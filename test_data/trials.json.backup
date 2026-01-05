@@ -1,0 +1,24 @@
+[
+  {
+    "ticker": "TEST1",
+    "nct_id": "NCT001",
+    "phase": "phase 2",
+    "status": "recruiting",
+    "primary_completion_date": "2025-06-30",
+    "last_update_posted": "2024-11-01",
+    "randomized": true,
+    "blinded": "double",
+    "primary_endpoint": "overall survival"
+  },
+  {
+    "ticker": "TEST2",
+    "nct_id": "NCT002",
+    "phase": "phase 3",
+    "status": "recruiting",
+    "primary_completion_date": "2025-09-30",
+    "last_update_posted": "2024-11-15",
+    "randomized": true,
+    "blinded": "double",
+    "primary_endpoint": "progression-free survival"
+  }
+]

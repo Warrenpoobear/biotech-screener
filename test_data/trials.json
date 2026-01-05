@@ -1,24 +1,34 @@
 [
-  {
-    "ticker": "TEST1",
-    "nct_id": "NCT001",
-    "phase": "phase 2",
-    "status": "recruiting",
-    "primary_completion_date": "2025-06-30",
-    "last_update_posted": "2024-11-01",
-    "randomized": true,
-    "blinded": "double",
-    "primary_endpoint": "overall survival"
-  },
-  {
-    "ticker": "TEST2",
-    "nct_id": "NCT002",
-    "phase": "phase 3",
-    "status": "recruiting",
-    "primary_completion_date": "2025-09-30",
-    "last_update_posted": "2024-11-15",
-    "randomized": true,
-    "blinded": "double",
-    "primary_endpoint": "progression-free survival"
-  }
+    {
+        "randomized":  true,
+        "enrollment":  150,
+        "primary_completion_date":  "2025-06-30",
+        "last_update_posted":  "2024-11-01",
+        "lead_indication":  "oncology_nsclc",
+        "catalyst_type":  "phase_2_interim",
+        "status":  "Recruiting",
+        "blinded":  "double",
+        "nct_id":  "NCT12345678",
+        "phase":  "Phase 2",
+        "next_catalyst_date":  "2025-06-30",
+        "primary_endpoint":  "overall_survival",
+        "lead_stage":  "phase_2",
+        "ticker":  "TEST1"
+    },
+    {
+        "randomized":  true,
+        "enrollment":  300,
+        "primary_completion_date":  "2025-03-31",
+        "last_update_posted":  "2024-11-15",
+        "lead_indication":  "rare_disease_sma",
+        "catalyst_type":  "phase_3_topline",
+        "status":  "Active, not recruiting",
+        "blinded":  "open_label",
+        "nct_id":  "NCT87654321",
+        "phase":  "Phase 3",
+        "next_catalyst_date":  "2025-03-31",
+        "primary_endpoint":  "change_from_baseline_hfmse",
+        "lead_stage":  "phase_3",
+        "ticker":  "TEST2"
+    }
 ]
