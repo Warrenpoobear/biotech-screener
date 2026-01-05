@@ -2,7 +2,7 @@
   "ticker": "ACAD",
   "success": true,
   "price": {
-    "current": 0.0,
+    "current": 26.15,
     "currency": "USD",
     "day_high": 26.595,
     "day_low": 25.56,
@@ -10,7 +10,7 @@
     "52_week_low": 13.4
   },
   "market_cap": {
-    "value": 0.0,
+    "value": 4424104448.0,
     "currency": "USD"
   },
   "shares_outstanding": 169181817.0,
@@ -30,8 +30,8 @@
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-05T17:57:06.177791",
+    "timestamp": "2026-01-05T18:05:31.615956",
     "url": "https://finance.yahoo.com/quote/ACAD",
-    "data_hash": "c7525605d584328d"
+    "data_hash": "1349810025a2da4d"
   }
 }

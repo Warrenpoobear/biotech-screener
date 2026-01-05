@@ -2,7 +2,7 @@
   "ticker": "UTHR",
   "success": true,
   "price": {
-    "current": 0.0,
+    "current": 489.69,
     "currency": "USD",
     "day_high": 498.77,
     "day_low": 479.59,
@@ -10,10 +10,10 @@
     "52_week_low": 266.98
   },
   "market_cap": {
-    "value": 0.0,
+    "value": 22146848768.0,
     "currency": "USD"
   },
-  "shares_outstanding": 45226263.0,
+  "shares_outstanding": 43056599.0,
   "volume": {
     "last": 601857,
     "average_30d": 484108
@@ -30,8 +30,8 @@
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-05T17:57:15.022167",
+    "timestamp": "2026-01-05T18:05:40.073760",
     "url": "https://finance.yahoo.com/quote/UTHR",
-    "data_hash": "c7525605d584328d"
+    "data_hash": "265d0a64832898ce"
   }
 }

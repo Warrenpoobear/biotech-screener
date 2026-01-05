@@ -2,7 +2,7 @@
   "ticker": "BMRN",
   "success": true,
   "price": {
-    "current": 0.0,
+    "current": 58.87,
     "currency": "USD",
     "day_high": 59.6,
     "day_low": 58.38,
@@ -10,7 +10,7 @@
     "52_week_low": 50.76
   },
   "market_cap": {
-    "value": 0.0,
+    "value": 11309770752.0,
     "currency": "USD"
   },
   "shares_outstanding": 192114344.0,
@@ -30,8 +30,8 @@
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-05T17:57:09.181617",
+    "timestamp": "2026-01-05T18:05:34.572134",
     "url": "https://finance.yahoo.com/quote/BMRN",
-    "data_hash": "c7525605d584328d"
+    "data_hash": "cdc4fcc4d311277c"
   }
 }

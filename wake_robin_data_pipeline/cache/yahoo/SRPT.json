@@ -2,7 +2,7 @@
   "ticker": "SRPT",
   "success": true,
   "price": {
-    "current": 0.0,
+    "current": 21.07,
     "currency": "USD",
     "day_high": 21.9701,
     "day_low": 20.86,
@@ -10,7 +10,7 @@
     "52_week_low": 10.42
   },
   "market_cap": {
-    "value": 0.0,
+    "value": 2207865856.0,
     "currency": "USD"
   },
   "shares_outstanding": 104787187.0,
@@ -30,8 +30,8 @@
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-05T17:57:13.520452",
+    "timestamp": "2026-01-05T18:05:38.738105",
     "url": "https://finance.yahoo.com/quote/SRPT",
-    "data_hash": "c7525605d584328d"
+    "data_hash": "12c2e2560ed27867"
   }
 }

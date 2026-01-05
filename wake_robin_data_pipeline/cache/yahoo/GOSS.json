@@ -2,7 +2,7 @@
   "ticker": "GOSS",
   "success": true,
   "price": {
-    "current": 0.0,
+    "current": 2.74,
     "currency": "USD",
     "day_high": 2.9692,
     "day_low": 2.725,
@@ -10,7 +10,7 @@
     "52_week_low": 0.76
   },
   "market_cap": {
-    "value": 0.0,
+    "value": 634190080.0,
     "currency": "USD"
   },
   "shares_outstanding": 231456247.0,
@@ -30,8 +30,8 @@
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-05T17:56:58.587367",
+    "timestamp": "2026-01-05T18:05:24.573889",
     "url": "https://finance.yahoo.com/quote/GOSS",
-    "data_hash": "c7525605d584328d"
+    "data_hash": "666cf48cb2606688"
   }
 }

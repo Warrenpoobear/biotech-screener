@@ -2,7 +2,7 @@
   "ticker": "ALNY",
   "success": true,
   "price": {
-    "current": 0.0,
+    "current": 397.83,
     "currency": "USD",
     "day_high": 400.0,
     "day_low": 383.84,
@@ -10,7 +10,7 @@
     "52_week_low": 205.87
   },
   "market_cap": {
-    "value": 0.0,
+    "value": 52558835712.0,
     "currency": "USD"
   },
   "shares_outstanding": 132113818.0,
@@ -30,8 +30,8 @@
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-05T17:57:07.672594",
+    "timestamp": "2026-01-05T18:05:33.159511",
     "url": "https://finance.yahoo.com/quote/ALNY",
-    "data_hash": "c7525605d584328d"
+    "data_hash": "4c7d4fa637927eca"
   }
 }

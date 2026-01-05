@@ -2,7 +2,7 @@
   "ticker": "FOLD",
   "success": true,
   "price": {
-    "current": 0.0,
+    "current": 14.25,
     "currency": "USD",
     "day_high": 14.26,
     "day_low": 14.205,
@@ -10,7 +10,7 @@
     "52_week_low": 5.51
   },
   "market_cap": {
-    "value": 0.0,
+    "value": 4407553024.0,
     "currency": "USD"
   },
   "shares_outstanding": 309301959.0,
@@ -30,8 +30,8 @@
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-05T17:57:19.828765",
+    "timestamp": "2026-01-05T18:05:44.249050",
     "url": "https://finance.yahoo.com/quote/FOLD",
-    "data_hash": "c7525605d584328d"
+    "data_hash": "3b59349476dd7559"
   }
 }

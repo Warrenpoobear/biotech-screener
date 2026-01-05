@@ -2,7 +2,7 @@
   "ticker": "EXEL",
   "success": true,
   "price": {
-    "current": 0.0,
+    "current": 42.4,
     "currency": "USD",
     "day_high": 43.46,
     "day_low": 41.93,
@@ -10,10 +10,10 @@
     "52_week_low": 31.9
   },
   "market_cap": {
-    "value": 0.0,
+    "value": 11414188032.0,
     "currency": "USD"
   },
-  "shares_outstanding": 269202522.0,
+  "shares_outstanding": 268112157.0,
   "volume": {
     "last": 2814429,
     "average_30d": 2600985
@@ -30,8 +30,8 @@
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-05T17:57:16.709058",
+    "timestamp": "2026-01-05T18:05:41.350840",
     "url": "https://finance.yahoo.com/quote/EXEL",
-    "data_hash": "c7525605d584328d"
+    "data_hash": "e2c2c88fd7d32a0d"
   }
 }

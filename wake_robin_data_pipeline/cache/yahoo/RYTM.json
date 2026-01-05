@@ -2,7 +2,7 @@
   "ticker": "RYTM",
   "success": true,
   "price": {
-    "current": 0.0,
+    "current": 101.86,
     "currency": "USD",
     "day_high": 104.71,
     "day_low": 99.46,
@@ -10,7 +10,7 @@
     "52_week_low": 45.905
   },
   "market_cap": {
-    "value": 0.0,
+    "value": 6797734912.0,
     "currency": "USD"
   },
   "shares_outstanding": 66736056.0,
@@ -30,8 +30,8 @@
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-05T17:57:03.127739",
+    "timestamp": "2026-01-05T18:05:28.757700",
     "url": "https://finance.yahoo.com/quote/RYTM",
-    "data_hash": "c7525605d584328d"
+    "data_hash": "58ac193fe1327a0e"
   }
 }

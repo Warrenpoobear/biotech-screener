@@ -2,7 +2,7 @@
   "ticker": "INCY",
   "success": true,
   "price": {
-    "current": 0.0,
+    "current": 101.79,
     "currency": "USD",
     "day_high": 103.0,
     "day_low": 99.04,
@@ -10,7 +10,7 @@
     "52_week_low": 53.56
   },
   "market_cap": {
-    "value": 0.0,
+    "value": 19983687680.0,
     "currency": "USD"
   },
   "shares_outstanding": 196322703.0,
@@ -30,8 +30,8 @@
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-05T17:56:52.462453",
+    "timestamp": "2026-01-05T18:05:19.161146",
     "url": "https://finance.yahoo.com/quote/INCY",
-    "data_hash": "c7525605d584328d"
+    "data_hash": "928ab41cfd5540a8"
   }
 }

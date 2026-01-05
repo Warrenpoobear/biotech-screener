@@ -2,7 +2,7 @@
   "ticker": "RARE",
   "success": true,
   "price": {
-    "current": 0.0,
+    "current": 23.11,
     "currency": "USD",
     "day_high": 23.75,
     "day_low": 22.65,
@@ -10,7 +10,7 @@
     "52_week_low": 18.41
   },
   "market_cap": {
-    "value": 0.0,
+    "value": 2229596672.0,
     "currency": "USD"
   },
   "shares_outstanding": 96477569.0,
@@ -30,8 +30,8 @@
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-05T17:57:18.201254",
+    "timestamp": "2026-01-05T18:05:42.846368",
     "url": "https://finance.yahoo.com/quote/RARE",
-    "data_hash": "c7525605d584328d"
+    "data_hash": "c2efdf1512b11ca2"
   }
 }
