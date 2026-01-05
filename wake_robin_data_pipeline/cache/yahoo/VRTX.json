@@ -1,0 +1,37 @@
+{
+  "ticker": "VRTX",
+  "success": true,
+  "price": {
+    "current": 0.0,
+    "currency": "USD",
+    "day_high": 450.72,
+    "day_low": 443.12,
+    "52_week_high": 519.68,
+    "52_week_low": 362.5
+  },
+  "market_cap": {
+    "value": 0.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 256390651.0,
+  "volume": {
+    "last": 901224,
+    "average_30d": 1209164
+  },
+  "valuation": {
+    "pe_ratio": 31.605633,
+    "forward_pe": 22.1764,
+    "price_to_book": 6.5809345
+  },
+  "company_info": {
+    "name": "Vertex Pharmaceuticals Incorporated",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-05T17:57:12.127049",
+    "url": "https://finance.yahoo.com/quote/VRTX",
+    "data_hash": "c7525605d584328d"
+  }
+}

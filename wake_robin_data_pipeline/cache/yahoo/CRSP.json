@@ -1,0 +1,37 @@
+{
+  "ticker": "CRSP",
+  "success": true,
+  "price": {
+    "current": 0.0,
+    "currency": "USD",
+    "day_high": 55.5204,
+    "day_low": 53.7301,
+    "52_week_high": 78.48,
+    "52_week_low": 30.04
+  },
+  "market_cap": {
+    "value": 0.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 95300233.0,
+  "volume": {
+    "last": 1933108,
+    "average_30d": 1534047
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -12.365083,
+    "price_to_book": 2.702107
+  },
+  "company_info": {
+    "name": "CRISPR Therapeutics AG",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-05T17:57:10.567050",
+    "url": "https://finance.yahoo.com/quote/CRSP",
+    "data_hash": "c7525605d584328d"
+  }
+}

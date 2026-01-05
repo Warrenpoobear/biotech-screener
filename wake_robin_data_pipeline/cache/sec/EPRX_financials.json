@@ -1,0 +1,28 @@
+{
+  "ticker": "EPRX",
+  "cik": "0001581178",
+  "success": true,
+  "financials": {
+    "cash": 19341756.0,
+    "debt": null,
+    "net_debt": null,
+    "revenue_ttm": null,
+    "assets": 20266229.0,
+    "liabilities": 19373903.0,
+    "equity": 892326.0,
+    "currency": "USD"
+  },
+  "coverage": {
+    "has_cash": true,
+    "has_debt": false,
+    "has_revenue": false,
+    "has_balance_sheet": true,
+    "pct_complete": 50.0
+  },
+  "provenance": {
+    "source": "SEC EDGAR Company Facts API",
+    "timestamp": "2026-01-05T17:57:42.662848",
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001581178.json",
+    "cik": "0001581178"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "ticker": "GOSS",
+  "cik": "0001728117",
+  "success": true,
+  "financials": {
+    "cash": 8933000.0,
+    "debt": 28548000.0,
+    "net_debt": 19615000.0,
+    "revenue_ttm": 34672000.0,
+    "assets": 208820000.0,
+    "liabilities": 291153000.0,
+    "equity": -82333000.0,
+    "currency": "USD"
+  },
+  "coverage": {
+    "has_cash": true,
+    "has_debt": true,
+    "has_revenue": true,
+    "has_balance_sheet": true,
+    "pct_complete": 100.0
+  },
+  "provenance": {
+    "source": "SEC EDGAR Company Facts API",
+    "timestamp": "2026-01-05T17:57:33.381885",
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001728117.json",
+    "cik": "0001728117"
+  }
+}

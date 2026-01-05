@@ -1,0 +1,174 @@
+{
+  "ticker": "ACAD",
+  "company_name": "ACADIA Pharmaceuticals",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05796167",
+      "title": "Pimavanserin for Sleep in Parkinson Disease",
+      "status": "WITHDRAWN",
+      "phase": "EARLY_PHASE1",
+      "condition": "Parkinson Disease",
+      "start_date": "2023-01-27",
+      "completion_date": "2024-06-24",
+      "enrollment": 0,
+      "sponsor": "State University of New York - Downstate Medical Center"
+    },
+    {
+      "nct_id": "NCT00361166",
+      "title": "Antipsychotic and Motor Effects of ACP-103 When Administered in Combination With Haloperidol and Risperidone",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Schizophrenia",
+      "start_date": "2005-08",
+      "completion_date": "2007-03",
+      "enrollment": 0,
+      "sponsor": "ACADIA Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT02970305",
+      "title": "Efficacy and Safety of Pimavanserin as Adjunctive Treatment for the Negative Symptoms of Schizophrenia (ADVANCE)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Schizophrenia",
+      "start_date": "2016-11-04",
+      "completion_date": "2019-10-28",
+      "enrollment": 0,
+      "sponsor": "ACADIA Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT05895513",
+      "title": "Pimavanserin and Aggression and Social Cognition.",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Intermittent Explosive Disorder",
+      "start_date": "2024-08-01",
+      "completion_date": "2028-01",
+      "enrollment": 0,
+      "sponsor": "Ohio State University"
+    },
+    {
+      "nct_id": "NCT05357612",
+      "title": "Characterization of the Serotonin 2A Receptor Selective PET Tracer [18F]MH.MZ in Patients With Neurodegenerative Diseases",
+      "status": "RECRUITING",
+      "phase": "PHASE4",
+      "condition": "Neurodegenerative Diseases, Parkinson Disease, Parkinson Disease Psychosis",
+      "start_date": "2023-01-23",
+      "completion_date": "2026-08",
+      "enrollment": 0,
+      "sponsor": "Vanderbilt University Medical Center"
+    },
+    {
+      "nct_id": "NCT07029581",
+      "title": "Phase 2, Efficacy and Safety Study of ACP-204 in Lewy Body Dementia Psychosis",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Lewy Body Dementia Psychosis",
+      "start_date": "2025-08-06",
+      "completion_date": "2028-03",
+      "enrollment": 0,
+      "sponsor": "ACADIA Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT03118947",
+      "title": "A Study of Pimavanserin for the Treatment of Agitation and Aggression in Subjects With Alzheimer's Disease",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Agitation and Aggression in Alzheimer's Disease",
+      "start_date": "2017-02-23",
+      "completion_date": "2019-02-25",
+      "enrollment": 0,
+      "sponsor": "ACADIA Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT00490516",
+      "title": "ACP-104 in Acutely Psychotic Subjects With Schizophrenia",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Schizophrenia",
+      "start_date": "2007-06",
+      "completion_date": "2008-02",
+      "enrollment": 0,
+      "sponsor": "ACADIA Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT01174004",
+      "title": "A Study of the Safety and Efficacy of Pimavanserin in Patients With Parkinson's Disease Psychosis",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Parkinson's Disease Psychosis",
+      "start_date": "2010-07",
+      "completion_date": "2012-11",
+      "enrollment": 0,
+      "sponsor": "ACADIA Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT06173531",
+      "title": "Study of Carbetocin Nasal Spray for the Treatment of Hyperphagia in Prader-Willi Syndrome",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Hyperphagia in Prader-Willi Syndrome",
+      "start_date": "2023-11-27",
+      "completion_date": "2025-11",
+      "enrollment": 0,
+      "sponsor": "ACADIA Pharmaceuticals Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 50,
+    "by_phase": {
+      "EARLY_PHASE1": 1,
+      "PHASE2": 19,
+      "PHASE4": 3,
+      "PHASE3": 19,
+      "PHASE1": 1,
+      "": 3,
+      "PHASE2, PHASE3": 4
+    },
+    "by_status": {
+      "WITHDRAWN": 3,
+      "COMPLETED": 27,
+      "RECRUITING": 6,
+      "ACTIVE_NOT_RECRUITING": 1,
+      "ENROLLING_BY_INVITATION": 3,
+      "TERMINATED": 9,
+      "APPROVED_FOR_MARKETING": 1
+    },
+    "active_trials": 10,
+    "completed_trials": 27,
+    "conditions": [
+      "Acute Postoperative Pain, Bunionectomy",
+      "Adjunctive Treatment of Major Depressive Disorder",
+      "Agitation and Aggression in Alzheimer's Disease",
+      "Alzheimer's Disease Psychosis",
+      "Autism Spectrum Disorder",
+      "Dementia-related Psychosis",
+      "Hallucinations, Psychoses, Parkinson's Disease",
+      "Hyperphagia in Prader-Willi Syndrome",
+      "Insomnia Chronic, Posttraumatic Stress Disorder",
+      "Intermittent Explosive Disorder",
+      "Irritability Associated With Autism Spectrum Disorder",
+      "Lewy Body Dementia Psychosis",
+      "Major Depressive Disorder (MDD), Depressive Disorder, Treatment-Resistant",
+      "Neurodegenerative Diseases, Parkinson Disease, Parkinson Disease Psychosis",
+      "Neuropsychiatric Symptoms Related to Neurodegenerative Disease",
+      "Osteoarthritis Pain",
+      "Parkinson Disease",
+      "Parkinson Disease Psychosis",
+      "Parkinson Disease, Parkinson Disease Psychosis, Hallucinations, Delusion",
+      "Parkinson's Disease",
+      "Parkinson's Disease Psychosis",
+      "Rett Syndrome",
+      "Schizophrenia",
+      "Schizophrenia, Psychosis",
+      "Treatment of Depression in Adults With Parkinson's Disease (PD)"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-05T17:58:23.485874",
+    "search_query": "ACADIA Pharmaceuticals",
+    "url": "https://clinicaltrials.gov/search?term=ACADIA+Pharmaceuticals"
+  }
+}

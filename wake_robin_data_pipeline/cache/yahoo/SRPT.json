@@ -1,0 +1,37 @@
+{
+  "ticker": "SRPT",
+  "success": true,
+  "price": {
+    "current": 0.0,
+    "currency": "USD",
+    "day_high": 21.9701,
+    "day_low": 20.86,
+    "52_week_high": 129.84,
+    "52_week_low": 10.42
+  },
+  "market_cap": {
+    "value": 0.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 104787187.0,
+  "volume": {
+    "last": 2706888,
+    "average_30d": 2798757
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": 7.595201,
+    "price_to_book": 1.6722221
+  },
+  "company_info": {
+    "name": "Sarepta Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-05T17:57:13.520452",
+    "url": "https://finance.yahoo.com/quote/SRPT",
+    "data_hash": "c7525605d584328d"
+  }
+}

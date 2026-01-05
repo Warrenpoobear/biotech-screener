@@ -1,0 +1,170 @@
+{
+  "ticker": "SRPT",
+  "company_name": "Sarepta Therapeutics",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06952686",
+      "title": "A Study of SRP-9005 in Limb Girdle Muscular Dystrophy Type 2C/R5 Pediatric and Adult Participants",
+      "status": "WITHDRAWN",
+      "phase": "PHASE3",
+      "condition": "Muscular Dystrophies, Limb-Girdle",
+      "start_date": "2025-06-30",
+      "completion_date": "2032-03-30",
+      "enrollment": 0,
+      "sponsor": "Sarepta Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT03218995",
+      "title": "Study of Eteplirsen in Young Participants With Duchenne Muscular Dystrophy (DMD) Amenable to Exon 51 Skipping",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Duchenne Muscular Dystrophy",
+      "start_date": "2017-08-16",
+      "completion_date": "2021-03-10",
+      "enrollment": 0,
+      "sponsor": "Sarepta Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT02255552",
+      "title": "Study of Eteplirsen in DMD Patients",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Duchenne Muscular Dystrophy (DMD)",
+      "start_date": "2014-11-17",
+      "completion_date": "2019-06-14",
+      "enrollment": 0,
+      "sponsor": "Sarepta Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT00244647",
+      "title": "A Phase 1b Study Evaluating RESTEN-MP in Subjects With Focal de Novo Stenosis",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Coronary Artery Disease, Coronary Stent Restenosis",
+      "start_date": "2003-08",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Sarepta Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT01976091",
+      "title": "A Gene Transfer Therapy Study to Evaluate the Safety of SRP-9004 (Patidistrogene Bexoparvovec) in Participants With Limb-Girdle Muscular Dystrophy, Type 2D (LGMD2D)",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Limb-Girdle Muscular Dystrophy, Type 2D",
+      "start_date": "2015-02-01",
+      "completion_date": "2019-03-14",
+      "enrollment": 0,
+      "sponsor": "Sarepta Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT00387283",
+      "title": "Pharmacokinetic Study in Cerebral Spinal Fluid After a Single Dose of AVI-4020",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "West Nile Virus",
+      "start_date": "2006-10",
+      "completion_date": "2009-06",
+      "enrollment": 0,
+      "sponsor": "Sarepta Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT02710500",
+      "title": "rAAVrh74.MHCK7.DYSF.DV for Treatment of Dysferlinopathies",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Dysferlinopathy",
+      "start_date": "2016-03",
+      "completion_date": "2019-07",
+      "enrollment": 0,
+      "sponsor": "Sarepta Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04004065",
+      "title": "Two-Part Study for Dose Determination of Vesleteplirsen (SRP-5051) (Part A), Then Dose Expansion (Part B) in Participants With Duchenne Muscular Dystrophy Amenable to Exon 51-Skipping Treatment",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Duchenne Muscular Dystrophy",
+      "start_date": "2019-06-26",
+      "completion_date": "2025-02-07",
+      "enrollment": 0,
+      "sponsor": "Sarepta Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT00248066",
+      "title": "Safety and Efficacy of RESTEN-MP When Used in Conjunction With a Bare Metal Stent in Coronary Arteries",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Coronary Artery Disease, Coronary Restenosis",
+      "start_date": "2005-09",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Sarepta Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT00091845",
+      "title": "An Exploratory Study of AVI-4020 in Patients With Possible Acute Neuroinvasive West Nile Virus (WNV) Disease",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "West Nile Fever",
+      "start_date": "2004-11",
+      "completion_date": "2004-11",
+      "enrollment": 0,
+      "sponsor": "Sarepta Therapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 50,
+    "by_phase": {
+      "PHASE3": 7,
+      "PHASE2": 11,
+      "PHASE1": 17,
+      "PHASE1, PHASE2": 9,
+      "": 5,
+      "PHASE4": 1
+    },
+    "by_status": {
+      "WITHDRAWN": 2,
+      "COMPLETED": 26,
+      "TERMINATED": 12,
+      "RECRUITING": 3,
+      "ENROLLING_BY_INVITATION": 3,
+      "ACTIVE_NOT_RECRUITING": 4
+    },
+    "active_trials": 10,
+    "completed_trials": 26,
+    "conditions": [
+      "Cardiovascular Disease, Coronary Artery Bypass",
+      "Coronary Artery Disease, Coronary Restenosis",
+      "Coronary Artery Disease, Coronary Stent Restenosis",
+      "DMD, BMD",
+      "Duchenne Muscular Dystrophy",
+      "Duchenne Muscular Dystrophy (DMD)",
+      "Duchenne Muscular Dystrophy, Burden, Dependency, Disability Physical, Disease Management, Impairment, Rare Diseases",
+      "Dysferlinopathy",
+      "Ebola Hemorrhagic Fever",
+      "Encephalitis",
+      "Hepatitis C",
+      "Limb Girdle Muscular Dystrophy",
+      "Limb Girdle Muscular Dystrophy, Limb Girdle Muscular Dystrophy Type 2D/R3",
+      "Limb-Girdle Muscular Dystrophy, Type 2D",
+      "Limb-Girdle Muscular Dystrophy, Type 2E",
+      "Limb-girdle Muscular Dystrophy",
+      "Marburg Hemorrhagic Fever",
+      "Muscular Dystrophies, Limb-Girdle",
+      "Muscular Dystrophy, Duchenne",
+      "Neoplasms",
+      "Spinal Muscular Atrophy, Fragile X Syndrome, Fragile X - Premutation, Duchenne Muscular Dystrophy, Hyperinsulinemic Hypoglycemia, Familial 1, Diabetes Mellitus, Adrenoleukodystrophy, Neonatal, Medium-chain Acyl-CoA Dehydrogenase Deficiency, Very Long Chain Acyl Coa Dehydrogenase Deficiency, Beta-ketothiolase Deficiency, Severe Combined Immunodeficiency Due to Adenosine Deaminase Deficiency, Primary Hyperoxaluria Type 1, Congenital Bile Acid Synthesis Defect Type 2, Pyridoxine-Dependent Epilepsy, Hereditary Fructose Intolerance, Hypophosphatasia, Hyperargininemia, Mucopolysaccharidosis Type 6, Argininosuccinic Aciduria, Citrullinemia, Type I, Wilson Disease, Maple Syrup Urine Disease, Type 1A, Maple Syrup Urine Disease, Type 1B, Biotinidase Deficiency, Neonatal Severe Primary Hyperparathyroidism, Intrinsic Factor Deficiency, Usher Syndrome Type 1D/F Digenic (Diagnosis), Cystic Fibrosis, Stickler Syndrome Type 2, Stickler Syndrome Type 1, Alport Syndrome, Autosomal Recessive, Alport Syndrome, X-Linked, Carbamoyl Phosphate Synthetase I Deficiency Disease, Carnitine Palmitoyl Transferase 1A Deficiency, Carnitine Palmitoyltransferase II Deficiency, Cystinosis, Chronic Granulomatous Disease, Cerebrotendinous Xanthomatoses, Maple Syrup Urine Disease, Type 2, Severe Combined Immunodeficiency Due to DCLRE1C Deficiency, Thyroid Dyshormonogenesis 6, Thyroid Dyshormonogenesis 5, Supravalvar Aortic Stenosis, Factor X Deficiency, Hemophilia A, Hemophilia B, Tyrosinemia, Type I, Fructose 1,6 Bisphosphatase Deficiency, Glycogen Storage Disease Type I, G6PD Deficiency, Glycogen Storage Disease II, Galactokinase Deficiency, Mucopolysaccharidosis Type IV A, Galactosemias, Guanidinoacetate Methyltransferase Deficiency, Agat Deficiency, Glutaryl-CoA Dehydrogenase Deficiency, Gtp Cyclohydrolase I Deficiency, Hyperinsulinism-Hyperammonemia Syndrome, Primary Hyperoxaluria Type 2, 3-Hydroxyacyl-CoA Dehydrogenase Deficiency, Long-chain 3-hydroxyacyl-CoA Dehydrogenase Deficiency, Mitochondrial Trifunctional Protein Deficiency, Sickle Cell Disease, Beta-Thalassemia, Holocarboxylase Synthetase Deficiency, 3-Hydroxy-3-Methylglutaric Aciduria, Primary Hyperoxaluria Type 3, Hermansky-Pudlak Syndrome 1, Hermansky-Pudlak Syndrome 4, Apparent Mineralocorticoid Excess, HSDB, CBAS1, Mucopolysaccharidosis Type 2, Mucopolysaccharidosis Type 1, Severe Combined Immunodeficiency, X Linked, Severe Combined Immunodeficiency Due to IL-7Ralpha Deficiency, Diabetes Mellitus, Permanent Neonatal, Isovaleric Acidemia, Severe Combined Immunodeficiency T-Cell Negative B-Cell Positive Due to Janus Kinase-3 Deficiency (Disorder), Jervell and Lange-Nielsen Syndrome 2, Hyperinsulinemic Hypoglycemia, Familial, 2, Diabetes Mellitus, Permanent Neonatal, With Neurologic Features, Jervell and Lange-Nielsen Syndrome 1, Lysosomal Acid Lipase Deficiency, CblF, 3-Methylcrotonyl CoA Carboxylase 1 Deficiency, 3-Methylcrotonyl CoA Carboxylase 2 Deficiency, Waardenburg Syndrome Type 2A, Methylmalonic Aciduria cblA Type, Methylmalonic Aciduria cblB Type, Methylmalonic Aciduria and Homocystinuria Type cblC, MAHCD, Methylmalonic Aciduria Due to Methylmalonyl-CoA Mutase Deficiency, Congenital Disorder of Glycosylation Type 1B, Mthfr Deficiency, Methylcobalamin Deficiency Type Cbl G (Disorder), Methylcobalamin Deficiency Type cblE, Usher Syndrome, Type 1B, N-acetylglutamate Synthase Deficiency, Ornithine Transcarbamylase Deficiency, Phenylketonurias, Waardenburg Syndrome Type 1, Congenital Hypothyroidism, Propionic Acidemia, Usher Syndrome, Type 1F, Pancreatic Agenesis 1, Hereditary Hypophosphatemic Rickets, Glycogen Storage Disease IXB, Glycogen Storage Disease IXC, MOWS, Epilepsy, Early-Onset, Vitamin B6-Dependent, Pyridoxal Phosphate-Responsive Seizures, Pituitary Hormone Deficiency, Combined, 1, Ptsd, Dihydropteridine Reductase Deficiency, Severe Combined Immunodeficiency Due to RAG1 Deficiency, Severe Combined Immunodeficiency Due to RAG2 Deficiency, Retinoblastoma, Multiple Endocrine Neoplasia Type 2B, Pseudohypoaldosteronism, Type I, Liddle Syndrome, Biotin-Responsive Basal Ganglia Disease, SCD, DIAR1, GSD1C, Acrodermatitis Enteropathica, Thyroid Dyshormonogenesis 1, Riboflavin Transporter Deficiency, Waardenburg Syndrome, Type 2E, SRD, Congenital Lipoid Adrenal Hyperplasia Due to STAR Deficiency, Barth Syndrome, Adrenocorticotropic Hormone Deficiency, Transcobalamin II Deficiency, Thyroid Dyshormonogenesis 3, Segawa Syndrome, Autosomal Recessive, Autosomal Recessive Nonsyndromic Hearing Loss, Thyroid Dyshormonogenesis 2A, Congenital Isolated Thyroid Stimulating Hormone Deficiency, Hypothyroidism Due to TSH Receptor Mutations, Usher Syndrome Type 1C, Usher Syndrome Type 1G (Diagnosis), Von Willebrand Disease, Type 3, Combined Immunodeficiency Due to ZAP70 Deficiency, Adenine Phosphoribosyltransferase Deficiency, Metachromatic Leukodystrophy, Canavan Disease, Menkes Disease, Carbonic Anhydrase VA Deficiency, Developmental and Epileptic Encephalopathy 2, 17 Alpha-Hydroxylase Deficiency, Smith-Lemli-Opitz Syndrome, Krabbe Disease, Glutathione Synthetase Deficiency, Mucopolysaccharidosis Type 7, Rett Syndrome, Molybdenum Cofactor Deficiency, Type A, Niemann-Pick Disease, Type C1, Niemann-Pick Disease Type C2, Ornithine Aminotransferase Deficiency, 3-Phosphoglycerate Dehydrogenase Deficiency, Leber Congenital Amaurosis 2, Dravet Syndrome, Mucopolysaccharidosis Type 3 A, Ornithine Translocase Deficiency, Carnitine-acylcarnitine Translocase Deficiency, Glucose Transporter Type 1 Deficiency Syndrome, Creatine Transporter Deficiency, Niemann-Pick Disease Type A, Pitt Hopkins Syndrome, Tuberous Sclerosis 1, Tuberous Sclerosis 2, Ataxia With Isolated Vitamin E Deficiency, Angelman Syndrome, Prader-Willi Syndrome, Homocystinuria, Permanent Neonatal Diabetes Mellitus, Transient Neonatal Diabetes Mellitus, Factor VII Deficiency, Glycogen Storage Disease Type IXA1, Glycogen Storage Disease, Type IXA2, Glycogen Storage Disease IC, Glycogen Storage Disease Type IB, Central Hypoventilation Syndrome With or Without Hirschsprung Disease",
+      "West Nile Fever",
+      "West Nile Virus"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-05T17:58:31.722342",
+    "search_query": "Sarepta Therapeutics",
+    "url": "https://clinicaltrials.gov/search?term=Sarepta+Therapeutics"
+  }
+}

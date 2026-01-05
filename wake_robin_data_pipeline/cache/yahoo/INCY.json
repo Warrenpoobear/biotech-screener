@@ -1,0 +1,37 @@
+{
+  "ticker": "INCY",
+  "success": true,
+  "price": {
+    "current": 0.0,
+    "currency": "USD",
+    "day_high": 103.0,
+    "day_low": 99.04,
+    "52_week_high": 109.28,
+    "52_week_low": 53.56
+  },
+  "market_cap": {
+    "value": 0.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 196322703.0,
+  "volume": {
+    "last": 3050800,
+    "average_30d": 2119063
+  },
+  "valuation": {
+    "pe_ratio": 17.252542,
+    "forward_pe": 13.296358,
+    "price_to_book": 4.29222
+  },
+  "company_info": {
+    "name": "Incyte Corporation",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-05T17:56:52.462453",
+    "url": "https://finance.yahoo.com/quote/INCY",
+    "data_hash": "c7525605d584328d"
+  }
+}

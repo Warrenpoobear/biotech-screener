@@ -1,0 +1,175 @@
+{
+  "ticker": "RYTM",
+  "company_name": "Rhythm Pharmaceuticals",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05183802",
+      "title": "An Expanded Access Protocol for Setmelanotide for Treatment of Bardet-Biedl Syndrome (BBS)",
+      "status": "APPROVED_FOR_MARKETING",
+      "phase": "",
+      "condition": "Bardet-Biedl Syndrome (BBS), Obesity",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Rhythm Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT02041195",
+      "title": "Phase 1b/2a Study to Evaluate Safety and Efficacy of Setmelanotide in Obese Patients",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Overweight and Obesity",
+      "start_date": "2014-01",
+      "completion_date": "2014-12",
+      "enrollment": 0,
+      "sponsor": "Rhythm Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT03013543",
+      "title": "Setmelanotide Phase 2 Treatment Trial in Participants With Rare Genetic Disorders of Obesity",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Genetic Obesity, Obesity, Obesity Due to Melanocortin 4 Receptor Deficiency",
+      "start_date": "2017-02-10",
+      "completion_date": "2022-03-01",
+      "enrollment": 0,
+      "sponsor": "Rhythm Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT06760546",
+      "title": "A Trial of Setmelanotide in Patients With Congenital Hypothalamic Obesity (Sub-study of NCT05774756)",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Hypothalamic Obesity, Multiple Pituitary Hormone Deficiency Genetic Form, Septo-Optic Dysplasia, Optic Nerve Hypoplasia, Childhood-onset Combined Pituitary Hormone Deficiency, Pituitary Stalk Interruption Syndrome",
+      "start_date": "2025-09-23",
+      "completion_date": "2027-09-30",
+      "enrollment": 0,
+      "sponsor": "Rhythm Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT05194124",
+      "title": "Phase 3 Crossover Trial of Two Formulations of Setmelanotide in Participants With Specific Gene Defects in the MC4R Pathway",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Bardet-Biedl Syndrome, POMC Deficiency",
+      "start_date": "2021-12-21",
+      "completion_date": "2023-10-19",
+      "enrollment": 0,
+      "sponsor": "Rhythm Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT06420622",
+      "title": "INDIcators for Clarifying the bAckground of exTreme Obesity in childRen",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Gene Abnormality, Child Obesity, Hunger",
+      "start_date": "2024-04-15",
+      "completion_date": "2026-03-31",
+      "enrollment": 0,
+      "sponsor": "University of Leipzig"
+    },
+    {
+      "nct_id": "NCT01867437",
+      "title": "Effects of RM-493 on Energy Expenditure in Obese Individuals",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Obesity, Morbid Obesity",
+      "start_date": "2013-05",
+      "completion_date": "2014-03",
+      "enrollment": 0,
+      "sponsor": "Rhythm Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT01849705",
+      "title": "Melanocortin 4 Receptor Mutations and Obesity-associated Diseases",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Obesity",
+      "start_date": "2012-10",
+      "completion_date": "2013-02",
+      "enrollment": 0,
+      "sponsor": "University of Copenhagen"
+    },
+    {
+      "nct_id": "NCT04725240",
+      "title": "Open-Label Study of Setmelanotide in Hypothalamic Obesity",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Hypothalamic Obesity",
+      "start_date": "2021-06-07",
+      "completion_date": "2022-06-28",
+      "enrollment": 0,
+      "sponsor": "Rhythm Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT02311673",
+      "title": "Phase 2 Trial to Evaluate Safety and Efficacy of Setmelanotide (RM-493) in Obese Participants With Prader-Willi Syndrome",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Prader-Willi Syndrome",
+      "start_date": "2015-03-19",
+      "completion_date": "2016-10-26",
+      "enrollment": 0,
+      "sponsor": "Rhythm Pharmaceuticals, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 32,
+    "by_phase": {
+      "": 7,
+      "PHASE1, PHASE2": 2,
+      "PHASE2": 9,
+      "PHASE3": 9,
+      "PHASE1": 3,
+      "PHASE4": 1,
+      "PHASE2, PHASE3": 1
+    },
+    "by_status": {
+      "APPROVED_FOR_MARKETING": 1,
+      "COMPLETED": 21,
+      "RECRUITING": 4,
+      "ACTIVE_NOT_RECRUITING": 4,
+      "ENROLLING_BY_INVITATION": 2
+    },
+    "active_trials": 10,
+    "completed_trials": 21,
+    "conditions": [
+      "Bardet Biedl Syndrome (BBS), Alstr\u00f6m Syndrome (AS)",
+      "Bardet-Biedl Syndrome (BBS), Obesity",
+      "Bardet-Biedl Syndrome, POMC Deficiency",
+      "Bardet-Biedl Syndrome, POMC Deficiency Obesity, PCSK1 Deficiency Obesity, LEPR Deficiency Obesity",
+      "Gene Abnormality, Child Obesity, Hunger",
+      "Genetic Forms of Extreme Obesity",
+      "Genetic Obesity",
+      "Genetic Obesity, Obesity, Obesity Due to Melanocortin 4 Receptor Deficiency",
+      "Healthy",
+      "Hypertriglyceridemia, Obesity",
+      "Hypothalamic Obesity",
+      "Hypothalamic Obesity, Multiple Pituitary Hormone Deficiency Genetic Form, Septo-Optic Dysplasia, Optic Nerve Hypoplasia, Childhood-onset Combined Pituitary Hormone Deficiency, Pituitary Stalk Interruption Syndrome",
+      "Hypothalamic Obesity, Prader-Willi Syndrome, PWS",
+      "Leptin Receptor Deficiency Obesity",
+      "Obesity",
+      "Obesity Associated With Defects in Leptin-melanocortin Pathway",
+      "Obesity, Childhood, Hyperphagia, Retinopathy, Syndactyly, Polydactyly, Cognitive Impairment, Bardet-Biedl Syndrome, POMC Deficiency",
+      "Obesity, Genetic Obesity",
+      "Obesity, Morbid Obesity",
+      "Overweight",
+      "Overweight and Obesity",
+      "Overweight, Obese",
+      "POMC Deficiency Obesity, PCSK1 Deficiency Obesity, LEPR Deficiency Obesity",
+      "Prader-Willi Syndrome",
+      "Prader-Willi Syndrome, Obesity, Hyperphagia",
+      "Pro-opiomelanocortin (POMC) Deficiency Obesity",
+      "Pro-opiomelanocortin (POMC), Proprotein Convertase Subtilisin/Kexin Type 1 (PCSK1) and Leptin Receptor (LepR) Gene Mutations",
+      "Renal Insufficiency"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-05T17:58:20.220109",
+    "search_query": "Rhythm Pharmaceuticals",
+    "url": "https://clinicaltrials.gov/search?term=Rhythm+Pharmaceuticals"
+  }
+}

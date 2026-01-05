@@ -1,0 +1,37 @@
+{
+  "ticker": "GOSS",
+  "success": true,
+  "price": {
+    "current": 0.0,
+    "currency": "USD",
+    "day_high": 2.9692,
+    "day_low": 2.725,
+    "52_week_high": 3.87,
+    "52_week_low": 0.76
+  },
+  "market_cap": {
+    "value": 0.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 231456247.0,
+  "volume": {
+    "last": 4336898,
+    "average_30d": 4656446
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -4.6704283,
+    "price_to_book": -7.696629
+  },
+  "company_info": {
+    "name": "Gossamer Bio, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-05T17:56:58.587367",
+    "url": "https://finance.yahoo.com/quote/GOSS",
+    "data_hash": "c7525605d584328d"
+  }
+}

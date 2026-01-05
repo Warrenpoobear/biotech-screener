@@ -1,0 +1,37 @@
+{
+  "ticker": "ARGX",
+  "success": true,
+  "price": {
+    "current": 0.0,
+    "currency": "USD",
+    "day_high": 835.53,
+    "day_low": 787.02,
+    "52_week_high": 934.62,
+    "52_week_low": 510.055
+  },
+  "market_cap": {
+    "value": 0.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 62276249.0,
+  "volume": {
+    "last": 729048,
+    "average_30d": 298639
+  },
+  "valuation": {
+    "pe_ratio": 34.298927,
+    "forward_pe": 26.837353,
+    "price_to_book": 8.036203
+  },
+  "company_info": {
+    "name": "argenx SE",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-05T17:56:51.017413",
+    "url": "https://finance.yahoo.com/quote/ARGX",
+    "data_hash": "c7525605d584328d"
+  }
+}

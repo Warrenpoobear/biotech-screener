@@ -1,0 +1,44 @@
+{
+  "universe_size": 20,
+  "collection_date": "2026-01-05T17:58:38.335668",
+  "coverage": {
+    "price_data": 20,
+    "financial_data": 19,
+    "clinical_data": 20
+  },
+  "coverage_pct": {
+    "price_data": 100.0,
+    "financial_data": 95.0,
+    "clinical_data": 100.0
+  },
+  "avg_financial_coverage": 82.5,
+  "avg_overall_coverage": 88.99999999999999,
+  "tickers_by_quality": {
+    "excellent": [
+      "ARGX",
+      "INCY",
+      "JAZZ",
+      "IONS",
+      "BBIO",
+      "GOSS",
+      "RNA",
+      "KYMR",
+      "RYTM",
+      "ACAD",
+      "ALNY",
+      "BMRN",
+      "CRSP",
+      "VRTX",
+      "SRPT",
+      "UTHR",
+      "EXEL",
+      "RARE",
+      "FOLD"
+    ],
+    "good": [
+      "EPRX"
+    ],
+    "fair": [],
+    "poor": []
+  }
+}
