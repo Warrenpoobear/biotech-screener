@@ -105,12 +105,22 @@ def compute_module_3_catalyst(
     """
     pit_cutoff = compute_pit_cutoff(as_of_date)
     
+    # Track PIT-filtered trials for diagnostics
+    pit_filtered_count = 0
+    
     # Group trials by ticker
     ticker_trials: Dict[str, List[Dict]] = {}
     for trial in trial_records:
         ticker = trial.get("ticker", "").upper()
         if ticker not in active_tickers:
             continue
+        
+        # PIT FILTER: Only include trials with data available before cutoff
+        # This prevents lookahead bias from future trial announcements
+        source_date = trial.get("last_update_posted") or trial.get("source_date")
+        if source_date and not is_pit_admissible(source_date, pit_cutoff):
+            pit_filtered_count += 1
+            continue  # Skip future data
         
         # Must have future primary completion date
         pcd = trial.get("primary_completion_date")
@@ -192,6 +202,7 @@ def compute_module_3_catalyst(
             "with_catalyst": len(scores) - len(no_catalyst),
             "no_catalyst": len(no_catalyst),
             "total_trials_evaluated": sum(len(v) for v in ticker_trials.values()),
+            "pit_filtered": pit_filtered_count,
         },
         "provenance": create_provenance(RULESET_VERSION, {"tickers": active_tickers}, pit_cutoff),
     }

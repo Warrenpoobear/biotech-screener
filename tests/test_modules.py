@@ -192,4 +192,4 @@ class TestIntegration:
         # Verify output
         assert m5["diagnostic_counts"]["rankable"] == 1
         assert m5["ranked_securities"][0]["ticker"] == "TEST"
-        assert m5["provenance"]["ruleset_version"] == "1.1.0"
+        assert m5["provenance"]["ruleset_version"] == "1.2.1"

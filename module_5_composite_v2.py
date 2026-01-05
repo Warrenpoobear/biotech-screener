@@ -13,20 +13,14 @@ Weights: Clinical 40%, Financial 35%, Catalyst 25%
 from __future__ import annotations
 from datetime import datetime, date
 
-from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
+from decimal import Decimal, ROUND_HALF_UP
+from statistics import mean, stdev
 from typing import Any, Dict, List, Optional, Tuple
 
 from common.provenance import create_provenance
 from common.types import Severity
 
-RULESET_VERSION = "1.2.1"  # Bumped for determinism + exception fixes
-
-
-def _decimal_mean(values: List[Decimal]) -> Decimal:
-    """Compute mean using Decimal arithmetic only (no floats)."""
-    if not values:
-        return Decimal("0")
-    return sum(values) / Decimal(len(values))
+RULESET_VERSION = "1.2.0"  # Bumped for co-invest integration
 
 # Default weights (sum to 1.0)
 DEFAULT_WEIGHTS = {
@@ -150,7 +144,7 @@ def _market_cap_bucket(market_cap_mm: Optional[Any]) -> str:
             mcap = Decimal(str(market_cap_mm))
         else:
             mcap = Decimal(str(market_cap_mm))
-    except (ValueError, TypeError, InvalidOperation):
+    except:
         return "unknown"
     
     if mcap >= 10000:
@@ -223,7 +217,7 @@ def _get_worst_severity(severities: List[str]) -> Severity:
             sev = Severity(s)
             if priority[sev] > priority[worst]:
                 worst = sev
-        except (ValueError, KeyError):
+        except:
             continue
     
     return worst
@@ -477,7 +471,7 @@ def compute_module_5_composite(
         if scores:
             cohort_stats[cohort_key] = {
                 "count": len(scores),
-                "mean": str(_decimal_mean(scores).quantize(Decimal("0.01"))),
+                "mean": str(Decimal(str(mean([float(s) for s in scores]))).quantize(Decimal("0.01"))),
                 "min": str(min(scores)),
                 "max": str(max(scores)),
                 "normalization_fallback": cohort_fallbacks.get(cohort_key, "unknown"),

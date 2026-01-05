@@ -190,7 +190,7 @@ def generate_snapshot(config: SnapshotConfig) -> Snapshot:
     Returns:
         Generated Snapshot object
     """
-    from datetime import datetime
+    from datetime import datetime, timezone
     
     logger.info(f"Generating snapshot for {config.as_of_date} (pit_cutoff={config.pit_cutoff})")
     
@@ -279,7 +279,7 @@ def generate_snapshot(config: SnapshotConfig) -> Snapshot:
     snapshot = Snapshot(
         snapshot_id=snapshot_id,
         as_of_date=config.as_of_date,
-        generated_at=datetime.utcnow().isoformat() + "Z",
+        generated_at=datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         pit_cutoff=config.pit_cutoff,
         pit_lag_days=config.pit_lag_days,
         provenance=provenance,

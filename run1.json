@@ -1,0 +1,253 @@
+{
+  "as_of_date": "2024-12-15",
+  "module_1_universe": {
+    "active_securities": [
+      {
+        "company_name": "Test Company 1",
+        "market_cap_mm": "1000",
+        "status": "active",
+        "ticker": "TEST1"
+      },
+      {
+        "company_name": "Test Company 2",
+        "market_cap_mm": "2000",
+        "status": "active",
+        "ticker": "TEST2"
+      }
+    ],
+    "as_of_date": "2024-12-15",
+    "diagnostic_counts": {
+      "active": 2,
+      "excluded": 0,
+      "excluded_by_reason": {},
+      "total_input": 2
+    },
+    "excluded_securities": [],
+    "provenance": {
+      "inputs_hash": "sha256:246f0e41be4cbeda9a3eda7efa3036ce1a80085e86a64be536701930b8bb720b",
+      "pit_cutoff": "2024-12-15",
+      "ruleset_version": "1.0.0"
+    }
+  },
+  "module_2_financial": {
+    "as_of_date": "2024-12-15",
+    "diagnostic_counts": {
+      "missing": 0,
+      "pit_cutoff": "2024-12-14",
+      "scored": 2
+    },
+    "missing_tickers": [],
+    "provenance": {
+      "inputs_hash": "sha256:246f0e41be4cbeda9a3eda7efa3036ce1a80085e86a64be536701930b8bb720b",
+      "pit_cutoff": "2024-12-14",
+      "ruleset_version": "1.0.0"
+    },
+    "scores": [
+      {
+        "components": {
+          "debt": "30",
+          "runway": "32",
+          "size": "18"
+        },
+        "financial_score": "80.00",
+        "flags": [],
+        "market_cap_mm": "1000",
+        "runway_months": "25.0",
+        "severity": "none",
+        "ticker": "TEST1"
+      },
+      {
+        "components": {
+          "debt": "30",
+          "runway": "32",
+          "size": "25"
+        },
+        "financial_score": "87.00",
+        "flags": [],
+        "market_cap_mm": "2000",
+        "runway_months": "26.7",
+        "severity": "none",
+        "ticker": "TEST2"
+      }
+    ]
+  },
+  "module_3_catalyst": {
+    "as_of_date": "2024-12-15",
+    "diagnostic_counts": {
+      "no_catalyst": 0,
+      "pit_filtered": 0,
+      "total_trials_evaluated": 2,
+      "with_catalyst": 2
+    },
+    "no_catalyst_tickers": [],
+    "provenance": {
+      "inputs_hash": "sha256:246f0e41be4cbeda9a3eda7efa3036ce1a80085e86a64be536701930b8bb720b",
+      "pit_cutoff": "2024-12-14",
+      "ruleset_version": "1.0.0"
+    },
+    "scores": [
+      {
+        "catalyst_score": "22.50",
+        "days_to_catalyst": 197,
+        "flags": [],
+        "nearest_catalyst": "NCT001",
+        "phase": "phase 2",
+        "severity": "none",
+        "ticker": "TEST1"
+      },
+      {
+        "catalyst_score": "30.00",
+        "days_to_catalyst": 289,
+        "flags": [],
+        "nearest_catalyst": "NCT002",
+        "phase": "phase 3",
+        "severity": "none",
+        "ticker": "TEST2"
+      }
+    ]
+  },
+  "module_4_clinical_dev": {
+    "as_of_date": "2024-12-15",
+    "diagnostic_counts": {
+      "pit_filtered": 0,
+      "scored": 2,
+      "total_trials": 2
+    },
+    "provenance": {
+      "inputs_hash": "sha256:246f0e41be4cbeda9a3eda7efa3036ce1a80085e86a64be536701930b8bb720b",
+      "pit_cutoff": "2024-12-14",
+      "ruleset_version": "1.0.0"
+    },
+    "scores": [
+      {
+        "clinical_score": "67.00",
+        "design_score": "25.00",
+        "endpoint_score": "12.00",
+        "execution_score": "12.00",
+        "flags": [],
+        "lead_phase": "phase 2",
+        "phase_score": "18",
+        "severity": "none",
+        "ticker": "TEST1",
+        "trial_count": 1
+      },
+      {
+        "clinical_score": "74.00",
+        "design_score": "25.00",
+        "endpoint_score": "12.00",
+        "execution_score": "12.00",
+        "flags": [],
+        "lead_phase": "phase 3",
+        "phase_score": "25",
+        "severity": "none",
+        "ticker": "TEST2",
+        "trial_count": 1
+      }
+    ]
+  },
+  "module_5_composite": {
+    "as_of_date": "2024-12-15",
+    "cohort_mode": "stage_only",
+    "cohort_stats": {
+      "late": {
+        "count": 1,
+        "max": "67.55",
+        "mean": "67.55",
+        "min": "67.55",
+        "normalization_fallback": "small_stage"
+      },
+      "mid": {
+        "count": 1,
+        "max": "60.42",
+        "mean": "60.42",
+        "min": "60.42",
+        "normalization_fallback": "small_stage"
+      }
+    },
+    "coinvest_coverage": null,
+    "diagnostic_counts": {
+      "cohort_count": 2,
+      "excluded": 0,
+      "rankable": 2,
+      "total_input": 2
+    },
+    "excluded_securities": [],
+    "normalization_method": "cohort",
+    "provenance": {
+      "inputs_hash": "sha256:764a0f2ff2074ce190a52c17916006ad124607bdc278641ee4544d475cec8c2d",
+      "pit_cutoff": "2024-12-15",
+      "ruleset_version": "1.2.1"
+    },
+    "ranked_securities": [
+      {
+        "catalyst_normalized": "30.00",
+        "catalyst_raw": "30.00",
+        "clinical_dev_normalized": "74.00",
+        "clinical_dev_raw": "74.00",
+        "cohort_key": "late",
+        "coinvest_flags": [],
+        "coinvest_holders": [],
+        "coinvest_overlap_count": 0,
+        "coinvest_published_at_max": null,
+        "coinvest_quarter": null,
+        "coinvest_usable": false,
+        "composite_rank": 1,
+        "composite_score": "67.55",
+        "financial_normalized": "87.00",
+        "financial_raw": "87.00",
+        "flags": [
+          "cohort_too_small_no_normalization"
+        ],
+        "market_cap_bucket": "mid",
+        "missing_subfactor_pct": "0.00",
+        "normalization_applied": "none",
+        "rankable": true,
+        "severity": "none",
+        "stage_bucket": "late",
+        "ticker": "TEST2",
+        "uncertainty_penalty": "0.00"
+      },
+      {
+        "catalyst_normalized": "22.50",
+        "catalyst_raw": "22.50",
+        "clinical_dev_normalized": "67.00",
+        "clinical_dev_raw": "67.00",
+        "cohort_key": "mid",
+        "coinvest_flags": [],
+        "coinvest_holders": [],
+        "coinvest_overlap_count": 0,
+        "coinvest_published_at_max": null,
+        "coinvest_quarter": null,
+        "coinvest_usable": false,
+        "composite_rank": 2,
+        "composite_score": "60.42",
+        "financial_normalized": "80.00",
+        "financial_raw": "80.00",
+        "flags": [
+          "cohort_too_small_no_normalization"
+        ],
+        "market_cap_bucket": "small",
+        "missing_subfactor_pct": "0.00",
+        "normalization_applied": "none",
+        "rankable": true,
+        "severity": "none",
+        "stage_bucket": "mid",
+        "ticker": "TEST1",
+        "uncertainty_penalty": "0.00"
+      }
+    ],
+    "weights_used": {
+      "catalyst": "0.25",
+      "clinical_dev": "0.40",
+      "financial": "0.35"
+    }
+  },
+  "pipeline_version": "1.0.0",
+  "run_timestamp": "2024-12-15T00:00:00Z",
+  "summary": {
+    "active_universe": 2,
+    "excluded": 0,
+    "final_ranked": 2,
+    "total_evaluated": 2
+  }
+}

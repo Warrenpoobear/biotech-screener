@@ -222,7 +222,7 @@ class TestCompareSnapshots(TestCase):
     
     def test_compare_stub_vs_aact(self):
         """Compare script should handle stub (coverage 0) vs AACT (coverage >0)."""
-        from scripts.compare_snapshots import compare_snapshots
+        from sec_13f.scripts.compare_snapshots import compare_snapshots
         
         # Generate stub snapshot
         stub_config = SnapshotConfig(
@@ -267,7 +267,7 @@ class TestCompareSnapshots(TestCase):
     
     def test_compare_produces_sensible_deltas(self):
         """Comparison should correctly identify trial count changes."""
-        from scripts.compare_snapshots import compare_snapshots
+        from sec_13f.scripts.compare_snapshots import compare_snapshots
         
         # Generate stub snapshot
         stub_config = SnapshotConfig(

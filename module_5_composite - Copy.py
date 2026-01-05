@@ -26,7 +26,7 @@ def _decimal_mean(values: List[Decimal]) -> Decimal:
     """Compute mean using Decimal arithmetic only (no floats)."""
     if not values:
         return Decimal("0")
-    return sum(values) / Decimal(len(values))
+    return sum(values) / len(values)
 
 # Default weights (sum to 1.0)
 DEFAULT_WEIGHTS = {
