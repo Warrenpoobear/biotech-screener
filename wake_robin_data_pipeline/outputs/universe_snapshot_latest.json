@@ -11,7 +11,8 @@
       "financial_coverage": 0.0,
       "has_cash": false,
       "has_balance_sheet": false,
-      "has_clinical": true
+      "has_clinical": true,
+      "sec_stale": false
     },
     "market_data": {
       "price": 800.88,
@@ -67,6 +68,15 @@
           "url": "https://clinicaltrials.gov/search?term=argenx+SE"
         }
       }
+    },
+    "freshness": {
+      "sec": {
+        "period_end": "2025-10-01",
+        "filed_date": "2026-01-05T17:57:21.347219",
+        "period_end_age_days": 96,
+        "filed_age_days": 0,
+        "is_stale": false
+      }
     }
   },
   {
@@ -81,7 +91,8 @@
       "financial_coverage": 100.0,
       "has_cash": true,
       "has_balance_sheet": true,
-      "has_clinical": true
+      "has_clinical": true,
+      "sec_stale": false
     },
     "market_data": {
       "price": 101.79,
@@ -246,6 +257,15 @@
           "url": "https://clinicaltrials.gov/search?term=Incyte+Corporation"
         }
       }
+    },
+    "freshness": {
+      "sec": {
+        "period_end": "2025-10-01",
+        "filed_date": "2026-01-05T17:57:23.871539",
+        "period_end_age_days": 96,
+        "filed_age_days": 0,
+        "is_stale": false
+      }
     }
   },
   {
@@ -260,7 +280,8 @@
       "financial_coverage": 100.0,
       "has_cash": true,
       "has_balance_sheet": false,
-      "has_clinical": true
+      "has_clinical": true,
+      "sec_stale": false
     },
     "market_data": {
       "price": 174.39,
@@ -426,6 +447,15 @@
           "url": "https://clinicaltrials.gov/search?term=Jazz+Pharmaceuticals"
         }
       }
+    },
+    "freshness": {
+      "sec": {
+        "period_end": "2025-10-01",
+        "filed_date": "2026-01-05T17:57:26.280518",
+        "period_end_age_days": 96,
+        "filed_age_days": 0,
+        "is_stale": false
+      }
     }
   },
   {
@@ -440,7 +470,8 @@
       "financial_coverage": 100.0,
       "has_cash": true,
       "has_balance_sheet": true,
-      "has_clinical": true
+      "has_clinical": true,
+      "sec_stale": false
     },
     "market_data": {
       "price": 78.53,
@@ -600,6 +631,15 @@
           "url": "https://clinicaltrials.gov/search?term=Ionis+Pharmaceuticals"
         }
       }
+    },
+    "freshness": {
+      "sec": {
+        "period_end": "2025-10-01",
+        "filed_date": "2026-01-05T17:57:28.627860",
+        "period_end_age_days": 96,
+        "filed_age_days": 0,
+        "is_stale": false
+      }
     }
   },
   {
@@ -614,7 +654,8 @@
       "financial_coverage": 100.0,
       "has_cash": true,
       "has_balance_sheet": true,
-      "has_clinical": true
+      "has_clinical": true,
+      "sec_stale": false
     },
     "market_data": {
       "price": 73.42,
@@ -723,6 +764,15 @@
           "url": "https://clinicaltrials.gov/search?term=BridgeBio+Pharma"
         }
       }
+    },
+    "freshness": {
+      "sec": {
+        "period_end": "2025-10-01",
+        "filed_date": "2026-01-05T17:57:30.977326",
+        "period_end_age_days": 96,
+        "filed_age_days": 0,
+        "is_stale": false
+      }
     }
   },
   {
@@ -737,7 +787,8 @@
       "financial_coverage": 100.0,
       "has_cash": true,
       "has_balance_sheet": true,
-      "has_clinical": true
+      "has_clinical": true,
+      "sec_stale": false
     },
     "market_data": {
       "price": 2.74,
@@ -863,6 +914,15 @@
           "url": "https://clinicaltrials.gov/search?term=Gossamer+Bio"
         }
       }
+    },
+    "freshness": {
+      "sec": {
+        "period_end": "2025-10-01",
+        "filed_date": "2026-01-05T17:57:33.381885",
+        "period_end_age_days": 96,
+        "filed_age_days": 0,
+        "is_stale": false
+      }
     }
   },
   {
@@ -877,7 +937,8 @@
       "financial_coverage": 75.0,
       "has_cash": true,
       "has_balance_sheet": true,
-      "has_clinical": true
+      "has_clinical": true,
+      "sec_stale": false
     },
     "market_data": {
       "price": 72.07,
@@ -1005,6 +1066,15 @@
           "url": "https://clinicaltrials.gov/search?term=Avidity+Biosciences"
         }
       }
+    },
+    "freshness": {
+      "sec": {
+        "period_end": "2025-10-01",
+        "filed_date": "2026-01-05T17:57:35.730561",
+        "period_end_age_days": 96,
+        "filed_age_days": 0,
+        "is_stale": false
+      }
     }
   },
   {
@@ -1019,7 +1089,8 @@
       "financial_coverage": 75.0,
       "has_cash": true,
       "has_balance_sheet": true,
-      "has_clinical": true
+      "has_clinical": true,
+      "sec_stale": false
     },
     "market_data": {
       "price": 72.41,
@@ -1144,6 +1215,15 @@
           "url": "https://clinicaltrials.gov/search?term=Kymera+Therapeutics"
         }
       }
+    },
+    "freshness": {
+      "sec": {
+        "period_end": "2025-10-01",
+        "filed_date": "2026-01-05T17:57:37.959538",
+        "period_end_age_days": 96,
+        "filed_age_days": 0,
+        "is_stale": false
+      }
     }
   },
   {
@@ -1158,7 +1238,8 @@
       "financial_coverage": 100.0,
       "has_cash": true,
       "has_balance_sheet": true,
-      "has_clinical": true
+      "has_clinical": true,
+      "sec_stale": false
     },
     "market_data": {
       "price": 101.86,
@@ -1307,6 +1388,15 @@
           "url": "https://clinicaltrials.gov/search?term=Rhythm+Pharmaceuticals"
         }
       }
+    },
+    "freshness": {
+      "sec": {
+        "period_end": "2025-10-01",
+        "filed_date": "2026-01-05T17:57:40.281404",
+        "period_end_age_days": 96,
+        "filed_age_days": 0,
+        "is_stale": false
+      }
     }
   },
   {
@@ -1321,7 +1411,8 @@
       "financial_coverage": 50.0,
       "has_cash": true,
       "has_balance_sheet": true,
-      "has_clinical": true
+      "has_clinical": true,
+      "sec_stale": false
     },
     "market_data": {
       "price": 7.68,
@@ -1418,6 +1509,15 @@
           "url": "https://clinicaltrials.gov/search?term=Eupraxia+Pharmaceuticals"
         }
       }
+    },
+    "freshness": {
+      "sec": {
+        "period_end": "2025-10-01",
+        "filed_date": "2026-01-05T17:57:42.662848",
+        "period_end_age_days": 96,
+        "filed_age_days": 0,
+        "is_stale": false
+      }
     }
   },
   {
@@ -1432,7 +1532,8 @@
       "financial_coverage": 75.0,
       "has_cash": true,
       "has_balance_sheet": true,
-      "has_clinical": true
+      "has_clinical": true,
+      "sec_stale": false
     },
     "market_data": {
       "price": 26.15,
@@ -1578,6 +1679,15 @@
           "url": "https://clinicaltrials.gov/search?term=ACADIA+Pharmaceuticals"
         }
       }
+    },
+    "freshness": {
+      "sec": {
+        "period_end": "2025-10-01",
+        "filed_date": "2026-01-05T17:57:45.068795",
+        "period_end_age_days": 96,
+        "filed_age_days": 0,
+        "is_stale": false
+      }
     }
   },
   {
@@ -1592,7 +1702,8 @@
       "financial_coverage": 100.0,
       "has_cash": true,
       "has_balance_sheet": true,
-      "has_clinical": true
+      "has_clinical": true,
+      "sec_stale": false
     },
     "market_data": {
       "price": 397.83,
@@ -1755,6 +1866,15 @@
           "url": "https://clinicaltrials.gov/search?term=Alnylam+Pharmaceuticals"
         }
       }
+    },
+    "freshness": {
+      "sec": {
+        "period_end": "2025-10-01",
+        "filed_date": "2026-01-05T17:57:47.385092",
+        "period_end_age_days": 96,
+        "filed_age_days": 0,
+        "is_stale": false
+      }
     }
   },
   {
@@ -1769,7 +1889,8 @@
       "financial_coverage": 75.0,
       "has_cash": true,
       "has_balance_sheet": true,
-      "has_clinical": true
+      "has_clinical": true,
+      "sec_stale": false
     },
     "market_data": {
       "price": 58.87,
@@ -1924,6 +2045,15 @@
           "url": "https://clinicaltrials.gov/search?term=BioMarin+Pharmaceutical"
         }
       }
+    },
+    "freshness": {
+      "sec": {
+        "period_end": "2025-10-01",
+        "filed_date": "2026-01-05T17:57:49.786508",
+        "period_end_age_days": 96,
+        "filed_age_days": 0,
+        "is_stale": false
+      }
     }
   },
   {
@@ -1938,7 +2068,8 @@
       "financial_coverage": 75.0,
       "has_cash": true,
       "has_balance_sheet": true,
-      "has_clinical": true
+      "has_clinical": true,
+      "sec_stale": false
     },
     "market_data": {
       "price": 55.15,
@@ -2071,6 +2202,15 @@
           "url": "https://clinicaltrials.gov/search?term=CRISPR+Therapeutics"
         }
       }
+    },
+    "freshness": {
+      "sec": {
+        "period_end": "2025-10-01",
+        "filed_date": "2026-01-05T17:57:52.001683",
+        "period_end_age_days": 96,
+        "filed_age_days": 0,
+        "is_stale": false
+      }
     }
   },
   {
@@ -2085,7 +2225,8 @@
       "financial_coverage": 100.0,
       "has_cash": true,
       "has_balance_sheet": true,
-      "has_clinical": true
+      "has_clinical": true,
+      "sec_stale": false
     },
     "market_data": {
       "price": 448.8,
@@ -2220,6 +2361,15 @@
           "url": "https://clinicaltrials.gov/search?term=Vertex+Pharmaceuticals"
         }
       }
+    },
+    "freshness": {
+      "sec": {
+        "period_end": "2025-10-01",
+        "filed_date": "2026-01-05T17:57:54.410936",
+        "period_end_age_days": 96,
+        "filed_age_days": 0,
+        "is_stale": false
+      }
     }
   },
   {
@@ -2234,7 +2384,8 @@
       "financial_coverage": 100.0,
       "has_cash": true,
       "has_balance_sheet": true,
-      "has_clinical": true
+      "has_clinical": true,
+      "sec_stale": false
     },
     "market_data": {
       "price": 21.07,
@@ -2377,6 +2528,15 @@
           "url": "https://clinicaltrials.gov/search?term=Sarepta+Therapeutics"
         }
       }
+    },
+    "freshness": {
+      "sec": {
+        "period_end": "2025-10-01",
+        "filed_date": "2026-01-05T17:57:56.820753",
+        "period_end_age_days": 96,
+        "filed_age_days": 0,
+        "is_stale": false
+      }
     }
   },
   {
@@ -2391,7 +2551,8 @@
       "financial_coverage": 75.0,
       "has_cash": true,
       "has_balance_sheet": true,
-      "has_clinical": true
+      "has_clinical": true,
+      "sec_stale": false
     },
     "market_data": {
       "price": 489.69,
@@ -2549,6 +2710,15 @@
           "url": "https://clinicaltrials.gov/search?term=United+Therapeutics"
         }
       }
+    },
+    "freshness": {
+      "sec": {
+        "period_end": "2025-10-01",
+        "filed_date": "2026-01-05T17:57:59.163096",
+        "period_end_age_days": 96,
+        "filed_age_days": 0,
+        "is_stale": false
+      }
     }
   },
   {
@@ -2563,7 +2733,8 @@
       "financial_coverage": 75.0,
       "has_cash": true,
       "has_balance_sheet": true,
-      "has_clinical": true
+      "has_clinical": true,
+      "sec_stale": false
     },
     "market_data": {
       "price": 42.4,
@@ -2731,6 +2902,15 @@
           "url": "https://clinicaltrials.gov/search?term=Exelixis"
         }
       }
+    },
+    "freshness": {
+      "sec": {
+        "period_end": "2025-10-01",
+        "filed_date": "2026-01-05T17:58:01.618807",
+        "period_end_age_days": 96,
+        "filed_age_days": 0,
+        "is_stale": false
+      }
     }
   },
   {
@@ -2745,7 +2925,8 @@
       "financial_coverage": 75.0,
       "has_cash": true,
       "has_balance_sheet": true,
-      "has_clinical": true
+      "has_clinical": true,
+      "sec_stale": false
     },
     "market_data": {
       "price": 23.11,
@@ -2901,6 +3082,15 @@
           "url": "https://clinicaltrials.gov/search?term=Ultragenyx+Pharmaceutical"
         }
       }
+    },
+    "freshness": {
+      "sec": {
+        "period_end": "2025-10-01",
+        "filed_date": "2026-01-05T17:58:04.111465",
+        "period_end_age_days": 96,
+        "filed_age_days": 0,
+        "is_stale": false
+      }
     }
   },
   {
@@ -2915,7 +3105,8 @@
       "financial_coverage": 100.0,
       "has_cash": true,
       "has_balance_sheet": true,
-      "has_clinical": true
+      "has_clinical": true,
+      "sec_stale": false
     },
     "market_data": {
       "price": 14.25,
@@ -3050,6 +3241,15 @@
           "search_query": "Amicus Therapeutics",
           "url": "https://clinicaltrials.gov/search?term=Amicus+Therapeutics"
         }
+      }
+    },
+    "freshness": {
+      "sec": {
+        "period_end": "2025-10-01",
+        "filed_date": "2026-01-05T17:58:06.437952",
+        "period_end_age_days": 96,
+        "filed_age_days": 0,
+        "is_stale": false
       }
     }
   }

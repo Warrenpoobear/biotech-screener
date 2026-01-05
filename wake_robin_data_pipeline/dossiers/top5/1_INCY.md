@@ -1,5 +1,6 @@
 # Investment Dossier: INCY
 **Rank: #1 | Composite Score: 8.36/10**
+**Generated: 2026-01-05 (as-of date)**
 
 ## Executive Summary
 - Company: Incyte Corporation
@@ -21,17 +22,32 @@
 
 ## Financial Reality Check
 - Cash: $2455M
-- Estimated Runway: ~35mo
+- Estimated Runway: ~34mo
 - Market Cap: $19.98B
 - Daily Volume: 2,119,063 shares
+
+## Freshness & Point-in-Time Discipline
+
+**As-of Date:** 2026-01-05
+
+**SEC Financial Data:**
+- Period End: 2025-10-01
+- Period End Age: 96 days
+- Filed Date: 2026-01-05
+- Status: FRESH (<365 days)
+
+**Market Data:**
+- Source: Yahoo Finance (real-time)
+- Last Update: 2026-01-05
 
 ## Data Quality
 - Overall Coverage: 93%
 - Financial Coverage: 100%
+- SEC Data Status: Fresh
 
 ## Risk Warnings
 - [PASS] No major risk flags identified
 
 
 ---
-*Algorithmically generated. Verify all data before investment decisions.*
+*Point-in-time validated. Algorithmically generated. Verify all data before investment decisions.*

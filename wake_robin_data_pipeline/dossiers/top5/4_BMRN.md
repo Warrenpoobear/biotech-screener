@@ -1,5 +1,6 @@
 # Investment Dossier: BMRN
 **Rank: #4 | Composite Score: 7.80/10**
+**Generated: 2026-01-05 (as-of date)**
 
 ## Executive Summary
 - Company: BioMarin Pharmaceutical Inc.
@@ -21,17 +22,31 @@
 
 ## Financial Reality Check
 - Cash: $1250M
-- Estimated Runway: ~161mo
+- Estimated Runway: 60+ mo (capped)
 - Market Cap: $11.31B
 - Daily Volume: 3,013,290 shares
+
+## Freshness & Point-in-Time Discipline
+
+**As-of Date:** 2026-01-05
+
+**SEC Financial Data:**
+- Period End: 2025-10-01
+- Period End Age: 96 days
+- Filed Date: 2026-01-05
+- Status: FRESH (<365 days)
+
+**Market Data:**
+- Source: Yahoo Finance (real-time)
+- Last Update: 2026-01-05
 
 ## Data Quality
 - Overall Coverage: 85%
 - Financial Coverage: 75%
+- SEC Data Status: Fresh
 
 ## Risk Warnings
-- [PASS] No major risk flags identified
-
+- [NOTE] Runway capped at 60mo for scoring (prevents burn artifacts)
 
 ---
-*Algorithmically generated. Verify all data before investment decisions.*
+*Point-in-time validated. Algorithmically generated. Verify all data before investment decisions.*

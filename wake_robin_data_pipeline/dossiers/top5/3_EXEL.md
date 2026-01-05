@@ -1,5 +1,6 @@
 # Investment Dossier: EXEL
 **Rank: #3 | Composite Score: 7.81/10**
+**Generated: 2026-01-05 (as-of date)**
 
 ## Executive Summary
 - Company: Exelixis, Inc.
@@ -25,13 +26,28 @@
 - Market Cap: $11.41B
 - Daily Volume: 2,600,985 shares
 
+## Freshness & Point-in-Time Discipline
+
+**As-of Date:** 2026-01-05
+
+**SEC Financial Data:**
+- Period End: 2025-10-01
+- Period End Age: 96 days
+- Filed Date: 2026-01-05
+- Status: FRESH (<365 days)
+
+**Market Data:**
+- Source: Yahoo Finance (real-time)
+- Last Update: 2026-01-05
+
 ## Data Quality
 - Overall Coverage: 85%
 - Financial Coverage: 75%
+- SEC Data Status: Fresh
 
 ## Risk Warnings
 - [PASS] No major risk flags identified
 
 
 ---
-*Algorithmically generated. Verify all data before investment decisions.*
+*Point-in-time validated. Algorithmically generated. Verify all data before investment decisions.*

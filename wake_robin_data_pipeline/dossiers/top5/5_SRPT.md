@@ -1,5 +1,6 @@
 # Investment Dossier: SRPT
 **Rank: #5 | Composite Score: 7.67/10**
+**Generated: 2026-01-05 (as-of date)**
 
 ## Executive Summary
 - Company: Sarepta Therapeutics, Inc.
@@ -21,16 +22,31 @@
 
 ## Financial Reality Check
 - Cash: $613M
-- Estimated Runway: ~17mo
+- Estimated Runway: ~16mo
 - Market Cap: $2.21B
 - Daily Volume: 2,798,757 shares
+
+## Freshness & Point-in-Time Discipline
+
+**As-of Date:** 2026-01-05
+
+**SEC Financial Data:**
+- Period End: 2025-10-01
+- Period End Age: 96 days
+- Filed Date: 2026-01-05
+- Status: FRESH (<365 days)
+
+**Market Data:**
+- Source: Yahoo Finance (real-time)
+- Last Update: 2026-01-05
 
 ## Data Quality
 - Overall Coverage: 93%
 - Financial Coverage: 100%
+- SEC Data Status: Fresh
 
 ## Risk Warnings
 - [WATCH] Runway < 18 months - monitor for financing
 
 ---
-*Algorithmically generated. Verify all data before investment decisions.*
+*Point-in-time validated. Algorithmically generated. Verify all data before investment decisions.*
