@@ -1,0 +1,32 @@
+INITIAL COMMIT MESSAGE
+======================
+
+Use this for your first commit in GitHub Desktop:
+
+Summary:
+Initial commit: Biotech screener with AACT clinical trials integration
+
+Description:
+Point-in-time safe biotech investment screening system
+
+Features:
+- AACT clinical trials provider with PIT boundary enforcement
+- Snapshot generator with deterministic hashing
+- Schema validation and CSV parsing hardening
+- PCD push and status flip tracking (optional)
+- 63 passing tests
+
+Components:
+- src/providers/aact_provider.py - Main AACT data provider
+- src/providers/protocols.py - Canonical data structures
+- src/snapshot_generator.py - CLI snapshot generation
+- scripts/validate_aact_extract.py - Pre-flight validation
+- scripts/compare_snapshots.py - A/B snapshot comparison
+
+Data:
+- Sample AACT snapshots (2024-01-15, 2024-01-29)
+- Sample trial mapping for 10 biotech tickers
+- Biotech universe CSV
+
+---
+DELETE THIS FILE AFTER YOUR FIRST COMMIT
