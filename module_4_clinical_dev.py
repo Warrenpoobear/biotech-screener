@@ -16,7 +16,7 @@ from decimal import Decimal
 from typing import Any, Dict, List, Optional
 
 from common.provenance import create_provenance
-from common.pit_enforcement import compute_pit_cutoff
+from common.pit_enforcement import compute_pit_cutoff, is_pit_admissible
 from common.types import Severity
 
 RULESET_VERSION = "1.0.0"
@@ -166,12 +166,22 @@ def compute_module_4_clinical_dev(
     """
     pit_cutoff = compute_pit_cutoff(as_of_date)
     
+    # Track PIT-filtered trials for diagnostics
+    pit_filtered_count = 0
+    
     # Group trials by ticker
     ticker_trials: Dict[str, List[Dict]] = {}
     for trial in trial_records:
         ticker = trial.get("ticker", "").upper()
         if ticker not in active_tickers:
             continue
+        
+        # PIT FILTER: Only include trials with data available before cutoff
+        # This prevents lookahead bias from future trial updates
+        source_date = trial.get("last_update_posted") or trial.get("source_date")
+        if source_date and not is_pit_admissible(source_date, pit_cutoff):
+            pit_filtered_count += 1
+            continue  # Skip future data
         
         if ticker not in ticker_trials:
             ticker_trials[ticker] = []
@@ -246,6 +256,7 @@ def compute_module_4_clinical_dev(
         "diagnostic_counts": {
             "scored": len(scores),
             "total_trials": sum(len(v) for v in ticker_trials.values()),
+            "pit_filtered": pit_filtered_count,
         },
         "provenance": create_provenance(RULESET_VERSION, {"tickers": active_tickers}, pit_cutoff),
     }

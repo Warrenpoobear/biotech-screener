@@ -6,19 +6,27 @@ Features:
 - Cohort normalization (rank within stage/mcap bucket)
 - Uncertainty penalty (missing subfactors)
 - Severity gates (sev3 excluded, sev2/sev1 penalties)
+- Co-invest overlay (tie-breaker, PIT-safe)
 
 Weights: Clinical 40%, Financial 35%, Catalyst 25%
 """
 from __future__ import annotations
+from datetime import datetime, date
 
-from decimal import Decimal, ROUND_HALF_UP
-from statistics import mean, stdev
+from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
 from typing import Any, Dict, List, Optional, Tuple
 
 from common.provenance import create_provenance
 from common.types import Severity
 
-RULESET_VERSION = "1.1.0"
+RULESET_VERSION = "1.2.1"  # Bumped for determinism + exception fixes
+
+
+def _decimal_mean(values: List[Decimal]) -> Decimal:
+    """Compute mean using Decimal arithmetic only (no floats)."""
+    if not values:
+        return Decimal("0")
+    return sum(values) / len(values)
 
 # Default weights (sum to 1.0)
 DEFAULT_WEIGHTS = {
@@ -51,6 +59,80 @@ COHORT_FALLBACK_GLOBAL = "global"           # Use global ranking
 COHORT_FALLBACK_NONE = "none"               # No normalization (raw scores)
 
 
+# =============================================================================
+# CO-INVEST OVERLAY HELPERS
+# =============================================================================
+
+def _quarter_from_date(d: date) -> str:
+    """Convert date to quarter string (e.g., '2025Q3')."""
+    q = (d.month - 1) // 3 + 1
+    return f"{d.year}Q{q}"
+
+
+def _enrich_with_coinvest(
+    ticker: str,
+    coinvest_signals: dict,
+    as_of_date: date,
+) -> dict:
+    """
+    Look up co-invest signal for a ticker and return overlay fields.
+    
+    PIT Rule: Only include filings where filing_date < as_of_date.
+    This ensures we don't "know" about positions until they're actually filed.
+    """
+    signal = coinvest_signals.get(ticker)
+    
+    if not signal:
+        return {
+            "coinvest_overlap_count": 0,
+            "coinvest_holders": [],
+            "coinvest_quarter": None,
+            "coinvest_published_at_max": None,
+            "coinvest_usable": False,
+            "coinvest_flags": ["no_signal"],
+        }
+    
+    # PIT filter: only count positions from filings before as_of_date
+    pit_positions = [
+        p for p in signal.positions
+        if p.filing_date < as_of_date
+    ]
+    
+    if not pit_positions:
+        return {
+            "coinvest_overlap_count": 0,
+            "coinvest_holders": [],
+            "coinvest_quarter": _quarter_from_date(signal.positions[0].report_date) if signal.positions else None,
+            "coinvest_published_at_max": None,
+            "coinvest_usable": False,
+            "coinvest_flags": ["filings_not_yet_public"],
+        }
+    
+    # Compute PIT-safe metrics
+    holders = sorted(set(p.manager_name for p in pit_positions))
+    max_filing_date = max(p.filing_date for p in pit_positions)
+    report_quarter = _quarter_from_date(pit_positions[0].report_date)
+    
+    flags = []
+    if len(pit_positions) < len(signal.positions):
+        flags.append("partial_manager_coverage")
+    if signal.ticker is None:
+        flags.append("cusip_unmapped")
+    
+    return {
+        "coinvest_overlap_count": len(holders),
+        "coinvest_holders": holders,
+        "coinvest_quarter": report_quarter,
+        "coinvest_published_at_max": max_filing_date.isoformat(),
+        "coinvest_usable": True,
+        "coinvest_flags": sorted(flags),
+    }
+
+
+# =============================================================================
+# COHORT HELPERS
+# =============================================================================
+
 def _market_cap_bucket(market_cap_mm: Optional[Any]) -> str:
     """
     Classify market cap into bucket.
@@ -68,7 +150,7 @@ def _market_cap_bucket(market_cap_mm: Optional[Any]) -> str:
             mcap = Decimal(str(market_cap_mm))
         else:
             mcap = Decimal(str(market_cap_mm))
-    except:
+    except (ValueError, TypeError, InvalidOperation):
         return "unknown"
     
     if mcap >= 10000:
@@ -141,7 +223,7 @@ def _get_worst_severity(severities: List[str]) -> Severity:
             sev = Severity(s)
             if priority[sev] > priority[worst]:
                 worst = sev
-        except:
+        except (ValueError, KeyError):
             continue
     
     return worst
@@ -171,6 +253,10 @@ def _apply_cohort_normalization(members: List[Dict]) -> None:
         m["normalization_applied"] = "cohort"
 
 
+# =============================================================================
+# MAIN COMPOSITE FUNCTION
+# =============================================================================
+
 def compute_module_5_composite(
     universe_result: Dict[str, Any],
     financial_result: Dict[str, Any],
@@ -179,19 +265,21 @@ def compute_module_5_composite(
     as_of_date: str,
     weights: Optional[Dict[str, Decimal]] = None,
     normalization: str = "rank",
-    cohort_mode: str = COHORT_MODE_STAGE_ONLY,  # Default to stage-only
+    coinvest_signals: Optional[Dict] = None,
+    cohort_mode: str = COHORT_MODE_STAGE_ONLY,
 ) -> Dict[str, Any]:
     """
-    Compute composite scores with cohort normalization.
+    Compute composite scores with cohort normalization and co-invest overlay.
     
     Args:
         universe_result: Module 1 output
         financial_result: Module 2 output
         catalyst_result: Module 3 output
         clinical_result: Module 4 output
-        as_of_date: Analysis date
+        as_of_date: Analysis date (YYYY-MM-DD)
         weights: Override default weights
         normalization: "rank" (default) or "zscore"
+        coinvest_signals: Optional dict of ticker -> AggregatedSignal from 13F aggregator
         cohort_mode: "stage_only" (recommended) or "stage_mcap" (granular)
     
     Returns:
@@ -200,10 +288,11 @@ def compute_module_5_composite(
             "normalization_method": str,
             "cohort_mode": str,
             "weights_used": {...},
-            "ranked_securities": [{ticker, composite_score, composite_rank, ...}],
+            "ranked_securities": [{ticker, composite_score, composite_rank, coinvest_*, ...}],
             "excluded_securities": [{ticker, reason, flags}],
             "cohort_stats": {...},
             "diagnostic_counts": {...},
+            "coinvest_coverage": {...} or None,
             "provenance": {...}
         }
     """
@@ -270,41 +359,34 @@ def compute_module_5_composite(
         })
     
     # Group by cohort for normalization
-    # cohort_mode determines the grouping key
     cohorts: Dict[str, List[Dict]] = {}
     
     for rec in combined:
         if cohort_mode == COHORT_MODE_STAGE_ONLY:
-            # Normalize by stage only (recommended - avoids small cohort fallbacks)
             key = rec['stage_bucket']
         else:
-            # Normalize by stage x mcap (granular - may trigger fallbacks)
             key = f"{rec['stage_bucket']}_{rec['market_cap_bucket']}"
         
-        rec["cohort_key"] = key  # Track which cohort for reporting
+        rec["cohort_key"] = key
         
         if key not in cohorts:
             cohorts[key] = []
         cohorts[key].append(rec)
     
-    # Identify small cohorts and apply fallback (only relevant for stage_mcap mode)
+    # Identify small cohorts and apply fallback
     cohort_fallbacks: Dict[str, str] = {}
-    stage_pools: Dict[str, List[Dict]] = {}  # For stage-only fallback
+    stage_pools: Dict[str, List[Dict]] = {}
     
     for cohort_key, members in cohorts.items():
         if len(members) >= MIN_COHORT_SIZE:
-            # Normal cohort normalization
             cohort_fallbacks[cohort_key] = "normal"
         else:
             if cohort_mode == COHORT_MODE_STAGE_ONLY:
-                # In stage-only mode, small cohorts still get flagged but normalized globally
                 cohort_fallbacks[cohort_key] = "small_stage"
-                # Fall back to global pool
                 if "global" not in stage_pools:
                     stage_pools["global"] = []
                 stage_pools["global"].extend(members)
             else:
-                # In stage_mcap mode, fall back to stage-only normalization
                 stage = cohort_key.split("_")[0]
                 cohort_fallbacks[cohort_key] = COHORT_FALLBACK_STAGE_ONLY
                 
@@ -321,11 +403,9 @@ def compute_module_5_composite(
     for stage, members in stage_pools.items():
         if len(members) >= MIN_COHORT_SIZE:
             _apply_cohort_normalization(members)
-            # Mark members as stage-normalized
             for m in members:
                 m["normalization_applied"] = f"stage_{stage}"
         elif len(members) > 0:
-            # Even stage pool is too small - fall back to no normalization
             for m in members:
                 m["clinical_dev_normalized"] = m["clinical_dev_raw"] or Decimal("0")
                 m["financial_normalized"] = m["financial_raw"] or Decimal("0")
@@ -373,8 +453,20 @@ def compute_module_5_composite(
         elif rec["severity"] == Severity.SEV1:
             rec["flags"].append("sev1_penalty_applied")
     
-    # Sort and rank
-    combined.sort(key=lambda x: (-x["composite_score"], x["ticker"]))
+    # Enrich with co-invest overlay (if provided)
+    for rec in combined:
+        if coinvest_signals:
+            as_of_dt = datetime.strptime(as_of_date, "%Y-%m-%d").date()
+            rec["coinvest"] = _enrich_with_coinvest(rec["ticker"], coinvest_signals, as_of_dt)
+        else:
+            rec["coinvest"] = None
+    
+    # Sort and rank (tie-breaker: coinvest_overlap_count DESC, then ticker ASC)
+    def sort_key(x):
+        coinvest_count = x["coinvest"]["coinvest_overlap_count"] if x["coinvest"] else 0
+        return (-x["composite_score"], -coinvest_count, x["ticker"])
+    
+    combined.sort(key=sort_key)
     for i, rec in enumerate(combined):
         rec["composite_rank"] = i + 1
     
@@ -385,7 +477,7 @@ def compute_module_5_composite(
         if scores:
             cohort_stats[cohort_key] = {
                 "count": len(scores),
-                "mean": str(Decimal(str(mean([float(s) for s in scores]))).quantize(Decimal("0.01"))),
+                "mean": str(_decimal_mean(scores).quantize(Decimal("0.01"))),
                 "min": str(min(scores)),
                 "max": str(max(scores)),
                 "normalization_fallback": cohort_fallbacks.get(cohort_key, "unknown"),
@@ -394,6 +486,7 @@ def compute_module_5_composite(
     # Format output
     ranked_securities = []
     for rec in combined:
+        coinvest = rec.get("coinvest") or {}
         ranked_securities.append({
             "ticker": rec["ticker"],
             "composite_score": str(rec["composite_score"]),
@@ -413,7 +506,24 @@ def compute_module_5_composite(
             "severity": rec["severity"].value,
             "flags": sorted(set(rec["flags"])),
             "rankable": True,
+            # Co-invest overlay fields
+            "coinvest_overlap_count": coinvest.get("coinvest_overlap_count", 0),
+            "coinvest_holders": coinvest.get("coinvest_holders", []),
+            "coinvest_quarter": coinvest.get("coinvest_quarter"),
+            "coinvest_published_at_max": coinvest.get("coinvest_published_at_max"),
+            "coinvest_usable": coinvest.get("coinvest_usable", False),
+            "coinvest_flags": coinvest.get("coinvest_flags", []),
         })
+    
+    # Compute co-invest coverage diagnostics
+    coinvest_coverage = None
+    if coinvest_signals:
+        coinvest_coverage = {
+            "rankable": len(ranked_securities),
+            "with_overlap_ge_1": sum(1 for r in ranked_securities if r["coinvest_overlap_count"] >= 1),
+            "with_overlap_ge_2": sum(1 for r in ranked_securities if r["coinvest_overlap_count"] >= 2),
+            "unmapped_cusips_count": sum(1 for r in ranked_securities if "cusip_unmapped" in r.get("coinvest_flags", [])),
+        }
     
     return {
         "as_of_date": as_of_date,
@@ -429,6 +539,7 @@ def compute_module_5_composite(
             "excluded": len(excluded),
             "cohort_count": len(cohorts),
         },
+        "coinvest_coverage": coinvest_coverage,
         "provenance": create_provenance(
             RULESET_VERSION,
             {"tickers": list(active_tickers), "weights": {k: str(v) for k, v in weights.items()}},

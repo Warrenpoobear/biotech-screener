@@ -9,7 +9,7 @@ Output: Filtered universe with status classifications
 """
 from __future__ import annotations
 
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from typing import Any, Dict, List, Optional
 
 from common.provenance import create_provenance
@@ -47,8 +47,8 @@ def _classify_status(record: Dict[str, Any]) -> StatusGate:
         try:
             if Decimal(str(market_cap)) < MIN_MARKET_CAP_MM:
                 return StatusGate.EXCLUDED_SHELL
-        except:
-            pass
+        except (ValueError, TypeError, InvalidOperation):
+            pass  # Invalid market cap format, continue to ACTIVE
     
     return StatusGate.ACTIVE
 

@@ -65,7 +65,7 @@ def _days_until(target_date: str, as_of: str) -> Optional[int]:
         target = date.fromisoformat(target_date[:10])
         current = date.fromisoformat(as_of)
         return (target - current).days
-    except:
+    except (ValueError, TypeError, AttributeError):
         return None
 
 
