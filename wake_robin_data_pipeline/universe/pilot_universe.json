@@ -1,0 +1,156 @@
+{
+  "metadata": {
+    "creation_date": "2025-01-05",
+    "description": "20-ticker pilot from Wake Robin 281-ticker universe",
+    "source": "Major biotech indices (XBI, IBB, NBI)",
+    "selection_criteria": "Mix of commercial-stage and clinical-stage companies with active catalysts"
+  },
+  "tickers": [
+    {
+      "ticker": "ARGX",
+      "company": "argenx SE",
+      "stage": "commercial",
+      "primary_indication": "Autoimmune disorders",
+      "market_cap_tier": "large"
+    },
+    {
+      "ticker": "INCY",
+      "company": "Incyte Corporation",
+      "stage": "commercial",
+      "primary_indication": "Oncology/Hematology",
+      "market_cap_tier": "large"
+    },
+    {
+      "ticker": "JAZZ",
+      "company": "Jazz Pharmaceuticals",
+      "stage": "commercial",
+      "primary_indication": "Sleep disorders/Oncology",
+      "market_cap_tier": "large"
+    },
+    {
+      "ticker": "IONS",
+      "company": "Ionis Pharmaceuticals",
+      "stage": "commercial",
+      "primary_indication": "Rare diseases",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "BBIO",
+      "company": "BridgeBio Pharma",
+      "stage": "commercial",
+      "primary_indication": "Rare diseases",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "GOSS",
+      "company": "Gossamer Bio",
+      "stage": "phase_3",
+      "primary_indication": "Autoimmune",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "RNA",
+      "company": "Avidity Biosciences",
+      "stage": "phase_3",
+      "primary_indication": "Muscle diseases",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "KYMR",
+      "company": "Kymera Therapeutics",
+      "stage": "phase_2",
+      "primary_indication": "Immunology/Oncology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "RYTM",
+      "company": "Rhythm Pharmaceuticals",
+      "stage": "commercial",
+      "primary_indication": "Rare genetic obesity",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "EPRX",
+      "company": "Eupraxia Pharmaceuticals",
+      "stage": "phase_2",
+      "primary_indication": "Pain management",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ACAD",
+      "company": "ACADIA Pharmaceuticals",
+      "stage": "commercial",
+      "primary_indication": "CNS disorders",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "ALNY",
+      "company": "Alnylam Pharmaceuticals",
+      "stage": "commercial",
+      "primary_indication": "RNAi therapeutics",
+      "market_cap_tier": "large"
+    },
+    {
+      "ticker": "BMRN",
+      "company": "BioMarin Pharmaceutical",
+      "stage": "commercial",
+      "primary_indication": "Rare genetic diseases",
+      "market_cap_tier": "large"
+    },
+    {
+      "ticker": "CRSP",
+      "company": "CRISPR Therapeutics",
+      "stage": "commercial",
+      "primary_indication": "Gene editing",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "VRTX",
+      "company": "Vertex Pharmaceuticals",
+      "stage": "commercial",
+      "primary_indication": "Cystic fibrosis",
+      "market_cap_tier": "mega"
+    },
+    {
+      "ticker": "SRPT",
+      "company": "Sarepta Therapeutics",
+      "stage": "commercial",
+      "primary_indication": "Duchenne muscular dystrophy",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "UTHR",
+      "company": "United Therapeutics",
+      "stage": "commercial",
+      "primary_indication": "Pulmonary arterial hypertension",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "EXEL",
+      "company": "Exelixis",
+      "stage": "commercial",
+      "primary_indication": "Oncology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "RARE",
+      "company": "Ultragenyx Pharmaceutical",
+      "stage": "commercial",
+      "primary_indication": "Rare diseases",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "FOLD",
+      "company": "Amicus Therapeutics",
+      "stage": "commercial",
+      "primary_indication": "Rare diseases",
+      "market_cap_tier": "mid"
+    }
+  ],
+  "validation": {
+    "total_count": 20,
+    "commercial_stage": 15,
+    "clinical_stage": 5,
+    "coverage_target": "100% price data, 80% financial data, 60% trial data"
+  }
+}

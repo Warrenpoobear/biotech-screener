@@ -1,0 +1,12 @@
+# Wake Robin Data Pipeline Dependencies
+# All packages use free, public APIs - no paid subscriptions required
+
+# Yahoo Finance data (market prices, volume, company info)
+yfinance>=0.2.36
+
+# HTTP requests for SEC and ClinicalTrials.gov APIs
+requests>=2.31.0
+
+# Optional: for better performance
+# pandas>=2.0.0  # Uncomment if you want DataFrame support
+# numpy>=1.24.0  # Uncomment if you want numerical analysis

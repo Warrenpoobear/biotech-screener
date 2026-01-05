@@ -1,0 +1,1377 @@
+{
+  "mode": "DEMO",
+  "note": "This is simulated data. Use real collectors in production.",
+  "timestamp": "2026-01-05T22:36:11.007256",
+  "records": [
+    {
+      "ticker": "ARGX",
+      "as_of_date": "2026-01-05T22:36:11.004975",
+      "data_quality": {
+        "yahoo_success": true,
+        "sec_success": true,
+        "trials_success": true,
+        "overall_coverage": 90.0,
+        "has_price": true,
+        "financial_coverage": 90,
+        "has_cash": true,
+        "has_clinical": true
+      },
+      "market_data": {
+        "price": 194.42,
+        "market_cap": 47104854778,
+        "shares_outstanding": 242278637,
+        "volume_avg_30d": 1694440,
+        "company_name": "ARGX Pharmaceuticals Inc."
+      },
+      "financials": {
+        "cash": 1721291216.7612135,
+        "debt": 291194523.32168514,
+        "net_debt": -1430096693.4395285,
+        "revenue_ttm": 8906830866.6969,
+        "assets": 4957191136.975629,
+        "liabilities": 2632085634.2148795,
+        "equity": 2325105502.7607493,
+        "currency": "USD"
+      },
+      "clinical": {
+        "total_trials": 19,
+        "active_trials": 7,
+        "lead_stage": "phase_3",
+        "top_trials": [
+          {
+            "nct_id": "NCT21776466",
+            "title": "Study of ARGX-0 in Disease X",
+            "status": "COMPLETED",
+            "phase": "PHASE3",
+            "condition": "CNS Disorder",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 449,
+            "sponsor": "argenx SE"
+          },
+          {
+            "nct_id": "NCT44452997",
+            "title": "Study of ARGX-1 in Disease X",
+            "status": "COMPLETED",
+            "phase": "PHASE3",
+            "condition": "Rare Disease",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 267,
+            "sponsor": "argenx SE"
+          },
+          {
+            "nct_id": "NCT82796667",
+            "title": "Study of ARGX-2 in Disease X",
+            "status": "COMPLETED",
+            "phase": "PHASE3",
+            "condition": "Oncology",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 322,
+            "sponsor": "argenx SE"
+          }
+        ]
+      }
+    },
+    {
+      "ticker": "INCY",
+      "as_of_date": "2026-01-05T22:36:11.005093",
+      "data_quality": {
+        "yahoo_success": true,
+        "sec_success": false,
+        "trials_success": true,
+        "overall_coverage": 90.0,
+        "has_price": true,
+        "financial_coverage": 0.0,
+        "has_cash": false,
+        "has_clinical": true
+      },
+      "market_data": {
+        "price": 176.39,
+        "market_cap": 59363679291,
+        "shares_outstanding": 336542049,
+        "volume_avg_30d": 1934630,
+        "company_name": "INCY Pharmaceuticals Inc."
+      },
+      "financials": {
+        "error": "Company not found in SEC database (simulated)"
+      },
+      "clinical": {
+        "total_trials": 19,
+        "active_trials": 6,
+        "lead_stage": "phase_3",
+        "top_trials": [
+          {
+            "nct_id": "NCT73035005",
+            "title": "Study of INCY-0 in Disease X",
+            "status": "ACTIVE_NOT_RECRUITING",
+            "phase": "PHASE3",
+            "condition": "CNS Disorder",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 362,
+            "sponsor": "Incyte Corporation"
+          },
+          {
+            "nct_id": "NCT83212526",
+            "title": "Study of INCY-1 in Disease X",
+            "status": "COMPLETED",
+            "phase": "PHASE3",
+            "condition": "Autoimmune",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 157,
+            "sponsor": "Incyte Corporation"
+          },
+          {
+            "nct_id": "NCT87794942",
+            "title": "Study of INCY-2 in Disease X",
+            "status": "COMPLETED",
+            "phase": "PHASE3",
+            "condition": "CNS Disorder",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 296,
+            "sponsor": "Incyte Corporation"
+          }
+        ]
+      }
+    },
+    {
+      "ticker": "JAZZ",
+      "as_of_date": "2026-01-05T22:36:11.005205",
+      "data_quality": {
+        "yahoo_success": true,
+        "sec_success": true,
+        "trials_success": true,
+        "overall_coverage": 85.0,
+        "has_price": true,
+        "financial_coverage": 75,
+        "has_cash": true,
+        "has_clinical": true
+      },
+      "market_data": {
+        "price": 282.78,
+        "market_cap": 65241538016,
+        "shares_outstanding": 230718438,
+        "volume_avg_30d": 2215547,
+        "company_name": "JAZZ Pharmaceuticals Inc."
+      },
+      "financials": {
+        "cash": 3947419888.9637704,
+        "debt": 130193523.5425574,
+        "net_debt": -3817226365.421213,
+        "revenue_ttm": null,
+        "assets": 14326995036.58777,
+        "liabilities": 5998120666.572073,
+        "equity": 8328874370.0156975,
+        "currency": "USD"
+      },
+      "clinical": {
+        "total_trials": 6,
+        "active_trials": 2,
+        "lead_stage": "commercial",
+        "top_trials": [
+          {
+            "nct_id": "NCT78043672",
+            "title": "Study of JAZZ-0 in Disease X",
+            "status": "COMPLETED",
+            "phase": "PHASE4",
+            "condition": "Rare Disease",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 478,
+            "sponsor": "Jazz Pharmaceuticals"
+          },
+          {
+            "nct_id": "NCT93256683",
+            "title": "Study of JAZZ-1 in Disease X",
+            "status": "ACTIVE_NOT_RECRUITING",
+            "phase": "PHASE4",
+            "condition": "CNS Disorder",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 412,
+            "sponsor": "Jazz Pharmaceuticals"
+          },
+          {
+            "nct_id": "NCT84148899",
+            "title": "Study of JAZZ-2 in Disease X",
+            "status": "RECRUITING",
+            "phase": "PHASE4",
+            "condition": "CNS Disorder",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 387,
+            "sponsor": "Jazz Pharmaceuticals"
+          }
+        ]
+      }
+    },
+    {
+      "ticker": "IONS",
+      "as_of_date": "2026-01-05T22:36:11.005315",
+      "data_quality": {
+        "yahoo_success": true,
+        "sec_success": true,
+        "trials_success": true,
+        "overall_coverage": 90.0,
+        "has_price": true,
+        "financial_coverage": 90,
+        "has_cash": true,
+        "has_clinical": true
+      },
+      "market_data": {
+        "price": 68.42,
+        "market_cap": 21880754605,
+        "shares_outstanding": 319822630,
+        "volume_avg_30d": 2424293,
+        "company_name": "IONS Pharmaceuticals Inc."
+      },
+      "financials": {
+        "cash": 4588059016.685017,
+        "debt": 1076613380.208928,
+        "net_debt": -3511445636.4760885,
+        "revenue_ttm": 682955318.7836053,
+        "assets": 13611516372.588497,
+        "liabilities": 5269501462.494275,
+        "equity": 8342014910.094222,
+        "currency": "USD"
+      },
+      "clinical": {
+        "total_trials": 17,
+        "active_trials": 7,
+        "lead_stage": "commercial",
+        "top_trials": [
+          {
+            "nct_id": "NCT78271563",
+            "title": "Study of IONS-0 in Disease X",
+            "status": "RECRUITING",
+            "phase": "PHASE1",
+            "condition": "Oncology",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 304,
+            "sponsor": "Ionis Pharmaceuticals"
+          },
+          {
+            "nct_id": "NCT93369406",
+            "title": "Study of IONS-1 in Disease X",
+            "status": "RECRUITING",
+            "phase": "PHASE1",
+            "condition": "Autoimmune",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 398,
+            "sponsor": "Ionis Pharmaceuticals"
+          },
+          {
+            "nct_id": "NCT57464693",
+            "title": "Study of IONS-2 in Disease X",
+            "status": "ACTIVE_NOT_RECRUITING",
+            "phase": "PHASE4",
+            "condition": "Oncology",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 110,
+            "sponsor": "Ionis Pharmaceuticals"
+          }
+        ]
+      }
+    },
+    {
+      "ticker": "BBIO",
+      "as_of_date": "2026-01-05T22:36:11.005454",
+      "data_quality": {
+        "yahoo_success": true,
+        "sec_success": true,
+        "trials_success": true,
+        "overall_coverage": 90.0,
+        "has_price": true,
+        "financial_coverage": 90,
+        "has_cash": true,
+        "has_clinical": true
+      },
+      "market_data": {
+        "price": 472.53,
+        "market_cap": 119311885591,
+        "shares_outstanding": 252498452,
+        "volume_avg_30d": 507169,
+        "company_name": "BBIO Pharmaceuticals Inc."
+      },
+      "financials": {
+        "cash": 2418666693.1630588,
+        "debt": 440096281.7496637,
+        "net_debt": -1978570411.413395,
+        "revenue_ttm": 8697401657.806381,
+        "assets": 10811331251.10068,
+        "liabilities": 7296944663.304573,
+        "equity": 3514386587.7961063,
+        "currency": "USD"
+      },
+      "clinical": {
+        "total_trials": 13,
+        "active_trials": 1,
+        "lead_stage": "phase_2",
+        "top_trials": [
+          {
+            "nct_id": "NCT62360257",
+            "title": "Study of BBIO-0 in Disease X",
+            "status": "ACTIVE_NOT_RECRUITING",
+            "phase": "PHASE2",
+            "condition": "Autoimmune",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 432,
+            "sponsor": "BridgeBio Pharma"
+          },
+          {
+            "nct_id": "NCT22875836",
+            "title": "Study of BBIO-1 in Disease X",
+            "status": "COMPLETED",
+            "phase": "PHASE2",
+            "condition": "CNS Disorder",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 330,
+            "sponsor": "BridgeBio Pharma"
+          },
+          {
+            "nct_id": "NCT94057863",
+            "title": "Study of BBIO-2 in Disease X",
+            "status": "COMPLETED",
+            "phase": "PHASE2",
+            "condition": "Autoimmune",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 75,
+            "sponsor": "BridgeBio Pharma"
+          }
+        ]
+      }
+    },
+    {
+      "ticker": "GOSS",
+      "as_of_date": "2026-01-05T22:36:11.005546",
+      "data_quality": {
+        "yahoo_success": true,
+        "sec_success": true,
+        "trials_success": true,
+        "overall_coverage": 90.0,
+        "has_price": true,
+        "financial_coverage": 90,
+        "has_cash": true,
+        "has_clinical": true
+      },
+      "market_data": {
+        "price": 407.62,
+        "market_cap": 70171952191,
+        "shares_outstanding": 172149312,
+        "volume_avg_30d": 2252973,
+        "company_name": "GOSS Pharmaceuticals Inc."
+      },
+      "financials": {
+        "cash": 4551262321.39534,
+        "debt": 1265062475.8139992,
+        "net_debt": -3286199845.581341,
+        "revenue_ttm": 7784895395.964197,
+        "assets": 20664935724.91818,
+        "liabilities": 6480317314.829157,
+        "equity": 14184618410.089022,
+        "currency": "USD"
+      },
+      "clinical": {
+        "total_trials": 2,
+        "active_trials": 1,
+        "lead_stage": "phase_2",
+        "top_trials": [
+          {
+            "nct_id": "NCT48087626",
+            "title": "Study of GOSS-0 in Disease X",
+            "status": "RECRUITING",
+            "phase": "PHASE2",
+            "condition": "Oncology",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 78,
+            "sponsor": "Gossamer Bio"
+          },
+          {
+            "nct_id": "NCT17150313",
+            "title": "Study of GOSS-1 in Disease X",
+            "status": "ACTIVE_NOT_RECRUITING",
+            "phase": "PHASE2",
+            "condition": "CNS Disorder",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 249,
+            "sponsor": "Gossamer Bio"
+          }
+        ]
+      }
+    },
+    {
+      "ticker": "RNA",
+      "as_of_date": "2026-01-05T22:36:11.005636",
+      "data_quality": {
+        "yahoo_success": true,
+        "sec_success": true,
+        "trials_success": true,
+        "overall_coverage": 90.0,
+        "has_price": true,
+        "financial_coverage": 90,
+        "has_cash": true,
+        "has_clinical": true
+      },
+      "market_data": {
+        "price": 397.23,
+        "market_cap": 24872820434,
+        "shares_outstanding": 62616187,
+        "volume_avg_30d": 884729,
+        "company_name": "RNA Pharmaceuticals Inc."
+      },
+      "financials": {
+        "cash": 956152856.7069173,
+        "debt": 30760821.53547788,
+        "net_debt": -925392035.1714394,
+        "revenue_ttm": 2028865447.977925,
+        "assets": 4525924236.915703,
+        "liabilities": 1880646988.3470235,
+        "equity": 2645277248.5686793,
+        "currency": "USD"
+      },
+      "clinical": {
+        "total_trials": 17,
+        "active_trials": 3,
+        "lead_stage": "commercial",
+        "top_trials": [
+          {
+            "nct_id": "NCT41847536",
+            "title": "Study of RNA-0 in Disease X",
+            "status": "COMPLETED",
+            "phase": "PHASE3",
+            "condition": "Autoimmune",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 418,
+            "sponsor": "Avidity Biosciences"
+          },
+          {
+            "nct_id": "NCT91452829",
+            "title": "Study of RNA-1 in Disease X",
+            "status": "RECRUITING",
+            "phase": "PHASE4",
+            "condition": "CNS Disorder",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 345,
+            "sponsor": "Avidity Biosciences"
+          },
+          {
+            "nct_id": "NCT82317114",
+            "title": "Study of RNA-2 in Disease X",
+            "status": "RECRUITING",
+            "phase": "PHASE4",
+            "condition": "Autoimmune",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 239,
+            "sponsor": "Avidity Biosciences"
+          }
+        ]
+      }
+    },
+    {
+      "ticker": "KYMR",
+      "as_of_date": "2026-01-05T22:36:11.005715",
+      "data_quality": {
+        "yahoo_success": true,
+        "sec_success": true,
+        "trials_success": true,
+        "overall_coverage": 90.0,
+        "has_price": true,
+        "financial_coverage": 90,
+        "has_cash": true,
+        "has_clinical": true
+      },
+      "market_data": {
+        "price": 385.68,
+        "market_cap": 79298350725,
+        "shares_outstanding": 205605037,
+        "volume_avg_30d": 1248570,
+        "company_name": "KYMR Pharmaceuticals Inc."
+      },
+      "financials": {
+        "cash": 4433391348.946559,
+        "debt": 2045626746.3284962,
+        "net_debt": -2387764602.618063,
+        "revenue_ttm": 3108614052.064315,
+        "assets": 20424431058.040154,
+        "liabilities": 10364734368.62227,
+        "equity": 10059696689.417883,
+        "currency": "USD"
+      },
+      "clinical": {
+        "total_trials": 2,
+        "active_trials": 1,
+        "lead_stage": "commercial",
+        "top_trials": [
+          {
+            "nct_id": "NCT68708094",
+            "title": "Study of KYMR-0 in Disease X",
+            "status": "ACTIVE_NOT_RECRUITING",
+            "phase": "PHASE4",
+            "condition": "Rare Disease",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 415,
+            "sponsor": "Kymera Therapeutics"
+          },
+          {
+            "nct_id": "NCT23672392",
+            "title": "Study of KYMR-1 in Disease X",
+            "status": "RECRUITING",
+            "phase": "PHASE4",
+            "condition": "Rare Disease",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 494,
+            "sponsor": "Kymera Therapeutics"
+          }
+        ]
+      }
+    },
+    {
+      "ticker": "RYTM",
+      "as_of_date": "2026-01-05T22:36:11.005813",
+      "data_quality": {
+        "yahoo_success": true,
+        "sec_success": true,
+        "trials_success": true,
+        "overall_coverage": 90.0,
+        "has_price": true,
+        "financial_coverage": 90,
+        "has_cash": true,
+        "has_clinical": true
+      },
+      "market_data": {
+        "price": 429.77,
+        "market_cap": 127431699852,
+        "shares_outstanding": 296512865,
+        "volume_avg_30d": 2740562,
+        "company_name": "RYTM Pharmaceuticals Inc."
+      },
+      "financials": {
+        "cash": 1324396101.477281,
+        "debt": 0,
+        "net_debt": -1324396101.477281,
+        "revenue_ttm": 7983330216.576883,
+        "assets": 3780919243.00902,
+        "liabilities": 2490349393.9324923,
+        "equity": 1290569849.0765276,
+        "currency": "USD"
+      },
+      "clinical": {
+        "total_trials": 6,
+        "active_trials": 1,
+        "lead_stage": "commercial",
+        "top_trials": [
+          {
+            "nct_id": "NCT78467964",
+            "title": "Study of RYTM-0 in Disease X",
+            "status": "RECRUITING",
+            "phase": "PHASE2",
+            "condition": "Rare Disease",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 355,
+            "sponsor": "Rhythm Pharmaceuticals"
+          },
+          {
+            "nct_id": "NCT55441392",
+            "title": "Study of RYTM-1 in Disease X",
+            "status": "RECRUITING",
+            "phase": "PHASE2",
+            "condition": "Autoimmune",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 71,
+            "sponsor": "Rhythm Pharmaceuticals"
+          },
+          {
+            "nct_id": "NCT85942384",
+            "title": "Study of RYTM-2 in Disease X",
+            "status": "ACTIVE_NOT_RECRUITING",
+            "phase": "PHASE2",
+            "condition": "Autoimmune",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 479,
+            "sponsor": "Rhythm Pharmaceuticals"
+          }
+        ]
+      }
+    },
+    {
+      "ticker": "EPRX",
+      "as_of_date": "2026-01-05T22:36:11.005925",
+      "data_quality": {
+        "yahoo_success": true,
+        "sec_success": true,
+        "trials_success": true,
+        "overall_coverage": 90.0,
+        "has_price": true,
+        "financial_coverage": 90,
+        "has_cash": true,
+        "has_clinical": true
+      },
+      "market_data": {
+        "price": 331.62,
+        "market_cap": 95260537385,
+        "shares_outstanding": 287256163,
+        "volume_avg_30d": 1305711,
+        "company_name": "EPRX Pharmaceuticals Inc."
+      },
+      "financials": {
+        "cash": 1379497773.6107538,
+        "debt": 0,
+        "net_debt": -1379497773.6107538,
+        "revenue_ttm": 7759145199.430592,
+        "assets": 6741838432.404143,
+        "liabilities": 2604820179.0144978,
+        "equity": 4137018253.3896456,
+        "currency": "USD"
+      },
+      "clinical": {
+        "total_trials": 6,
+        "active_trials": 2,
+        "lead_stage": "phase_3",
+        "top_trials": [
+          {
+            "nct_id": "NCT98094694",
+            "title": "Study of EPRX-0 in Disease X",
+            "status": "COMPLETED",
+            "phase": "PHASE3",
+            "condition": "Rare Disease",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 491,
+            "sponsor": "Eupraxia Pharmaceuticals"
+          },
+          {
+            "nct_id": "NCT37531615",
+            "title": "Study of EPRX-1 in Disease X",
+            "status": "ACTIVE_NOT_RECRUITING",
+            "phase": "PHASE3",
+            "condition": "Oncology",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 233,
+            "sponsor": "Eupraxia Pharmaceuticals"
+          },
+          {
+            "nct_id": "NCT90468453",
+            "title": "Study of EPRX-2 in Disease X",
+            "status": "ACTIVE_NOT_RECRUITING",
+            "phase": "PHASE3",
+            "condition": "Autoimmune",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 220,
+            "sponsor": "Eupraxia Pharmaceuticals"
+          }
+        ]
+      }
+    },
+    {
+      "ticker": "ACAD",
+      "as_of_date": "2026-01-05T22:36:11.006007",
+      "data_quality": {
+        "yahoo_success": true,
+        "sec_success": true,
+        "trials_success": true,
+        "overall_coverage": 90.0,
+        "has_price": true,
+        "financial_coverage": 90,
+        "has_cash": true,
+        "has_clinical": true
+      },
+      "market_data": {
+        "price": 386.49,
+        "market_cap": 113343637304,
+        "shares_outstanding": 293260363,
+        "volume_avg_30d": 618054,
+        "company_name": "ACAD Pharmaceuticals Inc."
+      },
+      "financials": {
+        "cash": 2537237179.7774544,
+        "debt": 1025171591.8920513,
+        "net_debt": -1512065587.8854032,
+        "revenue_ttm": 6004047889.937416,
+        "assets": 10914663304.942219,
+        "liabilities": 7162597967.376296,
+        "equity": 3752065337.5659227,
+        "currency": "USD"
+      },
+      "clinical": {
+        "total_trials": 16,
+        "active_trials": 8,
+        "lead_stage": "commercial",
+        "top_trials": [
+          {
+            "nct_id": "NCT83916552",
+            "title": "Study of ACAD-0 in Disease X",
+            "status": "ACTIVE_NOT_RECRUITING",
+            "phase": "PHASE3",
+            "condition": "CNS Disorder",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 175,
+            "sponsor": "ACADIA Pharmaceuticals"
+          },
+          {
+            "nct_id": "NCT64242952",
+            "title": "Study of ACAD-1 in Disease X",
+            "status": "COMPLETED",
+            "phase": "PHASE4",
+            "condition": "CNS Disorder",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 438,
+            "sponsor": "ACADIA Pharmaceuticals"
+          },
+          {
+            "nct_id": "NCT99563575",
+            "title": "Study of ACAD-2 in Disease X",
+            "status": "COMPLETED",
+            "phase": "PHASE4",
+            "condition": "Rare Disease",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 53,
+            "sponsor": "ACADIA Pharmaceuticals"
+          }
+        ]
+      }
+    },
+    {
+      "ticker": "ALNY",
+      "as_of_date": "2026-01-05T22:36:11.006105",
+      "data_quality": {
+        "yahoo_success": true,
+        "sec_success": false,
+        "trials_success": true,
+        "overall_coverage": 90.0,
+        "has_price": true,
+        "financial_coverage": 0.0,
+        "has_cash": false,
+        "has_clinical": true
+      },
+      "market_data": {
+        "price": 190.42,
+        "market_cap": 94593554393,
+        "shares_outstanding": 496759543,
+        "volume_avg_30d": 1429375,
+        "company_name": "ALNY Pharmaceuticals Inc."
+      },
+      "financials": {
+        "error": "Company not found in SEC database (simulated)"
+      },
+      "clinical": {
+        "total_trials": 13,
+        "active_trials": 2,
+        "lead_stage": "phase_3",
+        "top_trials": [
+          {
+            "nct_id": "NCT99896580",
+            "title": "Study of ALNY-0 in Disease X",
+            "status": "COMPLETED",
+            "phase": "PHASE2",
+            "condition": "Autoimmune",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 307,
+            "sponsor": "Alnylam Pharmaceuticals"
+          },
+          {
+            "nct_id": "NCT99855790",
+            "title": "Study of ALNY-1 in Disease X",
+            "status": "COMPLETED",
+            "phase": "PHASE3",
+            "condition": "Oncology",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 85,
+            "sponsor": "Alnylam Pharmaceuticals"
+          },
+          {
+            "nct_id": "NCT36183681",
+            "title": "Study of ALNY-2 in Disease X",
+            "status": "COMPLETED",
+            "phase": "PHASE3",
+            "condition": "Oncology",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 132,
+            "sponsor": "Alnylam Pharmaceuticals"
+          }
+        ]
+      }
+    },
+    {
+      "ticker": "BMRN",
+      "as_of_date": "2026-01-05T22:36:11.006190",
+      "data_quality": {
+        "yahoo_success": true,
+        "sec_success": true,
+        "trials_success": true,
+        "overall_coverage": 90.0,
+        "has_price": true,
+        "financial_coverage": 90,
+        "has_cash": true,
+        "has_clinical": true
+      },
+      "market_data": {
+        "price": 83.2,
+        "market_cap": 40841085815,
+        "shares_outstanding": 490878138,
+        "volume_avg_30d": 2044659,
+        "company_name": "BMRN Pharmaceuticals Inc."
+      },
+      "financials": {
+        "cash": 1910494973.1743248,
+        "debt": 598820514.07097,
+        "net_debt": -1311674459.1033547,
+        "revenue_ttm": 7254530840.126477,
+        "assets": 3983782480.431379,
+        "liabilities": 2265377956.375377,
+        "equity": 1718404524.0560017,
+        "currency": "USD"
+      },
+      "clinical": {
+        "total_trials": 9,
+        "active_trials": 4,
+        "lead_stage": "commercial",
+        "top_trials": [
+          {
+            "nct_id": "NCT76504704",
+            "title": "Study of BMRN-0 in Disease X",
+            "status": "ACTIVE_NOT_RECRUITING",
+            "phase": "PHASE4",
+            "condition": "Oncology",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 87,
+            "sponsor": "BioMarin Pharmaceutical"
+          },
+          {
+            "nct_id": "NCT57813180",
+            "title": "Study of BMRN-1 in Disease X",
+            "status": "COMPLETED",
+            "phase": "PHASE4",
+            "condition": "Oncology",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 155,
+            "sponsor": "BioMarin Pharmaceutical"
+          },
+          {
+            "nct_id": "NCT79254719",
+            "title": "Study of BMRN-2 in Disease X",
+            "status": "COMPLETED",
+            "phase": "PHASE4",
+            "condition": "Autoimmune",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 361,
+            "sponsor": "BioMarin Pharmaceutical"
+          }
+        ]
+      }
+    },
+    {
+      "ticker": "CRSP",
+      "as_of_date": "2026-01-05T22:36:11.006273",
+      "data_quality": {
+        "yahoo_success": true,
+        "sec_success": true,
+        "trials_success": true,
+        "overall_coverage": 90.0,
+        "has_price": true,
+        "financial_coverage": 90,
+        "has_cash": true,
+        "has_clinical": true
+      },
+      "market_data": {
+        "price": 255.72,
+        "market_cap": 61219411909,
+        "shares_outstanding": 239400610,
+        "volume_avg_30d": 528277,
+        "company_name": "CRSP Pharmaceuticals Inc."
+      },
+      "financials": {
+        "cash": 4409777488.617903,
+        "debt": 1366562100.6086848,
+        "net_debt": -3043215388.009218,
+        "revenue_ttm": 5150977545.923108,
+        "assets": 12545822228.297379,
+        "liabilities": 8649616055.363523,
+        "equity": 3896206172.933855,
+        "currency": "USD"
+      },
+      "clinical": {
+        "total_trials": 12,
+        "active_trials": 4,
+        "lead_stage": "phase_1",
+        "top_trials": [
+          {
+            "nct_id": "NCT71683583",
+            "title": "Study of CRSP-0 in Disease X",
+            "status": "ACTIVE_NOT_RECRUITING",
+            "phase": "PHASE1",
+            "condition": "Rare Disease",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 121,
+            "sponsor": "CRISPR Therapeutics"
+          },
+          {
+            "nct_id": "NCT90825222",
+            "title": "Study of CRSP-1 in Disease X",
+            "status": "COMPLETED",
+            "phase": "PHASE1",
+            "condition": "CNS Disorder",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 448,
+            "sponsor": "CRISPR Therapeutics"
+          },
+          {
+            "nct_id": "NCT56494115",
+            "title": "Study of CRSP-2 in Disease X",
+            "status": "RECRUITING",
+            "phase": "PHASE1",
+            "condition": "CNS Disorder",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 458,
+            "sponsor": "CRISPR Therapeutics"
+          }
+        ]
+      }
+    },
+    {
+      "ticker": "VRTX",
+      "as_of_date": "2026-01-05T22:36:11.006358",
+      "data_quality": {
+        "yahoo_success": true,
+        "sec_success": true,
+        "trials_success": true,
+        "overall_coverage": 90.0,
+        "has_price": true,
+        "financial_coverage": 90,
+        "has_cash": true,
+        "has_clinical": true
+      },
+      "market_data": {
+        "price": 287.77,
+        "market_cap": 49433564590,
+        "shares_outstanding": 171780450,
+        "volume_avg_30d": 2259273,
+        "company_name": "VRTX Pharmaceuticals Inc."
+      },
+      "financials": {
+        "cash": 4160557872.4351935,
+        "debt": 2041336229.9079678,
+        "net_debt": -2119221642.5272257,
+        "revenue_ttm": 8114058234.829075,
+        "assets": 11728489834.897297,
+        "liabilities": 5635738450.517915,
+        "equity": 6092751384.379382,
+        "currency": "USD"
+      },
+      "clinical": {
+        "total_trials": 11,
+        "active_trials": 1,
+        "lead_stage": "phase_2",
+        "top_trials": [
+          {
+            "nct_id": "NCT69830937",
+            "title": "Study of VRTX-0 in Disease X",
+            "status": "COMPLETED",
+            "phase": "PHASE2",
+            "condition": "Rare Disease",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 421,
+            "sponsor": "Vertex Pharmaceuticals"
+          },
+          {
+            "nct_id": "NCT74718181",
+            "title": "Study of VRTX-1 in Disease X",
+            "status": "ACTIVE_NOT_RECRUITING",
+            "phase": "PHASE1",
+            "condition": "CNS Disorder",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 183,
+            "sponsor": "Vertex Pharmaceuticals"
+          },
+          {
+            "nct_id": "NCT84364647",
+            "title": "Study of VRTX-2 in Disease X",
+            "status": "ACTIVE_NOT_RECRUITING",
+            "phase": "PHASE1",
+            "condition": "Autoimmune",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 326,
+            "sponsor": "Vertex Pharmaceuticals"
+          }
+        ]
+      }
+    },
+    {
+      "ticker": "SRPT",
+      "as_of_date": "2026-01-05T22:36:11.006450",
+      "data_quality": {
+        "yahoo_success": true,
+        "sec_success": true,
+        "trials_success": true,
+        "overall_coverage": 85.0,
+        "has_price": true,
+        "financial_coverage": 75,
+        "has_cash": true,
+        "has_clinical": true
+      },
+      "market_data": {
+        "price": 21.96,
+        "market_cap": 6689860368,
+        "shares_outstanding": 304622278,
+        "volume_avg_30d": 1134333,
+        "company_name": "SRPT Pharmaceuticals Inc."
+      },
+      "financials": {
+        "cash": 3267494119.323923,
+        "debt": 0,
+        "net_debt": -3267494119.323923,
+        "revenue_ttm": null,
+        "assets": 15547875179.006607,
+        "liabilities": 10052542730.968065,
+        "equity": 5495332448.038542,
+        "currency": "USD"
+      },
+      "clinical": {
+        "total_trials": 7,
+        "active_trials": 3,
+        "lead_stage": "phase_3",
+        "top_trials": [
+          {
+            "nct_id": "NCT17615968",
+            "title": "Study of SRPT-0 in Disease X",
+            "status": "RECRUITING",
+            "phase": "PHASE3",
+            "condition": "CNS Disorder",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 320,
+            "sponsor": "Sarepta Therapeutics"
+          },
+          {
+            "nct_id": "NCT71284825",
+            "title": "Study of SRPT-1 in Disease X",
+            "status": "COMPLETED",
+            "phase": "PHASE1",
+            "condition": "Rare Disease",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 398,
+            "sponsor": "Sarepta Therapeutics"
+          },
+          {
+            "nct_id": "NCT80341156",
+            "title": "Study of SRPT-2 in Disease X",
+            "status": "RECRUITING",
+            "phase": "PHASE1",
+            "condition": "Oncology",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 441,
+            "sponsor": "Sarepta Therapeutics"
+          }
+        ]
+      }
+    },
+    {
+      "ticker": "UTHR",
+      "as_of_date": "2026-01-05T22:36:11.006547",
+      "data_quality": {
+        "yahoo_success": true,
+        "sec_success": true,
+        "trials_success": true,
+        "overall_coverage": 90.0,
+        "has_price": true,
+        "financial_coverage": 90,
+        "has_cash": true,
+        "has_clinical": true
+      },
+      "market_data": {
+        "price": 131.08,
+        "market_cap": 18947227649,
+        "shares_outstanding": 144545910,
+        "volume_avg_30d": 781025,
+        "company_name": "UTHR Pharmaceuticals Inc."
+      },
+      "financials": {
+        "cash": 2018314935.2882423,
+        "debt": 0,
+        "net_debt": -2018314935.2882423,
+        "revenue_ttm": 6018644218.808602,
+        "assets": 4854786243.225271,
+        "liabilities": 1874952677.1576731,
+        "equity": 2979833566.0675983,
+        "currency": "USD"
+      },
+      "clinical": {
+        "total_trials": 9,
+        "active_trials": 4,
+        "lead_stage": "phase_2",
+        "top_trials": [
+          {
+            "nct_id": "NCT52344444",
+            "title": "Study of UTHR-0 in Disease X",
+            "status": "ACTIVE_NOT_RECRUITING",
+            "phase": "PHASE2",
+            "condition": "CNS Disorder",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 88,
+            "sponsor": "United Therapeutics"
+          },
+          {
+            "nct_id": "NCT25272211",
+            "title": "Study of UTHR-1 in Disease X",
+            "status": "RECRUITING",
+            "phase": "PHASE1",
+            "condition": "Oncology",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 138,
+            "sponsor": "United Therapeutics"
+          },
+          {
+            "nct_id": "NCT76408236",
+            "title": "Study of UTHR-2 in Disease X",
+            "status": "ACTIVE_NOT_RECRUITING",
+            "phase": "PHASE1",
+            "condition": "CNS Disorder",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 482,
+            "sponsor": "United Therapeutics"
+          }
+        ]
+      }
+    },
+    {
+      "ticker": "EXEL",
+      "as_of_date": "2026-01-05T22:36:11.006624",
+      "data_quality": {
+        "yahoo_success": true,
+        "sec_success": false,
+        "trials_success": true,
+        "overall_coverage": 90.0,
+        "has_price": true,
+        "financial_coverage": 0.0,
+        "has_cash": false,
+        "has_clinical": true
+      },
+      "market_data": {
+        "price": 261.53,
+        "market_cap": 51627589233,
+        "shares_outstanding": 197407341,
+        "volume_avg_30d": 2790030,
+        "company_name": "EXEL Pharmaceuticals Inc."
+      },
+      "financials": {
+        "error": "Company not found in SEC database (simulated)"
+      },
+      "clinical": {
+        "total_trials": 10,
+        "active_trials": 5,
+        "lead_stage": "phase_1",
+        "top_trials": [
+          {
+            "nct_id": "NCT64292857",
+            "title": "Study of EXEL-0 in Disease X",
+            "status": "ACTIVE_NOT_RECRUITING",
+            "phase": "PHASE1",
+            "condition": "Rare Disease",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 497,
+            "sponsor": "Exelixis"
+          },
+          {
+            "nct_id": "NCT69741997",
+            "title": "Study of EXEL-1 in Disease X",
+            "status": "ACTIVE_NOT_RECRUITING",
+            "phase": "PHASE1",
+            "condition": "Rare Disease",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 263,
+            "sponsor": "Exelixis"
+          },
+          {
+            "nct_id": "NCT34180997",
+            "title": "Study of EXEL-2 in Disease X",
+            "status": "ACTIVE_NOT_RECRUITING",
+            "phase": "PHASE1",
+            "condition": "Autoimmune",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 358,
+            "sponsor": "Exelixis"
+          }
+        ]
+      }
+    },
+    {
+      "ticker": "RARE",
+      "as_of_date": "2026-01-05T22:36:11.006700",
+      "data_quality": {
+        "yahoo_success": true,
+        "sec_success": false,
+        "trials_success": true,
+        "overall_coverage": 90.0,
+        "has_price": true,
+        "financial_coverage": 0.0,
+        "has_cash": false,
+        "has_clinical": true
+      },
+      "market_data": {
+        "price": 196.66,
+        "market_cap": 15771905828,
+        "shares_outstanding": 80198747,
+        "volume_avg_30d": 1029746,
+        "company_name": "RARE Pharmaceuticals Inc."
+      },
+      "financials": {
+        "error": "Company not found in SEC database (simulated)"
+      },
+      "clinical": {
+        "total_trials": 3,
+        "active_trials": 1,
+        "lead_stage": "phase_2",
+        "top_trials": [
+          {
+            "nct_id": "NCT32041670",
+            "title": "Study of RARE-0 in Disease X",
+            "status": "ACTIVE_NOT_RECRUITING",
+            "phase": "PHASE2",
+            "condition": "CNS Disorder",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 330,
+            "sponsor": "Ultragenyx Pharmaceutical"
+          },
+          {
+            "nct_id": "NCT52165109",
+            "title": "Study of RARE-1 in Disease X",
+            "status": "RECRUITING",
+            "phase": "PHASE2",
+            "condition": "Autoimmune",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 252,
+            "sponsor": "Ultragenyx Pharmaceutical"
+          },
+          {
+            "nct_id": "NCT29948213",
+            "title": "Study of RARE-2 in Disease X",
+            "status": "ACTIVE_NOT_RECRUITING",
+            "phase": "PHASE2",
+            "condition": "Autoimmune",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 328,
+            "sponsor": "Ultragenyx Pharmaceutical"
+          }
+        ]
+      }
+    },
+    {
+      "ticker": "FOLD",
+      "as_of_date": "2026-01-05T22:36:11.006788",
+      "data_quality": {
+        "yahoo_success": true,
+        "sec_success": true,
+        "trials_success": true,
+        "overall_coverage": 90.0,
+        "has_price": true,
+        "financial_coverage": 90,
+        "has_cash": true,
+        "has_clinical": true
+      },
+      "market_data": {
+        "price": 136.45,
+        "market_cap": 67002449624,
+        "shares_outstanding": 491043548,
+        "volume_avg_30d": 2334670,
+        "company_name": "FOLD Pharmaceuticals Inc."
+      },
+      "financials": {
+        "cash": 343656744.34796244,
+        "debt": 106047370.79164353,
+        "net_debt": -237609373.5563189,
+        "revenue_ttm": 1975459829.4682074,
+        "assets": 1117542568.6994588,
+        "liabilities": 597921840.6521738,
+        "equity": 519620728.0472851,
+        "currency": "USD"
+      },
+      "clinical": {
+        "total_trials": 7,
+        "active_trials": 3,
+        "lead_stage": "commercial",
+        "top_trials": [
+          {
+            "nct_id": "NCT21363569",
+            "title": "Study of FOLD-0 in Disease X",
+            "status": "RECRUITING",
+            "phase": "PHASE4",
+            "condition": "Autoimmune",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 469,
+            "sponsor": "Amicus Therapeutics"
+          },
+          {
+            "nct_id": "NCT47872611",
+            "title": "Study of FOLD-1 in Disease X",
+            "status": "RECRUITING",
+            "phase": "PHASE3",
+            "condition": "Oncology",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 309,
+            "sponsor": "Amicus Therapeutics"
+          },
+          {
+            "nct_id": "NCT90706549",
+            "title": "Study of FOLD-2 in Disease X",
+            "status": "ACTIVE_NOT_RECRUITING",
+            "phase": "PHASE4",
+            "condition": "CNS Disorder",
+            "start_date": "2023-01-15",
+            "completion_date": "2025-12-31",
+            "enrollment": 123,
+            "sponsor": "Amicus Therapeutics"
+          }
+        ]
+      }
+    }
+  ]
+}
