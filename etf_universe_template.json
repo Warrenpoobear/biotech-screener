@@ -1,0 +1,3753 @@
+[
+  {
+    "ticker": "ACAD",
+    "name": "ACAD Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "AKRO",
+    "name": "AKRO Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "ALLO",
+    "name": "ALLO Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "ALNY",
+    "name": "ALNY Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "AMGN",
+    "name": "AMGN Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "APLS",
+    "name": "APLS Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "ARCT",
+    "name": "ARCT Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "ARGX",
+    "name": "ARGX Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "ARVN",
+    "name": "ARVN Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "ATNF",
+    "name": "ATNF Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "AXSM",
+    "name": "AXSM Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "BBIO",
+    "name": "BBIO Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "BEAM",
+    "name": "BEAM Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "BGNE",
+    "name": "BGNE Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "BIIB",
+    "name": "BIIB Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "BLUE",
+    "name": "BLUE Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "BMRN",
+    "name": "BMRN Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "BNTX",
+    "name": "BNTX Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "BTAI",
+    "name": "BTAI Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "CDNA",
+    "name": "CDNA Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "CGEM",
+    "name": "CGEM Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "CLDX",
+    "name": "CLDX Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "CRBU",
+    "name": "CRBU Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "CRNX",
+    "name": "CRNX Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "CRSP",
+    "name": "CRSP Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "CRVS",
+    "name": "CRVS Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "CTKB",
+    "name": "CTKB Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "CYCC",
+    "name": "CYCC Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "DAWN",
+    "name": "DAWN Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "DRMA",
+    "name": "DRMA Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "EDIT",
+    "name": "EDIT Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "EPRX",
+    "name": "EPRX Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "ESPR",
+    "name": "ESPR Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "ETNB",
+    "name": "ETNB Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "EXEL",
+    "name": "EXEL Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "FATE",
+    "name": "FATE Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "FBIO",
+    "name": "FBIO Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "FGEN",
+    "name": "FGEN Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "FIXX",
+    "name": "FIXX Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "FOLD",
+    "name": "FOLD Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "FULC",
+    "name": "FULC Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "GERN",
+    "name": "GERN Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "GILD",
+    "name": "GILD Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "GLPG",
+    "name": "GLPG Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "GOSS",
+    "name": "GOSS Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "HALO",
+    "name": "HALO Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "HRTX",
+    "name": "HRTX Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "HZNP",
+    "name": "HZNP Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "ICPT",
+    "name": "ICPT Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "IMCR",
+    "name": "IMCR Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "IMMP",
+    "name": "IMMP Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "IMMU",
+    "name": "IMMU Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "IMVT",
+    "name": "IMVT Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "INCY",
+    "name": "INCY Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "IONS",
+    "name": "IONS Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "IRWD",
+    "name": "IRWD Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "ITCI",
+    "name": "ITCI Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "JAZZ",
+    "name": "JAZZ Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "KALA",
+    "name": "KALA Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "KALV",
+    "name": "KALV Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "KRYS",
+    "name": "KRYS Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "LEGN",
+    "name": "LEGN Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "LGND",
+    "name": "LGND Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "LQDA",
+    "name": "LQDA Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "MDGL",
+    "name": "MDGL Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "MRNA",
+    "name": "MRNA Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "MRSN",
+    "name": "MRSN Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "MRVI",
+    "name": "MRVI Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "MYOV",
+    "name": "MYOV Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "NBIX",
+    "name": "NBIX Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "NSTG",
+    "name": "NSTG Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "NTLA",
+    "name": "NTLA Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "NTRA",
+    "name": "NTRA Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "NVAX",
+    "name": "NVAX Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "NVCR",
+    "name": "NVCR Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "OCGN",
+    "name": "OCGN Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "OPCH",
+    "name": "OPCH Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "PCRX",
+    "name": "PCRX Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "PCVX",
+    "name": "PCVX Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "PGEN",
+    "name": "PGEN Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "PRTA",
+    "name": "PRTA Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "PRVA",
+    "name": "PRVA Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "PTCT",
+    "name": "PTCT Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "PTGX",
+    "name": "PTGX Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "RARE",
+    "name": "RARE Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "REGN",
+    "name": "REGN Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "RETA",
+    "name": "RETA Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "RGEN",
+    "name": "RGEN Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "RGNX",
+    "name": "RGNX Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "RNA",
+    "name": "RNA Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "ROIV",
+    "name": "ROIV Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "RVMD",
+    "name": "RVMD Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "RXRX",
+    "name": "RXRX Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "RYTM",
+    "name": "RYTM Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "SAGE",
+    "name": "SAGE Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "SANA",
+    "name": "SANA Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "SGEN",
+    "name": "SGEN Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "SGMO",
+    "name": "SGMO Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "SNDX",
+    "name": "SNDX Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "SPRY",
+    "name": "SPRY Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "SRPT",
+    "name": "SRPT Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "TARS",
+    "name": "TARS Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "TBPH",
+    "name": "TBPH Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "TCDA",
+    "name": "TCDA Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "TECH",
+    "name": "TECH Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "TGTX",
+    "name": "TGTX Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "TNDM",
+    "name": "TNDM Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "TVTX",
+    "name": "TVTX Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.120068Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "TWST",
+    "name": "TWST Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.121814Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "URGN",
+    "name": "URGN Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.121814Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "UTHR",
+    "name": "UTHR Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.121814Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "VCYT",
+    "name": "VCYT Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.121814Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "VERV",
+    "name": "VERV Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.121814Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "VKTX",
+    "name": "VKTX Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.121814Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "VNDA",
+    "name": "VNDA Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.121814Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "VRDN",
+    "name": "VRDN Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.121814Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "VRTX",
+    "name": "VRTX Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.121814Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "VYGR",
+    "name": "VYGR Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.121814Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "XNCR",
+    "name": "XNCR Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.121814Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "XOMA",
+    "name": "XOMA Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.121814Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "ZYXI",
+    "name": "ZYXI Inc",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "1000000000",
+    "price_usd": "50.00",
+    "shares_outstanding": "20000000",
+    "defensive_features": {
+      "price_current": "50.00",
+      "price_60d_ago": "45.00",
+      "return_60d": "0.1111",
+      "vol_60d": "0.3500",
+      "drawdown_60d": "-0.0500",
+      "corr_xbi": "0.7000",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T13:26:15.121814Z"
+    },
+    "financial_health": {
+      "cash_usd": "500000000",
+      "total_debt_usd": "100000000",
+      "quarterly_burn_usd": "50000000",
+      "runway_quarters": "10"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  }
+]
