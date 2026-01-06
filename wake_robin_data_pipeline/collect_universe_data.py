@@ -7,6 +7,7 @@ Orchestrates collection from:
 2. SEC EDGAR (financial data)
 3. ClinicalTrials.gov (trial data)
 4. Time-Series Data (historical prices/returns for defensive overlays)
+5. Defensive Overlays (volatility, correlation, gates, position sizing)
 
 Outputs unified snapshot with data quality metrics.
 """
@@ -20,6 +21,7 @@ from typing import Dict, List
 sys.path.insert(0, str(Path(__file__).parent))
 
 from collectors import yahoo_collector, sec_collector, trials_collector, time_series_collector
+from defensive_overlays import enrich_universe_with_defensive_overlays, print_defensive_summary
 
 def load_universe(universe_file: str = "universe/pilot_universe.json") -> Dict:
     """Load universe configuration."""
@@ -145,16 +147,17 @@ def merge_data_sources(ticker: str, yahoo_data: dict, sec_data: dict, trials_dat
 
 def generate_quality_report(records: List[dict]) -> dict:
     """Generate data quality summary across all records."""
-    total = len(records)
+    total = len([r for r in records if r['ticker'] != '_XBI_BENCHMARK_'])
 
     quality = {
         "universe_size": total,
         "collection_date": datetime.now().isoformat(),
         "coverage": {
-            "price_data": sum(1 for r in records if r['data_quality']['has_price']),
-            "financial_data": sum(1 for r in records if r['data_quality']['financial_coverage'] >= 50),
-            "clinical_data": sum(1 for r in records if r['data_quality']['has_clinical']),
-            "time_series_data": sum(1 for r in records if r['data_quality'].get('has_time_series', False)),
+            "price_data": sum(1 for r in records if r['ticker'] != '_XBI_BENCHMARK_' and r['data_quality']['has_price']),
+            "financial_data": sum(1 for r in records if r['ticker'] != '_XBI_BENCHMARK_' and r['data_quality']['financial_coverage'] >= 50),
+            "clinical_data": sum(1 for r in records if r['ticker'] != '_XBI_BENCHMARK_' and r['data_quality']['has_clinical']),
+            "time_series_data": sum(1 for r in records if r['ticker'] != '_XBI_BENCHMARK_' and r['data_quality'].get('has_time_series', False)),
+            "defensive_features": sum(1 for r in records if r['ticker'] != '_XBI_BENCHMARK_' and r.get('defensive_features')),
         },
         "coverage_pct": {},
         "avg_financial_coverage": 0.0,
@@ -173,17 +176,19 @@ def generate_quality_report(records: List[dict]) -> dict:
         "financial_data": quality['coverage']['financial_data'] / total * 100,
         "clinical_data": quality['coverage']['clinical_data'] / total * 100,
         "time_series_data": quality['coverage']['time_series_data'] / total * 100,
+        "defensive_features": quality['coverage']['defensive_features'] / total * 100,
     }
 
-    # Calculate averages
-    financial_coverages = [r['data_quality']['financial_coverage'] for r in records]
-    overall_coverages = [r['data_quality']['overall_coverage'] for r in records]
+    # Calculate averages (excluding XBI)
+    non_xbi_records = [r for r in records if r['ticker'] != '_XBI_BENCHMARK_']
+    financial_coverages = [r['data_quality']['financial_coverage'] for r in non_xbi_records]
+    overall_coverages = [r['data_quality']['overall_coverage'] for r in non_xbi_records]
 
     quality['avg_financial_coverage'] = sum(financial_coverages) / total if total > 0 else 0
     quality['avg_overall_coverage'] = sum(overall_coverages) / total if total > 0 else 0
 
     # Categorize by quality
-    for record in records:
+    for record in non_xbi_records:
         ticker = record['ticker']
         coverage = record['data_quality']['overall_coverage']
 
@@ -245,6 +250,7 @@ def print_summary(quality_report: dict):
     print(f"  • Financial Data (SEC):   {cov['financial_data']:.1f}%")
     print(f"  • Clinical Data (CT.gov): {cov['clinical_data']:.1f}%")
     print(f"  • Time-Series Data:       {cov['time_series_data']:.1f}%")
+    print(f"  • Defensive Features:     {cov['defensive_features']:.1f}%")
 
     print("\nAverage Coverage:")
     print(f"  • Financial Metrics: {quality_report['avg_financial_coverage']:.1f}%")
@@ -311,7 +317,22 @@ def main():
         record = merge_data_sources(ticker, yahoo_data, sec_data, trials_data, time_series_data)
         records.append(record)
 
+    # Add XBI benchmark to records
+    if "_XBI_BENCHMARK_" in time_series_results:
+        xbi_record = {
+            "ticker": "_XBI_BENCHMARK_",
+            "time_series": time_series_results["_XBI_BENCHMARK_"]["time_series"],
+            "data_quality": {"has_time_series": True}
+        }
+        records.append(xbi_record)
+
     print(f"   ✓ Merged data for {len(records)} companies")
+
+    # Compute defensive overlays (volatility, correlation, gates)
+    print("\n5b. Computing defensive overlays (volatility, correlation, gates)...")
+    xbi_benchmark = next((r for r in records if r['ticker'] == '_XBI_BENCHMARK_'), None)
+    enrich_universe_with_defensive_overlays(records, xbi_benchmark)
+    print_defensive_summary(records)
 
     # Generate quality report
     print("\n6. Generating data quality report...")

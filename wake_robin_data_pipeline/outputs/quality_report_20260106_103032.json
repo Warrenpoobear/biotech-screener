@@ -1,19 +1,17 @@
 {
   "universe_size": 20,
-  "collection_date": "2026-01-06T10:37:08.335806",
+  "collection_date": "2026-01-06T10:30:32.495739",
   "coverage": {
     "price_data": 20,
     "financial_data": 19,
     "clinical_data": 20,
-    "time_series_data": 20,
-    "defensive_features": 20
+    "time_series_data": 20
   },
   "coverage_pct": {
     "price_data": 100.0,
     "financial_data": 95.0,
     "clinical_data": 100.0,
-    "time_series_data": 100.0,
-    "defensive_features": 100.0
+    "time_series_data": 100.0
   },
   "avg_financial_coverage": 82.5,
   "avg_overall_coverage": 89.25,
