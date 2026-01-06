@@ -20,25 +20,34 @@ from decimal import Decimal
 from datetime import datetime
 
 def create_sample_data():
-    """Create sample scores_by_ticker with defensive features."""
+    """Create sample module results with defensive features."""
     
     sample_tickers = ["VRTX", "ALNY", "INCY", "GOSS", "JAZZ"]
     
-    scores_by_ticker = {}
+    # Module 1: Universe result
+    universe_result = {
+        "active_securities": []
+    }
+    
+    # Module 2: Financial result
+    financial_result = {
+        "scores": []
+    }
+    
+    # Module 3: Catalyst result
+    catalyst_result = {
+        "scores": []
+    }
+    
+    # Module 4: Clinical result
+    clinical_result = {
+        "scores": []
+    }
     
     for i, ticker in enumerate(sample_tickers):
-        scores_by_ticker[ticker] = {
-            "clinical_dev": {
-                "score": Decimal(str(85 - i*5)),
-                "lead_phase": "phase_3" if i < 3 else "phase_2",
-            },
-            "financial": {
-                "score": Decimal(str(80 - i*5)),
-                "market_cap_mm": 15000 - i*3000,
-            },
-            "catalyst": {
-                "score": Decimal(str(75 - i*5)),
-            },
+        # Universe (includes defensive features)
+        universe_result["active_securities"].append({
+            "ticker": ticker,
             "defensive_features": {
                 "vol_60d": str(0.25 + i*0.05),
                 "vol_20d": str(0.28 + i*0.05),
@@ -50,9 +59,32 @@ def create_sample_data():
                 "ret_21d": str(0.05 - i*0.02),
                 "skew_60d": str(-0.15 + i*0.05),
             }
-        }
+        })
+        
+        # Financial scores
+        financial_result["scores"].append({
+            "ticker": ticker,
+            "financial_score": str(80 - i*5),
+            "market_cap_mm": 15000 - i*3000,
+            "severity": "none",
+        })
+        
+        # Catalyst scores  
+        catalyst_result["scores"].append({
+            "ticker": ticker,
+            "catalyst_score": str(75 - i*5),
+            "severity": "none",
+        })
+        
+        # Clinical scores
+        clinical_result["scores"].append({
+            "ticker": ticker,
+            "clinical_score": str(85 - i*5),
+            "lead_phase": "phase_3" if i < 3 else "phase_2",
+            "severity": "none",
+        })
     
-    return scores_by_ticker, set(sample_tickers)
+    return universe_result, financial_result, catalyst_result, clinical_result
 
 
 def test_adapter_functions():
@@ -133,7 +165,7 @@ def test_wrapper():
     print("="*60)
     
     try:
-        from module_5_composite_with_defensive import rank_securities_with_defensive
+        from module_5_composite_with_defensive import compute_module_5_composite_with_defensive
         print("✓ Successfully imported module_5_composite_with_defensive")
     except ImportError as e:
         print(f"❌ Failed to import wrapper: {e}")
@@ -141,20 +173,22 @@ def test_wrapper():
         return False
     
     # Create sample data
-    scores_by_ticker, active_tickers = create_sample_data()
+    universe_result, financial_result, catalyst_result, clinical_result = create_sample_data()
     
     print(f"\n✓ Created sample data:")
-    print(f"  - {len(active_tickers)} tickers: {', '.join(sorted(active_tickers))}")
+    print(f"  - {len(universe_result['active_securities'])} tickers: {', '.join(sorted(s['ticker'] for s in universe_result['active_securities']))}")
     print(f"  - All have defensive_features")
     
     # Call the wrapper
-    print("\n✓ Calling rank_securities_with_defensive...")
+    print("\n✓ Calling compute_module_5_composite_with_defensive...")
     try:
-        output = rank_securities_with_defensive(
-            scores_by_ticker=scores_by_ticker,
-            active_tickers=active_tickers,
+        output = compute_module_5_composite_with_defensive(
+            universe_result=universe_result,
+            financial_result=financial_result,
+            catalyst_result=catalyst_result,
+            clinical_result=clinical_result,
             as_of_date="2026-01-06",
-            normalization="cohort",
+            normalization="rank",
             cohort_mode="stage_only",
             validate=True,  # This will print validation diagnostics
         )
@@ -225,7 +259,7 @@ def test_existing_module():
     print("="*60)
     
     try:
-        from module_5_composite import rank_securities
+        from module_5_composite import compute_module_5_composite
         print("✓ Successfully imported original module_5_composite")
     except ImportError as e:
         print(f"❌ Failed to import module_5_composite: {e}")
@@ -233,15 +267,17 @@ def test_existing_module():
         return False
     
     # Create sample data
-    scores_by_ticker, active_tickers = create_sample_data()
+    universe_result, financial_result, catalyst_result, clinical_result = create_sample_data()
     
     print("\n✓ Testing original function (without defensive overlays)...")
     try:
-        output = rank_securities(
-            scores_by_ticker=scores_by_ticker,
-            active_tickers=active_tickers,
+        output = compute_module_5_composite(
+            universe_result=universe_result,
+            financial_result=financial_result,
+            catalyst_result=catalyst_result,
+            clinical_result=clinical_result,
             as_of_date="2026-01-06",
-            normalization="cohort",
+            normalization="rank",
             cohort_mode="stage_only",
         )
         print("✓ Original function still works!")
@@ -303,8 +339,11 @@ def main():
         print("\n🎉 All tests passed! Your integration is ready to use.")
         print("\nNext steps:")
         print("1. In your pipeline, change:")
-        print("   FROM: from module_5_composite import rank_securities")
-        print("   TO:   from module_5_composite_with_defensive import rank_securities_with_defensive")
+        print("   FROM: from module_5_composite import compute_module_5_composite")
+        print("   FROM: output = compute_module_5_composite(universe_result, financial_result, ...)")
+        print("")
+        print("   TO:   from module_5_composite_with_defensive import compute_module_5_composite_with_defensive")
+        print("   TO:   output = compute_module_5_composite_with_defensive(universe_result, financial_result, ..., validate=True)")
         print("\n2. Run your full pipeline")
         print("3. Check that position_weight appears in your output")
     else:

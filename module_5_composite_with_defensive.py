@@ -2,31 +2,28 @@
 module_5_composite_with_defensive.py
 
 Simple wrapper that adds defensive overlays to your existing Module 5.
-
-USAGE:
-------
-Replace your existing call:
-    output = rank_securities(scores_by_ticker, active_tickers, as_of_date, ...)
-
-With:
-    from module_5_composite_with_defensive import rank_securities_with_defensive
-    output = rank_securities_with_defensive(scores_by_ticker, active_tickers, as_of_date, ...)
-
-That's it! Everything else stays the same.
 """
 
-from module_5_composite import rank_securities
+import json
+from pathlib import Path
+from module_5_composite import compute_module_5_composite
 from defensive_overlay_adapter import enrich_with_defensive_overlays, validate_defensive_integration
 
 
-def rank_securities_with_defensive(
-    scores_by_ticker: dict,
-    active_tickers: set,
+from module_5_composite import compute_module_5_composite
+from defensive_overlay_adapter import enrich_with_defensive_overlays, validate_defensive_integration
+
+
+def compute_module_5_composite_with_defensive(
+    universe_result: dict,
+    financial_result: dict,
+    catalyst_result: dict,
+    clinical_result: dict,
     as_of_date: str,
-    normalization: str = "cohort",
     weights: dict = None,
-    cohort_mode: str = "stage_only",
+    normalization: str = "rank",
     coinvest_signals: dict = None,
+    cohort_mode: str = "stage_only",
     apply_defensive_multiplier: bool = True,
     apply_position_sizing: bool = True,
     validate: bool = False,
@@ -34,37 +31,62 @@ def rank_securities_with_defensive(
     """
     Rank securities with defensive overlays integrated.
     
-    This is a drop-in replacement for module_5_composite.rank_securities()
-    that adds defensive overlay functionality.
-    
-    Args:
-        ... (same as rank_securities)
-        apply_defensive_multiplier: Apply correlation-based score adjustments
-        apply_position_sizing: Calculate inverse-vol position weights
-        validate: Print validation diagnostics
-    
-    Returns:
-        Same structure as rank_securities() with added fields:
-        - defensive_notes: List of defensive adjustments per security
-        - defensive_multiplier: The multiplier applied
-        - position_weight: Calculated position size (if sizing enabled)
-        - composite_score_before_defensive: Original score before adjustments
+    Drop-in replacement for compute_module_5_composite() with defensive overlays.
     """
     # Call your existing Module 5
-    output = rank_securities(
-        scores_by_ticker=scores_by_ticker,
-        active_tickers=active_tickers,
+    output = compute_module_5_composite(
+        universe_result=universe_result,
+        financial_result=financial_result,
+        catalyst_result=catalyst_result,
+        clinical_result=clinical_result,
         as_of_date=as_of_date,
-        normalization=normalization,
         weights=weights,
-        cohort_mode=cohort_mode,
+        normalization=normalization,
         coinvest_signals=coinvest_signals,
+        cohort_mode=cohort_mode,
     )
     
+    # Build defensive_features lookup from RAW universe file
+    # Module 1 strips out defensive_features, so we load the raw file
+    defensive_by_ticker = {}
+    
+    # Try to find the raw universe file
+    # Check common locations
+    universe_paths = [
+        Path("production_data/universe.json"),
+        Path("wake_robin_data_pipeline/outputs/universe_snapshot_latest.json"),
+        Path("wake_robin_data_pipeline/outputs/universe.json"),
+        Path("test_data/universe.json"),
+    ]
+    
+    raw_universe = None
+    for path in universe_paths:
+        if path.exists():
+            print(f"\nDEBUG: Loading defensive features from {path}")
+            with open(path, 'r') as f:
+                raw_universe = json.load(f)
+            break
+    
+    if raw_universe:
+        # Handle both dict and array formats
+        if isinstance(raw_universe, dict):
+            securities = raw_universe.get("active_securities", [])
+        else:
+            securities = raw_universe  # Direct array
+        
+        for sec in securities:
+            ticker = sec.get("ticker")
+            if ticker and "defensive_features" in sec:
+                defensive_by_ticker[ticker] = {"defensive_features": sec["defensive_features"]}
+        
+        print(f"DEBUG: Extracted defensive_features for {len(defensive_by_ticker)} tickers")
+    else:
+        print("WARNING: Could not find raw universe file for defensive features")
+
     # Add defensive overlays
     enrich_with_defensive_overlays(
         output,
-        scores_by_ticker,
+        defensive_by_ticker,
         apply_multiplier=apply_defensive_multiplier,
         apply_position_sizing=apply_position_sizing,
     )
@@ -78,46 +100,12 @@ def rank_securities_with_defensive(
 
 # Convenience exports
 __all__ = [
-    "rank_securities_with_defensive",
+    "compute_module_5_composite_with_defensive",
     "enrich_with_defensive_overlays",
     "validate_defensive_integration",
 ]
 
 
 if __name__ == "__main__":
-    print("""
-    module_5_composite_with_defensive.py
-    
-    This is a wrapper that adds defensive overlays to your existing Module 5.
-    
-    INTEGRATION STEPS:
-    ------------------
-    
-    1. Ensure these files are in the same directory:
-       - module_5_composite.py (your existing file)
-       - defensive_overlay_adapter.py (helper functions)
-       - module_5_composite_with_defensive.py (this wrapper)
-    
-    2. In your runner/pipeline code, change:
-       
-       FROM:
-           from module_5_composite import rank_securities
-           output = rank_securities(scores_by_ticker, active_tickers, as_of_date, ...)
-       
-       TO:
-           from module_5_composite_with_defensive import rank_securities_with_defensive
-           output = rank_securities_with_defensive(scores_by_ticker, active_tickers, as_of_date, ...)
-    
-    3. That's it! The output will now include:
-       - Defensive score adjustments (correlation-based)
-       - Position weights (inverse-vol with caps)
-       - Defensive notes explaining adjustments
-    
-    OPTIONAL: Add validation=True to see diagnostics:
-        output = rank_securities_with_defensive(..., validate=True)
-    
-    TESTING:
-    --------
-    Run this file directly to test the integration:
-        python module_5_composite_with_defensive.py
-    """)
+    print("module_5_composite_with_defensive.py - Wrapper for defensive overlays")
+    print("Run: python test_defensive_integration.py")

@@ -1,0 +1,1093 @@
+{
+  "as_of_date": "2026-01-06",
+  "module_1_universe": {
+    "active_securities": [
+      {
+        "company_name": null,
+        "market_cap_mm": null,
+        "status": "active",
+        "ticker": "ACAD"
+      },
+      {
+        "company_name": null,
+        "market_cap_mm": null,
+        "status": "active",
+        "ticker": "ALNY"
+      },
+      {
+        "company_name": null,
+        "market_cap_mm": null,
+        "status": "active",
+        "ticker": "ARGX"
+      },
+      {
+        "company_name": null,
+        "market_cap_mm": null,
+        "status": "active",
+        "ticker": "BBIO"
+      },
+      {
+        "company_name": null,
+        "market_cap_mm": null,
+        "status": "active",
+        "ticker": "BMRN"
+      },
+      {
+        "company_name": null,
+        "market_cap_mm": null,
+        "status": "active",
+        "ticker": "CRSP"
+      },
+      {
+        "company_name": null,
+        "market_cap_mm": null,
+        "status": "active",
+        "ticker": "EPRX"
+      },
+      {
+        "company_name": null,
+        "market_cap_mm": null,
+        "status": "active",
+        "ticker": "EXEL"
+      },
+      {
+        "company_name": null,
+        "market_cap_mm": null,
+        "status": "active",
+        "ticker": "FOLD"
+      },
+      {
+        "company_name": null,
+        "market_cap_mm": null,
+        "status": "active",
+        "ticker": "GOSS"
+      },
+      {
+        "company_name": null,
+        "market_cap_mm": null,
+        "status": "active",
+        "ticker": "INCY"
+      },
+      {
+        "company_name": null,
+        "market_cap_mm": null,
+        "status": "active",
+        "ticker": "IONS"
+      },
+      {
+        "company_name": null,
+        "market_cap_mm": null,
+        "status": "active",
+        "ticker": "JAZZ"
+      },
+      {
+        "company_name": null,
+        "market_cap_mm": null,
+        "status": "active",
+        "ticker": "KYMR"
+      },
+      {
+        "company_name": null,
+        "market_cap_mm": null,
+        "status": "active",
+        "ticker": "RARE"
+      },
+      {
+        "company_name": null,
+        "market_cap_mm": null,
+        "status": "active",
+        "ticker": "RNA"
+      },
+      {
+        "company_name": null,
+        "market_cap_mm": null,
+        "status": "active",
+        "ticker": "RYTM"
+      },
+      {
+        "company_name": null,
+        "market_cap_mm": null,
+        "status": "active",
+        "ticker": "SRPT"
+      },
+      {
+        "company_name": null,
+        "market_cap_mm": null,
+        "status": "active",
+        "ticker": "UTHR"
+      },
+      {
+        "company_name": null,
+        "market_cap_mm": null,
+        "status": "active",
+        "ticker": "VRTX"
+      },
+      {
+        "company_name": null,
+        "market_cap_mm": null,
+        "status": "active",
+        "ticker": "_XBI_BENCHMARK_"
+      }
+    ],
+    "as_of_date": "2026-01-06",
+    "diagnostic_counts": {
+      "active": 21,
+      "excluded": 0,
+      "excluded_by_reason": {},
+      "total_input": 21
+    },
+    "excluded_securities": [],
+    "provenance": {
+      "inputs_hash": "sha256:5629bbcf676cc66937acc0a0d89c16b4b972f446dac91e3b0aec7f86743d1e06",
+      "pit_cutoff": "2026-01-06",
+      "ruleset_version": "1.0.0"
+    }
+  },
+  "module_2_financial": {
+    "as_of_date": "2026-01-06",
+    "coverage_stats": {
+      "cash_coverage_pct": 19.0,
+      "debt_coverage_pct": 19.0,
+      "has_any_financial": 4,
+      "has_cash": 4,
+      "has_debt": 4,
+      "has_market_cap": 4,
+      "has_revenue": 4,
+      "market_cap_coverage_pct": 19.0,
+      "revenue_coverage_pct": 19.0,
+      "total_active": 21
+    },
+    "securities": {
+      "ACAD": {
+        "cash_usd": null,
+        "data_source": "unknown",
+        "debt_usd": null,
+        "financial_fields_present": 0,
+        "health_flags": [
+          "MISSING_CASH",
+          "MISSING_DEBT",
+          "MISSING_REVENUE"
+        ],
+        "health_score": null,
+        "market_cap_usd": null,
+        "net_cash_usd": null,
+        "ttm_revenue_usd": null
+      },
+      "ALNY": {
+        "cash_usd": "3200000000",
+        "data_source": "unknown",
+        "debt_usd": "800000000",
+        "financial_fields_present": 4,
+        "health_flags": [
+          "CASH_FORTRESS",
+          "COMMERCIAL_CASH_COW"
+        ],
+        "health_score": "85.0000",
+        "market_cap_usd": "52540000000",
+        "net_cash_usd": "2400000000",
+        "ttm_revenue_usd": "1800000000"
+      },
+      "ARGX": {
+        "cash_usd": null,
+        "data_source": "unknown",
+        "debt_usd": null,
+        "financial_fields_present": 0,
+        "health_flags": [
+          "MISSING_CASH",
+          "MISSING_DEBT",
+          "MISSING_REVENUE"
+        ],
+        "health_score": null,
+        "market_cap_usd": null,
+        "net_cash_usd": null,
+        "ttm_revenue_usd": null
+      },
+      "BBIO": {
+        "cash_usd": null,
+        "data_source": "unknown",
+        "debt_usd": null,
+        "financial_fields_present": 0,
+        "health_flags": [
+          "MISSING_CASH",
+          "MISSING_DEBT",
+          "MISSING_REVENUE"
+        ],
+        "health_score": null,
+        "market_cap_usd": null,
+        "net_cash_usd": null,
+        "ttm_revenue_usd": null
+      },
+      "BMRN": {
+        "cash_usd": "900000000",
+        "data_source": "unknown",
+        "debt_usd": "1500000000",
+        "financial_fields_present": 4,
+        "health_flags": [
+          "NET_DEBT_WARNING",
+          "COMMERCIAL_CASH_COW"
+        ],
+        "health_score": "50.0000",
+        "market_cap_usd": "11420000000",
+        "net_cash_usd": "-600000000",
+        "ttm_revenue_usd": "2100000000"
+      },
+      "CRSP": {
+        "cash_usd": null,
+        "data_source": "unknown",
+        "debt_usd": null,
+        "financial_fields_present": 0,
+        "health_flags": [
+          "MISSING_CASH",
+          "MISSING_DEBT",
+          "MISSING_REVENUE"
+        ],
+        "health_score": null,
+        "market_cap_usd": null,
+        "net_cash_usd": null,
+        "ttm_revenue_usd": null
+      },
+      "EPRX": {
+        "cash_usd": null,
+        "data_source": "unknown",
+        "debt_usd": null,
+        "financial_fields_present": 0,
+        "health_flags": [
+          "MISSING_CASH",
+          "MISSING_DEBT",
+          "MISSING_REVENUE"
+        ],
+        "health_score": null,
+        "market_cap_usd": null,
+        "net_cash_usd": null,
+        "ttm_revenue_usd": null
+      },
+      "EXEL": {
+        "cash_usd": null,
+        "data_source": "unknown",
+        "debt_usd": null,
+        "financial_fields_present": 0,
+        "health_flags": [
+          "MISSING_CASH",
+          "MISSING_DEBT",
+          "MISSING_REVENUE"
+        ],
+        "health_score": null,
+        "market_cap_usd": null,
+        "net_cash_usd": null,
+        "ttm_revenue_usd": null
+      },
+      "FOLD": {
+        "cash_usd": null,
+        "data_source": "unknown",
+        "debt_usd": null,
+        "financial_fields_present": 0,
+        "health_flags": [
+          "MISSING_CASH",
+          "MISSING_DEBT",
+          "MISSING_REVENUE"
+        ],
+        "health_score": null,
+        "market_cap_usd": null,
+        "net_cash_usd": null,
+        "ttm_revenue_usd": null
+      },
+      "GOSS": {
+        "cash_usd": null,
+        "data_source": "unknown",
+        "debt_usd": null,
+        "financial_fields_present": 0,
+        "health_flags": [
+          "MISSING_CASH",
+          "MISSING_DEBT",
+          "MISSING_REVENUE"
+        ],
+        "health_score": null,
+        "market_cap_usd": null,
+        "net_cash_usd": null,
+        "ttm_revenue_usd": null
+      },
+      "INCY": {
+        "cash_usd": null,
+        "data_source": "unknown",
+        "debt_usd": null,
+        "financial_fields_present": 0,
+        "health_flags": [
+          "MISSING_CASH",
+          "MISSING_DEBT",
+          "MISSING_REVENUE"
+        ],
+        "health_score": null,
+        "market_cap_usd": null,
+        "net_cash_usd": null,
+        "ttm_revenue_usd": null
+      },
+      "IONS": {
+        "cash_usd": null,
+        "data_source": "unknown",
+        "debt_usd": null,
+        "financial_fields_present": 0,
+        "health_flags": [
+          "MISSING_CASH",
+          "MISSING_DEBT",
+          "MISSING_REVENUE"
+        ],
+        "health_score": null,
+        "market_cap_usd": null,
+        "net_cash_usd": null,
+        "ttm_revenue_usd": null
+      },
+      "JAZZ": {
+        "cash_usd": null,
+        "data_source": "unknown",
+        "debt_usd": null,
+        "financial_fields_present": 0,
+        "health_flags": [
+          "MISSING_CASH",
+          "MISSING_DEBT",
+          "MISSING_REVENUE"
+        ],
+        "health_score": null,
+        "market_cap_usd": null,
+        "net_cash_usd": null,
+        "ttm_revenue_usd": null
+      },
+      "KYMR": {
+        "cash_usd": null,
+        "data_source": "unknown",
+        "debt_usd": null,
+        "financial_fields_present": 0,
+        "health_flags": [
+          "MISSING_CASH",
+          "MISSING_DEBT",
+          "MISSING_REVENUE"
+        ],
+        "health_score": null,
+        "market_cap_usd": null,
+        "net_cash_usd": null,
+        "ttm_revenue_usd": null
+      },
+      "RARE": {
+        "cash_usd": null,
+        "data_source": "unknown",
+        "debt_usd": null,
+        "financial_fields_present": 0,
+        "health_flags": [
+          "MISSING_CASH",
+          "MISSING_DEBT",
+          "MISSING_REVENUE"
+        ],
+        "health_score": null,
+        "market_cap_usd": null,
+        "net_cash_usd": null,
+        "ttm_revenue_usd": null
+      },
+      "RNA": {
+        "cash_usd": null,
+        "data_source": "unknown",
+        "debt_usd": null,
+        "financial_fields_present": 0,
+        "health_flags": [
+          "MISSING_CASH",
+          "MISSING_DEBT",
+          "MISSING_REVENUE"
+        ],
+        "health_score": null,
+        "market_cap_usd": null,
+        "net_cash_usd": null,
+        "ttm_revenue_usd": null
+      },
+      "RYTM": {
+        "cash_usd": null,
+        "data_source": "unknown",
+        "debt_usd": null,
+        "financial_fields_present": 0,
+        "health_flags": [
+          "MISSING_CASH",
+          "MISSING_DEBT",
+          "MISSING_REVENUE"
+        ],
+        "health_score": null,
+        "market_cap_usd": null,
+        "net_cash_usd": null,
+        "ttm_revenue_usd": null
+      },
+      "SRPT": {
+        "cash_usd": "1100000000",
+        "data_source": "unknown",
+        "debt_usd": "300000000",
+        "financial_fields_present": 4,
+        "health_flags": [
+          "COMMERCIAL_CASH_COW"
+        ],
+        "health_score": "65.0000",
+        "market_cap_usd": "2260000000",
+        "net_cash_usd": "800000000",
+        "ttm_revenue_usd": "1200000000"
+      },
+      "UTHR": {
+        "cash_usd": null,
+        "data_source": "unknown",
+        "debt_usd": null,
+        "financial_fields_present": 0,
+        "health_flags": [
+          "MISSING_CASH",
+          "MISSING_DEBT",
+          "MISSING_REVENUE"
+        ],
+        "health_score": null,
+        "market_cap_usd": null,
+        "net_cash_usd": null,
+        "ttm_revenue_usd": null
+      },
+      "VRTX": {
+        "cash_usd": "13000000000",
+        "data_source": "unknown",
+        "debt_usd": "500000000",
+        "financial_fields_present": 4,
+        "health_flags": [
+          "CASH_FORTRESS",
+          "COMMERCIAL_CASH_COW"
+        ],
+        "health_score": "85.0000",
+        "market_cap_usd": "115030000000",
+        "net_cash_usd": "12500000000",
+        "ttm_revenue_usd": "10500000000"
+      },
+      "_XBI_BENCHMARK_": {
+        "cash_usd": null,
+        "data_source": "unknown",
+        "debt_usd": null,
+        "financial_fields_present": 0,
+        "health_flags": [
+          "MISSING_CASH",
+          "MISSING_DEBT",
+          "MISSING_REVENUE"
+        ],
+        "health_score": null,
+        "market_cap_usd": null,
+        "net_cash_usd": null,
+        "ttm_revenue_usd": null
+      }
+    }
+  },
+  "module_3_catalyst": {
+    "as_of_date": "2026-01-06",
+    "diagnostic_counts": {
+      "no_catalyst": 17,
+      "pit_filtered": 0,
+      "total_trials_evaluated": 4,
+      "with_catalyst": 4
+    },
+    "no_catalyst_tickers": [
+      "ACAD",
+      "ARGX",
+      "BBIO",
+      "CRSP",
+      "EPRX",
+      "EXEL",
+      "FOLD",
+      "GOSS",
+      "INCY",
+      "IONS",
+      "JAZZ",
+      "KYMR",
+      "RARE",
+      "RNA",
+      "RYTM",
+      "UTHR",
+      "_XBI_BENCHMARK_"
+    ],
+    "provenance": {
+      "inputs_hash": "sha256:80b1b2724292b9a77fd2ebce9727d3fcdef26fd60bb8e5b833045b7225467a2c",
+      "pit_cutoff": "2026-01-05",
+      "ruleset_version": "1.0.0"
+    },
+    "scores": [
+      {
+        "catalyst_score": "0",
+        "days_to_catalyst": null,
+        "flags": [
+          "no_upcoming_catalyst"
+        ],
+        "nearest_catalyst": null,
+        "phase": null,
+        "severity": "sev1",
+        "ticker": "ACAD"
+      },
+      {
+        "catalyst_score": "40.00",
+        "days_to_catalyst": 84,
+        "flags": [],
+        "nearest_catalyst": "NCT05345678",
+        "phase": "phase 3",
+        "severity": "none",
+        "ticker": "ALNY"
+      },
+      {
+        "catalyst_score": "0",
+        "days_to_catalyst": null,
+        "flags": [
+          "no_upcoming_catalyst"
+        ],
+        "nearest_catalyst": null,
+        "phase": null,
+        "severity": "sev1",
+        "ticker": "ARGX"
+      },
+      {
+        "catalyst_score": "0",
+        "days_to_catalyst": null,
+        "flags": [
+          "no_upcoming_catalyst"
+        ],
+        "nearest_catalyst": null,
+        "phase": null,
+        "severity": "sev1",
+        "ticker": "BBIO"
+      },
+      {
+        "catalyst_score": "22.50",
+        "days_to_catalyst": 237,
+        "flags": [],
+        "nearest_catalyst": "NCT05456789",
+        "phase": "phase 2",
+        "severity": "none",
+        "ticker": "BMRN"
+      },
+      {
+        "catalyst_score": "0",
+        "days_to_catalyst": null,
+        "flags": [
+          "no_upcoming_catalyst"
+        ],
+        "nearest_catalyst": null,
+        "phase": null,
+        "severity": "sev1",
+        "ticker": "CRSP"
+      },
+      {
+        "catalyst_score": "0",
+        "days_to_catalyst": null,
+        "flags": [
+          "no_upcoming_catalyst"
+        ],
+        "nearest_catalyst": null,
+        "phase": null,
+        "severity": "sev1",
+        "ticker": "EPRX"
+      },
+      {
+        "catalyst_score": "0",
+        "days_to_catalyst": null,
+        "flags": [
+          "no_upcoming_catalyst"
+        ],
+        "nearest_catalyst": null,
+        "phase": null,
+        "severity": "sev1",
+        "ticker": "EXEL"
+      },
+      {
+        "catalyst_score": "0",
+        "days_to_catalyst": null,
+        "flags": [
+          "no_upcoming_catalyst"
+        ],
+        "nearest_catalyst": null,
+        "phase": null,
+        "severity": "sev1",
+        "ticker": "FOLD"
+      },
+      {
+        "catalyst_score": "0",
+        "days_to_catalyst": null,
+        "flags": [
+          "no_upcoming_catalyst"
+        ],
+        "nearest_catalyst": null,
+        "phase": null,
+        "severity": "sev1",
+        "ticker": "GOSS"
+      },
+      {
+        "catalyst_score": "0",
+        "days_to_catalyst": null,
+        "flags": [
+          "no_upcoming_catalyst"
+        ],
+        "nearest_catalyst": null,
+        "phase": null,
+        "severity": "sev1",
+        "ticker": "INCY"
+      },
+      {
+        "catalyst_score": "0",
+        "days_to_catalyst": null,
+        "flags": [
+          "no_upcoming_catalyst"
+        ],
+        "nearest_catalyst": null,
+        "phase": null,
+        "severity": "sev1",
+        "ticker": "IONS"
+      },
+      {
+        "catalyst_score": "0",
+        "days_to_catalyst": null,
+        "flags": [
+          "no_upcoming_catalyst"
+        ],
+        "nearest_catalyst": null,
+        "phase": null,
+        "severity": "sev1",
+        "ticker": "JAZZ"
+      },
+      {
+        "catalyst_score": "0",
+        "days_to_catalyst": null,
+        "flags": [
+          "no_upcoming_catalyst"
+        ],
+        "nearest_catalyst": null,
+        "phase": null,
+        "severity": "sev1",
+        "ticker": "KYMR"
+      },
+      {
+        "catalyst_score": "0",
+        "days_to_catalyst": null,
+        "flags": [
+          "no_upcoming_catalyst"
+        ],
+        "nearest_catalyst": null,
+        "phase": null,
+        "severity": "sev1",
+        "ticker": "RARE"
+      },
+      {
+        "catalyst_score": "0",
+        "days_to_catalyst": null,
+        "flags": [
+          "no_upcoming_catalyst"
+        ],
+        "nearest_catalyst": null,
+        "phase": null,
+        "severity": "sev1",
+        "ticker": "RNA"
+      },
+      {
+        "catalyst_score": "0",
+        "days_to_catalyst": null,
+        "flags": [
+          "no_upcoming_catalyst"
+        ],
+        "nearest_catalyst": null,
+        "phase": null,
+        "severity": "sev1",
+        "ticker": "RYTM"
+      },
+      {
+        "catalyst_score": "30.00",
+        "days_to_catalyst": 359,
+        "flags": [],
+        "nearest_catalyst": "NCT05567890",
+        "phase": "phase 3",
+        "severity": "none",
+        "ticker": "SRPT"
+      },
+      {
+        "catalyst_score": "0",
+        "days_to_catalyst": null,
+        "flags": [
+          "no_upcoming_catalyst"
+        ],
+        "nearest_catalyst": null,
+        "phase": null,
+        "severity": "sev1",
+        "ticker": "UTHR"
+      },
+      {
+        "catalyst_score": "22.50",
+        "days_to_catalyst": 267,
+        "flags": [],
+        "nearest_catalyst": "NCT05234567",
+        "phase": "phase 2",
+        "severity": "none",
+        "ticker": "VRTX"
+      },
+      {
+        "catalyst_score": "0",
+        "days_to_catalyst": null,
+        "flags": [
+          "no_upcoming_catalyst"
+        ],
+        "nearest_catalyst": null,
+        "phase": null,
+        "severity": "sev1",
+        "ticker": "_XBI_BENCHMARK_"
+      }
+    ]
+  },
+  "module_4_clinical_dev": {
+    "as_of_date": "2026-01-06",
+    "diagnostic_counts": {
+      "pit_filtered": 0,
+      "scored": 21,
+      "total_trials": 4
+    },
+    "provenance": {
+      "inputs_hash": "sha256:80b1b2724292b9a77fd2ebce9727d3fcdef26fd60bb8e5b833045b7225467a2c",
+      "pit_cutoff": "2026-01-05",
+      "ruleset_version": "1.0.0"
+    },
+    "scores": [
+      {
+        "clinical_score": "37.00",
+        "design_score": "12.00",
+        "endpoint_score": "10.00",
+        "execution_score": "12.00",
+        "flags": [
+          "early_stage",
+          "no_trials"
+        ],
+        "lead_phase": "preclinical",
+        "phase_score": "3",
+        "severity": "sev1",
+        "ticker": "ACAD",
+        "trial_count": 0
+      },
+      {
+        "clinical_score": "64.00",
+        "design_score": "17.00",
+        "endpoint_score": "10.00",
+        "execution_score": "12.00",
+        "flags": [],
+        "lead_phase": "phase 3",
+        "phase_score": "25",
+        "severity": "none",
+        "ticker": "ALNY",
+        "trial_count": 1
+      },
+      {
+        "clinical_score": "37.00",
+        "design_score": "12.00",
+        "endpoint_score": "10.00",
+        "execution_score": "12.00",
+        "flags": [
+          "early_stage",
+          "no_trials"
+        ],
+        "lead_phase": "preclinical",
+        "phase_score": "3",
+        "severity": "sev1",
+        "ticker": "ARGX",
+        "trial_count": 0
+      },
+      {
+        "clinical_score": "37.00",
+        "design_score": "12.00",
+        "endpoint_score": "10.00",
+        "execution_score": "12.00",
+        "flags": [
+          "early_stage",
+          "no_trials"
+        ],
+        "lead_phase": "preclinical",
+        "phase_score": "3",
+        "severity": "sev1",
+        "ticker": "BBIO",
+        "trial_count": 0
+      },
+      {
+        "clinical_score": "61.00",
+        "design_score": "21.00",
+        "endpoint_score": "10.00",
+        "execution_score": "12.00",
+        "flags": [],
+        "lead_phase": "phase 2",
+        "phase_score": "18",
+        "severity": "none",
+        "ticker": "BMRN",
+        "trial_count": 1
+      },
+      {
+        "clinical_score": "37.00",
+        "design_score": "12.00",
+        "endpoint_score": "10.00",
+        "execution_score": "12.00",
+        "flags": [
+          "early_stage",
+          "no_trials"
+        ],
+        "lead_phase": "preclinical",
+        "phase_score": "3",
+        "severity": "sev1",
+        "ticker": "CRSP",
+        "trial_count": 0
+      },
+      {
+        "clinical_score": "37.00",
+        "design_score": "12.00",
+        "endpoint_score": "10.00",
+        "execution_score": "12.00",
+        "flags": [
+          "early_stage",
+          "no_trials"
+        ],
+        "lead_phase": "preclinical",
+        "phase_score": "3",
+        "severity": "sev1",
+        "ticker": "EPRX",
+        "trial_count": 0
+      },
+      {
+        "clinical_score": "37.00",
+        "design_score": "12.00",
+        "endpoint_score": "10.00",
+        "execution_score": "12.00",
+        "flags": [
+          "early_stage",
+          "no_trials"
+        ],
+        "lead_phase": "preclinical",
+        "phase_score": "3",
+        "severity": "sev1",
+        "ticker": "EXEL",
+        "trial_count": 0
+      },
+      {
+        "clinical_score": "37.00",
+        "design_score": "12.00",
+        "endpoint_score": "10.00",
+        "execution_score": "12.00",
+        "flags": [
+          "early_stage",
+          "no_trials"
+        ],
+        "lead_phase": "preclinical",
+        "phase_score": "3",
+        "severity": "sev1",
+        "ticker": "FOLD",
+        "trial_count": 0
+      },
+      {
+        "clinical_score": "37.00",
+        "design_score": "12.00",
+        "endpoint_score": "10.00",
+        "execution_score": "12.00",
+        "flags": [
+          "early_stage",
+          "no_trials"
+        ],
+        "lead_phase": "preclinical",
+        "phase_score": "3",
+        "severity": "sev1",
+        "ticker": "GOSS",
+        "trial_count": 0
+      },
+      {
+        "clinical_score": "37.00",
+        "design_score": "12.00",
+        "endpoint_score": "10.00",
+        "execution_score": "12.00",
+        "flags": [
+          "early_stage",
+          "no_trials"
+        ],
+        "lead_phase": "preclinical",
+        "phase_score": "3",
+        "severity": "sev1",
+        "ticker": "INCY",
+        "trial_count": 0
+      },
+      {
+        "clinical_score": "37.00",
+        "design_score": "12.00",
+        "endpoint_score": "10.00",
+        "execution_score": "12.00",
+        "flags": [
+          "early_stage",
+          "no_trials"
+        ],
+        "lead_phase": "preclinical",
+        "phase_score": "3",
+        "severity": "sev1",
+        "ticker": "IONS",
+        "trial_count": 0
+      },
+      {
+        "clinical_score": "37.00",
+        "design_score": "12.00",
+        "endpoint_score": "10.00",
+        "execution_score": "12.00",
+        "flags": [
+          "early_stage",
+          "no_trials"
+        ],
+        "lead_phase": "preclinical",
+        "phase_score": "3",
+        "severity": "sev1",
+        "ticker": "JAZZ",
+        "trial_count": 0
+      },
+      {
+        "clinical_score": "37.00",
+        "design_score": "12.00",
+        "endpoint_score": "10.00",
+        "execution_score": "12.00",
+        "flags": [
+          "early_stage",
+          "no_trials"
+        ],
+        "lead_phase": "preclinical",
+        "phase_score": "3",
+        "severity": "sev1",
+        "ticker": "KYMR",
+        "trial_count": 0
+      },
+      {
+        "clinical_score": "37.00",
+        "design_score": "12.00",
+        "endpoint_score": "10.00",
+        "execution_score": "12.00",
+        "flags": [
+          "early_stage",
+          "no_trials"
+        ],
+        "lead_phase": "preclinical",
+        "phase_score": "3",
+        "severity": "sev1",
+        "ticker": "RARE",
+        "trial_count": 0
+      },
+      {
+        "clinical_score": "37.00",
+        "design_score": "12.00",
+        "endpoint_score": "10.00",
+        "execution_score": "12.00",
+        "flags": [
+          "early_stage",
+          "no_trials"
+        ],
+        "lead_phase": "preclinical",
+        "phase_score": "3",
+        "severity": "sev1",
+        "ticker": "RNA",
+        "trial_count": 0
+      },
+      {
+        "clinical_score": "37.00",
+        "design_score": "12.00",
+        "endpoint_score": "10.00",
+        "execution_score": "12.00",
+        "flags": [
+          "early_stage",
+          "no_trials"
+        ],
+        "lead_phase": "preclinical",
+        "phase_score": "3",
+        "severity": "sev1",
+        "ticker": "RYTM",
+        "trial_count": 0
+      },
+      {
+        "clinical_score": "68.00",
+        "design_score": "21.00",
+        "endpoint_score": "10.00",
+        "execution_score": "12.00",
+        "flags": [],
+        "lead_phase": "phase 3",
+        "phase_score": "25",
+        "severity": "none",
+        "ticker": "SRPT",
+        "trial_count": 1
+      },
+      {
+        "clinical_score": "37.00",
+        "design_score": "12.00",
+        "endpoint_score": "10.00",
+        "execution_score": "12.00",
+        "flags": [
+          "early_stage",
+          "no_trials"
+        ],
+        "lead_phase": "preclinical",
+        "phase_score": "3",
+        "severity": "sev1",
+        "ticker": "UTHR",
+        "trial_count": 0
+      },
+      {
+        "clinical_score": "61.00",
+        "design_score": "21.00",
+        "endpoint_score": "10.00",
+        "execution_score": "12.00",
+        "flags": [],
+        "lead_phase": "phase 2",
+        "phase_score": "18",
+        "severity": "none",
+        "ticker": "VRTX",
+        "trial_count": 1
+      },
+      {
+        "clinical_score": "37.00",
+        "design_score": "12.00",
+        "endpoint_score": "10.00",
+        "execution_score": "12.00",
+        "flags": [
+          "early_stage",
+          "no_trials"
+        ],
+        "lead_phase": "preclinical",
+        "phase_score": "3",
+        "severity": "sev1",
+        "ticker": "_XBI_BENCHMARK_",
+        "trial_count": 0
+      }
+    ]
+  },
+  "module_5_composite": {
+    "as_of_date": "2026-01-06",
+    "cohort_mode": "stage_only",
+    "cohort_stats": {
+      "early": {
+        "count": 17,
+        "max": "31.50",
+        "mean": "31.50",
+        "min": "31.50",
+        "normalization_fallback": "normal"
+      },
+      "late": {
+        "count": 2,
+        "max": "24.92",
+        "mean": "24.60",
+        "min": "24.29",
+        "normalization_fallback": "small_stage"
+      },
+      "mid": {
+        "count": 2,
+        "max": "21.02",
+        "mean": "21.02",
+        "min": "21.02",
+        "normalization_fallback": "small_stage"
+      }
+    },
+    "coinvest_coverage": null,
+    "diagnostic_counts": {
+      "cohort_count": 3,
+      "excluded": 0,
+      "rankable": 21,
+      "total_allocated_weight": "0.9000",
+      "total_input": 21,
+      "with_nonzero_weight": 21
+    },
+    "excluded_securities": [],
+    "normalization_method": "rank",
+    "provenance": {
+      "inputs_hash": "sha256:d73adc9832eedb4792a8a411c7b37a5ed132c0305e07932f5364c080620e5d44",
+      "pit_cutoff": "2026-01-06",
+      "ruleset_version": "1.2.1"
+    },
+    "ranked_securities": [
+      {
+        "_position_weight_raw": 

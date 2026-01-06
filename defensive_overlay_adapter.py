@@ -204,6 +204,12 @@ def enrich_with_defensive_overlays(
         
         output["diagnostic_counts"]["with_nonzero_weight"] = nonzero
         output["diagnostic_counts"]["total_allocated_weight"] = str(total_weight.quantize(Decimal("0.0001")))
+
+    # Convert any remaining Decimal objects to strings for JSON serialization
+    for rec in ranked:
+        # Remove internal _position_weight_raw field (not needed in output)
+        if "_position_weight_raw" in rec:
+            del rec["_position_weight_raw"]
     
     return output
 

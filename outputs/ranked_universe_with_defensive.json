@@ -1,0 +1,489 @@
+{
+  "as_of_date": "2026-01-06",
+  "module_1_universe": {
+    "active_securities": [
+      {
+        "company_name": null,
+        "market_cap_mm": null,
+        "status": "active",
+        "ticker": "ALNY"
+      },
+      {
+        "company_name": null,
+        "market_cap_mm": null,
+        "status": "active",
+        "ticker": "BMRN"
+      },
+      {
+        "company_name": null,
+        "market_cap_mm": null,
+        "status": "active",
+        "ticker": "REGN"
+      },
+      {
+        "company_name": null,
+        "market_cap_mm": null,
+        "status": "active",
+        "ticker": "SRPT"
+      },
+      {
+        "company_name": null,
+        "market_cap_mm": null,
+        "status": "active",
+        "ticker": "VRTX"
+      }
+    ],
+    "as_of_date": "2026-01-06",
+    "diagnostic_counts": {
+      "active": 5,
+      "excluded": 0,
+      "excluded_by_reason": {},
+      "total_input": 5
+    },
+    "excluded_securities": [],
+    "provenance": {
+      "inputs_hash": "sha256:804af96ec966b8504ecd8f77906875437949af1c7ca4be2fe00081af2e132cb7",
+      "pit_cutoff": "2026-01-06",
+      "ruleset_version": "1.0.0"
+    }
+  },
+  "module_2_financial": {
+    "as_of_date": "2026-01-06",
+    "coverage_stats": {
+      "cash_coverage_pct": 100.0,
+      "debt_coverage_pct": 100.0,
+      "has_any_financial": 5,
+      "has_cash": 5,
+      "has_debt": 5,
+      "has_market_cap": 5,
+      "has_revenue": 5,
+      "market_cap_coverage_pct": 100.0,
+      "revenue_coverage_pct": 100.0,
+      "total_active": 5
+    },
+    "securities": {
+      "ALNY": {
+        "cash_usd": "3200000000",
+        "data_source": "unknown",
+        "debt_usd": "800000000",
+        "financial_fields_present": 4,
+        "health_flags": [
+          "CASH_FORTRESS",
+          "COMMERCIAL_CASH_COW"
+        ],
+        "health_score": "85.0000",
+        "market_cap_usd": "52540000000",
+        "net_cash_usd": "2400000000",
+        "ttm_revenue_usd": "1800000000"
+      },
+      "BMRN": {
+        "cash_usd": "900000000",
+        "data_source": "unknown",
+        "debt_usd": "1500000000",
+        "financial_fields_present": 4,
+        "health_flags": [
+          "NET_DEBT_WARNING",
+          "COMMERCIAL_CASH_COW"
+        ],
+        "health_score": "50.0000",
+        "market_cap_usd": "11420000000",
+        "net_cash_usd": "-600000000",
+        "ttm_revenue_usd": "2100000000"
+      },
+      "REGN": {
+        "cash_usd": "8500000000",
+        "data_source": "unknown",
+        "debt_usd": "1200000000",
+        "financial_fields_present": 4,
+        "health_flags": [
+          "CASH_FORTRESS",
+          "COMMERCIAL_CASH_COW"
+        ],
+        "health_score": "85.0000",
+        "market_cap_usd": "79190000000",
+        "net_cash_usd": "7300000000",
+        "ttm_revenue_usd": "13000000000"
+      },
+      "SRPT": {
+        "cash_usd": "1100000000",
+        "data_source": "unknown",
+        "debt_usd": "300000000",
+        "financial_fields_present": 4,
+        "health_flags": [
+          "COMMERCIAL_CASH_COW"
+        ],
+        "health_score": "65.0000",
+        "market_cap_usd": "2260000000",
+        "net_cash_usd": "800000000",
+        "ttm_revenue_usd": "1200000000"
+      },
+      "VRTX": {
+        "cash_usd": "13000000000",
+        "data_source": "unknown",
+        "debt_usd": "500000000",
+        "financial_fields_present": 4,
+        "health_flags": [
+          "CASH_FORTRESS",
+          "COMMERCIAL_CASH_COW"
+        ],
+        "health_score": "85.0000",
+        "market_cap_usd": "115030000000",
+        "net_cash_usd": "12500000000",
+        "ttm_revenue_usd": "10500000000"
+      }
+    }
+  },
+  "module_3_catalyst": {
+    "as_of_date": "2026-01-06",
+    "diagnostic_counts": {
+      "no_catalyst": 0,
+      "pit_filtered": 0,
+      "total_trials_evaluated": 5,
+      "with_catalyst": 5
+    },
+    "no_catalyst_tickers": [],
+    "provenance": {
+      "inputs_hash": "sha256:3d32bd6177065f310326c01dfb653d135972c4b66cd69d23aae30ae56c94bbac",
+      "pit_cutoff": "2026-01-05",
+      "ruleset_version": "1.0.0"
+    },
+    "scores": [
+      {
+        "catalyst_score": "40.00",
+        "days_to_catalyst": 84,
+        "flags": [],
+        "nearest_catalyst": "NCT05345678",
+        "phase": "phase 3",
+        "severity": "none",
+        "ticker": "ALNY"
+      },
+      {
+        "catalyst_score": "22.50",
+        "days_to_catalyst": 237,
+        "flags": [],
+        "nearest_catalyst": "NCT05456789",
+        "phase": "phase 2",
+        "severity": "none",
+        "ticker": "BMRN"
+      },
+      {
+        "catalyst_score": "35.00",
+        "days_to_catalyst": 175,
+        "flags": [],
+        "nearest_catalyst": "NCT05123456",
+        "phase": "phase 3",
+        "severity": "none",
+        "ticker": "REGN"
+      },
+      {
+        "catalyst_score": "30.00",
+        "days_to_catalyst": 359,
+        "flags": [],
+        "nearest_catalyst": "NCT05567890",
+        "phase": "phase 3",
+        "severity": "none",
+        "ticker": "SRPT"
+      },
+      {
+        "catalyst_score": "22.50",
+        "days_to_catalyst": 267,
+        "flags": [],
+        "nearest_catalyst": "NCT05234567",
+        "phase": "phase 2",
+        "severity": "none",
+        "ticker": "VRTX"
+      }
+    ]
+  },
+  "module_4_clinical_dev": {
+    "as_of_date": "2026-01-06",
+    "diagnostic_counts": {
+      "pit_filtered": 0,
+      "scored": 5,
+      "total_trials": 5
+    },
+    "provenance": {
+      "inputs_hash": "sha256:3d32bd6177065f310326c01dfb653d135972c4b66cd69d23aae30ae56c94bbac",
+      "pit_cutoff": "2026-01-05",
+      "ruleset_version": "1.0.0"
+    },
+    "scores": [
+      {
+        "clinical_score": "64.00",
+        "design_score": "17.00",
+        "endpoint_score": "10.00",
+        "execution_score": "12.00",
+        "flags": [],
+        "lead_phase": "phase 3",
+        "phase_score": "25",
+        "severity": "none",
+        "ticker": "ALNY",
+        "trial_count": 1
+      },
+      {
+        "clinical_score": "61.00",
+        "design_score": "21.00",
+        "endpoint_score": "10.00",
+        "execution_score": "12.00",
+        "flags": [],
+        "lead_phase": "phase 2",
+        "phase_score": "18",
+        "severity": "none",
+        "ticker": "BMRN",
+        "trial_count": 1
+      },
+      {
+        "clinical_score": "68.00",
+        "design_score": "21.00",
+        "endpoint_score": "10.00",
+        "execution_score": "12.00",
+        "flags": [],
+        "lead_phase": "phase 3",
+        "phase_score": "25",
+        "severity": "none",
+        "ticker": "REGN",
+        "trial_count": 1
+      },
+      {
+        "clinical_score": "68.00",
+        "design_score": "21.00",
+        "endpoint_score": "10.00",
+        "execution_score": "12.00",
+        "flags": [],
+        "lead_phase": "phase 3",
+        "phase_score": "25",
+        "severity": "none",
+        "ticker": "SRPT",
+        "trial_count": 1
+      },
+      {
+        "clinical_score": "61.00",
+        "design_score": "21.00",
+        "endpoint_score": "10.00",
+        "execution_score": "12.00",
+        "flags": [],
+        "lead_phase": "phase 2",
+        "phase_score": "18",
+        "severity": "none",
+        "ticker": "VRTX",
+        "trial_count": 1
+      }
+    ]
+  },
+  "module_5_composite": {
+    "as_of_date": "2026-01-06",
+    "cohort_mode": "stage_only",
+    "cohort_stats": {
+      "late": {
+        "count": 3,
+        "max": "49.88",
+        "mean": "46.38",
+        "min": "43.75",
+        "normalization_fallback": "small_stage"
+      },
+      "mid": {
+        "count": 2,
+        "max": "17.94",
+        "mean": "17.94",
+        "min": "17.94",
+        "normalization_fallback": "small_stage"
+      }
+    },
+    "coinvest_coverage": null,
+    "diagnostic_counts": {
+      "cohort_count": 2,
+      "excluded": 0,
+      "rankable": 5,
+      "total_allocated_weight": "0.4000",
+      "total_input": 5,
+      "with_nonzero_weight": 5
+    },
+    "excluded_securities": [],
+    "normalization_method": "rank",
+    "provenance": {
+      "inputs_hash": "sha256:fe2911eb84381c031339a9855c9a61e8a41eb0925c3095a0d3e69a19b207e221",
+      "pit_cutoff": "2026-01-06",
+      "ruleset_version": "1.2.1"
+    },
+    "ranked_securities": [
+      {
+        "_position_weight_raw": null,
+        "catalyst_normalized": "75.00",
+        "catalyst_raw": "35.00",
+        "clinical_dev_normalized": "87.50",
+        "clinical_dev_raw": "68.00",
+        "cohort_key": "late",
+        "coinvest_flags": [],
+        "coinvest_holders": [],
+        "coinvest_overlap_count": 0,
+        "coinvest_published_at_max": null,
+        "coinvest_quarter": null,
+        "coinvest_usable": false,
+        "composite_rank": 1,
+        "composite_score": "49.88",
+        "composite_score_before_defensive": "49.88",
+        "defensive_multiplier": "1.00",
+        "defensive_notes": [],
+        "financial_normalized": "50.00",
+        "financial_raw": null,
+        "flags": [
+          "uncertainty_penalty_applied"
+        ],
+        "market_cap_bucket": "unknown",
+        "missing_subfactor_pct": "0.33",
+        "normalization_applied": "stage_global",
+        "position_weight": "0.0800",
+        "rankable": true,
+        "severity": "none",
+        "stage_bucket": "late",
+        "ticker": "REGN",
+        "uncertainty_penalty": "0.30"
+      },
+      {
+        "_position_weight_raw": null,
+        "catalyst_normalized": "50.00",
+        "catalyst_raw": "30.00",
+        "clinical_dev_normalized": "87.50",
+        "clinical_dev_raw": "68.00",
+        "cohort_key": "late",
+        "coinvest_flags": [],
+        "coinvest_holders": [],
+        "coinvest_overlap_count": 0,
+        "coinvest_published_at_max": null,
+        "coinvest_quarter": null,
+        "coinvest_usable": false,
+        "composite_rank": 2,
+        "composite_score": "45.50",
+        "composite_score_before_defensive": "45.50",
+        "defensive_multiplier": "1.00",
+        "defensive_notes": [],
+        "financial_normalized": "50.00",
+        "financial_raw": null,
+        "flags": [
+          "uncertainty_penalty_applied"
+        ],
+        "market_cap_bucket": "unknown",
+        "missing_subfactor_pct": "0.33",
+        "normalization_applied": "stage_global",
+        "position_weight": "0.0800",
+        "rankable": true,
+        "severity": "none",
+        "stage_bucket": "late",
+        "ticker": "SRPT",
+        "uncertainty_penalty": "0.30"
+      },
+      {
+        "_position_weight_raw": null,
+        "catalyst_normalized": "100.00",
+        "catalyst_raw": "40.00",
+        "clinical_dev_normalized": "50.00",
+        "clinical_dev_raw": "64.00",
+        "cohort_key": "late",
+        "coinvest_flags": [],
+        "coinvest_holders": [],
+        "coinvest_overlap_count": 0,
+        "coinvest_published_at_max": null,
+        "coinvest_quarter": null,
+        "coinvest_usable": false,
+        "composite_rank": 3,
+        "composite_score": "43.75",
+        "composite_score_before_defensive": "43.75",
+        "defensive_multiplier": "1.00",
+        "defensive_notes": [],
+        "financial_normalized": "50.00",
+        "financial_raw": null,
+        "flags": [
+          "uncertainty_penalty_applied"
+        ],
+        "market_cap_bucket": "unknown",
+        "missing_subfactor_pct": "0.33",
+        "normalization_applied": "stage_global",
+        "position_weight": "0.0800",
+        "rankable": true,
+        "severity": "none",
+        "stage_bucket": "late",
+        "ticker": "ALNY",
+        "uncertainty_penalty": "0.30"
+      },
+      {
+        "_position_weight_raw": null,
+        "catalyst_normalized": "12.50",
+        "catalyst_raw": "22.50",
+        "clinical_dev_normalized": "12.50",
+        "clinical_dev_raw": "61.00",
+        "cohort_key": "mid",
+        "coinvest_flags": [],
+        "coinvest_holders": [],
+        "coinvest_overlap_count": 0,
+        "coinvest_published_at_max": null,
+        "coinvest_quarter": null,
+        "coinvest_usable": false,
+        "composite_rank": 4,
+        "composite_score": "17.94",
+        "composite_score_before_defensive": "17.94",
+        "defensive_multiplier": "1.00",
+        "defensive_notes": [],
+        "financial_normalized": "50.00",
+        "financial_raw": null,
+        "flags": [
+          "uncertainty_penalty_applied"
+        ],
+        "market_cap_bucket": "unknown",
+        "missing_subfactor_pct": "0.33",
+        "normalization_applied": "stage_global",
+        "position_weight": "0.0800",
+        "rankable": true,
+        "severity": "none",
+        "stage_bucket": "mid",
+        "ticker": "BMRN",
+        "uncertainty_penalty": "0.30"
+      },
+      {
+        "_position_weight_raw": null,
+        "catalyst_normalized": "12.50",
+        "catalyst_raw": "22.50",
+        "clinical_dev_normalized": "12.50",
+        "clinical_dev_raw": "61.00",
+        "cohort_key": "mid",
+        "coinvest_flags": [],
+        "coinvest_holders": [],
+        "coinvest_overlap_count": 0,
+        "coinvest_published_at_max": null,
+        "coinvest_quarter": null,
+        "coinvest_usable": false,
+        "composite_rank": 5,
+        "composite_score": "17.94",
+        "composite_score_before_defensive": "17.94",
+        "defensive_multiplier": "1.00",
+        "defensive_notes": [],
+        "financial_normalized": "50.00",
+        "financial_raw": null,
+        "flags": [
+          "uncertainty_penalty_applied"
+        ],
+        "market_cap_bucket": "unknown",
+        "missing_subfactor_pct": "0.33",
+        "normalization_applied": "stage_global",
+        "position_weight": "0.0800",
+        "rankable": true,
+        "severity": "none",
+        "stage_bucket": "mid",
+        "ticker": "VRTX",
+        "uncertainty_penalty": "0.30"
+      }
+    ],
+    "weights_used": {
+      "catalyst": "0.25",
+      "clinical_dev": "0.40",
+      "financial": "0.35"
+    }
+  },
+  "pipeline_version": "1.0.0",
+  "run_timestamp": "2026-01-06T00:00:00Z",
+  "summary": {
+    "active_universe": 5,
+    "excluded": 0,
+    "final_ranked": 5,
+    "total_evaluated": 5
+  }
+}

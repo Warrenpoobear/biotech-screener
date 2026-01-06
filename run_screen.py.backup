@@ -188,9 +188,8 @@ def run_screening_pipeline(
         active_tickers=active_tickers,
         as_of_date=as_of_date,  # Explicit threading
     )
-    diag = m2_result.get('diagnostic_counts', {})
-    print(f"  Scored: {diag.get('scored', len(m2_result.get('scores', [])))}, "
-          f"Missing: {diag.get('missing', 'N/A')}")
+    print(f"  Scored: {m2_result['diagnostic_counts']['scored']}, "
+          f"Missing: {m2_result['diagnostic_counts']['missing']}")
     
     # Module 3: Catalyst analysis
     print("\n[4/6] Module 3: Catalyst analysis...")
@@ -199,9 +198,8 @@ def run_screening_pipeline(
         active_tickers=active_tickers,
         as_of_date=as_of_date,  # Explicit threading
     )
-    diag = m3_result.get('diagnostic_counts', {})
-    print(f"  With catalyst: {diag.get('with_catalyst', 'N/A')}, "
-          f"No catalyst: {diag.get('no_catalyst', 'N/A')}")
+    print(f"  With catalyst: {m3_result['diagnostic_counts']['with_catalyst']}, "
+          f"No catalyst: {m3_result['diagnostic_counts']['no_catalyst']}")
     
     # Module 4: Clinical development
     print("\n[5/6] Module 4: Clinical development...")
@@ -210,10 +208,9 @@ def run_screening_pipeline(
         active_tickers=active_tickers,
         as_of_date=as_of_date,  # Explicit threading
     )
-    diag = m4_result.get('diagnostic_counts', {})
-    print(f"  Scored: {diag.get('scored', len(m4_result.get('scores', [])))}, "
-          f"Trials evaluated: {diag.get('total_trials', 'N/A')}, "
-          f"PIT filtered: {diag.get('pit_filtered', 'N/A')}")
+    print(f"  Scored: {m4_result['diagnostic_counts']['scored']}, "
+          f"Trials evaluated: {m4_result['diagnostic_counts']['total_trials']}, "
+          f"PIT filtered: {m4_result['diagnostic_counts']['pit_filtered']}")
     
     # Module 5: Composite ranking
     print("\n[6/6] Module 5: Composite ranking...")
@@ -228,9 +225,8 @@ def run_screening_pipeline(
         coinvest_signals=coinvest_signals,
         validate=True,
     )
-    diag = m5_result.get('diagnostic_counts', {})
-    print(f"  Rankable: {diag.get('rankable', len(m5_result.get('ranked_securities', [])))}, "
-          f"Excluded: {diag.get('excluded', len(m5_result.get('excluded_securities', [])))}")
+    print(f"  Rankable: {m5_result['diagnostic_counts']['rankable']}, "
+          f"Excluded: {m5_result['diagnostic_counts']['excluded']}")
     
     if enable_coinvest and m5_result.get("coinvest_coverage"):
         cov = m5_result["coinvest_coverage"]
@@ -250,10 +246,10 @@ def run_screening_pipeline(
         "module_4_clinical_dev": m4_result,
         "module_5_composite": m5_result,
         "summary": {
-            "total_evaluated": m1_result.get("diagnostic_counts", {}).get("total_input", len(active_tickers)),
+            "total_evaluated": m1_result["diagnostic_counts"]["total_input"],
             "active_universe": len(active_tickers),
-            "excluded": m1_result.get("diagnostic_counts", {}).get("excluded", 0),
-            "final_ranked": m5_result.get("diagnostic_counts", {}).get("rankable", len(m5_result.get("ranked_securities", []))),
+            "excluded": m1_result["diagnostic_counts"]["excluded"],
+            "final_ranked": m5_result["diagnostic_counts"]["rankable"],
         },
     }
     
