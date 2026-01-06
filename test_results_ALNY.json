@@ -1,0 +1,9 @@
+{
+  "ticker": "ALNY",
+  "timestamp": "2026-01-06T16:38:42.677261",
+  "tests": {
+    "yahoo_finance": true,
+    "clinicaltrials": true,
+    "sec_edgar": true
+  }
+}

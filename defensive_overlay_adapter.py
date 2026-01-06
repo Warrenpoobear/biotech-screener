@@ -104,8 +104,8 @@ def defensive_multiplier(defensive_features: Dict[str, str]) -> Tuple[Decimal, L
         # Requires: corr < 0.30 AND vol < 0.40 AND real correlation data
         elif corr < Decimal("0.30"):
             if vol and vol < Decimal("0.40"):
-                m *= Decimal("1.20")  # Bigger bonus (was 1.10)
-                notes.append("def_mult_elite_1.20")
+                m *= Decimal("1.40")  # Maximum bonus to overcome normalization
+                notes.append("def_mult_elite_1.40")
             else:
                 notes.append("def_skip_not_elite_vol")
         
@@ -129,21 +129,22 @@ def defensive_multiplier(defensive_features: Dict[str, str]) -> Tuple[Decimal, L
     return m, notes
 
 
-def raw_inv_vol_weight(defensive_features: Dict[str, str], power: Decimal = Decimal("1.5")) -> Optional[Decimal]:
+def raw_inv_vol_weight(defensive_features: Dict[str, str], power: Decimal = Decimal("2.0")) -> Optional[Decimal]:
     """
     Calculate raw inverse-volatility weight with exponential scaling.
     
-    ENHANCED: Uses vol^1.5 (default) instead of vol^1.0 for more differentiation.
-    This creates more spread between low-vol and high-vol stocks.
+    ENHANCED: Uses vol^2.0 (default) for maximum differentiation.
+    This creates very strong spread between low-vol and high-vol stocks.
     
-    Examples:
-    - 20% vol: 1/(0.20^1.5) = 11.2  (large weight)
-    - 40% vol: 1/(0.40^1.5) = 3.95  (medium weight)
-    - 100% vol: 1/(1.00^1.5) = 1.0  (small weight)
-    - 200% vol: 1/(2.00^1.5) = 0.35 (tiny weight)
+    Examples (vol^2.0):
+    - 20% vol: 1/(0.20^2.0) = 25.0  (very large weight)
+    - 25% vol: 1/(0.25^2.0) = 16.0  (large weight)
+    - 40% vol: 1/(0.40^2.0) = 6.25  (medium weight)
+    - 100% vol: 1/(1.00^2.0) = 1.0  (small weight)
+    - 200% vol: 1/(2.00^2.0) = 0.25 (tiny weight)
     
     Args:
-        power: Exponent for volatility (1.5 = more aggressive, 1.0 = linear)
+        power: Exponent for volatility (2.0 = maximum, 1.8 = aggressive, 1.5 = moderate)
     """
     vol_s = defensive_features.get("vol_60d")
     if not vol_s:
@@ -183,19 +184,52 @@ def calculate_dynamic_floor(n_securities: int) -> Decimal:
 def apply_caps_and_renormalize(
     records: List[Dict],
     cash_target: Decimal = Decimal("0.10"),
-    max_pos: Decimal = Decimal("0.08"),
-    min_pos: Optional[Decimal] = None,  # Now optional - will be calculated dynamically
+    max_pos: Decimal = Decimal("0.07"),  # 7% max
+    min_pos: Optional[Decimal] = None,  # Dynamic - calculated based on universe
+    top_n: Optional[int] = None,  # NEW: If set, only invest in top N includable names
 ) -> None:
     """
     Apply position caps and renormalize weights.
     Mutates records in-place, setting record["position_weight"].
     
-    IMPROVED: Automatically calculates appropriate floor based on universe size.
+    ENHANCED: 
+    - Automatically calculates appropriate floor based on universe size
+    - Max position reduced to 7% for better risk management at scale
+    - NEW: Top-N selection for conviction-based portfolios
+    
+    Args:
+        top_n: If provided, only size the top N includable names post-ranking.
+               All others get zero weight and "NOT_IN_TOP_N" flag.
+               This increases max weights naturally without changing math.
+               Recommended: 60 for balanced, 40 for high conviction.
     """
     investable = Decimal("1.0") - cash_target
 
-    # Only include rankable securities
-    included = [r for r in records if r.get("rankable", True)]
+    # Get all potentially includable securities (before top-N cut)
+    included_all = [r for r in records if r.get("rankable", True)]
+    
+    # Apply top-N selection if specified
+    if top_n is not None and len(included_all) > top_n:
+        # Records should already be sorted by composite_rank
+        # (or if not, sort them now by rank ascending)
+        included_all_sorted = sorted(included_all, key=lambda x: x.get("composite_rank", 999))
+        
+        # Select top N
+        included = included_all_sorted[:top_n]
+        excluded_by_topn = included_all_sorted[top_n:]
+        
+        # Mark excluded securities
+        for r in excluded_by_topn:
+            r["rankable"] = False  # Mark as non-rankable
+            position_flags = r.get("position_flags", [])
+            if isinstance(position_flags, list):
+                position_flags.append("NOT_IN_TOP_N")
+            else:
+                position_flags = ["NOT_IN_TOP_N"]
+            r["position_flags"] = position_flags
+            r["position_weight"] = "0.0000"
+    else:
+        included = included_all
     
     # Excluded get zero weight
     for r in records:
@@ -247,6 +281,7 @@ def enrich_with_defensive_overlays(
     scores_by_ticker: Dict[str, Dict],
     apply_multiplier: bool = True,
     apply_position_sizing: bool = True,
+    top_n: Optional[int] = None,  # NEW: Top-N selection for conviction portfolios
 ) -> Dict:
     """
     Enrich Module 5 output with defensive overlays.
@@ -255,12 +290,14 @@ def enrich_with_defensive_overlays(
     1. Applies defensive multiplier to existing composite scores
     2. Calculates position weights using inverse-volatility
     3. Adds defensive_notes and position_weight fields to each security
+    4. NEW: Optionally applies top-N selection for conviction portfolios
     
     Args:
         output: Output dict from rank_securities()
         scores_by_ticker: Dict with defensive_features per ticker
         apply_multiplier: If True, apply correlation-based score multiplier
         apply_position_sizing: If True, calculate position weights
+        top_n: If provided, only invest in top N names (e.g., 60 for balanced, 40 for conviction)
     
     Returns:
         Modified output dict (mutated in-place, also returned for convenience)
@@ -304,9 +341,9 @@ def enrich_with_defensive_overlays(
         for i, rec in enumerate(ranked):
             rec["composite_rank"] = i + 1
     
-    # Step 3: Apply position sizing with dynamic floor
+    # Step 3: Apply position sizing with dynamic floor and optional top-N selection
     if apply_position_sizing:
-        apply_caps_and_renormalize(ranked)  # min_pos now calculated automatically
+        apply_caps_and_renormalize(ranked, top_n=top_n)  # Pass top_n parameter
         
         # Add position sizing diagnostics
         total_weight = sum(Decimal(r["position_weight"]) for r in ranked)
@@ -317,6 +354,12 @@ def enrich_with_defensive_overlays(
         
         output["diagnostic_counts"]["with_nonzero_weight"] = nonzero
         output["diagnostic_counts"]["total_allocated_weight"] = str(total_weight.quantize(Decimal("0.0001")))
+        
+        # Add top-N diagnostic if applied
+        if top_n is not None:
+            output["diagnostic_counts"]["top_n_cutoff"] = top_n
+            excluded_by_topn = sum(1 for r in ranked if "NOT_IN_TOP_N" in r.get("position_flags", []))
+            output["diagnostic_counts"]["excluded_by_top_n"] = excluded_by_topn
 
     # Convert any remaining Decimal objects to strings for JSON serialization
     for rec in ranked:

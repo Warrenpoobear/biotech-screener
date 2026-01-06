@@ -4780,7 +4780,7 @@
     "excluded_securities": [],
     "normalization_method": "rank",
     "provenance": {
-      "inputs_hash": "sha256:98b9e7a85a81f6e7cd0f62f5f6a10dc8bf7a5ae722e9d695dc36ee1fa40addf7",
+      "inputs_hash": "sha256:03a47251525a27cdc4d1df9889813dd37f9f922393362f6f67659faf9c5039bc",
       "pit_cutoff": "2026-01-06",
       "ruleset_version": "1.2.1"
     },
@@ -4798,11 +4798,11 @@
         "coinvest_quarter": null,
         "coinvest_usable": false,
         "composite_rank": 1,
-        "composite_score": "44.10",
+        "composite_score": "40.95",
         "composite_score_before_defensive": "31.50",
-        "defensive_multiplier": "1.4000",
+        "defensive_multiplier": "1.3000",
         "defensive_notes": [
-          "def_mult_elite_1.40"
+          "def_mult_elite_1.30"
         ],
         "financial_normalized": "50.00",
         "financial_raw": null,
@@ -4836,11 +4836,11 @@
         "coinvest_quarter": null,
         "coinvest_usable": false,
         "composite_rank": 2,
-        "composite_score": "44.10",
+        "composite_score": "40.95",
         "composite_score_before_defensive": "31.50",
-        "defensive_multiplier": "1.4000",
+        "defensive_multiplier": "1.3000",
         "defensive_notes": [
-          "def_mult_elite_1.40"
+          "def_mult_elite_1.30"
         ],
         "financial_normalized": "50.00",
         "financial_raw": null,
@@ -4874,11 +4874,11 @@
         "coinvest_quarter": null,
         "coinvest_usable": false,
         "composite_rank": 3,
-        "composite_score": "44.10",
+        "composite_score": "40.95",
         "composite_score_before_defensive": "31.50",
-        "defensive_multiplier": "1.4000",
+        "defensive_multiplier": "1.3000",
         "defensive_notes": [
-          "def_mult_elite_1.40"
+          "def_mult_elite_1.30"
         ],
         "financial_normalized": "50.00",
         "financial_raw": null,
@@ -4912,11 +4912,11 @@
         "coinvest_quarter": null,
         "coinvest_usable": false,
         "composite_rank": 4,
-        "composite_score": "44.10",
+        "composite_score": "40.95",
         "composite_score_before_defensive": "31.50",
-        "defensive_multiplier": "1.4000",
+        "defensive_multiplier": "1.3000",
         "defensive_notes": [
-          "def_mult_elite_1.40"
+          "def_mult_elite_1.30"
         ],
         "financial_normalized": "50.00",
         "financial_raw": null,
@@ -4950,11 +4950,11 @@
         "coinvest_quarter": null,
         "coinvest_usable": false,
         "composite_rank": 5,
-        "composite_score": "44.10",
+        "composite_score": "40.95",
         "composite_score_before_defensive": "31.50",
-        "defensive_multiplier": "1.4000",
+        "defensive_multiplier": "1.3000",
         "defensive_notes": [
-          "def_mult_elite_1.40"
+          "def_mult_elite_1.30"
         ],
         "financial_normalized": "50.00",
         "financial_raw": null,
@@ -4988,11 +4988,11 @@
         "coinvest_quarter": null,
         "coinvest_usable": false,
         "composite_rank": 6,
-        "composite_score": "44.10",
+        "composite_score": "40.95",
         "composite_score_before_defensive": "31.50",
-        "defensive_multiplier": "1.4000",
+        "defensive_multiplier": "1.3000",
         "defensive_notes": [
-          "def_mult_elite_1.40"
+          "def_mult_elite_1.30"
         ],
         "financial_normalized": "50.00",
         "financial_raw": null,
@@ -5026,11 +5026,11 @@
         "coinvest_quarter": null,
         "coinvest_usable": false,
         "composite_rank": 7,
-        "composite_score": "44.10",
+        "composite_score": "40.95",
         "composite_score_before_defensive": "31.50",
-        "defensive_multiplier": "1.4000",
+        "defensive_multiplier": "1.3000",
         "defensive_notes": [
-          "def_mult_elite_1.40"
+          "def_mult_elite_1.30"
         ],
         "financial_normalized": "50.00",
         "financial_raw": null,
@@ -5064,11 +5064,11 @@
         "coinvest_quarter": null,
         "coinvest_usable": false,
         "composite_rank": 8,
-        "composite_score": "44.10",
+        "composite_score": "40.95",
         "composite_score_before_defensive": "31.50",
-        "defensive_multiplier": "1.4000",
+        "defensive_multiplier": "1.3000",
         "defensive_notes": [
-          "def_mult_elite_1.40"
+          "def_mult_elite_1.30"
         ],
         "financial_normalized": "50.00",
         "financial_raw": null,
@@ -5090,41 +5090,6 @@
         "uncertainty_penalty": "0.30"
       },
       {
-        "catalyst_normalized": "40.00",
-        "catalyst_raw": "40.00",
-        "clinical_dev_normalized": "64.00",
-        "clinical_dev_raw": "64.00",
-        "cohort_key": "late",
-        "coinvest_flags": [],
-        "coinvest_holders": [],
-        "coinvest_overlap_count": 0,
-        "coinvest_published_at_max": null,
-        "coinvest_quarter": null,
-        "coinvest_usable": false,
-        "composite_rank": 9,
-        "composite_score": "34.89",
-        "composite_score_before_defensive": "24.92",
-        "defensive_multiplier": "1.4000",
-        "defensive_notes": [
-          "def_mult_elite_1.40"
-        ],
-        "financial_normalized": "0",
-        "financial_raw": null,
-        "flags": [
-          "cohort_too_small_no_normalization",
-          "uncertainty_penalty_applied"
-        ],
-        "market_cap_bucket": "unknown",
-        "missing_subfactor_pct": "0.33",
-        "normalization_applied": "none",
-        "position_weight": "0.0147",
-        "rankable": true,
-        "severity": "none",
-        "stage_bucket": "late",
-        "ticker": "ALNY",
-        "uncertainty_penalty": "0.30"
-      },
-      {
         "catalyst_normalized": "50.00",
         "catalyst_raw": null,
         "clinical_dev_normalized": "50.00",
@@ -5136,7 +5101,7 @@
         "coinvest_published_at_max": null,
         "coinvest_quarter": null,
         "coinvest_usable": false,
-        "composite_rank": 10,
+        "composite_rank": 9,
         "composite_score": "34.65",
         "composite_score_before_defensive": "31.50",
         "defensive_multiplier": "1.1000",
@@ -5174,7 +5139,7 @@
         "coinvest_published_at_max": null,
         "coinvest_quarter": null,
         "coinvest_usable": false,
-        "composite_rank": 11,
+        "composite_rank": 10,
         "composite_score": "34.65",
         "composite_score_before_defensive": "31.50",
         "defensive_multiplier": "1.1000",
@@ -5212,7 +5177,7 @@
         "coinvest_published_at_max": null,
         "coinvest_quarter": null,
         "coinvest_usable": false,
-        "composite_rank": 12,
+        "composite_rank": 11,
         "composite_score": "34.65",
         "composite_score_before_defensive": "31.50",
         "defensive_multiplier": "1.1000",
@@ -5251,7 +5216,7 @@
         "coinvest_published_at_max": null,
         "coinvest_quarter": null,
         "coinvest_usable": false,
-        "composite_rank": 13,
+        "composite_rank": 12,
         "composite_score": "34.65",
         "composite_score_before_defensive": "31.50",
         "defensive_multiplier": "1.1000",
@@ -5289,7 +5254,7 @@
         "coinvest_published_at_max": null,
         "coinvest_quarter": null,
         "coinvest_usable": false,
-        "composite_rank": 14,
+        "composite_rank": 13,
         "composite_score": "34.65",
         "composite_score_before_defensive": "31.50",
         "defensive_multiplier": "1.1000",
@@ -5328,7 +5293,7 @@
         "coinvest_published_at_max": null,
         "coinvest_quarter": null,
         "coinvest_usable": false,
-        "composite_rank": 15,
+        "composite_rank": 14,
         "composite_score": "34.65",
         "composite_score_before_defensive": "31.50",
         "defensive_multiplier": "1.1000",
@@ -5366,7 +5331,7 @@
         "coinvest_published_at_max": null,
         "coinvest_quarter": null,
         "coinvest_usable": false,
-        "composite_rank": 16,
+        "composite_rank": 15,
         "composite_score": "34.65",
         "composite_score_before_defensive": "31.50",
         "defensive_multiplier": "1.1000",
@@ -5404,7 +5369,7 @@
         "coinvest_published_at_max": null,
         "coinvest_quarter": null,
         "coinvest_usable": false,
-        "composite_rank": 17,
+        "composite_rank": 16,
         "composite_score": "34.65",
         "composite_score_before_defensive": "31.50",
         "defensive_multiplier": "1.1000",
@@ -5428,6 +5393,41 @@
         "severity": "sev1",
         "stage_bucket": "early",
         "ticker": "UTHR",
+        "uncertainty_penalty": "0.30"
+      },
+      {
+        "catalyst_normalized": "40.00",
+        "catalyst_raw": "40.00",
+        "clinical_dev_normalized": "64.00",
+        "clinical_dev_raw": "64.00",
+        "cohort_key": "late",
+        "coinvest_flags": [],
+        "coinvest_holders": [],
+        "coinvest_overlap_count": 0,
+        "coinvest_published_at_max": null,
+        "coinvest_quarter": null,
+        "coinvest_usable": false,
+        "composite_rank": 17,
+        "composite_score": "32.40",
+        "composite_score_before_defensive": "24.92",
+        "defensive_multiplier": "1.3000",
+        "defensive_notes": [
+          "def_mult_elite_1.30"
+        ],
+        "financial_normalized": "0",
+        "financial_raw": null,
+        "flags": [
+          "cohort_too_small_no_normalization",
+          "uncertainty_penalty_applied"
+        ],
+        "market_cap_bucket": "unknown",
+        "missing_subfactor_pct": "0.33",
+        "normalization_applied": "none",
+        "position_weight": "0.0147",
+        "rankable": true,
+        "severity": "none",
+        "stage_bucket": "late",
+        "ticker": "ALNY",
         "uncertainty_penalty": "0.30"
       },
       {
@@ -8405,11 +8405,11 @@
         "coinvest_quarter": null,
         "coinvest_usable": false,
         "composite_rank": 96,
-        "composite_score": "29.43",
+        "composite_score": "27.33",
         "composite_score_before_defensive": "21.02",
-        "defensive_multiplier": "1.4000",
+        "defensive_multiplier": "1.3000",
         "defensive_notes": [
-          "def_mult_elite_1.40"
+          "def_mult_elite_1.30"
         ],
         "financial_normalized": "0",
         "financial_raw": null,

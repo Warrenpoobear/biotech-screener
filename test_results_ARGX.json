@@ -1,0 +1,9 @@
+{
+  "ticker": "ARGX",
+  "timestamp": "2026-01-06T16:38:33.416554",
+  "tests": {
+    "yahoo_finance": true,
+    "clinicaltrials": true,
+    "sec_edgar": true
+  }
+}
