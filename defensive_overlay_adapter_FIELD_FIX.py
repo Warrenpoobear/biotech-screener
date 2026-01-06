@@ -1,14 +1,20 @@
 """
-defensive_overlay_adapter.py - PROPERLY FIXED VERSION
+defensive_overlay_adapter.py - FIXED VERSION
 
-Key fixes:
-1. Corrected field names (corr_xbi, drawdown_60d)
-2. DYNAMIC position floor that scales with universe size
-3. More aggressive inverse-volatility weighting
+Drop-in adapter for adding defensive overlays to existing Module 5.
+Minimal changes to your module_5_composite.py code.
 
-For 44 stocks: min=1.0%, works well
-For 100 stocks: min=0.5%, allows proper differentiation
-For 200 stocks: min=0.3%, maximum diversification
+FIXES:
+- Corrected field name: corr_xbi_120d → corr_xbi
+- Corrected field name: drawdown_current → drawdown_60d
+- Added fallback for both field names for compatibility
+
+Usage in module_5_composite.py:
+    from defensive_overlay_adapter import enrich_with_defensive_overlays
+    
+    # After your existing rank_securities() returns the output:
+    output = rank_securities(...)
+    enrich_with_defensive_overlays(output, scores_by_ticker)
 """
 
 from decimal import Decimal, ROUND_HALF_UP
@@ -20,104 +26,31 @@ def _q(x: Decimal) -> Decimal:
     """Quantize weight to 4 decimal places."""
     return x.quantize(WQ, rounding=ROUND_HALF_UP)
 
-def sanitize_corr(defensive_features: Dict[str, str]) -> Tuple[Optional[Decimal], List[str]]:
-    """
-    Sanitize correlation data, treating placeholders and invalid values as missing.
-    
-    Returns: (correlation_value or None, list_of_flags)
-    
-    Common issues:
-    - Placeholder 0.50 when correlation calculation failed
-    - Missing field entirely
-    - NaN or Infinity values
-    - Out of valid range [-1, 1]
-    """
-    flags: List[str] = []
-    PLACEHOLDER_CORR = Decimal("0.50")
-    
-    # Try both field names
-    corr_s = defensive_features.get("corr_xbi") or defensive_features.get("corr_xbi_120d")
-    
-    if not corr_s:
-        flags.append("def_corr_missing")
-        return None, flags
-    
-    try:
-        corr = Decimal(str(corr_s))
-    except Exception:
-        flags.append("def_corr_parse_fail")
-        return None, flags
-    
-    # CRITICAL: Check if Decimal is NaN or Inf BEFORE doing comparisons
-    # This prevents InvalidOperation errors
-    if not corr.is_finite():
-        flags.append("def_corr_not_finite")
-        return None, flags
-    
-    # Treat placeholder as missing
-    if corr == PLACEHOLDER_CORR:
-        flags.append("def_corr_placeholder_0.50")
-        return None, flags
-    
-    # Validate range (safe now that we know it's finite)
-    if corr < Decimal("-1") or corr > Decimal("1"):
-        flags.append("def_corr_out_of_range")
-        return None, flags
-    
-    return corr, flags
-
-
 def defensive_multiplier(defensive_features: Dict[str, str]) -> Tuple[Decimal, List[str]]:
     """
-    Calculate defensive multiplier (0.95-1.20 range).
-    Rewards only ELITE diversifiers with verified correlation data.
-    
-    ENHANCED: 
-    - Handles correlation placeholders (treats 0.50 as missing)
-    - Bigger bonus (1.20x) for truly elite diversifiers
-    - Only awards bonus when correlation is verified real
+    Calculate defensive multiplier (0.95-1.05 range).
+    Small multiplicative adjustment for correlation-based diversification.
     """
     m = Decimal("1.00")
     notes: List[str] = []
 
-    # Get volatility first (needed for correlation logic)
-    vol_s = defensive_features.get("vol_60d")
-    vol = None
-    if vol_s:
+    # Correlation multiplier (reward diversification)
+    # FIXED: Try both field names for compatibility
+    corr_s = defensive_features.get("corr_xbi") or defensive_features.get("corr_xbi_120d")
+    if corr_s:
         try:
-            vol = Decimal(vol_s)
+            corr = Decimal(corr_s)
+            if corr > Decimal("0.80"):
+                m *= Decimal("0.95")
+                notes.append("def_mult_high_corr_0.95")
+            elif corr < Decimal("0.40"):
+                m *= Decimal("1.05")
+                notes.append("def_mult_low_corr_1.05")
         except:
             pass
 
-    # Sanitize correlation (handle placeholders)
-    corr, corr_flags = sanitize_corr(defensive_features or {})
-    notes.extend(corr_flags)
-    
-    # Correlation multiplier (only if correlation is real)
-    if corr is not None:
-        # High correlation penalty (always applies)
-        if corr > Decimal("0.80"):
-            m *= Decimal("0.95")
-            notes.append("def_mult_high_corr_0.95")
-        
-        # Elite diversifier bonus (VERY selective)
-        # Requires: corr < 0.30 AND vol < 0.40 AND real correlation data
-        elif corr < Decimal("0.30"):
-            if vol and vol < Decimal("0.40"):
-                m *= Decimal("1.20")  # Bigger bonus (was 1.10)
-                notes.append("def_mult_elite_1.20")
-            else:
-                notes.append("def_skip_not_elite_vol")
-        
-        # Good diversifier bonus (less selective)
-        elif corr < Decimal("0.40"):
-            if vol and vol < Decimal("0.50"):
-                m *= Decimal("1.10")
-                notes.append("def_mult_good_diversifier_1.10")
-            else:
-                notes.append("def_skip_vol_too_high")
-
     # Drawdown warning
+    # FIXED: Try both field names for compatibility
     dd_s = defensive_features.get("drawdown_60d") or defensive_features.get("drawdown_current")
     if dd_s:
         try:
@@ -129,22 +62,8 @@ def defensive_multiplier(defensive_features: Dict[str, str]) -> Tuple[Decimal, L
     return m, notes
 
 
-def raw_inv_vol_weight(defensive_features: Dict[str, str], power: Decimal = Decimal("1.5")) -> Optional[Decimal]:
-    """
-    Calculate raw inverse-volatility weight with exponential scaling.
-    
-    ENHANCED: Uses vol^1.5 (default) instead of vol^1.0 for more differentiation.
-    This creates more spread between low-vol and high-vol stocks.
-    
-    Examples:
-    - 20% vol: 1/(0.20^1.5) = 11.2  (large weight)
-    - 40% vol: 1/(0.40^1.5) = 3.95  (medium weight)
-    - 100% vol: 1/(1.00^1.5) = 1.0  (small weight)
-    - 200% vol: 1/(2.00^1.5) = 0.35 (tiny weight)
-    
-    Args:
-        power: Exponent for volatility (1.5 = more aggressive, 1.0 = linear)
-    """
+def raw_inv_vol_weight(defensive_features: Dict[str, str]) -> Optional[Decimal]:
+    """Calculate raw inverse-volatility weight."""
     vol_s = defensive_features.get("vol_60d")
     if not vol_s:
         return None
@@ -152,45 +71,20 @@ def raw_inv_vol_weight(defensive_features: Dict[str, str], power: Decimal = Deci
         vol = Decimal(vol_s)
         if vol <= 0:
             return None
-        return Decimal("1") / (vol ** power)
+        return Decimal("1") / vol
     except:
         return None
-
-
-def calculate_dynamic_floor(n_securities: int) -> Decimal:
-    """
-    Calculate dynamic position floor based on universe size.
-    
-    Logic:
-    - 20-50 stocks: 1.0% floor (traditional focused portfolio)
-    - 51-100 stocks: 0.5% floor (allows proper differentiation)
-    - 101-200 stocks: 0.3% floor (maximum diversification)
-    - 201+ stocks: 0.2% floor (ultra-diversified)
-    
-    This ensures the floor is always well below the average weight,
-    allowing inverse-volatility weighting to work properly.
-    """
-    if n_securities <= 50:
-        return Decimal("0.01")  # 1.0%
-    elif n_securities <= 100:
-        return Decimal("0.005")  # 0.5%
-    elif n_securities <= 200:
-        return Decimal("0.003")  # 0.3%
-    else:
-        return Decimal("0.002")  # 0.2%
 
 
 def apply_caps_and_renormalize(
     records: List[Dict],
     cash_target: Decimal = Decimal("0.10"),
     max_pos: Decimal = Decimal("0.08"),
-    min_pos: Optional[Decimal] = None,  # Now optional - will be calculated dynamically
+    min_pos: Decimal = Decimal("0.01"),
 ) -> None:
     """
     Apply position caps and renormalize weights.
     Mutates records in-place, setting record["position_weight"].
-    
-    IMPROVED: Automatically calculates appropriate floor based on universe size.
     """
     investable = Decimal("1.0") - cash_target
 
@@ -204,10 +98,6 @@ def apply_caps_and_renormalize(
 
     if not included:
         return
-
-    # Calculate dynamic floor if not provided
-    if min_pos is None:
-        min_pos = calculate_dynamic_floor(len(included))
 
     # Collect raw weights
     raw = []
@@ -264,6 +154,10 @@ def enrich_with_defensive_overlays(
     
     Returns:
         Modified output dict (mutated in-place, also returned for convenience)
+    
+    Usage:
+        output = rank_securities(scores_by_ticker, ...)
+        enrich_with_defensive_overlays(output, scores_by_ticker)
     """
     ranked = output.get("ranked_securities", [])
     
@@ -304,9 +198,9 @@ def enrich_with_defensive_overlays(
         for i, rec in enumerate(ranked):
             rec["composite_rank"] = i + 1
     
-    # Step 3: Apply position sizing with dynamic floor
+    # Step 3: Apply position sizing
     if apply_position_sizing:
-        apply_caps_and_renormalize(ranked)  # min_pos now calculated automatically
+        apply_caps_and_renormalize(ranked)
         
         # Add position sizing diagnostics
         total_weight = sum(Decimal(r["position_weight"]) for r in ranked)
@@ -371,12 +265,6 @@ def validate_defensive_integration(output: Dict) -> None:
         print(f"  • Max weight: {max(weights):.4f} ({max(weights)*100:.2f}%)")
         print(f"  • Min weight: {min(weights):.4f} ({min(weights)*100:.2f}%)")
         print(f"  • Avg weight: {sum(weights)/len(weights):.4f}")
-        print(f"  • Range: {max(weights)/min(weights):.1f}:1")
-        
-        # Calculate and show dynamic floor used
-        n = len(nonzero_weights)
-        floor = calculate_dynamic_floor(n)
-        print(f"  • Dynamic floor: {floor:.4f} ({floor*100:.2f}%) for {n} securities")
     
     # 5. Top 10 with weights
     print(f"\nTop 10 holdings:")
@@ -390,14 +278,45 @@ def validate_defensive_integration(output: Dict) -> None:
 
 
 if __name__ == "__main__":
-    print("Testing defensive_overlay_adapter with dynamic floor...")
+    # Test with sample data
+    print("Testing defensive_overlay_adapter...")
     
-    # Test dynamic floor calculation
-    print("\nDynamic floor calculation:")
-    for n in [20, 44, 50, 80, 100, 150, 200, 300]:
-        floor = calculate_dynamic_floor(n)
-        avg = Decimal("0.90") / Decimal(str(n))
-        ratio = floor / avg
-        print(f"  {n:3} securities: floor={floor:.4f} ({floor*100:.2f}%), avg={avg:.4f}, floor/avg={ratio:.2f}x")
+    sample_output = {
+        "ranked_securities": [
+            {
+                "ticker": "VRTX",
+                "composite_score": "85.50",
+                "composite_rank": 1,
+                "rankable": True,
+            },
+            {
+                "ticker": "GOSS",
+                "composite_score": "45.00",
+                "composite_rank": 2,
+                "rankable": False,  # Excluded by SEV3
+            }
+        ],
+        "diagnostic_counts": {}
+    }
+    
+    sample_scores = {
+        "VRTX": {
+            "defensive_features": {
+                "vol_60d": "0.25",
+                "corr_xbi": "0.35",  # FIXED: using corr_xbi
+                "drawdown_60d": "-0.10",  # FIXED: using drawdown_60d
+            }
+        },
+        "GOSS": {
+            "defensive_features": {
+                "vol_60d": "0.60",
+                "corr_xbi": "0.85",  # FIXED: using corr_xbi
+                "drawdown_60d": "-0.45",  # FIXED: using drawdown_60d
+            }
+        }
+    }
+    
+    enrich_with_defensive_overlays(sample_output, sample_scores)
+    validate_defensive_integration(sample_output)
     
     print("\n✓ Test complete!")
