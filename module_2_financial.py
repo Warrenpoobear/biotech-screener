@@ -148,6 +148,10 @@ def compute_module_2_financial(
         "securities": securities,
         "coverage_stats": coverage_stats,
         "as_of_date": as_of_date,
+        "diagnostic_counts": {
+            "scored": len(securities),
+            "missing": coverage_stats["total_active"] - len(securities),
+        },
     }
 
 

@@ -159,8 +159,8 @@ def run_screening_pipeline(
     # Load input data
     print("\n[1/6] Loading input data...")
     raw_universe = load_json_data(data_dir / "universe.json", "Universe")
-    financial_records = load_json_data(data_dir / "financial.json", "Financial")
-    trial_records = load_json_data(data_dir / "trials.json", "Trials")
+    financial_records = load_json_data(data_dir / "financial_records.json", "Financial")
+    trial_records = load_json_data(data_dir / "trial_records.json", "Trials")
     
     coinvest_signals = None
     if enable_coinvest:
@@ -185,7 +185,7 @@ def run_screening_pipeline(
     print("\n[3/6] Module 2: Financial health...")
     m2_result = compute_module_2_financial(
         financial_records=financial_records,
-        active_tickers=active_tickers,
+        active_tickers=set(active_tickers),
         as_of_date=as_of_date,  # Explicit threading
     )
     diag = m2_result.get('diagnostic_counts', {})
@@ -395,7 +395,7 @@ Determinism guarantees:
         "--data-dir",
         type=Path,
         required=True,
-        help="Directory containing input data files (universe.json, financial.json, trials.json)",
+        help="Directory containing input data files (universe.json, financial.json, trial_records.json)",
     )
     
     parser.add_argument(

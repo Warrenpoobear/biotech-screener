@@ -89,6 +89,7 @@ def compute_module_5_composite_with_defensive(
         defensive_by_ticker,
         apply_multiplier=apply_defensive_multiplier,
         apply_position_sizing=apply_position_sizing,
+        top_n=60,  # Enable top-N selection
     )
     
     # Optionally validate

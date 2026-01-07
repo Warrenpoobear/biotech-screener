@@ -26207,6 +26207,69 @@
       "phase": "phase_2",
       "indication": "oncology",
       "trial_id": "NCT00000000"
+    },
+    "financial_data": {
+      "cash": 521870016,
+      "debt": 0,
+      "net_debt": -521870016,
+      "revenue_ttm": null,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "market_data": {
+      "price": 25.9,
+      "market_cap": 5218242048,
+      "shares_outstanding": 201476526,
+      "volume_avg_30d": 1792346,
+      "52_week_high": 27.69,
+      "52_week_low": 12.72,
+      "pe_ratio": null,
+      "company_name": "Immunovant, Inc.",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "clinical_data": {
+      "total_trials": 20,
+      "active_trials": 14,
+      "completed_trials": 3,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": [
+        {
+          "nct_id": "NCT06845176",
+          "title": "Combining Motor Imagery and Tendon Vibration on the Effectiveness of Motor Imagery",
+          "status": "NOT_YET_RECRUITING",
+          "phase": "NA"
+        },
+        {
+          "nct_id": "NCT05517421",
+          "title": "Study to Assess Batoclimab in Participants With Active Thyroid Eye Disease",
+          "status": "COMPLETED",
+          "phase": "PHASE3"
+        },
+        {
+          "nct_id": "NCT05907668",
+          "title": "A Proof-of-Concept Study to Assess Batoclimab in Participants With Graves' Disease",
+          "status": "ACTIVE_NOT_RECRUITING",
+          "phase": "PHASE2"
+        },
+        {
+          "nct_id": "NCT06979531",
+          "title": "Efficacy and Safety of IMVT-1402 in Adult Participants With Primary Sjogren's Disease With Moderate to Severe Systemic Disease Activity",
+          "status": "RECRUITING",
+          "phase": "PHASE2"
+        },
+        {
+          "nct_id": "NCT07039916",
+          "title": "Study to Assess the Efficacy and Safety of IMVT-1402 in Participants With Mild to Severe Generalized Myasthenia Gravis",
+          "status": "RECRUITING",
+          "phase": "PHASE3"
+        }
+      ]
     }
   },
   {
@@ -26238,6 +26301,69 @@
       "phase": "phase_2",
       "indication": "oncology",
       "trial_id": "NCT00000000"
+    },
+    "financial_data": {
+      "cash": 140407008,
+      "debt": 598240000,
+      "net_debt": 457832992,
+      "revenue_ttm": 338987008,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "market_data": {
+      "price": 4.3,
+      "market_cap": 699518208,
+      "shares_outstanding": 162678647,
+      "volume_avg_30d": 3942529,
+      "52_week_high": 5.78,
+      "52_week_low": 0.53,
+      "pe_ratio": 23.88889,
+      "company_name": "Ironwood Pharmaceuticals, Inc.",
+      "sector": "Healthcare",
+      "industry": "Drug Manufacturers - Specialty & Generic"
+    },
+    "clinical_data": {
+      "total_trials": 20,
+      "active_trials": 6,
+      "completed_trials": 10,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": [
+        {
+          "nct_id": "NCT05740007",
+          "title": "A Phase 2 Study of IW-3300 for the Treatment of Bladder Pain in Subjects With Interstitial Cystitis/Bladder Pain Syndrome",
+          "status": "TERMINATED",
+          "phase": "PHASE2"
+        },
+        {
+          "nct_id": "NCT03659136",
+          "title": "The XENERA\u2122 1 Study Tests Xentuzumab in Combination With Everolimus and Exemestane in Women With Hormone Receptor Positive and HER2-negative Breast Cancer That Has Spread",
+          "status": "COMPLETED",
+          "phase": "PHASE2"
+        },
+        {
+          "nct_id": "NCT02367794",
+          "title": "A Study of Atezolizumab in Combination With Carboplatin + Paclitaxel or Carboplatin + Nab-Paclitaxel Compared With Carboplatin + Nab-Paclitaxel in Participants With Stage IV Squamous Non-Small Cell Lung Cancer (NSCLC) [IMpower131]",
+          "status": "COMPLETED",
+          "phase": "PHASE3"
+        },
+        {
+          "nct_id": "NCT01712412",
+          "title": "Phase 2a Study of IW-9179 to Treat Functional Dyspepsia",
+          "status": "TERMINATED",
+          "phase": "PHASE2"
+        },
+        {
+          "nct_id": "NCT05215340",
+          "title": "Study of Dato-DXd Plus Pembrolizumab vs Pembrolizumab Alone in the First-line Treatment of Subjects With Advanced or Metastatic NSCLC Without Actionable Genomic Alterations",
+          "status": "RECRUITING",
+          "phase": "PHASE3"
+        }
+      ]
     }
   },
   {
@@ -26269,6 +26395,69 @@
       "phase": "phase_2",
       "indication": "oncology",
       "trial_id": "NCT00000000"
+    },
+    "financial_data": {
+      "cash": 21096000,
+      "debt": 29943000,
+      "net_debt": 8847000,
+      "revenue_ttm": null,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "market_data": {
+      "price": 0.6585,
+      "market_cap": 15309944,
+      "shares_outstanding": 23249725,
+      "volume_avg_30d": 7697625,
+      "52_week_high": 20.6,
+      "52_week_low": 0.51,
+      "pe_ratio": null,
+      "company_name": "KALA BIO, Inc.",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "clinical_data": {
+      "total_trials": 20,
+      "active_trials": 4,
+      "completed_trials": 14,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": [
+        {
+          "nct_id": "NCT00696969",
+          "title": "Safety and Efficacy Study to Evaluate Different Combination Treatment Regimens for Visceral Leishmaniasis",
+          "status": "COMPLETED",
+          "phase": "PHASE3"
+        },
+        {
+          "nct_id": "NCT01635777",
+          "title": "Safety and Efficacy of Oral Miltefosine in Patients With Post Kala Azar Dermal Leishmaniasis (PKDL)",
+          "status": "COMPLETED",
+          "phase": "PHASE2"
+        },
+        {
+          "nct_id": "NCT00523965",
+          "title": "Combination Therapy in Indian Visceral Leishmaniasis",
+          "status": "COMPLETED",
+          "phase": "PHASE3"
+        },
+        {
+          "nct_id": "NCT00370825",
+          "title": "Combination Chemotherapy for the Treatment of Indian Kala-Azar",
+          "status": "COMPLETED",
+          "phase": "PHASE2"
+        },
+        {
+          "nct_id": "NCT00604955",
+          "title": "Expand Access/Assess Safety and Efficacy of Paromomycin IM Injection for the Treatment of Visceral Leishmaniasis",
+          "status": "COMPLETED",
+          "phase": "PHASE4"
+        }
+      ]
     }
   },
   {
@@ -26300,6 +26489,69 @@
       "phase": "phase_2",
       "indication": "oncology",
       "trial_id": "NCT00000000"
+    },
+    "financial_data": {
+      "cash": 309158016,
+      "debt": 282579008,
+      "net_debt": -26579008,
+      "revenue_ttm": 1426000,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "market_data": {
+      "price": 15.75,
+      "market_cap": 796104128,
+      "shares_outstanding": 50546293,
+      "volume_avg_30d": 1261493,
+      "52_week_high": 17.3,
+      "52_week_low": 7.3,
+      "pe_ratio": null,
+      "company_name": "KalVista Pharmaceuticals, Inc.",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "clinical_data": {
+      "total_trials": 26,
+      "active_trials": 4,
+      "completed_trials": 19,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": [
+        {
+          "nct_id": "NCT00161798",
+          "title": "Dose-finding Study to Investigate the Safety and Immunogenicity of Two Vaccinations With FSME IMMUN NEW in Healthy Volunteers Aged 6 to 16 Years.",
+          "status": "COMPLETED",
+          "phase": "PHASE2"
+        },
+        {
+          "nct_id": "NCT01285180",
+          "title": "Quality of Life in Daxas-treated Patients Older Than 18 Years With Severe COPD",
+          "status": "COMPLETED",
+          "phase": "N/A"
+        },
+        {
+          "nct_id": "NCT00887289",
+          "title": "Non-interventional Observational Study on the Influence of Pramipexole on Sensory Symptoms of Restless Legs Syndrome (RLS)",
+          "status": "COMPLETED",
+          "phase": "N/A"
+        },
+        {
+          "nct_id": "NCT00540163",
+          "title": "Observational Non-interventional Study With Spiriva in Chronic Obstructive Pulmonary Disease Patients With Exercise-induced Dyspnoea",
+          "status": "COMPLETED",
+          "phase": "N/A"
+        },
+        {
+          "nct_id": "NCT00348140",
+          "title": "Rosiglitazone (Extended Release Tablets) As Adjunctive Therapy In Subjects With Mild To Moderate Alzheimer's Disease",
+          "status": "COMPLETED",
+          "phase": "PHASE3"
+        }
+      ]
     }
   },
   {
@@ -26331,6 +26583,69 @@
       "phase": "phase_2",
       "indication": "oncology",
       "trial_id": "NCT00000000"
+    },
+    "financial_data": {
+      "cash": 731068992,
+      "debt": 9511000,
+      "net_debt": -721557992,
+      "revenue_ttm": 373164000,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "market_data": {
+      "price": 249.39,
+      "market_cap": 7231691264,
+      "shares_outstanding": 28997519,
+      "volume_avg_30d": 291208,
+      "52_week_high": 265.915,
+      "52_week_low": 122.8,
+      "pe_ratio": 37.33383,
+      "company_name": "Krystal Biotech, Inc.",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "clinical_data": {
+      "total_trials": 22,
+      "active_trials": 10,
+      "completed_trials": 6,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": [
+        {
+          "nct_id": "NCT04917887",
+          "title": "Long-Term Follow-up Protocol",
+          "status": "RECRUITING",
+          "phase": "N/A"
+        },
+        {
+          "nct_id": "NCT04253301",
+          "title": "Feasibility of the InnoVein Valve and Delivery System for Chronic Venous Insufficiency",
+          "status": "RECRUITING",
+          "phase": "NA"
+        },
+        {
+          "nct_id": "NCT05838495",
+          "title": "Nutritional Tolerance and Safety of a Tube Feeding Formula in Children",
+          "status": "COMPLETED",
+          "phase": "NA"
+        },
+        {
+          "nct_id": "NCT06580041",
+          "title": "Precision Care for Major Depressive Disorder",
+          "status": "ENROLLING_BY_INVITATION",
+          "phase": "PHASE4"
+        },
+        {
+          "nct_id": "NCT07214467",
+          "title": "Individualized Adaptive Deep Brain Stimulation in Opioid Use Disorder",
+          "status": "RECRUITING",
+          "phase": "NA"
+        }
+      ]
     }
   },
   {
@@ -26362,6 +26677,69 @@
       "phase": "phase_2",
       "indication": "oncology",
       "trial_id": "NCT00000000"
+    },
+    "financial_data": {
+      "cash": 157496000,
+      "debt": 199182000,
+      "net_debt": 41686000,
+      "revenue_ttm": 69216000,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "market_data": {
+      "price": 30.72,
+      "market_cap": 2672500992,
+      "shares_outstanding": 86995483,
+      "volume_avg_30d": 1942312,
+      "52_week_high": 36.41,
+      "52_week_low": 11.26,
+      "pe_ratio": null,
+      "company_name": "Liquidia Corporation",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "clinical_data": {
+      "total_trials": 8,
+      "active_trials": 4,
+      "completed_trials": 3,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": [
+        {
+          "nct_id": "NCT04691154",
+          "title": "A Phase 3 Study to Evaluate the Safety and Tolerability of L606 in Subjects With PAH or PH-ILD",
+          "status": "ACTIVE_NOT_RECRUITING",
+          "phase": "PHASE3"
+        },
+        {
+          "nct_id": "NCT07285655",
+          "title": "A Phase 3 Study to Evaluate the Safety and Efficacy L606 in Participants With PH-ILD",
+          "status": "NOT_YET_RECRUITING",
+          "phase": "PHASE3"
+        },
+        {
+          "nct_id": "NCT02982889",
+          "title": "Single Ascending Dose Study of Two Liquidia Bupivacaine Formulations",
+          "status": "COMPLETED",
+          "phase": "PHASE1"
+        },
+        {
+          "nct_id": "NCT03399604",
+          "title": "Investigation of the Safety and Pharmacology of Dry Powder Inhalation of Treprostinil",
+          "status": "COMPLETED",
+          "phase": "PHASE3"
+        },
+        {
+          "nct_id": "NCT03884465",
+          "title": "Hemodynamic Evaluation of Dose-response and Safety of Dry Powder Inhalation of Treprostinil",
+          "status": "TERMINATED",
+          "phase": "PHASE2"
+        }
+      ]
     }
   },
   {
@@ -26393,6 +26771,69 @@
       "phase": "phase_2",
       "indication": "oncology",
       "trial_id": "NCT00000000"
+    },
+    "financial_data": {
+      "cash": 47638000,
+      "debt": 85253000,
+      "net_debt": 37615000,
+      "revenue_ttm": 351000,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "market_data": {
+      "price": 15.55,
+      "market_cap": 140673376,
+      "shares_outstanding": 9046519,
+      "volume_avg_30d": 163364,
+      "52_week_high": 29.98,
+      "52_week_low": 6.53,
+      "pe_ratio": 17.670454,
+      "company_name": "Seres Therapeutics, Inc.",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "clinical_data": {
+      "total_trials": 22,
+      "active_trials": 4,
+      "completed_trials": 16,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": [
+        {
+          "nct_id": "NCT02907515",
+          "title": "Maintenance and Cost Effectiveness of Cendres Metaux Locator (CM-LOC) Resin Matrix Versus Ball Nylon Matrix Attachment Retaining Single Implant Mandibular Complete Overdentures",
+          "status": "UNKNOWN",
+          "phase": "NA"
+        },
+        {
+          "nct_id": "NCT02866175",
+          "title": "Edoxaban Treatment Versus Vitamin K Antagonist in Patients With Atrial Fibrillation Undergoing Percutaneous Coronary Intervention",
+          "status": "COMPLETED",
+          "phase": "PHASE3"
+        },
+        {
+          "nct_id": "NCT00733213",
+          "title": "Depiction of Prostate Cancer Treatment Alternatives in Greece",
+          "status": "COMPLETED",
+          "phase": "N/A"
+        },
+        {
+          "nct_id": "NCT00722267",
+          "title": "European Non-interventional Study in Chronic Obstructive Pulmonary Disease (COPD) Patients",
+          "status": "COMPLETED",
+          "phase": "N/A"
+        },
+        {
+          "nct_id": "NCT06497088",
+          "title": "A Clinical Study to Evaluate the Ultrasonic Detection of a Novel Nasogastric Tube in the Human Body.",
+          "status": "NOT_YET_RECRUITING",
+          "phase": "NA"
+        }
+      ]
     }
   },
   {
@@ -26424,6 +26865,69 @@
       "phase": "phase_2",
       "indication": "oncology",
       "trial_id": "NCT00000000"
+    },
+    "financial_data": {
+      "cash": 1109748992,
+      "debt": 346401984,
+      "net_debt": -763347008,
+      "revenue_ttm": 740640000,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "market_data": {
+      "price": 558.01,
+      "market_cap": 12673200128,
+      "shares_outstanding": 22711420,
+      "volume_avg_30d": 335532,
+      "52_week_high": 615.0,
+      "52_week_low": 265.0,
+      "pe_ratio": null,
+      "company_name": "Madrigal Pharmaceuticals, Inc.",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "clinical_data": {
+      "total_trials": 20,
+      "active_trials": 7,
+      "completed_trials": 9,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": [
+        {
+          "nct_id": "NCT03714503",
+          "title": "Head Positioning After Retina Detachment Repair",
+          "status": "RECRUITING",
+          "phase": "NA"
+        },
+        {
+          "nct_id": "NCT06397872",
+          "title": "A Study to Evaluate the Pharmacokinetics, Safety, and Tolerability of Multiple Oral Doses (6 Days) of 100 mg Resmetirom in Subjects With Severe Renal Impairment and in Matched Healthy Control Subjects With Normal Renal Function",
+          "status": "COMPLETED",
+          "phase": "PHASE1"
+        },
+        {
+          "nct_id": "NCT04838821",
+          "title": "Efficacy and Safety of Three Different Doses of an Anti SARS-CoV-2 Hyperimmune Equine Serum in COVID-19 Patients",
+          "status": "UNKNOWN",
+          "phase": "PHASE2"
+        },
+        {
+          "nct_id": "NCT05688592",
+          "title": "Usefulness of PET-CT for Invasive Fungal Infection",
+          "status": "RECRUITING",
+          "phase": "N/A"
+        },
+        {
+          "nct_id": "NCT04951219",
+          "title": "A Phase 3 Study to Evaluate Safety and Biomarkers of Resmetirom (MGL-3196) in Patients With Non-alcoholic Fatty Liver Disease (NAFLD), MAESTRO-NAFLD-Open-Label-Extension (MAESTRO-NAFLD-OLE)",
+          "status": "ACTIVE_NOT_RECRUITING",
+          "phase": "PHASE3"
+        }
+      ]
     }
   },
   {
@@ -26455,6 +26959,69 @@
       "phase": "phase_2",
       "indication": "oncology",
       "trial_id": "NCT00000000"
+    },
+    "financial_data": {
+      "cash": 56391000,
+      "debt": 2293000,
+      "net_debt": -54098000,
+      "revenue_ttm": 33180000,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "market_data": {
+      "price": 29.08,
+      "market_cap": 145363648,
+      "shares_outstanding": 4998750,
+      "volume_avg_30d": 136650,
+      "52_week_high": 36.25,
+      "52_week_low": 5.21,
+      "pe_ratio": null,
+      "company_name": "Mersana Therapeutics, Inc.",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "clinical_data": {
+      "total_trials": 11,
+      "active_trials": 3,
+      "completed_trials": 5,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": [
+        {
+          "nct_id": "NCT00455052",
+          "title": "A Study of Intravenous XMT-1001 in Patients With Advanced Solid Tumors",
+          "status": "COMPLETED",
+          "phase": "PHASE1"
+        },
+        {
+          "nct_id": "NCT05329545",
+          "title": "Upifitamab Rilsodotin Maintenance in Platinum-Sensitive Recurrent Ovarian Cancer (UP-NEXT)",
+          "status": "TERMINATED",
+          "phase": "PHASE3"
+        },
+        {
+          "nct_id": "NCT05377996",
+          "title": "A Study of XMT-1660 in Participants With Solid Tumors",
+          "status": "RECRUITING",
+          "phase": "PHASE1"
+        },
+        {
+          "nct_id": "NCT05514717",
+          "title": "A Study of XMT-2056 in Advanced/Recurrent Solid Tumors That Express HER2",
+          "status": "RECRUITING",
+          "phase": "PHASE1"
+        },
+        {
+          "nct_id": "NCT04907968",
+          "title": "Study of Upifitamab Rilsodotin in Combination With Carboplatin in Participants With High-grade Serous Ovarian Cancer",
+          "status": "TERMINATED",
+          "phase": "PHASE1"
+        }
+      ]
     }
   },
   {
@@ -26486,6 +27053,38 @@
       "phase": "phase_2",
       "indication": "oncology",
       "trial_id": "NCT00000000"
+    },
+    "financial_data": {
+      "cash": 243574000,
+      "debt": 367940992,
+      "net_debt": 124366992,
+      "revenue_ttm": 192435008,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "market_data": {
+      "price": 3.88,
+      "market_cap": 1421596800,
+      "shares_outstanding": 145022751,
+      "volume_avg_30d": 1484558,
+      "52_week_high": 6.21,
+      "52_week_low": 1.665,
+      "pe_ratio": null,
+      "company_name": "Maravai LifeSciences Holdings, Inc.",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "clinical_data": {
+      "total_trials": 0,
+      "active_trials": 0,
+      "completed_trials": 0,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": []
     }
   },
   {
@@ -26517,6 +27116,69 @@
       "phase": "phase_2",
       "indication": "oncology",
       "trial_id": "NCT00000000"
+    },
+    "financial_data": {
+      "cash": 1033500992,
+      "debt": 797940992,
+      "net_debt": -235560000,
+      "revenue_ttm": 642268992,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "market_data": {
+      "price": 14.29,
+      "market_cap": 1600222592,
+      "shares_outstanding": 111981981,
+      "volume_avg_30d": 1556785,
+      "52_week_high": 29.8,
+      "52_week_low": 10.7,
+      "pe_ratio": null,
+      "company_name": "NovoCure Limited",
+      "sector": "Healthcare",
+      "industry": "Medical Devices"
+    },
+    "clinical_data": {
+      "total_trials": 20,
+      "active_trials": 1,
+      "completed_trials": 11,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": [
+        {
+          "nct_id": "NCT04474353",
+          "title": "Study of Tumor Treating Fields With Hypofractionated Chemoradiotherapy in Newly Diagnosed Glioblastoma",
+          "status": "COMPLETED",
+          "phase": "PHASE1"
+        },
+        {
+          "nct_id": "NCT02397928",
+          "title": "Safety and Efficacy of TTFields (150 kHz) Concomitant With Pemetrexed and Cisplatin or Carboplatin in Malignant Pleural Mesothelioma (STELLAR)",
+          "status": "COMPLETED",
+          "phase": "PHASE2"
+        },
+        {
+          "nct_id": "NCT03903640",
+          "title": "Optune Device - TT Field Plus Nivolumab and Ipilimumab for Melanoma With Brain Metastasis",
+          "status": "TERMINATED",
+          "phase": "PHASE2"
+        },
+        {
+          "nct_id": "NCT01954576",
+          "title": "NovoTTF Therapy in Treating Patients With Recurrent Glioblastoma Multiforme",
+          "status": "TERMINATED",
+          "phase": "NA"
+        },
+        {
+          "nct_id": "NCT04717739",
+          "title": "TIGER PRO-Active - Daily Activity, Sleep and Neurocognitive Functioning Study",
+          "status": "UNKNOWN",
+          "phase": "N/A"
+        }
+      ]
     }
   },
   {
@@ -26548,6 +27210,69 @@
       "phase": "phase_2",
       "indication": "oncology",
       "trial_id": "NCT00000000"
+    },
+    "financial_data": {
+      "cash": 762894016,
+      "debt": 251140000,
+      "net_debt": -511754016,
+      "revenue_ttm": 1064651008,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "market_data": {
+      "price": 7.44,
+      "market_cap": 1208992512,
+      "shares_outstanding": 162498995,
+      "volume_avg_30d": 3878841,
+      "52_week_high": 11.55,
+      "52_week_low": 5.01,
+      "pe_ratio": 3.7014925,
+      "company_name": "Novavax, Inc.",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "clinical_data": {
+      "total_trials": 21,
+      "active_trials": 4,
+      "completed_trials": 15,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": [
+        {
+          "nct_id": "NCT02515227",
+          "title": "Safety Study of a Helper Peptide Vaccine Plus Pembrolizumab",
+          "status": "COMPLETED",
+          "phase": "PHASE1"
+        },
+        {
+          "nct_id": "NCT02078674",
+          "title": "A(H7N9) VLP Antigen Dose-Ranging Study With Matrix-M1\u2122 Adjuvant",
+          "status": "COMPLETED",
+          "phase": "PHASE1"
+        },
+        {
+          "nct_id": "NCT00903552",
+          "title": "Trial to Evaluate Safety and Immunogenicity of Trivalent Seasonal Influenza Virus-Like Particle (VLP) Vaccine (Recombinant)",
+          "status": "COMPLETED",
+          "phase": "PHASE2"
+        },
+        {
+          "nct_id": "NCT01072799",
+          "title": "Safety and Immunogenicity of an A (H1N1) 2009 Influenza Virus-like Particle (VLP) Vaccine",
+          "status": "COMPLETED",
+          "phase": "PHASE2"
+        },
+        {
+          "nct_id": "NCT05767606",
+          "title": "Concomitant Administration of the Novavax Vaccine and a 20-valent Pneumococcal Conjugate Vaccine in Adults Aged \u226560 Years",
+          "status": "UNKNOWN",
+          "phase": "PHASE4"
+        }
+      ]
     }
   },
   {
@@ -26579,6 +27304,69 @@
       "phase": "phase_2",
       "indication": "oncology",
       "trial_id": "NCT00000000"
+    },
+    "financial_data": {
+      "cash": 32565000,
+      "debt": 32964000,
+      "net_debt": 399000,
+      "revenue_ttm": 5370000,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "market_data": {
+      "price": 1.54,
+      "market_cap": 480972992,
+      "shares_outstanding": 312320112,
+      "volume_avg_30d": 3925509,
+      "52_week_high": 1.9,
+      "52_week_low": 0.515,
+      "pe_ratio": null,
+      "company_name": "Ocugen, Inc.",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "clinical_data": {
+      "total_trials": 12,
+      "active_trials": 5,
+      "completed_trials": 2,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": [
+        {
+          "nct_id": "NCT02975557",
+          "title": "Brimonidine Eye Drops for Treatment of Ocular Graft-vs-Host Disease (oGVHD)",
+          "status": "TERMINATED",
+          "phase": "PHASE1"
+        },
+        {
+          "nct_id": "NCT03591874",
+          "title": "Study of Brimonidine Tartrate Nanoemulsion Eye Drops in Patients With Ocular Graft-vs-Host Disease",
+          "status": "TERMINATED",
+          "phase": "PHASE3"
+        },
+        {
+          "nct_id": "NCT06388200",
+          "title": "A Phase 3 Study Of OCU400 Gene Therapy for the Treatment Of Retinitis Pigmentosa",
+          "status": "RECRUITING",
+          "phase": "PHASE3"
+        },
+        {
+          "nct_id": "NCT03785340",
+          "title": "Study of Brimonidine Tartrate Nanoemulsion Eye Drop Solution in the Treatment of Dry Eye Disease (DED)",
+          "status": "COMPLETED",
+          "phase": "PHASE3"
+        },
+        {
+          "nct_id": "NCT06018558",
+          "title": "Study to Assess the Safety and Efficacy of OCU410 for Geographic Atrophy",
+          "status": "ACTIVE_NOT_RECRUITING",
+          "phase": "PHASE1"
+        }
+      ]
     }
   },
   {
@@ -26610,6 +27398,69 @@
       "phase": "phase_2",
       "indication": "oncology",
       "trial_id": "NCT00000000"
+    },
+    "financial_data": {
+      "cash": 316340000,
+      "debt": 1276205056,
+      "net_debt": 959865056,
+      "revenue_ttm": 5530490880,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "market_data": {
+      "price": 32.79,
+      "market_cap": 5321654784,
+      "shares_outstanding": 158732706,
+      "volume_avg_30d": 2000366,
+      "52_week_high": 35.53,
+      "52_week_low": 23.5,
+      "pe_ratio": 26.023811,
+      "company_name": "Option Care Health, Inc.",
+      "sector": "Healthcare",
+      "industry": "Medical Care Facilities"
+    },
+    "clinical_data": {
+      "total_trials": 20,
+      "active_trials": 2,
+      "completed_trials": 15,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": [
+        {
+          "nct_id": "NCT01163916",
+          "title": "Study to Characterize Demographics, Compliance, Tolerability and Safety in Patients With Rheumatoid Arthritis, Psoriatic Arthritis and Ankylosing Spondylitis Prescribed Adalimumab (Humira\u00ae) as Part of Routine Clinical Care",
+          "status": "COMPLETED",
+          "phase": "N/A"
+        },
+        {
+          "nct_id": "NCT01780506",
+          "title": "Study to Evaluate the Safety and Efficacy of E/C/F/TAF (Genvoya\u00ae) Versus E/C/F/TDF (Stribild\u00ae) in HIV-1 Positive, Antiretroviral Treatment-Naive Adults",
+          "status": "COMPLETED",
+          "phase": "PHASE3"
+        },
+        {
+          "nct_id": "NCT07201116",
+          "title": "Health-GIS Platform for Hip Replacement Rehabilitation Coordination",
+          "status": "COMPLETED",
+          "phase": "NA"
+        },
+        {
+          "nct_id": "NCT00927784",
+          "title": "Effect of Intramyocardial Injection of Mesenchymal Precursor Cells on Heart Function in People Receiving an LVAD",
+          "status": "TERMINATED",
+          "phase": "PHASE2"
+        },
+        {
+          "nct_id": "NCT06026306",
+          "title": "A Scalable Psychological Intervention for Earthquake Survivors in T\u00fcrkiye",
+          "status": "COMPLETED",
+          "phase": "NA"
+        }
+      ]
     }
   },
   {
@@ -26641,6 +27492,69 @@
       "phase": "phase_2",
       "indication": "oncology",
       "trial_id": "NCT00000000"
+    },
+    "financial_data": {
+      "cash": 246334000,
+      "debt": 425308000,
+      "net_debt": 178974000,
+      "revenue_ttm": 716790976,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "market_data": {
+      "price": 25.31,
+      "market_cap": 1137247104,
+      "shares_outstanding": 43021275,
+      "volume_avg_30d": 734404,
+      "52_week_high": 27.64,
+      "52_week_low": 18.18,
+      "pe_ratio": 53.851063,
+      "company_name": "Pacira BioSciences, Inc.",
+      "sector": "Healthcare",
+      "industry": "Drug Manufacturers - Specialty & Generic"
+    },
+    "clinical_data": {
+      "total_trials": 20,
+      "active_trials": 4,
+      "completed_trials": 12,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": [
+        {
+          "nct_id": "NCT01582477",
+          "title": "TAP-patients With Robotic Assisted Lap Prostatectomy",
+          "status": "COMPLETED",
+          "phase": "PHASE4"
+        },
+        {
+          "nct_id": "NCT06350981",
+          "title": "Analgesic Requirement for Post-Operative Pain Control in TLIP Interbody Fusion",
+          "status": "ENROLLING_BY_INVITATION",
+          "phase": "PHASE2"
+        },
+        {
+          "nct_id": "NCT06340451",
+          "title": "Study to Assess the Efficacy and Safety of Iovera\u00ae\u00b0 System in Subjects With Upper Extremity Spasticity",
+          "status": "RECRUITING",
+          "phase": "PHASE3"
+        },
+        {
+          "nct_id": "NCT06077422",
+          "title": "Exparel vs. Marcaine ESP Block for Post-cardiac Surgical Pain",
+          "status": "RECRUITING",
+          "phase": "PHASE2"
+        },
+        {
+          "nct_id": "NCT02985762",
+          "title": "PK Study of EXPAREL in Subjects Undergoing Open Spinal Fusion or Reconstructive Surgery",
+          "status": "COMPLETED",
+          "phase": "PHASE1"
+        }
+      ]
     }
   },
   {
@@ -26672,6 +27586,69 @@
       "phase": "phase_2",
       "indication": "oncology",
       "trial_id": "NCT00000000"
+    },
+    "financial_data": {
+      "cash": 121135000,
+      "debt": 98192000,
+      "net_debt": -22943000,
+      "revenue_ttm": 6309000,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "market_data": {
+      "price": 4.55,
+      "market_cap": 1609901568,
+      "shares_outstanding": 353824499,
+      "volume_avg_30d": 4801008,
+      "52_week_high": 5.23,
+      "52_week_low": 1.05,
+      "pe_ratio": null,
+      "company_name": "Precigen, Inc.",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "clinical_data": {
+      "total_trials": 9,
+      "active_trials": 5,
+      "completed_trials": 3,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": [
+        {
+          "nct_id": "NCT02988245",
+          "title": "Investigating the Use of Genetics to Guide Pharmacologic Therapy for Hypertension",
+          "status": "UNKNOWN",
+          "phase": "PHASE2"
+        },
+        {
+          "nct_id": "NCT06157151",
+          "title": "PRGN-2009 in Combination With Pembrolizumab Versus Pembrolizumab in Patients With Recurrent or Metastatic Cervical Cancer",
+          "status": "RECRUITING",
+          "phase": "PHASE2"
+        },
+        {
+          "nct_id": "NCT05694364",
+          "title": "Dose Escalation/Dose Expansion Study of PRGN-3007 UltraCAR-T Cells in Patients With Advanced Hematologic and Solid Tumor Malignancies",
+          "status": "COMPLETED",
+          "phase": "PHASE1"
+        },
+        {
+          "nct_id": "NCT06538480",
+          "title": "Zopa Retreatment and Vector Shedding in Adults With RRP",
+          "status": "RECRUITING",
+          "phase": "PHASE4"
+        },
+        {
+          "nct_id": "NCT03751007",
+          "title": "A Study to Assess the Safety and Tolerability of Different Doses of AG019 Administered Alone or in Combination With Teplizumab in Participants With Recent-onset Diagnosed Type 1 Diabetes (T1D)",
+          "status": "COMPLETED",
+          "phase": "PHASE1"
+        }
+      ]
     }
   },
   {
@@ -26703,6 +27680,69 @@
       "phase": "phase_2",
       "indication": "oncology",
       "trial_id": "NCT00000000"
+    },
+    "financial_data": {
+      "cash": 330843008,
+      "debt": 9082000,
+      "net_debt": -321761008,
+      "revenue_ttm": 11786000,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "market_data": {
+      "price": 8.97,
+      "market_cap": 482854976,
+      "shares_outstanding": 53829982,
+      "volume_avg_30d": 652029,
+      "52_week_high": 16.665,
+      "52_week_low": 4.32,
+      "pe_ratio": null,
+      "company_name": "Prothena Corporation plc",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "clinical_data": {
+      "total_trials": 17,
+      "active_trials": 4,
+      "completed_trials": 8,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": [
+        {
+          "nct_id": "NCT02613182",
+          "title": "Open-label Extension Study of NEOD001 in Subjects With Light Chain (AL) Amyloidosis",
+          "status": "TERMINATED",
+          "phase": "PHASE2"
+        },
+        {
+          "nct_id": "NCT03100149",
+          "title": "A Study to Evaluate the Efficacy of Prasinezumab (RO7046015/PRX002) in Participants With Early Parkinson's Disease",
+          "status": "ACTIVE_NOT_RECRUITING",
+          "phase": "PHASE2"
+        },
+        {
+          "nct_id": "NCT03336580",
+          "title": "A Study of PRX004 in Subjects With Amyloid Transthyretin (ATTR) Amyloidosis",
+          "status": "TERMINATED",
+          "phase": "PHASE1"
+        },
+        {
+          "nct_id": "NCT04777331",
+          "title": "A Study to Evaluate the Efficacy and Safety of Intravenous Prasinezumab in Participants With Early Parkinson's Disease",
+          "status": "ACTIVE_NOT_RECRUITING",
+          "phase": "PHASE2"
+        },
+        {
+          "nct_id": "NCT06699680",
+          "title": "Phase 1 Study of PRX019 in Healthy Adult Volunteers",
+          "status": "RECRUITING",
+          "phase": "PHASE1"
+        }
+      ]
     }
   },
   {
@@ -26734,6 +27774,69 @@
       "phase": "phase_2",
       "indication": "oncology",
       "trial_id": "NCT00000000"
+    },
+    "financial_data": {
+      "cash": 1707309952,
+      "debt": 2492047104,
+      "net_debt": 784737152,
+      "revenue_ttm": 1779149952,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "market_data": {
+      "price": 76.7,
+      "market_cap": 6158112768,
+      "shares_outstanding": 80288305,
+      "volume_avg_30d": 1502603,
+      "52_week_high": 87.5,
+      "52_week_low": 35.95,
+      "pe_ratio": 8.918604,
+      "company_name": "PTC Therapeutics, Inc.",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "clinical_data": {
+      "total_trials": 20,
+      "active_trials": 4,
+      "completed_trials": 11,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": [
+        {
+          "nct_id": "NCT00630214",
+          "title": "Prevention of Hypocalcemia in Patients Undergoing Total Thyroidectomy Plus Central Neck Dissection",
+          "status": "COMPLETED",
+          "phase": "PHASE2"
+        },
+        {
+          "nct_id": "NCT06747416",
+          "title": "KN057 Multiple Dose Study in Patients with Hemophilia a or Hemophilia B with or Without Inhibitors",
+          "status": "NOT_YET_RECRUITING",
+          "phase": "PHASE2"
+        },
+        {
+          "nct_id": "NCT03087747",
+          "title": "Percutaneous Transhepatic Cholangiography (PTHC) in Acute Cholecystitis and Clinical Outcomes",
+          "status": "WITHDRAWN",
+          "phase": "N/A"
+        },
+        {
+          "nct_id": "NCT06119659",
+          "title": "Safety and Efficacy Clinical Study of Severe Hemophilia B Treatment With KL001",
+          "status": "UNKNOWN",
+          "phase": "EARLY_PHASE1"
+        },
+        {
+          "nct_id": "NCT03420937",
+          "title": "Deep Neuromuscular Block During General Anaesthesia in Robotic Surgery",
+          "status": "COMPLETED",
+          "phase": "PHASE4"
+        }
+      ]
     }
   },
   {
@@ -26765,6 +27868,69 @@
       "phase": "phase_2",
       "indication": "oncology",
       "trial_id": "NCT00000000"
+    },
+    "financial_data": {
+      "cash": 1931507968,
+      "debt": 414969984,
+      "net_debt": -1516537984,
+      "revenue_ttm": null,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "market_data": {
+      "price": 79.85,
+      "market_cap": 15436585984,
+      "shares_outstanding": 193319805,
+      "volume_avg_30d": 2305488,
+      "52_week_high": 81.97,
+      "52_week_low": 29.17,
+      "pe_ratio": null,
+      "company_name": "Revolution Medicines, Inc.",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "clinical_data": {
+      "total_trials": 20,
+      "active_trials": 4,
+      "completed_trials": 12,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": [
+        {
+          "nct_id": "NCT04389333",
+          "title": "Feasibility of Non-contact Magnetically-controlled Capsule Endoscopy During COVID-19 Pandemic",
+          "status": "COMPLETED",
+          "phase": "NA"
+        },
+        {
+          "nct_id": "NCT04977349",
+          "title": "Manual Therapy Effectivity and Exercises in Musicians",
+          "status": "RECRUITING",
+          "phase": "NA"
+        },
+        {
+          "nct_id": "NCT04175184",
+          "title": "Inclusion of Mobilisation With Movement to an Exercise Programme in Rotator Cuff Related Pain",
+          "status": "COMPLETED",
+          "phase": "NA"
+        },
+        {
+          "nct_id": "NCT06591247",
+          "title": "Membrane Stripping for Cervical Ripening",
+          "status": "RECRUITING",
+          "phase": "NA"
+        },
+        {
+          "nct_id": "NCT06447649",
+          "title": "Investigation of Factors Affecting Shoulder Pain in Stroke Survivors",
+          "status": "COMPLETED",
+          "phase": "N/A"
+        }
+      ]
     }
   },
   {
@@ -26796,6 +27962,69 @@
       "phase": "phase_2",
       "indication": "oncology",
       "trial_id": "NCT00000000"
+    },
+    "financial_data": {
+      "cash": 659836032,
+      "debt": 82374000,
+      "net_debt": -577462032,
+      "revenue_ttm": 43689000,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "market_data": {
+      "price": 4.55,
+      "market_cap": 2371745536,
+      "shares_outstanding": 514190251,
+      "volume_avg_30d": 40253579,
+      "52_week_high": 12.36,
+      "52_week_low": 3.79,
+      "pe_ratio": null,
+      "company_name": "Recursion Pharmaceuticals, Inc.",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "clinical_data": {
+      "total_trials": 10,
+      "active_trials": 5,
+      "completed_trials": 2,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": [
+        {
+          "nct_id": "NCT05085561",
+          "title": "The Symptomatic Cerebral Cavernous Malformation Trial of REC-994",
+          "status": "COMPLETED",
+          "phase": "PHASE2"
+        },
+        {
+          "nct_id": "NCT06980116",
+          "title": "Dose Determining Study of EXS73565 in Participants With Relapsed or Refractory B-Cell Malignancies",
+          "status": "RECRUITING",
+          "phase": "PHASE1"
+        },
+        {
+          "nct_id": "NCT02708290",
+          "title": "Mental Imagery Therapy for Autism (MITA) - an Early Intervention Computerized Language Training Program for Children With ASD",
+          "status": "COMPLETED",
+          "phase": "N/A"
+        },
+        {
+          "nct_id": "NCT06005974",
+          "title": "A Study of REC-4881 in Participants with Cancers Which Have an AXIN1 or APC Mutation",
+          "status": "ACTIVE_NOT_RECRUITING",
+          "phase": "PHASE2"
+        },
+        {
+          "nct_id": "NCT06536465",
+          "title": "The Clostridioides Difficile Trial of REC-3964",
+          "status": "TERMINATED",
+          "phase": "PHASE2"
+        }
+      ]
     }
   },
   {
@@ -26827,6 +28056,69 @@
       "phase": "phase_2",
       "indication": "oncology",
       "trial_id": "NCT00000000"
+    },
+    "financial_data": {
+      "cash": 274204992,
+      "debt": 268140000,
+      "net_debt": -6064992,
+      "revenue_ttm": 161318000,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "market_data": {
+      "price": 14.18,
+      "market_cap": 717835392,
+      "shares_outstanding": 50623086,
+      "volume_avg_30d": 647100,
+      "52_week_high": 15.41,
+      "52_week_low": 5.035,
+      "pe_ratio": null,
+      "company_name": "REGENXBIO Inc.",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "clinical_data": {
+      "total_trials": 20,
+      "active_trials": 8,
+      "completed_trials": 3,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": [
+        {
+          "nct_id": "NCT04480476",
+          "title": "A Retrospective, Natural History Study in Children With CLN2",
+          "status": "WITHDRAWN",
+          "phase": "N/A"
+        },
+        {
+          "nct_id": "NCT06103487",
+          "title": "Long Term Follow-Up for RGX-111",
+          "status": "ENROLLING_BY_INVITATION",
+          "phase": "N/A"
+        },
+        {
+          "nct_id": "NCT04597385",
+          "title": "Long-term Follow-Up for RGX-121",
+          "status": "UNKNOWN",
+          "phase": "N/A"
+        },
+        {
+          "nct_id": "NCT03066258",
+          "title": "Safety and Tolerability of RGX-314 (Investigational Product) Gene Therapy for Neovascular AMD Trial",
+          "status": "COMPLETED",
+          "phase": "PHASE1"
+        },
+        {
+          "nct_id": "NCT03566043",
+          "title": "CAMPSIITE\u2122 RGX-121 Gene Therapy in Subjects With MPS II (Hunter Syndrome)",
+          "status": "ACTIVE_NOT_RECRUITING",
+          "phase": "PHASE2"
+        }
+      ]
     }
   },
   {
@@ -26858,6 +28150,69 @@
       "phase": "phase_2",
       "indication": "oncology",
       "trial_id": "NCT00000000"
+    },
+    "financial_data": {
+      "cash": 153054000,
+      "debt": 89736000,
+      "net_debt": -63318000,
+      "revenue_ttm": null,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "market_data": {
+      "price": 4.36,
+      "market_cap": 1161356288,
+      "shares_outstanding": 266366120,
+      "volume_avg_30d": 5262782,
+      "52_week_high": 7.3,
+      "52_week_low": 1.26,
+      "pe_ratio": null,
+      "company_name": "Sana Biotechnology, Inc.",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "clinical_data": {
+      "total_trials": 20,
+      "active_trials": 6,
+      "completed_trials": 9,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": [
+        {
+          "nct_id": "NCT04194606",
+          "title": "CORonaRy Angiography and intErventions Via Distal vs Proximal aCcess",
+          "status": "UNKNOWN",
+          "phase": "NA"
+        },
+        {
+          "nct_id": "NCT06485804",
+          "title": "AI Mobile App vs Self Exercises in Workers With Neck Pain",
+          "status": "NOT_YET_RECRUITING",
+          "phase": "NA"
+        },
+        {
+          "nct_id": "NCT02009774",
+          "title": "Accuracy of the Optical Diagnosis of Small Colonic Polyps Using the Nice Classification",
+          "status": "COMPLETED",
+          "phase": "N/A"
+        },
+        {
+          "nct_id": "NCT00864097",
+          "title": "Analgesic Efficacy And Safety of Tanezumab Added On To Diclofenac SR In Patients With Osteoarthritis Of The Knee Or Hip",
+          "status": "TERMINATED",
+          "phase": "PHASE3"
+        },
+        {
+          "nct_id": "NCT01172223",
+          "title": "Primary Chemotherapy in Patients With HER2-positive Early Breast Cancer",
+          "status": "COMPLETED",
+          "phase": "PHASE1"
+        }
+      ]
     }
   },
   {
@@ -26889,6 +28244,69 @@
       "phase": "phase_2",
       "indication": "oncology",
       "trial_id": "NCT00000000"
+    },
+    "financial_data": {
+      "cash": 29616000,
+      "debt": 25424000,
+      "net_debt": -4192000,
+      "revenue_ttm": 32875000,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "market_data": {
+      "price": 0.4441,
+      "market_cap": 149437200,
+      "shares_outstanding": 336494489,
+      "volume_avg_30d": 6093743,
+      "52_week_high": 1.51,
+      "52_week_low": 0.38,
+      "pe_ratio": null,
+      "company_name": "Sangamo Therapeutics, Inc.",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "clinical_data": {
+      "total_trials": 20,
+      "active_trials": 4,
+      "completed_trials": 12,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": [
+        {
+          "nct_id": "NCT00406458",
+          "title": "Clinical Trial of SB-509 in Subjects With Diabetic Neuropathy",
+          "status": "COMPLETED",
+          "phase": "PHASE2"
+        },
+        {
+          "nct_id": "NCT05145062",
+          "title": "Long - Term Follow Up of Sickle Cell Disease and Beta-thalassemia Subjects Previously Exposed to BIVV003 or ST-400.",
+          "status": "ACTIVE_NOT_RECRUITING",
+          "phase": "N/A"
+        },
+        {
+          "nct_id": "NCT01044654",
+          "title": "Phase 1 Dose Escalation Study of Autologous T-cells Genetically Modified at the CCR5 Gene by Zinc Finger Nucleases in HIV-Infected Patients",
+          "status": "COMPLETED",
+          "phase": "PHASE1"
+        },
+        {
+          "nct_id": "NCT02702115",
+          "title": "Ascending Dose Study of Genome Editing by the Zinc Finger Nuclease (ZFN) Therapeutic SB-318 in Subjects With MPS I",
+          "status": "TERMINATED",
+          "phase": "PHASE1"
+        },
+        {
+          "nct_id": "NCT04817774",
+          "title": "Safety & Tolerability Study of Chimeric Antigen Receptor T-Reg Cell Therapy in Living Donor Renal Transplant Recipients",
+          "status": "ACTIVE_NOT_RECRUITING",
+          "phase": "PHASE1"
+        }
+      ]
     }
   },
   {
@@ -26920,6 +28338,69 @@
       "phase": "phase_2",
       "indication": "oncology",
       "trial_id": "NCT00000000"
+    },
+    "financial_data": {
+      "cash": 454174016,
+      "debt": 345431008,
+      "net_debt": -108743008,
+      "revenue_ttm": 111304000,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "market_data": {
+      "price": 20.34,
+      "market_cap": 1767847808,
+      "shares_outstanding": 86914838,
+      "volume_avg_30d": 2596433,
+      "52_week_high": 22.73,
+      "52_week_low": 8.58,
+      "pe_ratio": null,
+      "company_name": "Syndax Pharmaceuticals, Inc.",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "clinical_data": {
+      "total_trials": 34,
+      "active_trials": 17,
+      "completed_trials": 10,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": [
+        {
+          "nct_id": "NCT01038778",
+          "title": "Entinostat in Combination With Aldesleukin in Treating Patients With Metastatic Kidney Cancer",
+          "status": "ACTIVE_NOT_RECRUITING",
+          "phase": "PHASE1"
+        },
+        {
+          "nct_id": "NCT01349959",
+          "title": "Azacitidine and Entinostat in Treating Patients With Advanced Breast Cancer",
+          "status": "COMPLETED",
+          "phase": "PHASE2"
+        },
+        {
+          "nct_id": "NCT02453620",
+          "title": "Entinostat, Nivolumab, and Ipilimumab in Treating Patients With Solid Tumors That Are Metastatic or Cannot Be Removed by Surgery or Locally Advanced or Metastatic HER2-Negative Breast Cancer",
+          "status": "ACTIVE_NOT_RECRUITING",
+          "phase": "PHASE1"
+        },
+        {
+          "nct_id": "NCT06222580",
+          "title": "SNDX-5613 and Gilteritinib for the Treatment of Relapsed or Refractory FLT3-Mutated Acute Myeloid Leukemia and Concurrent MLL-Rearrangement or NPM1 Mutation",
+          "status": "RECRUITING",
+          "phase": "PHASE1"
+        },
+        {
+          "nct_id": "NCT07011810",
+          "title": "Axatilimab for Sclerotic Chronic Graft-versus-Host Disease",
+          "status": "RECRUITING",
+          "phase": "PHASE2"
+        }
+      ]
     }
   },
   {
@@ -26951,6 +28432,69 @@
       "phase": "phase_2",
       "indication": "oncology",
       "trial_id": "NCT00000000"
+    },
+    "financial_data": {
+      "cash": 288208992,
+      "debt": 169804992,
+      "net_debt": -118404000,
+      "revenue_ttm": 142772000,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "market_data": {
+      "price": 11.15,
+      "market_cap": 1102161920,
+      "shares_outstanding": 98848611,
+      "volume_avg_30d": 1925167,
+      "52_week_high": 18.9,
+      "52_week_low": 6.66,
+      "pe_ratio": null,
+      "company_name": "ARS Pharmaceuticals, Inc.",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "clinical_data": {
+      "total_trials": 29,
+      "active_trials": 3,
+      "completed_trials": 18,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": [
+        {
+          "nct_id": "NCT03240926",
+          "title": "Loop Band Validation Study",
+          "status": "COMPLETED",
+          "phase": "NA"
+        },
+        {
+          "nct_id": "NCT02019589",
+          "title": "A Phase 3, Randomized, Three-Cycle, Double-Blind, Placebo-Controlled Study to Evaluate Induction of Secretory Conversion of Endometrium and Withdrawal Bleeding for Secondary Amenorrhea",
+          "status": "TERMINATED",
+          "phase": "PHASE3"
+        },
+        {
+          "nct_id": "NCT06281561",
+          "title": "Dexmedetomidine Premedication for Post-anaesthesia Sleep Disturbance",
+          "status": "NOT_YET_RECRUITING",
+          "phase": "PHASE3"
+        },
+        {
+          "nct_id": "NCT03569163",
+          "title": "Pulse Oximeter Test",
+          "status": "COMPLETED",
+          "phase": "N/A"
+        },
+        {
+          "nct_id": "NCT05457036",
+          "title": "Evaluation of the Effect of Spry Belt Treatment on Bone Turnover Marker Profile",
+          "status": "COMPLETED",
+          "phase": "NA"
+        }
+      ]
     }
   },
   {
@@ -26982,6 +28526,69 @@
       "phase": "phase_2",
       "indication": "oncology",
       "trial_id": "NCT00000000"
+    },
+    "financial_data": {
+      "cash": 401836992,
+      "debt": 82509000,
+      "net_debt": -319327992,
+      "revenue_ttm": 366100000,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "market_data": {
+      "price": 79.88,
+      "market_cap": 3390834432,
+      "shares_outstanding": 42449105,
+      "volume_avg_30d": 557430,
+      "52_week_high": 85.25,
+      "52_week_low": 38.51,
+      "pe_ratio": null,
+      "company_name": "Tarsus Pharmaceuticals, Inc.",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "clinical_data": {
+      "total_trials": 40,
+      "active_trials": 10,
+      "completed_trials": 16,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": [
+        {
+          "nct_id": "NCT04418349",
+          "title": "Evaluation of Posterior Component Separation Modified TAR Technique \"Transversus Abdominids Release\" in the Treatment of Parastomal Hernia",
+          "status": "UNKNOWN",
+          "phase": "NA"
+        },
+        {
+          "nct_id": "NCT02132884",
+          "title": "Genetic Sequencing-Informed Targeted Therapy in Treating Patients With Stage IIIB-IV Non-small Cell Lung Cancer",
+          "status": "TERMINATED",
+          "phase": "NA"
+        },
+        {
+          "nct_id": "NCT06842225",
+          "title": "Interactive Roles of Cardiorespiratory Fitness and Adiposity on Glucose and Vascular Control After Physical Inactivity",
+          "status": "NOT_YET_RECRUITING",
+          "phase": "NA"
+        },
+        {
+          "nct_id": "NCT01863199",
+          "title": "Impact of Home Monitoring to Decrease the Treatment Burden for Neovascular Age-related Macular Degeneration (AMD)",
+          "status": "COMPLETED",
+          "phase": "PHASE4"
+        },
+        {
+          "nct_id": "NCT04772729",
+          "title": "Does the Use of Fiasp vs. Asp Lead to the Prolonged TIR in Children With Type 1 Diabetes?",
+          "status": "UNKNOWN",
+          "phase": "PHASE4"
+        }
+      ]
     }
   },
   {
@@ -27013,6 +28620,69 @@
       "phase": "phase_2",
       "indication": "oncology",
       "trial_id": "NCT00000000"
+    },
+    "financial_data": {
+      "cash": 329680000,
+      "debt": 44595000,
+      "net_debt": -285085000,
+      "revenue_ttm": 80327000,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "market_data": {
+      "price": 18.3,
+      "market_cap": 927305472,
+      "shares_outstanding": 50672431,
+      "volume_avg_30d": 466541,
+      "52_week_high": 20.33,
+      "52_week_low": 7.9,
+      "pe_ratio": 32.105263,
+      "company_name": "Theravance Biopharma, Inc.",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "clinical_data": {
+      "total_trials": 20,
+      "active_trials": 1,
+      "completed_trials": 18,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": [
+        {
+          "nct_id": "NCT00107952",
+          "title": "Comparison of Telavancin and Vancomycin for Hospital-acquired Pneumonia Due to Methicillin-resistant Staphylococcus Aureus",
+          "status": "COMPLETED",
+          "phase": "PHASE3"
+        },
+        {
+          "nct_id": "NCT03095456",
+          "title": "Revefenacin Peak Inspiratory Flow Rate (PIFR) Study in COPD",
+          "status": "COMPLETED",
+          "phase": "PHASE3"
+        },
+        {
+          "nct_id": "NCT03103412",
+          "title": "TD-3504 SAD in Healthy Subjects and Subjects With Ulcerative Colitis (UC)",
+          "status": "COMPLETED",
+          "phase": "PHASE1"
+        },
+        {
+          "nct_id": "NCT02459080",
+          "title": "Efficacy Study of Nebulized TD-4208 for Chronic Obstructive Pulmonary Disease (COPD)",
+          "status": "COMPLETED",
+          "phase": "PHASE3"
+        },
+        {
+          "nct_id": "NCT03635112",
+          "title": "Efficacy and Safety of TD-1473 in Crohn's Disease",
+          "status": "TERMINATED",
+          "phase": "PHASE2"
+        }
+      ]
     }
   },
   {
@@ -27044,6 +28714,69 @@
       "phase": "phase_2",
       "indication": "oncology",
       "trial_id": "NCT00000000"
+    },
+    "financial_data": {
+      "cash": 131582000,
+      "debt": 254540000,
+      "net_debt": 122958000,
+      "revenue_ttm": 531897984,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "market_data": {
+      "price": 29.41,
+      "market_cap": 4669115392,
+      "shares_outstanding": 158759451,
+      "volume_avg_30d": 1738561,
+      "52_week_high": 46.48,
+      "52_week_low": 25.28,
+      "pe_ratio": 10.617329,
+      "company_name": "TG Therapeutics, Inc.",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "clinical_data": {
+      "total_trials": 22,
+      "active_trials": 8,
+      "completed_trials": 12,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": [
+        {
+          "nct_id": "NCT01744912",
+          "title": "Ublituximab in Combination With Lenalidomide in Patients With B-Cell Lymphoid Malignancies",
+          "status": "TERMINATED",
+          "phase": "PHASE1"
+        },
+        {
+          "nct_id": "NCT01647971",
+          "title": "Study of the Efficacy and Safety of Ublituximab in Patients With Relapsed or Refractory B-cell Non-Hodgkin Lymphoma",
+          "status": "COMPLETED",
+          "phase": "PHASE1"
+        },
+        {
+          "nct_id": "NCT02774733",
+          "title": "Correlation Between the Pulmonary Function Parameters and the Circulatory Parameters (PSV, EDV, RI) of Retrobulbar Blood Vessels (CRA, PCA, and OA) in 48 T2DM Patients Did Not Combinate With DR",
+          "status": "COMPLETED",
+          "phase": "N/A"
+        },
+        {
+          "nct_id": "NCT06747416",
+          "title": "KN057 Multiple Dose Study in Patients with Hemophilia a or Hemophilia B with or Without Inhibitors",
+          "status": "NOT_YET_RECRUITING",
+          "phase": "PHASE2"
+        },
+        {
+          "nct_id": "NCT06200584",
+          "title": "Synergistic Effect of Vitamin E & D in Reducing Risk of Effects Associated With Atypical Anti-psychotics",
+          "status": "COMPLETED",
+          "phase": "NA"
+        }
+      ]
     }
   }
 ]
