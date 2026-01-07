@@ -1,243 +1,239 @@
+#!/usr/bin/env python3
 """
-Module 2: Financial Health Assessment - Enhanced with Raw Value Pass-through
+module_2_financial.py - Financial Health Scoring
 
-Architecture:
-    - Computes financial health scores from financial.json records
-    - Now ALSO passes through raw financial values for downstream transparency:
-        * cash_usd
-        * debt_usd  
-        * ttm_revenue_usd
-        * market_cap_usd (optional)
-    
-CCFT Compliance:
-    - All raw values preserved exactly as input (no transformation)
-    - Explicit None for missing values (never fabricate)
-    - Coverage tracking for governance
+Scores tickers on financial health using:
+1. Cash runway (50% weight)
+2. Dilution risk (30% weight)
+3. Liquidity (20% weight)
+
+Usage:
+    from module_2_financial import run_module_2
+    results = run_module_2(universe, financial_data, market_data)
 """
-from __future__ import annotations
 
-from datetime import datetime
-from decimal import Decimal, ROUND_HALF_UP
-from typing import Any, Dict, List, Optional, Set
-
-
-# CCFT: Quantization for deterministic score representation  
-DECIMAL_QUANTIZATION = Decimal("0.0001")
+import json
+from pathlib import Path
+from typing import Dict, List, Optional
 
 
-def _quantize(value: Decimal) -> Decimal:
-    """CCFT: Quantize decimal values for deterministic representation."""
-    return value.quantize(DECIMAL_QUANTIZATION, rounding=ROUND_HALF_UP)
-
-
-def _safe_decimal(value: Any) -> Optional[Decimal]:
-    """Convert value to Decimal safely, returning None if invalid/missing."""
-    if value is None:
-        return None
-    try:
-        return Decimal(str(value))
-    except (ValueError, TypeError):
-        return None
-
-
-def compute_module_2_financial(
-    financial_records: List[Dict[str, Any]],
-    active_tickers: Set[str],
-    as_of_date: str,
-) -> Dict[str, Any]:
+def calculate_cash_runway(financial_data: Dict, market_data: Dict) -> tuple:
     """
-    Compute financial health scores AND pass through raw values.
-    
-    Args:
-        financial_records: List of financial records from financial.json
-        active_tickers: Set of tickers that passed Module 1 filter
-        as_of_date: Point-in-time date for the analysis (YYYY-MM-DD)
+    Calculate months of cash runway.
     
     Returns:
-        Dict containing:
-            - securities: Dict[ticker, security_financial_data]
-            - coverage_stats: Coverage metrics for governance
-            - as_of_date: Threading the analysis date
+        (runway_months, monthly_burn, score)
     """
-    # Index financial records by ticker for O(1) lookup
-    financial_by_ticker: Dict[str, Dict[str, Any]] = {}
-    for record in financial_records:
-        ticker = record.get("ticker")
-        if ticker:
-            financial_by_ticker[ticker] = record
     
-    securities: Dict[str, Dict[str, Any]] = {}
+    cash = financial_data.get('Cash', 0) or 0
+    net_income = financial_data.get('NetIncome', 0) or 0
+    rd_expense = financial_data.get('R&D', 0) or 0
     
-    # Coverage counters
-    coverage_stats = {
-        "total_active": len(active_tickers),
-        "has_cash": 0,
-        "has_debt": 0,
-        "has_revenue": 0,
-        "has_market_cap": 0,
-        "has_any_financial": 0,
-    }
+    # Method 1: Use net income if available and negative
+    if net_income and net_income < 0:
+        quarterly_burn = abs(net_income)
+        monthly_burn = quarterly_burn / 3.0
     
-    for ticker in sorted(active_tickers):  # CCFT: Deterministic iteration
-        fin_record = financial_by_ticker.get(ticker, {})
-        
-        # Extract raw values - NEVER fabricate, explicit None if missing
-        cash_usd = _safe_decimal(fin_record.get("cash_usd"))
-        debt_usd = _safe_decimal(fin_record.get("debt_usd"))
-        ttm_revenue_usd = _safe_decimal(fin_record.get("ttm_revenue_usd"))
-        market_cap_usd = _safe_decimal(fin_record.get("market_cap_usd"))
-        
-        # Track coverage
-        if cash_usd is not None:
-            coverage_stats["has_cash"] += 1
-        if debt_usd is not None:
-            coverage_stats["has_debt"] += 1
-        if ttm_revenue_usd is not None:
-            coverage_stats["has_revenue"] += 1
-        if market_cap_usd is not None:
-            coverage_stats["has_market_cap"] += 1
-        if any([cash_usd, debt_usd, ttm_revenue_usd, market_cap_usd]):
-            coverage_stats["has_any_financial"] += 1
-        
-        # Compute derived metrics (where possible)
-        net_cash_usd = None
-        if cash_usd is not None and debt_usd is not None:
-            net_cash_usd = cash_usd - debt_usd
-        
-        # Compute financial health score
-        health_score, health_flags = _compute_health_score(
-            cash_usd=cash_usd,
-            debt_usd=debt_usd,
-            ttm_revenue_usd=ttm_revenue_usd,
-            market_cap_usd=market_cap_usd,
-        )
-        
-        # Build security output with raw pass-through values
-        securities[ticker] = {
-            # Raw pass-through values (Tier-0 provenance)
-            "cash_usd": str(cash_usd) if cash_usd is not None else None,
-            "debt_usd": str(debt_usd) if debt_usd is not None else None,
-            "ttm_revenue_usd": str(ttm_revenue_usd) if ttm_revenue_usd is not None else None,
-            "market_cap_usd": str(market_cap_usd) if market_cap_usd is not None else None,
-            
-            # Derived metrics
-            "net_cash_usd": str(net_cash_usd) if net_cash_usd is not None else None,
-            
-            # Health assessment
-            "health_score": str(health_score) if health_score is not None else None,
-            "health_flags": health_flags,
-            
-            # Data quality metadata
-            "financial_fields_present": sum([
-                cash_usd is not None,
-                debt_usd is not None,
-                ttm_revenue_usd is not None,
-                market_cap_usd is not None,
-            ]),
-            "data_source": fin_record.get("data_source", "unknown"),
-        }
+    # Method 2: Estimate from R&D (pre-revenue companies)
+    elif rd_expense and rd_expense > 0:
+        # Assume total opex = R&D × 1.5 (add G&A overhead)
+        quarterly_burn = rd_expense * 1.5
+        monthly_burn = quarterly_burn / 3.0
     
-    # Compute coverage percentages
-    total = coverage_stats["total_active"] or 1  # Avoid division by zero
-    coverage_stats["cash_coverage_pct"] = round(100 * coverage_stats["has_cash"] / total, 1)
-    coverage_stats["debt_coverage_pct"] = round(100 * coverage_stats["has_debt"] / total, 1)
-    coverage_stats["revenue_coverage_pct"] = round(100 * coverage_stats["has_revenue"] / total, 1)
-    coverage_stats["market_cap_coverage_pct"] = round(100 * coverage_stats["has_market_cap"] / total, 1)
+    else:
+        # No burn data - return neutral
+        return None, None, 50.0
+    
+    # Calculate runway
+    if monthly_burn > 0:
+        runway_months = cash / monthly_burn
+    else:
+        # Cash positive
+        runway_months = 999.0
+    
+    # Score based on runway
+    if runway_months >= 24:
+        score = 100.0  # 2+ years
+    elif runway_months >= 18:
+        score = 90.0   # 18-24 months
+    elif runway_months >= 12:
+        score = 70.0   # 12-18 months
+    elif runway_months >= 6:
+        score = 40.0   # 6-12 months
+    else:
+        score = 10.0   # < 6 months
+    
+    return runway_months, monthly_burn, score
+
+
+def calculate_dilution_risk(financial_data: Dict, market_data: Dict, runway_months: Optional[float]) -> tuple:
+    """Score dilution risk based on cash as % of market cap"""
+    
+    cash = financial_data.get('Cash', 0) or 0
+    market_cap = market_data.get('market_cap', 0) or 0
+    
+    if not market_cap or market_cap <= 0:
+        return None, 50.0
+    
+    cash_to_mcap = cash / market_cap
+    
+    # Base scoring
+    if cash_to_mcap >= 0.30:
+        dilution_score = 100.0  # Strong
+    elif cash_to_mcap >= 0.20:
+        dilution_score = 80.0   # Adequate
+    elif cash_to_mcap >= 0.10:
+        dilution_score = 60.0   # Moderate
+    elif cash_to_mcap >= 0.05:
+        dilution_score = 30.0   # High risk
+    else:
+        dilution_score = 10.0   # Critical
+    
+    # Penalize near-term financing needs
+    if runway_months is not None and runway_months < 12:
+        dilution_score *= 0.7
+    
+    return cash_to_mcap, dilution_score
+
+
+def score_liquidity(market_data: Dict) -> float:
+    """Score based on market cap and trading volume"""
+    
+    market_cap = market_data.get('market_cap', 0) or 0
+    avg_volume = market_data.get('avg_volume', 0) or 0
+    price = market_data.get('price', 0) or 0
+    
+    if not all([market_cap, avg_volume, price]):
+        return 50.0
+    
+    # Dollar volume
+    dollar_volume = avg_volume * price
+    
+    # Market cap tiers (60% weight)
+    if market_cap > 10e9:
+        mcap_score = 100.0  # >$10B
+    elif market_cap > 2e9:
+        mcap_score = 80.0   # $2-10B
+    elif market_cap > 500e6:
+        mcap_score = 60.0   # $500M-2B
+    elif market_cap > 200e6:
+        mcap_score = 40.0   # $200M-500M
+    else:
+        mcap_score = 20.0   # <$200M
+    
+    # Volume tiers (40% weight)
+    if dollar_volume > 10e6:
+        volume_score = 100.0  # $10M+
+    elif dollar_volume > 5e6:
+        volume_score = 80.0   # $5-10M
+    elif dollar_volume > 1e6:
+        volume_score = 60.0   # $1-5M
+    elif dollar_volume > 500e3:
+        volume_score = 40.0   # $500K-1M
+    else:
+        volume_score = 20.0   # <$500K
+    
+    # Composite
+    return mcap_score * 0.6 + volume_score * 0.4
+
+
+def score_financial_health(ticker: str, financial_data: Dict, market_data: Dict) -> Dict:
+    """Main scoring function for Module 2"""
+    
+    # Component 1: Cash Runway (50%)
+    runway_months, burn_rate, runway_score = calculate_cash_runway(financial_data, market_data)
+    
+    # Component 2: Dilution Risk (30%)
+    cash_to_mcap, dilution_score = calculate_dilution_risk(financial_data, market_data, runway_months)
+    
+    # Component 3: Liquidity (20%)
+    liquidity_score = score_liquidity(market_data)
+    
+    # Composite score
+    if all([runway_score is not None, dilution_score is not None, liquidity_score is not None]):
+        composite = runway_score * 0.50 + dilution_score * 0.30 + liquidity_score * 0.20
+        has_data = True
+    else:
+        composite = 50.0
+        has_data = False
     
     return {
-        "securities": securities,
-        "coverage_stats": coverage_stats,
-        "as_of_date": as_of_date,
-        "diagnostic_counts": {
-            "scored": len(securities),
-            "missing": coverage_stats["total_active"] - len(securities),
-        },
+        "ticker": ticker,
+        "financial_normalized": float(composite),
+        "runway_months": float(runway_months) if runway_months else None,
+        "runway_score": float(runway_score) if runway_score else None,
+        "dilution_score": float(dilution_score) if dilution_score else None,
+        "liquidity_score": float(liquidity_score) if liquidity_score else None,
+        "cash_to_mcap": float(cash_to_mcap) if cash_to_mcap else None,
+        "monthly_burn": float(burn_rate) if burn_rate else None,
+        "has_financial_data": has_data
     }
 
 
-def _compute_health_score(
-    cash_usd: Optional[Decimal],
-    debt_usd: Optional[Decimal],
-    ttm_revenue_usd: Optional[Decimal],
-    market_cap_usd: Optional[Decimal],
-) -> tuple[Optional[Decimal], List[str]]:
+def run_module_2(universe: List[str], financial_data: List[Dict], market_data: List[Dict]) -> List[Dict]:
     """
-    Compute financial health score with explicit flag generation.
+    Main entry point for Module 2 financial health scoring.
+    
+    Args:
+        universe: List of tickers to score
+        financial_data: List of dicts from financial_data.json
+        market_data: List of dicts from market_data.json
     
     Returns:
-        Tuple of (score, flags) where:
-            - score: 0-100 health score (or None if insufficient data)
-            - flags: List of pattern/warning flags detected
+        List of dicts with financial health scores
     """
-    flags: List[str] = []
     
-    # Track what we're missing
-    if cash_usd is None:
-        flags.append("MISSING_CASH")
-    if debt_usd is None:
-        flags.append("MISSING_DEBT")
-    if ttm_revenue_usd is None:
-        flags.append("MISSING_REVENUE")
+    # Create lookup dicts
+    fin_lookup = {f['ticker']: f for f in financial_data if 'ticker' in f}
+    mkt_lookup = {m['ticker']: m for m in market_data if 'ticker' in m}
     
-    # Cannot compute meaningful score without cash
-    if cash_usd is None:
-        return None, flags
+    results = []
+    for ticker in universe:
+        fin_data = fin_lookup.get(ticker, {})
+        mkt_data = mkt_lookup.get(ticker, {})
+        score_result = score_financial_health(ticker, fin_data, mkt_data)
+        results.append(score_result)
     
-    score = Decimal("50")  # Base score
-    
-    # Pattern detection
-    debt = debt_usd or Decimal("0")
-    net_cash = cash_usd - debt
-    
-    # Cash Fortress pattern: net cash > $1B
-    if net_cash >= Decimal("1000000000"):
-        flags.append("CASH_FORTRESS")
-        score += Decimal("20")
-    
-    # Net debt warning
-    if net_cash < Decimal("0"):
-        flags.append("NET_DEBT_WARNING")
-        score -= Decimal("15")
-    
-    # Commercial patterns (revenue-based)
-    if ttm_revenue_usd is not None:
-        if ttm_revenue_usd >= Decimal("500000000"):
-            flags.append("COMMERCIAL_CASH_COW")
-            score += Decimal("15")
-        elif ttm_revenue_usd >= Decimal("100000000"):
-            flags.append("COMMERCIAL_RAMP")
-            score += Decimal("10")
-        elif ttm_revenue_usd > Decimal("0"):
-            flags.append("COMMERCIAL_LAUNCH")
-            score += Decimal("5")
-        else:
-            flags.append("PRE_REVENUE")
-    
-    # Normalize to 0-100 range
-    score = max(Decimal("0"), min(Decimal("100"), score))
-    
-    return _quantize(score), flags
+    return results
 
 
-# Example usage / self-test
-if __name__ == "__main__":
-    # Test with sample data
-    sample_financial = [
-        {"ticker": "ABBV", "cash_usd": 12500000000, "debt_usd": 55000000000, "ttm_revenue_usd": 58000000000},
-        {"ticker": "VRTX", "cash_usd": 11000000000, "debt_usd": 500000000, "ttm_revenue_usd": 9000000000},
-        {"ticker": "SRPT", "cash_usd": 2500000000, "debt_usd": 1200000000, "ttm_revenue_usd": 1500000000},
-        {"ticker": "ALNY", "cash_usd": 2100000000, "debt_usd": 1500000000, "ttm_revenue_usd": 2500000000},
-        {"ticker": "BEAM", "cash_usd": 1100000000, "debt_usd": 0},  # Pre-revenue
-        {"ticker": "RARE", "cash_usd": 450000000},  # Missing debt/revenue
+def main():
+    """Test Module 2 on sample data"""
+    
+    universe = ['CVAC', 'RYTM', 'IMMP']
+    
+    financial_data = [
+        {'ticker': 'CVAC', 'Cash': 500e6, 'NetIncome': -100e6, 'R&D': 80e6},
+        {'ticker': 'RYTM', 'Cash': 200e6, 'NetIncome': -50e6, 'R&D': 40e6},
+        {'ticker': 'IMMP', 'Cash': 1000e6, 'NetIncome': -150e6, 'R&D': 120e6}
     ]
     
-    active = {"ABBV", "VRTX", "SRPT", "ALNY", "BEAM", "RARE"}
+    market_data = [
+        {'ticker': 'CVAC', 'market_cap': 2e9, 'avg_volume': 500000, 'price': 20.0},
+        {'ticker': 'RYTM', 'market_cap': 800e6, 'avg_volume': 200000, 'price': 15.0},
+        {'ticker': 'IMMP', 'market_cap': 5e9, 'avg_volume': 1000000, 'price': 50.0}
+    ]
     
-    result = compute_module_2_financial(
-        financial_records=sample_financial,
-        active_tickers=active,
-        as_of_date="2025-01-05",
-    )
+    results = run_module_2(universe, financial_data, market_data)
     
-    import json
-    print(json.dumps(result, indent=2))
+    print("="*80)
+    print("MODULE 2: FINANCIAL HEALTH SCORING - TEST RUN")
+    print("="*80)
+    
+    for r in results:
+        print(f"\n{r['ticker']}:")
+        print(f"  Financial Score: {r['financial_normalized']:.2f}")
+        if r['runway_months']:
+            print(f"  Runway: {r['runway_months']:.1f} months ({r['runway_score']:.0f} pts)")
+        if r['cash_to_mcap']:
+            print(f"  Dilution: {r['cash_to_mcap']:.1%} cash/mcap ({r['dilution_score']:.0f} pts)")
+        if r['liquidity_score']:
+            print(f"  Liquidity: {r['liquidity_score']:.0f} pts")
+    
+    print("\n" + "="*80)
+    print("✅ Module 2 test complete!")
+    print("="*80)
+
+
+if __name__ == "__main__":
+    main()

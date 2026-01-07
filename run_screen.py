@@ -30,13 +30,14 @@ import sys
 from datetime import date
 import hashlib
 from decimal import Decimal
+from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 from dataclasses import asdict
 
 # Module imports
 from module_1_universe import compute_module_1_universe
-from module_2_financial import compute_module_2_financial
+from module_2_financial import run_module_2
 from module_3_catalyst import compute_module_3_catalyst, Module3Config
 from module_4_clinical_dev import compute_module_4_clinical_dev
 from module_5_composite_with_defensive import compute_module_5_composite_with_defensive
@@ -168,7 +169,8 @@ def run_screening_pipeline(
     # Load input data
     print("\n[1/7] Loading input data...")
     raw_universe = load_json_data(data_dir / "universe.json", "Universe")
-    financial_records = load_json_data(data_dir / "financial_records.json", "Financial")
+    financial_data = load_json_data(data_dir / "financial_data.json", "Financial data")
+    market_data = load_json_data(data_dir / "market_data.json", "Market data")
     trial_records = load_json_data(data_dir / "trial_records.json", "Trials")
     
     coinvest_signals = None
@@ -192,11 +194,23 @@ def run_screening_pipeline(
     
     # Module 2: Financial health
     print("\n[3/7] Module 2: Financial health...")
-    m2_result = compute_module_2_financial(
-        financial_records=financial_records,
-        active_tickers=set(active_tickers),
-        as_of_date=as_of_date,  # Explicit threading
+    
+    # Call new Module 2 implementation
+    module_2_scores = run_module_2(
+        universe=active_tickers,
+        financial_data=financial_data,
+        market_data=market_data
     )
+    
+    # Wrap in expected format for compatibility
+    m2_result = {
+        'scores': module_2_scores,
+        'diagnostic_counts': {
+            'scored': len(module_2_scores),
+            'missing': sum(1 for s in module_2_scores if not s.get('has_financial_data', True))
+        }
+    }
+    
     diag = m2_result.get('diagnostic_counts', {})
     print(f"  Scored: {diag.get('scored', len(m2_result.get('scores', [])))}, "
           f"Missing: {diag.get('missing', 'N/A')}")

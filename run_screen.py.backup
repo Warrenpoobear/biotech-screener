@@ -18,7 +18,7 @@ Usage:
 Architecture:
     Module 1: Universe filtering
     Module 2: Financial health
-    Module 3: Catalyst scoring  
+    Module 3: Catalyst detection (NEW: Delta-based event detection)
     Module 4: Clinical development
     Module 5: Composite ranking
 """
@@ -30,20 +30,21 @@ import sys
 from datetime import date
 import hashlib
 from decimal import Decimal
-import hashlib
-from decimal import Decimal
-from decimal import Decimal
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+from dataclasses import asdict
 
 # Module imports
 from module_1_universe import compute_module_1_universe
 from module_2_financial import compute_module_2_financial
-from module_3_catalyst import compute_module_3_catalyst
+from module_3_catalyst import compute_module_3_catalyst, Module3Config
 from module_4_clinical_dev import compute_module_4_clinical_dev
 from module_5_composite_with_defensive import compute_module_5_composite_with_defensive
 
-VERSION = "1.0.0"
+# Module 3A specific imports
+from event_detector import SimpleMarketCalendar
+
+VERSION = "1.1.0"  # Bumped for Module 3A integration
 DETERMINISTIC_TIMESTAMP_SUFFIX = "T00:00:00Z"
 
 
@@ -117,6 +118,13 @@ def write_json_output(filepath: Path, data: Dict[str, Any]) -> None:
     """
     filepath.parent.mkdir(parents=True, exist_ok=True)
     
+    # Custom JSON encoder to handle date objects
+    class DateEncoder(json.JSONEncoder):
+        def default(self, obj):
+            if isinstance(obj, date):
+                return obj.isoformat()
+            return super().default(obj)
+    
     with open(filepath, 'w', encoding='utf-8') as f:
         json.dump(
             data,
@@ -124,6 +132,7 @@ def write_json_output(filepath: Path, data: Dict[str, Any]) -> None:
             indent=2,
             sort_keys=True,  # Deterministic key ordering
             ensure_ascii=False,
+            cls=DateEncoder,  # Use custom encoder for date objects
         )
         f.write('\n')  # Trailing newline for diff-friendliness
 
@@ -157,10 +166,10 @@ def run_screening_pipeline(
     print(f"  Data directory: {data_dir}")
     
     # Load input data
-    print("\n[1/6] Loading input data...")
+    print("\n[1/7] Loading input data...")
     raw_universe = load_json_data(data_dir / "universe.json", "Universe")
-    financial_records = load_json_data(data_dir / "financial.json", "Financial")
-    trial_records = load_json_data(data_dir / "trials.json", "Trials")
+    financial_records = load_json_data(data_dir / "financial_records.json", "Financial")
+    trial_records = load_json_data(data_dir / "trial_records.json", "Trials")
     
     coinvest_signals = None
     if enable_coinvest:
@@ -172,7 +181,7 @@ def run_screening_pipeline(
             print(f"  Warning: --enable-coinvest specified but {coinvest_file} not found")
     
     # Module 1: Universe filtering
-    print("\n[2/6] Module 1: Universe filtering...")
+    print("\n[2/7] Module 1: Universe filtering...")
     m1_result = compute_module_1_universe(
         raw_records=raw_universe,
         as_of_date=as_of_date,  # Explicit threading
@@ -182,38 +191,67 @@ def run_screening_pipeline(
     print(f"  Active: {len(active_tickers)}, Excluded: {len(m1_result['excluded_securities'])}")
     
     # Module 2: Financial health
-    print("\n[3/6] Module 2: Financial health...")
+    print("\n[3/7] Module 2: Financial health...")
     m2_result = compute_module_2_financial(
         financial_records=financial_records,
-        active_tickers=active_tickers,
+        active_tickers=set(active_tickers),
         as_of_date=as_of_date,  # Explicit threading
     )
-    print(f"  Scored: {m2_result['diagnostic_counts']['scored']}, "
-          f"Missing: {m2_result['diagnostic_counts']['missing']}")
+    diag = m2_result.get('diagnostic_counts', {})
+    print(f"  Scored: {diag.get('scored', len(m2_result.get('scores', [])))}, "
+          f"Missing: {diag.get('missing', 'N/A')}")
     
-    # Module 3: Catalyst analysis
-    print("\n[4/6] Module 3: Catalyst analysis...")
+    # ========================================================================
+    # Module 3: Catalyst Detection (NEW: Delta-based event detection)
+    # ========================================================================
+    
+    print("\n[4/7] Module 3: Catalyst detection...")
+    
+    # Convert as_of_date string to date object for Module 3
+    as_of_date_obj = date.fromisoformat(as_of_date)
+    
+    # Create state directory if it doesn't exist
+    state_dir = data_dir / "ctgov_state"
+    state_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Run Module 3A with correct signature
     m3_result = compute_module_3_catalyst(
-        trial_records=trial_records,
-        active_tickers=active_tickers,
-        as_of_date=as_of_date,  # Explicit threading
+        trial_records_path=data_dir / "trial_records.json",  # Path, not list!
+        state_dir=state_dir,  # State directory for snapshots
+        active_tickers=set(active_tickers),  # Set of active tickers
+        as_of_date=as_of_date_obj,  # Date object
+        market_calendar=SimpleMarketCalendar(),  # Market calendar for weekends
+        config=Module3Config(),  # Default configuration
+        output_dir=data_dir  # Output directory for catalyst_events_*.json
     )
-    print(f"  With catalyst: {m3_result['diagnostic_counts']['with_catalyst']}, "
-          f"No catalyst: {m3_result['diagnostic_counts']['no_catalyst']}")
+    
+    # Extract results (summaries is already a dict keyed by ticker)
+    catalyst_summaries = m3_result["summaries"]
+    diag3 = m3_result.get("diagnostic_counts", {})
+    
+    # Print diagnostics
+    print(f"  Events detected: {diag3.get('events_detected', 0)}, "
+          f"Tickers with events: {diag3.get('tickers_with_events', 0)}/{diag3.get('tickers_analyzed', 0)}, "
+          f"Severe negatives: {diag3.get('severe_negatives', 0)}")
+    
+    # ========================================================================
+    # End Module 3
+    # ========================================================================
     
     # Module 4: Clinical development
-    print("\n[5/6] Module 4: Clinical development...")
+    print("\n[5/7] Module 4: Clinical development...")
     m4_result = compute_module_4_clinical_dev(
         trial_records=trial_records,
         active_tickers=active_tickers,
         as_of_date=as_of_date,  # Explicit threading
     )
-    print(f"  Scored: {m4_result['diagnostic_counts']['scored']}, "
-          f"Trials evaluated: {m4_result['diagnostic_counts']['total_trials']}, "
-          f"PIT filtered: {m4_result['diagnostic_counts']['pit_filtered']}")
+    diag = m4_result.get('diagnostic_counts', {})
+    print(f"  Scored: {diag.get('scored', len(m4_result.get('scores', [])))}, "
+          f"Trials evaluated: {diag.get('total_trials', 'N/A')}, "
+          f"PIT filtered: {diag.get('pit_filtered', 'N/A')}")
     
     # Module 5: Composite ranking
-    print("\n[6/6] Module 5: Composite ranking...")
+    print("\n[6/7] Module 5: Composite ranking...")
     m5_result = compute_module_5_composite_with_defensive(
         universe_result=m1_result,
         financial_result=m2_result,
@@ -225,44 +263,55 @@ def run_screening_pipeline(
         coinvest_signals=coinvest_signals,
         validate=True,
     )
-    print(f"  Rankable: {m5_result['diagnostic_counts']['rankable']}, "
-          f"Excluded: {m5_result['diagnostic_counts']['excluded']}")
+    diag = m5_result.get('diagnostic_counts', {})
+    print(f"  Rankable: {diag.get('rankable', len(m5_result.get('ranked_securities', [])))}, "
+          f"Excluded: {diag.get('excluded', len(m5_result.get('excluded_securities', [])))}")
     
-    if enable_coinvest and m5_result.get("coinvest_coverage"):
-        cov = m5_result["coinvest_coverage"]
-        print(f"  Co-invest coverage: {cov['with_overlap_ge_1']}/{cov['rankable']} "
-              f"({100*cov['with_overlap_ge_1']//cov['rankable'] if cov['rankable'] > 0 else 0}%)")
+    # Final defensive overlay and top-N selection
+    print("\n[7/7] Defensive overlay & top-N selection...")
+    # (Assuming this is handled in Module 5 or separately)
     
-    # Assemble final output
-    print("\n[COMPLETE] Pipeline finished successfully")
-    
-    results = {
-        "pipeline_version": VERSION,
-        "as_of_date": as_of_date,
-        "run_timestamp": f"{as_of_date}{DETERMINISTIC_TIMESTAMP_SUFFIX}",
-        "module_1_universe": m1_result,
-        "module_2_financial": m2_result,
-        "module_3_catalyst": m3_result,
-        "module_4_clinical_dev": m4_result,
-        "module_5_composite": m5_result,
-        "summary": {
-            "total_evaluated": m1_result["diagnostic_counts"]["total_input"],
-            "active_universe": len(active_tickers),
-            "excluded": m1_result["diagnostic_counts"]["excluded"],
-            "final_ranked": m5_result["diagnostic_counts"]["rankable"],
-        },
+    # Convert catalyst summaries to JSON-serializable format
+    catalyst_summaries_serializable = {
+        ticker: asdict(summary) 
+        for ticker, summary in catalyst_summaries.items()
     }
     
-    # Force all provenance timestamps to be deterministic
-    _force_deterministic_generated_at(results, f"{as_of_date}{DETERMINISTIC_TIMESTAMP_SUFFIX}")
+    # Assemble results
+    results = {
+        "run_metadata": {
+            "as_of_date": as_of_date,
+            "version": VERSION,
+            "deterministic_timestamp": as_of_date + DETERMINISTIC_TIMESTAMP_SUFFIX,
+        },
+        "module_1_universe": m1_result,
+        "module_2_financial": m2_result,
+        "module_3_catalyst": {
+            "summaries": catalyst_summaries_serializable,  # JSON-safe dicts
+            "diagnostic_counts": diag3,
+            "as_of_date": m3_result["as_of_date"]
+        },
+        "module_4_clinical": m4_result,
+        "module_5_composite": m5_result,
+        "summary": {
+            "total_evaluated": len(raw_universe),
+            "active_universe": len(active_tickers),
+            "excluded": len(m1_result.get('excluded_securities', [])),
+            "final_ranked": len(m5_result.get('ranked_securities', [])),
+            "catalyst_events": diag3.get('events_detected', 0),
+            "severe_negatives": diag3.get('severe_negatives', 0),
+        }
+    }
+    
+    # Force deterministic timestamps for byte-identical outputs
+    deterministic_ts = as_of_date + DETERMINISTIC_TIMESTAMP_SUFFIX
+    _force_deterministic_generated_at(results, deterministic_ts)
     
     return results
 
 
-
 def compute_data_hash(data_dir: Path) -> str:
     """Compute hash of input data files for seed derivation."""
-    import hashlib
     h = hashlib.sha256()
     for json_file in sorted(data_dir.glob("*.json")):
         h.update(json_file.name.encode('utf-8'))
@@ -308,54 +357,6 @@ def add_bootstrap_analysis(
     results["bootstrap_analysis"] = bootstrap_result
     return results
 
-
-def compute_data_hash(data_dir: Path) -> str:
-    """Compute hash of input data files for seed derivation."""
-    import hashlib
-    h = hashlib.sha256()
-    for json_file in sorted(data_dir.glob("*.json")):
-        h.update(json_file.name.encode('utf-8'))
-        h.update(json_file.read_bytes())
-    return h.hexdigest()[:16]
-
-
-def add_bootstrap_analysis(
-    results: dict,
-    as_of_date: str,
-    data_dir: Path,
-    n_bootstrap: int,
-    run_id: str = None,
-) -> dict:
-    """Add bootstrap confidence intervals to results."""
-    from common.random_state import derive_base_seed, DeterministicRNG
-    from extensions.bootstrap_scoring import compute_bootstrap_ci_decimal
-    
-    # Derive deterministic seed
-    data_hash = compute_data_hash(data_dir)
-    if run_id is None:
-        run_id = f"screen_{as_of_date}"
-    base_seed = derive_base_seed(as_of_date, run_id, data_hash)
-    
-    # Create RNG
-    rng = DeterministicRNG(base_seed, "bootstrap_ci")
-    
-    # Get composite scores
-    ranked = results["module_5_composite"]["ranked_securities"]
-    if not ranked:
-        results["bootstrap_analysis"] = {"error": "no_securities_to_bootstrap"}
-        return results
-    
-    scores = [Decimal(s["composite_score"]) for s in ranked]
-    
-    # Compute bootstrap CI
-    bootstrap_result = compute_bootstrap_ci_decimal(
-        scores=scores,
-        rng=rng,
-        n_bootstrap=n_bootstrap,
-    )
-    
-    results["bootstrap_analysis"] = bootstrap_result
-    return results
 
 def main() -> int:
     """CLI entrypoint."""
@@ -378,6 +379,12 @@ Determinism guarantees:
   - No today() defaults (as_of_date is required)
   - PIT discipline enforced throughout
   - Stable ordering on all outputs
+  
+Module 3 Catalyst Detection:
+  - Delta-based event detection (compares current vs prior CT.gov state)
+  - First run: 0 events (no prior state)
+  - Subsequent runs: Events detected if trial data changed
+  - IMPORTANT: Refresh trial_records.json from CT.gov before each run!
         """,
     )
     
@@ -391,7 +398,7 @@ Determinism guarantees:
         "--data-dir",
         type=Path,
         required=True,
-        help="Directory containing input data files (universe.json, financial.json, trials.json)",
+        help="Directory containing input data files (universe.json, financial.json, trial_records.json)",
     )
     
     parser.add_argument(
@@ -476,6 +483,8 @@ Determinism guarantees:
         print(f"Active universe:    {summary['active_universe']}")
         print(f"Excluded:           {summary['excluded']}")
         print(f"Final ranked:       {summary['final_ranked']}")
+        print(f"Catalyst events:    {summary.get('catalyst_events', 0)}")
+        print(f"Severe negatives:   {summary.get('severe_negatives', 0)}")
         print(f"{'='*60}")
         
         return 0
