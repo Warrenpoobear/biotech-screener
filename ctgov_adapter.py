@@ -56,6 +56,7 @@ class CompletionType(Enum):
     """Date completion type"""
     ACTUAL = "ACTUAL"
     ANTICIPATED = "ANTICIPATED"
+    ESTIMATED = "ESTIMATED"  # CT.gov also uses ESTIMATED
     
     @classmethod
     def from_string(cls, type_str: str | None) -> Optional['CompletionType']:

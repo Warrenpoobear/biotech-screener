@@ -48,9 +48,9 @@ def create_sample_trial_record(
         "last_update_posted": last_update_posted,
         "source_date": None,
         "primary_completion_date": "2024-06-01",
-        "primary_completion_type": "ANTICIPATED",
+        "primary_completion_type": "ESTIMATED",  # CT.gov uses ESTIMATED
         "completion_date": "2024-12-01",
-        "completion_type": "ANTICIPATED",
+        "completion_type": "ESTIMATED",  # CT.gov uses ESTIMATED
         "results_first_posted": None
     }
 
@@ -221,7 +221,7 @@ class TestEventClassification(unittest.TestCase):
     def test_date_confirmation(self):
         """Test date confirmation detection"""
         event_type, impact, direction, actual_date = classify_date_confirmation(
-            CompletionType.ANTICIPATED,
+            CompletionType.ESTIMATED,  # CT.gov uses ESTIMATED
             CompletionType.ACTUAL,
             date(2024, 1, 10),
             date(2024, 1, 15),

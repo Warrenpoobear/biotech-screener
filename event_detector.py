@@ -177,7 +177,8 @@ def classify_date_confirmation(
     
     Returns: (event_type, impact, direction, actual_date)
     """
-    if (old_type == CompletionType.ANTICIPATED and 
+    # Detect ANTICIPATED/ESTIMATED → ACTUAL transitions
+    if (old_type in {CompletionType.ANTICIPATED, CompletionType.ESTIMATED} and 
         new_type == CompletionType.ACTUAL):
         
         days_since_actual = (as_of_date - actual_date).days
