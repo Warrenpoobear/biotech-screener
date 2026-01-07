@@ -14,7 +14,7 @@ import shutil
 
 from ctgov_adapter import (
     CTGovStatus, CompletionType, CanonicalTrialRecord,
-    process_trial_records_batch, AdapterConfig
+    process_trial_records_batch, AdapterConfig, AdapterError
 )
 from state_management import StateStore, StateSnapshot
 from event_detector import (
@@ -83,7 +83,7 @@ class TestCTGovAdapter(unittest.TestCase):
         trial = create_sample_trial_record(last_update_posted="2024-01-20")
         config = AdapterConfig()
         
-        with self.assertRaises(ValueError):
+        with self.assertRaises(AdapterError):
             process_trial_records_batch(
                 [trial],
                 date(2024, 1, 15),  # as_of_date before last_update
@@ -96,7 +96,7 @@ class TestCTGovAdapter(unittest.TestCase):
         trial['last_update_posted'] = None
         config = AdapterConfig()
         
-        with self.assertRaises(ValueError):
+        with self.assertRaises(AdapterError):
             process_trial_records_batch([trial], date(2024, 1, 15), config)
 
 

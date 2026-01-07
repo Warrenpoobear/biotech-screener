@@ -32,7 +32,6 @@ import hashlib
 from decimal import Decimal
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-from dataclasses import asdict
 
 # Module imports
 from module_1_universe import compute_module_1_universe
@@ -118,13 +117,6 @@ def write_json_output(filepath: Path, data: Dict[str, Any]) -> None:
     """
     filepath.parent.mkdir(parents=True, exist_ok=True)
     
-    # Custom JSON encoder to handle date objects
-    class DateEncoder(json.JSONEncoder):
-        def default(self, obj):
-            if isinstance(obj, date):
-                return obj.isoformat()
-            return super().default(obj)
-    
     with open(filepath, 'w', encoding='utf-8') as f:
         json.dump(
             data,
@@ -132,7 +124,6 @@ def write_json_output(filepath: Path, data: Dict[str, Any]) -> None:
             indent=2,
             sort_keys=True,  # Deterministic key ordering
             ensure_ascii=False,
-            cls=DateEncoder,  # Use custom encoder for date objects
         )
         f.write('\n')  # Trailing newline for diff-friendliness
 
@@ -271,12 +262,6 @@ def run_screening_pipeline(
     print("\n[7/7] Defensive overlay & top-N selection...")
     # (Assuming this is handled in Module 5 or separately)
     
-    # Convert catalyst summaries to JSON-serializable format
-    catalyst_summaries_serializable = {
-        ticker: asdict(summary) 
-        for ticker, summary in catalyst_summaries.items()
-    }
-    
     # Assemble results
     results = {
         "run_metadata": {
@@ -286,11 +271,7 @@ def run_screening_pipeline(
         },
         "module_1_universe": m1_result,
         "module_2_financial": m2_result,
-        "module_3_catalyst": {
-            "summaries": catalyst_summaries_serializable,  # JSON-safe dicts
-            "diagnostic_counts": diag3,
-            "as_of_date": m3_result["as_of_date"]
-        },
+        "module_3_catalyst": m3_result,
         "module_4_clinical": m4_result,
         "module_5_composite": m5_result,
         "summary": {

@@ -331,6 +331,7 @@ class CTGovAdapter:
         """Extract overall_status"""
         candidates = [
             record.get("overall_status"),
+            record.get("status"),  # User's data uses "status" not "overall_status"
             self._safe_get(root, ["protocolSection", "statusModule", "overallStatus"]),
             self._safe_get(root, ["statusModule", "overallStatus"])
         ]
