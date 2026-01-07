@@ -39,6 +39,7 @@ from dataclasses import asdict
 from module_1_universe import compute_module_1_universe
 from module_2_financial import run_module_2
 from module_3_catalyst import compute_module_3_catalyst, Module3Config
+from module_3_scoring import score_catalyst_events
 from module_4_clinical_dev import compute_module_4_clinical_dev
 from module_5_composite_with_defensive import compute_module_5_composite_with_defensive
 
@@ -242,6 +243,15 @@ def run_screening_pipeline(
     # Extract results (summaries is already a dict keyed by ticker)
     catalyst_summaries = m3_result["summaries"]
     diag3 = m3_result.get("diagnostic_counts", {})
+    
+    # NEW: Score catalyst events for each ticker
+    catalyst_scores = score_catalyst_events(catalyst_summaries, active_tickers)
+    
+    # Add scores to m3_result for Module 5
+    m3_result['scores'] = list(catalyst_scores.values())
+    if 'diagnostic_counts' not in m3_result:
+        m3_result['diagnostic_counts'] = {}
+    m3_result['diagnostic_counts']['scored'] = len(catalyst_scores)
     
     # Print diagnostics
     print(f"  Events detected: {diag3.get('events_detected', 0)}, "

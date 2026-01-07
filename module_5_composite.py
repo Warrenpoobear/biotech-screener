@@ -316,8 +316,8 @@ def compute_module_5_composite(
         clin = clinical_by_ticker.get(ticker, {})
         
         # Get raw scores
-        fin_score = Decimal(fin.get("financial_score", "0")) if fin.get("financial_score") else None
-        cat_score = Decimal(cat.get("catalyst_score", "0")) if cat.get("catalyst_score") else None
+        fin_score = Decimal(str(fin.get("financial_normalized", "0"))) if fin.get("financial_normalized") else None
+        cat_score = Decimal(str(cat.get("score", "0"))) if cat.get("score") else None
         clin_score = Decimal(clin.get("clinical_score", "0")) if clin.get("clinical_score") else None
         
         # Get severities
