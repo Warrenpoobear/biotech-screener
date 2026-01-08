@@ -1,0 +1,46 @@
+Analyzing: results_ZERO_BUG_FIXED.json
+
+================================================================================
+WAKE ROBIN - SCORE QUALITY DIAGNOSTIC REPORT
+================================================================================
+
+1. UNIVERSE QUALITY
+--------------------------------------------------------------------------------
+   Total tickers: 322
+   Suspicious tickers: 5 (1.6%)
+
+   Top suspicious tickers:
+      1. CCCC (Rank 34) - blacklisted
+      2. NAME (Rank 40) - blacklisted
+      3. GH (Rank 43) - too_short
+      4. USD (Rank 52) - blacklisted
+      5. - (Rank 160) - too_short
+
+2A. RANK UNIQUENESS (Primary Quality Metric)
+--------------------------------------------------------------------------------
+   Total securities: 322
+   Unique ranks: 322/322 (100.0%)
+   ? PERFECT: All ranks are unique (tiebreaker working!)
+
+2B. SCORE UNIQUENESS (Secondary - informational only)
+--------------------------------------------------------------------------------
+
+2. SCORE UNIQUENESS (Higher is better)
+--------------------------------------------------------------------------------
+   Financial: 273/322 unique (84.8%)
+   Clinical:  139/322 unique (43.2%)
+   Catalyst:  1/322 unique (0.3%)
+   Composite: 291/322 unique (90.4%)
+
+3. BUCKETING EVIDENCE (Repeated values indicate bucketing)
+--------------------------------------------------------------------------------
+
+   Financial - Top 5 repeated values:
+      52.58 appears 17 times (5.3% of universe)
+      58.18 appears 11 times (3.4% of universe)
+      65.72 appears 10 times (3.1% of universe)
+      80.00 appears 4 times (1.2% of universe)
+      70.45 appears 4 times (1.2% of universe)
+
+   Clinical - Top 5 repeated values:
+      40.46 appears 156 times (48.4% of universe)

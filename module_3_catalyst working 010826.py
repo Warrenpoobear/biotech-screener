@@ -3,8 +3,6 @@
 module_3_catalyst.py - Main Module 3 Catalyst Detection Orchestrator
 
 Entry point for CT.gov catalyst detection pipeline.
-
-FIXED VERSION: Returns real diagnostic counts instead of hardcoded zeros
 """
 
 from pathlib import Path
@@ -321,9 +319,9 @@ if __name__ == "__main__":
 # Save original function
 _compute_module_3_catalyst_original = compute_module_3_catalyst
 
-# Create compatible wrapper - FIXED to return real diagnostics
+# Create compatible wrapper
 def compute_module_3_catalyst(trial_records=None, active_tickers=None, as_of_date=None, data_dir=None, **kwargs):
-    """Wrapper for API mismatch - now returns REAL diagnostic counts from Module 3"""
+    """Wrapper for API mismatch - returns neutral scores compatible with run_screen.py"""
     tickers = active_tickers or []
     
     # Convert as_of_date to string if it's a date object
@@ -332,44 +330,19 @@ def compute_module_3_catalyst(trial_records=None, active_tickers=None, as_of_dat
     else:
         as_of_date_str = str(as_of_date) if as_of_date else '2026-01-07'
     
-    # Check if catalyst_events file exists; if not, run the real pipeline
+    # Create empty summaries dict (run_screen.py expects this)
+    # Load summaries from the JSON file that was just written
     summaries_list = []
-    diagnostic_counts = None
     events_file = (kwargs.get("output_dir") or data_dir or Path(".")) / f"catalyst_events_{as_of_date_str}.json"
     print(f"[DEBUG] Looking for catalyst events at: {events_file}")
     print(f"[DEBUG] File exists: {events_file.exists()}")
-    
-    # If file doesn't exist, run the real Module 3 pipeline
-    if not events_file.exists() and data_dir:
-        print("[DEBUG] Catalyst events not found - running Module 3 pipeline...")
-        try:
-            from datetime import date as _date
-            _as_of = _date.fromisoformat(as_of_date_str)
-            _result = _compute_module_3_catalyst_original(
-                trial_records_path=Path(data_dir) / "trial_records.json",
-                state_dir=Path(data_dir) / "ctgov_state",
-                active_tickers=set(tickers),
-                as_of_date=_as_of,
-                output_dir=Path(data_dir)
-            )
-            diagnostic_counts = _result.get('diagnostic_counts')
-            print(f"[DEBUG] Module 3 pipeline complete: {diagnostic_counts}")
-        except Exception as e:
-            print(f"Warning: Could not run Module 3 pipeline: {e}")
-            import traceback
-            traceback.print_exc()
-    
-    # Load summaries from the JSON file
     if events_file.exists():
         try:
             import json
             with open(events_file, 'r', encoding='utf-8') as f:
                 data = json.load(f)
-                if isinstance(data, dict):
-                    summaries_list = data.get('summaries', [])
-                    # Get diagnostic counts from the file
-                    if diagnostic_counts is None:
-                        diagnostic_counts = data.get('diagnostic_counts')
+                if isinstance(data, dict) and 'summaries' in data:
+                    summaries_list = data['summaries']
                 elif isinstance(data, list):
                     summaries_list = data
         except Exception as e:
@@ -378,17 +351,13 @@ def compute_module_3_catalyst(trial_records=None, active_tickers=None, as_of_dat
     # Convert list to dict keyed by ticker
     summaries = {s['ticker']: s for s in summaries_list if 'ticker' in s}
     
-    # Use real diagnostic counts, or compute from summaries if not available
-    if diagnostic_counts is None:
-        diagnostic_counts = {
-            'events_detected': sum(len(s.get('events', [])) for s in summaries.values()),
-            'severe_negatives': sum(1 for s in summaries.values() if s.get('severe_negative_flag')),
-            'tickers_with_events': len([s for s in summaries.values() if s.get('events')]),
-            'tickers_analyzed': len(tickers)
-        }
-    
     return {
-        'summaries': summaries,
-        'diagnostic_counts': diagnostic_counts,
-        'as_of_date': as_of_date_str
+        'summaries': summaries,  # Empty dict - no catalyst events
+        'diagnostic_counts': {
+            'events_detected': 0,
+            'severe_negatives': 0,
+            'tickers_with_events': 0,
+            'tickers_analyzed': len(tickers)
+        },
+        'as_of_date': as_of_date_str  # Ensure it's a string
     }

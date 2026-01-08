@@ -1,0 +1,31 @@
+{
+  "description": "Sample biotech universe for automated pipeline",
+  "last_updated": "2026-01-08",
+  "tickers": [
+    "CVAC",
+    "RYTM",
+    "IMMP",
+    "BMRN",
+    "SRPT",
+    "ALNY",
+    "IONS",
+    "VRTX",
+    "EXEL",
+    "NBIX",
+    "INCY",
+    "HALO",
+    "RARE",
+    "FATE",
+    "BLUE",
+    "EDIT",
+    "CRSP",
+    "NTLA",
+    "BEAM",
+    "VERV"
+  ],
+  "notes": [
+    "This is a sample universe of 20 biotech tickers",
+    "Replace with your actual investment universe",
+    "Can also import from Module 1 output (active_securities)"
+  ]
+}
