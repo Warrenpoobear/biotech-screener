@@ -1,0 +1,41 @@
+2026-01-07 15:12:22,060 - module_3_catalyst - INFO - Starting Module 3 catalyst detection for 2026-01-07
+2026-01-07 15:12:22,060 - module_3_catalyst - INFO - Active tickers: 322
+2026-01-07 15:12:22,060 - module_3_catalyst - INFO - Loading trial records from production_data\trial_records.json
+2026-01-07 15:12:22,126 - module_3_catalyst - INFO - Processing 6727 trials for active tickers
+2026-01-07 15:12:22,126 - module_3_catalyst - INFO - Converting to canonical format...
+2026-01-07 15:12:22,126 - ctgov_adapter - WARNING - Unknown status: 'APPROVED_FOR_MARKETING' \u2192 UNKNOWN
+2026-01-07 15:12:22,129 - ctgov_adapter - WARNING - Unknown status: 'APPROVED_FOR_MARKETING' \u2192 UNKNOWN
+2026-01-07 15:12:22,134 - ctgov_adapter - WARNING - Unknown status: 'APPROVED_FOR_MARKETING' \u2192 UNKNOWN
+2026-01-07 15:12:22,159 - ctgov_adapter - WARNING - Unknown status: 'NO_LONGER_AVAILABLE' \u2192 UNKNOWN
+2026-01-07 15:12:22,173 - ctgov_adapter - WARNING - Unknown status: 'AVAILABLE' \u2192 UNKNOWN
+2026-01-07 15:12:22,181 - ctgov_adapter - WARNING - Unknown status: 'APPROVED_FOR_MARKETING' \u2192 UNKNOWN
+2026-01-07 15:12:22,183 - ctgov_adapter - WARNING - Unknown status: 'APPROVED_FOR_MARKETING' \u2192 UNKNOWN
+2026-01-07 15:12:22,192 - ctgov_adapter - WARNING - Unknown status: 'NO_LONGER_AVAILABLE' \u2192 UNKNOWN
+2026-01-07 15:12:22,192 - ctgov_adapter - WARNING - Unknown status: 'AVAILABLE' \u2192 UNKNOWN
+2026-01-07 15:12:22,204 - ctgov_adapter - WARNING - Unknown status: 'NO_LONGER_AVAILABLE' \u2192 UNKNOWN
+2026-01-07 15:12:22,204 - ctgov_adapter - WARNING - Unknown status: 'AVAILABLE' \u2192 UNKNOWN
+2026-01-07 15:12:22,209 - ctgov_adapter - WARNING - Unknown status: 'WITHHELD' \u2192 UNKNOWN
+2026-01-07 15:12:22,219 - ctgov_adapter - INFO - ================================================================================
+2026-01-07 15:12:22,219 - ctgov_adapter - INFO - Adapter Validation Summary
+2026-01-07 15:12:22,219 - ctgov_adapter - INFO - ================================================================================
+2026-01-07 15:12:22,219 - ctgov_adapter - INFO - Total: 6727
+2026-01-07 15:12:22,219 - ctgov_adapter - INFO - Success: 6727 (100.0%)
+2026-01-07 15:12:22,219 - ctgov_adapter - INFO - \u2705 VALIDATION GATES PASSED
+2026-01-07 15:12:22,219 - module_3_catalyst - INFO - Converted 6727 records successfully
+2026-01-07 15:12:22,289 - state_management - INFO - Loaded snapshot: production_data\ctgov_state\state_2026-01-07.jsonl (6727 records)
+2026-01-07 15:12:22,289 - module_3_catalyst - INFO - Loaded prior snapshot from 2026-01-07
+2026-01-07 15:12:22,290 - module_3_catalyst - INFO - Prior snapshot has 6727 records
+2026-01-07 15:12:22,293 - module_3_catalyst - INFO - Detecting catalyst events...
+2026-01-07 15:12:22,316 - module_3_catalyst - INFO - Detected 0 events across 0 tickers
+2026-01-07 15:12:22,316 - module_3_catalyst - INFO - Aggregating events into ticker summaries...
+2026-01-07 15:12:22,318 - module_3_catalyst - INFO - Diagnostics: {'events_detected': 0, 'severe_negatives': 0, 'tickers_with_events': 0, 'tickers_analyzed': 322}
+2026-01-07 15:12:22,318 - module_3_catalyst - INFO - Saving current snapshot...
+2026-01-07 15:12:22,398 - state_management - INFO - Saved snapshot: production_data\ctgov_state\state_2026-01-07.jsonl (6727 records)
+2026-01-07 15:12:22,398 - module_3_catalyst - INFO - Writing catalyst events to production_data\catalyst_events_2026-01-07.json
+2026-01-07 15:12:22,412 - catalyst_summary - INFO - Wrote catalyst events: production_data\catalyst_events_2026-01-07.json
+2026-01-07 15:12:22,440 - catalyst_summary - INFO - Wrote run log: production_data\run_log_2026-01-07.json
+2026-01-07 15:12:22,440 - module_3_catalyst - INFO - Module 3 completed in 0.38 seconds
+2026-01-07 15:12:22,443 - module_3_scoring - INFO - Scoring catalyst events for 322 tickers
+2026-01-07 15:12:22,445 - module_3_scoring - INFO - Scoring complete. Generated 322 scores
+
+ERROR: 'charmap' codec can't encode character '\u2713' in position 0: character maps to <undefined>

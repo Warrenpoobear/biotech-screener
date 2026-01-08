@@ -3135,159 +3135,6 @@
     "collected_at": "2026-01-07"
   },
   {
-    "ticker": "ELVN",
-    "cik": "0001672619",
-    "Assets": 490875000,
-    "Assets_date": "2025-09-30",
-    "CurrentAssets": 482683000,
-    "CurrentAssets_date": "2025-09-30",
-    "Liabilities": 14753000,
-    "Liabilities_date": "2025-09-30",
-    "CurrentLiabilities": 14650000,
-    "CurrentLiabilities_date": "2025-09-30",
-    "ShareholdersEquity": 476122000,
-    "ShareholdersEquity_date": "2025-09-30",
-    "Cash": 101732000,
-    "Cash_date": "2025-09-30",
-    "R&D": 64611000,
-    "R&D_date": "2025-09-30",
-    "NetIncome": -74027000,
-    "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
-  },
-  {
-    "ticker": "ENTA",
-    "cik": "0001177648",
-    "Assets": 280732000,
-    "Assets_date": "2025-09-30",
-    "CurrentAssets": 204336000,
-    "CurrentAssets_date": "2025-09-30",
-    "Liabilities": 216015000,
-    "Liabilities_date": "2025-09-30",
-    "CurrentLiabilities": 48555000,
-    "CurrentLiabilities_date": "2025-09-30",
-    "ShareholdersEquity": 64717000,
-    "ShareholdersEquity_date": "2025-09-30",
-    "Cash": 32298000,
-    "Cash_date": "2025-09-30",
-    "Revenue": 82158000,
-    "Revenue_date": "2018-03-31",
-    "R&D": 106740000,
-    "R&D_date": "2025-09-30",
-    "NetIncome": -81889000,
-    "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
-  },
-  {
-    "ticker": "ERAS",
-    "cik": "0001761918",
-    "Assets": 420401000,
-    "Assets_date": "2025-09-30",
-    "CurrentAssets": 299925000,
-    "CurrentAssets_date": "2025-09-30",
-    "Liabilities": 72515000,
-    "Liabilities_date": "2025-09-30",
-    "CurrentLiabilities": 28712000,
-    "CurrentLiabilities_date": "2025-09-30",
-    "ShareholdersEquity": 347886000,
-    "ShareholdersEquity_date": "2025-09-30",
-    "Cash": 70230000,
-    "Cash_date": "2025-09-30",
-    "NetIncome": -95454000,
-    "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
-  },
-  {
-    "ticker": "EWTX",
-    "cik": "0001710072",
-    "Assets": 583466000,
-    "Assets_date": "2025-09-30",
-    "CurrentAssets": 573900000,
-    "CurrentAssets_date": "2025-09-30",
-    "Liabilities": 24819000,
-    "Liabilities_date": "2025-09-30",
-    "CurrentLiabilities": 21646000,
-    "CurrentLiabilities_date": "2025-09-30",
-    "ShareholdersEquity": 558647000,
-    "ShareholdersEquity_date": "2025-09-30",
-    "Cash": 46003000,
-    "Cash_date": "2025-09-30",
-    "R&D": 107795000,
-    "R&D_date": "2025-09-30",
-    "NetIncome": -117579000,
-    "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
-  },
-  {
-    "ticker": "FDMT",
-    "cik": "0001650648",
-    "Assets": 423982000,
-    "Assets_date": "2025-09-30",
-    "CurrentAssets": 312377000,
-    "CurrentAssets_date": "2025-09-30",
-    "Liabilities": 54999000,
-    "Liabilities_date": "2025-09-30",
-    "CurrentLiabilities": 37107000,
-    "CurrentLiabilities_date": "2025-09-30",
-    "ShareholdersEquity": 368983000,
-    "ShareholdersEquity_date": "2025-09-30",
-    "Cash": 48555000,
-    "Cash_date": "2025-09-30",
-    "Revenue": 37000,
-    "Revenue_date": "2024-12-31",
-    "R&D": 43832000,
-    "R&D_date": "2021-09-30",
-    "NetIncome": -159506000,
-    "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
-  },
-  {
-    "ticker": "FHTX",
-    "cik": "0001822462",
-    "Assets": 204962000,
-    "Assets_date": "2025-09-30",
-    "CurrentAssets": 184117000,
-    "CurrentAssets_date": "2025-09-30",
-    "Liabilities": 294620000,
-    "Liabilities_date": "2025-09-30",
-    "CurrentLiabilities": 85088000,
-    "CurrentLiabilities_date": "2025-09-30",
-    "ShareholdersEquity": -89658000,
-    "ShareholdersEquity_date": "2025-09-30",
-    "Cash": 89334000,
-    "Cash_date": "2025-09-30",
-    "R&D": 63420000,
-    "R&D_date": "2025-09-30",
-    "NetIncome": -52619000,
-    "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
-  },
-  {
-    "ticker": "FLGT",
-    "cik": "0001674930",
-    "Assets": 1214563000,
-    "Assets_date": "2025-09-30",
-    "CurrentAssets": 507374000,
-    "CurrentAssets_date": "2025-09-30",
-    "Liabilities": 93806000,
-    "Liabilities_date": "2025-09-30",
-    "CurrentLiabilities": 72426000,
-    "CurrentLiabilities_date": "2025-09-30",
-    "ShareholdersEquity": 1125888000,
-    "ShareholdersEquity_date": "2025-09-30",
-    "Cash": 117641000,
-    "Cash_date": "2025-09-30",
-    "Revenue": 15678000,
-    "Revenue_date": "2018-09-30",
-    "COGS": 141042000,
-    "COGS_date": "2025-09-30",
-    "R&D": 39735000,
-    "R&D_date": "2025-09-30",
-    "NetIncome": -37095000,
-    "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
-  },
-  {
     "ticker": "FTRE",
     "cik": "0001965040",
     "Assets": 2742100000,
@@ -3304,7 +3151,7 @@
     "Cash_date": "2025-09-30",
     "NetIncome": -953700000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "GERN",
@@ -3325,7 +3172,7 @@
     "Revenue_date": "2017-12-31",
     "NetIncome": -54638000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "GLUE",
@@ -3346,7 +3193,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 7509000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "GPCR",
@@ -3367,7 +3214,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -174206000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "GRAL",
@@ -3388,7 +3235,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -309175000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "HUMA",
@@ -3409,7 +3256,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -16029000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "IBRX",
@@ -3432,28 +3279,7 @@
     "R&D_date": "2024-12-31",
     "NetIncome": -289454000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
-  },
-  {
-    "ticker": "IDYA",
-    "cik": "0001676725",
-    "Assets": 1185136000,
-    "Assets_date": "2025-09-30",
-    "CurrentAssets": 802655000,
-    "CurrentAssets_date": "2025-09-30",
-    "Liabilities": 93102000,
-    "Liabilities_date": "2025-09-30",
-    "CurrentLiabilities": 64509000,
-    "CurrentLiabilities_date": "2025-09-30",
-    "ShareholdersEquity": 1092034000,
-    "ShareholdersEquity_date": "2025-09-30",
-    "Cash": 298927000,
-    "Cash_date": "2025-09-30",
-    "R&D": 228105000,
-    "R&D_date": "2025-09-30",
-    "NetIncome": -30425000,
-    "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "ILMN",
@@ -3474,7 +3300,7 @@
     "R&D_date": "2025-09-28",
     "NetIncome": 516000000,
     "NetIncome_date": "2025-09-28",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "IMRX",
@@ -3499,7 +3325,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -44444888,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "INBX",
@@ -3522,7 +3348,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -107221000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "INSM",
@@ -3545,7 +3371,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -948290000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "IOVA",
@@ -3570,7 +3396,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -319074000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "IRON",
@@ -3591,7 +3417,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -151653000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "JANX",
@@ -3612,7 +3438,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -81679000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "KOD",
@@ -3633,7 +3459,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -173231000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "KROS",
@@ -3656,7 +3482,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 110475000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "KURA",
@@ -3677,7 +3503,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -197667000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "KYTX",
@@ -3698,7 +3524,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -123503000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "LAB",
@@ -3723,7 +3549,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -94179000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "LCTX",
@@ -3748,7 +3574,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -64384000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "LENZ",
@@ -3769,7 +3595,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -46231000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "LRMR",
@@ -3792,7 +3618,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -103175000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "LXEO",
@@ -3813,7 +3639,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -79042000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "LYEL",
@@ -3836,7 +3662,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -133725000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "MAZE",
@@ -3857,7 +3683,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -96552000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "MBX",
@@ -3878,7 +3704,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -64909000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "MEDP",
@@ -3899,7 +3725,7 @@
     "Revenue_date": "2018-03-31",
     "NetIncome": 315990000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "MGTX",
@@ -3922,7 +3748,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -129289000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "MIRM",
@@ -3945,7 +3771,7 @@
     "R&D_date": "2019-09-30",
     "NetIncome": -17633000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "MLYS",
@@ -3964,7 +3790,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -122417000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "MNKD",
@@ -3983,7 +3809,7 @@
     "Cash_date": "2025-09-30",
     "NetIncome": 21811000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "MNMD",
@@ -4004,7 +3830,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -133357000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "MYGN",
@@ -4029,7 +3855,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -358000000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "NAMS",
@@ -4050,7 +3876,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -128896000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "NBIX",
@@ -4073,7 +3899,7 @@
     "R&D_date": "2021-03-31",
     "NetIncome": 324900000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "NBP",
@@ -4098,7 +3924,7 @@
     "R&D_date": "2025-06-30",
     "NetIncome": -8654000,
     "NetIncome_date": "2025-06-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "NGNE",
@@ -4119,7 +3945,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -65616000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "NMRA",
@@ -4140,7 +3966,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -177478000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "NRIX",
@@ -4163,7 +3989,7 @@
     "R&D_date": "2025-08-31",
     "NetIncome": -186236000,
     "NetIncome_date": "2025-08-31",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "NUVB",
@@ -4186,7 +4012,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -168035000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "NUVL",
@@ -4207,7 +4033,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -306672000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "OABI",
@@ -4228,7 +4054,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -50600000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "OLMA",
@@ -4249,7 +4075,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -116390000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "ONC",
@@ -4272,7 +4098,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 220431000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "OPK",
@@ -4293,7 +4119,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -194423000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "ORIC",
@@ -4314,7 +4140,7 @@
     "R&D_date": "2020-06-30",
     "NetIncome": -98963000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "ORKA",
@@ -4337,7 +4163,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -75850000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "PACB",
@@ -4362,7 +4188,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -506005000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "PEPG",
@@ -4383,7 +4209,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -71315000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "PHAT",
@@ -4408,7 +4234,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -200099000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "PRAX",
@@ -4431,7 +4257,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -214357000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "PRME",
@@ -4452,7 +4278,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -155063000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "PSNL",
@@ -4475,7 +4301,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -57458000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "PYXS",
@@ -4500,7 +4326,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -61515000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "QSI",
@@ -4523,7 +4349,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -83728000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "QTRX",
@@ -4548,7 +4374,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -84033000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "QURE",
@@ -4571,7 +4397,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -161885000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "RAPP",
@@ -4592,7 +4418,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -77720000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "RAPT",
@@ -4613,7 +4439,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -52388000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "RCKT",
@@ -4634,7 +4460,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -180585000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "RCUS",
@@ -4657,7 +4483,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -247000000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "REGN",
@@ -4680,7 +4506,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 3660300000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "REPL",
@@ -4703,7 +4529,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -169793000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "RIGL",
@@ -4724,7 +4550,7 @@
     "R&D_date": "2011-06-30",
     "NetIncome": 98959000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "RLAY",
@@ -4747,7 +4573,7 @@
     "R&D_date": "2021-03-31",
     "NetIncome": -221589000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "SEPN",
@@ -4768,7 +4594,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -38141000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "SGMT",
@@ -4789,7 +4615,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -41470000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "SION",
@@ -4810,7 +4636,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -54828000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "SLDB",
@@ -4833,7 +4659,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -53578000,
     "NetIncome_date": "2021-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "SLN",
@@ -4854,7 +4680,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -76842000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "SMMT",
@@ -4875,7 +4701,7 @@
     "R&D_date": "2024-03-31",
     "NetIncome": -860414000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "SRRK",
@@ -4898,7 +4724,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -286974000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "STOK",
@@ -4921,7 +4747,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 51049000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "STRO",
@@ -4944,7 +4770,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -144324000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "SVRA",
@@ -4967,7 +4793,7 @@
     "R&D_date": "2019-03-31",
     "NetIncome": -86601000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "SYRE",
@@ -4988,7 +4814,7 @@
     "R&D_date": "2023-03-31",
     "NetIncome": -92673000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "TECX",
@@ -5009,7 +4835,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -54925000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "TEM",
@@ -5030,7 +4856,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -190862000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "TERN",
@@ -5049,7 +4875,7 @@
     "Cash_date": "2025-09-30",
     "NetIncome": -24635000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "TKNO",
@@ -5070,7 +4896,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -12501000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "TNGX",
@@ -5093,7 +4919,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -62845000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "TNYA",
@@ -5114,7 +4940,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -70422000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "TRDA",
@@ -5135,7 +4961,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -104586000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "TRVI",
@@ -5156,7 +4982,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -34443000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "TSHA",
@@ -5179,7 +5005,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -81144000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "TVTX",
@@ -5202,7 +5028,7 @@
     "R&D_date": "2023-09-30",
     "NetIncome": -28275000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "TWST",
@@ -5225,7 +5051,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -77670000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "TXG",
@@ -5248,7 +5074,7 @@
     "COGS_date": "2025-09-30",
     "NetIncome": -27292000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "TYRA",
@@ -5269,7 +5095,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -86113000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "UPB",
@@ -5290,7 +5116,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -100984000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "URGN",
@@ -5315,7 +5141,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -127130000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "VCEL",
@@ -5338,7 +5164,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -6725000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "VERA",
@@ -5359,7 +5185,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -208518000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "VIR",
@@ -5384,7 +5210,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -395064000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "VNDA",
@@ -5407,7 +5233,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -79287000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "VTYX",
@@ -5428,7 +5254,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -77256000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "VYGR",
@@ -5451,7 +5277,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -92295000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "WVE",
@@ -5474,7 +5300,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -151199000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "XENE",
@@ -5497,7 +5323,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -240649000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "XNCR",
@@ -5518,7 +5344,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -85270000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "ZBIO",
@@ -5541,7 +5367,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -137295000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "ZLAB",
@@ -5566,7 +5392,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -125128000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "ZVRA",
@@ -5589,7 +5415,7 @@
     "R&D_date": "2022-03-31",
     "NetIncome": 71064000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "ZYME",
@@ -5610,7 +5436,7 @@
     "R&D_date": "2024-03-31",
     "NetIncome": -39921000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "AMPH",
@@ -5635,7 +5461,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 73665000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "AMRX",
@@ -5658,7 +5484,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 36981000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "ANIP",
@@ -5683,7 +5509,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 50847000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "AQST",
@@ -5706,7 +5532,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -51924000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "ARDX",
@@ -5731,7 +5557,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -61192000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "CHRS",
@@ -5754,7 +5580,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 205667000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "COLL",
@@ -5775,7 +5601,7 @@
     "R&D_date": "2024-12-31",
     "NetIncome": 45907000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "CRMD",
@@ -5800,7 +5626,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 149034859,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "EOLS",
@@ -5821,7 +5647,7 @@
     "R&D_date": "2022-03-31",
     "NetIncome": -51771000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "ESPR",
@@ -5840,7 +5666,7 @@
     "Cash_date": "2025-09-30",
     "NetIncome": -84513000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "ETON",
@@ -5861,7 +5687,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -6084000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "EYPT",
@@ -5884,7 +5710,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -164353000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "GH",
@@ -5907,7 +5733,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -287783000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "HRMY",
@@ -5928,7 +5754,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 136201000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "HROW",
@@ -5951,7 +5777,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -11765000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "INDV",
@@ -5970,7 +5796,7 @@
     "Cash_date": "2025-09-30",
     "NetIncome": 108000000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "INVA",
@@ -5991,7 +5817,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 4435000,
     "NetIncome_date": "2016-03-31",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "IVVD",
@@ -6014,14 +5840,14 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -41419000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "KMDA",
     "cik": "0001567529",
     "CurrentLiabilities": 222000,
     "CurrentLiabilities_date": "2020-12-31",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "KNSA",
@@ -6044,7 +5870,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 44806000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "LFCR",
@@ -6069,7 +5895,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -9991000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "OBIO",
@@ -6094,7 +5920,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -58946000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "OCUL",
@@ -6117,7 +5943,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -201285000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "OMER",
@@ -6138,7 +5964,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -89801000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "PAHC",
@@ -6161,7 +5987,7 @@
     "R&D_date": "2025-06-30",
     "NetIncome": 26527000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "PBYI",
@@ -6184,7 +6010,7 @@
     "R&D_date": "2022-06-30",
     "NetIncome": 17673000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "RANI",
@@ -6205,7 +6031,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -19368000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "RPRX",
@@ -6226,7 +6052,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 556742000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "SIGA",
@@ -6251,7 +6077,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 28709061,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "SUPN",
@@ -6274,7 +6100,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -34445000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "VOR",
@@ -6295,7 +6121,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -2418839000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "VTRS",
@@ -6318,7 +6144,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -170000000,
     "NetIncome_date": "2020-09-27",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   },
   {
     "ticker": "XERS",
@@ -6341,6 +6167,6 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -10527000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-07"
+    "collected_at": "2026-01-08"
   }
 ]

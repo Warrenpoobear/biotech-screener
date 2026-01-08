@@ -1,36 +1,25 @@
 """
-Module 4: Clinical Development Quality (CUSTOM VERSION with Continuous Scoring)
-
-CHANGES FROM ORIGINAL:
-- Added Trial Count Bonus (0-5 pts) - diversified pipeline
-- Added Indication Diversity Bonus (0-5 pts) - less binary risk
-- Added Recency Bonus (0-5 pts) - active programs
-- Removed Enrollment Bonus (0% field coverage)
-
-These bonuses use fields with 100% coverage to break up score bucketing.
+Module 4: Clinical Development Quality
 
 Scores clinical programs on:
-- Phase advancement (most advanced phase) - 30 pts
-- Phase progress bonus - 5 pts
-- Trial count bonus - 5 pts (NEW)
-- Indication diversity bonus - 5 pts (NEW)
-- Recency bonus - 5 pts (NEW)
-- Trial design quality - 25 pts
-- Execution track record - 25 pts
-- Endpoint strength - 20 pts
-TOTAL: 120 pts (normalized to 0-100)
+- Phase advancement (most advanced phase)
+- Trial design quality (endpoints, controls)
+- Execution track record
+- Endpoint strength
+
+Input: Trial records with design details
+Output: Clinical development scores per security
 """
 from __future__ import annotations
 
 from decimal import Decimal
 from typing import Any, Dict, List, Optional
-from datetime import datetime, date
 
 from common.provenance import create_provenance
 from common.pit_enforcement import compute_pit_cutoff, is_pit_admissible
 from common.types import Severity
 
-RULESET_VERSION = "1.0.1-CUSTOM"
+RULESET_VERSION = "1.0.0"
 
 # Phase scores (0-30)
 PHASE_SCORES = {
@@ -76,93 +65,6 @@ def _parse_phase(phase_str: Optional[str]) -> str:
         return "preclinical"
     
     return "unknown"
-
-
-def _score_trial_count(num_trials: int) -> Decimal:
-    """
-    Score based on number of trials (0-5 pts).
-    More trials = more diversified pipeline.
-    """
-    if num_trials == 0:
-        return Decimal("0")
-    elif num_trials == 1:
-        return Decimal("0.5")
-    elif num_trials == 2:
-        return Decimal("1.0")
-    elif num_trials <= 5:
-        return Decimal("2.0")
-    elif num_trials <= 10:
-        return Decimal("3.5")
-    elif num_trials <= 20:
-        return Decimal("4.5")
-    else:
-        return Decimal("5.0")
-
-
-def _score_indication_diversity(conditions: List[str]) -> Decimal:
-    """
-    Score based on number of unique indications (0-5 pts).
-    Multiple indications = less binary risk.
-    """
-    # Flatten conditions - they might be lists
-    flattened = []
-    for cond in conditions:
-        if isinstance(cond, list):
-            flattened.extend(cond)
-        elif isinstance(cond, str) and cond:
-            flattened.append(cond)
-    
-    unique_conditions = len(set(flattened))
-    
-    if unique_conditions == 0:
-        return Decimal("0")
-    elif unique_conditions == 1:
-        return Decimal("0.7")
-    elif unique_conditions == 2:
-        return Decimal("1.5")
-    elif unique_conditions <= 5:
-        return Decimal("3.0")
-    elif unique_conditions <= 10:
-        return Decimal("4.0")
-    else:
-        return Decimal("5.0")
-
-def _score_recency(last_update: Optional[str], as_of_date: str) -> Decimal:
-    """
-    Score based on most recent trial update (0-5 pts).
-    Recent activity = active program.
-    
-    Args:
-        last_update: ISO date string of most recent update
-        as_of_date: Current analysis date
-    """
-    if not last_update:
-        return Decimal("1.0")  # Unknown
-    
-    try:
-        # Parse dates
-        update_date = datetime.fromisoformat(last_update.replace('Z', '+00:00')).date()
-        analysis_date = datetime.fromisoformat(as_of_date).date() if isinstance(as_of_date, str) else as_of_date
-        
-        days_since_update = (analysis_date - update_date).days
-        
-        # Scoring based on recency
-        if days_since_update < 0:
-            return Decimal("1.0")  # Future date (data quality issue)
-        elif days_since_update < 30:
-            return Decimal("5.0")  # Very active
-        elif days_since_update < 90:
-            return Decimal("4.5")  # Active
-        elif days_since_update < 180:
-            return Decimal("4.0")  # Recent
-        elif days_since_update < 365:
-            return Decimal("3.0")  # Moderate
-        elif days_since_update < 730:
-            return Decimal("2.0")  # Older
-        else:
-            return Decimal("1.0")  # Stale
-    except (ValueError, TypeError):
-        return Decimal("1.0")  # Parse error
 
 
 def _score_design(trial: Dict[str, Any]) -> Decimal:
@@ -246,26 +148,25 @@ def compute_module_4_clinical_dev(
     as_of_date: str,
 ) -> Dict[str, Any]:
     """
-    Compute clinical development quality scores with continuous bonuses.
+    Compute clinical development quality scores.
     
     Args:
-        trial_records: List with ticker, nct_id, phase, status, conditions, last_update_posted, etc.
+        trial_records: List with ticker, nct_id, phase, status, randomized, blinded, primary_endpoint
         active_tickers: Tickers from Module 1
         as_of_date: Analysis date
     
     Returns:
         {
             "as_of_date": str,
-            "scores": [{ticker, clinical_score, phase_score, trial_count_bonus, diversity_bonus,
-                       recency_bonus, design_score, execution_score, endpoint_score, 
-                       lead_phase, flags, severity}],
+            "scores": [{ticker, clinical_score, phase_score, design_score, execution_score, 
+                       endpoint_score, lead_phase, flags, severity}],
             "diagnostic_counts": {...},
             "provenance": {...}
         }
     """
     pit_cutoff = compute_pit_cutoff(as_of_date)
     
-    # Track PIT-filtered trials
+    # Track PIT-filtered trials for diagnostics
     pit_filtered_count = 0
     
     # Group trials by ticker
@@ -275,11 +176,12 @@ def compute_module_4_clinical_dev(
         if ticker not in active_tickers:
             continue
         
-        # PIT FILTER
+        # PIT FILTER: Only include trials with data available before cutoff
+        # This prevents lookahead bias from future trial updates
         source_date = trial.get("last_update_posted") or trial.get("source_date")
         if source_date and not is_pit_admissible(source_date, pit_cutoff):
             pit_filtered_count += 1
-            continue
+            continue  # Skip future data
         
         if ticker not in ticker_trials:
             ticker_trials[ticker] = []
@@ -291,8 +193,6 @@ def compute_module_4_clinical_dev(
             "randomized": trial.get("randomized", False),
             "blinded": trial.get("blinded", ""),
             "primary_endpoint": trial.get("primary_endpoint", ""),
-            "conditions": trial.get("conditions", ""),
-            "last_update_posted": trial.get("last_update_posted"),
         })
     
     scores = []
@@ -300,7 +200,7 @@ def compute_module_4_clinical_dev(
     for ticker in active_tickers:
         trials = ticker_trials.get(ticker, [])
         
-        # Find lead phase
+        # Find lead phase (most advanced)
         lead_phase = "preclinical"
         lead_phase_score = Decimal("3")
         
@@ -314,43 +214,7 @@ def compute_module_4_clinical_dev(
         # Component scores
         phase_score = lead_phase_score
         
-        # NEW BONUSES using 100% coverage fields
-        trial_count_bonus = _score_trial_count(len(trials))
-        
-        # Extract conditions from all trials
-        all_conditions = []
-        for t in trials:
-            cond = t.get("conditions", "")
-            if cond:
-                all_conditions.append(cond)
-        diversity_bonus = _score_indication_diversity(all_conditions)
-        
-        # Get most recent update across all trials
-        most_recent = None
-        for t in trials:
-            update = t.get("last_update_posted")
-            if update:
-                if not most_recent or update > most_recent:
-                    most_recent = update
-        recency_bonus = _score_recency(most_recent, as_of_date)
-        
-        # Phase progress bonus (placeholder, 0-5 pts based on phase)
-        if lead_phase == "approved":
-            phase_progress = Decimal("5")
-        elif lead_phase == "phase 3":
-            phase_progress = Decimal("4")
-        elif lead_phase == "phase 2/3":
-            phase_progress = Decimal("3.5")
-        elif lead_phase == "phase 2":
-            phase_progress = Decimal("3")
-        elif lead_phase == "phase 1/2":
-            phase_progress = Decimal("2")
-        elif lead_phase == "phase 1":
-            phase_progress = Decimal("1")
-        else:
-            phase_progress = Decimal("0")
-        
-        # Original scores
+        # Design score from best trial
         design_score = Decimal("12")
         if trials:
             design_scores = [_score_design(t) for t in trials]
@@ -359,13 +223,8 @@ def compute_module_4_clinical_dev(
         execution_score = _score_execution(trials)
         endpoint_score = _score_endpoints(trials)
         
-        # Total (0-120, normalized to 0-100)
-        total = (phase_score + phase_progress + trial_count_bonus + 
-                diversity_bonus + recency_bonus + design_score + 
-                execution_score + endpoint_score)
-        
-        # Normalize to 0-100 scale (max possible is 120)
-        normalized_score = (total / Decimal("120")) * Decimal("100")
+        # Total (0-100)
+        total = phase_score + design_score + execution_score + endpoint_score
         
         # Flags and severity
         flags = []
@@ -380,12 +239,8 @@ def compute_module_4_clinical_dev(
         
         scores.append({
             "ticker": ticker,
-            "clinical_score": str(normalized_score.quantize(Decimal("0.01"))),
+            "clinical_score": str(total.quantize(Decimal("0.01"))),
             "phase_score": str(phase_score),
-            "phase_progress": str(phase_progress),
-            "trial_count_bonus": str(trial_count_bonus),
-            "diversity_bonus": str(diversity_bonus.quantize(Decimal("0.01"))),
-            "recency_bonus": str(recency_bonus.quantize(Decimal("0.01"))),
             "design_score": str(design_score.quantize(Decimal("0.01"))),
             "execution_score": str(execution_score.quantize(Decimal("0.01"))),
             "endpoint_score": str(endpoint_score.quantize(Decimal("0.01"))),

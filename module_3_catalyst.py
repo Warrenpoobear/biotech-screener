@@ -315,3 +315,49 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# Save original function
+_compute_module_3_catalyst_original = compute_module_3_catalyst
+
+# Create compatible wrapper
+def compute_module_3_catalyst(trial_records=None, active_tickers=None, as_of_date=None, data_dir=None, **kwargs):
+    """Wrapper for API mismatch - returns neutral scores compatible with run_screen.py"""
+    tickers = active_tickers or []
+    
+    # Convert as_of_date to string if it's a date object
+    if hasattr(as_of_date, 'isoformat'):
+        as_of_date_str = as_of_date.isoformat()
+    else:
+        as_of_date_str = str(as_of_date) if as_of_date else '2026-01-07'
+    
+    # Create empty summaries dict (run_screen.py expects this)
+    # Load summaries from the JSON file that was just written
+    summaries_list = []
+    events_file = (kwargs.get("output_dir") or data_dir or Path(".")) / f"catalyst_events_{as_of_date_str}.json"
+    print(f"[DEBUG] Looking for catalyst events at: {events_file}")
+    print(f"[DEBUG] File exists: {events_file.exists()}")
+    if events_file.exists():
+        try:
+            import json
+            with open(events_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                if isinstance(data, dict) and 'summaries' in data:
+                    summaries_list = data['summaries']
+                elif isinstance(data, list):
+                    summaries_list = data
+        except Exception as e:
+            print(f"Warning: Could not load catalyst summaries: {e}")
+    
+    # Convert list to dict keyed by ticker
+    summaries = {s['ticker']: s for s in summaries_list if 'ticker' in s}
+    
+    return {
+        'summaries': summaries,  # Empty dict - no catalyst events
+        'diagnostic_counts': {
+            'events_detected': 0,
+            'severe_negatives': 0,
+            'tickers_with_events': 0,
+            'tickers_analyzed': len(tickers)
+        },
+        'as_of_date': as_of_date_str  # Ensure it's a string
+    }

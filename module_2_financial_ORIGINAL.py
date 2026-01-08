@@ -14,7 +14,6 @@ Usage:
 
 import json
 from pathlib import Path
-import math
 from typing import Dict, List, Optional
 
 
@@ -30,17 +29,12 @@ def calculate_cash_runway(financial_data: Dict, market_data: Dict) -> tuple:
     net_income = financial_data.get('NetIncome', 0) or 0
     rd_expense = financial_data.get('R&D', 0) or 0
     
-    # CASE 1: Profitable companies (positive net income)
-    if net_income and net_income > 0:
-        # Cash positive - assign high score based on profitability
-        return 999.0, 0, 95.0  # Strong position
-    
-    # CASE 2: Burning cash (negative net income)
+    # Method 1: Use net income if available and negative
     if net_income and net_income < 0:
         quarterly_burn = abs(net_income)
         monthly_burn = quarterly_burn / 3.0
     
-    # CASE 3: Estimate from R&D (pre-revenue companies)
+    # Method 2: Estimate from R&D (pre-revenue companies)
     elif rd_expense and rd_expense > 0:
         # Assume total opex = R&D × 1.5 (add G&A overhead)
         quarterly_burn = rd_expense * 1.5
@@ -50,7 +44,7 @@ def calculate_cash_runway(financial_data: Dict, market_data: Dict) -> tuple:
         # No burn data - return neutral
         return None, None, 50.0
     
-    # Calculate runway for burning companies
+    # Calculate runway
     if monthly_burn > 0:
         runway_months = cash / monthly_burn
     else:
@@ -73,7 +67,7 @@ def calculate_cash_runway(financial_data: Dict, market_data: Dict) -> tuple:
 
 
 def calculate_dilution_risk(financial_data: Dict, market_data: Dict, runway_months: Optional[float]) -> tuple:
-    """Score dilution risk with CONTINUOUS scoring"""
+    """Score dilution risk based on cash as % of market cap"""
     
     cash = financial_data.get('Cash', 0) or 0
     market_cap = market_data.get('market_cap', 0) or 0
@@ -83,23 +77,21 @@ def calculate_dilution_risk(financial_data: Dict, market_data: Dict, runway_mont
     
     cash_to_mcap = cash / market_cap
     
-    # CONTINUOUS scoring: sigmoid curve for cash/mcap ratio
-    # 0% ? 0, 5% ? 20, 10% ? 40, 20% ? 70, 30%+ ? 95
-    if cash_to_mcap >= 0.40:
-        dilution_score = 100.0
-    elif cash_to_mcap <= 0:
-        dilution_score = 0.0
+    # Base scoring
+    if cash_to_mcap >= 0.30:
+        dilution_score = 100.0  # Strong
+    elif cash_to_mcap >= 0.20:
+        dilution_score = 80.0   # Adequate
+    elif cash_to_mcap >= 0.10:
+        dilution_score = 60.0   # Moderate
+    elif cash_to_mcap >= 0.05:
+        dilution_score = 30.0   # High risk
     else:
-        # Sigmoid: maps 0-40% cash/mcap to 0-100 score
-        k = 15.0  # Steepness
-        midpoint = 0.15  # Inflection at 15%
-        dilution_score = 100.0 / (1.0 + math.exp(-k * (cash_to_mcap - midpoint)))
+        dilution_score = 10.0   # Critical
     
-    # Continuous penalty for near-term financing needs
+    # Penalize near-term financing needs
     if runway_months is not None and runway_months < 12:
-        # Smooth penalty: 0mo?0.5x, 12mo?1.0x
-        penalty_factor = 0.5 + (runway_months / 24.0)
-        dilution_score *= min(1.0, penalty_factor)
+        dilution_score *= 0.7
     
     return cash_to_mcap, dilution_score
 
@@ -177,6 +169,7 @@ def score_financial_health(ticker: str, financial_data: Dict, market_data: Dict)
         "has_financial_data": has_data
     }
 
+
 def run_module_2(universe: List[str], financial_data: List[Dict], market_data: List[Dict]) -> List[Dict]:
     """
     Main entry point for Module 2 financial health scoring.
@@ -189,19 +182,6 @@ def run_module_2(universe: List[str], financial_data: List[Dict], market_data: L
     Returns:
         List of dicts with financial health scores
     """
-    
-    # DEBUG
-    print(f"\n=== DEBUG run_module_2 ===")
-    print(f"Universe: {len(universe)} tickers")
-    print(f"Financial data: {len(financial_data)} records")
-    print(f"Market data: {len(market_data)} records")
-    if financial_data:
-        print(f"Sample financial keys: {list(financial_data[0].keys())}")
-        print(f"Sample ticker: {financial_data[0].get('ticker')}")
-        print(f"Sample Cash: {financial_data[0].get('Cash')}")
-        print(f"Sample NetIncome: {financial_data[0].get('NetIncome')}")
-    print(f"First 5 universe tickers: {universe[:5]}")
-    print("="*50)
     
     # Create lookup dicts
     fin_lookup = {f['ticker']: f for f in financial_data if 'ticker' in f}
@@ -257,48 +237,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-# Alias for run_screen.py
-def compute_module_2_financial(*args, **kwargs):
-    """Ultra-flexible wrapper - NO field mapping needed for SEC data"""
-    # Extract parameters
-    universe = kwargs.get('universe', kwargs.get('active_tickers', kwargs.get('active_universe', [])))
-    financial_data = kwargs.get('financial_records', kwargs.get('financial_data', []))
-    market_data = kwargs.get('market_records', kwargs.get('market_data', []))
-    
-    # Convert set to list if needed
-    if isinstance(universe, set):
-        universe = list(universe)
-    
-    # If market_data is empty but we have raw_universe, extract it
-    if not market_data and 'raw_universe' in kwargs:
-        raw_universe = kwargs['raw_universe']
-        market_data = []
-        for record in raw_universe:
-            if 'market_data' in record and record.get('ticker'):
-                mkt = record['market_data'].copy()
-                mkt['ticker'] = record['ticker']
-                market_data.append(mkt)
-    
-    # Map market data field names only (volume_avg_30d -> avg_volume)
-    mapped_market = []
-    for rec in market_data:
-        mapped_market.append({
-            'ticker': rec.get('ticker'),
-            'market_cap': rec.get('market_cap'),
-            'price': rec.get('price'),
-            'avg_volume': rec.get('volume_avg_30d'),
-        })
-    
-    # Financial data already has correct field names (Cash, NetIncome, R&D)
-    # Just pass it through!
-    result = run_module_2(universe, financial_data, mapped_market)
-    
-    # Wrap in expected format
-    return {
-        'scores': result,
-        'diagnostic_counts': {
-            'scored': len(result),
-            'missing': 0
-        }
-    }

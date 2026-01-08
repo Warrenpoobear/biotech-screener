@@ -303,7 +303,7 @@ def compute_module_5_composite(
     active_tickers = {s["ticker"] for s in universe_result.get("active_securities", [])}
     
     financial_by_ticker = {s["ticker"]: s for s in financial_result.get("scores", [])}
-    catalyst_by_ticker = {s["ticker"]: s for s in catalyst_result.get("scores", [])}
+    catalyst_by_ticker = catalyst_result.get("summaries", {})  # Module 3 returns summaries dict
     clinical_by_ticker = {s["ticker"]: s for s in clinical_result.get("scores", [])}
     
     # Build combined records
@@ -316,8 +316,8 @@ def compute_module_5_composite(
         clin = clinical_by_ticker.get(ticker, {})
         
         # Get raw scores
-        fin_score = Decimal(str(fin.get("financial_normalized", "0"))) if fin.get("financial_normalized") else None
-        cat_score = Decimal(str(cat.get("score", "0"))) if cat.get("score") else None
+        fin_score = Decimal(fin.get("financial_normalized", "0")) if fin.get("financial_normalized") else None
+        cat_score = Decimal(str(cat.get("catalyst_score_net", 0))) if cat.get("catalyst_score_net") is not None else None
         clin_score = Decimal(clin.get("clinical_score", "0")) if clin.get("clinical_score") else None
         
         # Get severities
@@ -464,8 +464,8 @@ def compute_module_5_composite(
     # Sort and rank (tie-breaker: coinvest_overlap_count DESC, then ticker ASC)
     def sort_key(x):
         coinvest_count = x["coinvest"]["coinvest_overlap_count"] if x["coinvest"] else 0
-        return (-x["composite_score"], -coinvest_count, x["ticker"])
-    
+        market_cap_mm = x.get("market_cap_mm", 0) or 0  # Market cap for deterministic tiebreak
+        return (-x["composite_score"], -market_cap_mm, -coinvest_count, x["ticker"])
     combined.sort(key=sort_key)
     for i, rec in enumerate(combined):
         rec["composite_rank"] = i + 1

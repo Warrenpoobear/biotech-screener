@@ -161,7 +161,6 @@ def run_screening_pipeline(
     raw_universe = load_json_data(data_dir / "universe.json", "Universe")
     financial_records = load_json_data(data_dir / "financial_records.json", "Financial")
     trial_records = load_json_data(data_dir / "trial_records.json", "Trials")
-    market_records = load_json_data(data_dir / "market_data.json", "Market data")
     
     coinvest_signals = None
     if enable_coinvest:
@@ -189,7 +188,6 @@ def run_screening_pipeline(
         active_tickers=set(active_tickers),
         as_of_date=as_of_date,
         raw_universe=raw_universe,
-        market_records=market_records,
     )
     diag = m2_result.get('diagnostic_counts', {})
     print(f"  Scored: {diag.get('scored', len(m2_result.get('scores', [])))}, "

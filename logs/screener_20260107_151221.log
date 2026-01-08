@@ -1,0 +1,33 @@
+2026-01-07 15:12:21
+Starting Wake Robin Screener 
+Date: 2026-01-07 
+Output: production_data\results_2026-01-07.json 
+============================================================================ 
+[2026-01-07] Starting screening pipeline...
+  Data directory: production_data
+
+[1/7] Loading input data...
+
+[2/7] Module 1: Universe filtering...
+  Active: 322, Excluded: 0
+
+[3/7] Module 2: Financial health...
+  Scored: 322, Missing: 0
+
+[4/7] Module 3: Catalyst detection...
+  Events detected: 0, Tickers with events: 0/322, Severe negatives: 0
+
+[5/7] Module 4: Clinical development...
+  Scored: 322, Trials evaluated: 6675, PIT filtered: 52
+
+[6/7] Module 5: Composite ranking...
+
+DEBUG: Loading defensive features from production_data\universe.json
+DEBUG: Extracted defensive_features for 97 tickers
+
+============================================================
+DEFENSIVE OVERLAY VALIDATION
+============================================================
+2026-01-07 15:12:22
+ERROR - Screening failed with code 1 
+Check error log: logs\error_20260107_151221.log 

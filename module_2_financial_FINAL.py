@@ -14,7 +14,6 @@ Usage:
 
 import json
 from pathlib import Path
-import math
 from typing import Dict, List, Optional
 
 
@@ -73,7 +72,7 @@ def calculate_cash_runway(financial_data: Dict, market_data: Dict) -> tuple:
 
 
 def calculate_dilution_risk(financial_data: Dict, market_data: Dict, runway_months: Optional[float]) -> tuple:
-    """Score dilution risk with CONTINUOUS scoring"""
+    """Score dilution risk based on cash as % of market cap"""
     
     cash = financial_data.get('Cash', 0) or 0
     market_cap = market_data.get('market_cap', 0) or 0
@@ -83,23 +82,21 @@ def calculate_dilution_risk(financial_data: Dict, market_data: Dict, runway_mont
     
     cash_to_mcap = cash / market_cap
     
-    # CONTINUOUS scoring: sigmoid curve for cash/mcap ratio
-    # 0% ? 0, 5% ? 20, 10% ? 40, 20% ? 70, 30%+ ? 95
-    if cash_to_mcap >= 0.40:
-        dilution_score = 100.0
-    elif cash_to_mcap <= 0:
-        dilution_score = 0.0
+    # Base scoring
+    if cash_to_mcap >= 0.30:
+        dilution_score = 100.0  # Strong
+    elif cash_to_mcap >= 0.20:
+        dilution_score = 80.0   # Adequate
+    elif cash_to_mcap >= 0.10:
+        dilution_score = 60.0   # Moderate
+    elif cash_to_mcap >= 0.05:
+        dilution_score = 30.0   # High risk
     else:
-        # Sigmoid: maps 0-40% cash/mcap to 0-100 score
-        k = 15.0  # Steepness
-        midpoint = 0.15  # Inflection at 15%
-        dilution_score = 100.0 / (1.0 + math.exp(-k * (cash_to_mcap - midpoint)))
+        dilution_score = 10.0   # Critical
     
-    # Continuous penalty for near-term financing needs
+    # Penalize near-term financing needs
     if runway_months is not None and runway_months < 12:
-        # Smooth penalty: 0mo?0.5x, 12mo?1.0x
-        penalty_factor = 0.5 + (runway_months / 24.0)
-        dilution_score *= min(1.0, penalty_factor)
+        dilution_score *= 0.7
     
     return cash_to_mcap, dilution_score
 

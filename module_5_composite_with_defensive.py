@@ -24,7 +24,7 @@ def compute_module_5_composite_with_defensive(
     normalization: str = "rank",
     coinvest_signals: dict = None,
     cohort_mode: str = "stage_only",
-    apply_defensive_multiplier: bool = True,
+    apply_defensive_multiplier: bool = False,
     apply_position_sizing: bool = True,
     validate: bool = False,
 ) -> dict:

@@ -104,15 +104,7 @@ def _score_indication_diversity(conditions: List[str]) -> Decimal:
     Score based on number of unique indications (0-5 pts).
     Multiple indications = less binary risk.
     """
-    # Flatten conditions - they might be lists
-    flattened = []
-    for cond in conditions:
-        if isinstance(cond, list):
-            flattened.extend(cond)
-        elif isinstance(cond, str) and cond:
-            flattened.append(cond)
-    
-    unique_conditions = len(set(flattened))
+    unique_conditions = len(set(conditions))
     
     if unique_conditions == 0:
         return Decimal("0")
@@ -126,6 +118,7 @@ def _score_indication_diversity(conditions: List[str]) -> Decimal:
         return Decimal("4.0")
     else:
         return Decimal("5.0")
+
 
 def _score_recency(last_update: Optional[str], as_of_date: str) -> Decimal:
     """
