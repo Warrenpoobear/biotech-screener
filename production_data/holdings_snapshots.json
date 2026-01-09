@@ -1,14 +1,14 @@
 {
-  "NVAX": {
-    "market_cap_usd": "1200867584",
+  "ARQT": {
+    "market_cap_usd": 0,
     "holdings": {
       "current": {
         "0001224962": {
           "quarter_end": "2024-09-30",
           "state": "KNOWN",
           "shares": 0,
-          "value_kusd": 1263000,
-          "put_call": "PUT"
+          "value_kusd": 12634050,
+          "put_call": ""
         }
       },
       "prior": {
@@ -16,8 +16,4950 @@
           "quarter_end": "2024-06-30",
           "state": "KNOWN",
           "shares": 0,
-          "value_kusd": 1266000,
-          "put_call": "PUT"
+          "value_kusd": 14494050,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "RARE": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 87553133,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 60275082,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "GLUE": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 26055304,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 18386195,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "NRIX": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 87231349,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 81019949,
+          "put_call": ""
+        },
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 13565500,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "ALLO": {
+    "market_cap_usd": "323611424",
+    "holdings": {
+      "current": {
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 7630000,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 6349250,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "CTNM": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 5981250,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 29029026,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 5503125,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 15849000,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "INBX": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 16662647,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 15077248,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "ACLX": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 154617011,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 324742748,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 88525533,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 214674695,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "OBIO": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 23605738,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 20748930,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "IMVT": {
+    "market_cap_usd": "5148732928",
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 34936439,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 67818505,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 12268555,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 5280000,
+          "put_call": "CALL"
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "BCRX": {
+    "market_cap_usd": "1583703936",
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 575913,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 468308,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "AXSM": {
+    "market_cap_usd": "8640222208",
+    "holdings": {
+      "current": {
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 89870000,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 70354190,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 80500000,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 36958436,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "DAWN": {
+    "market_cap_usd": "883522688",
+    "holdings": {
+      "current": {
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 109653074,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 108472315,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "XENE": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 39121142,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 20666494,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 38743544,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 22741151,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "ZBIO": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 19357072,
+          "put_call": ""
+        }
+      },
+      "prior": {}
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "TSHA": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 8049560,
+          "put_call": ""
+        },
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 21853731,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 8970653,
+          "put_call": ""
+        },
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 24354407,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "RLAY": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 8213628,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 7563963,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "NGNE": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 19134389,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 16594386,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "ADMA": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 21193398,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 30979780,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "ELVN": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 2932835,
+          "put_call": ""
+        },
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 27103891,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 2683647,
+          "put_call": ""
+        },
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 49602007,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "SYRE": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 84481607,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 71259233,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "RCKT": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 17211288,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 26839233,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "EYPT": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 8287819,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 5570384,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "BIIB": {
+    "market_cap_usd": "26462887936",
+    "holdings": {
+      "current": {
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 229594951,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 227679463,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "STOK": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 53688164,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 59017665,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "AKRO": {
+    "market_cap_usd": "4499031040",
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 31475283,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 49197784,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 25737544,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 35187584,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "TRDA": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 77755788,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 69337921,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "CGON": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 52725147,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 27682312,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 44116960,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 23162751,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "TNYA": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 13476393,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 23629276,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "KOD": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 45180379,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 40679652,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "SGMT": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 3827857,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 4726091,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "ARCT": {
+    "market_cap_usd": "186113536",
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 3512346,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 3684861,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "LENZ": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 99205258,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 72251850,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "OCUL": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 28922872,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 22739361,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "ABSI": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 2674000,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 2156000,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "FHTX": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 419201,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 258905,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 3128000,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "RVMD": {
+    "market_cap_usd": "15441419264",
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 343258232,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 293756383,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "RAPP": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 15322788,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 17402737,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "ORKA": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 30274433,
+          "put_call": ""
+        }
+      },
+      "prior": {}
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "PRME": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 3980163,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 5286315,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "MBX": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 39264457,
+          "put_call": ""
+        }
+      },
+      "prior": {}
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "IOVA": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 249940287,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 207983798,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "EOLS": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 86777276,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 62428708,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "BCAX": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 21224992,
+          "put_call": ""
+        },
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 177169142,
+          "put_call": ""
+        }
+      },
+      "prior": {}
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "APGE": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 115239833,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 118361511,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 77199309,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 82856776,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "NUVL": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 18033546,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 304775741,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 9087194,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 193372981,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "KYMR": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 283787320,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 2187261,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 178978451,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "SPRY": {
+    "market_cap_usd": "1113035392",
+    "holdings": {
+      "current": {
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 157484167,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 92426914,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 7380885,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "MIRM": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 7428564,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 6512374,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "ALMS": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 16687500,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 20781250,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "MDGL": {
+    "market_cap_usd": "12680126464",
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 419047490,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 553201134,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 74130336,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "AMLX": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 6887103,
+          "put_call": ""
+        }
+      },
+      "prior": {}
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "PRAX": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 18591462,
+          "put_call": ""
+        },
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 43842891,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 66978574,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 5440205,
+          "put_call": ""
+        },
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 51104375,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 31029513,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "ABCL": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 71566664,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 81475894,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "FULC": {
+    "market_cap_usd": "654425280",
+    "holdings": {
+      "current": {
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 36517883,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 5355000,
+          "put_call": "CALL"
+        }
+      },
+      "prior": {
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 71980165,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "KYTX": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 733500,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 1125000,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "NTRA": {
+    "market_cap_usd": "34229876736",
+    "holdings": {
+      "current": {
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 27929000,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 57393700,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "KRYS": {
+    "market_cap_usd": "7223427072",
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 30933086,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 31206680,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "SMMT": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 534904544,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 181133332,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "PTGX": {
+    "market_cap_usd": "5181923328",
+    "holdings": {
+      "current": {
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 61855335,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 43961668,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "LRMR": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 39597049,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 43828795,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "NMRA": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 13667066,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 10170118,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "KALA": {
+    "market_cap_usd": "16144609",
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 5080610,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 6319565,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "ACAD": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 659462348,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 696766135,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "ATXS": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 56208395,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 71404474,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 45898180,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 59017322,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "INCY": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 2031849222,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 1863369325,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "FATE": {
+    "market_cap_usd": "118812856",
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 10492202,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 1209513,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 9832692,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 1133486,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "TYRA": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 249371,
+          "put_call": ""
+        },
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 244894478,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 12018923,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 169606,
+          "put_call": ""
+        },
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 166561578,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 16107798,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "TARS": {
+    "market_cap_usd": "3371520256",
+    "holdings": {
+      "current": {
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 42639122,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 35236587,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "RYTM": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 335210395,
+          "put_call": ""
+        },
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 318762345,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 186519611,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 262716867,
+          "put_call": ""
+        },
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 249825957,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 141516534,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "TNGX": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 5775000,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 6435000,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "FDMT": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 55111661,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 107011449,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "CRGX": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 67951423,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 60474925,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "BIOA": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 45980251,
+          "put_call": ""
+        }
+      },
+      "prior": {}
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "DYN": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 24141688,
+          "put_call": ""
+        },
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 229210692,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 25795732,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 23718268,
+          "put_call": ""
+        },
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 213476409,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "NBIX": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 24452910,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 89472972,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "IDYA": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 33648057,
+          "put_call": ""
+        },
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 42680943,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 37291139,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "LXEO": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 4940848,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 1264108,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 10790300,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "IRON": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 19018015,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 24943406,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "AVBP": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 9752500,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 7698250,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "ZYME": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 27359251,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 14192221,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "RXRX": {
+    "market_cap_usd": "2345682432",
+    "holdings": {
+      "current": {
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 101384613,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 115384613,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 5769225,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "SLDB": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 30183209,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 48139322,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 24553629,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 39160682,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "MLYS": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 58745416,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 56756513,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "ANRO": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 23739762,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 22294572,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "ARVN": {
+    "market_cap_usd": "855314944",
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 9989337,
+          "put_call": ""
+        },
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 10377801,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 25313458,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 11216284,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 27358678,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "PEPG": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 91395610,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 12059245,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 170605138,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 22510590,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "JANX": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 416395570,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 383949162,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "REPL": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 121056883,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 90408024,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "PCVX": {
+    "market_cap_usd": "5922199552",
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 5586089,
+          "put_call": ""
+        },
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 992913741,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 231694766,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 3691306,
+          "put_call": ""
+        },
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 619465465,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 140645530,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "EWTX": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 155871175,
+          "put_call": ""
+        },
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 237783639,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 62195547,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 105179463,
+          "put_call": ""
+        },
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 160452729,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 33434070,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "DSGN": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 9381241,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 5679235,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "DNLI": {
+    "market_cap_usd": "2664061696",
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 108704275,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 86649958,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "XNCR": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 13482367,
+          "put_call": ""
+        },
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 11563250,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 10611464,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 10325009,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "SANA": {
+    "market_cap_usd": "1149369728",
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 9904748,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 12999982,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "PYXS": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 1866056,
+          "put_call": ""
+        }
+      },
+      "prior": {}
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "CRNX": {
+    "market_cap_usd": "4362178048",
+    "holdings": {
+      "current": {
+        "0001263508": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 5310670,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 37032068,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001263508": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 4654890,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 66119132,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "RNA": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 289377739,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 220606667,
+          "put_call": ""
+        }
+      }
+    },
+    "filings_metadata": {
+      "0001263508": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-118899",
+        "total_value_kusd": 9648757562,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001346824": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001104659-24-119034",
+        "total_value_kusd": 8673579253,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      },
+      "0001224962": {
+        "quarter_end": "2024-09-30",
+        "accession": "0001012975-24-000488",
+        "total_value_kusd": 4726735830,
+        "filed_at": "2024-11-14T00:00:00",
+        "is_amendment": false
+      }
+    }
+  },
+  "CCCC": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001346824": {
+          "quarter_end": "2024-09-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 27804600,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001346824": {
+          "quarter_end": "2024-06-30",
+          "state": "KNOWN",
+          "shares": 0,
+          "value_kusd": 22536360,
+          "put_call": ""
         }
       }
     },
