@@ -73,39 +73,29 @@ class FilingInfo:
 # ==============================================================================
 
 def fetch_url_with_rate_limit(url: str) -> str:
-    """
-    Fetch URL content with proper SEC rate limiting, user agent, and gzip handling.
-    
-    CRITICAL FIX: Decompress gzip responses before decoding.
-    
-    SEC Requirements:
-    - User-Agent header with contact info
-    - <10 requests per second
-    - Handle gzip compression
-    """
+    """Fetch URL with rate limiting and gzip support."""
     headers = {
-        'User-Agent': USER_AGENT,
-        'Accept-Encoding': 'gzip, deflate'
+        "User-Agent": "Wake Robin Capital / biotech_screener (darren@wakerobincapital.com)",
+        "Accept": "application/json,text/html,*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "close",
     }
-    
     req = urllib.request.Request(url, headers=headers)
-    
+
     try:
         with urllib.request.urlopen(req, timeout=30) as response:
             raw = response.read()
-            
-            # CRITICAL FIX: Decompress if gzipped
-            if response.headers.get('Content-Encoding', '').lower() == 'gzip':
+
+            # Decompress gzip if needed
+            enc = (response.headers.get("Content-Encoding") or "").lower()
+            if "gzip" in enc:
                 raw = gzip.decompress(raw)
-            
-            # Use 'replace' for robustness with malformed characters
-            content = raw.decode('utf-8', errors='replace')
-        
-        # Rate limiting
+
+            content = raw.decode("utf-8", errors="replace")
+
         time.sleep(REQUEST_DELAY_SECONDS)
-        
         return content
-        
+
     except urllib.error.HTTPError as e:
         print(f"HTTP Error {e.code} fetching {url}: {e.reason}")
         return ""
@@ -250,18 +240,35 @@ def fetch_information_table_xml(
             print(f"      Found information table: {xml_name}")
             return content, xml_url
     
-    # Try 3: Fetch filing index to find information table
-    cik_no_zeros = cik.lstrip('0')
-    accession_no_dashes = accession.replace('-', '')
-    index_url = f"{SEC_EDGAR_BASE_URL}/cgi-bin/viewer?action=view&cik={cik_no_zeros}&accession_number={accession}&xbrl_type=v"
-    
+    # Try 3: Fallback - fetch index.json and try ALL XML files
+    index_url = f"{base_dir}/index.json"
+    print(f"      Trying index.json: {index_url}")
     index_content = fetch_url_with_rate_limit(index_url)
-    
     if index_content:
-        # Try to extract XML document link from index
-        # This is a fallback - production systems should use submissions API properly
-        pass
-    
+        try:
+            import json as json_mod
+            data = json_mod.loads(index_content)
+            items = data.get("directory", {}).get("item", [])
+            
+            # Get ALL XML files (including numeric names like 36656.xml)
+            xml_files = [
+                item.get("name", "") 
+                for item in items 
+                if isinstance(item, dict) and item.get("name", "").lower().endswith(".xml")
+            ]
+            
+            # Try each XML until we find informationTable
+            for xml_fname in xml_files:
+                if xml_fname.lower() == "primary_doc.xml":
+                    continue  # Already tried
+                xml_url = f"{base_dir}/{xml_fname}"
+                content = fetch_url_with_rate_limit(xml_url)
+                if content and ('<informationTable' in content or '<ns1:informationTable' in content):
+                    print(f"      Found information table via index.json: {xml_fname}")
+                    return content, xml_url
+        except Exception:
+            pass
+
     print(f"      Could not locate information table XML")
     return None
 
@@ -405,6 +412,32 @@ def map_cusip_to_ticker(cusip: str, cusip_map: Dict[str, object]) -> Optional[st
                     return t.strip().upper()
         return None
     
+    # Try 3: Fallback - fetch index.json and try ALL XML files
+    index_url = f"{base_dir}/index.json"
+    index_content = fetch_url_with_rate_limit(index_url)
+    if index_content:
+        try:
+            import json as json_mod
+            data = json_mod.loads(index_content)
+            items = data.get("directory", {}).get("item", [])
+            
+            # Get ALL XML files (including numeric names like 36656.xml)
+            xml_files = [
+                item.get("name", "") 
+                for item in items 
+                if isinstance(item, dict) and item.get("name", "").lower().endswith(".xml")
+            ]
+            
+            # Try each XML until we find informationTable
+            for xml_fname in xml_files:
+                xml_url = f"{base_dir}/{xml_fname}"
+                content = fetch_url_with_rate_limit(xml_url)
+                if content and ('<informationTable' in content or '<ns1:informationTable' in content):
+                    print(f"      Found information table via index.json: {xml_fname}")
+                    return content, xml_url
+        except Exception:
+            pass
+
     return None
 
 
