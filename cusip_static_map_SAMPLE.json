@@ -1,0 +1,119 @@
+{
+  "_README": {
+    "description": "Static CUSIP→Ticker mapping for biotech universe",
+    "source": "Manual curation from SEC filings and financial databases",
+    "last_updated": "2026-01-09",
+    "coverage": "Sample entries - populate with your 322 tickers",
+    "instructions": "Add CUSIPs from SEC filings, Yahoo Finance, or Bloomberg"
+  },
+  
+  "037833100": {
+    "cusip": "037833100",
+    "ticker": "AAPL",
+    "name": "Apple Inc",
+    "exchange": "NASDAQ",
+    "security_type": "Common Stock",
+    "mapped_at": "2026-01-09T00:00:00",
+    "source": "static",
+    "notes": "Example entry - not biotech"
+  },
+  
+  "670002401": {
+    "cusip": "670002401",
+    "ticker": "NVAX",
+    "name": "Novavax Inc",
+    "exchange": "NASDAQ",
+    "security_type": "Common Stock",
+    "mapped_at": "2026-01-09T00:00:00",
+    "source": "static",
+    "notes": "Vaccine developer"
+  },
+  
+  "03969T105": {
+    "cusip": "03969T105",
+    "ticker": "ARGX",
+    "name": "Argenx SE",
+    "exchange": "NASDAQ",
+    "security_type": "ADR",
+    "mapped_at": "2026-01-09T00:00:00",
+    "source": "static",
+    "notes": "Belgian biotech ADR"
+  },
+  
+  "09075V102": {
+    "cusip": "09075V102",
+    "ticker": "BIIB",
+    "name": "Biogen Inc",
+    "exchange": "NASDAQ",
+    "security_type": "Common Stock",
+    "mapped_at": "2026-01-09T00:00:00",
+    "source": "static",
+    "notes": "Large cap biotech"
+  },
+  
+  "023135106": {
+    "cusip": "023135106",
+    "ticker": "AMGN",
+    "name": "Amgen Inc",
+    "exchange": "NASDAQ",
+    "security_type": "Common Stock",
+    "mapped_at": "2026-01-09T00:00:00",
+    "source": "static",
+    "notes": "Mega cap biotech"
+  },
+  
+  "30303M102": {
+    "cusip": "30303M102",
+    "ticker": "FBIO",
+    "name": "Fortress Biotech Inc",
+    "exchange": "NASDAQ",
+    "security_type": "Common Stock",
+    "mapped_at": "2026-01-09T00:00:00",
+    "source": "static",
+    "notes": "Biotech holding company"
+  },
+  
+  "74340W103": {
+    "cusip": "74340W103",
+    "ticker": "PRTA",
+    "name": "Prothena Corporation plc",
+    "exchange": "NASDAQ",
+    "security_type": "ADR",
+    "mapped_at": "2026-01-09T00:00:00",
+    "source": "static",
+    "notes": "Neuroscience biotech"
+  },
+  
+  "68622V106": {
+    "cusip": "68622V106",
+    "ticker": "ORMP",
+    "name": "Oramed Pharmaceuticals Inc",
+    "exchange": "NASDAQ",
+    "security_type": "Common Stock",
+    "mapped_at": "2026-01-09T00:00:00",
+    "source": "static",
+    "notes": "Oral drug delivery platform"
+  },
+  
+  "_INSTRUCTIONS": {
+    "how_to_add_entries": [
+      "1. Find CUSIP from SEC EDGAR company search",
+      "2. Or look up ticker on Yahoo Finance → Profile → CUSIP",
+      "3. Add entry following format above",
+      "4. Use ISO datetime format for mapped_at",
+      "5. Set source='static' for manual entries"
+    ],
+    "verification_sources": [
+      "SEC EDGAR: https://www.sec.gov/edgar/searchedgar/companysearch.html",
+      "Yahoo Finance: https://finance.yahoo.com/",
+      "Quantumonline CUSIP lookup: http://quantumonline.com/search.cfm",
+      "CUSIP Global Services: https://www.cusip.com/"
+    ],
+    "tips": [
+      "Focus on tickers most likely held by elite managers",
+      "Baker Bros, RA Capital, Perceptive tend to hold mid-cap biotechs",
+      "Foreign biotechs have different CUSIP format (often end in digits)",
+      "ADRs (American Depositary Receipts) are separate securities"
+    ]
+  }
+}

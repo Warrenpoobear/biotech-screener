@@ -1,0 +1,47 @@
+{
+  "670002401": {
+    "cusip": "670002401",
+    "ticker": "NVAX",
+    "name": "Novavax Inc",
+    "exchange": "NASDAQ",
+    "security_type": "Common Stock",
+    "mapped_at": "2026-01-09T09:01:31.899173",
+    "source": "static"
+  },
+  "03969T105": {
+    "cusip": "03969T105",
+    "ticker": "ARGX",
+    "name": "Argenx SE",
+    "exchange": "NASDAQ",
+    "security_type": "Common Stock",
+    "mapped_at": "2026-01-09T09:01:32.087096",
+    "source": "static"
+  },
+  "09075V102": {
+    "cusip": "09075V102",
+    "ticker": "BIIB",
+    "name": "Biogen Inc",
+    "exchange": "NASDAQ",
+    "security_type": "Common Stock",
+    "mapped_at": "2026-01-09T09:01:32.326488",
+    "source": "static"
+  },
+  "023135106": {
+    "cusip": "023135106",
+    "ticker": "AMGN",
+    "name": "Amgen Inc",
+    "exchange": "NASDAQ",
+    "security_type": "Common Stock",
+    "mapped_at": "2026-01-09T09:01:32.540955",
+    "source": "static"
+  },
+  "92532F100": {
+    "cusip": "92532F100",
+    "ticker": "VRTX",
+    "name": "Vertex Pharmaceuticals",
+    "exchange": "NASDAQ",
+    "security_type": "Common Stock",
+    "mapped_at": "2026-01-09T09:01:33.876651",
+    "source": "static"
+  }
+}

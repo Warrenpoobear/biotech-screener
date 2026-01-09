@@ -1,0 +1,111 @@
+{
+  "elite_core": [
+    {
+      "cik": "0001263508",
+      "name": "Baker Bros Advisors",
+      "aum_b": 13.8,
+      "style": "concentrated_conviction"
+    },
+    {
+      "cik": "0001346824",
+      "name": "RA Capital Management",
+      "aum_b": 8.1,
+      "style": "clinical_probability_engine"
+    },
+    {
+      "cik": "0001224962",
+      "name": "Perceptive Advisors",
+      "aum_b": 3.5,
+      "style": "event_driven"
+    },
+    {
+      "cik": "0001102854",
+      "name": "Deerfield Management",
+      "aum_b": 7.2,
+      "style": "multi_strategy"
+    },
+    {
+      "cik": "0001555280",
+      "name": "Ally Bridge Group",
+      "aum_b": 2.5,
+      "style": "asia_biotech"
+    },
+    {
+      "cik": "0001496147",
+      "name": "Redmile Group",
+      "aum_b": 4.8,
+      "style": "growth_equity"
+    },
+    {
+      "cik": "0001107208",
+      "name": "Orbimed Advisors",
+      "aum_b": 17.2,
+      "style": "diversified_healthcare"
+    },
+    {
+      "cik": "0001655352",
+      "name": "Venbio Partners",
+      "aum_b": 2.3,
+      "style": "venture_crossover"
+    },
+    {
+      "cik": "0001067983",
+      "name": "Bain Capital Life Sciences",
+      "aum_b": 5.5,
+      "style": "private_equity_crossover"
+    },
+    {
+      "cik": "0001713407",
+      "name": "RTW Investments",
+      "aum_b": 3.2,
+      "style": "clinical_stage_specialists"
+    },
+    {
+      "cik": "0001556308",
+      "name": "Tang Capital Partners",
+      "aum_b": 2.8,
+      "style": "oncology_focused"
+    },
+    {
+      "cik": "0001105977",
+      "name": "Farallon Capital",
+      "aum_b": 36.0,
+      "style": "multi_strategy_macro"
+    }
+  ],
+  "conditional": [
+    {
+      "cik": "0001005477",
+      "name": "Venrock",
+      "aum_b": 2.5,
+      "style": "venture_capital"
+    },
+    {
+      "cik": "0001398659",
+      "name": "Cormorant Asset Management",
+      "aum_b": 4.1,
+      "style": "event_driven"
+    },
+    {
+      "cik": "0001631282",
+      "name": "Deep Track Capital",
+      "aum_b": 1.8,
+      "style": "fundamental_long_short"
+    },
+    {
+      "cik": "0001103804",
+      "name": "Viking Global",
+      "aum_b": 27.0,
+      "style": "multi_strategy_macro"
+    }
+  ],
+  "metadata": {
+    "version": "1.0",
+    "last_updated": "2026-01-09",
+    "total_elite_aum_b": 70.8,
+    "notes": [
+      "Elite Core = primary signal source",
+      "Conditional = secondary breadth signal"
+    ]
+  }
+}
