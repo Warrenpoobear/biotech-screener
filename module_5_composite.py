@@ -35,6 +35,14 @@ DEFAULT_WEIGHTS = {
     "catalyst": Decimal("0.25"),
 }
 
+# Enhanced weights when PoS scoring is available (sum to 1.0)
+ENHANCED_WEIGHTS = {
+    "clinical_dev": Decimal("0.30"),  # Reduced from 0.40
+    "financial": Decimal("0.30"),     # Reduced from 0.35
+    "catalyst": Decimal("0.20"),      # Reduced from 0.25
+    "pos": Decimal("0.20"),           # New: PoS from BIO benchmarks
+}
+
 # Severity multipliers
 SEVERITY_MULTIPLIERS = {
     Severity.NONE: Decimal("1.0"),
@@ -229,27 +237,43 @@ def _get_worst_severity(severities: List[str]) -> Severity:
     return worst
 
 
-def _apply_cohort_normalization(members: List[Dict]) -> None:
+def _apply_cohort_normalization(members: List[Dict], include_pos: bool = False) -> None:
     """
     Apply rank normalization to cohort members in-place.
+
+    Args:
+        members: List of member records to normalize
+        include_pos: Whether to normalize PoS scores (if available)
     """
     if not members:
         return
-    
+
     # Extract raw scores
     clin_scores = [m["clinical_dev_raw"] or Decimal("0") for m in members]
     fin_scores = [m["financial_raw"] or Decimal("0") for m in members]
     cat_scores = [m["catalyst_raw"] or Decimal("0") for m in members]
-    
+
     # Normalize
     clin_norm = _rank_normalize(clin_scores)
     fin_norm = _rank_normalize(fin_scores)
     cat_norm = _rank_normalize(cat_scores)
-    
+
+    # Optionally normalize PoS scores
+    pos_norm = None
+    if include_pos:
+        pos_scores = [m.get("pos_raw") or Decimal("0") for m in members]
+        # Only normalize if any non-zero scores
+        if any(p > 0 for p in pos_scores):
+            pos_norm = _rank_normalize(pos_scores)
+
     for i, m in enumerate(members):
         m["clinical_dev_normalized"] = clin_norm[i]
         m["financial_normalized"] = fin_norm[i]
         m["catalyst_normalized"] = cat_norm[i]
+        if pos_norm:
+            m["pos_normalized"] = pos_norm[i]
+        else:
+            m["pos_normalized"] = m.get("pos_raw") or Decimal("0")
         m["normalization_applied"] = "cohort"
 
 
@@ -267,10 +291,11 @@ def compute_module_5_composite(
     normalization: str = "rank",
     coinvest_signals: Optional[Dict] = None,
     cohort_mode: str = COHORT_MODE_STAGE_ONLY,
+    enhancement_result: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """
     Compute composite scores with cohort normalization and co-invest overlay.
-    
+
     Args:
         universe_result: Module 1 output
         financial_result: Module 2 output
@@ -281,7 +306,8 @@ def compute_module_5_composite(
         normalization: "rank" (default) or "zscore"
         coinvest_signals: Optional dict of ticker -> AggregatedSignal from 13F aggregator
         cohort_mode: "stage_only" (recommended) or "stage_mcap" (granular)
-    
+        enhancement_result: Optional enhancement module results (PoS, regime, SI)
+
     Returns:
         {
             "as_of_date": str,
@@ -293,15 +319,77 @@ def compute_module_5_composite(
             "cohort_stats": {...},
             "diagnostic_counts": {...},
             "coinvest_coverage": {...} or None,
+            "enhancement_applied": bool,
             "provenance": {...}
         }
     """
+    # Extract enhancement data if provided
+    enhancement_applied = enhancement_result is not None
+    pos_by_ticker = {}
+    si_by_ticker = {}
+    regime_adjustments = {}
+    regime_name = "UNKNOWN"
+
+    if enhancement_result:
+        # Extract PoS scores
+        pos_scores = enhancement_result.get("pos_scores", {}).get("scores", [])
+        for ps in pos_scores:
+            ticker = ps.get("ticker")
+            if ticker:
+                pos_by_ticker[ticker.upper()] = ps
+
+        # Extract SI signals
+        si_scores = enhancement_result.get("short_interest_scores", {}).get("scores", [])
+        for si in si_scores:
+            ticker = si.get("ticker")
+            if ticker:
+                si_by_ticker[ticker.upper()] = si
+
+        # Extract regime adjustments
+        regime_data = enhancement_result.get("regime", {})
+        regime_name = regime_data.get("regime", "UNKNOWN")
+        regime_adjustments = regime_data.get("signal_adjustments", {})
+
+    # Use enhanced weights if PoS data is available
     if weights is None:
-        weights = DEFAULT_WEIGHTS
-    
+        if pos_by_ticker:
+            weights = ENHANCED_WEIGHTS.copy()
+        else:
+            weights = DEFAULT_WEIGHTS.copy()
+
+    # Apply regime-based weight adjustments
+    if regime_adjustments and pos_by_ticker:
+        # Regime adjusts relative importance of signals
+        # quality_adj > 1 in BEAR = favor quality/financial
+        # momentum_adj < 1 in BEAR = dampen catalyst/momentum signals
+        quality_adj = regime_adjustments.get("quality", Decimal("1.0"))
+        momentum_adj = regime_adjustments.get("momentum", Decimal("1.0"))
+        catalyst_adj = regime_adjustments.get("catalyst", Decimal("1.0"))
+
+        # Convert to Decimal if needed
+        if not isinstance(quality_adj, Decimal):
+            quality_adj = Decimal(str(quality_adj))
+        if not isinstance(momentum_adj, Decimal):
+            momentum_adj = Decimal(str(momentum_adj))
+        if not isinstance(catalyst_adj, Decimal):
+            catalyst_adj = Decimal(str(catalyst_adj))
+
+        # Adjust weights based on regime
+        adjusted_weights = {
+            "clinical_dev": weights.get("clinical_dev", Decimal("0.30")),
+            "financial": weights.get("financial", Decimal("0.30")) * quality_adj,
+            "catalyst": weights.get("catalyst", Decimal("0.20")) * catalyst_adj * momentum_adj,
+            "pos": weights.get("pos", Decimal("0.20")),
+        }
+
+        # Renormalize to sum to 1.0
+        total = sum(adjusted_weights.values())
+        if total > 0:
+            weights = {k: (v / total).quantize(Decimal("0.0001")) for k, v in adjusted_weights.items()}
+
     # Index module outputs by ticker
     active_tickers = {s["ticker"] for s in universe_result.get("active_securities", [])}
-    
+
     financial_by_ticker = {s["ticker"]: s for s in financial_result.get("scores", [])}
     catalyst_by_ticker = catalyst_result.get("summaries", {})  # Module 3 returns summaries dict
     clinical_by_ticker = {s["ticker"]: s for s in clinical_result.get("scores", [])}
@@ -380,7 +468,32 @@ def compute_module_5_composite(
         flags.extend(fin.get("flags", []))
         flags.extend(cat_flags)
         flags.extend(clin.get("flags", []))
-        
+
+        # Extract enhancement data for this ticker
+        pos_data = pos_by_ticker.get(ticker.upper(), {})
+        si_data = si_by_ticker.get(ticker.upper(), {})
+
+        # Get PoS score (0-100 scale)
+        pos_score = None
+        if pos_data:
+            pos_score_raw = pos_data.get("pos_score")
+            if pos_score_raw is not None:
+                pos_score = Decimal(str(pos_score_raw))
+
+        # Get SI signals and add flags
+        si_squeeze_potential = None
+        si_signal_direction = None
+        if si_data:
+            si_squeeze_potential = si_data.get("squeeze_potential")
+            si_signal_direction = si_data.get("signal_direction")
+            si_flags = si_data.get("flags", [])
+            if si_squeeze_potential in ("EXTREME", "HIGH"):
+                flags.append(f"si_squeeze_{si_squeeze_potential.lower()}")
+            if si_data.get("crowding_risk") in ("HIGH", "EXTREME"):
+                flags.append("si_crowding_risk")
+            if "COVERING_TREND" in si_flags:
+                flags.append("si_covering_trend")
+
         # Check for sev3 exclusion
         if worst_severity == Severity.SEV3:
             excluded.append({
@@ -389,22 +502,25 @@ def compute_module_5_composite(
                 "flags": sorted(set(flags)),
             })
             continue
-        
+
         # Get cohort info
         market_cap_mm = fin.get("market_cap_mm")
         lead_phase = clin.get("lead_phase")
-        
+
         combined.append({
             "ticker": ticker,
             "clinical_dev_raw": clin_score,
             "financial_raw": fin_score,
             "catalyst_raw": cat_score,
+            "pos_raw": pos_score,
             "catalyst_proximity": Decimal(str(cat_proximity)) if cat_proximity else Decimal("0"),
             "catalyst_delta": Decimal(str(cat_delta)) if cat_delta else Decimal("0"),
             "market_cap_bucket": _market_cap_bucket(market_cap_mm),
             "stage_bucket": _stage_bucket(lead_phase),
             "severity": worst_severity,
             "flags": flags,
+            "si_squeeze_potential": si_squeeze_potential,
+            "si_signal_direction": si_signal_direction,
         })
     
     # Group by cohort for normalization
@@ -446,12 +562,12 @@ def compute_module_5_composite(
     # Normalize within normal cohorts
     for cohort_key, members in cohorts.items():
         if cohort_fallbacks[cohort_key] == "normal":
-            _apply_cohort_normalization(members)
-    
+            _apply_cohort_normalization(members, include_pos=enhancement_applied)
+
     # Normalize within stage pools (for small cohorts)
     for stage, members in stage_pools.items():
         if len(members) >= MIN_COHORT_SIZE:
-            _apply_cohort_normalization(members)
+            _apply_cohort_normalization(members, include_pos=enhancement_applied)
             for m in members:
                 m["normalization_applied"] = f"stage_{stage}"
         elif len(members) > 0:
@@ -459,6 +575,7 @@ def compute_module_5_composite(
                 m["clinical_dev_normalized"] = m["clinical_dev_raw"] or Decimal("0")
                 m["financial_normalized"] = m["financial_raw"] or Decimal("0")
                 m["catalyst_normalized"] = m["catalyst_raw"] or Decimal("0")
+                m["pos_normalized"] = m.get("pos_raw") or Decimal("0")
                 m["normalization_applied"] = "none"
                 m["flags"].append("cohort_too_small_no_normalization")
     
@@ -467,6 +584,7 @@ def compute_module_5_composite(
         clin_n = rec["clinical_dev_normalized"] or Decimal("0")
         fin_n = rec["financial_normalized"] or Decimal("0")
         cat_n = rec["catalyst_normalized"] or Decimal("0")
+        pos_n = rec.get("pos_normalized") or Decimal("0")
 
         # Catalyst proximity bonus (upcoming catalysts boost score)
         # Scale: 0-100 proximity -> 0-5 point bonus
@@ -478,18 +596,26 @@ def compute_module_5_composite(
         cat_delta = rec.get("catalyst_delta", Decimal("0"))
         delta_adjustment = (cat_delta / Decimal("20")).quantize(Decimal("0.01"))  # Max ±2.5 pts
 
-        # Weighted sum
+        # Weighted sum (includes PoS if available)
         composite = (
-            clin_n * weights["clinical_dev"] +
-            fin_n * weights["financial"] +
-            cat_n * weights["catalyst"] +
+            clin_n * weights.get("clinical_dev", Decimal("0.40")) +
+            fin_n * weights.get("financial", Decimal("0.35")) +
+            cat_n * weights.get("catalyst", Decimal("0.25")) +
             proximity_bonus +
             delta_adjustment
         )
-        
-        # Count missing subfactors
-        missing = sum(1 for x in [rec["clinical_dev_raw"], rec["financial_raw"], rec["catalyst_raw"]] if x is None)
-        missing_pct = Decimal(str(missing / 3))
+
+        # Add PoS contribution if enhanced weights used
+        if "pos" in weights and pos_n > 0:
+            composite = composite + pos_n * weights["pos"]
+            rec["flags"].append("pos_score_applied")
+
+        # Count missing subfactors (now 4 if PoS available)
+        subfactors = [rec["clinical_dev_raw"], rec["financial_raw"], rec["catalyst_raw"]]
+        if enhancement_applied:
+            subfactors.append(rec.get("pos_raw"))
+        missing = sum(1 for x in subfactors if x is None)
+        missing_pct = Decimal(str(missing / len(subfactors)))
         
         # Uncertainty penalty
         uncertainty_penalty = min(MAX_UNCERTAINTY_PENALTY, missing_pct)
@@ -548,7 +674,7 @@ def compute_module_5_composite(
     ranked_securities = []
     for rec in combined:
         coinvest = rec.get("coinvest") or {}
-        ranked_securities.append({
+        security_data = {
             "ticker": rec["ticker"],
             "composite_score": str(rec["composite_score"]),
             "composite_rank": rec["composite_rank"],
@@ -574,7 +700,17 @@ def compute_module_5_composite(
             "coinvest_published_at_max": coinvest.get("coinvest_published_at_max"),
             "coinvest_usable": coinvest.get("coinvest_usable", False),
             "coinvest_flags": coinvest.get("coinvest_flags", []),
-        })
+        }
+
+        # Add enhancement fields if available
+        if enhancement_applied:
+            pos_normalized = rec.get("pos_normalized")
+            security_data["pos_normalized"] = str(pos_normalized) if pos_normalized else None
+            security_data["pos_raw"] = str(rec.get("pos_raw")) if rec.get("pos_raw") else None
+            security_data["si_squeeze_potential"] = rec.get("si_squeeze_potential")
+            security_data["si_signal_direction"] = rec.get("si_signal_direction")
+
+        ranked_securities.append(security_data)
     
     # Compute co-invest coverage diagnostics
     coinvest_coverage = None
@@ -586,6 +722,18 @@ def compute_module_5_composite(
             "unmapped_cusips_count": sum(1 for r in ranked_securities if "cusip_unmapped" in r.get("coinvest_flags", [])),
         }
     
+    # Enhancement diagnostics
+    enhancement_diagnostics = None
+    if enhancement_applied:
+        pos_applied_count = sum(1 for r in ranked_securities if "pos_score_applied" in r.get("flags", []))
+        si_squeeze_count = sum(1 for r in ranked_securities if r.get("si_squeeze_potential") in ("EXTREME", "HIGH"))
+        enhancement_diagnostics = {
+            "regime": regime_name,
+            "regime_adjustments": {k: str(v) for k, v in regime_adjustments.items()} if regime_adjustments else {},
+            "pos_scores_applied": pos_applied_count,
+            "si_squeeze_signals": si_squeeze_count,
+        }
+
     return {
         "as_of_date": as_of_date,
         "normalization_method": normalization,
@@ -601,6 +749,8 @@ def compute_module_5_composite(
             "cohort_count": len(cohorts),
         },
         "coinvest_coverage": coinvest_coverage,
+        "enhancement_applied": enhancement_applied,
+        "enhancement_diagnostics": enhancement_diagnostics,
         "provenance": create_provenance(
             RULESET_VERSION,
             {"tickers": list(active_tickers), "weights": {k: str(v) for k, v in weights.items()}},

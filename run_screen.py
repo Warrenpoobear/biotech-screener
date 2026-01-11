@@ -766,6 +766,7 @@ def run_screening_pipeline(
             cohort_mode="stage_only",
             coinvest_signals=coinvest_signals,
             validate=True,
+            enhancement_result=enhancement_result,
         )
         if checkpoint_dir:
             save_checkpoint(checkpoint_dir, "module_5", as_of_date, m5_result)

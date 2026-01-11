@@ -38,6 +38,7 @@ def compute_module_5_composite_with_defensive(
     validate: bool = False,
     universe_path: Optional[str] = None,
     universe_search_paths: Optional[List[str]] = None,
+    enhancement_result: dict = None,
 ) -> dict:
     """
     Rank securities with defensive overlays integrated.
@@ -59,6 +60,7 @@ def compute_module_5_composite_with_defensive(
         validate: Run validation checks
         universe_path: Explicit path to universe file with defensive_features
         universe_search_paths: Custom list of paths to search for universe file
+        enhancement_result: Optional enhancement module results (PoS, regime, SI)
 
     Returns:
         Module 5 output enriched with defensive overlay fields
@@ -74,6 +76,7 @@ def compute_module_5_composite_with_defensive(
         normalization=normalization,
         coinvest_signals=coinvest_signals,
         cohort_mode=cohort_mode,
+        enhancement_result=enhancement_result,
     )
 
     # Build defensive_features lookup from RAW universe file
