@@ -6,8 +6,13 @@ Downloads 10-Q and 10-K filings from SEC EDGAR with proper rate limiting.
 
 Usage:
     python sec_filing_downloader.py --tickers CVAC,RYTM,IMMP --count 8
+
+Environment Variables:
+    SEC_USER_AGENT: Your User-Agent string (required by SEC)
+                   Format: "YourName/1.0 (your.email@example.com)"
 """
 
+import os
 import requests
 import time
 import json
@@ -24,8 +29,41 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # SEC requires User-Agent with contact info
-# IMPORTANT: Replace with your actual contact information
-USER_AGENT = "YourName/1.0 (your.email@example.com)"
+# Set via SEC_USER_AGENT environment variable or pass explicitly
+_DEFAULT_USER_AGENT_PLACEHOLDER = "YourName/1.0 (your.email@example.com)"
+
+
+def get_sec_user_agent() -> str:
+    """
+    Get SEC User-Agent from environment variable.
+
+    SEC requires all EDGAR requests to include a User-Agent header with:
+    - Company or application name
+    - Contact email address
+
+    Returns:
+        User-Agent string from SEC_USER_AGENT env var, or placeholder if not set
+    """
+    user_agent = os.environ.get("SEC_USER_AGENT", "").strip()
+
+    if not user_agent:
+        logger.warning(
+            "SEC_USER_AGENT environment variable not set. "
+            "SEC requires a valid User-Agent with your contact info. "
+            "Set it with: export SEC_USER_AGENT='YourName/1.0 (your.email@example.com)'"
+        )
+        return _DEFAULT_USER_AGENT_PLACEHOLDER
+
+    # Validate format (should contain email-like pattern)
+    if "@" not in user_agent:
+        logger.warning(
+            f"SEC_USER_AGENT '{user_agent}' may be invalid - should include email address"
+        )
+
+    return user_agent
+
+
+USER_AGENT = get_sec_user_agent()
 
 # SEC rate limit: 10 requests per second
 RATE_LIMIT_DELAY = 0.11  # 110ms between requests (slightly over 100ms to be safe)
@@ -371,11 +409,12 @@ def main():
     args = parser.parse_args()
     
     # Validate user agent
-    if args.user_agent == USER_AGENT:
+    if args.user_agent == _DEFAULT_USER_AGENT_PLACEHOLDER:
         print("\n⚠️  WARNING: Please set a proper User-Agent with your contact information!")
         print("   SEC requires this for rate limiting and to contact you if needed.")
-        print("   Use: --user-agent 'YourName/1.0 (your.email@example.com)'")
-        print("\n   Proceeding with default, but you should update this for production.\n")
+        print("   Set environment variable: export SEC_USER_AGENT='YourName/1.0 (your.email@example.com)'")
+        print("   Or use: --user-agent 'YourName/1.0 (your.email@example.com)'")
+        print("\n   Proceeding with placeholder, but you MUST update this for production.\n")
     
     # Parse inputs
     tickers = [t.strip().upper() for t in args.tickers.split(',')]
