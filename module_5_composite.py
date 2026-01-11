@@ -315,20 +315,49 @@ def compute_module_5_composite(
         cat = catalyst_by_ticker.get(ticker, {})
         clin = clinical_by_ticker.get(ticker, {})
 
-        # Handle TickerCatalystSummary objects (dataclass) or dicts
-        if hasattr(cat, 'catalyst_score_net'):
-            # It's a TickerCatalystSummary dataclass
+        # Handle TickerCatalystSummaryV2 objects (dataclass) or dicts
+        # vNext uses score_override/score_blended, legacy uses catalyst_score_net
+        if hasattr(cat, 'score_blended'):
+            # It's a TickerCatalystSummaryV2 dataclass
+            cat_score_val = float(cat.score_blended)
+            cat_proximity = float(cat.catalyst_proximity_score) if hasattr(cat, 'catalyst_proximity_score') else 0
+            cat_delta = float(cat.catalyst_delta_score) if hasattr(cat, 'catalyst_delta_score') else 0
+            cat_severity = 'sev1' if cat.severe_negative_flag else 'none'
+            cat_flags = getattr(cat, 'flags', {}).get('severe_negative_flag', False)
+            cat_severe_neg = cat.severe_negative_flag
+        elif isinstance(cat, dict):
+            # Check for vNext dict format first (nested scores structure)
+            scores = cat.get("scores", {})
+            if scores and "score_blended" in scores:
+                cat_score_val = float(scores.get("score_blended", 50))
+                cat_proximity = float(scores.get("catalyst_proximity_score", 0))
+                cat_delta = float(scores.get("catalyst_delta_score", 0))
+            elif "score_blended" in cat:
+                # Flat vNext format
+                cat_score_val = float(cat.get("score_blended", 50))
+                cat_proximity = float(cat.get("catalyst_proximity_score", 0))
+                cat_delta = float(cat.get("catalyst_delta_score", 0))
+            else:
+                # Legacy format
+                cat_score_val = cat.get("catalyst_score_net")
+                cat_proximity = 0
+                cat_delta = 0
+            flags_dict = cat.get("flags", {})
+            cat_severity = 'sev1' if flags_dict.get("severe_negative_flag", False) else cat.get("severity", "none")
+            cat_flags = []
+            cat_severe_neg = flags_dict.get("severe_negative_flag", False) if isinstance(flags_dict, dict) else False
+        elif hasattr(cat, 'catalyst_score_net'):
+            # Legacy TickerCatalystSummary dataclass
             cat_score_val = cat.catalyst_score_net
+            cat_proximity = 0
+            cat_delta = 0
             cat_severity = getattr(cat, 'severity', 'none') if hasattr(cat, 'severity') else 'none'
             cat_flags = getattr(cat, 'flags', []) if hasattr(cat, 'flags') else []
             cat_severe_neg = getattr(cat, 'severe_negative_flag', False)
-        elif isinstance(cat, dict):
-            cat_score_val = cat.get("catalyst_score_net")
-            cat_severity = cat.get("severity", "none")
-            cat_flags = cat.get("flags", [])
-            cat_severe_neg = cat.get("severe_negative_flag", False)
         else:
             cat_score_val = None
+            cat_proximity = 0
+            cat_delta = 0
             cat_severity = "none"
             cat_flags = []
             cat_severe_neg = False
@@ -370,6 +399,8 @@ def compute_module_5_composite(
             "clinical_dev_raw": clin_score,
             "financial_raw": fin_score,
             "catalyst_raw": cat_score,
+            "catalyst_proximity": Decimal(str(cat_proximity)) if cat_proximity else Decimal("0"),
+            "catalyst_delta": Decimal(str(cat_delta)) if cat_delta else Decimal("0"),
             "market_cap_bucket": _market_cap_bucket(market_cap_mm),
             "stage_bucket": _stage_bucket(lead_phase),
             "severity": worst_severity,
@@ -436,12 +467,24 @@ def compute_module_5_composite(
         clin_n = rec["clinical_dev_normalized"] or Decimal("0")
         fin_n = rec["financial_normalized"] or Decimal("0")
         cat_n = rec["catalyst_normalized"] or Decimal("0")
-        
+
+        # Catalyst proximity bonus (upcoming catalysts boost score)
+        # Scale: 0-100 proximity -> 0-5 point bonus
+        cat_proximity = rec.get("catalyst_proximity", Decimal("0"))
+        proximity_bonus = (cat_proximity / Decimal("20")).quantize(Decimal("0.01"))  # Max +5 pts
+
+        # Catalyst delta adjustment (recent changes)
+        # Scale: -50 to +50 delta -> -2.5 to +2.5 point adjustment
+        cat_delta = rec.get("catalyst_delta", Decimal("0"))
+        delta_adjustment = (cat_delta / Decimal("20")).quantize(Decimal("0.01"))  # Max ±2.5 pts
+
         # Weighted sum
         composite = (
             clin_n * weights["clinical_dev"] +
             fin_n * weights["financial"] +
-            cat_n * weights["catalyst"]
+            cat_n * weights["catalyst"] +
+            proximity_bonus +
+            delta_adjustment
         )
         
         # Count missing subfactors
