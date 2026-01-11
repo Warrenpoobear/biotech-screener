@@ -54,6 +54,7 @@ from module_3_schema import (
 from module_3_scoring import (
     calculate_ticker_catalyst_score,
     score_catalyst_events,
+    compute_proximity_score,
 )
 
 logging.basicConfig(
@@ -322,6 +323,7 @@ def compute_module_3_catalyst(
     logger.info("Detecting catalyst events...")
     events_by_ticker_v2: Dict[str, List[CatalystEventV2]] = {}
     events_by_ticker_legacy: Dict[str, List[CatalystEvent]] = {}
+    prior_events_by_ticker_v2: Dict[str, List[CatalystEventV2]] = {}
     total_events = 0
     total_deduped = 0
 
@@ -368,12 +370,26 @@ def compute_module_3_catalyst(
     logger.info(f"Detected {total_events} events across {len(events_by_ticker_v2)} tickers")
     logger.info(f"Deduped {total_deduped} duplicate events")
 
+    # Build prior events for delta scoring (from prior snapshot)
+    if prior_snapshot:
+        for ticker in active_tickers:
+            prior_records = prior_snapshot.get_records_for_ticker(ticker) if hasattr(prior_snapshot, 'get_records_for_ticker') else []
+            if prior_records:
+                prior_events_by_ticker_v2[ticker] = []
+                # Note: Prior events would need to be reconstructed from prior snapshot
+                # For now, we use the detected events from delta comparison
+
+    # Load historical proximity scores from state store
+    historical_proximities = state_store.get_historical_proximities(4) if hasattr(state_store, 'get_historical_proximities') else {}
+
     # Score events using new scoring system
     logger.info("Scoring events with vNext scorer...")
     summaries_v2, diagnostics = score_catalyst_events(
         events_by_ticker_v2,
         list(active_tickers),
         as_of_date,
+        prior_events_by_ticker=prior_events_by_ticker_v2 if prior_events_by_ticker_v2 else None,
+        historical_proximities_by_ticker=historical_proximities if historical_proximities else None,
     )
 
     # Update diagnostics with dedup count

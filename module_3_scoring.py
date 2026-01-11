@@ -32,6 +32,7 @@ from module_3_schema import (
     EVENT_DEFAULT_CONFIDENCE,
     CONFIDENCE_WEIGHTS,
     SEVERITY_SCORE_CONTRIBUTION,
+    EVENT_TYPE_WEIGHT,
     compute_catalyst_window_bucket,
     decimal_to_str,
 )
@@ -62,6 +63,11 @@ SCORE_MAX = Decimal("100")
 DECAY_HALF_LIFE_DAYS = 90  # Score contribution halves every 90 days
 STALENESS_THRESHOLD_DAYS = 180  # Penalty if no events newer than this
 STALENESS_PENALTY_FACTOR = Decimal("0.8")
+
+# Proximity scoring parameters
+PROXIMITY_HORIZON_DAYS = 270  # Look-ahead window for upcoming catalysts
+PROXIMITY_HALF_LIFE_DAYS = 120  # Decay half-life for proximity score (configurable)
+PROXIMITY_SCALE_FACTOR = Decimal("2.0")  # Scale factor to normalize to 0-100
 
 
 # =============================================================================
@@ -147,6 +153,185 @@ def compute_staleness_factor(
         return STALENESS_PENALTY_FACTOR
 
     return Decimal("1.0")
+
+
+# =============================================================================
+# PROXIMITY SCORING (UPCOMING EVENTS)
+# =============================================================================
+
+def compute_proximity_score(
+    events: List[CatalystEventV2],
+    as_of_date: date,
+    horizon_days: int = PROXIMITY_HORIZON_DAYS,
+    half_life_days: int = PROXIMITY_HALF_LIFE_DAYS,
+) -> Tuple[Decimal, int]:
+    """
+    Compute proximity score for upcoming catalyst events.
+
+    For each upcoming event within horizon_days:
+        contrib = (type_weight * confidence_weight) * exp(-days_to_event / half_life_days)
+
+    Args:
+        events: List of catalyst events
+        as_of_date: Point-in-time date
+        horizon_days: Look-ahead window (default 270 days)
+        half_life_days: Decay half-life (default 120 days)
+
+    Returns:
+        (proximity_score, n_events_upcoming)
+        Score is clamped to [0, 100]
+    """
+    if not events:
+        return (Decimal("0"), 0)
+
+    total_contrib = Decimal("0")
+    n_upcoming = 0
+
+    for event in events:
+        if not event.event_date:
+            continue
+
+        try:
+            event_d = date.fromisoformat(event.event_date)
+        except (ValueError, TypeError):
+            continue
+
+        days_to_event = (event_d - as_of_date).days
+
+        # Only consider future events within horizon
+        if days_to_event <= 0 or days_to_event > horizon_days:
+            continue
+
+        n_upcoming += 1
+
+        # Get type weight
+        type_weight = EVENT_TYPE_WEIGHT.get(event.event_type, Decimal("1.0"))
+
+        # Get confidence weight
+        confidence_weight = CONFIDENCE_WEIGHTS.get(event.confidence, Decimal("0.5"))
+
+        # Exponential decay: closer events score higher
+        # weight = exp(-days / half_life) ≈ 0.5^(days / half_life)
+        decay_factor = Decimal(days_to_event) / Decimal(half_life_days)
+        time_weight = Decimal("0.5") ** decay_factor
+
+        # Combined contribution
+        contrib = type_weight * confidence_weight * time_weight
+        total_contrib += contrib
+
+    # Scale and clamp to [0, 100]
+    scaled_score = total_contrib * PROXIMITY_SCALE_FACTOR
+    clamped_score = max(Decimal("0"), min(Decimal("100"), scaled_score))
+
+    return (clamped_score.quantize(Decimal("0.01")), n_upcoming)
+
+
+# =============================================================================
+# DELTA SCORING (EVENT-BASED CHANGES)
+# =============================================================================
+
+def compute_delta_score(
+    current_events: List[CatalystEventV2],
+    prior_events: List[CatalystEventV2],
+    as_of_date: date,
+) -> Tuple[Decimal, int, int, Optional[int]]:
+    """
+    Compute delta score based on event changes.
+
+    Detects:
+    - Events added (by event_id): positive contribution
+    - Events removed: negative contribution
+    - Date shifts: earlier = positive, later = negative
+
+    Args:
+        current_events: Current snapshot events
+        prior_events: Prior snapshot events
+        as_of_date: Point-in-time date
+
+    Returns:
+        (delta_score, n_added, n_removed, max_slip_days)
+    """
+    if not current_events and not prior_events:
+        return (Decimal("0"), 0, 0, None)
+
+    # Index events by stable_event_id (ticker + nct_id + event_type)
+    def stable_id(e: CatalystEventV2) -> str:
+        return f"{e.ticker}|{e.nct_id}|{e.event_type.value}"
+
+    current_by_id = {stable_id(e): e for e in current_events}
+    prior_by_id = {stable_id(e): e for e in prior_events}
+
+    current_ids = set(current_by_id.keys())
+    prior_ids = set(prior_by_id.keys())
+
+    # Detect added/removed
+    added_ids = current_ids - prior_ids
+    removed_ids = prior_ids - current_ids
+    matched_ids = current_ids & prior_ids
+
+    n_added = len(added_ids)
+    n_removed = len(removed_ids)
+
+    # Score contributions
+    score = Decimal("0")
+
+    # Added events: positive contribution based on severity
+    for eid in added_ids:
+        event = current_by_id[eid]
+        severity_contrib = SEVERITY_SCORE_CONTRIBUTION.get(event.event_severity, Decimal("0"))
+        # Positive events add to score, negative events subtract
+        if severity_contrib > 0:
+            score += severity_contrib * Decimal("0.5")  # Dampen for delta
+        elif severity_contrib < 0:
+            score += severity_contrib * Decimal("0.5")
+
+    # Removed events: opposite contribution
+    for eid in removed_ids:
+        event = prior_by_id[eid]
+        severity_contrib = SEVERITY_SCORE_CONTRIBUTION.get(event.event_severity, Decimal("0"))
+        # If positive event removed, that's negative
+        if severity_contrib > 0:
+            score -= severity_contrib * Decimal("0.3")
+        elif severity_contrib < 0:
+            # Negative event removed is positive
+            score -= severity_contrib * Decimal("0.3")
+
+    # Date shifts for matched events
+    max_slip = None
+    for eid in matched_ids:
+        curr_event = current_by_id[eid]
+        prior_event = prior_by_id[eid]
+
+        if not curr_event.event_date or not prior_event.event_date:
+            continue
+
+        try:
+            curr_d = date.fromisoformat(curr_event.event_date)
+            prior_d = date.fromisoformat(prior_event.event_date)
+        except (ValueError, TypeError):
+            continue
+
+        shift_days = (curr_d - prior_d).days
+
+        if shift_days != 0:
+            # Track max slip (worst delay)
+            if max_slip is None or shift_days > max_slip:
+                max_slip = shift_days
+
+            # Magnitude weighting: min(1, abs(shift)/90)
+            magnitude = min(Decimal("1"), Decimal(abs(shift_days)) / Decimal("90"))
+
+            if shift_days < 0:
+                # Earlier shift is positive (pullin)
+                score += Decimal("5") * magnitude
+            else:
+                # Later shift is negative (pushout)
+                score -= Decimal("5") * magnitude
+
+    # Clamp to reasonable range
+    clamped = max(Decimal("-50"), min(Decimal("50"), score))
+
+    return (clamped.quantize(Decimal("0.01")), n_added, n_removed, max_slip)
 
 
 # =============================================================================
@@ -297,10 +482,44 @@ def calculate_score_blended(
 # TICKER-LEVEL SCORING
 # =============================================================================
 
+def compute_velocity(
+    current_proximity: Decimal,
+    historical_proximities: List[Decimal],
+) -> Optional[Decimal]:
+    """
+    Compute velocity as current proximity minus rolling median.
+
+    Args:
+        current_proximity: Current proximity score
+        historical_proximities: List of prior proximity scores (most recent first)
+
+    Returns:
+        velocity (current - median) or None if insufficient history
+    """
+    if len(historical_proximities) < 4:
+        return None
+
+    # Use last 4 snapshots
+    recent_4 = historical_proximities[:4]
+
+    # Compute median
+    sorted_scores = sorted(recent_4)
+    n = len(sorted_scores)
+    if n % 2 == 0:
+        median = (sorted_scores[n // 2 - 1] + sorted_scores[n // 2]) / 2
+    else:
+        median = sorted_scores[n // 2]
+
+    velocity = current_proximity - median
+    return velocity.quantize(Decimal("0.01"))
+
+
 def calculate_ticker_catalyst_score(
     ticker: str,
     events: List[CatalystEventV2],
     as_of_date: date,
+    prior_events: Optional[List[CatalystEventV2]] = None,
+    historical_proximities: Optional[List[Decimal]] = None,
 ) -> TickerCatalystSummaryV2:
     """
     Calculate complete catalyst score for a ticker.
@@ -309,9 +528,11 @@ def calculate_ticker_catalyst_score(
         ticker: Ticker symbol
         events: List of catalyst events for this ticker
         as_of_date: Point-in-time date
+        prior_events: Events from prior snapshot (for delta scoring)
+        historical_proximities: List of prior proximity scores (for velocity)
 
     Returns:
-        TickerCatalystSummaryV2 with both override and blended scores
+        TickerCatalystSummaryV2 with override, blended, proximity, delta, and velocity scores
     """
     # Sort events deterministically
     sorted_events = sorted(events, key=lambda e: e.sort_key())
@@ -319,6 +540,27 @@ def calculate_ticker_catalyst_score(
     # Calculate both scores
     score_override, override_reason = calculate_score_override(sorted_events)
     score_blended, weighted_counts = calculate_score_blended(sorted_events, as_of_date)
+
+    # NEW: Compute proximity score for upcoming catalysts
+    proximity_score, n_upcoming = compute_proximity_score(sorted_events, as_of_date)
+
+    # NEW: Compute delta score if prior events available
+    if prior_events is not None:
+        sorted_prior = sorted(prior_events, key=lambda e: e.sort_key())
+        delta_score, n_added, n_removed, max_slip = compute_delta_score(
+            sorted_events, sorted_prior, as_of_date
+        )
+    else:
+        delta_score = Decimal("0")
+        n_added = 0
+        n_removed = 0
+        max_slip = None
+
+    # NEW: Compute velocity if historical data available
+    if historical_proximities:
+        velocity = compute_velocity(proximity_score, historical_proximities)
+    else:
+        velocity = None
 
     # Determine which mode to use
     # Use override when it differs materially (>5 points) from blended
@@ -368,6 +610,16 @@ def calculate_ticker_catalyst_score(
         weighted_counts_by_severity=dict(sorted(weighted_counts.items())),
         top_3_events=[e.to_dict() for e in top_3],
         events=sorted_events,
+        # NEW: Proximity scoring
+        catalyst_proximity_score=proximity_score,
+        n_events_upcoming=n_upcoming,
+        # NEW: Delta scoring
+        catalyst_delta_score=delta_score,
+        n_events_added=n_added,
+        n_events_removed=n_removed,
+        max_slip_days=max_slip,
+        # NEW: Velocity
+        catalyst_velocity_4w=velocity,
     )
 
 
@@ -483,6 +735,8 @@ def score_catalyst_events(
     events_by_ticker: Dict[str, List[CatalystEventV2]],
     active_tickers: List[str],
     as_of_date: date,
+    prior_events_by_ticker: Optional[Dict[str, List[CatalystEventV2]]] = None,
+    historical_proximities_by_ticker: Optional[Dict[str, List[Decimal]]] = None,
 ) -> Tuple[Dict[str, TickerCatalystSummaryV2], DiagnosticCounts]:
     """
     Score catalyst events for all active tickers.
@@ -491,6 +745,8 @@ def score_catalyst_events(
         events_by_ticker: Dict of ticker -> list of events
         active_tickers: List of active tickers to score
         as_of_date: Point-in-time date
+        prior_events_by_ticker: Prior snapshot events (for delta scoring)
+        historical_proximities_by_ticker: Historical proximity scores (for velocity)
 
     Returns:
         (summaries_dict, diagnostics)
@@ -501,10 +757,19 @@ def score_catalyst_events(
     diagnostics = DiagnosticCounts()
     diagnostics.tickers_analyzed = len(active_tickers)
 
+    prior_events_by_ticker = prior_events_by_ticker or {}
+    historical_proximities_by_ticker = historical_proximities_by_ticker or {}
+
     for ticker in sorted(active_tickers):  # Sorted for determinism
         events = events_by_ticker.get(ticker, [])
+        prior_events = prior_events_by_ticker.get(ticker)
+        historical_proximities = historical_proximities_by_ticker.get(ticker)
 
-        summary = calculate_ticker_catalyst_score(ticker, events, as_of_date)
+        summary = calculate_ticker_catalyst_score(
+            ticker, events, as_of_date,
+            prior_events=prior_events,
+            historical_proximities=historical_proximities,
+        )
         summaries[ticker] = summary
 
         # Update diagnostics

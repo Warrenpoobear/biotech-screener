@@ -148,6 +148,19 @@ def write_json_output(filepath: Path, data: Dict[str, Any]) -> None:
     """
     filepath.parent.mkdir(parents=True, exist_ok=True)
 
+    # Custom encoder for dataclass objects
+    class DataclassEncoder(json.JSONEncoder):
+        def default(self, obj):
+            if hasattr(obj, 'to_dict'):
+                return obj.to_dict()
+            if hasattr(obj, '__dataclass_fields__'):
+                return {k: getattr(obj, k) for k in obj.__dataclass_fields__}
+            if isinstance(obj, Decimal):
+                return str(obj)
+            if isinstance(obj, date):
+                return obj.isoformat()
+            return super().default(obj)
+
     with open(filepath, 'w', encoding='utf-8') as f:
         json.dump(
             data,
@@ -155,6 +168,7 @@ def write_json_output(filepath: Path, data: Dict[str, Any]) -> None:
             indent=2,
             sort_keys=True,  # Deterministic key ordering
             ensure_ascii=False,
+            cls=DataclassEncoder,
         )
         f.write('\n')  # Trailing newline for diff-friendliness
 
