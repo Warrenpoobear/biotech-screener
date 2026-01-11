@@ -323,7 +323,7 @@ def compute_module_5_composite(
             cat_proximity = float(cat.catalyst_proximity_score) if hasattr(cat, 'catalyst_proximity_score') else 0
             cat_delta = float(cat.catalyst_delta_score) if hasattr(cat, 'catalyst_delta_score') else 0
             cat_severity = 'sev1' if cat.severe_negative_flag else 'none'
-            cat_flags = getattr(cat, 'flags', {}).get('severe_negative_flag', False)
+            cat_flags = []  # vNext dataclass uses flags dict, not list
             cat_severe_neg = cat.severe_negative_flag
         elif isinstance(cat, dict):
             # Check for vNext dict format first (nested scores structure)
