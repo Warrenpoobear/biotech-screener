@@ -338,8 +338,9 @@ def compute_module_5_composite(
             if ticker:
                 pos_by_ticker[ticker.upper()] = ps
 
-        # Extract SI signals
-        si_scores = enhancement_result.get("short_interest_scores", {}).get("scores", [])
+        # Extract SI signals (handle None values)
+        si_data = enhancement_result.get("short_interest_scores") or {}
+        si_scores = si_data.get("scores", [])
         for si in si_scores:
             ticker = si.get("ticker")
             if ticker:
