@@ -812,11 +812,27 @@ if __name__ == "__main__":
 # =============================================================================
 
 def compute_module_2_financial(*args, **kwargs):
-    """Ultra-flexible wrapper - NO field mapping needed for SEC data"""
-    # Extract parameters
-    universe = kwargs.get('universe', kwargs.get('active_tickers', kwargs.get('active_universe', [])))
-    financial_data = kwargs.get('financial_records', kwargs.get('financial_data', []))
-    market_data = kwargs.get('market_records', kwargs.get('market_data', []))
+    """
+    Ultra-flexible wrapper for backwards compatibility.
+
+    Supports multiple calling conventions:
+    - compute_module_2_financial(records, active_tickers, as_of_date)  # Legacy
+    - compute_module_2_financial(financial_data=..., universe=..., ...)  # Kwargs
+    """
+    # Handle positional arguments (legacy call pattern)
+    if len(args) >= 2:
+        # Legacy: (records, active_tickers, as_of_date)
+        records = args[0]
+        universe = args[1]
+        as_of_date = args[2] if len(args) > 2 else kwargs.get('as_of_date')
+        financial_data = records
+        market_data = []
+    else:
+        # Extract parameters from kwargs
+        universe = kwargs.get('universe', kwargs.get('active_tickers', kwargs.get('active_universe', [])))
+        financial_data = kwargs.get('financial_records', kwargs.get('financial_data', []))
+        market_data = kwargs.get('market_records', kwargs.get('market_data', []))
+        as_of_date = kwargs.get('as_of_date')
 
     # Convert set to list if needed
     if isinstance(universe, set):
@@ -832,8 +848,69 @@ def compute_module_2_financial(*args, **kwargs):
                 mkt['ticker'] = record['ticker']
                 market_data.append(mkt)
 
-    # Map market data field names only (volume_avg_30d -> avg_volume)
+    # Map legacy field names to new format
+    mapped_financial = []
     mapped_market = []
+
+    for rec in financial_data:
+        ticker = rec.get('ticker')
+
+        # PIT filtering: skip records from the future
+        source_date = rec.get('source_date')
+        if source_date and as_of_date and source_date > as_of_date:
+            continue
+
+        # Map legacy field names (cash_mm -> Cash in dollars, etc.)
+        fin_rec = {'ticker': ticker}
+
+        # Cash: cash_mm (millions) -> Cash (dollars)
+        if 'cash_mm' in rec:
+            fin_rec['Cash'] = rec['cash_mm'] * 1e6
+        elif 'Cash' in rec:
+            fin_rec['Cash'] = rec['Cash']
+
+        # Burn rate: burn_rate_mm -> NetIncome (negative)
+        if 'burn_rate_mm' in rec:
+            fin_rec['NetIncome'] = -rec['burn_rate_mm'] * 1e6  # Burn is expense
+        elif 'NetIncome' in rec:
+            fin_rec['NetIncome'] = rec['NetIncome']
+
+        # R&D
+        if 'rd_mm' in rec:
+            fin_rec['R&D'] = rec['rd_mm'] * 1e6
+        elif 'R&D' in rec:
+            fin_rec['R&D'] = rec['R&D']
+
+        # CFO/FCF pass-through
+        for field in ['CFO', 'CFO_quarterly', 'CFO_YTD', 'FCF', 'FCF_quarterly',
+                      'MarketableSecurities', 'Debt']:
+            if field in rec:
+                fin_rec[field] = rec[field]
+
+        mapped_financial.append(fin_rec)
+
+        # Extract market data from combined record if present
+        mkt_rec = {'ticker': ticker}
+        if 'market_cap_mm' in rec:
+            mkt_rec['market_cap'] = rec['market_cap_mm'] * 1e6
+        elif 'market_cap' in rec:
+            mkt_rec['market_cap'] = rec['market_cap']
+
+        if 'avg_volume' in rec:
+            mkt_rec['avg_volume'] = rec['avg_volume']
+        elif 'volume_avg_30d' in rec:
+            mkt_rec['avg_volume'] = rec['volume_avg_30d']
+        else:
+            mkt_rec['avg_volume'] = 100000  # Default
+
+        if 'price' in rec:
+            mkt_rec['price'] = rec['price']
+        else:
+            mkt_rec['price'] = 10.0  # Default
+
+        mapped_market.append(mkt_rec)
+
+    # Add any separate market_data records
     for rec in market_data:
         mapped_market.append({
             'ticker': rec.get('ticker'),
@@ -842,15 +919,17 @@ def compute_module_2_financial(*args, **kwargs):
             'avg_volume': rec.get('volume_avg_30d') or rec.get('avg_volume'),
         })
 
-    # Financial data already has correct field names (Cash, NetIncome, R&D)
-    # Just pass it through!
-    result = run_module_2(universe, financial_data, mapped_market)
+    # Filter universe to only tickers we have data for
+    available_tickers = {r['ticker'] for r in mapped_financial}
+    filtered_universe = [t for t in universe if t in available_tickers]
+
+    result = run_module_2(filtered_universe, mapped_financial, mapped_market)
 
     # Wrap in expected format
     return {
         'scores': result,
         'diagnostic_counts': {
             'scored': len(result),
-            'missing': 0
+            'missing': len(universe) - len(result)
         }
     }
