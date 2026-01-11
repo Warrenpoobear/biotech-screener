@@ -1,0 +1,12 @@
+{
+  "config": {
+    "decay_constant": 30.0,
+    "noise_band_days": 14,
+    "recency_threshold_days": 90
+  },
+  "errors": [],
+  "execution_time_seconds": 0.25,
+  "host": "runsc",
+  "run_timestamp": "2026-01-11T16:11:37.700950Z",
+  "warnings": []
+}
