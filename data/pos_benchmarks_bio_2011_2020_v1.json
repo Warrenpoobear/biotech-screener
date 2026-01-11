@@ -1,0 +1,70 @@
+{
+  "_metadata": {
+    "source": "BIO Clinical Development Success Rates and Contributing Factors 2011-2020",
+    "report_version": "2011-2020",
+    "url": "https://www.bio.org/clinical-development-success-rates-and-contributing-factors-2011-2020",
+    "retrieved_on": "2026-01-11",
+    "notes": "Values represent Likelihood of Approval (LOA) from each phase to FDA approval. Source data should be verified against original BIO/Informa report tables before production use.",
+    "schema_version": "1.0.0"
+  },
+  "phase_1_loa": {
+    "_description": "Phase 1 to FDA Approval - Likelihood of Approval",
+    "oncology": "0.057",
+    "rare_disease": "0.106",
+    "infectious_disease": "0.195",
+    "neurology": "0.084",
+    "cardiovascular": "0.071",
+    "immunology": "0.112",
+    "metabolic": "0.093",
+    "respiratory": "0.089",
+    "dermatology": "0.124",
+    "ophthalmology": "0.117",
+    "gastroenterology": "0.098",
+    "hematology": "0.102",
+    "all_indications": "0.079"
+  },
+  "phase_2_loa": {
+    "_description": "Phase 2 to FDA Approval - Likelihood of Approval",
+    "oncology": "0.131",
+    "rare_disease": "0.273",
+    "infectious_disease": "0.196",
+    "neurology": "0.144",
+    "cardiovascular": "0.126",
+    "immunology": "0.218",
+    "metabolic": "0.167",
+    "respiratory": "0.155",
+    "dermatology": "0.234",
+    "ophthalmology": "0.212",
+    "gastroenterology": "0.178",
+    "hematology": "0.195",
+    "all_indications": "0.152"
+  },
+  "phase_3_loa": {
+    "_description": "Phase 3 to FDA Approval - Likelihood of Approval",
+    "oncology": "0.439",
+    "rare_disease": "0.649",
+    "infectious_disease": "0.769",
+    "neurology": "0.510",
+    "cardiovascular": "0.545",
+    "immunology": "0.672",
+    "metabolic": "0.598",
+    "respiratory": "0.567",
+    "dermatology": "0.712",
+    "ophthalmology": "0.687",
+    "gastroenterology": "0.612",
+    "hematology": "0.634",
+    "all_indications": "0.579"
+  },
+  "nda_bla_loa": {
+    "_description": "NDA/BLA Submission to FDA Approval",
+    "all_indications": "0.903"
+  },
+  "_validation": {
+    "invariants": [
+      "All LOA values must be in range [0.0, 1.0]",
+      "Phase 3 LOA > Phase 2 LOA > Phase 1 LOA for each indication",
+      "NDA/BLA LOA > Phase 3 LOA"
+    ],
+    "checksum_sha256": "placeholder_update_after_verification"
+  }
+}
