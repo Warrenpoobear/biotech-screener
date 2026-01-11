@@ -1,8 +1,14 @@
 """
 sec_collector.py - Collect financial data from SEC EDGAR
 Free, no API key required. Rate limit: 10 req/sec per IP (we use 1 req/sec)
+
+Environment Variables:
+    SEC_USER_AGENT: Override default User-Agent
+    SEC_CACHE_DIR: Override default cache directory
 """
 import json
+import logging
+import os
 import time
 import requests
 from pathlib import Path
@@ -10,14 +16,37 @@ from datetime import datetime, timedelta
 from typing import Optional
 import hashlib
 
+logger = logging.getLogger(__name__)
+
 # SEC requires User-Agent header with contact info
-USER_AGENT = "Wake Robin Research contact@wakerobincapital.com"
+# Can be overridden via environment variable
+USER_AGENT = os.environ.get(
+    "SEC_USER_AGENT",
+    "Wake Robin Research contact@wakerobincapital.com"
+)
+
+# Default cache directory (can be overridden)
+DEFAULT_CACHE_DIR = Path(__file__).parent.parent / "cache" / "sec"
+
+# Data staleness thresholds (days)
+STALENESS_WARNING_DAYS = 90
+STALENESS_CRITICAL_DAYS = 180
+
+
+def get_cache_dir() -> Path:
+    """Get cache directory from env or default."""
+    cache_dir_str = os.environ.get("SEC_CACHE_DIR")
+    if cache_dir_str:
+        cache_dir = Path(cache_dir_str)
+    else:
+        cache_dir = DEFAULT_CACHE_DIR
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    return cache_dir
+
 
 def get_cache_path(identifier: str, data_type: str = "financials") -> Path:
     """Get cache file path."""
-    cache_dir = Path(__file__).parent.parent / "cache" / "sec"
-    cache_dir.mkdir(parents=True, exist_ok=True)
-    return cache_dir / f"{identifier}_{data_type}.json"
+    return get_cache_dir() / f"{identifier}_{data_type}.json"
 
 def is_cache_valid(cache_path: Path, max_age_hours: int = 24) -> bool:
     """Check if cache is fresh enough."""
@@ -82,29 +111,31 @@ def ticker_to_cik(ticker: str) -> Optional[str]:
         print(f"  Warning: CIK resolution failed: {e}")
         return None
 
-def extract_latest_metric(facts_data: dict, metric_name: str, unit: str = 'USD') -> Optional[float]:
+def extract_latest_metric(facts_data: dict, metric_name: str, unit: str = 'USD') -> tuple[Optional[float], Optional[str]]:
     """
     Extract latest value for a GAAP metric from SEC company facts.
-    
+
     Args:
         facts_data: Full company facts JSON from SEC
         metric_name: GAAP metric name (e.g., 'Assets', 'Cash')
         unit: Unit type (default 'USD', also can be 'shares', 'USD/shares')
-    
+
     Returns:
-        Latest value as float, or None if not found
+        Tuple of (value, end_date) where:
+        - value: Latest value as float, or None if not found
+        - end_date: Date of the data point (YYYY-MM-DD), or None
     """
     try:
         # Navigate to us-gaap facts
         us_gaap = facts_data.get('facts', {}).get('us-gaap', {})
-        
+
         if metric_name not in us_gaap:
-            return None
-        
+            return None, None
+
         # Get units data
         metric_data = us_gaap[metric_name]
         units_data = metric_data.get('units', {})
-        
+
         # Try to find the right unit
         if unit in units_data:
             values = units_data[unit]
@@ -115,18 +146,20 @@ def extract_latest_metric(facts_data: dict, metric_name: str, unit: str = 'USD')
             if units_data:
                 values = list(units_data.values())[0]
             else:
-                return None
-        
+                return None, None
+
         # Sort by date and get most recent
         sorted_values = sorted(values, key=lambda x: x.get('end', ''), reverse=True)
-        
+
         if sorted_values:
-            return float(sorted_values[0].get('val', 0))
-        
-        return None
-        
-    except Exception:
-        return None
+            latest = sorted_values[0]
+            return float(latest.get('val', 0)), latest.get('end')
+
+        return None, None
+
+    except Exception as e:
+        logger.debug(f"Error extracting {metric_name}: {e}")
+        return None, None
 
 def fetch_sec_financials(ticker: str, cik: Optional[str] = None) -> dict:
     """
@@ -159,46 +192,75 @@ def fetch_sec_financials(ticker: str, cik: Optional[str] = None) -> dict:
         response.raise_for_status()
         
         facts_data = response.json()
-        
+
         # Extract key metrics (try common variations)
         cash_metrics = ['CashAndCashEquivalentsAtCarryingValue', 'Cash', 'CashAndCashEquivalents']
         debt_metrics = ['LongTermDebt', 'LongTermDebtNoncurrent', 'DebtCurrent']
         revenue_metrics = ['Revenues', 'RevenueFromContractWithCustomerExcludingAssessedTax', 'SalesRevenueNet']
-        assets_metrics = ['Assets']
-        liabilities_metrics = ['Liabilities']
-        
-        cash = None
+
+        # Track dates for staleness validation
+        data_dates = {}
+
+        cash, cash_date = None, None
         for metric in cash_metrics:
-            cash = extract_latest_metric(facts_data, metric)
-            if cash:
+            cash, cash_date = extract_latest_metric(facts_data, metric)
+            if cash is not None:
+                data_dates['cash'] = cash_date
                 break
-        
-        debt = None
+
+        debt, debt_date = None, None
         for metric in debt_metrics:
-            debt = extract_latest_metric(facts_data, metric)
-            if debt:
+            debt, debt_date = extract_latest_metric(facts_data, metric)
+            if debt is not None:
+                data_dates['debt'] = debt_date
                 break
-        
-        revenue = None
+
+        revenue, revenue_date = None, None
         for metric in revenue_metrics:
-            revenue = extract_latest_metric(facts_data, metric)
-            if revenue:
+            revenue, revenue_date = extract_latest_metric(facts_data, metric)
+            if revenue is not None:
+                data_dates['revenue'] = revenue_date
                 break
-        
-        assets = extract_latest_metric(facts_data, 'Assets')
-        liabilities = extract_latest_metric(facts_data, 'Liabilities')
-        
+
+        assets, assets_date = extract_latest_metric(facts_data, 'Assets')
+        liabilities, liabilities_date = extract_latest_metric(facts_data, 'Liabilities')
+
+        if assets is not None:
+            data_dates['assets'] = assets_date
+        if liabilities is not None:
+            data_dates['liabilities'] = liabilities_date
+
         # Calculate derived metrics
         net_debt = None
         if cash is not None and debt is not None:
             net_debt = debt - cash
         elif debt is not None:
             net_debt = debt
-        
+
         equity = None
         if assets is not None and liabilities is not None:
             equity = assets - liabilities
-        
+
+        # Determine most recent and oldest data dates for staleness check
+        valid_dates = [d for d in data_dates.values() if d]
+        most_recent_date = max(valid_dates) if valid_dates else None
+        oldest_date = min(valid_dates) if valid_dates else None
+
+        # Check for stale data
+        staleness_flags = []
+        if oldest_date:
+            try:
+                oldest_dt = datetime.fromisoformat(oldest_date)
+                age_days = (datetime.now() - oldest_dt).days
+                if age_days > STALENESS_CRITICAL_DAYS:
+                    staleness_flags.append(f"critical_staleness:{age_days}d")
+                    logger.warning(f"{ticker}: Financial data is {age_days} days old (critical)")
+                elif age_days > STALENESS_WARNING_DAYS:
+                    staleness_flags.append(f"stale_data:{age_days}d")
+                    logger.info(f"{ticker}: Financial data is {age_days} days old (warning)")
+            except ValueError:
+                pass
+
         data = {
             "ticker": ticker,
             "cik": cik,
@@ -212,6 +274,12 @@ def fetch_sec_financials(ticker: str, cik: Optional[str] = None) -> dict:
                 "liabilities": liabilities,
                 "equity": equity,
                 "currency": "USD"
+            },
+            "data_dates": data_dates,
+            "data_freshness": {
+                "most_recent_date": most_recent_date,
+                "oldest_date": oldest_date,
+                "staleness_flags": staleness_flags,
             },
             "coverage": {
                 "has_cash": cash is not None,
@@ -232,7 +300,7 @@ def fetch_sec_financials(ticker: str, cik: Optional[str] = None) -> dict:
                 "cik": cik
             }
         }
-        
+
         return data
         
     except requests.exceptions.HTTPError as e:

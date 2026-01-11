@@ -3,10 +3,14 @@ yahoo_collector.py - Collect market data from Yahoo Finance
 Free, no API key required. Rate: reasonable (1 req/sec safe)
 """
 import json
+import logging
 import time
 from pathlib import Path
 from datetime import datetime, timedelta
 import hashlib
+
+logger = logging.getLogger(__name__)
+
 
 def get_cache_path(ticker: str) -> Path:
     cache_dir = Path(__file__).parent.parent / "cache" / "yahoo"
@@ -23,29 +27,47 @@ def fetch_yahoo_data(ticker: str) -> dict:
     try:
         import yfinance as yf
     except ImportError:
+        logger.error("yfinance not installed - run: pip install yfinance")
         return {
             "ticker": ticker,
             "success": False,
             "error": "yfinance not installed",
             "timestamp": datetime.now().isoformat()
         }
-    
+
     try:
         stock = yf.Ticker(ticker)
         info = stock.info  # Use info dict directly (more reliable)
-        
+
         # Get historical data for volume
+        avg_volume = 0
+        volume_error = None
         try:
             hist = stock.history(period="1mo")
-            avg_volume = int(hist['Volume'].mean()) if not hist.empty else 0
-        except:
-            avg_volume = 0
-        
+            if not hist.empty:
+                avg_volume = int(hist['Volume'].mean())
+            else:
+                volume_error = "empty_history"
+        except Exception as e:
+            volume_error = str(e)
+            logger.warning(f"Failed to get volume history for {ticker}: {e}")
+
         # Extract data (prioritize info dict)
         price = float(info.get('currentPrice') or info.get('regularMarketPrice') or 0)
         market_cap = float(info.get('marketCap') or 0)
         shares = float(info.get('sharesOutstanding') or 0)
-        
+
+        # Build flags for data quality tracking
+        flags = []
+        if price == 0:
+            flags.append("missing_price")
+        if market_cap == 0:
+            flags.append("missing_market_cap")
+        if avg_volume == 0:
+            flags.append("missing_volume")
+        if volume_error:
+            flags.append(f"volume_error:{volume_error}")
+
         data = {
             "ticker": ticker,
             "success": True,
@@ -76,6 +98,12 @@ def fetch_yahoo_data(ticker: str) -> dict:
                 "sector": info.get('sector', ''),
                 "industry": info.get('industry', '')
             },
+            "data_quality": {
+                "flags": flags,
+                "has_price": price > 0,
+                "has_market_cap": market_cap > 0,
+                "has_volume": avg_volume > 0,
+            },
             "provenance": {
                 "source": "Yahoo Finance via yfinance",
                 "timestamp": datetime.now().isoformat(),
@@ -86,10 +114,11 @@ def fetch_yahoo_data(ticker: str) -> dict:
                 }).encode()).hexdigest()[:16]
             }
         }
-        
+
         return data
-        
+
     except Exception as e:
+        logger.error(f"Failed to fetch Yahoo data for {ticker}: {e}")
         return {
             "ticker": ticker,
             "success": False,
