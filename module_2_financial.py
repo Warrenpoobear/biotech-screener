@@ -852,6 +852,9 @@ def compute_module_2_financial(*args, **kwargs):
     mapped_financial = []
     mapped_market = []
 
+    # Track tickers we've seen in input data (even if PIT-filtered)
+    all_input_tickers = {rec.get('ticker') for rec in financial_data if rec.get('ticker')}
+
     for rec in financial_data:
         ticker = rec.get('ticker')
 
@@ -922,14 +925,40 @@ def compute_module_2_financial(*args, **kwargs):
     # Filter universe to only tickers we have data for
     available_tickers = {r['ticker'] for r in mapped_financial}
     filtered_universe = [t for t in universe if t in available_tickers]
+    # Only create placeholders for tickers with NO input data at all (not PIT-filtered ones)
+    truly_missing_tickers = [t for t in universe if t not in all_input_tickers]
 
     result = run_module_2(filtered_universe, mapped_financial, mapped_market)
+
+    # Add placeholder scores for truly missing tickers (edge case handling)
+    for ticker in truly_missing_tickers:
+        result.append({
+            'ticker': ticker,
+            'score': 0,
+            'runway_months': None,
+            'cash_mm': None,
+            'burn_rate_mm': None,
+            'flags': ['missing_financial_data'],
+            'data_state': DATA_STATE_NONE,
+        })
+
+    # Add legacy field names to existing results for backwards compatibility
+    for score in result:
+        if 'flags' not in score:
+            score['flags'] = []
+        # Add cash_mm if we have Cash
+        if 'cash_mm' not in score and 'Cash' in score:
+            score['cash_mm'] = score['Cash'] / 1e6 if score['Cash'] else None
+        elif 'cash_mm' not in score:
+            score['cash_mm'] = None
+            if 'missing_cash' not in score['flags']:
+                score['flags'].append('missing_cash')
 
     # Wrap in expected format
     return {
         'scores': result,
         'diagnostic_counts': {
-            'scored': len(result),
-            'missing': len(universe) - len(result)
+            'scored': len(filtered_universe),
+            'missing': len(truly_missing_tickers)
         }
     }
