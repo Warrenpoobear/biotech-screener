@@ -14,6 +14,8 @@ Date: 2026-01-09
 """
 
 import json
+import logging
+import socket
 import time
 from pathlib import Path
 from typing import Dict, Optional, List, Tuple
@@ -21,6 +23,8 @@ from datetime import datetime, timedelta
 from dataclasses import dataclass, asdict
 import urllib.request
 import urllib.error
+
+logger = logging.getLogger(__name__)
 
 # ==============================================================================
 # CONFIGURATION
@@ -32,6 +36,12 @@ OPENFIGI_API_KEY = None  # Set via environment or config file
 # Rate limiting (OpenFIGI free tier: 25 requests/minute)
 OPENFIGI_REQUEST_DELAY = 2.5  # ~24 requests/minute (conservative)
 OPENFIGI_BATCH_SIZE = 100  # Max 100 CUSIPs per request
+
+# Retry configuration
+MAX_RETRIES = 3
+INITIAL_BACKOFF_SEC = 3.0
+MAX_BACKOFF_SEC = 60.0
+REQUEST_TIMEOUT_SEC = 30
 
 # Cache TTL
 CACHE_TTL_DAYS = 90  # Refresh mappings quarterly
@@ -181,23 +191,36 @@ def save_cache(
 # TIER 2: OPENFIGI API
 # ==============================================================================
 
+def _calculate_backoff(attempt: int) -> float:
+    """Calculate exponential backoff with jitter."""
+    import random
+    backoff = min(INITIAL_BACKOFF_SEC * (2 ** attempt), MAX_BACKOFF_SEC)
+    # Add jitter (±25%)
+    jitter = backoff * 0.25 * (2 * random.random() - 1)
+    return backoff + jitter
+
+
 def query_openfigi_batch(
     cusips: List[str],
     api_key: Optional[str] = None
 ) -> Dict[str, Optional[CUSIPMapping]]:
     """
-    Query OpenFIGI API for batch of CUSIPs.
-    
+    Query OpenFIGI API for batch of CUSIPs with retry logic.
+
     Args:
         cusips: List of 9-character CUSIPs (max 100)
         api_key: Optional OpenFIGI API key (increases rate limits)
-        
+
     Returns:
         {cusip: CUSIPMapping or None}
+
+    Retry behavior:
+        - Up to MAX_RETRIES attempts with exponential backoff
+        - Handles timeouts, rate limits, and transient network errors
     """
     if len(cusips) > OPENFIGI_BATCH_SIZE:
         raise ValueError(f"Batch size {len(cusips)} exceeds max {OPENFIGI_BATCH_SIZE}")
-    
+
     # Build request payload
     payload = [
         {
@@ -207,61 +230,89 @@ def query_openfigi_batch(
         }
         for cusip in cusips
     ]
-    
+
     headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
     }
-    
+
     if api_key:
         headers['X-OPENFIGI-APIKEY'] = api_key
-    
-    # Make request
+
+    # Make request with retry logic
     req = urllib.request.Request(
         OPENFIGI_API_URL,
         data=json.dumps(payload).encode('utf-8'),
         headers=headers
     )
-    
-    try:
-        with urllib.request.urlopen(req, timeout=30) as response:
-            results = json.loads(response.read().decode('utf-8'))
-        
-        # Rate limiting
-        time.sleep(OPENFIGI_REQUEST_DELAY)
-        
-    except urllib.error.HTTPError as e:
-        if e.code == 429:
-            print(f"OpenFIGI rate limit hit - waiting 60s...")
-            time.sleep(60)
-            return query_openfigi_batch(cusips, api_key)  # Retry
-        else:
-            print(f"OpenFIGI HTTP error {e.code}: {e.reason}")
+
+    last_error = None
+    for attempt in range(MAX_RETRIES):
+        try:
+            with urllib.request.urlopen(req, timeout=REQUEST_TIMEOUT_SEC) as response:
+                results = json.loads(response.read().decode('utf-8'))
+
+            # Rate limiting
+            time.sleep(OPENFIGI_REQUEST_DELAY)
+            break  # Success - exit retry loop
+
+        except urllib.error.HTTPError as e:
+            last_error = e
+            if e.code == 429:
+                # Rate limit - wait longer
+                wait_time = 60 if attempt == 0 else _calculate_backoff(attempt + 2)
+                logger.warning(f"OpenFIGI rate limit hit (attempt {attempt + 1}/{MAX_RETRIES}) - waiting {wait_time:.1f}s...")
+                time.sleep(wait_time)
+            elif e.code >= 500:
+                # Server error - retry with backoff
+                wait_time = _calculate_backoff(attempt)
+                logger.warning(f"OpenFIGI server error {e.code} (attempt {attempt + 1}/{MAX_RETRIES}) - retrying in {wait_time:.1f}s...")
+                time.sleep(wait_time)
+            else:
+                # Client error (4xx except 429) - don't retry
+                logger.error(f"OpenFIGI HTTP error {e.code}: {e.reason}")
+                return {cusip: None for cusip in cusips}
+
+        except socket.timeout as e:
+            last_error = e
+            wait_time = _calculate_backoff(attempt)
+            logger.warning(f"OpenFIGI timeout (attempt {attempt + 1}/{MAX_RETRIES}) - retrying in {wait_time:.1f}s...")
+            time.sleep(wait_time)
+
+        except urllib.error.URLError as e:
+            last_error = e
+            wait_time = _calculate_backoff(attempt)
+            logger.warning(f"OpenFIGI network error: {e.reason} (attempt {attempt + 1}/{MAX_RETRIES}) - retrying in {wait_time:.1f}s...")
+            time.sleep(wait_time)
+
+        except Exception as e:
+            last_error = e
+            logger.error(f"OpenFIGI unexpected error: {e}")
             return {cusip: None for cusip in cusips}
-    
-    except Exception as e:
-        print(f"OpenFIGI query failed: {e}")
+    else:
+        # All retries exhausted
+        logger.error(f"OpenFIGI query failed after {MAX_RETRIES} attempts: {last_error}")
         return {cusip: None for cusip in cusips}
-    
+
     # Parse results
     mappings = {}
-    
+
     for i, cusip in enumerate(cusips):
         result = results[i]
-        
+
         if 'error' in result:
-            print(f"  {cusip}: {result['error']}")
+            logger.debug(f"  {cusip}: {result['error']}")
             mappings[cusip] = None
             continue
-        
+
         if 'data' not in result or not result['data']:
-            print(f"  {cusip}: No mapping found")
+            logger.debug(f"  {cusip}: No mapping found")
             mappings[cusip] = None
             continue
-        
+
         # Take first result (usually most liquid)
         figi_data = result['data'][0]
-        
+
         mappings[cusip] = CUSIPMapping(
             cusip=cusip,
             ticker=figi_data.get('ticker', ''),
@@ -271,9 +322,9 @@ def query_openfigi_batch(
             mapped_at=datetime.now().isoformat(),
             source='openfigi'
         )
-        
-        print(f"  {cusip} → {figi_data.get('ticker', 'N/A')}")
-    
+
+        logger.info(f"  {cusip} → {figi_data.get('ticker', 'N/A')}")
+
     return mappings
 
 
@@ -291,9 +342,9 @@ def query_openfigi_all(
     # Process in batches
     for i in range(0, len(cusips), OPENFIGI_BATCH_SIZE):
         batch = cusips[i:i + OPENFIGI_BATCH_SIZE]
-        
-        print(f"\nQuerying OpenFIGI batch {i//OPENFIGI_BATCH_SIZE + 1} "
-              f"({len(batch)} CUSIPs)...")
+
+        logger.info(f"Querying OpenFIGI batch {i//OPENFIGI_BATCH_SIZE + 1} "
+                    f"({len(batch)} CUSIPs)...")
         
         batch_results = query_openfigi_batch(batch, api_key)
         all_mappings.update(batch_results)
@@ -325,12 +376,12 @@ class CUSIPMapper:
         self.openfigi_api_key = openfigi_api_key
         
         # Load tiers
-        print("Loading CUSIP mapper...")
+        logger.info("Loading CUSIP mapper...")
         self.static_map = load_static_cusip_map(static_map_path)
-        print(f"  Static map: {len(self.static_map)} entries")
-        
+        logger.info(f"  Static map: {len(self.static_map)} entries")
+
         self.cache = load_cache(cache_path)
-        print(f"  Cache: {len(self.cache)} entries (valid within {CACHE_TTL_DAYS} days)")
+        logger.info(f"  Cache: {len(self.cache)} entries (valid within {CACHE_TTL_DAYS} days)")
         
         # Track new mappings for cache update
         self.new_mappings = {}
@@ -361,7 +412,7 @@ class CUSIPMapper:
             return self.cache[cusip]
         
         # Tier 2: OpenFIGI (live query)
-        print(f"  Cache miss: {cusip} - querying OpenFIGI...")
+        logger.info(f"  Cache miss: {cusip} - querying OpenFIGI...")
         result = query_openfigi_batch([cusip], self.openfigi_api_key)
         
         mapping = result.get(cusip)
@@ -396,7 +447,7 @@ class CUSIPMapper:
         
         # Query OpenFIGI for unknowns
         if unknown_cusips:
-            print(f"\nQuerying OpenFIGI for {len(unknown_cusips)} unknown CUSIPs...")
+            logger.info(f"Querying OpenFIGI for {len(unknown_cusips)} unknown CUSIPs...")
             openfigi_results = query_openfigi_all(unknown_cusips, self.openfigi_api_key)
             
             for cusip, mapping in openfigi_results.items():
@@ -417,7 +468,7 @@ class CUSIPMapper:
         """
         if self.new_mappings:
             save_cache(self.cache_path, self.cache)
-            print(f"\nSaved {len(self.new_mappings)} new mappings to cache")
+            logger.info(f"Saved {len(self.new_mappings)} new mappings to cache")
             self.new_mappings.clear()
     
     def stats(self) -> dict:

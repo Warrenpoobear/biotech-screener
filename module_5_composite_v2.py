@@ -13,6 +13,7 @@ Weights: Clinical 40%, Financial 35%, Catalyst 25%
 from __future__ import annotations
 from datetime import datetime, date
 
+import decimal
 from decimal import Decimal, ROUND_HALF_UP
 from statistics import mean, stdev
 from typing import Any, Dict, List, Optional, Tuple
@@ -144,7 +145,7 @@ def _market_cap_bucket(market_cap_mm: Optional[Any]) -> str:
             mcap = Decimal(str(market_cap_mm))
         else:
             mcap = Decimal(str(market_cap_mm))
-    except:
+    except (ValueError, TypeError, decimal.InvalidOperation):
         return "unknown"
     
     if mcap >= 10000:
@@ -217,7 +218,7 @@ def _get_worst_severity(severities: List[str]) -> Severity:
             sev = Severity(s)
             if priority[sev] > priority[worst]:
                 worst = sev
-        except:
+        except (ValueError, KeyError):
             continue
     
     return worst

@@ -13,7 +13,10 @@ Environment Variables:
 """
 
 import os
+import random
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 import time
 import json
 from pathlib import Path
@@ -68,9 +71,35 @@ USER_AGENT = get_sec_user_agent()
 # SEC rate limit: 10 requests per second
 RATE_LIMIT_DELAY = 0.11  # 110ms between requests (slightly over 100ms to be safe)
 
+# Retry configuration
+MAX_RETRIES = 4
+INITIAL_BACKOFF_SEC = 2.0
+MAX_BACKOFF_SEC = 16.0
+REQUEST_TIMEOUT_SEC = 60
+
 # Base URLs
 SEC_SEARCH_URL = "https://data.sec.gov/submissions/CIK{cik}.json"
 SEC_ARCHIVE_URL = "https://www.sec.gov/Archives/edgar/data/{cik}/{accession}.txt"
+
+
+def _create_retry_session() -> requests.Session:
+    """Create a requests session with automatic retry logic."""
+    session = requests.Session()
+
+    # Configure retry strategy
+    retry_strategy = Retry(
+        total=MAX_RETRIES,
+        backoff_factor=INITIAL_BACKOFF_SEC,
+        status_forcelist=[429, 500, 502, 503, 504],
+        allowed_methods=["HEAD", "GET", "OPTIONS"],
+        respect_retry_after_header=True,
+    )
+
+    adapter = HTTPAdapter(max_retries=retry_strategy)
+    session.mount("https://", adapter)
+    session.mount("http://", adapter)
+
+    return session
 
 
 class SECDownloader:
@@ -79,7 +108,7 @@ class SECDownloader:
     def __init__(self, output_dir: Path = Path("filings"), user_agent: str = USER_AGENT):
         self.output_dir = output_dir
         self.user_agent = user_agent
-        self.session = requests.Session()
+        self.session = _create_retry_session()
         self.session.headers.update({
             'User-Agent': user_agent,
             'Accept-Encoding': 'gzip, deflate',
@@ -115,23 +144,29 @@ class SECDownloader:
         
         self._rate_limit()
         try:
-            response = self.session.get(url, timeout=30)
+            response = self.session.get(url, timeout=REQUEST_TIMEOUT_SEC)
             response.raise_for_status()
-            
+
             companies = response.json()
-            
+
             # Find matching ticker
             for company_data in companies.values():
                 if company_data.get('ticker', '').upper() == ticker:
                     cik = str(company_data['cik_str']).zfill(10)
                     logger.info(f"Found CIK for {ticker}: {cik}")
                     return cik
-            
+
             logger.warning(f"CIK not found for ticker: {ticker}")
             return None
-            
+
+        except requests.exceptions.Timeout as e:
+            logger.error(f"Timeout looking up CIK for {ticker}: {e}")
+            return None
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Network error looking up CIK for {ticker}: {e}")
+            return None
         except Exception as e:
-            logger.error(f"Error looking up CIK for {ticker}: {e}")
+            logger.error(f"Unexpected error looking up CIK for {ticker}: {e}")
             return None
     
     def get_filings_list(
@@ -155,35 +190,35 @@ class SECDownloader:
         
         self._rate_limit()
         try:
-            response = self.session.get(url, timeout=30)
+            response = self.session.get(url, timeout=REQUEST_TIMEOUT_SEC)
             response.raise_for_status()
-            
+
             data = response.json()
-            
+
             # Extract recent filings
             filings = data.get('filings', {}).get('recent', {})
-            
+
             if not filings:
                 logger.warning(f"No filings found for CIK {cik}")
                 return []
-            
+
             # Parse filings
             form_list = filings.get('form', [])
             filing_dates = filings.get('filingDate', [])
             accession_numbers = filings.get('accessionNumber', [])
             primary_documents = filings.get('primaryDocument', [])
-            
+
             results = []
             for i in range(len(form_list)):
                 form_type = form_list[i]
-                
+
                 # Filter by form type
                 if form_type not in form_types:
                     continue
-                
+
                 # Remove dashes from accession number for URL
                 accession = accession_numbers[i].replace('-', '')
-                
+
                 filing_info = {
                     'form_type': form_type,
                     'filing_date': filing_dates[i],
@@ -192,17 +227,23 @@ class SECDownloader:
                     'primary_document': primary_documents[i],
                     'cik': cik
                 }
-                
+
                 results.append(filing_info)
-                
+
                 if len(results) >= count:
                     break
-            
+
             logger.info(f"Found {len(results)} filings for CIK {cik}")
             return results
-            
+
+        except requests.exceptions.Timeout as e:
+            logger.error(f"Timeout fetching filings list for CIK {cik}: {e}")
+            return []
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Network error fetching filings list for CIK {cik}: {e}")
+            return []
         except Exception as e:
-            logger.error(f"Error fetching filings list for CIK {cik}: {e}")
+            logger.error(f"Unexpected error fetching filings list for CIK {cik}: {e}")
             return []
     
     def download_filing(
@@ -252,15 +293,15 @@ class SECDownloader:
         
         self._rate_limit()
         try:
-            response = self.session.get(url, timeout=60)
+            response = self.session.get(url, timeout=REQUEST_TIMEOUT_SEC)
             response.raise_for_status()
-            
+
             # Save to file
             with open(output_path, 'w', encoding='utf-8', errors='ignore') as f:
                 f.write(response.text)
-            
+
             logger.info(f"Downloaded: {ticker} {form_type} {filing_date}")
-            
+
             # Track download
             if ticker not in self.download_log:
                 self.download_log[ticker] = []
@@ -270,11 +311,17 @@ class SECDownloader:
                 'filename': filename,
                 'downloaded_at': datetime.now().isoformat()
             })
-            
+
             return output_path
-            
+
+        except requests.exceptions.Timeout as e:
+            logger.error(f"Timeout downloading {ticker} {form_type} {filing_date}: {e}")
+            return None
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Network error downloading {ticker} {form_type} {filing_date}: {e}")
+            return None
         except Exception as e:
-            logger.error(f"Error downloading {ticker} {form_type} {filing_date}: {e}")
+            logger.error(f"Unexpected error downloading {ticker} {form_type} {filing_date}: {e}")
             return None
     
     def download_ticker(
