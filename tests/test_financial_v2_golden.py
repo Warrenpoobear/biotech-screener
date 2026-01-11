@@ -674,11 +674,11 @@ def test_composite_score_weights():
     assert result['has_financial_data'] is True
     assert result['burn_source'] == 'CFO_quarterly'
     assert result['burn_confidence'] == 'HIGH'
-    assert result['liquidity_gate'] in ['PASS', 'WARN']
+    assert result['liquidity_gate_status'] in ['PASS', 'WARN']  # Use new enum field
 
-    # Verify composite is in valid range
-    composite = Decimal(result['financial_normalized'])
-    assert Decimal("0") <= composite <= Decimal("100"), \
+    # Verify composite is in valid range (now float for back-compat)
+    composite = result['financial_normalized']
+    assert 0.0 <= composite <= 100.0, \
         f"Composite {composite} out of range"
 
     print("✓ test_composite_score_weights passed")
@@ -703,6 +703,266 @@ def test_flags_generated_correctly():
     assert 'liquidity_gate_fail' in result['flags'], "Should flag liquidity gate fail"
 
     print("✓ test_flags_generated_correctly passed")
+
+
+# ============================================================================
+# UNITS ALIGNMENT TESTS
+# ============================================================================
+
+def test_runway_units_alignment():
+    """
+    Runway calculation must align units:
+    - liquid_assets: dollars (point-in-time)
+    - monthly_burn: dollars/month (derived from quarterly burn / 3)
+    - runway_months = liquid_assets / monthly_burn
+    """
+    data = create_financial_fixture(
+        cash=90e6,
+        cfo_quarterly=-30e6,  # Quarterly burn = $30M, monthly = $10M
+    )
+    market = create_market_fixture()
+
+    result = calculate_runway(data, market)
+
+    # Verify burn is monthly (quarterly / 3)
+    expected_monthly = Decimal("10000000")
+    assert abs(result.monthly_burn - expected_monthly) < Decimal("1"), \
+        f"Expected monthly burn {expected_monthly}, got {result.monthly_burn}"
+
+    # Verify runway is in months (liquid_assets / monthly_burn)
+    # 90M / 10M = 9 months
+    expected_runway = Decimal("9")
+    assert abs(result.runway_months - expected_runway) < Decimal("0.5"), \
+        f"Expected runway {expected_runway} months, got {result.runway_months}"
+
+    print("✓ test_runway_units_alignment passed")
+
+
+# ============================================================================
+# FINANCING PRESSURE MONOTONICITY TESTS
+# ============================================================================
+
+def test_financing_pressure_monotonicity_runway():
+    """Financing pressure should increase as runway decreases (monotonic)."""
+    data = create_financial_fixture(cash=100e6)
+    market = create_market_fixture(market_cap=500e6)
+
+    # Test with decreasing runway: 36, 18, 9, 3 months
+    pressures = []
+    for runway_months in [Decimal("36"), Decimal("18"), Decimal("9"), Decimal("3")]:
+        result = calculate_dilution_risk(
+            data, market,
+            runway_months=runway_months,
+            monthly_burn=Decimal("5e6")
+        )
+        pressures.append(result.financing_pressure_score)
+
+    # Each pressure should be >= previous (worse runway = higher pressure)
+    for i in range(1, len(pressures)):
+        assert pressures[i] >= pressures[i-1], \
+            f"Pressure not monotonic: {pressures[i-1]} -> {pressures[i]}"
+
+    print("✓ test_financing_pressure_monotonicity_runway passed")
+
+
+def test_financing_pressure_monotonicity_cash_mcap():
+    """Financing pressure should increase as cash/mcap decreases (monotonic)."""
+    market = create_market_fixture(market_cap=500e6)
+
+    # Test with decreasing cash: 50%, 20%, 8%, 2%
+    pressures = []
+    for cash in [250e6, 100e6, 40e6, 10e6]:
+        data = create_financial_fixture(cash=cash)
+        result = calculate_dilution_risk(
+            data, market,
+            runway_months=Decimal("18"),
+            monthly_burn=Decimal("5e6")
+        )
+        pressures.append(result.financing_pressure_score)
+
+    # Each pressure should be >= previous (worse cash ratio = higher pressure)
+    for i in range(1, len(pressures)):
+        assert pressures[i] >= pressures[i-1], \
+            f"Pressure not monotonic: {pressures[i-1]} -> {pressures[i]}"
+
+    print("✓ test_financing_pressure_monotonicity_cash_mcap passed")
+
+
+def test_financing_pressure_saturation_extremes():
+    """Financing pressure should saturate at extremes."""
+    market = create_market_fixture(market_cap=500e6)
+
+    # Very good position: 50% cash, 36 month runway
+    good_data = create_financial_fixture(cash=250e6)
+    good_result = calculate_dilution_risk(
+        good_data, market,
+        runway_months=Decimal("36"),
+        monthly_burn=Decimal("3e6")
+    )
+
+    # Very bad position: 2% cash, 2 month runway
+    bad_data = create_financial_fixture(cash=10e6)
+    bad_result = calculate_dilution_risk(
+        bad_data, market,
+        runway_months=Decimal("2"),
+        monthly_burn=Decimal("5e6")
+    )
+
+    # Good position should have low pressure (< 30)
+    assert good_result.financing_pressure_score < Decimal("30"), \
+        f"Good position pressure too high: {good_result.financing_pressure_score}"
+
+    # Bad position should have high pressure (> 70)
+    assert bad_result.financing_pressure_score > Decimal("70"), \
+        f"Bad position pressure too low: {bad_result.financing_pressure_score}"
+
+    print("✓ test_financing_pressure_saturation_extremes passed")
+
+
+# ============================================================================
+# DILUTION BUCKET BOUNDARY PRECISION TESTS
+# ============================================================================
+
+def test_dilution_bucket_boundary_30_percent():
+    """Test boundary at exactly 30% cash/mcap."""
+    market = create_market_fixture(market_cap=1000e6)
+
+    # Exactly 30% = LOW
+    data_at_30 = create_financial_fixture(cash=300e6)
+    result_at_30 = calculate_dilution_risk(data_at_30, market, Decimal("18"), Decimal("5e6"))
+    assert result_at_30.dilution_risk_bucket == DilutionRiskBucket.LOW, \
+        f"At 30%: expected LOW, got {result_at_30.dilution_risk_bucket}"
+
+    # Just below 30% = MODERATE
+    data_below_30 = create_financial_fixture(cash=299e6)
+    result_below_30 = calculate_dilution_risk(data_below_30, market, Decimal("18"), Decimal("5e6"))
+    assert result_below_30.dilution_risk_bucket == DilutionRiskBucket.MODERATE, \
+        f"Below 30%: expected MODERATE, got {result_below_30.dilution_risk_bucket}"
+
+    print("✓ test_dilution_bucket_boundary_30_percent passed")
+
+
+def test_dilution_bucket_boundary_15_percent():
+    """Test boundary at exactly 15% cash/mcap."""
+    market = create_market_fixture(market_cap=1000e6)
+
+    # Exactly 15% = MODERATE
+    data_at_15 = create_financial_fixture(cash=150e6)
+    result_at_15 = calculate_dilution_risk(data_at_15, market, Decimal("12"), Decimal("5e6"))
+    assert result_at_15.dilution_risk_bucket == DilutionRiskBucket.MODERATE, \
+        f"At 15%: expected MODERATE, got {result_at_15.dilution_risk_bucket}"
+
+    # Just below 15% = HIGH
+    data_below_15 = create_financial_fixture(cash=149e6)
+    result_below_15 = calculate_dilution_risk(data_below_15, market, Decimal("12"), Decimal("5e6"))
+    assert result_below_15.dilution_risk_bucket == DilutionRiskBucket.HIGH, \
+        f"Below 15%: expected HIGH, got {result_below_15.dilution_risk_bucket}"
+
+    print("✓ test_dilution_bucket_boundary_15_percent passed")
+
+
+def test_dilution_bucket_boundary_5_percent():
+    """Test boundary at exactly 5% cash/mcap."""
+    market = create_market_fixture(market_cap=1000e6)
+
+    # Exactly 5% = HIGH
+    data_at_5 = create_financial_fixture(cash=50e6)
+    result_at_5 = calculate_dilution_risk(data_at_5, market, Decimal("6"), Decimal("5e6"))
+    assert result_at_5.dilution_risk_bucket == DilutionRiskBucket.HIGH, \
+        f"At 5%: expected HIGH, got {result_at_5.dilution_risk_bucket}"
+
+    # Just below 5% = SEVERE
+    data_below_5 = create_financial_fixture(cash=49e6)
+    result_below_5 = calculate_dilution_risk(data_below_5, market, Decimal("6"), Decimal("5e6"))
+    assert result_below_5.dilution_risk_bucket == DilutionRiskBucket.SEVERE, \
+        f"Below 5%: expected SEVERE, got {result_below_5.dilution_risk_bucket}"
+
+    print("✓ test_dilution_bucket_boundary_5_percent passed")
+
+
+# ============================================================================
+# OPERATIONAL OBSERVABILITY TESTS
+# ============================================================================
+
+def test_all_fields_always_present():
+    """All output fields should always be present, even when data is missing."""
+    # Test with completely empty data
+    result = score_financial_health_v2("EMPTY", {}, {})
+
+    required_fields = [
+        # Core fields
+        "ticker", "financial_normalized", "runway_months", "runway_score",
+        "dilution_score", "liquidity_score", "cash_to_mcap", "monthly_burn",
+        "has_financial_data", "severity", "flags",
+        # Burn fields
+        "burn_source", "burn_confidence", "burn_period", "quarters_used",
+        "burn_rejection_reasons",
+        # Liquidity fields
+        "liquidity_gate", "liquidity_gate_status", "dollar_adv", "dollar_adv_20d",
+        # Liquid assets fields
+        "liquid_assets", "liquid_components",
+        # Dilution fields
+        "burn_to_mcap", "financing_pressure_score", "dilution_risk_bucket",
+        "share_count_growth",
+        # Data quality fields
+        "financial_data_state", "missing_fields", "inputs_used", "confidence",
+        # Audit fields
+        "determinism_hash", "schema_version",
+    ]
+
+    for field in required_fields:
+        assert field in result, f"Missing required field: {field}"
+
+    print("✓ test_all_fields_always_present passed")
+
+
+def test_fields_have_correct_types():
+    """Output fields should have consistent types."""
+    data = create_financial_fixture(cash=100e6, cfo_quarterly=-30e6)
+    market = create_market_fixture(market_cap=500e6, avg_volume=100000, price=25.0)
+
+    result = score_financial_health_v2("TEST", data, market)
+
+    # Check types
+    assert isinstance(result['ticker'], str)
+    assert isinstance(result['financial_normalized'], (float, type(None)))
+    assert isinstance(result['runway_months'], (float, type(None)))
+    assert isinstance(result['has_financial_data'], bool)
+    assert isinstance(result['flags'], list)
+    assert isinstance(result['liquidity_gate'], bool)  # back-compat
+    assert isinstance(result['liquidity_gate_status'], str)  # new enum
+    assert isinstance(result['liquid_components'], list)
+    assert isinstance(result['missing_fields'], list)
+    assert isinstance(result['inputs_used'], dict)
+    assert isinstance(result['burn_rejection_reasons'], dict)
+    assert isinstance(result['determinism_hash'], str)
+
+    print("✓ test_fields_have_correct_types passed")
+
+
+def test_burn_rejection_reasons_populated():
+    """Burn rejection reasons should explain why sources were not used."""
+    # Only provide R&D - should see rejections for CFO, FCF, NetIncome
+    data = create_financial_fixture(rd=20e6)
+    market = create_market_fixture()
+
+    result = score_financial_health_v2("TEST", data, market)
+
+    reasons = result['burn_rejection_reasons']
+
+    # Should have reasons for rejected sources
+    assert 'CFO_quarterly' in reasons, "Should have CFO_quarterly rejection reason"
+    assert 'CFO_YTD' in reasons, "Should have CFO_YTD rejection reason"
+    assert 'CFO_annual' in reasons, "Should have CFO_annual rejection reason"
+    assert 'FCF_quarterly' in reasons, "Should have FCF_quarterly rejection reason"
+    assert 'FCF_annual' in reasons, "Should have FCF_annual rejection reason"
+    assert 'NetIncome' in reasons, "Should have NetIncome rejection reason"
+
+    # Should indicate missing fields
+    assert reasons['CFO_quarterly'] == 'missing', \
+        f"CFO_quarterly reason should be 'missing', got {reasons['CFO_quarterly']}"
+
+    print("✓ test_burn_rejection_reasons_populated passed")
 
 
 # ============================================================================
@@ -764,6 +1024,24 @@ def run_all_tests():
         # Composite tests
         test_composite_score_weights,
         test_flags_generated_correctly,
+
+        # Units alignment tests
+        test_runway_units_alignment,
+
+        # Financing pressure monotonicity tests
+        test_financing_pressure_monotonicity_runway,
+        test_financing_pressure_monotonicity_cash_mcap,
+        test_financing_pressure_saturation_extremes,
+
+        # Dilution bucket boundary precision tests
+        test_dilution_bucket_boundary_30_percent,
+        test_dilution_bucket_boundary_15_percent,
+        test_dilution_bucket_boundary_5_percent,
+
+        # Operational observability tests
+        test_all_fields_always_present,
+        test_fields_have_correct_types,
+        test_burn_rejection_reasons_populated,
     ]
 
     passed = 0
