@@ -189,6 +189,39 @@ SEVERITY_SCORE_CONTRIBUTION: Dict[EventSeverity, Decimal] = {
 
 
 # =============================================================================
+# EVENT TYPE → PROXIMITY WEIGHT (for upcoming event scoring)
+# =============================================================================
+
+EVENT_TYPE_WEIGHT: Dict[EventType, Decimal] = {
+    # High-impact upcoming events
+    EventType.CT_PRIMARY_COMPLETION: Decimal("20.0"),
+    EventType.CT_STUDY_COMPLETION: Decimal("15.0"),
+    EventType.CT_RESULTS_POSTED: Decimal("18.0"),
+    EventType.CT_DATE_CONFIRMED_ACTUAL: Decimal("12.0"),
+
+    # Medium-impact
+    EventType.CT_ENROLLMENT_COMPLETE: Decimal("10.0"),
+    EventType.CT_STATUS_UPGRADE: Decimal("8.0"),
+    EventType.CT_TIMELINE_PULLIN: Decimal("6.0"),
+
+    # Lower-impact
+    EventType.CT_ENROLLMENT_STARTED: Decimal("5.0"),
+    EventType.CT_ENROLLMENT_RESUMED: Decimal("4.0"),
+    EventType.CT_ARM_ADDED: Decimal("3.0"),
+    EventType.CT_PROTOCOL_AMENDMENT: Decimal("2.0"),
+
+    # Neutral/negative (shouldn't affect upcoming score positively)
+    EventType.CT_STATUS_SEVERE_NEG: Decimal("0.0"),
+    EventType.CT_STATUS_DOWNGRADE: Decimal("0.0"),
+    EventType.CT_TIMELINE_PUSHOUT: Decimal("0.0"),
+    EventType.CT_ARM_REMOVED: Decimal("0.0"),
+    EventType.CT_ENROLLMENT_PAUSED: Decimal("0.0"),
+    EventType.CT_ENDPOINT_CHANGED: Decimal("1.0"),
+    EventType.UNKNOWN: Decimal("0.0"),
+}
+
+
+# =============================================================================
 # CATALYST EVENT (VERSIONED)
 # =============================================================================
 
@@ -318,6 +351,19 @@ class TickerCatalystSummaryV2:
     # All events (sorted deterministically)
     events: List[CatalystEventV2]
 
+    # NEW: Proximity scoring (exponential decay for upcoming events)
+    catalyst_proximity_score: Decimal = Decimal("0")
+    n_events_upcoming: int = 0
+
+    # NEW: Delta scoring (event-based changes)
+    catalyst_delta_score: Decimal = Decimal("0")
+    n_events_added: int = 0
+    n_events_removed: int = 0
+    max_slip_days: Optional[int] = None  # Worst delay (positive = later)
+
+    # NEW: Velocity (rolling baseline comparison)
+    catalyst_velocity_4w: Optional[Decimal] = None  # Current - median of last 4
+
     # Schema metadata
     schema_version: str = SCHEMA_VERSION
     score_version: str = SCORE_VERSION
@@ -335,6 +381,9 @@ class TickerCatalystSummaryV2:
                 "score_override": str(self.score_override),
                 "score_blended": str(self.score_blended),
                 "score_mode_used": self.score_mode_used,
+                "catalyst_proximity_score": str(self.catalyst_proximity_score),
+                "catalyst_delta_score": str(self.catalyst_delta_score),
+                "catalyst_velocity_4w": str(self.catalyst_velocity_4w) if self.catalyst_velocity_4w is not None else None,
             },
             "flags": {
                 "severe_negative_flag": self.severe_negative_flag,
@@ -350,6 +399,10 @@ class TickerCatalystSummaryV2:
                 "events_by_severity": self.events_by_severity,
                 "events_by_type": self.events_by_type,
                 "weighted_counts_by_severity": self.weighted_counts_by_severity,
+                "n_events_upcoming": self.n_events_upcoming,
+                "n_events_added": self.n_events_added,
+                "n_events_removed": self.n_events_removed,
+                "max_slip_days": self.max_slip_days,
             },
             "top_3_events": self.top_3_events,
             "events": [e.to_dict() for e in self.events],
