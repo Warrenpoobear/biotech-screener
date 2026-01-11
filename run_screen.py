@@ -12,8 +12,15 @@ DETERMINISM GUARANTEES:
 - Stable ordering on all outputs
 - Content-hash verification on inputs (if enabled)
 
+ORCHESTRATION FEATURES:
+- Dry-run mode: Validate inputs without running pipeline
+- Checkpointing: Save/resume intermediate module outputs
+- Audit trail: Parameter snapshots and content hashes
+
 Usage:
     python run_screen.py --as-of-date 2024-12-15 --data-dir ./data --output results.json
+    python run_screen.py --as-of-date 2024-12-15 --data-dir ./data --dry-run
+    python run_screen.py --as-of-date 2024-12-15 --data-dir ./data --output results.json --checkpoint-dir ./checkpoints
 
 Architecture:
     Module 1: Universe filtering
@@ -54,7 +61,20 @@ from module_5_composite_with_defensive import compute_module_5_composite_with_de
 # Module 3A specific imports
 from event_detector import SimpleMarketCalendar
 
-VERSION = "1.1.0"  # Bumped for Module 3A integration
+# Optional: Risk gates for audit trail
+try:
+    from risk_gates import get_parameters_snapshot as get_risk_params, compute_parameters_hash as risk_params_hash
+    HAS_RISK_GATES = True
+except ImportError:
+    HAS_RISK_GATES = False
+
+try:
+    from liquidity_scoring import get_parameters_snapshot as get_liq_params, compute_parameters_hash as liq_params_hash
+    HAS_LIQUIDITY_SCORING = True
+except ImportError:
+    HAS_LIQUIDITY_SCORING = False
+
+VERSION = "1.2.0"  # Bumped for orchestration features (dry-run, checkpointing, audit)
 DETERMINISTIC_TIMESTAMP_SUFFIX = "T00:00:00Z"
 
 
@@ -121,13 +141,13 @@ def load_json_data(filepath: Path, description: str) -> List[Dict[str, Any]]:
 def write_json_output(filepath: Path, data: Dict[str, Any]) -> None:
     """
     Write JSON output with deterministic formatting.
-    
+
     Args:
         filepath: Output path
         data: Data to serialize
     """
     filepath.parent.mkdir(parents=True, exist_ok=True)
-    
+
     with open(filepath, 'w', encoding='utf-8') as f:
         json.dump(
             data,
@@ -139,24 +159,269 @@ def write_json_output(filepath: Path, data: Dict[str, Any]) -> None:
         f.write('\n')  # Trailing newline for diff-friendliness
 
 
+# =============================================================================
+# CHECKPOINTING
+# =============================================================================
+
+CHECKPOINT_MODULES = ["module_1", "module_2", "module_3", "module_4", "module_5"]
+
+
+def save_checkpoint(
+    checkpoint_dir: Path,
+    module_name: str,
+    as_of_date: str,
+    data: Dict[str, Any]
+) -> Path:
+    """
+    Save module checkpoint to disk.
+
+    Args:
+        checkpoint_dir: Directory for checkpoints
+        module_name: Module identifier (e.g., "module_1")
+        as_of_date: Analysis date
+        data: Module output data
+
+    Returns:
+        Path to checkpoint file
+    """
+    checkpoint_dir.mkdir(parents=True, exist_ok=True)
+    filename = f"{module_name}_{as_of_date}.json"
+    filepath = checkpoint_dir / filename
+
+    checkpoint_data = {
+        "module": module_name,
+        "as_of_date": as_of_date,
+        "version": VERSION,
+        "data": data,
+    }
+
+    write_json_output(filepath, checkpoint_data)
+    logger.debug(f"Checkpoint saved: {filepath}")
+    return filepath
+
+
+def load_checkpoint(
+    checkpoint_dir: Path,
+    module_name: str,
+    as_of_date: str
+) -> Optional[Dict[str, Any]]:
+    """
+    Load module checkpoint from disk.
+
+    Args:
+        checkpoint_dir: Directory for checkpoints
+        module_name: Module identifier
+        as_of_date: Analysis date
+
+    Returns:
+        Module output data, or None if checkpoint not found
+    """
+    filename = f"{module_name}_{as_of_date}.json"
+    filepath = checkpoint_dir / filename
+
+    if not filepath.exists():
+        return None
+
+    with open(filepath, 'r', encoding='utf-8') as f:
+        checkpoint_data = json.load(f)
+
+    # Validate checkpoint version compatibility
+    checkpoint_version = checkpoint_data.get("version", "0.0.0")
+    if checkpoint_version.split(".")[0] != VERSION.split(".")[0]:
+        logger.warning(
+            f"Checkpoint version mismatch: {checkpoint_version} vs {VERSION}. "
+            "Ignoring checkpoint."
+        )
+        return None
+
+    logger.info(f"Loaded checkpoint: {filepath}")
+    return checkpoint_data.get("data")
+
+
+def get_resume_module_index(resume_from: Optional[str]) -> int:
+    """
+    Get the index of the module to resume from.
+
+    Args:
+        resume_from: Module name to resume from (e.g., "module_3")
+
+    Returns:
+        Index in CHECKPOINT_MODULES (0 = start from beginning)
+    """
+    if resume_from is None:
+        return 0
+
+    try:
+        return CHECKPOINT_MODULES.index(resume_from)
+    except ValueError:
+        logger.warning(f"Unknown module '{resume_from}', starting from beginning")
+        return 0
+
+
+# =============================================================================
+# DRY-RUN VALIDATION
+# =============================================================================
+
+def validate_inputs_dry_run(data_dir: Path, enable_coinvest: bool = False) -> Dict[str, Any]:
+    """
+    Validate all required input files exist without running pipeline.
+
+    Args:
+        data_dir: Directory containing input data files
+        enable_coinvest: Whether co-invest signals are required
+
+    Returns:
+        Dict with validation results
+    """
+    required_files = [
+        ("universe.json", "Universe data"),
+        ("financial_records.json", "Financial records"),
+        ("trial_records.json", "Clinical trial records"),
+        ("market_data.json", "Market data"),
+    ]
+
+    optional_files = [
+        ("coinvest_signals.json", "Co-invest signals"),
+    ]
+
+    results = {
+        "valid": True,
+        "data_dir": str(data_dir),
+        "required_files": {},
+        "optional_files": {},
+        "content_hashes": {},
+        "errors": [],
+    }
+
+    # Check required files
+    for filename, description in required_files:
+        filepath = data_dir / filename
+        exists = filepath.exists()
+        results["required_files"][filename] = {
+            "exists": exists,
+            "description": description,
+        }
+
+        if exists:
+            # Compute content hash
+            content_hash = hashlib.sha256(filepath.read_bytes()).hexdigest()[:16]
+            results["content_hashes"][filename] = content_hash
+
+            # Try to load and count records
+            try:
+                with open(filepath, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                if isinstance(data, list):
+                    results["required_files"][filename]["record_count"] = len(data)
+            except (json.JSONDecodeError, Exception) as e:
+                results["required_files"][filename]["error"] = str(e)
+                results["errors"].append(f"{filename}: {e}")
+                results["valid"] = False
+        else:
+            results["errors"].append(f"Required file missing: {filename}")
+            results["valid"] = False
+
+    # Check optional files
+    for filename, description in optional_files:
+        filepath = data_dir / filename
+        exists = filepath.exists()
+        results["optional_files"][filename] = {
+            "exists": exists,
+            "description": description,
+            "required": (filename == "coinvest_signals.json" and enable_coinvest),
+        }
+
+        if exists:
+            content_hash = hashlib.sha256(filepath.read_bytes()).hexdigest()[:16]
+            results["content_hashes"][filename] = content_hash
+        elif filename == "coinvest_signals.json" and enable_coinvest:
+            results["errors"].append(f"Co-invest enabled but {filename} missing")
+            results["valid"] = False
+
+    return results
+
+
+# =============================================================================
+# AUDIT TRAIL
+# =============================================================================
+
+def create_audit_record(
+    as_of_date: str,
+    data_dir: Path,
+    content_hashes: Dict[str, str],
+) -> Dict[str, Any]:
+    """
+    Create comprehensive audit record for the run.
+
+    Args:
+        as_of_date: Analysis date
+        data_dir: Data directory path
+        content_hashes: Dict of filename -> content hash
+
+    Returns:
+        Audit record dict
+    """
+    audit = {
+        "as_of_date": as_of_date,
+        "orchestrator_version": VERSION,
+        "data_dir": str(data_dir),
+        "input_hashes": dict(sorted(content_hashes.items())),
+        "parameter_snapshots": {},
+        "parameter_hashes": {},
+    }
+
+    # Add risk gates parameters if available
+    if HAS_RISK_GATES:
+        audit["parameter_snapshots"]["risk_gates"] = get_risk_params()
+        audit["parameter_hashes"]["risk_gates"] = risk_params_hash()
+
+    # Add liquidity scoring parameters if available
+    if HAS_LIQUIDITY_SCORING:
+        audit["parameter_snapshots"]["liquidity_scoring"] = get_liq_params()
+        audit["parameter_hashes"]["liquidity_scoring"] = liq_params_hash()
+
+    return audit
+
+
+def append_audit_log(audit_log_path: Path, record: Dict[str, Any]) -> None:
+    """
+    Append audit record to JSONL log file.
+
+    Args:
+        audit_log_path: Path to audit log file
+        record: Audit record to append
+    """
+    audit_log_path.parent.mkdir(parents=True, exist_ok=True)
+
+    line = json.dumps(record, sort_keys=True, separators=(',', ':'))
+    with open(audit_log_path, 'a', encoding='utf-8') as f:
+        f.write(line + '\n')
+
+
 def run_screening_pipeline(
     as_of_date: str,
     data_dir: Path,
     universe_tickers: Optional[List[str]] = None,
     enable_coinvest: bool = False,
+    checkpoint_dir: Optional[Path] = None,
+    resume_from: Optional[str] = None,
+    audit_log_path: Optional[Path] = None,
 ) -> Dict[str, Any]:
     """
     Execute full screening pipeline with deterministic guarantees.
-    
+
     Args:
         as_of_date: Analysis date (YYYY-MM-DD) - REQUIRED, no defaults
         data_dir: Directory containing input data files
         universe_tickers: Optional whitelist of tickers
         enable_coinvest: Include co-invest overlay (requires coinvest_signals.json)
-    
+        checkpoint_dir: Directory for saving/loading checkpoints
+        resume_from: Module name to resume from (e.g., "module_3")
+        audit_log_path: Path to audit log file (JSONL format)
+
     Returns:
         Complete screening results with provenance
-    
+
     Raises:
         ValueError: If as_of_date is invalid
         FileNotFoundError: If required data files missing
@@ -166,6 +431,26 @@ def run_screening_pipeline(
 
     logger.info(f"[{as_of_date}] Starting screening pipeline...")
     logger.info(f"  Data directory: {data_dir}")
+    if checkpoint_dir:
+        logger.info(f"  Checkpoint directory: {checkpoint_dir}")
+    if resume_from:
+        logger.info(f"  Resuming from: {resume_from}")
+
+    # Determine resume index
+    resume_index = get_resume_module_index(resume_from)
+
+    # Compute content hashes for audit trail
+    content_hashes = {}
+    for json_file in sorted(data_dir.glob("*.json")):
+        content_hashes[json_file.name] = hashlib.sha256(
+            json_file.read_bytes()
+        ).hexdigest()[:16]
+
+    # Create audit record if audit log path provided
+    if audit_log_path:
+        audit_record = create_audit_record(as_of_date, data_dir, content_hashes)
+        append_audit_log(audit_log_path, audit_record)
+        logger.info(f"  Audit record written to: {audit_log_path}")
 
     # Load input data
     logger.info("[1/7] Loading input data...")
@@ -185,23 +470,39 @@ def run_screening_pipeline(
 
     # Module 1: Universe filtering
     logger.info("[2/7] Module 1: Universe filtering...")
-    m1_result = compute_module_1_universe(
-        raw_records=raw_universe,
-        as_of_date=as_of_date,  # Explicit threading
-        universe_tickers=universe_tickers,
-    )
+    m1_result = None
+    if resume_index > 0 and checkpoint_dir:
+        m1_result = load_checkpoint(checkpoint_dir, "module_1", as_of_date)
+
+    if m1_result is None:
+        m1_result = compute_module_1_universe(
+            raw_records=raw_universe,
+            as_of_date=as_of_date,  # Explicit threading
+            universe_tickers=universe_tickers,
+        )
+        if checkpoint_dir:
+            save_checkpoint(checkpoint_dir, "module_1", as_of_date, m1_result)
+
     active_tickers = [s["ticker"] for s in m1_result["active_securities"]]
     logger.info(f"  Active: {len(active_tickers)}, Excluded: {len(m1_result['excluded_securities'])}")
 
     # Module 2: Financial health
     logger.info("[3/7] Module 2: Financial health...")
-    m2_result = compute_module_2_financial(
-        financial_records=financial_records,
-        active_tickers=set(active_tickers),
-        as_of_date=as_of_date,
-        raw_universe=raw_universe,
-        market_records=market_records,
-    )
+    m2_result = None
+    if resume_index > 1 and checkpoint_dir:
+        m2_result = load_checkpoint(checkpoint_dir, "module_2", as_of_date)
+
+    if m2_result is None:
+        m2_result = compute_module_2_financial(
+            financial_records=financial_records,
+            active_tickers=set(active_tickers),
+            as_of_date=as_of_date,
+            raw_universe=raw_universe,
+            market_records=market_records,
+        )
+        if checkpoint_dir:
+            save_checkpoint(checkpoint_dir, "module_2", as_of_date, m2_result)
+
     diag = m2_result.get('diagnostic_counts', {})
     logger.info(f"  Scored: {diag.get('scored', len(m2_result.get('scores', [])))}, "
                 f"Missing: {diag.get('missing', 'N/A')}")
@@ -211,29 +512,35 @@ def run_screening_pipeline(
     # ========================================================================
 
     logger.info("[4/7] Module 3: Catalyst detection...")
+    m3_result = None
+    if resume_index > 2 and checkpoint_dir:
+        m3_result = load_checkpoint(checkpoint_dir, "module_3", as_of_date)
 
-    # Convert as_of_date string to date object for Module 3
-    as_of_date_obj = to_date_object(as_of_date)
-    
-    # Create state directory if it doesn't exist
-    state_dir = data_dir / "ctgov_state"
-    state_dir.mkdir(parents=True, exist_ok=True)
-    
-    # Run Module 3A with correct signature
-    m3_result = compute_module_3_catalyst(
-        trial_records_path=data_dir / "trial_records.json",  # Path, not list!
-        state_dir=state_dir,  # State directory for snapshots
-        active_tickers=set(active_tickers),  # Set of active tickers
-        as_of_date=as_of_date_obj,  # Date object
-        market_calendar=SimpleMarketCalendar(),  # Market calendar for weekends
-        config=Module3Config(),  # Default configuration
-        output_dir=data_dir  # Output directory for catalyst_events_*.json
-    )
-    
+    if m3_result is None:
+        # Convert as_of_date string to date object for Module 3
+        as_of_date_obj = to_date_object(as_of_date)
+
+        # Create state directory if it doesn't exist
+        state_dir = data_dir / "ctgov_state"
+        state_dir.mkdir(parents=True, exist_ok=True)
+
+        # Run Module 3A with correct signature
+        m3_result = compute_module_3_catalyst(
+            trial_records_path=data_dir / "trial_records.json",  # Path, not list!
+            state_dir=state_dir,  # State directory for snapshots
+            active_tickers=set(active_tickers),  # Set of active tickers
+            as_of_date=as_of_date_obj,  # Date object
+            market_calendar=SimpleMarketCalendar(),  # Market calendar for weekends
+            config=Module3Config(),  # Default configuration
+            output_dir=data_dir  # Output directory for catalyst_events_*.json
+        )
+        if checkpoint_dir:
+            save_checkpoint(checkpoint_dir, "module_3", as_of_date, m3_result)
+
     # Extract results (summaries is already a dict keyed by ticker)
     catalyst_summaries = m3_result["summaries"]
     diag3 = m3_result.get("diagnostic_counts", {})
-    
+
     # Print diagnostics
     logger.info(f"  Events detected: {diag3.get('events_detected', 0)}, "
                 f"Tickers with events: {diag3.get('tickers_with_events', 0)}/{diag3.get('tickers_analyzed', 0)}, "
@@ -245,11 +552,19 @@ def run_screening_pipeline(
 
     # Module 4: Clinical development
     logger.info("[5/7] Module 4: Clinical development...")
-    m4_result = compute_module_4_clinical_dev(
-        trial_records=trial_records,
-        active_tickers=active_tickers,
-        as_of_date=as_of_date,  # Explicit threading
-    )
+    m4_result = None
+    if resume_index > 3 and checkpoint_dir:
+        m4_result = load_checkpoint(checkpoint_dir, "module_4", as_of_date)
+
+    if m4_result is None:
+        m4_result = compute_module_4_clinical_dev(
+            trial_records=trial_records,
+            active_tickers=active_tickers,
+            as_of_date=as_of_date,  # Explicit threading
+        )
+        if checkpoint_dir:
+            save_checkpoint(checkpoint_dir, "module_4", as_of_date, m4_result)
+
     diag = m4_result.get('diagnostic_counts', {})
     logger.info(f"  Scored: {diag.get('scored', len(m4_result.get('scores', [])))}, "
                 f"Trials evaluated: {diag.get('total_trials', 'N/A')}, "
@@ -257,17 +572,25 @@ def run_screening_pipeline(
 
     # Module 5: Composite ranking
     logger.info("[6/7] Module 5: Composite ranking...")
-    m5_result = compute_module_5_composite_with_defensive(
-        universe_result=m1_result,
-        financial_result=m2_result,
-        catalyst_result=m3_result,
-        clinical_result=m4_result,
-        as_of_date=as_of_date,  # Explicit threading
-        normalization="rank",
-        cohort_mode="stage_only",
-        coinvest_signals=coinvest_signals,
-        validate=True,
-    )
+    m5_result = None
+    if resume_index > 4 and checkpoint_dir:
+        m5_result = load_checkpoint(checkpoint_dir, "module_5", as_of_date)
+
+    if m5_result is None:
+        m5_result = compute_module_5_composite_with_defensive(
+            universe_result=m1_result,
+            financial_result=m2_result,
+            catalyst_result=m3_result,
+            clinical_result=m4_result,
+            as_of_date=as_of_date,  # Explicit threading
+            normalization="rank",
+            cohort_mode="stage_only",
+            coinvest_signals=coinvest_signals,
+            validate=True,
+        )
+        if checkpoint_dir:
+            save_checkpoint(checkpoint_dir, "module_5", as_of_date, m5_result)
+
     diag = m5_result.get('diagnostic_counts', {})
     logger.info(f"  Rankable: {diag.get('rankable', len(m5_result.get('ranked_securities', [])))}, "
                 f"Excluded: {diag.get('excluded', len(m5_result.get('excluded_securities', [])))}")
@@ -275,13 +598,14 @@ def run_screening_pipeline(
     # Final defensive overlay and top-N selection
     logger.info("[7/7] Defensive overlay & top-N selection...")
     # (Assuming this is handled in Module 5 or separately)
-    
+
     # Assemble results
     results = {
         "run_metadata": {
             "as_of_date": as_of_date,
             "version": VERSION,
             "deterministic_timestamp": as_of_date + DETERMINISTIC_TIMESTAMP_SUFFIX,
+            "input_hashes": dict(sorted(content_hashes.items())),
         },
         "module_1_universe": m1_result,
         "module_2_financial": m2_result,
@@ -362,10 +686,22 @@ def main() -> int:
 Examples:
   # Basic screening
   python run_screen.py --as-of-date 2024-12-15 --data-dir ./data --output results.json
-  
+
+  # Dry-run (validate inputs without running)
+  python run_screen.py --as-of-date 2024-12-15 --data-dir ./data --dry-run
+
+  # With checkpointing (save intermediate results)
+  python run_screen.py --as-of-date 2024-12-15 --data-dir ./data --output results.json --checkpoint-dir ./checkpoints
+
+  # Resume from module 3 (load prior checkpoints)
+  python run_screen.py --as-of-date 2024-12-15 --data-dir ./data --output results.json --checkpoint-dir ./checkpoints --resume-from module_3
+
+  # With audit trail
+  python run_screen.py --as-of-date 2024-12-15 --data-dir ./data --output results.json --audit-log ./audit.jsonl
+
   # With co-invest overlay
   python run_screen.py --as-of-date 2024-12-15 --data-dir ./data --output results.json --enable-coinvest
-  
+
   # Custom universe
   python run_screen.py --as-of-date 2024-12-15 --data-dir ./data --output results.json --tickers REGN VRTX ALNY
 
@@ -374,7 +710,12 @@ Determinism guarantees:
   - No today() defaults (as_of_date is required)
   - PIT discipline enforced throughout
   - Stable ordering on all outputs
-  
+
+Orchestration features:
+  - Dry-run: Validate inputs and compute hashes without running pipeline
+  - Checkpointing: Save/load intermediate results for each module
+  - Audit trail: Log parameter snapshots and content hashes to JSONL
+
 Module 3 Catalyst Detection:
   - Delta-based event detection (compares current vs prior CT.gov state)
   - First run: 0 events (no prior state)
@@ -399,16 +740,44 @@ Module 3 Catalyst Detection:
     parser.add_argument(
         "--output",
         type=Path,
-        required=True,
-        help="Output JSON file path",
+        default=None,
+        help="Output JSON file path (not required for --dry-run)",
     )
-    
+
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Validate inputs without running pipeline. Prints content hashes and exits.",
+    )
+
+    parser.add_argument(
+        "--checkpoint-dir",
+        type=Path,
+        default=None,
+        help="Directory for saving/loading checkpoints between modules.",
+    )
+
+    parser.add_argument(
+        "--resume-from",
+        type=str,
+        choices=["module_1", "module_2", "module_3", "module_4", "module_5"],
+        default=None,
+        help="Resume pipeline from specified module (requires --checkpoint-dir).",
+    )
+
+    parser.add_argument(
+        "--audit-log",
+        type=Path,
+        default=None,
+        help="Path to audit log file (JSONL format) for parameter and hash tracking.",
+    )
+
     parser.add_argument(
         "--tickers",
         nargs="+",
         help="Optional: Whitelist specific tickers (default: use all from universe.json)",
     )
-    
+
     parser.add_argument(
         "--enable-coinvest",
         action="store_true",
@@ -439,15 +808,62 @@ Module 3 Catalyst Detection:
     )
     
     args = parser.parse_args()
-    
+
+    # Validate argument combinations
+    if not args.dry_run and args.output is None:
+        parser.error("--output is required unless --dry-run is specified")
+
+    if args.resume_from and not args.checkpoint_dir:
+        parser.error("--resume-from requires --checkpoint-dir")
+
     try:
+        # Handle dry-run mode
+        if args.dry_run:
+            logger.info(f"[DRY-RUN] Validating inputs for {args.as_of_date}...")
+            validation = validate_inputs_dry_run(
+                data_dir=args.data_dir,
+                enable_coinvest=args.enable_coinvest,
+            )
+
+            logger.info("=" * 60)
+            logger.info("DRY-RUN VALIDATION RESULTS")
+            logger.info("=" * 60)
+            logger.info(f"Data directory: {validation['data_dir']}")
+            logger.info(f"Valid: {validation['valid']}")
+            logger.info("")
+
+            logger.info("Required files:")
+            for filename, info in validation["required_files"].items():
+                status = "OK" if info["exists"] else "MISSING"
+                count = f" ({info.get('record_count', '?')} records)" if info["exists"] else ""
+                logger.info(f"  {filename}: {status}{count}")
+
+            logger.info("")
+            logger.info("Content hashes:")
+            for filename, hash_val in validation["content_hashes"].items():
+                logger.info(f"  {filename}: {hash_val}")
+
+            if validation["errors"]:
+                logger.info("")
+                logger.info("Errors:")
+                for error in validation["errors"]:
+                    logger.info(f"  - {error}")
+
+            logger.info("=" * 60)
+
+            return 0 if validation["valid"] else 1
+
         # Run pipeline
         results = run_screening_pipeline(
             as_of_date=args.as_of_date,
             data_dir=args.data_dir,
             universe_tickers=args.tickers,
             enable_coinvest=args.enable_coinvest,
-        )        
+            checkpoint_dir=args.checkpoint_dir,
+            resume_from=args.resume_from,
+            audit_log_path=args.audit_log,
+        )
+
         # Add bootstrap analysis if requested
         if args.enable_bootstrap:
             logger.info("[BOOTSTRAP] Computing confidence intervals...")
@@ -464,7 +880,6 @@ Module 3 Catalyst Detection:
                 logger.info(f"  95% CI: [{ba['ci_lower']}, {ba['ci_upper']}]")
                 logger.info(f"  Bootstrap samples: {ba['bootstrap_samples']}")
 
-
         # Write output
         logger.info(f"[OUTPUT] Writing results to {args.output}")
         write_json_output(args.output, results)
@@ -480,6 +895,10 @@ Module 3 Catalyst Detection:
         logger.info(f"Final ranked:       {summary['final_ranked']}")
         logger.info(f"Catalyst events:    {summary.get('catalyst_events', 0)}")
         logger.info(f"Severe negatives:   {summary.get('severe_negatives', 0)}")
+        if args.checkpoint_dir:
+            logger.info(f"Checkpoints:        {args.checkpoint_dir}")
+        if args.audit_log:
+            logger.info(f"Audit log:          {args.audit_log}")
         logger.info("=" * 60)
 
         return 0
