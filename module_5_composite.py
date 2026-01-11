@@ -314,24 +314,42 @@ def compute_module_5_composite(
         fin = financial_by_ticker.get(ticker, {})
         cat = catalyst_by_ticker.get(ticker, {})
         clin = clinical_by_ticker.get(ticker, {})
-        
+
+        # Handle TickerCatalystSummary objects (dataclass) or dicts
+        if hasattr(cat, 'catalyst_score_net'):
+            # It's a TickerCatalystSummary dataclass
+            cat_score_val = cat.catalyst_score_net
+            cat_severity = getattr(cat, 'severity', 'none') if hasattr(cat, 'severity') else 'none'
+            cat_flags = getattr(cat, 'flags', []) if hasattr(cat, 'flags') else []
+            cat_severe_neg = getattr(cat, 'severe_negative_flag', False)
+        elif isinstance(cat, dict):
+            cat_score_val = cat.get("catalyst_score_net")
+            cat_severity = cat.get("severity", "none")
+            cat_flags = cat.get("flags", [])
+            cat_severe_neg = cat.get("severe_negative_flag", False)
+        else:
+            cat_score_val = None
+            cat_severity = "none"
+            cat_flags = []
+            cat_severe_neg = False
+
         # Get raw scores
         fin_score = Decimal(fin.get("financial_normalized", "0")) if fin.get("financial_normalized") else None
-        cat_score = Decimal(str(cat.get("catalyst_score_net", 0))) if cat.get("catalyst_score_net") is not None else None
+        cat_score = Decimal(str(cat_score_val)) if cat_score_val is not None else None
         clin_score = Decimal(clin.get("clinical_score", "0")) if clin.get("clinical_score") else None
-        
+
         # Get severities
         severities = [
             fin.get("severity", "none"),
-            cat.get("severity", "none"),
+            cat_severity,
             clin.get("severity", "none"),
         ]
         worst_severity = _get_worst_severity(severities)
-        
+
         # Collect flags
         flags = []
         flags.extend(fin.get("flags", []))
-        flags.extend(cat.get("flags", []))
+        flags.extend(cat_flags)
         flags.extend(clin.get("flags", []))
         
         # Check for sev3 exclusion

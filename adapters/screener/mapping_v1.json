@@ -1,0 +1,50 @@
+{
+  "adapter_name": "screener",
+  "description": "Field mappings from biotech screener data sources to canonical schema",
+  "mapping_version": "v1",
+  "required_fields": [
+    "ticker"
+  ],
+  "field_mappings": {
+    "avg_volume": "avg_volume",
+    "market_cap": "market_cap",
+    "price": "price",
+    "spread_bps": "spread_bps",
+    "ticker": "ticker"
+  },
+  "source_schemas": {
+    "financial_data": {
+      "required_fields": [
+        "ticker"
+      ],
+      "optional_fields": [
+        "Cash",
+        "NetIncome",
+        "ResearchAndDevelopment",
+        "TotalRevenue"
+      ]
+    },
+    "holdings_data": {
+      "required_fields": [
+        "ticker"
+      ],
+      "optional_fields": [
+        "managers",
+        "total_managers",
+        "net_buyers"
+      ]
+    },
+    "market_data": {
+      "required_fields": [
+        "ticker"
+      ],
+      "optional_fields": [
+        "price",
+        "avg_volume",
+        "market_cap",
+        "spread_bps",
+        "adv_usd_20d"
+      ]
+    }
+  }
+}

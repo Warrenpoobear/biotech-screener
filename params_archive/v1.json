@@ -1,0 +1,34 @@
+{
+  "description": "Score parameters v1 - Initial release",
+  "risk_gates": {
+    "ADV_MINIMUM": 500000,
+    "MARKET_CAP_MINIMUM": 50000000,
+    "PRICE_MINIMUM": 2.0,
+    "RUNWAY_MINIMUM_MONTHS": 6
+  },
+  "liquidity_scoring": {
+    "ADV_MAX_SCORE": 70,
+    "ADV_THRESHOLDS": {
+      "large": 10000000,
+      "micro": 750000,
+      "mid": 5000000,
+      "small": 2000000
+    },
+    "PENNY_STOCK_MAX_SCORE": 10,
+    "PENNY_STOCK_PRICE": 2.0,
+    "SPREAD_HIGH_BPS": 200.0,
+    "SPREAD_LOW_BPS": 50.0,
+    "SPREAD_MAX_SCORE": 30,
+    "TIER_LARGE_MIN": 10000000000,
+    "TIER_MICRO_MAX": 300000000,
+    "TIER_MID_MAX": 10000000000,
+    "TIER_SMALL_MAX": 2000000000
+  },
+  "institutional_scoring": {
+    "CONVICTION_NORMALIZATION": 50000000,
+    "DOLLAR_BOOST_WEIGHT": 0.1,
+    "MIN_MANAGERS": 1
+  },
+  "score_version": "v1",
+  "version_date": "2024-01-01"
+}

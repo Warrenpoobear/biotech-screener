@@ -599,6 +599,22 @@ def run_screening_pipeline(
     logger.info("[7/7] Defensive overlay & top-N selection...")
     # (Assuming this is handled in Module 5 or separately)
 
+    # Serialize module 3 result (contains TickerCatalystSummary dataclasses)
+    def _serialize_m3_result(m3):
+        """Convert TickerCatalystSummary objects to dicts for JSON serialization."""
+        result = dict(m3)
+        if "summaries" in result:
+            serialized_summaries = {}
+            for ticker, summary in result["summaries"].items():
+                if hasattr(summary, 'to_dict'):
+                    serialized_summaries[ticker] = summary.to_dict()
+                else:
+                    serialized_summaries[ticker] = summary
+            result["summaries"] = serialized_summaries
+        return result
+
+    m3_serialized = _serialize_m3_result(m3_result)
+
     # Assemble results
     results = {
         "run_metadata": {
@@ -609,7 +625,7 @@ def run_screening_pipeline(
         },
         "module_1_universe": m1_result,
         "module_2_financial": m2_result,
-        "module_3_catalyst": m3_result,
+        "module_3_catalyst": m3_serialized,
         "module_4_clinical": m4_result,
         "module_5_composite": m5_result,
         "summary": {
