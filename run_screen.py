@@ -26,12 +26,20 @@ from __future__ import annotations
 
 import argparse
 import json
+import logging
 import sys
 from datetime import date
 import hashlib
 from decimal import Decimal
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 # Common utilities
 from common.date_utils import normalize_date, to_date_string, to_date_object
@@ -155,38 +163,38 @@ def run_screening_pipeline(
     """
     # CRITICAL: Validate as_of_date FIRST (no implicit defaults)
     validate_as_of_date_param(as_of_date)
-    
-    print(f"[{as_of_date}] Starting screening pipeline...")
-    print(f"  Data directory: {data_dir}")
-    
+
+    logger.info(f"[{as_of_date}] Starting screening pipeline...")
+    logger.info(f"  Data directory: {data_dir}")
+
     # Load input data
-    print("\n[1/7] Loading input data...")
+    logger.info("[1/7] Loading input data...")
     raw_universe = load_json_data(data_dir / "universe.json", "Universe")
     financial_records = load_json_data(data_dir / "financial_records.json", "Financial")
     trial_records = load_json_data(data_dir / "trial_records.json", "Trials")
     market_records = load_json_data(data_dir / "market_data.json", "Market data")
-    
+
     coinvest_signals = None
     if enable_coinvest:
         coinvest_file = data_dir / "coinvest_signals.json"
         if coinvest_file.exists():
-            print("  Loading co-invest signals...")
+            logger.info("  Loading co-invest signals...")
             coinvest_signals = load_json_data(coinvest_file, "Co-invest signals")
         else:
-            print(f"  Warning: --enable-coinvest specified but {coinvest_file} not found")
-    
+            logger.warning(f"  --enable-coinvest specified but {coinvest_file} not found")
+
     # Module 1: Universe filtering
-    print("\n[2/7] Module 1: Universe filtering...")
+    logger.info("[2/7] Module 1: Universe filtering...")
     m1_result = compute_module_1_universe(
         raw_records=raw_universe,
         as_of_date=as_of_date,  # Explicit threading
         universe_tickers=universe_tickers,
     )
     active_tickers = [s["ticker"] for s in m1_result["active_securities"]]
-    print(f"  Active: {len(active_tickers)}, Excluded: {len(m1_result['excluded_securities'])}")
-    
+    logger.info(f"  Active: {len(active_tickers)}, Excluded: {len(m1_result['excluded_securities'])}")
+
     # Module 2: Financial health
-    print("\n[3/7] Module 2: Financial health...")
+    logger.info("[3/7] Module 2: Financial health...")
     m2_result = compute_module_2_financial(
         financial_records=financial_records,
         active_tickers=set(active_tickers),
@@ -195,14 +203,14 @@ def run_screening_pipeline(
         market_records=market_records,
     )
     diag = m2_result.get('diagnostic_counts', {})
-    print(f"  Scored: {diag.get('scored', len(m2_result.get('scores', [])))}, "
-          f"Missing: {diag.get('missing', 'N/A')}")
-    
+    logger.info(f"  Scored: {diag.get('scored', len(m2_result.get('scores', [])))}, "
+                f"Missing: {diag.get('missing', 'N/A')}")
+
     # ========================================================================
     # Module 3: Catalyst Detection (NEW: Delta-based event detection)
     # ========================================================================
-    
-    print("\n[4/7] Module 3: Catalyst detection...")
+
+    logger.info("[4/7] Module 3: Catalyst detection...")
 
     # Convert as_of_date string to date object for Module 3
     as_of_date_obj = to_date_object(as_of_date)
@@ -227,28 +235,28 @@ def run_screening_pipeline(
     diag3 = m3_result.get("diagnostic_counts", {})
     
     # Print diagnostics
-    print(f"  Events detected: {diag3.get('events_detected', 0)}, "
-          f"Tickers with events: {diag3.get('tickers_with_events', 0)}/{diag3.get('tickers_analyzed', 0)}, "
-          f"Severe negatives: {diag3.get('severe_negatives', 0)}")
-    
+    logger.info(f"  Events detected: {diag3.get('events_detected', 0)}, "
+                f"Tickers with events: {diag3.get('tickers_with_events', 0)}/{diag3.get('tickers_analyzed', 0)}, "
+                f"Severe negatives: {diag3.get('severe_negatives', 0)}")
+
     # ========================================================================
     # End Module 3
     # ========================================================================
-    
+
     # Module 4: Clinical development
-    print("\n[5/7] Module 4: Clinical development...")
+    logger.info("[5/7] Module 4: Clinical development...")
     m4_result = compute_module_4_clinical_dev(
         trial_records=trial_records,
         active_tickers=active_tickers,
         as_of_date=as_of_date,  # Explicit threading
     )
     diag = m4_result.get('diagnostic_counts', {})
-    print(f"  Scored: {diag.get('scored', len(m4_result.get('scores', [])))}, "
-          f"Trials evaluated: {diag.get('total_trials', 'N/A')}, "
-          f"PIT filtered: {diag.get('pit_filtered', 'N/A')}")
-    
+    logger.info(f"  Scored: {diag.get('scored', len(m4_result.get('scores', [])))}, "
+                f"Trials evaluated: {diag.get('total_trials', 'N/A')}, "
+                f"PIT filtered: {diag.get('pit_filtered', 'N/A')}")
+
     # Module 5: Composite ranking
-    print("\n[6/7] Module 5: Composite ranking...")
+    logger.info("[6/7] Module 5: Composite ranking...")
     m5_result = compute_module_5_composite_with_defensive(
         universe_result=m1_result,
         financial_result=m2_result,
@@ -261,11 +269,11 @@ def run_screening_pipeline(
         validate=True,
     )
     diag = m5_result.get('diagnostic_counts', {})
-    print(f"  Rankable: {diag.get('rankable', len(m5_result.get('ranked_securities', [])))}, "
-          f"Excluded: {diag.get('excluded', len(m5_result.get('excluded_securities', [])))}")
-    
+    logger.info(f"  Rankable: {diag.get('rankable', len(m5_result.get('ranked_securities', [])))}, "
+                f"Excluded: {diag.get('excluded', len(m5_result.get('excluded_securities', [])))}")
+
     # Final defensive overlay and top-N selection
-    print("\n[7/7] Defensive overlay & top-N selection...")
+    logger.info("[7/7] Defensive overlay & top-N selection...")
     # (Assuming this is handled in Module 5 or separately)
     
     # Assemble results
@@ -442,7 +450,7 @@ Module 3 Catalyst Detection:
         )        
         # Add bootstrap analysis if requested
         if args.enable_bootstrap:
-            print("\n[BOOTSTRAP] Computing confidence intervals...")
+            logger.info("[BOOTSTRAP] Computing confidence intervals...")
             results = add_bootstrap_analysis(
                 results=results,
                 as_of_date=args.as_of_date,
@@ -452,37 +460,35 @@ Module 3 Catalyst Detection:
             )
             if "error" not in results.get("bootstrap_analysis", {}):
                 ba = results["bootstrap_analysis"]
-                print(f"  Mean score: {ba['mean']}")
-                print(f"  95% CI: [{ba['ci_lower']}, {ba['ci_upper']}]")
-                print(f"  Bootstrap samples: {ba['bootstrap_samples']}")
+                logger.info(f"  Mean score: {ba['mean']}")
+                logger.info(f"  95% CI: [{ba['ci_lower']}, {ba['ci_upper']}]")
+                logger.info(f"  Bootstrap samples: {ba['bootstrap_samples']}")
 
-        
+
         # Write output
-        print(f"\n[OUTPUT] Writing results to {args.output}")
+        logger.info(f"[OUTPUT] Writing results to {args.output}")
         write_json_output(args.output, results)
-        
+
         # Print summary
         summary = results["summary"]
-        print(f"\n{'='*60}")
-        print(f"SCREENING SUMMARY ({args.as_of_date})")
-        print(f"{'='*60}")
-        print(f"Total evaluated:    {summary['total_evaluated']}")
-        print(f"Active universe:    {summary['active_universe']}")
-        print(f"Excluded:           {summary['excluded']}")
-        print(f"Final ranked:       {summary['final_ranked']}")
-        print(f"Catalyst events:    {summary.get('catalyst_events', 0)}")
-        print(f"Severe negatives:   {summary.get('severe_negatives', 0)}")
-        print(f"{'='*60}")
-        
+        logger.info("=" * 60)
+        logger.info(f"SCREENING SUMMARY ({args.as_of_date})")
+        logger.info("=" * 60)
+        logger.info(f"Total evaluated:    {summary['total_evaluated']}")
+        logger.info(f"Active universe:    {summary['active_universe']}")
+        logger.info(f"Excluded:           {summary['excluded']}")
+        logger.info(f"Final ranked:       {summary['final_ranked']}")
+        logger.info(f"Catalyst events:    {summary.get('catalyst_events', 0)}")
+        logger.info(f"Severe negatives:   {summary.get('severe_negatives', 0)}")
+        logger.info("=" * 60)
+
         return 0
-        
+
     except (ValueError, FileNotFoundError, json.JSONDecodeError) as e:
-        print(f"\nERROR: {e}", file=sys.stderr)
+        logger.error(f"ERROR: {e}")
         return 1
     except Exception as e:
-        print(f"\nUNEXPECTED ERROR: {e}", file=sys.stderr)
-        import traceback
-        traceback.print_exc()
+        logger.exception(f"UNEXPECTED ERROR: {e}")
         return 2
 
 
