@@ -1,0 +1,94 @@
+[
+  {
+    "ticker": "MRNA",
+    "short_interest_pct": "8.5",
+    "days_to_cover": "3.2",
+    "short_interest_change_pct": "-12.5",
+    "institutional_long_pct": "72.3",
+    "avg_daily_volume": "15000000",
+    "report_date": "2026-01-03"
+  },
+  {
+    "ticker": "BNTX",
+    "short_interest_pct": "5.2",
+    "days_to_cover": "2.1",
+    "short_interest_change_pct": "3.8",
+    "institutional_long_pct": "45.6",
+    "avg_daily_volume": "2500000",
+    "report_date": "2026-01-03"
+  },
+  {
+    "ticker": "VRTX",
+    "short_interest_pct": "1.8",
+    "days_to_cover": "1.5",
+    "short_interest_change_pct": "-2.1",
+    "institutional_long_pct": "92.1",
+    "avg_daily_volume": "1800000",
+    "report_date": "2026-01-03"
+  },
+  {
+    "ticker": "REGN",
+    "short_interest_pct": "2.3",
+    "days_to_cover": "1.8",
+    "short_interest_change_pct": "1.2",
+    "institutional_long_pct": "88.4",
+    "avg_daily_volume": "850000",
+    "report_date": "2026-01-03"
+  },
+  {
+    "ticker": "BIIB",
+    "short_interest_pct": "4.7",
+    "days_to_cover": "2.9",
+    "short_interest_change_pct": "-8.3",
+    "institutional_long_pct": "81.2",
+    "avg_daily_volume": "1200000",
+    "report_date": "2026-01-03"
+  },
+  {
+    "ticker": "ALNY",
+    "short_interest_pct": "12.8",
+    "days_to_cover": "5.6",
+    "short_interest_change_pct": "15.2",
+    "institutional_long_pct": "68.9",
+    "avg_daily_volume": "1400000",
+    "report_date": "2026-01-03",
+    "notes": "Elevated SI with increasing trend - potential squeeze candidate"
+  },
+  {
+    "ticker": "BMRN",
+    "short_interest_pct": "6.1",
+    "days_to_cover": "4.2",
+    "short_interest_change_pct": "-5.4",
+    "institutional_long_pct": "95.3",
+    "avg_daily_volume": "980000",
+    "report_date": "2026-01-03"
+  },
+  {
+    "ticker": "SGEN",
+    "short_interest_pct": "3.4",
+    "days_to_cover": "2.3",
+    "short_interest_change_pct": "0.8",
+    "institutional_long_pct": "89.7",
+    "avg_daily_volume": "1100000",
+    "report_date": "2026-01-03"
+  },
+  {
+    "ticker": "INCY",
+    "short_interest_pct": "7.9",
+    "days_to_cover": "3.8",
+    "short_interest_change_pct": "-18.2",
+    "institutional_long_pct": "91.5",
+    "avg_daily_volume": "2200000",
+    "report_date": "2026-01-03",
+    "notes": "Significant short covering observed"
+  },
+  {
+    "ticker": "EXEL",
+    "short_interest_pct": "9.3",
+    "days_to_cover": "4.5",
+    "short_interest_change_pct": "8.7",
+    "institutional_long_pct": "78.4",
+    "avg_daily_volume": "3500000",
+    "report_date": "2026-01-03"
+  }
+]
