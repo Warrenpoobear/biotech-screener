@@ -61,6 +61,15 @@ from module_5_composite_with_defensive import compute_module_5_composite_with_de
 # Module 3A specific imports
 from event_detector import SimpleMarketCalendar
 
+# Enhancement modules (optional)
+try:
+    from pos_engine import ProbabilityOfSuccessEngine
+    from short_interest_engine import ShortInterestSignalEngine
+    from regime_engine import RegimeDetectionEngine
+    HAS_ENHANCEMENTS = True
+except ImportError:
+    HAS_ENHANCEMENTS = False
+
 # Optional: Risk gates for audit trail
 try:
     from risk_gates import get_parameters_snapshot as get_risk_params, compute_parameters_hash as risk_params_hash
@@ -74,7 +83,7 @@ try:
 except ImportError:
     HAS_LIQUIDITY_SCORING = False
 
-VERSION = "1.2.0"  # Bumped for orchestration features (dry-run, checkpointing, audit)
+VERSION = "1.3.0"  # Bumped for enhancement integration (PoS, Short Interest, Regime)
 DETERMINISTIC_TIMESTAMP_SUFFIX = "T00:00:00Z"
 
 
@@ -177,7 +186,7 @@ def write_json_output(filepath: Path, data: Dict[str, Any]) -> None:
 # CHECKPOINTING
 # =============================================================================
 
-CHECKPOINT_MODULES = ["module_1", "module_2", "module_3", "module_4", "module_5"]
+CHECKPOINT_MODULES = ["module_1", "module_2", "module_3", "module_4", "enhancements", "module_5"]
 
 
 def save_checkpoint(
@@ -417,6 +426,8 @@ def run_screening_pipeline(
     data_dir: Path,
     universe_tickers: Optional[List[str]] = None,
     enable_coinvest: bool = False,
+    enable_enhancements: bool = False,
+    enable_short_interest: bool = False,
     checkpoint_dir: Optional[Path] = None,
     resume_from: Optional[str] = None,
     audit_log_path: Optional[Path] = None,
@@ -429,6 +440,8 @@ def run_screening_pipeline(
         data_dir: Directory containing input data files
         universe_tickers: Optional whitelist of tickers
         enable_coinvest: Include co-invest overlay (requires coinvest_signals.json)
+        enable_enhancements: Enable PoS + Regime modules (requires market_snapshot.json)
+        enable_short_interest: Enable short interest signals (requires short_interest.json)
         checkpoint_dir: Directory for saving/loading checkpoints
         resume_from: Module name to resume from (e.g., "module_3")
         audit_log_path: Path to audit log file (JSONL format)
@@ -481,6 +494,36 @@ def run_screening_pipeline(
             coinvest_signals = load_json_data(coinvest_file, "Co-invest signals")
         else:
             logger.warning(f"  --enable-coinvest specified but {coinvest_file} not found")
+
+    # Enhancement data (optional)
+    market_snapshot = None
+    short_interest_data = None
+
+    if enable_enhancements or enable_short_interest:
+        if not HAS_ENHANCEMENTS:
+            logger.warning("  Enhancement modules not available (import failed)")
+            enable_enhancements = False
+            enable_short_interest = False
+
+    if enable_enhancements:
+        # Market snapshot for regime detection (VIX, XBI vs SPY, Fed rates)
+        snapshot_file = data_dir / "market_snapshot.json"
+        if snapshot_file.exists():
+            logger.info("  Loading market snapshot for regime detection...")
+            with open(snapshot_file, 'r', encoding='utf-8') as f:
+                market_snapshot = json.load(f)
+        else:
+            logger.warning(f"  --enable-enhancements specified but {snapshot_file} not found")
+            logger.warning("  Regime detection will use UNKNOWN regime with neutral weights")
+
+    if enable_enhancements or enable_short_interest:
+        # Short interest data
+        si_file = data_dir / "short_interest.json"
+        if si_file.exists():
+            logger.info("  Loading short interest data...")
+            short_interest_data = load_json_data(si_file, "Short interest")
+        else:
+            logger.info("  Short interest data not found, will skip SI signals")
 
     # Module 1: Universe filtering
     logger.info("[2/7] Module 1: Universe filtering...")
@@ -584,10 +627,118 @@ def run_screening_pipeline(
                 f"Trials evaluated: {diag.get('total_trials', 'N/A')}, "
                 f"PIT filtered: {diag.get('pit_filtered', 'N/A')}")
 
+    # ========================================================================
+    # Enhancement Layer: PoS, Short Interest, Regime Detection
+    # ========================================================================
+    enhancement_result = None
+
+    if enable_enhancements and HAS_ENHANCEMENTS:
+        logger.info("[5.5/7] Enhancement Layer: PoS + Regime + Short Interest...")
+
+        # Check for checkpoint
+        if resume_index > 4 and checkpoint_dir:
+            enhancement_result = load_checkpoint(checkpoint_dir, "enhancements", as_of_date)
+
+        if enhancement_result is None:
+            as_of_date_obj = to_date_object(as_of_date)
+
+            # Initialize engines
+            pos_engine = ProbabilityOfSuccessEngine()
+            regime_engine = RegimeDetectionEngine()
+            si_engine = ShortInterestSignalEngine() if short_interest_data else None
+
+            # Step 1: Detect market regime
+            regime_result = None
+            if market_snapshot:
+                try:
+                    regime_result = regime_engine.detect_regime(
+                        vix_current=Decimal(str(market_snapshot.get("vix", "20"))),
+                        xbi_vs_spy_30d=Decimal(str(market_snapshot.get("xbi_vs_spy_30d", "0"))),
+                        fed_rate_change_3m=Decimal(str(market_snapshot.get("fed_rate_change_3m", "0")))
+                            if market_snapshot.get("fed_rate_change_3m") is not None else None,
+                        as_of_date=as_of_date_obj
+                    )
+                    logger.info(f"  Regime: {regime_result['regime']} (confidence: {regime_result['confidence']})")
+                except Exception as e:
+                    logger.warning(f"  Regime detection failed: {e}")
+                    regime_result = {"regime": "UNKNOWN", "signal_adjustments": {}}
+            else:
+                regime_result = {"regime": "UNKNOWN", "signal_adjustments": {}}
+                logger.info("  Regime: UNKNOWN (no market snapshot)")
+
+            # Step 2: Calculate PoS scores for each ticker
+            # Build universe data from trial records (extract stage and indication)
+            pos_universe = []
+            ticker_stage_map = {}  # ticker -> {stage, indication}
+
+            # Build stage/indication map from clinical results
+            for clinical_score in m4_result.get("scores", []):
+                ticker = clinical_score.get("ticker")
+                if ticker:
+                    ticker_stage_map[ticker] = {
+                        "base_stage": clinical_score.get("lead_phase", "phase_2"),
+                        "indication": clinical_score.get("lead_indication"),
+                    }
+
+            for ticker in active_tickers:
+                stage_info = ticker_stage_map.get(ticker, {"base_stage": "phase_2"})
+                pos_universe.append({
+                    "ticker": ticker,
+                    "base_stage": stage_info.get("base_stage", "phase_2"),
+                    "indication": stage_info.get("indication"),
+                })
+
+            pos_result = pos_engine.score_universe(pos_universe, as_of_date_obj)
+            logger.info(f"  PoS scored: {pos_result['diagnostic_counts']['total_scored']}, "
+                        f"Indication coverage: {pos_result['diagnostic_counts']['indication_coverage_pct']}")
+
+            # Step 3: Calculate short interest signals (if data available)
+            si_result = None
+            if si_engine and short_interest_data:
+                # Build SI universe from short interest data
+                si_map = {r.get("ticker"): r for r in short_interest_data}
+                si_universe = []
+                for ticker in active_tickers:
+                    si_info = si_map.get(ticker, {})
+                    si_universe.append({
+                        "ticker": ticker,
+                        "short_interest_pct": si_info.get("short_interest_pct"),
+                        "days_to_cover": si_info.get("days_to_cover"),
+                        "short_interest_change_pct": si_info.get("short_interest_change_pct"),
+                        "institutional_long_pct": si_info.get("institutional_long_pct"),
+                    })
+
+                si_result = si_engine.score_universe(si_universe, as_of_date_obj)
+                logger.info(f"  SI scored: {si_result['diagnostic_counts']['total_scored']}, "
+                            f"Coverage: {si_result['diagnostic_counts']['data_coverage_pct']}")
+
+            # Assemble enhancement result
+            enhancement_result = {
+                "regime": regime_result,
+                "pos_scores": pos_result,
+                "short_interest_scores": si_result,
+                "provenance": {
+                    "module": "enhancements",
+                    "version": "1.0.0",
+                    "as_of_date": as_of_date,
+                    "pos_engine_version": pos_engine.VERSION,
+                    "regime_engine_version": regime_engine.VERSION,
+                }
+            }
+
+            if checkpoint_dir:
+                save_checkpoint(checkpoint_dir, "enhancements", as_of_date, enhancement_result)
+    else:
+        logger.info("[5.5/7] Enhancement Layer: SKIPPED (not enabled)")
+
+    # ========================================================================
+    # End Enhancement Layer
+    # ========================================================================
+
     # Module 5: Composite ranking
     logger.info("[6/7] Module 5: Composite ranking...")
     m5_result = None
-    if resume_index > 4 and checkpoint_dir:
+    if resume_index > 5 and checkpoint_dir:
         m5_result = load_checkpoint(checkpoint_dir, "module_5", as_of_date)
 
     if m5_result is None:
@@ -636,6 +787,7 @@ def run_screening_pipeline(
             "version": VERSION,
             "deterministic_timestamp": as_of_date + DETERMINISTIC_TIMESTAMP_SUFFIX,
             "input_hashes": dict(sorted(content_hashes.items())),
+            "enhancements_enabled": enable_enhancements,
         },
         "module_1_universe": m1_result,
         "module_2_financial": m2_result,
@@ -651,6 +803,20 @@ def run_screening_pipeline(
             "severe_negatives": diag3.get('severe_negatives', 0),
         }
     }
+
+    # Add enhancement results if enabled
+    if enhancement_result:
+        results["enhancements"] = enhancement_result
+        # Add enhancement summary info
+        regime = enhancement_result.get("regime", {})
+        results["summary"]["regime"] = regime.get("regime", "UNKNOWN")
+        results["summary"]["regime_confidence"] = str(regime.get("confidence", "0"))
+        if enhancement_result.get("pos_scores"):
+            pos_diag = enhancement_result["pos_scores"].get("diagnostic_counts", {})
+            results["summary"]["pos_indication_coverage"] = pos_diag.get("indication_coverage_pct", "N/A")
+        if enhancement_result.get("short_interest_scores"):
+            si_diag = enhancement_result["short_interest_scores"].get("diagnostic_counts", {})
+            results["summary"]["short_interest_coverage"] = si_diag.get("data_coverage_pct", "N/A")
     
     # Force deterministic timestamps for byte-identical outputs
     deterministic_ts = as_of_date + DETERMINISTIC_TIMESTAMP_SUFFIX
@@ -790,7 +956,7 @@ Module 3 Catalyst Detection:
     parser.add_argument(
         "--resume-from",
         type=str,
-        choices=["module_1", "module_2", "module_3", "module_4", "module_5"],
+        choices=["module_1", "module_2", "module_3", "module_4", "enhancements", "module_5"],
         default=None,
         help="Resume pipeline from specified module (requires --checkpoint-dir).",
     )
@@ -813,7 +979,21 @@ Module 3 Catalyst Detection:
         action="store_true",
         help="Enable co-invest overlay (requires coinvest_signals.json in data-dir)",
     )
-    
+
+    parser.add_argument(
+        "--enable-enhancements",
+        action="store_true",
+        help="Enable enhancement modules (PoS, Short Interest, Regime Detection). "
+             "Requires market_snapshot.json for regime detection.",
+    )
+
+    parser.add_argument(
+        "--enable-short-interest",
+        action="store_true",
+        help="Enable short interest signals (requires short_interest.json in data-dir). "
+             "Implied by --enable-enhancements if data is available.",
+    )
+
     parser.add_argument(
         "--enable-bootstrap",
         action="store_true",
@@ -889,6 +1069,8 @@ Module 3 Catalyst Detection:
             data_dir=args.data_dir,
             universe_tickers=args.tickers,
             enable_coinvest=args.enable_coinvest,
+            enable_enhancements=args.enable_enhancements,
+            enable_short_interest=args.enable_short_interest,
             checkpoint_dir=args.checkpoint_dir,
             resume_from=args.resume_from,
             audit_log_path=args.audit_log,
@@ -925,6 +1107,12 @@ Module 3 Catalyst Detection:
         logger.info(f"Final ranked:       {summary['final_ranked']}")
         logger.info(f"Catalyst events:    {summary.get('catalyst_events', 0)}")
         logger.info(f"Severe negatives:   {summary.get('severe_negatives', 0)}")
+        if args.enable_enhancements:
+            logger.info(f"Regime:             {summary.get('regime', 'N/A')}")
+            logger.info(f"Regime confidence:  {summary.get('regime_confidence', 'N/A')}")
+            logger.info(f"PoS coverage:       {summary.get('pos_indication_coverage', 'N/A')}")
+            if args.enable_short_interest or summary.get('short_interest_coverage'):
+                logger.info(f"SI coverage:        {summary.get('short_interest_coverage', 'N/A')}")
         if args.checkpoint_dir:
             logger.info(f"Checkpoints:        {args.checkpoint_dir}")
         if args.audit_log:
