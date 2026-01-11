@@ -66,6 +66,7 @@ try:
     from pos_engine import ProbabilityOfSuccessEngine
     from short_interest_engine import ShortInterestSignalEngine
     from regime_engine import RegimeDetectionEngine
+    from indication_mapper import IndicationMapper
     HAS_ENHANCEMENTS = True
 except ImportError:
     HAS_ENHANCEMENTS = False
@@ -671,7 +672,7 @@ def run_screening_pipeline(
             pos_universe = []
             ticker_stage_map = {}  # ticker -> {stage, indication}
 
-            # Build stage/indication map from clinical results
+            # Build stage map from clinical results
             for clinical_score in m4_result.get("scores", []):
                 ticker = clinical_score.get("ticker")
                 if ticker:
@@ -680,12 +681,25 @@ def run_screening_pipeline(
                         "indication": clinical_score.get("lead_indication"),
                     }
 
+            # Use IndicationMapper to auto-detect indications from trial conditions
+            indication_mapper = IndicationMapper()
+            indication_map = indication_mapper.map_universe(
+                tickers=active_tickers,
+                trial_records=trial_records,
+                as_of_date=as_of_date_obj
+            )
+            logger.info(f"  Indication mapping: {len(indication_map)} tickers mapped")
+
             for ticker in active_tickers:
                 stage_info = ticker_stage_map.get(ticker, {"base_stage": "phase_2"})
+                # Get indication from mapper (auto-detected from conditions)
+                mapped_indication = indication_map.get(ticker.upper(), {}).get("indication")
+                # Fall back to clinical data if mapper returns None
+                final_indication = mapped_indication or stage_info.get("indication")
                 pos_universe.append({
                     "ticker": ticker,
                     "base_stage": stage_info.get("base_stage", "phase_2"),
-                    "indication": stage_info.get("indication"),
+                    "indication": final_indication,
                 })
 
             pos_result = pos_engine.score_universe(pos_universe, as_of_date_obj)

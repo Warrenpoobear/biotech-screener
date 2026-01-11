@@ -1,0 +1,107 @@
+{
+  "provenance": {
+    "source": "Manual curation based on BIO 2011-2020 benchmark categories",
+    "version": "1.0.0",
+    "as_of_date": "2026-01-11",
+    "notes": "Maps clinical trial conditions to BIO benchmark indication categories"
+  },
+  "condition_patterns": {
+    "oncology": [
+      "cancer", "carcinoma", "tumor", "tumour", "leukemia", "leukaemia", "lymphoma",
+      "melanoma", "sarcoma", "myeloma", "glioma", "glioblastoma", "neuroblastoma",
+      "mesothelioma", "adenocarcinoma", "neoplasm", "malignant", "metastatic",
+      "oncolog", "chemotherapy", "nsclc", "sclc", "hcc", "rcc", "aml", "all", "cll",
+      "dlbcl", "hodgkin", "non-hodgkin", "solid tumor", "hematologic", "blast"
+    ],
+    "rare_disease": [
+      "orphan", "rare disease", "ultra-rare", "duchenne", "huntington", "spinal muscular",
+      "cystic fibrosis", "hemophilia", "thalassemia", "sickle cell", "gaucher",
+      "fabry", "pompe", "niemann-pick", "mucopolysaccharidosis", "pku", "phenylketonuria",
+      "amyloidosis", "porphyria", "epidermolysis", "progeria", "ataxia", "dystrophy",
+      "als", "amyotrophic lateral", "myasthenia", "pemphigus", "pemphigoid"
+    ],
+    "infectious_disease": [
+      "infection", "infectious", "viral", "bacterial", "fungal", "parasitic",
+      "hiv", "aids", "hepatitis", "covid", "sars", "influenza", "flu", "rsv",
+      "tuberculosis", "malaria", "sepsis", "pneumonia", "meningitis", "encephalitis",
+      "herpes", "cytomegalovirus", "cmv", "ebola", "zika", "dengue", "vaccine"
+    ],
+    "cardiovascular": [
+      "cardiovascular", "cardiac", "heart", "coronary", "arterial", "venous",
+      "hypertension", "hypotension", "arrhythmia", "fibrillation", "tachycardia",
+      "bradycardia", "infarction", "stroke", "thrombosis", "embolism", "aneurysm",
+      "atherosclerosis", "cardiomyopathy", "angina", "ischemia", "vascular"
+    ],
+    "cns": [
+      "neurological", "neurologic", "brain", "spinal", "alzheimer", "parkinson",
+      "dementia", "epilepsy", "seizure", "migraine", "headache", "neuropathy",
+      "multiple sclerosis", "depression", "anxiety", "schizophrenia", "bipolar",
+      "psychosis", "adhd", "autism", "cognitive", "neurodegenerative", "cns"
+    ],
+    "autoimmune": [
+      "autoimmune", "immune", "inflammatory", "rheumatoid", "lupus", "psoriasis",
+      "psoriatic", "crohn", "colitis", "ibd", "celiac", "sjogren", "vasculitis",
+      "scleroderma", "dermatomyositis", "itp", "thrombocytopenia", "ankylosing",
+      "spondylitis", "arthritis", "atopic dermatitis", "eczema", "alopecia"
+    ],
+    "metabolic": [
+      "metabolic", "diabetes", "diabetic", "obesity", "obese", "lipid", "cholesterol",
+      "triglyceride", "nash", "nafld", "fatty liver", "gout", "hyperuricemia",
+      "thyroid", "adrenal", "pituitary", "growth hormone", "osteoporosis"
+    ],
+    "respiratory": [
+      "respiratory", "pulmonary", "lung", "asthma", "copd", "bronchitis",
+      "emphysema", "fibrosis", "pulmonary hypertension", "ards", "sleep apnea"
+    ],
+    "ophthalmology": [
+      "eye", "ocular", "ophthalmic", "retina", "retinal", "macular", "glaucoma",
+      "cataract", "uveitis", "diabetic retinopathy", "amd", "dry eye", "cornea"
+    ],
+    "gi_hepatology": [
+      "gastro", "hepat", "liver", "intestin", "bowel", "colon", "stomach",
+      "pancrea", "biliary", "cirrhosis", "esophag", "gerd", "ulcer"
+    ]
+  },
+  "ticker_overrides": {
+    "MRNA": "infectious_disease",
+    "BNTX": "infectious_disease",
+    "NVAX": "infectious_disease",
+    "VRTX": "rare_disease",
+    "REGN": "ophthalmology",
+    "BIIB": "cns",
+    "ALNY": "rare_disease",
+    "BMRN": "rare_disease",
+    "SGEN": "oncology",
+    "INCY": "oncology",
+    "EXEL": "oncology",
+    "JAZZ": "oncology",
+    "ARGX": "autoimmune",
+    "IONS": "rare_disease",
+    "CRSP": "rare_disease",
+    "BEAM": "rare_disease",
+    "EDIT": "rare_disease",
+    "NTLA": "rare_disease",
+    "SRPT": "rare_disease",
+    "SAREPTA": "rare_disease",
+    "RARE": "rare_disease",
+    "BLUE": "rare_disease",
+    "BLUEBIRD": "rare_disease"
+  },
+  "notes": {
+    "matching_logic": "First check ticker_overrides, then pattern match conditions against condition_patterns",
+    "default_indication": "other",
+    "bio_benchmark_categories": [
+      "oncology",
+      "rare_disease",
+      "infectious_disease",
+      "cardiovascular",
+      "cns",
+      "autoimmune",
+      "metabolic",
+      "respiratory",
+      "ophthalmology",
+      "gi_hepatology",
+      "other"
+    ]
+  }
+}
