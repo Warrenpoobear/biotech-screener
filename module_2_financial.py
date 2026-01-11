@@ -7,15 +7,24 @@ Scores tickers on financial health using:
 2. Dilution risk (30% weight)
 3. Liquidity (20% weight)
 
+Severity levels based on financial health:
+- SEV3: Runway < 6 months (critical)
+- SEV2: Runway 6-12 months (warning)
+- SEV1: Runway 12-18 months (caution)
+- NONE: Runway >= 18 months (healthy)
+
 Usage:
     from module_2_financial import run_module_2
     results = run_module_2(universe, financial_data, market_data)
 """
 
 import json
+import logging
 from pathlib import Path
 import math
 from typing import Dict, List, Optional
+
+logger = logging.getLogger(__name__)
 
 
 def calculate_cash_runway(financial_data: Dict, market_data: Dict) -> tuple:
@@ -106,17 +115,17 @@ def calculate_dilution_risk(financial_data: Dict, market_data: Dict, runway_mont
 
 def score_liquidity(market_data: Dict) -> float:
     """Score based on market cap and trading volume"""
-    
+
     market_cap = market_data.get('market_cap', 0) or 0
     avg_volume = market_data.get('avg_volume', 0) or 0
     price = market_data.get('price', 0) or 0
-    
+
     if not all([market_cap, avg_volume, price]):
         return 50.0
-    
+
     # Dollar volume
     dollar_volume = avg_volume * price
-    
+
     # Market cap tiers (60% weight)
     if market_cap > 10e9:
         mcap_score = 100.0  # >$10B
@@ -128,7 +137,7 @@ def score_liquidity(market_data: Dict) -> float:
         mcap_score = 40.0   # $200M-500M
     else:
         mcap_score = 20.0   # <$200M
-    
+
     # Volume tiers (40% weight)
     if dollar_volume > 10e6:
         volume_score = 100.0  # $10M+
@@ -140,23 +149,51 @@ def score_liquidity(market_data: Dict) -> float:
         volume_score = 40.0   # $500K-1M
     else:
         volume_score = 20.0   # <$500K
-    
+
     # Composite
     return mcap_score * 0.6 + volume_score * 0.4
 
 
+def determine_financial_severity(runway_months: Optional[float], cash_to_mcap: Optional[float]) -> str:
+    """
+    Determine severity level based on financial health metrics.
+
+    Args:
+        runway_months: Estimated months of cash runway
+        cash_to_mcap: Cash to market cap ratio
+
+    Returns:
+        Severity string: "none", "sev1", "sev2", or "sev3"
+    """
+    # If no runway data, check cash/mcap ratio
+    if runway_months is None:
+        if cash_to_mcap is not None and cash_to_mcap < 0.05:
+            return "sev2"  # Very low cash relative to market cap
+        return "none"  # Unknown - no penalty
+
+    # Severity based on runway
+    if runway_months < 6:
+        return "sev3"  # Critical - less than 6 months
+    elif runway_months < 12:
+        return "sev2"  # Warning - 6-12 months
+    elif runway_months < 18:
+        return "sev1"  # Caution - 12-18 months
+    else:
+        return "none"  # Healthy - 18+ months
+
+
 def score_financial_health(ticker: str, financial_data: Dict, market_data: Dict) -> Dict:
     """Main scoring function for Module 2"""
-    
+
     # Component 1: Cash Runway (50%)
     runway_months, burn_rate, runway_score = calculate_cash_runway(financial_data, market_data)
-    
+
     # Component 2: Dilution Risk (30%)
     cash_to_mcap, dilution_score = calculate_dilution_risk(financial_data, market_data, runway_months)
-    
+
     # Component 3: Liquidity (20%)
     liquidity_score = score_liquidity(market_data)
-    
+
     # Composite score
     if all([runway_score is not None, dilution_score is not None, liquidity_score is not None]):
         composite = runway_score * 0.50 + dilution_score * 0.30 + liquidity_score * 0.20
@@ -164,7 +201,19 @@ def score_financial_health(ticker: str, financial_data: Dict, market_data: Dict)
     else:
         composite = 50.0
         has_data = False
-    
+
+    # Determine severity based on financial health
+    severity = determine_financial_severity(runway_months, cash_to_mcap)
+
+    # Build flags list
+    flags = []
+    if runway_months is not None and runway_months < 12:
+        flags.append("low_runway")
+    if cash_to_mcap is not None and cash_to_mcap < 0.10:
+        flags.append("low_cash_ratio")
+    if not has_data:
+        flags.append("missing_financial_data")
+
     return {
         "ticker": ticker,
         "financial_normalized": float(composite),
@@ -174,46 +223,44 @@ def score_financial_health(ticker: str, financial_data: Dict, market_data: Dict)
         "liquidity_score": float(liquidity_score) if liquidity_score else None,
         "cash_to_mcap": float(cash_to_mcap) if cash_to_mcap else None,
         "monthly_burn": float(burn_rate) if burn_rate else None,
-        "has_financial_data": has_data
+        "has_financial_data": has_data,
+        "severity": severity,
+        "flags": flags,
     }
 
 def run_module_2(universe: List[str], financial_data: List[Dict], market_data: List[Dict]) -> List[Dict]:
     """
     Main entry point for Module 2 financial health scoring.
-    
+
     Args:
         universe: List of tickers to score
         financial_data: List of dicts from financial_data.json
         market_data: List of dicts from market_data.json
-    
+
     Returns:
         List of dicts with financial health scores
     """
-    
-    # DEBUG
-    print(f"\n=== DEBUG run_module_2 ===")
-    print(f"Universe: {len(universe)} tickers")
-    print(f"Financial data: {len(financial_data)} records")
-    print(f"Market data: {len(market_data)} records")
-    if financial_data:
-        print(f"Sample financial keys: {list(financial_data[0].keys())}")
-        print(f"Sample ticker: {financial_data[0].get('ticker')}")
-        print(f"Sample Cash: {financial_data[0].get('Cash')}")
-        print(f"Sample NetIncome: {financial_data[0].get('NetIncome')}")
-    print(f"First 5 universe tickers: {universe[:5]}")
-    print("="*50)
-    
+    logger.info(f"Module 2: Scoring {len(universe)} tickers")
+    logger.debug(f"Financial records: {len(financial_data)}, Market records: {len(market_data)}")
+
     # Create lookup dicts
     fin_lookup = {f['ticker']: f for f in financial_data if 'ticker' in f}
     mkt_lookup = {m['ticker']: m for m in market_data if 'ticker' in m}
-    
+
     results = []
     for ticker in universe:
         fin_data = fin_lookup.get(ticker, {})
         mkt_data = mkt_lookup.get(ticker, {})
         score_result = score_financial_health(ticker, fin_data, mkt_data)
         results.append(score_result)
-    
+
+    # Log severity distribution
+    severity_counts = {}
+    for r in results:
+        sev = r.get("severity", "none")
+        severity_counts[sev] = severity_counts.get(sev, 0) + 1
+    logger.info(f"Module 2 severity distribution: {severity_counts}")
+
     return results
 
 

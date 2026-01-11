@@ -318,77 +318,48 @@ def main():
 if __name__ == "__main__":
     main()
 
-# Save original function
-_compute_module_3_catalyst_original = compute_module_3_catalyst
+# Legacy wrapper for backwards compatibility with old API
+# DEPRECATED: Use compute_module_3_catalyst() directly with proper signature
+def compute_module_3_catalyst_legacy(trial_records=None, active_tickers=None, as_of_date=None, data_dir=None, **kwargs):
+    """
+    DEPRECATED: Legacy wrapper for old API signature.
 
-# Create compatible wrapper - FIXED to return real diagnostics
-def compute_module_3_catalyst(trial_records=None, active_tickers=None, as_of_date=None, data_dir=None, **kwargs):
-    """Wrapper for API mismatch - now returns REAL diagnostic counts from Module 3"""
+    Use compute_module_3_catalyst() directly with:
+        - trial_records_path: Path to trial_records.json
+        - state_dir: Path to ctgov_state directory
+        - active_tickers: Set of ticker strings
+        - as_of_date: date object
+        - output_dir: Optional output directory
+    """
+    import warnings
+    warnings.warn(
+        "compute_module_3_catalyst_legacy() is deprecated. "
+        "Use compute_module_3_catalyst() with the standard signature.",
+        DeprecationWarning,
+        stacklevel=2
+    )
+
     tickers = active_tickers or []
-    
-    # Convert as_of_date to string if it's a date object
-    if hasattr(as_of_date, 'isoformat'):
-        as_of_date_str = as_of_date.isoformat()
+
+    # Convert as_of_date to date object if string
+    if isinstance(as_of_date, str):
+        as_of_date_obj = date.fromisoformat(as_of_date)
+    elif hasattr(as_of_date, 'isoformat'):
+        as_of_date_obj = as_of_date
     else:
-        as_of_date_str = str(as_of_date) if as_of_date else '2026-01-07'
-    
-    # Check if catalyst_events file exists; if not, run the real pipeline
-    summaries_list = []
-    diagnostic_counts = None
-    events_file = (kwargs.get("output_dir") or data_dir or Path(".")) / f"catalyst_events_{as_of_date_str}.json"
-    print(f"[DEBUG] Looking for catalyst events at: {events_file}")
-    print(f"[DEBUG] File exists: {events_file.exists()}")
-    
-    # If file doesn't exist, run the real Module 3 pipeline
-    if not events_file.exists() and data_dir:
-        print("[DEBUG] Catalyst events not found - running Module 3 pipeline...")
-        try:
-            from datetime import date as _date
-            _as_of = _date.fromisoformat(as_of_date_str)
-            _result = _compute_module_3_catalyst_original(
-                trial_records_path=Path(data_dir) / "trial_records.json",
-                state_dir=Path(data_dir) / "ctgov_state",
-                active_tickers=set(tickers),
-                as_of_date=_as_of,
-                output_dir=Path(data_dir)
-            )
-            diagnostic_counts = _result.get('diagnostic_counts')
-            print(f"[DEBUG] Module 3 pipeline complete: {diagnostic_counts}")
-        except Exception as e:
-            print(f"Warning: Could not run Module 3 pipeline: {e}")
-            import traceback
-            traceback.print_exc()
-    
-    # Load summaries from the JSON file
-    if events_file.exists():
-        try:
-            import json
-            with open(events_file, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-                if isinstance(data, dict):
-                    summaries_list = data.get('summaries', [])
-                    # Get diagnostic counts from the file
-                    if diagnostic_counts is None:
-                        diagnostic_counts = data.get('diagnostic_counts')
-                elif isinstance(data, list):
-                    summaries_list = data
-        except Exception as e:
-            print(f"Warning: Could not load catalyst summaries: {e}")
-    
-    # Convert list to dict keyed by ticker
-    summaries = {s['ticker']: s for s in summaries_list if 'ticker' in s}
-    
-    # Use real diagnostic counts, or compute from summaries if not available
-    if diagnostic_counts is None:
-        diagnostic_counts = {
-            'events_detected': sum(len(s.get('events', [])) for s in summaries.values()),
-            'severe_negatives': sum(1 for s in summaries.values() if s.get('severe_negative_flag')),
-            'tickers_with_events': len([s for s in summaries.values() if s.get('events')]),
-            'tickers_analyzed': len(tickers)
-        }
-    
-    return {
-        'summaries': summaries,
-        'diagnostic_counts': diagnostic_counts,
-        'as_of_date': as_of_date_str
-    }
+        as_of_date_obj = date.fromisoformat('2026-01-07')
+
+    # Determine paths
+    data_path = Path(data_dir) if data_dir else Path(".")
+    trial_records_path = kwargs.get("trial_records_path") or data_path / "trial_records.json"
+    state_dir = kwargs.get("state_dir") or data_path / "ctgov_state"
+    output_dir = kwargs.get("output_dir") or data_path
+
+    # Call the real function with correct signature
+    return compute_module_3_catalyst(
+        trial_records_path=Path(trial_records_path),
+        state_dir=Path(state_dir),
+        active_tickers=set(tickers),
+        as_of_date=as_of_date_obj,
+        output_dir=Path(output_dir)
+    )
