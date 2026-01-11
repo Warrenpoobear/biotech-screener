@@ -36,15 +36,15 @@ class TestModule1Universe:
 class TestModule2Financial:
     def test_financial_scoring(self):
         records = [
-            {"ticker": "TEST", "cash_mm": 1000, "debt_mm": 100, "burn_rate_mm": 30, 
+            {"ticker": "TEST", "cash_mm": 1000, "debt_mm": 100, "burn_rate_mm": 30,
              "market_cap_mm": 5000, "source_date": "2023-12-30"},
         ]
         result = compute_module_2_financial(records, ["TEST"], "2024-01-01")
-        
+
         assert len(result["scores"]) == 1
         score = result["scores"][0]
         assert score["ticker"] == "TEST"
-        assert float(score["financial_score"]) > 0
+        assert float(score["financial_normalized"]) > 0
         assert float(score["runway_months"]) > 0
     
     def test_pit_filtering(self):
