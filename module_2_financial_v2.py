@@ -28,8 +28,29 @@ Severity levels:
 - SEV1: Runway 12-18 months (caution)
 - NONE: Runway >= 18 months (healthy)
 
+DETERMINISM CONTRACT:
+----------------------
+This module guarantees deterministic output for identical inputs:
+1. All arithmetic uses Decimal with explicit quantization rules
+2. Hash computation uses stable key ordering (sorted dict keys)
+3. Hash includes: ticker, composite, runway_months, cash_to_mcap, burn_source, inputs_used
+4. No floating-point intermediate calculations
+5. No datetime.now() or random calls
+6. Output field ordering is stable
+
+To verify determinism: same inputs MUST produce identical determinism_hash values.
+
+BREAKING CHANGES FROM v1:
+-------------------------
+- Output numeric fields are now floats (were strings in early v2 drafts)
+- liquidity_gate is now bool (True=gated) for back-compat; use liquidity_gate_status for enum
+- Added: burn_rejection_reasons, burn_to_mcap, financing_pressure_score, dilution_risk_bucket
+- Added: share_count_growth, confidence, determinism_hash, schema_version
+- Added: dollar_adv (alias), liquidity_gate_status (enum)
+
 Author: Wake Robin Capital Management
 Version: 2.0.0
+Last Modified: 2026-01-11
 """
 from __future__ import annotations
 
@@ -187,6 +208,7 @@ class BurnResult:
     quarters_used: int = 1
     raw_value: Optional[Decimal] = None
     ytd_quarters: Optional[int] = None
+    rejection_reasons: Dict[str, str] = field(default_factory=dict)  # source -> reason
 
 
 def _extract_quarterly_burns(financial_data: Dict) -> List[Decimal]:
@@ -223,8 +245,10 @@ def calculate_burn_rate_v2(financial_data: Dict) -> BurnResult:
     7. R&D proxy (R&D * 1.5)
 
     Returns:
-        BurnResult with monthly_burn, source, confidence, period
+        BurnResult with monthly_burn, source, confidence, period, rejection_reasons
     """
+    rejection_reasons: Dict[str, str] = {}
+
     # === CHECK PROFITABILITY FIRST ===
     cfo = _to_decimal(financial_data.get('CFO'))
     cfo_ops = _to_decimal(financial_data.get('CashFlowFromOperations'))
@@ -241,6 +265,7 @@ def calculate_burn_rate_v2(financial_data: Dict) -> BurnResult:
             burn_confidence=BurnConfidence.HIGH,
             burn_period="na",
             raw_value=effective_cfo or net_income,
+            rejection_reasons={"all": "company_profitable"},
         )
 
     # === PRIORITY 1: CFO QUARTERLY ===
@@ -256,7 +281,12 @@ def calculate_burn_rate_v2(financial_data: Dict) -> BurnResult:
             burn_confidence=BurnConfidence.HIGH,
             burn_period="quarterly",
             raw_value=effective_cfo_q,
+            rejection_reasons=rejection_reasons,
         )
+    elif effective_cfo_q is None:
+        rejection_reasons["CFO_quarterly"] = "missing"
+    else:
+        rejection_reasons["CFO_quarterly"] = "non_negative"
 
     # === PRIORITY 2: CFO YTD WITH DIFFERENCING ===
     cfo_ytd = _to_decimal(financial_data.get('CFO_YTD'))
@@ -279,6 +309,7 @@ def calculate_burn_rate_v2(financial_data: Dict) -> BurnResult:
                     burn_period=f"ytd_diff_{quarters_in_ytd}q",
                     raw_value=quarterly_diff,
                     ytd_quarters=quarters_in_ytd,
+                    rejection_reasons=rejection_reasons,
                 )
 
         # Use full YTD
@@ -290,7 +321,12 @@ def calculate_burn_rate_v2(financial_data: Dict) -> BurnResult:
             burn_period=f"ytd_{quarters_in_ytd}q",
             raw_value=cfo_ytd,
             ytd_quarters=quarters_in_ytd,
+            rejection_reasons=rejection_reasons,
         )
+    elif cfo_ytd is None:
+        rejection_reasons["CFO_YTD"] = "missing"
+    else:
+        rejection_reasons["CFO_YTD"] = "non_negative"
 
     # === PRIORITY 3: CFO ANNUAL ===
     if effective_cfo is not None and effective_cfo < Decimal("0"):
@@ -302,7 +338,12 @@ def calculate_burn_rate_v2(financial_data: Dict) -> BurnResult:
             burn_confidence=BurnConfidence.HIGH,
             burn_period="annual",
             raw_value=effective_cfo,
+            rejection_reasons=rejection_reasons,
         )
+    elif effective_cfo is None:
+        rejection_reasons["CFO_annual"] = "missing"
+    else:
+        rejection_reasons["CFO_annual"] = "non_negative"
 
     # === PRIORITY 4: TRAILING 4-QUARTER AVERAGE ===
     quarterly_burns = _extract_quarterly_burns(financial_data)
@@ -317,7 +358,10 @@ def calculate_burn_rate_v2(financial_data: Dict) -> BurnResult:
             burn_period=f"{quarters_used}q_avg",
             quarters_used=quarters_used,
             raw_value=avg_quarterly_burn,
+            rejection_reasons=rejection_reasons,
         )
+    else:
+        rejection_reasons["CFO_trailing_4q"] = "no_history"
 
     # === PRIORITY 5: FCF ===
     fcf_q = _to_decimal(financial_data.get('FCF_quarterly'))
@@ -336,7 +380,12 @@ def calculate_burn_rate_v2(financial_data: Dict) -> BurnResult:
             burn_confidence=BurnConfidence.HIGH,
             burn_period="quarterly",
             raw_value=effective_fcf_q,
+            rejection_reasons=rejection_reasons,
         )
+    elif effective_fcf_q is None:
+        rejection_reasons["FCF_quarterly"] = "missing"
+    else:
+        rejection_reasons["FCF_quarterly"] = "non_negative"
 
     if effective_fcf is not None and effective_fcf < Decimal("0"):
         monthly_burn = abs(effective_fcf) / Decimal("12")
@@ -346,7 +395,12 @@ def calculate_burn_rate_v2(financial_data: Dict) -> BurnResult:
             burn_confidence=BurnConfidence.HIGH,
             burn_period="annual",
             raw_value=effective_fcf,
+            rejection_reasons=rejection_reasons,
         )
+    elif effective_fcf is None:
+        rejection_reasons["FCF_annual"] = "missing"
+    else:
+        rejection_reasons["FCF_annual"] = "non_negative"
 
     # === PRIORITY 6: NET INCOME (FALLBACK) ===
     if net_income is not None and net_income < Decimal("0"):
@@ -358,7 +412,12 @@ def calculate_burn_rate_v2(financial_data: Dict) -> BurnResult:
             burn_confidence=BurnConfidence.MEDIUM,
             burn_period="quarterly",
             raw_value=net_income,
+            rejection_reasons=rejection_reasons,
         )
+    elif net_income is None:
+        rejection_reasons["NetIncome"] = "missing"
+    else:
+        rejection_reasons["NetIncome"] = "non_negative"
 
     # === PRIORITY 7: R&D PROXY (LAST RESORT) ===
     rd = _to_decimal(financial_data.get('R&D'))
@@ -375,7 +434,12 @@ def calculate_burn_rate_v2(financial_data: Dict) -> BurnResult:
             burn_confidence=BurnConfidence.LOW,
             burn_period="estimated",
             raw_value=effective_rd,
+            rejection_reasons=rejection_reasons,
         )
+    elif effective_rd is None:
+        rejection_reasons["R&D_proxy"] = "missing"
+    else:
+        rejection_reasons["R&D_proxy"] = "zero_or_negative"
 
     # === NO DATA ===
     return BurnResult(
@@ -383,6 +447,7 @@ def calculate_burn_rate_v2(financial_data: Dict) -> BurnResult:
         burn_source=BurnSource.NONE,
         burn_confidence=BurnConfidence.NONE,
         burn_period="none",
+        rejection_reasons=rejection_reasons,
     )
 
 
@@ -464,6 +529,7 @@ class RunwayResult:
     burn_confidence: BurnConfidence
     burn_period: str
     quarters_used: int
+    burn_rejection_reasons: Dict[str, str] = field(default_factory=dict)
 
 
 def calculate_runway(financial_data: Dict, market_data: Dict) -> RunwayResult:
@@ -489,6 +555,7 @@ def calculate_runway(financial_data: Dict, market_data: Dict) -> RunwayResult:
         burn_confidence=burn.burn_confidence,
         burn_period=burn.burn_period,
         quarters_used=burn.quarters_used,
+        burn_rejection_reasons=burn.rejection_reasons,
     )
 
     # Check for profitability
@@ -503,6 +570,7 @@ def calculate_runway(financial_data: Dict, market_data: Dict) -> RunwayResult:
             burn_confidence=burn.burn_confidence,
             burn_period=burn.burn_period,
             quarters_used=burn.quarters_used,
+            burn_rejection_reasons=burn.rejection_reasons,
         )
 
     # Calculate runway if we have burn data
@@ -521,6 +589,7 @@ def calculate_runway(financial_data: Dict, market_data: Dict) -> RunwayResult:
                 burn_confidence=burn.burn_confidence,
                 burn_period=burn.burn_period,
                 quarters_used=burn.quarters_used,
+                burn_rejection_reasons=burn.rejection_reasons,
             )
 
     return default_result
@@ -943,20 +1012,35 @@ def score_financial_health_v2(
     if dilution.share_count_growth is not None and dilution.share_count_growth > Decimal("0.10"):
         flags.append("share_dilution")
 
-    # Compute determinism hash
-    hash_input = f"{ticker}|{composite}|{runway.runway_months}|{dilution.cash_to_mcap}"
+    # Compute determinism hash with stable ordering
+    # Include: ticker, composite, runway, cash_to_mcap, burn_source, inputs_used (sorted keys)
+    inputs_sorted = "|".join(f"{k}={v}" for k, v in sorted(quality.inputs_used.items()))
+    hash_input = (
+        f"{ticker}|"
+        f"{composite}|"
+        f"{runway.runway_months}|"
+        f"{dilution.cash_to_mcap}|"
+        f"{runway.burn_source.value}|"
+        f"{inputs_sorted}"
+    )
     determinism_hash = hashlib.sha256(hash_input.encode()).hexdigest()[:16]
 
+    # Helper for safe float conversion (back-compat)
+    def _to_float(val):
+        if val is None:
+            return None
+        return float(val)
+
     return {
-        # Core fields (API preserved)
+        # Core fields (API preserved - floats for back-compat)
         "ticker": ticker,
-        "financial_normalized": str(composite),
-        "runway_months": str(runway.runway_months) if runway.runway_months is not None else None,
-        "runway_score": str(runway.runway_score),
-        "dilution_score": str(dilution.dilution_score),
-        "liquidity_score": str(liquidity.liquidity_score),
-        "cash_to_mcap": str(dilution.cash_to_mcap) if dilution.cash_to_mcap is not None else None,
-        "monthly_burn": str(runway.monthly_burn) if runway.monthly_burn is not None else None,
+        "financial_normalized": _to_float(composite),
+        "runway_months": _to_float(runway.runway_months),
+        "runway_score": _to_float(runway.runway_score),
+        "dilution_score": _to_float(dilution.dilution_score),
+        "liquidity_score": _to_float(liquidity.liquidity_score),
+        "cash_to_mcap": _to_float(dilution.cash_to_mcap),
+        "monthly_burn": _to_float(runway.monthly_burn),
         "has_financial_data": has_data,
         "severity": severity.value,
         "flags": flags,
@@ -966,28 +1050,31 @@ def score_financial_health_v2(
         "burn_confidence": runway.burn_confidence.value,
         "burn_period": runway.burn_period,
         "quarters_used": runway.quarters_used,
+        "burn_rejection_reasons": runway.burn_rejection_reasons,
 
-        # Liquidity fields
-        "liquidity_gate": liquidity.liquidity_gate.value,
-        "dollar_adv_20d": str(liquidity.dollar_adv_20d),
+        # Liquidity fields (back-compat: liquidity_gate bool + new enum)
+        "liquidity_gate": liquidity.liquidity_gate != LiquidityGate.PASS,  # bool for back-compat
+        "liquidity_gate_status": liquidity.liquidity_gate.value,  # new enum field
+        "dollar_adv": _to_float(liquidity.dollar_adv_20d),  # back-compat name
+        "dollar_adv_20d": _to_float(liquidity.dollar_adv_20d),  # new name
 
         # Liquid assets fields
-        "liquid_assets": str(runway.liquid_assets),
+        "liquid_assets": _to_float(runway.liquid_assets),
         "liquid_components": runway.liquid_components,
 
-        # Dilution/financing fields
-        "burn_to_mcap": str(dilution.burn_to_mcap) if dilution.burn_to_mcap is not None else None,
-        "financing_pressure_score": str(dilution.financing_pressure_score),
+        # Dilution/financing fields (v2 additions)
+        "burn_to_mcap": _to_float(dilution.burn_to_mcap),
+        "financing_pressure_score": _to_float(dilution.financing_pressure_score),
         "dilution_risk_bucket": dilution.dilution_risk_bucket.value,
-        "share_count_growth": str(dilution.share_count_growth) if dilution.share_count_growth is not None else None,
+        "share_count_growth": _to_float(dilution.share_count_growth),
 
         # Data quality fields
         "financial_data_state": quality.financial_data_state.value,
         "missing_fields": quality.missing_fields,
         "inputs_used": quality.inputs_used,
-        "confidence": str(quality.confidence),
+        "confidence": _to_float(quality.confidence),
 
-        # Audit
+        # Audit fields (v2 additions)
         "determinism_hash": determinism_hash,
         "schema_version": SCHEMA_VERSION,
     }
