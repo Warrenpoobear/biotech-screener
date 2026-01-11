@@ -5,13 +5,22 @@ Simple wrapper that adds defensive overlays to your existing Module 5.
 """
 
 import json
+import logging
 from pathlib import Path
-from module_5_composite import compute_module_5_composite
-from defensive_overlay_adapter import enrich_with_defensive_overlays, validate_defensive_integration
-
+from typing import Optional, List
 
 from module_5_composite import compute_module_5_composite
 from defensive_overlay_adapter import enrich_with_defensive_overlays, validate_defensive_integration
+
+logger = logging.getLogger(__name__)
+
+# Default search paths for universe file with defensive features
+DEFAULT_UNIVERSE_PATHS = [
+    "production_data/universe.json",
+    "wake_robin_data_pipeline/outputs/universe_snapshot_latest.json",
+    "wake_robin_data_pipeline/outputs/universe.json",
+    "data/universe.json",
+]
 
 
 def compute_module_5_composite_with_defensive(
@@ -27,11 +36,32 @@ def compute_module_5_composite_with_defensive(
     apply_defensive_multiplier: bool = False,
     apply_position_sizing: bool = True,
     validate: bool = False,
+    universe_path: Optional[str] = None,
+    universe_search_paths: Optional[List[str]] = None,
 ) -> dict:
     """
     Rank securities with defensive overlays integrated.
-    
+
     Drop-in replacement for compute_module_5_composite() with defensive overlays.
+
+    Args:
+        universe_result: Module 1 output
+        financial_result: Module 2 output
+        catalyst_result: Module 3 output
+        clinical_result: Module 4 output
+        as_of_date: Analysis date (YYYY-MM-DD)
+        weights: Override default weights
+        normalization: "rank" (default) or "zscore"
+        coinvest_signals: Optional co-invest overlay data
+        cohort_mode: "stage_only" (recommended) or "stage_mcap"
+        apply_defensive_multiplier: Apply defensive score multiplier
+        apply_position_sizing: Apply position sizing based on volatility
+        validate: Run validation checks
+        universe_path: Explicit path to universe file with defensive_features
+        universe_search_paths: Custom list of paths to search for universe file
+
+    Returns:
+        Module 5 output enriched with defensive overlay fields
     """
     # Call your existing Module 5
     output = compute_module_5_composite(
@@ -45,43 +75,54 @@ def compute_module_5_composite_with_defensive(
         coinvest_signals=coinvest_signals,
         cohort_mode=cohort_mode,
     )
-    
+
     # Build defensive_features lookup from RAW universe file
     # Module 1 strips out defensive_features, so we load the raw file
     defensive_by_ticker = {}
-    
-    # Try to find the raw universe file
-    # Check common locations
-    universe_paths = [
-        Path("production_data/universe.json"),
-        Path("wake_robin_data_pipeline/outputs/universe_snapshot_latest.json"),
-        Path("wake_robin_data_pipeline/outputs/universe.json"),
-        Path("test_data/universe.json"),
-    ]
-    
     raw_universe = None
-    for path in universe_paths:
+    loaded_from = None
+
+    # If explicit path provided, use it
+    if universe_path:
+        path = Path(universe_path)
         if path.exists():
-            print(f"\nDEBUG: Loading defensive features from {path}")
             with open(path, 'r') as f:
                 raw_universe = json.load(f)
-            break
-    
+            loaded_from = path
+        else:
+            logger.warning(f"Specified universe_path does not exist: {universe_path}")
+
+    # Otherwise search configured paths
+    if raw_universe is None:
+        search_paths = universe_search_paths or DEFAULT_UNIVERSE_PATHS
+        for path_str in search_paths:
+            path = Path(path_str)
+            if path.exists():
+                with open(path, 'r') as f:
+                    raw_universe = json.load(f)
+                loaded_from = path
+                break
+
     if raw_universe:
+        logger.info(f"Loaded defensive features from {loaded_from}")
+
         # Handle both dict and array formats
         if isinstance(raw_universe, dict):
             securities = raw_universe.get("active_securities", [])
         else:
             securities = raw_universe  # Direct array
-        
+
         for sec in securities:
             ticker = sec.get("ticker")
             if ticker and "defensive_features" in sec:
                 defensive_by_ticker[ticker] = {"defensive_features": sec["defensive_features"]}
-        
-        print(f"DEBUG: Extracted defensive_features for {len(defensive_by_ticker)} tickers")
+
+        logger.info(f"Extracted defensive_features for {len(defensive_by_ticker)} tickers")
     else:
-        print("WARNING: Could not find raw universe file for defensive features")
+        logger.warning(
+            "Could not find raw universe file for defensive features. "
+            f"Searched: {universe_search_paths or DEFAULT_UNIVERSE_PATHS}"
+        )
 
     # Add defensive overlays
     enrich_with_defensive_overlays(

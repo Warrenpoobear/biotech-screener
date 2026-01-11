@@ -33,6 +33,9 @@ from decimal import Decimal
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+# Common utilities
+from common.date_utils import normalize_date, to_date_string, to_date_object
+
 # Module imports
 from module_1_universe import compute_module_1_universe
 from module_2_financial import compute_module_2_financial
@@ -60,22 +63,22 @@ def _force_deterministic_generated_at(obj: Any, generated_at: str) -> None:
             _force_deterministic_generated_at(item, generated_at)
 
 
-def validate_as_of_date(as_of_date: str) -> None:
+def validate_as_of_date_param(as_of_date: str) -> None:
     """
     Validate as_of_date format.
-    
+
     Raises:
         ValueError: If date format is invalid
-    
+
     Note:
         Does not compare to date.today() to maintain time-invariance.
         Lookahead protection is enforced via PIT filters in modules.
     """
     try:
-        dt = date.fromisoformat(as_of_date)
-    except ValueError as e:
+        normalize_date(as_of_date)
+    except (ValueError, TypeError) as e:
         raise ValueError(f"Invalid as_of_date format '{as_of_date}': must be YYYY-MM-DD") from e
-    
+
     # NOTE: Do not compare to date.today() here (wall-clock dependency breaks time-invariance).
     # Lookahead protection should be enforced via PIT filters and/or input snapshot dating.
 
@@ -151,7 +154,7 @@ def run_screening_pipeline(
         FileNotFoundError: If required data files missing
     """
     # CRITICAL: Validate as_of_date FIRST (no implicit defaults)
-    validate_as_of_date(as_of_date)
+    validate_as_of_date_param(as_of_date)
     
     print(f"[{as_of_date}] Starting screening pipeline...")
     print(f"  Data directory: {data_dir}")
@@ -200,9 +203,9 @@ def run_screening_pipeline(
     # ========================================================================
     
     print("\n[4/7] Module 3: Catalyst detection...")
-    
+
     # Convert as_of_date string to date object for Module 3
-    as_of_date_obj = date.fromisoformat(as_of_date)
+    as_of_date_obj = to_date_object(as_of_date)
     
     # Create state directory if it doesn't exist
     state_dir = data_dir / "ctgov_state"
