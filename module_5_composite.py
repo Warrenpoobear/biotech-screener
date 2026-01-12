@@ -29,18 +29,23 @@ def _decimal_mean(values: List[Decimal]) -> Decimal:
     return sum(values) / Decimal(len(values))
 
 # Default weights (sum to 1.0)
+# SCHEME A: Financial = pure risk control via severity multipliers only
+# Rationale: Financial health is downside asymmetry/dilution pressure, not alpha.
+# The severity gates (SEV3 excluded, SEV2/SEV1 penalized) handle risk control.
+# This is regime-robust: avoids 2021 "easy funding" vs 2022 "funding shut" flip.
 DEFAULT_WEIGHTS = {
-    "clinical_dev": Decimal("0.40"),
-    "financial": Decimal("0.35"),
-    "catalyst": Decimal("0.25"),
+    "clinical_dev": Decimal("0.60"),  # Primary driver (was 0.40)
+    "financial": Decimal("0.00"),     # Risk control via severity only (was 0.35)
+    "catalyst": Decimal("0.40"),      # Secondary driver (was 0.25)
 }
 
 # Enhanced weights when PoS scoring is available (sum to 1.0)
+# Same philosophy: financial = 0, risk control via severity gates
 ENHANCED_WEIGHTS = {
-    "clinical_dev": Decimal("0.30"),  # Reduced from 0.40
-    "financial": Decimal("0.30"),     # Reduced from 0.35
-    "catalyst": Decimal("0.20"),      # Reduced from 0.25
-    "pos": Decimal("0.20"),           # New: PoS from BIO benchmarks
+    "clinical_dev": Decimal("0.45"),  # Primary driver
+    "financial": Decimal("0.00"),     # Risk control via severity only
+    "catalyst": Decimal("0.30"),      # Secondary driver
+    "pos": Decimal("0.25"),           # PoS from BIO benchmarks
 }
 
 # Severity multipliers
@@ -597,30 +602,48 @@ def compute_module_5_composite(
         cat_delta = rec.get("catalyst_delta", Decimal("0"))
         delta_adjustment = (cat_delta / Decimal("20")).quantize(Decimal("0.01"))  # Max ±2.5 pts
 
-        # Weighted sum (includes PoS if available)
-        composite = (
-            clin_n * weights.get("clinical_dev", Decimal("0.40")) +
-            fin_n * weights.get("financial", Decimal("0.35")) +
-            cat_n * weights.get("catalyst", Decimal("0.25")) +
-            proximity_bonus +
-            delta_adjustment
-        )
+        # ROBUSTNESS FIX: Renormalize weights based on available data
+        # This prevents missing data from acting as a negative signal
+        available_weights = {}
+        if rec["clinical_dev_raw"] is not None:
+            available_weights["clinical_dev"] = weights.get("clinical_dev", Decimal("0.60"))
+        if rec["catalyst_raw"] is not None:
+            available_weights["catalyst"] = weights.get("catalyst", Decimal("0.40"))
+        # Financial weight is 0 in Scheme A, but include if non-zero
+        if rec["financial_raw"] is not None and weights.get("financial", Decimal("0")) > 0:
+            available_weights["financial"] = weights.get("financial", Decimal("0"))
+        if pos_n > 0 and "pos" in weights:
+            available_weights["pos"] = weights["pos"]
 
-        # Add PoS contribution if enhanced weights used
-        if "pos" in weights and pos_n > 0:
-            composite = composite + pos_n * weights["pos"]
+        # Renormalize to sum to 1.0
+        weight_sum = sum(available_weights.values()) or Decimal("1")
+        renorm_weights = {k: v / weight_sum for k, v in available_weights.items()}
+
+        # Weighted sum with renormalized weights
+        composite = Decimal("0")
+        if "clinical_dev" in renorm_weights:
+            composite += clin_n * renorm_weights["clinical_dev"]
+        if "catalyst" in renorm_weights:
+            composite += cat_n * renorm_weights["catalyst"]
+        if "financial" in renorm_weights:
+            composite += fin_n * renorm_weights["financial"]
+        if "pos" in renorm_weights:
+            composite += pos_n * renorm_weights["pos"]
             rec["flags"].append("pos_score_applied")
 
-        # Count missing subfactors (now 4 if PoS available)
-        subfactors = [rec["clinical_dev_raw"], rec["financial_raw"], rec["catalyst_raw"]]
+        # Add proximity and delta adjustments
+        composite += proximity_bonus + delta_adjustment
+
+        # Track missing data for diagnostics (but no penalty)
+        subfactors = [rec["clinical_dev_raw"], rec["catalyst_raw"]]
         if enhancement_applied:
             subfactors.append(rec.get("pos_raw"))
         missing = sum(1 for x in subfactors if x is None)
-        missing_pct = Decimal(str(missing / len(subfactors)))
-        
-        # Uncertainty penalty
-        uncertainty_penalty = min(MAX_UNCERTAINTY_PENALTY, missing_pct)
-        composite = composite * (Decimal("1") - uncertainty_penalty)
+        missing_pct = Decimal(str(missing / len(subfactors))) if subfactors else Decimal("0")
+
+        # Flag if renormalization was applied
+        if len(available_weights) < len([w for w in weights.values() if w > 0]):
+            rec["flags"].append("weights_renormalized_missing_data")
         
         # Severity multiplier
         multiplier = SEVERITY_MULTIPLIERS[rec["severity"]]
@@ -630,12 +653,10 @@ def compute_module_5_composite(
         composite = min(Decimal("100"), max(Decimal("0"), composite))
         
         rec["composite_score"] = composite.quantize(Decimal("0.01"))
-        rec["uncertainty_penalty"] = uncertainty_penalty.quantize(Decimal("0.01"))
         rec["missing_subfactor_pct"] = missing_pct.quantize(Decimal("0.01"))
-        
-        # Add penalty flags
-        if uncertainty_penalty > 0:
-            rec["flags"].append("uncertainty_penalty_applied")
+        rec["weights_renormalized"] = len(available_weights) < len([w for w in weights.values() if w > 0])
+
+        # Add severity penalty flags
         if rec["severity"] == Severity.SEV2:
             rec["flags"].append("sev2_penalty_applied")
         elif rec["severity"] == Severity.SEV1:
