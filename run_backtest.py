@@ -3,21 +3,36 @@
 Backtest Runner for Biotech Screener
 
 Runs the point-in-time backtesting framework with available production data.
+Integrates with the production scoring pipeline (Modules 1-5).
 
 Usage:
     python run_backtest.py
     python run_backtest.py --verbose
     python run_backtest.py --output backtest_results.json
+    python run_backtest.py --use-production-scorer
 """
 
 import json
+import logging
 import sys
 from datetime import datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any, Optional, Callable
 
 from backtest_engine import PointInTimeBacktester
+
+# Configure logging
+logging.basicConfig(level=logging.WARNING)  # Suppress info logs during backtest
+
+# Try to import production modules
+try:
+    from run_screen import run_screening_pipeline
+    from common.date_utils import to_date_string
+    HAS_PRODUCTION_SCORER = True
+except ImportError as e:
+    HAS_PRODUCTION_SCORER = False
+    logging.warning(f"Production scorer not available: {e}")
 
 
 def load_production_data(data_dir: Path) -> Dict[str, Any]:
@@ -206,6 +221,106 @@ def create_production_scorer():
     return scorer
 
 
+def run_production_scoring(
+    data_dir: Path,
+    as_of_date: str,
+    verbose: bool = False
+) -> Dict[str, float]:
+    """
+    Run the full production scoring pipeline and extract scores.
+
+    Args:
+        data_dir: Path to production data directory
+        as_of_date: Date string (YYYY-MM-DD)
+        verbose: Print progress
+
+    Returns:
+        Dict mapping ticker to composite score
+    """
+    if not HAS_PRODUCTION_SCORER:
+        raise RuntimeError("Production scorer modules not available")
+
+    if verbose:
+        print(f"  Running production pipeline for {as_of_date}...")
+
+    try:
+        # Run the full screening pipeline
+        result = run_screening_pipeline(
+            as_of_date=as_of_date,
+            data_dir=data_dir,
+            enable_coinvest=False,
+            enable_enhancements=False,
+            enable_short_interest=False,
+        )
+
+        # Extract scores from Module 5 output
+        # Key is "module_5_composite" in the pipeline output
+        scores = {}
+        m5_result = result.get("module_5_composite", result.get("module_5", {}))
+        ranked = m5_result.get("ranked_securities", [])
+
+        for security in ranked:
+            ticker = security.get("ticker")
+            composite_score = security.get("composite_score")
+            if ticker and composite_score is not None:
+                # Convert Decimal or string to float
+                if isinstance(composite_score, Decimal):
+                    scores[ticker] = float(composite_score)
+                elif isinstance(composite_score, str):
+                    scores[ticker] = float(Decimal(composite_score))
+                else:
+                    scores[ticker] = float(composite_score)
+
+        if verbose:
+            print(f"    Scored {len(scores)} tickers")
+
+        return scores
+
+    except Exception as e:
+        if verbose:
+            print(f"    Error in production pipeline: {e}")
+        return {}
+
+
+def create_production_pipeline_scorer(data_dir: Path) -> Callable:
+    """
+    Create a scorer function that wraps the production pipeline.
+
+    This caches results per date to avoid re-running the full pipeline
+    for each ticker.
+    """
+    score_cache: Dict[str, Dict[str, float]] = {}
+
+    def scorer(ticker: str, data: Dict, as_of_date: datetime) -> Dict:
+        """Score using production pipeline (cached by date)."""
+        date_str = as_of_date.strftime('%Y-%m-%d')
+
+        # Check cache first
+        if date_str not in score_cache:
+            try:
+                scores = run_production_scoring(data_dir, date_str, verbose=False)
+                score_cache[date_str] = scores
+            except Exception:
+                score_cache[date_str] = {}
+
+        # Get score for this ticker
+        cached_scores = score_cache.get(date_str, {})
+        score = cached_scores.get(ticker)
+
+        if score is not None:
+            return {
+                "ticker": ticker,
+                "final_score": score,
+                "source": "production_pipeline",
+                "as_of_date": date_str
+            }
+
+        # Fallback to None if not in cache
+        return None
+
+    return scorer
+
+
 def extract_price_data(prod_data: Dict[str, Any]) -> Dict[str, Dict[str, float]]:
     """
     Extract price time series from production data.
@@ -253,6 +368,8 @@ def extract_price_data(prod_data: Dict[str, Any]) -> Dict[str, Dict[str, float]]
 
 def run_single_period_backtest(
     prod_data: Dict[str, Any],
+    data_dir: Path = None,
+    use_production_scorer: bool = False,
     verbose: bool = True
 ) -> Dict:
     """
@@ -260,18 +377,66 @@ def run_single_period_backtest(
 
     Since we only have current snapshots, this validates the framework
     and scores the current universe.
+
+    Args:
+        prod_data: Loaded production data
+        data_dir: Path to data directory (required for production scorer)
+        use_production_scorer: Use full production pipeline (Modules 1-5)
+        verbose: Print progress
     """
     # Get ticker list
     universe = prod_data.get("universe", [])
     tickers = [item["ticker"] for item in universe if item.get("ticker")]
 
+    scorer_type = "PRODUCTION" if use_production_scorer else "DEMO"
     if verbose:
         print(f"\n{'='*70}")
-        print("SINGLE-PERIOD BACKTEST")
+        print(f"SINGLE-PERIOD BACKTEST ({scorer_type})")
         print(f"{'='*70}")
         print(f"Universe size: {len(tickers)} tickers")
 
-    # Create scorer
+    # For production scorer, run full pipeline once for current date
+    if use_production_scorer and HAS_PRODUCTION_SCORER and data_dir:
+        if verbose:
+            print("Running full production pipeline...")
+        today = datetime.now().strftime('%Y-%m-%d')
+        production_scores = run_production_scoring(data_dir, today, verbose=verbose)
+
+        if production_scores:
+            results = []
+            for ticker, score in production_scores.items():
+                results.append({
+                    "ticker": ticker,
+                    "final_score": score,
+                    "components": {"production_composite": score - 50},
+                    "source": "production_pipeline"
+                })
+
+            results.sort(key=lambda x: x["final_score"], reverse=True)
+
+            if verbose:
+                print(f"Scored: {len(results)}, Errors: 0")
+                print(f"\n{'-'*70}")
+                print("TOP 20 SCORERS (PRODUCTION)")
+                print(f"{'-'*70}")
+                print(f"{'Rank':<6} {'Ticker':<10} {'Composite Score':<15}")
+                print(f"{'-'*70}")
+
+                for i, r in enumerate(results[:20], 1):
+                    print(f"{i:<6} {r['ticker']:<10} {r['final_score']:<15.2f}")
+
+            return {
+                "period": today,
+                "scorer": "production_pipeline",
+                "universe_size": len(tickers),
+                "scored_count": len(results),
+                "error_count": 0,
+                "scores": {r["ticker"]: r["final_score"] for r in results},
+                "top_20": [{"ticker": r["ticker"], "score": r["final_score"]} for r in results[:20]],
+                "bottom_20": [{"ticker": r["ticker"], "score": r["final_score"]} for r in results[-20:]],
+            }
+
+    # Fallback to demo scorer
     scorer = create_production_scorer()
 
     # Score all tickers
@@ -330,6 +495,8 @@ def run_single_period_backtest(
 
 def run_simulated_historical_backtest(
     prod_data: Dict[str, Any],
+    data_dir: Path = None,
+    use_production_scorer: bool = False,
     verbose: bool = True
 ) -> Dict:
     """
@@ -337,6 +504,12 @@ def run_simulated_historical_backtest(
 
     Uses current fundamental data but historical prices to calculate
     what returns would have been at different historical dates.
+
+    Args:
+        prod_data: Loaded production data
+        data_dir: Path to data directory (required for production scorer)
+        use_production_scorer: Use full production pipeline (Modules 1-5)
+        verbose: Print progress
     """
     # Extract price data
     price_cache = extract_price_data(prod_data)
@@ -356,9 +529,10 @@ def run_simulated_historical_backtest(
 
     sorted_dates = sorted(all_dates)
 
+    scorer_type = "PRODUCTION PIPELINE" if use_production_scorer else "DEMO"
     if verbose:
         print(f"\n{'='*70}")
-        print("SIMULATED HISTORICAL BACKTEST")
+        print(f"SIMULATED HISTORICAL BACKTEST ({scorer_type})")
         print(f"{'='*70}")
         print(f"Price history: {sorted_dates[0]} to {sorted_dates[-1]}")
         print(f"Tickers with prices: {len(price_cache)}")
@@ -386,8 +560,15 @@ def run_simulated_historical_backtest(
     )
     backtester.price_cache = price_cache
 
-    # Create scorer
-    scorer = create_production_scorer()
+    # Create scorer based on mode
+    if use_production_scorer and HAS_PRODUCTION_SCORER and data_dir:
+        if verbose:
+            print(f"Using PRODUCTION scorer (Modules 1-5)")
+        scorer = create_production_pipeline_scorer(data_dir)
+    else:
+        if use_production_scorer and not HAS_PRODUCTION_SCORER:
+            print("WARNING: Production scorer not available, falling back to demo scorer")
+        scorer = create_production_scorer()
 
     # Build snapshots (using current data for all periods - simplified approach)
     universe = prod_data.get("universe", [])
@@ -424,7 +605,8 @@ def run_simulated_historical_backtest(
             # Score
             try:
                 score_result = scorer(ticker=ticker, data=snapshot, as_of_date=test_date)
-                period_result["scores"][ticker] = score_result["final_score"]
+                if score_result and "final_score" in score_result:
+                    period_result["scores"][ticker] = score_result["final_score"]
             except Exception:
                 continue
 
@@ -434,6 +616,10 @@ def run_simulated_historical_backtest(
                 key = f"{horizon}d"
                 if ret.get(key) is not None:
                     period_result[f"returns_{key}"][ticker] = float(ret[key])
+
+        if verbose:
+            scored_count = len(period_result["scores"])
+            print(f"    Scored: {scored_count} tickers")
 
         all_period_results.append(period_result)
 
@@ -455,6 +641,8 @@ def main():
     parser.add_argument("--output", help="Output file for results")
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
     parser.add_argument("--historical", action="store_true", help="Run historical simulation")
+    parser.add_argument("--use-production-scorer", action="store_true",
+                        help="Use full production pipeline (Modules 1-5) for scoring")
     args = parser.parse_args()
 
     data_dir = Path(args.data_dir)
@@ -462,6 +650,14 @@ def main():
     print("="*70)
     print("BIOTECH SCREENER BACKTEST")
     print("="*70)
+
+    if args.use_production_scorer:
+        if HAS_PRODUCTION_SCORER:
+            print("Mode: PRODUCTION SCORER (Modules 1-5)")
+        else:
+            print("WARNING: Production scorer not available")
+    else:
+        print("Mode: DEMO SCORER (basic heuristics)")
 
     # Load production data
     print("\nLoading production data...")
@@ -471,13 +667,27 @@ def main():
         print("ERROR: No universe data found")
         sys.exit(1)
 
-    # Run single-period backtest
-    single_results = run_single_period_backtest(prod_data, verbose=True)
+    # Run single-period backtest (production scorer works here)
+    single_results = run_single_period_backtest(
+        prod_data,
+        data_dir=data_dir,
+        use_production_scorer=args.use_production_scorer,
+        verbose=True
+    )
 
-    # Run historical simulation if requested or by default
+    # Run historical simulation
+    # Note: Production scorer requires historical snapshots which we don't have
+    # So historical simulation always uses demo scorer
     historical_results = {}
     if args.historical or True:  # Always run historical
-        historical_results = run_simulated_historical_backtest(prod_data, verbose=True)
+        if args.use_production_scorer:
+            print("\nNote: Historical simulation uses demo scorer (no historical snapshots available)")
+        historical_results = run_simulated_historical_backtest(
+            prod_data,
+            data_dir=data_dir,
+            use_production_scorer=False,  # Always use demo for historical
+            verbose=True
+        )
 
     # Combine results
     output = {
