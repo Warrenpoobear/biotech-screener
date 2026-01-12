@@ -282,6 +282,15 @@ def create_production_scorer():
     print(f"  Loaded universe data for {len(universe_data)} tickers")
     print(f"  Loaded historical financials for {len(historical_financials)} tickers (PIT)")
 
+    # Debug: Show sample historical financials info
+    if historical_financials:
+        sample_ticker = next(iter(historical_financials.keys()))
+        sample_snaps = historical_financials[sample_ticker]
+        dates = [s.get('date', 'N/A') for s in sample_snaps]
+        print(f"    Sample ({sample_ticker}): {len(sample_snaps)} snapshots, dates: {dates[0]} to {dates[-1]}")
+    else:
+        print(f"    ⚠️  WARNING: No historical financials - PIT will use static current data!")
+
     def production_scorer(ticker: str, data: Dict, as_of_date: datetime) -> Dict:
         """
         Production scorer using full Module 1-5 pipeline with REAL data.
@@ -435,6 +444,9 @@ def create_production_scorer():
                 },
                 "production_pipeline": True,
                 "data_source": "real",
+                # PIT debug info
+                "pit_source_date": source_date,
+                "pit_lookup": fin_record.get("pit_lookup", False),
             }
         except Exception as e:
             # Fallback to basic scoring
@@ -627,6 +639,15 @@ def run_direct_backtest(
                     period_scores[ticker] = float(score_result["final_score"])
                     scored_count += 1
 
+                    # Store PIT debug info for debug ticker
+                    if ticker == debug_ticker:
+                        if not hasattr(run_direct_backtest, '_debug_pit_info'):
+                            run_direct_backtest._debug_pit_info = {}
+                        run_direct_backtest._debug_pit_info[ticker] = {
+                            'pit_source_date': score_result.get('pit_source_date'),
+                            'pit_lookup': score_result.get('pit_lookup'),
+                        }
+
                     # Calculate forward returns if price data available
                     if returns_provider:
                         start_str = (test_date + timedelta(days=1)).strftime("%Y-%m-%d")
@@ -645,8 +666,12 @@ def run_direct_backtest(
         # Debug: track sample ticker's score to detect static scoring
         if debug_ticker and debug_ticker in period_scores:
             debug_scores.append((test_date.strftime("%Y-%m-%d"), period_scores[debug_ticker]))
+
+        # Probe A: Log PIT details for debug ticker (stored during scoring)
+        if hasattr(run_direct_backtest, '_debug_pit_info') and debug_ticker:
+            pit_info = run_direct_backtest._debug_pit_info.get(debug_ticker, {})
             if i == 0 or i == len(test_dates) - 1:  # First and last
-                print(f"    DEBUG {debug_ticker}: score={period_scores[debug_ticker]:.2f}")
+                print(f"    DEBUG {debug_ticker}: score={period_scores.get(debug_ticker, 0):.2f} pit_date={pit_info.get('pit_source_date', 'N/A')} pit_lookup={pit_info.get('pit_lookup', 'N/A')}")
 
         # Calculate IC for this period
         if len(period_scores) >= 5 and len(period_returns_30d) >= 5:
@@ -696,10 +721,14 @@ def run_direct_backtest(
                 turnover = _turnover(prev_top_decile, top_set)
                 if turnover is not None:
                     turnover_values.append(turnover)
-                # Log top decile hash EVERY period to detect static scoring
+
+                # Probe B: Hash the entire score vector to detect any variation
                 import hashlib
+                scores_sorted = sorted((t, round(s, 4)) for t, s in period_scores.items())
+                blob = "|".join(f"{t}:{s}" for t, s in scores_sorted)
+                all_hash = hashlib.sha256(blob.encode()).hexdigest()[:8]
                 top_hash = hashlib.sha256(",".join(sorted(top_set)).encode()).hexdigest()[:8]
-                print(f"    Top decile hash: {top_hash} | Top 3: {sorted(top_set)[:3]}")
+                print(f"    Hashes: scores={all_hash} top_decile={top_hash} | Top 3: {sorted(top_set)[:3]}")
                 prev_top_decile = top_set
 
                 # Bucket ICs: market cap
