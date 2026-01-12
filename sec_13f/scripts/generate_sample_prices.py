@@ -87,8 +87,8 @@ def generate_prices(start_date: date, end_date: date) -> list:
 
 
 def main():
-    # Generate 5 years of data (2020-2024)
-    start = date(2020, 1, 2)  # First trading day 2020
+    # Generate 10 years of data (2015-2024)
+    start = date(2015, 1, 2)  # First trading day 2015
     end = date(2024, 12, 31)
     
     print(f"Generating prices from {start} to {end}...")
