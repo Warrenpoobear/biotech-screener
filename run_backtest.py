@@ -22,7 +22,7 @@ from typing import Dict, Any, List, Optional, Set, Tuple
 sys.path.insert(0, str(Path(__file__).parent))
 
 from backtest_engine import PointInTimeBacktester, create_sample_scoring_function
-from backtest.returns_provider import CSVReturnsProvider
+from backtest.returns_provider import CSVReturnsProvider, PITADVProvider
 from backtest.metrics import run_metrics_suite, HORIZON_DISPLAY_NAMES
 
 
@@ -560,24 +560,38 @@ def run_direct_backtest(
 
     price_file = price_file or "data/daily_prices.csv"
 
-    # Check if price file has volume column (needed for proper ADV calculation)
+    # Initialize PIT ADV provider for point-in-time liquidity analysis
+    pit_adv_provider = None
     price_file_has_volume = False
     try:
-        import csv
-        with open(price_file, 'r', newline='', encoding='utf-8-sig') as f:
-            reader = csv.DictReader(f)
-            headers = [h.lower().strip() for h in (reader.fieldnames or [])]
-            price_file_has_volume = 'volume' in headers or 'adj_volume' in headers
-    except Exception:
-        pass  # Will be caught below when loading returns provider
+        pit_adv_provider = PITADVProvider(price_file)
+        price_file_has_volume = pit_adv_provider.has_volume
+        vol_stats = pit_adv_provider.get_volume_coverage_stats()
+
+        # Print volume coverage validation
+        print("VOLUME DATA VALIDATION:")
+        print("-" * 50)
+        if price_file_has_volume:
+            print(f"  Volume column: PRESENT")
+            print(f"  Tickers with volume: {vol_stats['tickers_with_volume']}")
+            print(f"  Total volume-days: {vol_stats['total_volume_days']:,}")
+            if vol_stats['tickers_with_volume'] > 0:
+                avg_days = vol_stats['total_volume_days'] / vol_stats['tickers_with_volume']
+                print(f"  Avg days per ticker: {avg_days:.1f}")
+        else:
+            print(f"  Volume column: MISSING")
+            print(f"  ADV$ diagnostics will be DISABLED (no PIT liquidity data)")
+        print()
+    except Exception as e:
+        print(f"  Warning: Could not load PIT ADV provider: {e}")
+        pit_adv_provider = None
+        print()
 
     # Load price data first to get available tickers
     try:
         returns_provider = CSVReturnsProvider(price_file)
         available_tickers = set(returns_provider.get_available_tickers())
         print(f"Loaded price data for {len(available_tickers)} tickers")
-        if not price_file_has_volume:
-            print(f"  NOTE: Price file missing volume column - ADV$ diagnostics will be disabled")
 
         # Use all available tickers if no universe specified
         if universe is None:
@@ -651,13 +665,12 @@ def run_direct_backtest(
     # Intersection bucket IC tracking (MID-cap ∩ ADV buckets)
     ic_mid_liq, ic_mid_mid_adv, ic_mid_illiq, ic_mid_unknown_adv = [], [], [], []
 
-    # Load market cap and ADV$ data for bucket classification
+    # Load market cap data for bucket classification (static is fine for mcap)
     mcap_by_ticker = {}
-    adv_by_ticker = {}
     for ticker, data in COMPANY_DATA.items():
         mcap_by_ticker[ticker] = data.get("mcap", 0)
-    # Also try to load from universe_data if production scorer
-    has_adv_data = False  # Initialize - will be set if sufficient ADV data available
+
+    # Also try to load mcap from universe_data if production scorer
     if use_production_scorer:
         try:
             _, _, universe_data, _ = load_real_data()
@@ -666,24 +679,18 @@ def run_direct_backtest(
                 mcap = mkt.get("market_cap")
                 if mcap:
                     mcap_by_ticker[ticker] = mcap / 1_000_000  # Convert to millions
-                # Compute ADV$ from volume_avg_30d and price (correct field names)
-                volume = mkt.get("volume_avg_30d")
-                price = mkt.get("price")
-                if volume and price:
-                    adv_by_ticker[ticker] = volume * price  # ADV$ in dollars
-            print(f"  Loaded mcap for {len(mcap_by_ticker)} tickers, ADV$ for {len(adv_by_ticker)} tickers")
-            # Flag for gating ADV diagnostics - REQUIRE volume column in price file for proper PIT ADV
-            # Without volume in price file, ADV from universe.json is static/non-PIT and misleading
-            if not price_file_has_volume:
-                has_adv_data = False
-                print(f"  ADV$ diagnostics DISABLED: price file missing volume column (ADV from universe.json is non-PIT)")
-            elif len(adv_by_ticker) >= len(universe) * 0.1:
-                has_adv_data = True
-            else:
-                has_adv_data = False
-                print(f"  NOTE: ADV data available for <10% of universe - ADV diagnostics will be skipped")
+            print(f"  Loaded mcap for {len(mcap_by_ticker)} tickers from universe data")
         except Exception as e:
-            print(f"  Warning: Failed to load market data: {e}")
+            print(f"  Warning: Failed to load market cap data: {e}")
+
+    # ADV$ is computed PIT (per test date) using pit_adv_provider
+    # has_adv_data flag controls whether ADV diagnostics are shown
+    has_adv_data = price_file_has_volume and pit_adv_provider is not None
+    if has_adv_data:
+        vol_stats = pit_adv_provider.get_volume_coverage_stats()
+        print(f"  PIT ADV$ enabled: {vol_stats['tickers_with_volume']} tickers with volume data")
+    else:
+        print(f"  PIT ADV$ disabled: price file missing volume column")
 
     # Apply market cap filter if specified
     if mcap_filter:
@@ -719,21 +726,19 @@ def run_direct_backtest(
             print(f"  trial_data keys (first 20): {sorted(trial_data_check.keys())[:20]}")
             print(f"  historical_financials keys (first 20): {sorted(hist_fin_check.keys())[:20]}")
 
-            # Identify tickers with ADV data
+            # Identify tickers with PIT volume data from price file
             adv_available_tickers = set()
-            for ticker, record in universe_data_check.items():
-                mkt = record.get("market_data", {})
-                volume = mkt.get("volume_avg_30d")
-                price = mkt.get("price")
-                if volume and price:
-                    adv_available_tickers.add(ticker)
-            print(f"  ADV$ available (volume_avg_30d + price): {len(adv_available_tickers)} tickers")
+            if pit_adv_provider and pit_adv_provider.has_volume:
+                adv_available_tickers = set(pit_adv_provider.get_available_tickers())
+                print(f"  PIT ADV$ available (from price file volume): {len(adv_available_tickers)} tickers")
+            else:
+                print(f"  PIT ADV$ available: 0 tickers (price file missing volume column)")
 
             covered_tickers = set(trial_data_check.keys()) & set(hist_fin_check.keys()) & set(universe)
             covered_with_adv = covered_tickers & adv_available_tickers
 
             print(f"  trial ∩ hist_fin ∩ universe: {len(covered_tickers)} tickers")
-            print(f"  trial ∩ hist_fin ∩ universe ∩ ADV$: {len(covered_with_adv)} tickers")
+            print(f"  trial ∩ hist_fin ∩ universe ∩ PIT ADV$: {len(covered_with_adv)} tickers")
 
             # Prefer ticker with ADV data for more complete debugging
             if covered_with_adv:
@@ -888,8 +893,16 @@ def run_direct_backtest(
                     if bucket_ic is not None:
                         ic_list.append(bucket_ic)
 
-                # Bucket ICs: ADV$ - only compute if we have proper volume data
-                adv_bucket = {t: _bucket_adv(adv_by_ticker.get(t)) for t in common_tickers}
+                # Bucket ICs: ADV$ - compute PIT ADV$ using pit_adv_provider
+                # ADV is computed per test_date for point-in-time correctness
+                adv_by_ticker_pit = {}
+                if has_adv_data and pit_adv_provider:
+                    # Compute PIT ADV$ for this specific test date
+                    adv_by_ticker_pit = pit_adv_provider.get_adv_for_universe(
+                        list(common_tickers), test_date.date()
+                    )
+
+                adv_bucket = {t: _bucket_adv(adv_by_ticker_pit.get(t)) for t in common_tickers}
                 if has_adv_data:
                     for bucket, ic_list in [("ILLIQ", ic_adv_illiq), ("MID", ic_adv_mid), ("LIQ", ic_adv_liq), ("UNKNOWN", ic_adv_unknown)]:
                         bucket_ic, n = _compute_bucket_ic(period_scores, period_returns_90d, adv_bucket, bucket)
@@ -909,7 +922,7 @@ def run_direct_backtest(
                     for t in common_tickers:
                         ab = adv_bucket.get(t, "UNKNOWN")
                         adv_counts[ab] = adv_counts.get(ab, 0) + 1
-                        if adv_by_ticker.get(t) is not None:
+                        if adv_by_ticker_pit.get(t) is not None:
                             adv_non_null_count += 1
 
                     # Store ADV diagnostics for this period

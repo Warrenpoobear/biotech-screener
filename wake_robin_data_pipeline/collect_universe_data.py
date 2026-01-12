@@ -272,11 +272,11 @@ def print_summary(quality_report: dict):
 
 def export_prices_to_csv(records: List[dict], lookback_days: int) -> Path:
     """
-    Export historical prices from all records to a CSV file for backtesting.
+    Export historical prices and volumes from all records to a CSV file for backtesting.
 
-    Format: date,ticker,adj_close
+    Format: date,ticker,adj_close,volume
 
-    This allows the backtest runner to use real historical data.
+    This allows the backtest runner to use real historical data with PIT-safe ADV calculation.
     """
     import csv
     from datetime import datetime, timedelta
@@ -289,6 +289,7 @@ def export_prices_to_csv(records: List[dict], lookback_days: int) -> Path:
 
     # Collect all price data
     all_prices = []
+    volume_count = 0  # Track how many rows have volume data
 
     for record in records:
         ticker = record.get('ticker', '')
@@ -300,6 +301,7 @@ def export_prices_to_csv(records: List[dict], lookback_days: int) -> Path:
             continue
 
         prices = time_series['prices']
+        volumes = time_series.get('volumes', [])
         num_days = time_series.get('num_days', len(prices))
 
         # Calculate dates (working backwards from as_of_date)
@@ -321,14 +323,20 @@ def export_prices_to_csv(records: List[dict], lookback_days: int) -> Path:
 
         trading_dates.reverse()  # Oldest to newest
 
-        # Match dates with prices
+        # Match dates with prices and volumes
         for i, price in enumerate(prices):
             if i < len(trading_dates):
-                all_prices.append({
+                row = {
                     'date': trading_dates[i].isoformat(),
                     'ticker': ticker,
-                    'adj_close': f"{price:.2f}"
-                })
+                    'adj_close': f"{price:.2f}",
+                    'volume': ''  # Default empty
+                }
+                # Add volume if available for this index
+                if i < len(volumes) and volumes[i] is not None:
+                    row['volume'] = str(int(volumes[i]))
+                    volume_count += 1
+                all_prices.append(row)
 
     if not all_prices:
         print("   ⚠ No price data to export")
@@ -339,7 +347,7 @@ def export_prices_to_csv(records: List[dict], lookback_days: int) -> Path:
 
     # Write CSV
     with open(csv_file, 'w', newline='') as f:
-        writer = csv.DictWriter(f, fieldnames=['date', 'ticker', 'adj_close'])
+        writer = csv.DictWriter(f, fieldnames=['date', 'ticker', 'adj_close', 'volume'])
         writer.writeheader()
         writer.writerows(all_prices)
 
@@ -358,9 +366,11 @@ def export_prices_to_csv(records: List[dict], lookback_days: int) -> Path:
     # Print summary
     tickers = set(p['ticker'] for p in all_prices)
     dates = set(p['date'] for p in all_prices)
+    volume_pct = 100 * volume_count / len(all_prices) if all_prices else 0
     print(f"   Exported {len(all_prices)} price records")
     print(f"   Tickers: {len(tickers)}")
     print(f"   Date range: {min(dates)} to {max(dates)}")
+    print(f"   Volume data: {volume_count}/{len(all_prices)} rows ({volume_pct:.1f}%)")
 
     return csv_file
 
