@@ -16,7 +16,7 @@ import sys
 from datetime import datetime, date
 from decimal import Decimal
 from pathlib import Path
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Set, Tuple
 
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent))
@@ -24,6 +24,82 @@ sys.path.insert(0, str(Path(__file__).parent))
 from backtest_engine import PointInTimeBacktester, create_sample_scoring_function
 from backtest.returns_provider import CSVReturnsProvider
 from backtest.metrics import run_metrics_suite, HORIZON_DISPLAY_NAMES
+
+
+# =============================================================================
+# DIAGNOSTIC HELPERS (Deterministic)
+# =============================================================================
+
+def _bucket_mcap(mcap_mm: Optional[float]) -> str:
+    """Classify market cap (in millions) into bucket."""
+    if mcap_mm is None:
+        return "UNKNOWN"
+    if mcap_mm < 500:      # < $0.5B
+        return "SMALL"
+    if mcap_mm < 2000:     # $0.5B–$2B
+        return "MID"
+    return "LARGE"         # >= $2B
+
+
+def _bucket_adv(adv_usd: Optional[float]) -> str:
+    """Classify ADV$ into liquidity bucket."""
+    if adv_usd is None:
+        return "UNKNOWN"
+    if adv_usd < 250_000:
+        return "ILLIQ"
+    if adv_usd < 2_000_000:
+        return "MID"
+    return "LIQ"
+
+
+def _top_bottom_sets(sorted_items: List[Tuple[str, float]], frac: float = 0.10) -> Tuple[Set[str], Set[str]]:
+    """
+    Get top and bottom decile tickers from sorted list.
+
+    sorted_items: list of (ticker, score) sorted high->low deterministically.
+    """
+    n = len(sorted_items)
+    k = max(1, int(n * frac))
+    top = {t for t, _ in sorted_items[:k]}
+    bot = {t for t, _ in sorted_items[-k:]}
+    return top, bot
+
+
+def _turnover(prev: Optional[Set[str]], cur: Set[str]) -> Optional[float]:
+    """
+    Compute symmetric turnover between two sets.
+
+    Returns 1 - overlap / avg_size (0 = no change, 1 = complete change)
+    """
+    if prev is None:
+        return None
+    if not prev and not cur:
+        return 0.0
+    inter = len(prev & cur)
+    avg_size = (len(prev) + len(cur)) / 2.0
+    if avg_size == 0:
+        return 0.0
+    return 1.0 - (inter / avg_size)
+
+
+def _compute_bucket_ic(
+    scores_by_ticker: Dict[str, float],
+    returns_by_ticker: Dict[str, float],
+    bucket_by_ticker: Dict[str, str],
+    target_bucket: str,
+) -> Tuple[Optional[float], int]:
+    """Compute IC for a specific bucket. Returns (IC, n_tickers)."""
+    common = set(scores_by_ticker.keys()) & set(returns_by_ticker.keys()) & set(bucket_by_ticker.keys())
+    filtered = [t for t in common if bucket_by_ticker.get(t) == target_bucket]
+
+    if len(filtered) < 5:
+        return None, len(filtered)
+
+    scores = [scores_by_ticker[t] for t in filtered]
+    returns = [returns_by_ticker[t] for t in filtered]
+    ic = _calculate_spearman_ic(scores, returns)
+    return ic, len(filtered)
+
 
 # Default universe for backtesting (tickers with complete real data + price history)
 DEFAULT_UNIVERSE = [
@@ -469,6 +545,37 @@ def run_direct_backtest(
     ic_60d_values = []
     ic_90d_values = []
 
+    # New diagnostic tracking
+    spread_90d_values = []  # Top - Bottom decile returns
+    turnover_values = []    # Top decile turnover
+    prev_top_decile = None  # Previous period's top decile set
+
+    # Bucket IC tracking (use 90d as primary horizon)
+    ic_mcap_small, ic_mcap_mid, ic_mcap_large = [], [], []
+    ic_adv_illiq, ic_adv_mid, ic_adv_liq = [], [], []
+
+    # Load market cap and ADV$ data for bucket classification
+    mcap_by_ticker = {}
+    adv_by_ticker = {}
+    for ticker, data in COMPANY_DATA.items():
+        mcap_by_ticker[ticker] = data.get("mcap", 0)
+    # Also try to load from universe_data if production scorer
+    if use_production_scorer:
+        try:
+            _, _, universe_data, _ = load_real_data()
+            for ticker, record in universe_data.items():
+                mkt = record.get("market_data", {})
+                mcap = mkt.get("market_cap")
+                if mcap:
+                    mcap_by_ticker[ticker] = mcap / 1_000_000  # Convert to millions
+                # Compute ADV$ from volume and price
+                volume = mkt.get("volume")
+                price = mkt.get("current_price")
+                if volume and price:
+                    adv_by_ticker[ticker] = volume * price  # ADV$ in dollars
+        except:
+            pass
+
     for i, test_date in enumerate(test_dates):
         print(f"[{i+1}/{len(test_dates)}] Backtesting: {test_date.strftime('%Y-%m-%d')}")
 
@@ -534,6 +641,42 @@ def run_direct_backtest(
                 ic = _calculate_spearman_ic(scores, returns)
                 if ic is not None:
                     ic_90d_values.append(ic)
+
+                # ============== NEW DIAGNOSTICS (90d horizon) ==============
+                # Build sorted list for decile computation (deterministic: by score desc, then ticker asc)
+                sorted_items = sorted(
+                    [(t, period_scores[t]) for t in common_tickers],
+                    key=lambda x: (-x[1], x[0])  # High score first, then alphabetical
+                )
+
+                # Top/bottom decile spread
+                top_set, bot_set = _top_bottom_sets(sorted_items, frac=0.10)
+                top_ret = [period_returns_90d[t] for t in top_set if t in period_returns_90d]
+                bot_ret = [period_returns_90d[t] for t in bot_set if t in period_returns_90d]
+                if top_ret and bot_ret:
+                    top_mean = sum(top_ret) / len(top_ret)
+                    bot_mean = sum(bot_ret) / len(bot_ret)
+                    spread_90d_values.append(top_mean - bot_mean)
+
+                # Turnover of top decile vs previous period
+                turnover = _turnover(prev_top_decile, top_set)
+                if turnover is not None:
+                    turnover_values.append(turnover)
+                prev_top_decile = top_set
+
+                # Bucket ICs: market cap
+                mcap_bucket = {t: _bucket_mcap(mcap_by_ticker.get(t)) for t in common_tickers}
+                for bucket, ic_list in [("SMALL", ic_mcap_small), ("MID", ic_mcap_mid), ("LARGE", ic_mcap_large)]:
+                    bucket_ic, n = _compute_bucket_ic(period_scores, period_returns_90d, mcap_bucket, bucket)
+                    if bucket_ic is not None:
+                        ic_list.append(bucket_ic)
+
+                # Bucket ICs: ADV$
+                adv_bucket = {t: _bucket_adv(adv_by_ticker.get(t)) for t in common_tickers}
+                for bucket, ic_list in [("ILLIQ", ic_adv_illiq), ("MID", ic_adv_mid), ("LIQ", ic_adv_liq)]:
+                    bucket_ic, n = _compute_bucket_ic(period_scores, period_returns_90d, adv_bucket, bucket)
+                    if bucket_ic is not None:
+                        ic_list.append(bucket_ic)
 
         all_period_results.append({
             "date": test_date.isoformat(),
@@ -609,6 +752,75 @@ def run_direct_backtest(
             print(f"          Assessment: {assessment}")
         else:
             print(f"  IC {horizon}:  Insufficient data")
+    print()
+
+    # ============== NEW DIAGNOSTIC SUMMARY ==============
+    print("Top/Bottom Decile Spread (90d horizon):")
+    print("-" * 50)
+    if spread_90d_values:
+        spread_mean = sum(spread_90d_values) / len(spread_90d_values)
+        spread_pos_pct = 100 * sum(1 for x in spread_90d_values if x > 0) / len(spread_90d_values)
+        print(f"  Mean Spread:      {spread_mean:+.2%}")
+        print(f"  Positive Periods: {spread_pos_pct:.1f}% ({sum(1 for x in spread_90d_values if x > 0)}/{len(spread_90d_values)})")
+        results["spread_90d"] = {
+            "mean": spread_mean,
+            "positive_pct": spread_pos_pct,
+            "count": len(spread_90d_values),
+            "values": spread_90d_values,
+        }
+    else:
+        print("  Insufficient data")
+    print()
+
+    print("Top Decile Turnover:")
+    print("-" * 50)
+    if turnover_values:
+        turnover_mean = sum(turnover_values) / len(turnover_values)
+        print(f"  Mean Turnover:    {turnover_mean:.1%}")
+        print(f"  Observations:     {len(turnover_values)}")
+        results["turnover"] = {
+            "mean": turnover_mean,
+            "count": len(turnover_values),
+            "values": turnover_values,
+        }
+    else:
+        print("  Insufficient data (need 2+ periods)")
+    print()
+
+    print("IC by Market Cap Bucket (90d horizon):")
+    print("-" * 50)
+    for label, ic_list in [("SMALL (<$0.5B)", ic_mcap_small),
+                           ("MID ($0.5-2B)", ic_mcap_mid),
+                           ("LARGE (>$2B)", ic_mcap_large)]:
+        if ic_list:
+            bucket_mean = sum(ic_list) / len(ic_list)
+            bucket_pos = 100 * sum(1 for x in ic_list if x > 0) / len(ic_list)
+            print(f"  {label:16s}: IC={bucket_mean:+.4f}, Pos={bucket_pos:.0f}%, N={len(ic_list)}")
+        else:
+            print(f"  {label:16s}: Insufficient data")
+    results["ic_by_mcap"] = {
+        "small": {"mean": sum(ic_mcap_small)/len(ic_mcap_small), "n": len(ic_mcap_small)} if ic_mcap_small else None,
+        "mid": {"mean": sum(ic_mcap_mid)/len(ic_mcap_mid), "n": len(ic_mcap_mid)} if ic_mcap_mid else None,
+        "large": {"mean": sum(ic_mcap_large)/len(ic_mcap_large), "n": len(ic_mcap_large)} if ic_mcap_large else None,
+    }
+    print()
+
+    print("IC by ADV$ Bucket (90d horizon):")
+    print("-" * 50)
+    for label, ic_list in [("ILLIQ (<$250K)", ic_adv_illiq),
+                           ("MID ($250K-2M)", ic_adv_mid),
+                           ("LIQ (>$2M)", ic_adv_liq)]:
+        if ic_list:
+            bucket_mean = sum(ic_list) / len(ic_list)
+            bucket_pos = 100 * sum(1 for x in ic_list if x > 0) / len(ic_list)
+            print(f"  {label:16s}: IC={bucket_mean:+.4f}, Pos={bucket_pos:.0f}%, N={len(ic_list)}")
+        else:
+            print(f"  {label:16s}: Insufficient data")
+    results["ic_by_adv"] = {
+        "illiq": {"mean": sum(ic_adv_illiq)/len(ic_adv_illiq), "n": len(ic_adv_illiq)} if ic_adv_illiq else None,
+        "mid": {"mean": sum(ic_adv_mid)/len(ic_adv_mid), "n": len(ic_adv_mid)} if ic_adv_mid else None,
+        "liq": {"mean": sum(ic_adv_liq)/len(ic_adv_liq), "n": len(ic_adv_liq)} if ic_adv_liq else None,
+    }
     print()
 
     # Save results
