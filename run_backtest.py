@@ -608,7 +608,12 @@ def run_direct_backtest(
 
     # Bucket IC tracking (use 90d as primary horizon)
     ic_mcap_small, ic_mcap_mid, ic_mcap_large = [], [], []
+    ic_mcap_unknown = []  # Track UNKNOWN mcap bucket
     ic_adv_illiq, ic_adv_mid, ic_adv_liq = [], [], []
+    ic_adv_unknown = []  # Track UNKNOWN ADV bucket
+
+    # Intersection bucket IC tracking (MID-cap ∩ ADV buckets)
+    ic_mid_liq, ic_mid_mid_adv, ic_mid_illiq, ic_mid_unknown_adv = [], [], [], []
 
     # Load market cap and ADV$ data for bucket classification
     mcap_by_ticker = {}
@@ -779,17 +784,47 @@ def run_direct_backtest(
 
                 # Bucket ICs: market cap
                 mcap_bucket = {t: _bucket_mcap(mcap_by_ticker.get(t)) for t in common_tickers}
-                for bucket, ic_list in [("SMALL", ic_mcap_small), ("MID", ic_mcap_mid), ("LARGE", ic_mcap_large)]:
+                for bucket, ic_list in [("SMALL", ic_mcap_small), ("MID", ic_mcap_mid), ("LARGE", ic_mcap_large), ("UNKNOWN", ic_mcap_unknown)]:
                     bucket_ic, n = _compute_bucket_ic(period_scores, period_returns_90d, mcap_bucket, bucket)
                     if bucket_ic is not None:
                         ic_list.append(bucket_ic)
 
                 # Bucket ICs: ADV$
                 adv_bucket = {t: _bucket_adv(adv_by_ticker.get(t)) for t in common_tickers}
-                for bucket, ic_list in [("ILLIQ", ic_adv_illiq), ("MID", ic_adv_mid), ("LIQ", ic_adv_liq)]:
+                for bucket, ic_list in [("ILLIQ", ic_adv_illiq), ("MID", ic_adv_mid), ("LIQ", ic_adv_liq), ("UNKNOWN", ic_adv_unknown)]:
                     bucket_ic, n = _compute_bucket_ic(period_scores, period_returns_90d, adv_bucket, bucket)
                     if bucket_ic is not None:
                         ic_list.append(bucket_ic)
+
+                # Print bucket counts for first period only (diagnostic)
+                if i == 0:
+                    mcap_counts = {}
+                    adv_counts = {}
+                    for t in common_tickers:
+                        mb = mcap_bucket.get(t, "UNKNOWN")
+                        ab = adv_bucket.get(t, "UNKNOWN")
+                        mcap_counts[mb] = mcap_counts.get(mb, 0) + 1
+                        adv_counts[ab] = adv_counts.get(ab, 0) + 1
+                    print(f"    Bucket counts (N={len(common_tickers)}):")
+                    print(f"      MCAP: {mcap_counts}")
+                    print(f"      ADV$: {adv_counts}")
+
+                # Intersection ICs: MID-cap ∩ ADV buckets
+                def compute_intersection_ic(mcap_target, adv_target):
+                    filtered = [t for t in common_tickers
+                                if mcap_bucket.get(t) == mcap_target and adv_bucket.get(t) == adv_target]
+                    if len(filtered) < 3:  # Lower threshold for intersection
+                        return None, len(filtered)
+                    scores = [period_scores[t] for t in filtered]
+                    returns = [period_returns_90d[t] for t in filtered]
+                    ic = _calculate_spearman_ic(scores, returns)
+                    return ic, len(filtered)
+
+                for adv_target, ic_list in [("LIQ", ic_mid_liq), ("MID", ic_mid_mid_adv),
+                                             ("ILLIQ", ic_mid_illiq), ("UNKNOWN", ic_mid_unknown_adv)]:
+                    ic_val, n = compute_intersection_ic("MID", adv_target)
+                    if ic_val is not None:
+                        ic_list.append(ic_val)
 
         all_period_results.append({
             "date": test_date.isoformat(),
@@ -918,7 +953,8 @@ def run_direct_backtest(
     print("-" * 50)
     for label, ic_list in [("SMALL (<$0.5B)", ic_mcap_small),
                            ("MID ($0.5-2B)", ic_mcap_mid),
-                           ("LARGE (>$2B)", ic_mcap_large)]:
+                           ("LARGE (>$2B)", ic_mcap_large),
+                           ("UNKNOWN", ic_mcap_unknown)]:
         if ic_list:
             bucket_mean = sum(ic_list) / len(ic_list)
             bucket_pos = 100 * sum(1 for x in ic_list if x > 0) / len(ic_list)
@@ -929,6 +965,7 @@ def run_direct_backtest(
         "small": {"mean": sum(ic_mcap_small)/len(ic_mcap_small), "n": len(ic_mcap_small)} if ic_mcap_small else None,
         "mid": {"mean": sum(ic_mcap_mid)/len(ic_mcap_mid), "n": len(ic_mcap_mid)} if ic_mcap_mid else None,
         "large": {"mean": sum(ic_mcap_large)/len(ic_mcap_large), "n": len(ic_mcap_large)} if ic_mcap_large else None,
+        "unknown": {"mean": sum(ic_mcap_unknown)/len(ic_mcap_unknown), "n": len(ic_mcap_unknown)} if ic_mcap_unknown else None,
     }
     print()
 
@@ -936,7 +973,8 @@ def run_direct_backtest(
     print("-" * 50)
     for label, ic_list in [("ILLIQ (<$250K)", ic_adv_illiq),
                            ("MID ($250K-2M)", ic_adv_mid),
-                           ("LIQ (>$2M)", ic_adv_liq)]:
+                           ("LIQ (>$2M)", ic_adv_liq),
+                           ("UNKNOWN", ic_adv_unknown)]:
         if ic_list:
             bucket_mean = sum(ic_list) / len(ic_list)
             bucket_pos = 100 * sum(1 for x in ic_list if x > 0) / len(ic_list)
@@ -947,6 +985,28 @@ def run_direct_backtest(
         "illiq": {"mean": sum(ic_adv_illiq)/len(ic_adv_illiq), "n": len(ic_adv_illiq)} if ic_adv_illiq else None,
         "mid": {"mean": sum(ic_adv_mid)/len(ic_adv_mid), "n": len(ic_adv_mid)} if ic_adv_mid else None,
         "liq": {"mean": sum(ic_adv_liq)/len(ic_adv_liq), "n": len(ic_adv_liq)} if ic_adv_liq else None,
+        "unknown": {"mean": sum(ic_adv_unknown)/len(ic_adv_unknown), "n": len(ic_adv_unknown)} if ic_adv_unknown else None,
+    }
+    print()
+
+    # Intersection ICs: MID-cap by ADV bucket
+    print("IC for MID-cap by ADV$ Bucket (90d horizon):")
+    print("-" * 50)
+    for label, ic_list in [("MID ∩ LIQ", ic_mid_liq),
+                           ("MID ∩ MID-ADV", ic_mid_mid_adv),
+                           ("MID ∩ ILLIQ", ic_mid_illiq),
+                           ("MID ∩ UNKNOWN", ic_mid_unknown_adv)]:
+        if ic_list:
+            bucket_mean = sum(ic_list) / len(ic_list)
+            bucket_pos = 100 * sum(1 for x in ic_list if x > 0) / len(ic_list)
+            print(f"  {label:16s}: IC={bucket_mean:+.4f}, Pos={bucket_pos:.0f}%, N={len(ic_list)}")
+        else:
+            print(f"  {label:16s}: Insufficient data")
+    results["ic_mid_by_adv"] = {
+        "mid_liq": {"mean": sum(ic_mid_liq)/len(ic_mid_liq), "n": len(ic_mid_liq)} if ic_mid_liq else None,
+        "mid_mid_adv": {"mean": sum(ic_mid_mid_adv)/len(ic_mid_mid_adv), "n": len(ic_mid_mid_adv)} if ic_mid_mid_adv else None,
+        "mid_illiq": {"mean": sum(ic_mid_illiq)/len(ic_mid_illiq), "n": len(ic_mid_illiq)} if ic_mid_illiq else None,
+        "mid_unknown": {"mean": sum(ic_mid_unknown_adv)/len(ic_mid_unknown_adv), "n": len(ic_mid_unknown_adv)} if ic_mid_unknown_adv else None,
     }
     print()
 
