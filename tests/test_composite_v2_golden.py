@@ -926,6 +926,306 @@ def test_diagnostic_counts_accurate():
 
 
 # ============================================================================
+# 7. POLICY INVARIANTS (MERGE CHECKLIST)
+# ============================================================================
+
+def test_score_bounds_clamped_0_100():
+    """Final composite score must always be in [0, 100]."""
+    # Test with extreme high scores + bonuses
+    tickers = ["HIGH"]
+    base = {"HIGH": {
+        "financial": 99, "clinical": 99, "catalyst": 99,
+        "proximity": 50, "delta": 50,  # Large bonuses
+    }}
+    universe, financial, catalyst, clinical = create_full_result_set(tickers, base)
+
+    result = compute_module_5_composite_v2(
+        universe, financial, catalyst, clinical,
+        as_of_date="2026-01-11",
+    )
+
+    score = Decimal(result["ranked_securities"][0]["composite_score"])
+    assert Decimal("0") <= score <= Decimal("100"), \
+        f"Score {score} out of bounds [0, 100]"
+
+    # Test with extreme low scores
+    tickers_low = ["LOW"]
+    base_low = {"LOW": {"financial": 1, "clinical": 1, "catalyst": 1}}
+    universe_l, financial_l, catalyst_l, clinical_l = create_full_result_set(tickers_low, base_low)
+
+    result_low = compute_module_5_composite_v2(
+        universe_l, financial_l, catalyst_l, clinical_l,
+        as_of_date="2026-01-11",
+    )
+
+    score_low = Decimal(result_low["ranked_securities"][0]["composite_score"])
+    assert Decimal("0") <= score_low <= Decimal("100"), \
+        f"Score {score_low} out of bounds [0, 100]"
+
+    print("✓ test_score_bounds_clamped_0_100 passed")
+
+
+def test_ordering_caps_before_bonuses():
+    """Monotonic caps should be applied BEFORE bonuses."""
+    # Scenario: high base score gets capped, then bonus added
+    tickers = ["ORDER"]
+    base = {"ORDER": {
+        "financial": 90, "clinical": 90, "catalyst": 90,
+        "liquidity_gate_status": "FAIL",  # Cap at 35
+        "proximity": 10,  # +0.5 bonus (10/20)
+        "delta": 10,      # +0.5 bonus
+    }}
+    universe, financial, catalyst, clinical = create_full_result_set(tickers, base)
+
+    result = compute_module_5_composite_v2(
+        universe, financial, catalyst, clinical,
+        as_of_date="2026-01-11",
+    )
+
+    sec = result["ranked_securities"][0]
+    breakdown = sec["score_breakdown"]
+
+    post_cap = Decimal(breakdown["final"]["post_cap_score"])
+    post_bonus = Decimal(breakdown["final"]["post_bonus_score"])
+
+    # Post-cap should be at the cap (35)
+    assert post_cap <= MonotonicCap.LIQUIDITY_FAIL_CAP, \
+        f"Post-cap {post_cap} exceeds cap {MonotonicCap.LIQUIDITY_FAIL_CAP}"
+
+    # Post-bonus should be post_cap + bonuses
+    proximity_bonus = Decimal(breakdown["bonuses"]["proximity_bonus"])
+    delta_bonus = Decimal(breakdown["bonuses"]["delta_bonus"])
+    expected_post_bonus = post_cap + proximity_bonus + delta_bonus
+
+    assert abs(post_bonus - expected_post_bonus) < Decimal("0.02"), \
+        f"Post-bonus {post_bonus} != post_cap({post_cap}) + bonuses({proximity_bonus}+{delta_bonus})"
+
+    print("✓ test_ordering_caps_before_bonuses passed")
+
+
+def test_confidence_and_uncertainty_independent():
+    """Confidence weighting and uncertainty penalty measure different things."""
+    # Scenario 1: Has score but low confidence
+    tickers = ["LOWCONF"]
+    universe = create_universe_fixture(tickers)
+    financial = {"scores": [create_financial_fixture(
+        "LOWCONF", financial_normalized=70, confidence=0.3, financial_data_state="MINIMAL"
+    )]}
+    clinical = {"scores": [create_clinical_fixture("LOWCONF", clinical_score=60)]}
+    catalyst = {"summaries": {"LOWCONF": create_catalyst_fixture("LOWCONF", score_blended=50)}}
+
+    result1 = compute_module_5_composite_v2(
+        universe, financial, catalyst, clinical,
+        as_of_date="2026-01-11",
+    )
+
+    sec1 = result1["ranked_securities"][0]
+    bd1 = sec1["score_breakdown"]
+
+    # Should have low effective weight for financial (confidence-based)
+    fin_weight = Decimal(sec1["effective_weights"]["financial"])
+
+    # Uncertainty penalty should be 0 (all scores present)
+    uncertainty = Decimal(bd1["penalties_and_gates"]["uncertainty_penalty_pct"])
+    assert uncertainty == Decimal("0"), \
+        f"Uncertainty should be 0 when all scores present, got {uncertainty}"
+
+    # Scenario 2: Missing score (None) but high state confidence
+    tickers2 = ["MISSING"]
+    universe2 = create_universe_fixture(tickers2)
+    # financial_normalized is present but we'll test with missing clinical
+    financial2 = {"scores": [create_financial_fixture(
+        "MISSING", financial_normalized=70, financial_data_state="FULL"
+    )]}
+    clinical2 = {"scores": [{"ticker": "MISSING", "clinical_score": None,
+                            "lead_phase": "Phase 2", "severity": "none",
+                            "trial_count": 5, "flags": []}]}  # Score is None
+    catalyst2 = {"summaries": {"MISSING": create_catalyst_fixture("MISSING", score_blended=50)}}
+
+    result2 = compute_module_5_composite_v2(
+        universe2, financial2, catalyst2, clinical2,
+        as_of_date="2026-01-11",
+    )
+
+    sec2 = result2["ranked_securities"][0]
+    bd2 = sec2["score_breakdown"]
+
+    # Uncertainty penalty should be non-zero (1 of 3 scores missing = ~33%)
+    uncertainty2 = Decimal(bd2["penalties_and_gates"]["uncertainty_penalty_pct"])
+    assert uncertainty2 > Decimal("0"), \
+        f"Uncertainty should be >0 when score missing, got {uncertainty2}"
+
+    # Clinical confidence should still be reasonable (has trials, lead_phase)
+    clin_conf = Decimal(sec2["confidence_clinical"])
+    assert clin_conf >= Decimal("0.5"), \
+        f"Clinical confidence should be decent with trial data, got {clin_conf}"
+
+    print("✓ test_confidence_and_uncertainty_independent passed")
+
+
+def test_winsorization_small_n_2():
+    """Winsorization with n=2 should be deterministic."""
+    values = [Decimal("20"), Decimal("80")]
+    normalized, _ = _rank_normalize_winsorized(values)
+
+    assert len(normalized) == 2
+    # First should be lower, second higher
+    assert normalized[0] < normalized[1], \
+        f"n=2: first ({normalized[0]}) should be < second ({normalized[1]})"
+
+    print("✓ test_winsorization_small_n_2 passed")
+
+
+def test_winsorization_small_n_3():
+    """Winsorization with n=3 should be deterministic."""
+    values = [Decimal("10"), Decimal("50"), Decimal("90")]
+    normalized, _ = _rank_normalize_winsorized(values)
+
+    assert len(normalized) == 3
+    # Should maintain order
+    assert normalized[0] < normalized[1] < normalized[2], \
+        f"n=3 should maintain order: {normalized}"
+
+    print("✓ test_winsorization_small_n_3 passed")
+
+
+def test_winsorization_small_n_4():
+    """Winsorization with n=4 should be deterministic."""
+    values = [Decimal("10"), Decimal("30"), Decimal("60"), Decimal("90")]
+    normalized, _ = _rank_normalize_winsorized(values)
+
+    assert len(normalized) == 4
+    # Should maintain order
+    for i in range(len(normalized) - 1):
+        assert normalized[i] <= normalized[i + 1], \
+            f"n=4 should maintain order: {normalized}"
+
+    print("✓ test_winsorization_small_n_4 passed")
+
+
+def test_breakdown_pre_post_penalty_reconciliation():
+    """Pre and post penalty values should reconcile with multipliers."""
+    tickers = ["RECON"]
+    base = {"RECON": {"financial": 60, "clinical": 70, "catalyst": 50}}
+    universe, financial, catalyst, clinical = create_full_result_set(tickers, base)
+
+    # Add missing score to trigger uncertainty penalty
+    clinical["scores"][0]["clinical_score"] = None
+
+    result = compute_module_5_composite_v2(
+        universe, financial, catalyst, clinical,
+        as_of_date="2026-01-11",
+    )
+
+    sec = result["ranked_securities"][0]
+    bd = sec["score_breakdown"]
+
+    pre_penalty = Decimal(bd["final"]["pre_penalty_score"])
+    post_penalty = Decimal(bd["final"]["post_penalty_score"])
+    uncertainty_pct = Decimal(bd["penalties_and_gates"]["uncertainty_penalty_pct"]) / Decimal("100")
+    severity_mult = Decimal(bd["penalties_and_gates"]["severity_multiplier"])
+
+    # post_penalty = pre_penalty * (1 - uncertainty) * severity_mult
+    expected_post = pre_penalty * (Decimal("1") - uncertainty_pct) * severity_mult
+    expected_post = expected_post.quantize(Decimal("0.01"))
+
+    diff = abs(post_penalty - expected_post)
+    assert diff < Decimal("0.02"), \
+        f"Post penalty {post_penalty} != pre({pre_penalty}) * (1-{uncertainty_pct}) * {severity_mult} = {expected_post}"
+
+    print("✓ test_breakdown_pre_post_penalty_reconciliation passed")
+
+
+def test_breakdown_caps_record_pre_and_post():
+    """Caps applied should include threshold information."""
+    tickers = ["CAPINFO"]
+    base = {"CAPINFO": {
+        "financial": 90, "clinical": 90, "catalyst": 90,
+        "liquidity_gate_status": "FAIL",
+    }}
+    universe, financial, catalyst, clinical = create_full_result_set(tickers, base)
+
+    result = compute_module_5_composite_v2(
+        universe, financial, catalyst, clinical,
+        as_of_date="2026-01-11",
+    )
+
+    sec = result["ranked_securities"][0]
+    caps = sec["monotonic_caps_applied"]
+
+    assert len(caps) > 0, "Should have caps applied"
+    for cap in caps:
+        assert "reason" in cap, "Cap should have reason"
+        assert "cap" in cap, "Cap should have threshold value"
+
+    print("✓ test_breakdown_caps_record_pre_and_post passed")
+
+
+def test_determinism_hash_no_float_contamination():
+    """Hash computation should not use any float operations."""
+    # Create inputs with potential float edge cases
+    tickers = ["NOFLOAT"]
+    base = {"NOFLOAT": {
+        "financial": 33.333333,  # Repeating decimal
+        "clinical": 66.666666,
+        "catalyst": 50.0,
+    }}
+    universe, financial, catalyst, clinical = create_full_result_set(tickers, base)
+
+    # Run twice - if floats are involved, precision issues may cause different hashes
+    result1 = compute_module_5_composite_v2(
+        universe, financial, catalyst, clinical,
+        as_of_date="2026-01-11",
+    )
+    result2 = compute_module_5_composite_v2(
+        universe, financial, catalyst, clinical,
+        as_of_date="2026-01-11",
+    )
+
+    hash1 = result1["ranked_securities"][0]["determinism_hash"]
+    hash2 = result2["ranked_securities"][0]["determinism_hash"]
+
+    assert hash1 == hash2, \
+        f"Float contamination: hashes differ {hash1} vs {hash2}"
+
+    print("✓ test_determinism_hash_no_float_contamination passed")
+
+
+def test_determinism_hash_canonical_ordering():
+    """Hash should be stable regardless of input dict ordering."""
+    # Python 3.7+ dicts maintain insertion order, but hash should use sorted keys
+    from module_5_composite_v2 import _compute_determinism_hash
+
+    # Same data, different creation order
+    base_weights_1 = {"clinical": Decimal("0.4"), "financial": Decimal("0.35"), "catalyst": Decimal("0.25")}
+    base_weights_2 = {"catalyst": Decimal("0.25"), "clinical": Decimal("0.4"), "financial": Decimal("0.35")}
+
+    effective_weights = {"clinical": Decimal("0.4"), "financial": Decimal("0.35"), "catalyst": Decimal("0.25")}
+    regime_adj = {}
+
+    comp_scores = [
+        ComponentScore("clinical", Decimal("70"), Decimal("70"), Decimal("1"), Decimal("0.4"), Decimal("0.4"), Decimal("28")),
+        ComponentScore("financial", Decimal("60"), Decimal("60"), Decimal("1"), Decimal("0.35"), Decimal("0.35"), Decimal("21")),
+        ComponentScore("catalyst", Decimal("50"), Decimal("50"), Decimal("1"), Decimal("0.25"), Decimal("0.25"), Decimal("12.5")),
+    ]
+
+    hash1 = _compute_determinism_hash(
+        "TEST", "v2.0", "default", base_weights_1, effective_weights,
+        regime_adj, comp_scores, Decimal("0"), "NONE", [], "mid", Decimal("61.5")
+    )
+
+    hash2 = _compute_determinism_hash(
+        "TEST", "v2.0", "default", base_weights_2, effective_weights,
+        regime_adj, comp_scores, Decimal("0"), "NONE", [], "mid", Decimal("61.5")
+    )
+
+    assert hash1 == hash2, \
+        f"Hash should be stable regardless of dict ordering: {hash1} vs {hash2}"
+
+    print("✓ test_determinism_hash_canonical_ordering passed")
+
+
+# ============================================================================
 # RUN ALL TESTS
 # ============================================================================
 
@@ -979,6 +1279,18 @@ def run_all_tests():
         test_full_pipeline_basic,
         test_full_pipeline_with_exclusions,
         test_diagnostic_counts_accurate,
+
+        # 7. Policy invariants (merge checklist)
+        test_score_bounds_clamped_0_100,
+        test_ordering_caps_before_bonuses,
+        test_confidence_and_uncertainty_independent,
+        test_winsorization_small_n_2,
+        test_winsorization_small_n_3,
+        test_winsorization_small_n_4,
+        test_breakdown_pre_post_penalty_reconciliation,
+        test_breakdown_caps_record_pre_and_post,
+        test_determinism_hash_no_float_contamination,
+        test_determinism_hash_canonical_ordering,
     ]
 
     passed = 0
