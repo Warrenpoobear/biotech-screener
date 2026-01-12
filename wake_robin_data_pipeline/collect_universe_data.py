@@ -92,7 +92,7 @@ def merge_data_sources(ticker: str, yahoo_data: dict, sec_data: dict, trials_dat
             "lead_stage": trials_data['summary']['lead_stage'],
             "by_phase": trials_data['summary']['by_phase'],
             "conditions": trials_data['summary'].get('conditions', []),
-            "top_trials": trials_data['trials'][:5]  # Top 5 for reference
+            "top_trials": trials_data.get('trials', [])[:5]  # Top 5 for reference
         }
         record['data_quality']['has_clinical'] = True
     else:
