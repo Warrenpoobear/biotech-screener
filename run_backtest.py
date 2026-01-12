@@ -457,6 +457,7 @@ def run_direct_backtest(
     price_file: Optional[str] = None,
     output_file: Optional[str] = None,
     frequency_days: int = 30,
+    mcap_filter: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
     Run point-in-time backtest with direct data generation.
@@ -472,6 +473,7 @@ def run_direct_backtest(
         price_file: Path to historical price CSV
         output_file: Path to save results
         frequency_days: Days between scoring dates
+        mcap_filter: Filter by market cap bucket (small/mid/large/mid+large)
 
     Returns:
         Backtest results dictionary
@@ -568,13 +570,35 @@ def run_direct_backtest(
                 mcap = mkt.get("market_cap")
                 if mcap:
                     mcap_by_ticker[ticker] = mcap / 1_000_000  # Convert to millions
-                # Compute ADV$ from volume and price
-                volume = mkt.get("volume")
-                price = mkt.get("current_price")
+                # Compute ADV$ from volume_avg_30d and price (correct field names)
+                volume = mkt.get("volume_avg_30d")
+                price = mkt.get("price")
                 if volume and price:
                     adv_by_ticker[ticker] = volume * price  # ADV$ in dollars
-        except:
-            pass
+            print(f"  Loaded mcap for {len(mcap_by_ticker)} tickers, ADV$ for {len(adv_by_ticker)} tickers")
+        except Exception as e:
+            print(f"  Warning: Failed to load market data: {e}")
+
+    # Apply market cap filter if specified
+    if mcap_filter:
+        def passes_mcap_filter(ticker):
+            mcap = mcap_by_ticker.get(ticker)
+            if mcap is None:
+                return False
+            bucket = _bucket_mcap(mcap)
+            if mcap_filter == "small":
+                return bucket == "SMALL"
+            elif mcap_filter == "mid":
+                return bucket == "MID"
+            elif mcap_filter == "large":
+                return bucket == "LARGE"
+            elif mcap_filter == "mid+large":
+                return bucket in ("MID", "LARGE")
+            return True
+
+        original_size = len(universe)
+        universe = [t for t in universe if passes_mcap_filter(t)]
+        print(f"  Applied mcap filter '{mcap_filter}': {original_size} -> {len(universe)} tickers")
 
     for i, test_date in enumerate(test_dates):
         print(f"[{i+1}/{len(test_dates)}] Backtesting: {test_date.strftime('%Y-%m-%d')}")
@@ -658,10 +682,15 @@ def run_direct_backtest(
                     bot_mean = sum(bot_ret) / len(bot_ret)
                     spread_90d_values.append(top_mean - bot_mean)
 
-                # Turnover of top decile vs previous period
+                # Turnover of top decile vs previous period + hash for debugging
                 turnover = _turnover(prev_top_decile, top_set)
                 if turnover is not None:
                     turnover_values.append(turnover)
+                # Log top decile hash to detect static scoring
+                import hashlib
+                top_hash = hashlib.sha256(",".join(sorted(top_set)).encode()).hexdigest()[:8]
+                if i == 0 or i == len(test_dates) - 1:  # First and last period only
+                    print(f"    Top decile hash: {top_hash} (n={len(top_set)})")
                 prev_top_decile = top_set
 
                 # Bucket ICs: market cap
@@ -879,6 +908,7 @@ def run_backtest(
     price_file: Optional[str] = None,
     output_file: Optional[str] = None,
     frequency_days: int = 30,
+    mcap_filter: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
     Run point-in-time backtest.
@@ -893,6 +923,7 @@ def run_backtest(
         price_file=price_file,
         output_file=output_file,
         frequency_days=frequency_days,
+        mcap_filter=mcap_filter,
     )
 
 
@@ -951,6 +982,13 @@ Examples:
         default=None,
         help="Custom universe of tickers"
     )
+    parser.add_argument(
+        "--mcap-filter",
+        type=str,
+        choices=["small", "mid", "large", "mid+large"],
+        default=None,
+        help="Filter universe by market cap bucket (small=<$0.5B, mid=$0.5-2B, large=>$2B)"
+    )
 
     args = parser.parse_args()
 
@@ -963,6 +1001,7 @@ Examples:
             price_file=args.price_file,
             output_file=args.output,
             frequency_days=args.frequency,
+            mcap_filter=args.mcap_filter,
         )
 
         # Exit with success if we got results
