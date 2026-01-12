@@ -101,16 +101,18 @@ def merge_data_sources(ticker: str, yahoo_data: dict, sec_data: dict, trials_dat
 
     # Time-series data (historical prices/returns for defensive overlays)
     if time_series_data and time_series_data.get('success'):
+        ts = time_series_data.get('time_series', {})
+        liq = time_series_data.get('liquidity', {})
         record['time_series'] = {
-            "prices": time_series_data['time_series']['prices'],
-            "returns": time_series_data['time_series']['returns'],
-            "volumes": time_series_data['time_series']['volumes'],
-            "num_days": time_series_data['time_series']['num_days'],
-            "lookback_days": time_series_data['time_series']['lookback_days'],
-            "adv_20d": time_series_data['liquidity']['adv_20d']
+            "prices": ts.get('prices', []),
+            "returns": ts.get('returns', []),
+            "volumes": ts.get('volumes', []),
+            "num_days": ts.get('num_days', 0),
+            "lookback_days": ts.get('lookback_days', 0),
+            "adv_20d": liq.get('adv_20d', 0)
         }
         record['data_quality']['has_time_series'] = True
-        record['data_quality']['time_series_days'] = time_series_data['time_series']['num_days']
+        record['data_quality']['time_series_days'] = ts.get('num_days', 0)
     else:
         record['time_series'] = None
         record['data_quality']['has_time_series'] = False
