@@ -104,6 +104,23 @@ def load_real_data():
                 if ticker:
                     financial_data[ticker] = record
 
+    # Load historical financial snapshots for PIT backtesting
+    historical_financials = {}  # ticker -> list of snapshots sorted by date
+    hist_file = data_dir / "historical_financial_snapshots.json"
+    if hist_file.exists():
+        with open(hist_file) as f:
+            snapshots = json.load(f)
+            for snap in snapshots:
+                ticker = snap.get('ticker')
+                if ticker:
+                    if ticker not in historical_financials:
+                        historical_financials[ticker] = []
+                    historical_financials[ticker].append(snap)
+            # Sort each ticker's snapshots by date
+            for ticker in historical_financials:
+                historical_financials[ticker].sort(key=lambda x: x.get('date', ''))
+        print(f"  Loaded historical financials for {len(historical_financials)} tickers")
+
     # Load trial records
     trial_data = {}
     trial_file = data_dir / "trial_records.json"
@@ -126,7 +143,46 @@ def load_real_data():
                 if ticker:
                     universe_data[ticker] = record
 
-    return financial_data, trial_data, universe_data
+    return financial_data, trial_data, universe_data, historical_financials
+
+
+def get_pit_financial_data(ticker: str, as_of_date: str, historical_financials: dict, fallback_data: dict) -> dict:
+    """
+    Get point-in-time financial data for a ticker as of a specific date.
+
+    Looks up the most recent financial snapshot that was available before as_of_date.
+    """
+    snapshots = historical_financials.get(ticker, [])
+
+    if snapshots:
+        # Find the most recent snapshot before or on as_of_date
+        valid_snapshots = [s for s in snapshots if s.get('date', '') <= as_of_date]
+        if valid_snapshots:
+            # Return the most recent valid snapshot
+            latest = valid_snapshots[-1]
+            return {
+                'ticker': ticker,
+                'Cash': latest.get('cash'),
+                'Debt': latest.get('debt'),
+                'Assets': latest.get('assets'),
+                'Liabilities': latest.get('liabilities'),
+                'R&D': latest.get('rd_expense'),
+                'source_date': latest.get('date'),
+                'pit_lookup': True
+            }
+
+    # Fall back to current data if no historical data
+    fallback = fallback_data.get(ticker, {})
+    return {
+        'ticker': ticker,
+        'Cash': fallback.get('Cash'),
+        'Debt': fallback.get('Debt'),
+        'Assets': fallback.get('Assets'),
+        'Liabilities': fallback.get('Liabilities'),
+        'R&D': fallback.get('R&D'),
+        'source_date': as_of_date,
+        'pit_lookup': False
+    }
 
 
 def create_production_scorer():
@@ -144,10 +200,11 @@ def create_production_scorer():
 
     # Load real data once at scorer creation time
     print("Loading real production data...")
-    financial_data, trial_data, universe_data = load_real_data()
+    financial_data, trial_data, universe_data, historical_financials = load_real_data()
     print(f"  Loaded financial data for {len(financial_data)} tickers")
     print(f"  Loaded trial data for {len(trial_data)} tickers")
     print(f"  Loaded universe data for {len(universe_data)} tickers")
+    print(f"  Loaded historical financials for {len(historical_financials)} tickers (PIT)")
 
     def production_scorer(ticker: str, data: Dict, as_of_date: datetime) -> Dict:
         """
@@ -184,8 +241,8 @@ def create_production_scorer():
             "status": "active",
         }]
 
-        # Get real financial data
-        fin_record = financial_data.get(ticker, {})
+        # Get point-in-time financial data (uses historical snapshots if available)
+        fin_record = get_pit_financial_data(ticker, as_of_str, historical_financials, financial_data)
 
         # Convert financial data to module format (values in millions)
         cash_raw = fin_record.get("Cash", 0) or 0
@@ -194,12 +251,15 @@ def create_production_scorer():
         # Estimate debt from liabilities - current liabilities
         liabilities = fin_record.get("Liabilities", 0) or 0
         current_liab = fin_record.get("CurrentLiabilities", 0) or 0
-        debt_raw = liabilities - current_liab if liabilities else 0
-        debt_mm = max(0, debt_raw / 1_000_000)
+        debt_raw = fin_record.get("Debt", 0) or (liabilities - current_liab if liabilities else 0)
+        debt_mm = max(0, debt_raw / 1_000_000) if debt_raw else 0
 
         # Estimate burn rate from R&D expense
         rd_raw = fin_record.get("R&D", 0) or 0
         burn_mm = rd_raw / 1_000_000 / 4 if rd_raw else cash_mm / 24  # Quarterly burn
+
+        # Use the source_date from PIT lookup for proper filtering
+        source_date = fin_record.get("source_date", as_of_str)
 
         financial_records = [{
             "ticker": ticker,
@@ -207,7 +267,7 @@ def create_production_scorer():
             "debt_mm": debt_mm,
             "burn_rate_mm": burn_mm,
             "market_cap_mm": mcap_mm,
-            "source_date": as_of_str,  # Use backtest date to pass PIT filter
+            "source_date": source_date,
         }]
 
         # Get real trial data
