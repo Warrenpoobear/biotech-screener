@@ -600,6 +600,10 @@ def run_direct_backtest(
         universe = [t for t in universe if passes_mcap_filter(t)]
         print(f"  Applied mcap filter '{mcap_filter}': {original_size} -> {len(universe)} tickers")
 
+    # Track a sample ticker for debugging time-varying inputs
+    debug_ticker = "REGN" if "REGN" in universe else (universe[0] if universe else None)
+    debug_scores = []  # Track score changes for debug_ticker
+
     for i, test_date in enumerate(test_dates):
         print(f"[{i+1}/{len(test_dates)}] Backtesting: {test_date.strftime('%Y-%m-%d')}")
 
@@ -637,6 +641,12 @@ def run_direct_backtest(
                 pass  # Skip tickers with errors
 
         print(f"    Scored: {scored_count}/{len(universe)} ({100*scored_count/len(universe):.1f}%)")
+
+        # Debug: track sample ticker's score to detect static scoring
+        if debug_ticker and debug_ticker in period_scores:
+            debug_scores.append((test_date.strftime("%Y-%m-%d"), period_scores[debug_ticker]))
+            if i == 0 or i == len(test_dates) - 1:  # First and last
+                print(f"    DEBUG {debug_ticker}: score={period_scores[debug_ticker]:.2f}")
 
         # Calculate IC for this period
         if len(period_scores) >= 5 and len(period_returns_30d) >= 5:
@@ -686,11 +696,10 @@ def run_direct_backtest(
                 turnover = _turnover(prev_top_decile, top_set)
                 if turnover is not None:
                     turnover_values.append(turnover)
-                # Log top decile hash to detect static scoring
+                # Log top decile hash EVERY period to detect static scoring
                 import hashlib
                 top_hash = hashlib.sha256(",".join(sorted(top_set)).encode()).hexdigest()[:8]
-                if i == 0 or i == len(test_dates) - 1:  # First and last period only
-                    print(f"    Top decile hash: {top_hash} (n={len(top_set)})")
+                print(f"    Top decile hash: {top_hash} | Top 3: {sorted(top_set)[:3]}")
                 prev_top_decile = top_set
 
                 # Bucket ICs: market cap
@@ -784,6 +793,20 @@ def run_direct_backtest(
     print()
 
     # ============== NEW DIAGNOSTIC SUMMARY ==============
+
+    # Debug: Check if sample ticker score changed over time
+    if debug_scores:
+        scores_only = [s for _, s in debug_scores]
+        score_range = max(scores_only) - min(scores_only)
+        unique_scores = len(set(round(s, 2) for s in scores_only))
+        print(f"DEBUG Score Variation ({debug_ticker}):")
+        print("-" * 50)
+        print(f"  Score range: {min(scores_only):.2f} - {max(scores_only):.2f} (delta={score_range:.2f})")
+        print(f"  Unique scores: {unique_scores}/{len(scores_only)}")
+        if score_range < 0.01:
+            print(f"  ⚠️  WARNING: Scores are STATIC - inputs not time-varying!")
+        print()
+
     print("Top/Bottom Decile Spread (90d horizon):")
     print("-" * 50)
     if spread_90d_values:
