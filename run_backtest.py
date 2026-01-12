@@ -1090,13 +1090,16 @@ def run_direct_backtest(
             print()
             print(f"  Averages: non_null={avg_non_null:.1f}, UNKNOWN={avg_unknown:.1f} ({pct_unknown:.1f}% of tickers)")
             if pct_unknown > 50:
-                print(f"  WARNING: UNKNOWN dominates - ADV calculation likely failing")
-                print(f"     Common causes: volume as strings, lookback too strict, date misalignment")
+                print(f"  WARNING: UNKNOWN dominates - ADV$ coverage-limited")
+                print(f"     Cause: daily_prices.csv volume data is sparse/missing for most tickers.")
+                print(f"     To fix: Regenerate daily_prices.csv with volume column populated from Yahoo/Stooq.")
         else:
             print("  No ADV diagnostics available")
         print()
     else:
-        print("ADV$ Bucket Diagnostics: SKIPPED (insufficient ADV data)")
+        print("ADV$ Bucket Diagnostics: SKIPPED")
+        print(f"  Cause: daily_prices.csv has no volume column; using universe.json ADV for subset only (non-PIT).")
+        print(f"  To enable PIT ADV$: Add volume column to daily_prices.csv by regenerating with volume data.")
         print()
 
     print("Top/Bottom Decile Spread (90d horizon):")
