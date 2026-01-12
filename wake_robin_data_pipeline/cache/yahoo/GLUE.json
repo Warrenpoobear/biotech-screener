@@ -1,0 +1,43 @@
+{
+  "ticker": "GLUE",
+  "success": true,
+  "price": {
+    "current": 24.28,
+    "currency": "USD",
+    "day_high": 25.18,
+    "day_low": 23.87,
+    "52_week_high": 25.77,
+    "52_week_low": 3.5
+  },
+  "market_cap": {
+    "value": 1581059200.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 65117761.0,
+  "volume": {
+    "last": 5679465,
+    "average_30d": 2603733
+  },
+  "valuation": {
+    "pe_ratio": 75.87501,
+    "forward_pe": -17.099194,
+    "price_to_book": 6.1020355
+  },
+  "company_info": {
+    "name": "Monte Rosa Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:16:00.095081",
+    "url": "https://finance.yahoo.com/quote/GLUE",
+    "data_hash": "530f898d5843082b"
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "ticker": "SNDX",
+  "company_name": "Syndax Pharmaceuticals, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05360160",
+      "title": "A Phase I-II Study Investigating the All-Oral Combination of the Menin Inhibitor SNDX-5613 With Decitabine/Cedazuridine (ASTX727) and Venetoclax in Acute Myeloid Leukemia (SAVE)",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Acute Myeloid Leukemia",
+      "start_date": "2022-10-14",
+      "completion_date": "2026-12-01",
+      "enrollment": 0,
+      "sponsor": "M.D. Anderson Cancer Center"
+    },
+    {
+      "nct_id": "NCT03024437",
+      "title": "Atezolizumab in Combination With Entinostat and Bevacizumab in Patients With Advanced Renal Cell Carcinoma",
+      "status": "TERMINATED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Metastatic Cancer, Renal Cancer",
+      "start_date": "2017-06-29",
+      "completion_date": "2024-06-24",
+      "enrollment": 0,
+      "sponsor": "Roberto Pili"
+    },
+    {
+      "nct_id": "NCT03501381",
+      "title": "High Dose IL 2 and Entinostat in RCC",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Renal Cell Carcinoma",
+      "start_date": "2018-05-24",
+      "completion_date": "2024-04",
+      "enrollment": 0,
+      "sponsor": "Roberto Pili"
+    }
+  ],
+  "summary": {
+    "total_trials": 3,
+    "by_phase": {
+      "PHASE1, PHASE2": 2,
+      "PHASE2": 1
+    },
+    "by_status": {
+      "RECRUITING": 1,
+      "TERMINATED": 1,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 2,
+    "completed_trials": 0,
+    "conditions": [
+      "Acute Myeloid Leukemia",
+      "Metastatic Cancer, Renal Cancer",
+      "Renal Cell Carcinoma"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:44:55.037476",
+    "search_query": "Syndax Pharmaceuticals, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Syndax+Pharmaceuticals,+Inc."
+  }
+}

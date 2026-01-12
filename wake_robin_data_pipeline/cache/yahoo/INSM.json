@@ -1,0 +1,43 @@
+{
+  "ticker": "INSM",
+  "success": true,
+  "price": {
+    "current": 175.97,
+    "currency": "USD",
+    "day_high": 186.19,
+    "day_low": 169.0,
+    "52_week_high": 212.75,
+    "52_week_low": 60.4
+  },
+  "market_cap": {
+    "value": 37529735168.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 213273469.0,
+  "volume": {
+    "last": 5433426,
+    "average_30d": 3796300
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -53.638763,
+    "price_to_book": 39.5616
+  },
+  "company_info": {
+    "name": "Insmed Incorporated",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:16:15.447843",
+    "url": "https://finance.yahoo.com/quote/INSM",
+    "data_hash": "3cac8dd0a841a86c"
+  }
+}

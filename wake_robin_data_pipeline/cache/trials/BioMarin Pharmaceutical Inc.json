@@ -1,0 +1,65 @@
+{
+  "ticker": "BMRN",
+  "company_name": "BioMarin Pharmaceutical Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05368038",
+      "title": "ScreenPlus: A Comprehensive, Flexible, Multi-disorder Newborn Screening Program",
+      "status": "ENROLLING_BY_INVITATION",
+      "phase": "",
+      "condition": "Acid Sphingomyelinase Deficiency, Ceroid Lipofuscinosis, Neuronal, 2, Cerebrotendinous Xanthomatosis, Fabry Disease, GM1 Gangliosidosis, Gaucher Disease, Lysosomal Acid Lipase Deficiency, Metachromatic Leukodystrophy, Mucopolysaccharidosis II, Mucopolysaccharidosis III-B, Mucopolysaccharidosis IV A, Mucopolysaccharidosis VI, Mucopolysaccharidosis VII, Niemann-Pick Disease, Type C",
+      "start_date": "2021-05-10",
+      "completion_date": "2029-08-31",
+      "enrollment": 0,
+      "sponsor": "Albert Einstein College of Medicine"
+    },
+    {
+      "nct_id": "NCT03864029",
+      "title": "Retrospective Observational Safety Effectiveness With Kuvan in hpA",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Tetrahydrobiopterin Deficiency",
+      "start_date": "2017-10-10",
+      "completion_date": "2018-07-25",
+      "enrollment": 0,
+      "sponsor": "BioMarin Pharmaceutical"
+    },
+    {
+      "nct_id": "NCT02049593",
+      "title": "PARP Inhibitor BMN-673 and Temozolomide or Irinotecan Hydrochloride in Treating Patients With Locally Advanced or Metastatic Solid Tumors",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Metastatic Cancer, Unspecified Adult Solid Tumor",
+      "start_date": "2014-06-12",
+      "completion_date": "2019-10-07",
+      "enrollment": 0,
+      "sponsor": "Jonsson Comprehensive Cancer Center"
+    }
+  ],
+  "summary": {
+    "total_trials": 3,
+    "by_phase": {
+      "": 2,
+      "PHASE1": 1
+    },
+    "by_status": {
+      "ENROLLING_BY_INVITATION": 1,
+      "COMPLETED": 2
+    },
+    "active_trials": 1,
+    "completed_trials": 2,
+    "conditions": [
+      "Acid Sphingomyelinase Deficiency, Ceroid Lipofuscinosis, Neuronal, 2, Cerebrotendinous Xanthomatosis, Fabry Disease, GM1 Gangliosidosis, Gaucher Disease, Lysosomal Acid Lipase Deficiency, Metachromatic Leukodystrophy, Mucopolysaccharidosis II, Mucopolysaccharidosis III-B, Mucopolysaccharidosis IV A, Mucopolysaccharidosis VI, Mucopolysaccharidosis VII, Niemann-Pick Disease, Type C",
+      "Metastatic Cancer, Unspecified Adult Solid Tumor",
+      "Tetrahydrobiopterin Deficiency"
+    ],
+    "lead_stage": "phase_1"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:33:25.153933",
+    "search_query": "BioMarin Pharmaceutical Inc.",
+    "url": "https://clinicaltrials.gov/search?term=BioMarin+Pharmaceutical+Inc."
+  }
+}

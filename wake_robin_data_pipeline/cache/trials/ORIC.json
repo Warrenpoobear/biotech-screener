@@ -1,0 +1,137 @@
+{
+  "ticker": "ORIC",
+  "company_name": "ORIC",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05413421",
+      "title": "Study of ORIC-944 in Patients With Metastatic Prostate Cancer",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Metastatic Prostate Cancer",
+      "start_date": "2022-06-01",
+      "completion_date": "2026-09",
+      "enrollment": 0,
+      "sponsor": "ORIC Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT04033328",
+      "title": "Study of ORIC-101 in Combination With Enzalutamide",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Prostatic Neoplasms",
+      "start_date": "2019-10-28",
+      "completion_date": "2023-12-04",
+      "enrollment": 0,
+      "sponsor": "ORIC Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT05315700",
+      "title": "Study of ORIC-114 in Patients With Advanced Solid Tumors Harboring an EGFR or HER2 Alteration",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Solid Tumors",
+      "start_date": "2022-03-10",
+      "completion_date": "2027-09",
+      "enrollment": 0,
+      "sponsor": "ORIC Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT06012721",
+      "title": "Effect of Food on the Pharmacokinetics of ORIC-114",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Food Effect in Healthy Participants",
+      "start_date": "2023-09-11",
+      "completion_date": "2023-11-23",
+      "enrollment": 0,
+      "sponsor": "ORIC Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT06816992",
+      "title": "ORIC-114 in Combination with Subcutaneous Amivantamab in Patients with EGFR Exon20 Insertion Mutant NSCLC",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Solid Tumors, EGFR Exon 20 Insertion Mutations, NSCLC, EGFR-mutated NSCLC",
+      "start_date": "2025-02-27",
+      "completion_date": "2027-05",
+      "enrollment": 0,
+      "sponsor": "ORIC Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT03324555",
+      "title": "Study of ORIC-101 in Healthy Adult Subjects",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2017-10-19",
+      "completion_date": "2017-12-18",
+      "enrollment": 0,
+      "sponsor": "ORIC Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT05227144",
+      "title": "Study of ORIC-533 in Relapsed or Refractory Multiple Myeloma",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Relapsed or Refractory Multiple Myeloma",
+      "start_date": "2022-01-06",
+      "completion_date": "2025-03-03",
+      "enrollment": 0,
+      "sponsor": "ORIC Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT03928314",
+      "title": "Study of ORIC-101 in Combination With Anticancer Therapy",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Solid Tumor",
+      "start_date": "2019-05-02",
+      "completion_date": "2023-12-04",
+      "enrollment": 0,
+      "sponsor": "ORIC Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT03835637",
+      "title": "Single and Multiple Dose Study of ORIC-101 in Adult Healthy Subjects",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2018-03-23",
+      "completion_date": "2018-07-04",
+      "enrollment": 0,
+      "sponsor": "ORIC Pharmaceuticals"
+    }
+  ],
+  "summary": {
+    "total_trials": 9,
+    "by_phase": {
+      "PHASE1": 8,
+      "PHASE1, PHASE2": 1
+    },
+    "by_status": {
+      "RECRUITING": 3,
+      "TERMINATED": 2,
+      "COMPLETED": 4
+    },
+    "active_trials": 3,
+    "completed_trials": 4,
+    "conditions": [
+      "Food Effect in Healthy Participants",
+      "Healthy Volunteers",
+      "Metastatic Prostate Cancer",
+      "Prostatic Neoplasms",
+      "Relapsed or Refractory Multiple Myeloma",
+      "Solid Tumor",
+      "Solid Tumors",
+      "Solid Tumors, EGFR Exon 20 Insertion Mutations, NSCLC, EGFR-mutated NSCLC"
+    ],
+    "lead_stage": "phase_1"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:48:12.598108",
+    "search_query": "ORIC",
+    "url": "https://clinicaltrials.gov/search?term=ORIC"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "PRTA",
+  "success": true,
+  "price": {
+    "current": 9.19,
+    "currency": "USD",
+    "day_high": 9.335,
+    "day_low": 9.11,
+    "52_week_high": 16.665,
+    "52_week_low": 4.32
+  },
+  "market_cap": {
+    "value": 494697536.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 53829982.0,
+  "volume": {
+    "last": 401921,
+    "average_30d": 721247
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": 17.449257,
+    "price_to_book": 1.6770072
+  },
+  "company_info": {
+    "name": "Prothena Corporation plc",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:14:05.521892",
+    "url": "https://finance.yahoo.com/quote/PRTA",
+    "data_hash": "bebf6c88b0dc318a"
+  }
+}

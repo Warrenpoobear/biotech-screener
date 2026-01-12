@@ -1,0 +1,43 @@
+{
+  "ticker": "SNY",
+  "success": true,
+  "price": {
+    "current": 49.03,
+    "currency": "USD",
+    "day_high": 49.34,
+    "day_low": 48.78,
+    "52_week_high": 60.12,
+    "52_week_low": 44.62
+  },
+  "market_cap": {
+    "value": 118788874240.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 2422779332.0,
+  "volume": {
+    "last": 7029358,
+    "average_30d": 2807814
+  },
+  "valuation": {
+    "pe_ratio": 16.022875,
+    "forward_pe": 9.914124,
+    "price_to_book": 0.7007019
+  },
+  "company_info": {
+    "name": "Sanofi",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - General"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:19:33.078506",
+    "url": "https://finance.yahoo.com/quote/SNY",
+    "data_hash": "314b750696104e87"
+  }
+}

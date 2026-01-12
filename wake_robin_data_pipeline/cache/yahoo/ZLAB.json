@@ -1,0 +1,43 @@
+{
+  "ticker": "ZLAB",
+  "success": true,
+  "price": {
+    "current": 18.55,
+    "currency": "USD",
+    "day_high": 19.16,
+    "day_low": 18.46,
+    "52_week_high": 44.34,
+    "52_week_low": 16.82
+  },
+  "market_cap": {
+    "value": 2051514112.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 110593760.0,
+  "volume": {
+    "last": 695450,
+    "average_30d": 889171
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -29.673826,
+    "price_to_book": 2.6993594
+  },
+  "company_info": {
+    "name": "Zai Lab Limited",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:18:43.436085",
+    "url": "https://finance.yahoo.com/quote/ZLAB",
+    "data_hash": "bf23d7450475537e"
+  }
+}

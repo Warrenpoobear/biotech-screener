@@ -1,0 +1,41 @@
+{
+  "ticker": "TNGX",
+  "cik": "0001819133",
+  "success": true,
+  "financials": {
+    "cash": 58338000.0,
+    "debt": null,
+    "net_debt": null,
+    "revenue_ttm": 62384000.0,
+    "assets": 210136000.0,
+    "liabilities": 50105000.0,
+    "equity": 160031000.0,
+    "currency": "USD"
+  },
+  "data_dates": {
+    "cash": "2025-09-30",
+    "revenue": "2025-09-30",
+    "assets": "2025-09-30",
+    "liabilities": "2025-09-30"
+  },
+  "data_freshness": {
+    "most_recent_date": "2025-09-30",
+    "oldest_date": "2025-09-30",
+    "staleness_flags": [
+      "stale_data:104d"
+    ]
+  },
+  "coverage": {
+    "has_cash": true,
+    "has_debt": false,
+    "has_revenue": true,
+    "has_balance_sheet": true,
+    "pct_complete": 75.0
+  },
+  "provenance": {
+    "source": "SEC EDGAR Company Facts API",
+    "timestamp": "2026-01-12T09:30:40.311433",
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001819133.json",
+    "cik": "0001819133"
+  }
+}

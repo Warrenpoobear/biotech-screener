@@ -1,0 +1,43 @@
+{
+  "ticker": "ALMS",
+  "success": true,
+  "price": {
+    "current": 19.56,
+    "currency": "USD",
+    "day_high": 19.91,
+    "day_low": 18.1303,
+    "52_week_high": 22.3,
+    "52_week_low": 2.76
+  },
+  "market_cap": {
+    "value": 2438953984.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 117505995.0,
+  "volume": {
+    "last": 6009722,
+    "average_30d": 5142157
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -6.176835,
+    "price_to_book": 5.3051257
+  },
+  "company_info": {
+    "name": "Alumis Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:14:41.500958",
+    "url": "https://finance.yahoo.com/quote/ALMS",
+    "data_hash": "90b5de20bc089529"
+  }
+}

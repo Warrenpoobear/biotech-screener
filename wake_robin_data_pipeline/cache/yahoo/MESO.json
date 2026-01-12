@@ -1,0 +1,43 @@
+{
+  "ticker": "MESO",
+  "success": true,
+  "price": {
+    "current": 20.96,
+    "currency": "USD",
+    "day_high": 21.49,
+    "day_low": 20.12,
+    "52_week_high": 21.5,
+    "52_week_low": 9.61
+  },
+  "market_cap": {
+    "value": 2697488384.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 128696980.0,
+  "volume": {
+    "last": 312079,
+    "average_30d": 221800
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": 123.29411,
+    "price_to_book": 44.882225
+  },
+  "company_info": {
+    "name": "Mesoblast Limited",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:16:42.868719",
+    "url": "https://finance.yahoo.com/quote/MESO",
+    "data_hash": "aff5e09cea3e0650"
+  }
+}

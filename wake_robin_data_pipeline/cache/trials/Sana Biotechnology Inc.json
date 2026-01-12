@@ -1,0 +1,39 @@
+{
+  "ticker": "SANA",
+  "company_name": "Sana Biotechnology, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT03047369",
+      "title": "The Myelin Disorders Biorepository Project",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Leukodystrophy, White Matter Disease, Leukoencephalopathies, 4H Syndrome, Adrenoleukodystrophy, AMN, ALD, ALD Gene Mutation, ALD (Adrenoleukodystrophy), X-linked Adrenoleukodystrophy, X-ALD, Adrenomyeloneuropathy, Aicardi Goutieres Syndrome, AGS, Alexander Disease, Alexanders Leukodystrophy, AxD, ADLD, Canavan Disease, CTX, Cerebrotendinous Xanthomatoses, Krabbe Disease, GALC Deficiency, Globoid Leukodystrophy, TUBB4A-Related Leukodystrophy, H-ABC - Hypomyelination, Atrophy of Basal Ganglia and Cerebellum, HBSL, HBSL - Hypomyelination, Brain Stem, Spinal Cord, Leg Spasticity, LBSL, Leukoencephalopathy With Brain Stem and Spinal Cord Involvement and High Lactate Syndrome (Disorder), Leukoencephalopathy With Brainstem and Spinal Cord Involvement and Lactate Elevation, ALSP, CSF1R Gene Mutation, HCC - Hypomyelination and Congenital Cataract, MLC1, Megalencephalic Leukoencephalopathy With Subcortical Cysts, MLD, Metachromatic Leukodystrophy, PMD, Pelizaeus-Merzbacher Disease, PLP1 Null Syndrome, PLP1 Gene Duplication &#X7C; Blood or Tissue &#X7C; Mutations, Pelizaeus Merzbacher Like Disease, Peroxisomal Biogenesis Disorder, Zellweger Syndrome, Refsum Disease, Salla Disease, Sialic Storage Disease, Sj\u00f6gren, Sjogren-Larsson Syndrome, Van Der Knapp Disease, Vanishing White Matter Disease, Charcot-Marie-Tooth, CMT, Mct8 (Slc16A2)-Specific Thyroid Hormone Cell Transporter Deficiency, Allan-Herndon-Dudley Syndrome, Cadasil, Cockayne Syndrome, Multiple Sulfatase Deficiency, Gangliosidoses, GM2 Gangliosidosis, BPAN, Labrune Syndrome, LCC, Mucopolysaccharidoses, TBCK-Related Intellectual Disability Syndrome",
+      "start_date": "2016-12-08",
+      "completion_date": "2030-12-08",
+      "enrollment": 0,
+      "sponsor": "Children's Hospital of Philadelphia"
+    }
+  ],
+  "summary": {
+    "total_trials": 1,
+    "by_phase": {
+      "": 1
+    },
+    "by_status": {
+      "RECRUITING": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 0,
+    "conditions": [
+      "Leukodystrophy, White Matter Disease, Leukoencephalopathies, 4H Syndrome, Adrenoleukodystrophy, AMN, ALD, ALD Gene Mutation, ALD (Adrenoleukodystrophy), X-linked Adrenoleukodystrophy, X-ALD, Adrenomyeloneuropathy, Aicardi Goutieres Syndrome, AGS, Alexander Disease, Alexanders Leukodystrophy, AxD, ADLD, Canavan Disease, CTX, Cerebrotendinous Xanthomatoses, Krabbe Disease, GALC Deficiency, Globoid Leukodystrophy, TUBB4A-Related Leukodystrophy, H-ABC - Hypomyelination, Atrophy of Basal Ganglia and Cerebellum, HBSL, HBSL - Hypomyelination, Brain Stem, Spinal Cord, Leg Spasticity, LBSL, Leukoencephalopathy With Brain Stem and Spinal Cord Involvement and High Lactate Syndrome (Disorder), Leukoencephalopathy With Brainstem and Spinal Cord Involvement and Lactate Elevation, ALSP, CSF1R Gene Mutation, HCC - Hypomyelination and Congenital Cataract, MLC1, Megalencephalic Leukoencephalopathy With Subcortical Cysts, MLD, Metachromatic Leukodystrophy, PMD, Pelizaeus-Merzbacher Disease, PLP1 Null Syndrome, PLP1 Gene Duplication &#X7C; Blood or Tissue &#X7C; Mutations, Pelizaeus Merzbacher Like Disease, Peroxisomal Biogenesis Disorder, Zellweger Syndrome, Refsum Disease, Salla Disease, Sialic Storage Disease, Sj\u00f6gren, Sjogren-Larsson Syndrome, Van Der Knapp Disease, Vanishing White Matter Disease, Charcot-Marie-Tooth, CMT, Mct8 (Slc16A2)-Specific Thyroid Hormone Cell Transporter Deficiency, Allan-Herndon-Dudley Syndrome, Cadasil, Cockayne Syndrome, Multiple Sulfatase Deficiency, Gangliosidoses, GM2 Gangliosidosis, BPAN, Labrune Syndrome, LCC, Mucopolysaccharidoses, TBCK-Related Intellectual Disability Syndrome"
+    ],
+    "lead_stage": "unknown"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:44:51.833526",
+    "search_query": "Sana Biotechnology, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Sana+Biotechnology,+Inc."
+  }
+}

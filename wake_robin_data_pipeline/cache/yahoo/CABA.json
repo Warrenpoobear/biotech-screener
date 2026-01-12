@@ -1,0 +1,43 @@
+{
+  "ticker": "CABA",
+  "success": true,
+  "price": {
+    "current": 2.1,
+    "currency": "USD",
+    "day_high": 2.21,
+    "day_low": 2.08,
+    "52_week_high": 3.67,
+    "52_week_low": 0.986
+  },
+  "market_cap": {
+    "value": 202156912.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 96265204.0,
+  "volume": {
+    "last": 1329515,
+    "average_30d": 1744104
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -1.2520643,
+    "price_to_book": 1.4492753
+  },
+  "company_info": {
+    "name": "Cabaletta Bio, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:15:15.558271",
+    "url": "https://finance.yahoo.com/quote/CABA",
+    "data_hash": "e2cf4fc4061a2c9c"
+  }
+}

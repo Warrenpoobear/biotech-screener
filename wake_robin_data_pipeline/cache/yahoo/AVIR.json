@@ -1,0 +1,43 @@
+{
+  "ticker": "AVIR",
+  "success": true,
+  "price": {
+    "current": 3.45,
+    "currency": "USD",
+    "day_high": 3.67,
+    "day_low": 3.43,
+    "52_week_high": 4.02,
+    "52_week_low": 2.455
+  },
+  "market_cap": {
+    "value": 269537472.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 78126796.0,
+  "volume": {
+    "last": 315097,
+    "average_30d": 395666
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -1.9770774,
+    "price_to_book": 0.8535379
+  },
+  "company_info": {
+    "name": "Atea Pharmaceuticals, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:15:04.312357",
+    "url": "https://finance.yahoo.com/quote/AVIR",
+    "data_hash": "a92166c9a09814ce"
+  }
+}

@@ -1,0 +1,162 @@
+{
+  "ticker": "RGNX",
+  "company_name": "REGENXBIO Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT07236606",
+      "title": "RGX-121-3102 Gene Therapy in Participants With MPS II (Hunter Syndrome)",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "MPS II, Hunter Syndrome (MPS II)",
+      "start_date": "2025-11-25",
+      "completion_date": "2031-05-30",
+      "enrollment": 0,
+      "sponsor": "REGENXBIO Inc."
+    },
+    {
+      "nct_id": "NCT05407636",
+      "title": "Pivotal 2 Study of RGX-314 Gene Therapy in Participants With nAMD",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "AMD, nAMD, Wet Age-related Macular Degeneration, wAMD, WetAMD, CNV",
+      "start_date": "2022-01-13",
+      "completion_date": "2027-11",
+      "enrollment": 0,
+      "sponsor": "AbbVie"
+    },
+    {
+      "nct_id": "NCT04462692",
+      "title": "An Observational Study in Children With CLN2 Batten Disease",
+      "status": "WITHDRAWN",
+      "phase": "",
+      "condition": "Neuronal Ceroid Lipofuscinosis Type 2 (CLN2)",
+      "start_date": "2021-03-31",
+      "completion_date": "2023-10",
+      "enrollment": 0,
+      "sponsor": "REGENXBIO Inc."
+    },
+    {
+      "nct_id": "NCT04704921",
+      "title": "Pivotal 1 Study of ABBV-RGX-314 (Also Known as RGX-314) Gene Therapy Administered Via Subretinal Delivery One Time in Participants With nAMD",
+      "status": "RECRUITING",
+      "phase": "PHASE2, PHASE3",
+      "condition": "AMD, nAMD, Wet Age-related Macular Degeneration, wAMD, Wet AMD, CNV, Neovascular AMD, Neovascular Age-related Macular Degeneration, Choroidal Neovascularization",
+      "start_date": "2020-12-29",
+      "completion_date": "2027-11",
+      "enrollment": 0,
+      "sponsor": "AbbVie"
+    },
+    {
+      "nct_id": "NCT03529786",
+      "title": "Mucopolysaccharidosis Type II Natural History",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Mucopolysaccharidosis II",
+      "start_date": "2017-09-27",
+      "completion_date": "2022-03-22",
+      "enrollment": 0,
+      "sponsor": "REGENXBIO Inc."
+    },
+    {
+      "nct_id": "NCT05693142",
+      "title": "AFFINITY DUCHENNE: RGX-202 Gene Therapy in Participants With Duchenne Muscular Dystrophy (DMD)",
+      "status": "RECRUITING",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Duchenne Muscular Dystrophy",
+      "start_date": "2023-01-04",
+      "completion_date": "2028-08",
+      "enrollment": 0,
+      "sponsor": "REGENXBIO Inc."
+    },
+    {
+      "nct_id": "NCT04514653",
+      "title": "RGX-314 Gene Therapy Administered in the Suprachoroidal Space for Participants With Neovascular Age-Related Macular Degeneration (nAMD)",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Neovascular Age-Related Macular Degeneration (nAMD)",
+      "start_date": "2020-08-25",
+      "completion_date": "2027-02",
+      "enrollment": 0,
+      "sponsor": "AbbVie"
+    },
+    {
+      "nct_id": "NCT03566043",
+      "title": "CAMPSIITE\u2122 RGX-121 Gene Therapy in Subjects With MPS II (Hunter Syndrome)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Mucopolysaccharidosis Type II (MPS II)",
+      "start_date": "2018-09-27",
+      "completion_date": "2025-08",
+      "enrollment": 0,
+      "sponsor": "REGENXBIO Inc."
+    },
+    {
+      "nct_id": "NCT03066258",
+      "title": "Safety and Tolerability of RGX-314 (Investigational Product) Gene Therapy for Neovascular AMD Trial",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Neovascular Age-related Macular Degeneration, Wet Age-related Macular Degeneration",
+      "start_date": "2017-03-29",
+      "completion_date": "2021-06-17",
+      "enrollment": 0,
+      "sponsor": "REGENXBIO Inc."
+    },
+    {
+      "nct_id": "NCT05683379",
+      "title": "AFFINITY BEYOND: Anti-AAV8 Antibody Assessment Study of Males With DMD",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Duchenne Muscular Dystrophy",
+      "start_date": "2022-12-20",
+      "completion_date": "2026-09",
+      "enrollment": 0,
+      "sponsor": "REGENXBIO Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 22,
+    "by_phase": {
+      "PHASE3": 2,
+      "": 10,
+      "PHASE2, PHASE3": 3,
+      "PHASE2": 3,
+      "PHASE1, PHASE2": 4
+    },
+    "by_status": {
+      "RECRUITING": 7,
+      "WITHDRAWN": 3,
+      "COMPLETED": 4,
+      "ACTIVE_NOT_RECRUITING": 2,
+      "UNKNOWN": 3,
+      "ENROLLING_BY_INVITATION": 2,
+      "TERMINATED": 1
+    },
+    "active_trials": 11,
+    "completed_trials": 4,
+    "conditions": [
+      "AMD, nAMD, Wet Age-related Macular Degeneration, wAMD, Wet AMD, CNV, Neovascular AMD, Neovascular Age-related Macular Degeneration, Choroidal Neovascularization",
+      "AMD, nAMD, Wet Age-related Macular Degeneration, wAMD, WetAMD, CNV",
+      "Diabetic Macular Edema",
+      "Diabetic Retinopathy (DR), Center-Involved Diabetic Macular Edema (CI-DME)",
+      "Duchenne Muscular Dystrophy",
+      "Homozygous Familial Hypercholesterolemia (HoFH)",
+      "Late-infantile Neuronal Ceroid Lipofuscinosis Type 2 (CLN2)",
+      "MPS II, Hunter Syndrome (MPS II)",
+      "Mucopolysaccharidosis I",
+      "Mucopolysaccharidosis II",
+      "Mucopolysaccharidosis Type I (MPS I), Hurler Syndrome, Hurler-Scheie Syndrome",
+      "Mucopolysaccharidosis Type II (MPS II)",
+      "Neovascular Age-Related Macular Degeneration (nAMD)",
+      "Neovascular Age-related Macular Degeneration, Wet Age-related Macular Degeneration",
+      "Neuronal Ceroid Lipofuscinosis Type 2 (CLN2)"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:44:50.212836",
+    "search_query": "REGENXBIO Inc.",
+    "url": "https://clinicaltrials.gov/search?term=REGENXBIO+Inc."
+  }
+}

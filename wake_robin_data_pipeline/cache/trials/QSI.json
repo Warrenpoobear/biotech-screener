@@ -1,0 +1,20 @@
+{
+  "ticker": "QSI",
+  "company_name": "QSI",
+  "success": true,
+  "trials": [],
+  "summary": {
+    "total_trials": 0,
+    "by_phase": {},
+    "by_status": {},
+    "active_trials": 0,
+    "completed_trials": 0,
+    "lead_stage": "unknown"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:48:28.545497",
+    "search_query": "QSI",
+    "url": "https://clinicaltrials.gov/search?term=QSI"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "ABVX",
+  "success": true,
+  "price": {
+    "current": 114.4,
+    "currency": "USD",
+    "day_high": 119.17,
+    "day_low": 113.0,
+    "52_week_high": 148.83,
+    "52_week_low": 4.77
+  },
+  "market_cap": {
+    "value": 8974010368.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 78444148.0,
+  "volume": {
+    "last": 1709559,
+    "average_30d": 2004371
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -34.918503,
+    "price_to_book": 14.96917
+  },
+  "company_info": {
+    "name": "ABIVAX Soci\u00e9t\u00e9 Anonyme",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:14:27.116129",
+    "url": "https://finance.yahoo.com/quote/ABVX",
+    "data_hash": "b36ec8ff13db4b36"
+  }
+}

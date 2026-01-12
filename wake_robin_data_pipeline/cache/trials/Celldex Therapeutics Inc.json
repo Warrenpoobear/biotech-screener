@@ -1,0 +1,76 @@
+{
+  "ticker": "CLDX",
+  "company_name": "Celldex Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05484011",
+      "title": "A Maintenance Therapy Study of Odetiglucan With CDX-1140 in Patients With Metastatic Pancreatic Ductal Adenocarcinoma",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Metastatic Pancreatic Adenocarcinoma",
+      "start_date": "2022-12-15",
+      "completion_date": "2024-03-04",
+      "enrollment": 0,
+      "sponsor": "HiberCell, Inc."
+    },
+    {
+      "nct_id": "NCT02270372",
+      "title": "Study of ONT-10 and Varlilumab to Treat Advanced Ovarian or Breast Cancer",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Advanced Breast Carcinoma, Advanced Ovarian Carcinoma",
+      "start_date": "2014-11",
+      "completion_date": "2016-06",
+      "enrollment": 0,
+      "sponsor": "Cascadian Therapeutics Inc."
+    },
+    {
+      "nct_id": "NCT03835533",
+      "title": "Platform Study for Prostate Researching Translational Endpoints Correlated to Response to Inform Use of Novel Combinations",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Metastatic Castration-resistant Prostate Cancer",
+      "start_date": "2019-06-21",
+      "completion_date": "2022-10-03",
+      "enrollment": 0,
+      "sponsor": "Parker Institute for Cancer Immunotherapy"
+    },
+    {
+      "nct_id": "NCT02543645",
+      "title": "A Study of Varlilumab and Atezolizumab in Patients With Advanced Cancer",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Carcinoma, Renal Cell, Kidney Diseases, Kidney Neoplasms, Urogenital Neoplasms, Urologic Diseases, Urologic Neoplasms, Neoplasms by Histologic Type, Neoplasms, Clear-cell Metastatic Renal Cell Carcinoma, Melanoma, Triple Negative Breast Cancer, Bladder Cancer, Head and Neck Cancer, Non-small Cell Lung Cancer",
+      "start_date": "2015-10",
+      "completion_date": "2017-05-22",
+      "enrollment": 0,
+      "sponsor": "Celldex Therapeutics"
+    }
+  ],
+  "summary": {
+    "total_trials": 4,
+    "by_phase": {
+      "PHASE1": 4
+    },
+    "by_status": {
+      "TERMINATED": 2,
+      "COMPLETED": 2
+    },
+    "active_trials": 0,
+    "completed_trials": 2,
+    "conditions": [
+      "Advanced Breast Carcinoma, Advanced Ovarian Carcinoma",
+      "Carcinoma, Renal Cell, Kidney Diseases, Kidney Neoplasms, Urogenital Neoplasms, Urologic Diseases, Urologic Neoplasms, Neoplasms by Histologic Type, Neoplasms, Clear-cell Metastatic Renal Cell Carcinoma, Melanoma, Triple Negative Breast Cancer, Bladder Cancer, Head and Neck Cancer, Non-small Cell Lung Cancer",
+      "Metastatic Castration-resistant Prostate Cancer",
+      "Metastatic Pancreatic Adenocarcinoma"
+    ],
+    "lead_stage": "phase_1"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:43:58.848816",
+    "search_query": "Celldex Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Celldex+Therapeutics,+Inc."
+  }
+}

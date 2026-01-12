@@ -1,0 +1,43 @@
+{
+  "ticker": "CDNA",
+  "success": true,
+  "price": {
+    "current": 17.13,
+    "currency": "USD",
+    "day_high": 17.5705,
+    "day_low": 16.95,
+    "52_week_high": 25.95,
+    "52_week_low": 10.96
+  },
+  "market_cap": {
+    "value": 911777600.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 51432639.0,
+  "volume": {
+    "last": 549590,
+    "average_30d": 779523
+  },
+  "valuation": {
+    "pe_ratio": 13.3828125,
+    "forward_pe": 19.211142,
+    "price_to_book": 2.8304691
+  },
+  "company_info": {
+    "name": "CareDx, Inc.",
+    "sector": "Healthcare",
+    "industry": "Diagnostics & Research"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:13:02.406750",
+    "url": "https://finance.yahoo.com/quote/CDNA",
+    "data_hash": "ddbbaf2a4c6234c1"
+  }
+}

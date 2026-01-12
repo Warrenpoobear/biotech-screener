@@ -1,0 +1,39 @@
+{
+  "ticker": "PRME",
+  "company_name": "PRME",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT02392221",
+      "title": "Impact of Therapeutic Strategies in the Pediatric Inflammatory Bowel Disease: a Population Based Study (1988-2011).",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Pediatric Inflammatory Bowel Disease",
+      "start_date": "2015-05",
+      "completion_date": "2019-04",
+      "enrollment": 0,
+      "sponsor": "Centre Hospitalier Universitaire, Amiens"
+    }
+  ],
+  "summary": {
+    "total_trials": 1,
+    "by_phase": {
+      "": 1
+    },
+    "by_status": {
+      "COMPLETED": 1
+    },
+    "active_trials": 0,
+    "completed_trials": 1,
+    "conditions": [
+      "Pediatric Inflammatory Bowel Disease"
+    ],
+    "lead_stage": "unknown"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:48:23.772758",
+    "search_query": "PRME",
+    "url": "https://clinicaltrials.gov/search?term=PRME"
+  }
+}

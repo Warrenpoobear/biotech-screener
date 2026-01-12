@@ -1,0 +1,43 @@
+{
+  "ticker": "FHTX",
+  "success": true,
+  "price": {
+    "current": 5.16,
+    "currency": "USD",
+    "day_high": 5.3,
+    "day_low": 5.04,
+    "52_week_high": 6.79,
+    "52_week_low": 2.945
+  },
+  "market_cap": {
+    "value": 291804640.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 56551289.0,
+  "volume": {
+    "last": 165794,
+    "average_30d": 164819
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -5.137191,
+    "price_to_book": -3.2534678
+  },
+  "company_info": {
+    "name": "Foghorn Therapeutics Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:15:53.427503",
+    "url": "https://finance.yahoo.com/quote/FHTX",
+    "data_hash": "b0e8d3164114a59a"
+  }
+}

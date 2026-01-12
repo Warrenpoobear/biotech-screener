@@ -1,0 +1,128 @@
+{
+  "ticker": "DAWN",
+  "company_name": "Day One Biopharmaceuticals, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05566795",
+      "title": "DAY101 vs. Standard of Care Chemotherapy in Pediatric Participants With Low-Grade Glioma Requiring First-Line Systemic Therapy (LOGGIC/FIREFLY-2)",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Low-grade Glioma, Rapidly Accelerated Fibrosarcoma (RAF) Altered Glioma, Pediatric Low-grade Glioma",
+      "start_date": "2023-02-27",
+      "completion_date": "2030-03",
+      "enrollment": 0,
+      "sponsor": "Day One Biopharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT07121829",
+      "title": "Tovorafenib (DAY101) or in Combination With Pimasertib for Participants With Melanoma and Other Solid Tumors",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Melanoma, Solid Tumor, Pilocytic Astrocytoma, Non Small Cell Lung Cancer, Colorectal Cancer, Pancreatic Cancer, MAP Kinase Family Gene Mutation, RAS Mutation, RAF Mutation, MEK Mutation",
+      "start_date": "2022-05-02",
+      "completion_date": "2024-12-18",
+      "enrollment": 0,
+      "sponsor": "Day One Biopharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT03429803",
+      "title": "DAY101 In Gliomas and Other Tumors",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Low-grade Glioma",
+      "start_date": "2018-02-27",
+      "completion_date": "2025-12-31",
+      "enrollment": 0,
+      "sponsor": "Karen D. Wright, MD"
+    },
+    {
+      "nct_id": "NCT05760586",
+      "title": "Expanded Access Program (EAP) for Tovorafenib (DAY101) in RAF-Altered, Relapsed or Refractory Low-Grade Glioma",
+      "status": "APPROVED_FOR_MARKETING",
+      "phase": "",
+      "condition": "Low-grade Glioma",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Day One Biopharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT05465174",
+      "title": "Tovorafenib for Treatment of Craniopharyngioma in Children and Young Adults",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Craniopharyngioma, Child, Craniopharyngioma, Recurrent Craniopharyngioma",
+      "start_date": "2022-09-12",
+      "completion_date": "2028-03-01",
+      "enrollment": 0,
+      "sponsor": "Sabine Mueller, MD, PhD"
+    },
+    {
+      "nct_id": "NCT06752681",
+      "title": "To Evaluate the Safety, Tolerability, Pharmacokinetics and Antitumor Activity of DAY301 in Participants With Locally Advanced or Metastatic Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Advanced or Metastatic Solid Tumors",
+      "start_date": "2024-11-18",
+      "completion_date": "2028-12",
+      "enrollment": 0,
+      "sponsor": "Day One Biopharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT04985604",
+      "title": "Tovorafenib (DAY101) Monotherapy for Patients With Melanoma and Other Solid Tumors",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Melanoma, Solid Tumor, CRAF Gene Amplification, RAF1 Gene Amplification, BRAF Gene Fusion, BRAF Fusion, CRAF Gene Fusion, CRAF Fusion, RAF1 Gene Fusion, RAF1 Fusion, Thyroid Cancer, Papillary, Spitzoid Melanoma, Pilocytic Astrocytoma, Pilocytic Astrocytoma, Adult, Non Small Cell Lung Cancer, Non-Small Cell Adenocarcinoma, Colorectal Cancer, Pancreatic Acinar Carcinoma, Spitzoid Malignant Melanoma, Bladder Cancer, Bladder Urothelial Carcinoma, MAP Kinase Family Gene Mutation, RAF Mutation",
+      "start_date": "2021-07-15",
+      "completion_date": "2024-07-08",
+      "enrollment": 0,
+      "sponsor": "Day One Biopharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT04775485",
+      "title": "A Study to Evaluate Tovorafenib in Pediatric and Young Adult Participants With Relapsed or Progressive Low-Grade Glioma and Advance Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Low-grade Glioma, Advanced Solid Tumor",
+      "start_date": "2021-04-22",
+      "completion_date": "2027-05-31",
+      "enrollment": 0,
+      "sponsor": "Day One Biopharmaceuticals, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 8,
+    "by_phase": {
+      "PHASE3": 1,
+      "PHASE1": 3,
+      "": 1,
+      "PHASE2": 3
+    },
+    "by_status": {
+      "RECRUITING": 4,
+      "TERMINATED": 2,
+      "ACTIVE_NOT_RECRUITING": 1,
+      "APPROVED_FOR_MARKETING": 1
+    },
+    "active_trials": 5,
+    "completed_trials": 0,
+    "conditions": [
+      "Advanced or Metastatic Solid Tumors",
+      "Craniopharyngioma, Child, Craniopharyngioma, Recurrent Craniopharyngioma",
+      "Low-grade Glioma",
+      "Low-grade Glioma, Advanced Solid Tumor",
+      "Low-grade Glioma, Rapidly Accelerated Fibrosarcoma (RAF) Altered Glioma, Pediatric Low-grade Glioma",
+      "Melanoma, Solid Tumor, CRAF Gene Amplification, RAF1 Gene Amplification, BRAF Gene Fusion, BRAF Fusion, CRAF Gene Fusion, CRAF Fusion, RAF1 Gene Fusion, RAF1 Fusion, Thyroid Cancer, Papillary, Spitzoid Melanoma, Pilocytic Astrocytoma, Pilocytic Astrocytoma, Adult, Non Small Cell Lung Cancer, Non-Small Cell Adenocarcinoma, Colorectal Cancer, Pancreatic Acinar Carcinoma, Spitzoid Malignant Melanoma, Bladder Cancer, Bladder Urothelial Carcinoma, MAP Kinase Family Gene Mutation, RAF Mutation",
+      "Melanoma, Solid Tumor, Pilocytic Astrocytoma, Non Small Cell Lung Cancer, Colorectal Cancer, Pancreatic Cancer, MAP Kinase Family Gene Mutation, RAS Mutation, RAF Mutation, MEK Mutation"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:43:16.528494",
+    "search_query": "Day One Biopharmaceuticals, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Day+One+Biopharmaceuticals,+Inc."
+  }
+}

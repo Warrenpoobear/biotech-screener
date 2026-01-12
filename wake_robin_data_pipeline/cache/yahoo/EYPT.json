@@ -1,0 +1,43 @@
+{
+  "ticker": "EYPT",
+  "success": true,
+  "price": {
+    "current": 16.23,
+    "currency": "USD",
+    "day_high": 17.375,
+    "day_low": 16.17,
+    "52_week_high": 19.11,
+    "52_week_low": 3.91
+  },
+  "market_cap": {
+    "value": 1343636480.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 82787220.0,
+  "volume": {
+    "last": 877330,
+    "average_30d": 1146533
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -5.7467604,
+    "price_to_book": 5.6412926
+  },
+  "company_info": {
+    "name": "EyePoint, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:19:06.057685",
+    "url": "https://finance.yahoo.com/quote/EYPT",
+    "data_hash": "532116e93c1a1ee9"
+  }
+}

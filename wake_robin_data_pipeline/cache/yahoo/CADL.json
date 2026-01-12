@@ -1,0 +1,43 @@
+{
+  "ticker": "CADL",
+  "success": true,
+  "price": {
+    "current": 5.71,
+    "currency": "USD",
+    "day_high": 5.87,
+    "day_low": 5.565,
+    "52_week_high": 13.68,
+    "52_week_low": 4.25
+  },
+  "market_cap": {
+    "value": 313469312.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 54898303.0,
+  "volume": {
+    "last": 672765,
+    "average_30d": 843090
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -9.516666,
+    "price_to_book": 3.9109588
+  },
+  "company_info": {
+    "name": "Candel Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:15:16.934157",
+    "url": "https://finance.yahoo.com/quote/CADL",
+    "data_hash": "ee6acede3193f634"
+  }
+}

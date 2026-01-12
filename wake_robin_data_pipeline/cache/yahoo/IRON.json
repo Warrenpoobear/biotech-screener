@@ -1,0 +1,43 @@
+{
+  "ticker": "IRON",
+  "success": true,
+  "price": {
+    "current": 78.14,
+    "currency": "USD",
+    "day_high": 80.53,
+    "day_low": 77.83,
+    "52_week_high": 99.5,
+    "52_week_low": 30.82
+  },
+  "market_cap": {
+    "value": 2949797376.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 37750162.0,
+  "volume": {
+    "last": 247697,
+    "average_30d": 634276
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -11.863355,
+    "price_to_book": 4.770743
+  },
+  "company_info": {
+    "name": "Disc Medicine, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:16:18.695319",
+    "url": "https://finance.yahoo.com/quote/IRON",
+    "data_hash": "35ef0d2e372aff5e"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "SLDB",
+  "success": true,
+  "price": {
+    "current": 5.29,
+    "currency": "USD",
+    "day_high": 5.497,
+    "day_low": 5.17,
+    "52_week_high": 7.37,
+    "52_week_low": 2.41
+  },
+  "market_cap": {
+    "value": 412145152.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 77910239.0,
+  "volume": {
+    "last": 656665,
+    "average_30d": 894166
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -2.6269526,
+    "price_to_book": 1.8906361
+  },
+  "company_info": {
+    "name": "Solid Biosciences Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:17:47.648240",
+    "url": "https://finance.yahoo.com/quote/SLDB",
+    "data_hash": "8858d6a52a9cdf43"
+  }
+}

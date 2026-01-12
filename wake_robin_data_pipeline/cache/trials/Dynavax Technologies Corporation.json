@@ -1,0 +1,167 @@
+{
+  "ticker": "DVAX",
+  "company_name": "Dynavax Technologies Corporation",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT03934736",
+      "title": "HEPLISAV-B\u00ae in Adults With End-Stage Renal Disease (ESRD) Undergoing Hemodialysis",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "End Stage Renal Disease on Hemodialysis (Diagnosis)",
+      "start_date": "2019-04-22",
+      "completion_date": "2021-09-15",
+      "enrollment": 0,
+      "sponsor": "Dynavax Technologies Corporation"
+    },
+    {
+      "nct_id": "NCT04385524",
+      "title": "Use of Dynavax Heplisav B in Healthcare Workers Previously Vaccinated With 3-dose Vaccine Who Failed to Demonstrate Seroprotection",
+      "status": "WITHDRAWN",
+      "phase": "NA",
+      "condition": "Hepatitis B Virus",
+      "start_date": "2020-06-01",
+      "completion_date": "2021-02-28",
+      "enrollment": 0,
+      "sponsor": "University of Louisville"
+    },
+    {
+      "nct_id": "NCT01195246",
+      "title": "Safety and Immunogenicity of HEPLISAV\u2122 a Hepatitis B Virus Vaccine in Adults on Hemodialysis",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "End Stage Renal Disease",
+      "start_date": "2010-12",
+      "completion_date": "2012-08",
+      "enrollment": 0,
+      "sponsor": "Dynavax Technologies Corporation"
+    },
+    {
+      "nct_id": "NCT02266147",
+      "title": "Study of SD-101 in Combination With Localized Low-dose Radiation in Patients With Untreated Low-grade B-cell Lymphoma",
+      "status": "TERMINATED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "B-cell Lymphoma",
+      "start_date": "2014-10",
+      "completion_date": "2017-04",
+      "enrollment": 0,
+      "sponsor": "Dynavax Technologies Corporation"
+    },
+    {
+      "nct_id": "NCT00251394",
+      "title": "Study of Dynavax's 1018 ISS, Following Rituxan in Patients With B-Cell Follicular Lymphoma",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Non-Hodgkin's Lymphoma",
+      "start_date": "2004-07",
+      "completion_date": "2009-07",
+      "enrollment": 0,
+      "sponsor": "Dana-Farber Cancer Institute"
+    },
+    {
+      "nct_id": "NCT01023230",
+      "title": "A Study to Assess DV-601 in Subjects With Chronic Hepatitis B",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Hepatitis B, Chronic",
+      "start_date": "2009-09",
+      "completion_date": "2011-05",
+      "enrollment": 0,
+      "sponsor": "Dynavax Technologies Corporation"
+    },
+    {
+      "nct_id": "NCT05506969",
+      "title": "Trial of the Immunogenicity, Safety, and Tolerability of rF1V Vaccine With CpG 1018\u00ae Adjuvant Compared With rF1V Vaccine in Adults 18 to 55 Years of Age",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Plague, Pneumonic, Plague, Vaccine-Preventable Diseases",
+      "start_date": "2022-08-09",
+      "completion_date": "2024-04-26",
+      "enrollment": 0,
+      "sponsor": "Dynavax Technologies Corporation"
+    },
+    {
+      "nct_id": "NCT06569823",
+      "title": "Safety and Immunogenicity of an Investigational Herpes Zoster Vaccine (Z-1018) Compared to Shingrix\u00ae in Healthy Adults 50 Years of Age and Over",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Shingles, Herpes Zoster, Vaccine-Preventable Diseases",
+      "start_date": "2024-06-17",
+      "completion_date": "2031-11",
+      "enrollment": 0,
+      "sponsor": "Dynavax Technologies Corporation"
+    },
+    {
+      "nct_id": "NCT07207408",
+      "title": "Immunogenicity, Safety, and Tolerability of rF1V-1018 Vaccine in Adults 18 to 55 Years of Age",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Prevention of Pneumonic Plague Resulting From Aerosol Exposure to Yersenia Pestis",
+      "start_date": "2025-09-11",
+      "completion_date": "2026-10-16",
+      "enrollment": 0,
+      "sponsor": "Dynavax Technologies Corporation"
+    },
+    {
+      "nct_id": "NCT01282762",
+      "title": "Long-Term Study on Safety and Immunogenicity of HEPLISAV\u2122 and Engerix-B\u00ae in Adults With Chronic Kidney Disease",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Chronic Kidney Disease",
+      "start_date": "2010-12",
+      "completion_date": "2013-08",
+      "enrollment": 0,
+      "sponsor": "Dynavax Technologies Corporation"
+    }
+  ],
+  "summary": {
+    "total_trials": 30,
+    "by_phase": {
+      "PHASE1": 11,
+      "NA": 1,
+      "PHASE3": 6,
+      "PHASE1, PHASE2": 3,
+      "PHASE2": 7,
+      "": 2
+    },
+    "by_status": {
+      "COMPLETED": 21,
+      "WITHDRAWN": 1,
+      "TERMINATED": 5,
+      "RECRUITING": 2,
+      "UNKNOWN": 1
+    },
+    "active_trials": 2,
+    "completed_trials": 21,
+    "conditions": [
+      "Advanced Non Small Cell Lung Cancer",
+      "B-cell Lymphoma",
+      "Chronic Hepatitis C",
+      "Chronic Kidney Disease",
+      "Colorectal Neoplasms",
+      "End Stage Renal Disease",
+      "End Stage Renal Disease on Hemodialysis (Diagnosis)",
+      "HIV Infection, Hepatitis B",
+      "HIV Infections",
+      "Healthy",
+      "Hepatitis B",
+      "Hepatitis B Virus",
+      "Hepatitis B, Chronic",
+      "Metastatic Melanoma, Head Neck Cancer",
+      "Metastatic Pancreatic Adenocarcinoma, Refractory Pancreatic Adenocarcinoma, Stage IV Pancreatic Cancer AJCC v8",
+      "Non-Hodgkin's Lymphoma",
+      "Plague, Pneumonic, Plague, Vaccine-Preventable Diseases",
+      "Pregnant",
+      "Prevention of Pneumonic Plague Resulting From Aerosol Exposure to Yersenia Pestis",
+      "Rhinitis, Allergic, Seasonal",
+      "Shingles, Herpes Zoster, Vaccine-Preventable Diseases"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:44:05.389024",
+    "search_query": "Dynavax Technologies Corporation",
+    "url": "https://clinicaltrials.gov/search?term=Dynavax+Technologies+Corporation"
+  }
+}

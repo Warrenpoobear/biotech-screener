@@ -1,0 +1,43 @@
+{
+  "ticker": "AZN",
+  "success": true,
+  "price": {
+    "current": 94.65,
+    "currency": "USD",
+    "day_high": 95.935,
+    "day_low": 94.535,
+    "52_week_high": 96.51,
+    "52_week_low": 61.24
+  },
+  "market_cap": {
+    "value": 293468667904.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 3100567054.0,
+  "volume": {
+    "last": 6077499,
+    "average_30d": 4866214
+  },
+  "valuation": {
+    "pe_ratio": 31.445183,
+    "forward_pe": 18.379356,
+    "price_to_book": 3.1991482
+  },
+  "company_info": {
+    "name": "AstraZeneca PLC",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - General"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:18:56.298363",
+    "url": "https://finance.yahoo.com/quote/AZN",
+    "data_hash": "6ca8e225ece7b824"
+  }
+}

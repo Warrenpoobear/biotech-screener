@@ -2,26 +2,26 @@
   "ticker": "ARGX",
   "success": true,
   "price": {
-    "current": 800.88,
+    "current": 788.49,
     "currency": "USD",
-    "day_high": 835.53,
-    "day_low": 787.02,
+    "day_high": 816.45,
+    "day_low": 787.44,
     "52_week_high": 934.62,
     "52_week_low": 510.055
   },
   "market_cap": {
-    "value": 49875800064.0,
+    "value": 48794447872.0,
     "currency": "USD"
   },
-  "shares_outstanding": 61568926.0,
+  "shares_outstanding": 61883406.0,
   "volume": {
-    "last": 729048,
-    "average_30d": 298639
+    "last": 462284,
+    "average_30d": 326895
   },
   "valuation": {
-    "pe_ratio": 34.298927,
-    "forward_pe": 26.837353,
-    "price_to_book": 8.036203
+    "pe_ratio": 33.667377,
+    "forward_pe": 26.637304,
+    "price_to_book": 7.9118795
   },
   "company_info": {
     "name": "argenx SE",
@@ -30,8 +30,8 @@
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-05T18:05:17.682476",
+    "timestamp": "2026-01-12T09:01:39.303087",
     "url": "https://finance.yahoo.com/quote/ARGX",
-    "data_hash": "bf8cc50818c2740e"
+    "data_hash": "d25dcc92bdbfa3c9"
   }
 }

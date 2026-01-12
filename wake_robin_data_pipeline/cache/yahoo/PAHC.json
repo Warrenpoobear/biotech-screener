@@ -1,0 +1,43 @@
+{
+  "ticker": "PAHC",
+  "success": true,
+  "price": {
+    "current": 39.44,
+    "currency": "USD",
+    "day_high": 40.196,
+    "day_low": 39.18,
+    "52_week_high": 46.42,
+    "52_week_low": 16.16
+  },
+  "market_cap": {
+    "value": 1598645504.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 20447574.0,
+  "volume": {
+    "last": 163725,
+    "average_30d": 252100
+  },
+  "valuation": {
+    "pe_ratio": 23.616766,
+    "forward_pe": 13.066265,
+    "price_to_book": 5.1294055
+  },
+  "company_info": {
+    "name": "Phibro Animal Health Corporation",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:19:26.161536",
+    "url": "https://finance.yahoo.com/quote/PAHC",
+    "data_hash": "cd30b002dbaa81a2"
+  }
+}

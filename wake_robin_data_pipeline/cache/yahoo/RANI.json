@@ -1,0 +1,43 @@
+{
+  "ticker": "RANI",
+  "success": true,
+  "price": {
+    "current": 1.4,
+    "currency": "USD",
+    "day_high": 1.44,
+    "day_low": 1.3601,
+    "52_week_high": 3.87,
+    "52_week_low": 0.387
+  },
+  "market_cap": {
+    "value": 171703744.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 97550981.0,
+  "volume": {
+    "last": 915865,
+    "average_30d": 2118252
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -4.421006,
+    "price_to_book": -8.536585
+  },
+  "company_info": {
+    "name": "Rani Therapeutics Holdings, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:19:28.926354",
+    "url": "https://finance.yahoo.com/quote/RANI",
+    "data_hash": "dc8b91308b4d9c14"
+  }
+}

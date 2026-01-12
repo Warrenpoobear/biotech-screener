@@ -1,0 +1,43 @@
+{
+  "ticker": "KNSA",
+  "success": true,
+  "price": {
+    "current": 42.67,
+    "currency": "USD",
+    "day_high": 42.69,
+    "day_low": 41.31,
+    "52_week_high": 44.42,
+    "52_week_low": 17.82
+  },
+  "market_cap": {
+    "value": 3234204928.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 45161019.0,
+  "volume": {
+    "last": 482221,
+    "average_30d": 480147
+  },
+  "valuation": {
+    "pe_ratio": 94.82222,
+    "forward_pe": 23.175983,
+    "price_to_book": 6.0115523
+  },
+  "company_info": {
+    "name": "Kiniksa Pharmaceuticals International, plc",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:19:17.115647",
+    "url": "https://finance.yahoo.com/quote/KNSA",
+    "data_hash": "ae6ba5fe4742fe18"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "PRAX",
+  "success": true,
+  "price": {
+    "current": 288.45,
+    "currency": "USD",
+    "day_high": 305.2,
+    "day_low": 285.99,
+    "52_week_high": 317.72,
+    "52_week_low": 26.7
+  },
+  "market_cap": {
+    "value": 7905575936.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 27407092.0,
+  "volume": {
+    "last": 688792,
+    "average_30d": 642209
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -22.81469,
+    "price_to_book": 17.773739
+  },
+  "company_info": {
+    "name": "Praxis Precision Medicines, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:17:17.869070",
+    "url": "https://finance.yahoo.com/quote/PRAX",
+    "data_hash": "18c8209d4b1e4878"
+  }
+}

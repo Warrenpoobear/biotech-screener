@@ -1,0 +1,43 @@
+{
+  "ticker": "SANA",
+  "success": true,
+  "price": {
+    "current": 4.56,
+    "currency": "USD",
+    "day_high": 4.6906,
+    "day_low": 4.43,
+    "52_week_high": 6.55,
+    "52_week_low": 1.26
+  },
+  "market_cap": {
+    "value": 1214629504.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 266366120.0,
+  "volume": {
+    "last": 2564742,
+    "average_30d": 3966185
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -8.055683,
+    "price_to_book": 6.1208053
+  },
+  "company_info": {
+    "name": "Sana Biotechnology, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:14:12.157742",
+    "url": "https://finance.yahoo.com/quote/SANA",
+    "data_hash": "6186a710b3185b1b"
+  }
+}

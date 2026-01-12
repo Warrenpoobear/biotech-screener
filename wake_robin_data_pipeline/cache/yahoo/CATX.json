@@ -1,0 +1,43 @@
+{
+  "ticker": "CATX",
+  "success": true,
+  "price": {
+    "current": 2.84,
+    "currency": "USD",
+    "day_high": 2.95,
+    "day_low": 2.66,
+    "52_week_high": 5.39,
+    "52_week_low": 1.6
+  },
+  "market_cap": {
+    "value": 211119888.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 74337990.0,
+  "volume": {
+    "last": 1838228,
+    "average_30d": 1332657
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -2.0947196,
+    "price_to_book": 0.8717004
+  },
+  "company_info": {
+    "name": "Perspective Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Medical Devices"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:15:19.539167",
+    "url": "https://finance.yahoo.com/quote/CATX",
+    "data_hash": "25683f56602c5652"
+  }
+}

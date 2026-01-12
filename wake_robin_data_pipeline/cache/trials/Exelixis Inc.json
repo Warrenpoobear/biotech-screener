@@ -1,0 +1,130 @@
+{
+  "ticker": "EXEL",
+  "company_name": "Exelixis, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT02721459",
+      "title": "XL888 + Vemurafenib + Cobimetinib for Unresectable BRAF Mutated Stage III/IV Melanoma",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Melanoma, Skin Cancer",
+      "start_date": "2016-09-07",
+      "completion_date": "2026-11",
+      "enrollment": 0,
+      "sponsor": "H. Lee Moffitt Cancer Center and Research Institute"
+    },
+    {
+      "nct_id": "NCT04963283",
+      "title": "Study of Cabozantinib and Nivolumab in Refractory Metastatic Microsatellite Stable (MSS) Colorectal Cancer",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Colorectal Adenocarcinoma, Colon Cancer, Colon Adenocarcinoma, Rectum Cancer, Rectal Cancer, Rectal Adenocarcinoma, Colorectal Cancer",
+      "start_date": "2021-06-23",
+      "completion_date": "2026-02-09",
+      "enrollment": 0,
+      "sponsor": "University of Colorado, Denver"
+    },
+    {
+      "nct_id": "NCT04151563",
+      "title": "A Clinical Study Evaluating Nivolumab-containing Treatments in Patients With Advanced Non-small Cell Lung Cancer After Failing Previous PD-1/(L)1 Therapy and Chemotherapy",
+      "status": "WITHDRAWN",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Carcinoma, Non-small Cell Lung Cancer",
+      "start_date": "2021-04-15",
+      "completion_date": "2026-05-13",
+      "enrollment": 0,
+      "sponsor": "Bristol-Myers Squibb"
+    },
+    {
+      "nct_id": "NCT04289779",
+      "title": "Study of CAbozantinib in Combination with AtezolizumaB for Muscle-Invasive BladdEr Cancer",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Bladder Cancer",
+      "start_date": "2020-05-21",
+      "completion_date": "2025-12",
+      "enrollment": 0,
+      "sponsor": "Deepak Kilari"
+    },
+    {
+      "nct_id": "NCT06191796",
+      "title": "Study of Zanzalintinib (XL092) + AB521 and Zanzalintinib + AB521 + Nivolumab in Participants With Advanced Clear Cell Renal Cell Carcinoma (ccRCC) or Other Advanced Solid Tumors (STELLAR-009)",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Advanced Clear Cell Renal Cell Carcinoma or Other Advanced Solid Tumors",
+      "start_date": "2024-01-25",
+      "completion_date": "2025-05-12",
+      "enrollment": 0,
+      "sponsor": "Exelixis"
+    },
+    {
+      "nct_id": "NCT02260531",
+      "title": "Cabozantinib +/- Trastuzumab In Breast Cancer Patients w/ Brain Metastases",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Breast Cancer, Brain Tumor - Metastatic",
+      "start_date": "2014-11",
+      "completion_date": "2020-03-17",
+      "enrollment": 0,
+      "sponsor": "Dana-Farber Cancer Institute"
+    },
+    {
+      "nct_id": "NCT05859217",
+      "title": "A Study of Combining Cabozantinib and Atezolizumab for Advanced/Metastatic NSCLC (Cabatezo-1)",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Lung Cancer, NSCLC Stage IV, Metastatic NSCLC - Non-Small Cell Lung Cancer, Advanced NSCLC",
+      "start_date": "2024-12",
+      "completion_date": "2028-06",
+      "enrollment": 0,
+      "sponsor": "Jun Zhang, MD, PhD"
+    },
+    {
+      "nct_id": "NCT03899155",
+      "title": "Pan Tumor Rollover Study",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Cancer",
+      "start_date": "2019-08-09",
+      "completion_date": "2029-08-25",
+      "enrollment": 0,
+      "sponsor": "Bristol-Myers Squibb"
+    }
+  ],
+  "summary": {
+    "total_trials": 8,
+    "by_phase": {
+      "PHASE1": 2,
+      "PHASE2": 5,
+      "PHASE1, PHASE2": 1
+    },
+    "by_status": {
+      "ACTIVE_NOT_RECRUITING": 3,
+      "WITHDRAWN": 1,
+      "TERMINATED": 1,
+      "COMPLETED": 1,
+      "NOT_YET_RECRUITING": 1,
+      "RECRUITING": 1
+    },
+    "active_trials": 4,
+    "completed_trials": 1,
+    "conditions": [
+      "Advanced Clear Cell Renal Cell Carcinoma or Other Advanced Solid Tumors",
+      "Bladder Cancer",
+      "Breast Cancer, Brain Tumor - Metastatic",
+      "Cancer",
+      "Carcinoma, Non-small Cell Lung Cancer",
+      "Colorectal Adenocarcinoma, Colon Cancer, Colon Adenocarcinoma, Rectum Cancer, Rectal Cancer, Rectal Adenocarcinoma, Colorectal Cancer",
+      "Lung Cancer, NSCLC Stage IV, Metastatic NSCLC - Non-Small Cell Lung Cancer, Advanced NSCLC",
+      "Melanoma, Skin Cancer"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:33:34.099198",
+    "search_query": "Exelixis, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Exelixis,+Inc."
+  }
+}

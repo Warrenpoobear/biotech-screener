@@ -1,0 +1,43 @@
+{
+  "ticker": "PSNL",
+  "success": true,
+  "price": {
+    "current": 8.1,
+    "currency": "USD",
+    "day_high": 8.54,
+    "day_low": 8.025,
+    "52_week_high": 11.4,
+    "52_week_low": 2.826
+  },
+  "market_cap": {
+    "value": 719315264.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 88804348.0,
+  "volume": {
+    "last": 1176286,
+    "average_30d": 1418076
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -8.289498,
+    "price_to_book": 4.192547
+  },
+  "company_info": {
+    "name": "Personalis, Inc.",
+    "sector": "Healthcare",
+    "industry": "Diagnostics & Research"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:17:20.493427",
+    "url": "https://finance.yahoo.com/quote/PSNL",
+    "data_hash": "a577382cb73007c1"
+  }
+}

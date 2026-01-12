@@ -1,0 +1,159 @@
+{
+  "ticker": "KRYS",
+  "company_name": "Krystal Biotech, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06724900",
+      "title": "A Study Assessing KB304 for the Treatment of Wrinkles in Women",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Wrinkles in Decolletage, Pigmentation, D\u00e9collet\u00e9 Wrinkles",
+      "start_date": "2024-11-20",
+      "completion_date": "2025-08",
+      "enrollment": 0,
+      "sponsor": "Krystal Biotech, Inc."
+    },
+    {
+      "nct_id": "NCT07016750",
+      "title": "A Study Assessing KB803 Compared to Matching Placebo for the Treatment and Prevention of Corneal Abrasions in Dystrophic Epidermolysis Bullosa",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Dystrophic Epidermolysis Bullosa, DEB - Dystrophic Epidermolysis Bullosa, Recessive Dystrophic Epidermolysis Bullosa, Dominant Dystrophic Epidermolysis Bullosa",
+      "start_date": "2025-06-20",
+      "completion_date": "2026-03",
+      "enrollment": 0,
+      "sponsor": "Krystal Biotech, Inc."
+    },
+    {
+      "nct_id": "NCT06049082",
+      "title": "A Study of KB408 for the Treatment of Alpha-1 Antitrypsin Deficiency",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Alpha 1-Antitrypsin Deficiency",
+      "start_date": "2024-02-15",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "Krystal Biotech, Inc."
+    },
+    {
+      "nct_id": "NCT05095246",
+      "title": "A Study of Inhaled KB407 for the Treatment of Cystic Fibrosis",
+      "status": "WITHDRAWN",
+      "phase": "PHASE1",
+      "condition": "Cystic Fibrosis",
+      "start_date": "2022-03-08",
+      "completion_date": "2024-10-30",
+      "enrollment": 0,
+      "sponsor": "Krystal Biotech, Inc."
+    },
+    {
+      "nct_id": "NCT04491604",
+      "title": "Ph 3 Efficacy and Safety of B-VEC for the Treatment of DEB",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Dystrophic Epidermolysis Bullosa, Recessive Dystrophic Epidermolysis Bullosa, Dominant Dystrophic Epidermolysis Bullosa",
+      "start_date": "2020-08-17",
+      "completion_date": "2022-01-14",
+      "enrollment": 0,
+      "sponsor": "Krystal Biotech, Inc."
+    },
+    {
+      "nct_id": "NCT04047732",
+      "title": "Topical KB105 Gene Therapy for the Treatment of TGM1-deficient Autosomal Recessive Congenital Ichthyosis (ARCI)",
+      "status": "UNKNOWN",
+      "phase": "PHASE1, PHASE2",
+      "condition": "TGM-1 Related Autosomal Recessive Congenital Ichthyosis",
+      "start_date": "2019-08-27",
+      "completion_date": "2025-03",
+      "enrollment": 0,
+      "sponsor": "Krystal Biotech, Inc."
+    },
+    {
+      "nct_id": "NCT04917874",
+      "title": "A Long-term Treatment With B-VEC for Dystrophic Epidermolysis Bullosa",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Dystrophic Epidermolysis Bullosa, DEB - Dystrophic Epidermolysis Bullosa, Recessive Dystrophic Epidermolysis Bullosa, Dominant Dystrophic Epidermolysis Bullosa",
+      "start_date": "2021-05-25",
+      "completion_date": "2023-07-31",
+      "enrollment": 0,
+      "sponsor": "Krystal Biotech, Inc."
+    },
+    {
+      "nct_id": "NCT05504837",
+      "title": "A Study Assessing KB407 for the Treatment of Cystic Fibrosis",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Cystic Fibrosis",
+      "start_date": "2023-06-30",
+      "completion_date": "2026-01",
+      "enrollment": 0,
+      "sponsor": "Krystal Biotech, Inc."
+    },
+    {
+      "nct_id": "NCT06999733",
+      "title": "A Study Assessing KB801 for the Treatment of Stage 2 or 3 Neurotrophic Keratitis",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Neurotrophic Keratitis",
+      "start_date": "2025-05",
+      "completion_date": "2026-10",
+      "enrollment": 0,
+      "sponsor": "Krystal Biotech, Inc."
+    },
+    {
+      "nct_id": "NCT05970497",
+      "title": "A Study Assessing KB707 for the Treatment of Locally Advanced or Metastatic Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Cancer, Melanoma Stage III, Melanoma Stage IV, Cutaneous Melanoma",
+      "start_date": "2023-10-31",
+      "completion_date": "2027-07",
+      "enrollment": 0,
+      "sponsor": "Krystal Biotech, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 17,
+    "by_phase": {
+      "PHASE1, PHASE2": 6,
+      "PHASE3": 3,
+      "PHASE1": 4,
+      "": 3,
+      "PHASE2": 1
+    },
+    "by_status": {
+      "ACTIVE_NOT_RECRUITING": 2,
+      "RECRUITING": 8,
+      "WITHDRAWN": 2,
+      "COMPLETED": 3,
+      "UNKNOWN": 2
+    },
+    "active_trials": 10,
+    "completed_trials": 3,
+    "conditions": [
+      "Alpha 1-Antitrypsin Deficiency",
+      "Autosomal Recessive Ichthyosis",
+      "Cancer, Melanoma Stage III, Melanoma Stage IV, Cutaneous Melanoma",
+      "Cystic Fibrosis",
+      "Dystrophic Epidermolysis Bullosa",
+      "Dystrophic Epidermolysis Bullosa, DEB - Dystrophic Epidermolysis Bullosa",
+      "Dystrophic Epidermolysis Bullosa, DEB - Dystrophic Epidermolysis Bullosa, Recessive Dystrophic Epidermolysis Bullosa, Dominant Dystrophic Epidermolysis Bullosa",
+      "Dystrophic Epidermolysis Bullosa, Recessive Dystrophic Epidermolysis Bullosa, Dominant Dystrophic Epidermolysis Bullosa",
+      "Epidermolysis Bullosa Dystrophica, Epidermolysis Bullosa Dystrophica, Recessive, Epidermolysis Bullosa Dystrophica Dominans",
+      "Lung Cancer, Non-small Cell, Lung Cancer Metastatic, Solid Tumor, Adult, Advanced Cancer, Lung Cancer (NSCLC)",
+      "Neurotrophic Keratitis",
+      "Skin Roughness, Wrinkle, Fine Lines, Skin Thickness",
+      "TGM-1 Related Autosomal Recessive Congenital Ichthyosis",
+      "Wrinkles in Decolletage, Pigmentation, D\u00e9collet\u00e9 Wrinkles"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:44:24.610393",
+    "search_query": "Krystal Biotech, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Krystal+Biotech,+Inc."
+  }
+}

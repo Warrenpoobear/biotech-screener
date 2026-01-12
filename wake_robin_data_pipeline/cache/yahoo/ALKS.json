@@ -1,0 +1,43 @@
+{
+  "ticker": "ALKS",
+  "success": true,
+  "price": {
+    "current": 29.66,
+    "currency": "USD",
+    "day_high": 30.47,
+    "day_low": 29.58,
+    "52_week_high": 36.45,
+    "52_week_low": 25.17
+  },
+  "market_cap": {
+    "value": 4897384960.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 165117509.0,
+  "volume": {
+    "last": 2820810,
+    "average_30d": 1743795
+  },
+  "valuation": {
+    "pe_ratio": 14.756219,
+    "forward_pe": 14.612997,
+    "price_to_book": 2.825031
+  },
+  "company_info": {
+    "name": "Alkermes plc",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:14:40.103864",
+    "url": "https://finance.yahoo.com/quote/ALKS",
+    "data_hash": "0a50935484da6905"
+  }
+}

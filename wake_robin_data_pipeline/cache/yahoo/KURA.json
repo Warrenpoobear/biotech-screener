@@ -1,0 +1,43 @@
+{
+  "ticker": "KURA",
+  "success": true,
+  "price": {
+    "current": 9.41,
+    "currency": "USD",
+    "day_high": 9.71,
+    "day_low": 9.35,
+    "52_week_high": 12.49,
+    "52_week_low": 5.41
+  },
+  "market_cap": {
+    "value": 818834880.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 87017518.0,
+  "volume": {
+    "last": 1664334,
+    "average_30d": 1703485
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -3.948257,
+    "price_to_book": 3.3763905
+  },
+  "company_info": {
+    "name": "Kura Oncology, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:16:25.930754",
+    "url": "https://finance.yahoo.com/quote/KURA",
+    "data_hash": "81123a8295d7c8e4"
+  }
+}

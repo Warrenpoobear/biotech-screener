@@ -1,0 +1,43 @@
+{
+  "ticker": "RCKT",
+  "success": true,
+  "price": {
+    "current": 3.73,
+    "currency": "USD",
+    "day_high": 3.99,
+    "day_low": 3.71,
+    "52_week_high": 11.45,
+    "52_week_low": 2.19
+  },
+  "market_cap": {
+    "value": 403668896.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 108222228.0,
+  "volume": {
+    "last": 1468835,
+    "average_30d": 2134947
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -2.8821561,
+    "price_to_book": 1.2866507
+  },
+  "company_info": {
+    "name": "Rocket Pharmaceuticals, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:17:31.301105",
+    "url": "https://finance.yahoo.com/quote/RCKT",
+    "data_hash": "630b42bf8519ef1f"
+  }
+}

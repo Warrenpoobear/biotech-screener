@@ -1,0 +1,88 @@
+{
+  "ticker": "AVIR",
+  "company_name": "AVIR",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT03745274",
+      "title": "Two Doses of GHB04L1 for Pandemic Influenza Prophylaxis in Healthy Adults",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Influenza, Avian",
+      "start_date": "2008-12-19",
+      "completion_date": "2009-05-27",
+      "enrollment": 0,
+      "sponsor": "AVIR Green Hills Biotechnology AG"
+    },
+    {
+      "nct_id": "NCT01078701",
+      "title": "Dose Finding Study of Single Dose GHB11L1 in Healthy Adults",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Influenza, Human",
+      "start_date": "2009-12",
+      "completion_date": "2010-05",
+      "enrollment": 0,
+      "sponsor": "AVIR Green Hills Biotechnology AG"
+    },
+    {
+      "nct_id": "NCT00724997",
+      "title": "Randomized, Double-blind, Placebo-controlled, Phase I Dose-escalation Study of Single Dose GHB01L1 in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Seasonal Human Influenza",
+      "start_date": "2007-03",
+      "completion_date": "2008-08",
+      "enrollment": 0,
+      "sponsor": "AVIR Green Hills Biotechnology AG"
+    },
+    {
+      "nct_id": "NCT01369862",
+      "title": "Study of Single Dose GHB16L2 Trivalent Influenza Vaccine in Healthy Adults",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Influenza, Human",
+      "start_date": "2011-01",
+      "completion_date": "2011-08",
+      "enrollment": 0,
+      "sponsor": "AVIR Green Hills Biotechnology AG"
+    },
+    {
+      "nct_id": "NCT00741806",
+      "title": "Dose-escalation Study of Single Dose GHB04L1 in Healthy Adults",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Influenza",
+      "start_date": "2008-08",
+      "completion_date": "2010-03",
+      "enrollment": 0,
+      "sponsor": "AVIR Green Hills Biotechnology AG"
+    }
+  ],
+  "summary": {
+    "total_trials": 5,
+    "by_phase": {
+      "PHASE1": 3,
+      "PHASE2": 1,
+      "PHASE1, PHASE2": 1
+    },
+    "by_status": {
+      "COMPLETED": 5
+    },
+    "active_trials": 0,
+    "completed_trials": 5,
+    "conditions": [
+      "Influenza",
+      "Influenza, Avian",
+      "Influenza, Human",
+      "Seasonal Human Influenza"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:45:50.626214",
+    "search_query": "AVIR",
+    "url": "https://clinicaltrials.gov/search?term=AVIR"
+  }
+}
