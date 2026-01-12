@@ -268,9 +268,104 @@ def print_summary(quality_report: dict):
 
     print("\n" + "="*60)
 
+def export_prices_to_csv(records: List[dict], lookback_days: int) -> Path:
+    """
+    Export historical prices from all records to a CSV file for backtesting.
+
+    Format: date,ticker,adj_close
+
+    This allows the backtest runner to use real historical data.
+    """
+    import csv
+    from datetime import datetime, timedelta
+
+    output_dir = Path(__file__).parent / "outputs"
+    output_dir.mkdir(exist_ok=True)
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    csv_file = output_dir / f"daily_prices_{timestamp}.csv"
+
+    # Collect all price data
+    all_prices = []
+
+    for record in records:
+        ticker = record.get('ticker', '')
+        if ticker == '_XBI_BENCHMARK_':
+            continue  # Skip benchmark in price export
+
+        time_series = record.get('time_series')
+        if not time_series or not time_series.get('prices'):
+            continue
+
+        prices = time_series['prices']
+        num_days = time_series.get('num_days', len(prices))
+
+        # Calculate dates (working backwards from as_of_date)
+        as_of_str = record.get('as_of_date', datetime.now().isoformat()[:10])
+        try:
+            as_of = datetime.strptime(as_of_str[:10], '%Y-%m-%d').date()
+        except:
+            as_of = date.today()
+
+        # Generate trading dates (approximate - skip weekends)
+        trading_dates = []
+        current_date = as_of
+        days_back = 0
+        while len(trading_dates) < num_days and days_back < lookback_days * 2:
+            if current_date.weekday() < 5:  # Monday-Friday
+                trading_dates.append(current_date)
+            current_date = current_date - timedelta(days=1)
+            days_back += 1
+
+        trading_dates.reverse()  # Oldest to newest
+
+        # Match dates with prices
+        for i, price in enumerate(prices):
+            if i < len(trading_dates):
+                all_prices.append({
+                    'date': trading_dates[i].isoformat(),
+                    'ticker': ticker,
+                    'adj_close': f"{price:.2f}"
+                })
+
+    if not all_prices:
+        print("   ⚠ No price data to export")
+        return None
+
+    # Sort by date, then ticker
+    all_prices.sort(key=lambda x: (x['date'], x['ticker']))
+
+    # Write CSV
+    with open(csv_file, 'w', newline='') as f:
+        writer = csv.DictWriter(f, fieldnames=['date', 'ticker', 'adj_close'])
+        writer.writeheader()
+        writer.writerows(all_prices)
+
+    # Also copy to main data directory for backtest
+    import shutil
+    main_data_dir = Path(__file__).parent.parent / "data"
+    main_data_dir.mkdir(exist_ok=True)
+    shutil.copy(csv_file, main_data_dir / "daily_prices.csv")
+
+    # Create latest symlink
+    latest_csv = output_dir / "daily_prices_latest.csv"
+    if latest_csv.exists():
+        latest_csv.unlink()
+    shutil.copy(csv_file, latest_csv)
+
+    # Print summary
+    tickers = set(p['ticker'] for p in all_prices)
+    dates = set(p['date'] for p in all_prices)
+    print(f"   Exported {len(all_prices)} price records")
+    print(f"   Tickers: {len(tickers)}")
+    print(f"   Date range: {min(dates)} to {max(dates)}")
+
+    return csv_file
+
+
 def main():
     """Main execution flow."""
-    print("\n🚀 Wake Robin Data Pipeline - Universe Collection")
+    print("\n🚀 Wake Robin Data Pipeline - Universe Collection (10-YEAR HISTORICAL)")
     print("="*60)
 
     # Load universe
@@ -296,12 +391,14 @@ def main():
     trials_results = trials_collector.collect_batch(ticker_company_map, delay_seconds=1.0)
 
     # Collect time-series data (historical prices/returns)
-    print("\n4b. Collecting time-series data (historical prices/returns)...")
+    # Use 10 years of historical data (3650 days) for comprehensive backtesting
+    print("\n4b. Collecting time-series data (10 YEARS of historical prices/returns)...")
     as_of_date = date.today()  # Or pass as parameter for PIT backtesting
+    lookback_days = 3650  # 10 years of data
     time_series_results = time_series_collector.collect_batch(
-        tickers, 
+        tickers,
         as_of=as_of_date,
-        lookback_days=365,
+        lookback_days=lookback_days,
         delay_seconds=0.1  # Fast due to caching
     )
 
@@ -343,6 +440,13 @@ def main():
     snapshot_file, report_file = save_snapshot(records, quality_report)
     print(f"   ✓ Snapshot: {snapshot_file.name}")
     print(f"   ✓ Report:   {report_file.name}")
+
+    # Export historical prices to CSV for backtesting
+    print("\n8. Exporting historical prices to CSV for backtesting...")
+    prices_csv = export_prices_to_csv(records, lookback_days)
+    if prices_csv:
+        print(f"   ✓ Prices CSV: {prices_csv.name}")
+        print(f"   ✓ Also copied to: ../data/daily_prices.csv")
 
     # Print summary
     print_summary(quality_report)
