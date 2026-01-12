@@ -638,8 +638,18 @@ def compute_module_5_composite(
         subfactors = [rec["clinical_dev_raw"], rec["catalyst_raw"]]
         if enhancement_applied:
             subfactors.append(rec.get("pos_raw"))
-        missing = sum(1 for x in subfactors if x is None)
-        missing_pct = Decimal(str(missing / len(subfactors))) if subfactors else Decimal("0")
+        available_count = sum(1 for x in subfactors if x is not None)
+        total_count = len(subfactors)
+
+        # Compute composite_data_state: FULL / PARTIAL / NONE
+        if available_count == total_count:
+            data_state = "FULL"
+        elif available_count > 0:
+            data_state = "PARTIAL"
+        else:
+            data_state = "NONE"
+        rec["composite_data_state"] = data_state
+        missing_pct = Decimal(str((total_count - available_count) / total_count)) if total_count > 0 else Decimal("0")
 
         # Flag if renormalization was applied
         if len(available_weights) < len([w for w in weights.values() if w > 0]):
@@ -706,7 +716,8 @@ def compute_module_5_composite(
             "clinical_dev_raw": str(rec["clinical_dev_raw"]) if rec["clinical_dev_raw"] else None,
             "financial_raw": str(rec["financial_raw"]) if rec["financial_raw"] else None,
             "catalyst_raw": str(rec["catalyst_raw"]) if rec["catalyst_raw"] else None,
-            "uncertainty_penalty": str(rec["uncertainty_penalty"]),
+            "composite_data_state": rec["composite_data_state"],
+            "weights_renormalized": rec.get("weights_renormalized", False),
             "missing_subfactor_pct": str(rec["missing_subfactor_pct"]),
             "market_cap_bucket": rec["market_cap_bucket"],
             "stage_bucket": rec["stage_bucket"],
@@ -756,6 +767,14 @@ def compute_module_5_composite(
             "si_squeeze_signals": si_squeeze_count,
         }
 
+    # Data coverage diagnostics (FULL/PARTIAL/NONE distribution)
+    data_coverage = {
+        "FULL": sum(1 for r in ranked_securities if r["composite_data_state"] == "FULL"),
+        "PARTIAL": sum(1 for r in ranked_securities if r["composite_data_state"] == "PARTIAL"),
+        "NONE": sum(1 for r in ranked_securities if r["composite_data_state"] == "NONE"),
+        "weights_renormalized": sum(1 for r in ranked_securities if r.get("weights_renormalized", False)),
+    }
+
     return {
         "as_of_date": as_of_date,
         "normalization_method": normalization,
@@ -770,6 +789,7 @@ def compute_module_5_composite(
             "excluded": len(excluded),
             "cohort_count": len(cohorts),
         },
+        "data_coverage": data_coverage,
         "coinvest_coverage": coinvest_coverage,
         "enhancement_applied": enhancement_applied,
         "enhancement_diagnostics": enhancement_diagnostics,
