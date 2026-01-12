@@ -644,6 +644,7 @@ def run_direct_backtest(
     for ticker, data in COMPANY_DATA.items():
         mcap_by_ticker[ticker] = data.get("mcap", 0)
     # Also try to load from universe_data if production scorer
+    has_adv_data = False  # Initialize - will be set if sufficient ADV data available
     if use_production_scorer:
         try:
             _, _, universe_data, _ = load_real_data()
@@ -658,6 +659,10 @@ def run_direct_backtest(
                 if volume and price:
                     adv_by_ticker[ticker] = volume * price  # ADV$ in dollars
             print(f"  Loaded mcap for {len(mcap_by_ticker)} tickers, ADV$ for {len(adv_by_ticker)} tickers")
+            # Flag for gating ADV diagnostics - only meaningful if we have ADV data for >10% of universe
+            has_adv_data = len(adv_by_ticker) >= len(universe) * 0.1
+            if not has_adv_data:
+                print(f"  NOTE: ADV data available for <10% of universe - ADV diagnostics will be skipped")
         except Exception as e:
             print(f"  Warning: Failed to load market data: {e}")
 
@@ -1026,28 +1031,32 @@ def run_direct_backtest(
             print(f"    {date}: {hash_val}")
     print()
 
-    # ADV Diagnostics Summary (per-period counts)
-    print("ADV$ Bucket Diagnostics (per period):")
-    print("-" * 50)
-    if all_adv_diagnostics:
-        print(f"  {'Date':<12} {'non_null':>10} {'ILLIQ':>6} {'MID':>6} {'LIQ':>6} {'UNK':>6}")
-        print(f"  {'-'*12} {'-'*10} {'-'*6} {'-'*6} {'-'*6} {'-'*6}")
-        for diag in all_adv_diagnostics:
-            print(f"  {diag['date']:<12} {diag['adv_non_null']:>10}/{diag['total']:<4} {diag['ILLIQ']:>6} {diag['MID']:>6} {diag['LIQ']:>6} {diag['UNKNOWN']:>6}")
+    # ADV Diagnostics Summary (per-period counts) - only show if we have ADV data
+    if has_adv_data:
+        print("ADV$ Bucket Diagnostics (per period):")
+        print("-" * 50)
+        if all_adv_diagnostics:
+            print(f"  {'Date':<12} {'non_null':>10} {'ILLIQ':>6} {'MID':>6} {'LIQ':>6} {'UNK':>6}")
+            print(f"  {'-'*12} {'-'*10} {'-'*6} {'-'*6} {'-'*6} {'-'*6}")
+            for diag in all_adv_diagnostics:
+                print(f"  {diag['date']:<12} {diag['adv_non_null']:>10}/{diag['total']:<4} {diag['ILLIQ']:>6} {diag['MID']:>6} {diag['LIQ']:>6} {diag['UNKNOWN']:>6}")
 
-        # Summary statistics
-        avg_non_null = sum(d['adv_non_null'] for d in all_adv_diagnostics) / len(all_adv_diagnostics)
-        avg_unknown = sum(d['UNKNOWN'] for d in all_adv_diagnostics) / len(all_adv_diagnostics)
-        avg_total = sum(d['total'] for d in all_adv_diagnostics) / len(all_adv_diagnostics)
-        pct_unknown = 100 * avg_unknown / avg_total if avg_total > 0 else 0
+            # Summary statistics
+            avg_non_null = sum(d['adv_non_null'] for d in all_adv_diagnostics) / len(all_adv_diagnostics)
+            avg_unknown = sum(d['UNKNOWN'] for d in all_adv_diagnostics) / len(all_adv_diagnostics)
+            avg_total = sum(d['total'] for d in all_adv_diagnostics) / len(all_adv_diagnostics)
+            pct_unknown = 100 * avg_unknown / avg_total if avg_total > 0 else 0
+            print()
+            print(f"  Averages: non_null={avg_non_null:.1f}, UNKNOWN={avg_unknown:.1f} ({pct_unknown:.1f}% of tickers)")
+            if pct_unknown > 50:
+                print(f"  WARNING: UNKNOWN dominates - ADV calculation likely failing")
+                print(f"     Common causes: volume as strings, lookback too strict, date misalignment")
+        else:
+            print("  No ADV diagnostics available")
         print()
-        print(f"  Averages: non_null={avg_non_null:.1f}, UNKNOWN={avg_unknown:.1f} ({pct_unknown:.1f}% of tickers)")
-        if pct_unknown > 50:
-            print(f"  ⚠️  WARNING: UNKNOWN dominates - ADV calculation likely failing")
-            print(f"     Common causes: volume as strings, lookback too strict, date misalignment")
     else:
-        print("  No ADV diagnostics available")
-    print()
+        print("ADV$ Bucket Diagnostics: SKIPPED (insufficient ADV data)")
+        print()
 
     print("Top/Bottom Decile Spread (90d horizon):")
     print("-" * 50)
@@ -1101,46 +1110,52 @@ def run_direct_backtest(
     }
     print()
 
-    print("IC by ADV$ Bucket (90d horizon):")
-    print("-" * 50)
-    for label, ic_list in [("ILLIQ (<$250K)", ic_adv_illiq),
-                           ("MID ($250K-2M)", ic_adv_mid),
-                           ("LIQ (>$2M)", ic_adv_liq),
-                           ("UNKNOWN", ic_adv_unknown)]:
-        if ic_list:
-            bucket_mean = sum(ic_list) / len(ic_list)
-            bucket_pos = 100 * sum(1 for x in ic_list if x > 0) / len(ic_list)
-            print(f"  {label:16s}: IC={bucket_mean:+.4f}, Pos={bucket_pos:.0f}%, N={len(ic_list)}")
-        else:
-            print(f"  {label:16s}: Insufficient data")
-    results["ic_by_adv"] = {
-        "illiq": {"mean": sum(ic_adv_illiq)/len(ic_adv_illiq), "n": len(ic_adv_illiq)} if ic_adv_illiq else None,
-        "mid": {"mean": sum(ic_adv_mid)/len(ic_adv_mid), "n": len(ic_adv_mid)} if ic_adv_mid else None,
-        "liq": {"mean": sum(ic_adv_liq)/len(ic_adv_liq), "n": len(ic_adv_liq)} if ic_adv_liq else None,
-        "unknown": {"mean": sum(ic_adv_unknown)/len(ic_adv_unknown), "n": len(ic_adv_unknown)} if ic_adv_unknown else None,
-    }
-    print()
+    # ADV bucket ICs - only show if we have ADV data
+    if has_adv_data:
+        print("IC by ADV$ Bucket (90d horizon):")
+        print("-" * 50)
+        for label, ic_list in [("ILLIQ (<$250K)", ic_adv_illiq),
+                               ("MID ($250K-2M)", ic_adv_mid),
+                               ("LIQ (>$2M)", ic_adv_liq),
+                               ("UNKNOWN", ic_adv_unknown)]:
+            if ic_list:
+                bucket_mean = sum(ic_list) / len(ic_list)
+                bucket_pos = 100 * sum(1 for x in ic_list if x > 0) / len(ic_list)
+                print(f"  {label:16s}: IC={bucket_mean:+.4f}, Pos={bucket_pos:.0f}%, N={len(ic_list)}")
+            else:
+                print(f"  {label:16s}: Insufficient data")
+        results["ic_by_adv"] = {
+            "illiq": {"mean": sum(ic_adv_illiq)/len(ic_adv_illiq), "n": len(ic_adv_illiq)} if ic_adv_illiq else None,
+            "mid": {"mean": sum(ic_adv_mid)/len(ic_adv_mid), "n": len(ic_adv_mid)} if ic_adv_mid else None,
+            "liq": {"mean": sum(ic_adv_liq)/len(ic_adv_liq), "n": len(ic_adv_liq)} if ic_adv_liq else None,
+            "unknown": {"mean": sum(ic_adv_unknown)/len(ic_adv_unknown), "n": len(ic_adv_unknown)} if ic_adv_unknown else None,
+        }
+        print()
 
-    # Intersection ICs: MID-cap by ADV bucket
-    print("IC for MID-cap by ADV$ Bucket (90d horizon):")
-    print("-" * 50)
-    for label, ic_list in [("MID ∩ LIQ", ic_mid_liq),
-                           ("MID ∩ MID-ADV", ic_mid_mid_adv),
-                           ("MID ∩ ILLIQ", ic_mid_illiq),
-                           ("MID ∩ UNKNOWN", ic_mid_unknown_adv)]:
-        if ic_list:
-            bucket_mean = sum(ic_list) / len(ic_list)
-            bucket_pos = 100 * sum(1 for x in ic_list if x > 0) / len(ic_list)
-            print(f"  {label:16s}: IC={bucket_mean:+.4f}, Pos={bucket_pos:.0f}%, N={len(ic_list)}")
-        else:
-            print(f"  {label:16s}: Insufficient data")
-    results["ic_mid_by_adv"] = {
-        "mid_liq": {"mean": sum(ic_mid_liq)/len(ic_mid_liq), "n": len(ic_mid_liq)} if ic_mid_liq else None,
-        "mid_mid_adv": {"mean": sum(ic_mid_mid_adv)/len(ic_mid_mid_adv), "n": len(ic_mid_mid_adv)} if ic_mid_mid_adv else None,
-        "mid_illiq": {"mean": sum(ic_mid_illiq)/len(ic_mid_illiq), "n": len(ic_mid_illiq)} if ic_mid_illiq else None,
-        "mid_unknown": {"mean": sum(ic_mid_unknown_adv)/len(ic_mid_unknown_adv), "n": len(ic_mid_unknown_adv)} if ic_mid_unknown_adv else None,
-    }
-    print()
+        # Intersection ICs: MID-cap by ADV bucket
+        print("IC for MID-cap by ADV$ Bucket (90d horizon):")
+        print("-" * 50)
+        for label, ic_list in [("MID ∩ LIQ", ic_mid_liq),
+                               ("MID ∩ MID-ADV", ic_mid_mid_adv),
+                               ("MID ∩ ILLIQ", ic_mid_illiq),
+                               ("MID ∩ UNKNOWN", ic_mid_unknown_adv)]:
+            if ic_list:
+                bucket_mean = sum(ic_list) / len(ic_list)
+                bucket_pos = 100 * sum(1 for x in ic_list if x > 0) / len(ic_list)
+                print(f"  {label:16s}: IC={bucket_mean:+.4f}, Pos={bucket_pos:.0f}%, N={len(ic_list)}")
+            else:
+                print(f"  {label:16s}: Insufficient data")
+        results["ic_mid_by_adv"] = {
+            "mid_liq": {"mean": sum(ic_mid_liq)/len(ic_mid_liq), "n": len(ic_mid_liq)} if ic_mid_liq else None,
+            "mid_mid_adv": {"mean": sum(ic_mid_mid_adv)/len(ic_mid_mid_adv), "n": len(ic_mid_mid_adv)} if ic_mid_mid_adv else None,
+            "mid_illiq": {"mean": sum(ic_mid_illiq)/len(ic_mid_illiq), "n": len(ic_mid_illiq)} if ic_mid_illiq else None,
+            "mid_unknown": {"mean": sum(ic_mid_unknown_adv)/len(ic_mid_unknown_adv), "n": len(ic_mid_unknown_adv)} if ic_mid_unknown_adv else None,
+        }
+        print()
+    else:
+        print("IC by ADV$ Bucket: SKIPPED (insufficient ADV data)")
+        print("IC for MID-cap by ADV$ Bucket: SKIPPED (insufficient ADV data)")
+        print()
 
     # Save results
     if output_file:
