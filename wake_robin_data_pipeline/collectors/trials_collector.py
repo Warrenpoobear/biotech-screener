@@ -200,6 +200,25 @@ def collect_trials_data(ticker: str, company_name: str, force_refresh: bool = Fa
     """
     Main entry point: collect clinical trial data with caching.
     """
+    # Handle None or empty company names (e.g., benchmark tickers)
+    if not company_name:
+        return {
+            "ticker": ticker,
+            "success": True,
+            "summary": {
+                "total_trials": 0,
+                "active_trials": 0,
+                "completed_trials": 0,
+                "lead_stage": "not_applicable",
+                "by_phase": {},
+                "conditions": [],
+                "top_trials": []
+            },
+            "from_cache": False,
+            "skipped": True,
+            "reason": "No company name (benchmark or index ticker)"
+        }
+
     cache_path = get_cache_path(company_name)
     
     # Check cache first
