@@ -23,7 +23,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from collectors import yahoo_collector, sec_collector, trials_collector, time_series_collector
 from defensive_overlays import enrich_universe_with_defensive_overlays, print_defensive_summary
 
-def load_universe(universe_file: str = "universe/pilot_universe.json") -> Dict:
+def load_universe(universe_file: str = "universe/full_universe.json") -> Dict:
     """Load universe configuration."""
     universe_path = Path(__file__).parent / universe_file
 
