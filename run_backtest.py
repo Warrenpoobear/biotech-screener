@@ -425,14 +425,32 @@ def create_production_scorer():
             else:
                 score = 50.0
 
-            # Extract component scores
+            # Extract component scores with full detail
             fin_score = 0
+            fin_severity = None
             if m2.get("scores"):
-                fin_score = float(m2["scores"][0].get("financial_normalized", 0) or 0)
+                m2_score = m2["scores"][0]
+                fin_score = float(m2_score.get("financial_normalized", 0) or 0)
+                fin_severity = m2_score.get("severity")
 
             clin_score = 0
+            clin_raw = None
             if m4.get("scores"):
-                clin_score = float(m4["scores"][0].get("clinical_score", 0) or 0)
+                m4_score = m4["scores"][0]
+                clin_score = float(m4_score.get("clinical_score", 0) or 0)
+                clin_raw = m4_score.get("clinical_raw")
+
+            catalyst_score = 0
+            catalyst_raw = None
+            if m3.get("scores"):
+                m3_score = m3["scores"][0]
+                catalyst_score = float(m3_score.get("catalyst_normalized", 0) or 0)
+                catalyst_raw = m3_score.get("catalyst_raw")
+
+            # Get data state from composite
+            data_state = None
+            if ranked:
+                data_state = ranked[0].get("composite_data_state")
 
             return {
                 "ticker": ticker,
@@ -440,7 +458,14 @@ def create_production_scorer():
                 "components": {
                     "financial": fin_score,
                     "clinical": clin_score,
+                    "catalyst": catalyst_score,
                     "trials_count": len(ticker_trials),
+                },
+                "raw_components": {
+                    "clinical_raw": clin_raw,
+                    "catalyst_raw": catalyst_raw,
+                    "fin_severity": fin_severity,
+                    "data_state": data_state,
                 },
                 "production_pipeline": True,
                 "data_source": "real",
@@ -646,6 +671,7 @@ def run_direct_backtest(
                         run_direct_backtest._debug_pit_info[ticker] = {
                             'pit_source_date': score_result.get('pit_source_date'),
                             'pit_lookup': score_result.get('pit_lookup'),
+                            'raw_components': score_result.get('raw_components', {}),
                         }
 
                     # Calculate forward returns if price data available
@@ -667,11 +693,14 @@ def run_direct_backtest(
         if debug_ticker and debug_ticker in period_scores:
             debug_scores.append((test_date.strftime("%Y-%m-%d"), period_scores[debug_ticker]))
 
-        # Probe A: Log PIT details for debug ticker (stored during scoring)
+        # Probe A: Log PIT details + raw components for debug ticker
         if hasattr(run_direct_backtest, '_debug_pit_info') and debug_ticker:
             pit_info = run_direct_backtest._debug_pit_info.get(debug_ticker, {})
+            raw = pit_info.get('raw_components', {})
             if i == 0 or i == len(test_dates) - 1:  # First and last
-                print(f"    DEBUG {debug_ticker}: score={period_scores.get(debug_ticker, 0):.2f} pit_date={pit_info.get('pit_source_date', 'N/A')} pit_lookup={pit_info.get('pit_lookup', 'N/A')}")
+                print(f"    DEBUG {debug_ticker}: score={period_scores.get(debug_ticker, 0):.2f}")
+                print(f"      pit_date={pit_info.get('pit_source_date', 'N/A')} pit_lookup={pit_info.get('pit_lookup', 'N/A')}")
+                print(f"      clin_raw={raw.get('clinical_raw')} cat_raw={raw.get('catalyst_raw')} sev={raw.get('fin_severity')} state={raw.get('data_state')}")
 
         # Calculate IC for this period
         if len(period_scores) >= 5 and len(period_returns_30d) >= 5:
