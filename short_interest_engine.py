@@ -362,22 +362,30 @@ class ShortInterestSignalEngine:
 
     def _assess_squeeze_potential(
         self,
-        si_pct: Decimal,
-        dtc: Decimal
+        si_pct: Optional[Decimal],
+        dtc: Optional[Decimal]
     ) -> str:
-        """Assess squeeze potential category based on SI% and days-to-cover."""
+        """
+        Assess squeeze potential category based on SI% and days-to-cover.
+
+        CCFT Compliance: Returns "UNKNOWN" for missing data instead of
+        silently defaulting to "LOW" (which would change semantics).
+        """
+        # Explicit missing data handling (CCFT compliance)
+        if si_pct is None or dtc is None:
+            return "UNKNOWN"
+
         # Check thresholds from highest to lowest
         if (si_pct >= self.SQUEEZE_THRESHOLDS["extreme"]["si_pct"] and
             dtc >= self.SQUEEZE_THRESHOLDS["extreme"]["dtc"]):
             return "EXTREME"
-        elif (si_pct >= self.SQUEEZE_THRESHOLDS["high"]["si_pct"] and
-              dtc >= self.SQUEEZE_THRESHOLDS["high"]["dtc"]):
+        if (si_pct >= self.SQUEEZE_THRESHOLDS["high"]["si_pct"] and
+            dtc >= self.SQUEEZE_THRESHOLDS["high"]["dtc"]):
             return "HIGH"
-        elif (si_pct >= self.SQUEEZE_THRESHOLDS["moderate"]["si_pct"] and
-              dtc >= self.SQUEEZE_THRESHOLDS["moderate"]["dtc"]):
+        if (si_pct >= self.SQUEEZE_THRESHOLDS["moderate"]["si_pct"] and
+            dtc >= self.SQUEEZE_THRESHOLDS["moderate"]["dtc"]):
             return "MODERATE"
-        else:
-            return "LOW"
+        return "LOW"
 
     def _assess_crowding_risk(self, si_pct: Decimal) -> str:
         """Assess crowding risk based on short interest percentage."""
