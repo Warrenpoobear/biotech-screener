@@ -291,6 +291,13 @@ def create_production_scorer():
     else:
         print(f"    ⚠️  WARNING: No historical financials - PIT will use static current data!")
 
+    # Print first 20 keys of each data source for debug ticker selection
+    print(f"  Data source keys (first 20):")
+    print(f"    trial_data: {sorted(trial_data.keys())[:20]}")
+    print(f"    historical_financials: {sorted(historical_financials.keys())[:20]}")
+    covered_intersection = set(trial_data.keys()) & set(historical_financials.keys())
+    print(f"    intersection (trial ∩ hist_fin): {len(covered_intersection)} tickers → {sorted(covered_intersection)[:10]}...")
+
     def production_scorer(ticker: str, data: Dict, as_of_date: datetime) -> Dict:
         """
         Production scorer using full Module 1-5 pipeline with REAL data.
@@ -397,6 +404,10 @@ def create_production_scorer():
                 "conditions": trial.get("conditions", []),
                 "interventions": trial.get("interventions", []),
                 "sponsor": trial.get("sponsor", ""),
+                # PIT-relevant date fields (CRITICAL for PIT filtering)
+                "last_update_posted": trial.get("last_update_posted"),
+                "first_posted": trial.get("first_posted"),
+                "source_date": trial.get("source_date"),
             })
 
         # If no trials found, use fallback
@@ -451,10 +462,16 @@ def create_production_scorer():
 
             clin_score = 0
             clin_raw = None
+            m4_trial_count = 0
+            m4_pit_filtered = 0
+            m4_lead_phase = None
             if m4.get("scores"):
                 m4_score = m4["scores"][0]
                 clin_score = float(m4_score.get("clinical_score", 0) or 0)
-                clin_raw = m4_score.get("clinical_raw")
+                clin_raw = clin_score  # clinical_score IS the raw score
+                m4_trial_count = m4_score.get("n_trials_unique", 0)
+                m4_pit_filtered = m4_score.get("pit_filtered_count_ticker", 0)
+                m4_lead_phase = m4_score.get("lead_phase")
 
             catalyst_score = 0
             catalyst_raw = None
@@ -482,6 +499,12 @@ def create_production_scorer():
                     "catalyst_raw": catalyst_raw,
                     "fin_severity": fin_severity,
                     "data_state": data_state,
+                },
+                # M4 (clinical) debug info
+                "m4_debug": {
+                    "trial_count": m4_trial_count,
+                    "pit_filtered": m4_pit_filtered,
+                    "lead_phase": m4_lead_phase,
                 },
                 "production_pipeline": True,
                 "data_source": "real",
@@ -663,20 +686,52 @@ def run_direct_backtest(
     # Load data sources to find covered tickers
     if use_production_scorer:
         try:
-            _, trial_data_check, _, hist_fin_check = load_real_data()
+            _, trial_data_check, universe_data_check, hist_fin_check = load_real_data()
+
+            # Print first 20 keys of each data source
+            print()
+            print("DATA SOURCE COVERAGE:")
+            print("-" * 50)
+            print(f"  trial_data keys (first 20): {sorted(trial_data_check.keys())[:20]}")
+            print(f"  historical_financials keys (first 20): {sorted(hist_fin_check.keys())[:20]}")
+
+            # Identify tickers with ADV data
+            adv_available_tickers = set()
+            for ticker, record in universe_data_check.items():
+                mkt = record.get("market_data", {})
+                volume = mkt.get("volume_avg_30d")
+                price = mkt.get("price")
+                if volume and price:
+                    adv_available_tickers.add(ticker)
+            print(f"  ADV$ available (volume_avg_30d + price): {len(adv_available_tickers)} tickers")
+
             covered_tickers = set(trial_data_check.keys()) & set(hist_fin_check.keys()) & set(universe)
-            if covered_tickers:
-                debug_ticker = sorted(covered_tickers)[0]  # First alphabetically for consistency
-                print(f"  Debug ticker: {debug_ticker} (from {len(covered_tickers)} covered tickers)")
+            covered_with_adv = covered_tickers & adv_available_tickers
+
+            print(f"  trial ∩ hist_fin ∩ universe: {len(covered_tickers)} tickers")
+            print(f"  trial ∩ hist_fin ∩ universe ∩ ADV$: {len(covered_with_adv)} tickers")
+
+            # Prefer ticker with ADV data for more complete debugging
+            if covered_with_adv:
+                debug_ticker = sorted(covered_with_adv)[0]
+                print(f"  Debug ticker: {debug_ticker} (from {len(covered_with_adv)} fully-covered + ADV tickers)")
+            elif covered_tickers:
+                debug_ticker = sorted(covered_tickers)[0]
+                print(f"  Debug ticker: {debug_ticker} (from {len(covered_tickers)} covered tickers, no ADV)")
             else:
                 debug_ticker = universe[0] if universe else None
                 print(f"  Debug ticker: {debug_ticker} (WARNING: no fully-covered tickers found)")
-        except:
+            print()
+        except Exception as e:
             debug_ticker = universe[0] if universe else None
+            print(f"  Debug ticker: {debug_ticker} (error loading coverage: {e})")
     else:
         debug_ticker = universe[0] if universe else None
     debug_scores = []  # Track score changes for debug_ticker
     all_scores_hashes = []  # Track scores_hash for every period
+
+    # Track ADV diagnostics per period
+    all_adv_diagnostics = []
 
     for i, test_date in enumerate(test_dates):
         print(f"[{i+1}/{len(test_dates)}] Backtesting: {test_date.strftime('%Y-%m-%d')}")
@@ -709,6 +764,7 @@ def run_direct_backtest(
                             'pit_source_date': score_result.get('pit_source_date'),
                             'pit_lookup': score_result.get('pit_lookup'),
                             'raw_components': score_result.get('raw_components', {}),
+                            'm4_debug': score_result.get('m4_debug', {}),
                         }
 
                     # Calculate forward returns if price data available
@@ -734,10 +790,14 @@ def run_direct_backtest(
         if hasattr(run_direct_backtest, '_debug_pit_info') and debug_ticker:
             pit_info = run_direct_backtest._debug_pit_info.get(debug_ticker, {})
             raw = pit_info.get('raw_components', {})
+            m4 = pit_info.get('m4_debug', {})
             if i == 0 or i == len(test_dates) - 1:  # First and last
                 print(f"    DEBUG {debug_ticker}: score={period_scores.get(debug_ticker, 0):.2f}")
                 print(f"      pit_date={pit_info.get('pit_source_date', 'N/A')} pit_lookup={pit_info.get('pit_lookup', 'N/A')}")
-                print(f"      clin_raw={raw.get('clinical_raw')} cat_raw={raw.get('catalyst_raw')} sev={raw.get('fin_severity')} state={raw.get('data_state')}")
+                clin_val = raw.get('clinical_raw')
+                clin_str = f"{clin_val:.2f}" if clin_val else 'N/A'
+                print(f"      clin_raw={clin_str} cat_raw={raw.get('catalyst_raw')} sev={raw.get('fin_severity')} state={raw.get('data_state')}")
+                print(f"      M4: trials={m4.get('trial_count')} pit_filt={m4.get('pit_filtered')} lead={m4.get('lead_phase')}")
 
         # Calculate IC for this period
         if len(period_scores) >= 5 and len(period_returns_30d) >= 5:
@@ -814,14 +874,29 @@ def run_direct_backtest(
                 # Print bucket counts for EVERY period (not just first)
                 mcap_counts = {}
                 adv_counts = {}
+                adv_non_null_count = 0
                 for t in common_tickers:
                     mb = mcap_bucket.get(t, "UNKNOWN")
                     ab = adv_bucket.get(t, "UNKNOWN")
                     mcap_counts[mb] = mcap_counts.get(mb, 0) + 1
                     adv_counts[ab] = adv_counts.get(ab, 0) + 1
+                    if adv_by_ticker.get(t) is not None:
+                        adv_non_null_count += 1
+
+                # Store ADV diagnostics for this period
+                all_adv_diagnostics.append({
+                    'date': test_date.strftime("%Y-%m-%d"),
+                    'adv_non_null': adv_non_null_count,
+                    'total': len(common_tickers),
+                    'ILLIQ': adv_counts.get('ILLIQ', 0),
+                    'MID': adv_counts.get('MID', 0),
+                    'LIQ': adv_counts.get('LIQ', 0),
+                    'UNKNOWN': adv_counts.get('UNKNOWN', 0),
+                })
+
                 # Compact format: show hash + ADV counts on one line
                 adv_str = f"ILLIQ={adv_counts.get('ILLIQ',0)} MID={adv_counts.get('MID',0)} LIQ={adv_counts.get('LIQ',0)} UNK={adv_counts.get('UNKNOWN',0)}"
-                print(f"    scores_hash={all_hash} | ADV$: {adv_str}")
+                print(f"    scores_hash={all_hash} | ADV$: non_null={adv_non_null_count}/{len(common_tickers)} {adv_str}")
 
                 # Intersection ICs: MID-cap ∩ ADV buckets
                 def compute_intersection_ic(mcap_target, adv_target):
@@ -944,9 +1019,34 @@ def run_direct_backtest(
             print(f"  ⚠️  WARNING: Score vector has limited variation (< 50% unique)")
         else:
             print(f"  ✓ Score vector varies across periods")
-        # Show first 5 and last 5 hashes
-        print(f"  First 5: {[h for _, h in all_scores_hashes[:5]]}")
-        print(f"  Last 5:  {[h for _, h in all_scores_hashes[-5:]]}")
+
+        # Print ALL scores_hash values (user requested all 17)
+        print(f"  All {len(all_scores_hashes)} period hashes:")
+        for date, hash_val in all_scores_hashes:
+            print(f"    {date}: {hash_val}")
+    print()
+
+    # ADV Diagnostics Summary (per-period counts)
+    print("ADV$ Bucket Diagnostics (per period):")
+    print("-" * 50)
+    if all_adv_diagnostics:
+        print(f"  {'Date':<12} {'non_null':>10} {'ILLIQ':>6} {'MID':>6} {'LIQ':>6} {'UNK':>6}")
+        print(f"  {'-'*12} {'-'*10} {'-'*6} {'-'*6} {'-'*6} {'-'*6}")
+        for diag in all_adv_diagnostics:
+            print(f"  {diag['date']:<12} {diag['adv_non_null']:>10}/{diag['total']:<4} {diag['ILLIQ']:>6} {diag['MID']:>6} {diag['LIQ']:>6} {diag['UNKNOWN']:>6}")
+
+        # Summary statistics
+        avg_non_null = sum(d['adv_non_null'] for d in all_adv_diagnostics) / len(all_adv_diagnostics)
+        avg_unknown = sum(d['UNKNOWN'] for d in all_adv_diagnostics) / len(all_adv_diagnostics)
+        avg_total = sum(d['total'] for d in all_adv_diagnostics) / len(all_adv_diagnostics)
+        pct_unknown = 100 * avg_unknown / avg_total if avg_total > 0 else 0
+        print()
+        print(f"  Averages: non_null={avg_non_null:.1f}, UNKNOWN={avg_unknown:.1f} ({pct_unknown:.1f}% of tickers)")
+        if pct_unknown > 50:
+            print(f"  ⚠️  WARNING: UNKNOWN dominates - ADV calculation likely failing")
+            print(f"     Common causes: volume as strings, lookback too strict, date misalignment")
+    else:
+        print("  No ADV diagnostics available")
     print()
 
     print("Top/Bottom Decile Spread (90d horizon):")
