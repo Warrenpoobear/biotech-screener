@@ -608,7 +608,12 @@ def run_direct_backtest(
 
     # Bucket IC tracking (use 90d as primary horizon)
     ic_mcap_small, ic_mcap_mid, ic_mcap_large = [], [], []
+    ic_mcap_unknown = []  # Track UNKNOWN mcap bucket
     ic_adv_illiq, ic_adv_mid, ic_adv_liq = [], [], []
+    ic_adv_unknown = []  # Track UNKNOWN ADV bucket
+
+    # Intersection bucket IC tracking (MID-cap ∩ ADV buckets)
+    ic_mid_liq, ic_mid_mid_adv, ic_mid_illiq, ic_mid_unknown_adv = [], [], [], []
 
     # Load market cap and ADV$ data for bucket classification
     mcap_by_ticker = {}
@@ -654,9 +659,24 @@ def run_direct_backtest(
         universe = [t for t in universe if passes_mcap_filter(t)]
         print(f"  Applied mcap filter '{mcap_filter}': {original_size} -> {len(universe)} tickers")
 
-    # Track a sample ticker for debugging time-varying inputs
-    debug_ticker = "REGN" if "REGN" in universe else (universe[0] if universe else None)
+    # Pick debug ticker from KNOWN-COVERED intersection (not REGN which may have no data)
+    # Load data sources to find covered tickers
+    if use_production_scorer:
+        try:
+            _, trial_data_check, _, hist_fin_check = load_real_data()
+            covered_tickers = set(trial_data_check.keys()) & set(hist_fin_check.keys()) & set(universe)
+            if covered_tickers:
+                debug_ticker = sorted(covered_tickers)[0]  # First alphabetically for consistency
+                print(f"  Debug ticker: {debug_ticker} (from {len(covered_tickers)} covered tickers)")
+            else:
+                debug_ticker = universe[0] if universe else None
+                print(f"  Debug ticker: {debug_ticker} (WARNING: no fully-covered tickers found)")
+        except:
+            debug_ticker = universe[0] if universe else None
+    else:
+        debug_ticker = universe[0] if universe else None
     debug_scores = []  # Track score changes for debug_ticker
+    all_scores_hashes = []  # Track scores_hash for every period
 
     for i, test_date in enumerate(test_dates):
         print(f"[{i+1}/{len(test_dates)}] Backtesting: {test_date.strftime('%Y-%m-%d')}")
@@ -774,22 +794,51 @@ def run_direct_backtest(
                 blob = "|".join(f"{t}:{s}" for t, s in scores_sorted)
                 all_hash = hashlib.sha256(blob.encode()).hexdigest()[:8]
                 top_hash = hashlib.sha256(",".join(sorted(top_set)).encode()).hexdigest()[:8]
-                print(f"    Hashes: scores={all_hash} top_decile={top_hash} | Top 3: {sorted(top_set)[:3]}")
+                all_scores_hashes.append((test_date.strftime("%Y-%m-%d"), all_hash))
                 prev_top_decile = top_set
 
                 # Bucket ICs: market cap
                 mcap_bucket = {t: _bucket_mcap(mcap_by_ticker.get(t)) for t in common_tickers}
-                for bucket, ic_list in [("SMALL", ic_mcap_small), ("MID", ic_mcap_mid), ("LARGE", ic_mcap_large)]:
+                for bucket, ic_list in [("SMALL", ic_mcap_small), ("MID", ic_mcap_mid), ("LARGE", ic_mcap_large), ("UNKNOWN", ic_mcap_unknown)]:
                     bucket_ic, n = _compute_bucket_ic(period_scores, period_returns_90d, mcap_bucket, bucket)
                     if bucket_ic is not None:
                         ic_list.append(bucket_ic)
 
                 # Bucket ICs: ADV$
                 adv_bucket = {t: _bucket_adv(adv_by_ticker.get(t)) for t in common_tickers}
-                for bucket, ic_list in [("ILLIQ", ic_adv_illiq), ("MID", ic_adv_mid), ("LIQ", ic_adv_liq)]:
+                for bucket, ic_list in [("ILLIQ", ic_adv_illiq), ("MID", ic_adv_mid), ("LIQ", ic_adv_liq), ("UNKNOWN", ic_adv_unknown)]:
                     bucket_ic, n = _compute_bucket_ic(period_scores, period_returns_90d, adv_bucket, bucket)
                     if bucket_ic is not None:
                         ic_list.append(bucket_ic)
+
+                # Print bucket counts for EVERY period (not just first)
+                mcap_counts = {}
+                adv_counts = {}
+                for t in common_tickers:
+                    mb = mcap_bucket.get(t, "UNKNOWN")
+                    ab = adv_bucket.get(t, "UNKNOWN")
+                    mcap_counts[mb] = mcap_counts.get(mb, 0) + 1
+                    adv_counts[ab] = adv_counts.get(ab, 0) + 1
+                # Compact format: show hash + ADV counts on one line
+                adv_str = f"ILLIQ={adv_counts.get('ILLIQ',0)} MID={adv_counts.get('MID',0)} LIQ={adv_counts.get('LIQ',0)} UNK={adv_counts.get('UNKNOWN',0)}"
+                print(f"    scores_hash={all_hash} | ADV$: {adv_str}")
+
+                # Intersection ICs: MID-cap ∩ ADV buckets
+                def compute_intersection_ic(mcap_target, adv_target):
+                    filtered = [t for t in common_tickers
+                                if mcap_bucket.get(t) == mcap_target and adv_bucket.get(t) == adv_target]
+                    if len(filtered) < 3:  # Lower threshold for intersection
+                        return None, len(filtered)
+                    scores = [period_scores[t] for t in filtered]
+                    returns = [period_returns_90d[t] for t in filtered]
+                    ic = _calculate_spearman_ic(scores, returns)
+                    return ic, len(filtered)
+
+                for adv_target, ic_list in [("LIQ", ic_mid_liq), ("MID", ic_mid_mid_adv),
+                                             ("ILLIQ", ic_mid_illiq), ("UNKNOWN", ic_mid_unknown_adv)]:
+                    ic_val, n = compute_intersection_ic("MID", adv_target)
+                    if ic_val is not None:
+                        ic_list.append(ic_val)
 
         all_period_results.append({
             "date": test_date.isoformat(),
@@ -882,6 +931,24 @@ def run_direct_backtest(
             print(f"  ⚠️  WARNING: Scores are STATIC - inputs not time-varying!")
         print()
 
+    # Summary of ALL scores_hash values (critical for diagnosing static scoring)
+    print("Scores Hash Analysis (entire score vector):")
+    print("-" * 50)
+    if all_scores_hashes:
+        unique_hashes = set(h for _, h in all_scores_hashes)
+        print(f"  Unique hashes: {len(unique_hashes)}/{len(all_scores_hashes)} periods")
+        if len(unique_hashes) == 1:
+            print(f"  ⚠️  CRITICAL: Score vector is COMPLETELY STATIC across all periods!")
+            print(f"     Hash: {all_scores_hashes[0][1]}")
+        elif len(unique_hashes) < len(all_scores_hashes) * 0.5:
+            print(f"  ⚠️  WARNING: Score vector has limited variation (< 50% unique)")
+        else:
+            print(f"  ✓ Score vector varies across periods")
+        # Show first 5 and last 5 hashes
+        print(f"  First 5: {[h for _, h in all_scores_hashes[:5]]}")
+        print(f"  Last 5:  {[h for _, h in all_scores_hashes[-5:]]}")
+    print()
+
     print("Top/Bottom Decile Spread (90d horizon):")
     print("-" * 50)
     if spread_90d_values:
@@ -918,7 +985,8 @@ def run_direct_backtest(
     print("-" * 50)
     for label, ic_list in [("SMALL (<$0.5B)", ic_mcap_small),
                            ("MID ($0.5-2B)", ic_mcap_mid),
-                           ("LARGE (>$2B)", ic_mcap_large)]:
+                           ("LARGE (>$2B)", ic_mcap_large),
+                           ("UNKNOWN", ic_mcap_unknown)]:
         if ic_list:
             bucket_mean = sum(ic_list) / len(ic_list)
             bucket_pos = 100 * sum(1 for x in ic_list if x > 0) / len(ic_list)
@@ -929,6 +997,7 @@ def run_direct_backtest(
         "small": {"mean": sum(ic_mcap_small)/len(ic_mcap_small), "n": len(ic_mcap_small)} if ic_mcap_small else None,
         "mid": {"mean": sum(ic_mcap_mid)/len(ic_mcap_mid), "n": len(ic_mcap_mid)} if ic_mcap_mid else None,
         "large": {"mean": sum(ic_mcap_large)/len(ic_mcap_large), "n": len(ic_mcap_large)} if ic_mcap_large else None,
+        "unknown": {"mean": sum(ic_mcap_unknown)/len(ic_mcap_unknown), "n": len(ic_mcap_unknown)} if ic_mcap_unknown else None,
     }
     print()
 
@@ -936,7 +1005,8 @@ def run_direct_backtest(
     print("-" * 50)
     for label, ic_list in [("ILLIQ (<$250K)", ic_adv_illiq),
                            ("MID ($250K-2M)", ic_adv_mid),
-                           ("LIQ (>$2M)", ic_adv_liq)]:
+                           ("LIQ (>$2M)", ic_adv_liq),
+                           ("UNKNOWN", ic_adv_unknown)]:
         if ic_list:
             bucket_mean = sum(ic_list) / len(ic_list)
             bucket_pos = 100 * sum(1 for x in ic_list if x > 0) / len(ic_list)
@@ -947,6 +1017,28 @@ def run_direct_backtest(
         "illiq": {"mean": sum(ic_adv_illiq)/len(ic_adv_illiq), "n": len(ic_adv_illiq)} if ic_adv_illiq else None,
         "mid": {"mean": sum(ic_adv_mid)/len(ic_adv_mid), "n": len(ic_adv_mid)} if ic_adv_mid else None,
         "liq": {"mean": sum(ic_adv_liq)/len(ic_adv_liq), "n": len(ic_adv_liq)} if ic_adv_liq else None,
+        "unknown": {"mean": sum(ic_adv_unknown)/len(ic_adv_unknown), "n": len(ic_adv_unknown)} if ic_adv_unknown else None,
+    }
+    print()
+
+    # Intersection ICs: MID-cap by ADV bucket
+    print("IC for MID-cap by ADV$ Bucket (90d horizon):")
+    print("-" * 50)
+    for label, ic_list in [("MID ∩ LIQ", ic_mid_liq),
+                           ("MID ∩ MID-ADV", ic_mid_mid_adv),
+                           ("MID ∩ ILLIQ", ic_mid_illiq),
+                           ("MID ∩ UNKNOWN", ic_mid_unknown_adv)]:
+        if ic_list:
+            bucket_mean = sum(ic_list) / len(ic_list)
+            bucket_pos = 100 * sum(1 for x in ic_list if x > 0) / len(ic_list)
+            print(f"  {label:16s}: IC={bucket_mean:+.4f}, Pos={bucket_pos:.0f}%, N={len(ic_list)}")
+        else:
+            print(f"  {label:16s}: Insufficient data")
+    results["ic_mid_by_adv"] = {
+        "mid_liq": {"mean": sum(ic_mid_liq)/len(ic_mid_liq), "n": len(ic_mid_liq)} if ic_mid_liq else None,
+        "mid_mid_adv": {"mean": sum(ic_mid_mid_adv)/len(ic_mid_mid_adv), "n": len(ic_mid_mid_adv)} if ic_mid_mid_adv else None,
+        "mid_illiq": {"mean": sum(ic_mid_illiq)/len(ic_mid_illiq), "n": len(ic_mid_illiq)} if ic_mid_illiq else None,
+        "mid_unknown": {"mean": sum(ic_mid_unknown_adv)/len(ic_mid_unknown_adv), "n": len(ic_mid_unknown_adv)} if ic_mid_unknown_adv else None,
     }
     print()
 
