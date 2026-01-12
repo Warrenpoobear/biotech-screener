@@ -25,13 +25,11 @@ from backtest_engine import PointInTimeBacktester, create_sample_scoring_functio
 from backtest.returns_provider import CSVReturnsProvider
 from backtest.metrics import run_metrics_suite, HORIZON_DISPLAY_NAMES
 
-# Default universe for backtesting
+# Default universe for backtesting (tickers with complete real data + price history)
 DEFAULT_UNIVERSE = [
-    "AMGN", "GILD", "VRTX", "REGN", "BIIB",
-    "ALNY", "BMRN", "SGEN", "INCY", "EXEL",
-    "MRNA", "BNTX", "IONS", "SRPT", "RARE",
-    "BLUE", "FOLD", "ACAD", "HALO", "KRTX",
-    "IMVT", "ARWR", "PCVX", "BEAM", "EDIT",
+    "ACAD", "BEAM", "BIIB", "BMRN", "EDIT",
+    "EXEL", "FOLD", "GILD", "HALO", "IMVT",
+    "IONS", "MRNA", "RARE", "REGN", "SRPT",
 ]
 
 # Sample data for production scorer
@@ -92,22 +90,68 @@ CLINICAL_DATA = {
 }
 
 
+def load_real_data():
+    """Load real production data from files."""
+    data_dir = Path(__file__).parent / "production_data"
+
+    # Load financial data
+    financial_data = {}
+    financial_file = data_dir / "financial_data.json"
+    if financial_file.exists():
+        with open(financial_file) as f:
+            for record in json.load(f):
+                ticker = record.get("ticker")
+                if ticker:
+                    financial_data[ticker] = record
+
+    # Load trial records
+    trial_data = {}
+    trial_file = data_dir / "trial_records.json"
+    if trial_file.exists():
+        with open(trial_file) as f:
+            for record in json.load(f):
+                ticker = record.get("ticker")
+                if ticker:
+                    if ticker not in trial_data:
+                        trial_data[ticker] = []
+                    trial_data[ticker].append(record)
+
+    # Load universe data for market caps
+    universe_data = {}
+    universe_file = data_dir / "universe.json"
+    if universe_file.exists():
+        with open(universe_file) as f:
+            for record in json.load(f):
+                ticker = record.get("ticker")
+                if ticker:
+                    universe_data[ticker] = record
+
+    return financial_data, trial_data, universe_data
+
+
 def create_production_scorer():
     """
-    Create production scorer using Module 5 composite.
+    Create production scorer using Module 5 composite with REAL data.
 
-    This integrates modules 1-5 for full production scoring.
+    This integrates modules 1-5 for full production scoring using actual
+    financial and clinical trial data from production_data/.
     """
-    import random
     from module_1_universe import compute_module_1_universe
     from module_2_financial import compute_module_2_financial
     from module_3_catalyst import compute_module_3_catalyst
     from module_4_clinical_dev import compute_module_4_clinical_dev
     from module_5_composite import compute_module_5_composite
 
+    # Load real data once at scorer creation time
+    print("Loading real production data...")
+    financial_data, trial_data, universe_data = load_real_data()
+    print(f"  Loaded financial data for {len(financial_data)} tickers")
+    print(f"  Loaded trial data for {len(trial_data)} tickers")
+    print(f"  Loaded universe data for {len(universe_data)} tickers")
+
     def production_scorer(ticker: str, data: Dict, as_of_date: datetime) -> Dict:
         """
-        Production scorer using full Module 1-5 pipeline.
+        Production scorer using full Module 1-5 pipeline with REAL data.
 
         Args:
             ticker: Stock ticker
@@ -118,47 +162,108 @@ def create_production_scorer():
             Dict with final_score and components
         """
         as_of_str = as_of_date.strftime("%Y-%m-%d")
-        random.seed(hash(f"{ticker}_{as_of_str}") % (2**32))
 
-        # Get company info
-        company = COMPANY_DATA.get(ticker, {"name": ticker, "mcap": 1000})
-        clinical = CLINICAL_DATA.get(ticker, {"phase": "phase 1", "trials": 1, "endpoint": "safety"})
+        # Get real company/universe data
+        uni_record = universe_data.get(ticker, {})
+        market_data = uni_record.get("market_data", {})
 
-        # Generate module inputs
+        # Get market cap from universe data (convert from raw to millions)
+        raw_mcap = market_data.get("market_cap")
+        if raw_mcap:
+            mcap_mm = raw_mcap / 1_000_000  # Convert to millions
+        else:
+            mcap_mm = COMPANY_DATA.get(ticker, {}).get("mcap", 1000)
+
+        company_name = market_data.get("company_name", ticker)
+
+        # Build universe record
         universe_records = [{
             "ticker": ticker,
-            "company_name": company.get("name", ticker),
-            "market_cap_mm": company.get("mcap"),
+            "company_name": company_name,
+            "market_cap_mm": mcap_mm,
             "status": "active",
         }]
 
-        mcap = company.get("mcap", 1000)
-        cash = mcap * random.uniform(0.1, 0.4)
-        debt = mcap * random.uniform(0.0, 0.2)
-        burn = cash / random.uniform(18, 48)
+        # Get real financial data
+        fin_record = financial_data.get(ticker, {})
+
+        # Convert financial data to module format (values in millions)
+        cash_raw = fin_record.get("Cash", 0) or 0
+        cash_mm = cash_raw / 1_000_000 if cash_raw else mcap_mm * 0.2
+
+        # Estimate debt from liabilities - current liabilities
+        liabilities = fin_record.get("Liabilities", 0) or 0
+        current_liab = fin_record.get("CurrentLiabilities", 0) or 0
+        debt_raw = liabilities - current_liab if liabilities else 0
+        debt_mm = max(0, debt_raw / 1_000_000)
+
+        # Estimate burn rate from R&D expense
+        rd_raw = fin_record.get("R&D", 0) or 0
+        burn_mm = rd_raw / 1_000_000 / 4 if rd_raw else cash_mm / 24  # Quarterly burn
 
         financial_records = [{
             "ticker": ticker,
-            "cash_mm": cash,
-            "debt_mm": debt,
-            "burn_rate_mm": burn,
-            "market_cap_mm": mcap,
-            "source_date": as_of_str,
+            "cash_mm": cash_mm,
+            "debt_mm": debt_mm,
+            "burn_rate_mm": burn_mm,
+            "market_cap_mm": mcap_mm,
+            "source_date": fin_record.get("collected_at", as_of_str),
         }]
 
-        num_trials = clinical.get("trials", 1)
+        # Get real trial data
+        ticker_trials = trial_data.get(ticker, [])
+
+        # Convert trial records to module format
         trial_records = []
-        for i in range(num_trials):
+        for trial in ticker_trials:
+            # Map status to expected format
+            status_raw = trial.get("status", "UNKNOWN")
+            status_map = {
+                "RECRUITING": "recruiting",
+                "ACTIVE_NOT_RECRUITING": "active",
+                "COMPLETED": "completed",
+                "TERMINATED": "terminated",
+                "WITHDRAWN": "withdrawn",
+                "SUSPENDED": "suspended",
+                "NOT_YET_RECRUITING": "not_yet_recruiting",
+            }
+            status = status_map.get(status_raw, status_raw.lower() if status_raw else "unknown")
+
+            # Map phase to expected format
+            phase_raw = trial.get("phase", "PHASE1")
+            phase_map = {
+                "PHASE1": "phase 1",
+                "PHASE2": "phase 2",
+                "PHASE3": "phase 3",
+                "PHASE4": "phase 4",
+                "EARLY_PHASE1": "phase 1",
+                "NA": "preclinical",
+            }
+            phase = phase_map.get(phase_raw, phase_raw.lower().replace("phase", "phase ") if phase_raw else "phase 1")
+
             trial_records.append({
                 "ticker": ticker,
-                "nct_id": f"NCT{random.randint(10000000, 99999999)}",
-                "phase": clinical.get("phase", "phase 1"),
-                "primary_completion_date": f"2024-{random.randint(1,12):02d}-{random.randint(1,28):02d}",
-                "status": random.choice(["recruiting", "active", "completed"]),
-                "randomized": random.random() > 0.3,
-                "blinded": random.choice(["open", "single", "double"]),
-                "primary_endpoint": clinical.get("endpoint", "safety"),
+                "nct_id": trial.get("nct_id", ""),
+                "title": trial.get("title", ""),
+                "phase": phase,
+                "primary_completion_date": trial.get("primary_completion_date"),
+                "completion_date": trial.get("completion_date"),
+                "status": status,
+                "conditions": trial.get("conditions", []),
+                "interventions": trial.get("interventions", []),
+                "sponsor": trial.get("sponsor", ""),
             })
+
+        # If no trials found, use fallback
+        if not trial_records:
+            clinical = CLINICAL_DATA.get(ticker, {"phase": "phase 1", "trials": 1, "endpoint": "safety"})
+            trial_records = [{
+                "ticker": ticker,
+                "nct_id": f"NCT00000000",
+                "phase": clinical.get("phase", "phase 1"),
+                "primary_completion_date": "2025-12-31",
+                "status": "active",
+            }]
 
         # Run Module 1-5 pipeline
         try:
@@ -175,15 +280,25 @@ def create_production_scorer():
             else:
                 score = 50.0
 
+            # Extract component scores
+            fin_score = 0
+            if m2.get("scores"):
+                fin_score = float(m2["scores"][0].get("financial_normalized", 0) or 0)
+
+            clin_score = 0
+            if m4.get("scores"):
+                clin_score = float(m4["scores"][0].get("clinical_score", 0) or 0)
+
             return {
                 "ticker": ticker,
                 "final_score": score,
                 "components": {
-                    "financial": float(m2.get("scores", [{}])[0].get("financial_normalized", 0)) if m2.get("scores") else 0,
-                    "catalyst": 50,  # Extracted from m3
-                    "clinical": float(m4.get("scores", [{}])[0].get("clinical_score", 0)) if m4.get("scores") else 0,
+                    "financial": fin_score,
+                    "clinical": clin_score,
+                    "trials_count": len(ticker_trials),
                 },
                 "production_pipeline": True,
+                "data_source": "real",
             }
         except Exception as e:
             # Fallback to basic scoring
@@ -192,6 +307,7 @@ def create_production_scorer():
                 "final_score": 50.0,
                 "components": {"error": str(e)},
                 "production_pipeline": False,
+                "data_source": "fallback",
             }
 
     return production_scorer
