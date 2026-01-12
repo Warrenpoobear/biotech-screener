@@ -560,11 +560,24 @@ def run_direct_backtest(
 
     price_file = price_file or "data/daily_prices.csv"
 
+    # Check if price file has volume column (needed for proper ADV calculation)
+    price_file_has_volume = False
+    try:
+        import csv
+        with open(price_file, 'r', newline='', encoding='utf-8-sig') as f:
+            reader = csv.DictReader(f)
+            headers = [h.lower().strip() for h in (reader.fieldnames or [])]
+            price_file_has_volume = 'volume' in headers or 'adj_volume' in headers
+    except Exception:
+        pass  # Will be caught below when loading returns provider
+
     # Load price data first to get available tickers
     try:
         returns_provider = CSVReturnsProvider(price_file)
         available_tickers = set(returns_provider.get_available_tickers())
         print(f"Loaded price data for {len(available_tickers)} tickers")
+        if not price_file_has_volume:
+            print(f"  NOTE: Price file missing volume column - ADV$ diagnostics will be disabled")
 
         # Use all available tickers if no universe specified
         if universe is None:
@@ -659,9 +672,15 @@ def run_direct_backtest(
                 if volume and price:
                     adv_by_ticker[ticker] = volume * price  # ADV$ in dollars
             print(f"  Loaded mcap for {len(mcap_by_ticker)} tickers, ADV$ for {len(adv_by_ticker)} tickers")
-            # Flag for gating ADV diagnostics - only meaningful if we have ADV data for >10% of universe
-            has_adv_data = len(adv_by_ticker) >= len(universe) * 0.1
-            if not has_adv_data:
+            # Flag for gating ADV diagnostics - REQUIRE volume column in price file for proper PIT ADV
+            # Without volume in price file, ADV from universe.json is static/non-PIT and misleading
+            if not price_file_has_volume:
+                has_adv_data = False
+                print(f"  ADV$ diagnostics DISABLED: price file missing volume column (ADV from universe.json is non-PIT)")
+            elif len(adv_by_ticker) >= len(universe) * 0.1:
+                has_adv_data = True
+            else:
+                has_adv_data = False
                 print(f"  NOTE: ADV data available for <10% of universe - ADV diagnostics will be skipped")
         except Exception as e:
             print(f"  Warning: Failed to load market data: {e}")
@@ -869,56 +888,65 @@ def run_direct_backtest(
                     if bucket_ic is not None:
                         ic_list.append(bucket_ic)
 
-                # Bucket ICs: ADV$
+                # Bucket ICs: ADV$ - only compute if we have proper volume data
                 adv_bucket = {t: _bucket_adv(adv_by_ticker.get(t)) for t in common_tickers}
-                for bucket, ic_list in [("ILLIQ", ic_adv_illiq), ("MID", ic_adv_mid), ("LIQ", ic_adv_liq), ("UNKNOWN", ic_adv_unknown)]:
-                    bucket_ic, n = _compute_bucket_ic(period_scores, period_returns_90d, adv_bucket, bucket)
-                    if bucket_ic is not None:
-                        ic_list.append(bucket_ic)
+                if has_adv_data:
+                    for bucket, ic_list in [("ILLIQ", ic_adv_illiq), ("MID", ic_adv_mid), ("LIQ", ic_adv_liq), ("UNKNOWN", ic_adv_unknown)]:
+                        bucket_ic, n = _compute_bucket_ic(period_scores, period_returns_90d, adv_bucket, bucket)
+                        if bucket_ic is not None:
+                            ic_list.append(bucket_ic)
 
                 # Print bucket counts for EVERY period (not just first)
                 mcap_counts = {}
-                adv_counts = {}
-                adv_non_null_count = 0
                 for t in common_tickers:
                     mb = mcap_bucket.get(t, "UNKNOWN")
-                    ab = adv_bucket.get(t, "UNKNOWN")
                     mcap_counts[mb] = mcap_counts.get(mb, 0) + 1
-                    adv_counts[ab] = adv_counts.get(ab, 0) + 1
-                    if adv_by_ticker.get(t) is not None:
-                        adv_non_null_count += 1
 
-                # Store ADV diagnostics for this period
-                all_adv_diagnostics.append({
-                    'date': test_date.strftime("%Y-%m-%d"),
-                    'adv_non_null': adv_non_null_count,
-                    'total': len(common_tickers),
-                    'ILLIQ': adv_counts.get('ILLIQ', 0),
-                    'MID': adv_counts.get('MID', 0),
-                    'LIQ': adv_counts.get('LIQ', 0),
-                    'UNKNOWN': adv_counts.get('UNKNOWN', 0),
-                })
+                # ADV diagnostics - only track if we have proper volume data
+                if has_adv_data:
+                    adv_counts = {}
+                    adv_non_null_count = 0
+                    for t in common_tickers:
+                        ab = adv_bucket.get(t, "UNKNOWN")
+                        adv_counts[ab] = adv_counts.get(ab, 0) + 1
+                        if adv_by_ticker.get(t) is not None:
+                            adv_non_null_count += 1
 
-                # Compact format: show hash + ADV counts on one line
-                adv_str = f"ILLIQ={adv_counts.get('ILLIQ',0)} MID={adv_counts.get('MID',0)} LIQ={adv_counts.get('LIQ',0)} UNK={adv_counts.get('UNKNOWN',0)}"
-                print(f"    scores_hash={all_hash} | ADV$: non_null={adv_non_null_count}/{len(common_tickers)} {adv_str}")
+                    # Store ADV diagnostics for this period
+                    all_adv_diagnostics.append({
+                        'date': test_date.strftime("%Y-%m-%d"),
+                        'adv_non_null': adv_non_null_count,
+                        'total': len(common_tickers),
+                        'ILLIQ': adv_counts.get('ILLIQ', 0),
+                        'MID': adv_counts.get('MID', 0),
+                        'LIQ': adv_counts.get('LIQ', 0),
+                        'UNKNOWN': adv_counts.get('UNKNOWN', 0),
+                    })
 
-                # Intersection ICs: MID-cap ∩ ADV buckets
-                def compute_intersection_ic(mcap_target, adv_target):
-                    filtered = [t for t in common_tickers
-                                if mcap_bucket.get(t) == mcap_target and adv_bucket.get(t) == adv_target]
-                    if len(filtered) < 3:  # Lower threshold for intersection
-                        return None, len(filtered)
-                    scores = [period_scores[t] for t in filtered]
-                    returns = [period_returns_90d[t] for t in filtered]
-                    ic = _calculate_spearman_ic(scores, returns)
-                    return ic, len(filtered)
+                    # Compact format: show hash + ADV counts on one line
+                    adv_str = f"ILLIQ={adv_counts.get('ILLIQ',0)} MID={adv_counts.get('MID',0)} LIQ={adv_counts.get('LIQ',0)} UNK={adv_counts.get('UNKNOWN',0)}"
+                    print(f"    scores_hash={all_hash} | ADV$: non_null={adv_non_null_count}/{len(common_tickers)} {adv_str}")
+                else:
+                    # Just print scores hash without ADV info
+                    print(f"    scores_hash={all_hash}")
 
-                for adv_target, ic_list in [("LIQ", ic_mid_liq), ("MID", ic_mid_mid_adv),
-                                             ("ILLIQ", ic_mid_illiq), ("UNKNOWN", ic_mid_unknown_adv)]:
-                    ic_val, n = compute_intersection_ic("MID", adv_target)
-                    if ic_val is not None:
-                        ic_list.append(ic_val)
+                # Intersection ICs: MID-cap ∩ ADV buckets - only compute if we have proper volume data
+                if has_adv_data:
+                    def compute_intersection_ic(mcap_target, adv_target):
+                        filtered = [t for t in common_tickers
+                                    if mcap_bucket.get(t) == mcap_target and adv_bucket.get(t) == adv_target]
+                        if len(filtered) < 3:  # Lower threshold for intersection
+                            return None, len(filtered)
+                        scores = [period_scores[t] for t in filtered]
+                        returns = [period_returns_90d[t] for t in filtered]
+                        ic = _calculate_spearman_ic(scores, returns)
+                        return ic, len(filtered)
+
+                    for adv_target, ic_list in [("LIQ", ic_mid_liq), ("MID", ic_mid_mid_adv),
+                                                 ("ILLIQ", ic_mid_illiq), ("UNKNOWN", ic_mid_unknown_adv)]:
+                        ic_val, n = compute_intersection_ic("MID", adv_target)
+                        if ic_val is not None:
+                            ic_list.append(ic_val)
 
         all_period_results.append({
             "date": test_date.isoformat(),
