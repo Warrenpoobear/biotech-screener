@@ -16,6 +16,10 @@ def get_cache_path(company_name: str) -> Path:
     cache_dir.mkdir(parents=True, exist_ok=True)
     # Use sanitized company name as filename
     safe_name = "".join(c for c in company_name if c.isalnum() or c in (' ', '-', '_')).strip()
+    # Truncate long names and use hash suffix for uniqueness
+    if len(safe_name) > 100:
+        name_hash = hashlib.md5(company_name.encode()).hexdigest()[:8]
+        safe_name = safe_name[:90] + "_" + name_hash
     return cache_dir / f"{safe_name}.json"
 
 def is_cache_valid(cache_path: Path, max_age_hours: int = 24) -> bool:
