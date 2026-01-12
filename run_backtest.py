@@ -414,7 +414,23 @@ def create_production_scorer():
         try:
             m1 = compute_module_1_universe(universe_records, as_of_str, universe_tickers=[ticker])
             m2 = compute_module_2_financial(financial_records, [ticker], as_of_str)
-            m3 = compute_module_3_catalyst(trial_records, [ticker], as_of_str)
+
+            # Module 3 requires file-based API, create fallback for backtest
+            # Calculate simple catalyst score based on trial activity
+            upcoming_trials = sum(1 for t in trial_records
+                                  if (t.get("primary_completion_date") or "9999") > as_of_str
+                                  and t.get("status") in ("recruiting", "active"))
+            catalyst_score = min(100, 50 + upcoming_trials * 5)  # Simple heuristic
+            m3 = {
+                "scores": [{
+                    "ticker": ticker,
+                    "catalyst_normalized": catalyst_score,
+                    "catalyst_raw": catalyst_score,
+                    "upcoming_catalysts": upcoming_trials,
+                }],
+                "catalyst_events": [],
+            }
+
             m4 = compute_module_4_clinical_dev(trial_records, [ticker], as_of_str)
             m5 = compute_module_5_composite(m1, m2, m3, m4, as_of_str)
 
@@ -481,6 +497,7 @@ def create_production_scorer():
                 "components": {"error": str(e)},
                 "production_pipeline": False,
                 "data_source": "fallback",
+                "pit_lookup": None,
             }
 
     return production_scorer
