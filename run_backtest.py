@@ -343,9 +343,29 @@ def run_direct_backtest(
     from datetime import timedelta
     from statistics import mean, stdev
 
-    universe = universe or DEFAULT_UNIVERSE
     price_file = price_file or "data/daily_prices.csv"
 
+    # Load price data first to get available tickers
+    try:
+        returns_provider = CSVReturnsProvider(price_file)
+        available_tickers = set(returns_provider.get_available_tickers())
+        print(f"Loaded price data for {len(available_tickers)} tickers")
+
+        # Use all available tickers if no universe specified
+        if universe is None:
+            universe = sorted(list(available_tickers))
+            print(f"Using all {len(universe)} tickers from price data")
+        else:
+            # Filter provided universe to available tickers
+            universe = [t for t in universe if t.upper() in available_tickers]
+            print(f"Filtered universe to {len(universe)} tickers with price data")
+    except Exception as e:
+        print(f"Warning: Could not load price data: {e}")
+        returns_provider = None
+        available_tickers = set()
+        universe = universe or DEFAULT_UNIVERSE
+
+    print()
     print("=" * 70)
     print("BIOTECH SCREENER BACKTEST")
     print("=" * 70)
@@ -356,19 +376,6 @@ def run_direct_backtest(
     print(f"Price File:    {price_file}")
     print(f"Frequency:     Every {frequency_days} days")
     print()
-
-    # Load price data
-    try:
-        returns_provider = CSVReturnsProvider(price_file)
-        available_tickers = set(returns_provider.get_available_tickers())
-        print(f"Loaded price data for {len(available_tickers)} tickers")
-        # Filter universe to available tickers
-        universe = [t for t in universe if t.upper() in available_tickers]
-        print(f"Filtered universe to {len(universe)} tickers with price data")
-    except Exception as e:
-        print(f"Warning: Could not load price data: {e}")
-        returns_provider = None
-        available_tickers = set()
 
     # Generate test dates
     start_dt = datetime.fromisoformat(start_date)
