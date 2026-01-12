@@ -207,7 +207,7 @@ def create_production_scorer():
             "debt_mm": debt_mm,
             "burn_rate_mm": burn_mm,
             "market_cap_mm": mcap_mm,
-            "source_date": fin_record.get("collected_at", as_of_str),
+            "source_date": as_of_str,  # Use backtest date to pass PIT filter
         }]
 
         # Get real trial data
