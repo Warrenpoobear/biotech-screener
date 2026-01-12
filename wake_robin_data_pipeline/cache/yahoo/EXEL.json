@@ -2,26 +2,26 @@
   "ticker": "EXEL",
   "success": true,
   "price": {
-    "current": 42.4,
+    "current": 44.04,
     "currency": "USD",
-    "day_high": 43.46,
-    "day_low": 41.93,
+    "day_high": 45.42,
+    "day_low": 43.875,
     "52_week_high": 49.62,
     "52_week_low": 31.9
   },
   "market_cap": {
-    "value": 11414188032.0,
+    "value": 11855679488.0,
     "currency": "USD"
   },
   "shares_outstanding": 268112157.0,
   "volume": {
-    "last": 2814429,
-    "average_30d": 2600985
+    "last": 2830916,
+    "average_30d": 2544933
   },
   "valuation": {
-    "pe_ratio": 17.815126,
-    "forward_pe": 12.870248,
-    "price_to_book": 5.261199
+    "pe_ratio": 18.504202,
+    "forward_pe": 13.289237,
+    "price_to_book": 5.464698
   },
   "company_info": {
     "name": "Exelixis, Inc.",
@@ -30,8 +30,8 @@
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-05T18:05:41.350840",
+    "timestamp": "2026-01-12T09:02:02.721729",
     "url": "https://finance.yahoo.com/quote/EXEL",
-    "data_hash": "e2c2c88fd7d32a0d"
+    "data_hash": "f04268d176ddf0cf"
   }
 }

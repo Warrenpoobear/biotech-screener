@@ -1,0 +1,43 @@
+{
+  "ticker": "PBYI",
+  "success": true,
+  "price": {
+    "current": 6.11,
+    "currency": "USD",
+    "day_high": 6.255,
+    "day_low": 6.085,
+    "52_week_high": 6.29,
+    "52_week_low": 2.58
+  },
+  "market_cap": {
+    "value": 307889664.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 50391107.0,
+  "volume": {
+    "last": 332758,
+    "average_30d": 382104
+  },
+  "valuation": {
+    "pe_ratio": 8.256757,
+    "forward_pe": 11.109091,
+    "price_to_book": 2.6704545
+  },
+  "company_info": {
+    "name": "Puma Biotechnology, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:19:27.586131",
+    "url": "https://finance.yahoo.com/quote/PBYI",
+    "data_hash": "b5d624fc030db9e7"
+  }
+}

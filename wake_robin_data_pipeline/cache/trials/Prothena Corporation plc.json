@@ -1,0 +1,20 @@
+{
+  "ticker": "PRTA",
+  "company_name": "Prothena Corporation plc",
+  "success": true,
+  "trials": [],
+  "summary": {
+    "total_trials": 0,
+    "by_phase": {},
+    "by_status": {},
+    "active_trials": 0,
+    "completed_trials": 0,
+    "lead_stage": "unknown"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:44:43.760950",
+    "search_query": "Prothena Corporation plc",
+    "url": "https://clinicaltrials.gov/search?term=Prothena+Corporation+plc"
+  }
+}

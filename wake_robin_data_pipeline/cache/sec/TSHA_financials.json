@@ -1,0 +1,42 @@
+{
+  "ticker": "TSHA",
+  "cik": "0001806310",
+  "success": true,
+  "financials": {
+    "cash": 297344000.0,
+    "debt": 38354000.0,
+    "net_debt": -258990000.0,
+    "revenue_ttm": 4288000.0,
+    "assets": 316554000.0,
+    "liabilities": 97565000.0,
+    "equity": 218989000.0,
+    "currency": "USD"
+  },
+  "data_dates": {
+    "cash": "2025-09-30",
+    "debt": "2023-06-30",
+    "revenue": "2025-09-30",
+    "assets": "2025-09-30",
+    "liabilities": "2025-09-30"
+  },
+  "data_freshness": {
+    "most_recent_date": "2025-09-30",
+    "oldest_date": "2023-06-30",
+    "staleness_flags": [
+      "critical_staleness:927d"
+    ]
+  },
+  "coverage": {
+    "has_cash": true,
+    "has_debt": true,
+    "has_revenue": true,
+    "has_balance_sheet": true,
+    "pct_complete": 100.0
+  },
+  "provenance": {
+    "source": "SEC EDGAR Company Facts API",
+    "timestamp": "2026-01-12T09:30:49.476535",
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001806310.json",
+    "cik": "0001806310"
+  }
+}

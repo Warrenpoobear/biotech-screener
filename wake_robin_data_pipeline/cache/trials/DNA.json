@@ -1,0 +1,117 @@
+{
+  "ticker": "DNA",
+  "company_name": "DNA",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04722237",
+      "title": "Acceptance and Commitment Therapy for Neuro-Oncology Wellbeing",
+      "status": "UNKNOWN",
+      "phase": "NA",
+      "condition": "Brain Tumors, Quality of Life, Brain Tumor, Pediatric",
+      "start_date": "2021-03-18",
+      "completion_date": "2024-06-28",
+      "enrollment": 0,
+      "sponsor": "Nottingham University Hospitals NHS Trust"
+    },
+    {
+      "nct_id": "NCT04824365",
+      "title": "Sodium Pyruvate Nasal Spray Treatment of COVID-19 Infection",
+      "status": "COMPLETED",
+      "phase": "PHASE2, PHASE3",
+      "condition": "COVID-19",
+      "start_date": "2021-04-12",
+      "completion_date": "2022-08-12",
+      "enrollment": 0,
+      "sponsor": "Cellular Sciences, inc."
+    },
+    {
+      "nct_id": "NCT01344642",
+      "title": "Qualitative and Quantitative HIV RNA Detection in Saliva Using the Oragene RNA Kit",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "HIV Infections",
+      "start_date": "2007-10",
+      "completion_date": "2010-12",
+      "enrollment": 0,
+      "sponsor": "Ottawa Hospital Research Institute"
+    },
+    {
+      "nct_id": "NCT01469455",
+      "title": "DNA Repair Inhibitor & Irradiation on Melanoma",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Local Metastatic Melanoma",
+      "start_date": "2011-10",
+      "completion_date": "2015-07",
+      "enrollment": 0,
+      "sponsor": "DNA Therapeutics"
+    },
+    {
+      "nct_id": "NCT05827757",
+      "title": "Evaluating the Safety and Efficacy of Autologous Adipose Tissue-derived Mesenchymal Stem Cell Transplantation on Proinflammatory Cytokines and Anti-inflammatory Cytokines on Ageing-related Low-grade Inflammation Patients.",
+      "status": "UNKNOWN",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Aging Problems, Aging, Chronic Inflammation",
+      "start_date": "2020-04-28",
+      "completion_date": "2025-04-13",
+      "enrollment": 0,
+      "sponsor": "DNA International Hospital"
+    },
+    {
+      "nct_id": "NCT06448052",
+      "title": "Umbilical Cord Mesenchymal Stem Cell for Aging-related Low-grade Inflammation",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Inflammatory Disease, Aging Problems, Obese, Lipid Metabolism Disorders, Diabetes",
+      "start_date": "2023-11-01",
+      "completion_date": "2026-10-30",
+      "enrollment": 0,
+      "sponsor": "Nguyen Ton Ngoc Huynh"
+    },
+    {
+      "nct_id": "NCT04871815",
+      "title": "Effects of Sodium Pyruvate Nasal Spray in COVID-19 Long Haulers.",
+      "status": "COMPLETED",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Long COVID",
+      "start_date": "2021-04-27",
+      "completion_date": "2022-03-07",
+      "enrollment": 0,
+      "sponsor": "Cellular Sciences, inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 7,
+    "by_phase": {
+      "NA": 1,
+      "PHASE2, PHASE3": 2,
+      "": 1,
+      "PHASE1": 1,
+      "PHASE1, PHASE2": 2
+    },
+    "by_status": {
+      "UNKNOWN": 2,
+      "COMPLETED": 4,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 4,
+    "conditions": [
+      "Aging Problems, Aging, Chronic Inflammation",
+      "Brain Tumors, Quality of Life, Brain Tumor, Pediatric",
+      "COVID-19",
+      "HIV Infections",
+      "Inflammatory Disease, Aging Problems, Obese, Lipid Metabolism Disorders, Diabetes",
+      "Local Metastatic Melanoma",
+      "Long COVID"
+    ],
+    "lead_stage": "phase_1"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:46:32.056687",
+    "search_query": "DNA",
+    "url": "https://clinicaltrials.gov/search?term=DNA"
+  }
+}

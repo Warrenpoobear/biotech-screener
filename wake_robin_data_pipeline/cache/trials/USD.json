@@ -1,0 +1,39 @@
+{
+  "ticker": "USD",
+  "company_name": "USD",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT01787656",
+      "title": "A Novel Method of Screening for Ovarian Cancer Using Gynecologic Fluids and Mucus",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Ovarian Cancer",
+      "start_date": "2013-01",
+      "completion_date": "2018-08",
+      "enrollment": 0,
+      "sponsor": "University of South Alabama"
+    }
+  ],
+  "summary": {
+    "total_trials": 1,
+    "by_phase": {
+      "": 1
+    },
+    "by_status": {
+      "COMPLETED": 1
+    },
+    "active_trials": 0,
+    "completed_trials": 1,
+    "conditions": [
+      "Ovarian Cancer"
+    ],
+    "lead_stage": "unknown"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T10:02:42.391547",
+    "search_query": "USD",
+    "url": "https://clinicaltrials.gov/search?term=USD"
+  }
+}

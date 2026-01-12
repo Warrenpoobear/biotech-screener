@@ -1,0 +1,43 @@
+{
+  "ticker": "STOK",
+  "success": true,
+  "price": {
+    "current": 32.85,
+    "currency": "USD",
+    "day_high": 34.3357,
+    "day_low": 32.46,
+    "52_week_high": 38.693,
+    "52_week_low": 5.35
+  },
+  "market_cap": {
+    "value": 1876298368.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 57117150.0,
+  "volume": {
+    "last": 674168,
+    "average_30d": 877619
+  },
+  "valuation": {
+    "pe_ratio": 48.308823,
+    "forward_pe": -10.412044,
+    "price_to_book": 5.876565
+  },
+  "company_info": {
+    "name": "Stoke Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:17:53.205590",
+    "url": "https://finance.yahoo.com/quote/STOK",
+    "data_hash": "67b723ee97288af1"
+  }
+}

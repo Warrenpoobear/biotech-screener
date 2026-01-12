@@ -1,0 +1,39 @@
+{
+  "ticker": "MLYS",
+  "cik": "0001933414",
+  "success": true,
+  "financials": {
+    "cash": 217597000.0,
+    "debt": null,
+    "net_debt": null,
+    "revenue_ttm": null,
+    "assets": 599947000.0,
+    "liabilities": null,
+    "equity": null,
+    "currency": "USD"
+  },
+  "data_dates": {
+    "cash": "2025-09-30",
+    "assets": "2025-09-30"
+  },
+  "data_freshness": {
+    "most_recent_date": "2025-09-30",
+    "oldest_date": "2025-09-30",
+    "staleness_flags": [
+      "stale_data:104d"
+    ]
+  },
+  "coverage": {
+    "has_cash": true,
+    "has_debt": false,
+    "has_revenue": false,
+    "has_balance_sheet": false,
+    "pct_complete": 50.0
+  },
+  "provenance": {
+    "source": "SEC EDGAR Company Facts API",
+    "timestamp": "2026-01-12T09:28:22.537779",
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001933414.json",
+    "cik": "0001933414"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "ticker": "CDNA",
+  "company_name": "CareDx, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04177095",
+      "title": "Immune Monitoring to Facilitate Belatacept Monotherapy",
+      "status": "COMPLETED",
+      "phase": "PHASE4",
+      "condition": "Kidney Transplant Rejection, Immunosuppression",
+      "start_date": "2020-02-11",
+      "completion_date": "2023-06-01",
+      "enrollment": 0,
+      "sponsor": "Massachusetts General Hospital"
+    },
+    {
+      "nct_id": "NCT07230886",
+      "title": "Prospective Reduction Of Transplant Complications Through Enhanced Preservation Therapy to Prevent Primary Graft Dysfunction",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "NA",
+      "condition": "Primary Graft Dysfunction",
+      "start_date": "2025-11",
+      "completion_date": "2028-12",
+      "enrollment": 0,
+      "sponsor": "University Health Network, Toronto"
+    }
+  ],
+  "summary": {
+    "total_trials": 2,
+    "by_phase": {
+      "PHASE4": 1,
+      "NA": 1
+    },
+    "by_status": {
+      "COMPLETED": 1,
+      "NOT_YET_RECRUITING": 1
+    },
+    "active_trials": 0,
+    "completed_trials": 1,
+    "conditions": [
+      "Kidney Transplant Rejection, Immunosuppression",
+      "Primary Graft Dysfunction"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:43:34.107019",
+    "search_query": "CareDx, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=CareDx,+Inc."
+  }
+}

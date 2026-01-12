@@ -1,0 +1,172 @@
+{
+  "ticker": "IRWD",
+  "company_name": "Ironwood Pharmaceuticals, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT01712412",
+      "title": "Phase 2a Study of IW-9179 to Treat Functional Dyspepsia",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Dyspepsia, Functional Gastrointestinal Disorders",
+      "start_date": "2012-10",
+      "completion_date": "2014-03",
+      "enrollment": 0,
+      "sponsor": "Ironwood Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT02030925",
+      "title": "Ph2a Study to Evaluate IW-3718 in Patients With Gastroesophageal Reflux Not Completely Responsive to Proton Pump Inhibitors",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Gastroesophageal Reflux",
+      "start_date": "2014-02",
+      "completion_date": "2014-12",
+      "enrollment": 0,
+      "sponsor": "Ironwood Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT02559817",
+      "title": "A Safety and Efficacy Study of a Range of Linaclotide Doses Administered Orally to Children Ages 7-17 Years, With Irritable Bowel Syndrome With Constipation",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Irritable Bowel Syndrome With Constipation",
+      "start_date": "2015-11-01",
+      "completion_date": "2019-08-30",
+      "enrollment": 0,
+      "sponsor": "Forest Laboratories"
+    },
+    {
+      "nct_id": "NCT02291679",
+      "title": "Trial of Linaclotide in Patients With Chronic Idiopathic Constipation",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Chronic Idiopathic Constipation",
+      "start_date": "2014-10",
+      "completion_date": "2015-08",
+      "enrollment": 0,
+      "sponsor": "Ironwood Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT02289846",
+      "title": "Trial of IW-9179 in Patients With Diabetic Gastroparesis (DGP)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Diabetic Gastroparesis",
+      "start_date": "2014-10",
+      "completion_date": "2015-12",
+      "enrollment": 0,
+      "sponsor": "Ironwood Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT03226899",
+      "title": "A Phase 4 Safety and Efficacy Study to Evaluate Lesinurad 200 mg in Participants With Gout and Renal Impairment",
+      "status": "TERMINATED",
+      "phase": "PHASE4",
+      "condition": "Gout, Chronic Kidney Disease (CKD)",
+      "start_date": "2017-07-19",
+      "completion_date": "2019-02-25",
+      "enrollment": 0,
+      "sponsor": "Ironwood Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT05760313",
+      "title": "A Study to Assess Adverse Events and Change in Disease Activity in Pediatric Participants (Age 6 Months to <2 Years) With Functional Constipation Who Are Treated With Linaclotide",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Functional Constipation",
+      "start_date": "2023-04-27",
+      "completion_date": "2025-06-09",
+      "enrollment": 0,
+      "sponsor": "AbbVie"
+    },
+    {
+      "nct_id": "NCT00730171",
+      "title": "An Open-label, Long-term Safety Study of Linaclotide in Patients With Chronic Constipation or Irritable Bowel Syndrome With Constipation",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Irritable Bowel Syndrome With Constipation, Chronic Constipation",
+      "start_date": "2008-09",
+      "completion_date": "2012-03",
+      "enrollment": 0,
+      "sponsor": "Ironwood Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT03931785",
+      "title": "A Study of MD-7246 to Treat Abdominal Pain in Patients With Diarrhea-predominant Irritable Bowel Syndrome",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Irritable Bowel Syndrome With Diarrhea (IBS-D)",
+      "start_date": "2019-05-01",
+      "completion_date": "2020-03-11",
+      "enrollment": 0,
+      "sponsor": "Ironwood Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT02270983",
+      "title": "Phase 2 Randomized, Double-Blind, Placebo-Controlled, Parallel Group Trial of Linaclotide Administered to Patients With Opioid-Induced Constipation Receiving Chronic Opioid Treatment for Non-Cancer Pain",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Opioid-Induced Constipation",
+      "start_date": "2014-10-31",
+      "completion_date": "2015-10-31",
+      "enrollment": 0,
+      "sponsor": "Forest Laboratories"
+    }
+  ],
+  "summary": {
+    "total_trials": 42,
+    "by_phase": {
+      "PHASE2": 18,
+      "PHASE3": 15,
+      "PHASE4": 3,
+      "PHASE1": 3,
+      "NA": 3
+    },
+    "by_status": {
+      "TERMINATED": 6,
+      "COMPLETED": 35,
+      "RECRUITING": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 35,
+    "conditions": [
+      "Chronic Constipation",
+      "Chronic Constipation, Constipation",
+      "Chronic Constipation, Irritable Bowel Syndrome With Constipation",
+      "Chronic Idiopathic Constipation",
+      "Constipation",
+      "Diabetic Gastroparesis",
+      "Dyspepsia, Functional Gastrointestinal Disorders",
+      "Functional Constipation",
+      "Functional Constipation (FC), Chronic Idiopathic Constipation (CIC)",
+      "Functional Constipation in Children Ages 6-17 Years",
+      "Functional Constipation, Irritable Bowel Syndrome With Constipation",
+      "Gastroesophageal Reflux",
+      "Gastroesophageal Reflux Disease",
+      "Gastroesophageal Reflux Disease (GERD)",
+      "Gout, Chronic Kidney Disease (CKD)",
+      "Healthy",
+      "Healthy Volunteers",
+      "Hypercholesterolemia",
+      "Interstitial Cystitis, Bladder Pain Syndrome",
+      "Irritable Bowel Syndrome",
+      "Irritable Bowel Syndrome Characterized by Constipation",
+      "Irritable Bowel Syndrome With Constipation",
+      "Irritable Bowel Syndrome With Constipation (IBS-C)",
+      "Irritable Bowel Syndrome With Constipation, Chronic Constipation",
+      "Irritable Bowel Syndrome With Constipation, Chronic Idiopathic Constipation",
+      "Irritable Bowel Syndrome With Constipation, Functional Constipation",
+      "Irritable Bowel Syndrome With Diarrhea (IBS-D)",
+      "Irritable Bowel Syndrome with Constipation",
+      "Opioid-Induced Constipation"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:44:19.818442",
+    "search_query": "Ironwood Pharmaceuticals, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Ironwood+Pharmaceuticals,+Inc."
+  }
+}

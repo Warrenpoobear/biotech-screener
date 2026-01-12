@@ -1,0 +1,43 @@
+{
+  "ticker": "HALO",
+  "success": true,
+  "price": {
+    "current": 72.47,
+    "currency": "USD",
+    "day_high": 73.41,
+    "day_low": 71.98,
+    "52_week_high": 79.5,
+    "52_week_low": 47.5
+  },
+  "market_cap": {
+    "value": 8522254848.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 117597000.0,
+  "volume": {
+    "last": 1919908,
+    "average_30d": 2253766
+  },
+  "valuation": {
+    "pe_ratio": 15.28903,
+    "forward_pe": 8.827041,
+    "price_to_book": 16.900652
+  },
+  "company_info": {
+    "name": "Halozyme Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:13:37.561682",
+    "url": "https://finance.yahoo.com/quote/HALO",
+    "data_hash": "6e7fc8e5f5136c36"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "NBP",
+  "success": true,
+  "price": {
+    "current": 3.7,
+    "currency": "USD",
+    "day_high": 3.8384,
+    "day_low": 3.63,
+    "52_week_high": 6.79,
+    "52_week_low": 0.595
+  },
+  "market_cap": {
+    "value": 426576832.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 115291032.0,
+  "volume": {
+    "last": 1064881,
+    "average_30d": 779376
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -11.5625,
+    "price_to_book": 1.6473731
+  },
+  "company_info": {
+    "name": "NovaBridge Biosciences",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:16:55.469167",
+    "url": "https://finance.yahoo.com/quote/NBP",
+    "data_hash": "4dda6e8c844711cc"
+  }
+}

@@ -1,0 +1,149 @@
+{
+  "ticker": "TBPH",
+  "company_name": "Theravance Biopharma, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT02578082",
+      "title": "Pharmacokinetics of TD-4208 in Patients With Severe Renal Impairment",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Renal Impairment",
+      "start_date": "2015-12",
+      "completion_date": "2016-05",
+      "enrollment": 0,
+      "sponsor": "Mylan Inc."
+    },
+    {
+      "nct_id": "NCT02459080",
+      "title": "Efficacy Study of Nebulized TD-4208 for Chronic Obstructive Pulmonary Disease (COPD)",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Chronic Obstructive Pulmonary Disease (COPD)",
+      "start_date": "2015-09",
+      "completion_date": "2016-09",
+      "enrollment": 0,
+      "sponsor": "Mylan Inc."
+    },
+    {
+      "nct_id": "NCT02518139",
+      "title": "A 52-Week Parallel Group Safety Study of TD-4208 in Chronic Obstructive Pulmonary Disease (COPD)",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Chronic Obstructive Pulmonary Disease (COPD)",
+      "start_date": "2015-09",
+      "completion_date": "2017-06",
+      "enrollment": 0,
+      "sponsor": "Mylan Inc."
+    },
+    {
+      "nct_id": "NCT01704404",
+      "title": "7 Days of TD-4208 in Subjects With Chronic Obstructive Pulmonary Disease",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "COPD",
+      "start_date": "2012-12",
+      "completion_date": "2013-12",
+      "enrollment": 0,
+      "sponsor": "Mylan Inc."
+    },
+    {
+      "nct_id": "NCT02772159",
+      "title": "TD-4208 Absorption, Distribution, Metabolism and Excretion (ADME) Study in Healthy Male Subjects",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Chronic Obstructive Pulmonary Disease (COPD)",
+      "start_date": "2015-06",
+      "completion_date": "2016-04",
+      "enrollment": 0,
+      "sponsor": "Mylan Inc."
+    },
+    {
+      "nct_id": "NCT03064113",
+      "title": "Effects of TD-4208 on FEV1 in Subjects With Chronic Obstructive Pulmonary Disease (COPD)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Chronic Obstructive Pulmonary Disease, COPD",
+      "start_date": "2011-05",
+      "completion_date": "2011-10",
+      "enrollment": 0,
+      "sponsor": "Mylan Inc."
+    },
+    {
+      "nct_id": "NCT03095456",
+      "title": "Revefenacin Peak Inspiratory Flow Rate (PIFR) Study in COPD",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Chronic Obstructive Pulmonary Disease, COPD, Low Peak Inspiratory Flow Rate (PIFR)",
+      "start_date": "2017-03-27",
+      "completion_date": "2017-11-25",
+      "enrollment": 0,
+      "sponsor": "Mylan Inc."
+    },
+    {
+      "nct_id": "NCT03573817",
+      "title": "A 42-day Parallel Group Safety Study of Revefenacin and Formoterol, Administered in Sequence and as a Combination, in Participants With COPD",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Chronic Obstructive Pulmonary Disease (COPD)",
+      "start_date": "2018-05-31",
+      "completion_date": "2018-09-25",
+      "enrollment": 0,
+      "sponsor": "Mylan Inc."
+    },
+    {
+      "nct_id": "NCT02040792",
+      "title": "A 28-Day Parallel Group Study of TD-4208 in Chronic Obstructive Pulmonary Disease (COPD)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "COPD",
+      "start_date": "2014-05",
+      "completion_date": "2014-08",
+      "enrollment": 0,
+      "sponsor": "Mylan Inc."
+    },
+    {
+      "nct_id": "NCT02820311",
+      "title": "Thorough QT (TQT) Study of TD-4208 in Healthy Subjects",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Cardiac Repolarization in Healthy Subjects",
+      "start_date": "2016-05",
+      "completion_date": "2016-07",
+      "enrollment": 0,
+      "sponsor": "Mylan Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 15,
+    "by_phase": {
+      "PHASE1": 4,
+      "PHASE3": 5,
+      "PHASE2": 5,
+      "PHASE4": 1
+    },
+    "by_status": {
+      "COMPLETED": 15
+    },
+    "active_trials": 0,
+    "completed_trials": 15,
+    "conditions": [
+      "COPD",
+      "COPD, Acute Respiratory Failure",
+      "Cardiac Repolarization in Healthy Subjects",
+      "Chronic Obstructive Pulmonary Disease",
+      "Chronic Obstructive Pulmonary Disease (COPD)",
+      "Chronic Obstructive Pulmonary Disease, COPD",
+      "Chronic Obstructive Pulmonary Disease, COPD, Low Peak Inspiratory Flow Rate (PIFR)",
+      "Hepatic Impairment",
+      "Renal Impairment"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:44:59.771279",
+    "search_query": "Theravance Biopharma, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Theravance+Biopharma,+Inc."
+  }
+}

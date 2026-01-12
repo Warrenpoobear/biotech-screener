@@ -1,0 +1,150 @@
+{
+  "ticker": "SIGA",
+  "company_name": "SIGA",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05380752",
+      "title": "Tecovirimat Intravenous Treatment for Orthopox Virus Exposure",
+      "status": "NO_LONGER_AVAILABLE",
+      "phase": "",
+      "condition": "Orthopox Virus Infection",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "U.S. Army Medical Research and Development Command"
+    },
+    {
+      "nct_id": "NCT02474589",
+      "title": "A Trial to Assess the Safety, Tolerability, and Pharmacokinetics of the Anti-Orthopoxvirus Compound Tecovirimat",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Smallpox",
+      "start_date": "2015-06-19",
+      "completion_date": "2016-08-24",
+      "enrollment": 0,
+      "sponsor": "SIGA Technologies"
+    },
+    {
+      "nct_id": "NCT04392739",
+      "title": "Safety, Tolerability and PK of TPOXX in Adults Weighing More Than 120 KG",
+      "status": "COMPLETED",
+      "phase": "PHASE4",
+      "condition": "Smallpox",
+      "start_date": "2019-07-19",
+      "completion_date": "2019-12-05",
+      "enrollment": 0,
+      "sponsor": "SIGA Technologies"
+    },
+    {
+      "nct_id": "NCT04485039",
+      "title": "Drug-drug Interaction Study of TPOXX When Co-administered With Phosphate Binders",
+      "status": "COMPLETED",
+      "phase": "PHASE4",
+      "condition": "Smallpox",
+      "start_date": "2022-06-08",
+      "completion_date": "2023-04-23",
+      "enrollment": 0,
+      "sponsor": "SIGA Technologies"
+    },
+    {
+      "nct_id": "NCT00728689",
+      "title": "Phase I Trial of an Investigational Small Pox Medication",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Orthopoxviral Disease, Smallpox, Monkey Pox",
+      "start_date": "2008-08",
+      "completion_date": "2008-10",
+      "enrollment": 0,
+      "sponsor": "SIGA Technologies"
+    },
+    {
+      "nct_id": "NCT05534984",
+      "title": "Study of Tecovirimat for Human Mpox Virus",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "MPOX",
+      "start_date": "2022-09-12",
+      "completion_date": "2025-09-30",
+      "enrollment": 0,
+      "sponsor": "National Institute of Allergy and Infectious Diseases (NIAID)"
+    },
+    {
+      "nct_id": "NCT04971109",
+      "title": "Safety, Tolerability and Pharmacokinetics of TPOXX When Administered Orally for 28 Days",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Smallpox",
+      "start_date": "2022-03-29",
+      "completion_date": "2023-05-12",
+      "enrollment": 0,
+      "sponsor": "SIGA Technologies"
+    },
+    {
+      "nct_id": "NCT03972111",
+      "title": "A Phase 4, Observational Field Study to Evaluate TPOXX in Patients With Smallpox",
+      "status": "WITHDRAWN",
+      "phase": "",
+      "condition": "Smallpox",
+      "start_date": "2020-01-01",
+      "completion_date": "2024-09-30",
+      "enrollment": 0,
+      "sponsor": "SIGA Technologies"
+    },
+    {
+      "nct_id": "NCT04957485",
+      "title": "Study to Assess the Safety and Immunogenicity of TPOXX\u00ae When Administered Orally for 28 Days With JYNNEOS",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Smallpox",
+      "start_date": "2022-04-05",
+      "completion_date": "2026-01-01",
+      "enrollment": 0,
+      "sponsor": "SIGA Technologies"
+    },
+    {
+      "nct_id": "NCT00431951",
+      "title": "Phase I, Escalating, Multiple-Dose, ST-246 Safety, Tolerability and Pharmacokinetics 21-Day Trial in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2007-02",
+      "completion_date": "2008-02",
+      "enrollment": 0,
+      "sponsor": "SIGA Technologies"
+    }
+  ],
+  "summary": {
+    "total_trials": 11,
+    "by_phase": {
+      "": 2,
+      "PHASE3": 3,
+      "PHASE4": 2,
+      "PHASE1": 2,
+      "PHASE2": 2
+    },
+    "by_status": {
+      "NO_LONGER_AVAILABLE": 1,
+      "COMPLETED": 7,
+      "ACTIVE_NOT_RECRUITING": 2,
+      "WITHDRAWN": 1
+    },
+    "active_trials": 2,
+    "completed_trials": 7,
+    "conditions": [
+      "Healthy",
+      "MPOX",
+      "Orthopox Virus Infection",
+      "Orthopoxviral Disease",
+      "Orthopoxviral Disease, Smallpox, Monkey Pox",
+      "Smallpox"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T10:03:56.201012",
+    "search_query": "SIGA",
+    "url": "https://clinicaltrials.gov/search?term=SIGA"
+  }
+}

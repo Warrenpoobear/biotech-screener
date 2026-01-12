@@ -1,0 +1,87 @@
+{
+  "ticker": "RANI",
+  "company_name": "RANI",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04911296",
+      "title": "Pill Swallow Study",
+      "status": "COMPLETED",
+      "phase": "NA",
+      "condition": "Not Determined",
+      "start_date": "2021-06-01",
+      "completion_date": "2021-08-27",
+      "enrollment": 0,
+      "sponsor": "RANI Therapeutics"
+    },
+    {
+      "nct_id": "NCT03798912",
+      "title": "A First-in-Human Study of the RaniPill, an Oral Drug Delivery Platform",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2019-07-09",
+      "completion_date": "2020-02-17",
+      "enrollment": 0,
+      "sponsor": "RANI Therapeutics"
+    },
+    {
+      "nct_id": "NCT05164614",
+      "title": "Study Evaluating PK of PTH Administered Orally Via RaniPill\u2122 Capsule",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2022-02-21",
+      "completion_date": "2022-10-17",
+      "enrollment": 0,
+      "sponsor": "RANI Therapeutics"
+    },
+    {
+      "nct_id": "NCT06891287",
+      "title": "An Early Phase Study of RT-114",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Obesity",
+      "start_date": "2025-06-01",
+      "completion_date": "2026-04-01",
+      "enrollment": 0,
+      "sponsor": "RANI Therapeutics"
+    },
+    {
+      "nct_id": "NCT05890118",
+      "title": "Study Evaluating PK of Ustekinumab Administered Orally Via RaniPill\u2122 Capsule",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2023-08-30",
+      "completion_date": "2023-11-28",
+      "enrollment": 0,
+      "sponsor": "RANI Therapeutics"
+    }
+  ],
+  "summary": {
+    "total_trials": 5,
+    "by_phase": {
+      "NA": 1,
+      "PHASE1": 4
+    },
+    "by_status": {
+      "COMPLETED": 4,
+      "NOT_YET_RECRUITING": 1
+    },
+    "active_trials": 0,
+    "completed_trials": 4,
+    "conditions": [
+      "Healthy Volunteers",
+      "Not Determined",
+      "Obesity"
+    ],
+    "lead_stage": "phase_1"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T10:03:52.993284",
+    "search_query": "RANI",
+    "url": "https://clinicaltrials.gov/search?term=RANI"
+  }
+}

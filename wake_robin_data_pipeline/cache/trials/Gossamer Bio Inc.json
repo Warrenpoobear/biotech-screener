@@ -1,0 +1,151 @@
+{
+  "ticker": "GOSS",
+  "company_name": "Gossamer Bio, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT03956862",
+      "title": "GB001 in Adult Participants With Chronic Rhinosinusitis",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Chronic Rhinosinusitis Without Nasal Polyps (CRSsNP), Chronic Rhinosinusitis With Nasal Polyps (CRSwNP)",
+      "start_date": "2019-05-16",
+      "completion_date": "2020-08-05",
+      "enrollment": 0,
+      "sponsor": "GB001, Inc, a wholly owned subsidiary of Gossamer Bio, Inc."
+    },
+    {
+      "nct_id": "NCT05934526",
+      "title": "Efficacy and Safety of Seralutinib in Adult Subjects With PAH (PROSERA)",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Pulmonary Arterial Hypertension",
+      "start_date": "2023-12-28",
+      "completion_date": "2025-12-22",
+      "enrollment": 0,
+      "sponsor": "GB002, Inc."
+    },
+    {
+      "nct_id": "NCT04816604",
+      "title": "Open-label Extension Study of GB002 in Adult Subjects With Pulmonary Arterial Hypertension (PAH)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Pulmonary Arterial Hypertension",
+      "start_date": "2021-04-05",
+      "completion_date": "2027-12",
+      "enrollment": 0,
+      "sponsor": "GB002, Inc., a wholly owned subsidiary of Gossamer Bio, Inc."
+    },
+    {
+      "nct_id": "NCT03926793",
+      "title": "Clinical Study of Inhaled GB002 for Treatment of WHO Group I Pulmonary Arterial Hypertension",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Pulmonary Arterial Hypertension",
+      "start_date": "2020-02-04",
+      "completion_date": "2021-05-05",
+      "enrollment": 0,
+      "sponsor": "GB002, Inc., a wholly owned subsidiary of Gossamer Bio, Inc."
+    },
+    {
+      "nct_id": "NCT03473236",
+      "title": "Phase 1A Safety Trial of Inhaled PK10571 (GB002)",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Safety Issues",
+      "start_date": "2017-09-06",
+      "completion_date": "2018-12-03",
+      "enrollment": 0,
+      "sponsor": "GB002, Inc., a wholly owned subsidiary of Gossamer Bio, Inc."
+    },
+    {
+      "nct_id": "NCT04556383",
+      "title": "A Study With GB004 in Adult Subjects With Active Ulcerative Colitis (UC)",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Ulcerative Colitis",
+      "start_date": "2020-10-19",
+      "completion_date": "2022-06-01",
+      "enrollment": 0,
+      "sponsor": "GB004, Inc."
+    },
+    {
+      "nct_id": "NCT05242146",
+      "title": "GB5121 in Adult Patients With Relapsed/Refractory CNS Lymphoma",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "CNS Lymphoma",
+      "start_date": "2022-05-24",
+      "completion_date": "2023-05-11",
+      "enrollment": 0,
+      "sponsor": "GB005, Inc., a wholly owned subsidiary of Gossamer Bio, Inc."
+    },
+    {
+      "nct_id": "NCT04060342",
+      "title": "GB1275 Monotherapy and in Combination With an Anti-PD1 Antibody in Patients With Specified Advanced Solid Tumors or in Combination With Standard of Care in Patients With Metastatic Pancreatic Adenocarcinoma",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Pancreatic Adenocarcinoma, Esophageal Adenocarcinoma, Esophageal Squamous Cell Carcinoma, Gastric Adenocarcinoma, Gastroesophageal Junction Adenocarcinoma, Triple Negative Breast Cancer, Castration-resistant Prostate Cancer, Microsatellite Stable Colorectal Cancer, Non-small Cell Lung Cancer, Small-cell Lung Cancer, Head and Neck Squamous Cell Carcinoma, Urothelial Carcinoma, Renal Cell Carcinoma, Hepatocellular Carcinoma",
+      "start_date": "2019-08-13",
+      "completion_date": "2022-04-11",
+      "enrollment": 0,
+      "sponsor": "GB006, Inc., a wholly owned subsidiary of Gossamer Bio, Inc."
+    },
+    {
+      "nct_id": "NCT04456998",
+      "title": "GB002 in Adult Subjects With Pulmonary Arterial Hypertension (PAH)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Pulmonary Artery Hypertension",
+      "start_date": "2020-11-12",
+      "completion_date": "2022-11-01",
+      "enrollment": 0,
+      "sponsor": "GB002, Inc., a wholly owned subsidiary of Gossamer Bio, Inc."
+    },
+    {
+      "nct_id": "NCT07181382",
+      "title": "Efficacy and Safety of Seralutinib in Adult Subjects With Pulmonary Hypertension Associated With Interstitial Lung Disease (PH-ILD)",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Pulmonary Hypertension Associated With Interstitial Lung Disease",
+      "start_date": "2025-12",
+      "completion_date": "2028-12",
+      "enrollment": 0,
+      "sponsor": "GB002, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 13,
+    "by_phase": {
+      "PHASE2": 5,
+      "PHASE3": 3,
+      "PHASE1": 5
+    },
+    "by_status": {
+      "COMPLETED": 7,
+      "ACTIVE_NOT_RECRUITING": 2,
+      "TERMINATED": 3,
+      "RECRUITING": 1
+    },
+    "active_trials": 3,
+    "completed_trials": 7,
+    "conditions": [
+      "Asthma",
+      "CNS Lymphoma",
+      "Chronic Rhinosinusitis Without Nasal Polyps (CRSsNP), Chronic Rhinosinusitis With Nasal Polyps (CRSwNP)",
+      "Pancreatic Adenocarcinoma, Esophageal Adenocarcinoma, Esophageal Squamous Cell Carcinoma, Gastric Adenocarcinoma, Gastroesophageal Junction Adenocarcinoma, Triple Negative Breast Cancer, Castration-resistant Prostate Cancer, Microsatellite Stable Colorectal Cancer, Non-small Cell Lung Cancer, Small-cell Lung Cancer, Head and Neck Squamous Cell Carcinoma, Urothelial Carcinoma, Renal Cell Carcinoma, Hepatocellular Carcinoma",
+      "Pulmonary Arterial Hypertension",
+      "Pulmonary Artery Hypertension",
+      "Pulmonary Hypertension Associated With Interstitial Lung Disease",
+      "Safety Issues",
+      "Ulcerative Colitis"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:33:12.992879",
+    "search_query": "Gossamer Bio, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Gossamer+Bio,+Inc."
+  }
+}

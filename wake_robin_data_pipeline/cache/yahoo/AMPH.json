@@ -1,0 +1,43 @@
+{
+  "ticker": "AMPH",
+  "success": true,
+  "price": {
+    "current": 27.74,
+    "currency": "USD",
+    "day_high": 28.02,
+    "day_low": 27.43,
+    "52_week_high": 39.01,
+    "52_week_low": 20.39
+  },
+  "market_cap": {
+    "value": 1289773568.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 45952174.0,
+  "volume": {
+    "last": 247216,
+    "average_30d": 360938
+  },
+  "valuation": {
+    "pe_ratio": 12.274336,
+    "forward_pe": 7.7933607,
+    "price_to_book": 1.6552299
+  },
+  "company_info": {
+    "name": "Amphastar Pharmaceuticals, Inc.",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:18:49.466477",
+    "url": "https://finance.yahoo.com/quote/AMPH",
+    "data_hash": "b97c137472b1c321"
+  }
+}

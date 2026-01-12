@@ -1,0 +1,43 @@
+{
+  "ticker": "EDIT",
+  "success": true,
+  "price": {
+    "current": 2.07,
+    "currency": "USD",
+    "day_high": 2.2,
+    "day_low": 2.06,
+    "52_week_high": 4.537,
+    "52_week_low": 0.91
+  },
+  "market_cap": {
+    "value": 202070608.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 97618660.0,
+  "volume": {
+    "last": 1069050,
+    "average_30d": 1886080
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -1.8190606,
+    "price_to_book": 14.375
+  },
+  "company_info": {
+    "name": "Editas Medicine, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:12:55.177723",
+    "url": "https://finance.yahoo.com/quote/EDIT",
+    "data_hash": "9d2895577c46bcca"
+  }
+}

@@ -2,26 +2,26 @@
   "ticker": "JAZZ",
   "success": true,
   "price": {
-    "current": 174.39,
+    "current": 161.13,
     "currency": "USD",
-    "day_high": 175.8,
-    "day_low": 171.135,
+    "day_high": 165.64,
+    "day_low": 159.895,
     "52_week_high": 182.99,
     "52_week_low": 95.49
   },
   "market_cap": {
-    "value": 10596828160.0,
+    "value": 9791083520.0,
     "currency": "USD"
   },
   "shares_outstanding": 60765116.0,
   "volume": {
-    "last": 1334298,
-    "average_30d": 902201
+    "last": 1222635,
+    "average_30d": 1095795
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 7.7079306,
-    "price_to_book": 2.675514
+    "forward_pe": 7.4084907,
+    "price_to_book": 2.4720774
   },
   "company_info": {
     "name": "Jazz Pharmaceuticals plc",
@@ -30,8 +30,8 @@
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-05T18:05:20.553010",
+    "timestamp": "2026-01-12T09:01:42.033793",
     "url": "https://finance.yahoo.com/quote/JAZZ",
-    "data_hash": "dc8358a7bace0290"
+    "data_hash": "c561378b953f7264"
   }
 }

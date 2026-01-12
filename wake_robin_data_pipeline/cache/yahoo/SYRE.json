@@ -1,0 +1,43 @@
+{
+  "ticker": "SYRE",
+  "success": true,
+  "price": {
+    "current": 30.61,
+    "currency": "USD",
+    "day_high": 31.45,
+    "day_low": 30.46,
+    "52_week_high": 35.31,
+    "52_week_low": 10.91
+  },
+  "market_cap": {
+    "value": 2375095040.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 77592130.0,
+  "volume": {
+    "last": 456078,
+    "average_30d": 779804
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -11.010238,
+    "price_to_book": 6.185088
+  },
+  "company_info": {
+    "name": "Spyre Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:17:58.841187",
+    "url": "https://finance.yahoo.com/quote/SYRE",
+    "data_hash": "ea9c4e3e6580803b"
+  }
+}

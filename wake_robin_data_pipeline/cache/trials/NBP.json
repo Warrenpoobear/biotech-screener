@@ -1,0 +1,92 @@
+{
+  "ticker": "NBP",
+  "company_name": "NBP",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04675450",
+      "title": "NBP in Women With Metastatic Breast Cancer to Prevent Nab-paclitaxel Induced Toxic Neuropathy",
+      "status": "WITHDRAWN",
+      "phase": "PHASE2",
+      "condition": "Breast Cancer, Peripheral Neuropathy",
+      "start_date": "2023-06-30",
+      "completion_date": "2025-01-30",
+      "enrollment": 0,
+      "sponsor": "Conjupro Biotherapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT03804229",
+      "title": "Efficacy and Safety of Butylphthalide Soft Capsule for the Treatment of Vascular Dementia",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Vascular Dementia",
+      "start_date": "2019-10-29",
+      "completion_date": "2025-02-07",
+      "enrollment": 0,
+      "sponsor": "Capital Medical University"
+    },
+    {
+      "nct_id": "NCT02905565",
+      "title": "NBP in Adult Patients With Acute Ischemic Stroke (AIS)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "AIS",
+      "start_date": "2018-02-28",
+      "completion_date": "2020-08-07",
+      "enrollment": 0,
+      "sponsor": "CSPC-NBP Pharmaceutical Co., Ltd."
+    },
+    {
+      "nct_id": "NCT01405248",
+      "title": "Butylphthalide for Preventing Restenosis After Intracranial and Extracranial Artery Stenting",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Restenosis",
+      "start_date": "2011-07",
+      "completion_date": "2014-01",
+      "enrollment": 0,
+      "sponsor": "Jinling Hospital, China"
+    },
+    {
+      "nct_id": "NCT05757635",
+      "title": "A Research of Application of the New Model of Standardized Secondary Prevention of Stroke",
+      "status": "UNKNOWN",
+      "phase": "",
+      "condition": "Acute Ischemic Stroke",
+      "start_date": "2023-03-20",
+      "completion_date": "2025-12-31",
+      "enrollment": 0,
+      "sponsor": "Peking Union Medical College Hospital"
+    }
+  ],
+  "summary": {
+    "total_trials": 5,
+    "by_phase": {
+      "PHASE2": 2,
+      "PHASE3": 2,
+      "": 1
+    },
+    "by_status": {
+      "WITHDRAWN": 1,
+      "ACTIVE_NOT_RECRUITING": 1,
+      "COMPLETED": 2,
+      "UNKNOWN": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 2,
+    "conditions": [
+      "AIS",
+      "Acute Ischemic Stroke",
+      "Breast Cancer, Peripheral Neuropathy",
+      "Restenosis",
+      "Vascular Dementia"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:47:56.819307",
+    "search_query": "NBP",
+    "url": "https://clinicaltrials.gov/search?term=NBP"
+  }
+}

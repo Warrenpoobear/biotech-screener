@@ -1,0 +1,39 @@
+{
+  "ticker": "TECH",
+  "company_name": "Bio-Techne Corporation",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06966089",
+      "title": "ExosomeDx in MRI-negative Men With High PSA",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "NA",
+      "condition": "Prostate Cancer",
+      "start_date": "2025-08",
+      "completion_date": "2026-08",
+      "enrollment": 0,
+      "sponsor": "Icahn School of Medicine at Mount Sinai"
+    }
+  ],
+  "summary": {
+    "total_trials": 1,
+    "by_phase": {
+      "NA": 1
+    },
+    "by_status": {
+      "NOT_YET_RECRUITING": 1
+    },
+    "active_trials": 0,
+    "completed_trials": 0,
+    "conditions": [
+      "Prostate Cancer"
+    ],
+    "lead_stage": "preclinical"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:43:10.235328",
+    "search_query": "Bio-Techne Corporation",
+    "url": "https://clinicaltrials.gov/search?term=Bio-Techne+Corporation"
+  }
+}

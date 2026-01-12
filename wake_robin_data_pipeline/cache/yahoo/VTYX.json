@@ -1,0 +1,43 @@
+{
+  "ticker": "VTYX",
+  "success": true,
+  "price": {
+    "current": 13.81,
+    "currency": "USD",
+    "day_high": 13.83,
+    "day_low": 13.78,
+    "52_week_high": 25.0,
+    "52_week_low": 0.783
+  },
+  "market_cap": {
+    "value": 990869504.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 71750148.0,
+  "volume": {
+    "last": 13026327,
+    "average_30d": 5072009
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -8.477646,
+    "price_to_book": 5.1472235
+  },
+  "company_info": {
+    "name": "Ventyx Biosciences, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:18:33.203739",
+    "url": "https://finance.yahoo.com/quote/VTYX",
+    "data_hash": "d45eefab34faf4a0"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "ACLX",
+  "success": true,
+  "price": {
+    "current": 66.27,
+    "currency": "USD",
+    "day_high": 66.83,
+    "day_low": 64.7,
+    "52_week_high": 94.07,
+    "52_week_low": 47.86
+  },
+  "market_cap": {
+    "value": 3831921408.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 57822871.0,
+  "volume": {
+    "last": 1022680,
+    "average_30d": 973566
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -19.55998,
+    "price_to_book": 8.68659
+  },
+  "company_info": {
+    "name": "Arcellx, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:14:29.777857",
+    "url": "https://finance.yahoo.com/quote/ACLX",
+    "data_hash": "65cdd602ddb7afaa"
+  }
+}

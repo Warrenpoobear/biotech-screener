@@ -1,0 +1,43 @@
+{
+  "ticker": "TRDA",
+  "success": true,
+  "price": {
+    "current": 10.02,
+    "currency": "USD",
+    "day_high": 10.64,
+    "day_low": 10.0,
+    "52_week_high": 14.47,
+    "52_week_low": 4.93
+  },
+  "market_cap": {
+    "value": 382956736.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 38219232.0,
+  "volume": {
+    "last": 101589,
+    "average_30d": 185471
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -2.5034354,
+    "price_to_book": 1.0546259
+  },
+  "company_info": {
+    "name": "Entrada Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:18:14.040130",
+    "url": "https://finance.yahoo.com/quote/TRDA",
+    "data_hash": "a481f3354bc3a2d4"
+  }
+}

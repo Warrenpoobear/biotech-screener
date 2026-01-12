@@ -1,0 +1,43 @@
+{
+  "ticker": "QURE",
+  "success": true,
+  "price": {
+    "current": 25.32,
+    "currency": "USD",
+    "day_high": 28.77,
+    "day_low": 24.84,
+    "52_week_high": 71.5,
+    "52_week_low": 7.76
+  },
+  "market_cap": {
+    "value": 1577224960.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 62291663.0,
+  "volume": {
+    "last": 4664306,
+    "average_30d": 2508538
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -8.184648,
+    "price_to_book": 6.8804345
+  },
+  "company_info": {
+    "name": "uniQure N.V.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:17:27.141184",
+    "url": "https://finance.yahoo.com/quote/QURE",
+    "data_hash": "2c6d7e3f7d5ded26"
+  }
+}

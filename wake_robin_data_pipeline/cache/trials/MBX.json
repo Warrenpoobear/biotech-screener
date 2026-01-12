@@ -1,0 +1,112 @@
+{
+  "ticker": "MBX",
+  "company_name": "MBX",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05158335",
+      "title": "Safety, Tolerability, Pharmacokinetic, and Pharmacodynamic Study of MBX 2109 in Healthy Adult Subjects",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2021-11-10",
+      "completion_date": "2023-06-20",
+      "enrollment": 0,
+      "sponsor": "MBX Biosciences"
+    },
+    {
+      "nct_id": "NCT07029412",
+      "title": "Study to Evaluate Efficacy and Dose Response of Imapextide (STEADI)",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Postbariatric Hypoglycemia",
+      "start_date": "2025-08-26",
+      "completion_date": "2026-01-26",
+      "enrollment": 0,
+      "sponsor": "MBX Biosciences"
+    },
+    {
+      "nct_id": "NCT06036784",
+      "title": "Safety, Tolerability, Pharmacokinetic and Pharmacodynamic Study of MBX 1416 in Healthy Subjects",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Postbariatric Hypoglycemia",
+      "start_date": "2023-09-18",
+      "completion_date": "2024-12-05",
+      "enrollment": 0,
+      "sponsor": "MBX Biosciences"
+    },
+    {
+      "nct_id": "NCT06465108",
+      "title": "Safety, Pharmacokinetics and Efficacy of MBX 2109 in Patients With Hypoparathyroidism",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Hypoparathyroidism",
+      "start_date": "2024-08-08",
+      "completion_date": "2025-06-04",
+      "enrollment": 0,
+      "sponsor": "MBX Biosciences"
+    },
+    {
+      "nct_id": "NCT06496217",
+      "title": "Safety and Pharmacokinetics Study of MBX 2109 in Adult Subjects With Normal and Impaired Renal Function",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Renal Impairment",
+      "start_date": "2024-06-13",
+      "completion_date": "2025-09-04",
+      "enrollment": 0,
+      "sponsor": "MBX Biosciences"
+    },
+    {
+      "nct_id": "NCT07142707",
+      "title": "A Study to Evaluate the Safety, Tolerability, Pharmacokinetics, and Pharmacodynamics of MBX 4291 in Adult Participants With Obesity",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Obesity",
+      "start_date": "2025-09-03",
+      "completion_date": "2026-05-30",
+      "enrollment": 0,
+      "sponsor": "MBX Biosciences"
+    },
+    {
+      "nct_id": "NCT06531941",
+      "title": "Extension Study to Evaluate the Long-Term Safety and Tolerability of MBX 2109 in Patients With Hypoparathyroidism",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Hypoparathyroidism",
+      "start_date": "2024-10-31",
+      "completion_date": "2027-05-27",
+      "enrollment": 0,
+      "sponsor": "MBX Biosciences"
+    }
+  ],
+  "summary": {
+    "total_trials": 7,
+    "by_phase": {
+      "PHASE1": 4,
+      "PHASE2": 3
+    },
+    "by_status": {
+      "COMPLETED": 4,
+      "RECRUITING": 2,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 3,
+    "completed_trials": 4,
+    "conditions": [
+      "Healthy",
+      "Hypoparathyroidism",
+      "Obesity",
+      "Postbariatric Hypoglycemia",
+      "Renal Impairment"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:47:37.690296",
+    "search_query": "MBX",
+    "url": "https://clinicaltrials.gov/search?term=MBX"
+  }
+}

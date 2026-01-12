@@ -1,0 +1,43 @@
+{
+  "ticker": "CDXS",
+  "success": true,
+  "price": {
+    "current": 1.64,
+    "currency": "USD",
+    "day_high": 1.71,
+    "day_low": 1.61,
+    "52_week_high": 5.43,
+    "52_week_low": 1.52
+  },
+  "market_cap": {
+    "value": 148131984.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 90324383.0,
+  "volume": {
+    "last": 601242,
+    "average_30d": 1063800
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -3.3469386,
+    "price_to_book": 3.8407495
+  },
+  "company_info": {
+    "name": "Codexis, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:15:22.249164",
+    "url": "https://finance.yahoo.com/quote/CDXS",
+    "data_hash": "41ffdeba0c253378"
+  }
+}

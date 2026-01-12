@@ -1,0 +1,43 @@
+{
+  "ticker": "TECX",
+  "success": true,
+  "price": {
+    "current": 20.56,
+    "currency": "USD",
+    "day_high": 21.8,
+    "day_low": 19.01,
+    "52_week_high": 61.07,
+    "52_week_low": 13.7
+  },
+  "market_cap": {
+    "value": 384806720.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 18716280.0,
+  "volume": {
+    "last": 422656,
+    "average_30d": 320514
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -4.3931623,
+    "price_to_book": 1.4381645
+  },
+  "company_info": {
+    "name": "Tectonic Therapeutic, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:18:00.236746",
+    "url": "https://finance.yahoo.com/quote/TECX",
+    "data_hash": "a2cf9a504b2a4057"
+  }
+}

@@ -1,0 +1,139 @@
+{
+  "ticker": "CRSP",
+  "company_name": "CRISPR Therapeutics AG",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06208878",
+      "title": "A Long-term Follow-up Study of Subjects Who Received CRISPR CAR T Cellular Therapies",
+      "status": "ENROLLING_BY_INVITATION",
+      "phase": "",
+      "condition": "Hematologic Malignancy, Solid Malignancy",
+      "start_date": "2023-11-22",
+      "completion_date": "2038-08",
+      "enrollment": 0,
+      "sponsor": "CRISPR Therapeutics AG"
+    },
+    {
+      "nct_id": "NCT04438083",
+      "title": "A Safety and Efficacy Study Evaluating CTX130 in Subjects With Relapsed or Refractory Renal Cell Carcinoma (COBALT-RCC)",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Renal Cell Carcinoma",
+      "start_date": "2020-06-16",
+      "completion_date": "2024-10-08",
+      "enrollment": 0,
+      "sponsor": "CRISPR Therapeutics AG"
+    },
+    {
+      "nct_id": "NCT04035434",
+      "title": "A Safety and Efficacy Study Evaluating CTX110 in Subjects With Relapsed or Refractory B-Cell Malignancies (CARBON)",
+      "status": "TERMINATED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "B-cell Malignancy, Non-Hodgkin Lymphoma, B-cell Lymphoma, Adult B Cell ALL",
+      "start_date": "2019-07-22",
+      "completion_date": "2024-10-04",
+      "enrollment": 0,
+      "sponsor": "CRISPR Therapeutics AG"
+    },
+    {
+      "nct_id": "NCT05643742",
+      "title": "A Safety and Efficacy Study Evaluating CTX112 in Subjects With Relapsed or Refractory B-Cell Malignancies",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "B-cell Lymphoma, Non-Hodgkin Lymphoma, B-cell Malignancy, Chronic Lymphocytic Leukemia (CLL)/Small Lymphocytic Lymphoma (SLL), Follicular Lymphoma, Mantle Cell Lymphoma, Marginal Zone Lymphoma, Large B-cell Lymphoma",
+      "start_date": "2023-03-10",
+      "completion_date": "2030-02",
+      "enrollment": 0,
+      "sponsor": "CRISPR Therapeutics AG"
+    },
+    {
+      "nct_id": "NCT05565248",
+      "title": "An Open-Label, FIH Study Evaluating the Safety, Tolerability, and Efficacy of VCTX211 Combination Product in Subjects With T1D",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Diabetes Mellitus, Diabetes Mellitus, Type 1, Glucose Metabolism Disorders, Metabolic Disease, Endocrine System Diseases, Autoimmune Diseases, Immune System Diseases",
+      "start_date": "2023-01-20",
+      "completion_date": "2025-08",
+      "enrollment": 0,
+      "sponsor": "CRISPR Therapeutics AG"
+    },
+    {
+      "nct_id": "NCT04244656",
+      "title": "A Safety and Efficacy Study Evaluating CTX120 in Subjects With Relapsed or Refractory Multiple Myeloma",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Multiple Myeloma",
+      "start_date": "2020-01-22",
+      "completion_date": "2024-01-04",
+      "enrollment": 0,
+      "sponsor": "CRISPR Therapeutics AG"
+    },
+    {
+      "nct_id": "NCT04502446",
+      "title": "A Safety and Efficacy Study Evaluating CTX130 in Subjects With Relapsed or Refractory T or B Cell Malignancies (COBALT-LYM)",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "T Cell Lymphoma",
+      "start_date": "2020-07-31",
+      "completion_date": "2024-08-30",
+      "enrollment": 0,
+      "sponsor": "CRISPR Therapeutics AG"
+    },
+    {
+      "nct_id": "NCT05795595",
+      "title": "A Safety and Efficacy Study Evaluating CTX131 in Adult Subjects With Relapsed or Refractory Solid Tumors",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Clear Cell Renal Cell Carcinoma, Cervical Carcinoma, Esophageal Carcinoma, Pancreatic Adenocarcinoma, Malignant Pleural Mesothelioma",
+      "start_date": "2023-03-13",
+      "completion_date": "2025-09-18",
+      "enrollment": 0,
+      "sponsor": "CRISPR Therapeutics AG"
+    },
+    {
+      "nct_id": "NCT05210530",
+      "title": "An Open-Label, FIH Study Evaluating the Safety and Tolerability of VCTX210A Combination Product in Subjects With T1D",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Diabetes Mellitus, Diabetes Mellitus, Type 1, Glucose Metabolism Disorders, Metabolic Disease, Endocrine System Diseases, Autoimmune Diseases, Immune System Diseases",
+      "start_date": "2022-01-24",
+      "completion_date": "2023-01-19",
+      "enrollment": 0,
+      "sponsor": "CRISPR Therapeutics AG"
+    }
+  ],
+  "summary": {
+    "total_trials": 9,
+    "by_phase": {
+      "": 1,
+      "PHASE1": 4,
+      "PHASE1, PHASE2": 4
+    },
+    "by_status": {
+      "ENROLLING_BY_INVITATION": 1,
+      "TERMINATED": 4,
+      "RECRUITING": 2,
+      "COMPLETED": 2
+    },
+    "active_trials": 3,
+    "completed_trials": 2,
+    "conditions": [
+      "B-cell Lymphoma, Non-Hodgkin Lymphoma, B-cell Malignancy, Chronic Lymphocytic Leukemia (CLL)/Small Lymphocytic Lymphoma (SLL), Follicular Lymphoma, Mantle Cell Lymphoma, Marginal Zone Lymphoma, Large B-cell Lymphoma",
+      "B-cell Malignancy, Non-Hodgkin Lymphoma, B-cell Lymphoma, Adult B Cell ALL",
+      "Clear Cell Renal Cell Carcinoma, Cervical Carcinoma, Esophageal Carcinoma, Pancreatic Adenocarcinoma, Malignant Pleural Mesothelioma",
+      "Diabetes Mellitus, Diabetes Mellitus, Type 1, Glucose Metabolism Disorders, Metabolic Disease, Endocrine System Diseases, Autoimmune Diseases, Immune System Diseases",
+      "Hematologic Malignancy, Solid Malignancy",
+      "Multiple Myeloma",
+      "Renal Cell Carcinoma",
+      "T Cell Lymphoma"
+    ],
+    "lead_stage": "phase_1"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:33:26.849650",
+    "search_query": "CRISPR Therapeutics AG",
+    "url": "https://clinicaltrials.gov/search?term=CRISPR+Therapeutics+AG"
+  }
+}

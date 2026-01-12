@@ -2,26 +2,26 @@
   "ticker": "ACAD",
   "success": true,
   "price": {
-    "current": 26.15,
+    "current": 26.78,
     "currency": "USD",
-    "day_high": 26.595,
-    "day_low": 25.56,
+    "day_high": 27.15,
+    "day_low": 26.49,
     "52_week_high": 28.35,
     "52_week_low": 13.4
   },
   "market_cap": {
-    "value": 4424104448.0,
+    "value": 4530689536.0,
     "currency": "USD"
   },
   "shares_outstanding": 169181817.0,
   "volume": {
-    "last": 1328774,
-    "average_30d": 1379167
+    "last": 756941,
+    "average_30d": 1326852
   },
   "valuation": {
-    "pe_ratio": 16.870968,
-    "forward_pe": 32.103615,
-    "price_to_book": 4.8220544
+    "pe_ratio": 17.27742,
+    "forward_pe": 32.57947,
+    "price_to_book": 4.938226
   },
   "company_info": {
     "name": "ACADIA Pharmaceuticals Inc.",
@@ -30,8 +30,8 @@
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-05T18:05:31.615956",
+    "timestamp": "2026-01-12T09:01:53.302297",
     "url": "https://finance.yahoo.com/quote/ACAD",
-    "data_hash": "1349810025a2da4d"
+    "data_hash": "76700d8cafa0685a"
   }
 }

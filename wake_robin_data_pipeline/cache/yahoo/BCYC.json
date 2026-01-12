@@ -1,0 +1,43 @@
+{
+  "ticker": "BCYC",
+  "success": true,
+  "price": {
+    "current": 6.64,
+    "currency": "USD",
+    "day_high": 6.8,
+    "day_low": 6.58,
+    "52_week_high": 15.43,
+    "52_week_low": 6.03
+  },
+  "market_cap": {
+    "value": 460602816.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 49929952.0,
+  "volume": {
+    "last": 164353,
+    "average_30d": 237795
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -1.905992,
+    "price_to_book": 0.74406093
+  },
+  "company_info": {
+    "name": "Bicycle Therapeutics plc",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:15:09.765973",
+    "url": "https://finance.yahoo.com/quote/BCYC",
+    "data_hash": "363180beea6e3fe7"
+  }
+}

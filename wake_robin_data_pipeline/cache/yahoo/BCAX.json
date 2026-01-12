@@ -1,0 +1,43 @@
+{
+  "ticker": "BCAX",
+  "success": true,
+  "price": {
+    "current": 17.95,
+    "currency": "USD",
+    "day_high": 18.3893,
+    "day_low": 16.76,
+    "52_week_high": 19.71,
+    "52_week_low": 7.8
+  },
+  "market_cap": {
+    "value": 983336064.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 54781950.0,
+  "volume": {
+    "last": 443188,
+    "average_30d": 649880
+  },
+  "valuation": {
+    "pe_ratio": 3.3364313,
+    "forward_pe": -6.117011,
+    "price_to_book": 2.4338984
+  },
+  "company_info": {
+    "name": "Bicara Therapeutics Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:15:08.402354",
+    "url": "https://finance.yahoo.com/quote/BCAX",
+    "data_hash": "7e22592a39a188fc"
+  }
+}

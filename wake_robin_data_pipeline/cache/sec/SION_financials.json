@@ -1,0 +1,40 @@
+{
+  "ticker": "SION",
+  "cik": "0002036042",
+  "success": true,
+  "financials": {
+    "cash": 50831000.0,
+    "debt": null,
+    "net_debt": null,
+    "revenue_ttm": null,
+    "assets": 339270000.0,
+    "liabilities": 17602000.0,
+    "equity": 321668000.0,
+    "currency": "USD"
+  },
+  "data_dates": {
+    "cash": "2025-09-30",
+    "assets": "2025-09-30",
+    "liabilities": "2025-09-30"
+  },
+  "data_freshness": {
+    "most_recent_date": "2025-09-30",
+    "oldest_date": "2025-09-30",
+    "staleness_flags": [
+      "stale_data:104d"
+    ]
+  },
+  "coverage": {
+    "has_cash": true,
+    "has_debt": false,
+    "has_revenue": false,
+    "has_balance_sheet": true,
+    "pct_complete": 50.0
+  },
+  "provenance": {
+    "source": "SEC EDGAR Company Facts API",
+    "timestamp": "2026-01-12T09:30:05.762605",
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0002036042.json",
+    "cik": "0002036042"
+  }
+}

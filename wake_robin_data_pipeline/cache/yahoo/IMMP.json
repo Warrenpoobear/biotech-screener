@@ -1,0 +1,43 @@
+{
+  "ticker": "IMMP",
+  "success": true,
+  "price": {
+    "current": 2.95,
+    "currency": "USD",
+    "day_high": 2.99,
+    "day_low": 2.91,
+    "52_week_high": 3.53,
+    "52_week_low": 1.32
+  },
+  "market_cap": {
+    "value": 434216512.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 147192034.0,
+  "volume": {
+    "last": 83113,
+    "average_30d": 403328
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -12.731981,
+    "price_to_book": 44.955257
+  },
+  "company_info": {
+    "name": "Immutep Limited",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:13:41.744929",
+    "url": "https://finance.yahoo.com/quote/IMMP",
+    "data_hash": "8cf4a69b26e48a70"
+  }
+}

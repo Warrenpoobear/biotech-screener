@@ -1,0 +1,153 @@
+{
+  "ticker": "GH",
+  "company_name": "GH",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04640831",
+      "title": "Safety of GH001 in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2019-03-13",
+      "completion_date": "2019-10-04",
+      "enrollment": 0,
+      "sponsor": "GH Research Ireland Limited"
+    },
+    {
+      "nct_id": "NCT05163691",
+      "title": "Pharmacokinetics of GH001 in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2021-06-21",
+      "completion_date": "2021-11-22",
+      "enrollment": 0,
+      "sponsor": "GH Research Ireland Limited"
+    },
+    {
+      "nct_id": "NCT05576870",
+      "title": "Growth Study Using Else Toddler Nutritional Drink vs. a. Dairy Based Toddler Drink (Control) in Healthy Toddlers",
+      "status": "UNKNOWN",
+      "phase": "NA",
+      "condition": "Weight Gain",
+      "start_date": "2022-10-01",
+      "completion_date": "2023-05-31",
+      "enrollment": 0,
+      "sponsor": "Else Nutrition GH Ltd"
+    },
+    {
+      "nct_id": "NCT07305103",
+      "title": "Defining Dosimetric Reference Levels in Computed Tomography Spectral Scanning",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "",
+      "condition": "Medical Imaging",
+      "start_date": "2025-09-01",
+      "completion_date": "2026-06-30",
+      "enrollment": 0,
+      "sponsor": "Centre Hospitalier Universitaire de N\u012bmes"
+    },
+    {
+      "nct_id": "NCT05804708",
+      "title": "Phase 2 Clinical Trial of GH001 in Postpartum Depression",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Postpartum Depression, Postnatal Depression",
+      "start_date": "2023-03-02",
+      "completion_date": "2024-11-15",
+      "enrollment": 0,
+      "sponsor": "GH Research Ireland Limited"
+    },
+    {
+      "nct_id": "NCT05753956",
+      "title": "Safety and Pharmacokinetics of GH002 in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2022-12-22",
+      "completion_date": "2023-11-29",
+      "enrollment": 0,
+      "sponsor": "GH Research Ireland Limited"
+    },
+    {
+      "nct_id": "NCT04698603",
+      "title": "Clinical Study of GH001 in Depression",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Treatment Resistant Depression, Major Depressive Disorder, Depression",
+      "start_date": "2019-11-12",
+      "completion_date": "2021-11-06",
+      "enrollment": 0,
+      "sponsor": "GH Research Ireland Limited"
+    },
+    {
+      "nct_id": "NCT05622214",
+      "title": "The Efficacy and Tolerability of 12-weeks Treatment With Almond and Buckwheat Based Formula in Pediatric Patients With Active EoE",
+      "status": "UNKNOWN",
+      "phase": "NA",
+      "condition": "Eosinophilic Esophagitis",
+      "start_date": "2022-07-25",
+      "completion_date": "2023-12-31",
+      "enrollment": 0,
+      "sponsor": "Rambam Health Care Campus"
+    },
+    {
+      "nct_id": "NCT05800860",
+      "title": "A Trial of GH001 in Patients With Treatment-resistant Depression",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Treatment-resistant Depression",
+      "start_date": "2023-05-24",
+      "completion_date": "2025-03-11",
+      "enrollment": 0,
+      "sponsor": "GH Research Ireland Limited"
+    },
+    {
+      "nct_id": "NCT05839509",
+      "title": "Phase 2 Clinical Trial of GH001 in Bipolar II Disorder",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Bipolar II Disorder",
+      "start_date": "2023-04-06",
+      "completion_date": "2024-12-05",
+      "enrollment": 0,
+      "sponsor": "GH Research Ireland Limited"
+    }
+  ],
+  "summary": {
+    "total_trials": 11,
+    "by_phase": {
+      "PHASE1": 4,
+      "NA": 2,
+      "": 1,
+      "PHASE2": 3,
+      "PHASE1, PHASE2": 1
+    },
+    "by_status": {
+      "COMPLETED": 5,
+      "UNKNOWN": 2,
+      "ACTIVE_NOT_RECRUITING": 1,
+      "TERMINATED": 2,
+      "RECRUITING": 1
+    },
+    "active_trials": 2,
+    "completed_trials": 5,
+    "conditions": [
+      "Bipolar II Disorder",
+      "Eosinophilic Esophagitis",
+      "Healthy Volunteers",
+      "Medical Imaging",
+      "Postpartum Depression, Postnatal Depression",
+      "Treatment Resistant Depression, Major Depressive Disorder, Depression",
+      "Treatment-resistant Depression",
+      "Weight Gain"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T10:03:28.816484",
+    "search_query": "GH",
+    "url": "https://clinicaltrials.gov/search?term=GH"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "TYRA",
+  "success": true,
+  "price": {
+    "current": 29.31,
+    "currency": "USD",
+    "day_high": 30.7,
+    "day_low": 29.03,
+    "52_week_high": 30.7,
+    "52_week_low": 6.42
+  },
+  "market_cap": {
+    "value": 1564336128.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 53372098.0,
+  "volume": {
+    "last": 548510,
+    "average_30d": 581038
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -13.424447,
+    "price_to_book": 5.5711837
+  },
+  "company_info": {
+    "name": "Tyra Biosciences, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:18:22.283500",
+    "url": "https://finance.yahoo.com/quote/TYRA",
+    "data_hash": "35da22b14cb57418"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "PYXS",
+  "success": true,
+  "price": {
+    "current": 1.76,
+    "currency": "USD",
+    "day_high": 1.81,
+    "day_low": 1.47,
+    "52_week_high": 5.55,
+    "52_week_low": 0.833
+  },
+  "market_cap": {
+    "value": 109585016.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 62264215.0,
+  "volume": {
+    "last": 3016927,
+    "average_30d": 2038933
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -1.4946921,
+    "price_to_book": 1.5898826
+  },
+  "company_info": {
+    "name": "Pyxis Oncology, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:17:21.826255",
+    "url": "https://finance.yahoo.com/quote/PYXS",
+    "data_hash": "c74b128396ae7a87"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "EOLS",
+  "success": true,
+  "price": {
+    "current": 5.65,
+    "currency": "USD",
+    "day_high": 5.81,
+    "day_low": 5.14,
+    "52_week_high": 17.12,
+    "52_week_low": 5.13
+  },
+  "market_cap": {
+    "value": 366231776.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 64819784.0,
+  "volume": {
+    "last": 3103563,
+    "average_30d": 1041642
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": 44.84127,
+    "price_to_book": -12.725225
+  },
+  "company_info": {
+    "name": "Evolus, Inc.",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:19:02.001695",
+    "url": "https://finance.yahoo.com/quote/EOLS",
+    "data_hash": "95376f6d42dc55a3"
+  }
+}

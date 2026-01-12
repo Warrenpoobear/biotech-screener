@@ -1,0 +1,159 @@
+{
+  "ticker": "NAME",
+  "company_name": "NAME",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT03614910",
+      "title": "Ablation of Unresectable Locally Advanced Pancreatic Cancer With Irreversible Electroporation (IRE) System",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Pancreatic Cancer",
+      "start_date": "2018-05-15",
+      "completion_date": "2021-05-01",
+      "enrollment": 0,
+      "sponsor": "Holy Name Medical Center, Inc."
+    },
+    {
+      "nct_id": "NCT06097624",
+      "title": "Effectiveness of Synchronized Tele-exercise",
+      "status": "COMPLETED",
+      "phase": "NA",
+      "condition": "Healthy",
+      "start_date": "2021-09-10",
+      "completion_date": "2021-12-10",
+      "enrollment": 0,
+      "sponsor": "Okan University"
+    },
+    {
+      "nct_id": "NCT00668902",
+      "title": "Rapid Screening Phenotype Test To Evaluate CYP 2C19 Enzyme Activity Using Stable Isotope [13C]Pantoprazole",
+      "status": "COMPLETED",
+      "phase": "NA",
+      "condition": "Healthy",
+      "start_date": "2007-03",
+      "completion_date": "2009-01",
+      "enrollment": 0,
+      "sponsor": "Indiana University"
+    },
+    {
+      "nct_id": "NCT00805662",
+      "title": "Nasal Oxcytocin During IUI",
+      "status": "COMPLETED",
+      "phase": "NA",
+      "condition": "Idiopathic Infertility",
+      "start_date": "2003-05",
+      "completion_date": "2008-01",
+      "enrollment": 0,
+      "sponsor": "Ludwig-Maximilians - University of Munich"
+    },
+    {
+      "nct_id": "NCT04100525",
+      "title": "Intervention for Employed Women With Multiple Sclerosis",
+      "status": "UNKNOWN",
+      "phase": "NA",
+      "condition": "Multiple Sclerosis",
+      "start_date": "2016-04",
+      "completion_date": "2022-01",
+      "enrollment": 0,
+      "sponsor": "Holy Name Medical Center, Inc."
+    },
+    {
+      "nct_id": "NCT06008249",
+      "title": "Platform Trial to Assess the Efficacy of Multiple Drugs in Amyotrophic Lateral Sclerosis (ALS)",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Amyotrophic Lateral Sclerosis",
+      "start_date": "2021-08-09",
+      "completion_date": "2026-06",
+      "enrollment": 0,
+      "sponsor": "Stichting TRICALS Foundation"
+    },
+    {
+      "nct_id": "NCT06254989",
+      "title": "Effectiveness of an Aerobic Exercise Program in Cancer Survivors.",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "NA",
+      "condition": "Aerobic Exercise",
+      "start_date": "2024-02-12",
+      "completion_date": "2025-06-30",
+      "enrollment": 0,
+      "sponsor": "Holy Name Medical Center, Inc."
+    },
+    {
+      "nct_id": "NCT03062241",
+      "title": "Ablation of Atrial Fibrillation in Heart Failure Patients",
+      "status": "UNKNOWN",
+      "phase": "NA",
+      "condition": "Atrial Fibrillation, Severe Heart Failure",
+      "start_date": "2017-01-23",
+      "completion_date": "2019-07-31",
+      "enrollment": 0,
+      "sponsor": "Medical University of Silesia"
+    },
+    {
+      "nct_id": "NCT00670150",
+      "title": "New Retinoid Agent Combined With Arsenic Trioxide for Untreated Acute Promyelocytic Leukemia",
+      "status": "WITHDRAWN",
+      "phase": "PHASE2",
+      "condition": "Acute Promyelocytic Leukemia",
+      "start_date": "2010-05",
+      "completion_date": "2010-08",
+      "enrollment": 0,
+      "sponsor": "University of Southern California"
+    },
+    {
+      "nct_id": "NCT00668499",
+      "title": "A Study of VEGF-Antisense Oligonucleotide in Combination With Pemetrexed and Cisplatin for the Treatment of Advanced Malignant Mesothelioma",
+      "status": "WITHDRAWN",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Mesothelioma",
+      "start_date": "2008-04",
+      "completion_date": "2011-04",
+      "enrollment": 0,
+      "sponsor": "University of Southern California"
+    }
+  ],
+  "summary": {
+    "total_trials": 16,
+    "by_phase": {
+      "": 4,
+      "NA": 7,
+      "PHASE3": 1,
+      "PHASE2": 1,
+      "PHASE1, PHASE2": 1,
+      "PHASE4": 2
+    },
+    "by_status": {
+      "COMPLETED": 7,
+      "UNKNOWN": 4,
+      "RECRUITING": 2,
+      "NOT_YET_RECRUITING": 1,
+      "WITHDRAWN": 2
+    },
+    "active_trials": 2,
+    "completed_trials": 7,
+    "conditions": [
+      "Acute Promyelocytic Leukemia",
+      "Aerobic Exercise",
+      "Amyotrophic Lateral Sclerosis",
+      "Atrial Fibrillation, Severe Heart Failure",
+      "Chronic Lymphocytic Leukemia",
+      "Cystinuria, Renal Lithiasis, Glomerulonephritis, Interstitial Nephritis",
+      "Healthy",
+      "Idiopathic Infertility",
+      "Mesothelioma",
+      "Multiple Sclerosis",
+      "Pancreatic Cancer",
+      "Stomach Cancer, Colorectal Cancer, Appendiceal Cancer, Ovarian Cancer, Uterine Cancer, Cervical Cancer, Fallopian Tube Cancer, Primary Peritoneal Carcinoma",
+      "Symptomatic Uterine Fibroids and Adenomyosis"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T10:03:43.386043",
+    "search_query": "NAME",
+    "url": "https://clinicaltrials.gov/search?term=NAME"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "CVAC",
+  "success": true,
+  "price": {
+    "current": 4.66,
+    "currency": "USD",
+    "day_high": 4.66,
+    "day_low": 4.66,
+    "52_week_high": 5.72,
+    "52_week_low": 2.475
+  },
+  "market_cap": {
+    "value": 1049304960.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 225172749.0,
+  "volume": {
+    "last": 728780,
+    "average_30d": 1276873
+  },
+  "valuation": {
+    "pe_ratio": 6.9552236,
+    "forward_pe": -8.015163,
+    "price_to_book": 0.82808596
+  },
+  "company_info": {
+    "name": "CureVac N.V.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:13:24.944890",
+    "url": "https://finance.yahoo.com/quote/CVAC",
+    "data_hash": "2d05d7b1ab439a39"
+  }
+}

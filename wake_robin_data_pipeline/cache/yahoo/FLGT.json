@@ -1,0 +1,43 @@
+{
+  "ticker": "FLGT",
+  "success": true,
+  "price": {
+    "current": 27.85,
+    "currency": "USD",
+    "day_high": 28.4399,
+    "day_low": 27.73,
+    "52_week_high": 31.04,
+    "52_week_low": 14.57
+  },
+  "market_cap": {
+    "value": 860910144.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 30912392.0,
+  "volume": {
+    "last": 228486,
+    "average_30d": 217066
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -87.0095,
+    "price_to_book": 0.7632019
+  },
+  "company_info": {
+    "name": "Fulgent Genetics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Diagnostics & Research"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:15:54.742405",
+    "url": "https://finance.yahoo.com/quote/FLGT",
+    "data_hash": "c44e3e8d7bb6c318"
+  }
+}

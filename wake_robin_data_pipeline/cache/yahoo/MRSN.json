@@ -1,0 +1,43 @@
+{
+  "ticker": "MRSN",
+  "success": true,
+  "price": {
+    "current": 29.08,
+    "currency": "USD",
+    "day_high": 29.08,
+    "day_low": 29.08,
+    "52_week_high": 30.39,
+    "52_week_low": 5.21
+  },
+  "market_cap": {
+    "value": 145363648.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 4998750.0,
+  "volume": {
+    "last": 624025,
+    "average_30d": 120707
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -2.617462,
+    "price_to_book": -2.4414406
+  },
+  "company_info": {
+    "name": "Mersana Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:13:54.367863",
+    "url": "https://finance.yahoo.com/quote/MRSN",
+    "data_hash": "43c8a8596a6d1533"
+  }
+}

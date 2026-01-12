@@ -1,0 +1,43 @@
+{
+  "ticker": "INBX",
+  "success": true,
+  "price": {
+    "current": 72.86,
+    "currency": "USD",
+    "day_high": 76.44,
+    "day_low": 72.18,
+    "52_week_high": 94.565,
+    "52_week_low": 10.805
+  },
+  "market_cap": {
+    "value": 1059656768.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 14543738.0,
+  "volume": {
+    "last": 119643,
+    "average_30d": 248952
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -15.306722,
+    "price_to_book": 28.68504
+  },
+  "company_info": {
+    "name": "Inhibrx Biosciences, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:16:14.054517",
+    "url": "https://finance.yahoo.com/quote/INBX",
+    "data_hash": "926eefa6eacbe6e7"
+  }
+}

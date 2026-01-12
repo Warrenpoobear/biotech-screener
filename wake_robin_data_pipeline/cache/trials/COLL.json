@@ -1,0 +1,39 @@
+{
+  "ticker": "COLL",
+  "company_name": "COLL",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT00426244",
+      "title": "Osteopathic Manipulative Medicine in Pregnancy: Physiologic and Clinical Effects",
+      "status": "COMPLETED",
+      "phase": "NA",
+      "condition": "Low Back Pain, Pregnancy",
+      "start_date": "2006-04",
+      "completion_date": "2011-09",
+      "enrollment": 0,
+      "sponsor": "University of North Texas Health Science Center"
+    }
+  ],
+  "summary": {
+    "total_trials": 1,
+    "by_phase": {
+      "NA": 1
+    },
+    "by_status": {
+      "COMPLETED": 1
+    },
+    "active_trials": 0,
+    "completed_trials": 1,
+    "conditions": [
+      "Low Back Pain, Pregnancy"
+    ],
+    "lead_stage": "preclinical"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T10:03:19.007811",
+    "search_query": "COLL",
+    "url": "https://clinicaltrials.gov/search?term=COLL"
+  }
+}

@@ -1,0 +1,169 @@
+{
+  "ticker": "KURA",
+  "company_name": "KURA",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT03051035",
+      "title": "First-in-Human Study of KO-947 in Non-Hematological Malignancies",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Advanced Malignant Neoplasm",
+      "start_date": "2017-04-06",
+      "completion_date": "2020-06-02",
+      "enrollment": 0,
+      "sponsor": "Kura Oncology, Inc."
+    },
+    {
+      "nct_id": "NCT04865159",
+      "title": "Cardiovascular Safety Study of Tipifarnib in Patients With Advanced Solid Malignancies",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Advanced Solid Tumor",
+      "start_date": "2021-05-06",
+      "completion_date": "2023-05-02",
+      "enrollment": 0,
+      "sponsor": "Kura Oncology, Inc."
+    },
+    {
+      "nct_id": "NCT05735184",
+      "title": "A Study to Investigate the Safety and Tolerability of Ziftomenib in Combination With Venetoclax/Azacitidine, Venetoclax, 7+3, or 7+3+Quizartinib in Patients With AML",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Acute Myeloid Leukemia, Mixed Lineage Leukemia Gene Mutation, Refractory AML, AML With Mutated NPM1, Acute Myeloid Leukemia Recurrent, Acute Myeloid Leukemia, in Relapse, NPM1 Mutation, KMT2Ar, Myeloid Sarcoma, Nucleophosmin 1-mutated Acute Myeloid Leukemia",
+      "start_date": "2023-07-18",
+      "completion_date": "2030-04",
+      "enrollment": 0,
+      "sponsor": "Kura Oncology, Inc."
+    },
+    {
+      "nct_id": "NCT05693090",
+      "title": "Tipifarnib and Osimertinib in EGFR-mutated Non-Small Cell Lung Cancer",
+      "status": "WITHDRAWN",
+      "phase": "PHASE1",
+      "condition": "NSCLC",
+      "start_date": "2023-02-01",
+      "completion_date": "2027-07-27",
+      "enrollment": 0,
+      "sponsor": "Kura Oncology, Inc."
+    },
+    {
+      "nct_id": "NCT06655246",
+      "title": "A Study of Ziftomenib, an Oral Menin Inhibitor, in Combination With Imatinib in Patients With Advanced Gastrointestinal Stromal Tumors (GIST)",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Gastrointestinal Stromal Tumor (GIST), Gastrointestinal Stromal Tumor (GIST) of the Gastrointestinal Tract, Gastrointestinal Stromal Cancer, Gastrointestinal Stromal Neoplasm, Gastrointestinal Stromal Tumor, Malignant, Gastrointestinal Stromal Cell Tumors",
+      "start_date": "2025-03-27",
+      "completion_date": "2028-12",
+      "enrollment": 0,
+      "sponsor": "Kura Oncology, Inc."
+    },
+    {
+      "nct_id": "NCT05848687",
+      "title": "TINI 2: Total Therapy for Infants With Acute Lymphoblastic Leukemia II",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Lymphoblastic Leukemia",
+      "start_date": "2023-11-03",
+      "completion_date": "2033-12",
+      "enrollment": 0,
+      "sponsor": "Tanja Andrea Gruber"
+    },
+    {
+      "nct_id": "NCT06376162",
+      "title": "Ziftomenib in Combination With Chemotherapy for Children With Relapsed/Refractory Acute Leukemia",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Relapsed/Refractory KMT2A-r Acute Leukemia, Relapsed/Refractory NUP98-r Acute Leukemia, Relapsed/Refractory NPM1-m Acute Leukemia",
+      "start_date": "2025-03-18",
+      "completion_date": "2027-01",
+      "enrollment": 0,
+      "sponsor": "PedAL BCU, LLC"
+    },
+    {
+      "nct_id": "NCT04809233",
+      "title": "Expanded Access to Tipifarnib",
+      "status": "AVAILABLE",
+      "phase": "",
+      "condition": "HRAS Mutations or Peripheral T Cell Lymphoma (PTCL)",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Kura Oncology, Inc."
+    },
+    {
+      "nct_id": "NCT02383927",
+      "title": "Phase II Study of Tipifarnib in Squamous Head and Neck Cancer With HRAS Mutations",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Thyroid Cancer, Squamous Cell Carcinoma Head and Neck Cancer (HNSCC), HRAS Mutant Tumor, Other Squamous Cell Carcinoma (SCC) With HRAS Mutant Tumor",
+      "start_date": "2015-05-13",
+      "completion_date": "2020-12-14",
+      "enrollment": 0,
+      "sponsor": "Kura Oncology, Inc."
+    },
+    {
+      "nct_id": "NCT05643976",
+      "title": "Investigating KardioPAC Mobile App to Improve Physical Fitness Among Cardiac Rehabilitation Patients",
+      "status": "COMPLETED",
+      "phase": "NA",
+      "condition": "Cardiac Rehabilitation, Exercise, Quality of Life",
+      "start_date": "2023-01-18",
+      "completion_date": "2024-11-30",
+      "enrollment": 0,
+      "sponsor": "University of California, San Diego"
+    }
+  ],
+  "summary": {
+    "total_trials": 23,
+    "by_phase": {
+      "PHASE1": 10,
+      "PHASE1, PHASE2": 3,
+      "": 2,
+      "PHASE2": 6,
+      "NA": 1,
+      "PHASE3": 1
+    },
+    "by_status": {
+      "TERMINATED": 3,
+      "RECRUITING": 10,
+      "WITHDRAWN": 1,
+      "AVAILABLE": 2,
+      "COMPLETED": 6,
+      "NOT_YET_RECRUITING": 1
+    },
+    "active_trials": 10,
+    "completed_trials": 6,
+    "conditions": [
+      "AML, AML With Mutated NPM1, Hematologic Malignancy, KMT2Ar, NPM1 Mutation, MLL Rearrangement, Leukemia, Acute Myeloid Leukemia, Leukemia, Myeloid, Leukemia, Myeloid, Acute, Acute Leukemia, Neoplasms by Histologic Type",
+      "Acute Lymphoblastic Leukemia, With Appropriate Mutations, Acute Myeloid Leukemia, With NPM1 Mutations",
+      "Acute Myeloid Leukemia",
+      "Acute Myeloid Leukemia (AML)",
+      "Acute Myeloid Leukemia, Mixed Lineage Leukemia Gene Mutation, Refractory AML, AML With Mutated NPM1, Acute Myeloid Leukemia Recurrent, Acute Myeloid Leukemia, in Relapse, NPM1 Mutation, KMT2Ar, Myeloid Sarcoma, Nucleophosmin 1-mutated Acute Myeloid Leukemia",
+      "Advanced Malignant Neoplasm",
+      "Advanced Malignant Neoplasm, Acute Myeloid Leukemia, Mixed Lineage Leukemia, Mixed Lineage Acute Leukemia, Acute Leukemia of Ambiguous Lineage, Mixed Phenotype Acute Leukemia, Acute Lymphoblastic Leukemia",
+      "Advanced Solid Tumor",
+      "Cardiac Rehabilitation, Exercise, Quality of Life",
+      "Gastrointestinal Stromal Tumor (GIST), Gastrointestinal Stromal Tumor (GIST) of the Gastrointestinal Tract, Gastrointestinal Stromal Cancer, Gastrointestinal Stromal Neoplasm, Gastrointestinal Stromal Tumor, Malignant, Gastrointestinal Stromal Cell Tumors",
+      "HNSCC",
+      "HRAS Gene Mutation, HNSCC",
+      "HRAS Mutations or Peripheral T Cell Lymphoma (PTCL)",
+      "Leukemia, Myelomonocytic, Chronic",
+      "Lymphoblastic Leukemia",
+      "Myelodysplastic Syndromes",
+      "NSCLC",
+      "Refractory Acute Leukemia, Pediatric Relapsed",
+      "Relapsed or Refractory Peripheral T-Cell Lymphoma",
+      "Relapsed/Refractory KMT2A-r Acute Leukemia, Relapsed/Refractory NUP98-r Acute Leukemia, Relapsed/Refractory NPM1-m Acute Leukemia",
+      "Solid Tumors With HRAS Alterations, Non Small Cell Lung Cancer (NSCLC), Colorectal Cancer (CRC), Pancreatic Ductal Adenocarcinoma (PDAC), Clear Cell Renal Cell Carcinoma (ccRCC), Renal Cell Carcinoma (Kidney Cancer), Non Clear Cell Renal Cell Carcinoma (nccRCC)",
+      "Thyroid Cancer, Squamous Cell Carcinoma Head and Neck Cancer (HNSCC), HRAS Mutant Tumor, Other Squamous Cell Carcinoma (SCC) With HRAS Mutant Tumor"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:47:23.287997",
+    "search_query": "KURA",
+    "url": "https://clinicaltrials.gov/search?term=KURA"
+  }
+}
