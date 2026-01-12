@@ -659,9 +659,24 @@ def run_direct_backtest(
         universe = [t for t in universe if passes_mcap_filter(t)]
         print(f"  Applied mcap filter '{mcap_filter}': {original_size} -> {len(universe)} tickers")
 
-    # Track a sample ticker for debugging time-varying inputs
-    debug_ticker = "REGN" if "REGN" in universe else (universe[0] if universe else None)
+    # Pick debug ticker from KNOWN-COVERED intersection (not REGN which may have no data)
+    # Load data sources to find covered tickers
+    if use_production_scorer:
+        try:
+            _, trial_data_check, _, hist_fin_check = load_real_data()
+            covered_tickers = set(trial_data_check.keys()) & set(hist_fin_check.keys()) & set(universe)
+            if covered_tickers:
+                debug_ticker = sorted(covered_tickers)[0]  # First alphabetically for consistency
+                print(f"  Debug ticker: {debug_ticker} (from {len(covered_tickers)} covered tickers)")
+            else:
+                debug_ticker = universe[0] if universe else None
+                print(f"  Debug ticker: {debug_ticker} (WARNING: no fully-covered tickers found)")
+        except:
+            debug_ticker = universe[0] if universe else None
+    else:
+        debug_ticker = universe[0] if universe else None
     debug_scores = []  # Track score changes for debug_ticker
+    all_scores_hashes = []  # Track scores_hash for every period
 
     for i, test_date in enumerate(test_dates):
         print(f"[{i+1}/{len(test_dates)}] Backtesting: {test_date.strftime('%Y-%m-%d')}")
@@ -779,7 +794,7 @@ def run_direct_backtest(
                 blob = "|".join(f"{t}:{s}" for t, s in scores_sorted)
                 all_hash = hashlib.sha256(blob.encode()).hexdigest()[:8]
                 top_hash = hashlib.sha256(",".join(sorted(top_set)).encode()).hexdigest()[:8]
-                print(f"    Hashes: scores={all_hash} top_decile={top_hash} | Top 3: {sorted(top_set)[:3]}")
+                all_scores_hashes.append((test_date.strftime("%Y-%m-%d"), all_hash))
                 prev_top_decile = top_set
 
                 # Bucket ICs: market cap
@@ -796,18 +811,17 @@ def run_direct_backtest(
                     if bucket_ic is not None:
                         ic_list.append(bucket_ic)
 
-                # Print bucket counts for first period only (diagnostic)
-                if i == 0:
-                    mcap_counts = {}
-                    adv_counts = {}
-                    for t in common_tickers:
-                        mb = mcap_bucket.get(t, "UNKNOWN")
-                        ab = adv_bucket.get(t, "UNKNOWN")
-                        mcap_counts[mb] = mcap_counts.get(mb, 0) + 1
-                        adv_counts[ab] = adv_counts.get(ab, 0) + 1
-                    print(f"    Bucket counts (N={len(common_tickers)}):")
-                    print(f"      MCAP: {mcap_counts}")
-                    print(f"      ADV$: {adv_counts}")
+                # Print bucket counts for EVERY period (not just first)
+                mcap_counts = {}
+                adv_counts = {}
+                for t in common_tickers:
+                    mb = mcap_bucket.get(t, "UNKNOWN")
+                    ab = adv_bucket.get(t, "UNKNOWN")
+                    mcap_counts[mb] = mcap_counts.get(mb, 0) + 1
+                    adv_counts[ab] = adv_counts.get(ab, 0) + 1
+                # Compact format: show hash + ADV counts on one line
+                adv_str = f"ILLIQ={adv_counts.get('ILLIQ',0)} MID={adv_counts.get('MID',0)} LIQ={adv_counts.get('LIQ',0)} UNK={adv_counts.get('UNKNOWN',0)}"
+                print(f"    scores_hash={all_hash} | ADV$: {adv_str}")
 
                 # Intersection ICs: MID-cap ∩ ADV buckets
                 def compute_intersection_ic(mcap_target, adv_target):
@@ -916,6 +930,24 @@ def run_direct_backtest(
         if score_range < 0.01:
             print(f"  ⚠️  WARNING: Scores are STATIC - inputs not time-varying!")
         print()
+
+    # Summary of ALL scores_hash values (critical for diagnosing static scoring)
+    print("Scores Hash Analysis (entire score vector):")
+    print("-" * 50)
+    if all_scores_hashes:
+        unique_hashes = set(h for _, h in all_scores_hashes)
+        print(f"  Unique hashes: {len(unique_hashes)}/{len(all_scores_hashes)} periods")
+        if len(unique_hashes) == 1:
+            print(f"  ⚠️  CRITICAL: Score vector is COMPLETELY STATIC across all periods!")
+            print(f"     Hash: {all_scores_hashes[0][1]}")
+        elif len(unique_hashes) < len(all_scores_hashes) * 0.5:
+            print(f"  ⚠️  WARNING: Score vector has limited variation (< 50% unique)")
+        else:
+            print(f"  ✓ Score vector varies across periods")
+        # Show first 5 and last 5 hashes
+        print(f"  First 5: {[h for _, h in all_scores_hashes[:5]]}")
+        print(f"  Last 5:  {[h for _, h in all_scores_hashes[-5:]]}")
+    print()
 
     print("Top/Bottom Decile Spread (90d horizon):")
     print("-" * 50)
