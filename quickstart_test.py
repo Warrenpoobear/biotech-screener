@@ -117,16 +117,34 @@ def test_fetch_returns() -> bool:
 
         print(f"  Fetching XBI returns from {start_date} to {end_date}...")
 
-        df = md.direct.returns(
-            investments=["XBI:US"],
-            start_date=start_date.isoformat(),
-            end_date=end_date.isoformat(),
-            frequency="monthly",
-        )
+        # Try new API first, fall back to deprecated if needed
+        df = None
+        try:
+            from morningstar_data.direct import Frequency
+            df = md.direct.get_returns(
+                investments=["XBI:US"],
+                start_date=start_date.isoformat(),
+                end_date=end_date.isoformat(),
+                frequency=Frequency.MONTHLY,
+            )
+            print("  [INFO] Using new get_returns API")
+        except (AttributeError, ImportError):
+            # Fall back to deprecated API
+            import warnings
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", FutureWarning)
+                df = md.direct.returns(
+                    investments=["XBI:US"],
+                    start_date=start_date.isoformat(),
+                    end_date=end_date.isoformat(),
+                    frequency="monthly",
+                )
+            print("  [INFO] Using deprecated returns API (fallback)")
 
         if df is not None and not df.empty:
             num_obs = len(df)
             print(f"  [PASS] Retrieved {num_obs} observations")
+            print(f"  [INFO] DataFrame columns: {list(df.columns)}")
             return True
         else:
             print("  [FAIL] No data returned")
@@ -134,6 +152,8 @@ def test_fetch_returns() -> bool:
 
     except Exception as e:
         print(f"  [FAIL] Fetch failed: {e}")
+        import traceback
+        traceback.print_exc()
         return False
 
 

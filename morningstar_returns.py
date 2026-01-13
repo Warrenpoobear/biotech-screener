@@ -178,41 +178,82 @@ class MorningstarReturnsFetcher:
             # Build security IDs (format: "TICKER:US" for US stocks)
             sec_ids = [f"{t}:US" for t in tickers]
 
-            # Use md.direct.returns() - the working method
-            df = md.direct.returns(
-                investments=sec_ids,
-                start_date=start_date,
-                end_date=end_date,
-                frequency="monthly",  # Monthly returns for backtesting
-            )
+            # Try the new get_returns API first, fall back to deprecated returns() if needed
+            df = None
+            try:
+                # Import Frequency enum for new API
+                from morningstar_data.direct import Frequency
+                df = md.direct.get_returns(
+                    investments=sec_ids,
+                    start_date=start_date,
+                    end_date=end_date,
+                    frequency=Frequency.MONTHLY,
+                )
+            except (AttributeError, ImportError):
+                # Fall back to deprecated API if get_returns not available
+                import warnings
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore", FutureWarning)
+                    df = md.direct.returns(
+                        investments=sec_ids,
+                        start_date=start_date,
+                        end_date=end_date,
+                        frequency="monthly",
+                    )
 
             # Convert DataFrame to dict
             results = {}
             if df is not None and not df.empty:
                 # Handle DataFrame structure from Morningstar
-                for col in df.columns:
-                    # Column names are typically the security IDs
-                    ticker = col.split(":")[0] if ":" in str(col) else str(col)
-                    ticker = ticker.upper()
+                # The new API may have different column structure - check for 'Return' column
+                # or iterate over securities
 
-                    records = []
-                    for idx, val in df[col].items():
-                        if val is not None and not (isinstance(val, float) and str(val) == "nan"):
-                            # Index is typically the date
-                            date_str = idx.isoformat() if hasattr(idx, "isoformat") else str(idx)[:10]
-                            records.append({
-                                "date": date_str,
-                                "return": float(val),
-                            })
+                # Check if it's a multi-index or simple structure
+                if hasattr(df, 'columns'):
+                    # Try to find return columns - handle both old and new formats
+                    for col in df.columns:
+                        col_str = str(col)
+                        # Column names might be security IDs or tuples
+                        if isinstance(col, tuple):
+                            # Multi-level column - extract ticker and check for Return
+                            ticker = None
+                            for part in col:
+                                part_str = str(part)
+                                if ":" in part_str:
+                                    ticker = part_str.split(":")[0].upper()
+                                    break
+                            if ticker is None:
+                                continue
+                        elif ":" in col_str:
+                            ticker = col_str.split(":")[0].upper()
+                        else:
+                            ticker = col_str.upper()
 
-                    if records:
-                        results[ticker] = records
+                        records = []
+                        for idx, val in df[col].items():
+                            if val is not None:
+                                try:
+                                    float_val = float(val)
+                                    if not (str(float_val) == "nan"):
+                                        # Index is typically the date
+                                        date_str = idx.isoformat() if hasattr(idx, "isoformat") else str(idx)[:10]
+                                        records.append({
+                                            "date": date_str,
+                                            "return": float_val,
+                                        })
+                                except (ValueError, TypeError):
+                                    continue
+
+                        if records and ticker not in results:
+                            results[ticker] = records
 
             return results
 
         except Exception as e:
             # Log error but don't fail - partial data is still useful
             print(f"  Warning: Error fetching batch: {e}")
+            import traceback
+            traceback.print_exc()
             return {}
 
     def fetch_returns(
