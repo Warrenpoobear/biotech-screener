@@ -41,12 +41,20 @@ def load_universe(tickers_file: str = None) -> List[str]:
                 # If CSV, extract ticker from second column (Rank,Ticker,...)
                 if ',' in line:
                     parts = line.split(',')
-                    if len(parts) >= 2 and parts[1] and parts[1] != 'Ticker':
-                        tickers.append(parts[1].strip())
+                    if len(parts) >= 2:
+                        ticker = parts[1].strip().strip('"')
+                        # Validate ticker: 1-5 uppercase letters
+                        if (ticker and ticker != 'Ticker' and
+                            len(ticker) <= 6 and ticker.isalpha() and
+                            ticker.isupper()):
+                            tickers.append(ticker)
                 else:
                     # Plain text file - one ticker per line
-                    if line and not line.startswith('#'):
-                        tickers.append(line)
+                    ticker = line.strip()
+                    if (ticker and not ticker.startswith('#') and
+                        len(ticker) <= 6 and ticker.isalpha() and
+                        ticker.isupper()):
+                        tickers.append(ticker)
             return tickers
 
     # Try to load from existing snapshot
