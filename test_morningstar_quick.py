@@ -38,10 +38,12 @@ except Exception as e:
     sys.exit(1)
 
 # Test 4: Fetch returns
-print("\n[Test 4] Fetching returns (XBI, 2023)...")
+# Note: Use Morningstar SecIds, not ticker:exchange format
+# 0P000005R7 = VRTX, FOUSA00L8Y = XBI ETF
+print("\n[Test 4] Fetching returns (VRTX, 2023)...")
 try:
     data = mr.fetch_returns(
-        sec_ids=['XBI:US'],
+        sec_ids=['0P000005R7'],  # VRTX Morningstar SecId
         start_date='2023-01-01',
         end_date='2023-12-31',
         frequency='monthly'
