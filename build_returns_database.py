@@ -244,7 +244,7 @@ Required Environment Variable:
     print()
     print("Next steps:")
     print("  1. Run validation (NO TOKEN NEEDED):")
-    print(f"     python validate_signals.py --database {output_path} --ranked-list your_screen.csv")
+    print(f"     python validate_signals.py --database {output_path} --ranked-list your_screen.csv --screen-date YYYY-MM-DD")
     print()
     print("  2. To update database later (TOKEN NEEDED):")
     print("     python build_returns_database.py --universe universe.csv --start-date <new_start>")

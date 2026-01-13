@@ -488,7 +488,12 @@ class ReturnsDatabase:
         Returns:
             List of {date, return} records, or None if not found
         """
-        return self._returns.get(ticker.upper())
+        ticker_upper = ticker.upper()
+        # Check regular returns first, then benchmark data
+        result = self._returns.get(ticker_upper)
+        if result is None:
+            result = self._benchmark.get(ticker_upper)
+        return result
 
     def get_benchmark_returns(self, benchmark: str = "XBI") -> Optional[List[Dict]]:
         """Get benchmark returns data."""
