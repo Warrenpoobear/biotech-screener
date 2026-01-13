@@ -536,8 +536,8 @@ class ReturnsDatabase:
         for r in forward_returns:
             cumulative *= (Decimal("1") + r / Decimal("100"))
 
-        # Return as percentage
-        return ((cumulative - Decimal("1")) * Decimal("100")).quantize(Decimal("0.0001"))
+        # Return as decimal (0.2039 for 20.39%) for consistent formatting
+        return (cumulative - Decimal("1")).quantize(Decimal("0.000001"))
 
     def get_excess_return(
         self,
