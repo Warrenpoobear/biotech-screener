@@ -65,19 +65,24 @@ def search_clinical_trials(sponsor_name: str, max_results: int = 1) -> Tuple[Opt
     """
     params = {
         "query.spons": sponsor_name,
-        "pageSize": str(max_results),
+        "pageSize": max_results,
         "format": "json"
     }
 
-    # Build URL with query string
-    query_string = "&".join(f"{k}={urllib.parse.quote(v)}" for k, v in params.items())
-    url = f"{CTGOV_API_URL}?{query_string}"
+    # Build URL with proper encoding (same as working fetcher)
+    url = f"{CTGOV_API_URL}?{urllib.parse.urlencode(params)}"
 
     try:
-        req = urllib.request.Request(url, headers=CTGOV_HEADERS)
+        req = urllib.request.Request(url)
+        req.add_header('Accept', 'application/json')
         with urllib.request.urlopen(req, timeout=30) as response:
             data = json.loads(response.read().decode('utf-8'))
+            # Get total count from response
             total_count = data.get('totalCount', 0)
+            # Also check studies array as fallback
+            if total_count == 0:
+                studies = data.get('studies', [])
+                total_count = len(studies)
             return total_count, None
 
     except urllib.error.HTTPError as e:
