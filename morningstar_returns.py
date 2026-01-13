@@ -169,8 +169,36 @@ class MorningstarReturnsFetcher:
         md = _get_md()
 
         try:
-            # Build security IDs (format: "TICKER:US" for US stocks)
-            sec_ids = [f"{t}:US" for t in tickers]
+            # Step 1: Look up Morningstar SecIds for tickers using investments()
+            ticker_queries = [f"{t}:US" for t in tickers]
+            ticker_to_secid = {}
+            secid_to_ticker = {}
+
+            try:
+                inv_df = md.direct.investments(ticker_queries)
+                if inv_df is not None and not inv_df.empty:
+                    for idx, row in inv_df.iterrows():
+                        sec_id = str(row.get('SecId', ''))
+                        # Try to extract ticker from the index or Id column
+                        row_id = str(idx) if isinstance(idx, str) else str(row.get('Id', ''))
+                        if ':' in row_id:
+                            ticker = row_id.split(':')[0].upper()
+                        else:
+                            ticker = row_id.upper()
+                        if sec_id and ticker in [t.upper() for t in tickers]:
+                            ticker_to_secid[ticker] = sec_id
+                            secid_to_ticker[sec_id] = ticker
+            except Exception as e:
+                # If investments lookup fails, continue with empty mapping
+                pass
+
+            # Step 2: Fetch returns using SecIds (not ticker:US format)
+            sec_ids = list(ticker_to_secid.values())
+            if not sec_ids:
+                # Fallback: try ticker:US format if no SecIds found
+                sec_ids = ticker_queries
+                for t in tickers:
+                    secid_to_ticker[f"{t}:US"] = t
 
             # Try the new get_returns API first, fall back to deprecated returns() if needed
             df = None
@@ -198,48 +226,57 @@ class MorningstarReturnsFetcher:
             # Convert DataFrame to dict
             results = {}
             if df is not None and not df.empty:
-                # Handle DataFrame structure from Morningstar
-                # The new API may have different column structure - check for 'Return' column
-                # or iterate over securities
+                # Check for 'Id' column (SecId) and return column
+                # DataFrame structure: Id, Date, Monthly Return (or similar)
+                id_col = None
+                return_col = None
+                date_col = None
 
-                # Check if it's a multi-index or simple structure
-                if hasattr(df, 'columns'):
-                    # Try to find return columns - handle both old and new formats
-                    for col in df.columns:
-                        col_str = str(col)
-                        # Column names might be security IDs or tuples
-                        if isinstance(col, tuple):
-                            # Multi-level column - extract ticker and check for Return
-                            ticker = None
-                            for part in col:
-                                part_str = str(part)
-                                if ":" in part_str:
-                                    ticker = part_str.split(":")[0].upper()
+                for col in df.columns:
+                    col_lower = str(col).lower()
+                    if col_lower == 'id' or 'secid' in col_lower:
+                        id_col = col
+                    elif 'return' in col_lower:
+                        return_col = col
+                    elif col_lower == 'date':
+                        date_col = col
+
+                if return_col and id_col:
+                    # Group by SecId and extract returns
+                    for sec_id in df[id_col].unique():
+                        sec_id_str = str(sec_id)
+                        # Map SecId back to ticker
+                        ticker = secid_to_ticker.get(sec_id_str)
+                        if not ticker:
+                            # Try to find ticker in original mapping
+                            for t, s in ticker_to_secid.items():
+                                if s == sec_id_str:
+                                    ticker = t
                                     break
-                            if ticker is None:
-                                continue
-                        elif ":" in col_str:
-                            ticker = col_str.split(":")[0].upper()
-                        else:
-                            ticker = col_str.upper()
+                        if not ticker:
+                            continue
 
+                        mask = df[id_col] == sec_id
                         records = []
-                        for idx, val in df[col].items():
+                        for idx, row in df[mask].iterrows():
+                            val = row[return_col]
                             if val is not None:
                                 try:
                                     float_val = float(val)
-                                    if not (str(float_val) == "nan"):
-                                        # Index is typically the date
-                                        date_str = idx.isoformat() if hasattr(idx, "isoformat") else str(idx)[:10]
+                                    if str(float_val) != "nan":
+                                        if date_col:
+                                            date_val = row[date_col]
+                                            date_str = date_val.isoformat() if hasattr(date_val, "isoformat") else str(date_val)[:10]
+                                        else:
+                                            date_str = str(idx)[:10]
                                         records.append({
                                             "date": date_str,
                                             "return": float_val,
                                         })
                                 except (ValueError, TypeError):
                                     continue
-
-                        if records and ticker not in results:
-                            results[ticker] = records
+                        if records:
+                            results[ticker.upper()] = records
 
             return results
 
