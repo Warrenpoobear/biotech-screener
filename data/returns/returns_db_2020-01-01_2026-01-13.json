@@ -312,15 +312,15 @@
   "metadata": {
     "benchmark_included": true,
     "end_date": "2026-01-13",
-    "fetched_at": "2026-01-13T17:10:42.641973Z",
+    "fetched_at": "2026-01-13T17:25:48.087183Z",
     "source": "morningstar_direct",
     "start_date": "2020-01-01",
     "ticker_count": 310,
     "version": "1.0.0"
   },
   "provenance": {
-    "content_hash": "sha256:fb813c5ea22705cf05c2a18ee28abacc45038eac8e1912d39f53b5ddfd2e4117",
-    "fetch_timestamp": "2026-01-13T17:10:42.641973Z",
+    "content_hash": "sha256:fd80bde8c5796894269f997a05a82b8673abab751c7bf7f9181e26f99157215a",
+    "fetch_timestamp": "2026-01-13T17:25:48.087183Z",
     "source_version": "1.0.0"
   },
   "returns": {
