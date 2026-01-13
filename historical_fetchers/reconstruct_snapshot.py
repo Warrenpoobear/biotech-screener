@@ -104,7 +104,7 @@ def reconstruct_snapshot(as_of_date: str, tickers: List[str],
 
     # Step 2: Fetch clinical data from ClinicalTrials.gov
     print("Step 2: Fetching clinical data from ClinicalTrials.gov...")
-    clinical = fetch_clinical(tickers[:50], as_of_date, delay=0.5)  # Limit for demo
+    clinical = fetch_clinical(tickers, as_of_date, delay=0.5)  # Fetch all tickers
     print(f"  Retrieved: {len([c for c in clinical.values() if c.get('lead_stage')])} with stage data\n")
 
     # Step 3: Combine into snapshot
