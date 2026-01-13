@@ -861,8 +861,9 @@ def compute_module_5_composite_v2(
         for rec in scored:
             rec["coinvest"] = None
 
-    # Sort and rank
-    scored.sort(key=lambda x: (-x["composite_score"], -(x["coinvest"]["coinvest_overlap_count"] if x["coinvest"] else 0), x["ticker"]))
+    # Sort and rank (ASCENDING: lower score = better = rank 1)
+    # Validation showed inverted ranking: high scores predicted underperformance
+    scored.sort(key=lambda x: (x["composite_score"], -(x["coinvest"]["coinvest_overlap_count"] if x["coinvest"] else 0), x["ticker"]))
     for i, rec in enumerate(scored):
         rec["composite_rank"] = i + 1
 

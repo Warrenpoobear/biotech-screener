@@ -681,10 +681,12 @@ def compute_module_5_composite(
             rec["coinvest"] = None
     
     # Sort and rank (tie-breaker: coinvest_overlap_count DESC, then ticker ASC)
+    # NOTE: Sort ASCENDING by composite_score (lower score = better = rank 1)
+    # Validation showed inverted ranking: high scores predicted underperformance
     def sort_key(x):
         coinvest_count = x["coinvest"]["coinvest_overlap_count"] if x["coinvest"] else 0
         market_cap_mm = x.get("market_cap_mm", 0) or 0  # Market cap for deterministic tiebreak
-        return (-x["composite_score"], -market_cap_mm, -coinvest_count, x["ticker"])
+        return (x["composite_score"], -market_cap_mm, -coinvest_count, x["ticker"])
     combined.sort(key=sort_key)
     for i, rec in enumerate(combined):
         rec["composite_rank"] = i + 1
