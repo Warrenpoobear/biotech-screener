@@ -23,7 +23,7 @@ from dataclasses import dataclass, asdict
 # Morningstar package (optional dependency)
 try:
     import morningstar_data as md
-    from morningstar_data.direct import Frequency
+    from morningstar_data.direct.data_type import Frequency
     MORNINGSTAR_AVAILABLE = True
 except ImportError:
     MORNINGSTAR_AVAILABLE = False
@@ -114,15 +114,17 @@ def fetch_returns(
     fetch_timestamp = datetime.utcnow().isoformat() + 'Z'
 
     try:
-        # Map frequency string to enum
+        # Map frequency string to enum (lowercase values)
         freq_map = {
-            'monthly': Frequency.MONTHLY if Frequency else None,
-            'quarterly': Frequency.QUARTERLY if Frequency else None,
-            'yearly': Frequency.YEARLY if Frequency else None,
+            'monthly': Frequency.monthly if Frequency else None,
+            'quarterly': Frequency.quarterly if Frequency else None,
+            'yearly': Frequency.yearly if Frequency else None,
+            'daily': Frequency.daily if Frequency else None,
+            'weekly': Frequency.weekly if Frequency else None,
         }
         freq_enum = freq_map.get(frequency.lower())
 
-        # Try new API first, fall back to deprecated
+        # Fetch returns using get_returns (preferred) or returns (deprecated)
         absolute_returns = None
         api_method = 'md.direct.get_returns'
 
@@ -132,7 +134,7 @@ def fetch_returns(
                     investments=sec_ids,
                     start_date=start_date,
                     end_date=end_date,
-                    frequency=freq_enum
+                    freq=freq_enum  # Note: parameter is 'freq', not 'frequency'
                 )
             else:
                 raise AttributeError("Frequency enum not available")
@@ -145,42 +147,58 @@ def fetch_returns(
                     investments=sec_ids,
                     start_date=start_date,
                     end_date=end_date,
-                    freq=frequency
+                    freq=frequency  # String frequency for deprecated API
                 )
             api_method = 'md.direct.returns (deprecated)'
 
         if absolute_returns is None or absolute_returns.empty:
             raise MorningstarReturnsError("No returns data returned")
 
-        # Convert DataFrame to records - handle different response formats
+        # Convert DataFrame to records
+        # DataFrame has columns: ['Id', 'Date', 'Monthly Return'] (or similar)
         absolute_records = []
 
-        # Check DataFrame structure - old format has 'Return' and 'Id' columns
-        if 'Return' in absolute_returns.columns and 'Id' in absolute_returns.columns:
-            # Old format: rows with Id, Date, Return columns
+        # Find the return column (could be 'Monthly Return', 'Return', etc.)
+        return_col = None
+        for col in absolute_returns.columns:
+            col_str = str(col).lower()
+            if 'return' in col_str and col_str not in ['id', 'date']:
+                return_col = col
+                break
+
+        if return_col and 'Id' in absolute_returns.columns:
+            # Standard format: rows with Id, Date, [Monthly Return] columns
             for idx, row in absolute_returns.iterrows():
-                date_val = row.get('Date', idx)
-                date_str = str(date_val)[:10] if date_val is not None else str(idx)[:10]
-                absolute_records.append({
-                    'sec_id': str(row['Id']),
-                    'date': date_str,
-                    'return_pct': str(Decimal(str(row['Return']))),
-                })
+                ret_val = row[return_col]
+                # Skip NA/null values
+                if ret_val is None or (hasattr(ret_val, '__class__') and str(ret_val) in ['<NA>', 'nan', 'NaN']):
+                    continue
+                try:
+                    date_val = row.get('Date', idx)
+                    date_str = str(date_val)[:10] if date_val is not None else str(idx)[:10]
+                    absolute_records.append({
+                        'sec_id': str(row['Id']),
+                        'date': date_str,
+                        'return_pct': str(Decimal(str(float(ret_val)))),
+                    })
+                except (ValueError, TypeError):
+                    continue
         else:
-            # New format: security IDs as columns, dates as index
+            # Alternative format: security IDs as columns, dates as index
             for col in absolute_returns.columns:
+                if str(col).lower() in ['id', 'date']:
+                    continue
                 sec_id = str(col)
                 for idx, val in absolute_returns[col].items():
-                    if val is not None:
+                    if val is not None and str(val) not in ['<NA>', 'nan', 'NaN']:
                         try:
                             float_val = float(val)
-                            if str(float_val) != 'nan':
-                                date_str = idx.isoformat() if hasattr(idx, 'isoformat') else str(idx)[:10]
-                                absolute_records.append({
-                                    'sec_id': sec_id,
-                                    'date': date_str,
-                                    'return_pct': str(Decimal(str(float_val))),
-                                })
+                            date_str = idx.isoformat() if hasattr(idx, 'isoformat') else str(idx)[:10]
+                            absolute_records.append({
+                                'sec_id': sec_id,
+                                'date': date_str,
+                                'return_pct': str(Decimal(str(float_val))),
+                            })
                         except (ValueError, TypeError):
                             continue
 
@@ -188,22 +206,13 @@ def fetch_returns(
         excess_records = []
         if benchmark_sec_id:
             try:
-                if freq_enum is not None:
-                    excess_returns = md.direct.get_excess_returns(
-                        investments=sec_ids,
-                        benchmark_sec_id=benchmark_sec_id,
-                        start_date=start_date,
-                        end_date=end_date,
-                        frequency=freq_enum
-                    )
-                else:
-                    excess_returns = md.direct.get_excess_returns(
-                        investments=sec_ids,
-                        benchmark_sec_id=benchmark_sec_id,
-                        start_date=start_date,
-                        end_date=end_date,
-                        freq=frequency
-                    )
+                excess_returns = md.direct.get_excess_returns(
+                    investments=sec_ids,
+                    benchmark_sec_id=benchmark_sec_id,
+                    start_date=start_date,
+                    end_date=end_date,
+                    freq=freq_enum if freq_enum else frequency
+                )
 
                 if excess_returns is not None and not excess_returns.empty:
                     if 'Excess Return' in excess_returns.columns and 'Id' in excess_returns.columns:
