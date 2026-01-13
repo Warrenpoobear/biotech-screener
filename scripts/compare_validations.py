@@ -432,6 +432,8 @@ def main():
                         help='Output file for report')
     parser.add_argument('--run-pending', action='store_true',
                         help='Run all pending validations')
+    parser.add_argument('--run-all', action='store_true',
+                        help='Re-run ALL validations (clears cached results)')
     parser.add_argument('--run-quarter', type=str,
                         help='Run validation for specific quarter (e.g., 2023-Q2)')
 
@@ -439,7 +441,25 @@ def main():
 
     comparison = ValidationComparison()
 
-    if args.run_quarter:
+    if args.run_all:
+        # Clear cached results and re-run all
+        print("Clearing cached results and re-running all validations...")
+        comparison.enhanced = {"2023-Q1": ENHANCED_RESULTS["2023-Q1"]}  # Keep only Q1 2023 (already validated)
+        comparison._save_results()
+
+        all_quarters = sorted(comparison.baseline.keys())
+        print(f"Running {len(all_quarters) - 1} validations (skipping 2023-Q1 which is already done)...")
+        for quarter in all_quarters:
+            if quarter == "2023-Q1":
+                continue  # Already have good results for Q1 2023
+            screen_date = comparison.baseline[quarter]['screen_date']
+            result = run_validation_for_quarter(screen_date, quarter)
+            if result:
+                comparison.add_enhanced_result(quarter, result)
+                print(f"  {quarter}: Q1-Q5 Spread = {result['q1_q5_spread']:+.2f}%")
+        print("\nAll validations complete!")
+
+    elif args.run_quarter:
         quarter = args.run_quarter
         if quarter in comparison.baseline:
             screen_date = comparison.baseline[quarter]['screen_date']
@@ -453,7 +473,7 @@ def main():
             print(f"Available: {list(comparison.baseline.keys())}")
         return
 
-    if args.run_pending:
+    elif args.run_pending:
         pending = comparison.get_pending_quarters()
         print(f"Running {len(pending)} pending validations...")
         for quarter, screen_date in pending:
