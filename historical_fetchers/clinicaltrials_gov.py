@@ -31,52 +31,40 @@ CT_BASE_URL = "https://clinicaltrials.gov/api/v2"
 # Cache directory
 CACHE_DIR = Path("data/cache/clinicaltrials")
 
-# Mapping of tickers to company names for searching
-TICKER_TO_COMPANY = {
-    'VRTX': 'Vertex Pharmaceuticals',
-    'REGN': 'Regeneron Pharmaceuticals',
-    'ALNY': 'Alnylam Pharmaceuticals',
-    'BMRN': 'BioMarin Pharmaceutical',
-    'SGEN': 'Seagen',
-    'BIIB': 'Biogen',
-    'GILD': 'Gilead Sciences',
-    'AMGN': 'Amgen',
-    'CRSP': 'CRISPR Therapeutics',
-    'EDIT': 'Editas Medicine',
-    'NTLA': 'Intellia Therapeutics',
-    'BEAM': 'Beam Therapeutics',
-    'MRNA': 'Moderna',
-    'BNTX': 'BioNTech',
-    'NVAX': 'Novavax',
-    # Add more mappings as needed
-}
+# Sponsor mapping file
+SPONSOR_MAPPING_FILE = Path("data/ticker_to_sponsor.json")
 
-# Phase to stage bucket mapping
-PHASE_TO_STAGE = {
-    'PHASE1': 'early',
-    'PHASE2': 'mid',
-    'PHASE3': 'late',
-    'PHASE4': 'commercial',
-    'NA': 'preclinical',
-    'EARLY_PHASE1': 'early',
-}
+
+def load_sponsor_mapping() -> Dict[str, str]:
+    """Load ticker to sponsor name mapping."""
+    if SPONSOR_MAPPING_FILE.exists():
+        with open(SPONSOR_MAPPING_FILE, 'r') as f:
+            return json.load(f)
+    return {}
+
+
+# Load mapping at module import
+_SPONSOR_MAPPING = None
+
+
+def get_sponsor_mapping() -> Dict[str, str]:
+    """Get sponsor mapping, loading if needed."""
+    global _SPONSOR_MAPPING
+    if _SPONSOR_MAPPING is None:
+        _SPONSOR_MAPPING = load_sponsor_mapping()
+    return _SPONSOR_MAPPING
 
 
 def get_company_name(ticker: str) -> Optional[str]:
-    """Get company name for a ticker."""
-    # Check hardcoded mapping first
-    if ticker.upper() in TICKER_TO_COMPANY:
-        return TICKER_TO_COMPANY[ticker.upper()]
+    """Get company name for a ticker from mapping."""
+    mapping = get_sponsor_mapping()
 
-    # Try to load from cache
-    cache_file = CACHE_DIR / "ticker_to_company.json"
-    if cache_file.exists():
-        with open(cache_file, 'r') as f:
-            cache = json.load(f)
-            if ticker.upper() in cache:
-                return cache[ticker.upper()]
+    # Check mapping first
+    if ticker.upper() in mapping:
+        return mapping[ticker.upper()]
 
-    return None
+    # Return ticker as fallback (will likely fail but worth trying)
+    return ticker
 
 
 def search_trials(sponsor: str, as_of_date: str,
