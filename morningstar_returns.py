@@ -150,14 +150,8 @@ class MorningstarReturnsFetcher:
                 "  Linux:   export MD_AUTH_TOKEN='your-token'"
             )
 
-        # Initialize the library
-        try:
-            md.init(token)
-            self._md_initialized = True
-        except Exception as e:
-            raise ConnectionError(
-                f"Failed to initialize Morningstar connection: {e}"
-            ) from e
+        # Token is set - morningstar-data reads it automatically from env
+        self._md_initialized = True
 
     def _fetch_batch_returns(
         self,
