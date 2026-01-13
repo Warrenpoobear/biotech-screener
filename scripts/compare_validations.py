@@ -309,25 +309,29 @@ def run_validation_for_quarter(screen_date: str, quarter: str) -> Optional[Dict]
         # Step 1: Reconstruct snapshot and generate rankings
         print("\nStep 1: Reconstructing snapshot with expanded clinical coverage...")
 
-        # Find tickers file - check multiple locations
+        # Find tickers file - check multiple locations (use absolute paths)
+        repo_root = Path(__file__).parent.parent.resolve()
         tickers_file = None
         possible_paths = [
-            Path("data/tickers/biotech_universe.csv"),
-            Path("data/universe/biotech_universe_v1.csv"),
-            Path("data/universe_322_biotech.csv"),
-            Path("data/universe_322_ranked.csv"),
-            Path("example_universe.csv"),
+            repo_root / "data/tickers/biotech_universe.csv",
+            repo_root / "data/universe/biotech_universe_v1.csv",
+            repo_root / "data/universe_322_biotech.csv",
+            repo_root / "data/universe_322_ranked.csv",
+            repo_root / "example_universe.csv",
         ]
         for p in possible_paths:
             if p.exists():
                 tickers_file = p
-                print(f"  Using tickers file: {tickers_file}")
+                # Count tickers in file
+                with open(p, 'r', encoding='utf-8-sig') as f:
+                    lines = [l.strip() for l in f if l.strip() and not l.startswith('#')]
+                print(f"  Using tickers file: {tickers_file} ({len(lines)} lines)")
                 break
 
         if tickers_file is None:
             print("Error: No tickers file found! Checked:")
             for p in possible_paths:
-                print(f"  - {p}")
+                print(f"  - {p} (exists: {p.exists()})")
             return None
 
         cmd = [
@@ -348,14 +352,29 @@ def run_validation_for_quarter(screen_date: str, quarter: str) -> Optional[Dict]
         print("\nStep 2: Validating rankings against forward returns...")
 
         rankings_file = Path(f"data/snapshots/{screen_date}/rankings.csv")
-        returns_db = Path("data/returns/returns_db.json")
+
+        # Find returns database - check multiple locations/patterns
+        returns_db = None
+        returns_dir = Path("data/returns")
+        if returns_dir.exists():
+            # Look for returns_db*.json files
+            db_files = list(returns_dir.glob("returns_db*.json"))
+            if db_files:
+                returns_db = sorted(db_files, key=lambda x: x.stat().st_mtime, reverse=True)[0]
+                print(f"  Using returns database: {returns_db}")
+
+        if returns_db is None:
+            # Try default path
+            default_db = Path("data/returns/returns_db.json")
+            if default_db.exists():
+                returns_db = default_db
 
         if not rankings_file.exists():
             print(f"Error: Rankings file not found: {rankings_file}")
             return None
 
-        if not returns_db.exists():
-            print(f"Warning: Returns database not found: {returns_db}")
+        if returns_db is None or not returns_db.exists():
+            print(f"Warning: Returns database not found in data/returns/")
             print("Skipping forward returns validation")
             return None
 
