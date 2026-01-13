@@ -65,6 +65,12 @@ class ValidationResult:
     benchmark_return: Optional[float]
     avg_alpha: Optional[float]
 
+    # Alpha metrics (enhanced)
+    alpha_hit_rate: Optional[float]  # % that beat benchmark
+    median_alpha: Optional[float]
+    quintile_alphas: Dict[int, float]  # Alpha by quintile
+    alpha_spread: Optional[float]  # Q1 alpha - Q5 alpha
+
     # Quintile analysis
     quintile_returns: Dict[int, float]  # Q1=top, Q5=bottom
     quintile_spread: Optional[float]  # Q1 - Q5
@@ -200,6 +206,10 @@ def validate_signals(
             std_return=None,
             benchmark_return=None,
             avg_alpha=None,
+            alpha_hit_rate=None,
+            median_alpha=None,
+            quintile_alphas={},
+            alpha_spread=None,
             quintile_returns={},
             quintile_spread=None,
             ticker_results=ticker_results,
@@ -228,15 +238,45 @@ def validate_signals(
     benchmark_return = database.get_forward_return("XBI", screen_date, forward_months)
     benchmark_return = float(benchmark_return) if benchmark_return else None
 
-    # Average alpha
+    # Alpha metrics
     excess_returns = [r["excess_return"] for r in ticker_results if r["excess_return"] is not None]
     avg_alpha = sum(excess_returns) / len(excess_returns) if excess_returns else None
+
+    # Enhanced alpha metrics
+    alpha_hit_rate = None
+    median_alpha = None
+    if excess_returns:
+        # Alpha hit rate (% that beat benchmark)
+        beat_benchmark = sum(1 for a in excess_returns if a > 0)
+        alpha_hit_rate = beat_benchmark / len(excess_returns)
+
+        # Median alpha
+        sorted_alphas = sorted(excess_returns)
+        mid = len(sorted_alphas) // 2
+        if len(sorted_alphas) % 2 == 0:
+            median_alpha = (sorted_alphas[mid - 1] + sorted_alphas[mid]) / 2
+        else:
+            median_alpha = sorted_alphas[mid]
+
+    # Build alpha list in ranked order (matching returns_list order)
+    alpha_list = []
+    for ticker, _ in returns_list:
+        for r in ticker_results:
+            if r["ticker"] == ticker and r["excess_return"] is not None:
+                alpha_list.append((ticker, r["excess_return"]))
+                break
 
     # Quintile analysis
     quintile_returns = calculate_quintiles(returns_list)
     quintile_spread = None
     if 1 in quintile_returns and 5 in quintile_returns:
         quintile_spread = quintile_returns[1] - quintile_returns[5]
+
+    # Quintile alpha analysis
+    quintile_alphas = calculate_quintiles(alpha_list)
+    alpha_spread = None
+    if 1 in quintile_alphas and 5 in quintile_alphas:
+        alpha_spread = quintile_alphas[1] - quintile_alphas[5]
 
     return ValidationResult(
         screen_date=screen_date,
@@ -249,6 +289,10 @@ def validate_signals(
         std_return=std_return,
         benchmark_return=benchmark_return,
         avg_alpha=avg_alpha,
+        alpha_hit_rate=alpha_hit_rate,
+        median_alpha=median_alpha,
+        quintile_alphas=quintile_alphas,
+        alpha_spread=alpha_spread,
         quintile_returns=quintile_returns,
         quintile_spread=quintile_spread,
         ticker_results=ticker_results,
@@ -292,15 +336,29 @@ def print_report(result: ValidationResult) -> None:
     print(f"  Std Deviation:     {fmt_pct(result.std_return)}")
     print()
 
-    # Benchmark Comparison
+    # Alpha Metrics (vs XBI Benchmark)
     print("-" * 60)
-    print("BENCHMARK COMPARISON (vs XBI)")
+    print("ALPHA METRICS (vs XBI)")
     print("-" * 60)
     print(f"  XBI Return:        {fmt_pct(result.benchmark_return)}")
+    print(f"  Alpha Hit Rate:    {fmt_pct(result.alpha_hit_rate)}  (% that beat XBI)")
     print(f"  Average Alpha:     {fmt_pct(result.avg_alpha)}")
+    print(f"  Median Alpha:      {fmt_pct(result.median_alpha)}")
     print()
 
-    # Quintile Analysis
+    # Alpha by quintile
+    if result.quintile_alphas:
+        print("  Alpha by Quintile:")
+        for q in range(1, 6):
+            if q in result.quintile_alphas:
+                label = "TOP" if q == 1 else "BOTTOM" if q == 5 else ""
+                print(f"    Q{q}: {fmt_pct(result.quintile_alphas[q]):>10}  {label}")
+        print()
+        if result.alpha_spread is not None:
+            print(f"  Alpha Q1-Q5 Spread: {fmt_pct(result.alpha_spread)}")
+            print()
+
+    # Quintile Analysis (Absolute Returns)
     if result.quintile_returns:
         print("-" * 60)
         print("QUINTILE ANALYSIS")
@@ -345,11 +403,24 @@ def print_report(result: ValidationResult) -> None:
     # Alpha interpretation
     if result.avg_alpha is not None:
         if result.avg_alpha > 0.05:
-            print(f"  [ALPHA] {result.avg_alpha*100:.1f}% average alpha vs XBI")
+            print(f"  [STRONG ALPHA] {result.avg_alpha*100:.1f}% average alpha vs XBI")
+        elif result.avg_alpha > 0.02:
+            print(f"  [GOOD ALPHA] {result.avg_alpha*100:.1f}% average alpha vs XBI")
         elif result.avg_alpha > 0:
             print(f"  [MILD ALPHA] {result.avg_alpha*100:.1f}% average alpha vs XBI")
         else:
             print(f"  [NO ALPHA] {result.avg_alpha*100:.1f}% underperforms XBI on average")
+
+    # Alpha spread interpretation
+    if result.alpha_spread is not None:
+        if result.alpha_spread > 0.10:
+            print(f"  [STRONG RANKING] {result.alpha_spread*100:.1f}% alpha spread - top picks generate most alpha")
+        elif result.alpha_spread > 0.05:
+            print(f"  [GOOD RANKING] {result.alpha_spread*100:.1f}% alpha spread - ranking adds value")
+        elif result.alpha_spread > 0:
+            print(f"  [WEAK RANKING] {result.alpha_spread*100:.1f}% alpha spread - minimal ranking benefit")
+        else:
+            print(f"  [INVERTED ALPHA] Negative alpha spread - bottom-ranked generate more alpha!")
 
     print()
 
@@ -368,6 +439,13 @@ def save_results(result: ValidationResult, output_path: Path) -> None:
             "std_return": result.std_return,
             "benchmark_return": result.benchmark_return,
             "avg_alpha": result.avg_alpha,
+        },
+        "alpha_metrics": {
+            "alpha_hit_rate": result.alpha_hit_rate,
+            "avg_alpha": result.avg_alpha,
+            "median_alpha": result.median_alpha,
+            "quintile_alphas": result.quintile_alphas,
+            "alpha_spread": result.alpha_spread,
         },
         "quintile_analysis": {
             "quintile_returns": result.quintile_returns,
