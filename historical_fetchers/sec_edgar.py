@@ -20,8 +20,9 @@ from typing import Dict, Any, List, Optional
 import urllib.request
 import urllib.error
 
-# SEC EDGAR API base URL
-SEC_BASE_URL = "https://data.sec.gov"
+# SEC EDGAR API base URLs
+SEC_DATA_URL = "https://data.sec.gov"
+SEC_WWW_URL = "https://www.sec.gov"
 
 # Required headers for SEC EDGAR API
 SEC_HEADERS = {
@@ -51,7 +52,7 @@ def get_cik_for_ticker(ticker: str) -> Optional[str]:
                 return cache[ticker.upper()]
 
     # Fetch the SEC company tickers mapping
-    tickers_url = f"{SEC_BASE_URL}/files/company_tickers.json"
+    tickers_url = f"{SEC_WWW_URL}/files/company_tickers.json"
 
     try:
         req = urllib.request.Request(tickers_url, headers=SEC_HEADERS)
@@ -84,7 +85,7 @@ def get_company_filings(cik: str) -> Dict[str, Any]:
     """
     Get all filings for a company by CIK.
     """
-    url = f"{SEC_BASE_URL}/submissions/CIK{cik}.json"
+    url = f"{SEC_DATA_URL}/submissions/CIK{cik}.json"
 
     req = urllib.request.Request(url, headers=SEC_HEADERS)
     with urllib.request.urlopen(req, timeout=30) as response:
@@ -133,7 +134,7 @@ def get_company_facts(cik: str) -> Optional[Dict]:
     - Cash and equivalents
     - Revenue, Net Income
     """
-    url = f"{SEC_BASE_URL}/api/xbrl/companyfacts/CIK{cik}.json"
+    url = f"{SEC_DATA_URL}/api/xbrl/companyfacts/CIK{cik}.json"
 
     try:
         req = urllib.request.Request(url, headers=SEC_HEADERS)
