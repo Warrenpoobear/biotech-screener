@@ -530,12 +530,14 @@ class ReturnsDatabase:
         if not forward_returns:
             return None
 
-        # Compound returns: (1 + r1) * (1 + r2) * ... - 1
+        # Compound returns: (1 + r1/100) * (1 + r2/100) * ... - 1
+        # Note: Morningstar returns are in percentage form (e.g., -13.97 means -13.97%)
         cumulative = Decimal("1")
         for r in forward_returns:
-            cumulative *= (Decimal("1") + r)
+            cumulative *= (Decimal("1") + r / Decimal("100"))
 
-        return (cumulative - Decimal("1")).quantize(Decimal("0.000001"))
+        # Return as percentage
+        return ((cumulative - Decimal("1")) * Decimal("100")).quantize(Decimal("0.0001"))
 
     def get_excess_return(
         self,
