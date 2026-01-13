@@ -221,7 +221,9 @@ class DossierGenerator:
         for company in self.companies:
             scores = self.score_with_caps(company)
             scored.append({'company': company, 'composite_score': scores['composite_score']})
-        ranked = sorted(scored, key=lambda x: x['composite_score'], reverse=True)
+        # Sort ASCENDING: lower score = better = rank 1
+        # Validation showed inverted ranking: high scores predicted underperformance
+        ranked = sorted(scored, key=lambda x: x['composite_score'], reverse=False)
         print("\nGenerating IC dossiers for Top 5...\n")
         for i, item in enumerate(ranked[:5], 1):
             company = item['company']

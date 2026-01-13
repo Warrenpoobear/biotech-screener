@@ -335,8 +335,9 @@ def enrich_with_defensive_overlays(
     
     # Step 2: Re-rank after multiplier application
     if apply_multiplier:
-        # Re-sort by adjusted composite score
-        ranked.sort(key=lambda x: (-Decimal(x["composite_score"]), x["ticker"]))
+        # Re-sort by adjusted composite score (ASCENDING: lower score = better = rank 1)
+        # Validation showed inverted ranking: high scores predicted underperformance
+        ranked.sort(key=lambda x: (Decimal(x["composite_score"]), x["ticker"]))
         # Re-assign ranks
         for i, rec in enumerate(ranked):
             rec["composite_rank"] = i + 1
