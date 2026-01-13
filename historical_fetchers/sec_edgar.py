@@ -38,8 +38,10 @@ def get_cik_for_ticker(ticker: str) -> Optional[str]:
     Get the CIK (Central Index Key) for a ticker symbol.
 
     The CIK is required to query SEC EDGAR for company filings.
+    Uses the SEC's company tickers JSON file for mapping.
     """
     cache_file = CACHE_DIR / "ticker_to_cik.json"
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
     # Check cache first
     if cache_file.exists():
@@ -48,31 +50,31 @@ def get_cik_for_ticker(ticker: str) -> Optional[str]:
             if ticker.upper() in cache:
                 return cache[ticker.upper()]
 
-    # Fetch from SEC
-    url = f"{SEC_BASE_URL}/submissions/CIK{ticker.upper()}.json"
+    # Fetch the SEC company tickers mapping
+    tickers_url = f"{SEC_BASE_URL}/files/company_tickers.json"
 
     try:
-        req = urllib.request.Request(url, headers=SEC_HEADERS)
+        req = urllib.request.Request(tickers_url, headers=SEC_HEADERS)
         with urllib.request.urlopen(req, timeout=30) as response:
             data = json.loads(response.read().decode())
-            cik = data.get('cik', '').zfill(10)
 
-            # Cache the result
-            CACHE_DIR.mkdir(parents=True, exist_ok=True)
-            cache = {}
-            if cache_file.exists():
-                with open(cache_file, 'r') as f:
-                    cache = json.load(f)
-            cache[ticker.upper()] = cik
+            # Build ticker -> CIK mapping
+            ticker_map = {}
+            for entry in data.values():
+                t = entry.get('ticker', '').upper()
+                cik = str(entry.get('cik_str', '')).zfill(10)
+                if t:
+                    ticker_map[t] = cik
+
+            # Save to cache
             with open(cache_file, 'w') as f:
-                json.dump(cache, f, indent=2)
+                json.dump(ticker_map, f, indent=2)
 
-            return cik
+            return ticker_map.get(ticker.upper())
+
     except urllib.error.HTTPError as e:
-        if e.code == 404:
-            print(f"  Warning: Ticker {ticker} not found in SEC EDGAR")
-            return None
-        raise
+        print(f"  HTTP Error {e.code} fetching CIK mapping")
+        return None
     except Exception as e:
         print(f"  Error fetching CIK for {ticker}: {e}")
         return None

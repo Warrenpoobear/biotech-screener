@@ -30,8 +30,24 @@ from historical_fetchers.clinicaltrials_gov import get_historical_clinical, fetc
 def load_universe(tickers_file: str = None) -> List[str]:
     """Load universe of tickers to reconstruct."""
     if tickers_file:
-        with open(tickers_file, 'r') as f:
-            return [line.strip() for line in f if line.strip()]
+        with open(tickers_file, 'r', encoding='utf-8', errors='ignore') as f:
+            # Handle both plain text files and CSVs
+            lines = f.readlines()
+            tickers = []
+            for line in lines:
+                line = line.strip()
+                if not line:
+                    continue
+                # If CSV, extract ticker from second column (Rank,Ticker,...)
+                if ',' in line:
+                    parts = line.split(',')
+                    if len(parts) >= 2 and parts[1] and parts[1] != 'Ticker':
+                        tickers.append(parts[1].strip())
+                else:
+                    # Plain text file - one ticker per line
+                    if line and not line.startswith('#'):
+                        tickers.append(line)
+            return tickers
 
     # Try to load from existing snapshot
     snapshot_dir = Path("data/snapshots")
