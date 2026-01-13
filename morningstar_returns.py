@@ -170,35 +170,33 @@ class MorningstarReturnsFetcher:
 
         try:
             # Step 1: Look up Morningstar SecIds for tickers using investments()
-            ticker_queries = [f"{t}:US" for t in tickers]
+            # investments() takes a single ticker string, returns DataFrame with matches
             ticker_to_secid = {}
             secid_to_ticker = {}
 
-            try:
-                inv_df = md.direct.investments(ticker_queries)
-                if inv_df is not None and not inv_df.empty:
-                    for idx, row in inv_df.iterrows():
-                        sec_id = str(row.get('SecId', ''))
-                        # Try to extract ticker from the index or Id column
-                        row_id = str(idx) if isinstance(idx, str) else str(row.get('Id', ''))
-                        if ':' in row_id:
-                            ticker = row_id.split(':')[0].upper()
-                        else:
-                            ticker = row_id.upper()
-                        if sec_id and ticker in [t.upper() for t in tickers]:
-                            ticker_to_secid[ticker] = sec_id
-                            secid_to_ticker[sec_id] = ticker
-            except Exception as e:
-                # If investments lookup fails, continue with empty mapping
-                pass
+            for ticker in tickers:
+                try:
+                    inv_df = md.direct.investments(ticker)
+                    if inv_df is not None and not inv_df.empty:
+                        # Filter for US listings (Country=USA, Base Currency=USD)
+                        us_rows = inv_df[
+                            (inv_df['Country'] == 'USA') &
+                            (inv_df['Base Currency'] == 'USD')
+                        ]
+                        if not us_rows.empty:
+                            # Take the first US match
+                            sec_id = str(us_rows.iloc[0]['SecId'])
+                            ticker_to_secid[ticker.upper()] = sec_id
+                            secid_to_ticker[sec_id] = ticker.upper()
+                except Exception:
+                    # Skip tickers that can't be looked up
+                    pass
 
             # Step 2: Fetch returns using SecIds (not ticker:US format)
             sec_ids = list(ticker_to_secid.values())
             if not sec_ids:
-                # Fallback: try ticker:US format if no SecIds found
-                sec_ids = ticker_queries
-                for t in tickers:
-                    secid_to_ticker[f"{t}:US"] = t
+                # No SecIds found - return empty
+                return {}
 
             # Try the new get_returns API first, fall back to deprecated returns() if needed
             df = None
