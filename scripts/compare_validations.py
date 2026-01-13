@@ -1,4 +1,4 @@
-"""
+﻿"""
 Compare validation results across different versions of the screening system.
 
 Tracks improvements from enhancements like clinical coverage expansion.
@@ -79,8 +79,8 @@ class ValidationComparison:
                 spread_change = enhanced['q1_q5_spread'] - baseline['q1_q5_spread']
                 alpha_change = enhanced['q1_alpha'] - baseline['q1_alpha']
                 
-                spread_arrow = "📈" if spread_change > 0 else "📉" if spread_change < 0 else "→"
-                alpha_arrow = "📈" if alpha_change > 0 else "📉" if alpha_change < 0 else "→"
+                spread_arrow = "ðŸ“ˆ" if spread_change > 0 else "ðŸ“‰" if spread_change < 0 else "â†’"
+                alpha_arrow = "ðŸ“ˆ" if alpha_change > 0 else "ðŸ“‰" if alpha_change < 0 else "â†’"
                 
                 lines.append(
                     f"| {quarter} | {baseline['screen_date']} | "
@@ -166,7 +166,7 @@ class ValidationComparison:
             lines.append("### Q1-Q5 Spread Improvements:")
             for i, (quarter, data) in enumerate(sorted_improvements[:3], 1):
                 lines.append(
-                    f"{i}. **{quarter}**: {data['baseline']:+.2f}% → {data['enhanced']:+.2f}% "
+                    f"{i}. **{quarter}**: {data['baseline']:+.2f}% â†’ {data['enhanced']:+.2f}% "
                     f"(*{data['absolute_change']:+.2f}% improvement*)"
                 )
         else:
@@ -185,7 +185,7 @@ class ValidationComparison:
         pending_quarters = total_quarters - completed_quarters
         
         lines.append(f"- **Total Test Periods**: {total_quarters}")
-        lines.append(f"- **Baseline Complete**: {total_quarters} ✅")
+        lines.append(f"- **Baseline Complete**: {total_quarters} âœ…")
         lines.append(f"- **Enhanced Complete**: {completed_quarters}")
         lines.append(f"- **Pending**: {pending_quarters}\n")
         
@@ -209,7 +209,7 @@ class ValidationComparison:
         report.append("## Enhancement: Clinical Coverage Expansion")
         report.append("- **Baseline**: 13% clinical coverage (41/316 tickers)")
         report.append("- **Enhanced**: 70% clinical coverage (220+/316 tickers)")
-        report.append("- **Method**: Expanded ticker → sponsor name mapping\n")
+        report.append("- **Method**: Expanded ticker â†’ sponsor name mapping\n")
         
         report.append(self.generate_status_summary())
         report.append(self.generate_summary_table())
@@ -225,9 +225,9 @@ class ValidationComparison:
         if output_file:
             output_path = Path(output_file)
             output_path.parent.mkdir(parents=True, exist_ok=True)
-            with open(output_path, 'w') as f:
+            with open(output_path, 'w', encoding='utf-8') as f:
                 f.write(report_text)
-            print(f"\n✅ Report saved to: {output_file}")
+            print(f"\nâœ… Report saved to: {output_file}")
         
         return report_text
 
@@ -399,3 +399,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
