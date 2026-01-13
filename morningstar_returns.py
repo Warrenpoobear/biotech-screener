@@ -181,13 +181,13 @@ class MorningstarReturnsFetcher:
             # Try the new get_returns API first, fall back to deprecated returns() if needed
             df = None
             try:
-                # Import Frequency enum for new API
-                from morningstar_data.direct import Frequency
+                # Import Frequency enum for new API (correct path: data_type submodule)
+                from morningstar_data.direct.data_type import Frequency
                 df = md.direct.get_returns(
                     investments=sec_ids,
                     start_date=start_date,
                     end_date=end_date,
-                    frequency=Frequency.MONTHLY,
+                    freq=Frequency.monthly,  # lowercase enum value, 'freq' parameter
                 )
             except (AttributeError, ImportError):
                 # Fall back to deprecated API if get_returns not available
@@ -198,7 +198,7 @@ class MorningstarReturnsFetcher:
                         investments=sec_ids,
                         start_date=start_date,
                         end_date=end_date,
-                        frequency="monthly",
+                        freq="monthly",  # 'freq' parameter for deprecated API too
                     )
 
             # Convert DataFrame to dict
