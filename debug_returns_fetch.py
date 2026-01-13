@@ -17,35 +17,58 @@ print(f"morningstar-data version: {md.__version__}")
 # Test tickers
 test_tickers = ['VRTX', 'BMRN', 'ALNY']
 
-print("\n=== Step 1: Look up SecIds using investments() ===")
-ticker_queries = [f"{t}:US" for t in test_tickers]
-print(f"Querying: {ticker_queries}")
+print("\n=== Step 1: Explore investments() API ===")
 
-try:
-    inv_df = md.direct.investments(ticker_queries)
-    print(f"Result type: {type(inv_df)}")
-    if inv_df is not None and not inv_df.empty:
-        print(f"Columns: {list(inv_df.columns)}")
-        print(f"Index: {inv_df.index.tolist()}")
-        print(f"\nFull DataFrame:")
-        print(inv_df.to_string())
+# Try different API calls to find SecIds
+for ticker in test_tickers:
+    print(f"\n--- Looking up {ticker} ---")
 
-        # Extract SecIds
-        ticker_to_secid = {}
-        for idx, row in inv_df.iterrows():
-            print(f"\n  Row index: {idx}, type: {type(idx)}")
-            print(f"  Row data: {dict(row)}")
-            sec_id = row.get('SecId', None)
-            if sec_id:
-                ticker_to_secid[str(idx).split(':')[0]] = str(sec_id)
+    # Try 1: Search by ticker string
+    try:
+        result = md.direct.investments(ticker)
+        print(f"investments('{ticker}'): type={type(result)}")
+        if result is not None and hasattr(result, 'empty') and not result.empty:
+            print(f"  Columns: {list(result.columns)}")
+            print(f"  First rows:\n{result.head(3).to_string()}")
+        elif result is not None:
+            print(f"  Result: {result}")
+    except Exception as e:
+        print(f"  Error: {e}")
 
-        print(f"\nTicker to SecId mapping: {ticker_to_secid}")
-    else:
-        print("Empty or None result")
-except Exception as e:
-    print(f"Error: {e}")
-    import traceback
-    traceback.print_exc()
+    # Try 2: Search with exchange
+    try:
+        result = md.direct.investments(f"{ticker}:US")
+        print(f"investments('{ticker}:US'): type={type(result)}")
+        if result is not None and hasattr(result, 'empty') and not result.empty:
+            print(f"  Columns: {list(result.columns)}")
+            print(f"  First rows:\n{result.head(3).to_string()}")
+    except Exception as e:
+        print(f"  Error: {e}")
+
+# Try 3: Check for other functions
+print("\n=== Available md.direct functions ===")
+funcs = [f for f in dir(md.direct) if not f.startswith('_')]
+print(funcs)
+
+# Try search function if available
+if hasattr(md.direct, 'search'):
+    print("\n=== Trying md.direct.search() ===")
+    try:
+        result = md.direct.search("VRTX")
+        print(f"search('VRTX'): {type(result)}")
+        if hasattr(result, 'head'):
+            print(result.head().to_string())
+    except Exception as e:
+        print(f"Error: {e}")
+
+# Try get_security_details or similar
+if hasattr(md.direct, 'get_security_details'):
+    print("\n=== Trying md.direct.get_security_details() ===")
+    try:
+        result = md.direct.get_security_details(['VRTX:US'])
+        print(f"Result: {type(result)}")
+    except Exception as e:
+        print(f"Error: {e}")
 
 print("\n=== Step 2: Fetch returns using SecIds ===")
 # Use known working SecId from earlier testing
