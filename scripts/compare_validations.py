@@ -310,14 +310,15 @@ def run_validation_for_quarter(screen_date: str, quarter: str) -> Optional[Dict]
         print("\nStep 1: Reconstructing snapshot with expanded clinical coverage...")
 
         # Find tickers file - check multiple locations (use absolute paths)
+        # Prefer larger universe files first
         repo_root = Path(__file__).parent.parent.resolve()
         tickers_file = None
         possible_paths = [
-            repo_root / "data/tickers/biotech_universe.csv",
-            repo_root / "data/universe/biotech_universe_v1.csv",
-            repo_root / "data/universe_322_biotech.csv",
-            repo_root / "data/universe_322_ranked.csv",
-            repo_root / "example_universe.csv",
+            repo_root / "data/universe_322_biotech.csv",      # 322 tickers - preferred
+            repo_root / "data/universe_322_ranked.csv",       # 322 tickers ranked
+            repo_root / "data/tickers/biotech_universe.csv",  # Custom tickers
+            repo_root / "data/universe/biotech_universe_v1.csv",  # Small test set
+            repo_root / "example_universe.csv",               # Fallback
         ]
         for p in possible_paths:
             if p.exists():
