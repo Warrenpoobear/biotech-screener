@@ -75,13 +75,8 @@ def check_availability() -> Tuple[bool, str]:
     if not os.environ.get('MD_AUTH_TOKEN'):
         return False, "MD_AUTH_TOKEN environment variable not set"
 
-    # Initialize the connection
-    try:
-        token = os.environ.get('MD_AUTH_TOKEN')
-        md.init(token)
-    except Exception as e:
-        return False, f"Failed to initialize: {e}"
-
+    # The morningstar-data package reads MD_AUTH_TOKEN automatically
+    # No explicit init() call needed
     return True, "Morningstar Direct available"
 
 
