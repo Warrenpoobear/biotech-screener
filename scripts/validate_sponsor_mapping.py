@@ -64,7 +64,7 @@ def search_clinical_trials(sponsor_name: str, max_results: int = 1) -> Tuple[Opt
         - error_message is None if successful
     """
     params = {
-        "query.lead": sponsor_name,
+        "query.spons": sponsor_name,
         "pageSize": str(max_results),
         "format": "json"
     }
