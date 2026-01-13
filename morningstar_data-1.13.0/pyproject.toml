@@ -1,0 +1,104 @@
+[tool.poetry]
+name = "morningstar_data"
+version = "1.13.0"
+description = "Morningstar Data"
+authors = ["Morningstar, Inc."]
+readme = "README.md"
+license = "Apache-2.0"
+homepage = "https://www.morningstar.com/products/md-python-package"
+documentation = "https://docs-analyticslab.morningstar.com/latest/index.html"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+pandas = ">=1.5.3,<3"
+typeguard = "^2.13.3"
+PyJWT = "^2.4.0"
+boto3 = "^1.20.1"
+polling2 = "0.5.0"
+tenacity = "^8.2.2"
+simplejson = ">=3"
+requests = "^2.28.2"
+# We are not using pyarrow directly, but it is required for pandas to read feather files
+pyarrow = ">=10.0.1"
+# We do not depend on a specific numpy version directly, but adding this forces poetry to make the same
+# calculations as it does for other direct dependencies in terms of only installing versions which are compatible
+# with morningstar_data's lowest supported python version. This prevents incompatible pandas+numpy combos
+# being installed in our local environments. We can probably remove this after dropping python<3.10 support or if we move away from poetry
+numpy = "*"
+
+[tool.poetry.dev-dependencies]
+mypy = "^0.931"
+pytest = ">7"
+pytest-cov = "^4.1.0"
+ruff = "^0.11.4"
+
+requests_mock = "^1.8.0"
+Sphinx = "^7.1"
+# We can't use a more updated version of sphinx-autobuild until we drop support for python 3.8
+sphinx-autobuild = "^2021.03.14"
+furo = "2024.1.29"
+ipython = "7.31.1"
+pytest-mock = "^3.8.1"
+sphinx-multiversion = "^0.2.4"
+mockito = "^1.2.2"
+boto3-stubs = "^1.26.23"
+moto = "^4.0.11"
+importlib-metadata = "^4.13.0"
+pytest-xdist = "^3.1.0"
+towncrier = "^22.12.0"
+sphinx_design = "0.5.0"
+vcrpy = "^5.1.0"
+# vcrpy 5.1.0 needs a urllib3 version < 2.0. So the below will pick a version that is compatible.
+urllib3 = "<2.0.0"
+
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.towncrier]
+    package = "morningstar_data"
+    filename = "CHANGELOG.rst"
+    directory = "docs/changelog/"
+    issue_format = "`{issue} <https://msjira.morningstar.com/browse/{issue}>`__"
+    template = "docs/changelog/template.rst"
+
+    [[tool.towncrier.type]]
+        directory = "breaking"
+        name = "Backwards Incompatible Changes"
+        showcontent = true
+
+    [[tool.towncrier.type]]
+        directory = "api"
+        name = "API Changes"
+        showcontent = true
+
+    [[tool.towncrier.type]]
+      directory = "removal"
+      name = "Deprecations and Removals"
+      showcontent = true
+
+    [[tool.towncrier.type]]
+      directory = "feature"
+      name = "Features"
+      showcontent = true
+
+    [[tool.towncrier.type]]
+      directory = "bugfix"
+      name = "Bug Fixes"
+      showcontent = true
+
+    [[tool.towncrier.type]]
+      directory = "doc"
+      name = "Added/Improved Documentation"
+      showcontent = true
+
+    [[tool.towncrier.type]]
+      directory = "docfix"
+      name = "Documentation Fixes"
+      showcontent = true
+
+    [[tool.towncrier.type]]
+      directory = "trivial"
+      name = "Trivial/Internal Changes"
+      showcontent = true

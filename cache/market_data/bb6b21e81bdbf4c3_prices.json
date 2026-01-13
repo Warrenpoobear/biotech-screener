@@ -1,0 +1,18 @@
+{
+  "cached_at": "2026-01-12T16:13:34.341333",
+  "data": {
+    "as_of": "2026-01-12",
+    "lookback_days": 40,
+    "num_prices": 5,
+    "prices": [
+      "54.68999863",
+      "54.63000107",
+      "54.54999924",
+      "54.65000153",
+      "54.65000153"
+    ],
+    "source_provider": "yahoo",
+    "ticker": "AKRO"
+  },
+  "integrity": "ed3eff1c9fd73bf21f4021c2f7298639593c49167c6f2b569b128fde4b535004"
+}
