@@ -34,17 +34,37 @@ def load_universe(tickers_file: str = None) -> List[str]:
             # Handle both plain text files and CSVs
             lines = f.readlines()
             tickers = []
-            for line in lines:
+            ticker_col = None  # Will auto-detect
+
+            for i, line in enumerate(lines):
                 line = line.strip()
                 if not line:
                     continue
-                # If CSV, extract ticker from second column (Rank,Ticker,...)
+
+                # If CSV, extract ticker
                 if ',' in line:
-                    parts = line.split(',')
-                    if len(parts) >= 2:
-                        ticker = parts[1].strip().strip('"')
-                        # Validate ticker: 1-5 uppercase letters
-                        if (ticker and ticker != 'Ticker' and
+                    parts = [p.strip().strip('"') for p in line.split(',')]
+
+                    # First line: detect which column has tickers
+                    if i == 0 and ticker_col is None:
+                        # Check header for 'ticker' column
+                        lower_parts = [p.lower() for p in parts]
+                        if 'ticker' in lower_parts:
+                            ticker_col = lower_parts.index('ticker')
+                        elif 'symbol' in lower_parts:
+                            ticker_col = lower_parts.index('symbol')
+                        else:
+                            # Default to column 1 (Rank,Ticker,...) or 0 if only 1 col
+                            ticker_col = 1 if len(parts) > 1 else 0
+                        continue  # Skip header row
+
+                    if ticker_col is None:
+                        ticker_col = 0  # Default
+
+                    if len(parts) > ticker_col:
+                        ticker = parts[ticker_col]
+                        # Validate ticker: 1-6 uppercase letters
+                        if (ticker and ticker.upper() != 'TICKER' and
                             len(ticker) <= 6 and ticker.isalpha() and
                             ticker.isupper()):
                             tickers.append(ticker)
