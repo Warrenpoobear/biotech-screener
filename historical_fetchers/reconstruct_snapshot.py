@@ -193,13 +193,19 @@ def generate_rankings_from_historical(snapshot_date: str) -> None:
         clin = clinical.get(ticker, {})
 
         # Financial score (lower is better - penalty style)
-        # High cash = good, high debt = bad
         cash = fin.get('cash', 0) or 0
         debt = fin.get('debt', 0) or 0
         runway = fin.get('runway_months', 0) or 0
 
-        # Normalize cash to 0-50 score (higher cash = lower score)
-        if cash > 1e9:  # > $1B
+        # First try to use existing financial_normalized from snapshot collector
+        existing_fin = fin.get('financial_normalized')
+        if existing_fin is not None:
+            try:
+                financial_score = float(existing_fin)
+            except (ValueError, TypeError):
+                financial_score = 30  # Neutral fallback
+        # Otherwise derive from cash (historical fetcher data)
+        elif cash > 1e9:  # > $1B
             financial_score = 10
         elif cash > 500e6:  # > $500M
             financial_score = 20
@@ -208,11 +214,22 @@ def generate_rankings_from_historical(snapshot_date: str) -> None:
         elif cash > 0:
             financial_score = 40
         else:
-            financial_score = 50
+            financial_score = 30  # Neutral - don't penalize missing data
 
         # Clinical score based on stage
-        stage_bucket = clin.get('stage_bucket', 'unknown')
-        if stage_bucket == 'commercial':
+        # NOTE: Unknown stage gets NEUTRAL score (30) to avoid penalizing
+        # companies without clinical data coverage
+        stage_bucket = clin.get('stage_bucket')
+
+        # First try to use existing clinical_score from snapshot collector
+        existing_score = clin.get('clinical_score')
+        if existing_score is not None:
+            try:
+                clinical_score = float(existing_score)
+            except (ValueError, TypeError):
+                clinical_score = 30  # Neutral fallback
+        # Otherwise derive from stage_bucket (historical fetcher data)
+        elif stage_bucket == 'commercial':
             clinical_score = 10
         elif stage_bucket == 'late':
             clinical_score = 20
@@ -221,7 +238,7 @@ def generate_rankings_from_historical(snapshot_date: str) -> None:
         elif stage_bucket == 'early':
             clinical_score = 40
         else:
-            clinical_score = 50
+            clinical_score = 30  # Neutral - don't penalize missing data
 
         # Composite (simple average for now)
         composite_score = (financial_score + clinical_score) / 2
