@@ -309,19 +309,34 @@ def run_validation_for_quarter(screen_date: str, quarter: str) -> Optional[Dict]
         # Step 1: Reconstruct snapshot and generate rankings
         print("\nStep 1: Reconstructing snapshot with expanded clinical coverage...")
 
-        # Find tickers file
-        tickers_file = Path("data/tickers/biotech_universe.csv")
-        if not tickers_file.exists():
-            tickers_file = Path("example_universe.csv")
+        # Find tickers file - check multiple locations
+        tickers_file = None
+        possible_paths = [
+            Path("data/tickers/biotech_universe.csv"),
+            Path("data/universe/biotech_universe_v1.csv"),
+            Path("data/universe_322_biotech.csv"),
+            Path("data/universe_322_ranked.csv"),
+            Path("example_universe.csv"),
+        ]
+        for p in possible_paths:
+            if p.exists():
+                tickers_file = p
+                print(f"  Using tickers file: {tickers_file}")
+                break
+
+        if tickers_file is None:
+            print("Error: No tickers file found! Checked:")
+            for p in possible_paths:
+                print(f"  - {p}")
+            return None
 
         cmd = [
             sys.executable,
             "historical_fetchers/reconstruct_snapshot.py",
             "--date", screen_date,
-            "--generate-rankings"
+            "--generate-rankings",
+            "--tickers-file", str(tickers_file)
         ]
-        if tickers_file.exists():
-            cmd.extend(["--tickers-file", str(tickers_file)])
 
         result = subprocess.run(cmd, capture_output=True, text=True, cwd=str(Path(__file__).parent.parent))
         if result.returncode != 0:
