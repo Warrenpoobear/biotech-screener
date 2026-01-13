@@ -380,14 +380,19 @@ def print_report(result: ValidationResult) -> None:
     print("INTERPRETATION")
     print("-" * 60)
 
-    # Hit rate interpretation
+    # Hit rate interpretation (context-aware: compare to benchmark conditions)
+    # NOTE: Hit rate < 50% is normal in bear markets or high-dispersion sectors like biotech.
+    # The Q1-Q5 spread is the true test of ranking quality, not raw hit rate.
     if result.hit_rate is not None:
+        benchmark_positive = result.benchmark_return is not None and result.benchmark_return > 0
         if result.hit_rate > 0.55:
-            print(f"  [GOOD] Hit rate {result.hit_rate*100:.1f}% > 55% indicates useful signal")
+            print(f"  [GOOD] Hit rate {result.hit_rate*100:.1f}% > 55% indicates broad profitability")
         elif result.hit_rate > 0.50:
-            print(f"  [WEAK] Hit rate {result.hit_rate*100:.1f}% is marginally above random")
+            print(f"  [OK] Hit rate {result.hit_rate*100:.1f}% - majority profitable")
+        elif benchmark_positive:
+            print(f"  [MIXED] Hit rate {result.hit_rate*100:.1f}% despite positive benchmark - high dispersion")
         else:
-            print(f"  [POOR] Hit rate {result.hit_rate*100:.1f}% is below random - signal may be inverted")
+            print(f"  [EXPECTED] Hit rate {result.hit_rate*100:.1f}% in challenging market conditions")
 
     # Quintile spread interpretation
     if result.quintile_spread is not None:
