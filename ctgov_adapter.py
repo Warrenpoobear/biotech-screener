@@ -21,6 +21,19 @@ logger = logging.getLogger(__name__)
 # ENUMS
 # ============================================================================
 
+# Status aliases: map alternative CT.gov statuses to canonical values
+# These are legitimate statuses that should map to existing canonical values
+CTGOV_STATUS_ALIASES = {
+    # Post-trial/marketed statuses → COMPLETED (positive signal)
+    'APPROVED_FOR_MARKETING': 'COMPLETED',  # Drug approved by regulatory body
+    'AVAILABLE': 'COMPLETED',                # Drug/treatment available
+
+    # Discontinued/stopped statuses → WITHDRAWN (negative signal)
+    'NO_LONGER_AVAILABLE': 'WITHDRAWN',      # Drug discontinued
+    'WITHHELD': 'WITHDRAWN',                  # Trial data withheld/stopped
+}
+
+
 class CTGovStatus(Enum):
     """Normalized CT.gov status values (ordered)"""
     WITHDRAWN = 0
@@ -32,19 +45,24 @@ class CTGovStatus(Enum):
     RECRUITING = 6
     ACTIVE_NOT_RECRUITING = 7
     COMPLETED = 8
-    
+
     @classmethod
     def from_string(cls, status_str: str) -> 'CTGovStatus':
         """Normalize status string to enum"""
         if not status_str:
             return cls.UNKNOWN
-        
+
         # Normalize: uppercase, replace separators
         normalized = status_str.upper()
         normalized = re.sub(r'[,\-\s]+', '_', normalized)
         normalized = re.sub(r'_+', '_', normalized)
         normalized = normalized.strip('_')
-        
+
+        # Check for aliases first
+        if normalized in CTGOV_STATUS_ALIASES:
+            canonical_name = CTGOV_STATUS_ALIASES[normalized]
+            return cls[canonical_name]
+
         try:
             return cls[normalized]
         except KeyError:
