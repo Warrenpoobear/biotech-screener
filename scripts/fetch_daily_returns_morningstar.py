@@ -54,8 +54,45 @@ def load_universe(universe_path: str) -> list[str]:
     return tickers
 
 
+def lookup_single_ticker(md, ticker: str) -> str | None:
+    """
+    Try multiple strategies to look up a ticker's SecId.
+
+    Strategies tried in order:
+    1. Direct ticker search
+    2. Ticker:US format
+    3. XNAS:Ticker (NASDAQ)
+    4. XNYS:Ticker (NYSE)
+    """
+    strategies = [
+        ticker,              # Direct: VRTX
+        f"{ticker}:US",      # With suffix: VRTX:US
+        f"XNAS:{ticker}",    # NASDAQ: XNAS:VRTX
+        f"XNYS:{ticker}",    # NYSE: XNYS:VRTX
+    ]
+
+    for search_term in strategies:
+        try:
+            inv_df = md.direct.investments(search_term)
+            if inv_df is not None and not inv_df.empty:
+                # Filter for US listings
+                us_rows = inv_df[
+                    (inv_df['Country'] == 'USA') &
+                    (inv_df['Base Currency'] == 'USD')
+                ]
+                if not us_rows.empty:
+                    return str(us_rows.iloc[0]['SecId'])
+                # If no US filter match, try without filter
+                if not inv_df.empty:
+                    return str(inv_df.iloc[0]['SecId'])
+        except Exception:
+            continue
+
+    return None
+
+
 def lookup_secids(tickers: list[str]) -> dict[str, str]:
-    """Look up Morningstar SecIds for each ticker."""
+    """Look up Morningstar SecIds for each ticker using multiple strategies."""
     import morningstar_data as md
 
     ticker_to_secid = {}
@@ -64,38 +101,24 @@ def lookup_secids(tickers: list[str]) -> dict[str, str]:
     logger.info(f"Looking up SecIds for {len(tickers)} tickers...")
 
     for i, ticker in enumerate(tickers):
-        try:
-            inv_df = md.direct.investments(ticker)
-            if inv_df is not None and not inv_df.empty:
-                # Filter for US listings
-                us_rows = inv_df[
-                    (inv_df['Country'] == 'USA') &
-                    (inv_df['Base Currency'] == 'USD')
-                ]
-                if not us_rows.empty:
-                    sec_id = str(us_rows.iloc[0]['SecId'])
-                    ticker_to_secid[ticker] = sec_id
-                    logger.debug(f"  {ticker}: {sec_id}")
-                else:
-                    failed.append(ticker)
-                    logger.debug(f"  {ticker}: No US listing found")
-            else:
-                failed.append(ticker)
-                logger.debug(f"  {ticker}: No data")
-        except Exception as e:
+        sec_id = lookup_single_ticker(md, ticker)
+        if sec_id:
+            ticker_to_secid[ticker] = sec_id
+            logger.debug(f"  {ticker}: {sec_id}")
+        else:
             failed.append(ticker)
-            logger.debug(f"  {ticker}: ERROR - {str(e)[:50]}")
+            logger.debug(f"  {ticker}: Not found")
 
         # Progress update every 50 tickers
         if (i + 1) % 50 == 0:
-            logger.info(f"  Processed {i + 1}/{len(tickers)} tickers...")
+            logger.info(f"  Processed {i + 1}/{len(tickers)} tickers, found {len(ticker_to_secid)}")
 
         # Small delay to avoid rate limiting
         time.sleep(0.1)
 
     logger.info(f"Found SecIds for {len(ticker_to_secid)} tickers, {len(failed)} failed")
     if failed:
-        logger.debug(f"Failed tickers: {failed[:20]}...")
+        logger.info(f"Failed tickers (first 30): {failed[:30]}")
 
     return ticker_to_secid
 
