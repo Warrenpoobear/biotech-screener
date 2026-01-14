@@ -59,6 +59,57 @@ def get_momentum_weight(negative_pct: float) -> float:
         # Example: 2024-Q1 (17% negative)
         return 0.05
 
+
+def get_regime_adjusted_momentum_score(
+    momentum_pct: float,
+    negative_pct: float,
+    clip_at: float = 50.0
+) -> int:
+    """
+    Calculate regime-adaptive momentum score with trend/reversal switching.
+
+    - Scarce winners (60%+ negative): Trend-following (favor recent winners)
+    - Mixed tape (25-60% negative): Contrarian (fade momentum, buy beaten-down)
+    - Broad rally (<25% negative): Slight contrarian
+
+    Args:
+        momentum_pct: 3-month return percentage
+        negative_pct: Percentage of universe with negative momentum
+        clip_at: Maximum absolute momentum to consider (prevents chasing)
+
+    Returns:
+        Momentum score (10-40, lower is better)
+    """
+    # Clip extreme momentum to prevent chasing
+    clipped_momentum = max(-clip_at, min(clip_at, momentum_pct))
+
+    # Determine regime and apply appropriate strategy
+    if negative_pct >= 60:
+        # TREND-FOLLOWING MODE (scarce winners)
+        # Strong positive momentum = good (low score)
+        effective_momentum = clipped_momentum
+
+    elif negative_pct >= 25:
+        # CONTRARIAN MODE (mixed tape)
+        # Fade momentum - recent winners may consolidate, losers may bounce
+        # Invert the signal: negative momentum becomes positive signal
+        effective_momentum = -clipped_momentum * 0.7
+
+    else:
+        # WEAK CONTRARIAN MODE (broad rally)
+        # Slight fade, mostly neutral
+        effective_momentum = -clipped_momentum * 0.4
+
+    # Convert to score (lower is better)
+    if effective_momentum >= 20:
+        return 10  # Best
+    elif effective_momentum >= 5:
+        return 20
+    elif effective_momentum >= -5:
+        return 30  # Neutral
+    else:
+        return 40  # Worst
+
 # Support both gated and non-gated clinical scoring
 USE_GATED_CLINICAL = True  # Set to True to use confidence-weighted scoring
 
@@ -287,11 +338,21 @@ def generate_rankings_from_historical(snapshot_date: str) -> None:
                 adaptive_momentum_weight = get_momentum_weight(negative_pct)
 
                 # Log regime detection
-                regime = 'TREND' if negative_pct >= 60 else 'MIXED' if negative_pct >= 25 else 'BROAD_RALLY'
+                if negative_pct >= 60:
+                    regime = 'TREND'
+                    mode = 'trend-following (favor winners)'
+                elif negative_pct >= 25:
+                    regime = 'MIXED'
+                    mode = 'CONTRARIAN (fade momentum, buy beaten-down)'
+                else:
+                    regime = 'BROAD_RALLY'
+                    mode = 'weak contrarian (fundamentals lead)'
+
                 print(f"\n  Regime Detection:")
                 print(f"    Negative %: {negative_pct:.1f}%")
                 print(f"    Regime: {regime}")
-                print(f"    Momentum Weight: {adaptive_momentum_weight:.0%} (was fixed 15%)")
+                print(f"    Mode: {mode}")
+                print(f"    Momentum Weight: {adaptive_momentum_weight:.0%}")
 
         except Exception as e:
             print(f"  Warning: Momentum fetch failed: {e}")
@@ -351,15 +412,21 @@ def generate_rankings_from_historical(snapshot_date: str) -> None:
         else:
             clinical_score = 30  # Neutral - don't penalize missing data
 
-        # Momentum score (if enabled)
+        # Momentum score (if enabled) - with regime-adaptive scoring
         momentum_score = 30  # Neutral default
         momentum_pct = 0
         momentum_bucket = 'NEUTRAL'
         if USE_MOMENTUM and ticker in momentum_data:
             mom = momentum_data[ticker]
-            momentum_score = mom.get('momentum_score', 30)
             momentum_pct = mom.get('momentum_pct', 0)
             momentum_bucket = mom.get('momentum_bucket', 'NEUTRAL')
+
+            # Use regime-adjusted momentum score (trend vs contrarian)
+            momentum_score = get_regime_adjusted_momentum_score(
+                momentum_pct=momentum_pct,
+                negative_pct=negative_pct,
+                clip_at=50.0
+            )
 
         # Composite score calculation with regime-adaptive momentum weight
         if USE_MOMENTUM and momentum_data:
