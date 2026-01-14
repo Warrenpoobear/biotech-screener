@@ -24,7 +24,25 @@ from typing import Dict, List, Optional
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from historical_fetchers.sec_edgar import get_historical_financials, fetch_batch as fetch_financials
-from historical_fetchers.clinicaltrials_gov import get_historical_clinical, fetch_batch as fetch_clinical
+
+# Support both gated and non-gated clinical scoring
+USE_GATED_CLINICAL = True  # Set to True to use confidence-weighted scoring
+
+if USE_GATED_CLINICAL:
+    try:
+        from historical_fetchers.clinicaltrials_gov_gated import (
+            get_historical_clinical, fetch_batch as fetch_clinical
+        )
+        print("Using GATED clinical scoring (confidence-weighted)")
+    except ImportError:
+        from historical_fetchers.clinicaltrials_gov import (
+            get_historical_clinical, fetch_batch as fetch_clinical
+        )
+        print("Warning: Gated module not found, using standard clinical scoring")
+else:
+    from historical_fetchers.clinicaltrials_gov import (
+        get_historical_clinical, fetch_batch as fetch_clinical
+    )
 
 
 def load_universe(tickers_file: str = None) -> List[str]:
