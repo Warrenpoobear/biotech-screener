@@ -34,30 +34,30 @@ def get_momentum_weight(negative_pct: float) -> float:
     """
     Adjust momentum weight based on market breadth (regime detection).
 
-    High weight in scarce-winner environments (clear trends).
-    Low weight in broad/mixed markets (mean-reversion risk).
+    CRITICAL INSIGHT: In contrarian mode, we need MORE weight (not less)
+    because we're confident in mean-reversion signal.
 
     Args:
         negative_pct: Percentage of stocks with negative momentum (0-100)
 
     Returns:
-        Weight for momentum in composite score (0.05 to 0.20)
+        Weight for momentum in composite score (0.05 to 0.25)
     """
     if negative_pct >= 60:
         # Scarce winners - strong trends, momentum works great
         # Example: 2023-Q4 (69% negative) -> +57% spread
         return 0.20
     elif negative_pct >= 40:
-        # Moderate dispersion - momentum still useful
-        return 0.12
+        # Moderate dispersion - momentum still useful (trend-following)
+        return 0.15
     elif negative_pct >= 25:
-        # Mixed tape - mean-reversion risk, reduce momentum
-        # Example: 2024-Q2 (38% negative) -> was inverted
-        return 0.08
+        # Mixed tape - CONTRARIAN mode needs HIGH weight to override fundamentals
+        # Example: 2024-Q2 (38% negative) -> need strong contrarian signal
+        return 0.25  # INCREASED from 0.08 to override fundamentals
     else:
         # Broad rally - let fundamentals dominate
         # Example: 2024-Q1 (17% negative)
-        return 0.05
+        return 0.08
 
 
 def get_regime_adjusted_momentum_score(
