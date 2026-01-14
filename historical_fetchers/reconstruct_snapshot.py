@@ -27,7 +27,37 @@ from historical_fetchers.sec_edgar import get_historical_financials, fetch_batch
 
 # Support momentum signal integration
 USE_MOMENTUM = True  # Set to True to include 3-month momentum in rankings
-MOMENTUM_WEIGHT = 0.15  # Weight for momentum in composite (15%)
+MOMENTUM_WEIGHT = 0.15  # Default weight (overridden by regime detection)
+
+
+def get_momentum_weight(negative_pct: float) -> float:
+    """
+    Adjust momentum weight based on market breadth (regime detection).
+
+    High weight in scarce-winner environments (clear trends).
+    Low weight in broad/mixed markets (mean-reversion risk).
+
+    Args:
+        negative_pct: Percentage of stocks with negative momentum (0-100)
+
+    Returns:
+        Weight for momentum in composite score (0.05 to 0.20)
+    """
+    if negative_pct >= 60:
+        # Scarce winners - strong trends, momentum works great
+        # Example: 2023-Q4 (69% negative) -> +57% spread
+        return 0.20
+    elif negative_pct >= 40:
+        # Moderate dispersion - momentum still useful
+        return 0.12
+    elif negative_pct >= 25:
+        # Mixed tape - mean-reversion risk, reduce momentum
+        # Example: 2024-Q2 (38% negative) -> was inverted
+        return 0.08
+    else:
+        # Broad rally - let fundamentals dominate
+        # Example: 2024-Q1 (17% negative)
+        return 0.05
 
 # Support both gated and non-gated clinical scoring
 USE_GATED_CLINICAL = True  # Set to True to use confidence-weighted scoring
@@ -240,10 +270,29 @@ def generate_rankings_from_historical(snapshot_date: str) -> None:
 
     # Fetch momentum data if enabled
     momentum_data = {}
+    negative_pct = 50  # Default for regime detection
+    adaptive_momentum_weight = MOMENTUM_WEIGHT  # Default
+
     if USE_MOMENTUM:
         print(f"\nStep 5: Calculating 3-month momentum (as of {snapshot_date})...")
         try:
             momentum_data = get_momentum_batch(tickers, snapshot_date, delay=0.1)
+
+            # Calculate regime (negative percentage) for adaptive weighting
+            if momentum_data:
+                negative_count = sum(1 for t, m in momentum_data.items()
+                                     if m.get('momentum_bucket') == 'NEGATIVE')
+                total_with_momentum = len(momentum_data)
+                negative_pct = (negative_count / total_with_momentum * 100) if total_with_momentum > 0 else 50
+                adaptive_momentum_weight = get_momentum_weight(negative_pct)
+
+                # Log regime detection
+                regime = 'TREND' if negative_pct >= 60 else 'MIXED' if negative_pct >= 25 else 'BROAD_RALLY'
+                print(f"\n  Regime Detection:")
+                print(f"    Negative %: {negative_pct:.1f}%")
+                print(f"    Regime: {regime}")
+                print(f"    Momentum Weight: {adaptive_momentum_weight:.0%} (was fixed 15%)")
+
         except Exception as e:
             print(f"  Warning: Momentum fetch failed: {e}")
             momentum_data = {}
@@ -312,14 +361,14 @@ def generate_rankings_from_historical(snapshot_date: str) -> None:
             momentum_pct = mom.get('momentum_pct', 0)
             momentum_bucket = mom.get('momentum_bucket', 'NEUTRAL')
 
-        # Composite score calculation
+        # Composite score calculation with regime-adaptive momentum weight
         if USE_MOMENTUM and momentum_data:
-            # With momentum: financial(42.5%) + clinical(42.5%) + momentum(15%)
-            base_weight = (1 - MOMENTUM_WEIGHT) / 2
+            # Use pre-calculated regime-adaptive weight
+            base_weight = (1 - adaptive_momentum_weight) / 2
             composite_score = (
                 financial_score * base_weight +
                 clinical_score * base_weight +
-                momentum_score * MOMENTUM_WEIGHT
+                momentum_score * adaptive_momentum_weight
             )
         else:
             # Without momentum: financial(50%) + clinical(50%)
