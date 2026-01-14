@@ -34,30 +34,36 @@ def get_momentum_weight(negative_pct: float) -> float:
     """
     Adjust momentum weight based on market breadth (regime detection).
 
-    CRITICAL INSIGHT: In contrarian mode, we need MORE weight (not less)
-    because we're confident in mean-reversion signal.
+    Momentum is most useful when winners are scarce (high NEGATIVE% breadth).
+    In broad rallies, even small momentum weights can dilute fundamentals.
+
+    Validated thresholds from 7-quarter backtest:
+    - 60%+: Strong trend-following (scarce winners)
+    - 35-60%: Contrarian with high weight (mixed tape)
+    - 25-35%: Minimal momentum (broad market)
+    - <25%: Near-zero momentum (strong rally)
 
     Args:
         negative_pct: Percentage of stocks with negative momentum (0-100)
 
     Returns:
-        Weight for momentum in composite score (0.05 to 0.25)
+        Weight for momentum in composite score (0.03 to 0.25)
     """
     if negative_pct >= 60:
         # Scarce winners - strong trends, momentum works great
-        # Example: 2023-Q4 (69% negative) -> +57% spread
+        # Example: 2023-Q4 (69% negative) -> +54% spread
         return 0.20
-    elif negative_pct >= 40:
-        # Moderate dispersion - momentum still useful (trend-following)
-        return 0.15
-    elif negative_pct >= 25:
+    elif negative_pct >= 35:
         # Mixed tape - CONTRARIAN mode needs HIGH weight to override fundamentals
-        # Example: 2024-Q2 (38% negative) -> need strong contrarian signal
-        return 0.25  # INCREASED from 0.08 to override fundamentals
+        # Example: 2024-Q2 (38% negative) -> contrarian signal
+        return 0.25
+    elif negative_pct >= 25:
+        # Broad market - minimal momentum, let fundamentals lead
+        return 0.05
     else:
-        # Broad rally - let fundamentals dominate
-        # Example: 2024-Q1 (17% negative)
-        return 0.08
+        # Strong rally - near-zero momentum weight
+        # Example: 2024-Q1 (17% negative) -> fundamentals dominate
+        return 0.03
 
 
 def get_regime_adjusted_momentum_score(
