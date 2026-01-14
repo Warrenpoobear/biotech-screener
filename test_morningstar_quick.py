@@ -16,9 +16,9 @@ if not os.environ.get('MD_AUTH_TOKEN'):
 print(f"PASS: Token set ({len(os.environ['MD_AUTH_TOKEN'])} chars)")
 
 # Test 2: Import module
-print("\n[Test 2] Importing morningstar_returns...")
+print("\n[Test 2] Importing morningstar_returns_fixed...")
 try:
-    import morningstar_returns as mr
+    import morningstar_returns_fixed as mr
     print("PASS: Module imported")
 except ImportError as e:
     print(f"FAIL: {e}")
