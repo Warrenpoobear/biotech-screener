@@ -101,6 +101,84 @@ def sanitize_sponsor_name(name: str) -> str:
     return name.strip()
 
 
+def generate_sponsor_name_variants(name: str) -> List[str]:
+    """
+    Generate fallback name variants to try if initial search returns 0 results.
+
+    ClinicalTrials.gov API uses fuzzy matching, but company names from SEC filings
+    often don't match the sponsor names in the registry. This generates variants
+    to try in order.
+
+    Examples:
+        "Orchestra BioMed Holdings" -> ["Orchestra BioMed Holdings", "Orchestra BioMed"]
+        "OMEROS CORP" -> ["OMEROS CORP", "Omeros", "Omeros Corporation"]
+        "Xeris Biopharma" -> ["Xeris Biopharma", "Xeris", "Xeris Pharmaceuticals"]
+    """
+    variants = []
+
+    # Start with sanitized name
+    clean_name = sanitize_sponsor_name(name)
+    if clean_name:
+        variants.append(clean_name)
+
+    # Remove "Holdings" suffix (common for holding companies)
+    if ' Holdings' in clean_name:
+        no_holdings = re.sub(r'\s+Holdings\s*$', '', clean_name, flags=re.IGNORECASE)
+        if no_holdings and no_holdings not in variants:
+            variants.append(no_holdings)
+
+    # Remove legal suffixes (Inc., Corp., Ltd., etc.)
+    legal_suffixes = [
+        r',?\s+Inc\.?\s*$',
+        r',?\s+INC\.?\s*$',
+        r',?\s+Corp\.?\s*$',
+        r',?\s+CORP\.?\s*$',
+        r',?\s+Corporation\s*$',
+        r',?\s+Ltd\.?\s*$',
+        r',?\s+LTD\.?\s*$',
+        r',?\s+LLC\.?\s*$',
+        r',?\s+L\.?L\.?C\.?\s*$',
+        r',?\s+plc\.?\s*$',
+        r',?\s+PLC\.?\s*$',
+        r',?\s+S\.?A\.?\s*$',
+        r',?\s+N\.?V\.?\s*$',
+        r',?\s+A/S\s*$',
+        r',?\s+S\.?p\.?A\.?\s*$',
+    ]
+
+    base_name = clean_name
+    for suffix in legal_suffixes:
+        base_name = re.sub(suffix, '', base_name).strip()
+
+    if base_name and base_name not in variants:
+        variants.append(base_name)
+
+    # Try title case version if name is all caps
+    if base_name.isupper() and len(base_name.split()) <= 4:
+        title_case = base_name.title()
+        if title_case not in variants:
+            variants.append(title_case)
+
+    # Common Biopharma/Pharmaceuticals swap
+    if 'Biopharma' in base_name:
+        pharma_variant = base_name.replace('Biopharma', 'Pharmaceuticals')
+        if pharma_variant not in variants:
+            variants.append(pharma_variant)
+    elif 'Pharmaceuticals' in base_name:
+        bio_variant = base_name.replace('Pharmaceuticals', 'Biopharma')
+        if bio_variant not in variants:
+            variants.append(bio_variant)
+
+    # Try just the first word if it's distinctive (>4 chars)
+    words = base_name.split()
+    if len(words) > 1 and len(words[0]) > 4:
+        first_word = words[0]
+        if first_word not in variants:
+            variants.append(first_word)
+
+    return variants
+
+
 # =============================================================================
 # CONFIDENCE GATING (Fix 2)
 # =============================================================================
@@ -209,21 +287,10 @@ def get_company_name(ticker: str) -> Optional[str]:
 # CLINICAL TRIALS API
 # =============================================================================
 
-def search_trials(sponsor: str, as_of_date: str,
-                  max_results: int = 100) -> List[Dict]:
+def _search_trials_single(sponsor: str, target_date, max_results: int = 100) -> List[Dict]:
     """
-    Search for clinical trials by sponsor as of a specific date.
-
-    Uses ClinicalTrials.gov API v2.
+    Internal function: Search for trials with a single sponsor name variant.
     """
-    # Sanitize sponsor name before querying
-    sponsor = sanitize_sponsor_name(sponsor)
-
-    if not sponsor:
-        return []
-
-    target_date = datetime.strptime(as_of_date, "%Y-%m-%d").date()
-
     query = {
         'query.spons': sponsor,
         'filter.overallStatus': 'RECRUITING,ACTIVE_NOT_RECRUITING,ENROLLING_BY_INVITATION,NOT_YET_RECRUITING,COMPLETED,SUSPENDED,TERMINATED,WITHDRAWN',
@@ -269,11 +336,38 @@ def search_trials(sponsor: str, as_of_date: str,
             return valid_trials
 
     except urllib.error.HTTPError as e:
-        print(f"  HTTP Error {e.code}: {e.reason}")
+        # Don't print error for fallback attempts
         return []
     except Exception as e:
-        print(f"  Error searching trials: {e}")
         return []
+
+
+def search_trials(sponsor: str, as_of_date: str,
+                  max_results: int = 100) -> Tuple[List[Dict], str]:
+    """
+    Search for clinical trials by sponsor as of a specific date.
+
+    Uses ClinicalTrials.gov API v2 with fallback name variants.
+
+    Returns:
+        Tuple of (trials_list, matched_sponsor_name)
+    """
+    if not sponsor:
+        return [], ""
+
+    target_date = datetime.strptime(as_of_date, "%Y-%m-%d").date()
+
+    # Generate name variants to try
+    variants = generate_sponsor_name_variants(sponsor)
+
+    # Try each variant until we find results
+    for variant in variants:
+        trials = _search_trials_single(variant, target_date, max_results)
+        if trials:
+            return trials, variant
+
+    # No results with any variant
+    return [], variants[0] if variants else sponsor
 
 
 def extract_trial_info(study: Dict) -> Dict:
@@ -360,7 +454,7 @@ def get_historical_clinical(ticker: str, as_of_date: str) -> Optional[Dict]:
     """
     Get historical clinical stage data for a ticker as of a specific date.
 
-    NOW INCLUDES: Confidence gating and weighted scoring!
+    NOW INCLUDES: Confidence gating, weighted scoring, and fallback name search!
     """
     company_name = get_company_name(ticker)
     if not company_name:
@@ -368,8 +462,13 @@ def get_historical_clinical(ticker: str, as_of_date: str) -> Optional[Dict]:
 
     print(f"    Searching for sponsor: {company_name}")
 
-    trials = search_trials(company_name, as_of_date)
+    # search_trials now returns (trials, matched_name)
+    trials, matched_name = search_trials(company_name, as_of_date)
     trial_count = len(trials)
+
+    # Log if fallback name was used
+    if trials and matched_name != sanitize_sponsor_name(company_name):
+        print(f"    (matched as: {matched_name})")
 
     if not trials:
         # No trials found - return UNKNOWN with neutral score
@@ -380,6 +479,7 @@ def get_historical_clinical(ticker: str, as_of_date: str) -> Optional[Dict]:
             'ticker': ticker,
             'as_of_date': as_of_date,
             'company_name': company_name,
+            'matched_name': matched_name,
             'lead_stage': 'UNKNOWN',
             'stage_bucket': 'unknown',
             'trial_count': 0,
@@ -406,6 +506,7 @@ def get_historical_clinical(ticker: str, as_of_date: str) -> Optional[Dict]:
         'ticker': ticker,
         'as_of_date': as_of_date,
         'company_name': company_name,
+        'matched_name': matched_name,
         'lead_stage': stage_info['lead_stage'],
         'stage_bucket': stage_bucket,
         'trial_count': trial_count,
@@ -488,7 +589,7 @@ def main():
     elif args.company:
         # Direct company search
         print(f"Searching for {args.company} as of {args.as_of}")
-        trials = search_trials(args.company, args.as_of)
+        trials, matched_name = search_trials(args.company, args.as_of)
         stage_info = determine_lead_stage(trials)
 
         weighted_score, confidence, weight = calculate_weighted_clinical_score(
@@ -496,6 +597,8 @@ def main():
         )
 
         print(f"  Found {len(trials)} trials")
+        if matched_name != sanitize_sponsor_name(args.company):
+            print(f"  Matched as: {matched_name}")
         print(f"  Lead stage: {stage_info['lead_stage']}")
         print(f"  Confidence: {confidence} (weight: {weight})")
         print(f"  Raw score: {STAGE_SCORES.get(stage_info['stage_bucket'], 30)}")
