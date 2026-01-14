@@ -25,6 +25,10 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from historical_fetchers.sec_edgar import get_historical_financials, fetch_batch as fetch_financials
 
+# Support momentum signal integration
+USE_MOMENTUM = True  # Set to True to include 3-month momentum in rankings
+MOMENTUM_WEIGHT = 0.15  # Weight for momentum in composite (15%)
+
 # Support both gated and non-gated clinical scoring
 USE_GATED_CLINICAL = True  # Set to True to use confidence-weighted scoring
 
@@ -43,6 +47,15 @@ else:
     from historical_fetchers.clinicaltrials_gov import (
         get_historical_clinical, fetch_batch as fetch_clinical
     )
+
+# Import momentum signal module if enabled
+if USE_MOMENTUM:
+    try:
+        from historical_fetchers.momentum_signal import get_momentum_batch
+        print("Momentum signal ENABLED (15% weight in composite)")
+    except ImportError:
+        USE_MOMENTUM = False
+        print("Warning: Momentum module not found, disabling momentum signal")
 
 
 def load_universe(tickers_file: str = None) -> List[str]:
@@ -211,6 +224,7 @@ def generate_rankings_from_historical(snapshot_date: str) -> None:
     Generate rankings from a reconstructed historical snapshot.
 
     Uses a simplified scoring model since we have limited data.
+    Optionally includes 3-month momentum signal if USE_MOMENTUM is enabled.
     """
     snapshot_dir = Path(f"data/snapshots/{snapshot_date}")
 
@@ -223,6 +237,16 @@ def generate_rankings_from_historical(snapshot_date: str) -> None:
 
     with open(snapshot_dir / "universe.json", 'r') as f:
         tickers = json.load(f).get('tickers', [])
+
+    # Fetch momentum data if enabled
+    momentum_data = {}
+    if USE_MOMENTUM:
+        print(f"\nStep 5: Calculating 3-month momentum (as of {snapshot_date})...")
+        try:
+            momentum_data = get_momentum_batch(tickers, snapshot_date, delay=0.1)
+        except Exception as e:
+            print(f"  Warning: Momentum fetch failed: {e}")
+            momentum_data = {}
 
     # Score each ticker
     scored = []
@@ -278,14 +302,37 @@ def generate_rankings_from_historical(snapshot_date: str) -> None:
         else:
             clinical_score = 30  # Neutral - don't penalize missing data
 
-        # Composite (simple average for now)
-        composite_score = (financial_score + clinical_score) / 2
+        # Momentum score (if enabled)
+        momentum_score = 30  # Neutral default
+        momentum_pct = 0
+        momentum_bucket = 'NEUTRAL'
+        if USE_MOMENTUM and ticker in momentum_data:
+            mom = momentum_data[ticker]
+            momentum_score = mom.get('momentum_score', 30)
+            momentum_pct = mom.get('momentum_pct', 0)
+            momentum_bucket = mom.get('momentum_bucket', 'NEUTRAL')
+
+        # Composite score calculation
+        if USE_MOMENTUM and momentum_data:
+            # With momentum: financial(42.5%) + clinical(42.5%) + momentum(15%)
+            base_weight = (1 - MOMENTUM_WEIGHT) / 2
+            composite_score = (
+                financial_score * base_weight +
+                clinical_score * base_weight +
+                momentum_score * MOMENTUM_WEIGHT
+            )
+        else:
+            # Without momentum: financial(50%) + clinical(50%)
+            composite_score = (financial_score + clinical_score) / 2
 
         scored.append({
             'ticker': ticker,
             'composite_score': composite_score,
             'financial_score': financial_score,
             'clinical_score': clinical_score,
+            'momentum_score': momentum_score,
+            'momentum_pct': momentum_pct,
+            'momentum_bucket': momentum_bucket,
             'stage_bucket': stage_bucket,
             'cash': cash,
             'runway_months': runway
@@ -303,19 +350,38 @@ def generate_rankings_from_historical(snapshot_date: str) -> None:
     output_csv = snapshot_dir / "rankings.csv"
     with open(output_csv, 'w', newline='') as f:
         writer = csv.writer(f)
-        writer.writerow(['Rank', 'Ticker', 'Composite_Score', 'Clinical_Score',
-                         'Financial_Score', 'Stage_Bucket', 'Cash', 'Runway_Months'])
-        for rec in scored:
-            writer.writerow([
-                rec['composite_rank'],
-                rec['ticker'],
-                rec['composite_score'],
-                rec['clinical_score'],
-                rec['financial_score'],
-                rec['stage_bucket'],
-                rec.get('cash', ''),
-                rec.get('runway_months', '')
-            ])
+        if USE_MOMENTUM and momentum_data:
+            writer.writerow(['Rank', 'Ticker', 'Composite_Score', 'Clinical_Score',
+                             'Financial_Score', 'Momentum_Score', 'Momentum_Pct',
+                             'Momentum_Bucket', 'Stage_Bucket', 'Cash', 'Runway_Months'])
+            for rec in scored:
+                writer.writerow([
+                    rec['composite_rank'],
+                    rec['ticker'],
+                    f"{rec['composite_score']:.2f}",
+                    rec['clinical_score'],
+                    rec['financial_score'],
+                    rec['momentum_score'],
+                    f"{rec['momentum_pct']:.1f}",
+                    rec['momentum_bucket'],
+                    rec['stage_bucket'],
+                    rec.get('cash', ''),
+                    rec.get('runway_months', '')
+                ])
+        else:
+            writer.writerow(['Rank', 'Ticker', 'Composite_Score', 'Clinical_Score',
+                             'Financial_Score', 'Stage_Bucket', 'Cash', 'Runway_Months'])
+            for rec in scored:
+                writer.writerow([
+                    rec['composite_rank'],
+                    rec['ticker'],
+                    rec['composite_score'],
+                    rec['clinical_score'],
+                    rec['financial_score'],
+                    rec['stage_bucket'],
+                    rec.get('cash', ''),
+                    rec.get('runway_months', '')
+                ])
 
     print(f"\nGenerated rankings: {output_csv}")
     print(f"  Top 5: {[r['ticker'] for r in scored[:5]]}")

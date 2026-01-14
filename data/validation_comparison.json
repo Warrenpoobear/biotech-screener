@@ -1,0 +1,95 @@
+{
+  "baseline": {
+    "2023-Q1": {
+      "screen_date": "2023-01-15",
+      "q1_q5_spread": 8.66,
+      "q1_return": 12.42,
+      "q5_return": 3.76,
+      "alpha": 12.18,
+      "clinical_coverage": 13.0
+    },
+    "2023-Q2": {
+      "screen_date": "2023-04-15",
+      "q1_q5_spread": 3.79,
+      "q1_return": 3.52,
+      "q5_return": -0.27,
+      "alpha": 7.66,
+      "clinical_coverage": 13.0
+    },
+    "2023-Q3": {
+      "screen_date": "2023-07-15",
+      "q1_q5_spread": 12.97,
+      "q1_return": 12.53,
+      "q5_return": -0.44,
+      "alpha": 5.29,
+      "clinical_coverage": 13.0
+    },
+    "2023-Q4": {
+      "screen_date": "2023-10-15",
+      "q1_q5_spread": 18.43,
+      "q1_return": 42.67,
+      "q5_return": 24.23,
+      "alpha": 12.58,
+      "clinical_coverage": 13.0
+    },
+    "2024-Q1": {
+      "screen_date": "2024-01-15",
+      "q1_q5_spread": 13.19,
+      "q1_return": 19.21,
+      "q5_return": 6.02,
+      "alpha": 19.21,
+      "clinical_coverage": 13.0
+    },
+    "2024-Q2": {
+      "screen_date": "2024-04-15",
+      "q1_q5_spread": -14.53,
+      "q1_return": 1.64,
+      "q5_return": 16.16,
+      "alpha": -2.54,
+      "clinical_coverage": 13.0
+    },
+    "2024-Q3": {
+      "screen_date": "2024-07-15",
+      "q1_q5_spread": 22.62,
+      "q1_return": 26.78,
+      "q5_return": 4.16,
+      "alpha": 29.57,
+      "clinical_coverage": 13.0
+    }
+  },
+  "enhanced": {
+    "2023-Q1": {
+      "screen_date": "2023-01-15",
+      "q1_q5_spread": 13.6,
+      "q1_return": 17.05,
+      "q5_return": 3.45,
+      "alpha": 16.81,
+      "clinical_coverage": 75.3
+    },
+    "2023-Q2": {
+      "screen_date": "2023-04-15",
+      "q1_q5_spread": 6.88497023809524,
+      "q1_return": 4.555403571428573,
+      "q5_return": -2.3295666666666666,
+      "alpha": 3.9852364285714232,
+      "clinical_coverage": 75.3
+    },
+    "2023-Q3": {
+      "screen_date": "2023-07-15",
+      "q1_q5_spread": -5.218584523809527,
+      "q1_return": 12.243532142857141,
+      "q5_return": 17.46211666666667,
+      "alpha": 2.2302109540636033,
+      "clinical_coverage": 75.3
+    },
+    "2023-Q4": {
+      "screen_date": "2023-10-15",
+      "q1_q5_spread": -1.0143351740005802,
+      "q1_return": 51.460538596491226,
+      "q5_return": 52.474873770491804,
+      "alpha": 17.714134027777774,
+      "clinical_coverage": 75.3
+    }
+  },
+  "last_updated": "2026-01-14T14:39:44.838410"
+}
