@@ -172,6 +172,8 @@ class MorningstarDataProvider:
         """
         Fetch daily returns from Morningstar Direct.
 
+        Uses data_set_id="2" (Returns Daily) with data point PD003 (Total Ret 1 Day).
+
         Args:
             ticker: Security ticker symbol
             as_of: Point-in-time date (only data up to this date)
@@ -187,53 +189,69 @@ class MorningstarDataProvider:
             # Calculate date range
             start_date = as_of - timedelta(days=lookback_days)
 
-            # Try different Morningstar API methods
             returns_df = None
 
-            # Method 1: Try md.direct.investments.get_investment_data (if available)
-            if hasattr(md.direct, 'investments') and hasattr(md.direct.investments, 'get_investment_data'):
-                try:
-                    returns_df = md.direct.investments.get_investment_data(
-                        investments=[ticker],
-                        data_points=["DailyReturn"],
-                        start=start_date.strftime('%Y-%m-%d'),
-                        end=as_of.strftime('%Y-%m-%d')
-                    )
-                except Exception:
-                    pass
-
-            # Method 2: Try md.direct.get_returns (if available)
+            # Method 1: Use md.direct.get_returns (primary method for returns)
             if returns_df is None and hasattr(md.direct, 'get_returns'):
                 try:
                     returns_df = md.direct.get_returns(
-                        securities=[ticker],
-                        start=start_date.strftime('%Y-%m-%d'),
-                        end=as_of.strftime('%Y-%m-%d'),
-                        frequency='daily'
-                    )
-                except Exception:
-                    pass
-
-            # Method 3: Try md.time_series.get_returns (if available)
-            if returns_df is None and hasattr(md, 'time_series') and hasattr(md.time_series, 'get_returns'):
-                try:
-                    returns_df = md.time_series.get_returns(
                         investments=[ticker],
                         start_date=start_date.strftime('%Y-%m-%d'),
                         end_date=as_of.strftime('%Y-%m-%d')
                     )
-                except Exception:
-                    pass
+                except Exception as e1:
+                    # Try alternative parameter names
+                    try:
+                        returns_df = md.direct.get_returns(
+                            investments=[ticker],
+                            start=start_date.strftime('%Y-%m-%d'),
+                            end=as_of.strftime('%Y-%m-%d')
+                        )
+                    except Exception:
+                        pass
 
-            # Method 4: Try md.direct.get_data with data_set_id for daily returns
-            if returns_df is None and hasattr(md.direct, 'get_data'):
+            # Method 2: Use md.direct.get_investment_data with PD003 (Total Ret 1 Day Daily)
+            if returns_df is None and hasattr(md.direct, 'get_investment_data'):
                 try:
-                    returns_df = md.direct.get_data(
+                    # PD003 = "Total Ret 1 Day (Daily)" from data_set_id=2
+                    returns_df = md.direct.get_investment_data(
                         investments=[ticker],
-                        data_set_id=MSTAR_DATA_SET_RETURNS_DAILY
+                        data_points=["PD003"],
+                        start_date=start_date.strftime('%Y-%m-%d'),
+                        end_date=as_of.strftime('%Y-%m-%d')
                     )
-                except Exception:
-                    pass
+                except Exception as e2:
+                    # Try alternative parameter names
+                    try:
+                        returns_df = md.direct.get_investment_data(
+                            investments=[ticker],
+                            data_points=["PD003"],
+                            start=start_date.strftime('%Y-%m-%d'),
+                            end=as_of.strftime('%Y-%m-%d')
+                        )
+                    except Exception:
+                        pass
+
+            # Method 3: Use md.direct.portfolio.get_data with data_set_id
+            if returns_df is None and hasattr(md.direct.portfolio, 'get_data'):
+                try:
+                    returns_df = md.direct.portfolio.get_data(
+                        investments=[ticker],
+                        data_set_id=MSTAR_DATA_SET_RETURNS_DAILY,
+                        data_points=["PD003"],
+                        start_date=start_date.strftime('%Y-%m-%d'),
+                        end_date=as_of.strftime('%Y-%m-%d')
+                    )
+                except Exception as e3:
+                    try:
+                        # Try without date filters
+                        returns_df = md.direct.portfolio.get_data(
+                            investments=[ticker],
+                            data_set_id=MSTAR_DATA_SET_RETURNS_DAILY,
+                            data_points=["PD003"]
+                        )
+                    except Exception:
+                        pass
 
             if returns_df is None or (hasattr(returns_df, 'empty') and returns_df.empty):
                 return None
@@ -241,25 +259,40 @@ class MorningstarDataProvider:
             # Extract returns, filtering for PIT compliance
             returns = []
             for idx, row in returns_df.iterrows():
+                # Handle various index types
                 if hasattr(idx, 'date'):
                     return_date = idx.date()
                 elif hasattr(idx, 'to_pydatetime'):
                     return_date = idx.to_pydatetime().date()
+                elif isinstance(idx, str):
+                    try:
+                        return_date = datetime.strptime(idx, '%Y-%m-%d').date()
+                    except ValueError:
+                        continue
                 else:
                     continue
 
-                if return_date <= as_of:
+                if return_date <= as_of and return_date >= start_date:
                     # Try common column names for daily returns
                     ret_value = None
-                    for col_name in ['DailyReturn', 'daily_return', 'Return', 'return', 'value']:
+                    for col_name in ['PD003', 'Total Ret 1 Day (Daily)', 'DailyReturn',
+                                     'daily_return', 'Return', 'return', 'value', ticker]:
                         if col_name in row.index:
                             ret_value = row[col_name]
                             break
                     if ret_value is None and len(row) > 0:
                         ret_value = row.iloc[0]
 
-                    if ret_value is not None and not math.isnan(ret_value):
-                        returns.append(float(ret_value))
+                    if ret_value is not None:
+                        try:
+                            ret_float = float(ret_value)
+                            if not math.isnan(ret_float):
+                                # Convert percentage to decimal if needed (e.g., 1.5 -> 0.015)
+                                if abs(ret_float) > 1:
+                                    ret_float = ret_float / 100.0
+                                returns.append(ret_float)
+                        except (ValueError, TypeError):
+                            continue
 
             return returns if returns else None
 
