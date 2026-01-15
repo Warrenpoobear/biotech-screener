@@ -322,14 +322,27 @@ def generate_portfolio(
         price_estimate = prices.get(ticker, 50.0)
         shares = int(position_value / price_estimate) if price_estimate > 0 else 0
 
+        # Get scores - support both old and new field names
+        original_score = float(
+            security.get("composite_score_original")
+            or security.get("original_score")
+            or 0
+        )
+        final_score = float(
+            security.get("composite_score_with_momentum")
+            or security.get("final_score")
+            or 0
+        )
+        momentum = float(security.get("momentum_score", 50))
+
         position = {
             "rank": i + 1,
             "ticker": ticker,
             "weight_pct": round(weight_pct, 2),
             "position_value_usd": round(position_value, 2),
-            "original_score": security.get("original_score", 0),
-            "momentum_score": security.get("momentum_score", 50),
-            "final_score": security.get("final_score", 0),
+            "original_score": round(original_score, 2),
+            "momentum_score": round(momentum, 1),
+            "final_score": round(final_score, 2),
             "volatility": round(volatilities.get(ticker, 0.50), 4),
             "price_estimate": round(price_estimate, 2),
             "shares_estimate": shares,
