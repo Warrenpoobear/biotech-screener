@@ -89,10 +89,14 @@ def main():
     with open(ranked_path) as f:
         ranked_data = json.load(f)
 
-    # Get ranked securities
-    ranked_securities = ranked_data.get("module_5_output", {}).get("ranked_securities", [])
+    # Get ranked securities (try both possible keys)
+    ranked_securities = (
+        ranked_data.get("module_5_composite", {}).get("ranked_securities", []) or
+        ranked_data.get("module_5_output", {}).get("ranked_securities", [])
+    )
     if not ranked_securities:
         print("Error: No ranked_securities found in file")
+        print("Available keys:", list(ranked_data.keys()))
         return 1
 
     print(f"Found {len(ranked_securities)} ranked securities")
@@ -132,8 +136,11 @@ def main():
         sec["composite_rank_with_momentum"] = i
         sec["composite_rank_original"] = sec.get("composite_rank")
 
-    # Update ranked_data
-    ranked_data["module_5_output"]["ranked_securities"] = enriched_securities
+    # Update ranked_data (use whichever key exists)
+    if "module_5_composite" in ranked_data:
+        ranked_data["module_5_composite"]["ranked_securities"] = enriched_securities
+    else:
+        ranked_data["module_5_output"]["ranked_securities"] = enriched_securities
     ranked_data["momentum_metadata"] = {
         "regime": regime,
         "xbi_return_90d": str(xbi_return) if 'xbi_return' in dir() else "0",
