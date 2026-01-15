@@ -75,7 +75,12 @@ def compare_weeks(current_date_str=None, previous_date_str=None):
         current = json.load(f)
 
     curr_signals = current.get('signals', {})
-    curr_regime = current.get('metadata', {}).get('regime', 'UNKNOWN')
+    # Try different locations for regime
+    curr_regime = (
+        current.get('metadata', {}).get('regime') or
+        current.get('regime') or
+        'UNKNOWN'
+    )
 
     print("=" * 70)
     print(f"WEEKLY MOMENTUM REPORT")

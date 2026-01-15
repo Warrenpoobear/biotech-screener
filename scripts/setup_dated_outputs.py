@@ -88,7 +88,7 @@ def main():
             # Also copy to archive
             archive_path = archive_dir / target_path.name
             shutil.copy2(source_path, archive_path)
-            print(f"   → Archived: {archive_path.relative_to(Path.cwd())}")
+            print(f"   → Archived: archives/{calc_date.strftime('%Y/%m')}/{target_path.name}")
 
             # Add to manifest
             manifest['files'][target_path.name] = {
