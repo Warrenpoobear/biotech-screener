@@ -39,6 +39,7 @@ def find_sweet_spot_tickers():
 
     # Check for Module 5 base scores in various locations
     module5_files = [
+        "outputs/ranked_full_308.json",
         "outputs/ranked_with_real_defensive_FINAL.json",
         "outputs/ranked_20260106.json",
         "outputs/ranked_full_universe_with_defensive.json",
@@ -53,7 +54,7 @@ def find_sweet_spot_tickers():
         p = Path(f_path)
         if p.exists():
             try:
-                with open(p, 'r') as f:
+                with open(p, 'r', encoding='utf-8') as f:
                     data = json.load(f)
 
                 # Try different structures
