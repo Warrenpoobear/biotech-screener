@@ -176,6 +176,19 @@ def apply_concentration_limits(
 def calculate_portfolio_metrics(positions: list[dict], volatilities: dict[str, float]) -> dict:
     """Calculate portfolio-level risk metrics"""
 
+    # Handle empty portfolio
+    if not positions:
+        return {
+            "num_positions": 0,
+            "total_weight_pct": 0.0,
+            "avg_momentum": 0.0,
+            "max_position_pct": 0.0,
+            "min_position_pct": 0.0,
+            "portfolio_volatility": 0.0,
+            "portfolio_beta_estimate": 0.0,
+            "data_source": "morningstar_direct",
+        }
+
     # Weighted average momentum
     total_weight = sum(p["weight_pct"] for p in positions)
     avg_momentum = sum(
@@ -269,6 +282,18 @@ def generate_portfolio(
     # Filter to tickers with data
     valid_tickers = [t for t in tickers if t in volatilities]
     valid_securities = [s for s in top_securities if s["ticker"] in volatilities]
+
+    # Early exit if no valid tickers
+    if not valid_tickers:
+        print("❌ ERROR: No tickers have Morningstar data!")
+        print()
+        print("The returns database appears to be missing data for your universe.")
+        print("To fix this, run the Morningstar fetch script first:")
+        print()
+        print("    python scripts/fetch_daily_returns_morningstar.py --years 1")
+        print()
+        print("This requires MD_AUTH_TOKEN environment variable to be set.")
+        return None
 
     # Calculate weights
     print("3. Calculating position sizes...")
@@ -445,7 +470,7 @@ def main():
         return 1
 
     # Generate
-    generate_portfolio(
+    result = generate_portfolio(
         ranked_path=ranked_path,
         returns_db_path=returns_db_path,
         top_n=args.top_n,
@@ -454,6 +479,9 @@ def main():
         output_path=output_path,
         max_position_pct=args.max_position_pct,
     )
+
+    if result is None:
+        return 1
 
     return 0
 
