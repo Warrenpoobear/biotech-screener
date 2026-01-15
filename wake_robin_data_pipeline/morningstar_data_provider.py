@@ -191,43 +191,44 @@ class MorningstarDataProvider:
 
             returns_df = None
 
-            # Method 1: Use md.direct.get_returns (primary method for returns)
+            # Method 1: Use md.direct.get_returns with freq='daily'
             if returns_df is None and hasattr(md.direct, 'get_returns'):
                 try:
+                    # Use freq='daily' to get daily returns (default is 'monthly')
                     returns_df = md.direct.get_returns(
                         investments=[ticker],
                         start_date=start_date.strftime('%Y-%m-%d'),
-                        end_date=as_of.strftime('%Y-%m-%d')
+                        end_date=as_of.strftime('%Y-%m-%d'),
+                        freq='daily'
                     )
                 except Exception as e1:
-                    # Try alternative parameter names
+                    # Try with Frequency enum if string doesn't work
                     try:
                         returns_df = md.direct.get_returns(
                             investments=[ticker],
-                            start=start_date.strftime('%Y-%m-%d'),
-                            end=as_of.strftime('%Y-%m-%d')
+                            start_date=start_date.strftime('%Y-%m-%d'),
+                            end_date=as_of.strftime('%Y-%m-%d'),
+                            freq=md.direct.Frequency.daily
                         )
                     except Exception:
                         pass
 
             # Method 2: Use md.direct.get_investment_data with PD003 (Total Ret 1 Day Daily)
+            # Note: data_points must be list of dicts, not strings
             if returns_df is None and hasattr(md.direct, 'get_investment_data'):
                 try:
                     # PD003 = "Total Ret 1 Day (Daily)" from data_set_id=2
+                    # data_points format: list of dicts with datapointId
                     returns_df = md.direct.get_investment_data(
                         investments=[ticker],
-                        data_points=["PD003"],
-                        start_date=start_date.strftime('%Y-%m-%d'),
-                        end_date=as_of.strftime('%Y-%m-%d')
+                        data_points=[{"datapointId": "PD003"}]
                     )
                 except Exception as e2:
-                    # Try alternative parameter names
+                    # Try with different dict key names
                     try:
                         returns_df = md.direct.get_investment_data(
                             investments=[ticker],
-                            data_points=["PD003"],
-                            start=start_date.strftime('%Y-%m-%d'),
-                            end=as_of.strftime('%Y-%m-%d')
+                            data_points=[{"id": "PD003"}]
                         )
                     except Exception:
                         pass
@@ -275,11 +276,18 @@ class MorningstarDataProvider:
                 if return_date <= as_of and return_date >= start_date:
                     # Try common column names for daily returns
                     ret_value = None
-                    for col_name in ['PD003', 'Total Ret 1 Day (Daily)', 'DailyReturn',
-                                     'daily_return', 'Return', 'return', 'value', ticker]:
+                    for col_name in ['Daily Return', 'DailyReturn', 'daily_return',
+                                     'PD003', 'Total Ret 1 Day (Daily)',
+                                     'Return', 'return', 'value', ticker]:
                         if col_name in row.index:
                             ret_value = row[col_name]
                             break
+                    # Also check columns case-insensitively
+                    if ret_value is None:
+                        for col in row.index:
+                            if 'return' in str(col).lower() and 'monthly' not in str(col).lower():
+                                ret_value = row[col]
+                                break
                     if ret_value is None and len(row) > 0:
                         ret_value = row.iloc[0]
 
