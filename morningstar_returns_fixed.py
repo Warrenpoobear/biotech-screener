@@ -12,14 +12,17 @@ Key principles:
 - Fail-closed behavior (degrade visibly, not silently)
 """
 
-import os
-import json
 import hashlib
-from datetime import datetime, timedelta
+import json
+import logging
+import os
+from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 from typing import Dict, List, Optional, Tuple, Union
 from typing_extensions import TypedDict
 from dataclasses import dataclass, asdict
+
+logger = logging.getLogger(__name__)
 
 
 # =============================================================================
@@ -151,7 +154,7 @@ def fetch_returns(
     if not available:
         raise MorningstarReturnsError(f"Morningstar not available: {msg}")
 
-    fetch_timestamp = datetime.utcnow().isoformat() + 'Z'
+    fetch_timestamp = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
     try:
         # Map frequency string to enum (lowercase values)
@@ -280,7 +283,7 @@ def fetch_returns(
                                     except (ValueError, TypeError):
                                         continue
             except Exception as e:
-                print(f"Warning: Could not fetch excess returns: {e}")
+                logger.warning(f"Could not fetch excess returns: {e}")
 
         # Create provenance
         raw_data = json.dumps({
@@ -481,7 +484,7 @@ def build_ticker_mapping(
                     mapping[sec_id] = ticker
     except Exception as e:
         # If this fails, we'll just use sec_ids as tickers
-        print(f"Warning: Could not build ticker mapping: {e}")
+        logger.warning(f"Could not build ticker mapping: {e}")
         for sec_id in sec_ids:
             mapping[sec_id] = sec_id
 
