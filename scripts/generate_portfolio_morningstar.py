@@ -9,29 +9,30 @@ Usage:
     python scripts/generate_portfolio_morningstar.py --date 2026-01-15 --top-n 60
 """
 
-import json
 import argparse
+import json
 import math
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, List, Tuple
 
 
-def load_rankings(path: Path) -> List[Dict]:
+def load_rankings(path: Path) -> list[dict]:
     """Load ranked tickers with momentum"""
     with open(path) as f:
         data = json.load(f)
 
     if isinstance(data, list):
         return data
-    elif 'securities' in data:
-        return data['securities']
+    elif "securities" in data:
+        return data["securities"]
     else:
         raise ValueError(f"Unexpected format in {path}")
 
 
-def load_morningstar_returns(returns_db_path: Path) -> Tuple[Dict[str, Dict[str, str]], Dict[str, Dict[str, str]]]:
+def load_morningstar_returns(
+    returns_db_path: Path,
+) -> tuple[dict[str, dict[str, str]], dict[str, dict[str, str]]]:
     """
     Load Morningstar daily returns database.
 
@@ -41,13 +42,15 @@ def load_morningstar_returns(returns_db_path: Path) -> Tuple[Dict[str, Dict[str,
     with open(returns_db_path) as f:
         data = json.load(f)
 
-    ticker_returns = data.get('tickers', {})
-    benchmark_returns = data.get('benchmark', {})
+    ticker_returns = data.get("tickers", {})
+    benchmark_returns = data.get("benchmark", {})
 
     return ticker_returns, benchmark_returns
 
 
-def calculate_volatility_from_returns(returns_dict: Dict[str, str], lookback_days: int = 60) -> float:
+def calculate_volatility_from_returns(
+    returns_dict: dict[str, str], lookback_days: int = 60
+) -> float:
     """
     Calculate annualized volatility from daily returns.
 
@@ -83,7 +86,7 @@ def calculate_volatility_from_returns(returns_dict: Dict[str, str], lookback_day
     return max(0.10, min(2.0, annual_vol))
 
 
-def estimate_price_from_returns(returns_dict: Dict[str, str], base_price: float = 50.0) -> float:
+def estimate_price_from_returns(returns_dict: dict[str, str], base_price: float = 50.0) -> float:
     """
     Estimate a price level from cumulative returns.
 
@@ -100,7 +103,7 @@ def estimate_price_from_returns(returns_dict: Dict[str, str], base_price: float 
     cum_return = 1.0
     for date in sorted_dates:
         daily_ret = float(returns_dict[date])
-        cum_return *= (1 + daily_ret)
+        cum_return *= 1 + daily_ret
 
     estimated_price = base_price * cum_return
 
@@ -109,9 +112,8 @@ def estimate_price_from_returns(returns_dict: Dict[str, str], base_price: float 
 
 
 def calculate_inverse_vol_weights(
-    tickers: List[str],
-    volatilities: Dict[str, float]
-) -> Dict[str, float]:
+    tickers: list[str], volatilities: dict[str, float]
+) -> dict[str, float]:
     """
     Inverse volatility weighting
     - Lower volatility stocks get higher weight
@@ -134,9 +136,8 @@ def calculate_inverse_vol_weights(
 
 
 def apply_concentration_limits(
-    weights: Dict[str, float],
-    max_position_pct: float = 3.0
-) -> Dict[str, float]:
+    weights: dict[str, float], max_position_pct: float = 3.0
+) -> dict[str, float]:
     """
     Apply concentration limits
     - No single position > max_position_pct
@@ -151,7 +152,7 @@ def apply_concentration_limits(
     for ticker, weight in weights.items():
         if weight > max_weight:
             capped[ticker] = max_weight
-            excess += (weight - max_weight)
+            excess += weight - max_weight
         else:
             capped[ticker] = weight
 
@@ -172,38 +173,34 @@ def apply_concentration_limits(
     return normalized
 
 
-def calculate_portfolio_metrics(
-    positions: List[Dict],
-    volatilities: Dict[str, float]
-) -> Dict:
+def calculate_portfolio_metrics(positions: list[dict], volatilities: dict[str, float]) -> dict:
     """Calculate portfolio-level risk metrics"""
 
     # Weighted average momentum
-    total_weight = sum(p['weight_pct'] for p in positions)
+    total_weight = sum(p["weight_pct"] for p in positions)
     avg_momentum = sum(
-        p.get('momentum_score', 50) * p['weight_pct'] / total_weight
-        for p in positions
+        p.get("momentum_score", 50) * p["weight_pct"] / total_weight for p in positions
     )
 
     # Weighted average volatility
     weighted_vol = 0.0
     for pos in positions:
-        ticker = pos['ticker']
+        ticker = pos["ticker"]
         if ticker in volatilities:
-            weighted_vol += volatilities[ticker] * pos['weight_pct'] / 100.0
+            weighted_vol += volatilities[ticker] * pos["weight_pct"] / 100.0
 
     # Portfolio beta estimate
     portfolio_beta = weighted_vol / 0.60 if weighted_vol > 0 else 0.0
 
     return {
-        'num_positions': len(positions),
-        'total_weight_pct': round(sum(p['weight_pct'] for p in positions), 2),
-        'avg_momentum': round(avg_momentum, 1),
-        'max_position_pct': round(max(p['weight_pct'] for p in positions), 2),
-        'min_position_pct': round(min(p['weight_pct'] for p in positions), 2),
-        'portfolio_volatility': round(weighted_vol * 100, 1),
-        'portfolio_beta_estimate': round(portfolio_beta, 2),
-        'data_source': 'morningstar_direct'
+        "num_positions": len(positions),
+        "total_weight_pct": round(sum(p["weight_pct"] for p in positions), 2),
+        "avg_momentum": round(avg_momentum, 1),
+        "max_position_pct": round(max(p["weight_pct"] for p in positions), 2),
+        "min_position_pct": round(min(p["weight_pct"] for p in positions), 2),
+        "portfolio_volatility": round(weighted_vol * 100, 1),
+        "portfolio_beta_estimate": round(portfolio_beta, 2),
+        "data_source": "morningstar_direct",
     }
 
 
@@ -214,7 +211,7 @@ def generate_portfolio(
     portfolio_value: float,
     date_str: str,
     output_path: Path,
-    max_position_pct: float = 3.0
+    max_position_pct: float = 3.0,
 ):
     """Main portfolio generation logic - Morningstar powered"""
 
@@ -225,7 +222,7 @@ def generate_portfolio(
     print(f"Portfolio value: ${portfolio_value:,.0f}")
     print(f"Target positions: {top_n}")
     print(f"Max position: {max_position_pct}%")
-    print(f"Data source: Morningstar Direct")
+    print("Data source: Morningstar Direct")
     print()
 
     # Load rankings
@@ -235,7 +232,7 @@ def generate_portfolio(
 
     # Take top N
     top_securities = securities[:top_n]
-    tickers = [s['ticker'] for s in top_securities]
+    tickers = [s["ticker"] for s in top_securities]
     print(f"   Selected top {len(tickers)} for portfolio")
     print()
 
@@ -258,16 +255,20 @@ def generate_portfolio(
             missing_tickers.append(ticker)
 
     coverage_pct = (len(tickers) - len(missing_tickers)) / len(tickers) * 100
-    print(f"   Morningstar coverage: {len(tickers) - len(missing_tickers)}/{len(tickers)} ({coverage_pct:.1f}%)")
+    print(
+        f"   Morningstar coverage: {len(tickers) - len(missing_tickers)}/{len(tickers)} ({coverage_pct:.1f}%)"
+    )
 
     if missing_tickers:
-        print(f"   Missing tickers: {', '.join(missing_tickers[:10])}" +
-              (f" (+{len(missing_tickers)-10} more)" if len(missing_tickers) > 10 else ""))
+        print(
+            f"   Missing tickers: {', '.join(missing_tickers[:10])}"
+            + (f" (+{len(missing_tickers) - 10} more)" if len(missing_tickers) > 10 else "")
+        )
     print()
 
     # Filter to tickers with data
     valid_tickers = [t for t in tickers if t in volatilities]
-    valid_securities = [s for s in top_securities if s['ticker'] in volatilities]
+    valid_securities = [s for s in top_securities if s["ticker"] in volatilities]
 
     # Calculate weights
     print("3. Calculating position sizes...")
@@ -283,7 +284,7 @@ def generate_portfolio(
     positions = []
 
     for i, security in enumerate(valid_securities):
-        ticker = security['ticker']
+        ticker = security["ticker"]
         weight_pct = final_weights.get(ticker, 0) * 100
         position_value = portfolio_value * weight_pct / 100
 
@@ -292,17 +293,17 @@ def generate_portfolio(
         shares = int(position_value / price_estimate) if price_estimate > 0 else 0
 
         position = {
-            'rank': i + 1,
-            'ticker': ticker,
-            'weight_pct': round(weight_pct, 2),
-            'position_value_usd': round(position_value, 2),
-            'original_score': security.get('original_score', 0),
-            'momentum_score': security.get('momentum_score', 50),
-            'final_score': security.get('final_score', 0),
-            'volatility': round(volatilities.get(ticker, 0.50), 4),
-            'price_estimate': round(price_estimate, 2),
-            'shares_estimate': shares,
-            'data_source': 'morningstar_direct'
+            "rank": i + 1,
+            "ticker": ticker,
+            "weight_pct": round(weight_pct, 2),
+            "position_value_usd": round(position_value, 2),
+            "original_score": security.get("original_score", 0),
+            "momentum_score": security.get("momentum_score", 50),
+            "final_score": security.get("final_score", 0),
+            "volatility": round(volatilities.get(ticker, 0.50), 4),
+            "price_estimate": round(price_estimate, 2),
+            "shares_estimate": shares,
+            "data_source": "morningstar_direct",
         }
 
         positions.append(position)
@@ -320,30 +321,30 @@ def generate_portfolio(
 
     # Build output
     output = {
-        'date': date_str,
-        'generated_at': datetime.now(timezone.utc).isoformat(),
-        'portfolio_value_usd': portfolio_value,
-        'num_positions': len(positions),
-        'positions': positions,
-        'metrics': metrics,
-        'parameters': {
-            'top_n': top_n,
-            'max_position_pct': max_position_pct,
-            'weighting_method': 'inverse_volatility',
-            'data_source': 'morningstar_direct',
-            'returns_db_path': str(returns_db_path)
+        "date": date_str,
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "portfolio_value_usd": portfolio_value,
+        "num_positions": len(positions),
+        "positions": positions,
+        "metrics": metrics,
+        "parameters": {
+            "top_n": top_n,
+            "max_position_pct": max_position_pct,
+            "weighting_method": "inverse_volatility",
+            "data_source": "morningstar_direct",
+            "returns_db_path": str(returns_db_path),
         },
-        'data_quality': {
-            'tickers_requested': len(tickers),
-            'tickers_with_morningstar_data': len(valid_tickers),
-            'coverage_pct': round(coverage_pct, 1),
-            'missing_tickers': missing_tickers
-        }
+        "data_quality": {
+            "tickers_requested": len(tickers),
+            "tickers_with_morningstar_data": len(valid_tickers),
+            "coverage_pct": round(coverage_pct, 1),
+            "missing_tickers": missing_tickers,
+        },
     }
 
     # Save
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(output_path, 'w') as f:
+    with open(output_path, "w") as f:
         json.dump(output, f, indent=2)
 
     print(f"✅ Portfolio saved to {output_path}")
@@ -362,7 +363,7 @@ def generate_portfolio(
             f"{pos['ticker']:<8}"
             f"{pos['weight_pct']:>7.2f}%"
             f"${pos['position_value_usd']:>10,.0f}"
-            f"{pos['volatility']*100:>7.1f}%"
+            f"{pos['volatility'] * 100:>7.1f}%"
             f"{pos['final_score']:>8.2f}"
         )
 
@@ -386,25 +387,43 @@ def generate_portfolio(
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Generate portfolio from rankings (Morningstar powered)')
-    parser.add_argument('--date', required=True, help='Portfolio date (YYYY-MM-DD)')
-    parser.add_argument('--top-n', type=int, default=60, help='Number of positions (default: 60)')
-    parser.add_argument('--portfolio-value', type=float, default=10_000_000,
-                       help='Portfolio value in USD (default: 10M)')
-    parser.add_argument('--ranked-path', default='outputs/ranked_with_momentum.json',
-                       help='Path to ranked JSON file')
-    parser.add_argument('--returns-db', default='data/returns/returns_db_daily.json',
-                       help='Path to Morningstar returns database')
-    parser.add_argument('--output-path', help='Output path (default: outputs/portfolio_YYYYMMDD_morningstar.json)')
-    parser.add_argument('--max-position-pct', type=float, default=3.0,
-                       help='Max position size as % of portfolio (default: 3.0)')
+    parser = argparse.ArgumentParser(
+        description="Generate portfolio from rankings (Morningstar powered)"
+    )
+    parser.add_argument("--date", required=True, help="Portfolio date (YYYY-MM-DD)")
+    parser.add_argument("--top-n", type=int, default=60, help="Number of positions (default: 60)")
+    parser.add_argument(
+        "--portfolio-value",
+        type=float,
+        default=10_000_000,
+        help="Portfolio value in USD (default: 10M)",
+    )
+    parser.add_argument(
+        "--ranked-path",
+        default="outputs/ranked_with_momentum.json",
+        help="Path to ranked JSON file",
+    )
+    parser.add_argument(
+        "--returns-db",
+        default="data/returns/returns_db_daily.json",
+        help="Path to Morningstar returns database",
+    )
+    parser.add_argument(
+        "--output-path", help="Output path (default: outputs/portfolio_YYYYMMDD_morningstar.json)"
+    )
+    parser.add_argument(
+        "--max-position-pct",
+        type=float,
+        default=3.0,
+        help="Max position size as % of portfolio (default: 3.0)",
+    )
 
     args = parser.parse_args()
 
     # Parse date
     date_str = args.date
-    date_obj = datetime.strptime(date_str, '%Y-%m-%d')
-    date_compact = date_obj.strftime('%Y%m%d')
+    date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+    date_compact = date_obj.strftime("%Y%m%d")
 
     # Set paths
     ranked_path = Path(args.ranked_path)
@@ -413,7 +432,7 @@ def main():
     if args.output_path:
         output_path = Path(args.output_path)
     else:
-        output_path = Path(f'outputs/portfolio_{date_compact}_morningstar.json')
+        output_path = Path(f"outputs/portfolio_{date_compact}_morningstar.json")
 
     # Validate inputs
     if not ranked_path.exists():
@@ -433,11 +452,11 @@ def main():
         portfolio_value=args.portfolio_value,
         date_str=date_str,
         output_path=output_path,
-        max_position_pct=args.max_position_pct
+        max_position_pct=args.max_position_pct,
     )
 
     return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())
