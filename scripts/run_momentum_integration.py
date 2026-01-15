@@ -86,7 +86,7 @@ def main():
 
     # Load ranked output
     print(f"\nLoading ranked output from {ranked_path}...")
-    with open(ranked_path) as f:
+    with open(ranked_path, encoding='utf-8') as f:
         ranked_data = json.load(f)
 
     # Get ranked securities (try both possible keys)
