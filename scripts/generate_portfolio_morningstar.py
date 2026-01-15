@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 """
-Portfolio Construction from Rankings
-Takes momentum-integrated rankings and generates trade-ready portfolio
+Portfolio Construction from Rankings - MORNINGSTAR VERSION
+Uses institutional-grade Morningstar Direct returns data
 
 Usage:
-    python scripts/generate_portfolio_from_rankings.py --date 2026-01-15 --top-n 60
+    python scripts/generate_portfolio_morningstar.py --date 2026-01-15 --top-n 60
 """
 
 import json
 import argparse
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from decimal import Decimal
-import yfinance as yf
+import math
 from typing import Dict, List, Tuple
 
 def load_rankings(path: Path) -> List[Dict]:
@@ -27,80 +27,139 @@ def load_rankings(path: Path) -> List[Dict]:
     else:
         raise ValueError(f"Unexpected format in {path}")
 
-def fetch_current_prices(tickers: List[str]) -> Dict[str, float]:
-    """Fetch current prices and volatility for position sizing"""
-    prices = {}
-    volatilities = {}
+def load_morningstar_returns(returns_db_path: Path) -> Dict:
+    """Load Morningstar returns database"""
+    with open(returns_db_path) as f:
+        data = json.load(f)
     
-    print(f"Fetching prices for {len(tickers)} tickers...")
+    # Convert list format to dict by ticker for easy lookup
+    returns_by_ticker = {}
     
-    # Batch fetch for efficiency
-    batch_size = 50
-    for i in range(0, len(tickers), batch_size):
-        batch = tickers[i:i+batch_size]
-        batch_str = " ".join(batch)
+    for ticker, ticker_data in data.items():
+        returns_by_ticker[ticker] = ticker_data
+    
+    return returns_by_ticker
+
+def get_current_price(ticker: str, returns_data: Dict, as_of_date: str = None) -> float:
+    """
+    Get current price from Morningstar return index
+    Price = most recent return index value
+    """
+    if ticker not in returns_data:
+        return None
+    
+    ticker_data = returns_data[ticker]
+    returns_list = ticker_data.get('returns', [])
+    
+    if not returns_list:
+        return None
+    
+    # Get most recent return
+    if as_of_date:
+        # Find closest date <= as_of_date
+        target_date = datetime.strptime(as_of_date, '%Y-%m-%d')
+        valid_returns = [r for r in returns_list 
+                        if datetime.strptime(r['date'], '%Y-%m-%d') <= target_date]
+        if not valid_returns:
+            return None
+        latest = max(valid_returns, key=lambda x: x['date'])
+    else:
+        latest = returns_list[-1]
+    
+    # Return index value as proxy for price level
+    # Note: This is relative, we'll use it for volatility calc
+    return float(latest['return_index'])
+
+def calculate_volatility_from_returns(ticker: str, returns_data: Dict, days: int = 30) -> float:
+    """
+    Calculate annualized volatility from Morningstar returns
+    Uses last N days of daily returns
+    """
+    if ticker not in returns_data:
+        return 0.50  # Default 50% vol
+    
+    ticker_data = returns_data[ticker]
+    returns_list = ticker_data.get('returns', [])
+    
+    if len(returns_list) < days:
+        return 0.50  # Default if insufficient data
+    
+    # Get last N days
+    recent_returns = returns_list[-days:]
+    
+    # Calculate return series
+    return_pcts = []
+    for i in range(1, len(recent_returns)):
+        prev_idx = float(recent_returns[i-1]['return_index'])
+        curr_idx = float(recent_returns[i]['return_index'])
         
-        try:
-            data = yf.download(batch_str, period="90d", progress=False, show_errors=False)
-            
-            for ticker in batch:
-                try:
-                    if len(batch) == 1:
-                        close_prices = data['Close']
-                    else:
-                        close_prices = data['Close'][ticker]
-                    
-                    if len(close_prices) > 0:
-                        # Current price
-                        prices[ticker] = float(close_prices.iloc[-1])
-                        
-                        # 30-day volatility (annualized)
-                        returns = close_prices.pct_change().dropna()
-                        if len(returns) >= 20:
-                            volatilities[ticker] = float(returns.std() * (252 ** 0.5))
-                        else:
-                            volatilities[ticker] = 0.50  # Default 50% volatility
-                    
-                except Exception as e:
-                    print(f"  ⚠️  Error fetching {ticker}: {e}")
-                    continue
-        
-        except Exception as e:
-            print(f"  ⚠️  Batch error: {e}")
-            continue
+        if prev_idx > 0:
+            daily_return = (curr_idx - prev_idx) / prev_idx
+            return_pcts.append(daily_return)
     
-    print(f"  ✅ Fetched {len(prices)} prices")
-    print(f"  ✅ Calculated {len(volatilities)} volatilities")
+    if len(return_pcts) < 20:
+        return 0.50  # Default if insufficient returns
     
-    return prices, volatilities
+    # Calculate standard deviation
+    mean_return = sum(return_pcts) / len(return_pcts)
+    variance = sum((r - mean_return) ** 2 for r in return_pcts) / (len(return_pcts) - 1)
+    daily_vol = math.sqrt(variance)
+    
+    # Annualize (252 trading days)
+    annual_vol = daily_vol * math.sqrt(252)
+    
+    # Cap at reasonable bounds (10% - 200%)
+    return max(0.10, min(2.0, annual_vol))
+
+def get_latest_price_from_external(ticker: str, returns_data: Dict) -> float:
+    """
+    Get actual trading price (not return index)
+    For production, you'd query Morningstar API for latest quote
+    For now, use a scaling heuristic based on typical biotech prices
+    """
+    if ticker not in returns_data:
+        return None
+    
+    ticker_data = returns_data[ticker]
+    returns_list = ticker_data.get('returns', [])
+    
+    if not returns_list:
+        return None
+    
+    # Get latest return index
+    latest_idx = float(returns_list[-1]['return_index'])
+    
+    # Heuristic: Assume base price of $50 at index = 100
+    # This is just for share count estimation
+    # In production, you'd query actual prices from Morningstar quote API
+    estimated_price = latest_idx * 0.50  # Scale factor
+    
+    # Cap at reasonable biotech price range ($5 - $500)
+    return max(5.0, min(500.0, estimated_price))
 
 def calculate_inverse_vol_weights(
     tickers: List[str],
-    volatilities: Dict[str, float],
-    prices: Dict[str, float]
+    returns_data: Dict
 ) -> Dict[str, float]:
     """
-    Inverse volatility weighting
+    Inverse volatility weighting using Morningstar data
     - Lower volatility stocks get higher weight
     - Smooths out risk contribution across positions
     """
-    # Calculate inverse volatility for each ticker
-    inv_vols = {}
+    # Calculate volatility for each ticker
+    volatilities = {}
     for ticker in tickers:
-        if ticker in volatilities and ticker in prices:
-            vol = volatilities[ticker]
-            # Avoid division by zero, cap at 200% vol
-            vol = max(0.10, min(2.0, vol))
-            inv_vols[ticker] = 1.0 / vol
-        else:
-            # If no data, use average inverse vol
-            inv_vols[ticker] = 2.0  # ~50% vol
+        vol = calculate_volatility_from_returns(ticker, returns_data, days=30)
+        volatilities[ticker] = vol
+    
+    # Calculate inverse volatility
+    inv_vols = {t: 1.0 / v for t, v in volatilities.items()}
     
     # Normalize to sum to 1.0
     total_inv_vol = sum(inv_vols.values())
     weights = {t: inv_vol / total_inv_vol for t, inv_vol in inv_vols.items()}
     
-    return weights
+    return weights, volatilities
 
 def apply_concentration_limits(
     weights: Dict[str, float],
@@ -131,7 +190,6 @@ def apply_concentration_limits(
             uncapped_total = sum(capped[t] for t in uncapped_tickers)
             if uncapped_total > 0:
                 for ticker in uncapped_tickers:
-                    # Proportional redistribution
                     boost = excess * (capped[ticker] / uncapped_total)
                     capped[ticker] = min(max_weight, capped[ticker] + boost)
     
@@ -143,7 +201,6 @@ def apply_concentration_limits(
 
 def calculate_portfolio_metrics(
     positions: List[Dict],
-    prices: Dict[str, float],
     volatilities: Dict[str, float]
 ) -> Dict:
     """Calculate portfolio-level risk metrics"""
@@ -162,8 +219,7 @@ def calculate_portfolio_metrics(
         if ticker in volatilities:
             weighted_vol += volatilities[ticker] * pos['weight_pct'] / 100.0
     
-    # Portfolio beta estimate (using weighted vol as proxy)
-    # Typical biotech vol ~60%, market vol ~20%, so biotech beta ~0.6-0.8
+    # Portfolio beta estimate
     portfolio_beta = weighted_vol / 0.60 if weighted_vol > 0 else 0.0
     
     return {
@@ -174,12 +230,14 @@ def calculate_portfolio_metrics(
         'min_position_pct': min(p['weight_pct'] for p in positions),
         'portfolio_volatility': round(weighted_vol * 100, 1),
         'portfolio_beta_estimate': round(portfolio_beta, 2),
-        'tickers_with_prices': sum(1 for p in positions if p.get('current_price')),
-        'tickers_missing_prices': sum(1 for p in positions if not p.get('current_price'))
+        'data_source': 'morningstar_direct',
+        'tickers_with_data': sum(1 for p in positions if p.get('current_price')),
+        'tickers_missing_data': sum(1 for p in positions if not p.get('current_price'))
     }
 
 def generate_portfolio(
     ranked_path: Path,
+    returns_db_path: Path,
     top_n: int,
     portfolio_value: float,
     date_str: str,
@@ -189,12 +247,13 @@ def generate_portfolio(
     """Main portfolio generation logic"""
     
     print("="*70)
-    print("PORTFOLIO GENERATION")
+    print("PORTFOLIO GENERATION - MORNINGSTAR POWERED")
     print("="*70)
     print(f"Date: {date_str}")
     print(f"Portfolio value: ${portfolio_value:,.0f}")
     print(f"Target positions: {top_n}")
     print(f"Max position: {max_position_pct}%")
+    print(f"Data source: Morningstar Direct")
     print()
     
     # Load rankings
@@ -202,20 +261,25 @@ def generate_portfolio(
     securities = load_rankings(ranked_path)
     print(f"   Found {len(securities)} ranked securities")
     
+    # Load Morningstar returns
+    print("2. Loading Morningstar returns database...")
+    returns_data = load_morningstar_returns(returns_db_path)
+    print(f"   Loaded {len(returns_data)} tickers from Morningstar")
+    print()
+    
     # Take top N
     top_securities = securities[:top_n]
     tickers = [s['ticker'] for s in top_securities]
     print(f"   Selected top {len(tickers)} for portfolio")
-    print()
     
-    # Fetch prices and volatility
-    print("2. Fetching market data...")
-    prices, volatilities = fetch_current_prices(tickers)
+    # Check coverage
+    tickers_with_data = [t for t in tickers if t in returns_data]
+    print(f"   Morningstar coverage: {len(tickers_with_data)}/{len(tickers)} ({100*len(tickers_with_data)/len(tickers):.1f}%)")
     print()
     
     # Calculate weights
     print("3. Calculating position sizes...")
-    weights = calculate_inverse_vol_weights(tickers, volatilities, prices)
+    weights, volatilities = calculate_inverse_vol_weights(tickers_with_data, returns_data)
     
     # Apply concentration limits
     final_weights = apply_concentration_limits(weights, max_position_pct)
@@ -228,8 +292,17 @@ def generate_portfolio(
     
     for i, security in enumerate(top_securities):
         ticker = security['ticker']
+        
+        if ticker not in tickers_with_data:
+            print(f"   ⚠️  Skipping {ticker} (no Morningstar data)")
+            continue
+        
         weight_pct = final_weights.get(ticker, 0) * 100
         position_value = portfolio_value * weight_pct / 100
+        
+        # Get price estimate for share count
+        price_estimate = get_latest_price_from_external(ticker, returns_data)
+        shares = int(position_value / price_estimate) if price_estimate and price_estimate > 0 else 0
         
         position = {
             'rank': i + 1,
@@ -239,9 +312,10 @@ def generate_portfolio(
             'original_score': security.get('original_score', 0),
             'momentum_score': security.get('momentum_score', 50),
             'final_score': security.get('final_score', 0),
-            'current_price': prices.get(ticker),
-            'volatility': volatilities.get(ticker),
-            'shares': int(position_value / prices[ticker]) if ticker in prices and prices[ticker] > 0 else 0
+            'volatility': round(volatilities.get(ticker, 0.50), 3),
+            'price_estimate': round(price_estimate, 2) if price_estimate else None,
+            'shares_estimate': shares,
+            'data_source': 'morningstar_direct'
         }
         
         positions.append(position)
@@ -251,7 +325,7 @@ def generate_portfolio(
     
     # Calculate portfolio metrics
     print("5. Calculating portfolio metrics...")
-    metrics = calculate_portfolio_metrics(positions, prices, volatilities)
+    metrics = calculate_portfolio_metrics(positions, volatilities)
     print(f"   Portfolio beta estimate: {metrics['portfolio_beta_estimate']}")
     print(f"   Portfolio volatility: {metrics['portfolio_volatility']}%")
     print(f"   Average momentum: {metrics['avg_momentum']}")
@@ -268,7 +342,14 @@ def generate_portfolio(
         'parameters': {
             'top_n': top_n,
             'max_position_pct': max_position_pct,
-            'weighting_method': 'inverse_volatility'
+            'weighting_method': 'inverse_volatility',
+            'data_source': 'morningstar_direct',
+            'returns_db_path': str(returns_db_path)
+        },
+        'data_quality': {
+            'tickers_requested': len(tickers),
+            'tickers_with_morningstar_data': len(tickers_with_data),
+            'coverage_pct': round(100 * len(tickers_with_data) / len(tickers), 1)
         }
     }
     
@@ -284,7 +365,7 @@ def generate_portfolio(
     print("="*70)
     print("TOP 10 POSITIONS")
     print("="*70)
-    print(f"{'Rank':<6}{'Ticker':<8}{'Weight':>8}{'Value':>12}{'Shares':>8}{'Price':>10}")
+    print(f"{'Rank':<6}{'Ticker':<8}{'Weight':>8}{'Value':>12}{'Vol':>8}{'Score':>8}")
     print("-"*70)
     
     for pos in positions[:10]:
@@ -293,8 +374,8 @@ def generate_portfolio(
             f"{pos['ticker']:<8}"
             f"{pos['weight_pct']:>7.2f}%"
             f"${pos['position_value_usd']:>10,.0f}"
-            f"{pos['shares']:>8}"
-            f"${pos['current_price']:>9.2f}" if pos['current_price'] else "N/A"
+            f"{pos['volatility']*100:>7.1f}%"
+            f"{pos['final_score']:>8.2f}"
         )
     
     print()
@@ -308,13 +389,15 @@ def generate_portfolio(
     return output
 
 def main():
-    parser = argparse.ArgumentParser(description='Generate portfolio from rankings')
+    parser = argparse.ArgumentParser(description='Generate portfolio from rankings (Morningstar)')
     parser.add_argument('--date', required=True, help='Portfolio date (YYYY-MM-DD)')
     parser.add_argument('--top-n', type=int, default=60, help='Number of positions (default: 60)')
     parser.add_argument('--portfolio-value', type=float, default=10_000_000, 
                        help='Portfolio value in USD (default: 10M)')
     parser.add_argument('--ranked-path', default='outputs/ranked_with_momentum.json',
                        help='Path to ranked JSON file')
+    parser.add_argument('--returns-db', default='data/returns/returns_db_daily.json',
+                       help='Path to Morningstar returns database')
     parser.add_argument('--output-path', help='Output path (default: outputs/portfolio_YYYYMMDD.json)')
     parser.add_argument('--max-position-pct', type=float, default=3.0,
                        help='Max position size as % of portfolio (default: 3.0)')
@@ -328,20 +411,31 @@ def main():
     
     # Set paths
     ranked_path = Path(args.ranked_path)
+    returns_db_path = Path(args.returns_db)
+    
     if args.output_path:
         output_path = Path(args.output_path)
     else:
-        output_path = Path(f'outputs/portfolio_{date_compact}.json')
+        output_path = Path(f'outputs/portfolio_{date_compact}_morningstar.json')
+    
+    # Verify returns DB exists
+    if not returns_db_path.exists():
+        print(f"❌ Morningstar returns database not found: {returns_db_path}")
+        print("   Run: python scripts/build_returns_database.py")
+        return 1
     
     # Generate
     generate_portfolio(
         ranked_path=ranked_path,
+        returns_db_path=returns_db_path,
         top_n=args.top_n,
         portfolio_value=args.portfolio_value,
         date_str=date_str,
         output_path=output_path,
         max_position_pct=args.max_position_pct
     )
+    
+    return 0
 
 if __name__ == '__main__':
-    main()
+    exit(main())
