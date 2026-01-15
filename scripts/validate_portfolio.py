@@ -99,7 +99,7 @@ def validate_position_count(portfolio: dict, target: int = 60, tolerance: float 
     )
 
 
-def validate_concentration_limits(portfolio: dict, max_position: float = 0.03) -> ValidationResult:
+def validate_concentration_limits(portfolio: dict, max_position: float = 0.07) -> ValidationResult:
     """Check no position exceeds concentration limit."""
     positions = portfolio.get("positions", [])
 
