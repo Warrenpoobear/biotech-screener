@@ -29,7 +29,53 @@ import shutil
 from datetime import date, datetime, timedelta
 from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
+from typing_extensions import TypedDict
+
+
+# =============================================================================
+# TYPE DEFINITIONS
+# =============================================================================
+
+class ReturnRecord(TypedDict):
+    """Single return observation."""
+    date: str
+    return_: float  # Note: 'return' is a Python keyword
+
+
+class ReturnsMetadata(TypedDict, total=False):
+    """Metadata for returns database."""
+    start_date: str
+    end_date: str
+    fetched_at: str
+    source: str
+    version: str
+    ticker_count: int
+    benchmark_included: bool
+
+
+class ReturnsCoverage(TypedDict):
+    """Coverage statistics for returns fetch."""
+    requested: int
+    received: int
+    missing: List[str]
+
+
+class ReturnsProvenance(TypedDict):
+    """Provenance information for returns data."""
+    content_hash: str
+    fetch_timestamp: str
+    source_version: str
+
+
+class ReturnsData(TypedDict, total=False):
+    """Complete returns data structure."""
+    metadata: ReturnsMetadata
+    returns: Dict[str, List[Dict[str, Union[str, float]]]]
+    benchmark: Optional[Dict[str, List[Dict[str, Union[str, float]]]]]
+    coverage: ReturnsCoverage
+    provenance: ReturnsProvenance
+
 
 # Version for provenance tracking
 VERSION = "1.0.0"
@@ -291,7 +337,7 @@ class MorningstarReturnsFetcher:
         start_date: str,
         end_date: str,
         include_benchmark: bool = True,
-    ) -> Dict[str, Any]:
+    ) -> ReturnsData:
         """
         Fetch returns for multiple tickers.
 
@@ -403,7 +449,7 @@ class MorningstarReturnsFetcher:
 
     def save_database(
         self,
-        data: Dict[str, Any],
+        data: ReturnsData,
         filename: Optional[str] = None,
     ) -> Path:
         """
@@ -438,7 +484,12 @@ class ReturnsDatabase:
     Use this for validation and backtesting.
     """
 
-    def __init__(self, database_path: Path):
+    _data: ReturnsData
+    _returns: Dict[str, List[Dict[str, Union[str, float]]]]
+    _benchmark: Dict[str, List[Dict[str, Union[str, float]]]]
+    _metadata: ReturnsMetadata
+
+    def __init__(self, database_path: Path) -> None:
         """
         Load returns database from file.
 
@@ -461,7 +512,7 @@ class ReturnsDatabase:
         self._metadata = self._data.get("metadata", {})
 
     @property
-    def metadata(self) -> Dict[str, Any]:
+    def metadata(self) -> ReturnsMetadata:
         """Get database metadata."""
         return self._metadata
 

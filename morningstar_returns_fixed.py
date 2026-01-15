@@ -17,8 +17,48 @@ import json
 import hashlib
 from datetime import datetime, timedelta
 from decimal import Decimal
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
+from typing_extensions import TypedDict
 from dataclasses import dataclass, asdict
+
+
+# =============================================================================
+# TYPE DEFINITIONS
+# =============================================================================
+
+class AbsoluteReturnRecord(TypedDict):
+    """Absolute return record from fetch."""
+    sec_id: str
+    date: str
+    return_pct: str
+
+
+class ExcessReturnRecord(TypedDict):
+    """Excess return record from fetch."""
+    sec_id: str
+    date: str
+    excess_return_pct: str
+
+
+class FetchReturnsProvenance(TypedDict):
+    """Provenance metadata from fetch_returns."""
+    source: str
+    fetch_timestamp: str
+    data_start_date: str
+    data_end_date: str
+    frequency: str
+    benchmark_sec_id: Optional[str]
+    api_method: str
+    package_version: str
+    num_observations: int
+    sha256: str
+
+
+class FetchReturnsResult(TypedDict):
+    """Result structure from fetch_returns."""
+    absolute: List[AbsoluteReturnRecord]
+    excess: List[ExcessReturnRecord]
+    provenance: FetchReturnsProvenance
 
 # Morningstar package (optional dependency)
 try:
@@ -86,7 +126,7 @@ def fetch_returns(
     end_date: str,
     frequency: str = 'monthly',
     benchmark_sec_id: Optional[str] = None
-) -> Dict[str, List[Dict]]:
+) -> FetchReturnsResult:
     """
     Fetch historical returns from Morningstar Direct.
 
@@ -276,7 +316,7 @@ def fetch_returns(
 
 
 def save_returns_cache(
-    data: Dict,
+    data: FetchReturnsResult,
     output_dir: str,
     filename: str,
     atomic: bool = True
@@ -335,7 +375,7 @@ def save_returns_cache(
     return filepath
 
 
-def load_returns_cache(filepath: str) -> Dict:
+def load_returns_cache(filepath: str) -> FetchReturnsResult:
     """
     Load returns data from cache with integrity verification.
 
