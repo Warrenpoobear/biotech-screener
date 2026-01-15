@@ -23,14 +23,17 @@ from __future__ import annotations
 
 import hashlib
 import json
+import logging
 import os
 import tempfile
 import shutil
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 from typing_extensions import TypedDict
+
+logger = logging.getLogger(__name__)
 
 
 # =============================================================================
@@ -234,9 +237,9 @@ class MorningstarReturnsFetcher:
                             sec_id = str(us_rows.iloc[0]['SecId'])
                             ticker_to_secid[ticker.upper()] = sec_id
                             secid_to_ticker[sec_id] = ticker.upper()
-                except Exception:
-                    # Skip tickers that can't be looked up
-                    pass
+                except Exception as e:
+                    # Log and skip tickers that can't be looked up
+                    logger.debug(f"Could not look up ticker {ticker}: {e}")
 
             # Step 2: Fetch returns using SecIds (not ticker:US format)
             sec_ids = list(ticker_to_secid.values())
@@ -326,9 +329,7 @@ class MorningstarReturnsFetcher:
 
         except Exception as e:
             # Log error but don't fail - partial data is still useful
-            print(f"  Warning: Error fetching batch: {e}")
-            import traceback
-            traceback.print_exc()
+            logger.warning(f"Error fetching batch: {e}", exc_info=True)
             return {}
 
     def fetch_returns(
@@ -413,7 +414,7 @@ class MorningstarReturnsFetcher:
                 ticker_returns[ticker] = returns
 
         # Build result structure
-        fetched_at = datetime.utcnow().isoformat() + "Z"
+        fetched_at = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
         result = {
             "metadata": {

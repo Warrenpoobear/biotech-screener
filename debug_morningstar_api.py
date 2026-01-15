@@ -2,6 +2,7 @@
 Debug script to discover correct Morningstar API usage
 """
 import os
+import sys
 print("="*60)
 print("MORNINGSTAR API DIAGNOSTIC")
 print("="*60)
@@ -14,7 +15,7 @@ if token:
 else:
     print("    Token NOT set - set it with:")
     print("    $env:MD_AUTH_TOKEN='your-token'")
-    exit(1)
+    sys.exit(1)
 
 # Import package
 print("\n[2] Importing morningstar_data...")
@@ -24,7 +25,7 @@ try:
     print(f"    Version: {getattr(md, '__version__', 'unknown')}")
 except ImportError as e:
     print(f"    FAILED: {e}")
-    exit(1)
+    sys.exit(1)
 
 # Check direct module
 print("\n[3] Checking md.direct module...")
@@ -36,7 +37,7 @@ if hasattr(md, 'direct'):
     print(f"    Available methods: {methods[:10]}...")
 else:
     print("    md.direct NOT found")
-    exit(1)
+    sys.exit(1)
 
 # Check Frequency enum
 print("\n[4] Looking for Frequency enum...")

@@ -184,12 +184,15 @@ def fetch_returns_batch(
                 date_str = str(date_val).split('T')[0].split(' ')[0]
 
             ret_val = row[return_col]
-            if ret_val is not None and str(ret_val) not in ['nan', 'None', '']:
-                # Morningstar returns are in percentage, convert to decimal
-                all_returns[ticker][date_str] = str(float(ret_val) / 100)
+            if ret_val is not None and str(ret_val) not in ['nan', 'None', '', 'N/A', '<NA>']:
+                try:
+                    # Morningstar returns are in percentage, convert to decimal
+                    all_returns[ticker][date_str] = str(float(ret_val) / 100)
+                except (ValueError, TypeError) as e:
+                    logger.debug(f"Could not convert return value '{ret_val}' for {ticker} on {date_str}: {e}")
 
     except Exception as e:
-        logger.error(f"Error fetching batch: {e}")
+        logger.error(f"Error fetching batch: {e}", exc_info=True)
 
     return all_returns
 

@@ -22,7 +22,7 @@ GOVERNANCE: stdlib-only, Decimal arithmetic, complete audit trails
 """
 
 from decimal import Decimal, ROUND_HALF_UP, getcontext, InvalidOperation
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Dict, List, Tuple, Union
 from typing_extensions import TypedDict
@@ -221,7 +221,7 @@ class MorningstarMomentumSignals:
             "n_observations": n_obs,
             "ticker_window_hash": ticker_hash,
             "xbi_window_hash": xbi_hash,
-            "calculation_timestamp": datetime.now().isoformat()
+            "calculation_timestamp": datetime.now(timezone.utc).isoformat()
         }
 
         # Log for audit
@@ -707,7 +707,7 @@ class MorningstarMomentumSignals:
             "calc_date": calc_date,
             "composite_score": str(signals["composite_momentum_score"]),
             "confidence_tier": signals["confidence_tier"],
-            "timestamp": datetime.now().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
         self.audit_trail.append(entry)
 
@@ -739,14 +739,14 @@ def run_acceptance_tests():
     calc = MorningstarMomentumSignals()
     signals = calc.calculate_all_signals("TEST1", monotonic_returns, xbi_flat, "2024-05-10")
 
-    assert signals["composite_momentum_score"] > Decimal("50.0"), \
-        f"FAIL: Monotonic positive returns should score >50, got {signals['composite_momentum_score']}"
+    if signals["composite_momentum_score"] <= Decimal("50.0"):
+        raise ValueError(f"FAIL: Monotonic positive returns should score >50, got {signals['composite_momentum_score']}")
     print(f"  ✓ PASS: Score = {signals['composite_momentum_score']:.2f} (>50)")
 
     # Test 2: Score range must be [0, 100]
     print("\n[Test 2] Score Range [0, 100] (Not Capped at 85)")
-    assert Decimal("0.0") <= signals["composite_momentum_score"] <= Decimal("100.0"), \
-        "FAIL: Score out of bounds"
+    if not (Decimal("0.0") <= signals["composite_momentum_score"] <= Decimal("100.0")):
+        raise ValueError("FAIL: Score out of bounds")
 
     # Check that high-Sharpe returns with variance produce high scores
     # Using alternating positive returns to create variance while maintaining high mean
@@ -761,8 +761,8 @@ def run_acceptance_tests():
     signals_high_sharpe = calc.calculate_all_signals("TEST2", high_sharpe_returns, xbi_flat, "2024-05-10")
 
     # High Sharpe + high relative strength should produce score > 75
-    assert signals_high_sharpe["composite_momentum_score"] > Decimal("75.0"), \
-        f"FAIL: High Sharpe returns should score >75, got {signals_high_sharpe['composite_momentum_score']}"
+    if signals_high_sharpe["composite_momentum_score"] <= Decimal("75.0"):
+        raise ValueError(f"FAIL: High Sharpe returns should score >75, got {signals_high_sharpe['composite_momentum_score']}")
     print(f"  ✓ PASS: High Sharpe score = {signals_high_sharpe['composite_momentum_score']:.2f} (>75, demonstrates full range)")
 
     # Test 3: Alignment - missing dates should affect confidence
@@ -775,10 +775,10 @@ def run_acceptance_tests():
 
     signals_sparse = calc.calculate_all_signals("TEST3", sparse_returns, monotonic_returns, "2024-05-10")
 
-    assert signals_sparse["confidence_tier"] in ["LOW", "UNKNOWN"], \
-        f"FAIL: Sparse data should be LOW/UNKNOWN, got {signals_sparse['confidence_tier']}"
-    assert signals_sparse["confidence_multiplier"] < Decimal("1.0"), \
-        "FAIL: Sparse data should have reduced confidence multiplier"
+    if signals_sparse["confidence_tier"] not in ["LOW", "UNKNOWN"]:
+        raise ValueError(f"FAIL: Sparse data should be LOW/UNKNOWN, got {signals_sparse['confidence_tier']}")
+    if signals_sparse["confidence_multiplier"] >= Decimal("1.0"):
+        raise ValueError("FAIL: Sparse data should have reduced confidence multiplier")
     print(f"  ✓ PASS: Confidence tier = {signals_sparse['confidence_tier']}, "
           f"multiplier = {signals_sparse['confidence_multiplier']:.2f}")
 
@@ -787,10 +787,10 @@ def run_acceptance_tests():
     signals_a = calc.calculate_all_signals("TEST4", monotonic_returns, xbi_flat, "2024-05-10")
     signals_b = calc.calculate_all_signals("TEST4", monotonic_returns, xbi_flat, "2024-05-10")
 
-    assert signals_a["composite_momentum_score"] == signals_b["composite_momentum_score"], \
-        "FAIL: Non-deterministic output"
-    assert signals_a["provenance"]["ticker_window_hash"] == signals_b["provenance"]["ticker_window_hash"], \
-        "FAIL: Input hashes differ"
+    if signals_a["composite_momentum_score"] != signals_b["composite_momentum_score"]:
+        raise ValueError("FAIL: Non-deterministic output")
+    if signals_a["provenance"]["ticker_window_hash"] != signals_b["provenance"]["ticker_window_hash"]:
+        raise ValueError("FAIL: Input hashes differ")
     print(f"  ✓ PASS: Identical scores and input hashes")
 
     print("\n" + "=" * 70)
