@@ -354,9 +354,8 @@ class EnhancementOrchestrator:
             severity_distribution[score.severity] = \
                 severity_distribution.get(score.severity, 0) + 1
 
-        # Sort by composite score (ASCENDING: lower score = better = rank 1)
-        # Validation showed inverted ranking: high scores predicted underperformance
-        scores.sort(key=lambda x: x.composite_score, reverse=False)
+        # Sort by composite score (descending)
+        scores.sort(key=lambda x: x.composite_score, reverse=True)
 
         # Assign ranks
         for i, score in enumerate(scores):

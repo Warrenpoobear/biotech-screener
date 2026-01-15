@@ -20,8 +20,7 @@ Version: See SCHEMA_VERSION and SCORE_VERSION in module_3_schema.py
 
 from pathlib import Path
 from datetime import date
-from typing import Optional, Dict, List, Set, Tuple, Union
-from typing_extensions import TypedDict
+from typing import Optional, Dict, List, Set, Tuple, Any
 import json
 import hashlib
 import time
@@ -63,33 +62,6 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
-
-
-# =============================================================================
-# TYPE DEFINITIONS
-# =============================================================================
-
-class Module3Result(TypedDict):
-    """Complete result from Module 3 catalyst detection."""
-    summaries: Dict[str, TickerCatalystSummaryV2]
-    summaries_legacy: Dict[str, TickerCatalystSummary]
-    diagnostic_counts: Dict[str, Union[int, Dict[str, int]]]
-    diagnostic_counts_legacy: Dict[str, int]
-    as_of_date: str
-    schema_version: str
-    score_version: str
-
-
-class IntegrationRecord(TypedDict):
-    """Integration record for downstream consumers."""
-    ticker: str
-    score_override: str
-    score_blended: str
-    severe_negative_flag: bool
-    next_catalyst_date: Optional[str]
-    catalyst_window_bucket: str
-    catalyst_confidence: str
-    top_3_events: List[Dict[str, object]]
 
 
 # ============================================================================
@@ -259,7 +231,7 @@ def compute_module_3_catalyst(
     market_calendar: Optional[MarketCalendar] = None,
     config: Optional[Module3Config] = None,
     output_dir: Optional[Path] = None,
-) -> Module3Result:
+) -> Dict[str, Any]:
     """
     Main Module 3 Catalyst Detection Entry Point (vNext)
 
@@ -561,7 +533,7 @@ def write_vnext_output(
 # INTEGRATION HOOKS
 # ============================================================================
 
-def get_integration_record(summary: TickerCatalystSummaryV2) -> IntegrationRecord:
+def get_integration_record(summary: TickerCatalystSummaryV2) -> Dict[str, Any]:
     """
     Get merge-friendly record for institutional layer integration.
 
@@ -581,7 +553,7 @@ def get_integration_record(summary: TickerCatalystSummaryV2) -> IntegrationRecor
 
 def get_all_integration_records(
     summaries: Dict[str, TickerCatalystSummaryV2],
-) -> Dict[str, IntegrationRecord]:
+) -> Dict[str, Dict[str, Any]]:
     """
     Get integration records for all tickers.
 

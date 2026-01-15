@@ -4,17 +4,6 @@
   "success": true,
   "trials": [
     {
-      "nct_id": "NCT04120402",
-      "title": "Study to Evaluate the Efficacy and Safety of EP-104IAR in Patients With Osteoarthritis of the Knee",
-      "status": "COMPLETED",
-      "phase": "PHASE2",
-      "condition": "Osteoarthritis, Knee",
-      "start_date": "2021-09-10",
-      "completion_date": "2023-06-01",
-      "enrollment": 0,
-      "sponsor": "Eupraxia Pharmaceuticals Inc."
-    },
-    {
       "nct_id": "NCT02609126",
       "title": "Safety Study of a Long-Acting Injectable Steroid to Treat Knee Osteoarthritis",
       "status": "COMPLETED",
@@ -35,14 +24,25 @@
       "completion_date": "2026-12",
       "enrollment": 0,
       "sponsor": "Eupraxia Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT04120402",
+      "title": "Study to Evaluate the Efficacy and Safety of EP-104IAR in Patients With Osteoarthritis of the Knee",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Osteoarthritis, Knee",
+      "start_date": "2021-09-10",
+      "completion_date": "2023-06-01",
+      "enrollment": 0,
+      "sponsor": "Eupraxia Pharmaceuticals Inc."
     }
   ],
   "summary": {
     "total_trials": 3,
     "by_phase": {
-      "PHASE2": 1,
       "PHASE1": 1,
-      "PHASE1, PHASE2": 1
+      "PHASE1, PHASE2": 1,
+      "PHASE2": 1
     },
     "by_status": {
       "COMPLETED": 2,
@@ -58,7 +58,7 @@
   },
   "provenance": {
     "source": "ClinicalTrials.gov API v2",
-    "timestamp": "2026-01-12T09:03:02.626239",
+    "timestamp": "2026-01-05T17:58:21.863408",
     "search_query": "Eupraxia Pharmaceuticals",
     "url": "https://clinicaltrials.gov/search?term=Eupraxia+Pharmaceuticals"
   }

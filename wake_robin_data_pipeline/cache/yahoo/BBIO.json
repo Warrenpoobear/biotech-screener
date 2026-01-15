@@ -2,26 +2,26 @@
   "ticker": "BBIO",
   "success": true,
   "price": {
-    "current": 77.25,
+    "current": 73.42,
     "currency": "USD",
-    "day_high": 78.36,
-    "day_low": 74.5001,
-    "52_week_high": 78.585,
-    "52_week_low": 28.1
+    "day_high": 78.45,
+    "day_low": 71.99,
+    "52_week_high": 78.54,
+    "52_week_low": 27.86
   },
   "market_cap": {
-    "value": 14886756352.0,
+    "value": 14148680704.0,
     "currency": "USD"
   },
   "shares_outstanding": 192708813.0,
   "volume": {
-    "last": 2889389,
-    "average_30d": 1992228
+    "last": 2994461,
+    "average_30d": 1832892
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -41.700405,
-    "price_to_book": -7.6980567
+    "forward_pe": -41.402332,
+    "price_to_book": -7.3163924
   },
   "company_info": {
     "name": "BridgeBio Pharma, Inc.",
@@ -30,8 +30,8 @@
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-12T09:01:44.689286",
+    "timestamp": "2026-01-05T18:05:23.192537",
     "url": "https://finance.yahoo.com/quote/BBIO",
-    "data_hash": "f95747f40a97d156"
+    "data_hash": "5797a7f46b21ce64"
   }
 }

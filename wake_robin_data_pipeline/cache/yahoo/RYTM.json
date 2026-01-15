@@ -2,26 +2,26 @@
   "ticker": "RYTM",
   "success": true,
   "price": {
-    "current": 101.02,
+    "current": 101.86,
     "currency": "USD",
-    "day_high": 103.24,
-    "day_low": 96.7,
+    "day_high": 104.71,
+    "day_low": 99.46,
     "52_week_high": 122.2,
     "52_week_low": 45.905
   },
   "market_cap": {
-    "value": 6741676032.0,
+    "value": 6797734912.0,
     "currency": "USD"
   },
   "shares_outstanding": 66736056.0,
   "volume": {
-    "last": 813093,
-    "average_30d": 965557
+    "last": 939366,
+    "average_30d": 968403
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -38.505226,
-    "price_to_book": 45.259853
+    "forward_pe": -38.93329,
+    "price_to_book": 45.6362
   },
   "company_info": {
     "name": "Rhythm Pharmaceuticals, Inc.",
@@ -30,8 +30,8 @@
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-12T09:01:50.323938",
+    "timestamp": "2026-01-05T18:05:28.757700",
     "url": "https://finance.yahoo.com/quote/RYTM",
-    "data_hash": "0e8c038fd3166079"
+    "data_hash": "58ac193fe1327a0e"
   }
 }

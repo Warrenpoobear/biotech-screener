@@ -2,26 +2,26 @@
   "ticker": "RNA",
   "success": true,
   "price": {
-    "current": 72.37,
+    "current": 72.07,
     "currency": "USD",
-    "day_high": 72.41,
-    "day_low": 72.3,
+    "day_high": 72.15,
+    "day_low": 72.01,
     "52_week_high": 72.61,
     "52_week_low": 21.51
   },
   "market_cap": {
-    "value": 10904403968.0,
+    "value": 10859200512.0,
     "currency": "USD"
   },
   "shares_outstanding": 150675742.0,
   "volume": {
-    "last": 1122166,
-    "average_30d": 2111514
+    "last": 3653118,
+    "average_30d": 2203111
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -14.79935,
-    "price_to_book": 5.63103
+    "forward_pe": -14.738,
+    "price_to_book": 5.6076875
   },
   "company_info": {
     "name": "Avidity Biosciences, Inc.",
@@ -30,8 +30,8 @@
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-12T09:01:47.438624",
+    "timestamp": "2026-01-05T18:05:25.930410",
     "url": "https://finance.yahoo.com/quote/RNA",
-    "data_hash": "f0f88ac7b319f620"
+    "data_hash": "896507b545d9de07"
   }
 }

@@ -14,130 +14,10 @@ from __future__ import annotations
 from datetime import datetime, date
 
 from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
-from typing import Dict, List, Optional, Tuple, Union
-from typing_extensions import TypedDict, NotRequired
+from typing import Any, Dict, List, Optional, Tuple
 
 from common.provenance import create_provenance
-from common.types import Severity, UniverseResult, FinancialResult, Ticker
-
-
-# =============================================================================
-# TYPE DEFINITIONS
-# =============================================================================
-
-class CoinvestOverlay(TypedDict):
-    """Co-invest overlay data for a security."""
-    coinvest_overlap_count: int
-    coinvest_holders: List[str]
-    coinvest_quarter: Optional[str]
-    coinvest_published_at_max: Optional[str]
-    coinvest_usable: bool
-    coinvest_flags: List[str]
-
-
-class RankedSecurityRecord(TypedDict, total=False):
-    """Ranked security output record."""
-    ticker: str
-    composite_score: str
-    composite_rank: int
-    clinical_dev_normalized: str
-    financial_normalized: str
-    catalyst_normalized: str
-    clinical_dev_raw: Optional[str]
-    financial_raw: Optional[str]
-    catalyst_raw: Optional[str]
-    composite_data_state: str
-    weights_renormalized: bool
-    missing_subfactor_pct: str
-    market_cap_bucket: str
-    stage_bucket: str
-    cohort_key: str
-    normalization_applied: str
-    severity: str
-    flags: List[str]
-    rankable: bool
-    # Co-invest fields
-    coinvest_overlap_count: int
-    coinvest_holders: List[str]
-    coinvest_quarter: Optional[str]
-    coinvest_published_at_max: Optional[str]
-    coinvest_usable: bool
-    coinvest_flags: List[str]
-    # Enhancement fields (optional)
-    pos_normalized: NotRequired[Optional[str]]
-    pos_raw: NotRequired[Optional[str]]
-    si_squeeze_potential: NotRequired[Optional[str]]
-    si_signal_direction: NotRequired[Optional[str]]
-
-
-class ExcludedSecurityRecord(TypedDict):
-    """Excluded security record."""
-    ticker: str
-    reason: str
-    flags: List[str]
-
-
-class CohortStats(TypedDict):
-    """Statistics for a cohort."""
-    count: int
-    mean: str
-    min: str
-    max: str
-    normalization_fallback: str
-
-
-class CoinvestCoverage(TypedDict):
-    """Co-invest coverage statistics."""
-    rankable: int
-    with_overlap_ge_1: int
-    with_overlap_ge_2: int
-    unmapped_cusips_count: int
-
-
-class EnhancementDiagnostics(TypedDict, total=False):
-    """Enhancement module diagnostics."""
-    regime: str
-    regime_adjustments: Dict[str, str]
-    pos_scores_applied: int
-    si_squeeze_signals: int
-
-
-class DataCoverage(TypedDict):
-    """Data coverage statistics."""
-    FULL: int
-    PARTIAL: int
-    NONE: int
-    weights_renormalized: int
-
-
-class Module5DiagnosticCounts(TypedDict):
-    """Diagnostic counts for module 5."""
-    total_input: int
-    rankable: int
-    excluded: int
-    cohort_count: int
-
-
-class Module5Result(TypedDict, total=False):
-    """Complete result from Module 5 composite scoring."""
-    as_of_date: str
-    normalization_method: str
-    cohort_mode: str
-    weights_used: Dict[str, str]
-    ranked_securities: List[RankedSecurityRecord]
-    excluded_securities: List[ExcludedSecurityRecord]
-    cohort_stats: Dict[str, CohortStats]
-    diagnostic_counts: Module5DiagnosticCounts
-    data_coverage: DataCoverage
-    coinvest_coverage: Optional[CoinvestCoverage]
-    enhancement_applied: bool
-    enhancement_diagnostics: Optional[EnhancementDiagnostics]
-    provenance: Dict[str, object]
-
-
-# Internal working types
-WorkingRecord = Dict[str, Union[str, int, float, bool, Decimal, Severity, List[str], None, CoinvestOverlay]]
-CatalystSummaryDict = Dict[str, Union[str, int, float, bool, Decimal, List[object], Dict[str, object], None]]
+from common.types import Severity
 
 RULESET_VERSION = "1.2.1"  # Bumped for determinism + exception fixes
 
@@ -149,23 +29,18 @@ def _decimal_mean(values: List[Decimal]) -> Decimal:
     return sum(values) / Decimal(len(values))
 
 # Default weights (sum to 1.0)
-# SCHEME A: Financial = pure risk control via severity multipliers only
-# Rationale: Financial health is downside asymmetry/dilution pressure, not alpha.
-# The severity gates (SEV3 excluded, SEV2/SEV1 penalized) handle risk control.
-# This is regime-robust: avoids 2021 "easy funding" vs 2022 "funding shut" flip.
 DEFAULT_WEIGHTS = {
-    "clinical_dev": Decimal("0.60"),  # Primary driver (was 0.40)
-    "financial": Decimal("0.00"),     # Risk control via severity only (was 0.35)
-    "catalyst": Decimal("0.40"),      # Secondary driver (was 0.25)
+    "clinical_dev": Decimal("0.40"),
+    "financial": Decimal("0.35"),
+    "catalyst": Decimal("0.25"),
 }
 
 # Enhanced weights when PoS scoring is available (sum to 1.0)
-# Same philosophy: financial = 0, risk control via severity gates
 ENHANCED_WEIGHTS = {
-    "clinical_dev": Decimal("0.45"),  # Primary driver
-    "financial": Decimal("0.00"),     # Risk control via severity only
-    "catalyst": Decimal("0.30"),      # Secondary driver
-    "pos": Decimal("0.25"),           # PoS from BIO benchmarks
+    "clinical_dev": Decimal("0.30"),  # Reduced from 0.40
+    "financial": Decimal("0.30"),     # Reduced from 0.35
+    "catalyst": Decimal("0.20"),      # Reduced from 0.25
+    "pos": Decimal("0.20"),           # New: PoS from BIO benchmarks
 }
 
 # Severity multipliers
@@ -203,10 +78,10 @@ def _quarter_from_date(d: date) -> str:
 
 
 def _enrich_with_coinvest(
-    ticker: Ticker,
-    coinvest_signals: Dict[str, object],
+    ticker: str,
+    coinvest_signals: dict,
     as_of_date: date,
-) -> CoinvestOverlay:
+) -> dict:
     """
     Look up co-invest signal for a ticker and return overlay fields.
     
@@ -266,7 +141,7 @@ def _enrich_with_coinvest(
 # COHORT HELPERS
 # =============================================================================
 
-def _market_cap_bucket(market_cap_mm: Optional[Union[int, float, str, Decimal]]) -> str:
+def _market_cap_bucket(market_cap_mm: Optional[Any]) -> str:
     """
     Classify market cap into bucket.
     
@@ -362,7 +237,7 @@ def _get_worst_severity(severities: List[str]) -> Severity:
     return worst
 
 
-def _apply_cohort_normalization(members: List[WorkingRecord], include_pos: bool = False) -> None:
+def _apply_cohort_normalization(members: List[Dict], include_pos: bool = False) -> None:
     """
     Apply rank normalization to cohort members in-place.
 
@@ -407,17 +282,17 @@ def _apply_cohort_normalization(members: List[WorkingRecord], include_pos: bool 
 # =============================================================================
 
 def compute_module_5_composite(
-    universe_result: Dict[str, object],
-    financial_result: Dict[str, object],
-    catalyst_result: Dict[str, object],
-    clinical_result: Dict[str, object],
+    universe_result: Dict[str, Any],
+    financial_result: Dict[str, Any],
+    catalyst_result: Dict[str, Any],
+    clinical_result: Dict[str, Any],
     as_of_date: str,
     weights: Optional[Dict[str, Decimal]] = None,
     normalization: str = "rank",
-    coinvest_signals: Optional[Dict[str, object]] = None,
+    coinvest_signals: Optional[Dict] = None,
     cohort_mode: str = COHORT_MODE_STAGE_ONLY,
-    enhancement_result: Optional[Dict[str, object]] = None,
-) -> Module5Result:
+    enhancement_result: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
     """
     Compute composite scores with cohort normalization and co-invest overlay.
 
@@ -521,8 +396,8 @@ def compute_module_5_composite(
     clinical_by_ticker = {s["ticker"]: s for s in clinical_result.get("scores", [])}
     
     # Build combined records
-    combined: List[WorkingRecord] = []
-    excluded: List[ExcludedSecurityRecord] = []
+    combined = []
+    excluded = []
     
     for ticker in active_tickers:
         fin = financial_by_ticker.get(ticker, {})
@@ -650,7 +525,7 @@ def compute_module_5_composite(
         })
     
     # Group by cohort for normalization
-    cohorts: Dict[str, List[WorkingRecord]] = {}
+    cohorts: Dict[str, List[Dict]] = {}
     
     for rec in combined:
         if cohort_mode == COHORT_MODE_STAGE_ONLY:
@@ -666,7 +541,7 @@ def compute_module_5_composite(
     
     # Identify small cohorts and apply fallback
     cohort_fallbacks: Dict[str, str] = {}
-    stage_pools: Dict[str, List[WorkingRecord]] = {}
+    stage_pools: Dict[str, List[Dict]] = {}
     
     for cohort_key, members in cohorts.items():
         if len(members) >= MIN_COHORT_SIZE:
@@ -722,58 +597,30 @@ def compute_module_5_composite(
         cat_delta = rec.get("catalyst_delta", Decimal("0"))
         delta_adjustment = (cat_delta / Decimal("20")).quantize(Decimal("0.01"))  # Max ±2.5 pts
 
-        # ROBUSTNESS FIX: Renormalize weights based on available data
-        # This prevents missing data from acting as a negative signal
-        available_weights = {}
-        if rec["clinical_dev_raw"] is not None:
-            available_weights["clinical_dev"] = weights.get("clinical_dev", Decimal("0.60"))
-        if rec["catalyst_raw"] is not None:
-            available_weights["catalyst"] = weights.get("catalyst", Decimal("0.40"))
-        # Financial weight is 0 in Scheme A, but include if non-zero
-        if rec["financial_raw"] is not None and weights.get("financial", Decimal("0")) > 0:
-            available_weights["financial"] = weights.get("financial", Decimal("0"))
-        if pos_n > 0 and "pos" in weights:
-            available_weights["pos"] = weights["pos"]
+        # Weighted sum (includes PoS if available)
+        composite = (
+            clin_n * weights.get("clinical_dev", Decimal("0.40")) +
+            fin_n * weights.get("financial", Decimal("0.35")) +
+            cat_n * weights.get("catalyst", Decimal("0.25")) +
+            proximity_bonus +
+            delta_adjustment
+        )
 
-        # Renormalize to sum to 1.0
-        weight_sum = sum(available_weights.values()) or Decimal("1")
-        renorm_weights = {k: v / weight_sum for k, v in available_weights.items()}
-
-        # Weighted sum with renormalized weights
-        composite = Decimal("0")
-        if "clinical_dev" in renorm_weights:
-            composite += clin_n * renorm_weights["clinical_dev"]
-        if "catalyst" in renorm_weights:
-            composite += cat_n * renorm_weights["catalyst"]
-        if "financial" in renorm_weights:
-            composite += fin_n * renorm_weights["financial"]
-        if "pos" in renorm_weights:
-            composite += pos_n * renorm_weights["pos"]
+        # Add PoS contribution if enhanced weights used
+        if "pos" in weights and pos_n > 0:
+            composite = composite + pos_n * weights["pos"]
             rec["flags"].append("pos_score_applied")
 
-        # Add proximity and delta adjustments
-        composite += proximity_bonus + delta_adjustment
-
-        # Track missing data for diagnostics (but no penalty)
-        subfactors = [rec["clinical_dev_raw"], rec["catalyst_raw"]]
+        # Count missing subfactors (now 4 if PoS available)
+        subfactors = [rec["clinical_dev_raw"], rec["financial_raw"], rec["catalyst_raw"]]
         if enhancement_applied:
             subfactors.append(rec.get("pos_raw"))
-        available_count = sum(1 for x in subfactors if x is not None)
-        total_count = len(subfactors)
-
-        # Compute composite_data_state: FULL / PARTIAL / NONE
-        if available_count == total_count:
-            data_state = "FULL"
-        elif available_count > 0:
-            data_state = "PARTIAL"
-        else:
-            data_state = "NONE"
-        rec["composite_data_state"] = data_state
-        missing_pct = Decimal(str((total_count - available_count) / total_count)) if total_count > 0 else Decimal("0")
-
-        # Flag if renormalization was applied
-        if len(available_weights) < len([w for w in weights.values() if w > 0]):
-            rec["flags"].append("weights_renormalized_missing_data")
+        missing = sum(1 for x in subfactors if x is None)
+        missing_pct = Decimal(str(missing / len(subfactors)))
+        
+        # Uncertainty penalty
+        uncertainty_penalty = min(MAX_UNCERTAINTY_PENALTY, missing_pct)
+        composite = composite * (Decimal("1") - uncertainty_penalty)
         
         # Severity multiplier
         multiplier = SEVERITY_MULTIPLIERS[rec["severity"]]
@@ -783,10 +630,12 @@ def compute_module_5_composite(
         composite = min(Decimal("100"), max(Decimal("0"), composite))
         
         rec["composite_score"] = composite.quantize(Decimal("0.01"))
+        rec["uncertainty_penalty"] = uncertainty_penalty.quantize(Decimal("0.01"))
         rec["missing_subfactor_pct"] = missing_pct.quantize(Decimal("0.01"))
-        rec["weights_renormalized"] = len(available_weights) < len([w for w in weights.values() if w > 0])
-
-        # Add severity penalty flags
+        
+        # Add penalty flags
+        if uncertainty_penalty > 0:
+            rec["flags"].append("uncertainty_penalty_applied")
         if rec["severity"] == Severity.SEV2:
             rec["flags"].append("sev2_penalty_applied")
         elif rec["severity"] == Severity.SEV1:
@@ -801,12 +650,10 @@ def compute_module_5_composite(
             rec["coinvest"] = None
     
     # Sort and rank (tie-breaker: coinvest_overlap_count DESC, then ticker ASC)
-    # NOTE: Sort ASCENDING by composite_score (lower score = better = rank 1)
-    # Validation showed inverted ranking: high scores predicted underperformance
     def sort_key(x):
         coinvest_count = x["coinvest"]["coinvest_overlap_count"] if x["coinvest"] else 0
         market_cap_mm = x.get("market_cap_mm", 0) or 0  # Market cap for deterministic tiebreak
-        return (x["composite_score"], -market_cap_mm, -coinvest_count, x["ticker"])
+        return (-x["composite_score"], -market_cap_mm, -coinvest_count, x["ticker"])
     combined.sort(key=sort_key)
     for i, rec in enumerate(combined):
         rec["composite_rank"] = i + 1
@@ -825,7 +672,7 @@ def compute_module_5_composite(
             }
     
     # Format output
-    ranked_securities: List[RankedSecurityRecord] = []
+    ranked_securities = []
     for rec in combined:
         coinvest = rec.get("coinvest") or {}
         security_data = {
@@ -838,8 +685,7 @@ def compute_module_5_composite(
             "clinical_dev_raw": str(rec["clinical_dev_raw"]) if rec["clinical_dev_raw"] else None,
             "financial_raw": str(rec["financial_raw"]) if rec["financial_raw"] else None,
             "catalyst_raw": str(rec["catalyst_raw"]) if rec["catalyst_raw"] else None,
-            "composite_data_state": rec["composite_data_state"],
-            "weights_renormalized": rec.get("weights_renormalized", False),
+            "uncertainty_penalty": str(rec["uncertainty_penalty"]),
             "missing_subfactor_pct": str(rec["missing_subfactor_pct"]),
             "market_cap_bucket": rec["market_cap_bucket"],
             "stage_bucket": rec["stage_bucket"],
@@ -889,14 +735,6 @@ def compute_module_5_composite(
             "si_squeeze_signals": si_squeeze_count,
         }
 
-    # Data coverage diagnostics (FULL/PARTIAL/NONE distribution)
-    data_coverage = {
-        "FULL": sum(1 for r in ranked_securities if r["composite_data_state"] == "FULL"),
-        "PARTIAL": sum(1 for r in ranked_securities if r["composite_data_state"] == "PARTIAL"),
-        "NONE": sum(1 for r in ranked_securities if r["composite_data_state"] == "NONE"),
-        "weights_renormalized": sum(1 for r in ranked_securities if r.get("weights_renormalized", False)),
-    }
-
     return {
         "as_of_date": as_of_date,
         "normalization_method": normalization,
@@ -911,7 +749,6 @@ def compute_module_5_composite(
             "excluded": len(excluded),
             "cohort_count": len(cohorts),
         },
-        "data_coverage": data_coverage,
         "coinvest_coverage": coinvest_coverage,
         "enhancement_applied": enhancement_applied,
         "enhancement_diagnostics": enhancement_diagnostics,

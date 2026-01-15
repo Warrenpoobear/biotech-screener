@@ -1,4 +1,4 @@
-# Byte-compiled / optimized / DLL files
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
@@ -50,15 +50,6 @@ Thumbs.db
 # Project outputs (generated, not source)
 snapshots/
 output/
-outputs/
-logs/
-results/
-backtest_results/
-reports/
-
-# Cache directories
-cache/
-*_cache/
 
 # Large data files - uncomment if you want to exclude real AACT data
 # data/aact_snapshots/*/studies.csv
@@ -66,12 +57,5 @@ cache/
 
 # Secrets / credentials (if any)
 .env
-.env.*
 *.pem
 *.key
-
-# Log files
-*.log
-
-# Generated dossiers
-dossiers/

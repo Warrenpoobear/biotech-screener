@@ -78,9 +78,8 @@ def calculate_score(company):
 # Score all companies
 scored = [calculate_score(c) for c in companies]
 
-# Sort by composite score (ASCENDING: lower score = better = rank 1)
-# Validation showed inverted ranking: high scores predicted underperformance
-ranked = sorted(scored, key=lambda x: x['composite_score'], reverse=False)
+# Sort by composite score
+ranked = sorted(scored, key=lambda x: x['composite_score'], reverse=True)
 
 # Display ranked list
 print('\n' + '='*100)

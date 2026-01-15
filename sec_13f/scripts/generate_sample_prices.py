@@ -87,15 +87,15 @@ def generate_prices(start_date: date, end_date: date) -> list:
 
 
 def main():
-    # Generate 10 years of data (2015-2024)
-    start = date(2015, 1, 2)  # First trading day 2015
+    # Generate 3 years of data (2022-2024)
+    start = date(2022, 1, 3)  # First trading day 2022
     end = date(2024, 12, 31)
     
     print(f"Generating prices from {start} to {end}...")
     rows = generate_prices(start, end)
     
     # Write CSV
-    output_path = "/home/user/biotech-screener/data/daily_prices.csv"
+    output_path = "/home/claude/biotech_screener/data/daily_prices.csv"
     with open(output_path, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=["date", "ticker", "adj_close"])
         writer.writeheader()

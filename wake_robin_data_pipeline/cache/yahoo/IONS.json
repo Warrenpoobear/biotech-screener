@@ -2,26 +2,26 @@
   "ticker": "IONS",
   "success": true,
   "price": {
-    "current": 80.3,
+    "current": 78.53,
     "currency": "USD",
-    "day_high": 83.2299,
-    "day_low": 79.3,
-    "52_week_high": 86.15,
+    "day_high": 79.42,
+    "day_low": 76.1,
+    "52_week_high": 83.61,
     "52_week_low": 23.95
   },
   "market_cap": {
-    "value": 13006544896.0,
+    "value": 12719849472.0,
     "currency": "USD"
   },
   "shares_outstanding": 161974393.0,
   "volume": {
-    "last": 2668760,
-    "average_30d": 1891000
+    "last": 1423138,
+    "average_30d": 1676002
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -34.67125,
-    "price_to_book": 20.938723
+    "forward_pe": -34.054047,
+    "price_to_book": 20.477182
   },
   "company_info": {
     "name": "Ionis Pharmaceuticals, Inc.",
@@ -30,8 +30,8 @@
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-12T09:01:43.411120",
+    "timestamp": "2026-01-05T18:05:21.867141",
     "url": "https://finance.yahoo.com/quote/IONS",
-    "data_hash": "3f2cd68bf7687ca3"
+    "data_hash": "bf677077183e122b"
   }
 }

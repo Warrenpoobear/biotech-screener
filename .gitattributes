@@ -1,26 +1,2 @@
 # Auto detect text files and perform LF normalization
 * text=auto
-
-# Force LF line endings for consistency and determinism
-*.py text eol=lf
-*.json text eol=lf
-*.jsonl text eol=lf
-*.csv text eol=lf
-*.md text eol=lf
-*.yml text eol=lf
-*.yaml text eol=lf
-*.toml text eol=lf
-*.txt text eol=lf
-*.sh text eol=lf
-
-# Windows batch files need CRLF
-*.bat text eol=crlf
-*.cmd text eol=crlf
-
-# Binary files
-*.png binary
-*.jpg binary
-*.jpeg binary
-*.gif binary
-*.pdf binary
-*.ico binary

@@ -10,17 +10,10 @@ Output: Filtered universe with status classifications
 from __future__ import annotations
 
 from decimal import Decimal, InvalidOperation
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from common.provenance import create_provenance
-from common.types import (
-    Severity,
-    StatusGate,
-    RawUniverseRecord,
-    ActiveSecurityRecord,
-    ExcludedSecurityRecord,
-    UniverseResult,
-)
+from common.types import Severity, StatusGate
 
 RULESET_VERSION = "1.0.0"
 
@@ -33,7 +26,7 @@ SHELL_KEYWORDS = frozenset([
 ])
 
 
-def _classify_status(record: RawUniverseRecord) -> StatusGate:
+def _classify_status(record: Dict[str, Any]) -> StatusGate:
     """Classify security status."""
     # Check for explicit status
     status = record.get("status", "").lower()
@@ -61,10 +54,10 @@ def _classify_status(record: RawUniverseRecord) -> StatusGate:
 
 
 def compute_module_1_universe(
-    raw_records: List[RawUniverseRecord],
+    raw_records: List[Dict[str, Any]],
     as_of_date: str,
     universe_tickers: Optional[List[str]] = None,
-) -> UniverseResult:
+) -> Dict[str, Any]:
     """
     Compute universe with status classifications.
     
@@ -82,9 +75,9 @@ def compute_module_1_universe(
             "provenance": {...}
         }
     """
-    active: List[ActiveSecurityRecord] = []
-    excluded: List[ExcludedSecurityRecord] = []
-    reason_counts: Dict[str, int] = {}
+    active = []
+    excluded = []
+    reason_counts = {}
     
     for record in raw_records:
         ticker = record.get("ticker", "").upper()

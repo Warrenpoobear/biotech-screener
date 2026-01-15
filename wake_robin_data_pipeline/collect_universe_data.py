@@ -23,7 +23,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from collectors import yahoo_collector, sec_collector, trials_collector, time_series_collector
 from defensive_overlays import enrich_universe_with_defensive_overlays, print_defensive_summary
 
-def load_universe(universe_file: str = "universe/full_universe.json") -> Dict:
+def load_universe(universe_file: str = "universe/pilot_universe.json") -> Dict:
     """Load universe configuration."""
     universe_path = Path(__file__).parent / universe_file
 
@@ -92,7 +92,7 @@ def merge_data_sources(ticker: str, yahoo_data: dict, sec_data: dict, trials_dat
             "lead_stage": trials_data['summary']['lead_stage'],
             "by_phase": trials_data['summary']['by_phase'],
             "conditions": trials_data['summary'].get('conditions', []),
-            "top_trials": trials_data.get('trials', [])[:5]  # Top 5 for reference
+            "top_trials": trials_data['trials'][:5]  # Top 5 for reference
         }
         record['data_quality']['has_clinical'] = True
     else:
@@ -101,18 +101,16 @@ def merge_data_sources(ticker: str, yahoo_data: dict, sec_data: dict, trials_dat
 
     # Time-series data (historical prices/returns for defensive overlays)
     if time_series_data and time_series_data.get('success'):
-        ts = time_series_data.get('time_series', {})
-        liq = time_series_data.get('liquidity', {})
         record['time_series'] = {
-            "prices": ts.get('prices', []),
-            "returns": ts.get('returns', []),
-            "volumes": ts.get('volumes', []),
-            "num_days": ts.get('num_days', 0),
-            "lookback_days": ts.get('lookback_days', 0),
-            "adv_20d": liq.get('adv_20d', 0)
+            "prices": time_series_data['time_series']['prices'],
+            "returns": time_series_data['time_series']['returns'],
+            "volumes": time_series_data['time_series']['volumes'],
+            "num_days": time_series_data['time_series']['num_days'],
+            "lookback_days": time_series_data['time_series']['lookback_days'],
+            "adv_20d": time_series_data['liquidity']['adv_20d']
         }
         record['data_quality']['has_time_series'] = True
-        record['data_quality']['time_series_days'] = ts.get('num_days', 0)
+        record['data_quality']['time_series_days'] = time_series_data['time_series']['num_days']
     else:
         record['time_series'] = None
         record['data_quality']['has_time_series'] = False
@@ -270,114 +268,9 @@ def print_summary(quality_report: dict):
 
     print("\n" + "="*60)
 
-def export_prices_to_csv(records: List[dict], lookback_days: int) -> Path:
-    """
-    Export historical prices and volumes from all records to a CSV file for backtesting.
-
-    Format: date,ticker,adj_close,volume
-
-    This allows the backtest runner to use real historical data with PIT-safe ADV calculation.
-    """
-    import csv
-    from datetime import datetime, timedelta
-
-    output_dir = Path(__file__).parent / "outputs"
-    output_dir.mkdir(exist_ok=True)
-
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    csv_file = output_dir / f"daily_prices_{timestamp}.csv"
-
-    # Collect all price data
-    all_prices = []
-    volume_count = 0  # Track how many rows have volume data
-
-    for record in records:
-        ticker = record.get('ticker', '')
-        if ticker == '_XBI_BENCHMARK_':
-            continue  # Skip benchmark in price export
-
-        time_series = record.get('time_series')
-        if not time_series or not time_series.get('prices'):
-            continue
-
-        prices = time_series['prices']
-        volumes = time_series.get('volumes', [])
-        num_days = time_series.get('num_days', len(prices))
-
-        # Calculate dates (working backwards from as_of_date)
-        as_of_str = record.get('as_of_date', datetime.now().isoformat()[:10])
-        try:
-            as_of = datetime.strptime(as_of_str[:10], '%Y-%m-%d').date()
-        except:
-            as_of = date.today()
-
-        # Generate trading dates (approximate - skip weekends)
-        trading_dates = []
-        current_date = as_of
-        days_back = 0
-        while len(trading_dates) < num_days and days_back < lookback_days * 2:
-            if current_date.weekday() < 5:  # Monday-Friday
-                trading_dates.append(current_date)
-            current_date = current_date - timedelta(days=1)
-            days_back += 1
-
-        trading_dates.reverse()  # Oldest to newest
-
-        # Match dates with prices and volumes
-        for i, price in enumerate(prices):
-            if i < len(trading_dates):
-                row = {
-                    'date': trading_dates[i].isoformat(),
-                    'ticker': ticker,
-                    'adj_close': f"{price:.2f}",
-                    'volume': ''  # Default empty
-                }
-                # Add volume if available for this index
-                if i < len(volumes) and volumes[i] is not None:
-                    row['volume'] = str(int(volumes[i]))
-                    volume_count += 1
-                all_prices.append(row)
-
-    if not all_prices:
-        print("   ⚠ No price data to export")
-        return None
-
-    # Sort by date, then ticker
-    all_prices.sort(key=lambda x: (x['date'], x['ticker']))
-
-    # Write CSV
-    with open(csv_file, 'w', newline='') as f:
-        writer = csv.DictWriter(f, fieldnames=['date', 'ticker', 'adj_close', 'volume'])
-        writer.writeheader()
-        writer.writerows(all_prices)
-
-    # Also copy to main data directory for backtest
-    import shutil
-    main_data_dir = Path(__file__).parent.parent / "data"
-    main_data_dir.mkdir(exist_ok=True)
-    shutil.copy(csv_file, main_data_dir / "daily_prices.csv")
-
-    # Create latest symlink
-    latest_csv = output_dir / "daily_prices_latest.csv"
-    if latest_csv.exists():
-        latest_csv.unlink()
-    shutil.copy(csv_file, latest_csv)
-
-    # Print summary
-    tickers = set(p['ticker'] for p in all_prices)
-    dates = set(p['date'] for p in all_prices)
-    volume_pct = 100 * volume_count / len(all_prices) if all_prices else 0
-    print(f"   Exported {len(all_prices)} price records")
-    print(f"   Tickers: {len(tickers)}")
-    print(f"   Date range: {min(dates)} to {max(dates)}")
-    print(f"   Volume data: {volume_count}/{len(all_prices)} rows ({volume_pct:.1f}%)")
-
-    return csv_file
-
-
 def main():
     """Main execution flow."""
-    print("\n🚀 Wake Robin Data Pipeline - Universe Collection (10-YEAR HISTORICAL)")
+    print("\n🚀 Wake Robin Data Pipeline - Universe Collection")
     print("="*60)
 
     # Load universe
@@ -403,14 +296,12 @@ def main():
     trials_results = trials_collector.collect_batch(ticker_company_map, delay_seconds=1.0)
 
     # Collect time-series data (historical prices/returns)
-    # Use 10 years of historical data (3650 days) for comprehensive backtesting
-    print("\n4b. Collecting time-series data (10 YEARS of historical prices/returns)...")
+    print("\n4b. Collecting time-series data (historical prices/returns)...")
     as_of_date = date.today()  # Or pass as parameter for PIT backtesting
-    lookback_days = 3650  # 10 years of data
     time_series_results = time_series_collector.collect_batch(
-        tickers,
+        tickers, 
         as_of=as_of_date,
-        lookback_days=lookback_days,
+        lookback_days=365,
         delay_seconds=0.1  # Fast due to caching
     )
 
@@ -452,13 +343,6 @@ def main():
     snapshot_file, report_file = save_snapshot(records, quality_report)
     print(f"   ✓ Snapshot: {snapshot_file.name}")
     print(f"   ✓ Report:   {report_file.name}")
-
-    # Export historical prices to CSV for backtesting
-    print("\n8. Exporting historical prices to CSV for backtesting...")
-    prices_csv = export_prices_to_csv(records, lookback_days)
-    if prices_csv:
-        print(f"   ✓ Prices CSV: {prices_csv.name}")
-        print(f"   ✓ Also copied to: ../data/daily_prices.csv")
 
     # Print summary
     print_summary(quality_report)

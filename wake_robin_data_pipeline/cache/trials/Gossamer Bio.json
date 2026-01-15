@@ -4,13 +4,35 @@
   "success": true,
   "trials": [
     {
-      "nct_id": "NCT04816604",
-      "title": "Open-label Extension Study of GB002 in Adult Subjects With Pulmonary Arterial Hypertension (PAH)",
-      "status": "ACTIVE_NOT_RECRUITING",
-      "phase": "PHASE2",
+      "nct_id": "NCT03473236",
+      "title": "Phase 1A Safety Trial of Inhaled PK10571 (GB002)",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Safety Issues",
+      "start_date": "2017-09-06",
+      "completion_date": "2018-12-03",
+      "enrollment": 0,
+      "sponsor": "GB002, Inc., a wholly owned subsidiary of Gossamer Bio, Inc."
+    },
+    {
+      "nct_id": "NCT06274801",
+      "title": "Open-label Extension Study of Seralutinib in Adult Subjects With PAH (PROSERA-EXT)",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
       "condition": "Pulmonary Arterial Hypertension",
-      "start_date": "2021-04-05",
-      "completion_date": "2027-12",
+      "start_date": "2024-09-03",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "GB002, Inc."
+    },
+    {
+      "nct_id": "NCT03926793",
+      "title": "Clinical Study of Inhaled GB002 for Treatment of WHO Group I Pulmonary Arterial Hypertension",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Pulmonary Arterial Hypertension",
+      "start_date": "2020-02-04",
+      "completion_date": "2021-05-05",
       "enrollment": 0,
       "sponsor": "GB002, Inc., a wholly owned subsidiary of Gossamer Bio, Inc."
     },
@@ -26,15 +48,26 @@
       "sponsor": "GB001, Inc, a wholly owned subsidiary of Gossamer Bio, Inc."
     },
     {
-      "nct_id": "NCT05934526",
-      "title": "Efficacy and Safety of Seralutinib in Adult Subjects With PAH (PROSERA)",
-      "status": "COMPLETED",
-      "phase": "PHASE3",
-      "condition": "Pulmonary Arterial Hypertension",
-      "start_date": "2023-12-28",
-      "completion_date": "2025-12-22",
+      "nct_id": "NCT04060342",
+      "title": "GB1275 Monotherapy and in Combination With an Anti-PD1 Antibody in Patients With Specified Advanced Solid Tumors or in Combination With Standard of Care in Patients With Metastatic Pancreatic Adenocarcinoma",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Pancreatic Adenocarcinoma, Esophageal Adenocarcinoma, Esophageal Squamous Cell Carcinoma, Gastric Adenocarcinoma, Gastroesophageal Junction Adenocarcinoma, Triple Negative Breast Cancer, Castration-resistant Prostate Cancer, Microsatellite Stable Colorectal Cancer, Non-small Cell Lung Cancer, Small-cell Lung Cancer, Head and Neck Squamous Cell Carcinoma, Urothelial Carcinoma, Renal Cell Carcinoma, Hepatocellular Carcinoma",
+      "start_date": "2019-08-13",
+      "completion_date": "2022-04-11",
       "enrollment": 0,
-      "sponsor": "GB002, Inc."
+      "sponsor": "GB006, Inc., a wholly owned subsidiary of Gossamer Bio, Inc."
+    },
+    {
+      "nct_id": "NCT04816604",
+      "title": "Open-label Extension Study of GB002 in Adult Subjects With Pulmonary Arterial Hypertension (PAH)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Pulmonary Arterial Hypertension",
+      "start_date": "2021-04-05",
+      "completion_date": "2027-12",
+      "enrollment": 0,
+      "sponsor": "GB002, Inc., a wholly owned subsidiary of Gossamer Bio, Inc."
     },
     {
       "nct_id": "NCT03860896",
@@ -48,26 +81,15 @@
       "sponsor": "GB004, Inc., a wholly owned subsidiary of Gossamer Bio, Inc."
     },
     {
-      "nct_id": "NCT03926793",
-      "title": "Clinical Study of Inhaled GB002 for Treatment of WHO Group I Pulmonary Arterial Hypertension",
+      "nct_id": "NCT03683576",
+      "title": "GB001 in Adult Subjects With Moderate to Severe Asthma",
       "status": "COMPLETED",
-      "phase": "PHASE1",
-      "condition": "Pulmonary Arterial Hypertension",
-      "start_date": "2020-02-04",
-      "completion_date": "2021-05-05",
-      "enrollment": 0,
-      "sponsor": "GB002, Inc., a wholly owned subsidiary of Gossamer Bio, Inc."
-    },
-    {
-      "nct_id": "NCT04556383",
-      "title": "A Study With GB004 in Adult Subjects With Active Ulcerative Colitis (UC)",
-      "status": "TERMINATED",
       "phase": "PHASE2",
-      "condition": "Ulcerative Colitis",
-      "start_date": "2020-10-19",
-      "completion_date": "2022-06-01",
+      "condition": "Asthma",
+      "start_date": "2018-10-22",
+      "completion_date": "2020-08-18",
       "enrollment": 0,
-      "sponsor": "GB004, Inc."
+      "sponsor": "GB001, Inc, a wholly owned subsidiary of Gossamer Bio, Inc."
     },
     {
       "nct_id": "NCT05242146",
@@ -81,54 +103,32 @@
       "sponsor": "GB005, Inc., a wholly owned subsidiary of Gossamer Bio, Inc."
     },
     {
-      "nct_id": "NCT03473236",
-      "title": "Phase 1A Safety Trial of Inhaled PK10571 (GB002)",
-      "status": "COMPLETED",
-      "phase": "PHASE1",
-      "condition": "Safety Issues",
-      "start_date": "2017-09-06",
-      "completion_date": "2018-12-03",
+      "nct_id": "NCT05934526",
+      "title": "Efficacy and Safety of Seralutinib in Adult Subjects With PAH (PROSERA)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Pulmonary Arterial Hypertension",
+      "start_date": "2023-12-28",
+      "completion_date": "2025-12",
       "enrollment": 0,
-      "sponsor": "GB002, Inc., a wholly owned subsidiary of Gossamer Bio, Inc."
-    },
-    {
-      "nct_id": "NCT03683576",
-      "title": "GB001 in Adult Subjects With Moderate to Severe Asthma",
-      "status": "COMPLETED",
-      "phase": "PHASE2",
-      "condition": "Asthma",
-      "start_date": "2018-10-22",
-      "completion_date": "2020-08-18",
-      "enrollment": 0,
-      "sponsor": "GB001, Inc, a wholly owned subsidiary of Gossamer Bio, Inc."
-    },
-    {
-      "nct_id": "NCT04060342",
-      "title": "GB1275 Monotherapy and in Combination With an Anti-PD1 Antibody in Patients With Specified Advanced Solid Tumors or in Combination With Standard of Care in Patients With Metastatic Pancreatic Adenocarcinoma",
-      "status": "TERMINATED",
-      "phase": "PHASE1",
-      "condition": "Pancreatic Adenocarcinoma, Esophageal Adenocarcinoma, Esophageal Squamous Cell Carcinoma, Gastric Adenocarcinoma, Gastroesophageal Junction Adenocarcinoma, Triple Negative Breast Cancer, Castration-resistant Prostate Cancer, Microsatellite Stable Colorectal Cancer, Non-small Cell Lung Cancer, Small-cell Lung Cancer, Head and Neck Squamous Cell Carcinoma, Urothelial Carcinoma, Renal Cell Carcinoma, Hepatocellular Carcinoma",
-      "start_date": "2019-08-13",
-      "completion_date": "2022-04-11",
-      "enrollment": 0,
-      "sponsor": "GB006, Inc., a wholly owned subsidiary of Gossamer Bio, Inc."
+      "sponsor": "GB002, Inc."
     }
   ],
   "summary": {
     "total_trials": 13,
     "by_phase": {
-      "PHASE2": 5,
+      "PHASE1": 5,
       "PHASE3": 3,
-      "PHASE1": 5
+      "PHASE2": 5
     },
     "by_status": {
-      "ACTIVE_NOT_RECRUITING": 2,
-      "COMPLETED": 7,
+      "COMPLETED": 6,
+      "RECRUITING": 2,
       "TERMINATED": 3,
-      "RECRUITING": 1
+      "ACTIVE_NOT_RECRUITING": 2
     },
-    "active_trials": 3,
-    "completed_trials": 7,
+    "active_trials": 4,
+    "completed_trials": 6,
     "conditions": [
       "Asthma",
       "CNS Lymphoma",
@@ -144,7 +144,7 @@
   },
   "provenance": {
     "source": "ClinicalTrials.gov API v2",
-    "timestamp": "2026-01-12T09:02:54.834399",
+    "timestamp": "2026-01-05T17:58:15.181375",
     "search_query": "Gossamer Bio",
     "url": "https://clinicaltrials.gov/search?term=Gossamer+Bio"
   }
