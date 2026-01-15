@@ -39,7 +39,8 @@ from datetime import date
 import hashlib
 from decimal import Decimal
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional, Union
+from typing_extensions import TypedDict
 
 # Configure logging
 logging.basicConfig(
@@ -88,7 +89,84 @@ VERSION = "1.3.0"  # Bumped for enhancement integration (PoS, Short Interest, Re
 DETERMINISTIC_TIMESTAMP_SUFFIX = "T00:00:00Z"
 
 
-def _force_deterministic_generated_at(obj: Any, generated_at: str) -> None:
+# =============================================================================
+# TYPE DEFINITIONS
+# =============================================================================
+
+class ContentHashes(TypedDict, total=False):
+    """Content hashes for input files."""
+    universe: str
+    financial_records: str
+    trial_records: str
+    market_data: str
+    coinvest_signals: str
+
+
+class AuditRecord(TypedDict, total=False):
+    """Audit record for the run."""
+    as_of_date: str
+    orchestrator_version: str
+    data_dir: str
+    input_hashes: ContentHashes
+    parameter_snapshots: Dict[str, object]
+    parameter_hashes: Dict[str, str]
+
+
+class RunMetadata(TypedDict):
+    """Metadata for a screening run."""
+    as_of_date: str
+    version: str
+    deterministic_timestamp: str
+    input_hashes: ContentHashes
+    enhancements_enabled: bool
+
+
+class SummaryStats(TypedDict, total=False):
+    """Summary statistics for run results."""
+    total_evaluated: int
+    active_universe: int
+    excluded: int
+    final_ranked: int
+    catalyst_events: int
+    severe_negatives: int
+    regime: str
+    regime_confidence: str
+    pos_indication_coverage: str
+    short_interest_coverage: str
+
+
+class ScreeningResults(TypedDict, total=False):
+    """Complete screening pipeline results."""
+    run_metadata: RunMetadata
+    module_1_universe: object
+    module_2_financial: object
+    module_3_catalyst: object
+    module_4_clinical: object
+    module_5_composite: object
+    enhancements: object
+    summary: SummaryStats
+    bootstrap_analysis: object
+
+
+class DryRunValidation(TypedDict):
+    """Validation results for dry-run mode."""
+    valid: bool
+    data_dir: str
+    required_files: Dict[str, Dict[str, object]]
+    optional_files: Dict[str, Dict[str, object]]
+    content_hashes: ContentHashes
+    errors: List[str]
+
+
+class CheckpointData(TypedDict):
+    """Data saved in a checkpoint file."""
+    module: str
+    as_of_date: str
+    version: str
+    data: object
+
+
+def _force_deterministic_generated_at(obj: Union[Dict[str, object], List[object], object], generated_at: str) -> None:
     """Recursively overwrite provenance.generated_at for byte-identical outputs."""
     if isinstance(obj, dict):
         prov = obj.get("provenance")
@@ -121,7 +199,7 @@ def validate_as_of_date_param(as_of_date: str) -> None:
     # Lookahead protection should be enforced via PIT filters and/or input snapshot dating.
 
 
-def load_json_data(filepath: Path, description: str) -> List[Dict[str, Any]]:
+def load_json_data(filepath: Path, description: str) -> List[Dict[str, object]]:
     """
     Load JSON data file with validation.
     
@@ -148,7 +226,7 @@ def load_json_data(filepath: Path, description: str) -> List[Dict[str, Any]]:
     return data
 
 
-def write_json_output(filepath: Path, data: Dict[str, Any]) -> None:
+def write_json_output(filepath: Path, data: Dict[str, object]) -> None:
     """
     Write JSON output with deterministic formatting.
 
@@ -194,7 +272,7 @@ def save_checkpoint(
     checkpoint_dir: Path,
     module_name: str,
     as_of_date: str,
-    data: Dict[str, Any]
+    data: Dict[str, object]
 ) -> Path:
     """
     Save module checkpoint to disk.
@@ -228,7 +306,7 @@ def load_checkpoint(
     checkpoint_dir: Path,
     module_name: str,
     as_of_date: str
-) -> Optional[Dict[str, Any]]:
+) -> Optional[Dict[str, object]]:
     """
     Load module checkpoint from disk.
 
@@ -286,7 +364,7 @@ def get_resume_module_index(resume_from: Optional[str]) -> int:
 # DRY-RUN VALIDATION
 # =============================================================================
 
-def validate_inputs_dry_run(data_dir: Path, enable_coinvest: bool = False) -> Dict[str, Any]:
+def validate_inputs_dry_run(data_dir: Path, enable_coinvest: bool = False) -> DryRunValidation:
     """
     Validate all required input files exist without running pipeline.
 
@@ -373,7 +451,7 @@ def create_audit_record(
     as_of_date: str,
     data_dir: Path,
     content_hashes: Dict[str, str],
-) -> Dict[str, Any]:
+) -> AuditRecord:
     """
     Create comprehensive audit record for the run.
 
@@ -407,7 +485,7 @@ def create_audit_record(
     return audit
 
 
-def append_audit_log(audit_log_path: Path, record: Dict[str, Any]) -> None:
+def append_audit_log(audit_log_path: Path, record: AuditRecord) -> None:
     """
     Append audit record to JSONL log file.
 
@@ -432,7 +510,7 @@ def run_screening_pipeline(
     checkpoint_dir: Optional[Path] = None,
     resume_from: Optional[str] = None,
     audit_log_path: Optional[Path] = None,
-) -> Dict[str, Any]:
+) -> ScreeningResults:
     """
     Execute full screening pipeline with deterministic guarantees.
 
@@ -850,12 +928,12 @@ def compute_data_hash(data_dir: Path) -> str:
 
 
 def add_bootstrap_analysis(
-    results: dict,
+    results: ScreeningResults,
     as_of_date: str,
     data_dir: Path,
     n_bootstrap: int,
-    run_id: str = None,
-) -> dict:
+    run_id: Optional[str] = None,
+) -> ScreeningResults:
     """Add bootstrap confidence intervals to results."""
     from common.random_state import derive_base_seed, DeterministicRNG
     from extensions.bootstrap_scoring import compute_bootstrap_ci_decimal
@@ -889,7 +967,7 @@ def add_bootstrap_analysis(
 
 
 def main() -> int:
-    """CLI entrypoint."""
+    """CLI entrypoint. Returns 0 on success, 1 on validation error, 2 on unexpected error."""
     parser = argparse.ArgumentParser(
         description="Wake Robin Biotech Screening Pipeline (Deterministic)",
         formatter_class=argparse.RawDescriptionHelpFormatter,

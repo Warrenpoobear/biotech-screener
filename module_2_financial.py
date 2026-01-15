@@ -30,9 +30,21 @@ import json
 import logging
 import math
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Any
+from typing import Dict, List, Optional, Tuple, Union
+
+from common.types import (
+    FinancialInputRecord,
+    MarketDataRecord,
+    FinancialScoreRecord,
+    FinancialResult,
+    Ticker,
+)
 
 logger = logging.getLogger(__name__)
+
+# Type alias for financial data dict (internal use)
+FinancialDataDict = Dict[str, Union[float, int, str, List[float], None]]
+MarketDataDict = Dict[str, Union[float, int, str, None]]
 
 # =============================================================================
 # CONSTANTS
@@ -61,7 +73,7 @@ EPS = 1e-9
 # BURN RATE CALCULATION (HIERARCHICAL)
 # =============================================================================
 
-def calculate_burn_rate(financial_data: Dict) -> Tuple[Optional[float], str, str, str]:
+def calculate_burn_rate(financial_data: FinancialDataDict) -> Tuple[Optional[float], str, str, str]:
     """
     Calculate monthly burn rate using hierarchical sources.
 
@@ -130,7 +142,7 @@ def calculate_burn_rate(financial_data: Dict) -> Tuple[Optional[float], str, str
     return (None, "none", BURN_CONFIDENCE_NONE, "none")
 
 
-def calculate_trailing_burn(financial_data: Dict) -> Tuple[Optional[float], int]:
+def calculate_trailing_burn(financial_data: FinancialDataDict) -> Tuple[Optional[float], int]:
     """
     Calculate trailing 4-quarter average burn if multiple quarters available.
 
@@ -168,7 +180,7 @@ def calculate_trailing_burn(financial_data: Dict) -> Tuple[Optional[float], int]
 # LIQUID ASSETS CALCULATION
 # =============================================================================
 
-def calculate_liquid_assets(financial_data: Dict) -> Tuple[float, List[str]]:
+def calculate_liquid_assets(financial_data: FinancialDataDict) -> Tuple[float, List[str]]:
     """
     Calculate liquid assets: Cash + MarketableSecurities.
 
@@ -201,7 +213,7 @@ def calculate_liquid_assets(financial_data: Dict) -> Tuple[float, List[str]]:
 # CASH RUNWAY CALCULATION
 # =============================================================================
 
-def calculate_cash_runway(financial_data: Dict, market_data: Dict) -> Dict[str, Any]:
+def calculate_cash_runway(financial_data: FinancialDataDict, market_data: MarketDataDict) -> Dict[str, Union[float, str, List[str], None]]:
     """
     Calculate months of cash runway with detailed burn info.
 
@@ -287,8 +299,8 @@ def _score_runway(runway_months: float) -> float:
 # =============================================================================
 
 def calculate_dilution_risk(
-    financial_data: Dict,
-    market_data: Dict,
+    financial_data: FinancialDataDict,
+    market_data: MarketDataDict,
     runway_months: Optional[float]
 ) -> Tuple[Optional[float], float]:
     """
@@ -344,7 +356,7 @@ def calculate_dilution_risk(
 # LIQUIDITY SCORING (DOLLAR ADV EMPHASIS)
 # =============================================================================
 
-def score_liquidity(market_data: Dict) -> Tuple[float, bool, float]:
+def score_liquidity(market_data: MarketDataDict) -> Tuple[float, bool, float]:
     """
     Score based on market cap and trading volume.
     Emphasizes dollar ADV (60%) over market cap (40%).
@@ -405,7 +417,7 @@ def score_liquidity(market_data: Dict) -> Tuple[float, bool, float]:
 # DATA QUALITY ASSESSMENT
 # =============================================================================
 
-def assess_data_quality(financial_data: Dict, market_data: Dict) -> Tuple[str, List[str], Dict[str, str]]:
+def assess_data_quality(financial_data: FinancialDataDict, market_data: MarketDataDict) -> Tuple[str, List[str], Dict[str, str]]:
     """
     Assess data quality and track inputs used.
 
@@ -521,7 +533,7 @@ def determine_financial_severity(
 # MAIN SCORING FUNCTION
 # =============================================================================
 
-def score_financial_health(ticker: str, financial_data: Dict, market_data: Dict) -> Dict:
+def score_financial_health(ticker: Ticker, financial_data: FinancialDataDict, market_data: MarketDataDict) -> FinancialScoreRecord:
     """Main scoring function for Module 2 (vNext)"""
 
     # Assess data quality first
@@ -608,7 +620,7 @@ def score_financial_health(ticker: str, financial_data: Dict, market_data: Dict)
     }
 
 
-def run_module_2(universe: List[str], financial_data: List[Dict], market_data: List[Dict]) -> List[Dict]:
+def run_module_2(universe: List[Ticker], financial_data: List[FinancialDataDict], market_data: List[MarketDataDict]) -> List[FinancialScoreRecord]:
     """
     Main entry point for Module 2 financial health scoring.
 
