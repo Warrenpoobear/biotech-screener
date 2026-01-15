@@ -184,31 +184,58 @@ class MorningstarDataProvider:
             return None
 
         try:
-            # Get the data points schema for daily returns
-            if self._data_points_cache is None:
-                data_points_df = md.direct.portfolio.get_data_set_data_points(
-                    data_set_id=MSTAR_DATA_SET_RETURNS_DAILY
-                )
-                if data_points_df is not None:
-                    self._data_points_cache = {
-                        row['name']: row['data_point_id']
-                        for _, row in data_points_df.iterrows()
-                    }
-
             # Calculate date range
             start_date = as_of - timedelta(days=lookback_days)
 
-            # Fetch returns using Morningstar Direct API
-            # Note: The exact API call depends on how securities are identified
-            # This uses the investment data API pattern
-            returns_df = md.direct.get_investment_data(
-                investments=[ticker],
-                data_points=["daily_return"],
-                start_date=start_date.strftime('%Y-%m-%d'),
-                end_date=as_of.strftime('%Y-%m-%d')
-            )
+            # Try different Morningstar API methods
+            returns_df = None
 
-            if returns_df is None or returns_df.empty:
+            # Method 1: Try md.direct.investments.get_investment_data (if available)
+            if hasattr(md.direct, 'investments') and hasattr(md.direct.investments, 'get_investment_data'):
+                try:
+                    returns_df = md.direct.investments.get_investment_data(
+                        investments=[ticker],
+                        data_points=["DailyReturn"],
+                        start=start_date.strftime('%Y-%m-%d'),
+                        end=as_of.strftime('%Y-%m-%d')
+                    )
+                except Exception:
+                    pass
+
+            # Method 2: Try md.direct.get_returns (if available)
+            if returns_df is None and hasattr(md.direct, 'get_returns'):
+                try:
+                    returns_df = md.direct.get_returns(
+                        securities=[ticker],
+                        start=start_date.strftime('%Y-%m-%d'),
+                        end=as_of.strftime('%Y-%m-%d'),
+                        frequency='daily'
+                    )
+                except Exception:
+                    pass
+
+            # Method 3: Try md.time_series.get_returns (if available)
+            if returns_df is None and hasattr(md, 'time_series') and hasattr(md.time_series, 'get_returns'):
+                try:
+                    returns_df = md.time_series.get_returns(
+                        investments=[ticker],
+                        start_date=start_date.strftime('%Y-%m-%d'),
+                        end_date=as_of.strftime('%Y-%m-%d')
+                    )
+                except Exception:
+                    pass
+
+            # Method 4: Try md.direct.get_data with data_set_id for daily returns
+            if returns_df is None and hasattr(md.direct, 'get_data'):
+                try:
+                    returns_df = md.direct.get_data(
+                        investments=[ticker],
+                        data_set_id=MSTAR_DATA_SET_RETURNS_DAILY
+                    )
+                except Exception:
+                    pass
+
+            if returns_df is None or (hasattr(returns_df, 'empty') and returns_df.empty):
                 return None
 
             # Extract returns, filtering for PIT compliance
@@ -216,11 +243,21 @@ class MorningstarDataProvider:
             for idx, row in returns_df.iterrows():
                 if hasattr(idx, 'date'):
                     return_date = idx.date()
+                elif hasattr(idx, 'to_pydatetime'):
+                    return_date = idx.to_pydatetime().date()
                 else:
-                    return_date = idx
+                    continue
 
                 if return_date <= as_of:
-                    ret_value = row.get('daily_return', row.iloc[0] if len(row) > 0 else None)
+                    # Try common column names for daily returns
+                    ret_value = None
+                    for col_name in ['DailyReturn', 'daily_return', 'Return', 'return', 'value']:
+                        if col_name in row.index:
+                            ret_value = row[col_name]
+                            break
+                    if ret_value is None and len(row) > 0:
+                        ret_value = row.iloc[0]
+
                     if ret_value is not None and not math.isnan(ret_value):
                         returns.append(float(ret_value))
 
@@ -655,6 +692,85 @@ def check_morningstar_availability() -> Dict[str, bool]:
         "yfinance_available": YFINANCE_AVAILABLE,
         "primary_source": "morningstar" if MORNINGSTAR_AVAILABLE else "yfinance"
     }
+
+
+def diagnose_morningstar_api() -> Dict[str, Any]:
+    """
+    Diagnose available Morningstar API methods and structure.
+
+    Run this to discover what API methods are available for fetching data.
+    """
+    result = {
+        "morningstar_available": MORNINGSTAR_AVAILABLE,
+        "modules": {},
+        "methods": {}
+    }
+
+    if not MORNINGSTAR_AVAILABLE:
+        print("morningstar_data not installed")
+        return result
+
+    print("=== Morningstar API Structure ===\n")
+
+    # Check top-level modules
+    print("Top-level modules in md:")
+    top_level = [x for x in dir(md) if not x.startswith('_')]
+    print(f"  {top_level}")
+    result["modules"]["top_level"] = top_level
+
+    # Check md.direct
+    if hasattr(md, 'direct'):
+        print("\nModules in md.direct:")
+        direct_modules = [x for x in dir(md.direct) if not x.startswith('_')]
+        print(f"  {direct_modules}")
+        result["modules"]["md.direct"] = direct_modules
+
+        # Check md.direct.portfolio
+        if hasattr(md.direct, 'portfolio'):
+            print("\nMethods in md.direct.portfolio:")
+            portfolio_methods = [x for x in dir(md.direct.portfolio) if not x.startswith('_') and callable(getattr(md.direct.portfolio, x, None))]
+            print(f"  {portfolio_methods}")
+            result["methods"]["md.direct.portfolio"] = portfolio_methods
+
+        # Check md.direct.investments (if exists)
+        if hasattr(md.direct, 'investments'):
+            print("\nMethods in md.direct.investments:")
+            inv_methods = [x for x in dir(md.direct.investments) if not x.startswith('_') and callable(getattr(md.direct.investments, x, None))]
+            print(f"  {inv_methods}")
+            result["methods"]["md.direct.investments"] = inv_methods
+
+        # Check md.direct for data fetching methods
+        print("\nCallable methods in md.direct:")
+        direct_methods = [x for x in dir(md.direct) if not x.startswith('_') and callable(getattr(md.direct, x, None))]
+        print(f"  {direct_methods}")
+        result["methods"]["md.direct"] = direct_methods
+
+    # Check md.time_series (if exists)
+    if hasattr(md, 'time_series'):
+        print("\nMethods in md.time_series:")
+        ts_methods = [x for x in dir(md.time_series) if not x.startswith('_') and callable(getattr(md.time_series, x, None))]
+        print(f"  {ts_methods}")
+        result["methods"]["md.time_series"] = ts_methods
+
+    # Try to get data sets
+    print("\n=== Available Data Sets ===")
+    try:
+        data_sets = md.direct.portfolio.get_data_sets()
+        print(data_sets)
+        result["data_sets"] = data_sets.to_dict() if hasattr(data_sets, 'to_dict') else str(data_sets)
+    except Exception as e:
+        print(f"  Error: {e}")
+
+    # Try to get daily returns data points
+    print("\n=== Daily Returns Data Points (data_set_id=2) ===")
+    try:
+        data_points = md.direct.portfolio.get_data_set_data_points(data_set_id="2")
+        print(data_points)
+        result["daily_returns_data_points"] = data_points.to_dict() if hasattr(data_points, 'to_dict') else str(data_points)
+    except Exception as e:
+        print(f"  Error: {e}")
+
+    return result
 
 
 if __name__ == "__main__":
