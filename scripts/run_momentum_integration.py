@@ -54,28 +54,35 @@ def main():
             print(f"\nMomentum signals available for {len(signals)} tickers")
 
             # Show top/bottom momentum
-            ranked = sorted(signals.items(), key=lambda x: x[1].get("composite_score", 0), reverse=True)
+            ranked = sorted(signals.items(), key=lambda x: x[1].get("composite_momentum_score", 0), reverse=True)
 
             print("\n📈 TOP 10 MOMENTUM:")
             for ticker, data in ranked[:10]:
-                score = data.get("composite_score", 0)
+                score = data.get("composite_momentum_score", 0)
                 print(f"  {ticker:6s}: {score:5.1f}")
 
             print("\n📉 BOTTOM 10 MOMENTUM:")
             for ticker, data in ranked[-10:]:
-                score = data.get("composite_score", 0)
+                score = data.get("composite_momentum_score", 0)
                 print(f"  {ticker:6s}: {score:5.1f}")
 
             # Show regime
             returns_path = Path("data/returns/returns_db_daily.json")
             if returns_path.exists():
-                from src.scoring.integrate_momentum_regime_adaptive import calculate_xbi_regime
-                with open(returns_path) as f:
-                    returns_data = json.load(f)
-                regime_info = calculate_xbi_regime(returns_data)
-                print(f"\n🎯 CURRENT REGIME: {regime_info['regime']}")
-                print(f"   XBI 90-day return: {regime_info['xbi_return_90d']*100:.1f}%")
-                print(f"   Momentum weight: {regime_info['momentum_weight']*100:.0f}%")
+                from src.scoring.integrate_momentum_regime_adaptive import calculate_xbi_regime, load_xbi_returns
+                from decimal import Decimal
+
+                xbi_returns = load_xbi_returns(str(returns_path))
+                calc_date = momentum_data.get("metadata", {}).get("calculation_date", "2026-01-14")
+                regime, xbi_return = calculate_xbi_regime(xbi_returns, calc_date)
+
+                # Regime weights
+                regime_weights = {"risk_on": 0.25, "neutral": 0.15, "risk_off": 0.05}
+                weight = regime_weights.get(regime, 0.15)
+
+                print(f"\n🎯 CURRENT REGIME: {regime.upper()}")
+                print(f"   XBI 90-day return: {float(xbi_return)*100:.1f}%")
+                print(f"   Momentum weight: {weight*100:.0f}%")
         else:
             print("\nNo momentum signals found. Run calculate_momentum_batch.py first.")
 
