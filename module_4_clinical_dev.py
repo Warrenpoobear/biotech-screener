@@ -23,12 +23,63 @@ vNext changes:
 from __future__ import annotations
 
 from decimal import Decimal
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
+from typing_extensions import TypedDict
 from datetime import datetime, date
 
 from common.provenance import create_provenance
 from common.pit_enforcement import compute_pit_cutoff, is_pit_admissible
-from common.types import Severity
+from common.types import Severity, TrialRecord, ClinicalResult, Ticker
+
+
+# =============================================================================
+# TYPE DEFINITIONS
+# =============================================================================
+
+class ClinicalScoreRecord(TypedDict, total=False):
+    """Output record for clinical scoring."""
+    ticker: str
+    clinical_score: str
+    phase_score: str
+    phase_progress: str
+    trial_count_bonus: str
+    diversity_bonus: str
+    recency_bonus: str
+    design_score: str
+    execution_score: str
+    endpoint_score: str
+    lead_phase: str
+    trial_count: int
+    flags: List[str]
+    severity: str
+    n_trials_unique: int
+    n_trials_raw: int
+    pit_filtered_count_ticker: int
+    lead_trial_nct_id: Optional[str]
+    recency_days: Optional[int]
+
+
+class Module4DiagnosticCounts(TypedDict):
+    """Diagnostic counts for module 4."""
+    scored: int
+    total_trials_raw: int
+    total_trials_unique: int
+    total_trials: int
+    pit_filtered: int
+    pit_fields_used: Dict[str, int]
+
+
+class Module4Result(TypedDict):
+    """Complete result from Module 4 clinical development scoring."""
+    as_of_date: str
+    scores: List[ClinicalScoreRecord]
+    diagnostic_counts: Module4DiagnosticCounts
+    provenance: Dict[str, object]
+
+
+# Internal types
+TrialDict = Dict[str, Union[str, int, float, bool, List[str], None]]
+NormalizedTrialDict = Dict[str, Union[str, int, bool, List[str], None]]
 
 RULESET_VERSION = "1.0.2-VNEXT"
 
@@ -103,7 +154,7 @@ def _score_trial_count(num_trials: int) -> Decimal:
         return Decimal("5.0")
 
 
-def _normalize_conditions(conditions_raw: Any) -> List[str]:
+def _normalize_conditions(conditions_raw: Union[str, List[str], List[List[str]], None]) -> List[str]:
     """
     Normalize conditions to List[str] (lower, strip).
     Handles string, list of strings, or nested structures.
@@ -130,7 +181,7 @@ def _normalize_conditions(conditions_raw: Any) -> List[str]:
     return result
 
 
-def _tokenize_conditions(conditions: List[str]) -> set:
+def _tokenize_conditions(conditions: List[str]) -> set[str]:
     """
     Tokenize conditions for diversity scoring.
     Returns unique tokens (words) across all conditions.
@@ -240,7 +291,7 @@ def _score_recency(
     return (score, days_since_update, False, is_stale)
 
 
-def _score_design(trial: Dict[str, Any]) -> Decimal:
+def _score_design(trial: NormalizedTrialDict) -> Decimal:
     """Score trial design quality (0-25)."""
     score = Decimal("12")  # Base
     
@@ -268,7 +319,7 @@ def _score_design(trial: Dict[str, Any]) -> Decimal:
     return max(Decimal("0"), min(Decimal("25"), score))
 
 
-def _score_execution(trials: List[Dict[str, Any]]) -> Decimal:
+def _score_execution(trials: List[NormalizedTrialDict]) -> Decimal:
     """Score execution track record (0-25)."""
     if not trials:
         return Decimal("12")
@@ -310,7 +361,7 @@ def _classify_endpoint(endpoint_text: str) -> str:
     return "neutral"
 
 
-def _score_endpoints(trials: List[Dict[str, Any]]) -> Decimal:
+def _score_endpoints(trials: List[NormalizedTrialDict]) -> Decimal:
     """Score endpoint portfolio strength (0-20)."""
     if not trials:
         return Decimal("10")
@@ -333,7 +384,7 @@ def _score_endpoints(trials: List[Dict[str, Any]]) -> Decimal:
     return max(Decimal("0"), min(Decimal("20"), score))
 
 
-def _select_pit_date(trial: Dict[str, Any]) -> Tuple[Optional[str], str]:
+def _select_pit_date(trial: TrialDict) -> Tuple[Optional[str], str]:
     """
     Select PIT date field in priority order.
 
@@ -352,10 +403,10 @@ def _select_pit_date(trial: Dict[str, Any]) -> Tuple[Optional[str], str]:
 
 
 def compute_module_4_clinical_dev(
-    trial_records: List[Dict[str, Any]],
-    active_tickers: List[str],
+    trial_records: List[TrialDict],
+    active_tickers: List[Ticker],
     as_of_date: str,
-) -> Dict[str, Any]:
+) -> Module4Result:
     """
     Compute clinical development quality scores (vNext).
 
@@ -387,7 +438,7 @@ def compute_module_4_clinical_dev(
     ticker_pit_filtered: Dict[str, int] = {}
 
     # Group trials by ticker with deduplication
-    ticker_trials: Dict[str, Dict[str, Dict]] = {}  # ticker -> nct_id -> trial
+    ticker_trials: Dict[str, Dict[str, NormalizedTrialDict]] = {}  # ticker -> nct_id -> trial
 
     for trial in trial_records:
         ticker = trial.get("ticker", "").upper()
@@ -440,7 +491,7 @@ def compute_module_4_clinical_dev(
     for ticker_dict in ticker_trials.values():
         total_unique += len(ticker_dict)
 
-    scores = []
+    scores: List[ClinicalScoreRecord] = []
 
     for ticker in active_tickers:
         trials_dict = ticker_trials.get(ticker, {})

@@ -14,10 +14,130 @@ from __future__ import annotations
 from datetime import datetime, date
 
 from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
+from typing_extensions import TypedDict, NotRequired
 
 from common.provenance import create_provenance
-from common.types import Severity
+from common.types import Severity, UniverseResult, FinancialResult, Ticker
+
+
+# =============================================================================
+# TYPE DEFINITIONS
+# =============================================================================
+
+class CoinvestOverlay(TypedDict):
+    """Co-invest overlay data for a security."""
+    coinvest_overlap_count: int
+    coinvest_holders: List[str]
+    coinvest_quarter: Optional[str]
+    coinvest_published_at_max: Optional[str]
+    coinvest_usable: bool
+    coinvest_flags: List[str]
+
+
+class RankedSecurityRecord(TypedDict, total=False):
+    """Ranked security output record."""
+    ticker: str
+    composite_score: str
+    composite_rank: int
+    clinical_dev_normalized: str
+    financial_normalized: str
+    catalyst_normalized: str
+    clinical_dev_raw: Optional[str]
+    financial_raw: Optional[str]
+    catalyst_raw: Optional[str]
+    composite_data_state: str
+    weights_renormalized: bool
+    missing_subfactor_pct: str
+    market_cap_bucket: str
+    stage_bucket: str
+    cohort_key: str
+    normalization_applied: str
+    severity: str
+    flags: List[str]
+    rankable: bool
+    # Co-invest fields
+    coinvest_overlap_count: int
+    coinvest_holders: List[str]
+    coinvest_quarter: Optional[str]
+    coinvest_published_at_max: Optional[str]
+    coinvest_usable: bool
+    coinvest_flags: List[str]
+    # Enhancement fields (optional)
+    pos_normalized: NotRequired[Optional[str]]
+    pos_raw: NotRequired[Optional[str]]
+    si_squeeze_potential: NotRequired[Optional[str]]
+    si_signal_direction: NotRequired[Optional[str]]
+
+
+class ExcludedSecurityRecord(TypedDict):
+    """Excluded security record."""
+    ticker: str
+    reason: str
+    flags: List[str]
+
+
+class CohortStats(TypedDict):
+    """Statistics for a cohort."""
+    count: int
+    mean: str
+    min: str
+    max: str
+    normalization_fallback: str
+
+
+class CoinvestCoverage(TypedDict):
+    """Co-invest coverage statistics."""
+    rankable: int
+    with_overlap_ge_1: int
+    with_overlap_ge_2: int
+    unmapped_cusips_count: int
+
+
+class EnhancementDiagnostics(TypedDict, total=False):
+    """Enhancement module diagnostics."""
+    regime: str
+    regime_adjustments: Dict[str, str]
+    pos_scores_applied: int
+    si_squeeze_signals: int
+
+
+class DataCoverage(TypedDict):
+    """Data coverage statistics."""
+    FULL: int
+    PARTIAL: int
+    NONE: int
+    weights_renormalized: int
+
+
+class Module5DiagnosticCounts(TypedDict):
+    """Diagnostic counts for module 5."""
+    total_input: int
+    rankable: int
+    excluded: int
+    cohort_count: int
+
+
+class Module5Result(TypedDict, total=False):
+    """Complete result from Module 5 composite scoring."""
+    as_of_date: str
+    normalization_method: str
+    cohort_mode: str
+    weights_used: Dict[str, str]
+    ranked_securities: List[RankedSecurityRecord]
+    excluded_securities: List[ExcludedSecurityRecord]
+    cohort_stats: Dict[str, CohortStats]
+    diagnostic_counts: Module5DiagnosticCounts
+    data_coverage: DataCoverage
+    coinvest_coverage: Optional[CoinvestCoverage]
+    enhancement_applied: bool
+    enhancement_diagnostics: Optional[EnhancementDiagnostics]
+    provenance: Dict[str, object]
+
+
+# Internal working types
+WorkingRecord = Dict[str, Union[str, int, float, bool, Decimal, Severity, List[str], None, CoinvestOverlay]]
+CatalystSummaryDict = Dict[str, Union[str, int, float, bool, Decimal, List[object], Dict[str, object], None]]
 
 RULESET_VERSION = "1.2.1"  # Bumped for determinism + exception fixes
 
@@ -83,10 +203,10 @@ def _quarter_from_date(d: date) -> str:
 
 
 def _enrich_with_coinvest(
-    ticker: str,
-    coinvest_signals: dict,
+    ticker: Ticker,
+    coinvest_signals: Dict[str, object],
     as_of_date: date,
-) -> dict:
+) -> CoinvestOverlay:
     """
     Look up co-invest signal for a ticker and return overlay fields.
     
@@ -146,7 +266,7 @@ def _enrich_with_coinvest(
 # COHORT HELPERS
 # =============================================================================
 
-def _market_cap_bucket(market_cap_mm: Optional[Any]) -> str:
+def _market_cap_bucket(market_cap_mm: Optional[Union[int, float, str, Decimal]]) -> str:
     """
     Classify market cap into bucket.
     
@@ -242,7 +362,7 @@ def _get_worst_severity(severities: List[str]) -> Severity:
     return worst
 
 
-def _apply_cohort_normalization(members: List[Dict], include_pos: bool = False) -> None:
+def _apply_cohort_normalization(members: List[WorkingRecord], include_pos: bool = False) -> None:
     """
     Apply rank normalization to cohort members in-place.
 
@@ -287,17 +407,17 @@ def _apply_cohort_normalization(members: List[Dict], include_pos: bool = False) 
 # =============================================================================
 
 def compute_module_5_composite(
-    universe_result: Dict[str, Any],
-    financial_result: Dict[str, Any],
-    catalyst_result: Dict[str, Any],
-    clinical_result: Dict[str, Any],
+    universe_result: Dict[str, object],
+    financial_result: Dict[str, object],
+    catalyst_result: Dict[str, object],
+    clinical_result: Dict[str, object],
     as_of_date: str,
     weights: Optional[Dict[str, Decimal]] = None,
     normalization: str = "rank",
-    coinvest_signals: Optional[Dict] = None,
+    coinvest_signals: Optional[Dict[str, object]] = None,
     cohort_mode: str = COHORT_MODE_STAGE_ONLY,
-    enhancement_result: Optional[Dict[str, Any]] = None,
-) -> Dict[str, Any]:
+    enhancement_result: Optional[Dict[str, object]] = None,
+) -> Module5Result:
     """
     Compute composite scores with cohort normalization and co-invest overlay.
 
@@ -401,8 +521,8 @@ def compute_module_5_composite(
     clinical_by_ticker = {s["ticker"]: s for s in clinical_result.get("scores", [])}
     
     # Build combined records
-    combined = []
-    excluded = []
+    combined: List[WorkingRecord] = []
+    excluded: List[ExcludedSecurityRecord] = []
     
     for ticker in active_tickers:
         fin = financial_by_ticker.get(ticker, {})
@@ -530,7 +650,7 @@ def compute_module_5_composite(
         })
     
     # Group by cohort for normalization
-    cohorts: Dict[str, List[Dict]] = {}
+    cohorts: Dict[str, List[WorkingRecord]] = {}
     
     for rec in combined:
         if cohort_mode == COHORT_MODE_STAGE_ONLY:
@@ -546,7 +666,7 @@ def compute_module_5_composite(
     
     # Identify small cohorts and apply fallback
     cohort_fallbacks: Dict[str, str] = {}
-    stage_pools: Dict[str, List[Dict]] = {}
+    stage_pools: Dict[str, List[WorkingRecord]] = {}
     
     for cohort_key, members in cohorts.items():
         if len(members) >= MIN_COHORT_SIZE:
@@ -705,7 +825,7 @@ def compute_module_5_composite(
             }
     
     # Format output
-    ranked_securities = []
+    ranked_securities: List[RankedSecurityRecord] = []
     for rec in combined:
         coinvest = rec.get("coinvest") or {}
         security_data = {
