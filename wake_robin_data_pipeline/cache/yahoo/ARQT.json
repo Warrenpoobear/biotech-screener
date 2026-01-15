@@ -1,0 +1,43 @@
+{
+  "ticker": "ARQT",
+  "success": true,
+  "price": {
+    "current": 28.22,
+    "currency": "USD",
+    "day_high": 30.75,
+    "day_low": 28.135,
+    "52_week_high": 31.77,
+    "52_week_low": 11.13
+  },
+  "market_cap": {
+    "value": 3456729600.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 122492192.0,
+  "volume": {
+    "last": 1745882,
+    "average_30d": 1870347
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": 62.711113,
+    "price_to_book": 21.476408
+  },
+  "company_info": {
+    "name": "Arcutis Biotherapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:14:53.049809",
+    "url": "https://finance.yahoo.com/quote/ARQT",
+    "data_hash": "a5810641f3d8aa62"
+  }
+}

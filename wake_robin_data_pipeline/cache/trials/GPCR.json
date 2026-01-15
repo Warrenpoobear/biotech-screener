@@ -1,0 +1,88 @@
+{
+  "ticker": "GPCR",
+  "company_name": "GPCR",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT00822341",
+      "title": "Evaluating the Safety, Tolerability, Pharmacokinetics and Efficacy of TG-0054 With Single IV Doses Escalation in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2008-04",
+      "completion_date": "2009-05",
+      "enrollment": 0,
+      "sponsor": "GPCR Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT01458288",
+      "title": "A Study to Evaluate the Safety, Pharmacokinetics, and Hematopoietic Stem Cell Mobilization of TG-0054 Alone or in Combination With G-CSF in Patients With Multiple Myeloma, Non-Hodgkin Lymphoma or Hodgkin Disease",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Multiple Myeloma, Non-hodgkin's Lymphoma, Hodgkin's Disease",
+      "start_date": "2012-10",
+      "completion_date": "2013-07",
+      "enrollment": 0,
+      "sponsor": "GPCR Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05561751",
+      "title": "Ph2, Study to Assess the Safety and Efficacy of GPC 100 and Propranolol With and Without G-CSF for the Mobilization of Stem Cells in Patients With Multiple Myeloma Undergoing Autologous Stem Cell Transplant",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Multiple Myeloma",
+      "start_date": "2023-02-13",
+      "completion_date": "2025-09-30",
+      "enrollment": 0,
+      "sponsor": "GPCR Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT02104427",
+      "title": "PD and Safety of TG-0054 Combined With G-CSF in Multiple Myeloma, Non-Hodgkin Lymphoma and Hodgkin Disease Patients",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Multiple Myeloma, Non-Hodgkin Lymphoma, Hodgkin Disease",
+      "start_date": "2015-02",
+      "completion_date": "2015-11",
+      "enrollment": 0,
+      "sponsor": "GPCR Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT01018979",
+      "title": "Safety and PK/PD of TG-0054 in Multiple Myeloma, Non-Hodgkin Lymphoma and Hodgkin Disease Patients",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Multiple Myeloma, Non-Hodgkin Lymphoma, Hodgkin Disease",
+      "start_date": "2010-02",
+      "completion_date": "2011-10",
+      "enrollment": 0,
+      "sponsor": "GPCR Therapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 5,
+    "by_phase": {
+      "PHASE1": 1,
+      "PHASE2": 4
+    },
+    "by_status": {
+      "COMPLETED": 4,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 4,
+    "conditions": [
+      "Healthy",
+      "Multiple Myeloma",
+      "Multiple Myeloma, Non-Hodgkin Lymphoma, Hodgkin Disease",
+      "Multiple Myeloma, Non-hodgkin's Lymphoma, Hodgkin's Disease"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:46:57.637037",
+    "search_query": "GPCR",
+    "url": "https://clinicaltrials.gov/search?term=GPCR"
+  }
+}

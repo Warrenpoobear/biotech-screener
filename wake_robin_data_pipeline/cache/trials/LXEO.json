@@ -1,0 +1,20 @@
+{
+  "ticker": "LXEO",
+  "company_name": "LXEO",
+  "success": true,
+  "trials": [],
+  "summary": {
+    "total_trials": 0,
+    "by_phase": {},
+    "by_status": {},
+    "active_trials": 0,
+    "completed_trials": 0,
+    "lead_stage": "unknown"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:47:32.767245",
+    "search_query": "LXEO",
+    "url": "https://clinicaltrials.gov/search?term=LXEO"
+  }
+}

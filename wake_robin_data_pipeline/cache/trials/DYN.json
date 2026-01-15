@@ -1,0 +1,39 @@
+{
+  "ticker": "DYN",
+  "company_name": "DYN",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04161651",
+      "title": "Evaluation of Long-Term Implanted Sensor in Patients on Quality of Life",
+      "status": "UNKNOWN",
+      "phase": "NA",
+      "condition": "Type 1 Diabetes",
+      "start_date": "2019-11",
+      "completion_date": "2020-10",
+      "enrollment": 0,
+      "sponsor": "Meir Medical Center"
+    }
+  ],
+  "summary": {
+    "total_trials": 1,
+    "by_phase": {
+      "NA": 1
+    },
+    "by_status": {
+      "UNKNOWN": 1
+    },
+    "active_trials": 0,
+    "completed_trials": 0,
+    "conditions": [
+      "Type 1 Diabetes"
+    ],
+    "lead_stage": "preclinical"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:46:35.193073",
+    "search_query": "DYN",
+    "url": "https://clinicaltrials.gov/search?term=DYN"
+  }
+}

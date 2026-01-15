@@ -1,0 +1,43 @@
+{
+  "ticker": "STVN",
+  "success": true,
+  "price": {
+    "current": 21.06,
+    "currency": "USD",
+    "day_high": 21.9998,
+    "day_low": 21.0,
+    "52_week_high": 28.0,
+    "52_week_low": 17.81
+  },
+  "market_cap": {
+    "value": 5749457408.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 49709718.0,
+  "volume": {
+    "last": 189365,
+    "average_30d": 254828
+  },
+  "valuation": {
+    "pe_ratio": 35.1,
+    "forward_pe": 28.578794,
+    "price_to_book": 3.4381983
+  },
+  "company_info": {
+    "name": "Stevanato Group S.p.A.",
+    "sector": "Healthcare",
+    "industry": "Medical Instruments & Supplies"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:17:56.095558",
+    "url": "https://finance.yahoo.com/quote/STVN",
+    "data_hash": "3513ef0154e1ff13"
+  }
+}

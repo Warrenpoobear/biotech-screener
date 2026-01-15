@@ -1,0 +1,65 @@
+{
+  "ticker": "ESPR",
+  "company_name": "ESPR",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05550545",
+      "title": "Infant RSV Infections and Health-related Quality of Life of Families",
+      "status": "UNKNOWN",
+      "phase": "",
+      "condition": "RSV Infection, Quality of Life, Infant ALL, Caregiver Burden, Family",
+      "start_date": "2022-09-29",
+      "completion_date": "2024-06",
+      "enrollment": 0,
+      "sponsor": "Global Foundation for the Care of Newborn Infants"
+    },
+    {
+      "nct_id": "NCT03368755",
+      "title": "IUGR, Respiratory Muscle Function, and Exercise Capacity in Childhood",
+      "status": "UNKNOWN",
+      "phase": "NA",
+      "condition": "Intrauterine Growth Restriction, Cardiopulmonary Disease",
+      "start_date": "2018-01-08",
+      "completion_date": "2022-01-30",
+      "enrollment": 0,
+      "sponsor": "University of Patras"
+    },
+    {
+      "nct_id": "NCT07134387",
+      "title": "Long-Term Burden of BPD and Health-Related Quality of Life (BronQ Family)",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Bronchopulmonary Dysplasia (BPD), Chronic Lung Disease of Newborn, HRQOL (Health Related Quality Of Life)",
+      "start_date": "2025-09-16",
+      "completion_date": "2027-01",
+      "enrollment": 0,
+      "sponsor": "Global Foundation for the Care of Newborn Infants"
+    }
+  ],
+  "summary": {
+    "total_trials": 3,
+    "by_phase": {
+      "": 2,
+      "NA": 1
+    },
+    "by_status": {
+      "UNKNOWN": 2,
+      "RECRUITING": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 0,
+    "conditions": [
+      "Bronchopulmonary Dysplasia (BPD), Chronic Lung Disease of Newborn, HRQOL (Health Related Quality Of Life)",
+      "Intrauterine Growth Restriction, Cardiopulmonary Disease",
+      "RSV Infection, Quality of Life, Infant ALL, Caregiver Burden, Family"
+    ],
+    "lead_stage": "preclinical"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T10:03:24.041364",
+    "search_query": "ESPR",
+    "url": "https://clinicaltrials.gov/search?term=ESPR"
+  }
+}

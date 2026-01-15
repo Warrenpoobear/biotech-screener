@@ -1,0 +1,43 @@
+{
+  "ticker": "SMMT",
+  "success": true,
+  "price": {
+    "current": 19.68,
+    "currency": "USD",
+    "day_high": 20.19,
+    "day_low": 18.98,
+    "52_week_high": 36.91,
+    "52_week_low": 15.55
+  },
+  "market_cap": {
+    "value": 14650630144.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 744442538.0,
+  "volume": {
+    "last": 2826204,
+    "average_30d": 2174880
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -19.673002,
+    "price_to_book": 76.279076
+  },
+  "company_info": {
+    "name": "Summit Therapeutics Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:17:50.349587",
+    "url": "https://finance.yahoo.com/quote/SMMT",
+    "data_hash": "7f91e93b381599dd"
+  }
+}

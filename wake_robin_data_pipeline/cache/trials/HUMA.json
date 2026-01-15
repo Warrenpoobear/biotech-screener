@@ -1,0 +1,65 @@
+{
+  "ticker": "HUMA",
+  "company_name": "HUMA",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04731142",
+      "title": "Type 2 Diabetes Exemplar: A Remote Care Service for North West London",
+      "status": "COMPLETED",
+      "phase": "NA",
+      "condition": "Type 2 Diabetes Mellitus",
+      "start_date": "2021-06-01",
+      "completion_date": "2022-10-31",
+      "enrollment": 0,
+      "sponsor": "Imperial College London"
+    },
+    {
+      "nct_id": "NCT06743490",
+      "title": "Capturing Key MG-symptoms Using Smartphone Recordings.",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Myasthenia Gravis, Fatigue",
+      "start_date": "2025-03-18",
+      "completion_date": "2026-04-01",
+      "enrollment": 0,
+      "sponsor": "Leiden University Medical Center"
+    },
+    {
+      "nct_id": "NCT07073131",
+      "title": "Comparison Between Maternal Complications of Chromic Catgut and Vicryl Rapid Sutures Used for Episiotomy Repair",
+      "status": "COMPLETED",
+      "phase": "NA",
+      "condition": "Episiotomy Extended by Laceration, Episiotomy Wound",
+      "start_date": "2024-07-01",
+      "completion_date": "2024-12-31",
+      "enrollment": 0,
+      "sponsor": "Huma Ijaz"
+    }
+  ],
+  "summary": {
+    "total_trials": 3,
+    "by_phase": {
+      "NA": 2,
+      "": 1
+    },
+    "by_status": {
+      "COMPLETED": 2,
+      "RECRUITING": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 2,
+    "conditions": [
+      "Episiotomy Extended by Laceration, Episiotomy Wound",
+      "Myasthenia Gravis, Fatigue",
+      "Type 2 Diabetes Mellitus"
+    ],
+    "lead_stage": "preclinical"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:47:02.537358",
+    "search_query": "HUMA",
+    "url": "https://clinicaltrials.gov/search?term=HUMA"
+  }
+}

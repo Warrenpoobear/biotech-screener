@@ -1,0 +1,39 @@
+{
+  "ticker": "MENS",
+  "company_name": "MENS",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05226182",
+      "title": "Visualisation of a Digital Care Pathway.",
+      "status": "UNKNOWN",
+      "phase": "NA",
+      "condition": "Type 2 Diabetes, Multidisciplinary Communication, Empowerment, Patient Empowerment, Patient Acceptance of Health Care",
+      "start_date": "2021-10-01",
+      "completion_date": "2022-06-30",
+      "enrollment": 0,
+      "sponsor": "Jessa Hospital"
+    }
+  ],
+  "summary": {
+    "total_trials": 1,
+    "by_phase": {
+      "NA": 1
+    },
+    "by_status": {
+      "UNKNOWN": 1
+    },
+    "active_trials": 0,
+    "completed_trials": 0,
+    "conditions": [
+      "Type 2 Diabetes, Multidisciplinary Communication, Empowerment, Patient Empowerment, Patient Acceptance of Health Care"
+    ],
+    "lead_stage": "preclinical"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:47:40.879950",
+    "search_query": "MENS",
+    "url": "https://clinicaltrials.gov/search?term=MENS"
+  }
+}

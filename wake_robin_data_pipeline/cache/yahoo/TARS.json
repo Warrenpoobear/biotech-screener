@@ -1,0 +1,43 @@
+{
+  "ticker": "TARS",
+  "success": true,
+  "price": {
+    "current": 76.87,
+    "currency": "USD",
+    "day_high": 80.035,
+    "day_low": 76.615,
+    "52_week_high": 85.25,
+    "52_week_low": 38.51
+  },
+  "market_cap": {
+    "value": 3263062784.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 42449105.0,
+  "volume": {
+    "last": 451851,
+    "average_30d": 710233
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": 57.67557,
+    "price_to_book": 9.737776
+  },
+  "company_info": {
+    "name": "Tarsus Pharmaceuticals, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:14:17.723097",
+    "url": "https://finance.yahoo.com/quote/TARS",
+    "data_hash": "06cff9f2fc0ab241"
+  }
+}

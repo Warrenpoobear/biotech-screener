@@ -1,0 +1,51 @@
+{
+  "ticker": "ERAS",
+  "company_name": "ERAS",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06084871",
+      "title": "Patient Blood Management in Cardiac Surgery in Turkiye",
+      "status": "UNKNOWN",
+      "phase": "",
+      "condition": "Coronary Artery Disease, Iron Deficiency Anemia",
+      "start_date": "2023-06-01",
+      "completion_date": "2025-06-01",
+      "enrollment": 0,
+      "sponsor": "ERAS Turkey Association"
+    },
+    {
+      "nct_id": "NCT05319223",
+      "title": "Patient Blood Management in Orthopedic Surgical Patients in Turkey",
+      "status": "UNKNOWN",
+      "phase": "",
+      "condition": "Arthropathy",
+      "start_date": "2022-02-01",
+      "completion_date": "2022-12-01",
+      "enrollment": 0,
+      "sponsor": "Prof. Serdar Gunaydin"
+    }
+  ],
+  "summary": {
+    "total_trials": 2,
+    "by_phase": {
+      "": 2
+    },
+    "by_status": {
+      "UNKNOWN": 2
+    },
+    "active_trials": 0,
+    "completed_trials": 0,
+    "conditions": [
+      "Arthropathy",
+      "Coronary Artery Disease, Iron Deficiency Anemia"
+    ],
+    "lead_stage": "unknown"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:46:41.647720",
+    "search_query": "ERAS",
+    "url": "https://clinicaltrials.gov/search?term=ERAS"
+  }
+}

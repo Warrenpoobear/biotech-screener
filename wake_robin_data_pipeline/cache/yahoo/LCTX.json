@@ -1,0 +1,43 @@
+{
+  "ticker": "LCTX",
+  "success": true,
+  "price": {
+    "current": 1.71,
+    "currency": "USD",
+    "day_high": 1.77,
+    "day_low": 1.69,
+    "52_week_high": 2.09,
+    "52_week_low": 0.37
+  },
+  "market_cap": {
+    "value": 393860096.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 230327537.0,
+  "volume": {
+    "last": 1000440,
+    "average_30d": 1205728
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -30.174696,
+    "price_to_book": 17.8125
+  },
+  "company_info": {
+    "name": "Lineage Cell Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:16:30.295394",
+    "url": "https://finance.yahoo.com/quote/LCTX",
+    "data_hash": "f339a590e9876ca6"
+  }
+}

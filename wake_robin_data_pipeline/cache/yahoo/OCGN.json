@@ -1,0 +1,43 @@
+{
+  "ticker": "OCGN",
+  "success": true,
+  "price": {
+    "current": 1.5,
+    "currency": "USD",
+    "day_high": 1.55,
+    "day_low": 1.475,
+    "52_week_high": 1.9,
+    "52_week_low": 0.515
+  },
+  "market_cap": {
+    "value": 468480192.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 312320112.0,
+  "volume": {
+    "last": 2891281,
+    "average_30d": 4111028
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -6.3157897,
+    "price_to_book": 136.36363
+  },
+  "company_info": {
+    "name": "Ocugen, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:13:59.923391",
+    "url": "https://finance.yahoo.com/quote/OCGN",
+    "data_hash": "31efae4201e5e071"
+  }
+}

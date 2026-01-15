@@ -1,0 +1,43 @@
+{
+  "ticker": "ROIV",
+  "success": true,
+  "price": {
+    "current": 21.98,
+    "currency": "USD",
+    "day_high": 22.53,
+    "day_low": 21.92,
+    "52_week_high": 23.47,
+    "52_week_low": 8.73
+  },
+  "market_cap": {
+    "value": 15286904832.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 695491615.0,
+  "volume": {
+    "last": 5260146,
+    "average_30d": 8369990
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -19.405817,
+    "price_to_book": 3.4750988
+  },
+  "company_info": {
+    "name": "Roivant Sciences Ltd.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:12:43.419230",
+    "url": "https://finance.yahoo.com/quote/ROIV",
+    "data_hash": "105c705441ee8876"
+  }
+}

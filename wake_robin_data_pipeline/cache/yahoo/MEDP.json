@@ -1,0 +1,43 @@
+{
+  "ticker": "MEDP",
+  "success": true,
+  "price": {
+    "current": 595.0,
+    "currency": "USD",
+    "day_high": 612.12,
+    "day_low": 593.66,
+    "52_week_high": 626.255,
+    "52_week_low": 250.05
+  },
+  "market_cap": {
+    "value": 16760093696.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 28168223.0,
+  "volume": {
+    "last": 189214,
+    "average_30d": 204647
+  },
+  "valuation": {
+    "pe_ratio": 41.49233,
+    "forward_pe": 36.03025,
+    "price_to_book": 57.94702
+  },
+  "company_info": {
+    "name": "Medpace Holdings, Inc.",
+    "sector": "Healthcare",
+    "industry": "Diagnostics & Research"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:16:40.112489",
+    "url": "https://finance.yahoo.com/quote/MEDP",
+    "data_hash": "30740610e597fdb6"
+  }
+}

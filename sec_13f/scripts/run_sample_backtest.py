@@ -100,8 +100,9 @@ def create_mock_snapshot(as_of_date: str, score_seed: int = None) -> Dict[str, A
             "flags": [],
         })
     
-    # Sort by score descending, assign ranks
-    securities.sort(key=lambda x: float(x["composite_score"]), reverse=True)
+    # Sort by score ASCENDING: lower score = better = rank 1
+    # Validation showed inverted ranking: high scores predicted underperformance
+    securities.sort(key=lambda x: float(x["composite_score"]), reverse=False)
     for i, sec in enumerate(securities):
         sec["composite_rank"] = i + 1
     

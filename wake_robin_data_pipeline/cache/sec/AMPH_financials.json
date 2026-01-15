@@ -1,0 +1,42 @@
+{
+  "ticker": "AMPH",
+  "cik": "0001297184",
+  "success": true,
+  "financials": {
+    "cash": 216265000.0,
+    "debt": 40295000.0,
+    "net_debt": -175970000.0,
+    "revenue_ttm": 536782000.0,
+    "assets": 1666222000.0,
+    "liabilities": 889476000.0,
+    "equity": 776746000.0,
+    "currency": "USD"
+  },
+  "data_dates": {
+    "cash": "2025-09-30",
+    "debt": "2015-12-31",
+    "revenue": "2025-09-30",
+    "assets": "2025-09-30",
+    "liabilities": "2025-09-30"
+  },
+  "data_freshness": {
+    "most_recent_date": "2025-09-30",
+    "oldest_date": "2015-12-31",
+    "staleness_flags": [
+      "critical_staleness:3665d"
+    ]
+  },
+  "coverage": {
+    "has_cash": true,
+    "has_debt": true,
+    "has_revenue": true,
+    "has_balance_sheet": true,
+    "pct_complete": 100.0
+  },
+  "provenance": {
+    "source": "SEC EDGAR Company Facts API",
+    "timestamp": "2026-01-12T09:31:41.848204",
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001297184.json",
+    "cik": "0001297184"
+  }
+}

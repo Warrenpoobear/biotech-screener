@@ -1,0 +1,20 @@
+{
+  "ticker": "KALV",
+  "company_name": "KalVista Pharmaceuticals, Inc.",
+  "success": true,
+  "trials": [],
+  "summary": {
+    "total_trials": 0,
+    "by_phase": {},
+    "by_status": {},
+    "active_trials": 0,
+    "completed_trials": 0,
+    "lead_stage": "unknown"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:44:22.975945",
+    "search_query": "KalVista Pharmaceuticals, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=KalVista+Pharmaceuticals,+Inc."
+  }
+}

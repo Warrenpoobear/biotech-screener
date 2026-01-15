@@ -1,0 +1,43 @@
+{
+  "ticker": "ADCT",
+  "success": true,
+  "price": {
+    "current": 3.66,
+    "currency": "USD",
+    "day_high": 3.83,
+    "day_low": 3.54,
+    "52_week_high": 4.8,
+    "52_week_low": 1.05
+  },
+  "market_cap": {
+    "value": 453390240.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 123877111.0,
+  "volume": {
+    "last": 562378,
+    "average_30d": 1173257
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -2.4563758,
+    "price_to_book": -1.7304965
+  },
+  "company_info": {
+    "name": "ADC Therapeutics SA",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:14:32.494559",
+    "url": "https://finance.yahoo.com/quote/ADCT",
+    "data_hash": "04324145529a1eea"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "MIRM",
+  "success": true,
+  "price": {
+    "current": 86.57,
+    "currency": "USD",
+    "day_high": 86.745,
+    "day_low": 81.62,
+    "52_week_high": 86.79,
+    "52_week_low": 36.88
+  },
+  "market_cap": {
+    "value": 4474269696.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 51683837.0,
+  "volume": {
+    "last": 892419,
+    "average_30d": 886928
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -447.78357,
+    "price_to_book": 15.211738
+  },
+  "company_info": {
+    "name": "Mirum Pharmaceuticals, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:16:45.664939",
+    "url": "https://finance.yahoo.com/quote/MIRM",
+    "data_hash": "c8076e120e177836"
+  }
+}

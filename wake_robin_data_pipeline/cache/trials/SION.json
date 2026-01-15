@@ -1,0 +1,115 @@
+{
+  "ticker": "SION",
+  "company_name": "SION",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT01854476",
+      "title": "Safety and Efficacy Study Comparing Pad-gauze With Anti-fibrinolytic Agent Hemostopan\u2122) to a Regular Pad-gauze",
+      "status": "UNKNOWN",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Bleeding, Coagulopathy",
+      "start_date": "2013-10",
+      "completion_date": "2015-08",
+      "enrollment": 0,
+      "sponsor": "Sion Microtec Ltd."
+    },
+    {
+      "nct_id": "NCT03021122",
+      "title": "Reducing Medication Errors and Time to Drugs Delivery During Pediatric Cardiopulmonary Resuscitation: a Multicenter RCT",
+      "status": "COMPLETED",
+      "phase": "NA",
+      "condition": "Resuscitation, Pediatrics",
+      "start_date": "2017-03-01",
+      "completion_date": "2017-12-31",
+      "enrollment": 0,
+      "sponsor": "Pediatric Clinical Research Platform"
+    },
+    {
+      "nct_id": "NCT03096561",
+      "title": "Measurement of Serum Potassium Rate During Accidental Hypothermia.",
+      "status": "UNKNOWN",
+      "phase": "NA",
+      "condition": "Accidental Hypothermia, Hyperkalemia, Cardiac Arrest",
+      "start_date": "2016-11-14",
+      "completion_date": "2019-07",
+      "enrollment": 0,
+      "sponsor": "University Hospital, Grenoble"
+    },
+    {
+      "nct_id": "NCT04214210",
+      "title": "The DIALOGUE Study: Swiss-Korean Billateral Collaboration",
+      "status": "RECRUITING",
+      "phase": "NA",
+      "condition": "Hereditary Cancer, Breast Cancer, Ovarian Cancer",
+      "start_date": "2022-04-15",
+      "completion_date": "2025-12-31",
+      "enrollment": 0,
+      "sponsor": "University of Basel"
+    },
+    {
+      "nct_id": "NCT05498402",
+      "title": "Effect of IAM With an I-gel\u00ae on Ventilation Parameters in Simulated Pediatric OHCA",
+      "status": "COMPLETED",
+      "phase": "NA",
+      "condition": "Pediatric ALL, Cardiac Arrest, Cardiopulmonary Arrest, Resuscitation, Pediatric Emergency Medicine",
+      "start_date": "2023-01-30",
+      "completion_date": "2023-06-13",
+      "enrollment": 0,
+      "sponsor": "Geneve TEAM Ambulances"
+    },
+    {
+      "nct_id": "NCT01103076",
+      "title": "Effects of High Cut-off (HCO) Hemodialysis on Central Memory CD4+ T and Treg Cells in Patients With End-stage Kidney Disease",
+      "status": "UNKNOWN",
+      "phase": "PHASE2, PHASE3",
+      "condition": "End-stage Kidney Disease, CD4 T Cells, Central Memory T Cells, Regulatory T Cells, Uremic Toxins",
+      "start_date": "2011-04",
+      "completion_date": "2012-02",
+      "enrollment": 0,
+      "sponsor": "Centre Hospitalier du Centre du Valais"
+    },
+    {
+      "nct_id": "NCT03124212",
+      "title": "Cascade Genetic Testing for Hereditary Breast/Ovarian Cancer and Lynch Syndrome in Switzerland",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Hereditary Breast and Ovarian Cancer, Lynch Syndrome",
+      "start_date": "2017-04-01",
+      "completion_date": "2027-09-30",
+      "enrollment": 0,
+      "sponsor": "University of Basel"
+    }
+  ],
+  "summary": {
+    "total_trials": 7,
+    "by_phase": {
+      "PHASE2, PHASE3": 2,
+      "NA": 4,
+      "": 1
+    },
+    "by_status": {
+      "UNKNOWN": 3,
+      "COMPLETED": 2,
+      "RECRUITING": 2
+    },
+    "active_trials": 2,
+    "completed_trials": 2,
+    "conditions": [
+      "Accidental Hypothermia, Hyperkalemia, Cardiac Arrest",
+      "Bleeding, Coagulopathy",
+      "End-stage Kidney Disease, CD4 T Cells, Central Memory T Cells, Regulatory T Cells, Uremic Toxins",
+      "Hereditary Breast and Ovarian Cancer, Lynch Syndrome",
+      "Hereditary Cancer, Breast Cancer, Ovarian Cancer",
+      "Pediatric ALL, Cardiac Arrest, Cardiopulmonary Arrest, Resuscitation, Pediatric Emergency Medicine",
+      "Resuscitation, Pediatrics"
+    ],
+    "lead_stage": "preclinical"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:48:55.066191",
+    "search_query": "SION",
+    "url": "https://clinicaltrials.gov/search?term=SION"
+  }
+}

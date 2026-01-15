@@ -1,0 +1,43 @@
+{
+  "ticker": "MDGL",
+  "success": true,
+  "price": {
+    "current": 514.06,
+    "currency": "USD",
+    "day_high": 555.1,
+    "day_low": 511.03,
+    "52_week_high": 615.0,
+    "52_week_low": 265.0
+  },
+  "market_cap": {
+    "value": 11675032576.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 22711420.0,
+  "volume": {
+    "last": 703253,
+    "average_30d": 329347
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": 202.46394,
+    "price_to_book": 18.652395
+  },
+  "company_info": {
+    "name": "Madrigal Pharmaceuticals, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:13:53.031831",
+    "url": "https://finance.yahoo.com/quote/MDGL",
+    "data_hash": "84efefa7379763a4"
+  }
+}

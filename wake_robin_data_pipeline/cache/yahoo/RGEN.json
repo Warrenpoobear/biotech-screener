@@ -1,0 +1,43 @@
+{
+  "ticker": "RGEN",
+  "success": true,
+  "price": {
+    "current": 166.82,
+    "currency": "USD",
+    "day_high": 169.56,
+    "day_low": 164.475,
+    "52_week_high": 182.52,
+    "52_week_low": 102.97
+  },
+  "market_cap": {
+    "value": 9390423040.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 56290749.0,
+  "volume": {
+    "last": 396143,
+    "average_30d": 572509
+  },
+  "valuation": {
+    "pe_ratio": 8341.001,
+    "forward_pe": 80.39596,
+    "price_to_book": 4.5073085
+  },
+  "company_info": {
+    "name": "Repligen Corporation",
+    "sector": "Healthcare",
+    "industry": "Medical Instruments & Supplies"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:12:42.040056",
+    "url": "https://finance.yahoo.com/quote/RGEN",
+    "data_hash": "bac8a7d5fd1b4bac"
+  }
+}

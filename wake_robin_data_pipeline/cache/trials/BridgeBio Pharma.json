@@ -4,17 +4,6 @@
   "success": true,
   "trials": [
     {
-      "nct_id": "NCT04528836",
-      "title": "First-in-Human Study of the SHP2 Inhibitor BBP-398 in Patients With Advanced Solid Tumors",
-      "status": "TERMINATED",
-      "phase": "PHASE1",
-      "condition": "Tumor, Solid",
-      "start_date": "2020-11-12",
-      "completion_date": "2024-07-30",
-      "enrollment": 0,
-      "sponsor": "Navire Pharma Inc., a BridgeBio company"
-    },
-    {
       "nct_id": "NCT05480865",
       "title": "SHP2 Inhibitor BBP-398 in Combination With Sotorasib in Patients With Advanced Solid Tumors and a KRAS-G12C Mutation",
       "status": "TERMINATED",
@@ -22,6 +11,17 @@
       "condition": "Solid Tumor, Adult, Metastatic Solid Tumor, Metastatic NSCLC, Non Small Cell Lung Cancer",
       "start_date": "2022-07-06",
       "completion_date": "2024-08-22",
+      "enrollment": 0,
+      "sponsor": "Navire Pharma Inc., a BridgeBio company"
+    },
+    {
+      "nct_id": "NCT04528836",
+      "title": "First-in-Human Study of the SHP2 Inhibitor BBP-398 in Patients With Advanced Solid Tumors",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Tumor, Solid",
+      "start_date": "2020-11-12",
+      "completion_date": "2024-07-30",
       "enrollment": 0,
       "sponsor": "Navire Pharma Inc., a BridgeBio company"
     },
@@ -70,7 +70,7 @@
   },
   "provenance": {
     "source": "ClinicalTrials.gov API v2",
-    "timestamp": "2026-01-05T17:58:13.611526",
+    "timestamp": "2026-01-12T09:02:52.972993",
     "search_query": "BridgeBio Pharma",
     "url": "https://clinicaltrials.gov/search?term=BridgeBio+Pharma"
   }

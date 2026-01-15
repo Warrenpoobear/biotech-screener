@@ -1,0 +1,43 @@
+{
+  "ticker": "ALT",
+  "success": true,
+  "price": {
+    "current": 4.02,
+    "currency": "USD",
+    "day_high": 4.18,
+    "day_low": 3.985,
+    "52_week_high": 7.73,
+    "52_week_low": 2.9
+  },
+  "market_cap": {
+    "value": 419456384.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 104342385.0,
+  "volume": {
+    "last": 3075210,
+    "average_30d": 6087538
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -3.0512333,
+    "price_to_book": 2.0710974
+  },
+  "company_info": {
+    "name": "Altimmune, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:14:42.937845",
+    "url": "https://finance.yahoo.com/quote/ALT",
+    "data_hash": "af4f37e9022aa421"
+  }
+}

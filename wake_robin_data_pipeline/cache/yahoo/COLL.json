@@ -1,0 +1,43 @@
+{
+  "ticker": "COLL",
+  "success": true,
+  "price": {
+    "current": 45.54,
+    "currency": "USD",
+    "day_high": 49.04,
+    "day_low": 45.01,
+    "52_week_high": 50.787,
+    "52_week_low": 23.23
+  },
+  "market_cap": {
+    "value": 1439563904.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 31610976.0,
+  "volume": {
+    "last": 675064,
+    "average_30d": 490609
+  },
+  "valuation": {
+    "pe_ratio": 27.93865,
+    "forward_pe": 5.7333503,
+    "price_to_book": 5.236891
+  },
+  "company_info": {
+    "name": "Collegium Pharmaceutical, Inc.",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:18:59.214959",
+    "url": "https://finance.yahoo.com/quote/COLL",
+    "data_hash": "c73bc03f44d3117a"
+  }
+}

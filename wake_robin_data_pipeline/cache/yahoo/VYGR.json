@@ -1,0 +1,43 @@
+{
+  "ticker": "VYGR",
+  "success": true,
+  "price": {
+    "current": 4.02,
+    "currency": "USD",
+    "day_high": 4.12,
+    "day_low": 3.955,
+    "52_week_high": 5.96,
+    "52_week_low": 2.65
+  },
+  "market_cap": {
+    "value": 223512336.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 55600084.0,
+  "volume": {
+    "last": 359909,
+    "average_30d": 388928
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -2.5779808,
+    "price_to_book": 1.0146391
+  },
+  "company_info": {
+    "name": "Voyager Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:18:34.603105",
+    "url": "https://finance.yahoo.com/quote/VYGR",
+    "data_hash": "cfc666d61d09259b"
+  }
+}

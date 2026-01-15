@@ -1,0 +1,43 @@
+{
+  "ticker": "TEM",
+  "success": true,
+  "price": {
+    "current": 66.27,
+    "currency": "USD",
+    "day_high": 69.83,
+    "day_low": 66.175,
+    "52_week_high": 104.32,
+    "52_week_low": 31.36
+  },
+  "market_cap": {
+    "value": 11789914112.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 172863470.0,
+  "volume": {
+    "last": 3145479,
+    "average_30d": 4036557
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -141.0,
+    "price_to_book": 23.187542
+  },
+  "company_info": {
+    "name": "Tempus AI, Inc.",
+    "sector": "Healthcare",
+    "industry": "Health Information Services"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:18:01.637334",
+    "url": "https://finance.yahoo.com/quote/TEM",
+    "data_hash": "5d9713eaa96762d0"
+  }
+}

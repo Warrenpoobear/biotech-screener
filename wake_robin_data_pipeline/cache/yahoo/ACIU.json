@@ -1,0 +1,43 @@
+{
+  "ticker": "ACIU",
+  "success": true,
+  "price": {
+    "current": 3.41,
+    "currency": "USD",
+    "day_high": 3.559,
+    "day_low": 3.36,
+    "52_week_high": 4.0,
+    "52_week_low": 1.43
+  },
+  "market_cap": {
+    "value": 343046016.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 100600000.0,
+  "volume": {
+    "last": 362475,
+    "average_30d": 1486947
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -4.5051546,
+    "price_to_book": 4.417817
+  },
+  "company_info": {
+    "name": "AC Immune SA",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:14:28.466673",
+    "url": "https://finance.yahoo.com/quote/ACIU",
+    "data_hash": "1f28b743bef7668b"
+  }
+}

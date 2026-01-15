@@ -1,0 +1,43 @@
+{
+  "ticker": "ATAI",
+  "success": true,
+  "price": {
+    "current": 3.75,
+    "currency": "USD",
+    "day_high": 3.98,
+    "day_low": 3.68,
+    "52_week_high": 6.75,
+    "52_week_low": 1.15
+  },
+  "market_cap": {
+    "value": 1362054656.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 363214602.0,
+  "volume": {
+    "last": 4902751,
+    "average_30d": 3620428
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -7.687892,
+    "price_to_book": 5.6475906
+  },
+  "company_info": {
+    "name": "AtaiBeckley Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:14:55.864475",
+    "url": "https://finance.yahoo.com/quote/ATAI",
+    "data_hash": "4b2f9a8f1f51097b"
+  }
+}

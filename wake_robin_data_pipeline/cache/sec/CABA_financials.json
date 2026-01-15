@@ -1,0 +1,40 @@
+{
+  "ticker": "CABA",
+  "cik": "0001759138",
+  "success": true,
+  "financials": {
+    "cash": 60206000.0,
+    "debt": null,
+    "net_debt": null,
+    "revenue_ttm": null,
+    "assets": 189759000.0,
+    "liabilities": 50293000.0,
+    "equity": 139466000.0,
+    "currency": "USD"
+  },
+  "data_dates": {
+    "cash": "2025-09-30",
+    "assets": "2025-09-30",
+    "liabilities": "2025-09-30"
+  },
+  "data_freshness": {
+    "most_recent_date": "2025-09-30",
+    "oldest_date": "2025-09-30",
+    "staleness_flags": [
+      "stale_data:104d"
+    ]
+  },
+  "coverage": {
+    "has_cash": true,
+    "has_debt": false,
+    "has_revenue": false,
+    "has_balance_sheet": true,
+    "pct_complete": 50.0
+  },
+  "provenance": {
+    "source": "SEC EDGAR Company Facts API",
+    "timestamp": "2026-01-12T09:25:19.003169",
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001759138.json",
+    "cik": "0001759138"
+  }
+}

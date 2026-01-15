@@ -2,26 +2,26 @@
   "ticker": "INCY",
   "success": true,
   "price": {
-    "current": 101.79,
+    "current": 106.87,
     "currency": "USD",
-    "day_high": 103.0,
-    "day_low": 99.04,
-    "52_week_high": 109.28,
+    "day_high": 107.685,
+    "day_low": 105.9337,
+    "52_week_high": 112.29,
     "52_week_low": 53.56
   },
   "market_cap": {
-    "value": 19983687680.0,
+    "value": 20981008384.0,
     "currency": "USD"
   },
   "shares_outstanding": 196322703.0,
   "volume": {
-    "last": 3050800,
-    "average_30d": 2119063
+    "last": 1520739,
+    "average_30d": 2155814
   },
   "valuation": {
-    "pe_ratio": 17.252542,
-    "forward_pe": 13.296358,
-    "price_to_book": 4.29222
+    "pe_ratio": 18.11356,
+    "forward_pe": 13.887373,
+    "price_to_book": 4.5064306
   },
   "company_info": {
     "name": "Incyte Corporation",
@@ -30,8 +30,8 @@
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-05T18:05:19.161146",
+    "timestamp": "2026-01-12T09:01:40.646762",
     "url": "https://finance.yahoo.com/quote/INCY",
-    "data_hash": "928ab41cfd5540a8"
+    "data_hash": "903c128ad089cc11"
   }
 }

@@ -1,0 +1,2254 @@
+{
+  "metadata": {
+    "creation_date": "2026-01-12",
+    "description": "322-ticker full biotech universe",
+    "source": "Major biotech indices (XBI, IBB, NBI)",
+    "selection_criteria": "All biotechnology companies"
+  },
+  "tickers": [
+    {
+      "ticker": "ARGX",
+      "company": "argenx SE",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "large"
+    },
+    {
+      "ticker": "INCY",
+      "company": "Incyte Corporation",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "large"
+    },
+    {
+      "ticker": "JAZZ",
+      "company": "Jazz Pharmaceuticals plc",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "large"
+    },
+    {
+      "ticker": "IONS",
+      "company": "Ionis Pharmaceuticals, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "large"
+    },
+    {
+      "ticker": "BBIO",
+      "company": "BridgeBio Pharma, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "large"
+    },
+    {
+      "ticker": "GOSS",
+      "company": "Gossamer Bio, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "RNA",
+      "company": "Avidity Biosciences, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "large"
+    },
+    {
+      "ticker": "KYMR",
+      "company": "Kymera Therapeutics, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "RYTM",
+      "company": "Rhythm Pharmaceuticals, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "EPRX",
+      "company": "Eupraxia Pharmaceuticals Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "ACAD",
+      "company": "ACADIA Pharmaceuticals Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "ALNY",
+      "company": "Alnylam Pharmaceuticals, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mega"
+    },
+    {
+      "ticker": "BMRN",
+      "company": "BioMarin Pharmaceutical Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "large"
+    },
+    {
+      "ticker": "CRSP",
+      "company": "CRISPR Therapeutics AG",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "VRTX",
+      "company": "Vertex Pharmaceuticals Incorporated",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mega"
+    },
+    {
+      "ticker": "SRPT",
+      "company": "Sarepta Therapeutics, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "UTHR",
+      "company": "United Therapeutics Corporation",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "large"
+    },
+    {
+      "ticker": "EXEL",
+      "company": "Exelixis, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "large"
+    },
+    {
+      "ticker": "RARE",
+      "company": "Ultragenyx Pharmaceutical Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "FOLD",
+      "company": "Amicus Therapeutics, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "_XBI_BENCHMARK_",
+      "company": null,
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "AMGN",
+      "company": "Amgen Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mega"
+    },
+    {
+      "ticker": "GILD",
+      "company": "Gilead Sciences, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mega"
+    },
+    {
+      "ticker": "BIIB",
+      "company": "Biogen Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "large"
+    },
+    {
+      "ticker": "MRNA",
+      "company": "Moderna, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "large"
+    },
+    {
+      "ticker": "BNTX",
+      "company": "BioNTech SE",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "large"
+    },
+    {
+      "ticker": "LGND",
+      "company": "Ligand Pharmaceuticals Incorporated",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "TECH",
+      "company": "Bio-Techne Corporation",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "large"
+    },
+    {
+      "ticker": "RGEN",
+      "company": "Repligen Corporation",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "ROIV",
+      "company": "Roivant Sciences Ltd.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "large"
+    },
+    {
+      "ticker": "NTRA",
+      "company": "Natera, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "large"
+    },
+    {
+      "ticker": "DAWN",
+      "company": "Day One Biopharmaceuticals, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "PCVX",
+      "company": "Vaxcyte, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "ARVN",
+      "company": "Arvinas, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "LEGN",
+      "company": "Legend Biotech Corporation",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "FATE",
+      "company": "Fate Therapeutics, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "NTLA",
+      "company": "Intellia Therapeutics, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "EDIT",
+      "company": "Editas Medicine, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "BEAM",
+      "company": "Beam Therapeutics Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "VCYT",
+      "company": "Veracyte, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "AXSM",
+      "company": "Axsome Therapeutics, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "PTGX",
+      "company": "Protagonist Therapeutics, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "CDNA",
+      "company": "CareDx, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "PRVA",
+      "company": "Privia Health Group, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "AGIO",
+      "company": "Agios Pharmaceuticals, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "AKRO",
+      "company": "Akero Therapeutics, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "ALLO",
+      "company": "Allogene Therapeutics, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "APLS",
+      "company": "Apellis Pharmaceuticals, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "ARCT",
+      "company": "Arcturus Therapeutics Holdings Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ARWR",
+      "company": "Arrowhead Pharmaceuticals, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "AVTR",
+      "company": "Avantor, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "BCRX",
+      "company": "BioCryst Pharmaceuticals, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "BDTX",
+      "company": "Black Diamond Therapeutics, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "BGXX",
+      "company": "Bright Green Corporation",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "CRBU",
+      "company": "Caribou Biosciences, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "CRNX",
+      "company": "Crinetics Pharmaceuticals, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "CRVS",
+      "company": "Corvus Pharmaceuticals, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "CVAC",
+      "company": "CureVac N.V.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "CLDX",
+      "company": "Celldex Therapeutics, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "CYTK",
+      "company": "Cytokinetics, Incorporated",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "DNLI",
+      "company": "Denali Therapeutics Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "DRMA",
+      "company": "Dermata Therapeutics, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "DVAX",
+      "company": "Dynavax Technologies Corporation",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "FGEN",
+      "company": "FibroGen, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "FULC",
+      "company": "Fulcrum Therapeutics, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "GLPG",
+      "company": "Galapagos NV",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "HALO",
+      "company": "Halozyme Therapeutics, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "HRTX",
+      "company": "Heron Therapeutics, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "IMCR",
+      "company": "Immunocore Holdings plc",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "IMMP",
+      "company": "Immutep Limited",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "IMVT",
+      "company": "Immunovant, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "IRWD",
+      "company": "Ironwood Pharmaceuticals, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "KALA",
+      "company": "KALA BIO, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "KALV",
+      "company": "KalVista Pharmaceuticals, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "KRYS",
+      "company": "Krystal Biotech, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "LQDA",
+      "company": "Liquidia Corporation",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "MCRB",
+      "company": "Seres Therapeutics, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "MDGL",
+      "company": "Madrigal Pharmaceuticals, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "large"
+    },
+    {
+      "ticker": "MRSN",
+      "company": "Mersana Therapeutics, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "MRVI",
+      "company": "Maravai LifeSciences Holdings, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "NVCR",
+      "company": "NovoCure Limited",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "NVAX",
+      "company": "Novavax, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "OCGN",
+      "company": "Ocugen, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "OPCH",
+      "company": "Option Care Health, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "PCRX",
+      "company": "Pacira BioSciences, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "PGEN",
+      "company": "Precigen, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "PRTA",
+      "company": "Prothena Corporation plc",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "PTCT",
+      "company": "PTC Therapeutics, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "RVMD",
+      "company": "Revolution Medicines, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "large"
+    },
+    {
+      "ticker": "RXRX",
+      "company": "Recursion Pharmaceuticals, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "RGNX",
+      "company": "REGENXBIO Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "SANA",
+      "company": "Sana Biotechnology, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "SGMO",
+      "company": "Sangamo Therapeutics, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "SNDX",
+      "company": "Syndax Pharmaceuticals, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "SPRY",
+      "company": "ARS Pharmaceuticals, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "TARS",
+      "company": "Tarsus Pharmaceuticals, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "TBPH",
+      "company": "Theravance Biopharma, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "TGTX",
+      "company": "TG Therapeutics, Inc.",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "AARD",
+      "company": "AARD",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ABCL",
+      "company": "ABCL",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ABSI",
+      "company": "ABSI",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ABUS",
+      "company": "ABUS",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ABVX",
+      "company": "ABVX",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ACIU",
+      "company": "ACIU",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ACLX",
+      "company": "ACLX",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ACRS",
+      "company": "ACRS",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ADCT",
+      "company": "ADCT",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ADMA",
+      "company": "ADMA",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ADPT",
+      "company": "ADPT",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ADRO",
+      "company": "ADRO",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "AKE",
+      "company": "AKE",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ALKS",
+      "company": "ALKS",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ALMS",
+      "company": "ALMS",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ALT",
+      "company": "ALT",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ALVO",
+      "company": "ALVO",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "AMLX",
+      "company": "AMLX",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ANAB",
+      "company": "ANAB",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ANNX",
+      "company": "ANNX",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ANRO",
+      "company": "ANRO",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "APGE",
+      "company": "APGE",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ARQT",
+      "company": "ARQT",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ASND",
+      "company": "ASND",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ATAI",
+      "company": "ATAI",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ATXS",
+      "company": "ATXS",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "AUPH",
+      "company": "AUPH",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "AURA",
+      "company": "AURA",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "AUTL",
+      "company": "AUTL",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "AVBP",
+      "company": "AVBP",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "AVIR",
+      "company": "AVIR",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "AVXL",
+      "company": "AVXL",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "BBOT",
+      "company": "BBOT",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "BCAX",
+      "company": "BCAX",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "BCYC",
+      "company": "BCYC",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "BHVN",
+      "company": "BHVN",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "BIOA",
+      "company": "BIOA",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "BRKR",
+      "company": "BRKR",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "CABA",
+      "company": "CABA",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "CADL",
+      "company": "CADL",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "CAI",
+      "company": "CAI",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "CATX",
+      "company": "CATX",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "CCCC",
+      "company": "CCCC",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "CDXS",
+      "company": "CDXS",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "CGEM",
+      "company": "CGEM",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "CGON",
+      "company": "CGON",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "CLLS",
+      "company": "CLLS",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "CMPS",
+      "company": "CMPS",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "CNTA",
+      "company": "CNTA",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "COGT",
+      "company": "COGT",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "CRGX",
+      "company": "CRGX",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "CRL",
+      "company": "CRL",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "CSTL",
+      "company": "CSTL",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "CTKB",
+      "company": "CTKB",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "CTMX",
+      "company": "CTMX",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "CTNM",
+      "company": "CTNM",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "DNA",
+      "company": "DNA",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "DSGN",
+      "company": "DSGN",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "DYN",
+      "company": "DYN",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "EBS",
+      "company": "EBS",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ELVN",
+      "company": "ELVN",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ENTA",
+      "company": "ENTA",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ERAS",
+      "company": "ERAS",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "EWTX",
+      "company": "EWTX",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "FDMT",
+      "company": "FDMT",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "FHTX",
+      "company": "FHTX",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "FLGT",
+      "company": "FLGT",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "FTRE",
+      "company": "FTRE",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "GERN",
+      "company": "GERN",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "GHRS",
+      "company": "GHRS",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "GLUE",
+      "company": "GLUE",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "GMAB",
+      "company": "GMAB",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "GPCR",
+      "company": "GPCR",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "GRAL",
+      "company": "GRAL",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "GRFS",
+      "company": "GRFS",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "HUMA",
+      "company": "HUMA",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "IBRX",
+      "company": "IBRX",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "IDYA",
+      "company": "IDYA",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ILMN",
+      "company": "ILMN",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "IMRX",
+      "company": "IMRX",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "INBX",
+      "company": "INBX",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "INSM",
+      "company": "INSM",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "IOVA",
+      "company": "IOVA",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "IRON",
+      "company": "IRON",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "IXCH6",
+      "company": "IXCH6",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "JANX",
+      "company": "JANX",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "KOD",
+      "company": "KOD",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "KROS",
+      "company": "KROS",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "KURA",
+      "company": "KURA",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "KYTX",
+      "company": "KYTX",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "LAB",
+      "company": "LAB",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "LCTX",
+      "company": "LCTX",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "LENZ",
+      "company": "LENZ",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "LRMR",
+      "company": "LRMR",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "LXEO",
+      "company": "LXEO",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "LYEL",
+      "company": "LYEL",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "MAZE",
+      "company": "MAZE",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "MBX",
+      "company": "MBX",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "MEDP",
+      "company": "MEDP",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "MENS",
+      "company": "MENS",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "MESO",
+      "company": "MESO",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "MGTX",
+      "company": "MGTX",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "MIRM",
+      "company": "MIRM",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "MLYS",
+      "company": "MLYS",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "MNKD",
+      "company": "MNKD",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "MNMD",
+      "company": "MNMD",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "MYGN",
+      "company": "MYGN",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "NAMS",
+      "company": "NAMS",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "NBIX",
+      "company": "NBIX",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "NBP",
+      "company": "NBP",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "NGNE",
+      "company": "NGNE",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "NMRA",
+      "company": "NMRA",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "NRIX",
+      "company": "NRIX",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "NUVB",
+      "company": "NUVB",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "NUVL",
+      "company": "NUVL",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "OABI",
+      "company": "OABI",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "OLMA",
+      "company": "OLMA",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ONC",
+      "company": "ONC",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "OPK",
+      "company": "OPK",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ORIC",
+      "company": "ORIC",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ORKA",
+      "company": "ORKA",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "PACB",
+      "company": "PACB",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "PEPG",
+      "company": "PEPG",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "PHAT",
+      "company": "PHAT",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "PHVS",
+      "company": "PHVS",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "PRAX",
+      "company": "PRAX",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "PRME",
+      "company": "PRME",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "PSNL",
+      "company": "PSNL",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "PYXS",
+      "company": "PYXS",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "QSI",
+      "company": "QSI",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "QTRX",
+      "company": "QTRX",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "QURE",
+      "company": "QURE",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "RAPP",
+      "company": "RAPP",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "RAPT",
+      "company": "RAPT",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "RCKT",
+      "company": "RCKT",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "RCUS",
+      "company": "RCUS",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "REGN",
+      "company": "REGN",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "REPL",
+      "company": "REPL",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "RIGL",
+      "company": "RIGL",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "RLAY",
+      "company": "RLAY",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "RTYH6",
+      "company": "RTYH6",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "SEPN",
+      "company": "SEPN",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "SGAFT",
+      "company": "SGAFT",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "SGMT",
+      "company": "SGMT",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "SION",
+      "company": "SION",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "SLDB",
+      "company": "SLDB",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "SLN",
+      "company": "SLN",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "SMMT",
+      "company": "SMMT",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "SRRK",
+      "company": "SRRK",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "STOK",
+      "company": "STOK",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "STRO",
+      "company": "STRO",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "STVN",
+      "company": "STVN",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "SVRA",
+      "company": "SVRA",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "SYRE",
+      "company": "SYRE",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "TECX",
+      "company": "TECX",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "TEM",
+      "company": "TEM",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "TERN",
+      "company": "TERN",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "THRD",
+      "company": "THRD",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "TKNO",
+      "company": "TKNO",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "TNGX",
+      "company": "TNGX",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "TNYA",
+      "company": "TNYA",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "TRDA",
+      "company": "TRDA",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "TRVI",
+      "company": "TRVI",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "TSHA",
+      "company": "TSHA",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "TVTX",
+      "company": "TVTX",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "TWST",
+      "company": "TWST",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "TXG",
+      "company": "TXG",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "TYRA",
+      "company": "TYRA",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "UPB",
+      "company": "UPB",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "URGN",
+      "company": "URGN",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "USD",
+      "company": "USD",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "VCEL",
+      "company": "VCEL",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "VERA",
+      "company": "VERA",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "VIR",
+      "company": "VIR",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "VNDA",
+      "company": "VNDA",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "VTYX",
+      "company": "VTYX",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "VYGR",
+      "company": "VYGR",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "WVE",
+      "company": "WVE",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "XENE",
+      "company": "XENE",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "XNCR",
+      "company": "XNCR",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "XTSLA",
+      "company": "XTSLA",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ZBIO",
+      "company": "ZBIO",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ZLAB",
+      "company": "ZLAB",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ZVRA",
+      "company": "ZVRA",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ZYME",
+      "company": "ZYME",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "-",
+      "company": "-",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "AMPH",
+      "company": "AMPH",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "AMRX",
+      "company": "AMRX",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ANIP",
+      "company": "ANIP",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "AQST",
+      "company": "AQST",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ARDX",
+      "company": "ARDX",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "AZN",
+      "company": "AZN",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "CHRS",
+      "company": "CHRS",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "COLL",
+      "company": "COLL",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "CRMD",
+      "company": "CRMD",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "EOLS",
+      "company": "EOLS",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ESPR",
+      "company": "ESPR",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "ETON",
+      "company": "ETON",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "EYPT",
+      "company": "EYPT",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "GH",
+      "company": "GH",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "HRMY",
+      "company": "HRMY",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "HROW",
+      "company": "HROW",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "INDV",
+      "company": "INDV",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "INVA",
+      "company": "INVA",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "IVVD",
+      "company": "IVVD",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "KMDA",
+      "company": "KMDA",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "KNSA",
+      "company": "KNSA",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "LFCR",
+      "company": "LFCR",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "NAME",
+      "company": "NAME",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "OBIO",
+      "company": "OBIO",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "OCUL",
+      "company": "OCUL",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "OMER",
+      "company": "OMER",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "PAHC",
+      "company": "PAHC",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "PBYI",
+      "company": "PBYI",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "RANI",
+      "company": "RANI",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "RPRX",
+      "company": "RPRX",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "SIGA",
+      "company": "SIGA",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "SNY",
+      "company": "SNY",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "SUPN",
+      "company": "SUPN",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "VOR",
+      "company": "VOR",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "VTRS",
+      "company": "VTRS",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    },
+    {
+      "ticker": "XERS",
+      "company": "XERS",
+      "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
+    }
+  ],
+  "validation": {
+    "total_count": 320,
+    "coverage_target": "100% price data"
+  }
+}

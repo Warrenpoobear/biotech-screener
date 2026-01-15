@@ -1,0 +1,20 @@
+{
+  "ticker": "ARWR",
+  "company_name": "Arrowhead Pharmaceuticals, Inc.",
+  "success": true,
+  "trials": [],
+  "summary": {
+    "total_trials": 0,
+    "by_phase": {},
+    "by_status": {},
+    "active_trials": 0,
+    "completed_trials": 0,
+    "lead_stage": "unknown"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:43:44.997828",
+    "search_query": "Arrowhead Pharmaceuticals, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Arrowhead+Pharmaceuticals,+Inc."
+  }
+}

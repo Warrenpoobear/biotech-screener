@@ -1,0 +1,77 @@
+{
+  "ticker": "ALNY",
+  "company_name": "Alnylam Pharmaceuticals, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT03672188",
+      "title": "Study of VIR-2218 in Healthy Subjects and Patients With Chronic Hepatitis B",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Chronic Hepatitis B",
+      "start_date": "2018-11-14",
+      "completion_date": "2020-09-03",
+      "enrollment": 0,
+      "sponsor": "Vir Biotechnology, Inc."
+    },
+    {
+      "nct_id": "NCT04412863",
+      "title": "Study of VIR-2218 With or Without Pegylated Interferon Alpha-2a for Treatment of Chronic Hepatitis B Virus Infection",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Chronic Hepatitis B",
+      "start_date": "2020-07-03",
+      "completion_date": "2024-03-25",
+      "enrollment": 0,
+      "sponsor": "Vir Biotechnology, Inc."
+    },
+    {
+      "nct_id": "NCT04569903",
+      "title": "Evaluation of a Claims-based Algorithm for the Identification of Transthyretin-mediated Amyloidosis (ATTR) Amyloidosis in Medical Records",
+      "status": "WITHDRAWN",
+      "phase": "EARLY_PHASE1",
+      "condition": "Transthyretin Amyloidosis",
+      "start_date": "2022-08-01",
+      "completion_date": "2025-02-01",
+      "enrollment": 0,
+      "sponsor": "Yale University"
+    },
+    {
+      "nct_id": "NCT04507269",
+      "title": "Study of VIR-2218 in Patients With Chronic Hepatitis B in Mainland China",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Hepatitis B, Chronic",
+      "start_date": "2020-08-18",
+      "completion_date": "2021-09-30",
+      "enrollment": 0,
+      "sponsor": "Brii Biosciences Limited"
+    }
+  ],
+  "summary": {
+    "total_trials": 4,
+    "by_phase": {
+      "PHASE1, PHASE2": 1,
+      "PHASE2": 2,
+      "EARLY_PHASE1": 1
+    },
+    "by_status": {
+      "COMPLETED": 3,
+      "WITHDRAWN": 1
+    },
+    "active_trials": 0,
+    "completed_trials": 3,
+    "conditions": [
+      "Chronic Hepatitis B",
+      "Hepatitis B, Chronic",
+      "Transthyretin Amyloidosis"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:33:23.458538",
+    "search_query": "Alnylam Pharmaceuticals, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Alnylam+Pharmaceuticals,+Inc."
+  }
+}

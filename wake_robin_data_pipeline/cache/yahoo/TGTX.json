@@ -1,0 +1,43 @@
+{
+  "ticker": "TGTX",
+  "success": true,
+  "price": {
+    "current": 28.47,
+    "currency": "USD",
+    "day_high": 30.9,
+    "day_low": 28.21,
+    "52_week_high": 46.48,
+    "52_week_low": 25.28
+  },
+  "market_cap": {
+    "value": 4519881728.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 158759451.0,
+  "volume": {
+    "last": 3255187,
+    "average_30d": 1709514
+  },
+  "valuation": {
+    "pe_ratio": 10.277978,
+    "forward_pe": 15.134439,
+    "price_to_book": 6.6893797
+  },
+  "company_info": {
+    "name": "TG Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:14:20.382809",
+    "url": "https://finance.yahoo.com/quote/TGTX",
+    "data_hash": "d6b711ac6f9e72d1"
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "ticker": "MESO",
+  "company_name": "MESO",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT01089816",
+      "title": "Rapid Diagnostic Test for Influenza",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Influenza",
+      "start_date": "2010-03",
+      "completion_date": "2010-10",
+      "enrollment": 0,
+      "sponsor": "Meso Scale Diagnostics, LLC."
+    },
+    {
+      "nct_id": "NCT00863343",
+      "title": "Clinical Validation of the Point-of-Care MSD Influenza Test",
+      "status": "TERMINATED",
+      "phase": "",
+      "condition": "Influenza Human",
+      "start_date": "2010-03",
+      "completion_date": "2010-08",
+      "enrollment": 0,
+      "sponsor": "Meso Scale Diagnostics, LLC."
+    }
+  ],
+  "summary": {
+    "total_trials": 2,
+    "by_phase": {
+      "": 2
+    },
+    "by_status": {
+      "COMPLETED": 1,
+      "TERMINATED": 1
+    },
+    "active_trials": 0,
+    "completed_trials": 1,
+    "conditions": [
+      "Influenza",
+      "Influenza Human"
+    ],
+    "lead_stage": "unknown"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:47:42.454066",
+    "search_query": "MESO",
+    "url": "https://clinicaltrials.gov/search?term=MESO"
+  }
+}

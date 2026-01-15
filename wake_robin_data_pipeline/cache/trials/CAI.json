@@ -1,0 +1,162 @@
+{
+  "ticker": "CAI",
+  "company_name": "CAI",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT07123441",
+      "title": "A Study on the Efficacy and Safety of Irinotecan Liposome (II), 5-FU/LV in Combination With Bevacizumab for the Treatment of Advanced Colorectal Cancer",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Colorectal Cancer",
+      "start_date": "2025-09-01",
+      "completion_date": "2028-09-01",
+      "enrollment": 0,
+      "sponsor": "Sanjun Cai"
+    },
+    {
+      "nct_id": "NCT02261675",
+      "title": "Reduction in MACbar of Sevoflurane by Dexmedetomidine in Children",
+      "status": "COMPLETED",
+      "phase": "NA",
+      "condition": "Children",
+      "start_date": "2013-01",
+      "completion_date": "2014-04",
+      "enrollment": 0,
+      "sponsor": "Cai Li"
+    },
+    {
+      "nct_id": "NCT02248038",
+      "title": "A Multicenter Clinical Trial on Laparoscopic Colorectal Cancer Surgery Compared With Open Surgery",
+      "status": "UNKNOWN",
+      "phase": "PHASE3",
+      "condition": "Colorectal Cancer",
+      "start_date": "2014-06",
+      "completion_date": "2019-06",
+      "enrollment": 0,
+      "sponsor": "Cai Kailin"
+    },
+    {
+      "nct_id": "NCT01683162",
+      "title": "Effects of Parenteral Nutrition With Different Lipid Emulsions in Preterm Infants",
+      "status": "UNKNOWN",
+      "phase": "PHASE4",
+      "condition": "Preterm Infant",
+      "start_date": "2012-07",
+      "completion_date": "2013-02",
+      "enrollment": 0,
+      "sponsor": "Wei Cai"
+    },
+    {
+      "nct_id": "NCT02302794",
+      "title": "A Multicenter Clinical Trial on Laparoscopic Gastric Cancer Surgery Compared With Open Surgery",
+      "status": "UNKNOWN",
+      "phase": "PHASE3",
+      "condition": "Locally Advanced Gastric Cancer",
+      "start_date": "2014-08",
+      "completion_date": "2016-08",
+      "enrollment": 0,
+      "sponsor": "Cai Kailin"
+    },
+    {
+      "nct_id": "NCT05902000",
+      "title": "Stent Implantation Versus Balloon Dilation for Acute Anterior Circulation Tandem Occlusion",
+      "status": "UNKNOWN",
+      "phase": "NA",
+      "condition": "Thrombectomy, Tandem Occlusion, Stroke",
+      "start_date": "2023-06-14",
+      "completion_date": "2025-12",
+      "enrollment": 0,
+      "sponsor": "Xueli Cai"
+    },
+    {
+      "nct_id": "NCT01516359",
+      "title": "Incidence and Predictive Factors of Intestinal Injury in Patients Undergoing Heart Valve Replacements",
+      "status": "UNKNOWN",
+      "phase": "",
+      "condition": "Injury of Other and Multiple Parts of Small Intestine",
+      "start_date": "2011-10",
+      "completion_date": "2012-11",
+      "enrollment": 0,
+      "sponsor": "Cai Li"
+    },
+    {
+      "nct_id": "NCT07247877",
+      "title": "Research on Using Small-for-size Grafts for Auxiliary Liver Transplantation in the Treatment of Portal Hypertension",
+      "status": "ENROLLING_BY_INVITATION",
+      "phase": "",
+      "condition": "Liver Transplantation",
+      "start_date": "2014-01-01",
+      "completion_date": "2029-12-31",
+      "enrollment": 0,
+      "sponsor": "Ru-zhou Cai"
+    },
+    {
+      "nct_id": "NCT01910961",
+      "title": "Impact of Limb Remote Ischemic Preconditioning on Mortality and Quality of Life During Abdominal Aortic Aneurysm Repair",
+      "status": "UNKNOWN",
+      "phase": "NA",
+      "condition": "Abdominal Aortic Aneurysm",
+      "start_date": "2013-08",
+      "completion_date": "2015-09",
+      "enrollment": 0,
+      "sponsor": "Cai Li"
+    },
+    {
+      "nct_id": "NCT07273448",
+      "title": "Study on the Clinical Outcomes of ABO-Incompatible Living Donor Liver Transplantation",
+      "status": "ENROLLING_BY_INVITATION",
+      "phase": "",
+      "condition": "ABO Incompatibility, Liver Transplant Surgery, Living Donor Liver Transplantation",
+      "start_date": "2014-01-01",
+      "completion_date": "2029-12-31",
+      "enrollment": 0,
+      "sponsor": "Ru-zhou Cai"
+    }
+  ],
+  "summary": {
+    "total_trials": 20,
+    "by_phase": {
+      "PHASE2": 3,
+      "NA": 6,
+      "PHASE3": 3,
+      "PHASE4": 1,
+      "": 7
+    },
+    "by_status": {
+      "NOT_YET_RECRUITING": 3,
+      "COMPLETED": 3,
+      "UNKNOWN": 8,
+      "ENROLLING_BY_INVITATION": 2,
+      "RECRUITING": 4
+    },
+    "active_trials": 6,
+    "completed_trials": 3,
+    "conditions": [
+      "ABO Incompatibility, Liver Transplant Surgery, Living Donor Liver Transplantation",
+      "Abdominal Aortic Aneurysm",
+      "Cadasil",
+      "Cerebral Small Vessel Diseases",
+      "Children",
+      "Colorectal Cancer",
+      "Injury of Other and Multiple Parts of Small Intestine",
+      "Liver Transplantation",
+      "Locally Advanced Gastric Cancer",
+      "Lung Neoplasms",
+      "Ovarian Cancer, Epithelial Ovarian Cancer, Ovarian Cancer, Epithelial, Hyperthermic Intraperitoneal Chemotherapy(HIPEC), Homologous Recombination Repair Gene Mutation",
+      "Portal Vein Thrombosis",
+      "Preterm Infant",
+      "Rectal Cancer, Recurrent",
+      "Sepsis, Acute Gastrointestinal Injury, Organ Dysfunction Syndrome",
+      "Stroke, Cerebral Infarction, Transient Ischemic Attack, Cerebral Hemorrhage, Subarachnoid Hemorrhage",
+      "Thrombectomy, Tandem Occlusion, Stroke"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:46:06.454190",
+    "search_query": "CAI",
+    "url": "https://clinicaltrials.gov/search?term=CAI"
+  }
+}

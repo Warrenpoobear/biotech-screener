@@ -1,0 +1,43 @@
+{
+  "ticker": "CMPS",
+  "success": true,
+  "price": {
+    "current": 7.22,
+    "currency": "USD",
+    "day_high": 7.78,
+    "day_low": 7.08,
+    "52_week_high": 8.2,
+    "52_week_low": 2.25
+  },
+  "market_cap": {
+    "value": 693243008.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 96017044.0,
+  "volume": {
+    "last": 1968302,
+    "average_30d": 1335666
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -6.1709404,
+    "price_to_book": 18.418367
+  },
+  "company_info": {
+    "name": "COMPASS Pathways plc",
+    "sector": "Healthcare",
+    "industry": "Medical Care Facilities"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:15:27.778560",
+    "url": "https://finance.yahoo.com/quote/CMPS",
+    "data_hash": "0fd3c11413c8d37f"
+  }
+}

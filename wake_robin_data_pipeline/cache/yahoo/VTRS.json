@@ -1,0 +1,43 @@
+{
+  "ticker": "VTRS",
+  "success": true,
+  "price": {
+    "current": 12.76,
+    "currency": "USD",
+    "day_high": 12.79,
+    "day_low": 12.58,
+    "52_week_high": 12.79,
+    "52_week_low": 6.85
+  },
+  "market_cap": {
+    "value": 14731001856.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 1151769872.0,
+  "volume": {
+    "last": 10167818,
+    "average_30d": 8919357
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": 5.187688,
+    "price_to_book": 0.9719683
+  },
+  "company_info": {
+    "name": "Viatris Inc.",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:19:41.587577",
+    "url": "https://finance.yahoo.com/quote/VTRS",
+    "data_hash": "483702a327dc8b50"
+  }
+}

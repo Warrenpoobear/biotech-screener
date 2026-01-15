@@ -1,0 +1,43 @@
+{
+  "ticker": "ANAB",
+  "success": true,
+  "price": {
+    "current": 44.67,
+    "currency": "USD",
+    "day_high": 46.2678,
+    "day_low": 42.5,
+    "52_week_high": 52.47,
+    "52_week_low": 12.21
+  },
+  "market_cap": {
+    "value": 1249553792.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 27688470.0,
+  "volume": {
+    "last": 591811,
+    "average_30d": 511885
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -10.908212,
+    "price_to_book": -41.86504
+  },
+  "company_info": {
+    "name": "AnaptysBio, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:14:47.143213",
+    "url": "https://finance.yahoo.com/quote/ANAB",
+    "data_hash": "e6b0bf580d208a43"
+  }
+}

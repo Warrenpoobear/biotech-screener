@@ -42,8 +42,10 @@ def score_company(c):
         'runway_months': runway_months
     }
 
-ranked = sorted([(c, score_company(c)) for c in companies], 
-                key=lambda x: x[1]['composite'], reverse=True)
+# Sort ASCENDING: lower composite score = better = rank 1
+# Validation showed inverted ranking: high scores predicted underperformance
+ranked = sorted([(c, score_company(c)) for c in companies],
+                key=lambda x: x[1]['composite'], reverse=False)
 
 print('\nTOP 5 RANKINGS (Improved Scoring):\n')
 print(f"{'Rank':<6} {'Ticker':<8} {'Score':<8} {'Cash':<10} {'Runway':<12} {'Stage':<12}")

@@ -1,0 +1,43 @@
+{
+  "ticker": "ZBIO",
+  "success": true,
+  "price": {
+    "current": 16.08,
+    "currency": "USD",
+    "day_high": 17.36,
+    "day_low": 15.9025,
+    "52_week_high": 44.6,
+    "52_week_low": 5.83
+  },
+  "market_cap": {
+    "value": 863161024.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 53679166.0,
+  "volume": {
+    "last": 532887,
+    "average_30d": 983352
+  },
+  "valuation": {
+    "pe_ratio": 1.1762985,
+    "forward_pe": -4.0812182,
+    "price_to_book": 3.455835
+  },
+  "company_info": {
+    "name": "Zenas BioPharma, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:18:42.071592",
+    "url": "https://finance.yahoo.com/quote/ZBIO",
+    "data_hash": "c91646100ac1bc83"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "DNA",
+  "success": true,
+  "price": {
+    "current": 9.24,
+    "currency": "USD",
+    "day_high": 9.44,
+    "day_low": 9.12,
+    "52_week_high": 17.58,
+    "52_week_low": 5.0
+  },
+  "market_cap": {
+    "value": 559853632.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 48523595.0,
+  "volume": {
+    "last": 718456,
+    "average_30d": 995985
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -2.5454545,
+    "price_to_book": 0.93816626
+  },
+  "company_info": {
+    "name": "Ginkgo Bioworks Holdings, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:15:40.983579",
+    "url": "https://finance.yahoo.com/quote/DNA",
+    "data_hash": "a5b2051bf36c1884"
+  }
+}

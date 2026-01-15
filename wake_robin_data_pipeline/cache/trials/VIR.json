@@ -1,0 +1,163 @@
+{
+  "ticker": "VIR",
+  "company_name": "VIR",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05780281",
+      "title": "VIR-7831 for Inpatients With COVID-19 (An ACTIV-3/TICO Treatment Trial)",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "COVID-19",
+      "start_date": "2020-12-16",
+      "completion_date": "2022-10-04",
+      "enrollment": 0,
+      "sponsor": "National Institute of Allergy and Infectious Diseases (NIAID)"
+    },
+    {
+      "nct_id": "NCT06070051",
+      "title": "Dose-Escalation Prime/Boost Therapeutic Vaccination Study Of 2 Chimp Adenoviral Vectors in Adults With Chronic HBV On Nucleos(t)Ide Therapy",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Chronic Hepatitis B",
+      "start_date": "2023-09-26",
+      "completion_date": "2026-03-31",
+      "enrollment": 0,
+      "sponsor": "Virion Therapeutics"
+    },
+    {
+      "nct_id": "NCT06960395",
+      "title": "Safety and Preliminary Efficacy of VIR-5525 and VIR-5525 + Pembrolizumab in Participants With Locally Advanced or Metastatic Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Solid Tumor Malignancies, EGFR Positive Solid Tumors, EGFR",
+      "start_date": "2025-07-22",
+      "completion_date": "2029-08",
+      "enrollment": 0,
+      "sponsor": "Vir Biotechnology, Inc."
+    },
+    {
+      "nct_id": "NCT05461170",
+      "title": "SOLSTICE: Combination Therapy for the Treatment of Chronic Hepatitis D Infection.",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Hepatitis D, Chronic",
+      "start_date": "2022-09-17",
+      "completion_date": "2029-08",
+      "enrollment": 0,
+      "sponsor": "Vir Biotechnology, Inc."
+    },
+    {
+      "nct_id": "NCT05970289",
+      "title": "Investigate the Efficacy and Safety of BRII-835 (VIR-2218) and PEG-IFN\u03b1 Combination Therapy in Chronic HBV Patients",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Chronic Hepatitis B Virus Infection",
+      "start_date": "2023-08-22",
+      "completion_date": "2026-02",
+      "enrollment": 0,
+      "sponsor": "Brii Biosciences Limited"
+    },
+    {
+      "nct_id": "NCT05356741",
+      "title": "To Access the Safety and Effects of Intravenous Administration of VIR-5818 Alone and in Combination With Pembrolizumab in Adult Participants With Locally Advanced or Metastatic HER2-Expressing Cancers",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Locally Advanced or Metastatic HER2-Expressing Cancers",
+      "start_date": "2022-04-13",
+      "completion_date": "2027-08-16",
+      "enrollment": 0,
+      "sponsor": "Vir Biotechnology, Inc."
+    },
+    {
+      "nct_id": "NCT04856085",
+      "title": "Study of VIR-2218, VIR-3434, and/or PEG-IFN\u03b1 in Subjects With Chronic Hepatitis B Virus Infection",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Hepatitis B, Chronic",
+      "start_date": "2021-07-11",
+      "completion_date": "2026-03",
+      "enrollment": 0,
+      "sponsor": "Vir Biotechnology, Inc."
+    },
+    {
+      "nct_id": "NCT06491563",
+      "title": "Study to Investigate the Efficacy and Safety of Regimens Containing BRII-179, BRII-835, and PEG-IFN\u03b1 Treating Chronic Hepatitis B Virus (HBV) Infection (ENRICH)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "For Treatment of Chronic Hepatitis B Virus Infection",
+      "start_date": "2024-08-06",
+      "completion_date": "2027-06",
+      "enrollment": 0,
+      "sponsor": "Brii Biosciences Limited"
+    },
+    {
+      "nct_id": "NCT05135650",
+      "title": "Pharmacokinetics of Sotrovimab as Pre-exposure Prophylaxis for COVID-19 in Hematopoietic Stem Cell Transplant Recipients, COVIDMAB Study",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "COVID-19 Infection, Hematopoietic and Lymphoid Cell Neoplasm, Malignant Solid Neoplasm",
+      "start_date": "2022-01-25",
+      "completion_date": "2023-01-10",
+      "enrollment": 0,
+      "sponsor": "Fred Hutchinson Cancer Center"
+    },
+    {
+      "nct_id": "NCT07128550",
+      "title": "A Study to Evaluate Tobevibart+Elebsiran in Participants With Chronic HDV Infection Not Virologically Suppressed With Bulevirtide",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Viral Hepatitis",
+      "start_date": "2025-07-30",
+      "completion_date": "2031-07",
+      "enrollment": 0,
+      "sponsor": "Vir Biotechnology, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 35,
+    "by_phase": {
+      "PHASE3": 5,
+      "PHASE1": 11,
+      "PHASE2": 13,
+      "PHASE1, PHASE2": 3,
+      "PHASE2, PHASE3": 1,
+      "": 2
+    },
+    "by_status": {
+      "COMPLETED": 17,
+      "ACTIVE_NOT_RECRUITING": 6,
+      "RECRUITING": 6,
+      "TERMINATED": 5,
+      "NO_LONGER_AVAILABLE": 1
+    },
+    "active_trials": 12,
+    "completed_trials": 17,
+    "conditions": [
+      "COVID-19",
+      "COVID-19 Infection, Hematopoietic and Lymphoid Cell Neoplasm, Malignant Solid Neoplasm",
+      "Chronic Hepatitis B",
+      "Chronic Hepatitis B Virus Infection",
+      "Covid19",
+      "Covid19, SARS-CoV Infection",
+      "For Treatment of Chronic Hepatitis B Virus Infection",
+      "HIV I Infection",
+      "Hepatic Impairment, Cirrhosis",
+      "Hepatitis B, Chronic",
+      "Hepatitis D, Chronic",
+      "Hormone-refractory Prostate Cancer",
+      "Influenza A",
+      "Locally Advanced or Metastatic HER2-Expressing Cancers",
+      "Renal Impairment",
+      "Solid Tumor Malignancies, EGFR Positive Solid Tumors, EGFR",
+      "Viral Hepatitis"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T10:02:47.189954",
+    "search_query": "VIR",
+    "url": "https://clinicaltrials.gov/search?term=VIR"
+  }
+}

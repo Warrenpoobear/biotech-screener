@@ -1,0 +1,159 @@
+{
+  "ticker": "IRON",
+  "company_name": "IRON",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT00951002",
+      "title": "The Efficacy of Human Acellular Dermal Matrix in the Treatment of Anal Fistula",
+      "status": "UNKNOWN",
+      "phase": "",
+      "condition": "Anal Fistula, Treatment, Postoperative Complications, Acellular Dermal Matrix",
+      "start_date": "2009-07",
+      "completion_date": "2013-11",
+      "enrollment": 0,
+      "sponsor": "Zhen Jun Wang"
+    },
+    {
+      "nct_id": "NCT03385902",
+      "title": "Assessment of Dialysis Initiation by a Fuzzy Mathematics Equation",
+      "status": "UNKNOWN",
+      "phase": "NA",
+      "condition": "Chronic Kidney Disease",
+      "start_date": "2018-04-14",
+      "completion_date": "2023-12-14",
+      "enrollment": 0,
+      "sponsor": "The First Affiliated Hospital of Dalian Medical University"
+    },
+    {
+      "nct_id": "NCT04542239",
+      "title": "Inclined Positioning and Infant Gastroesophageal Reflux",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Gastroesophageal Reflux",
+      "start_date": "2021-03-15",
+      "completion_date": "2022-01-25",
+      "enrollment": 0,
+      "sponsor": "Milton S. Hershey Medical Center"
+    },
+    {
+      "nct_id": "NCT04897126",
+      "title": "Efficacy and Safety of Shexiang Baoxin Pill in Patients With Ischemia With Non-Obstructive Coronary Artery",
+      "status": "COMPLETED",
+      "phase": "PHASE4",
+      "condition": "Ischemia With Non-Obstructive Coronary Artery, Angina Pectoris, Coronary Heart Disease, X Syndrome, Angina",
+      "start_date": "2021-05-11",
+      "completion_date": "2023-10-25",
+      "enrollment": 0,
+      "sponsor": "Shanghai Hutchison Pharmaceuticals Limited"
+    },
+    {
+      "nct_id": "NCT06825715",
+      "title": "Multilevel Intervention for Precision Oncology",
+      "status": "RECRUITING",
+      "phase": "NA",
+      "condition": "Advanced Cancers of the Prostate, Cancers of the Lung",
+      "start_date": "2025-07-02",
+      "completion_date": "2030-02-28",
+      "enrollment": 0,
+      "sponsor": "VA Office of Research and Development"
+    },
+    {
+      "nct_id": "NCT03606993",
+      "title": "Iron Fish for Dominican Republic (DR) Infants",
+      "status": "COMPLETED",
+      "phase": "NA",
+      "condition": "Iron-deficiency, Iron Deficiency Anemia",
+      "start_date": "2018-08-13",
+      "completion_date": "2020-01-17",
+      "enrollment": 0,
+      "sponsor": "Children's Hospital of Philadelphia"
+    },
+    {
+      "nct_id": "NCT02099838",
+      "title": "Effectiveness and Safety of Adding Compound Preparation of Pioglitazone and Metformin for Type 2 Diabetic Patients",
+      "status": "COMPLETED",
+      "phase": "PHASE4",
+      "condition": "Diabetes Mellitus, Type 2",
+      "start_date": "2012-01",
+      "completion_date": "2013-12",
+      "enrollment": 0,
+      "sponsor": "Huazhong University of Science and Technology"
+    },
+    {
+      "nct_id": "NCT03955367",
+      "title": "Pelvic RT Versus Prophylactic Extended-field RT in Patients With Cervical Cancer",
+      "status": "UNKNOWN",
+      "phase": "PHASE3",
+      "condition": "Uterine Cervical Neoplasms",
+      "start_date": "2019-06-17",
+      "completion_date": "2025-06-01",
+      "enrollment": 0,
+      "sponsor": "Peking Union Medical College Hospital"
+    },
+    {
+      "nct_id": "NCT04666805",
+      "title": "Effect of Endocrine Therapy Duration on Clinical Outcome of Patients With HR+ Intraductal Carcinoma of the Breast",
+      "status": "UNKNOWN",
+      "phase": "",
+      "condition": "Breast Cancer",
+      "start_date": "2020-07-01",
+      "completion_date": "2021-01-15",
+      "enrollment": 0,
+      "sponsor": "First Hospital of China Medical University"
+    },
+    {
+      "nct_id": "NCT03199235",
+      "title": "Iron Fish in Dominican Republic (DR) Children",
+      "status": "COMPLETED",
+      "phase": "NA",
+      "condition": "Iron Deficiency Anemia, Anemia, Iron-deficiency",
+      "start_date": "2017-02-20",
+      "completion_date": "2018-10-16",
+      "enrollment": 0,
+      "sponsor": "Children's Hospital of Philadelphia"
+    }
+  ],
+  "summary": {
+    "total_trials": 15,
+    "by_phase": {
+      "": 5,
+      "NA": 6,
+      "PHASE4": 2,
+      "PHASE3": 1,
+      "PHASE2": 1
+    },
+    "by_status": {
+      "UNKNOWN": 6,
+      "COMPLETED": 6,
+      "RECRUITING": 2,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 3,
+    "completed_trials": 6,
+    "conditions": [
+      "Advanced Cancers of the Prostate, Cancers of the Lung",
+      "Amyotrophic Lateral Sclerosis (ALS)",
+      "Anal Fistula, Treatment, Postoperative Complications, Acellular Dermal Matrix",
+      "Breast Cancer",
+      "Chronic Kidney Disease",
+      "Diabetes Mellitus, Type 2",
+      "Diarrhea, Constipation, Melena, Neoplasm, Colonic Neoplasms, Pain",
+      "Drug-Coated Balloon, De Novo Stenosis, Acute Coronary Syndromes, ACS, DCB, Clinical Trial, Coronary Artery Disease",
+      "Gastroesophageal Reflux",
+      "Iron Deficiency Anemia of Pregnancy",
+      "Iron Deficiency Anemia, Anemia, Iron-deficiency",
+      "Iron Deficiency, Iron Deficiency Anaemia",
+      "Iron-deficiency, Iron Deficiency Anemia",
+      "Ischemia With Non-Obstructive Coronary Artery, Angina Pectoris, Coronary Heart Disease, X Syndrome, Angina",
+      "Uterine Cervical Neoplasms"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:47:15.301121",
+    "search_query": "IRON",
+    "url": "https://clinicaltrials.gov/search?term=IRON"
+  }
+}

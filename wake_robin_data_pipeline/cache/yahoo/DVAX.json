@@ -1,0 +1,43 @@
+{
+  "ticker": "DVAX",
+  "success": true,
+  "price": {
+    "current": 15.41,
+    "currency": "USD",
+    "day_high": 15.43,
+    "day_low": 15.41,
+    "52_week_high": 15.49,
+    "52_week_low": 9.2
+  },
+  "market_cap": {
+    "value": 1809518720.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 113684064.0,
+  "volume": {
+    "last": 2272806,
+    "average_30d": 4810004
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": 46.696968,
+    "price_to_book": 3.3860688
+  },
+  "company_info": {
+    "name": "Dynavax Technologies Corporation",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:13:32.046098",
+    "url": "https://finance.yahoo.com/quote/DVAX",
+    "data_hash": "6ed96e19557dd64a"
+  }
+}

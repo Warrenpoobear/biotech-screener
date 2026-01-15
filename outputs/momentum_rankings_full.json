@@ -1,0 +1,3094 @@
+{
+  "as_of_date": "2026-01-15",
+  "regime": "risk_on",
+  "xbi_return_90d": 0.3331465450176686,
+  "momentum_weight": 0.25,
+  "total_tickers": 308,
+  "rankings": [
+    {
+      "ticker": "ANNX",
+      "momentum_score": 100.0,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 1
+    },
+    {
+      "ticker": "BIOA",
+      "momentum_score": 100.0,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 2
+    },
+    {
+      "ticker": "CSTL",
+      "momentum_score": 100.0,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 3
+    },
+    {
+      "ticker": "ERAS",
+      "momentum_score": 100.0,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 4
+    },
+    {
+      "ticker": "FOLD",
+      "momentum_score": 100.0,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 5
+    },
+    {
+      "ticker": "IRWD",
+      "momentum_score": 100.0,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 6
+    },
+    {
+      "ticker": "LQDA",
+      "momentum_score": 100.0,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 7
+    },
+    {
+      "ticker": "RVMD",
+      "momentum_score": 100.0,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 8
+    },
+    {
+      "ticker": "TYRA",
+      "momentum_score": 100.0,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 9
+    },
+    {
+      "ticker": "VTYX",
+      "momentum_score": 98.78,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 10
+    },
+    {
+      "ticker": "GH",
+      "momentum_score": 98.4,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 11
+    },
+    {
+      "ticker": "GPCR",
+      "momentum_score": 98.03,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 12
+    },
+    {
+      "ticker": "ALMS",
+      "momentum_score": 97.7,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 13
+    },
+    {
+      "ticker": "KOD",
+      "momentum_score": 97.33,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 14
+    },
+    {
+      "ticker": "ARWR",
+      "momentum_score": 97.2,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 15
+    },
+    {
+      "ticker": "GLUE",
+      "momentum_score": 96.84,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 16
+    },
+    {
+      "ticker": "TERN",
+      "momentum_score": 95.92,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 17
+    },
+    {
+      "ticker": "KRYS",
+      "momentum_score": 95.47,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 18
+    },
+    {
+      "ticker": "ROIV",
+      "momentum_score": 94.57,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 19
+    },
+    {
+      "ticker": "APGE",
+      "momentum_score": 94.5,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 20
+    },
+    {
+      "ticker": "FTRE",
+      "momentum_score": 94.38,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 21
+    },
+    {
+      "ticker": "RCUS",
+      "momentum_score": 93.77,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 22
+    },
+    {
+      "ticker": "UPB",
+      "momentum_score": 93.46,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 23
+    },
+    {
+      "ticker": "MAZE",
+      "momentum_score": 92.81,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 24
+    },
+    {
+      "ticker": "TXG",
+      "momentum_score": 92.63,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 25
+    },
+    {
+      "ticker": "SVRA",
+      "momentum_score": 92.13,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 26
+    },
+    {
+      "ticker": "ANRO",
+      "momentum_score": 91.98,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 27
+    },
+    {
+      "ticker": "NRIX",
+      "momentum_score": 90.94,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 28
+    },
+    {
+      "ticker": "DSGN",
+      "momentum_score": 90.45,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 29
+    },
+    {
+      "ticker": "TRDA",
+      "momentum_score": 90.32,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 30
+    },
+    {
+      "ticker": "EWTX",
+      "momentum_score": 89.86,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 31
+    },
+    {
+      "ticker": "MRSN",
+      "momentum_score": 89.65,
+      "confidence": "MEDIUM",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 32
+    },
+    {
+      "ticker": "RNA",
+      "momentum_score": 89.44,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 33
+    },
+    {
+      "ticker": "IMMP",
+      "momentum_score": 89.09,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 34
+    },
+    {
+      "ticker": "INDV",
+      "momentum_score": 88.27,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 35
+    },
+    {
+      "ticker": "MBX",
+      "momentum_score": 88.19,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 36
+    },
+    {
+      "ticker": "AMRX",
+      "momentum_score": 87.69,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 37
+    },
+    {
+      "ticker": "TBPH",
+      "momentum_score": 87.06,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 38
+    },
+    {
+      "ticker": "SNDX",
+      "momentum_score": 86.92,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 39
+    },
+    {
+      "ticker": "NTRA",
+      "momentum_score": 86.56,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 40
+    },
+    {
+      "ticker": "INBX",
+      "momentum_score": 86.3,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 41
+    },
+    {
+      "ticker": "OLMA",
+      "momentum_score": 85.86,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 42
+    },
+    {
+      "ticker": "VERA",
+      "momentum_score": 85.63,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 43
+    },
+    {
+      "ticker": "ANAB",
+      "momentum_score": 85.09,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 44
+    },
+    {
+      "ticker": "EPRX",
+      "momentum_score": 84.69,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 45
+    },
+    {
+      "ticker": "VTRS",
+      "momentum_score": 84.68,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 46
+    },
+    {
+      "ticker": "GRAL",
+      "momentum_score": 84.11,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 47
+    },
+    {
+      "ticker": "CGON",
+      "momentum_score": 83.74,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 48
+    },
+    {
+      "ticker": "COGT",
+      "momentum_score": 83.04,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 49
+    },
+    {
+      "ticker": "AXSM",
+      "momentum_score": 82.65,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 50
+    },
+    {
+      "ticker": "DVAX",
+      "momentum_score": 82.61,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 51
+    },
+    {
+      "ticker": "CTKB",
+      "momentum_score": 82.24,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 52
+    },
+    {
+      "ticker": "BBIO",
+      "momentum_score": 82.06,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 53
+    },
+    {
+      "ticker": "IMVT",
+      "momentum_score": 81.12,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 54
+    },
+    {
+      "ticker": "SYRE",
+      "momentum_score": 79.07,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 55
+    },
+    {
+      "ticker": "ILMN",
+      "momentum_score": 78.37,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 56
+    },
+    {
+      "ticker": "NUVB",
+      "momentum_score": 78.32,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 57
+    },
+    {
+      "ticker": "MIRM",
+      "momentum_score": 78.06,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 58
+    },
+    {
+      "ticker": "COLL",
+      "momentum_score": 77.98,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 59
+    },
+    {
+      "ticker": "PRAX",
+      "momentum_score": 77.22,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 60
+    },
+    {
+      "ticker": "RAPT",
+      "momentum_score": 77.08,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 61
+    },
+    {
+      "ticker": "AUPH",
+      "momentum_score": 76.59,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 62
+    },
+    {
+      "ticker": "OPCH",
+      "momentum_score": 76.01,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 63
+    },
+    {
+      "ticker": "TNGX",
+      "momentum_score": 75.87,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 64
+    },
+    {
+      "ticker": "CRNX",
+      "momentum_score": 75.81,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 65
+    },
+    {
+      "ticker": "DAWN",
+      "momentum_score": 75.18,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 66
+    },
+    {
+      "ticker": "MEDP",
+      "momentum_score": 75.09,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 67
+    },
+    {
+      "ticker": "VNDA",
+      "momentum_score": 74.85,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 68
+    },
+    {
+      "ticker": "INCY",
+      "momentum_score": 74.07,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 69
+    },
+    {
+      "ticker": "ABVX",
+      "momentum_score": 73.73,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 70
+    },
+    {
+      "ticker": "CDNA",
+      "momentum_score": 73.05,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 71
+    },
+    {
+      "ticker": "REGN",
+      "momentum_score": 72.96,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 72
+    },
+    {
+      "ticker": "IVVD",
+      "momentum_score": 72.9,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 73
+    },
+    {
+      "ticker": "ARDX",
+      "momentum_score": 72.73,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 74
+    },
+    {
+      "ticker": "PBYI",
+      "momentum_score": 72.22,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 75
+    },
+    {
+      "ticker": "SION",
+      "momentum_score": 72.17,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 76
+    },
+    {
+      "ticker": "AZN",
+      "momentum_score": 71.76,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 77
+    },
+    {
+      "ticker": "CTMX",
+      "momentum_score": 71.73,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 78
+    },
+    {
+      "ticker": "BEAM",
+      "momentum_score": 70.96,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 79
+    },
+    {
+      "ticker": "PGEN",
+      "momentum_score": 70.64,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 80
+    },
+    {
+      "ticker": "FLGT",
+      "momentum_score": 70.48,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 81
+    },
+    {
+      "ticker": "OMER",
+      "momentum_score": 70.18,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 82
+    },
+    {
+      "ticker": "SRRK",
+      "momentum_score": 69.94,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 83
+    },
+    {
+      "ticker": "KROS",
+      "momentum_score": 69.89,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 84
+    },
+    {
+      "ticker": "MRNA",
+      "momentum_score": 69.69,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 85
+    },
+    {
+      "ticker": "CRL",
+      "momentum_score": 69.65,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 86
+    },
+    {
+      "ticker": "PEPG",
+      "momentum_score": 69.44,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 87
+    },
+    {
+      "ticker": "RLAY",
+      "momentum_score": 69.33,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 88
+    },
+    {
+      "ticker": "BRKR",
+      "momentum_score": 69.07,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 89
+    },
+    {
+      "ticker": "ORKA",
+      "momentum_score": 68.8,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 90
+    },
+    {
+      "ticker": "IDYA",
+      "momentum_score": 68.17,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 91
+    },
+    {
+      "ticker": "WVE",
+      "momentum_score": 68.12,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 92
+    },
+    {
+      "ticker": "JAZZ",
+      "momentum_score": 67.97,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 93
+    },
+    {
+      "ticker": "ZYME",
+      "momentum_score": 67.67,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 94
+    },
+    {
+      "ticker": "ACAD",
+      "momentum_score": 67.65,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 95
+    },
+    {
+      "ticker": "PTCT",
+      "momentum_score": 67.55,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 96
+    },
+    {
+      "ticker": "EBS",
+      "momentum_score": 67.02,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 97
+    },
+    {
+      "ticker": "EYPT",
+      "momentum_score": 66.92,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 98
+    },
+    {
+      "ticker": "CMPS",
+      "momentum_score": 66.89,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 99
+    },
+    {
+      "ticker": "SEPN",
+      "momentum_score": 66.83,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 100
+    },
+    {
+      "ticker": "ARQT",
+      "momentum_score": 66.64,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 101
+    },
+    {
+      "ticker": "ACRS",
+      "momentum_score": 66.2,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 102
+    },
+    {
+      "ticker": "TWST",
+      "momentum_score": 65.73,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 103
+    },
+    {
+      "ticker": "ENTA",
+      "momentum_score": 64.85,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 104
+    },
+    {
+      "ticker": "RGNX",
+      "momentum_score": 64.69,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 105
+    },
+    {
+      "ticker": "VCYT",
+      "momentum_score": 64.65,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 106
+    },
+    {
+      "ticker": "ADPT",
+      "momentum_score": 64.49,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 107
+    },
+    {
+      "ticker": "HRMY",
+      "momentum_score": 63.88,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 108
+    },
+    {
+      "ticker": "PACB",
+      "momentum_score": 63.87,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 109
+    },
+    {
+      "ticker": "KYTX",
+      "momentum_score": 63.36,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 110
+    },
+    {
+      "ticker": "MNMD",
+      "momentum_score": 63.17,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 111
+    },
+    {
+      "ticker": "BIIB",
+      "momentum_score": 63.15,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 112
+    },
+    {
+      "ticker": "SUPN",
+      "momentum_score": 63.0,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 113
+    },
+    {
+      "ticker": "ESPR",
+      "momentum_score": 62.85,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 114
+    },
+    {
+      "ticker": "HALO",
+      "momentum_score": 62.79,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 115
+    },
+    {
+      "ticker": "TECH",
+      "momentum_score": 62.61,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 116
+    },
+    {
+      "ticker": "ARVN",
+      "momentum_score": 62.44,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 117
+    },
+    {
+      "ticker": "CTNM",
+      "momentum_score": 62.3,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 118
+    },
+    {
+      "ticker": "GMAB",
+      "momentum_score": 62.3,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 119
+    },
+    {
+      "ticker": "MRVI",
+      "momentum_score": 62.26,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 120
+    },
+    {
+      "ticker": "AMPH",
+      "momentum_score": 62.09,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 121
+    },
+    {
+      "ticker": "RIGL",
+      "momentum_score": 61.82,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 122
+    },
+    {
+      "ticker": "PHAT",
+      "momentum_score": 61.45,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 123
+    },
+    {
+      "ticker": "OBIO",
+      "momentum_score": 61.39,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 124
+    },
+    {
+      "ticker": "KMDA",
+      "momentum_score": 60.93,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 125
+    },
+    {
+      "ticker": "LYEL",
+      "momentum_score": 60.82,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 126
+    },
+    {
+      "ticker": "LAB",
+      "momentum_score": 60.74,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 127
+    },
+    {
+      "ticker": "ALLO",
+      "momentum_score": 60.41,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 128
+    },
+    {
+      "ticker": "OCGN",
+      "momentum_score": 59.64,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 129
+    },
+    {
+      "ticker": "LGND",
+      "momentum_score": 59.6,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 130
+    },
+    {
+      "ticker": "GHRS",
+      "momentum_score": 59.39,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 131
+    },
+    {
+      "ticker": "CLLS",
+      "momentum_score": 59.17,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 132
+    },
+    {
+      "ticker": "IBRX",
+      "momentum_score": 58.82,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 133
+    },
+    {
+      "ticker": "UTHR",
+      "momentum_score": 58.63,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 134
+    },
+    {
+      "ticker": "MDGL",
+      "momentum_score": 58.4,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 135
+    },
+    {
+      "ticker": "ACIU",
+      "momentum_score": 58.24,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 136
+    },
+    {
+      "ticker": "CGEM",
+      "momentum_score": 58.12,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 137
+    },
+    {
+      "ticker": "KYMR",
+      "momentum_score": 58.12,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 138
+    },
+    {
+      "ticker": "ATXS",
+      "momentum_score": 58.11,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 139
+    },
+    {
+      "ticker": "RPRX",
+      "momentum_score": 57.67,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 140
+    },
+    {
+      "ticker": "LFCR",
+      "momentum_score": 57.52,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 141
+    },
+    {
+      "ticker": "IONS",
+      "momentum_score": 57.05,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 142
+    },
+    {
+      "ticker": "HROW",
+      "momentum_score": 56.48,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 143
+    },
+    {
+      "ticker": "ELVN",
+      "momentum_score": 55.68,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 144
+    },
+    {
+      "ticker": "CYTK",
+      "momentum_score": 55.56,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 145
+    },
+    {
+      "ticker": "ONC",
+      "momentum_score": 55.54,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 146
+    },
+    {
+      "ticker": "QTRX",
+      "momentum_score": 55.22,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 147
+    },
+    {
+      "ticker": "PHVS",
+      "momentum_score": 55.19,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 148
+    },
+    {
+      "ticker": "AVIR",
+      "momentum_score": 54.69,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 149
+    },
+    {
+      "ticker": "FHTX",
+      "momentum_score": 54.18,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 150
+    },
+    {
+      "ticker": "INVA",
+      "momentum_score": 54.12,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 151
+    },
+    {
+      "ticker": "EXEL",
+      "momentum_score": 53.72,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 152
+    },
+    {
+      "ticker": "TVTX",
+      "momentum_score": 53.39,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 153
+    },
+    {
+      "ticker": "TARS",
+      "momentum_score": 53.36,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 154
+    },
+    {
+      "ticker": "PCVX",
+      "momentum_score": 53.34,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 155
+    },
+    {
+      "ticker": "ADMA",
+      "momentum_score": 53.22,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 156
+    },
+    {
+      "ticker": "RGEN",
+      "momentum_score": 53.03,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 157
+    },
+    {
+      "ticker": "NUVL",
+      "momentum_score": 52.88,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 158
+    },
+    {
+      "ticker": "DYN",
+      "momentum_score": 52.32,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 159
+    },
+    {
+      "ticker": "STRO",
+      "momentum_score": 52.29,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 160
+    },
+    {
+      "ticker": "ASND",
+      "momentum_score": 51.55,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 161
+    },
+    {
+      "ticker": "KALV",
+      "momentum_score": 51.23,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 162
+    },
+    {
+      "ticker": "SRPT",
+      "momentum_score": 51.17,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 163
+    },
+    {
+      "ticker": "ABUS",
+      "momentum_score": 50.46,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 164
+    },
+    {
+      "ticker": "PTGX",
+      "momentum_score": 50.27,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 165
+    },
+    {
+      "ticker": "AMGN",
+      "momentum_score": 49.84,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 166
+    },
+    {
+      "ticker": "TRVI",
+      "momentum_score": 49.81,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 167
+    },
+    {
+      "ticker": "RAPP",
+      "momentum_score": 49.7,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 168
+    },
+    {
+      "ticker": "GLPG",
+      "momentum_score": 49.0,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 169
+    },
+    {
+      "ticker": "TSHA",
+      "momentum_score": 48.98,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 170
+    },
+    {
+      "ticker": "PAHC",
+      "momentum_score": 48.86,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 171
+    },
+    {
+      "ticker": "LCTX",
+      "momentum_score": 48.68,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 172
+    },
+    {
+      "ticker": "BNTX",
+      "momentum_score": 48.51,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 173
+    },
+    {
+      "ticker": "DNLI",
+      "momentum_score": 48.42,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 174
+    },
+    {
+      "ticker": "MNKD",
+      "momentum_score": 48.34,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 175
+    },
+    {
+      "ticker": "BBOT",
+      "momentum_score": 47.92,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 176
+    },
+    {
+      "ticker": "ALKS",
+      "momentum_score": 47.63,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 177
+    },
+    {
+      "ticker": "STOK",
+      "momentum_score": 47.49,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 178
+    },
+    {
+      "ticker": "KNSA",
+      "momentum_score": 47.39,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 179
+    },
+    {
+      "ticker": "VIR",
+      "momentum_score": 47.07,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 180
+    },
+    {
+      "ticker": "PSNL",
+      "momentum_score": 46.6,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 181
+    },
+    {
+      "ticker": "AMLX",
+      "momentum_score": 46.46,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 182
+    },
+    {
+      "ticker": "GERN",
+      "momentum_score": 46.41,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 183
+    },
+    {
+      "ticker": "RYTM",
+      "momentum_score": 45.66,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 184
+    },
+    {
+      "ticker": "FULC",
+      "momentum_score": 45.6,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 185
+    },
+    {
+      "ticker": "INSM",
+      "momentum_score": 45.52,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 186
+    },
+    {
+      "ticker": "BCAX",
+      "momentum_score": 44.65,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 187
+    },
+    {
+      "ticker": "CHRS",
+      "momentum_score": 44.56,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 188
+    },
+    {
+      "ticker": "GILD",
+      "momentum_score": 44.21,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 189
+    },
+    {
+      "ticker": "VCEL",
+      "momentum_score": 43.59,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 190
+    },
+    {
+      "ticker": "AVBP",
+      "momentum_score": 43.09,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 191
+    },
+    {
+      "ticker": "RCKT",
+      "momentum_score": 42.99,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 192
+    },
+    {
+      "ticker": "VRTX",
+      "momentum_score": 42.44,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 193
+    },
+    {
+      "ticker": "BMRN",
+      "momentum_score": 41.52,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 194
+    },
+    {
+      "ticker": "NVAX",
+      "momentum_score": 41.35,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 195
+    },
+    {
+      "ticker": "CADL",
+      "momentum_score": 41.2,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 196
+    },
+    {
+      "ticker": "BGXX",
+      "momentum_score": 40.86,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 197
+    },
+    {
+      "ticker": "NVCR",
+      "momentum_score": 40.78,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 198
+    },
+    {
+      "ticker": "RANI",
+      "momentum_score": 40.44,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 199
+    },
+    {
+      "ticker": "LXEO",
+      "momentum_score": 40.19,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 200
+    },
+    {
+      "ticker": "MESO",
+      "momentum_score": 40.11,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 201
+    },
+    {
+      "ticker": "XERS",
+      "momentum_score": 40.02,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 202
+    },
+    {
+      "ticker": "REPL",
+      "momentum_score": 39.83,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 203
+    },
+    {
+      "ticker": "GOSS",
+      "momentum_score": 39.46,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 204
+    },
+    {
+      "ticker": "ANIP",
+      "momentum_score": 39.38,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 205
+    },
+    {
+      "ticker": "ADCT",
+      "momentum_score": 38.03,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 206
+    },
+    {
+      "ticker": "NMRA",
+      "momentum_score": 37.97,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 207
+    },
+    {
+      "ticker": "MLYS",
+      "momentum_score": 37.65,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 208
+    },
+    {
+      "ticker": "AKRO",
+      "momentum_score": 37.57,
+      "confidence": "LOW",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 209
+    },
+    {
+      "ticker": "OABI",
+      "momentum_score": 37.13,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 210
+    },
+    {
+      "ticker": "FGEN",
+      "momentum_score": 37.02,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 211
+    },
+    {
+      "ticker": "ALT",
+      "momentum_score": 36.55,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 212
+    },
+    {
+      "ticker": "AARD",
+      "momentum_score": 36.36,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 213
+    },
+    {
+      "ticker": "URGN",
+      "momentum_score": 36.01,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 214
+    },
+    {
+      "ticker": "CNTA",
+      "momentum_score": 35.68,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 215
+    },
+    {
+      "ticker": "HRTX",
+      "momentum_score": 34.87,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 216
+    },
+    {
+      "ticker": "AVTR",
+      "momentum_score": 33.71,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 217
+    },
+    {
+      "ticker": "XENE",
+      "momentum_score": 33.57,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 218
+    },
+    {
+      "ticker": "KURA",
+      "momentum_score": 33.33,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 219
+    },
+    {
+      "ticker": "ARGX",
+      "momentum_score": 33.04,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 220
+    },
+    {
+      "ticker": "GRFS",
+      "momentum_score": 32.91,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 221
+    },
+    {
+      "ticker": "XNCR",
+      "momentum_score": 32.66,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 222
+    },
+    {
+      "ticker": "FDMT",
+      "momentum_score": 32.48,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 223
+    },
+    {
+      "ticker": "PCRX",
+      "momentum_score": 32.18,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 224
+    },
+    {
+      "ticker": "TECX",
+      "momentum_score": 32.13,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 225
+    },
+    {
+      "ticker": "CRVS",
+      "momentum_score": 32.11,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 226
+    },
+    {
+      "ticker": "PRTA",
+      "momentum_score": 31.65,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 227
+    },
+    {
+      "ticker": "IOVA",
+      "momentum_score": 30.57,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 228
+    },
+    {
+      "ticker": "MCRB",
+      "momentum_score": 28.92,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 229
+    },
+    {
+      "ticker": "CLDX",
+      "momentum_score": 28.71,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 230
+    },
+    {
+      "ticker": "SNY",
+      "momentum_score": 27.89,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 231
+    },
+    {
+      "ticker": "NAMS",
+      "momentum_score": 27.12,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 232
+    },
+    {
+      "ticker": "IMCR",
+      "momentum_score": 26.77,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 233
+    },
+    {
+      "ticker": "BCRX",
+      "momentum_score": 26.19,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 234
+    },
+    {
+      "ticker": "IRON",
+      "momentum_score": 26.14,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 235
+    },
+    {
+      "ticker": "SLN",
+      "momentum_score": 25.79,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 236
+    },
+    {
+      "ticker": "NBIX",
+      "momentum_score": 25.56,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 237
+    },
+    {
+      "ticker": "APLS",
+      "momentum_score": 25.51,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 238
+    },
+    {
+      "ticker": "CABA",
+      "momentum_score": 25.29,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 239
+    },
+    {
+      "ticker": "PRVA",
+      "momentum_score": 24.97,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 240
+    },
+    {
+      "ticker": "VYGR",
+      "momentum_score": 24.66,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 241
+    },
+    {
+      "ticker": "ETON",
+      "momentum_score": 24.63,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 242
+    },
+    {
+      "ticker": "CCCC",
+      "momentum_score": 23.34,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 243
+    },
+    {
+      "ticker": "SLDB",
+      "momentum_score": 23.03,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 244
+    },
+    {
+      "ticker": "SIGA",
+      "momentum_score": 22.64,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 245
+    },
+    {
+      "ticker": "ORIC",
+      "momentum_score": 22.55,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 246
+    },
+    {
+      "ticker": "ZBIO",
+      "momentum_score": 22.52,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 247
+    },
+    {
+      "ticker": "ACLX",
+      "momentum_score": 22.47,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 248
+    },
+    {
+      "ticker": "SANA",
+      "momentum_score": 22.31,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 249
+    },
+    {
+      "ticker": "OCUL",
+      "momentum_score": 22.21,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 250
+    },
+    {
+      "ticker": "CAI",
+      "momentum_score": 22.16,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 251
+    },
+    {
+      "ticker": "MYGN",
+      "momentum_score": 21.76,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 252
+    },
+    {
+      "ticker": "MGTX",
+      "momentum_score": 21.52,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 253
+    },
+    {
+      "ticker": "OPK",
+      "momentum_score": 21.05,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 254
+    },
+    {
+      "ticker": "ZVRA",
+      "momentum_score": 21.0,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 255
+    },
+    {
+      "ticker": "SPRY",
+      "momentum_score": 20.98,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 256
+    },
+    {
+      "ticker": "RXRX",
+      "momentum_score": 19.05,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 257
+    },
+    {
+      "ticker": "SGMT",
+      "momentum_score": 18.86,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 258
+    },
+    {
+      "ticker": "PRME",
+      "momentum_score": 18.36,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 259
+    },
+    {
+      "ticker": "LRMR",
+      "momentum_score": 18.07,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 260
+    },
+    {
+      "ticker": "TEM",
+      "momentum_score": 18.06,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 261
+    },
+    {
+      "ticker": "NBP",
+      "momentum_score": 17.74,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 262
+    },
+    {
+      "ticker": "IMRX",
+      "momentum_score": 17.32,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 263
+    },
+    {
+      "ticker": "ABCL",
+      "momentum_score": 17.29,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 264
+    },
+    {
+      "ticker": "ALNY",
+      "momentum_score": 16.83,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 265
+    },
+    {
+      "ticker": "AGIO",
+      "momentum_score": 16.67,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 266
+    },
+    {
+      "ticker": "CRSP",
+      "momentum_score": 16.65,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 267
+    },
+    {
+      "ticker": "PYXS",
+      "momentum_score": 16.45,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 268
+    },
+    {
+      "ticker": "BHVN",
+      "momentum_score": 16.15,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 269
+    },
+    {
+      "ticker": "CVAC",
+      "momentum_score": 15.67,
+      "confidence": "MEDIUM",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 270
+    },
+    {
+      "ticker": "RARE",
+      "momentum_score": 15.62,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 271
+    },
+    {
+      "ticker": "BDTX",
+      "momentum_score": 15.43,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 272
+    },
+    {
+      "ticker": "NTLA",
+      "momentum_score": 14.61,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 273
+    },
+    {
+      "ticker": "ABSI",
+      "momentum_score": 14.57,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 274
+    },
+    {
+      "ticker": "TGTX",
+      "momentum_score": 13.72,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 275
+    },
+    {
+      "ticker": "STVN",
+      "momentum_score": 12.96,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 276
+    },
+    {
+      "ticker": "FATE",
+      "momentum_score": 12.89,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 277
+    },
+    {
+      "ticker": "QURE",
+      "momentum_score": 12.09,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 278
+    },
+    {
+      "ticker": "VOR",
+      "momentum_score": 12.0,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 279
+    },
+    {
+      "ticker": "AUTL",
+      "momentum_score": 11.9,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 280
+    },
+    {
+      "ticker": "BCYC",
+      "momentum_score": 11.84,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 281
+    },
+    {
+      "ticker": "KALA",
+      "momentum_score": 11.69,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 282
+    },
+    {
+      "ticker": "AURA",
+      "momentum_score": 11.51,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 283
+    },
+    {
+      "ticker": "DNA",
+      "momentum_score": 11.5,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 284
+    },
+    {
+      "ticker": "SMMT",
+      "momentum_score": 11.29,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 285
+    },
+    {
+      "ticker": "AVXL",
+      "momentum_score": 9.72,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 286
+    },
+    {
+      "ticker": "CRMD",
+      "momentum_score": 8.8,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 287
+    },
+    {
+      "ticker": "NGNE",
+      "momentum_score": 8.57,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 288
+    },
+    {
+      "ticker": "SGMO",
+      "momentum_score": 8.52,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 289
+    },
+    {
+      "ticker": "TKNO",
+      "momentum_score": 8.36,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 290
+    },
+    {
+      "ticker": "CDXS",
+      "momentum_score": 8.15,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 291
+    },
+    {
+      "ticker": "CATX",
+      "momentum_score": 7.65,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 292
+    },
+    {
+      "ticker": "ATAI",
+      "momentum_score": 7.38,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 293
+    },
+    {
+      "ticker": "DRMA",
+      "momentum_score": 7.01,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 294
+    },
+    {
+      "ticker": "MENS",
+      "momentum_score": 6.31,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 295
+    },
+    {
+      "ticker": "ARCT",
+      "momentum_score": 6.26,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 296
+    },
+    {
+      "ticker": "TNYA",
+      "momentum_score": 6.14,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 297
+    },
+    {
+      "ticker": "CRBU",
+      "momentum_score": 6.1,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 298
+    },
+    {
+      "ticker": "JANX",
+      "momentum_score": 6.06,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 299
+    },
+    {
+      "ticker": "LENZ",
+      "momentum_score": 5.91,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 300
+    },
+    {
+      "ticker": "QSI",
+      "momentum_score": 5.79,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 301
+    },
+    {
+      "ticker": "ALVO",
+      "momentum_score": 5.43,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 302
+    },
+    {
+      "ticker": "EOLS",
+      "momentum_score": 5.37,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 303
+    },
+    {
+      "ticker": "EDIT",
+      "momentum_score": 4.97,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 304
+    },
+    {
+      "ticker": "HUMA",
+      "momentum_score": 4.9,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 305
+    },
+    {
+      "ticker": "AQST",
+      "momentum_score": 4.55,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 306
+    },
+    {
+      "ticker": "ZLAB",
+      "momentum_score": 4.29,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 307
+    },
+    {
+      "ticker": "LEGN",
+      "momentum_score": 3.18,
+      "confidence": "HIGH",
+      "sharpe_score": 50,
+      "relative_strength_score": 50,
+      "idio_momentum_score": 50,
+      "drawdown_gate_score": 50,
+      "momentum_rank": 308
+    }
+  ],
+  "metadata": {
+    "calculation_date": "2026-01-15",
+    "source": "momentum_signals.json",
+    "note": "Standalone momentum ranking - not integrated with Module 5"
+  }
+}

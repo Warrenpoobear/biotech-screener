@@ -1,0 +1,129 @@
+{
+  "ticker": "RXRX",
+  "company_name": "Recursion Pharmaceuticals, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06980116",
+      "title": "Dose Determining Study of EXS73565 in Participants With Relapsed or Refractory B-Cell Malignancies",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Relapsed or Refractory B-cell Malignancies",
+      "start_date": "2025-03-31",
+      "completion_date": "2028-12",
+      "enrollment": 0,
+      "sponsor": "Exscientia AI Ltd., a wholly owned subsidiary of Recursion Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT06536465",
+      "title": "The Clostridioides Difficile Trial of REC-3964",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Recurrent Clostridioides Difficile Infection",
+      "start_date": "2024-10-14",
+      "completion_date": "2025-05-06",
+      "enrollment": 0,
+      "sponsor": "Recursion Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT05085561",
+      "title": "The Symptomatic Cerebral Cavernous Malformation Trial of REC-994",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Cerebral Cavernous Malformation",
+      "start_date": "2022-03-17",
+      "completion_date": "2025-06-30",
+      "enrollment": 0,
+      "sponsor": "Recursion Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT06678659",
+      "title": "A Study of REC-1245 in Participants With Unresectable, Locally Advanced, or Metastatic Cancer",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Unresectable, Locally Advanced, Metastatic Cancers, Relapsed/Refractory Lymphomas",
+      "start_date": "2024-11-21",
+      "completion_date": "2028-10-30",
+      "enrollment": 0,
+      "sponsor": "Recursion Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT05130866",
+      "title": "Efficacy and Safety of REC-2282 in Patients With Progressive Neurofibromatosis Type 2 (NF2) Mutated Meningiomas",
+      "status": "TERMINATED",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Neurofibromatosis Type 2",
+      "start_date": "2022-06-20",
+      "completion_date": "2025-08-18",
+      "enrollment": 0,
+      "sponsor": "Recursion Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT05552755",
+      "title": "Evaluate REC-4881 in Participants With Familial Adenomatous Polyposis (FAP)",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Familial Adenomatous Polyposis",
+      "start_date": "2023-07-10",
+      "completion_date": "2026-07",
+      "enrollment": 0,
+      "sponsor": "Recursion Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT06005974",
+      "title": "A Study of REC-4881 in Participants with Cancers Which Have an AXIN1 or APC Mutation",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "AXIN1 Gene Mutation, APC Gene Mutation, Solid Tumor",
+      "start_date": "2024-01-15",
+      "completion_date": "2027-01",
+      "enrollment": 0,
+      "sponsor": "Recursion Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT05985655",
+      "title": "Study to Assess GTAEXS617 in Participants With Advanced Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Advanced Solid Tumor, Head and Neck Squamous Cell Carcinoma (HNSCC), Pancreatic Adenocarcinoma, Non-small Cell Lung Cancer (NSCLC), Breast Carcinoma, High-grade Epithelial Ovarian, Primary Peritoneal, or Fallopian Tube Cancers (HGSOC), Hormone Receptor Positive [HR+] and Human Epidermal Growth Factor Receptor 2 Negative [HER2-] Breast Carcinoma",
+      "start_date": "2023-07-06",
+      "completion_date": "2028-05",
+      "enrollment": 0,
+      "sponsor": "Exscientia AI Ltd., a wholly owned subsidiary of Recursion Pharmaceuticals, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 8,
+    "by_phase": {
+      "PHASE1": 1,
+      "PHASE2": 3,
+      "PHASE1, PHASE2": 3,
+      "PHASE2, PHASE3": 1
+    },
+    "by_status": {
+      "RECRUITING": 4,
+      "TERMINATED": 2,
+      "COMPLETED": 1,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 5,
+    "completed_trials": 1,
+    "conditions": [
+      "AXIN1 Gene Mutation, APC Gene Mutation, Solid Tumor",
+      "Advanced Solid Tumor, Head and Neck Squamous Cell Carcinoma (HNSCC), Pancreatic Adenocarcinoma, Non-small Cell Lung Cancer (NSCLC), Breast Carcinoma, High-grade Epithelial Ovarian, Primary Peritoneal, or Fallopian Tube Cancers (HGSOC), Hormone Receptor Positive [HR+] and Human Epidermal Growth Factor Receptor 2 Negative [HER2-] Breast Carcinoma",
+      "Cerebral Cavernous Malformation",
+      "Familial Adenomatous Polyposis",
+      "Neurofibromatosis Type 2",
+      "Recurrent Clostridioides Difficile Infection",
+      "Relapsed or Refractory B-cell Malignancies",
+      "Unresectable, Locally Advanced, Metastatic Cancers, Relapsed/Refractory Lymphomas"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:44:48.572601",
+    "search_query": "Recursion Pharmaceuticals, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Recursion+Pharmaceuticals,+Inc."
+  }
+}

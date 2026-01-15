@@ -1,0 +1,43 @@
+{
+  "ticker": "KMDA",
+  "success": true,
+  "price": {
+    "current": 8.04,
+    "currency": "USD",
+    "day_high": 8.08,
+    "day_low": 7.96,
+    "52_week_high": 9.15,
+    "52_week_low": 5.54
+  },
+  "market_cap": {
+    "value": 464397056.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 57681590.0,
+  "volume": {
+    "last": 105152,
+    "average_30d": 69300
+  },
+  "valuation": {
+    "pe_ratio": 22.971428,
+    "forward_pe": 16.75,
+    "price_to_book": 1.7838917
+  },
+  "company_info": {
+    "name": "Kamada Ltd.",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:19:15.740213",
+    "url": "https://finance.yahoo.com/quote/KMDA",
+    "data_hash": "9fbb7f4b785c137f"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "GHRS",
+  "success": true,
+  "price": {
+    "current": 15.01,
+    "currency": "USD",
+    "day_high": 15.84,
+    "day_low": 14.715,
+    "52_week_high": 20.5,
+    "52_week_low": 7.98
+  },
+  "market_cap": {
+    "value": 931061248.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 62029395.0,
+  "volume": {
+    "last": 437988,
+    "average_30d": 665952
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -9.586705,
+    "price_to_book": 3.1949766
+  },
+  "company_info": {
+    "name": "GH Research PLC",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:15:58.779813",
+    "url": "https://finance.yahoo.com/quote/GHRS",
+    "data_hash": "8d823936beb5ff6a"
+  }
+}

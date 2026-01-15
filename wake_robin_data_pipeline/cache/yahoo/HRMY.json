@@ -1,0 +1,43 @@
+{
+  "ticker": "HRMY",
+  "success": true,
+  "price": {
+    "current": 38.55,
+    "currency": "USD",
+    "day_high": 38.75,
+    "day_low": 37.02,
+    "52_week_high": 40.93,
+    "52_week_low": 25.52
+  },
+  "market_cap": {
+    "value": 2220339712.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 57596358.0,
+  "volume": {
+    "last": 737433,
+    "average_30d": 637742
+  },
+  "valuation": {
+    "pe_ratio": 12.160883,
+    "forward_pe": 6.877174,
+    "price_to_book": 2.6586206
+  },
+  "company_info": {
+    "name": "Harmony Biosciences Holdings, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:19:08.862480",
+    "url": "https://finance.yahoo.com/quote/HRMY",
+    "data_hash": "48608f30ccf3325c"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "AURA",
+  "success": true,
+  "price": {
+    "current": 5.09,
+    "currency": "USD",
+    "day_high": 5.415,
+    "day_low": 5.005,
+    "52_week_high": 8.27,
+    "52_week_low": 4.345
+  },
+  "market_cap": {
+    "value": 323231648.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 63503269.0,
+  "volume": {
+    "last": 178870,
+    "average_30d": 201961
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -2.5073893,
+    "price_to_book": 2.0466425
+  },
+  "company_info": {
+    "name": "Aura Biosciences, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-12T09:15:00.082577",
+    "url": "https://finance.yahoo.com/quote/AURA",
+    "data_hash": "8b9d7221b10a30ea"
+  }
+}

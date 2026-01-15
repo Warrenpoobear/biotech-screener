@@ -1,0 +1,39 @@
+{
+  "ticker": "GRAL",
+  "company_name": "GRAL",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04663893",
+      "title": "Peri-Implant and Peri-Prosthetic Fractures: Epidemiology, Morbidity, Mortality, Treatment and Outcome Analysis",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Periprosthetic Fracture of the Upper or Lower Limb, Peri-implant Fracture of the Upper or Lower Limb, Periprosthetic Fractures, Peri-implant Fracture",
+      "start_date": "2021-01-01",
+      "completion_date": "2027-12-31",
+      "enrollment": 0,
+      "sponsor": "Hospital Cl\u00ednico Universitario de Valladolid"
+    }
+  ],
+  "summary": {
+    "total_trials": 1,
+    "by_phase": {
+      "": 1
+    },
+    "by_status": {
+      "RECRUITING": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 0,
+    "conditions": [
+      "Periprosthetic Fracture of the Upper or Lower Limb, Peri-implant Fracture of the Upper or Lower Limb, Periprosthetic Fractures, Peri-implant Fracture"
+    ],
+    "lead_stage": "unknown"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-12T09:46:59.203371",
+    "search_query": "GRAL",
+    "url": "https://clinicaltrials.gov/search?term=GRAL"
+  }
+}
