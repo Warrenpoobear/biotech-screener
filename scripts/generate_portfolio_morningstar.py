@@ -16,20 +16,95 @@ import math
 from typing import Dict, List, Tuple
 
 def load_rankings(path: Path) -> List[Dict]:
-    """Load ranked tickers with momentum"""
-    with open(path) as f:
+    """Load ranked tickers with momentum - handles multiple formats"""
+    # Use utf-8 encoding to handle special characters
+    with open(path, encoding='utf-8') as f:
         data = json.load(f)
     
+    # Format 1: Already a list
     if isinstance(data, list):
         return data
-    elif 'securities' in data:
+    
+    # Format 2: Multi-module pipeline output (has module_5_composite key)
+    if isinstance(data, dict) and 'module_5_composite' in data:
+        module5_data = data['module_5_composite']
+        
+        # Try different nested structures
+        if 'ranked_securities' in module5_data:
+            securities = module5_data['ranked_securities']
+        elif 'securities' in module5_data:
+            securities = module5_data['securities']
+        elif 'rankings' in module5_data:
+            securities = module5_data['rankings']
+        elif isinstance(module5_data, list):
+            securities = module5_data
+        elif isinstance(module5_data, dict):
+            # Maybe it's a dict of ticker -> data
+            securities = []
+            for ticker, ticker_data in module5_data.items():
+                if isinstance(ticker_data, dict) and ticker not in ['as_of_date', 'metadata', 'provenance']:
+                    if 'ticker' not in ticker_data:
+                        ticker_data['ticker'] = ticker
+                    securities.append(ticker_data)
+            
+            # Sort by score
+            if securities and 'final_score' in securities[0]:
+                securities.sort(key=lambda x: x.get('final_score', 0), reverse=True)
+        else:
+            securities = []
+        
+        if securities:
+            return securities
+    
+    # Format 3: Has 'securities' key
+    if isinstance(data, dict) and 'securities' in data:
         return data['securities']
-    else:
-        raise ValueError(f"Unexpected format in {path}")
+    
+    # Format 4: Has 'rankings' key
+    if isinstance(data, dict) and 'rankings' in data:
+        return data['rankings']
+    
+    # Format 5: Has 'ranked_securities' key
+    if isinstance(data, dict) and 'ranked_securities' in data:
+        return data['ranked_securities']
+    
+    # Format 6: Dict with ticker keys at top level
+    if isinstance(data, dict):
+        # Check if keys look like tickers (all caps, 2-5 chars)
+        ticker_like_keys = [k for k in data.keys() if isinstance(k, str) and k.isupper() and 2 <= len(k) <= 5]
+        
+        if len(ticker_like_keys) > 10:  # At least 10 ticker-like keys
+            result = []
+            for ticker in ticker_like_keys:
+                ticker_data = data[ticker]
+                if isinstance(ticker_data, dict):
+                    if 'ticker' not in ticker_data:
+                        ticker_data['ticker'] = ticker
+                    result.append(ticker_data)
+                else:
+                    result.append({'ticker': ticker})
+            
+            # Sort by rank or score
+            if result and 'rank' in result[0]:
+                result.sort(key=lambda x: x.get('rank', 999))
+            elif result and 'final_score' in result[0]:
+                result.sort(key=lambda x: x.get('final_score', 0), reverse=True)
+            
+            return result
+    
+    # If we get here, format is unknown
+    print(f"⚠️  Unknown JSON format in {path}")
+    print(f"   Type: {type(data)}")
+    if isinstance(data, dict):
+        print(f"   Keys: {list(data.keys())[:10]}")
+        # Try to show structure of first module
+        if 'module_5_composite' in data:
+            print(f"   module_5_composite keys: {list(data['module_5_composite'].keys())[:10]}")
+    raise ValueError(f"Unexpected format in {path}")
 
 def load_morningstar_returns(returns_db_path: Path) -> Dict:
     """Load Morningstar returns database"""
-    with open(returns_db_path) as f:
+    with open(returns_db_path, encoding='utf-8') as f:
         data = json.load(f)
     
     # Convert list format to dict by ticker for easy lookup
@@ -291,7 +366,10 @@ def generate_portfolio(
     positions = []
     
     for i, security in enumerate(top_securities):
-        ticker = security['ticker']
+        ticker = security.get('ticker')
+        
+        if not ticker:
+            continue
         
         if ticker not in tickers_with_data:
             print(f"   ⚠️  Skipping {ticker} (no Morningstar data)")
@@ -304,14 +382,25 @@ def generate_portfolio(
         price_estimate = get_latest_price_from_external(ticker, returns_data)
         shares = int(position_value / price_estimate) if price_estimate and price_estimate > 0 else 0
         
+        # Map field names (handle different JSON formats)
+        original_score = float(security.get('original_score') or 
+                              security.get('composite_score_original') or 
+                              security.get('composite_score') or 0)
+        
+        final_score = float(security.get('final_score') or 
+                           security.get('composite_score_with_momentum') or 
+                           security.get('composite_score') or 0)
+        
+        momentum_score = float(security.get('momentum_score', 50))
+        
         position = {
             'rank': i + 1,
             'ticker': ticker,
             'weight_pct': round(weight_pct, 2),
             'position_value_usd': round(position_value, 2),
-            'original_score': security.get('original_score', 0),
-            'momentum_score': security.get('momentum_score', 50),
-            'final_score': security.get('final_score', 0),
+            'original_score': round(original_score, 2),
+            'momentum_score': round(momentum_score, 1),
+            'final_score': round(final_score, 2),
             'volatility': round(volatilities.get(ticker, 0.50), 3),
             'price_estimate': round(price_estimate, 2) if price_estimate else None,
             'shares_estimate': shares,
