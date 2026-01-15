@@ -57,10 +57,13 @@ def calculate_volatility_from_returns(
     returns_dict: dict[str, str], lookback_days: int = 60
 ) -> float:
     """
-    Calculate annualized volatility from daily returns.
+    Calculate annualized volatility from cumulative returns.
+
+    The Morningstar data stores cumulative returns (total return since base date).
+    We need to convert to daily returns first, then calculate volatility.
 
     Args:
-        returns_dict: {date_str: return_decimal_str}
+        returns_dict: {date_str: cumulative_return_decimal_str}
         lookback_days: Number of days to use for volatility calc
 
     Returns:
@@ -69,19 +72,32 @@ def calculate_volatility_from_returns(
     if not returns_dict:
         return 0.50  # Default 50% volatility
 
-    # Sort by date and take most recent N days
-    sorted_dates = sorted(returns_dict.keys(), reverse=True)[:lookback_days]
+    # Sort by date chronologically (oldest first) to compute daily returns
+    sorted_dates = sorted(returns_dict.keys())
 
-    if len(sorted_dates) < 20:
+    # Take extra day to compute lookback_days of daily returns
+    if len(sorted_dates) > lookback_days + 1:
+        sorted_dates = sorted_dates[-(lookback_days + 1):]
+
+    if len(sorted_dates) < 21:
+        return 0.50  # Not enough data (need 20+ daily returns)
+
+    # Convert cumulative returns to daily returns
+    # Daily return = (1 + cumulative[t]) / (1 + cumulative[t-1]) - 1
+    cumulative = [float(returns_dict[d]) for d in sorted_dates]
+    daily_returns = []
+    for i in range(1, len(cumulative)):
+        if abs(1 + cumulative[i - 1]) > 0.001:  # Avoid division by zero
+            daily_ret = (1 + cumulative[i]) / (1 + cumulative[i - 1]) - 1
+            daily_returns.append(daily_ret)
+
+    if len(daily_returns) < 20:
         return 0.50  # Not enough data
 
-    # Convert to floats
-    returns = [float(returns_dict[d]) for d in sorted_dates]
-
     # Calculate standard deviation of daily returns
-    n = len(returns)
-    mean = sum(returns) / n
-    variance = sum((r - mean) ** 2 for r in returns) / (n - 1)
+    n = len(daily_returns)
+    mean = sum(daily_returns) / n
+    variance = sum((r - mean) ** 2 for r in daily_returns) / (n - 1)
     daily_std = math.sqrt(variance)
 
     # Annualize (sqrt(252) trading days)
