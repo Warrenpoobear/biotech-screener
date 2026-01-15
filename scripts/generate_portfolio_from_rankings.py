@@ -5,7 +5,7 @@ Generate portfolio from momentum-integrated rankings.
 Takes the ranked output and constructs a portfolio with:
 - Top N position selection
 - Inverse volatility weighting
-- Concentration limits (max 3% per position)
+- Concentration limits (max 7% per position)
 - Risk metrics calculation
 
 Usage:
@@ -73,7 +73,7 @@ def fetch_price_and_volatility(tickers: list[str]) -> dict:
     return result
 
 
-def calculate_inverse_volatility_weights(securities: list[dict], market_data: dict, max_weight: float = 0.03) -> list[dict]:
+def calculate_inverse_volatility_weights(securities: list[dict], market_data: dict, max_weight: float = 0.07) -> list[dict]:
     """
     Calculate position weights using inverse volatility.
 
@@ -129,8 +129,8 @@ def main():
     parser.add_argument(
         "--max-position",
         type=float,
-        default=0.03,
-        help="Maximum position weight (default: 0.03 = 3%%)"
+        default=0.07,
+        help="Maximum position weight (default: 0.07 = 7%%)"
     )
     parser.add_argument(
         "--output-path",
