@@ -24,8 +24,88 @@ GOVERNANCE: stdlib-only, Decimal arithmetic, complete audit trails
 from decimal import Decimal, ROUND_HALF_UP, getcontext, InvalidOperation
 from datetime import datetime, timedelta
 from pathlib import Path
+from typing import Dict, List, Tuple, Union
+from typing_extensions import TypedDict
 import json
 import hashlib
+
+
+# =============================================================================
+# TYPE DEFINITIONS
+# =============================================================================
+
+# Type aliases
+ReturnsData = Dict[str, Decimal]
+
+
+class MultiHorizonSharpe(TypedDict, total=False):
+    """Multi-horizon Sharpe ratio results."""
+    short_20d: Decimal
+    medium_60d: Decimal
+    long_120d: Decimal
+    composite: Decimal
+
+
+class RelativeStrengthResult(TypedDict, total=False):
+    """Relative strength calculation results."""
+    rs_20d: Decimal
+    rs_60d: Decimal
+    rs_120d: Decimal
+    composite: Decimal
+
+
+class IdiosyncraticMomentum(TypedDict):
+    """Idiosyncratic momentum calculation results."""
+    beta_60d: Decimal
+    idio_return_60d: Decimal
+    idio_sharpe: Decimal
+    n_aligned_obs: int
+
+
+class DrawdownGate(TypedDict, total=False):
+    """Drawdown gate calculation results."""
+    max_drawdown_120d: Decimal
+    max_drawdown_180d: Decimal
+    risk_penalty: Decimal
+
+
+class AlignedWindow(TypedDict):
+    """Benchmark-aligned window data."""
+    ticker: Dict[str, Decimal]
+    xbi: Dict[str, Decimal]
+    n_missing: int
+    coverage_pct: Decimal
+
+
+class Provenance(TypedDict):
+    """Calculation provenance information."""
+    ticker: str
+    calc_date: str
+    n_observations: int
+    ticker_window_hash: str
+    xbi_window_hash: str
+    calculation_timestamp: str
+
+
+class AllSignalsResult(TypedDict):
+    """Complete momentum signals result."""
+    multi_horizon_sharpe: MultiHorizonSharpe
+    relative_strength_vs_xbi: RelativeStrengthResult
+    idiosyncratic_momentum: IdiosyncraticMomentum
+    drawdown_gate: DrawdownGate
+    composite_momentum_score: Decimal
+    confidence_tier: str
+    confidence_multiplier: Decimal
+    provenance: Provenance
+
+
+class AuditEntry(TypedDict):
+    """Audit trail entry."""
+    ticker: str
+    calc_date: str
+    composite_score: str
+    confidence_tier: str
+    timestamp: str
 
 # Set fixed Decimal context for deterministic calculations
 getcontext().prec = 28  # High precision for sqrt operations
@@ -65,10 +145,16 @@ class MorningstarMomentumSignals:
         "score": Decimal("0.01")
     }
 
-    def __init__(self):
-        self.audit_trail = []
+    def __init__(self) -> None:
+        self.audit_trail: List[AuditEntry] = []
 
-    def calculate_all_signals(self, ticker, returns_data, xbi_returns_data, calc_date):
+    def calculate_all_signals(
+        self,
+        ticker: str,
+        returns_data: ReturnsData,
+        xbi_returns_data: ReturnsData,
+        calc_date: str
+    ) -> AllSignalsResult:
         """
         Calculate all 4 momentum signals for a ticker.
 
@@ -143,7 +229,12 @@ class MorningstarMomentumSignals:
 
         return signals
 
-    def _calculate_multi_horizon_sharpe(self, returns_data, xbi_returns_data, calc_date):
+    def _calculate_multi_horizon_sharpe(
+        self,
+        returns_data: ReturnsData,
+        xbi_returns_data: ReturnsData,
+        calc_date: str
+    ) -> MultiHorizonSharpe:
         """
         Signal 1: Multi-horizon risk-adjusted momentum (CORRECTED).
 
@@ -207,7 +298,12 @@ class MorningstarMomentumSignals:
 
         return sharpes
 
-    def _calculate_relative_strength(self, ticker_returns, xbi_returns, calc_date):
+    def _calculate_relative_strength(
+        self,
+        ticker_returns: ReturnsData,
+        xbi_returns: ReturnsData,
+        calc_date: str
+    ) -> RelativeStrengthResult:
         """
         Signal 2: Relative strength vs XBI (CORRECTED).
 
@@ -253,7 +349,12 @@ class MorningstarMomentumSignals:
 
         return rs_signals
 
-    def _calculate_idiosyncratic_momentum(self, ticker_returns, xbi_returns, calc_date):
+    def _calculate_idiosyncratic_momentum(
+        self,
+        ticker_returns: ReturnsData,
+        xbi_returns: ReturnsData,
+        calc_date: str
+    ) -> IdiosyncraticMomentum:
         """
         Signal 3: Beta + idiosyncratic momentum (CORRECTED).
 
@@ -316,7 +417,12 @@ class MorningstarMomentumSignals:
             "n_aligned_obs": len(aligned_window["ticker"])
         }
 
-    def _calculate_drawdown_gate(self, returns_data, xbi_returns_data, calc_date):
+    def _calculate_drawdown_gate(
+        self,
+        returns_data: ReturnsData,
+        xbi_returns_data: ReturnsData,
+        calc_date: str
+    ) -> DrawdownGate:
         """
         Signal 4: Maximum drawdown risk gate (CORRECTED).
 
@@ -376,7 +482,10 @@ class MorningstarMomentumSignals:
 
         return drawdowns
 
-    def _calculate_composite_score(self, signals):
+    def _calculate_composite_score(
+        self,
+        signals: Dict[str, Union[MultiHorizonSharpe, RelativeStrengthResult, IdiosyncraticMomentum, DrawdownGate]]
+    ) -> Decimal:
         """
         Combine all 4 signals into single 0-100 score.
 
@@ -421,7 +530,13 @@ class MorningstarMomentumSignals:
 
     # ===== HELPER FUNCTIONS =====
 
-    def _get_benchmark_aligned_window(self, ticker_returns, xbi_returns, calc_date, lookback_days):
+    def _get_benchmark_aligned_window(
+        self,
+        ticker_returns: ReturnsData,
+        xbi_returns: ReturnsData,
+        calc_date: str,
+        lookback_days: int
+    ) -> AlignedWindow:
         """
         Get benchmark-aligned window for calculations.
 
@@ -467,7 +582,12 @@ class MorningstarMomentumSignals:
             "coverage_pct": coverage_pct
         }
 
-    def _determine_confidence_tier(self, returns_data, xbi_returns_data, calc_date):
+    def _determine_confidence_tier(
+        self,
+        returns_data: ReturnsData,
+        xbi_returns_data: ReturnsData,
+        calc_date: str
+    ) -> Tuple[str, Decimal, int]:
         """
         Determine confidence tier based on data availability.
 
@@ -495,7 +615,7 @@ class MorningstarMomentumSignals:
 
         return tier, multiplier, n_obs
 
-    def _calculate_cumulative_return(self, returns_dict):
+    def _calculate_cumulative_return(self, returns_dict: Dict[str, Decimal]) -> Decimal:
         """Calculate cumulative return from daily returns."""
         cum_return = Decimal("1.0")
 
@@ -505,7 +625,7 @@ class MorningstarMomentumSignals:
 
         return cum_return - Decimal("1.0")
 
-    def _calculate_beta(self, ticker_series, xbi_series):
+    def _calculate_beta(self, ticker_series: List[Decimal], xbi_series: List[Decimal]) -> Decimal:
         """
         Calculate beta: Cov(ticker, xbi) / Var(xbi).
 
@@ -540,7 +660,7 @@ class MorningstarMomentumSignals:
 
         return beta
 
-    def _normalize_sharpe_to_score(self, sharpe):
+    def _normalize_sharpe_to_score(self, sharpe: Decimal) -> Decimal:
         """
         Normalize Sharpe ratio to 0-100 score.
 
@@ -553,13 +673,13 @@ class MorningstarMomentumSignals:
         score = Decimal("50.0") + (sharpe_clipped * Decimal("16.67"))
         return max(Decimal("0.0"), min(Decimal("100.0"), score))
 
-    def _normalize_return_to_score(self, return_val):
+    def _normalize_return_to_score(self, return_val: Decimal) -> Decimal:
         """Normalize return (for relative strength) to 0-100 score."""
         return_clipped = max(Decimal("-0.50"), min(Decimal("0.50"), return_val))
         score = Decimal("50.0") + (return_clipped * Decimal("100.0"))
         return max(Decimal("0.0"), min(Decimal("100.0"), score))
 
-    def _hash_window_data(self, returns_data, calc_date, lookback_days):
+    def _hash_window_data(self, returns_data: ReturnsData, calc_date: str, lookback_days: int) -> str:
         """
         Hash input window for provenance.
 
@@ -580,7 +700,7 @@ class MorningstarMomentumSignals:
 
         return hashlib.sha256(window_str.encode()).hexdigest()[:16]
 
-    def _log_calculation(self, ticker, calc_date, signals):
+    def _log_calculation(self, ticker: str, calc_date: str, signals: AllSignalsResult) -> None:
         """Log calculation for audit trail."""
         entry = {
             "ticker": ticker,
@@ -591,7 +711,7 @@ class MorningstarMomentumSignals:
         }
         self.audit_trail.append(entry)
 
-    def write_audit_trail(self, output_file):
+    def write_audit_trail(self, output_file: str) -> None:
         """Write audit trail to file."""
         with open(output_file, 'w') as f:
             json.dump(self.audit_trail, f, indent=2)

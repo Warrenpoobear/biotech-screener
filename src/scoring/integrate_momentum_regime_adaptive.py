@@ -11,12 +11,58 @@ Solution: Adjust momentum weight based on XBI regime.
 """
 
 from decimal import Decimal
-from typing import Dict, Any, Optional
+from typing import Dict, List, Optional, Tuple, Union
+from typing_extensions import TypedDict
 import json
 from pathlib import Path
 
 
-def load_momentum_signals(path: str = "outputs/momentum_signals.json") -> Dict[str, Any]:
+# =============================================================================
+# TYPE DEFINITIONS
+# =============================================================================
+
+class MomentumSignal(TypedDict, total=False):
+    """Momentum signal data for a ticker."""
+    composite_momentum_score: str
+    confidence_tier: str
+    confidence_multiplier: str
+    multi_horizon_sharpe: Dict[str, str]
+    relative_strength_vs_xbi: Dict[str, str]
+    idiosyncratic_momentum: Dict[str, Union[str, int]]
+    drawdown_gate: Dict[str, str]
+
+
+class MomentumMetadata(TypedDict):
+    """Metadata for momentum integration."""
+    score: str
+    confidence_tier: str
+    confidence_multiplier: str
+    weight_applied: str
+    contribution: str
+
+
+class MomentumIntegrationResult(TypedDict, total=False):
+    """Result of momentum integration."""
+    status: str
+    reason: Optional[str]
+    regime: str
+    xbi_return_90d: str
+    momentum_weight_used: str
+    tickers_enriched: int
+    rationale: str
+
+
+class BlendingMetadata(TypedDict):
+    """Metadata from blending momentum into composite."""
+    original_composite: str
+    momentum_score: str
+    momentum_weight: str
+    regime: str
+    confidence_multiplier: str
+    contribution_from_momentum: str
+
+
+def load_momentum_signals(path: str = "outputs/momentum_signals.json") -> Dict[str, MomentumSignal]:
     """Load pre-calculated momentum signals."""
     with open(path) as f:
         data = json.load(f)
@@ -36,7 +82,7 @@ def calculate_xbi_regime(
     xbi_returns: Dict[str, Decimal],
     calc_date: str,
     lookback_days: int = 90
-) -> tuple[str, Decimal]:
+) -> Tuple[str, Decimal]:
     """
     Classify current regime based on XBI performance.
 
@@ -97,7 +143,7 @@ def apply_momentum_to_composite(
     momentum_score: Decimal,
     regime: str,
     confidence_multiplier: Decimal = Decimal("1.0")
-) -> tuple[Decimal, Dict[str, Any]]:
+) -> Tuple[Decimal, BlendingMetadata]:
     """
     Blend momentum into existing composite score.
 
@@ -134,11 +180,11 @@ def apply_momentum_to_composite(
 
 
 def enrich_module5_with_momentum(
-    module5_output: Dict[str, Any],
+    module5_output: Dict[str, object],
     momentum_signals_path: str = "outputs/momentum_signals.json",
     returns_path: str = "data/returns/returns_db_daily.json",
     calc_date: Optional[str] = None
-) -> Dict[str, Any]:
+) -> Dict[str, object]:
     """
     Enrich Module 5 output with regime-adaptive momentum signals.
 
@@ -253,10 +299,10 @@ def enrich_module5_with_momentum(
 # Convenience function for standalone use
 def integrate_momentum(
     module5_output_path: str,
-    output_path: str = None,
+    output_path: Optional[str] = None,
     momentum_signals_path: str = "outputs/momentum_signals.json",
     returns_path: str = "data/returns/returns_db_daily.json"
-) -> Dict[str, Any]:
+) -> Dict[str, object]:
     """
     Load Module 5 output, integrate momentum, save result.
 
