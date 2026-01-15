@@ -6,14 +6,86 @@ GOVERNANCE: Momentum contribution shrinks automatically when confidence is low.
 """
 
 from decimal import Decimal
+from typing import Dict, Optional, Union
+from typing_extensions import TypedDict
+
+
+# =============================================================================
+# TYPE DEFINITIONS
+# =============================================================================
+
+class BaseScores(TypedDict, total=False):
+    """Base scores for integration."""
+    financial_health_score: Decimal
+    clinical_development_score: Decimal
+    institutional_signal_score: Decimal
+
+
+class ComponentScore(TypedDict):
+    """Component score details."""
+    score: Decimal
+    weight: Decimal
+    contribution: Decimal
+
+
+class MomentumComponentScore(TypedDict):
+    """Momentum component score with confidence info."""
+    score: Decimal
+    weight: Decimal
+    contribution: Decimal
+    confidence_tier: str
+    confidence_multiplier: str
+
+
+class MomentumDetail(TypedDict):
+    """Detailed momentum breakdown."""
+    multi_horizon_sharpe: str
+    relative_strength: str
+    idiosyncratic_sharpe: str
+    drawdown_penalty: str
+
+
+class IntegratedProvenance(TypedDict, total=False):
+    """Provenance information for integrated results."""
+    ticker: str
+    momentum_calc_date: str
+    n_observations: int
+    reason: str
+
+
+class IntegratedResult(TypedDict, total=False):
+    """Result of momentum integration with base scores."""
+    final_score: Decimal
+    component_scores: Dict[str, Union[ComponentScore, MomentumComponentScore]]
+    momentum_detail: MomentumDetail
+    provenance: IntegratedProvenance
+    momentum_available: bool
+
+
+class MomentumSignals(TypedDict, total=False):
+    """Input momentum signals from calculator."""
+    composite_momentum_score: Decimal
+    confidence_tier: str
+    confidence_multiplier: Decimal
+    multi_horizon_sharpe: Dict[str, Decimal]
+    relative_strength_vs_xbi: Dict[str, Decimal]
+    idiosyncratic_momentum: Dict[str, Union[Decimal, int]]
+    drawdown_gate: Dict[str, Decimal]
+    provenance: Dict[str, Union[str, int]]
+
+
+class ReturnsDB(TypedDict, total=False):
+    """Returns database structure."""
+    tickers: Dict[str, Dict[str, Union[float, str, Decimal]]]
+    benchmark: Dict[str, Dict[str, Union[float, str, Decimal]]]
 
 
 def integrate_momentum_signals_with_confidence(
-    base_scores,
-    momentum_signals,
-    ticker,
-    momentum_max_weight=Decimal("0.20")  # Cap momentum at 20% max
-):
+    base_scores: BaseScores,
+    momentum_signals: MomentumSignals,
+    ticker: str,
+    momentum_max_weight: Decimal = Decimal("0.20")
+) -> IntegratedResult:
     """
     Add momentum signals to composite score with confidence weighting.
 
@@ -109,12 +181,12 @@ def integrate_momentum_signals_with_confidence(
 
 
 def integrate_momentum_batch(
-    tickers_base_scores,
-    momentum_calculator,
-    returns_db,
-    calc_date,
-    momentum_max_weight=Decimal("0.20")
-):
+    tickers_base_scores: Dict[str, BaseScores],
+    momentum_calculator: object,  # MorningstarMomentumSignals instance
+    returns_db: ReturnsDB,
+    calc_date: str,
+    momentum_max_weight: Decimal = Decimal("0.20")
+) -> Dict[str, IntegratedResult]:
     """
     Batch integration for multiple tickers.
 
