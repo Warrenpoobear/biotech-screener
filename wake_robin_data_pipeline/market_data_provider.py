@@ -1,6 +1,9 @@
 """
 market_data_provider.py - Point-in-time safe price/return series provider
 FINAL VERSION - Handles both historical and current dates correctly
+
+Updated to use Morningstar Direct as primary source for daily returns,
+with yfinance as fallback.
 """
 
 from decimal import Decimal, ROUND_HALF_UP
@@ -10,6 +13,26 @@ from pathlib import Path
 import json
 import hashlib
 import math
+
+# Import Morningstar provider (primary source for returns)
+try:
+    from .morningstar_data_provider import (
+        MorningstarDataProvider,
+        MORNINGSTAR_AVAILABLE,
+        check_morningstar_availability
+    )
+except ImportError:
+    try:
+        from morningstar_data_provider import (
+            MorningstarDataProvider,
+            MORNINGSTAR_AVAILABLE,
+            check_morningstar_availability
+        )
+    except ImportError:
+        MORNINGSTAR_AVAILABLE = False
+        MorningstarDataProvider = None
+        def check_morningstar_availability():
+            return {"morningstar_available": False, "yfinance_available": True, "primary_source": "yfinance"}
 
 try:
     import yfinance as yf
@@ -71,10 +94,20 @@ def _read_cache(cache_path: Path) -> Optional[Dict]:
         return None
 
 class PriceDataProvider:
-    def __init__(self, cache_ttl_hours: int = CACHE_TTL_HOURS):
+    def __init__(self, cache_ttl_hours: int = CACHE_TTL_HOURS, prefer_morningstar: bool = True):
         self.cache_ttl_hours = cache_ttl_hours
-        if yf is None:
-            raise RuntimeError("yfinance not installed")
+        self.prefer_morningstar = prefer_morningstar
+
+        # Initialize Morningstar provider if available
+        self._mstar_provider = None
+        if prefer_morningstar and MORNINGSTAR_AVAILABLE and MorningstarDataProvider:
+            try:
+                self._mstar_provider = MorningstarDataProvider(cache_ttl_hours, prefer_morningstar=True)
+            except Exception as e:
+                print(f"WARNING: Failed to initialize Morningstar provider: {e}")
+
+        if yf is None and self._mstar_provider is None:
+            raise RuntimeError("Neither yfinance nor morningstar_data is available")
     
     def get_prices(self, ticker: str, as_of: date, lookback_days: int, use_cache: bool = True) -> List[Decimal]:
         """
@@ -159,7 +192,22 @@ class PriceDataProvider:
             return []
     
     def get_log_returns(self, ticker: str, as_of: date, lookback_days: int, use_cache: bool = True) -> List[float]:
-        """Get daily log returns."""
+        """
+        Get daily log returns.
+
+        Uses Morningstar Direct (data_set_id="2") as primary source for daily returns.
+        Falls back to calculating from yfinance prices if Morningstar unavailable.
+        """
+        # Try Morningstar first (uses data_set_id="2" for Returns Daily)
+        if self._mstar_provider is not None:
+            try:
+                returns = self._mstar_provider.get_daily_returns(ticker, as_of, lookback_days, use_cache)
+                if returns:
+                    return returns
+            except Exception as e:
+                print(f"WARNING: Morningstar returns fetch failed for {ticker}, falling back to yfinance: {e}")
+
+        # Fallback: calculate from yfinance prices
         prices = self.get_prices(ticker, as_of, lookback_days, use_cache)
         if len(prices) < 2:
             return []
@@ -383,13 +431,20 @@ def validate_cache_integrity() -> bool:
 if __name__ == "__main__":
     """Run validation suite."""
     print("=== Market Data Provider Validation ===\n")
-    
+
+    # Show data source availability
+    print("=== Data Source Availability ===")
+    availability = check_morningstar_availability()
+    for key, value in availability.items():
+        print(f"  {key}: {value}")
+    print()
+
     tests = [
         ("PIT Discipline", validate_pit_discipline),
         ("Determinism", validate_determinism),
         ("Cache Integrity", validate_cache_integrity),
     ]
-    
+
     results = []
     for name, test_func in tests:
         try:
@@ -398,11 +453,12 @@ if __name__ == "__main__":
         except Exception as e:
             print(f"ERROR in {name}: {e}")
             results.append((name, False))
-    
+
     print("\n=== Validation Summary ===")
     for name, passed in results:
         status = "✓ PASS" if passed else "✗ FAIL"
         print(f"{status}: {name}")
-    
+
     all_passed = all(p for _, p in results)
     print(f"\nOverall: {'✓ ALL TESTS PASSED' if all_passed else '✗ SOME TESTS FAILED'}")
+    print(f"\nPrimary data source: {availability['primary_source']}")

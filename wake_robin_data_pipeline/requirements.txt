@@ -1,7 +1,10 @@
 # Wake Robin Data Pipeline Dependencies
-# All packages use free, public APIs - no paid subscriptions required
 
-# Yahoo Finance data (market prices, volume, company info)
+# Morningstar Direct API (primary source for daily returns)
+# Requires authentication via MD_AUTH_TOKEN environment variable
+morningstar-data>=1.0.0
+
+# Yahoo Finance data (fallback for market prices, volume, company info)
 yfinance>=0.2.36
 
 # HTTP requests for SEC and ClinicalTrials.gov APIs
