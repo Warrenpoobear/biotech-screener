@@ -26,6 +26,11 @@ def load_rankings(path: Path) -> list[dict]:
         return data
     elif "securities" in data:
         return data["securities"]
+    elif "module_5_composite" in data:
+        # Full pipeline output format
+        return data["module_5_composite"].get("ranked_securities", [])
+    elif "ranked_securities" in data:
+        return data["ranked_securities"]
     else:
         raise ValueError(f"Unexpected format in {path}")
 
