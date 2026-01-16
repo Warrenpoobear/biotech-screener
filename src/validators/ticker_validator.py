@@ -2,8 +2,23 @@
 Ticker validation for biotech universe.
 Implements fail-loud validation to prevent data contamination.
 """
-from typing import Tuple, List, Dict, Any
+from typing import Tuple, List, Dict, TypedDict, Union
 import re
+
+
+class ValidationStats(TypedDict):
+    """Statistics from ticker validation."""
+    total_input: int
+    valid_count: int
+    invalid_count: int
+    pass_rate: float
+
+
+class ValidationResult(TypedDict):
+    """Result from validate_ticker_list."""
+    valid: List[str]
+    invalid: Dict[str, str]
+    stats: ValidationStats
 
 
 def is_valid_ticker(ticker: str, allow_internal: bool = True) -> Tuple[bool, str]:
@@ -106,7 +121,7 @@ def is_valid_ticker(ticker: str, allow_internal: bool = True) -> Tuple[bool, str
     return True, ""
 
 
-def validate_ticker_list(tickers: List[str]) -> Dict[str, Any]:
+def validate_ticker_list(tickers: List[str]) -> ValidationResult:
     """
     Validate a list of tickers and return detailed results.
 
@@ -114,13 +129,13 @@ def validate_ticker_list(tickers: List[str]) -> Dict[str, Any]:
         tickers: List of ticker strings to validate
 
     Returns:
-        Dictionary with:
+        ValidationResult with:
         - valid: list of valid tickers
         - invalid: dict mapping invalid ticker to reason
         - stats: summary statistics
     """
-    valid = []
-    invalid = {}
+    valid: List[str] = []
+    invalid: Dict[str, str] = {}
 
     for ticker in tickers:
         is_valid, reason = is_valid_ticker(ticker)
@@ -129,7 +144,7 @@ def validate_ticker_list(tickers: List[str]) -> Dict[str, Any]:
         else:
             invalid[ticker] = reason
 
-    stats = {
+    stats: ValidationStats = {
         'total_input': len(tickers),
         'valid_count': len(valid),
         'invalid_count': len(invalid),

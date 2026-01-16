@@ -16,7 +16,18 @@ import logging
 from dataclasses import dataclass, replace
 from datetime import date, timedelta
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional, TypedDict
+
+
+class StudyRow(TypedDict, total=False):
+    """Raw study data from AACT studies.csv."""
+    nct_id: str
+    phase: str
+    overall_status: str
+    primary_completion_date: str
+    primary_completion_date_type: str
+    last_update_posted_date: str
+    study_type: str
 
 from .protocols import (
     ClinicalTrialsProvider,
@@ -35,7 +46,7 @@ logger = logging.getLogger(__name__)
 class AACTSnapshot:
     """Represents a loaded AACT snapshot."""
     snapshot_date: date
-    studies: dict[str, dict]  # nct_id -> study row
+    studies: dict[str, StudyRow]  # nct_id -> study row
     sponsors: dict[str, str]  # nct_id -> lead_sponsor name
 
 
@@ -71,7 +82,7 @@ class AACTClinicalTrialsProvider:
         snapshots_root: Path,
         strict_pit: bool = True,  # If True, use < pit_cutoff; if False, use <= pit_cutoff
         compute_diffs: bool = False,  # If True, compute pcd_pushes/status_flips from snapshots
-    ):
+    ) -> None:
         """
         Initialize AACT provider.
         
@@ -168,7 +179,7 @@ class AACTClinicalTrialsProvider:
         
         # Load studies with schema validation
         studies_file = snapshot_path / "studies.csv"
-        studies: dict[str, dict] = {}
+        studies: dict[str, StudyRow] = {}
         duplicates_found = 0
         
         if studies_file.exists():
@@ -244,7 +255,7 @@ class AACTClinicalTrialsProvider:
         self._snapshot_cache[snapshot_date] = snapshot
         return snapshot
     
-    def build_trial_row(self, nct_id: str, study: dict, sponsor: str) -> TrialRow:
+    def build_trial_row(self, nct_id: str, study: StudyRow, sponsor: str) -> TrialRow:
         """
         Build a canonical TrialRow from raw AACT data.
         
@@ -309,7 +320,7 @@ class AACTClinicalTrialsProvider:
         nct_id: str,
         snapshots: list[AACTSnapshot],
         lookback_days: int = 548,  # ~18 months
-        as_of_date: date = None,
+        as_of_date: Optional[date] = None,
     ) -> tuple[int, int]:
         """
         Compute PCD pushes and status flips for a trial across snapshots.

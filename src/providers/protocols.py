@@ -9,7 +9,37 @@ from dataclasses import dataclass, field
 from datetime import date
 from decimal import Decimal
 from enum import Enum
-from typing import Protocol, Optional
+from typing import Any, Protocol, Optional, TypedDict, Union
+
+
+class TrialRowDict(TypedDict):
+    """Dictionary representation of a TrialRow."""
+    nct_id: str
+    phase: str
+    overall_status: str
+    primary_completion_date: Optional[str]
+    primary_completion_date_type: str
+    last_update_posted_date: Optional[str]
+    lead_sponsor: str
+    study_type: str
+    pcd_pushes_18m: int
+    status_flips_18m: int
+    flags: list[str]
+
+
+class TrialDiffDict(TypedDict):
+    """Dictionary representation of a TrialDiff."""
+    nct_id: str
+    snapshot_date_prev: str
+    snapshot_date_curr: str
+    pcd_prev: Optional[str]
+    pcd_curr: Optional[str]
+    pcd_type_prev: str
+    pcd_type_curr: str
+    pcd_pushed: bool
+    status_prev: str
+    status_curr: str
+    status_flipped: bool
 
 
 class Phase(Enum):
@@ -152,7 +182,7 @@ class TrialRow:
     # Flags for data quality and processing state (frozen tuple for hashability)
     flags: tuple[str, ...] = ()
     
-    def to_dict(self) -> dict:
+    def to_dict(self) -> TrialRowDict:
         """Convert to dictionary for JSON serialization."""
         return {
             "nct_id": self.nct_id,
@@ -167,9 +197,9 @@ class TrialRow:
             "status_flips_18m": self.status_flips_18m,
             "flags": list(self.flags),  # Convert tuple to list for JSON
         }
-    
+
     @classmethod
-    def from_dict(cls, data: dict) -> "TrialRow":
+    def from_dict(cls, data: TrialRowDict) -> "TrialRow":
         """Create from dictionary."""
         return cls(
             nct_id=data["nct_id"],
@@ -208,7 +238,7 @@ class TrialDiff:
     status_curr: TrialStatus
     status_flipped: bool  # True if status changed meaningfully
     
-    def to_dict(self) -> dict:
+    def to_dict(self) -> TrialDiffDict:
         """Convert to dictionary for serialization."""
         return {
             "nct_id": self.nct_id,
