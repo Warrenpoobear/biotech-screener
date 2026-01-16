@@ -307,41 +307,47 @@ def enrich_with_defensive_overlays(
     if not ranked:
         return output
     
-    # Step 1: Apply defensive multiplier to composite scores
+    # Step 1: Calculate raw weights for position sizing (needed for Step 3)
+    # This must run BEFORE multiplier application if position sizing is enabled
+    if apply_position_sizing:
+        for rec in ranked:
+            ticker = rec["ticker"]
+            ticker_data = scores_by_ticker.get(ticker, {})
+            defensive_features = ticker_data.get("defensive_features", {})
+            rec["_position_weight_raw"] = raw_inv_vol_weight(defensive_features or {})
+
+    # Step 2: Apply defensive multiplier to composite scores (optional)
     if apply_multiplier:
         for rec in ranked:
             ticker = rec["ticker"]
             ticker_data = scores_by_ticker.get(ticker, {})
             defensive_features = ticker_data.get("defensive_features", {})
-            
+
             # Get current composite score
             current_score = Decimal(rec["composite_score"])
-            
+
             # Apply multiplier
             mult, notes = defensive_multiplier(defensive_features or {})
             adjusted_score = current_score * mult
-            
+
             # Cap at 100
             adjusted_score = min(Decimal("100"), max(Decimal("0"), adjusted_score))
-            
+
             # Update score
             rec["composite_score_before_defensive"] = str(current_score)
             rec["composite_score"] = str(adjusted_score.quantize(Decimal("0.01")))
             rec["defensive_multiplier"] = str(mult)
             rec["defensive_notes"] = notes
-            
-            # Store raw weight for position sizing
-            rec["_position_weight_raw"] = raw_inv_vol_weight(defensive_features or {})
-    
-    # Step 2: Re-rank after multiplier application
+
+    # Step 3: Re-rank after multiplier application
     if apply_multiplier:
         # Re-sort by adjusted composite score
         ranked.sort(key=lambda x: (-Decimal(x["composite_score"]), x["ticker"]))
         # Re-assign ranks
         for i, rec in enumerate(ranked):
             rec["composite_rank"] = i + 1
-    
-    # Step 3: Apply position sizing with dynamic floor and optional top-N selection
+
+    # Step 4: Apply position sizing with dynamic floor and optional top-N selection
     if apply_position_sizing:
         apply_caps_and_renormalize(ranked, top_n=top_n)  # Pass top_n parameter
         

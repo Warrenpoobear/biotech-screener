@@ -191,24 +191,24 @@ class MorningstarDataProvider:
 
             returns_df = None
 
-            # Method 1: Use md.direct.get_returns with freq='daily'
+            # Method 1: Use md.direct.get_returns with Frequency enum (preferred)
             if returns_df is None and hasattr(md.direct, 'get_returns'):
+                # Try Frequency enum first (avoids deprecation warning)
                 try:
-                    # Use freq='daily' to get daily returns (default is 'monthly')
                     returns_df = md.direct.get_returns(
                         investments=[ticker],
                         start_date=start_date.strftime('%Y-%m-%d'),
                         end_date=as_of.strftime('%Y-%m-%d'),
-                        freq='daily'
+                        freq=md.direct.Frequency.daily
                     )
-                except Exception as e1:
-                    # Try with Frequency enum if string doesn't work
+                except Exception:
+                    # Fall back to string 'daily' if enum doesn't work
                     try:
                         returns_df = md.direct.get_returns(
                             investments=[ticker],
                             start_date=start_date.strftime('%Y-%m-%d'),
                             end_date=as_of.strftime('%Y-%m-%d'),
-                            freq=md.direct.Frequency.daily
+                            freq='daily'
                         )
                     except Exception:
                         pass
