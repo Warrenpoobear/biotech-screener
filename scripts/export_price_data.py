@@ -42,11 +42,12 @@ def load_universe_tickers() -> List[str]:
     """Load tickers from universe files."""
     tickers = set()
 
-    # Check multiple universe file locations
+    # Check multiple universe file locations (full universe first!)
     universe_paths = [
+        Path("production_data/universe.json"),  # Full 307 tickers - check first!
         Path("data/universe.json"),
-        Path("wake_robin_data_pipeline/universe/pilot_universe.json"),
         Path("wake_robin_data_pipeline/universe/biotech_universe.json"),
+        Path("wake_robin_data_pipeline/universe/pilot_universe.json"),  # Small pilot last
     ]
 
     for path in universe_paths:
