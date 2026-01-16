@@ -84,7 +84,15 @@ try:
 except ImportError:
     HAS_LIQUIDITY_SCORING = False
 
-VERSION = "1.3.0"  # Bumped for enhancement integration (PoS, Short Interest, Regime)
+# Ticker validation for fail-loud data quality
+try:
+    from src.validators.ticker_validator import validate_ticker_list
+    HAS_TICKER_VALIDATION = True
+except ImportError:
+    HAS_TICKER_VALIDATION = False
+    logger.warning("Ticker validation module not available - skipping validation")
+
+VERSION = "1.4.0"  # Bumped for ticker validation integration
 DETERMINISTIC_TIMESTAMP_SUFFIX = "T00:00:00Z"
 
 
@@ -483,6 +491,20 @@ def run_screening_pipeline(
     # Load input data
     logger.info("[1/7] Loading input data...")
     raw_universe = load_json_data(data_dir / "universe.json", "Universe")
+
+    # Validate tickers in universe (fail-loud on contamination)
+    if HAS_TICKER_VALIDATION:
+        universe_tickers_to_validate = [r.get('ticker') for r in raw_universe if r.get('ticker')]
+        validation_result = validate_ticker_list(universe_tickers_to_validate)
+        if validation_result['invalid']:
+            invalid_sample = list(validation_result['invalid'].items())[:5]
+            raise ValueError(
+                f"Universe contains {len(validation_result['invalid'])} invalid tickers. "
+                f"Examples: {invalid_sample}. "
+                f"Run: python src/scripts/clean_universe.py to fix."
+            )
+        logger.info(f"  Universe validation passed: {validation_result['stats']['valid_count']} valid tickers")
+
     financial_records = load_json_data(data_dir / "financial_records.json", "Financial")
     trial_records = load_json_data(data_dir / "trial_records.json", "Trials")
     market_records = load_json_data(data_dir / "market_data.json", "Market data")

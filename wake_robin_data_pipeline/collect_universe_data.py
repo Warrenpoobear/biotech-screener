@@ -23,6 +23,14 @@ sys.path.insert(0, str(Path(__file__).parent))
 from collectors import yahoo_collector, sec_collector, trials_collector, time_series_collector
 from defensive_overlays import enrich_universe_with_defensive_overlays, print_defensive_summary
 
+# Ticker validation for fail-loud data quality
+try:
+    sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))
+    from validators.ticker_validator import validate_ticker_list
+    HAS_TICKER_VALIDATION = True
+except ImportError:
+    HAS_TICKER_VALIDATION = False
+
 def load_universe(universe_file: str = "universe/pilot_universe.json") -> Dict:
     """Load universe configuration."""
     universe_path = Path(__file__).parent / universe_file
@@ -278,6 +286,19 @@ def main():
     universe = load_universe()
     tickers = [t['ticker'] for t in universe['tickers']]
     print(f"   ✓ Loaded {len(tickers)} tickers from pilot universe")
+
+    # Validate tickers (fail-loud on contaminated data)
+    if HAS_TICKER_VALIDATION:
+        print("\n1b. Validating tickers...")
+        validation_result = validate_ticker_list(tickers)
+        if validation_result['invalid']:
+            invalid_sample = list(validation_result['invalid'].items())[:5]
+            raise ValueError(
+                f"Universe contains {len(validation_result['invalid'])} invalid tickers. "
+                f"Examples: {invalid_sample}. "
+                f"Run: python src/scripts/clean_universe.py to fix."
+            )
+        print(f"   ✓ All {len(tickers)} tickers validated")
 
     # Collect Yahoo Finance data
     print("\n2. Collecting market data from Yahoo Finance...")
