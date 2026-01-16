@@ -22334,37 +22334,6 @@
     }
   },
   {
-    "ticker": "AKRO",
-    "name": "Akero Therapeutics, Inc.",
-    "status": "active",
-    "status_reason": "active",
-    "market_cap_usd": "4499031040",
-    "price_usd": "54.65",
-    "shares_outstanding": "82324445",
-    "defensive_features": {
-      "price_current": "54.65",
-      "price_60d_ago": "42.60",
-      "return_60d": "0.2829",
-      "vol_60d": "0.4138",
-      "drawdown_60d": "-0.2287",
-      "corr_xbi": "0.3025",
-      "rsi_14d": "69.0",
-      "vol_regime": "elevated",
-      "timestamp": "2026-01-06T14:34:46.107919Z"
-    },
-    "financial_health": {
-      "cash_usd": "1124757760",
-      "total_debt_usd": "449903104",
-      "quarterly_burn_usd": "89980620",
-      "runway_quarters": "12"
-    },
-    "lead_program": {
-      "phase": "phase_2",
-      "indication": "oncology",
-      "trial_id": "NCT00000000"
-    }
-  },
-  {
     "ticker": "ALLO",
     "name": "Allogene Therapeutics, Inc.",
     "status": "active",
