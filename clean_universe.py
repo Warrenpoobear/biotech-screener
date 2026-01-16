@@ -1,4 +1,6 @@
 ﻿import json
+import shutil
+import datetime
 
 print('Cleaning universe.json...')
 
@@ -17,7 +19,8 @@ def is_valid_ticker(ticker):
     if ticker == '-':  # Just a dash
         return False
     # Allow only alphanumeric + underscore/dash
-    if not ticker.replace('_', '').replace('-', '').isalnum():
+    cleaned = ticker.replace('_', '').replace('-', '')
+    if not cleaned.isalnum():
         return False
     return True
 
@@ -31,12 +34,10 @@ print(f'Removed: {len(universe) - len(clean_universe)}')
 removed_tickers = [s.get('ticker', '') for s in universe if not is_valid_ticker(s.get('ticker', ''))]
 print(f'\nRemoved tickers:')
 for t in removed_tickers:
-    display = t[:50] + '...' if len(t) > 50 else t
+    display = t[:80] + '...' if len(t) > 80 else t
     print(f'  - {repr(display)}')
 
 # Backup original
-import shutil
-import datetime
 backup_name = f'production_data/universe_backup_{datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\")}.json'
 shutil.copy('production_data/universe.json', backup_name)
 print(f'\n✅ Backup saved: {backup_name}')
@@ -45,4 +46,5 @@ print(f'\n✅ Backup saved: {backup_name}')
 with open('production_data/universe.json', 'w') as f:
     json.dump(clean_universe, f, indent=2)
 
-print(f'✅ Cleaned universe saved')
+print(f'✅ Cleaned universe saved to: production_data/universe.json')
+print(f'\nYou can now re-run: python test_morningstar_universe.py')
