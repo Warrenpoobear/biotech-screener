@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-01-16T20:50:40.718586Z",
+  "source_file": "production_data/universe_backup_2026-01-07.json",
+  "removed_count": 6,
+  "removed_tickers": {
+    "ADRO": "Delisted/invalid ticker 'ADRO'",
+    "AKE": "Delisted/invalid ticker 'AKE'",
+    "CRGX": "Delisted/invalid ticker 'CRGX'",
+    "SGAFT": "Delisted/invalid ticker 'SGAFT'",
+    "THRD": "Delisted/invalid ticker 'THRD'",
+    "XTSLA": "Delisted/invalid ticker 'XTSLA'"
+  }
+}
