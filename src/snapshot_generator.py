@@ -29,7 +29,7 @@ from dataclasses import dataclass, field
 from datetime import date, timedelta
 from decimal import Decimal
 from pathlib import Path
-from typing import Any, Optional
+from typing import Optional, TypedDict, Union
 
 from .common.hash_utils import (
     compute_hash,
@@ -45,6 +45,57 @@ from .providers import (
     TrialRow,
 )
 from .providers.aact_provider import load_trial_mapping
+
+
+# TypedDicts for structured data
+class ClinicalProviderProvenance(TypedDict):
+    """Provenance info for clinical provider."""
+    name: str
+    snapshot_date_used: str
+    snapshots_root: str
+    compute_diffs_enabled: bool
+    compute_diffs_available: bool
+    snapshots_available_count: int
+
+
+class ProvidersProvenance(TypedDict):
+    """Provenance info for all providers."""
+    clinical: ClinicalProviderProvenance
+
+
+class SnapshotProvenance(TypedDict):
+    """Full provenance metadata."""
+    pit_cutoff: str
+    providers: ProvidersProvenance
+
+
+class CoverageStats(TypedDict):
+    """Coverage statistics for a module."""
+    tickers_total: int
+    tickers_with_trials: int
+    coverage_rate: float
+
+
+class TickerData(TypedDict):
+    """Per-ticker data in snapshot."""
+    trials: list[dict[str, Union[str, int, bool, None, list[str]]]]
+    trial_count: int
+    module3_catalyst: Optional[float]
+    module4_clinical: Optional[float]
+
+
+class SnapshotDict(TypedDict):
+    """Full snapshot dictionary structure."""
+    snapshot_id: str
+    as_of_date: str
+    generated_at: str
+    pit_cutoff: str
+    pit_lag_days: int
+    provenance: SnapshotProvenance
+    input_hashes: dict[str, str]
+    coverage: dict[str, CoverageStats]
+    tickers: dict[str, TickerData]
+
 
 logging.basicConfig(
     level=logging.INFO,
@@ -81,7 +132,7 @@ class SnapshotConfig:
 class Snapshot:
     """
     Complete snapshot output structure.
-    
+
     Designed for JSON serialization with full provenance and
     deterministic reproducibility.
     """
@@ -89,24 +140,24 @@ class Snapshot:
     snapshot_id: str
     as_of_date: date
     generated_at: str  # ISO timestamp
-    
+
     # PIT tracking
     pit_cutoff: date
     pit_lag_days: int
-    
+
     # Provider provenance
-    provenance: dict[str, Any]
-    
+    provenance: SnapshotProvenance
+
     # Input hashes for reproducibility
     input_hashes: dict[str, str]
-    
+
     # Coverage statistics
-    coverage: dict[str, dict[str, Any]]
-    
+    coverage: dict[str, CoverageStats]
+
     # Per-ticker data
-    tickers: dict[str, dict[str, Any]]
-    
-    def to_dict(self) -> dict:
+    tickers: dict[str, TickerData]
+
+    def to_dict(self) -> SnapshotDict:
         """Convert to dictionary for JSON serialization."""
         return {
             "snapshot_id": self.snapshot_id,
@@ -255,7 +306,7 @@ def generate_snapshot(config: SnapshotConfig) -> Snapshot:
     }
     
     # Build per-ticker data
-    tickers_data: dict[str, dict[str, Any]] = {}
+    tickers_data: dict[str, TickerData] = {}
     
     for ticker in tickers:
         trials = clinical_result.trials_by_ticker.get(ticker, [])
@@ -313,7 +364,7 @@ def save_snapshot(snapshot: Snapshot, output_dir: Path) -> Path:
     return output_file
 
 
-def main():
+def main() -> None:
     """CLI entry point."""
     parser = argparse.ArgumentParser(
         description="Generate biotech alpha snapshots",

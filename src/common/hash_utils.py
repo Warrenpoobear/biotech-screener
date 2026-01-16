@@ -11,7 +11,22 @@ import hashlib
 import json
 from datetime import date
 from decimal import Decimal
-from typing import Any, Union
+from typing import Any, Protocol, Union
+
+
+class HasToDict(Protocol):
+    """Protocol for objects with a to_dict method."""
+    def to_dict(self) -> dict[str, Any]: ...
+
+
+class HasValue(Protocol):
+    """Protocol for enum-like objects with a value attribute."""
+    @property
+    def value(self) -> Any: ...
+
+
+# Type alias for trial-like objects (TrialRow or dict)
+TrialLike = Union[HasToDict, dict[str, Any]]
 
 
 def stable_json_dumps(obj: Any) -> str:
@@ -63,29 +78,29 @@ def compute_hash(data: Any) -> str:
     return f"sha256:{hash_bytes}"
 
 
-def compute_trial_facts_hash(trials_by_ticker: dict[str, list]) -> str:
+def compute_trial_facts_hash(trials_by_ticker: dict[str, list[TrialLike]]) -> str:
     """
     Compute deterministic hash of trial facts for provenance tracking.
-    
+
     The hash captures the exact state of trial data used to generate
     a snapshot, enabling:
         - Reproducibility verification
         - Input drift detection
         - Audit trail
-    
+
     Args:
         trials_by_ticker: Dict mapping ticker to list of TrialRow (or dicts)
-    
+
     Returns:
         Hash string in format "sha256:abc123..."
     """
     # Build canonical representation
-    canonical: dict[str, list[dict]] = {}
+    canonical: dict[str, list[dict[str, Any]]] = {}
     
     for ticker in sorted(trials_by_ticker.keys()):
         trials = trials_by_ticker[ticker]
         # Convert to dicts if needed and sort by nct_id
-        trial_dicts = []
+        trial_dicts: list[dict[str, Any]] = []
         for t in trials:
             if hasattr(t, "to_dict"):
                 trial_dicts.append(t.to_dict())

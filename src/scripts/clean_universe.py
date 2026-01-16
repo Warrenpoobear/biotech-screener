@@ -7,15 +7,26 @@ import json
 import argparse
 from pathlib import Path
 from datetime import datetime
-from typing import Set, List, Dict, Any
+from typing import Set, List, Dict, TypedDict, Union
 import sys
+
+# Type alias for JSON-like data structures from universe files
+JsonValue = Union[str, int, float, bool, None, List["JsonValue"], Dict[str, "JsonValue"]]
+UniverseData = Union[List[Dict[str, JsonValue]], Dict[str, JsonValue]]
+
+
+class ValidationResult(TypedDict):
+    """Result from ticker validation."""
+    valid: List[str]
+    invalid: Dict[str, str]
+    stats: Dict[str, Union[int, float]]
 
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from validators.ticker_validator import validate_ticker_list, is_valid_ticker
 
 
-def extract_tickers_from_universe(data: Any) -> List[str]:
+def extract_tickers_from_universe(data: UniverseData) -> List[str]:
     """Extract tickers from various universe file formats."""
     tickers = []
 
@@ -45,7 +56,7 @@ def extract_tickers_from_universe(data: Any) -> List[str]:
     return tickers
 
 
-def load_universe_file(filepath: Path) -> tuple:
+def load_universe_file(filepath: Path) -> tuple[UniverseData, List[str]]:
     """Load tickers from universe file and return (data, tickers)."""
     with open(filepath, 'r', encoding='utf-8') as f:
         data = json.load(f)
@@ -54,7 +65,7 @@ def load_universe_file(filepath: Path) -> tuple:
     return data, tickers
 
 
-def clean_universe_data(data: Any, valid_tickers: Set[str]) -> Any:
+def clean_universe_data(data: UniverseData, valid_tickers: Set[str]) -> UniverseData:
     """
     Clean universe data by removing invalid tickers.
     Returns cleaned data structure.
@@ -89,7 +100,7 @@ def clean_universe_data(data: Any, valid_tickers: Set[str]) -> Any:
     return data
 
 
-def save_cleaned_universe(filepath: Path, data: Any, metadata: dict):
+def save_cleaned_universe(filepath: Path, data: UniverseData, metadata: Dict[str, Union[str, int]]) -> None:
     """Save cleaned universe with metadata."""
     # Add metadata if it's a dict
     if isinstance(data, dict):
@@ -105,7 +116,7 @@ def save_cleaned_universe(filepath: Path, data: Any, metadata: dict):
     temp_path.replace(filepath)
 
 
-def save_audit_log(output_dir: Path, removed_tickers: dict, source_file: str):
+def save_audit_log(output_dir: Path, removed_tickers: Dict[str, str], source_file: str) -> Path:
     """Save audit log of removed tickers."""
     timestamp = datetime.utcnow().strftime('%Y%m%d_%H%M%S')
     audit_file = output_dir / f'universe_cleaning_audit_{timestamp}.json'
@@ -124,7 +135,7 @@ def save_audit_log(output_dir: Path, removed_tickers: dict, source_file: str):
     return audit_file
 
 
-def clean_universe_files(check_only: bool = False, verbose: bool = True):
+def clean_universe_files(check_only: bool = False, verbose: bool = True) -> bool:
     """Main function to clean all universe files."""
 
     # Locate project root
@@ -232,7 +243,7 @@ def clean_universe_files(check_only: bool = False, verbose: bool = True):
     return all_valid
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(
         description='Clean biotech universe files and remove ineligible securities.'
     )
