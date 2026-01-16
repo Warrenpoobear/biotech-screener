@@ -36,9 +36,24 @@ from typing import Dict, List, Optional, Any, Tuple
 from datetime import date
 from enum import Enum
 
+# Import momentum health monitor for IC-based adjustments
+try:
+    from momentum_health_monitor import (
+        MomentumHealthMonitor,
+        IC_GOOD,
+        IC_MARGINAL,
+        IC_WEAK,
+        WEIGHT_DISABLED,
+        WEIGHT_MINIMAL,
+        WEIGHT_REDUCED,
+    )
+    HAS_MOMENTUM_MONITOR = True
+except ImportError:
+    HAS_MOMENTUM_MONITOR = False
+
 
 # Module metadata
-__version__ = "1.0.0"
+__version__ = "1.1.0"  # Bumped for IC-based momentum adjustment
 __author__ = "Wake Robin Capital Management"
 
 
@@ -58,18 +73,22 @@ class RegimeDetectionEngine:
     Classifies market conditions and provides optimal signal weights
     for each regime based on historical performance patterns.
 
+    Now includes IC-based momentum health monitoring to disable momentum
+    when the signal shows persistent negative IC (mean reversion).
+
     Usage:
         engine = RegimeDetectionEngine()
         result = engine.detect_regime(
             vix_current=Decimal("18.5"),
             xbi_vs_spy_30d=Decimal("3.2"),
-            fed_rate_change_3m=Decimal("-0.25")
+            fed_rate_change_3m=Decimal("-0.25"),
+            momentum_ic_3m=Decimal("0.12")  # Optional IC for health check
         )
         print(result["regime"])  # "BULL"
         print(result["signal_adjustments"])  # Weights for each signal type
     """
 
-    VERSION = "1.0.0"
+    VERSION = "1.1.0"
 
     # VIX thresholds for regime classification
     VIX_LOW = Decimal("15")      # Below = calm markets
@@ -153,6 +172,11 @@ class RegimeDetectionEngine:
         self.current_regime: Optional[str] = None
         self.regime_history: List[Dict[str, Any]] = []
         self.audit_trail: List[Dict[str, Any]] = []
+        self.momentum_monitor: Optional[Any] = None
+
+        # Initialize momentum health monitor if available
+        if HAS_MOMENTUM_MONITOR:
+            self.momentum_monitor = MomentumHealthMonitor()
 
     def detect_regime(
         self,
@@ -162,6 +186,7 @@ class RegimeDetectionEngine:
         xbi_momentum_10d: Optional[Decimal] = None,    # 10-day XBI momentum
         spy_momentum_10d: Optional[Decimal] = None,    # 10-day SPY momentum
         credit_spread_change: Optional[Decimal] = None, # HY spread change
+        momentum_ic_3m: Optional[Decimal] = None,      # 3-month rolling momentum IC
         as_of_date: Optional[date] = None
     ) -> Dict[str, Any]:
         """
@@ -174,6 +199,7 @@ class RegimeDetectionEngine:
             xbi_momentum_10d: Optional XBI 10-day momentum
             spy_momentum_10d: Optional SPY 10-day momentum
             credit_spread_change: Optional HY credit spread change
+            momentum_ic_3m: Optional 3-month rolling momentum IC for health check
             as_of_date: Point-in-time date
 
         Returns:
@@ -182,6 +208,7 @@ class RegimeDetectionEngine:
             - regime_description: str
             - confidence: Decimal (0-1 classification confidence)
             - signal_adjustments: Dict[str, Decimal] (weight multipliers)
+            - momentum_health: Dict (IC-based momentum health if provided)
             - indicators: Dict (contributing factors)
             - audit_entry: Dict
         """
@@ -204,6 +231,15 @@ class RegimeDetectionEngine:
             regime,
             self.REGIME_ADJUSTMENTS["UNKNOWN"]
         ).copy()
+
+        # Apply IC-based momentum health adjustment (kill switch)
+        momentum_health = None
+        if momentum_ic_3m is not None and HAS_MOMENTUM_MONITOR:
+            momentum_health = self._apply_momentum_health_adjustment(
+                signal_adjustments,
+                momentum_ic_3m,
+                regime
+            )
 
         # Compile indicator summary
         indicators = {
@@ -234,8 +270,10 @@ class RegimeDetectionEngine:
                 "fed_rate_change_3m": str(fed_rate_change_3m) if fed_rate_change_3m else None,
                 "xbi_momentum_10d": str(xbi_momentum_10d) if xbi_momentum_10d else None,
                 "spy_momentum_10d": str(spy_momentum_10d) if spy_momentum_10d else None,
-                "credit_spread_change": str(credit_spread_change) if credit_spread_change else None
+                "credit_spread_change": str(credit_spread_change) if credit_spread_change else None,
+                "momentum_ic_3m": str(momentum_ic_3m) if momentum_ic_3m else None
             },
+            "momentum_health": momentum_health,
             "regime_scores": {k: str(v) for k, v in regime_scores.items()},
             "regime": regime,
             "confidence": str(confidence),
@@ -257,6 +295,7 @@ class RegimeDetectionEngine:
             "regime_description": self.REGIME_DESCRIPTIONS.get(regime, ""),
             "confidence": confidence,
             "signal_adjustments": signal_adjustments,
+            "momentum_health": momentum_health,
             "regime_scores": regime_scores,
             "indicators": indicators,
             "flags": flags,
@@ -502,6 +541,72 @@ class RegimeDetectionEngine:
 
         return flags
 
+    def _apply_momentum_health_adjustment(
+        self,
+        signal_adjustments: Dict[str, Decimal],
+        momentum_ic_3m: Decimal,
+        regime: str
+    ) -> Dict[str, Any]:
+        """
+        Apply IC-based momentum health adjustment (kill switch).
+
+        Modifies signal_adjustments in-place to reduce or disable
+        momentum when the IC indicates the signal isn't working.
+
+        Args:
+            signal_adjustments: Dict of signal weights (modified in-place)
+            momentum_ic_3m: 3-month rolling IC
+            regime: Current market regime
+
+        Returns:
+            Dict with momentum health assessment
+        """
+        original_momentum = signal_adjustments.get("momentum", Decimal("1.00"))
+
+        # Use the monitor if available
+        if self.momentum_monitor:
+            self.momentum_monitor.update_ic(float(momentum_ic_3m))
+            adjusted_weight = self.momentum_monitor.check_momentum_health(float(momentum_ic_3m))
+
+            # If health check returns full weight, use regime weight
+            if adjusted_weight == Decimal("1.00"):
+                final_weight = original_momentum
+            else:
+                final_weight = adjusted_weight
+        else:
+            # Fallback: Simple threshold check
+            if momentum_ic_3m < IC_WEAK:
+                final_weight = WEIGHT_DISABLED
+            elif momentum_ic_3m < IC_MARGINAL:
+                final_weight = WEIGHT_MINIMAL
+            elif momentum_ic_3m < IC_GOOD:
+                final_weight = WEIGHT_REDUCED
+            else:
+                final_weight = original_momentum
+
+        # Update signal_adjustments in place
+        signal_adjustments["momentum"] = final_weight
+
+        # Classify health status
+        if momentum_ic_3m >= IC_GOOD:
+            health_status = "HEALTHY"
+        elif momentum_ic_3m >= IC_MARGINAL:
+            health_status = "MARGINAL"
+        elif momentum_ic_3m >= IC_WEAK:
+            health_status = "WEAK"
+        else:
+            health_status = "INVERTED"
+
+        return {
+            "ic_3m": str(momentum_ic_3m),
+            "health_status": health_status,
+            "original_weight": str(original_momentum),
+            "adjusted_weight": str(final_weight),
+            "regime": regime,
+            "action": "DISABLED" if final_weight == Decimal("0") else
+                      "REDUCED" if final_weight < original_momentum else "FULL",
+        }
+
     def get_regime_history(self) -> List[Dict[str, Any]]:
         """Return regime classification history."""
         return self.regime_history.copy()
@@ -515,6 +620,8 @@ class RegimeDetectionEngine:
         self.current_regime = None
         self.regime_history = []
         self.audit_trail = []
+        if HAS_MOMENTUM_MONITOR and self.momentum_monitor:
+            self.momentum_monitor = MomentumHealthMonitor()
 
 
 def demonstration():
@@ -597,6 +704,40 @@ def demonstration():
     print("Base Weights → Adjusted Weights (BEAR regime):")
     for component in base_weights:
         print(f"  {component}: {base_weights[component]} → {adjusted_weights[component]}")
+    print()
+
+    # Example 5: IC-based momentum kill switch
+    print("Example 5: IC-Based Momentum Health (Kill Switch)")
+    print("-" * 70)
+
+    # Create fresh engine
+    engine2 = RegimeDetectionEngine()
+
+    # Test with different IC values
+    ic_tests = [
+        (Decimal("0.15"), "Strong momentum signal"),
+        (Decimal("0.08"), "Marginal momentum signal"),
+        (Decimal("0.02"), "Weak momentum signal"),
+        (Decimal("-0.10"), "Inverted (mean reversion) - DISABLED"),
+    ]
+
+    for ic, description in ic_tests:
+        result = engine2.detect_regime(
+            vix_current=Decimal("18.0"),
+            xbi_vs_spy_30d=Decimal("1.0"),
+            fed_rate_change_3m=Decimal("0.00"),
+            momentum_ic_3m=ic
+        )
+
+        print(f"\nIC = {ic} ({description})")
+        if result.get("momentum_health"):
+            mh = result["momentum_health"]
+            print(f"  Health Status: {mh['health_status']}")
+            print(f"  Original Weight: {mh['original_weight']}")
+            print(f"  Adjusted Weight: {mh['adjusted_weight']}")
+            print(f"  Action: {mh['action']}")
+        print(f"  Final Momentum Weight: {result['signal_adjustments']['momentum']}x")
+
     print()
 
 
