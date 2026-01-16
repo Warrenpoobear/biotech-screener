@@ -852,7 +852,27 @@
       "vol_ratio": "1.0050"
     },
     "include_long": true,
-    "position_flags": []
+    "position_flags": [],
+    "financial_data": {
+      "cash": null,
+      "debt": null,
+      "net_debt": null,
+      "revenue_ttm": null,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": "0001697862"
+    },
+    "clinical_data": {
+      "total_trials": 0,
+      "active_trials": 0,
+      "completed_trials": 0,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": []
+    }
   },
   {
     "ticker": "INCY",
@@ -1816,7 +1836,136 @@
       "vol_ratio": "1.0838"
     },
     "include_long": true,
-    "position_flags": []
+    "position_flags": [],
+    "financial_data": {
+      "cash": 2455006000.0,
+      "debt": 19094000000.0,
+      "net_debt": 16638994000.0,
+      "revenue_ttm": 3394635000.0,
+      "assets": 6330356000.0,
+      "liabilities": 1679162000.0,
+      "equity": 4651194000.0,
+      "currency": "USD",
+      "cik": "0000879169"
+    },
+    "clinical_data": {
+      "total_trials": 50,
+      "active_trials": 21,
+      "completed_trials": 15,
+      "lead_stage": "phase_3",
+      "by_phase": {
+        "PHASE3": 10,
+        "PHASE2": 20,
+        "": 1,
+        "PHASE1": 12,
+        "PHASE1, PHASE2": 7
+      },
+      "conditions": [
+        "Acute Lymphoblastic Leukemia",
+        "Advanced Malignant Solid Neoplasm, Metastatic Malignant Solid Neoplasm, Recurrent Malignant Solid Neoplasm, Refractory Malignant Solid Neoplasm",
+        "Advanced Pancreatic Carcinoma, Metastatic Pancreatic Carcinoma, Stage II Pancreatic Cancer AJCC v8, Stage III Pancreatic Cancer AJCC v8, Stage IV Pancreatic Cancer AJCC v8",
+        "Advanced Solid Tumors, Squamous Cell Carcinoma of the Head and Neck (SCCHN), Gastrointestinal (GI) Malignancies",
+        "Advanced and/or Metastatic Solid Tumors, Stage IIIB Not Amenable to Curative Therapy to Stage IV Non-small Cell Lung Cancer, Advanced/Metastatic Unresectable Malignant Pleural Mesothelioma",
+        "Advanced or Metastatic Solid Tumors, FGFR Mutations, FGFR Translocations",
+        "Atopic Dermatitis",
+        "B-Cell Malignancies",
+        "Breast Cancer",
+        "COVID-19",
+        "CRC (Colorectal Cancer)",
+        "Chronic Graft Versus Host Disease",
+        "Chronic Graft-versus-host-disease",
+        "Chronic Phase Chronic Myeloid Leukemia",
+        "Chronic Phase Chronic Myeloid Leukemia, Chronic Myeloid Leukemia, Chronic Phase",
+        "Diabetic Kidney Disease",
+        "Follicular Lymphoma, Marginal Zone Lymphoma",
+        "Glioblastoma, Brain Cancer, Glioblastoma Multiforme, Glioblastoma Multiforme of Brain, Glioblastoma Multiforme, Adult, MGMT-Unmethylated Glioblastoma, MGMT-Methylated Glioblastoma",
+        "Graft Vs Host Disease, Vulvovaginal Signs and Symptoms",
+        "Graft-versus-host Disease (GVHD)",
+        "Head and Neck Cancer",
+        "Healthy Volunteers",
+        "Hematopoietic and Lymphoid Cell Neoplasm, Malignant Solid Neoplasm",
+        "Hemophagocytic Lymphohistiocytoses",
+        "Hemophagocytic Lymphohistiocytosis",
+        "Immune Thrombocytopenia",
+        "Large B-Cell Lymphoma, Diffuse Large B-Cell Lymphoma",
+        "Leukemia, Acute, Myelodysplastic Syndromes, Myelomonocytic Leukemia, Chronic, T-cell Prolymphocytic Leukemia, CML, Myeloproliferative Disorders, Multiple Myeloma, Plasma Cell Leukemia",
+        "Lung Cancer",
+        "Lymphoma",
+        "MPN (Myeloproliferative Neoplasms)",
+        "Metastatic Head and Neck Squamous Cell Carcinoma, Advanced Malignancies, Recurrent Head and Neck Squamous Cell Carcinoma",
+        "Metastatic Merkel Cell Carcinoma",
+        "Metastatic Non-small Cell Lung Cancer, Locally Advanced Urothelial Cancer, Metastatic Urothelial Cancer, Unresectable Melanoma, Metastatic Melanoma, Locally Advanced Renal Cell Carcinoma, Metastatic Clear-Cell Renal Cell Carcinoma",
+        "Metastatic Squamous Non-Small Cell Lung Cancer, Metastatic Nonsquamous Non-Small Cell Lung Cancer",
+        "Myelodysplastic Syndromes",
+        "Myeloproliferative Neoplasms",
+        "Non Hodgkins Lymphoma, Diffuse Large B-cell Lymphoma",
+        "NonSegmental Vitiligo",
+        "Rheumatoid Arthritis",
+        "Solid Tumor",
+        "Solid Tumors",
+        "Solid Tumors and Hematologic Malignancy",
+        "Solid Tumors and Hematologic Malignancy, NSCLC (Non-small Cell Lung Carcinoma)",
+        "Systemic Lupus Erythematosus",
+        "Unresectable Clinical Stage III Merkel Cell Carcinoma AJCC v8, Clinical Stage IV Merkel Cell Carcinoma AJCC v8, Merkel Cell Carcinoma"
+      ],
+      "top_trials": [
+        {
+          "nct_id": "NCT04205812",
+          "title": "Platinum-Based Chemotherapy With/Without INCMGA00012, an Anti-PD-1 Antibody, in Non-Small Cell Lung Cancer",
+          "status": "ACTIVE_NOT_RECRUITING",
+          "phase": "PHASE3",
+          "condition": "Metastatic Squamous Non-Small Cell Lung Cancer, Metastatic Nonsquamous Non-Small Cell Lung Cancer",
+          "start_date": "2020-09-11",
+          "completion_date": "2026-08-28",
+          "enrollment": 0,
+          "sponsor": "Incyte Corporation"
+        },
+        {
+          "nct_id": "NCT06056895",
+          "title": "Triple Immune Checkpoint Inhibition for Advanced or Metastatic PD-(L)1 Refractory Merkel Cell Carcinoma",
+          "status": "ACTIVE_NOT_RECRUITING",
+          "phase": "PHASE2",
+          "condition": "Unresectable Clinical Stage III Merkel Cell Carcinoma AJCC v8, Clinical Stage IV Merkel Cell Carcinoma AJCC v8, Merkel Cell Carcinoma",
+          "start_date": "2023-11-08",
+          "completion_date": "2027-04-30",
+          "enrollment": 0,
+          "sponsor": "University of Washington"
+        },
+        {
+          "nct_id": "NCT06649201",
+          "title": "Vulvovaginal Graft-versus-Host Disease: Diagnosis and Microbiome Evaluation",
+          "status": "RECRUITING",
+          "phase": "",
+          "condition": "Graft Vs Host Disease, Vulvovaginal Signs and Symptoms",
+          "start_date": "2024-12-19",
+          "completion_date": "2027-02-15",
+          "enrollment": 0,
+          "sponsor": "Case Comprehensive Cancer Center"
+        },
+        {
+          "nct_id": "NCT05936359",
+          "title": "A Study to Evaluate INCA033989 Administered as a Monotherapy or in Combination With Ruxolitinib in Participants With Myeloproliferative Neoplasms",
+          "status": "RECRUITING",
+          "phase": "PHASE1",
+          "condition": "Myeloproliferative Neoplasms",
+          "start_date": "2023-09-25",
+          "completion_date": "2028-02-29",
+          "enrollment": 0,
+          "sponsor": "Incyte Corporation"
+        },
+        {
+          "nct_id": "NCT06113471",
+          "title": "A Study to Evaluate Efficacy and Safety of Povorcitinib in Participants With Nonsegmental Vitiligo (STOP-V2)",
+          "status": "ACTIVE_NOT_RECRUITING",
+          "phase": "PHASE3",
+          "condition": "NonSegmental Vitiligo",
+          "start_date": "2023-11-27",
+          "completion_date": "2027-03-16",
+          "enrollment": 0,
+          "sponsor": "Incyte Corporation"
+        }
+      ]
+    }
   },
   {
     "ticker": "JAZZ",
@@ -2781,7 +2930,137 @@
       "vol_ratio": "0.5274"
     },
     "include_long": true,
-    "position_flags": []
+    "position_flags": [],
+    "financial_data": {
+      "cash": 1326070000.0,
+      "debt": 5361161000.0,
+      "net_debt": 4035091000.0,
+      "revenue_ttm": 476457000.0,
+      "assets": 11356485000.0,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": "0001232524"
+    },
+    "clinical_data": {
+      "total_trials": 50,
+      "active_trials": 11,
+      "completed_trials": 27,
+      "lead_stage": "commercial",
+      "by_phase": {
+        "PHASE3": 13,
+        "PHASE1": 8,
+        "PHASE2": 18,
+        "": 6,
+        "PHASE2, PHASE3": 1,
+        "PHASE1, PHASE2": 2,
+        "NA": 1,
+        "PHASE4": 1
+      },
+      "conditions": [
+        "Acute Lymphoblastic Leukemia (ALL)/Lymphoblastic Lymphoma (LBL)",
+        "Acute Lymphoblastic Leukemia, Lymphoblastic Lymphoma",
+        "Acute Myelogenous Leukemia (AML) Due to Therapy, Acute Myeloid Leukemia With Myelodysplasia-Related Changes",
+        "Acute Myelogenous Leukemia, Myelodysplastic Syndrome",
+        "Acute Myeloid Leukemia",
+        "Acute Myeloid Leukemia With FLT3/ITD Mutation",
+        "Acute Myeloid Leukemia With Myelodysplasia-Related Changes, Therapy-Related Acute Myeloid Leukemia",
+        "Acute Myeloid Leukemia, Myeloid Neoplasm",
+        "Adenovirus",
+        "Adenovirus Disease",
+        "Anxiety Disorder",
+        "Breast Cancer, Gastric Cancer, Esophageal Cancer, Gastroesophageal Cancer, Colorectal Cancer, Endometrial Cancer, Non-small Cell Lung Cancer, Ovarian Cancer, Urothelial Carcinoma, Salivary Gland Cancer, Pancreatic Cancer, HER-2 Protein Overexpression",
+        "Daytime Sleepiness",
+        "Diabetes Mellitus, Type 2",
+        "Diffuse Intrinsic Pontine Glioma, Diffuse Midline Glioma, H3 K27M-Mutant, Recurrent Diffuse Intrinsic Pontine Glioma, Recurrent Diffuse Midline Glioma, H3 K27M-Mutant, Recurrent WHO Grade III Glioma, WHO Grade III Glioma",
+        "Extensive-stage Small-cell Lung Cancer",
+        "Fibromyalgia",
+        "Focal Seizures",
+        "Fragile X Syndrome",
+        "Gastrointestinal Malignancies",
+        "Glioblastoma, Diffuse Midline Glioma, H3 K27M Glioma, Thalamic Glioma, Infratentorial Glioma, Basal Ganglia Glioma",
+        "HER2+/HR+ Breast Cancer",
+        "HER2-expressing Cancers",
+        "HER2-positive Breast Cancer, Breast Cancer",
+        "Healthy Participants",
+        "Hematologic Neoplasms",
+        "Hepatic Impairment",
+        "Hepatic Veno-Occlusive Disease",
+        "Infantile Spasms",
+        "Lennox-Gastaut Syndrome",
+        "Leukemia, Acute Lymphoblastic, Acute Lymphoid Leukemia",
+        "Myeloid Neoplasm",
+        "Narcolepsy With Cataplexy",
+        "Non-Small Cell Lung Cancer, Sarcoma, Head &Amp; Neck Cancer, Colorectal Carcinoma, Endometrial",
+        "Obstructive Sleep Apnea, Excessive Sleepiness",
+        "Oral Mucositis",
+        "Ovarian Cancer",
+        "Pain, Advanced Cancer",
+        "Pain, Peripheral Neuropathy",
+        "Protein Losing Enteropathy",
+        "Schizophrenia, Schizophrenia-related Psychotic Disorder",
+        "Seizure in Participants With Tuberous Sclerosis Complex, Seizure in Participants With Dravet Syndrome, Seizure in Participants With Lennox-Gastaut Syndrome",
+        "Severe Hepatic Veno-Occlusive Disease",
+        "Spasticity With Multiple Sclerosis"
+      ],
+      "top_trials": [
+        {
+          "nct_id": "NCT02953548",
+          "title": "Trial of Cannabidiol (CBD; GWP42003-P) for Infantile Spasms (GWPCARE7)",
+          "status": "COMPLETED",
+          "phase": "PHASE3",
+          "condition": "Infantile Spasms",
+          "start_date": "2017-04-24",
+          "completion_date": "2018-05-07",
+          "enrollment": 0,
+          "sponsor": "Jazz Pharmaceuticals"
+        },
+        {
+          "nct_id": "NCT07233239",
+          "title": "A Study to Evaluate the Efficacy and Safety of Cannabidiol Oral Solution (CBD-OS [GWP42003-P, JZP926]) for the Treatment of Focal-Onset Seizures",
+          "status": "RECRUITING",
+          "phase": "PHASE1",
+          "condition": "Focal Seizures",
+          "start_date": "2025-11-26",
+          "completion_date": "2027-11-29",
+          "enrollment": 0,
+          "sponsor": "Jazz Pharmaceuticals"
+        },
+        {
+          "nct_id": "NCT02053272",
+          "title": "A Study of GWP42004 as Add on to Metformin in the Treatment of Participants With Type 2 Diabetes",
+          "status": "COMPLETED",
+          "phase": "PHASE2",
+          "condition": "Diabetes Mellitus, Type 2",
+          "start_date": "2014-02",
+          "completion_date": "2016-02",
+          "enrollment": 0,
+          "sponsor": "Jazz Pharmaceuticals"
+        },
+        {
+          "nct_id": "NCT05260528",
+          "title": "CPX-351 vs Intensive Chemotherapy in Patients With de Novo Intermediate or Adverse Risk AML Stratified by Genomics",
+          "status": "RECRUITING",
+          "phase": "PHASE2",
+          "condition": "Acute Myeloid Leukemia",
+          "start_date": "2023-05-03",
+          "completion_date": "2027-10",
+          "enrollment": 0,
+          "sponsor": "Centre Hospitalier Universitaire de Nice"
+        },
+        {
+          "nct_id": "NCT00106860",
+          "title": "A Long-Term Study Continuing on From Study 04-001-01 of an Experimental Medication in Adults With Anxiety Disorder",
+          "status": "COMPLETED",
+          "phase": "PHASE3",
+          "condition": "Anxiety Disorder",
+          "start_date": "2005-03",
+          "completion_date": "2006-03",
+          "enrollment": 0,
+          "sponsor": "Jazz Pharmaceuticals"
+        }
+      ]
+    }
   },
   {
     "ticker": "IONS",
@@ -3740,7 +4019,131 @@
       "vol_ratio": "0.7906"
     },
     "include_long": true,
-    "position_flags": []
+    "position_flags": [],
+    "financial_data": {
+      "cash": 338341000.0,
+      "debt": 1253062000.0,
+      "net_debt": 914721000.0,
+      "revenue_ttm": 226577000.0,
+      "assets": 3033091000.0,
+      "liabilities": 2415124000.0,
+      "equity": 617967000.0,
+      "currency": "USD",
+      "cik": "0000874015"
+    },
+    "clinical_data": {
+      "total_trials": 50,
+      "active_trials": 7,
+      "completed_trials": 41,
+      "lead_stage": "phase_3",
+      "by_phase": {
+        "PHASE2": 19,
+        "PHASE3": 7,
+        "NA": 2,
+        "PHASE1, PHASE2": 7,
+        "PHASE1": 10,
+        "": 4,
+        "PHASE2, PHASE3": 1
+      },
+      "conditions": [
+        "Acromegaly",
+        "Advanced Cancers, DLBCL, Lymphoma",
+        "Amyloidosis",
+        "Angelman Syndrome",
+        "Castrate-Resistant Prostate Cancer",
+        "Crohn's Disease",
+        "Cytomegalovirus Retinitis, HIV Infections",
+        "End-stage Renal Disease (ESRD)",
+        "Familial Chylomicronemia Syndrome",
+        "Familial Partial Lipodystrophy",
+        "Healthy Participants",
+        "Healthy Subjects, Cystic Fibrosis",
+        "Healthy Volunteer",
+        "Healthy Volunteers",
+        "Healthy Volunteers, hATTR Amyloidosis",
+        "Hepatic Steatosis",
+        "Hepatitis C, Chronic",
+        "Hereditary Amyloidosis, Transthyretin-Related",
+        "Huntington's Disease",
+        "Hypertriglyceridemia",
+        "Hypertriglyceridemia, Atherosclerotic Cardiovascular Disease, Severe Hypertriglyceridemia",
+        "Hypertriglyceridemia, Cardiovascular Diseases",
+        "Hypertriglyceridemia, Cardiovascular Diseases, Atherosclerosis",
+        "Hypertriglyceridemia, Familial Hypercholesterolemia",
+        "Lipid Metabolism, Inborn Errors, Hypercholesterolemia, Autosomal Dominant, Hyperlipidemias, Metabolic Diseases, Hyperlipoproteinemia Type II, Metabolism, Inborn Errors, Genetic Diseases, Inborn, Infant, Newborn, Diseases, Metabolic Disorder, Congenital Abnormalities, Hypercholesterolemia, Hyperlipoproteinemias, Dyslipidemias, Lipid Metabolism Disorders",
+        "Metabolic Diseases, Hyperlipidemias, Metabolic Disorder, Hypercholesterolemia, Dyslipidemias, Lipid Metabolism Disorders",
+        "Methyl CpG Binding Protein 2 (MECP2) Duplication Syndrome",
+        "Multiple System Atrophy",
+        "NAFLD, Diabetes Mellitus, Type 2, Hypertriglyceridemia, Fatty Liver, Nonalcoholic",
+        "Non-small Cell Lung Cancer",
+        "Paroxysmal Atrial Fibrillation",
+        "Primary IgA Nephropathy",
+        "Relapsed Multiple Myeloma, Refractory Multiple Myeloma",
+        "Severe Hypertriglyceridemia",
+        "Steatohepatitis, Nonalcoholic",
+        "Transthyretin-Mediated Amyloid Cardiomyopathy (ATTR-CM)",
+        "Type 2 Diabetes",
+        "Type 2 Diabetes Mellitus",
+        "Type 2 Diabetes Mellitus, Obese"
+      ],
+      "top_trials": [
+        {
+          "nct_id": "NCT03385239",
+          "title": "Study of ISIS 678354 (AKCEA-APOCIII-LRx) in Participants With Hypertriglyceridemia and Established Cardiovascular Disease (CVD)",
+          "status": "COMPLETED",
+          "phase": "PHASE2",
+          "condition": "Hypertriglyceridemia, Cardiovascular Diseases",
+          "start_date": "2018-01-30",
+          "completion_date": "2020-02-25",
+          "enrollment": 0,
+          "sponsor": "Akcea Therapeutics"
+        },
+        {
+          "nct_id": "NCT02300233",
+          "title": "The COMPASS Study: A Study of Volanesorsen (Formally ISIS-APOCIIIRx) in Patients With Hypertriglyceridemia",
+          "status": "COMPLETED",
+          "phase": "PHASE3",
+          "condition": "Hypertriglyceridemia",
+          "start_date": "2015-02-05",
+          "completion_date": "2017-01-24",
+          "enrollment": 0,
+          "sponsor": "Ionis Pharmaceuticals, Inc."
+        },
+        {
+          "nct_id": "NCT00002187",
+          "title": "A Study of ISIS 2922 in the Treatment of Advanced Cytomegalovirus Retinitis",
+          "status": "COMPLETED",
+          "phase": "NA",
+          "condition": "Cytomegalovirus Retinitis, HIV Infections",
+          "start_date": "",
+          "completion_date": "",
+          "enrollment": 0,
+          "sponsor": "Ionis Pharmaceuticals, Inc."
+        },
+        {
+          "nct_id": "NCT01234025",
+          "title": "Safety and Tolerability Study of ISIS EIF4E Rx in Combination With Docetaxel and Prednisone (CRPC)",
+          "status": "COMPLETED",
+          "phase": "PHASE1, PHASE2",
+          "condition": "Castrate-Resistant Prostate Cancer",
+          "start_date": "2010-11",
+          "completion_date": "2013-12",
+          "enrollment": 0,
+          "sponsor": "Ionis Pharmaceuticals, Inc."
+        },
+        {
+          "nct_id": "NCT00048295",
+          "title": "Alicaforsen (ISIS 2302) in Patients With Active Crohn's Disease",
+          "status": "COMPLETED",
+          "phase": "PHASE3",
+          "condition": "Crohn's Disease",
+          "start_date": "2002-05",
+          "completion_date": "",
+          "enrollment": 0,
+          "sponsor": "Ionis Pharmaceuticals, Inc."
+        }
+      ]
+    }
   },
   {
     "ticker": "BBIO",
@@ -4648,7 +5051,80 @@
       "vol_ratio": "0.7315"
     },
     "include_long": true,
-    "position_flags": []
+    "position_flags": [],
+    "financial_data": {
+      "cash": 642951000.0,
+      "debt": 2007337000.0,
+      "net_debt": 1364386000.0,
+      "revenue_ttm": 347898000.0,
+      "assets": 998250000.0,
+      "liabilities": 2920979000.0,
+      "equity": -1922729000.0,
+      "currency": "USD",
+      "cik": "0001743881"
+    },
+    "clinical_data": {
+      "total_trials": 4,
+      "active_trials": 1,
+      "completed_trials": 0,
+      "lead_stage": "phase_1",
+      "by_phase": {
+        "PHASE1": 3,
+        "": 1
+      },
+      "conditions": [
+        "Non Small Cell Lung Cancer, Solid Tumor",
+        "Solid Tumor, Adult, Metastatic Solid Tumor, Metastatic NSCLC, Non Small Cell Lung Cancer",
+        "Transthyretin (TTR) Amyloid Cardiomyopathy",
+        "Tumor, Solid"
+      ],
+      "top_trials": [
+        {
+          "nct_id": "NCT04528836",
+          "title": "First-in-Human Study of the SHP2 Inhibitor BBP-398 in Patients With Advanced Solid Tumors",
+          "status": "TERMINATED",
+          "phase": "PHASE1",
+          "condition": "Tumor, Solid",
+          "start_date": "2020-11-12",
+          "completion_date": "2024-07-30",
+          "enrollment": 0,
+          "sponsor": "Navire Pharma Inc., a BridgeBio company"
+        },
+        {
+          "nct_id": "NCT05480865",
+          "title": "SHP2 Inhibitor BBP-398 in Combination With Sotorasib in Patients With Advanced Solid Tumors and a KRAS-G12C Mutation",
+          "status": "TERMINATED",
+          "phase": "PHASE1",
+          "condition": "Solid Tumor, Adult, Metastatic Solid Tumor, Metastatic NSCLC, Non Small Cell Lung Cancer",
+          "start_date": "2022-07-06",
+          "completion_date": "2024-08-22",
+          "enrollment": 0,
+          "sponsor": "Navire Pharma Inc., a BridgeBio company"
+        },
+        {
+          "nct_id": "NCT05375084",
+          "title": "SHP2 Inhibitor BBP-398 in Combination With Nivolumab in Patients With Advanced Non-Small Cell Lung Cancer With a KRAS Mutation",
+          "status": "TERMINATED",
+          "phase": "PHASE1",
+          "condition": "Non Small Cell Lung Cancer, Solid Tumor",
+          "start_date": "2022-10-20",
+          "completion_date": "2024-07-15",
+          "enrollment": 0,
+          "sponsor": "Navire Pharma Inc., a BridgeBio company"
+        },
+        {
+          "nct_id": "NCT07062848",
+          "title": "An Observational Study Using Artificial Intelligence (AI) Algorithms on Electrocardiography (ECG), Point-of-care Ultrasound (POCUS), and Transthoracic Echocardiophy (TTE) to Estimate the Under-diagnosis of Transthyretin Amyloid Cardiomyopathy (ATTR-CM) Across a Diverse Range of US Health Systems.",
+          "status": "ACTIVE_NOT_RECRUITING",
+          "phase": "",
+          "condition": "Transthyretin (TTR) Amyloid Cardiomyopathy",
+          "start_date": "2025-01-24",
+          "completion_date": "2027-01",
+          "enrollment": 0,
+          "sponsor": "Yale University"
+        }
+      ]
+    }
   },
   {
     "ticker": "GOSS",
@@ -5573,7 +6049,97 @@
       "vol_ratio": "0.9536"
     },
     "include_long": true,
-    "position_flags": []
+    "position_flags": [],
+    "financial_data": {
+      "cash": 8933000.0,
+      "debt": 28548000.0,
+      "net_debt": 19615000.0,
+      "revenue_ttm": 34672000.0,
+      "assets": 208820000.0,
+      "liabilities": 291153000.0,
+      "equity": -82333000.0,
+      "currency": "USD",
+      "cik": "0001728117"
+    },
+    "clinical_data": {
+      "total_trials": 13,
+      "active_trials": 4,
+      "completed_trials": 6,
+      "lead_stage": "phase_3",
+      "by_phase": {
+        "PHASE1": 5,
+        "PHASE3": 3,
+        "PHASE2": 5
+      },
+      "conditions": [
+        "Asthma",
+        "CNS Lymphoma",
+        "Chronic Rhinosinusitis Without Nasal Polyps (CRSsNP), Chronic Rhinosinusitis With Nasal Polyps (CRSwNP)",
+        "Pancreatic Adenocarcinoma, Esophageal Adenocarcinoma, Esophageal Squamous Cell Carcinoma, Gastric Adenocarcinoma, Gastroesophageal Junction Adenocarcinoma, Triple Negative Breast Cancer, Castration-resistant Prostate Cancer, Microsatellite Stable Colorectal Cancer, Non-small Cell Lung Cancer, Small-cell Lung Cancer, Head and Neck Squamous Cell Carcinoma, Urothelial Carcinoma, Renal Cell Carcinoma, Hepatocellular Carcinoma",
+        "Pulmonary Arterial Hypertension",
+        "Pulmonary Artery Hypertension",
+        "Pulmonary Hypertension Associated With Interstitial Lung Disease",
+        "Safety Issues",
+        "Ulcerative Colitis"
+      ],
+      "top_trials": [
+        {
+          "nct_id": "NCT03473236",
+          "title": "Phase 1A Safety Trial of Inhaled PK10571 (GB002)",
+          "status": "COMPLETED",
+          "phase": "PHASE1",
+          "condition": "Safety Issues",
+          "start_date": "2017-09-06",
+          "completion_date": "2018-12-03",
+          "enrollment": 0,
+          "sponsor": "GB002, Inc., a wholly owned subsidiary of Gossamer Bio, Inc."
+        },
+        {
+          "nct_id": "NCT06274801",
+          "title": "Open-label Extension Study of Seralutinib in Adult Subjects With PAH (PROSERA-EXT)",
+          "status": "RECRUITING",
+          "phase": "PHASE3",
+          "condition": "Pulmonary Arterial Hypertension",
+          "start_date": "2024-09-03",
+          "completion_date": "2026-12",
+          "enrollment": 0,
+          "sponsor": "GB002, Inc."
+        },
+        {
+          "nct_id": "NCT03926793",
+          "title": "Clinical Study of Inhaled GB002 for Treatment of WHO Group I Pulmonary Arterial Hypertension",
+          "status": "COMPLETED",
+          "phase": "PHASE1",
+          "condition": "Pulmonary Arterial Hypertension",
+          "start_date": "2020-02-04",
+          "completion_date": "2021-05-05",
+          "enrollment": 0,
+          "sponsor": "GB002, Inc., a wholly owned subsidiary of Gossamer Bio, Inc."
+        },
+        {
+          "nct_id": "NCT03956862",
+          "title": "GB001 in Adult Participants With Chronic Rhinosinusitis",
+          "status": "COMPLETED",
+          "phase": "PHASE2",
+          "condition": "Chronic Rhinosinusitis Without Nasal Polyps (CRSsNP), Chronic Rhinosinusitis With Nasal Polyps (CRSwNP)",
+          "start_date": "2019-05-16",
+          "completion_date": "2020-08-05",
+          "enrollment": 0,
+          "sponsor": "GB001, Inc, a wholly owned subsidiary of Gossamer Bio, Inc."
+        },
+        {
+          "nct_id": "NCT04060342",
+          "title": "GB1275 Monotherapy and in Combination With an Anti-PD1 Antibody in Patients With Specified Advanced Solid Tumors or in Combination With Standard of Care in Patients With Metastatic Pancreatic Adenocarcinoma",
+          "status": "TERMINATED",
+          "phase": "PHASE1",
+          "condition": "Pancreatic Adenocarcinoma, Esophageal Adenocarcinoma, Esophageal Squamous Cell Carcinoma, Gastric Adenocarcinoma, Gastroesophageal Junction Adenocarcinoma, Triple Negative Breast Cancer, Castration-resistant Prostate Cancer, Microsatellite Stable Colorectal Cancer, Non-small Cell Lung Cancer, Small-cell Lung Cancer, Head and Neck Squamous Cell Carcinoma, Urothelial Carcinoma, Renal Cell Carcinoma, Hepatocellular Carcinoma",
+          "start_date": "2019-08-13",
+          "completion_date": "2022-04-11",
+          "enrollment": 0,
+          "sponsor": "GB006, Inc., a wholly owned subsidiary of Gossamer Bio, Inc."
+        }
+      ]
+    }
   },
   {
     "ticker": "RNA",
@@ -6500,7 +7066,99 @@
       "vol_ratio": "0.0434"
     },
     "include_long": true,
-    "position_flags": []
+    "position_flags": [],
+    "financial_data": {
+      "cash": 350158000.0,
+      "debt": null,
+      "net_debt": null,
+      "revenue_ttm": 17895000.0,
+      "assets": 2134209000.0,
+      "liabilities": 247944000.0,
+      "equity": 1886265000.0,
+      "currency": "USD",
+      "cik": "0001599901"
+    },
+    "clinical_data": {
+      "total_trials": 11,
+      "active_trials": 7,
+      "completed_trials": 3,
+      "lead_stage": "phase_3",
+      "by_phase": {
+        "PHASE1, PHASE2": 3,
+        "PHASE2": 3,
+        "PHASE3": 3,
+        "": 2
+      },
+      "conditions": [
+        "DM1, Muscular Dystrophies, Myotonic Dystrophy, Myotonic Dystrophy 1, Myotonic Disorders, Muscular Disorders, Atrophic, Muscular Diseases, Musculoskeletal Diseases, Neuromuscular Diseases, Nervous System Diseases, Genetic Diseases, Inborn, Heredodegenerative Disorders, Nervous System, Neurodegenerative Diseases",
+        "DM1, Myotonic Dystrophy 1, Myotonic Dystrophy, Myotonic Dystrophy Type 1 (DM1), Dystrophy Myotonic, Myotonic Disorders, Steinert Disease, Myotonic Muscular Dystrophy",
+        "DM1, Myotonic Dystrophy, Myotonic Dystrophy 1, Myotonia, Myotonic Dystrophy Type 1 (DM1), Dystrophy Myotonic, Myotonic Disorders, Steinert Disease, Steinert, Myotonic Muscular Dystrophy",
+        "DMD, Duchenne Muscular Dystrophy, Duchenne, Exon 44",
+        "Duchenne Muscular Dystrophy, Exon 44",
+        "FSHD",
+        "FSHD, FSHD1, FSHD2, FMD, FMD2, Fascioscapulohumeral Muscular Dystrophy, Fascioscapulohumeral Muscular Dystrophy Type 1, Fascioscapulohumeral Muscular Dystrophy Type 2, Dystrophies, Facioscapulohumeral Muscular, Dystrophy, Facioscapulohumeral Muscular, Facioscapulohumeral Muscular Dystrophy 1, Facioscapulohumeral Muscular Dystrophy 2, Facio-Scapulo-Humeral Dystrophy, Atrophy, Facioscapulohumeral, Atrophies, Facioscapulohumeral, Facioscapulohumeral Atrophy, Muscular Dystrophies, Muscular Dystrophy, Facioscapulohumeral, FSH Muscular Dystrophy, Landouzy Dejerine Dystrophy, Landouzy-Dejerine Muscular Dystrophy, Dystrophies, Landouzy-Dejerine, Dystrophy, Landouzy-Dejerine, Landouzy-Dejerine Syndrome, Muscular Dystrophy, Landouzy Dejerine, Progressive Muscular Dystrophy, FSH",
+        "Facioscapulohumeral Muscular Dystrophy, FSHD, FSHD - Facioscapulohumeral Muscular Dystrophy, FSHD1, FSHD2, Fascioscapulohumeral Muscular Dystrophy, Fascioscapulohumeral Muscular Dystrophy Type 1, Fascioscapulohumeral Muscular Dystrophy Type 2, Facioscapulohumeral Muscular Dystrophy 1, Facioscapulohumeral Dystrophy, Facio-Scapulo-Humeral Dystrophy, Facioscapulohumeral Muscular Dystrophy 2, Facioscapulohumeral Muscular Dystrophy Type 1 (FSHD1), FSH Muscular Dystrophy, Landouzy Dejerine Dystrophy, Landouzy-Dejerine Muscular Dystrophy, Landouzy-Dejerine Syndrome",
+        "Muscular Disorders, Atrophic, Muscular Diseases, Musculoskeletal Diseases, Neuromuscular Diseases, Nervous System Diseases, Genetic Diseases, Inborn, Genetic Diseases, X-Linked, Muscular Dystrophies, Muscular Dystrophy, Duchenne",
+        "Myotonic Dystrophy Type 1, DM1, Myotonic Dystrophy, Myotonia, Myotonic Dystrophy 1, Myotonic Disorders, Steinert Myotonic Dystrophy, Steinert Disease"
+      ],
+      "top_trials": [
+        {
+          "nct_id": "NCT05747924",
+          "title": "Phase 1/2 Study of AOC 1020 in Participants With Facioscapulohumeral Muscular Dystrophy (FSHD)",
+          "status": "ACTIVE_NOT_RECRUITING",
+          "phase": "PHASE1, PHASE2",
+          "condition": "FSHD, FSHD1, FSHD2, FMD, FMD2, Fascioscapulohumeral Muscular Dystrophy, Fascioscapulohumeral Muscular Dystrophy Type 1, Fascioscapulohumeral Muscular Dystrophy Type 2, Dystrophies, Facioscapulohumeral Muscular, Dystrophy, Facioscapulohumeral Muscular, Facioscapulohumeral Muscular Dystrophy 1, Facioscapulohumeral Muscular Dystrophy 2, Facio-Scapulo-Humeral Dystrophy, Atrophy, Facioscapulohumeral, Atrophies, Facioscapulohumeral, Facioscapulohumeral Atrophy, Muscular Dystrophies, Muscular Dystrophy, Facioscapulohumeral, FSH Muscular Dystrophy, Landouzy Dejerine Dystrophy, Landouzy-Dejerine Muscular Dystrophy, Dystrophies, Landouzy-Dejerine, Dystrophy, Landouzy-Dejerine, Landouzy-Dejerine Syndrome, Muscular Dystrophy, Landouzy Dejerine, Progressive Muscular Dystrophy, FSH",
+          "start_date": "2023-04-04",
+          "completion_date": "2027-04",
+          "enrollment": 0,
+          "sponsor": "Avidity Biosciences, Inc."
+        },
+        {
+          "nct_id": "NCT06547216",
+          "title": "Phase 2 Open-label Extension Study of AOC 1020 in Participants with Facioscapulohumeral Muscular Dystrophy (FSHD)",
+          "status": "ENROLLING_BY_INVITATION",
+          "phase": "PHASE2",
+          "condition": "FSHD, FSHD1, FSHD2, FMD, FMD2, Fascioscapulohumeral Muscular Dystrophy, Fascioscapulohumeral Muscular Dystrophy Type 1, Fascioscapulohumeral Muscular Dystrophy Type 2, Dystrophies, Facioscapulohumeral Muscular, Dystrophy, Facioscapulohumeral Muscular, Facioscapulohumeral Muscular Dystrophy 1, Facioscapulohumeral Muscular Dystrophy 2, Facio-Scapulo-Humeral Dystrophy, Atrophy, Facioscapulohumeral, Atrophies, Facioscapulohumeral, Facioscapulohumeral Atrophy, Muscular Dystrophies, Muscular Dystrophy, Facioscapulohumeral, FSH Muscular Dystrophy, Landouzy Dejerine Dystrophy, Landouzy-Dejerine Muscular Dystrophy, Dystrophies, Landouzy-Dejerine, Dystrophy, Landouzy-Dejerine, Landouzy-Dejerine Syndrome, Muscular Dystrophy, Landouzy Dejerine, Progressive Muscular Dystrophy, FSH",
+          "start_date": "2024-07-25",
+          "completion_date": "2028-04",
+          "enrollment": 0,
+          "sponsor": "Avidity Biosciences, Inc."
+        },
+        {
+          "nct_id": "NCT06411288",
+          "title": "Global Study of Del-desiran for the Treatment of DM1",
+          "status": "ACTIVE_NOT_RECRUITING",
+          "phase": "PHASE3",
+          "condition": "DM1, Myotonic Dystrophy, Myotonic Dystrophy 1, Myotonia, Myotonic Dystrophy Type 1 (DM1), Dystrophy Myotonic, Myotonic Disorders, Steinert Disease, Steinert, Myotonic Muscular Dystrophy",
+          "start_date": "2024-05-30",
+          "completion_date": "2026-09",
+          "enrollment": 0,
+          "sponsor": "Avidity Biosciences, Inc."
+        },
+        {
+          "nct_id": "NCT05027269",
+          "title": "Study of AOC 1001 in Adult Myotonic Dystrophy Type 1 (DM1) Patients",
+          "status": "COMPLETED",
+          "phase": "PHASE1, PHASE2",
+          "condition": "DM1, Myotonic Dystrophy 1, Myotonic Dystrophy, Myotonic Dystrophy Type 1 (DM1), Dystrophy Myotonic, Myotonic Disorders, Steinert Disease, Myotonic Muscular Dystrophy",
+          "start_date": "2021-10-28",
+          "completion_date": "2023-02-14",
+          "enrollment": 0,
+          "sponsor": "Avidity Biosciences, Inc."
+        },
+        {
+          "nct_id": "NCT06244082",
+          "title": "Ph2 Open-label Study of AOC 1044 in Duchenne Muscular Dystrophy Participants With Mutations Amenable to Exon44 Skipping",
+          "status": "ACTIVE_NOT_RECRUITING",
+          "phase": "PHASE2",
+          "condition": "DMD, Duchenne Muscular Dystrophy, Duchenne, Exon 44",
+          "start_date": "2024-01-22",
+          "completion_date": "2027-07-31",
+          "enrollment": 0,
+          "sponsor": "Avidity Biosciences, Inc."
+        }
+      ]
+    }
   },
   {
     "ticker": "KYMR",
@@ -7426,7 +8084,96 @@
     "include_long": true,
     "position_flags": [
       "VOL_EXPANSION"
-    ]
+    ],
+    "financial_data": {
+      "cash": 112949000.0,
+      "debt": null,
+      "net_debt": null,
+      "revenue_ttm": 36341000.0,
+      "assets": 1102044000.0,
+      "liabilities": 155786000.0,
+      "equity": 946258000.0,
+      "currency": "USD",
+      "cik": "0001815442"
+    },
+    "clinical_data": {
+      "total_trials": 10,
+      "active_trials": 2,
+      "completed_trials": 6,
+      "lead_stage": "phase_2",
+      "by_phase": {
+        "PHASE2": 3,
+        "PHASE1": 6,
+        "": 1
+      },
+      "conditions": [
+        "Atopic Dermatitis",
+        "Healthy Participants Study",
+        "Healthy Volunteer, Atopic Dermatitis, Hidradenitis Suppurativa",
+        "Hidradenitis Suppurativa",
+        "Hidradenitis Suppurativa, Dermatitis, Atopic",
+        "Myeloid Malignancies, Acute Lymphocytic Leukemia, Lymphomas, Advanced Solid Tumors",
+        "Non Hodgkin Lymphoma (NHL), Peripheral T-cell Lymphoma (PTCL), Cutaneous T-Cell Lymphoma (CTCL), Large Granular Lymphocytic Leukemia (LGL-L), T-cell Prolymphocytic Leukemia (T-PLL), Solid Tumors",
+        "Non Hodgkin Lymphoma, Diffuse Large B Cell Lymphoma, DLBCL, MYD88 Gene Mutation"
+      ],
+      "top_trials": [
+        {
+          "nct_id": "NCT06058156",
+          "title": "Phase 2 Study of SAR444656 in Adult Participants With Moderate to Severe Atopic Dermatitis",
+          "status": "TERMINATED",
+          "phase": "PHASE2",
+          "condition": "Atopic Dermatitis",
+          "start_date": "2023-11-09",
+          "completion_date": "2025-11-20",
+          "enrollment": 0,
+          "sponsor": "Sanofi"
+        },
+        {
+          "nct_id": "NCT05225584",
+          "title": "Safety, PK, PD, Clinical Activity of KT-333 in Adult Patients With Refractory Lymphoma, Large Granular Lymphocytic Leukemia, Solid Tumors",
+          "status": "COMPLETED",
+          "phase": "PHASE1",
+          "condition": "Non Hodgkin Lymphoma (NHL), Peripheral T-cell Lymphoma (PTCL), Cutaneous T-Cell Lymphoma (CTCL), Large Granular Lymphocytic Leukemia (LGL-L), T-cell Prolymphocytic Leukemia (T-PLL), Solid Tumors",
+          "start_date": "2022-05-19",
+          "completion_date": "2025-03-03",
+          "enrollment": 0,
+          "sponsor": "Kymera Therapeutics, Inc."
+        },
+        {
+          "nct_id": "NCT04440410",
+          "title": "Evaluation of Cutaneous and Circulating Inflammatory Biomarkers in Hidradenitis Suppurativa and Atopic Dermatitis",
+          "status": "COMPLETED",
+          "phase": "",
+          "condition": "Hidradenitis Suppurativa, Dermatitis, Atopic",
+          "start_date": "2020-05-28",
+          "completion_date": "2021-03-24",
+          "enrollment": 0,
+          "sponsor": "Kymera Therapeutics, Inc."
+        },
+        {
+          "nct_id": "NCT05775406",
+          "title": "Safety and Clinical Activity of KT-253 in Adult Patients with High Grade Myeloid Malignancies, Acute Lymphocytic Leukemia, Lymphoma, Solid Tumors",
+          "status": "COMPLETED",
+          "phase": "PHASE1",
+          "condition": "Myeloid Malignancies, Acute Lymphocytic Leukemia, Lymphomas, Advanced Solid Tumors",
+          "start_date": "2023-05-15",
+          "completion_date": "2024-12-18",
+          "enrollment": 0,
+          "sponsor": "Kymera Therapeutics, Inc."
+        },
+        {
+          "nct_id": "NCT06945458",
+          "title": "Safety, PK, PD, and Clinical Activity of Orally Administered KT-621 in Adult Patients With Atopic Dermatitis (AD)",
+          "status": "ACTIVE_NOT_RECRUITING",
+          "phase": "PHASE1",
+          "condition": "Atopic Dermatitis",
+          "start_date": "2025-04-17",
+          "completion_date": "2025-12",
+          "enrollment": 0,
+          "sponsor": "Kymera Therapeutics, Inc."
+        }
+      ]
+    }
   },
   {
     "ticker": "RYTM",
@@ -8376,7 +9123,120 @@
     "include_long": true,
     "position_flags": [
       "RSI_OVERSOLD"
-    ]
+    ],
+    "financial_data": {
+      "cash": 52078000.0,
+      "debt": 72961000.0,
+      "net_debt": 20883000.0,
+      "revenue_ttm": 132504000.0,
+      "assets": 506874000.0,
+      "liabilities": 211191000.0,
+      "equity": 295683000.0,
+      "currency": "USD",
+      "cik": "0001649904"
+    },
+    "clinical_data": {
+      "total_trials": 32,
+      "active_trials": 10,
+      "completed_trials": 21,
+      "lead_stage": "commercial",
+      "by_phase": {
+        "": 7,
+        "PHASE1, PHASE2": 2,
+        "PHASE2": 9,
+        "PHASE3": 9,
+        "PHASE1": 3,
+        "PHASE4": 1,
+        "PHASE2, PHASE3": 1
+      },
+      "conditions": [
+        "Bardet Biedl Syndrome (BBS), Alstr\u00f6m Syndrome (AS)",
+        "Bardet-Biedl Syndrome (BBS), Obesity",
+        "Bardet-Biedl Syndrome, POMC Deficiency",
+        "Bardet-Biedl Syndrome, POMC Deficiency Obesity, PCSK1 Deficiency Obesity, LEPR Deficiency Obesity",
+        "Gene Abnormality, Child Obesity, Hunger",
+        "Genetic Forms of Extreme Obesity",
+        "Genetic Obesity",
+        "Genetic Obesity, Obesity, Obesity Due to Melanocortin 4 Receptor Deficiency",
+        "Healthy",
+        "Hypertriglyceridemia, Obesity",
+        "Hypothalamic Obesity",
+        "Hypothalamic Obesity, Multiple Pituitary Hormone Deficiency Genetic Form, Septo-Optic Dysplasia, Optic Nerve Hypoplasia, Childhood-onset Combined Pituitary Hormone Deficiency, Pituitary Stalk Interruption Syndrome",
+        "Hypothalamic Obesity, Prader-Willi Syndrome, PWS",
+        "Leptin Receptor Deficiency Obesity",
+        "Obesity",
+        "Obesity Associated With Defects in Leptin-melanocortin Pathway",
+        "Obesity, Childhood, Hyperphagia, Retinopathy, Syndactyly, Polydactyly, Cognitive Impairment, Bardet-Biedl Syndrome, POMC Deficiency",
+        "Obesity, Genetic Obesity",
+        "Obesity, Morbid Obesity",
+        "Overweight",
+        "Overweight and Obesity",
+        "Overweight, Obese",
+        "POMC Deficiency Obesity, PCSK1 Deficiency Obesity, LEPR Deficiency Obesity",
+        "Prader-Willi Syndrome",
+        "Prader-Willi Syndrome, Obesity, Hyperphagia",
+        "Pro-opiomelanocortin (POMC) Deficiency Obesity",
+        "Pro-opiomelanocortin (POMC), Proprotein Convertase Subtilisin/Kexin Type 1 (PCSK1) and Leptin Receptor (LepR) Gene Mutations",
+        "Renal Insufficiency"
+      ],
+      "top_trials": [
+        {
+          "nct_id": "NCT05183802",
+          "title": "An Expanded Access Protocol for Setmelanotide for Treatment of Bardet-Biedl Syndrome (BBS)",
+          "status": "APPROVED_FOR_MARKETING",
+          "phase": "",
+          "condition": "Bardet-Biedl Syndrome (BBS), Obesity",
+          "start_date": "",
+          "completion_date": "",
+          "enrollment": 0,
+          "sponsor": "Rhythm Pharmaceuticals, Inc."
+        },
+        {
+          "nct_id": "NCT02041195",
+          "title": "Phase 1b/2a Study to Evaluate Safety and Efficacy of Setmelanotide in Obese Patients",
+          "status": "COMPLETED",
+          "phase": "PHASE1, PHASE2",
+          "condition": "Overweight and Obesity",
+          "start_date": "2014-01",
+          "completion_date": "2014-12",
+          "enrollment": 0,
+          "sponsor": "Rhythm Pharmaceuticals, Inc."
+        },
+        {
+          "nct_id": "NCT03013543",
+          "title": "Setmelanotide Phase 2 Treatment Trial in Participants With Rare Genetic Disorders of Obesity",
+          "status": "COMPLETED",
+          "phase": "PHASE2",
+          "condition": "Genetic Obesity, Obesity, Obesity Due to Melanocortin 4 Receptor Deficiency",
+          "start_date": "2017-02-10",
+          "completion_date": "2022-03-01",
+          "enrollment": 0,
+          "sponsor": "Rhythm Pharmaceuticals, Inc."
+        },
+        {
+          "nct_id": "NCT06760546",
+          "title": "A Trial of Setmelanotide in Patients With Congenital Hypothalamic Obesity (Sub-study of NCT05774756)",
+          "status": "RECRUITING",
+          "phase": "PHASE3",
+          "condition": "Hypothalamic Obesity, Multiple Pituitary Hormone Deficiency Genetic Form, Septo-Optic Dysplasia, Optic Nerve Hypoplasia, Childhood-onset Combined Pituitary Hormone Deficiency, Pituitary Stalk Interruption Syndrome",
+          "start_date": "2025-09-23",
+          "completion_date": "2027-09-30",
+          "enrollment": 0,
+          "sponsor": "Rhythm Pharmaceuticals, Inc."
+        },
+        {
+          "nct_id": "NCT05194124",
+          "title": "Phase 3 Crossover Trial of Two Formulations of Setmelanotide in Participants With Specific Gene Defects in the MC4R Pathway",
+          "status": "COMPLETED",
+          "phase": "PHASE3",
+          "condition": "Bardet-Biedl Syndrome, POMC Deficiency",
+          "start_date": "2021-12-21",
+          "completion_date": "2023-10-19",
+          "enrollment": 0,
+          "sponsor": "Rhythm Pharmaceuticals, Inc."
+        }
+      ]
+    }
   },
   {
     "ticker": "EPRX",
@@ -9274,7 +10134,68 @@
     "include_long": true,
     "position_flags": [
       "RSI_OVERBOUGHT"
-    ]
+    ],
+    "financial_data": {
+      "cash": 19341756.0,
+      "debt": null,
+      "net_debt": null,
+      "revenue_ttm": null,
+      "assets": 20266229.0,
+      "liabilities": 19373903.0,
+      "equity": 892326.0,
+      "currency": "USD",
+      "cik": "0001581178"
+    },
+    "clinical_data": {
+      "total_trials": 3,
+      "active_trials": 1,
+      "completed_trials": 2,
+      "lead_stage": "phase_2",
+      "by_phase": {
+        "PHASE1": 1,
+        "PHASE1, PHASE2": 1,
+        "PHASE2": 1
+      },
+      "conditions": [
+        "Eosinophilic Esophagitis",
+        "Osteoarthritis, Knee"
+      ],
+      "top_trials": [
+        {
+          "nct_id": "NCT02609126",
+          "title": "Safety Study of a Long-Acting Injectable Steroid to Treat Knee Osteoarthritis",
+          "status": "COMPLETED",
+          "phase": "PHASE1",
+          "condition": "Osteoarthritis, Knee",
+          "start_date": "2016-04",
+          "completion_date": "2017-12-28",
+          "enrollment": 0,
+          "sponsor": "Eupraxia Pharmaceuticals Inc."
+        },
+        {
+          "nct_id": "NCT05608681",
+          "title": "A Trial to Evaluate EP-104GI in Adults With Eosinophilic Esophagitis (EoE).",
+          "status": "RECRUITING",
+          "phase": "PHASE1, PHASE2",
+          "condition": "Eosinophilic Esophagitis",
+          "start_date": "2023-03-31",
+          "completion_date": "2026-12",
+          "enrollment": 0,
+          "sponsor": "Eupraxia Pharmaceuticals Inc."
+        },
+        {
+          "nct_id": "NCT04120402",
+          "title": "Study to Evaluate the Efficacy and Safety of EP-104IAR in Patients With Osteoarthritis of the Knee",
+          "status": "COMPLETED",
+          "phase": "PHASE2",
+          "condition": "Osteoarthritis, Knee",
+          "start_date": "2021-09-10",
+          "completion_date": "2023-06-01",
+          "enrollment": 0,
+          "sponsor": "Eupraxia Pharmaceuticals Inc."
+        }
+      ]
+    }
   },
   {
     "ticker": "ACAD",
@@ -10219,7 +11140,117 @@
       "vol_ratio": "0.6700"
     },
     "include_long": true,
-    "position_flags": []
+    "position_flags": [],
+    "financial_data": {
+      "cash": 257996000.0,
+      "debt": null,
+      "net_debt": null,
+      "revenue_ttm": 726437000.0,
+      "assets": 1330771000.0,
+      "liabilities": 413499000.0,
+      "equity": 917272000.0,
+      "currency": "USD",
+      "cik": "0001070494"
+    },
+    "clinical_data": {
+      "total_trials": 50,
+      "active_trials": 10,
+      "completed_trials": 27,
+      "lead_stage": "commercial",
+      "by_phase": {
+        "EARLY_PHASE1": 1,
+        "PHASE2": 19,
+        "PHASE4": 3,
+        "PHASE3": 19,
+        "PHASE1": 1,
+        "": 3,
+        "PHASE2, PHASE3": 4
+      },
+      "conditions": [
+        "Acute Postoperative Pain, Bunionectomy",
+        "Adjunctive Treatment of Major Depressive Disorder",
+        "Agitation and Aggression in Alzheimer's Disease",
+        "Alzheimer's Disease Psychosis",
+        "Autism Spectrum Disorder",
+        "Dementia-related Psychosis",
+        "Hallucinations, Psychoses, Parkinson's Disease",
+        "Hyperphagia in Prader-Willi Syndrome",
+        "Insomnia Chronic, Posttraumatic Stress Disorder",
+        "Intermittent Explosive Disorder",
+        "Irritability Associated With Autism Spectrum Disorder",
+        "Lewy Body Dementia Psychosis",
+        "Major Depressive Disorder (MDD), Depressive Disorder, Treatment-Resistant",
+        "Neurodegenerative Diseases, Parkinson Disease, Parkinson Disease Psychosis",
+        "Neuropsychiatric Symptoms Related to Neurodegenerative Disease",
+        "Osteoarthritis Pain",
+        "Parkinson Disease",
+        "Parkinson Disease Psychosis",
+        "Parkinson Disease, Parkinson Disease Psychosis, Hallucinations, Delusion",
+        "Parkinson's Disease",
+        "Parkinson's Disease Psychosis",
+        "Rett Syndrome",
+        "Schizophrenia",
+        "Schizophrenia, Psychosis",
+        "Treatment of Depression in Adults With Parkinson's Disease (PD)"
+      ],
+      "top_trials": [
+        {
+          "nct_id": "NCT05796167",
+          "title": "Pimavanserin for Sleep in Parkinson Disease",
+          "status": "WITHDRAWN",
+          "phase": "EARLY_PHASE1",
+          "condition": "Parkinson Disease",
+          "start_date": "2023-01-27",
+          "completion_date": "2024-06-24",
+          "enrollment": 0,
+          "sponsor": "State University of New York - Downstate Medical Center"
+        },
+        {
+          "nct_id": "NCT00361166",
+          "title": "Antipsychotic and Motor Effects of ACP-103 When Administered in Combination With Haloperidol and Risperidone",
+          "status": "COMPLETED",
+          "phase": "PHASE2",
+          "condition": "Schizophrenia",
+          "start_date": "2005-08",
+          "completion_date": "2007-03",
+          "enrollment": 0,
+          "sponsor": "ACADIA Pharmaceuticals Inc."
+        },
+        {
+          "nct_id": "NCT02970305",
+          "title": "Efficacy and Safety of Pimavanserin as Adjunctive Treatment for the Negative Symptoms of Schizophrenia (ADVANCE)",
+          "status": "COMPLETED",
+          "phase": "PHASE2",
+          "condition": "Schizophrenia",
+          "start_date": "2016-11-04",
+          "completion_date": "2019-10-28",
+          "enrollment": 0,
+          "sponsor": "ACADIA Pharmaceuticals Inc."
+        },
+        {
+          "nct_id": "NCT05895513",
+          "title": "Pimavanserin and Aggression and Social Cognition.",
+          "status": "RECRUITING",
+          "phase": "PHASE2",
+          "condition": "Intermittent Explosive Disorder",
+          "start_date": "2024-08-01",
+          "completion_date": "2028-01",
+          "enrollment": 0,
+          "sponsor": "Ohio State University"
+        },
+        {
+          "nct_id": "NCT05357612",
+          "title": "Characterization of the Serotonin 2A Receptor Selective PET Tracer [18F]MH.MZ in Patients With Neurodegenerative Diseases",
+          "status": "RECRUITING",
+          "phase": "PHASE4",
+          "condition": "Neurodegenerative Diseases, Parkinson Disease, Parkinson Disease Psychosis",
+          "start_date": "2023-01-23",
+          "completion_date": "2026-08",
+          "enrollment": 0,
+          "sponsor": "Vanderbilt University Medical Center"
+        }
+      ]
+    }
   },
   {
     "ticker": "ALNY",
@@ -11181,7 +12212,134 @@
       "vol_ratio": "0.9703"
     },
     "include_long": true,
-    "position_flags": []
+    "position_flags": [],
+    "financial_data": {
+      "cash": 1490249000.0,
+      "debt": 677723000.0,
+      "net_debt": -812526000.0,
+      "revenue_ttm": 1037418000.0,
+      "assets": 4851662000.0,
+      "liabilities": 4617768000.0,
+      "equity": 233894000.0,
+      "currency": "USD",
+      "cik": "0001178670"
+    },
+    "clinical_data": {
+      "total_trials": 50,
+      "active_trials": 12,
+      "completed_trials": 28,
+      "lead_stage": "phase_3",
+      "by_phase": {
+        "PHASE1": 15,
+        "": 9,
+        "PHASE1, PHASE2": 5,
+        "PHASE3": 5,
+        "PHASE2": 13,
+        "EARLY_PHASE1": 2,
+        "NA": 1
+      },
+      "conditions": [
+        "Acute Hepatic Porphyria",
+        "Acute Intermittent Porphyria",
+        "Acute Intermittent Porphyria (AIP), Acute Hepatic Porphyria (AHP), Porphyria, Acute Intermittent, Acute Porphyria",
+        "Advanced Hepatocellular Carcinoma, Metastatic Hepatocellular Carcinoma",
+        "Alzheimer's Disease",
+        "Amyloidosis, Hereditary, Transthyretin Amyloidosis",
+        "Amyloidosis, Leukocyte Chemotactic Factor 2 Amyloidosis",
+        "Antitrypsin Deficiency Liver Disease",
+        "Cerebral Amyloid Angiopathy",
+        "Chronic Hepatitis B",
+        "Early-Onset Alzheimer Disease",
+        "Familial Amyloidotic Cardiomyopathy (FAC)",
+        "Healthy",
+        "Healthy Volunteers",
+        "Hepatitis B, Chronic",
+        "Hepatitis B, Chronic Hepatitis B, Hepatitis B, Chronic, Hepatitis B Infection, HBV",
+        "Hereditary Hemorrhagic Telangiectasia",
+        "Hereditary Transthyretin-mediated (hATTR) Amyloidosis, Polyneuropathy",
+        "Hypertension",
+        "IgA Nephropathy (IgAN), Berger Disease, Glomerulonephritis, IgA",
+        "PH1, Primary Hyperoxaluria, RNAi Therapeutic, siRNA, AGT",
+        "Paroxysmal Nocturnal Hemoglobinuria (PNH)",
+        "Polyneuropathies, Wild Type ATTR Amyloidosis, Wild-Type Transthyretin-Related (ATTR)Amyloidosis, Wild-Type Transthyretin Cardiac Amyloidosis, Transthyretin Amyloidosis",
+        "Primary Hyperoxaluria",
+        "Primary Hyperoxaluria Type 1 (PH1)",
+        "Primary Hyperoxaluria Type 1, Primary Hyperoxaluria",
+        "Respiratory Syncytial Virus Infections",
+        "Solid Tumors",
+        "TTR-mediated Amyloidosis",
+        "TTR-mediated Amyloidosis, Amyloidosis, Hereditary, Amyloid Neuropathies, Familial, Familial Amyloid Polyneuropathies, Amyloid Neuropathies, Amyloidosis, Hereditary, Transthyretin-Related",
+        "Transthyretin (TTR)-Mediated Amyloidosis, Familial Amyloidotic Polyneuropathy (FAP), ATTR Amyloidosis, Familial Amyloid Neuropathies",
+        "Transthyretin Amyloidosis",
+        "Transthyretin Amyloidosis (ATTR) With Cardiomyopathy",
+        "Transthyretin Amyloidosis With Cardiomyopathy",
+        "Transthyretin Amyloidosis, Heart Failure, Heart Failure, Diastolic, Amyloidosis",
+        "Transthyretin Amyloidosis, Transthyretin-Related (ATTR) Familial Amyloid Polyneuropathy, Transthyretin-Related (ATTR) Familial Amyloid Cardiomyopathy, Polyneuropathies, Cardiomyopathies",
+        "Transthyretin Mediated Amyloidosis (ATTR)",
+        "Transthyretin-Mediated Amyloidosis",
+        "Transthyretin-Mediated Amyloidosis, ATTR Amyloidosis",
+        "Transthyretin-mediated Amyloidosis (ATTR Amyloidosis)",
+        "Transthyretin-mediated Amyloidosis With Cardiomyopathy, ATTR Amyloidosis With Cardiomyopathy",
+        "ZZ Type Alpha-1 Antitrypsin Deficiency Liver Disease"
+      ],
+      "top_trials": [
+        {
+          "nct_id": "NCT01148953",
+          "title": "Trial to Evaluate Safety and Tolerability of ALN-TTR01 in Transthyretin (TTR) Amyloidosis",
+          "status": "COMPLETED",
+          "phase": "PHASE1",
+          "condition": "Transthyretin Mediated Amyloidosis (ATTR)",
+          "start_date": "2010-06",
+          "completion_date": "2012-02",
+          "enrollment": 0,
+          "sponsor": "Alnylam Pharmaceuticals"
+        },
+        {
+          "nct_id": "NCT03774784",
+          "title": "A Study of the Natural History of Leukocyte Chemotactic Factor 2 Amyloidosis (ALECT2) Disease",
+          "status": "TERMINATED",
+          "phase": "",
+          "condition": "Amyloidosis, Leukocyte Chemotactic Factor 2 Amyloidosis",
+          "start_date": "2019-01-29",
+          "completion_date": "2020-05-18",
+          "enrollment": 0,
+          "sponsor": "Alnylam Pharmaceuticals"
+        },
+        {
+          "nct_id": "NCT06659640",
+          "title": "A Study to Evaluate ALN-6400 in Healthy Volunteers and Patients With Hereditary Hemorrhagic Telangiectasia (HHT)",
+          "status": "RECRUITING",
+          "phase": "PHASE1, PHASE2",
+          "condition": "Hereditary Hemorrhagic Telangiectasia",
+          "start_date": "2024-11-11",
+          "completion_date": "2028-06-22",
+          "enrollment": 0,
+          "sponsor": "Alnylam Pharmaceuticals"
+        },
+        {
+          "nct_id": "NCT03767829",
+          "title": "A Study of ALN-AAT02 in Healthy Participants and Participants With ZZ Type Alpha-1 Antitrypsin Deficiency Liver Disease",
+          "status": "TERMINATED",
+          "phase": "PHASE1, PHASE2",
+          "condition": "ZZ Type Alpha-1 Antitrypsin Deficiency Liver Disease",
+          "start_date": "2018-12-05",
+          "completion_date": "2020-06-25",
+          "enrollment": 0,
+          "sponsor": "Alnylam Pharmaceuticals"
+        },
+        {
+          "nct_id": "NCT04883905",
+          "title": "ELEVATE, a Registry of Patients With Acute Hepatic Porphyria (AHP)",
+          "status": "RECRUITING",
+          "phase": "",
+          "condition": "Acute Hepatic Porphyria",
+          "start_date": "2021-04-26",
+          "completion_date": "2027-04-01",
+          "enrollment": 0,
+          "sponsor": "Alnylam Pharmaceuticals"
+        }
+      ]
+    }
   },
   {
     "ticker": "BMRN",
@@ -12135,7 +13293,126 @@
       "vol_ratio": "1.4653"
     },
     "include_long": true,
-    "position_flags": []
+    "position_flags": [],
+    "financial_data": {
+      "cash": 1250108000.0,
+      "debt": null,
+      "net_debt": null,
+      "revenue_ttm": 373447000.0,
+      "assets": 7614868000.0,
+      "liabilities": 1558157000.0,
+      "equity": 6056711000.0,
+      "currency": "USD",
+      "cik": "0001048477"
+    },
+    "clinical_data": {
+      "total_trials": 50,
+      "active_trials": 7,
+      "completed_trials": 31,
+      "lead_stage": "commercial",
+      "by_phase": {
+        "PHASE2, PHASE3": 2,
+        "": 15,
+        "PHASE2": 11,
+        "PHASE1, PHASE2": 4,
+        "PHASE3": 9,
+        "PHASE1": 6,
+        "PHASE4": 2,
+        "NA": 1
+      },
+      "conditions": [
+        "Achondroplasia",
+        "Advanced Breast Cancer, HER2/Neu Negative, Triple-Negative Breast Cancer",
+        "Autism Spectrum Disorder",
+        "Autistic Disorder",
+        "Behavioral Manifestations of Lesch-Nyhan Disease",
+        "Childhood Solid Tumors",
+        "Claudication, Intermittent, Peripheral Artery Disease, Peripheral Vascular Diseases",
+        "Coronary Artery Disease",
+        "Duchenne Muscular Dystrophy",
+        "Endothelial Dysfunction",
+        "Hemophilia A",
+        "Hemophilia A, Gene Therapy, Clotting Disorders, Blood Disorder",
+        "Hereditary Angioedema, HAE",
+        "Hyperphenylalaninemia (HPA) Due to Phenylketonuria (PKU) or Tetrahydrobiopterin (BH4) Deficiency",
+        "Hypochondroplasia",
+        "Intermittent Claudication",
+        "Isolated Systolic Hypertension, Endothelial Dysfunction",
+        "Jansky-Bielschowsky Disease, Batten Disease, Late-Infantile Neuronal Ceroid Lipofuscinosis Type 2, CLN2 Disease, CLN2 Disorder",
+        "Late-onset Pompe Disease",
+        "MPS IV A",
+        "Morquio Disease, MPS - Mucopolysaccharidosis",
+        "Morquio Syndrome A, Maroteaux Lamy Syndrome, MPS IVA, MPS VI",
+        "Mucopolysaccharidosis IVA, Morquio A Syndrome, MPS IVA",
+        "Mucopolysaccharidosis VI",
+        "Muscular Dystrophies",
+        "Phenylketonuria",
+        "Phenylketonuria (PKU)",
+        "Phenylketonuria, PKU",
+        "Phenylketonurias",
+        "Pompe Disease",
+        "Pulmonary Arterial Hypertension",
+        "Tetrahydrobiopterin Deficiencies, Hyperphenylalaninemia, Non-Phenylketonuric",
+        "Tetrahydrobiopterin Deficiency"
+      ],
+      "top_trials": [
+        {
+          "nct_id": "NCT00935753",
+          "title": "Trial of Kuvan in Lesch-Nyhan Disease",
+          "status": "WITHDRAWN",
+          "phase": "PHASE2, PHASE3",
+          "condition": "Behavioral Manifestations of Lesch-Nyhan Disease",
+          "start_date": "2009-04",
+          "completion_date": "2010-02",
+          "enrollment": 0,
+          "sponsor": "University of California, San Diego"
+        },
+        {
+          "nct_id": "NCT00728676",
+          "title": "Study to Evaluate the Effects of Kuvan on Individuals With Phenylketonuria (PKU) With Maladaptive Behaviors",
+          "status": "COMPLETED",
+          "phase": "",
+          "condition": "Phenylketonuria",
+          "start_date": "2008-08",
+          "completion_date": "2010-05",
+          "enrollment": 0,
+          "sponsor": "Shoji Yano"
+        },
+        {
+          "nct_id": "NCT02401347",
+          "title": "Phase II Trial of Talazoparib in BRCA1/2 Wild-type HER2-negative Breast Cancer and Other Solid Tumors",
+          "status": "COMPLETED",
+          "phase": "PHASE2",
+          "condition": "Advanced Breast Cancer, HER2/Neu Negative, Triple-Negative Breast Cancer",
+          "start_date": "2015-08",
+          "completion_date": "2022-12",
+          "enrollment": 0,
+          "sponsor": "Melinda Telli"
+        },
+        {
+          "nct_id": "NCT03520712",
+          "title": "Gene Therapy Study in Severe Hemophilia A Patients With Antibodies Against AAV5",
+          "status": "TERMINATED",
+          "phase": "PHASE1, PHASE2",
+          "condition": "Hemophilia A, Gene Therapy, Clotting Disorders, Blood Disorder",
+          "start_date": "2018-04-24",
+          "completion_date": "2024-08-07",
+          "enrollment": 0,
+          "sponsor": "BioMarin Pharmaceutical"
+        },
+        {
+          "nct_id": "NCT00355264",
+          "title": "Safety and Efficacy Study of Phenoptin in Subjects With Hyperphenylalaninemia Due to BH4 Deficiency",
+          "status": "COMPLETED",
+          "phase": "PHASE2",
+          "condition": "Tetrahydrobiopterin Deficiencies, Hyperphenylalaninemia, Non-Phenylketonuric",
+          "start_date": "2006-08",
+          "completion_date": "2009-06",
+          "enrollment": 0,
+          "sponsor": "BioMarin Pharmaceutical"
+        }
+      ]
+    }
   },
   {
     "ticker": "CRSP",
@@ -13067,7 +14344,104 @@
       "vol_ratio": "0.7372"
     },
     "include_long": true,
-    "position_flags": []
+    "position_flags": [],
+    "financial_data": {
+      "cash": 286497000.0,
+      "debt": null,
+      "net_debt": null,
+      "revenue_ttm": 157000.0,
+      "assets": 2245308000.0,
+      "liabilities": 329326000.0,
+      "equity": 1915982000.0,
+      "currency": "USD",
+      "cik": "0001674416"
+    },
+    "clinical_data": {
+      "total_trials": 16,
+      "active_trials": 8,
+      "completed_trials": 4,
+      "lead_stage": "phase_3",
+      "by_phase": {
+        "PHASE1, PHASE2": 5,
+        "PHASE1": 5,
+        "": 1,
+        "PHASE2, PHASE3": 2,
+        "PHASE3": 3
+      },
+      "conditions": [
+        "B-cell Lymphoma, Non-Hodgkin Lymphoma, B-cell Malignancy, Chronic Lymphocytic Leukemia (CLL)/Small Lymphocytic Lymphoma (SLL), Follicular Lymphoma, Mantle Cell Lymphoma, Marginal Zone Lymphoma, Large B-cell Lymphoma",
+        "B-cell Malignancy, Non-Hodgkin Lymphoma, B-cell Lymphoma, Adult B Cell ALL",
+        "Beta-Thalassemia, Thalassemia, Genetic Diseases, Inborn, Hematologic Diseases, Hemoglobinopathies",
+        "Beta-Thalassemia, Thalassemia, Sickle Cell Disease, Hematologic Diseases, Hemoglobinopathies, Genetic Diseases, Inborn, Sickle Cell Anemia",
+        "Clear Cell Renal Cell Carcinoma, Cervical Carcinoma, Esophageal Carcinoma, Pancreatic Adenocarcinoma, Malignant Pleural Mesothelioma",
+        "Diabetes Mellitus, Diabetes Mellitus, Type 1, Glucose Metabolism Disorders, Metabolic Disease, Endocrine System Diseases, Autoimmune Diseases, Immune System Diseases",
+        "Hematologic Malignancy, Solid Malignancy",
+        "Multiple Myeloma",
+        "Renal Cell Carcinoma",
+        "SLE (Systemic Lupus), Lupus Erythematosus, Systemic, Lupus Nephritis, Systemic Sclerosis, Inflammatory Myopathy, Idiopathic, Myositis, Diffuse Cutaneous Systemic Sclerosis",
+        "Sickle Cell Disease, Hematological Diseases, Hemoglobinopathies",
+        "Sickle Cell Disease, Hydroxyurea Failure, Hydroxyurea Intolerance, Hemoglobinopathies, Hematological Diseases",
+        "T Cell Lymphoma",
+        "T Cell Lymphoma, B Cell Lymphoma, Acute Myeloid Leukemia"
+      ],
+      "top_trials": [
+        {
+          "nct_id": "NCT04035434",
+          "title": "A Safety and Efficacy Study Evaluating CTX110 in Subjects With Relapsed or Refractory B-Cell Malignancies (CARBON)",
+          "status": "TERMINATED",
+          "phase": "PHASE1, PHASE2",
+          "condition": "B-cell Malignancy, Non-Hodgkin Lymphoma, B-cell Lymphoma, Adult B Cell ALL",
+          "start_date": "2019-07-22",
+          "completion_date": "2024-10-04",
+          "enrollment": 0,
+          "sponsor": "CRISPR Therapeutics AG"
+        },
+        {
+          "nct_id": "NCT04244656",
+          "title": "A Safety and Efficacy Study Evaluating CTX120 in Subjects With Relapsed or Refractory Multiple Myeloma",
+          "status": "TERMINATED",
+          "phase": "PHASE1",
+          "condition": "Multiple Myeloma",
+          "start_date": "2020-01-22",
+          "completion_date": "2024-01-04",
+          "enrollment": 0,
+          "sponsor": "CRISPR Therapeutics AG"
+        },
+        {
+          "nct_id": "NCT05210530",
+          "title": "An Open-Label, FIH Study Evaluating the Safety and Tolerability of VCTX210A Combination Product in Subjects With T1D",
+          "status": "COMPLETED",
+          "phase": "PHASE1",
+          "condition": "Diabetes Mellitus, Diabetes Mellitus, Type 1, Glucose Metabolism Disorders, Metabolic Disease, Endocrine System Diseases, Autoimmune Diseases, Immune System Diseases",
+          "start_date": "2022-01-24",
+          "completion_date": "2023-01-19",
+          "enrollment": 0,
+          "sponsor": "CRISPR Therapeutics AG"
+        },
+        {
+          "nct_id": "NCT06492304",
+          "title": "A Safety and Efficacy Study Evaluating CTX131 in Adult Subjects With Relapsed/Refractory Hematologic Malignancies",
+          "status": "RECRUITING",
+          "phase": "PHASE1, PHASE2",
+          "condition": "T Cell Lymphoma, B Cell Lymphoma, Acute Myeloid Leukemia",
+          "start_date": "2024-08-13",
+          "completion_date": "2030-11",
+          "enrollment": 0,
+          "sponsor": "CRISPR Therapeutics"
+        },
+        {
+          "nct_id": "NCT05795595",
+          "title": "A Safety and Efficacy Study Evaluating CTX131 in Adult Subjects With Relapsed or Refractory Solid Tumors",
+          "status": "COMPLETED",
+          "phase": "PHASE1, PHASE2",
+          "condition": "Clear Cell Renal Cell Carcinoma, Cervical Carcinoma, Esophageal Carcinoma, Pancreatic Adenocarcinoma, Malignant Pleural Mesothelioma",
+          "start_date": "2023-03-13",
+          "completion_date": "2025-09-18",
+          "enrollment": 0,
+          "sponsor": "CRISPR Therapeutics AG"
+        }
+      ]
+    }
   },
   {
     "ticker": "VRTX",
@@ -14001,7 +15375,106 @@
       "vol_ratio": "0.9778"
     },
     "include_long": true,
-    "position_flags": []
+    "position_flags": [],
+    "financial_data": {
+      "cash": 4939600000.0,
+      "debt": 105000000.0,
+      "net_debt": -4834600000.0,
+      "revenue_ttm": 640799000.0,
+      "assets": 24862300000.0,
+      "liabilities": 7543500000.0,
+      "equity": 17318800000.0,
+      "currency": "USD",
+      "cik": "0000875320"
+    },
+    "clinical_data": {
+      "total_trials": 50,
+      "active_trials": 4,
+      "completed_trials": 42,
+      "lead_stage": "phase_3",
+      "by_phase": {
+        "PHASE2": 10,
+        "PHASE1": 12,
+        "PHASE3": 19,
+        "PHASE1, PHASE2": 3,
+        "": 5,
+        "NA": 1
+      },
+      "conditions": [
+        "Acute Pain",
+        "Alpha-1 Antitrypsin Deficiency",
+        "Chronic Hepatitis C",
+        "Chronic Hepatitis C Virus Infection",
+        "Cystic Fibrosis",
+        "Diabetes Mellitus, Type 1, Impaired Hypoglycemic Awareness, Severe Hypoglycemia",
+        "Diabetic Peripheral Neuropathy",
+        "Genotype 1 Chronic Hepatitis C, Treatment Naive",
+        "Hepatitis C",
+        "Hepatitis C, Chronic",
+        "Influenza Virus",
+        "Pain",
+        "Renal Impairment",
+        "Rheumatoid Arthritis",
+        "Type 1 Diabetes"
+      ],
+      "top_trials": [
+        {
+          "nct_id": "NCT05660538",
+          "title": "Evaluation of Efficacy and Safety of VX-548 for Painful Diabetic Peripheral Neuropathy (DPN)",
+          "status": "COMPLETED",
+          "phase": "PHASE2",
+          "condition": "Diabetic Peripheral Neuropathy",
+          "start_date": "2022-12-20",
+          "completion_date": "2023-10-25",
+          "enrollment": 0,
+          "sponsor": "Vertex Pharmaceuticals Incorporated"
+        },
+        {
+          "nct_id": "NCT01561807",
+          "title": "A Study to Investigate VX-787 Given to Adult Volunteers Inoculated With Live Influenza Virus",
+          "status": "COMPLETED",
+          "phase": "PHASE2",
+          "condition": "Influenza Virus",
+          "start_date": "2012-03",
+          "completion_date": "",
+          "enrollment": 0,
+          "sponsor": "Vertex Pharmaceuticals Incorporated"
+        },
+        {
+          "nct_id": "NCT06394167",
+          "title": "A Phase 1 Dose Escalation Study of Intravenous VX-993 in Healthy Adults",
+          "status": "COMPLETED",
+          "phase": "PHASE1",
+          "condition": "Pain",
+          "start_date": "2024-05-09",
+          "completion_date": "2025-02-18",
+          "enrollment": 0,
+          "sponsor": "Vertex Pharmaceuticals Incorporated"
+        },
+        {
+          "nct_id": "NCT05518734",
+          "title": "A Phase 1 Dose Escalation Study of VX-708 in Healthy Participants",
+          "status": "COMPLETED",
+          "phase": "PHASE1",
+          "condition": "Pain",
+          "start_date": "2022-09-17",
+          "completion_date": "2023-03-07",
+          "enrollment": 0,
+          "sponsor": "Vertex Pharmaceuticals Incorporated"
+        },
+        {
+          "nct_id": "NCT04599465",
+          "title": "A Study to Assess the Effect of ELX/TEZ/IVA on Glucose Tolerance in Participants With Cystic Fibrosis (CF)",
+          "status": "COMPLETED",
+          "phase": "PHASE3",
+          "condition": "Cystic Fibrosis",
+          "start_date": "2021-01-15",
+          "completion_date": "2022-07-14",
+          "enrollment": 0,
+          "sponsor": "Vertex Pharmaceuticals Incorporated"
+        }
+      ]
+    }
   },
   {
     "ticker": "SRPT",
@@ -14945,7 +16418,114 @@
     "include_long": false,
     "position_flags": [
       "EXCLUDE_DRAWDOWN_LT_40PCT"
-    ]
+    ],
+    "financial_data": {
+      "cash": 613077000.0,
+      "debt": 1035146000.0,
+      "net_debt": 422069000.0,
+      "revenue_ttm": 1755303000.0,
+      "assets": 3493437000.0,
+      "liabilities": 2173317000.0,
+      "equity": 1320120000.0,
+      "currency": "USD",
+      "cik": "0000873303"
+    },
+    "clinical_data": {
+      "total_trials": 50,
+      "active_trials": 10,
+      "completed_trials": 26,
+      "lead_stage": "commercial",
+      "by_phase": {
+        "PHASE3": 7,
+        "PHASE2": 11,
+        "PHASE1": 17,
+        "PHASE1, PHASE2": 9,
+        "": 5,
+        "PHASE4": 1
+      },
+      "conditions": [
+        "Cardiovascular Disease, Coronary Artery Bypass",
+        "Coronary Artery Disease, Coronary Restenosis",
+        "Coronary Artery Disease, Coronary Stent Restenosis",
+        "DMD, BMD",
+        "Duchenne Muscular Dystrophy",
+        "Duchenne Muscular Dystrophy (DMD)",
+        "Duchenne Muscular Dystrophy, Burden, Dependency, Disability Physical, Disease Management, Impairment, Rare Diseases",
+        "Dysferlinopathy",
+        "Ebola Hemorrhagic Fever",
+        "Encephalitis",
+        "Hepatitis C",
+        "Limb Girdle Muscular Dystrophy",
+        "Limb Girdle Muscular Dystrophy, Limb Girdle Muscular Dystrophy Type 2D/R3",
+        "Limb-Girdle Muscular Dystrophy, Type 2D",
+        "Limb-Girdle Muscular Dystrophy, Type 2E",
+        "Limb-girdle Muscular Dystrophy",
+        "Marburg Hemorrhagic Fever",
+        "Muscular Dystrophies, Limb-Girdle",
+        "Muscular Dystrophy, Duchenne",
+        "Neoplasms",
+        "Spinal Muscular Atrophy, Fragile X Syndrome, Fragile X - Premutation, Duchenne Muscular Dystrophy, Hyperinsulinemic Hypoglycemia, Familial 1, Diabetes Mellitus, Adrenoleukodystrophy, Neonatal, Medium-chain Acyl-CoA Dehydrogenase Deficiency, Very Long Chain Acyl Coa Dehydrogenase Deficiency, Beta-ketothiolase Deficiency, Severe Combined Immunodeficiency Due to Adenosine Deaminase Deficiency, Primary Hyperoxaluria Type 1, Congenital Bile Acid Synthesis Defect Type 2, Pyridoxine-Dependent Epilepsy, Hereditary Fructose Intolerance, Hypophosphatasia, Hyperargininemia, Mucopolysaccharidosis Type 6, Argininosuccinic Aciduria, Citrullinemia, Type I, Wilson Disease, Maple Syrup Urine Disease, Type 1A, Maple Syrup Urine Disease, Type 1B, Biotinidase Deficiency, Neonatal Severe Primary Hyperparathyroidism, Intrinsic Factor Deficiency, Usher Syndrome Type 1D/F Digenic (Diagnosis), Cystic Fibrosis, Stickler Syndrome Type 2, Stickler Syndrome Type 1, Alport Syndrome, Autosomal Recessive, Alport Syndrome, X-Linked, Carbamoyl Phosphate Synthetase I Deficiency Disease, Carnitine Palmitoyl Transferase 1A Deficiency, Carnitine Palmitoyltransferase II Deficiency, Cystinosis, Chronic Granulomatous Disease, Cerebrotendinous Xanthomatoses, Maple Syrup Urine Disease, Type 2, Severe Combined Immunodeficiency Due to DCLRE1C Deficiency, Thyroid Dyshormonogenesis 6, Thyroid Dyshormonogenesis 5, Supravalvar Aortic Stenosis, Factor X Deficiency, Hemophilia A, Hemophilia B, Tyrosinemia, Type I, Fructose 1,6 Bisphosphatase Deficiency, Glycogen Storage Disease Type I, G6PD Deficiency, Glycogen Storage Disease II, Galactokinase Deficiency, Mucopolysaccharidosis Type IV A, Galactosemias, Guanidinoacetate Methyltransferase Deficiency, Agat Deficiency, Glutaryl-CoA Dehydrogenase Deficiency, Gtp Cyclohydrolase I Deficiency, Hyperinsulinism-Hyperammonemia Syndrome, Primary Hyperoxaluria Type 2, 3-Hydroxyacyl-CoA Dehydrogenase Deficiency, Long-chain 3-hydroxyacyl-CoA Dehydrogenase Deficiency, Mitochondrial Trifunctional Protein Deficiency, Sickle Cell Disease, Beta-Thalassemia, Holocarboxylase Synthetase Deficiency, 3-Hydroxy-3-Methylglutaric Aciduria, Primary Hyperoxaluria Type 3, Hermansky-Pudlak Syndrome 1, Hermansky-Pudlak Syndrome 4, Apparent Mineralocorticoid Excess, HSDB, CBAS1, Mucopolysaccharidosis Type 2, Mucopolysaccharidosis Type 1, Severe Combined Immunodeficiency, X Linked, Severe Combined Immunodeficiency Due to IL-7Ralpha Deficiency, Diabetes Mellitus, Permanent Neonatal, Isovaleric Acidemia, Severe Combined Immunodeficiency T-Cell Negative B-Cell Positive Due to Janus Kinase-3 Deficiency (Disorder), Jervell and Lange-Nielsen Syndrome 2, Hyperinsulinemic Hypoglycemia, Familial, 2, Diabetes Mellitus, Permanent Neonatal, With Neurologic Features, Jervell and Lange-Nielsen Syndrome 1, Lysosomal Acid Lipase Deficiency, CblF, 3-Methylcrotonyl CoA Carboxylase 1 Deficiency, 3-Methylcrotonyl CoA Carboxylase 2 Deficiency, Waardenburg Syndrome Type 2A, Methylmalonic Aciduria cblA Type, Methylmalonic Aciduria cblB Type, Methylmalonic Aciduria and Homocystinuria Type cblC, MAHCD, Methylmalonic Aciduria Due to Methylmalonyl-CoA Mutase Deficiency, Congenital Disorder of Glycosylation Type 1B, Mthfr Deficiency, Methylcobalamin Deficiency Type Cbl G (Disorder), Methylcobalamin Deficiency Type cblE, Usher Syndrome, Type 1B, N-acetylglutamate Synthase Deficiency, Ornithine Transcarbamylase Deficiency, Phenylketonurias, Waardenburg Syndrome Type 1, Congenital Hypothyroidism, Propionic Acidemia, Usher Syndrome, Type 1F, Pancreatic Agenesis 1, Hereditary Hypophosphatemic Rickets, Glycogen Storage Disease IXB, Glycogen Storage Disease IXC, MOWS, Epilepsy, Early-Onset, Vitamin B6-Dependent, Pyridoxal Phosphate-Responsive Seizures, Pituitary Hormone Deficiency, Combined, 1, Ptsd, Dihydropteridine Reductase Deficiency, Severe Combined Immunodeficiency Due to RAG1 Deficiency, Severe Combined Immunodeficiency Due to RAG2 Deficiency, Retinoblastoma, Multiple Endocrine Neoplasia Type 2B, Pseudohypoaldosteronism, Type I, Liddle Syndrome, Biotin-Responsive Basal Ganglia Disease, SCD, DIAR1, GSD1C, Acrodermatitis Enteropathica, Thyroid Dyshormonogenesis 1, Riboflavin Transporter Deficiency, Waardenburg Syndrome, Type 2E, SRD, Congenital Lipoid Adrenal Hyperplasia Due to STAR Deficiency, Barth Syndrome, Adrenocorticotropic Hormone Deficiency, Transcobalamin II Deficiency, Thyroid Dyshormonogenesis 3, Segawa Syndrome, Autosomal Recessive, Autosomal Recessive Nonsyndromic Hearing Loss, Thyroid Dyshormonogenesis 2A, Congenital Isolated Thyroid Stimulating Hormone Deficiency, Hypothyroidism Due to TSH Receptor Mutations, Usher Syndrome Type 1C, Usher Syndrome Type 1G (Diagnosis), Von Willebrand Disease, Type 3, Combined Immunodeficiency Due to ZAP70 Deficiency, Adenine Phosphoribosyltransferase Deficiency, Metachromatic Leukodystrophy, Canavan Disease, Menkes Disease, Carbonic Anhydrase VA Deficiency, Developmental and Epileptic Encephalopathy 2, 17 Alpha-Hydroxylase Deficiency, Smith-Lemli-Opitz Syndrome, Krabbe Disease, Glutathione Synthetase Deficiency, Mucopolysaccharidosis Type 7, Rett Syndrome, Molybdenum Cofactor Deficiency, Type A, Niemann-Pick Disease, Type C1, Niemann-Pick Disease Type C2, Ornithine Aminotransferase Deficiency, 3-Phosphoglycerate Dehydrogenase Deficiency, Leber Congenital Amaurosis 2, Dravet Syndrome, Mucopolysaccharidosis Type 3 A, Ornithine Translocase Deficiency, Carnitine-acylcarnitine Translocase Deficiency, Glucose Transporter Type 1 Deficiency Syndrome, Creatine Transporter Deficiency, Niemann-Pick Disease Type A, Pitt Hopkins Syndrome, Tuberous Sclerosis 1, Tuberous Sclerosis 2, Ataxia With Isolated Vitamin E Deficiency, Angelman Syndrome, Prader-Willi Syndrome, Homocystinuria, Permanent Neonatal Diabetes Mellitus, Transient Neonatal Diabetes Mellitus, Factor VII Deficiency, Glycogen Storage Disease Type IXA1, Glycogen Storage Disease, Type IXA2, Glycogen Storage Disease IC, Glycogen Storage Disease Type IB, Central Hypoventilation Syndrome With or Without Hirschsprung Disease",
+        "West Nile Fever",
+        "West Nile Virus"
+      ],
+      "top_trials": [
+        {
+          "nct_id": "NCT06952686",
+          "title": "A Study of SRP-9005 in Limb Girdle Muscular Dystrophy Type 2C/R5 Pediatric and Adult Participants",
+          "status": "WITHDRAWN",
+          "phase": "PHASE3",
+          "condition": "Muscular Dystrophies, Limb-Girdle",
+          "start_date": "2025-06-30",
+          "completion_date": "2032-03-30",
+          "enrollment": 0,
+          "sponsor": "Sarepta Therapeutics, Inc."
+        },
+        {
+          "nct_id": "NCT03218995",
+          "title": "Study of Eteplirsen in Young Participants With Duchenne Muscular Dystrophy (DMD) Amenable to Exon 51 Skipping",
+          "status": "COMPLETED",
+          "phase": "PHASE2",
+          "condition": "Duchenne Muscular Dystrophy",
+          "start_date": "2017-08-16",
+          "completion_date": "2021-03-10",
+          "enrollment": 0,
+          "sponsor": "Sarepta Therapeutics, Inc."
+        },
+        {
+          "nct_id": "NCT02255552",
+          "title": "Study of Eteplirsen in DMD Patients",
+          "status": "COMPLETED",
+          "phase": "PHASE3",
+          "condition": "Duchenne Muscular Dystrophy (DMD)",
+          "start_date": "2014-11-17",
+          "completion_date": "2019-06-14",
+          "enrollment": 0,
+          "sponsor": "Sarepta Therapeutics, Inc."
+        },
+        {
+          "nct_id": "NCT00244647",
+          "title": "A Phase 1b Study Evaluating RESTEN-MP in Subjects With Focal de Novo Stenosis",
+          "status": "TERMINATED",
+          "phase": "PHASE1",
+          "condition": "Coronary Artery Disease, Coronary Stent Restenosis",
+          "start_date": "2003-08",
+          "completion_date": "",
+          "enrollment": 0,
+          "sponsor": "Sarepta Therapeutics, Inc."
+        },
+        {
+          "nct_id": "NCT01976091",
+          "title": "A Gene Transfer Therapy Study to Evaluate the Safety of SRP-9004 (Patidistrogene Bexoparvovec) in Participants With Limb-Girdle Muscular Dystrophy, Type 2D (LGMD2D)",
+          "status": "COMPLETED",
+          "phase": "PHASE1, PHASE2",
+          "condition": "Limb-Girdle Muscular Dystrophy, Type 2D",
+          "start_date": "2015-02-01",
+          "completion_date": "2019-03-14",
+          "enrollment": 0,
+          "sponsor": "Sarepta Therapeutics, Inc."
+        }
+      ]
+    }
   },
   {
     "ticker": "UTHR",
@@ -15902,7 +17482,129 @@
       "vol_ratio": "0.9477"
     },
     "include_long": true,
-    "position_flags": []
+    "position_flags": [],
+    "financial_data": {
+      "cash": 1340100000.0,
+      "debt": null,
+      "net_debt": null,
+      "revenue_ttm": 1483300000.0,
+      "assets": 7351100000.0,
+      "liabilities": 760900000.0,
+      "equity": 6590200000.0,
+      "currency": "USD",
+      "cik": "0001082554"
+    },
+    "clinical_data": {
+      "total_trials": 50,
+      "active_trials": 6,
+      "completed_trials": 29,
+      "lead_stage": "commercial",
+      "by_phase": {
+        "PHASE4": 7,
+        "PHASE1": 13,
+        "": 6,
+        "PHASE2, PHASE3": 4,
+        "NA": 2,
+        "EARLY_PHASE1": 1,
+        "PHASE3": 6,
+        "PHASE2": 10,
+        "PHASE1, PHASE2": 1
+      },
+      "conditions": [
+        "Acute Spinal Cord Injury",
+        "Alcohol Use Disorder (AUD), Post Traumatic Stress Disorder (PTSD)",
+        "Breast Cancer",
+        "Burns",
+        "Critical Limb Ischemia",
+        "ESRD (End-Stage Renal Disease), Kidney Transplantation, Xenotransplantation",
+        "Ebola Hemorrhagic Fever",
+        "Ganglioneuroblastoma, Recurrent Neuroblastoma",
+        "HIV-1-infection",
+        "Hypertension, Pulmonary",
+        "Hypertension, Pulmonary, Pulmonary Arterial Hypertension",
+        "Idiopathic Pulmonary Fibrosis, Interstitial Lung Disease, Progressive Pulmonary Fibrosis",
+        "Interstitial Lung Disease, Pulmonary Hypertension",
+        "Liver Transplant",
+        "Marburg Hemorrhagic Fever",
+        "Neuroblastoma",
+        "PAH",
+        "PAH, Pulmonary Hypertension, Pulmonary Arterial Hypertension, Hypertension, Connective Tissue Diseases, Familial Primary Pulmonary Hypertension, Vascular Diseases, Cardiovascular Diseases, Hypertension, Pulmonary, Lung Diseases, Respiratory Tract Disease",
+        "Persistent Pulmonary Hypertension of the Newborn",
+        "Portopulmonary Hypertension, Pulmonary Arterial Hypertension, Pulmonary Hypertension",
+        "Pulmonary Arterial Hypertension",
+        "Pulmonary Arterial Hypertension, Pulmonary Hypertension",
+        "Pulmonary Hypertension",
+        "Pulmonary Hypertension, Interstitial Lung Disease, Combined Pulmonary Fibrosis and Emphysema",
+        "Pulmonary Hypertension, Pain",
+        "Renal Impairment",
+        "Rotator Cuff Repair, Anterior Cruciate Ligament Reconstruction, Ankle Arthrodesis or Arthroplasty, Hallux Valgus Correction",
+        "Small Cell Lung Cancer",
+        "Solid Tumours",
+        "Staphylococcal Infections, Yeast Infections, Candidiasis",
+        "Systemic Sclerosis",
+        "Systemic Sclerosis, Calcinosis",
+        "Thermal Burns",
+        "Traumatic Brain Injury",
+        "Type 1 Diabetes Mellitus With Hypoglycemia"
+      ],
+      "top_trials": [
+        {
+          "nct_id": "NCT02893995",
+          "title": "Safety, Tolerability, Pharmacokinetics and Efficacy of Two Different Rates of Subcutanous Remodulin\u00ae Dose Titration in Pulmonary Arterial Hypertension",
+          "status": "WITHDRAWN",
+          "phase": "PHASE4",
+          "condition": "Pulmonary Arterial Hypertension",
+          "start_date": "2017-02",
+          "completion_date": "2018-04",
+          "enrollment": 0,
+          "sponsor": "United Therapeutics"
+        },
+        {
+          "nct_id": "NCT01165476",
+          "title": "Comparative Bioavailability of Treprostinil Diethanolamine Manufactured by Two Independent Facilities",
+          "status": "COMPLETED",
+          "phase": "PHASE1",
+          "condition": "Pulmonary Arterial Hypertension",
+          "start_date": "2010-07",
+          "completion_date": "2010-08",
+          "enrollment": 0,
+          "sponsor": "United Therapeutics"
+        },
+        {
+          "nct_id": "NCT06223009",
+          "title": "Phase 1 Healthy Volunteer Burn Therapy Study",
+          "status": "COMPLETED",
+          "phase": "PHASE1",
+          "condition": "Burns",
+          "start_date": "2024-01-30",
+          "completion_date": "2024-07-23",
+          "enrollment": 0,
+          "sponsor": "Neomatrix Therapeutics, Inc."
+        },
+        {
+          "nct_id": "NCT02360345",
+          "title": "Phase I Trial of ONX-0801 Once Weekly or Alternate Weekly",
+          "status": "COMPLETED",
+          "phase": "PHASE1",
+          "condition": "Solid Tumours",
+          "start_date": "2013-09",
+          "completion_date": "2021-03",
+          "enrollment": 0,
+          "sponsor": "Royal Marsden NHS Foundation Trust"
+        },
+        {
+          "nct_id": "NCT01268553",
+          "title": "Transition From Injectable Prostacyclin Medication to Inhaled Prostacyclin Medication",
+          "status": "COMPLETED",
+          "phase": "PHASE4",
+          "condition": "Pulmonary Arterial Hypertension",
+          "start_date": "2010-08",
+          "completion_date": "2016-10-05",
+          "enrollment": 0,
+          "sponsor": "Lundquist Institute for Biomedical Innovation at Harbor-UCLA Medical Center"
+        }
+      ]
+    }
   },
   {
     "ticker": "EXEL",
@@ -16869,7 +18571,139 @@
       "vol_ratio": "0.8102"
     },
     "include_long": true,
-    "position_flags": []
+    "position_flags": [],
+    "financial_data": {
+      "cash": 376300000.0,
+      "debt": null,
+      "net_debt": null,
+      "revenue_ttm": 717486000.0,
+      "assets": 2823547000.0,
+      "liabilities": 662847000.0,
+      "equity": 2160700000.0,
+      "currency": "USD",
+      "cik": "0000939767"
+    },
+    "clinical_data": {
+      "total_trials": 50,
+      "active_trials": 25,
+      "completed_trials": 14,
+      "lead_stage": "phase_3",
+      "by_phase": {
+        "PHASE2": 25,
+        "PHASE3": 4,
+        "PHASE1, PHASE2": 1,
+        "PHASE1": 18,
+        "NA": 1,
+        "PHASE2, PHASE3": 1
+      },
+      "conditions": [
+        "Advanced Leiomyosarcoma, Adipocytic Sarcoma, Advanced Liposarcoma",
+        "Advanced Renal Cell Carcinoma, Metastatic Renal Cell Carcinoma, Clear Cell Renal Cell Carcinoma",
+        "Advanced Solid Tumor",
+        "Aggressive Variant Prostate Carcinoma",
+        "Anaplastic Thyroid Cancer, Thyroid Cancer, BRAF Mutation-Related Tumors",
+        "Bile Duct Cancer, Intrahepatic Cholangiocarcinoma, Cholangiocarcinoma of the Extrahepatic Bile Duct",
+        "Brain Metastases, Renal Cell Carcinoma",
+        "Breast Cancer",
+        "Cancer",
+        "Cancer, Non-small-cell Lung Cancer, Breast Cancer",
+        "Cancer, Non-small-cell Lung Cancer, Colorectal Cancer, Papillary Thyroid Cancer, Melanoma",
+        "Carcinoma, Non-Small-Cell Lung",
+        "Clear Cell Renal Cell Cancer (ccRCC), Clear Cell Renal Carcinoma, Clear Cell Renal Cell Carcinoma Metastatic, Clear Cell Renal Cancer, Bone Metastases of a Malignant Tumor, Clear Cell Renal Cell Carcinoma, Bone, Metastatic Cancer, Metastatic Cancer, Metastatic Renal Cell Carcinoma, Metastases to Bone",
+        "Colorectal Adenocarcinoma, Metastatic Pancreatic Adenocarcinoma, Recurrent Colorectal Carcinoma, Recurrent Pancreatic Carcinoma, Stage III Colorectal Cancer, Stage III Pancreatic Cancer, Stage IIIA Colorectal Cancer, Stage IIIB Colorectal Cancer, Stage IV Colorectal Cancer, Stage IV Pancreatic Cancer, Stage IVA Colorectal Cancer, Stage IVA Pancreatic Cancer, Stage IVB Colorectal Cancer, Stage IVB Pancreatic Cancer, Unresectable Pancreatic Carcinoma",
+        "Colorectal Cancer",
+        "Gastric Adenocarcinoma, GastroEsophageal Cancer",
+        "Head and Neck Squamous Cell Carcinoma",
+        "Healthy, Hepatic Impairment",
+        "Hepatic Impairment, Moderate Hepatic Impairment",
+        "Hepatocellular Carcinoma",
+        "High Grade Neuroendocrine Neoplasms",
+        "Locally Advanced Hepatocellular Carcinoma",
+        "Locally Advanced Renal Cell Carcinoma",
+        "Lung Cancer, NSCLC Stage IV, Metastatic NSCLC - Non-Small Cell Lung Cancer, Advanced NSCLC",
+        "Malignant Neoplasms of Urinary Tract, Renal Cell Carcinoma, Chromophobe Renal Cell Carcinoma, Metastatic Renal Cell Carcinoma, Papillary Renal Cell Carcinoma, Renal Cell Carcinoma Associated With Xp11.2 Translocations/TFE3 Gene Fusions, Sarcomatoid Renal Cell Carcinoma, Stage IV Renal Cell Cancer AJCC v8, Unclassified Renal Cell Carcinoma",
+        "Melanoma",
+        "Melanoma, Skin Cancer",
+        "Meningioma",
+        "Merkel Cell Carcinoma, Skin Cancer",
+        "Metastatic Head and Neck Carcinoma, Paranasal Sinus Squamous Cell Carcinoma, Recurrent Head and Neck Squamous Cell Carcinoma, Recurrent Hypopharyngeal Squamous Cell Carcinoma, Recurrent Laryngeal Squamous Cell Carcinoma, Recurrent Oral Cavity Squamous Cell Carcinoma, Recurrent Oropharyngeal Squamous Cell Carcinoma, Stage IV Hypopharyngeal Squamous Cell Carcinoma AJCC v7, Stage IV Laryngeal Squamous Cell Carcinoma AJCC v7, Stage IV Oral Cavity Squamous Cell Carcinoma AJCC v6 and v7, Stage IV Oropharyngeal Squamous Cell Carcinoma AJCC v7, Stage IVA Hypopharyngeal Squamous Cell Carcinoma AJCC v7, Stage IVA Laryngeal Squamous Cell Carcinoma AJCC v7, Stage IVA Oral Cavity Squamous Cell Carcinoma AJCC v6 and v7, Stage IVA Oropharyngeal Squamous Cell Carcinoma AJCC v7, Stage IVB Hypopharyngeal Squamous Cell Carcinoma AJCC v7, Stage IVB Laryngeal Squamous Cell Carcinoma AJCC v7, Stage IVB Oral Cavity Squamous Cell Carcinoma AJCC v6 and v7, Stage IVB Oropharyngeal Squamous Cell Carcinoma AJCC v7, Stage IVC Hypopharyngeal Squamous Cell Carcinoma AJCC v7, Stage IVC Laryngeal Squamous Cell Carcinoma AJCC v7, Stage IVC Oral Cavity Squamous Cell Carcinoma AJCC v6 and v7, Stage IVC Oropharyngeal Squamous Cell Carcinoma AJCC v7, Unresectable Head and Neck Squamous Cell Carcinoma",
+        "Metastatic Hormone Refractory Prostate Cancer",
+        "Metastatic Renal Cell Carcinoma Treated With Cabozantinib",
+        "Metastatic Soft-tissue Sarcoma",
+        "Neoadjuvant Treatment, Thyroid Cancer",
+        "Neoplasm Malignant, Renal Cell Carcinoma, Hormone Receptor Positive Breast Carcinoma, Metastatic Castration-resistant Prostate Cancer, Colorectal Cancer",
+        "Neuroblastoma, Sarcoma",
+        "Non-Hodgkin's Lymphoma (NHL), Activated B-Cell Type Diffuse Large B-Cell Lymphoma (ABC-DLBCL), Mantle Cell Lymphoma (MCL), Chronic Lymphocytic Leukemia (CLL), Small Lymphocytic Lymphoma (SLL)",
+        "Pancreatic Adenocarcinoma Metastatic",
+        "Poorly Differentiated Thyroid Gland Carcinoma, Recurrent Thyroid Gland Carcinoma, Stage I Thyroid Gland Follicular Carcinoma, Stage I Thyroid Gland Papillary Carcinoma, Stage II Thyroid Gland Follicular Carcinoma, Stage II Thyroid Gland Papillary Carcinoma, Stage III Thyroid Gland Follicular Carcinoma, Stage III Thyroid Gland Papillary Carcinoma, Stage IVA Thyroid Gland Follicular Carcinoma, Stage IVA Thyroid Gland Papillary Carcinoma, Stage IVB Thyroid Gland Follicular Carcinoma, Stage IVB Thyroid Gland Papillary Carcinoma, Stage IVC Thyroid Gland Follicular Carcinoma, Stage IVC Thyroid Gland Papillary Carcinoma, Tall Cell Variant Thyroid Gland Papillary Carcinoma, Thyroid Gland Oncocytic Follicular Carcinoma",
+        "Prostate Cancer",
+        "Prostate Cancer, Castration Resistant Prostate Cancer, Pain, Prostatic Neoplasms",
+        "Prostate Cancer, Castration Resistant Prostate Cancer, Prostatic Neoplasms",
+        "RCC, Renal Cell Carcinoma",
+        "Relapsed Acute Myeloid Leukemia, Refractory Acute Myeloid Leukemia",
+        "Renal Cell Carcinoma",
+        "Sarcoma of the Extremity, Stage I Soft Tissue Sarcoma of the Trunk and Extremities, Stage IA Soft Tissue Sarcoma of the Trunk and Extremities, Stage IB Soft Tissue Sarcoma of the Trunk and Extremities, Stage II Soft Tissue Sarcoma of the Trunk and Extremities",
+        "Solid Tumor, Advanced Solid Tumor, Metastatic Solid Tumor, Immune Sensitive Tumor",
+        "Urothelial Carcinoma, Renal Cell Carcinoma, Non-Small Cell Lung Cancer, Castration-resistant Prostate Cancer, Triple Negative Breast Cancer, Ovarian Cancer, Endometrial Cancer, Hepatocellular Carcinoma, Gastric Cancer, Gastroesophageal Junction Adenocarcinoma, Colorectal Cancer, Head and Neck Cancer, Differentiated Thyroid Cancer, Lower Esophageal Cancer"
+      ],
+      "top_trials": [
+        {
+          "nct_id": "NCT02036476",
+          "title": "Cabozantinib in Recurrent/Metastatic Merkel Cell Carcinoma",
+          "status": "TERMINATED",
+          "phase": "PHASE2",
+          "condition": "Merkel Cell Carcinoma, Skin Cancer",
+          "start_date": "2014-02",
+          "completion_date": "2016-07",
+          "enrollment": 0,
+          "sponsor": "Dana-Farber Cancer Institute"
+        },
+        {
+          "nct_id": "NCT07227402",
+          "title": "A Clinical Study of Belzutifan and Zanzalintinib in People With Recurrent Kidney Cancer Following Adjuvant Therapy (MK-6482-033)",
+          "status": "RECRUITING",
+          "phase": "PHASE3",
+          "condition": "Renal Cell Carcinoma",
+          "start_date": "2025-11-26",
+          "completion_date": "2032-02-27",
+          "enrollment": 0,
+          "sponsor": "Merck Sharp & Dohme LLC"
+        },
+        {
+          "nct_id": "NCT04220229",
+          "title": "Cabozantinib With Radiation Therapy for the Treatment of Sarcomas of the Extremities",
+          "status": "TERMINATED",
+          "phase": "PHASE1, PHASE2",
+          "condition": "Sarcoma of the Extremity, Stage I Soft Tissue Sarcoma of the Trunk and Extremities, Stage IA Soft Tissue Sarcoma of the Trunk and Extremities, Stage IB Soft Tissue Sarcoma of the Trunk and Extremities, Stage II Soft Tissue Sarcoma of the Trunk and Extremities",
+          "start_date": "2020-06-01",
+          "completion_date": "2024-10-31",
+          "enrollment": 0,
+          "sponsor": "University of Washington"
+        },
+        {
+          "nct_id": "NCT01657591",
+          "title": "Study of XL888 With Vemurafenib for Patients With Unresectable BRAF Mutated Stage III/IV Melanoma",
+          "status": "COMPLETED",
+          "phase": "PHASE1",
+          "condition": "Melanoma",
+          "start_date": "2012-07-27",
+          "completion_date": "2021-09-21",
+          "enrollment": 0,
+          "sponsor": "H. Lee Moffitt Cancer Center and Research Institute"
+        },
+        {
+          "nct_id": "NCT03213626",
+          "title": "Cabozantinib and Erlotinib for Patients With EGFR and c-Met Co-expressing Metastatic Pancreatic Adenocarcinoma",
+          "status": "TERMINATED",
+          "phase": "PHASE2",
+          "condition": "Pancreatic Adenocarcinoma Metastatic",
+          "start_date": "2017-10-13",
+          "completion_date": "2019-11-18",
+          "enrollment": 0,
+          "sponsor": "Patrick Joseph Loehrer Sr."
+        }
+      ]
+    }
   },
   {
     "ticker": "RARE",
@@ -17827,7 +19661,127 @@
     "position_flags": [
       "EXCLUDE_DRAWDOWN_LT_40PCT",
       "VOL_EXPANSION"
-    ]
+    ],
+    "financial_data": {
+      "cash": 202510000.0,
+      "debt": null,
+      "net_debt": null,
+      "revenue_ttm": 465721000.0,
+      "assets": 1190445000.0,
+      "liabilities": 1174286000.0,
+      "equity": 16159000.0,
+      "currency": "USD",
+      "cik": "0001515673"
+    },
+    "clinical_data": {
+      "total_trials": 50,
+      "active_trials": 11,
+      "completed_trials": 23,
+      "lead_stage": "phase_3",
+      "by_phase": {
+        "": 14,
+        "PHASE3": 9,
+        "EARLY_PHASE1": 1,
+        "PHASE1, PHASE2": 5,
+        "PHASE2": 18,
+        "PHASE1": 2,
+        "PHASE2, PHASE3": 1
+      },
+      "conditions": [
+        "Adult Polyglucosan Body Disease, Glycogen Brancher Enzyme Deficiency, Glycogen Storage Disease Type IV",
+        "Angelman Syndrome",
+        "Carnitine Palmitoyltransferase (CPT I or CPT II) Deficiency, Very Long Chain Acyl-CoA Dehydrogenase (VLCAD) Deficiency, Long-chain 3-hydroxy-acyl-CoA Dehydrogenase (LCHAD) Deficiency, Trifunctional Protein (TFP) Deficiency, Carnitine-acylcarnitine Translocase (CACT) Deficiency",
+        "Chronic-kidney Disease Stage 5D on Stable Hemodialysis",
+        "GNE Myopathy, Hereditary Inclusion Body Myopathy (HIBM)",
+        "Glucose Transporter Type 1 Deficiency Syndrome",
+        "Glucose Transporter Type 1 Deficiency Syndrome (Glut1 DS)",
+        "Glucose Transporter Type-1 Deficiency Syndrome (Glut1 DS)",
+        "Glycogen Storage Disease Type I",
+        "Glycogen Storage Disease Type IA",
+        "Glycogen Storage Disease Type IA, Von Gierke's Disease (GSD Type Ia)",
+        "Glycogen Storage Disease Type III",
+        "Glycogen Storage Disease Type V",
+        "Hereditary Inclusion Body Myopathy (HIBM)",
+        "Hereditary Inclusion Body Myopathy, Distal Myopathy With Rimmed Vacuoles, Distal Myopathy, Nonaka Type, GNE Myopathy",
+        "Hereditary Inclusion Body Myopathy, Distal Myopathy With Rimmed Vacuoles, Distal Myopathy, Nonaka Type, GNE Myopathy, Quadriceps Sparing Myopathy, Inclusion Body Myopathy 2",
+        "Hereditary Inclusion Body Myopathy, GNE Myopathy, Nonaka Disease, Quadriceps Sparing Myopathy (QSM), Distal Myopathy With Rimmed Vacuoles (DMRV)",
+        "Hypophosphatasia",
+        "Hypophosphatemia, Hypophosphatemic Rickets, Pain, Chronic",
+        "Long Chain Fatty Acid Oxidation Disorders",
+        "Long-chain Fatty Acid Oxidation Disorders (LC-FAOD)",
+        "Medium-chain Acyl-CoA Dehydrogenase Deficiency",
+        "Mucopolysaccharidosis Type 7",
+        "Ornithine Transcarbamylase (OTC) Deficiency",
+        "Ornithine Transcarbamylase Deficiency",
+        "Ornithine Transcarbamylase Deficiency, Wilson Disease, Glycogen Storage Disease Type IA",
+        "Osteogenesis Imperfecta",
+        "Osteopenia, Osteoporosis",
+        "Pyruvate Dehydrogenase Complex Deficiency",
+        "Rett Syndrome",
+        "Sly Syndrome, MPS VII, Mucopolysaccharidosis, Mucopolysaccharidosis VII",
+        "Tarui Disease, Debrancher Deficiency, GYG1 DEFICIENCY",
+        "Very Long-chain acylCoA Dehydrogenase (VLCAD) Deficiency, Carnitine Palmitoyltransferase Deficiencies (CPT1, CPT2), Mitochondrial Trifunctional Protein Deficiency, Long-chain Hydroxyacyl-CoA Dehydrogenase Deficiency, Glycogen Storage Disorders, Pyruvate Carboxylase Deficiency Disease, ACYL-CoA DEHYDROGENASE FAMILY, MEMBER 9, DEFICIENCY of, Barth Syndrome",
+        "Wilson Disease",
+        "X-linked Hypophosphatemia, Hypophosphatemic Rickets"
+      ],
+      "top_trials": [
+        {
+          "nct_id": "NCT07159581",
+          "title": "Gene Therapy for Wilson Disease Evaluated by 64Cu PET/CT",
+          "status": "ENROLLING_BY_INVITATION",
+          "phase": "",
+          "condition": "Wilson Disease",
+          "start_date": "2025-07-08",
+          "completion_date": "2026-01",
+          "enrollment": 0,
+          "sponsor": "Thomas Damgaard Sandahl"
+        },
+        {
+          "nct_id": "NCT05933200",
+          "title": "A Study to Determine the Effect of Triheptanoin Compared With Even-Chain MCT on MCEs in Pediatric Patients With LC-FAOD",
+          "status": "ACTIVE_NOT_RECRUITING",
+          "phase": "PHASE3",
+          "condition": "Long-chain Fatty Acid Oxidation Disorders (LC-FAOD)",
+          "start_date": "2023-02-28",
+          "completion_date": "2027-08",
+          "enrollment": 0,
+          "sponsor": "Ultragenyx Pharmaceutical Inc"
+        },
+        {
+          "nct_id": "NCT03665636",
+          "title": "Anaplerotic Therapy Using Triheptanoin for Patients With Glycogen Storage Disease Type I",
+          "status": "COMPLETED",
+          "phase": "EARLY_PHASE1",
+          "condition": "Glycogen Storage Disease Type I",
+          "start_date": "2020-10-16",
+          "completion_date": "2021-10-21",
+          "enrollment": 0,
+          "sponsor": "Areeg El-Gharbawy"
+        },
+        {
+          "nct_id": "NCT02991144",
+          "title": "Safety and Dose-Finding Study of DTX301 (scAAV8OTC) in Adults With Late-Onset Ornithine Transcarbamylase (OTC) Deficiency",
+          "status": "COMPLETED",
+          "phase": "PHASE1, PHASE2",
+          "condition": "Ornithine Transcarbamylase (OTC) Deficiency",
+          "start_date": "2017-07-31",
+          "completion_date": "2021-12-16",
+          "enrollment": 0,
+          "sponsor": "Ultragenyx Pharmaceutical Inc"
+        },
+        {
+          "nct_id": "NCT04909346",
+          "title": "Adeno-Associated Virus (AAV) Antibody Study in Subjects OTC Deficiency, GSDIa, and Wilson Disease",
+          "status": "TERMINATED",
+          "phase": "",
+          "condition": "Ornithine Transcarbamylase Deficiency, Wilson Disease, Glycogen Storage Disease Type IA",
+          "start_date": "2021-06-23",
+          "completion_date": "2022-11-17",
+          "enrollment": 0,
+          "sponsor": "Ultragenyx Pharmaceutical Inc"
+        }
+      ]
+    }
   },
   {
     "ticker": "FOLD",
@@ -18765,7 +20719,107 @@
     "position_flags": [
       "RSI_OVERBOUGHT",
       "VOL_EXPANSION"
-    ]
+    ],
+    "financial_data": {
+      "cash": 190553000.0,
+      "debt": 391985000.0,
+      "net_debt": 201432000.0,
+      "revenue_ttm": 16696000.0,
+      "assets": 868811000.0,
+      "liabilities": 638387000.0,
+      "equity": 230424000.0,
+      "currency": "USD",
+      "cik": "0001178879"
+    },
+    "clinical_data": {
+      "total_trials": 50,
+      "active_trials": 7,
+      "completed_trials": 32,
+      "lead_stage": "phase_3",
+      "by_phase": {
+        "PHASE1, PHASE2": 1,
+        "PHASE2": 12,
+        "": 17,
+        "NA": 2,
+        "PHASE3": 13,
+        "PHASE1": 5
+      },
+      "conditions": [
+        "Epidermolysis Bullosa",
+        "Fabry Disease",
+        "Fabry Disease, Anderson Fabry Disease",
+        "Fabry Disease, Heart Diseases",
+        "Gaucher Disease, Type 1 Gaucher Disease, Gaucher Disease, Type 1",
+        "Gaucher Disease, Type 1, Type 1 Gaucher Disease, Gaucher Disease",
+        "Glycogen Storage Disease Type II Infantile Onset",
+        "Hypertrophic Cardiomyopathy, Endothelial Dysfunction",
+        "Late-onset Pompe Disease",
+        "Pompe Disease",
+        "Pompe Disease (Late-onset)",
+        "Pompe Disease Infantile-Onset",
+        "Pompe Disease, Glycogen Storage Disease Type II",
+        "Pompe Disease, Glycogen Storage Disease Type II, Lysosomal Storage Diseases",
+        "Pompe Disease, Hypersensitivity Reaction",
+        "Type 1 Gaucher Disease"
+      ],
+      "top_trials": [
+        {
+          "nct_id": "NCT02675465",
+          "title": "First-In-Human Study to Evaluate Safety, Tolerability, and PK of Intravenous ATB200 Alone and When Co-Administered With Oral AT2221",
+          "status": "COMPLETED",
+          "phase": "PHASE1, PHASE2",
+          "condition": "Pompe Disease",
+          "start_date": "2016-04",
+          "completion_date": "2024-08-22",
+          "enrollment": 0,
+          "sponsor": "Amicus Therapeutics"
+        },
+        {
+          "nct_id": "NCT00813865",
+          "title": "A Long-Term Extension Study of AT2101 (Afegostat Tartrate) in Type 1 Gaucher Patients",
+          "status": "COMPLETED",
+          "phase": "PHASE2",
+          "condition": "Gaucher Disease, Type 1 Gaucher Disease, Gaucher Disease, Type 1",
+          "start_date": "2009-05-11",
+          "completion_date": "2012-05-01",
+          "enrollment": 0,
+          "sponsor": "Amicus Therapeutics"
+        },
+        {
+          "nct_id": "NCT00283959",
+          "title": "A 12-Week Safety and Pharmacodynamic Study of AT1001 (Migalastat Hydrochloride) in Participants With Fabry Disease",
+          "status": "COMPLETED",
+          "phase": "PHASE2",
+          "condition": "Fabry Disease",
+          "start_date": "2006-06-27",
+          "completion_date": "2008-05-08",
+          "enrollment": 0,
+          "sponsor": "Amicus Therapeutics"
+        },
+        {
+          "nct_id": "NCT03135197",
+          "title": "German Observational Multicenter Study of Patients With Fabry Disease Under Chaperone Therapy With Migalastat-HCl.",
+          "status": "COMPLETED",
+          "phase": "",
+          "condition": "Fabry Disease",
+          "start_date": "2017-06-08",
+          "completion_date": "2020-06-30",
+          "enrollment": 0,
+          "sponsor": "University Hospital Muenster"
+        },
+        {
+          "nct_id": "NCT04602364",
+          "title": "French Prospective, Observational Cohort Study of Patients With Fabry Disease Treated With Migalastat",
+          "status": "COMPLETED",
+          "phase": "",
+          "condition": "Fabry Disease",
+          "start_date": "2020-10-15",
+          "completion_date": "2023-06-30",
+          "enrollment": 0,
+          "sponsor": "Amicus Therapeutics France SAS"
+        }
+      ]
+    }
   },
   {
     "ticker": "_XBI_BENCHMARK_",
@@ -20519,6 +22573,37 @@
       "cash_usd": "36677600",
       "total_debt_usd": "14671040",
       "quarterly_burn_usd": "2934208",
+      "runway_quarters": "12"
+    },
+    "lead_program": {
+      "phase": "phase_2",
+      "indication": "oncology",
+      "trial_id": "NCT00000000"
+    }
+  },
+  {
+    "ticker": "BGXX",
+    "name": "Bright Green Corporation",
+    "status": "active",
+    "status_reason": "active",
+    "market_cap_usd": "7264308",
+    "price_usd": "0.04",
+    "shares_outstanding": "191166000",
+    "defensive_features": {
+      "price_current": "0.04",
+      "price_60d_ago": "0.04",
+      "return_60d": "0.0000",
+      "vol_60d": "0.0000",
+      "drawdown_60d": "0.0000",
+      "corr_xbi": "nan",
+      "rsi_14d": "50.0",
+      "vol_regime": "normal",
+      "timestamp": "2026-01-06T14:34:54.192859Z"
+    },
+    "financial_health": {
+      "cash_usd": "1816077",
+      "total_debt_usd": "726430",
+      "quarterly_burn_usd": "145286",
       "runway_quarters": "12"
     },
     "lead_program": {
