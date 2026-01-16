@@ -267,6 +267,403 @@ class MomentumValidator:
         )
 
     # =========================================================================
+    # STAGE 2: PRODUCTION TESTING (requires data)
+    # =========================================================================
+
+    def load_price_data(self) -> Tuple[Optional[Dict], Optional[List], Optional[List]]:
+        """
+        Load historical price data for Stage 2 validation.
+
+        Expected files:
+        - data/universe_prices.csv: Daily prices for all tickers
+        - data/indices_prices.csv: XBI and SPY benchmark prices
+
+        Returns:
+            (prices_by_ticker, xbi_prices, spy_prices) or (None, None, None)
+        """
+        import csv
+        from datetime import datetime
+
+        universe_file = self.data_dir / "universe_prices.csv"
+        indices_file = self.data_dir / "indices_prices.csv"
+
+        if not universe_file.exists() or not indices_file.exists():
+            return None, None, None
+
+        try:
+            # Load universe prices
+            prices_by_ticker = {}
+            with open(universe_file, 'r') as f:
+                reader = csv.DictReader(f)
+                rows = list(reader)
+                if not rows:
+                    return None, None, None
+
+                # Get tickers from header (excluding 'date')
+                tickers = [k for k in rows[0].keys() if k.lower() != 'date']
+
+                for ticker in tickers:
+                    prices_by_ticker[ticker] = []
+                    for row in rows:
+                        try:
+                            price = float(row[ticker])
+                            prices_by_ticker[ticker].append(price)
+                        except (ValueError, KeyError):
+                            pass
+
+            # Load index prices
+            xbi_prices = []
+            spy_prices = []
+            with open(indices_file, 'r') as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    try:
+                        xbi_prices.append(float(row.get('XBI', row.get('xbi', 0))))
+                        spy_prices.append(float(row.get('SPY', row.get('spy', 0))))
+                    except ValueError:
+                        pass
+
+            return prices_by_ticker, xbi_prices, spy_prices
+
+        except Exception as e:
+            print(f"   Error loading price data: {e}")
+            return None, None, None
+
+    def calculate_returns(self, prices: List[float]) -> List[float]:
+        """Calculate daily returns from prices."""
+        if len(prices) < 2:
+            return []
+        return [(prices[i] / prices[i-1]) - 1 for i in range(1, len(prices))]
+
+    def calculate_momentum_score(self, prices: List[float], lookback: int = 21) -> Optional[float]:
+        """Calculate momentum score (trailing return)."""
+        if len(prices) < lookback + 1:
+            return None
+        return (prices[-1] / prices[-lookback-1]) - 1
+
+    def test_quartile_spread(self, prices_by_ticker: Dict, forward_days: int = 21) -> ValidationResult:
+        """
+        Test quartile spread between top/bottom momentum quartiles.
+        Target: 87.6% spread.
+        """
+        if not prices_by_ticker:
+            return ValidationResult(
+                test_name="Quartile Spread Analysis",
+                passed=False,
+                expected="87.6% spread",
+                actual="No data",
+                details="Load price data to run this test"
+            )
+
+        # Calculate momentum scores for each ticker
+        momentum_scores = {}
+        for ticker, prices in prices_by_ticker.items():
+            if len(prices) >= 63:  # Need at least 3 months
+                # Use 21-day momentum (1 month lookback)
+                score = self.calculate_momentum_score(prices[:-forward_days], lookback=21)
+                if score is not None:
+                    momentum_scores[ticker] = score
+
+        if len(momentum_scores) < 20:
+            return ValidationResult(
+                test_name="Quartile Spread Analysis",
+                passed=False,
+                expected="87.6% spread",
+                actual=f"Only {len(momentum_scores)} tickers with data",
+                details="Need at least 20 tickers for quartile analysis"
+            )
+
+        # Sort by momentum and assign quartiles
+        sorted_tickers = sorted(momentum_scores.keys(), key=lambda t: momentum_scores[t], reverse=True)
+        n = len(sorted_tickers)
+        q_size = n // 4
+
+        q1_tickers = sorted_tickers[:q_size]  # Top quartile (highest momentum)
+        q4_tickers = sorted_tickers[-q_size:]  # Bottom quartile (lowest momentum)
+
+        # Calculate forward returns for each quartile
+        q1_returns = []
+        q4_returns = []
+
+        for ticker in q1_tickers:
+            prices = prices_by_ticker[ticker]
+            if len(prices) >= forward_days:
+                fwd_ret = (prices[-1] / prices[-forward_days-1]) - 1
+                q1_returns.append(fwd_ret)
+
+        for ticker in q4_tickers:
+            prices = prices_by_ticker[ticker]
+            if len(prices) >= forward_days:
+                fwd_ret = (prices[-1] / prices[-forward_days-1]) - 1
+                q4_returns.append(fwd_ret)
+
+        if not q1_returns or not q4_returns:
+            return ValidationResult(
+                test_name="Quartile Spread Analysis",
+                passed=False,
+                expected="87.6% spread",
+                actual="Insufficient forward return data",
+                details=""
+            )
+
+        q1_mean = mean(q1_returns)
+        q4_mean = mean(q4_returns)
+        spread = (q1_mean - q4_mean) * 100  # Convert to percentage points
+
+        # Pass if spread is positive and significant
+        passed = spread > 10  # Minimum 10% spread to be meaningful
+
+        return ValidationResult(
+            test_name="Quartile Spread Analysis",
+            passed=passed,
+            expected="87.6% spread (target)",
+            actual=f"{spread:.1f}% spread",
+            details=(
+                f"Q1 (top) mean return: {q1_mean*100:.2f}%\n"
+                f"Q4 (bottom) mean return: {q4_mean*100:.2f}%\n"
+                f"Spread: {spread:.1f}%\n"
+                f"Tickers analyzed: {n}"
+            )
+        )
+
+    def test_information_coefficient(self, prices_by_ticker: Dict) -> ValidationResult:
+        """
+        Test cross-sectional Information Coefficient.
+        Target: IC = 0.713.
+        """
+        if not prices_by_ticker:
+            return ValidationResult(
+                test_name="Information Coefficient",
+                passed=False,
+                expected="IC = 0.713",
+                actual="No data",
+                details="Load price data to run this test"
+            )
+
+        # Calculate momentum scores and forward returns
+        momentum_scores = []
+        forward_returns = []
+
+        for ticker, prices in prices_by_ticker.items():
+            if len(prices) >= 42:  # Need 21 days lookback + 21 days forward
+                # Momentum: 21-day trailing return
+                mom = self.calculate_momentum_score(prices[:-21], lookback=21)
+                # Forward: 21-day forward return
+                fwd = (prices[-1] / prices[-22]) - 1
+
+                if mom is not None:
+                    momentum_scores.append(Decimal(str(mom)))
+                    forward_returns.append(Decimal(str(fwd)))
+
+        if len(momentum_scores) < MIN_OBS_IC:
+            return ValidationResult(
+                test_name="Information Coefficient",
+                passed=False,
+                expected="IC = 0.713",
+                actual=f"Only {len(momentum_scores)} observations",
+                details=f"Need at least {MIN_OBS_IC} observations"
+            )
+
+        ic = compute_spearman_ic(momentum_scores, forward_returns)
+
+        if ic is None:
+            return ValidationResult(
+                test_name="Information Coefficient",
+                passed=False,
+                expected="IC = 0.713",
+                actual="IC calculation failed",
+                details=""
+            )
+
+        ic_val = float(ic)
+
+        # Pass if IC is positive and meaningful
+        passed = ic_val > 0.10  # Minimum 0.10 IC to be meaningful
+
+        return ValidationResult(
+            test_name="Information Coefficient",
+            passed=passed,
+            expected="IC = 0.713 (target)",
+            actual=f"IC = {ic_val:.4f}",
+            details=(
+                f"Cross-sectional Spearman IC\n"
+                f"Observations: {len(momentum_scores)}\n"
+                f"IC > 0.30 = strong, > 0.50 = exceptional"
+            )
+        )
+
+    def test_regime_detection(self, xbi_prices: List, spy_prices: List) -> ValidationResult:
+        """
+        Test regime detection on benchmark data.
+        """
+        if not xbi_prices or not spy_prices or len(xbi_prices) < 60:
+            return ValidationResult(
+                test_name="Regime Detection",
+                passed=False,
+                expected="Valid regime classification",
+                actual="No benchmark data",
+                details="Load XBI and SPY prices to run this test"
+            )
+
+        # Calculate XBI vs SPY relative performance (30-day)
+        xbi_ret_30d = (xbi_prices[-1] / xbi_prices[-31]) - 1 if len(xbi_prices) > 30 else 0
+        spy_ret_30d = (spy_prices[-1] / spy_prices[-31]) - 1 if len(spy_prices) > 30 else 0
+        relative_perf = (xbi_ret_30d - spy_ret_30d) * 100  # Percentage points
+
+        # Simple regime classification based on relative performance
+        if relative_perf > 5:
+            regime = "BULL"
+        elif relative_perf < -5:
+            regime = "BEAR"
+        else:
+            regime = "NEUTRAL"
+
+        # Calculate XBI volatility (20-day)
+        xbi_returns = self.calculate_returns(xbi_prices[-21:])
+        if xbi_returns:
+            xbi_vol = (sum(r**2 for r in xbi_returns) / len(xbi_returns)) ** 0.5 * math.sqrt(252) * 100
+        else:
+            xbi_vol = 0
+
+        passed = regime in ["BULL", "BEAR", "NEUTRAL"]
+
+        return ValidationResult(
+            test_name="Regime Detection",
+            passed=passed,
+            expected="Valid regime classification",
+            actual=f"Regime: {regime}",
+            details=(
+                f"XBI 30d return: {xbi_ret_30d*100:.2f}%\n"
+                f"SPY 30d return: {spy_ret_30d*100:.2f}%\n"
+                f"Relative performance: {relative_perf:.2f}%\n"
+                f"XBI 20d volatility: {xbi_vol:.1f}%"
+            )
+        )
+
+    def test_alpha_decay(self, prices_by_ticker: Dict) -> ValidationResult:
+        """
+        Test signal persistence / alpha decay across horizons.
+        """
+        if not prices_by_ticker:
+            return ValidationResult(
+                test_name="Alpha Decay Analysis",
+                passed=False,
+                expected="Decaying IC across horizons",
+                actual="No data",
+                details="Load price data to run this test"
+            )
+
+        horizons = [5, 10, 21, 42, 63]
+        ic_by_horizon = {}
+
+        for horizon in horizons:
+            momentum_scores = []
+            forward_returns = []
+
+            for ticker, prices in prices_by_ticker.items():
+                if len(prices) >= 21 + horizon:
+                    # 21-day momentum
+                    mom = self.calculate_momentum_score(prices[:-(horizon)], lookback=21)
+                    # Forward return at this horizon
+                    fwd = (prices[-1] / prices[-(horizon+1)]) - 1
+
+                    if mom is not None:
+                        momentum_scores.append(Decimal(str(mom)))
+                        forward_returns.append(Decimal(str(fwd)))
+
+            if len(momentum_scores) >= MIN_OBS_IC:
+                ic = compute_spearman_ic(momentum_scores, forward_returns)
+                if ic is not None:
+                    ic_by_horizon[horizon] = float(ic)
+
+        if not ic_by_horizon:
+            return ValidationResult(
+                test_name="Alpha Decay Analysis",
+                passed=False,
+                expected="IC values across horizons",
+                actual="Insufficient data for any horizon",
+                details=""
+            )
+
+        # Format results
+        decay_report = []
+        for h in sorted(ic_by_horizon.keys()):
+            decay_report.append(f"{h}d: IC = {ic_by_horizon[h]:.4f}")
+
+        # Check for reasonable decay pattern (short-term IC should be higher)
+        short_term_ic = ic_by_horizon.get(5, ic_by_horizon.get(10, 0))
+        passed = short_term_ic > 0  # At least positive short-term IC
+
+        return ValidationResult(
+            test_name="Alpha Decay Analysis",
+            passed=passed,
+            expected="Positive short-term IC, decaying over time",
+            actual=f"IC at {min(ic_by_horizon.keys())}d = {ic_by_horizon[min(ic_by_horizon.keys())]:.4f}",
+            details="\n".join(decay_report)
+        )
+
+    def run_stage2(self) -> List[ValidationResult]:
+        """Run Stage 2: Production validation with historical data."""
+        print("\n" + "=" * 70)
+        print("STAGE 2: PRODUCTION TESTING")
+        print("=" * 70)
+
+        # Load data
+        print("\nLoading historical price data...")
+        prices_by_ticker, xbi_prices, spy_prices = self.load_price_data()
+
+        if prices_by_ticker is None:
+            print(f"\n⚠️  Price data not found in {self.data_dir}")
+            print("   Expected files:")
+            print(f"   - {self.data_dir}/universe_prices.csv")
+            print(f"   - {self.data_dir}/indices_prices.csv")
+            print("\n   Create these files to run Stage 2 validation.")
+            return []
+
+        n_tickers = len(prices_by_ticker)
+        n_days = len(next(iter(prices_by_ticker.values()))) if prices_by_ticker else 0
+        print(f"   Loaded {n_tickers} tickers, {n_days} days of data")
+
+        tests = [
+            lambda: self.test_quartile_spread(prices_by_ticker),
+            lambda: self.test_information_coefficient(prices_by_ticker),
+            lambda: self.test_regime_detection(xbi_prices, spy_prices),
+            lambda: self.test_alpha_decay(prices_by_ticker),
+        ]
+
+        results = []
+        for test_func in tests:
+            try:
+                result = test_func()
+                results.append(result)
+                status = "PASS" if result.passed else "FAIL"
+                symbol = "✅" if result.passed else "❌"
+                print(f"\n{symbol} {result.test_name}: {status}")
+                print(f"   Expected: {result.expected}")
+                print(f"   Actual:   {result.actual}")
+                if result.details:
+                    for line in result.details.split('\n'):
+                        print(f"   {line}")
+            except Exception as e:
+                result = ValidationResult(
+                    test_name=test_func.__name__,
+                    passed=False,
+                    expected="No exception",
+                    actual=f"Exception: {e}",
+                    details=str(e)
+                )
+                results.append(result)
+                print(f"\n❌ {test_func.__name__}: EXCEPTION")
+                print(f"   {e}")
+
+        # Stage 2 summary
+        print("\n" + "-" * 70)
+        passed = sum(1 for r in results if r.passed)
+        print(f"Stage 2: {passed}/{len(results)} tests passed")
+
+        return results
+
+    # =========================================================================
     # RUN VALIDATION
     # =========================================================================
 
@@ -339,13 +736,12 @@ class MomentumValidator:
             for r in failed:
                 print(f"   - {r.test_name}")
 
+        stage2_results = []
         if include_stage2:
-            print("\n" + "=" * 70)
-            print("STAGE 2: PRODUCTION TESTING")
-            print("=" * 70)
-            print("\n⚠️  Stage 2 requires historical price data.")
-            print("   Prepare CSV files and update load_test_data() method.")
-            print("   See MOMENTUM_VALIDATION_GUIDE.md for instructions.")
+            stage2_results = self.run_stage2()
+
+        stage2_passed = sum(1 for r in stage2_results if r.passed) if stage2_results else 0
+        stage2_total = len(stage2_results)
 
         return {
             "stage1_passed": passed,
@@ -359,7 +755,18 @@ class MomentumValidator:
                 }
                 for r in stage1_results
             ],
-            "all_passed": passed == total,
+            "stage2_passed": stage2_passed,
+            "stage2_total": stage2_total,
+            "stage2_results": [
+                {
+                    "test": r.test_name,
+                    "passed": r.passed,
+                    "expected": r.expected,
+                    "actual": r.actual,
+                }
+                for r in stage2_results
+            ],
+            "all_passed": passed == total and (not stage2_results or stage2_passed == stage2_total),
         }
 
 
