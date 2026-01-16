@@ -63,6 +63,16 @@ def is_valid_ticker(ticker: str, allow_internal: bool = True) -> Tuple[bool, str
         if keyword in ticker_upper:
             return False, f"Contains contamination keyword '{keyword}'"
 
+    # Blacklist - known invalid/placeholder tickers
+    invalid_tickers = ['NAME', 'TICKER', 'SYMBOL', 'TEST', 'EXAMPLE', 'NULL', 'NONE', 'NA', 'N/A']
+    if ticker_upper in invalid_tickers:
+        return False, f"Placeholder ticker '{ticker}'"
+
+    # Detect futures contract tickers (e.g., RTYH6, IXCH6, ESM5)
+    # Pattern: letters followed by month code (F,G,H,J,K,M,N,Q,U,V,X,Z) and year digit
+    if re.match(r'^[A-Z]+[FGHJKMNQUVXZ]\d$', ticker_upper):
+        return False, f"Futures contract ticker '{ticker}'"
+
     # Additional sanity checks
     if ticker.startswith('.') or ticker.endswith('.'):
         return False, "Starts or ends with period"

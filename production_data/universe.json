@@ -29956,20 +29956,6 @@
     "description": "Added from ETF holdings (IBB)"
   },
   {
-    "ticker": "IXCH6",
-    "name": "IXCH6",
-    "exchange": "NASDAQ",
-    "sector": "Biotechnology",
-    "status": "active",
-    "added_from_etf": true,
-    "added_date": "2026-01-07",
-    "etf_sources": [
-      "IBB"
-    ],
-    "market_cap": null,
-    "description": "Added from ETF holdings (IBB)"
-  },
-  {
     "ticker": "JANX",
     "name": "JANX",
     "exchange": "NASDAQ",
@@ -30728,20 +30714,6 @@
   {
     "ticker": "RLAY",
     "name": "RLAY",
-    "exchange": "NASDAQ",
-    "sector": "Biotechnology",
-    "status": "active",
-    "added_from_etf": true,
-    "added_date": "2026-01-07",
-    "etf_sources": [
-      "IBB"
-    ],
-    "market_cap": null,
-    "description": "Added from ETF holdings (IBB)"
-  },
-  {
-    "ticker": "RTYH6",
-    "name": "RTYH6",
     "exchange": "NASDAQ",
     "sector": "Biotechnology",
     "status": "active",
@@ -31676,20 +31648,6 @@
     ],
     "market_cap": null,
     "description": "Added from ETF holdings (NBI)"
-  },
-  {
-    "ticker": "NAME",
-    "name": "NAME",
-    "exchange": "NASDAQ",
-    "sector": "Biotechnology",
-    "status": "active",
-    "added_from_etf": true,
-    "added_date": "2026-01-07",
-    "etf_sources": [
-      "XBI"
-    ],
-    "market_cap": null,
-    "description": "Added from ETF holdings (XBI)"
   },
   {
     "ticker": "OBIO",
