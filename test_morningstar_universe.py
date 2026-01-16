@@ -18,7 +18,7 @@ results = {'success': [], 'failed': []}
 start = time.time()
 
 # Test first 50 tickers (change to tickers for full test)
-test_tickers = tickers[:50]
+test_tickers = tickers
 
 for i, ticker in enumerate(test_tickers):
     try:
