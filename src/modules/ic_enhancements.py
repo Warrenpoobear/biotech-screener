@@ -111,6 +111,23 @@ INTERACTION_DISTRESS_MAX_PENALTY = Decimal("2.0")  # Max -2.0 points (was 5.0)
 # Only applies when vol_bucket == HIGH
 INTERACTION_CATALYST_VOL_DAMPENING_MIN = Decimal("0.7")  # Floor multiplier
 
+# Peer-relative valuation parameters
+# Winsorization bounds to prevent extreme values from dominating
+VALUATION_TRIAL_COUNT_MIN = 1      # Minimum trials (avoid divide-by-zero)
+VALUATION_TRIAL_COUNT_MAX = 30     # Cap trials to reduce denominator gaming
+VALUATION_MCAP_MIN_MM = Decimal("50")     # Floor at $50M
+VALUATION_MCAP_MAX_MM = Decimal("50000")  # Cap at $50B
+# Minimum peers for reliable signal
+VALUATION_MIN_PEERS = 5
+# Confidence ramp: conf = min(0.8, base + slope * N)
+VALUATION_CONFIDENCE_BASE = Decimal("0.20")
+VALUATION_CONFIDENCE_SLOPE = Decimal("0.04")  # +4% per peer
+VALUATION_CONFIDENCE_MAX = Decimal("0.80")
+# Shrinkage toward neutral (50) when sample is small
+# shrunk_score = raw_score * (1 - shrink) + 50 * shrink
+VALUATION_SHRINKAGE_FULL_AT_N = 20  # No shrinkage at 20+ peers
+VALUATION_SHRINKAGE_MAX = Decimal("0.50")  # Max 50% shrinkage at N=5
+
 
 # =============================================================================
 # ENUMS
@@ -475,10 +492,15 @@ def compute_valuation_signal(
     Compares market cap per pipeline asset to peers at same development stage.
     Undervalued names (low mcap/trial) tend to outperform.
 
+    DETERMINISM: All calculations use pure Decimal arithmetic.
+    ROBUSTNESS: Winsorizes mcap and trial_count to reduce outlier impact.
+    TIE-HANDLING: Uses midrank for ties to avoid bias.
+    SHRINKAGE: Shrinks toward neutral (50) when peer sample is small.
+
     Args:
         market_cap_mm: Market cap in millions
         trial_count: Number of active clinical trials
-        lead_phase: Lead development phase
+        lead_phase: Lead development phase (must be PIT-safe)
         peer_valuations: List of peer dicts with market_cap_mm, trial_count, stage_bucket
 
     Returns:
@@ -495,19 +517,23 @@ def compute_valuation_signal(
             confidence=Decimal("0.2"),
         )
 
-    # Compute mcap per asset
-    mcap_per_asset = mcap / Decimal(max(trial_count, 1))
+    # Winsorize inputs to reduce outlier impact
+    mcap_winsorized = _clamp(mcap, VALUATION_MCAP_MIN_MM, VALUATION_MCAP_MAX_MM)
+    trials_winsorized = max(VALUATION_TRIAL_COUNT_MIN, min(trial_count, VALUATION_TRIAL_COUNT_MAX))
+
+    # Compute mcap per asset (all Decimal)
+    mcap_per_asset = mcap_winsorized / Decimal(trials_winsorized)
 
     # Determine stage bucket for peer comparison
     stage = _stage_bucket(lead_phase)
 
-    # Filter peers to same stage
+    # Filter peers to same stage with valid data
     same_stage_peers = [
         p for p in peer_valuations
         if p.get("stage_bucket") == stage and p.get("trial_count", 0) > 0
     ]
 
-    if len(same_stage_peers) < 5:
+    if len(same_stage_peers) < VALUATION_MIN_PEERS:
         return ValuationSignal(
             valuation_score=Decimal("50"),
             mcap_per_asset=_quantize_score(mcap_per_asset),
@@ -516,13 +542,16 @@ def compute_valuation_signal(
             confidence=Decimal("0.3"),
         )
 
-    # Compute peer mcap/asset values
-    peer_mcap_per_asset = []
+    # Compute peer mcap/asset values with winsorization
+    peer_mcap_per_asset: List[Decimal] = []
     for p in same_stage_peers:
         p_mcap = _to_decimal(p.get("market_cap_mm"))
         p_trials = p.get("trial_count", 0)
         if p_mcap is not None and p_trials > 0:
-            peer_mcap_per_asset.append(p_mcap / Decimal(p_trials))
+            # Winsorize peer values too
+            p_mcap_w = _clamp(p_mcap, VALUATION_MCAP_MIN_MM, VALUATION_MCAP_MAX_MM)
+            p_trials_w = max(VALUATION_TRIAL_COUNT_MIN, min(p_trials, VALUATION_TRIAL_COUNT_MAX))
+            peer_mcap_per_asset.append(p_mcap_w / Decimal(p_trials_w))
 
     if not peer_mcap_per_asset:
         return ValuationSignal(
@@ -533,37 +562,106 @@ def compute_valuation_signal(
             confidence=Decimal("0.2"),
         )
 
-    # Compute percentile rank (lower mcap/asset = cheaper = better)
-    cheaper_count = sum(1 for p in peer_mcap_per_asset if p < mcap_per_asset)
-    percentile = Decimal(str(cheaper_count / len(peer_mcap_per_asset) * 100))
+    n_peers = len(peer_mcap_per_asset)
+
+    # Compute TIE-AWARE midrank percentile (pure Decimal, deterministic)
+    # percentile = (lt + 0.5 * eq) / N * 100
+    # where lt = count strictly less than, eq = count equal
+    lt_count = sum(1 for p in peer_mcap_per_asset if p < mcap_per_asset)
+    eq_count = sum(1 for p in peer_mcap_per_asset if p == mcap_per_asset)
+
+    # All Decimal arithmetic - no floats
+    percentile = (
+        (Decimal(lt_count) + Decimal("0.5") * Decimal(eq_count))
+        / Decimal(n_peers)
+        * Decimal("100")
+    )
 
     # Invert: cheap is high signal (100 - percentile = valuation_score)
-    valuation_score = Decimal("100") - percentile
-    valuation_score = _clamp(valuation_score, Decimal("10"), Decimal("90"))
+    # Lower mcap/asset = lower percentile = higher valuation_score = better
+    raw_valuation_score = Decimal("100") - percentile
 
-    # Compute peer median for reference
+    # Compute peer median for reference (deterministic: no float sorting)
     sorted_peers = sorted(peer_mcap_per_asset)
-    mid = len(sorted_peers) // 2
-    if len(sorted_peers) % 2 == 0:
-        peer_median = (sorted_peers[mid - 1] + sorted_peers[mid]) / 2
+    mid = n_peers // 2
+    if n_peers % 2 == 0:
+        peer_median = (sorted_peers[mid - 1] + sorted_peers[mid]) / Decimal("2")
     else:
         peer_median = sorted_peers[mid]
 
-    # Confidence based on peer count
-    if len(peer_mcap_per_asset) >= 20:
-        confidence = Decimal("0.8")
-    elif len(peer_mcap_per_asset) >= 10:
-        confidence = Decimal("0.6")
-    else:
-        confidence = Decimal("0.4")
+    # Compute confidence with smooth ramp: conf = base + slope * N (capped)
+    confidence = _clamp(
+        VALUATION_CONFIDENCE_BASE + VALUATION_CONFIDENCE_SLOPE * Decimal(n_peers),
+        Decimal("0.2"),
+        VALUATION_CONFIDENCE_MAX,
+    )
+
+    # Penalize confidence for low dispersion (tight peer distribution = noisy percentile)
+    if n_peers >= 3:
+        # Compute coefficient of variation (std / mean)
+        peer_mean = sum(peer_mcap_per_asset) / Decimal(n_peers)
+        if peer_mean > EPS:
+            variance = sum((p - peer_mean) ** 2 for p in peer_mcap_per_asset) / Decimal(n_peers)
+            # Decimal doesn't have sqrt, use Newton-Raphson approximation
+            std_approx = _decimal_sqrt_approx(variance)
+            cv = std_approx / peer_mean
+            # If CV < 0.3 (very tight distribution), reduce confidence
+            if cv < Decimal("0.3"):
+                cv_penalty = (Decimal("0.3") - cv) / Decimal("0.3") * Decimal("0.2")
+                confidence = _clamp(confidence - cv_penalty, Decimal("0.2"), VALUATION_CONFIDENCE_MAX)
+
+    # Apply shrinkage toward neutral (50) when sample is small
+    # shrink_factor ramps from SHRINKAGE_MAX at N=MIN_PEERS to 0 at N>=FULL_AT_N
+    if n_peers < VALUATION_SHRINKAGE_FULL_AT_N:
+        shrink_range = VALUATION_SHRINKAGE_FULL_AT_N - VALUATION_MIN_PEERS
+        if shrink_range > 0:
+            progress = Decimal(n_peers - VALUATION_MIN_PEERS) / Decimal(shrink_range)
+            shrink_factor = VALUATION_SHRINKAGE_MAX * (Decimal("1") - progress)
+        else:
+            shrink_factor = VALUATION_SHRINKAGE_MAX
+        # Apply shrinkage: move toward 50
+        neutral = Decimal("50")
+        raw_valuation_score = (
+            raw_valuation_score * (Decimal("1") - shrink_factor)
+            + neutral * shrink_factor
+        )
+
+    # Clamp final score
+    valuation_score = _clamp(raw_valuation_score, Decimal("10"), Decimal("90"))
 
     return ValuationSignal(
         valuation_score=_quantize_score(valuation_score),
         mcap_per_asset=_quantize_score(mcap_per_asset),
         peer_median_mcap_per_asset=_quantize_score(peer_median),
-        peer_count=len(peer_mcap_per_asset),
-        confidence=confidence,
+        peer_count=n_peers,
+        confidence=_quantize_weight(confidence),
     )
+
+
+def _decimal_sqrt_approx(value: Decimal, iterations: int = 10) -> Decimal:
+    """
+    Approximate square root using Newton-Raphson method.
+
+    Pure Decimal implementation for determinism (no math.sqrt).
+
+    Args:
+        value: Non-negative Decimal
+        iterations: Number of Newton-Raphson iterations
+
+    Returns:
+        Approximate square root as Decimal
+    """
+    if value <= Decimal("0"):
+        return Decimal("0")
+
+    # Initial guess: value / 2 (or 1 if value < 1)
+    x = value / Decimal("2") if value > Decimal("1") else Decimal("1")
+
+    # Newton-Raphson: x_new = (x + value/x) / 2
+    for _ in range(iterations):
+        x = (x + value / x) / Decimal("2")
+
+    return x
 
 
 def _stage_bucket(lead_phase: Optional[str]) -> str:
