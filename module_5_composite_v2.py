@@ -733,6 +733,32 @@ def compute_module_5_composite_v2(
     enhancement_result: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """Compute composite scores with all v2 enhancements."""
+
+    # Handle empty universe gracefully
+    active_securities = universe_result.get("active_securities", [])
+    if not active_securities or len(active_securities) == 0:
+        logger.warning("Module 5 v2: Empty universe provided - returning empty results")
+        return {
+            "as_of_date": as_of_date,
+            "scoring_mode": ScoringMode.DEFAULT.value,
+            "weights_used": {k: str(v) for k, v in DEFAULT_WEIGHTS.items()},
+            "ranked_securities": [],
+            "excluded_securities": [],
+            "cohort_stats": {},
+            "diagnostic_counts": {
+                "total_input": 0,
+                "rankable": 0,
+                "excluded": 0,
+                "cohort_count": 0,
+                "with_pos_scores": 0,
+                "with_caps_applied": 0,
+            },
+            "enhancement_applied": False,
+            "enhancement_diagnostics": None,
+            "schema_version": SCHEMA_VERSION,
+            "provenance": create_provenance(RULESET_VERSION, {"tickers": [], "weights": {}}, as_of_date),
+        }
+
     logger.info(f"Module 5 v2: Computing composite scores for {as_of_date}")
 
     # Enhancement data

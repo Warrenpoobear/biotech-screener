@@ -62,6 +62,7 @@ from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple
 
 from common.types import Severity
+from common.score_utils import clamp_score, to_decimal as score_to_decimal
 
 __version__ = "2.0.0"
 RULESET_VERSION = "2.0.0-V2"
@@ -983,7 +984,8 @@ def score_financial_health_v2(
             dilution.dilution_score * Decimal("0.30") +
             liquidity.liquidity_score * Decimal("0.20")
         )
-        composite = _clamp(composite, Decimal("0"), Decimal("100"))
+        # Use clamp_score utility for consistent bounds enforcement
+        composite = clamp_score(composite, Decimal("0"), Decimal("100")) or Decimal("50")
         composite = _quantize_score(composite)
         has_data = True
     else:
@@ -1100,7 +1102,29 @@ def run_module_2_v2(
     Returns:
         Dict with scores and diagnostic_counts
     """
+    # Handle empty universe gracefully
+    if not universe or len(universe) == 0:
+        logger.warning("Module 2 v2: Empty universe provided - returning empty results")
+        return {
+            "scores": [],
+            "diagnostic_counts": {
+                "scored": 0,
+                "missing": 0,
+                "severity_distribution": {},
+                "data_state_distribution": {},
+                "burn_source_distribution": {},
+            },
+        }
+
     logger.info(f"Module 2 v2: Scoring {len(universe)} tickers")
+
+    # Handle empty data gracefully
+    if not financial_data:
+        logger.warning("Module 2 v2: No financial data provided")
+        financial_data = []
+    if not market_data:
+        logger.warning("Module 2 v2: No market data provided")
+        market_data = []
 
     # Create lookup dicts
     fin_lookup = {f['ticker']: f for f in financial_data if 'ticker' in f}
