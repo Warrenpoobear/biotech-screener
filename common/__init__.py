@@ -50,6 +50,14 @@ from common.integration_contracts import (
     # Version checking
     check_schema_version,
     SUPPORTED_SCHEMA_VERSIONS,
+    # Validation mode
+    get_validation_mode,
+    set_validation_mode,
+    is_strict_mode,
+    is_validation_enabled,
+    # Schema migration
+    migrate_module_output,
+    ensure_dual_field_names,
     # Re-exported Module 3 types
     EventType,
     EventSeverity,
@@ -101,6 +109,14 @@ __all__ = [
     # Integration contracts - version checking
     "check_schema_version",
     "SUPPORTED_SCHEMA_VERSIONS",
+    # Integration contracts - validation mode
+    "get_validation_mode",
+    "set_validation_mode",
+    "is_strict_mode",
+    "is_validation_enabled",
+    # Integration contracts - schema migration
+    "migrate_module_output",
+    "ensure_dual_field_names",
     # Integration contracts - Module 3 types
     "EventType",
     "EventSeverity",

@@ -54,7 +54,44 @@ from module_3_schema import (
 )
 
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
+
+# =============================================================================
+# VALIDATION MODE
+# =============================================================================
+
+import os
+
+# Validation modes: "strict" (raise), "warn" (log warning), "off" (skip)
+VALIDATION_MODE = os.getenv("IC_VALIDATION_MODE", "warn")
+
+
+def get_validation_mode() -> str:
+    """Get current validation mode from environment."""
+    return os.getenv("IC_VALIDATION_MODE", "warn")
+
+
+def set_validation_mode(mode: str) -> None:
+    """
+    Set validation mode programmatically.
+
+    Args:
+        mode: One of "strict", "warn", "off"
+    """
+    if mode not in ("strict", "warn", "off"):
+        raise ValueError(f"Invalid validation mode: {mode}. Must be 'strict', 'warn', or 'off'")
+    os.environ["IC_VALIDATION_MODE"] = mode
+
+
+def is_strict_mode() -> bool:
+    """Check if strict validation mode is enabled."""
+    return get_validation_mode() == "strict"
+
+
+def is_validation_enabled() -> bool:
+    """Check if validation is enabled (not 'off')."""
+    return get_validation_mode() != "off"
+
 
 # =============================================================================
 # CONTRACT VERSIONING
@@ -110,6 +147,110 @@ def check_schema_version(
             warnings.warn(msg, DeprecationWarning, stacklevel=3)
 
     return is_supported, version
+
+
+# =============================================================================
+# SCHEMA MIGRATION HELPERS
+# =============================================================================
+
+def migrate_module_output(
+    result: Dict[str, Any],
+    module_name: str,
+    target_version: Optional[str] = None
+) -> Dict[str, Any]:
+    """
+    Migrate module output to target schema version.
+
+    Args:
+        result: Module output to migrate
+        module_name: Name of module (e.g., "module_2")
+        target_version: Target version (defaults to latest supported)
+
+    Returns:
+        Migrated result dict
+    """
+    if module_name == "module_2":
+        return _migrate_module_2_output(result, target_version)
+    elif module_name == "module_3":
+        return _migrate_module_3_output(result, target_version)
+    # Other modules don't need migration yet
+    return result
+
+
+def _migrate_module_2_output(
+    result: Dict[str, Any],
+    target_version: Optional[str] = None
+) -> Dict[str, Any]:
+    """
+    Migrate Module 2 output.
+
+    Handles:
+    - financial_normalized -> financial_score field rename
+    """
+    migrated = dict(result)
+
+    # Ensure both field names exist for backwards compatibility
+    if "scores" in migrated:
+        for score in migrated["scores"]:
+            if "financial_normalized" in score and "financial_score" not in score:
+                score["financial_score"] = score["financial_normalized"]
+            elif "financial_score" in score and "financial_normalized" not in score:
+                score["financial_normalized"] = score["financial_score"]
+
+    return migrated
+
+
+def _migrate_module_3_output(
+    result: Dict[str, Any],
+    target_version: Optional[str] = None
+) -> Dict[str, Any]:
+    """
+    Migrate Module 3 output.
+
+    Handles:
+    - Legacy TickerCatalystSummary -> TickerCatalystSummaryV2
+    - summaries_legacy deprecation
+    """
+    migrated = dict(result)
+
+    # If summaries_legacy exists but summaries doesn't, copy it
+    if "summaries_legacy" in migrated and "summaries" not in migrated:
+        migrated["summaries"] = migrated["summaries_legacy"]
+
+    # Migrate individual summaries if needed
+    if "summaries" in migrated:
+        for ticker, summary in migrated["summaries"].items():
+            if isinstance(summary, dict):
+                # Check if it's legacy format (has catalyst_score_net but no score_blended)
+                if "catalyst_score_net" in summary and "score_blended" not in summary:
+                    # Migrate to vNext format
+                    net_score = summary.get("catalyst_score_net", 0)
+                    # Convert legacy net score to 0-100 scale
+                    blended = 50 + (float(net_score) * 10)
+                    blended = max(0, min(100, blended))
+
+                    migrated["summaries"][ticker] = {
+                        **summary,
+                        "score_blended": blended,
+                        "scores": {
+                            "score_blended": str(blended),
+                            "score_override": str(blended),
+                        },
+                        "flags": {
+                            "severe_negative_flag": summary.get("severe_negative_flag", False),
+                        },
+                    }
+
+    return migrated
+
+
+def ensure_dual_field_names(result: Dict[str, Any], module_name: str) -> Dict[str, Any]:
+    """
+    Ensure both standard and legacy field names exist for backwards compatibility.
+
+    This is useful when returning data that may be consumed by both old and new code.
+    """
+    return migrate_module_output(result, module_name)
 
 
 # =============================================================================

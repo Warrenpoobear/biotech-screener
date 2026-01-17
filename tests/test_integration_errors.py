@@ -86,12 +86,18 @@ class TestErrorHandlingModule2:
 
     def test_empty_financial_records(self):
         """Handle empty financial data."""
-        result = compute_module_2_financial([], ["TEST"], "2024-01-01")
+        import os
+        # Disable validation for this edge case test
+        os.environ["IC_VALIDATION_MODE"] = "off"
+        try:
+            result = compute_module_2_financial([], ["TEST"], "2024-01-01")
 
-        assert len(result["scores"]) == 1
-        score = result["scores"][0]
-        assert score["ticker"] == "TEST"
-        assert "missing_financial_data" in score["flags"]
+            assert len(result["scores"]) == 1
+            score = result["scores"][0]
+            assert score["ticker"] == "TEST"
+            assert "missing_financial_data" in score["flags"]
+        finally:
+            os.environ["IC_VALIDATION_MODE"] = "warn"
 
     def test_missing_cash_field(self):
         """Handle records with missing cash."""

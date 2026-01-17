@@ -32,10 +32,15 @@ import math
 from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple, Any, Union
 
-logger = logging.getLogger(__name__)
+from common.integration_contracts import (
+    validate_module_2_output,
+    is_validation_enabled,
+    normalize_date_string,
+    normalize_ticker_set,
+    TickerCollection,
+)
 
-# Type alias for flexible ticker input
-TickerCollection = Union[Set[str], List[str]]
+logger = logging.getLogger(__name__)
 
 # =============================================================================
 # CONSTANTS
@@ -968,10 +973,16 @@ def compute_module_2_financial(*args, **kwargs):
                 score['flags'].append('missing_cash')
 
     # Wrap in expected format
-    return {
+    output = {
         'scores': result,
         'diagnostic_counts': {
             'scored': len(filtered_universe),
             'missing': len(truly_missing_tickers)
         }
     }
+
+    # Validate output schema before returning
+    if is_validation_enabled():
+        validate_module_2_output(output)
+
+    return output
