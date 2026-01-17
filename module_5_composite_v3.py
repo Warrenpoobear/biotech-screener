@@ -101,6 +101,16 @@ from src.modules.ic_enhancements import (
     WEIGHT_PRECISION,
 )
 
+# Import PIT validation
+from src.modules.ic_pit_validation import (
+    run_production_gate,
+    create_weight_provenance,
+    PITValidationError,
+    WeightStabilityError,
+    ProductionGateResult,
+    WeightProvenance,
+)
+
 __version__ = "3.0.0"
 RULESET_VERSION = "3.0.0-IC-ENHANCED"
 SCHEMA_VERSION = "v3.0"
@@ -1140,6 +1150,8 @@ def compute_module_5_composite_v3(
     historical_returns: Optional[Dict[str, Decimal]] = None,
     use_adaptive_weights: bool = False,
     validate_inputs: bool = True,
+    enforce_pit_gates: bool = True,
+    previous_weights: Optional[Dict[str, Decimal]] = None,
 ) -> Dict[str, Any]:
     """
     Compute composite scores with all v3 IC enhancements.
@@ -1183,6 +1195,33 @@ def compute_module_5_composite_v3(
         validate_module_2_output(financial_result)
         validate_module_3_output(catalyst_result)
         validate_module_4_output(clinical_result)
+
+    # Parse as_of_date for PIT validation
+    as_of_dt = datetime.strptime(as_of_date, "%Y-%m-%d").date()
+
+    # Run PIT production gate (if enforcement enabled)
+    production_gate_result = None
+    if enforce_pit_gates and (use_adaptive_weights or historical_scores):
+        production_gate_result = run_production_gate(
+            as_of_date=as_of_dt,
+            historical_scores=historical_scores,
+            historical_returns=historical_returns,
+            use_adaptive_weights=use_adaptive_weights,
+            current_weights=weights,
+            previous_weights=previous_weights,
+        )
+
+        if not production_gate_result.passed:
+            logger.warning(
+                f"Production gate FAILED: {production_gate_result.blocking_violations}. "
+                f"Falling back to non-adaptive mode."
+            )
+            use_adaptive_weights = False  # Disable adaptive weights on failure
+            historical_scores = None
+            historical_returns = None
+
+        if production_gate_result.warnings:
+            logger.warning(f"Production gate warnings: {production_gate_result.warnings}")
 
     # Handle empty universe
     active_securities = universe_result.get("active_securities", [])
@@ -1561,6 +1600,24 @@ def compute_module_5_composite_v3(
     # RETURN RESULT
     # =========================================================================
 
+    # Build production gate diagnostics
+    pit_gate_diagnostics = None
+    if production_gate_result:
+        pit_gate_diagnostics = {
+            "passed": production_gate_result.passed,
+            "checks": [
+                {
+                    "name": c.check_name,
+                    "status": c.status.value,
+                    "violations": c.violations,
+                }
+                for c in production_gate_result.checks
+            ],
+            "blocking_violations": production_gate_result.blocking_violations,
+            "warnings": production_gate_result.warnings,
+            "recommendation": production_gate_result.recommendation,
+        }
+
     return {
         "as_of_date": as_of_date,
         "scoring_mode": mode.value,
@@ -1572,6 +1629,7 @@ def compute_module_5_composite_v3(
         "diagnostic_counts": diagnostic_counts,
         "enhancement_applied": enhancement_applied,
         "enhancement_diagnostics": enhancement_diagnostics,
+        "pit_gate_diagnostics": pit_gate_diagnostics,
         "schema_version": SCHEMA_VERSION,
         "provenance": create_provenance(
             RULESET_VERSION,
