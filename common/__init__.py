@@ -7,6 +7,7 @@ Provides:
 - pit_enforcement: Point-in-time discipline
 - provenance: Provenance tracking
 - types: Common type definitions
+- integration_contracts: Module boundary types and schema validation
 """
 
 from common.date_utils import normalize_date, to_date_string, to_date_object, validate_as_of_date
@@ -19,6 +20,34 @@ from common.data_quality import (
     validate_liquidity,
 )
 from common.types import Severity
+
+# Integration contracts - module boundary types and validation
+from common.integration_contracts import (
+    # Type aliases
+    TickerSet,
+    TickerList,
+    TickerCollection,
+    DateLike,
+    # Normalization helpers
+    normalize_date_input,
+    normalize_date_string,
+    normalize_ticker_set,
+    # Score field names
+    ScoreFieldNames,
+    # Schema validation
+    SchemaValidationError,
+    validate_module_1_output,
+    validate_module_2_output,
+    validate_module_3_output,
+    validate_module_4_output,
+    validate_module_5_output,
+    validate_pipeline_handoff,
+    # Score extraction helpers
+    extract_financial_score,
+    extract_catalyst_score,
+    extract_clinical_score,
+    extract_market_cap_mm,
+)
 
 __all__ = [
     # Date utilities
@@ -35,4 +64,28 @@ __all__ = [
     "validate_liquidity",
     # Types
     "Severity",
+    # Integration contracts - type aliases
+    "TickerSet",
+    "TickerList",
+    "TickerCollection",
+    "DateLike",
+    # Integration contracts - normalization
+    "normalize_date_input",
+    "normalize_date_string",
+    "normalize_ticker_set",
+    # Integration contracts - score field names
+    "ScoreFieldNames",
+    # Integration contracts - schema validation
+    "SchemaValidationError",
+    "validate_module_1_output",
+    "validate_module_2_output",
+    "validate_module_3_output",
+    "validate_module_4_output",
+    "validate_module_5_output",
+    "validate_pipeline_handoff",
+    # Integration contracts - score extraction
+    "extract_financial_score",
+    "extract_catalyst_score",
+    "extract_clinical_score",
+    "extract_market_cap_mm",
 ]

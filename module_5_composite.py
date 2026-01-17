@@ -18,6 +18,11 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from common.provenance import create_provenance
 from common.types import Severity
+from common.integration_contracts import (
+    extract_financial_score,
+    extract_catalyst_score,
+    extract_clinical_score,
+)
 
 RULESET_VERSION = "1.2.1"  # Bumped for determinism + exception fixes
 
@@ -451,10 +456,12 @@ def compute_module_5_composite(
             cat_flags = []
             cat_severe_neg = False
 
-        # Get raw scores
-        fin_score = Decimal(fin.get("financial_normalized", "0")) if fin.get("financial_normalized") else None
+        # Get raw scores using integration contract helpers
+        fin_score_raw = extract_financial_score(fin)
+        fin_score = Decimal(str(fin_score_raw)) if fin_score_raw is not None else None
         cat_score = Decimal(str(cat_score_val)) if cat_score_val is not None else None
-        clin_score = Decimal(clin.get("clinical_score", "0")) if clin.get("clinical_score") else None
+        clin_score_raw = extract_clinical_score(clin)
+        clin_score = Decimal(str(clin_score_raw)) if clin_score_raw is not None else None
 
         # Get severities
         severities = [
