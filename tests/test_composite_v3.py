@@ -333,6 +333,135 @@ class TestValuationSignal:
         assert result.valuation_score == Decimal("50")
         assert result.confidence <= Decimal("0.3")
 
+    def test_determinism(self):
+        """Same inputs must produce identical outputs (no float variance)."""
+        peers = [
+            {"market_cap_mm": 5000, "trial_count": 5, "stage_bucket": "mid"},
+            {"market_cap_mm": 6000, "trial_count": 6, "stage_bucket": "mid"},
+            {"market_cap_mm": 7000, "trial_count": 7, "stage_bucket": "mid"},
+            {"market_cap_mm": 8000, "trial_count": 4, "stage_bucket": "mid"},
+            {"market_cap_mm": 9000, "trial_count": 8, "stage_bucket": "mid"},
+            {"market_cap_mm": 10000, "trial_count": 3, "stage_bucket": "mid"},
+        ]
+        # Run multiple times
+        results = [compute_valuation_signal(Decimal("6500"), 5, "Phase 2", peers) for _ in range(10)]
+
+        # All must be identical
+        assert all(r.valuation_score == results[0].valuation_score for r in results)
+        assert all(r.confidence == results[0].confidence for r in results)
+
+    def test_tie_aware_percentile(self):
+        """Ties should use midrank, not strict less-than."""
+        # Create peers with identical mcap/trial ratios
+        peers = [
+            {"market_cap_mm": 1000, "trial_count": 10, "stage_bucket": "mid"},  # 100
+            {"market_cap_mm": 1000, "trial_count": 10, "stage_bucket": "mid"},  # 100
+            {"market_cap_mm": 1000, "trial_count": 10, "stage_bucket": "mid"},  # 100
+            {"market_cap_mm": 2000, "trial_count": 10, "stage_bucket": "mid"},  # 200
+            {"market_cap_mm": 2000, "trial_count": 10, "stage_bucket": "mid"},  # 200
+        ]
+        # Test stock with same ratio as the 1000/10 peers (100)
+        result = compute_valuation_signal(Decimal("1000"), 10, "Phase 2", peers)
+
+        # With midrank: 3 ties at 100, so percentile = (0 + 0.5*3)/5 = 0.3 = 30%
+        # Valuation score = 100 - 30 = 70 (before shrinkage)
+        # Should NOT be 100 (which would happen with strict < counting)
+        assert result.valuation_score < Decimal("85")  # Account for shrinkage
+        assert result.valuation_score > Decimal("50")
+
+    def test_winsorization_trial_count(self):
+        """Extreme trial counts should be winsorized."""
+        peers = [
+            {"market_cap_mm": 1000, "trial_count": 5, "stage_bucket": "mid"},
+            {"market_cap_mm": 2000, "trial_count": 5, "stage_bucket": "mid"},
+            {"market_cap_mm": 3000, "trial_count": 5, "stage_bucket": "mid"},
+            {"market_cap_mm": 4000, "trial_count": 5, "stage_bucket": "mid"},
+            {"market_cap_mm": 5000, "trial_count": 5, "stage_bucket": "mid"},
+        ]
+        # Stock with absurdly high trial count (should be capped)
+        result_extreme = compute_valuation_signal(Decimal("3000"), 100, "Phase 2", peers)
+        result_capped = compute_valuation_signal(Decimal("3000"), 30, "Phase 2", peers)
+
+        # Both should produce similar results due to winsorization (100 -> 30)
+        assert result_extreme.mcap_per_asset == result_capped.mcap_per_asset
+
+    def test_winsorization_mcap(self):
+        """Extreme market caps should be winsorized."""
+        peers = [
+            {"market_cap_mm": 1000, "trial_count": 5, "stage_bucket": "mid"},
+            {"market_cap_mm": 2000, "trial_count": 5, "stage_bucket": "mid"},
+            {"market_cap_mm": 3000, "trial_count": 5, "stage_bucket": "mid"},
+            {"market_cap_mm": 4000, "trial_count": 5, "stage_bucket": "mid"},
+            {"market_cap_mm": 5000, "trial_count": 5, "stage_bucket": "mid"},
+        ]
+        # Stock with very small mcap (should be floored at 50)
+        result = compute_valuation_signal(Decimal("10"), 5, "Phase 2", peers)
+
+        # mcap_per_asset should be based on floor (50 / 5 = 10), not (10 / 5 = 2)
+        assert result.mcap_per_asset == Decimal("10.00")
+
+    def test_confidence_ramp(self):
+        """Confidence should increase smoothly with peer count."""
+        base_peer = {"market_cap_mm": 5000, "trial_count": 5, "stage_bucket": "mid"}
+
+        # 6 peers
+        peers_6 = [base_peer.copy() for _ in range(6)]
+        for i, p in enumerate(peers_6):
+            p["market_cap_mm"] = 5000 + i * 1000
+        result_6 = compute_valuation_signal(Decimal("5000"), 5, "Phase 2", peers_6)
+
+        # 15 peers
+        peers_15 = [base_peer.copy() for _ in range(15)]
+        for i, p in enumerate(peers_15):
+            p["market_cap_mm"] = 5000 + i * 500
+        result_15 = compute_valuation_signal(Decimal("5000"), 5, "Phase 2", peers_15)
+
+        # More peers = higher confidence
+        assert result_15.confidence > result_6.confidence
+
+    def test_shrinkage_small_sample(self):
+        """Small samples should be shrunk toward neutral (50)."""
+        # Create peers where stock is clearly cheapest
+        peers_small = [
+            {"market_cap_mm": 10000, "trial_count": 5, "stage_bucket": "mid"},
+            {"market_cap_mm": 11000, "trial_count": 5, "stage_bucket": "mid"},
+            {"market_cap_mm": 12000, "trial_count": 5, "stage_bucket": "mid"},
+            {"market_cap_mm": 13000, "trial_count": 5, "stage_bucket": "mid"},
+            {"market_cap_mm": 14000, "trial_count": 5, "stage_bucket": "mid"},
+        ]
+        result_small = compute_valuation_signal(Decimal("1000"), 5, "Phase 2", peers_small)
+
+        # Create large peer set where stock is also cheapest
+        peers_large = peers_small + [
+            {"market_cap_mm": 15000 + i * 1000, "trial_count": 5, "stage_bucket": "mid"}
+            for i in range(20)
+        ]
+        result_large = compute_valuation_signal(Decimal("1000"), 5, "Phase 2", peers_large)
+
+        # Small sample should be shrunk closer to 50 than large sample
+        # Both should be > 50 (cheapest), but small should be less extreme
+        distance_small = abs(result_small.valuation_score - Decimal("50"))
+        distance_large = abs(result_large.valuation_score - Decimal("50"))
+        assert distance_small < distance_large
+
+    def test_stage_filtering(self):
+        """Only same-stage peers should be used."""
+        peers = [
+            {"market_cap_mm": 1000, "trial_count": 5, "stage_bucket": "early"},
+            {"market_cap_mm": 2000, "trial_count": 5, "stage_bucket": "early"},
+            {"market_cap_mm": 100000, "trial_count": 5, "stage_bucket": "mid"},
+            {"market_cap_mm": 200000, "trial_count": 5, "stage_bucket": "mid"},
+            {"market_cap_mm": 200000, "trial_count": 5, "stage_bucket": "mid"},
+            {"market_cap_mm": 200000, "trial_count": 5, "stage_bucket": "mid"},
+            {"market_cap_mm": 200000, "trial_count": 5, "stage_bucket": "mid"},
+        ]
+        # Phase 2 = mid stage, should only compare to mid peers
+        result = compute_valuation_signal(Decimal("150000"), 5, "Phase 2", peers)
+
+        # Should be compared to 100k-200k mid peers, not 1k-2k early peers
+        # 150k is in the middle of mid peers, so score should be around 50
+        assert Decimal("30") < result.valuation_score < Decimal("70")
+
 
 # =============================================================================
 # CATALYST DECAY TESTS
