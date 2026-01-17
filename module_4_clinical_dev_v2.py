@@ -51,9 +51,158 @@ from common.provenance import create_provenance
 from common.types import Severity
 
 
-__version__ = "2.0.0"
-RULESET_VERSION = "2.0.0-V2"
-SCHEMA_VERSION = "v2.0"
+__version__ = "2.1.0"
+RULESET_VERSION = "2.1.0-V2"
+SCHEMA_VERSION = "v2.1"
+
+
+# ============================================================================
+# INPUT VALIDATION CONSTANTS
+# ============================================================================
+
+# Maximum allowed lengths for input fields to prevent DoS
+MAX_ENDPOINT_LENGTH = 10000
+MAX_CONDITION_LENGTH = 1000
+MAX_CONDITIONS_DEPTH = 3
+MAX_TRIALS_PER_TICKER = 5000  # Reasonable upper bound for pathological inputs
+MAX_CONDITION_STRING_LENGTH = 500
+
+
+class ValidationError(ValueError):
+    """Raised when input validation fails."""
+    pass
+
+
+# ============================================================================
+# INPUT VALIDATION UTILITIES
+# ============================================================================
+
+def _validate_as_of_date(as_of_date: Any) -> str:
+    """
+    Validate and normalize as_of_date input.
+
+    Args:
+        as_of_date: Expected to be ISO date string (YYYY-MM-DD)
+
+    Returns:
+        Validated ISO date string
+
+    Raises:
+        ValidationError: If as_of_date is invalid
+    """
+    if as_of_date is None:
+        raise ValidationError("as_of_date cannot be None")
+
+    if not isinstance(as_of_date, str):
+        # Try to convert date object
+        if hasattr(as_of_date, 'isoformat'):
+            as_of_date = as_of_date.isoformat()
+        else:
+            raise ValidationError(
+                f"as_of_date must be string or date, got {type(as_of_date).__name__}"
+            )
+
+    as_of_date = as_of_date.strip()
+
+    if not as_of_date:
+        raise ValidationError("as_of_date cannot be empty string")
+
+    # Validate ISO format
+    try:
+        parsed = date.fromisoformat(as_of_date[:10])
+        return parsed.isoformat()
+    except ValueError as e:
+        raise ValidationError(f"as_of_date must be valid ISO date (YYYY-MM-DD): {e}")
+
+
+def _validate_active_tickers(active_tickers: Any) -> List[str]:
+    """
+    Validate and normalize active_tickers input.
+
+    Args:
+        active_tickers: Expected to be Set[str] or List[str]
+
+    Returns:
+        Sorted list of uppercase ticker strings
+
+    Raises:
+        ValidationError: If active_tickers is invalid type
+    """
+    if active_tickers is None:
+        return []
+
+    if not isinstance(active_tickers, (set, list, frozenset, tuple)):
+        raise ValidationError(
+            f"active_tickers must be set, list, tuple, or frozenset, "
+            f"got {type(active_tickers).__name__}"
+        )
+
+    # Convert to list and validate each ticker
+    result = []
+    for ticker in active_tickers:
+        if not isinstance(ticker, str):
+            raise ValidationError(
+                f"Each ticker must be string, got {type(ticker).__name__}: {ticker!r}"
+            )
+        normalized = ticker.strip().upper()
+        if normalized:  # Skip empty strings
+            result.append(normalized)
+
+    return sorted(set(result))  # Dedupe and sort for determinism
+
+
+def _validate_trial_records(trial_records: Any) -> List[Dict[str, Any]]:
+    """
+    Validate and normalize trial_records input.
+
+    Args:
+        trial_records: Expected to be List[Dict[str, Any]]
+
+    Returns:
+        Validated list of trial record dicts
+
+    Raises:
+        ValidationError: If trial_records structure is invalid
+    """
+    if trial_records is None:
+        return []
+
+    if not isinstance(trial_records, list):
+        raise ValidationError(
+            f"trial_records must be list, got {type(trial_records).__name__}"
+        )
+
+    validated = []
+    for i, record in enumerate(trial_records):
+        if not isinstance(record, dict):
+            raise ValidationError(
+                f"trial_records[{i}] must be dict, got {type(record).__name__}"
+            )
+        validated.append(record)
+
+    return validated
+
+
+def _safe_string_field(value: Any, max_length: int = MAX_CONDITION_STRING_LENGTH) -> str:
+    """
+    Safely convert a field to string with length limit.
+
+    Args:
+        value: Any value to convert
+        max_length: Maximum allowed length
+
+    Returns:
+        String value, truncated if necessary
+    """
+    if value is None:
+        return ""
+
+    result = str(value).strip()
+
+    if len(result) > max_length:
+        return result[:max_length]
+
+    return result
 
 
 # ============================================================================
@@ -547,32 +696,65 @@ def _classify_endpoint(endpoint_text: str) -> Tuple[str, Optional[str]]:
 # CONDITIONS PARSING
 # ============================================================================
 
-def _normalize_conditions(conditions_raw: Any) -> List[str]:
+def _normalize_conditions(
+    conditions_raw: Any,
+    max_depth: int = MAX_CONDITIONS_DEPTH,
+    max_length: int = MAX_CONDITION_STRING_LENGTH
+) -> List[str]:
     """
     Normalize conditions to List[str] (lower, strip).
-    Handles string, list of strings, or nested structures.
+
+    Handles string, list of strings, or nested structures with depth limit.
+    Provides robust handling of malformed inputs.
+
+    Args:
+        conditions_raw: Input conditions (string, list, or nested)
+        max_depth: Maximum nesting depth to traverse (default: 3)
+        max_length: Maximum length per condition string (default: 500)
+
+    Returns:
+        Sorted list of unique normalized condition strings
     """
-    result = []
+    result: List[str] = []
 
-    if isinstance(conditions_raw, str):
-        for part in conditions_raw.replace(';', ',').replace('|', ',').split(','):
-            cleaned = part.lower().strip()
-            if cleaned:
-                result.append(cleaned)
-    elif isinstance(conditions_raw, list):
-        for item in conditions_raw:
-            if isinstance(item, str):
-                cleaned = item.lower().strip()
+    def _extract_strings(value: Any, depth: int) -> None:
+        """Recursively extract strings with depth limit."""
+        if depth > max_depth:
+            return
+
+        if value is None:
+            return
+
+        if isinstance(value, str):
+            # Split on common delimiters
+            for part in value.replace(';', ',').replace('|', ',').split(','):
+                cleaned = part.lower().strip()
                 if cleaned:
+                    # Apply length limit
+                    if len(cleaned) > max_length:
+                        cleaned = cleaned[:max_length]
                     result.append(cleaned)
-            elif isinstance(item, list):
-                for sub in item:
-                    if isinstance(sub, str):
-                        cleaned = sub.lower().strip()
-                        if cleaned:
-                            result.append(cleaned)
 
-    # Deterministic ordering
+        elif isinstance(value, (list, tuple)):
+            for item in value:
+                _extract_strings(item, depth + 1)
+
+        elif isinstance(value, dict):
+            # Handle dict-like structures (e.g., {"name": "condition"})
+            if "name" in value and isinstance(value["name"], str):
+                _extract_strings(value["name"], depth + 1)
+            elif "condition" in value and isinstance(value["condition"], str):
+                _extract_strings(value["condition"], depth + 1)
+            # Also try extracting from values if simple
+            for v in value.values():
+                if isinstance(v, str) and len(v) < max_length:
+                    _extract_strings(v, depth + 1)
+
+        # Silently ignore other types (int, float, etc.)
+
+    _extract_strings(conditions_raw, depth=0)
+
+    # Deterministic ordering with deduplication
     return sorted(set(result))
 
 
@@ -599,8 +781,26 @@ def _tokenize_conditions(conditions: List[str]) -> Set[str]:
 def _score_trial_count(num_trials: int) -> Decimal:
     """
     Score based on number of trials (0-5 pts).
+
     More trials = more diversified pipeline.
+    Includes upper bound protection for pathological inputs.
+
+    Args:
+        num_trials: Number of unique trials for a ticker
+
+    Returns:
+        Score between 0 and 5 as Decimal
     """
+    # Robust handling of invalid inputs
+    if not isinstance(num_trials, (int, float)):
+        return Decimal("0")
+
+    # Ensure non-negative
+    num_trials = max(0, int(num_trials))
+
+    # Cap at reasonable maximum to prevent pathological behavior
+    num_trials = min(num_trials, MAX_TRIALS_PER_TICKER)
+
     if num_trials == 0:
         return Decimal("0")
     elif num_trials == 1:
@@ -613,7 +813,10 @@ def _score_trial_count(num_trials: int) -> Decimal:
         return Decimal("3.5")
     elif num_trials <= 20:
         return Decimal("4.5")
+    elif num_trials <= 100:
+        return Decimal("5.0")
     else:
+        # Very large trial counts (>100) - log diagnostic but still score max
         return Decimal("5.0")
 
 
@@ -687,16 +890,25 @@ def _score_recency(
 
 
 def _score_design(trial: TrialPITRecord) -> Decimal:
-    """Score trial design quality (0-25)."""
+    """
+    Score trial design quality (0-25).
+
+    Robust handling of potentially None or malformed blinded field.
+    """
     score = Decimal("12")  # Base
 
     # Randomized bonus
     if trial.randomized:
         score += Decimal("5")
 
-    # Double-blind bonus
-    if trial.blinded.lower() in ("double", "double-blind", "double blind"):
-        score += Decimal("4")
+    # Double-blind bonus - defensive null check
+    blinded = trial.blinded
+    if blinded and isinstance(blinded, str):
+        blinded_lower = blinded.lower().strip()
+        if blinded_lower in ("double", "double-blind", "double blind", "double_blind"):
+            score += Decimal("4")
+        elif blinded_lower in ("single", "single-blind", "single blind", "single_blind"):
+            score += Decimal("2")  # Partial credit for single-blind
 
     # Endpoint strength (already classified)
     if trial.endpoint_classification == "strong":
@@ -894,12 +1106,33 @@ def compute_module_4_clinical_dev_v2(
             "diagnostic_counts": DiagnosticCountsV2,
             "provenance": {...}
         }
+
+    Raises:
+        ValidationError: If inputs fail type validation
     """
     import logging
     logger = logging.getLogger(__name__)
 
-    # Handle empty active_tickers gracefully
-    if not active_tickers or len(active_tickers) == 0:
+    # =========================================================================
+    # INPUT VALIDATION (fail-fast with clear error messages)
+    # =========================================================================
+
+    # Validate and normalize as_of_date
+    try:
+        as_of_date = _validate_as_of_date(as_of_date)
+    except ValidationError as e:
+        logger.error(f"Module 4: Invalid as_of_date: {e}")
+        raise
+
+    # Validate and normalize active_tickers
+    try:
+        active_tickers_list = _validate_active_tickers(active_tickers)
+    except ValidationError as e:
+        logger.error(f"Module 4: Invalid active_tickers: {e}")
+        raise
+
+    # Handle empty active_tickers gracefully (after validation)
+    if not active_tickers_list:
         logger.warning("Module 4: Empty active_tickers provided - returning empty results")
         return {
             "as_of_date": as_of_date,
@@ -913,31 +1146,65 @@ def compute_module_4_clinical_dev_v2(
                 "pit_fields_used": {},
                 "status_distribution": {},
                 "endpoint_distribution": {},
+                "validation_issues": {},
             },
             "provenance": create_provenance(RULESET_VERSION, {"tickers": []}, as_of_date),
         }
 
-    # Handle empty trial_records gracefully
+    # Validate and normalize trial_records
+    try:
+        trial_records = _validate_trial_records(trial_records)
+    except ValidationError as e:
+        logger.error(f"Module 4: Invalid trial_records: {e}")
+        raise
+
+    # Handle empty trial_records gracefully (after validation)
     if not trial_records:
         logger.warning("Module 4: No trial records provided")
-        trial_records = []
 
-    # Normalize to sorted list for deterministic iteration
-    if isinstance(active_tickers, set):
-        active_tickers = sorted(active_tickers)
-
+    # Compute PIT cutoff (as_of_date already validated)
     pit_cutoff = _compute_pit_cutoff(as_of_date)
 
-    # Diagnostics
+    # =========================================================================
+    # INITIALIZE DIAGNOSTICS
+    # =========================================================================
+
     diagnostics = DiagnosticCountsV2()
 
-    # Parse all trials with PIT audit
+    # Extended diagnostics for validation issues
+    validation_issues: Dict[str, int] = {
+        "empty_ticker": 0,
+        "empty_nct_id": 0,
+        "invalid_ticker_type": 0,
+        "endpoint_truncated": 0,
+    }
+
+    # =========================================================================
+    # PARSE ALL TRIALS WITH PIT AUDIT
+    # =========================================================================
+
     all_trials: List[TrialPITRecord] = []
     ticker_raw_counts: Dict[str, int] = {}
 
     for trial in trial_records:
-        ticker = str(trial.get("ticker", "")).upper()
-        if ticker not in active_tickers:
+        # Robust ticker extraction with validation tracking
+        raw_ticker = trial.get("ticker")
+        if raw_ticker is None:
+            validation_issues["empty_ticker"] += 1
+            continue
+
+        if not isinstance(raw_ticker, str):
+            validation_issues["invalid_ticker_type"] += 1
+            raw_ticker = str(raw_ticker)
+
+        ticker = raw_ticker.strip().upper()
+
+        # Track empty ticker after normalization
+        if not ticker:
+            validation_issues["empty_ticker"] += 1
+            continue
+
+        if ticker not in active_tickers_list:
             continue
 
         diagnostics.total_trials_raw += 1
@@ -952,15 +1219,23 @@ def compute_module_4_clinical_dev_v2(
         if not pit_admissible:
             diagnostics.total_pit_filtered += 1
 
-        nct_id = str(trial.get("nct_id", "")).strip()
+        # Robust NCT ID extraction
+        nct_id = _safe_string_field(trial.get("nct_id"), max_length=50)
         if not nct_id:
+            validation_issues["empty_nct_id"] += 1
             continue
 
-        # Parse fields
+        # Parse fields with robust handling
         phase = _parse_phase(trial.get("phase"))
         status = _parse_status(trial.get("status"))
         conditions = _normalize_conditions(trial.get("conditions", ""))
-        primary_endpoint = str(trial.get("primary_endpoint", ""))
+
+        # Primary endpoint with length limiting
+        primary_endpoint_raw = trial.get("primary_endpoint", "")
+        primary_endpoint = _safe_string_field(primary_endpoint_raw, max_length=MAX_ENDPOINT_LENGTH)
+        if len(str(primary_endpoint_raw)) > MAX_ENDPOINT_LENGTH:
+            validation_issues["endpoint_truncated"] += 1
+
         endpoint_class, endpoint_pattern = _classify_endpoint(primary_endpoint)
 
         # Track status distribution
@@ -978,7 +1253,7 @@ def compute_module_4_clinical_dev_v2(
             conditions=conditions,
             primary_endpoint=primary_endpoint,
             randomized=bool(trial.get("randomized", False)),
-            blinded=str(trial.get("blinded", "")),
+            blinded=_safe_string_field(trial.get("blinded"), max_length=100),
             last_update_posted=trial.get("last_update_posted"),
             pit_date_field_used=pit_field,
             pit_reference_date=pit_date,
@@ -989,6 +1264,11 @@ def compute_module_4_clinical_dev_v2(
         )
 
         all_trials.append(pit_record)
+
+    # Log validation issues if any occurred
+    total_issues = sum(validation_issues.values())
+    if total_issues > 0:
+        logger.info(f"Module 4: Validation issues encountered: {validation_issues}")
 
     # Deduplicate by nct_id
     deduped_trials = _dedup_trials_by_nct_id(all_trials)
@@ -1008,7 +1288,7 @@ def compute_module_4_clinical_dev_v2(
     # Score each ticker
     scores: List[TickerClinicalSummaryV2] = []
 
-    for ticker in sorted(active_tickers):
+    for ticker in active_tickers_list:  # Already sorted and validated
         trials = ticker_trials.get(ticker, [])
         n_trials_unique = len(trials)
         n_trials_raw = ticker_raw_counts.get(ticker, 0)
@@ -1067,10 +1347,16 @@ def compute_module_4_clinical_dev_v2(
         endpoint_score, n_strong, n_weak, n_neutral = _score_endpoints(trials)
 
         # Total (0-120, normalized to 0-100)
+        # Quantize each component before summing to ensure precision
         total = (
-            phase_score + phase_progress + trial_count_bonus +
-            diversity_bonus + recency_bonus + design_score +
-            execution_score + endpoint_score
+            phase_score.quantize(SCORE_PRECISION, rounding=ROUND_HALF_UP) +
+            phase_progress.quantize(SCORE_PRECISION, rounding=ROUND_HALF_UP) +
+            trial_count_bonus.quantize(SCORE_PRECISION, rounding=ROUND_HALF_UP) +
+            diversity_bonus.quantize(SCORE_PRECISION, rounding=ROUND_HALF_UP) +
+            recency_bonus.quantize(SCORE_PRECISION, rounding=ROUND_HALF_UP) +
+            design_score.quantize(SCORE_PRECISION, rounding=ROUND_HALF_UP) +
+            execution_score.quantize(SCORE_PRECISION, rounding=ROUND_HALF_UP) +
+            endpoint_score.quantize(SCORE_PRECISION, rounding=ROUND_HALF_UP)
         )
 
         clinical_score = ((total / Decimal("120")) * Decimal("100")).quantize(
@@ -1144,8 +1430,9 @@ def compute_module_4_clinical_dev_v2(
             "pit_fields_used": diagnostics.pit_fields_used,
             "status_distribution": diagnostics.status_distribution,
             "endpoint_distribution": diagnostics.endpoint_distribution,
+            "validation_issues": validation_issues,
         },
-        "provenance": create_provenance(RULESET_VERSION, {"tickers": active_tickers}, pit_cutoff),
+        "provenance": create_provenance(RULESET_VERSION, {"tickers": active_tickers_list}, pit_cutoff),
     }
 
 
