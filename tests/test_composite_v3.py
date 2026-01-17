@@ -548,42 +548,133 @@ class TestRegimeAdaptive:
 # =============================================================================
 
 class TestAdaptiveWeights:
-    """Tests for adaptive weight learning."""
+    """Tests for adaptive weight learning with PIT-safe signature."""
 
     def test_no_data_fallback(self):
         """No historical data should return base weights."""
+        from datetime import date
         base_weights = {"clinical": Decimal("0.40"), "financial": Decimal("0.35"), "catalyst": Decimal("0.25")}
         result = compute_adaptive_weights(
             historical_scores=[],
-            historical_returns={},
+            forward_returns={},
             base_weights=base_weights,
+            asof_date=date(2026, 1, 15),
         )
         assert result.weights == base_weights
         assert result.optimization_method == "fallback_no_data"
+        assert result.training_periods == 0
 
     def test_with_historical_data(self):
         """Historical data should produce adjusted weights based on IC."""
+        from datetime import date, timedelta
         base_weights = {"clinical": Decimal("0.40"), "financial": Decimal("0.35"), "catalyst": Decimal("0.25")}
 
+        asof_date = date(2026, 1, 15)
+
         # Create mock historical data where clinical is most predictive
-        historical_scores = [
-            {"ticker": f"T{i}", "clinical": Decimal(str(50 + i)), "financial": Decimal("50"), "catalyst": Decimal("50")}
-            for i in range(50)
-        ]
-        # Returns correlated with clinical score
-        historical_returns = {f"T{i}": Decimal(str(0.01 * i)) for i in range(50)}
+        # Each score record needs an as_of_date field
+        # We'll create 6 months of data, one record per ticker per month
+        historical_scores = []
+        forward_returns = {}  # Dict[(date, ticker), Decimal]
+
+        for month_offset in range(6, 12):  # 6-12 months ago (within lookback, before embargo)
+            score_date = asof_date - timedelta(days=30 * month_offset)
+            for i in range(20):  # 20 tickers per month
+                ticker = f"T{i}"
+                historical_scores.append({
+                    "ticker": ticker,
+                    "as_of_date": score_date.isoformat(),
+                    "clinical": Decimal(str(50 + i)),  # Clinical varies by ticker
+                    "financial": Decimal("50"),
+                    "catalyst": Decimal("50"),
+                })
+                # Returns correlated with clinical score (higher ticker # = higher return)
+                forward_returns[(score_date, ticker)] = Decimal(str(0.01 * i))
 
         result = compute_adaptive_weights(
             historical_scores=historical_scores,
-            historical_returns=historical_returns,
+            forward_returns=forward_returns,
             base_weights=base_weights,
+            asof_date=asof_date,
+            embargo_months=1,
+            shrinkage_lambda=Decimal("0.50"),  # Less shrinkage for clearer signal
+            smooth_gamma=Decimal("0.0"),  # No smoothing (no prev_weights)
         )
 
-        # Should use a non-fallback method
-        assert "fallback" not in result.optimization_method
+        # Should use PIT-safe method
+        assert result.optimization_method == "pit_safe_rank_correlation"
+        # Should have training periods
+        assert result.training_periods >= 3
         # Weights should sum to ~1.0
         total = sum(result.weights.values())
         assert Decimal("0.99") <= total <= Decimal("1.01")
+
+    def test_embargo_enforcement(self):
+        """Data within embargo period should be excluded."""
+        from datetime import date, timedelta
+        base_weights = {"clinical": Decimal("0.40"), "financial": Decimal("0.35")}
+        asof_date = date(2026, 1, 15)
+
+        # Create data that's too recent (within embargo)
+        recent_date = asof_date - timedelta(days=15)  # Only 15 days ago
+        historical_scores = [
+            {"ticker": f"T{i}", "as_of_date": recent_date.isoformat(), "clinical": Decimal("60"), "financial": Decimal("50")}
+            for i in range(20)
+        ]
+        forward_returns = {(recent_date, f"T{i}"): Decimal("0.05") for i in range(20)}
+
+        result = compute_adaptive_weights(
+            historical_scores=historical_scores,
+            forward_returns=forward_returns,
+            base_weights=base_weights,
+            asof_date=asof_date,
+            embargo_months=1,  # 30 days embargo
+        )
+
+        # Should fall back because all data is within embargo
+        assert "fallback" in result.optimization_method
+        assert result.training_periods == 0
+
+    def test_deterministic_tiebreaking(self):
+        """Tickers with same scores should have deterministic ranking."""
+        from datetime import date, timedelta
+        base_weights = {"clinical": Decimal("0.50"), "financial": Decimal("0.50")}
+        asof_date = date(2026, 1, 15)
+
+        # Create data with ties (same scores for all tickers)
+        historical_scores = []
+        forward_returns = {}
+
+        for month_offset in range(3, 9):
+            score_date = asof_date - timedelta(days=30 * month_offset)
+            for i in range(15):
+                ticker = f"TICK{i:03d}"  # Zero-padded for consistent sorting
+                historical_scores.append({
+                    "ticker": ticker,
+                    "as_of_date": score_date.isoformat(),
+                    "clinical": Decimal("50"),  # Same score for all
+                    "financial": Decimal("50"),
+                })
+                # Different returns for each ticker
+                forward_returns[(score_date, ticker)] = Decimal(str(0.02 * i))
+
+        # Run twice to verify determinism
+        result1 = compute_adaptive_weights(
+            historical_scores=historical_scores,
+            forward_returns=forward_returns,
+            base_weights=base_weights,
+            asof_date=asof_date,
+        )
+        result2 = compute_adaptive_weights(
+            historical_scores=historical_scores,
+            forward_returns=forward_returns,
+            base_weights=base_weights,
+            asof_date=asof_date,
+        )
+
+        # Results should be identical
+        assert result1.weights == result2.weights
+        assert result1.historical_ic_by_component == result2.historical_ic_by_component
 
 
 # =============================================================================

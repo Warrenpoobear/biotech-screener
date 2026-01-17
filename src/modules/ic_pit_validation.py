@@ -124,7 +124,7 @@ class ProductionGateResult:
 def validate_adaptive_weight_pit(
     as_of_date: date,
     historical_scores: List[Dict[str, Any]],
-    historical_returns: Dict[str, Decimal],
+    historical_returns: Dict[Tuple[date, str], Decimal],
     *,
     embargo_days: int = DEFAULT_EMBARGO_DAYS,
     min_training_months: int = MIN_TRAINING_MONTHS,
@@ -134,14 +134,16 @@ def validate_adaptive_weight_pit(
 
     Requirements:
     1. All historical scores must have as_of_date < training_cutoff
-    2. All returns must be from periods ending before training_cutoff
-    3. Training cutoff must be at least embargo_days before as_of_date
-    4. Training window must be at least min_training_months
+    2. All returns must be keyed by (as_of_date, ticker) for PIT safety
+    3. All return keys must have as_of_date < embargo_cutoff
+    4. Training cutoff must be at least embargo_days before as_of_date
+    5. Training window must be at least min_training_months
 
     Args:
         as_of_date: The evaluation date
         historical_scores: List of historical score records
-        historical_returns: Dict of ticker -> forward returns
+        historical_returns: Dict keyed by (as_of_date, ticker) -> forward return
+            CRITICAL: as_of_date in key is when the return period STARTS
         embargo_days: Minimum gap between training end and evaluation
         min_training_months: Minimum training window length
 
@@ -173,12 +175,15 @@ def validate_adaptive_weight_pit(
             continue
 
         try:
-            score_date = date.fromisoformat(score_date_str)
+            if isinstance(score_date_str, date):
+                score_date = score_date_str
+            else:
+                score_date = date.fromisoformat(str(score_date_str)[:10])
             score_dates.append(score_date)
             if score_date >= embargo_cutoff:
                 scores_after_embargo.append({
                     "index": i,
-                    "date": score_date_str,
+                    "date": score_date.isoformat(),
                     "ticker": score.get("ticker", "unknown"),
                 })
         except ValueError:
@@ -211,9 +216,43 @@ def validate_adaptive_weight_pit(
                 f"minimum ({min_training_months} months)"
             )
 
-    # Check 3: Returns must not include post-embargo periods
-    # (This requires return metadata - simplified check)
-    # In production, returns should have return_start_date and return_end_date
+    # Check 3: All returns must be keyed by (date, ticker) and before embargo
+    # This is the CRITICAL PIT check for returns
+    returns_after_embargo = []
+    invalid_return_keys = []
+
+    for key in historical_returns.keys():
+        if not isinstance(key, tuple) or len(key) != 2:
+            invalid_return_keys.append(str(key))
+            continue
+
+        return_date, ticker = key
+        if not isinstance(return_date, date):
+            invalid_return_keys.append(f"({return_date}, {ticker})")
+            continue
+
+        # The return_date is when the return period STARTS
+        # It must be before embargo_cutoff to be PIT-safe
+        if return_date >= embargo_cutoff:
+            returns_after_embargo.append({
+                "date": return_date.isoformat(),
+                "ticker": ticker,
+            })
+
+    if invalid_return_keys:
+        violations.append(
+            f"Found {len(invalid_return_keys)} returns with invalid keys "
+            f"(must be (date, ticker) tuples): {invalid_return_keys[:3]}..."
+        )
+
+    if returns_after_embargo:
+        violations.append(
+            f"Found {len(returns_after_embargo)} returns after embargo cutoff "
+            f"({embargo_cutoff.isoformat()}): {returns_after_embargo[:3]}..."
+        )
+
+    details["returns_validated"] = len(historical_returns) - len(invalid_return_keys)
+    details["returns_after_embargo"] = len(returns_after_embargo)
 
     status = ValidationStatus.PASSED if not violations else ValidationStatus.FAILED
 
@@ -511,7 +550,7 @@ def run_production_gate(
     as_of_date: date,
     *,
     historical_scores: Optional[List[Dict]] = None,
-    historical_returns: Optional[Dict[str, Decimal]] = None,
+    historical_returns: Optional[Dict[Tuple[date, str], Decimal]] = None,
     peer_valuations: Optional[List[Dict]] = None,
     coinvest_data: Optional[Dict] = None,
     current_weights: Optional[Dict[str, Decimal]] = None,
@@ -527,7 +566,8 @@ def run_production_gate(
     Args:
         as_of_date: Evaluation date
         historical_scores: For adaptive weight validation
-        historical_returns: For adaptive weight validation
+        historical_returns: For adaptive weight validation. Must be keyed by
+            (as_of_date, ticker) tuples for PIT safety.
         peer_valuations: For peer valuation validation
         coinvest_data: For co-invest validation
         current_weights: For weight stability check
