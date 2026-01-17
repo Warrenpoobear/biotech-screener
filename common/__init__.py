@@ -12,6 +12,7 @@ Provides:
 - input_validation: Pipeline input validation
 - score_utils: Score clamping and normalization
 - null_safety: Defensive null handling
+- robustness: Data staleness, consistency checks, retry logic, memory guards
 """
 
 from common.date_utils import normalize_date, to_date_string, to_date_object, validate_as_of_date
@@ -79,6 +80,37 @@ from common.integration_contracts import (
     TickerCatalystSummaryV2,
 )
 
+# Robustness utilities
+from common.robustness import (
+    # Data staleness
+    DataFreshnessConfig,
+    DataFreshnessResult,
+    validate_data_freshness,
+    validate_record_freshness,
+    # Cross-module consistency
+    ConsistencyReport,
+    validate_ticker_coverage,
+    validate_module_handoff,
+    # Retry logic
+    RetryConfig,
+    retry_with_backoff,
+    RetryExhaustedError,
+    # Memory guards
+    MemoryGuardConfig,
+    chunk_universe,
+    estimate_memory_usage,
+    # Structured logging
+    CorrelationContext,
+    get_correlation_id,
+    set_correlation_id,
+    with_correlation_id,
+    CorrelatedLogger,
+    # Graceful degradation
+    DegradationReport,
+    GracefulDegradationConfig,
+    compute_with_degradation,
+)
+
 __all__ = [
     # Date utilities
     "normalize_date",
@@ -141,4 +173,31 @@ __all__ = [
     "CatalystWindowBucket",
     "CatalystEventV2",
     "TickerCatalystSummaryV2",
+    # Robustness - data staleness
+    "DataFreshnessConfig",
+    "DataFreshnessResult",
+    "validate_data_freshness",
+    "validate_record_freshness",
+    # Robustness - cross-module consistency
+    "ConsistencyReport",
+    "validate_ticker_coverage",
+    "validate_module_handoff",
+    # Robustness - retry logic
+    "RetryConfig",
+    "retry_with_backoff",
+    "RetryExhaustedError",
+    # Robustness - memory guards
+    "MemoryGuardConfig",
+    "chunk_universe",
+    "estimate_memory_usage",
+    # Robustness - structured logging
+    "CorrelationContext",
+    "get_correlation_id",
+    "set_correlation_id",
+    "with_correlation_id",
+    "CorrelatedLogger",
+    # Robustness - graceful degradation
+    "DegradationReport",
+    "GracefulDegradationConfig",
+    "compute_with_degradation",
 ]
