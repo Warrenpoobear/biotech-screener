@@ -739,14 +739,22 @@ def _score_single_ticker_v3(
     elif vol_adj.vol_bucket == VolatilityBucket.LOW:
         flags.append("low_volatility_boost")
 
-    # 2. Momentum signal
-    momentum = compute_momentum_signal(return_60d, benchmark_return_60d)
+    # 2. Momentum signal (with vol available for adjustment)
+    momentum = compute_momentum_signal(
+        return_60d,
+        benchmark_return_60d,
+        annualized_vol=annualized_vol,
+        use_vol_adjusted_alpha=False,  # Default to raw alpha (can enable for vol-adjusted)
+    )
     momentum_norm = momentum.momentum_score
     if momentum.alpha_60d is not None:
         if momentum.alpha_60d >= Decimal("0.10"):
             flags.append("strong_positive_momentum")
         elif momentum.alpha_60d <= Decimal("-0.10"):
             flags.append("strong_negative_momentum")
+    # Flag incomplete momentum data
+    if momentum.data_completeness < Decimal("0.5"):
+        flags.append("momentum_data_incomplete")
 
     # 3. Valuation signal
     valuation = compute_valuation_signal(market_cap_mm, trial_count, lead_phase, peer_valuations)
