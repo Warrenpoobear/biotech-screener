@@ -22,6 +22,11 @@ from common.integration_contracts import (
     extract_financial_score,
     extract_catalyst_score,
     extract_clinical_score,
+    validate_module_1_output,
+    validate_module_2_output,
+    validate_module_3_output,
+    validate_module_4_output,
+    SchemaValidationError,
 )
 
 RULESET_VERSION = "1.2.1"  # Bumped for determinism + exception fixes
@@ -297,6 +302,7 @@ def compute_module_5_composite(
     coinvest_signals: Optional[Dict] = None,
     cohort_mode: str = COHORT_MODE_STAGE_ONLY,
     enhancement_result: Optional[Dict[str, Any]] = None,
+    validate_inputs: bool = True,
 ) -> Dict[str, Any]:
     """
     Compute composite scores with cohort normalization and co-invest overlay.
@@ -312,6 +318,7 @@ def compute_module_5_composite(
         coinvest_signals: Optional dict of ticker -> AggregatedSignal from 13F aggregator
         cohort_mode: "stage_only" (recommended) or "stage_mcap" (granular)
         enhancement_result: Optional enhancement module results (PoS, regime, SI)
+        validate_inputs: If True (default), validate upstream module outputs against schemas
 
     Returns:
         {
@@ -328,6 +335,13 @@ def compute_module_5_composite(
             "provenance": {...}
         }
     """
+    # Validate upstream module outputs (fail-fast on schema violations)
+    if validate_inputs:
+        validate_module_1_output(universe_result)
+        validate_module_2_output(financial_result)
+        validate_module_3_output(catalyst_result)
+        validate_module_4_output(clinical_result)
+
     # Extract enhancement data if provided
     enhancement_applied = enhancement_result is not None
     pos_by_ticker = {}

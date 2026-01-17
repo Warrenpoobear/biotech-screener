@@ -5,13 +5,15 @@ This module defines:
 1. Type aliases and protocols for module boundaries
 2. Schema validation functions for inter-module data
 3. Standardized data structures for pipeline communication
+4. Re-exports of key types from specialized schema modules
 
 Design Philosophy:
 - Explicit type hints at all module boundaries
 - Schema validation for fail-loud behavior
 - Standardized field names across modules
+- Single source of truth via re-exports
 
-Version: 1.0.0
+Version: 1.1.0
 """
 from __future__ import annotations
 
@@ -27,13 +29,87 @@ from typing import (
     Optional,
     Protocol,
     Set,
+    Tuple,
     TypedDict,
     Union,
     runtime_checkable,
 )
 
+# Re-export Module 3 schema types for cross-module usage
+from module_3_schema import (
+    # Enums
+    EventType,
+    EventSeverity,
+    ConfidenceLevel,
+    CatalystWindowBucket,
+    # Dataclasses
+    CatalystEventV2,
+    TickerCatalystSummaryV2,
+    DiagnosticCounts as Module3DiagnosticCounts,
+    # Version constants
+    SCHEMA_VERSION as MODULE_3_SCHEMA_VERSION,
+    SCORE_VERSION as MODULE_3_SCORE_VERSION,
+    # Validation functions
+    validate_summary_schema as validate_m3_summary_schema,
+)
 
-__version__ = "1.0.0"
+
+__version__ = "1.1.0"
+
+# =============================================================================
+# CONTRACT VERSIONING
+# =============================================================================
+
+# Supported schema versions for each module (for forward/backward compat)
+SUPPORTED_SCHEMA_VERSIONS = {
+    "module_1": {"1.0.0"},
+    "module_2": {"1.0.0"},
+    "module_3": {MODULE_3_SCHEMA_VERSION, "m3catalyst_vnext_20260111"},
+    "module_4": {"1.0.0"},
+    "module_5": {"1.0.0", "1.1.0"},
+}
+
+
+def check_schema_version(
+    module_name: str,
+    result: Dict[str, Any],
+    strict: bool = False
+) -> Tuple[bool, Optional[str]]:
+    """
+    Check if result schema version is supported.
+
+    Args:
+        module_name: Name of module (e.g., "module_3")
+        result: Module output to check
+        strict: If True, raise on unsupported version; else warn
+
+    Returns:
+        Tuple of (is_supported, version_found)
+    """
+    supported = SUPPORTED_SCHEMA_VERSIONS.get(module_name, set())
+    if not supported:
+        return True, None  # No version checking for this module
+
+    # Look for schema version in common locations
+    version = None
+    if "schema_version" in result:
+        version = result["schema_version"]
+    elif "_schema" in result and "schema_version" in result["_schema"]:
+        version = result["_schema"]["schema_version"]
+
+    if version is None:
+        # No version found - allow for backwards compatibility
+        return True, None
+
+    is_supported = version in supported
+    if not is_supported:
+        msg = f"{module_name} schema version '{version}' not in supported: {supported}"
+        if strict:
+            raise SchemaValidationError(msg)
+        else:
+            warnings.warn(msg, DeprecationWarning, stacklevel=3)
+
+    return is_supported, version
 
 
 # =============================================================================
@@ -291,9 +367,13 @@ def validate_module_2_output(output: Dict[str, Any]) -> None:
             )
 
 
-def validate_module_3_output(output: Dict[str, Any]) -> None:
+def validate_module_3_output(output: Dict[str, Any], deep: bool = False) -> None:
     """
     Validate Module 3 output schema.
+
+    Args:
+        output: Module 3 output dict
+        deep: If True, validate individual summary schemas (slower)
 
     Raises:
         SchemaValidationError: If validation fails
@@ -306,6 +386,9 @@ def validate_module_3_output(output: Dict[str, Any]) -> None:
     if not isinstance(output["summaries"], dict):
         raise SchemaValidationError("summaries must be a dict")
 
+    # Check schema version compatibility
+    check_schema_version("module_3", output)
+
     # Warn about deprecated summaries_legacy
     if "summaries_legacy" in output and output["summaries_legacy"]:
         warnings.warn(
@@ -314,6 +397,25 @@ def validate_module_3_output(output: Dict[str, Any]) -> None:
             DeprecationWarning,
             stacklevel=2
         )
+
+    # Deep validation using module_3_schema validator
+    if deep:
+        for ticker, summary in output["summaries"].items():
+            # Handle both dataclass and dict
+            if hasattr(summary, "to_dict"):
+                summary_dict = summary.to_dict()
+            elif isinstance(summary, dict):
+                summary_dict = summary
+            else:
+                raise SchemaValidationError(
+                    f"summaries[{ticker}] must be dict or TickerCatalystSummaryV2"
+                )
+
+            is_valid, errors = validate_m3_summary_schema(summary_dict)
+            if not is_valid:
+                raise SchemaValidationError(
+                    f"summaries[{ticker}] schema validation failed: {errors}"
+                )
 
 
 def validate_module_4_output(output: Dict[str, Any]) -> None:

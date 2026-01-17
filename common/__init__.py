@@ -47,6 +47,16 @@ from common.integration_contracts import (
     extract_catalyst_score,
     extract_clinical_score,
     extract_market_cap_mm,
+    # Version checking
+    check_schema_version,
+    SUPPORTED_SCHEMA_VERSIONS,
+    # Re-exported Module 3 types
+    EventType,
+    EventSeverity,
+    ConfidenceLevel,
+    CatalystWindowBucket,
+    CatalystEventV2,
+    TickerCatalystSummaryV2,
 )
 
 __all__ = [
@@ -88,4 +98,14 @@ __all__ = [
     "extract_catalyst_score",
     "extract_clinical_score",
     "extract_market_cap_mm",
+    # Integration contracts - version checking
+    "check_schema_version",
+    "SUPPORTED_SCHEMA_VERSIONS",
+    # Integration contracts - Module 3 types
+    "EventType",
+    "EventSeverity",
+    "ConfidenceLevel",
+    "CatalystWindowBucket",
+    "CatalystEventV2",
+    "TickerCatalystSummaryV2",
 ]
