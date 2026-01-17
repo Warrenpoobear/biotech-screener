@@ -1147,11 +1147,14 @@ def compute_module_5_composite_v3(
     enhancement_result: Optional[Dict[str, Any]] = None,
     market_data_by_ticker: Optional[Dict[str, Dict]] = None,
     historical_scores: Optional[List[Dict]] = None,
-    historical_returns: Optional[Dict[str, Decimal]] = None,
+    historical_returns: Optional[Dict[Tuple[date, str], Decimal]] = None,
     use_adaptive_weights: bool = False,
     validate_inputs: bool = True,
     enforce_pit_gates: bool = True,
     previous_weights: Optional[Dict[str, Decimal]] = None,
+    embargo_months: int = 1,
+    shrinkage_lambda: Decimal = Decimal("0.70"),
+    smooth_gamma: Decimal = Decimal("0.80"),
 ) -> Dict[str, Any]:
     """
     Compute composite scores with all v3 IC enhancements.
@@ -1181,10 +1184,19 @@ def compute_module_5_composite_v3(
         enhancement_result: Optional PoS/SI/regime enhancement data
         market_data_by_ticker: Optional dict mapping ticker to market data
             (volatility_252d, return_60d, xbi_return_60d)
-        historical_scores: Optional historical scores for adaptive weights
-        historical_returns: Optional historical returns for adaptive weights
+        historical_scores: Optional historical scores for adaptive weights.
+            Each dict must have 'as_of_date' field (date or ISO string).
+        historical_returns: Optional Dict keyed by (as_of_date, ticker) -> forward return.
+            CRITICAL FOR PIT SAFETY: The as_of_date in the key must be when the
+            return period STARTS, not when it ends.
         use_adaptive_weights: Whether to compute adaptive weights
         validate_inputs: If True (default), validate upstream outputs
+        embargo_months: Minimum months between score date and return measurement.
+            Default 1 month ensures returns are fully realized before use.
+        shrinkage_lambda: 0-1, higher = more shrinkage toward base_weights.
+            Default 0.70 provides strong regularization to prevent overfitting.
+        smooth_gamma: 0-1, higher = more smoothing toward prev_weights.
+            Default 0.80 reduces weight volatility period-to-period.
 
     Returns:
         Dict with ranked_securities, excluded_securities, and diagnostics
@@ -1277,17 +1289,27 @@ def compute_module_5_composite_v3(
         base_weights = V3_DEFAULT_WEIGHTS.copy() if weights is None else weights
 
     # Adaptive weight learning (if enabled and data available)
+    # Uses PIT-safe signature: historical_returns keyed by (as_of_date, ticker)
     adaptive_weights_result = None
     if use_adaptive_weights and historical_scores and historical_returns:
         adaptive_weights_result = compute_adaptive_weights(
             historical_scores,
-            historical_returns,
+            historical_returns,  # Dict[(date, ticker), Decimal]
             base_weights,
+            asof_date=as_of_dt,
+            embargo_months=embargo_months,
+            shrinkage_lambda=shrinkage_lambda,
+            smooth_gamma=smooth_gamma,
+            prev_weights=previous_weights,
         )
         if adaptive_weights_result.confidence >= Decimal("0.4"):
             base_weights = adaptive_weights_result.weights
             mode = ScoringMode.ADAPTIVE
-            logger.info(f"Using adaptive weights with confidence {adaptive_weights_result.confidence}")
+            logger.info(
+                f"Using adaptive weights (method={adaptive_weights_result.optimization_method}, "
+                f"confidence={adaptive_weights_result.confidence}, "
+                f"training_periods={adaptive_weights_result.training_periods})"
+            )
 
     # =========================================================================
     # INDEX MODULE OUTPUTS

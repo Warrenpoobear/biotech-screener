@@ -190,6 +190,11 @@ class AdaptiveWeights:
     optimization_method: str
     lookback_months: int
     confidence: Decimal
+    # PIT-safety fields
+    embargo_months: int = 1
+    training_periods: int = 0  # Number of as_of_date periods used
+    shrinkage_applied: Decimal = Decimal("0")
+    smoothing_applied: Decimal = Decimal("0")
 
 
 @dataclass
@@ -955,49 +960,99 @@ def apply_regime_to_weights(
 
 
 # =============================================================================
-# ADAPTIVE WEIGHT LEARNING
+# ADAPTIVE WEIGHT LEARNING (PIT-SAFE)
 # =============================================================================
 
 def compute_adaptive_weights(
     historical_scores: List[Dict[str, Any]],
-    historical_returns: Dict[str, Decimal],
+    forward_returns: Dict[Tuple[date, str], Decimal],
     base_weights: Dict[str, Decimal],
     *,
+    asof_date: date,
     lookback_months: int = 12,
-    min_weight: Decimal = Decimal("0.05"),
-    max_weight: Decimal = Decimal("0.50"),
+    embargo_months: int = 1,
+    min_weight: Decimal = Decimal("0.02"),
+    max_weight: Decimal = Decimal("0.60"),
+    shrinkage_lambda: Decimal = Decimal("0.70"),
+    smooth_gamma: Decimal = Decimal("0.80"),
+    prev_weights: Optional[Dict[str, Decimal]] = None,
 ) -> AdaptiveWeights:
     """
-    Compute weights that maximize historical IC using simple rank correlation.
+    Compute weights that maximize historical IC using PIT-safe rank correlation.
 
-    Uses PIT-safe historical data to estimate component-level IC contribution,
-    then adjusts weights to overweight high-IC components.
+    CRITICAL PIT SAFETY:
+    - forward_returns is keyed by (asof_date, ticker), NOT just ticker
+    - For each historical as_of_date, we only use returns that were realized
+      AFTER the embargo period (asof_date + embargo_months)
+    - This prevents look-ahead bias in weight optimization
 
-    This is a simplified version suitable for production without scipy.
-    Uses rank correlation (Spearman-like) computed with pure Python.
+    The function computes per-period cross-sectional IC for each component,
+    aggregates across periods, then applies:
+    1. Shrinkage toward base_weights (controlled by shrinkage_lambda)
+    2. Smoothing toward prev_weights (controlled by smooth_gamma)
 
     Args:
         historical_scores: List of dicts with ticker, component scores, as_of_date
-        historical_returns: Dict of ticker -> forward return (1-month or 3-month)
-        base_weights: Starting weights to adjust from
-        lookback_months: Months of history to use
+            Each dict must have 'as_of_date' field (date or ISO string)
+        forward_returns: Dict keyed by (as_of_date, ticker) -> forward return
+            The as_of_date in the key is when the return period STARTS
+        base_weights: Prior weights to shrink toward
+        asof_date: Current date for PIT cutoff
+        lookback_months: Months of history to use for IC estimation
+        embargo_months: Minimum months between score date and return measurement
         min_weight: Minimum weight per component
         max_weight: Maximum weight per component
+        shrinkage_lambda: 0-1, higher = more shrinkage toward base_weights
+        smooth_gamma: 0-1, higher = more smoothing toward prev_weights
+        prev_weights: Previous period's weights for smoothing
 
     Returns:
         AdaptiveWeights with optimized weights and diagnostics
     """
-    if not historical_scores or not historical_returns:
+    if not historical_scores or not forward_returns:
         return AdaptiveWeights(
             weights=base_weights.copy(),
             historical_ic_by_component={},
             optimization_method="fallback_no_data",
             lookback_months=lookback_months,
             confidence=Decimal("0.1"),
+            embargo_months=embargo_months,
+            training_periods=0,
+        )
+
+    # Compute lookback cutoff
+    lookback_cutoff = asof_date - timedelta(days=lookback_months * 30)
+    embargo_cutoff = asof_date - timedelta(days=embargo_months * 30)
+
+    # Group historical scores by as_of_date
+    scores_by_date: Dict[date, List[Dict[str, Any]]] = {}
+    for rec in historical_scores:
+        rec_date = _parse_date(rec.get("as_of_date"))
+        if rec_date is None:
+            continue
+        # Only use dates within lookback window AND before embargo cutoff
+        if rec_date < lookback_cutoff:
+            continue
+        if rec_date > embargo_cutoff:
+            # Too recent - returns not yet realized
+            continue
+        if rec_date not in scores_by_date:
+            scores_by_date[rec_date] = []
+        scores_by_date[rec_date].append(rec)
+
+    if not scores_by_date:
+        return AdaptiveWeights(
+            weights=base_weights.copy(),
+            historical_ic_by_component={},
+            optimization_method="fallback_no_valid_periods",
+            lookback_months=lookback_months,
+            confidence=Decimal("0.1"),
+            embargo_months=embargo_months,
+            training_periods=0,
         )
 
     # Extract component names from first record
-    sample = historical_scores[0]
+    sample = next(iter(next(iter(scores_by_date.values()))))
     component_names = [k for k in base_weights.keys() if k in sample or f"{k}_normalized" in sample]
 
     if not component_names:
@@ -1007,85 +1062,237 @@ def compute_adaptive_weights(
             optimization_method="fallback_no_components",
             lookback_months=lookback_months,
             confidence=Decimal("0.1"),
+            embargo_months=embargo_months,
+            training_periods=0,
         )
 
-    # Compute IC for each component
-    ic_by_component: Dict[str, Decimal] = {}
+    # Compute per-period IC for each component
+    # This is the CRITICAL PIT-safe loop
+    ic_by_component_by_date: Dict[str, List[Decimal]] = {comp: [] for comp in component_names}
 
-    for comp in component_names:
-        # Extract (score, return) pairs
-        pairs = []
-        for rec in historical_scores:
-            ticker = rec.get("ticker")
-            if ticker not in historical_returns:
-                continue
+    for score_date, records in sorted(scores_by_date.items()):
+        # Get all tickers that have both scores and returns for this date
+        tickers_with_returns = [
+            rec.get("ticker") for rec in records
+            if (score_date, rec.get("ticker")) in forward_returns
+        ]
 
-            # Try both normalized and raw score names
-            score = _to_decimal(rec.get(f"{comp}_normalized") or rec.get(comp))
-            if score is None:
-                continue
-
-            ret = historical_returns[ticker]
-            pairs.append((score, ret))
-
-        if len(pairs) < 20:
-            # Not enough data for reliable IC
-            ic_by_component[comp] = Decimal("0")
+        if len(tickers_with_returns) < 10:
+            # Not enough cross-section for reliable IC
             continue
 
-        # Compute rank correlation
-        ic = _compute_rank_correlation(pairs)
-        ic_by_component[comp] = ic
+        # For each component, compute cross-sectional IC for this date
+        for comp in component_names:
+            pairs = []
+            for rec in records:
+                ticker = rec.get("ticker")
+                ret_key = (score_date, ticker)
+                if ret_key not in forward_returns:
+                    continue
 
-    # Adjust weights based on IC
-    # Higher IC -> higher weight (but bounded)
-    adjusted_weights = {}
-    total_positive_ic = sum(max(ic, Decimal("0")) for ic in ic_by_component.values())
+                score = _to_decimal(rec.get(f"{comp}_normalized") or rec.get(comp))
+                if score is None:
+                    continue
 
-    if total_positive_ic <= EPS:
-        # No positive IC found, use base weights
+                ret = forward_returns[ret_key]
+                pairs.append((ticker, score, ret))
+
+            if len(pairs) < 10:
+                continue
+
+            # Compute rank correlation with deterministic tie-breaking
+            ic = _compute_rank_correlation_with_tiebreak(pairs)
+            ic_by_component_by_date[comp].append(ic)
+
+    # Aggregate ICs across periods (simple mean)
+    ic_by_component: Dict[str, Decimal] = {}
+    for comp, ics in ic_by_component_by_date.items():
+        if ics:
+            ic_by_component[comp] = sum(ics) / Decimal(len(ics))
+        else:
+            ic_by_component[comp] = Decimal("0")
+
+    training_periods = max(len(ics) for ics in ic_by_component_by_date.values()) if ic_by_component_by_date else 0
+
+    if training_periods < 3:
+        # Not enough periods for reliable estimation
         return AdaptiveWeights(
             weights=base_weights.copy(),
             historical_ic_by_component={k: str(v) for k, v in ic_by_component.items()},
-            optimization_method="fallback_no_positive_ic",
+            optimization_method="fallback_insufficient_periods",
             lookback_months=lookback_months,
-            confidence=Decimal("0.2"),
+            confidence=Decimal("0.15"),
+            embargo_months=embargo_months,
+            training_periods=training_periods,
         )
 
-    for comp, ic in ic_by_component.items():
-        base = base_weights.get(comp, Decimal("0.20"))
+    # Compute raw IC-based weights
+    # Higher IC -> higher weight
+    raw_weights: Dict[str, Decimal] = {}
+    total_positive_ic = sum(max(ic, Decimal("0")) for ic in ic_by_component.values())
 
-        # Scale adjustment by IC (positive IC increases weight)
-        # ic_adjustment = (ic / 0.10) * 0.10 = ic itself as percentage adjustment
-        ic_adjustment = ic  # IC of 0.05 = 5% weight increase
+    if total_positive_ic <= EPS:
+        # No positive IC found
+        raw_weights = base_weights.copy()
+    else:
+        for comp, ic in ic_by_component.items():
+            base = base_weights.get(comp, Decimal("0.20"))
+            # Scale adjustment by IC
+            ic_adjustment = _clamp(ic * Decimal("2"), Decimal("-0.5"), Decimal("0.5"))
+            adjusted = base * (Decimal("1") + ic_adjustment)
+            adjusted = _clamp(adjusted, min_weight, max_weight)
+            raw_weights[comp] = adjusted
 
-        adjusted = base * (Decimal("1") + ic_adjustment * Decimal("2"))
-        adjusted = _clamp(adjusted, min_weight, max_weight)
-        adjusted_weights[comp] = adjusted
+    # Step 1: Shrinkage toward base_weights
+    # shrunk_w = (1 - lambda) * raw_w + lambda * base_w
+    shrunk_weights: Dict[str, Decimal] = {}
+    for comp in component_names:
+        raw_w = raw_weights.get(comp, base_weights.get(comp, Decimal("0.20")))
+        base_w = base_weights.get(comp, Decimal("0.20"))
+        shrunk = (Decimal("1") - shrinkage_lambda) * raw_w + shrinkage_lambda * base_w
+        shrunk_weights[comp] = shrunk
 
-    # Renormalize
-    total = sum(adjusted_weights.values())
+    # Step 2: Smoothing toward prev_weights (if available)
+    # smoothed_w = (1 - gamma) * shrunk_w + gamma * prev_w
+    if prev_weights:
+        smoothed_weights: Dict[str, Decimal] = {}
+        for comp in component_names:
+            shrunk_w = shrunk_weights.get(comp, Decimal("0.20"))
+            prev_w = prev_weights.get(comp, shrunk_w)
+            smoothed = (Decimal("1") - smooth_gamma) * shrunk_w + smooth_gamma * prev_w
+            smoothed_weights[comp] = smoothed
+        final_weights = smoothed_weights
+        smoothing_applied = smooth_gamma
+    else:
+        final_weights = shrunk_weights
+        smoothing_applied = Decimal("0")
+
+    # Renormalize to sum to 1.0
+    total = sum(final_weights.values())
     if total > EPS:
-        adjusted_weights = {k: _quantize_weight(v / total) for k, v in adjusted_weights.items()}
+        final_weights = {k: _quantize_weight(v / total) for k, v in final_weights.items()}
 
-    # Compute confidence based on sample size and IC variance
-    sample_size = len(historical_scores)
-    if sample_size >= 500:
-        confidence = Decimal("0.8")
-    elif sample_size >= 200:
-        confidence = Decimal("0.6")
-    elif sample_size >= 100:
-        confidence = Decimal("0.4")
+    # Ensure we have all components from base_weights
+    for comp in base_weights:
+        if comp not in final_weights:
+            final_weights[comp] = base_weights[comp]
+
+    # Re-normalize after adding missing components
+    total = sum(final_weights.values())
+    if total > EPS:
+        final_weights = {k: _quantize_weight(v / total) for k, v in final_weights.items()}
+
+    # Compute confidence based on sample size and period count
+    if training_periods >= 12:
+        confidence = Decimal("0.7")
+    elif training_periods >= 6:
+        confidence = Decimal("0.5")
     else:
         confidence = Decimal("0.3")
 
     return AdaptiveWeights(
-        weights=adjusted_weights,
+        weights=final_weights,
         historical_ic_by_component={k: str(v) for k, v in ic_by_component.items()},
-        optimization_method="rank_correlation",
+        optimization_method="pit_safe_rank_correlation",
         lookback_months=lookback_months,
         confidence=confidence,
+        embargo_months=embargo_months,
+        training_periods=training_periods,
+        shrinkage_applied=shrinkage_lambda,
+        smoothing_applied=smoothing_applied,
     )
+
+
+def _parse_date(value: Any) -> Optional[date]:
+    """Parse date from various formats."""
+    if value is None:
+        return None
+    if isinstance(value, date):
+        return value
+    if isinstance(value, str):
+        try:
+            return date.fromisoformat(value[:10])
+        except ValueError:
+            return None
+    return None
+
+
+def _compute_rank_correlation_with_tiebreak(
+    pairs: List[Tuple[str, Decimal, Decimal]]
+) -> Decimal:
+    """
+    Compute Spearman rank correlation with deterministic tie-breaking.
+
+    Uses ticker as secondary sort key to ensure deterministic ranks when
+    scores or returns are tied. This is critical for reproducibility.
+
+    Args:
+        pairs: List of (ticker, score, return) tuples
+
+    Returns:
+        Rank correlation coefficient (-1 to 1)
+    """
+    n = len(pairs)
+    if n < 2:
+        return Decimal("0")
+
+    # Extract data preserving ticker for tiebreaking
+    tickers = [p[0] for p in pairs]
+    scores = [p[1] for p in pairs]
+    returns = [p[2] for p in pairs]
+
+    # Compute ranks with deterministic tiebreak
+    score_ranks = _compute_ranks_deterministic(scores, tickers)
+    return_ranks = _compute_ranks_deterministic(returns, tickers)
+
+    # Compute Spearman correlation
+    # rho = 1 - (6 * sum(d^2)) / (n * (n^2 - 1))
+    d_squared_sum = sum(
+        (sr - rr) ** 2
+        for sr, rr in zip(score_ranks, return_ranks)
+    )
+
+    denominator = Decimal(n) * (Decimal(n) ** 2 - Decimal("1"))
+    if denominator == 0:
+        return Decimal("0")
+
+    rho = Decimal("1") - (Decimal("6") * d_squared_sum) / denominator
+    return _quantize_weight(rho)
+
+
+def _compute_ranks_deterministic(
+    values: List[Decimal],
+    tiebreakers: List[str],
+) -> List[Decimal]:
+    """
+    Compute ranks with deterministic tie-breaking using secondary key.
+
+    When values are tied, uses tiebreakers (e.g., ticker) as secondary
+    sort key to ensure consistent ranking across runs.
+
+    Args:
+        values: List of values to rank
+        tiebreakers: List of secondary sort keys (same length as values)
+
+    Returns:
+        List of ranks (1-indexed)
+    """
+    n = len(values)
+    if n == 0:
+        return []
+
+    # Create indexed list with tiebreaker
+    indexed = [(v, tb, i) for i, (v, tb) in enumerate(zip(values, tiebreakers))]
+
+    # Sort by value first, then by tiebreaker for determinism
+    indexed.sort(key=lambda x: (x[0], x[1]))
+
+    # Assign ranks (1-indexed, no ties due to tiebreaker)
+    ranks = [Decimal("0")] * n
+    for rank_idx, (_, _, orig_idx) in enumerate(indexed):
+        ranks[orig_idx] = Decimal(rank_idx + 1)
+
+    return ranks
 
 
 def _compute_rank_correlation(pairs: List[Tuple[Decimal, Decimal]]) -> Decimal:
@@ -1093,6 +1300,8 @@ def _compute_rank_correlation(pairs: List[Tuple[Decimal, Decimal]]) -> Decimal:
     Compute Spearman rank correlation between score and return pairs.
 
     Pure Python implementation without scipy.
+    NOTE: This uses average ranks for ties. For deterministic behavior,
+    use _compute_rank_correlation_with_tiebreak instead.
 
     Args:
         pairs: List of (score, return) tuples
@@ -1128,7 +1337,12 @@ def _compute_rank_correlation(pairs: List[Tuple[Decimal, Decimal]]) -> Decimal:
 
 
 def _compute_ranks(values: List[Decimal]) -> List[Decimal]:
-    """Compute ranks with average rank for ties."""
+    """
+    Compute ranks with average rank for ties.
+
+    NOTE: This is non-deterministic when values are tied. Use
+    _compute_ranks_deterministic for reproducible results.
+    """
     n = len(values)
     indexed = [(v, i) for i, v in enumerate(values)]
     indexed.sort(key=lambda x: x[0])
