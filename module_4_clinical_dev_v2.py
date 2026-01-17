@@ -37,7 +37,10 @@ from dataclasses import dataclass, field
 from datetime import date, timedelta
 from decimal import Decimal, ROUND_HALF_UP
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple, Set
+from typing import Any, Dict, List, Optional, Tuple, Set, Union
+
+# Type alias for flexible ticker input
+TickerCollection = Union[Set[str], List[str]]
 
 from common.provenance import create_provenance
 from common.types import Severity
@@ -868,7 +871,7 @@ def _dedup_trials_by_nct_id(
 
 def compute_module_4_clinical_dev_v2(
     trial_records: List[Dict[str, Any]],
-    active_tickers: List[str],
+    active_tickers: TickerCollection,
     as_of_date: str,
 ) -> Dict[str, Any]:
     """
@@ -876,7 +879,7 @@ def compute_module_4_clinical_dev_v2(
 
     Args:
         trial_records: List with ticker, nct_id, phase, status, conditions, etc.
-        active_tickers: Tickers from Module 1
+        active_tickers: Set or List of tickers from Module 1 (both accepted)
         as_of_date: Analysis date (ISO format)
 
     Returns:
@@ -887,6 +890,10 @@ def compute_module_4_clinical_dev_v2(
             "provenance": {...}
         }
     """
+    # Normalize to sorted list for deterministic iteration
+    if isinstance(active_tickers, set):
+        active_tickers = sorted(active_tickers)
+
     pit_cutoff = _compute_pit_cutoff(as_of_date)
 
     # Diagnostics
@@ -1116,13 +1123,14 @@ def compute_module_4_clinical_dev_v2(
 
 def compute_module_4_clinical_dev(
     trial_records: List[Dict[str, Any]],
-    active_tickers: List[str],
+    active_tickers: TickerCollection,
     as_of_date: str,
 ) -> Dict[str, Any]:
     """
     Backwards-compatible wrapper for v2.
 
     Preserves original function signature and output keys.
+    Accepts both Set[str] and List[str] for active_tickers.
     """
     result = compute_module_4_clinical_dev_v2(trial_records, active_tickers, as_of_date)
 

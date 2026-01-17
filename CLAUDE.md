@@ -73,6 +73,136 @@ biotech-screener/
 - `regime_engine.py` - Market regime classification (VIX, XBI momentum)
 - `defensive_overlay_adapter.py` - Correlation sanitization and position sizing
 
+## Module Integration Contracts
+
+### Data Flow Architecture
+
+```
+Module 1 (Universe)
+    ↓ outputs: active_securities[] + excluded_securities[]
+
+Module 2 (Financial)  ← inputs: TickerCollection, financial_records, market_data
+    ↓ outputs: scores[] {ticker, financial_score, market_cap_mm, severity, flags}
+
+Module 3 (Catalyst)   ← inputs: TickerCollection, trial_records_path, DateLike
+    ↓ outputs: summaries{} {ticker: TickerCatalystSummaryV2}
+
+Module 4 (Clinical)   ← inputs: TickerCollection, trial_records
+    ↓ outputs: scores[] {ticker, clinical_score, lead_phase, severity}
+
+Module 5 (Composite)  ← inputs: ALL module results
+    ↓ outputs: ranked_securities[], excluded_securities[]
+```
+
+### Type Conventions
+
+All modules accept flexible input types for consistency:
+
+```python
+# Ticker collections - accept both Set and List
+from typing import Union, Set, List
+TickerCollection = Union[Set[str], List[str]]
+
+# Date inputs - accept both date object and ISO string
+from datetime import date
+DateLike = Union[str, date]
+```
+
+### Standardized Score Field Names
+
+| Module | Primary Field | Legacy Alias |
+|--------|--------------|--------------|
+| Module 2 | `financial_score` | `financial_normalized` |
+| Module 3 | `catalyst_score` | `score_blended`, `catalyst_score_net` |
+| Module 4 | `clinical_score` | - |
+| Module 5 | `composite_score` | - |
+
+### Module Output Schemas
+
+**Module 1 Output:**
+```python
+{
+    "active_securities": [{"ticker": str, "status": str, "market_cap_mm": float}],
+    "excluded_securities": [{"ticker": str, "reason": str}],
+    "diagnostic_counts": {...}
+}
+```
+
+**Module 2 Output:**
+```python
+{
+    "scores": [{
+        "ticker": str,
+        "financial_score": float,      # Standardized name
+        "financial_normalized": float,  # Legacy alias (same value)
+        "market_cap_mm": float,         # For Module 5 cohort analysis
+        "runway_months": float,
+        "severity": str,
+        "flags": [str]
+    }],
+    "diagnostic_counts": {"scored": int, "missing": int}
+}
+```
+
+**Module 3 Output:**
+```python
+{
+    "summaries": {ticker: TickerCatalystSummaryV2},  # Primary (use this)
+    "summaries_legacy": {...},  # DEPRECATED - will be removed in v2.0
+    "diagnostic_counts": {...},
+    "as_of_date": str,
+    "schema_version": str,
+    "score_version": str
+}
+```
+
+**Module 4 Output:**
+```python
+{
+    "as_of_date": str,
+    "scores": [{
+        "ticker": str,
+        "clinical_score": str,  # Decimal as string
+        "lead_phase": str,
+        "severity": str,
+        "flags": [str]
+    }],
+    "diagnostic_counts": {...},
+    "provenance": {...}
+}
+```
+
+### Schema Validation
+
+Use `common/integration_contracts.py` for validation between modules:
+
+```python
+from common.integration_contracts import (
+    validate_module_2_output,
+    validate_pipeline_handoff,
+    extract_financial_score,
+    normalize_date_input,
+    normalize_ticker_set,
+)
+
+# Validate module output
+validate_module_2_output(m2_result)
+
+# Validate handoff between modules
+validate_pipeline_handoff("module_2", "module_5", m2_result)
+
+# Extract scores with backwards compatibility
+score = extract_financial_score(score_record)  # Handles both field names
+```
+
+### Deprecation Warnings
+
+The following are deprecated and will be removed in v2.0:
+
+- `summaries_legacy` in Module 3 output - use `summaries` instead
+- `diagnostic_counts_legacy` in Module 3 output
+- `financial_normalized` field name - use `financial_score` instead
+
 ## Coding Conventions
 
 ### Use Decimal for All Financial Calculations
@@ -319,4 +449,5 @@ Default weighting for final ranking:
 | `tests/conftest.py` | Shared test fixtures (~500 lines) |
 | `common/pit_enforcement.py` | PIT cutoff utilities |
 | `common/provenance.py` | Audit trail and hashing |
+| `common/integration_contracts.py` | Module boundary types and schema validation |
 | `run_screen.py` | Main pipeline orchestrator |
