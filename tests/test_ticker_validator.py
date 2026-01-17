@@ -67,20 +67,25 @@ class TestIsValidTicker:
             assert "Too long" in reason
 
     def test_invalid_contamination_keywords(self):
-        """Test that contamination keywords fail."""
+        """Test that contamination keywords fail.
+
+        Note: We use shorter keywords (<=6 chars) that pass the length check
+        but fail the contamination keyword check. Longer contamination strings
+        like 'BLACKROCK' or 'COPYRIGHT' are correctly rejected for being too long.
+        """
+        # Short keywords that pass length check but fail contamination check
         invalid_cases = [
-            "THE CONTENT",
-            "COPYRIGHT",
-            "BLACKROCK",
-            "TRADEMARK",
-            "ISHARES",
-            "PROSPECTUS",
+            "FTSE",    # 4 chars - index provider
+            "EPRA",    # 4 chars - index provider
+            "INDEX",   # 5 chars - generic index term
+            "OWNED",   # 5 chars - legal boilerplate
+            "THE",     # 3 chars - boilerplate
         ]
 
         for ticker in invalid_cases:
             is_valid, reason = is_valid_ticker(ticker)
             assert not is_valid, f"'{ticker}' should be invalid (contamination)"
-            assert "contamination keyword" in reason.lower()
+            assert "contamination keyword" in reason.lower(), f"'{ticker}' should fail with contamination keyword, got: {reason}"
 
     def test_invalid_special_char_positions(self):
         """Test that misplaced special characters fail."""
