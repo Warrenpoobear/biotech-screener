@@ -775,13 +775,23 @@ def _score_single_ticker_v3(
     if smart_money.holders_decreasing:
         flags.append("smart_money_selling")
 
-    # 6. Interaction terms
+    # 6. Interaction terms (with gate status to prevent double-counting)
+    # Convert gate statuses from v2 format
+    runway_gate = "PASS" if liquidity_status == "PASS" else (
+        "FAIL" if liquidity_status == "FAIL" else "UNKNOWN"
+    )
+    dilution_gate = "PASS" if dilution_bucket in ("LOW", "MEDIUM") else (
+        "FAIL" if dilution_bucket in ("HIGH", "SEVERE") else "UNKNOWN"
+    )
+
     interactions = compute_interaction_terms(
         clin_norm,
         fin_data,
         cat_norm,
         stage,
-        vol_adj
+        vol_adj,
+        runway_gate_status=runway_gate,
+        dilution_gate_status=dilution_gate,
     )
     flags.extend(interactions.interaction_flags)
 

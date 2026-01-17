@@ -80,12 +80,28 @@ SMART_MONEY_POSITION_CHANGE_WEIGHTS = {
     "EXIT": Decimal("-5"),
 }
 
-# Interaction term parameters
-INTERACTION_SYNERGY_THRESHOLD_CLINICAL = Decimal("70")
-INTERACTION_SYNERGY_THRESHOLD_RUNWAY = 18  # months
-INTERACTION_SYNERGY_BONUS = Decimal("3.0")
-INTERACTION_DISTRESS_THRESHOLD_RUNWAY = 12  # months
-INTERACTION_DISTRESS_PENALTY = Decimal("5.0")
+# Interaction term parameters - using SMOOTH RAMPS to avoid rank churn
+# All inputs must be Decimal with explicit ranges:
+#   clinical_norm, catalyst_norm, financial_norm: [0, 100]
+#   vol_norm: [0, 1] (fraction, not percentage)
+#   runway_months: raw months (no normalization assumed)
+
+# Synergy ramp: bonus ramps linearly from 0 at clinical=60 to max at clinical=80
+# AND from 0 at runway=12 to max at runway=24
+INTERACTION_SYNERGY_CLINICAL_LOW = Decimal("60")
+INTERACTION_SYNERGY_CLINICAL_HIGH = Decimal("80")
+INTERACTION_SYNERGY_RUNWAY_LOW = Decimal("12")  # months
+INTERACTION_SYNERGY_RUNWAY_HIGH = Decimal("24")  # months
+INTERACTION_SYNERGY_MAX_BONUS = Decimal("1.5")  # Max +1.5 points (was 3.0)
+
+# Distress ramp: penalty ramps from 0 at runway=12 to max at runway=6
+INTERACTION_DISTRESS_RUNWAY_HIGH = Decimal("12")  # months - no penalty above
+INTERACTION_DISTRESS_RUNWAY_LOW = Decimal("6")    # months - max penalty below
+INTERACTION_DISTRESS_MAX_PENALTY = Decimal("2.0")  # Max -2.0 points (was 5.0)
+
+# Catalyst dampening in high-vol: multiplicative factor [0.7, 1.0]
+# Only applies when vol_bucket == HIGH
+INTERACTION_CATALYST_VOL_DAMPENING_MIN = Decimal("0.7")  # Floor multiplier
 
 
 # =============================================================================
@@ -174,12 +190,19 @@ class SmartMoneySignal:
 
 @dataclass
 class InteractionTerms:
-    """Non-linear interaction term calculations."""
-    clinical_financial_synergy: Decimal
-    stage_financial_interaction: Decimal
-    catalyst_volatility_dampening: Decimal
-    total_interaction_adjustment: Decimal
+    """Non-linear interaction term calculations.
+
+    All adjustments use smooth ramps to avoid rank churn from discontinuities.
+    Magnitudes are bounded to ±2 points to prevent leaderboard rewrites.
+    """
+    clinical_financial_synergy: Decimal  # [0, +1.5] smooth ramp
+    stage_financial_interaction: Decimal  # [-2.0, 0] smooth ramp
+    catalyst_volatility_dampening: Decimal  # Dampening applied (informational)
+    total_interaction_adjustment: Decimal  # Sum of above (bounded)
     interaction_flags: List[str]
+    # Gate status tracking to prevent double-counting
+    runway_gate_already_applied: bool = False
+    dilution_gate_already_applied: bool = False
 
 
 @dataclass
@@ -721,14 +744,27 @@ def compute_interaction_terms(
     catalyst_normalized: Decimal,
     stage_bucket: str,
     vol_adjustment: Optional[VolatilityAdjustment] = None,
+    *,
+    runway_gate_status: str = "UNKNOWN",
+    dilution_gate_status: str = "UNKNOWN",
 ) -> InteractionTerms:
     """
     Compute non-linear interaction terms between signals.
 
-    Captures synergies and distress patterns that linear combination misses:
-    - High clinical + strong financial = synergy bonus
-    - Late-stage + weak runway = distress penalty
-    - High catalyst + high vol = dampened catalyst
+    Uses SMOOTH RAMPS (piecewise linear) instead of hard thresholds to
+    avoid rank churn from discontinuities. All adjustments are bounded
+    to ±2 points to prevent leaderboard rewrites.
+
+    SCALE CONTRACTS (enforced):
+    - clinical_normalized: Decimal in [0, 100]
+    - catalyst_normalized: Decimal in [0, 100]
+    - runway_months: Decimal, raw months (not normalized)
+    - vol_adjustment.annualized_vol: Decimal in [0, 1] or percentage
+
+    DOUBLE-COUNTING PREVENTION:
+    - If runway_gate_status == "FAIL", distress penalty is reduced by 50%
+      (v2 gate already penalized this)
+    - Synergy bonus only applies if runway_gate_status == "PASS"
 
     Args:
         clinical_normalized: Normalized clinical score (0-100)
@@ -736,48 +772,121 @@ def compute_interaction_terms(
         catalyst_normalized: Normalized catalyst score (0-100)
         stage_bucket: Development stage (early, mid, late)
         vol_adjustment: Optional volatility adjustment result
+        runway_gate_status: "PASS", "FAIL", or "UNKNOWN" from v2 gates
+        dilution_gate_status: "PASS", "FAIL", or "UNKNOWN" from v2 gates
 
     Returns:
-        InteractionTerms with all computed interactions
+        InteractionTerms with all computed interactions (bounded ±2)
     """
     flags = []
 
+    # Enforce scale contracts with clamping
+    clinical_norm = _clamp(_to_decimal(clinical_normalized, Decimal("50")), Decimal("0"), Decimal("100"))
+    catalyst_norm = _clamp(_to_decimal(catalyst_normalized, Decimal("50")), Decimal("0"), Decimal("100"))
+
     # Extract financial metrics
     runway_months = _to_decimal(financial_data.get("runway_months"), Decimal("24"))
-    financial_score = _to_decimal(financial_data.get("financial_score"), Decimal("50"))
+    runway_months = _clamp(runway_months, Decimal("0"), Decimal("120"))  # Cap at 10 years
 
-    # 1. Clinical x Financial synergy
-    # Strong clinical + strong financial = premium company
+    # Track if gates already applied
+    runway_gate_applied = runway_gate_status == "FAIL"
+    dilution_gate_applied = dilution_gate_status == "FAIL"
+
+    # =========================================================================
+    # 1. Clinical x Financial SYNERGY (smooth ramp)
+    # =========================================================================
+    # Bonus ramps from 0 to max as clinical goes 60→80 AND runway goes 12→24
+    # Only applies if runway gate passed (to avoid rewarding already-gated names)
+
     clinical_financial_synergy = Decimal("0")
-    if (clinical_normalized >= INTERACTION_SYNERGY_THRESHOLD_CLINICAL and
-        runway_months >= INTERACTION_SYNERGY_THRESHOLD_RUNWAY):
-        clinical_financial_synergy = INTERACTION_SYNERGY_BONUS
-        flags.append("clinical_financial_synergy")
 
-    # 2. Stage x Financial distress
-    # Late-stage with weak runway = dilution risk, severe penalty
+    if not runway_gate_applied:  # Don't give synergy if already gated
+        # Compute clinical contribution: 0 at 60, 1.0 at 80
+        clinical_factor = _smooth_ramp(
+            clinical_norm,
+            INTERACTION_SYNERGY_CLINICAL_LOW,
+            INTERACTION_SYNERGY_CLINICAL_HIGH,
+        )
+
+        # Compute runway contribution: 0 at 12mo, 1.0 at 24mo
+        runway_factor = _smooth_ramp(
+            runway_months,
+            INTERACTION_SYNERGY_RUNWAY_LOW,
+            INTERACTION_SYNERGY_RUNWAY_HIGH,
+        )
+
+        # Multiplicative: both must be strong for full bonus
+        synergy_factor = clinical_factor * runway_factor
+        clinical_financial_synergy = synergy_factor * INTERACTION_SYNERGY_MAX_BONUS
+
+        if clinical_financial_synergy >= Decimal("0.5"):
+            flags.append("clinical_financial_synergy")
+
+    # =========================================================================
+    # 2. Stage x Financial DISTRESS (smooth ramp)
+    # =========================================================================
+    # Penalty ramps from 0 at runway=12 to max at runway=6
+    # Only applies to late/mid stage
+    # If runway gate already failed, reduce penalty by 50% (already penalized)
+
     stage_financial_interaction = Decimal("0")
-    if stage_bucket == "late" and runway_months < INTERACTION_DISTRESS_THRESHOLD_RUNWAY:
-        stage_financial_interaction = -INTERACTION_DISTRESS_PENALTY
-        flags.append("late_stage_distress")
-    elif stage_bucket == "mid" and runway_months < Decimal("9"):
-        stage_financial_interaction = -INTERACTION_DISTRESS_PENALTY * Decimal("0.5")
-        flags.append("mid_stage_runway_warning")
 
-    # 3. Catalyst x Volatility dampening
-    # High catalyst in high-vol name = less reliable signal
+    if stage_bucket in ("late", "mid"):
+        # Compute distress factor: 0 at 12mo, 1.0 at 6mo (inverted ramp)
+        distress_factor = _smooth_ramp_inverted(
+            runway_months,
+            INTERACTION_DISTRESS_RUNWAY_LOW,
+            INTERACTION_DISTRESS_RUNWAY_HIGH,
+        )
+
+        # Stage multiplier: late = 1.0, mid = 0.5
+        stage_mult = Decimal("1.0") if stage_bucket == "late" else Decimal("0.5")
+
+        # Double-counting adjustment: if gate already failed, halve the penalty
+        gate_mult = Decimal("0.5") if runway_gate_applied else Decimal("1.0")
+
+        stage_financial_interaction = -(
+            distress_factor * stage_mult * gate_mult * INTERACTION_DISTRESS_MAX_PENALTY
+        )
+
+        if stage_financial_interaction <= Decimal("-0.5"):
+            flags.append("late_stage_distress" if stage_bucket == "late" else "mid_stage_runway_warning")
+
+    # =========================================================================
+    # 3. Catalyst x Volatility DAMPENING (multiplicative, not additive)
+    # =========================================================================
+    # In high-vol names, extreme catalyst signals are less reliable
+    # We return the dampening factor for informational purposes
+    # The actual dampening is applied in the main scoring function
+
     catalyst_volatility_dampening = Decimal("0")
+
     if vol_adjustment and vol_adjustment.vol_bucket == VolatilityBucket.HIGH:
-        # Dampen catalyst deviation from neutral
-        catalyst_excess = catalyst_normalized - Decimal("50")
-        if abs(catalyst_excess) > Decimal("15"):
-            # Reduce impact of extreme catalyst signals in high-vol names
-            dampening = catalyst_excess * Decimal("0.2")  # 20% dampening
-            catalyst_volatility_dampening = -dampening
+        # Compute how far catalyst is from neutral (50)
+        catalyst_excess = abs(catalyst_norm - Decimal("50"))
+
+        # Dampening increases with catalyst extremity
+        # At |excess| = 0: no dampening
+        # At |excess| = 50: max dampening (30%)
+        dampening_pct = (catalyst_excess / Decimal("50")) * Decimal("0.30")
+        dampening_pct = _clamp(dampening_pct, Decimal("0"), Decimal("0.30"))
+
+        # Store as the score-point reduction (informational)
+        # This represents how much the catalyst signal is discounted
+        catalyst_volatility_dampening = dampening_pct * Decimal("10")  # Scale to ~0-3 points
+
+        if dampening_pct >= Decimal("0.10"):
             flags.append("catalyst_vol_dampening")
 
-    # Total interaction adjustment
-    total = clinical_financial_synergy + stage_financial_interaction + catalyst_volatility_dampening
+    # =========================================================================
+    # Total with bounds
+    # =========================================================================
+    # Clamp total to prevent extreme adjustments
+    total = clinical_financial_synergy + stage_financial_interaction
+    # Note: catalyst dampening is informational, not added to total
+    # (it's applied as a multiplier in the main function)
+
+    total = _clamp(total, Decimal("-2.0"), Decimal("2.0"))
 
     return InteractionTerms(
         clinical_financial_synergy=_quantize_score(clinical_financial_synergy),
@@ -785,7 +894,41 @@ def compute_interaction_terms(
         catalyst_volatility_dampening=_quantize_score(catalyst_volatility_dampening),
         total_interaction_adjustment=_quantize_score(total),
         interaction_flags=flags,
+        runway_gate_already_applied=runway_gate_applied,
+        dilution_gate_already_applied=dilution_gate_applied,
     )
+
+
+def _smooth_ramp(value: Decimal, low: Decimal, high: Decimal) -> Decimal:
+    """
+    Compute smooth ramp from 0 at low to 1 at high.
+
+    Returns:
+        0 if value <= low
+        1 if value >= high
+        Linear interpolation between
+    """
+    if value <= low:
+        return Decimal("0")
+    if value >= high:
+        return Decimal("1")
+    return (value - low) / (high - low)
+
+
+def _smooth_ramp_inverted(value: Decimal, low: Decimal, high: Decimal) -> Decimal:
+    """
+    Compute inverted smooth ramp from 1 at low to 0 at high.
+
+    Returns:
+        1 if value <= low
+        0 if value >= high
+        Linear interpolation between
+    """
+    if value <= low:
+        return Decimal("1")
+    if value >= high:
+        return Decimal("0")
+    return (high - value) / (high - low)
 
 
 # =============================================================================

@@ -427,10 +427,10 @@ class TestSmartMoneySignal:
 # =============================================================================
 
 class TestInteractionTerms:
-    """Tests for non-linear interaction terms."""
+    """Tests for non-linear interaction terms with smooth ramps."""
 
     def test_clinical_financial_synergy(self):
-        """High clinical + strong runway should produce synergy."""
+        """High clinical + strong runway should produce synergy via smooth ramp."""
         result = compute_interaction_terms(
             clinical_normalized=Decimal("80"),
             financial_data={"runway_months": 24, "financial_score": 75},
@@ -440,18 +440,70 @@ class TestInteractionTerms:
         )
         assert result.clinical_financial_synergy > Decimal("0")
         assert "clinical_financial_synergy" in result.interaction_flags
+        # Should be max bonus (1.5) at clinical=80, runway=24
+        assert result.clinical_financial_synergy == Decimal("1.50")
+
+    def test_synergy_smooth_ramp(self):
+        """Synergy should increase smoothly, not have cliff at 70."""
+        # At clinical=65 (halfway from 60 to 80), synergy should be partial
+        result_65 = compute_interaction_terms(
+            clinical_normalized=Decimal("65"),
+            financial_data={"runway_months": 24, "financial_score": 75},
+            catalyst_normalized=Decimal("50"),
+            stage_bucket="mid",
+        )
+        result_70 = compute_interaction_terms(
+            clinical_normalized=Decimal("70"),
+            financial_data={"runway_months": 24, "financial_score": 75},
+            catalyst_normalized=Decimal("50"),
+            stage_bucket="mid",
+        )
+        # Both should have synergy (no cliff at 70)
+        assert result_65.clinical_financial_synergy > Decimal("0")
+        assert result_70.clinical_financial_synergy > result_65.clinical_financial_synergy
 
     def test_late_stage_distress(self):
-        """Late stage with weak runway should produce penalty."""
+        """Late stage with weak runway should produce penalty via smooth ramp."""
         result = compute_interaction_terms(
             clinical_normalized=Decimal("70"),
-            financial_data={"runway_months": 9, "financial_score": 40},
+            financial_data={"runway_months": 6, "financial_score": 40},
             catalyst_normalized=Decimal("60"),
             stage_bucket="late",
             vol_adjustment=None,
         )
         assert result.stage_financial_interaction < Decimal("0")
         assert "late_stage_distress" in result.interaction_flags
+        # Should be max penalty (-2.0) at runway=6 for late stage
+        assert result.stage_financial_interaction == Decimal("-2.00")
+
+    def test_distress_smooth_ramp(self):
+        """Distress penalty should ramp smoothly from 12mo to 6mo."""
+        # At runway=9 (halfway from 12 to 6), penalty should be partial
+        result_9 = compute_interaction_terms(
+            clinical_normalized=Decimal("60"),
+            financial_data={"runway_months": 9, "financial_score": 40},
+            catalyst_normalized=Decimal("50"),
+            stage_bucket="late",
+        )
+        result_6 = compute_interaction_terms(
+            clinical_normalized=Decimal("60"),
+            financial_data={"runway_months": 6, "financial_score": 40},
+            catalyst_normalized=Decimal("50"),
+            stage_bucket="late",
+        )
+        # Penalty should be greater (more negative) at 6 than at 9
+        assert result_9.stage_financial_interaction < Decimal("0")
+        assert result_6.stage_financial_interaction < result_9.stage_financial_interaction
+
+    def test_no_distress_above_12mo(self):
+        """No distress penalty when runway >= 12 months."""
+        result = compute_interaction_terms(
+            clinical_normalized=Decimal("60"),
+            financial_data={"runway_months": 12, "financial_score": 40},
+            catalyst_normalized=Decimal("50"),
+            stage_bucket="late",
+        )
+        assert result.stage_financial_interaction == Decimal("0")
 
     def test_catalyst_volatility_dampening(self):
         """High catalyst in high-vol name should be dampened."""
@@ -463,8 +515,76 @@ class TestInteractionTerms:
             stage_bucket="mid",
             vol_adjustment=vol_adj,
         )
-        assert result.catalyst_volatility_dampening != Decimal("0")
+        assert result.catalyst_volatility_dampening > Decimal("0")
         assert "catalyst_vol_dampening" in result.interaction_flags
+
+    def test_double_counting_prevention(self):
+        """Distress penalty should be halved if runway gate already failed."""
+        # Without gate
+        result_no_gate = compute_interaction_terms(
+            clinical_normalized=Decimal("60"),
+            financial_data={"runway_months": 6, "financial_score": 40},
+            catalyst_normalized=Decimal("50"),
+            stage_bucket="late",
+            runway_gate_status="UNKNOWN",
+        )
+        # With gate already failed
+        result_gate_failed = compute_interaction_terms(
+            clinical_normalized=Decimal("60"),
+            financial_data={"runway_months": 6, "financial_score": 40},
+            catalyst_normalized=Decimal("50"),
+            stage_bucket="late",
+            runway_gate_status="FAIL",
+        )
+        # Penalty should be halved when gate already applied
+        assert abs(result_gate_failed.stage_financial_interaction) < abs(result_no_gate.stage_financial_interaction)
+        assert result_gate_failed.runway_gate_already_applied is True
+
+    def test_no_synergy_when_gate_failed(self):
+        """Synergy bonus should not apply if runway gate already failed."""
+        result = compute_interaction_terms(
+            clinical_normalized=Decimal("80"),
+            financial_data={"runway_months": 24, "financial_score": 75},
+            catalyst_normalized=Decimal("50"),
+            stage_bucket="mid",
+            runway_gate_status="FAIL",
+        )
+        # No synergy despite high clinical and runway, because gate already failed
+        assert result.clinical_financial_synergy == Decimal("0")
+
+    def test_boundedness(self):
+        """Total interaction adjustment should always be within [-2, +2]."""
+        # Test extreme values
+        for clinical in [Decimal("0"), Decimal("50"), Decimal("100")]:
+            for runway in [1, 6, 12, 24, 36]:
+                for stage in ["early", "mid", "late"]:
+                    result = compute_interaction_terms(
+                        clinical_normalized=clinical,
+                        financial_data={"runway_months": runway},
+                        catalyst_normalized=Decimal("50"),
+                        stage_bucket=stage,
+                    )
+                    assert Decimal("-2.0") <= result.total_interaction_adjustment <= Decimal("2.0")
+                    # Should never be NaN or None
+                    assert result.total_interaction_adjustment is not None
+
+    def test_monotonicity(self):
+        """Increasing runway should never increase late-stage penalty."""
+        penalties = []
+        for runway in [3, 6, 9, 12, 15, 18]:
+            result = compute_interaction_terms(
+                clinical_normalized=Decimal("60"),
+                financial_data={"runway_months": runway},
+                catalyst_normalized=Decimal("50"),
+                stage_bucket="late",
+            )
+            penalties.append((runway, result.stage_financial_interaction))
+
+        # Penalties should be non-increasing (less negative) as runway increases
+        for i in range(len(penalties) - 1):
+            assert penalties[i][1] <= penalties[i + 1][1], \
+                f"Monotonicity violated: runway {penalties[i][0]} has penalty {penalties[i][1]}, " \
+                f"but runway {penalties[i + 1][0]} has penalty {penalties[i + 1][1]}"
 
 
 # =============================================================================
