@@ -355,8 +355,19 @@ def create_production_scorer():
             "source_date": source_date,
         }]
 
-        # Get real trial data
+        # Get real trial data with PIT filtering
         ticker_trials = trial_data.get(ticker, [])
+
+        # PIT filter: only include trials that were known at as_of_date
+        # Use last_update_posted as proxy (conservative: exclude trials updated after as_of_date)
+        pit_filtered_trials = []
+        for trial in ticker_trials:
+            last_update = trial.get("last_update_posted")
+            if last_update and last_update > as_of_str:
+                continue  # Trial info wasn't available yet
+            pit_filtered_trials.append(trial)
+
+        ticker_trials = pit_filtered_trials
 
         # Convert trial records to module format
         trial_records = []
