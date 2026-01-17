@@ -373,6 +373,87 @@ class TestCatalystDecay:
         assert decayed < original
         assert decayed > Decimal("50")
 
+    def test_determinism(self):
+        """Same inputs must produce identical outputs (no float variance)."""
+        # Run twice with identical inputs
+        result1 = compute_catalyst_decay(45, "DATA_READOUT")
+        result2 = compute_catalyst_decay(45, "DATA_READOUT")
+
+        # Must be exactly equal (not just approximately)
+        assert result1.decay_factor == result2.decay_factor
+        assert result1.in_optimal_window == result2.in_optimal_window
+
+        # Run many times to catch any non-determinism
+        factors = [compute_catalyst_decay(45, "DATA_READOUT").decay_factor for _ in range(10)]
+        assert all(f == factors[0] for f in factors), "Non-deterministic decay detected"
+
+    def test_asymmetric_decay_faster_after_peak(self):
+        """Past optimal peak should decay faster than same distance before peak.
+
+        days_to_catalyst=60 is 30 days BEFORE optimal (d=+30)
+        days_to_catalyst=0 is 30 days AFTER optimal (d=-30)
+
+        Post-peak should decay faster due to information pricing.
+        """
+        # 30 days before optimal peak (event far in future)
+        before_peak = compute_catalyst_decay(60, "DATA_READOUT")  # d = 60 - 30 = +30
+        # 30 days after optimal peak (at event itself)
+        at_event = compute_catalyst_decay(0, "DATA_READOUT")  # d = 0 - 30 = -30
+
+        # Both are same distance (30 days) from optimal, but post-peak should be lower
+        assert at_event.decay_factor < before_peak.decay_factor, \
+            f"Post-peak decay ({at_event.decay_factor}) should be < pre-peak ({before_peak.decay_factor})"
+
+    def test_asymmetric_decay_past_event(self):
+        """Events that already happened should decay very fast."""
+        # Use closer distances where decay hasn't hit the floor yet
+        # Event happened 5 days ago (d = -5 - 30 = -35)
+        past_event = compute_catalyst_decay(-5, "PDUFA")  # PDUFA has slower decay
+        # Event is 65 days away (d = 65 - 30 = +35, same distance)
+        future_event = compute_catalyst_decay(65, "PDUFA")
+
+        # Past should decay faster (post-event decay mult = 2x)
+        # Both are 35 days from optimal, but past uses 2x tau
+        assert past_event.decay_factor < future_event.decay_factor, \
+            f"Past event ({past_event.decay_factor}) should decay faster than future ({future_event.decay_factor})"
+
+    def test_event_type_normalization(self):
+        """Event type should be case-insensitive with whitespace stripped."""
+        # All these should produce identical results
+        upper = compute_catalyst_decay(30, "PDUFA")
+        lower = compute_catalyst_decay(30, "pdufa")
+        mixed = compute_catalyst_decay(30, "Pdufa")
+        whitespace = compute_catalyst_decay(30, "  PDUFA  ")
+
+        assert upper.decay_factor == lower.decay_factor
+        assert upper.decay_factor == mixed.decay_factor
+        assert upper.decay_factor == whitespace.decay_factor
+
+        # All should report normalized event type
+        assert upper.event_type == "PDUFA"
+        assert lower.event_type == "PDUFA"
+        assert mixed.event_type == "PDUFA"
+        assert whitespace.event_type == "PDUFA"
+
+    def test_unknown_event_type_uses_default(self):
+        """Unknown event types should use DEFAULT rate, not fail."""
+        result = compute_catalyst_decay(30, "UNKNOWN_EVENT_TYPE")
+        assert result.decay_factor > Decimal("0")
+        assert result.event_type == "UNKNOWN_EVENT_TYPE"
+
+    def test_decay_monotonicity_approaching_peak(self):
+        """Decay factor should increase as we approach optimal window from far out."""
+        # Moving from 120 days out toward 30 days out (optimal)
+        factors = []
+        for days in [120, 90, 60, 45, 30]:
+            result = compute_catalyst_decay(days, "DATA_READOUT")
+            factors.append((days, result.decay_factor))
+
+        # Each step closer should have >= decay factor (monotonically increasing)
+        for i in range(len(factors) - 1):
+            assert factors[i][1] <= factors[i + 1][1], \
+                f"Monotonicity violated: {factors[i]} should have <= decay than {factors[i + 1]}"
+
 
 # =============================================================================
 # SMART MONEY SIGNAL TESTS
