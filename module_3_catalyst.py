@@ -60,6 +60,10 @@ from module_3_scoring import (
     score_catalyst_events,
     compute_proximity_score,
 )
+from common.integration_contracts import (
+    validate_module_3_output,
+    is_validation_enabled,
+)
 
 logging.basicConfig(
     level=logging.INFO,
@@ -483,7 +487,7 @@ def compute_module_3_catalyst(
         stacklevel=2
     )
 
-    return {
+    output = {
         "summaries": summaries_v2,
         "summaries_legacy": summaries_legacy,  # DEPRECATED - use summaries instead
         "diagnostic_counts": diagnostics.to_dict(),
@@ -492,6 +496,12 @@ def compute_module_3_catalyst(
         "schema_version": config.schema_version,
         "score_version": config.score_version,
     }
+
+    # Output validation
+    if is_validation_enabled():
+        validate_module_3_output(output)
+
+    return output
 
 
 # ============================================================================

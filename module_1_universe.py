@@ -14,6 +14,10 @@ from typing import Any, Dict, List, Optional
 
 from common.provenance import create_provenance
 from common.types import Severity, StatusGate
+from common.integration_contracts import (
+    validate_module_1_output,
+    is_validation_enabled,
+)
 
 RULESET_VERSION = "1.0.0"
 
@@ -105,7 +109,7 @@ def compute_module_1_universe(
             })
             reason_counts[reason] = reason_counts.get(reason, 0) + 1
     
-    return {
+    output = {
         "as_of_date": as_of_date,
         "active_securities": sorted(active, key=lambda x: x["ticker"]),
         "excluded_securities": sorted(excluded, key=lambda x: x["ticker"]),
@@ -121,3 +125,9 @@ def compute_module_1_universe(
             as_of_date,
         ),
     }
+
+    # Output validation
+    if is_validation_enabled():
+        validate_module_1_output(output)
+
+    return output
