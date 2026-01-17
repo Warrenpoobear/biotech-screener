@@ -635,41 +635,73 @@ def validate_pipeline_handoff(
 # SCORE EXTRACTION HELPERS
 # =============================================================================
 
-def extract_financial_score(score_record: Dict[str, Any]) -> Optional[float]:
+def extract_financial_score(
+    score_record: Dict[str, Any],
+    warn_legacy: bool = True
+) -> Optional[float]:
     """
     Extract financial score from Module 2 score record.
 
     Handles both standardized and legacy field names.
+
+    Args:
+        score_record: Module 2 score record dict
+        warn_legacy: If True, emit deprecation warning when using legacy field
+
+    Returns:
+        Financial score as float, or None if not found
     """
     # Try standardized name first
     if "financial_score" in score_record:
         return float(score_record["financial_score"])
     # Fall back to legacy name
     if "financial_normalized" in score_record:
+        if warn_legacy:
+            warn_legacy_field("financial_normalized", "financial_score", "Module 2")
         return float(score_record["financial_normalized"])
     return None
 
 
-def extract_catalyst_score(summary: Any) -> Optional[float]:
+def extract_catalyst_score(
+    summary: Any,
+    warn_legacy: bool = True
+) -> Optional[float]:
     """
     Extract catalyst score from Module 3 summary.
 
     Handles both dataclass objects and dict formats.
+
+    Args:
+        summary: Module 3 summary (dataclass or dict)
+        warn_legacy: If True, emit deprecation warning when using legacy fields
+
+    Returns:
+        Catalyst score as float, or None if not found
     """
-    # Try dataclass attribute first (V2)
+    # Try standardized name first
+    if isinstance(summary, dict) and "catalyst_score" in summary:
+        return float(summary["catalyst_score"])
+
+    # Try dataclass attribute (V2 uses score_blended)
     if hasattr(summary, "score_blended"):
         return float(summary.score_blended)
-    # Try dict access
-    if isinstance(summary, dict):
-        if "catalyst_score" in summary:
-            return float(summary["catalyst_score"])
-        if "score_blended" in summary:
-            return float(summary["score_blended"])
-        if "catalyst_score_net" in summary:
-            return float(summary["catalyst_score_net"])
+
+    # Try dict access for score_blended (V2 intermediate)
+    if isinstance(summary, dict) and "score_blended" in summary:
+        return float(summary["score_blended"])
+
+    # Fall back to legacy field names
+    if isinstance(summary, dict) and "catalyst_score_net" in summary:
+        if warn_legacy:
+            warn_legacy_field("catalyst_score_net", "catalyst_score", "Module 3")
+        return float(summary["catalyst_score_net"])
+
     # Try legacy dataclass
     if hasattr(summary, "catalyst_score_net"):
+        if warn_legacy:
+            warn_legacy_field("catalyst_score_net", "catalyst_score", "Module 3")
         return float(summary.catalyst_score_net)
+
     return None
 
 

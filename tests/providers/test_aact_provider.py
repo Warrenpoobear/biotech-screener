@@ -13,7 +13,7 @@ from datetime import date
 from pathlib import Path
 from unittest import TestCase
 
-from src.common.hash_utils import compute_trial_facts_hash
+from common.hash_utils import compute_trial_facts_hash
 from src.providers.aact_provider import AACTClinicalTrialsProvider, load_trial_mapping
 from src.providers.protocols import Phase, PCDType, TrialRow, TrialStatus
 

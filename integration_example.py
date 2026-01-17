@@ -9,15 +9,13 @@ import json
 from pathlib import Path
 from datetime import date
 
-# Prefer ENHANCED Module 2 if available; fall back to standard.
-ENHANCED_M2 = False
+# Use canonical Module 2 v2
 try:
-    from module_2_financial_ENHANCED import run_module_2  # type: ignore
-    ENHANCED_M2 = True
-    print("✅ Using ENHANCED Module 2 (module_2_financial_ENHANCED.py)")
+    from module_2_financial_v2 import run_module_2_v2 as run_module_2
+    print("✅ Using Module 2 v2 (module_2_financial_v2.py)")
 except Exception:
     from module_2_financial import run_module_2  # type: ignore
-    print("ℹ️  Using standard Module 2 (module_2_financial.py) — burn acceleration fields may be unavailable")
+    print("ℹ️  Using standard Module 2 (module_2_financial.py)")
 
 # Simulate CFO extractor output (in production, this comes from cfo_extractor.py)
 SAMPLE_CFO_DATA = [

@@ -117,6 +117,12 @@ WINSOR_HIGH = Decimal("95")
 HYBRID_ALPHA = Decimal("0.85")
 CRITICAL_COMPONENTS = ["financial", "clinical"]
 
+# Volatility adjustment parameters
+VOLATILITY_BASELINE = Decimal("0.50")  # 50% annualized vol as baseline
+VOLATILITY_LOW_THRESHOLD = Decimal("0.30")  # Below this = low vol
+VOLATILITY_HIGH_THRESHOLD = Decimal("0.80")  # Above this = high vol
+VOLATILITY_MAX_ADJUSTMENT = Decimal("0.25")  # Max +/- 25% weight adjustment
+
 
 class MonotonicCap:
     """Monotonic cap thresholds."""
@@ -350,6 +356,99 @@ def _extract_confidence_pos(pos_data: Optional[Dict]) -> Decimal:
 
 
 # ============================================================================
+# VOLATILITY ADJUSTMENT
+# ============================================================================
+
+@dataclass
+class VolatilityAdjustment:
+    """Volatility-based weight adjustment result."""
+    annualized_vol: Optional[Decimal]
+    vol_bucket: str  # "low", "normal", "high", "unknown"
+    adjustment_factor: Decimal  # Multiplier for weights (0.75 - 1.25)
+    confidence_penalty: Decimal  # Additional confidence reduction for high vol
+
+
+def _extract_volatility(
+    fin_data: Dict,
+    si_data: Optional[Dict],
+    market_data: Optional[Dict] = None,
+) -> VolatilityAdjustment:
+    """
+    Extract and compute volatility adjustment factor.
+
+    Volatility can come from multiple sources:
+    1. Market data (252-day realized vol)
+    2. Short interest data (implied vol if available)
+    3. Financial data (price volatility metrics)
+
+    Higher volatility -> lower weight adjustment (more uncertainty)
+    Lower volatility -> higher weight adjustment (more confidence)
+    """
+    vol = None
+
+    # Try market data first (most reliable)
+    if market_data:
+        vol = _to_decimal(market_data.get("volatility_252d"))
+        if vol is None:
+            vol = _to_decimal(market_data.get("annualized_volatility"))
+
+    # Try short interest data (may have implied vol)
+    if vol is None and si_data:
+        vol = _to_decimal(si_data.get("implied_volatility"))
+        if vol is None:
+            vol = _to_decimal(si_data.get("realized_volatility"))
+
+    # Try financial data
+    if vol is None and fin_data:
+        vol = _to_decimal(fin_data.get("price_volatility"))
+        if vol is None:
+            vol = _to_decimal(fin_data.get("volatility_252d"))
+
+    # If no volatility data, return neutral adjustment
+    if vol is None:
+        return VolatilityAdjustment(
+            annualized_vol=None,
+            vol_bucket="unknown",
+            adjustment_factor=Decimal("1.0"),
+            confidence_penalty=Decimal("0.05"),  # Small penalty for unknown
+        )
+
+    # Determine bucket and adjustment
+    if vol < VOLATILITY_LOW_THRESHOLD:
+        vol_bucket = "low"
+        # Low vol = more reliable signal = boost weights slightly
+        # Linear interpolation: at 0% vol -> +25% adjustment, at 30% vol -> 0%
+        adjustment = Decimal("1.0") + VOLATILITY_MAX_ADJUSTMENT * (
+            (VOLATILITY_LOW_THRESHOLD - vol) / VOLATILITY_LOW_THRESHOLD
+        )
+        confidence_penalty = Decimal("0")
+    elif vol <= VOLATILITY_HIGH_THRESHOLD:
+        vol_bucket = "normal"
+        # Normal vol = neutral
+        adjustment = Decimal("1.0")
+        # Small confidence penalty that increases with volatility
+        vol_ratio = (vol - VOLATILITY_LOW_THRESHOLD) / (VOLATILITY_HIGH_THRESHOLD - VOLATILITY_LOW_THRESHOLD)
+        confidence_penalty = vol_ratio * Decimal("0.10")  # Up to 10% penalty
+    else:
+        vol_bucket = "high"
+        # High vol = less reliable signal = reduce weight influence
+        # Linear interpolation: at 80% vol -> 0%, capped at -25%
+        excess_vol = vol - VOLATILITY_HIGH_THRESHOLD
+        adjustment = Decimal("1.0") - min(
+            VOLATILITY_MAX_ADJUSTMENT,
+            VOLATILITY_MAX_ADJUSTMENT * (excess_vol / VOLATILITY_BASELINE)
+        )
+        confidence_penalty = Decimal("0.15")  # Significant penalty for high vol
+
+    return VolatilityAdjustment(
+        annualized_vol=_quantize_score(vol * Decimal("100")),  # Store as percentage
+        vol_bucket=vol_bucket,
+        adjustment_factor=_quantize_weight(adjustment),
+        confidence_penalty=_quantize_weight(confidence_penalty),
+    )
+
+
+# ============================================================================
 # MONOTONIC CAPS
 # ============================================================================
 
@@ -504,8 +603,12 @@ def _score_single_ticker_v2(
     normalized_scores: Dict[str, Optional[Decimal]],
     cohort_key: str,
     normalization_method: NormalizationMethod,
+    market_data: Optional[Dict] = None,
 ) -> Dict[str, Any]:
     """Score a single ticker with full breakdown."""
+
+    # Extract volatility adjustment
+    vol_adj = _extract_volatility(fin_data, si_data, market_data)
 
     # Extract raw scores
     fin_raw = _to_decimal(fin_data.get("financial_normalized"))
@@ -543,18 +646,26 @@ def _score_single_ticker_v2(
     momentum_adj = regime_adjustments.get("momentum", Decimal("1.0"))
     catalyst_adj = regime_adjustments.get("catalyst", Decimal("1.0"))
 
+    # Apply volatility adjustment to regime factors
+    # High volatility reduces the impact of all adjustments (converges to baseline)
+    vol_factor = vol_adj.adjustment_factor
+
     adjusted_weights = {
-        "clinical": base_weights.get("clinical", Decimal("0.40")),
-        "financial": base_weights.get("financial", Decimal("0.35")) * quality_adj,
-        "catalyst": base_weights.get("catalyst", Decimal("0.25")) * catalyst_adj * momentum_adj,
+        "clinical": base_weights.get("clinical", Decimal("0.40")) * vol_factor,
+        "financial": base_weights.get("financial", Decimal("0.35")) * quality_adj * vol_factor,
+        "catalyst": base_weights.get("catalyst", Decimal("0.25")) * catalyst_adj * momentum_adj * vol_factor,
     }
     if mode == ScoringMode.ENHANCED:
-        adjusted_weights["pos"] = base_weights.get("pos", Decimal("0.20"))
+        adjusted_weights["pos"] = base_weights.get("pos", Decimal("0.20")) * vol_factor
 
-    # Confidence weighting
-    confidences = {"clinical": conf_clin, "financial": conf_fin, "catalyst": conf_cat}
+    # Confidence weighting with volatility penalty
+    confidences = {
+        "clinical": _clamp(conf_clin - vol_adj.confidence_penalty, Decimal("0"), Decimal("1")),
+        "financial": _clamp(conf_fin - vol_adj.confidence_penalty, Decimal("0"), Decimal("1")),
+        "catalyst": _clamp(conf_cat - vol_adj.confidence_penalty, Decimal("0"), Decimal("1")),
+    }
     if mode == ScoringMode.ENHANCED:
-        confidences["pos"] = conf_pos
+        confidences["pos"] = _clamp(conf_pos - vol_adj.confidence_penalty, Decimal("0"), Decimal("1"))
 
     effective_weights = {}
     total_weight = Decimal("0")
@@ -699,6 +810,10 @@ def _score_single_ticker_v2(
         flags.append("monotonic_cap_applied")
     if mode == ScoringMode.ENHANCED and pos_raw is not None:
         flags.append("pos_score_applied")
+    if vol_adj.vol_bucket == "high":
+        flags.append("high_volatility_adjustment")
+    elif vol_adj.vol_bucket == "low":
+        flags.append("low_volatility_boost")
 
     return {
         "ticker": ticker,
@@ -715,6 +830,12 @@ def _score_single_ticker_v2(
         "normalization_method": normalization_method.value,
         "caps_applied": caps_applied,
         "component_scores": component_scores,
+        "volatility_adjustment": {
+            "annualized_vol_pct": str(vol_adj.annualized_vol) if vol_adj.annualized_vol else None,
+            "vol_bucket": vol_adj.vol_bucket,
+            "adjustment_factor": str(vol_adj.adjustment_factor),
+            "confidence_penalty": str(vol_adj.confidence_penalty),
+        },
     }
 
 
@@ -731,8 +852,52 @@ def compute_module_5_composite_v2(
     weights: Optional[Dict[str, Decimal]] = None,
     coinvest_signals: Optional[Dict] = None,
     enhancement_result: Optional[Dict[str, Any]] = None,
+    market_data_by_ticker: Optional[Dict[str, Dict]] = None,
 ) -> Dict[str, Any]:
-    """Compute composite scores with all v2 enhancements."""
+    """
+    Compute composite scores with all v2 enhancements.
+
+    Args:
+        universe_result: Module 1 output with active/excluded securities
+        financial_result: Module 2 output with financial scores
+        catalyst_result: Module 3 output with catalyst summaries
+        clinical_result: Module 4 output with clinical scores
+        as_of_date: ISO date string for the scoring date
+        weights: Optional custom weights (defaults to DEFAULT_WEIGHTS or ENHANCED_WEIGHTS)
+        coinvest_signals: Optional co-invest overlay signals
+        enhancement_result: Optional PoS/SI/regime enhancement data
+        market_data_by_ticker: Optional dict mapping ticker to market data
+            (including volatility_252d for volatility-adjusted weighting)
+
+    Returns:
+        Dict with ranked_securities, excluded_securities, and diagnostics
+    """
+
+    # Handle empty universe gracefully
+    active_securities = universe_result.get("active_securities", [])
+    if not active_securities or len(active_securities) == 0:
+        logger.warning("Module 5 v2: Empty universe provided - returning empty results")
+        return {
+            "as_of_date": as_of_date,
+            "scoring_mode": ScoringMode.DEFAULT.value,
+            "weights_used": {k: str(v) for k, v in DEFAULT_WEIGHTS.items()},
+            "ranked_securities": [],
+            "excluded_securities": [],
+            "cohort_stats": {},
+            "diagnostic_counts": {
+                "total_input": 0,
+                "rankable": 0,
+                "excluded": 0,
+                "cohort_count": 0,
+                "with_pos_scores": 0,
+                "with_caps_applied": 0,
+            },
+            "enhancement_applied": False,
+            "enhancement_diagnostics": None,
+            "schema_version": SCHEMA_VERSION,
+            "provenance": create_provenance(RULESET_VERSION, {"tickers": [], "weights": {}}, as_of_date),
+        }
+
     logger.info(f"Module 5 v2: Computing composite scores for {as_of_date}")
 
     # Enhancement data
@@ -832,6 +997,7 @@ def compute_module_5_composite_v2(
         cohort_stats[cohort_key] = {"count": len(members)}
 
     # Score each ticker
+    market_data_dict = market_data_by_ticker or {}
     scored = []
     for rec in combined:
         normalized_scores = {
@@ -840,12 +1006,14 @@ def compute_module_5_composite_v2(
             "catalyst": rec.get("catalyst_normalized"),
             "pos": rec.get("pos_normalized"),
         }
+        ticker_market_data = market_data_dict.get(rec["ticker"])
         result = _score_single_ticker_v2(
             ticker=rec["ticker"], fin_data=rec["fin_data"], cat_data=rec["cat_data"],
             clin_data=rec["clin_data"], pos_data=rec["pos_data"], si_data=rec["si_data"],
             base_weights=base_weights, regime_adjustments=regime_adjustments,
             mode=mode, normalized_scores=normalized_scores,
             cohort_key=rec["cohort_key"], normalization_method=rec["normalization_method"],
+            market_data=ticker_market_data,
         )
         result["market_cap_bucket"] = rec["market_cap_bucket"]
         result["stage_bucket"] = rec["stage_bucket"]
@@ -901,6 +1069,7 @@ def compute_module_5_composite_v2(
             "coinvest_overlap_count": coinvest.get("coinvest_overlap_count", 0),
             "coinvest_holders": coinvest.get("coinvest_holders", []),
             "coinvest_usable": coinvest.get("coinvest_usable", False),
+            "volatility_adjustment": rec.get("volatility_adjustment"),
         })
 
     return {
@@ -917,6 +1086,18 @@ def compute_module_5_composite_v2(
             "cohort_count": len(cohorts),
             "with_pos_scores": sum(1 for r in ranked_securities if r.get("confidence_pos")),
             "with_caps_applied": sum(1 for r in ranked_securities if r.get("monotonic_caps_applied")),
+            "with_volatility_data": sum(
+                1 for r in ranked_securities
+                if r.get("volatility_adjustment", {}).get("annualized_vol_pct") is not None
+            ),
+            "high_volatility_count": sum(
+                1 for r in ranked_securities
+                if r.get("volatility_adjustment", {}).get("vol_bucket") == "high"
+            ),
+            "low_volatility_count": sum(
+                1 for r in ranked_securities
+                if r.get("volatility_adjustment", {}).get("vol_bucket") == "low"
+            ),
         },
         "enhancement_applied": enhancement_applied,
         "enhancement_diagnostics": {

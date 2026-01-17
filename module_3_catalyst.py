@@ -276,6 +276,31 @@ def compute_module_3_catalyst(
     elif not isinstance(as_of_date, date):
         raise ValueError(f"as_of_date must be date or ISO string, got {type(as_of_date)}")
 
+    # Handle empty active_tickers gracefully
+    if not active_tickers or len(active_tickers) == 0:
+        logger.warning("Module 3: Empty active_tickers provided - returning empty results")
+        return {
+            "summaries": {},
+            "summaries_legacy": {},
+            "diagnostic_counts": {
+                "events_detected_total": 0,
+                "events_deduped": 0,
+                "tickers_with_events": 0,
+                "tickers_analyzed": 0,
+                "tickers_with_severe_negative": 0,
+            },
+            "diagnostic_counts_legacy": {
+                "events_detected": 0,
+                "events_deduped": 0,
+                "severe_negatives": 0,
+                "tickers_with_events": 0,
+                "tickers_analyzed": 0,
+            },
+            "as_of_date": as_of_date.isoformat(),
+            "schema_version": SCHEMA_VERSION,
+            "score_version": SCORE_VERSION,
+        }
+
     # Initialize
     if config is None:
         config = Module3Config()

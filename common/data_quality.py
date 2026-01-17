@@ -22,7 +22,7 @@ Usage:
 import logging
 from dataclasses import dataclass, field
 from datetime import date, timedelta
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 from common.date_utils import normalize_date
 
@@ -444,3 +444,152 @@ def validate_liquidity(
     gates = DataQualityGates(DataQualityConfig(min_adv_dollars=min_adv_dollars))
     result = gates.validate_liquidity(avg_volume, price)
     return result.passed
+
+
+# ============================================================================
+# CIRCUIT BREAKER
+# ============================================================================
+
+class CircuitBreakerError(Exception):
+    """Raised when circuit breaker trips due to excessive failures."""
+    pass
+
+
+@dataclass
+class CircuitBreakerConfig:
+    """Configuration for circuit breaker."""
+    # Thresholds
+    failure_threshold: float = 0.50  # Trip if > 50% of records fail
+    warning_threshold: float = 0.20  # Warn if > 20% fail
+    min_records_for_check: int = 10  # Don't check if fewer than 10 records
+
+    # Behavior
+    strict_mode: bool = False  # If True, raise exception on trip; else warn
+
+
+@dataclass
+class CircuitBreakerResult:
+    """Result of circuit breaker check."""
+    tripped: bool
+    warning: bool
+    failure_rate: float
+    total_records: int
+    failed_records: int
+    message: str
+
+
+def check_circuit_breaker(
+    total_records: int,
+    failed_records: int,
+    config: Optional[CircuitBreakerConfig] = None,
+    context: str = "data validation",
+) -> CircuitBreakerResult:
+    """
+    Check if circuit breaker should trip due to excessive failures.
+
+    Prevents pipeline from continuing when data quality is too poor.
+
+    Args:
+        total_records: Total number of records processed
+        failed_records: Number of records that failed validation
+        config: Circuit breaker configuration
+        context: Description for error message
+
+    Returns:
+        CircuitBreakerResult with trip status and details
+
+    Raises:
+        CircuitBreakerError: If strict_mode is True and breaker trips
+    """
+    config = config or CircuitBreakerConfig()
+
+    # Don't check if too few records
+    if total_records < config.min_records_for_check:
+        return CircuitBreakerResult(
+            tripped=False,
+            warning=False,
+            failure_rate=0.0,
+            total_records=total_records,
+            failed_records=failed_records,
+            message=f"Skipped circuit breaker check: only {total_records} records"
+        )
+
+    # Calculate failure rate
+    failure_rate = failed_records / total_records if total_records > 0 else 0.0
+
+    # Check thresholds
+    tripped = failure_rate > config.failure_threshold
+    warning = failure_rate > config.warning_threshold
+
+    # Build message
+    if tripped:
+        message = (
+            f"Circuit breaker TRIPPED: {failure_rate:.1%} of {total_records} records "
+            f"failed {context} (threshold: {config.failure_threshold:.1%})"
+        )
+        logger.error(message)
+
+        if config.strict_mode:
+            raise CircuitBreakerError(message)
+    elif warning:
+        message = (
+            f"Circuit breaker WARNING: {failure_rate:.1%} of {total_records} records "
+            f"failed {context} (threshold: {config.warning_threshold:.1%})"
+        )
+        logger.warning(message)
+    else:
+        message = (
+            f"Circuit breaker OK: {failure_rate:.1%} failure rate "
+            f"({failed_records}/{total_records})"
+        )
+
+    return CircuitBreakerResult(
+        tripped=tripped,
+        warning=warning,
+        failure_rate=failure_rate,
+        total_records=total_records,
+        failed_records=failed_records,
+        message=message
+    )
+
+
+def validate_batch_with_circuit_breaker(
+    records: List[Dict[str, Any]],
+    validator_func,
+    config: Optional[CircuitBreakerConfig] = None,
+    context: str = "batch validation",
+) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]], CircuitBreakerResult]:
+    """
+    Validate a batch of records with circuit breaker protection.
+
+    Args:
+        records: List of records to validate
+        validator_func: Function that takes a record and returns (valid: bool, errors: List[str])
+        config: Circuit breaker configuration
+        context: Description for error messages
+
+    Returns:
+        Tuple of (valid_records, invalid_records, circuit_breaker_result)
+    """
+    valid_records = []
+    invalid_records = []
+
+    for record in records:
+        is_valid, errors = validator_func(record)
+        if is_valid:
+            valid_records.append(record)
+        else:
+            invalid_records.append({
+                "record": record,
+                "errors": errors,
+            })
+
+    # Check circuit breaker
+    cb_result = check_circuit_breaker(
+        total_records=len(records),
+        failed_records=len(invalid_records),
+        config=config,
+        context=context,
+    )
+
+    return valid_records, invalid_records, cb_result

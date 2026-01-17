@@ -895,6 +895,33 @@ def compute_module_4_clinical_dev_v2(
             "provenance": {...}
         }
     """
+    import logging
+    logger = logging.getLogger(__name__)
+
+    # Handle empty active_tickers gracefully
+    if not active_tickers or len(active_tickers) == 0:
+        logger.warning("Module 4: Empty active_tickers provided - returning empty results")
+        return {
+            "as_of_date": as_of_date,
+            "scores": [],
+            "diagnostic_counts": {
+                "tickers_scored": 0,
+                "total_trials_raw": 0,
+                "total_trials_unique": 0,
+                "total_trials_pit_admissible": 0,
+                "total_pit_filtered": 0,
+                "pit_fields_used": {},
+                "status_distribution": {},
+                "endpoint_distribution": {},
+            },
+            "provenance": create_provenance(RULESET_VERSION, {"tickers": []}, as_of_date),
+        }
+
+    # Handle empty trial_records gracefully
+    if not trial_records:
+        logger.warning("Module 4: No trial records provided")
+        trial_records = []
+
     # Normalize to sorted list for deterministic iteration
     if isinstance(active_tickers, set):
         active_tickers = sorted(active_tickers)

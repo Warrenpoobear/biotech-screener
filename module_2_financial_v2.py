@@ -62,6 +62,7 @@ from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple
 
 from common.types import Severity
+from common.score_utils import clamp_score, to_decimal as score_to_decimal
 
 __version__ = "2.0.0"
 RULESET_VERSION = "2.0.0-V2"
@@ -199,6 +200,17 @@ def _quantize_rate(value: Decimal) -> Decimal:
 # ============================================================================
 
 @dataclass
+class BurnAcceleration:
+    """Result of burn acceleration analysis."""
+    is_accelerating: bool
+    acceleration_rate: Optional[Decimal]  # % change Q-over-Q
+    trend_direction: str  # "accelerating", "stable", "decelerating", "unknown"
+    quarters_analyzed: int
+    confidence: str  # "high" (4Q), "medium" (3Q), "low" (2Q), "none"
+    penalty_factor: Decimal  # 1.0 = no penalty, <1.0 = penalize for accelerating burn
+
+
+@dataclass
 class BurnResult:
     """Result of burn rate calculation with full provenance."""
     monthly_burn: Optional[Decimal]
@@ -209,13 +221,15 @@ class BurnResult:
     raw_value: Optional[Decimal] = None
     ytd_quarters: Optional[int] = None
     rejection_reasons: Dict[str, str] = field(default_factory=dict)  # source -> reason
+    # Burn acceleration tracking
+    acceleration: Optional[BurnAcceleration] = None
 
 
 def _extract_quarterly_burns(financial_data: Dict) -> List[Decimal]:
     """
     Extract quarterly burn values from history fields.
 
-    Returns list of valid (negative) quarterly burns.
+    Returns list of valid (negative) quarterly burns, most recent first.
     """
     burns = []
 
@@ -228,7 +242,101 @@ def _extract_quarterly_burns(financial_data: Dict) -> List[Decimal]:
                 if dec is not None and dec < Decimal("0"):
                     burns.append(abs(dec))
 
-    return burns[:4]  # Up to 4 quarters
+    return burns[:4]  # Up to 4 quarters, most recent first
+
+
+def calculate_burn_acceleration(financial_data: Dict) -> BurnAcceleration:
+    """
+    Calculate burn acceleration from quarterly history.
+
+    Detects if burn rate is increasing (accelerating), stable, or decreasing.
+    Uses linear regression-like approach on quarterly burn data.
+
+    Acceleration is concerning because it indicates faster cash consumption,
+    which can lead to runway shortening faster than expected.
+
+    Args:
+        financial_data: Financial data dict with burn history
+
+    Returns:
+        BurnAcceleration with trend analysis and penalty factor
+    """
+    # Extract quarterly burns (most recent first)
+    burns = _extract_quarterly_burns(financial_data)
+
+    if len(burns) < 2:
+        return BurnAcceleration(
+            is_accelerating=False,
+            acceleration_rate=None,
+            trend_direction="unknown",
+            quarters_analyzed=len(burns),
+            confidence="none",
+            penalty_factor=Decimal("1.0"),
+        )
+
+    # Determine confidence based on data availability
+    if len(burns) >= 4:
+        confidence = "high"
+    elif len(burns) >= 3:
+        confidence = "medium"
+    else:
+        confidence = "low"
+
+    # Calculate quarter-over-quarter changes
+    # burns[0] is most recent, burns[1] is prior quarter, etc.
+    qoq_changes = []
+    for i in range(len(burns) - 1):
+        current = burns[i]
+        prior = burns[i + 1]
+        if prior > EPS:  # Avoid division by zero
+            pct_change = ((current - prior) / prior) * Decimal("100")
+            qoq_changes.append(pct_change)
+
+    if not qoq_changes:
+        return BurnAcceleration(
+            is_accelerating=False,
+            acceleration_rate=None,
+            trend_direction="unknown",
+            quarters_analyzed=len(burns),
+            confidence=confidence,
+            penalty_factor=Decimal("1.0"),
+        )
+
+    # Average quarter-over-quarter change
+    avg_qoq_change = sum(qoq_changes) / Decimal(len(qoq_changes))
+
+    # Determine trend direction
+    # Positive change = burn is increasing (bad - accelerating)
+    # Negative change = burn is decreasing (good - decelerating)
+    ACCELERATION_THRESHOLD = Decimal("10")  # 10% QoQ increase is concerning
+    DECELERATION_THRESHOLD = Decimal("-10")  # 10% QoQ decrease is good
+
+    if avg_qoq_change > ACCELERATION_THRESHOLD:
+        trend_direction = "accelerating"
+        is_accelerating = True
+        # Penalty: reduce runway score for accelerating burn
+        # Cap penalty at 30% reduction for extreme acceleration (>50% QoQ)
+        penalty_pct = min(Decimal("0.30"), avg_qoq_change / Decimal("100") * Decimal("0.5"))
+        penalty_factor = Decimal("1.0") - penalty_pct
+    elif avg_qoq_change < DECELERATION_THRESHOLD:
+        trend_direction = "decelerating"
+        is_accelerating = False
+        # Bonus: slight boost for decelerating burn (up to 10%)
+        bonus_pct = min(Decimal("0.10"), abs(avg_qoq_change) / Decimal("100") * Decimal("0.2"))
+        penalty_factor = Decimal("1.0") + bonus_pct
+    else:
+        trend_direction = "stable"
+        is_accelerating = False
+        penalty_factor = Decimal("1.0")
+
+    return BurnAcceleration(
+        is_accelerating=is_accelerating,
+        acceleration_rate=avg_qoq_change.quantize(Decimal("0.01")),
+        trend_direction=trend_direction,
+        quarters_analyzed=len(burns),
+        confidence=confidence,
+        penalty_factor=penalty_factor.quantize(Decimal("0.001")),
+    )
 
 
 def calculate_burn_rate_v2(financial_data: Dict) -> BurnResult:
@@ -530,6 +638,9 @@ class RunwayResult:
     burn_period: str
     quarters_used: int
     burn_rejection_reasons: Dict[str, str] = field(default_factory=dict)
+    # Burn acceleration tracking for accuracy improvement
+    burn_acceleration: Optional[BurnAcceleration] = None
+    runway_score_pre_acceleration: Optional[Decimal] = None  # Score before accel adjustment
 
 
 def calculate_runway(financial_data: Dict, market_data: Dict) -> RunwayResult:
@@ -537,12 +648,16 @@ def calculate_runway(financial_data: Dict, market_data: Dict) -> RunwayResult:
     Calculate months of cash runway with full provenance.
 
     Uses 4-quarter trailing average if available.
+    Now includes burn acceleration analysis for accuracy improvement.
     """
     # Calculate liquid assets
     liquid = calculate_liquid_assets(financial_data)
 
     # Calculate burn rate
     burn = calculate_burn_rate_v2(financial_data)
+
+    # Calculate burn acceleration for trend analysis
+    acceleration = calculate_burn_acceleration(financial_data)
 
     # Default result
     default_result = RunwayResult(
@@ -556,6 +671,7 @@ def calculate_runway(financial_data: Dict, market_data: Dict) -> RunwayResult:
         burn_period=burn.burn_period,
         quarters_used=burn.quarters_used,
         burn_rejection_reasons=burn.rejection_reasons,
+        burn_acceleration=acceleration,
     )
 
     # Check for profitability
@@ -571,6 +687,7 @@ def calculate_runway(financial_data: Dict, market_data: Dict) -> RunwayResult:
             burn_period=burn.burn_period,
             quarters_used=burn.quarters_used,
             burn_rejection_reasons=burn.rejection_reasons,
+            burn_acceleration=acceleration,
         )
 
     # Calculate runway if we have burn data
@@ -578,10 +695,18 @@ def calculate_runway(financial_data: Dict, market_data: Dict) -> RunwayResult:
         runway_months = _safe_divide(liquid.liquid_assets, burn.monthly_burn)
         if runway_months is not None:
             runway_months = _quantize_score(runway_months)
-            runway_score = _score_runway(runway_months)
+            base_runway_score = _score_runway(runway_months)
+
+            # Apply burn acceleration adjustment
+            # Accelerating burn = lower score (penalty)
+            # Decelerating burn = slightly higher score (bonus)
+            adjusted_runway_score = base_runway_score * acceleration.penalty_factor
+            adjusted_runway_score = _clamp(adjusted_runway_score, Decimal("0"), Decimal("100"))
+            adjusted_runway_score = _quantize_score(adjusted_runway_score)
+
             return RunwayResult(
                 runway_months=runway_months,
-                runway_score=runway_score,
+                runway_score=adjusted_runway_score,
                 monthly_burn=burn.monthly_burn,
                 liquid_assets=liquid.liquid_assets,
                 liquid_components=liquid.components_used,
@@ -590,6 +715,8 @@ def calculate_runway(financial_data: Dict, market_data: Dict) -> RunwayResult:
                 burn_period=burn.burn_period,
                 quarters_used=burn.quarters_used,
                 burn_rejection_reasons=burn.rejection_reasons,
+                burn_acceleration=acceleration,
+                runway_score_pre_acceleration=base_runway_score,
             )
 
     return default_result
@@ -983,7 +1110,8 @@ def score_financial_health_v2(
             dilution.dilution_score * Decimal("0.30") +
             liquidity.liquidity_score * Decimal("0.20")
         )
-        composite = _clamp(composite, Decimal("0"), Decimal("100"))
+        # Use clamp_score utility for consistent bounds enforcement
+        composite = clamp_score(composite, Decimal("0"), Decimal("100")) or Decimal("50")
         composite = _quantize_score(composite)
         has_data = True
     else:
@@ -1012,6 +1140,12 @@ def score_financial_health_v2(
     if dilution.share_count_growth is not None and dilution.share_count_growth > Decimal("0.10"):
         flags.append("share_dilution")
 
+    # Add burn acceleration flag (accuracy improvement)
+    if runway.burn_acceleration and runway.burn_acceleration.is_accelerating:
+        flags.append("burn_accelerating")
+    elif runway.burn_acceleration and runway.burn_acceleration.trend_direction == "decelerating":
+        flags.append("burn_decelerating")
+
     # Compute determinism hash with stable ordering
     # Include: ticker, composite, runway, cash_to_mcap, burn_source, inputs_used (sorted keys)
     inputs_sorted = "|".join(f"{k}={v}" for k, v in sorted(quality.inputs_used.items()))
@@ -1034,7 +1168,8 @@ def score_financial_health_v2(
     return {
         # Core fields (API preserved - floats for back-compat)
         "ticker": ticker,
-        "financial_normalized": _to_float(composite),
+        "financial_score": _to_float(composite),  # Primary field name
+        "financial_normalized": _to_float(composite),  # DEPRECATED: use financial_score
         "runway_months": _to_float(runway.runway_months),
         "runway_score": _to_float(runway.runway_score),
         "dilution_score": _to_float(dilution.dilution_score),
@@ -1074,6 +1209,13 @@ def score_financial_health_v2(
         "inputs_used": quality.inputs_used,
         "confidence": _to_float(quality.confidence),
 
+        # Burn acceleration fields (accuracy improvement)
+        "burn_acceleration_rate": _to_float(runway.burn_acceleration.acceleration_rate) if runway.burn_acceleration else None,
+        "burn_acceleration_trend": runway.burn_acceleration.trend_direction if runway.burn_acceleration else "unknown",
+        "burn_acceleration_penalty": _to_float(runway.burn_acceleration.penalty_factor) if runway.burn_acceleration else None,
+        "burn_acceleration_confidence": runway.burn_acceleration.confidence if runway.burn_acceleration else "none",
+        "runway_score_pre_acceleration": _to_float(runway.runway_score_pre_acceleration),
+
         # Audit fields (v2 additions)
         "determinism_hash": determinism_hash,
         "schema_version": SCHEMA_VERSION,
@@ -1100,7 +1242,29 @@ def run_module_2_v2(
     Returns:
         Dict with scores and diagnostic_counts
     """
+    # Handle empty universe gracefully
+    if not universe or len(universe) == 0:
+        logger.warning("Module 2 v2: Empty universe provided - returning empty results")
+        return {
+            "scores": [],
+            "diagnostic_counts": {
+                "scored": 0,
+                "missing": 0,
+                "severity_distribution": {},
+                "data_state_distribution": {},
+                "burn_source_distribution": {},
+            },
+        }
+
     logger.info(f"Module 2 v2: Scoring {len(universe)} tickers")
+
+    # Handle empty data gracefully
+    if not financial_data:
+        logger.warning("Module 2 v2: No financial data provided")
+        financial_data = []
+    if not market_data:
+        logger.warning("Module 2 v2: No market data provided")
+        market_data = []
 
     # Create lookup dicts
     fin_lookup = {f['ticker']: f for f in financial_data if 'ticker' in f}
