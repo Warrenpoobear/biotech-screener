@@ -148,11 +148,13 @@ class Module1SecurityRecord(TypedDict, total=False):
     subsector: Optional[str]
 
 
-class Module1Output(TypedDict):
+class Module1Output(TypedDict, total=False):
     """Schema for Module 1 output."""
+    as_of_date: str  # ISO date string
     active_securities: List[Module1SecurityRecord]
     excluded_securities: List[Dict[str, Any]]
     diagnostic_counts: Dict[str, int]
+    provenance: Dict[str, Any]  # Audit trail metadata
 
 
 class Module2ScoreRecord(TypedDict, total=False):

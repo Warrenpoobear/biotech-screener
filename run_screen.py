@@ -50,6 +50,11 @@ logger = logging.getLogger(__name__)
 
 # Common utilities
 from common.date_utils import normalize_date, to_date_string, to_date_object
+from common.integration_contracts import (
+    validate_pipeline_handoff,
+    validate_module_5_output,
+    SchemaValidationError,
+)
 
 # Module imports
 from module_1_universe import compute_module_1_universe
@@ -563,6 +568,9 @@ def run_screening_pipeline(
         if checkpoint_dir:
             save_checkpoint(checkpoint_dir, "module_1", as_of_date, m1_result)
 
+    # Validate Module 1 output schema
+    validate_pipeline_handoff("module_1", "module_2", m1_result)
+
     active_tickers = [s["ticker"] for s in m1_result["active_securities"]]
     logger.info(f"  Active: {len(active_tickers)}, Excluded: {len(m1_result['excluded_securities'])}")
 
@@ -582,6 +590,9 @@ def run_screening_pipeline(
         )
         if checkpoint_dir:
             save_checkpoint(checkpoint_dir, "module_2", as_of_date, m2_result)
+
+    # Validate Module 2 output schema
+    validate_pipeline_handoff("module_2", "module_5", m2_result)
 
     diag = m2_result.get('diagnostic_counts', {})
     logger.info(f"  Scored: {diag.get('scored', len(m2_result.get('scores', [])))}, "
@@ -617,6 +628,9 @@ def run_screening_pipeline(
         if checkpoint_dir:
             save_checkpoint(checkpoint_dir, "module_3", as_of_date, m3_result)
 
+    # Validate Module 3 output schema
+    validate_pipeline_handoff("module_3", "module_5", m3_result)
+
     # Extract results (summaries is already a dict keyed by ticker)
     catalyst_summaries = m3_result["summaries"]
     diag3 = m3_result.get("diagnostic_counts", {})
@@ -644,6 +658,9 @@ def run_screening_pipeline(
         )
         if checkpoint_dir:
             save_checkpoint(checkpoint_dir, "module_4", as_of_date, m4_result)
+
+    # Validate Module 4 output schema
+    validate_pipeline_handoff("module_4", "module_5", m4_result)
 
     diag = m4_result.get('diagnostic_counts', {})
     logger.info(f"  Scored: {diag.get('scored', len(m4_result.get('scores', [])))}, "
@@ -792,6 +809,9 @@ def run_screening_pipeline(
         )
         if checkpoint_dir:
             save_checkpoint(checkpoint_dir, "module_5", as_of_date, m5_result)
+
+    # Validate Module 5 output schema
+    validate_module_5_output(m5_result)
 
     diag = m5_result.get('diagnostic_counts', {})
     logger.info(f"  Rankable: {diag.get('rankable', len(m5_result.get('ranked_securities', [])))}, "
