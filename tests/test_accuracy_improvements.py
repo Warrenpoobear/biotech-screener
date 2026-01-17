@@ -511,3 +511,575 @@ class TestEdgeCases:
         market_data = {"volatility_252d": 1}  # 100% vol as integer
         result = _extract_volatility({}, None, market_data)
         assert result.vol_bucket == "high"
+
+
+# ============================================================================
+# NEW ACCURACY IMPROVEMENTS TESTS (8 Priority Improvements)
+# ============================================================================
+
+from common.accuracy_improvements import (
+    # 1. Indication-specific endpoint weighting
+    TherapeuticArea,
+    classify_therapeutic_area,
+    compute_weighted_endpoint_score,
+    # 2. Phase-dependent staleness
+    compute_phase_staleness,
+    get_staleness_threshold_for_phase,
+    # 3. Regulatory pathway scoring
+    RegulatoryDesignation,
+    compute_regulatory_pathway_score,
+    # 4. Regime-adaptive catalyst decay
+    MarketRegimeType,
+    compute_regime_adaptive_decay,
+    # 5. Competitive landscape penalty
+    compute_competition_penalty,
+    # 6. Dynamic dilution
+    compute_vix_dilution_adjustment,
+    # 7. Burn seasonality
+    compute_burn_seasonality_adjustment,
+    # 8. Proximity boost
+    compute_binary_event_proximity_boost,
+    # Integration helper
+    apply_all_accuracy_improvements,
+)
+from datetime import date
+
+
+# =============================================================================
+# 1. INDICATION-SPECIFIC ENDPOINT WEIGHTING TESTS
+# =============================================================================
+
+class TestIndicationSpecificEndpointWeighting:
+    """Tests for indication-specific endpoint weighting."""
+
+    def test_oncology_os_highest_weight(self):
+        """OS should have highest weight in oncology."""
+        weight, etype, is_strong = compute_weighted_endpoint_score(
+            "Overall Survival at 5 years",
+            TherapeuticArea.ONCOLOGY
+        )
+        assert weight >= Decimal("0.95")
+        assert is_strong is True
+
+    def test_oncology_pfs_vs_orr(self):
+        """PFS should be weighted higher than ORR in oncology."""
+        weight_pfs, _, _ = compute_weighted_endpoint_score(
+            "Progression-free survival",
+            TherapeuticArea.ONCOLOGY
+        )
+        weight_orr, _, _ = compute_weighted_endpoint_score(
+            "Objective Response Rate",
+            TherapeuticArea.ONCOLOGY
+        )
+        assert weight_pfs > weight_orr
+
+    def test_autoimmune_acr_hierarchy(self):
+        """ACR70 should be weighted higher than ACR50 in autoimmune."""
+        weight_70, _, _ = compute_weighted_endpoint_score(
+            "ACR70 response",
+            TherapeuticArea.AUTOIMMUNE
+        )
+        weight_50, _, _ = compute_weighted_endpoint_score(
+            "ACR50 response",
+            TherapeuticArea.AUTOIMMUNE
+        )
+        assert weight_70 > weight_50
+
+    def test_therapeutic_area_classification_oncology(self):
+        """Test oncology classification from conditions."""
+        conditions = ["breast cancer", "metastatic disease"]
+        area = classify_therapeutic_area(conditions)
+        assert area == TherapeuticArea.ONCOLOGY
+
+    def test_therapeutic_area_classification_autoimmune(self):
+        """Test autoimmune classification."""
+        conditions = ["rheumatoid arthritis", "joint inflammation"]
+        area = classify_therapeutic_area(conditions)
+        assert area == TherapeuticArea.AUTOIMMUNE
+
+    def test_therapeutic_area_classification_cns(self):
+        """Test CNS classification."""
+        conditions = ["alzheimer's disease", "cognitive decline"]
+        area = classify_therapeutic_area(conditions)
+        assert area == TherapeuticArea.CNS
+
+    def test_empty_endpoint_neutral(self):
+        """Empty endpoint should return neutral weight."""
+        weight, _, _ = compute_weighted_endpoint_score("", TherapeuticArea.ONCOLOGY)
+        assert weight == Decimal("0.50")
+
+
+# =============================================================================
+# 2. PHASE-DEPENDENT STALENESS TESTS
+# =============================================================================
+
+class TestPhaseSpecificStaleness:
+    """Tests for phase-dependent staleness thresholds."""
+
+    def test_phase3_strict_threshold(self):
+        """Phase 3 should have 6-month staleness threshold."""
+        config = get_staleness_threshold_for_phase("phase 3")
+        assert config.max_staleness_days == 180
+        assert config.severity_if_stale == "sev2"
+
+    def test_phase1_lenient_threshold(self):
+        """Phase 1 should have 2-year staleness threshold."""
+        config = get_staleness_threshold_for_phase("phase 1")
+        assert config.max_staleness_days == 730
+        assert config.severity_if_stale == "none"
+
+    def test_preclinical_very_lenient(self):
+        """Preclinical should have 3-year threshold."""
+        config = get_staleness_threshold_for_phase("preclinical")
+        assert config.max_staleness_days == 1095
+
+    def test_phase3_stale_after_6_months(self):
+        """Phase 3 trial should be stale after 6+ months."""
+        result = compute_phase_staleness(
+            "phase 3",
+            "2025-06-01",
+            "2026-01-15"
+        )
+        assert result.is_stale is True
+        assert result.staleness_penalty == Decimal("0.50")  # sev2
+
+    def test_phase1_not_stale_at_1_year(self):
+        """Phase 1 trial should not be stale at 1 year."""
+        result = compute_phase_staleness(
+            "phase 1",
+            "2025-01-15",
+            "2026-01-15"
+        )
+        assert result.is_stale is False
+
+    def test_missing_date_warning(self):
+        """Missing date should trigger warning but not stale."""
+        result = compute_phase_staleness("phase 2", None, "2026-01-15")
+        assert result.is_stale is False
+        assert result.is_warning is True
+        assert result.staleness_penalty == Decimal("0.90")
+
+
+# =============================================================================
+# 3. REGULATORY PATHWAY SCORING TESTS
+# =============================================================================
+
+class TestRegulatoryPathway:
+    """Tests for regulatory pathway scoring."""
+
+    def test_breakthrough_designation_bonus(self):
+        """Breakthrough designation should add +15 points."""
+        trial_data = {"breakthrough_designation": True}
+        result = compute_regulatory_pathway_score(trial_data)
+        assert RegulatoryDesignation.BREAKTHROUGH_THERAPY in result.designations_detected
+        assert result.total_score_modifier >= Decimal("15")
+        assert result.is_expedited is True
+
+    def test_fast_track_bonus(self):
+        """Fast track should add +8 points."""
+        trial_data = {"fast_track_designation": True}
+        result = compute_regulatory_pathway_score(trial_data)
+        assert RegulatoryDesignation.FAST_TRACK in result.designations_detected
+        assert result.total_score_modifier >= Decimal("8")
+
+    def test_orphan_designation_bonus(self):
+        """Orphan designation should add +5 points."""
+        trial_data = {"orphan_designation": True}
+        result = compute_regulatory_pathway_score(trial_data)
+        assert RegulatoryDesignation.ORPHAN_DRUG in result.designations_detected
+        assert result.total_score_modifier >= Decimal("5")
+
+    def test_rems_penalty(self):
+        """REMS requirement should subtract -5 points."""
+        trial_data = {"rems_required": True}
+        result = compute_regulatory_pathway_score(trial_data)
+        assert RegulatoryDesignation.REMS_REQUIRED in result.designations_detected
+        assert result.total_score_modifier < Decimal("0")
+        assert result.has_risk_factor is True
+
+    def test_multiple_designations_additive(self):
+        """Multiple designations should be additive."""
+        trial_data = {
+            "breakthrough_designation": True,
+            "orphan_designation": True
+        }
+        result = compute_regulatory_pathway_score(trial_data)
+        assert len(result.designations_detected) == 2
+        assert result.total_score_modifier == Decimal("20")  # 15 + 5
+
+    def test_text_based_detection(self):
+        """Should detect designations from text fields."""
+        trial_data = {"brief_title": "Fast track study of novel compound"}
+        result = compute_regulatory_pathway_score(trial_data)
+        assert RegulatoryDesignation.FAST_TRACK in result.designations_detected
+
+
+# =============================================================================
+# 4. REGIME-ADAPTIVE CATALYST DECAY TESTS
+# =============================================================================
+
+class TestRegimeAdaptiveCatalystDecay:
+    """Tests for regime-adaptive catalyst decay."""
+
+    def test_bull_market_faster_decay(self):
+        """Bull market should have 20-day half-life."""
+        result = compute_regime_adaptive_decay(
+            "2026-01-01",
+            "2026-01-15",
+            MarketRegimeType.BULL
+        )
+        assert result.decay_half_life_days == 20
+
+    def test_bear_market_slower_decay(self):
+        """Bear market should have 45-day half-life."""
+        result = compute_regime_adaptive_decay(
+            "2026-01-01",
+            "2026-01-15",
+            MarketRegimeType.BEAR
+        )
+        assert result.decay_half_life_days == 45
+
+    def test_volatility_spike_slower_decay(self):
+        """Volatility spike should have 45-day half-life."""
+        result = compute_regime_adaptive_decay(
+            "2026-01-01",
+            "2026-01-15",
+            MarketRegimeType.VOLATILITY_SPIKE
+        )
+        assert result.decay_half_life_days == 45
+
+    def test_sector_rotation_normal_decay(self):
+        """Sector rotation should have 30-day half-life."""
+        result = compute_regime_adaptive_decay(
+            "2026-01-01",
+            "2026-01-15",
+            MarketRegimeType.SECTOR_ROTATION
+        )
+        assert result.decay_half_life_days == 30
+
+    def test_bull_vs_bear_weight_difference(self):
+        """Same event should have higher weight in bear vs bull."""
+        bull_result = compute_regime_adaptive_decay(
+            "2026-01-01",
+            "2026-01-15",
+            MarketRegimeType.BULL
+        )
+        bear_result = compute_regime_adaptive_decay(
+            "2026-01-01",
+            "2026-01-15",
+            MarketRegimeType.BEAR
+        )
+        assert bear_result.decay_weight > bull_result.decay_weight
+
+    def test_same_day_full_weight(self):
+        """Same-day events should have full weight."""
+        result = compute_regime_adaptive_decay(
+            "2026-01-15",
+            "2026-01-15",
+            MarketRegimeType.BULL
+        )
+        assert result.decay_weight == Decimal("1.0")
+
+    def test_future_event_zero_weight(self):
+        """Future events should have zero weight (PIT safety)."""
+        result = compute_regime_adaptive_decay(
+            "2026-02-01",
+            "2026-01-15",
+            MarketRegimeType.BULL
+        )
+        assert result.decay_weight == Decimal("0")
+
+
+# =============================================================================
+# 5. COMPETITIVE LANDSCAPE PENALTY TESTS
+# =============================================================================
+
+class TestCompetitiveLandscape:
+    """Tests for competitive landscape penalty."""
+
+    def test_no_competitors_no_penalty(self):
+        """0-2 competitors should have no penalty."""
+        result = compute_competition_penalty(
+            "rare disease",
+            "phase 3",
+            [{"phase": "phase 3"}]  # 1 competitor
+        )
+        assert result.competition_level == "low"
+        assert result.penalty_points == Decimal("0")
+
+    def test_moderate_competition_5_points(self):
+        """3-5 competitors should have 5-point penalty."""
+        competitors = [{"phase": "phase 3"} for _ in range(4)]
+        result = compute_competition_penalty(
+            "indication",
+            "phase 3",
+            competitors
+        )
+        assert result.competition_level == "moderate"
+        assert result.penalty_points == Decimal("5")
+
+    def test_high_competition_12_points(self):
+        """6-10 competitors should have 12-point penalty."""
+        competitors = [{"phase": "phase 3"} for _ in range(8)]
+        result = compute_competition_penalty(
+            "indication",
+            "phase 3",
+            competitors
+        )
+        assert result.competition_level == "high"
+        assert result.penalty_points == Decimal("12")
+
+    def test_hyper_competitive_20_points(self):
+        """11+ competitors should have 20-point penalty."""
+        competitors = [{"phase": "phase 3"} for _ in range(15)]
+        result = compute_competition_penalty(
+            "indication",
+            "phase 3",
+            competitors
+        )
+        assert result.competition_level == "hyper_competitive"
+        assert result.penalty_points == Decimal("20")
+
+    def test_first_in_class_50_percent_reduction(self):
+        """First-in-class should reduce penalty by 50%."""
+        competitors = [{"phase": "phase 3"} for _ in range(8)]
+        result = compute_competition_penalty(
+            "indication",
+            "phase 3",
+            competitors,
+            is_first_in_class=True
+        )
+        assert result.penalty_points == Decimal("6")  # 12 * 0.5
+
+    def test_early_phase_50_percent_reduction(self):
+        """Early phase should reduce penalty by 50%."""
+        competitors = [{"phase": "phase 3"} for _ in range(8)]
+        result = compute_competition_penalty(
+            "indication",
+            "phase 1",  # Early phase
+            competitors
+        )
+        assert result.penalty_points == Decimal("6")  # 12 * 0.5
+
+
+# =============================================================================
+# 6. VIX-ADJUSTED DILUTION TESTS
+# =============================================================================
+
+class TestVixAdjustedDilution:
+    """Tests for VIX-adjusted dilution risk."""
+
+    def test_low_vix_favorable(self):
+        """Low VIX (< 15) should reduce dilution risk."""
+        result = compute_vix_dilution_adjustment(Decimal("12"), Decimal("50"))
+        assert result.vix_bucket == "low"
+        assert result.adjustment_factor == Decimal("0.85")
+        assert result.market_receptiveness == "favorable"
+
+    def test_normal_vix_neutral(self):
+        """Normal VIX (15-20) should be neutral."""
+        result = compute_vix_dilution_adjustment(Decimal("18"), Decimal("50"))
+        assert result.vix_bucket == "normal"
+        assert result.adjustment_factor == Decimal("1.00")
+
+    def test_elevated_vix_challenging(self):
+        """Elevated VIX (20-25) should increase risk."""
+        result = compute_vix_dilution_adjustment(Decimal("23"), Decimal("50"))
+        assert result.vix_bucket == "elevated"
+        assert result.adjustment_factor == Decimal("1.15")
+        assert result.market_receptiveness == "challenging"
+
+    def test_high_vix_difficult(self):
+        """High VIX (25-35) should significantly increase risk."""
+        result = compute_vix_dilution_adjustment(Decimal("30"), Decimal("50"))
+        assert result.vix_bucket == "high"
+        assert result.adjustment_factor == Decimal("1.35")
+        assert result.market_receptiveness == "difficult"
+
+    def test_extreme_vix(self):
+        """Extreme VIX (35+) should have maximum penalty."""
+        result = compute_vix_dilution_adjustment(Decimal("45"), Decimal("50"))
+        assert result.vix_bucket == "extreme"
+        assert result.adjustment_factor == Decimal("1.60")
+
+
+# =============================================================================
+# 7. BURN SEASONALITY TESTS
+# =============================================================================
+
+class TestBurnSeasonalityAdjustment:
+    """Tests for burn rate seasonality adjustment."""
+
+    def test_q1_lower_burn_adjustment(self):
+        """Q1 should have 15% lower burn (0.85 factor)."""
+        result = compute_burn_seasonality_adjustment(
+            Decimal("10000000"),
+            Decimal("100000000"),
+            "2026-01-15"  # Q1
+        )
+        assert result.fiscal_quarter == 1
+        assert result.adjustment_factor == Decimal("0.85")
+        assert result.adjusted_monthly_burn == Decimal("8500000.00")
+
+    def test_q2_higher_burn(self):
+        """Q2 should have 5% higher burn (1.05 factor)."""
+        result = compute_burn_seasonality_adjustment(
+            Decimal("10000000"),
+            Decimal("100000000"),
+            "2026-04-15"  # Q2
+        )
+        assert result.fiscal_quarter == 2
+        assert result.adjustment_factor == Decimal("1.05")
+
+    def test_q3_highest_burn(self):
+        """Q3 should have 10% higher burn (1.10 factor)."""
+        result = compute_burn_seasonality_adjustment(
+            Decimal("10000000"),
+            Decimal("100000000"),
+            "2026-07-15"  # Q3
+        )
+        assert result.fiscal_quarter == 3
+        assert result.adjustment_factor == Decimal("1.10")
+
+    def test_q4_normalized(self):
+        """Q4 should be normalized (1.00 factor)."""
+        result = compute_burn_seasonality_adjustment(
+            Decimal("10000000"),
+            Decimal("100000000"),
+            "2026-10-15"  # Q4
+        )
+        assert result.fiscal_quarter == 4
+        assert result.adjustment_factor == Decimal("1.00")
+        assert result.is_q4_submission_window is True
+
+
+# =============================================================================
+# 8. BINARY EVENT PROXIMITY BOOST TESTS
+# =============================================================================
+
+class TestBinaryEventProximity:
+    """Tests for binary event proximity boost."""
+
+    def test_imminent_20_percent_boost(self):
+        """Events within 30 days should get 20% boost."""
+        result = compute_binary_event_proximity_boost(
+            "2026-02-01",  # 17 days from 2026-01-15
+            "2026-01-15",
+            confidence="high"
+        )
+        assert result.proximity_bucket == "imminent"
+        assert result.boost_percentage == Decimal("0.200")
+
+    def test_near_term_10_percent_boost(self):
+        """Events 31-60 days out should get 10% boost."""
+        result = compute_binary_event_proximity_boost(
+            "2026-02-28",  # ~44 days
+            "2026-01-15",
+            confidence="high"
+        )
+        assert result.proximity_bucket == "near_term"
+        assert result.boost_percentage == Decimal("0.100")
+
+    def test_medium_term_5_percent_boost(self):
+        """Events 61-90 days out should get 5% boost."""
+        result = compute_binary_event_proximity_boost(
+            "2026-03-25",  # ~69 days
+            "2026-01-15",
+            confidence="high"
+        )
+        assert result.proximity_bucket == "medium_term"
+        assert result.boost_percentage == Decimal("0.050")
+
+    def test_far_no_boost(self):
+        """Events beyond 90 days should get no boost."""
+        result = compute_binary_event_proximity_boost(
+            "2026-06-01",
+            "2026-01-15"
+        )
+        assert result.proximity_bucket == "far"
+        assert result.boost_percentage == Decimal("0.000")
+
+    def test_low_confidence_reduces_boost(self):
+        """Low confidence should reduce boost by 50%."""
+        result_low = compute_binary_event_proximity_boost(
+            "2026-02-01",
+            "2026-01-15",
+            confidence="low"
+        )
+        assert result_low.boost_percentage == Decimal("0.100")  # 20% * 0.5
+
+    def test_no_catalyst_no_boost(self):
+        """No catalyst date should return no boost."""
+        result = compute_binary_event_proximity_boost(None, "2026-01-15")
+        assert result.proximity_bucket == "none"
+        assert result.boost_percentage == Decimal("0")
+
+
+# =============================================================================
+# INTEGRATION TEST FOR ALL IMPROVEMENTS
+# =============================================================================
+
+class TestAllImprovementsIntegration:
+    """Integration tests for all accuracy improvements."""
+
+    def test_apply_all_improvements_returns_all_sections(self):
+        """Applying all improvements should return all expected sections."""
+        trial_data = {
+            "phase": "phase 3",
+            "conditions": ["breast cancer"],
+            "primary_endpoint": "Overall Survival",
+            "last_update_posted": "2025-12-01",
+            "breakthrough_designation": True,
+            "next_catalyst_date": "2026-02-01",
+            "catalyst_confidence": "high",
+        }
+        financial_data = {
+            "dilution_score": Decimal("60"),
+            "monthly_burn": Decimal("15000000"),
+            "liquid_assets": Decimal("200000000"),
+        }
+        market_data = {}
+
+        result = apply_all_accuracy_improvements(
+            ticker="ACME",
+            trial_data=trial_data,
+            financial_data=financial_data,
+            market_data=market_data,
+            as_of_date="2026-01-15",
+            vix_current=Decimal("22"),
+            market_regime=MarketRegimeType.BULL,
+            competitor_programs=[{"phase": "phase 3"} for _ in range(5)],
+        )
+
+        # All sections should be present
+        assert "endpoint_analysis" in result
+        assert "staleness_analysis" in result
+        assert "regulatory_analysis" in result
+        assert "decay_analysis" in result
+        assert "competition_analysis" in result
+        assert "vix_adjustment" in result
+        assert "seasonality_analysis" in result
+        assert "proximity_analysis" in result
+
+    def test_improvements_are_deterministic(self):
+        """All improvements should be deterministic."""
+        trial_data = {
+            "phase": "phase 3",
+            "conditions": ["nsclc"],
+            "primary_endpoint": "PFS",
+        }
+        financial_data = {"dilution_score": 50}
+
+        results = []
+        for _ in range(3):
+            result = apply_all_accuracy_improvements(
+                ticker="TEST",
+                trial_data=trial_data,
+                financial_data=financial_data,
+                market_data={},
+                as_of_date="2026-01-15",
+            )
+            results.append(str(result))
+
+        # All results should be identical
+        assert len(set(results)) == 1
