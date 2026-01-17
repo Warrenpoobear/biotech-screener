@@ -168,20 +168,22 @@ class TestModule5Composite:
     
     def test_composite_ranking(self, sample_inputs):
         u, f, c, cl = sample_inputs
-        result = compute_module_5_composite(u, f, c, cl, "2024-01-01")
-        
+        # validate_inputs=False for minimal test fixtures
+        result = compute_module_5_composite(u, f, c, cl, "2024-01-01", validate_inputs=False)
+
         assert len(result["ranked_securities"]) == 2
-        
+
         # A should rank higher (better scores across the board)
         ranked = result["ranked_securities"]
         assert ranked[0]["ticker"] == "A"
         assert ranked[0]["composite_rank"] == 1
         assert ranked[1]["ticker"] == "B"
         assert ranked[1]["composite_rank"] == 2
-    
+
     def test_cohort_normalization(self, sample_inputs):
         u, f, c, cl = sample_inputs
-        result = compute_module_5_composite(u, f, c, cl, "2024-01-01")
+        # validate_inputs=False for minimal test fixtures
+        result = compute_module_5_composite(u, f, c, cl, "2024-01-01", validate_inputs=False)
         
         # Check normalized scores exist
         for sec in result["ranked_securities"]:

@@ -170,8 +170,10 @@ class TestErrorHandlingModule5:
         catalyst = {"scores": []}
         clinical = {"scores": []}
 
+        # validate_inputs=False for minimal test fixtures
         result = compute_module_5_composite(
-            universe, financial, catalyst, clinical, "2024-01-01"
+            universe, financial, catalyst, clinical, "2024-01-01",
+            validate_inputs=False
         )
 
         assert result["ranked_securities"] == []
@@ -184,8 +186,10 @@ class TestErrorHandlingModule5:
         catalyst = {"scores": []}   # No catalyst data
         clinical = {"scores": []}   # No clinical data
 
+        # validate_inputs=False for minimal test fixtures
         result = compute_module_5_composite(
-            universe, financial, catalyst, clinical, "2024-01-01"
+            universe, financial, catalyst, clinical, "2024-01-01",
+            validate_inputs=False
         )
 
         # Should still rank with available data (with uncertainty penalty)
@@ -208,8 +212,10 @@ class TestErrorHandlingModule5:
             ]
         }
 
+        # validate_inputs=False for minimal test fixtures
         result = compute_module_5_composite(
-            universe, financial, catalyst, clinical, "2024-01-01"
+            universe, financial, catalyst, clinical, "2024-01-01",
+            validate_inputs=False
         )
 
         # Both should be ranked but with penalties for missing data
@@ -305,8 +311,10 @@ class TestEdgeCases:
             }]
         }
 
+        # validate_inputs=False for minimal test fixtures
         result = compute_module_5_composite(
-            universe, financial, catalyst, clinical, "2024-01-01"
+            universe, financial, catalyst, clinical, "2024-01-01",
+            validate_inputs=False
         )
 
         # Should maintain precision (at least 2 decimal places)
@@ -353,11 +361,14 @@ class TestDeterminism:
             {"ticker": "M", "clinical_score": "50", "lead_phase": "phase 2", "severity": "none", "flags": []},
         ]}
 
+        # validate_inputs=False for minimal test fixtures
         result1 = compute_module_5_composite(
-            universe, financial, catalyst, clinical, "2024-01-01"
+            universe, financial, catalyst, clinical, "2024-01-01",
+            validate_inputs=False
         )
         result2 = compute_module_5_composite(
-            universe, financial, catalyst, clinical, "2024-01-01"
+            universe, financial, catalyst, clinical, "2024-01-01",
+            validate_inputs=False
         )
 
         # Ordering should be identical (all tied scores, sorted by ticker)
