@@ -27,7 +27,6 @@ Version: 1.0.0
 """
 from __future__ import annotations
 
-import math
 from dataclasses import dataclass, field
 from datetime import date, timedelta
 from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
@@ -56,14 +55,23 @@ MOMENTUM_LOOKBACK_DAYS = 60
 MOMENTUM_OPTIMAL_ALPHA_BPS = 1000  # 10% alpha = 70 score
 
 # Catalyst decay parameters
+# Uses exponential decay with asymmetric shape:
+# - Slow rise as event approaches (from 90+ days out)
+# - Peak at ~30 days before event
+# - Fast decay after event (information gets priced quickly)
 CATALYST_OPTIMAL_WINDOW_DAYS = 30
 CATALYST_DECAY_RATES = {
-    "PDUFA": Decimal("0.05"),
+    "PDUFA": Decimal("0.05"),       # Slowest decay - high anticipation events
     "DATA_READOUT": Decimal("0.08"),
     "PHASE_COMPLETION": Decimal("0.10"),
     "ENROLLMENT_COMPLETE": Decimal("0.07"),
     "DEFAULT": Decimal("0.07"),
 }
+# Post-event decay multiplier: tau_effective = tau * POST_EVENT_DECAY_MULT
+# Higher = faster decay after event (information priced quickly in biotech)
+CATALYST_POST_EVENT_DECAY_MULT = Decimal("2.0")
+# Decay precision: 0.0001 matches WEIGHT_PRECISION to avoid tie artifacts
+CATALYST_DECAY_PRECISION = Decimal("0.0001")
 
 # Shrinkage normalization parameters
 SHRINKAGE_MIN_COHORT = Decimal("5")
@@ -586,52 +594,86 @@ def compute_catalyst_decay(
     Research shows IC peaks ~30 days before catalyst event, then decays
     both before (too early) and after (already priced in).
 
-    Uses exponential decay model with event-specific decay rates.
+    Uses ASYMMETRIC exponential decay:
+    - Before event: slow rise as event approaches (standard tau)
+    - After event: fast decay (tau * POST_EVENT_DECAY_MULT)
+
+    This models the biotech reality that post-event information gets
+    priced quickly while pre-event anticipation builds slowly.
+
+    DETERMINISM: Uses Decimal.exp() exclusively - no floats.
 
     Args:
         days_to_catalyst: Days until catalyst event (negative = past)
         event_type: Type of catalyst (PDUFA, DATA_READOUT, etc.)
-        optimal_window: Days before event for peak signal
+            Will be normalized to uppercase for matching.
+        optimal_window: Days before event for peak signal (default 30)
 
     Returns:
         CatalystDecayResult with decay factor and metadata
     """
+    # Normalize event_type for robust matching
+    event_type_normalized = event_type.strip().upper() if event_type else "DEFAULT"
+
     if days_to_catalyst is None:
         return CatalystDecayResult(
             decay_factor=Decimal("0.5"),  # Neutral
             days_to_catalyst=None,
-            event_type=event_type,
+            event_type=event_type_normalized,
             in_optimal_window=False,
         )
 
-    # Get decay rate for event type
-    tau = CATALYST_DECAY_RATES.get(event_type, CATALYST_DECAY_RATES["DEFAULT"])
+    # Get decay rate for event type (normalized lookup)
+    tau = CATALYST_DECAY_RATES.get(event_type_normalized, CATALYST_DECAY_RATES["DEFAULT"])
 
-    # Compute distance from optimal window
-    distance = abs(days_to_catalyst - optimal_window)
+    # Convert to Decimal for all arithmetic
+    days = Decimal(days_to_catalyst)
+    optimal = Decimal(optimal_window)
+
+    # Distance from optimal window (signed: negative = past optimal)
+    # days_to_catalyst=30 at optimal_window=30 -> d=0 (peak)
+    # days_to_catalyst=60 at optimal_window=30 -> d=30 (30 days before optimal)
+    # days_to_catalyst=0 at optimal_window=30 -> d=-30 (at event, past optimal)
+    # days_to_catalyst=-10 at optimal_window=30 -> d=-40 (event 10 days ago)
+    d = days - optimal
 
     # Check if in optimal window (within 15 days of peak)
-    in_optimal_window = distance <= 15
+    in_optimal_window = abs(d) <= Decimal("15")
 
-    # Exponential decay
-    # decay_factor = exp(-tau * distance)
-    try:
-        decay_float = math.exp(-float(tau) * distance)
-        decay_factor = Decimal(str(decay_float))
-    except (OverflowError, ValueError):
-        decay_factor = Decimal("0.01")
+    # ASYMMETRIC DECAY:
+    # - d > 0: event is far out, signal building (use standard tau)
+    # - d < 0: past optimal peak, signal decaying (use tau * POST_EVENT_DECAY_MULT)
+    #
+    # Note: d < 0 includes both "approaching event" (days_to_catalyst < optimal)
+    # and "event already happened" (days_to_catalyst < 0). Both should decay
+    # faster because uncertainty is resolving.
+    if d < Decimal("0"):
+        tau_effective = tau * CATALYST_POST_EVENT_DECAY_MULT
+    else:
+        tau_effective = tau
 
-    # Apply asymmetric adjustment: past events decay faster
-    if days_to_catalyst < 0:
-        # Event already happened - faster decay
-        decay_factor = decay_factor * Decimal("0.7")
+    # Compute decay using Decimal.exp() for determinism
+    # decay = exp(-tau_effective * |distance|)
+    distance = abs(d)
+    exponent = -(tau_effective * distance)
 
+    # Decimal.exp() is deterministic across platforms
+    # Clamp exponent to avoid underflow (exp(-50) ≈ 2e-22, effectively 0)
+    if exponent < Decimal("-50"):
+        decay_factor = Decimal("0")
+    else:
+        decay_factor = exponent.exp()
+
+    # Clamp to valid range
     decay_factor = _clamp(decay_factor, Decimal("0.05"), Decimal("1.0"))
 
+    # Quantize with fine precision to avoid tie artifacts
+    decay_factor = decay_factor.quantize(CATALYST_DECAY_PRECISION, rounding=ROUND_HALF_UP)
+
     return CatalystDecayResult(
-        decay_factor=_quantize_weight(decay_factor),
+        decay_factor=decay_factor,
         days_to_catalyst=days_to_catalyst,
-        event_type=event_type,
+        event_type=event_type_normalized,
         in_optimal_window=in_optimal_window,
     )
 
