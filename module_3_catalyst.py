@@ -20,11 +20,15 @@ Version: See SCHEMA_VERSION and SCORE_VERSION in module_3_schema.py
 
 from pathlib import Path
 from datetime import date
-from typing import Optional, Dict, List, Set, Tuple, Any
+from typing import Optional, Dict, List, Set, Tuple, Any, Union
 import json
 import hashlib
 import time
 import logging
+import warnings
+
+# Type alias for flexible date input
+DateLike = Union[str, date]
 
 from ctgov_adapter import process_trial_records_batch, AdapterConfig, CanonicalTrialRecord
 from state_management import StateStore, StateSnapshot
@@ -227,7 +231,7 @@ def compute_module_3_catalyst(
     trial_records_path: Path,
     state_dir: Path,
     active_tickers: Set[str],
-    as_of_date: date,
+    as_of_date: DateLike,
     market_calendar: Optional[MarketCalendar] = None,
     config: Optional[Module3Config] = None,
     output_dir: Optional[Path] = None,
@@ -241,7 +245,7 @@ def compute_module_3_catalyst(
         trial_records_path: Path to trial_records.json
         state_dir: Path to ctgov_state directory
         active_tickers: Set of tickers from Module 1
-        as_of_date: Point-in-time date for analysis (REQUIRED, no default)
+        as_of_date: Point-in-time date for analysis (REQUIRED, accepts date or ISO string)
         market_calendar: Optional market calendar (uses simple if not provided)
         config: Optional configuration
         output_dir: Optional output directory (defaults to state_dir parent)
@@ -249,7 +253,7 @@ def compute_module_3_catalyst(
     Returns:
         {
             "summaries": {ticker: TickerCatalystSummaryV2},
-            "summaries_legacy": {ticker: TickerCatalystSummary},  # For backwards compat
+            "summaries_legacy": {ticker: TickerCatalystSummary},  # DEPRECATED
             "diagnostic_counts": DiagnosticCounts,
             "as_of_date": "2024-01-15",
             "schema_version": "m3catalyst_vnext_YYYYMMDD",
@@ -261,6 +265,12 @@ def compute_module_3_catalyst(
     # Validate as_of_date is provided (PIT safety)
     if as_of_date is None:
         raise ValueError("as_of_date is REQUIRED for PIT safety. Do not use defaults.")
+
+    # Normalize date input - accept both date object and ISO string
+    if isinstance(as_of_date, str):
+        as_of_date = date.fromisoformat(as_of_date)
+    elif not isinstance(as_of_date, date):
+        raise ValueError(f"as_of_date must be date or ISO string, got {type(as_of_date)}")
 
     # Initialize
     if config is None:
@@ -465,11 +475,19 @@ def compute_module_3_catalyst(
     execution_time = time.time() - start_time
     logger.info(f"Module 3 completed in {execution_time:.2f} seconds")
 
+    # Emit deprecation warning for legacy format
+    warnings.warn(
+        "Module 3: 'summaries_legacy' and 'diagnostic_counts_legacy' are deprecated "
+        "and will be removed in v2.0. Use 'summaries' with TickerCatalystSummaryV2 objects instead.",
+        DeprecationWarning,
+        stacklevel=2
+    )
+
     return {
         "summaries": summaries_v2,
-        "summaries_legacy": summaries_legacy,
+        "summaries_legacy": summaries_legacy,  # DEPRECATED - use summaries instead
         "diagnostic_counts": diagnostics.to_dict(),
-        "diagnostic_counts_legacy": diagnostic_counts_legacy,
+        "diagnostic_counts_legacy": diagnostic_counts_legacy,  # DEPRECATED
         "as_of_date": as_of_date.isoformat(),
         "schema_version": config.schema_version,
         "score_version": config.score_version,

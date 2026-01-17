@@ -105,8 +105,14 @@ GOLDEN_EVENT_2 = CatalystEventV2(
 # TEST CLASS
 # =============================================================================
 
-class TestCatalystV2Golden:
-    """Golden fixture tests for Catalyst Module v2."""
+class CatalystV2GoldenTestRunner:
+    """
+    Golden fixture test runner for Catalyst Module v2.
+
+    Note: Renamed from TestCatalystV2Golden to avoid pytest collection
+    (pytest expects test classes to not have __init__ constructors).
+    Use pytest-compatible test functions below for automated testing.
+    """
 
     def __init__(self):
         self.as_of_date = date(2026, 1, 11)
@@ -673,6 +679,6 @@ class TestCatalystV2Golden:
 
 
 if __name__ == "__main__":
-    tester = TestCatalystV2Golden()
+    tester = CatalystV2GoldenTestRunner()
     success = tester.run_all()
     sys.exit(0 if success else 1)

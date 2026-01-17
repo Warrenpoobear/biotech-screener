@@ -30,9 +30,12 @@ import json
 import logging
 import math
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Any
+from typing import Dict, List, Optional, Set, Tuple, Any, Union
 
 logger = logging.getLogger(__name__)
+
+# Type alias for flexible ticker input
+TickerCollection = Union[Set[str], List[str]]
 
 # =============================================================================
 # CONSTANTS
@@ -574,16 +577,22 @@ def score_financial_health(ticker: str, financial_data: Dict, market_data: Dict)
     if runway_result['burn_confidence'] == BURN_CONFIDENCE_LOW:
         flags.append("burn_estimated")
 
+    # Extract market_cap for downstream modules
+    market_cap = market_data.get('market_cap', 0) or 0
+    market_cap_mm = market_cap / 1e6 if market_cap > 0 else None
+
     return {
         # Core fields (API preserved)
         "ticker": ticker,
-        "financial_normalized": float(composite),
+        "financial_score": float(composite),  # Standardized field name
+        "financial_normalized": float(composite),  # Legacy alias (same value)
         "runway_months": float(runway_months) if runway_months is not None else None,
         "runway_score": float(runway_score) if runway_score is not None else None,
         "dilution_score": float(dilution_score) if dilution_score is not None else None,
         "liquidity_score": float(liquidity_score) if liquidity_score is not None else None,
         "cash_to_mcap": float(cash_to_mcap) if cash_to_mcap is not None else None,
         "monthly_burn": float(burn_rate) if burn_rate is not None else None,
+        "market_cap_mm": market_cap_mm,  # Added for Module 5 integration
         "has_financial_data": has_data,
         "severity": severity,
         "flags": flags,
@@ -608,18 +617,22 @@ def score_financial_health(ticker: str, financial_data: Dict, market_data: Dict)
     }
 
 
-def run_module_2(universe: List[str], financial_data: List[Dict], market_data: List[Dict]) -> List[Dict]:
+def run_module_2(universe: TickerCollection, financial_data: List[Dict], market_data: List[Dict]) -> List[Dict]:
     """
     Main entry point for Module 2 financial health scoring.
 
     Args:
-        universe: List of tickers to score
+        universe: Set or List of tickers to score (both accepted for flexibility)
         financial_data: List of dicts from financial_data.json
         market_data: List of dicts from market_data.json
 
     Returns:
         List of dicts with financial health scores
     """
+    # Normalize to list for iteration while preserving order
+    if isinstance(universe, set):
+        universe = sorted(universe)  # Deterministic ordering for sets
+
     logger.info(f"Module 2: Scoring {len(universe)} tickers")
     logger.debug(f"Financial records: {len(financial_data)}, Market records: {len(market_data)}")
 
