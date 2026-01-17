@@ -1036,7 +1036,8 @@ def score_financial_health_v2(
     return {
         # Core fields (API preserved - floats for back-compat)
         "ticker": ticker,
-        "financial_normalized": _to_float(composite),
+        "financial_score": _to_float(composite),  # Primary field name
+        "financial_normalized": _to_float(composite),  # DEPRECATED: use financial_score
         "runway_months": _to_float(runway.runway_months),
         "runway_score": _to_float(runway.runway_score),
         "dilution_score": _to_float(dilution.dilution_score),

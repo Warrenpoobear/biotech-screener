@@ -8,9 +8,21 @@ Provides:
 - provenance: Provenance tracking
 - types: Common type definitions
 - integration_contracts: Module boundary types and schema validation
+- hash_utils: Deterministic hashing utilities
+- input_validation: Pipeline input validation
+- score_utils: Score clamping and normalization
+- null_safety: Defensive null handling
 """
 
 from common.date_utils import normalize_date, to_date_string, to_date_object, validate_as_of_date
+
+# Hash utilities
+from common.hash_utils import (
+    compute_hash,
+    compute_snapshot_id,
+    compute_trial_facts_hash,
+    stable_json_dumps,
+)
 from common.data_quality import (
     DataQualityGates,
     DataQualityConfig,
@@ -73,6 +85,11 @@ __all__ = [
     "to_date_string",
     "to_date_object",
     "validate_as_of_date",
+    # Hash utilities
+    "compute_hash",
+    "compute_snapshot_id",
+    "compute_trial_facts_hash",
+    "stable_json_dumps",
     # Data quality
     "DataQualityGates",
     "DataQualityConfig",
