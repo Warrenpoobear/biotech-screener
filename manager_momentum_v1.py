@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Manager Momentum Engine (v1)
+Manager Momentum Engine (v1) - VALIDATION ONLY
 
 Tracks Q/Q position changes for elite biotech managers to detect:
 - Fresh convictions (NEW positions)
@@ -8,6 +8,13 @@ Tracks Q/Q position changes for elite biotech managers to detect:
 - Conviction decreases (TRIM)
 - Position exits (EXIT)
 - Coordinated activity (multiple managers acting in same direction)
+
+USAGE MODE: VALIDATION ONLY
+---------------------------
+This module is used for validation and monitoring purposes only.
+Momentum signals are NOT used for scoring adjustments in the pipeline.
+The momentum_score and related metrics are for analyst review and
+audit trails, not for automated score modifications.
 
 Design Philosophy (Governed Over Smart):
 - DETERMINISTIC: No datetime.now(), no randomness
@@ -29,9 +36,9 @@ Data Sources:
 - manager_registry.json: Elite manager definitions
 
 Output Integration:
-- Feeds into Module 5 v2 composite scoring
-- Provides momentum_score for each ticker
-- Flags coordinated activity
+- Validation layer for analyst review
+- Provides momentum_score for monitoring (not scoring)
+- Flags coordinated activity for alerts
 
 Author: Wake Robin Capital Management
 Version: 1.0.0
@@ -554,21 +561,24 @@ def compute_manager_momentum(
 
 
 # ============================================================================
-# MODULE 5 INTEGRATION
+# VALIDATION HELPERS (NOT USED FOR SCORING)
 # ============================================================================
 
-def get_momentum_adjustment(
+def get_momentum_validation(
     ticker: str,
     momentum_result: Dict[str, Any],
 ) -> Dict[str, Any]:
     """
-    Get momentum-based adjustment for Module 5 v2 composite scoring.
+    Get momentum validation data for analyst review.
+
+    NOTE: This is for VALIDATION ONLY - not used for scoring adjustments.
+    Momentum signals are monitored but do not modify composite scores.
 
     Returns dict with:
-        - momentum_score: Raw momentum score
+        - momentum_score: Raw momentum score (for monitoring)
         - momentum_confidence: Confidence in signal (based on manager coverage)
-        - momentum_flags: List of signal flags
-        - momentum_adjustment: Suggested score adjustment (+/- points)
+        - momentum_flags: List of signal flags for alerts
+        - momentum_adjustment: Suggested adjustment (FOR REFERENCE ONLY, not applied)
     """
     signals = momentum_result.get("signals", {})
     if ticker not in signals:
