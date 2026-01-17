@@ -25,6 +25,7 @@ dependencies = []
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
 ]
 data = [
     "pandas>=2.0.0",
@@ -36,6 +37,23 @@ testpaths = ["tests"]
 python_files = "test_*.py"
 python_functions = "test_*"
 addopts = "-v"
+
+[tool.coverage.run]
+source = ["."]
+omit = [
+    "tests/*",
+    "*_test.py",
+    "test_*.py",
+    "setup.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+]
+show_missing = true
 
 [tool.setuptools.packages.find]
 where = ["."]
