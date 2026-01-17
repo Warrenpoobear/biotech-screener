@@ -1,0 +1,32 @@
+{
+  "timestamp": "2026-01-16T16:26:26.476953",
+  "test_results": {
+    "volatility_annualization": "PASS",
+    "math_properties": "PASS",
+    "look_ahead_bias": "PENDING",
+    "regime_detection": "PENDING",
+    "quartile_spread": "PENDING",
+    "information_coefficient": "PENDING",
+    "signal_persistence": "PENDING"
+  },
+  "expected_metrics": {
+    "bull_quartile_spread": 0.876,
+    "information_coefficient": 0.713,
+    "min_sharpe": 0.5
+  },
+  "regime_config": {
+    "bull_market": {
+      "xbi_spy_outperformance_threshold": 0.05,
+      "breadth_threshold": 0.4,
+      "momentum_weight": 0.25
+    },
+    "bear_market": {
+      "xbi_spy_underperformance_threshold": -0.05,
+      "breadth_threshold": 0.4,
+      "momentum_weight": 0.05
+    },
+    "neutral": {
+      "momentum_weight": 0.15
+    }
+  }
+}

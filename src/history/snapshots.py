@@ -14,7 +14,67 @@ import json
 import re
 from datetime import date, timedelta
 from pathlib import Path
-from typing import Dict, Any, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, TypedDict, Union
+
+
+# TypedDicts for 13F holdings snapshot structures
+class SchemaInfo(TypedDict, total=False):
+    """Schema metadata section."""
+    version: str
+    quarter_end: str
+
+
+class HoldingsData(TypedDict, total=False):
+    """Holdings data for a ticker."""
+    current: Dict[str, Any]
+    history: List[Dict[str, Any]]
+
+
+class TickerHoldingsInfo(TypedDict, total=False):
+    """Per-ticker holdings information."""
+    holdings: HoldingsData
+
+
+class StatsInfo(TypedDict, total=False):
+    """Snapshot statistics."""
+    tickers_count: int
+    managers_count: int
+
+
+class HoldingsSnapshot(TypedDict, total=False):
+    """13F holdings snapshot structure."""
+    _schema: SchemaInfo
+    tickers: Dict[str, TickerHoldingsInfo]
+    managers: Dict[str, Any]
+    stats: StatsInfo
+
+
+class QuarterInfo(TypedDict):
+    """Quarter entry in manifest."""
+    quarter_end: str
+    filename: str
+    sha256: str
+
+
+class ManifestParams(TypedDict, total=False):
+    """Parameters section of manifest."""
+    universe: str
+    quarters_back: int
+
+
+class InputHashes(TypedDict, total=False):
+    """Input hashes section of manifest."""
+    universe: str
+    filings: str
+
+
+class HoldingsManifest(TypedDict, total=False):
+    """13F manifest structure."""
+    _schema: SchemaInfo
+    run_id: str
+    params: ManifestParams
+    quarters: List[QuarterInfo]
+    input_hashes: InputHashes
 
 # Schema versions
 SNAPSHOT_SCHEMA_VERSION = "13f_holdings_snapshot_v1"
@@ -190,7 +250,7 @@ def list_quarters(out_dir: Union[str, Path]) -> List[date]:
 def load_snapshot(
     quarter_end: Union[date, str],
     out_dir: Union[str, Path],
-) -> Dict[str, Any]:
+) -> HoldingsSnapshot:
     """
     Load a quarter snapshot from disk.
 
@@ -226,7 +286,7 @@ def load_snapshot(
     return snapshot
 
 
-def load_manifest(out_dir: Union[str, Path]) -> Dict[str, Any]:
+def load_manifest(out_dir: Union[str, Path]) -> HoldingsManifest:
     """
     Load the manifest file from holdings history directory.
 
@@ -258,7 +318,7 @@ def load_manifest(out_dir: Union[str, Path]) -> Dict[str, Any]:
 # SCHEMA VALIDATION
 # =============================================================================
 
-def validate_snapshot_schema(snapshot: Dict[str, Any]) -> Tuple[bool, List[str]]:
+def validate_snapshot_schema(snapshot: HoldingsSnapshot) -> Tuple[bool, List[str]]:
     """
     Validate a snapshot against the expected schema.
 
@@ -316,7 +376,7 @@ def validate_snapshot_schema(snapshot: Dict[str, Any]) -> Tuple[bool, List[str]]
     return len(errors) == 0, errors
 
 
-def validate_manifest_schema(manifest: Dict[str, Any]) -> Tuple[bool, List[str]]:
+def validate_manifest_schema(manifest: HoldingsManifest) -> Tuple[bool, List[str]]:
     """
     Validate a manifest against the expected schema.
 
@@ -365,7 +425,7 @@ def validate_manifest_schema(manifest: Dict[str, Any]) -> Tuple[bool, List[str]]
 # =============================================================================
 
 def write_snapshot(
-    snapshot: Dict[str, Any],
+    snapshot: HoldingsSnapshot,
     quarter_end: Union[date, str],
     out_dir: Union[str, Path],
 ) -> Tuple[Path, str]:
@@ -409,7 +469,7 @@ def write_snapshot(
 
 
 def write_manifest(
-    manifest: Dict[str, Any],
+    manifest: HoldingsManifest,
     out_dir: Union[str, Path],
 ) -> Tuple[Path, str]:
     """

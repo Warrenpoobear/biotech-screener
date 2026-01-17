@@ -1,0 +1,9 @@
+{
+  "timestamp": "2026-01-16T20:39:04.688091Z",
+  "source_file": "production_data/universe_backup_2026-01-07.json",
+  "removed_count": 2,
+  "removed_tickers": {
+    "IXCH6": "Futures contract ticker 'IXCH6'",
+    "RTYH6": "Futures contract ticker 'RTYH6'"
+  }
+}

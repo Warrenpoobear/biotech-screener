@@ -26,7 +26,7 @@ class StubClinicalTrialsProvider:
         - Fallback when AACT data unavailable
     """
     
-    def __init__(self):
+    def __init__(self) -> None:
         pass
     
     @property

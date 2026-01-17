@@ -60,5 +60,6 @@ output/
 *.pem
 *.key
 
-# Generated dossiers
-dossiers/
+# Generated validation data (use export_price_data.py to regenerate)
+data/universe_prices.csv
+data/indices_prices.csv

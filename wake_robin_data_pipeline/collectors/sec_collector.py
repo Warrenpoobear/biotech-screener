@@ -354,15 +354,15 @@ def collect_batch(tickers: list[str], delay_seconds: float = 1.0) -> dict:
     """Collect SEC data for multiple tickers with rate limiting."""
     results = {}
     total = len(tickers)
-
+    
     print(f"\n📄 Collecting SEC EDGAR data for {total} tickers...")
-
+    
     for i, ticker in enumerate(tickers, 1):
         print(f"[{i}/{total}] Fetching {ticker}...", end=" ")
-
+        
         data = collect_sec_data(ticker)
         results[ticker] = data
-
+        
         if data.get('success'):
             fin = data['financials']
             coverage = data['coverage']['pct_complete']
@@ -371,191 +371,14 @@ def collect_batch(tickers: list[str], delay_seconds: float = 1.0) -> dict:
             print(f"✓ Cash: {cash_str}, Coverage: {coverage:.0f}%{cached}")
         else:
             print(f"✗ {data.get('error', 'Unknown error')}")
-
+        
         # Rate limiting
         if i < total and not data.get('from_cache'):
             time.sleep(delay_seconds)
-
+    
     successful = sum(1 for d in results.values() if d.get('success'))
     print(f"\n✓ Successfully collected data for {successful}/{total} tickers")
-
-    return results
-
-
-def extract_metric_history(facts_data: dict, metric_name: str, unit: str = 'USD') -> list:
-    """
-    Extract ALL historical values for a GAAP metric from SEC company facts.
-
-    Returns list of dicts: [{'date': 'YYYY-MM-DD', 'value': float, 'form': '10-K/10-Q'}, ...]
-    """
-    try:
-        us_gaap = facts_data.get('facts', {}).get('us-gaap', {})
-        if metric_name not in us_gaap:
-            return []
-
-        metric_data = us_gaap[metric_name]
-        units_data = metric_data.get('units', {})
-
-        if unit in units_data:
-            values = units_data[unit]
-        elif 'USD' in units_data:
-            values = units_data['USD']
-        else:
-            if units_data:
-                values = list(units_data.values())[0]
-            else:
-                return []
-
-        # Extract all values with dates
-        history = []
-        seen_dates = set()
-        for v in values:
-            end_date = v.get('end')
-            if end_date and end_date not in seen_dates:
-                seen_dates.add(end_date)
-                history.append({
-                    'date': end_date,
-                    'value': float(v.get('val', 0)),
-                    'form': v.get('form', ''),
-                    'filed': v.get('filed', '')
-                })
-
-        # Sort by date
-        history.sort(key=lambda x: x['date'])
-        return history
-
-    except Exception as e:
-        logger.debug(f"Error extracting history for {metric_name}: {e}")
-        return []
-
-
-def fetch_historical_financials(ticker: str, years: int = 5) -> dict:
-    """
-    Fetch historical financial data from SEC EDGAR for PIT backtesting.
-
-    Args:
-        ticker: Stock ticker
-        years: Number of years of history to fetch
-
-    Returns:
-        dict with time series of financial snapshots
-    """
-    cik = ticker_to_cik(ticker)
-    if not cik:
-        return {"ticker": ticker, "success": False, "error": "Could not resolve CIK", "snapshots": []}
-
-    try:
-        url = f"https://data.sec.gov/api/xbrl/companyfacts/CIK{cik}.json"
-        headers = {'User-Agent': USER_AGENT}
-
-        response = requests.get(url, headers=headers, timeout=30)
-        response.raise_for_status()
-
-        facts_data = response.json()
-
-        # Extract history for key metrics
-        cash_metrics = ['CashAndCashEquivalentsAtCarryingValue', 'Cash', 'CashAndCashEquivalents']
-        debt_metrics = ['LongTermDebt', 'LongTermDebtNoncurrent', 'DebtCurrent']
-
-        cash_history = []
-        for metric in cash_metrics:
-            cash_history = extract_metric_history(facts_data, metric)
-            if cash_history:
-                break
-
-        debt_history = []
-        for metric in debt_metrics:
-            debt_history = extract_metric_history(facts_data, metric)
-            if debt_history:
-                break
-
-        assets_history = extract_metric_history(facts_data, 'Assets')
-        liabilities_history = extract_metric_history(facts_data, 'Liabilities')
-        rd_history = extract_metric_history(facts_data, 'ResearchAndDevelopmentExpense')
-
-        # Build snapshots by date
-        all_dates = set()
-        for h in [cash_history, debt_history, assets_history, liabilities_history, rd_history]:
-            for item in h:
-                all_dates.add(item['date'])
-
-        # Filter to last N years
-        cutoff_date = (datetime.now() - timedelta(days=years*365)).strftime('%Y-%m-%d')
-        all_dates = {d for d in all_dates if d >= cutoff_date}
-
-        # Create lookup dicts
-        def make_lookup(history):
-            return {item['date']: item['value'] for item in history}
-
-        cash_lookup = make_lookup(cash_history)
-        debt_lookup = make_lookup(debt_history)
-        assets_lookup = make_lookup(assets_history)
-        liabilities_lookup = make_lookup(liabilities_history)
-        rd_lookup = make_lookup(rd_history)
-
-        # Build snapshots
-        snapshots = []
-        for date in sorted(all_dates):
-            snapshot = {
-                'ticker': ticker,
-                'date': date,
-                'cash': cash_lookup.get(date),
-                'debt': debt_lookup.get(date),
-                'assets': assets_lookup.get(date),
-                'liabilities': liabilities_lookup.get(date),
-                'rd_expense': rd_lookup.get(date),
-            }
-            # Only include if we have at least cash or assets
-            if snapshot['cash'] is not None or snapshot['assets'] is not None:
-                snapshots.append(snapshot)
-
-        return {
-            "ticker": ticker,
-            "cik": cik,
-            "success": True,
-            "snapshots": snapshots,
-            "date_range": {
-                "start": min(all_dates) if all_dates else None,
-                "end": max(all_dates) if all_dates else None,
-                "count": len(snapshots)
-            }
-        }
-
-    except Exception as e:
-        return {"ticker": ticker, "success": False, "error": str(e), "snapshots": []}
-
-
-def collect_historical_batch(tickers: list[str], years: int = 5, delay_seconds: float = 1.0) -> dict:
-    """
-    Collect historical financial data for multiple tickers.
-
-    Returns dict mapping ticker -> historical snapshots
-    """
-    results = {}
-    total = len(tickers)
-
-    print(f"\n📄 Collecting {years}-year historical SEC data for {total} tickers...")
-
-    for i, ticker in enumerate(tickers, 1):
-        print(f"[{i}/{total}] Fetching {ticker}...", end=" ")
-
-        data = fetch_historical_financials(ticker, years)
-        results[ticker] = data
-
-        if data.get('success'):
-            count = data['date_range']['count']
-            date_range = f"{data['date_range']['start']} to {data['date_range']['end']}"
-            print(f"✓ {count} snapshots ({date_range})")
-        else:
-            print(f"✗ {data.get('error', 'Unknown error')}")
-
-        if i < total:
-            time.sleep(delay_seconds)
-
-    successful = sum(1 for d in results.values() if d.get('success'))
-    total_snapshots = sum(len(d.get('snapshots', [])) for d in results.values())
-    print(f"\n✓ Collected {total_snapshots} historical snapshots for {successful}/{total} tickers")
-
+    
     return results
 
 if __name__ == "__main__":

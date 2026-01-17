@@ -23860,100 +23860,6 @@
     }
   },
   {
-    "ticker": "AKRO",
-    "name": "Akero Therapeutics, Inc.",
-    "status": "active",
-    "status_reason": "active",
-    "market_cap_usd": "4499031040",
-    "price_usd": "54.65",
-    "shares_outstanding": "82324445",
-    "defensive_features": {
-      "price_current": "54.65",
-      "price_60d_ago": "42.60",
-      "return_60d": "0.2829",
-      "vol_60d": "0.4138",
-      "drawdown_60d": "-0.2287",
-      "corr_xbi": "0.3025",
-      "rsi_14d": "69.0",
-      "vol_regime": "elevated",
-      "timestamp": "2026-01-06T14:34:46.107919Z"
-    },
-    "financial_health": {
-      "cash_usd": "1124757760",
-      "total_debt_usd": "449903104",
-      "quarterly_burn_usd": "89980620",
-      "runway_quarters": "12"
-    },
-    "lead_program": {
-      "phase": "phase_2",
-      "indication": "oncology",
-      "trial_id": "NCT00000000"
-    },
-    "financial_data": {
-      "cash": 737825984,
-      "debt": 605000,
-      "net_debt": -737220984,
-      "revenue_ttm": null,
-      "assets": null,
-      "liabilities": null,
-      "equity": null,
-      "currency": "USD",
-      "cik": null
-    },
-    "market_data": {
-      "price": 54.65,
-      "market_cap": 4499031040,
-      "shares_outstanding": 82324445,
-      "volume_avg_30d": 2745117,
-      "52_week_high": 58.4,
-      "52_week_low": 21.34,
-      "pe_ratio": null,
-      "company_name": "Akero Therapeutics, Inc.",
-      "sector": "Healthcare",
-      "industry": "Biotechnology"
-    },
-    "clinical_data": {
-      "total_trials": 6,
-      "active_trials": 4,
-      "completed_trials": 2,
-      "lead_stage": "unknown",
-      "by_phase": {},
-      "conditions": [],
-      "top_trials": [
-        {
-          "nct_id": "NCT04767529",
-          "title": "A Study of Efruxifermin in Non-Cirrhotic Subjects With Histologically Confirmed Nonalcoholic Steatohepatitis (NASH)",
-          "status": "COMPLETED",
-          "phase": "PHASE2"
-        },
-        {
-          "nct_id": "NCT05039450",
-          "title": "A Study of Efruxifermin in Subjects With Compensated Cirrhosis Due to Nonalcoholic Steatohepatitis (NASH) (Symmetry)",
-          "status": "ACTIVE_NOT_RECRUITING",
-          "phase": "PHASE2"
-        },
-        {
-          "nct_id": "NCT06161571",
-          "title": "A Study Evaluating Efruxifermin in Subjects With Non-invasively Diagnosed Nonalcoholic Steatohepatitis (NASH)/Metabolic Dysfunction-Associated Steatohepatitis (MASH) and Nonalcoholic Fatty Liver Disease (NAFLD)/Metabolic Dysfunction-Associated Steatotic Liver Disease (MASLD)",
-          "status": "ACTIVE_NOT_RECRUITING",
-          "phase": "PHASE3"
-        },
-        {
-          "nct_id": "NCT06528314",
-          "title": "A Study Evaluating Efruxifermin in Subjects With Compensated Cirrhosis Due to NASH/MASH",
-          "status": "RECRUITING",
-          "phase": "PHASE3"
-        },
-        {
-          "nct_id": "NCT06215716",
-          "title": "A Study Evaluating Efruxifermin in Subjects With Non-Cirrhotic Nonalcoholic Steatohepatitis (NASH)/Metabolic Dysfunction-Associated Steatohepatitis (MASH) and Fibrosis",
-          "status": "RECRUITING",
-          "phase": "PHASE3"
-        }
-      ]
-    }
-  },
-  {
     "ticker": "ALLO",
     "name": "Allogene Therapeutics, Inc.",
     "status": "active",
@@ -24576,100 +24482,6 @@
           "title": "African-American Diabetes Intervention Project",
           "status": "COMPLETED",
           "phase": "NA"
-        }
-      ]
-    }
-  },
-  {
-    "ticker": "BGXX",
-    "name": "Bright Green Corporation",
-    "status": "active",
-    "status_reason": "active",
-    "market_cap_usd": "7264308",
-    "price_usd": "0.04",
-    "shares_outstanding": "191166000",
-    "defensive_features": {
-      "price_current": "0.04",
-      "price_60d_ago": "0.04",
-      "return_60d": "0.0000",
-      "vol_60d": "0.0000",
-      "drawdown_60d": "0.0000",
-      "corr_xbi": "nan",
-      "rsi_14d": "50.0",
-      "vol_regime": "normal",
-      "timestamp": "2026-01-06T14:34:54.192859Z"
-    },
-    "financial_health": {
-      "cash_usd": "1816077",
-      "total_debt_usd": "726430",
-      "quarterly_burn_usd": "145286",
-      "runway_quarters": "12"
-    },
-    "lead_program": {
-      "phase": "phase_2",
-      "indication": "oncology",
-      "trial_id": "NCT00000000"
-    },
-    "financial_data": {
-      "cash": 40366,
-      "debt": 805315,
-      "net_debt": 764949,
-      "revenue_ttm": null,
-      "assets": null,
-      "liabilities": null,
-      "equity": null,
-      "currency": "USD",
-      "cik": null
-    },
-    "market_data": {
-      "price": 0.038,
-      "market_cap": 7264308,
-      "shares_outstanding": 191166000,
-      "volume_avg_30d": 0,
-      "52_week_high": 0.1,
-      "52_week_low": 0.03,
-      "pe_ratio": null,
-      "company_name": "Bright Green Corporation",
-      "sector": "Healthcare",
-      "industry": "Drug Manufacturers - Specialty & Generic"
-    },
-    "clinical_data": {
-      "total_trials": 20,
-      "active_trials": 5,
-      "completed_trials": 8,
-      "lead_stage": "unknown",
-      "by_phase": {},
-      "conditions": [],
-      "top_trials": [
-        {
-          "nct_id": "NCT06413316",
-          "title": "ABC-CT Pre-School Feasibility Study",
-          "status": "COMPLETED",
-          "phase": "N/A"
-        },
-        {
-          "nct_id": "NCT06204926",
-          "title": "Diagnostic Efficacy of CNN in Predicting Intraoperative Complications and Postoperative Outcomes in SMILE",
-          "status": "RECRUITING",
-          "phase": "N/A"
-        },
-        {
-          "nct_id": "NCT05118815",
-          "title": "Peri-implant Tissues on the Galimplant Anti-rotational Slim Abutment.",
-          "status": "ACTIVE_NOT_RECRUITING",
-          "phase": "NA"
-        },
-        {
-          "nct_id": "NCT00065689",
-          "title": "High Intensity Light Therapy in Alzheimer's Disease",
-          "status": "COMPLETED",
-          "phase": "PHASE3"
-        },
-        {
-          "nct_id": "NCT04528173",
-          "title": "Opioid-Free Anesthetic for Tonsillectomy",
-          "status": "TERMINATED",
-          "phase": "PHASE4"
         }
       ]
     }
@@ -28934,34 +28746,6 @@
     "description": "Added from ETF holdings (IBB)"
   },
   {
-    "ticker": "ADRO",
-    "name": "ADRO",
-    "exchange": "NASDAQ",
-    "sector": "Biotechnology",
-    "status": "active",
-    "added_from_etf": true,
-    "added_date": "2026-01-07",
-    "etf_sources": [
-      "IBB"
-    ],
-    "market_cap": null,
-    "description": "Added from ETF holdings (IBB)"
-  },
-  {
-    "ticker": "AKE",
-    "name": "AKE",
-    "exchange": "NASDAQ",
-    "sector": "Biotechnology",
-    "status": "active",
-    "added_from_etf": true,
-    "added_date": "2026-01-07",
-    "etf_sources": [
-      "IBB"
-    ],
-    "market_cap": null,
-    "description": "Added from ETF holdings (IBB)"
-  },
-  {
     "ticker": "ALKS",
     "name": "ALKS",
     "exchange": "NASDAQ",
@@ -29480,20 +29264,6 @@
     "description": "Added from ETF holdings (IBB)"
   },
   {
-    "ticker": "CRGX",
-    "name": "CRGX",
-    "exchange": "NASDAQ",
-    "sector": "Biotechnology",
-    "status": "active",
-    "added_from_etf": true,
-    "added_date": "2026-01-07",
-    "etf_sources": [
-      "IBB"
-    ],
-    "market_cap": null,
-    "description": "Added from ETF holdings (IBB)"
-  },
-  {
     "ticker": "CRL",
     "name": "CRL",
     "exchange": "NASDAQ",
@@ -29944,20 +29714,6 @@
   {
     "ticker": "IRON",
     "name": "IRON",
-    "exchange": "NASDAQ",
-    "sector": "Biotechnology",
-    "status": "active",
-    "added_from_etf": true,
-    "added_date": "2026-01-07",
-    "etf_sources": [
-      "IBB"
-    ],
-    "market_cap": null,
-    "description": "Added from ETF holdings (IBB)"
-  },
-  {
-    "ticker": "IXCH6",
-    "name": "IXCH6",
     "exchange": "NASDAQ",
     "sector": "Biotechnology",
     "status": "active",
@@ -30740,36 +30496,8 @@
     "description": "Added from ETF holdings (IBB)"
   },
   {
-    "ticker": "RTYH6",
-    "name": "RTYH6",
-    "exchange": "NASDAQ",
-    "sector": "Biotechnology",
-    "status": "active",
-    "added_from_etf": true,
-    "added_date": "2026-01-07",
-    "etf_sources": [
-      "IBB"
-    ],
-    "market_cap": null,
-    "description": "Added from ETF holdings (IBB)"
-  },
-  {
     "ticker": "SEPN",
     "name": "SEPN",
-    "exchange": "NASDAQ",
-    "sector": "Biotechnology",
-    "status": "active",
-    "added_from_etf": true,
-    "added_date": "2026-01-07",
-    "etf_sources": [
-      "IBB"
-    ],
-    "market_cap": null,
-    "description": "Added from ETF holdings (IBB)"
-  },
-  {
-    "ticker": "SGAFT",
-    "name": "SGAFT",
     "exchange": "NASDAQ",
     "sector": "Biotechnology",
     "status": "active",
@@ -30966,34 +30694,6 @@
   {
     "ticker": "TERN",
     "name": "TERN",
-    "exchange": "NASDAQ",
-    "sector": "Biotechnology",
-    "status": "active",
-    "added_from_etf": true,
-    "added_date": "2026-01-07",
-    "etf_sources": [
-      "IBB"
-    ],
-    "market_cap": null,
-    "description": "Added from ETF holdings (IBB)"
-  },
-  {
-    "ticker": "THE CONTENT CONTAINED HEREIN IS OWNED OR LICENSED BY BLACKROCK AND/OR ITS THIRD-PARTY INFORMATION PROVIDERS AND IS PROTECTED BY APPLICABLE COPYRIGHTS, TRADEMARKS, SERVICE MARKS, AND/OR OTHER INTELLECTUAL PROPERTY RIGHTS- SUCH CONTENT IS SOLELY FOR YOUR PERSONAL, NON-COMMERCIAL USE- ACCORDINGLY, YOU MAY NOT COPY, DISTRIBUTE, MODIFY, POST, FRAME OR DEEP LINK THIS CONTENT- YOU MAY DOWNLOAD MATERIAL DISPLAYED ON THIS WEBSITE FOR YOUR PERSONAL USE PROVIDED YOU ALSO RETAIN ALL COPYRIGHT AND OTHER PROPRIETARY NOTICES CONTAINED ON THE MATERIALS- MODIFICATION OR USE OF THE MATERIALS FOR ANY OTHER PURPOSE VIOLATES BLACKROCK'S INTELLECTUAL PROPERTY RIGHTS-\nHOLDINGS SUBJECT TO CHANGE- SEE WWW-ISHARES-COM FOR THE MOST RECENT FUNDS HOLDINGS-\nTHE VALUES FOR \u201cPRICE\u201d SHOWN HEREIN GENERALLY REPRESENT A PRICE PROVIDED BY A THIRD-PARTY PRICING VENDOR FOR THE PORTFOLIO HOLDING AND DO NOT REFLECT THE IMPACT OF SYSTEMATIC FAIR VALUATION (\u201cTHE VENDOR PRICE\u201d)- THE VENDOR PRICE IS NOT NECESSARILY THE PRICE AT WHICH THE FUND VALUES THE PORTFOLIO HOLDING FOR THE PURPOSES OF DETERMINING ITS NET ASSET VALUE (THE \u201cVALUATION PRICE\u201d)- ADDITIONALLY, WHERE APPLICABLE, FOREIGN CURRENCY EXCHANGE RATES WITH RESPECT TO THE PORTFOLIO HOLDINGS DENOMINATED IN NON-U-S- CURRENCIES FOR THE VALUATION PRICE WILL BE GENERALLY DETERMINED AS OF THE CLOSE OF BUSINESS ON THE NEW YORK STOCK EXCHANGE, WHEREAS FOR THE VENDOR PRICE WILL BE GENERALLY DETERMINED AS OF 4 P-M- LONDON- THE VALUES SHOWN HEREIN FOR \u201cMARKET VALUE,\u201d \u201cWEIGHT,\u201d AND \u201cNOTIONAL VALUE\u201d (THE \u201cCALCULATED VALUES\u201d) ARE BASED OFF OF THE VENDOR PRICE AND MAY HAVE BEEN DIFFERENT IF THE VALUATION PRICE WERE TO HAVE BEEN USED TO CALCULATE SUCH VALUES- THE VENDOR PRICE IS AS OF THE MOST RECENT PRACTICABLE DATE AND MAY NOT NECESSARILY BE AS OF THE DATE SHOWN ABOVE-\nPLEASE SEE THE \u201cDETERMINATION OF NET ASSET VALUE\u201d SECTION OF EACH FUND\u2019S PROSPECTUS FOR ADDITIONAL INFORMATION ON THE FUND\u2019S VALUATION POLICIES AND PROCEDURES-\nCAREFULLY CONSIDER THE FUNDS' INVESTMENT OBJECTIVES, RISK FACTORS, AND CHARGES AND EXPENSES BEFORE INVESTING- THIS AND OTHER INFORMATION CAN BE FOUND IN THE FUNDS' PROSPECTUSES OR, IF AVAILABLE, THE SUMMARY PROSPECTUSES WHICH MAY BE OBTAINED BY VISITING WWW-ISHARES-COM OR WWW-BLACKROCK-COM- READ THE PROSPECTUS CAREFULLY BEFORE INVESTING- INVESTING INVOLVES RISK, INCLUDING POSSIBLE LOSS OF PRINCIPAL-\nTHIS INFORMATION SHOULD NOT BE RELIED UPON AS RESEARCH, INVESTMENT ADVICE, OR A RECOMMENDATION REGARDING ANY PRODUCTS, STRATEGIES, OR ANY SECURITY IN PARTICULAR-\nTHIS MATERIAL IS STRICTLY FOR ILLUSTRATIVE, EDUCATIONAL, OR INFORMATIONAL PURPOSES AND IS SUBJECT TO CHANGE-\nTHE FUNDS ARE DISTRIBUTED BY BLACKROCK INVESTMENTS, LLC (TOGETHER WITH ITS AFFILIATES, \u201cBLACKROCK\u201d)-\nTHE ISHARES FUNDS ARE NOT SPONSORED, ENDORSED, ISSUED, SOLD OR PROMOTED BY BLOOMBERG, BLACKROCK INDEX SERVICES, LLC, CBOE GLOBAL INDICES, LLC, COHEN & STEERS, EUROPEAN PUBLIC REAL ESTATE ASSOCIATION (\u201cEPRA\u00ae \u201d), FTSE INTERNATIONAL LIMITED (\u201cFTSE\u201d), ICE DATA INDICES, LLC, NSE INDICES LTD, JPMORGAN, JPX GROUP, LONDON STOCK EXCHANGE GROUP (\u201cLSEG\u201d), MSCI INC-, MARKIT INDICES LIMITED, MORNINGSTAR, INC-, NASDAQ, INC-, NATIONAL ASSOCIATION OF REAL ESTATE INVESTMENT TRUSTS (\u201cNAREIT\u201d), NIKKEI, INC-, RUSSELL, S&P DOW JONES INDICES LLC OR STOXX LTD- NONE OF THESE COMPANIES MAKE ANY REPRESENTATION REGARDING THE ADVISABILITY OF INVESTING IN THE FUNDS- WITH THE EXCEPTION OF BLACKROCK INDEX SERVICES, LLC, WHO IS AN AFFILIATE, BLACKROCK INVESTMENTS, LLC IS NOT AFFILIATED WITH THE COMPANIES LISTED ABOVE- NEITHER FTSE, LSEG, NOR NAREIT MAKES ANY WARRANTY REGARDING THE FTSE NAREIT EQUITY REITS INDEX, FTSE NAREIT ALL RESIDENTIAL CAPPED INDEX OR FTSE NAREIT ALL MORTGAGE CAPPED INDEX- NEITHER FTSE, EPRA, LSEG, NOR NAREIT MAKES ANY WARRANTY REGARDING THE FTSE EPRA NAREIT DEVELOPED EX-U-S- INDEX, FTSE EPRA NAREIT DEVELOPED GREEN TARGET INDEX OR FTSE EPRA NAREIT GLOBAL REITS INDEX- \u201cFTSE\u00ae\u201d IS A TRADEMARK OF LONDON STOCK EXCHANGE GROUP COMPANIES AND IS USED BY FTSE UNDER LICENSE-\n\u00a92023 BLACKROCK, INC OR ITS AFFILIATES- ALL RIGHTS RESERVED- ISHARES, IBONDS AND BLACKROCK ARE TRADEMARKS OF BLACKROCK, INC- OR ITS AFFILIATES- ALL OTHER TRADEMARKS ARE THOSE OF THEIR RESPECTIVE OWNERS-",
-    "name": "THE CONTENT CONTAINED HEREIN IS OWNED OR LICENSED BY BLACKROCK AND/OR ITS THIRD-PARTY INFORMATION PROVIDERS AND IS PROTECTED BY APPLICABLE COPYRIGHTS, TRADEMARKS, SERVICE MARKS, AND/OR OTHER INTELLECTUAL PROPERTY RIGHTS- SUCH CONTENT IS SOLELY FOR YOUR PERSONAL, NON-COMMERCIAL USE- ACCORDINGLY, YOU MAY NOT COPY, DISTRIBUTE, MODIFY, POST, FRAME OR DEEP LINK THIS CONTENT- YOU MAY DOWNLOAD MATERIAL DISPLAYED ON THIS WEBSITE FOR YOUR PERSONAL USE PROVIDED YOU ALSO RETAIN ALL COPYRIGHT AND OTHER PROPRIETARY NOTICES CONTAINED ON THE MATERIALS- MODIFICATION OR USE OF THE MATERIALS FOR ANY OTHER PURPOSE VIOLATES BLACKROCK'S INTELLECTUAL PROPERTY RIGHTS-\nHOLDINGS SUBJECT TO CHANGE- SEE WWW-ISHARES-COM FOR THE MOST RECENT FUNDS HOLDINGS-\nTHE VALUES FOR \u201cPRICE\u201d SHOWN HEREIN GENERALLY REPRESENT A PRICE PROVIDED BY A THIRD-PARTY PRICING VENDOR FOR THE PORTFOLIO HOLDING AND DO NOT REFLECT THE IMPACT OF SYSTEMATIC FAIR VALUATION (\u201cTHE VENDOR PRICE\u201d)- THE VENDOR PRICE IS NOT NECESSARILY THE PRICE AT WHICH THE FUND VALUES THE PORTFOLIO HOLDING FOR THE PURPOSES OF DETERMINING ITS NET ASSET VALUE (THE \u201cVALUATION PRICE\u201d)- ADDITIONALLY, WHERE APPLICABLE, FOREIGN CURRENCY EXCHANGE RATES WITH RESPECT TO THE PORTFOLIO HOLDINGS DENOMINATED IN NON-U-S- CURRENCIES FOR THE VALUATION PRICE WILL BE GENERALLY DETERMINED AS OF THE CLOSE OF BUSINESS ON THE NEW YORK STOCK EXCHANGE, WHEREAS FOR THE VENDOR PRICE WILL BE GENERALLY DETERMINED AS OF 4 P-M- LONDON- THE VALUES SHOWN HEREIN FOR \u201cMARKET VALUE,\u201d \u201cWEIGHT,\u201d AND \u201cNOTIONAL VALUE\u201d (THE \u201cCALCULATED VALUES\u201d) ARE BASED OFF OF THE VENDOR PRICE AND MAY HAVE BEEN DIFFERENT IF THE VALUATION PRICE WERE TO HAVE BEEN USED TO CALCULATE SUCH VALUES- THE VENDOR PRICE IS AS OF THE MOST RECENT PRACTICABLE DATE AND MAY NOT NECESSARILY BE AS OF THE DATE SHOWN ABOVE-\nPLEASE SEE THE \u201cDETERMINATION OF NET ASSET VALUE\u201d SECTION OF EACH FUND\u2019S PROSPECTUS FOR ADDITIONAL INFORMATION ON THE FUND\u2019S VALUATION POLICIES AND PROCEDURES-\nCAREFULLY CONSIDER THE FUNDS' INVESTMENT OBJECTIVES, RISK FACTORS, AND CHARGES AND EXPENSES BEFORE INVESTING- THIS AND OTHER INFORMATION CAN BE FOUND IN THE FUNDS' PROSPECTUSES OR, IF AVAILABLE, THE SUMMARY PROSPECTUSES WHICH MAY BE OBTAINED BY VISITING WWW-ISHARES-COM OR WWW-BLACKROCK-COM- READ THE PROSPECTUS CAREFULLY BEFORE INVESTING- INVESTING INVOLVES RISK, INCLUDING POSSIBLE LOSS OF PRINCIPAL-\nTHIS INFORMATION SHOULD NOT BE RELIED UPON AS RESEARCH, INVESTMENT ADVICE, OR A RECOMMENDATION REGARDING ANY PRODUCTS, STRATEGIES, OR ANY SECURITY IN PARTICULAR-\nTHIS MATERIAL IS STRICTLY FOR ILLUSTRATIVE, EDUCATIONAL, OR INFORMATIONAL PURPOSES AND IS SUBJECT TO CHANGE-\nTHE FUNDS ARE DISTRIBUTED BY BLACKROCK INVESTMENTS, LLC (TOGETHER WITH ITS AFFILIATES, \u201cBLACKROCK\u201d)-\nTHE ISHARES FUNDS ARE NOT SPONSORED, ENDORSED, ISSUED, SOLD OR PROMOTED BY BLOOMBERG, BLACKROCK INDEX SERVICES, LLC, CBOE GLOBAL INDICES, LLC, COHEN & STEERS, EUROPEAN PUBLIC REAL ESTATE ASSOCIATION (\u201cEPRA\u00ae \u201d), FTSE INTERNATIONAL LIMITED (\u201cFTSE\u201d), ICE DATA INDICES, LLC, NSE INDICES LTD, JPMORGAN, JPX GROUP, LONDON STOCK EXCHANGE GROUP (\u201cLSEG\u201d), MSCI INC-, MARKIT INDICES LIMITED, MORNINGSTAR, INC-, NASDAQ, INC-, NATIONAL ASSOCIATION OF REAL ESTATE INVESTMENT TRUSTS (\u201cNAREIT\u201d), NIKKEI, INC-, RUSSELL, S&P DOW JONES INDICES LLC OR STOXX LTD- NONE OF THESE COMPANIES MAKE ANY REPRESENTATION REGARDING THE ADVISABILITY OF INVESTING IN THE FUNDS- WITH THE EXCEPTION OF BLACKROCK INDEX SERVICES, LLC, WHO IS AN AFFILIATE, BLACKROCK INVESTMENTS, LLC IS NOT AFFILIATED WITH THE COMPANIES LISTED ABOVE- NEITHER FTSE, LSEG, NOR NAREIT MAKES ANY WARRANTY REGARDING THE FTSE NAREIT EQUITY REITS INDEX, FTSE NAREIT ALL RESIDENTIAL CAPPED INDEX OR FTSE NAREIT ALL MORTGAGE CAPPED INDEX- NEITHER FTSE, EPRA, LSEG, NOR NAREIT MAKES ANY WARRANTY REGARDING THE FTSE EPRA NAREIT DEVELOPED EX-U-S- INDEX, FTSE EPRA NAREIT DEVELOPED GREEN TARGET INDEX OR FTSE EPRA NAREIT GLOBAL REITS INDEX- \u201cFTSE\u00ae\u201d IS A TRADEMARK OF LONDON STOCK EXCHANGE GROUP COMPANIES AND IS USED BY FTSE UNDER LICENSE-\n\u00a92023 BLACKROCK, INC OR ITS AFFILIATES- ALL RIGHTS RESERVED- ISHARES, IBONDS AND BLACKROCK ARE TRADEMARKS OF BLACKROCK, INC- OR ITS AFFILIATES- ALL OTHER TRADEMARKS ARE THOSE OF THEIR RESPECTIVE OWNERS-",
-    "exchange": "NASDAQ",
-    "sector": "Biotechnology",
-    "status": "active",
-    "added_from_etf": true,
-    "added_date": "2026-01-07",
-    "etf_sources": [
-      "IBB"
-    ],
-    "market_cap": null,
-    "description": "Added from ETF holdings (IBB)"
-  },
-  {
-    "ticker": "THRD",
-    "name": "THRD",
     "exchange": "NASDAQ",
     "sector": "Biotechnology",
     "status": "active",
@@ -31302,20 +31002,6 @@
   {
     "ticker": "XNCR",
     "name": "XNCR",
-    "exchange": "NASDAQ",
-    "sector": "Biotechnology",
-    "status": "active",
-    "added_from_etf": true,
-    "added_date": "2026-01-07",
-    "etf_sources": [
-      "IBB"
-    ],
-    "market_cap": null,
-    "description": "Added from ETF holdings (IBB)"
-  },
-  {
-    "ticker": "XTSLA",
-    "name": "XTSLA",
     "exchange": "NASDAQ",
     "sector": "Biotechnology",
     "status": "active",

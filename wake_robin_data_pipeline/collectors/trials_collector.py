@@ -16,10 +16,6 @@ def get_cache_path(company_name: str) -> Path:
     cache_dir.mkdir(parents=True, exist_ok=True)
     # Use sanitized company name as filename
     safe_name = "".join(c for c in company_name if c.isalnum() or c in (' ', '-', '_')).strip()
-    # Truncate long names and use hash suffix for uniqueness
-    if len(safe_name) > 100:
-        name_hash = hashlib.md5(company_name.encode()).hexdigest()[:8]
-        safe_name = safe_name[:90] + "_" + name_hash
     return cache_dir / f"{safe_name}.json"
 
 def is_cache_valid(cache_path: Path, max_age_hours: int = 24) -> bool:
@@ -204,25 +200,6 @@ def collect_trials_data(ticker: str, company_name: str, force_refresh: bool = Fa
     """
     Main entry point: collect clinical trial data with caching.
     """
-    # Handle None or empty company names (e.g., benchmark tickers)
-    if not company_name:
-        return {
-            "ticker": ticker,
-            "success": True,
-            "summary": {
-                "total_trials": 0,
-                "active_trials": 0,
-                "completed_trials": 0,
-                "lead_stage": "not_applicable",
-                "by_phase": {},
-                "conditions": [],
-                "top_trials": []
-            },
-            "from_cache": False,
-            "skipped": True,
-            "reason": "No company name (benchmark or index ticker)"
-        }
-
     cache_path = get_cache_path(company_name)
     
     # Check cache first
