@@ -39,8 +39,13 @@ from decimal import Decimal, ROUND_HALF_UP
 from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple, Set, Union
 
-# Type alias for flexible ticker input
-TickerCollection = Union[Set[str], List[str]]
+from common.integration_contracts import (
+    validate_module_4_output,
+    is_validation_enabled,
+    normalize_date_string,
+    normalize_ticker_set,
+    TickerCollection,
+)
 
 from common.provenance import create_provenance
 from common.types import Severity
@@ -1168,7 +1173,7 @@ def compute_module_4_clinical_dev(
             "n_neutral_endpoints": score["n_neutral_endpoints"],
         })
 
-    return {
+    output = {
         "as_of_date": result["as_of_date"],
         "scores": v1_scores,
         "diagnostic_counts": {
@@ -1181,3 +1186,9 @@ def compute_module_4_clinical_dev(
         },
         "provenance": result["provenance"],
     }
+
+    # Validate output schema before returning
+    if is_validation_enabled():
+        validate_module_4_output(output)
+
+    return output
