@@ -76,6 +76,13 @@ try:
 except ImportError:
     HAS_ENHANCEMENTS = False
 
+# Accuracy enhancements adapter (optional)
+try:
+    from accuracy_enhancements_adapter import AccuracyEnhancementsAdapter
+    HAS_ACCURACY_ENHANCEMENTS = True
+except ImportError:
+    HAS_ACCURACY_ENHANCEMENTS = False
+
 # Optional: Risk gates for audit trail
 try:
     from risk_gates import get_parameters_snapshot as get_risk_params, compute_parameters_hash as risk_params_hash
@@ -711,13 +718,21 @@ def run_screening_pipeline(
             pos_universe = []
             ticker_stage_map = {}  # ticker -> {stage, indication}
 
-            # Build stage map from clinical results
+            # Build stage map from clinical results (including design score for PoS)
             for clinical_score in m4_result.get("scores", []):
                 ticker = clinical_score.get("ticker")
                 if ticker:
+                    # Extract design_score and normalize to 0.7-1.3 multiplier for PoS
+                    # design_score is 0-25 scale; 12 = baseline (1.0x)
+                    raw_design = Decimal(str(clinical_score.get("design_score", "12")))
+                    # Linear mapping: 0 -> 0.7, 12 -> 1.0, 25 -> 1.3
+                    design_quality = Decimal("0.7") + (raw_design / Decimal("25")) * Decimal("0.6")
+                    design_quality = max(Decimal("0.7"), min(Decimal("1.3"), design_quality))
+
                     ticker_stage_map[ticker] = {
                         "base_stage": clinical_score.get("lead_phase", "phase_2"),
                         "indication": clinical_score.get("lead_indication"),
+                        "trial_design_quality": design_quality,
                     }
 
             # Use IndicationMapper to auto-detect indications from trial conditions
@@ -739,6 +754,7 @@ def run_screening_pipeline(
                     "ticker": ticker,
                     "base_stage": stage_info.get("base_stage", "phase_2"),
                     "indication": final_indication,
+                    "trial_design_quality": stage_info.get("trial_design_quality"),
                 })
 
             pos_result = pos_engine.score_universe(pos_universe, as_of_date_obj)
@@ -765,17 +781,80 @@ def run_screening_pipeline(
                 logger.info(f"  SI scored: {si_result['diagnostic_counts']['total_scored']}, "
                             f"Coverage: {si_result['diagnostic_counts']['data_coverage_pct']}")
 
+            # Step 4: Calculate accuracy enhancements (if available)
+            accuracy_result = None
+            if HAS_ACCURACY_ENHANCEMENTS:
+                accuracy_adapter = AccuracyEnhancementsAdapter()
+
+                # Build trial data map from trial records
+                trial_data_map = {}
+                for trial in trial_records:
+                    ticker = trial.get("lead_sponsor_ticker") or trial.get("ticker")
+                    if ticker:
+                        ticker = ticker.upper()
+                        if ticker not in trial_data_map:
+                            trial_data_map[ticker] = trial
+                        # Keep most recent trial per ticker
+                        elif trial.get("last_update_posted", "") > trial_data_map[ticker].get("last_update_posted", ""):
+                            trial_data_map[ticker] = trial
+
+                # Build financial data map
+                financial_data_map = {}
+                for score in m2_result.get("scores", []):
+                    ticker = score.get("ticker")
+                    if ticker:
+                        financial_data_map[ticker] = score
+
+                # Get VIX from market snapshot
+                vix_current = None
+                if market_snapshot:
+                    vix_current = Decimal(str(market_snapshot.get("vix", "20")))
+
+                # Compute accuracy adjustments for universe
+                universe_for_accuracy = [{"ticker": t.upper()} for t in active_tickers]
+                accuracy_adjustments = accuracy_adapter.compute_universe_adjustments(
+                    universe=universe_for_accuracy,
+                    trial_data_map=trial_data_map,
+                    financial_data_map=financial_data_map,
+                    as_of_date=as_of_date_obj,
+                    vix_current=vix_current,
+                    market_regime=regime_result.get("regime") if regime_result else None,
+                )
+
+                accuracy_diag = accuracy_adapter.get_diagnostic_counts()
+                logger.info(f"  Accuracy enhancements: {accuracy_diag['total']} tickers, "
+                           f"staleness={accuracy_diag['staleness_coverage_pct']}%, "
+                           f"regulatory={accuracy_diag['regulatory_coverage_pct']}%")
+
+                # Convert to serializable format
+                accuracy_result = {
+                    "adjustments": {
+                        ticker: {
+                            "clinical_adjustment": str(adj.clinical_adjustment),
+                            "financial_adjustment": str(adj.financial_adjustment),
+                            "catalyst_adjustment": str(adj.catalyst_adjustment),
+                            "regulatory_bonus": str(adj.regulatory_bonus),
+                            "confidence": adj.confidence,
+                            "adjustments_applied": adj.adjustments_applied,
+                        }
+                        for ticker, adj in accuracy_adjustments.items()
+                    },
+                    "diagnostic_counts": accuracy_diag,
+                }
+
             # Assemble enhancement result
             enhancement_result = {
                 "regime": regime_result,
                 "pos_scores": pos_result,
                 "short_interest_scores": si_result,
+                "accuracy_enhancements": accuracy_result,
                 "provenance": {
                     "module": "enhancements",
-                    "version": "1.0.0",
+                    "version": "1.1.0",
                     "as_of_date": as_of_date,
                     "pos_engine_version": pos_engine.VERSION,
                     "regime_engine_version": regime_engine.VERSION,
+                    "accuracy_adapter_version": "1.0.0" if HAS_ACCURACY_ENHANCEMENTS else None,
                 }
             }
 
