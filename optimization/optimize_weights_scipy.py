@@ -658,6 +658,32 @@ def run_optimization(
     return output
 
 
+def _resolve_data_path(path: str) -> str:
+    """
+    Resolve data path relative to project structure.
+
+    Handles running from project root or optimization directory.
+    """
+    if os.path.isabs(path):
+        return path
+
+    # If path exists as-is, use it
+    if os.path.exists(path):
+        return path
+
+    # Check if we're in project root and path is inside optimization/
+    optimization_path = os.path.join('optimization', path)
+    if os.path.exists(optimization_path):
+        return optimization_path
+
+    # Check if we're in optimization directory
+    if os.path.basename(os.getcwd()) == 'optimization':
+        return path
+
+    # Default: prepend optimization/ for project root
+    return optimization_path
+
+
 def main():
     """CLI entry point."""
     import argparse
@@ -683,10 +709,14 @@ def main():
 
     args = parser.parse_args()
 
+    # Resolve paths relative to project structure
+    training_path = _resolve_data_path(args.training_data)
+    output_path = _resolve_data_path(args.output)
+
     try:
         result = run_optimization(
-            training_data_path=args.training_data,
-            output_path=args.output,
+            training_data_path=training_path,
+            output_path=output_path,
             verbose=not args.quiet
         )
 
