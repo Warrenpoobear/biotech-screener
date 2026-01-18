@@ -1355,6 +1355,10 @@ def compute_module_5_composite_v3(
         regime_name = regime_data.get("regime", "NEUTRAL")
         regime_adjustments = regime_data.get("signal_adjustments", {})
 
+        # Extract accuracy enhancements
+        accuracy_data = enhancement_result.get("accuracy_enhancements") or {}
+        accuracy_by_ticker = accuracy_data.get("adjustments", {})
+
     # =========================================================================
     # DETERMINE SCORING MODE AND WEIGHTS
     # =========================================================================
@@ -1534,6 +1538,37 @@ def compute_module_5_composite_v3(
             rec["coinvest"] = _enrich_with_coinvest(rec["ticker"], coinvest_signals, as_of_dt)
         else:
             rec["coinvest"] = {"coinvest_overlap_count": 0, "coinvest_holders": [], "coinvest_usable": False, "position_changes": {}}
+
+    # =========================================================================
+    # APPLY ACCURACY ENHANCEMENTS (if available)
+    # =========================================================================
+
+    accuracy_by_ticker = accuracy_by_ticker if 'accuracy_by_ticker' in dir() else {}
+    if accuracy_by_ticker:
+        for rec in combined:
+            ticker = rec["ticker"].upper()
+            acc_adj = accuracy_by_ticker.get(ticker)
+            if acc_adj:
+                # Apply multipliers to normalized scores
+                clin_mult = Decimal(acc_adj.get("clinical_adjustment", "1.00"))
+                fin_mult = Decimal(acc_adj.get("financial_adjustment", "1.00"))
+                cat_mult = Decimal(acc_adj.get("catalyst_adjustment", "1.00"))
+                reg_bonus = Decimal(acc_adj.get("regulatory_bonus", "0"))
+
+                if rec.get("clinical_normalized"):
+                    adj_clinical = rec["clinical_normalized"] * clin_mult + reg_bonus
+                    rec["clinical_normalized"] = max(Decimal("0"), min(Decimal("100"), adj_clinical))
+
+                if rec.get("financial_normalized"):
+                    adj_financial = rec["financial_normalized"] * fin_mult
+                    rec["financial_normalized"] = max(Decimal("0"), min(Decimal("100"), adj_financial))
+
+                if rec.get("catalyst_normalized"):
+                    adj_catalyst = rec["catalyst_normalized"] * cat_mult
+                    rec["catalyst_normalized"] = max(Decimal("0"), min(Decimal("100"), adj_catalyst))
+
+                # Track adjustments in rec for audit
+                rec["accuracy_adjustments_applied"] = acc_adj.get("adjustments_applied", [])
 
     # =========================================================================
     # SCORE EACH TICKER
