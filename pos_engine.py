@@ -627,7 +627,7 @@ class ProbabilityOfSuccessEngine:
         self.audit_trail = []
 
 
-def demonstration():
+def demonstration() -> None:
     """Demonstrate the PoS engine capabilities."""
     print("=" * 70)
     print("PROBABILITY OF SUCCESS ENGINE v1.1.0 - DEMONSTRATION")

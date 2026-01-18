@@ -22,9 +22,12 @@ Usage:
 import logging
 from dataclasses import dataclass, field
 from datetime import date, timedelta
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
 
 from common.date_utils import normalize_date
+
+# Type alias for date-like inputs (ISO string or date object)
+DateLike = Union[str, "date"]
 
 logger = logging.getLogger(__name__)
 
@@ -100,8 +103,8 @@ class DataQualityGates:
 
     def validate_financial_staleness(
         self,
-        data_date: Any,
-        as_of_date: Any,
+        data_date: Optional[DateLike],
+        as_of_date: DateLike,
     ) -> QualityGateResult:
         """
         Validate financial data is not too stale.
@@ -333,7 +336,7 @@ class DataQualityGates:
         financial_data: Optional[Dict[str, Any]] = None,
         market_data: Optional[Dict[str, Any]] = None,
         trial_data: Optional[Dict[str, Any]] = None,
-        as_of_date: Optional[Any] = None,
+        as_of_date: Optional[DateLike] = None,
     ) -> ValidationResult:
         """
         Run all quality gates for a ticker.
@@ -405,8 +408,8 @@ class DataQualityGates:
 
 
 def validate_financial_staleness(
-    data_date: Any,
-    as_of_date: Any,
+    data_date: Optional[DateLike],
+    as_of_date: DateLike,
     max_age_days: int = 90,
 ) -> bool:
     """
@@ -555,7 +558,7 @@ def check_circuit_breaker(
 
 def validate_batch_with_circuit_breaker(
     records: List[Dict[str, Any]],
-    validator_func,
+    validator_func: Callable[[Dict[str, Any]], Tuple[bool, List[str]]],
     config: Optional[CircuitBreakerConfig] = None,
     context: str = "batch validation",
 ) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]], CircuitBreakerResult]:

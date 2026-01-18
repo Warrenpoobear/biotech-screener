@@ -93,7 +93,7 @@ class Module3Config:
         self.score_version = SCORE_VERSION
 
     @classmethod
-    def from_dict(cls, config_dict: dict) -> 'Module3Config':
+    def from_dict(cls, config_dict: Dict[str, Any]) -> 'Module3Config':
         """Create config from dict"""
         config = cls()
 
@@ -619,7 +619,7 @@ def get_all_integration_records(
 # CLI INTERFACE
 # ============================================================================
 
-def main():
+def main() -> None:
     """Command-line interface for Module 3"""
     import argparse
 

@@ -622,7 +622,7 @@ class RegimeDetectionEngine:
             self.momentum_monitor = MomentumHealthMonitor()
 
 
-def demonstration():
+def demonstration() -> None:
     """Demonstrate the regime detection engine capabilities."""
     print("=" * 70)
     print("MARKET REGIME DETECTION ENGINE - DEMONSTRATION")

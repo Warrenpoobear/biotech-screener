@@ -19,12 +19,13 @@ import logging
 import signal
 import threading
 import time
+import types
 from collections import deque
 from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from enum import Enum
-from typing import Any, Callable, Dict, Generic, List, Optional, Set, TypeVar, Union
+from typing import Any, Callable, Dict, Generic, List, NoReturn, Optional, Set, Tuple, TypeVar, Union
 
 __all__ = [
     # Timeout protection
@@ -83,15 +84,15 @@ class TimeoutConfig:
     timeout_seconds: float = 30.0
     raise_on_timeout: bool = True
     default_value: Any = None
-    cleanup_func: Optional[Callable] = None
+    cleanup_func: Optional[Callable[[], None]] = None
 
 
-def _timeout_handler(signum, frame):
+def _timeout_handler(signum: int, frame: Optional[types.FrameType]) -> NoReturn:
     """Signal handler for timeout."""
     raise TimeoutError("Operation timed out")
 
 
-def with_timeout(config: Optional[TimeoutConfig] = None) -> Callable:
+def with_timeout(config: Optional[TimeoutConfig] = None) -> Callable[[Callable[..., T]], Callable[..., T]]:
     """
     Decorator to add timeout protection to a function.
 
@@ -248,7 +249,7 @@ class StatefulCircuitBreaker:
         self._half_open_calls = 0
 
         # Sliding window for failure tracking
-        self._failure_times: deque = deque()
+        self._failure_times: deque[float] = deque()
 
         self._lock = threading.Lock()
 
@@ -495,7 +496,7 @@ class Throttler:
 def with_throttle(
     max_calls: int = 10,
     period_seconds: float = 1.0,
-) -> Callable:
+) -> Callable[[Callable[..., T]], Callable[..., T]]:
     """
     Simple throttle decorator.
 
@@ -535,7 +536,7 @@ class IntegrityResult:
 
 def _stable_json_dumps(obj: Any) -> str:
     """Deterministic JSON serialization for hashing."""
-    def default_serializer(o):
+    def default_serializer(o: Any) -> Any:
         if isinstance(o, date):
             return o.isoformat()
         if isinstance(o, datetime):
@@ -753,7 +754,7 @@ class IdempotencyStore:
             }
 
 
-def idempotent(store: IdempotencyStore, key_func: Callable[..., str]) -> Callable:
+def idempotent(store: IdempotencyStore, key_func: Callable[..., str]) -> Callable[[Callable[..., T]], Callable[..., T]]:
     """
     Decorator for idempotent function execution.
 
