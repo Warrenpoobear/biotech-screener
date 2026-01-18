@@ -314,13 +314,14 @@ class HistoricalDataExtractor:
         # Calculate return
         return (end_price - start_price) / start_price
 
-    def extract_training_data(self, horizon_days=28, min_observations=100):
+    def extract_training_data(self, horizon_days=28, min_observations=100, skip_returns=False):
         """
         Extract complete training dataset from checkpoints.
 
         Parameters:
         - horizon_days: Forward return period (default: 28 = 4 weeks)
         - min_observations: Minimum observations required (default: 100)
+        - skip_returns: If True, extract scores without forward returns
 
         Returns: List of dicts with training data
         """
@@ -335,8 +336,9 @@ class HistoricalDataExtractor:
             print("ERROR: No checkpoint files found")
             return []
 
-        # Load prices
-        self.load_price_data()
+        # Load prices (only if calculating returns)
+        if not skip_returns:
+            self.load_price_data()
 
         # Extract data
         training_data = []
@@ -363,21 +365,23 @@ class HistoricalDataExtractor:
 
             stats['checkpoints_processed'] += 1
 
-            # Calculate forward returns
+            # Process each ticker
             for ticker, score_data in scores.items():
                 stats['tickers_with_scores'] += 1
 
-                # Calculate forward return
-                fwd_return = self.calculate_forward_return(ticker, date, horizon_days)
+                # Calculate forward return (if not skipping)
+                fwd_return = None
+                if not skip_returns:
+                    fwd_return = self.calculate_forward_return(ticker, date, horizon_days)
 
-                if fwd_return is None:
-                    stats['missing_prices'] += 1
-                    continue
+                    if fwd_return is None:
+                        stats['missing_prices'] += 1
+                        continue  # Skip observations without returns (when returns required)
 
-                stats['forward_returns_calculated'] += 1
+                    stats['forward_returns_calculated'] += 1
 
                 # Add to training data
-                training_data.append({
+                observation = {
                     'date': date.strftime('%Y-%m-%d'),
                     'ticker': ticker,
                     'clinical': score_data['clinical'],
@@ -386,8 +390,11 @@ class HistoricalDataExtractor:
                     'pos': score_data['pos'],
                     'momentum': score_data['momentum'],
                     'valuation': score_data['valuation'],
-                    'fwd_return': fwd_return
-                })
+                }
+                if not skip_returns:
+                    observation['fwd_return'] = fwd_return
+
+                training_data.append(observation)
 
         # Print statistics
         print(f"\nExtraction Statistics:")
@@ -407,7 +414,7 @@ class HistoricalDataExtractor:
 
         return training_data
 
-    def save_training_data(self, training_data, output_file='optimization/optimization_data/training_dataset.csv'):
+    def save_training_data(self, training_data, output_file='optimization/optimization_data/training_dataset.csv', include_returns=True):
         """Save training data to CSV."""
         output_path = Path(output_file)
         output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -416,24 +423,30 @@ class HistoricalDataExtractor:
             print("ERROR: No training data to save")
             return
 
+        # Check if we have returns data
+        has_returns = 'fwd_return' in training_data[0] if training_data else False
+
         fieldnames = ['date', 'ticker', 'clinical', 'financial', 'catalyst',
-                      'pos', 'momentum', 'valuation', 'fwd_return']
+                      'pos', 'momentum', 'valuation']
+        if has_returns and include_returns:
+            fieldnames.append('fwd_return')
 
         with open(output_path, 'w', newline='') as f:
-            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction='ignore')
             writer.writeheader()
             writer.writerows(training_data)
 
         print(f"\n✓ Saved {len(training_data)} observations to {output_file}")
 
         # Print sample statistics
-        if np:
-            returns = [d['fwd_return'] for d in training_data]
-            print(f"\nForward return statistics:")
-            print(f"  Mean: {np.mean(returns):.4f} ({np.mean(returns)*100:.2f}%)")
-            print(f"  Std: {np.std(returns):.4f} ({np.std(returns)*100:.2f}%)")
-            print(f"  Min: {np.min(returns):.4f} ({np.min(returns)*100:.2f}%)")
-            print(f"  Max: {np.max(returns):.4f} ({np.max(returns)*100:.2f}%)")
+        if np and has_returns and include_returns:
+            returns = [d['fwd_return'] for d in training_data if d.get('fwd_return') is not None]
+            if returns:
+                print(f"\nForward return statistics:")
+                print(f"  Mean: {np.mean(returns):.4f} ({np.mean(returns)*100:.2f}%)")
+                print(f"  Std: {np.std(returns):.4f} ({np.std(returns)*100:.2f}%)")
+                print(f"  Min: {np.min(returns):.4f} ({np.min(returns)*100:.2f}%)")
+                print(f"  Max: {np.max(returns):.4f} ({np.max(returns)*100:.2f}%)")
 
         # Print date range
         dates = [d['date'] for d in training_data]
@@ -481,6 +494,11 @@ def main():
         default=100,
         help='Minimum observations required (default: 100)'
     )
+    parser.add_argument(
+        '--no-returns',
+        action='store_true',
+        help='Extract scores only (no forward returns required)'
+    )
 
     args = parser.parse_args()
 
@@ -493,24 +511,30 @@ def main():
     # Extract data
     training_data = extractor.extract_training_data(
         horizon_days=args.horizon,
-        min_observations=args.min_observations
+        min_observations=args.min_observations,
+        skip_returns=args.no_returns
     )
 
     if not training_data:
         print("\n❌ No training data extracted. Check:")
         print("  1. Checkpoint files exist in", args.checkpoint_dir)
-        print("  2. Price data is available")
-        print("  3. Dates overlap between checkpoints and prices")
+        if not args.no_returns:
+            print("  2. Price data is available")
+            print("  3. Dates overlap between checkpoints and prices")
         sys.exit(1)
 
     # Save
-    extractor.save_training_data(training_data, args.output)
+    extractor.save_training_data(training_data, args.output, include_returns=not args.no_returns)
 
     print("\n" + "="*60)
     print("EXTRACTION COMPLETE")
     print("="*60)
-    print("\nNext step: Run optimization")
-    print("  python -m optimization.optimize_weights_scipy")
+    if args.no_returns:
+        print("\nScores extracted (no forward returns).")
+        print("To run optimization, you'll need price data for forward returns.")
+    else:
+        print("\nNext step: Run optimization")
+        print("  python -m optimization.optimize_weights_scipy")
 
 
 if __name__ == '__main__':
