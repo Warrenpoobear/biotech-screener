@@ -288,6 +288,22 @@ class V3ScoringResult:
 # HELPER FUNCTIONS
 # =============================================================================
 
+def _coalesce(*vals, default=None):
+    """Return the first value that is not None.
+
+    Unlike `or` chains, this correctly handles falsy values like Decimal("0")
+    which should be treated as valid scores, not missing data.
+
+    Example:
+        _coalesce(Decimal("0"), Decimal("50"))  -> Decimal("0")  # Correct
+        Decimal("0") or Decimal("50")           -> Decimal("50")  # Wrong!
+    """
+    for v in vals:
+        if v is not None:
+            return v
+    return default
+
+
 def _market_cap_bucket(market_cap_mm: Optional[Any]) -> str:
     """Classify market cap into bucket."""
     mcap = _to_decimal(market_cap_mm)
@@ -503,8 +519,8 @@ def _compute_determinism_hash(
         "base_weights": {k: str(v) for k, v in sorted(base_weights.items())},
         "effective_weights": {k: str(v) for k, v in sorted(effective_weights.items())},
         "components": sorted([
-            {"name": c.name, "raw": str(c.raw) if c.raw else None,
-             "normalized": str(c.normalized) if c.normalized else None,
+            {"name": c.name, "raw": str(c.raw) if c.raw is not None else None,
+             "normalized": str(c.normalized) if c.normalized is not None else None,
              "contribution": str(c.contribution)}
             for c in component_scores
         ], key=lambda x: x["name"]),
@@ -707,7 +723,7 @@ def _score_single_ticker_v3(
     flags = []
 
     # Extract raw scores
-    fin_raw = _to_decimal(fin_data.get("financial_normalized") or fin_data.get("financial_score"))
+    fin_raw = _to_decimal(_coalesce(fin_data.get("financial_normalized"), fin_data.get("financial_score")))
     clin_raw = _to_decimal(clin_data.get("clinical_score"))
     pos_raw = _to_decimal(pos_data.get("pos_score")) if pos_data else None
 
@@ -733,10 +749,11 @@ def _score_single_ticker_v3(
         cat_event_type = "DEFAULT"
 
     # Get normalized scores
-    clin_norm = normalized_scores.get("clinical") or clin_raw or Decimal("50")
-    fin_norm = normalized_scores.get("financial") or fin_raw or Decimal("50")
-    cat_norm = normalized_scores.get("catalyst") or cat_raw or Decimal("50")
-    pos_norm = normalized_scores.get("pos") or pos_raw or Decimal("0")
+    # Use _coalesce to correctly handle Decimal("0") as a valid score, not missing
+    clin_norm = _coalesce(normalized_scores.get("clinical"), clin_raw, default=Decimal("50"))
+    fin_norm = _coalesce(normalized_scores.get("financial"), fin_raw, default=Decimal("50"))
+    cat_norm = _coalesce(normalized_scores.get("catalyst"), cat_raw, default=Decimal("50"))
+    pos_norm = _coalesce(normalized_scores.get("pos"), pos_raw, default=Decimal("0"))
 
     # Extract financial metadata for interactions
     runway_months = _to_decimal(fin_data.get("runway_months"))
@@ -819,10 +836,16 @@ def _score_single_ticker_v3(
         flags.append("smart_money_tier1_present")
 
     # 6. Interaction terms (with gate status to prevent double-counting)
-    # Convert gate statuses from v2 format
-    runway_gate = "PASS" if liquidity_status == "PASS" else (
-        "FAIL" if liquidity_status == "FAIL" else "UNKNOWN"
-    )
+    # Compute runway_gate from runway_months directly (not from liquidity_status)
+    # This ensures the "late-stage distress / runway" interaction fires on the correct condition
+    if runway_months is None:
+        runway_gate = "UNKNOWN"
+    elif runway_months < Decimal("6"):
+        runway_gate = "FAIL"
+    elif runway_months >= Decimal("12"):
+        runway_gate = "PASS"
+    else:
+        runway_gate = "UNKNOWN"  # 6-12 months is borderline
     dilution_gate = "PASS" if dilution_bucket in ("LOW", "MEDIUM") else (
         "FAIL" if dilution_bucket in ("HIGH", "SEVERE") else "UNKNOWN"
     )
@@ -1089,11 +1112,11 @@ def _score_single_ticker_v3(
         regime_adjustments={"regime": regime},
         effective_weights={k: str(v) for k, v in effective_weights.items()},
         components=[{
-            "name": c.name, "raw": str(c.raw) if c.raw else None,
-            "normalized": str(c.normalized) if c.normalized else None,
+            "name": c.name, "raw": str(c.raw) if c.raw is not None else None,
+            "normalized": str(c.normalized) if c.normalized is not None else None,
             "confidence": str(c.confidence), "weight_base": str(c.weight_base),
             "weight_effective": str(c.weight_effective), "contribution": str(c.contribution),
-            "decay_factor": str(c.decay_factor) if c.decay_factor else None,
+            "decay_factor": str(c.decay_factor) if c.decay_factor is not None else None,
             "notes": c.notes,
         } for c in component_scores],
         enhancements={
