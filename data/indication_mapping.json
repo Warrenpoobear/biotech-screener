@@ -1,9 +1,28 @@
 {
   "provenance": {
     "source": "Manual curation based on BIO 2011-2020 benchmark categories",
-    "version": "2.0.0",
+    "schema_version": "3.0.0",
+    "content_version": "2.1.0",
     "as_of_date": "2026-01-18",
-    "notes": "Expanded with 100+ ticker overrides and additional condition patterns for improved coverage"
+    "updated_at": "2026-01-18T12:00:00Z",
+    "notes": "Expanded with 190+ ticker overrides, PIT-safe schema with effective_from and evidence fields"
+  },
+  "precedence_rules": {
+    "_description": "Mapping precedence from highest to lowest priority",
+    "order": [
+      "nct_overrides",
+      "ticker_overrides",
+      "condition_patterns",
+      "category_fallback"
+    ],
+    "conflict_resolution": "first_match_wins",
+    "deterministic_ordering": "Patterns within each category are applied in sorted key order"
+  },
+  "category_aliases": {
+    "_description": "Maps mapper categories to PoS engine benchmark categories",
+    "cns": "neurology",
+    "autoimmune": "immunology",
+    "gi_hepatology": "gastroenterology"
   },
   "condition_patterns": {
     "oncology": [
@@ -22,7 +41,7 @@
       "amyloidosis", "porphyria", "epidermolysis", "progeria", "ataxia", "dystrophy",
       "als", "amyotrophic lateral", "myasthenia", "pemphigus", "pemphigoid",
       "alpha-mannosidosis", "mannosidosis", "homocystinuria", "lysosomal",
-      "gene therapy", "aav", "adeno-associated", "retinitis pigmentosa"
+      "gene therapy", "aav", "adeno-associated"
     ],
     "infectious_disease": [
       "infection", "infectious", "viral", "bacterial", "fungal", "parasitic",
@@ -279,10 +298,81 @@
     "SLDB": "cns",
     "GLPG": "oncology"
   },
+  "ticker_overrides_v3": {
+    "_schema": {
+      "description": "PIT-safe ticker overrides with evidence and temporal bounds",
+      "required_fields": ["indication", "effective_from", "evidence"],
+      "optional_fields": ["effective_until", "confidence", "source_type", "notes"]
+    },
+    "MRNA": {
+      "indication": "infectious_disease",
+      "effective_from": "2020-01-01",
+      "evidence": "NCT04283461",
+      "confidence": "high",
+      "source_type": "CT.gov",
+      "notes": "COVID-19 mRNA vaccine platform"
+    },
+    "BNTX": {
+      "indication": "infectious_disease",
+      "effective_from": "2020-01-01",
+      "evidence": "NCT04368728",
+      "confidence": "high",
+      "source_type": "CT.gov"
+    },
+    "VRTX": {
+      "indication": "rare_disease",
+      "effective_from": "2019-01-01",
+      "evidence": "NCT03525444",
+      "confidence": "high",
+      "source_type": "CT.gov",
+      "notes": "Cystic fibrosis focus"
+    },
+    "CRSP": {
+      "indication": "rare_disease",
+      "effective_from": "2019-01-01",
+      "evidence": "NCT03655678",
+      "confidence": "high",
+      "source_type": "CT.gov",
+      "notes": "Gene editing for sickle cell/beta thalassemia"
+    },
+    "BIIB": {
+      "indication": "cns",
+      "effective_from": "2015-01-01",
+      "evidence": "NCT02477800",
+      "confidence": "high",
+      "source_type": "CT.gov",
+      "notes": "Alzheimer's and MS focus"
+    },
+    "ARGX": {
+      "indication": "autoimmune",
+      "effective_from": "2017-01-01",
+      "evidence": "NCT03669588",
+      "confidence": "high",
+      "source_type": "CT.gov",
+      "notes": "Myasthenia gravis focus"
+    },
+    "URGN": {
+      "indication": "urology",
+      "effective_from": "2018-01-01",
+      "evidence": "NCT03719365",
+      "confidence": "high",
+      "source_type": "CT.gov"
+    },
+    "CYTK": {
+      "indication": "cardiovascular",
+      "effective_from": "2020-01-01",
+      "evidence": "NCT04187313",
+      "confidence": "high",
+      "source_type": "CT.gov",
+      "notes": "Heart failure focus"
+    }
+  },
   "notes": {
-    "matching_logic": "First check ticker_overrides, then pattern match conditions against condition_patterns",
+    "matching_logic": "Precedence: nct_overrides > ticker_overrides_v3 > ticker_overrides > condition_patterns > category_fallback",
+    "pit_safety": "ticker_overrides_v3 entries MUST have effective_from date and evidence (NCT ID or verifiable source)",
     "default_indication": "other",
     "confidence_tiers": {
+      "ticker_override_v3": 0.95,
       "ticker_override": 0.85,
       "pattern_match_multi": 0.80,
       "pattern_match_single": 0.65,
@@ -302,21 +392,7 @@
       "gi_hepatology",
       "urology",
       "other"
-    ]
-  },
-  "future_schema": {
-    "_description": "Planned enhancement: per-ticker confidence and source tracking",
-    "example_format": {
-      "TICKER": {
-        "indication": "oncology",
-        "phase": 2,
-        "confidence": "high",
-        "source": "10-K",
-        "date_added": "2026-01-18"
-      }
-    },
-    "confidence_levels": ["high", "medium", "low"],
-    "valid_sources": ["CT.gov", "10-K", "investor_deck", "press_release", "manual_review"],
-    "implementation_status": "planned_v3"
+    ],
+    "category_alias_note": "cns -> neurology, autoimmune -> immunology, gi_hepatology -> gastroenterology for PoS engine compatibility"
   }
 }
