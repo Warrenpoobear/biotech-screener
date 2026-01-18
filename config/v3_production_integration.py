@@ -11,16 +11,25 @@ This configuration defines:
 2. Logging requirements
 3. Fallback thresholds
 4. Sanity override mechanism
+5. Intelligent governance layer configuration (NEW)
+
+The Intelligent Governance Layer provides:
+- Sharpe-optimized weight learning
+- Non-linear interaction effects with business logic
+- Ensemble ranking (multiple perspectives)
+- Regime-adaptive weight orchestration
+- Smartness control knob for governance/intelligence tradeoff
 
 Author: Wake Robin Capital Management
-Version: 1.0.0
+Version: 1.1.0
 Created: 2026-01-18
+Updated: 2026-01-18 - Added intelligent governance integration
 """
 from __future__ import annotations
 
 from dataclasses import dataclass, field
 from decimal import Decimal
-from typing import Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional, Set
 from enum import Enum
 
 
@@ -82,6 +91,30 @@ class FeatureFlags:
 
     # Cap for interaction term impact (even when enabled)
     INTERACTION_TERMS_MAX_ADJUSTMENT: Decimal = Decimal("3.0")  # Max ±3 points
+
+    # =========================================================================
+    # TIER 4: INTELLIGENT GOVERNANCE (NEW - Advanced features with explicit control)
+    # =========================================================================
+
+    # Master toggle for intelligent governance layer
+    INTELLIGENT_GOVERNANCE_ENABLED: bool = True  # ON - master switch
+
+    # Sharpe-ratio weight optimization (learns from historical returns)
+    # Requires: historical_scores + forward_returns data
+    SHARPE_WEIGHT_OPTIMIZATION: bool = False  # OFF - needs sufficient historical data
+
+    # Non-linear interaction effects (business logic synergies/conflicts)
+    # More sophisticated than INTERACTION_TERMS above - uses smooth ramps, not thresholds
+    BUSINESS_LOGIC_INTERACTIONS: bool = True  # ON - proven stable
+
+    # Ensemble ranking (multiple ranking perspectives: composite, momentum, value)
+    ENSEMBLE_RANKING: bool = False            # OFF - experimental
+
+    # Regime-adaptive weight orchestration (combines base + Sharpe + regime multipliers)
+    REGIME_WEIGHT_ORCHESTRATION: bool = True  # ON - proven stable
+
+    # Smartness knob (0.0 conservative to 1.0 aggressive)
+    SMARTNESS_LEVEL: Decimal = Decimal("0.5")  # Balanced for production
 
 
 # =============================================================================
@@ -205,6 +238,269 @@ class FallbackConfig:
     FEATURES_DISABLED_ON_PIT_FAILURE: List[str] = [
         "ADAPTIVE_WEIGHT_LEARNING",
         "SMART_MONEY_POSITION_CHANGES",  # Relies on historical 13F comparison
+    ]
+
+
+# =============================================================================
+# INTELLIGENT GOVERNANCE CONFIGURATION (NEW)
+# =============================================================================
+
+class IntelligentGovernanceConfig:
+    """
+    Configuration for the Intelligent Governance Layer.
+
+    The governance layer sits on top of the deterministic feature/data layers,
+    enabling adaptive optimization while maintaining full auditability and
+    IC-defensibility.
+
+    Architecture:
+        INTELLIGENCE LAYER (Governed by this config)
+        - Sharpe-optimized weight learning
+        - Non-linear interaction effects
+        - Ensemble ranking
+        - Regime-adaptive weights
+
+        FEATURE LAYER (Existing modules - unchanged)
+        - Institutional signals (13F)
+        - Financial health (SEC)
+        - Clinical catalysts (CT.gov)
+        - Momentum (prices)
+
+        DATA LAYER (Deterministic - unchanged)
+        - Raw filings, trials, prices
+        - SHA256 integrity checks
+        - Point-in-time discipline
+    """
+
+    # =========================================================================
+    # MASTER CONTROL: SMARTNESS KNOB
+    # =========================================================================
+    # Control knob from 0 (conservative/governed) to 1 (aggressive/smart)
+    # - 0.0: Max shrinkage, min interactions, strict missing data handling
+    # - 0.5: Balanced defaults (RECOMMENDED FOR PRODUCTION)
+    # - 1.0: Min shrinkage, max interactions, looser caps
+
+    SMARTNESS_DEFAULT: Decimal = Decimal("0.5")  # Balanced for production
+    SMARTNESS_MIN: Decimal = Decimal("0.0")
+    SMARTNESS_MAX: Decimal = Decimal("1.0")
+
+    # =========================================================================
+    # FEATURE TOGGLES
+    # =========================================================================
+
+    # Sharpe-ratio weight optimization (learns from historical returns)
+    ENABLE_SHARPE_OPTIMIZATION: bool = False  # OFF by default - needs historical data
+
+    # Non-linear interaction effects (business logic bonuses/penalties)
+    ENABLE_INTERACTION_EFFECTS: bool = True  # ON by default
+
+    # Ensemble ranking (multiple ranking perspectives)
+    ENABLE_ENSEMBLE_RANKING: bool = False  # OFF by default - experimental
+
+    # Regime-adaptive weights (Bull/Bear/Volatility adjustments)
+    ENABLE_REGIME_ADAPTATION: bool = True  # ON by default
+
+    # =========================================================================
+    # SHARPE OPTIMIZATION PARAMETERS
+    # =========================================================================
+
+    # Minimum periods required for Sharpe optimization
+    SHARPE_MIN_PERIODS: int = 12  # ~1 year of monthly data
+
+    # Shrinkage toward base weights (higher = more conservative)
+    SHARPE_SHRINKAGE_LAMBDA: Decimal = Decimal("0.70")
+
+    # Smoothing toward previous weights (higher = more stable)
+    SHARPE_SMOOTHING_GAMMA: Decimal = Decimal("0.80")
+
+    # PIT embargo for forward returns (months)
+    SHARPE_EMBARGO_MONTHS: int = 1
+
+    # Weight bounds
+    SHARPE_MIN_WEIGHT: Decimal = Decimal("0.02")  # No component < 2%
+    SHARPE_MAX_WEIGHT: Decimal = Decimal("0.60")  # No component > 60%
+
+    # =========================================================================
+    # INTERACTION EFFECTS PARAMETERS
+    # =========================================================================
+
+    # Maximum total adjustment from interaction effects
+    INTERACTION_MAX_ADJUSTMENT: Decimal = Decimal("3.0")  # ±3 points
+
+    # Individual effect caps
+    INTERACTION_SYNERGY_CAP: Decimal = Decimal("2.0")
+    INTERACTION_CONFLICT_CAP: Decimal = Decimal("2.0")
+
+    # =========================================================================
+    # ENSEMBLE RANKING PARAMETERS
+    # =========================================================================
+
+    # Weights for ensemble ranking perspectives
+    ENSEMBLE_COMPOSITE_WEIGHT: Decimal = Decimal("0.50")  # Standard weighted
+    ENSEMBLE_MOMENTUM_WEIGHT: Decimal = Decimal("0.25")   # Trend-following
+    ENSEMBLE_VALUE_WEIGHT: Decimal = Decimal("0.25")      # Value/catalyst
+
+    # =========================================================================
+    # REGIME ADAPTATION PARAMETERS
+    # =========================================================================
+
+    # Maximum weight change per regime
+    REGIME_MAX_WEIGHT_DELTA: Decimal = Decimal("0.15")
+
+    # Regime multipliers (applied after base weights)
+    REGIME_MULTIPLIERS: Dict[str, Dict[str, Decimal]] = {
+        "BULL": {
+            "clinical": Decimal("1.0"),
+            "financial": Decimal("0.85"),
+            "catalyst": Decimal("1.20"),
+            "momentum": Decimal("1.25"),
+            "pos": Decimal("1.0"),
+            "valuation": Decimal("0.80"),
+        },
+        "BEAR": {
+            "clinical": Decimal("1.0"),
+            "financial": Decimal("1.30"),
+            "catalyst": Decimal("0.80"),
+            "momentum": Decimal("0.60"),
+            "pos": Decimal("1.10"),
+            "valuation": Decimal("1.15"),
+        },
+        "VOLATILITY_SPIKE": {
+            "clinical": Decimal("0.90"),
+            "financial": Decimal("1.40"),
+            "catalyst": Decimal("0.70"),
+            "momentum": Decimal("0.50"),
+            "pos": Decimal("1.0"),
+            "valuation": Decimal("1.0"),
+        },
+        "NEUTRAL": {
+            "clinical": Decimal("1.0"),
+            "financial": Decimal("1.0"),
+            "catalyst": Decimal("1.0"),
+            "momentum": Decimal("1.0"),
+            "pos": Decimal("1.0"),
+            "valuation": Decimal("1.0"),
+        },
+    }
+
+
+class IntelligentGovernanceLogging:
+    """
+    Logging requirements for intelligent governance features.
+    """
+
+    # Fields to log when governance features are active
+    GOVERNANCE_OUTPUT_FIELDS: Set[str] = {
+        "governance_flags",
+        "effective_weights",
+        "smartness_level",
+        "governance_audit_hash",
+    }
+
+    # Sharpe optimization logging
+    SHARPE_LOGGING_FIELDS: Set[str] = {
+        "sharpe_optimization.method",
+        "sharpe_optimization.historical_sharpe",
+        "sharpe_optimization.training_periods",
+        "sharpe_optimization.confidence",
+        "sharpe_optimization.l1_change_from_base",
+        "sharpe_optimization.shrinkage_applied",
+        "sharpe_optimization.weights_clamped",
+    }
+
+    # Interaction effects logging
+    INTERACTION_LOGGING_FIELDS: Set[str] = {
+        "interaction_effects.total_adjustment",
+        "interaction_effects.net_synergy",
+        "interaction_effects.net_conflict",
+        "interaction_effects.triggered_effects",
+        "interaction_effects.flags",
+    }
+
+    # Ensemble ranking logging
+    ENSEMBLE_LOGGING_FIELDS: Set[str] = {
+        "ensemble_rank.composite_rank",
+        "ensemble_rank.momentum_rank",
+        "ensemble_rank.value_rank",
+        "ensemble_rank.final_rank",
+        "ensemble_rank.rank_agreement",
+        "ensemble_rank.max_divergence",
+    }
+
+    # Regime adaptation logging
+    REGIME_LOGGING_FIELDS: Set[str] = {
+        "regime_adaptation.regime",
+        "regime_adaptation.multipliers_applied",
+        "regime_adaptation.weight_delta",
+    }
+
+    # Alert thresholds
+    GOVERNANCE_ALERT_THRESHOLDS: Dict[str, Decimal] = {
+        # Alert if interaction adjustment exceeds this
+        "interaction_max_alert": Decimal("2.5"),
+
+        # Alert if Sharpe optimization confidence below this
+        "sharpe_min_confidence_alert": Decimal("0.30"),
+
+        # Alert if ensemble rank divergence exceeds this
+        "ensemble_max_divergence_alert": 15,
+
+        # Alert if regime weight delta exceeds this
+        "regime_delta_alert": Decimal("0.12"),
+    }
+
+
+class IntelligentGovernanceFallbacks:
+    """
+    Fallback configurations for intelligent governance features.
+    """
+
+    # =========================================================================
+    # SHARPE OPTIMIZATION FALLBACKS
+    # =========================================================================
+
+    # If training periods < N, disable Sharpe optimization
+    SHARPE_MIN_TRAINING_PERIODS: int = 6
+
+    # If Sharpe confidence < N, fall back to base weights
+    SHARPE_MIN_CONFIDENCE: Decimal = Decimal("0.40")
+
+    # If historical Sharpe < N, don't trust optimization
+    SHARPE_MIN_RATIO: Decimal = Decimal("0.10")
+
+    # If weight L1 change > N, reject optimization
+    SHARPE_MAX_L1_CHANGE: Decimal = Decimal("0.25")
+
+    # =========================================================================
+    # INTERACTION EFFECTS FALLBACKS
+    # =========================================================================
+
+    # If missing metadata fields > N%, disable interactions
+    INTERACTION_MIN_METADATA_COVERAGE: Decimal = Decimal("0.50")
+
+    # If interaction confidence < N, reduce effect magnitude
+    INTERACTION_MIN_CONFIDENCE: Decimal = Decimal("0.40")
+
+    # =========================================================================
+    # ENSEMBLE FALLBACKS
+    # =========================================================================
+
+    # If method ranks diverge > N, log warning
+    ENSEMBLE_MAX_DIVERGENCE_WARNING: int = 20
+
+    # If agreement < N, flag for review
+    ENSEMBLE_MIN_AGREEMENT: Decimal = Decimal("0.30")
+
+    # =========================================================================
+    # REGIME FALLBACKS
+    # =========================================================================
+
+    # If regime signal unclear, fall back to NEUTRAL
+    REGIME_DEFAULT_ON_UNCLEAR: str = "NEUTRAL"
+
+    # Features disabled on regime detection failure
+    FEATURES_DISABLED_ON_REGIME_FAILURE: List[str] = [
+        "REGIME_ADAPTATION",
     ]
 
 
@@ -494,6 +790,55 @@ V3_PRODUCTION_DEFAULTS = {
     "embargo_months": 1,
     "shrinkage_lambda": "0.70",
     "smooth_gamma": "0.80",
+
+    # =========================================================================
+    # INTELLIGENT GOVERNANCE (NEW)
+    # =========================================================================
+
+    "intelligent_governance": {
+        # Master control knob: 0.0 (conservative) to 1.0 (aggressive)
+        # Production default: 0.5 (balanced)
+        "smartness": "0.5",
+
+        # Feature toggles
+        "enable_sharpe_optimization": False,  # OFF - needs historical data
+        "enable_interaction_effects": True,   # ON - proven stable
+        "enable_ensemble_ranking": False,     # OFF - experimental
+        "enable_regime_adaptation": True,     # ON - proven stable
+
+        # Sharpe optimization (when enabled)
+        "sharpe": {
+            "min_periods": 12,
+            "shrinkage_lambda": "0.70",
+            "smoothing_gamma": "0.80",
+            "embargo_months": 1,
+            "min_weight": "0.02",
+            "max_weight": "0.60",
+            "min_confidence": "0.40",
+        },
+
+        # Interaction effects
+        "interactions": {
+            "max_adjustment": "3.0",
+            "synergy_cap": "2.0",
+            "conflict_cap": "2.0",
+            "min_confidence": "0.40",
+        },
+
+        # Ensemble ranking (when enabled)
+        "ensemble": {
+            "composite_weight": "0.50",
+            "momentum_weight": "0.25",
+            "value_weight": "0.25",
+            "min_agreement": "0.30",
+        },
+
+        # Regime adaptation
+        "regime": {
+            "max_weight_delta": "0.15",
+            "default_on_unclear": "NEUTRAL",
+        },
+    },
 }
 
 
@@ -527,11 +872,38 @@ REQUIRED_REGRESSION_TESTS = [
         "description": "Zero scores must not cause hash instability",
         "assertion": "hash(score=0) == hash(score=0) across runs",
     },
+    # Intelligent Governance regression tests (NEW)
+    {
+        "name": "test_governance_missing_data_renormalization",
+        "description": "Missing scores should be excluded and weights renormalized, not imputed with 50",
+        "assertion": "Missing pos/valuation scores result in governance_flags containing 'excluded_*_missing'",
+    },
+    {
+        "name": "test_interaction_effects_bounded",
+        "description": "Interaction effects total adjustment must be capped",
+        "assertion": "abs(interaction_result.total_adjustment) <= INTERACTION_MAX_ADJUSTMENT",
+    },
+    {
+        "name": "test_smartness_knob_clamped",
+        "description": "Smartness level must be clamped to [0, 1]",
+        "assertion": "smartness == clamp(input_smartness, 0, 1)",
+    },
+    {
+        "name": "test_sharpe_pit_safety",
+        "description": "Sharpe optimization must respect embargo period",
+        "assertion": "No forward returns used from dates < as_of_date - embargo_months",
+    },
+    {
+        "name": "test_governance_audit_hash_determinism",
+        "description": "Governance audit hash must be deterministic",
+        "assertion": "audit_hash(run1) == audit_hash(run2) for same inputs",
+    },
 ]
 
 
 # Export all for clean imports
 __all__ = [
+    # Existing exports
     "FeatureFlags",
     "LoggingConfig",
     "FallbackConfig",
@@ -540,4 +912,66 @@ __all__ = [
     "check_sanity_override",
     "V3_PRODUCTION_DEFAULTS",
     "REQUIRED_REGRESSION_TESTS",
+
+    # Intelligent Governance exports (NEW)
+    "IntelligentGovernanceConfig",
+    "IntelligentGovernanceLogging",
+    "IntelligentGovernanceFallbacks",
+    "create_intelligent_governance_layer",
 ]
+
+
+# =============================================================================
+# FACTORY FUNCTION FOR INTELLIGENT GOVERNANCE LAYER
+# =============================================================================
+
+def create_intelligent_governance_layer(
+    config: Optional[Dict[str, Any]] = None,
+    smartness: Optional[Decimal] = None,
+):
+    """
+    Factory function to create an IntelligentGovernanceLayer with production config.
+
+    This provides a convenient way to instantiate the governance layer with
+    the production defaults while allowing overrides.
+
+    Args:
+        config: Optional config dict (defaults to V3_PRODUCTION_DEFAULTS["intelligent_governance"])
+        smartness: Optional override for smartness level (0.0 to 1.0)
+
+    Returns:
+        Configured IntelligentGovernanceLayer instance
+
+    Example:
+        # Use production defaults
+        layer = create_intelligent_governance_layer()
+
+        # Override smartness for more conservative behavior
+        layer = create_intelligent_governance_layer(smartness=Decimal("0.3"))
+
+        # Full custom config
+        layer = create_intelligent_governance_layer(config={
+            "smartness": "0.7",
+            "enable_sharpe_optimization": True,
+            ...
+        })
+    """
+    # Import here to avoid circular imports
+    from src.modules.intelligent_governance import IntelligentGovernanceLayer
+
+    # Get default config
+    gov_config = config or V3_PRODUCTION_DEFAULTS.get("intelligent_governance", {})
+
+    # Determine smartness level
+    if smartness is not None:
+        smart_level = smartness
+    else:
+        smart_level = Decimal(str(gov_config.get("smartness", "0.5")))
+
+    # Create layer with configured settings
+    return IntelligentGovernanceLayer(
+        enable_sharpe_optimization=gov_config.get("enable_sharpe_optimization", False),
+        enable_interaction_effects=gov_config.get("enable_interaction_effects", True),
+        enable_regime_adaptation=gov_config.get("enable_regime_adaptation", True),
+        smartness=smart_level,
+    )
