@@ -36,8 +36,12 @@ from src.modules.intelligent_governance import (
     InteractionType,
     RankingMethod,
 
+    # Constants
+    V3_PRODUCTION_WEIGHTS,
+
     # Helpers
     _to_decimal,
+    _coalesce,
     _quantize_weight,
     _quantize_score,
     _clamp,
@@ -205,6 +209,21 @@ class TestHelperFunctions:
     def test_to_decimal_invalid_returns_default(self):
         """Test _to_decimal returns default for invalid input."""
         result = _to_decimal("not_a_number", Decimal("50"))
+        assert result == Decimal("50")
+
+    def test_coalesce_returns_first_non_none(self):
+        """Test _coalesce returns first non-None value."""
+        result = _coalesce(None, Decimal("42"), Decimal("100"))
+        assert result == Decimal("42")
+
+    def test_coalesce_preserves_zero(self):
+        """Test _coalesce doesn't treat 0 as falsy (critical bug fix)."""
+        result = _coalesce(Decimal("0"), Decimal("100"))
+        assert result == Decimal("0")  # NOT 100!
+
+    def test_coalesce_all_none_returns_default(self):
+        """Test _coalesce returns default when all values None."""
+        result = _coalesce(None, None, None, default=Decimal("50"))
         assert result == Decimal("50")
 
     def test_quantize_weight(self):
@@ -450,7 +469,7 @@ class TestInteractionEffectsEngine:
         assert result.total_adjustment > Decimal("0")
         assert "institutional_catalyst_synergy" in result.flags
 
-    def test_clinical_financial_conviction(self):
+    def test_clinical_runway_conviction(self):
         """Test clinical + strong runway synergy."""
         engine = InteractionEffectsEngine()
         result = engine.compute_effects(
@@ -465,7 +484,7 @@ class TestInteractionEffectsEngine:
             metadata={"runway_months": Decimal("30")},  # Long runway
         )
 
-        assert any(e.name == "clinical_financial_conviction" for e in result.effects)
+        assert any(e.name == "clinical_runway_conviction" for e in result.effects)
         assert result.net_synergy > Decimal("0")
 
     def test_momentum_fundamental_conflict(self):
@@ -879,6 +898,36 @@ class TestIntelligentGovernanceLayer:
         # Disabled should use base weights
         assert result_disabled.effective_weights == base_weights
 
+    def test_smartness_knob_low(self, base_weights, sample_scores):
+        """Test conservative smartness setting (0.0)."""
+        layer = IntelligentGovernanceLayer(smartness=Decimal("0.0"))
+
+        # Check that smartness params are conservative
+        assert layer._smartness_params["smartness"] == "0"
+        # Interaction cap should be lower
+        assert Decimal(layer._smartness_params["interaction_cap"]) == Decimal("2.0")
+        # Shrinkage should be higher (more governed)
+        assert Decimal(layer._smartness_params["shrinkage"]) == Decimal("0.90")
+
+    def test_smartness_knob_high(self, base_weights, sample_scores):
+        """Test aggressive smartness setting (1.0)."""
+        layer = IntelligentGovernanceLayer(smartness=Decimal("1.0"))
+
+        # Check that smartness params are aggressive
+        assert layer._smartness_params["smartness"] == "1"
+        # Interaction cap should be higher
+        assert Decimal(layer._smartness_params["interaction_cap"]) == Decimal("4.0")
+        # Shrinkage should be lower (less governed)
+        assert Decimal(layer._smartness_params["shrinkage"]) == Decimal("0.50")
+
+    def test_smartness_knob_clamped(self):
+        """Test smartness is clamped to [0, 1]."""
+        layer_under = IntelligentGovernanceLayer(smartness=Decimal("-0.5"))
+        layer_over = IntelligentGovernanceLayer(smartness=Decimal("1.5"))
+
+        assert layer_under.smartness == Decimal("0")
+        assert layer_over.smartness == Decimal("1")
+
 
 # =============================================================================
 # INTEGRATION TESTS
@@ -1084,6 +1133,54 @@ class TestEdgeCases:
 
         # Should handle gracefully (normalize will provide equal weights)
         assert result.base_score >= Decimal("0")
+
+    def test_missing_data_drops_and_renormalizes(self):
+        """Test that missing scores are excluded and weights renormalized."""
+        layer = IntelligentGovernanceLayer(
+            enable_interaction_effects=False,
+            enable_regime_adaptation=False,
+        )
+
+        # Use V3 production weights
+        base_weights = V3_PRODUCTION_WEIGHTS.copy()
+
+        # Provide only 4 of 6 components (missing pos and valuation)
+        scores = {
+            "clinical": Decimal("80"),
+            "financial": Decimal("70"),
+            "catalyst": Decimal("60"),
+            "momentum": Decimal("50"),
+            # pos: missing
+            # valuation: missing
+        }
+
+        result = layer.compute(
+            ticker="ACME",
+            scores=scores,
+            metadata={},
+            base_weights=base_weights,
+        )
+
+        # Should have governance flags for missing data
+        assert any("missing_2_components" in f for f in result.governance_flags)
+        assert any("excluded_pos_missing" in f for f in result.governance_flags)
+        assert any("excluded_valuation_missing" in f for f in result.governance_flags)
+
+        # Score should be computed from renormalized weights of available components
+        # Available: clinical(28%) + financial(25%) + catalyst(17%) + momentum(10%) = 80%
+        # After renormalization: clinical=35%, financial=31.25%, catalyst=21.25%, momentum=12.5%
+        assert result.base_score >= Decimal("0")
+        assert result.base_score <= Decimal("100")
+
+    def test_v3_production_weights_constant(self):
+        """Test V3 production weights are correctly defined."""
+        assert sum(V3_PRODUCTION_WEIGHTS.values()) == Decimal("1.00")
+        assert V3_PRODUCTION_WEIGHTS["clinical"] == Decimal("0.28")
+        assert V3_PRODUCTION_WEIGHTS["financial"] == Decimal("0.25")
+        assert V3_PRODUCTION_WEIGHTS["catalyst"] == Decimal("0.17")
+        assert V3_PRODUCTION_WEIGHTS["pos"] == Decimal("0.15")
+        assert V3_PRODUCTION_WEIGHTS["momentum"] == Decimal("0.10")
+        assert V3_PRODUCTION_WEIGHTS["valuation"] == Decimal("0.05")
 
 
 if __name__ == "__main__":

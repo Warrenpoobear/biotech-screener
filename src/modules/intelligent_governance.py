@@ -77,6 +77,16 @@ ENSEMBLE_VALUE_WEIGHT = Decimal("0.25")
 # Regime thresholds for weight adaptation
 REGIME_MAX_WEIGHT_DELTA = Decimal("0.15")  # Max weight change per regime
 
+# V3 Production Base Weights (from config/v3_production_integration.py)
+V3_PRODUCTION_WEIGHTS: Dict[str, Decimal] = {
+    "clinical": Decimal("0.28"),
+    "financial": Decimal("0.25"),
+    "catalyst": Decimal("0.17"),
+    "pos": Decimal("0.15"),
+    "momentum": Decimal("0.10"),
+    "valuation": Decimal("0.05"),
+}
+
 
 # =============================================================================
 # ENUMS
@@ -224,6 +234,14 @@ def _to_decimal(value: Any, default: Optional[Decimal] = None) -> Optional[Decim
         return default
     except (InvalidOperation, ValueError):
         return default
+
+
+def _coalesce(*vals: Any, default: Any = None) -> Any:
+    """Return first non-None value, avoiding truthiness bugs with 0/Decimal('0')."""
+    for v in vals:
+        if v is not None:
+            return v
+    return default
 
 
 def _quantize_weight(value: Decimal) -> Decimal:
@@ -503,12 +521,14 @@ class SharpeWeightOptimizer:
                 if ret_key not in forward_returns:
                     continue
 
-                # Extract component scores
+                # Extract component scores (use _coalesce to avoid 0-as-falsy bug)
                 comp_scores = {}
                 for comp in components:
-                    score = _to_decimal(
-                        rec.get(f"{comp}_normalized") or rec.get(comp) or rec.get(f"{comp}_score")
-                    )
+                    score = _to_decimal(_coalesce(
+                        rec.get(f"{comp}_normalized"),
+                        rec.get(comp),
+                        rec.get(f"{comp}_score"),
+                    ))
                     if score is not None:
                         comp_scores[comp] = score
 
@@ -854,7 +874,7 @@ class InteractionEffectsEngine:
         momentum = scores.get("momentum", Decimal("50"))
         institutional = scores.get("institutional", scores.get("smart_money", Decimal("50")))
 
-        runway_months = _to_decimal(metadata.get("runway_months"), Decimal("24"))
+        runway_months = _to_decimal(metadata.get("runway_months"))  # No default - missing data != 24 months
         days_to_catalyst = metadata.get("days_to_catalyst")
         short_interest_pct = _to_decimal(metadata.get("short_interest_pct"), Decimal("0"))
 
@@ -889,7 +909,7 @@ class InteractionEffectsEngine:
         # =====================================================================
         # SYNERGY 2: Clinical + Runway = Quality Conviction
         # =====================================================================
-        if clinical > Decimal("65") and runway_months > Decimal("18"):
+        if runway_months is not None and clinical > Decimal("65") and runway_months > Decimal("18"):
             clinical_factor = self._smooth_ramp(
                 clinical, Decimal("60"), Decimal("80")
             )
@@ -899,9 +919,9 @@ class InteractionEffectsEngine:
             adjustment = clinical_factor * runway_factor * Decimal("1.2")
 
             effects.append(InteractionEffect(
-                name="clinical_financial_conviction",
+                name="clinical_runway_conviction",
                 interaction_type=InteractionType.SYNERGY,
-                factors_involved=["clinical", "financial"],
+                factors_involved=["clinical", "runway_months"],
                 adjustment=_quantize_score(adjustment),
                 triggered=adjustment > Decimal("0.1"),
                 trigger_conditions={
@@ -1180,10 +1200,11 @@ class EnsembleRanker:
             ranks = [c_rank, m_rank, v_rank]
             max_div = max(ranks) - min(ranks)
 
-            # Agreement: 1 - (std(ranks) / n)
-            mean_rank = sum(ranks) / 3
-            variance = sum((r - mean_rank) ** 2 for r in ranks) / 3
-            std_rank = Decimal(str(variance ** 0.5))
+            # Agreement: 1 - (std(ranks) / n), using pure Decimal for determinism
+            dec_ranks = [Decimal(r) for r in ranks]
+            mean_rank = sum(dec_ranks) / Decimal("3")
+            variance = sum((r - mean_rank) ** 2 for r in dec_ranks) / Decimal("3")
+            std_rank = variance.sqrt() if variance > Decimal("0") else Decimal("0")
             agreement = Decimal("1") - (std_rank / Decimal(len(tickers)))
             agreement = _clamp(agreement, Decimal("0"), Decimal("1"))
 
@@ -1448,15 +1469,51 @@ class IntelligentGovernanceLayer:
         enable_sharpe_optimization: bool = True,
         enable_interaction_effects: bool = True,
         enable_regime_adaptation: bool = True,
+        smartness: Decimal = Decimal("0.5"),
     ):
+        """
+        Initialize the intelligent governance layer.
+
+        Args:
+            enable_sharpe_optimization: Enable Sharpe-ratio weight optimization
+            enable_interaction_effects: Enable non-linear interaction effects
+            enable_regime_adaptation: Enable regime-based weight adaptation
+            smartness: Control knob from 0 (conservative/governed) to 1 (aggressive/smart)
+                      - 0.0: Max shrinkage, min interactions, strict missing data handling
+                      - 0.5: Balanced defaults (recommended for production)
+                      - 1.0: Min shrinkage, max interactions, looser caps
+        """
         self.enable_sharpe_optimization = enable_sharpe_optimization
         self.enable_interaction_effects = enable_interaction_effects
         self.enable_regime_adaptation = enable_regime_adaptation
+        self.smartness = _clamp(smartness, Decimal("0"), Decimal("1"))
 
-        self.sharpe_optimizer = SharpeWeightOptimizer()
-        self.interaction_engine = InteractionEffectsEngine()
-        self.regime_orchestrator = RegimeAdaptiveOrchestrator()
+        # Compute smartness-dependent parameters
+        # Interaction cap: 2.0 at smartness=0 → 4.0 at smartness=1
+        interaction_cap = Decimal("2.0") + self.smartness * Decimal("2.0")
+
+        # Sharpe blend max: 25% at smartness=0 → 60% at smartness=1
+        sharpe_blend_factor = Decimal("0.25") + self.smartness * Decimal("0.35")
+
+        # Regime delta cap: 10% at smartness=0 → 20% at smartness=1
+        regime_delta_cap = Decimal("0.10") + self.smartness * Decimal("0.10")
+
+        # Shrinkage: 90% at smartness=0 → 50% at smartness=1 (lower = less governed)
+        shrinkage = Decimal("0.90") - self.smartness * Decimal("0.40")
+
+        self.sharpe_optimizer = SharpeWeightOptimizer(shrinkage_lambda=shrinkage)
+        self.interaction_engine = InteractionEffectsEngine(max_adjustment=interaction_cap)
+        self.regime_orchestrator = RegimeAdaptiveOrchestrator(max_weight_delta=regime_delta_cap)
         self.ensemble_ranker = EnsembleRanker()
+
+        # Store derived parameters for governance logging
+        self._smartness_params = {
+            "smartness": str(self.smartness),
+            "interaction_cap": str(interaction_cap),
+            "sharpe_blend_factor": str(sharpe_blend_factor),
+            "regime_delta_cap": str(regime_delta_cap),
+            "shrinkage": str(shrinkage),
+        }
 
     def compute(
         self,
@@ -1518,10 +1575,36 @@ class IntelligentGovernanceLayer:
         else:
             effective_weights = base_weights.copy()
 
-        # Step 3: Compute base score
-        base_score = Decimal("0")
+        # Step 3: Handle missing scores - drop and renormalize (don't impute 50)
+        available_weights: Dict[str, Decimal] = {}
+        missing_components: List[str] = []
+
         for comp, weight in effective_weights.items():
-            comp_score = scores.get(comp, Decimal("50"))
+            score_val = scores.get(comp)
+            if score_val is not None:
+                available_weights[comp] = weight
+            else:
+                missing_components.append(comp)
+
+        # Log missing data governance flags
+        if missing_components:
+            coverage_pct = int(100 * len(available_weights) / len(effective_weights))
+            governance_flags.append(f"missing_{len(missing_components)}_components_coverage_{coverage_pct}pct")
+            for missing in missing_components:
+                governance_flags.append(f"excluded_{missing}_missing")
+
+        # Renormalize weights to available components only
+        if available_weights:
+            scoring_weights = _normalize_weights(available_weights)
+        else:
+            # Fallback: if ALL components missing, use effective weights with 50 imputation
+            scoring_weights = effective_weights
+            governance_flags.append("all_components_missing_imputed_50")
+
+        # Compute base score using only available data
+        base_score = Decimal("0")
+        for comp, weight in scoring_weights.items():
+            comp_score = scores.get(comp, Decimal("50"))  # 50 only for edge case above
             base_score += comp_score * weight
         base_score = _quantize_score(base_score)
 
