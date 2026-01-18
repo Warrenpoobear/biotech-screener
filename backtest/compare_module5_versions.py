@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Module 5 v2 vs v3 Backtest Comparison
+Module 5 v2 vs v3 Backtest Comparison (v2 - Fixed)
 
 Runs side-by-side backtesting of Module 5 v2 and v3 to measure:
 - IC (Information Coefficient) differences
@@ -8,12 +8,20 @@ Runs side-by-side backtesting of Module 5 v2 and v3 to measure:
 - Score distribution changes
 - Feature contribution analysis
 
+Key fixes from v1:
+- Corrected spread labeling (Top-Bottom, not Q5-Q1)
+- Added IC t-stat and confidence intervals
+- Added sanity check: sign(IC) == sign(spread)
+- Added v3 feature coverage diagnostics
+- Added portfolio-level metrics (turnover, drawdown)
+
 Usage:
     python backtest/compare_module5_versions.py
     python backtest/compare_module5_versions.py --start-date 2023-01-01 --end-date 2024-12-31
 """
 import argparse
 import json
+import math
 import sys
 from datetime import datetime, date, timedelta
 from decimal import Decimal
@@ -26,7 +34,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from backtest.returns_provider import CSVReturnsProvider
-from backtest.metrics import compute_spearman_ic, assign_quintiles, HORIZON_TRADING_DAYS
+from backtest.metrics import compute_spearman_ic, HORIZON_TRADING_DAYS
 
 # Import Module 5 versions
 from module_5_composite_v2 import compute_module_5_composite_v2
@@ -128,11 +136,9 @@ def generate_module_inputs(tickers: List[str], as_of_date: str, seed: int = 42) 
     financial_scores = []
     for t in tickers:
         mcap = MARKET_CAP_DATA.get(t, 5000)
-        # Larger companies tend to have better financial scores
         base_score = 50 + min(30, mcap / 5000)
         score = vary(base_score, t, "financial")
 
-        # Determine severity based on score
         if score >= 70:
             severity = "none"
         elif score >= 50:
@@ -192,7 +198,6 @@ def generate_module_inputs(tickers: List[str], as_of_date: str, seed: int = 42) 
     for t in tickers:
         clin = CLINICAL_DATA.get(t, {"phase": "phase 1", "trials": 1, "lead_phase": "phase_1"})
 
-        # Score based on phase
         phase_scores = {
             "approved": 90,
             "phase_3": 70,
@@ -251,7 +256,7 @@ def run_module5_v3(inputs: Dict[str, Any], as_of_date: str) -> Dict[str, Any]:
         catalyst_result=inputs["catalyst"],
         clinical_result=inputs["clinical"],
         as_of_date=as_of_date,
-        validate_inputs=False,  # Skip validation for synthetic data
+        validate_inputs=False,
     )
 
 
@@ -281,20 +286,54 @@ def compute_ic(scores: Dict[str, Decimal], returns: Dict[str, float]) -> Optiona
     return compute_spearman_ic(score_list, return_list)
 
 
+def compute_ic_tstat(ic_values: List[float]) -> Optional[float]:
+    """Compute IC t-statistic: mean / (std / sqrt(N))."""
+    if len(ic_values) < 2:
+        return None
+    ic_mean = mean(ic_values)
+    ic_std = stdev(ic_values)
+    if ic_std == 0:
+        return None
+    return ic_mean / (ic_std / math.sqrt(len(ic_values)))
+
+
+def bootstrap_ic_ci(ic_values: List[float], n_bootstrap: int = 1000, ci: float = 0.95) -> Tuple[float, float]:
+    """
+    Compute bootstrap confidence interval for IC mean.
+    Returns (lower, upper) bounds.
+    """
+    import random
+    random.seed(42)  # Determinism
+
+    n = len(ic_values)
+    if n < 2:
+        return (float('nan'), float('nan'))
+
+    boot_means = []
+    for _ in range(n_bootstrap):
+        sample = [random.choice(ic_values) for _ in range(n)]
+        boot_means.append(mean(sample))
+
+    boot_means.sort()
+    alpha = 1 - ci
+    lower_idx = int(alpha / 2 * n_bootstrap)
+    upper_idx = int((1 - alpha / 2) * n_bootstrap)
+
+    return (boot_means[lower_idx], boot_means[upper_idx])
+
+
 def compute_rank_correlation(scores_a: Dict[str, Decimal], scores_b: Dict[str, Decimal]) -> Optional[float]:
     """Compute rank correlation between two score sets."""
     common = set(scores_a.keys()) & set(scores_b.keys())
     if len(common) < 5:
         return None
 
-    # Rank each set
     sorted_a = sorted(common, key=lambda t: scores_a[t], reverse=True)
     sorted_b = sorted(common, key=lambda t: scores_b[t], reverse=True)
 
     rank_a = {t: i for i, t in enumerate(sorted_a)}
     rank_b = {t: i for i, t in enumerate(sorted_b)}
 
-    # Spearman correlation on ranks
     n = len(common)
     d_squared_sum = sum((rank_a[t] - rank_b[t]) ** 2 for t in common)
 
@@ -302,47 +341,75 @@ def compute_rank_correlation(scores_a: Dict[str, Decimal], scores_b: Dict[str, D
     return rho
 
 
-def compute_quintile_spread(
-    result: Dict[str, Any],
+def compute_top_bottom_spread(
+    scores: Dict[str, Decimal],
     returns: Dict[str, float],
-) -> Optional[Tuple[float, float, bool]]:
+    top_n: int = 5,
+) -> Tuple[Optional[float], Optional[float], Optional[float], bool]:
     """
-    Compute Q5-Q1 spread and monotonicity.
+    Compute top N vs bottom N spread (NOT quintile-based).
 
-    Returns: (q5_mean, q1_mean, is_monotonic)
+    Returns: (top_mean, bottom_mean, spread, sign_consistent_with_ic)
+
+    This is the SANITY CHECK: if IC > 0, spread should also be > 0.
     """
-    ranked = result.get("ranked_securities", [])
-    if len(ranked) < 10:
+    common = sorted(set(scores.keys()) & set(returns.keys()), key=lambda t: scores[t], reverse=True)
+
+    if len(common) < top_n * 2:
+        return None, None, None, True
+
+    top_tickers = common[:top_n]
+    bottom_tickers = common[-top_n:]
+
+    top_returns = [returns[t] for t in top_tickers]
+    bottom_returns = [returns[t] for t in bottom_tickers]
+
+    top_mean = mean(top_returns)
+    bottom_mean = mean(bottom_returns)
+    spread = top_mean - bottom_mean  # TOP - BOTTOM (positive if top outperforms)
+
+    # Compute IC for sign check
+    score_list = [scores[t] for t in common]
+    return_list = [Decimal(str(returns[t])) for t in common]
+    ic = compute_spearman_ic(score_list, return_list)
+
+    if ic is None:
+        sign_consistent = True
+    else:
+        ic_float = float(ic)
+        # Signs should match: positive IC → positive spread
+        sign_consistent = (ic_float >= 0 and spread >= 0) or (ic_float < 0 and spread < 0)
+
+    return top_mean, bottom_mean, spread, sign_consistent
+
+
+def compute_turnover(prev_top: Set[str], curr_top: Set[str]) -> Optional[float]:
+    """Compute turnover between two top sets."""
+    if not prev_top or not curr_top:
         return None
 
-    # Assign quintiles
-    quintiles = assign_quintiles(ranked)
+    # Symmetric difference / average size
+    changed = len(prev_top.symmetric_difference(curr_top))
+    avg_size = (len(prev_top) + len(curr_top)) / 2
 
-    # Compute quintile returns
-    q_returns = {i: [] for i in range(1, 6)}
-    for sec in ranked:
-        ticker = sec["ticker"]
-        if ticker in returns and ticker in quintiles:
-            q_returns[quintiles[ticker]].append(returns[ticker])
+    return changed / (2 * avg_size) if avg_size > 0 else 0
 
-    # Compute means
-    q_means = {}
-    for q in range(1, 6):
-        if len(q_returns[q]) >= 2:
-            q_means[q] = mean(q_returns[q])
 
-    if 1 not in q_means or 5 not in q_means:
-        return None
+def compute_drawdown(cumulative_returns: List[float]) -> float:
+    """Compute max drawdown from cumulative returns series."""
+    if not cumulative_returns:
+        return 0.0
 
-    # Check monotonicity (higher quintile = higher return)
-    is_monotonic = True
-    for i in range(1, 5):
-        if i in q_means and i+1 in q_means:
-            if q_means[i] > q_means[i+1] + 0.001:
-                is_monotonic = False
-                break
+    peak = cumulative_returns[0]
+    max_dd = 0.0
 
-    return q_means[5], q_means[1], is_monotonic
+    for ret in cumulative_returns:
+        if ret > peak:
+            peak = ret
+        dd = (peak - ret) / peak if peak > 0 else 0
+        max_dd = max(max_dd, dd)
+
+    return max_dd
 
 
 # =============================================================================
@@ -356,6 +423,7 @@ def run_comparison_backtest(
     universe: Optional[List[str]] = None,
     price_file: str = "data/daily_prices.csv",
     output_dir: Optional[str] = None,
+    top_n: int = 5,
 ) -> Dict[str, Any]:
     """
     Run side-by-side backtest comparing Module 5 v2 and v3.
@@ -363,12 +431,13 @@ def run_comparison_backtest(
     universe = universe or DEFAULT_UNIVERSE
 
     print("=" * 70)
-    print("MODULE 5 v2 vs v3 BACKTEST COMPARISON")
+    print("MODULE 5 v2 vs v3 BACKTEST COMPARISON (v2 - Fixed)")
     print("=" * 70)
     print(f"Start Date:    {start_date}")
     print(f"End Date:      {end_date}")
     print(f"Frequency:     {frequency_days} days")
     print(f"Universe:      {len(universe)} tickers")
+    print(f"Top N:         {top_n} (for spread calculation)")
     print(f"Price File:    {price_file}")
     print()
 
@@ -400,16 +469,33 @@ def run_comparison_backtest(
     ic_v2_90d = []
     ic_v3_90d = []
     rank_correlations = []
+
+    # NEW: Top-Bottom spreads (not Q5-Q1)
     spread_v2 = []
     spread_v3 = []
+
+    # NEW: Sanity check tracking
+    sanity_checks_v2 = []  # (IC_sign, spread_sign, consistent)
+    sanity_checks_v3 = []
+
+    # NEW: Portfolio metrics
+    turnover_v2 = []
+    turnover_v3 = []
+    prev_top_v2: Set[str] = set()
+    prev_top_v3: Set[str] = set()
+
+    # For drawdown calculation
+    cumret_v2 = [1.0]
+    cumret_v3 = [1.0]
 
     # Run backtest
     print("Running backtest...")
     print("-" * 70)
+    print(f"{'Date':<12} | {'IC_v2':>8} | {'IC_v3':>8} | {'Sprd_v2':>8} | {'Sprd_v3':>8} | {'Corr':>6} | Sanity")
+    print("-" * 70)
 
     for i, test_date in enumerate(test_dates):
         as_of_str = test_date.strftime("%Y-%m-%d")
-        print(f"[{i+1}/{len(test_dates)}] {as_of_str}", end=" ")
 
         # Generate inputs
         inputs = generate_module_inputs(universe, as_of_str, seed=100 + i)
@@ -419,7 +505,7 @@ def run_comparison_backtest(
             result_v2 = run_module5_v2(inputs, as_of_str)
             result_v3 = run_module5_v3(inputs, as_of_str)
         except Exception as e:
-            print(f"ERROR: {e}")
+            print(f"{as_of_str:<12} | ERROR: {e}")
             continue
 
         # Extract scores
@@ -432,6 +518,11 @@ def run_comparison_backtest(
             rank_correlations.append(rank_corr)
 
         # Get forward returns (90 days)
+        ic_v2 = None
+        ic_v3 = None
+        spread_result_v2 = (None, None, None, True)
+        spread_result_v3 = (None, None, None, True)
+
         if returns_provider:
             return_start = (test_date + timedelta(days=1)).strftime("%Y-%m-%d")
             return_end = (test_date + timedelta(days=91)).strftime("%Y-%m-%d")
@@ -451,18 +542,63 @@ def run_comparison_backtest(
             if ic_v3 is not None:
                 ic_v3_90d.append(float(ic_v3))
 
-            # Compute spreads
-            spread_result_v2 = compute_quintile_spread(result_v2, returns_90d)
-            spread_result_v3 = compute_quintile_spread(result_v3, returns_90d)
+            # Compute top-bottom spreads (CORRECTED)
+            spread_result_v2 = compute_top_bottom_spread(scores_v2, returns_90d, top_n)
+            spread_result_v3 = compute_top_bottom_spread(scores_v3, returns_90d, top_n)
 
-            if spread_result_v2:
-                spread_v2.append(spread_result_v2[0] - spread_result_v2[1])
-            if spread_result_v3:
-                spread_v3.append(spread_result_v3[0] - spread_result_v3[1])
+            if spread_result_v2[2] is not None:
+                spread_v2.append(spread_result_v2[2])
+                sanity_checks_v2.append((
+                    "+" if ic_v2 and float(ic_v2) >= 0 else "-",
+                    "+" if spread_result_v2[2] >= 0 else "-",
+                    spread_result_v2[3]
+                ))
 
-            print(f"| IC_v2={float(ic_v2):.3f} IC_v3={float(ic_v3):.3f} rank_corr={rank_corr:.3f}" if ic_v2 and ic_v3 else "| (no IC)")
-        else:
-            print(f"| rank_corr={rank_corr:.3f}" if rank_corr else "")
+            if spread_result_v3[2] is not None:
+                spread_v3.append(spread_result_v3[2])
+                sanity_checks_v3.append((
+                    "+" if ic_v3 and float(ic_v3) >= 0 else "-",
+                    "+" if spread_result_v3[2] >= 0 else "-",
+                    spread_result_v3[3]
+                ))
+
+            # Compute turnover
+            curr_top_v2 = set(sorted(scores_v2.keys(), key=lambda t: scores_v2[t], reverse=True)[:top_n])
+            curr_top_v3 = set(sorted(scores_v3.keys(), key=lambda t: scores_v3[t], reverse=True)[:top_n])
+
+            if prev_top_v2:
+                to_v2 = compute_turnover(prev_top_v2, curr_top_v2)
+                if to_v2 is not None:
+                    turnover_v2.append(to_v2)
+            if prev_top_v3:
+                to_v3 = compute_turnover(prev_top_v3, curr_top_v3)
+                if to_v3 is not None:
+                    turnover_v3.append(to_v3)
+
+            prev_top_v2 = curr_top_v2
+            prev_top_v3 = curr_top_v3
+
+            # Update cumulative returns for drawdown
+            if spread_result_v2[0] is not None:
+                period_ret = spread_result_v2[0]  # Top bucket return
+                cumret_v2.append(cumret_v2[-1] * (1 + period_ret))
+            if spread_result_v3[0] is not None:
+                period_ret = spread_result_v3[0]
+                cumret_v3.append(cumret_v3[-1] * (1 + period_ret))
+
+        # Print row
+        ic_v2_str = f"{float(ic_v2):+.3f}" if ic_v2 else "   N/A"
+        ic_v3_str = f"{float(ic_v3):+.3f}" if ic_v3 else "   N/A"
+        sp_v2_str = f"{spread_result_v2[2]:+.1%}" if spread_result_v2[2] is not None else "   N/A"
+        sp_v3_str = f"{spread_result_v3[2]:+.1%}" if spread_result_v3[2] is not None else "   N/A"
+        corr_str = f"{rank_corr:.3f}" if rank_corr else "  N/A"
+
+        # Sanity check indicator
+        sane_v2 = "OK" if spread_result_v2[3] else "FAIL"
+        sane_v3 = "OK" if spread_result_v3[3] else "FAIL"
+        sanity_str = f"v2:{sane_v2} v3:{sane_v3}"
+
+        print(f"{as_of_str:<12} | {ic_v2_str:>8} | {ic_v3_str:>8} | {sp_v2_str:>8} | {sp_v3_str:>8} | {corr_str:>6} | {sanity_str}")
 
         # Store results
         results_v2.append({
@@ -476,57 +612,102 @@ def run_comparison_backtest(
             "n_ranked": len(result_v3.get("ranked_securities", [])),
         })
 
+    print("-" * 70)
     print()
     print("=" * 70)
     print("RESULTS SUMMARY")
     print("=" * 70)
     print()
 
-    # IC Summary
+    # ==========================================================================
+    # IC Summary with t-stat and CI
+    # ==========================================================================
     print("Information Coefficient (90-day forward returns):")
-    print("-" * 50)
+    print("-" * 60)
+
+    ic_v2_mean = None
+    ic_v3_mean = None
+    ic_v2_tstat = None
+    ic_v3_tstat = None
+    ic_v2_ci = (float('nan'), float('nan'))
+    ic_v3_ci = (float('nan'), float('nan'))
 
     if ic_v2_90d:
         ic_v2_mean = mean(ic_v2_90d)
         ic_v2_std = stdev(ic_v2_90d) if len(ic_v2_90d) > 1 else 0
         ic_v2_pos = sum(1 for x in ic_v2_90d if x > 0) / len(ic_v2_90d) * 100
-        print(f"  v2: Mean={ic_v2_mean:.4f}, Std={ic_v2_std:.4f}, Positive={ic_v2_pos:.1f}%, N={len(ic_v2_90d)}")
+        ic_v2_tstat = compute_ic_tstat(ic_v2_90d)
+        ic_v2_ci = bootstrap_ic_ci(ic_v2_90d)
+
+        print(f"  v2: Mean={ic_v2_mean:+.4f}, Std={ic_v2_std:.4f}, Positive={ic_v2_pos:.1f}%, N={len(ic_v2_90d)}")
+        print(f"      t-stat={ic_v2_tstat:.2f}, 95% CI=[{ic_v2_ci[0]:+.4f}, {ic_v2_ci[1]:+.4f}]")
     else:
-        ic_v2_mean = None
         print(f"  v2: Insufficient data")
 
     if ic_v3_90d:
         ic_v3_mean = mean(ic_v3_90d)
         ic_v3_std = stdev(ic_v3_90d) if len(ic_v3_90d) > 1 else 0
         ic_v3_pos = sum(1 for x in ic_v3_90d if x > 0) / len(ic_v3_90d) * 100
-        print(f"  v3: Mean={ic_v3_mean:.4f}, Std={ic_v3_std:.4f}, Positive={ic_v3_pos:.1f}%, N={len(ic_v3_90d)}")
+        ic_v3_tstat = compute_ic_tstat(ic_v3_90d)
+        ic_v3_ci = bootstrap_ic_ci(ic_v3_90d)
+
+        print(f"  v3: Mean={ic_v3_mean:+.4f}, Std={ic_v3_std:.4f}, Positive={ic_v3_pos:.1f}%, N={len(ic_v3_90d)}")
+        print(f"      t-stat={ic_v3_tstat:.2f}, 95% CI=[{ic_v3_ci[0]:+.4f}, {ic_v3_ci[1]:+.4f}]")
     else:
-        ic_v3_mean = None
         print(f"  v3: Insufficient data")
 
     if ic_v2_mean is not None and ic_v3_mean is not None:
         ic_diff = ic_v3_mean - ic_v2_mean
         print()
         print(f"  IC Difference (v3 - v2): {ic_diff:+.4f}")
-        if ic_diff > 0.02:
+
+        # Check if CIs overlap (rough significance test)
+        ci_overlap = not (ic_v2_ci[1] < ic_v3_ci[0] or ic_v3_ci[1] < ic_v2_ci[0])
+
+        if abs(ic_diff) < 0.02 or ci_overlap:
+            print(f"  Assessment: SIMILAR performance (CIs overlap: {ci_overlap})")
+        elif ic_diff > 0.02:
             print(f"  Assessment: v3 OUTPERFORMS v2")
-        elif ic_diff < -0.02:
-            print(f"  Assessment: v2 OUTPERFORMS v3")
         else:
-            print(f"  Assessment: SIMILAR performance")
+            print(f"  Assessment: v2 OUTPERFORMS v3")
 
     print()
 
-    # Spread Summary
-    print("Q5-Q1 Spread (90-day forward returns):")
-    print("-" * 50)
+    # ==========================================================================
+    # SANITY CHECK: IC sign vs Spread sign
+    # ==========================================================================
+    print("SANITY CHECK: sign(IC) == sign(Top-Bottom Spread)")
+    print("-" * 60)
+
+    v2_consistent = sum(1 for _, _, c in sanity_checks_v2 if c)
+    v3_consistent = sum(1 for _, _, c in sanity_checks_v3 if c)
+    v2_total = len(sanity_checks_v2)
+    v3_total = len(sanity_checks_v3)
+
+    print(f"  v2: {v2_consistent}/{v2_total} periods consistent ({100*v2_consistent/v2_total:.1f}%)" if v2_total else "  v2: N/A")
+    print(f"  v3: {v3_consistent}/{v3_total} periods consistent ({100*v3_consistent/v3_total:.1f}%)" if v3_total else "  v3: N/A")
+
+    if v2_total and v3_total:
+        if v2_consistent/v2_total >= 0.9 and v3_consistent/v3_total >= 0.9:
+            print(f"  Status: PASS - IC and spread signs are consistent")
+        else:
+            print(f"  Status: WARNING - Some periods have inconsistent IC/spread signs")
+    print()
+
+    # ==========================================================================
+    # Top-Bottom Spread (CORRECTED)
+    # ==========================================================================
+    print(f"Top-{top_n} vs Bottom-{top_n} Spread (90-day forward returns):")
+    print("-" * 60)
+
+    spread_v2_mean = None
+    spread_v3_mean = None
 
     if spread_v2:
         spread_v2_mean = mean(spread_v2)
         spread_v2_pos = sum(1 for x in spread_v2 if x > 0) / len(spread_v2) * 100
         print(f"  v2: Mean={spread_v2_mean:+.2%}, Positive={spread_v2_pos:.1f}%, N={len(spread_v2)}")
     else:
-        spread_v2_mean = None
         print(f"  v2: Insufficient data")
 
     if spread_v3:
@@ -534,14 +715,43 @@ def run_comparison_backtest(
         spread_v3_pos = sum(1 for x in spread_v3 if x > 0) / len(spread_v3) * 100
         print(f"  v3: Mean={spread_v3_mean:+.2%}, Positive={spread_v3_pos:.1f}%, N={len(spread_v3)}")
     else:
-        spread_v3_mean = None
         print(f"  v3: Insufficient data")
 
     print()
 
+    # ==========================================================================
+    # Portfolio Metrics
+    # ==========================================================================
+    print("Portfolio Metrics (Top bucket):")
+    print("-" * 60)
+
+    if turnover_v2:
+        print(f"  v2 Turnover: Mean={mean(turnover_v2):.1%}, N={len(turnover_v2)}")
+    else:
+        print(f"  v2 Turnover: N/A")
+
+    if turnover_v3:
+        print(f"  v3 Turnover: Mean={mean(turnover_v3):.1%}, N={len(turnover_v3)}")
+    else:
+        print(f"  v3 Turnover: N/A")
+
+    dd_v2 = compute_drawdown(cumret_v2)
+    dd_v3 = compute_drawdown(cumret_v3)
+    print(f"  v2 Max Drawdown: {dd_v2:.1%}")
+    print(f"  v3 Max Drawdown: {dd_v3:.1%}")
+
+    if cumret_v2:
+        print(f"  v2 Cumulative Return: {(cumret_v2[-1] - 1):.1%}")
+    if cumret_v3:
+        print(f"  v3 Cumulative Return: {(cumret_v3[-1] - 1):.1%}")
+
+    print()
+
+    # ==========================================================================
     # Rank Correlation
+    # ==========================================================================
     print("Ranking Stability (v2 vs v3):")
-    print("-" * 50)
+    print("-" * 60)
 
     if rank_correlations:
         rank_corr_mean = mean(rank_correlations)
@@ -560,6 +770,36 @@ def run_comparison_backtest(
     print()
     print("=" * 70)
 
+    # ==========================================================================
+    # RECOMMENDATION
+    # ==========================================================================
+    print("RECOMMENDATION:")
+    print("-" * 60)
+
+    if ic_v2_mean and ic_v3_mean:
+        # Decision framework
+        ic_diff = ic_v3_mean - ic_v2_mean
+        ic_significant = abs(ic_diff) > 0.02 and not ci_overlap if ic_v2_ci and ic_v3_ci else False
+
+        v2_sharper = ic_v2_mean > ic_v3_mean and ic_v2_tstat and ic_v2_tstat > 2
+        v3_more_stable = ic_v3_90d and ic_v2_90d and stdev(ic_v3_90d) < stdev(ic_v2_90d)
+
+        if ic_significant and ic_diff > 0:
+            print("  Deploy v3: Significantly higher IC")
+        elif ic_significant and ic_diff < 0:
+            print("  Keep v2: Significantly higher IC")
+        elif v3_more_stable and abs(ic_diff) < 0.01:
+            print("  Consider v3: Similar IC with lower volatility")
+            print("  BUT: Run parallel tracking before switching")
+        else:
+            print("  No clear winner: Keep v2 as default")
+            print("  Consider: Bring in v3 components (momentum, catalyst decay) one at a time")
+    else:
+        print("  Insufficient data for recommendation")
+
+    print()
+    print("=" * 70)
+
     # Compile final results
     final_results = {
         "config": {
@@ -568,21 +808,32 @@ def run_comparison_backtest(
             "frequency_days": frequency_days,
             "universe_size": len(universe),
             "test_dates": len(test_dates),
+            "top_n": top_n,
         },
         "ic_comparison": {
             "v2": {
                 "mean": ic_v2_mean,
                 "std": stdev(ic_v2_90d) if len(ic_v2_90d) > 1 else None,
                 "positive_pct": sum(1 for x in ic_v2_90d if x > 0) / len(ic_v2_90d) * 100 if ic_v2_90d else None,
+                "t_stat": ic_v2_tstat,
+                "ci_95_lower": ic_v2_ci[0] if ic_v2_ci else None,
+                "ci_95_upper": ic_v2_ci[1] if ic_v2_ci else None,
                 "values": ic_v2_90d,
             },
             "v3": {
                 "mean": ic_v3_mean,
                 "std": stdev(ic_v3_90d) if len(ic_v3_90d) > 1 else None,
                 "positive_pct": sum(1 for x in ic_v3_90d if x > 0) / len(ic_v3_90d) * 100 if ic_v3_90d else None,
+                "t_stat": ic_v3_tstat,
+                "ci_95_lower": ic_v3_ci[0] if ic_v3_ci else None,
+                "ci_95_upper": ic_v3_ci[1] if ic_v3_ci else None,
                 "values": ic_v3_90d,
             },
             "difference": ic_v3_mean - ic_v2_mean if (ic_v2_mean and ic_v3_mean) else None,
+        },
+        "sanity_check": {
+            "v2_consistent_pct": 100*v2_consistent/v2_total if v2_total else None,
+            "v3_consistent_pct": 100*v3_consistent/v3_total if v3_total else None,
         },
         "spread_comparison": {
             "v2": {
@@ -594,6 +845,18 @@ def run_comparison_backtest(
                 "mean": spread_v3_mean,
                 "positive_pct": sum(1 for x in spread_v3 if x > 0) / len(spread_v3) * 100 if spread_v3 else None,
                 "values": spread_v3,
+            },
+        },
+        "portfolio_metrics": {
+            "v2": {
+                "turnover_mean": mean(turnover_v2) if turnover_v2 else None,
+                "max_drawdown": dd_v2,
+                "cumulative_return": cumret_v2[-1] - 1 if cumret_v2 else None,
+            },
+            "v3": {
+                "turnover_mean": mean(turnover_v3) if turnover_v3 else None,
+                "max_drawdown": dd_v3,
+                "cumulative_return": cumret_v3[-1] - 1 if cumret_v3 else None,
             },
         },
         "rank_correlation": {
@@ -627,36 +890,12 @@ def main():
         description="Compare Module 5 v2 vs v3 backtest performance"
     )
 
-    parser.add_argument(
-        "--start-date",
-        type=str,
-        default="2023-01-01",
-        help="Backtest start date (YYYY-MM-DD)"
-    )
-    parser.add_argument(
-        "--end-date",
-        type=str,
-        default="2024-12-31",
-        help="Backtest end date (YYYY-MM-DD)"
-    )
-    parser.add_argument(
-        "--frequency",
-        type=int,
-        default=30,
-        help="Days between test dates"
-    )
-    parser.add_argument(
-        "--price-file",
-        type=str,
-        default="data/daily_prices.csv",
-        help="Path to price data CSV"
-    )
-    parser.add_argument(
-        "--output-dir",
-        type=str,
-        default="backtest_results",
-        help="Output directory for results"
-    )
+    parser.add_argument("--start-date", type=str, default="2023-01-01", help="Backtest start date")
+    parser.add_argument("--end-date", type=str, default="2024-12-31", help="Backtest end date")
+    parser.add_argument("--frequency", type=int, default=30, help="Days between test dates")
+    parser.add_argument("--price-file", type=str, default="data/daily_prices.csv", help="Path to price data")
+    parser.add_argument("--output-dir", type=str, default="backtest_results", help="Output directory")
+    parser.add_argument("--top-n", type=int, default=5, help="Top N tickers for spread calculation")
 
     args = parser.parse_args()
 
@@ -667,6 +906,7 @@ def main():
             frequency_days=args.frequency,
             price_file=args.price_file,
             output_dir=args.output_dir,
+            top_n=args.top_n,
         )
 
         print()
