@@ -36,6 +36,9 @@ from src.modules.intelligent_governance import (
     InteractionType,
     RankingMethod,
 
+    # Constants
+    V3_PRODUCTION_WEIGHTS,
+
     # Helpers
     _to_decimal,
     _coalesce,
@@ -1130,6 +1133,54 @@ class TestEdgeCases:
 
         # Should handle gracefully (normalize will provide equal weights)
         assert result.base_score >= Decimal("0")
+
+    def test_missing_data_drops_and_renormalizes(self):
+        """Test that missing scores are excluded and weights renormalized."""
+        layer = IntelligentGovernanceLayer(
+            enable_interaction_effects=False,
+            enable_regime_adaptation=False,
+        )
+
+        # Use V3 production weights
+        base_weights = V3_PRODUCTION_WEIGHTS.copy()
+
+        # Provide only 4 of 6 components (missing pos and valuation)
+        scores = {
+            "clinical": Decimal("80"),
+            "financial": Decimal("70"),
+            "catalyst": Decimal("60"),
+            "momentum": Decimal("50"),
+            # pos: missing
+            # valuation: missing
+        }
+
+        result = layer.compute(
+            ticker="ACME",
+            scores=scores,
+            metadata={},
+            base_weights=base_weights,
+        )
+
+        # Should have governance flags for missing data
+        assert any("missing_2_components" in f for f in result.governance_flags)
+        assert any("excluded_pos_missing" in f for f in result.governance_flags)
+        assert any("excluded_valuation_missing" in f for f in result.governance_flags)
+
+        # Score should be computed from renormalized weights of available components
+        # Available: clinical(28%) + financial(25%) + catalyst(17%) + momentum(10%) = 80%
+        # After renormalization: clinical=35%, financial=31.25%, catalyst=21.25%, momentum=12.5%
+        assert result.base_score >= Decimal("0")
+        assert result.base_score <= Decimal("100")
+
+    def test_v3_production_weights_constant(self):
+        """Test V3 production weights are correctly defined."""
+        assert sum(V3_PRODUCTION_WEIGHTS.values()) == Decimal("1.00")
+        assert V3_PRODUCTION_WEIGHTS["clinical"] == Decimal("0.28")
+        assert V3_PRODUCTION_WEIGHTS["financial"] == Decimal("0.25")
+        assert V3_PRODUCTION_WEIGHTS["catalyst"] == Decimal("0.17")
+        assert V3_PRODUCTION_WEIGHTS["pos"] == Decimal("0.15")
+        assert V3_PRODUCTION_WEIGHTS["momentum"] == Decimal("0.10")
+        assert V3_PRODUCTION_WEIGHTS["valuation"] == Decimal("0.05")
 
 
 if __name__ == "__main__":

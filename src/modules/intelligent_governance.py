@@ -77,6 +77,16 @@ ENSEMBLE_VALUE_WEIGHT = Decimal("0.25")
 # Regime thresholds for weight adaptation
 REGIME_MAX_WEIGHT_DELTA = Decimal("0.15")  # Max weight change per regime
 
+# V3 Production Base Weights (from config/v3_production_integration.py)
+V3_PRODUCTION_WEIGHTS: Dict[str, Decimal] = {
+    "clinical": Decimal("0.28"),
+    "financial": Decimal("0.25"),
+    "catalyst": Decimal("0.17"),
+    "pos": Decimal("0.15"),
+    "momentum": Decimal("0.10"),
+    "valuation": Decimal("0.05"),
+}
+
 
 # =============================================================================
 # ENUMS
@@ -1565,10 +1575,36 @@ class IntelligentGovernanceLayer:
         else:
             effective_weights = base_weights.copy()
 
-        # Step 3: Compute base score
-        base_score = Decimal("0")
+        # Step 3: Handle missing scores - drop and renormalize (don't impute 50)
+        available_weights: Dict[str, Decimal] = {}
+        missing_components: List[str] = []
+
         for comp, weight in effective_weights.items():
-            comp_score = scores.get(comp, Decimal("50"))
+            score_val = scores.get(comp)
+            if score_val is not None:
+                available_weights[comp] = weight
+            else:
+                missing_components.append(comp)
+
+        # Log missing data governance flags
+        if missing_components:
+            coverage_pct = int(100 * len(available_weights) / len(effective_weights))
+            governance_flags.append(f"missing_{len(missing_components)}_components_coverage_{coverage_pct}pct")
+            for missing in missing_components:
+                governance_flags.append(f"excluded_{missing}_missing")
+
+        # Renormalize weights to available components only
+        if available_weights:
+            scoring_weights = _normalize_weights(available_weights)
+        else:
+            # Fallback: if ALL components missing, use effective weights with 50 imputation
+            scoring_weights = effective_weights
+            governance_flags.append("all_components_missing_imputed_50")
+
+        # Compute base score using only available data
+        base_score = Decimal("0")
+        for comp, weight in scoring_weights.items():
+            comp_score = scores.get(comp, Decimal("50"))  # 50 only for edge case above
             base_score += comp_score * weight
         base_score = _quantize_score(base_score)
 
