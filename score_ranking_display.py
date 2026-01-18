@@ -82,6 +82,30 @@ class RankedSecurity:
             return Decimal("0")
         return ((self.enhanced_score - self.base_score) / self.base_score * Decimal("100")).quantize(SCORE_PRECISION)
 
+    @property
+    def gov_flags(self) -> str:
+        """Get governance flags applied to this security."""
+        flags = []
+
+        # Severity flags
+        if self.severity == "sev1":
+            flags.append("SEV1")
+        elif self.severity == "sev2":
+            flags.append("SEV2")
+        elif self.severity == "sev3":
+            flags.append("SEV3")
+
+        # Check for caps and penalties from breakdown
+        penalties = self.score_breakdown.get("penalties_and_gates", {})
+        if penalties:
+            uncertainty = penalties.get("uncertainty_penalty_pct", "0")
+            if float(uncertainty) > 5:
+                flags.append("UNC")
+            if penalties.get("monotonic_caps_applied"):
+                flags.append("CAP")
+
+        return ",".join(flags) if flags else "PASS"
+
 
 # =============================================================================
 # HELPER FUNCTIONS
@@ -266,40 +290,58 @@ def print_rankings(
     """
     display_list = ranked[:top_n]
 
-    print(f"\nTop {len(display_list)} Enhanced Rankings:")
-    print(f"{'Rank':<6}{'Ticker':<10}{'Enhanced Score':<15}{'Base Score':<15}{'Delta':<10}{'Stage':<8}")
-    print("-" * 70)
+    print(f"\nTop {len(display_list)} Securities (Ranked by Final Score):")
+    print(f"{'Rank':<6}{'Ticker':<10}{'Final':<10}{'Pre-Gov':<10}{'Gov Impact':<12}{'Flags':<12}{'Stage':<8}")
+    print("-" * 78)
 
     for sec in display_list:
         print(
             f"{sec.rank:<6}"
             f"{sec.ticker:<10}"
-            f"{sec.enhanced_score:<15.2f}"
-            f"{sec.base_score:<15.2f}"
-            f"{sec.delta:+.2f}{'':5}"
+            f"{sec.enhanced_score:<10.2f}"
+            f"{sec.base_score:<10.2f}"
+            f"{sec.delta:+10.2f}  "
+            f"{sec.gov_flags:<12}"
             f"{sec.stage_bucket:<8}"
         )
 
     # Summary statistics
-    print("-" * 70)
+    print("-" * 78)
     if display_list:
-        avg_enhanced = sum(s.enhanced_score for s in display_list) / len(display_list)
-        avg_base = sum(s.base_score for s in display_list) / len(display_list)
-        avg_delta = sum(s.delta for s in display_list) / len(display_list)
-        max_delta = max(s.delta for s in display_list)
-        min_delta = min(s.delta for s in display_list)
+        avg_final = sum(s.enhanced_score for s in display_list) / len(display_list)
+        avg_pregov = sum(s.base_score for s in display_list) / len(display_list)
+        avg_impact = sum(s.delta for s in display_list) / len(display_list)
+        max_impact = max(s.delta for s in display_list)
+        min_impact = min(s.delta for s in display_list)
 
-        print(f"\nSummary Statistics (Top {len(display_list)}):")
-        print(f"  Average Enhanced Score: {avg_enhanced:.2f}")
-        print(f"  Average Base Score:     {avg_base:.2f}")
-        print(f"  Average Delta:          {avg_delta:+.2f}")
-        print(f"  Delta Range:            [{min_delta:+.2f}, {max_delta:+.2f}]")
+        print(f"\nScore Statistics (Top {len(display_list)}):")
+        print(f"  Average Final Score:    {avg_final:.2f}")
+        print(f"  Average Pre-Gov Score:  {avg_pregov:.2f}")
+        print(f"  Average Gov Impact:     {avg_impact:+.2f}")
+        print(f"  Gov Impact Range:       [{min_impact:+.2f}, {max_impact:+.2f}]")
 
-        # Count positive/negative deltas
-        positive_deltas = sum(1 for s in display_list if s.delta > 0)
-        negative_deltas = sum(1 for s in display_list if s.delta < 0)
-        zero_deltas = sum(1 for s in display_list if s.delta == 0)
-        print(f"  Delta Distribution:     {positive_deltas} positive, {negative_deltas} negative, {zero_deltas} zero")
+        # Count by governance status
+        clean_count = sum(1 for s in display_list if s.gov_flags == "PASS")
+        penalized_count = len(display_list) - clean_count
+        print(f"  Clean (no penalties):   {clean_count} ({clean_count/len(display_list)*100:.1f}%)")
+        print(f"  Penalized:              {penalized_count} ({penalized_count/len(display_list)*100:.1f}%)")
+
+        # Governance flag breakdown
+        sev1_count = sum(1 for s in display_list if "SEV1" in s.gov_flags)
+        sev2_count = sum(1 for s in display_list if "SEV2" in s.gov_flags)
+        unc_count = sum(1 for s in display_list if "UNC" in s.gov_flags)
+        cap_count = sum(1 for s in display_list if "CAP" in s.gov_flags)
+
+        if penalized_count > 0:
+            print(f"\n  Governance Breakdown:")
+            if sev1_count > 0:
+                print(f"    SEV1 (10% penalty):   {sev1_count}")
+            if sev2_count > 0:
+                print(f"    SEV2 (50% penalty):   {sev2_count}")
+            if unc_count > 0:
+                print(f"    UNC (uncertainty):    {unc_count}")
+            if cap_count > 0:
+                print(f"    CAP (monotonic cap):  {cap_count}")
 
 
 def print_detailed_breakdown(ranked: List[RankedSecurity], top_n: int = 10) -> None:
@@ -315,8 +357,8 @@ def print_detailed_breakdown(ranked: List[RankedSecurity], top_n: int = 10) -> N
     print(f"{'='*70}")
 
     for sec in ranked[:top_n]:
-        print(f"\n{sec.rank}. {sec.ticker}")
-        print(f"   Enhanced: {sec.enhanced_score:.2f} | Base: {sec.base_score:.2f} | Delta: {sec.delta:+.2f}")
+        print(f"\n{sec.rank}. {sec.ticker} [{sec.gov_flags}]")
+        print(f"   Final: {sec.enhanced_score:.2f} | Pre-Gov: {sec.base_score:.2f} | Gov Impact: {sec.delta:+.2f}")
 
         breakdown = sec.score_breakdown
         if breakdown:
@@ -370,10 +412,11 @@ def export_to_csv(
         writer.writerow([
             "Rank",
             "Ticker",
-            "Enhanced_Score",
-            "Base_Score",
-            "Delta",
-            "Delta_Pct",
+            "Final_Score",
+            "PreGov_Score",
+            "Gov_Impact",
+            "Gov_Impact_Pct",
+            "Gov_Flags",
             "Severity",
             "Stage",
             "Market_Cap_Bucket",
@@ -387,6 +430,7 @@ def export_to_csv(
                 f"{sec.base_score:.2f}",
                 f"{sec.delta:+.2f}",
                 f"{sec.delta_pct:+.1f}%",
+                sec.gov_flags,
                 sec.severity,
                 sec.stage_bucket,
                 sec.market_cap_bucket,
@@ -417,10 +461,11 @@ def export_to_json(
             {
                 "rank": sec.rank,
                 "ticker": sec.ticker,
-                "enhanced_score": str(sec.enhanced_score),
-                "base_score": str(sec.base_score),
-                "delta": str(sec.delta),
-                "delta_pct": str(sec.delta_pct),
+                "final_score": str(sec.enhanced_score),
+                "pre_gov_score": str(sec.base_score),
+                "gov_impact": str(sec.delta),
+                "gov_impact_pct": str(sec.delta_pct),
+                "gov_flags": sec.gov_flags,
                 "severity": sec.severity,
                 "stage_bucket": sec.stage_bucket,
                 "market_cap_bucket": sec.market_cap_bucket,
@@ -477,18 +522,21 @@ def analyze_enhancement_impact(ranked: List[RankedSecurity]) -> Dict[str, Any]:
     top_20_enhanced_tickers = {s.ticker for s in ranked[:20]}
     overlap_count = len(top_10_base_tickers & top_20_enhanced_tickers)
 
+    # Count by governance flags
+    clean_count = sum(1 for s in ranked if s.gov_flags == "PASS")
+    penalized_count = len(ranked) - clean_count
+
     return {
         "total_securities": len(ranked),
-        "average_delta": str(_quantize_score(avg_delta)),
-        "max_delta": str(max_delta),
-        "min_delta": str(min_delta),
-        "positive_delta_count": positive_count,
-        "negative_delta_count": negative_count,
-        "zero_delta_count": zero_count,
-        "average_enhanced_score": str(_quantize_score(avg_enhanced)),
-        "average_base_score": str(_quantize_score(avg_base)),
-        "top10_base_in_top20_enhanced": overlap_count,
-        "enhancement_stability": "high" if overlap_count >= 7 else "medium" if overlap_count >= 4 else "low",
+        "average_gov_impact": str(_quantize_score(avg_delta)),
+        "max_gov_impact": str(max_delta),
+        "min_gov_impact": str(min_delta),
+        "clean_count": clean_count,
+        "penalized_count": penalized_count,
+        "average_final_score": str(_quantize_score(avg_enhanced)),
+        "average_pre_gov_score": str(_quantize_score(avg_base)),
+        "top10_pregov_in_top20_final": overlap_count,
+        "ranking_stability": "high" if overlap_count >= 7 else "medium" if overlap_count >= 4 else "low",
     }
 
 
@@ -527,21 +575,21 @@ def print_movers(
     """
     gainers, losers = find_biggest_movers(ranked, top_n)
 
-    print(f"\n{'='*50}")
-    print(f"TOP {top_n} GAINERS (Most Positive Delta)")
-    print(f"{'='*50}")
-    print(f"{'Ticker':<10}{'Enhanced':<12}{'Base':<12}{'Delta':<10}")
-    print("-" * 50)
+    print(f"\n{'='*60}")
+    print(f"LEAST PENALIZED (Smallest Gov Impact)")
+    print(f"{'='*60}")
+    print(f"{'Ticker':<10}{'Final':<12}{'Pre-Gov':<12}{'Impact':<12}{'Flags':<10}")
+    print("-" * 60)
     for sec in gainers:
-        print(f"{sec.ticker:<10}{sec.enhanced_score:<12.2f}{sec.base_score:<12.2f}{sec.delta:+.2f}")
+        print(f"{sec.ticker:<10}{sec.enhanced_score:<12.2f}{sec.base_score:<12.2f}{sec.delta:+10.2f}  {sec.gov_flags:<10}")
 
-    print(f"\n{'='*50}")
-    print(f"TOP {top_n} LOSERS (Most Negative Delta)")
-    print(f"{'='*50}")
-    print(f"{'Ticker':<10}{'Enhanced':<12}{'Base':<12}{'Delta':<10}")
-    print("-" * 50)
+    print(f"\n{'='*60}")
+    print(f"MOST PENALIZED (Largest Gov Impact)")
+    print(f"{'='*60}")
+    print(f"{'Ticker':<10}{'Final':<12}{'Pre-Gov':<12}{'Impact':<12}{'Flags':<10}")
+    print("-" * 60)
     for sec in losers:
-        print(f"{sec.ticker:<10}{sec.enhanced_score:<12.2f}{sec.base_score:<12.2f}{sec.delta:+.2f}")
+        print(f"{sec.ticker:<10}{sec.enhanced_score:<12.2f}{sec.base_score:<12.2f}{sec.delta:+10.2f}  {sec.gov_flags:<10}")
 
 
 # =============================================================================
