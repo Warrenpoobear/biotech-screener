@@ -379,28 +379,43 @@ def _safe_divide(numerator: Decimal, denominator: Decimal, default: Decimal = De
 def compute_volatility_adjustment(
     annualized_vol: Optional[Decimal],
     *,
-    baseline_vol: Decimal = VOLATILITY_BASELINE,
+    target_vol: Decimal = VOLATILITY_BASELINE,
     low_threshold: Decimal = VOLATILITY_LOW_THRESHOLD,
     high_threshold: Decimal = VOLATILITY_HIGH_THRESHOLD,
     max_adjustment: Decimal = VOLATILITY_MAX_ADJUSTMENT,
+    max_score_penalty: Decimal = Decimal("0.30"),
 ) -> VolatilityAdjustment:
     """
     Compute volatility-based adjustment factors.
 
-    Logic:
+    SCORE PENALTY LOGIC (v2 - asymmetric, penalize only high vol):
+    - At or below target vol (50%): No score penalty (score_adjustment_factor = 1.0)
+    - Above target vol: Linear penalty = (vol_ratio - 1) * 0.15, capped at max_score_penalty
+    - This avoids penalizing low-vol names which often deliver more reliable returns
+
+    WEIGHT ADJUSTMENT LOGIC (unchanged):
     - Low volatility (<30%): Boost weight influence (more reliable signal)
-    - Normal volatility (30-80%): Neutral adjustment
+    - Normal volatility (30-80%): Neutral weight adjustment
     - High volatility (>80%): Reduce weight influence (less reliable signal)
 
-    Additionally applies score dampening for high-vol names to approximate
-    risk-adjusted returns.
+    RATIONALE:
+    - Low-vol, institutionally owned biotech names often have better IC
+    - Penalizing low-vol suppresses the best compounders
+    - Only high-vol "lottery ticket" names should be dampened
+
+    Test vectors (raw_score=80, target=0.50):
+    - vol=0.50 → 80 (no penalty)
+    - vol=0.25 → 80 (no penalty - low vol is not penalized)
+    - vol=0.75 → ratio 1.5 → penalty 0.075 → 74
+    - vol=1.00 → ratio 2.0 → penalty 0.15 → 68
 
     Args:
         annualized_vol: Annualized volatility as decimal (e.g., 0.50 for 50%)
-        baseline_vol: Target volatility for neutral adjustment
-        low_threshold: Below this = low vol bucket
-        high_threshold: Above this = high vol bucket
-        max_adjustment: Maximum +/- adjustment factor
+        target_vol: Target volatility - no penalty at or below (default 0.50)
+        low_threshold: Below this = low vol bucket for weight boost
+        high_threshold: Above this = high vol bucket for max weight reduction
+        max_adjustment: Maximum weight adjustment factor
+        max_score_penalty: Maximum score penalty (default 0.30 = 30%)
 
     Returns:
         VolatilityAdjustment with all computed factors
@@ -416,6 +431,40 @@ def compute_volatility_adjustment(
 
     vol = _to_decimal(annualized_vol, Decimal("0.50"))
 
+    # Ensure vol is positive
+    if vol <= Decimal("0"):
+        return VolatilityAdjustment(
+            annualized_vol=Decimal("0"),
+            vol_bucket=VolatilityBucket.UNKNOWN,
+            weight_adjustment_factor=Decimal("1.0"),
+            score_adjustment_factor=Decimal("1.0"),
+            confidence_penalty=Decimal("0.05"),
+        )
+
+    # =========================================================================
+    # SCORE ADJUSTMENT: Penalize only high vol (v2 asymmetric)
+    # =========================================================================
+    # Key insight: low-vol names often deliver better forward returns in biotech
+    # Penalizing them hurts IC. Only penalize above target vol.
+
+    vol_ratio = vol / target_vol
+
+    if vol_ratio <= Decimal("1"):
+        # At or below target vol: NO score penalty
+        score_adj = Decimal("1.0")
+    else:
+        # Above target vol: linear penalty, capped
+        # penalty = (vol_ratio - 1) * 0.15, capped at max_score_penalty
+        penalty = (vol_ratio - Decimal("1")) * Decimal("0.15")
+        penalty = _clamp(penalty, Decimal("0"), max_score_penalty)
+        score_adj = Decimal("1.0") - penalty
+
+    # =========================================================================
+    # WEIGHT ADJUSTMENT: Boost low vol, reduce high vol (for signal reliability)
+    # =========================================================================
+    # This is separate from score adjustment - it affects how much we trust
+    # the signal, not the final ranking directly.
+
     if vol < low_threshold:
         # Low vol = more reliable signal = boost weights
         vol_bucket = VolatilityBucket.LOW
@@ -423,20 +472,15 @@ def compute_volatility_adjustment(
         weight_adj = Decimal("1.0") + max_adjustment * (
             (low_threshold - vol) / low_threshold
         )
-        # Score boost for low vol (less risky)
-        vol_ratio = vol / baseline_vol
-        score_adj = Decimal("1.0") + (Decimal("1.0") - vol_ratio) * Decimal("0.10")
         confidence_penalty = Decimal("0")
 
     elif vol <= high_threshold:
-        # Normal vol = neutral
+        # Normal vol = neutral weight adjustment
         vol_bucket = VolatilityBucket.NORMAL
         weight_adj = Decimal("1.0")
-        # Mild score dampening as vol increases within normal range
-        vol_ratio = (vol - low_threshold) / (high_threshold - low_threshold)
-        score_adj = Decimal("1.0") - vol_ratio * Decimal("0.05")
         # Confidence penalty increases with volatility
-        confidence_penalty = vol_ratio * Decimal("0.10")
+        vol_ratio_norm = (vol - low_threshold) / (high_threshold - low_threshold)
+        confidence_penalty = vol_ratio_norm * Decimal("0.10")
 
     else:
         # High vol = less reliable signal = reduce weight influence
@@ -445,12 +489,8 @@ def compute_volatility_adjustment(
         excess_vol = vol - high_threshold
         weight_adj = Decimal("1.0") - min(
             max_adjustment,
-            max_adjustment * (excess_vol / baseline_vol)
+            max_adjustment * (excess_vol / target_vol)
         )
-        # Significant score dampening for high vol
-        vol_ratio = min(vol / baseline_vol, Decimal("2.0"))
-        score_adj = Decimal("1.0") - (vol_ratio - Decimal("1.0")) * Decimal("0.15")
-        score_adj = max(score_adj, Decimal("0.70"))  # Floor at 30% penalty
         confidence_penalty = Decimal("0.15")
 
     return VolatilityAdjustment(
