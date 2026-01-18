@@ -702,6 +702,77 @@ class TestShrinkageNormalization:
         # Shrinkage factor should be small for large cohort
         assert shrinkage_factor < Decimal("0.1")
 
+    def test_equal_to_global_mean_yields_fifty(self):
+        """If all values equal global_mean, outputs should all be ~50."""
+        global_mean = Decimal("50")
+        global_std = Decimal("20")
+        values = [global_mean] * 10
+
+        result, _ = shrinkage_normalize(values, global_mean, global_std)
+
+        # All results should be exactly 50 (within quantization)
+        assert all(r == Decimal("50.00") for r in result)
+
+    def test_single_value_shrinks_to_global(self):
+        """Single value (n=1) should return 50 due to maximum shrinkage."""
+        global_mean = Decimal("50")
+        global_std = Decimal("20")
+        values = [Decimal("100")]  # Extreme value
+
+        result, shrinkage_factor = shrinkage_normalize(values, global_mean, global_std)
+
+        # n=1 is a special case, should return 50
+        assert len(result) == 1
+        assert result[0] == Decimal("50")
+        assert shrinkage_factor == Decimal("1.0")
+
+    def test_output_bounds_never_exceeded(self):
+        """No output should ever be outside [5, 95], even with extreme values."""
+        global_mean = Decimal("50")
+        global_std = Decimal("20")
+        # Extreme outliers
+        values = [Decimal("-1000"), Decimal("0"), Decimal("50"), Decimal("100"), Decimal("1000")]
+
+        result, _ = shrinkage_normalize(values, global_mean, global_std)
+
+        # All results must be within bounds
+        assert len(result) == 5
+        assert all(Decimal("5") <= r <= Decimal("95") for r in result)
+
+    def test_z_score_clamping_limits_spread(self):
+        """Z-score clamping should limit the spread to ~45 points (3*15)."""
+        global_mean = Decimal("50")
+        global_std = Decimal("20")
+        # Values that would produce extreme z-scores without clamping
+        values = [Decimal("0"), Decimal("25"), Decimal("50"), Decimal("75"), Decimal("100")]
+
+        result, _ = shrinkage_normalize(values, global_mean, global_std)
+
+        # With z clamped to [-3, +3] and multiplier of 15:
+        # min should be 50 - 3*15 = 5, max should be 50 + 3*15 = 95
+        # But with shrinkage, the spread will be reduced
+        assert min(result) >= Decimal("5")
+        assert max(result) <= Decimal("95")
+        # Verify ordering is maintained
+        assert result[0] <= result[1] <= result[2] <= result[3] <= result[4]
+
+    def test_std_shrinkage_stabilizes_small_cohorts(self):
+        """Small cohorts with high variance should shrink std toward global."""
+        global_mean = Decimal("50")
+        global_std = Decimal("20")
+        # Small cohort with extreme variance
+        values = [Decimal("0"), Decimal("50"), Decimal("100")]
+
+        result, shrinkage_factor = shrinkage_normalize(values, global_mean, global_std)
+
+        # With n=3 and prior_strength=5, shrinkage = 5/(5+3) = 0.625
+        assert shrinkage_factor > Decimal("0.6")
+        # Results should be centered due to heavy shrinkage toward global mean
+        # and std shrinkage should prevent extreme spread
+        assert all(Decimal("5") <= r <= Decimal("95") for r in result)
+        # Middle value (50) should be close to 50 due to shrinkage
+        assert Decimal("40") <= result[1] <= Decimal("60")
+
 
 # =============================================================================
 # REGIME-ADAPTIVE TESTS
