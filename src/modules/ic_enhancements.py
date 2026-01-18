@@ -33,7 +33,7 @@ from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
 from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple, Callable
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"  # V2 smart money signal with tier weighting
 
 
 # =============================================================================
@@ -85,7 +85,7 @@ CATALYST_DECAY_PRECISION = Decimal("0.0001")
 SHRINKAGE_MIN_COHORT = Decimal("5")
 SHRINKAGE_PRIOR_STRENGTH = Decimal("5")  # Equivalent sample size of prior
 
-# Smart money signal parameters
+# Smart money signal parameters (legacy - kept for backwards compatibility)
 SMART_MONEY_OVERLAP_BONUS_PER_HOLDER = Decimal("5")
 SMART_MONEY_MAX_OVERLAP_BONUS = Decimal("20")
 SMART_MONEY_POSITION_CHANGE_WEIGHTS = {
@@ -95,6 +95,62 @@ SMART_MONEY_POSITION_CHANGE_WEIGHTS = {
     "DECREASE": Decimal("-2"),
     "EXIT": Decimal("-5"),
 }
+
+# Smart money V2 parameters - tier-weighted with saturation
+# =============================================================================
+# V2 IMPROVEMENTS:
+# 1. Weight by holder tier (Tier1=1.0, Tier2=0.6, Unknown=0.2)
+# 2. Apply saturating function for overlap (diminishing returns)
+# 3. Cap per-holder contribution to prevent one noisy filing dominating
+# 4. Reduce EXIT weight unless high confidence (data quality issue)
+# =============================================================================
+
+# Tier weights: Tier1 pure biotech specialists, Tier2 diversified healthcare
+SMART_MONEY_TIER_WEIGHTS = {
+    1: Decimal("1.0"),   # Baker Bros, RA Capital, Perceptive, BVF, EcoR1
+    2: Decimal("0.6"),   # OrbiMed, Redmile, Deerfield, Farallon
+    3: Decimal("0.4"),   # Avoro, Venrock HCP, Cormorant
+}
+SMART_MONEY_UNKNOWN_TIER_WEIGHT = Decimal("0.2")
+
+# Known elite manager short names -> tier mapping (deterministic lookup)
+# This allows tier lookup by holder name when CIK is not available
+SMART_MONEY_TIER_BY_NAME = {
+    # Tier 1
+    "baker bros": 1, "baker bros.": 1, "baker brothers": 1,
+    "ra capital": 1, "ra capital management": 1,
+    "perceptive": 1, "perceptive advisors": 1,
+    "bvf": 1, "biotechnology value fund": 1,
+    "ecor1": 1, "ecor1 capital": 1,
+    # Tier 2
+    "orbimed": 1, "orbimed advisors": 2,
+    "redmile": 2, "redmile group": 2,
+    "deerfield": 2, "deerfield management": 2,
+    "farallon": 2, "farallon capital": 2,
+    "citadel": 2, "citadel advisors": 2,
+    # Tier 3
+    "avoro": 3, "avoro capital": 3,
+    "venrock": 3, "venrock hcp": 3,
+    "cormorant": 3, "cormorant asset": 3,
+}
+
+# Overlap bonus: saturating function applied to weighted overlap
+# Piecewise: linear 0-1.5 weighted overlap, then diminishing above
+SMART_MONEY_OVERLAP_SATURATION_THRESHOLD = Decimal("1.5")  # Weighted overlap
+SMART_MONEY_OVERLAP_LINEAR_BONUS = Decimal("12")  # Max bonus in linear region (per 1.0 weight)
+SMART_MONEY_OVERLAP_MAX_BONUS = Decimal("20")  # Hard cap after saturation
+
+# Position change V2: reduced weights, per-holder cap
+SMART_MONEY_V2_CHANGE_WEIGHTS = {
+    "NEW": Decimal("3"),
+    "INCREASE": Decimal("2"),
+    "HOLD": Decimal("0"),
+    "DECREASE": Decimal("-2"),
+    "EXIT": Decimal("-3"),  # Reduced from -5 (data quality sensitivity)
+}
+SMART_MONEY_PER_HOLDER_CAP = Decimal("5")  # Max |contribution| per holder
+SMART_MONEY_CHANGE_MAX_BONUS = Decimal("15")
+SMART_MONEY_CHANGE_MIN_PENALTY = Decimal("-15")
 
 # Interaction term parameters - using SMOOTH RAMPS to avoid rank churn
 # All inputs must be Decimal with explicit ranges:
@@ -208,14 +264,26 @@ class CatalystDecayResult:
 
 @dataclass
 class SmartMoneySignal:
-    """Smart money (13F) signal result."""
+    """Smart money (13F) signal result.
+
+    V2 ENHANCEMENTS:
+    - weighted_overlap: Sum of tier weights (not raw count)
+    - tier_breakdown: Dict of tier -> count for diagnostics
+    - per_holder_contributions: Detailed breakdown by holder
+    - Uses saturation to prevent gaming by many small holders
+    """
     smart_money_score: Decimal  # 20-80 range
-    overlap_count: int
-    overlap_bonus: Decimal
-    position_change_adjustment: Decimal
+    overlap_count: int  # Raw holder count (for backwards compat)
+    overlap_bonus: Decimal  # Now tier-weighted
+    position_change_adjustment: Decimal  # Now tier-weighted with per-holder caps
     holders_increasing: List[str]
     holders_decreasing: List[str]
     confidence: Decimal
+    # V2 fields
+    weighted_overlap: Decimal = Decimal("0")  # Sum of tier weights
+    tier_breakdown: Dict[int, int] = field(default_factory=dict)  # tier -> count
+    tier1_holders: List[str] = field(default_factory=list)  # For diagnostics
+    per_holder_contributions: Dict[str, Decimal] = field(default_factory=dict)
 
 
 @dataclass
@@ -785,65 +853,239 @@ def apply_catalyst_decay(
 # SMART MONEY SIGNAL
 # =============================================================================
 
+def _get_holder_tier(holder_name: str, holder_tiers: Optional[Dict[str, int]] = None) -> int:
+    """
+    Get tier for a holder by name.
+
+    Uses explicit holder_tiers dict first, then falls back to name-based lookup.
+    Returns tier 0 for unknown holders (will use SMART_MONEY_UNKNOWN_TIER_WEIGHT).
+
+    DETERMINISM: Always normalizes holder name to lowercase for lookup.
+
+    Args:
+        holder_name: Name of the holder/manager
+        holder_tiers: Optional dict mapping holder name -> tier (1, 2, or 3)
+
+    Returns:
+        Tier number (1, 2, 3) or 0 for unknown
+    """
+    name_lower = holder_name.lower().strip()
+
+    # First check explicit mapping (e.g., from 13F metadata)
+    if holder_tiers:
+        for name_variant, tier in holder_tiers.items():
+            if name_variant.lower() == name_lower:
+                return tier
+
+    # Fall back to built-in name mapping
+    for name_pattern, tier in SMART_MONEY_TIER_BY_NAME.items():
+        if name_pattern in name_lower or name_lower in name_pattern:
+            return tier
+
+    return 0  # Unknown
+
+
+def _get_holder_weight(tier: int) -> Decimal:
+    """Get weight for a holder tier. Unknown (tier 0) gets reduced weight."""
+    if tier == 0:
+        return SMART_MONEY_UNKNOWN_TIER_WEIGHT
+    return SMART_MONEY_TIER_WEIGHTS.get(tier, SMART_MONEY_UNKNOWN_TIER_WEIGHT)
+
+
+def _saturating_bonus(weighted_sum: Decimal) -> Decimal:
+    """
+    Apply saturating function to weighted overlap.
+
+    Piecewise linear:
+    - 0 to threshold: linear bonus
+    - Above threshold: diminishing returns (sqrt-like)
+
+    This prevents gaming by many small holders.
+
+    Args:
+        weighted_sum: Sum of holder tier weights
+
+    Returns:
+        Bonus score (bounded by SMART_MONEY_OVERLAP_MAX_BONUS)
+    """
+    threshold = SMART_MONEY_OVERLAP_SATURATION_THRESHOLD
+    linear_rate = SMART_MONEY_OVERLAP_LINEAR_BONUS
+    max_bonus = SMART_MONEY_OVERLAP_MAX_BONUS
+
+    if weighted_sum <= Decimal("0"):
+        return Decimal("0")
+
+    if weighted_sum <= threshold:
+        # Linear region: full credit
+        bonus = weighted_sum * linear_rate
+    else:
+        # Saturation region: diminishing returns
+        # Linear portion up to threshold
+        linear_part = threshold * linear_rate
+        # Excess gets sqrt-like treatment (approximated as log-like)
+        excess = weighted_sum - threshold
+        # Diminishing returns: each additional 1.0 weight adds less
+        # Use: bonus_excess = linear_rate * (1 - e^(-excess))
+        # Approximated as: bonus_excess = linear_rate * min(excess, 1.0) * 0.5
+        diminishing = linear_rate * _clamp(excess, Decimal("0"), Decimal("2")) * Decimal("0.3")
+        bonus = linear_part + diminishing
+
+    return _clamp(bonus, Decimal("0"), max_bonus)
+
+
 def compute_smart_money_signal(
     overlap_count: int,
     holders: List[str],
     position_changes: Optional[Dict[str, str]] = None,
+    holder_tiers: Optional[Dict[str, int]] = None,
 ) -> SmartMoneySignal:
     """
     Compute smart money signal from 13F co-invest data.
 
-    Converts co-invest overlay into a scoring component.
-    New positions and increases are more predictive than static holdings.
+    V2 IMPROVEMENTS:
+    1. Weights by holder tier (Tier1=1.0, Tier2=0.6, Unknown=0.2)
+    2. Applies saturating function for overlap (diminishing returns)
+    3. Caps per-holder contribution to prevent one noisy filing dominating
+    4. Reduces EXIT weight (data quality sensitive)
+    5. Deterministic: sorts holders before processing
+
+    BREADTH vs DIRECTION:
+    - Overlap bonus (breadth): How many high-quality co-investors
+    - Change bonus (direction): Net weighted change (new/increase vs decrease/exit)
+
+    TIER SENSITIVITY:
+    - 2 Tier1 holders beats 4 unknown holders
+    - 1 Tier1 + 1 Tier2 = 1.6 weighted overlap vs 2 unknowns = 0.4
+
+    PIT SAFETY:
+    - position_changes should use filing dates, not quarter-end
+    - "NEW" must mean "new to tracked managers", not "new to your dataset"
 
     Args:
-        overlap_count: Number of tracked managers holding the position
-        holders: List of holder names
+        overlap_count: Number of tracked managers holding the position (raw count)
+        holders: List of holder names (used for tier lookup)
         position_changes: Dict mapping holder -> change type (NEW, INCREASE, etc.)
+        holder_tiers: Optional dict mapping holder name -> tier (1, 2, 3)
+            If not provided, uses name-based lookup from SMART_MONEY_TIER_BY_NAME
 
     Returns:
         SmartMoneySignal with normalized score and components
     """
     base_signal = Decimal("50")
 
-    # Overlap count bonus
-    overlap_bonus = min(
-        Decimal(overlap_count) * SMART_MONEY_OVERLAP_BONUS_PER_HOLDER,
-        SMART_MONEY_MAX_OVERLAP_BONUS
-    )
+    # DETERMINISM: Sort holders for consistent iteration order
+    sorted_holders = sorted(holders) if holders else []
 
-    # Position change adjustments
+    # =========================================================================
+    # STEP 1: Compute tier-weighted overlap (breadth signal)
+    # =========================================================================
+    tier_breakdown: Dict[int, int] = {1: 0, 2: 0, 3: 0, 0: 0}
+    weighted_overlap = Decimal("0")
+    tier1_holders: List[str] = []
+    per_holder_contributions: Dict[str, Decimal] = {}
+
+    for holder in sorted_holders:
+        tier = _get_holder_tier(holder, holder_tiers)
+        tier_breakdown[tier] = tier_breakdown.get(tier, 0) + 1
+        holder_weight = _get_holder_weight(tier)
+        weighted_overlap += holder_weight
+
+        if tier == 1:
+            tier1_holders.append(holder)
+
+        # Track base contribution (before change adjustment)
+        per_holder_contributions[holder] = holder_weight
+
+    # Apply saturating function to weighted overlap
+    overlap_bonus = _saturating_bonus(weighted_overlap)
+
+    # =========================================================================
+    # STEP 2: Compute tier-weighted position changes (direction signal)
+    # =========================================================================
     change_bonus = Decimal("0")
-    holders_increasing = []
-    holders_decreasing = []
+    holders_increasing: List[str] = []
+    holders_decreasing: List[str] = []
 
     if position_changes:
-        for holder, change in position_changes.items():
+        # DETERMINISM: Sort keys for consistent iteration order
+        for holder in sorted(position_changes.keys()):
+            change = position_changes[holder]
             change_upper = change.upper() if isinstance(change, str) else "HOLD"
-            weight = SMART_MONEY_POSITION_CHANGE_WEIGHTS.get(change_upper, Decimal("0"))
-            change_bonus += weight
 
+            # Get tier-based weight
+            tier = _get_holder_tier(holder, holder_tiers)
+            tier_weight = _get_holder_weight(tier)
+
+            # Get change weight (using V2 weights with reduced EXIT)
+            base_change_weight = SMART_MONEY_V2_CHANGE_WEIGHTS.get(change_upper, Decimal("0"))
+
+            # Compute holder's contribution: tier_weight * change_weight
+            holder_contribution = tier_weight * base_change_weight
+
+            # Apply per-holder cap to prevent one noisy filing from dominating
+            holder_contribution = _clamp(
+                holder_contribution,
+                -SMART_MONEY_PER_HOLDER_CAP,
+                SMART_MONEY_PER_HOLDER_CAP
+            )
+
+            change_bonus += holder_contribution
+
+            # Track contribution for diagnostics
+            if holder in per_holder_contributions:
+                per_holder_contributions[holder] += holder_contribution
+            else:
+                per_holder_contributions[holder] = holder_contribution
+
+            # Track direction
             if change_upper in ("NEW", "INCREASE"):
                 holders_increasing.append(holder)
             elif change_upper in ("DECREASE", "EXIT"):
                 holders_decreasing.append(holder)
 
-    # Clamp change bonus
-    change_bonus = _clamp(change_bonus, Decimal("-15"), Decimal("15"))
+    # Clamp total change bonus
+    change_bonus = _clamp(
+        change_bonus,
+        SMART_MONEY_CHANGE_MIN_PENALTY,
+        SMART_MONEY_CHANGE_MAX_BONUS
+    )
 
-    # Compute final score
+    # =========================================================================
+    # STEP 3: Compute final score
+    # =========================================================================
     smart_money_score = base_signal + overlap_bonus + change_bonus
     smart_money_score = _clamp(smart_money_score, Decimal("20"), Decimal("80"))
 
-    # Confidence based on data availability
-    if position_changes and overlap_count >= 3:
-        confidence = Decimal("0.7")
+    # =========================================================================
+    # STEP 4: Compute confidence based on tier coverage
+    # =========================================================================
+    # Confidence scales with:
+    # - Number of Tier1 holders (highest signal quality)
+    # - Presence of position change data
+    # - Overall weighted overlap
+
+    num_tier1 = tier_breakdown.get(1, 0)
+    num_tier2 = tier_breakdown.get(2, 0)
+    has_changes = bool(position_changes)
+
+    if num_tier1 >= 2:
+        confidence = Decimal("0.8")  # Strong: multiple top-tier holders
+    elif num_tier1 >= 1 and num_tier2 >= 1:
+        confidence = Decimal("0.7")  # Good: Tier1 + Tier2 coverage
+    elif num_tier1 >= 1:
+        confidence = Decimal("0.6")  # Moderate: single Tier1
+    elif weighted_overlap >= Decimal("1.0"):
+        confidence = Decimal("0.5")  # Some signal: meaningful weighted overlap
     elif overlap_count >= 2:
-        confidence = Decimal("0.5")
+        confidence = Decimal("0.4")  # Weak: multiple unknowns
     elif overlap_count >= 1:
-        confidence = Decimal("0.4")
+        confidence = Decimal("0.3")  # Very weak: single unknown
     else:
-        confidence = Decimal("0.2")
+        confidence = Decimal("0.2")  # No signal
+
+    # Boost confidence if we have change data
+    if has_changes and overlap_count >= 2:
+        confidence = _clamp(confidence + Decimal("0.1"), Decimal("0"), Decimal("0.9"))
 
     return SmartMoneySignal(
         smart_money_score=_quantize_score(smart_money_score),
@@ -853,6 +1095,11 @@ def compute_smart_money_signal(
         holders_increasing=sorted(holders_increasing),
         holders_decreasing=sorted(holders_decreasing),
         confidence=confidence,
+        # V2 fields
+        weighted_overlap=_quantize_score(weighted_overlap),
+        tier_breakdown=tier_breakdown,
+        tier1_holders=sorted(tier1_holders),
+        per_holder_contributions={k: _quantize_score(v) for k, v in sorted(per_holder_contributions.items())},
     )
 
 
