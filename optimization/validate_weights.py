@@ -28,15 +28,27 @@ from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 from scipy.stats import spearmanr
 
-from .optimize_weights_scipy import (
-    BASELINE_WEIGHTS,
-    COMPONENT_NAMES,
-    DEFAULT_BOUNDS,
-    load_training_data,
-    objective_function,
-    optimize_slsqp,
-    _resolve_data_path,
-)
+try:
+    from .optimize_weights_scipy import (
+        BASELINE_WEIGHTS,
+        COMPONENT_NAMES,
+        DEFAULT_BOUNDS,
+        load_training_data,
+        objective_function,
+        optimize_slsqp,
+        _resolve_data_path,
+    )
+except ImportError:
+    # Running as script directly
+    from optimize_weights_scipy import (
+        BASELINE_WEIGHTS,
+        COMPONENT_NAMES,
+        DEFAULT_BOUNDS,
+        load_training_data,
+        objective_function,
+        optimize_slsqp,
+        _resolve_data_path,
+    )
 
 __version__ = "1.0.0"
 
