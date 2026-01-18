@@ -1,15 +1,25 @@
 """
 module_5_composite_with_defensive.py
 
-Simple wrapper that adds defensive overlays to your existing Module 5.
+Production wrapper that adds defensive overlays to Module 5.
+
+v1.1.0 (2026-01-18): Merged v2 features into production:
+  - Monotonic caps (risk gates can't be "outvoted")
+  - Confidence weighting (module-level confidence affects weights)
+  - Hybrid aggregation (weighted-sum + weakest-link blend)
+  - Determinism hash (SHA256 for audit parity)
+  - Volatility-adjusted weighting
+
+The v2 scorer is now the default. Set use_v2_scoring=False to revert to v1.
 """
 
 import json
 import logging
 from pathlib import Path
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
 
 from module_5_composite import compute_module_5_composite
+from module_5_composite_v2 import compute_module_5_composite_v2
 from defensive_overlay_adapter import enrich_with_defensive_overlays, validate_defensive_integration
 
 logger = logging.getLogger(__name__)
@@ -39,11 +49,13 @@ def compute_module_5_composite_with_defensive(
     universe_path: Optional[str] = None,
     universe_search_paths: Optional[List[str]] = None,
     enhancement_result: dict = None,
+    use_v2_scoring: bool = True,
+    market_data_by_ticker: Optional[Dict[str, Dict[str, Any]]] = None,
 ) -> dict:
     """
     Rank securities with defensive overlays integrated.
 
-    Drop-in replacement for compute_module_5_composite() with defensive overlays.
+    Production wrapper for Module 5 composite scoring with v2 enhancements.
 
     Args:
         universe_result: Module 1 output
@@ -52,32 +64,55 @@ def compute_module_5_composite_with_defensive(
         clinical_result: Module 4 output
         as_of_date: Analysis date (YYYY-MM-DD)
         weights: Override default weights
-        normalization: "rank" (default) or "zscore"
+        normalization: "rank" (default) or "zscore" (v1 only)
         coinvest_signals: Optional co-invest overlay data
-        cohort_mode: "stage_only" (recommended) or "stage_mcap"
+        cohort_mode: "stage_only" (recommended) or "stage_mcap" (v1 only)
         apply_defensive_multiplier: Apply defensive score multiplier
         apply_position_sizing: Apply position sizing based on volatility
         validate: Run validation checks
         universe_path: Explicit path to universe file with defensive_features
         universe_search_paths: Custom list of paths to search for universe file
         enhancement_result: Optional enhancement module results (PoS, regime, SI)
+        use_v2_scoring: Use v2 scoring with caps/confidence/hybrid (default True)
+        market_data_by_ticker: Optional market data for volatility adjustment (v2)
 
     Returns:
         Module 5 output enriched with defensive overlay fields
+
+    V2 Features (enabled by default):
+        - Monotonic caps: Risk gates can't be "outvoted" by strong modules
+        - Confidence weighting: Module confidence affects effective weights
+        - Hybrid aggregation: alpha*weighted_sum + (1-alpha)*min_critical
+        - Determinism hash: SHA256 for audit parity
+        - Volatility adjustment: Weight adjustment based on realized vol
     """
-    # Call your existing Module 5
-    output = compute_module_5_composite(
-        universe_result=universe_result,
-        financial_result=financial_result,
-        catalyst_result=catalyst_result,
-        clinical_result=clinical_result,
-        as_of_date=as_of_date,
-        weights=weights,
-        normalization=normalization,
-        coinvest_signals=coinvest_signals,
-        cohort_mode=cohort_mode,
-        enhancement_result=enhancement_result,
-    )
+    if use_v2_scoring:
+        logger.info("Module 5: Using v2 scoring (caps/confidence/hybrid/hash)")
+        output = compute_module_5_composite_v2(
+            universe_result=universe_result,
+            financial_result=financial_result,
+            catalyst_result=catalyst_result,
+            clinical_result=clinical_result,
+            as_of_date=as_of_date,
+            weights=weights,
+            coinvest_signals=coinvest_signals,
+            enhancement_result=enhancement_result,
+            market_data_by_ticker=market_data_by_ticker,
+        )
+    else:
+        logger.info("Module 5: Using v1 scoring (legacy)")
+        output = compute_module_5_composite(
+            universe_result=universe_result,
+            financial_result=financial_result,
+            catalyst_result=catalyst_result,
+            clinical_result=clinical_result,
+            as_of_date=as_of_date,
+            weights=weights,
+            normalization=normalization,
+            coinvest_signals=coinvest_signals,
+            cohort_mode=cohort_mode,
+            enhancement_result=enhancement_result,
+        )
 
     # Build defensive_features lookup from RAW universe file
     # Module 1 strips out defensive_features, so we load the raw file
@@ -143,14 +178,33 @@ def compute_module_5_composite_with_defensive(
     return output
 
 
+__version__ = "1.1.0"
+
 # Convenience exports
 __all__ = [
     "compute_module_5_composite_with_defensive",
     "enrich_with_defensive_overlays",
     "validate_defensive_integration",
+    "compute_module_5_composite_v2",  # Direct access to v2 scorer
 ]
 
 
 if __name__ == "__main__":
-    print("module_5_composite_with_defensive.py - Wrapper for defensive overlays")
-    print("Run: python test_defensive_integration.py")
+    print(f"module_5_composite_with_defensive.py v{__version__}")
+    print("Production wrapper with v2 features: caps/confidence/hybrid/hash")
+    print()
+    print("V2 Features (default):")
+    print("  - Monotonic caps: Risk gates can't be 'outvoted'")
+    print("  - Confidence weighting: Module confidence affects weights")
+    print("  - Hybrid aggregation: weighted_sum + weakest_link blend")
+    print("  - Determinism hash: SHA256 audit trail")
+    print("  - Volatility adjustment: Weight scaling by realized vol")
+    print()
+    print("Usage:")
+    print("  # Default (v2 scoring)")
+    print("  result = compute_module_5_composite_with_defensive(...)")
+    print()
+    print("  # Revert to v1")
+    print("  result = compute_module_5_composite_with_defensive(..., use_v2_scoring=False)")
+    print()
+    print("Test: python -m pytest tests/test_module_5_v2_integration.py -v")
