@@ -69,11 +69,23 @@ class HistoricalDataExtractor:
         scores = {}
 
         # Try different possible structures
-        if 'ranked_securities' in checkpoint_data:
+        securities = None
+
+        # Format 1: Nested under 'data' key (module_5 checkpoints)
+        if 'data' in checkpoint_data:
+            data = checkpoint_data['data']
+            if 'ranked_securities' in data:
+                securities = data['ranked_securities']
+
+        # Format 2: Direct ranked_securities at top level
+        if securities is None and 'ranked_securities' in checkpoint_data:
             securities = checkpoint_data['ranked_securities']
-        elif 'results' in checkpoint_data:
+
+        # Format 3: Direct results at top level
+        if securities is None and 'results' in checkpoint_data:
             securities = checkpoint_data['results']
-        else:
+
+        if securities is None:
             print(f"Warning: Unknown checkpoint structure for {date}, skipping")
             return scores
 
@@ -85,39 +97,64 @@ class HistoricalDataExtractor:
             # Extract scores - try different field names
             score_data = {}
 
-            # Method 1: Direct score_components field
-            if 'score_components' in security:
+            # Method 1: score_breakdown.components array (v2.0 format)
+            if 'score_breakdown' in security:
+                breakdown = security['score_breakdown']
+                components = breakdown.get('components', [])
+
+                # Build dict from components array
+                comp_dict = {}
+                for comp in components:
+                    name = comp.get('name')
+                    # Use normalized score (0-100 scale)
+                    normalized = comp.get('normalized', '50.0')
+                    try:
+                        comp_dict[name] = float(normalized)
+                    except (ValueError, TypeError):
+                        comp_dict[name] = 50.0
+
+                score_data = {
+                    'clinical': comp_dict.get('clinical', 50.0),
+                    'financial': comp_dict.get('financial', 50.0),
+                    'catalyst': comp_dict.get('catalyst', 50.0),
+                    'pos': comp_dict.get('pos', 50.0),
+                    'momentum': comp_dict.get('momentum', 50.0),
+                    'valuation': comp_dict.get('valuation', 50.0)
+                }
+
+            # Method 2: Direct score_components field
+            elif 'score_components' in security:
                 components = security['score_components']
                 score_data = {
-                    'clinical': float(components.get('clinical', 0)),
-                    'financial': float(components.get('financial', 0)),
-                    'catalyst': float(components.get('catalyst', 0)),
-                    'pos': float(components.get('pos', 0)),
-                    'momentum': float(components.get('momentum', 0)),
-                    'valuation': float(components.get('valuation', 0))
+                    'clinical': float(components.get('clinical', 50.0)),
+                    'financial': float(components.get('financial', 50.0)),
+                    'catalyst': float(components.get('catalyst', 50.0)),
+                    'pos': float(components.get('pos', 50.0)),
+                    'momentum': float(components.get('momentum', 50.0)),
+                    'valuation': float(components.get('valuation', 50.0))
                 }
 
-            # Method 2: Individual score fields
+            # Method 3: Individual score fields
             elif 'clinical_score' in security:
                 score_data = {
-                    'clinical': float(security.get('clinical_score', 0)),
-                    'financial': float(security.get('financial_score', 0)),
-                    'catalyst': float(security.get('catalyst_score', 0)),
-                    'pos': float(security.get('pos_score', 0)),
-                    'momentum': float(security.get('momentum_score', 0)),
-                    'valuation': float(security.get('valuation_score', 0))
+                    'clinical': float(security.get('clinical_score', 50.0)),
+                    'financial': float(security.get('financial_score', 50.0)),
+                    'catalyst': float(security.get('catalyst_score', 50.0)),
+                    'pos': float(security.get('pos_score', 50.0)),
+                    'momentum': float(security.get('momentum_score', 50.0)),
+                    'valuation': float(security.get('valuation_score', 50.0))
                 }
 
-            # Method 3: From module scores
+            # Method 4: From module scores
             elif 'module_2_score' in security:
                 # Module 2 = financial, Module 4 = clinical
                 score_data = {
-                    'clinical': float(security.get('module_4_score', 0)),
-                    'financial': float(security.get('module_2_score', 0)),
-                    'catalyst': float(security.get('module_3_score', 0)),
-                    'pos': float(security.get('pos_score', 0)),
-                    'momentum': float(security.get('momentum_score', 0)),
-                    'valuation': float(security.get('valuation_score', 0))
+                    'clinical': float(security.get('module_4_score', 50.0)),
+                    'financial': float(security.get('module_2_score', 50.0)),
+                    'catalyst': float(security.get('module_3_score', 50.0)),
+                    'pos': float(security.get('pos_score', 50.0)),
+                    'momentum': float(security.get('momentum_score', 50.0)),
+                    'valuation': float(security.get('valuation_score', 50.0))
                 }
 
             if score_data:
