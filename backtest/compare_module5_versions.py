@@ -412,6 +412,88 @@ def compute_drawdown(cumulative_returns: List[float]) -> float:
     return max_dd
 
 
+def compute_costed_return(
+    gross_return: float,
+    turnover: float,
+    cost_bps: float = 50.0,
+) -> float:
+    """
+    Compute net return after trading costs.
+
+    Args:
+        gross_return: Gross period return
+        turnover: Fraction of portfolio turned over (0-1)
+        cost_bps: Round-trip cost in basis points (default 50 = 0.50%)
+
+    Returns:
+        Net return after costs
+    """
+    cost = turnover * (cost_bps / 10000.0)
+    return gross_return - cost
+
+
+def compute_concentration_metrics(
+    scores: Dict[str, Decimal],
+    returns: Dict[str, float],
+    top_n: int = 5,
+) -> Dict[str, Any]:
+    """
+    Compute concentration/robustness metrics for top bucket.
+
+    Returns:
+        - median_return: Median of top-N returns (robust to outliers)
+        - mean_return: Mean of top-N returns
+        - win_rate: Fraction where top-N beat universe median
+        - top1_contribution: Return contribution from best performer
+        - top1_ticker: Ticker of best performer
+        - returns_by_ticker: Dict of returns for each top ticker
+    """
+    common = sorted(
+        set(scores.keys()) & set(returns.keys()),
+        key=lambda t: scores[t],
+        reverse=True
+    )
+
+    if len(common) < top_n:
+        return {
+            "median_return": None,
+            "mean_return": None,
+            "win_rate": None,
+            "top1_contribution": None,
+            "top1_ticker": None,
+            "returns_by_ticker": {},
+        }
+
+    top_tickers = common[:top_n]
+    top_returns = [returns[t] for t in top_tickers]
+
+    # Universe median for win rate calculation
+    all_returns = [returns[t] for t in common]
+    universe_median = median(all_returns) if all_returns else 0
+
+    # Metrics
+    median_ret = median(top_returns)
+    mean_ret = mean(top_returns)
+    wins = sum(1 for r in top_returns if r > universe_median)
+    win_rate = wins / len(top_returns)
+
+    # Top-1 contribution (what % of total top-N return came from best name)
+    best_idx = top_returns.index(max(top_returns))
+    top1_ticker = top_tickers[best_idx]
+    top1_return = top_returns[best_idx]
+    total_return = sum(top_returns)
+    top1_contribution = top1_return / total_return if total_return != 0 else 0
+
+    return {
+        "median_return": median_ret,
+        "mean_return": mean_ret,
+        "win_rate": win_rate,
+        "top1_contribution": top1_contribution,
+        "top1_ticker": top1_ticker,
+        "returns_by_ticker": {t: returns[t] for t in top_tickers},
+    }
+
+
 # =============================================================================
 # MAIN BACKTEST
 # =============================================================================
@@ -487,6 +569,18 @@ def run_comparison_backtest(
     # For drawdown calculation
     cumret_v2 = [1.0]
     cumret_v3 = [1.0]
+
+    # NEW: Costed returns tracking
+    cumret_v2_net = [1.0]  # Net of 50bps cost
+    cumret_v3_net = [1.0]
+
+    # NEW: Concentration metrics tracking
+    median_returns_v2 = []
+    median_returns_v3 = []
+    win_rates_v2 = []
+    win_rates_v3 = []
+    top1_contributions_v2 = []
+    top1_contributions_v3 = []
 
     # Run backtest
     print("Running backtest...")
@@ -578,13 +672,38 @@ def run_comparison_backtest(
             prev_top_v2 = curr_top_v2
             prev_top_v3 = curr_top_v3
 
-            # Update cumulative returns for drawdown
+            # Update cumulative returns for drawdown (gross and net of costs)
             if spread_result_v2[0] is not None:
                 period_ret = spread_result_v2[0]  # Top bucket return
                 cumret_v2.append(cumret_v2[-1] * (1 + period_ret))
+
+                # Net return (50 bps cost per turnover)
+                period_turnover = turnover_v2[-1] if turnover_v2 else 0
+                net_ret = compute_costed_return(period_ret, period_turnover, cost_bps=50.0)
+                cumret_v2_net.append(cumret_v2_net[-1] * (1 + net_ret))
+
             if spread_result_v3[0] is not None:
                 period_ret = spread_result_v3[0]
                 cumret_v3.append(cumret_v3[-1] * (1 + period_ret))
+
+                # Net return (50 bps cost per turnover)
+                period_turnover = turnover_v3[-1] if turnover_v3 else 0
+                net_ret = compute_costed_return(period_ret, period_turnover, cost_bps=50.0)
+                cumret_v3_net.append(cumret_v3_net[-1] * (1 + net_ret))
+
+            # Compute concentration metrics
+            conc_v2 = compute_concentration_metrics(scores_v2, returns_90d, top_n)
+            conc_v3 = compute_concentration_metrics(scores_v3, returns_90d, top_n)
+
+            if conc_v2["median_return"] is not None:
+                median_returns_v2.append(conc_v2["median_return"])
+                win_rates_v2.append(conc_v2["win_rate"])
+                top1_contributions_v2.append(conc_v2["top1_contribution"])
+
+            if conc_v3["median_return"] is not None:
+                median_returns_v3.append(conc_v3["median_return"])
+                win_rates_v3.append(conc_v3["win_rate"])
+                top1_contributions_v3.append(conc_v3["top1_contribution"])
 
         # Print row
         ic_v2_str = f"{float(ic_v2):+.3f}" if ic_v2 else "   N/A"
@@ -740,10 +859,56 @@ def run_comparison_backtest(
     print(f"  v2 Max Drawdown: {dd_v2:.1%}")
     print(f"  v3 Max Drawdown: {dd_v3:.1%}")
 
+    print()
+    print("  Gross Returns:")
     if cumret_v2:
-        print(f"  v2 Cumulative Return: {(cumret_v2[-1] - 1):.1%}")
+        print(f"    v2 Cumulative: {(cumret_v2[-1] - 1):+.1%}")
     if cumret_v3:
-        print(f"  v3 Cumulative Return: {(cumret_v3[-1] - 1):.1%}")
+        print(f"    v3 Cumulative: {(cumret_v3[-1] - 1):+.1%}")
+
+    print()
+    print("  Net Returns (after 50bps cost per turnover):")
+    if cumret_v2_net:
+        print(f"    v2 Cumulative (net): {(cumret_v2_net[-1] - 1):+.1%}")
+    if cumret_v3_net:
+        print(f"    v3 Cumulative (net): {(cumret_v3_net[-1] - 1):+.1%}")
+
+    if cumret_v2 and cumret_v3 and cumret_v2_net and cumret_v3_net:
+        v2_cost_drag = (cumret_v2[-1] - cumret_v2_net[-1]) / cumret_v2[-1] * 100
+        v3_cost_drag = (cumret_v3[-1] - cumret_v3_net[-1]) / cumret_v3[-1] * 100
+        print(f"    v2 Cost Drag: {v2_cost_drag:.1f}%")
+        print(f"    v3 Cost Drag: {v3_cost_drag:.1f}%")
+
+    print()
+
+    # ==========================================================================
+    # Concentration / Robustness Check
+    # ==========================================================================
+    print("Concentration Analysis (robustness check):")
+    print("-" * 60)
+
+    if median_returns_v2:
+        print(f"  v2 Median Top-{top_n} Return: {mean(median_returns_v2):+.2%}")
+    if median_returns_v3:
+        print(f"  v3 Median Top-{top_n} Return: {mean(median_returns_v3):+.2%}")
+
+    print()
+    if win_rates_v2:
+        print(f"  v2 Win Rate (top-{top_n} beats median): {mean(win_rates_v2):.1%}")
+    if win_rates_v3:
+        print(f"  v3 Win Rate (top-{top_n} beats median): {mean(win_rates_v3):.1%}")
+
+    print()
+    if top1_contributions_v2:
+        print(f"  v2 Top-1 Contribution: {mean(top1_contributions_v2):.1%} of top-{top_n} return")
+    if top1_contributions_v3:
+        print(f"  v3 Top-1 Contribution: {mean(top1_contributions_v3):.1%} of top-{top_n} return")
+
+    # Flag if one name dominates
+    if top1_contributions_v2 and top1_contributions_v3:
+        if mean(top1_contributions_v2) > 0.5 or mean(top1_contributions_v3) > 0.5:
+            print()
+            print("  WARNING: Top-1 name contributes >50% of returns - concentration risk!")
 
     print()
 
@@ -851,12 +1016,20 @@ def run_comparison_backtest(
             "v2": {
                 "turnover_mean": mean(turnover_v2) if turnover_v2 else None,
                 "max_drawdown": dd_v2,
-                "cumulative_return": cumret_v2[-1] - 1 if cumret_v2 else None,
+                "cumulative_return_gross": cumret_v2[-1] - 1 if cumret_v2 else None,
+                "cumulative_return_net": cumret_v2_net[-1] - 1 if cumret_v2_net else None,
+                "median_top_return": mean(median_returns_v2) if median_returns_v2 else None,
+                "win_rate": mean(win_rates_v2) if win_rates_v2 else None,
+                "top1_contribution": mean(top1_contributions_v2) if top1_contributions_v2 else None,
             },
             "v3": {
                 "turnover_mean": mean(turnover_v3) if turnover_v3 else None,
                 "max_drawdown": dd_v3,
-                "cumulative_return": cumret_v3[-1] - 1 if cumret_v3 else None,
+                "cumulative_return_gross": cumret_v3[-1] - 1 if cumret_v3 else None,
+                "cumulative_return_net": cumret_v3_net[-1] - 1 if cumret_v3_net else None,
+                "median_top_return": mean(median_returns_v3) if median_returns_v3 else None,
+                "win_rate": mean(win_rates_v3) if win_rates_v3 else None,
+                "top1_contribution": mean(top1_contributions_v3) if top1_contributions_v3 else None,
             },
         },
         "rank_correlation": {

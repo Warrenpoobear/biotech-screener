@@ -140,16 +140,24 @@
     "v2": {
       "turnover_mean": 0.35000000000000003,
       "max_drawdown": 0.2278909598966754,
-      "cumulative_return": 2.7509883716307257
+      "cumulative_return_gross": 2.7509883716307257,
+      "cumulative_return_net": 2.6306020029573873,
+      "median_top_return": 0.051212772727272725,
+      "win_rate": 0.6272727272727273,
+      "top1_contribution": 2.076182564035529
     },
     "v3": {
       "turnover_mean": 0.11666666666666667,
       "max_drawdown": 0.2576614915012625,
-      "cumulative_return": 4.04306030161071
+      "cumulative_return_gross": 4.04306030161071,
+      "cumulative_return_net": 3.9803533301767864,
+      "median_top_return": 0.023014909090909093,
+      "win_rate": 0.6090909090909091,
+      "top1_contribution": 0.0682937476892602
     }
   },
   "rank_correlation": {
-    "mean": 0.8409391304347826,
+    "mean": 0.8405913043478261,
     "min": 0.7573913043478261,
     "max": 0.9121739130434783,
     "values": [
@@ -177,7 +185,7 @@
       0.8947826086956522,
       0.811304347826087,
       0.8669565217391304,
-      0.8713043478260869
+      0.8626086956521739
     ]
   },
   "period_results": {
