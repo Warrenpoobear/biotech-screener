@@ -949,11 +949,14 @@ def compute_module_2_financial(*args: Any, **kwargs: Any) -> Dict[str, Any]:
         result.append({
             'ticker': ticker,
             'score': 0,
+            'financial_score': 0.0,  # Required by validation
+            'financial_normalized': 0.0,  # Legacy alias
             'runway_months': None,
             'cash_mm': None,
             'burn_rate_mm': None,
             'flags': ['missing_financial_data'],
             'data_state': DATA_STATE_NONE,
+            'severity': 'sev3',  # Missing data = hard gate
         })
 
     # Add legacy field names to existing results for backwards compatibility

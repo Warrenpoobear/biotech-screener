@@ -1,0 +1,14 @@
+{
+  "config": {
+    "decay_constant": 30.0,
+    "noise_band_days": 14,
+    "recency_threshold_days": 90,
+    "schema_version": "m3catalyst_vnext_20260111",
+    "score_version": "m3score_vnext_20260111"
+  },
+  "errors": [],
+  "execution_time_seconds": 0.25,
+  "host": "runsc",
+  "run_timestamp": "2026-01-18T15:36:49.942824Z",
+  "warnings": []
+}
