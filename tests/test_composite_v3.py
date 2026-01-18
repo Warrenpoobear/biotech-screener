@@ -207,43 +207,107 @@ def sample_enhancement_result():
 # =============================================================================
 
 class TestVolatilityAdjustment:
-    """Tests for volatility-adjusted scoring."""
+    """Tests for volatility-adjusted scoring.
 
-    def test_low_volatility_boost(self):
-        """Low volatility should boost weights and scores."""
+    V2 ASYMMETRIC PENALTY:
+    - Score penalty only applies above target vol (50%)
+    - Low vol names are NOT penalized (better IC in biotech)
+    - Weight adjustments still boost low vol / reduce high vol for signal reliability
+    """
+
+    def test_low_volatility_no_score_penalty(self):
+        """Low volatility should NOT have score penalty (v2 asymmetric).
+
+        Low-vol names often deliver better forward returns in biotech.
+        Penalizing them hurts IC.
+        """
         result = compute_volatility_adjustment(Decimal("0.20"))
         assert result.vol_bucket == VolatilityBucket.LOW
+        # Weights are still boosted for signal reliability
         assert result.weight_adjustment_factor > Decimal("1.0")
-        assert result.score_adjustment_factor >= Decimal("1.0")
+        # But NO score penalty for low vol (v2 improvement)
+        assert result.score_adjustment_factor == Decimal("1.0")
         assert result.confidence_penalty == Decimal("0")
 
-    def test_normal_volatility_neutral(self):
-        """Normal volatility should be neutral."""
+    def test_low_volatility_25pct_no_penalty(self):
+        """At 25% vol (below target 50%), no score penalty.
+
+        Test vector: vol=0.25, target=0.50 -> vol_ratio=0.5 -> no penalty
+        """
+        result = compute_volatility_adjustment(Decimal("0.25"))
+        assert result.vol_bucket == VolatilityBucket.LOW
+        assert result.score_adjustment_factor == Decimal("1.0")
+
+    def test_target_volatility_neutral(self):
+        """At target volatility (50%), no score penalty."""
         result = compute_volatility_adjustment(Decimal("0.50"))
         assert result.vol_bucket == VolatilityBucket.NORMAL
         assert result.weight_adjustment_factor == Decimal("1.0")
+        # At target vol, vol_ratio = 1.0, no penalty
+        assert result.score_adjustment_factor == Decimal("1.0")
 
-    def test_high_volatility_penalty(self):
-        """High volatility should reduce weights and scores."""
+    def test_above_target_vol_75pct_penalty(self):
+        """At 75% vol (above target 50%), linear score penalty.
+
+        Test vector: vol=0.75, target=0.50 -> vol_ratio=1.5 -> penalty=0.075
+        score_adj = 1.0 - 0.075 = 0.925
+        """
+        result = compute_volatility_adjustment(Decimal("0.75"))
+        assert result.vol_bucket == VolatilityBucket.NORMAL
+        # penalty = (1.5 - 1) * 0.15 = 0.075
+        expected_score_adj = Decimal("0.9250")
+        assert result.score_adjustment_factor == expected_score_adj
+
+    def test_high_volatility_100pct_penalty(self):
+        """At 100% vol, significant score penalty.
+
+        Test vector: vol=1.00, target=0.50 -> vol_ratio=2.0 -> penalty=0.15
+        score_adj = 1.0 - 0.15 = 0.85
+        """
         result = compute_volatility_adjustment(Decimal("1.00"))
         assert result.vol_bucket == VolatilityBucket.HIGH
         assert result.weight_adjustment_factor < Decimal("1.0")
-        assert result.score_adjustment_factor < Decimal("1.0")
+        # penalty = (2.0 - 1) * 0.15 = 0.15
+        expected_score_adj = Decimal("0.8500")
+        assert result.score_adjustment_factor == expected_score_adj
         assert result.confidence_penalty > Decimal("0.10")
+
+    def test_very_high_volatility_capped(self):
+        """Very high volatility penalty is capped at 30%.
+
+        Test vector: vol=2.00, target=0.50 -> vol_ratio=4.0 -> penalty capped at 0.30
+        score_adj = 1.0 - 0.30 = 0.70
+        """
+        result = compute_volatility_adjustment(Decimal("2.00"))
+        assert result.vol_bucket == VolatilityBucket.HIGH
+        # penalty = (4.0 - 1) * 0.15 = 0.45, but capped at 0.30
+        expected_score_adj = Decimal("0.7000")
+        assert result.score_adjustment_factor == expected_score_adj
 
     def test_unknown_volatility(self):
         """Missing volatility should return neutral with small penalty."""
         result = compute_volatility_adjustment(None)
         assert result.vol_bucket == VolatilityBucket.UNKNOWN
         assert result.weight_adjustment_factor == Decimal("1.0")
+        assert result.score_adjustment_factor == Decimal("1.0")
         assert result.confidence_penalty == Decimal("0.05")
 
-    def test_apply_volatility_to_score(self):
+    def test_apply_volatility_to_score_high_vol(self):
         """Score adjustment should dampen high-vol stocks."""
         vol_adj = compute_volatility_adjustment(Decimal("1.00"))
         original_score = Decimal("80")
         adjusted = apply_volatility_to_score(original_score, vol_adj)
+        # 80 * 0.85 = 68
         assert adjusted < original_score
+        assert adjusted == Decimal("68.00")
+
+    def test_apply_volatility_to_score_low_vol(self):
+        """Score adjustment should NOT change low-vol stocks."""
+        vol_adj = compute_volatility_adjustment(Decimal("0.25"))
+        original_score = Decimal("80")
+        adjusted = apply_volatility_to_score(original_score, vol_adj)
+        # No penalty for low vol
+        assert adjusted == original_score
 
 
 # =============================================================================
