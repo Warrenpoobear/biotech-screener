@@ -29,7 +29,7 @@ from common.integration_contracts import (
     SchemaValidationError,
 )
 
-RULESET_VERSION = "1.2.1"  # Bumped for determinism + exception fixes
+RULESET_VERSION = "1.2.2"  # Bumped for regime weight normalization fix
 
 
 def _decimal_mean(values: List[Decimal]) -> Decimal:
@@ -378,34 +378,73 @@ def compute_module_5_composite(
             weights = DEFAULT_WEIGHTS.copy()
 
     # Apply regime-based weight adjustments
-    if regime_adjustments and pos_by_ticker:
-        # Regime adjusts relative importance of signals
-        # quality_adj > 1 in BEAR = favor quality/financial
-        # momentum_adj < 1 in BEAR = dampen catalyst/momentum signals
-        quality_adj = regime_adjustments.get("quality", Decimal("1.0"))
-        momentum_adj = regime_adjustments.get("momentum", Decimal("1.0"))
-        catalyst_adj = regime_adjustments.get("catalyst", Decimal("1.0"))
+    # Note: Regime adjustments apply independently of PoS data availability
+    regime_weights_applied = False
+    pre_regime_weights = weights.copy()  # Store for audit trail
 
-        # Convert to Decimal if needed
-        if not isinstance(quality_adj, Decimal):
-            quality_adj = Decimal(str(quality_adj))
-        if not isinstance(momentum_adj, Decimal):
-            momentum_adj = Decimal(str(momentum_adj))
-        if not isinstance(catalyst_adj, Decimal):
-            catalyst_adj = Decimal(str(catalyst_adj))
+    if regime_adjustments:
+        # Map regime_engine signal keys to module_5 weight keys:
+        # regime_engine provides: momentum, fundamental, quality, catalyst, institutional, clinical, financial
+        # module_5 uses: clinical_dev, financial, catalyst, pos
+        #
+        # Mappings:
+        #   clinical -> clinical_dev (clinical development progress)
+        #   financial -> financial (runway, burn rate)
+        #   catalyst -> catalyst (trial events)
+        #   momentum -> catalyst (catalyst includes momentum-like signals)
+        #   pos -> not regime-adjusted (objective probability, not market-sensitive)
 
-        # Adjust weights based on regime
-        adjusted_weights = {
-            "clinical_dev": weights.get("clinical_dev", Decimal("0.30")),
-            "financial": weights.get("financial", Decimal("0.30")) * quality_adj,
-            "catalyst": weights.get("catalyst", Decimal("0.20")) * catalyst_adj * momentum_adj,
-            "pos": weights.get("pos", Decimal("0.20")),
-        }
+        def _to_decimal(val) -> Decimal:
+            """Convert to Decimal, handling various input types."""
+            if isinstance(val, Decimal):
+                return val
+            return Decimal(str(val)) if val is not None else Decimal("1.0")
 
-        # Renormalize to sum to 1.0
+        # Extract regime multipliers with defaults of 1.0 (neutral)
+        clinical_adj = _to_decimal(regime_adjustments.get("clinical", "1.0"))
+        financial_adj = _to_decimal(regime_adjustments.get("financial", "1.0"))
+        catalyst_adj = _to_decimal(regime_adjustments.get("catalyst", "1.0"))
+        # momentum dampens catalyst signal (they're related in our scoring)
+        momentum_adj = _to_decimal(regime_adjustments.get("momentum", "1.0"))
+
+        # Apply multipliers to each weight component
+        # w_i' = w_i * m_i(regime)
+        adjusted_weights = {}
+        for key, base_weight in weights.items():
+            if key == "clinical_dev":
+                # Clinical development adjusted by clinical regime signal
+                adjusted_weights[key] = base_weight * clinical_adj
+            elif key == "financial":
+                # Financial health adjusted by financial regime signal
+                adjusted_weights[key] = base_weight * financial_adj
+            elif key == "catalyst":
+                # Catalyst adjusted by both catalyst and momentum signals
+                # In BEAR: catalyst * momentum dampens speculative catalyst plays
+                adjusted_weights[key] = base_weight * catalyst_adj * momentum_adj
+            elif key == "pos":
+                # PoS (probability of success) is objective, not regime-adjusted
+                adjusted_weights[key] = base_weight
+            else:
+                # Unknown weight key - pass through unchanged
+                adjusted_weights[key] = base_weight
+
+        # Renormalize so weights sum to 1.0 (prevents score drift across regimes)
+        # w_i'' = w_i' / sum(w_i')
         total = sum(adjusted_weights.values())
-        if total > 0:
-            weights = {k: (v / total).quantize(Decimal("0.0001")) for k, v in adjusted_weights.items()}
+        if total > Decimal("0"):
+            weights = {
+                k: (v / total).quantize(Decimal("0.0001"), rounding=ROUND_HALF_UP)
+                for k, v in adjusted_weights.items()
+            }
+            regime_weights_applied = True
+
+            # Verify normalization (fail-fast on numerical issues)
+            normalized_total = sum(weights.values())
+            if abs(normalized_total - Decimal("1.0")) > Decimal("0.001"):
+                raise ValueError(
+                    f"Regime weight normalization failed: weights sum to {normalized_total}, "
+                    f"expected 1.0. Pre-normalization: {adjusted_weights}"
+                )
 
     # Index module outputs by ticker
     active_tickers = {s["ticker"] for s in universe_result.get("active_securities", [])}
@@ -744,14 +783,18 @@ def compute_module_5_composite(
             "unmapped_cusips_count": sum(1 for r in ranked_securities if "cusip_unmapped" in r.get("coinvest_flags", [])),
         }
     
-    # Enhancement diagnostics
+    # Enhancement diagnostics (includes regime weight audit trail)
     enhancement_diagnostics = None
-    if enhancement_applied:
+    if enhancement_applied or regime_weights_applied:
         pos_applied_count = sum(1 for r in ranked_securities if "pos_score_applied" in r.get("flags", []))
         si_squeeze_count = sum(1 for r in ranked_securities if r.get("si_squeeze_potential") in ("EXTREME", "HIGH"))
         enhancement_diagnostics = {
             "regime": regime_name,
             "regime_adjustments": {k: str(v) for k, v in regime_adjustments.items()} if regime_adjustments else {},
+            "regime_weights_applied": regime_weights_applied,
+            "base_weights": {k: str(v) for k, v in pre_regime_weights.items()},
+            "effective_weights": {k: str(v) for k, v in weights.items()},
+            "effective_weights_sum": str(sum(weights.values())),  # Should always be 1.0
             "pos_scores_applied": pos_applied_count,
             "si_squeeze_signals": si_squeeze_count,
         }

@@ -184,12 +184,258 @@ class TestModule5Composite:
         u, f, c, cl = sample_inputs
         # validate_inputs=False for minimal test fixtures
         result = compute_module_5_composite(u, f, c, cl, "2024-01-01", validate_inputs=False)
-        
+
         # Check normalized scores exist
         for sec in result["ranked_securities"]:
             assert sec["clinical_dev_normalized"] is not None
             assert sec["financial_normalized"] is not None
             assert sec["catalyst_normalized"] is not None
+
+
+class TestRegimeWeightNormalization:
+    """Tests for regime weight normalization (issue: weights must sum to 1.0 across regimes)."""
+
+    @pytest.fixture
+    def sample_inputs_with_regime(self):
+        """Sample inputs for regime weight testing."""
+        universe = {
+            "active_securities": [{"ticker": "A"}, {"ticker": "B"}]
+        }
+        financial = {
+            "scores": [
+                {"ticker": "A", "financial_score": "70", "market_cap_mm": "5000", "severity": "none", "flags": []},
+                {"ticker": "B", "financial_score": "50", "market_cap_mm": "500", "severity": "none", "flags": []},
+            ]
+        }
+        catalyst = {
+            "scores": [
+                {"ticker": "A", "catalyst_score": "40", "severity": "none", "flags": []},
+                {"ticker": "B", "catalyst_score": "30", "severity": "none", "flags": []},
+            ]
+        }
+        clinical = {
+            "scores": [
+                {"ticker": "A", "clinical_score": "80", "lead_phase": "phase 3", "severity": "none", "flags": []},
+                {"ticker": "B", "clinical_score": "40", "lead_phase": "phase 1", "severity": "none", "flags": []},
+            ]
+        }
+        return universe, financial, catalyst, clinical
+
+    def test_regime_weights_sum_to_one_bull(self, sample_inputs_with_regime):
+        """BULL regime: weights must sum to 1.0 after normalization."""
+        from decimal import Decimal
+        u, f, c, cl = sample_inputs_with_regime
+
+        # BULL regime adjustments (from regime_engine.py)
+        enhancement_result = {
+            "regime": {
+                "regime": "BULL",
+                "signal_adjustments": {
+                    "momentum": Decimal("1.20"),
+                    "clinical": Decimal("1.10"),
+                    "financial": Decimal("0.95"),
+                    "catalyst": Decimal("1.15"),
+                },
+            },
+            "pos_scores": {"scores": []},  # No PoS data
+        }
+
+        result = compute_module_5_composite(
+            u, f, c, cl, "2024-01-01",
+            enhancement_result=enhancement_result,
+            validate_inputs=False
+        )
+
+        # Weights must sum to 1.0
+        weights_used = result.get("weights_used", {})
+        total = sum(Decimal(v) for v in weights_used.values())
+        assert abs(total - Decimal("1.0")) < Decimal("0.001"), f"Weights sum to {total}, expected 1.0"
+
+        # Check audit trail includes regime info
+        diag = result.get("enhancement_diagnostics", {})
+        assert diag.get("regime_weights_applied") is True
+        # Allow small rounding tolerance in audit sum (0.9999-1.0001 acceptable)
+        effective_sum = Decimal(diag.get("effective_weights_sum", "0"))
+        assert abs(effective_sum - Decimal("1.0")) < Decimal("0.001")
+
+    def test_regime_weights_sum_to_one_bear(self, sample_inputs_with_regime):
+        """BEAR regime: weights must sum to 1.0 after normalization."""
+        from decimal import Decimal
+        u, f, c, cl = sample_inputs_with_regime
+
+        # BEAR regime adjustments (from regime_engine.py)
+        enhancement_result = {
+            "regime": {
+                "regime": "BEAR",
+                "signal_adjustments": {
+                    "momentum": Decimal("0.80"),
+                    "clinical": Decimal("1.05"),
+                    "financial": Decimal("1.20"),
+                    "catalyst": Decimal("0.90"),
+                },
+            },
+            "pos_scores": {"scores": []},
+        }
+
+        result = compute_module_5_composite(
+            u, f, c, cl, "2024-01-01",
+            enhancement_result=enhancement_result,
+            validate_inputs=False
+        )
+
+        weights_used = result.get("weights_used", {})
+        total = sum(Decimal(v) for v in weights_used.values())
+        assert abs(total - Decimal("1.0")) < Decimal("0.001"), f"Weights sum to {total}, expected 1.0"
+
+    def test_regime_weights_sum_to_one_volatility_spike(self, sample_inputs_with_regime):
+        """VOLATILITY_SPIKE regime: weights must sum to 1.0 after normalization."""
+        from decimal import Decimal
+        u, f, c, cl = sample_inputs_with_regime
+
+        # VOLATILITY_SPIKE regime adjustments
+        enhancement_result = {
+            "regime": {
+                "regime": "VOLATILITY_SPIKE",
+                "signal_adjustments": {
+                    "momentum": Decimal("0.70"),
+                    "clinical": Decimal("0.90"),
+                    "financial": Decimal("1.25"),
+                    "catalyst": Decimal("0.80"),
+                },
+            },
+            "pos_scores": {"scores": []},
+        }
+
+        result = compute_module_5_composite(
+            u, f, c, cl, "2024-01-01",
+            enhancement_result=enhancement_result,
+            validate_inputs=False
+        )
+
+        weights_used = result.get("weights_used", {})
+        total = sum(Decimal(v) for v in weights_used.values())
+        assert abs(total - Decimal("1.0")) < Decimal("0.001"), f"Weights sum to {total}, expected 1.0"
+
+    def test_regime_adjustments_without_pos_data(self, sample_inputs_with_regime):
+        """Regime adjustments should apply even without PoS data."""
+        from decimal import Decimal
+        u, f, c, cl = sample_inputs_with_regime
+
+        # Enhancement result with regime but NO PoS scores
+        enhancement_result = {
+            "regime": {
+                "regime": "BEAR",
+                "signal_adjustments": {
+                    "momentum": Decimal("0.80"),
+                    "clinical": Decimal("1.05"),
+                    "financial": Decimal("1.20"),
+                    "catalyst": Decimal("0.90"),
+                },
+            },
+            "pos_scores": {"scores": []},  # Empty PoS
+        }
+
+        result = compute_module_5_composite(
+            u, f, c, cl, "2024-01-01",
+            enhancement_result=enhancement_result,
+            validate_inputs=False
+        )
+
+        # Regime weights should still be applied
+        diag = result.get("enhancement_diagnostics", {})
+        assert diag.get("regime_weights_applied") is True
+        assert diag.get("regime") == "BEAR"
+
+    def test_regime_audit_trail_included(self, sample_inputs_with_regime):
+        """Audit trail should include base weights and effective weights."""
+        from decimal import Decimal
+        u, f, c, cl = sample_inputs_with_regime
+
+        enhancement_result = {
+            "regime": {
+                "regime": "BULL",
+                "signal_adjustments": {
+                    "momentum": Decimal("1.20"),
+                    "clinical": Decimal("1.10"),
+                    "financial": Decimal("0.95"),
+                    "catalyst": Decimal("1.15"),
+                },
+            },
+            "pos_scores": {"scores": []},
+        }
+
+        result = compute_module_5_composite(
+            u, f, c, cl, "2024-01-01",
+            enhancement_result=enhancement_result,
+            validate_inputs=False
+        )
+
+        diag = result.get("enhancement_diagnostics", {})
+
+        # Must include all audit fields
+        assert "base_weights" in diag
+        assert "effective_weights" in diag
+        assert "effective_weights_sum" in diag
+        assert "regime_weights_applied" in diag
+
+        # Base weights should be the default weights
+        base = diag["base_weights"]
+        assert "clinical_dev" in base
+        assert "financial" in base
+        assert "catalyst" in base
+
+    def test_all_regimes_produce_normalized_weights(self, sample_inputs_with_regime):
+        """All regime types must produce weights that sum to 1.0."""
+        from decimal import Decimal
+        u, f, c, cl = sample_inputs_with_regime
+
+        # Test all regime types
+        regimes = {
+            "BULL": {
+                "momentum": Decimal("1.20"),
+                "clinical": Decimal("1.10"),
+                "financial": Decimal("0.95"),
+                "catalyst": Decimal("1.15"),
+            },
+            "BEAR": {
+                "momentum": Decimal("0.80"),
+                "clinical": Decimal("1.05"),
+                "financial": Decimal("1.20"),
+                "catalyst": Decimal("0.90"),
+            },
+            "VOLATILITY_SPIKE": {
+                "momentum": Decimal("0.70"),
+                "clinical": Decimal("0.90"),
+                "financial": Decimal("1.25"),
+                "catalyst": Decimal("0.80"),
+            },
+            "SECTOR_ROTATION": {
+                "momentum": Decimal("1.00"),
+                "clinical": Decimal("1.00"),
+                "financial": Decimal("1.05"),
+                "catalyst": Decimal("1.00"),
+            },
+        }
+
+        for regime_name, adjustments in regimes.items():
+            enhancement_result = {
+                "regime": {
+                    "regime": regime_name,
+                    "signal_adjustments": adjustments,
+                },
+                "pos_scores": {"scores": []},
+            }
+
+            result = compute_module_5_composite(
+                u, f, c, cl, "2024-01-01",
+                enhancement_result=enhancement_result,
+                validate_inputs=False
+            )
+
+            weights_used = result.get("weights_used", {})
+            total = sum(Decimal(v) for v in weights_used.values())
+            assert abs(total - Decimal("1.0")) < Decimal("0.001"), \
+                f"{regime_name}: Weights sum to {total}, expected 1.0"
 
 
 class TestIntegration:
@@ -255,4 +501,4 @@ class TestIntegration:
         # Verify output
         assert m5["diagnostic_counts"]["rankable"] == 1
         assert m5["ranked_securities"][0]["ticker"] == "TEST"
-        assert m5["provenance"]["ruleset_version"] == "1.2.1"
+        assert m5["provenance"]["ruleset_version"] == "1.2.2"
