@@ -1,0 +1,325 @@
+{
+  "summary": {
+    "total_tickers": 96,
+    "covered_tickers": 68,
+    "uncovered_tickers": 28,
+    "coverage_pct": 70.8,
+    "by_override": 64,
+    "by_pattern": 4
+  },
+  "coverage_by_market_cap": {
+    "mega (>$20B)": {
+      "total": 4,
+      "covered": 4,
+      "coverage_pct": 100.0
+    },
+    "large ($5-20B)": {
+      "total": 10,
+      "covered": 10,
+      "coverage_pct": 100.0
+    },
+    "small ($300M-1B)": {
+      "total": 2,
+      "covered": 2,
+      "coverage_pct": 100.0
+    },
+    "mid ($1-5B)": {
+      "total": 4,
+      "covered": 4,
+      "coverage_pct": 100.0
+    },
+    "unknown": {
+      "total": 76,
+      "covered": 48,
+      "coverage_pct": 63.1578947368421
+    }
+  },
+  "coverage_by_category": {
+    "oncology": 25,
+    "rare_disease": 19,
+    "infectious_disease": 7,
+    "cns": 5,
+    "autoimmune": 4,
+    "respiratory": 3,
+    "cardiovascular": 2,
+    "gi_hepatology": 1,
+    "metabolic": 1,
+    "ophthalmology": 1
+  },
+  "uncovered_sample": [
+    {
+      "ticker": "_XBI_BENCHMARK_",
+      "market_cap_mm": null,
+      "conditions": []
+    },
+    {
+      "ticker": "TECH",
+      "market_cap_mm": null,
+      "conditions": []
+    },
+    {
+      "ticker": "NTRA",
+      "market_cap_mm": null,
+      "conditions": []
+    },
+    {
+      "ticker": "DAWN",
+      "market_cap_mm": null,
+      "conditions": []
+    },
+    {
+      "ticker": "LEGN",
+      "market_cap_mm": null,
+      "conditions": []
+    },
+    {
+      "ticker": "FATE",
+      "market_cap_mm": null,
+      "conditions": []
+    },
+    {
+      "ticker": "CDNA",
+      "market_cap_mm": null,
+      "conditions": []
+    },
+    {
+      "ticker": "AGIO",
+      "market_cap_mm": null,
+      "conditions": []
+    },
+    {
+      "ticker": "ALLO",
+      "market_cap_mm": null,
+      "conditions": []
+    },
+    {
+      "ticker": "ARCT",
+      "market_cap_mm": null,
+      "conditions": []
+    },
+    {
+      "ticker": "CRVS",
+      "market_cap_mm": null,
+      "conditions": []
+    },
+    {
+      "ticker": "CVAC",
+      "market_cap_mm": null,
+      "conditions": []
+    },
+    {
+      "ticker": "DNLI",
+      "market_cap_mm": null,
+      "conditions": []
+    },
+    {
+      "ticker": "HALO",
+      "market_cap_mm": null,
+      "conditions": []
+    },
+    {
+      "ticker": "HRTX",
+      "market_cap_mm": null,
+      "conditions": []
+    },
+    {
+      "ticker": "IMMP",
+      "market_cap_mm": null,
+      "conditions": []
+    },
+    {
+      "ticker": "IMVT",
+      "market_cap_mm": null,
+      "conditions": []
+    },
+    {
+      "ticker": "KALA",
+      "market_cap_mm": null,
+      "conditions": []
+    },
+    {
+      "ticker": "KALV",
+      "market_cap_mm": null,
+      "conditions": []
+    },
+    {
+      "ticker": "KRYS",
+      "market_cap_mm": null,
+      "conditions": []
+    }
+  ],
+  "audit_sample": [
+    {
+      "ticker": "APLS",
+      "indication": "cardiovascular",
+      "market_cap_mm": null,
+      "conditions": [],
+      "source": "override"
+    },
+    {
+      "ticker": "AXSM",
+      "indication": "cns",
+      "market_cap_mm": null,
+      "conditions": [],
+      "source": "override"
+    },
+    {
+      "ticker": "CRNX",
+      "indication": "oncology",
+      "market_cap_mm": null,
+      "conditions": [],
+      "source": "override"
+    },
+    {
+      "ticker": "CRSP",
+      "indication": "rare_disease",
+      "market_cap_mm": 5255.808,
+      "conditions": [
+        "B-cell Lymphoma, Non-Hodgkin Lymphoma, B-cell Malignancy, Chronic Lymphocytic Leukemia (CLL)/Small Lymphocytic Lymphoma (SLL), Follicular Lymphoma, Mantle Cell Lymphoma, Marginal Zone Lymphoma, Large B-cell Lymphoma",
+        "B-cell Malignancy, Non-Hodgkin Lymphoma, B-cell Lymphoma, Adult B Cell ALL",
+        "Beta-Thalassemia, Thalassemia, Genetic Diseases, Inborn, Hematologic Diseases, Hemoglobinopathies"
+      ],
+      "source": "override"
+    },
+    {
+      "ticker": "DVAX",
+      "indication": "infectious_disease",
+      "market_cap_mm": null,
+      "conditions": [],
+      "source": "override"
+    },
+    {
+      "ticker": "EDIT",
+      "indication": "rare_disease",
+      "market_cap_mm": null,
+      "conditions": [],
+      "source": "override"
+    },
+    {
+      "ticker": "GOSS",
+      "indication": "oncology",
+      "market_cap_mm": 634.19008,
+      "conditions": [
+        "Asthma",
+        "CNS Lymphoma",
+        "Chronic Rhinosinusitis Without Nasal Polyps (CRSsNP), Chronic Rhinosinusitis With Nasal Polyps (CRSwNP)"
+      ],
+      "source": "pattern"
+    },
+    {
+      "ticker": "INCY",
+      "indication": "oncology",
+      "market_cap_mm": 19983.68768,
+      "conditions": [
+        "Acute Lymphoblastic Leukemia",
+        "Advanced Malignant Solid Neoplasm, Metastatic Malignant Solid Neoplasm, Recurrent Malignant Solid Neoplasm, Refractory Malignant Solid Neoplasm",
+        "Advanced Pancreatic Carcinoma, Metastatic Pancreatic Carcinoma, Stage II Pancreatic Cancer AJCC v8, Stage III Pancreatic Cancer AJCC v8, Stage IV Pancreatic Cancer AJCC v8"
+      ],
+      "source": "override"
+    },
+    {
+      "ticker": "IONS",
+      "indication": "rare_disease",
+      "market_cap_mm": 12719.849472,
+      "conditions": [
+        "Acromegaly",
+        "Advanced Cancers, DLBCL, Lymphoma",
+        "Amyloidosis"
+      ],
+      "source": "override"
+    },
+    {
+      "ticker": "JAZZ",
+      "indication": "oncology",
+      "market_cap_mm": 10596.82816,
+      "conditions": [
+        "Acute Lymphoblastic Leukemia (ALL)/Lymphoblastic Lymphoma (LBL)",
+        "Acute Lymphoblastic Leukemia, Lymphoblastic Lymphoma",
+        "Acute Myelogenous Leukemia (AML) Due to Therapy, Acute Myeloid Leukemia With Myelodysplasia-Related Changes"
+      ],
+      "source": "override"
+    },
+    {
+      "ticker": "MRSN",
+      "indication": "oncology",
+      "market_cap_mm": null,
+      "conditions": [],
+      "source": "override"
+    },
+    {
+      "ticker": "NVCR",
+      "indication": "oncology",
+      "market_cap_mm": null,
+      "conditions": [],
+      "source": "override"
+    },
+    {
+      "ticker": "PCVX",
+      "indication": "infectious_disease",
+      "market_cap_mm": null,
+      "conditions": [],
+      "source": "override"
+    },
+    {
+      "ticker": "PRTA",
+      "indication": "cns",
+      "market_cap_mm": null,
+      "conditions": [],
+      "source": "override"
+    },
+    {
+      "ticker": "PTGX",
+      "indication": "autoimmune",
+      "market_cap_mm": null,
+      "conditions": [],
+      "source": "override"
+    },
+    {
+      "ticker": "RNA",
+      "indication": "rare_disease",
+      "market_cap_mm": 10859.200512,
+      "conditions": [
+        "DM1, Muscular Dystrophies, Myotonic Dystrophy, Myotonic Dystrophy 1, Myotonic Disorders, Muscular Disorders, Atrophic, Muscular Diseases, Musculoskeletal Diseases, Neuromuscular Diseases, Nervous System Diseases, Genetic Diseases, Inborn, Heredodegenerative Disorders, Nervous System, Neurodegenerative Diseases",
+        "DM1, Myotonic Dystrophy 1, Myotonic Dystrophy, Myotonic Dystrophy Type 1 (DM1), Dystrophy Myotonic, Myotonic Disorders, Steinert Disease, Myotonic Muscular Dystrophy",
+        "DM1, Myotonic Dystrophy, Myotonic Dystrophy 1, Myotonia, Myotonic Dystrophy Type 1 (DM1), Dystrophy Myotonic, Myotonic Disorders, Steinert Disease, Steinert, Myotonic Muscular Dystrophy"
+      ],
+      "source": "pattern"
+    },
+    {
+      "ticker": "ROIV",
+      "indication": "oncology",
+      "market_cap_mm": null,
+      "conditions": [],
+      "source": "override"
+    },
+    {
+      "ticker": "RYTM",
+      "indication": "rare_disease",
+      "market_cap_mm": 6797.734912,
+      "conditions": [
+        "Bardet Biedl Syndrome (BBS), Alstr\u00f6m Syndrome (AS)",
+        "Bardet-Biedl Syndrome (BBS), Obesity",
+        "Bardet-Biedl Syndrome, POMC Deficiency"
+      ],
+      "source": "pattern"
+    },
+    {
+      "ticker": "TBPH",
+      "indication": "respiratory",
+      "market_cap_mm": null,
+      "conditions": [],
+      "source": "override"
+    },
+    {
+      "ticker": "VRTX",
+      "indication": "rare_disease",
+      "market_cap_mm": 115068.125184,
+      "conditions": [
+        "Acute Pain",
+        "Alpha-1 Antitrypsin Deficiency",
+        "Chronic Hepatitis C"
+      ],
+      "source": "override"
+    }
+  ]
+}

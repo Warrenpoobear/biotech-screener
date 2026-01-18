@@ -303,5 +303,20 @@
       "urology",
       "other"
     ]
+  },
+  "future_schema": {
+    "_description": "Planned enhancement: per-ticker confidence and source tracking",
+    "example_format": {
+      "TICKER": {
+        "indication": "oncology",
+        "phase": 2,
+        "confidence": "high",
+        "source": "10-K",
+        "date_added": "2026-01-18"
+      }
+    },
+    "confidence_levels": ["high", "medium", "low"],
+    "valid_sources": ["CT.gov", "10-K", "investor_deck", "press_release", "manual_review"],
+    "implementation_status": "planned_v3"
   }
 }
