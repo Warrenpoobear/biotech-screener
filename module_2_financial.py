@@ -65,7 +65,7 @@ EPS = 1e-9
 # BURN RATE CALCULATION (HIERARCHICAL)
 # =============================================================================
 
-def calculate_burn_rate(financial_data: Dict) -> Tuple[Optional[float], str, str, str]:
+def calculate_burn_rate(financial_data: Dict[str, Any]) -> Tuple[Optional[float], str, str, str]:
     """
     Calculate monthly burn rate using hierarchical sources.
 
@@ -134,7 +134,7 @@ def calculate_burn_rate(financial_data: Dict) -> Tuple[Optional[float], str, str
     return (None, "none", BURN_CONFIDENCE_NONE, "none")
 
 
-def calculate_trailing_burn(financial_data: Dict) -> Tuple[Optional[float], int]:
+def calculate_trailing_burn(financial_data: Dict[str, Any]) -> Tuple[Optional[float], int]:
     """
     Calculate trailing 4-quarter average burn if multiple quarters available.
 
@@ -172,7 +172,7 @@ def calculate_trailing_burn(financial_data: Dict) -> Tuple[Optional[float], int]
 # LIQUID ASSETS CALCULATION
 # =============================================================================
 
-def calculate_liquid_assets(financial_data: Dict) -> Tuple[float, List[str]]:
+def calculate_liquid_assets(financial_data: Dict[str, Any]) -> Tuple[float, List[str]]:
     """
     Calculate liquid assets: Cash + MarketableSecurities.
 
@@ -205,7 +205,7 @@ def calculate_liquid_assets(financial_data: Dict) -> Tuple[float, List[str]]:
 # CASH RUNWAY CALCULATION
 # =============================================================================
 
-def calculate_cash_runway(financial_data: Dict, market_data: Dict) -> Dict[str, Any]:
+def calculate_cash_runway(financial_data: Dict[str, Any], market_data: Dict[str, Any]) -> Dict[str, Any]:
     """
     Calculate months of cash runway with detailed burn info.
 
@@ -348,7 +348,7 @@ def calculate_dilution_risk(
 # LIQUIDITY SCORING (DOLLAR ADV EMPHASIS)
 # =============================================================================
 
-def score_liquidity(market_data: Dict) -> Tuple[float, bool, float]:
+def score_liquidity(market_data: Dict[str, Any]) -> Tuple[float, bool, float]:
     """
     Score based on market cap and trading volume.
     Emphasizes dollar ADV (60%) over market cap (40%).
@@ -409,7 +409,7 @@ def score_liquidity(market_data: Dict) -> Tuple[float, bool, float]:
 # DATA QUALITY ASSESSMENT
 # =============================================================================
 
-def assess_data_quality(financial_data: Dict, market_data: Dict) -> Tuple[str, List[str], Dict[str, str]]:
+def assess_data_quality(financial_data: Dict[str, Any], market_data: Dict[str, Any]) -> Tuple[str, List[str], Dict[str, str]]:
     """
     Assess data quality and track inputs used.
 
@@ -525,7 +525,7 @@ def determine_financial_severity(
 # MAIN SCORING FUNCTION
 # =============================================================================
 
-def score_financial_health(ticker: str, financial_data: Dict, market_data: Dict) -> Dict:
+def score_financial_health(ticker: str, financial_data: Dict[str, Any], market_data: Dict[str, Any]) -> Dict[str, Any]:
     """Main scoring function for Module 2 (vNext)"""
 
     # Assess data quality first
@@ -662,9 +662,9 @@ def run_module_2(universe: TickerCollection, financial_data: List[Dict], market_
 # SELF-CHECKS (Unit-test-like)
 # =============================================================================
 
-def _run_self_checks():
+def _run_self_checks() -> List[str]:
     """Run self-checks to verify correctness."""
-    errors = []
+    errors: List[str] = []
 
     # CHECK 1: Bugfix - `if x is not None` vs `if x`
     # Zero runway should NOT be treated as None
@@ -753,7 +753,7 @@ def _run_self_checks():
 # CLI / MAIN
 # =============================================================================
 
-def main():
+def main() -> None:
     """Test Module 2 on sample data with self-checks"""
 
     # Run self-checks first
@@ -825,7 +825,7 @@ if __name__ == "__main__":
 # COMPATIBILITY WRAPPER
 # =============================================================================
 
-def compute_module_2_financial(*args, **kwargs):
+def compute_module_2_financial(*args: Any, **kwargs: Any) -> Dict[str, Any]:
     """
     Ultra-flexible wrapper for backwards compatibility.
 

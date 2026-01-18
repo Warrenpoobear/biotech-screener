@@ -525,7 +525,7 @@ class ShortInterestSignalEngine:
         self.audit_trail = []
 
 
-def demonstration():
+def demonstration() -> None:
     """Demonstrate the short interest engine capabilities."""
     print("=" * 70)
     print("SHORT INTEREST SIGNAL ENGINE - DEMONSTRATION")
