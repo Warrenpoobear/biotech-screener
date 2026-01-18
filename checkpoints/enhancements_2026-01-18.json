@@ -10,8 +10,8 @@
           "NONE": 0,
           "PARTIAL": 308
         },
-        "indication_coverage": 121,
-        "indication_coverage_pct": "39.3%",
+        "indication_coverage": 230,
+        "indication_coverage_pct": "74.7%",
         "stage_distribution": {
           "commercial": 84,
           "phase_1": 13,
@@ -24,7 +24,7 @@
       "provenance": {
         "benchmarks_source": "BIO Clinical Development Success Rates and Contributing Factors 2011-2020",
         "benchmarks_version": "2011-2020",
-        "content_hash": "1b07cc0d023693dc",
+        "content_hash": "2a20ee06d49fb1f0",
         "module": "pos_engine",
         "module_version": "1.1.0",
         "pit_cutoff": "2026-01-18"
@@ -33,7 +33,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -48,7 +48,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": "neurology",
+          "indication_normalized": "all_indications",
           "loa_probability": "1.0",
           "loa_provenance": "commercial_approved",
           "missing_fields": [
@@ -93,7 +93,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -123,14 +123,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "neurology",
+          "loa_probability": "0.0420",
+          "loa_provenance": "BIO_phase_1_neurology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "4.20",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "ACIU"
@@ -138,14 +138,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "ACLX"
@@ -153,14 +153,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": "metabolic",
-          "loa_probability": "0.598",
-          "loa_provenance": "BIO_phase_3_metabolic",
+          "indication_normalized": "immunology",
+          "loa_probability": "0.672",
+          "loa_provenance": "BIO_phase_3_immunology",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "59.80",
+          "pos_score": "67.20",
           "stage_normalized": "phase_3",
           "stage_score": "65",
           "ticker": "ACRS"
@@ -168,7 +168,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": "immunology",
+          "indication_normalized": "oncology",
           "loa_probability": "1.0",
           "loa_provenance": "commercial_approved",
           "missing_fields": [
@@ -198,14 +198,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "ADPT"
@@ -213,7 +213,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": "oncology",
+          "indication_normalized": "metabolic",
           "loa_probability": "1.0",
           "loa_provenance": "commercial_approved",
           "missing_fields": [
@@ -228,7 +228,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": "oncology",
+          "indication_normalized": "neurology",
           "loa_probability": "1.0",
           "loa_provenance": "commercial_approved",
           "missing_fields": [
@@ -318,14 +318,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "AMGN"
@@ -333,7 +333,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -348,7 +348,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": "all_indications",
+          "indication_normalized": "neurology",
           "loa_probability": "1.0",
           "loa_provenance": "commercial_approved",
           "missing_fields": [
@@ -378,7 +378,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.079",
           "loa_provenance": "BIO_phase_1_all_indications",
           "missing_fields": [
@@ -393,14 +393,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "ANIP"
@@ -408,14 +408,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "immunology",
+          "loa_probability": "0.0560",
+          "loa_provenance": "BIO_phase_1_immunology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "5.60",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "ANNX"
@@ -423,14 +423,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "ANRO"
@@ -438,7 +438,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -468,14 +468,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "neurology",
+          "loa_probability": "0.0420",
+          "loa_provenance": "BIO_phase_1_neurology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "4.20",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "AQST"
@@ -498,7 +498,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -528,14 +528,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "immunology",
+          "loa_probability": "0.0560",
+          "loa_provenance": "BIO_phase_1_immunology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "5.60",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "ARQT"
@@ -543,14 +543,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "ARVN"
@@ -558,7 +558,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -573,7 +573,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -603,14 +603,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "immunology",
+          "loa_probability": "0.0560",
+          "loa_provenance": "BIO_phase_1_immunology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "5.60",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "ATXS"
@@ -618,14 +618,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "immunology",
+          "loa_probability": "0.0560",
+          "loa_provenance": "BIO_phase_1_immunology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "5.60",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "AUPH"
@@ -648,14 +648,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "AUTL"
@@ -663,14 +663,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "neurology",
+          "loa_probability": "0.0420",
+          "loa_provenance": "BIO_phase_1_neurology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "4.20",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "AVBP"
@@ -693,7 +693,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -708,14 +708,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "neurology",
+          "loa_probability": "0.0420",
+          "loa_provenance": "BIO_phase_1_neurology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "4.20",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "AVXL"
@@ -723,14 +723,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "neurology",
+          "loa_probability": "0.0420",
+          "loa_provenance": "BIO_phase_1_neurology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "4.20",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "AXSM"
@@ -738,14 +738,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.079",
-          "loa_provenance": "BIO_phase_1_all_indications",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.057",
+          "loa_provenance": "BIO_phase_1_oncology",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "7.90",
+          "pos_score": "5.70",
           "stage_normalized": "phase_1",
           "stage_score": "20",
           "ticker": "AZN"
@@ -783,14 +783,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "BCAX"
@@ -798,7 +798,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -813,14 +813,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "BCYC"
@@ -828,14 +828,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "BDTX"
@@ -858,14 +858,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "neurology",
+          "loa_probability": "0.0420",
+          "loa_provenance": "BIO_phase_1_neurology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "4.20",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "BHVN"
@@ -888,7 +888,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -933,14 +933,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "BRKR"
@@ -978,7 +978,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": "oncology",
+          "indication_normalized": "immunology",
           "loa_probability": "1.0",
           "loa_provenance": "commercial_approved",
           "missing_fields": [
@@ -993,14 +993,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "CATX"
@@ -1038,14 +1038,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "CDXS"
@@ -1053,14 +1053,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "CGEM"
@@ -1068,14 +1068,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "CGON"
@@ -1083,7 +1083,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": "neurology",
+          "indication_normalized": "oncology",
           "loa_probability": "1.0",
           "loa_provenance": "commercial_approved",
           "missing_fields": [
@@ -1098,14 +1098,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "CLDX"
@@ -1128,14 +1128,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": "cardiovascular",
-          "loa_probability": "0.071",
-          "loa_provenance": "BIO_phase_1_cardiovascular",
+          "indication_normalized": "neurology",
+          "loa_probability": "0.084",
+          "loa_provenance": "BIO_phase_1_neurology",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "7.10",
+          "pos_score": "8.40",
           "stage_normalized": "phase_1",
           "stage_score": "20",
           "ticker": "CMPS"
@@ -1188,14 +1188,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "CRBU"
@@ -1233,14 +1233,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "CRNX"
@@ -1278,14 +1278,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "CSTL"
@@ -1293,14 +1293,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "CTKB"
@@ -1353,14 +1353,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "cardiovascular",
+          "loa_probability": "0.0355",
+          "loa_provenance": "BIO_phase_1_cardiovascular_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "3.55",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "CYTK"
@@ -1413,14 +1413,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "immunology",
+          "loa_probability": "0.0560",
+          "loa_provenance": "BIO_phase_1_immunology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "5.60",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "DRMA"
@@ -1428,14 +1428,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "DSGN"
@@ -1443,7 +1443,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -1473,7 +1473,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": "oncology",
+          "indication_normalized": "neurology",
           "loa_probability": "1.0",
           "loa_provenance": "commercial_approved",
           "missing_fields": [
@@ -1503,14 +1503,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "ELVN"
@@ -1518,14 +1518,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.579",
-          "loa_provenance": "BIO_phase_3_all_indications",
+          "indication_normalized": "respiratory",
+          "loa_probability": "0.567",
+          "loa_provenance": "BIO_phase_3_respiratory",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "57.90",
+          "pos_score": "56.70",
           "stage_normalized": "phase_3",
           "stage_score": "65",
           "ticker": "ENTA"
@@ -1533,14 +1533,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "respiratory",
+          "loa_probability": "0.0445",
+          "loa_provenance": "BIO_phase_1_respiratory_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "4.45",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "EOLS"
@@ -1548,7 +1548,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -1608,14 +1608,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "EWTX"
@@ -1668,14 +1668,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "ophthalmology",
+          "loa_probability": "0.0585",
+          "loa_provenance": "BIO_phase_1_ophthalmology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "5.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "FDMT"
@@ -1683,14 +1683,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "FGEN"
@@ -1698,14 +1698,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "FHTX"
@@ -1713,7 +1713,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -1743,14 +1743,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "immunology",
+          "loa_probability": "0.0560",
+          "loa_provenance": "BIO_phase_1_immunology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "5.60",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "FTRE"
@@ -1758,14 +1758,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "FULC"
@@ -1803,14 +1803,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "metabolic",
+          "loa_probability": "0.0465",
+          "loa_provenance": "BIO_phase_1_metabolic_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "4.65",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "GHRS"
@@ -1818,7 +1818,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": "respiratory",
+          "indication_normalized": "all_indications",
           "loa_probability": "1.0",
           "loa_provenance": "commercial_approved",
           "missing_fields": [
@@ -1833,14 +1833,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.579",
-          "loa_provenance": "BIO_phase_3_all_indications",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.439",
+          "loa_provenance": "BIO_phase_3_oncology",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "57.90",
+          "pos_score": "43.90",
           "stage_normalized": "phase_3",
           "stage_score": "65",
           "ticker": "GLPG"
@@ -1848,7 +1848,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": "oncology",
+          "indication_normalized": "all_indications",
           "loa_probability": "1.0",
           "loa_provenance": "commercial_approved",
           "missing_fields": [
@@ -1923,7 +1923,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": "oncology",
+          "indication_normalized": "immunology",
           "loa_probability": "1.0",
           "loa_provenance": "commercial_approved",
           "missing_fields": [
@@ -1953,14 +1953,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "neurology",
+          "loa_probability": "0.0420",
+          "loa_provenance": "BIO_phase_1_neurology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "4.20",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "HRMY"
@@ -1968,14 +1968,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "ophthalmology",
+          "loa_probability": "0.0585",
+          "loa_provenance": "BIO_phase_1_ophthalmology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "5.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "HROW"
@@ -2028,14 +2028,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "IDYA"
@@ -2043,7 +2043,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -2058,14 +2058,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "IMCR"
@@ -2088,14 +2088,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "IMRX"
@@ -2118,14 +2118,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "INBX"
@@ -2148,14 +2148,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.079",
-          "loa_provenance": "BIO_phase_1_all_indications",
+          "indication_normalized": "neurology",
+          "loa_probability": "0.084",
+          "loa_provenance": "BIO_phase_1_neurology",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "7.90",
+          "pos_score": "8.40",
           "stage_normalized": "phase_1",
           "stage_score": "20",
           "ticker": "INDV"
@@ -2163,14 +2163,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "respiratory",
+          "loa_probability": "0.0445",
+          "loa_provenance": "BIO_phase_1_respiratory_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "4.45",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "INSM"
@@ -2238,7 +2238,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -2253,7 +2253,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -2268,14 +2268,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "JANX"
@@ -2313,14 +2313,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": "respiratory",
-          "loa_probability": "0.567",
-          "loa_provenance": "BIO_phase_3_respiratory",
+          "indication_normalized": "all_indications",
+          "loa_probability": "0.579",
+          "loa_provenance": "BIO_phase_3_all_indications",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "56.70",
+          "pos_score": "57.90",
           "stage_normalized": "phase_3",
           "stage_score": "65",
           "ticker": "KALV"
@@ -2343,14 +2343,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "immunology",
+          "loa_probability": "0.0560",
+          "loa_provenance": "BIO_phase_1_immunology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "5.60",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "KNSA"
@@ -2418,14 +2418,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "KYMR"
@@ -2433,14 +2433,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "KYTX"
@@ -2463,14 +2463,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "neurology",
+          "loa_probability": "0.0420",
+          "loa_provenance": "BIO_phase_1_neurology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "4.20",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "LCTX"
@@ -2508,14 +2508,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "neurology",
+          "loa_probability": "0.0420",
+          "loa_provenance": "BIO_phase_1_neurology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "4.20",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "LFCR"
@@ -2523,14 +2523,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "LGND"
@@ -2538,14 +2538,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "respiratory",
+          "loa_probability": "0.0445",
+          "loa_provenance": "BIO_phase_1_respiratory_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "4.45",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "LQDA"
@@ -2553,14 +2553,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "LRMR"
@@ -2568,7 +2568,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -2583,7 +2583,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "oncology",
           "loa_probability": "1.0",
           "loa_provenance": "commercial_approved",
           "missing_fields": [
@@ -2643,14 +2643,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "metabolic",
+          "loa_probability": "0.0465",
+          "loa_provenance": "BIO_phase_1_metabolic_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "4.65",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "MDGL"
@@ -2658,14 +2658,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "MEDP"
@@ -2718,7 +2718,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -2733,7 +2733,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -2748,14 +2748,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "metabolic",
+          "loa_probability": "0.0465",
+          "loa_provenance": "BIO_phase_1_metabolic_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "4.65",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "MNKD"
@@ -2763,14 +2763,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "neurology",
+          "loa_probability": "0.0420",
+          "loa_provenance": "BIO_phase_1_neurology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "4.20",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "MNMD"
@@ -2793,14 +2793,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "MRSN"
@@ -2808,14 +2808,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "MRVI"
@@ -2823,14 +2823,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "MYGN"
@@ -2853,14 +2853,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "neurology",
+          "loa_probability": "0.0420",
+          "loa_provenance": "BIO_phase_1_neurology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "4.20",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "NBIX"
@@ -2883,7 +2883,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -2913,14 +2913,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "NRIX"
@@ -2973,14 +2973,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "NUVL"
@@ -3003,14 +3003,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "NVCR"
@@ -3018,7 +3018,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -3033,14 +3033,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "OBIO"
@@ -3048,14 +3048,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "ophthalmology",
+          "loa_probability": "0.0585",
+          "loa_provenance": "BIO_phase_1_ophthalmology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "5.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "OCGN"
@@ -3078,14 +3078,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "OLMA"
@@ -3138,7 +3138,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": "ophthalmology",
+          "indication_normalized": "all_indications",
           "loa_probability": "1.0",
           "loa_provenance": "commercial_approved",
           "missing_fields": [
@@ -3183,7 +3183,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -3213,14 +3213,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "PBYI"
@@ -3228,14 +3228,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "neurology",
+          "loa_probability": "0.0420",
+          "loa_provenance": "BIO_phase_1_neurology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "4.20",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "PCRX"
@@ -3243,7 +3243,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -3258,14 +3258,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "PEPG"
@@ -3303,14 +3303,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "PHVS"
@@ -3333,7 +3333,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": "oncology",
+          "indication_normalized": "metabolic",
           "loa_probability": "1.0",
           "loa_provenance": "commercial_approved",
           "missing_fields": [
@@ -3348,14 +3348,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "neurology",
+          "loa_probability": "0.0420",
+          "loa_provenance": "BIO_phase_1_neurology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "4.20",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "PRTA"
@@ -3363,14 +3363,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "PRVA"
@@ -3378,14 +3378,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "PSNL"
@@ -3393,7 +3393,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -3408,14 +3408,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "immunology",
+          "loa_probability": "0.0560",
+          "loa_provenance": "BIO_phase_1_immunology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "5.60",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "PTGX"
@@ -3423,14 +3423,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "PYXS"
@@ -3453,7 +3453,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -3543,7 +3543,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -3588,7 +3588,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -3603,14 +3603,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "immunology",
+          "loa_probability": "0.0560",
+          "loa_provenance": "BIO_phase_1_immunology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "5.60",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "RGEN"
@@ -3618,7 +3618,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -3633,14 +3633,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "immunology",
+          "loa_probability": "0.0560",
+          "loa_provenance": "BIO_phase_1_immunology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "5.60",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "RIGL"
@@ -3648,14 +3648,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "RLAY"
@@ -3678,14 +3678,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "ROIV"
@@ -3693,14 +3693,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "RPRX"
@@ -3708,14 +3708,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "RVMD"
@@ -3723,14 +3723,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "RXRX"
@@ -3768,14 +3768,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "SEPN"
@@ -3783,7 +3783,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -3798,14 +3798,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": "respiratory",
-          "loa_probability": "0.0445",
-          "loa_provenance": "BIO_phase_1_respiratory_interpolated",
+          "indication_normalized": "cardiovascular",
+          "loa_probability": "0.0355",
+          "loa_provenance": "BIO_phase_1_cardiovascular_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "4.45",
+          "pos_score": "3.55",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "SGMT"
@@ -3843,14 +3843,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "neurology",
+          "loa_probability": "0.0420",
+          "loa_provenance": "BIO_phase_1_neurology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "4.20",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "SLDB"
@@ -3903,7 +3903,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": "respiratory",
+          "indication_normalized": "all_indications",
           "loa_probability": "1.0",
           "loa_provenance": "commercial_approved",
           "missing_fields": [
@@ -3948,7 +3948,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -3963,14 +3963,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": "oncology",
-          "loa_probability": "0.439",
-          "loa_provenance": "BIO_phase_3_oncology",
+          "indication_normalized": "respiratory",
+          "loa_probability": "0.567",
+          "loa_provenance": "BIO_phase_3_respiratory",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "43.90",
+          "pos_score": "56.70",
           "stage_normalized": "phase_3",
           "stage_score": "65",
           "ticker": "STOK"
@@ -3978,14 +3978,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "STRO"
@@ -3993,14 +3993,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "STVN"
@@ -4008,14 +4008,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "neurology",
+          "loa_probability": "0.0420",
+          "loa_provenance": "BIO_phase_1_neurology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "4.20",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "SUPN"
@@ -4023,14 +4023,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "SVRA"
@@ -4068,14 +4068,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "respiratory",
+          "loa_probability": "0.0445",
+          "loa_provenance": "BIO_phase_1_respiratory_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "4.45",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "TBPH"
@@ -4098,14 +4098,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "TECX"
@@ -4158,14 +4158,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "TKNO"
@@ -4173,14 +4173,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "TNGX"
@@ -4188,14 +4188,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "TNYA"
@@ -4203,14 +4203,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "TRDA"
@@ -4218,7 +4218,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -4233,7 +4233,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -4248,7 +4248,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "1.0",
           "loa_provenance": "commercial_approved",
           "missing_fields": [
@@ -4323,7 +4323,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -4353,14 +4353,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "respiratory",
+          "loa_probability": "0.0445",
+          "loa_provenance": "BIO_phase_1_respiratory_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "4.45",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "UTHR"
@@ -4368,7 +4368,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
@@ -4383,14 +4383,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "VCYT"
@@ -4428,14 +4428,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "neurology",
+          "loa_probability": "0.0420",
+          "loa_provenance": "BIO_phase_1_neurology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "4.20",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "VNDA"
@@ -4473,14 +4473,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "immunology",
+          "loa_probability": "0.0560",
+          "loa_provenance": "BIO_phase_1_immunology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "5.60",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "VTRS"
@@ -4488,14 +4488,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "VTYX"
@@ -4548,14 +4548,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "metabolic",
+          "loa_probability": "0.0465",
+          "loa_provenance": "BIO_phase_1_metabolic_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "4.65",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "XERS"
@@ -4563,14 +4563,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "XNCR"
@@ -4578,14 +4578,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "ZBIO"
@@ -4593,14 +4593,14 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
-          "loa_probability": "0.0395",
-          "loa_provenance": "BIO_phase_1_all_indications_interpolated",
+          "indication_normalized": "oncology",
+          "loa_probability": "0.0285",
+          "loa_provenance": "BIO_phase_1_oncology_interpolated",
           "missing_fields": [
             "trial_design_quality",
             "competitive_intensity"
           ],
-          "pos_score": "3.95",
+          "pos_score": "2.85",
           "stage_normalized": "preclinical",
           "stage_score": "10",
           "ticker": "ZLAB"
@@ -4608,7 +4608,7 @@
         {
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": null,
+          "indication_normalized": "all_indications",
           "loa_probability": "0.0395",
           "loa_provenance": "BIO_phase_1_all_indications_interpolated",
           "missing_fields": [
