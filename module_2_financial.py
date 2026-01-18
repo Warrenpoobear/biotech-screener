@@ -26,17 +26,13 @@ Usage:
     results = run_module_2(universe, financial_data, market_data)
 """
 
-import json
 import logging
 import math
-from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple, Any, Union
+from typing import Dict, List, Optional, Tuple, Any
 
 from common.integration_contracts import (
     validate_module_2_output,
     is_validation_enabled,
-    normalize_date_string,
-    normalize_ticker_set,
     TickerCollection,
 )
 

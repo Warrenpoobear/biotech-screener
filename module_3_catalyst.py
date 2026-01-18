@@ -38,7 +38,6 @@ from event_detector import (
     SimpleMarketCalendar,
     MarketCalendar,
     CatalystEvent,
-    EventType as LegacyEventType,
 )
 from catalyst_summary import CatalystAggregator, TickerCatalystSummary, CatalystOutputWriter
 from module_3_schema import (
@@ -53,12 +52,9 @@ from module_3_schema import (
     EVENT_SEVERITY_MAP,
     EVENT_DEFAULT_CONFIDENCE,
     canonical_json_dumps,
-    validate_summary_schema,
 )
 from module_3_scoring import (
-    calculate_ticker_catalyst_score,
     score_catalyst_events,
-    compute_proximity_score,
 )
 from common.integration_contracts import (
     validate_module_3_output,

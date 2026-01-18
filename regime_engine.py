@@ -29,8 +29,6 @@ Author: Wake Robin Capital Management
 Version: 1.0.0
 """
 
-import hashlib
-import json
 from decimal import Decimal, ROUND_HALF_UP
 from typing import Dict, List, Optional, Any, Tuple
 from datetime import date
@@ -647,7 +645,7 @@ def demonstration():
     print(f"Description: {result1['regime_description']}")
     print(f"Confidence: {result1['confidence']}")
     print(f"Indicators: {result1['indicators']}")
-    print(f"Signal Adjustments:")
+    print("Signal Adjustments:")
     for signal, mult in result1['signal_adjustments'].items():
         print(f"  {signal}: {mult}x")
     print()
@@ -665,7 +663,7 @@ def demonstration():
     print(f"Regime: {result2['regime']}")
     print(f"Confidence: {result2['confidence']}")
     print(f"Flags: {result2['flags']}")
-    print(f"Key Adjustments:")
+    print("Key Adjustments:")
     print(f"  Momentum: {result2['signal_adjustments']['momentum']}x")
     print(f"  Quality: {result2['signal_adjustments']['quality']}x")
     print(f"  Financial: {result2['signal_adjustments']['financial']}x")

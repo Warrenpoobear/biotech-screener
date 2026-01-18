@@ -405,7 +405,7 @@ def validate_defensive_integration(output: Dict) -> None:
     if excluded_with_weight:
         print(f"⚠️  {len(excluded_with_weight)} excluded securities have non-zero weight: {excluded_with_weight}")
     else:
-        print(f"✓ All excluded securities have zero weight")
+        print("✓ All excluded securities have zero weight")
     
     # 3. Count securities with defensive adjustments
     with_def_notes = sum(1 for r in ranked if r.get("defensive_notes"))
@@ -415,7 +415,7 @@ def validate_defensive_integration(output: Dict) -> None:
     nonzero_weights = [r for r in ranked if Decimal(r.get("position_weight", "0")) > 0]
     if nonzero_weights:
         weights = [Decimal(r["position_weight"]) for r in nonzero_weights]
-        print(f"\nPosition sizing:")
+        print("\nPosition sizing:")
         print(f"  • {len(nonzero_weights)} positions")
         print(f"  • Max weight: {max(weights):.4f} ({max(weights)*100:.2f}%)")
         print(f"  • Min weight: {min(weights):.4f} ({min(weights)*100:.2f}%)")
@@ -428,7 +428,7 @@ def validate_defensive_integration(output: Dict) -> None:
         print(f"  • Dynamic floor: {floor:.4f} ({floor*100:.2f}%) for {n} securities")
     
     # 5. Top 10 with weights
-    print(f"\nTop 10 holdings:")
+    print("\nTop 10 holdings:")
     print(f"{'Rank':<6}{'Ticker':<8}{'Score':<10}{'Weight':<10}{'Def Notes'}")
     print("-" * 60)
     for r in ranked[:10]:
