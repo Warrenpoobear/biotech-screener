@@ -8,6 +8,7 @@ Modules:
     generate_sample_data: Generate synthetic training data for testing
     validate_weights: Out-of-sample validation and deployment readiness
     extract_historical_data: Extract scores from checkpoint files for training
+    fetch_price_data: Fetch historical price data from Yahoo Finance
 
 Usage:
     # From project root
@@ -22,8 +23,11 @@ Usage:
     # Validate optimized weights
     python -m optimization.validate_weights
 
+    # Fetch price data (requires yfinance)
+    python -m optimization.fetch_price_data --checkpoint-dir checkpoints
+
     # Extract real data from checkpoints
-    python -m optimization.extract_historical_data --checkpoints-dir checkpoints
+    python -m optimization.extract_historical_data --checkpoint-dir checkpoints
 
 Author: Wake Robin Capital Management
 Version: 1.0.0
@@ -42,7 +46,8 @@ __all__ = [
     'generate_training_data',
     'validate_from_file',
     'run_cross_validation',
-    'extract_all_data',
+    'HistoricalDataExtractor',
+    'PriceDataFetcher',
 ]
 
 
@@ -58,7 +63,10 @@ def __getattr__(name):
     elif name in ('validate_from_file', 'run_cross_validation'):
         from . import validate_weights as val
         return getattr(val, name)
-    elif name == 'extract_all_data':
+    elif name == 'HistoricalDataExtractor':
         from . import extract_historical_data as ext
-        return ext.extract_all_data
+        return ext.HistoricalDataExtractor
+    elif name == 'PriceDataFetcher':
+        from . import fetch_price_data as fetch
+        return fetch.PriceDataFetcher
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
