@@ -1,0 +1,3 @@
+# Ignore generated training data and results
+# These can be regenerated with generate_sample_data.py
+optimization_data/
