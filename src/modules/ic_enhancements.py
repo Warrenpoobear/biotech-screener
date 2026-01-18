@@ -1100,12 +1100,14 @@ def shrinkage_normalize(
         global_mean * shrinkage_factor
     )
 
-    # Use global std with mild shrinkage (std estimation is noisier)
+    # Shrink std toward global with SAME weight as mean
+    # This is critical: small cohorts have unstable std estimates
+    # Using same shrinkage weight stabilizes percentile ranks significantly
     cohort_variance = sum((v - cohort_mean) ** 2 for v in values) / Decimal(n)
     cohort_std = cohort_variance.sqrt() if cohort_variance > 0 else Decimal("1")
     adjusted_std = (
-        cohort_std * (Decimal("1") - shrinkage_factor * Decimal("0.5")) +
-        global_std * shrinkage_factor * Decimal("0.5")
+        cohort_std * (Decimal("1") - shrinkage_factor) +
+        global_std * shrinkage_factor
     )
     adjusted_std = max(adjusted_std, Decimal("0.01"))  # Prevent division by zero
 
@@ -1113,8 +1115,11 @@ def shrinkage_normalize(
     result = []
     for v in values:
         z = (v - adjusted_mean) / adjusted_std
-        # Convert z-score to 0-100 scale (z=0 -> 50, z=±2 -> ~5/95)
-        percentile = Decimal("50") + z * Decimal("20")
+        # Clamp z-score to [-3, +3] before percentile conversion
+        # This prevents extreme tail values from distorting ranks
+        z = _clamp(z, Decimal("-3"), Decimal("3"))
+        # Convert z-score to 0-100 scale (z=0 -> 50, z=±2 -> ~10/90)
+        percentile = Decimal("50") + z * Decimal("15")
         percentile = _clamp(percentile, Decimal("5"), Decimal("95"))
         result.append(_quantize_score(percentile))
 
