@@ -510,11 +510,34 @@ class ProbabilityOfSuccessEngine:
         Normalize indication to benchmark categories.
 
         Uses word-boundary-safe matching to avoid false positives.
+        Also handles category aliases from indication_mapper (cns -> neurology, etc.)
         """
         if not indication:
             return None
 
         indication_lower = indication.lower().strip()
+
+        # First, handle direct category aliases from indication_mapper
+        # These map mapper categories to PoS benchmark categories
+        category_aliases = {
+            "cns": "neurology",
+            "autoimmune": "immunology",
+            "gi_hepatology": "gastroenterology"
+        }
+
+        # Check if indication is a direct category name (from mapper)
+        if indication_lower in category_aliases:
+            return category_aliases[indication_lower]
+
+        # Check if indication is already a valid benchmark category
+        valid_categories = {
+            "oncology", "rare_disease", "infectious_disease", "neurology",
+            "cardiovascular", "immunology", "metabolic", "respiratory",
+            "dermatology", "ophthalmology", "gastroenterology", "hematology",
+            "urology"
+        }
+        if indication_lower in valid_categories:
+            return indication_lower
 
         # Word-boundary patterns for each category
         # Using regex \b for word boundaries to avoid matching "os" in "dose"
@@ -564,11 +587,17 @@ class ProbabilityOfSuccessEngine:
             ],
             "gastroenterology": [
                 r"\bgastroenterology\b", r"\bgastrointestinal\b",
-                r"\bibd\b", r"\birritable bowel\b", r"\bliver\b", r"\bhepatic\b"
+                r"\bibd\b", r"\birritable bowel\b", r"\bliver\b", r"\bhepatic\b",
+                r"\bgi_hepatology\b"
             ],
             "hematology": [
                 r"\bhematology\b", r"\bblood\b", r"\bhemophilia\b", r"\bsickle cell\b",
                 r"\bthalassemia\b", r"\banemia\b"
+            ],
+            "urology": [
+                r"\burology\b", r"\burolog\b", r"\bbladder\b", r"\bkidney\b",
+                r"\brenal\b", r"\bprostate\b", r"\burinary\b", r"\bincontinence\b",
+                r"\berectile\b"
             ]
         }
 
