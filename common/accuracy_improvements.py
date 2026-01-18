@@ -278,7 +278,8 @@ def compute_weighted_endpoint_score(
     if not endpoint_text:
         return (Decimal("0.50"), "unknown", False)
 
-    endpoint_lower = endpoint_text.lower()
+    # Normalize: lowercase and replace hyphens with spaces for matching
+    endpoint_lower = endpoint_text.lower().replace("-", " ")
 
     # Get weights for this therapeutic area
     weights = ENDPOINT_WEIGHTS_BY_AREA.get(
@@ -638,8 +639,11 @@ def compute_regulatory_pathway_score(
                 designation_details[designation.value] = REGULATORY_SCORE_MODIFIERS[designation]
                 break
 
-    # Calculate total modifier
-    total_modifier = sum(REGULATORY_SCORE_MODIFIERS[d] for d in detected)
+    # Calculate total modifier (start with Decimal to ensure type consistency)
+    total_modifier = sum(
+        (REGULATORY_SCORE_MODIFIERS[d] for d in detected),
+        Decimal("0")
+    )
 
     # Cap total modifier to prevent extreme scores
     total_modifier = max(Decimal("-10"), min(Decimal("25"), total_modifier))
