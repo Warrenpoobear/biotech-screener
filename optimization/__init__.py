@@ -32,6 +32,8 @@ __all__ = [
     'compare_methods',
     'load_training_data',
     'generate_training_data',
+    'validate_from_file',
+    'run_cross_validation',
 ]
 
 
@@ -44,4 +46,7 @@ def __getattr__(name):
     elif name == 'generate_training_data':
         from . import generate_sample_data as gen
         return gen.generate_training_data
+    elif name in ('validate_from_file', 'run_cross_validation'):
+        from . import validate_weights as val
+        return getattr(val, name)
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
