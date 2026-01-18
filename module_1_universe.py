@@ -13,7 +13,7 @@ from decimal import Decimal, InvalidOperation
 from typing import Any, Dict, List, Optional
 
 from common.provenance import create_provenance
-from common.types import Severity, StatusGate
+from common.types import StatusGate
 from common.integration_contracts import (
     validate_module_1_output,
     is_validation_enabled,

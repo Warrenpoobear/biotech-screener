@@ -657,13 +657,13 @@ def demonstration():
         as_of_date=as_of
     )
 
-    print(f"Oncology:")
+    print("Oncology:")
     print(f"  PoS Score: {oncology['pos_score']}")
     print(f"  Stage Score: {oncology['stage_score']}")
     print(f"  LOA Probability: {oncology['loa_probability']}")
     print(f"  Data Quality: {oncology['data_quality_state']}")
     print()
-    print(f"Rare Disease:")
+    print("Rare Disease:")
     print(f"  PoS Score: {rare['pos_score']}")
     print(f"  Stage Score: {rare['stage_score']}")
     print(f"  LOA Probability: {rare['loa_probability']}")

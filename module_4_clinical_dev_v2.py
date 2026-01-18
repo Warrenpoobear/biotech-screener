@@ -37,13 +37,11 @@ from dataclasses import dataclass, field
 from datetime import date, timedelta
 from decimal import Decimal, ROUND_HALF_UP
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple, Set, Union
+from typing import Any, Dict, List, Optional, Tuple, Set
 
 from common.integration_contracts import (
     validate_module_4_output,
     is_validation_enabled,
-    normalize_date_string,
-    normalize_ticker_set,
     TickerCollection,
 )
 
