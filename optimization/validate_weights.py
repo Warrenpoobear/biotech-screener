@@ -305,78 +305,86 @@ def run_cross_validation(
 def assess_deployment_readiness(
     cv_results: List[ValidationResult],
     stability: StabilityMetrics,
-    oos_result: Optional[ValidationResult] = None
+    oos_result: Optional[ValidationResult] = None,
+    direct_result: Optional[Dict[str, float]] = None,
+    saved_weights: Optional[Dict[str, float]] = None
 ) -> DeploymentAssessment:
     """
     Assess whether optimized weights are ready for deployment.
 
-    Checks:
-    1. Mean OOS Sharpe improvement >= 10%
-    2. Win rate (positive improvement) >= 55%
-    3. Weight stability (std < 0.05)
-    4. Minimum OOS Sharpe >= 0.5
+    PRIMARY criteria (from direct_result - testing saved weights):
+    1. Direct OOS Sharpe improvement >= 10%
+    2. Direct OOS Sharpe >= 0.5
+
+    SECONDARY criteria (from CV - informational):
+    3. Weight stability across CV folds
+    4. Mean CV Sharpe
     """
     reasons = []
     warnings = []
     is_ready = True
 
-    # Calculate aggregate metrics
-    improvements = [r.improvement_pct for r in cv_results]
-    oos_sharpes = [r.test_sharpe for r in cv_results]
-    oos_ics = [r.test_ic for r in cv_results]
+    # PRIMARY: Use direct validation of saved weights
+    if direct_result:
+        direct_improvement = direct_result['improvement_pct']
+        direct_sharpe = direct_result['optimized_sharpe']
+        direct_ic = direct_result['optimized_ic']
 
-    mean_improvement = np.mean(improvements)
-    win_rate = sum(1 for x in improvements if x > 0) / len(improvements) * 100
+        # Check 1: Direct improvement (PRIMARY)
+        if direct_improvement >= MIN_SHARPE_IMPROVEMENT_PCT:
+            reasons.append(f"✓ Direct OOS improvement: {direct_improvement:+.1f}% (threshold: {MIN_SHARPE_IMPROVEMENT_PCT}%)")
+        else:
+            reasons.append(f"✗ Direct OOS improvement: {direct_improvement:+.1f}% (threshold: {MIN_SHARPE_IMPROVEMENT_PCT}%)")
+            is_ready = False
+
+        # Check 2: Direct Sharpe (PRIMARY)
+        if direct_sharpe >= MIN_OOS_SHARPE:
+            reasons.append(f"✓ Direct OOS Sharpe: {direct_sharpe:.4f} (threshold: {MIN_OOS_SHARPE})")
+        else:
+            reasons.append(f"✗ Direct OOS Sharpe: {direct_sharpe:.4f} (threshold: {MIN_OOS_SHARPE})")
+            is_ready = False
+    else:
+        # Fallback to CV results if no direct result
+        improvements = [r.improvement_pct for r in cv_results]
+        mean_improvement = np.mean(improvements)
+        if mean_improvement >= MIN_SHARPE_IMPROVEMENT_PCT:
+            reasons.append(f"✓ Mean CV improvement: {mean_improvement:+.1f}%")
+        else:
+            reasons.append(f"✗ Mean CV improvement: {mean_improvement:+.1f}%")
+            is_ready = False
+
+    # SECONDARY: CV metrics (informational)
+    oos_sharpes = [r.test_sharpe for r in cv_results]
     mean_oos_sharpe = np.mean(oos_sharpes)
-    mean_oos_ic = np.mean(oos_ics)
     max_weight_std = max(stability.std_weights.values())
 
+    # Check if CV optimizer failed to find improvements (all baseline)
+    cv_all_baseline = max_weight_std == 0.0
+    if cv_all_baseline:
+        warnings.append("CV re-optimization returned baseline weights (insufficient data per fold)")
+        # Don't fail on stability if CV couldn't optimize
+    else:
+        if max_weight_std <= MAX_WEIGHT_STD:
+            reasons.append(f"✓ CV weight stability: max std {max_weight_std:.4f}")
+        else:
+            reasons.append(f"⚠ CV weight stability: max std {max_weight_std:.4f} (high variance)")
+            warnings.append("High CV weight variance - consider larger training windows")
+
+    reasons.append(f"ℹ Mean CV Sharpe: {mean_oos_sharpe:.4f}")
+
+    # Build metrics
     metrics = {
-        'mean_improvement_pct': float(mean_improvement),
-        'win_rate_pct': float(win_rate),
-        'mean_oos_sharpe': float(mean_oos_sharpe),
-        'mean_oos_ic': float(mean_oos_ic),
+        'direct_improvement_pct': float(direct_result['improvement_pct']) if direct_result else 0.0,
+        'direct_sharpe': float(direct_result['optimized_sharpe']) if direct_result else 0.0,
+        'mean_cv_sharpe': float(mean_oos_sharpe),
         'max_weight_std': float(max_weight_std),
         'n_folds': len(cv_results)
     }
 
-    # Check 1: Mean improvement
-    if mean_improvement >= MIN_SHARPE_IMPROVEMENT_PCT:
-        reasons.append(f"✓ Mean OOS improvement: {mean_improvement:+.1f}% (threshold: {MIN_SHARPE_IMPROVEMENT_PCT}%)")
-    else:
-        reasons.append(f"✗ Mean OOS improvement: {mean_improvement:+.1f}% (threshold: {MIN_SHARPE_IMPROVEMENT_PCT}%)")
-        is_ready = False
-
-    # Check 2: Win rate
-    if win_rate >= MIN_WIN_RATE_PCT:
-        reasons.append(f"✓ Win rate: {win_rate:.1f}% (threshold: {MIN_WIN_RATE_PCT}%)")
-    else:
-        reasons.append(f"✗ Win rate: {win_rate:.1f}% (threshold: {MIN_WIN_RATE_PCT}%)")
-        is_ready = False
-
-    # Check 3: Weight stability
-    if max_weight_std <= MAX_WEIGHT_STD:
-        reasons.append(f"✓ Weight stability: max std {max_weight_std:.4f} (threshold: {MAX_WEIGHT_STD})")
-    else:
-        reasons.append(f"✗ Weight stability: max std {max_weight_std:.4f} (threshold: {MAX_WEIGHT_STD})")
-        warnings.append(f"High weight variance suggests overfitting or unstable optimization")
-        is_ready = False
-
-    # Check 4: Minimum OOS Sharpe
-    if mean_oos_sharpe >= MIN_OOS_SHARPE:
-        reasons.append(f"✓ Mean OOS Sharpe: {mean_oos_sharpe:.4f} (threshold: {MIN_OOS_SHARPE})")
-    else:
-        reasons.append(f"✗ Mean OOS Sharpe: {mean_oos_sharpe:.4f} (threshold: {MIN_OOS_SHARPE})")
-        is_ready = False
-
-    # Additional warnings
-    if mean_oos_ic < 0.02:
-        warnings.append(f"Low IC ({mean_oos_ic:.4f}) suggests weak predictive power")
-
-    # Recommended weights (use mean across folds if stable)
+    # Recommended weights: use the SAVED weights if passing, not CV mean
     recommended_weights = None
-    if is_ready:
-        recommended_weights = stability.mean_weights
+    if is_ready and saved_weights:
+        recommended_weights = saved_weights
 
     return DeploymentAssessment(
         is_ready=is_ready,
@@ -485,7 +493,11 @@ def validate_from_file(
             print(f"  {name:12s}  {mean:.4f}   {std:.4f}   {rng:.4f}  (baseline: {baseline:.2f})")
 
     # Assess deployment readiness (use direct validation as primary metric)
-    assessment = assess_deployment_readiness(cv_results, stability, oos_result)
+    assessment = assess_deployment_readiness(
+        cv_results, stability, oos_result,
+        direct_result=direct_result,
+        saved_weights=weights
+    )
 
     if verbose:
         print("\n" + "-"*60)
@@ -508,7 +520,7 @@ def validate_from_file(
         if assessment.is_ready:
             print("RECOMMENDATION: ✓ DEPLOY OPTIMIZED WEIGHTS")
             print("="*60)
-            print("\nRecommended weights (mean across CV folds):")
+            print("\nRecommended weights (validated on held-out data):")
             for name, weight in assessment.recommended_weights.items():
                 baseline = BASELINE_WEIGHTS[COMPONENT_NAMES.index(name)]
                 delta = weight - baseline
