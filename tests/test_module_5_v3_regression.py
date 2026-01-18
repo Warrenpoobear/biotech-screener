@@ -264,10 +264,10 @@ class TestRunwayGateIndependence:
         vol_adj = compute_volatility_adjustment(None)
 
         interactions = compute_interaction_terms(
-            clinical_norm=Decimal("70"),
+            clinical_normalized=Decimal("70"),
             financial_data=fin_data,
-            catalyst_norm=Decimal("50"),
-            stage="late",
+            catalyst_normalized=Decimal("50"),
+            stage_bucket="late",
             vol_adjustment=vol_adj,
             runway_gate_status="FAIL",  # Should be FAIL because runway < 6
             dilution_gate_status="PASS",

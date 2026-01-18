@@ -504,7 +504,7 @@ class TestDefensiveWrapper:
 
     def test_wrapper_version_updated(self):
         """Wrapper version should reflect v2 merge."""
-        assert wrapper_version == "1.1.0"
+        assert wrapper_version == "1.2.0"
 
 
 # =============================================================================
