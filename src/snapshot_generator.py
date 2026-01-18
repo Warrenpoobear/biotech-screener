@@ -31,7 +31,7 @@ from decimal import Decimal
 from pathlib import Path
 from typing import Optional, TypedDict, Union
 
-from .common.hash_utils import (
+from common.hash_utils import (
     compute_hash,
     compute_snapshot_id,
     compute_trial_facts_hash,
