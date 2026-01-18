@@ -52,7 +52,15 @@ VOLATILITY_MAX_ADJUSTMENT = Decimal("0.25")
 
 # Momentum calculation parameters
 MOMENTUM_LOOKBACK_DAYS = 60
-MOMENTUM_OPTIMAL_ALPHA_BPS = 1000  # 10% alpha = 70 score
+MOMENTUM_OPTIMAL_ALPHA_BPS = 1000  # 10% alpha = 65 score (with slope 150)
+# Saturation parameters - reduced to improve rank resolution
+# Old: slope=200, clamp 10-90 caused too many ties at extremes
+# New: slope=150, clamp 5-95 for better rank granularity
+MOMENTUM_SLOPE = Decimal("150")  # +10% alpha → +15 points (vs old +20)
+MOMENTUM_SCORE_MIN = Decimal("5")
+MOMENTUM_SCORE_MAX = Decimal("95")
+# Epsilon for volatility normalization
+MOMENTUM_VOL_EPS = Decimal("0.0001")
 
 # Catalyst decay parameters
 # Uses exponential decay with asymmetric shape:
@@ -157,12 +165,26 @@ class VolatilityAdjustment:
 
 @dataclass
 class MomentumSignal:
-    """Price momentum signal result."""
+    """Price momentum signal result.
+
+    Fields:
+        momentum_score: 0-100 normalized score (5-95 effective range)
+        alpha_60d: Raw excess return vs benchmark (ret - bench)
+        alpha_vol_adjusted: Volatility-adjusted alpha (alpha / vol) for
+            "persistent outperformance" - rewards low-vol outperformers
+        return_60d: Stock's 60-day compounded return
+        benchmark_return_60d: XBI's 60-day compounded return (same window)
+        confidence: Signal confidence (0-1) based on alpha magnitude
+        data_completeness: Data availability flag (0-1) indicating if
+            all required inputs were present (1.0 = complete, 0.0 = missing)
+    """
     momentum_score: Decimal  # 0-100 normalized score
     alpha_60d: Optional[Decimal]  # Excess return vs benchmark
+    alpha_vol_adjusted: Optional[Decimal]  # Vol-adjusted alpha (alpha/vol)
     return_60d: Optional[Decimal]
     benchmark_return_60d: Optional[Decimal]
     confidence: Decimal
+    data_completeness: Decimal  # 1.0 = full data, 0.0 = missing
 
 
 @dataclass
@@ -398,6 +420,8 @@ def compute_momentum_signal(
     return_60d: Optional[Decimal],
     benchmark_return_60d: Optional[Decimal],
     *,
+    annualized_vol: Optional[Decimal] = None,
+    use_vol_adjusted_alpha: bool = False,
     lookback_days: int = MOMENTUM_LOOKBACK_DAYS,
 ) -> MomentumSignal:
     """
@@ -406,9 +430,37 @@ def compute_momentum_signal(
     Research shows 60-day momentum relative to sector ETF is predictive
     in biotech. Captures both absolute and relative strength.
 
+    COMPOUNDING REQUIREMENT (PIT-critical):
+        Both return_60d and benchmark_return_60d MUST be computed as
+        compounded returns: P_t / P_{t-60} - 1, NOT arithmetic sum
+        of daily returns. Using summed daily returns introduces noise
+        and can bias toward volatile names.
+
+    PIT INTEGRITY:
+        Both returns MUST use:
+        - Same as-of close date (e.g., both as of 2026-01-15)
+        - Same lookback count (trading days, not calendar days)
+        - Aligned data sources (both from same price feed)
+        A common bug is stock return using trading days while XBI
+        uses calendar days - this breaks alpha calculation.
+
+    SATURATION (v2 improvement):
+        Uses slope=150 and clamp 5-95 to reduce ties at extremes.
+        +10% alpha → 65 score (not 70 as in v1)
+        -10% alpha → 35 score (not 30 as in v1)
+        This improves rank granularity and IC.
+
+    VOL-ADJUSTED ALPHA (optional):
+        When use_vol_adjusted_alpha=True and annualized_vol is provided,
+        computes alpha_adj = alpha / max(eps, vol). This rewards
+        "persistent outperformance" vs "lucky squeeze" and typically
+        improves IC in biotech where vol varies widely.
+
     Args:
-        return_60d: Ticker's 60-day return as decimal (0.10 = 10%)
-        benchmark_return_60d: XBI's 60-day return as decimal
+        return_60d: Ticker's 60-day COMPOUNDED return as decimal (0.10 = 10%)
+        benchmark_return_60d: XBI's 60-day COMPOUNDED return (same window!)
+        annualized_vol: Optional annualized volatility for vol adjustment
+        use_vol_adjusted_alpha: If True, use vol-adjusted alpha for scoring
         lookback_days: Lookback period (for documentation)
 
     Returns:
@@ -416,28 +468,54 @@ def compute_momentum_signal(
     """
     ret = _to_decimal(return_60d)
     bench = _to_decimal(benchmark_return_60d)
+    vol = _to_decimal(annualized_vol)
+
+    # Determine data completeness (for downstream confidence weighting)
+    # 1.0 = all data present, 0.5 = partial, 0.0 = missing critical data
+    if ret is not None and bench is not None:
+        data_completeness = Decimal("1.0")
+        if use_vol_adjusted_alpha and vol is None:
+            data_completeness = Decimal("0.8")  # Missing vol for adjustment
+    elif ret is not None or bench is not None:
+        data_completeness = Decimal("0.3")  # Partial data
+    else:
+        data_completeness = Decimal("0.0")  # No data
 
     if ret is None or bench is None:
         return MomentumSignal(
             momentum_score=Decimal("50"),  # Neutral
             alpha_60d=None,
+            alpha_vol_adjusted=None,
             return_60d=ret,
             benchmark_return_60d=bench,
             confidence=Decimal("0.3"),
+            data_completeness=data_completeness,
         )
 
     # Compute alpha (excess return)
     alpha = ret - bench
 
-    # Convert alpha to 0-100 score
-    # +10% alpha (1000bps) = 70 score
-    # -10% alpha = 30 score
-    # Scale: 20bps of alpha = 1 point of score
-    alpha_bps = alpha * Decimal("10000")  # Convert to basis points
-    score_delta = alpha_bps / Decimal("50")  # 50bps = 1 point
+    # Compute volatility-adjusted alpha if requested
+    alpha_vol_adjusted: Optional[Decimal] = None
+    if vol is not None and vol > MOMENTUM_VOL_EPS:
+        alpha_vol_adjusted = alpha / vol
+
+    # Select which alpha to use for scoring
+    scoring_alpha = alpha
+    if use_vol_adjusted_alpha and alpha_vol_adjusted is not None:
+        # Vol-adjusted: scale back to similar range as raw alpha
+        # Typical vol is 0.50 (50%), so vol-adjusted alpha ≈ 2x raw alpha
+        # Normalize by baseline vol to keep score scale consistent
+        scoring_alpha = alpha_vol_adjusted * VOLATILITY_BASELINE
+
+    # Convert alpha to 0-100 score with reduced saturation
+    # SLOPE=150: +10% alpha (1000bps) = +15 points → 65 score
+    # Old SLOPE=200: +10% alpha = +20 points → 70 score (too aggressive)
+    # This reduces ties at extremes and improves rank granularity
+    score_delta = scoring_alpha * MOMENTUM_SLOPE
 
     momentum_score = Decimal("50") + score_delta
-    momentum_score = _clamp(momentum_score, Decimal("10"), Decimal("90"))
+    momentum_score = _clamp(momentum_score, MOMENTUM_SCORE_MIN, MOMENTUM_SCORE_MAX)
 
     # Confidence based on magnitude (larger moves = more confident)
     abs_alpha = abs(alpha)
@@ -453,9 +531,11 @@ def compute_momentum_signal(
     return MomentumSignal(
         momentum_score=_quantize_score(momentum_score),
         alpha_60d=_quantize_weight(alpha),
+        alpha_vol_adjusted=_quantize_weight(alpha_vol_adjusted) if alpha_vol_adjusted is not None else None,
         return_60d=_quantize_weight(ret),
         benchmark_return_60d=_quantize_weight(bench),
         confidence=confidence,
+        data_completeness=data_completeness,
     )
 
 
@@ -1634,10 +1714,18 @@ def compute_enhanced_score(
     elif vol_adj.vol_bucket == VolatilityBucket.LOW:
         flags.append("low_volatility")
 
-    # 2. Compute momentum signal
-    momentum = compute_momentum_signal(return_60d, benchmark_return_60d)
+    # 2. Compute momentum signal (with optional vol adjustment)
+    momentum = compute_momentum_signal(
+        return_60d,
+        benchmark_return_60d,
+        annualized_vol=annualized_vol,
+        use_vol_adjusted_alpha=False,  # Default to raw alpha for now
+    )
     if momentum.alpha_60d and abs(momentum.alpha_60d) >= Decimal("0.10"):
         flags.append("strong_momentum" if momentum.alpha_60d > 0 else "weak_momentum")
+    # Flag low data completeness
+    if momentum.data_completeness < Decimal("0.5"):
+        flags.append("momentum_data_incomplete")
 
     # 3. Compute valuation signal
     valuation = compute_valuation_signal(
