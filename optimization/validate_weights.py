@@ -184,6 +184,35 @@ def rolling_window_splits(
     return splits
 
 
+def evaluate_fixed_weights(
+    weights: np.ndarray,
+    test_data: List[Dict],
+    baseline_weights: np.ndarray = BASELINE_WEIGHTS
+) -> Dict[str, float]:
+    """
+    Evaluate fixed weights on test data (no re-optimization).
+
+    This tests the SAVED weights directly, not re-optimized weights.
+    """
+    test_sharpe_optimal = -objective_function(weights, test_data, 'sharpe')
+    test_sharpe_baseline = -objective_function(baseline_weights, test_data, 'sharpe')
+
+    test_ic_optimal = compute_ic(weights, test_data)
+    test_ic_baseline = compute_ic(baseline_weights, test_data)
+
+    improvement = (test_sharpe_optimal / test_sharpe_baseline - 1) * 100 if test_sharpe_baseline > 0 else 0
+
+    return {
+        'optimized_sharpe': float(test_sharpe_optimal),
+        'baseline_sharpe': float(test_sharpe_baseline),
+        'optimized_ic': float(test_ic_optimal),
+        'baseline_ic': float(test_ic_baseline),
+        'improvement_pct': float(improvement),
+        'n_observations': len(test_data),
+        'n_periods': len(set(d['date'] for d in test_data))
+    }
+
+
 def validate_single_split(
     train_data: List[Dict],
     test_data: List[Dict],
@@ -394,28 +423,49 @@ def validate_from_file(
 
     if verbose:
         print(f"\nLoaded {len(data)} observations from {training_data_file}")
+        print(f"\nSaved optimal weights:")
+        for name in COMPONENT_NAMES:
+            baseline = BASELINE_WEIGHTS[COMPONENT_NAMES.index(name)]
+            delta = weights[name] - baseline
+            print(f"  {name:12s}: {weights[name]:.4f} (baseline: {baseline:.2f}, delta: {delta:+.4f})")
 
-    # Run temporal split validation
+    # SECTION 1: Direct test of SAVED weights on held-out data
     if verbose:
         print("\n" + "-"*60)
-        print("1. TEMPORAL TRAIN/TEST SPLIT (70/30)")
+        print("1. DIRECT VALIDATION OF SAVED WEIGHTS (70/30 split)")
         print("-"*60)
 
     train_data, test_data = temporal_train_test_split(data, train_ratio=0.7)
+
+    # Test the SAVED weights directly (no re-optimization)
+    direct_result = evaluate_fixed_weights(weight_array, test_data)
+
+    if verbose:
+        print(f"\n  Test periods:       {direct_result['n_periods']}")
+        print(f"  Test observations:  {direct_result['n_observations']}")
+        print(f"  Optimized Sharpe:   {direct_result['optimized_sharpe']:.4f}")
+        print(f"  Baseline Sharpe:    {direct_result['baseline_sharpe']:.4f}")
+        print(f"  Improvement:        {direct_result['improvement_pct']:+.1f}%")
+        print(f"  Optimized IC:       {direct_result['optimized_ic']:.4f}")
+        print(f"  Baseline IC:        {direct_result['baseline_ic']:.4f}")
+
+    # SECTION 2: Cross-validation (re-optimizes to test stability)
+    if verbose:
+        print("\n" + "-"*60)
+        print("2. CROSS-VALIDATION STABILITY (re-optimizes each fold)")
+        print("-"*60)
+
+    # Also run the re-optimization validation for comparison
     oos_result = validate_single_split(train_data, test_data)
 
     if verbose:
-        print(f"\n  Train periods: {oos_result.train_periods}")
-        print(f"  Test periods:  {oos_result.test_periods}")
-        print(f"  Train Sharpe:  {oos_result.train_sharpe:.4f}")
         print(f"  Test Sharpe:   {oos_result.test_sharpe:.4f}")
-        print(f"  Test IC:       {oos_result.test_ic:.4f}")
         print(f"  Improvement:   {oos_result.improvement_pct:+.1f}%")
 
     # Run cross-validation
     if verbose:
         print("\n" + "-"*60)
-        print("2. ROLLING WINDOW CROSS-VALIDATION")
+        print("3. ROLLING WINDOW CROSS-VALIDATION")
         print("-"*60)
 
     cv_results, stability = run_cross_validation(data, n_folds=5, verbose=verbose)
@@ -423,7 +473,7 @@ def validate_from_file(
     # Print stability analysis
     if verbose:
         print("\n" + "-"*60)
-        print("3. WEIGHT STABILITY ANALYSIS")
+        print("4. WEIGHT STABILITY ANALYSIS (from CV re-optimization)")
         print("-"*60)
         print("\n  Component       Mean     Std      Range")
         print("  " + "-"*45)
@@ -434,13 +484,17 @@ def validate_from_file(
             baseline = BASELINE_WEIGHTS[COMPONENT_NAMES.index(name)]
             print(f"  {name:12s}  {mean:.4f}   {std:.4f}   {rng:.4f}  (baseline: {baseline:.2f})")
 
-    # Assess deployment readiness
+    # Assess deployment readiness (use direct validation as primary metric)
     assessment = assess_deployment_readiness(cv_results, stability, oos_result)
 
     if verbose:
         print("\n" + "-"*60)
-        print("4. DEPLOYMENT ASSESSMENT")
+        print("5. DEPLOYMENT ASSESSMENT")
         print("-"*60)
+
+        # First show the direct validation result (most important)
+        print(f"\n  PRIMARY METRIC (saved weights on held-out data):")
+        print(f"    Sharpe improvement: {direct_result['improvement_pct']:+.1f}%")
 
         for reason in assessment.reasons:
             print(f"  {reason}")
@@ -474,7 +528,9 @@ def validate_from_file(
         'timestamp': datetime.utcnow().isoformat() + 'Z',
         'source_weights_file': weights_file,
         'training_data_file': training_data_file,
-        'temporal_split': {
+        'saved_weights': weights,
+        'direct_validation': direct_result,  # Testing SAVED weights on held-out data
+        'temporal_split_reoptimized': {
             'train_sharpe': oos_result.train_sharpe,
             'test_sharpe': oos_result.test_sharpe,
             'test_ic': oos_result.test_ic,
