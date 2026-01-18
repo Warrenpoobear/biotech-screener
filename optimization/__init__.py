@@ -6,6 +6,8 @@ Provides scipy-based weight optimization tools for the composite scoring module.
 Modules:
     optimize_weights_scipy: Fast optimization using SLSQP and Differential Evolution
     generate_sample_data: Generate synthetic training data for testing
+    validate_weights: Out-of-sample validation and deployment readiness
+    extract_historical_data: Extract scores from checkpoint files for training
 
 Usage:
     # From project root
@@ -16,6 +18,12 @@ Usage:
 
     # Run optimization
     python -m optimization.optimize_weights_scipy
+
+    # Validate optimized weights
+    python -m optimization.validate_weights
+
+    # Extract real data from checkpoints
+    python -m optimization.extract_historical_data --checkpoints-dir checkpoints
 
 Author: Wake Robin Capital Management
 Version: 1.0.0
@@ -34,6 +42,7 @@ __all__ = [
     'generate_training_data',
     'validate_from_file',
     'run_cross_validation',
+    'extract_all_data',
 ]
 
 
@@ -49,4 +58,7 @@ def __getattr__(name):
     elif name in ('validate_from_file', 'run_cross_validation'):
         from . import validate_weights as val
         return getattr(val, name)
+    elif name == 'extract_all_data':
+        from . import extract_historical_data as ext
+        return ext.extract_all_data
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
