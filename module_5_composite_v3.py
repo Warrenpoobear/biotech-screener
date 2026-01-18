@@ -520,21 +520,51 @@ def _compute_determinism_hash(
 # =============================================================================
 
 def _enrich_with_coinvest(ticker: str, coinvest_signals: dict, as_of_date: date) -> dict:
-    """Look up co-invest signal and return overlay fields with PIT safety."""
+    """Look up co-invest signal and return overlay fields with PIT safety.
+
+    V2 ENHANCEMENT: Now extracts holder tier metadata for weighted scoring.
+    """
     signal = coinvest_signals.get(ticker)
     if not signal:
-        return {"coinvest_overlap_count": 0, "coinvest_holders": [], "coinvest_usable": False, "position_changes": {}}
+        return {
+            "coinvest_overlap_count": 0,
+            "coinvest_holders": [],
+            "coinvest_usable": False,
+            "position_changes": {},
+            "holder_tiers": {},
+        }
 
     pit_positions = [p for p in signal.positions if p.filing_date < as_of_date]
     if not pit_positions:
-        return {"coinvest_overlap_count": 0, "coinvest_holders": [], "coinvest_usable": False, "position_changes": {}}
+        return {
+            "coinvest_overlap_count": 0,
+            "coinvest_holders": [],
+            "coinvest_usable": False,
+            "position_changes": {},
+            "holder_tiers": {},
+        }
 
     holders = sorted(set(p.manager_name for p in pit_positions))
 
+    # Extract holder tiers from position metadata if available
+    # This comes from the elite_managers registry during 13F parsing
+    holder_tiers: Dict[str, int] = {}
+    for p in pit_positions:
+        manager_name = p.manager_name
+        if manager_name not in holder_tiers:
+            # Check if position has tier metadata
+            tier = getattr(p, 'manager_tier', None)
+            if tier is not None:
+                holder_tiers[manager_name] = tier
+            # Otherwise, compute_smart_money_signal will use name-based lookup
+
     # Compute position changes (if previous quarter data available)
     position_changes = {}
-    # This would require historical 13F data - simplified here
-    # In production, compare current quarter to previous quarter
+    # Check if positions have change_type metadata (from 13F comparison)
+    for p in pit_positions:
+        change_type = getattr(p, 'change_type', None)
+        if change_type is not None:
+            position_changes[p.manager_name] = change_type
 
     return {
         "coinvest_overlap_count": len(holders),
@@ -542,6 +572,7 @@ def _enrich_with_coinvest(ticker: str, coinvest_signals: dict, as_of_date: date)
         "coinvest_quarter": _quarter_from_date(pit_positions[0].report_date),
         "coinvest_usable": True,
         "position_changes": position_changes,
+        "holder_tiers": holder_tiers,
     }
 
 
@@ -772,16 +803,20 @@ def _score_single_ticker_v3(
     # Apply decay to catalyst score
     cat_norm_decayed = apply_catalyst_decay(cat_norm, decay)
 
-    # 5. Smart money signal
+    # 5. Smart money signal (V2: tier-weighted with saturation)
     smart_money = compute_smart_money_signal(
         coinvest_data.get("coinvest_overlap_count", 0),
         coinvest_data.get("coinvest_holders", []),
         coinvest_data.get("position_changes"),
+        coinvest_data.get("holder_tiers"),  # V2: pass tier metadata
     )
     if smart_money.holders_increasing:
         flags.append("smart_money_buying")
     if smart_money.holders_decreasing:
         flags.append("smart_money_selling")
+    # V2: Flag high-conviction Tier1 holdings
+    if smart_money.tier1_holders:
+        flags.append("smart_money_tier1_present")
 
     # 6. Interaction terms (with gate status to prevent double-counting)
     # Convert gate statuses from v2 format
@@ -1131,6 +1166,15 @@ def _score_single_ticker_v3(
         "smart_money_signal": {
             "score": str(smart_money.smart_money_score),
             "overlap_count": smart_money.overlap_count,
+            # V2 fields
+            "weighted_overlap": str(smart_money.weighted_overlap),
+            "overlap_bonus": str(smart_money.overlap_bonus),
+            "change_adjustment": str(smart_money.position_change_adjustment),
+            "confidence": str(smart_money.confidence),
+            "tier_breakdown": smart_money.tier_breakdown,
+            "tier1_holders": smart_money.tier1_holders,
+            "holders_increasing": smart_money.holders_increasing,
+            "holders_decreasing": smart_money.holders_decreasing,
         },
         "volatility_adjustment": {
             "annualized_vol_pct": str(vol_adj.annualized_vol) if vol_adj.annualized_vol else None,

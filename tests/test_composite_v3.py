@@ -460,37 +460,61 @@ class TestCatalystDecay:
 # =============================================================================
 
 class TestSmartMoneySignal:
-    """Tests for smart money (13F) signal."""
+    """Tests for smart money (13F) signal.
 
-    def test_high_overlap(self):
-        """High overlap should increase score."""
+    NOTE: V2 implements tier-weighted scoring. Tests updated to use
+    Tier1 holder names for expected high-conviction behavior.
+    Unknown holders (generic names) now get reduced weight (0.2).
+    """
+
+    def test_high_overlap_with_tier1_holders(self):
+        """High overlap with Tier1 holders should increase score significantly."""
+        # Use Tier1 holder names for tier-weighted bonus
+        result = compute_smart_money_signal(
+            overlap_count=4,
+            holders=["Baker Bros", "RA Capital", "Perceptive", "BVF"],
+            position_changes=None,
+            holder_tiers={"Baker Bros": 1, "RA Capital": 1, "Perceptive": 1, "BVF": 1},
+        )
+        # 4 Tier1 holders × 1.0 weight = 4.0 weighted overlap
+        # Saturation applies, but should still be high score
+        assert result.smart_money_score > Decimal("60")
+        assert result.weighted_overlap == Decimal("4.00")
+
+    def test_high_overlap_with_unknown_holders(self):
+        """High overlap with unknown holders should give moderate bonus."""
+        # Unknown holders get 0.2 weight each
         result = compute_smart_money_signal(
             overlap_count=4,
             holders=["Holder1", "Holder2", "Holder3", "Holder4"],
             position_changes=None,
         )
-        assert result.smart_money_score > Decimal("60")
-        assert result.overlap_bonus == Decimal("20")  # Capped
+        # 4 unknown × 0.2 = 0.8 weighted overlap → modest bonus
+        assert result.smart_money_score > Decimal("50")  # Above neutral
+        assert result.smart_money_score < Decimal("65")  # Not too high for unknowns
+        assert result.weighted_overlap == Decimal("0.80")
 
     def test_position_increases(self):
         """Position increases should boost score."""
         result = compute_smart_money_signal(
             overlap_count=2,
-            holders=["Holder1", "Holder2"],
-            position_changes={"Holder1": "INCREASE", "Holder2": "NEW"},
+            holders=["Baker Bros", "RA Capital"],
+            position_changes={"Baker Bros": "INCREASE", "RA Capital": "NEW"},
+            holder_tiers={"Baker Bros": 1, "RA Capital": 1},
         )
         assert result.position_change_adjustment > Decimal("0")
-        assert "Holder1" in result.holders_increasing
+        assert "Baker Bros" in result.holders_increasing
 
     def test_position_decreases(self):
         """Position decreases should lower score."""
         result = compute_smart_money_signal(
             overlap_count=2,
-            holders=["Holder1", "Holder2"],
-            position_changes={"Holder1": "DECREASE", "Holder2": "EXIT"},
+            holders=["Baker Bros", "RA Capital"],
+            position_changes={"Baker Bros": "DECREASE", "RA Capital": "EXIT"},
+            holder_tiers={"Baker Bros": 1, "RA Capital": 1},
         )
         assert result.position_change_adjustment < Decimal("0")
-        assert "Holder1" in result.holders_decreasing
+        assert "Baker Bros" in result.holders_decreasing
 
     def test_no_overlap(self):
         """No overlap should return neutral-low score."""
@@ -1364,6 +1388,255 @@ class TestEdgeCases:
         assert len(result["ranked_securities"]) == 1
         score = Decimal(result["ranked_securities"][0]["composite_score"])
         assert Decimal("0") <= score <= Decimal("100")
+
+
+# =============================================================================
+# SMART MONEY SIGNAL V2 TESTS
+# =============================================================================
+
+class TestSmartMoneySignalV2:
+    """Tests for tier-weighted smart money signal (V2 improvements)."""
+
+    def test_tier_sensitivity_tier1_beats_unknowns(self):
+        """2 Tier1 holders should beat 4 unknown holders."""
+        # 2 Tier1 holders (Baker Bros + RA Capital)
+        tier1_result = compute_smart_money_signal(
+            overlap_count=2,
+            holders=["Baker Bros Advisors LP", "RA Capital Management, L.P."],
+            position_changes=None,
+            holder_tiers=None,  # Use name-based lookup
+        )
+
+        # 4 unknown holders
+        unknown_result = compute_smart_money_signal(
+            overlap_count=4,
+            holders=["Unknown Fund A", "Unknown Fund B", "Unknown Fund C", "Unknown Fund D"],
+            position_changes=None,
+            holder_tiers=None,
+        )
+
+        # Tier1 should have higher weighted overlap
+        assert tier1_result.weighted_overlap > unknown_result.weighted_overlap
+        # Tier1 should have higher score
+        assert tier1_result.smart_money_score > unknown_result.smart_money_score
+        # Tier1 should have higher confidence
+        assert tier1_result.confidence >= unknown_result.confidence
+
+    def test_tier_sensitivity_weighted_overlap_calculation(self):
+        """Verify weighted overlap calculation: Tier1=1.0, Tier2=0.6, Unknown=0.2."""
+        # 1 Tier1 + 1 Tier2 = 1.0 + 0.6 = 1.6
+        mixed_result = compute_smart_money_signal(
+            overlap_count=2,
+            holders=["Baker Bros Advisors LP", "OrbiMed Advisors LLC"],
+            position_changes=None,
+            holder_tiers={"Baker Bros Advisors LP": 1, "OrbiMed Advisors LLC": 2},
+        )
+
+        # 2 unknowns = 0.2 + 0.2 = 0.4
+        unknown_result = compute_smart_money_signal(
+            overlap_count=2,
+            holders=["Unknown A", "Unknown B"],
+            position_changes=None,
+            holder_tiers=None,
+        )
+
+        assert mixed_result.weighted_overlap == Decimal("1.60")
+        assert unknown_result.weighted_overlap == Decimal("0.40")
+        assert mixed_result.weighted_overlap == Decimal("4") * unknown_result.weighted_overlap
+
+    def test_breadth_only_score_rises_without_changes(self):
+        """Score should rise with overlap even without position_changes data."""
+        # No holders
+        no_holders = compute_smart_money_signal(
+            overlap_count=0,
+            holders=[],
+            position_changes=None,
+            holder_tiers=None,
+        )
+
+        # 2 Tier1 holders, no change data
+        with_holders = compute_smart_money_signal(
+            overlap_count=2,
+            holders=["Baker Bros Advisors LP", "RA Capital Management, L.P."],
+            position_changes=None,  # Empty
+            holder_tiers=None,
+        )
+
+        # Score should increase from overlap alone
+        assert with_holders.smart_money_score > no_holders.smart_money_score
+        assert with_holders.overlap_bonus > Decimal("0")
+        assert with_holders.position_change_adjustment == Decimal("0")
+
+    def test_exit_dominance_capped(self):
+        """One EXIT from Tier1 should matter but not nuke the score."""
+        # Tier1 EXIT only
+        exit_only = compute_smart_money_signal(
+            overlap_count=1,
+            holders=["Baker Bros Advisors LP"],
+            position_changes={"Baker Bros Advisors LP": "EXIT"},
+            holder_tiers={"Baker Bros Advisors LP": 1},
+        )
+
+        # Tier1 EXIT with Tier1 NEW (offsetting)
+        mixed_changes = compute_smart_money_signal(
+            overlap_count=2,
+            holders=["Baker Bros Advisors LP", "RA Capital Management, L.P."],
+            position_changes={
+                "Baker Bros Advisors LP": "EXIT",
+                "RA Capital Management, L.P.": "NEW",
+            },
+            holder_tiers={"Baker Bros Advisors LP": 1, "RA Capital Management, L.P.": 1},
+        )
+
+        # EXIT should lower score but not below 20 (hard floor)
+        assert exit_only.smart_money_score >= Decimal("20")
+        # Per-holder cap should prevent excessive penalty
+        assert exit_only.position_change_adjustment >= Decimal("-5")  # Capped per-holder
+        # Mixed changes should partially offset
+        assert mixed_changes.smart_money_score > exit_only.smart_money_score
+
+    def test_per_holder_cap_prevents_domination(self):
+        """Per-holder cap should prevent one noisy filing from dominating."""
+        # Single Tier1 with NEW (high weight)
+        single_tier1 = compute_smart_money_signal(
+            overlap_count=1,
+            holders=["Baker Bros Advisors LP"],
+            position_changes={"Baker Bros Advisors LP": "NEW"},
+            holder_tiers={"Baker Bros Advisors LP": 1},
+        )
+
+        # Per-holder contribution should be capped
+        contribution = single_tier1.per_holder_contributions.get("Baker Bros Advisors LP", Decimal("0"))
+        # Cap is 5, so tier_weight(1.0) + change(3.0) = 4.0 < 5, should be uncapped
+        # But total change contribution is tier_weight * change_weight = 1.0 * 3.0 = 3.0
+        # So per_holder_contribution = overlap_weight + change_contribution = 1.0 + 3.0 = 4.0
+        # This is under the cap of 5
+        assert contribution <= Decimal("5.01")  # Small tolerance for quantization
+
+    def test_deterministic_ordering(self):
+        """Dict iteration order should not affect result."""
+        # Create position_changes in different orders
+        changes_1 = {"Baker Bros Advisors LP": "NEW", "RA Capital": "INCREASE", "Perceptive": "HOLD"}
+        changes_2 = {"Perceptive": "HOLD", "Baker Bros Advisors LP": "NEW", "RA Capital": "INCREASE"}
+        changes_3 = {"RA Capital": "INCREASE", "Perceptive": "HOLD", "Baker Bros Advisors LP": "NEW"}
+
+        result_1 = compute_smart_money_signal(
+            overlap_count=3,
+            holders=["Baker Bros Advisors LP", "RA Capital", "Perceptive"],
+            position_changes=changes_1,
+            holder_tiers=None,
+        )
+
+        result_2 = compute_smart_money_signal(
+            overlap_count=3,
+            holders=["RA Capital", "Perceptive", "Baker Bros Advisors LP"],
+            position_changes=changes_2,
+            holder_tiers=None,
+        )
+
+        result_3 = compute_smart_money_signal(
+            overlap_count=3,
+            holders=["Perceptive", "Baker Bros Advisors LP", "RA Capital"],
+            position_changes=changes_3,
+            holder_tiers=None,
+        )
+
+        # All results should be identical
+        assert result_1.smart_money_score == result_2.smart_money_score == result_3.smart_money_score
+        assert result_1.weighted_overlap == result_2.weighted_overlap == result_3.weighted_overlap
+        assert result_1.overlap_bonus == result_2.overlap_bonus == result_3.overlap_bonus
+        assert result_1.position_change_adjustment == result_2.position_change_adjustment == result_3.position_change_adjustment
+        # Sorted lists should also be identical
+        assert result_1.holders_increasing == result_2.holders_increasing == result_3.holders_increasing
+        assert result_1.tier1_holders == result_2.tier1_holders == result_3.tier1_holders
+
+    def test_saturation_diminishing_returns(self):
+        """Many holders should have diminishing returns on overlap bonus."""
+        # 1 Tier1 holder
+        one_tier1 = compute_smart_money_signal(
+            overlap_count=1,
+            holders=["Baker Bros Advisors LP"],
+            position_changes=None,
+            holder_tiers={"Baker Bros Advisors LP": 1},
+        )
+
+        # 5 Tier1 holders (excessive)
+        five_tier1 = compute_smart_money_signal(
+            overlap_count=5,
+            holders=["Baker Bros", "RA Capital", "Perceptive", "BVF", "EcoR1"],
+            position_changes=None,
+            holder_tiers={"Baker Bros": 1, "RA Capital": 1, "Perceptive": 1, "BVF": 1, "EcoR1": 1},
+        )
+
+        # 5x weighted overlap should NOT give 5x bonus (saturation)
+        overlap_ratio = five_tier1.weighted_overlap / one_tier1.weighted_overlap
+        bonus_ratio = five_tier1.overlap_bonus / one_tier1.overlap_bonus if one_tier1.overlap_bonus > 0 else Decimal("1")
+
+        # Bonus ratio should be less than overlap ratio (diminishing returns)
+        assert bonus_ratio < overlap_ratio
+
+    def test_confidence_based_on_tier_coverage(self):
+        """Confidence should scale with tier coverage."""
+        # 2 Tier1 = highest confidence
+        two_tier1 = compute_smart_money_signal(
+            overlap_count=2,
+            holders=["Baker Bros", "RA Capital"],
+            position_changes=None,
+            holder_tiers={"Baker Bros": 1, "RA Capital": 1},
+        )
+
+        # 1 Tier1 + 1 Tier2 = good confidence
+        mixed_tiers = compute_smart_money_signal(
+            overlap_count=2,
+            holders=["Baker Bros", "OrbiMed"],
+            position_changes=None,
+            holder_tiers={"Baker Bros": 1, "OrbiMed": 2},
+        )
+
+        # 2 unknowns = lower confidence
+        two_unknown = compute_smart_money_signal(
+            overlap_count=2,
+            holders=["Unknown A", "Unknown B"],
+            position_changes=None,
+            holder_tiers=None,
+        )
+
+        # Confidence should decrease with tier quality
+        assert two_tier1.confidence >= mixed_tiers.confidence
+        assert mixed_tiers.confidence >= two_unknown.confidence
+
+    def test_tier_breakdown_tracking(self):
+        """Tier breakdown should accurately track holder distribution."""
+        result = compute_smart_money_signal(
+            overlap_count=5,
+            holders=["Baker Bros", "RA Capital", "OrbiMed", "Unknown A", "Unknown B"],
+            position_changes=None,
+            holder_tiers={"Baker Bros": 1, "RA Capital": 1, "OrbiMed": 2},
+        )
+
+        # Verify tier breakdown
+        assert result.tier_breakdown.get(1, 0) == 2  # Baker Bros, RA Capital
+        assert result.tier_breakdown.get(2, 0) == 1  # OrbiMed
+        assert result.tier_breakdown.get(0, 0) == 2  # Unknown A, Unknown B
+        # Tier1 holders list should contain the right names
+        assert "Baker Bros" in result.tier1_holders
+        assert "RA Capital" in result.tier1_holders
+        assert len(result.tier1_holders) == 2
+
+    def test_explicit_holder_tiers_override_name_lookup(self):
+        """Explicit holder_tiers should override name-based lookup."""
+        # Use Baker Bros name but assign Tier3 explicitly
+        result = compute_smart_money_signal(
+            overlap_count=1,
+            holders=["Baker Bros Advisors LP"],
+            position_changes=None,
+            holder_tiers={"Baker Bros Advisors LP": 3},  # Override to Tier3
+        )
+
+        # Should use Tier3 weight (0.4), not Tier1 (1.0)
+        assert result.weighted_overlap == Decimal("0.40")
+        assert result.tier_breakdown.get(3, 0) == 1
+        assert result.tier_breakdown.get(1, 0) == 0
 
 
 if __name__ == "__main__":
