@@ -1,452 +1,480 @@
-#!/usr/bin/env python3
 """
-Extract historical screening data from checkpoint files for weight optimization.
+Extract historical screening data for weight optimization.
 
-Reads module_5 checkpoint files and extracts component scores with forward returns.
-Outputs CSV in the format required by optimize_weights_scipy.py.
-
-Usage:
-    # Extract from checkpoints with price data
-    python -m optimization.extract_historical_data \
-        --checkpoints-dir checkpoints \
-        --prices-file production_data/prices.csv \
-        --output optimization/optimization_data/training_dataset.csv
-
-    # Extract without prices (scores only, no returns)
-    python -m optimization.extract_historical_data \
-        --checkpoints-dir checkpoints \
-        --output optimization/optimization_data/scores_only.csv \
-        --no-returns
-
-Author: Wake Robin Capital Management
-Version: 1.0.0
+Scans checkpoint files, extracts component scores, and calculates forward returns
+from price data to create training dataset for weight optimization.
 """
-from __future__ import annotations
 
-import argparse
-import csv
 import json
-import os
-import sys
-from collections import defaultdict
-from datetime import datetime, timedelta
+import csv
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from datetime import datetime, timedelta
+from decimal import Decimal
+from collections import defaultdict
+import sys
 
-__version__ = "1.0.0"
-
-# Component mapping from checkpoint to optimization format
-# The checkpoint has 4 core components; momentum/valuation may be added separately
-COMPONENT_MAPPING = {
-    'clinical': 'clinical',
-    'financial': 'financial',
-    'catalyst': 'catalyst',
-    'pos': 'pos',
-}
-
-# Default values for missing components
-DEFAULT_MOMENTUM = 50.0  # Neutral
-DEFAULT_VALUATION = 50.0  # Neutral
+try:
+    import numpy as np
+except ImportError:
+    print("WARNING: numpy not installed. Some features may not work.")
+    np = None
 
 
-def parse_date(date_str: str) -> datetime:
-    """Parse ISO date string to datetime."""
-    return datetime.strptime(date_str, '%Y-%m-%d')
+class HistoricalDataExtractor:
+    """Extract historical screening data for optimization."""
 
+    def __init__(self, checkpoint_dir='checkpoints', price_file=None):
+        self.checkpoint_dir = Path(checkpoint_dir)
+        self.price_file = price_file
+        self.prices = None
 
-def load_checkpoint(filepath: str) -> Dict[str, Any]:
-    """Load a module_5 checkpoint file."""
-    with open(filepath, 'r') as f:
-        return json.load(f)
+        if not self.checkpoint_dir.exists():
+            raise FileNotFoundError(f"Checkpoint directory not found: {checkpoint_dir}")
 
+    def load_checkpoint_files(self):
+        """
+        Scan checkpoint directory for module_5 results.
 
-def extract_scores_from_checkpoint(
-    checkpoint: Dict[str, Any]
-) -> List[Dict[str, Any]]:
-    """
-    Extract component scores from a module_5 checkpoint.
+        Returns: List of (date, filepath) tuples sorted by date
+        """
+        checkpoints = []
 
-    Returns list of {ticker, clinical, financial, catalyst, pos, momentum, valuation}
-    """
-    as_of_date = checkpoint.get('as_of_date', '')
-    data = checkpoint.get('data', {})
-    ranked_securities = data.get('ranked_securities', [])
-
-    scores = []
-
-    for security in ranked_securities:
-        ticker = security.get('ticker')
-        if not ticker:
-            continue
-
-        # Extract component scores from score_breakdown
-        breakdown = security.get('score_breakdown', {})
-        components = breakdown.get('components', [])
-
-        # Build component dict
-        component_scores = {}
-        for comp in components:
-            name = comp.get('name')
-            # Use normalized score (0-100 scale)
-            normalized = comp.get('normalized', '50.0')
+        # Look for module_5_*.json files
+        for filepath in self.checkpoint_dir.glob('module_5_*.json'):
+            # Extract date from filename: module_5_2024-01-15.json
             try:
-                component_scores[name] = float(normalized)
-            except (ValueError, TypeError):
-                component_scores[name] = 50.0
+                date_str = filepath.stem.replace('module_5_', '')
+                date = datetime.strptime(date_str, '%Y-%m-%d')
+                checkpoints.append((date, filepath))
+            except ValueError:
+                print(f"Warning: Could not parse date from {filepath.name}, skipping")
+                continue
 
-        # Map to output format
-        score_row = {
-            'date': as_of_date,
-            'ticker': ticker,
-            'clinical': component_scores.get('clinical', 50.0),
-            'financial': component_scores.get('financial', 50.0),
-            'catalyst': component_scores.get('catalyst', 50.0),
-            'pos': component_scores.get('pos', 50.0),
-            'momentum': DEFAULT_MOMENTUM,  # Not in checkpoint, use default
-            'valuation': DEFAULT_VALUATION,  # Not in checkpoint, use default
-            'composite_score': float(security.get('composite_score', 50.0)),
-            'composite_rank': security.get('composite_rank', 999),
-        }
+        checkpoints.sort(key=lambda x: x[0])
 
-        scores.append(score_row)
+        print(f"Found {len(checkpoints)} checkpoint files")
+        if checkpoints:
+            print(f"  Date range: {checkpoints[0][0].date()} to {checkpoints[-1][0].date()}")
 
-    return scores
+        return checkpoints
 
+    def extract_component_scores(self, checkpoint_data, date):
+        """
+        Extract component scores from checkpoint JSON.
 
-def load_prices(prices_file: str) -> Dict[str, Dict[str, float]]:
-    """
-    Load price data for forward return calculation.
+        Handles different checkpoint formats (v2, v3, with/without enhancements).
 
-    Expected format: date,ticker,close
-    Returns: {ticker: {date: price}}
-    """
-    prices = defaultdict(dict)
+        Returns: Dict[ticker] -> {clinical, financial, catalyst, pos, momentum, valuation}
+        """
+        scores = {}
 
-    if not os.path.exists(prices_file):
-        print(f"Warning: Prices file not found: {prices_file}")
+        # Try different possible structures
+        if 'ranked_securities' in checkpoint_data:
+            securities = checkpoint_data['ranked_securities']
+        elif 'results' in checkpoint_data:
+            securities = checkpoint_data['results']
+        else:
+            print(f"Warning: Unknown checkpoint structure for {date}, skipping")
+            return scores
+
+        for security in securities:
+            ticker = security.get('ticker')
+            if not ticker:
+                continue
+
+            # Extract scores - try different field names
+            score_data = {}
+
+            # Method 1: Direct score_components field
+            if 'score_components' in security:
+                components = security['score_components']
+                score_data = {
+                    'clinical': float(components.get('clinical', 0)),
+                    'financial': float(components.get('financial', 0)),
+                    'catalyst': float(components.get('catalyst', 0)),
+                    'pos': float(components.get('pos', 0)),
+                    'momentum': float(components.get('momentum', 0)),
+                    'valuation': float(components.get('valuation', 0))
+                }
+
+            # Method 2: Individual score fields
+            elif 'clinical_score' in security:
+                score_data = {
+                    'clinical': float(security.get('clinical_score', 0)),
+                    'financial': float(security.get('financial_score', 0)),
+                    'catalyst': float(security.get('catalyst_score', 0)),
+                    'pos': float(security.get('pos_score', 0)),
+                    'momentum': float(security.get('momentum_score', 0)),
+                    'valuation': float(security.get('valuation_score', 0))
+                }
+
+            # Method 3: From module scores
+            elif 'module_2_score' in security:
+                # Module 2 = financial, Module 4 = clinical
+                score_data = {
+                    'clinical': float(security.get('module_4_score', 0)),
+                    'financial': float(security.get('module_2_score', 0)),
+                    'catalyst': float(security.get('module_3_score', 0)),
+                    'pos': float(security.get('pos_score', 0)),
+                    'momentum': float(security.get('momentum_score', 0)),
+                    'valuation': float(security.get('valuation_score', 0))
+                }
+
+            if score_data:
+                scores[ticker] = score_data
+
+        return scores
+
+    def load_price_data(self):
+        """
+        Load historical price data.
+
+        Supports multiple formats:
+        - CSV with columns: date, ticker, close
+        - JSON with nested structure
+        - Yahoo Finance cache files
+
+        Returns: Dict[ticker][date] -> price
+        """
+        if self.prices is not None:
+            return self.prices
+
+        prices = defaultdict(dict)
+
+        if self.price_file:
+            # Load from specified file
+            price_path = Path(self.price_file)
+
+            if price_path.suffix == '.csv':
+                prices = self._load_csv_prices(price_path)
+            elif price_path.suffix == '.json':
+                prices = self._load_json_prices(price_path)
+        else:
+            # Try to find price data in common locations
+            search_paths = [
+                'production_data/price_history.csv',
+                'production_data/yahoo_cache.json',
+                'data/prices.csv',
+                'backtest/price_data.csv'
+            ]
+
+            for path in search_paths:
+                if Path(path).exists():
+                    print(f"Found price data: {path}")
+                    if path.endswith('.csv'):
+                        prices = self._load_csv_prices(Path(path))
+                    else:
+                        prices = self._load_json_prices(Path(path))
+                    break
+
+        if not prices:
+            print("WARNING: No price data found. Forward returns will be unavailable.")
+            print("  Provide price file with --price-file option")
+
+        self.prices = prices
         return prices
 
-    with open(prices_file, 'r', newline='') as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            ticker = row.get('ticker', row.get('symbol', ''))
-            date = row.get('date', '')
-            close = row.get('close', row.get('adj_close', row.get('price', '')))
-
-            if ticker and date and close:
-                try:
-                    prices[ticker][date] = float(close)
-                except ValueError:
-                    pass
-
-    print(f"Loaded prices for {len(prices)} tickers")
-    return prices
-
-
-def calculate_forward_return(
-    ticker: str,
-    date: str,
-    prices: Dict[str, Dict[str, float]],
-    forward_weeks: int = 4
-) -> Optional[float]:
-    """
-    Calculate forward return for a ticker from date.
-
-    Returns None if prices not available.
-    """
-    if ticker not in prices:
-        return None
-
-    ticker_prices = prices[ticker]
-
-    # Find start price
-    start_date = parse_date(date)
-    start_price = None
-
-    # Look for price on or near start date (within 3 days)
-    for delta in range(4):
-        check_date = (start_date + timedelta(days=delta)).strftime('%Y-%m-%d')
-        if check_date in ticker_prices:
-            start_price = ticker_prices[check_date]
-            break
-
-    if start_price is None:
-        return None
-
-    # Find end price (forward_weeks later)
-    end_date = start_date + timedelta(weeks=forward_weeks)
-    end_price = None
-
-    for delta in range(4):
-        check_date = (end_date + timedelta(days=delta)).strftime('%Y-%m-%d')
-        if check_date in ticker_prices:
-            end_price = ticker_prices[check_date]
-            break
-
-    if end_price is None:
-        return None
-
-    # Calculate return
-    return (end_price - start_price) / start_price
-
-
-def find_checkpoint_files(checkpoints_dir: str) -> List[Tuple[str, str]]:
-    """
-    Find all module_5 checkpoint files.
-
-    Returns: List of (filepath, date) tuples sorted by date
-    """
-    files = []
-    pattern = 'module_5_'
-
-    for filename in os.listdir(checkpoints_dir):
-        if filename.startswith(pattern) and filename.endswith('.json'):
-            # Extract date from filename (module_5_YYYY-MM-DD.json)
-            date_part = filename[len(pattern):-5]
-            filepath = os.path.join(checkpoints_dir, filename)
-            files.append((filepath, date_part))
-
-    # Sort by date
-    files.sort(key=lambda x: x[1])
-    return files
-
-
-def extract_all_data(
-    checkpoints_dir: str,
-    prices_file: Optional[str] = None,
-    forward_weeks: int = 4,
-    verbose: bool = True
-) -> List[Dict[str, Any]]:
-    """
-    Extract historical data from all checkpoint files.
-
-    Args:
-        checkpoints_dir: Directory containing module_5_*.json files
-        prices_file: Optional path to prices CSV for forward returns
-        forward_weeks: Weeks ahead for forward return calculation
-        verbose: Print progress
-
-    Returns:
-        List of observation dicts with scores and optional returns
-    """
-    # Find checkpoint files
-    checkpoint_files = find_checkpoint_files(checkpoints_dir)
-
-    if verbose:
-        print(f"Found {len(checkpoint_files)} checkpoint files")
-
-    if not checkpoint_files:
-        raise ValueError(f"No module_5_*.json files found in {checkpoints_dir}")
-
-    # Load prices if provided
-    prices = {}
-    if prices_file:
-        prices = load_prices(prices_file)
-
-    # Extract scores from each checkpoint
-    all_observations = []
-    returns_available = 0
-    returns_missing = 0
-
-    for filepath, date in checkpoint_files:
-        if verbose:
-            print(f"  Processing {date}...")
+    def _load_csv_prices(self, filepath):
+        """Load prices from CSV file."""
+        prices = defaultdict(dict)
 
         try:
-            checkpoint = load_checkpoint(filepath)
-            scores = extract_scores_from_checkpoint(checkpoint)
+            with open(filepath) as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    ticker = row.get('ticker') or row.get('symbol')
+                    date_str = row.get('date')
+                    close = row.get('close') or row.get('adj_close')
 
-            for score in scores:
-                # Calculate forward return if prices available
-                if prices:
-                    fwd_return = calculate_forward_return(
-                        score['ticker'], date, prices, forward_weeks
-                    )
-                    if fwd_return is not None:
-                        score['fwd_4w'] = fwd_return
-                        returns_available += 1
-                    else:
-                        score['fwd_4w'] = None
-                        returns_missing += 1
-                else:
-                    score['fwd_4w'] = None
+                    if ticker and date_str and close:
+                        try:
+                            date = datetime.strptime(date_str, '%Y-%m-%d')
+                            prices[ticker][date] = float(close)
+                        except (ValueError, TypeError):
+                            continue
 
-                all_observations.append(score)
-
+            print(f"Loaded prices for {len(prices)} tickers")
         except Exception as e:
-            print(f"  Error processing {filepath}: {e}")
+            print(f"Error loading CSV prices: {e}")
 
-    if verbose:
-        print(f"\nExtracted {len(all_observations)} observations")
-        if prices:
-            print(f"  Returns available: {returns_available}")
-            print(f"  Returns missing:   {returns_missing}")
+        return prices
 
-    return all_observations
+    def _load_json_prices(self, filepath):
+        """Load prices from JSON file (e.g., Yahoo cache)."""
+        prices = defaultdict(dict)
 
+        try:
+            with open(filepath) as f:
+                data = json.load(f)
 
-def save_to_csv(
-    observations: List[Dict[str, Any]],
-    output_path: str,
-    include_returns: bool = True,
-    verbose: bool = True
-):
-    """
-    Save observations to CSV in optimization format.
+            # Handle different JSON structures
+            for ticker, ticker_data in data.items():
+                if isinstance(ticker_data, dict):
+                    # Format 1: {ticker: {date: price}}
+                    for date_str, price in ticker_data.items():
+                        try:
+                            date = datetime.strptime(date_str, '%Y-%m-%d')
+                            prices[ticker][date] = float(price)
+                        except (ValueError, TypeError):
+                            continue
+                elif isinstance(ticker_data, list):
+                    # Format 2: {ticker: [{date: ..., close: ...}]}
+                    for entry in ticker_data:
+                        date_str = entry.get('date')
+                        close = entry.get('close')
+                        if date_str and close:
+                            try:
+                                date = datetime.strptime(date_str, '%Y-%m-%d')
+                                prices[ticker][date] = float(close)
+                            except (ValueError, TypeError):
+                                continue
 
-    Args:
-        observations: List of observation dicts
-        output_path: Output CSV path
-        include_returns: Whether to include forward returns column
-        verbose: Print progress
-    """
-    # Filter to observations with returns if required
-    if include_returns:
-        valid_obs = [o for o in observations if o.get('fwd_4w') is not None]
-        if verbose:
-            print(f"Writing {len(valid_obs)} observations with returns")
-    else:
-        valid_obs = observations
-        if verbose:
-            print(f"Writing {len(valid_obs)} observations (no returns)")
+            print(f"Loaded prices for {len(prices)} tickers")
+        except Exception as e:
+            print(f"Error loading JSON prices: {e}")
 
-    if not valid_obs:
-        raise ValueError("No valid observations to write")
+        return prices
 
-    # Determine columns
-    columns = ['date', 'ticker', 'clinical', 'financial', 'catalyst',
-               'pos', 'momentum', 'valuation']
-    if include_returns:
-        columns.append('fwd_4w')
+    def calculate_forward_return(self, ticker, start_date, horizon_days=28):
+        """
+        Calculate forward return for a ticker.
 
-    # Write CSV
-    output_dir = os.path.dirname(output_path)
-    if output_dir:
-        os.makedirs(output_dir, exist_ok=True)
+        Parameters:
+        - ticker: Stock symbol
+        - start_date: Start date (datetime)
+        - horizon_days: Forward period (default: 28 days = 4 weeks)
 
-    with open(output_path, 'w', newline='') as f:
-        writer = csv.DictWriter(f, fieldnames=columns, extrasaction='ignore')
-        writer.writeheader()
+        Returns: Forward return as decimal (e.g., 0.15 = 15%) or None if unavailable
+        """
+        if not self.prices or ticker not in self.prices:
+            return None
 
-        for obs in valid_obs:
-            # Format numeric values
-            row = {
-                'date': obs['date'],
-                'ticker': obs['ticker'],
-                'clinical': f"{obs['clinical']:.2f}",
-                'financial': f"{obs['financial']:.2f}",
-                'catalyst': f"{obs['catalyst']:.2f}",
-                'pos': f"{obs['pos']:.2f}",
-                'momentum': f"{obs['momentum']:.2f}",
-                'valuation': f"{obs['valuation']:.2f}",
-            }
-            if include_returns and obs.get('fwd_4w') is not None:
-                row['fwd_4w'] = f"{obs['fwd_4w']:.6f}"
+        ticker_prices = self.prices[ticker]
 
-            writer.writerow(row)
+        # Find price on or near start_date (allow ±3 days)
+        start_price = None
+        for offset in range(-3, 4):
+            check_date = start_date + timedelta(days=offset)
+            if check_date in ticker_prices:
+                start_price = ticker_prices[check_date]
+                break
 
-    if verbose:
-        print(f"Saved to {output_path}")
+        if start_price is None:
+            return None
+
+        # Find price on or near end_date (allow ±3 days)
+        end_date = start_date + timedelta(days=horizon_days)
+        end_price = None
+        for offset in range(-3, 4):
+            check_date = end_date + timedelta(days=offset)
+            if check_date in ticker_prices:
+                end_price = ticker_prices[check_date]
+                break
+
+        if end_price is None or start_price <= 0:
+            return None
+
+        # Calculate return
+        return (end_price - start_price) / start_price
+
+    def extract_training_data(self, horizon_days=28, min_observations=100):
+        """
+        Extract complete training dataset from checkpoints.
+
+        Parameters:
+        - horizon_days: Forward return period (default: 28 = 4 weeks)
+        - min_observations: Minimum observations required (default: 100)
+
+        Returns: List of dicts with training data
+        """
+        print("\n" + "="*60)
+        print("EXTRACTING HISTORICAL TRAINING DATA")
+        print("="*60)
+
+        # Load checkpoints
+        checkpoints = self.load_checkpoint_files()
+
+        if not checkpoints:
+            print("ERROR: No checkpoint files found")
+            return []
+
+        # Load prices
+        self.load_price_data()
+
+        # Extract data
+        training_data = []
+        stats = {
+            'checkpoints_processed': 0,
+            'tickers_with_scores': 0,
+            'forward_returns_calculated': 0,
+            'missing_prices': 0
+        }
+
+        for date, filepath in checkpoints:
+            try:
+                with open(filepath) as f:
+                    checkpoint_data = json.load(f)
+            except Exception as e:
+                print(f"Error loading {filepath}: {e}")
+                continue
+
+            # Extract scores
+            scores = self.extract_component_scores(checkpoint_data, date)
+
+            if not scores:
+                continue
+
+            stats['checkpoints_processed'] += 1
+
+            # Calculate forward returns
+            for ticker, score_data in scores.items():
+                stats['tickers_with_scores'] += 1
+
+                # Calculate forward return
+                fwd_return = self.calculate_forward_return(ticker, date, horizon_days)
+
+                if fwd_return is None:
+                    stats['missing_prices'] += 1
+                    continue
+
+                stats['forward_returns_calculated'] += 1
+
+                # Add to training data
+                training_data.append({
+                    'date': date.strftime('%Y-%m-%d'),
+                    'ticker': ticker,
+                    'clinical': score_data['clinical'],
+                    'financial': score_data['financial'],
+                    'catalyst': score_data['catalyst'],
+                    'pos': score_data['pos'],
+                    'momentum': score_data['momentum'],
+                    'valuation': score_data['valuation'],
+                    'fwd_return': fwd_return
+                })
+
+        # Print statistics
+        print(f"\nExtraction Statistics:")
+        print(f"  Checkpoints processed: {stats['checkpoints_processed']}")
+        print(f"  Tickers with scores: {stats['tickers_with_scores']}")
+        print(f"  Forward returns calculated: {stats['forward_returns_calculated']}")
+        print(f"  Missing prices: {stats['missing_prices']}")
+        print(f"  Total observations: {len(training_data)}")
+
+        # Check minimum threshold
+        if len(training_data) < min_observations:
+            print(f"\n⚠️  WARNING: Only {len(training_data)} observations found")
+            print(f"   Minimum recommended: {min_observations}")
+            print("   Results may not be reliable with limited data")
+        else:
+            print(f"\n✓ Sufficient data: {len(training_data)} observations")
+
+        return training_data
+
+    def save_training_data(self, training_data, output_file='optimization/optimization_data/training_dataset.csv'):
+        """Save training data to CSV."""
+        output_path = Path(output_file)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+
+        if not training_data:
+            print("ERROR: No training data to save")
+            return
+
+        fieldnames = ['date', 'ticker', 'clinical', 'financial', 'catalyst',
+                      'pos', 'momentum', 'valuation', 'fwd_return']
+
+        with open(output_path, 'w', newline='') as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(training_data)
+
+        print(f"\n✓ Saved {len(training_data)} observations to {output_file}")
+
+        # Print sample statistics
+        if np:
+            returns = [d['fwd_return'] for d in training_data]
+            print(f"\nForward return statistics:")
+            print(f"  Mean: {np.mean(returns):.4f} ({np.mean(returns)*100:.2f}%)")
+            print(f"  Std: {np.std(returns):.4f} ({np.std(returns)*100:.2f}%)")
+            print(f"  Min: {np.min(returns):.4f} ({np.min(returns)*100:.2f}%)")
+            print(f"  Max: {np.max(returns):.4f} ({np.max(returns)*100:.2f}%)")
+
+        # Print date range
+        dates = [d['date'] for d in training_data]
+        print(f"\nDate range:")
+        print(f"  First: {min(dates)}")
+        print(f"  Last: {max(dates)}")
+
+        # Print ticker coverage
+        unique_tickers = len(set(d['ticker'] for d in training_data))
+        print(f"\nTicker coverage:")
+        print(f"  Unique tickers: {unique_tickers}")
+        print(f"  Avg observations per ticker: {len(training_data) / unique_tickers:.1f}")
 
 
 def main():
-    """CLI entry point."""
+    """Main extraction workflow."""
+    import argparse
+
     parser = argparse.ArgumentParser(
         description='Extract historical screening data for weight optimization'
     )
     parser.add_argument(
-        '--checkpoints-dir',
+        '--checkpoint-dir',
         default='checkpoints',
         help='Directory containing module_5_*.json checkpoint files'
     )
     parser.add_argument(
-        '--prices-file',
-        help='Path to prices CSV (date,ticker,close) for forward returns'
+        '--price-file',
+        help='Price data file (CSV or JSON). If not provided, will search common locations.'
+    )
+    parser.add_argument(
+        '--horizon',
+        type=int,
+        default=28,
+        help='Forward return period in days (default: 28 = 4 weeks)'
     )
     parser.add_argument(
         '--output',
         default='optimization/optimization_data/training_dataset.csv',
-        help='Output CSV path'
+        help='Output file path'
     )
     parser.add_argument(
-        '--forward-weeks',
+        '--min-observations',
         type=int,
-        default=4,
-        help='Weeks ahead for forward return calculation'
-    )
-    parser.add_argument(
-        '--no-returns',
-        action='store_true',
-        help='Skip return calculation (scores only)'
-    )
-    parser.add_argument(
-        '--quiet',
-        action='store_true',
-        help='Suppress progress output'
+        default=100,
+        help='Minimum observations required (default: 100)'
     )
 
     args = parser.parse_args()
 
-    # Resolve paths
-    if not os.path.isabs(args.checkpoints_dir):
-        # Try relative to project root
-        if not os.path.exists(args.checkpoints_dir):
-            alt_path = os.path.join('..', args.checkpoints_dir)
-            if os.path.exists(alt_path):
-                args.checkpoints_dir = alt_path
+    # Create extractor
+    extractor = HistoricalDataExtractor(
+        checkpoint_dir=args.checkpoint_dir,
+        price_file=args.price_file
+    )
 
-    try:
-        # Extract data
-        observations = extract_all_data(
-            checkpoints_dir=args.checkpoints_dir,
-            prices_file=args.prices_file,
-            forward_weeks=args.forward_weeks,
-            verbose=not args.quiet
-        )
+    # Extract data
+    training_data = extractor.extract_training_data(
+        horizon_days=args.horizon,
+        min_observations=args.min_observations
+    )
 
-        # Save to CSV
-        save_to_csv(
-            observations,
-            output_path=args.output,
-            include_returns=not args.no_returns and args.prices_file is not None,
-            verbose=not args.quiet
-        )
+    if not training_data:
+        print("\n❌ No training data extracted. Check:")
+        print("  1. Checkpoint files exist in", args.checkpoint_dir)
+        print("  2. Price data is available")
+        print("  3. Dates overlap between checkpoints and prices")
+        sys.exit(1)
 
-        # Print summary
-        if not args.quiet:
-            print("\n" + "="*60)
-            print("EXTRACTION COMPLETE")
-            print("="*60)
+    # Save
+    extractor.save_training_data(training_data, args.output)
 
-            dates = sorted(set(o['date'] for o in observations))
-            print(f"\nDate range: {dates[0]} to {dates[-1]}")
-            print(f"Unique dates: {len(dates)}")
-            print(f"Total observations: {len(observations)}")
-
-            if args.prices_file:
-                with_returns = sum(1 for o in observations if o.get('fwd_4w') is not None)
-                print(f"With forward returns: {with_returns}")
-
-            print(f"\nOutput: {args.output}")
-
-            if not args.prices_file:
-                print("\nNOTE: No prices file provided.")
-                print("To calculate forward returns, run with --prices-file:")
-                print(f"  python -m optimization.extract_historical_data \\")
-                print(f"    --checkpoints-dir {args.checkpoints_dir} \\")
-                print(f"    --prices-file production_data/prices.csv \\")
-                print(f"    --output {args.output}")
-
-        return 0
-
-    except FileNotFoundError as e:
-        print(f"Error: {e}")
-        return 1
-
-    except Exception as e:
-        print(f"Error: {e}")
-        raise
+    print("\n" + "="*60)
+    print("EXTRACTION COMPLETE")
+    print("="*60)
+    print("\nNext step: Run optimization")
+    print("  python -m optimization.optimize_weights_scipy")
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    main()
