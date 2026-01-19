@@ -175,6 +175,10 @@ WINSOR_HIGH = Decimal("95")
 HYBRID_ALPHA = Decimal("0.85")
 CRITICAL_COMPONENTS = ["financial", "clinical"]
 
+# PoS contribution cap - prevents any single mapping surprise from
+# moving composite more than ±6 points (protects against data quality issues)
+POS_DELTA_CAP = Decimal("6.0")
+
 # Monotonic cap thresholds
 class MonotonicCap:
     LIQUIDITY_FAIL_CAP = Decimal("35")
@@ -980,10 +984,25 @@ def _score_single_ticker_v3(
                 notes=[] if valuation.peer_count >= 5 else ["insufficient_peers"],
             ))
 
+    # Track PoS contribution separately for delta capping
+    pos_contrib_raw = Decimal("0")
+    pos_contrib_capped = Decimal("0")
+    pos_delta_was_capped = False
+
     if mode == ScoringMode.ENHANCED and pos_raw is not None:
         w_eff = effective_weights.get("pos", Decimal("0"))
-        contrib = pos_norm * w_eff
-        contributions["pos"] = contrib
+        pos_contrib_raw = pos_norm * w_eff
+
+        # Cap PoS contribution to prevent mapping surprises from
+        # dominating the composite score (±POS_DELTA_CAP points max impact)
+        pos_contrib_capped = _clamp(pos_contrib_raw, -POS_DELTA_CAP, POS_DELTA_CAP)
+
+        if pos_contrib_raw != pos_contrib_capped:
+            pos_delta_was_capped = True
+            flags.append("pos_delta_capped")
+
+        contributions["pos"] = pos_contrib_capped
+
         component_scores.append(ComponentScore(
             name="pos",
             raw=pos_raw,
@@ -991,8 +1010,8 @@ def _score_single_ticker_v3(
             confidence=conf_pos,
             weight_base=base_weights.get("pos", Decimal("0")),
             weight_effective=w_eff,
-            contribution=_quantize_score(contrib),
-            notes=[],
+            contribution=_quantize_score(pos_contrib_capped),
+            notes=["delta_capped"] if pos_delta_was_capped else [],
         ))
         flags.append("pos_score_applied")
 
