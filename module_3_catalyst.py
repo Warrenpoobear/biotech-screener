@@ -66,6 +66,12 @@ from catalyst_diagnostics import (
     CalendarCatalyst,
     EventRuleID,
 )
+from time_decay_scoring import (
+    TimeDecayConfig,
+    compute_time_decay_score,
+    score_all_tickers_with_time_decay,
+    DEFAULT_TIME_DECAY_WINDOWS,
+)
 from common.integration_contracts import (
     validate_module_3_output,
     is_validation_enabled,
@@ -102,6 +108,10 @@ class Module3Config:
         self.schema_version = SCHEMA_VERSION
         self.score_version = SCORE_VERSION
 
+        # Time-decay scoring config
+        self.enable_time_decay = True
+        self.time_decay_config = TimeDecayConfig()
+
     @classmethod
     def from_dict(cls, config_dict: Dict[str, Any]) -> 'Module3Config':
         """Create config from dict"""
@@ -116,6 +126,12 @@ class Module3Config:
             config.decay_constant = config_dict['decay_constant']
         if 'confidence_scores' in config_dict:
             config.event_detector_config.confidence_scores = config_dict['confidence_scores']
+
+        # Time-decay settings
+        if 'enable_time_decay' in config_dict:
+            config.enable_time_decay = config_dict['enable_time_decay']
+        if 'time_decay_config' in config_dict:
+            config.time_decay_config = TimeDecayConfig.from_dict(config_dict['time_decay_config'])
 
         return config
 
@@ -580,6 +596,41 @@ def compute_module_3_catalyst(
     # Update diagnostics with dedup count
     diagnostics.events_deduped = total_deduped
 
+    # =========================================================================
+    # TIME-DECAY SCORING: Multi-window analysis
+    # =========================================================================
+    time_decay_diagnostics = {}
+    if config.enable_time_decay:
+        logger.info("Computing time-decay scores across multiple windows...")
+        logger.info(f"  Windows: {[w.name for w in config.time_decay_config.windows]}")
+
+        # Score all tickers with time-decay
+        time_decay_results, time_decay_diagnostics = score_all_tickers_with_time_decay(
+            events_by_ticker_v2,
+            list(active_tickers),
+            as_of_date,
+            config.time_decay_config,
+        )
+
+        # Merge time-decay results into summaries
+        for ticker, td_result in time_decay_results.items():
+            if ticker in summaries_v2:
+                summary = summaries_v2[ticker]
+                summary.time_decay_score = td_result.final_score
+                summary.time_decay_contributing_window = td_result.contributing_window
+                summary.time_decay_cluster_detected = td_result.cluster_detected
+                summary.time_decay_cluster_bonus_applied = td_result.cluster_bonus_applied
+                summary.time_decay_windows_with_events = td_result.windows_with_events
+                summary.time_decay_window_scores = {
+                    ws.window_name: str(ws.weighted_score)
+                    for ws in td_result.window_scores
+                }
+
+        logger.info(f"Time-decay scoring complete: {time_decay_diagnostics.get('tickers_with_cluster', 0)} "
+                   f"tickers with sustained catalyst clusters")
+    else:
+        logger.info("Time-decay scoring disabled")
+
     # Also generate legacy summaries for backwards compatibility
     logger.info("Generating legacy summaries for backwards compatibility...")
     summaries_legacy: Dict[str, TickerCatalystSummary] = {}
@@ -672,6 +723,9 @@ def compute_module_3_catalyst(
         "delta_diagnostics": delta_diagnostics.to_dict(),
         "staleness": staleness_result.to_dict(),
         "calendar_catalysts": calendar_summary,
+        # New in v2.2: Time-decay scoring
+        "time_decay_enabled": config.enable_time_decay,
+        "time_decay_diagnostics": time_decay_diagnostics,
     }
 
     # Output validation
