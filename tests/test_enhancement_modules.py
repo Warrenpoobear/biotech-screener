@@ -313,7 +313,7 @@ class TestRegimeDetectionEngine:
     def test_regime_engine_initialization(self):
         """Test engine initializes correctly."""
         engine = RegimeDetectionEngine()
-        assert engine.VERSION == "1.1.0"
+        assert engine.VERSION == "1.2.0"
         assert engine.current_regime is None
 
     def test_regime_bull_detection(self):
