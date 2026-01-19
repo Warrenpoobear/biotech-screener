@@ -758,8 +758,11 @@ def run_screening_pipeline(
                 })
 
             pos_result = pos_engine.score_universe(pos_universe, as_of_date_obj)
-            logger.info(f"  PoS scored: {pos_result['diagnostic_counts']['total_scored']}, "
-                        f"Indication coverage: {pos_result['diagnostic_counts']['indication_coverage_pct']}")
+            pos_diag = pos_result['diagnostic_counts']
+            conf_dist = pos_diag.get('confidence_distribution', {})
+            logger.info(f"  PoS: mapped={pos_diag['indication_coverage_pct']} | "
+                        f"effective(>=0.40)={pos_diag.get('effective_coverage_pct', 'N/A')} | "
+                        f"conf(H/M/L)={conf_dist.get('high', 0)}/{conf_dist.get('medium', 0)}/{conf_dist.get('low', 0)}")
 
             # Step 3: Calculate short interest signals (if data available)
             si_result = None
@@ -950,6 +953,8 @@ def run_screening_pipeline(
         if enhancement_result.get("pos_scores"):
             pos_diag = enhancement_result["pos_scores"].get("diagnostic_counts", {})
             results["summary"]["pos_indication_coverage"] = pos_diag.get("indication_coverage_pct", "N/A")
+            results["summary"]["pos_effective_coverage"] = pos_diag.get("effective_coverage_pct", "N/A")
+            results["summary"]["pos_confidence_distribution"] = pos_diag.get("confidence_distribution", {})
         if enhancement_result.get("short_interest_scores"):
             si_diag = enhancement_result["short_interest_scores"].get("diagnostic_counts", {})
             results["summary"]["short_interest_coverage"] = si_diag.get("data_coverage_pct", "N/A")
@@ -1246,7 +1251,8 @@ Module 3 Catalyst Detection:
         if args.enable_enhancements:
             logger.info(f"Regime:             {summary.get('regime', 'N/A')}")
             logger.info(f"Regime confidence:  {summary.get('regime_confidence', 'N/A')}")
-            logger.info(f"PoS coverage:       {summary.get('pos_indication_coverage', 'N/A')}")
+            logger.info(f"PoS mapped:         {summary.get('pos_indication_coverage', 'N/A')}")
+            logger.info(f"PoS effective:      {summary.get('pos_effective_coverage', 'N/A')}")
             if args.enable_short_interest or summary.get('short_interest_coverage'):
                 logger.info(f"SI coverage:        {summary.get('short_interest_coverage', 'N/A')}")
         if args.checkpoint_dir:
