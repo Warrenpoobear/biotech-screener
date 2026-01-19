@@ -16,7 +16,7 @@ import logging
 from dataclasses import dataclass, replace
 from datetime import date, timedelta
 from pathlib import Path
-from typing import Any, Optional, TypedDict
+from typing import Any, Dict, List, Optional, Tuple, TypedDict
 
 
 class StudyRow(TypedDict, total=False):
@@ -46,8 +46,8 @@ logger = logging.getLogger(__name__)
 class AACTSnapshot:
     """Represents a loaded AACT snapshot."""
     snapshot_date: date
-    studies: dict[str, StudyRow]  # nct_id -> study row
-    sponsors: dict[str, str]  # nct_id -> lead_sponsor name
+    studies: Dict[str, StudyRow]  # nct_id -> study row
+    sponsors: Dict[str, str]  # nct_id -> lead_sponsor name
 
 
 class AACTClinicalTrialsProvider:
@@ -94,7 +94,7 @@ class AACTClinicalTrialsProvider:
         self.snapshots_root = Path(snapshots_root)
         self.strict_pit = strict_pit
         self.compute_diffs = compute_diffs
-        self._snapshot_cache: dict[date, AACTSnapshot] = {}
+        self._snapshot_cache: Dict[date, AACTSnapshot] = {}
         
         if not self.snapshots_root.exists():
             logger.warning(f"AACT snapshots root does not exist: {self.snapshots_root}")
@@ -103,7 +103,7 @@ class AACTClinicalTrialsProvider:
     def provider_name(self) -> str:
         return "aact"
     
-    def get_available_snapshots(self) -> list[date]:
+    def get_available_snapshots(self) -> List[date]:
         """
         Get list of available snapshot dates, sorted ascending.
         
@@ -179,7 +179,7 @@ class AACTClinicalTrialsProvider:
         
         # Load studies with schema validation
         studies_file = snapshot_path / "studies.csv"
-        studies: dict[str, StudyRow] = {}
+        studies: Dict[str, StudyRow] = {}
         duplicates_found = 0
         
         if studies_file.exists():
@@ -221,7 +221,7 @@ class AACTClinicalTrialsProvider:
         
         # Load sponsors with schema validation
         sponsors_file = snapshot_path / "sponsors.csv"
-        sponsors: dict[str, str] = {}
+        sponsors: Dict[str, str] = {}
         
         if sponsors_file.exists():
             with open(sponsors_file, "r", encoding="utf-8", newline="") as f:
@@ -267,7 +267,7 @@ class AACTClinicalTrialsProvider:
         Returns:
             Normalized TrialRow with appropriate flags for missing data
         """
-        flags: list[str] = []
+        flags: List[str] = []
         
         # Parse primary completion date
         pcd_str = study.get("primary_completion_date", "").strip()
@@ -318,10 +318,10 @@ class AACTClinicalTrialsProvider:
     def _compute_diffs(
         self,
         nct_id: str,
-        snapshots: list[AACTSnapshot],
+        snapshots: List[AACTSnapshot],
         lookback_days: int = 548,  # ~18 months
         as_of_date: Optional[date] = None,
-    ) -> tuple[int, int]:
+    ) -> Tuple[int, int]:
         """
         Compute PCD pushes and status flips for a trial across snapshots.
         
@@ -400,8 +400,8 @@ class AACTClinicalTrialsProvider:
         self,
         as_of_date: date,
         pit_cutoff: date,
-        tickers: list[str],
-        trial_mapping: dict[str, list[str]],
+        tickers: List[str],
+        trial_mapping: Dict[str, List[str]],
     ) -> ProviderResult:
         """
         Return trials per ticker, filtered to PIT-safe snapshot.
@@ -437,7 +437,7 @@ class AACTClinicalTrialsProvider:
         snapshot = self.load_snapshot(snapshot_date)
         
         # Determine diff computation availability
-        all_snapshots: list[AACTSnapshot] = []
+        all_snapshots: List[AACTSnapshot] = []
         diffs_available = False
         
         if self.compute_diffs:
@@ -457,11 +457,11 @@ class AACTClinicalTrialsProvider:
             diff_flag = None  # Diffs are computed, no flag needed
         
         # Build trials by ticker
-        trials_by_ticker: dict[str, list[TrialRow]] = {}
-        
+        trials_by_ticker: Dict[str, List[TrialRow]] = {}
+
         for ticker in tickers:
             nct_ids = trial_mapping.get(ticker, [])
-            trials: list[TrialRow] = []
+            trials: List[TrialRow] = []
             
             for nct_id in nct_ids:
                 nct_id_upper = nct_id.strip().upper()
@@ -509,19 +509,19 @@ class AACTClinicalTrialsProvider:
         return result
 
 
-def load_trial_mapping(mapping_file: Path) -> dict[str, list[str]]:
+def load_trial_mapping(mapping_file: Path) -> Dict[str, List[str]]:
     """
     Load trial mapping from CSV file.
-    
+
     Expected columns: ticker, nct_id, effective_start, effective_end, source
-    
+
     Args:
         mapping_file: Path to trial_mapping.csv
-    
+
     Returns:
         Dict mapping ticker to list of NCT IDs
     """
-    mapping: dict[str, list[str]] = {}
+    mapping: Dict[str, List[str]] = {}
     
     if not mapping_file.exists():
         logger.warning(f"Trial mapping file not found: {mapping_file}")

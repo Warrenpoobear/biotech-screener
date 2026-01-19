@@ -38,7 +38,7 @@ class SecurityRecord:
     severity: Severity = Severity.NONE
     flags: List[str] = None
     
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if self.flags is None:
             self.flags = []
 
@@ -66,7 +66,7 @@ class ClinicalScore:
     lead_phase: str
     flags: List[str] = None
     
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if self.flags is None:
             self.flags = []
 

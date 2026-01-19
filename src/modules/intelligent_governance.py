@@ -42,7 +42,16 @@ from dataclasses import dataclass, field
 from datetime import date, timedelta
 from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple, Callable, Set
+from typing import Any, Dict, List, Mapping, Optional, Tuple, Callable, Set, TypeVar, Union
+
+# Type variable for coalesce function
+T = TypeVar("T")
+
+# Type aliases for common parameter types
+ScoresDict = Dict[str, Decimal]
+WeightsDict = Dict[str, Decimal]
+MetadataDict = Dict[str, Union[Decimal, int, float, str, None]]
+TickerDataDict = Dict[str, Union[str, Decimal, int, float, MetadataDict, None]]
 
 __version__ = "1.0.0"
 __author__ = "Wake Robin Capital Management"
@@ -140,7 +149,7 @@ class SharpeOptimizationResult:
 
     # Audit trail
     audit_hash: str
-    provenance: Dict[str, Any] = field(default_factory=dict)
+    provenance: Dict[str, Union[str, int, float]] = field(default_factory=dict)
 
 
 @dataclass
@@ -219,7 +228,10 @@ class IntelligentGovernanceResult:
 # HELPER FUNCTIONS
 # =============================================================================
 
-def _to_decimal(value: Any, default: Optional[Decimal] = None) -> Optional[Decimal]:
+def _to_decimal(
+    value: Union[Decimal, int, float, str, None],
+    default: Optional[Decimal] = None
+) -> Optional[Decimal]:
     """Convert various types to Decimal with safe handling."""
     if value is None:
         return default
@@ -236,7 +248,7 @@ def _to_decimal(value: Any, default: Optional[Decimal] = None) -> Optional[Decim
         return default
 
 
-def _coalesce(*vals: Any, default: Any = None) -> Any:
+def _coalesce(*vals: Optional[T], default: Optional[T] = None) -> Optional[T]:
     """Return first non-None value, avoiding truthiness bugs with 0/Decimal('0')."""
     for v in vals:
         if v is not None:
@@ -280,15 +292,15 @@ def _normalize_weights(weights: Dict[str, Decimal]) -> Dict[str, Decimal]:
     return {k: _quantize_weight(v / total) for k, v in weights.items()}
 
 
-def _compute_audit_hash(data: Dict[str, Any]) -> str:
+def _compute_audit_hash(data: Dict[str, Union[str, int, float, Dict[str, str], None]]) -> str:
     """Compute deterministic audit hash."""
-    def serialize(obj):
+    def serialize(obj: Union[Decimal, date, Enum]) -> str:
         if isinstance(obj, Decimal):
             return str(obj)
         if isinstance(obj, date):
             return obj.isoformat()
         if isinstance(obj, Enum):
-            return obj.value
+            return str(obj.value)
         raise TypeError(f"Cannot serialize {type(obj)}")
 
     canonical = json.dumps(data, sort_keys=True, default=serialize)
@@ -801,7 +813,7 @@ class SharpeWeightOptimizer:
             provenance={"fallback_reason": reason},
         )
 
-    def _parse_date(self, value: Any) -> Optional[date]:
+    def _parse_date(self, value: Union[date, str, None]) -> Optional[date]:
         """Parse date from various formats."""
         if value is None:
             return None
@@ -850,8 +862,8 @@ class InteractionEffectsEngine:
     def compute_effects(
         self,
         ticker: str,
-        scores: Dict[str, Decimal],
-        metadata: Dict[str, Any],
+        scores: ScoresDict,
+        metadata: MetadataDict,
     ) -> InteractionEffectsResult:
         """
         Compute all applicable interaction effects for a ticker.
@@ -1718,7 +1730,7 @@ class IntelligentGovernanceLayer:
 # DEMONSTRATION
 # =============================================================================
 
-def demonstration():
+def demonstration() -> None:
     """Demonstrate the intelligent governance layer."""
     print("=" * 70)
     print("INTELLIGENT GOVERNANCE LAYER - DEMONSTRATION")

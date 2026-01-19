@@ -98,7 +98,7 @@ class DataQualityGates:
     - Data coverage
     """
 
-    def __init__(self, config: Optional[DataQualityConfig] = None):
+    def __init__(self, config: Optional[DataQualityConfig] = None) -> None:
         self.config = config or DataQualityConfig()
 
     def validate_financial_staleness(

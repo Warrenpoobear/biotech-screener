@@ -24,13 +24,16 @@ from decimal import Decimal
 from enum import Enum
 from typing import (
     Any,
+    Callable,
     Dict,
     List,
+    Mapping,
     Optional,
     Protocol,
     Set,
     Tuple,
     TypedDict,
+    TypeVar,
     Union,
     runtime_checkable,
 )
@@ -353,6 +356,55 @@ class ScoreFieldNames:
 
 
 # =============================================================================
+# NESTED TYPE DEFINITIONS FOR MODULE OUTPUTS
+# =============================================================================
+
+class ExcludedSecurityRecord(TypedDict, total=False):
+    """Schema for excluded security record."""
+    ticker: str
+    reason: str
+    exclusion_type: str
+    details: str
+
+
+class DiagnosticCountsDict(TypedDict, total=False):
+    """Schema for diagnostic counts in module outputs."""
+    scored: int
+    missing: int
+    excluded: int
+    total: int
+    errors: int
+    warnings: int
+
+
+class ProvenanceDict(TypedDict, total=False):
+    """Schema for provenance/audit trail metadata."""
+    run_id: str
+    schema_version: str
+    score_version: str
+    parameters_hash: str
+    pit_cutoff: str
+    input_hashes: Dict[str, str]
+    timestamp: str
+    module_version: str
+
+
+class GovernanceDict(TypedDict, total=False):
+    """Schema for governance metadata in Module 5 output."""
+    run_id: str
+    schema_version: str
+    score_version: str
+    parameters_hash: str
+    pit_cutoff: str
+    weights: Dict[str, float]
+    config: Dict[str, Union[str, int, float, bool]]
+
+
+# Module-specific result type alias
+ModuleResultDict = Dict[str, Union[str, int, float, bool, List[Any], Dict[str, Any], None]]
+
+
+# =============================================================================
 # MODULE OUTPUT SCHEMAS (TypedDict for validation)
 # =============================================================================
 
@@ -369,9 +421,9 @@ class Module1Output(TypedDict, total=False):
     """Schema for Module 1 output."""
     as_of_date: str  # ISO date string
     active_securities: List[Module1SecurityRecord]
-    excluded_securities: List[Dict[str, Any]]
-    diagnostic_counts: Dict[str, int]
-    provenance: Dict[str, Any]  # Audit trail metadata
+    excluded_securities: List[ExcludedSecurityRecord]
+    diagnostic_counts: DiagnosticCountsDict
+    provenance: ProvenanceDict
 
 
 class Module2ScoreRecord(TypedDict, total=False):
@@ -389,7 +441,7 @@ class Module2ScoreRecord(TypedDict, total=False):
 class Module2Output(TypedDict):
     """Schema for Module 2 output."""
     scores: List[Module2ScoreRecord]
-    diagnostic_counts: Dict[str, int]
+    diagnostic_counts: DiagnosticCountsDict
 
 
 class Module3SummaryRecord(TypedDict, total=False):
@@ -405,14 +457,14 @@ class Module3SummaryRecord(TypedDict, total=False):
 
 class Module3Output(TypedDict):
     """Schema for Module 3 output."""
-    summaries: Dict[str, Any]  # ticker -> TickerCatalystSummaryV2
-    diagnostic_counts: Dict[str, int]
+    summaries: Dict[str, Union[TickerCatalystSummaryV2, Module3SummaryRecord]]
+    diagnostic_counts: DiagnosticCountsDict
     as_of_date: str
     schema_version: str
     score_version: str
     # Deprecated
-    summaries_legacy: Optional[Dict[str, Any]]
-    diagnostic_counts_legacy: Optional[Dict[str, int]]
+    summaries_legacy: Optional[Dict[str, Module3SummaryRecord]]
+    diagnostic_counts_legacy: Optional[DiagnosticCountsDict]
 
 
 class Module4ScoreRecord(TypedDict, total=False):
@@ -430,8 +482,8 @@ class Module4Output(TypedDict):
     """Schema for Module 4 output."""
     as_of_date: str
     scores: List[Module4ScoreRecord]
-    diagnostic_counts: Dict[str, int]
-    provenance: Dict[str, Any]
+    diagnostic_counts: DiagnosticCountsDict
+    provenance: ProvenanceDict
 
 
 class Module5RankedRecord(TypedDict, total=False):
@@ -449,9 +501,19 @@ class Module5RankedRecord(TypedDict, total=False):
 class Module5Output(TypedDict):
     """Schema for Module 5 output."""
     ranked_securities: List[Module5RankedRecord]
-    excluded_securities: List[Dict[str, Any]]
-    diagnostic_counts: Dict[str, int]
-    governance: Dict[str, Any]
+    excluded_securities: List[ExcludedSecurityRecord]
+    diagnostic_counts: DiagnosticCountsDict
+    governance: GovernanceDict
+
+
+# Type variable for generic module output type
+ModuleOutput = Union[Module1Output, Module2Output, Module3Output, Module4Output, Module5Output]
+
+# Score record types
+ScoreRecord = Union[Module2ScoreRecord, Module4ScoreRecord]
+FinancialScoreRecord = Module2ScoreRecord
+ClinicalScoreRecord = Module4ScoreRecord
+CatalystSummary = Union[TickerCatalystSummaryV2, Module3SummaryRecord, Dict[str, Any]]
 
 
 # =============================================================================
@@ -636,7 +698,7 @@ def validate_pipeline_handoff(
 # =============================================================================
 
 def extract_financial_score(
-    score_record: Dict[str, Any],
+    score_record: Union[Module2ScoreRecord, Mapping[str, Any]],
     warn_legacy: bool = True
 ) -> Optional[float]:
     """
@@ -663,7 +725,7 @@ def extract_financial_score(
 
 
 def extract_catalyst_score(
-    summary: Any,
+    summary: CatalystSummary,
     warn_legacy: bool = True
 ) -> Optional[float]:
     """
@@ -705,7 +767,9 @@ def extract_catalyst_score(
     return None
 
 
-def extract_clinical_score(score_record: Dict[str, Any]) -> Optional[float]:
+def extract_clinical_score(
+    score_record: Union[Module4ScoreRecord, Mapping[str, Any]]
+) -> Optional[float]:
     """
     Extract clinical score from Module 4 score record.
     """
@@ -716,7 +780,9 @@ def extract_clinical_score(score_record: Dict[str, Any]) -> Optional[float]:
     return None
 
 
-def extract_market_cap_mm(record: Dict[str, Any]) -> Optional[float]:
+def extract_market_cap_mm(
+    record: Union[Module1SecurityRecord, Module2ScoreRecord, Mapping[str, Any]]
+) -> Optional[float]:
     """
     Extract market_cap_mm from various record formats.
 
