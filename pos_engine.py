@@ -77,6 +77,13 @@ class ProbabilityOfSuccessEngine:
     STAGE_SCORE_MIN = Decimal("0")
     STAGE_SCORE_MAX = Decimal("100")
 
+    # Confidence levels
+    # When stage is defaulted (unknown/empty), use low confidence so PoS
+    # contributes 0 weight under gating rules (threshold typically 0.40)
+    CONFIDENCE_HIGH = Decimal("0.70")      # Known stage + indication
+    CONFIDENCE_MEDIUM = Decimal("0.55")    # Known stage, unknown indication
+    CONFIDENCE_LOW = Decimal("0.30")       # Defaulted/unknown stage (below gating threshold)
+
     # Base stage scores (development phase → raw score)
     # These are SEPARATE from PoS - combined at composite layer
     STAGE_SCORES: Dict[str, Decimal] = {
@@ -193,11 +200,12 @@ class ProbabilityOfSuccessEngine:
         inputs_used = {}
 
         # Normalize and validate stage
-        stage_normalized = self._normalize_stage(base_stage)
+        stage_normalized, stage_was_defaulted = self._normalize_stage(base_stage)
         inputs_used["base_stage"] = base_stage
         inputs_used["stage_normalized"] = stage_normalized
+        inputs_used["stage_was_defaulted"] = stage_was_defaulted
 
-        if not stage_normalized:
+        if stage_was_defaulted:
             missing_fields.append("base_stage")
 
         # Normalize indication
@@ -254,6 +262,19 @@ class ProbabilityOfSuccessEngine:
         pos_score = self._clamp(pos_score_raw, self.POS_SCORE_MIN, self.POS_SCORE_MAX)
         pos_score = pos_score.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
 
+        # Calculate PoS confidence
+        # Key insight: if stage was defaulted (unknown/empty), confidence should be
+        # LOW so that PoS contributes 0 weight under gating rules (threshold ~0.40)
+        if stage_was_defaulted:
+            pos_confidence = self.CONFIDENCE_LOW  # 0.30 - below gating threshold
+            confidence_reason = "stage_defaulted"
+        elif indication_normalized and indication_normalized != "all_indications":
+            pos_confidence = self.CONFIDENCE_HIGH  # 0.70 - full weight
+            confidence_reason = "stage_and_indication_known"
+        else:
+            pos_confidence = self.CONFIDENCE_MEDIUM  # 0.55 - partial weight
+            confidence_reason = "stage_known_indication_unknown"
+
         # Generate deterministic audit hash
         audit_inputs = {
             "stage": stage_normalized,
@@ -274,12 +295,15 @@ class ProbabilityOfSuccessEngine:
             "data_quality_state": data_quality_state.value,
             "calculation": {
                 "stage_normalized": stage_normalized,
+                "stage_was_defaulted": stage_was_defaulted,
                 "indication_normalized": indication_normalized,
                 "loa_probability": str(loa_probability),
                 "loa_provenance": provenance,
                 "pos_score_raw": str(pos_score_raw),
                 "pos_score_final": str(pos_score),
                 "stage_score": str(stage_score),
+                "pos_confidence": str(pos_confidence),
+                "confidence_reason": confidence_reason,
                 "adjustments_applied": adjustments_applied
             },
             "benchmarks_source": self.benchmarks_metadata.get("source", "UNKNOWN"),
@@ -290,7 +314,10 @@ class ProbabilityOfSuccessEngine:
 
         return {
             "pos_score": pos_score,
+            "pos_confidence": pos_confidence,
+            "confidence_reason": confidence_reason,
             "stage_score": stage_score,
+            "stage_was_defaulted": stage_was_defaulted,
             "loa_probability": loa_probability,
             "loa_provenance": provenance,
             "stage_normalized": stage_normalized,
@@ -324,10 +351,18 @@ class ProbabilityOfSuccessEngine:
 
         scores = []
         indication_coverage = 0
+        effective_coverage = 0  # Tickers with pos_confidence >= gating threshold
+        stage_defaulted_count = 0
         stage_distribution: Dict[str, int] = {}
+        confidence_distribution: Dict[str, int] = {
+            "high": 0, "medium": 0, "low": 0
+        }
         quality_distribution: Dict[str, int] = {
             "FULL": 0, "PARTIAL": 0, "MINIMAL": 0, "NONE": 0
         }
+
+        # Gating threshold - below this, PoS contributes 0 weight
+        GATING_THRESHOLD = Decimal("0.40")
 
         for company in universe:
             ticker = company.get("ticker", "UNKNOWN")
@@ -344,22 +379,49 @@ class ProbabilityOfSuccessEngine:
                 as_of_date=as_of_date
             )
 
+            pos_confidence = result["pos_confidence"]
+
+            # Build flags
+            flags = []
+            if result["stage_was_defaulted"]:
+                flags.append("stage_defaulted")
+            if pos_confidence < GATING_THRESHOLD:
+                flags.append("below_confidence_gate")
+
             scores.append({
                 "ticker": ticker,
                 "pos_score": result["pos_score"],
+                "pos_confidence": pos_confidence,
+                "confidence_reason": result["confidence_reason"],
                 "stage_score": result["stage_score"],
+                "stage_was_defaulted": result["stage_was_defaulted"],
                 "loa_probability": result["loa_probability"],
                 "loa_provenance": result["loa_provenance"],
                 "stage_normalized": result["stage_normalized"],
                 "indication_normalized": result["indication_normalized"],
                 "data_quality_state": result["data_quality_state"],
                 "missing_fields": result["missing_fields"],
-                "flags": []
+                "flags": flags
             })
 
             # Track metrics
             if result["indication_normalized"] and result["indication_normalized"] != "all_indications":
                 indication_coverage += 1
+
+            # Track effective coverage (will actually contribute to composite)
+            if pos_confidence >= GATING_THRESHOLD:
+                effective_coverage += 1
+
+            if result["stage_was_defaulted"]:
+                stage_defaulted_count += 1
+
+            # Track confidence distribution
+            if pos_confidence >= self.CONFIDENCE_HIGH:
+                confidence_distribution["high"] += 1
+            elif pos_confidence >= self.CONFIDENCE_MEDIUM:
+                confidence_distribution["medium"] += 1
+            else:
+                confidence_distribution["low"] += 1
 
             stage = result["stage_normalized"]
             stage_distribution[stage] = stage_distribution.get(stage, 0) + 1
@@ -380,7 +442,11 @@ class ProbabilityOfSuccessEngine:
                 "total_scored": len(scores),
                 "indication_coverage": indication_coverage,
                 "indication_coverage_pct": f"{indication_coverage / max(1, len(scores)) * 100:.1f}%",
+                "effective_coverage": effective_coverage,
+                "effective_coverage_pct": f"{effective_coverage / max(1, len(scores)) * 100:.1f}%",
+                "stage_defaulted_count": stage_defaulted_count,
                 "stage_distribution": stage_distribution,
+                "confidence_distribution": confidence_distribution,
                 "data_quality_distribution": quality_distribution
             },
             "provenance": {
@@ -449,12 +515,21 @@ class ProbabilityOfSuccessEngine:
 
         return loa, provenance
 
-    def _normalize_stage(self, stage: str) -> str:
-        """Normalize stage name to canonical format."""
+    def _normalize_stage(self, stage: str) -> tuple:
+        """
+        Normalize stage name to canonical format.
+
+        Returns:
+            tuple: (normalized_stage: str, was_defaulted: bool)
+                   was_defaulted=True if input was empty/unknown and defaulted to phase_2
+        """
         if not stage:
-            return "phase_2"
+            return ("phase_2", True)  # Defaulted - should trigger low confidence
 
         stage_lower = stage.lower().strip()
+
+        if not stage_lower:
+            return ("phase_2", True)  # Defaulted - should trigger low confidence
 
         stage_map = {
             "preclinical": "preclinical",
@@ -496,14 +571,14 @@ class ProbabilityOfSuccessEngine:
         }
 
         if stage_lower in stage_map:
-            return stage_map[stage_lower]
+            return (stage_map[stage_lower], False)  # Valid stage found
 
         # Try underscore version
         stage_underscore = stage_lower.replace(" ", "_").replace("-", "_")
         if stage_underscore in stage_map:
-            return stage_map[stage_underscore]
+            return (stage_map[stage_underscore], False)  # Valid stage found
 
-        return "phase_2"
+        return ("phase_2", True)  # Unknown stage defaulted - should trigger low confidence
 
     def _normalize_indication(self, indication: Optional[str]) -> Optional[str]:
         """
