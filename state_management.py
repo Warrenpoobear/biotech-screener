@@ -6,7 +6,7 @@ Manages trial state snapshots in JSONL format with sorted keys.
 """
 
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 from typing import Optional
 import json
@@ -165,6 +165,78 @@ class StateStore:
         if not prior_snapshots:
             return None
         return self.load_snapshot(prior_snapshots[-1])
+
+    def get_snapshot_for_window(
+        self,
+        as_of_date: date,
+        lookback_days: int,
+    ) -> Optional[StateSnapshot]:
+        """
+        Get the snapshot closest to (as_of_date - lookback_days).
+
+        For time-decay scoring, we want to compare against a snapshot
+        from approximately `lookback_days` ago. This method finds the
+        closest available snapshot to that target date.
+
+        Args:
+            as_of_date: Reference date
+            lookback_days: Days to look back
+
+        Returns:
+            StateSnapshot closest to target date, None if no snapshots exist
+        """
+        target_date = as_of_date - timedelta(days=lookback_days)
+        snapshots = self.list_snapshots()
+
+        if not snapshots:
+            return None
+
+        # Filter to snapshots on or before target
+        valid_snapshots = [d for d in snapshots if d <= target_date]
+
+        if not valid_snapshots:
+            # If no snapshots exist at/before target, use earliest available
+            # but only if it's before as_of_date (PIT safety)
+            valid_snapshots = [d for d in snapshots if d < as_of_date]
+            if not valid_snapshots:
+                return None
+
+        # Use most recent snapshot at/before target
+        best_date = valid_snapshots[-1]
+        return self.load_snapshot(best_date)
+
+    def get_snapshots_for_time_decay(
+        self,
+        as_of_date: date,
+        lookback_windows: list[int],
+    ) -> dict[int, Optional[StateSnapshot]]:
+        """
+        Get snapshots for multiple time-decay windows.
+
+        Efficiently loads snapshots needed for multi-window comparison.
+
+        Args:
+            as_of_date: Reference date
+            lookback_windows: List of lookback days (e.g., [7, 30, 90])
+
+        Returns:
+            Dict mapping lookback_days to StateSnapshot (or None)
+        """
+        results = {}
+        for lookback_days in lookback_windows:
+            results[lookback_days] = self.get_snapshot_for_window(
+                as_of_date, lookback_days
+            )
+            if results[lookback_days]:
+                logger.info(
+                    f"Time-decay window {lookback_days}d: using snapshot from "
+                    f"{results[lookback_days].snapshot_date}"
+                )
+            else:
+                logger.warning(
+                    f"Time-decay window {lookback_days}d: no snapshot available"
+                )
+        return results
     
     def _get_snapshot_path(self, snapshot_date: date) -> Path:
         """Get filepath for snapshot date"""
