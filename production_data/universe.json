@@ -24771,7 +24771,7 @@
   {
     "ticker": "CVAC",
     "name": "CureVac N.V.",
-    "status": "active",
+    "status": "excluded_acquired",
     "status_reason": "active",
     "market_cap_usd": "1049304960",
     "price_usd": "4.66",
@@ -24860,7 +24860,9 @@
           "phase": "PHASE1"
         }
       ]
-    }
+    },
+    "exclusion_reason": "Acquired by BioNTech SE, delisted from NASDAQ January 2026",
+    "exclusion_date": "2026-01-16"
   },
   {
     "ticker": "CLDX",
@@ -26745,7 +26747,7 @@
   {
     "ticker": "MRSN",
     "name": "Mersana Therapeutics, Inc.",
-    "status": "active",
+    "status": "excluded_acquired",
     "status_reason": "active",
     "market_cap_usd": "145363648",
     "price_usd": "29.08",
@@ -26834,7 +26836,9 @@
           "phase": "PHASE1"
         }
       ]
-    }
+    },
+    "exclusion_reason": "Acquired by Day One Biopharmaceuticals, delisted from NASDAQ January 6, 2026",
+    "exclusion_date": "2026-01-06"
   },
   {
     "ticker": "MRVI",
