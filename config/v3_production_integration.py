@@ -34,6 +34,130 @@ from enum import Enum
 
 
 # =============================================================================
+# OPTIMIZED COMPONENT WEIGHTS (Scipy Differential Evolution - 2026-01-19)
+# =============================================================================
+
+COMPONENT_WEIGHTS_V3 = {
+    'clinical': 0.223,     # was 0.280 (-5.7pp)
+    'financial': 0.257,    # was 0.250 (+0.7pp)
+    'catalyst': 0.156,     # was 0.170 (-1.4pp)
+    'pos': 0.232,          # was 0.150 (+8.2pp) ← KEY CHANGE
+    'momentum': 0.102,     # was 0.100 (+0.2pp)
+    'valuation': 0.030     # was 0.050 (-2.0pp)
+}
+
+# Optimization metadata for audit trail
+WEIGHT_OPTIMIZATION_METADATA = {
+    'optimization_date': '2026-01-19',
+    'method': 'scipy_differential_evolution',
+    'training_period': '2022-01-01 to 2024-12-31',
+    'baseline_sharpe': 3.34,
+    'optimized_sharpe': 4.26,
+    'improvement_pct': 27.6,
+    'oos_validated': True,
+    'deployment_approved_by': 'Darren Schulz',
+    'next_review_date': '2026-04-19',
+    'key_finding': 'PoS should be weighted 23% (was 15%)'
+}
+
+
+# =============================================================================
+# POS CONFIDENCE GATING (Critical for safe PoS weight increase)
+# =============================================================================
+# PoS coverage is ~75%. Without confidence gating, increasing PoS weight
+# could penalize names with missing/weak PoS mappings or let low-quality
+# fallbacks move ranks.
+
+POS_CONFIDENCE_CONFIG = {
+    # Minimum confidence to apply full PoS weight
+    'min_confidence_full_weight': 0.60,
+
+    # Below this threshold, set effective PoS weight to 0 and renormalize
+    'min_confidence_threshold': 0.40,
+
+    # Effective weight formula: w_pos_eff = w_pos * pos_conf (when conf >= threshold)
+    'scale_by_confidence': True,
+
+    # Log coverage per run to detect drift
+    'log_coverage_metrics': True,
+
+    # Alert if coverage drops below this
+    'min_coverage_alert_threshold': 0.70,
+}
+
+
+# =============================================================================
+# V3 AS DEFAULT, V2 AS SHADOW/FALLBACK
+# =============================================================================
+# Backtest evidence strongly favors v3:
+#   - Mean IC: 0.088 vs 0.047 (almost 2x)
+#   - Turnover: 5.9% vs 41.2% (massive reduction)
+#   - Max DD: 28.2% vs 39.0%
+#   - Cum return: +87.1% vs -27.4%
+#   - IC/spread consistency: 94.1% vs 76.5%
+
+SCORING_VERSION_CONFIG = {
+    # Primary scorer (production rankings)
+    'default_version': 'v3',
+
+    # Shadow scorer (logged for diff monitoring, not used for ranking)
+    'shadow_version': 'v2',
+
+    # Enable shadow scoring (runs v2 in parallel, logs diffs)
+    'enable_shadow_scoring': True,
+
+    # Fallback to shadow version if primary fails validation
+    'fallback_on_primary_failure': True,
+
+    # Log top-N rank differences between v3 and v2
+    'diff_report_top_n': 10,
+
+    # Alert if >N tickers have rank divergence > threshold
+    'rank_divergence_alert_count': 5,
+    'rank_divergence_threshold': 15,
+}
+
+
+# =============================================================================
+# DIFF MONITORING AND REASON CODES
+# =============================================================================
+# Automated report: "top-10 diffs + reason codes" to explain v3 rank changes
+
+DIFF_MONITORING_CONFIG = {
+    # Generate diff report each run
+    'enabled': True,
+
+    # Number of top rank differences to report
+    'top_n_diffs': 10,
+
+    # Include reason codes explaining the rank change
+    'include_reason_codes': True,
+
+    # Reason code categories (in order of priority)
+    'reason_code_priority': [
+        'clinical_signal_change',     # Clinical score moved significantly
+        'financial_gate_change',      # Financial severity changed
+        'catalyst_event',             # New catalyst or catalyst decay
+        'pos_mapping_change',         # PoS indication mapping changed
+        'momentum_signal',            # Price momentum moved ranks
+        'valuation_peer_change',      # Peer valuation comparison changed
+        'smart_money_signal',         # 13F overlap change
+        'interaction_effect',         # Non-linear interaction triggered
+    ],
+
+    # Minimum contribution % to be flagged as reason
+    'min_contribution_for_reason': 0.20,
+
+    # Output format
+    'report_format': 'json',  # 'json' or 'markdown'
+
+    # Log to separate file for easy monitoring
+    'log_to_separate_file': True,
+    'diff_report_path': 'logs/v3_v2_diff_report.json',
+}
+
+
+# =============================================================================
 # FEATURE FLAG DEFAULTS
 # =============================================================================
 
@@ -739,13 +863,15 @@ V3_PRODUCTION_DEFAULTS = {
     # WEIGHTS
     # =========================================================================
 
+    # Optimized weights from scipy differential evolution (2026-01-19)
+    # Sharpe improvement: 3.34 -> 4.26 (+27.6%)
     "v3_enhanced_weights": {
-        "clinical": "0.28",
-        "financial": "0.25",
-        "catalyst": "0.17",
-        "pos": "0.15",
-        "momentum": "0.10",
-        "valuation": "0.05",
+        "clinical": "0.223",    # was 0.28 (-5.7pp)
+        "financial": "0.257",   # was 0.25 (+0.7pp)
+        "catalyst": "0.156",    # was 0.17 (-1.4pp)
+        "pos": "0.232",         # was 0.15 (+8.2pp) KEY CHANGE
+        "momentum": "0.102",    # was 0.10 (+0.2pp)
+        "valuation": "0.030",   # was 0.05 (-2.0pp)
     },
 
     "v3_partial_weights": {
@@ -903,6 +1029,19 @@ REQUIRED_REGRESSION_TESTS = [
 
 # Export all for clean imports
 __all__ = [
+    # Optimized weights (2026-01-19)
+    "COMPONENT_WEIGHTS_V3",
+    "WEIGHT_OPTIMIZATION_METADATA",
+
+    # PoS confidence gating
+    "POS_CONFIDENCE_CONFIG",
+
+    # V3 default / V2 shadow configuration
+    "SCORING_VERSION_CONFIG",
+
+    # Diff monitoring
+    "DIFF_MONITORING_CONFIG",
+
     # Existing exports
     "FeatureFlags",
     "LoggingConfig",
