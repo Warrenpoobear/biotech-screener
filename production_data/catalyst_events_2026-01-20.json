@@ -1,7 +1,7 @@
 {
   "run_metadata": {
     "as_of_date": "2026-01-20",
-    "events_detected": 0,
+    "events_detected": 12,
     "module_version": "3A.2.0",
     "prior_snapshot_date": "2026-01-18",
     "severe_negatives": 0,
@@ -262,13 +262,32 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "a9c34855988ce4f2",
+      "audit_hash": "0ab89262a9ede1b1",
       "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 0.0,
-      "catalyst_score_pos": 0.0,
-      "events": [],
+      "catalyst_score_net": 2.4,
+      "catalyst_score_pos": 2.4,
+      "events": [
+        {
+          "actual_date": null,
+          "confidence": 0.8,
+          "confidence_reason": "Status upgrade: UNKNOWN \u2192 AVAILABLE",
+          "direction": "POS",
+          "disclosed_at": "2025-08-19",
+          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
+          "event_type": "CT_STATUS_UPGRADE",
+          "fields_changed": {
+            "overallStatus": [
+              "UNKNOWN",
+              "AVAILABLE"
+            ]
+          },
+          "impact": 3,
+          "nct_id": "NCT07083479",
+          "source": "CTGOV"
+        }
+      ],
       "nearest_negative_days": null,
-      "nearest_positive_days": null,
+      "nearest_positive_days": 1,
       "severe_negative_flag": false,
       "ticker": "AMPH"
     },
@@ -742,12 +761,31 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "c8956f8361871187",
-      "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 0.0,
+      "audit_hash": "c98179c8c490434e",
+      "catalyst_score_neg": 0.85,
+      "catalyst_score_net": -0.85,
       "catalyst_score_pos": 0.0,
-      "events": [],
-      "nearest_negative_days": null,
+      "events": [
+        {
+          "actual_date": null,
+          "confidence": 0.85,
+          "confidence_reason": "Status downgrade: UNKNOWN \u2192 NO_LONGER_AVAILABLE",
+          "direction": "NEG",
+          "disclosed_at": "2016-09-29",
+          "event_rule_id": "M3_DIFF_CT_STATUS_DOWNGRADE",
+          "event_type": "CT_STATUS_DOWNGRADE",
+          "fields_changed": {
+            "overallStatus": [
+              "UNKNOWN",
+              "NO_LONGER_AVAILABLE"
+            ]
+          },
+          "impact": 1,
+          "nct_id": "NCT02142218",
+          "source": "CTGOV"
+        }
+      ],
+      "nearest_negative_days": 1,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "CABA"
@@ -1414,12 +1452,31 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "8adcd6af65a82dcb",
-      "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 0.0,
+      "audit_hash": "6cb3b8e27896b25c",
+      "catalyst_score_neg": 1.7,
+      "catalyst_score_net": -1.7,
       "catalyst_score_pos": 0.0,
-      "events": [],
-      "nearest_negative_days": null,
+      "events": [
+        {
+          "actual_date": null,
+          "confidence": 0.85,
+          "confidence_reason": "Status downgrade: UNKNOWN \u2192 WITHHELD",
+          "direction": "NEG",
+          "disclosed_at": "2025-07-14",
+          "event_rule_id": "M3_DIFF_CT_STATUS_DOWNGRADE",
+          "event_type": "CT_STATUS_DOWNGRADE",
+          "fields_changed": {
+            "overallStatus": [
+              "UNKNOWN",
+              "WITHHELD"
+            ]
+          },
+          "impact": 2,
+          "nct_id": "NCT07063459",
+          "source": "CTGOV"
+        }
+      ],
+      "nearest_negative_days": 1,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "GH"
@@ -1582,13 +1639,32 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "f830351f7de279bf",
+      "audit_hash": "e55e58b0925f1a96",
       "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 0.0,
-      "catalyst_score_pos": 0.0,
-      "events": [],
+      "catalyst_score_net": 2.4,
+      "catalyst_score_pos": 2.4,
+      "events": [
+        {
+          "actual_date": null,
+          "confidence": 0.8,
+          "confidence_reason": "Status upgrade: UNKNOWN \u2192 AVAILABLE",
+          "direction": "POS",
+          "disclosed_at": "2025-07-28",
+          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
+          "event_type": "CT_STATUS_UPGRADE",
+          "fields_changed": {
+            "overallStatus": [
+              "UNKNOWN",
+              "AVAILABLE"
+            ]
+          },
+          "impact": 3,
+          "nct_id": "NCT06574997",
+          "source": "CTGOV"
+        }
+      ],
       "nearest_negative_days": null,
-      "nearest_positive_days": null,
+      "nearest_positive_days": 1,
       "severe_negative_flag": false,
       "ticker": "HUMA"
     },
@@ -1810,13 +1886,50 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "8b3dfb2babff1185",
+      "audit_hash": "2f0c63350d256a35",
       "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 0.0,
-      "catalyst_score_pos": 0.0,
-      "events": [],
+      "catalyst_score_net": 4.8,
+      "catalyst_score_pos": 4.8,
+      "events": [
+        {
+          "actual_date": null,
+          "confidence": 0.8,
+          "confidence_reason": "Status upgrade: UNKNOWN \u2192 APPROVED_FOR_MARKETING",
+          "direction": "POS",
+          "disclosed_at": "2023-10-10",
+          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
+          "event_type": "CT_STATUS_UPGRADE",
+          "fields_changed": {
+            "overallStatus": [
+              "UNKNOWN",
+              "APPROVED_FOR_MARKETING"
+            ]
+          },
+          "impact": 3,
+          "nct_id": "NCT02660255",
+          "source": "CTGOV"
+        },
+        {
+          "actual_date": null,
+          "confidence": 0.8,
+          "confidence_reason": "Status upgrade: UNKNOWN \u2192 APPROVED_FOR_MARKETING",
+          "direction": "POS",
+          "disclosed_at": "2025-08-20",
+          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
+          "event_type": "CT_STATUS_UPGRADE",
+          "fields_changed": {
+            "overallStatus": [
+              "UNKNOWN",
+              "APPROVED_FOR_MARKETING"
+            ]
+          },
+          "impact": 3,
+          "nct_id": "NCT04617002",
+          "source": "CTGOV"
+        }
+      ],
       "nearest_negative_days": null,
-      "nearest_positive_days": null,
+      "nearest_positive_days": 1,
       "severe_negative_flag": false,
       "ticker": "JAZZ"
     },
@@ -2074,13 +2187,50 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "a4f60702f363a006",
+      "audit_hash": "39d98651a151f41b",
       "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 0.0,
-      "catalyst_score_pos": 0.0,
-      "events": [],
+      "catalyst_score_net": 4.8,
+      "catalyst_score_pos": 4.8,
+      "events": [
+        {
+          "actual_date": null,
+          "confidence": 0.8,
+          "confidence_reason": "Status upgrade: UNKNOWN \u2192 APPROVED_FOR_MARKETING",
+          "direction": "POS",
+          "disclosed_at": "2016-04-06",
+          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
+          "event_type": "CT_STATUS_UPGRADE",
+          "fields_changed": {
+            "overallStatus": [
+              "UNKNOWN",
+              "APPROVED_FOR_MARKETING"
+            ]
+          },
+          "impact": 3,
+          "nct_id": "NCT00338247",
+          "source": "CTGOV"
+        },
+        {
+          "actual_date": null,
+          "confidence": 0.8,
+          "confidence_reason": "Status upgrade: UNKNOWN \u2192 APPROVED_FOR_MARKETING",
+          "direction": "POS",
+          "disclosed_at": "2020-11-13",
+          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
+          "event_type": "CT_STATUS_UPGRADE",
+          "fields_changed": {
+            "overallStatus": [
+              "UNKNOWN",
+              "APPROVED_FOR_MARKETING"
+            ]
+          },
+          "impact": 3,
+          "nct_id": "NCT04323761",
+          "source": "CTGOV"
+        }
+      ],
       "nearest_negative_days": null,
-      "nearest_positive_days": null,
+      "nearest_positive_days": 1,
       "severe_negative_flag": false,
       "ticker": "MBX"
     },
@@ -2806,13 +2956,32 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "ee8ff3a27663437d",
+      "audit_hash": "df587b28ad842e2e",
       "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 0.0,
-      "catalyst_score_pos": 0.0,
-      "events": [],
+      "catalyst_score_net": 2.4,
+      "catalyst_score_pos": 2.4,
+      "events": [
+        {
+          "actual_date": null,
+          "confidence": 0.8,
+          "confidence_reason": "Status upgrade: UNKNOWN \u2192 APPROVED_FOR_MARKETING",
+          "direction": "POS",
+          "disclosed_at": "2019-10-14",
+          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
+          "event_type": "CT_STATUS_UPGRADE",
+          "fields_changed": {
+            "overallStatus": [
+              "UNKNOWN",
+              "APPROVED_FOR_MARKETING"
+            ]
+          },
+          "impact": 3,
+          "nct_id": "NCT00580658",
+          "source": "CTGOV"
+        }
+      ],
       "nearest_negative_days": null,
-      "nearest_positive_days": null,
+      "nearest_positive_days": 1,
       "severe_negative_flag": false,
       "ticker": "RARE"
     },
@@ -2842,13 +3011,50 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "08f49e7288f68c3b",
-      "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 0.0,
-      "catalyst_score_pos": 0.0,
-      "events": [],
-      "nearest_negative_days": null,
-      "nearest_positive_days": null,
+      "audit_hash": "83b2da5a9faf3343",
+      "catalyst_score_neg": 0.85,
+      "catalyst_score_net": 1.55,
+      "catalyst_score_pos": 2.4,
+      "events": [
+        {
+          "actual_date": null,
+          "confidence": 0.8,
+          "confidence_reason": "Status upgrade: UNKNOWN \u2192 AVAILABLE",
+          "direction": "POS",
+          "disclosed_at": "2025-11-24",
+          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
+          "event_type": "CT_STATUS_UPGRADE",
+          "fields_changed": {
+            "overallStatus": [
+              "UNKNOWN",
+              "AVAILABLE"
+            ]
+          },
+          "impact": 3,
+          "nct_id": "NCT03576690",
+          "source": "CTGOV"
+        },
+        {
+          "actual_date": null,
+          "confidence": 0.85,
+          "confidence_reason": "Status downgrade: UNKNOWN \u2192 NO_LONGER_AVAILABLE",
+          "direction": "NEG",
+          "disclosed_at": "2023-10-03",
+          "event_rule_id": "M3_DIFF_CT_STATUS_DOWNGRADE",
+          "event_type": "CT_STATUS_DOWNGRADE",
+          "fields_changed": {
+            "overallStatus": [
+              "UNKNOWN",
+              "NO_LONGER_AVAILABLE"
+            ]
+          },
+          "impact": 1,
+          "nct_id": "NCT04617535",
+          "source": "CTGOV"
+        }
+      ],
+      "nearest_negative_days": 1,
+      "nearest_positive_days": 1,
       "severe_negative_flag": false,
       "ticker": "REGN"
     },
@@ -3514,12 +3720,31 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "0905ddf16fcd20c4",
-      "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 0.0,
+      "audit_hash": "b1ee1a149e2903c3",
+      "catalyst_score_neg": 0.85,
+      "catalyst_score_net": -0.85,
       "catalyst_score_pos": 0.0,
-      "events": [],
-      "nearest_negative_days": null,
+      "events": [
+        {
+          "actual_date": null,
+          "confidence": 0.85,
+          "confidence_reason": "Status downgrade: UNKNOWN \u2192 NO_LONGER_AVAILABLE",
+          "direction": "NEG",
+          "disclosed_at": "2022-11-10",
+          "event_rule_id": "M3_DIFF_CT_STATUS_DOWNGRADE",
+          "event_type": "CT_STATUS_DOWNGRADE",
+          "fields_changed": {
+            "overallStatus": [
+              "UNKNOWN",
+              "NO_LONGER_AVAILABLE"
+            ]
+          },
+          "impact": 1,
+          "nct_id": "NCT05235347",
+          "source": "CTGOV"
+        }
+      ],
+      "nearest_negative_days": 1,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "VIR"
