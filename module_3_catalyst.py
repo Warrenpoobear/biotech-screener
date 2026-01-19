@@ -19,7 +19,7 @@ Version: See SCHEMA_VERSION and SCORE_VERSION in module_3_schema.py
 """
 
 from pathlib import Path
-from datetime import date
+from datetime import date, timedelta
 from typing import Optional, Dict, List, Set, Tuple, Any, Union
 import json
 import hashlib
@@ -398,6 +398,60 @@ def compute_module_3_catalyst(
     # =========================================================================
     delta_diagnostics = compute_delta_diagnostics(current_snapshot, prior_snapshot)
     delta_diagnostics.log_summary()
+
+    # =========================================================================
+    # DETAILED SAMPLE COMPARISON: Check individual trials for changes
+    # =========================================================================
+    logger.info("=" * 60)
+    logger.info("CATALYST DETECTION DIAGNOSTICS - SAMPLE COMPARISON")
+    logger.info("=" * 60)
+    logger.info(f"Current snapshot: {current_snapshot.key_count} trials")
+    logger.info(f"Prior snapshot: {prior_snapshot.key_count if prior_snapshot else 0} trials")
+
+    if prior_snapshot and current_snapshot.records:
+        # Sample up to 10 trials and check if ANYTHING changed
+        sample_records = current_snapshot.records[:10]
+        changes_found = 0
+
+        for current_record in sample_records:
+            prior_record = prior_snapshot.get_record(current_record.ticker, current_record.nct_id)
+            if not prior_record:
+                continue
+
+            changes = []
+
+            if current_record.overall_status != prior_record.overall_status:
+                changes.append(f"status: {prior_record.overall_status.name} → {current_record.overall_status.name}")
+
+            if current_record.primary_completion_date != prior_record.primary_completion_date:
+                changes.append(f"pcd: {prior_record.primary_completion_date} → {current_record.primary_completion_date}")
+
+            if current_record.last_update_posted != prior_record.last_update_posted:
+                changes.append(f"updated: {prior_record.last_update_posted} → {current_record.last_update_posted}")
+
+            if changes:
+                changes_found += 1
+                logger.info(f"  {current_record.nct_id}: {', '.join(changes)}")
+
+        if changes_found == 0:
+            logger.warning("⚠️  NO CHANGES detected in sample - snapshots may be identical")
+            logger.info(f"   Current snapshot date: {current_snapshot.snapshot_date}")
+            logger.info(f"   Prior snapshot date: {prior_snapshot.snapshot_date}")
+
+    # Check update recency distribution
+    cutoff_date = as_of_date - timedelta(days=7)
+    recent_updates = sum(
+        1 for r in current_snapshot.records
+        if r.last_update_posted and r.last_update_posted >= cutoff_date
+    )
+
+    logger.info(f"Trials updated in past 7 days: {recent_updates} / {current_snapshot.key_count}")
+
+    if recent_updates < 50:  # Expect ~1% weekly update rate for active trials
+        logger.warning(f"⚠️  Very few recent updates ({recent_updates}) - trial_records.json may be stale")
+        logger.warning(f"   This explains why 0 diff-based events are detected")
+
+    logger.info("=" * 60)
 
     # =========================================================================
     # CALENDAR-BASED CATALYSTS: Forward-looking events from trial dates
