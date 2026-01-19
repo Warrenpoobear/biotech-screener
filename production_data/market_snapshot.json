@@ -1,16 +1,16 @@
 {
   "provenance": {
-    "source": "Sample data for enhancement testing",
-    "as_of_date": "2026-01-10",
+    "source": "Market data from Yahoo Finance, FRED, Trading Economics",
+    "as_of_date": "2026-01-19",
     "generated_by": "manual_entry",
     "version": "1.0.0"
   },
-  "vix": "18.5",
-  "xbi_vs_spy_30d": "2.3",
-  "fed_rate_change_3m": "-0.25",
-  "xbi_momentum_10d": "1.5",
-  "spy_momentum_10d": "0.8",
-  "credit_spread_change": "0.05",
+  "vix": "15.5",
+  "xbi_vs_spy_30d": "4.8",
+  "fed_rate_change_3m": "-0.50",
+  "xbi_momentum_10d": "2.5",
+  "spy_momentum_10d": "1.0",
+  "credit_spread_change": "-0.03",
   "notes": {
     "vix": "VIX index current value (normal range: 12-20, elevated: 20-30, crisis: 30+)",
     "xbi_vs_spy_30d": "XBI relative performance vs SPY over 30 days (percentage points)",
