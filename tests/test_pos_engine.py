@@ -79,47 +79,48 @@ class TestStageNormalization:
 
     def test_normalize_phase_formats(self, engine):
         """Various phase formats should normalize correctly."""
+        # _normalize_stage now returns (stage, was_defaulted) tuple
         # Standard formats
-        assert engine._normalize_stage("phase_1") == "phase_1"
-        assert engine._normalize_stage("phase_2") == "phase_2"
-        assert engine._normalize_stage("phase_3") == "phase_3"
+        assert engine._normalize_stage("phase_1") == ("phase_1", False)
+        assert engine._normalize_stage("phase_2") == ("phase_2", False)
+        assert engine._normalize_stage("phase_3") == ("phase_3", False)
 
         # Space-separated
-        assert engine._normalize_stage("Phase 1") == "phase_1"
-        assert engine._normalize_stage("Phase 2") == "phase_2"
-        assert engine._normalize_stage("Phase 3") == "phase_3"
+        assert engine._normalize_stage("Phase 1") == ("phase_1", False)
+        assert engine._normalize_stage("Phase 2") == ("phase_2", False)
+        assert engine._normalize_stage("Phase 3") == ("phase_3", False)
 
         # Roman numerals
-        assert engine._normalize_stage("Phase I") == "phase_1"
-        assert engine._normalize_stage("Phase II") == "phase_2"
-        assert engine._normalize_stage("Phase III") == "phase_3"
+        assert engine._normalize_stage("Phase I") == ("phase_1", False)
+        assert engine._normalize_stage("Phase II") == ("phase_2", False)
+        assert engine._normalize_stage("Phase III") == ("phase_3", False)
 
     def test_normalize_combined_phases(self, engine):
         """Combined phase formats should normalize correctly."""
-        assert engine._normalize_stage("phase 1/2") == "phase_1_2"
-        assert engine._normalize_stage("Phase I/II") == "phase_1_2"
-        assert engine._normalize_stage("phase 2/3") == "phase_2_3"
-        assert engine._normalize_stage("Phase II/III") == "phase_2_3"
+        assert engine._normalize_stage("phase 1/2") == ("phase_1_2", False)
+        assert engine._normalize_stage("Phase I/II") == ("phase_1_2", False)
+        assert engine._normalize_stage("phase 2/3") == ("phase_2_3", False)
+        assert engine._normalize_stage("Phase II/III") == ("phase_2_3", False)
 
     def test_normalize_special_stages(self, engine):
         """Special stage names should normalize correctly."""
-        assert engine._normalize_stage("preclinical") == "preclinical"
-        assert engine._normalize_stage("pre-clinical") == "preclinical"
-        assert engine._normalize_stage("discovery") == "preclinical"
+        assert engine._normalize_stage("preclinical") == ("preclinical", False)
+        assert engine._normalize_stage("pre-clinical") == ("preclinical", False)
+        assert engine._normalize_stage("discovery") == ("preclinical", False)
 
-        assert engine._normalize_stage("nda") == "nda_bla"
-        assert engine._normalize_stage("bla") == "nda_bla"
-        assert engine._normalize_stage("submitted") == "nda_bla"
+        assert engine._normalize_stage("nda") == ("nda_bla", False)
+        assert engine._normalize_stage("bla") == ("nda_bla", False)
+        assert engine._normalize_stage("submitted") == ("nda_bla", False)
 
-        assert engine._normalize_stage("approved") == "commercial"
-        assert engine._normalize_stage("commercial") == "commercial"
-        assert engine._normalize_stage("marketed") == "commercial"
+        assert engine._normalize_stage("approved") == ("commercial", False)
+        assert engine._normalize_stage("commercial") == ("commercial", False)
+        assert engine._normalize_stage("marketed") == ("commercial", False)
 
     def test_normalize_unknown_defaults_to_phase_2(self, engine):
-        """Unknown stage should default to phase_2."""
-        assert engine._normalize_stage("unknown_stage") == "phase_2"
-        assert engine._normalize_stage("") == "phase_2"
-        assert engine._normalize_stage(None) == "phase_2"
+        """Unknown stage should default to phase_2 with was_defaulted=True."""
+        assert engine._normalize_stage("unknown_stage") == ("phase_2", True)
+        assert engine._normalize_stage("") == ("phase_2", True)
+        assert engine._normalize_stage(None) == ("phase_2", True)
 
 
 # ============================================================================
@@ -559,3 +560,89 @@ class TestEdgeCases:
         result = engine.calculate_pos_score("commercial", as_of_date=date(2026, 1, 15))
         assert result["loa_probability"] == Decimal("1.0")
         assert result["loa_provenance"] == "commercial_approved"
+
+
+# ============================================================================
+# CONFIDENCE GATING TESTS
+# ============================================================================
+
+class TestConfidenceGating:
+    """Tests for PoS confidence gating to prevent silent contribution from unknown stages."""
+
+    @pytest.fixture
+    def engine(self):
+        return ProbabilityOfSuccessEngine()
+
+    def test_defaulted_stage_has_low_confidence(self, engine):
+        """Unknown/empty stage should have low confidence (below 0.40 gating threshold)."""
+        as_of = date(2026, 1, 15)
+
+        # Empty string
+        result = engine.calculate_pos_score("", as_of_date=as_of)
+        assert result["stage_was_defaulted"] is True
+        assert result["pos_confidence"] == Decimal("0.30")
+        assert result["confidence_reason"] == "stage_defaulted"
+
+        # Unknown stage
+        result = engine.calculate_pos_score("unknown_xyz", as_of_date=as_of)
+        assert result["stage_was_defaulted"] is True
+        assert result["pos_confidence"] == Decimal("0.30")
+
+    def test_known_stage_has_higher_confidence(self, engine):
+        """Known stage should have higher confidence."""
+        as_of = date(2026, 1, 15)
+
+        result = engine.calculate_pos_score("phase_3", as_of_date=as_of)
+        assert result["stage_was_defaulted"] is False
+        # Without indication, confidence is medium
+        assert result["pos_confidence"] == Decimal("0.55")
+        assert result["confidence_reason"] == "stage_known_indication_unknown"
+
+    def test_known_stage_and_indication_has_high_confidence(self, engine):
+        """Known stage + known indication should have high confidence."""
+        as_of = date(2026, 1, 15)
+
+        result = engine.calculate_pos_score("phase_3", indication="oncology", as_of_date=as_of)
+        assert result["stage_was_defaulted"] is False
+        assert result["pos_confidence"] == Decimal("0.70")
+        assert result["confidence_reason"] == "stage_and_indication_known"
+
+    def test_confidence_below_gating_threshold_flagged(self, engine):
+        """Universe scoring should flag tickers below gating threshold."""
+        as_of = date(2026, 1, 15)
+        universe = [
+            {"ticker": "KNOWN", "base_stage": "phase_3", "indication": "oncology"},
+            {"ticker": "UNKNOWN", "base_stage": ""},
+        ]
+
+        result = engine.score_universe(universe, as_of)
+
+        # Check flags
+        known_score = next(s for s in result["scores"] if s["ticker"] == "KNOWN")
+        unknown_score = next(s for s in result["scores"] if s["ticker"] == "UNKNOWN")
+
+        assert "below_confidence_gate" not in known_score["flags"]
+        assert "below_confidence_gate" in unknown_score["flags"]
+        assert "stage_defaulted" in unknown_score["flags"]
+
+    def test_effective_coverage_tracked(self, engine):
+        """Universe scoring should track effective coverage (above gating threshold)."""
+        as_of = date(2026, 1, 15)
+        universe = [
+            {"ticker": "HIGH_CONF", "base_stage": "phase_3", "indication": "oncology"},
+            {"ticker": "MED_CONF", "base_stage": "phase_2"},
+            {"ticker": "LOW_CONF_1", "base_stage": "unknown"},
+            {"ticker": "LOW_CONF_2", "base_stage": ""},
+        ]
+
+        result = engine.score_universe(universe, as_of)
+        diag = result["diagnostic_counts"]
+
+        # 2 are above 0.40 threshold (HIGH_CONF=0.70, MED_CONF=0.55)
+        # 2 are below (LOW_CONF_1=0.30, LOW_CONF_2=0.30)
+        assert diag["effective_coverage"] == 2
+        assert diag["effective_coverage_pct"] == "50.0%"
+        assert diag["stage_defaulted_count"] == 2
+        assert diag["confidence_distribution"]["high"] == 1
+        assert diag["confidence_distribution"]["medium"] == 1
+        assert diag["confidence_distribution"]["low"] == 2
