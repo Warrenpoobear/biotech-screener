@@ -56,6 +56,16 @@ from module_3_schema import (
 from module_3_scoring import (
     score_catalyst_events,
 )
+from catalyst_diagnostics import (
+    compute_delta_diagnostics,
+    check_trial_records_staleness,
+    detect_calendar_catalysts,
+    summarize_calendar_catalysts,
+    DeltaDiagnostics,
+    StalenessResult,
+    CalendarCatalyst,
+    EventRuleID,
+)
 from common.integration_contracts import (
     validate_module_3_output,
     is_validation_enabled,
@@ -320,10 +330,22 @@ def compute_module_3_catalyst(
     # Load trial records
     logger.info(f"Loading trial records from {trial_records_path}")
     with open(trial_records_path) as f:
-        trial_records = json.load(f)
+        trial_records_raw = json.load(f)
+
+    # =========================================================================
+    # STALENESS GATING: Check if trial_records is stale
+    # =========================================================================
+    staleness_result = check_trial_records_staleness(trial_records_raw, as_of_date)
+    if staleness_result.is_stale:
+        logger.warning(f"STALENESS WARNING: {staleness_result.recommendation}")
+        logger.warning(f"  trial_records_date={staleness_result.trial_records_date}, "
+                      f"as_of_date={as_of_date}, age={staleness_result.age_days} days")
+    else:
+        logger.info(f"Staleness check: {staleness_result.confidence_level} "
+                   f"(age={staleness_result.age_days} days)")
 
     # Filter to active tickers
-    trial_records = [r for r in trial_records if r.get('ticker') in active_tickers]
+    trial_records = [r for r in trial_records_raw if r.get('ticker') in active_tickers]
     logger.info(f"Processing {len(trial_records)} trials for active tickers")
 
     # Convert to canonical format
@@ -371,8 +393,25 @@ def compute_module_3_catalyst(
             f"Prior snapshot should be strictly before current. Check state directory for stale data."
         )
 
+    # =========================================================================
+    # DELTA DIAGNOSTICS: Analyze what changed between snapshots
+    # =========================================================================
+    delta_diagnostics = compute_delta_diagnostics(current_snapshot, prior_snapshot)
+    delta_diagnostics.log_summary()
+
+    # =========================================================================
+    # CALENDAR-BASED CATALYSTS: Forward-looking events from trial dates
+    # =========================================================================
+    logger.info("Detecting calendar-based catalysts...")
+    calendar_catalysts = detect_calendar_catalysts(current_snapshot, as_of_date)
+    calendar_summary = summarize_calendar_catalysts(calendar_catalysts)
+    logger.info(f"Calendar catalysts: {calendar_summary['total_catalysts']} events "
+               f"across {calendar_summary['tickers_with_catalysts']} tickers")
+    if calendar_summary['by_window']:
+        logger.info(f"  By window: {calendar_summary['by_window']}")
+
     # Detect events by comparing states
-    logger.info("Detecting catalyst events...")
+    logger.info("Detecting diff-based catalyst events...")
     events_by_ticker_v2: Dict[str, List[CatalystEventV2]] = {}
     events_by_ticker_legacy: Dict[str, List[CatalystEvent]] = {}
     prior_events_by_ticker_v2: Dict[str, List[CatalystEventV2]] = {}
@@ -533,6 +572,10 @@ def compute_module_3_catalyst(
         "as_of_date": as_of_date.isoformat(),
         "schema_version": config.schema_version,
         "score_version": config.score_version,
+        # New in v2.1: Enhanced diagnostics
+        "delta_diagnostics": delta_diagnostics.to_dict(),
+        "staleness": staleness_result.to_dict(),
+        "calendar_catalysts": calendar_summary,
     }
 
     # Output validation

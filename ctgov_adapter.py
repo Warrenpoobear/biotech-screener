@@ -22,34 +22,102 @@ logger = logging.getLogger(__name__)
 # ============================================================================
 
 class CTGovStatus(Enum):
-    """Normalized CT.gov status values (ordered)"""
+    """
+    Normalized CT.gov status values (ordered by trial lifecycle progression).
+
+    Ordering rationale:
+    - Lower values = worse outcomes / earlier termination
+    - Higher values = trial progressing / completed successfully
+
+    Non-trial statuses (APPROVED_FOR_MARKETING, AVAILABLE, etc.) are mapped
+    to specific values based on their signal characteristics.
+    """
     WITHDRAWN = 0
     TERMINATED = 1
     SUSPENDED = 2
-    UNKNOWN = 3
-    ENROLLING_BY_INVITATION = 4
-    NOT_YET_RECRUITING = 5
-    RECRUITING = 6
-    ACTIVE_NOT_RECRUITING = 7
-    COMPLETED = 8
-    
+    WITHHELD = 3              # Results withheld - negative signal
+    NO_LONGER_AVAILABLE = 4   # Expanded access ended - neutral/slightly negative
+    UNKNOWN = 5
+    ENROLLING_BY_INVITATION = 6
+    NOT_YET_RECRUITING = 7
+    RECRUITING = 8
+    AVAILABLE = 9             # Expanded access / compassionate use - positive signal
+    ACTIVE_NOT_RECRUITING = 10
+    APPROVED_FOR_MARKETING = 11  # Drug approved - very positive (post-trial)
+    COMPLETED = 12
+
     @classmethod
     def from_string(cls, status_str: str) -> 'CTGovStatus':
         """Normalize status string to enum"""
         if not status_str:
             return cls.UNKNOWN
-        
+
         # Normalize: uppercase, replace separators
         normalized = status_str.upper()
         normalized = re.sub(r'[,\-\s]+', '_', normalized)
         normalized = re.sub(r'_+', '_', normalized)
         normalized = normalized.strip('_')
-        
+
+        # Handle known CT.gov status variants
+        STATUS_ALIASES = {
+            # Standard statuses (exact match after normalization)
+            'WITHDRAWN': cls.WITHDRAWN,
+            'TERMINATED': cls.TERMINATED,
+            'SUSPENDED': cls.SUSPENDED,
+            'WITHHELD': cls.WITHHELD,
+            'NO_LONGER_AVAILABLE': cls.NO_LONGER_AVAILABLE,
+            'UNKNOWN_STATUS': cls.UNKNOWN,
+            'ENROLLING_BY_INVITATION': cls.ENROLLING_BY_INVITATION,
+            'NOT_YET_RECRUITING': cls.NOT_YET_RECRUITING,
+            'RECRUITING': cls.RECRUITING,
+            'AVAILABLE': cls.AVAILABLE,
+            'ACTIVE_NOT_RECRUITING': cls.ACTIVE_NOT_RECRUITING,
+            'APPROVED_FOR_MARKETING': cls.APPROVED_FOR_MARKETING,
+            'COMPLETED': cls.COMPLETED,
+            # Common aliases
+            'ACTIVE': cls.ACTIVE_NOT_RECRUITING,
+            'APPROVED': cls.APPROVED_FOR_MARKETING,
+            'ENROLL_BY_INVITATION': cls.ENROLLING_BY_INVITATION,
+            'INVITATION_ONLY': cls.ENROLLING_BY_INVITATION,
+        }
+
+        if normalized in STATUS_ALIASES:
+            return STATUS_ALIASES[normalized]
+
+        # Try direct enum lookup
         try:
             return cls[normalized]
         except KeyError:
             logger.warning(f"Unknown status: '{status_str}' → UNKNOWN")
             return cls.UNKNOWN
+
+    @property
+    def is_terminal_negative(self) -> bool:
+        """True if status indicates trial stopped/failed"""
+        return self in {
+            CTGovStatus.WITHDRAWN,
+            CTGovStatus.TERMINATED,
+            CTGovStatus.SUSPENDED,
+        }
+
+    @property
+    def is_terminal_positive(self) -> bool:
+        """True if status indicates successful completion/approval"""
+        return self in {
+            CTGovStatus.COMPLETED,
+            CTGovStatus.APPROVED_FOR_MARKETING,
+        }
+
+    @property
+    def is_active(self) -> bool:
+        """True if trial is actively recruiting or progressing"""
+        return self in {
+            CTGovStatus.RECRUITING,
+            CTGovStatus.ACTIVE_NOT_RECRUITING,
+            CTGovStatus.ENROLLING_BY_INVITATION,
+            CTGovStatus.NOT_YET_RECRUITING,
+            CTGovStatus.AVAILABLE,
+        }
 
 
 class CompletionType(Enum):
