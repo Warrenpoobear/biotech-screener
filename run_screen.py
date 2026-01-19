@@ -698,14 +698,29 @@ def run_screening_pipeline(
             regime_result = None
             if market_snapshot:
                 try:
+                    # Extract data date from provenance for staleness check
+                    data_date_str = None
+                    if "provenance" in market_snapshot:
+                        data_date_str = market_snapshot["provenance"].get("as_of_date")
+                    data_as_of_date = date.fromisoformat(data_date_str) if data_date_str else None
+
                     regime_result = regime_engine.detect_regime(
                         vix_current=Decimal(str(market_snapshot.get("vix", "20"))),
                         xbi_vs_spy_30d=Decimal(str(market_snapshot.get("xbi_vs_spy_30d", "0"))),
                         fed_rate_change_3m=Decimal(str(market_snapshot.get("fed_rate_change_3m", "0")))
                             if market_snapshot.get("fed_rate_change_3m") is not None else None,
-                        as_of_date=as_of_date_obj
+                        as_of_date=as_of_date_obj,
+                        data_as_of_date=data_as_of_date
                     )
-                    logger.info(f"  Regime: {regime_result['regime']} (confidence: {regime_result['confidence']})")
+
+                    # Log regime with staleness info if applicable
+                    staleness = regime_result.get('staleness')
+                    if staleness and staleness.get('is_stale'):
+                        logger.warning(f"  Regime: UNKNOWN (data stale: {staleness['age_days']} days old)")
+                    elif staleness and staleness.get('action') == 'HAIRCUT_APPLIED':
+                        logger.info(f"  Regime: {regime_result['regime']} (confidence: {regime_result['confidence']}, {staleness['age_days']}d stale → {staleness['haircut_multiplier']}x haircut)")
+                    else:
+                        logger.info(f"  Regime: {regime_result['regime']} (confidence: {regime_result['confidence']})")
                 except Exception as e:
                     logger.warning(f"  Regime detection failed: {e}")
                     regime_result = {"regime": "UNKNOWN", "signal_adjustments": {}}

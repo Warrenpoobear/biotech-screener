@@ -51,7 +51,7 @@ except ImportError:
 
 
 # Module metadata
-__version__ = "1.1.0"  # Bumped for IC-based momentum adjustment
+__version__ = "1.2.0"  # Added staleness gating for data freshness
 __author__ = "Wake Robin Capital Management"
 
 
@@ -86,7 +86,7 @@ class RegimeDetectionEngine:
         print(result["signal_adjustments"])  # Weights for each signal type
     """
 
-    VERSION = "1.1.0"
+    VERSION = "1.2.0"  # Added staleness gating
 
     # VIX thresholds for regime classification
     VIX_LOW = Decimal("15")      # Below = calm markets
@@ -106,6 +106,15 @@ class RegimeDetectionEngine:
     RATE_HIKE_MODERATE = Decimal("0.25")     # Moderate tightening
     RATE_CUT_MODERATE = Decimal("-0.25")     # Moderate easing
     RATE_CUT_AGGRESSIVE = Decimal("-0.50")   # Aggressive easing
+
+    # Data staleness thresholds and confidence haircuts
+    # Regime is time-sensitive; stale data should not drive full weight tilts
+    STALENESS_THRESHOLDS: Dict[int, Decimal] = {
+        2: Decimal("1.00"),   # ≤2 days: full confidence
+        5: Decimal("0.85"),   # 3-5 days: 15% haircut
+        10: Decimal("0.65"),  # 6-10 days: 35% haircut
+    }
+    STALENESS_MAX_DAYS = 10  # >10 days: force UNKNOWN regime
 
     # Signal weight adjustments by regime
     REGIME_ADJUSTMENTS: Dict[str, Dict[str, Decimal]] = {
@@ -176,6 +185,42 @@ class RegimeDetectionEngine:
         if HAS_MOMENTUM_MONITOR:
             self.momentum_monitor = MomentumHealthMonitor()
 
+    def compute_staleness_haircut(
+        self,
+        data_as_of_date: date,
+        run_as_of_date: date
+    ) -> Tuple[int, Decimal, bool]:
+        """
+        Compute confidence haircut based on data staleness.
+
+        Args:
+            data_as_of_date: Date of the market snapshot data
+            run_as_of_date: Date of the screening run (as_of_date)
+
+        Returns:
+            Tuple of (age_days, haircut_multiplier, is_stale)
+            - age_days: Number of days between data and run
+            - haircut_multiplier: Decimal multiplier (1.0 = no haircut, 0.0 = fully stale)
+            - is_stale: True if data is too old and regime should be UNKNOWN
+        """
+        age_days = (run_as_of_date - data_as_of_date).days
+
+        # Check if too stale
+        if age_days > self.STALENESS_MAX_DAYS:
+            return (age_days, Decimal("0.00"), True)
+
+        # Find applicable haircut
+        haircut = Decimal("1.00")
+        for threshold_days, multiplier in sorted(self.STALENESS_THRESHOLDS.items()):
+            if age_days <= threshold_days:
+                haircut = multiplier
+                break
+        else:
+            # Beyond all thresholds but under max - use last threshold
+            haircut = Decimal("0.65")
+
+        return (age_days, haircut, False)
+
     def detect_regime(
         self,
         vix_current: Decimal,
@@ -185,7 +230,8 @@ class RegimeDetectionEngine:
         spy_momentum_10d: Optional[Decimal] = None,    # 10-day SPY momentum
         credit_spread_change: Optional[Decimal] = None, # HY spread change
         momentum_ic_3m: Optional[Decimal] = None,      # 3-month rolling momentum IC
-        as_of_date: Optional[date] = None
+        as_of_date: Optional[date] = None,
+        data_as_of_date: Optional[date] = None         # Date of market snapshot data
     ) -> Dict[str, Any]:
         """
         Detect current market regime and return signal adjustments.
@@ -223,6 +269,37 @@ class RegimeDetectionEngine:
 
         # Determine primary regime and confidence
         regime, confidence = self._select_regime(regime_scores)
+        raw_confidence = confidence  # Preserve pre-haircut value
+
+        # Apply staleness gating if both dates provided
+        staleness_info = None
+        if data_as_of_date is not None and as_of_date is not None:
+            age_days, haircut, is_stale = self.compute_staleness_haircut(
+                data_as_of_date, as_of_date
+            )
+
+            staleness_info = {
+                "data_as_of_date": data_as_of_date.isoformat(),
+                "run_as_of_date": as_of_date.isoformat(),
+                "age_days": age_days,
+                "haircut_multiplier": str(haircut),
+                "is_stale": is_stale,
+                "raw_confidence": str(raw_confidence),
+            }
+
+            if is_stale:
+                # Data too old - force UNKNOWN regime with neutral weights
+                regime = "UNKNOWN"
+                confidence = Decimal("0.00")
+                staleness_info["action"] = "FORCED_UNKNOWN"
+                staleness_info["reason"] = f"Data age ({age_days} days) exceeds max ({self.STALENESS_MAX_DAYS} days)"
+            else:
+                # Apply haircut to confidence
+                confidence = (confidence * haircut).quantize(
+                    Decimal("0.01"), rounding=ROUND_HALF_UP
+                )
+                staleness_info["adjusted_confidence"] = str(confidence)
+                staleness_info["action"] = "HAIRCUT_APPLIED" if haircut < Decimal("1.00") else "FULL_CONFIDENCE"
 
         # Get signal adjustments for this regime
         signal_adjustments = self.REGIME_ADJUSTMENTS.get(
@@ -269,8 +346,10 @@ class RegimeDetectionEngine:
                 "xbi_momentum_10d": str(xbi_momentum_10d) if xbi_momentum_10d else None,
                 "spy_momentum_10d": str(spy_momentum_10d) if spy_momentum_10d else None,
                 "credit_spread_change": str(credit_spread_change) if credit_spread_change else None,
-                "momentum_ic_3m": str(momentum_ic_3m) if momentum_ic_3m else None
+                "momentum_ic_3m": str(momentum_ic_3m) if momentum_ic_3m else None,
+                "data_as_of_date": data_as_of_date.isoformat() if data_as_of_date else None
             },
+            "staleness": staleness_info,
             "momentum_health": momentum_health,
             "regime_scores": {k: str(v) for k, v in regime_scores.items()},
             "regime": regime,
@@ -293,6 +372,7 @@ class RegimeDetectionEngine:
             "regime_description": self.REGIME_DESCRIPTIONS.get(regime, ""),
             "confidence": confidence,
             "signal_adjustments": signal_adjustments,
+            "staleness": staleness_info,
             "momentum_health": momentum_health,
             "regime_scores": regime_scores,
             "indicators": indicators,
