@@ -643,9 +643,9 @@ def run_screening_pipeline(
     diag3 = m3_result.get("diagnostic_counts", {})
 
     # Print diagnostics
-    logger.info(f"  Events detected: {diag3.get('events_detected', 0)}, "
+    logger.info(f"  Events detected: {diag3.get('events_detected_total', 0)}, "
                 f"Tickers with events: {diag3.get('tickers_with_events', 0)}/{diag3.get('tickers_analyzed', 0)}, "
-                f"Severe negatives: {diag3.get('severe_negatives', 0)}")
+                f"Severe negatives: {diag3.get('tickers_with_severe_negative', 0)}")
 
     # ========================================================================
     # End Module 3
@@ -953,8 +953,8 @@ def run_screening_pipeline(
             "active_universe": len(active_tickers),
             "excluded": len(m1_result.get('excluded_securities', [])),
             "final_ranked": len(m5_result.get('ranked_securities', [])),
-            "catalyst_events": diag3.get('events_detected', 0),
-            "severe_negatives": diag3.get('severe_negatives', 0),
+            "catalyst_events": diag3.get('events_detected_total', 0),
+            "severe_negatives": diag3.get('tickers_with_severe_negative', 0),
         }
     }
 
