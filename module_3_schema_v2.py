@@ -612,6 +612,14 @@ class TickerCatalystSummaryV2:
     # === COVERAGE STATE ===
     coverage_state: str = "FULL"  # FULL, PARTIAL, NONE
 
+    # === TIME-DECAY SCORING ===
+    time_decay_score: Optional[Decimal] = None
+    time_decay_contributing_window: Optional[str] = None
+    time_decay_cluster_detected: bool = False
+    time_decay_cluster_bonus_applied: bool = False
+    time_decay_windows_with_events: int = 0
+    time_decay_window_scores: Dict[str, str] = field(default_factory=dict)  # window_name -> weighted_score
+
     # === SCHEMA METADATA ===
     schema_version: str = SCHEMA_VERSION
     score_version: str = SCORE_VERSION
@@ -635,6 +643,14 @@ class TickerCatalystSummaryV2:
                 "negative_catalyst_score": str(self.negative_catalyst_score),
                 "avg_certainty_score": str(self.avg_certainty_score),
                 "uncertainty_penalty": str(self.uncertainty_penalty),
+            },
+            "time_decay": {
+                "time_decay_score": str(self.time_decay_score) if self.time_decay_score is not None else None,
+                "contributing_window": self.time_decay_contributing_window,
+                "cluster_detected": self.time_decay_cluster_detected,
+                "cluster_bonus_applied": self.time_decay_cluster_bonus_applied,
+                "windows_with_events": self.time_decay_windows_with_events,
+                "window_scores": self.time_decay_window_scores,
             },
             "flags": {
                 "severe_negative_flag": self.severe_negative_flag,
