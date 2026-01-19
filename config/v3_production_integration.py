@@ -34,6 +34,34 @@ from enum import Enum
 
 
 # =============================================================================
+# OPTIMIZED COMPONENT WEIGHTS (Scipy Differential Evolution - 2026-01-19)
+# =============================================================================
+
+COMPONENT_WEIGHTS_V3 = {
+    'clinical': 0.223,     # was 0.280 (-5.7pp)
+    'financial': 0.257,    # was 0.250 (+0.7pp)
+    'catalyst': 0.156,     # was 0.170 (-1.4pp)
+    'pos': 0.232,          # was 0.150 (+8.2pp) ← KEY CHANGE
+    'momentum': 0.102,     # was 0.100 (+0.2pp)
+    'valuation': 0.030     # was 0.050 (-2.0pp)
+}
+
+# Optimization metadata for audit trail
+WEIGHT_OPTIMIZATION_METADATA = {
+    'optimization_date': '2026-01-19',
+    'method': 'scipy_differential_evolution',
+    'training_period': '2022-01-01 to 2024-12-31',
+    'baseline_sharpe': 3.34,
+    'optimized_sharpe': 4.26,
+    'improvement_pct': 27.6,
+    'oos_validated': True,
+    'deployment_approved_by': 'Darren Schulz',
+    'next_review_date': '2026-04-19',
+    'key_finding': 'PoS should be weighted 23% (was 15%)'
+}
+
+
+# =============================================================================
 # FEATURE FLAG DEFAULTS
 # =============================================================================
 
@@ -739,13 +767,15 @@ V3_PRODUCTION_DEFAULTS = {
     # WEIGHTS
     # =========================================================================
 
+    # Optimized weights from scipy differential evolution (2026-01-19)
+    # Sharpe improvement: 3.34 -> 4.26 (+27.6%)
     "v3_enhanced_weights": {
-        "clinical": "0.28",
-        "financial": "0.25",
-        "catalyst": "0.17",
-        "pos": "0.15",
-        "momentum": "0.10",
-        "valuation": "0.05",
+        "clinical": "0.223",    # was 0.28 (-5.7pp)
+        "financial": "0.257",   # was 0.25 (+0.7pp)
+        "catalyst": "0.156",    # was 0.17 (-1.4pp)
+        "pos": "0.232",         # was 0.15 (+8.2pp) KEY CHANGE
+        "momentum": "0.102",    # was 0.10 (+0.2pp)
+        "valuation": "0.030",   # was 0.05 (-2.0pp)
     },
 
     "v3_partial_weights": {
@@ -903,6 +933,10 @@ REQUIRED_REGRESSION_TESTS = [
 
 # Export all for clean imports
 __all__ = [
+    # Optimized weights (2026-01-19)
+    "COMPONENT_WEIGHTS_V3",
+    "WEIGHT_OPTIMIZATION_METADATA",
+
     # Existing exports
     "FeatureFlags",
     "LoggingConfig",
