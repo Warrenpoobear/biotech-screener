@@ -58,7 +58,7 @@ class EventType(Enum):
 
 @dataclass
 class CatalystEvent:
-    """Single catalyst event from CT.gov delta"""
+    """Single catalyst event from CT.gov delta with full explainability"""
     source: str = "CTGOV"
     nct_id: str = ""
     event_type: EventType = EventType.CT_STATUS_UPGRADE
@@ -68,25 +68,31 @@ class CatalystEvent:
     disclosed_at: date = date.today()
     fields_changed: dict = None
     actual_date: Optional[date] = None
-    
+    # Explainability fields (new)
+    event_rule_id: str = ""  # e.g., "M3_DIFF_STATUS_SEVERE_NEG"
+    confidence_reason: str = ""  # Human-readable explanation
+
     def __post_init__(self):
         if self.fields_changed is None:
             self.fields_changed = {}
-    
+        # Auto-generate rule_id if not set
+        if not self.event_rule_id:
+            self.event_rule_id = f"M3_DIFF_{self.event_type.name}"
+
     def effective_trading_date(self, calendar: MarketCalendar) -> date:
         """
         Conservative: treat disclosed_at as effective next trading day
         Prevents same-day lookahead and handles weekends/holidays
         """
         return calendar.next_trading_day(self.disclosed_at)
-    
+
     def days_to_event(self, as_of_date: date, calendar: MarketCalendar) -> int:
         """Returns unsigned days to event (for nearest_*_days calculation)"""
         effective_date = self.effective_trading_date(calendar)
         return max(1, (effective_date - as_of_date).days)
-    
+
     def to_dict(self) -> dict:
-        """Serialize for JSON"""
+        """Serialize for JSON with full explainability"""
         return {
             'source': self.source,
             'nct_id': self.nct_id,
@@ -96,7 +102,9 @@ class CatalystEvent:
             'confidence': self.confidence,
             'disclosed_at': self.disclosed_at.isoformat(),
             'fields_changed': self.fields_changed,
-            'actual_date': self.actual_date.isoformat() if self.actual_date else None
+            'actual_date': self.actual_date.isoformat() if self.actual_date else None,
+            'event_rule_id': self.event_rule_id,
+            'confidence_reason': self.confidence_reason,
         }
 
 
@@ -269,6 +277,14 @@ class EventDetector:
                 current_record.overall_status
             )
             if event_type:
+                # Generate confidence reason
+                if event_type == EventType.CT_STATUS_SEVERE_NEG:
+                    confidence_reason = f"Trial status changed to {current_record.overall_status.name} (terminal negative)"
+                elif direction == 'NEG':
+                    confidence_reason = f"Status downgrade: {prior_record.overall_status.name} → {current_record.overall_status.name}"
+                else:
+                    confidence_reason = f"Status upgrade: {prior_record.overall_status.name} → {current_record.overall_status.name}"
+
                 events.append(CatalystEvent(
                     nct_id=current_record.nct_id,
                     event_type=event_type,
@@ -281,20 +297,27 @@ class EventDetector:
                             prior_record.overall_status.name,
                             current_record.overall_status.name
                         ]
-                    }
+                    },
+                    confidence_reason=confidence_reason,
                 ))
         
         # Primary completion date change
-        if (current_record.primary_completion_date and 
+        if (current_record.primary_completion_date and
             prior_record.primary_completion_date and
             current_record.primary_completion_date != prior_record.primary_completion_date):
-            
+
             event_type, impact, direction = classify_timeline_change(
                 prior_record.primary_completion_date,
                 current_record.primary_completion_date,
                 self.config.noise_band_days
             )
             if event_type:
+                delta_days = (current_record.primary_completion_date - prior_record.primary_completion_date).days
+                if delta_days > 0:
+                    confidence_reason = f"Primary completion date pushed out by {delta_days} days"
+                else:
+                    confidence_reason = f"Primary completion date pulled in by {abs(delta_days)} days"
+
                 events.append(CatalystEvent(
                     nct_id=current_record.nct_id,
                     event_type=event_type,
@@ -307,20 +330,27 @@ class EventDetector:
                             prior_record.primary_completion_date.isoformat(),
                             current_record.primary_completion_date.isoformat()
                         ]
-                    }
+                    },
+                    confidence_reason=confidence_reason,
                 ))
         
         # Study completion date change
-        if (current_record.completion_date and 
+        if (current_record.completion_date and
             prior_record.completion_date and
             current_record.completion_date != prior_record.completion_date):
-            
+
             event_type, impact, direction = classify_timeline_change(
                 prior_record.completion_date,
                 current_record.completion_date,
                 self.config.noise_band_days
             )
             if event_type:
+                delta_days = (current_record.completion_date - prior_record.completion_date).days
+                if delta_days > 0:
+                    confidence_reason = f"Study completion date pushed out by {delta_days} days"
+                else:
+                    confidence_reason = f"Study completion date pulled in by {abs(delta_days)} days"
+
                 events.append(CatalystEvent(
                     nct_id=current_record.nct_id,
                     event_type=event_type,
@@ -333,13 +363,14 @@ class EventDetector:
                             prior_record.completion_date.isoformat(),
                             current_record.completion_date.isoformat()
                         ]
-                    }
+                    },
+                    confidence_reason=confidence_reason,
                 ))
-        
+
         # Primary completion type change (ANTICIPATED → ACTUAL)
         if (current_record.primary_completion_type != prior_record.primary_completion_type and
             current_record.primary_completion_date):
-            
+
             event_type, impact, direction, actual_date = classify_date_confirmation(
                 prior_record.primary_completion_type,
                 current_record.primary_completion_type,
@@ -348,6 +379,10 @@ class EventDetector:
                 self.config.recency_threshold_days
             )
             if event_type:
+                prior_type = prior_record.primary_completion_type.value if prior_record.primary_completion_type else 'None'
+                current_type = current_record.primary_completion_type.value if current_record.primary_completion_type else 'None'
+                confidence_reason = f"Primary completion type changed: {prior_type} → {current_type}"
+
                 events.append(CatalystEvent(
                     nct_id=current_record.nct_id,
                     event_type=event_type,
@@ -361,13 +396,14 @@ class EventDetector:
                             prior_record.primary_completion_type.value if prior_record.primary_completion_type else None,
                             current_record.primary_completion_type.value if current_record.primary_completion_type else None
                         ]
-                    }
+                    },
+                    confidence_reason=confidence_reason,
                 ))
-        
+
         # Study completion type change
         if (current_record.completion_type != prior_record.completion_type and
             current_record.completion_date):
-            
+
             event_type, impact, direction, actual_date = classify_date_confirmation(
                 prior_record.completion_type,
                 current_record.completion_type,
@@ -376,6 +412,10 @@ class EventDetector:
                 self.config.recency_threshold_days
             )
             if event_type:
+                prior_type = prior_record.completion_type.value if prior_record.completion_type else 'None'
+                current_type = current_record.completion_type.value if current_record.completion_type else 'None'
+                confidence_reason = f"Study completion type changed: {prior_type} → {current_type}"
+
                 events.append(CatalystEvent(
                     nct_id=current_record.nct_id,
                     event_type=event_type,
@@ -389,9 +429,10 @@ class EventDetector:
                             prior_record.completion_type.value if prior_record.completion_type else None,
                             current_record.completion_type.value if current_record.completion_type else None
                         ]
-                    }
+                    },
+                    confidence_reason=confidence_reason,
                 ))
-        
+
         # Results posted detection
         if current_record.results_first_posted != prior_record.results_first_posted:
             event_type, impact, direction = classify_results_posted(
@@ -399,6 +440,11 @@ class EventDetector:
                 current_record.results_first_posted
             )
             if event_type:
+                if prior_record.results_first_posted is None:
+                    confidence_reason = f"Results first posted on {current_record.results_first_posted}"
+                else:
+                    confidence_reason = f"Results posting date updated: {prior_record.results_first_posted} → {current_record.results_first_posted}"
+
                 events.append(CatalystEvent(
                     nct_id=current_record.nct_id,
                     event_type=event_type,
@@ -411,9 +457,10 @@ class EventDetector:
                             prior_record.results_first_posted.isoformat() if prior_record.results_first_posted else None,
                             current_record.results_first_posted.isoformat() if current_record.results_first_posted else None
                         ]
-                    }
+                    },
+                    confidence_reason=confidence_reason,
                 ))
-        
+
         return events
 
 
