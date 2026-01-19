@@ -354,6 +354,23 @@ def compute_module_3_catalyst(
         records=canonical_records
     )
 
+    # CRITICAL: Verify snapshot dates for correctness
+    current_snapshot_date = current_snapshot.snapshot_date
+    logger.info(f"Snapshot dates: current={current_snapshot_date}, prior={prior_snapshot_date or 'None'}, as_of={as_of_date}")
+
+    # Assertion 1: Current snapshot date must equal as_of_date
+    if current_snapshot_date != as_of_date:
+        raise ValueError(
+            f"Snapshot date mismatch: current_snapshot_date={current_snapshot_date} != as_of_date={as_of_date}"
+        )
+
+    # Assertion 2: Prior snapshot date must be before current (if prior exists)
+    if prior_snapshot_date is not None and prior_snapshot_date >= current_snapshot_date:
+        raise ValueError(
+            f"Snapshot date ordering violation: prior={prior_snapshot_date} >= current={current_snapshot_date}. "
+            f"Prior snapshot should be strictly before current. Check state directory for stale data."
+        )
+
     # Detect events by comparing states
     logger.info("Detecting catalyst events...")
     events_by_ticker_v2: Dict[str, List[CatalystEventV2]] = {}

@@ -265,15 +265,53 @@ def apply_caps_and_renormalize(
     # Apply caps and floors
     capped = [max(min_pos, min(max_pos, w)) for w in weights]
 
-    # Renormalize after capping
+    # Renormalize after capping, then re-enforce floor
+    # (renormalization can push weights below floor)
     total_capped = sum(capped)
     if total_capped > 0:
         scale = investable / total_capped
         capped = [w * scale for w in capped]
 
+        # Re-enforce floor after scaling (iterative approach)
+        for _ in range(3):  # Max 3 iterations to converge
+            floor_violations = sum(1 for w in capped if w < min_pos)
+            if floor_violations == 0:
+                break
+            # Bring floor violations up to floor, reduce others proportionally
+            floored = []
+            excess_needed = Decimal("0")
+            for w in capped:
+                if w < min_pos:
+                    excess_needed += min_pos - w
+                    floored.append(min_pos)
+                else:
+                    floored.append(w)
+            # Reduce weights above floor proportionally
+            above_floor = [(i, w) for i, w in enumerate(floored) if w > min_pos]
+            if above_floor and excess_needed > 0:
+                total_above = sum(w - min_pos for i, w in above_floor)
+                if total_above > 0:
+                    for i, w in above_floor:
+                        reduction = (w - min_pos) / total_above * excess_needed
+                        floored[i] = max(min_pos, w - reduction)
+            capped = floored
+
+    # Quantize all weights first
+    quantized = [_q(w) for w in capped]
+
+    # Calculate residual and allocate to anchor (highest weight) for exact sum
+    quantized_sum = sum(quantized)
+    residual = investable - quantized_sum
+
+    if residual != Decimal("0") and quantized:
+        # Find anchor: highest weight position (first by index if tied)
+        anchor_idx = max(range(len(quantized)), key=lambda i: (quantized[i], -i))
+        # Add residual to anchor and re-quantize
+        quantized[anchor_idx] = _q(quantized[anchor_idx] + residual)
+
     # Assign final weights
-    for r, w in zip(included, capped):
-        r["position_weight"] = str(_q(w))
+    for r, w in zip(included, quantized):
+        r["position_weight"] = str(w)
 
 
 def enrich_with_defensive_overlays(
