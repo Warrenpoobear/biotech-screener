@@ -33,10 +33,19 @@ class PriceDataFetcher:
         for filepath in self.checkpoint_dir.glob('module_5_*.json'):
             try:
                 with open(filepath) as f:
-                    data = json.load(f)
+                    checkpoint_data = json.load(f)
 
-                # Extract tickers
-                securities = data.get('ranked_securities', data.get('results', []))
+                # Handle nested structure (data.ranked_securities)
+                securities = None
+                if 'data' in checkpoint_data:
+                    data = checkpoint_data['data']
+                    if 'ranked_securities' in data:
+                        securities = data['ranked_securities']
+
+                # Fallback to direct keys
+                if securities is None:
+                    securities = checkpoint_data.get('ranked_securities', checkpoint_data.get('results', []))
+
                 for security in securities:
                     ticker = security.get('ticker')
                     if ticker:
@@ -101,12 +110,16 @@ class PriceDataFetcher:
                     failed_tickers.append(ticker)
                     continue
 
-                # Extract data
+                # Extract data (handle both old and new yfinance column names)
                 for date, row in df.iterrows():
+                    if 'Adj Close' in row:
+                        close_price = row['Adj Close']
+                    else:
+                        close_price = row['Close']
                     price_data.append({
                         'date': date.strftime('%Y-%m-%d'),
                         'ticker': ticker,
-                        'close': float(row['Adj Close'])
+                        'close': float(close_price)
                     })
 
                 print(f" ✓ {len(df)} days")
