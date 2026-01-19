@@ -191,7 +191,12 @@ def compute_event_score(
     )
 
     # Certainty score (includes source reliability, date specificity, staleness)
-    certainty = event.compute_certainty_score(as_of_date)
+    # Handle events that may not have compute_certainty_score method
+    if hasattr(event, 'compute_certainty_score'):
+        certainty = event.compute_certainty_score(as_of_date)
+    else:
+        # Fallback: use confidence weight as certainty proxy
+        certainty = confidence_weight
 
     # Combined score
     score = severity_contrib * confidence_weight * certainty
