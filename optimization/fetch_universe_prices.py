@@ -123,8 +123,13 @@ class YahooFinanceSession:
             return []
 
 
-def load_universe_tickers(universe_file='production_data/universe.json'):
-    """Load tickers from universe file, excluding benchmark placeholders."""
+def load_universe_tickers(universe_file='production_data/universe.json', include_xbi=True):
+    """Load tickers from universe file, excluding benchmark placeholders.
+
+    Args:
+        universe_file: Path to universe JSON file
+        include_xbi: If True, adds XBI benchmark ETF to the ticker list
+    """
     with open(universe_file) as f:
         data = json.load(f)
 
@@ -134,6 +139,10 @@ def load_universe_tickers(universe_file='production_data/universe.json'):
         # Skip benchmark placeholders and invalid tickers
         if ticker and not ticker.startswith('_') and not ticker.endswith('_'):
             tickers.append(ticker)
+
+    # Add XBI benchmark ETF for relative performance analysis
+    if include_xbi:
+        tickers.append('XBI')
 
     return sorted(set(tickers))
 
