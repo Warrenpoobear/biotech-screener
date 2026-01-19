@@ -188,11 +188,14 @@ for i, ticker in enumerate(all_tickers, 1):
 
     try:
         # Download with progress disabled
+        # Set auto_adjust=False to use traditional column names ('Adj Close')
+        # In yfinance v1.0+, auto_adjust defaults to True which changes column names
         df = yf.download(
             ticker,
             start=fetch_start.strftime('%Y-%m-%d'),
             end=fetch_end.strftime('%Y-%m-%d'),
-            progress=False
+            progress=False,
+            auto_adjust=False
         )
 
         if df.empty:
@@ -200,7 +203,23 @@ for i, ticker in enumerate(all_tickers, 1):
             failed_tickers.append(ticker)
             continue
 
+<<<<<<< HEAD
         # Extract close prices (auto_adjust=True is now default in yfinance)
+=======
+        # Determine which column to use for adjusted close price
+        # - yfinance < 1.0 or auto_adjust=False: 'Adj Close'
+        # - yfinance >= 1.0 with auto_adjust=True: 'Close' (already adjusted)
+        if 'Adj Close' in df.columns:
+            close_col = 'Adj Close'
+        elif 'Close' in df.columns:
+            close_col = 'Close'
+        else:
+            print(" ❌ No price column found")
+            failed_tickers.append(ticker)
+            continue
+
+        # Extract adjusted close prices
+>>>>>>> 67027e11f0d9e4ee7aae6a9b3b1ac759eb7010ac
         for date, row in df.iterrows():
             # Handle both old ('Adj Close') and new ('Close') column names
             if 'Adj Close' in row:
@@ -210,7 +229,11 @@ for i, ticker in enumerate(all_tickers, 1):
             price_data.append({
                 'date': date.strftime('%Y-%m-%d'),
                 'ticker': ticker,
+<<<<<<< HEAD
                 'close': float(close_price)
+=======
+                'close': float(row[close_col])
+>>>>>>> 67027e11f0d9e4ee7aae6a9b3b1ac759eb7010ac
             })
 
         success_count += 1

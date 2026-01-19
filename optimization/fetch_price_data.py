@@ -103,14 +103,32 @@ class PriceDataFetcher:
 
             try:
                 # Download data
-                df = yf.download(ticker, start=fetch_start, end=fetch_end, progress=False)
+                # Set auto_adjust=False to use traditional column names ('Adj Close')
+                # In yfinance v1.0+, auto_adjust defaults to True which changes column names
+                df = yf.download(ticker, start=fetch_start, end=fetch_end, progress=False, auto_adjust=False)
 
                 if df.empty:
                     print(" ❌ No data")
                     failed_tickers.append(ticker)
                     continue
 
+<<<<<<< HEAD
                 # Extract data (handle both old and new yfinance column names)
+=======
+                # Determine which column to use for adjusted close price
+                # - yfinance < 1.0 or auto_adjust=False: 'Adj Close'
+                # - yfinance >= 1.0 with auto_adjust=True: 'Close' (already adjusted)
+                if 'Adj Close' in df.columns:
+                    close_col = 'Adj Close'
+                elif 'Close' in df.columns:
+                    close_col = 'Close'
+                else:
+                    print(" ❌ No price column found")
+                    failed_tickers.append(ticker)
+                    continue
+
+                # Extract data
+>>>>>>> 67027e11f0d9e4ee7aae6a9b3b1ac759eb7010ac
                 for date, row in df.iterrows():
                     if 'Adj Close' in row:
                         close_price = row['Adj Close']
@@ -119,7 +137,11 @@ class PriceDataFetcher:
                     price_data.append({
                         'date': date.strftime('%Y-%m-%d'),
                         'ticker': ticker,
+<<<<<<< HEAD
                         'close': float(close_price)
+=======
+                        'close': float(row[close_col])
+>>>>>>> 67027e11f0d9e4ee7aae6a9b3b1ac759eb7010ac
                     })
 
                 print(f" ✓ {len(df)} days")
