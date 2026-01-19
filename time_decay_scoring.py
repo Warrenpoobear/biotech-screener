@@ -265,6 +265,7 @@ def score_window(
     # Sum event contributions
     raw_score = Decimal("0")
     severity_counts: Dict[EventSeverity, int] = {}
+    event_ids = []
 
     for event in window_events:
         contrib = compute_event_score(event, as_of_date)
@@ -272,6 +273,16 @@ def score_window(
 
         sev = event.event_severity
         severity_counts[sev] = severity_counts.get(sev, 0) + 1
+
+        # Get event ID - handle different event formats
+        if hasattr(event, 'event_id_short'):
+            event_ids.append(event.event_id_short)
+        elif hasattr(event, 'event_id'):
+            eid = event.event_id
+            event_ids.append(eid[:16] if len(eid) > 16 else eid)
+        else:
+            # Fallback: create ID from ticker + nct_id
+            event_ids.append(f"{event.ticker}:{getattr(event, 'nct_id', 'unknown')[:8]}")
 
     # Find dominant severity
     dominant_severity = None
@@ -290,7 +301,7 @@ def score_window(
         events_in_window=len(window_events),
         raw_score=raw_score.quantize(Decimal("0.01")),
         weighted_score=weighted_score,
-        event_ids=[e.event_id_short for e in window_events],
+        event_ids=event_ids,
         dominant_severity=dominant_severity,
     )
 
