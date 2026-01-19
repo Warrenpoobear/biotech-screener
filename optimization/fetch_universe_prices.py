@@ -13,12 +13,114 @@ Usage:
 
 import csv
 import json
+import re
 import sys
 import time
 import urllib.request
 import urllib.error
 from datetime import datetime, timedelta
 from pathlib import Path
+from http.cookiejar import CookieJar
+
+
+class YahooFinanceSession:
+    """Handle Yahoo Finance authentication with cookies and crumb."""
+
+    def __init__(self):
+        self.cookie_jar = CookieJar()
+        self.opener = urllib.request.build_opener(
+            urllib.request.HTTPCookieProcessor(self.cookie_jar)
+        )
+        self.crumb = None
+        self.headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.5',
+        }
+
+    def _get_crumb(self):
+        """Fetch crumb token from Yahoo Finance."""
+        if self.crumb:
+            return self.crumb
+
+        # First, visit the main page to get cookies
+        try:
+            request = urllib.request.Request(
+                'https://finance.yahoo.com',
+                headers=self.headers
+            )
+            self.opener.open(request, timeout=30)
+        except Exception:
+            pass
+
+        # Then fetch the crumb
+        try:
+            request = urllib.request.Request(
+                'https://query1.finance.yahoo.com/v1/test/getcrumb',
+                headers=self.headers
+            )
+            with self.opener.open(request, timeout=30) as response:
+                self.crumb = response.read().decode('utf-8').strip()
+                return self.crumb
+        except Exception:
+            return None
+
+    def fetch_prices(self, ticker, start_date, end_date):
+        """
+        Fetch historical prices from Yahoo Finance.
+
+        Returns list of (date, close_price) tuples.
+        """
+        # Get crumb if we don't have one
+        crumb = self._get_crumb()
+
+        # Convert dates to Unix timestamps
+        start_ts = int(start_date.timestamp())
+        end_ts = int(end_date.timestamp())
+
+        # Build URL with crumb
+        url = (
+            f"https://query1.finance.yahoo.com/v7/finance/download/{ticker}"
+            f"?period1={start_ts}&period2={end_ts}&interval=1d&events=history"
+        )
+        if crumb:
+            url += f"&crumb={crumb}"
+
+        try:
+            request = urllib.request.Request(url, headers=self.headers)
+            with self.opener.open(request, timeout=30) as response:
+                content = response.read().decode('utf-8')
+
+            # Parse CSV
+            lines = content.strip().split('\n')
+            if len(lines) < 2:
+                return []
+
+            prices = []
+            for line in lines[1:]:  # Skip header
+                parts = line.split(',')
+                if len(parts) >= 6:
+                    date_str = parts[0]
+                    adj_close = parts[5]  # Adj Close column
+                    try:
+                        price = float(adj_close)
+                        if price > 0:  # Skip invalid prices
+                            prices.append((date_str, price))
+                    except (ValueError, IndexError):
+                        continue
+
+            return prices
+
+        except urllib.error.HTTPError as e:
+            if e.code == 401:
+                # Clear crumb and retry once
+                self.crumb = None
+                return []
+            if e.code == 404:
+                return []  # Ticker not found
+            raise
+        except Exception:
+            return []
 
 
 def load_universe_tickers(universe_file='production_data/universe.json'):
@@ -36,59 +138,6 @@ def load_universe_tickers(universe_file='production_data/universe.json'):
     return sorted(set(tickers))
 
 
-def fetch_yahoo_csv(ticker, start_date, end_date):
-    """
-    Fetch historical prices from Yahoo Finance CSV API.
-
-    Returns list of (date, close_price) tuples.
-    """
-    # Convert dates to Unix timestamps
-    start_ts = int(start_date.timestamp())
-    end_ts = int(end_date.timestamp())
-
-    # Yahoo Finance CSV download URL
-    url = (
-        f"https://query1.finance.yahoo.com/v7/finance/download/{ticker}"
-        f"?period1={start_ts}&period2={end_ts}&interval=1d&events=history"
-    )
-
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-    }
-
-    try:
-        request = urllib.request.Request(url, headers=headers)
-        with urllib.request.urlopen(request, timeout=30) as response:
-            content = response.read().decode('utf-8')
-
-        # Parse CSV
-        lines = content.strip().split('\n')
-        if len(lines) < 2:
-            return []
-
-        prices = []
-        for line in lines[1:]:  # Skip header
-            parts = line.split(',')
-            if len(parts) >= 6:
-                date_str = parts[0]
-                adj_close = parts[5]  # Adj Close column
-                try:
-                    price = float(adj_close)
-                    if price > 0:  # Skip invalid prices
-                        prices.append((date_str, price))
-                except (ValueError, IndexError):
-                    continue
-
-        return prices
-
-    except urllib.error.HTTPError as e:
-        if e.code == 404:
-            return []  # Ticker not found
-        raise
-    except Exception:
-        return []
-
-
 def fetch_all_prices(tickers, start_date, end_date, output_file, delay=0.3):
     """
     Fetch prices for all tickers and save to CSV.
@@ -104,6 +153,10 @@ def fetch_all_prices(tickers, start_date, end_date, output_file, delay=0.3):
     print(f"Date range: {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}")
     print(f"Output: {output_file}")
     print()
+
+    # Create session for authenticated requests
+    session = YahooFinanceSession()
+    print("Initializing Yahoo Finance session...")
 
     all_prices = []
     success_count = 0
@@ -123,7 +176,7 @@ def fetch_all_prices(tickers, start_date, end_date, output_file, delay=0.3):
         print(f"[{i:3d}/{len(tickers)}] {ticker:8s} (ETA: {eta})...", end='', flush=True)
 
         try:
-            prices = fetch_yahoo_csv(ticker, start_date, end_date)
+            prices = session.fetch_prices(ticker, start_date, end_date)
 
             if prices:
                 for date_str, close in prices:
