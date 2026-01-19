@@ -1,7 +1,7 @@
 {
   "run_metadata": {
     "as_of_date": "2026-01-20",
-    "events_detected": 12,
+    "events_detected": 40,
     "module_version": "3A.2.0",
     "prior_snapshot_date": "2026-01-18",
     "severe_negatives": 0,
@@ -70,13 +70,32 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "4aadd46e5cb377c6",
+      "audit_hash": "c7e743d807ed7723",
       "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 0.0,
-      "catalyst_score_pos": 0.0,
-      "events": [],
+      "catalyst_score_net": 1.6,
+      "catalyst_score_pos": 1.6,
+      "events": [
+        {
+          "actual_date": null,
+          "confidence": 0.8,
+          "confidence_reason": "Status upgrade: RECRUITING \u2192 ACTIVE_NOT_RECRUITING",
+          "direction": "POS",
+          "disclosed_at": "2026-01-14",
+          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
+          "event_type": "CT_STATUS_UPGRADE",
+          "fields_changed": {
+            "overallStatus": [
+              "RECRUITING",
+              "ACTIVE_NOT_RECRUITING"
+            ]
+          },
+          "impact": 2,
+          "nct_id": "NCT06557850",
+          "source": "CTGOV"
+        }
+      ],
       "nearest_negative_days": null,
-      "nearest_positive_days": null,
+      "nearest_positive_days": 1,
       "severe_negative_flag": false,
       "ticker": "ACAD"
     },
@@ -118,12 +137,49 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "7a66a42b11eae22f",
-      "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 0.0,
+      "audit_hash": "3d4aff61816b221f",
+      "catalyst_score_neg": 2.45,
+      "catalyst_score_net": -2.45,
       "catalyst_score_pos": 0.0,
-      "events": [],
-      "nearest_negative_days": null,
+      "events": [
+        {
+          "actual_date": null,
+          "confidence": 0.85,
+          "confidence_reason": "Status downgrade: RECRUITING \u2192 ENROLLING_BY_INVITATION",
+          "direction": "NEG",
+          "disclosed_at": "2026-01-08",
+          "event_rule_id": "M3_DIFF_CT_STATUS_DOWNGRADE",
+          "event_type": "CT_STATUS_DOWNGRADE",
+          "fields_changed": {
+            "overallStatus": [
+              "RECRUITING",
+              "ENROLLING_BY_INVITATION"
+            ]
+          },
+          "impact": 2,
+          "nct_id": "NCT05492578",
+          "source": "CTGOV"
+        },
+        {
+          "actual_date": null,
+          "confidence": 0.75,
+          "confidence_reason": "Primary completion date pushed out by 40 days",
+          "direction": "NEG",
+          "disclosed_at": "2026-01-08",
+          "event_rule_id": "M3_DIFF_CT_TIMELINE_PUSHOUT",
+          "event_type": "CT_TIMELINE_PUSHOUT",
+          "fields_changed": {
+            "primaryCompletionDate": [
+              "2028-12-13",
+              "2029-01-22"
+            ]
+          },
+          "impact": 1,
+          "nct_id": "NCT05492578",
+          "source": "CTGOV"
+        }
+      ],
+      "nearest_negative_days": 1,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "ADCT"
@@ -262,7 +318,7 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "0ab89262a9ede1b1",
+      "audit_hash": "a9c4cc33c2a4b7bc",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 2.4,
       "catalyst_score_pos": 2.4,
@@ -272,7 +328,7 @@
           "confidence": 0.8,
           "confidence_reason": "Status upgrade: UNKNOWN \u2192 AVAILABLE",
           "direction": "POS",
-          "disclosed_at": "2025-08-19",
+          "disclosed_at": "2026-01-16",
           "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
           "event_type": "CT_STATUS_UPGRADE",
           "fields_changed": {
@@ -761,31 +817,12 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "c98179c8c490434e",
-      "catalyst_score_neg": 0.85,
-      "catalyst_score_net": -0.85,
+      "audit_hash": "c8956f8361871187",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
       "catalyst_score_pos": 0.0,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.85,
-          "confidence_reason": "Status downgrade: UNKNOWN \u2192 NO_LONGER_AVAILABLE",
-          "direction": "NEG",
-          "disclosed_at": "2016-09-29",
-          "event_rule_id": "M3_DIFF_CT_STATUS_DOWNGRADE",
-          "event_type": "CT_STATUS_DOWNGRADE",
-          "fields_changed": {
-            "overallStatus": [
-              "UNKNOWN",
-              "NO_LONGER_AVAILABLE"
-            ]
-          },
-          "impact": 1,
-          "nct_id": "NCT02142218",
-          "source": "CTGOV"
-        }
-      ],
-      "nearest_negative_days": 1,
+      "events": [],
+      "nearest_negative_days": null,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "CABA"
@@ -888,13 +925,32 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "4446300074df601f",
+      "audit_hash": "efdb840a4c374b01",
       "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 0.0,
-      "catalyst_score_pos": 0.0,
-      "events": [],
+      "catalyst_score_net": 1.6,
+      "catalyst_score_pos": 1.6,
+      "events": [
+        {
+          "actual_date": null,
+          "confidence": 0.8,
+          "confidence_reason": "Status upgrade: RECRUITING \u2192 ACTIVE_NOT_RECRUITING",
+          "direction": "POS",
+          "disclosed_at": "2026-01-12",
+          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
+          "event_type": "CT_STATUS_UPGRADE",
+          "fields_changed": {
+            "overallStatus": [
+              "RECRUITING",
+              "ACTIVE_NOT_RECRUITING"
+            ]
+          },
+          "impact": 2,
+          "nct_id": "NCT05552469",
+          "source": "CTGOV"
+        }
+      ],
       "nearest_negative_days": null,
-      "nearest_positive_days": null,
+      "nearest_positive_days": 1,
       "severe_negative_flag": false,
       "ticker": "CHRS"
     },
@@ -984,13 +1040,86 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "21af2f45d8bb194d",
-      "catalyst_score_neg": 0.0,
+      "audit_hash": "70b048a978b30f14",
+      "catalyst_score_neg": 4.5,
       "catalyst_score_net": 0.0,
-      "catalyst_score_pos": 0.0,
-      "events": [],
-      "nearest_negative_days": null,
-      "nearest_positive_days": null,
+      "catalyst_score_pos": 4.5,
+      "events": [
+        {
+          "actual_date": null,
+          "confidence": 0.75,
+          "confidence_reason": "Primary completion date pushed out by 273 days",
+          "direction": "NEG",
+          "disclosed_at": "2026-01-16",
+          "event_rule_id": "M3_DIFF_CT_TIMELINE_PUSHOUT",
+          "event_type": "CT_TIMELINE_PUSHOUT",
+          "fields_changed": {
+            "primaryCompletionDate": [
+              "2025-11-30",
+              "2026-08-30"
+            ]
+          },
+          "impact": 3,
+          "nct_id": "NCT06532786",
+          "source": "CTGOV"
+        },
+        {
+          "actual_date": null,
+          "confidence": 0.75,
+          "confidence_reason": "Study completion date pushed out by 365 days",
+          "direction": "NEG",
+          "disclosed_at": "2026-01-16",
+          "event_rule_id": "M3_DIFF_CT_TIMELINE_PUSHOUT",
+          "event_type": "CT_TIMELINE_PUSHOUT",
+          "fields_changed": {
+            "completionDate": [
+              "2025-12-31",
+              "2026-12-31"
+            ]
+          },
+          "impact": 3,
+          "nct_id": "NCT06532786",
+          "source": "CTGOV"
+        },
+        {
+          "actual_date": null,
+          "confidence": 0.8,
+          "confidence_reason": "Status upgrade: ENROLLING_BY_INVITATION \u2192 COMPLETED",
+          "direction": "POS",
+          "disclosed_at": "2026-01-16",
+          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
+          "event_type": "CT_STATUS_UPGRADE",
+          "fields_changed": {
+            "overallStatus": [
+              "ENROLLING_BY_INVITATION",
+              "COMPLETED"
+            ]
+          },
+          "impact": 3,
+          "nct_id": "NCT06539650",
+          "source": "CTGOV"
+        },
+        {
+          "actual_date": null,
+          "confidence": 0.7,
+          "confidence_reason": "Study completion date pulled in by 216 days",
+          "direction": "POS",
+          "disclosed_at": "2026-01-16",
+          "event_rule_id": "M3_DIFF_CT_TIMELINE_PULLIN",
+          "event_type": "CT_TIMELINE_PULLIN",
+          "fields_changed": {
+            "completionDate": [
+              "2028-08-15",
+              "2028-01-12"
+            ]
+          },
+          "impact": 3,
+          "nct_id": "NCT06618001",
+          "source": "CTGOV"
+        }
+      ],
+      "nearest_negative_days": 1,
+      "nearest_positive_days": 1,
       "severe_negative_flag": false,
       "ticker": "CRL"
     },
@@ -1092,12 +1221,49 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "ab088b716e7d37cb",
-      "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 0.0,
+      "audit_hash": "ff41492dcf745b4e",
+      "catalyst_score_neg": 4.5,
+      "catalyst_score_net": -4.5,
       "catalyst_score_pos": 0.0,
-      "events": [],
-      "nearest_negative_days": null,
+      "events": [
+        {
+          "actual_date": null,
+          "confidence": 0.75,
+          "confidence_reason": "Primary completion date pushed out by 243 days",
+          "direction": "NEG",
+          "disclosed_at": "2026-01-14",
+          "event_rule_id": "M3_DIFF_CT_TIMELINE_PUSHOUT",
+          "event_type": "CT_TIMELINE_PUSHOUT",
+          "fields_changed": {
+            "primaryCompletionDate": [
+              "2026-01-30",
+              "2026-09-30"
+            ]
+          },
+          "impact": 3,
+          "nct_id": "NCT06862453",
+          "source": "CTGOV"
+        },
+        {
+          "actual_date": null,
+          "confidence": 0.75,
+          "confidence_reason": "Study completion date pushed out by 334 days",
+          "direction": "NEG",
+          "disclosed_at": "2026-01-14",
+          "event_rule_id": "M3_DIFF_CT_TIMELINE_PUSHOUT",
+          "event_type": "CT_TIMELINE_PUSHOUT",
+          "fields_changed": {
+            "completionDate": [
+              "2026-01-30",
+              "2026-12-30"
+            ]
+          },
+          "impact": 3,
+          "nct_id": "NCT06862453",
+          "source": "CTGOV"
+        }
+      ],
+      "nearest_negative_days": 1,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "CVAC"
@@ -1140,13 +1306,32 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "62b521670a897264",
+      "audit_hash": "ea46745f6df5cdaa",
       "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 0.0,
-      "catalyst_score_pos": 0.0,
-      "events": [],
+      "catalyst_score_net": 1.6,
+      "catalyst_score_pos": 1.6,
+      "events": [
+        {
+          "actual_date": null,
+          "confidence": 0.8,
+          "confidence_reason": "Status upgrade: RECRUITING \u2192 ACTIVE_NOT_RECRUITING",
+          "direction": "POS",
+          "disclosed_at": "2026-01-15",
+          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
+          "event_type": "CT_STATUS_UPGRADE",
+          "fields_changed": {
+            "overallStatus": [
+              "RECRUITING",
+              "ACTIVE_NOT_RECRUITING"
+            ]
+          },
+          "impact": 2,
+          "nct_id": "NCT05262023",
+          "source": "CTGOV"
+        }
+      ],
       "nearest_negative_days": null,
-      "nearest_positive_days": null,
+      "nearest_positive_days": 1,
       "severe_negative_flag": false,
       "ticker": "DNLI"
     },
@@ -1188,25 +1373,117 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "245d9eb8d4726e35",
+      "audit_hash": "251185c4476c2281",
       "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 0.0,
-      "catalyst_score_pos": 0.0,
-      "events": [],
+      "catalyst_score_net": 3.0,
+      "catalyst_score_pos": 3.0,
+      "events": [
+        {
+          "actual_date": null,
+          "confidence": 0.8,
+          "confidence_reason": "Status upgrade: ACTIVE_NOT_RECRUITING \u2192 COMPLETED",
+          "direction": "POS",
+          "disclosed_at": "2026-01-14",
+          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
+          "event_type": "CT_STATUS_UPGRADE",
+          "fields_changed": {
+            "overallStatus": [
+              "ACTIVE_NOT_RECRUITING",
+              "COMPLETED"
+            ]
+          },
+          "impact": 2,
+          "nct_id": "NCT05818137",
+          "source": "CTGOV"
+        },
+        {
+          "actual_date": null,
+          "confidence": 0.7,
+          "confidence_reason": "Study completion date pulled in by 113 days",
+          "direction": "POS",
+          "disclosed_at": "2026-01-14",
+          "event_rule_id": "M3_DIFF_CT_TIMELINE_PULLIN",
+          "event_type": "CT_TIMELINE_PULLIN",
+          "fields_changed": {
+            "completionDate": [
+              "2026-02-27",
+              "2025-11-06"
+            ]
+          },
+          "impact": 2,
+          "nct_id": "NCT05818137",
+          "source": "CTGOV"
+        }
+      ],
       "nearest_negative_days": null,
-      "nearest_positive_days": null,
+      "nearest_positive_days": 1,
       "severe_negative_flag": false,
       "ticker": "DYN"
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "14908cd9df838dcb",
+      "audit_hash": "e15d9cc45778762d",
       "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 0.0,
-      "catalyst_score_pos": 0.0,
-      "events": [],
+      "catalyst_score_net": 5.1,
+      "catalyst_score_pos": 5.1,
+      "events": [
+        {
+          "actual_date": null,
+          "confidence": 0.8,
+          "confidence_reason": "Status upgrade: ACTIVE_NOT_RECRUITING \u2192 COMPLETED",
+          "direction": "POS",
+          "disclosed_at": "2026-01-16",
+          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
+          "event_type": "CT_STATUS_UPGRADE",
+          "fields_changed": {
+            "overallStatus": [
+              "ACTIVE_NOT_RECRUITING",
+              "COMPLETED"
+            ]
+          },
+          "impact": 2,
+          "nct_id": "NCT03910075",
+          "source": "CTGOV"
+        },
+        {
+          "actual_date": null,
+          "confidence": 0.7,
+          "confidence_reason": "Primary completion date pulled in by 62 days",
+          "direction": "POS",
+          "disclosed_at": "2026-01-16",
+          "event_rule_id": "M3_DIFF_CT_TIMELINE_PULLIN",
+          "event_type": "CT_TIMELINE_PULLIN",
+          "fields_changed": {
+            "primaryCompletionDate": [
+              "2025-10-01",
+              "2025-07-31"
+            ]
+          },
+          "impact": 2,
+          "nct_id": "NCT03910075",
+          "source": "CTGOV"
+        },
+        {
+          "actual_date": null,
+          "confidence": 0.7,
+          "confidence_reason": "Study completion date pulled in by 274 days",
+          "direction": "POS",
+          "disclosed_at": "2026-01-16",
+          "event_rule_id": "M3_DIFF_CT_TIMELINE_PULLIN",
+          "event_type": "CT_TIMELINE_PULLIN",
+          "fields_changed": {
+            "completionDate": [
+              "2026-05-01",
+              "2025-07-31"
+            ]
+          },
+          "impact": 3,
+          "nct_id": "NCT03910075",
+          "source": "CTGOV"
+        }
+      ],
       "nearest_negative_days": null,
-      "nearest_positive_days": null,
+      "nearest_positive_days": 1,
       "severe_negative_flag": false,
       "ticker": "EBS"
     },
@@ -1440,43 +1717,43 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "b968d4d484d03fbe",
+      "audit_hash": "69f101f66a9fe573",
       "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 0.0,
-      "catalyst_score_pos": 0.0,
-      "events": [],
+      "catalyst_score_net": 2.4,
+      "catalyst_score_pos": 2.4,
+      "events": [
+        {
+          "actual_date": null,
+          "confidence": 0.8,
+          "confidence_reason": "Status upgrade: RECRUITING \u2192 COMPLETED",
+          "direction": "POS",
+          "disclosed_at": "2026-01-16",
+          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
+          "event_type": "CT_STATUS_UPGRADE",
+          "fields_changed": {
+            "overallStatus": [
+              "RECRUITING",
+              "COMPLETED"
+            ]
+          },
+          "impact": 3,
+          "nct_id": "NCT06059027",
+          "source": "CTGOV"
+        }
+      ],
       "nearest_negative_days": null,
-      "nearest_positive_days": null,
+      "nearest_positive_days": 1,
       "severe_negative_flag": false,
       "ticker": "GERN"
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "6cb3b8e27896b25c",
-      "catalyst_score_neg": 1.7,
-      "catalyst_score_net": -1.7,
+      "audit_hash": "8adcd6af65a82dcb",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
       "catalyst_score_pos": 0.0,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.85,
-          "confidence_reason": "Status downgrade: UNKNOWN \u2192 WITHHELD",
-          "direction": "NEG",
-          "disclosed_at": "2025-07-14",
-          "event_rule_id": "M3_DIFF_CT_STATUS_DOWNGRADE",
-          "event_type": "CT_STATUS_DOWNGRADE",
-          "fields_changed": {
-            "overallStatus": [
-              "UNKNOWN",
-              "WITHHELD"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT07063459",
-          "source": "CTGOV"
-        }
-      ],
-      "nearest_negative_days": 1,
+      "events": [],
+      "nearest_negative_days": null,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "GH"
@@ -1567,13 +1844,32 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "a9413f8b5699cc20",
+      "audit_hash": "d682e31c97a478c6",
       "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 0.0,
-      "catalyst_score_pos": 0.0,
-      "events": [],
+      "catalyst_score_net": 1.6,
+      "catalyst_score_pos": 1.6,
+      "events": [
+        {
+          "actual_date": null,
+          "confidence": 0.8,
+          "confidence_reason": "Status upgrade: RECRUITING \u2192 ACTIVE_NOT_RECRUITING",
+          "direction": "POS",
+          "disclosed_at": "2026-01-12",
+          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
+          "event_type": "CT_STATUS_UPGRADE",
+          "fields_changed": {
+            "overallStatus": [
+              "RECRUITING",
+              "ACTIVE_NOT_RECRUITING"
+            ]
+          },
+          "impact": 2,
+          "nct_id": "NCT06054555",
+          "source": "CTGOV"
+        }
+      ],
       "nearest_negative_days": null,
-      "nearest_positive_days": null,
+      "nearest_positive_days": 1,
       "severe_negative_flag": false,
       "ticker": "GRAL"
     },
@@ -1639,9 +1935,9 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "e55e58b0925f1a96",
-      "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 2.4,
+      "audit_hash": "64a5bb2a5f51eb70",
+      "catalyst_score_neg": 4.5,
+      "catalyst_score_net": -2.1,
       "catalyst_score_pos": 2.4,
       "events": [
         {
@@ -1661,9 +1957,45 @@
           "impact": 3,
           "nct_id": "NCT06574997",
           "source": "CTGOV"
+        },
+        {
+          "actual_date": null,
+          "confidence": 0.75,
+          "confidence_reason": "Primary completion date pushed out by 731 days",
+          "direction": "NEG",
+          "disclosed_at": "2026-01-09",
+          "event_rule_id": "M3_DIFF_CT_TIMELINE_PUSHOUT",
+          "event_type": "CT_TIMELINE_PUSHOUT",
+          "fields_changed": {
+            "primaryCompletionDate": [
+              "2027-12-30",
+              "2029-12-30"
+            ]
+          },
+          "impact": 3,
+          "nct_id": "NCT07324174",
+          "source": "CTGOV"
+        },
+        {
+          "actual_date": null,
+          "confidence": 0.75,
+          "confidence_reason": "Study completion date pushed out by 731 days",
+          "direction": "NEG",
+          "disclosed_at": "2026-01-09",
+          "event_rule_id": "M3_DIFF_CT_TIMELINE_PUSHOUT",
+          "event_type": "CT_TIMELINE_PUSHOUT",
+          "fields_changed": {
+            "completionDate": [
+              "2027-12-30",
+              "2029-12-30"
+            ]
+          },
+          "impact": 3,
+          "nct_id": "NCT07324174",
+          "source": "CTGOV"
         }
       ],
-      "nearest_negative_days": null,
+      "nearest_negative_days": 1,
       "nearest_positive_days": 1,
       "severe_negative_flag": false,
       "ticker": "HUMA"
@@ -1886,50 +2218,13 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "2f0c63350d256a35",
+      "audit_hash": "8b3dfb2babff1185",
       "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 4.8,
-      "catalyst_score_pos": 4.8,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.8,
-          "confidence_reason": "Status upgrade: UNKNOWN \u2192 APPROVED_FOR_MARKETING",
-          "direction": "POS",
-          "disclosed_at": "2023-10-10",
-          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
-          "event_type": "CT_STATUS_UPGRADE",
-          "fields_changed": {
-            "overallStatus": [
-              "UNKNOWN",
-              "APPROVED_FOR_MARKETING"
-            ]
-          },
-          "impact": 3,
-          "nct_id": "NCT02660255",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.8,
-          "confidence_reason": "Status upgrade: UNKNOWN \u2192 APPROVED_FOR_MARKETING",
-          "direction": "POS",
-          "disclosed_at": "2025-08-20",
-          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
-          "event_type": "CT_STATUS_UPGRADE",
-          "fields_changed": {
-            "overallStatus": [
-              "UNKNOWN",
-              "APPROVED_FOR_MARKETING"
-            ]
-          },
-          "impact": 3,
-          "nct_id": "NCT04617002",
-          "source": "CTGOV"
-        }
-      ],
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
       "nearest_negative_days": null,
-      "nearest_positive_days": 1,
+      "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "JAZZ"
     },
@@ -2187,49 +2482,67 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "39d98651a151f41b",
-      "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 4.8,
-      "catalyst_score_pos": 4.8,
+      "audit_hash": "0605592693f61d6f",
+      "catalyst_score_neg": 1.5,
+      "catalyst_score_net": 0.1,
+      "catalyst_score_pos": 1.6,
       "events": [
         {
           "actual_date": null,
           "confidence": 0.8,
-          "confidence_reason": "Status upgrade: UNKNOWN \u2192 APPROVED_FOR_MARKETING",
+          "confidence_reason": "Status upgrade: RECRUITING \u2192 ACTIVE_NOT_RECRUITING",
           "direction": "POS",
-          "disclosed_at": "2016-04-06",
+          "disclosed_at": "2026-01-08",
           "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
           "event_type": "CT_STATUS_UPGRADE",
           "fields_changed": {
             "overallStatus": [
-              "UNKNOWN",
-              "APPROVED_FOR_MARKETING"
+              "RECRUITING",
+              "ACTIVE_NOT_RECRUITING"
             ]
           },
-          "impact": 3,
-          "nct_id": "NCT00338247",
+          "impact": 2,
+          "nct_id": "NCT06245408",
           "source": "CTGOV"
         },
         {
           "actual_date": null,
-          "confidence": 0.8,
-          "confidence_reason": "Status upgrade: UNKNOWN \u2192 APPROVED_FOR_MARKETING",
-          "direction": "POS",
-          "disclosed_at": "2020-11-13",
-          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
-          "event_type": "CT_STATUS_UPGRADE",
+          "confidence": 0.75,
+          "confidence_reason": "Primary completion date pushed out by 50 days",
+          "direction": "NEG",
+          "disclosed_at": "2026-01-08",
+          "event_rule_id": "M3_DIFF_CT_TIMELINE_PUSHOUT",
+          "event_type": "CT_TIMELINE_PUSHOUT",
           "fields_changed": {
-            "overallStatus": [
-              "UNKNOWN",
-              "APPROVED_FOR_MARKETING"
+            "primaryCompletionDate": [
+              "2026-09-02",
+              "2026-10-22"
             ]
           },
-          "impact": 3,
-          "nct_id": "NCT04323761",
+          "impact": 1,
+          "nct_id": "NCT06245408",
+          "source": "CTGOV"
+        },
+        {
+          "actual_date": null,
+          "confidence": 0.75,
+          "confidence_reason": "Study completion date pushed out by 44 days",
+          "direction": "NEG",
+          "disclosed_at": "2026-01-08",
+          "event_rule_id": "M3_DIFF_CT_TIMELINE_PUSHOUT",
+          "event_type": "CT_TIMELINE_PUSHOUT",
+          "fields_changed": {
+            "completionDate": [
+              "2026-11-03",
+              "2026-12-17"
+            ]
+          },
+          "impact": 1,
+          "nct_id": "NCT06245408",
           "source": "CTGOV"
         }
       ],
-      "nearest_negative_days": null,
+      "nearest_negative_days": 1,
       "nearest_positive_days": 1,
       "severe_negative_flag": false,
       "ticker": "MBX"
@@ -2488,12 +2801,31 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "aadac4b3ac2657d3",
-      "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 0.0,
+      "audit_hash": "f629504e6fb80e1e",
+      "catalyst_score_neg": 1.7,
+      "catalyst_score_net": -1.7,
       "catalyst_score_pos": 0.0,
-      "events": [],
-      "nearest_negative_days": null,
+      "events": [
+        {
+          "actual_date": null,
+          "confidence": 0.85,
+          "confidence_reason": "Status downgrade: RECRUITING \u2192 UNKNOWN",
+          "direction": "NEG",
+          "disclosed_at": "2024-01-05",
+          "event_rule_id": "M3_DIFF_CT_STATUS_DOWNGRADE",
+          "event_type": "CT_STATUS_DOWNGRADE",
+          "fields_changed": {
+            "overallStatus": [
+              "RECRUITING",
+              "UNKNOWN"
+            ]
+          },
+          "impact": 2,
+          "nct_id": "NCT06082440",
+          "source": "CTGOV"
+        }
+      ],
+      "nearest_negative_days": 1,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "NTRA"
@@ -2620,13 +2952,68 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "709b9325a6509bf2",
-      "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 0.0,
-      "catalyst_score_pos": 0.0,
-      "events": [],
-      "nearest_negative_days": null,
-      "nearest_positive_days": null,
+      "audit_hash": "c076cdd746f7628e",
+      "catalyst_score_neg": 3.0,
+      "catalyst_score_net": -1.4,
+      "catalyst_score_pos": 1.6,
+      "events": [
+        {
+          "actual_date": null,
+          "confidence": 0.75,
+          "confidence_reason": "Primary completion date pushed out by 134 days",
+          "direction": "NEG",
+          "disclosed_at": "2026-01-08",
+          "event_rule_id": "M3_DIFF_CT_TIMELINE_PUSHOUT",
+          "event_type": "CT_TIMELINE_PUSHOUT",
+          "fields_changed": {
+            "primaryCompletionDate": [
+              "2025-12-31",
+              "2026-05-14"
+            ]
+          },
+          "impact": 2,
+          "nct_id": "NCT02568267",
+          "source": "CTGOV"
+        },
+        {
+          "actual_date": null,
+          "confidence": 0.75,
+          "confidence_reason": "Study completion date pushed out by 134 days",
+          "direction": "NEG",
+          "disclosed_at": "2026-01-08",
+          "event_rule_id": "M3_DIFF_CT_TIMELINE_PUSHOUT",
+          "event_type": "CT_TIMELINE_PUSHOUT",
+          "fields_changed": {
+            "completionDate": [
+              "2025-12-31",
+              "2026-05-14"
+            ]
+          },
+          "impact": 2,
+          "nct_id": "NCT02568267",
+          "source": "CTGOV"
+        },
+        {
+          "actual_date": null,
+          "confidence": 0.8,
+          "confidence_reason": "Status upgrade: RECRUITING \u2192 ACTIVE_NOT_RECRUITING",
+          "direction": "POS",
+          "disclosed_at": "2026-01-12",
+          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
+          "event_type": "CT_STATUS_UPGRADE",
+          "fields_changed": {
+            "overallStatus": [
+              "RECRUITING",
+              "ACTIVE_NOT_RECRUITING"
+            ]
+          },
+          "impact": 2,
+          "nct_id": "NCT06054555",
+          "source": "CTGOV"
+        }
+      ],
+      "nearest_negative_days": 1,
+      "nearest_positive_days": 1,
       "severe_negative_flag": false,
       "ticker": "ONC"
     },
@@ -2956,32 +3343,13 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "df587b28ad842e2e",
+      "audit_hash": "ee8ff3a27663437d",
       "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 2.4,
-      "catalyst_score_pos": 2.4,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.8,
-          "confidence_reason": "Status upgrade: UNKNOWN \u2192 APPROVED_FOR_MARKETING",
-          "direction": "POS",
-          "disclosed_at": "2019-10-14",
-          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
-          "event_type": "CT_STATUS_UPGRADE",
-          "fields_changed": {
-            "overallStatus": [
-              "UNKNOWN",
-              "APPROVED_FOR_MARKETING"
-            ]
-          },
-          "impact": 3,
-          "nct_id": "NCT00580658",
-          "source": "CTGOV"
-        }
-      ],
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
       "nearest_negative_days": null,
-      "nearest_positive_days": 1,
+      "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "RARE"
     },
@@ -3432,12 +3800,49 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "ae5b12796096d86f",
-      "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 0.0,
+      "audit_hash": "bc5c9fc7b38569f1",
+      "catalyst_score_neg": 4.5,
+      "catalyst_score_net": -4.5,
       "catalyst_score_pos": 0.0,
-      "events": [],
-      "nearest_negative_days": null,
+      "events": [
+        {
+          "actual_date": null,
+          "confidence": 0.75,
+          "confidence_reason": "Primary completion date pushed out by 212 days",
+          "direction": "NEG",
+          "disclosed_at": "2026-01-14",
+          "event_rule_id": "M3_DIFF_CT_TIMELINE_PUSHOUT",
+          "event_type": "CT_TIMELINE_PUSHOUT",
+          "fields_changed": {
+            "primaryCompletionDate": [
+              "2025-09-30",
+              "2026-04-30"
+            ]
+          },
+          "impact": 3,
+          "nct_id": "NCT06904846",
+          "source": "CTGOV"
+        },
+        {
+          "actual_date": null,
+          "confidence": 0.75,
+          "confidence_reason": "Study completion date pushed out by 212 days",
+          "direction": "NEG",
+          "disclosed_at": "2026-01-14",
+          "event_rule_id": "M3_DIFF_CT_TIMELINE_PUSHOUT",
+          "event_type": "CT_TIMELINE_PUSHOUT",
+          "fields_changed": {
+            "completionDate": [
+              "2025-11-30",
+              "2026-06-30"
+            ]
+          },
+          "impact": 3,
+          "nct_id": "NCT06904846",
+          "source": "CTGOV"
+        }
+      ],
+      "nearest_negative_days": 1,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "TARS"
@@ -3480,13 +3885,68 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "50f0ae3ebba445cd",
+      "audit_hash": "f58da197ea1e446f",
       "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 0.0,
-      "catalyst_score_pos": 0.0,
-      "events": [],
+      "catalyst_score_net": 4.4,
+      "catalyst_score_pos": 4.4,
+      "events": [
+        {
+          "actual_date": null,
+          "confidence": 0.8,
+          "confidence_reason": "Status upgrade: ACTIVE_NOT_RECRUITING \u2192 COMPLETED",
+          "direction": "POS",
+          "disclosed_at": "2026-01-12",
+          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
+          "event_type": "CT_STATUS_UPGRADE",
+          "fields_changed": {
+            "overallStatus": [
+              "ACTIVE_NOT_RECRUITING",
+              "COMPLETED"
+            ]
+          },
+          "impact": 2,
+          "nct_id": "NCT06150976",
+          "source": "CTGOV"
+        },
+        {
+          "actual_date": null,
+          "confidence": 0.7,
+          "confidence_reason": "Primary completion date pulled in by 117 days",
+          "direction": "POS",
+          "disclosed_at": "2026-01-12",
+          "event_rule_id": "M3_DIFF_CT_TIMELINE_PULLIN",
+          "event_type": "CT_TIMELINE_PULLIN",
+          "fields_changed": {
+            "primaryCompletionDate": [
+              "2025-12-31",
+              "2025-09-05"
+            ]
+          },
+          "impact": 2,
+          "nct_id": "NCT06150976",
+          "source": "CTGOV"
+        },
+        {
+          "actual_date": null,
+          "confidence": 0.7,
+          "confidence_reason": "Study completion date pulled in by 117 days",
+          "direction": "POS",
+          "disclosed_at": "2026-01-12",
+          "event_rule_id": "M3_DIFF_CT_TIMELINE_PULLIN",
+          "event_type": "CT_TIMELINE_PULLIN",
+          "fields_changed": {
+            "completionDate": [
+              "2025-12-31",
+              "2025-09-05"
+            ]
+          },
+          "impact": 2,
+          "nct_id": "NCT06150976",
+          "source": "CTGOV"
+        }
+      ],
       "nearest_negative_days": null,
-      "nearest_positive_days": null,
+      "nearest_positive_days": 1,
       "severe_negative_flag": false,
       "ticker": "TEM"
     },
@@ -3624,13 +4084,50 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "3f72353c06aff2ea",
+      "audit_hash": "f88f6f2b5b850b29",
       "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 0.0,
-      "catalyst_score_pos": 0.0,
-      "events": [],
+      "catalyst_score_net": 2.4,
+      "catalyst_score_pos": 2.4,
+      "events": [
+        {
+          "actual_date": null,
+          "confidence": 0.8,
+          "confidence_reason": "Status upgrade: RECRUITING \u2192 ACTIVE_NOT_RECRUITING",
+          "direction": "POS",
+          "disclosed_at": "2026-01-12",
+          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
+          "event_type": "CT_STATUS_UPGRADE",
+          "fields_changed": {
+            "overallStatus": [
+              "RECRUITING",
+              "ACTIVE_NOT_RECRUITING"
+            ]
+          },
+          "impact": 2,
+          "nct_id": "NCT05544552",
+          "source": "CTGOV"
+        },
+        {
+          "actual_date": null,
+          "confidence": 0.8,
+          "confidence_reason": "Status upgrade: NOT_YET_RECRUITING \u2192 RECRUITING",
+          "direction": "POS",
+          "disclosed_at": "2026-01-16",
+          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
+          "event_type": "CT_STATUS_UPGRADE",
+          "fields_changed": {
+            "overallStatus": [
+              "NOT_YET_RECRUITING",
+              "RECRUITING"
+            ]
+          },
+          "impact": 1,
+          "nct_id": "NCT07265947",
+          "source": "CTGOV"
+        }
+      ],
       "nearest_negative_days": null,
-      "nearest_positive_days": null,
+      "nearest_positive_days": 1,
       "severe_negative_flag": false,
       "ticker": "TYRA"
     },
@@ -3720,10 +4217,10 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "b1ee1a149e2903c3",
+      "audit_hash": "dc5196ca993a2909",
       "catalyst_score_neg": 0.85,
-      "catalyst_score_net": -0.85,
-      "catalyst_score_pos": 0.0,
+      "catalyst_score_net": 0.75,
+      "catalyst_score_pos": 1.6,
       "events": [
         {
           "actual_date": null,
@@ -3742,10 +4239,28 @@
           "impact": 1,
           "nct_id": "NCT05235347",
           "source": "CTGOV"
+        },
+        {
+          "actual_date": null,
+          "confidence": 0.8,
+          "confidence_reason": "Status upgrade: RECRUITING \u2192 ACTIVE_NOT_RECRUITING",
+          "direction": "POS",
+          "disclosed_at": "2026-01-16",
+          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
+          "event_type": "CT_STATUS_UPGRADE",
+          "fields_changed": {
+            "overallStatus": [
+              "RECRUITING",
+              "ACTIVE_NOT_RECRUITING"
+            ]
+          },
+          "impact": 2,
+          "nct_id": "NCT07142811",
+          "source": "CTGOV"
         }
       ],
       "nearest_negative_days": 1,
-      "nearest_positive_days": null,
+      "nearest_positive_days": 1,
       "severe_negative_flag": false,
       "ticker": "VIR"
     },
