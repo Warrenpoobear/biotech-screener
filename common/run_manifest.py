@@ -40,7 +40,10 @@ import json
 from datetime import datetime
 from decimal import Decimal
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
+
+# Type alias for JSON-serializable data
+JsonValue = Union[str, int, float, bool, None, Dict[str, Any], List[Any]]
 
 # Manifest version for schema evolution
 MANIFEST_VERSION = "1.0.0"
@@ -48,16 +51,16 @@ MANIFEST_VERSION = "1.0.0"
 
 class DecimalEncoder(json.JSONEncoder):
     """JSON encoder that handles Decimal types."""
-    def default(self, obj):
+    def default(self, obj: object) -> JsonValue:
         if isinstance(obj, Decimal):
             return str(obj)
-        return super().default(obj)
+        return super().default(obj)  # type: ignore[return-value]
 
 
-def compute_content_hash(data: Any) -> str:
+def compute_content_hash(data: Union[Dict[str, Any], List[Any], str, int, float, bool, None]) -> str:
     """
     Compute deterministic SHA256 hash of data.
-    
+
     Handles nested dicts, lists, Decimals.
     """
     json_str = json.dumps(
@@ -82,20 +85,23 @@ RESULTS_HASH_EXCLUDE_KEYS = {
 }
 
 
-def canonicalize_for_hash(data: Any, exclude_keys: Optional[set] = None) -> Any:
+def canonicalize_for_hash(
+    data: Union[Dict[str, Any], List[Any], str, int, float, bool, Decimal, None],
+    exclude_keys: Optional[set[str]] = None
+) -> Union[Dict[str, Any], List[Any], str, int, float, bool, None]:
     """
     Recursively remove non-deterministic fields before hashing.
-    
+
     Args:
         data: Data structure to canonicalize
         exclude_keys: Keys to exclude (uses RESULTS_HASH_EXCLUDE_KEYS if None)
-    
+
     Returns:
         Canonicalized copy safe for deterministic hashing
     """
     if exclude_keys is None:
         exclude_keys = RESULTS_HASH_EXCLUDE_KEYS
-    
+
     if isinstance(data, dict):
         return {
             k: canonicalize_for_hash(v, exclude_keys)
@@ -179,7 +185,7 @@ class RunManifest:
     Enables reproducibility verification and audit.
     """
     
-    def __init__(self, output_dir: str | Path):
+    def __init__(self, output_dir: Union[str, Path]) -> None:
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.manifest_file = self.output_dir / "run_manifest.jsonl"

@@ -25,7 +25,13 @@ from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from enum import Enum
-from typing import Any, Callable, Dict, Generic, List, NoReturn, Optional, Set, Tuple, TypeVar, Union
+from typing import Any, Callable, Dict, Generic, List, Mapping, NoReturn, Optional, Set, Tuple, TypeVar, Union
+
+# Type alias for JSON-serializable data
+JsonSerializable = Union[str, int, float, bool, None, List["JsonSerializable"], Dict[str, "JsonSerializable"]]
+
+# Type alias for stats dictionaries
+StatsDict = Dict[str, Union[str, int, float, bool, None]]
 
 __all__ = [
     # Timeout protection
@@ -349,7 +355,7 @@ class StatefulCircuitBreaker:
             self._failure_times.clear()
             self._opened_at = None
 
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> Dict[str, Union[str, int, float, None]]:
         """Get circuit breaker statistics."""
         with self._lock:
             self._update_state()
@@ -480,7 +486,7 @@ class Throttler:
             return func(*args, **kwargs)
         return wrapper
 
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> Dict[str, Union[str, int, float]]:
         """Get throttler statistics."""
         with self._lock:
             self._refill_tokens()
@@ -534,9 +540,9 @@ class IntegrityResult:
     record_count: int = 0
 
 
-def _stable_json_dumps(obj: Any) -> str:
+def _stable_json_dumps(obj: Union[Dict[str, Any], List[Any], str, int, float, bool, None]) -> str:
     """Deterministic JSON serialization for hashing."""
-    def default_serializer(o: Any) -> Any:
+    def default_serializer(o: Union[date, datetime, Decimal, set, object]) -> Union[str, List[str], Dict[str, Any]]:
         if isinstance(o, date):
             return o.isoformat()
         if isinstance(o, datetime):
@@ -553,7 +559,7 @@ def _stable_json_dumps(obj: Any) -> str:
 
 
 def compute_data_hash(
-    data: Any,
+    data: Union[Dict[str, Any], List[Any], str, int, float, bool, None],
     config: Optional[IntegrityConfig] = None,
 ) -> str:
     """
@@ -583,7 +589,7 @@ def compute_data_hash(
 
 
 def verify_data_integrity(
-    data: Any,
+    data: Union[Dict[str, Any], List[Any], str, int, float, bool, None],
     expected_hash: Optional[str],
     config: Optional[IntegrityConfig] = None,
 ) -> IntegrityResult:

@@ -11,7 +11,7 @@ import hashlib
 import json
 from datetime import date
 from decimal import Decimal
-from typing import Any, Protocol, Union
+from typing import Any, Dict, List, Protocol, Union
 
 
 class HasToDict(Protocol):
@@ -29,43 +29,49 @@ class HasValue(Protocol):
 TrialLike = Union[HasToDict, dict[str, Any]]
 
 
-def stable_json_dumps(obj: Any) -> str:
+def stable_json_dumps(
+    obj: Union[Dict[str, Any], List[Any], str, int, float, bool, None]
+) -> str:
     """
     Convert object to JSON string with deterministic ordering.
-    
+
     Handles:
         - dict sorting by keys
         - date serialization
         - Decimal serialization
         - Enum serialization
-    
+
     Args:
         obj: Object to serialize
-    
+
     Returns:
         Deterministic JSON string
     """
-    def default_serializer(o: Any) -> Any:
+    def default_serializer(
+        o: Union[date, Decimal, HasValue, HasToDict, object]
+    ) -> Union[str, Dict[str, Any]]:
         if isinstance(o, date):
             return o.isoformat()
         if isinstance(o, Decimal):
             return str(o)
         if hasattr(o, "value"):  # Enum
-            return o.value
+            return str(o.value)
         if hasattr(o, "to_dict"):  # TrialRow and similar
-            return o.to_dict()
+            return o.to_dict()  # type: ignore[union-attr]
         raise TypeError(f"Object of type {type(o).__name__} is not JSON serializable")
-    
+
     return json.dumps(obj, sort_keys=True, default=default_serializer)
 
 
-def compute_hash(data: Any) -> str:
+def compute_hash(
+    data: Union[Dict[str, Any], List[Any], str, int, float, bool, None]
+) -> str:
     """
     Compute SHA-256 hash of data.
-    
+
     Args:
         data: Any JSON-serializable object
-    
+
     Returns:
         Hash string in format "sha256:abc123..."
     """
@@ -73,7 +79,7 @@ def compute_hash(data: Any) -> str:
         json_str = data
     else:
         json_str = stable_json_dumps(data)
-    
+
     hash_bytes = hashlib.sha256(json_str.encode("utf-8")).hexdigest()
     return f"sha256:{hash_bytes}"
 
