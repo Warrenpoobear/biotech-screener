@@ -147,6 +147,24 @@ class StateStore:
         if not snapshots:
             return None
         return self.load_snapshot(snapshots[-1])
+
+    def get_prior_snapshot(self, before_date: date) -> Optional[StateSnapshot]:
+        """
+        Get the most recent snapshot strictly before the given date.
+
+        Used for delta comparison when running for a date that already has a snapshot.
+
+        Args:
+            before_date: The reference date - returns most recent snapshot < this date
+
+        Returns:
+            StateSnapshot if one exists before the date, None otherwise
+        """
+        snapshots = self.list_snapshots()
+        prior_snapshots = [d for d in snapshots if d < before_date]
+        if not prior_snapshots:
+            return None
+        return self.load_snapshot(prior_snapshots[-1])
     
     def _get_snapshot_path(self, snapshot_date: date) -> Path:
         """Get filepath for snapshot date"""

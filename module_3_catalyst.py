@@ -338,8 +338,8 @@ def compute_module_3_catalyst(
     # DETERMINISTIC: Sort canonical records
     canonical_records = sort_canonical_records(canonical_records)
 
-    # Load prior state
-    prior_snapshot = state_store.get_most_recent_snapshot()
+    # Load prior state - must be strictly before as_of_date for valid delta comparison
+    prior_snapshot = state_store.get_prior_snapshot(as_of_date)
     prior_snapshot_date = prior_snapshot.snapshot_date if prior_snapshot else None
 
     if prior_snapshot:
