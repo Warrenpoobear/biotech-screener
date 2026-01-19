@@ -461,6 +461,46 @@ def compute_module_3_catalyst(
     logger.info(f"Detected {total_events} events across {len(events_by_ticker_v2)} tickers")
     logger.info(f"Deduped {total_deduped} duplicate events")
 
+    # =========================================================================
+    # ZERO EVENTS DIAGNOSTIC: Explain why no events were detected
+    # =========================================================================
+    if total_events == 0:
+        logger.warning("=" * 70)
+        logger.warning("ZERO DIFF-BASED EVENTS DETECTED - DIAGNOSTIC SUMMARY")
+        logger.warning("=" * 70)
+
+        # Check data freshness
+        if staleness_result.is_stale:
+            logger.warning(f"ROOT CAUSE: DATA IS STALE")
+            logger.warning(f"  trial_records date: {staleness_result.trial_records_date}")
+            logger.warning(f"  as_of_date:         {as_of_date}")
+            logger.warning(f"  Age:                {staleness_result.age_days} days old")
+            logger.warning(f"  Recommendation:     {staleness_result.recommendation}")
+
+        # Check delta diagnostics
+        if delta_diagnostics.no_changes_detected:
+            logger.warning(f"SNAPSHOT COMPARISON: No field changes between snapshots")
+            logger.warning(f"  Current records: {delta_diagnostics.total_current_records}")
+            logger.warning(f"  Prior records:   {delta_diagnostics.total_prior_records}")
+            logger.warning(f"  Records added:   {delta_diagnostics.records_added_count}")
+            logger.warning(f"  Records removed: {delta_diagnostics.records_removed_count}")
+            logger.warning(f"  Records changed: {delta_diagnostics.records_changed_count}")
+        elif delta_diagnostics.prior_snapshot_missing:
+            logger.warning(f"This is an INITIAL RUN - no prior snapshot to compare against")
+        else:
+            logger.warning(f"Delta shows changes but no events generated:")
+            logger.warning(f"  Records changed: {delta_diagnostics.records_changed_count}")
+            logger.warning(f"  Fields changed: {delta_diagnostics.fields_changed_histogram}")
+
+        logger.warning("-" * 70)
+        logger.warning("POSSIBLE CAUSES:")
+        logger.warning("  1. trial_records.json was not refreshed (most common)")
+        logger.warning("  2. CT.gov hasn't updated trials in this window")
+        logger.warning("  3. Changes exist but don't meet event thresholds")
+        logger.warning("-" * 70)
+        logger.warning("RESOLUTION: Update trial_records.json with fresh CT.gov data")
+        logger.warning("=" * 70)
+
     # Build prior events for delta scoring (from prior snapshot)
     if prior_snapshot:
         for ticker in active_tickers:
@@ -525,6 +565,8 @@ def compute_module_3_catalyst(
             prior_snapshot_date,
             config,
             vnext_path,
+            staleness_result=staleness_result,
+            delta_diagnostics=delta_diagnostics,
         )
 
         # Write legacy format for backwards compat
@@ -596,6 +638,8 @@ def write_vnext_output(
     prior_snapshot_date: Optional[date],
     config: Module3Config,
     output_path: Path,
+    staleness_result: Optional['StalenessResult'] = None,
+    delta_diagnostics: Optional['DeltaDiagnostics'] = None,
 ) -> str:
     """
     Write vNext catalyst events output with deterministic JSON.
@@ -605,6 +649,29 @@ def write_vnext_output(
     """
     # Sort tickers for determinism
     sorted_tickers = sorted(summaries.keys())
+
+    # Build data freshness metadata
+    data_freshness = {}
+    if staleness_result:
+        data_freshness = {
+            "is_stale": staleness_result.is_stale,
+            "age_days": staleness_result.age_days,
+            "trial_records_date": staleness_result.trial_records_date.isoformat() if staleness_result.trial_records_date else None,
+            "confidence_level": staleness_result.confidence_level,
+            "recommendation": staleness_result.recommendation,
+        }
+
+    # Build delta summary
+    delta_summary = {}
+    if delta_diagnostics:
+        delta_summary = {
+            "records_changed_count": delta_diagnostics.records_changed_count,
+            "records_added_count": delta_diagnostics.records_added_count,
+            "records_removed_count": delta_diagnostics.records_removed_count,
+            "no_changes_detected": delta_diagnostics.no_changes_detected,
+            "prior_snapshot_missing": delta_diagnostics.prior_snapshot_missing,
+            "fields_changed_histogram": delta_diagnostics.fields_changed_histogram,
+        }
 
     # Build output
     output = {
@@ -616,6 +683,8 @@ def write_vnext_output(
             "as_of_date": as_of_date.isoformat(),
             "prior_snapshot_date": prior_snapshot_date.isoformat() if prior_snapshot_date else None,
             "module_version": config.module_version,
+            "data_freshness": data_freshness,
+            "delta_summary": delta_summary,
         },
         "diagnostics": diagnostics.to_dict(),
         "summaries": {
