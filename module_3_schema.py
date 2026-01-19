@@ -75,6 +75,11 @@ class EventType(str, Enum):
     CT_ENROLLMENT_PAUSED = "CT_ENROLLMENT_PAUSED"
     CT_ENROLLMENT_RESUMED = "CT_ENROLLMENT_RESUMED"
 
+    # Activity proxy (historical data workaround)
+    # Detected when last_update_posted changed but no status/date changes detected
+    # Indicates ongoing trial engagement without specific event type
+    CT_ACTIVITY_PROXY = "CT_ACTIVITY_PROXY"
+
     # Unknown (catch-all, zero score)
     UNKNOWN = "UNKNOWN"
 
@@ -125,6 +130,7 @@ EVENT_SEVERITY_MAP: Dict[EventType, EventSeverity] = {
     EventType.CT_RESULTS_POSTED: EventSeverity.NEUTRAL,
     EventType.CT_PROTOCOL_AMENDMENT: EventSeverity.NEUTRAL,
     EventType.CT_ENDPOINT_CHANGED: EventSeverity.NEUTRAL,
+    EventType.CT_ACTIVITY_PROXY: EventSeverity.NEUTRAL,  # Unknown if positive or negative
     EventType.UNKNOWN: EventSeverity.NEUTRAL,
 
     # Negative
@@ -160,6 +166,7 @@ EVENT_DEFAULT_CONFIDENCE: Dict[EventType, ConfidenceLevel] = {
     EventType.CT_ENROLLMENT_COMPLETE: ConfidenceLevel.HIGH,
     EventType.CT_ENROLLMENT_PAUSED: ConfidenceLevel.HIGH,
     EventType.CT_ENROLLMENT_RESUMED: ConfidenceLevel.HIGH,
+    EventType.CT_ACTIVITY_PROXY: ConfidenceLevel.LOW,  # Unknown change type
     EventType.UNKNOWN: ConfidenceLevel.LOW,
 }
 
@@ -217,6 +224,7 @@ EVENT_TYPE_WEIGHT: Dict[EventType, Decimal] = {
     EventType.CT_ARM_REMOVED: Decimal("0.0"),
     EventType.CT_ENROLLMENT_PAUSED: Decimal("0.0"),
     EventType.CT_ENDPOINT_CHANGED: Decimal("1.0"),
+    EventType.CT_ACTIVITY_PROXY: Decimal("2.0"),  # Low weight, indicates engagement
     EventType.UNKNOWN: Decimal("0.0"),
 }
 
@@ -364,6 +372,12 @@ class TickerCatalystSummaryV2:
     # NEW: Velocity (rolling baseline comparison)
     catalyst_velocity_4w: Optional[Decimal] = None  # Current - median of last 4
 
+    # NEW: Activity proxy (historical data workaround)
+    # Tracks trials with recent last_update_posted but no detected status/date changes
+    activity_proxy_score: Decimal = Decimal("0")
+    activity_proxy_count_90d: int = 0  # Trials updated in past 90 days
+    activity_proxy_count_30d: int = 0  # Trials updated in past 30 days
+
     # Schema metadata
     schema_version: str = SCHEMA_VERSION
     score_version: str = SCORE_VERSION
@@ -384,6 +398,7 @@ class TickerCatalystSummaryV2:
                 "catalyst_proximity_score": str(self.catalyst_proximity_score),
                 "catalyst_delta_score": str(self.catalyst_delta_score),
                 "catalyst_velocity_4w": str(self.catalyst_velocity_4w) if self.catalyst_velocity_4w is not None else None,
+                "activity_proxy_score": str(self.activity_proxy_score),
             },
             "flags": {
                 "severe_negative_flag": self.severe_negative_flag,
@@ -403,6 +418,8 @@ class TickerCatalystSummaryV2:
                 "n_events_added": self.n_events_added,
                 "n_events_removed": self.n_events_removed,
                 "max_slip_days": self.max_slip_days,
+                "activity_proxy_count_90d": self.activity_proxy_count_90d,
+                "activity_proxy_count_30d": self.activity_proxy_count_30d,
             },
             "top_3_events": self.top_3_events,
             "events": [e.to_dict() for e in self.events],
