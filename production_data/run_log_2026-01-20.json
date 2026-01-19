@@ -7,8 +7,14 @@
     "score_version": "m3score_vnext_20260111"
   },
   "errors": [],
+<<<<<<< Updated upstream
   "execution_time_seconds": 0.29,
   "host": "runsc",
   "run_timestamp": "2026-01-19T16:00:51.108825Z",
+=======
+  "execution_time_seconds": 0.38,
+  "host": "BCM-LPT-012",
+  "run_timestamp": "2026-01-19T15:47:34.370368Z",
+>>>>>>> Stashed changes
   "warnings": []
 }
