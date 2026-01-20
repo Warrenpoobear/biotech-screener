@@ -131,12 +131,12 @@ def sample_trial_records_for_lookback(as_of_date) -> list[CanonicalTrialRecord]:
             completion_type=None,
             results_first_posted=None,
         ),
-        # Very old (100 days ago - outside 90d window)
+        # Very old (130 days ago - outside 120d window)
         CanonicalTrialRecord(
             ticker="ACME",
             nct_id="NCT00000004",
             overall_status=CTGovStatus.COMPLETED,
-            last_update_posted=as_of_date - timedelta(days=100),
+            last_update_posted=as_of_date - timedelta(days=130),
             primary_completion_date=as_of_date - timedelta(days=50),
             primary_completion_type=CompletionType.ACTUAL,
             completion_date=None,
@@ -206,12 +206,12 @@ class TestActivityProxyEventDetection:
     def test_activity_proxy_not_detected_for_stale_update(
         self, event_detector, as_of_date
     ):
-        """Activity proxy should NOT be generated for updates > 90 days old."""
+        """Activity proxy should NOT be generated for updates > 120 days old."""
         current = CanonicalTrialRecord(
             ticker="ACME",
             nct_id="NCT12345678",
             overall_status=CTGovStatus.RECRUITING,
-            last_update_posted=as_of_date - timedelta(days=100),  # Too old
+            last_update_posted=as_of_date - timedelta(days=130),  # Too old (> 120d)
             primary_completion_date=as_of_date + timedelta(days=90),
             primary_completion_type=CompletionType.ESTIMATED,
             completion_date=None,
@@ -222,7 +222,7 @@ class TestActivityProxyEventDetection:
             ticker="ACME",
             nct_id="NCT12345678",
             overall_status=CTGovStatus.RECRUITING,
-            last_update_posted=as_of_date - timedelta(days=150),
+            last_update_posted=as_of_date - timedelta(days=180),
             primary_completion_date=as_of_date + timedelta(days=90),
             primary_completion_type=CompletionType.ESTIMATED,
             completion_date=None,
@@ -296,11 +296,11 @@ class TestActivityProxyScoreComputation:
         result = compute_activity_proxy_score(
             sample_trial_records_for_lookback,
             as_of_date,
-            lookback_days=90,
+            lookback_days=120,
         )
 
-        # Should count 3 trials within 90 days (NCT1, NCT2, NCT3)
-        assert result['activity_count_90d'] == 3
+        # Should count 3 trials within 120 days (NCT1, NCT2, NCT3 - NCT4 is at 130 days)
+        assert result['activity_count_120d'] == 3
         # Should count 2 trials within 30 days (NCT1, NCT2)
         assert result['activity_count_30d'] == 2
         # Score should be positive
@@ -325,12 +325,12 @@ class TestActivityProxyScoreComputation:
             results_first_posted=None,
         )]
 
-        # Old trial (85 days ago)
+        # Old trial (110 days ago)
         old = [CanonicalTrialRecord(
             ticker="ACME",
             nct_id="NCT00000002",
             overall_status=CTGovStatus.RECRUITING,
-            last_update_posted=as_of_date - timedelta(days=85),
+            last_update_posted=as_of_date - timedelta(days=110),
             primary_completion_date=as_of_date + timedelta(days=90),
             primary_completion_type=CompletionType.ESTIMATED,
             completion_date=None,
@@ -338,17 +338,17 @@ class TestActivityProxyScoreComputation:
             results_first_posted=None,
         )]
 
-        recent_result = compute_activity_proxy_score(recent, as_of_date, 90)
-        old_result = compute_activity_proxy_score(old, as_of_date, 90)
+        recent_result = compute_activity_proxy_score(recent, as_of_date, 120)
+        old_result = compute_activity_proxy_score(old, as_of_date, 120)
 
         # Recent should score higher due to time decay
         assert recent_result['activity_proxy_score'] > old_result['activity_proxy_score']
 
     def test_activity_proxy_score_empty_trials(self, as_of_date):
         """Empty trial list should return zero score."""
-        result = compute_activity_proxy_score([], as_of_date, 90)
+        result = compute_activity_proxy_score([], as_of_date, 120)
 
-        assert result['activity_count_90d'] == 0
+        assert result['activity_count_120d'] == 0
         assert result['activity_count_30d'] == 0
         assert result['activity_proxy_score'] == 0
 
@@ -367,14 +367,14 @@ class TestActivityProxyLookbackDetection:
         events_by_ticker = detect_activity_proxy_from_lookback(
             sample_trial_records_for_lookback,
             as_of_date,
-            lookback_days=90,
+            lookback_days=120,
         )
 
         # Should have events for ACME ticker
         assert "ACME" in events_by_ticker
         events = events_by_ticker["ACME"]
 
-        # Should have 3 events (trials within 90 days)
+        # Should have 3 events (trials within 120 days - NCT4 is at 130 days)
         assert len(events) == 3
 
         # All events should be activity proxy type
@@ -388,10 +388,10 @@ class TestActivityProxyLookbackDetection:
         events_by_ticker = detect_activity_proxy_from_lookback(
             sample_trial_records_for_lookback,
             as_of_date,
-            lookback_days=90,
+            lookback_days=120,
         )
 
-        # NCT00000004 (100 days old) should be excluded
+        # NCT00000004 (130 days old) should be excluded
         events = events_by_ticker.get("ACME", [])
         nct_ids = [e.nct_id for e in events]
         assert "NCT00000004" not in nct_ids
@@ -405,14 +405,14 @@ class TestActivityProxyLookbackDetection:
             as_of_date,
             lookback_days=30,
         )
-        events_90d = detect_activity_proxy_from_lookback(
+        events_120d = detect_activity_proxy_from_lookback(
             sample_trial_records_for_lookback,
             as_of_date,
-            lookback_days=90,
+            lookback_days=120,
         )
 
-        # 30d window should have fewer events than 90d
-        assert len(events_30d.get("ACME", [])) <= len(events_90d.get("ACME", []))
+        # 30d window should have fewer events than 120d
+        assert len(events_30d.get("ACME", [])) <= len(events_120d.get("ACME", []))
 
 
 # =============================================================================
@@ -475,12 +475,12 @@ class TestActivityProxySummaryIntegration:
 
         # Check activity proxy fields exist
         assert hasattr(summary, 'activity_proxy_score')
-        assert hasattr(summary, 'activity_proxy_count_90d')
+        assert hasattr(summary, 'activity_proxy_count_120d')
         assert hasattr(summary, 'activity_proxy_count_30d')
 
         # Check default values
         assert summary.activity_proxy_score == Decimal("0")
-        assert summary.activity_proxy_count_90d == 0
+        assert summary.activity_proxy_count_120d == 0
         assert summary.activity_proxy_count_30d == 0
 
     def test_summary_serialization_includes_activity_proxy(self):
@@ -505,7 +505,7 @@ class TestActivityProxySummaryIntegration:
             top_3_events=[],
             events=[],
             activity_proxy_score=Decimal("5.5"),
-            activity_proxy_count_90d=3,
+            activity_proxy_count_120d=3,
             activity_proxy_count_30d=2,
         )
 
@@ -515,7 +515,7 @@ class TestActivityProxySummaryIntegration:
         assert serialized['scores']['activity_proxy_score'] == "5.5"
 
         # Check event_summary section
-        assert serialized['event_summary']['activity_proxy_count_90d'] == 3
+        assert serialized['event_summary']['activity_proxy_count_120d'] == 3
         assert serialized['event_summary']['activity_proxy_count_30d'] == 2
 
 
