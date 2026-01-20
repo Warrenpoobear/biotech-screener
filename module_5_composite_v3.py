@@ -179,6 +179,17 @@ CRITICAL_COMPONENTS = ["financial", "clinical"]
 # moving composite more than ±6 points (protects against data quality issues)
 POS_DELTA_CAP = Decimal("6.0")
 
+# Confidence gate threshold - components with confidence below this contribute 0
+# This prevents missing data from being masked by neutral (50) defaults
+CONFIDENCE_GATE_THRESHOLD = Decimal("0.4")
+
+# Pipeline health thresholds (fraction of universe)
+HEALTH_GATE_THRESHOLDS = {
+    "catalyst": Decimal("0.10"),    # Fail if <10% have catalyst events
+    "momentum": Decimal("0.50"),    # Fail if <50% have market data
+    "smart_money": Decimal("0.30"), # Warn if <30% have 13F coverage
+}
+
 # Monotonic cap thresholds
 class MonotonicCap:
     LIQUIDITY_FAIL_CAP = Decimal("35")
@@ -195,6 +206,13 @@ class ScoringMode(str, Enum):
     PARTIAL = "partial"           # Some enhancement data (momentum, valuation)
     ENHANCED = "enhanced"         # Full enhancement data including PoS
     ADAPTIVE = "adaptive"         # Using adaptive weights from historical data
+
+
+class RunStatus(str, Enum):
+    """Pipeline run status based on data coverage health."""
+    OK = "OK"                     # All pipelines healthy
+    DEGRADED = "DEGRADED"         # Some pipelines below threshold, components gated
+    FAIL = "FAIL"                 # Critical pipeline failure, run should be rejected
 
 
 class NormalizationMethod(str, Enum):
@@ -902,14 +920,25 @@ def _score_single_ticker_v3(
         "valuation": valuation.confidence,
     }
 
+    # Track gated components (below confidence threshold)
+    gated_components = []
+
     effective_weights = {}
     for comp, base_w in vol_adjusted_weights.items():
         conf = confidences.get(comp, Decimal("0.5"))
-        # Confidence-weighted: low confidence reduces weight
-        eff_w = base_w * (Decimal("0.5") + conf * Decimal("0.5"))  # Range: 50-100% of base
-        effective_weights[comp] = eff_w
 
-    # Renormalize
+        # CONFIDENCE GATE: If confidence is below threshold, component contributes ZERO
+        # This prevents missing data from being masked by neutral (50) defaults
+        if conf < CONFIDENCE_GATE_THRESHOLD:
+            effective_weights[comp] = Decimal("0")
+            gated_components.append(comp)
+            flags.append(f"{comp}_confidence_gated")
+        else:
+            # Confidence-weighted: low confidence reduces weight (range: 50-100% of base)
+            eff_w = base_w * (Decimal("0.5") + conf * Decimal("0.5"))
+            effective_weights[comp] = eff_w
+
+    # Renormalize (only non-gated components contribute)
     total = sum(effective_weights.values())
     if total > EPS:
         effective_weights = {k: _quantize_weight(v / total) for k, v in effective_weights.items()}
@@ -1752,6 +1781,74 @@ def compute_module_5_composite_v3(
         "market_data_coverage": len(market_data_dict),
     }
 
+    # =========================================================================
+    # PIPELINE HEALTH CHECK
+    # =========================================================================
+
+    total_rankable = len(ranked_securities) if ranked_securities else 1  # Avoid div/0
+
+    # Calculate component coverage as fraction of universe
+    component_coverage = {
+        "catalyst": Decimal(str(diagnostic_counts.get("in_catalyst_window", 0))) / Decimal(str(total_rankable)),
+        "momentum": Decimal(str(diagnostic_counts.get("with_momentum_signal", 0))) / Decimal(str(total_rankable)),
+        "smart_money": Decimal(str(diagnostic_counts.get("with_smart_money", 0))) / Decimal(str(total_rankable)),
+        "market_data": Decimal(str(diagnostic_counts.get("with_market_data", 0))) / Decimal(str(total_rankable)),
+        "pos": Decimal(str(diagnostic_counts.get("with_pos_scores", 0))) / Decimal(str(total_rankable)),
+        "valuation": Decimal(str(diagnostic_counts.get("with_valuation_signal", 0))) / Decimal(str(total_rankable)),
+    }
+
+    # Collect components with confidence-gated entries (from individual security scoring)
+    gated_component_counts = {}
+    for sec in ranked_securities:
+        for flag in sec.get("flags", []):
+            if flag.endswith("_confidence_gated"):
+                comp = flag.replace("_confidence_gated", "")
+                gated_component_counts[comp] = gated_component_counts.get(comp, 0) + 1
+
+    # Determine run status
+    run_status = RunStatus.OK
+    degraded_components = []
+    health_warnings = []
+    health_errors = []
+
+    # Check each pipeline against thresholds
+    for component, threshold in HEALTH_GATE_THRESHOLDS.items():
+        coverage = component_coverage.get(component, Decimal("0"))
+        if coverage < threshold:
+            # Catalyst below threshold is critical (FAIL)
+            if component == "catalyst" and coverage < Decimal("0.01"):  # <1% = broken
+                run_status = RunStatus.FAIL
+                health_errors.append(f"CRITICAL: {component} coverage {coverage*100:.1f}% < {threshold*100:.0f}% threshold - pipeline broken")
+            elif component in ("momentum", "market_data"):
+                # Momentum/market data below threshold degrades run
+                if run_status != RunStatus.FAIL:
+                    run_status = RunStatus.DEGRADED
+                degraded_components.append(component)
+                health_warnings.append(f"DEGRADED: {component} coverage {coverage*100:.1f}% < {threshold*100:.0f}% threshold")
+            else:
+                # Other components just warn
+                degraded_components.append(component)
+                health_warnings.append(f"WARNING: {component} coverage {coverage*100:.1f}% < {threshold*100:.0f}% threshold")
+
+    # Check gated components (high rate of confidence gating indicates data issue)
+    for comp, count in gated_component_counts.items():
+        gated_pct = Decimal(str(count)) / Decimal(str(total_rankable))
+        if gated_pct > Decimal("0.5"):  # >50% of universe gated for this component
+            if run_status != RunStatus.FAIL:
+                run_status = RunStatus.DEGRADED
+            degraded_components.append(f"{comp}_gated")
+            health_warnings.append(f"DEGRADED: {comp} confidence-gated for {gated_pct*100:.1f}% of universe")
+
+    # Log health status
+    if run_status == RunStatus.FAIL:
+        for err in health_errors:
+            logger.error(err)
+    for warn in health_warnings:
+        logger.warning(warn)
+
+    if run_status != RunStatus.OK:
+        logger.warning(f"Run status: {run_status.value} | Degraded components: {degraded_components}")
+
     if adaptive_weights_result:
         enhancement_diagnostics["adaptive_weights"] = {
             "method": adaptive_weights_result.optimization_method,
@@ -1787,6 +1884,12 @@ def compute_module_5_composite_v3(
     return {
         "as_of_date": as_of_date,
         "scoring_mode": mode.value,
+        "run_status": run_status.value,
+        "degraded_components": degraded_components,
+        "component_coverage": {k: str(v) for k, v in sorted(component_coverage.items())},
+        "gated_component_counts": gated_component_counts,
+        "health_warnings": health_warnings,
+        "health_errors": health_errors,
         "weights_used": {k: str(v) for k, v in sorted(base_weights.items())},
         "ranked_securities": ranked_securities,
         "excluded_securities": excluded_sorted,
@@ -1810,6 +1913,12 @@ def _empty_result(as_of_date: str) -> Dict[str, Any]:
     return {
         "as_of_date": as_of_date,
         "scoring_mode": ScoringMode.DEFAULT.value,
+        "run_status": RunStatus.OK.value,
+        "degraded_components": [],
+        "component_coverage": {},
+        "gated_component_counts": {},
+        "health_warnings": [],
+        "health_errors": [],
         "weights_used": {k: str(v) for k, v in V3_DEFAULT_WEIGHTS.items()},
         "ranked_securities": [],
         "excluded_securities": [],

@@ -436,10 +436,24 @@ def compute_module_3_catalyst(
 
         logger.info(f"Key overlap: {len(common_keys)} common, {len(added_keys)} added, {len(removed_keys)} removed")
 
+        # Calculate churn rate
+        total_current = len(current_keys) if current_keys else 1
+        churn_rate = (len(added_keys) + len(removed_keys)) / (2 * total_current)
+
         if len(added_keys) > 100 or len(removed_keys) > 100:
-            logger.warning(f"⚠️  HIGH KEY CHURN: {len(added_keys)} added, {len(removed_keys)} removed")
+            logger.warning(f"⚠️  HIGH KEY CHURN: {len(added_keys)} added, {len(removed_keys)} removed ({churn_rate*100:.1f}% churn)")
             logger.warning("   This suggests trial_records.json was regenerated with different parameters")
             logger.warning("   or CT.gov query/universe changed between runs.")
+
+            # HIGH CHURN GATE: If >30% churn, treat as fresh baseline (no delta detection)
+            if churn_rate > 0.30:
+                logger.error(f"CATALYST CHURN GATE TRIGGERED: {churn_rate*100:.1f}% churn exceeds 30% threshold")
+                logger.error("   Forcing fresh baseline mode - all events will be detected as initial ingest")
+                logger.error("   This prevents false negatives from dataset regeneration")
+                # Force fresh baseline by clearing prior snapshot reference
+                prior_snapshot = None
+                prior_snapshot_date = None
+                logger.warning("   Prior snapshot cleared - running in fresh baseline mode")
 
         # Sample up to 10 COMMON trials and check field changes
         sample_keys = sorted(list(common_keys))[:10]
