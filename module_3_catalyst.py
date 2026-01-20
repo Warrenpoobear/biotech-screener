@@ -456,34 +456,36 @@ def compute_module_3_catalyst(
                 logger.warning("   Prior snapshot cleared - running in fresh baseline mode")
 
         # Sample up to 10 COMMON trials and check field changes
-        sample_keys = sorted(list(common_keys))[:10]
-        changes_found = 0
+        # Only run if prior_snapshot is still valid (not cleared by churn gate)
+        if prior_snapshot is not None:
+            sample_keys = sorted(list(common_keys))[:10]
+            changes_found = 0
 
-        for ticker, nct_id in sample_keys:
-            current_record = current_snapshot.get_record(ticker, nct_id)
-            prior_record = prior_snapshot.get_record(ticker, nct_id)
-            if not current_record or not prior_record:
-                continue
+            for ticker, nct_id in sample_keys:
+                current_record = current_snapshot.get_record(ticker, nct_id)
+                prior_record = prior_snapshot.get_record(ticker, nct_id)
+                if not current_record or not prior_record:
+                    continue
 
-            changes = []
+                changes = []
 
-            if current_record.overall_status != prior_record.overall_status:
-                changes.append(f"status: {prior_record.overall_status.name} → {current_record.overall_status.name}")
+                if current_record.overall_status != prior_record.overall_status:
+                    changes.append(f"status: {prior_record.overall_status.name} → {current_record.overall_status.name}")
 
-            if current_record.primary_completion_date != prior_record.primary_completion_date:
-                changes.append(f"pcd: {prior_record.primary_completion_date} → {current_record.primary_completion_date}")
+                if current_record.primary_completion_date != prior_record.primary_completion_date:
+                    changes.append(f"pcd: {prior_record.primary_completion_date} → {current_record.primary_completion_date}")
 
-            if current_record.last_update_posted != prior_record.last_update_posted:
-                changes.append(f"updated: {prior_record.last_update_posted} → {current_record.last_update_posted}")
+                if current_record.last_update_posted != prior_record.last_update_posted:
+                    changes.append(f"updated: {prior_record.last_update_posted} → {current_record.last_update_posted}")
 
-            if changes:
-                changes_found += 1
-                logger.info(f"  {nct_id}: {', '.join(changes)}")
+                if changes:
+                    changes_found += 1
+                    logger.info(f"  {nct_id}: {', '.join(changes)}")
 
-        if changes_found == 0 and len(common_keys) > 0:
-            logger.warning("⚠️  NO FIELD CHANGES in common records - snapshots may have same underlying data")
-            logger.info(f"   Current snapshot date: {current_snapshot.snapshot_date}")
-            logger.info(f"   Prior snapshot date: {prior_snapshot.snapshot_date}")
+            if changes_found == 0 and len(common_keys) > 0:
+                logger.warning("⚠️  NO FIELD CHANGES in common records - snapshots may have same underlying data")
+                logger.info(f"   Current snapshot date: {current_snapshot.snapshot_date}")
+                logger.info(f"   Prior snapshot date: {prior_snapshot.snapshot_date}")
 
     # Check update recency distribution
     cutoff_date = as_of_date - timedelta(days=7)
