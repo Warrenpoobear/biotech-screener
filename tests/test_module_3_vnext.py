@@ -755,5 +755,216 @@ class TestDiagnostics:
         assert list(d["events_by_confidence"].keys()) == ["HIGH", "LOW"]
 
 
+# =============================================================================
+# T9: CALENDAR CATALYST INTEGRATION
+# =============================================================================
+
+class TestCalendarCatalystIntegration:
+    """T9: Calendar catalysts flow through to scoring and diagnostics.
+
+    This tests the fix for the bug where calendar catalysts were detected
+    but never merged into the scoring pipeline.
+
+    Invariants:
+    - If calendar catalysts > 0, then events_detected_total > 0
+    - If calendar catalysts > 0, then tickers_with_events > 0
+    - Calendar events appear in ticker summaries
+    """
+
+    def test_calendar_catalyst_conversion(self):
+        """Calendar catalysts can be converted to CatalystEventV2."""
+        from module_3_catalyst import convert_calendar_catalyst_to_v2
+        from catalyst_diagnostics import CalendarCatalyst, EventEvidence, EventRuleID
+
+        calendar_cat = CalendarCatalyst(
+            ticker="TEST",
+            nct_id="NCT00000001",
+            event_type="UPCOMING_PCD",
+            target_date=date(2024, 3, 15),
+            days_until=60,
+            window="60D",
+            confidence=0.85,
+            rule_id=EventRuleID.M3_CAL_PCD_60D,
+            evidence=EventEvidence(
+                rule_id=EventRuleID.M3_CAL_PCD_60D,
+                fields={"primary_completion_date": "2024-03-15", "days_until": 60},
+                confidence=0.85,
+                confidence_reason="Date is ESTIMATED",
+            ),
+        )
+
+        v2_event = convert_calendar_catalyst_to_v2(calendar_cat)
+
+        # Verify conversion
+        assert v2_event.ticker == "TEST"
+        assert v2_event.nct_id == "NCT00000001"
+        assert v2_event.event_type == EventType.CT_PRIMARY_COMPLETION
+        assert v2_event.event_date == "2024-03-15"
+        assert v2_event.source == "CTGOV_CALENDAR"
+        assert v2_event.confidence == ConfidenceLevel.HIGH  # 0.85 >= 0.85
+
+    def test_calendar_catalyst_confidence_mapping(self):
+        """Calendar catalyst confidence is mapped correctly."""
+        from module_3_catalyst import convert_calendar_catalyst_to_v2
+        from catalyst_diagnostics import CalendarCatalyst, EventEvidence, EventRuleID
+
+        def make_cal_cat(confidence: float) -> CalendarCatalyst:
+            return CalendarCatalyst(
+                ticker="TEST",
+                nct_id="NCT00000001",
+                event_type="UPCOMING_PCD",
+                target_date=date(2024, 3, 15),
+                days_until=30,
+                window="30D",
+                confidence=confidence,
+                rule_id=EventRuleID.M3_CAL_PCD_30D,
+                evidence=EventEvidence(
+                    rule_id=EventRuleID.M3_CAL_PCD_30D,
+                    fields={},
+                    confidence=confidence,
+                    confidence_reason="test",
+                ),
+            )
+
+        # HIGH: >= 0.85
+        high_cat = make_cal_cat(0.90)
+        assert convert_calendar_catalyst_to_v2(high_cat).confidence == ConfidenceLevel.HIGH
+
+        # MED: >= 0.65 and < 0.85
+        med_cat = make_cal_cat(0.75)
+        assert convert_calendar_catalyst_to_v2(med_cat).confidence == ConfidenceLevel.MED
+
+        # LOW: < 0.65
+        low_cat = make_cal_cat(0.55)
+        assert convert_calendar_catalyst_to_v2(low_cat).confidence == ConfidenceLevel.LOW
+
+    def test_calendar_event_type_mapping(self):
+        """Calendar event types map to correct EventType."""
+        from module_3_catalyst import convert_calendar_catalyst_to_v2
+        from catalyst_diagnostics import CalendarCatalyst, EventEvidence, EventRuleID
+
+        def make_cal_cat(event_type: str, rule_id: str) -> CalendarCatalyst:
+            return CalendarCatalyst(
+                ticker="TEST",
+                nct_id="NCT00000001",
+                event_type=event_type,
+                target_date=date(2024, 3, 15),
+                days_until=30,
+                window="30D",
+                confidence=0.80,
+                rule_id=rule_id,
+                evidence=EventEvidence(
+                    rule_id=rule_id,
+                    fields={},
+                    confidence=0.80,
+                    confidence_reason="test",
+                ),
+            )
+
+        # UPCOMING_PCD -> CT_PRIMARY_COMPLETION
+        pcd_cat = make_cal_cat("UPCOMING_PCD", EventRuleID.M3_CAL_PCD_30D)
+        assert convert_calendar_catalyst_to_v2(pcd_cat).event_type == EventType.CT_PRIMARY_COMPLETION
+
+        # UPCOMING_SCD -> CT_STUDY_COMPLETION
+        scd_cat = make_cal_cat("UPCOMING_SCD", EventRuleID.M3_CAL_SCD_30D)
+        assert convert_calendar_catalyst_to_v2(scd_cat).event_type == EventType.CT_STUDY_COMPLETION
+
+        # RESULTS_DUE -> CT_RESULTS_POSTED
+        results_cat = make_cal_cat("RESULTS_DUE", EventRuleID.M3_CAL_RESULTS_DUE)
+        assert convert_calendar_catalyst_to_v2(results_cat).event_type == EventType.CT_RESULTS_POSTED
+
+    def test_calendar_events_included_in_batch_scoring(self):
+        """Calendar events merged into batch scoring produce non-zero coverage."""
+        from module_3_scoring import score_catalyst_events
+
+        # Simulate calendar-derived events
+        calendar_events = [
+            CatalystEventV2(
+                ticker="ACME",
+                nct_id="NCT00000001",
+                event_type=EventType.CT_PRIMARY_COMPLETION,
+                event_severity=EventSeverity.CRITICAL_POSITIVE,
+                event_date="2024-03-15",  # Future date
+                field_changed="calendar_upcoming_pcd",
+                prior_value=None,
+                new_value="60d_ahead",
+                source="CTGOV_CALENDAR",
+                confidence=ConfidenceLevel.HIGH,
+                disclosed_at="2024-03-15",
+            ),
+            CatalystEventV2(
+                ticker="BETA",
+                nct_id="NCT00000002",
+                event_type=EventType.CT_STUDY_COMPLETION,
+                event_severity=EventSeverity.POSITIVE,
+                event_date="2024-04-01",  # Future date
+                field_changed="calendar_upcoming_scd",
+                prior_value=None,
+                new_value="77d_ahead",
+                source="CTGOV_CALENDAR",
+                confidence=ConfidenceLevel.MED,
+                disclosed_at="2024-04-01",
+            ),
+        ]
+
+        events_by_ticker = {
+            "ACME": [calendar_events[0]],
+            "BETA": [calendar_events[1]],
+        }
+        active_tickers = ["ACME", "BETA", "GAMMA"]
+        as_of = date(2024, 1, 15)
+
+        summaries, diagnostics = score_catalyst_events(events_by_ticker, active_tickers, as_of)
+
+        # Key invariant: If calendar catalysts exist, diagnostics should reflect them
+        assert diagnostics.events_detected_total == 2, \
+            f"Expected 2 events, got {diagnostics.events_detected_total}"
+        assert diagnostics.tickers_with_events == 2, \
+            f"Expected 2 tickers with events, got {diagnostics.tickers_with_events}"
+
+        # Verify events appear in summaries
+        assert len(summaries["ACME"].events) == 1
+        assert summaries["ACME"].events[0].event_type == EventType.CT_PRIMARY_COMPLETION
+        assert summaries["ACME"].events[0].source == "CTGOV_CALENDAR"
+
+        assert len(summaries["BETA"].events) == 1
+        assert summaries["BETA"].events[0].event_type == EventType.CT_STUDY_COMPLETION
+
+        # GAMMA has no events
+        assert len(summaries["GAMMA"].events) == 0
+
+    def test_calendar_events_contribute_to_proximity_score(self):
+        """Calendar events (future-dated) contribute to proximity score."""
+        as_of = date(2024, 1, 15)
+
+        # Future calendar event
+        calendar_event = CatalystEventV2(
+            ticker="TEST",
+            nct_id="NCT00000001",
+            event_type=EventType.CT_PRIMARY_COMPLETION,
+            event_severity=EventSeverity.CRITICAL_POSITIVE,
+            event_date="2024-03-01",  # ~45 days in future
+            field_changed="calendar_upcoming_pcd",
+            prior_value=None,
+            new_value="45d_ahead",
+            source="CTGOV_CALENDAR",
+            confidence=ConfidenceLevel.HIGH,
+            disclosed_at="2024-03-01",
+        )
+
+        summary = calculate_ticker_catalyst_score("TEST", [calendar_event], as_of)
+
+        # Proximity score should be positive (event is in future)
+        assert summary.catalyst_proximity_score > Decimal("0"), \
+            f"Expected positive proximity score, got {summary.catalyst_proximity_score}"
+        assert summary.n_events_upcoming == 1, \
+            f"Expected 1 upcoming event, got {summary.n_events_upcoming}"
+
+        # Next catalyst date should be set
+        assert summary.next_catalyst_date == "2024-03-01"
+        # Days until Mar 1 from Jan 15 (inclusive/exclusive handling may vary)
+        assert 45 <= summary.catalyst_window_days <= 46
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
