@@ -168,6 +168,76 @@ def load_json_data(filepath: Path, description: str) -> List[Dict[str, Any]]:
     return data
 
 
+def _convert_holdings_to_coinvest(holdings_snapshots: Dict[str, Any]) -> Dict[str, Dict]:
+    """
+    Convert holdings_snapshots.json format to coinvest_signals format for Module 5.
+
+    holdings_snapshots format:
+    {
+        "TICKER": {
+            "holdings": {
+                "current": {
+                    "MANAGER_CIK": {"value_kusd": 123456},
+                    ...
+                }
+            }
+        }
+    }
+
+    coinvest_signals format expected by Module 5:
+    {
+        "TICKER": {
+            "coinvest_overlap_count": int,
+            "coinvest_holders": [str, ...],
+            "position_changes": {...},
+            "holder_tiers": {...}
+        }
+    }
+    """
+    # Known elite managers (Tier 1) by CIK
+    TIER1_MANAGERS = {
+        "0001263508": "Baker Bros",
+        "0001346824": "RA Capital",
+        "0000909661": "Perceptive",
+        "0001167483": "Deerfield",
+        "0001390295": "RTW Investments",
+        "0001495385": "Orbimed",
+        "0001043233": "Viking Global",
+        "0001535472": "Citadel",
+    }
+
+    coinvest_signals = {}
+
+    for ticker, ticker_data in holdings_snapshots.items():
+        if not isinstance(ticker_data, dict):
+            continue
+
+        holdings = ticker_data.get("holdings", {})
+        current = holdings.get("current", {})
+
+        if not current:
+            continue
+
+        # Count managers and identify tiers
+        holder_ciks = list(current.keys())
+        holder_tiers = {}
+
+        for cik in holder_ciks:
+            if cik in TIER1_MANAGERS:
+                holder_tiers[cik] = {"tier": 1, "name": TIER1_MANAGERS[cik]}
+            else:
+                holder_tiers[cik] = {"tier": 2, "name": f"Manager_{cik[-4:]}"}
+
+        coinvest_signals[ticker] = {
+            "coinvest_overlap_count": len(holder_ciks),
+            "coinvest_holders": holder_ciks,
+            "position_changes": {},  # Would need historical data to compute
+            "holder_tiers": holder_tiers,
+        }
+
+    return coinvest_signals
+
+
 def write_json_output(filepath: Path, data: Dict[str, Any]) -> None:
     """
     Write JSON output with deterministic formatting.
@@ -524,14 +594,35 @@ def run_screening_pipeline(
     trial_records = load_json_data(data_dir / "trial_records.json", "Trials")
     market_records = load_json_data(data_dir / "market_data.json", "Market data")
 
+    # Convert market_records list to dict keyed by ticker for Module 5
+    # This enables volatility adjustment, momentum signal, and other enhancements
+    market_data_by_ticker = {}
+    if market_records:
+        for record in market_records:
+            if isinstance(record, dict) and 'ticker' in record:
+                ticker = record['ticker']
+                market_data_by_ticker[ticker] = record
+        logger.info(f"  Market data indexed for {len(market_data_by_ticker)} tickers")
+
     coinvest_signals = None
     if enable_coinvest:
+        # Try loading coinvest_signals.json first
         coinvest_file = data_dir / "coinvest_signals.json"
         if coinvest_file.exists():
             logger.info("  Loading co-invest signals...")
             coinvest_signals = load_json_data(coinvest_file, "Co-invest signals")
         else:
-            logger.warning(f"  --enable-coinvest specified but {coinvest_file} not found")
+            # Fallback: try loading holdings_snapshots.json and convert to coinvest format
+            holdings_file = data_dir / "holdings_snapshots.json"
+            if holdings_file.exists():
+                logger.info("  Loading holdings_snapshots.json for smart money signals...")
+                holdings_snapshots = load_json_data(holdings_file, "Holdings snapshots")
+                if holdings_snapshots:
+                    # Convert holdings format to coinvest_signals format
+                    coinvest_signals = _convert_holdings_to_coinvest(holdings_snapshots)
+                    logger.info(f"  Converted holdings to coinvest signals for {len(coinvest_signals)} tickers")
+            else:
+                logger.warning(f"  --enable-coinvest specified but neither coinvest_signals.json nor holdings_snapshots.json found")
 
     # Enhancement data (optional)
     market_snapshot = None
@@ -906,6 +997,7 @@ def run_screening_pipeline(
             coinvest_signals=coinvest_signals,
             validate=True,
             enhancement_result=enhancement_result,
+            market_data_by_ticker=market_data_by_ticker,  # Enable volatility/momentum signals
         )
         if checkpoint_dir:
             save_checkpoint(checkpoint_dir, "module_5", as_of_date, m5_result)
@@ -916,6 +1008,29 @@ def run_screening_pipeline(
     diag = m5_result.get('diagnostic_counts', {})
     logger.info(f"  Rankable: {diag.get('rankable', len(m5_result.get('ranked_securities', [])))}, "
                 f"Excluded: {diag.get('excluded', len(m5_result.get('excluded_securities', [])))}")
+
+    # Log pipeline health status
+    run_status = m5_result.get('run_status', 'UNKNOWN')
+    degraded = m5_result.get('degraded_components', [])
+    coverage = m5_result.get('component_coverage', {})
+    gated = m5_result.get('gated_component_counts', {})
+
+    if run_status == 'FAIL':
+        logger.error(f"  RUN STATUS: {run_status} - Pipeline health check FAILED")
+        for err in m5_result.get('health_errors', []):
+            logger.error(f"    {err}")
+    elif run_status == 'DEGRADED':
+        logger.warning(f"  RUN STATUS: {run_status} - Some components degraded: {degraded}")
+        for warn in m5_result.get('health_warnings', []):
+            logger.warning(f"    {warn}")
+    else:
+        logger.info(f"  RUN STATUS: {run_status}")
+
+    # Log component coverage
+    logger.info(f"  Component coverage: catalyst={coverage.get('catalyst', '?')}, "
+                f"momentum={coverage.get('momentum', '?')}, smart_money={coverage.get('smart_money', '?')}")
+    if gated:
+        logger.warning(f"  Confidence-gated components: {gated}")
 
     # Final defensive overlay and top-N selection
     logger.info("[7/7] Defensive overlay & top-N selection...")
