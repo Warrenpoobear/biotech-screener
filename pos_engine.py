@@ -35,7 +35,7 @@ from enum import Enum
 
 
 # Module metadata
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 __author__ = "Wake Robin Capital Management"
 
 
@@ -68,7 +68,7 @@ class ProbabilityOfSuccessEngine:
         print(result["stage_score"])    # 65 (from stage)
     """
 
-    VERSION = "1.1.0"
+    VERSION = "1.2.0"
     BENCHMARKS_FILE = "data/pos_benchmarks_bio_2011_2020_v1.json"
 
     # Score ranges (explicit bounds)
@@ -101,15 +101,19 @@ class ProbabilityOfSuccessEngine:
     REQUIRED_FIELDS = ["base_stage"]
     OPTIONAL_FIELDS = ["indication", "trial_design_quality", "competitive_intensity"]
 
-    def __init__(self, benchmarks_path: Optional[str] = None):
+    def __init__(self, benchmarks_path: Optional[str] = None, strict: bool = False):
         """
         Initialize the PoS engine.
 
         Args:
             benchmarks_path: Optional path to benchmarks JSON file.
                              Defaults to data/pos_benchmarks_bio_2011_2020_v1.json
+            strict: If True, raise an error if benchmark file is missing/invalid.
+                    If False (default), fall back to hardcoded defaults with warning.
+                    Production deployments should use strict=True.
         """
         self.benchmarks_path = benchmarks_path or self.BENCHMARKS_FILE
+        self.strict = strict
         self.benchmarks: Dict[str, Any] = {}
         self.benchmarks_metadata: Dict[str, Any] = {}
         self.audit_trail: List[Dict[str, Any]] = []
@@ -118,16 +122,25 @@ class ProbabilityOfSuccessEngine:
         self._load_benchmarks()
 
     def _load_benchmarks(self) -> None:
-        """Load PoS benchmarks from external versioned file."""
-        try:
-            # Try relative to module, then absolute
-            paths_to_try = [
-                Path(__file__).parent / self.benchmarks_path,
-                Path(self.benchmarks_path)
-            ]
+        """Load PoS benchmarks from external versioned file.
 
-            for path in paths_to_try:
-                if path.exists():
+        Raises:
+            FileNotFoundError: If strict=True and benchmark file not found
+            ValueError: If strict=True and benchmark file is invalid/corrupt
+        """
+        # Try relative to module, then absolute
+        paths_to_try = [
+            Path(__file__).parent / self.benchmarks_path,
+            Path(self.benchmarks_path)
+        ]
+
+        file_found = False
+        load_error = None
+
+        for path in paths_to_try:
+            if path.exists():
+                file_found = True
+                try:
                     with open(path, "r") as f:
                         data = json.load(f)
                     self.benchmarks_metadata = data.get("_metadata", {})
@@ -138,12 +151,26 @@ class ProbabilityOfSuccessEngine:
                         "nda_bla": data.get("nda_bla_loa", {})
                     }
                     return
+                except json.JSONDecodeError as e:
+                    load_error = ValueError(f"Invalid JSON in benchmark file {path}: {e}")
+                    break
+                except Exception as e:
+                    load_error = ValueError(f"Error loading benchmark file {path}: {e}")
+                    break
 
-            # Fallback to hardcoded defaults (with warning)
-            self._use_fallback_benchmarks()
+        # Handle missing or invalid benchmark file
+        if self.strict:
+            if load_error:
+                raise load_error
+            if not file_found:
+                raise FileNotFoundError(
+                    f"Benchmark file not found: {self.benchmarks_path}. "
+                    f"Searched: {[str(p) for p in paths_to_try]}. "
+                    "Use strict=False to allow fallback to hardcoded defaults."
+                )
 
-        except Exception:
-            self._use_fallback_benchmarks()
+        # Non-strict mode: fallback to hardcoded defaults (with warning in metadata)
+        self._use_fallback_benchmarks()
 
     def _use_fallback_benchmarks(self) -> None:
         """Use hardcoded fallback benchmarks when file unavailable."""
@@ -186,11 +213,17 @@ class ProbabilityOfSuccessEngine:
             - missing_fields: List[str]
             - inputs_used: Dict
             - audit_entry: Dict
+
+        Raises:
+            ValueError: If as_of_date is None (required for determinism)
         """
 
-        # Validate as_of_date (required for determinism)
+        # Validate as_of_date (REQUIRED for determinism - no silent defaults)
         if as_of_date is None:
-            as_of_date = date.today()
+            raise ValueError(
+                "as_of_date is required for deterministic scoring. "
+                "Providing date.today() as default would violate PIT discipline."
+            )
 
         # Deterministic timestamp from as_of_date
         deterministic_timestamp = f"{as_of_date.isoformat()}T00:00:00Z"
@@ -213,8 +246,12 @@ class ProbabilityOfSuccessEngine:
         inputs_used["indication"] = indication
         inputs_used["indication_normalized"] = indication_normalized
 
-        if indication and not indication_normalized:
-            inputs_used["indication_parse_failed"] = True
+        # Detect indication parse fallback: when indication was provided but
+        # normalized to "all_indications" (the generic fallback category)
+        # This is important for auditability - we should know when we couldn't
+        # map an indication to a specific benchmark category
+        if indication and indication_normalized == "all_indications":
+            inputs_used["indication_parse_fallback"] = True
 
         # Track optional fields
         if trial_design_quality is not None:
@@ -371,8 +408,11 @@ class ProbabilityOfSuccessEngine:
             tdq = self._to_decimal(company.get("trial_design_quality"))
             ci = self._to_decimal(company.get("competitive_intensity"))
 
+            # IMPORTANT: Do NOT default base_stage here - let _normalize_stage()
+            # handle missing/empty stages so it can properly flag stage_was_defaulted
+            # and trigger low confidence gating
             result = self.calculate_pos_score(
-                base_stage=company.get("base_stage", "phase_2"),
+                base_stage=company.get("base_stage"),  # No default - allows proper flagging
                 indication=company.get("indication"),
                 trial_design_quality=tdq,
                 competitive_intensity=ci,
@@ -734,7 +774,7 @@ class ProbabilityOfSuccessEngine:
 def demonstration() -> None:
     """Demonstrate the PoS engine capabilities."""
     print("=" * 70)
-    print("PROBABILITY OF SUCCESS ENGINE v1.1.0 - DEMONSTRATION")
+    print("PROBABILITY OF SUCCESS ENGINE v1.2.0 - DEMONSTRATION")
     print("=" * 70)
     print()
 

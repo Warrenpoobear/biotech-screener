@@ -41,7 +41,7 @@ class TestEngineInitialization:
         """Engine should initialize with default benchmarks."""
         engine = ProbabilityOfSuccessEngine()
 
-        assert engine.VERSION == "1.1.0"
+        assert engine.VERSION == "1.2.0"
         assert len(engine.benchmarks) > 0
         assert engine.audit_trail == []
 
@@ -646,3 +646,205 @@ class TestConfidenceGating:
         assert diag["confidence_distribution"]["high"] == 1
         assert diag["confidence_distribution"]["medium"] == 1
         assert diag["confidence_distribution"]["low"] == 2
+
+
+# ============================================================================
+# DETERMINISM AND PIT DISCIPLINE TESTS
+# ============================================================================
+
+class TestDeterminismRequirements:
+    """Tests for determinism and PIT discipline enforcement."""
+
+    @pytest.fixture
+    def engine(self):
+        return ProbabilityOfSuccessEngine()
+
+    def test_as_of_date_required_raises_on_none(self, engine):
+        """as_of_date=None should raise ValueError (no silent defaults)."""
+        with pytest.raises(ValueError) as exc_info:
+            engine.calculate_pos_score("phase_3", as_of_date=None)
+
+        assert "as_of_date is required" in str(exc_info.value)
+        assert "deterministic" in str(exc_info.value).lower()
+
+    def test_same_inputs_produce_identical_outputs(self, engine):
+        """Same inputs must produce byte-identical outputs (determinism test)."""
+        as_of = date(2026, 1, 15)
+
+        result1 = engine.calculate_pos_score(
+            "phase_3", indication="oncology", as_of_date=as_of
+        )
+        result2 = engine.calculate_pos_score(
+            "phase_3", indication="oncology", as_of_date=as_of
+        )
+
+        # Compare key fields for determinism
+        assert result1["pos_score"] == result2["pos_score"]
+        assert result1["stage_score"] == result2["stage_score"]
+        assert result1["loa_probability"] == result2["loa_probability"]
+        assert result1["audit_entry"]["inputs_hash"] == result2["audit_entry"]["inputs_hash"]
+
+
+# ============================================================================
+# MISSING STAGE DETECTION TESTS
+# ============================================================================
+
+class TestMissingStageDetection:
+    """Tests for proper detection of missing base_stage in score_universe()."""
+
+    @pytest.fixture
+    def engine(self):
+        return ProbabilityOfSuccessEngine()
+
+    def test_missing_base_stage_flagged_correctly(self, engine):
+        """Company with no base_stage should have stage_was_defaulted=True."""
+        as_of = date(2026, 1, 15)
+
+        # Company with no base_stage key at all
+        universe = [{"ticker": "NOSTAGE", "indication": "oncology"}]
+        result = engine.score_universe(universe, as_of)
+
+        score = result["scores"][0]
+        assert score["stage_was_defaulted"] is True
+        assert score["pos_confidence"] == Decimal("0.30")  # Low confidence
+        assert "stage_defaulted" in score["flags"]
+        assert "below_confidence_gate" in score["flags"]
+
+    def test_none_base_stage_flagged_correctly(self, engine):
+        """Company with base_stage=None should have stage_was_defaulted=True."""
+        as_of = date(2026, 1, 15)
+
+        universe = [{"ticker": "NULLSTAGE", "base_stage": None, "indication": "oncology"}]
+        result = engine.score_universe(universe, as_of)
+
+        score = result["scores"][0]
+        assert score["stage_was_defaulted"] is True
+        assert score["pos_confidence"] == Decimal("0.30")
+
+    def test_provided_stage_not_marked_defaulted(self, engine):
+        """Company with valid base_stage should NOT have stage_was_defaulted."""
+        as_of = date(2026, 1, 15)
+
+        universe = [{"ticker": "HASSTAGE", "base_stage": "phase_3", "indication": "oncology"}]
+        result = engine.score_universe(universe, as_of)
+
+        score = result["scores"][0]
+        assert score["stage_was_defaulted"] is False
+        assert score["pos_confidence"] == Decimal("0.70")  # High confidence
+        assert "stage_defaulted" not in score["flags"]
+
+
+# ============================================================================
+# INDICATION PARSE FALLBACK TESTS
+# ============================================================================
+
+class TestIndicationParseFallback:
+    """Tests for indication parse fallback detection."""
+
+    @pytest.fixture
+    def engine(self):
+        return ProbabilityOfSuccessEngine()
+
+    def test_unknown_indication_flags_parse_fallback(self, engine):
+        """Unknown indication should flag indication_parse_fallback."""
+        result = engine.calculate_pos_score(
+            "phase_3",
+            indication="some unknown therapy xyz",
+            as_of_date=date(2026, 1, 15)
+        )
+
+        assert result["indication_normalized"] == "all_indications"
+        assert result["inputs_used"].get("indication_parse_fallback") is True
+
+    def test_valid_indication_no_fallback_flag(self, engine):
+        """Valid indication should NOT have parse_fallback flag."""
+        result = engine.calculate_pos_score(
+            "phase_3",
+            indication="oncology",
+            as_of_date=date(2026, 1, 15)
+        )
+
+        assert result["indication_normalized"] == "oncology"
+        assert "indication_parse_fallback" not in result["inputs_used"]
+
+    def test_none_indication_no_fallback_flag(self, engine):
+        """None indication should NOT have parse_fallback flag (expected behavior)."""
+        result = engine.calculate_pos_score(
+            "phase_3",
+            indication=None,
+            as_of_date=date(2026, 1, 15)
+        )
+
+        assert result["indication_normalized"] is None
+        assert "indication_parse_fallback" not in result["inputs_used"]
+
+
+# ============================================================================
+# STRICT MODE BENCHMARK TESTS
+# ============================================================================
+
+class TestStrictModeBenchmarks:
+    """Tests for strict mode benchmark loading."""
+
+    def test_strict_mode_raises_on_missing_file(self, tmp_path):
+        """strict=True should raise FileNotFoundError when benchmarks file missing."""
+        with pytest.raises(FileNotFoundError) as exc_info:
+            ProbabilityOfSuccessEngine(
+                benchmarks_path=str(tmp_path / "nonexistent.json"),
+                strict=True
+            )
+
+        assert "Benchmark file not found" in str(exc_info.value)
+        assert "strict=False" in str(exc_info.value)
+
+    def test_strict_mode_raises_on_invalid_json(self, tmp_path):
+        """strict=True should raise ValueError when benchmark file is invalid JSON."""
+        # Create invalid JSON file
+        invalid_file = tmp_path / "invalid.json"
+        invalid_file.write_text("{ not valid json }")
+
+        with pytest.raises(ValueError) as exc_info:
+            ProbabilityOfSuccessEngine(
+                benchmarks_path=str(invalid_file),
+                strict=True
+            )
+
+        assert "Invalid JSON" in str(exc_info.value)
+
+    def test_non_strict_mode_falls_back_silently(self, tmp_path):
+        """strict=False should use fallback benchmarks when file missing."""
+        engine = ProbabilityOfSuccessEngine(
+            benchmarks_path=str(tmp_path / "nonexistent.json"),
+            strict=False  # Default behavior
+        )
+
+        # Should still work
+        result = engine.calculate_pos_score("phase_3", as_of_date=date(2026, 1, 15))
+        assert result["pos_score"] >= Decimal("0")
+
+        # Should indicate fallback in metadata
+        assert engine.benchmarks_metadata.get("source") == "FALLBACK_HARDCODED"
+        assert "warning" in engine.benchmarks_metadata
+
+    def test_fallback_benchmarks_labeled_in_provenance(self, tmp_path):
+        """Fallback benchmarks should be clearly labeled in provenance."""
+        engine = ProbabilityOfSuccessEngine(
+            benchmarks_path=str(tmp_path / "nonexistent.json"),
+            strict=False
+        )
+
+        result = engine.calculate_pos_score("phase_3", as_of_date=date(2026, 1, 15))
+
+        # Audit entry should indicate fallback source
+        assert result["audit_entry"]["benchmarks_source"] == "FALLBACK_HARDCODED"
+
+    def test_valid_benchmarks_loads_without_error(self):
+        """Default benchmarks path should load without error in strict mode."""
+        # This tests that the real benchmark file exists and is valid
+        try:
+            engine = ProbabilityOfSuccessEngine(strict=True)
+            # Should have loaded real benchmarks
+            assert engine.benchmarks_metadata.get("source") != "FALLBACK_HARDCODED"
+        except FileNotFoundError:
+            # If running in environment without benchmark file, skip
+            pytest.skip("Benchmark file not available in test environment")

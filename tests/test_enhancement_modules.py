@@ -39,7 +39,7 @@ class TestProbabilityOfSuccessEngine:
     def test_pos_engine_initialization(self):
         """Test engine initializes correctly."""
         engine = ProbabilityOfSuccessEngine()
-        assert engine.VERSION == "1.1.0"
+        assert engine.VERSION == "1.2.0"
         assert len(engine.audit_trail) == 0
         # Should have loaded benchmarks (either file or fallback)
         assert "phase_3" in engine.benchmarks
