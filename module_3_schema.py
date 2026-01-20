@@ -375,7 +375,7 @@ class TickerCatalystSummaryV2:
     # NEW: Activity proxy (historical data workaround)
     # Tracks trials with recent last_update_posted but no detected status/date changes
     activity_proxy_score: Decimal = Decimal("0")
-    activity_proxy_count_90d: int = 0  # Trials updated in past 90 days
+    activity_proxy_count_120d: int = 0  # Trials updated in past 120 days
     activity_proxy_count_30d: int = 0  # Trials updated in past 30 days
 
     # Schema metadata
@@ -418,7 +418,7 @@ class TickerCatalystSummaryV2:
                 "n_events_added": self.n_events_added,
                 "n_events_removed": self.n_events_removed,
                 "max_slip_days": self.max_slip_days,
-                "activity_proxy_count_90d": self.activity_proxy_count_90d,
+                "activity_proxy_count_120d": self.activity_proxy_count_120d,
                 "activity_proxy_count_30d": self.activity_proxy_count_30d,
             },
             "top_3_events": self.top_3_events,

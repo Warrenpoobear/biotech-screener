@@ -475,8 +475,8 @@ class EventDetector:
             # Only generate activity proxy if no other events were detected
             days_since_update = (as_of_date - current_record.last_update_posted).days
 
-            # Only count updates within 90 days as meaningful activity
-            if days_since_update <= 90:
+            # Only count updates within 120 days as meaningful activity
+            if days_since_update <= 120:
                 # Scale impact by recency (more recent = higher impact)
                 if days_since_update <= 7:
                     impact = 2
@@ -549,7 +549,7 @@ def compute_event_score(
 def detect_activity_proxy_from_lookback(
     trials: list[CanonicalTrialRecord],
     as_of_date: date,
-    lookback_days: int = 90
+    lookback_days: int = 120
 ) -> dict[str, list[CatalystEvent]]:
     """
     Detect activity proxy events from last_update_posted within lookback window.
@@ -620,7 +620,7 @@ def detect_activity_proxy_from_lookback(
 def compute_activity_proxy_score(
     trials: list[CanonicalTrialRecord],
     as_of_date: date,
-    lookback_days: int = 90,
+    lookback_days: int = 120,
     phase_weights: dict[str, float] = None
 ) -> dict[str, any]:
     """
@@ -650,10 +650,10 @@ def compute_activity_proxy_score(
             'NA': 2.0,
         }
 
-    cutoff_90d = as_of_date - timedelta(days=90)
+    cutoff_120d = as_of_date - timedelta(days=120)
     cutoff_30d = as_of_date - timedelta(days=30)
 
-    activity_count_90d = 0
+    activity_count_120d = 0
     activity_count_30d = 0
     total_score = 0.0
     recent_nct_ids = []
@@ -662,10 +662,10 @@ def compute_activity_proxy_score(
         if not trial.last_update_posted:
             continue
 
-        if trial.last_update_posted < cutoff_90d:
+        if trial.last_update_posted < cutoff_120d:
             continue
 
-        activity_count_90d += 1
+        activity_count_120d += 1
         recent_nct_ids.append(trial.nct_id)
 
         if trial.last_update_posted >= cutoff_30d:
@@ -696,7 +696,7 @@ def compute_activity_proxy_score(
 
     return {
         'activity_proxy_score': round(total_score, 2),
-        'activity_count_90d': activity_count_90d,
+        'activity_count_120d': activity_count_120d,
         'activity_count_30d': activity_count_30d,
         'recent_nct_ids': recent_nct_ids,
     }
