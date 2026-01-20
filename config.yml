@@ -1,0 +1,220 @@
+# ============================================================================
+# BIOTECH-SCREENER CONFIGURATION
+# ============================================================================
+# All paths and thresholds are EXPLICIT here - no hidden defaults.
+# Edit this file to customize your pipeline configuration.
+#
+# IMPORTANT: This is the single source of truth for configuration.
+# ============================================================================
+
+# Pipeline version (for compatibility checking)
+version: "1.4.0"
+
+# ----------------------------------------------------------------------------
+# DATA PATHS
+# All paths relative to project root unless absolute
+# ----------------------------------------------------------------------------
+paths:
+  # Input data directory
+  data_dir: "production_data"
+
+  # Required input files (relative to data_dir)
+  input_files:
+    universe: "universe.json"
+    financial_records: "financial_records.json"
+    trial_records: "trial_records.json"
+    market_data: "market_data.json"
+
+  # Optional input files
+  optional_files:
+    coinvest_signals: "coinvest_signals.json"
+    short_interest: "short_interest.json"
+    market_snapshot: "market_snapshot.json"
+
+  # State directory for catalyst snapshots
+  ctgov_state_dir: "production_data/ctgov_state"
+
+  # Output directory
+  output_dir: "production_data"
+
+  # Checkpoint directory (for resuming)
+  checkpoint_dir: "checkpoints"
+
+# ----------------------------------------------------------------------------
+# MODULE 1: Universe Filtering
+# ----------------------------------------------------------------------------
+module_1:
+  # Minimum market cap (in millions USD)
+  min_market_cap_mm: 50
+
+  # Keywords that indicate shell companies (excluded)
+  shell_keywords:
+    - "acquisition corp"
+    - "spac"
+    - "blank check"
+    - "shell company"
+
+# ----------------------------------------------------------------------------
+# MODULE 2: Financial Health
+# ----------------------------------------------------------------------------
+module_2:
+  # Component weights (must sum to 1.0)
+  weights:
+    runway: 0.50
+    dilution: 0.30
+    liquidity: 0.20
+
+  # Runway thresholds (months)
+  runway_thresholds:
+    sev3_critical: 6      # < 6 months = SEV3 (hard gate)
+    sev2_warning: 12      # 6-12 months = SEV2 (soft gate)
+    sev1_caution: 18      # 12-18 months = SEV1
+    # >= 18 months = NONE (healthy)
+
+  # Liquidity gate threshold (USD daily volume)
+  liquidity_gate_threshold: 500000
+
+  # Cash-to-market-cap ratio for dilution warning
+  dilution_warning_threshold: 0.05
+
+# ----------------------------------------------------------------------------
+# MODULE 3: Catalyst Detection
+# ----------------------------------------------------------------------------
+module_3:
+  # Adapter configuration
+  adapter:
+    # If true, crash on future data. If false, filter and warn.
+    fail_on_future_data: false
+    max_missing_overall_status: 0.05
+    log_unknown_statuses: true
+
+  # Time decay configuration
+  time_decay:
+    enabled: true
+    decay_constant_days: 30
+    windows:
+      - "7d"
+      - "30d"
+      - "90d"
+
+  # Staleness thresholds (days)
+  staleness:
+    warning_threshold: 3
+    critical_threshold: 7
+
+# ----------------------------------------------------------------------------
+# MODULE 4: Clinical Development
+# ----------------------------------------------------------------------------
+module_4:
+  # Scoring component weights (total = 120, normalized to 100)
+  scoring:
+    phase_advancement: 30
+    phase_progress_bonus: 5
+    trial_count_bonus: 5
+    indication_diversity: 5
+    recency_bonus: 5
+    trial_design_quality: 25
+    execution_track_record: 25
+    endpoint_strength: 20
+
+  # Recency thresholds (days)
+  recency:
+    stale_threshold_days: 730  # 2 years
+
+# ----------------------------------------------------------------------------
+# MODULE 5: Composite Ranking
+# ----------------------------------------------------------------------------
+module_5:
+  # Default component weights (must sum to 1.0)
+  weights:
+    clinical: 0.40
+    financial: 0.35
+    catalyst: 0.25
+
+  # Position sizing
+  position_sizing:
+    max_positions: 60
+    target_weight_sum: 0.90
+    max_single_position: 0.10
+    min_single_position: 0.005
+
+  # Scoring mode
+  scoring_mode: "DEFAULT"  # Options: DEFAULT, CONSERVATIVE, AGGRESSIVE
+
+  # Normalization method
+  normalization: "rank"  # Options: rank, z_score, minmax
+
+  # Cohort mode
+  cohort_mode: "stage_only"  # Options: stage_only, stage_cap, unified
+
+  # Use v3 scoring (IC-enhanced)
+  use_v3_scoring: true
+
+  # Sanity override (fallback to v2 if v3 diverges too much)
+  sanity_override:
+    enabled: true
+    max_rank_divergence: 20
+    confidence_threshold: 0.3
+
+# ----------------------------------------------------------------------------
+# ENHANCEMENT MODULES (Optional)
+# ----------------------------------------------------------------------------
+enhancements:
+  # Probability of Success (PoS)
+  pos_engine:
+    enabled: false
+    confidence_threshold: 0.40
+
+  # Regime Detection
+  regime_engine:
+    enabled: false
+    vix_thresholds:
+      low: 15
+      high: 25
+
+  # Short Interest
+  short_interest:
+    enabled: false
+    squeeze_threshold: 20  # % short interest
+
+# ----------------------------------------------------------------------------
+# VALIDATION & OBSERVABILITY
+# ----------------------------------------------------------------------------
+validation:
+  # Validation mode: "strict", "warn", "off"
+  mode: "strict"
+
+  # Fail loudly on missing required fields
+  fail_on_missing_required: true
+
+  # Warn on deprecated field usage
+  warn_on_deprecated: true
+
+logging:
+  # Log level: DEBUG, INFO, WARNING, ERROR
+  level: "INFO"
+
+  # Log file (optional, relative to project root)
+  # log_file: "logs/pipeline.log"
+
+  # Log coverage statistics per module
+  log_coverage_stats: true
+
+  # Log top reasons for zero/unknown scores
+  log_score_diagnostics: true
+
+# ----------------------------------------------------------------------------
+# DETERMINISM GUARANTEES
+# ----------------------------------------------------------------------------
+determinism:
+  # Force deterministic timestamps in output
+  force_deterministic_timestamps: true
+
+  # Sort all output keys
+  sort_output_keys: true
+
+  # Include content hashes in output for verification
+  include_content_hashes: true
+
+  # Random seed (for any randomized operations, if needed)
+  random_seed: 42

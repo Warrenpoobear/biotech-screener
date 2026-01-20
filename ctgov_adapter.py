@@ -257,11 +257,21 @@ class AdapterStats:
 
 @dataclass
 class AdapterConfig:
-    """Adapter behavior configuration"""
+    """Adapter behavior configuration
+
+    Note on fail_on_future_data:
+        - False (default): Filter out future records with a warning, continue processing
+        - True: Crash on any future data (strict mode for production)
+
+    The default is False to allow historical/backtest runs where as_of_date
+    may be before the data's last_update_date. The adapter will still report
+    how many records were filtered and fail if >50% are filtered.
+    """
     max_missing_overall_status: float = 0.05  # 5% threshold
     allow_partial_dates: bool = False
-    fail_on_future_data: bool = True
+    fail_on_future_data: bool = False  # Changed: filter (not crash) by default
     log_unknown_statuses: bool = True
+    max_future_data_ratio: float = 0.50  # Fail if >50% of data is from future
 
 
 # ============================================================================
@@ -303,13 +313,13 @@ class CTGovAdapter:
             # Required: last_update_posted (PIT anchor)
             last_update_posted = self._extract_last_update_posted(record, root)
             
-            # PIT validation
+            # PIT validation - always raise FutureDataError for future records
+            # The batch processor decides whether to fail or filter based on config
             if last_update_posted > as_of_date:
                 self.stats.future_data_violations += 1
-                if self.config.fail_on_future_data:
-                    raise FutureDataError(
-                        f"Future data: {nct_id} has last_update_posted={last_update_posted} > as_of_date={as_of_date}"
-                    )
+                raise FutureDataError(
+                    f"Future data: {nct_id} has last_update_posted={last_update_posted} > as_of_date={as_of_date}"
+                )
             
             # Optional: overall_status
             overall_status = self._extract_overall_status(record, root)
@@ -341,6 +351,8 @@ class CTGovAdapter:
             
         except MissingRequiredFieldError:
             raise
+        except FutureDataError:
+            raise  # Let FutureDataError propagate for batch processor to handle
         except Exception as e:
             logger.error(f"Unexpected error: {e}")
             raise AdapterError(f"Extraction failed: {e}")
@@ -524,27 +536,49 @@ class CTGovAdapter:
     def validate_batch(self) -> bool:
         """Run validation gates on batch statistics"""
         self.stats.log_summary()
-        
+
         failures = []
-        
+        warnings = []
+
         # Gate 1: last_update_posted must be 100%
         if self.stats.missing_last_update_posted > 0:
             failures.append(f"Missing last_update_posted: {self.stats.missing_last_update_posted}")
-        
+
         # Gate 2: overall_status coverage
         if self.stats.pct_missing_overall_status > 0.10:
             failures.append(f"Missing overall_status: {self.stats.pct_missing_overall_status:.1%} (threshold: 10%)")
-        
-        # Gate 3: future data violations
+
+        # Gate 3: future data handling
         if self.stats.future_data_violations > 0:
-            failures.append(f"Future data violations: {self.stats.future_data_violations}")
-        
+            future_ratio = self.stats.future_data_violations / max(self.stats.total_records, 1)
+
+            if self.config.fail_on_future_data:
+                # Strict mode: any future data is a failure
+                failures.append(f"Future data violations: {self.stats.future_data_violations}")
+            elif future_ratio > self.config.max_future_data_ratio:
+                # Too many filtered: fail (probably wrong as_of_date)
+                failures.append(
+                    f"Too many future data records filtered: {self.stats.future_data_violations}/{self.stats.total_records} "
+                    f"({future_ratio:.1%} > {self.config.max_future_data_ratio:.0%} threshold). "
+                    f"Check if as_of_date is correct."
+                )
+            else:
+                # Acceptable: warn but continue
+                warnings.append(
+                    f"Filtered {self.stats.future_data_violations} future-dated records "
+                    f"({future_ratio:.1%} of total)"
+                )
+
+        # Log warnings
+        for warning in warnings:
+            logger.warning(f"⚠️  {warning}")
+
         if failures:
             logger.error("VALIDATION GATES FAILED:")
             for failure in failures:
                 logger.error(f"  - {failure}")
             return False
-        
+
         logger.info("✅ VALIDATION GATES PASSED")
         return True
 
@@ -574,9 +608,13 @@ def process_trial_records_batch(
         except MissingRequiredFieldError as e:
             logger.warning(f"Skipping record {i}: {e}")
         except FutureDataError as e:
-            logger.error(f"Leakage in record {i}: {e}")
             if config.fail_on_future_data:
+                # Strict mode: log error and crash
+                logger.error(f"PIT violation in record {i}: {e}")
                 raise
+            else:
+                # Filter mode: skip silently (count is tracked in stats)
+                logger.debug(f"Filtering future-dated record {i}: {e}")
     
     # Run validation gates
     if not adapter.validate_batch():
