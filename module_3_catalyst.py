@@ -499,7 +499,7 @@ def compute_module_3_catalyst(
         trials_by_ticker[ticker].append(record)
 
     # Compute activity proxy scores per ticker
-    total_activity_90d = 0
+    total_activity_120d = 0
     total_activity_30d = 0
     for ticker in active_tickers:
         ticker_trials = trials_by_ticker.get(ticker, [])
@@ -507,13 +507,13 @@ def compute_module_3_catalyst(
             proxy_result = compute_activity_proxy_score(
                 ticker_trials,
                 as_of_date,
-                lookback_days=90,
+                lookback_days=120,
             )
             activity_proxy_by_ticker[ticker] = proxy_result
-            total_activity_90d += proxy_result['activity_count_90d']
+            total_activity_120d += proxy_result['activity_count_120d']
             total_activity_30d += proxy_result['activity_count_30d']
 
-    logger.info(f"Activity proxy: {total_activity_90d} trials updated in 90d, "
+    logger.info(f"Activity proxy: {total_activity_120d} trials updated in 120d, "
                f"{total_activity_30d} in 30d across {len(activity_proxy_by_ticker)} tickers")
 
     # Detect events by comparing states
@@ -641,7 +641,7 @@ def compute_module_3_catalyst(
             proxy_data = activity_proxy_by_ticker[ticker]
             summary = summaries_v2[ticker]
             summary.activity_proxy_score = Decimal(str(proxy_data['activity_proxy_score']))
-            summary.activity_proxy_count_90d = proxy_data['activity_count_90d']
+            summary.activity_proxy_count_120d = proxy_data['activity_count_120d']
             summary.activity_proxy_count_30d = proxy_data['activity_count_30d']
 
     # =========================================================================
@@ -761,9 +761,9 @@ def compute_module_3_catalyst(
 
     # Compute activity proxy summary
     activity_proxy_summary = {
-        "total_activity_90d": total_activity_90d,
+        "total_activity_120d": total_activity_120d,
         "total_activity_30d": total_activity_30d,
-        "tickers_with_activity": len([t for t, p in activity_proxy_by_ticker.items() if p['activity_count_90d'] > 0]),
+        "tickers_with_activity": len([t for t, p in activity_proxy_by_ticker.items() if p['activity_count_120d'] > 0]),
     }
 
     output = {
