@@ -427,13 +427,28 @@ def compute_module_3_catalyst(
     logger.info(f"Prior snapshot: {prior_snapshot.key_count if prior_snapshot else 0} trials")
 
     if prior_snapshot and current_snapshot.records:
-        # Sample up to 10 trials and check if ANYTHING changed
-        sample_records = current_snapshot.records[:10]
+        # Build key sets for comparison
+        current_keys = {(r.ticker, r.nct_id) for r in current_snapshot.records}
+        prior_keys = {(r.ticker, r.nct_id) for r in prior_snapshot.records}
+        common_keys = current_keys & prior_keys
+        added_keys = current_keys - prior_keys
+        removed_keys = prior_keys - current_keys
+
+        logger.info(f"Key overlap: {len(common_keys)} common, {len(added_keys)} added, {len(removed_keys)} removed")
+
+        if len(added_keys) > 100 or len(removed_keys) > 100:
+            logger.warning(f"⚠️  HIGH KEY CHURN: {len(added_keys)} added, {len(removed_keys)} removed")
+            logger.warning("   This suggests trial_records.json was regenerated with different parameters")
+            logger.warning("   or CT.gov query/universe changed between runs.")
+
+        # Sample up to 10 COMMON trials and check field changes
+        sample_keys = sorted(list(common_keys))[:10]
         changes_found = 0
 
-        for current_record in sample_records:
-            prior_record = prior_snapshot.get_record(current_record.ticker, current_record.nct_id)
-            if not prior_record:
+        for ticker, nct_id in sample_keys:
+            current_record = current_snapshot.get_record(ticker, nct_id)
+            prior_record = prior_snapshot.get_record(ticker, nct_id)
+            if not current_record or not prior_record:
                 continue
 
             changes = []
@@ -449,10 +464,10 @@ def compute_module_3_catalyst(
 
             if changes:
                 changes_found += 1
-                logger.info(f"  {current_record.nct_id}: {', '.join(changes)}")
+                logger.info(f"  {nct_id}: {', '.join(changes)}")
 
-        if changes_found == 0:
-            logger.warning("⚠️  NO CHANGES detected in sample - snapshots may be identical")
+        if changes_found == 0 and len(common_keys) > 0:
+            logger.warning("⚠️  NO FIELD CHANGES in common records - snapshots may have same underlying data")
             logger.info(f"   Current snapshot date: {current_snapshot.snapshot_date}")
             logger.info(f"   Prior snapshot date: {prior_snapshot.snapshot_date}")
 
