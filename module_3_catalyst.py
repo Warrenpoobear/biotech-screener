@@ -38,6 +38,8 @@ from event_detector import (
     SimpleMarketCalendar,
     MarketCalendar,
     CatalystEvent,
+    detect_activity_proxy_from_lookback,
+    compute_activity_proxy_score,
 )
 from catalyst_summary import CatalystAggregator, TickerCatalystSummary, CatalystOutputWriter
 from module_3_schema import (
@@ -480,6 +482,40 @@ def compute_module_3_catalyst(
     if calendar_summary['by_window']:
         logger.info(f"  By window: {calendar_summary['by_window']}")
 
+    # =========================================================================
+    # ACTIVITY PROXY: Historical data workaround based on last_update_posted
+    # =========================================================================
+    # This supplements diff-based detection when historical snapshots are limited.
+    # It identifies trials with recent updates (even without knowing what changed).
+    logger.info("Computing activity proxy scores (historical data workaround)...")
+    activity_proxy_by_ticker: Dict[str, Dict[str, Any]] = {}
+
+    # Group trials by ticker for activity proxy computation
+    trials_by_ticker: Dict[str, List[CanonicalTrialRecord]] = {}
+    for record in canonical_records:
+        ticker = record.ticker
+        if ticker not in trials_by_ticker:
+            trials_by_ticker[ticker] = []
+        trials_by_ticker[ticker].append(record)
+
+    # Compute activity proxy scores per ticker
+    total_activity_90d = 0
+    total_activity_30d = 0
+    for ticker in active_tickers:
+        ticker_trials = trials_by_ticker.get(ticker, [])
+        if ticker_trials:
+            proxy_result = compute_activity_proxy_score(
+                ticker_trials,
+                as_of_date,
+                lookback_days=90,
+            )
+            activity_proxy_by_ticker[ticker] = proxy_result
+            total_activity_90d += proxy_result['activity_count_90d']
+            total_activity_30d += proxy_result['activity_count_30d']
+
+    logger.info(f"Activity proxy: {total_activity_90d} trials updated in 90d, "
+               f"{total_activity_30d} in 30d across {len(activity_proxy_by_ticker)} tickers")
+
     # Detect events by comparing states
     logger.info("Detecting diff-based catalyst events...")
     events_by_ticker_v2: Dict[str, List[CatalystEventV2]] = {}
@@ -597,6 +633,18 @@ def compute_module_3_catalyst(
     diagnostics.events_deduped = total_deduped
 
     # =========================================================================
+    # MERGE ACTIVITY PROXY DATA INTO SUMMARIES
+    # =========================================================================
+    from decimal import Decimal
+    for ticker in summaries_v2:
+        if ticker in activity_proxy_by_ticker:
+            proxy_data = activity_proxy_by_ticker[ticker]
+            summary = summaries_v2[ticker]
+            summary.activity_proxy_score = Decimal(str(proxy_data['activity_proxy_score']))
+            summary.activity_proxy_count_90d = proxy_data['activity_count_90d']
+            summary.activity_proxy_count_30d = proxy_data['activity_count_30d']
+
+    # =========================================================================
     # TIME-DECAY SCORING: Multi-window analysis
     # =========================================================================
     time_decay_diagnostics = {}
@@ -711,6 +759,13 @@ def compute_module_3_catalyst(
         stacklevel=2
     )
 
+    # Compute activity proxy summary
+    activity_proxy_summary = {
+        "total_activity_90d": total_activity_90d,
+        "total_activity_30d": total_activity_30d,
+        "tickers_with_activity": len([t for t, p in activity_proxy_by_ticker.items() if p['activity_count_90d'] > 0]),
+    }
+
     output = {
         "summaries": summaries_v2,
         "summaries_legacy": summaries_legacy,  # DEPRECATED - use summaries instead
@@ -726,6 +781,8 @@ def compute_module_3_catalyst(
         # New in v2.2: Time-decay scoring
         "time_decay_enabled": config.enable_time_decay,
         "time_decay_diagnostics": time_decay_diagnostics,
+        # New in v2.3: Activity proxy (historical data workaround)
+        "activity_proxy_summary": activity_proxy_summary,
     }
 
     # Output validation
