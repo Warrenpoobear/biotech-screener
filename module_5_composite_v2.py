@@ -923,7 +923,8 @@ def compute_module_5_composite_v2(
     base_weights = (ENHANCED_WEIGHTS.copy() if mode == ScoringMode.ENHANCED else DEFAULT_WEIGHTS.copy()) if weights is None else {k: _to_decimal(v, Decimal("0")) for k, v in weights.items()}
 
     # Index outputs
-    active_tickers = {s["ticker"] for s in universe_result.get("active_securities", [])}
+    # DETERMINISM: Sort active_tickers to ensure consistent iteration order
+    active_tickers = sorted({s["ticker"] for s in universe_result.get("active_securities", [])})
     financial_by_ticker = {s["ticker"]: s for s in financial_result.get("scores", [])}
     catalyst_by_ticker = catalyst_result.get("summaries", {})
     clinical_by_ticker = {s["ticker"]: s for s in clinical_result.get("scores", [])}
@@ -1072,13 +1073,16 @@ def compute_module_5_composite_v2(
             "volatility_adjustment": rec.get("volatility_adjustment"),
         })
 
+    # DETERMINISM: Sort excluded_securities by ticker for consistent output order
+    excluded_sorted = sorted(excluded, key=lambda x: x["ticker"])
+
     return {
         "as_of_date": as_of_date,
         "scoring_mode": mode.value,
-        "weights_used": {k: str(v) for k, v in base_weights.items()},
+        "weights_used": {k: str(v) for k, v in sorted(base_weights.items())},
         "ranked_securities": ranked_securities,
-        "excluded_securities": excluded,
-        "cohort_stats": cohort_stats,
+        "excluded_securities": excluded_sorted,
+        "cohort_stats": {k: v for k, v in sorted(cohort_stats.items())},
         "diagnostic_counts": {
             "total_input": len(active_tickers),
             "rankable": len(ranked_securities),
@@ -1102,12 +1106,12 @@ def compute_module_5_composite_v2(
         "enhancement_applied": enhancement_applied,
         "enhancement_diagnostics": {
             "regime": regime_name,
-            "regime_adjustments": {k: str(v) for k, v in regime_adjustments.items()},
+            "regime_adjustments": {k: str(v) for k, v in sorted(regime_adjustments.items())},
         } if enhancement_applied else None,
         "schema_version": SCHEMA_VERSION,
         "provenance": create_provenance(
             RULESET_VERSION,
-            {"tickers": list(active_tickers), "weights": {k: str(v) for k, v in base_weights.items()}},
+            {"tickers": sorted(active_tickers), "weights": {k: str(v) for k, v in sorted(base_weights.items())}},
             as_of_date,
         ),
     }

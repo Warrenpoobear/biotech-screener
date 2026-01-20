@@ -447,7 +447,8 @@ def compute_module_5_composite(
                 )
 
     # Index module outputs by ticker
-    active_tickers = {s["ticker"] for s in universe_result.get("active_securities", [])}
+    # DETERMINISM: Sort active_tickers to ensure consistent iteration order
+    active_tickers = sorted({s["ticker"] for s in universe_result.get("active_securities", [])})
 
     financial_by_ticker = {s["ticker"]: s for s in financial_result.get("scores", [])}
     catalyst_by_ticker = catalyst_result.get("summaries", {})  # Module 3 returns summaries dict
@@ -799,18 +800,21 @@ def compute_module_5_composite(
             "si_squeeze_signals": si_squeeze_count,
         }
 
+    # DETERMINISM: Sort excluded_securities by ticker for consistent output order
+    excluded_sorted = sorted(excluded, key=lambda x: x["ticker"])
+
     return {
         "as_of_date": as_of_date,
         "normalization_method": normalization,
         "cohort_mode": cohort_mode,
-        "weights_used": {k: str(v) for k, v in weights.items()},
+        "weights_used": {k: str(v) for k, v in sorted(weights.items())},
         "ranked_securities": ranked_securities,
-        "excluded_securities": excluded,
-        "cohort_stats": cohort_stats,
+        "excluded_securities": excluded_sorted,
+        "cohort_stats": {k: v for k, v in sorted(cohort_stats.items())},
         "diagnostic_counts": {
             "total_input": len(active_tickers),
             "rankable": len(ranked_securities),
-            "excluded": len(excluded),
+            "excluded": len(excluded_sorted),
             "cohort_count": len(cohorts),
         },
         "coinvest_coverage": coinvest_coverage,
@@ -818,7 +822,7 @@ def compute_module_5_composite(
         "enhancement_diagnostics": enhancement_diagnostics,
         "provenance": create_provenance(
             RULESET_VERSION,
-            {"tickers": list(active_tickers), "weights": {k: str(v) for k, v in weights.items()}},
+            {"tickers": sorted(active_tickers), "weights": {k: str(v) for k, v in sorted(weights.items())}},
             as_of_date,
         ),
     }
