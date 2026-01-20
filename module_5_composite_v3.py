@@ -1423,7 +1423,9 @@ def compute_module_5_composite_v3(
     # INDEX MODULE OUTPUTS
     # =========================================================================
 
-    active_tickers = {s["ticker"] for s in universe_result.get("active_securities", [])}
+    # DETERMINISM: Sort active_tickers to ensure consistent iteration order
+    # (set iteration order is non-deterministic due to Python hash randomization)
+    active_tickers = sorted({s["ticker"] for s in universe_result.get("active_securities", [])})
     financial_by_ticker = {s["ticker"]: s for s in financial_result.get("scores", [])}
     catalyst_by_ticker = catalyst_result.get("summaries", {})
     clinical_by_ticker = {s["ticker"]: s for s in clinical_result.get("scores", [])}
@@ -1779,14 +1781,17 @@ def compute_module_5_composite_v3(
             "recommendation": production_gate_result.recommendation,
         }
 
+    # DETERMINISM: Sort excluded_securities by ticker for consistent output order
+    excluded_sorted = sorted(excluded, key=lambda x: x["ticker"])
+
     return {
         "as_of_date": as_of_date,
         "scoring_mode": mode.value,
-        "weights_used": {k: str(v) for k, v in base_weights.items()},
+        "weights_used": {k: str(v) for k, v in sorted(base_weights.items())},
         "ranked_securities": ranked_securities,
-        "excluded_securities": excluded,
-        "cohort_stats": cohort_stats,
-        "global_stats": {k: {"mean": str(v[0]), "std": str(v[1])} for k, v in global_stats.items()},
+        "excluded_securities": excluded_sorted,
+        "cohort_stats": {k: v for k, v in sorted(cohort_stats.items())},
+        "global_stats": {k: {"mean": str(v[0]), "std": str(v[1])} for k, v in sorted(global_stats.items())},
         "diagnostic_counts": diagnostic_counts,
         "enhancement_applied": enhancement_applied,
         "enhancement_diagnostics": enhancement_diagnostics,
@@ -1794,7 +1799,7 @@ def compute_module_5_composite_v3(
         "schema_version": SCHEMA_VERSION,
         "provenance": create_provenance(
             RULESET_VERSION,
-            {"tickers": list(active_tickers), "weights": {k: str(v) for k, v in base_weights.items()}, "mode": mode.value},
+            {"tickers": sorted(active_tickers), "weights": {k: str(v) for k, v in sorted(base_weights.items())}, "mode": mode.value},
             as_of_date,
         ),
     }

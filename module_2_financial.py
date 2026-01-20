@@ -849,8 +849,9 @@ def compute_module_2_financial(*args: Any, **kwargs: Any) -> Dict[str, Any]:
         as_of_date = kwargs.get('as_of_date')
 
     # Convert set to list if needed
+    # DETERMINISM: Sort the set to ensure consistent iteration order
     if isinstance(universe, set):
-        universe = list(universe)
+        universe = sorted(universe)
 
     # If market_data is empty but we have raw_universe, extract it
     if not market_data and 'raw_universe' in kwargs:
@@ -971,9 +972,12 @@ def compute_module_2_financial(*args: Any, **kwargs: Any) -> Dict[str, Any]:
             if 'missing_cash' not in score['flags']:
                 score['flags'].append('missing_cash')
 
+    # DETERMINISM: Sort results by ticker to ensure consistent output order
+    result_sorted = sorted(result, key=lambda x: x.get('ticker', ''))
+
     # Wrap in expected format
     output = {
-        'scores': result,
+        'scores': result_sorted,
         'diagnostic_counts': {
             'scored': len(filtered_universe),
             'missing': len(truly_missing_tickers)

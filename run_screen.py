@@ -488,8 +488,11 @@ def run_screening_pipeline(
     resume_index = get_resume_module_index(resume_from)
 
     # Compute content hashes for audit trail
+    # DETERMINISM: Exclude run_log files (they contain timestamps that change each run)
     content_hashes = {}
     for json_file in sorted(data_dir.glob("*.json")):
+        if json_file.name.startswith("run_log"):
+            continue  # Skip run logs - they're outputs, not inputs
         content_hashes[json_file.name] = hashlib.sha256(
             json_file.read_bytes()
         ).hexdigest()[:16]
