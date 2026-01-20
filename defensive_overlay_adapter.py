@@ -431,9 +431,9 @@ def validate_defensive_integration(output: Dict) -> None:
     tolerance = Decimal("0.0001")
     
     if abs(total_weight - expected) >= tolerance:
-        print(f"⚠️  Weights sum: {total_weight} (expected {expected}, diff: {abs(total_weight - expected)})")
+        print(f"[WARN] Weights sum: {total_weight} (expected {expected}, diff: {abs(total_weight - expected)})")
     else:
-        print(f"✓ Weights sum: {total_weight} (target: {expected})")
+        print(f"[OK] Weights sum: {total_weight} (target: {expected})")
     
     # 2. Check excluded have zero weight
     excluded_with_weight = [
@@ -441,29 +441,29 @@ def validate_defensive_integration(output: Dict) -> None:
         if not r.get("rankable", True) and Decimal(r.get("position_weight", "0")) != 0
     ]
     if excluded_with_weight:
-        print(f"⚠️  {len(excluded_with_weight)} excluded securities have non-zero weight: {excluded_with_weight}")
+        print(f"[WARN] {len(excluded_with_weight)} excluded securities have non-zero weight: {excluded_with_weight}")
     else:
-        print("✓ All excluded securities have zero weight")
+        print("[OK] All excluded securities have zero weight")
     
     # 3. Count securities with defensive adjustments
     with_def_notes = sum(1 for r in ranked if r.get("defensive_notes"))
-    print(f"✓ {with_def_notes}/{len(ranked)} securities have defensive adjustments")
+    print(f"[OK] {with_def_notes}/{len(ranked)} securities have defensive adjustments")
     
     # 4. Weight distribution
     nonzero_weights = [r for r in ranked if Decimal(r.get("position_weight", "0")) > 0]
     if nonzero_weights:
         weights = [Decimal(r["position_weight"]) for r in nonzero_weights]
         print("\nPosition sizing:")
-        print(f"  • {len(nonzero_weights)} positions")
-        print(f"  • Max weight: {max(weights):.4f} ({max(weights)*100:.2f}%)")
-        print(f"  • Min weight: {min(weights):.4f} ({min(weights)*100:.2f}%)")
-        print(f"  • Avg weight: {sum(weights)/len(weights):.4f}")
-        print(f"  • Range: {max(weights)/min(weights):.1f}:1")
-        
+        print(f"  - {len(nonzero_weights)} positions")
+        print(f"  - Max weight: {max(weights):.4f} ({max(weights)*100:.2f}%)")
+        print(f"  - Min weight: {min(weights):.4f} ({min(weights)*100:.2f}%)")
+        print(f"  - Avg weight: {sum(weights)/len(weights):.4f}")
+        print(f"  - Range: {max(weights)/min(weights):.1f}:1")
+
         # Calculate and show dynamic floor used
         n = len(nonzero_weights)
         floor = calculate_dynamic_floor(n)
-        print(f"  • Dynamic floor: {floor:.4f} ({floor*100:.2f}%) for {n} securities")
+        print(f"  - Dynamic floor: {floor:.4f} ({floor*100:.2f}%) for {n} securities")
     
     # 5. Top 10 with weights
     print("\nTop 10 holdings:")
@@ -487,4 +487,4 @@ if __name__ == "__main__":
         ratio = floor / avg
         print(f"  {n:3} securities: floor={floor:.4f} ({floor*100:.2f}%), avg={avg:.4f}, floor/avg={ratio:.2f}x")
     
-    print("\n✓ Test complete!")
+    print("\n[OK] Test complete!")
