@@ -23,6 +23,8 @@ class StatusGate(Enum):
     EXCLUDED_SHELL = "excluded_shell"
     EXCLUDED_DELISTED = "excluded_delisted"
     EXCLUDED_ACQUIRED = "excluded_acquired"
+    EXCLUDED_MISSING_DATA = "excluded_missing_data"  # Missing critical data (market cap, price)
+    EXCLUDED_SMALL_CAP = "excluded_small_cap"  # Below minimum market cap threshold
     NOT_FOUND = "not_found"
 
 
