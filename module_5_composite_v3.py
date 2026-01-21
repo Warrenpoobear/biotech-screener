@@ -159,6 +159,14 @@ from module_5_scoring_v3 import (
     _score_single_ticker_v3,
 )
 
+# Import diagnostics module (extracted for maintainability)
+from module_5_diagnostics_v3 import (
+    compute_momentum_breakdown,
+    build_momentum_health,
+    format_momentum_log_lines,
+    check_coverage_guardrail,
+)
+
 __version__ = "3.0.0"
 RULESET_VERSION = "3.0.0-IC-ENHANCED"
 SCHEMA_VERSION = "v3.0"
@@ -925,84 +933,23 @@ def compute_module_5_composite_v3(
             # Log as info, not degradation - sparse optional component coverage is normal
             health_warnings.append(f"INFO: {comp} confidence-gated for {gated_pct*100:.1f}% of universe (sparse coverage expected)")
 
-    # Log detailed momentum state breakdown for debugging/attribution
-    # V2: Now tracks data status (missing_prices, computed_low_conf) and window usage
-    mom_missing = diagnostic_counts.get("momentum_missing_prices", 0)
-    mom_low_conf = diagnostic_counts.get("momentum_computed_low_conf", 0)
-    mom_neg = diagnostic_counts.get("momentum_applied_negative", 0)
-    mom_pos = diagnostic_counts.get("momentum_applied_positive", 0)
+    # Compute momentum breakdown (single source of truth)
+    # This ensures applied = neg + pos + neutral = total_rankable - missing - low_conf
+    mom_breakdown = compute_momentum_breakdown(
+        ranked_securities=ranked_securities,
+        diagnostic_counts=diagnostic_counts,
+        total_rankable=total_rankable,
+    )
 
-    # Window usage stats
-    mom_20d = diagnostic_counts.get("momentum_window_20d", 0)
-    mom_60d = diagnostic_counts.get("momentum_window_60d", 0)
-    mom_120d = diagnostic_counts.get("momentum_window_120d", 0)
+    # Coverage guardrail check
+    guardrail_warning = check_coverage_guardrail(mom_breakdown, threshold_pct=20.0)
+    if guardrail_warning:
+        health_warnings.append(guardrail_warning)
 
-    # Neutral = has data, not low conf, not strong either way
-    mom_with_data = mom_60d + mom_20d + mom_120d
-    mom_neutral = mom_with_data - mom_neg - mom_pos - mom_low_conf
-    if mom_neutral < 0:
-        mom_neutral = 0
-
-    # Active = actually contributed to scoring
-    mom_active = mom_with_data - mom_low_conf
-    mom_coverage_pct = (Decimal(str(mom_active)) / Decimal(str(total_rankable)) * 100) if total_rankable > 0 else Decimal("0")
-
-    # Calculate average effective momentum weight across active securities
-    avg_mom_weight = Decimal("0")
-    total_mom_contribution = Decimal("0")
-    if mom_active > 0:
-        for sec in ranked_securities:
-            flags = sec.get("flags", [])
-            if "momentum_missing_prices" not in flags and "momentum_low_confidence" not in flags:
-                eff_weights = sec.get("effective_weights", {})
-                mom_weight = _to_decimal(eff_weights.get("momentum", "0")) or Decimal("0")
-                avg_mom_weight += mom_weight
-                # Track total momentum contribution to composite (for impact assessment)
-                mom_score = _to_decimal(sec.get("momentum_signal", {}).get("score", "50")) or Decimal("50")
-                total_mom_contribution += mom_score * mom_weight
-        avg_mom_weight = (avg_mom_weight / Decimal(str(mom_active))).quantize(Decimal("0.001")) if mom_active > 0 else Decimal("0")
-
-    # V3.2: Stable coverage metrics (avoids coverage inflation)
-    mom_computable = diagnostic_counts.get("momentum_computable", 0)
-    mom_meaningful = diagnostic_counts.get("momentum_meaningful", 0)
-    mom_strong_signal = diagnostic_counts.get("momentum_strong_signal", 0)
-    mom_strong_effective = diagnostic_counts.get("momentum_strong_and_effective", 0)
-    mom_source_prices = diagnostic_counts.get("momentum_source_prices", 0)
-    mom_source_13f = diagnostic_counts.get("momentum_source_13f", 0)
-    # Fix: applied should equal neg + pos + neutral (all signals with data, not low_conf)
-    # This matches the breakdown shown in applied[neg:X, pos:X, neutral:X]
-    mom_applied_stable = mom_neg + mom_pos + mom_neutral
-
-    # GUARDRAIL: Coverage collapsed alert
-    # If coverage drops below 20%, emit loud warning (likely data pipeline issue)
-    coverage_pct = (mom_applied_stable / total_rankable * 100) if total_rankable > 0 else 0
-    if total_rankable > 0 and coverage_pct < 20:
-        health_warnings.append(
-            f"WARN: momentum coverage collapsed ({coverage_pct:.1f}%) - "
-            f"check enrich_market_data_momentum outputs / market_data.json keys"
-        )
-
-    if mom_with_data > 0 or mom_missing > 0:
-        health_warnings.append(
-            f"INFO: momentum breakdown - "
-            f"missing:{mom_missing}, low_conf:{mom_low_conf}, "
-            f"applied[neg:{mom_neg}, pos:{mom_pos}, neutral:{mom_neutral}] | "
-            f"windows[20d:{mom_20d}, 60d:{mom_60d}, 120d:{mom_120d}] | "
-            f"coverage={mom_active}/{total_rankable} ({mom_coverage_pct:.1f}%), avg_weight={avg_mom_weight}"
-        )
-        # Single-line signal health dashboard for monitoring:
-        # - applied: coverage (has data, not low_conf)
-        # - meaningful: confidence >= 0.5
-        # - strong: |score-50| >= 2.5
-        # - strong+effective: strong AND confidence >= 0.6 (actually moves composite)
-        # - sources: prices vs 13f breakdown
-        health_warnings.append(
-            f"INFO: momentum stable metrics - "
-            f"computable:{mom_computable}, meaningful:{mom_meaningful}, "
-            f"coverage_applied:{mom_applied_stable}/{total_rankable}, "
-            f"strong:{mom_strong_signal}, strong_and_effective:{mom_strong_effective}, "
-            f"sources[prices:{mom_source_prices}, 13f:{mom_source_13f}]"
-        )
+    # Log momentum breakdown if there's any data
+    if mom_breakdown["with_data"] > 0 or mom_breakdown["missing"] > 0:
+        for log_line in format_momentum_log_lines(mom_breakdown):
+            health_warnings.append(log_line)
 
     # Log health status
     if run_status == RunStatus.FAIL:
@@ -1046,27 +993,8 @@ def compute_module_5_composite_v3(
     # DETERMINISM: Sort excluded_securities by ticker for consistent output order
     excluded_sorted = sorted(excluded, key=lambda x: x["ticker"])
 
-    # Build momentum_health for results JSON (scriptable A/B comparisons)
-    momentum_health = {
-        "coverage_applied": mom_applied_stable,
-        "coverage_pct": round(coverage_pct, 1),
-        "computable": mom_computable,
-        "meaningful": mom_meaningful,
-        "strong_signal": mom_strong_signal,
-        "strong_and_effective": mom_strong_effective,
-        "avg_weight": str(avg_mom_weight),
-        "windows_used": {
-            "20d": mom_20d,
-            "60d": mom_60d,
-            "120d": mom_120d,
-        },
-        "sources": {
-            "prices": mom_source_prices,
-            "13f": mom_source_13f,
-        },
-        "total_rankable": total_rankable,
-        "as_of_date": as_of_date,
-    }
+    # Build momentum_health for results JSON (from breakdown computed above)
+    momentum_health = build_momentum_health(mom_breakdown, as_of_date)
 
     return {
         "as_of_date": as_of_date,
