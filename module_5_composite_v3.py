@@ -179,6 +179,16 @@ CRITICAL_COMPONENTS = ["financial", "clinical"]
 # moving composite more than ±6 points (protects against data quality issues)
 POS_DELTA_CAP = Decimal("6.0")
 
+# Catalyst effective blending weights
+# When both window score and proximity score present:
+#   catalyst_effective = CATALYST_WINDOW_WEIGHT * window_score + CATALYST_PROXIMITY_WEIGHT * proximity_score
+# When only proximity present:
+#   catalyst_effective = CATALYST_DEFAULT_BASE * 50 + (1 - CATALYST_DEFAULT_BASE) * proximity_score
+CATALYST_WINDOW_WEIGHT = Decimal("0.70")
+CATALYST_PROXIMITY_WEIGHT = Decimal("0.30")
+CATALYST_DEFAULT_BASE = Decimal("0.85")  # Weight toward neutral 50 when only proximity present
+CATALYST_DEFAULT_SCORE = Decimal("50")
+
 # Confidence gate threshold - components with confidence below this contribute 0
 # This prevents missing data from being masked by neutral (50) defaults
 CONFIDENCE_GATE_THRESHOLD = Decimal("0.4")
@@ -324,6 +334,75 @@ def _coalesce(*vals, default=None):
         if v is not None:
             return v
     return default
+
+
+def _compute_catalyst_effective(
+    catalyst_score_window: Optional[Decimal],
+    catalyst_proximity_score: Optional[Decimal],
+) -> Tuple[Decimal, bool, str]:
+    """
+    Compute effective catalyst score by blending window and proximity scores.
+
+    Blending rules:
+    1. If both scores present:
+       catalyst_effective = 0.70 * catalyst_score + 0.30 * proximity_score
+    2. If only proximity present (window is None or effectively missing):
+       catalyst_effective = 0.85 * 50 + 0.15 * proximity_score
+    3. If neither: default 50
+
+    The proximity score captures future calendar events, ensuring that names
+    with upcoming catalysts outside the optimal 15-45d window still contribute
+    to the composite score.
+
+    Args:
+        catalyst_score_window: Window/importance-based catalyst score (Module 3 score_blended)
+        catalyst_proximity_score: Proximity score from calendar events
+
+    Returns:
+        (catalyst_effective, proximity_blended_flag, blend_mode)
+        - catalyst_effective: The blended score [0, 100]
+        - proximity_blended_flag: True if proximity was factored into the score
+        - blend_mode: String describing how the blend was computed
+    """
+    # Determine which scores are usable
+    has_window = catalyst_score_window is not None
+    has_proximity = catalyst_proximity_score is not None and catalyst_proximity_score > Decimal("0")
+
+    if has_window and has_proximity:
+        # Case 1: Both present - full blend
+        effective = (
+            CATALYST_WINDOW_WEIGHT * catalyst_score_window +
+            CATALYST_PROXIMITY_WEIGHT * catalyst_proximity_score
+        )
+        proximity_blended = True
+        blend_mode = "full_blend"
+
+    elif has_proximity and not has_window:
+        # Case 2: Only proximity - anchor to neutral 50 with proximity contribution
+        effective = (
+            CATALYST_DEFAULT_BASE * CATALYST_DEFAULT_SCORE +
+            (Decimal("1") - CATALYST_DEFAULT_BASE) * catalyst_proximity_score
+        )
+        proximity_blended = True
+        blend_mode = "proximity_only"
+
+    elif has_window and not has_proximity:
+        # Case 3: Only window score - use as-is
+        effective = catalyst_score_window
+        proximity_blended = False
+        blend_mode = "window_only"
+
+    else:
+        # Case 4: Neither present - default neutral
+        effective = CATALYST_DEFAULT_SCORE
+        proximity_blended = False
+        blend_mode = "default"
+
+    # Clamp to valid range
+    effective = _clamp(effective, Decimal("0"), Decimal("100"))
+    effective = _quantize_score(effective)
+
+    return (effective, proximity_blended, blend_mode)
 
 
 def _market_cap_bucket(market_cap_mm: Optional[Any]) -> str:
@@ -834,8 +913,10 @@ def _score_single_ticker_v3(
     pos_raw = _to_decimal(pos_data.get("pos_score")) if pos_data else None
 
     # Extract catalyst scores and metadata
+    # cat_window = the window/importance-based score from Module 3 (score_blended)
+    # cat_proximity = the proximity score from calendar events
     if hasattr(cat_data, 'score_blended'):
-        cat_raw = _to_decimal(cat_data.score_blended)
+        cat_window = _to_decimal(cat_data.score_blended)
         cat_proximity = _to_decimal(getattr(cat_data, 'catalyst_proximity_score', 0)) or Decimal("0")
         cat_delta = _to_decimal(getattr(cat_data, 'catalyst_delta_score', 0)) or Decimal("0")
         # Try both field names for days to catalyst (schema uses catalyst_window_days)
@@ -843,7 +924,7 @@ def _score_single_ticker_v3(
         cat_event_type = getattr(cat_data, 'nearest_catalyst_type', "DEFAULT")
     elif isinstance(cat_data, dict):
         scores = cat_data.get("scores", cat_data)
-        cat_raw = _to_decimal(scores.get("score_blended", scores.get("catalyst_score_net")))
+        cat_window = _to_decimal(scores.get("score_blended", scores.get("catalyst_score_net")))
         cat_proximity = _to_decimal(scores.get("catalyst_proximity_score", 0)) or Decimal("0")
         cat_delta = _to_decimal(scores.get("catalyst_delta_score", 0)) or Decimal("0")
         # Try both field names (integration.catalyst_window_days or scores.days_to_nearest_catalyst)
@@ -851,11 +932,21 @@ def _score_single_ticker_v3(
         days_to_cat = integration.get("catalyst_window_days") or scores.get("days_to_nearest_catalyst") or scores.get("catalyst_window_days")
         cat_event_type = scores.get("nearest_catalyst_type", "DEFAULT")
     else:
-        cat_raw = None
+        cat_window = None
         cat_proximity = Decimal("0")
         cat_delta = Decimal("0")
         days_to_cat = None
         cat_event_type = "DEFAULT"
+
+    # Compute effective catalyst score by blending window and proximity
+    # This ensures upcoming calendar events contribute even when no events fall in the optimal window
+    cat_effective, cat_proximity_blended, cat_blend_mode = _compute_catalyst_effective(
+        cat_window, cat_proximity
+    )
+    # Use the effective score as the raw catalyst input
+    cat_raw = cat_effective
+    if cat_proximity_blended:
+        flags.append("catalyst_proximity_blended")
 
     # Get normalized scores
     # Use _coalesce to correctly handle Decimal("0") as a valid score, not missing
@@ -1193,11 +1284,11 @@ def _score_single_ticker_v3(
     # Volatility score adjustment
     post_vol = apply_volatility_to_score(post_cap, vol_adj)
 
-    # Proximity and delta bonuses (scaled down in v3)
-    proximity_bonus = (cat_proximity / Decimal("25")).quantize(SCORE_PRECISION)  # Max +4 pts
+    # Delta bonus only (proximity is now blended into catalyst_effective)
+    # Proximity bonus removed to avoid double-counting since it's already in the catalyst component
     delta_bonus = (cat_delta / Decimal("25")).quantize(SCORE_PRECISION)  # Max ±2 pts
 
-    final_score = _clamp(post_vol + proximity_bonus + delta_bonus, Decimal("0"), Decimal("100"))
+    final_score = _clamp(post_vol + delta_bonus, Decimal("0"), Decimal("100"))
     final_score = _quantize_score(final_score)
 
     # =========================================================================
@@ -1280,7 +1371,6 @@ def _score_single_ticker_v3(
             "post_severity_score": str(post_severity),
             "post_cap_score": str(post_cap),
             "post_vol_score": str(post_vol),
-            "proximity_bonus": str(proximity_bonus),
             "delta_bonus": str(delta_bonus),
             "composite_score": str(final_score),
         },
@@ -1344,6 +1434,14 @@ def _score_single_ticker_v3(
             "factor": str(decay.decay_factor),
             "days_to_catalyst": decay.days_to_catalyst,
             "in_optimal_window": decay.in_optimal_window,
+        },
+        # Catalyst effective blending debug fields
+        "catalyst_effective": {
+            "catalyst_score_window": str(cat_window) if cat_window is not None else None,
+            "catalyst_proximity_score": str(cat_proximity) if cat_proximity else "0",
+            "catalyst_score_effective": str(cat_effective),
+            "catalyst_proximity_blended": cat_proximity_blended,
+            "blend_mode": cat_blend_mode,
         },
         "interaction_terms": {
             "total_adjustment": str(interactions.total_interaction_adjustment),
@@ -1827,6 +1925,7 @@ def compute_module_5_composite_v3(
             "volatility_adjustment": rec.get("volatility_adjustment"),
             "catalyst_decay": rec.get("catalyst_decay"),
             "interaction_terms": rec.get("interaction_terms"),
+            "catalyst_effective": rec.get("catalyst_effective"),
         }
 
         ranked_securities.append(security_data)
@@ -1861,6 +1960,12 @@ def compute_module_5_composite_v3(
         "with_catalyst_events": sum(
             1 for r in ranked_securities
             if _to_decimal(r.get("confidence_catalyst")) and _to_decimal(r.get("confidence_catalyst")) > Decimal("0.3")
+        ),
+        # New in v3.2: Proximity-blended catalyst tracking
+        # Counts tickers where proximity score was factored into catalyst_effective
+        "with_catalyst_proximity_blended": sum(
+            1 for r in ranked_securities
+            if r.get("catalyst_effective", {}).get("catalyst_proximity_blended", False)
         ),
     }
 
