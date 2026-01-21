@@ -964,7 +964,7 @@
       "provenance": {
         "benchmarks_source": "BIO Clinical Development Success Rates and Contributing Factors 2011-2020",
         "benchmarks_version": "2011-2020",
-        "content_hash": "d1abd268b3c44e45",
+        "content_hash": "f9933c87343724df",
         "module": "pos_engine",
         "module_version": "1.2.0",
         "pit_cutoff": "2026-01-21"
@@ -991,7 +991,7 @@
           "confidence_reason": "stage_and_indication_known",
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": "metabolic",
+          "indication_normalized": "gastroenterology",
           "loa_probability": "1.0",
           "loa_provenance": "commercial_approved",
           "missing_fields": [
@@ -1790,14 +1790,14 @@
           "confidence_reason": "stage_and_indication_known",
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": "infectious_disease",
-          "loa_probability": "0.769",
-          "loa_provenance": "BIO_phase_3_infectious_disease",
+          "indication_normalized": "respiratory",
+          "loa_probability": "0.567",
+          "loa_provenance": "BIO_phase_3_respiratory",
           "missing_fields": [
             "competitive_intensity"
           ],
           "pos_confidence": "0.70",
-          "pos_score": "75.98",
+          "pos_score": "56.02",
           "stage_normalized": "phase_3",
           "stage_score": "65",
           "stage_was_defaulted": false,
@@ -33698,6 +33698,10 @@
       "high_volatility_count": 0,
       "in_catalyst_window": 2,
       "low_volatility_count": 0,
+      "momentum_applied_negative": 2,
+      "momentum_applied_positive": 0,
+      "momentum_gated_with_data": 0,
+      "momentum_no_alpha": 42,
       "rankable": 44,
       "top_n_cutoff": 60,
       "total_allocated_weight": "0.9000",
@@ -33997,7 +34001,8 @@
     "health_warnings": [
       "INFO: catalyst window coverage 4.5% (raw: 100.0%) - events exist but few in optimal 15-45d window",
       "INFO: momentum confidence-gated for 95.5% of universe (sparse coverage expected)",
-      "INFO: valuation confidence-gated for 54.5% of universe (sparse coverage expected)"
+      "INFO: valuation confidence-gated for 54.5% of universe (sparse coverage expected)",
+      "INFO: momentum breakdown - no_alpha:42, gated:0, applied[neg:2, pos:0, neutral:0] | coverage=2/44 (4.5%), avg_weight=0.132"
     ],
     "pit_gate_diagnostics": null,
     "provenance": {
