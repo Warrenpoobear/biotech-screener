@@ -220,9 +220,10 @@ def main():
             alpha = r.get("alpha_60d", "N/A")
             vol = r.get("volatility_252d")
             est = " (estimated)" if r.get("return_60d_estimated") else ""
+            alpha_str = f"{alpha:.4f}" if isinstance(alpha, (int, float)) else str(alpha)
+            vol_str = f"{vol:.4f}" if vol else "N/A"
             print(f"  {r['ticker']}: return_60d={r['return_60d']:.4f}{est}, "
-                  f"alpha={alpha:.4f if isinstance(alpha, float) else alpha}, "
-                  f"vol={vol:.4f if vol else 'N/A'}")
+                  f"alpha={alpha_str}, vol={vol_str}")
             sample_count += 1
             if sample_count >= 5:
                 break
