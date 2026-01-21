@@ -474,33 +474,49 @@ def compute_module_3_catalyst(
     logger.info(f"Prior snapshot: {prior_snapshot.key_count if prior_snapshot else 0} trials")
 
     if prior_snapshot and current_snapshot.records:
-        # Build key sets for comparison
+        # Build key sets for comparison using NCT ID ONLY (stable identifier)
+        # Ticker association can change between CT.gov queries, but NCT ID is globally unique
+        current_nct_ids = {r.nct_id for r in current_snapshot.records}
+        prior_nct_ids = {r.nct_id for r in prior_snapshot.records}
+        common_nct_ids = current_nct_ids & prior_nct_ids
+        added_nct_ids = current_nct_ids - prior_nct_ids
+        removed_nct_ids = prior_nct_ids - current_nct_ids
+
+        # Also track (ticker, nct_id) tuples for detailed comparison
         current_keys = {(r.ticker, r.nct_id) for r in current_snapshot.records}
         prior_keys = {(r.ticker, r.nct_id) for r in prior_snapshot.records}
         common_keys = current_keys & prior_keys
         added_keys = current_keys - prior_keys
         removed_keys = prior_keys - current_keys
 
-        logger.info(f"Key overlap: {len(common_keys)} common, {len(added_keys)} added, {len(removed_keys)} removed")
+        logger.info(f"NCT ID overlap: {len(common_nct_ids)} common, {len(added_nct_ids)} added, {len(removed_nct_ids)} removed")
+        logger.info(f"(ticker, nct_id) overlap: {len(common_keys)} common, {len(added_keys)} added, {len(removed_keys)} removed")
 
-        # Calculate churn rate
-        total_current = len(current_keys) if current_keys else 1
-        churn_rate = (len(added_keys) + len(removed_keys)) / (2 * total_current)
+        # Calculate churn rate using NCT IDs (stable keys)
+        total_current = len(current_nct_ids) if current_nct_ids else 1
+        nct_churn_rate = (len(added_nct_ids) + len(removed_nct_ids)) / (2 * total_current)
 
-        if len(added_keys) > 100 or len(removed_keys) > 100:
-            logger.warning(f"⚠️  HIGH KEY CHURN: {len(added_keys)} added, {len(removed_keys)} removed ({churn_rate*100:.1f}% churn)")
-            logger.warning("   This suggests trial_records.json was regenerated with different parameters")
-            logger.warning("   or CT.gov query/universe changed between runs.")
+        # Also calculate ticker association churn for diagnostics
+        ticker_churn_rate = (len(added_keys) + len(removed_keys)) / (2 * len(current_keys)) if current_keys else 0
 
-            # HIGH CHURN GATE: If >30% churn, treat as fresh baseline (no delta detection)
-            if churn_rate > 0.30:
-                logger.error(f"CATALYST CHURN GATE TRIGGERED: {churn_rate*100:.1f}% churn exceeds 30% threshold")
-                logger.error("   Forcing fresh baseline mode - all events will be detected as initial ingest")
-                logger.error("   This prevents false negatives from dataset regeneration")
-                # Force fresh baseline by clearing prior snapshot reference
-                prior_snapshot = None
-                prior_snapshot_date = None
-                logger.warning("   Prior snapshot cleared - running in fresh baseline mode")
+        if nct_churn_rate > 0.10:
+            logger.warning(f"⚠️  HIGH NCT ID CHURN: {len(added_nct_ids)} added, {len(removed_nct_ids)} removed ({nct_churn_rate*100:.1f}% churn)")
+            logger.warning("   This suggests actual trial population changed significantly.")
+
+        if ticker_churn_rate > 0.30 and nct_churn_rate < 0.10:
+            logger.info(f"ℹ️  Ticker association churn: {ticker_churn_rate*100:.1f}% (NCT churn only {nct_churn_rate*100:.1f}%)")
+            logger.info("   Ticker-NCT associations changed but trials are stable - this is expected with CT.gov text search.")
+
+        # HIGH CHURN GATE: Only trigger on NCT ID churn (actual trial changes)
+        # Ticker association churn is expected and should not trigger fresh baseline
+        if nct_churn_rate > 0.30:
+            logger.error(f"CATALYST CHURN GATE TRIGGERED: {nct_churn_rate*100:.1f}% NCT churn exceeds 30% threshold")
+            logger.error("   Forcing fresh baseline mode - all events will be detected as initial ingest")
+            logger.error("   This prevents false negatives from dataset regeneration")
+            # Force fresh baseline by clearing prior snapshot reference
+            prior_snapshot = None
+            prior_snapshot_date = None
+            logger.warning("   Prior snapshot cleared - running in fresh baseline mode")
 
         # Sample up to 10 COMMON trials and check field changes
         # Only run if prior_snapshot is still valid (not cleared by churn gate)
@@ -602,14 +618,19 @@ def compute_module_3_catalyst(
     total_events = 0
     total_deduped = 0
 
+    # Build NCT ID lookup for prior snapshot (stable key regardless of ticker association)
+    # This ensures we find prior records even if ticker-NCT association changed between runs
+    prior_records_by_nct: Dict[str, CanonicalTrialRecord] = {}
+    if prior_snapshot:
+        for record in prior_snapshot.records:
+            prior_records_by_nct[record.nct_id] = record
+
     for current_record in canonical_records:
         ticker = current_record.ticker
         nct_id = current_record.nct_id
 
-        # Get prior record for this trial
-        prior_record = None
-        if prior_snapshot:
-            prior_record = prior_snapshot.get_record(ticker, nct_id)
+        # Get prior record for this trial using NCT ID only (stable lookup)
+        prior_record = prior_records_by_nct.get(nct_id) if prior_snapshot else None
 
         # Detect events (legacy format)
         legacy_events = event_detector.detect_events(
