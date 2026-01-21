@@ -304,5 +304,95 @@ class TestMomentumSignalDataclass(unittest.TestCase):
         self.assertTrue(hasattr(result, 'data_completeness'))
 
 
+class TestZeroBenchmarkFalsyBug(unittest.TestCase):
+    """
+    Regression tests for the 0.0 benchmark falsy bug.
+
+    Bug: Using `or` fallback for numeric values treats 0.0 as falsy,
+    causing xbi_return_60d=0.0 to be skipped, resulting in None alpha.
+
+    Fix: Use `x if x is not None else fallback` pattern instead of `or`.
+
+    This test ensures the bug never regresses.
+    """
+
+    def test_zero_benchmark_return_computes_alpha(self):
+        """
+        benchmark_return_60d=0.0 should compute alpha, not return None.
+
+        This is the critical regression test for the falsy bug.
+        When XBI return is exactly 0.0 (flat market), alpha should equal
+        the stock's return, not be None.
+        """
+        result = compute_momentum_signal(
+            return_60d=Decimal("0.10"),  # Stock gained 10%
+            benchmark_return_60d=Decimal("0.0"),  # XBI was flat
+        )
+
+        # CRITICAL: alpha should be computed, not None
+        self.assertIsNotNone(result.alpha_60d, (
+            "alpha_60d is None when benchmark=0.0! "
+            "This is the falsy bug: 0.0 is being treated as missing data."
+        ))
+
+        # Alpha should equal stock return (10% - 0% = 10%)
+        self.assertEqual(result.alpha_60d, Decimal("0.1000"))
+
+        # Score should be above neutral (positive alpha)
+        self.assertGreater(result.momentum_score, Decimal("50"))
+
+        # Data completeness should be 1.0 (both values present)
+        self.assertEqual(result.data_completeness, Decimal("1.0"))
+
+    def test_zero_benchmark_different_from_none_benchmark(self):
+        """benchmark=0.0 and benchmark=None must produce different results."""
+        result_zero = compute_momentum_signal(
+            return_60d=Decimal("0.10"),
+            benchmark_return_60d=Decimal("0.0"),
+        )
+        result_none = compute_momentum_signal(
+            return_60d=Decimal("0.10"),
+            benchmark_return_60d=None,
+        )
+
+        # Zero benchmark should have computed alpha
+        self.assertIsNotNone(result_zero.alpha_60d)
+        self.assertEqual(result_zero.alpha_60d, Decimal("0.1000"))
+
+        # None benchmark should have None alpha
+        self.assertIsNone(result_none.alpha_60d)
+
+        # Scores should differ
+        self.assertNotEqual(result_zero.momentum_score, result_none.momentum_score)
+
+    def test_zero_return_with_nonzero_benchmark(self):
+        """return_60d=0.0 with nonzero benchmark should compute negative alpha."""
+        result = compute_momentum_signal(
+            return_60d=Decimal("0.0"),  # Stock was flat
+            benchmark_return_60d=Decimal("0.10"),  # XBI gained 10%
+        )
+
+        # Alpha should be computed: 0% - 10% = -10%
+        self.assertIsNotNone(result.alpha_60d)
+        self.assertEqual(result.alpha_60d, Decimal("-0.1000"))
+
+        # Score should be below neutral (negative alpha)
+        self.assertLess(result.momentum_score, Decimal("50"))
+
+    def test_both_zero_produces_neutral(self):
+        """Both return and benchmark at 0.0 should produce neutral score."""
+        result = compute_momentum_signal(
+            return_60d=Decimal("0.0"),
+            benchmark_return_60d=Decimal("0.0"),
+        )
+
+        # Alpha should be 0
+        self.assertIsNotNone(result.alpha_60d)
+        self.assertEqual(result.alpha_60d, Decimal("0.0000"))
+
+        # Score should be exactly neutral
+        self.assertEqual(result.momentum_score, Decimal("50.00"))
+
+
 if __name__ == "__main__":
     unittest.main()
