@@ -478,11 +478,12 @@ if __name__ == "__main__":
     
     filepath = sys.argv[1] if len(sys.argv) > 1 else "/home/claude/biotech_screener/data/daily_prices.csv"
     
+    # Note: Removed delisted tickers (SGEN acquired by Pfizer, BLUE acquired by Carlyle/SK Capital)
     BIOTECH_UNIVERSE = [
         "AMGN", "GILD", "VRTX", "REGN", "BIIB",
-        "ALNY", "BMRN", "SGEN", "INCY", "EXEL",
+        "ALNY", "BMRN", "INCY", "EXEL", "JAZZ",
         "MRNA", "BNTX", "IONS", "SRPT", "RARE",
-        "BLUE", "FOLD", "ACAD", "HALO", "KRTX",
+        "FOLD", "ACAD", "HALO", "KRTX", "LEGN",
         "IMVT", "ARWR", "PCVX", "BEAM", "EDIT",
     ]
     

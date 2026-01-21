@@ -107,7 +107,7 @@ KNOWN_CUSIP_MAPPINGS = {
     
     # Cell/gene therapy
     '07400F101': 'BEAM',   # Beam Therapeutics
-    '24703L102': 'BLUE',   # bluebird bio
+    '24703L102': 'BLUE',   # bluebird bio (DELISTED 2025 - acquired by Carlyle/SK Capital)
     '17323P108': 'CRSP',   # CRISPR Therapeutics
     '33767L109': 'FATE',   # Fate Therapeutics
     '454140100': 'IMTX',   # Immatics

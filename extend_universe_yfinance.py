@@ -28,18 +28,20 @@ except ImportError:
     sys.exit(1)
 
 
-# 29 additional stocks to add (large/mid caps with good data availability)
+# Additional stocks to add (large/mid caps with good data availability)
+# Note: Removed delisted/acquired tickers: SGEN (Pfizer), HZNP (Amgen), IMMU (Gilead), BLUE (Carlyle), NSTG (Bruker)
+# Note: BGNE changed ticker to ONC (BeiGene -> BeOne Medicines) on Jan 2, 2025
 NEW_TICKERS = [
     # Mega caps (easy data)
     "AMGN", "GILD", "BIIB", "MRNA", "BNTX",
-    
+
     # Large caps
-    "SGEN", "LGND", "TECH", "BGNE", "RGEN",
-    
+    "LGND", "TECH", "ONC", "RGEN",
+
     # Mid caps
-    "ROIV", "NTRA", "HZNP", "DAWN", "PCVX",
-    "ARVN", "LEGN", "IMMU", "BLUE", "FATE",
-    "NTLA", "EDIT", "BEAM", "VCYT", "NSTG",
+    "ROIV", "NTRA", "DAWN", "PCVX",
+    "ARVN", "LEGN", "FATE",
+    "NTLA", "EDIT", "BEAM", "VCYT",
     "AXSM", "PTGX", "CDNA", "PRVA"
 ]
 
