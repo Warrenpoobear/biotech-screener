@@ -608,9 +608,46 @@ def _enrich_with_coinvest(ticker: str, coinvest_signals: dict, as_of_date: date)
     """Look up co-invest signal and return overlay fields with PIT safety.
 
     V2 ENHANCEMENT: Now extracts holder tier metadata for weighted scoring.
+
+    Supports two input formats:
+    1. Object format with .positions attribute (from live 13F aggregator)
+    2. Pre-computed dict format from holdings_snapshots.json conversion
     """
     signal = coinvest_signals.get(ticker)
     if not signal:
+        return {
+            "coinvest_overlap_count": 0,
+            "coinvest_holders": [],
+            "coinvest_usable": False,
+            "position_changes": {},
+            "holder_tiers": {},
+        }
+
+    # Handle pre-computed dict format from _convert_holdings_to_coinvest
+    # This format already has coinvest_overlap_count, coinvest_holders, etc.
+    if isinstance(signal, dict) and "coinvest_overlap_count" in signal:
+        # Convert holder_tiers from nested dict format {"cik": {"tier": 1, "name": "..."}}
+        # to simple format {"cik": 1} expected by compute_smart_money_signal
+        raw_tiers = signal.get("holder_tiers", {})
+        normalized_tiers = {}
+        for holder_id, tier_info in raw_tiers.items():
+            if isinstance(tier_info, dict):
+                normalized_tiers[holder_id] = tier_info.get("tier", 2)
+            elif isinstance(tier_info, int):
+                normalized_tiers[holder_id] = tier_info
+            else:
+                normalized_tiers[holder_id] = 2  # Default to tier 2
+
+        return {
+            "coinvest_overlap_count": signal.get("coinvest_overlap_count", 0),
+            "coinvest_holders": signal.get("coinvest_holders", []),
+            "coinvest_usable": signal.get("coinvest_overlap_count", 0) > 0,
+            "position_changes": signal.get("position_changes", {}),
+            "holder_tiers": normalized_tiers,
+        }
+
+    # Handle object format with .positions attribute (original behavior)
+    if not hasattr(signal, 'positions'):
         return {
             "coinvest_overlap_count": 0,
             "coinvest_holders": [],

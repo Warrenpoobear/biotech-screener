@@ -616,8 +616,10 @@ def run_screening_pipeline(
             holdings_file = data_dir / "holdings_snapshots.json"
             if holdings_file.exists():
                 logger.info("  Loading holdings_snapshots.json for smart money signals...")
-                holdings_snapshots = load_json_data(holdings_file, "Holdings snapshots")
-                if holdings_snapshots:
+                # Holdings snapshots is a dict keyed by ticker, not an array
+                with open(holdings_file, 'r', encoding='utf-8') as f:
+                    holdings_snapshots = json.load(f)
+                if holdings_snapshots and isinstance(holdings_snapshots, dict):
                     # Convert holdings format to coinvest_signals format
                     coinvest_signals = _convert_holdings_to_coinvest(holdings_snapshots)
                     logger.info(f"  Converted holdings to coinvest signals for {len(coinvest_signals)} tickers")
