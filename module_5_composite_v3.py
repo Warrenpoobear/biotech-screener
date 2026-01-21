@@ -69,6 +69,7 @@ from src.modules.ic_enhancements import (
     compute_volatility_adjustment,
     apply_volatility_to_score,
     compute_momentum_signal,
+    compute_momentum_signal_with_fallback,  # V2: Multi-window with fallback
     compute_valuation_signal,
     compute_catalyst_decay,
     apply_catalyst_decay,
@@ -83,6 +84,7 @@ from src.modules.ic_enhancements import (
     VolatilityAdjustment,
     VolatilityBucket,
     MomentumSignal,
+    MultiWindowMomentumInput,  # V2: Multi-window input
     ValuationSignal,
     CatalystDecayResult,
     SmartMoneySignal,
@@ -977,18 +979,26 @@ def _score_single_ticker_v3(
     stage = _stage_bucket(lead_phase)
     trial_count = clin_data.get("trial_count", 0)
 
-    # Extract market data for volatility and momentum
+    # Extract market data for volatility and momentum (multi-window)
     annualized_vol = None
-    return_60d = None
-    benchmark_return_60d = None
+    momentum_input = MultiWindowMomentumInput()
 
     if market_data:
-        # Use None-safe fallback (0.0 is falsy, so 'or' fails for values=0)
+        # Volatility
         vol_val = market_data.get("volatility_252d")
         annualized_vol = _to_decimal(vol_val if vol_val is not None else market_data.get("annualized_volatility"))
-        return_60d = _to_decimal(market_data.get("return_60d"))
-        xbi_val = market_data.get("xbi_return_60d")
-        benchmark_return_60d = _to_decimal(xbi_val if xbi_val is not None else market_data.get("benchmark_return_60d"))
+
+        # Multi-window returns (20d, 60d, 120d)
+        momentum_input = MultiWindowMomentumInput(
+            return_20d=_to_decimal(market_data.get("return_20d")),
+            return_60d=_to_decimal(market_data.get("return_60d")),
+            return_120d=_to_decimal(market_data.get("return_120d")),
+            benchmark_20d=_to_decimal(market_data.get("xbi_return_20d")),
+            benchmark_60d=_to_decimal(market_data.get("xbi_return_60d") or market_data.get("benchmark_return_60d")),
+            benchmark_120d=_to_decimal(market_data.get("xbi_return_120d")),
+            trading_days_available=market_data.get("trading_days_available"),
+            annualized_vol=annualized_vol,
+        )
 
     # =========================================================================
     # COMPUTE ALL ENHANCEMENTS
@@ -1001,20 +1011,31 @@ def _score_single_ticker_v3(
     elif vol_adj.vol_bucket == VolatilityBucket.LOW:
         flags.append("low_volatility_boost")
 
-    # 2. Momentum signal (with vol available for adjustment)
-    momentum = compute_momentum_signal(
-        return_60d,
-        benchmark_return_60d,
-        annualized_vol=annualized_vol,
+    # 2. Momentum signal (with multi-window fallback for improved coverage)
+    momentum = compute_momentum_signal_with_fallback(
+        momentum_input,
         use_vol_adjusted_alpha=False,  # Default to raw alpha (can enable for vol-adjusted)
     )
     momentum_norm = momentum.momentum_score
+
+    # Track momentum data status for diagnostics
+    if momentum.data_status == "missing_prices":
+        flags.append("momentum_missing_prices")
+    elif momentum.data_status == "computed_low_conf":
+        flags.append("momentum_low_confidence")
+
+    # Flag strong momentum (only when data is available)
     if momentum.alpha_60d is not None:
         if momentum.alpha_60d >= Decimal("0.10"):
             flags.append("strong_positive_momentum")
         elif momentum.alpha_60d <= Decimal("-0.10"):
             flags.append("strong_negative_momentum")
-    # Flag incomplete momentum data
+
+    # Track which window was used
+    if momentum.window_used:
+        flags.append(f"momentum_window_{momentum.window_used}d")
+
+    # Flag incomplete momentum data (backwards compat)
     if momentum.data_completeness < Decimal("0.5"):
         flags.append("momentum_data_incomplete")
 
@@ -1419,6 +1440,10 @@ def _score_single_ticker_v3(
             "score": str(momentum.momentum_score),
             "alpha_60d": str(momentum.alpha_60d) if momentum.alpha_60d else None,
             "confidence": str(momentum.confidence),
+            "data_completeness": str(momentum.data_completeness),
+            # V2 multi-window fields
+            "window_used": momentum.window_used,
+            "data_status": momentum.data_status,
         },
         "valuation_signal": {
             "score": str(valuation.valuation_score),
@@ -1963,11 +1988,45 @@ def compute_module_5_composite_v3(
 
         # Momentum state breakdown (for debugging/attribution)
         # Categories are MUTUALLY EXCLUSIVE and sum to total_rankable:
-        # 1. no_alpha: alpha_60d is None (can't classify direction)
-        # 2. gated_with_data: alpha exists but confidence-gated (signal not applied)
-        # 3. applied_negative: not gated, strong negative signal
-        # 4. applied_positive: not gated, strong positive signal
-        # 5. applied_neutral: not gated, signal exists but not strong either way
+        # 1. missing_prices: No price data available for any window
+        # 2. computed_low_conf: Computed but confidence < 0.5
+        # 3. applied_negative: Strong negative signal
+        # 4. applied_positive: Strong positive signal
+        # 5. applied_neutral: Signal computed but not strong either way
+        "momentum_missing_prices": sum(
+            1 for r in ranked_securities
+            if "momentum_missing_prices" in r.get("flags", [])
+        ),
+        "momentum_computed_low_conf": sum(
+            1 for r in ranked_securities
+            if "momentum_low_confidence" in r.get("flags", [])
+        ),
+        "momentum_applied_negative": sum(
+            1 for r in ranked_securities
+            if "strong_negative_momentum" in r.get("flags", [])
+            and "momentum_missing_prices" not in r.get("flags", [])
+        ),
+        "momentum_applied_positive": sum(
+            1 for r in ranked_securities
+            if "strong_positive_momentum" in r.get("flags", [])
+            and "momentum_missing_prices" not in r.get("flags", [])
+        ),
+
+        # Window usage breakdown
+        "momentum_window_20d": sum(
+            1 for r in ranked_securities
+            if "momentum_window_20d" in r.get("flags", [])
+        ),
+        "momentum_window_60d": sum(
+            1 for r in ranked_securities
+            if "momentum_window_60d" in r.get("flags", [])
+        ),
+        "momentum_window_120d": sum(
+            1 for r in ranked_securities
+            if "momentum_window_120d" in r.get("flags", [])
+        ),
+
+        # Legacy compat: "no_alpha" = missing_prices + computed_low_conf
         "momentum_no_alpha": sum(
             1 for r in ranked_securities
             if r.get("momentum_signal", {}).get("alpha_60d") is None
@@ -1976,16 +2035,6 @@ def compute_module_5_composite_v3(
             1 for r in ranked_securities
             if r.get("momentum_signal", {}).get("alpha_60d") is not None
             and "momentum_confidence_gated" in r.get("flags", [])
-        ),
-        "momentum_applied_negative": sum(
-            1 for r in ranked_securities
-            if "strong_negative_momentum" in r.get("flags", [])
-            and "momentum_confidence_gated" not in r.get("flags", [])
-        ),
-        "momentum_applied_positive": sum(
-            1 for r in ranked_securities
-            if "strong_positive_momentum" in r.get("flags", [])
-            and "momentum_confidence_gated" not in r.get("flags", [])
         ),
 
         # Quality metrics
@@ -2098,16 +2147,25 @@ def compute_module_5_composite_v3(
             health_warnings.append(f"INFO: {comp} confidence-gated for {gated_pct*100:.1f}% of universe (sparse coverage expected)")
 
     # Log detailed momentum state breakdown for debugging/attribution
-    # Categories are mutually exclusive and sum to total_rankable
-    mom_no_alpha = diagnostic_counts.get("momentum_no_alpha", 0)
-    mom_gated = diagnostic_counts.get("momentum_gated_with_data", 0)
+    # V2: Now tracks data status (missing_prices, computed_low_conf) and window usage
+    mom_missing = diagnostic_counts.get("momentum_missing_prices", 0)
+    mom_low_conf = diagnostic_counts.get("momentum_computed_low_conf", 0)
     mom_neg = diagnostic_counts.get("momentum_applied_negative", 0)
     mom_pos = diagnostic_counts.get("momentum_applied_positive", 0)
-    # Neutral = has data, not gated, not strong either way
-    mom_neutral = total_rankable - mom_no_alpha - mom_gated - mom_neg - mom_pos
 
-    # Compute coverage and effective weight stats for active (non-gated) signals
-    mom_active = mom_neg + mom_pos + mom_neutral  # Securities where momentum actually contributes
+    # Window usage stats
+    mom_20d = diagnostic_counts.get("momentum_window_20d", 0)
+    mom_60d = diagnostic_counts.get("momentum_window_60d", 0)
+    mom_120d = diagnostic_counts.get("momentum_window_120d", 0)
+
+    # Neutral = has data, not low conf, not strong either way
+    mom_with_data = mom_60d + mom_20d + mom_120d
+    mom_neutral = mom_with_data - mom_neg - mom_pos - mom_low_conf
+    if mom_neutral < 0:
+        mom_neutral = 0
+
+    # Active = actually contributed to scoring
+    mom_active = mom_with_data - mom_low_conf
     mom_coverage_pct = (Decimal(str(mom_active)) / Decimal(str(total_rankable)) * 100) if total_rankable > 0 else Decimal("0")
 
     # Calculate average effective momentum weight across active securities
@@ -2116,19 +2174,21 @@ def compute_module_5_composite_v3(
     if mom_active > 0:
         for sec in ranked_securities:
             flags = sec.get("flags", [])
-            if "momentum_confidence_gated" not in flags and sec.get("momentum_signal", {}).get("alpha_60d") is not None:
+            if "momentum_missing_prices" not in flags and "momentum_low_confidence" not in flags:
                 eff_weights = sec.get("effective_weights", {})
                 mom_weight = _to_decimal(eff_weights.get("momentum", "0")) or Decimal("0")
                 avg_mom_weight += mom_weight
                 # Track total momentum contribution to composite (for impact assessment)
                 mom_score = _to_decimal(sec.get("momentum_signal", {}).get("score", "50")) or Decimal("50")
                 total_mom_contribution += mom_score * mom_weight
-        avg_mom_weight = (avg_mom_weight / Decimal(str(mom_active))).quantize(Decimal("0.001"))
+        avg_mom_weight = (avg_mom_weight / Decimal(str(mom_active))).quantize(Decimal("0.001")) if mom_active > 0 else Decimal("0")
 
-    if mom_no_alpha + mom_gated + mom_neg + mom_pos > 0:
+    if mom_with_data > 0 or mom_missing > 0:
         health_warnings.append(
-            f"INFO: momentum breakdown - no_alpha:{mom_no_alpha}, gated:{mom_gated}, "
+            f"INFO: momentum breakdown - "
+            f"missing:{mom_missing}, low_conf:{mom_low_conf}, "
             f"applied[neg:{mom_neg}, pos:{mom_pos}, neutral:{mom_neutral}] | "
+            f"windows[20d:{mom_20d}, 60d:{mom_60d}, 120d:{mom_120d}] | "
             f"coverage={mom_active}/{total_rankable} ({mom_coverage_pct:.1f}%), avg_weight={avg_mom_weight}"
         )
 

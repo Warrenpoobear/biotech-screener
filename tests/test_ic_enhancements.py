@@ -19,7 +19,9 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.modules.ic_enhancements import (
     compute_momentum_signal,
+    compute_momentum_signal_with_fallback,
     MomentumSignal,
+    MultiWindowMomentumInput,
     MOMENTUM_SLOPE,
     MOMENTUM_SCORE_MIN,
     MOMENTUM_SCORE_MAX,
@@ -392,6 +394,195 @@ class TestZeroBenchmarkFalsyBug(unittest.TestCase):
 
         # Score should be exactly neutral
         self.assertEqual(result.momentum_score, Decimal("50.00"))
+
+
+class TestMultiWindowMomentumFallback(unittest.TestCase):
+    """Tests for multi-window momentum with fallback for improved coverage."""
+
+    def test_prefers_60d_window(self):
+        """When all windows available, should prefer 60d."""
+        inputs = MultiWindowMomentumInput(
+            return_20d=Decimal("0.05"),
+            return_60d=Decimal("0.10"),
+            return_120d=Decimal("0.15"),
+            benchmark_20d=Decimal("0.02"),
+            benchmark_60d=Decimal("0.05"),
+            benchmark_120d=Decimal("0.08"),
+        )
+        result = compute_momentum_signal_with_fallback(inputs)
+
+        self.assertEqual(result.window_used, 60)
+        # alpha = 0.10 - 0.05 = 0.05
+        self.assertEqual(result.alpha_60d, Decimal("0.0500"))
+        self.assertEqual(result.data_status, "applied")
+
+    def test_fallback_to_120d(self):
+        """When 60d unavailable, should fallback to 120d."""
+        inputs = MultiWindowMomentumInput(
+            return_20d=Decimal("0.05"),
+            return_60d=None,
+            return_120d=Decimal("0.15"),
+            benchmark_20d=Decimal("0.02"),
+            benchmark_60d=None,
+            benchmark_120d=Decimal("0.08"),
+        )
+        result = compute_momentum_signal_with_fallback(inputs)
+
+        self.assertEqual(result.window_used, 120)
+        # alpha = 0.15 - 0.08 = 0.07
+        self.assertEqual(result.alpha_60d, Decimal("0.0700"))
+        self.assertEqual(result.data_completeness, Decimal("0.8"))
+
+    def test_fallback_to_20d(self):
+        """When 60d and 120d unavailable, should fallback to 20d."""
+        inputs = MultiWindowMomentumInput(
+            return_20d=Decimal("0.05"),
+            return_60d=None,
+            return_120d=None,
+            benchmark_20d=Decimal("0.02"),
+            benchmark_60d=None,
+            benchmark_120d=None,
+        )
+        result = compute_momentum_signal_with_fallback(inputs)
+
+        self.assertEqual(result.window_used, 20)
+        # alpha = 0.05 - 0.02 = 0.03
+        self.assertEqual(result.alpha_60d, Decimal("0.0300"))
+        self.assertEqual(result.data_completeness, Decimal("0.6"))
+
+    def test_missing_prices_status(self):
+        """When no windows available, should return missing_prices status."""
+        inputs = MultiWindowMomentumInput(
+            return_20d=None,
+            return_60d=None,
+            return_120d=None,
+            benchmark_20d=None,
+            benchmark_60d=None,
+            benchmark_120d=None,
+        )
+        result = compute_momentum_signal_with_fallback(inputs)
+
+        self.assertIsNone(result.window_used)
+        self.assertEqual(result.data_status, "missing_prices")
+        self.assertEqual(result.momentum_score, Decimal("50"))
+        self.assertEqual(result.data_completeness, Decimal("0.0"))
+
+    def test_requires_both_stock_and_benchmark(self):
+        """Should only use window if both stock and benchmark available."""
+        inputs = MultiWindowMomentumInput(
+            return_60d=Decimal("0.10"),  # Stock has 60d
+            benchmark_60d=None,           # But no XBI 60d
+            return_20d=Decimal("0.05"),   # Stock has 20d
+            benchmark_20d=Decimal("0.02"), # XBI has 20d
+        )
+        result = compute_momentum_signal_with_fallback(inputs)
+
+        # Should fallback to 20d since 60d is incomplete
+        self.assertEqual(result.window_used, 20)
+
+
+class TestMultiWindowConfidenceRules(unittest.TestCase):
+    """Tests for confidence based on window and data availability."""
+
+    def test_60d_window_base_confidence(self):
+        """60d window should have base confidence of 0.7."""
+        inputs = MultiWindowMomentumInput(
+            return_60d=Decimal("0.05"),
+            benchmark_60d=Decimal("0.02"),
+            trading_days_available=60,
+        )
+        result = compute_momentum_signal_with_fallback(inputs)
+
+        # Base 0.7 for 60d window, no days penalty
+        # Alpha 0.03 < 0.05, so no boost
+        self.assertEqual(result.confidence, Decimal("0.7000"))
+
+    def test_20d_window_lower_confidence(self):
+        """20d window should have lower base confidence."""
+        inputs = MultiWindowMomentumInput(
+            return_20d=Decimal("0.05"),
+            benchmark_20d=Decimal("0.02"),
+            trading_days_available=20,
+        )
+        result = compute_momentum_signal_with_fallback(inputs)
+
+        # Base 0.5 for 20d, -0.2 for 20-39 days available
+        self.assertEqual(result.confidence, Decimal("0.3000"))
+
+    def test_strong_signal_boosts_confidence(self):
+        """Strong alpha should boost confidence."""
+        inputs = MultiWindowMomentumInput(
+            return_60d=Decimal("0.30"),
+            benchmark_60d=Decimal("0.05"),
+            trading_days_available=60,
+        )
+        result = compute_momentum_signal_with_fallback(inputs)
+
+        # alpha = 0.25 >= 0.20, so +0.2 boost
+        # Base 0.7 + 0.2 = 0.9
+        self.assertEqual(result.confidence, Decimal("0.9000"))
+
+    def test_few_trading_days_penalty(self):
+        """Few trading days should penalize confidence."""
+        inputs = MultiWindowMomentumInput(
+            return_60d=Decimal("0.10"),
+            benchmark_60d=Decimal("0.05"),
+            trading_days_available=30,  # Only 30 days (20-39 range)
+        )
+        result = compute_momentum_signal_with_fallback(inputs)
+
+        # Base 0.7 - 0.2 (days penalty) = 0.5
+        # alpha 0.05 gives medium boost = +0
+        self.assertEqual(result.confidence, Decimal("0.5000"))
+
+
+class TestMultiWindowDataStatus(unittest.TestCase):
+    """Tests for data_status tracking."""
+
+    def test_applied_status(self):
+        """Good confidence should result in 'applied' status."""
+        inputs = MultiWindowMomentumInput(
+            return_60d=Decimal("0.15"),
+            benchmark_60d=Decimal("0.05"),
+            trading_days_available=60,
+        )
+        result = compute_momentum_signal_with_fallback(inputs)
+
+        self.assertEqual(result.data_status, "applied")
+
+    def test_low_conf_status(self):
+        """Low confidence should result in 'computed_low_conf' status."""
+        inputs = MultiWindowMomentumInput(
+            return_20d=Decimal("0.03"),  # Small alpha
+            benchmark_20d=Decimal("0.02"),
+            trading_days_available=15,  # Very few days
+        )
+        result = compute_momentum_signal_with_fallback(inputs)
+
+        # Base 0.5 - 0.3 (< 20 days) = 0.2 < 0.5 threshold
+        # But minimum is 0.3
+        self.assertEqual(result.data_status, "computed_low_conf")
+
+    def test_determinism(self):
+        """Same inputs should produce identical outputs."""
+        inputs = MultiWindowMomentumInput(
+            return_20d=Decimal("0.05"),
+            return_60d=Decimal("0.10"),
+            return_120d=Decimal("0.15"),
+            benchmark_20d=Decimal("0.02"),
+            benchmark_60d=Decimal("0.05"),
+            benchmark_120d=Decimal("0.08"),
+            annualized_vol=Decimal("0.45"),
+            trading_days_available=100,
+        )
+
+        result1 = compute_momentum_signal_with_fallback(inputs)
+        result2 = compute_momentum_signal_with_fallback(inputs)
+
+        self.assertEqual(result1.momentum_score, result2.momentum_score)
+        self.assertEqual(result1.alpha_60d, result2.alpha_60d)
+        self.assertEqual(result1.window_used, result2.window_used)
+        self.assertEqual(result1.data_status, result2.data_status)
 
 
 if __name__ == "__main__":
