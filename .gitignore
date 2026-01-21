@@ -63,3 +63,6 @@ output/
 # Generated validation data (use export_price_data.py to regenerate)
 data/universe_prices.csv
 data/indices_prices.csv
+
+# Module 3 state files (runtime generated)
+production_data/ctgov_state/
