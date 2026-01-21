@@ -62,6 +62,40 @@ MOMENTUM_SCORE_MAX = Decimal("95")
 # Epsilon for volatility normalization
 MOMENTUM_VOL_EPS = Decimal("0.0001")
 
+# Strong signal threshold (for diagnostic metrics)
+# A signal is "strong" if |score - 50| >= this threshold
+MOMENTUM_STRONG_THRESHOLD = Decimal("2.5")
+
+
+def compute_alpha_for_score_delta(
+    score_delta: Decimal,
+    confidence: Decimal,
+    slope: Decimal = MOMENTUM_SLOPE,
+) -> Decimal:
+    """Compute the alpha required to produce a given score delta after shrinkage.
+
+    The momentum score formula is:
+        final_score = 50 + confidence * (raw_score - 50)
+        raw_score = 50 + alpha * slope
+
+    Combining: final_score = 50 + confidence * alpha * slope
+    So: |score_delta| = confidence * |alpha| * slope
+    Therefore: |alpha| = |score_delta| / (confidence * slope)
+
+    Args:
+        score_delta: The score deviation from 50 (e.g., 2.5 for "strong" threshold)
+        confidence: Shrinkage confidence (0.0-1.0)
+        slope: Score mapping slope (default MOMENTUM_SLOPE=150)
+
+    Returns:
+        The absolute alpha (as Decimal) required to achieve that score delta.
+        For score_delta=2.5, conf=0.7: returns ~0.0238 (2.38% alpha)
+    """
+    if confidence <= 0:
+        return Decimal("Inf")
+    return (abs(score_delta) / (confidence * slope)).quantize(Decimal("0.0001"))
+
+
 # Catalyst decay parameters
 # Uses exponential decay with asymmetric shape:
 # - Slow rise as event approaches (from 90+ days out)
