@@ -43294,7 +43294,7 @@
       }
     },
     "component_coverage": {
-      "catalyst": "0",
+      "catalyst": "0.03448275862068965517241379310",
       "market_data": "0",
       "momentum": "0",
       "pos": "0",
@@ -43302,6 +43302,7 @@
       "valuation": "0.4913793103448275862068965517"
     },
     "degraded_components": [
+      "catalyst",
       "momentum",
       "smart_money",
       "catalyst_gated",
@@ -43313,7 +43314,7 @@
       "excluded": 192,
       "excluded_by_top_n": 56,
       "high_volatility_count": 0,
-      "in_catalyst_window": 0,
+      "in_catalyst_window": 4,
       "low_volatility_count": 0,
       "rankable": 116,
       "top_n_cutoff": 60,
@@ -44322,10 +44323,9 @@
         "std": "20"
       }
     },
-    "health_errors": [
-      "CRITICAL: catalyst coverage 0.0% < 10% threshold - pipeline broken"
-    ],
+    "health_errors": [],
     "health_warnings": [
+      "WARNING: catalyst coverage 3.4% < 10% threshold",
       "DEGRADED: momentum coverage 0.0% < 50% threshold",
       "WARNING: smart_money coverage 0.0% < 30% threshold",
       "DEGRADED: catalyst confidence-gated for 100.0% of universe",
@@ -44341,8 +44341,8 @@
     "ranked_securities": [
       {
         "catalyst_decay": {
-          "days_to_catalyst": null,
-          "factor": "0.5",
+          "days_to_catalyst": 71,
+          "factor": "0.0567",
           "in_optimal_window": false
         },
         "cohort_key": "late",
@@ -44356,7 +44356,7 @@
         "confidence_financial": "0.95",
         "confidence_overall": "0.73000",
         "confidence_pos": null,
-        "determinism_hash": "dd30ce379fb06229",
+        "determinism_hash": "91c9e5098cb016d7",
         "effective_weights": {
           "catalyst": "0.0000",
           "clinical": "0.5028",
@@ -44425,11 +44425,11 @@
             {
               "confidence": "0.25",
               "contribution": "0.00",
-              "decay_factor": "0.5",
+              "decay_factor": "0.0567",
               "name": "catalyst",
               "normalized": "50.00",
               "notes": [
-                "decay_factor_0.5"
+                "decay_factor_0.0567"
               ],
               "raw": "50.00",
               "weight_base": "0.20",
@@ -44469,7 +44469,7 @@
           },
           "enhancements": {
             "catalyst_decay": {
-              "factor": "0.5",
+              "factor": "0.0567",
               "in_optimal_window": false
             },
             "momentum": {
@@ -46567,8 +46567,8 @@
       },
       {
         "catalyst_decay": {
-          "days_to_catalyst": null,
-          "factor": "0.5",
+          "days_to_catalyst": 10,
+          "factor": "0.0608",
           "in_optimal_window": false
         },
         "cohort_key": "early",
@@ -46582,7 +46582,7 @@
         "confidence_financial": "0.95",
         "confidence_overall": "0.73000",
         "confidence_pos": null,
-        "determinism_hash": "e8727e42f2c63a55",
+        "determinism_hash": "f7609023d5b03344",
         "effective_weights": {
           "catalyst": "0.0000",
           "clinical": "0.5028",
@@ -46649,11 +46649,11 @@
             {
               "confidence": "0.25",
               "contribution": "0.00",
-              "decay_factor": "0.5",
+              "decay_factor": "0.0608",
               "name": "catalyst",
               "normalized": "50.00",
               "notes": [
-                "decay_factor_0.5"
+                "decay_factor_0.0608"
               ],
               "raw": "50.00",
               "weight_base": "0.20",
@@ -46693,7 +46693,7 @@
           },
           "enhancements": {
             "catalyst_decay": {
-              "factor": "0.5",
+              "factor": "0.0608",
               "in_optimal_window": false
             },
             "momentum": {
@@ -47894,8 +47894,8 @@
       },
       {
         "catalyst_decay": {
-          "days_to_catalyst": null,
-          "factor": "0.5",
+          "days_to_catalyst": 10,
+          "factor": "0.0608",
           "in_optimal_window": false
         },
         "cohort_key": "late",
@@ -47909,7 +47909,7 @@
         "confidence_financial": "0.95",
         "confidence_overall": "0.73000",
         "confidence_pos": null,
-        "determinism_hash": "e0d6b540a52e56fe",
+        "determinism_hash": "1fd1b5d0b75d339d",
         "effective_weights": {
           "catalyst": "0.0000",
           "clinical": "0.5028",
@@ -47975,11 +47975,11 @@
             {
               "confidence": "0.25",
               "contribution": "0.00",
-              "decay_factor": "0.5",
+              "decay_factor": "0.0608",
               "name": "catalyst",
               "normalized": "50.00",
               "notes": [
-                "decay_factor_0.5"
+                "decay_factor_0.0608"
               ],
               "raw": "50.00",
               "weight_base": "0.20",
@@ -48019,7 +48019,7 @@
           },
           "enhancements": {
             "catalyst_decay": {
-              "factor": "0.5",
+              "factor": "0.0608",
               "in_optimal_window": false
             },
             "momentum": {
@@ -48334,9 +48334,9 @@
       },
       {
         "catalyst_decay": {
-          "days_to_catalyst": null,
-          "factor": "0.5",
-          "in_optimal_window": false
+          "days_to_catalyst": 20,
+          "factor": "0.2466",
+          "in_optimal_window": true
         },
         "cohort_key": "late",
         "coinvest_holders": [],
@@ -48349,7 +48349,7 @@
         "confidence_financial": "0.95",
         "confidence_overall": "0.73000",
         "confidence_pos": null,
-        "determinism_hash": "6c1f3d908033922e",
+        "determinism_hash": "afb6546676700efb",
         "effective_weights": {
           "catalyst": "0.0000",
           "clinical": "0.5028",
@@ -48359,6 +48359,7 @@
         },
         "flags": [
           "catalyst_confidence_gated",
+          "catalyst_optimal_window",
           "clinical_financial_synergy",
           "momentum_confidence_gated",
           "momentum_data_incomplete"
@@ -48417,11 +48418,11 @@
             {
               "confidence": "0.25",
               "contribution": "0.00",
-              "decay_factor": "0.5",
+              "decay_factor": "0.2466",
               "name": "catalyst",
               "normalized": "50.00",
               "notes": [
-                "decay_factor_0.5"
+                "decay_factor_0.2466"
               ],
               "raw": "50.00",
               "weight_base": "0.20",
@@ -48461,8 +48462,8 @@
           },
           "enhancements": {
             "catalyst_decay": {
-              "factor": "0.5",
-              "in_optimal_window": false
+              "factor": "0.2466",
+              "in_optimal_window": true
             },
             "momentum": {
               "alpha_60d": null,
@@ -48774,8 +48775,8 @@
       },
       {
         "catalyst_decay": {
-          "days_to_catalyst": null,
-          "factor": "0.5",
+          "days_to_catalyst": 11,
+          "factor": "0.0699",
           "in_optimal_window": false
         },
         "cohort_key": "mid",
@@ -48789,7 +48790,7 @@
         "confidence_financial": "0.95",
         "confidence_overall": "0.680",
         "confidence_pos": null,
-        "determinism_hash": "67fa81e76282de8b",
+        "determinism_hash": "b2648421d2fea70b",
         "effective_weights": {
           "catalyst": "0.0000",
           "clinical": "0.5385",
@@ -48855,11 +48856,11 @@
             {
               "confidence": "0.25",
               "contribution": "0.00",
-              "decay_factor": "0.5",
+              "decay_factor": "0.0699",
               "name": "catalyst",
               "normalized": "50.00",
               "notes": [
-                "decay_factor_0.5"
+                "decay_factor_0.0699"
               ],
               "raw": "50.00",
               "weight_base": "0.20",
@@ -48901,7 +48902,7 @@
           },
           "enhancements": {
             "catalyst_decay": {
-              "factor": "0.5",
+              "factor": "0.0699",
               "in_optimal_window": false
             },
             "momentum": {
@@ -52746,8 +52747,8 @@
       },
       {
         "catalyst_decay": {
-          "days_to_catalyst": null,
-          "factor": "0.5",
+          "days_to_catalyst": 11,
+          "factor": "0.0699",
           "in_optimal_window": false
         },
         "cohort_key": "late",
@@ -52761,7 +52762,7 @@
         "confidence_financial": "0.95",
         "confidence_overall": "0.73000",
         "confidence_pos": null,
-        "determinism_hash": "3914beb21b046dc5",
+        "determinism_hash": "10b9b23de90acfca",
         "effective_weights": {
           "catalyst": "0.0000",
           "clinical": "0.5028",
@@ -52826,11 +52827,11 @@
             {
               "confidence": "0.25",
               "contribution": "0.00",
-              "decay_factor": "0.5",
+              "decay_factor": "0.0699",
               "name": "catalyst",
               "normalized": "50.00",
               "notes": [
-                "decay_factor_0.5"
+                "decay_factor_0.0699"
               ],
               "raw": "50.00",
               "weight_base": "0.20",
@@ -52870,7 +52871,7 @@
           },
           "enhancements": {
             "catalyst_decay": {
-              "factor": "0.5",
+              "factor": "0.0699",
               "in_optimal_window": false
             },
             "momentum": {
@@ -54067,8 +54068,8 @@
       },
       {
         "catalyst_decay": {
-          "days_to_catalyst": null,
-          "factor": "0.5",
+          "days_to_catalyst": 10,
+          "factor": "0.0608",
           "in_optimal_window": false
         },
         "cohort_key": "late",
@@ -54082,7 +54083,7 @@
         "confidence_financial": "0.95",
         "confidence_overall": "0.73000",
         "confidence_pos": null,
-        "determinism_hash": "1b1bec57d7042ff4",
+        "determinism_hash": "7655ddee1bcbc94d",
         "effective_weights": {
           "catalyst": "0.0000",
           "clinical": "0.5028",
@@ -54148,11 +54149,11 @@
             {
               "confidence": "0.25",
               "contribution": "0.00",
-              "decay_factor": "0.5",
+              "decay_factor": "0.0608",
               "name": "catalyst",
               "normalized": "50.00",
               "notes": [
-                "decay_factor_0.5"
+                "decay_factor_0.0608"
               ],
               "raw": "50.00",
               "weight_base": "0.20",
@@ -54192,7 +54193,7 @@
           },
           "enhancements": {
             "catalyst_decay": {
-              "factor": "0.5",
+              "factor": "0.0608",
               "in_optimal_window": false
             },
             "momentum": {
@@ -55165,8 +55166,8 @@
       },
       {
         "catalyst_decay": {
-          "days_to_catalyst": null,
-          "factor": "0.5",
+          "days_to_catalyst": 10,
+          "factor": "0.0608",
           "in_optimal_window": false
         },
         "cohort_key": "late",
@@ -55180,7 +55181,7 @@
         "confidence_financial": "0.95",
         "confidence_overall": "0.73000",
         "confidence_pos": null,
-        "determinism_hash": "856a20106055370a",
+        "determinism_hash": "419a9abad3f7de64",
         "effective_weights": {
           "catalyst": "0.0000",
           "clinical": "0.5028",
@@ -55246,11 +55247,11 @@
             {
               "confidence": "0.25",
               "contribution": "0.00",
-              "decay_factor": "0.5",
+              "decay_factor": "0.0608",
               "name": "catalyst",
               "normalized": "50.00",
               "notes": [
-                "decay_factor_0.5"
+                "decay_factor_0.0608"
               ],
               "raw": "50.00",
               "weight_base": "0.20",
@@ -55290,7 +55291,7 @@
           },
           "enhancements": {
             "catalyst_decay": {
-              "factor": "0.5",
+              "factor": "0.0608",
               "in_optimal_window": false
             },
             "momentum": {
@@ -58707,8 +58708,8 @@
       },
       {
         "catalyst_decay": {
-          "days_to_catalyst": null,
-          "factor": "0.5",
+          "days_to_catalyst": 69,
+          "factor": "0.0652",
           "in_optimal_window": false
         },
         "cohort_key": "late",
@@ -58722,7 +58723,7 @@
         "confidence_financial": "0.95",
         "confidence_overall": "0.73000",
         "confidence_pos": null,
-        "determinism_hash": "5bcb5ef11b4a4047",
+        "determinism_hash": "83be7123f89e2d4e",
         "effective_weights": {
           "catalyst": "0.0000",
           "clinical": "0.5028",
@@ -58790,11 +58791,11 @@
             {
               "confidence": "0.25",
               "contribution": "0.00",
-              "decay_factor": "0.5",
+              "decay_factor": "0.0652",
               "name": "catalyst",
               "normalized": "50.00",
               "notes": [
-                "decay_factor_0.5"
+                "decay_factor_0.0652"
               ],
               "raw": "50.00",
               "weight_base": "0.20",
@@ -58834,7 +58835,7 @@
           },
           "enhancements": {
             "catalyst_decay": {
-              "factor": "0.5",
+              "factor": "0.0652",
               "in_optimal_window": false
             },
             "momentum": {
@@ -59375,9 +59376,9 @@
       },
       {
         "catalyst_decay": {
-          "days_to_catalyst": null,
-          "factor": "0.5",
-          "in_optimal_window": false
+          "days_to_catalyst": 34,
+          "factor": "0.7558",
+          "in_optimal_window": true
         },
         "cohort_key": "late",
         "coinvest_holders": [],
@@ -59390,7 +59391,7 @@
         "confidence_financial": "0.95",
         "confidence_overall": "0.73000",
         "confidence_pos": null,
-        "determinism_hash": "4ffa6f57bff8c59b",
+        "determinism_hash": "5a3319e3b5bd5675",
         "effective_weights": {
           "catalyst": "0.0000",
           "clinical": "0.5028",
@@ -59400,6 +59401,7 @@
         },
         "flags": [
           "catalyst_confidence_gated",
+          "catalyst_optimal_window",
           "momentum_confidence_gated",
           "momentum_data_incomplete",
           "sev1_penalty_applied"
@@ -59459,11 +59461,11 @@
             {
               "confidence": "0.25",
               "contribution": "0.00",
-              "decay_factor": "0.5",
+              "decay_factor": "0.7558",
               "name": "catalyst",
               "normalized": "50.00",
               "notes": [
-                "decay_factor_0.5"
+                "decay_factor_0.7558"
               ],
               "raw": "50.00",
               "weight_base": "0.20",
@@ -59503,8 +59505,8 @@
           },
           "enhancements": {
             "catalyst_decay": {
-              "factor": "0.5",
-              "in_optimal_window": false
+              "factor": "0.7558",
+              "in_optimal_window": true
             },
             "momentum": {
               "alpha_60d": null,
@@ -61392,8 +61394,8 @@
       },
       {
         "catalyst_decay": {
-          "days_to_catalyst": null,
-          "factor": "0.5",
+          "days_to_catalyst": 70,
+          "factor": "0.0608",
           "in_optimal_window": false
         },
         "cohort_key": "late",
@@ -61407,7 +61409,7 @@
         "confidence_financial": "0.95",
         "confidence_overall": "0.73000",
         "confidence_pos": null,
-        "determinism_hash": "3e7365f6cb6c7e99",
+        "determinism_hash": "fff6273774b795c6",
         "effective_weights": {
           "catalyst": "0.0000",
           "clinical": "0.5028",
@@ -61477,11 +61479,11 @@
             {
               "confidence": "0.25",
               "contribution": "0.00",
-              "decay_factor": "0.5",
+              "decay_factor": "0.0608",
               "name": "catalyst",
               "normalized": "50.00",
               "notes": [
-                "decay_factor_0.5"
+                "decay_factor_0.0608"
               ],
               "raw": "50.00",
               "weight_base": "0.20",
@@ -61521,7 +61523,7 @@
           },
           "enhancements": {
             "catalyst_decay": {
-              "factor": "0.5",
+              "factor": "0.0608",
               "in_optimal_window": false
             },
             "momentum": {
@@ -61838,9 +61840,9 @@
       },
       {
         "catalyst_decay": {
-          "days_to_catalyst": null,
-          "factor": "0.5",
-          "in_optimal_window": false
+          "days_to_catalyst": 15,
+          "factor": "0.1225",
+          "in_optimal_window": true
         },
         "cohort_key": "late",
         "coinvest_holders": [],
@@ -61853,7 +61855,7 @@
         "confidence_financial": "0.95",
         "confidence_overall": "0.73000",
         "confidence_pos": null,
-        "determinism_hash": "636de39dc9e9ea59",
+        "determinism_hash": "8423b4b3214b525e",
         "effective_weights": {
           "catalyst": "0.0000",
           "clinical": "0.5028",
@@ -61863,6 +61865,7 @@
         },
         "flags": [
           "catalyst_confidence_gated",
+          "catalyst_optimal_window",
           "momentum_confidence_gated",
           "momentum_data_incomplete",
           "overvalued_vs_peers"
@@ -61922,11 +61925,11 @@
             {
               "confidence": "0.25",
               "contribution": "0.00",
-              "decay_factor": "0.5",
+              "decay_factor": "0.1225",
               "name": "catalyst",
               "normalized": "50.00",
               "notes": [
-                "decay_factor_0.5"
+                "decay_factor_0.1225"
               ],
               "raw": "50.00",
               "weight_base": "0.20",
@@ -61966,8 +61969,8 @@
           },
           "enhancements": {
             "catalyst_decay": {
-              "factor": "0.5",
-              "in_optimal_window": false
+              "factor": "0.1225",
+              "in_optimal_window": true
             },
             "momentum": {
               "alpha_60d": null,
@@ -62728,8 +62731,8 @@
       },
       {
         "catalyst_decay": {
-          "days_to_catalyst": null,
-          "factor": "0.5",
+          "days_to_catalyst": 3,
+          "factor": "0.0500",
           "in_optimal_window": false
         },
         "cohort_key": "late",
@@ -62743,7 +62746,7 @@
         "confidence_financial": "0.95",
         "confidence_overall": "0.73000",
         "confidence_pos": null,
-        "determinism_hash": "d6caf05faf78e9fb",
+        "determinism_hash": "c230393b9a7b1632",
         "effective_weights": {
           "catalyst": "0.0000",
           "clinical": "0.5028",
@@ -62816,11 +62819,11 @@
             {
               "confidence": "0.25",
               "contribution": "0.00",
-              "decay_factor": "0.5",
+              "decay_factor": "0.0500",
               "name": "catalyst",
               "normalized": "50.00",
               "notes": [
-                "decay_factor_0.5"
+                "decay_factor_0.0500"
               ],
               "raw": "50.00",
               "weight_base": "0.20",
@@ -62860,7 +62863,7 @@
           },
           "enhancements": {
             "catalyst_decay": {
-              "factor": "0.5",
+              "factor": "0.0500",
               "in_optimal_window": false
             },
             "momentum": {
@@ -64966,8 +64969,8 @@
       },
       {
         "catalyst_decay": {
-          "days_to_catalyst": null,
-          "factor": "0.5",
+          "days_to_catalyst": 66,
+          "factor": "0.0805",
           "in_optimal_window": false
         },
         "cohort_key": "late",
@@ -64981,7 +64984,7 @@
         "confidence_financial": "0.95",
         "confidence_overall": "0.73000",
         "confidence_pos": null,
-        "determinism_hash": "3f86eab5889518e6",
+        "determinism_hash": "55bca3df4646bc71",
         "effective_weights": {
           "catalyst": "0.0000",
           "clinical": "0.5028",
@@ -65053,11 +65056,11 @@
             {
               "confidence": "0.25",
               "contribution": "0.00",
-              "decay_factor": "0.5",
+              "decay_factor": "0.0805",
               "name": "catalyst",
               "normalized": "50.00",
               "notes": [
-                "decay_factor_0.5"
+                "decay_factor_0.0805"
               ],
               "raw": "50.00",
               "weight_base": "0.20",
@@ -65097,7 +65100,7 @@
           },
           "enhancements": {
             "catalyst_decay": {
-              "factor": "0.5",
+              "factor": "0.0805",
               "in_optimal_window": false
             },
             "momentum": {
@@ -65192,8 +65195,8 @@
       },
       {
         "catalyst_decay": {
-          "days_to_catalyst": null,
-          "factor": "0.5",
+          "days_to_catalyst": 7,
+          "factor": "0.0500",
           "in_optimal_window": false
         },
         "cohort_key": "late",
@@ -65207,7 +65210,7 @@
         "confidence_financial": "0.95",
         "confidence_overall": "0.73000",
         "confidence_pos": null,
-        "determinism_hash": "8e54f4595f6a96b9",
+        "determinism_hash": "02aa5beea704e0dd",
         "effective_weights": {
           "catalyst": "0.0000",
           "clinical": "0.5028",
@@ -65280,11 +65283,11 @@
             {
               "confidence": "0.25",
               "contribution": "0.00",
-              "decay_factor": "0.5",
+              "decay_factor": "0.0500",
               "name": "catalyst",
               "normalized": "50.00",
               "notes": [
-                "decay_factor_0.5"
+                "decay_factor_0.0500"
               ],
               "raw": "50.00",
               "weight_base": "0.20",
@@ -65324,7 +65327,7 @@
           },
           "enhancements": {
             "catalyst_decay": {
-              "factor": "0.5",
+              "factor": "0.0500",
               "in_optimal_window": false
             },
             "momentum": {
@@ -65419,9 +65422,9 @@
       },
       {
         "catalyst_decay": {
-          "days_to_catalyst": null,
-          "factor": "0.5",
-          "in_optimal_window": false
+          "days_to_catalyst": 29,
+          "factor": "0.8694",
+          "in_optimal_window": true
         },
         "cohort_key": "late",
         "coinvest_holders": [],
@@ -65434,7 +65437,7 @@
         "confidence_financial": "0.95",
         "confidence_overall": "0.73000",
         "confidence_pos": null,
-        "determinism_hash": "d663c1837dbbbb8d",
+        "determinism_hash": "7470c97cf602b40c",
         "effective_weights": {
           "catalyst": "0.0000",
           "clinical": "0.5028",
@@ -65444,6 +65447,7 @@
         },
         "flags": [
           "catalyst_confidence_gated",
+          "catalyst_optimal_window",
           "momentum_confidence_gated",
           "momentum_data_incomplete",
           "undervalued_vs_peers"
@@ -65503,11 +65507,11 @@
             {
               "confidence": "0.25",
               "contribution": "0.00",
-              "decay_factor": "0.5",
+              "decay_factor": "0.8694",
               "name": "catalyst",
               "normalized": "50.00",
               "notes": [
-                "decay_factor_0.5"
+                "decay_factor_0.8694"
               ],
               "raw": "50.00",
               "weight_base": "0.20",
@@ -65547,8 +65551,8 @@
           },
           "enhancements": {
             "catalyst_decay": {
-              "factor": "0.5",
-              "in_optimal_window": false
+              "factor": "0.8694",
+              "in_optimal_window": true
             },
             "momentum": {
               "alpha_60d": null,
@@ -65640,8 +65644,8 @@
       },
       {
         "catalyst_decay": {
-          "days_to_catalyst": null,
-          "factor": "0.5",
+          "days_to_catalyst": 11,
+          "factor": "0.0699",
           "in_optimal_window": false
         },
         "cohort_key": "late",
@@ -65655,7 +65659,7 @@
         "confidence_financial": "0.95",
         "confidence_overall": "0.73000",
         "confidence_pos": null,
-        "determinism_hash": "98e06d7f85e872ac",
+        "determinism_hash": "f2a6456acd7618bc",
         "effective_weights": {
           "catalyst": "0.0000",
           "clinical": "0.5028",
@@ -65728,11 +65732,11 @@
             {
               "confidence": "0.25",
               "contribution": "0.00",
-              "decay_factor": "0.5",
+              "decay_factor": "0.0699",
               "name": "catalyst",
               "normalized": "50.00",
               "notes": [
-                "decay_factor_0.5"
+                "decay_factor_0.0699"
               ],
               "raw": "50.00",
               "weight_base": "0.20",
@@ -65772,7 +65776,7 @@
           },
           "enhancements": {
             "catalyst_decay": {
-              "factor": "0.5",
+              "factor": "0.0699",
               "in_optimal_window": false
             },
             "momentum": {
@@ -66309,8 +66313,8 @@
       },
       {
         "catalyst_decay": {
-          "days_to_catalyst": null,
-          "factor": "0.5",
+          "days_to_catalyst": 12,
+          "factor": "0.0805",
           "in_optimal_window": false
         },
         "cohort_key": "late",
@@ -66324,7 +66328,7 @@
         "confidence_financial": "0.95",
         "confidence_overall": "0.73000",
         "confidence_pos": null,
-        "determinism_hash": "23f8737709ad867a",
+        "determinism_hash": "fdef0e59be3613d1",
         "effective_weights": {
           "catalyst": "0.0000",
           "clinical": "0.5028",
@@ -66397,11 +66401,11 @@
             {
               "confidence": "0.25",
               "contribution": "0.00",
-              "decay_factor": "0.5",
+              "decay_factor": "0.0805",
               "name": "catalyst",
               "normalized": "50.00",
               "notes": [
-                "decay_factor_0.5"
+                "decay_factor_0.0805"
               ],
               "raw": "50.00",
               "weight_base": "0.20",
@@ -66441,7 +66445,7 @@
           },
           "enhancements": {
             "catalyst_decay": {
-              "factor": "0.5",
+              "factor": "0.0805",
               "in_optimal_window": false
             },
             "momentum": {
@@ -70120,7 +70124,7 @@
         }
       }
     ],
-    "run_status": "FAIL",
+    "run_status": "DEGRADED",
     "sanity_overrides": {
       "enabled": true,
       "overrides": [],
