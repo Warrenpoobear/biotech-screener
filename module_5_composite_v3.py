@@ -2037,6 +2037,29 @@ def compute_module_5_composite_v3(
             and "momentum_confidence_gated" in r.get("flags", [])
         ),
 
+        # NEW v3.2: Stable coverage metrics for momentum
+        # These three metrics are stable and avoid "coverage inflation"
+        #
+        # 1. momentum_computable: Any window computed (low_conf + applied)
+        #    = tickers where we have at least one return window
+        "momentum_computable": sum(
+            1 for r in ranked_securities
+            if r.get("momentum_signal", {}).get("window_used") is not None
+        ),
+        # 2. momentum_meaningful: Confidence >= 0.5 threshold
+        #    = signals strong enough to be trusted
+        "momentum_meaningful": sum(
+            1 for r in ranked_securities
+            if _to_decimal(r.get("momentum_signal", {}).get("confidence", "0")) >= Decimal("0.5")
+        ),
+        # 3. momentum_applied: Score moved away from 50 by at least 2.5 points
+        #    = signals that actually affected rankings
+        "momentum_applied": sum(
+            1 for r in ranked_securities
+            if abs(_to_decimal(r.get("momentum_signal", {}).get("momentum_score", "50")) - Decimal("50")) >= Decimal("2.5")
+            and r.get("momentum_signal", {}).get("window_used") is not None
+        ),
+
         # Quality metrics
         "with_caps_applied": sum(1 for r in ranked_securities if r.get("monotonic_caps_applied")),
         "with_interaction_flags": sum(1 for r in ranked_securities if r.get("interaction_terms", {}).get("flags")),
@@ -2183,6 +2206,11 @@ def compute_module_5_composite_v3(
                 total_mom_contribution += mom_score * mom_weight
         avg_mom_weight = (avg_mom_weight / Decimal(str(mom_active))).quantize(Decimal("0.001")) if mom_active > 0 else Decimal("0")
 
+    # V3.2: Stable coverage metrics (avoids coverage inflation)
+    mom_computable = diagnostic_counts.get("momentum_computable", 0)
+    mom_meaningful = diagnostic_counts.get("momentum_meaningful", 0)
+    mom_applied_stable = diagnostic_counts.get("momentum_applied", 0)
+
     if mom_with_data > 0 or mom_missing > 0:
         health_warnings.append(
             f"INFO: momentum breakdown - "
@@ -2190,6 +2218,12 @@ def compute_module_5_composite_v3(
             f"applied[neg:{mom_neg}, pos:{mom_pos}, neutral:{mom_neutral}] | "
             f"windows[20d:{mom_20d}, 60d:{mom_60d}, 120d:{mom_120d}] | "
             f"coverage={mom_active}/{total_rankable} ({mom_coverage_pct:.1f}%), avg_weight={avg_mom_weight}"
+        )
+        # NEW: Stable metrics log (computable vs meaningful vs applied)
+        health_warnings.append(
+            f"INFO: momentum stable metrics - "
+            f"computable:{mom_computable}, meaningful:{mom_meaningful}, applied:{mom_applied_stable} "
+            f"(of {total_rankable} total)"
         )
 
     # Log health status

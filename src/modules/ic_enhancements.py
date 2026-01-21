@@ -250,6 +250,15 @@ class MomentumSignal:
         confidence: Signal confidence (0-1) based on alpha magnitude
         data_completeness: Data availability flag (0-1) indicating if
             all required inputs were present (1.0 = complete, 0.0 = missing)
+
+    V2 Fields (multi-window fallback):
+        window_used: Which window was selected (20, 60, 120, or None)
+        data_status: Classification for diagnostics
+
+    V3 Fields (guardrails):
+        benchmark_missing: Set True when benchmark was missing for any window
+        return_clipped: Set True when return was clipped due to outlier
+        guardrail_flags: List of any guardrail events that affected the signal
     """
     momentum_score: Decimal  # 0-100 normalized score
     alpha_60d: Optional[Decimal]  # Excess return vs benchmark
@@ -261,6 +270,10 @@ class MomentumSignal:
     # V2 multi-window fields (optional for backwards compatibility)
     window_used: Optional[int] = None  # Which window was used (20, 60, 120)
     data_status: str = "unknown"  # "missing_prices" | "computed_low_conf" | "applied"
+    # V3 guardrail fields
+    benchmark_missing: bool = False  # True if benchmark was unavailable
+    return_clipped: bool = False  # True if return was clipped for outlier
+    guardrail_flags: List[str] = field(default_factory=list)  # All guardrail events
 
 
 @dataclass
@@ -270,6 +283,9 @@ class MultiWindowMomentumInput:
     Provides returns for multiple lookback windows (20d, 60d, 120d) with
     corresponding benchmark returns. The momentum calculation will use
     the longest available window, falling back to shorter ones.
+
+    V3 Fields (guardrails):
+        return_clipped_20d, etc.: Set True if corresponding return was clipped
     """
     # Stock returns by window (trading days)
     return_20d: Optional[Decimal] = None
@@ -286,6 +302,11 @@ class MultiWindowMomentumInput:
 
     # Volatility (optional, for vol-adjusted alpha)
     annualized_vol: Optional[Decimal] = None
+
+    # V3 guardrail tracking: which returns were clipped for outliers
+    return_clipped_20d: bool = False
+    return_clipped_60d: bool = False
+    return_clipped_120d: bool = False
 
 
 @dataclass
@@ -667,8 +688,8 @@ def compute_momentum_signal(
     # This reduces ties at extremes and improves rank granularity
     score_delta = scoring_alpha * MOMENTUM_SLOPE
 
-    momentum_score = Decimal("50") + score_delta
-    momentum_score = _clamp(momentum_score, MOMENTUM_SCORE_MIN, MOMENTUM_SCORE_MAX)
+    momentum_score_raw = Decimal("50") + score_delta
+    momentum_score_raw = _clamp(momentum_score_raw, MOMENTUM_SCORE_MIN, MOMENTUM_SCORE_MAX)
 
     # Confidence based on magnitude (larger moves = more confident)
     abs_alpha = abs(alpha)
@@ -680,6 +701,12 @@ def compute_momentum_signal(
         confidence = Decimal("0.5")
     else:
         confidence = Decimal("0.4")
+
+    # Apply confidence shrinkage: score_final = 50 + conf * (score_raw - 50)
+    # This ensures low-confidence signals don't dominate
+    # IPOs and sparse tickers will have their scores pulled toward neutral
+    momentum_score = Decimal("50") + confidence * (momentum_score_raw - Decimal("50"))
+    momentum_score = _clamp(momentum_score, MOMENTUM_SCORE_MIN, MOMENTUM_SCORE_MAX)
 
     return MomentumSignal(
         momentum_score=_quantize_score(momentum_score),
@@ -731,24 +758,38 @@ def compute_momentum_signal_with_fallback(
         MomentumSignal with window_used and data_status populated
     """
     # Try windows in order of preference: 60d -> 120d -> 20d
+    # Each tuple: (window_days, return, benchmark, is_return_clipped)
     window_order = [
-        (60, inputs.return_60d, inputs.benchmark_60d),
-        (120, inputs.return_120d, inputs.benchmark_120d),
-        (20, inputs.return_20d, inputs.benchmark_20d),
+        (60, inputs.return_60d, inputs.benchmark_60d, inputs.return_clipped_60d),
+        (120, inputs.return_120d, inputs.benchmark_120d, inputs.return_clipped_120d),
+        (20, inputs.return_20d, inputs.benchmark_20d, inputs.return_clipped_20d),
     ]
 
     selected_window = None
     selected_return = None
     selected_benchmark = None
+    selected_was_clipped = False
 
-    for window_days, ret, bench in window_order:
+    # Track guardrail events
+    guardrail_flags: List[str] = []
+
+    # Track benchmark availability for diagnostics
+    benchmark_missing_for_available_return = False
+
+    for window_days, ret, bench, was_clipped in window_order:
         ret_dec = _to_decimal(ret)
         bench_dec = _to_decimal(bench)
+
         if ret_dec is not None and bench_dec is not None:
             selected_window = window_days
             selected_return = ret_dec
             selected_benchmark = bench_dec
+            selected_was_clipped = was_clipped
             break
+        elif ret_dec is not None and bench_dec is None:
+            # Return exists but benchmark missing - track for diagnostics
+            benchmark_missing_for_available_return = True
+            guardrail_flags.append(f"benchmark_missing_{window_days}d")
 
     # No windows available - missing prices
     if selected_window is None:
@@ -762,7 +803,14 @@ def compute_momentum_signal_with_fallback(
             data_completeness=Decimal("0.0"),
             window_used=None,
             data_status="missing_prices",
+            benchmark_missing=benchmark_missing_for_available_return,
+            return_clipped=False,
+            guardrail_flags=guardrail_flags,
         )
+
+    # Track if the selected return was clipped
+    if selected_was_clipped:
+        guardrail_flags.append(f"return_clipped_{selected_window}d")
 
     # Compute alpha
     alpha = selected_return - selected_benchmark
@@ -778,10 +826,10 @@ def compute_momentum_signal_with_fallback(
     if use_vol_adjusted_alpha and alpha_vol_adjusted is not None:
         scoring_alpha = alpha_vol_adjusted * VOLATILITY_BASELINE
 
-    # Convert alpha to score
+    # Convert alpha to score (raw, before shrinkage)
     score_delta = scoring_alpha * MOMENTUM_SLOPE
-    momentum_score = Decimal("50") + score_delta
-    momentum_score = _clamp(momentum_score, MOMENTUM_SCORE_MIN, MOMENTUM_SCORE_MAX)
+    momentum_score_raw = Decimal("50") + score_delta
+    momentum_score_raw = _clamp(momentum_score_raw, MOMENTUM_SCORE_MIN, MOMENTUM_SCORE_MAX)
 
     # Base confidence by window
     window_confidence = {
@@ -811,6 +859,11 @@ def compute_momentum_signal_with_fallback(
     elif abs_alpha >= Decimal("0.10"):
         base_confidence = min(Decimal("0.8"), base_confidence + Decimal("0.1"))
 
+    # Apply confidence shrinkage: score_final = 50 + conf * (score_raw - 50)
+    # This ensures low-confidence signals (IPOs, sparse data) don't dominate
+    momentum_score = Decimal("50") + base_confidence * (momentum_score_raw - Decimal("50"))
+    momentum_score = _clamp(momentum_score, MOMENTUM_SCORE_MIN, MOMENTUM_SCORE_MAX)
+
     # Determine data status
     if base_confidence < Decimal("0.5"):
         data_status = "computed_low_conf"
@@ -835,6 +888,9 @@ def compute_momentum_signal_with_fallback(
         data_completeness=data_completeness,
         window_used=selected_window,
         data_status=data_status,
+        benchmark_missing=benchmark_missing_for_available_return,
+        return_clipped=selected_was_clipped,
+        guardrail_flags=guardrail_flags,
     )
 
 
