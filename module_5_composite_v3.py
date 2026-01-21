@@ -1962,21 +1962,30 @@ def compute_module_5_composite_v3(
         "with_smart_money": sum(1 for r in ranked_securities if r.get("coinvest_overlap_count", 0) > 0),
 
         # Momentum state breakdown (for debugging/attribution)
-        "momentum_missing_data": sum(
+        # Categories are MUTUALLY EXCLUSIVE and sum to total_rankable:
+        # 1. no_alpha: alpha_60d is None (can't classify direction)
+        # 2. gated_with_data: alpha exists but confidence-gated (signal not applied)
+        # 3. applied_negative: not gated, strong negative signal
+        # 4. applied_positive: not gated, strong positive signal
+        # 5. applied_neutral: not gated, signal exists but not strong either way
+        "momentum_no_alpha": sum(
             1 for r in ranked_securities
             if r.get("momentum_signal", {}).get("alpha_60d") is None
         ),
-        "momentum_confidence_gated": sum(
+        "momentum_gated_with_data": sum(
             1 for r in ranked_securities
-            if "momentum_confidence_gated" in r.get("flags", [])
+            if r.get("momentum_signal", {}).get("alpha_60d") is not None
+            and "momentum_confidence_gated" in r.get("flags", [])
         ),
-        "momentum_negative_applied": sum(
+        "momentum_applied_negative": sum(
             1 for r in ranked_securities
             if "strong_negative_momentum" in r.get("flags", [])
+            and "momentum_confidence_gated" not in r.get("flags", [])
         ),
-        "momentum_positive_applied": sum(
+        "momentum_applied_positive": sum(
             1 for r in ranked_securities
             if "strong_positive_momentum" in r.get("flags", [])
+            and "momentum_confidence_gated" not in r.get("flags", [])
         ),
 
         # Quality metrics
@@ -2089,15 +2098,38 @@ def compute_module_5_composite_v3(
             health_warnings.append(f"INFO: {comp} confidence-gated for {gated_pct*100:.1f}% of universe (sparse coverage expected)")
 
     # Log detailed momentum state breakdown for debugging/attribution
-    mom_missing = diagnostic_counts.get("momentum_missing_data", 0)
-    mom_gated = diagnostic_counts.get("momentum_confidence_gated", 0)
-    mom_neg = diagnostic_counts.get("momentum_negative_applied", 0)
-    mom_pos = diagnostic_counts.get("momentum_positive_applied", 0)
-    mom_neutral = total_rankable - mom_missing - mom_neg - mom_pos
-    if mom_missing + mom_gated + mom_neg + mom_pos > 0:
+    # Categories are mutually exclusive and sum to total_rankable
+    mom_no_alpha = diagnostic_counts.get("momentum_no_alpha", 0)
+    mom_gated = diagnostic_counts.get("momentum_gated_with_data", 0)
+    mom_neg = diagnostic_counts.get("momentum_applied_negative", 0)
+    mom_pos = diagnostic_counts.get("momentum_applied_positive", 0)
+    # Neutral = has data, not gated, not strong either way
+    mom_neutral = total_rankable - mom_no_alpha - mom_gated - mom_neg - mom_pos
+
+    # Compute coverage and effective weight stats for active (non-gated) signals
+    mom_active = mom_neg + mom_pos + mom_neutral  # Securities where momentum actually contributes
+    mom_coverage_pct = (Decimal(str(mom_active)) / Decimal(str(total_rankable)) * 100) if total_rankable > 0 else Decimal("0")
+
+    # Calculate average effective momentum weight across active securities
+    avg_mom_weight = Decimal("0")
+    total_mom_contribution = Decimal("0")
+    if mom_active > 0:
+        for sec in ranked_securities:
+            flags = sec.get("flags", [])
+            if "momentum_confidence_gated" not in flags and sec.get("momentum_signal", {}).get("alpha_60d") is not None:
+                eff_weights = sec.get("effective_weights", {})
+                mom_weight = _to_decimal(eff_weights.get("momentum", "0")) or Decimal("0")
+                avg_mom_weight += mom_weight
+                # Track total momentum contribution to composite (for impact assessment)
+                mom_score = _to_decimal(sec.get("momentum_signal", {}).get("score", "50")) or Decimal("50")
+                total_mom_contribution += mom_score * mom_weight
+        avg_mom_weight = (avg_mom_weight / Decimal(str(mom_active))).quantize(Decimal("0.001"))
+
+    if mom_no_alpha + mom_gated + mom_neg + mom_pos > 0:
         health_warnings.append(
-            f"INFO: momentum breakdown - missing:{mom_missing}, gated:{mom_gated}, "
-            f"negative:{mom_neg}, positive:{mom_pos}, neutral:{max(0, mom_neutral - mom_gated)}"
+            f"INFO: momentum breakdown - no_alpha:{mom_no_alpha}, gated:{mom_gated}, "
+            f"applied[neg:{mom_neg}, pos:{mom_pos}, neutral:{mom_neutral}] | "
+            f"coverage={mom_active}/{total_rankable} ({mom_coverage_pct:.1f}%), avg_weight={avg_mom_weight}"
         )
 
     # Log health status
