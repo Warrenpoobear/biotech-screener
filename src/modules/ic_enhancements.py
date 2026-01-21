@@ -258,6 +258,34 @@ class MomentumSignal:
     benchmark_return_60d: Optional[Decimal]
     confidence: Decimal
     data_completeness: Decimal  # 1.0 = full data, 0.0 = missing
+    # V2 multi-window fields (optional for backwards compatibility)
+    window_used: Optional[int] = None  # Which window was used (20, 60, 120)
+    data_status: str = "unknown"  # "missing_prices" | "computed_low_conf" | "applied"
+
+
+@dataclass
+class MultiWindowMomentumInput:
+    """Input for multi-window momentum calculation.
+
+    Provides returns for multiple lookback windows (20d, 60d, 120d) with
+    corresponding benchmark returns. The momentum calculation will use
+    the longest available window, falling back to shorter ones.
+    """
+    # Stock returns by window (trading days)
+    return_20d: Optional[Decimal] = None
+    return_60d: Optional[Decimal] = None
+    return_120d: Optional[Decimal] = None
+
+    # Benchmark (XBI) returns by window
+    benchmark_20d: Optional[Decimal] = None
+    benchmark_60d: Optional[Decimal] = None
+    benchmark_120d: Optional[Decimal] = None
+
+    # Trading days available (for confidence calculation)
+    trading_days_available: Optional[int] = None
+
+    # Volatility (optional, for vol-adjusted alpha)
+    annualized_vol: Optional[Decimal] = None
 
 
 @dataclass
@@ -661,6 +689,152 @@ def compute_momentum_signal(
         benchmark_return_60d=_quantize_weight(bench),
         confidence=confidence,
         data_completeness=data_completeness,
+    )
+
+
+def compute_momentum_signal_with_fallback(
+    inputs: MultiWindowMomentumInput,
+    *,
+    use_vol_adjusted_alpha: bool = False,
+) -> MomentumSignal:
+    """
+    Compute momentum signal with multi-window fallback for improved coverage.
+
+    FALLBACK STRATEGY:
+        1. Prefer 60d window (optimal for biotech IC per research)
+        2. If 60d unavailable, try 120d (longer-term trend)
+        3. If 120d unavailable, use 20d (short-term, lower confidence)
+        4. If no windows available, return neutral with "missing_prices" status
+
+    CONFIDENCE RULES (deterministic):
+        - 60d window: conf = 0.7 (baseline)
+        - 120d window: conf = 0.6 (longer term, slower signal)
+        - 20d window: conf = 0.5 (short term, noisier)
+        - No data: conf = 0.3 (neutral fallback)
+
+        Additional adjustment based on trading_days_available:
+        - >= 60 days: no penalty
+        - 40-59 days: -0.1
+        - 20-39 days: -0.2
+        - < 20 days: -0.3
+
+    DATA STATUS TRACKING:
+        - "missing_prices": No return windows available
+        - "computed_low_conf": Computed but confidence < 0.5
+        - "applied": Signal computed and applied
+
+    Args:
+        inputs: MultiWindowMomentumInput with returns for each window
+        use_vol_adjusted_alpha: Whether to use vol-adjusted alpha
+
+    Returns:
+        MomentumSignal with window_used and data_status populated
+    """
+    # Try windows in order of preference: 60d -> 120d -> 20d
+    window_order = [
+        (60, inputs.return_60d, inputs.benchmark_60d),
+        (120, inputs.return_120d, inputs.benchmark_120d),
+        (20, inputs.return_20d, inputs.benchmark_20d),
+    ]
+
+    selected_window = None
+    selected_return = None
+    selected_benchmark = None
+
+    for window_days, ret, bench in window_order:
+        ret_dec = _to_decimal(ret)
+        bench_dec = _to_decimal(bench)
+        if ret_dec is not None and bench_dec is not None:
+            selected_window = window_days
+            selected_return = ret_dec
+            selected_benchmark = bench_dec
+            break
+
+    # No windows available - missing prices
+    if selected_window is None:
+        return MomentumSignal(
+            momentum_score=Decimal("50"),  # Neutral
+            alpha_60d=None,
+            alpha_vol_adjusted=None,
+            return_60d=None,
+            benchmark_return_60d=None,
+            confidence=Decimal("0.3"),
+            data_completeness=Decimal("0.0"),
+            window_used=None,
+            data_status="missing_prices",
+        )
+
+    # Compute alpha
+    alpha = selected_return - selected_benchmark
+
+    # Compute vol-adjusted alpha if requested
+    vol = _to_decimal(inputs.annualized_vol)
+    alpha_vol_adjusted: Optional[Decimal] = None
+    if vol is not None and vol > MOMENTUM_VOL_EPS:
+        alpha_vol_adjusted = alpha / vol
+
+    # Select scoring alpha
+    scoring_alpha = alpha
+    if use_vol_adjusted_alpha and alpha_vol_adjusted is not None:
+        scoring_alpha = alpha_vol_adjusted * VOLATILITY_BASELINE
+
+    # Convert alpha to score
+    score_delta = scoring_alpha * MOMENTUM_SLOPE
+    momentum_score = Decimal("50") + score_delta
+    momentum_score = _clamp(momentum_score, MOMENTUM_SCORE_MIN, MOMENTUM_SCORE_MAX)
+
+    # Base confidence by window
+    window_confidence = {
+        60: Decimal("0.7"),
+        120: Decimal("0.6"),
+        20: Decimal("0.5"),
+    }
+    base_confidence = window_confidence.get(selected_window, Decimal("0.5"))
+
+    # Adjust confidence based on trading days available
+    trading_days = inputs.trading_days_available
+    if trading_days is not None:
+        if trading_days >= 60:
+            days_penalty = Decimal("0.0")
+        elif trading_days >= 40:
+            days_penalty = Decimal("0.1")
+        elif trading_days >= 20:
+            days_penalty = Decimal("0.2")
+        else:
+            days_penalty = Decimal("0.3")
+        base_confidence = max(Decimal("0.3"), base_confidence - days_penalty)
+
+    # Boost confidence for strong signals
+    abs_alpha = abs(alpha)
+    if abs_alpha >= Decimal("0.20"):
+        base_confidence = min(Decimal("0.9"), base_confidence + Decimal("0.2"))
+    elif abs_alpha >= Decimal("0.10"):
+        base_confidence = min(Decimal("0.8"), base_confidence + Decimal("0.1"))
+
+    # Determine data status
+    if base_confidence < Decimal("0.5"):
+        data_status = "computed_low_conf"
+    else:
+        data_status = "applied"
+
+    # Data completeness: 1.0 for 60d, 0.8 for 120d, 0.6 for 20d
+    completeness_by_window = {
+        60: Decimal("1.0"),
+        120: Decimal("0.8"),
+        20: Decimal("0.6"),
+    }
+    data_completeness = completeness_by_window.get(selected_window, Decimal("0.5"))
+
+    return MomentumSignal(
+        momentum_score=_quantize_score(momentum_score),
+        alpha_60d=_quantize_weight(alpha),  # Always report as "alpha_60d" for compat
+        alpha_vol_adjusted=_quantize_weight(alpha_vol_adjusted) if alpha_vol_adjusted else None,
+        return_60d=_quantize_weight(selected_return),  # Report the window actually used
+        benchmark_return_60d=_quantize_weight(selected_benchmark),
+        confidence=_quantize_weight(base_confidence),
+        data_completeness=data_completeness,
+        window_used=selected_window,
+        data_status=data_status,
     )
 
 
