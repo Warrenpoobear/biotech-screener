@@ -964,7 +964,7 @@
       "provenance": {
         "benchmarks_source": "BIO Clinical Development Success Rates and Contributing Factors 2011-2020",
         "benchmarks_version": "2011-2020",
-        "content_hash": "f9933c87343724df",
+        "content_hash": "d1abd268b3c44e45",
         "module": "pos_engine",
         "module_version": "1.2.0",
         "pit_cutoff": "2026-01-21"
@@ -991,7 +991,7 @@
           "confidence_reason": "stage_and_indication_known",
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": "gastroenterology",
+          "indication_normalized": "metabolic",
           "loa_probability": "1.0",
           "loa_provenance": "commercial_approved",
           "missing_fields": [
@@ -1790,14 +1790,14 @@
           "confidence_reason": "stage_and_indication_known",
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": "respiratory",
-          "loa_probability": "0.567",
-          "loa_provenance": "BIO_phase_3_respiratory",
+          "indication_normalized": "infectious_disease",
+          "loa_probability": "0.769",
+          "loa_provenance": "BIO_phase_3_infectious_disease",
           "missing_fields": [
             "competitive_intensity"
           ],
           "pos_confidence": "0.70",
-          "pos_score": "56.02",
+          "pos_score": "75.98",
           "stage_normalized": "phase_3",
           "stage_score": "65",
           "stage_was_defaulted": false,
@@ -33678,7 +33678,7 @@
       "catalyst": "0.04545454545454545454545454545",
       "catalyst_raw": "1",
       "market_data": "0",
-      "momentum": "0.04545454545454545454545454545",
+      "momentum": "0",
       "pos": "1",
       "smart_money": "0.1818181818181818181818181818",
       "valuation": "0.4545454545454545454545454545"
@@ -33698,10 +33698,18 @@
       "high_volatility_count": 0,
       "in_catalyst_window": 2,
       "low_volatility_count": 0,
-      "momentum_applied_negative": 2,
+      "momentum_applied": 0,
+      "momentum_applied_negative": 0,
       "momentum_applied_positive": 0,
+      "momentum_computable": 0,
+      "momentum_computed_low_conf": 0,
       "momentum_gated_with_data": 0,
-      "momentum_no_alpha": 42,
+      "momentum_meaningful": 0,
+      "momentum_missing_prices": 44,
+      "momentum_no_alpha": 44,
+      "momentum_window_120d": 0,
+      "momentum_window_20d": 0,
+      "momentum_window_60d": 0,
       "rankable": 44,
       "top_n_cutoff": 60,
       "total_allocated_weight": "0.9000",
@@ -33711,7 +33719,7 @@
       "with_catalyst_proximity_blended": 8,
       "with_interaction_flags": 11,
       "with_market_data": 0,
-      "with_momentum_signal": 2,
+      "with_momentum_signal": 0,
       "with_nonzero_weight": 44,
       "with_pos_scores": 44,
       "with_smart_money": 8,
@@ -33976,7 +33984,7 @@
       }
     ],
     "gated_component_counts": {
-      "momentum": 42,
+      "momentum": 44,
       "valuation": 24
     },
     "global_stats": {
@@ -34000,9 +34008,10 @@
     "health_errors": [],
     "health_warnings": [
       "INFO: catalyst window coverage 4.5% (raw: 100.0%) - events exist but few in optimal 15-45d window",
-      "INFO: momentum confidence-gated for 95.5% of universe (sparse coverage expected)",
+      "INFO: momentum confidence-gated for 100.0% of universe (sparse coverage expected)",
       "INFO: valuation confidence-gated for 54.5% of universe (sparse coverage expected)",
-      "INFO: momentum breakdown - no_alpha:42, gated:0, applied[neg:2, pos:0, neutral:0] | coverage=2/44 (4.5%), avg_weight=0.132"
+      "INFO: momentum breakdown - missing:44, low_conf:0, applied[neg:0, pos:0, neutral:0] | windows[20d:0, 60d:0, 120d:0] | coverage=0/44 (0.0%), avg_weight=0",
+      "INFO: momentum stable metrics - computable:0, meaningful:0, applied:0 (of 44 total)"
     ],
     "pit_gate_diagnostics": null,
     "provenance": {
@@ -34048,6 +34057,7 @@
           "clinical_financial_synergy",
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_delta_capped",
           "pos_score_applied"
         ],
@@ -34061,7 +34071,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_winsorized",
@@ -34293,6 +34306,7 @@
           "clinical_financial_synergy",
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_score_applied"
         ],
         "interaction_terms": {
@@ -34305,7 +34319,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_winsorized",
@@ -34537,6 +34554,7 @@
           "clinical_financial_synergy",
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_delta_capped",
           "pos_score_applied"
         ],
@@ -34550,7 +34568,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_winsorized",
@@ -34787,6 +34808,7 @@
           "clinical_financial_synergy",
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_delta_capped",
           "pos_score_applied",
           "smart_money_tier1_present"
@@ -34801,7 +34823,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_shrinkage",
@@ -35036,6 +35061,7 @@
           "clinical_financial_synergy",
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_delta_capped",
           "pos_score_applied"
         ],
@@ -35049,7 +35075,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_shrinkage",
@@ -35282,6 +35311,7 @@
           "clinical_financial_synergy",
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_delta_capped",
           "pos_score_applied"
         ],
@@ -35295,7 +35325,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_shrinkage",
@@ -35529,6 +35562,7 @@
           "clinical_financial_synergy",
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_delta_capped",
           "pos_score_applied"
         ],
@@ -35542,7 +35576,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_shrinkage",
@@ -35774,6 +35811,7 @@
           "clinical_financial_synergy",
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_delta_capped",
           "pos_score_applied"
         ],
@@ -35787,7 +35825,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_winsorized",
@@ -35995,11 +36036,268 @@
           "catalyst_score_effective": "50.00",
           "catalyst_score_window": "50.00"
         },
+        "cohort_key": "early",
+        "coinvest_holders": [
+          "0001224962",
+          "0001425738",
+          "0001055951",
+          "0000909661"
+        ],
+        "coinvest_overlap_count": 4,
+        "coinvest_usable": true,
+        "composite_rank": 9,
+        "composite_score": "53.26",
+        "confidence_catalyst": "0.45",
+        "confidence_clinical": "0.85",
+        "confidence_financial": "0.95",
+        "confidence_overall": "0.71200",
+        "confidence_pos": "0.7",
+        "determinism_hash": "a44c3e9c990f5ee0",
+        "effective_weights": {
+          "catalyst": "0.1956",
+          "clinical": "0.3426",
+          "financial": "0.2579",
+          "momentum": "0.0000",
+          "pos": "0.1687",
+          "valuation": "0.0351"
+        },
+        "flags": [
+          "clinical_financial_synergy",
+          "momentum_confidence_gated",
+          "momentum_data_incomplete",
+          "momentum_missing_prices",
+          "pos_delta_capped",
+          "pos_score_applied",
+          "smart_money_tier1_present"
+        ],
+        "interaction_terms": {
+          "flags": [
+            "clinical_financial_synergy"
+          ],
+          "total_adjustment": "1.50"
+        },
+        "market_cap_bucket": "mid",
+        "momentum_signal": {
+          "alpha_60d": null,
+          "confidence": "0.3",
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
+        },
+        "monotonic_caps_applied": [],
+        "normalization_method": "cohort_winsorized",
+        "position_weight": "0.0246",
+        "rankable": true,
+        "schema_version": "v3.0",
+        "score_breakdown": {
+          "base_weights": {
+            "catalyst": "0.17",
+            "clinical": "0.28",
+            "financial": "0.25",
+            "momentum": "0.10",
+            "pos": "0.15",
+            "valuation": "0.05"
+          },
+          "cohort_info": {
+            "cohort_key": "early"
+          },
+          "components": [
+            {
+              "confidence": "0.85",
+              "contribution": "29.82",
+              "decay_factor": null,
+              "name": "clinical",
+              "normalized": "87.0400",
+              "notes": [],
+              "raw": "39.44",
+              "weight_base": "0.28",
+              "weight_effective": "0.3426"
+            },
+            {
+              "confidence": "0.95",
+              "contribution": "8.12",
+              "decay_factor": null,
+              "name": "financial",
+              "normalized": "31.4800",
+              "notes": [],
+              "raw": "71.22673766781598",
+              "weight_base": "0.25",
+              "weight_effective": "0.2579"
+            },
+            {
+              "confidence": "0.45",
+              "contribution": "9.78",
+              "decay_factor": "0.5",
+              "name": "catalyst",
+              "normalized": "50.00",
+              "notes": [
+                "decay_factor_0.5"
+              ],
+              "raw": "50.00",
+              "weight_base": "0.17",
+              "weight_effective": "0.1956"
+            },
+            {
+              "confidence": "0.3",
+              "contribution": "0.00",
+              "decay_factor": null,
+              "name": "momentum",
+              "normalized": "50",
+              "notes": [
+                "missing_price_data"
+              ],
+              "raw": null,
+              "weight_base": "0.10",
+              "weight_effective": "0.0000"
+            },
+            {
+              "confidence": "0.5200",
+              "contribution": "1.62",
+              "decay_factor": null,
+              "name": "valuation",
+              "normalized": "46.25",
+              "notes": [],
+              "raw": "2737.75",
+              "weight_base": "0.05",
+              "weight_effective": "0.0351"
+            },
+            {
+              "confidence": "0.7",
+              "contribution": "6.00",
+              "decay_factor": null,
+              "name": "pos",
+              "normalized": "74.07",
+              "notes": [
+                "delta_capped"
+              ],
+              "raw": "5.24",
+              "weight_base": "0.15",
+              "weight_effective": "0.1687"
+            }
+          ],
+          "effective_weights": {
+            "catalyst": "0.1956",
+            "clinical": "0.3426",
+            "financial": "0.2579",
+            "momentum": "0.0000",
+            "pos": "0.1687",
+            "valuation": "0.0351"
+          },
+          "enhancements": {
+            "catalyst_decay": {
+              "factor": "0.5",
+              "in_optimal_window": false
+            },
+            "momentum": {
+              "alpha_60d": null,
+              "confidence": "0.3",
+              "score": "50"
+            },
+            "smart_money": {
+              "overlap_count": 4,
+              "score": "70.00"
+            },
+            "valuation": {
+              "confidence": "0.5200",
+              "peer_count": 8,
+              "score": "46.25"
+            },
+            "volatility": {
+              "bucket": "unknown",
+              "score_factor": "1.0",
+              "weight_factor": "1.0"
+            }
+          },
+          "final": {
+            "composite_score": "53.26",
+            "delta_bonus": "0.00",
+            "post_cap_score": "53.26",
+            "post_severity_score": "53.26",
+            "post_uncertainty_score": "53.26",
+            "post_vol_score": "53.26",
+            "pre_penalty_score": "53.26"
+          },
+          "hybrid_aggregation": {
+            "alpha": "0.85",
+            "min_critical": "31.48",
+            "weighted_sum": "55.34"
+          },
+          "interaction_terms": {
+            "catalyst_volatility_dampening": "0.00",
+            "clinical_financial_synergy": "1.50",
+            "flags": [
+              "clinical_financial_synergy"
+            ],
+            "stage_financial_interaction": "0.00",
+            "total_adjustment": "1.50"
+          },
+          "mode": "enhanced",
+          "normalization_method": "cohort_winsorized",
+          "penalties_and_gates": {
+            "monotonic_caps_applied": [],
+            "severity_gate": "NONE",
+            "severity_multiplier": "1.0",
+            "uncertainty_penalty_pct": "0.00"
+          },
+          "regime_adjustments": {
+            "regime": "BULL"
+          },
+          "version": "v3.0"
+        },
+        "severity": "none",
+        "smart_money_signal": {
+          "change_adjustment": "0.00",
+          "confidence": "0.7",
+          "holders_decreasing": [],
+          "holders_increasing": [],
+          "overlap_bonus": "20.00",
+          "overlap_count": 4,
+          "score": "70.00",
+          "tier1_holders": [
+            "0000909661"
+          ],
+          "tier_breakdown": {
+            "0": 0,
+            "1": 1,
+            "2": 3,
+            "3": 0
+          },
+          "weighted_overlap": "2.80"
+        },
+        "stage_bucket": "early",
+        "ticker": "KRYS",
+        "uncertainty_penalty": "0.0",
+        "valuation_signal": {
+          "confidence": "0.5200",
+          "peer_count": 8,
+          "score": "46.25"
+        },
+        "volatility_adjustment": {
+          "annualized_vol_pct": null,
+          "score_factor": "1.0",
+          "vol_bucket": "unknown",
+          "weight_factor": "1.0"
+        }
+      },
+      {
+        "catalyst_decay": {
+          "days_to_catalyst": null,
+          "factor": "0.5",
+          "in_optimal_window": false
+        },
+        "catalyst_effective": {
+          "blend_mode": "window_only",
+          "catalyst_proximity_blended": false,
+          "catalyst_proximity_score": "0",
+          "catalyst_score_effective": "50.00",
+          "catalyst_score_window": "50.00"
+        },
         "cohort_key": "late",
         "coinvest_holders": [],
         "coinvest_overlap_count": 0,
         "coinvest_usable": false,
-        "composite_rank": 9,
+        "composite_rank": 10,
         "composite_score": "51.33",
         "confidence_catalyst": "0.45",
         "confidence_clinical": "0.85",
@@ -36018,6 +36316,7 @@
         "flags": [
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "overvalued_vs_peers",
           "pos_delta_capped",
           "pos_score_applied"
@@ -36030,7 +36329,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_shrinkage",
@@ -36236,256 +36538,6 @@
           "catalyst_score_effective": "50.00",
           "catalyst_score_window": "50.00"
         },
-        "cohort_key": "early",
-        "coinvest_holders": [
-          "0001224962",
-          "0001425738",
-          "0001055951",
-          "0000909661"
-        ],
-        "coinvest_overlap_count": 4,
-        "coinvest_usable": true,
-        "composite_rank": 10,
-        "composite_score": "51.30",
-        "confidence_catalyst": "0.45",
-        "confidence_clinical": "0.85",
-        "confidence_financial": "0.95",
-        "confidence_overall": "0.75200",
-        "confidence_pos": "0.7",
-        "determinism_hash": "fa3d26558290f3fa",
-        "effective_weights": {
-          "catalyst": "0.1707",
-          "clinical": "0.2989",
-          "financial": "0.2250",
-          "momentum": "0.1275",
-          "pos": "0.1472",
-          "valuation": "0.0307"
-        },
-        "flags": [
-          "clinical_financial_synergy",
-          "pos_delta_capped",
-          "pos_score_applied",
-          "smart_money_tier1_present",
-          "strong_negative_momentum"
-        ],
-        "interaction_terms": {
-          "flags": [
-            "clinical_financial_synergy"
-          ],
-          "total_adjustment": "1.50"
-        },
-        "market_cap_bucket": "mid",
-        "momentum_signal": {
-          "alpha_60d": "-0.1250",
-          "confidence": "0.7",
-          "score": "31.25"
-        },
-        "monotonic_caps_applied": [],
-        "normalization_method": "cohort_winsorized",
-        "position_weight": "0.0246",
-        "rankable": true,
-        "schema_version": "v3.0",
-        "score_breakdown": {
-          "base_weights": {
-            "catalyst": "0.17",
-            "clinical": "0.28",
-            "financial": "0.25",
-            "momentum": "0.10",
-            "pos": "0.15",
-            "valuation": "0.05"
-          },
-          "cohort_info": {
-            "cohort_key": "early"
-          },
-          "components": [
-            {
-              "confidence": "0.85",
-              "contribution": "26.02",
-              "decay_factor": null,
-              "name": "clinical",
-              "normalized": "87.0400",
-              "notes": [],
-              "raw": "39.44",
-              "weight_base": "0.28",
-              "weight_effective": "0.2989"
-            },
-            {
-              "confidence": "0.95",
-              "contribution": "7.08",
-              "decay_factor": null,
-              "name": "financial",
-              "normalized": "31.4800",
-              "notes": [],
-              "raw": "71.22673766781598",
-              "weight_base": "0.25",
-              "weight_effective": "0.2250"
-            },
-            {
-              "confidence": "0.45",
-              "contribution": "8.54",
-              "decay_factor": "0.5",
-              "name": "catalyst",
-              "normalized": "50.00",
-              "notes": [
-                "decay_factor_0.5"
-              ],
-              "raw": "50.00",
-              "weight_base": "0.17",
-              "weight_effective": "0.1707"
-            },
-            {
-              "confidence": "0.7",
-              "contribution": "3.98",
-              "decay_factor": null,
-              "name": "momentum",
-              "normalized": "31.25",
-              "notes": [],
-              "raw": "-0.1250",
-              "weight_base": "0.10",
-              "weight_effective": "0.1275"
-            },
-            {
-              "confidence": "0.5200",
-              "contribution": "1.42",
-              "decay_factor": null,
-              "name": "valuation",
-              "normalized": "46.25",
-              "notes": [],
-              "raw": "2737.75",
-              "weight_base": "0.05",
-              "weight_effective": "0.0307"
-            },
-            {
-              "confidence": "0.7",
-              "contribution": "6.00",
-              "decay_factor": null,
-              "name": "pos",
-              "normalized": "74.07",
-              "notes": [
-                "delta_capped"
-              ],
-              "raw": "5.24",
-              "weight_base": "0.15",
-              "weight_effective": "0.1472"
-            }
-          ],
-          "effective_weights": {
-            "catalyst": "0.1707",
-            "clinical": "0.2989",
-            "financial": "0.2250",
-            "momentum": "0.1275",
-            "pos": "0.1472",
-            "valuation": "0.0307"
-          },
-          "enhancements": {
-            "catalyst_decay": {
-              "factor": "0.5",
-              "in_optimal_window": false
-            },
-            "momentum": {
-              "alpha_60d": "-0.1250",
-              "confidence": "0.7",
-              "score": "31.25"
-            },
-            "smart_money": {
-              "overlap_count": 4,
-              "score": "70.00"
-            },
-            "valuation": {
-              "confidence": "0.5200",
-              "peer_count": 8,
-              "score": "46.25"
-            },
-            "volatility": {
-              "bucket": "unknown",
-              "score_factor": "1.0",
-              "weight_factor": "1.0"
-            }
-          },
-          "final": {
-            "composite_score": "51.30",
-            "delta_bonus": "0.00",
-            "post_cap_score": "51.30",
-            "post_severity_score": "51.30",
-            "post_uncertainty_score": "51.30",
-            "post_vol_score": "51.30",
-            "pre_penalty_score": "51.30"
-          },
-          "hybrid_aggregation": {
-            "alpha": "0.85",
-            "min_critical": "31.48",
-            "weighted_sum": "53.04"
-          },
-          "interaction_terms": {
-            "catalyst_volatility_dampening": "0.00",
-            "clinical_financial_synergy": "1.50",
-            "flags": [
-              "clinical_financial_synergy"
-            ],
-            "stage_financial_interaction": "0.00",
-            "total_adjustment": "1.50"
-          },
-          "mode": "enhanced",
-          "normalization_method": "cohort_winsorized",
-          "penalties_and_gates": {
-            "monotonic_caps_applied": [],
-            "severity_gate": "NONE",
-            "severity_multiplier": "1.0",
-            "uncertainty_penalty_pct": "0.00"
-          },
-          "regime_adjustments": {
-            "regime": "BULL"
-          },
-          "version": "v3.0"
-        },
-        "severity": "none",
-        "smart_money_signal": {
-          "change_adjustment": "0.00",
-          "confidence": "0.7",
-          "holders_decreasing": [],
-          "holders_increasing": [],
-          "overlap_bonus": "20.00",
-          "overlap_count": 4,
-          "score": "70.00",
-          "tier1_holders": [
-            "0000909661"
-          ],
-          "tier_breakdown": {
-            "0": 0,
-            "1": 1,
-            "2": 3,
-            "3": 0
-          },
-          "weighted_overlap": "2.80"
-        },
-        "stage_bucket": "early",
-        "ticker": "KRYS",
-        "uncertainty_penalty": "0.0",
-        "valuation_signal": {
-          "confidence": "0.5200",
-          "peer_count": 8,
-          "score": "46.25"
-        },
-        "volatility_adjustment": {
-          "annualized_vol_pct": null,
-          "score_factor": "1.0",
-          "vol_bucket": "unknown",
-          "weight_factor": "1.0"
-        }
-      },
-      {
-        "catalyst_decay": {
-          "days_to_catalyst": null,
-          "factor": "0.5",
-          "in_optimal_window": false
-        },
-        "catalyst_effective": {
-          "blend_mode": "window_only",
-          "catalyst_proximity_blended": false,
-          "catalyst_proximity_score": "0",
-          "catalyst_score_effective": "50.00",
-          "catalyst_score_window": "50.00"
-        },
         "cohort_key": "late",
         "coinvest_holders": [],
         "coinvest_overlap_count": 0,
@@ -36509,6 +36561,7 @@
         "flags": [
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_delta_capped",
           "pos_score_applied",
           "sev1_penalty_applied",
@@ -36522,7 +36575,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_shrinkage",
@@ -36751,6 +36807,7 @@
         "flags": [
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_delta_capped",
           "pos_score_applied",
           "sev1_penalty_applied",
@@ -36764,7 +36821,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_winsorized",
@@ -36996,6 +37056,7 @@
           "catalyst_proximity_blended",
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_delta_capped",
           "pos_score_applied",
           "valuation_confidence_gated"
@@ -37008,7 +37069,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "global_fallback",
@@ -37239,6 +37303,7 @@
         "flags": [
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_delta_capped",
           "pos_score_applied",
           "sev1_penalty_applied",
@@ -37252,7 +37317,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_winsorized",
@@ -37484,6 +37552,7 @@
           "catalyst_proximity_blended",
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "overvalued_vs_peers",
           "pos_score_applied"
         ],
@@ -37495,7 +37564,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_shrinkage",
@@ -37722,6 +37794,7 @@
         "flags": [
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "overvalued_vs_peers",
           "pos_score_applied"
         ],
@@ -37733,7 +37806,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_shrinkage",
@@ -37961,6 +38037,7 @@
           "catalyst_proximity_blended",
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_delta_capped",
           "pos_score_applied",
           "sev1_penalty_applied",
@@ -37974,7 +38051,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_shrinkage",
@@ -38203,6 +38283,7 @@
         "flags": [
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_score_applied",
           "undervalued_vs_peers"
         ],
@@ -38214,7 +38295,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_shrinkage",
@@ -38443,6 +38527,7 @@
         "flags": [
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_score_applied",
           "sev1_penalty_applied",
           "smart_money_tier1_present",
@@ -38456,7 +38541,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_winsorized",
@@ -38687,6 +38775,7 @@
         "flags": [
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_delta_capped",
           "pos_score_applied",
           "sev1_penalty_applied",
@@ -38700,7 +38789,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_winsorized",
@@ -38931,6 +39023,7 @@
         "flags": [
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_score_applied",
           "sev1_penalty_applied",
           "valuation_confidence_gated"
@@ -38943,7 +39036,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_winsorized",
@@ -39172,6 +39268,7 @@
         "flags": [
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_delta_capped",
           "pos_score_applied",
           "sev1_penalty_applied",
@@ -39185,7 +39282,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_winsorized",
@@ -39416,6 +39516,7 @@
         "flags": [
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_delta_capped",
           "pos_score_applied",
           "sev1_penalty_applied",
@@ -39429,7 +39530,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_winsorized",
@@ -39660,6 +39764,7 @@
         "flags": [
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_score_applied",
           "sev1_penalty_applied",
           "valuation_confidence_gated"
@@ -39672,7 +39777,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_winsorized",
@@ -39901,6 +40009,7 @@
         "flags": [
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_delta_capped",
           "pos_score_applied",
           "sev1_penalty_applied",
@@ -39914,7 +40023,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_winsorized",
@@ -40145,6 +40257,7 @@
         "flags": [
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_delta_capped",
           "pos_score_applied",
           "sev1_penalty_applied",
@@ -40158,7 +40271,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_winsorized",
@@ -40389,6 +40505,7 @@
         "flags": [
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_score_applied",
           "sev1_penalty_applied",
           "valuation_confidence_gated"
@@ -40401,7 +40518,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_winsorized",
@@ -40630,6 +40750,7 @@
         "flags": [
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_delta_capped",
           "pos_score_applied",
           "sev1_penalty_applied",
@@ -40643,7 +40764,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_winsorized",
@@ -40874,6 +40998,7 @@
         "flags": [
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_score_applied",
           "sev1_penalty_applied",
           "valuation_confidence_gated"
@@ -40886,7 +41011,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_winsorized",
@@ -41115,6 +41243,7 @@
         "flags": [
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_delta_capped",
           "pos_score_applied",
           "sev1_penalty_applied",
@@ -41128,7 +41257,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_winsorized",
@@ -41359,6 +41491,7 @@
         "flags": [
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_delta_capped",
           "pos_score_applied",
           "sev1_penalty_applied",
@@ -41372,7 +41505,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_winsorized",
@@ -41605,6 +41741,7 @@
         "flags": [
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_score_applied",
           "sev1_penalty_applied",
           "valuation_confidence_gated"
@@ -41617,7 +41754,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_winsorized",
@@ -41846,6 +41986,7 @@
         "flags": [
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "overvalued_vs_peers",
           "pos_delta_capped",
           "pos_score_applied"
@@ -41858,7 +41999,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_winsorized",
@@ -42074,27 +42218,29 @@
         "coinvest_overlap_count": 4,
         "coinvest_usable": true,
         "composite_rank": 34,
-        "composite_score": "29.07",
+        "composite_score": "29.53",
         "confidence_catalyst": "0.45",
         "confidence_clinical": "0.65",
         "confidence_financial": "0.95",
-        "confidence_overall": "0.660",
+        "confidence_overall": "0.620",
         "confidence_pos": "0.7",
-        "determinism_hash": "321b6c749e79f895",
+        "determinism_hash": "016ebb81b08552bb",
         "effective_weights": {
-          "catalyst": "0.1822",
-          "clinical": "0.2845",
-          "financial": "0.2402",
-          "momentum": "0.1361",
-          "pos": "0.1571",
+          "catalyst": "0.2108",
+          "clinical": "0.3293",
+          "financial": "0.2780",
+          "momentum": "0.0000",
+          "pos": "0.1818",
           "valuation": "0.0000"
         },
         "flags": [
+          "momentum_confidence_gated",
+          "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_delta_capped",
           "pos_score_applied",
           "sev1_penalty_applied",
           "smart_money_tier1_present",
-          "strong_negative_momentum",
           "valuation_confidence_gated"
         ],
         "interaction_terms": {
@@ -42103,9 +42249,12 @@
         },
         "market_cap_bucket": "small",
         "momentum_signal": {
-          "alpha_60d": "-0.1700",
-          "confidence": "0.7",
-          "score": "24.50"
+          "alpha_60d": null,
+          "confidence": "0.3",
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_winsorized",
@@ -42127,29 +42276,29 @@
           "components": [
             {
               "confidence": "0.65",
-              "contribution": "11.06",
+              "contribution": "12.81",
               "decay_factor": null,
               "name": "clinical",
               "normalized": "38.8900",
               "notes": [],
               "raw": "32.92",
               "weight_base": "0.28",
-              "weight_effective": "0.2845"
+              "weight_effective": "0.3293"
             },
             {
               "confidence": "0.95",
-              "contribution": "4.89",
+              "contribution": "5.66",
               "decay_factor": null,
               "name": "financial",
               "normalized": "20.3700",
               "notes": [],
               "raw": "69.23962442936323",
               "weight_base": "0.25",
-              "weight_effective": "0.2402"
+              "weight_effective": "0.2780"
             },
             {
               "confidence": "0.45",
-              "contribution": "9.11",
+              "contribution": "10.54",
               "decay_factor": "0.5",
               "name": "catalyst",
               "normalized": "50.00",
@@ -42158,18 +42307,20 @@
               ],
               "raw": "50.00",
               "weight_base": "0.17",
-              "weight_effective": "0.1822"
+              "weight_effective": "0.2108"
             },
             {
-              "confidence": "0.7",
-              "contribution": "3.33",
+              "confidence": "0.3",
+              "contribution": "0.00",
               "decay_factor": null,
               "name": "momentum",
-              "normalized": "24.50",
-              "notes": [],
-              "raw": "-0.1700",
+              "normalized": "50",
+              "notes": [
+                "missing_price_data"
+              ],
+              "raw": null,
               "weight_base": "0.10",
-              "weight_effective": "0.1361"
+              "weight_effective": "0.0000"
             },
             {
               "confidence": "0.2",
@@ -42195,15 +42346,15 @@
               ],
               "raw": "9.63",
               "weight_base": "0.15",
-              "weight_effective": "0.1571"
+              "weight_effective": "0.1818"
             }
           ],
           "effective_weights": {
-            "catalyst": "0.1822",
-            "clinical": "0.2845",
-            "financial": "0.2402",
-            "momentum": "0.1361",
-            "pos": "0.1571",
+            "catalyst": "0.2108",
+            "clinical": "0.3293",
+            "financial": "0.2780",
+            "momentum": "0.0000",
+            "pos": "0.1818",
             "valuation": "0.0000"
           },
           "enhancements": {
@@ -42212,9 +42363,9 @@
               "in_optimal_window": false
             },
             "momentum": {
-              "alpha_60d": "-0.1700",
-              "confidence": "0.7",
-              "score": "24.50"
+              "alpha_60d": null,
+              "confidence": "0.3",
+              "score": "50"
             },
             "smart_money": {
               "overlap_count": 4,
@@ -42232,18 +42383,18 @@
             }
           },
           "final": {
-            "composite_score": "29.07",
+            "composite_score": "29.53",
             "delta_bonus": "0.00",
-            "post_cap_score": "29.07",
-            "post_severity_score": "29.07",
-            "post_uncertainty_score": "32.30",
-            "post_vol_score": "29.07",
-            "pre_penalty_score": "32.30"
+            "post_cap_score": "29.53",
+            "post_severity_score": "29.53",
+            "post_uncertainty_score": "32.81",
+            "post_vol_score": "29.53",
+            "pre_penalty_score": "32.81"
           },
           "hybrid_aggregation": {
             "alpha": "0.85",
             "min_critical": "20.37",
-            "weighted_sum": "34.40"
+            "weighted_sum": "35.01"
           },
           "interaction_terms": {
             "catalyst_volatility_dampening": "0.00",
@@ -42336,6 +42487,7 @@
         "flags": [
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_score_applied",
           "sev1_penalty_applied",
           "valuation_confidence_gated"
@@ -42348,7 +42500,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_winsorized",
@@ -42578,6 +42733,7 @@
           "late_stage_distress",
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_delta_capped",
           "pos_score_applied",
           "sev2_penalty_applied"
@@ -42592,7 +42748,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_shrinkage",
@@ -42823,6 +42982,7 @@
         "flags": [
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_score_applied",
           "sev2_penalty_applied",
           "undervalued_vs_peers"
@@ -42835,7 +42995,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_winsorized",
@@ -43066,6 +43229,7 @@
         "flags": [
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_delta_capped",
           "pos_score_applied",
           "sev2_penalty_applied",
@@ -43079,7 +43243,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_winsorized",
@@ -43314,6 +43481,7 @@
           "late_stage_distress",
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_delta_capped",
           "pos_score_applied",
           "sev2_penalty_applied"
@@ -43328,7 +43496,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_shrinkage",
@@ -43559,6 +43730,7 @@
         "flags": [
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_score_applied",
           "sev2_penalty_applied",
           "valuation_confidence_gated"
@@ -43571,7 +43743,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_winsorized",
@@ -43800,6 +43975,7 @@
         "flags": [
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_score_applied",
           "sev2_penalty_applied",
           "valuation_confidence_gated"
@@ -43812,7 +43988,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_winsorized",
@@ -44041,6 +44220,7 @@
         "flags": [
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_delta_capped",
           "pos_score_applied",
           "sev2_penalty_applied",
@@ -44054,7 +44234,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_winsorized",
@@ -44285,6 +44468,7 @@
         "flags": [
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_score_applied",
           "sev2_penalty_applied",
           "valuation_confidence_gated"
@@ -44297,7 +44481,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_winsorized",
@@ -44531,6 +44718,7 @@
         "flags": [
           "momentum_confidence_gated",
           "momentum_data_incomplete",
+          "momentum_missing_prices",
           "pos_delta_capped",
           "pos_score_applied",
           "sev2_penalty_applied",
@@ -44545,7 +44733,10 @@
         "momentum_signal": {
           "alpha_60d": null,
           "confidence": "0.3",
-          "score": "50"
+          "data_completeness": "0.0",
+          "data_status": "missing_prices",
+          "score": "50",
+          "window_used": null
         },
         "monotonic_caps_applied": [],
         "normalization_method": "cohort_winsorized",
