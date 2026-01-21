@@ -271,7 +271,9 @@ class PoSPriorEngine:
             # Fallback to hardcoded defaults
             self._use_fallback_benchmarks()
 
-        except Exception:
+        except (FileNotFoundError, json.JSONDecodeError, KeyError) as e:
+            import logging
+            logging.getLogger(__name__).warning(f"Failed to load benchmarks file: {e}. Using fallback benchmarks.")
             self._use_fallback_benchmarks()
 
     def _use_fallback_benchmarks(self) -> None:
@@ -347,7 +349,10 @@ class PoSPriorEngine:
 
         # Validate as_of_date (required for determinism)
         if as_of_date is None:
-            as_of_date = date.today()
+            raise ValueError(
+                "as_of_date is required for deterministic scoring. "
+                "Providing date.today() as default would violate PIT discipline."
+            )
 
         # Deterministic timestamp
         deterministic_timestamp = f"{as_of_date.isoformat()}T00:00:00Z"

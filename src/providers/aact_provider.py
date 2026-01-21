@@ -345,8 +345,11 @@ class AACTClinicalTrialsProvider:
             Tuple of (pcd_pushes, status_flips)
         """
         if as_of_date is None:
-            as_of_date = date.today()
-        
+            raise ValueError(
+                "as_of_date is required for deterministic diff computation. "
+                "Providing date.today() as default would violate PIT discipline."
+            )
+
         cutoff_date = as_of_date - timedelta(days=lookback_days)
         
         # Filter snapshots to lookback window

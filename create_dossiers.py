@@ -32,7 +32,7 @@ class DossierGenerator:
             filing_date = datetime.fromisoformat(filing_ts)
             days = (datetime.now() - filing_date).days
             return days
-        except:
+        except (KeyError, ValueError, TypeError, AttributeError):
             return None
     
     def score_with_caps(self, company: Dict) -> Dict:

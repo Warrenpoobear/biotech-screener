@@ -194,7 +194,7 @@ class ClinicalTrialsClient:
                 return f"{date_str}-01-01"
             else:
                 return date_str[:10]
-        except:
+        except (TypeError, IndexError, AttributeError):
             return None
     
     def _parse_blinding(self, design_info: Dict[str, Any]) -> str:

@@ -27,7 +27,7 @@ Version: 1.1.0
 import hashlib
 import json
 import re
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
 from typing import Dict, List, Optional, Any
 from datetime import date
 from pathlib import Path
@@ -154,7 +154,7 @@ class ProbabilityOfSuccessEngine:
                 except json.JSONDecodeError as e:
                     load_error = ValueError(f"Invalid JSON in benchmark file {path}: {e}")
                     break
-                except Exception as e:
+                except (OSError, IOError, KeyError, TypeError) as e:
                     load_error = ValueError(f"Error loading benchmark file {path}: {e}")
                     break
 
@@ -536,7 +536,7 @@ class ProbabilityOfSuccessEngine:
 
         try:
             loa = Decimal(loa_str)
-        except Exception:
+        except (ValueError, InvalidOperation, TypeError):
             loa = Decimal("0.10")
             provenance = "fallback_parse_error"
 
@@ -749,7 +749,7 @@ class ProbabilityOfSuccessEngine:
             return value
         try:
             return Decimal(str(value))
-        except Exception:
+        except (ValueError, InvalidOperation, TypeError):
             return None
 
     def get_benchmarks_info(self) -> Dict[str, Any]:

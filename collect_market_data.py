@@ -77,7 +77,15 @@ def get_market_data(ticker: str) -> Optional[Dict]:
             "industry": info.get('industry'),
             "collected_at": date.today().isoformat()
         }
+    except ImportError as e:
+        print(f"  ERROR: yfinance not installed: {e}")
+        return None
+    except (ValueError, TypeError, KeyError, AttributeError) as e:
+        print(f"  ERROR: Data extraction failed for {ticker}: {e}")
+        return None
     except Exception as e:
+        # Network errors, API errors, etc. - log and continue
+        print(f"  ERROR: Failed to fetch data for {ticker}: {type(e).__name__}: {e}")
         return None
 
 
