@@ -44,6 +44,8 @@ def test_network_connectivity() -> Tuple[bool, str]:
             return False, "Network timeout - Yahoo Finance API unreachable"
         if "No module named 'yfinance'" in error_msg:
             return False, "yfinance not installed - run: pip install yfinance"
+        if "Too Many Requests" in error_msg or "Rate limit" in error_msg.lower():
+            return False, "RATE_LIMITED"
         return False, f"Connection error: {error_msg[:100]}"
 
 
@@ -176,6 +178,30 @@ def collect_all_market_data(universe_file: Path, output_file: Path, use_cache: b
     is_reachable, error_msg = test_network_connectivity()
 
     if not is_reachable:
+        # Special handling for rate limiting
+        if error_msg == "RATE_LIMITED":
+            print("❌ Rate limited by Yahoo Finance (Too Many Requests)")
+            print("\n   You recently made many requests. Yahoo Finance has temporarily blocked you.")
+            if cache_available:
+                print(f"\n✅ USING EXISTING CACHED DATA")
+                print(f"   Cache date: {cache_date}")
+                print(f"   Records: {len(cached_data)}")
+                print(f"\n   Your cached data is still valid. Wait 15-30 minutes before retrying.")
+                print(f"{'='*80}\n")
+                return
+            elif output_file.exists():
+                print(f"\n✅ Output file already exists: {output_file}")
+                print(f"   If you just ran the full pipeline, your data is already collected!")
+                print(f"   Wait 15-30 minutes before attempting another collection.")
+                print(f"{'='*80}\n")
+                return
+            else:
+                print(f"\n⚠️  No cached data available.")
+                print(f"   Wait 15-30 minutes, then retry:")
+                print(f"   python collect_market_data.py")
+                print(f"{'='*80}\n")
+                return  # Don't crash, just exit gracefully
+
         print(f"❌ Network test failed: {error_msg}")
         if cache_available:
             print(f"\n⚠️  FALLING BACK TO CACHED DATA")
