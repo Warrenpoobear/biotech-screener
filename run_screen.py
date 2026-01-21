@@ -577,6 +577,17 @@ def run_screening_pipeline(
     logger.info("[1/7] Loading input data...")
     raw_universe = load_json_data(data_dir / "universe.json", "Universe")
 
+    # Extract full universe tickers BEFORE any filtering (for Module 3 stability)
+    # This ensures Module 3 always processes the same population regardless of Module 1 filtering
+    full_universe_tickers = frozenset(
+        r.get('ticker') for r in raw_universe if r.get('ticker')
+    )
+    # Compute universe hash for state file namespacing (prevents churn on population changes)
+    universe_hash = hashlib.sha256(
+        json.dumps(sorted(full_universe_tickers)).encode()
+    ).hexdigest()[:8]
+    logger.info(f"  Full universe: {len(full_universe_tickers)} tickers (hash: {universe_hash})")
+
     # Validate tickers in universe (fail-loud on contamination)
     if HAS_TICKER_VALIDATION:
         universe_tickers_to_validate = [r.get('ticker') for r in raw_universe if r.get('ticker')]
@@ -656,6 +667,60 @@ def run_screening_pipeline(
         else:
             logger.info("  Short interest data not found, will skip SI signals")
 
+    # 13F institutional momentum data (coordinated buys/sells among holders)
+    # This enhances the smart money signal with momentum detection
+    institutional_momentum = None
+    momentum_file = data_dir / "momentum_results.json"
+    if momentum_file.exists():
+        logger.info("  Loading 13F institutional momentum data...")
+        with open(momentum_file, 'r', encoding='utf-8') as f:
+            institutional_momentum = json.load(f)
+        logger.info(f"  Institutional momentum: {len(institutional_momentum.get('rankings', []))} tickers scored")
+    else:
+        # Also check root directory
+        root_momentum_file = Path("momentum_results.json")
+        if root_momentum_file.exists():
+            logger.info("  Loading 13F institutional momentum data from root...")
+            with open(root_momentum_file, 'r', encoding='utf-8') as f:
+                institutional_momentum = json.load(f)
+            logger.info(f"  Institutional momentum: {len(institutional_momentum.get('rankings', []))} tickers scored")
+
+    # Inject 13F institutional momentum into market_data_by_ticker as pseudo "return_60d"
+    # This allows Module 5 v3 to use institutional momentum as a price momentum proxy
+    # Conversion: momentum_score (0-100) -> return_60d as (score - 50) / 100
+    # e.g., score=75 -> +0.25, score=50 -> 0, score=25 -> -0.25
+    if institutional_momentum and market_data_by_ticker:
+        injected_count = 0
+        coordinated_buys = set(institutional_momentum.get("summary", {}).get("coordinated_buys", []))
+        coordinated_sells = set(institutional_momentum.get("summary", {}).get("coordinated_sells", []))
+
+        for ranking in institutional_momentum.get("rankings", []):
+            ticker = ranking.get("ticker")
+            momentum_score = ranking.get("momentum_score")
+
+            if ticker and momentum_score and ticker in market_data_by_ticker:
+                try:
+                    score = float(momentum_score)
+                    # Convert to pseudo-return: (score - 50) / 100
+                    pseudo_return = (score - 50) / 100
+
+                    # Inject into market data (only if return_60d not already set)
+                    if market_data_by_ticker[ticker].get("return_60d") is None:
+                        market_data_by_ticker[ticker]["return_60d"] = pseudo_return
+                        # Also set benchmark to 0 so alpha = return (relative strength)
+                        market_data_by_ticker[ticker]["xbi_return_60d"] = 0.0
+                        # Add flags for coordinated activity
+                        if ticker in coordinated_buys:
+                            market_data_by_ticker[ticker]["_13f_coordinated_buy"] = True
+                        if ticker in coordinated_sells:
+                            market_data_by_ticker[ticker]["_13f_coordinated_sell"] = True
+                        injected_count += 1
+                except (ValueError, TypeError):
+                    pass
+
+        if injected_count > 0:
+            logger.info(f"  Injected 13F momentum for {injected_count} tickers into market data")
+
     # Module 1: Universe filtering
     logger.info("[2/7] Module 1: Universe filtering...")
     m1_result = None
@@ -714,15 +779,19 @@ def run_screening_pipeline(
         # Convert as_of_date string to date object for Module 3
         as_of_date_obj = to_date_object(as_of_date)
 
-        # Create state directory if it doesn't exist
-        state_dir = data_dir / "ctgov_state"
+        # Create state directory namespaced by universe hash
+        # This prevents churn gate from firing when Module 1 filtering changes
+        # because snapshots from different universe populations are kept separate
+        state_dir = data_dir / "ctgov_state" / universe_hash
         state_dir.mkdir(parents=True, exist_ok=True)
+        logger.info(f"  Using state directory: {state_dir.name} (universe hash)")
 
-        # Run Module 3A with correct signature
+        # Run Module 3A with FULL UNIVERSE tickers (not post-Module-1 filtered)
+        # This ensures stable delta comparisons regardless of Module 1 filtering
         m3_result = compute_module_3_catalyst(
             trial_records_path=data_dir / "trial_records.json",  # Path, not list!
-            state_dir=state_dir,  # State directory for snapshots
-            active_tickers=set(active_tickers),  # Set of active tickers
+            state_dir=state_dir,  # State directory for snapshots (namespaced by universe)
+            active_tickers=full_universe_tickers,  # FULL universe, not filtered active_tickers
             as_of_date=as_of_date_obj,  # Date object
             market_calendar=SimpleMarketCalendar(),  # Market calendar for weekends
             config=Module3Config(),  # Default configuration
