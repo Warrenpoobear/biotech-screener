@@ -1,9 +1,9 @@
 {
   "run_metadata": {
     "as_of_date": "2026-01-20",
-    "events_detected": 127,
+    "events_detected": 0,
     "module_version": "3A.2.0",
-    "prior_snapshot_date": "2026-01-18",
+    "prior_snapshot_date": null,
     "severe_negatives": 0,
     "tickers_analyzed": 308
   },
@@ -22,30 +22,11 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "39720a875b61ea05",
+      "audit_hash": "6376cd7df887ee5a",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
       "catalyst_score_pos": 0.0,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 11 days ago (2025-12-17 \u2192 2026-01-09) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-09",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-17",
-              "2026-01-09"
-            ]
-          },
-          "impact": 1,
-          "nct_id": "NCT05864846",
-          "source": "CTGOV"
-        }
-      ],
+      "events": [],
       "nearest_negative_days": null,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
@@ -53,30 +34,11 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "e2820ded634b1169",
+      "audit_hash": "56e57287f4cd3417",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
       "catalyst_score_pos": 0.0,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 8 days ago (2026-01-06 \u2192 2026-01-12) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-12",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2026-01-06",
-              "2026-01-12"
-            ]
-          },
-          "impact": 1,
-          "nct_id": "NCT03242642",
-          "source": "CTGOV"
-        }
-      ],
+      "events": [],
       "nearest_negative_days": null,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
@@ -108,68 +70,13 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "653a6019d69f8a00",
+      "audit_hash": "4aadd46e5cb377c6",
       "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 1.6,
-      "catalyst_score_pos": 1.6,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 7 days ago (2025-12-23 \u2192 2026-01-13) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-13",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-23",
-              "2026-01-13"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06383390",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.8,
-          "confidence_reason": "Status upgrade: RECRUITING \u2192 ACTIVE_NOT_RECRUITING",
-          "direction": "POS",
-          "disclosed_at": "2026-01-14",
-          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
-          "event_type": "CT_STATUS_UPGRADE",
-          "fields_changed": {
-            "overallStatus": [
-              "RECRUITING",
-              "ACTIVE_NOT_RECRUITING"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06557850",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 11 days ago (2025-11-17 \u2192 2026-01-09) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-09",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-11-17",
-              "2026-01-09"
-            ]
-          },
-          "impact": 1,
-          "nct_id": "NCT06940141",
-          "source": "CTGOV"
-        }
-      ],
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
       "nearest_negative_days": null,
-      "nearest_positive_days": 1,
+      "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "ACAD"
     },
@@ -211,97 +118,23 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "68674f19467362be",
-      "catalyst_score_neg": 2.45,
-      "catalyst_score_net": -2.45,
+      "audit_hash": "7a66a42b11eae22f",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
       "catalyst_score_pos": 0.0,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.85,
-          "confidence_reason": "Status downgrade: RECRUITING \u2192 ENROLLING_BY_INVITATION",
-          "direction": "NEG",
-          "disclosed_at": "2026-01-08",
-          "event_rule_id": "M3_DIFF_CT_STATUS_DOWNGRADE",
-          "event_type": "CT_STATUS_DOWNGRADE",
-          "fields_changed": {
-            "overallStatus": [
-              "RECRUITING",
-              "ENROLLING_BY_INVITATION"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT05492578",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.75,
-          "confidence_reason": "Primary completion date pushed out by 40 days",
-          "direction": "NEG",
-          "disclosed_at": "2026-01-08",
-          "event_rule_id": "M3_DIFF_CT_TIMELINE_PUSHOUT",
-          "event_type": "CT_TIMELINE_PUSHOUT",
-          "fields_changed": {
-            "primaryCompletionDate": [
-              "2028-12-13",
-              "2029-01-22"
-            ]
-          },
-          "impact": 1,
-          "nct_id": "NCT05492578",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 5 days ago (2025-12-18 \u2192 2026-01-15) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-15",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-18",
-              "2026-01-15"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT07290803",
-          "source": "CTGOV"
-        }
-      ],
-      "nearest_negative_days": 1,
+      "events": [],
+      "nearest_negative_days": null,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "ADCT"
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "6e7c23f217e29cc9",
+      "audit_hash": "c1f80842289e22fe",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
       "catalyst_score_pos": 0.0,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 6 days ago (2025-09-25 \u2192 2026-01-14) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-14",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-09-25",
-              "2026-01-14"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06932250",
-          "source": "CTGOV"
-        }
-      ],
+      "events": [],
       "nearest_negative_days": null,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
@@ -429,50 +262,13 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "c2a62cabcacc28bb",
+      "audit_hash": "a9c34855988ce4f2",
       "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 2.4,
-      "catalyst_score_pos": 2.4,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2025-08-19 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-08-19",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT05726864",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.8,
-          "confidence_reason": "Status upgrade: UNKNOWN \u2192 AVAILABLE",
-          "direction": "POS",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
-          "event_type": "CT_STATUS_UPGRADE",
-          "fields_changed": {
-            "overallStatus": [
-              "UNKNOWN",
-              "AVAILABLE"
-            ]
-          },
-          "impact": 3,
-          "nct_id": "NCT07083479",
-          "source": "CTGOV"
-        }
-      ],
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
       "nearest_negative_days": null,
-      "nearest_positive_days": 1,
+      "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "AMPH"
     },
@@ -658,30 +454,11 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "42a09d730427ebb5",
+      "audit_hash": "d24ef8655c8d6d6c",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
       "catalyst_score_pos": 0.0,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 12 days ago (2025-12-15 \u2192 2026-01-08) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-08",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-15",
-              "2026-01-08"
-            ]
-          },
-          "impact": 1,
-          "nct_id": "NCT06524830",
-          "source": "CTGOV"
-        }
-      ],
+      "events": [],
       "nearest_negative_days": null,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
@@ -905,30 +682,11 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "7b801244ff05587f",
+      "audit_hash": "fededb65be2d47a7",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
       "catalyst_score_pos": 0.0,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2026-01-07 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2026-01-07",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT05828069",
-          "source": "CTGOV"
-        }
-      ],
+      "events": [],
       "nearest_negative_days": null,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
@@ -1092,32 +850,13 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "efdb840a4c374b01",
+      "audit_hash": "4446300074df601f",
       "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 1.6,
-      "catalyst_score_pos": 1.6,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.8,
-          "confidence_reason": "Status upgrade: RECRUITING \u2192 ACTIVE_NOT_RECRUITING",
-          "direction": "POS",
-          "disclosed_at": "2026-01-12",
-          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
-          "event_type": "CT_STATUS_UPGRADE",
-          "fields_changed": {
-            "overallStatus": [
-              "RECRUITING",
-              "ACTIVE_NOT_RECRUITING"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT05552469",
-          "source": "CTGOV"
-        }
-      ],
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
       "nearest_negative_days": null,
-      "nearest_positive_days": 1,
+      "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "CHRS"
     },
@@ -1147,30 +886,11 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "472754ba9d0216d8",
+      "audit_hash": "990855c675fd60a7",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
       "catalyst_score_pos": 0.0,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 6 days ago (2025-12-30 \u2192 2026-01-14) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-14",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-30",
-              "2026-01-14"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT03072927",
-          "source": "CTGOV"
-        }
-      ],
+      "events": [],
       "nearest_negative_days": null,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
@@ -1190,30 +910,11 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "55448288ab810e10",
+      "audit_hash": "4713773efeb6ae89",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
       "catalyst_score_pos": 0.0,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 5 days ago (2025-12-04 \u2192 2026-01-15) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-15",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-04",
-              "2026-01-15"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT07263581",
-          "source": "CTGOV"
-        }
-      ],
+      "events": [],
       "nearest_negative_days": null,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
@@ -1221,120 +922,11 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "9a44eb33751bb7a9",
+      "audit_hash": "88e19779f7a8b188",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
       "catalyst_score_pos": 0.0,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2026-01-07 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2026-01-07",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT04402788",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 6 days ago (2025-12-02 \u2192 2026-01-14) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-14",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-02",
-              "2026-01-14"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT04736199",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 6 days ago (2025-11-10 \u2192 2026-01-14) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-14",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-11-10",
-              "2026-01-14"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT05050084",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 6 days ago (2025-11-10 \u2192 2026-01-14) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-14",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-11-10",
-              "2026-01-14"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT05053152",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 6 days ago (2025-11-10 \u2192 2026-01-14) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-14",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-11-10",
-              "2026-01-14"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06500455",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 12 days ago (2025-12-03 \u2192 2026-01-08) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-08",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-03",
-              "2026-01-08"
-            ]
-          },
-          "impact": 1,
-          "nct_id": "NCT06914128",
-          "source": "CTGOV"
-        }
-      ],
+      "events": [],
       "nearest_negative_days": null,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
@@ -1354,194 +946,13 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "3343224a802a0002",
-      "catalyst_score_neg": 4.5,
+      "audit_hash": "21af2f45d8bb194d",
+      "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
-      "catalyst_score_pos": 4.5,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2026-01-07 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2026-01-07",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT03816319",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2026-01-07 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2026-01-07",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT05564390",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.75,
-          "confidence_reason": "Primary completion date pushed out by 273 days",
-          "direction": "NEG",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_TIMELINE_PUSHOUT",
-          "event_type": "CT_TIMELINE_PUSHOUT",
-          "fields_changed": {
-            "primaryCompletionDate": [
-              "2025-11-30",
-              "2026-08-30"
-            ]
-          },
-          "impact": 3,
-          "nct_id": "NCT06532786",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.75,
-          "confidence_reason": "Study completion date pushed out by 365 days",
-          "direction": "NEG",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_TIMELINE_PUSHOUT",
-          "event_type": "CT_TIMELINE_PUSHOUT",
-          "fields_changed": {
-            "completionDate": [
-              "2025-12-31",
-              "2026-12-31"
-            ]
-          },
-          "impact": 3,
-          "nct_id": "NCT06532786",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.8,
-          "confidence_reason": "Status upgrade: ENROLLING_BY_INVITATION \u2192 COMPLETED",
-          "direction": "POS",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
-          "event_type": "CT_STATUS_UPGRADE",
-          "fields_changed": {
-            "overallStatus": [
-              "ENROLLING_BY_INVITATION",
-              "COMPLETED"
-            ]
-          },
-          "impact": 3,
-          "nct_id": "NCT06539650",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2026-01-07 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2026-01-07",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06577441",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.7,
-          "confidence_reason": "Study completion date pulled in by 216 days",
-          "direction": "POS",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_TIMELINE_PULLIN",
-          "event_type": "CT_TIMELINE_PULLIN",
-          "fields_changed": {
-            "completionDate": [
-              "2028-08-15",
-              "2028-01-12"
-            ]
-          },
-          "impact": 3,
-          "nct_id": "NCT06618001",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 5 days ago (2025-10-10 \u2192 2026-01-15) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-15",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-10-10",
-              "2026-01-15"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06930651",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 6 days ago (2025-11-21 \u2192 2026-01-14) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-14",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-11-21",
-              "2026-01-14"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT07090746",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2026-01-07 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2026-01-07",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT07153497",
-          "source": "CTGOV"
-        }
-      ],
-      "nearest_negative_days": 1,
-      "nearest_positive_days": 1,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "CRL"
     },
@@ -1643,49 +1054,12 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "ff41492dcf745b4e",
-      "catalyst_score_neg": 4.5,
-      "catalyst_score_net": -4.5,
+      "audit_hash": "ab088b716e7d37cb",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
       "catalyst_score_pos": 0.0,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.75,
-          "confidence_reason": "Primary completion date pushed out by 243 days",
-          "direction": "NEG",
-          "disclosed_at": "2026-01-14",
-          "event_rule_id": "M3_DIFF_CT_TIMELINE_PUSHOUT",
-          "event_type": "CT_TIMELINE_PUSHOUT",
-          "fields_changed": {
-            "primaryCompletionDate": [
-              "2026-01-30",
-              "2026-09-30"
-            ]
-          },
-          "impact": 3,
-          "nct_id": "NCT06862453",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.75,
-          "confidence_reason": "Study completion date pushed out by 334 days",
-          "direction": "NEG",
-          "disclosed_at": "2026-01-14",
-          "event_rule_id": "M3_DIFF_CT_TIMELINE_PUSHOUT",
-          "event_type": "CT_TIMELINE_PUSHOUT",
-          "fields_changed": {
-            "completionDate": [
-              "2026-01-30",
-              "2026-12-30"
-            ]
-          },
-          "impact": 3,
-          "nct_id": "NCT06862453",
-          "source": "CTGOV"
-        }
-      ],
-      "nearest_negative_days": 1,
+      "events": [],
+      "nearest_negative_days": null,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "CVAC"
@@ -1728,32 +1102,13 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "ea46745f6df5cdaa",
+      "audit_hash": "62b521670a897264",
       "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 1.6,
-      "catalyst_score_pos": 1.6,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.8,
-          "confidence_reason": "Status upgrade: RECRUITING \u2192 ACTIVE_NOT_RECRUITING",
-          "direction": "POS",
-          "disclosed_at": "2026-01-15",
-          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
-          "event_type": "CT_STATUS_UPGRADE",
-          "fields_changed": {
-            "overallStatus": [
-              "RECRUITING",
-              "ACTIVE_NOT_RECRUITING"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT05262023",
-          "source": "CTGOV"
-        }
-      ],
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
       "nearest_negative_days": null,
-      "nearest_positive_days": 1,
+      "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "DNLI"
     },
@@ -1795,135 +1150,25 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "251185c4476c2281",
+      "audit_hash": "245d9eb8d4726e35",
       "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 3.0,
-      "catalyst_score_pos": 3.0,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.8,
-          "confidence_reason": "Status upgrade: ACTIVE_NOT_RECRUITING \u2192 COMPLETED",
-          "direction": "POS",
-          "disclosed_at": "2026-01-14",
-          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
-          "event_type": "CT_STATUS_UPGRADE",
-          "fields_changed": {
-            "overallStatus": [
-              "ACTIVE_NOT_RECRUITING",
-              "COMPLETED"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT05818137",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.7,
-          "confidence_reason": "Study completion date pulled in by 113 days",
-          "direction": "POS",
-          "disclosed_at": "2026-01-14",
-          "event_rule_id": "M3_DIFF_CT_TIMELINE_PULLIN",
-          "event_type": "CT_TIMELINE_PULLIN",
-          "fields_changed": {
-            "completionDate": [
-              "2026-02-27",
-              "2025-11-06"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT05818137",
-          "source": "CTGOV"
-        }
-      ],
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
       "nearest_negative_days": null,
-      "nearest_positive_days": 1,
+      "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "DYN"
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "74fce72b61ff34b6",
+      "audit_hash": "14908cd9df838dcb",
       "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 5.1,
-      "catalyst_score_pos": 5.1,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.8,
-          "confidence_reason": "Status upgrade: ACTIVE_NOT_RECRUITING \u2192 COMPLETED",
-          "direction": "POS",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
-          "event_type": "CT_STATUS_UPGRADE",
-          "fields_changed": {
-            "overallStatus": [
-              "ACTIVE_NOT_RECRUITING",
-              "COMPLETED"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT03910075",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.7,
-          "confidence_reason": "Primary completion date pulled in by 62 days",
-          "direction": "POS",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_TIMELINE_PULLIN",
-          "event_type": "CT_TIMELINE_PULLIN",
-          "fields_changed": {
-            "primaryCompletionDate": [
-              "2025-10-01",
-              "2025-07-31"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT03910075",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.7,
-          "confidence_reason": "Study completion date pulled in by 274 days",
-          "direction": "POS",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_TIMELINE_PULLIN",
-          "event_type": "CT_TIMELINE_PULLIN",
-          "fields_changed": {
-            "completionDate": [
-              "2026-05-01",
-              "2025-07-31"
-            ]
-          },
-          "impact": 3,
-          "nct_id": "NCT03910075",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 12 days ago (2025-01-23 \u2192 2026-01-08) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-08",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-01-23",
-              "2026-01-08"
-            ]
-          },
-          "impact": 1,
-          "nct_id": "NCT06788678",
-          "source": "CTGOV"
-        }
-      ],
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
       "nearest_negative_days": null,
-      "nearest_positive_days": 1,
+      "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "EBS"
     },
@@ -2157,32 +1402,13 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "69f101f66a9fe573",
+      "audit_hash": "b968d4d484d03fbe",
       "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 2.4,
-      "catalyst_score_pos": 2.4,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.8,
-          "confidence_reason": "Status upgrade: RECRUITING \u2192 COMPLETED",
-          "direction": "POS",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
-          "event_type": "CT_STATUS_UPGRADE",
-          "fields_changed": {
-            "overallStatus": [
-              "RECRUITING",
-              "COMPLETED"
-            ]
-          },
-          "impact": 3,
-          "nct_id": "NCT06059027",
-          "source": "CTGOV"
-        }
-      ],
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
       "nearest_negative_days": null,
-      "nearest_positive_days": 1,
+      "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "GERN"
     },
@@ -2260,30 +1486,11 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "1a0f559646b6f8b3",
+      "audit_hash": "3f4c8495c2d39f97",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
       "catalyst_score_pos": 0.0,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 12 days ago (2025-12-17 \u2192 2026-01-08) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-08",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-17",
-              "2026-01-08"
-            ]
-          },
-          "impact": 1,
-          "nct_id": "NCT05097287",
-          "source": "CTGOV"
-        }
-      ],
+      "events": [],
       "nearest_negative_days": null,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
@@ -2291,48 +1498,11 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "dfc3884232801481",
+      "audit_hash": "64a066effd724d12",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
       "catalyst_score_pos": 0.0,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2026-01-07 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2026-01-07",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT04939051",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 7 days ago (2025-06-03 \u2192 2026-01-13) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-13",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-06-03",
-              "2026-01-13"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT05759728",
-          "source": "CTGOV"
-        }
-      ],
+      "events": [],
       "nearest_negative_days": null,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
@@ -2340,284 +1510,13 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "69b8eb7233cbfc63",
+      "audit_hash": "a9413f8b5699cc20",
       "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 1.6,
-      "catalyst_score_pos": 1.6,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2025-12-19 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-19",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT01804686",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2025-12-05 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-05",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT04892173",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2025-12-19 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-19",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT05438043",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2025-12-19 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-19",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT05714202",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2025-12-22 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-22",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT05754957",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2025-12-24 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-24",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT05901649",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.8,
-          "confidence_reason": "Status upgrade: RECRUITING \u2192 ACTIVE_NOT_RECRUITING",
-          "direction": "POS",
-          "disclosed_at": "2026-01-12",
-          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
-          "event_type": "CT_STATUS_UPGRADE",
-          "fields_changed": {
-            "overallStatus": [
-              "RECRUITING",
-              "ACTIVE_NOT_RECRUITING"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06054555",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2025-12-08 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-08",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06095115",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2025-12-18 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-18",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06120140",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 11 days ago (2025-11-10 \u2192 2026-01-09) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-09",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-11-10",
-              "2026-01-09"
-            ]
-          },
-          "impact": 1,
-          "nct_id": "NCT06143878",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2025-12-05 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-05",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06211764",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2025-12-05 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-05",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06408935",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 12 days ago (2025-12-22 \u2192 2026-01-08) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-08",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-22",
-              "2026-01-08"
-            ]
-          },
-          "impact": 1,
-          "nct_id": "NCT06424288",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2025-12-24 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-24",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06660563",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 8 days ago (2025-10-03 \u2192 2026-01-12) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-12",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-10-03",
-              "2026-01-12"
-            ]
-          },
-          "impact": 1,
-          "nct_id": "NCT06712316",
-          "source": "CTGOV"
-        }
-      ],
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
       "nearest_negative_days": null,
-      "nearest_positive_days": 1,
+      "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "GRAL"
     },
@@ -2683,104 +1582,13 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "68cb0c06ea84ac9f",
-      "catalyst_score_neg": 4.5,
-      "catalyst_score_net": -2.1,
-      "catalyst_score_pos": 2.4,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 6 days ago (2025-11-20 \u2192 2026-01-14) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-14",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-11-20",
-              "2026-01-14"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06182774",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 12 days ago (2025-10-16 \u2192 2026-01-08) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-08",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-10-16",
-              "2026-01-08"
-            ]
-          },
-          "impact": 1,
-          "nct_id": "NCT06388200",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.8,
-          "confidence_reason": "Status upgrade: UNKNOWN \u2192 AVAILABLE",
-          "direction": "POS",
-          "disclosed_at": "2025-07-28",
-          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
-          "event_type": "CT_STATUS_UPGRADE",
-          "fields_changed": {
-            "overallStatus": [
-              "UNKNOWN",
-              "AVAILABLE"
-            ]
-          },
-          "impact": 3,
-          "nct_id": "NCT06574997",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.75,
-          "confidence_reason": "Primary completion date pushed out by 731 days",
-          "direction": "NEG",
-          "disclosed_at": "2026-01-09",
-          "event_rule_id": "M3_DIFF_CT_TIMELINE_PUSHOUT",
-          "event_type": "CT_TIMELINE_PUSHOUT",
-          "fields_changed": {
-            "primaryCompletionDate": [
-              "2027-12-30",
-              "2029-12-30"
-            ]
-          },
-          "impact": 3,
-          "nct_id": "NCT07324174",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.75,
-          "confidence_reason": "Study completion date pushed out by 731 days",
-          "direction": "NEG",
-          "disclosed_at": "2026-01-09",
-          "event_rule_id": "M3_DIFF_CT_TIMELINE_PUSHOUT",
-          "event_type": "CT_TIMELINE_PUSHOUT",
-          "fields_changed": {
-            "completionDate": [
-              "2027-12-30",
-              "2029-12-30"
-            ]
-          },
-          "impact": 3,
-          "nct_id": "NCT07324174",
-          "source": "CTGOV"
-        }
-      ],
-      "nearest_negative_days": 1,
-      "nearest_positive_days": 1,
+      "audit_hash": "f830351f7de279bf",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "HUMA"
     },
@@ -3014,102 +1822,11 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "c19961a2d7c9d733",
+      "audit_hash": "a40a5304ac2026c2",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
       "catalyst_score_pos": 0.0,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 6 days ago (2025-12-30 \u2192 2026-01-14) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-14",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-30",
-              "2026-01-14"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT03072927",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 5 days ago (2026-01-07 \u2192 2026-01-15) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-15",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2026-01-07",
-              "2026-01-15"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT05047172",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2026-01-07 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2026-01-07",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT05675410",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 12 days ago (2025-12-17 \u2192 2026-01-08) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-08",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-17",
-              "2026-01-08"
-            ]
-          },
-          "impact": 1,
-          "nct_id": "NCT06423430",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 12 days ago (2025-12-16 \u2192 2026-01-08) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-08",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-16",
-              "2026-01-08"
-            ]
-          },
-          "impact": 1,
-          "nct_id": "NCT07286604",
-          "source": "CTGOV"
-        }
-      ],
+      "events": [],
       "nearest_negative_days": null,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
@@ -3261,48 +1978,11 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "7a5a4c790e32b2d9",
+      "audit_hash": "18ed951f5063281a",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
       "catalyst_score_pos": 0.0,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 8 days ago (2025-12-08 \u2192 2026-01-12) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-12",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-08",
-              "2026-01-12"
-            ]
-          },
-          "impact": 1,
-          "nct_id": "NCT06063928",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2026-01-07 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2026-01-07",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06102902",
-          "source": "CTGOV"
-        }
-      ],
+      "events": [],
       "nearest_negative_days": null,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
@@ -3394,68 +2074,13 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "0605592693f61d6f",
-      "catalyst_score_neg": 1.5,
-      "catalyst_score_net": 0.1,
-      "catalyst_score_pos": 1.6,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.8,
-          "confidence_reason": "Status upgrade: RECRUITING \u2192 ACTIVE_NOT_RECRUITING",
-          "direction": "POS",
-          "disclosed_at": "2026-01-08",
-          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
-          "event_type": "CT_STATUS_UPGRADE",
-          "fields_changed": {
-            "overallStatus": [
-              "RECRUITING",
-              "ACTIVE_NOT_RECRUITING"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06245408",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.75,
-          "confidence_reason": "Primary completion date pushed out by 50 days",
-          "direction": "NEG",
-          "disclosed_at": "2026-01-08",
-          "event_rule_id": "M3_DIFF_CT_TIMELINE_PUSHOUT",
-          "event_type": "CT_TIMELINE_PUSHOUT",
-          "fields_changed": {
-            "primaryCompletionDate": [
-              "2026-09-02",
-              "2026-10-22"
-            ]
-          },
-          "impact": 1,
-          "nct_id": "NCT06245408",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.75,
-          "confidence_reason": "Study completion date pushed out by 44 days",
-          "direction": "NEG",
-          "disclosed_at": "2026-01-08",
-          "event_rule_id": "M3_DIFF_CT_TIMELINE_PUSHOUT",
-          "event_type": "CT_TIMELINE_PUSHOUT",
-          "fields_changed": {
-            "completionDate": [
-              "2026-11-03",
-              "2026-12-17"
-            ]
-          },
-          "impact": 1,
-          "nct_id": "NCT06245408",
-          "source": "CTGOV"
-        }
-      ],
-      "nearest_negative_days": 1,
-      "nearest_positive_days": 1,
+      "audit_hash": "a4f60702f363a006",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "MBX"
     },
@@ -3629,48 +2254,11 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "66ebf999f3736335",
+      "audit_hash": "5cfe87650d186648",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
       "catalyst_score_pos": 0.0,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2025-12-05 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-05",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT04273945",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2025-12-19 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-19",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT04929210",
-          "source": "CTGOV"
-        }
-      ],
+      "events": [],
       "nearest_negative_days": null,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
@@ -3714,66 +2302,11 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "516cdccf95a57976",
+      "audit_hash": "ea86fedb8b3feaa6",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
       "catalyst_score_pos": 0.0,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 6 days ago (2025-12-09 \u2192 2026-01-14) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-14",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-09",
-              "2026-01-14"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06029439",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 7 days ago (2025-12-09 \u2192 2026-01-13) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-13",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-09",
-              "2026-01-13"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06058013",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 7 days ago (2025-12-09 \u2192 2026-01-13) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-13",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-09",
-              "2026-01-13"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06058039",
-          "source": "CTGOV"
-        }
-      ],
+      "events": [],
       "nearest_negative_days": null,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
@@ -3805,103 +2338,12 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "ef2a95781112708d",
-      "catalyst_score_neg": 1.7,
-      "catalyst_score_net": -1.7,
+      "audit_hash": "aadac4b3ac2657d3",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
       "catalyst_score_pos": 0.0,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2025-11-12 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-11-12",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT05376891",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.85,
-          "confidence_reason": "Status downgrade: RECRUITING \u2192 UNKNOWN",
-          "direction": "NEG",
-          "disclosed_at": "2024-01-05",
-          "event_rule_id": "M3_DIFF_CT_STATUS_DOWNGRADE",
-          "event_type": "CT_STATUS_DOWNGRADE",
-          "fields_changed": {
-            "overallStatus": [
-              "RECRUITING",
-              "UNKNOWN"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06082440",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2025-12-18 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-18",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06120140",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2025-12-19 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-19",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06285318",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2025-12-05 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-05",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06934226",
-          "source": "CTGOV"
-        }
-      ],
-      "nearest_negative_days": 1,
+      "events": [],
+      "nearest_negative_days": null,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "NTRA"
@@ -4028,86 +2470,13 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "381f09b581c96aed",
-      "catalyst_score_neg": 3.0,
-      "catalyst_score_net": -1.4,
-      "catalyst_score_pos": 1.6,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.75,
-          "confidence_reason": "Primary completion date pushed out by 134 days",
-          "direction": "NEG",
-          "disclosed_at": "2026-01-08",
-          "event_rule_id": "M3_DIFF_CT_TIMELINE_PUSHOUT",
-          "event_type": "CT_TIMELINE_PUSHOUT",
-          "fields_changed": {
-            "primaryCompletionDate": [
-              "2025-12-31",
-              "2026-05-14"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT02568267",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.75,
-          "confidence_reason": "Study completion date pushed out by 134 days",
-          "direction": "NEG",
-          "disclosed_at": "2026-01-08",
-          "event_rule_id": "M3_DIFF_CT_TIMELINE_PUSHOUT",
-          "event_type": "CT_TIMELINE_PUSHOUT",
-          "fields_changed": {
-            "completionDate": [
-              "2025-12-31",
-              "2026-05-14"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT02568267",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2025-09-19 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-09-19",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT03096418",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.8,
-          "confidence_reason": "Status upgrade: RECRUITING \u2192 ACTIVE_NOT_RECRUITING",
-          "direction": "POS",
-          "disclosed_at": "2026-01-12",
-          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
-          "event_type": "CT_STATUS_UPGRADE",
-          "fields_changed": {
-            "overallStatus": [
-              "RECRUITING",
-              "ACTIVE_NOT_RECRUITING"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06054555",
-          "source": "CTGOV"
-        }
-      ],
-      "nearest_negative_days": 1,
-      "nearest_positive_days": 1,
+      "audit_hash": "709b9325a6509bf2",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "ONC"
     },
@@ -4245,30 +2614,11 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "6f0aac21761aa6fb",
+      "audit_hash": "e513311d9bcc4a1c",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
       "catalyst_score_pos": 0.0,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 5 days ago (2025-01-16 \u2192 2026-01-15) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-15",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-01-16",
-              "2026-01-15"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06513819",
-          "source": "CTGOV"
-        }
-      ],
+      "events": [],
       "nearest_negative_days": null,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
@@ -4384,48 +2734,11 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "de725752cf72a870",
+      "audit_hash": "aeb03e0dc8c628a8",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
       "catalyst_score_pos": 0.0,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 7 days ago (2025-08-15 \u2192 2026-01-13) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-13",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-08-15",
-              "2026-01-13"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT05154513",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2024-12-12 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2024-12-12",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06075108",
-          "source": "CTGOV"
-        }
-      ],
+      "events": [],
       "nearest_negative_days": null,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
@@ -4457,138 +2770,11 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "0d31843f94651472",
+      "audit_hash": "a7a043c66ceee267",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
       "catalyst_score_pos": 0.0,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2025-12-31 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-31",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT01386424",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 8 days ago (2026-01-06 \u2192 2026-01-12) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-12",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2026-01-06",
-              "2026-01-12"
-            ]
-          },
-          "impact": 1,
-          "nct_id": "NCT03242642",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 6 days ago (2024-11-22 \u2192 2026-01-14) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-14",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2024-11-22",
-              "2026-01-14"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT04404530",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 12 days ago (2025-12-02 \u2192 2026-01-08) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-08",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-02",
-              "2026-01-08"
-            ]
-          },
-          "impact": 1,
-          "nct_id": "NCT05696626",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 7 days ago (2025-12-18 \u2192 2026-01-13) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-13",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-18",
-              "2026-01-13"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06292013",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 5 days ago (2025-09-26 \u2192 2026-01-15) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-15",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-09-26",
-              "2026-01-15"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT07194993",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2026-01-07 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2026-01-07",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT07215871",
-          "source": "CTGOV"
-        }
-      ],
+      "events": [],
       "nearest_negative_days": null,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
@@ -4656,176 +2842,13 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "8200e845fd2e21f0",
-      "catalyst_score_neg": 0.85,
-      "catalyst_score_net": 1.55,
-      "catalyst_score_pos": 2.4,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.8,
-          "confidence_reason": "Status upgrade: UNKNOWN \u2192 AVAILABLE",
-          "direction": "POS",
-          "disclosed_at": "2025-11-24",
-          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
-          "event_type": "CT_STATUS_UPGRADE",
-          "fields_changed": {
-            "overallStatus": [
-              "UNKNOWN",
-              "AVAILABLE"
-            ]
-          },
-          "impact": 3,
-          "nct_id": "NCT03576690",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.85,
-          "confidence_reason": "Status downgrade: UNKNOWN \u2192 NO_LONGER_AVAILABLE",
-          "direction": "NEG",
-          "disclosed_at": "2023-10-03",
-          "event_rule_id": "M3_DIFF_CT_STATUS_DOWNGRADE",
-          "event_type": "CT_STATUS_DOWNGRADE",
-          "fields_changed": {
-            "overallStatus": [
-              "UNKNOWN",
-              "NO_LONGER_AVAILABLE"
-            ]
-          },
-          "impact": 1,
-          "nct_id": "NCT04617535",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 8 days ago (2024-10-28 \u2192 2026-01-12) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-12",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2024-10-28",
-              "2026-01-12"
-            ]
-          },
-          "impact": 1,
-          "nct_id": "NCT05041907",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2026-01-07 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2026-01-07",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06568172",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2026-01-07 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2026-01-07",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06900595",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2026-01-07 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2026-01-07",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06980038",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2026-01-07 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2026-01-07",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT07147231",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 7 days ago (2026-01-07 \u2192 2026-01-13) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-13",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2026-01-07",
-              "2026-01-13"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT07195734",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2026-01-07 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2026-01-07",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT07281417",
-          "source": "CTGOV"
-        }
-      ],
-      "nearest_negative_days": 1,
-      "nearest_positive_days": 1,
+      "audit_hash": "08f49e7288f68c3b",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "REGN"
     },
@@ -5071,66 +3094,11 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "7fe6e0e70b6fcc41",
+      "audit_hash": "4dffdba4648cae1f",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
       "catalyst_score_pos": 0.0,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2026-01-07 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2026-01-07",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT05053971",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 4 days ago (2026-01-07 \u2192 2026-01-16) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2026-01-07",
-              "2026-01-16"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT05886049",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 12 days ago (2025-08-07 \u2192 2026-01-08) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-08",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-08-07",
-              "2026-01-08"
-            ]
-          },
-          "impact": 1,
-          "nct_id": "NCT07011810",
-          "source": "CTGOV"
-        }
-      ],
+      "events": [],
       "nearest_negative_days": null,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
@@ -5186,48 +3154,11 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "135187e7b3e3dc4c",
+      "audit_hash": "7230c062e5b38733",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
       "catalyst_score_pos": 0.0,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 7 days ago (2025-12-23 \u2192 2026-01-13) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-13",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-23",
-              "2026-01-13"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06338995",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 7 days ago (2025-12-17 \u2192 2026-01-13) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-13",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-17",
-              "2026-01-13"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06588686",
-          "source": "CTGOV"
-        }
-      ],
+      "events": [],
       "nearest_negative_days": null,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
@@ -5295,49 +3226,12 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "bc5c9fc7b38569f1",
-      "catalyst_score_neg": 4.5,
-      "catalyst_score_net": -4.5,
+      "audit_hash": "ae5b12796096d86f",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
       "catalyst_score_pos": 0.0,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.75,
-          "confidence_reason": "Primary completion date pushed out by 212 days",
-          "direction": "NEG",
-          "disclosed_at": "2026-01-14",
-          "event_rule_id": "M3_DIFF_CT_TIMELINE_PUSHOUT",
-          "event_type": "CT_TIMELINE_PUSHOUT",
-          "fields_changed": {
-            "primaryCompletionDate": [
-              "2025-09-30",
-              "2026-04-30"
-            ]
-          },
-          "impact": 3,
-          "nct_id": "NCT06904846",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.75,
-          "confidence_reason": "Study completion date pushed out by 212 days",
-          "direction": "NEG",
-          "disclosed_at": "2026-01-14",
-          "event_rule_id": "M3_DIFF_CT_TIMELINE_PUSHOUT",
-          "event_type": "CT_TIMELINE_PUSHOUT",
-          "fields_changed": {
-            "completionDate": [
-              "2025-11-30",
-              "2026-06-30"
-            ]
-          },
-          "impact": 3,
-          "nct_id": "NCT06904846",
-          "source": "CTGOV"
-        }
-      ],
-      "nearest_negative_days": 1,
+      "events": [],
+      "nearest_negative_days": null,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "TARS"
@@ -5380,68 +3274,13 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "f58da197ea1e446f",
+      "audit_hash": "50f0ae3ebba445cd",
       "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 4.4,
-      "catalyst_score_pos": 4.4,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.8,
-          "confidence_reason": "Status upgrade: ACTIVE_NOT_RECRUITING \u2192 COMPLETED",
-          "direction": "POS",
-          "disclosed_at": "2026-01-12",
-          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
-          "event_type": "CT_STATUS_UPGRADE",
-          "fields_changed": {
-            "overallStatus": [
-              "ACTIVE_NOT_RECRUITING",
-              "COMPLETED"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06150976",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.7,
-          "confidence_reason": "Primary completion date pulled in by 117 days",
-          "direction": "POS",
-          "disclosed_at": "2026-01-12",
-          "event_rule_id": "M3_DIFF_CT_TIMELINE_PULLIN",
-          "event_type": "CT_TIMELINE_PULLIN",
-          "fields_changed": {
-            "primaryCompletionDate": [
-              "2025-12-31",
-              "2025-09-05"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06150976",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.7,
-          "confidence_reason": "Study completion date pulled in by 117 days",
-          "direction": "POS",
-          "disclosed_at": "2026-01-12",
-          "event_rule_id": "M3_DIFF_CT_TIMELINE_PULLIN",
-          "event_type": "CT_TIMELINE_PULLIN",
-          "fields_changed": {
-            "completionDate": [
-              "2025-12-31",
-              "2025-09-05"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06150976",
-          "source": "CTGOV"
-        }
-      ],
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
       "nearest_negative_days": null,
-      "nearest_positive_days": 1,
+      "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "TEM"
     },
@@ -5579,115 +3418,23 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "f166accf344ffd1b",
+      "audit_hash": "3f72353c06aff2ea",
       "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 2.4,
-      "catalyst_score_pos": 2.4,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.8,
-          "confidence_reason": "Status upgrade: RECRUITING \u2192 ACTIVE_NOT_RECRUITING",
-          "direction": "POS",
-          "disclosed_at": "2026-01-12",
-          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
-          "event_type": "CT_STATUS_UPGRADE",
-          "fields_changed": {
-            "overallStatus": [
-              "RECRUITING",
-              "ACTIVE_NOT_RECRUITING"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT05544552",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 5 days ago (2026-01-07 \u2192 2026-01-15) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-15",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2026-01-07",
-              "2026-01-15"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT06842355",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 11 days ago (2025-12-23 \u2192 2026-01-09) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-09",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-23",
-              "2026-01-09"
-            ]
-          },
-          "impact": 1,
-          "nct_id": "NCT06995677",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.8,
-          "confidence_reason": "Status upgrade: NOT_YET_RECRUITING \u2192 RECRUITING",
-          "direction": "POS",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
-          "event_type": "CT_STATUS_UPGRADE",
-          "fields_changed": {
-            "overallStatus": [
-              "NOT_YET_RECRUITING",
-              "RECRUITING"
-            ]
-          },
-          "impact": 1,
-          "nct_id": "NCT07265947",
-          "source": "CTGOV"
-        }
-      ],
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
       "nearest_negative_days": null,
-      "nearest_positive_days": 1,
+      "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "TYRA"
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "3cee58b6eb4be89b",
+      "audit_hash": "69e8dcd66a6ff028",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
       "catalyst_score_pos": 0.0,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 8 days ago (2025-12-22 \u2192 2026-01-12) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-12",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-22",
-              "2026-01-12"
-            ]
-          },
-          "impact": 1,
-          "nct_id": "NCT06966479",
-          "source": "CTGOV"
-        }
-      ],
+      "events": [],
       "nearest_negative_days": null,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
@@ -5767,68 +3514,13 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "6bc94786db3a0bb4",
-      "catalyst_score_neg": 0.85,
-      "catalyst_score_net": 0.75,
-      "catalyst_score_pos": 1.6,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 6 days ago (2025-08-21 \u2192 2026-01-14) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-14",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-08-21",
-              "2026-01-14"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT04998851",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.85,
-          "confidence_reason": "Status downgrade: UNKNOWN \u2192 NO_LONGER_AVAILABLE",
-          "direction": "NEG",
-          "disclosed_at": "2022-11-10",
-          "event_rule_id": "M3_DIFF_CT_STATUS_DOWNGRADE",
-          "event_type": "CT_STATUS_DOWNGRADE",
-          "fields_changed": {
-            "overallStatus": [
-              "UNKNOWN",
-              "NO_LONGER_AVAILABLE"
-            ]
-          },
-          "impact": 1,
-          "nct_id": "NCT05235347",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.8,
-          "confidence_reason": "Status upgrade: RECRUITING \u2192 ACTIVE_NOT_RECRUITING",
-          "direction": "POS",
-          "disclosed_at": "2026-01-16",
-          "event_rule_id": "M3_DIFF_CT_STATUS_UPGRADE",
-          "event_type": "CT_STATUS_UPGRADE",
-          "fields_changed": {
-            "overallStatus": [
-              "RECRUITING",
-              "ACTIVE_NOT_RECRUITING"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT07142811",
-          "source": "CTGOV"
-        }
-      ],
-      "nearest_negative_days": 1,
-      "nearest_positive_days": 1,
+      "audit_hash": "0905ddf16fcd20c4",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "VIR"
     },
@@ -5846,30 +3538,11 @@
     },
     {
       "as_of_date": "2026-01-20",
-      "audit_hash": "a9dc7d0ce65b7e89",
+      "audit_hash": "7d7547aebe3233b5",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
       "catalyst_score_pos": 0.0,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 8 days ago (2025-01-16 \u2192 2026-01-12) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-12",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-01-16",
-              "2026-01-12"
-            ]
-          },
-          "impact": 1,
-          "nct_id": "NCT05674786",
-          "source": "CTGOV"
-        }
-      ],
+      "events": [],
       "nearest_negative_days": null,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
