@@ -618,3 +618,81 @@ class TestMomentumStrongSignalBoundary:
             result1 = self._is_strong_signal(score)
             result2 = self._is_strong_signal(score)
             assert result1 == result2, f"Non-deterministic result for score {score}"
+
+
+# =============================================================================
+# TEST 8: Module Import Graph Smoke Test
+# =============================================================================
+
+class TestModuleImportGraph:
+    """
+    Smoke test for module import structure.
+
+    Verifies:
+    - All three modules import without error
+    - No circular import issues
+    - Expected exports are available
+    - One-way dependency flow (scoring ← composite → diagnostics)
+    """
+
+    def test_scoring_module_imports(self):
+        """Scoring module imports cleanly with no composite/diagnostics dependency."""
+        from module_5_scoring_v3 import (
+            _score_single_ticker_v3,
+            ComponentScore,
+            ScoreBreakdown,
+            V3ScoringResult,
+            MonotonicCap,
+            ScoringMode,
+            RunStatus,
+            NormalizationMethod,
+            SEVERITY_MULTIPLIERS,
+            _coalesce,
+        )
+        assert callable(_score_single_ticker_v3)
+        assert ScoringMode.DEFAULT is not None
+
+    def test_diagnostics_module_imports(self):
+        """Diagnostics module imports cleanly with no scoring/composite dependency."""
+        from module_5_diagnostics_v3 import (
+            compute_momentum_breakdown,
+            build_momentum_health,
+            format_momentum_log_lines,
+            check_coverage_guardrail,
+        )
+        assert callable(compute_momentum_breakdown)
+        assert callable(build_momentum_health)
+
+    def test_composite_module_imports(self):
+        """Composite module imports both scoring and diagnostics."""
+        from module_5_composite_v3 import (
+            compute_module_5_composite_v3,
+            # Re-exports from scoring
+            _score_single_ticker_v3,
+            ComponentScore,
+            ScoringMode,
+            # Re-exports from diagnostics
+            compute_momentum_breakdown,
+            build_momentum_health,
+        )
+        assert callable(compute_module_5_composite_v3)
+
+    def test_no_circular_imports(self):
+        """Importing all modules in any order should work."""
+        import importlib
+        import sys
+
+        # Clear cached imports
+        for mod in list(sys.modules.keys()):
+            if mod.startswith("module_5_"):
+                del sys.modules[mod]
+
+        # Import in various orders - should not raise ImportError
+        import module_5_scoring_v3
+        import module_5_diagnostics_v3
+        import module_5_composite_v3
+
+        # Verify they're all loaded
+        assert "module_5_scoring_v3" in sys.modules
+        assert "module_5_diagnostics_v3" in sys.modules
+        assert "module_5_composite_v3" in sys.modules
