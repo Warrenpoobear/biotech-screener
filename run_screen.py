@@ -709,6 +709,8 @@ def run_screening_pipeline(
                         market_data_by_ticker[ticker]["return_60d"] = pseudo_return
                         # Also set benchmark to 0 so alpha = return (relative strength)
                         market_data_by_ticker[ticker]["xbi_return_60d"] = 0.0
+                        # Mark source as 13F (for observability - distinguishes from prices)
+                        market_data_by_ticker[ticker]["_momentum_source"] = "13f"
                         # Add flags for coordinated activity
                         if ticker in coordinated_buys:
                             market_data_by_ticker[ticker]["_13f_coordinated_buy"] = True

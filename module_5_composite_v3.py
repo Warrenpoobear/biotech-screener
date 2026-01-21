@@ -982,11 +982,17 @@ def _score_single_ticker_v3(
     # Extract market data for volatility and momentum (multi-window)
     annualized_vol = None
     momentum_input = MultiWindowMomentumInput()
+    # Track momentum source for observability (prices vs 13f)
+    momentum_source = "prices"  # Default: derived from daily prices
 
     if market_data:
         # Volatility
         vol_val = market_data.get("volatility_252d")
         annualized_vol = _to_decimal(vol_val if vol_val is not None else market_data.get("annualized_volatility"))
+
+        # Check if momentum came from 13F injection (vs price-derived)
+        if market_data.get("_momentum_source") == "13f":
+            momentum_source = "13f"
 
         # Multi-window returns (20d, 60d, 120d)
         momentum_input = MultiWindowMomentumInput(
@@ -1444,6 +1450,8 @@ def _score_single_ticker_v3(
             # V2 multi-window fields
             "window_used": momentum.window_used,
             "data_status": momentum.data_status,
+            # V3.2: Source tracking for observability (prices vs 13f)
+            "source": momentum_source,
         },
         "valuation_signal": {
             "score": str(valuation.valuation_score),
@@ -2075,6 +2083,19 @@ def compute_module_5_composite_v3(
             and r.get("momentum_signal", {}).get("window_used") is not None
             and _to_decimal(r.get("momentum_signal", {}).get("confidence", "0")) >= Decimal("0.6")
         ),
+        # 5. Momentum source breakdown (for observability)
+        #    prices = computed from daily price returns
+        #    13f = injected from institutional momentum data
+        "momentum_source_prices": sum(
+            1 for r in ranked_securities
+            if r.get("momentum_signal", {}).get("source") == "prices"
+            and r.get("momentum_signal", {}).get("window_used") is not None
+        ),
+        "momentum_source_13f": sum(
+            1 for r in ranked_securities
+            if r.get("momentum_signal", {}).get("source") == "13f"
+            and r.get("momentum_signal", {}).get("window_used") is not None
+        ),
 
         # Quality metrics
         "with_caps_applied": sum(1 for r in ranked_securities if r.get("monotonic_caps_applied")),
@@ -2227,9 +2248,20 @@ def compute_module_5_composite_v3(
     mom_meaningful = diagnostic_counts.get("momentum_meaningful", 0)
     mom_strong_signal = diagnostic_counts.get("momentum_strong_signal", 0)
     mom_strong_effective = diagnostic_counts.get("momentum_strong_and_effective", 0)
+    mom_source_prices = diagnostic_counts.get("momentum_source_prices", 0)
+    mom_source_13f = diagnostic_counts.get("momentum_source_13f", 0)
     # Fix: applied should equal neg + pos + neutral (all signals with data, not low_conf)
     # This matches the breakdown shown in applied[neg:X, pos:X, neutral:X]
     mom_applied_stable = mom_neg + mom_pos + mom_neutral
+
+    # GUARDRAIL: Coverage collapsed alert
+    # If coverage drops below 20%, emit loud warning (likely data pipeline issue)
+    coverage_pct = (mom_applied_stable / total_rankable * 100) if total_rankable > 0 else 0
+    if total_rankable > 0 and coverage_pct < 20:
+        health_warnings.append(
+            f"WARN: momentum coverage collapsed ({coverage_pct:.1f}%) - "
+            f"check enrich_market_data_momentum outputs / market_data.json keys"
+        )
 
     if mom_with_data > 0 or mom_missing > 0:
         health_warnings.append(
@@ -2239,17 +2271,18 @@ def compute_module_5_composite_v3(
             f"windows[20d:{mom_20d}, 60d:{mom_60d}, 120d:{mom_120d}] | "
             f"coverage={mom_active}/{total_rankable} ({mom_coverage_pct:.1f}%), avg_weight={avg_mom_weight}"
         )
-        # NEW: Stable metrics log (computable vs meaningful vs applied vs strong)
         # Single-line signal health dashboard for monitoring:
         # - applied: coverage (has data, not low_conf)
         # - meaningful: confidence >= 0.5
         # - strong: |score-50| >= 2.5
         # - strong+effective: strong AND confidence >= 0.6 (actually moves composite)
+        # - sources: prices vs 13f breakdown
         health_warnings.append(
             f"INFO: momentum stable metrics - "
             f"computable:{mom_computable}, meaningful:{mom_meaningful}, "
             f"coverage_applied:{mom_applied_stable}/{total_rankable}, "
-            f"strong:{mom_strong_signal}, strong+eff:{mom_strong_effective}"
+            f"strong:{mom_strong_signal}, strong_and_effective:{mom_strong_effective}, "
+            f"sources[prices:{mom_source_prices}, 13f:{mom_source_13f}]"
         )
 
     # Log health status
@@ -2294,6 +2327,28 @@ def compute_module_5_composite_v3(
     # DETERMINISM: Sort excluded_securities by ticker for consistent output order
     excluded_sorted = sorted(excluded, key=lambda x: x["ticker"])
 
+    # Build momentum_health for results JSON (scriptable A/B comparisons)
+    momentum_health = {
+        "coverage_applied": mom_applied_stable,
+        "coverage_pct": round(coverage_pct, 1),
+        "computable": mom_computable,
+        "meaningful": mom_meaningful,
+        "strong_signal": mom_strong_signal,
+        "strong_and_effective": mom_strong_effective,
+        "avg_weight": str(avg_mom_weight),
+        "windows_used": {
+            "20d": mom_20d,
+            "60d": mom_60d,
+            "120d": mom_120d,
+        },
+        "sources": {
+            "prices": mom_source_prices,
+            "13f": mom_source_13f,
+        },
+        "total_rankable": total_rankable,
+        "as_of_date": as_of_date,
+    }
+
     return {
         "as_of_date": as_of_date,
         "scoring_mode": mode.value,
@@ -2311,6 +2366,7 @@ def compute_module_5_composite_v3(
         "diagnostic_counts": diagnostic_counts,
         "enhancement_applied": enhancement_applied,
         "enhancement_diagnostics": enhancement_diagnostics,
+        "momentum_health": momentum_health,  # V3.2: Persisted for A/B comparisons
         "pit_gate_diagnostics": pit_gate_diagnostics,
         "schema_version": SCHEMA_VERSION,
         "provenance": create_provenance(
