@@ -66,3 +66,8 @@ data/indices_prices.csv
 
 # Module 3 state files (runtime generated)
 production_data/ctgov_state/
+
+# A/B test artifacts
+checkpoints_ab_*/
+results_*_prefix*.json
+results_*_postfix*.json
