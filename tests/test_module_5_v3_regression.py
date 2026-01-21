@@ -218,6 +218,68 @@ class TestDecimalZeroCoalesce:
         result = _coalesce(Decimal("0"), Decimal("50"))
         assert result == Decimal("0"), f"Coalesce incorrectly skipped zero: {result}"
 
+    def test_xbi_return_60d_zero_is_valid(self):
+        """
+        Regression test for xbi_return_60d = 0.0 falsy bug.
+
+        Bug: Using `market_data.get("xbi_return_60d") or fallback` fails when
+        xbi_return_60d is exactly 0.0 because 0.0 is falsy in Python.
+
+        Fix: Use explicit None check:
+            xbi_val = market_data.get("xbi_return_60d")
+            benchmark = xbi_val if xbi_val is not None else fallback
+
+        This test ensures xbi_return_60d=0.0 is treated as a valid benchmark
+        return (flat market), not as missing data.
+        """
+        from src.modules.ic_enhancements import compute_momentum_signal
+
+        # Case 1: xbi_return_60d = 0.0 should be used (flat benchmark)
+        # Stock return of 10% vs flat benchmark = +10% alpha
+        stock_return = Decimal("0.10")
+        benchmark_zero = Decimal("0.0")  # Flat market
+
+        momentum = compute_momentum_signal(
+            return_60d=stock_return,
+            benchmark_return_60d=benchmark_zero,
+        )
+
+        # Alpha should be +0.10 (stock beat flat benchmark by 10%)
+        assert momentum.alpha_60d == Decimal("0.10"), (
+            f"Alpha should be +0.10 when stock=+10% vs flat benchmark, "
+            f"got alpha={momentum.alpha_60d}"
+        )
+        # Score should be > 50 (positive alpha = above neutral)
+        assert momentum.momentum_score > Decimal("50"), (
+            f"Momentum score should be > 50 for positive alpha, "
+            f"got {momentum.momentum_score}"
+        )
+
+        # Case 2: None benchmark should result in None alpha
+        momentum_no_bench = compute_momentum_signal(
+            return_60d=stock_return,
+            benchmark_return_60d=None,
+        )
+        assert momentum_no_bench.alpha_60d is None, (
+            "Alpha should be None when benchmark is None"
+        )
+
+    def test_volatility_252d_zero_is_valid(self):
+        """
+        Regression test for volatility_252d = 0.0 falsy bug (same pattern).
+
+        Zero volatility is theoretically impossible but the code should
+        handle it gracefully, not treat it as missing data.
+        """
+        from src.modules.ic_enhancements import compute_volatility_adjustment
+
+        # Zero volatility should be treated as valid (not None)
+        vol_adj = compute_volatility_adjustment(Decimal("0.0"))
+
+        # Should not crash and should return a valid adjustment
+        assert vol_adj is not None
+        assert vol_adj.score_adjustment_factor is not None
+
     def test_coalesce_none_falls_through(self):
         """_coalesce should fall through None values."""
         result = _coalesce(None, Decimal("50"))
