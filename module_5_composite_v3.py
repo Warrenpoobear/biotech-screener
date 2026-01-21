@@ -2055,6 +2055,12 @@ def compute_module_5_composite_v3(
         # 3. momentum_strong_signal: Score moved away from 50 by at least 2.5 points
         #    = signals strong enough to meaningfully affect rankings
         #    Note: "applied" total (neg + pos + neutral) is computed separately for consistency
+        #
+        #    Alpha anchoring (score = 50 + conf * alpha * 150):
+        #    - With conf=0.7 (typical): |score-50| >= 2.5 requires |alpha| >= ~2.4%
+        #    - With conf=0.9 (high):    |score-50| >= 2.5 requires |alpha| >= ~1.85%
+        #    - Raw (no shrinkage):      |score-50| >= 2.5 requires |alpha| >= ~1.67%
+        #    Inclusive boundary: score=47.5 or score=52.5 counts as strong.
         "momentum_strong_signal": sum(
             1 for r in ranked_securities
             if abs(_to_decimal(r.get("momentum_signal", {}).get("momentum_score", "50")) - Decimal("50")) >= Decimal("2.5")

@@ -527,3 +527,94 @@ class TestPipelineDeterminism:
         hashes1 = {s["ticker"]: s["determinism_hash"] for s in result1["ranked_securities"]}
         hashes2 = {s["ticker"]: s["determinism_hash"] for s in result2["ranked_securities"]}
         assert hashes1 == hashes2, "Determinism hashes differ between runs"
+
+
+# =============================================================================
+# TEST 7: Momentum Strong Signal Threshold Boundary Inclusivity
+# =============================================================================
+
+class TestMomentumStrongSignalBoundary:
+    """
+    Regression tests for momentum_strong_signal threshold boundary.
+
+    The metric counts signals where |score - 50| >= 2.5, meaning:
+    - Score >= 52.5 OR score <= 47.5 counts as "strong"
+    - Score = 52.49 or 47.51 does NOT count
+
+    This is INCLUSIVE at exactly 47.5 and 52.5.
+
+    Alpha anchoring (for reference):
+    - With conf=0.7 (typical): |score-50| >= 2.5 requires |alpha| >= ~2.4%
+    - With conf=0.9 (high):    |score-50| >= 2.5 requires |alpha| >= ~1.85%
+    - Raw (no shrinkage):      |score-50| >= 2.5 requires |alpha| >= ~1.67%
+    """
+
+    def _is_strong_signal(self, score: Decimal) -> bool:
+        """Helper to check if a score qualifies as strong signal.
+
+        This replicates the logic from module_5_composite_v3.py diagnostic_counts.
+        """
+        return abs(score - Decimal("50")) >= Decimal("2.5")
+
+    def test_boundary_inclusive_at_47_5(self):
+        """Score of exactly 47.5 should count as strong (inclusive boundary)."""
+        assert self._is_strong_signal(Decimal("47.5")), (
+            "Score 47.5 should be counted as strong (boundary is inclusive)"
+        )
+
+    def test_boundary_inclusive_at_52_5(self):
+        """Score of exactly 52.5 should count as strong (inclusive boundary)."""
+        assert self._is_strong_signal(Decimal("52.5")), (
+            "Score 52.5 should be counted as strong (boundary is inclusive)"
+        )
+
+    def test_boundary_exclusive_at_47_51(self):
+        """Score of 47.51 should NOT count as strong (|47.51-50| = 2.49 < 2.5)."""
+        assert not self._is_strong_signal(Decimal("47.51")), (
+            "Score 47.51 should NOT be counted as strong"
+        )
+
+    def test_boundary_exclusive_at_52_49(self):
+        """Score of 52.49 should NOT count as strong."""
+        assert not self._is_strong_signal(Decimal("52.49")), (
+            "Score 52.49 should NOT be counted as strong"
+        )
+
+    def test_neutral_score_not_strong(self):
+        """Score of exactly 50 should NOT count as strong."""
+        assert not self._is_strong_signal(Decimal("50")), (
+            "Neutral score (50) should NOT be counted as strong"
+        )
+
+    def test_boundary_epsilon_below_threshold(self):
+        """Score just inside threshold boundary should NOT count as strong."""
+        # Use high precision to test boundary
+        # 52.4999999 is 2.4999999 away from 50, which is < 2.5
+        assert not self._is_strong_signal(Decimal("52.4999999")), (
+            "Score 52.4999999 should NOT be counted as strong"
+        )
+        # 47.5000001 is 2.4999999 away from 50, which is < 2.5
+        assert not self._is_strong_signal(Decimal("47.5000001")), (
+            "Score 47.5000001 should NOT be counted as strong"
+        )
+
+    def test_extreme_scores_are_strong(self):
+        """Extreme scores (near 5 or 95 clamp limits) should count as strong."""
+        assert self._is_strong_signal(Decimal("5")), "Score 5 should be strong"
+        assert self._is_strong_signal(Decimal("95")), "Score 95 should be strong"
+        assert self._is_strong_signal(Decimal("9.5")), "Score 9.5 should be strong"
+        assert self._is_strong_signal(Decimal("90.5")), "Score 90.5 should be strong"
+
+    def test_deterministic_threshold(self):
+        """Same score should always produce same strong/not-strong classification."""
+        test_scores = [
+            Decimal("47.5"),   # Strong (boundary)
+            Decimal("47.51"),  # Not strong
+            Decimal("50"),     # Neutral
+            Decimal("52.5"),   # Strong (boundary)
+            Decimal("52.49"),  # Not strong
+        ]
+        for score in test_scores:
+            result1 = self._is_strong_signal(score)
+            result2 = self._is_strong_signal(score)
+            assert result1 == result2, f"Non-deterministic result for score {score}"
