@@ -21,7 +21,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.12863,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.10863,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.222104,
+    "annualized_volatility": 0.222104
   },
   {
     "ticker": "INCY",
@@ -45,7 +52,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.191992,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.211992,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.355008,
+    "annualized_volatility": 0.355008
   },
   {
     "ticker": "JAZZ",
@@ -69,7 +83,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.062677,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.082677,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.500176,
+    "annualized_volatility": 0.500176
   },
   {
     "ticker": "IONS",
@@ -93,7 +114,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.080079,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.100079,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.306294,
+    "annualized_volatility": 0.306294
   },
   {
     "ticker": "BBIO",
@@ -117,7 +145,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.055881,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.075881,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.485971,
+    "annualized_volatility": 0.485971
   },
   {
     "ticker": "GOSS",
@@ -141,7 +176,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.441304,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.421304,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.856341,
+    "annualized_volatility": 0.856341
   },
   {
     "ticker": "RNA",
@@ -165,7 +207,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.021669,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.041669,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.882557,
+    "annualized_volatility": 0.882557
   },
   {
     "ticker": "KYMR",
@@ -189,7 +238,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.20511,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.18511,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.969227,
+    "annualized_volatility": 0.969227
   },
   {
     "ticker": "RYTM",
@@ -213,7 +269,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.012288,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.007712,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.480392,
+    "annualized_volatility": 0.480392
   },
   {
     "ticker": "EPRX",
@@ -237,7 +300,14 @@
     "exchange": "NCM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.346734,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.366734,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.609571,
+    "annualized_volatility": 0.609571
   },
   {
     "ticker": "ACAD",
@@ -261,7 +331,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.013946,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.033946,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.353895,
+    "annualized_volatility": 0.353895
   },
   {
     "ticker": "ALNY",
@@ -285,7 +362,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.012753,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.032753,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.349255,
+    "annualized_volatility": 0.349255
   },
   {
     "ticker": "BMRN",
@@ -309,7 +393,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.191757,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.211757,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.446311,
+    "annualized_volatility": 0.446311
   },
   {
     "ticker": "CRSP",
@@ -333,7 +424,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.01328,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.00672,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.538238,
+    "annualized_volatility": 0.538238
   },
   {
     "ticker": "VRTX",
@@ -357,7 +455,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.156896,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.176896,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.256003,
+    "annualized_volatility": 0.256003
   },
   {
     "ticker": "SRPT",
@@ -381,7 +486,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.100812,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.120812,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.952965,
+    "annualized_volatility": 0.952965
   },
   {
     "ticker": "UTHR",
@@ -405,7 +517,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.074424,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.094424,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.273938,
+    "annualized_volatility": 0.273938
   },
   {
     "ticker": "EXEL",
@@ -429,7 +548,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.108909,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.128909,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.441376,
+    "annualized_volatility": 0.441376
   },
   {
     "ticker": "RARE",
@@ -453,7 +579,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.492975,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.472975,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.037382,
+    "annualized_volatility": 1.037382
   },
   {
     "ticker": "FOLD",
@@ -477,7 +610,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.683486,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.703486,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.666112,
+    "annualized_volatility": 0.666112
   },
   {
     "ticker": "AMGN",
@@ -501,7 +641,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - General",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.115039,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.135039,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.277459,
+    "annualized_volatility": 0.277459
   },
   {
     "ticker": "GILD",
@@ -525,7 +672,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - General",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.065947,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.085947,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.242846,
+    "annualized_volatility": 0.242846
   },
   {
     "ticker": "BIIB",
@@ -549,7 +703,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - General",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.083258,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.103258,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.258512,
+    "annualized_volatility": 0.258512
   },
   {
     "ticker": "MRNA",
@@ -573,7 +734,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.35455,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.37455,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.698274,
+    "annualized_volatility": 0.698274
   },
   {
     "ticker": "BNTX",
@@ -597,7 +765,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.049609,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.069609,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.289506,
+    "annualized_volatility": 0.289506
   },
   {
     "ticker": "LGND",
@@ -621,7 +796,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.101544,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.121544,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.321341,
+    "annualized_volatility": 0.321341
   },
   {
     "ticker": "TECH",
@@ -645,7 +827,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.132608,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.152608,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.333397,
+    "annualized_volatility": 0.333397
   },
   {
     "ticker": "RGEN",
@@ -669,7 +858,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Medical Instruments & Supplies",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.052841,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.072841,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.361636,
+    "annualized_volatility": 0.361636
   },
   {
     "ticker": "ROIV",
@@ -693,7 +889,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.076358,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.096358,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.327303,
+    "annualized_volatility": 0.327303
   },
   {
     "ticker": "NTRA",
@@ -717,7 +920,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Diagnostics & Research",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.051942,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.071942,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.31104,
+    "annualized_volatility": 0.31104
   },
   {
     "ticker": "DAWN",
@@ -741,7 +951,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.1782,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.1982,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.898442,
+    "annualized_volatility": 0.898442
   },
   {
     "ticker": "PCVX",
@@ -765,7 +982,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.013411,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.006589,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.465045,
+    "annualized_volatility": 0.465045
   },
   {
     "ticker": "ARVN",
@@ -789,7 +1013,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.091053,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.071053,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.680741,
+    "annualized_volatility": 0.680741
   },
   {
     "ticker": "LEGN",
@@ -813,7 +1044,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.116834,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.096834,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.439693,
+    "annualized_volatility": 0.439693
   },
   {
     "ticker": "FATE",
@@ -837,7 +1075,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.021429,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.041429,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.761158,
+    "annualized_volatility": 0.761158
   },
   {
     "ticker": "NTLA",
@@ -861,7 +1106,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.182258,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.202258,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.237683,
+    "annualized_volatility": 1.237683
   },
   {
     "ticker": "EDIT",
@@ -885,7 +1137,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.222172,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.202172,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.755802,
+    "annualized_volatility": 0.755802
   },
   {
     "ticker": "BEAM",
@@ -909,7 +1168,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.068259,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.088259,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.738587,
+    "annualized_volatility": 0.738587
   },
   {
     "ticker": "VCYT",
@@ -933,7 +1199,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Diagnostics & Research",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.004106,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.015894,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.714919,
+    "annualized_volatility": 0.714919
   },
   {
     "ticker": "AXSM",
@@ -957,7 +1230,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.246505,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.266505,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.558619,
+    "annualized_volatility": 0.558619
   },
   {
     "ticker": "PTGX",
@@ -981,7 +1261,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.125,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.105,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.376908,
+    "annualized_volatility": 0.376908
   },
   {
     "ticker": "CDNA",
@@ -1005,7 +1292,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Diagnostics & Research",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.090779,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.070779,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.58448,
+    "annualized_volatility": 0.58448
   },
   {
     "ticker": "PRVA",
@@ -1029,7 +1323,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Health Information Services",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.044767,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.064767,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.282354,
+    "annualized_volatility": 0.282354
   },
   {
     "ticker": "AGIO",
@@ -1053,7 +1354,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.074302,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.094302,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.203276,
+    "annualized_volatility": 1.203276
   },
   {
     "ticker": "AKRO",
@@ -1077,7 +1385,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.01413,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.03413,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.032683,
+    "annualized_volatility": 0.032683
   },
   {
     "ticker": "ALLO",
@@ -1101,7 +1416,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.100352,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.120352,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.69342,
+    "annualized_volatility": 0.69342
   },
   {
     "ticker": "APLS",
@@ -1125,7 +1447,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.131518,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.151518,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.834872,
+    "annualized_volatility": 0.834872
   },
   {
     "ticker": "ARCT",
@@ -1149,7 +1478,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.114583,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.094583,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.224695,
+    "annualized_volatility": 1.224695
   },
   {
     "ticker": "ARWR",
@@ -1173,7 +1509,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.020267,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.000267,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.834615,
+    "annualized_volatility": 0.834615
   },
   {
     "ticker": "AVTR",
@@ -1197,7 +1540,14 @@
     "exchange": "NYQ",
     "sector": "Healthcare",
     "industry": "Medical Instruments & Supplies",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.195437,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.215437,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.609905,
+    "annualized_volatility": 0.609905
   },
   {
     "ticker": "BCRX",
@@ -1221,7 +1571,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.020615,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.040615,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.453027,
+    "annualized_volatility": 0.453027
   },
   {
     "ticker": "BDTX",
@@ -1245,7 +1602,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.02214,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.00214,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.787768,
+    "annualized_volatility": 0.787768
   },
   {
     "ticker": "BGXX",
@@ -1269,7 +1633,14 @@
     "exchange": "PNK",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.0,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.02,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.0,
+    "annualized_volatility": 0.0
   },
   {
     "ticker": "CRBU",
@@ -1293,7 +1664,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.135321,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.115321,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.741963,
+    "annualized_volatility": 0.741963
   },
   {
     "ticker": "CRNX",
@@ -1317,7 +1695,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.152505,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.172505,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.554931,
+    "annualized_volatility": 0.554931
   },
   {
     "ticker": "CRVS",
@@ -1341,7 +1726,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.344291,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.324291,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.62131,
+    "annualized_volatility": 0.62131
   },
   {
     "ticker": "CVAC",
@@ -1365,7 +1757,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.134766,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.114766,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.394039,
+    "annualized_volatility": 0.394039
   },
   {
     "ticker": "CLDX",
@@ -1389,7 +1788,14 @@
     "exchange": "NCM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.039783,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.019783,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.500104,
+    "annualized_volatility": 0.500104
   },
   {
     "ticker": "CYTK",
@@ -1413,7 +1819,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.076339,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.096339,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.44944,
+    "annualized_volatility": 0.44944
   },
   {
     "ticker": "DNLI",
@@ -1437,7 +1850,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.213632,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.193632,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.594195,
+    "annualized_volatility": 0.594195
   },
   {
     "ticker": "DRMA",
@@ -1461,7 +1881,14 @@
     "exchange": "NCM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.378621,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.358621,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.080683,
+    "annualized_volatility": 1.080683
   },
   {
     "ticker": "DVAX",
@@ -1485,7 +1912,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.622589,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.642589,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.814451,
+    "annualized_volatility": 0.814451
   },
   {
     "ticker": "FGEN",
@@ -1509,7 +1943,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.242225,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.262225,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.66725,
+    "annualized_volatility": 0.66725
   },
   {
     "ticker": "FULC",
@@ -1533,7 +1974,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.456164,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.436164,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.272922,
+    "annualized_volatility": 1.272922
   },
   {
     "ticker": "GLPG",
@@ -1557,7 +2005,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.062125,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.082125,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.285549,
+    "annualized_volatility": 0.285549
   },
   {
     "ticker": "HALO",
@@ -1581,7 +2036,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.295782,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.315782,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.28669,
+    "annualized_volatility": 0.28669
   },
   {
     "ticker": "HRTX",
@@ -1605,7 +2067,14 @@
     "exchange": "NCM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.084587,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.064587,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.491225,
+    "annualized_volatility": 0.491225
   },
   {
     "ticker": "IMCR",
@@ -1629,7 +2098,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.135098,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.115098,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.440843,
+    "annualized_volatility": 0.440843
   },
   {
     "ticker": "IMMP",
@@ -1653,7 +2129,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.486667,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.506667,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.775075,
+    "annualized_volatility": 0.775075
   },
   {
     "ticker": "IMVT",
@@ -1677,7 +2160,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.219464,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.239464,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.587891,
+    "annualized_volatility": 0.587891
   },
   {
     "ticker": "IRWD",
@@ -1701,7 +2191,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.148421,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.168421,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.324548,
+    "annualized_volatility": 1.324548
   },
   {
     "ticker": "KALA",
@@ -1725,7 +2222,14 @@
     "exchange": "NCM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.240649,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.220649,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.612387,
+    "annualized_volatility": 1.612387
   },
   {
     "ticker": "KALV",
@@ -1749,7 +2253,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.012067,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.007933,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.661909,
+    "annualized_volatility": 0.661909
   },
   {
     "ticker": "KRYS",
@@ -1773,7 +2284,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.08496,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.10496,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.289469,
+    "annualized_volatility": 0.289469
   },
   {
     "ticker": "LQDA",
@@ -1797,7 +2315,14 @@
     "exchange": "NCM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.120079,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.100079,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.611808,
+    "annualized_volatility": 0.611808
   },
   {
     "ticker": "MCRB",
@@ -1821,7 +2346,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.124702,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.104702,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.137733,
+    "annualized_volatility": 1.137733
   },
   {
     "ticker": "MDGL",
@@ -1845,7 +2377,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.00788,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.02788,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.46206,
+    "annualized_volatility": 0.46206
   },
   {
     "ticker": "MRSN",
@@ -1869,7 +2408,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.070477,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.090477,
+    "return_60d_estimated": true,
+    "volatility_252d": 4.357305,
+    "annualized_volatility": 4.357305
   },
   {
     "ticker": "MRVI",
@@ -1893,7 +2439,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.050813,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.070813,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.670954,
+    "annualized_volatility": 0.670954
   },
   {
     "ticker": "NVCR",
@@ -1917,7 +2470,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Medical Devices",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.190158,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.210158,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.524764,
+    "annualized_volatility": 0.524764
   },
   {
     "ticker": "NVAX",
@@ -1941,7 +2501,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.176802,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.196802,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.459439,
+    "annualized_volatility": 0.459439
   },
   {
     "ticker": "OCGN",
@@ -1965,7 +2532,14 @@
     "exchange": "NCM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.384297,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.404297,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.591448,
+    "annualized_volatility": 0.591448
   },
   {
     "ticker": "OPCH",
@@ -1989,7 +2563,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Medical Care Facilities",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.002328,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.022328,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.311567,
+    "annualized_volatility": 0.311567
   },
   {
     "ticker": "PCRX",
@@ -2013,7 +2594,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.077513,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.097513,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.355497,
+    "annualized_volatility": 0.355497
   },
   {
     "ticker": "PGEN",
@@ -2037,7 +2625,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.5,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.52,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.894993,
+    "annualized_volatility": 0.894993
   },
   {
     "ticker": "PRTA",
@@ -2061,7 +2656,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.177325,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.157325,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.48081,
+    "annualized_volatility": 0.48081
   },
   {
     "ticker": "PTCT",
@@ -2085,7 +2687,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.060025,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.080025,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.342834,
+    "annualized_volatility": 0.342834
   },
   {
     "ticker": "RVMD",
@@ -2109,7 +2718,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.378036,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.398036,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.674007,
+    "annualized_volatility": 0.674007
   },
   {
     "ticker": "RXRX",
@@ -2133,7 +2749,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.034591,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.014591,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.837362,
+    "annualized_volatility": 0.837362
   },
   {
     "ticker": "RGNX",
@@ -2157,7 +2780,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.24763,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.26763,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.661539,
+    "annualized_volatility": 0.661539
   },
   {
     "ticker": "SANA",
@@ -2181,7 +2811,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.091379,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.111379,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.19657,
+    "annualized_volatility": 1.19657
   },
   {
     "ticker": "SGMO",
@@ -2205,7 +2842,14 @@
     "exchange": "NCM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.1533,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.1333,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.78453,
+    "annualized_volatility": 0.78453
   },
   {
     "ticker": "SNDX",
@@ -2229,7 +2873,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.132624,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.152624,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.661886,
+    "annualized_volatility": 0.661886
   },
   {
     "ticker": "SPRY",
@@ -2253,7 +2904,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.170695,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.190695,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.790733,
+    "annualized_volatility": 0.790733
   },
   {
     "ticker": "TARS",
@@ -2277,7 +2935,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.000377,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.020377,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.374598,
+    "annualized_volatility": 0.374598
   },
   {
     "ticker": "TBPH",
@@ -2301,7 +2966,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.06443,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.08443,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.57564,
+    "annualized_volatility": 0.57564
   },
   {
     "ticker": "TGTX",
@@ -2325,7 +2997,14 @@
     "exchange": "NCM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.036724,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.016724,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.355147,
+    "annualized_volatility": 0.355147
   },
   {
     "ticker": "AARD",
@@ -2349,7 +3028,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.00767,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.02767,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.967024,
+    "annualized_volatility": 0.967024
   },
   {
     "ticker": "ABCL",
@@ -2373,7 +3059,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.128397,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.148397,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.682252,
+    "annualized_volatility": 0.682252
   },
   {
     "ticker": "ABSI",
@@ -2397,7 +3090,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.021307,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.041307,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.070707,
+    "annualized_volatility": 1.070707
   },
   {
     "ticker": "ABUS",
@@ -2421,7 +3121,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.084081,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.104081,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.461657,
+    "annualized_volatility": 0.461657
   },
   {
     "ticker": "ABVX",
@@ -2445,7 +3152,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.132518,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.112518,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.752842,
+    "annualized_volatility": 0.752842
   },
   {
     "ticker": "ACIU",
@@ -2469,7 +3183,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.561024,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.581024,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.894561,
+    "annualized_volatility": 0.894561
   },
   {
     "ticker": "ACLX",
@@ -2493,7 +3214,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.15775,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.13775,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.543473,
+    "annualized_volatility": 0.543473
   },
   {
     "ticker": "ACRS",
@@ -2517,7 +3245,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.28271,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.26271,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.854548,
+    "annualized_volatility": 0.854548
   },
   {
     "ticker": "ADCT",
@@ -2541,7 +3276,14 @@
     "exchange": "NYQ",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.004249,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.024249,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.770592,
+    "annualized_volatility": 0.770592
   },
   {
     "ticker": "ADMA",
@@ -2565,7 +3307,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.091667,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.071667,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.457462,
+    "annualized_volatility": 0.457462
   },
   {
     "ticker": "ADPT",
@@ -2589,7 +3338,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.134253,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.154253,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.765629,
+    "annualized_volatility": 0.765629
   },
   {
     "ticker": "ALKS",
@@ -2613,7 +3369,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.065928,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.085928,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.352616,
+    "annualized_volatility": 0.352616
   },
   {
     "ticker": "ALMS",
@@ -2637,7 +3400,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.919948,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.939948,
+    "return_60d_estimated": true,
+    "volatility_252d": 2.135226,
+    "annualized_volatility": 2.135226
   },
   {
     "ticker": "ALT",
@@ -2661,7 +3431,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.380462,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.360462,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.80866,
+    "annualized_volatility": 0.80866
   },
   {
     "ticker": "ALVO",
@@ -2685,7 +3462,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.242806,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.222806,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.95002,
+    "annualized_volatility": 0.95002
   },
   {
     "ticker": "AMLX",
@@ -2709,7 +3493,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.167866,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.147866,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.534414,
+    "annualized_volatility": 0.534414
   },
   {
     "ticker": "ANAB",
@@ -2733,7 +3524,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.017808,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.037808,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.552461,
+    "annualized_volatility": 0.552461
   },
   {
     "ticker": "ANNX",
@@ -2757,7 +3555,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.180556,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.200556,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.887976,
+    "annualized_volatility": 0.887976
   },
   {
     "ticker": "ANRO",
@@ -2781,7 +3586,14 @@
     "exchange": "NYQ",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.272264,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.292264,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.915121,
+    "annualized_volatility": 1.915121
   },
   {
     "ticker": "APGE",
@@ -2805,7 +3617,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.03753,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.05753,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.453892,
+    "annualized_volatility": 0.453892
   },
   {
     "ticker": "ARQT",
@@ -2829,7 +3648,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.043044,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.023044,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.717539,
+    "annualized_volatility": 0.717539
   },
   {
     "ticker": "ASND",
@@ -2853,7 +3679,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.140594,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.160594,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.364822,
+    "annualized_volatility": 0.364822
   },
   {
     "ticker": "ATAI",
@@ -2877,7 +3710,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.15205,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.13205,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.781614,
+    "annualized_volatility": 0.781614
   },
   {
     "ticker": "ATXS",
@@ -2901,7 +3741,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.016216,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.036216,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.770153,
+    "annualized_volatility": 0.770153
   },
   {
     "ticker": "AUPH",
@@ -2925,7 +3772,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.035254,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.055254,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.402692,
+    "annualized_volatility": 0.402692
   },
   {
     "ticker": "AURA",
@@ -2949,7 +3803,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.281102,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.261102,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.55603,
+    "annualized_volatility": 0.55603
   },
   {
     "ticker": "AUTL",
@@ -2973,7 +3834,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.422718,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.442718,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.803288,
+    "annualized_volatility": 0.803288
   },
   {
     "ticker": "AVBP",
@@ -2997,7 +3865,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.325773,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.305773,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.574941,
+    "annualized_volatility": 0.574941
   },
   {
     "ticker": "AVIR",
@@ -3021,7 +3896,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.176752,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.196752,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.434134,
+    "annualized_volatility": 0.434134
   },
   {
     "ticker": "AVXL",
@@ -3045,7 +3927,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.122245,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.102245,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.164966,
+    "annualized_volatility": 1.164966
   },
   {
     "ticker": "BBOT",
@@ -3069,7 +3958,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.017358,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.037358,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.660161,
+    "annualized_volatility": 0.660161
   },
   {
     "ticker": "BCAX",
@@ -3093,7 +3989,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.129808,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.109808,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.66049,
+    "annualized_volatility": 0.66049
   },
   {
     "ticker": "BCYC",
@@ -3117,7 +4020,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.082511,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.062511,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.629827,
+    "annualized_volatility": 0.629827
   },
   {
     "ticker": "BHVN",
@@ -3141,7 +4051,14 @@
     "exchange": "NYQ",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.138836,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.158836,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.231283,
+    "annualized_volatility": 1.231283
   },
   {
     "ticker": "BIOA",
@@ -3165,7 +4082,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.325871,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.345871,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.017886,
+    "annualized_volatility": 1.017886
   },
   {
     "ticker": "BRKR",
@@ -3189,7 +4113,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Medical Devices",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.23578,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.25578,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.406925,
+    "annualized_volatility": 0.406925
   },
   {
     "ticker": "CABA",
@@ -3213,7 +4144,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.237,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.217,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.291345,
+    "annualized_volatility": 1.291345
   },
   {
     "ticker": "CADL",
@@ -3237,7 +4175,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.021201,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.001201,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.673369,
+    "annualized_volatility": 0.673369
   },
   {
     "ticker": "CAI",
@@ -3261,7 +4206,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.056077,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.076077,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.53344,
+    "annualized_volatility": 0.53344
   },
   {
     "ticker": "CATX",
@@ -3285,7 +4237,14 @@
     "exchange": "ASE",
     "sector": "Healthcare",
     "industry": "Medical Devices",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.159048,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.179048,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.917541,
+    "annualized_volatility": 0.917541
   },
   {
     "ticker": "CCCC",
@@ -3309,7 +4268,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.237452,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.217452,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.816126,
+    "annualized_volatility": 0.816126
   },
   {
     "ticker": "CDXS",
@@ -3333,7 +4299,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.136364,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.116364,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.729722,
+    "annualized_volatility": 0.729722
   },
   {
     "ticker": "CGEM",
@@ -3357,7 +4330,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.175971,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.155971,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.154028,
+    "annualized_volatility": 1.154028
   },
   {
     "ticker": "CGON",
@@ -3381,7 +4361,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.01132,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.03132,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.474311,
+    "annualized_volatility": 0.474311
   },
   {
     "ticker": "CLLS",
@@ -3405,7 +4392,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.029412,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.009412,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.897432,
+    "annualized_volatility": 0.897432
   },
   {
     "ticker": "CMPS",
@@ -3429,7 +4423,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Medical Care Facilities",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.356132,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.376132,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.776917,
+    "annualized_volatility": 0.776917
   },
   {
     "ticker": "CNTA",
@@ -3453,7 +4454,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.339598,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.319598,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.551931,
+    "annualized_volatility": 0.551931
   },
   {
     "ticker": "COGT",
@@ -3477,7 +4485,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.114845,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.094845,
+    "return_60d_estimated": true,
+    "volatility_252d": 2.473819,
+    "annualized_volatility": 2.473819
   },
   {
     "ticker": "CRL",
@@ -3501,7 +4516,14 @@
     "exchange": "NYQ",
     "sector": "Healthcare",
     "industry": "Diagnostics & Research",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.228238,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.248238,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.338363,
+    "annualized_volatility": 0.338363
   },
   {
     "ticker": "CSTL",
@@ -3525,7 +4547,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Diagnostics & Research",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.078823,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.098823,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.547596,
+    "annualized_volatility": 0.547596
   },
   {
     "ticker": "CTKB",
@@ -3549,7 +4578,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Medical Devices",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.18866,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.20866,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.693518,
+    "annualized_volatility": 0.693518
   },
   {
     "ticker": "CTMX",
@@ -3573,7 +4609,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.123393,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.143393,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.809178,
+    "annualized_volatility": 0.809178
   },
   {
     "ticker": "CTNM",
@@ -3597,7 +4640,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.429,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.409,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.683733,
+    "annualized_volatility": 0.683733
   },
   {
     "ticker": "DNA",
@@ -3621,7 +4671,14 @@
     "exchange": "NYQ",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.073761,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.053761,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.816059,
+    "annualized_volatility": 0.816059
   },
   {
     "ticker": "DSGN",
@@ -3645,7 +4702,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.033172,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.053172,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.834159,
+    "annualized_volatility": 0.834159
   },
   {
     "ticker": "DYN",
@@ -3669,7 +4733,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.003254,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.016746,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.14708,
+    "annualized_volatility": 1.14708
   },
   {
     "ticker": "EBS",
@@ -3693,7 +4764,14 @@
     "exchange": "NYQ",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.254303,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.274303,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.980355,
+    "annualized_volatility": 0.980355
   },
   {
     "ticker": "ELVN",
@@ -3717,7 +4795,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.337789,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.357789,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.309927,
+    "annualized_volatility": 1.309927
   },
   {
     "ticker": "ENTA",
@@ -3741,7 +4826,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.109631,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.089631,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.517973,
+    "annualized_volatility": 0.517973
   },
   {
     "ticker": "ERAS",
@@ -3765,7 +4857,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.636364,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.656364,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.104621,
+    "annualized_volatility": 1.104621
   },
   {
     "ticker": "EWTX",
@@ -3789,7 +4888,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.048522,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.068522,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.040022,
+    "annualized_volatility": 1.040022
   },
   {
     "ticker": "FDMT",
@@ -3813,7 +4919,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.446717,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.426717,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.899693,
+    "annualized_volatility": 0.899693
   },
   {
     "ticker": "FHTX",
@@ -3837,7 +4950,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.254005,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.274005,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.764988,
+    "annualized_volatility": 0.764988
   },
   {
     "ticker": "FLGT",
@@ -3861,7 +4981,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Diagnostics & Research",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.022396,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.042396,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.487839,
+    "annualized_volatility": 0.487839
   },
   {
     "ticker": "FTRE",
@@ -3885,7 +5012,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.320014,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.340014,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.823617,
+    "annualized_volatility": 0.823617
   },
   {
     "ticker": "GERN",
@@ -3909,7 +5043,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.115854,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.135854,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.533731,
+    "annualized_volatility": 0.533731
   },
   {
     "ticker": "GHRS",
@@ -3933,7 +5074,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.257337,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.277337,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.937783,
+    "annualized_volatility": 0.937783
   },
   {
     "ticker": "GLUE",
@@ -3957,7 +5105,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.719541,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.739541,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.235759,
+    "annualized_volatility": 1.235759
   },
   {
     "ticker": "GMAB",
@@ -3981,7 +5136,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.131426,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.151426,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.320195,
+    "annualized_volatility": 0.320195
   },
   {
     "ticker": "GPCR",
@@ -4005,7 +5167,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.01326,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.00674,
+    "return_60d_estimated": true,
+    "volatility_252d": 2.179246,
+    "annualized_volatility": 2.179246
   },
   {
     "ticker": "GRAL",
@@ -4029,7 +5198,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Diagnostics & Research",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.030474,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.050474,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.971158,
+    "annualized_volatility": 0.971158
   },
   {
     "ticker": "GRFS",
@@ -4053,7 +5229,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - General",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.095238,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.115238,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.275348,
+    "annualized_volatility": 0.275348
   },
   {
     "ticker": "HUMA",
@@ -4077,7 +5260,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.11811,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.09811,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.766417,
+    "annualized_volatility": 0.766417
   },
   {
     "ticker": "IBRX",
@@ -4101,7 +5291,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.016892,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.003108,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.666664,
+    "annualized_volatility": 0.666664
   },
   {
     "ticker": "IDYA",
@@ -4125,7 +5322,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.130282,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.150282,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.443507,
+    "annualized_volatility": 0.443507
   },
   {
     "ticker": "ILMN",
@@ -4149,7 +5353,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Diagnostics & Research",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.165178,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.185178,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.602669,
+    "annualized_volatility": 0.602669
   },
   {
     "ticker": "IMRX",
@@ -4173,7 +5384,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.288462,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.268462,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.133563,
+    "annualized_volatility": 1.133563
   },
   {
     "ticker": "INBX",
@@ -4197,7 +5415,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.246372,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.226372,
+    "return_60d_estimated": true,
+    "volatility_252d": 2.207224,
+    "annualized_volatility": 2.207224
   },
   {
     "ticker": "INSM",
@@ -4221,7 +5446,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.164624,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.144624,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.542409,
+    "annualized_volatility": 0.542409
   },
   {
     "ticker": "IOVA",
@@ -4245,7 +5477,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.25,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.27,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.945497,
+    "annualized_volatility": 0.945497
   },
   {
     "ticker": "IRON",
@@ -4269,7 +5508,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.211132,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.191132,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.602716,
+    "annualized_volatility": 0.602716
   },
   {
     "ticker": "JANX",
@@ -4293,7 +5539,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.192503,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.172503,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.263667,
+    "annualized_volatility": 1.263667
   },
   {
     "ticker": "KOD",
@@ -4317,7 +5570,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.073653,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.093653,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.050718,
+    "annualized_volatility": 1.050718
   },
   {
     "ticker": "KROS",
@@ -4341,7 +5601,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.20274,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.18274,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.549232,
+    "annualized_volatility": 0.549232
   },
   {
     "ticker": "KURA",
@@ -4365,7 +5632,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.143393,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.123393,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.685464,
+    "annualized_volatility": 0.685464
   },
   {
     "ticker": "KYTX",
@@ -4389,7 +5663,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.077993,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.097993,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.313633,
+    "annualized_volatility": 1.313633
   },
   {
     "ticker": "LAB",
@@ -4413,7 +5694,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Medical Devices",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.036458,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.056458,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.680958,
+    "annualized_volatility": 0.680958
   },
   {
     "ticker": "LCTX",
@@ -4437,7 +5725,14 @@
     "exchange": "ASE",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.018965,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.038965,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.583712,
+    "annualized_volatility": 0.583712
   },
   {
     "ticker": "LENZ",
@@ -4461,7 +5756,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.574293,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.554293,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.964724,
+    "annualized_volatility": 0.964724
   },
   {
     "ticker": "LRMR",
@@ -4485,7 +5787,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.256824,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.236824,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.79692,
+    "annualized_volatility": 0.79692
   },
   {
     "ticker": "LXEO",
@@ -4509,7 +5818,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.006309,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.026309,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.690622,
+    "annualized_volatility": 0.690622
   },
   {
     "ticker": "LYEL",
@@ -4533,7 +5849,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.208832,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.188832,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.925083,
+    "annualized_volatility": 0.925083
   },
   {
     "ticker": "MAZE",
@@ -4557,7 +5880,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.022816,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.002816,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.541545,
+    "annualized_volatility": 0.541545
   },
   {
     "ticker": "MBX",
@@ -4581,7 +5911,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.132845,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.152845,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.885939,
+    "annualized_volatility": 0.885939
   },
   {
     "ticker": "MEDP",
@@ -4605,7 +5942,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Diagnostics & Research",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.162963,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.182963,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.32734,
+    "annualized_volatility": 0.32734
   },
   {
     "ticker": "MENS",
@@ -4629,7 +5973,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -1.291632,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -1.271632,
+    "return_60d_estimated": true,
+    "volatility_252d": 2.664064,
+    "annualized_volatility": 2.664064
   },
   {
     "ticker": "MESO",
@@ -4653,7 +6004,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.078758,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.098758,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.462391,
+    "annualized_volatility": 0.462391
   },
   {
     "ticker": "MGTX",
@@ -4677,7 +6035,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.170616,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.150616,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.564773,
+    "annualized_volatility": 0.564773
   },
   {
     "ticker": "MIRM",
@@ -4701,7 +6066,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.348739,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.368739,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.430601,
+    "annualized_volatility": 0.430601
   },
   {
     "ticker": "MLYS",
@@ -4725,7 +6097,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.11639,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.09639,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.566329,
+    "annualized_volatility": 0.566329
   },
   {
     "ticker": "MNKD",
@@ -4749,7 +6128,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.097487,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.117487,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.402727,
+    "annualized_volatility": 0.402727
   },
   {
     "ticker": "MNMD",
@@ -4773,7 +6159,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.1431,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.1631,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.659775,
+    "annualized_volatility": 0.659775
   },
   {
     "ticker": "MYGN",
@@ -4797,7 +6190,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Diagnostics & Research",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.159184,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.139184,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.636676,
+    "annualized_volatility": 0.636676
   },
   {
     "ticker": "NAMS",
@@ -4821,7 +6221,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.049569,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.069569,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.533905,
+    "annualized_volatility": 0.533905
   },
   {
     "ticker": "NBIX",
@@ -4845,7 +6252,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.16464,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.14464,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.339265,
+    "annualized_volatility": 0.339265
   },
   {
     "ticker": "NBP",
@@ -4869,7 +6283,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.063433,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.043433,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.906254,
+    "annualized_volatility": 0.906254
   },
   {
     "ticker": "NGNE",
@@ -4893,7 +6314,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.0706,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.0506,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.890566,
+    "annualized_volatility": 0.890566
   },
   {
     "ticker": "NMRA",
@@ -4917,7 +6345,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.028482,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.048482,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.204712,
+    "annualized_volatility": 1.204712
   },
   {
     "ticker": "NRIX",
@@ -4941,7 +6376,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.086701,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.066701,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.770048,
+    "annualized_volatility": 0.770048
   },
   {
     "ticker": "NUVB",
@@ -4965,7 +6407,14 @@
     "exchange": "NYQ",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.148125,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.168125,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.210722,
+    "annualized_volatility": 1.210722
   },
   {
     "ticker": "NUVL",
@@ -4989,7 +6438,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.001285,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.018715,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.523298,
+    "annualized_volatility": 0.523298
   },
   {
     "ticker": "OABI",
@@ -5013,7 +6469,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.083065,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.063065,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.585645,
+    "annualized_volatility": 0.585645
   },
   {
     "ticker": "OLMA",
@@ -5037,7 +6500,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.041196,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.021196,
+    "return_60d_estimated": true,
+    "volatility_252d": 2.893875,
+    "annualized_volatility": 2.893875
   },
   {
     "ticker": "ONC",
@@ -5061,7 +6531,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.047938,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.067938,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.375019,
+    "annualized_volatility": 0.375019
   },
   {
     "ticker": "OPK",
@@ -5085,7 +6562,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Diagnostics & Research",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.016544,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.003456,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.323089,
+    "annualized_volatility": 0.323089
   },
   {
     "ticker": "ORIC",
@@ -5109,7 +6593,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.242604,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.222604,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.493657,
+    "annualized_volatility": 0.493657
   },
   {
     "ticker": "ORKA",
@@ -5133,7 +6624,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.197304,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.177304,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.621332,
+    "annualized_volatility": 0.621332
   },
   {
     "ticker": "PACB",
@@ -5157,7 +6655,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Medical Devices",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.246914,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.226914,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.091447,
+    "annualized_volatility": 1.091447
   },
   {
     "ticker": "PEPG",
@@ -5181,7 +6686,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.355263,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.375263,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.945388,
+    "annualized_volatility": 0.945388
   },
   {
     "ticker": "PHAT",
@@ -5205,7 +6717,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.131422,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.151422,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.599935,
+    "annualized_volatility": 0.599935
   },
   {
     "ticker": "PHVS",
@@ -5229,7 +6748,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.039309,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.059309,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.787108,
+    "annualized_volatility": 0.787108
   },
   {
     "ticker": "PRAX",
@@ -5253,7 +6779,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.205216,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.225216,
+    "return_60d_estimated": true,
+    "volatility_252d": 3.855762,
+    "annualized_volatility": 3.855762
   },
   {
     "ticker": "PRME",
@@ -5277,7 +6810,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.091289,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.071289,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.974667,
+    "annualized_volatility": 0.974667
   },
   {
     "ticker": "PSNL",
@@ -5301,7 +6841,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Diagnostics & Research",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.089077,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.069077,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.112239,
+    "annualized_volatility": 1.112239
   },
   {
     "ticker": "PYXS",
@@ -5325,7 +6872,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -1.009884,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.989884,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.529046,
+    "annualized_volatility": 1.529046
   },
   {
     "ticker": "QSI",
@@ -5349,7 +6903,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Medical Devices",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.153169,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.133169,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.052551,
+    "annualized_volatility": 1.052551
   },
   {
     "ticker": "QTRX",
@@ -5373,7 +6934,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Medical Devices",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.222947,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.202947,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.548767,
+    "annualized_volatility": 0.548767
   },
   {
     "ticker": "QURE",
@@ -5397,7 +6965,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.154115,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.174115,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.287686,
+    "annualized_volatility": 1.287686
   },
   {
     "ticker": "RAPP",
@@ -5421,7 +6996,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.051309,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.071309,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.613661,
+    "annualized_volatility": 0.613661
   },
   {
     "ticker": "RAPT",
@@ -5445,7 +7027,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.125283,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.105283,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.72802,
+    "annualized_volatility": 0.72802
   },
   {
     "ticker": "RCKT",
@@ -5469,7 +7058,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.191339,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.211339,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.795721,
+    "annualized_volatility": 0.795721
   },
   {
     "ticker": "RCUS",
@@ -5493,7 +7089,14 @@
     "exchange": "NYQ",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.227962,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.207962,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.68178,
+    "annualized_volatility": 0.68178
   },
   {
     "ticker": "REGN",
@@ -5517,7 +7120,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.256736,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.276736,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.374066,
+    "annualized_volatility": 0.374066
   },
   {
     "ticker": "REPL",
@@ -5541,7 +7151,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.26068,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.24068,
+    "return_60d_estimated": true,
+    "volatility_252d": 2.099028,
+    "annualized_volatility": 2.099028
   },
   {
     "ticker": "RIGL",
@@ -5565,7 +7182,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.076719,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.096719,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.971666,
+    "annualized_volatility": 0.971666
   },
   {
     "ticker": "RLAY",
@@ -5589,7 +7213,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.112797,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.132797,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.727091,
+    "annualized_volatility": 0.727091
   },
   {
     "ticker": "SEPN",
@@ -5613,7 +7244,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.0306,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.0506,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.735404,
+    "annualized_volatility": 0.735404
   },
   {
     "ticker": "SGMT",
@@ -5637,7 +7275,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.160032,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.140032,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.825524,
+    "annualized_volatility": 0.825524
   },
   {
     "ticker": "SION",
@@ -5661,7 +7306,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.025066,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.005066,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.932089,
+    "annualized_volatility": 0.932089
   },
   {
     "ticker": "SLDB",
@@ -5685,7 +7337,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.065217,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.045217,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.779468,
+    "annualized_volatility": 0.779468
   },
   {
     "ticker": "SLN",
@@ -5709,7 +7368,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.099194,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.079194,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.659968,
+    "annualized_volatility": 0.659968
   },
   {
     "ticker": "SMMT",
@@ -5733,7 +7399,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.16745,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.18745,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.550097,
+    "annualized_volatility": 0.550097
   },
   {
     "ticker": "SRRK",
@@ -5757,7 +7430,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.082008,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.062008,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.774848,
+    "annualized_volatility": 0.774848
   },
   {
     "ticker": "STOK",
@@ -5781,7 +7461,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.182639,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.202639,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.769925,
+    "annualized_volatility": 0.769925
   },
   {
     "ticker": "STRO",
@@ -5805,7 +7492,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.567138,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.587138,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.084182,
+    "annualized_volatility": 1.084182
   },
   {
     "ticker": "STVN",
@@ -5829,7 +7523,14 @@
     "exchange": "NYQ",
     "sector": "Healthcare",
     "industry": "Medical Instruments & Supplies",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.049319,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.069319,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.424067,
+    "annualized_volatility": 0.424067
   },
   {
     "ticker": "SVRA",
@@ -5853,7 +7554,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.168605,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.148605,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.721678,
+    "annualized_volatility": 0.721678
   },
   {
     "ticker": "SYRE",
@@ -5877,7 +7585,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.162787,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.142787,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.609034,
+    "annualized_volatility": 0.609034
   },
   {
     "ticker": "TECX",
@@ -5901,7 +7616,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.11231,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.13231,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.752323,
+    "annualized_volatility": 0.752323
   },
   {
     "ticker": "TEM",
@@ -5925,7 +7647,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Health Information Services",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.148557,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.128557,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.576164,
+    "annualized_volatility": 0.576164
   },
   {
     "ticker": "TERN",
@@ -5949,7 +7678,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.121917,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.101917,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.761443,
+    "annualized_volatility": 1.761443
   },
   {
     "ticker": "TKNO",
@@ -5973,7 +7709,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.175325,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.155325,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.614307,
+    "annualized_volatility": 0.614307
   },
   {
     "ticker": "TNGX",
@@ -5997,7 +7740,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.278882,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.298882,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.888982,
+    "annualized_volatility": 0.888982
   },
   {
     "ticker": "TNYA",
@@ -6021,7 +7771,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.67234,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.65234,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.185745,
+    "annualized_volatility": 1.185745
   },
   {
     "ticker": "TRDA",
@@ -6045,7 +7802,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.015581,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.004419,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.580321,
+    "annualized_volatility": 0.580321
   },
   {
     "ticker": "TRVI",
@@ -6069,7 +7833,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.167436,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.147436,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.629013,
+    "annualized_volatility": 0.629013
   },
   {
     "ticker": "TSHA",
@@ -6093,7 +7864,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.025424,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.005424,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.779491,
+    "annualized_volatility": 0.779491
   },
   {
     "ticker": "TVTX",
@@ -6117,7 +7895,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.045009,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.065009,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.636133,
+    "annualized_volatility": 0.636133
   },
   {
     "ticker": "TWST",
@@ -6141,7 +7926,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Diagnostics & Research",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.179307,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.199307,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.730926,
+    "annualized_volatility": 0.730926
   },
   {
     "ticker": "TXG",
@@ -6165,7 +7957,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Health Information Services",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.120277,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.140277,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.781134,
+    "annualized_volatility": 0.781134
   },
   {
     "ticker": "TYRA",
@@ -6189,7 +7988,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.498418,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.518418,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.781841,
+    "annualized_volatility": 0.781841
   },
   {
     "ticker": "UPB",
@@ -6213,7 +8019,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.030936,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.010936,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.707553,
+    "annualized_volatility": 0.707553
   },
   {
     "ticker": "URGN",
@@ -6237,7 +8050,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.017841,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.037841,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.762422,
+    "annualized_volatility": 0.762422
   },
   {
     "ticker": "USD",
@@ -6261,7 +8081,14 @@
     "exchange": "PCX",
     "sector": null,
     "industry": null,
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.080867,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.060867,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.676354,
+    "annualized_volatility": 0.676354
   },
   {
     "ticker": "VCEL",
@@ -6285,7 +8112,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.078166,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.098166,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.445855,
+    "annualized_volatility": 0.445855
   },
   {
     "ticker": "VERA",
@@ -6309,7 +8143,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.117219,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.137219,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.763084,
+    "annualized_volatility": 0.763084
   },
   {
     "ticker": "VIR",
@@ -6333,7 +8174,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.173423,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.153423,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.659035,
+    "annualized_volatility": 0.659035
   },
   {
     "ticker": "VNDA",
@@ -6357,7 +8205,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.366312,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.386312,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.013641,
+    "annualized_volatility": 1.013641
   },
   {
     "ticker": "VTYX",
@@ -6381,7 +8236,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.928026,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.948026,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.905238,
+    "annualized_volatility": 1.905238
   },
   {
     "ticker": "VYGR",
@@ -6405,7 +8267,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.131119,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.111119,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.55353,
+    "annualized_volatility": 0.55353
   },
   {
     "ticker": "WVE",
@@ -6429,7 +8298,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.429376,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.409376,
+    "return_60d_estimated": true,
+    "volatility_252d": 3.109935,
+    "annualized_volatility": 3.109935
   },
   {
     "ticker": "XENE",
@@ -6453,7 +8329,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.078929,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.058929,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.335627,
+    "annualized_volatility": 0.335627
   },
   {
     "ticker": "XNCR",
@@ -6477,7 +8360,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.226651,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.206651,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.731673,
+    "annualized_volatility": 0.731673
   },
   {
     "ticker": "ZBIO",
@@ -6501,7 +8391,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.870919,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.850919,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.56682,
+    "annualized_volatility": 1.56682
   },
   {
     "ticker": "ZLAB",
@@ -6525,7 +8422,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.007219,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.012781,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.411909,
+    "annualized_volatility": 0.411909
   },
   {
     "ticker": "ZVRA",
@@ -6549,7 +8453,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.013986,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.006014,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.561969,
+    "annualized_volatility": 0.561969
   },
   {
     "ticker": "ZYME",
@@ -6573,7 +8484,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.080508,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.060508,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.774407,
+    "annualized_volatility": 0.774407
   },
   {
     "ticker": "AMPH",
@@ -6597,7 +8515,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.142105,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.162105,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.37566,
+    "annualized_volatility": 0.37566
   },
   {
     "ticker": "AMRX",
@@ -6621,7 +8546,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.16416,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.18416,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.323813,
+    "annualized_volatility": 0.323813
   },
   {
     "ticker": "ANIP",
@@ -6645,7 +8577,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.035815,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.015815,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.244085,
+    "annualized_volatility": 0.244085
   },
   {
     "ticker": "AQST",
@@ -6669,7 +8608,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.020902,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.040902,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.573602,
+    "annualized_volatility": 0.573602
   },
   {
     "ticker": "ARDX",
@@ -6693,7 +8639,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.184914,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.204914,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.688071,
+    "annualized_volatility": 0.688071
   },
   {
     "ticker": "AZN",
@@ -6717,7 +8670,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - General",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.094856,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.114856,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.198261,
+    "annualized_volatility": 0.198261
   },
   {
     "ticker": "CHRS",
@@ -6741,7 +8701,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.12593,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.14593,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.75003,
+    "annualized_volatility": 0.75003
   },
   {
     "ticker": "COLL",
@@ -6765,7 +8732,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.038592,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.058592,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.380661,
+    "annualized_volatility": 0.380661
   },
   {
     "ticker": "CRMD",
@@ -6789,7 +8763,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.44858,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.42858,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.846413,
+    "annualized_volatility": 0.846413
   },
   {
     "ticker": "EOLS",
@@ -6813,7 +8794,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.271848,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.251848,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.549161,
+    "annualized_volatility": 0.549161
   },
   {
     "ticker": "ESPR",
@@ -6837,7 +8825,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.104881,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.124881,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.766275,
+    "annualized_volatility": 0.766275
   },
   {
     "ticker": "ETON",
@@ -6861,7 +8856,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.022005,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.042005,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.458675,
+    "annualized_volatility": 0.458675
   },
   {
     "ticker": "EYPT",
@@ -6885,7 +8887,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.003513,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.023513,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.71743,
+    "annualized_volatility": 0.71743
   },
   {
     "ticker": "GH",
@@ -6909,7 +8918,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Diagnostics & Research",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.091997,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.111997,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.723686,
+    "annualized_volatility": 0.723686
   },
   {
     "ticker": "HRMY",
@@ -6933,7 +8949,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.051777,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.031777,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.378933,
+    "annualized_volatility": 0.378933
   },
   {
     "ticker": "HROW",
@@ -6957,7 +8980,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.044656,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.064656,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.633014,
+    "annualized_volatility": 0.633014
   },
   {
     "ticker": "INDV",
@@ -6981,7 +9011,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.052069,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.072069,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.416535,
+    "annualized_volatility": 0.416535
   },
   {
     "ticker": "INVA",
@@ -7005,7 +9042,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.066026,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.046026,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.372037,
+    "annualized_volatility": 0.372037
   },
   {
     "ticker": "IVVD",
@@ -7029,7 +9073,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.021169,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.001169,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.323,
+    "annualized_volatility": 1.323
   },
   {
     "ticker": "KMDA",
@@ -7053,7 +9104,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.265485,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.285485,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.360066,
+    "annualized_volatility": 0.360066
   },
   {
     "ticker": "KNSA",
@@ -7077,7 +9135,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.020053,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.040053,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.290959,
+    "annualized_volatility": 0.290959
   },
   {
     "ticker": "LFCR",
@@ -7101,7 +9166,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.045455,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.065455,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.440844,
+    "annualized_volatility": 0.440844
   },
   {
     "ticker": "OBIO",
@@ -7125,7 +9197,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.196429,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.216429,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.873803,
+    "annualized_volatility": 0.873803
   },
   {
     "ticker": "OCUL",
@@ -7149,7 +9228,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.423197,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.403197,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.737599,
+    "annualized_volatility": 0.737599
   },
   {
     "ticker": "OMER",
@@ -7173,7 +9259,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.499564,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.519564,
+    "return_60d_estimated": true,
+    "volatility_252d": 3.618699,
+    "annualized_volatility": 3.618699
   },
   {
     "ticker": "PAHC",
@@ -7197,7 +9290,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.0721,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.0921,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.406147,
+    "annualized_volatility": 0.406147
   },
   {
     "ticker": "PBYI",
@@ -7221,7 +9321,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.14038,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.16038,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.765115,
+    "annualized_volatility": 0.765115
   },
   {
     "ticker": "RANI",
@@ -7245,7 +9352,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": -0.162097,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": -0.142097,
+    "return_60d_estimated": true,
+    "volatility_252d": 5.333694,
+    "annualized_volatility": 5.333694
   },
   {
     "ticker": "RPRX",
@@ -7269,7 +9383,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.129562,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.149562,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.256682,
+    "annualized_volatility": 0.256682
   },
   {
     "ticker": "SIGA",
@@ -7293,7 +9414,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.1008,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.1208,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.509463,
+    "annualized_volatility": 0.509463
   },
   {
     "ticker": "SNY",
@@ -7317,7 +9445,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - General",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.013799,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.033799,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.199992,
+    "annualized_volatility": 0.199992
   },
   {
     "ticker": "SUPN",
@@ -7341,7 +9476,14 @@
     "exchange": "NGM",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.189729,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.209729,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.455573,
+    "annualized_volatility": 0.455573
   },
   {
     "ticker": "VOR",
@@ -7365,7 +9507,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.295242,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.315242,
+    "return_60d_estimated": true,
+    "volatility_252d": 1.615706,
+    "annualized_volatility": 1.615706
   },
   {
     "ticker": "VTRS",
@@ -7389,7 +9538,14 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.164209,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.184209,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.303263,
+    "annualized_volatility": 0.303263
   },
   {
     "ticker": "XERS",
@@ -7413,6 +9569,13 @@
     "exchange": "NMS",
     "sector": "Healthcare",
     "industry": "Biotechnology",
-    "collected_at": "2026-01-08"
+    "collected_at": "2026-01-08",
+    "return_60d": 0.223609,
+    "xbi_return_60d": -0.02,
+    "benchmark_return_60d": -0.02,
+    "alpha_60d": 0.243609,
+    "return_60d_estimated": true,
+    "volatility_252d": 0.729704,
+    "annualized_volatility": 0.729704
   }
 ]

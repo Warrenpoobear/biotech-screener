@@ -535,8 +535,21 @@ def _compute_determinism_hash(
 # ============================================================================
 
 def _enrich_with_coinvest(ticker: str, coinvest_signals: dict, as_of_date: date) -> dict:
+    """Supports both object format (.positions) and pre-computed dict format."""
     signal = coinvest_signals.get(ticker)
     if not signal:
+        return {"coinvest_overlap_count": 0, "coinvest_holders": [], "coinvest_usable": False}
+
+    # Handle pre-computed dict format from _convert_holdings_to_coinvest
+    if isinstance(signal, dict) and "coinvest_overlap_count" in signal:
+        return {
+            "coinvest_overlap_count": signal.get("coinvest_overlap_count", 0),
+            "coinvest_holders": signal.get("coinvest_holders", []),
+            "coinvest_usable": signal.get("coinvest_overlap_count", 0) > 0,
+        }
+
+    # Handle object format with .positions attribute (original behavior)
+    if not hasattr(signal, 'positions'):
         return {"coinvest_overlap_count": 0, "coinvest_holders": [], "coinvest_usable": False}
 
     pit_positions = [p for p in signal.positions if p.filing_date < as_of_date]
