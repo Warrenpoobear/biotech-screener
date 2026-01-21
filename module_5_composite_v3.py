@@ -922,7 +922,11 @@ def _score_single_ticker_v3(
         cat_proximity = _to_decimal(getattr(cat_data, 'catalyst_proximity_score', 0)) or Decimal("0")
         cat_delta = _to_decimal(getattr(cat_data, 'catalyst_delta_score', 0)) or Decimal("0")
         # Try both field names for days to catalyst (schema uses catalyst_window_days)
-        days_to_cat = getattr(cat_data, 'catalyst_window_days', None) or getattr(cat_data, 'days_to_nearest_catalyst', None)
+        # Use _coalesce to correctly handle days_to_cat=0 (catalyst today) as valid
+        days_to_cat = _coalesce(
+            getattr(cat_data, 'catalyst_window_days', None),
+            getattr(cat_data, 'days_to_nearest_catalyst', None),
+        )
         cat_event_type = getattr(cat_data, 'nearest_catalyst_type', "DEFAULT")
     elif isinstance(cat_data, dict):
         scores = cat_data.get("scores", cat_data)
@@ -930,8 +934,13 @@ def _score_single_ticker_v3(
         cat_proximity = _to_decimal(scores.get("catalyst_proximity_score", 0)) or Decimal("0")
         cat_delta = _to_decimal(scores.get("catalyst_delta_score", 0)) or Decimal("0")
         # Try both field names (integration.catalyst_window_days or scores.days_to_nearest_catalyst)
+        # Use _coalesce to correctly handle days_to_cat=0 (catalyst today) as valid
         integration = cat_data.get("integration", {})
-        days_to_cat = integration.get("catalyst_window_days") or scores.get("days_to_nearest_catalyst") or scores.get("catalyst_window_days")
+        days_to_cat = _coalesce(
+            integration.get("catalyst_window_days"),
+            scores.get("days_to_nearest_catalyst"),
+            scores.get("catalyst_window_days"),
+        )
         cat_event_type = scores.get("nearest_catalyst_type", "DEFAULT")
     else:
         cat_window = None
