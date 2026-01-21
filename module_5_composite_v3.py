@@ -1961,6 +1961,24 @@ def compute_module_5_composite_v3(
         "with_valuation_signal": sum(1 for r in ranked_securities if r.get("valuation_signal", {}).get("peer_count", 0) >= 5),
         "with_smart_money": sum(1 for r in ranked_securities if r.get("coinvest_overlap_count", 0) > 0),
 
+        # Momentum state breakdown (for debugging/attribution)
+        "momentum_missing_data": sum(
+            1 for r in ranked_securities
+            if r.get("momentum_signal", {}).get("alpha_60d") is None
+        ),
+        "momentum_confidence_gated": sum(
+            1 for r in ranked_securities
+            if "momentum_confidence_gated" in r.get("flags", [])
+        ),
+        "momentum_negative_applied": sum(
+            1 for r in ranked_securities
+            if "strong_negative_momentum" in r.get("flags", [])
+        ),
+        "momentum_positive_applied": sum(
+            1 for r in ranked_securities
+            if "strong_positive_momentum" in r.get("flags", [])
+        ),
+
         # Quality metrics
         "with_caps_applied": sum(1 for r in ranked_securities if r.get("monotonic_caps_applied")),
         "with_interaction_flags": sum(1 for r in ranked_securities if r.get("interaction_terms", {}).get("flags")),
@@ -2069,6 +2087,18 @@ def compute_module_5_composite_v3(
         if gated_pct > Decimal("0.5"):  # >50% of universe gated for this component
             # Log as info, not degradation - sparse optional component coverage is normal
             health_warnings.append(f"INFO: {comp} confidence-gated for {gated_pct*100:.1f}% of universe (sparse coverage expected)")
+
+    # Log detailed momentum state breakdown for debugging/attribution
+    mom_missing = diagnostic_counts.get("momentum_missing_data", 0)
+    mom_gated = diagnostic_counts.get("momentum_confidence_gated", 0)
+    mom_neg = diagnostic_counts.get("momentum_negative_applied", 0)
+    mom_pos = diagnostic_counts.get("momentum_positive_applied", 0)
+    mom_neutral = total_rankable - mom_missing - mom_neg - mom_pos
+    if mom_missing + mom_gated + mom_neg + mom_pos > 0:
+        health_warnings.append(
+            f"INFO: momentum breakdown - missing:{mom_missing}, gated:{mom_gated}, "
+            f"negative:{mom_neg}, positive:{mom_pos}, neutral:{max(0, mom_neutral - mom_gated)}"
+        )
 
     # Log health status
     if run_status == RunStatus.FAIL:
