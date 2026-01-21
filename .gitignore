@@ -71,3 +71,4 @@ production_data/ctgov_state/
 checkpoints_ab_*/
 results_*_prefix*.json
 results_*_postfix*.json
+tests/golden/
