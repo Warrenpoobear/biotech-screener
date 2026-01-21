@@ -2226,6 +2226,7 @@ def compute_module_5_composite_v3(
     mom_computable = diagnostic_counts.get("momentum_computable", 0)
     mom_meaningful = diagnostic_counts.get("momentum_meaningful", 0)
     mom_strong_signal = diagnostic_counts.get("momentum_strong_signal", 0)
+    mom_strong_effective = diagnostic_counts.get("momentum_strong_and_effective", 0)
     # Fix: applied should equal neg + pos + neutral (all signals with data, not low_conf)
     # This matches the breakdown shown in applied[neg:X, pos:X, neutral:X]
     mom_applied_stable = mom_neg + mom_pos + mom_neutral
@@ -2238,13 +2239,17 @@ def compute_module_5_composite_v3(
             f"windows[20d:{mom_20d}, 60d:{mom_60d}, 120d:{mom_120d}] | "
             f"coverage={mom_active}/{total_rankable} ({mom_coverage_pct:.1f}%), avg_weight={avg_mom_weight}"
         )
-        # NEW: Stable metrics log (computable vs meaningful vs applied)
-        # Side-by-side: coverage_applied + strong_signal_rate for monitoring signal strength drift
+        # NEW: Stable metrics log (computable vs meaningful vs applied vs strong)
+        # Single-line signal health dashboard for monitoring:
+        # - applied: coverage (has data, not low_conf)
+        # - meaningful: confidence >= 0.5
+        # - strong: |score-50| >= 2.5
+        # - strong+effective: strong AND confidence >= 0.6 (actually moves composite)
         health_warnings.append(
             f"INFO: momentum stable metrics - "
             f"computable:{mom_computable}, meaningful:{mom_meaningful}, "
             f"coverage_applied:{mom_applied_stable}/{total_rankable}, "
-            f"strong_signal(|score-50|>=2.5):{mom_strong_signal}/{total_rankable}"
+            f"strong:{mom_strong_signal}, strong+eff:{mom_strong_effective}"
         )
 
     # Log health status
