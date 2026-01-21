@@ -450,22 +450,69 @@ def _extract_confidence_clinical(clin_data: Dict) -> Decimal:
 
 
 def _extract_confidence_catalyst(cat_data: Any) -> Decimal:
-    """Extract confidence for catalyst score."""
+    """Extract confidence for catalyst score.
+
+    Handles:
+    1. TickerCatalystSummaryV2 dataclass (catalyst_confidence enum attribute)
+    2. vNext dict schema (integration.catalyst_confidence string)
+    3. Legacy schema (n_high_confidence/events_detected_total counts)
+
+    vNext confidence mapping:
+        HIGH -> 0.70
+        MED  -> 0.50
+        LOW  -> 0.35
+        UNKNOWN/None -> 0.30 (default, below gate threshold)
+    """
     if not cat_data:
         return Decimal("0.3")
+
+    # vNext schema mapping: string confidence to numeric
+    CONFIDENCE_MAP = {
+        "HIGH": Decimal("0.70"),
+        "MED": Decimal("0.50"),
+        "LOW": Decimal("0.35"),
+        "UNKNOWN": Decimal("0.30"),
+    }
+
+    # 1. Try TickerCatalystSummaryV2 dataclass (catalyst_confidence is an enum)
+    if hasattr(cat_data, 'catalyst_confidence') and hasattr(cat_data.catalyst_confidence, 'value'):
+        conf_str = cat_data.catalyst_confidence.value  # Get enum value as string
+        if conf_str in CONFIDENCE_MAP:
+            return CONFIDENCE_MAP[conf_str]
+
+    # 2. Try vNext dict schema: integration.catalyst_confidence (string)
+    if isinstance(cat_data, dict):
+        integration = cat_data.get("integration", {})
+        conf_str = integration.get("catalyst_confidence")
+        if conf_str and conf_str in CONFIDENCE_MAP:
+            return CONFIDENCE_MAP[conf_str]
+
+        # Also check for vNext event_summary.events_total
+        event_summary = cat_data.get("event_summary", {})
+        events_total = event_summary.get("events_total", 0)
+        if events_total > 0 and conf_str is None:
+            # Has events but no confidence string - use MED as default
+            return Decimal("0.50")
+
+    # 3. Try legacy dataclass with n_high_confidence
     if hasattr(cat_data, 'n_high_confidence'):
         n_high = cat_data.n_high_confidence
         n_events = cat_data.events_detected_total
-    elif isinstance(cat_data, dict):
+        if n_events > 0:
+            high_ratio = Decimal(str(n_high)) / Decimal(str(max(n_events, 1)))
+            return _clamp(Decimal("0.4") + high_ratio * Decimal("0.5"), Decimal("0"), Decimal("1"))
+
+    # 4. Try legacy dict schema (scores.n_high_confidence)
+    if isinstance(cat_data, dict):
         scores = cat_data.get("scores", cat_data)
         n_high = scores.get("n_high_confidence", 0)
         n_events = scores.get("events_detected_total", 0)
-    else:
-        return Decimal("0.3")
-    if n_events == 0:
-        return Decimal("0.3")
-    high_ratio = Decimal(str(n_high)) / Decimal(str(max(n_events, 1)))
-    return _clamp(Decimal("0.4") + high_ratio * Decimal("0.5"), Decimal("0"), Decimal("1"))
+        if n_events > 0:
+            high_ratio = Decimal(str(n_high)) / Decimal(str(max(n_events, 1)))
+            return _clamp(Decimal("0.4") + high_ratio * Decimal("0.5"), Decimal("0"), Decimal("1"))
+
+    # Default: low confidence (below gate threshold)
+    return Decimal("0.3")
 
 
 def _extract_confidence_pos(pos_data: Optional[Dict]) -> Decimal:
@@ -1770,6 +1817,14 @@ def compute_module_5_composite_v3(
         "high_volatility_count": sum(1 for r in ranked_securities if r.get("volatility_adjustment", {}).get("vol_bucket") == "high"),
         "low_volatility_count": sum(1 for r in ranked_securities if r.get("volatility_adjustment", {}).get("vol_bucket") == "low"),
         "in_catalyst_window": sum(1 for r in ranked_securities if r.get("catalyst_decay", {}).get("in_optimal_window")),
+
+        # Catalyst coverage breakdown (new in v3.1)
+        # Raw coverage = has any catalyst events (confidence > default 0.3)
+        # Window coverage = in optimal catalyst window (15-45 days from event)
+        "with_catalyst_events": sum(
+            1 for r in ranked_securities
+            if _to_decimal(r.get("confidence_catalyst")) and _to_decimal(r.get("confidence_catalyst")) > Decimal("0.3")
+        ),
     }
 
     # =========================================================================
@@ -1792,7 +1847,10 @@ def compute_module_5_composite_v3(
 
     # Calculate component coverage as fraction of universe
     component_coverage = {
+        # catalyst_window = in optimal 15-45 day window (stricter)
         "catalyst": Decimal(str(diagnostic_counts.get("in_catalyst_window", 0))) / Decimal(str(total_rankable)),
+        # catalyst_raw = has any catalyst events (confidence > 0.3 default)
+        "catalyst_raw": Decimal(str(diagnostic_counts.get("with_catalyst_events", 0))) / Decimal(str(total_rankable)),
         "momentum": Decimal(str(diagnostic_counts.get("with_momentum_signal", 0))) / Decimal(str(total_rankable)),
         "smart_money": Decimal(str(diagnostic_counts.get("with_smart_money", 0))) / Decimal(str(total_rankable)),
         "market_data": Decimal(str(diagnostic_counts.get("with_market_data", 0))) / Decimal(str(total_rankable)),
@@ -1818,10 +1876,21 @@ def compute_module_5_composite_v3(
     for component, threshold in HEALTH_GATE_THRESHOLDS.items():
         coverage = component_coverage.get(component, Decimal("0"))
         if coverage < threshold:
-            # Catalyst below threshold is critical (FAIL)
-            if component == "catalyst" and coverage < Decimal("0.01"):  # <1% = broken
-                run_status = RunStatus.FAIL
-                health_errors.append(f"CRITICAL: {component} coverage {coverage*100:.1f}% < {threshold*100:.0f}% threshold - pipeline broken")
+            # Catalyst: check raw coverage for pipeline health, not window coverage
+            if component == "catalyst":
+                raw_coverage = component_coverage.get("catalyst_raw", Decimal("0"))
+                if raw_coverage < Decimal("0.05"):  # <5% with events = pipeline broken
+                    run_status = RunStatus.FAIL
+                    health_errors.append(
+                        f"CRITICAL: catalyst_raw coverage {raw_coverage*100:.1f}% - pipeline broken "
+                        f"(window coverage: {coverage*100:.1f}%)"
+                    )
+                else:
+                    # Raw coverage OK but window coverage low - just informational
+                    health_warnings.append(
+                        f"INFO: catalyst window coverage {coverage*100:.1f}% (raw: {raw_coverage*100:.1f}%) - "
+                        f"events exist but few in optimal 15-45d window"
+                    )
             elif component in ("momentum", "market_data"):
                 # Momentum/market data below threshold degrades run
                 if run_status != RunStatus.FAIL:
