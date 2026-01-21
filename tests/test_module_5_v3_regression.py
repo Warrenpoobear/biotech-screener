@@ -237,6 +237,23 @@ class TestDecimalZeroCoalesce:
         result = _coalesce(None, None, default=Decimal("999"))
         assert result == Decimal("999")
 
+    def test_coalesce_int_zero_preserved(self):
+        """
+        Integer 0 (days_to_catalyst=0) must be treated as valid.
+
+        Bug: Using `or` for days_to_catalyst=0 (catalyst today) would
+        treat 0 as falsy and fall through to the next field.
+
+        Fix: Use _coalesce which only falls through on None.
+        """
+        # Integer zero should be preserved
+        result = _coalesce(0, 30, default=None)
+        assert result == 0, f"Coalesce incorrectly skipped int zero: {result}"
+
+        # None should fall through to next value
+        result = _coalesce(None, 30, default=None)
+        assert result == 30
+
 
 # =============================================================================
 # TEST 4: Runway Gate Independence
