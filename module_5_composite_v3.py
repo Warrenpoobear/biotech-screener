@@ -2210,6 +2210,7 @@ def compute_module_5_composite_v3(
     # V3.2: Stable coverage metrics (avoids coverage inflation)
     mom_computable = diagnostic_counts.get("momentum_computable", 0)
     mom_meaningful = diagnostic_counts.get("momentum_meaningful", 0)
+    mom_strong_signal = diagnostic_counts.get("momentum_strong_signal", 0)
     # Fix: applied should equal neg + pos + neutral (all signals with data, not low_conf)
     # This matches the breakdown shown in applied[neg:X, pos:X, neutral:X]
     mom_applied_stable = mom_neg + mom_pos + mom_neutral
@@ -2223,10 +2224,12 @@ def compute_module_5_composite_v3(
             f"coverage={mom_active}/{total_rankable} ({mom_coverage_pct:.1f}%), avg_weight={avg_mom_weight}"
         )
         # NEW: Stable metrics log (computable vs meaningful vs applied)
+        # Side-by-side: coverage_applied + strong_signal_rate for monitoring signal strength drift
         health_warnings.append(
             f"INFO: momentum stable metrics - "
-            f"computable:{mom_computable}, meaningful:{mom_meaningful}, applied:{mom_applied_stable} "
-            f"(of {total_rankable} total)"
+            f"computable:{mom_computable}, meaningful:{mom_meaningful}, "
+            f"coverage_applied:{mom_applied_stable}/{total_rankable}, "
+            f"strong_signal(|score-50|>=2.5):{mom_strong_signal}/{total_rankable}"
         )
 
     # Log health status
