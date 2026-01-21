@@ -341,10 +341,42 @@ def enrich_with_defensive_overlays(
         Modified output dict (mutated in-place, also returned for convenience)
     """
     ranked = output.get("ranked_securities", [])
-    
+
     if not ranked:
         return output
-    
+
+    # Initialize diagnostics
+    if "diagnostic_counts" not in output:
+        output["diagnostic_counts"] = {}
+
+    # Track defensive feature coverage
+    total_securities = len(ranked)
+    with_def_features = 0
+    with_correlation = 0
+    with_volatility = 0
+
+    for rec in ranked:
+        ticker = rec["ticker"]
+        ticker_data = scores_by_ticker.get(ticker, {})
+        def_features = ticker_data.get("defensive_features", {})
+
+        if def_features:
+            with_def_features += 1
+            # Check for correlation (either field name)
+            if def_features.get("corr_xbi") or def_features.get("corr_xbi_120d"):
+                with_correlation += 1
+            if def_features.get("vol_60d"):
+                with_volatility += 1
+
+    # Add coverage diagnostics
+    output["diagnostic_counts"]["defensive_features_coverage"] = {
+        "total_securities": total_securities,
+        "with_defensive_features": with_def_features,
+        "with_correlation": with_correlation,
+        "with_volatility": with_volatility,
+        "coverage_pct": round(100 * with_def_features / total_securities, 1) if total_securities > 0 else 0,
+    }
+
     # Step 1: Calculate raw weights for position sizing (needed for Step 3)
     # This must run BEFORE multiplier application if position sizing is enabled
     if apply_position_sizing:
@@ -420,36 +452,80 @@ def validate_defensive_integration(output: Dict) -> None:
     Prints validation results to console.
     """
     ranked = output.get("ranked_securities", [])
-    
+
     print("\n" + "="*60)
     print("DEFENSIVE OVERLAY VALIDATION")
     print("="*60)
-    
+
     # 1. Check weights sum
     total_weight = sum(Decimal(r.get("position_weight", "0")) for r in ranked)
     expected = Decimal("0.9000")
     tolerance = Decimal("0.0001")
-    
+
     if abs(total_weight - expected) >= tolerance:
         print(f"[WARN] Weights sum: {total_weight} (expected {expected}, diff: {abs(total_weight - expected)})")
     else:
         print(f"[OK] Weights sum: {total_weight} (target: {expected})")
-    
+
     # 2. Check excluded have zero weight
     excluded_with_weight = [
-        r["ticker"] for r in ranked 
+        r["ticker"] for r in ranked
         if not r.get("rankable", True) and Decimal(r.get("position_weight", "0")) != 0
     ]
     if excluded_with_weight:
         print(f"[WARN] {len(excluded_with_weight)} excluded securities have non-zero weight: {excluded_with_weight}")
     else:
         print("[OK] All excluded securities have zero weight")
+
+    # 3. Check defensive feature coverage (from diagnostics)
+    diag = output.get("diagnostic_counts", {})
+    coverage = diag.get("defensive_features_coverage", {})
+
+    if coverage:
+        total = coverage.get("total_securities", 0)
+        with_features = coverage.get("with_defensive_features", 0)
+        with_corr = coverage.get("with_correlation", 0)
+        with_vol = coverage.get("with_volatility", 0)
+        pct = coverage.get("coverage_pct", 0)
+
+        if with_features == 0:
+            print(f"[WARN] Defensive features coverage: 0/{total} securities (no defensive data loaded)")
+        elif with_features < total:
+            print(f"[INFO] Defensive features coverage: {with_features}/{total} ({pct}%)")
+            print(f"       Correlation data: {with_corr}, Volatility data: {with_vol}")
+        else:
+            print(f"[OK] Defensive features coverage: {with_features}/{total} ({pct}%)")
+            print(f"     Correlation data: {with_corr}, Volatility data: {with_vol}")
+
+    # 4. Check defensive multiplier status (score adjustment)
+    has_multiplier_field = any(r.get("defensive_multiplier") for r in ranked)
+
+    if has_multiplier_field:
+        # Multiplier was applied - count meaningful adjustments
+        with_def_notes = sum(1 for r in ranked if r.get("defensive_notes"))
+        non_neutral = sum(
+            1 for r in ranked
+            if r.get("defensive_multiplier") and Decimal(r["defensive_multiplier"]) != Decimal("1.00")
+        )
+        elite = sum(1 for r in ranked if "def_mult_elite_1.40" in (r.get("defensive_notes") or []))
+        good_div = sum(1 for r in ranked if "def_mult_good_diversifier_1.10" in (r.get("defensive_notes") or []))
+        high_corr = sum(1 for r in ranked if "def_mult_high_corr_0.95" in (r.get("defensive_notes") or []))
+        corr_missing = sum(1 for r in ranked if "def_corr_missing" in (r.get("defensive_notes") or []))
+        corr_placeholder = sum(1 for r in ranked if "def_corr_placeholder_0.50" in (r.get("defensive_notes") or []))
+
+        print(f"[OK] Defensive multiplier: ENABLED")
+        print(f"[OK] {with_def_notes}/{len(ranked)} securities have defensive notes")
+        print(f"[OK] {non_neutral}/{len(ranked)} securities have non-neutral multiplier")
+        if elite > 0 or good_div > 0 or high_corr > 0:
+            print(f"     Breakdown: {elite} elite (1.40x), {good_div} good diversifier (1.10x), {high_corr} high-corr penalty (0.95x)")
+        if corr_missing > 0 or corr_placeholder > 0:
+            print(f"     Data gaps: {corr_missing} missing corr, {corr_placeholder} placeholder corr")
+    else:
+        # Multiplier was not applied
+        print(f"[INFO] Defensive multiplier: DISABLED (apply_defensive_multiplier=False)")
+        print(f"[OK] Position sizing applied without score adjustment")
     
-    # 3. Count securities with defensive adjustments
-    with_def_notes = sum(1 for r in ranked if r.get("defensive_notes"))
-    print(f"[OK] {with_def_notes}/{len(ranked)} securities have defensive adjustments")
-    
-    # 4. Weight distribution
+    # 5. Weight distribution
     nonzero_weights = [r for r in ranked if Decimal(r.get("position_weight", "0")) > 0]
     if nonzero_weights:
         weights = [Decimal(r["position_weight"]) for r in nonzero_weights]
@@ -465,7 +541,7 @@ def validate_defensive_integration(output: Dict) -> None:
         floor = calculate_dynamic_floor(n)
         print(f"  - Dynamic floor: {floor:.4f} ({floor*100:.2f}%) for {n} securities")
     
-    # 5. Top 10 with weights
+    # 6. Top 10 holdings
     print("\nTop 10 holdings:")
     print(f"{'Rank':<6}{'Ticker':<8}{'Score':<10}{'Weight':<10}{'Def Notes'}")
     print("-" * 60)

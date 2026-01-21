@@ -410,3 +410,85 @@ class TestEdgeCases:
         assert corr_pos1 == Decimal("1.0")
         assert len(flags1) == 0
         assert len(flags2) == 0
+
+
+# ============================================================================
+# COVERAGE DIAGNOSTICS TESTS
+# ============================================================================
+
+class TestCoverageDiagnostics:
+    """Tests for defensive feature coverage diagnostics."""
+
+    def test_coverage_diagnostics_added_to_output(self):
+        """Enrichment should add coverage diagnostics to output."""
+        from defensive_overlay_adapter import enrich_with_defensive_overlays
+
+        output = {
+            "ranked_securities": [
+                {"ticker": "AAA", "composite_score": "50.00", "rankable": True},
+                {"ticker": "BBB", "composite_score": "40.00", "rankable": True},
+            ]
+        }
+
+        scores_by_ticker = {
+            "AAA": {"defensive_features": {"vol_60d": "0.30", "corr_xbi": "0.40"}},
+            # BBB has no defensive features
+        }
+
+        result = enrich_with_defensive_overlays(
+            output, scores_by_ticker, apply_multiplier=False, apply_position_sizing=True
+        )
+
+        coverage = result.get("diagnostic_counts", {}).get("defensive_features_coverage", {})
+        assert coverage.get("total_securities") == 2
+        assert coverage.get("with_defensive_features") == 1
+        assert coverage.get("with_correlation") == 1
+        assert coverage.get("with_volatility") == 1
+        assert coverage.get("coverage_pct") == 50.0
+
+    def test_coverage_with_alternate_field_names(self):
+        """Coverage should detect both corr_xbi and corr_xbi_120d."""
+        from defensive_overlay_adapter import enrich_with_defensive_overlays
+
+        output = {
+            "ranked_securities": [
+                {"ticker": "AAA", "composite_score": "50.00", "rankable": True},
+                {"ticker": "BBB", "composite_score": "40.00", "rankable": True},
+            ]
+        }
+
+        scores_by_ticker = {
+            "AAA": {"defensive_features": {"vol_60d": "0.30", "corr_xbi": "0.40"}},
+            "BBB": {"defensive_features": {"vol_60d": "0.25", "corr_xbi_120d": "0.35"}},
+        }
+
+        result = enrich_with_defensive_overlays(
+            output, scores_by_ticker, apply_multiplier=False, apply_position_sizing=True
+        )
+
+        coverage = result.get("diagnostic_counts", {}).get("defensive_features_coverage", {})
+        assert coverage.get("with_correlation") == 2
+        assert coverage.get("with_volatility") == 2
+        assert coverage.get("coverage_pct") == 100.0
+
+    def test_coverage_with_empty_defensive_features(self):
+        """Empty defensive features dict should count as having no features."""
+        from defensive_overlay_adapter import enrich_with_defensive_overlays
+
+        output = {
+            "ranked_securities": [
+                {"ticker": "AAA", "composite_score": "50.00", "rankable": True},
+            ]
+        }
+
+        scores_by_ticker = {
+            "AAA": {"defensive_features": {}},
+        }
+
+        result = enrich_with_defensive_overlays(
+            output, scores_by_ticker, apply_multiplier=False, apply_position_sizing=True
+        )
+
+        coverage = result.get("diagnostic_counts", {}).get("defensive_features_coverage", {})
+        assert coverage.get("with_defensive_features") == 0
+        assert coverage.get("coverage_pct") == 0
