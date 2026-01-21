@@ -29,7 +29,7 @@ def get_xbi_constituents() -> Set[str]:
     """
     # Major XBI holdings (representative sample - NOT complete)
     return {
-        'ACAD', 'ALNY', 'AMGN', 'ARGX', 'ARWR', 'ASND', 'AXSM', 'BEAM', 'BGNE',
+        'ACAD', 'ALNY', 'AMGN', 'ARGX', 'ARWR', 'ASND', 'AXSM', 'BEAM', 'ONC',
         'BIIB', 'BNTX', 'CRBU', 'CRSP', 'CVAC', 'DAWN', 'DNLI', 'EDIT', 'EXAS',
         'FATE', 'FOLD', 'GILD', 'HALO', 'ICLR', 'IDYA', 'IMCR', 'INCY', 'IONS',
         'ITIC', 'KALA', 'KALV', 'KROS', 'KYMR', 'LEGN', 'LEGN', 'MLTX', 'MRNA',
@@ -51,7 +51,7 @@ def get_ibb_constituents() -> Set[str]:
     # Major IBB holdings (representative - NOT complete)
     return {
         'ABBV', 'ACAD', 'ALNY', 'AMGN', 'ARGX', 'ARWR', 'ASND', 'AXSM', 'BEAM',
-        'BGNE', 'BIIB', 'BMRN', 'BNTX', 'BSX', 'CRBU', 'CRSP', 'CVAC', 'DNLI',
+        'ONC', 'BIIB', 'BMRN', 'BNTX', 'BSX', 'CRBU', 'CRSP', 'CVAC', 'DNLI',
         'DVAX', 'EDIT', 'EXAS', 'EXEL', 'FATE', 'FOLD', 'GILD', 'HALO', 'ICLR',
         'IDYA', 'ILMN', 'IMCR', 'INCY', 'IONS', 'ITIC', 'KALA', 'KALV', 'KROS',
         'KYMR', 'LEGN', 'MLTX', 'MRNA', 'MRUS', 'NBIX', 'NKTR', 'NKTX', 'NTRA',
@@ -73,7 +73,7 @@ def get_nbi_constituents() -> Set[str]:
     # Major NBI holdings (representative - NOT complete)
     return {
         'ABBV', 'ACAD', 'ALNY', 'AMGN', 'ARGX', 'ARWR', 'ASND', 'AXSM', 'BEAM',
-        'BGNE', 'BIIB', 'BMRN', 'BNTX', 'CRBU', 'CRSP', 'CVAC', 'DNLI', 'DVAX',
+        'ONC', 'BIIB', 'BMRN', 'BNTX', 'CRBU', 'CRSP', 'CVAC', 'DNLI', 'DVAX',
         'EDIT', 'EXAS', 'EXEL', 'FATE', 'FOLD', 'GILD', 'HALO', 'ICLR', 'IDYA',
         'ILMN', 'IMCR', 'INCY', 'IONS', 'ITIC', 'KALA', 'KALV', 'KROS', 'KYMR',
         'LEGN', 'MLTX', 'MRNA', 'MRUS', 'NBIX', 'NKTR', 'NKTX', 'NTRA', 'NTLA',
