@@ -142,6 +142,53 @@ class Module3Config:
 # EVENT CONVERSION (LEGACY -> V2)
 # ============================================================================
 
+def convert_calendar_catalyst_to_v2(
+    calendar_catalyst: CalendarCatalyst,
+) -> CatalystEventV2:
+    """
+    Convert CalendarCatalyst (forward-looking) to CatalystEventV2.
+
+    Maps calendar event types to appropriate EventType enum values.
+    Calendar catalysts represent upcoming events detected from trial date fields.
+    """
+    # Map calendar event types to EventType enum
+    CALENDAR_EVENT_TYPE_MAP = {
+        'UPCOMING_PCD': EventType.CT_PRIMARY_COMPLETION,
+        'UPCOMING_SCD': EventType.CT_STUDY_COMPLETION,
+        'RESULTS_DUE': EventType.CT_RESULTS_POSTED,
+    }
+
+    event_type = CALENDAR_EVENT_TYPE_MAP.get(
+        calendar_catalyst.event_type,
+        EventType.CT_PRIMARY_COMPLETION  # Default fallback
+    )
+
+    # Get severity from mapping
+    severity = EVENT_SEVERITY_MAP.get(event_type, EventSeverity.POSITIVE)
+
+    # Map confidence float to ConfidenceLevel
+    if calendar_catalyst.confidence >= 0.85:
+        confidence = ConfidenceLevel.HIGH
+    elif calendar_catalyst.confidence >= 0.65:
+        confidence = ConfidenceLevel.MED
+    else:
+        confidence = ConfidenceLevel.LOW
+
+    return CatalystEventV2(
+        ticker=calendar_catalyst.ticker,
+        nct_id=calendar_catalyst.nct_id,
+        event_type=event_type,
+        event_severity=severity,
+        event_date=calendar_catalyst.target_date.isoformat(),
+        field_changed=f"calendar_{calendar_catalyst.event_type.lower()}",
+        prior_value=None,
+        new_value=f"{calendar_catalyst.days_until}d_ahead",
+        source="CTGOV_CALENDAR",
+        confidence=confidence,
+        disclosed_at=calendar_catalyst.target_date.isoformat(),  # Use target date as disclosed_at
+    )
+
+
 def convert_legacy_event_to_v2(
     ticker: str,
     legacy_event: CatalystEvent,
@@ -599,44 +646,39 @@ def compute_module_3_catalyst(
     logger.info(f"Deduped {total_deduped} duplicate events")
 
     # =========================================================================
-    # ZERO EVENTS DIAGNOSTIC: Explain why no events were detected
+    # ZERO DIFF-BASED EVENTS DIAGNOSTIC: Explain why no diff events detected
     # =========================================================================
+    # Note: Calendar-based events will still provide coverage for upcoming catalysts
     if total_events == 0:
-        logger.warning("=" * 70)
-        logger.warning("ZERO DIFF-BASED EVENTS DETECTED - DIAGNOSTIC SUMMARY")
-        logger.warning("=" * 70)
+        logger.info("=" * 70)
+        logger.info("ZERO DIFF-BASED EVENTS - DIAGNOSTIC SUMMARY")
+        logger.info("=" * 70)
+
+        # Note calendar coverage as fallback
+        if calendar_summary['total_catalysts'] > 0:
+            logger.info(f"CALENDAR FALLBACK ACTIVE: {calendar_summary['total_catalysts']} calendar events "
+                       f"across {calendar_summary['tickers_with_catalysts']} tickers will provide coverage")
 
         # Check data freshness
         if staleness_result.is_stale:
-            logger.warning(f"ROOT CAUSE: DATA IS STALE")
+            logger.warning(f"DATA STALENESS: trial_records is {staleness_result.age_days} days old")
             logger.warning(f"  trial_records date: {staleness_result.trial_records_date}")
             logger.warning(f"  as_of_date:         {as_of_date}")
-            logger.warning(f"  Age:                {staleness_result.age_days} days old")
             logger.warning(f"  Recommendation:     {staleness_result.recommendation}")
 
         # Check delta diagnostics
         if delta_diagnostics.no_changes_detected:
-            logger.warning(f"SNAPSHOT COMPARISON: No field changes between snapshots")
-            logger.warning(f"  Current records: {delta_diagnostics.total_current_records}")
-            logger.warning(f"  Prior records:   {delta_diagnostics.total_prior_records}")
-            logger.warning(f"  Records added:   {delta_diagnostics.records_added_count}")
-            logger.warning(f"  Records removed: {delta_diagnostics.records_removed_count}")
-            logger.warning(f"  Records changed: {delta_diagnostics.records_changed_count}")
+            logger.info(f"SNAPSHOT COMPARISON: No field changes between snapshots")
+            logger.info(f"  Current records: {delta_diagnostics.total_current_records}")
+            logger.info(f"  Prior records:   {delta_diagnostics.total_prior_records}")
         elif delta_diagnostics.prior_snapshot_missing:
-            logger.warning(f"This is an INITIAL RUN - no prior snapshot to compare against")
+            logger.info(f"INITIAL RUN: No prior snapshot - diff detection disabled")
+            logger.info(f"  Calendar-based events will provide catalyst coverage")
         else:
-            logger.warning(f"Delta shows changes but no events generated:")
-            logger.warning(f"  Records changed: {delta_diagnostics.records_changed_count}")
-            logger.warning(f"  Fields changed: {delta_diagnostics.fields_changed_histogram}")
+            logger.info(f"Delta shows changes but no events generated:")
+            logger.info(f"  Records changed: {delta_diagnostics.records_changed_count}")
 
-        logger.warning("-" * 70)
-        logger.warning("POSSIBLE CAUSES:")
-        logger.warning("  1. trial_records.json was not refreshed (most common)")
-        logger.warning("  2. CT.gov hasn't updated trials in this window")
-        logger.warning("  3. Changes exist but don't meet event thresholds")
-        logger.warning("-" * 70)
-        logger.warning("RESOLUTION: Update trial_records.json with fresh CT.gov data")
-        logger.warning("=" * 70)
+        logger.info("=" * 70)
 
     # Build prior events for delta scoring (from prior snapshot)
     if prior_snapshot:
@@ -649,6 +691,45 @@ def compute_module_3_catalyst(
 
     # Load historical proximity scores from state store
     historical_proximities = state_store.get_historical_proximities(4) if hasattr(state_store, 'get_historical_proximities') else {}
+
+    # =========================================================================
+    # MERGE CALENDAR CATALYSTS INTO SCORING PIPELINE
+    # =========================================================================
+    # Convert calendar catalysts to CatalystEventV2 and merge with diff-based events
+    # This ensures calendar-based forward-looking events are included in scoring
+    logger.info("Merging calendar catalysts into scoring pipeline...")
+    calendar_events_added = 0
+    calendar_tickers_added = 0
+
+    for calendar_catalyst in calendar_catalysts:
+        ticker = calendar_catalyst.ticker
+        v2_event = convert_calendar_catalyst_to_v2(calendar_catalyst)
+
+        if ticker not in events_by_ticker_v2:
+            events_by_ticker_v2[ticker] = []
+            calendar_tickers_added += 1
+
+        events_by_ticker_v2[ticker].append(v2_event)
+        calendar_events_added += 1
+
+    # Re-dedup and re-sort after merging calendar events
+    if calendar_events_added > 0:
+        calendar_deduped = 0
+        for ticker in events_by_ticker_v2:
+            events_by_ticker_v2[ticker], deduped = dedup_events(events_by_ticker_v2[ticker])
+            calendar_deduped += deduped
+            events_by_ticker_v2[ticker] = sort_events_v2(events_by_ticker_v2[ticker])
+
+        total_deduped += calendar_deduped
+        total_events += calendar_events_added
+
+        logger.info(f"Merged {calendar_events_added} calendar events across "
+                   f"{calendar_summary['tickers_with_catalysts']} tickers "
+                   f"(new tickers: {calendar_tickers_added}, deduped: {calendar_deduped})")
+
+    # Update total event count for combined diff + calendar events
+    combined_tickers_with_events = len([t for t in events_by_ticker_v2 if events_by_ticker_v2[t]])
+    logger.info(f"Total events for scoring: {total_events} across {combined_tickers_with_events} tickers")
 
     # Score events using new scoring system
     logger.info("Scoring events with vNext scorer...")
