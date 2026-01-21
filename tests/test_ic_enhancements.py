@@ -20,11 +20,13 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from src.modules.ic_enhancements import (
     compute_momentum_signal,
     compute_momentum_signal_with_fallback,
+    compute_alpha_for_score_delta,
     MomentumSignal,
     MultiWindowMomentumInput,
     MOMENTUM_SLOPE,
     MOMENTUM_SCORE_MIN,
     MOMENTUM_SCORE_MAX,
+    MOMENTUM_STRONG_THRESHOLD,
     VOLATILITY_BASELINE,
 )
 
@@ -1043,6 +1045,97 @@ class TestShrinkageEffect(unittest.TestCase):
 
         # 50 + conf * (50 - 50) = 50 regardless of confidence
         self.assertEqual(result.momentum_score, Decimal("50.00"))
+
+
+class TestAlphaThresholdDocumentation(unittest.TestCase):
+    """
+    Tests that enforce the documented alpha-to-score mapping.
+
+    These tests ensure the documented values in module_5_composite_v3.py
+    (alpha anchoring comments) stay in sync with the actual mapping function.
+
+    If the mapping changes, these tests will fail, prompting an update to
+    the documentation.
+    """
+
+    def test_strong_threshold_constant(self):
+        """Verify MOMENTUM_STRONG_THRESHOLD is 2.5."""
+        self.assertEqual(MOMENTUM_STRONG_THRESHOLD, Decimal("2.5"))
+
+    def test_alpha_for_strong_signal_conf_0_7(self):
+        """With conf=0.7 (typical), strong signal requires |alpha| >= ~2.38%.
+
+        Documented: "With conf=0.7 (typical): |score-50| >= 2.5 requires |alpha| >= ~2.4%"
+        """
+        alpha_threshold = compute_alpha_for_score_delta(
+            score_delta=MOMENTUM_STRONG_THRESHOLD,
+            confidence=Decimal("0.7"),
+        )
+        # 2.5 / (0.7 * 150) = 2.5 / 105 = 0.02381...
+        # Allow small tolerance for rounding
+        self.assertGreaterEqual(alpha_threshold, Decimal("0.0235"))
+        self.assertLessEqual(alpha_threshold, Decimal("0.0240"))
+
+    def test_alpha_for_strong_signal_conf_0_9(self):
+        """With conf=0.9 (high), strong signal requires |alpha| >= ~1.85%.
+
+        Documented: "With conf=0.9 (high): |score-50| >= 2.5 requires |alpha| >= ~1.85%"
+        """
+        alpha_threshold = compute_alpha_for_score_delta(
+            score_delta=MOMENTUM_STRONG_THRESHOLD,
+            confidence=Decimal("0.9"),
+        )
+        # 2.5 / (0.9 * 150) = 2.5 / 135 = 0.01852...
+        self.assertGreaterEqual(alpha_threshold, Decimal("0.0183"))
+        self.assertLessEqual(alpha_threshold, Decimal("0.0188"))
+
+    def test_alpha_for_strong_signal_conf_1_0(self):
+        """With conf=1.0 (no shrinkage), strong signal requires |alpha| >= ~1.67%.
+
+        Documented: "Raw (no shrinkage): |score-50| >= 2.5 requires |alpha| >= ~1.67%"
+        """
+        alpha_threshold = compute_alpha_for_score_delta(
+            score_delta=MOMENTUM_STRONG_THRESHOLD,
+            confidence=Decimal("1.0"),
+        )
+        # 2.5 / (1.0 * 150) = 2.5 / 150 = 0.01667...
+        self.assertGreaterEqual(alpha_threshold, Decimal("0.0165"))
+        self.assertLessEqual(alpha_threshold, Decimal("0.0168"))
+
+    def test_alpha_scales_with_confidence(self):
+        """Lower confidence requires higher alpha to achieve same score delta."""
+        alpha_high_conf = compute_alpha_for_score_delta(
+            score_delta=MOMENTUM_STRONG_THRESHOLD,
+            confidence=Decimal("0.9"),
+        )
+        alpha_low_conf = compute_alpha_for_score_delta(
+            score_delta=MOMENTUM_STRONG_THRESHOLD,
+            confidence=Decimal("0.5"),
+        )
+        # Lower confidence requires MORE alpha
+        self.assertGreater(alpha_low_conf, alpha_high_conf)
+
+    def test_round_trip_score_calculation(self):
+        """Verify alpha -> score -> alpha round-trip consistency.
+
+        Given: alpha = 0.0238 (2.38%), conf = 0.7
+        Compute: score = 50 + 0.7 * (50 + 0.0238 * 150 - 50) = 50 + 0.7 * 3.57 = 52.5
+        So a score of 52.5 should require ~2.38% alpha.
+        """
+        # Compute expected alpha for score_delta = 2.5
+        expected_alpha = compute_alpha_for_score_delta(
+            score_delta=Decimal("2.5"),
+            confidence=Decimal("0.7"),
+        )
+
+        # Now verify: with this alpha, we get back to score 52.5
+        # raw_score = 50 + alpha * 150
+        raw_score = Decimal("50") + expected_alpha * MOMENTUM_SLOPE
+        # shrunk_score = 50 + conf * (raw - 50)
+        shrunk_score = Decimal("50") + Decimal("0.7") * (raw_score - Decimal("50"))
+
+        # Should be close to 52.5 (within precision)
+        self.assertAlmostEqual(float(shrunk_score), 52.5, places=1)
 
 
 if __name__ == "__main__":

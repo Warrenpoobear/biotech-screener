@@ -2066,6 +2066,15 @@ def compute_module_5_composite_v3(
             if abs(_to_decimal(r.get("momentum_signal", {}).get("momentum_score", "50")) - Decimal("50")) >= Decimal("2.5")
             and r.get("momentum_signal", {}).get("window_used") is not None
         ),
+        # 4. momentum_strong_and_effective: Strong signal AND high enough confidence to matter
+        #    = signals that are both strong (|score-50| >= 2.5) AND have confidence >= 0.6
+        #    This is the "portfolio impact" metric: signals likely to move composites
+        "momentum_strong_and_effective": sum(
+            1 for r in ranked_securities
+            if abs(_to_decimal(r.get("momentum_signal", {}).get("momentum_score", "50")) - Decimal("50")) >= Decimal("2.5")
+            and r.get("momentum_signal", {}).get("window_used") is not None
+            and _to_decimal(r.get("momentum_signal", {}).get("confidence", "0")) >= Decimal("0.6")
+        ),
 
         # Quality metrics
         "with_caps_applied": sum(1 for r in ranked_securities if r.get("monotonic_caps_applied")),

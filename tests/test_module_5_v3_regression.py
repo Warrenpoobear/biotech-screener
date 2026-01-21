@@ -568,16 +568,16 @@ class TestMomentumStrongSignalBoundary:
             "Score 52.5 should be counted as strong (boundary is inclusive)"
         )
 
-    def test_boundary_exclusive_at_47_51(self):
-        """Score of 47.51 should NOT count as strong (|47.51-50| = 2.49 < 2.5)."""
+    def test_score_47_51_not_strong_delta_2_49(self):
+        """Score 47.51 NOT strong: |47.51-50| = 2.49 < 2.5 threshold."""
         assert not self._is_strong_signal(Decimal("47.51")), (
-            "Score 47.51 should NOT be counted as strong"
+            "Score 47.51 should NOT be counted as strong (delta=2.49)"
         )
 
-    def test_boundary_exclusive_at_52_49(self):
-        """Score of 52.49 should NOT count as strong."""
+    def test_score_52_49_not_strong_delta_2_49(self):
+        """Score 52.49 NOT strong: |52.49-50| = 2.49 < 2.5 threshold."""
         assert not self._is_strong_signal(Decimal("52.49")), (
-            "Score 52.49 should NOT be counted as strong"
+            "Score 52.49 should NOT be counted as strong (delta=2.49)"
         )
 
     def test_neutral_score_not_strong(self):
