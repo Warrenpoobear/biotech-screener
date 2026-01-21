@@ -2052,9 +2052,10 @@ def compute_module_5_composite_v3(
             1 for r in ranked_securities
             if _to_decimal(r.get("momentum_signal", {}).get("confidence", "0")) >= Decimal("0.5")
         ),
-        # 3. momentum_applied: Score moved away from 50 by at least 2.5 points
-        #    = signals that actually affected rankings
-        "momentum_applied": sum(
+        # 3. momentum_strong_signal: Score moved away from 50 by at least 2.5 points
+        #    = signals strong enough to meaningfully affect rankings
+        #    Note: "applied" total (neg + pos + neutral) is computed separately for consistency
+        "momentum_strong_signal": sum(
             1 for r in ranked_securities
             if abs(_to_decimal(r.get("momentum_signal", {}).get("momentum_score", "50")) - Decimal("50")) >= Decimal("2.5")
             and r.get("momentum_signal", {}).get("window_used") is not None
@@ -2209,7 +2210,9 @@ def compute_module_5_composite_v3(
     # V3.2: Stable coverage metrics (avoids coverage inflation)
     mom_computable = diagnostic_counts.get("momentum_computable", 0)
     mom_meaningful = diagnostic_counts.get("momentum_meaningful", 0)
-    mom_applied_stable = diagnostic_counts.get("momentum_applied", 0)
+    # Fix: applied should equal neg + pos + neutral (all signals with data, not low_conf)
+    # This matches the breakdown shown in applied[neg:X, pos:X, neutral:X]
+    mom_applied_stable = mom_neg + mom_pos + mom_neutral
 
     if mom_with_data > 0 or mom_missing > 0:
         health_warnings.append(
