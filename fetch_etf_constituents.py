@@ -49,10 +49,11 @@ ETF_HOLDINGS = {
         "UTHR", "SRPT", "ARGX", "NBIX", "RARE", "ACAD",
         
         # Additional large/mid caps
-        "AMGN", "GILD", "BIIB", "MRNA", "BNTX", "SGEN", "LGND", "TECH",
-        "BGNE", "RGEN", "ROIV", "NTRA", "HZNP", "DAWN", "PCVX", "ARVN",
-        "LEGN", "IMMU", "BLUE", "FATE", "CRSP", "NTLA", "EDIT", "BEAM",
-        "VCYT", "NSTG", "AXSM", "PTGX", "CDNA", "PRVA", "MYOV", "RETA",
+        # Note: Removed delisted tickers (SGEN, HZNP, IMMU, BLUE, NSTG), BGNE->ONC
+        "AMGN", "GILD", "BIIB", "MRNA", "BNTX", "LGND", "TECH",
+        "ONC", "RGEN", "ROIV", "NTRA", "DAWN", "PCVX", "ARVN",
+        "LEGN", "FATE", "CRSP", "NTLA", "EDIT", "BEAM",
+        "VCYT", "AXSM", "PTGX", "CDNA", "PRVA", "MYOV", "RETA",
         
         # Additional IBB-specific holdings
         "FOLD", "BBIO", "EPRX", "GOSS", "RNA", "RYTM", "CGEM", "CLDX",
@@ -66,13 +67,14 @@ ETF_HOLDINGS = {
     "NBI": [
         # NASDAQ Biotech Index (~200 stocks)
         # Significant overlap with IBB but includes some unique names
+        # Note: Removed delisted tickers (SGEN, HZNP, IMMU, BLUE, NSTG), BGNE->ONC
         "VRTX", "REGN", "AMGN", "GILD", "BIIB", "ALNY", "MRNA", "BNTX",
-        "BMRN", "IONS", "INCY", "EXEL", "JAZZ", "UTHR", "SGEN", "LGND",
-        "SRPT", "ARGX", "NBIX", "TECH", "RARE", "ACAD", "BGNE", "RGEN",
-        
+        "BMRN", "IONS", "INCY", "EXEL", "JAZZ", "UTHR", "LGND",
+        "SRPT", "ARGX", "NBIX", "TECH", "RARE", "ACAD", "ONC", "RGEN",
+
         # Additional NBI constituents
-        "ROIV", "NTRA", "HZNP", "DAWN", "PCVX", "ARVN", "LEGN", "IMMU",
-        "BLUE", "FATE", "CRSP", "NTLA", "EDIT", "BEAM", "VCYT", "NSTG",
+        "ROIV", "NTRA", "DAWN", "PCVX", "ARVN", "LEGN",
+        "FATE", "CRSP", "NTLA", "EDIT", "BEAM", "VCYT",
         "AXSM", "PTGX", "CDNA", "PRVA", "MYOV", "RETA", "FOLD", "BBIO",
         "EPRX", "GOSS", "RNA", "RYTM", "CGEM", "CLDX", "DRMA", "ETNB",
         "FGEN", "GLPG", "ICPT", "ITCI", "MDGL", "NVAX", "PCRX", "RGNX",

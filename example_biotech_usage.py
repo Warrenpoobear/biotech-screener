@@ -80,10 +80,11 @@ def example_pilot_universe():
     print("=" * 70)
     
     # Your 20-ticker pilot universe (adjust to your actual tickers)
+    # Note: BLUE (bluebird bio) removed - acquired by Carlyle/SK Capital in 2025
     pilot_tickers = [
         "AMGN", "BIIB", "GILD", "REGN", "VRTX",  # Large cap
         "ALNY", "BMRN", "IONS", "SRPT", "INCY",  # Mid cap
-        "ARWR", "FOLD", "SAGE", "BLUE", "CRSP",  # Clinical stage
+        "ARWR", "FOLD", "SAGE", "FATE", "CRSP",  # Clinical stage
         "EDIT", "NTLA", "BEAM", "VERV", "PRVB",  # Gene editing
     ]
     
