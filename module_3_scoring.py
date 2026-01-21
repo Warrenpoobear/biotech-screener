@@ -69,6 +69,25 @@ PROXIMITY_HORIZON_DAYS = 270  # Look-ahead window for upcoming catalysts
 PROXIMITY_HALF_LIFE_DAYS = 120  # Decay half-life for proximity score (configurable)
 PROXIMITY_SCALE_FACTOR = Decimal("2.0")  # Scale factor to normalize to 0-100
 
+# Deterministic bucket-based proximity scoring for calendar events
+# Maps days-to-event to (base_score, max_score) ranges
+# Used when no delta events exist but upcoming events do
+PROXIMITY_BUCKET_SCORING = {
+    30: (Decimal("80"), Decimal("100")),   # ≤30d → 80-100
+    60: (Decimal("65"), Decimal("80")),    # ≤60d → 65-80
+    90: (Decimal("55"), Decimal("70")),    # ≤90d → 55-70
+}
+PROXIMITY_NEUTRAL_BASE = Decimal("50")  # >90d → neutral baseline
+
+# Severity weights for proximity bonus calculation
+PROXIMITY_SEVERITY_WEIGHT = {
+    EventSeverity.CRITICAL_POSITIVE: Decimal("1.0"),
+    EventSeverity.POSITIVE: Decimal("0.6"),
+    EventSeverity.NEUTRAL: Decimal("0.3"),
+    EventSeverity.NEGATIVE: Decimal("0.0"),  # No bonus for negative events
+    EventSeverity.SEVERE_NEGATIVE: Decimal("0.0"),
+}
+
 
 # =============================================================================
 # RECENCY / DECAY CALCULATION
@@ -158,6 +177,121 @@ def compute_staleness_factor(
 # =============================================================================
 # PROXIMITY SCORING (UPCOMING EVENTS)
 # =============================================================================
+
+def compute_bucket_proximity_score(
+    events: List[CatalystEventV2],
+    as_of_date: date,
+) -> Tuple[Decimal, int]:
+    """
+    Compute deterministic bucket-based proximity score for upcoming calendar events.
+
+    Used when no delta events exist but upcoming events do. Provides non-neutral
+    scores based on days-to-event and event severity.
+
+    Bucket mapping:
+        ≤30d → 80-100 (high catalyst proximity)
+        ≤60d → 65-80
+        ≤90d → 55-70
+        >90d → 50 (neutral baseline)
+
+    Within each bucket, the score is interpolated based on:
+    - Days within bucket (closer = higher)
+    - Event severity weight (CRITICAL_POSITIVE > POSITIVE > NEUTRAL)
+    - Confidence level
+
+    Args:
+        events: List of catalyst events
+        as_of_date: Point-in-time date
+
+    Returns:
+        (bucket_proximity_score, n_upcoming)
+        Score is clamped to [0, 100]
+    """
+    if not events:
+        return (PROXIMITY_NEUTRAL_BASE, 0)
+
+    # Find upcoming events and their days-to-event
+    upcoming_events: List[Tuple[CatalystEventV2, int]] = []
+
+    for event in events:
+        if not event.event_date:
+            continue
+
+        try:
+            event_d = date.fromisoformat(event.event_date)
+        except (ValueError, TypeError):
+            continue
+
+        days_to_event = (event_d - as_of_date).days
+
+        # Only consider future events within 90-day horizon for bucket scoring
+        if days_to_event > 0 and days_to_event <= 90:
+            upcoming_events.append((event, days_to_event))
+
+    if not upcoming_events:
+        return (PROXIMITY_NEUTRAL_BASE, 0)
+
+    # Sort by days_to_event (closest first), then by severity (best first)
+    severity_order = {
+        EventSeverity.CRITICAL_POSITIVE: 0,
+        EventSeverity.POSITIVE: 1,
+        EventSeverity.NEUTRAL: 2,
+        EventSeverity.NEGATIVE: 3,
+        EventSeverity.SEVERE_NEGATIVE: 4,
+    }
+    upcoming_events.sort(key=lambda x: (x[1], severity_order.get(x[0].event_severity, 2)))
+
+    # Use closest event for base score, with contributions from all events
+    closest_event, closest_days = upcoming_events[0]
+
+    # Determine base bucket
+    base_score = PROXIMITY_NEUTRAL_BASE
+    max_score = PROXIMITY_NEUTRAL_BASE
+    for threshold in sorted(PROXIMITY_BUCKET_SCORING.keys()):
+        if closest_days <= threshold:
+            base_score, max_score = PROXIMITY_BUCKET_SCORING[threshold]
+            break
+
+    # Calculate weighted bonus from all upcoming events
+    total_bonus = Decimal("0")
+    max_bonus = max_score - base_score
+
+    for event, days in upcoming_events:
+        # Severity weight
+        severity_weight = PROXIMITY_SEVERITY_WEIGHT.get(
+            event.event_severity, Decimal("0.3")
+        )
+
+        # Confidence weight
+        confidence_weight = CONFIDENCE_WEIGHTS.get(
+            event.confidence, Decimal("0.5")
+        )
+
+        # Days factor: closer events contribute more (linear within bucket)
+        if closest_days <= 30:
+            days_factor = Decimal(30 - days) / Decimal("30")
+        elif closest_days <= 60:
+            days_factor = Decimal(60 - days) / Decimal("30")
+        else:
+            days_factor = Decimal(90 - days) / Decimal("30")
+
+        # Combined contribution
+        contrib = severity_weight * confidence_weight * days_factor
+        total_bonus += contrib
+
+    # Scale bonus (cap at max_bonus, diminishing returns for multiple events)
+    # Use sqrt for diminishing returns: bonus = max_bonus * min(1, sqrt(total_bonus))
+    if total_bonus > Decimal("0"):
+        # Simple approach: cap at max_bonus with diminishing returns
+        scaled_bonus = max_bonus * min(Decimal("1"), total_bonus)
+    else:
+        scaled_bonus = Decimal("0")
+
+    final_score = base_score + scaled_bonus
+    final_score = max(SCORE_MIN, min(SCORE_MAX, final_score))
+
+    return (final_score.quantize(Decimal("0.01")), len(upcoming_events))
+
 
 def compute_proximity_score(
     events: List[CatalystEventV2],
@@ -414,9 +548,10 @@ def calculate_score_blended(
     Calculate blended score with confidence and recency weighting.
 
     Formula:
-    - For each event: contribution = severity_score * confidence_weight * recency_weight
+    - For each past event: contribution = severity_score * confidence_weight * recency_weight
     - Sum all contributions
     - Apply staleness penalty if applicable
+    - If NO past events but upcoming calendar events exist: use bucket proximity scoring
     - Clamp to [0, 100]
 
     Args:
@@ -432,17 +567,21 @@ def calculate_score_blended(
     # Accumulate weighted contributions
     weighted_sums: Dict[EventSeverity, Decimal] = {sev: Decimal("0") for sev in EventSeverity}
     total_contribution = Decimal("0")
+    n_past_events = 0
+    n_future_events = 0
 
     for event in events:
-        # Skip future events (PIT safety)
+        # Check if event is in the future (skip for delta scoring but track for proximity)
         if event.event_date:
             try:
                 event_d = date.fromisoformat(event.event_date)
                 if event_d > as_of_date:
+                    n_future_events += 1
                     continue
             except (ValueError, TypeError):
                 pass
 
+        n_past_events += 1
         severity = event.event_severity
         confidence = event.confidence
 
@@ -458,6 +597,13 @@ def calculate_score_blended(
 
         total_contribution += contribution
         weighted_sums[severity] += confidence_weight * recency_weight
+
+    # If no past events but future events exist, use bucket proximity scoring
+    # This ensures calendar events produce non-neutral scores
+    if n_past_events == 0 and n_future_events > 0:
+        bucket_score, n_upcoming = compute_bucket_proximity_score(events, as_of_date)
+        # Return bucket score with empty weighted counts (no past events to count)
+        return (bucket_score, {})
 
     # Apply staleness penalty
     staleness = compute_staleness_factor(events, as_of_date)
