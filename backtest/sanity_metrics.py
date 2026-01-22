@@ -17,7 +17,7 @@ from collections import defaultdict
 from datetime import datetime, timezone
 from decimal import Decimal
 from pathlib import Path
-from statistics import mean, stdev, correlation
+from statistics import mean, stdev, correlation, StatisticsError
 from typing import Any, Dict, List, Optional, Tuple
 
 import sys
@@ -327,20 +327,20 @@ def compute_factor_stability(
         try:
             if len(set(clinical)) > 1 and len(set(composite)) > 1:
                 factor_corrs["clinical"].append(correlation(clinical, composite))
-        except:
-            pass
-        
+        except (ValueError, ZeroDivisionError, StatisticsError):
+            pass  # Correlation undefined for this data
+
         try:
             if len(set(financial)) > 1 and len(set(composite)) > 1:
                 factor_corrs["financial"].append(correlation(financial, composite))
-        except:
-            pass
-        
+        except (ValueError, ZeroDivisionError, StatisticsError):
+            pass  # Correlation undefined for this data
+
         try:
             if len(set(catalyst)) > 1 and len(set(composite)) > 1:
                 factor_corrs["catalyst"].append(correlation(catalyst, composite))
-        except:
-            pass
+        except (ValueError, ZeroDivisionError, StatisticsError):
+            pass  # Correlation undefined for this data
     
     # Summarize
     results = {
