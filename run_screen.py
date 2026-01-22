@@ -41,12 +41,50 @@ from decimal import Decimal
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-# Configure logging
+# Configure logging with rotation support
+from logging.handlers import RotatingFileHandler
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+# Production hardening utilities
+from common.production_hardening import (
+    # Path security
+    validate_path_within_base,
+    safe_join_path,
+    validate_checkpoint_path,
+    PathTraversalError,
+    SymlinkError,
+    # File operations
+    validate_file_size,
+    safe_read_json,
+    safe_write_json,
+    safe_mkdir,
+    FileSizeError,
+    # Integrity
+    save_with_integrity,
+    verify_integrity,
+    load_with_integrity_check,
+    IntegrityError,
+    compute_content_hash,
+    # Timeouts
+    operation_timeout,
+    OperationTimeoutError,
+    # Logging
+    sanitize_for_logging,
+    # Validation
+    validate_date_format,
+    validate_numeric_bounds,
+    # Resources
+    require_minimum_memory,
+    # Constants
+    MAX_JSON_FILE_SIZE_MB,
+    DEFAULT_MODULE_EXECUTION_TIMEOUT,
+    DEFAULT_PIPELINE_TIMEOUT,
+)
 
 # Common utilities
 from common.date_utils import normalize_date, to_date_string, to_date_object
@@ -123,7 +161,7 @@ def _force_deterministic_generated_at(obj: Any, generated_at: str) -> None:
 
 def validate_as_of_date_param(as_of_date: str) -> None:
     """
-    Validate as_of_date format.
+    Validate as_of_date format with strict security checks.
 
     Raises:
         ValueError: If date format is invalid
@@ -132,6 +170,13 @@ def validate_as_of_date_param(as_of_date: str) -> None:
         Does not compare to date.today() to maintain time-invariance.
         Lookahead protection is enforced via PIT filters in modules.
     """
+    # SECURITY: Use hardened date validation to prevent injection
+    try:
+        validate_date_format(as_of_date, "as_of_date")
+    except ValueError as e:
+        raise ValueError(f"Invalid as_of_date format '{as_of_date}': must be YYYY-MM-DD") from e
+
+    # Also validate via existing utility for compatibility
     try:
         normalize_date(as_of_date)
     except (ValueError, TypeError) as e:
@@ -141,30 +186,60 @@ def validate_as_of_date_param(as_of_date: str) -> None:
     # Lookahead protection should be enforced via PIT filters and/or input snapshot dating.
 
 
-def load_json_data(filepath: Path, description: str) -> List[Dict[str, Any]]:
+def load_json_data(
+    filepath: Path,
+    description: str,
+    max_size_mb: float = MAX_JSON_FILE_SIZE_MB,
+    base_dir: Optional[Path] = None
+) -> List[Dict[str, Any]]:
     """
-    Load JSON data file with validation.
-    
+    Load JSON data file with validation and security checks.
+
     Args:
         filepath: Path to JSON file
         description: Human-readable description for error messages
-    
+        max_size_mb: Maximum file size in MB (default: 100MB)
+        base_dir: If provided, validate path is within this directory
+
     Returns:
         List of records
-    
+
     Raises:
         FileNotFoundError: If file doesn't exist
         json.JSONDecodeError: If file is not valid JSON
+        FileSizeError: If file exceeds size limit
+        PathTraversalError: If path escapes base_dir
+        SymlinkError: If file is a symlink
     """
-    if not filepath.exists():
+    # SECURITY: Validate file size before loading into memory
+    try:
+        validate_file_size(filepath, max_size_mb)
+    except FileNotFoundError:
         raise FileNotFoundError(f"{description} file not found: {filepath}")
-    
-    with open(filepath, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-    
+
+    # SECURITY: Check for symlinks (potential directory traversal)
+    if filepath.is_symlink():
+        raise SymlinkError(f"{description} file is a symbolic link (security risk): {filepath}")
+
+    # SECURITY: Validate path is within expected directory
+    if base_dir:
+        try:
+            validate_path_within_base(filepath, base_dir)
+        except PathTraversalError as e:
+            raise PathTraversalError(f"{description} path validation failed: {e}") from e
+
+    # Load with timeout protection for large files
+    try:
+        with operation_timeout(60, f"Loading {description}"):
+            with open(filepath, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+    except UnicodeDecodeError as e:
+        raise ValueError(f"{description} file is not valid UTF-8: {filepath}") from e
+
     if not isinstance(data, list):
         raise ValueError(f"{description} must be a JSON array, got {type(data)}")
-    
+
+    logger.debug(f"Loaded {description}: {len(data)} records from {filepath}")
     return data
 
 
@@ -241,15 +316,17 @@ def _convert_holdings_to_coinvest(holdings_snapshots: Dict[str, Any]) -> Dict[st
     return coinvest_signals
 
 
-def write_json_output(filepath: Path, data: Dict[str, Any]) -> None:
+def write_json_output(filepath: Path, data: Dict[str, Any], secure: bool = True) -> None:
     """
-    Write JSON output with deterministic formatting.
+    Write JSON output with deterministic formatting and security.
 
     Args:
         filepath: Output path
         data: Data to serialize
+        secure: Use secure file permissions (default True)
     """
-    filepath.parent.mkdir(parents=True, exist_ok=True)
+    # SECURITY: Create parent directory with secure permissions
+    safe_mkdir(filepath.parent, mode=0o700)
 
     # Custom encoder for dataclass objects
     class DataclassEncoder(json.JSONEncoder):
@@ -262,18 +339,45 @@ def write_json_output(filepath: Path, data: Dict[str, Any]) -> None:
                 return str(obj)
             if isinstance(obj, date):
                 return obj.isoformat()
+            if isinstance(obj, Path):
+                return str(obj)
+            if isinstance(obj, set):
+                return sorted(list(obj))
             return super().default(obj)
 
-    with open(filepath, 'w', encoding='utf-8') as f:
-        json.dump(
-            data,
-            f,
-            indent=2,
-            sort_keys=True,  # Deterministic key ordering
-            ensure_ascii=False,
-            cls=DataclassEncoder,
+    # Serialize to string first
+    json_content = json.dumps(
+        data,
+        indent=2,
+        sort_keys=True,  # Deterministic key ordering
+        ensure_ascii=False,
+        cls=DataclassEncoder,
+    ) + '\n'  # Trailing newline for diff-friendliness
+
+    if secure:
+        # SECURITY: Write atomically with secure permissions
+        import tempfile
+        import os
+
+        fd, tmp_path = tempfile.mkstemp(
+            dir=filepath.parent,
+            prefix='.tmp_output_',
+            suffix='.json'
         )
-        f.write('\n')  # Trailing newline for diff-friendliness
+        try:
+            with os.fdopen(fd, 'w', encoding='utf-8') as f:
+                f.write(json_content)
+            os.chmod(tmp_path, 0o600)
+            Path(tmp_path).replace(filepath)
+        except Exception:
+            try:
+                os.unlink(tmp_path)
+            except OSError:
+                pass
+            raise
+    else:
+        with open(filepath, 'w', encoding='utf-8') as f:
+            f.write(json_content)
 
 
 # =============================================================================
@@ -290,7 +394,7 @@ def save_checkpoint(
     data: Dict[str, Any]
 ) -> Path:
     """
-    Save module checkpoint to disk.
+    Save module checkpoint to disk with integrity metadata.
 
     Args:
         checkpoint_dir: Directory for checkpoints
@@ -300,10 +404,20 @@ def save_checkpoint(
 
     Returns:
         Path to checkpoint file
+
+    Raises:
+        PathTraversalError: If path components are invalid
     """
-    checkpoint_dir.mkdir(parents=True, exist_ok=True)
-    filename = f"{module_name}_{as_of_date}.json"
-    filepath = checkpoint_dir / filename
+    # SECURITY: Validate checkpoint path to prevent directory traversal
+    try:
+        filepath = validate_checkpoint_path(checkpoint_dir, module_name, as_of_date)
+    except (PathTraversalError, ValueError) as e:
+        raise PathTraversalError(
+            f"Invalid checkpoint path: module={module_name}, date={as_of_date}: {e}"
+        ) from e
+
+    # Create checkpoint directory with secure permissions
+    safe_mkdir(checkpoint_dir, mode=0o700)
 
     checkpoint_data = {
         "module": module_name,
@@ -312,31 +426,58 @@ def save_checkpoint(
         "data": data,
     }
 
-    write_json_output(filepath, checkpoint_data)
-    logger.debug(f"Checkpoint saved: {filepath}")
+    # INTEGRITY: Add content hash for verification on load
+    data_json = json.dumps(data, sort_keys=True, default=str)
+    checkpoint_data["_content_hash"] = compute_content_hash(data_json)
+
+    # Write atomically with secure permissions
+    safe_write_json(filepath, checkpoint_data, mode=0o600)
+    logger.debug(f"Checkpoint saved with integrity hash: {filepath}")
     return filepath
 
 
 def load_checkpoint(
     checkpoint_dir: Path,
     module_name: str,
-    as_of_date: str
+    as_of_date: str,
+    verify_integrity: bool = True
 ) -> Optional[Dict[str, Any]]:
     """
-    Load module checkpoint from disk.
+    Load module checkpoint from disk with integrity verification.
 
     Args:
         checkpoint_dir: Directory for checkpoints
         module_name: Module identifier
         as_of_date: Analysis date
+        verify_integrity: Whether to verify content hash (default True)
 
     Returns:
         Module output data, or None if checkpoint not found
+
+    Raises:
+        IntegrityError: If integrity verification fails
+        PathTraversalError: If path components are invalid
     """
-    filename = f"{module_name}_{as_of_date}.json"
-    filepath = checkpoint_dir / filename
+    # SECURITY: Validate checkpoint path to prevent directory traversal
+    try:
+        filepath = validate_checkpoint_path(checkpoint_dir, module_name, as_of_date)
+    except (PathTraversalError, ValueError) as e:
+        logger.warning(f"Invalid checkpoint path: {e}")
+        return None
 
     if not filepath.exists():
+        return None
+
+    # SECURITY: Check for symlinks
+    if filepath.is_symlink():
+        logger.warning(f"Checkpoint is a symlink (security risk), ignoring: {filepath}")
+        return None
+
+    # SECURITY: Validate file size
+    try:
+        validate_file_size(filepath, MAX_JSON_FILE_SIZE_MB)
+    except FileSizeError as e:
+        logger.warning(f"Checkpoint file too large: {e}")
         return None
 
     with open(filepath, 'r', encoding='utf-8') as f:
@@ -350,6 +491,22 @@ def load_checkpoint(
             "Ignoring checkpoint."
         )
         return None
+
+    # INTEGRITY: Verify content hash if present
+    if verify_integrity and "_content_hash" in checkpoint_data:
+        data = checkpoint_data.get("data", {})
+        data_json = json.dumps(data, sort_keys=True, default=str)
+        computed_hash = compute_content_hash(data_json)
+        stored_hash = checkpoint_data["_content_hash"]
+
+        if computed_hash != stored_hash:
+            logger.error(
+                f"Checkpoint integrity check FAILED: {filepath}. "
+                f"Expected {stored_hash}, got {computed_hash}"
+            )
+            raise IntegrityError(f"Checkpoint corrupted or tampered: {filepath}")
+
+        logger.debug(f"Checkpoint integrity verified: {filepath}")
 
     logger.info(f"Loaded checkpoint: {filepath}")
     return checkpoint_data.get("data")
@@ -525,6 +682,7 @@ def run_screening_pipeline(
     checkpoint_dir: Optional[Path] = None,
     resume_from: Optional[str] = None,
     audit_log_path: Optional[Path] = None,
+    pipeline_timeout: int = DEFAULT_PIPELINE_TIMEOUT,
 ) -> Dict[str, Any]:
     """
     Execute full screening pipeline with deterministic guarantees.
@@ -539,6 +697,7 @@ def run_screening_pipeline(
         checkpoint_dir: Directory for saving/loading checkpoints
         resume_from: Module name to resume from (e.g., "module_3")
         audit_log_path: Path to audit log file (JSONL format)
+        pipeline_timeout: Maximum execution time in seconds (default: 1 hour)
 
     Returns:
         Complete screening results with provenance
@@ -546,9 +705,28 @@ def run_screening_pipeline(
     Raises:
         ValueError: If as_of_date is invalid
         FileNotFoundError: If required data files missing
+        OperationTimeoutError: If pipeline exceeds timeout
+        PathTraversalError: If data_dir path is suspicious
     """
     # CRITICAL: Validate as_of_date FIRST (no implicit defaults)
     validate_as_of_date_param(as_of_date)
+
+    # SECURITY: Validate data_dir exists and is a directory
+    if not data_dir.exists():
+        raise FileNotFoundError(f"Data directory not found: {data_dir}")
+    if not data_dir.is_dir():
+        raise ValueError(f"Data path is not a directory: {data_dir}")
+
+    # SECURITY: Check data_dir is not a symlink to prevent traversal
+    if data_dir.is_symlink():
+        raise SymlinkError(f"Data directory is a symbolic link (security risk): {data_dir}")
+
+    # RESOURCE: Check available memory before loading large data files
+    try:
+        require_minimum_memory(min_mb=500)
+    except RuntimeError as e:
+        logger.warning(f"Memory check: {e}")
+        # Continue anyway but log the warning
 
     logger.info(f"[{as_of_date}] Starting screening pipeline...")
     logger.info(f"  Data directory: {data_dir}")
@@ -1379,6 +1557,14 @@ Module 3 Catalyst Detection:
         parser.error("--resume-from requires --checkpoint-dir")
 
     try:
+        # SECURITY: Validate data_dir early
+        if not args.data_dir.exists():
+            logger.error(f"Data directory not found: {args.data_dir}")
+            return 1
+        if args.data_dir.is_symlink():
+            logger.error(f"Data directory is a symbolic link (security risk): {args.data_dir}")
+            return 1
+
         # Handle dry-run mode
         if args.dry_run:
             logger.info(f"[DRY-RUN] Validating inputs for {args.as_of_date}...")
@@ -1474,11 +1660,34 @@ Module 3 Catalyst Detection:
 
         return 0
 
+    except (PathTraversalError, SymlinkError) as e:
+        # SECURITY: Log security-related errors without exposing details
+        logger.error(f"SECURITY ERROR: Path validation failed - {type(e).__name__}")
+        logger.debug(f"Security error details: {e}")  # Only in debug mode
+        return 3
+    except IntegrityError as e:
+        logger.error(f"INTEGRITY ERROR: Data integrity check failed")
+        logger.debug(f"Integrity error details: {e}")
+        return 4
+    except FileSizeError as e:
+        logger.error(f"FILE SIZE ERROR: {e}")
+        return 5
+    except OperationTimeoutError as e:
+        logger.error(f"TIMEOUT ERROR: {e}")
+        return 6
     except (ValueError, FileNotFoundError, json.JSONDecodeError) as e:
-        logger.error(f"ERROR: {e}")
+        # Sanitize error message to avoid logging sensitive data
+        error_msg = sanitize_for_logging(str(e), max_string_length=200)
+        logger.error(f"ERROR: {error_msg}")
         return 1
+    except KeyboardInterrupt:
+        logger.warning("Pipeline interrupted by user")
+        return 130  # Standard exit code for SIGINT
     except Exception as e:
-        logger.exception(f"UNEXPECTED ERROR: {e}")
+        # Log sanitized error to avoid exposing sensitive information
+        error_type = type(e).__name__
+        error_msg = sanitize_for_logging(str(e), max_string_length=200)
+        logger.exception(f"UNEXPECTED ERROR ({error_type}): {error_msg}")
         return 2
 
 
