@@ -29,6 +29,11 @@ from common.production_hardening import (
     PathTraversalError,
     SecurityError,
     SymlinkError,
+    DateParseError,
+    FileOperationError,
+    FileReadError,
+    FileWriteError,
+    DirectoryError,
     # Path validation
     safe_join_path,
     validate_checkpoint_path,
@@ -47,12 +52,33 @@ from common.production_hardening import (
     safe_read_json,
     safe_write_json,
     validate_file_size,
+    # File I/O with error handling
+    safe_mkdir_with_error,
+    safe_file_write,
+    safe_file_read,
+    safe_json_write,
+    safe_json_read,
     # Logging
     sanitize_for_logging,
+    ModuleLogger,
+    get_module_logger,
     # Validation
     validate_date_format,
     validate_numeric_bounds,
     validate_ticker_format,
+    # Safe date parsing
+    safe_parse_date,
+    safe_parse_date_or_none,
+    # Safe dict access
+    safe_get_nested,
+    safe_get_decimal,
+    safe_get_int,
+    safe_get_str,
+    # Decimal safety
+    DECIMAL_BOUNDS,
+    clamp_decimal,
+    safe_decimal_divide,
+    validate_decimal_field,
     # Resources
     check_available_memory_mb,
     # Constants
@@ -412,14 +438,15 @@ class TestLoggingSanitization:
         assert result == "[REDACTED]"
 
     def test_sanitize_for_logging_nested_dicts(self):
-        """Nested dicts should be sanitized recursively."""
+        """Nested dicts should be sanitized recursively when no whitelist."""
         data = {
             "outer": {
                 "api_key": "secret",
                 "data": {"count": 5},
             }
         }
-        result = sanitize_for_logging(data)
+        # Pass empty set for safe_keys to enable full recursive sanitization
+        result = sanitize_for_logging(data, safe_keys=set())
         assert result["outer"]["api_key"] == "[REDACTED]"
 
 
@@ -585,3 +612,340 @@ class TestHardeningIntegration:
 
         assert len(loaded) == 2
         assert loaded[0]["ticker"] == "AAPL"
+
+
+# =============================================================================
+# Safe Date Parsing Tests
+# =============================================================================
+
+
+class TestSafeDateParsing:
+    """Tests for safe date parsing utilities."""
+
+    def test_safe_parse_date_valid_iso(self):
+        """Valid ISO date strings should parse correctly."""
+        result = safe_parse_date("2026-01-15")
+        assert result == date(2026, 1, 15)
+
+    def test_safe_parse_date_with_whitespace(self):
+        """Whitespace around date should be trimmed."""
+        result = safe_parse_date("  2026-01-15  ")
+        assert result == date(2026, 1, 15)
+
+    def test_safe_parse_date_none_with_default(self):
+        """None with default should return default."""
+        default = date(2026, 1, 1)
+        result = safe_parse_date(None, default=default)
+        assert result == default
+
+    def test_safe_parse_date_none_without_default(self):
+        """None without default should raise DateParseError."""
+        with pytest.raises(DateParseError) as exc_info:
+            safe_parse_date(None, field_name="test_date")
+        assert "test_date" in str(exc_info.value)
+
+    def test_safe_parse_date_empty_string(self):
+        """Empty string without default should raise DateParseError."""
+        with pytest.raises(DateParseError):
+            safe_parse_date("")
+
+    def test_safe_parse_date_invalid_format(self):
+        """Invalid date format should raise DateParseError."""
+        with pytest.raises(DateParseError) as exc_info:
+            safe_parse_date("not-a-date")
+        assert "invalid date format" in str(exc_info.value).lower()
+
+    def test_safe_parse_date_wrong_type(self):
+        """Non-string type should raise DateParseError."""
+        with pytest.raises(DateParseError):
+            safe_parse_date(12345)
+
+    def test_safe_parse_date_or_none_valid(self):
+        """Valid date should parse correctly."""
+        result = safe_parse_date_or_none("2026-01-15")
+        assert result == date(2026, 1, 15)
+
+    def test_safe_parse_date_or_none_invalid(self):
+        """Invalid date should return None."""
+        result = safe_parse_date_or_none("not-a-date")
+        assert result is None
+
+    def test_safe_parse_date_or_none_none_input(self):
+        """None input should return None."""
+        result = safe_parse_date_or_none(None)
+        assert result is None
+
+
+# =============================================================================
+# Safe Nested Dict Access Tests
+# =============================================================================
+
+
+class TestSafeNestedDictAccess:
+    """Tests for safe nested dict access utilities."""
+
+    def test_safe_get_nested_simple(self):
+        """Simple nested access should work."""
+        data = {"a": {"b": {"c": 1}}}
+        assert safe_get_nested(data, "a", "b", "c") == 1
+
+    def test_safe_get_nested_missing_key(self):
+        """Missing key should return default."""
+        data = {"a": {"b": 1}}
+        assert safe_get_nested(data, "a", "x", default=0) == 0
+
+    def test_safe_get_nested_none_data(self):
+        """None data should return default."""
+        assert safe_get_nested(None, "a", "b", default="default") == "default"
+
+    def test_safe_get_nested_non_dict_intermediate(self):
+        """Non-dict intermediate should return default."""
+        data = {"a": "not_a_dict"}
+        assert safe_get_nested(data, "a", "b", default=0) == 0
+
+    def test_safe_get_decimal_valid(self):
+        """Valid decimal should parse correctly."""
+        data = {"score": "85.50"}
+        result = safe_get_decimal(data, "score")
+        assert result == Decimal("85.50")
+
+    def test_safe_get_decimal_integer(self):
+        """Integer should convert to decimal."""
+        data = {"score": 85}
+        result = safe_get_decimal(data, "score")
+        assert result == Decimal("85")
+
+    def test_safe_get_decimal_with_bounds(self):
+        """Bounds should be enforced."""
+        data = {"score": "150"}
+        result = safe_get_decimal(data, "score", max_val=Decimal("100"))
+        assert result == Decimal("100")
+
+        data = {"score": "-10"}
+        result = safe_get_decimal(data, "score", min_val=Decimal("0"))
+        assert result == Decimal("0")
+
+    def test_safe_get_decimal_invalid(self):
+        """Invalid value should return default."""
+        data = {"score": "not_a_number"}
+        result = safe_get_decimal(data, "score", default=Decimal("0"))
+        assert result == Decimal("0")
+
+    def test_safe_get_decimal_none_data(self):
+        """None data should return default."""
+        result = safe_get_decimal(None, "score", default=Decimal("50"))
+        assert result == Decimal("50")
+
+    def test_safe_get_int_valid(self):
+        """Valid int should parse correctly."""
+        data = {"count": "42"}
+        result = safe_get_int(data, "count")
+        assert result == 42
+
+    def test_safe_get_int_with_bounds(self):
+        """Bounds should be enforced."""
+        data = {"count": 150}
+        result = safe_get_int(data, "count", max_val=100)
+        assert result == 100
+
+    def test_safe_get_int_invalid(self):
+        """Invalid value should return default."""
+        data = {"count": "not_a_number"}
+        result = safe_get_int(data, "count", default=0)
+        assert result == 0
+
+    def test_safe_get_str_valid(self):
+        """Valid string should return correctly."""
+        data = {"name": "test"}
+        result = safe_get_str(data, "name")
+        assert result == "test"
+
+    def test_safe_get_str_truncates(self):
+        """Long string should be truncated."""
+        data = {"name": "a" * 100}
+        result = safe_get_str(data, "name", max_length=10)
+        assert result == "a" * 10
+
+    def test_safe_get_str_converts_non_string(self):
+        """Non-string should be converted."""
+        data = {"value": 123}
+        result = safe_get_str(data, "value")
+        assert result == "123"
+
+
+# =============================================================================
+# Module Logger Tests
+# =============================================================================
+
+
+class TestModuleLogger:
+    """Tests for module logging utilities."""
+
+    def test_module_logger_creation(self):
+        """Module logger should be created correctly."""
+        logger = get_module_logger("test_module", run_id="abc123", as_of_date="2026-01-15")
+        assert logger.module_name == "test_module"
+        assert logger.run_id == "abc123"
+        assert logger.as_of_date == "2026-01-15"
+
+    def test_module_logger_format_context(self):
+        """Context formatting should include all parts."""
+        logger = ModuleLogger("test_module", run_id="abc123def", as_of_date="2026-01-15")
+        context = logger._format_context()
+        assert "[test_module]" in context
+        assert "[run=abc123de]" in context  # First 8 chars of run_id
+        assert "[date=2026-01-15]" in context
+
+    def test_module_logger_timer(self):
+        """Timer should track duration."""
+        logger = get_module_logger("test_module")
+        logger.start_timer("test_operation")
+        time.sleep(0.1)
+        duration = logger.end_timer("test_operation")
+        assert duration >= 0.1
+
+    def test_module_logger_timer_not_found(self):
+        """Missing timer should return 0."""
+        logger = get_module_logger("test_module")
+        duration = logger.end_timer("nonexistent")
+        assert duration == 0.0
+
+
+# =============================================================================
+# Decimal Safety Tests
+# =============================================================================
+
+
+class TestDecimalSafety:
+    """Tests for decimal safety utilities."""
+
+    def test_clamp_decimal_within_bounds(self):
+        """Value within bounds should pass through."""
+        result = clamp_decimal(Decimal("50"), Decimal("0"), Decimal("100"))
+        assert result == Decimal("50")
+
+    def test_clamp_decimal_above_max(self):
+        """Value above max should be clamped."""
+        result = clamp_decimal(Decimal("150"), Decimal("0"), Decimal("100"))
+        assert result == Decimal("100")
+
+    def test_clamp_decimal_below_min(self):
+        """Value below min should be clamped."""
+        result = clamp_decimal(Decimal("-10"), Decimal("0"), Decimal("100"))
+        assert result == Decimal("0")
+
+    def test_clamp_decimal_none(self):
+        """None should return default."""
+        result = clamp_decimal(None, Decimal("0"), Decimal("100"), default=Decimal("50"))
+        assert result == Decimal("50")
+
+    def test_clamp_decimal_non_finite(self):
+        """Non-finite values should return default."""
+        result = clamp_decimal(
+            Decimal("inf"), Decimal("0"), Decimal("100"), default=Decimal("0")
+        )
+        assert result == Decimal("0")
+
+    def test_safe_decimal_divide_normal(self):
+        """Normal division should work."""
+        result = safe_decimal_divide(Decimal("10"), Decimal("2"))
+        assert result == Decimal("5")
+
+    def test_safe_decimal_divide_by_zero(self):
+        """Division by zero should return default."""
+        result = safe_decimal_divide(Decimal("10"), Decimal("0"), default=Decimal("0"))
+        assert result == Decimal("0")
+
+    def test_safe_decimal_divide_none_inputs(self):
+        """None inputs should return default."""
+        result = safe_decimal_divide(None, Decimal("2"), default=Decimal("0"))
+        assert result == Decimal("0")
+
+        result = safe_decimal_divide(Decimal("10"), None, default=Decimal("0"))
+        assert result == Decimal("0")
+
+    def test_safe_decimal_divide_with_max(self):
+        """Result exceeding max should be clamped."""
+        result = safe_decimal_divide(
+            Decimal("1000000"),
+            Decimal("0.001"),
+            max_result=Decimal("1000000")
+        )
+        assert result == Decimal("1000000")
+
+    def test_validate_decimal_field_valid(self):
+        """Valid decimal should pass validation."""
+        result = validate_decimal_field("85.5", "score", bounds_type="score")
+        assert result == Decimal("85.5")
+
+    def test_validate_decimal_field_out_of_bounds(self):
+        """Out of bounds should raise ValueError."""
+        with pytest.raises(ValueError) as exc_info:
+            validate_decimal_field("150", "score", bounds_type="score")
+        assert "above maximum" in str(exc_info.value)
+
+    def test_validate_decimal_field_none_allowed(self):
+        """None should be allowed when specified."""
+        result = validate_decimal_field(None, "score", allow_none=True)
+        assert result is None
+
+    def test_validate_decimal_field_none_not_allowed(self):
+        """None should raise when not allowed."""
+        with pytest.raises(ValueError) as exc_info:
+            validate_decimal_field(None, "score", allow_none=False)
+        assert "required" in str(exc_info.value)
+
+
+# =============================================================================
+# File I/O Error Handling Tests
+# =============================================================================
+
+
+class TestFileIOErrorHandling:
+    """Tests for file I/O error handling utilities."""
+
+    def test_safe_mkdir_with_error_creates_dir(self, tmp_path):
+        """safe_mkdir_with_error should create directory."""
+        new_dir = tmp_path / "new_dir"
+        result = safe_mkdir_with_error(new_dir)
+        assert result.exists()
+        assert result.is_dir()
+
+    def test_safe_file_write_creates_file(self, tmp_path):
+        """safe_file_write should create file atomically."""
+        file_path = tmp_path / "test.txt"
+        result = safe_file_write(file_path, "test content")
+        assert result.exists()
+        assert result.read_text() == "test content"
+
+    def test_safe_file_read_reads_content(self, tmp_path):
+        """safe_file_read should read file content."""
+        file_path = tmp_path / "test.txt"
+        file_path.write_text("test content")
+        content = safe_file_read(file_path)
+        assert content == "test content"
+
+    def test_safe_file_read_file_not_found(self, tmp_path):
+        """safe_file_read should raise FileReadError for missing file."""
+        with pytest.raises(FileReadError) as exc_info:
+            safe_file_read(tmp_path / "nonexistent.txt")
+        assert "not found" in str(exc_info.value).lower()
+
+    def test_safe_json_write_and_read(self, tmp_path):
+        """safe_json_write and safe_json_read should work together."""
+        file_path = tmp_path / "data.json"
+        data = {"key": "value", "number": 42}
+
+        safe_json_write(file_path, data)
+        loaded = safe_json_read(file_path)
+
+        assert loaded == data
+
+    def test_safe_json_read_invalid_json(self, tmp_path):
+        """safe_json_read should raise FileReadError for invalid JSON."""
+        file_path = tmp_path / "invalid.json"
+        file_path.write_text("not valid json {")
+
+        with pytest.raises(FileReadError) as exc_info:
+            safe_json_read(file_path)
+        assert "Invalid JSON" in str(exc_info.value)

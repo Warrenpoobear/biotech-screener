@@ -8,8 +8,12 @@ This module provides security and reliability utilities for production deploymen
 - Secure file operations
 - Input size limits
 - Logging sanitization
+- Safe date parsing
+- Safe nested dict access
+- Module logging factory
+- Decimal overflow protection
 
-Version: 1.0.0
+Version: 1.1.0
 """
 
 import hashlib
@@ -916,6 +920,763 @@ def validate_ticker_format(ticker: str) -> str:
 
 
 # =============================================================================
+# Safe Date Parsing
+# =============================================================================
+
+class DateParseError(Exception):
+    """Raised when date parsing fails."""
+    pass
+
+
+def safe_parse_date(
+    date_str: Optional[str],
+    field_name: str = "date",
+    default: Optional[date] = None
+) -> Optional[date]:
+    """
+    Safely parse a date string with comprehensive error handling.
+
+    Args:
+        date_str: Date string in YYYY-MM-DD format, or None
+        field_name: Name for error messages
+        default: Default value if date_str is None or empty
+
+    Returns:
+        Parsed date object or default
+
+    Raises:
+        DateParseError: If parsing fails and no default provided
+    """
+    if date_str is None or date_str == "":
+        if default is not None:
+            return default
+        raise DateParseError(f"{field_name} is required but was None or empty")
+
+    if not isinstance(date_str, str):
+        raise DateParseError(
+            f"{field_name} must be a string, got {type(date_str).__name__}"
+        )
+
+    date_str = date_str.strip()
+
+    # Try ISO format first (YYYY-MM-DD)
+    try:
+        return date.fromisoformat(date_str)
+    except ValueError:
+        pass
+
+    # Try datetime.strptime as fallback
+    from datetime import datetime
+    for fmt in ("%Y-%m-%d", "%Y/%m/%d", "%d-%m-%Y", "%m/%d/%Y"):
+        try:
+            return datetime.strptime(date_str, fmt).date()
+        except ValueError:
+            continue
+
+    raise DateParseError(
+        f"{field_name} has invalid date format: '{date_str}'. "
+        f"Expected YYYY-MM-DD format."
+    )
+
+
+def safe_parse_date_or_none(date_str: Optional[str], field_name: str = "date") -> Optional[date]:
+    """
+    Parse date string, returning None on any error.
+
+    Args:
+        date_str: Date string or None
+        field_name: Name for logging
+
+    Returns:
+        Parsed date or None
+    """
+    try:
+        return safe_parse_date(date_str, field_name, default=None)
+    except DateParseError:
+        return None
+
+
+# =============================================================================
+# Safe Nested Dict Access
+# =============================================================================
+
+def safe_get_nested(
+    data: Optional[Dict[str, Any]],
+    *keys: str,
+    default: Any = None
+) -> Any:
+    """
+    Safely get a nested value from a dictionary.
+
+    Args:
+        data: Dictionary to traverse
+        *keys: Sequence of keys to follow
+        default: Default value if path not found
+
+    Returns:
+        Value at path or default
+
+    Example:
+        >>> d = {"a": {"b": {"c": 1}}}
+        >>> safe_get_nested(d, "a", "b", "c")
+        1
+        >>> safe_get_nested(d, "a", "x", "c", default=0)
+        0
+    """
+    if data is None:
+        return default
+
+    current = data
+    for key in keys:
+        if not isinstance(current, dict):
+            return default
+        current = current.get(key)
+        if current is None:
+            return default
+
+    return current
+
+
+def safe_get_decimal(
+    data: Optional[Dict[str, Any]],
+    key: str,
+    default: Optional[Decimal] = None,
+    min_val: Optional[Decimal] = None,
+    max_val: Optional[Decimal] = None
+) -> Optional[Decimal]:
+    """
+    Safely extract a Decimal value from a dict with bounds checking.
+
+    Args:
+        data: Dictionary containing the value
+        key: Key to look up
+        default: Default value if not found or invalid
+        min_val: Minimum allowed value (clamps if exceeded)
+        max_val: Maximum allowed value (clamps if exceeded)
+
+    Returns:
+        Decimal value or default
+    """
+    if data is None:
+        return default
+
+    raw = data.get(key)
+    if raw is None:
+        return default
+
+    try:
+        if isinstance(raw, Decimal):
+            value = raw
+        elif isinstance(raw, str):
+            value = Decimal(raw)
+        elif isinstance(raw, (int, float)):
+            value = Decimal(str(raw))
+        else:
+            return default
+
+        # Check for non-finite values
+        if not value.is_finite():
+            return default
+
+        # Apply bounds
+        if min_val is not None and value < min_val:
+            value = min_val
+        if max_val is not None and value > max_val:
+            value = max_val
+
+        return value
+
+    except Exception:
+        return default
+
+
+def safe_get_int(
+    data: Optional[Dict[str, Any]],
+    key: str,
+    default: Optional[int] = None,
+    min_val: Optional[int] = None,
+    max_val: Optional[int] = None
+) -> Optional[int]:
+    """
+    Safely extract an int value from a dict with bounds checking.
+
+    Args:
+        data: Dictionary containing the value
+        key: Key to look up
+        default: Default value if not found or invalid
+        min_val: Minimum allowed value
+        max_val: Maximum allowed value
+
+    Returns:
+        Integer value or default
+    """
+    if data is None:
+        return default
+
+    raw = data.get(key)
+    if raw is None:
+        return default
+
+    try:
+        value = int(raw)
+
+        if min_val is not None and value < min_val:
+            value = min_val
+        if max_val is not None and value > max_val:
+            value = max_val
+
+        return value
+
+    except (ValueError, TypeError):
+        return default
+
+
+def safe_get_str(
+    data: Optional[Dict[str, Any]],
+    key: str,
+    default: Optional[str] = None,
+    max_length: Optional[int] = None
+) -> Optional[str]:
+    """
+    Safely extract a string value from a dict with length limit.
+
+    Args:
+        data: Dictionary containing the value
+        key: Key to look up
+        default: Default value if not found
+        max_length: Maximum string length (truncates if exceeded)
+
+    Returns:
+        String value or default
+    """
+    if data is None:
+        return default
+
+    raw = data.get(key)
+    if raw is None:
+        return default
+
+    try:
+        value = str(raw)
+        if max_length is not None and len(value) > max_length:
+            value = value[:max_length]
+        return value
+    except Exception:
+        return default
+
+
+# =============================================================================
+# Module Logging Factory
+# =============================================================================
+
+class ModuleLogger:
+    """
+    Structured logger for pipeline modules with consistent formatting.
+
+    Provides:
+    - Automatic module name and context
+    - Structured log format with counts/metrics
+    - Sanitization of sensitive data
+    - Performance timing
+    """
+
+    def __init__(
+        self,
+        module_name: str,
+        run_id: Optional[str] = None,
+        as_of_date: Optional[str] = None
+    ):
+        """
+        Initialize module logger.
+
+        Args:
+            module_name: Name of the module (e.g., "module_5_composite")
+            run_id: Optional run identifier for correlation
+            as_of_date: Optional date for context
+        """
+        self.module_name = module_name
+        self.run_id = run_id
+        self.as_of_date = as_of_date
+        self._logger = logging.getLogger(module_name)
+        self._timers: Dict[str, float] = {}
+
+    def _format_context(self) -> str:
+        """Format context prefix for log messages."""
+        parts = [f"[{self.module_name}]"]
+        if self.run_id:
+            parts.append(f"[run={self.run_id[:8]}]")
+        if self.as_of_date:
+            parts.append(f"[date={self.as_of_date}]")
+        return " ".join(parts)
+
+    def info(self, msg: str, **kwargs: Any) -> None:
+        """Log info message with context."""
+        context = self._format_context()
+        if kwargs:
+            sanitized = sanitize_for_logging(kwargs)
+            self._logger.info(f"{context} {msg} {sanitized}")
+        else:
+            self._logger.info(f"{context} {msg}")
+
+    def warning(self, msg: str, **kwargs: Any) -> None:
+        """Log warning message with context."""
+        context = self._format_context()
+        if kwargs:
+            sanitized = sanitize_for_logging(kwargs)
+            self._logger.warning(f"{context} {msg} {sanitized}")
+        else:
+            self._logger.warning(f"{context} {msg}")
+
+    def error(self, msg: str, exc_info: bool = False, **kwargs: Any) -> None:
+        """Log error message with context."""
+        context = self._format_context()
+        if kwargs:
+            sanitized = sanitize_for_logging(kwargs)
+            self._logger.error(f"{context} {msg} {sanitized}", exc_info=exc_info)
+        else:
+            self._logger.error(f"{context} {msg}", exc_info=exc_info)
+
+    def debug(self, msg: str, **kwargs: Any) -> None:
+        """Log debug message with context."""
+        context = self._format_context()
+        if kwargs:
+            sanitized = sanitize_for_logging(kwargs)
+            self._logger.debug(f"{context} {msg} {sanitized}")
+        else:
+            self._logger.debug(f"{context} {msg}")
+
+    def start_timer(self, operation: str) -> None:
+        """Start timing an operation."""
+        import time
+        self._timers[operation] = time.time()
+
+    def end_timer(self, operation: str) -> float:
+        """
+        End timing and log the duration.
+
+        Returns:
+            Duration in seconds, or 0 if timer not found
+        """
+        import time
+        start = self._timers.pop(operation, None)
+        if start is None:
+            return 0.0
+        duration = time.time() - start
+        self.debug(f"{operation} completed", duration_ms=int(duration * 1000))
+        return duration
+
+    def log_counts(self, **counts: int) -> None:
+        """Log a set of counts (e.g., processed=100, errors=5)."""
+        self.info("Counts", **counts)
+
+    def log_start(self, input_count: Optional[int] = None) -> None:
+        """Log module start."""
+        kwargs: Dict[str, Any] = {}
+        if input_count is not None:
+            kwargs["input_count"] = input_count
+        self.info("Starting", **kwargs)
+        self.start_timer("module_execution")
+
+    def log_complete(
+        self,
+        output_count: Optional[int] = None,
+        error_count: int = 0
+    ) -> None:
+        """Log module completion."""
+        duration = self.end_timer("module_execution")
+        kwargs: Dict[str, Any] = {"duration_ms": int(duration * 1000)}
+        if output_count is not None:
+            kwargs["output_count"] = output_count
+        if error_count > 0:
+            kwargs["error_count"] = error_count
+        self.info("Completed", **kwargs)
+
+
+def get_module_logger(
+    module_name: str,
+    run_id: Optional[str] = None,
+    as_of_date: Optional[str] = None
+) -> ModuleLogger:
+    """
+    Get a configured module logger.
+
+    Args:
+        module_name: Name of the module
+        run_id: Optional run identifier
+        as_of_date: Optional date context
+
+    Returns:
+        Configured ModuleLogger instance
+    """
+    return ModuleLogger(module_name, run_id, as_of_date)
+
+
+# =============================================================================
+# Decimal Safety Utilities
+# =============================================================================
+
+# Standard financial bounds
+DECIMAL_BOUNDS = {
+    "score": (Decimal("0"), Decimal("100")),
+    "percentage": (Decimal("-100"), Decimal("100")),
+    "market_cap_mm": (Decimal("0"), Decimal("10000000")),  # 10 trillion
+    "runway_months": (Decimal("0"), Decimal("1200")),  # 100 years
+    "cash": (Decimal("-1000000000000"), Decimal("1000000000000")),  # +/- 1T
+    "burn_rate": (Decimal("-100000000000"), Decimal("100000000000")),  # +/- 100B
+}
+
+
+def clamp_decimal(
+    value: Optional[Decimal],
+    min_val: Decimal,
+    max_val: Decimal,
+    default: Optional[Decimal] = None
+) -> Optional[Decimal]:
+    """
+    Clamp a Decimal value to bounds, handling None and non-finite values.
+
+    Args:
+        value: Value to clamp
+        min_val: Minimum bound
+        max_val: Maximum bound
+        default: Default if value is None or non-finite
+
+    Returns:
+        Clamped value or default
+    """
+    if value is None:
+        return default
+
+    if not isinstance(value, Decimal):
+        try:
+            value = Decimal(str(value))
+        except Exception:
+            return default
+
+    if not value.is_finite():
+        return default
+
+    return max(min_val, min(max_val, value))
+
+
+def safe_decimal_divide(
+    numerator: Optional[Decimal],
+    denominator: Optional[Decimal],
+    default: Decimal = Decimal("0"),
+    max_result: Optional[Decimal] = None
+) -> Decimal:
+    """
+    Safely divide two Decimals with comprehensive error handling.
+
+    Args:
+        numerator: Dividend
+        denominator: Divisor
+        default: Value to return on error or division by zero
+        max_result: Maximum allowed result (prevents overflow)
+
+    Returns:
+        Division result or default
+    """
+    if numerator is None or denominator is None:
+        return default
+
+    try:
+        if denominator == 0:
+            return default
+
+        result = numerator / denominator
+
+        if not result.is_finite():
+            return default
+
+        if max_result is not None and abs(result) > max_result:
+            return max_result if result > 0 else -max_result
+
+        return result
+
+    except Exception:
+        return default
+
+
+def validate_decimal_field(
+    value: Any,
+    field_name: str,
+    bounds_type: str = "score",
+    allow_none: bool = True
+) -> Optional[Decimal]:
+    """
+    Validate and convert a value to Decimal with standard bounds.
+
+    Args:
+        value: Value to validate
+        field_name: Name for error messages
+        bounds_type: Key in DECIMAL_BOUNDS for limits
+        allow_none: Whether None is acceptable
+
+    Returns:
+        Validated Decimal or None
+
+    Raises:
+        ValueError: If validation fails
+    """
+    if value is None:
+        if allow_none:
+            return None
+        raise ValueError(f"{field_name} is required but was None")
+
+    try:
+        if isinstance(value, Decimal):
+            dec_value = value
+        elif isinstance(value, str):
+            dec_value = Decimal(value)
+        elif isinstance(value, (int, float)):
+            dec_value = Decimal(str(value))
+        else:
+            raise ValueError(f"{field_name} has unsupported type: {type(value).__name__}")
+
+        if not dec_value.is_finite():
+            raise ValueError(f"{field_name} must be finite, got: {value}")
+
+        min_val, max_val = DECIMAL_BOUNDS.get(bounds_type, (None, None))
+        if min_val is not None and dec_value < min_val:
+            raise ValueError(f"{field_name} below minimum: {value} < {min_val}")
+        if max_val is not None and dec_value > max_val:
+            raise ValueError(f"{field_name} above maximum: {value} > {max_val}")
+
+        return dec_value
+
+    except Exception as e:
+        if "required" in str(e) or "minimum" in str(e) or "maximum" in str(e):
+            raise
+        raise ValueError(f"{field_name} cannot be converted to Decimal: {value}") from e
+
+
+# =============================================================================
+# File I/O Error Handling
+# =============================================================================
+
+class FileOperationError(Exception):
+    """Base exception for file operation failures."""
+    pass
+
+
+class FileReadError(FileOperationError):
+    """Raised when file read fails."""
+    pass
+
+
+class FileWriteError(FileOperationError):
+    """Raised when file write fails."""
+    pass
+
+
+class DirectoryError(FileOperationError):
+    """Raised when directory operation fails."""
+    pass
+
+
+def safe_mkdir_with_error(
+    path: Union[str, Path],
+    mode: int = 0o700,
+    operation_name: str = "create directory"
+) -> Path:
+    """
+    Create directory with comprehensive error handling.
+
+    Args:
+        path: Directory path
+        mode: Permission mode
+        operation_name: Description for error messages
+
+    Returns:
+        Path object
+
+    Raises:
+        DirectoryError: If creation fails
+    """
+    path = Path(path)
+    try:
+        old_umask = os.umask(0o077)
+        try:
+            path.mkdir(parents=True, exist_ok=True)
+            path.chmod(mode)
+        finally:
+            os.umask(old_umask)
+        return path
+    except PermissionError as e:
+        raise DirectoryError(
+            f"Permission denied while trying to {operation_name}: {path}"
+        ) from e
+    except OSError as e:
+        raise DirectoryError(
+            f"Failed to {operation_name} '{path}': {e}"
+        ) from e
+
+
+def safe_file_write(
+    filepath: Union[str, Path],
+    content: str,
+    operation_name: str = "write file"
+) -> Path:
+    """
+    Write content to file with comprehensive error handling.
+
+    Uses atomic write pattern (temp file + rename).
+
+    Args:
+        filepath: Output file path
+        content: Content to write
+        operation_name: Description for error messages
+
+    Returns:
+        Path to written file
+
+    Raises:
+        FileWriteError: If write fails
+    """
+    filepath = Path(filepath)
+
+    try:
+        # Ensure parent directory exists
+        safe_mkdir_with_error(filepath.parent, operation_name=f"create parent for {operation_name}")
+
+        # Write to temp file first
+        fd, tmp_path = tempfile.mkstemp(
+            dir=filepath.parent,
+            prefix='.tmp_',
+            suffix=filepath.suffix
+        )
+
+        try:
+            with os.fdopen(fd, 'w', encoding='utf-8') as f:
+                f.write(content)
+
+            # Set permissions before rename
+            os.chmod(tmp_path, 0o600)
+
+            # Atomic rename
+            Path(tmp_path).replace(filepath)
+            return filepath
+
+        except Exception:
+            # Clean up temp file on error
+            try:
+                os.unlink(tmp_path)
+            except OSError:
+                pass
+            raise
+
+    except PermissionError as e:
+        raise FileWriteError(
+            f"Permission denied while trying to {operation_name}: {filepath}"
+        ) from e
+    except OSError as e:
+        if "No space left" in str(e) or e.errno == 28:  # ENOSPC
+            raise FileWriteError(
+                f"Disk full while trying to {operation_name}: {filepath}"
+            ) from e
+        raise FileWriteError(
+            f"Failed to {operation_name} '{filepath}': {e}"
+        ) from e
+
+
+def safe_file_read(
+    filepath: Union[str, Path],
+    operation_name: str = "read file"
+) -> str:
+    """
+    Read file content with comprehensive error handling.
+
+    Args:
+        filepath: Path to file
+        operation_name: Description for error messages
+
+    Returns:
+        File content
+
+    Raises:
+        FileReadError: If read fails
+    """
+    filepath = Path(filepath)
+
+    try:
+        if not filepath.exists():
+            raise FileReadError(f"File not found for {operation_name}: {filepath}")
+
+        with open(filepath, 'r', encoding='utf-8') as f:
+            return f.read()
+
+    except FileReadError:
+        raise
+    except PermissionError as e:
+        raise FileReadError(
+            f"Permission denied while trying to {operation_name}: {filepath}"
+        ) from e
+    except UnicodeDecodeError as e:
+        raise FileReadError(
+            f"File is not valid UTF-8 for {operation_name}: {filepath}"
+        ) from e
+    except OSError as e:
+        raise FileReadError(
+            f"Failed to {operation_name} '{filepath}': {e}"
+        ) from e
+
+
+def safe_json_write(
+    filepath: Union[str, Path],
+    data: Any,
+    operation_name: str = "write JSON"
+) -> Path:
+    """
+    Write JSON data to file with comprehensive error handling.
+
+    Args:
+        filepath: Output file path
+        data: Data to serialize
+        operation_name: Description for error messages
+
+    Returns:
+        Path to written file
+
+    Raises:
+        FileWriteError: If write fails
+    """
+    try:
+        content = json.dumps(data, indent=2, sort_keys=True, default=json_serializer)
+        return safe_file_write(filepath, content, operation_name)
+    except (TypeError, ValueError) as e:
+        raise FileWriteError(
+            f"Failed to serialize JSON for {operation_name}: {e}"
+        ) from e
+
+
+def safe_json_read(
+    filepath: Union[str, Path],
+    operation_name: str = "read JSON"
+) -> Any:
+    """
+    Read and parse JSON file with comprehensive error handling.
+
+    Args:
+        filepath: Path to JSON file
+        operation_name: Description for error messages
+
+    Returns:
+        Parsed JSON data
+
+    Raises:
+        FileReadError: If read or parse fails
+    """
+    content = safe_file_read(filepath, operation_name)
+    try:
+        return json.loads(content)
+    except json.JSONDecodeError as e:
+        raise FileReadError(
+            f"Invalid JSON in file for {operation_name}: {filepath}, error at line {e.lineno}"
+        ) from e
+
+
+# =============================================================================
 # Resource Management
 # =============================================================================
 
@@ -1056,6 +1817,11 @@ __all__ = [
     'OperationTimeoutError',
     'SymlinkError',
     'DecompressionBombError',
+    'DateParseError',
+    'FileOperationError',
+    'FileReadError',
+    'FileWriteError',
+    'DirectoryError',
 
     # Path validation
     'validate_path_within_base',
@@ -1081,6 +1847,13 @@ __all__ = [
     'safe_write_json',
     'safe_read_json',
 
+    # File I/O with error handling
+    'safe_mkdir_with_error',
+    'safe_file_write',
+    'safe_file_read',
+    'safe_json_write',
+    'safe_json_read',
+
     # Decompression protection
     'safe_gzip_load',
     'safe_decompress',
@@ -1089,6 +1862,8 @@ __all__ = [
     # Logging
     'sanitize_for_logging',
     'SanitizedLoggerAdapter',
+    'ModuleLogger',
+    'get_module_logger',
 
     # JSON
     'json_serializer',
@@ -1099,6 +1874,22 @@ __all__ = [
     'validate_numeric_bounds',
     'validate_date_format',
     'validate_ticker_format',
+
+    # Safe date parsing
+    'safe_parse_date',
+    'safe_parse_date_or_none',
+
+    # Safe dict access
+    'safe_get_nested',
+    'safe_get_decimal',
+    'safe_get_int',
+    'safe_get_str',
+
+    # Decimal safety
+    'DECIMAL_BOUNDS',
+    'clamp_decimal',
+    'safe_decimal_divide',
+    'validate_decimal_field',
 
     # Resources
     'check_available_memory_mb',
