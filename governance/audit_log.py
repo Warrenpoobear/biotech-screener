@@ -13,12 +13,22 @@ No timestamps - deterministic records only.
 """
 
 import json
+import logging
+import os
+import tempfile
 from dataclasses import dataclass, field, asdict
 from enum import Enum
 from pathlib import Path
 from typing import List, Dict, Optional, Any, Union
 
 from governance.canonical_json import canonical_dumps
+
+logger = logging.getLogger(__name__)
+
+
+class AuditLogError(Exception):
+    """Raised when audit log operations fail."""
+    pass
 
 
 class AuditStage(str, Enum):
@@ -242,18 +252,66 @@ class AuditLog:
 
     def write(self) -> str:
         """
-        Write all records to audit log file.
+        Write all records to audit log file atomically.
+
+        Uses atomic write pattern (temp file + rename) to prevent partial writes.
 
         Returns:
             Path to written file
+
+        Raises:
+            AuditLogError: If write fails
         """
-        self.output_path.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            self.output_path.parent.mkdir(parents=True, exist_ok=True)
+        except PermissionError as e:
+            logger.error(f"Permission denied creating audit log directory: {self.output_path.parent}")
+            raise AuditLogError(f"Cannot create audit log directory: {e}") from e
+        except OSError as e:
+            logger.error(f"Failed to create audit log directory: {e}")
+            raise AuditLogError(f"Cannot create audit log directory: {e}") from e
 
-        with open(self.output_path, 'w', encoding='utf-8') as f:
-            for record in self.records:
-                f.write(self._serialize_record(record) + '\n')
+        # Write to temp file first for atomic operation
+        fd = None
+        tmp_path = None
+        try:
+            fd, tmp_path = tempfile.mkstemp(
+                dir=self.output_path.parent,
+                prefix='.audit_tmp_',
+                suffix='.jsonl'
+            )
+            with os.fdopen(fd, 'w', encoding='utf-8') as f:
+                fd = None  # fd is now owned by the file object
+                for record in self.records:
+                    f.write(self._serialize_record(record) + '\n')
 
-        return str(self.output_path)
+            # Atomic rename
+            Path(tmp_path).replace(self.output_path)
+            logger.debug(f"Audit log written: {self.output_path}")
+            return str(self.output_path)
+
+        except PermissionError as e:
+            logger.error(f"Permission denied writing audit log: {self.output_path}")
+            raise AuditLogError(f"Cannot write audit log: {e}") from e
+        except OSError as e:
+            if "No space left" in str(e) or getattr(e, 'errno', 0) == 28:
+                logger.error(f"Disk full writing audit log: {self.output_path}")
+                raise AuditLogError("Disk full - cannot write audit log") from e
+            logger.error(f"Failed to write audit log: {e}")
+            raise AuditLogError(f"Cannot write audit log: {e}") from e
+        finally:
+            # Clean up fd if still open
+            if fd is not None:
+                try:
+                    os.close(fd)
+                except OSError:
+                    pass
+            # Clean up temp file on failure
+            if tmp_path and Path(tmp_path).exists():
+                try:
+                    os.unlink(tmp_path)
+                except OSError:
+                    pass
 
     def append(self, record: AuditRecord) -> None:
         """
@@ -261,12 +319,33 @@ class AuditLog:
 
         Args:
             record: Record to append
+
+        Raises:
+            AuditLogError: If append fails
         """
         self.records.append(record)
-        self.output_path.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(self.output_path, 'a', encoding='utf-8') as f:
-            f.write(self._serialize_record(record) + '\n')
+        try:
+            self.output_path.parent.mkdir(parents=True, exist_ok=True)
+        except PermissionError as e:
+            logger.error(f"Permission denied creating audit log directory: {self.output_path.parent}")
+            raise AuditLogError(f"Cannot create audit log directory: {e}") from e
+        except OSError as e:
+            logger.error(f"Failed to create audit log directory: {e}")
+            raise AuditLogError(f"Cannot create audit log directory: {e}") from e
+
+        try:
+            with open(self.output_path, 'a', encoding='utf-8') as f:
+                f.write(self._serialize_record(record) + '\n')
+        except PermissionError as e:
+            logger.error(f"Permission denied appending to audit log: {self.output_path}")
+            raise AuditLogError(f"Cannot append to audit log: {e}") from e
+        except OSError as e:
+            if "No space left" in str(e) or getattr(e, 'errno', 0) == 28:
+                logger.error(f"Disk full appending to audit log: {self.output_path}")
+                raise AuditLogError("Disk full - cannot append to audit log") from e
+            logger.error(f"Failed to append to audit log: {e}")
+            raise AuditLogError(f"Cannot append to audit log: {e}") from e
 
 
 def load_audit_log(path: Union[str, Path]) -> List[Dict[str, Any]]:
@@ -278,14 +357,36 @@ def load_audit_log(path: Union[str, Path]) -> List[Dict[str, Any]]:
 
     Returns:
         List of audit record dicts
+
+    Raises:
+        AuditLogError: If file cannot be read or parsed
     """
     path = Path(path)
     records = []
 
-    with open(path, 'r', encoding='utf-8') as f:
-        for line in f:
-            line = line.strip()
-            if line:
-                records.append(json.loads(line))
+    if not path.exists():
+        raise AuditLogError(f"Audit log not found: {path}")
+
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            line_num = 0
+            for line in f:
+                line_num += 1
+                line = line.strip()
+                if line:
+                    try:
+                        records.append(json.loads(line))
+                    except json.JSONDecodeError as e:
+                        logger.warning(f"Skipping malformed JSON at line {line_num}: {e}")
+                        continue
+    except PermissionError as e:
+        logger.error(f"Permission denied reading audit log: {path}")
+        raise AuditLogError(f"Cannot read audit log: {e}") from e
+    except UnicodeDecodeError as e:
+        logger.error(f"Audit log is not valid UTF-8: {path}")
+        raise AuditLogError(f"Audit log encoding error: {e}") from e
+    except OSError as e:
+        logger.error(f"Failed to read audit log: {e}")
+        raise AuditLogError(f"Cannot read audit log: {e}") from e
 
     return records

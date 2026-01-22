@@ -62,6 +62,11 @@ from common.integration_contracts import (
     validate_module_4_output,
     SchemaValidationError,
 )
+from common.production_hardening import (
+    safe_parse_date,
+    DateParseError,
+    get_module_logger,
+)
 
 # Import IC enhancement utilities
 from src.modules.ic_enhancements import (
@@ -300,8 +305,12 @@ def compute_module_5_composite_v3(
         validate_module_3_output(catalyst_result)
         validate_module_4_output(clinical_result)
 
-    # Parse as_of_date for PIT validation
-    as_of_dt = datetime.strptime(as_of_date, "%Y-%m-%d").date()
+    # Parse as_of_date for PIT validation with error handling
+    try:
+        as_of_dt = safe_parse_date(as_of_date, field_name="as_of_date")
+    except DateParseError as e:
+        logger.error(f"Invalid as_of_date format: {as_of_date}")
+        raise ValueError(f"Module 5 v3: {e}") from e
 
     # Run PIT production gate (if enforcement enabled)
     production_gate_result = None
