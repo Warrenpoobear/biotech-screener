@@ -120,7 +120,7 @@ def fetch_url_with_rate_limit(url: str) -> str:
 def find_13f_filing_via_submissions_api(
     cik: str,
     quarter_end: date
-) -> Optional[Tuple[str, date, str, str]]:
+) -> Optional[Tuple[str, date, str, bool]]:
     """
     Find 13F-HR filing using official data.sec.gov submissions API.
 
@@ -131,8 +131,8 @@ def find_13f_filing_via_submissions_api(
         quarter_end: Quarter end date (e.g., 2024-09-30)
 
     Returns:
-        (accession, filing_date, primary_document_url, form_type) or None
-        form_type is '13F-HR' for original filings, '13F-HR/A' for amendments
+        (accession, filing_date, primary_document_url, is_amendment) or None
+        is_amendment is True for 13F-HR/A filings, False for 13F-HR
 
     API Reference:
     https://www.sec.gov/edgar/sec-api-documentation
@@ -180,8 +180,9 @@ def find_13f_filing_via_submissions_api(
                 accession = accession_list[i]
                 primary_document = primary_doc_list[i].split('/')[-1]  # Strip xslForm13F_X02/ prefix
 
-                is_amendment_str = " (AMENDMENT)" if form == '13F-HR/A' else ""
-                print(f"    Found {form}: {accession} (filed {filing_date}){is_amendment_str}")
+                is_amendment = form == '13F-HR/A'
+                amendment_str = " (AMENDMENT)" if is_amendment else ""
+                print(f"    Found {form}: {accession} (filed {filing_date}){amendment_str}")
 
                 # Construct primary document URL
                 # Format: https://www.sec.gov/Archives/edgar/data/{cik_no_leading_zeros}/{accession_no_dashes}/{primary_doc}
@@ -190,7 +191,7 @@ def find_13f_filing_via_submissions_api(
 
                 doc_url = f"{SEC_EDGAR_BASE_URL}/Archives/edgar/data/{cik_no_zeros}/{accession_no_dashes}/{primary_document}"
 
-                return accession, filing_date, doc_url, form
+                return accession, filing_date, doc_url, is_amendment
 
         print(f"    No 13F-HR found for quarter ending {quarter_end}")
         return None
@@ -445,8 +446,8 @@ def extract_manager_holdings(
         print(f"  No filing found for {manager_name}")
         return None, {}
 
-    accession, filing_date, primary_doc_url, form_type = found
-    
+    accession, filing_date, primary_doc_url, is_amendment = found
+
     # Step 2: Fetch information table XML
     xml_result = fetch_information_table_xml(cik, accession, primary_doc_url)
     if not xml_result:
@@ -472,7 +473,6 @@ def extract_manager_holdings(
     
     # Step 5: Create filing info with DETERMINISTIC filed_at
     # CRITICAL FIX: Use filing_date from EDGAR, not datetime.now()
-    # Detect amendments from form type (13F-HR/A indicates an amendment)
     filing_info = FilingInfo(
         cik=cik,
         manager_name=manager_name,
@@ -480,7 +480,7 @@ def extract_manager_holdings(
         accession=accession,
         total_value_kusd=total_value_kusd,
         filed_at=datetime.combine(filing_date, datetime.min.time()),  # Deterministic!
-        is_amendment=(form_type == '13F-HR/A'),
+        is_amendment=is_amendment,  # Detected from SEC form type (13F-HR vs 13F-HR/A)
         holdings_count=len(raw_holdings)
     )
     
