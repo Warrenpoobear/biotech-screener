@@ -20,7 +20,7 @@ from __future__ import annotations
 import warnings
 from dataclasses import dataclass, field
 from datetime import date
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from enum import Enum
 from typing import (
     Any,
@@ -57,7 +57,7 @@ from module_3_schema import (
 )
 
 
-__version__ = "1.2.0"
+__version__ = "1.3.0"  # Added diagnostic normalization, improved extraction functions, strict validation default
 
 # =============================================================================
 # VALIDATION MODE
@@ -66,7 +66,8 @@ __version__ = "1.2.0"
 import os
 
 # Validation modes: "strict" (raise), "warn" (log warning), "off" (skip)
-VALIDATION_MODE = os.getenv("IC_VALIDATION_MODE", "warn")
+# Changed default from "warn" to "strict" for fail-loud behavior on schema violations
+VALIDATION_MODE = os.getenv("IC_VALIDATION_MODE", "strict")
 
 
 def get_validation_mode() -> str:
@@ -731,40 +732,70 @@ def extract_catalyst_score(
     """
     Extract catalyst score from Module 3 summary.
 
-    Handles both dataclass objects and dict formats.
+    Handles both dataclass objects and dict formats, including:
+    - Standardized "catalyst_score" field
+    - V2 format with "score_blended" attribute or dict key
+    - V2 nested format with scores["score_blended"]
+    - Legacy "catalyst_score_net" field
 
     Args:
         summary: Module 3 summary (dataclass or dict)
         warn_legacy: If True, emit deprecation warning when using legacy fields
 
     Returns:
-        Catalyst score as float, or None if not found
+        Catalyst score as float (0-100 scale), or None if not found
     """
-    # Try standardized name first
-    if isinstance(summary, dict) and "catalyst_score" in summary:
-        return float(summary["catalyst_score"])
+    if summary is None:
+        return None
 
-    # Try dataclass attribute (V2 uses score_blended)
-    if hasattr(summary, "score_blended"):
-        return float(summary.score_blended)
+    try:
+        # 1. Try standardized name first
+        if isinstance(summary, dict) and "catalyst_score" in summary:
+            val = summary["catalyst_score"]
+            if val is not None:
+                return float(val)
 
-    # Try dict access for score_blended (V2 intermediate)
-    if isinstance(summary, dict) and "score_blended" in summary:
-        return float(summary["score_blended"])
+        # 2. Try dataclass attribute (V2 uses score_blended)
+        if hasattr(summary, "score_blended") and summary.score_blended is not None:
+            return float(summary.score_blended)
 
-    # Fall back to legacy field names
-    if isinstance(summary, dict) and "catalyst_score_net" in summary:
-        if warn_legacy:
-            warn_legacy_field("catalyst_score_net", "catalyst_score", "Module 3")
-        return float(summary["catalyst_score_net"])
+        # 3. Try V2 nested format: scores dict with score_blended
+        if isinstance(summary, dict):
+            scores = summary.get("scores", {})
+            if isinstance(scores, dict) and "score_blended" in scores:
+                val = scores["score_blended"]
+                if val is not None:
+                    return float(val)
 
-    # Try legacy dataclass
-    if hasattr(summary, "catalyst_score_net"):
-        if warn_legacy:
-            warn_legacy_field("catalyst_score_net", "catalyst_score", "Module 3")
-        return float(summary.catalyst_score_net)
+            # 4. Try flat V2 format: direct score_blended key
+            if "score_blended" in summary:
+                val = summary["score_blended"]
+                if val is not None:
+                    return float(val)
 
-    return None
+        # 5. Fall back to legacy field names
+        if isinstance(summary, dict) and "catalyst_score_net" in summary:
+            if warn_legacy:
+                warn_legacy_field("catalyst_score_net", "catalyst_score", "Module 3")
+            val = summary["catalyst_score_net"]
+            if val is not None:
+                return float(val)
+
+        # 6. Try legacy dataclass attribute
+        if hasattr(summary, "catalyst_score_net") and summary.catalyst_score_net is not None:
+            if warn_legacy:
+                warn_legacy_field("catalyst_score_net", "catalyst_score", "Module 3")
+            return float(summary.catalyst_score_net)
+
+        return None
+
+    except (ValueError, TypeError, InvalidOperation) as e:
+        warnings.warn(
+            f"Failed to extract catalyst_score from summary: {e}",
+            RuntimeWarning,
+            stacklevel=2
+        )
+        return None
 
 
 def extract_clinical_score(
@@ -772,12 +803,41 @@ def extract_clinical_score(
 ) -> Optional[float]:
     """
     Extract clinical score from Module 4 score record.
+
+    Handles:
+    - Decimal string (from Module 4 output, e.g., "75.50")
+    - float value
+    - Decimal object
+    - None values
+
+    Returns:
+        Clinical score as float, or None if not found or invalid
     """
-    if "clinical_score" in score_record:
-        val = score_record["clinical_score"]
-        # May be Decimal string
-        return float(val) if val is not None else None
-    return None
+    if "clinical_score" not in score_record:
+        return None
+
+    val = score_record["clinical_score"]
+    if val is None:
+        return None
+
+    try:
+        # Handle string (from Module 4 Decimal serialization), float, or Decimal
+        if isinstance(val, str):
+            return float(val)
+        elif isinstance(val, (int, float)):
+            return float(val)
+        elif isinstance(val, Decimal):
+            return float(val)
+        else:
+            # Attempt conversion for any other type
+            return float(val)
+    except (ValueError, TypeError, InvalidOperation) as e:
+        warnings.warn(
+            f"Failed to extract clinical_score: {val!r} ({type(val).__name__}): {e}",
+            RuntimeWarning,
+            stacklevel=2
+        )
+        return None
 
 
 def extract_market_cap_mm(
@@ -795,6 +855,110 @@ def extract_market_cap_mm(
     if "market_cap" in record and record["market_cap"] is not None:
         return float(record["market_cap"]) / 1e6
     return None
+
+
+# =============================================================================
+# DIAGNOSTIC COUNTS NORMALIZATION
+# =============================================================================
+
+# Standardized diagnostic count field names
+class DiagnosticFields:
+    """Standardized diagnostic count field names across modules."""
+    # Common fields (all modules)
+    SCORED = "scored"  # Number of items successfully scored
+    TOTAL = "total"  # Total input items
+    EXCLUDED = "excluded"  # Items excluded from scoring
+    MISSING = "missing"  # Items with missing data
+
+    # Module 3 specific
+    EVENTS_TOTAL = "events_detected_total"
+    TICKERS_WITH_EVENTS = "tickers_with_events"
+    TICKERS_ANALYZED = "tickers_analyzed"
+    TICKERS_SEVERE_NEG = "tickers_with_severe_negative"
+
+    # Module 4 specific
+    TRIALS_RAW = "total_trials_raw"
+    TRIALS_UNIQUE = "total_trials_unique"
+    PIT_FILTERED = "pit_filtered"
+
+
+def normalize_diagnostic_counts(
+    module_name: str,
+    diagnostic_counts: Dict[str, Any]
+) -> Dict[str, Any]:
+    """
+    Normalize diagnostic counts to standardized schema.
+
+    Ensures all modules have consistent field names for common diagnostics.
+    Module-specific fields are preserved as-is.
+
+    Args:
+        module_name: Name of module (e.g., "module_2")
+        diagnostic_counts: Raw diagnostic counts from module
+
+    Returns:
+        Normalized diagnostic counts dict
+    """
+    normalized = dict(diagnostic_counts)
+
+    # Ensure common fields exist with defaults
+    if DiagnosticFields.SCORED not in normalized:
+        # Try to infer from module-specific fields
+        if module_name == "module_3":
+            normalized[DiagnosticFields.SCORED] = normalized.get(
+                DiagnosticFields.TICKERS_ANALYZED, 0
+            )
+        elif "total_scored" in normalized:
+            normalized[DiagnosticFields.SCORED] = normalized["total_scored"]
+
+    if DiagnosticFields.TOTAL not in normalized:
+        # Try to infer
+        if "total_input" in normalized:
+            normalized[DiagnosticFields.TOTAL] = normalized["total_input"]
+        elif DiagnosticFields.TICKERS_ANALYZED in normalized:
+            normalized[DiagnosticFields.TOTAL] = normalized[DiagnosticFields.TICKERS_ANALYZED]
+
+    return normalized
+
+
+def validate_diagnostic_counts(
+    module_name: str,
+    diagnostic_counts: Dict[str, Any],
+    strict: bool = False
+) -> Tuple[bool, List[str]]:
+    """
+    Validate diagnostic counts contain expected fields.
+
+    Args:
+        module_name: Name of module (e.g., "module_2")
+        diagnostic_counts: Diagnostic counts dict to validate
+        strict: If True, require all expected fields
+
+    Returns:
+        Tuple of (is_valid, list of warnings/errors)
+    """
+    warnings_list = []
+
+    # Module-specific expected fields
+    expected_by_module = {
+        "module_1": {DiagnosticFields.SCORED, DiagnosticFields.EXCLUDED},
+        "module_2": {DiagnosticFields.SCORED, DiagnosticFields.MISSING},
+        "module_3": {DiagnosticFields.TICKERS_ANALYZED, DiagnosticFields.EVENTS_TOTAL},
+        "module_4": {DiagnosticFields.SCORED, DiagnosticFields.PIT_FILTERED},
+        "module_5": {DiagnosticFields.TOTAL, "rankable", DiagnosticFields.EXCLUDED},
+    }
+
+    expected = expected_by_module.get(module_name, set())
+    present = set(diagnostic_counts.keys())
+    missing = expected - present
+
+    if missing:
+        msg = f"{module_name} diagnostic_counts missing expected fields: {missing}"
+        warnings_list.append(msg)
+        if strict:
+            return False, warnings_list
+
+    return True, warnings_list
 
 
 # =============================================================================
