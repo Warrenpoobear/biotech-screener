@@ -267,13 +267,16 @@ class EventDetector:
             List of catalyst events
         """
         events = []
-        
+
         # If no prior record, this is initial ingest (not a delta)
         if prior_record is None:
             return []
-        
+
         disclosed_at = current_record.last_update_posted
-        
+
+        # Track if small date changes were filtered as noise (suppress activity proxy)
+        noise_filtered = False
+
         # Status change detection
         if current_record.overall_status != prior_record.overall_status:
             event_type, impact, direction = classify_status_change(
@@ -315,7 +318,10 @@ class EventDetector:
                 current_record.primary_completion_date,
                 self.config.noise_band_days
             )
-            if event_type:
+            if event_type is None:
+                # Small date change filtered as noise - suppress activity proxy
+                noise_filtered = True
+            elif event_type:
                 delta_days = (current_record.primary_completion_date - prior_record.primary_completion_date).days
                 if delta_days > 0:
                     confidence_reason = f"Primary completion date pushed out by {delta_days} days"
@@ -348,7 +354,10 @@ class EventDetector:
                 current_record.completion_date,
                 self.config.noise_band_days
             )
-            if event_type:
+            if event_type is None:
+                # Small date change filtered as noise - suppress activity proxy
+                noise_filtered = True
+            elif event_type:
                 delta_days = (current_record.completion_date - prior_record.completion_date).days
                 if delta_days > 0:
                     confidence_reason = f"Study completion date pushed out by {delta_days} days"
@@ -468,7 +477,10 @@ class EventDetector:
         # Activity proxy detection: trial was updated but no specific event type detected
         # This is a historical data workaround - CT.gov API only shows current state,
         # so we can't know what specifically changed. But an update indicates engagement.
+        # NOTE: Skip activity proxy if small date changes were filtered as noise - we know
+        # what changed, we just chose to ignore it as noise.
         if (len(events) == 0 and
+            not noise_filtered and
             current_record.last_update_posted is not None and
             prior_record.last_update_posted is not None and
             current_record.last_update_posted != prior_record.last_update_posted):
