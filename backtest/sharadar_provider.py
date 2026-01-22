@@ -25,7 +25,7 @@ import json
 import urllib.request
 import urllib.parse
 from datetime import date, timedelta
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -126,7 +126,7 @@ class SharadarReturnsProvider:
                 
                 try:
                     price = Decimal(price_str).quantize(PRICE_QUANTIZE, rounding=ROUND_HALF_UP)
-                except:
+                except (ValueError, TypeError, InvalidOperation):
                     continue
                 
                 if ticker not in prices:

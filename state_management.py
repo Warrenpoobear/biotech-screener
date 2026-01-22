@@ -5,8 +5,9 @@ state_management.py - Trial State Snapshot Management
 Manages trial state snapshots in JSONL format with sorted keys.
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date, timedelta
+from functools import cached_property
 from pathlib import Path
 from typing import Optional
 import json
@@ -48,20 +49,45 @@ class StateSnapshot:
         """Binary search for record (since sorted)"""
         key = (ticker, nct_id)
         left, right = 0, len(self.records) - 1
-        
+
         while left <= right:
             mid = (left + right) // 2
             mid_key = (self.records[mid].ticker, self.records[mid].nct_id)
-            
+
             if mid_key == key:
                 return self.records[mid]
             elif mid_key < key:
                 left = mid + 1
             else:
                 right = mid - 1
-        
+
         return None
-    
+
+    @cached_property
+    def records_by_nct_id(self) -> dict:
+        """
+        Lazily build and cache NCT ID -> record lookup dict.
+
+        This is useful for cross-snapshot comparisons where ticker
+        association may change but NCT ID is stable.
+
+        Returns:
+            Dict mapping nct_id -> CanonicalTrialRecord
+        """
+        return {record.nct_id: record for record in self.records}
+
+    def get_record_by_nct_id(self, nct_id: str) -> Optional[CanonicalTrialRecord]:
+        """
+        O(1) lookup by NCT ID using cached dict.
+
+        Args:
+            nct_id: ClinicalTrials.gov NCT identifier
+
+        Returns:
+            CanonicalTrialRecord or None if not found
+        """
+        return self.records_by_nct_id.get(nct_id)
+
     def to_dict(self) -> dict:
         """Serialize for manifest"""
         return {

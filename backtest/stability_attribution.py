@@ -100,7 +100,7 @@ def compute_monthly_deltas(
                 return 0.0
             try:
                 return float(val)
-            except:
+            except (ValueError, TypeError):
                 return 0.0
         
         composite_prev = safe_float(prev.get("composite_score"))

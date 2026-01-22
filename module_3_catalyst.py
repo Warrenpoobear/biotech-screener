@@ -634,19 +634,16 @@ def compute_module_3_catalyst(
     total_events = 0
     total_deduped = 0
 
-    # Build NCT ID lookup for prior snapshot (stable key regardless of ticker association)
+    # Use cached NCT ID lookup for prior snapshot (stable key regardless of ticker association)
     # This ensures we find prior records even if ticker-NCT association changed between runs
-    prior_records_by_nct: Dict[str, CanonicalTrialRecord] = {}
-    if prior_snapshot:
-        for record in prior_snapshot.records:
-            prior_records_by_nct[record.nct_id] = record
+    # The records_by_nct_id property is lazily computed and cached on first access
 
     for current_record in canonical_records:
         ticker = current_record.ticker
         nct_id = current_record.nct_id
 
-        # Get prior record for this trial using NCT ID only (stable lookup)
-        prior_record = prior_records_by_nct.get(nct_id) if prior_snapshot else None
+        # Get prior record for this trial using NCT ID only (stable lookup via cached dict)
+        prior_record = prior_snapshot.get_record_by_nct_id(nct_id) if prior_snapshot else None
 
         # Detect events (legacy format)
         legacy_events = event_detector.detect_events(
