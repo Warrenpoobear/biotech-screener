@@ -682,7 +682,8 @@ def run_direct_backtest(
             else:
                 debug_ticker = universe[0] if universe else None
                 print(f"  Debug ticker: {debug_ticker} (WARNING: no fully-covered tickers found)")
-        except:
+        except (FileNotFoundError, json.JSONDecodeError, KeyError) as e:
+            print(f"  Warning: Could not load real data for debug ticker selection: {e}")
             debug_ticker = universe[0] if universe else None
     else:
         debug_ticker = universe[0] if universe else None
