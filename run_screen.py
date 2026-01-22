@@ -215,6 +215,9 @@ def _convert_holdings_to_coinvest(holdings_snapshots: Dict[str, Any]) -> Dict[st
         holdings = ticker_data.get("holdings", {})
         current = holdings.get("current", {})
 
+        # Normalize ticker to uppercase for consistent lookups
+        ticker = ticker.upper()
+
         if not current:
             continue
 
@@ -607,11 +610,13 @@ def run_screening_pipeline(
 
     # Convert market_records list to dict keyed by ticker for Module 5
     # This enables volatility adjustment, momentum signal, and other enhancements
+    # IMPORTANT: Normalize ticker keys to uppercase for consistent lookups
+    # (Module 5 uses .upper() for ticker lookups)
     market_data_by_ticker = {}
     if market_records:
         for record in market_records:
             if isinstance(record, dict) and 'ticker' in record:
-                ticker = record['ticker']
+                ticker = record['ticker'].upper()  # Normalize to uppercase for consistent lookups
                 market_data_by_ticker[ticker] = record
         logger.info(f"  Market data indexed for {len(market_data_by_ticker)} tickers")
 
