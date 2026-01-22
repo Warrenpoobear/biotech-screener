@@ -963,6 +963,90 @@ def require_minimum_memory(min_mb: float = 500) -> None:
 # Exports
 # =============================================================================
 
+# =============================================================================
+# Decompression Bomb Protection
+# =============================================================================
+
+MAX_DECOMPRESSED_SIZE_MB = 100  # Maximum uncompressed size
+
+
+class DecompressionBombError(SecurityError):
+    """Raised when decompression bomb is detected."""
+    pass
+
+
+def safe_gzip_load(
+    filepath: Union[str, Path],
+    max_uncompressed_mb: float = MAX_DECOMPRESSED_SIZE_MB
+) -> Any:
+    """
+    Safely load gzip-compressed JSON with decompression bomb protection.
+
+    Args:
+        filepath: Path to .gz file
+        max_uncompressed_mb: Maximum allowed uncompressed size in MB
+
+    Returns:
+        Parsed JSON data
+
+    Raises:
+        DecompressionBombError: If uncompressed size exceeds limit
+        FileSizeError: If compressed file is too large
+    """
+    import gzip
+
+    filepath = Path(filepath)
+
+    # Check compressed file size
+    validate_file_size(filepath, MAX_JSON_FILE_SIZE_MB)
+
+    max_bytes = int(max_uncompressed_mb * 1024 * 1024)
+
+    with gzip.open(filepath, 'rt', encoding='utf-8') as f:
+        # Read with size limit
+        content = f.read(max_bytes + 1)
+
+        if len(content) > max_bytes:
+            raise DecompressionBombError(
+                f"Decompressed size exceeds {max_uncompressed_mb}MB limit for {filepath}"
+            )
+
+    return json.loads(content)
+
+
+def safe_decompress(
+    compressed_data: bytes,
+    max_uncompressed_mb: float = MAX_DECOMPRESSED_SIZE_MB
+) -> bytes:
+    """
+    Safely decompress data with bomb protection.
+
+    Args:
+        compressed_data: Gzip-compressed bytes
+        max_uncompressed_mb: Maximum allowed uncompressed size
+
+    Returns:
+        Decompressed bytes
+
+    Raises:
+        DecompressionBombError: If uncompressed size exceeds limit
+    """
+    import gzip
+    import io
+
+    max_bytes = int(max_uncompressed_mb * 1024 * 1024)
+
+    with gzip.GzipFile(fileobj=io.BytesIO(compressed_data)) as f:
+        decompressed = f.read(max_bytes + 1)
+
+        if len(decompressed) > max_bytes:
+            raise DecompressionBombError(
+                f"Decompressed size exceeds {max_uncompressed_mb}MB limit"
+            )
+
+    return decompressed
+
+
 __all__ = [
     # Exceptions
     'SecurityError',
@@ -971,6 +1055,7 @@ __all__ = [
     'IntegrityError',
     'OperationTimeoutError',
     'SymlinkError',
+    'DecompressionBombError',
 
     # Path validation
     'validate_path_within_base',
@@ -995,6 +1080,11 @@ __all__ = [
     'safe_mkdir',
     'safe_write_json',
     'safe_read_json',
+
+    # Decompression protection
+    'safe_gzip_load',
+    'safe_decompress',
+    'MAX_DECOMPRESSED_SIZE_MB',
 
     # Logging
     'sanitize_for_logging',
