@@ -211,11 +211,18 @@ class V3ScoringResult:
 # HELPER FUNCTIONS
 # =============================================================================
 
-def _coalesce(*vals, default=None):
+def _coalesce(*vals: Any, default: Optional[Any] = None) -> Any:
     """Return the first value that is not None.
 
     Unlike `or` chains, this correctly handles falsy values like Decimal("0")
     which should be treated as valid scores, not missing data.
+
+    Args:
+        *vals: Variable number of values to check
+        default: Value to return if all vals are None
+
+    Returns:
+        First non-None value, or default if all are None
     """
     for v in vals:
         if v is not None:

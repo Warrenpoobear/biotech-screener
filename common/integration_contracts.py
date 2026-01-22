@@ -66,13 +66,13 @@ __version__ = "1.3.0"  # Added diagnostic normalization, improved extraction fun
 import os
 
 # Validation modes: "strict" (raise), "warn" (log warning), "off" (skip)
-# Changed default from "warn" to "strict" for fail-loud behavior on schema violations
-VALIDATION_MODE = os.getenv("IC_VALIDATION_MODE", "strict")
+# Default is "strict" for fail-loud behavior on schema violations
+_DEFAULT_VALIDATION_MODE = "strict"
 
 
 def get_validation_mode() -> str:
     """Get current validation mode from environment."""
-    return os.getenv("IC_VALIDATION_MODE", "warn")
+    return os.getenv("IC_VALIDATION_MODE", _DEFAULT_VALIDATION_MODE)
 
 
 def set_validation_mode(mode: str) -> None:

@@ -11,7 +11,7 @@ For 100 stocks: min=0.5%, allows proper differentiation
 For 200 stocks: min=0.3%, maximum diversification
 """
 
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
 from typing import Dict, List, Optional, Tuple
 
 WQ = Decimal("0.0001")  # Weight quantization
@@ -86,8 +86,8 @@ def defensive_multiplier(defensive_features: Dict[str, str]) -> Tuple[Decimal, L
     if vol_s:
         try:
             vol = Decimal(vol_s)
-        except:
-            pass
+        except (ValueError, TypeError, InvalidOperation):
+            pass  # Invalid volatility value - treat as missing
 
     # Sanitize correlation (handle placeholders)
     corr, corr_flags = sanitize_corr(defensive_features or {})
@@ -123,8 +123,8 @@ def defensive_multiplier(defensive_features: Dict[str, str]) -> Tuple[Decimal, L
         try:
             if Decimal(dd_s) < Decimal("-0.30"):
                 notes.append("def_warn_drawdown_gt_30pct")
-        except:
-            pass
+        except (ValueError, TypeError, InvalidOperation):
+            pass  # Invalid drawdown value - skip warning
 
     return m, notes
 
@@ -154,8 +154,8 @@ def raw_inv_vol_weight(defensive_features: Dict[str, str], power: Decimal = Deci
         if vol <= 0:
             return None
         return Decimal("1") / (vol ** power)
-    except:
-        return None
+    except (ValueError, TypeError, InvalidOperation, ZeroDivisionError):
+        return None  # Invalid volatility - cannot compute inverse weight
 
 
 def calculate_dynamic_floor(n_securities: int) -> Decimal:

@@ -392,10 +392,26 @@ def compute_module_3_catalyst(
     event_detector = EventDetector(config.event_detector_config)
     aggregator = CatalystAggregator(market_calendar, config.decay_constant)
 
-    # Load trial records
+    # Load trial records with explicit error handling
     logger.info(f"Loading trial records from {trial_records_path}")
-    with open(trial_records_path) as f:
-        trial_records_raw = json.load(f)
+    try:
+        with open(trial_records_path) as f:
+            trial_records_raw = json.load(f)
+    except FileNotFoundError:
+        raise FileNotFoundError(
+            f"Trial records file not found: {trial_records_path}. "
+            f"Ensure the file exists and path is correct."
+        )
+    except json.JSONDecodeError as e:
+        raise ValueError(
+            f"Invalid JSON in trial records file {trial_records_path}: {e}. "
+            f"File may be corrupted or malformed."
+        )
+    except PermissionError:
+        raise PermissionError(
+            f"Permission denied reading trial records: {trial_records_path}. "
+            f"Check file permissions."
+        )
 
     # =========================================================================
     # STALENESS GATING: Check if trial_records is stale
