@@ -159,7 +159,10 @@ class DilutionRiskEngine:
 
         # Validate as_of_date (required for determinism)
         if as_of_date is None:
-            as_of_date = date.today()
+            raise ValueError(
+                "as_of_date is REQUIRED for determinism. "
+                "Do not use date.today() - pass explicit date."
+            )
 
         # Deterministic timestamp from as_of_date
         deterministic_timestamp = f"{as_of_date.isoformat()}T00:00:00Z"

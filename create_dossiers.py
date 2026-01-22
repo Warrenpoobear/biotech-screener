@@ -1,11 +1,24 @@
 import json
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, date
 from typing import Dict, Optional
 import math
 
 class DossierGenerator:
-    def __init__(self, snapshot_path: str = 'outputs/universe_snapshot_latest.json'):
+    def __init__(self, snapshot_path: str = 'outputs/universe_snapshot_latest.json', as_of_date: Optional[date] = None):
+        """
+        Initialize DossierGenerator.
+
+        Args:
+            snapshot_path: Path to universe snapshot JSON
+            as_of_date: Point-in-time date for calculations (REQUIRED for determinism)
+        """
+        if as_of_date is None:
+            raise ValueError(
+                "as_of_date is REQUIRED for determinism. "
+                "Do not use date.today() - pass explicit date."
+            )
+        self.as_of_date = as_of_date
         with open(snapshot_path) as f:
             self.companies = json.load(f)
         Path('dossiers/top5').mkdir(parents=True, exist_ok=True)
@@ -25,14 +38,15 @@ class DossierGenerator:
         return round(runway_months, 1)
     
     def get_filing_freshness_days(self, company: Dict) -> Optional[int]:
+        """Calculate days since filing using as_of_date (deterministic)."""
         try:
             filing_ts = company['provenance']['sources']['sec_edgar'].get('timestamp')
             if not filing_ts:
                 return None
-            filing_date = datetime.fromisoformat(filing_ts)
-            days = (datetime.now() - filing_date).days
+            filing_date = datetime.fromisoformat(filing_ts).date()
+            days = (self.as_of_date - filing_date).days
             return days
-        except:
+        except (KeyError, ValueError, TypeError):
             return None
     
     def score_with_caps(self, company: Dict) -> Dict:
@@ -69,8 +83,8 @@ class DossierGenerator:
     def generate_dossier(self, company: Dict, rank: int) -> str:
         ticker = company['ticker']
         scores = self.score_with_caps(company)
-        lines = [f"# Investment Dossier: {ticker}", f"**Rank: #{rank} | Score: {scores['composite_score']:.2f}/10**", 
-                 f"**Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}**", "---", "", "## Executive Summary", ""]
+        lines = [f"# Investment Dossier: {ticker}", f"**Rank: #{rank} | Score: {scores['composite_score']:.2f}/10**",
+                 f"**Generated: {self.as_of_date.isoformat()}**", "---", "", "## Executive Summary", ""]
         price = company['market_data']['price']
         mcap = company['market_data']['market_cap'] / 1e9
         cash = company['financials'].get('cash', 0) / 1e6 if company['financials'].get('cash') else 0
@@ -125,4 +139,20 @@ class DossierGenerator:
         print("\nAll dossiers in: dossiers/top5/\n")
 
 if __name__ == "__main__":
-    DossierGenerator().generate_top5_dossiers()
+    import argparse
+    parser = argparse.ArgumentParser(description="Generate investment dossiers")
+    parser.add_argument(
+        "--as-of-date",
+        type=str,
+        required=True,
+        help="Point-in-time date (YYYY-MM-DD) - REQUIRED for determinism"
+    )
+    parser.add_argument(
+        "--snapshot",
+        type=str,
+        default='outputs/universe_snapshot_latest.json',
+        help="Path to universe snapshot JSON"
+    )
+    args = parser.parse_args()
+    as_of = date.fromisoformat(args.as_of_date)
+    DossierGenerator(snapshot_path=args.snapshot, as_of_date=as_of).generate_top5_dossiers()

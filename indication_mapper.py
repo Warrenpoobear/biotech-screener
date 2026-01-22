@@ -124,7 +124,11 @@ class IndicationMapper:
             # Fallback to empty mappings
             self._use_fallback_mappings()
 
-        except Exception:
+        except (json.JSONDecodeError, IOError, OSError) as e:
+            # Track the error instead of silently ignoring it
+            self.validation_errors.append(
+                f"Failed to load mapping file: {type(e).__name__}: {e}"
+            )
             self._use_fallback_mappings()
 
     def _validate_mappings(self) -> None:
@@ -215,7 +219,11 @@ class IndicationMapper:
                 if as_of_date > until_date:
                     return False
             except ValueError:
-                pass  # Ignore invalid until date
+                # Invalid date format - treat as if no end date (override still active)
+                # This is logged as validation error during init
+                self.validation_errors.append(
+                    f"Invalid effective_until date format: {effective_until}"
+                )
 
         return True
 
@@ -251,7 +259,10 @@ class IndicationMapper:
             Dict with indication, confidence, and audit info
         """
         if as_of_date is None:
-            as_of_date = date.today()
+            raise ValueError(
+                "as_of_date is REQUIRED for determinism. "
+                "Do not use date.today() - pass explicit date."
+            )
 
         deterministic_timestamp = f"{as_of_date.isoformat()}T00:00:00Z"
         ticker_upper = ticker.upper() if ticker else ""
