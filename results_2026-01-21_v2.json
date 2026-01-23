@@ -33698,7 +33698,6 @@
       "high_volatility_count": 4,
       "in_catalyst_window": 2,
       "low_volatility_count": 3,
-      "momentum_applied": 0,
       "momentum_applied_negative": 18,
       "momentum_applied_positive": 12,
       "momentum_computable": 44,
@@ -33707,6 +33706,10 @@
       "momentum_meaningful": 44,
       "momentum_missing_prices": 0,
       "momentum_no_alpha": 0,
+      "momentum_source_13f": 0,
+      "momentum_source_prices": 44,
+      "momentum_strong_and_effective": 0,
+      "momentum_strong_signal": 0,
       "momentum_window_120d": 0,
       "momentum_window_20d": 0,
       "momentum_window_60d": 44,
@@ -34010,8 +34013,28 @@
       "INFO: catalyst window coverage 4.5% (raw: 100.0%) - events exist but few in optimal 15-45d window",
       "INFO: valuation confidence-gated for 54.5% of universe (sparse coverage expected)",
       "INFO: momentum breakdown - missing:0, low_conf:0, applied[neg:18, pos:12, neutral:14] | windows[20d:0, 60d:44, 120d:0] | coverage=44/44 (100.0%), avg_weight=0.142",
-      "INFO: momentum stable metrics - computable:44, meaningful:44, applied:0 (of 44 total)"
+      "INFO: momentum stable metrics - computable:44, meaningful:44, coverage_applied:44/44, strong:0, strong_and_effective:0, sources[prices:44, 13f:0]"
     ],
+    "momentum_health": {
+      "as_of_date": "2026-01-21",
+      "avg_weight": "0.142",
+      "computable": 44,
+      "coverage_applied": 44,
+      "coverage_pct": 100.0,
+      "meaningful": 44,
+      "sources": {
+        "13f": 0,
+        "prices": 44
+      },
+      "strong_and_effective": 0,
+      "strong_signal": 0,
+      "total_rankable": 44,
+      "windows_used": {
+        "120d": 0,
+        "20d": 0,
+        "60d": 44
+      }
+    },
     "pit_gate_diagnostics": null,
     "provenance": {
       "inputs_hash": "sha256:3bf00ef545db4b1eb99c2ebbd8813894a2bb288bbb88357b76b4dd8b74c99fcb",
@@ -34073,6 +34096,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "44.57",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -34318,6 +34342,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "32.47",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -34562,6 +34587,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "22.72",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -34810,6 +34836,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "90.50",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -35062,6 +35089,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "90.50",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -35315,6 +35343,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "56.07",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -35563,6 +35592,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "41.68",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -35810,6 +35840,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "37.95",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -36053,6 +36084,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "87.60",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -36294,6 +36326,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "32.90",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -36538,6 +36571,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "12.63",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -36783,6 +36817,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "88.78",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -37026,6 +37061,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "54.42",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -37268,6 +37304,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "78.98",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -37512,6 +37549,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "49.37",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -37757,6 +37795,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "13.12",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -38004,6 +38043,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "90.50",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -38249,6 +38289,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "9.50",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -38493,6 +38534,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "42.35",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -38737,6 +38779,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "43.58",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -38982,6 +39025,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "33.96",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -39227,6 +39271,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "59.85",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -39471,6 +39516,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "12.53",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -39716,6 +39762,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "9.50",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -39959,6 +40006,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "90.50",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -40202,6 +40250,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "52.98",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -40445,6 +40494,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "33.84",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -40689,6 +40739,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "45.27",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -40932,6 +40983,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "9.50",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -41176,6 +41228,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "9.50",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -41419,6 +41472,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "9.50",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -41659,6 +41713,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "36.05",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -41905,6 +41960,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "64.50",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -42147,6 +42203,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "36.55",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -42396,6 +42453,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "19.06",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -42646,6 +42704,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "78.59",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -42891,6 +42950,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "54.27",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -43139,6 +43199,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "40.87",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -43382,6 +43443,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "52.31",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -43623,6 +43685,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "90.50",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -43874,6 +43937,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "83.88",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -44120,6 +44184,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "62.98",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -44362,6 +44427,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "18.64",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
@@ -44603,6 +44669,7 @@
           "data_completeness": "1.0",
           "data_status": "applied",
           "score": "42.48",
+          "source": "prices",
           "window_used": 60
         },
         "monotonic_caps_applied": [],
