@@ -93,6 +93,12 @@ from common.integration_contracts import (
     validate_module_5_output,
     SchemaValidationError,
 )
+from common.data_integration_contracts import (
+    safe_numeric_check,
+    validate_market_data_schema,
+    validate_financial_records_schema,
+    normalize_ticker_set,
+)
 
 # Module imports
 from module_1_universe import compute_module_1_universe
@@ -881,7 +887,9 @@ def run_screening_pipeline(
             ticker = ranking.get("ticker")
             momentum_score = ranking.get("momentum_score")
 
-            if ticker and momentum_score and ticker in market_data_by_ticker:
+            # CRITICAL: Use safe_numeric_check to handle momentum_score=0 correctly
+            # The pattern `if momentum_score` would incorrectly skip valid zero scores
+            if ticker and safe_numeric_check(momentum_score) and ticker in market_data_by_ticker:
                 try:
                     score = float(momentum_score)
                     # Convert to pseudo-return: (score - 50) / 100
