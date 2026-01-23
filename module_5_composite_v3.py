@@ -832,6 +832,10 @@ def compute_module_5_composite_v3(
             if r.get("momentum_signal", {}).get("source") == "13f"
             and r.get("momentum_signal", {}).get("window_used") is not None
         ),
+        # 6. Alpha distribution metrics (for regime attribution)
+        #    Helps distinguish "strong=0 because low dispersion" from "strong=0 because bug"
+        #    Values stored as strings for Decimal consistency
+        **_compute_alpha_distribution_metrics(ranked_securities),
 
         # Quality metrics
         "with_caps_applied": sum(1 for r in ranked_securities if r.get("monotonic_caps_applied")),
@@ -1030,6 +1034,65 @@ def compute_module_5_composite_v3(
             {"tickers": sorted(active_tickers), "weights": {k: str(v) for k, v in sorted(base_weights.items())}, "mode": mode.value},
             as_of_date,
         ),
+    }
+
+
+def _compute_alpha_distribution_metrics(ranked_securities: list) -> Dict[str, str]:
+    """
+    Compute alpha distribution metrics for momentum diagnostics.
+
+    Helps distinguish between:
+    - "strong=0 because low dispersion regime" (small alphas, normal)
+    - "strong=0 because of a bug" (large alphas but scores near 50)
+
+    Returns dict with string values for Decimal JSON consistency.
+    """
+    alphas = []
+    score_deltas = []
+
+    for r in ranked_securities:
+        ms = r.get("momentum_signal", {})
+        alpha_str = ms.get("alpha_60d")
+        score_str = ms.get("momentum_score")
+
+        if alpha_str is not None:
+            try:
+                alphas.append(abs(Decimal(str(alpha_str))))
+            except (ValueError, TypeError):
+                pass
+
+        if score_str is not None:
+            try:
+                score_deltas.append(abs(Decimal(str(score_str)) - Decimal("50")))
+            except (ValueError, TypeError):
+                pass
+
+    if not alphas:
+        return {
+            "alpha_abs_p50": None,
+            "alpha_abs_p90": None,
+            "alpha_abs_max": None,
+            "score_delta_p50": None,
+            "score_delta_p90": None,
+            "score_delta_max": None,
+        }
+
+    # Sort for percentile calculation
+    alphas.sort()
+    score_deltas.sort()
+    n = len(alphas)
+
+    # Compute percentiles (with bounds checking)
+    p50_idx = min(int(n * 0.5), n - 1)
+    p90_idx = min(int(n * 0.9), n - 1)
+
+    return {
+        "alpha_abs_p50": str(alphas[p50_idx].quantize(Decimal("0.0001"))),
+        "alpha_abs_p90": str(alphas[p90_idx].quantize(Decimal("0.0001"))),
+        "alpha_abs_max": str(max(alphas).quantize(Decimal("0.0001"))),
+        "score_delta_p50": str(score_deltas[p50_idx].quantize(Decimal("0.01"))) if score_deltas else None,
+        "score_delta_p90": str(score_deltas[p90_idx].quantize(Decimal("0.01"))) if score_deltas else None,
+        "score_delta_max": str(max(score_deltas).quantize(Decimal("0.01"))) if score_deltas else None,
     }
 
 
