@@ -11,10 +11,10 @@
     "with_any_window": 307,
     "with_volatility": 302
   },
-  "enriched_at": "2026-01-21T15:05:07Z",
+  "enriched_at": "2026-01-23T09:57:58Z",
   "max_return_clip": 3.0,
   "momentum_enrichment_version": "1.1.0",
-  "output_hash": "sha256:1ae6484fee4e30c9f116301cc2c57c24210a453b7169590c5580be8920239112",
+  "output_hash": "sha256:ecb10f35b627ad2f37fbe91dacd131d59ee4f66567e280c57eef12f521973975",
   "price_field_used": "Close",
   "windows_computed": [
     20,

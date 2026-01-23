@@ -991,7 +991,7 @@
           "confidence_reason": "stage_and_indication_known",
           "data_quality_state": "PARTIAL",
           "flags": [],
-          "indication_normalized": "gastroenterology",
+          "indication_normalized": "oncology",
           "loa_probability": "1.0",
           "loa_provenance": "commercial_approved",
           "missing_fields": [
@@ -33685,6 +33685,9 @@
     },
     "degraded_components": [],
     "diagnostic_counts": {
+      "alpha_abs_max": "1.7459",
+      "alpha_abs_p50": "0.1461",
+      "alpha_abs_p90": "0.5024",
       "cohort_count": 3,
       "defensive_features_coverage": {
         "coverage_pct": 100.0,
@@ -33708,12 +33711,15 @@
       "momentum_no_alpha": 0,
       "momentum_source_13f": 0,
       "momentum_source_prices": 44,
-      "momentum_strong_and_effective": 0,
-      "momentum_strong_signal": 0,
+      "momentum_strong_and_effective": 42,
+      "momentum_strong_signal": 42,
       "momentum_window_120d": 0,
       "momentum_window_20d": 0,
       "momentum_window_60d": 44,
       "rankable": 44,
+      "score_delta_max": "40.50",
+      "score_delta_p50": "17.53",
+      "score_delta_p90": "40.50",
       "top_n_cutoff": 60,
       "total_allocated_weight": "0.9000",
       "total_input": 92,
@@ -34013,7 +34019,7 @@
       "INFO: catalyst window coverage 4.5% (raw: 100.0%) - events exist but few in optimal 15-45d window",
       "INFO: valuation confidence-gated for 54.5% of universe (sparse coverage expected)",
       "INFO: momentum breakdown - missing:0, low_conf:0, applied[neg:18, pos:12, neutral:14] | windows[20d:0, 60d:44, 120d:0] | coverage=44/44 (100.0%), avg_weight=0.142",
-      "INFO: momentum stable metrics - computable:44, meaningful:44, coverage_applied:44/44, strong:0, strong_and_effective:0, sources[prices:44, 13f:0]"
+      "INFO: momentum stable metrics - computable:44, meaningful:44, coverage_applied:44/44, strong:42, strong_and_effective:42, sources[prices:44, 13f:0]"
     ],
     "momentum_health": {
       "as_of_date": "2026-01-21",
@@ -34026,8 +34032,8 @@
         "13f": 0,
         "prices": 44
       },
-      "strong_and_effective": 0,
-      "strong_signal": 0,
+      "strong_and_effective": 42,
+      "strong_signal": 42,
       "total_rankable": 44,
       "windows_used": {
         "120d": 0,
@@ -34095,7 +34101,7 @@
           "confidence": "0.7000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "44.57",
+          "momentum_score": "44.57",
           "source": "prices",
           "window_used": 60
         },
@@ -34341,7 +34347,7 @@
           "confidence": "0.8000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "32.47",
+          "momentum_score": "32.47",
           "source": "prices",
           "window_used": 60
         },
@@ -34586,7 +34592,7 @@
           "confidence": "0.9000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "22.72",
+          "momentum_score": "22.72",
           "source": "prices",
           "window_used": 60
         },
@@ -34835,7 +34841,7 @@
           "confidence": "0.9000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "90.50",
+          "momentum_score": "90.50",
           "source": "prices",
           "window_used": 60
         },
@@ -35088,7 +35094,7 @@
           "confidence": "0.9000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "90.50",
+          "momentum_score": "90.50",
           "source": "prices",
           "window_used": 60
         },
@@ -35342,7 +35348,7 @@
           "confidence": "0.7000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "56.07",
+          "momentum_score": "56.07",
           "source": "prices",
           "window_used": 60
         },
@@ -35591,7 +35597,7 @@
           "confidence": "0.7000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "41.68",
+          "momentum_score": "41.68",
           "source": "prices",
           "window_used": 60
         },
@@ -35839,7 +35845,7 @@
           "confidence": "0.8000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "37.95",
+          "momentum_score": "37.95",
           "source": "prices",
           "window_used": 60
         },
@@ -36083,7 +36089,7 @@
           "confidence": "0.9000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "87.60",
+          "momentum_score": "87.60",
           "source": "prices",
           "window_used": 60
         },
@@ -36325,7 +36331,7 @@
           "confidence": "0.8000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "32.90",
+          "momentum_score": "32.90",
           "source": "prices",
           "window_used": 60
         },
@@ -36570,7 +36576,7 @@
           "confidence": "0.9000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "12.63",
+          "momentum_score": "12.63",
           "source": "prices",
           "window_used": 60
         },
@@ -36816,7 +36822,7 @@
           "confidence": "0.9000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "88.78",
+          "momentum_score": "88.78",
           "source": "prices",
           "window_used": 60
         },
@@ -37060,7 +37066,7 @@
           "confidence": "0.7000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "54.42",
+          "momentum_score": "54.42",
           "source": "prices",
           "window_used": 60
         },
@@ -37303,7 +37309,7 @@
           "confidence": "0.9000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "78.98",
+          "momentum_score": "78.98",
           "source": "prices",
           "window_used": 60
         },
@@ -37548,7 +37554,7 @@
           "confidence": "0.7000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "49.37",
+          "momentum_score": "49.37",
           "source": "prices",
           "window_used": 60
         },
@@ -37794,7 +37800,7 @@
           "confidence": "0.9000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "13.12",
+          "momentum_score": "13.12",
           "source": "prices",
           "window_used": 60
         },
@@ -38042,7 +38048,7 @@
           "confidence": "0.9000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "90.50",
+          "momentum_score": "90.50",
           "source": "prices",
           "window_used": 60
         },
@@ -38288,7 +38294,7 @@
           "confidence": "0.9000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "9.50",
+          "momentum_score": "9.50",
           "source": "prices",
           "window_used": 60
         },
@@ -38533,7 +38539,7 @@
           "confidence": "0.7000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "42.35",
+          "momentum_score": "42.35",
           "source": "prices",
           "window_used": 60
         },
@@ -38778,7 +38784,7 @@
           "confidence": "0.7000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "43.58",
+          "momentum_score": "43.58",
           "source": "prices",
           "window_used": 60
         },
@@ -39024,7 +39030,7 @@
           "confidence": "0.8000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "33.96",
+          "momentum_score": "33.96",
           "source": "prices",
           "window_used": 60
         },
@@ -39270,7 +39276,7 @@
           "confidence": "0.7000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "59.85",
+          "momentum_score": "59.85",
           "source": "prices",
           "window_used": 60
         },
@@ -39515,7 +39521,7 @@
           "confidence": "0.9000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "12.53",
+          "momentum_score": "12.53",
           "source": "prices",
           "window_used": 60
         },
@@ -39761,7 +39767,7 @@
           "confidence": "0.9000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "9.50",
+          "momentum_score": "9.50",
           "source": "prices",
           "window_used": 60
         },
@@ -40005,7 +40011,7 @@
           "confidence": "0.9000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "90.50",
+          "momentum_score": "90.50",
           "source": "prices",
           "window_used": 60
         },
@@ -40249,7 +40255,7 @@
           "confidence": "0.7000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "52.98",
+          "momentum_score": "52.98",
           "source": "prices",
           "window_used": 60
         },
@@ -40493,7 +40499,7 @@
           "confidence": "0.8000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "33.84",
+          "momentum_score": "33.84",
           "source": "prices",
           "window_used": 60
         },
@@ -40738,7 +40744,7 @@
           "confidence": "0.7000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "45.27",
+          "momentum_score": "45.27",
           "source": "prices",
           "window_used": 60
         },
@@ -40982,7 +40988,7 @@
           "confidence": "0.9000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "9.50",
+          "momentum_score": "9.50",
           "source": "prices",
           "window_used": 60
         },
@@ -41227,7 +41233,7 @@
           "confidence": "0.9000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "9.50",
+          "momentum_score": "9.50",
           "source": "prices",
           "window_used": 60
         },
@@ -41471,7 +41477,7 @@
           "confidence": "0.9000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "9.50",
+          "momentum_score": "9.50",
           "source": "prices",
           "window_used": 60
         },
@@ -41712,7 +41718,7 @@
           "confidence": "0.8000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "36.05",
+          "momentum_score": "36.05",
           "source": "prices",
           "window_used": 60
         },
@@ -41959,7 +41965,7 @@
           "confidence": "0.8000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "64.50",
+          "momentum_score": "64.50",
           "source": "prices",
           "window_used": 60
         },
@@ -42202,7 +42208,7 @@
           "confidence": "0.8000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "36.55",
+          "momentum_score": "36.55",
           "source": "prices",
           "window_used": 60
         },
@@ -42452,7 +42458,7 @@
           "confidence": "0.9000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "19.06",
+          "momentum_score": "19.06",
           "source": "prices",
           "window_used": 60
         },
@@ -42703,7 +42709,7 @@
           "confidence": "0.9000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "78.59",
+          "momentum_score": "78.59",
           "source": "prices",
           "window_used": 60
         },
@@ -42949,7 +42955,7 @@
           "confidence": "0.7000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "54.27",
+          "momentum_score": "54.27",
           "source": "prices",
           "window_used": 60
         },
@@ -43198,7 +43204,7 @@
           "confidence": "0.7000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "40.87",
+          "momentum_score": "40.87",
           "source": "prices",
           "window_used": 60
         },
@@ -43442,7 +43448,7 @@
           "confidence": "0.7000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "52.31",
+          "momentum_score": "52.31",
           "source": "prices",
           "window_used": 60
         },
@@ -43684,7 +43690,7 @@
           "confidence": "0.9000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "90.50",
+          "momentum_score": "90.50",
           "source": "prices",
           "window_used": 60
         },
@@ -43936,7 +43942,7 @@
           "confidence": "0.9000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "83.88",
+          "momentum_score": "83.88",
           "source": "prices",
           "window_used": 60
         },
@@ -44183,7 +44189,7 @@
           "confidence": "0.8000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "62.98",
+          "momentum_score": "62.98",
           "source": "prices",
           "window_used": 60
         },
@@ -44426,7 +44432,7 @@
           "confidence": "0.9000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "18.64",
+          "momentum_score": "18.64",
           "source": "prices",
           "window_used": 60
         },
@@ -44668,7 +44674,7 @@
           "confidence": "0.7000",
           "data_completeness": "1.0",
           "data_status": "applied",
-          "score": "42.48",
+          "momentum_score": "42.48",
           "source": "prices",
           "window_used": 60
         },
@@ -44909,8 +44915,8 @@
       "financial_records.json": "db2d53afde9f21e0",
       "holdings_snapshots.json": "caf60dfe9aed0167",
       "manager_registry.json": "54021d91b9eabe13",
-      "market_data.json": "1ae6484fee4e30c9",
-      "market_data.momentum_meta.json": "baa5b38d22a71053",
+      "market_data.json": "ecb10f35b627ad2f",
+      "market_data.momentum_meta.json": "e5bcc92990981b33",
       "market_snapshot.json": "9e22c8a328a57622",
       "pos_coverage_validation.json": "1b59d24430d261d5",
       "production_market_caps.json": "303de21c05bf2d9c",
