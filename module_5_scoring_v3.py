@@ -1170,7 +1170,7 @@ def _score_single_ticker_v3(
         "component_scores": component_scores,
         "uncertainty_penalty": uncertainty_penalty,
         "momentum_signal": {
-            "score": str(momentum.momentum_score),
+            "momentum_score": str(momentum.momentum_score),
             "alpha_60d": str(momentum.alpha_60d) if momentum.alpha_60d else None,
             "confidence": str(momentum.confidence),
             "data_completeness": str(momentum.data_completeness),
