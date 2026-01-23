@@ -22,6 +22,7 @@ Usage:
 import logging
 from dataclasses import dataclass, field
 from datetime import date, timedelta
+from decimal import Decimal, ROUND_HALF_UP
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
 
 from common.date_utils import normalize_date
@@ -67,9 +68,9 @@ class DataQualityConfig:
     max_market_data_age_days: int = 7
     max_trial_data_age_days: int = 30
 
-    # Liquidity thresholds
-    min_adv_dollars: float = 500_000  # Minimum average daily volume in dollars
-    min_price: float = 5.0  # Penny stock threshold
+    # Liquidity thresholds - Use Decimal for financial precision
+    min_adv_dollars: Decimal = field(default_factory=lambda: Decimal("500000"))
+    min_price: Decimal = field(default_factory=lambda: Decimal("5.0"))
 
     # Trial quality thresholds
     min_enrollment: int = 10  # Minimum trial participants
@@ -170,6 +171,9 @@ class DataQualityGates:
 
         Returns:
             QualityGateResult with pass/fail status
+
+        Note:
+            Uses Decimal arithmetic internally for precision in ADV calculation.
         """
         if avg_volume is None or price is None:
             return QualityGateResult(
@@ -185,19 +189,29 @@ class DataQualityGates:
                 passed=False,
                 gate_name="liquidity",
                 message="Invalid volume or price (zero or negative)",
-                value=0,
+                value=Decimal("0"),
                 threshold=self.config.min_adv_dollars,
             )
 
-        adv_dollars = avg_volume * price
+        # PRECISION: Use Decimal arithmetic for financial calculations
+        # Converting via string avoids float representation errors
+        vol_decimal = Decimal(str(avg_volume))
+        price_decimal = Decimal(str(price))
+        adv_dollars = (vol_decimal * price_decimal).quantize(
+            Decimal("0.01"), rounding=ROUND_HALF_UP
+        )
 
-        if adv_dollars < self.config.min_adv_dollars:
+        min_threshold = self.config.min_adv_dollars
+        if not isinstance(min_threshold, Decimal):
+            min_threshold = Decimal(str(min_threshold))
+
+        if adv_dollars < min_threshold:
             return QualityGateResult(
                 passed=False,
                 gate_name="liquidity",
-                message=f"ADV ${adv_dollars:,.0f} below minimum ${self.config.min_adv_dollars:,.0f}",
+                message=f"ADV ${adv_dollars:,.0f} below minimum ${min_threshold:,.0f}",
                 value=adv_dollars,
-                threshold=self.config.min_adv_dollars,
+                threshold=min_threshold,
             )
 
         return QualityGateResult(
@@ -205,7 +219,7 @@ class DataQualityGates:
             gate_name="liquidity",
             message=f"ADV ${adv_dollars:,.0f}",
             value=adv_dollars,
-            threshold=self.config.min_adv_dollars,
+            threshold=min_threshold,
         )
 
     def validate_price(self, price: Optional[float]) -> QualityGateResult:
@@ -227,21 +241,27 @@ class DataQualityGates:
                 threshold=self.config.min_price,
             )
 
-        if price < self.config.min_price:
+        # Use Decimal for comparison
+        price_decimal = Decimal(str(price))
+        min_price = self.config.min_price
+        if not isinstance(min_price, Decimal):
+            min_price = Decimal(str(min_price))
+
+        if price_decimal < min_price:
             return QualityGateResult(
                 passed=False,
                 gate_name="price",
-                message=f"Price ${price:.2f} below minimum ${self.config.min_price:.2f}",
-                value=price,
-                threshold=self.config.min_price,
+                message=f"Price ${price_decimal:.2f} below minimum ${min_price:.2f}",
+                value=price_decimal,
+                threshold=min_price,
             )
 
         return QualityGateResult(
             passed=True,
             gate_name="price",
-            message=f"Price ${price:.2f}",
-            value=price,
-            threshold=self.config.min_price,
+            message=f"Price ${price_decimal:.2f}",
+            value=price_decimal,
+            threshold=min_price,
         )
 
     def validate_enrollment(self, enrollment: Optional[int]) -> QualityGateResult:
@@ -431,7 +451,7 @@ def validate_financial_staleness(
 def validate_liquidity(
     avg_volume: float,
     price: float,
-    min_adv_dollars: float = 500_000,
+    min_adv_dollars: Union[float, Decimal] = Decimal("500000"),
 ) -> bool:
     """
     Convenience function to check if liquidity meets minimum.
@@ -439,11 +459,14 @@ def validate_liquidity(
     Args:
         avg_volume: Average daily volume (shares)
         price: Stock price
-        min_adv_dollars: Minimum ADV in dollars
+        min_adv_dollars: Minimum ADV in dollars (Decimal preferred)
 
     Returns:
         True if liquidity is sufficient, False otherwise
     """
+    # Convert to Decimal if needed
+    if not isinstance(min_adv_dollars, Decimal):
+        min_adv_dollars = Decimal(str(min_adv_dollars))
     gates = DataQualityGates(DataQualityConfig(min_adv_dollars=min_adv_dollars))
     result = gates.validate_liquidity(avg_volume, price)
     return result.passed

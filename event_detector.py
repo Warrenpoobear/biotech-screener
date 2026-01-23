@@ -68,14 +68,23 @@ class CatalystEvent:
     direction: str = "POS"  # 'POS', 'NEG', 'NEUTRAL'
     impact: int = 1  # 1-3
     confidence: float = 0.85
-    disclosed_at: date = date.today()
-    fields_changed: dict = None
+    # CRITICAL: No default for disclosed_at - must be explicitly provided
+    # Using date.today() as default violates determinism (same data → different results)
+    disclosed_at: Optional[date] = None
+    fields_changed: Optional[dict] = None
     actual_date: Optional[date] = None
     # Explainability fields (new)
     event_rule_id: str = ""  # e.g., "M3_DIFF_STATUS_SEVERE_NEG"
     confidence_reason: str = ""  # Human-readable explanation
 
     def __post_init__(self):
+        # CRITICAL: Require disclosed_at to be set explicitly
+        if self.disclosed_at is None:
+            raise ValueError(
+                "CatalystEvent.disclosed_at must be explicitly set. "
+                "Using date.today() as default violates determinism."
+            )
+        # Use field factory pattern to avoid mutable default
         if self.fields_changed is None:
             self.fields_changed = {}
         # Auto-generate rule_id if not set

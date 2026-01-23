@@ -346,8 +346,13 @@ class PoSPriorEngine:
         """
 
         # Validate as_of_date (required for determinism)
+        # CRITICAL: Fail-loud instead of silently defaulting to date.today()
         if as_of_date is None:
-            as_of_date = date.today()
+            raise ValueError(
+                "as_of_date is required for determinism. "
+                "Silent default to date.today() violates PIT safety - "
+                "same inputs would produce different outputs on different days."
+            )
 
         # Deterministic timestamp
         deterministic_timestamp = f"{as_of_date.isoformat()}T00:00:00Z"
