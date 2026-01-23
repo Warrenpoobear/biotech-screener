@@ -60,17 +60,23 @@ class ValidationResult:
         return [r.message for r in self.gate_results if not r.passed]
 
 
-@dataclass
+@dataclass(frozen=True)
 class DataQualityConfig:
-    """Configuration for data quality gates."""
+    """
+    Configuration for data quality gates.
+
+    Immutable (frozen=True) to prevent accidental modification after initialization.
+    This ensures configuration consistency throughout a pipeline run.
+    """
     # Staleness thresholds (days)
     max_financial_age_days: int = 90
     max_market_data_age_days: int = 7
     max_trial_data_age_days: int = 30
 
     # Liquidity thresholds - Use Decimal for financial precision
-    min_adv_dollars: Decimal = field(default_factory=lambda: Decimal("500000"))
-    min_price: Decimal = field(default_factory=lambda: Decimal("5.0"))
+    # Note: Using tuple for immutability since frozen dataclass can't use mutable defaults
+    min_adv_dollars: Decimal = Decimal("500000")
+    min_price: Decimal = Decimal("5.0")
 
     # Trial quality thresholds
     min_enrollment: int = 10  # Minimum trial participants
@@ -79,13 +85,9 @@ class DataQualityConfig:
     min_financial_coverage: float = 0.5  # At least 50% of financial fields
     min_market_coverage: float = 0.8  # At least 80% of market fields
 
-    # Required fields
-    required_financial_fields: Set[str] = field(default_factory=lambda: {
-        "Cash", "NetIncome"
-    })
-    required_market_fields: Set[str] = field(default_factory=lambda: {
-        "price", "market_cap"
-    })
+    # Required fields - use frozenset for immutability
+    required_financial_fields: frozenset = frozenset({"Cash", "NetIncome"})
+    required_market_fields: frozenset = frozenset({"price", "market_cap"})
 
 
 class DataQualityGates:
@@ -481,9 +483,13 @@ class CircuitBreakerError(Exception):
     pass
 
 
-@dataclass
+@dataclass(frozen=True)
 class CircuitBreakerConfig:
-    """Configuration for circuit breaker."""
+    """
+    Configuration for circuit breaker.
+
+    Immutable (frozen=True) to prevent accidental modification after initialization.
+    """
     # Thresholds
     failure_threshold: float = 0.50  # Trip if > 50% of records fail
     warning_threshold: float = 0.20  # Warn if > 20% fail

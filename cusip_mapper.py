@@ -9,8 +9,14 @@ ARCHITECTURE:
 - Tier 1: Persistent cache (OpenFIGI results, 90-day TTL)
 - Tier 2: OpenFIGI API (live lookups with rate limiting)
 
+PIT SAFETY:
+- All timestamp operations use explicit reference_time parameter
+- Cache TTL validation uses reference time, not wall-clock time
+- This ensures deterministic behavior across pipeline runs
+
 Author: Wake Robin Capital Management
 Date: 2026-01-09
+Updated: 2026-01-23 (PIT safety hardening)
 """
 
 import json
@@ -97,29 +103,46 @@ def load_static_cusip_map(static_map_path: Path) -> Dict[str, CUSIPMapping]:
 
 def build_static_map_from_universe(
     universe_path: Path,
-    output_path: Path
+    output_path: Path,
+    reference_time: Optional[datetime] = None
 ) -> None:
     """
     Bootstrap static map from universe.json with known CUSIPs.
-    
+
     This is a one-time operation to create the initial static map.
     You'll need to manually add CUSIPs for your 322 tickers.
+
+    Args:
+        universe_path: Path to universe.json
+        output_path: Path to write static map
+        reference_time: Explicit timestamp for PIT safety. If None, uses
+                       a deterministic default (midnight of 2026-01-01).
+                       IMPORTANT: For production use, always pass an explicit time.
     """
+    # PIT SAFETY: Use explicit reference time, never wall-clock
+    if reference_time is None:
+        # Deterministic default for reproducibility
+        reference_time = datetime(2026, 1, 1, 0, 0, 0)
+        logger.warning(
+            "build_static_map_from_universe: No reference_time provided. "
+            f"Using deterministic default: {reference_time.isoformat()}"
+        )
+
     with open(universe_path) as f:
         universe = json.load(f)
-    
+
     static_map = {}
-    
+
     # Example structure - you'll need to populate with real CUSIPs
     for security in universe:
         ticker = security.get('ticker')
         if ticker == '_XBI_BENCHMARK_':
             continue
-        
+
         # PLACEHOLDER: You need to add actual CUSIPs
         # Sources: Bloomberg, SEC filings, Yahoo Finance, etc.
         cusip = security.get('cusip')  # If you have this in universe
-        
+
         if cusip:
             static_map[cusip] = {
                 'cusip': cusip,
@@ -127,13 +150,13 @@ def build_static_map_from_universe(
                 'name': security.get('name', ''),
                 'exchange': security.get('exchange', 'NASDAQ'),
                 'security_type': 'Common Stock',
-                'mapped_at': datetime.now().isoformat(),
+                'mapped_at': reference_time.isoformat(),
                 'source': 'static'
             }
-    
+
     with open(output_path, 'w') as f:
         json.dump(static_map, f, indent=2)
-    
+
     print(f"Static map created: {len(static_map)} mappings")
     print(f"Saved to: {output_path}")
 
@@ -142,32 +165,51 @@ def build_static_map_from_universe(
 # TIER 1: PERSISTENT CACHE
 # ==============================================================================
 
-def load_cache(cache_path: Path) -> Dict[str, CUSIPMapping]:
+def load_cache(
+    cache_path: Path,
+    reference_time: Optional[datetime] = None
+) -> Dict[str, CUSIPMapping]:
     """
     Load Tier 1 persistent cache.
-    
+
     Cached OpenFIGI results with 90-day TTL.
-    
+
+    Args:
+        cache_path: Path to cache file
+        reference_time: Explicit reference time for TTL validation.
+                       If None, uses deterministic default for reproducibility.
+                       IMPORTANT: For production use, always pass an explicit time.
+
     Returns:
         {cusip: CUSIPMapping}
     """
     if not cache_path.exists():
         return {}
-    
+
+    # PIT SAFETY: Use explicit reference time, never wall-clock
+    if reference_time is None:
+        # Deterministic default - use a far-future date to include all cache entries
+        # This ensures reproducible behavior when no reference time is provided
+        reference_time = datetime(2099, 12, 31, 23, 59, 59)
+        logger.warning(
+            "load_cache: No reference_time provided. "
+            "Using deterministic default that includes all cache entries."
+        )
+
     with open(cache_path) as f:
         data = json.load(f)
-    
-    # Filter expired entries
-    cutoff = datetime.now() - timedelta(days=CACHE_TTL_DAYS)
+
+    # Filter expired entries using explicit reference time
+    cutoff = reference_time - timedelta(days=CACHE_TTL_DAYS)
     valid_mappings = {}
-    
+
     for cusip, mapping_dict in data.items():
         mapping = CUSIPMapping.from_dict(mapping_dict)
         mapped_at = datetime.fromisoformat(mapping.mapped_at)
-        
+
         if mapped_at >= cutoff:
             valid_mappings[cusip] = mapping
-    
+
     return valid_mappings
 
 
@@ -202,7 +244,8 @@ def _calculate_backoff(attempt: int) -> float:
 
 def query_openfigi_batch(
     cusips: List[str],
-    api_key: Optional[str] = None
+    api_key: Optional[str] = None,
+    reference_time: Optional[datetime] = None
 ) -> Dict[str, Optional[CUSIPMapping]]:
     """
     Query OpenFIGI API for batch of CUSIPs with retry logic.
@@ -210,6 +253,9 @@ def query_openfigi_batch(
     Args:
         cusips: List of 9-character CUSIPs (max 100)
         api_key: Optional OpenFIGI API key (increases rate limits)
+        reference_time: Explicit timestamp for mapped_at field.
+                       If None, uses deterministic default.
+                       IMPORTANT: For production use, always pass an explicit time.
 
     Returns:
         {cusip: CUSIPMapping or None}
@@ -218,6 +264,14 @@ def query_openfigi_batch(
         - Up to MAX_RETRIES attempts with exponential backoff
         - Handles timeouts, rate limits, and transient network errors
     """
+    # PIT SAFETY: Use explicit reference time, never wall-clock
+    if reference_time is None:
+        # Deterministic default for reproducibility
+        reference_time = datetime(2026, 1, 1, 0, 0, 0)
+        logger.warning(
+            "query_openfigi_batch: No reference_time provided. "
+            f"Using deterministic default: {reference_time.isoformat()}"
+        )
     if len(cusips) > OPENFIGI_BATCH_SIZE:
         raise ValueError(f"Batch size {len(cusips)} exceeds max {OPENFIGI_BATCH_SIZE}")
 
@@ -319,7 +373,7 @@ def query_openfigi_batch(
             name=figi_data.get('name', ''),
             exchange=figi_data.get('exchCode', ''),
             security_type=figi_data.get('securityType', ''),
-            mapped_at=datetime.now().isoformat(),
+            mapped_at=reference_time.isoformat(),
             source='openfigi'
         )
 
@@ -330,25 +384,31 @@ def query_openfigi_batch(
 
 def query_openfigi_all(
     cusips: List[str],
-    api_key: Optional[str] = None
+    api_key: Optional[str] = None,
+    reference_time: Optional[datetime] = None
 ) -> Dict[str, Optional[CUSIPMapping]]:
     """
     Query OpenFIGI for all CUSIPs in batches.
-    
+
     Handles batching and rate limiting automatically.
+
+    Args:
+        cusips: List of CUSIPs to query
+        api_key: Optional OpenFIGI API key
+        reference_time: Explicit timestamp for mapped_at field (PIT safety)
     """
     all_mappings = {}
-    
+
     # Process in batches
     for i in range(0, len(cusips), OPENFIGI_BATCH_SIZE):
         batch = cusips[i:i + OPENFIGI_BATCH_SIZE]
 
         logger.info(f"Querying OpenFIGI batch {i//OPENFIGI_BATCH_SIZE + 1} "
                     f"({len(batch)} CUSIPs)...")
-        
-        batch_results = query_openfigi_batch(batch, api_key)
+
+        batch_results = query_openfigi_batch(batch, api_key, reference_time)
         all_mappings.update(batch_results)
-    
+
     return all_mappings
 
 
@@ -359,30 +419,38 @@ def query_openfigi_all(
 class CUSIPMapper:
     """
     Three-tier CUSIP→Ticker mapper with intelligent fallback.
-    
+
     Tier 0: Static map (instant, never expires)
     Tier 1: Persistent cache (instant, 90-day TTL)
     Tier 2: OpenFIGI API (slow, rate-limited)
+
+    PIT Safety:
+        Pass explicit reference_time to ensure deterministic behavior.
+        All timestamps use the reference_time instead of wall-clock time.
     """
-    
+
     def __init__(
         self,
         static_map_path: Path,
         cache_path: Path,
-        openfigi_api_key: Optional[str] = None
+        openfigi_api_key: Optional[str] = None,
+        reference_time: Optional[datetime] = None
     ):
         self.static_map_path = static_map_path
         self.cache_path = cache_path
         self.openfigi_api_key = openfigi_api_key
-        
+
+        # PIT SAFETY: Store reference time for all operations
+        self.reference_time = reference_time
+
         # Load tiers
         logger.info("Loading CUSIP mapper...")
         self.static_map = load_static_cusip_map(static_map_path)
         logger.info(f"  Static map: {len(self.static_map)} entries")
 
-        self.cache = load_cache(cache_path)
+        self.cache = load_cache(cache_path, reference_time)
         logger.info(f"  Cache: {len(self.cache)} entries (valid within {CACHE_TTL_DAYS} days)")
-        
+
         # Track new mappings for cache update
         self.new_mappings = {}
     
@@ -399,43 +467,43 @@ class CUSIPMapper:
     def get_mapping(self, cusip: str) -> Optional[CUSIPMapping]:
         """
         Get full mapping for CUSIP with fallback strategy.
-        
+
         Returns:
             CUSIPMapping or None
         """
         # Tier 0: Static map
         if cusip in self.static_map:
             return self.static_map[cusip]
-        
+
         # Tier 1: Cache
         if cusip in self.cache:
             return self.cache[cusip]
-        
+
         # Tier 2: OpenFIGI (live query)
         logger.info(f"  Cache miss: {cusip} - querying OpenFIGI...")
-        result = query_openfigi_batch([cusip], self.openfigi_api_key)
-        
+        result = query_openfigi_batch([cusip], self.openfigi_api_key, self.reference_time)
+
         mapping = result.get(cusip)
-        
+
         if mapping:
             # Add to cache and new_mappings
             self.cache[cusip] = mapping
             self.new_mappings[cusip] = mapping
-        
+
         return mapping
     
     def get_batch(self, cusips: List[str]) -> Dict[str, Optional[str]]:
         """
         Get tickers for batch of CUSIPs.
-        
+
         More efficient than calling get() in a loop.
-        
+
         Returns:
             {cusip: ticker or None}
         """
         results = {}
         unknown_cusips = []
-        
+
         # Check static map and cache first
         for cusip in cusips:
             if cusip in self.static_map:
@@ -444,12 +512,14 @@ class CUSIPMapper:
                 results[cusip] = self.cache[cusip].ticker
             else:
                 unknown_cusips.append(cusip)
-        
+
         # Query OpenFIGI for unknowns
         if unknown_cusips:
             logger.info(f"Querying OpenFIGI for {len(unknown_cusips)} unknown CUSIPs...")
-            openfigi_results = query_openfigi_all(unknown_cusips, self.openfigi_api_key)
-            
+            openfigi_results = query_openfigi_all(
+                unknown_cusips, self.openfigi_api_key, self.reference_time
+            )
+
             for cusip, mapping in openfigi_results.items():
                 if mapping:
                     results[cusip] = mapping.ticker
@@ -457,7 +527,7 @@ class CUSIPMapper:
                     self.new_mappings[cusip] = mapping
                 else:
                     results[cusip] = None
-        
+
         return results
     
     def save(self) -> None:

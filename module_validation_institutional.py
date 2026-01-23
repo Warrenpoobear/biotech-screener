@@ -278,16 +278,23 @@ def convert_to_dict(
 def generate_institutional_alerts(
     summaries: List[Dict],
     output_dir: Path,
-    timestamp: str
+    timestamp: str,
+    report_time: Optional[str] = None
 ) -> None:
     """
     Generate institutional activity alert report.
-    
+
     Args:
         summaries: List of ticker summaries with institutional data
         output_dir: Path to outputs/ directory
         timestamp: Timestamp string for filename
+        report_time: Explicit report generation timestamp for PIT safety.
+                    If None, uses the filename timestamp for reproducibility.
     """
+    # PIT SAFETY: Use explicit timestamp, not wall-clock
+    if report_time is None:
+        # Use the provided timestamp parameter for reproducibility
+        report_time = timestamp
     high_priority_alerts = []
     medium_priority_alerts = []
     
@@ -355,7 +362,8 @@ def generate_institutional_alerts(
         f.write("=" * 80 + "\n")
         f.write("WAKE ROBIN - INSTITUTIONAL ACTIVITY ALERTS\n")
         f.write("=" * 80 + "\n")
-        f.write(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+        # PIT SAFETY: Use explicit timestamp, never wall-clock
+        f.write(f"Generated: {report_time}\n")
         f.write(f"Alert Count: {len(high_priority_alerts) + len(medium_priority_alerts)}\n")
         f.write("=" * 80 + "\n\n")
         
