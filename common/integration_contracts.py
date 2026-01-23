@@ -57,7 +57,7 @@ from module_3_schema import (
 )
 
 
-__version__ = "1.3.0"  # Added diagnostic normalization, improved extraction functions, strict validation default
+__version__ = "1.4.0"  # Added score bounds validation, production mode enforcement, deep validation by default
 
 # =============================================================================
 # VALIDATION MODE
@@ -546,12 +546,17 @@ def validate_module_1_output(output: Dict[str, Any]) -> None:
             raise SchemaValidationError(f"active_securities[{i}] missing 'ticker' field")
 
 
-def validate_module_2_output(output: Dict[str, Any]) -> None:
+def validate_module_2_output(output: Dict[str, Any], validate_bounds: bool = True) -> None:
     """
     Validate Module 2 output schema.
 
+    Args:
+        output: Module 2 output dict
+        validate_bounds: If True, also validate score bounds (default: True)
+
     Raises:
         SchemaValidationError: If validation fails
+        ScoreBoundsError: If score bounds are violated (when validate_bounds=True)
     """
     required_keys = {"scores", "diagnostic_counts"}
     missing = required_keys - set(output.keys())
@@ -570,17 +575,29 @@ def validate_module_2_output(output: Dict[str, Any]) -> None:
                 f"scores[{i}] missing 'financial_score' or 'financial_normalized' field"
             )
 
+    # Score bounds validation (enabled by default for fail-loud behavior)
+    if validate_bounds and is_validation_enabled():
+        is_valid, errors = validate_module_2_score_bounds(output["scores"], strict=False)
+        if not is_valid and is_strict_mode():
+            raise SchemaValidationError(f"Module 2 score bounds violations: {errors}")
 
-def validate_module_3_output(output: Dict[str, Any], deep: bool = False) -> None:
+
+def validate_module_3_output(
+    output: Dict[str, Any],
+    deep: bool = True,
+    validate_bounds: bool = True
+) -> None:
     """
     Validate Module 3 output schema.
 
     Args:
         output: Module 3 output dict
-        deep: If True, validate individual summary schemas (slower)
+        deep: If True, validate individual summary schemas (default: True for production safety)
+        validate_bounds: If True, also validate score bounds (default: True)
 
     Raises:
         SchemaValidationError: If validation fails
+        ScoreBoundsError: If score bounds are violated (when validate_bounds=True)
     """
     required_keys = {"summaries", "diagnostic_counts", "as_of_date"}
     missing = required_keys - set(output.keys())
@@ -602,7 +619,7 @@ def validate_module_3_output(output: Dict[str, Any], deep: bool = False) -> None
             stacklevel=2
         )
 
-    # Deep validation using module_3_schema validator
+    # Deep validation using module_3_schema validator (enabled by default)
     if deep:
         for ticker, summary in output["summaries"].items():
             # Handle both dataclass and dict
@@ -621,13 +638,24 @@ def validate_module_3_output(output: Dict[str, Any], deep: bool = False) -> None
                     f"summaries[{ticker}] schema validation failed: {errors}"
                 )
 
+    # Score bounds validation (enabled by default for fail-loud behavior)
+    if validate_bounds and is_validation_enabled():
+        is_valid, errors = validate_module_3_score_bounds(output["summaries"], strict=False)
+        if not is_valid and is_strict_mode():
+            raise SchemaValidationError(f"Module 3 score bounds violations: {errors}")
 
-def validate_module_4_output(output: Dict[str, Any]) -> None:
+
+def validate_module_4_output(output: Dict[str, Any], validate_bounds: bool = True) -> None:
     """
     Validate Module 4 output schema.
 
+    Args:
+        output: Module 4 output dict
+        validate_bounds: If True, also validate score bounds (default: True)
+
     Raises:
         SchemaValidationError: If validation fails
+        ScoreBoundsError: If score bounds are violated (when validate_bounds=True)
     """
     required_keys = {"scores", "diagnostic_counts", "as_of_date"}
     missing = required_keys - set(output.keys())
@@ -643,13 +671,24 @@ def validate_module_4_output(output: Dict[str, Any]) -> None:
         if "clinical_score" not in score:
             raise SchemaValidationError(f"scores[{i}] missing 'clinical_score' field")
 
+    # Score bounds validation (enabled by default for fail-loud behavior)
+    if validate_bounds and is_validation_enabled():
+        is_valid, errors = validate_module_4_score_bounds(output["scores"], strict=False)
+        if not is_valid and is_strict_mode():
+            raise SchemaValidationError(f"Module 4 score bounds violations: {errors}")
 
-def validate_module_5_output(output: Dict[str, Any]) -> None:
+
+def validate_module_5_output(output: Dict[str, Any], validate_bounds: bool = True) -> None:
     """
     Validate Module 5 output schema.
 
+    Args:
+        output: Module 5 output dict
+        validate_bounds: If True, also validate score bounds (default: True)
+
     Raises:
         SchemaValidationError: If validation fails
+        ScoreBoundsError: If score bounds are violated (when validate_bounds=True)
     """
     required_keys = {"ranked_securities", "excluded_securities", "diagnostic_counts"}
     missing = required_keys - set(output.keys())
@@ -658,6 +697,12 @@ def validate_module_5_output(output: Dict[str, Any]) -> None:
 
     if not isinstance(output["ranked_securities"], list):
         raise SchemaValidationError("ranked_securities must be a list")
+
+    # Score bounds validation (enabled by default for fail-loud behavior)
+    if validate_bounds and is_validation_enabled():
+        is_valid, errors = validate_module_5_score_bounds(output["ranked_securities"], strict=False)
+        if not is_valid and is_strict_mode():
+            raise SchemaValidationError(f"Module 5 score bounds violations: {errors}")
 
 
 def validate_pipeline_handoff(
@@ -1023,3 +1068,298 @@ def warn_summaries_legacy() -> None:
         DeprecationWarning,
         stacklevel=2
     )
+
+
+# =============================================================================
+# SCORE BOUNDS VALIDATION
+# =============================================================================
+
+# Score bounds for each module (min, max)
+SCORE_BOUNDS = {
+    "financial_score": (0.0, 100.0),
+    "financial_normalized": (0.0, 100.0),
+    "clinical_score": (0.0, 100.0),
+    "catalyst_score": (0.0, 100.0),
+    "score_blended": (0.0, 100.0),
+    "composite_score": (0.0, 100.0),
+}
+
+
+class ScoreBoundsError(Exception):
+    """Raised when a score is outside valid bounds."""
+    pass
+
+
+def validate_score_bounds(
+    value: Union[float, int, str, Decimal, None],
+    field_name: str,
+    ticker: Optional[str] = None,
+    strict: bool = True
+) -> Tuple[bool, Optional[str]]:
+    """
+    Validate that a score is within expected bounds.
+
+    Args:
+        value: Score value to validate
+        field_name: Name of the score field (e.g., "financial_score")
+        ticker: Optional ticker for error messages
+        strict: If True, raise on invalid; else return (False, error_msg)
+
+    Returns:
+        Tuple of (is_valid, error_message)
+
+    Raises:
+        ScoreBoundsError: If strict=True and score is out of bounds
+    """
+    if value is None:
+        return True, None  # None values are allowed (missing data)
+
+    bounds = SCORE_BOUNDS.get(field_name)
+    if bounds is None:
+        return True, None  # No bounds defined for this field
+
+    min_val, max_val = bounds
+
+    try:
+        numeric_val = float(value)
+    except (ValueError, TypeError, InvalidOperation) as e:
+        error_msg = f"Invalid score value for {field_name}: {value!r} ({type(value).__name__})"
+        if ticker:
+            error_msg = f"[{ticker}] {error_msg}"
+        if strict:
+            raise ScoreBoundsError(error_msg) from e
+        return False, error_msg
+
+    if numeric_val < min_val or numeric_val > max_val:
+        error_msg = (
+            f"Score {field_name}={numeric_val:.4f} out of bounds [{min_val}, {max_val}]"
+        )
+        if ticker:
+            error_msg = f"[{ticker}] {error_msg}"
+        if strict:
+            raise ScoreBoundsError(error_msg)
+        return False, error_msg
+
+    return True, None
+
+
+def validate_module_2_score_bounds(
+    scores: List[Dict[str, Any]],
+    strict: bool = True
+) -> Tuple[bool, List[str]]:
+    """
+    Validate all Module 2 scores are within bounds.
+
+    Args:
+        scores: List of Module 2 score records
+        strict: If True, raise on first invalid score
+
+    Returns:
+        Tuple of (all_valid, list of error messages)
+    """
+    errors = []
+
+    for i, score in enumerate(scores):
+        ticker = score.get("ticker", f"record_{i}")
+
+        # Check financial_score
+        if "financial_score" in score:
+            is_valid, error = validate_score_bounds(
+                score["financial_score"], "financial_score", ticker, strict=False
+            )
+            if not is_valid and error:
+                errors.append(error)
+
+        # Check financial_normalized (legacy)
+        if "financial_normalized" in score:
+            is_valid, error = validate_score_bounds(
+                score["financial_normalized"], "financial_normalized", ticker, strict=False
+            )
+            if not is_valid and error:
+                errors.append(error)
+
+    if errors and strict:
+        raise ScoreBoundsError(f"Module 2 score bounds violations: {errors}")
+
+    return len(errors) == 0, errors
+
+
+def validate_module_3_score_bounds(
+    summaries: Dict[str, Any],
+    strict: bool = True
+) -> Tuple[bool, List[str]]:
+    """
+    Validate all Module 3 scores are within bounds.
+
+    Args:
+        summaries: Dict of ticker -> catalyst summary
+        strict: If True, raise on first invalid score
+
+    Returns:
+        Tuple of (all_valid, list of error messages)
+    """
+    errors = []
+
+    for ticker, summary in summaries.items():
+        if summary is None:
+            continue
+
+        # Handle dataclass or dict
+        if hasattr(summary, "score_blended"):
+            score_val = summary.score_blended
+        elif isinstance(summary, dict):
+            score_val = summary.get("score_blended") or summary.get("catalyst_score")
+        else:
+            continue
+
+        if score_val is not None:
+            is_valid, error = validate_score_bounds(
+                score_val, "score_blended", ticker, strict=False
+            )
+            if not is_valid and error:
+                errors.append(error)
+
+    if errors and strict:
+        raise ScoreBoundsError(f"Module 3 score bounds violations: {errors}")
+
+    return len(errors) == 0, errors
+
+
+def validate_module_4_score_bounds(
+    scores: List[Dict[str, Any]],
+    strict: bool = True
+) -> Tuple[bool, List[str]]:
+    """
+    Validate all Module 4 scores are within bounds.
+
+    Args:
+        scores: List of Module 4 score records
+        strict: If True, raise on first invalid score
+
+    Returns:
+        Tuple of (all_valid, list of error messages)
+    """
+    errors = []
+
+    for i, score in enumerate(scores):
+        ticker = score.get("ticker", f"record_{i}")
+
+        if "clinical_score" in score:
+            is_valid, error = validate_score_bounds(
+                score["clinical_score"], "clinical_score", ticker, strict=False
+            )
+            if not is_valid and error:
+                errors.append(error)
+
+    if errors and strict:
+        raise ScoreBoundsError(f"Module 4 score bounds violations: {errors}")
+
+    return len(errors) == 0, errors
+
+
+def validate_module_5_score_bounds(
+    ranked_securities: List[Dict[str, Any]],
+    strict: bool = True
+) -> Tuple[bool, List[str]]:
+    """
+    Validate all Module 5 scores are within bounds.
+
+    Args:
+        ranked_securities: List of ranked security records
+        strict: If True, raise on first invalid score
+
+    Returns:
+        Tuple of (all_valid, list of error messages)
+    """
+    errors = []
+
+    for i, record in enumerate(ranked_securities):
+        ticker = record.get("ticker", f"record_{i}")
+
+        if "composite_score" in record:
+            is_valid, error = validate_score_bounds(
+                record["composite_score"], "composite_score", ticker, strict=False
+            )
+            if not is_valid and error:
+                errors.append(error)
+
+        # Also check component scores if present
+        for field in ["clinical_normalized", "financial_normalized", "catalyst_normalized"]:
+            if field in record and record[field] is not None:
+                is_valid, error = validate_score_bounds(
+                    record[field], field.replace("_normalized", "_score"), ticker, strict=False
+                )
+                if not is_valid and error:
+                    errors.append(error)
+
+    if errors and strict:
+        raise ScoreBoundsError(f"Module 5 score bounds violations: {errors}")
+
+    return len(errors) == 0, errors
+
+
+# =============================================================================
+# PRODUCTION MODE ENFORCEMENT
+# =============================================================================
+
+def is_production_mode() -> bool:
+    """
+    Check if running in production mode.
+
+    Production mode is detected by:
+    1. PRODUCTION_MODE environment variable set to 'true' or '1'
+    2. IC_VALIDATION_MODE set to 'strict'
+
+    Returns:
+        True if production mode is detected
+    """
+    prod_mode = os.getenv("PRODUCTION_MODE", "").lower() in ("true", "1", "yes")
+    strict_validation = get_validation_mode() == "strict"
+    return prod_mode or strict_validation
+
+
+def enforce_production_validation(
+    output: Dict[str, Any],
+    module_name: str
+) -> None:
+    """
+    Enforce strict validation in production mode.
+
+    Validates:
+    1. Schema compliance
+    2. Score bounds
+    3. Required fields
+
+    Args:
+        output: Module output to validate
+        module_name: Name of module (e.g., "module_2")
+
+    Raises:
+        SchemaValidationError: If schema validation fails
+        ScoreBoundsError: If score bounds are violated
+    """
+    if not is_production_mode():
+        return
+
+    # Run schema validation
+    validators = {
+        "module_1": validate_module_1_output,
+        "module_2": validate_module_2_output,
+        "module_3": lambda o: validate_module_3_output(o, deep=True),  # Enable deep validation
+        "module_4": validate_module_4_output,
+        "module_5": validate_module_5_output,
+    }
+
+    validator = validators.get(module_name)
+    if validator:
+        validator(output)
+
+    # Run score bounds validation
+    if module_name == "module_2" and "scores" in output:
+        validate_module_2_score_bounds(output["scores"], strict=True)
+    elif module_name == "module_3" and "summaries" in output:
+        validate_module_3_score_bounds(output["summaries"], strict=True)
+    elif module_name == "module_4" and "scores" in output:
+        validate_module_4_score_bounds(output["scores"], strict=True)
+    elif module_name == "module_5" and "ranked_securities" in output:
+        validate_module_5_score_bounds(output["ranked_securities"], strict=True)
