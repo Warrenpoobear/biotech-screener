@@ -700,8 +700,9 @@ def validate_pipeline_handoff(
 
 def extract_financial_score(
     score_record: Union[Module2ScoreRecord, Mapping[str, Any]],
-    warn_legacy: bool = True
-) -> Optional[float]:
+    warn_legacy: bool = True,
+    return_decimal: bool = False
+) -> Optional[Union[float, Decimal]]:
     """
     Extract financial score from Module 2 score record.
 
@@ -710,19 +711,40 @@ def extract_financial_score(
     Args:
         score_record: Module 2 score record dict
         warn_legacy: If True, emit deprecation warning when using legacy field
+        return_decimal: If True, return Decimal for precision-critical calculations.
+                       Default False for backwards compatibility.
 
     Returns:
-        Financial score as float, or None if not found
+        Financial score as float (default) or Decimal if return_decimal=True,
+        or None if not found.
+
+    Note:
+        For production scoring pipelines, prefer return_decimal=True to maintain
+        precision throughout calculations. Float conversion loses precision.
     """
+    value = None
+
     # Try standardized name first
     if "financial_score" in score_record:
-        return float(score_record["financial_score"])
+        value = score_record["financial_score"]
     # Fall back to legacy name
-    if "financial_normalized" in score_record:
+    elif "financial_normalized" in score_record:
         if warn_legacy:
             warn_legacy_field("financial_normalized", "financial_score", "Module 2")
-        return float(score_record["financial_normalized"])
-    return None
+        value = score_record["financial_normalized"]
+
+    if value is None:
+        return None
+
+    if return_decimal:
+        try:
+            if isinstance(value, Decimal):
+                return value
+            return Decimal(str(value))
+        except (InvalidOperation, ValueError):
+            return None
+    else:
+        return float(value)
 
 
 def extract_catalyst_score(
@@ -799,8 +821,9 @@ def extract_catalyst_score(
 
 
 def extract_clinical_score(
-    score_record: Union[Module4ScoreRecord, Mapping[str, Any]]
-) -> Optional[float]:
+    score_record: Union[Module4ScoreRecord, Mapping[str, Any]],
+    return_decimal: bool = False
+) -> Optional[Union[float, Decimal]]:
     """
     Extract clinical score from Module 4 score record.
 
@@ -810,8 +833,18 @@ def extract_clinical_score(
     - Decimal object
     - None values
 
+    Args:
+        score_record: Module 4 score record dict
+        return_decimal: If True, return Decimal for precision-critical calculations.
+                       Default False for backwards compatibility.
+
     Returns:
-        Clinical score as float, or None if not found or invalid
+        Clinical score as float (default) or Decimal if return_decimal=True,
+        or None if not found or invalid.
+
+    Note:
+        For production scoring pipelines, prefer return_decimal=True to maintain
+        precision throughout calculations.
     """
     if "clinical_score" not in score_record:
         return None
@@ -821,16 +854,24 @@ def extract_clinical_score(
         return None
 
     try:
-        # Handle string (from Module 4 Decimal serialization), float, or Decimal
-        if isinstance(val, str):
-            return float(val)
-        elif isinstance(val, (int, float)):
-            return float(val)
-        elif isinstance(val, Decimal):
-            return float(val)
+        if return_decimal:
+            # Return Decimal for precision-critical paths
+            if isinstance(val, Decimal):
+                return val
+            elif isinstance(val, str):
+                return Decimal(val)
+            else:
+                return Decimal(str(val))
         else:
-            # Attempt conversion for any other type
-            return float(val)
+            # Original behavior: return float
+            if isinstance(val, str):
+                return float(val)
+            elif isinstance(val, (int, float)):
+                return float(val)
+            elif isinstance(val, Decimal):
+                return float(val)
+            else:
+                return float(val)
     except (ValueError, TypeError, InvalidOperation) as e:
         warnings.warn(
             f"Failed to extract clinical_score: {val!r} ({type(val).__name__}): {e}",

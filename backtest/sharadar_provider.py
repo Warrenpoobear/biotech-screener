@@ -365,26 +365,48 @@ class SharadarReturnsProvider:
         """Check if ticker is available."""
         return ticker in self._tickers
     
-    def get_delisted_date(self, ticker: str) -> Optional[str]:
+    def get_delisted_date(
+        self,
+        ticker: str,
+        as_of_date: Optional[date] = None
+    ) -> Optional[str]:
         """
-        Get last trading date for a ticker.
-        
-        Returns None if ticker is still active (has recent data).
+        Get last trading date for a ticker (if delisted).
+
+        Args:
+            ticker: Stock ticker symbol
+            as_of_date: Reference date for delisting check. REQUIRED for backtests.
+                        If None, returns last date without checking recency
+                        (for inspection purposes only, not for backtest logic).
+
+        Returns:
+            Last trading date if ticker appears delisted, None if active.
+
+        Note:
+            For backtest usage, ALWAYS pass as_of_date to ensure reproducibility.
+            Using date.today() would cause survivorship bias - a stock that
+            delistted after the backtest period would be incorrectly excluded.
         """
         if ticker not in self._date_index:
             return None
-        
+
         dates = self._date_index[ticker]
         if not dates:
             return None
-        
+
         last_date = date.fromisoformat(dates[-1])
-        today = date.today()
-        
-        # If last date is more than 10 days ago, consider delisted
-        if (today - last_date).days > 10:
+
+        # CRITICAL: For reproducibility, require explicit as_of_date for delisting logic
+        # Using date.today() would cause different backtest results on different days
+        if as_of_date is None:
+            # Without as_of_date, we cannot determine if "delisted" - return None
+            # This is safer than guessing based on wall-clock time
+            return None
+
+        # If last date is more than 10 trading days before as_of_date, consider delisted
+        if (as_of_date - last_date).days > 10:
             return dates[-1]
-        
+
         return None
 
 

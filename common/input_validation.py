@@ -535,10 +535,19 @@ def validate_date(
     if parsed < config.min_date:
         errors.append(f"Date {parsed} is before minimum allowed: {config.min_date}")
 
-    max_allowed = date.today()
-    # Can't add days to date directly in a simple way, check year instead
-    if parsed.year > max_allowed.year + 1:
-        errors.append(f"Date {parsed} is too far in the future")
+    # NOTE: Future date validation removed to maintain time-invariance.
+    # Using date.today() here would cause validation to behave differently
+    # depending on when the code runs, breaking reproducibility.
+    #
+    # Lookahead protection should be enforced via:
+    # 1. PIT cutoff filters in modules (source_date <= as_of_date - 1)
+    # 2. Input data snapshot dating (data cannot be newer than snapshot date)
+    #
+    # If future date validation is needed, pass an explicit max_date in config
+    # rather than using wall-clock time.
+    if hasattr(config, 'max_date') and config.max_date is not None:
+        if parsed > config.max_date:
+            errors.append(f"Date {parsed} is after maximum allowed: {config.max_date}")
 
     return len(errors) == 0, parsed, errors
 
