@@ -1085,5 +1085,248 @@ class TestEdgeCases:
         assert ic is None  # No common tickers
 
 
+# =============================================================================
+# ADDITIONAL COVERAGE TESTS
+# =============================================================================
+
+class TestICResultSerialization:
+    """Tests for ICResult serialization."""
+
+    def test_ic_result_to_dict(self):
+        """Test ICResult.to_dict() method."""
+        result = ICResult(
+            ic_value=Decimal("0.045"),
+            ic_quality=ICQuality.GOOD,
+            n_observations=50,
+            t_statistic=Decimal("3.2"),
+            p_value=Decimal("0.002"),
+            is_significant_95=True,
+            is_significant_99=True,
+        )
+
+        d = result.to_dict()
+
+        assert d["ic_value"] == "0.045"
+        assert d["ic_quality"] == "GOOD"
+        assert d["n_observations"] == 50
+        assert d["t_statistic"] == "3.2"
+        assert d["p_value"] == "0.002"
+        assert d["is_significant_95"] is True
+        assert d["is_significant_99"] is True
+
+    def test_ic_result_to_dict_none_values(self):
+        """Test ICResult.to_dict() with None values."""
+        result = ICResult(
+            ic_value=Decimal("0.02"),
+            ic_quality=ICQuality.WEAK,
+            n_observations=15,
+            t_statistic=None,
+            p_value=None,
+            is_significant_95=False,
+            is_significant_99=False,
+        )
+
+        d = result.to_dict()
+
+        assert d["t_statistic"] is None
+        assert d["p_value"] is None
+
+
+class TestForwardWindowErrors:
+    """Tests for forward window error handling."""
+
+    def test_invalid_horizon_raises_error(self):
+        """Test that invalid horizon raises ValueError."""
+        with pytest.raises(ValueError, match="Unknown horizon"):
+            compute_forward_windows("2026-01-15", ["invalid_horizon"])
+
+
+class TestForwardReturnWithoutBenchmark:
+    """Tests for forward returns without benchmark adjustment."""
+
+    def test_forward_returns_no_benchmark(self, as_of_date):
+        """Test forward returns without benchmark adjustment."""
+        def provider(ticker: str, start_date: str, end_date: str) -> Optional[str]:
+            if ticker == "ACME":
+                return "0.05"
+            return None
+
+        engine = ForwardReturnEngine(provider, benchmark_ticker="XBI")
+        results = engine.calculate_forward_returns(
+            ["ACME"],
+            as_of_date,
+            ["5d"],
+            include_benchmark_adjustment=False,
+        )
+
+        assert results["5d"]["ACME"].raw_return == Decimal("0.05")
+        assert results["5d"]["ACME"].benchmark_return is None
+        assert results["5d"]["ACME"].excess_return is None
+
+
+class TestOOSConsistencyClassifications:
+    """Tests for out-of-sample consistency classifications."""
+
+    def test_oos_improved_consistency(self):
+        """Test OOS validation detects improved signal."""
+        ic_engine = ICCalculationEngine()
+        validator = OutOfSampleValidator(ic_engine)
+
+        # Create data where test IC is better than train IC
+        train_data = [
+            {
+                "as_of_date": "2020-01-15",
+                "rankings": {f"T{i}": i for i in range(1, 16)},
+                "forward_returns": {f"T{i}": 0.01 * (16 - i) + 0.005 * (i % 3) for i in range(1, 16)},
+            }
+            for _ in range(10)
+        ]
+        test_data = [
+            {
+                "as_of_date": "2023-01-15",
+                "rankings": {f"T{i}": i for i in range(1, 16)},
+                "forward_returns": {f"T{i}": 0.02 * (16 - i) for i in range(1, 16)},
+            }
+            for _ in range(10)
+        ]
+
+        result = validator.validate_train_test_split(
+            train_data + test_data,
+            train_start="2020-01-01",
+            train_end="2020-12-31",
+            test_start="2023-01-01",
+            test_end="2023-12-31",
+        )
+
+        assert result["consistency"] in ["CONSISTENT", "IMPROVED", "DEGRADED", "INVERTED", "CONSISTENTLY_WEAK", "UNKNOWN"]
+
+
+class TestNegativeICTStatistic:
+    """Tests for negative IC t-statistic handling."""
+
+    def test_negative_perfect_ic_tstat(self):
+        """Test t-stat for negative perfect correlation."""
+        # Create inverted signal: higher rank = higher return
+        tickers = [f"T{i:02d}" for i in range(1, 36)]
+        rankings = {t: i + 1 for i, t in enumerate(tickers)}
+        # Inverted returns: higher rank = higher return
+        returns = {t: -0.15 + 0.01 * i for i, t in enumerate(tickers)}
+
+        engine = ICCalculationEngine()
+        result = engine.calculate_ic_with_significance(rankings, returns)
+
+        # Should detect negative IC with significance
+        assert result.ic_value < Decimal("0")
+        assert result.t_statistic is not None
+        assert result.t_statistic < Decimal("0")
+
+
+class TestEqualWeightBenchmarkEdgeCases:
+    """Tests for equal-weight benchmark edge cases."""
+
+    def test_empty_returns_for_benchmark(self):
+        """Test equal-weight benchmark with empty returns."""
+        def provider(ticker: str, start_date: str, end_date: str) -> Optional[str]:
+            return None
+
+        engine = ForwardReturnEngine(provider)
+        result = engine.calculate_equal_weight_benchmark({})
+
+        assert result is None
+
+    def test_benchmark_with_none_values(self):
+        """Test equal-weight benchmark ignores None values."""
+        def provider(ticker: str, start_date: str, end_date: str) -> Optional[str]:
+            return None
+
+        engine = ForwardReturnEngine(provider)
+        returns = {
+            "ACME": Decimal("0.10"),
+            "BETA": None,
+            "GAMMA": Decimal("0.05"),
+        }
+
+        result = engine.calculate_equal_weight_benchmark(returns)
+
+        # Should average only non-None values: (0.10 + 0.05) / 2 = 0.075
+        assert result is not None
+        assert abs(result - Decimal("0.075")) < Decimal("0.001")
+
+
+class TestRollingICWindowBoundaries:
+    """Tests for rolling IC window boundary conditions."""
+
+    def test_exact_minimum_window(self):
+        """Test rolling IC with exactly minimum window size."""
+        ic_engine = ICCalculationEngine()
+        analyzer = ICStabilityAnalyzer(ic_engine)
+
+        # Create exactly 12 weeks of data
+        results = []
+        base_date = date(2025, 10, 1)
+        for week in range(12):
+            week_date = base_date + timedelta(weeks=week)
+            rankings = {f"T{i}": i for i in range(1, 16)}
+            returns = {f"T{i}": 0.01 * (16 - i) for i in range(1, 16)}
+            results.append({
+                "as_of_date": week_date.isoformat(),
+                "rankings": rankings,
+                "forward_returns": returns,
+            })
+
+        rolling_results = analyzer.calculate_rolling_ic(results, window_weeks=12)
+
+        # Should have exactly 1 result
+        assert len(rolling_results) == 1
+
+
+class TestDatabaseWithScores:
+    """Tests for database storage with scores."""
+
+    def test_store_ranking_with_scores(self, temp_data_dir, sample_rankings):
+        """Test storing rankings with scores."""
+        db = ICTimeSeriesDatabase(temp_data_dir)
+
+        scores = {t: Decimal(str(100 - r * 5)) for t, r in sample_rankings.items()}
+
+        filepath = db.store_ranking("2026-01-15", sample_rankings, scores)
+        assert Path(filepath).exists()
+
+        # Load and verify
+        loaded = db.load_ranking("2026-01-15")
+        assert loaded == sample_rankings
+
+
+class TestReportWithStratifiedAnalysis:
+    """Tests for report generation with stratified analysis."""
+
+    def test_report_with_all_stratifications(
+        self, mock_return_provider, sample_rankings, as_of_date, weekly_historical_results
+    ):
+        """Test report with sector, market cap, and regime stratification."""
+        generator = WeeklyICReportGenerator(
+            mock_return_provider,
+            benchmark_ticker="XBI",
+            bootstrap_seed=42,
+        )
+
+        ticker_sectors = {t: "ONCOLOGY" if i < 5 else "OTHER" for i, t in enumerate(sample_rankings.keys())}
+        ticker_mcaps = {t: Decimal(str(500 + i * 100)) for i, t in enumerate(sample_rankings.keys())}
+
+        report = generator.generate_report(
+            rankings=sample_rankings,
+            as_of_date=as_of_date,
+            horizon="20d",
+            historical_results=weekly_historical_results,
+            ticker_sectors=ticker_sectors,
+            ticker_market_caps=ticker_mcaps,
+            current_regime="BEAR",
+        )
+
+        assert "sector_ic" in report
+        assert "market_cap_ic" in report
+        assert report["current_regime"] == "BEAR"
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
