@@ -1,6 +1,24 @@
 {
   "snapshots": [
     {
+      "file_size_mb": 1.65,
+      "first_key": "ABCL|NCT00190957",
+      "last_key": "ZYME|NCT03765840",
+      "record_count": 6434,
+      "sha256": "b7671e5567ef43068849fc5e274b8119113b488ef472d979d9250beb8f14d026",
+      "snapshot_date": "2026-01-15",
+      "ticker_count": 163
+    },
+    {
+      "file_size_mb": 1.68,
+      "first_key": "ABCL|NCT00190957",
+      "last_key": "ZYME|NCT03765840",
+      "record_count": 6520,
+      "sha256": "41f9747798e601afe15b6a597a31cde2d8732a5832ebace3e49d0aa8e6e4f9f4",
+      "snapshot_date": "2026-01-20",
+      "ticker_count": 163
+    },
+    {
       "file_size_mb": 1.7,
       "first_key": "ABCL|NCT00190957",
       "last_key": "ZYME|NCT03765840",
