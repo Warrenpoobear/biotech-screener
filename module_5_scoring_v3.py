@@ -438,6 +438,39 @@ def _extract_confidence_pos(pos_data: Optional[Dict]) -> Decimal:
     return Decimal("0.7") if pos_data.get("pos_score") is not None else Decimal("0")
 
 
+def _extract_confidence_short_interest(si_data: Optional[Dict]) -> Decimal:
+    """Extract confidence for short interest signal.
+
+    Confidence is based on:
+    - Data availability (base 0.5 if we have any SI data)
+    - Signal strength (higher SI% = higher confidence in the signal)
+    - Data freshness (if status is SUCCESS)
+    """
+    if not si_data:
+        return Decimal("0")
+
+    if si_data.get("status") == "INSUFFICIENT_DATA":
+        return Decimal("0.1")
+
+    # Base confidence if we have data
+    conf = Decimal("0.5")
+
+    # Boost for high squeeze potential (strong signal)
+    squeeze = si_data.get("squeeze_potential", "LOW")
+    if squeeze == "EXTREME":
+        conf += Decimal("0.3")
+    elif squeeze == "HIGH":
+        conf += Decimal("0.2")
+    elif squeeze == "MODERATE":
+        conf += Decimal("0.1")
+
+    # Boost if we have trend data
+    if si_data.get("trend_direction") not in (None, "UNKNOWN"):
+        conf += Decimal("0.1")
+
+    return _clamp(conf, Decimal("0"), Decimal("1"))
+
+
 def _apply_monotonic_caps(
     score: Decimal,
     liquidity_gate_status: Optional[str],
@@ -694,6 +727,13 @@ def _score_single_ticker_v3(
     clin_raw = _to_decimal(clin_data.get("clinical_score"))
     pos_raw = _to_decimal(pos_data.get("pos_score")) if pos_data else None
 
+    # Extract short interest score
+    si_raw = _to_decimal(si_data.get("short_signal_score")) if si_data else None
+    si_squeeze_potential = si_data.get("squeeze_potential", "UNKNOWN") if si_data else "UNKNOWN"
+    si_crowding_risk = si_data.get("crowding_risk", "UNKNOWN") if si_data else "UNKNOWN"
+    si_signal_direction = si_data.get("signal_direction", "NEUTRAL") if si_data else "NEUTRAL"
+    si_trend_direction = si_data.get("trend_direction", "UNKNOWN") if si_data else "UNKNOWN"
+
     # Extract catalyst scores and metadata
     if hasattr(cat_data, 'score_blended'):
         cat_window = _to_decimal(cat_data.score_blended)
@@ -867,6 +907,7 @@ def _score_single_ticker_v3(
     conf_fin = _extract_confidence_financial(fin_data)
     conf_cat = _extract_confidence_catalyst(cat_data)
     conf_pos = _extract_confidence_pos(pos_data)
+    conf_si = _extract_confidence_short_interest(si_data)
 
     conf_clin = _clamp(conf_clin - vol_adj.confidence_penalty, Decimal("0.1"), Decimal("1"))
     conf_fin = _clamp(conf_fin - vol_adj.confidence_penalty, Decimal("0.1"), Decimal("1"))
@@ -890,6 +931,7 @@ def _score_single_ticker_v3(
         "pos": conf_pos,
         "momentum": momentum.confidence,
         "valuation": valuation.confidence,
+        "short_interest": conf_si,
     }
 
     gated_components = []
@@ -976,6 +1018,45 @@ def _score_single_ticker_v3(
                 contribution=_quantize_score(contrib),
                 notes=[] if valuation.peer_count >= 5 else ["insufficient_peers"],
             ))
+
+        # Short interest signal integration
+        if "short_interest" in effective_weights and si_raw is not None:
+            w_eff = effective_weights["short_interest"]
+            # Short interest score is already 0-100, use directly as normalized
+            si_norm = si_raw
+            contrib = si_norm * w_eff
+            contributions["short_interest"] = contrib
+
+            si_notes = []
+            if si_squeeze_potential == "EXTREME":
+                flags.append("extreme_squeeze_potential")
+                si_notes.append("extreme_squeeze")
+            elif si_squeeze_potential == "HIGH":
+                flags.append("high_squeeze_potential")
+                si_notes.append("high_squeeze")
+            if si_crowding_risk == "HIGH":
+                flags.append("high_short_crowding")
+                si_notes.append("high_crowding")
+            if si_signal_direction == "BULLISH":
+                flags.append("si_bullish_signal")
+            elif si_signal_direction == "BEARISH":
+                flags.append("si_bearish_signal")
+            if si_trend_direction == "COVERING":
+                flags.append("shorts_covering")
+            elif si_trend_direction == "BUILDING":
+                flags.append("shorts_building")
+
+            component_scores.append(ComponentScore(
+                name="short_interest",
+                raw=si_raw,
+                normalized=si_norm,
+                confidence=conf_si,
+                weight_base=base_weights.get("short_interest", Decimal("0")),
+                weight_effective=w_eff,
+                contribution=_quantize_score(contrib),
+                notes=si_notes if si_notes else [],
+            ))
+            flags.append("short_interest_applied")
 
     pos_contrib_raw = Decimal("0")
     pos_contrib_capped = Decimal("0")
@@ -1163,6 +1244,7 @@ def _score_single_ticker_v3(
         "confidence_financial": conf_fin,
         "confidence_catalyst": conf_cat,
         "confidence_pos": conf_pos if mode == ScoringMode.ENHANCED else None,
+        "confidence_short_interest": conf_si if si_raw is not None else None,
         "confidence_overall": confidence_overall,
         "effective_weights": effective_weights,
         "normalization_method": normalization_method.value,
@@ -1194,6 +1276,15 @@ def _score_single_ticker_v3(
             "tier1_holders": smart_money.tier1_holders,
             "holders_increasing": smart_money.holders_increasing,
             "holders_decreasing": smart_money.holders_decreasing,
+        },
+        "short_interest_signal": {
+            "score": str(si_raw) if si_raw is not None else None,
+            "squeeze_potential": si_squeeze_potential,
+            "crowding_risk": si_crowding_risk,
+            "signal_direction": si_signal_direction,
+            "trend_direction": si_trend_direction,
+            "confidence": str(conf_si),
+            "applied": si_raw is not None and "short_interest" in effective_weights,
         },
         "volatility_adjustment": {
             "annualized_vol_pct": str(vol_adj.annualized_vol) if vol_adj.annualized_vol else None,
