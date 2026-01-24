@@ -1138,5 +1138,744 @@ class TestAlphaThresholdDocumentation(unittest.TestCase):
         self.assertAlmostEqual(float(shrunk_score), 52.5, places=1)
 
 
+class TestVolatilityAdjustment(unittest.TestCase):
+    """Tests for volatility-based adjustment calculation."""
+
+    def setUp(self):
+        from src.modules.ic_enhancements import compute_volatility_adjustment, VolatilityBucket
+        self.compute_volatility_adjustment = compute_volatility_adjustment
+        self.VolatilityBucket = VolatilityBucket
+
+    def test_none_volatility_returns_unknown(self):
+        """None volatility should return unknown bucket with neutral adjustments."""
+        result = self.compute_volatility_adjustment(None)
+        self.assertEqual(result.vol_bucket, self.VolatilityBucket.UNKNOWN)
+        self.assertEqual(result.weight_adjustment_factor, Decimal("1.0"))
+        self.assertEqual(result.score_adjustment_factor, Decimal("1.0"))
+        self.assertEqual(result.confidence_penalty, Decimal("0.05"))
+
+    def test_zero_volatility_returns_unknown(self):
+        """Zero volatility should return unknown bucket."""
+        result = self.compute_volatility_adjustment(Decimal("0"))
+        self.assertEqual(result.vol_bucket, self.VolatilityBucket.UNKNOWN)
+
+    def test_low_volatility_bucket(self):
+        """Low volatility (<30%) should be LOW bucket with boosted weight."""
+        result = self.compute_volatility_adjustment(Decimal("0.20"))
+        self.assertEqual(result.vol_bucket, self.VolatilityBucket.LOW)
+        # Low vol gets weight boost
+        self.assertGreater(result.weight_adjustment_factor, Decimal("1.0"))
+        # Low vol should NOT be penalized on score
+        self.assertEqual(result.score_adjustment_factor, Decimal("1.0"))
+
+    def test_normal_volatility_bucket(self):
+        """Normal volatility (30-80%) should be NORMAL bucket."""
+        result = self.compute_volatility_adjustment(Decimal("0.50"))
+        self.assertEqual(result.vol_bucket, self.VolatilityBucket.NORMAL)
+        self.assertEqual(result.weight_adjustment_factor, Decimal("1.0"))
+        # At baseline vol, no score penalty
+        self.assertEqual(result.score_adjustment_factor, Decimal("1.0"))
+
+    def test_high_volatility_bucket(self):
+        """High volatility (>80%) should be HIGH bucket with reduced weight."""
+        result = self.compute_volatility_adjustment(Decimal("1.00"))
+        self.assertEqual(result.vol_bucket, self.VolatilityBucket.HIGH)
+        # High vol gets weight reduction
+        self.assertLess(result.weight_adjustment_factor, Decimal("1.0"))
+        # High vol gets score penalty
+        self.assertLess(result.score_adjustment_factor, Decimal("1.0"))
+
+    def test_score_penalty_only_for_high_vol(self):
+        """Score penalty should only apply when vol > target (50%)."""
+        # At target vol - no penalty
+        at_target = self.compute_volatility_adjustment(Decimal("0.50"))
+        self.assertEqual(at_target.score_adjustment_factor, Decimal("1.0"))
+
+        # Below target - no penalty
+        below_target = self.compute_volatility_adjustment(Decimal("0.30"))
+        self.assertEqual(below_target.score_adjustment_factor, Decimal("1.0"))
+
+        # Above target - penalty applied
+        above_target = self.compute_volatility_adjustment(Decimal("0.75"))
+        self.assertLess(above_target.score_adjustment_factor, Decimal("1.0"))
+
+    def test_annualized_vol_stored_as_percentage(self):
+        """Annualized vol should be stored as percentage."""
+        result = self.compute_volatility_adjustment(Decimal("0.50"))
+        # 0.50 = 50%, should be stored as 50.00
+        self.assertEqual(result.annualized_vol, Decimal("50.00"))
+
+
+class TestApplyVolatilityToScore(unittest.TestCase):
+    """Tests for applying volatility adjustment to scores."""
+
+    def setUp(self):
+        from src.modules.ic_enhancements import (
+            apply_volatility_to_score,
+            compute_volatility_adjustment,
+        )
+        self.apply_volatility_to_score = apply_volatility_to_score
+        self.compute_volatility_adjustment = compute_volatility_adjustment
+
+    def test_no_penalty_at_baseline_vol(self):
+        """Score should be unchanged at baseline volatility."""
+        vol_adj = self.compute_volatility_adjustment(Decimal("0.50"))
+        adjusted = self.apply_volatility_to_score(Decimal("80"), vol_adj)
+        self.assertEqual(adjusted, Decimal("80.00"))
+
+    def test_penalty_at_high_vol(self):
+        """Score should be reduced at high volatility."""
+        vol_adj = self.compute_volatility_adjustment(Decimal("1.00"))  # 100% vol
+        original = Decimal("80")
+        adjusted = self.apply_volatility_to_score(original, vol_adj)
+        self.assertLess(adjusted, original)
+
+    def test_score_clamped_to_bounds(self):
+        """Adjusted score should be clamped to 0-100."""
+        vol_adj = self.compute_volatility_adjustment(Decimal("0.50"))
+        # Try to go above 100
+        adjusted_high = self.apply_volatility_to_score(Decimal("120"), vol_adj)
+        self.assertLessEqual(adjusted_high, Decimal("100"))
+
+        # Try to go below 0
+        adjusted_low = self.apply_volatility_to_score(Decimal("-10"), vol_adj)
+        self.assertGreaterEqual(adjusted_low, Decimal("0"))
+
+
+class TestCatalystDecay(unittest.TestCase):
+    """Tests for catalyst signal decay calculation."""
+
+    def setUp(self):
+        from src.modules.ic_enhancements import (
+            compute_catalyst_decay,
+            apply_catalyst_decay,
+            CATALYST_OPTIMAL_WINDOW_DAYS,
+        )
+        self.compute_catalyst_decay = compute_catalyst_decay
+        self.apply_catalyst_decay = apply_catalyst_decay
+        self.optimal_window = CATALYST_OPTIMAL_WINDOW_DAYS
+
+    def test_none_days_returns_neutral(self):
+        """None days_to_catalyst should return neutral decay."""
+        result = self.compute_catalyst_decay(None, "PDUFA")
+        self.assertEqual(result.decay_factor, Decimal("0.5"))
+        self.assertFalse(result.in_optimal_window)
+
+    def test_optimal_window_peak_decay(self):
+        """At optimal window, decay should be at peak (1.0)."""
+        result = self.compute_catalyst_decay(30, "PDUFA")  # 30 days = optimal
+        self.assertEqual(result.decay_factor, Decimal("1.0"))
+        self.assertTrue(result.in_optimal_window)
+
+    def test_in_optimal_window_range(self):
+        """Within 15 days of optimal should be in_optimal_window."""
+        # At 20 days (optimal - 10)
+        result_20 = self.compute_catalyst_decay(20, "PDUFA")
+        self.assertTrue(result_20.in_optimal_window)
+
+        # At 40 days (optimal + 10)
+        result_40 = self.compute_catalyst_decay(40, "PDUFA")
+        self.assertTrue(result_40.in_optimal_window)
+
+        # At 60 days (optimal + 30) - outside window
+        result_60 = self.compute_catalyst_decay(60, "PDUFA")
+        self.assertFalse(result_60.in_optimal_window)
+
+    def test_post_event_faster_decay(self):
+        """Post-event decay should be faster than pre-event."""
+        # 30 days before optimal (far out)
+        pre_event = self.compute_catalyst_decay(60, "PDUFA")
+
+        # 30 days after optimal (past peak)
+        post_event = self.compute_catalyst_decay(0, "PDUFA")
+
+        # Both are same distance from optimal, but post-event decays faster
+        self.assertGreater(pre_event.decay_factor, post_event.decay_factor)
+
+    def test_event_type_normalization(self):
+        """Event type should be normalized to uppercase."""
+        result = self.compute_catalyst_decay(30, "pdufa")
+        self.assertEqual(result.event_type, "PDUFA")
+
+        result2 = self.compute_catalyst_decay(30, "  data_readout  ")
+        self.assertEqual(result2.event_type, "DATA_READOUT")
+
+    def test_decay_factor_bounds(self):
+        """Decay factor should be between 0.05 and 1.0."""
+        # Far in the future
+        far_future = self.compute_catalyst_decay(365, "PDUFA")
+        self.assertGreaterEqual(far_future.decay_factor, Decimal("0.05"))
+        self.assertLessEqual(far_future.decay_factor, Decimal("1.0"))
+
+        # Far in the past
+        far_past = self.compute_catalyst_decay(-365, "PDUFA")
+        self.assertGreaterEqual(far_past.decay_factor, Decimal("0.05"))
+        self.assertLessEqual(far_past.decay_factor, Decimal("1.0"))
+
+    def test_apply_catalyst_decay_toward_neutral(self):
+        """Apply decay should pull score toward neutral (50), not toward 0."""
+        decay_result = self.compute_catalyst_decay(100, "PDUFA")  # Far out, low decay
+
+        # High score should decay toward 50
+        high_score = Decimal("80")
+        adjusted_high = self.apply_catalyst_decay(high_score, decay_result)
+        self.assertLess(adjusted_high, high_score)
+        self.assertGreater(adjusted_high, Decimal("50"))
+
+        # Low score should also decay toward 50
+        low_score = Decimal("20")
+        adjusted_low = self.apply_catalyst_decay(low_score, decay_result)
+        self.assertGreater(adjusted_low, low_score)
+        self.assertLess(adjusted_low, Decimal("50"))
+
+
+class TestSmartMoneySignal(unittest.TestCase):
+    """Tests for smart money (13F) signal calculation."""
+
+    def setUp(self):
+        from src.modules.ic_enhancements import compute_smart_money_signal
+        self.compute_smart_money_signal = compute_smart_money_signal
+
+    def test_empty_holders(self):
+        """No holders should return neutral score with low confidence."""
+        result = self.compute_smart_money_signal(0, [])
+        self.assertEqual(result.smart_money_score, Decimal("50.00"))
+        self.assertEqual(result.overlap_count, 0)
+        self.assertEqual(result.confidence, Decimal("0.2"))
+
+    def test_tier1_holder_recognition(self):
+        """Tier1 holders should be recognized and weighted highest."""
+        result = self.compute_smart_money_signal(
+            overlap_count=2,
+            holders=["Baker Bros", "RA Capital"],
+        )
+        # Should recognize both as Tier1
+        self.assertEqual(result.tier_breakdown.get(1, 0), 2)
+        # Weighted overlap should be 2.0 (2 x 1.0)
+        self.assertEqual(result.weighted_overlap, Decimal("2.00"))
+        # Should have good confidence
+        self.assertEqual(result.confidence, Decimal("0.8"))
+
+    def test_tier_weighting(self):
+        """Different tiers should have different weights."""
+        # 2 Tier1 holders
+        tier1_result = self.compute_smart_money_signal(
+            overlap_count=2,
+            holders=["Baker Bros", "RA Capital"],
+        )
+
+        # 2 unknown holders
+        unknown_result = self.compute_smart_money_signal(
+            overlap_count=2,
+            holders=["Unknown Fund A", "Unknown Fund B"],
+        )
+
+        # Tier1 should have higher weighted overlap
+        self.assertGreater(tier1_result.weighted_overlap, unknown_result.weighted_overlap)
+        # Tier1 should have higher score
+        self.assertGreater(tier1_result.smart_money_score, unknown_result.smart_money_score)
+
+    def test_position_changes_increase(self):
+        """NEW and INCREASE changes should boost score."""
+        result = self.compute_smart_money_signal(
+            overlap_count=2,
+            holders=["Baker Bros", "RA Capital"],
+            position_changes={"Baker Bros": "NEW", "RA Capital": "INCREASE"},
+        )
+        # Score should be above base + overlap bonus
+        self.assertGreater(result.position_change_adjustment, Decimal("0"))
+        self.assertEqual(len(result.holders_increasing), 2)
+        self.assertEqual(len(result.holders_decreasing), 0)
+
+    def test_position_changes_decrease(self):
+        """DECREASE and EXIT changes should reduce score."""
+        result = self.compute_smart_money_signal(
+            overlap_count=2,
+            holders=["Baker Bros", "RA Capital"],
+            position_changes={"Baker Bros": "DECREASE", "RA Capital": "EXIT"},
+        )
+        # Score should be reduced
+        self.assertLess(result.position_change_adjustment, Decimal("0"))
+        self.assertEqual(len(result.holders_increasing), 0)
+        self.assertEqual(len(result.holders_decreasing), 2)
+
+    def test_score_bounds(self):
+        """Score should be bounded to 20-80 range."""
+        # Many Tier1 holders increasing - should not exceed 80
+        result_high = self.compute_smart_money_signal(
+            overlap_count=5,
+            holders=["Baker Bros", "RA Capital", "Perceptive", "BVF", "EcoR1"],
+            position_changes={h: "NEW" for h in ["Baker Bros", "RA Capital", "Perceptive", "BVF", "EcoR1"]},
+        )
+        self.assertLessEqual(result_high.smart_money_score, Decimal("80"))
+
+        # Many exits - should not go below 20
+        result_low = self.compute_smart_money_signal(
+            overlap_count=5,
+            holders=["Baker Bros", "RA Capital", "Perceptive", "BVF", "EcoR1"],
+            position_changes={h: "EXIT" for h in ["Baker Bros", "RA Capital", "Perceptive", "BVF", "EcoR1"]},
+        )
+        self.assertGreaterEqual(result_low.smart_money_score, Decimal("20"))
+
+    def test_determinism_sorted_holders(self):
+        """Same holders in different order should produce identical results."""
+        result1 = self.compute_smart_money_signal(
+            overlap_count=3,
+            holders=["C Fund", "A Fund", "B Fund"],
+        )
+        result2 = self.compute_smart_money_signal(
+            overlap_count=3,
+            holders=["B Fund", "C Fund", "A Fund"],
+        )
+        self.assertEqual(result1.smart_money_score, result2.smart_money_score)
+        self.assertEqual(result1.weighted_overlap, result2.weighted_overlap)
+
+
+class TestInteractionTerms(unittest.TestCase):
+    """Tests for non-linear interaction terms calculation."""
+
+    def setUp(self):
+        from src.modules.ic_enhancements import (
+            compute_interaction_terms,
+            compute_volatility_adjustment,
+        )
+        self.compute_interaction_terms = compute_interaction_terms
+        self.compute_volatility_adjustment = compute_volatility_adjustment
+
+    def test_no_synergy_for_low_clinical(self):
+        """Low clinical score should not get synergy bonus."""
+        result = self.compute_interaction_terms(
+            clinical_normalized=Decimal("50"),  # Below threshold
+            financial_data={"runway_months": Decimal("30")},  # Good runway
+            catalyst_normalized=Decimal("50"),
+            stage_bucket="late",
+        )
+        self.assertEqual(result.clinical_financial_synergy, Decimal("0.00"))
+
+    def test_synergy_for_high_clinical_and_runway(self):
+        """High clinical + high runway should get synergy bonus."""
+        result = self.compute_interaction_terms(
+            clinical_normalized=Decimal("85"),  # Above threshold
+            financial_data={"runway_months": Decimal("30")},  # Above threshold
+            catalyst_normalized=Decimal("50"),
+            stage_bucket="late",
+        )
+        self.assertGreater(result.clinical_financial_synergy, Decimal("0"))
+        self.assertIn("clinical_financial_synergy", result.interaction_flags)
+
+    def test_distress_penalty_late_stage_low_runway(self):
+        """Late stage with low runway should get distress penalty."""
+        result = self.compute_interaction_terms(
+            clinical_normalized=Decimal("50"),
+            financial_data={"runway_months": Decimal("4")},  # Below threshold
+            catalyst_normalized=Decimal("50"),
+            stage_bucket="late",
+        )
+        self.assertLess(result.stage_financial_interaction, Decimal("0"))
+        self.assertIn("late_stage_distress", result.interaction_flags)
+
+    def test_no_distress_for_early_stage(self):
+        """Early stage should not get distress penalty."""
+        result = self.compute_interaction_terms(
+            clinical_normalized=Decimal("50"),
+            financial_data={"runway_months": Decimal("4")},  # Low runway
+            catalyst_normalized=Decimal("50"),
+            stage_bucket="early",  # But early stage
+        )
+        self.assertEqual(result.stage_financial_interaction, Decimal("0.00"))
+
+    def test_catalyst_vol_dampening_high_vol(self):
+        """High volatility should dampen extreme catalyst signals."""
+        vol_adj = self.compute_volatility_adjustment(Decimal("1.00"))  # High vol
+        result = self.compute_interaction_terms(
+            clinical_normalized=Decimal("50"),
+            financial_data={"runway_months": Decimal("24")},
+            catalyst_normalized=Decimal("90"),  # Extreme catalyst
+            stage_bucket="late",
+            vol_adjustment=vol_adj,
+        )
+        self.assertGreater(result.catalyst_volatility_dampening, Decimal("0"))
+
+    def test_total_adjustment_bounded(self):
+        """Total adjustment should be bounded to ±2."""
+        # Try to get maximum synergy
+        result = self.compute_interaction_terms(
+            clinical_normalized=Decimal("100"),
+            financial_data={"runway_months": Decimal("100")},
+            catalyst_normalized=Decimal("50"),
+            stage_bucket="late",
+        )
+        self.assertLessEqual(result.total_interaction_adjustment, Decimal("2.0"))
+        self.assertGreaterEqual(result.total_interaction_adjustment, Decimal("-2.0"))
+
+    def test_runway_gate_reduces_distress_penalty(self):
+        """If runway gate already failed, distress penalty should be reduced."""
+        # Without gate failure
+        no_gate = self.compute_interaction_terms(
+            clinical_normalized=Decimal("50"),
+            financial_data={"runway_months": Decimal("4")},
+            catalyst_normalized=Decimal("50"),
+            stage_bucket="late",
+            runway_gate_status="PASS",
+        )
+
+        # With gate failure
+        with_gate = self.compute_interaction_terms(
+            clinical_normalized=Decimal("50"),
+            financial_data={"runway_months": Decimal("4")},
+            catalyst_normalized=Decimal("50"),
+            stage_bucket="late",
+            runway_gate_status="FAIL",
+        )
+
+        # With gate failure, distress penalty should be smaller (50% reduction)
+        self.assertGreater(with_gate.stage_financial_interaction, no_gate.stage_financial_interaction)
+        self.assertTrue(with_gate.runway_gate_already_applied)
+
+
+class TestShrinkageNormalize(unittest.TestCase):
+    """Tests for Bayesian shrinkage normalization."""
+
+    def setUp(self):
+        from src.modules.ic_enhancements import shrinkage_normalize
+        self.shrinkage_normalize = shrinkage_normalize
+
+    def test_empty_list(self):
+        """Empty list should return empty list."""
+        result, shrinkage = self.shrinkage_normalize(
+            [],
+            global_mean=Decimal("50"),
+            global_std=Decimal("10"),
+        )
+        self.assertEqual(result, [])
+        self.assertEqual(shrinkage, Decimal("0"))
+
+    def test_single_value_returns_neutral(self):
+        """Single value should return neutral (50) with full shrinkage."""
+        result, shrinkage = self.shrinkage_normalize(
+            [Decimal("80")],
+            global_mean=Decimal("50"),
+            global_std=Decimal("10"),
+        )
+        self.assertEqual(result, [Decimal("50")])
+        self.assertEqual(shrinkage, Decimal("1.0"))
+
+    def test_small_cohort_high_shrinkage(self):
+        """Small cohort should have high shrinkage toward global."""
+        small_cohort = [Decimal("30"), Decimal("40")]  # 2 values
+        result_small, shrinkage_small = self.shrinkage_normalize(
+            small_cohort,
+            global_mean=Decimal("50"),
+            global_std=Decimal("10"),
+        )
+
+        large_cohort = [Decimal("30")] * 10 + [Decimal("40")] * 10  # 20 values
+        result_large, shrinkage_large = self.shrinkage_normalize(
+            large_cohort,
+            global_mean=Decimal("50"),
+            global_std=Decimal("10"),
+        )
+
+        # Small cohort should have higher shrinkage
+        self.assertGreater(shrinkage_small, shrinkage_large)
+
+    def test_output_bounds(self):
+        """Output scores should be bounded to 5-95."""
+        extreme_values = [Decimal("0"), Decimal("100"), Decimal("-50"), Decimal("150")]
+        result, _ = self.shrinkage_normalize(
+            extreme_values,
+            global_mean=Decimal("50"),
+            global_std=Decimal("10"),
+        )
+        for score in result:
+            self.assertGreaterEqual(score, Decimal("5"))
+            self.assertLessEqual(score, Decimal("95"))
+
+
+class TestRegimeSignalImportance(unittest.TestCase):
+    """Tests for regime-specific signal importance."""
+
+    def setUp(self):
+        from src.modules.ic_enhancements import (
+            get_regime_signal_importance,
+            apply_regime_to_weights,
+        )
+        self.get_regime_signal_importance = get_regime_signal_importance
+        self.apply_regime_to_weights = apply_regime_to_weights
+
+    def test_bull_regime_boosts_momentum(self):
+        """Bull regime should boost momentum importance."""
+        importance = self.get_regime_signal_importance("BULL")
+        self.assertGreater(importance.momentum, Decimal("1.0"))
+
+    def test_bear_regime_boosts_financial(self):
+        """Bear regime should boost financial importance."""
+        importance = self.get_regime_signal_importance("BEAR")
+        self.assertGreater(importance.financial, Decimal("1.0"))
+
+    def test_neutral_regime_no_adjustments(self):
+        """Neutral regime should have all 1.0 multipliers."""
+        importance = self.get_regime_signal_importance("NEUTRAL")
+        self.assertEqual(importance.clinical, Decimal("1.0"))
+        self.assertEqual(importance.financial, Decimal("1.0"))
+        self.assertEqual(importance.catalyst, Decimal("1.0"))
+        self.assertEqual(importance.momentum, Decimal("1.0"))
+
+    def test_unknown_regime_fallback(self):
+        """Unknown regime should fallback gracefully."""
+        importance = self.get_regime_signal_importance("INVALID_REGIME")
+        # Should use UNKNOWN regime defaults
+        self.assertEqual(importance.clinical, Decimal("1.0"))
+        self.assertLess(importance.momentum, Decimal("1.0"))  # Reduced momentum
+
+    def test_apply_regime_renormalizes_weights(self):
+        """Applied weights should still sum to 1.0."""
+        base_weights = {
+            "clinical": Decimal("0.40"),
+            "financial": Decimal("0.25"),
+            "catalyst": Decimal("0.20"),
+            "momentum": Decimal("0.15"),
+        }
+        adjusted = self.apply_regime_to_weights(base_weights, "BULL")
+
+        total = sum(adjusted.values())
+        # Should be approximately 1.0 (allowing for quantization)
+        self.assertAlmostEqual(float(total), 1.0, places=2)
+
+    def test_case_insensitive_regime(self):
+        """Regime should be case insensitive."""
+        bull_upper = self.get_regime_signal_importance("BULL")
+        bull_lower = self.get_regime_signal_importance("bull")
+        bull_mixed = self.get_regime_signal_importance("Bull")
+
+        self.assertEqual(bull_upper.momentum, bull_lower.momentum)
+        self.assertEqual(bull_upper.momentum, bull_mixed.momentum)
+
+
+class TestValuationSignal(unittest.TestCase):
+    """Tests for peer-relative valuation signal."""
+
+    def setUp(self):
+        from src.modules.ic_enhancements import compute_valuation_signal
+        self.compute_valuation_signal = compute_valuation_signal
+
+    def test_missing_market_cap(self):
+        """Missing market cap should return neutral score."""
+        result = self.compute_valuation_signal(
+            market_cap_mm=None,
+            trial_count=5,
+            lead_phase="Phase 3",
+            peer_valuations=[],
+        )
+        self.assertEqual(result.valuation_score, Decimal("50"))
+        self.assertEqual(result.confidence, Decimal("0.2"))
+
+    def test_zero_trial_count(self):
+        """Zero trial count should return neutral score."""
+        result = self.compute_valuation_signal(
+            market_cap_mm=Decimal("1000"),
+            trial_count=0,
+            lead_phase="Phase 3",
+            peer_valuations=[],
+        )
+        self.assertEqual(result.valuation_score, Decimal("50"))
+
+    def test_insufficient_peers(self):
+        """Less than 5 peers should return neutral with low confidence."""
+        result = self.compute_valuation_signal(
+            market_cap_mm=Decimal("1000"),
+            trial_count=5,
+            lead_phase="Phase 3",
+            peer_valuations=[
+                {"stage_bucket": "late", "trial_count": 3, "market_cap_mm": Decimal("500")},
+                {"stage_bucket": "late", "trial_count": 4, "market_cap_mm": Decimal("600")},
+            ],
+        )
+        self.assertEqual(result.valuation_score, Decimal("50"))
+        self.assertEqual(result.peer_count, 2)
+        self.assertEqual(result.confidence, Decimal("0.3"))
+
+    def test_mcap_per_asset_calculation(self):
+        """mcap_per_asset should be calculated correctly."""
+        result = self.compute_valuation_signal(
+            market_cap_mm=Decimal("1000"),
+            trial_count=5,
+            lead_phase="Phase 3",
+            peer_valuations=[],
+        )
+        # 1000 / 5 = 200
+        self.assertIsNotNone(result.mcap_per_asset)
+        self.assertEqual(result.mcap_per_asset, Decimal("200.00"))
+
+    def test_stage_bucket_filtering(self):
+        """Only peers in same stage bucket should be used."""
+        peers = [
+            {"stage_bucket": "late", "trial_count": 3, "market_cap_mm": Decimal("500")},
+            {"stage_bucket": "late", "trial_count": 4, "market_cap_mm": Decimal("600")},
+            {"stage_bucket": "early", "trial_count": 2, "market_cap_mm": Decimal("200")},  # Different stage
+            {"stage_bucket": "late", "trial_count": 5, "market_cap_mm": Decimal("700")},
+            {"stage_bucket": "late", "trial_count": 6, "market_cap_mm": Decimal("800")},
+            {"stage_bucket": "late", "trial_count": 7, "market_cap_mm": Decimal("900")},
+        ]
+        result = self.compute_valuation_signal(
+            market_cap_mm=Decimal("1000"),
+            trial_count=5,
+            lead_phase="Phase 3",  # late stage
+            peer_valuations=peers,
+        )
+        # Should use 5 late-stage peers, not the 1 early-stage
+        self.assertEqual(result.peer_count, 5)
+
+
+class TestHelperFunctions(unittest.TestCase):
+    """Tests for internal helper functions."""
+
+    def setUp(self):
+        from src.modules.ic_enhancements import (
+            _to_decimal,
+            _quantize_score,
+            _clamp,
+            _safe_divide,
+            _stage_bucket,
+        )
+        self._to_decimal = _to_decimal
+        self._quantize_score = _quantize_score
+        self._clamp = _clamp
+        self._safe_divide = _safe_divide
+        self._stage_bucket = _stage_bucket
+
+    def test_to_decimal_none(self):
+        """None should return default value."""
+        result = self._to_decimal(None, Decimal("10"))
+        self.assertEqual(result, Decimal("10"))
+
+    def test_to_decimal_int(self):
+        """Int should convert to Decimal."""
+        result = self._to_decimal(42)
+        self.assertEqual(result, Decimal("42"))
+
+    def test_to_decimal_float(self):
+        """Float should convert to Decimal via string."""
+        result = self._to_decimal(3.14)
+        self.assertEqual(result, Decimal("3.14"))
+
+    def test_to_decimal_string(self):
+        """String should convert to Decimal."""
+        result = self._to_decimal("  42.5  ")
+        self.assertEqual(result, Decimal("42.5"))
+
+    def test_to_decimal_empty_string(self):
+        """Empty string should return default."""
+        result = self._to_decimal("", Decimal("0"))
+        self.assertEqual(result, Decimal("0"))
+
+    def test_to_decimal_invalid(self):
+        """Invalid value should return default."""
+        result = self._to_decimal("not a number", Decimal("0"))
+        self.assertEqual(result, Decimal("0"))
+
+    def test_quantize_score_precision(self):
+        """Score should be quantized to 2 decimal places."""
+        result = self._quantize_score(Decimal("12.3456789"))
+        self.assertEqual(result, Decimal("12.35"))
+
+    def test_clamp_in_range(self):
+        """Value in range should be unchanged."""
+        result = self._clamp(Decimal("50"), Decimal("0"), Decimal("100"))
+        self.assertEqual(result, Decimal("50"))
+
+    def test_clamp_below_min(self):
+        """Value below min should be clamped to min."""
+        result = self._clamp(Decimal("-10"), Decimal("0"), Decimal("100"))
+        self.assertEqual(result, Decimal("0"))
+
+    def test_clamp_above_max(self):
+        """Value above max should be clamped to max."""
+        result = self._clamp(Decimal("150"), Decimal("0"), Decimal("100"))
+        self.assertEqual(result, Decimal("100"))
+
+    def test_safe_divide_normal(self):
+        """Normal division should work."""
+        result = self._safe_divide(Decimal("10"), Decimal("2"))
+        self.assertEqual(result, Decimal("5"))
+
+    def test_safe_divide_by_zero(self):
+        """Division by zero should return default."""
+        result = self._safe_divide(Decimal("10"), Decimal("0"), Decimal("99"))
+        self.assertEqual(result, Decimal("99"))
+
+    def test_stage_bucket_phase3(self):
+        """Phase 3 should be late stage."""
+        self.assertEqual(self._stage_bucket("Phase 3"), "late")
+        # Note: Roman numerals are not currently supported in the implementation
+        # self.assertEqual(self._stage_bucket("phase III"), "late")
+
+    def test_stage_bucket_phase2(self):
+        """Phase 2 should be mid stage."""
+        self.assertEqual(self._stage_bucket("Phase 2"), "mid")
+        self.assertEqual(self._stage_bucket("Phase 2a"), "mid")
+
+    def test_stage_bucket_phase1(self):
+        """Phase 1 should be early stage."""
+        self.assertEqual(self._stage_bucket("Phase 1"), "early")
+
+    def test_stage_bucket_none(self):
+        """None should be early stage."""
+        self.assertEqual(self._stage_bucket(None), "early")
+
+    def test_stage_bucket_approved(self):
+        """Approved should be late stage."""
+        self.assertEqual(self._stage_bucket("Approved"), "late")
+
+
+class TestDeterminism(unittest.TestCase):
+    """Tests ensuring all functions are deterministic."""
+
+    def test_smart_money_determinism(self):
+        """compute_smart_money_signal should be deterministic."""
+        from src.modules.ic_enhancements import compute_smart_money_signal
+
+        result1 = compute_smart_money_signal(
+            overlap_count=3,
+            holders=["Fund A", "Fund B", "Baker Bros"],
+            position_changes={"Fund A": "NEW", "Baker Bros": "INCREASE"},
+        )
+        result2 = compute_smart_money_signal(
+            overlap_count=3,
+            holders=["Fund A", "Fund B", "Baker Bros"],
+            position_changes={"Fund A": "NEW", "Baker Bros": "INCREASE"},
+        )
+        self.assertEqual(result1.smart_money_score, result2.smart_money_score)
+        self.assertEqual(result1.overlap_bonus, result2.overlap_bonus)
+
+    def test_catalyst_decay_determinism(self):
+        """compute_catalyst_decay should be deterministic."""
+        from src.modules.ic_enhancements import compute_catalyst_decay
+
+        result1 = compute_catalyst_decay(45, "PDUFA")
+        result2 = compute_catalyst_decay(45, "PDUFA")
+        self.assertEqual(result1.decay_factor, result2.decay_factor)
+        self.assertEqual(result1.in_optimal_window, result2.in_optimal_window)
+
+    def test_interaction_terms_determinism(self):
+        """compute_interaction_terms should be deterministic."""
+        from src.modules.ic_enhancements import compute_interaction_terms
+
+        result1 = compute_interaction_terms(
+            clinical_normalized=Decimal("75"),
+            financial_data={"runway_months": Decimal("18")},
+            catalyst_normalized=Decimal("60"),
+            stage_bucket="late",
+        )
+        result2 = compute_interaction_terms(
+            clinical_normalized=Decimal("75"),
+            financial_data={"runway_months": Decimal("18")},
+            catalyst_normalized=Decimal("60"),
+            stage_bucket="late",
+        )
+        self.assertEqual(result1.total_interaction_adjustment, result2.total_interaction_adjustment)
+        self.assertEqual(result1.clinical_financial_synergy, result2.clinical_financial_synergy)
+
+
 if __name__ == "__main__":
     unittest.main()
