@@ -127,6 +127,20 @@ try:
 except ImportError:
     HAS_ACCURACY_ENHANCEMENTS = False
 
+# Dilution risk engine (optional)
+try:
+    from dilution_risk_engine import DilutionRiskEngine
+    HAS_DILUTION_RISK = True
+except ImportError:
+    HAS_DILUTION_RISK = False
+
+# Timeline slippage engine (optional)
+try:
+    from timeline_slippage_engine import TimelineSlippageEngine
+    HAS_TIMELINE_SLIPPAGE = True
+except ImportError:
+    HAS_TIMELINE_SLIPPAGE = False
+
 # Optional: Risk gates for audit trail
 try:
     from risk_gates import get_parameters_snapshot as get_risk_params, compute_parameters_hash as risk_params_hash
@@ -148,7 +162,7 @@ except ImportError:
     HAS_TICKER_VALIDATION = False
     logger.warning("Ticker validation module not available - skipping validation")
 
-VERSION = "1.4.0"  # Bumped for ticker validation integration
+VERSION = "1.5.0"  # Bumped for data enrichment integration (dilution risk, timeline slippage, smart money changes)
 DETERMINISTIC_TIMESTAMP_SUFFIX = "T00:00:00Z"
 
 
@@ -260,6 +274,10 @@ def _convert_holdings_to_coinvest(holdings_snapshots: Dict[str, Any]) -> Dict[st
                 "current": {
                     "MANAGER_CIK": {"value_kusd": 123456},
                     ...
+                },
+                "prior": {
+                    "MANAGER_CIK": {"value_kusd": 100000},
+                    ...
                 }
             }
         }
@@ -270,10 +288,17 @@ def _convert_holdings_to_coinvest(holdings_snapshots: Dict[str, Any]) -> Dict[st
         "TICKER": {
             "coinvest_overlap_count": int,
             "coinvest_holders": [str, ...],
-            "position_changes": {...},
+            "position_changes": {"CIK": "NEW"|"INCREASE"|"DECREASE"|"EXIT"|"HOLD"},
             "holder_tiers": {...}
         }
     }
+
+    Position change types:
+    - NEW: Manager in current but not in prior (new position initiated)
+    - INCREASE: Manager increased position value by >10%
+    - DECREASE: Manager decreased position value by >10%
+    - EXIT: Manager in prior but not in current (position closed)
+    - HOLD: Position relatively unchanged (±10%)
     """
     # Known elite managers (Tier 1) by CIK
     TIER1_MANAGERS = {
@@ -287,6 +312,9 @@ def _convert_holdings_to_coinvest(holdings_snapshots: Dict[str, Any]) -> Dict[st
         "0001535472": "Citadel",
     }
 
+    # Threshold for detecting meaningful position changes (10%)
+    CHANGE_THRESHOLD = 0.10
+
     coinvest_signals = {}
 
     for ticker, ticker_data in holdings_snapshots.items():
@@ -295,6 +323,7 @@ def _convert_holdings_to_coinvest(holdings_snapshots: Dict[str, Any]) -> Dict[st
 
         holdings = ticker_data.get("holdings", {})
         current = holdings.get("current", {})
+        prior = holdings.get("prior", {})
 
         # Normalize ticker to uppercase for consistent lookups
         ticker = ticker.upper()
@@ -305,17 +334,49 @@ def _convert_holdings_to_coinvest(holdings_snapshots: Dict[str, Any]) -> Dict[st
         # Count managers and identify tiers
         holder_ciks = list(current.keys())
         holder_tiers = {}
+        position_changes = {}
 
-        for cik in holder_ciks:
+        # All CIKs that appear in either current or prior
+        all_ciks = set(current.keys()) | set(prior.keys())
+
+        for cik in all_ciks:
+            # Determine tier
             if cik in TIER1_MANAGERS:
                 holder_tiers[cik] = {"tier": 1, "name": TIER1_MANAGERS[cik]}
             else:
                 holder_tiers[cik] = {"tier": 2, "name": f"Manager_{cik[-4:]}"}
 
+            # Calculate position change
+            current_val = current.get(cik, {}).get("value_kusd", 0) or 0
+            prior_val = prior.get(cik, {}).get("value_kusd", 0) or 0
+
+            if cik in current and cik not in prior:
+                # New position
+                position_changes[cik] = "NEW"
+            elif cik not in current and cik in prior:
+                # Exited position
+                position_changes[cik] = "EXIT"
+            elif prior_val > 0:
+                # Calculate percentage change
+                change_pct = (current_val - prior_val) / prior_val
+
+                if change_pct > CHANGE_THRESHOLD:
+                    position_changes[cik] = "INCREASE"
+                elif change_pct < -CHANGE_THRESHOLD:
+                    position_changes[cik] = "DECREASE"
+                else:
+                    position_changes[cik] = "HOLD"
+            else:
+                # Prior was zero but current exists (edge case)
+                if current_val > 0:
+                    position_changes[cik] = "NEW"
+                else:
+                    position_changes[cik] = "HOLD"
+
         coinvest_signals[ticker] = {
             "coinvest_overlap_count": len(holder_ciks),
             "coinvest_holders": holder_ciks,
-            "position_changes": {},  # Would need historical data to compute
+            "position_changes": position_changes,
             "holder_tiers": holder_tiers,
         }
 
@@ -1218,19 +1279,106 @@ def run_screening_pipeline(
                     "diagnostic_counts": accuracy_diag,
                 }
 
+            # Step 5: Calculate dilution risk scores (if available)
+            dilution_risk_result = None
+            if HAS_DILUTION_RISK:
+                dilution_engine = DilutionRiskEngine()
+
+                # Build dilution risk universe from financial + market + catalyst data
+                dilution_universe = []
+                financial_by_ticker = {r.get("ticker"): r for r in financial_records if r.get("ticker")}
+                market_by_ticker = market_data_by_ticker  # Already indexed
+
+                for ticker in active_tickers:
+                    fin_data = financial_by_ticker.get(ticker, {})
+                    mkt_data = market_by_ticker.get(ticker.upper(), {})
+
+                    # Get next catalyst date from Module 3 summaries
+                    catalyst_summary = catalyst_summaries.get(ticker.upper()) or catalyst_summaries.get(ticker)
+                    next_catalyst_date = None
+                    if catalyst_summary:
+                        # Handle both dict and object formats
+                        if isinstance(catalyst_summary, dict):
+                            next_catalyst_date = catalyst_summary.get("next_catalyst_date")
+                        elif hasattr(catalyst_summary, "next_catalyst_date"):
+                            next_catalyst_date = catalyst_summary.next_catalyst_date
+
+                    # Calculate quarterly burn from NetIncome or R&D (annualized / 4)
+                    quarterly_burn = None
+                    net_income = fin_data.get("NetIncome")
+                    if net_income is not None and net_income < 0:
+                        # NetIncome is annualized, divide by 4 for quarterly
+                        quarterly_burn = Decimal(str(net_income)) / Decimal("4")
+                    elif fin_data.get("R&D"):
+                        # Fall back to R&D as burn proxy (annualized / 4, negative)
+                        quarterly_burn = -Decimal(str(fin_data.get("R&D"))) / Decimal("4")
+
+                    dilution_universe.append({
+                        "ticker": ticker,
+                        "quarterly_cash": Decimal(str(fin_data.get("Cash"))) if fin_data.get("Cash") else None,
+                        "quarterly_burn": quarterly_burn,
+                        "next_catalyst_date": next_catalyst_date,
+                        "market_cap": Decimal(str(mkt_data.get("market_cap"))) if mkt_data.get("market_cap") else None,
+                        "avg_daily_volume_90d": int(mkt_data.get("avg_volume_90d", 0)) if mkt_data.get("avg_volume_90d") else None,
+                    })
+
+                dilution_risk_result = dilution_engine.score_universe(dilution_universe, as_of_date_obj)
+                diag_dr = dilution_risk_result.get("diagnostic_counts", {})
+                risk_dist = diag_dr.get("risk_distribution", {})
+                logger.info(f"  Dilution risk: {diag_dr.get('total_scored', 0)} scored, "
+                           f"HIGH={risk_dist.get('HIGH_RISK', 0)}, "
+                           f"MED={risk_dist.get('MEDIUM_RISK', 0)}, "
+                           f"LOW={risk_dist.get('LOW_RISK', 0)}")
+
+            # Step 6: Calculate timeline slippage scores (if available)
+            timeline_slippage_result = None
+            if HAS_TIMELINE_SLIPPAGE:
+                slippage_engine = TimelineSlippageEngine()
+
+                # Build trial data by ticker for slippage analysis
+                slippage_universe = [{"ticker": t} for t in active_tickers]
+                current_trials_by_ticker = {}
+
+                for trial in trial_records:
+                    ticker = trial.get("lead_sponsor_ticker") or trial.get("ticker")
+                    if ticker:
+                        ticker_upper = ticker.upper()
+                        if ticker_upper not in current_trials_by_ticker:
+                            current_trials_by_ticker[ticker_upper] = []
+                        current_trials_by_ticker[ticker_upper].append(trial)
+
+                if slippage_universe and current_trials_by_ticker:
+                    try:
+                        timeline_slippage_result = slippage_engine.score_universe(
+                            universe=slippage_universe,
+                            current_trials_by_ticker=current_trials_by_ticker,
+                            prior_trials_by_ticker=None,  # Would need historical snapshots
+                            as_of_date=as_of_date_obj
+                        )
+                        diag_ts = timeline_slippage_result.get("diagnostic_counts", {})
+                        logger.info(f"  Timeline slippage: {diag_ts.get('total_scored', 0)} scored, "
+                                   f"repeat_offenders={diag_ts.get('repeat_offenders', 0)}")
+                    except Exception as e:
+                        logger.warning(f"  Timeline slippage scoring failed: {e}")
+                        timeline_slippage_result = None
+
             # Assemble enhancement result
             enhancement_result = {
                 "regime": regime_result,
                 "pos_scores": pos_result,
                 "short_interest_scores": si_result,
                 "accuracy_enhancements": accuracy_result,
+                "dilution_risk_scores": dilution_risk_result,
+                "timeline_slippage_scores": timeline_slippage_result,
                 "provenance": {
                     "module": "enhancements",
-                    "version": "1.1.0",
+                    "version": "1.2.0",  # Bumped for dilution risk + timeline slippage
                     "as_of_date": as_of_date,
                     "pos_engine_version": pos_engine.VERSION,
                     "regime_engine_version": regime_engine.VERSION,
                     "accuracy_adapter_version": "1.0.0" if HAS_ACCURACY_ENHANCEMENTS else None,
+                    "dilution_risk_engine_version": "1.0.0" if HAS_DILUTION_RISK else None,
+                    "timeline_slippage_engine_version": "1.0.0" if HAS_TIMELINE_SLIPPAGE else None,
                 }
             }
 
