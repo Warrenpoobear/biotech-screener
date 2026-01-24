@@ -185,12 +185,13 @@ logger = logging.getLogger(__name__)
 
 # V3 Enhanced weights (with all new signals)
 V3_ENHANCED_WEIGHTS = {
-    "clinical": Decimal("0.28"),
-    "financial": Decimal("0.25"),
-    "catalyst": Decimal("0.17"),
-    "pos": Decimal("0.15"),
-    "momentum": Decimal("0.10"),
+    "clinical": Decimal("0.26"),
+    "financial": Decimal("0.24"),
+    "catalyst": Decimal("0.16"),
+    "pos": Decimal("0.14"),
+    "momentum": Decimal("0.09"),
     "valuation": Decimal("0.05"),
+    "short_interest": Decimal("0.06"),
 }
 
 # V3 Default weights (without enhancement data)
@@ -202,11 +203,12 @@ V3_DEFAULT_WEIGHTS = {
 
 # V3 Partial weights (with some enhancement data)
 V3_PARTIAL_WEIGHTS = {
-    "clinical": Decimal("0.35"),
-    "financial": Decimal("0.30"),
-    "catalyst": Decimal("0.20"),
-    "momentum": Decimal("0.10"),
+    "clinical": Decimal("0.33"),
+    "financial": Decimal("0.28"),
+    "catalyst": Decimal("0.18"),
+    "momentum": Decimal("0.09"),
     "valuation": Decimal("0.05"),
+    "short_interest": Decimal("0.07"),
 }
 
 # Pipeline health thresholds (fraction of universe)
