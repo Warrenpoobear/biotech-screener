@@ -72,3 +72,6 @@ checkpoints_ab_*/
 results_*_prefix*.json
 results_*_postfix*.json
 tests/golden/
+
+# Generated ablation reports
+ablation_report.json
