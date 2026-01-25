@@ -16,7 +16,7 @@ Usage:
     from wake_robin.providers.sec_13f.edgar_13f import SEC13FFetcher
     
     fetcher = SEC13FFetcher()
-    filings = fetcher.get_recent_filings(cik='1074999', count=4)  # Baker Bros
+    filings = fetcher.get_recent_filings(cik='1263508', count=4)  # Baker Bros
     
     for filing in filings:
         holdings = fetcher.parse_holdings(filing)
@@ -233,20 +233,24 @@ class SEC13FFetcher:
     def find_info_table_url(self, filing: Filing13F) -> Optional[str]:
         """
         Find the information table XML URL for a filing.
-        
+
         The info table is usually named something like:
         - infotable.xml
         - form13fInfoTable.xml
         - *_infotable.xml
+
+        Some filers use non-standard names (e.g., numeric IDs like "46941.xml").
+        In those cases, we fall back to finding the largest XML file that isn't
+        the primary document.
         """
         if not HAS_REQUESTS:
             return None
-        
+
         # Fetch filing index
         cik_int = int(filing.cik)
         accession = filing.accession_number
         index_url = f"{self.EDGAR_BASE}/Archives/edgar/data/{cik_int}/{accession}/index.json"
-        
+
         try:
             response = self.session.get(index_url, timeout=30)
             response.raise_for_status()
@@ -254,13 +258,33 @@ class SEC13FFetcher:
         except Exception as e:
             print(f"Error fetching filing index: {e}")
             return None
-        
-        # Look for info table
+
+        # Get primary doc name to exclude it from fallback search
+        primary_doc_name = filing.primary_doc_url.split('/')[-1].lower() if filing.primary_doc_url else ''
+
+        # First pass: Look for standard info table naming
+        xml_files = []
         for item in data.get('directory', {}).get('item', []):
-            name = item.get('name', '').lower()
-            if 'infotable' in name and name.endswith('.xml'):
-                return f"{self.EDGAR_BASE}/Archives/edgar/data/{cik_int}/{accession}/{item['name']}"
-        
+            name = item.get('name', '')
+            name_lower = name.lower()
+            size = int(item.get('size') or 0)
+
+            if 'infotable' in name_lower and name_lower.endswith('.xml'):
+                # Found standard info table name
+                return f"{self.EDGAR_BASE}/Archives/edgar/data/{cik_int}/{accession}/{name}"
+
+            # Track all XML files for fallback
+            if name_lower.endswith('.xml') and name_lower != primary_doc_name:
+                xml_files.append({'name': name, 'size': size})
+
+        # Fallback: If no standard name found, pick the largest XML file
+        # (info tables are typically larger than cover pages/primary docs)
+        if xml_files:
+            # Sort by size descending, pick largest
+            xml_files.sort(key=lambda x: x['size'], reverse=True)
+            largest = xml_files[0]
+            return f"{self.EDGAR_BASE}/Archives/edgar/data/{cik_int}/{accession}/{largest['name']}"
+
         return None
     
     def fetch_info_table_xml(self, filing: Filing13F) -> Optional[str]:
@@ -474,7 +498,7 @@ if __name__ == '__main__':
     import sys
     
     # Default to Baker Bros if no CIK provided
-    cik = sys.argv[1] if len(sys.argv) > 1 else '1074999'
+    cik = sys.argv[1] if len(sys.argv) > 1 else '1263508'
     
     print(f"Fetching 13F holdings for CIK {cik}")
     print("=" * 60)

@@ -34,7 +34,7 @@ ELITE_MANAGERS = [
     # TIER 1: Core biotech specialists with 20+ year track records
     # =========================================================================
     {
-        'cik': '1074999',
+        'cik': '1263508',
         'name': 'Baker Bros. Advisors LP',
         'short_name': 'Baker Bros',
         'style': 'concentrated_conviction',
@@ -44,7 +44,7 @@ ELITE_MANAGERS = [
         'tier': 1,
     },
     {
-        'cik': '1535392',
+        'cik': '1346824',
         'name': 'RA Capital Management, L.P.',
         'short_name': 'RA Capital',
         'style': 'crossover_specialist',
@@ -53,19 +53,10 @@ ELITE_MANAGERS = [
         'holding_period': 'long',
         'tier': 1,
     },
+    # NOTE: Perceptive Advisors uses offshore fund structure, does not file 13F-HR
     {
-        'cik': '1303382',
-        'name': 'Perceptive Advisors LLC',
-        'short_name': 'Perceptive',
-        'style': 'diversified_biotech',
-        'focus': ['broad_biotech', 'clinical_stage', 'commercial'],
-        'typical_position_size': 'medium',
-        'holding_period': 'medium',
-        'tier': 1,
-    },
-    {
-        'cik': '1056831',
-        'name': 'Biotechnology Value Fund, L.P.',
+        'cik': '1056807',
+        'name': 'BVF Inc.',
         'short_name': 'BVF',
         'style': 'value_activist',
         'focus': ['undervalued_biotech', 'activist_situations'],
@@ -74,7 +65,7 @@ ELITE_MANAGERS = [
         'tier': 1,
     },
     {
-        'cik': '1633642',
+        'cik': '1587114',
         'name': 'EcoR1 Capital, LLC',
         'short_name': 'EcoR1',
         'style': 'scientific_deep_dive',
@@ -88,7 +79,7 @@ ELITE_MANAGERS = [
     # TIER 2: Excellent biotech specialists
     # =========================================================================
     {
-        'cik': '1167483',
+        'cik': '1055951',
         'name': 'OrbiMed Advisors LLC',
         'short_name': 'OrbiMed',
         'style': 'diversified_healthcare',
@@ -98,7 +89,7 @@ ELITE_MANAGERS = [
         'tier': 2,
     },
     {
-        'cik': '1510387',
+        'cik': '1425738',
         'name': 'Redmile Group, LLC',
         'short_name': 'Redmile',
         'style': 'crossover_specialist',
@@ -108,7 +99,7 @@ ELITE_MANAGERS = [
         'tier': 2,
     },
     {
-        'cik': '1454502',
+        'cik': '1009258',
         'name': 'Deerfield Management Company, L.P.',
         'short_name': 'Deerfield',
         'style': 'multi_strategy_healthcare',
@@ -118,7 +109,7 @@ ELITE_MANAGERS = [
         'tier': 2,
     },
     {
-        'cik': '1358706',
+        'cik': '909661',
         'name': 'Farallon Capital Management, L.L.C.',
         'short_name': 'Farallon',
         'style': 'event_driven',
@@ -128,7 +119,7 @@ ELITE_MANAGERS = [
         'tier': 2,
     },
     {
-        'cik': '1040273',
+        'cik': '1423053',
         'name': 'Citadel Advisors LLC',
         'short_name': 'Citadel',
         'style': 'quantitative_fundamental',
@@ -143,7 +134,7 @@ ELITE_MANAGERS = [
     # TIER 3: Notable biotech allocators (smaller or narrower focus)
     # =========================================================================
     {
-        'cik': '1603466',
+        'cik': '1633313',
         'name': 'Avoro Capital Advisors LLC',
         'short_name': 'Avoro',
         'style': 'concentrated_biotech',
@@ -152,18 +143,9 @@ ELITE_MANAGERS = [
         'holding_period': 'medium',
         'tier': 3,
     },
+    # NOTE: Venrock Healthcare Capital Partners does not file 13F-HR
     {
-        'cik': '1495584',
-        'name': 'Venrock Healthcare Capital Partners',
-        'short_name': 'Venrock HCP',
-        'style': 'venture_crossover',
-        'focus': ['early_stage', 'platform_technologies'],
-        'typical_position_size': 'medium',
-        'holding_period': 'long',
-        'tier': 3,
-    },
-    {
-        'cik': '1802994',
+        'cik': '1583977',
         'name': 'Cormorant Asset Management, LP',
         'short_name': 'Cormorant',
         'style': 'healthcare_specialist',

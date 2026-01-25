@@ -37,8 +37,8 @@ tests/
 ```python
 from wake_robin.providers.sec_13f.edgar_13f import get_manager_holdings
 
-# Baker Bros (CIK 1074999)
-result = get_manager_holdings('1074999')
+# Baker Bros (CIK 1263508)
+result = get_manager_holdings('1263508')
 
 print(f"Total: ${result['summary']['total_value']:,.0f}")
 for h in result['holdings'][:10]:
@@ -65,7 +65,7 @@ for s in signals:
 
 ```powershell
 # Single manager holdings
-python edgar_13f.py 1074999
+python edgar_13f.py 1263508
 
 # Aggregated signals
 python aggregator.py

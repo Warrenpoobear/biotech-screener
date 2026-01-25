@@ -37,7 +37,7 @@ class TestEliteManagers:
     def test_registry_has_tier_1(self):
         """Registry should have Tier 1 managers."""
         tier_1 = get_tier_1_managers()
-        assert len(tier_1) >= 5, "Expected at least 5 Tier 1 managers"
+        assert len(tier_1) >= 4, "Expected at least 4 Tier 1 managers"
     
     def test_registry_validates(self):
         """Registry should pass validation."""
@@ -50,13 +50,13 @@ class TestEliteManagers:
     
     def test_get_manager_by_cik(self):
         """Should find manager by CIK."""
-        baker = get_manager_by_cik('1074999')
+        baker = get_manager_by_cik('1263508')
         assert baker is not None
         assert baker['short_name'] == 'Baker Bros'
-    
+
     def test_get_manager_by_cik_with_leading_zeros(self):
         """Should handle leading zeros in CIK."""
-        baker = get_manager_by_cik('0001074999')
+        baker = get_manager_by_cik('0001263508')
         assert baker is not None
         assert baker['short_name'] == 'Baker Bros'
     
@@ -64,7 +64,7 @@ class TestEliteManagers:
         """Should find manager by short name."""
         ra = get_manager_by_short_name('RA Capital')
         assert ra is not None
-        assert ra['cik'] == '1535392'
+        assert ra['cik'].lstrip('0') == '1346824'
     
     def test_get_manager_by_short_name_case_insensitive(self):
         """Short name lookup should be case-insensitive."""
@@ -73,7 +73,7 @@ class TestEliteManagers:
     
     def test_manager_weight_tier_1(self):
         """Tier 1 manager should have higher weight."""
-        baker = get_manager_by_cik('1074999')
+        baker = get_manager_by_cik('1263508')
         weight = get_manager_weight(baker)
         assert weight >= 1.0, "Tier 1 concentrated manager should have weight >= 1.0"
     
@@ -335,8 +335,8 @@ class TestDeterminism:
     
     def test_manager_weight_deterministic(self):
         """Manager weight should be deterministic."""
-        baker = get_manager_by_cik('1074999')
-        
+        baker = get_manager_by_cik('1263508')
+
         weights = [get_manager_weight(baker) for _ in range(3)]
         assert all(w == weights[0] for w in weights)
     
