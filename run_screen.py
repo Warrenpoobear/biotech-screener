@@ -162,8 +162,117 @@ except ImportError:
     HAS_TICKER_VALIDATION = False
     logger.warning("Ticker validation module not available - skipping validation")
 
-VERSION = "1.5.0"  # Bumped for data enrichment integration (dilution risk, timeline slippage, smart money changes)
+VERSION = "1.6.0"  # Bumped for governance-friendly CLI enhancements
 DETERMINISTIC_TIMESTAMP_SUFFIX = "T00:00:00Z"
+
+# =============================================================================
+# CATALYST WINDOW PRESETS AND DECAY FUNCTIONS
+# =============================================================================
+
+CATALYST_WINDOW_PRESETS = {
+    "tight": (7, 30),
+    "standard": (15, 45),
+    "wide": (15, 90),
+}
+
+
+def parse_catalyst_window(window_str: str) -> tuple[int, int]:
+    """
+    Parse catalyst window string 'START-END' into tuple of ints.
+
+    Args:
+        window_str: String like '15-45'
+
+    Returns:
+        Tuple (start_days, end_days)
+
+    Raises:
+        ValueError: If format is invalid or values out of range
+    """
+    if not window_str or '-' not in window_str:
+        raise ValueError(f"Invalid catalyst window format: '{window_str}'. Expected 'START-END' (e.g., '15-45')")
+
+    parts = window_str.split('-')
+    if len(parts) != 2:
+        raise ValueError(f"Invalid catalyst window format: '{window_str}'. Expected 'START-END' (e.g., '15-45')")
+
+    try:
+        start = int(parts[0])
+        end = int(parts[1])
+    except ValueError:
+        raise ValueError(f"Invalid catalyst window values: '{window_str}'. Both values must be integers.")
+
+    if start < 0 or end < 0:
+        raise ValueError(f"Catalyst window values must be non-negative: got {start}-{end}")
+    if start >= end:
+        raise ValueError(f"Catalyst window start must be less than end: got {start}-{end}")
+    if end > 365:
+        raise ValueError(f"Catalyst window end exceeds 365 days: got {end}")
+
+    return (start, end)
+
+
+def compute_catalyst_decay_weight(
+    days_to_event: int,
+    window_start: int,
+    window_end: int,
+    decay_mode: str,
+    half_life_days: int = 30,
+) -> float:
+    """
+    Compute decay weight for a catalyst event based on days until event.
+
+    Args:
+        days_to_event: Days from as_of_date to catalyst event
+        window_start: Start of optimal window (days)
+        window_end: End of optimal window (days)
+        decay_mode: 'step', 'linear', or 'exp'
+        half_life_days: Half-life for exponential decay (only used if decay_mode='exp')
+
+    Returns:
+        Weight in [0.0, 1.0] where 1.0 = fully within window
+    """
+    import math
+
+    # Events in the past get zero weight
+    if days_to_event < 0:
+        return 0.0
+
+    # Events within optimal window get full weight
+    if window_start <= days_to_event <= window_end:
+        return 1.0
+
+    if decay_mode == "step":
+        # Binary: full weight in window, zero outside
+        return 0.0
+
+    elif decay_mode == "linear":
+        # Linear taper: 1.0 at window edge, 0.0 at 2x window distance
+        if days_to_event < window_start:
+            # Too soon - taper down as we get closer to 0
+            if window_start == 0:
+                return 1.0  # Edge case: window starts at 0
+            return max(0.0, days_to_event / window_start)
+        else:
+            # Beyond window_end - taper down
+            overshoot = days_to_event - window_end
+            taper_range = window_end  # Taper over same distance as window
+            return max(0.0, 1.0 - (overshoot / max(1, taper_range)))
+
+    elif decay_mode == "exp":
+        # Exponential decay with half-life
+        if days_to_event < window_start:
+            # Too soon - exponential approach
+            distance = window_start - days_to_event
+            return math.exp(-0.693 * distance / half_life_days)  # 0.693 = ln(2)
+        else:
+            # Beyond window_end - exponential decay
+            distance = days_to_event - window_end
+            return math.exp(-0.693 * distance / half_life_days)
+
+    else:
+        # Unknown mode - fall back to step
+        return 0.0 if days_to_event < window_start or days_to_event > window_end else 1.0
 
 
 def _force_deterministic_generated_at(obj: Any, generated_at: str) -> None:
@@ -445,6 +554,345 @@ def write_json_output(filepath: Path, data: Dict[str, Any], secure: bool = True)
     else:
         with open(filepath, 'w', encoding='utf-8') as f:
             f.write(json_content)
+
+
+# =============================================================================
+# SNAPSHOT COMPARISON
+# =============================================================================
+
+def compare_snapshots_detailed(
+    state_dir: Path,
+    current_date: str,
+    prior_date: Optional[str] = None,
+) -> Dict[str, Any]:
+    """
+    Compare two CT.gov state snapshots with detailed hash and field-diff summary.
+
+    Args:
+        state_dir: Directory containing state_YYYY-MM-DD.jsonl files
+        current_date: Current snapshot date (YYYY-MM-DD)
+        prior_date: Prior snapshot date (default: day before current_date)
+
+    Returns:
+        Dict with comparison results including:
+        - file paths, line counts, SHA256 hashes
+        - field changes detected
+        - records added/removed
+    """
+    from datetime import timedelta
+
+    current_date_obj = to_date_object(current_date)
+    if prior_date:
+        prior_date_obj = to_date_object(prior_date)
+    else:
+        prior_date_obj = current_date_obj - timedelta(days=1)
+        prior_date = prior_date_obj.isoformat()
+
+    current_file = state_dir / f"state_{current_date}.jsonl"
+    prior_file = state_dir / f"state_{prior_date}.jsonl"
+
+    result = {
+        "current_date": current_date,
+        "prior_date": prior_date,
+        "current_file": str(current_file),
+        "prior_file": str(prior_file),
+        "current_exists": current_file.exists(),
+        "prior_exists": prior_file.exists(),
+        "current_sha256": None,
+        "prior_sha256": None,
+        "current_line_count": 0,
+        "prior_line_count": 0,
+        "files_identical": False,
+        "field_changes_detected": 0,
+        "records_added": 0,
+        "records_removed": 0,
+        "top_changed_fields": {},
+        "comparison_status": "OK",
+    }
+
+    # Check if files exist
+    if not current_file.exists():
+        result["comparison_status"] = "CURRENT_MISSING"
+        return result
+    if not prior_file.exists():
+        result["comparison_status"] = "PRIOR_MISSING"
+        return result
+
+    # Compute hashes and line counts
+    current_bytes = current_file.read_bytes()
+    prior_bytes = prior_file.read_bytes()
+
+    result["current_sha256"] = hashlib.sha256(current_bytes).hexdigest()
+    result["prior_sha256"] = hashlib.sha256(prior_bytes).hexdigest()
+    result["current_line_count"] = current_bytes.count(b'\n')
+    result["prior_line_count"] = prior_bytes.count(b'\n')
+
+    # Check if files are identical
+    if result["current_sha256"] == result["prior_sha256"]:
+        result["files_identical"] = True
+        result["comparison_status"] = "IDENTICAL"
+        return result
+
+    # Parse and compare records
+    def parse_jsonl(file_path: Path) -> Dict[str, Dict]:
+        records = {}
+        with open(file_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    try:
+                        record = json.loads(line)
+                        # Use (ticker, nct_id) as key
+                        key = (record.get("ticker", ""), record.get("nct_id", ""))
+                        records[key] = record
+                    except json.JSONDecodeError:
+                        continue
+        return records
+
+    current_records = parse_jsonl(current_file)
+    prior_records = parse_jsonl(prior_file)
+
+    current_keys = set(current_records.keys())
+    prior_keys = set(prior_records.keys())
+
+    result["records_added"] = len(current_keys - prior_keys)
+    result["records_removed"] = len(prior_keys - current_keys)
+
+    # Check field changes in common records
+    common_keys = current_keys & prior_keys
+    field_changes = {}
+    for key in common_keys:
+        curr = current_records[key]
+        prev = prior_records[key]
+        for field in set(curr.keys()) | set(prev.keys()):
+            if curr.get(field) != prev.get(field):
+                field_changes[field] = field_changes.get(field, 0) + 1
+                result["field_changes_detected"] += 1
+
+    # Top changed fields
+    sorted_fields = sorted(field_changes.items(), key=lambda x: -x[1])[:10]
+    result["top_changed_fields"] = dict(sorted_fields)
+
+    return result
+
+
+def write_diagnostics_output(
+    diagnostics_path: Path,
+    results: Dict[str, Any],
+    args: argparse.Namespace,
+    catalyst_window: tuple[int, int],
+) -> None:
+    """
+    Write structured diagnostics to JSON sidecar file.
+
+    Args:
+        diagnostics_path: Output path for diagnostics JSON
+        results: Full pipeline results
+        args: Parsed CLI arguments
+        catalyst_window: Resolved catalyst window tuple
+    """
+    diagnostics = {
+        "schema_version": "1.0.0",
+        "generated_by": "run_screen.py",
+        "run_metadata": {
+            "as_of_date": args.as_of_date,
+            "orchestrator_version": VERSION,
+            "cli_arguments": {
+                "log_level": args.log_level,
+                "diagnostics": args.diagnostics,
+                "catalyst_window": f"{catalyst_window[0]}-{catalyst_window[1]}",
+                "catalyst_window_preset": args.catalyst_window_preset,
+                "catalyst_decay": args.catalyst_decay,
+                "catalyst_half_life_days": args.catalyst_half_life_days,
+                "enable_smart_money": args.enable_smart_money,
+                "smart_money_source": args.smart_money_source,
+                "enable_enhancements": args.enable_enhancements,
+                "enable_short_interest": args.enable_short_interest,
+                "enable_coinvest": args.enable_coinvest,
+                "min_component_coverage": args.min_component_coverage,
+                "min_component_coverage_mode": args.min_component_coverage_mode,
+            },
+        },
+        "pipeline_summary": results.get("summary", {}),
+        "module_diagnostics": {},
+        "component_coverage": {},
+        "gating_analysis": {},
+    }
+
+    # Extract module diagnostics
+    if "module_1_universe" in results:
+        m1 = results["module_1_universe"]
+        diagnostics["module_diagnostics"]["module_1"] = {
+            "active_count": len(m1.get("active_securities", [])),
+            "excluded_count": len(m1.get("excluded_securities", [])),
+            "diagnostic_counts": m1.get("diagnostic_counts", {}),
+        }
+
+    if "module_2_financial" in results:
+        m2 = results["module_2_financial"]
+        diagnostics["module_diagnostics"]["module_2"] = {
+            "scored_count": len(m2.get("scores", [])),
+            "diagnostic_counts": m2.get("diagnostic_counts", {}),
+        }
+
+    if "module_3_catalyst" in results:
+        m3 = results["module_3_catalyst"]
+        diagnostics["module_diagnostics"]["module_3"] = {
+            "events_total": m3.get("diagnostic_counts", {}).get("events_detected_total", 0),
+            "tickers_with_events": m3.get("diagnostic_counts", {}).get("tickers_with_events", 0),
+            "events_by_type": m3.get("diagnostic_counts", {}).get("events_by_type", {}),
+            "events_by_severity": m3.get("diagnostic_counts", {}).get("events_by_severity", {}),
+        }
+
+    if "module_4_clinical" in results:
+        m4 = results["module_4_clinical"]
+        diagnostics["module_diagnostics"]["module_4"] = {
+            "scored_count": len(m4.get("scores", [])),
+            "diagnostic_counts": m4.get("diagnostic_counts", {}),
+        }
+
+    if "module_5_composite" in results:
+        m5 = results["module_5_composite"]
+        diagnostics["module_diagnostics"]["module_5"] = {
+            "ranked_count": len(m5.get("ranked_securities", [])),
+            "excluded_count": len(m5.get("excluded_securities", [])),
+            "run_status": m5.get("run_status", "UNKNOWN"),
+            "degraded_components": m5.get("degraded_components", []),
+            "health_warnings": m5.get("health_warnings", []),
+            "health_errors": m5.get("health_errors", []),
+        }
+        diagnostics["component_coverage"] = m5.get("component_coverage", {})
+        diagnostics["gating_analysis"] = {
+            "gated_component_counts": m5.get("gated_component_counts", {}),
+            "confidence_gated_tickers": m5.get("confidence_gated_tickers", {}),
+        }
+
+    # Enhancement diagnostics
+    if "enhancements" in results:
+        enh = results["enhancements"]
+        diagnostics["enhancement_diagnostics"] = {}
+
+        if enh.get("regime"):
+            diagnostics["enhancement_diagnostics"]["regime"] = {
+                "regime": enh["regime"].get("regime"),
+                "confidence": str(enh["regime"].get("confidence", "0")),
+                "staleness": enh["regime"].get("staleness"),
+            }
+
+        if enh.get("pos_scores"):
+            pos = enh["pos_scores"]
+            diagnostics["enhancement_diagnostics"]["pos"] = pos.get("diagnostic_counts", {})
+
+        if enh.get("short_interest_scores"):
+            si = enh["short_interest_scores"]
+            diagnostics["enhancement_diagnostics"]["short_interest"] = si.get("diagnostic_counts", {})
+
+        if enh.get("dilution_risk_scores"):
+            dr = enh["dilution_risk_scores"]
+            diagnostics["enhancement_diagnostics"]["dilution_risk"] = dr.get("diagnostic_counts", {})
+
+    write_json_output(diagnostics_path, diagnostics, secure=True)
+    logger.info(f"  Diagnostics written to: {diagnostics_path}")
+
+
+def log_smart_money_debug(
+    institutional_momentum: Optional[Dict],
+    market_data_by_ticker: Dict[str, Dict],
+    active_tickers: List[str],
+    data_dir: Path,
+    smart_money_source: str,
+) -> None:
+    """
+    Print detailed smart money diagnostics when --debug-smart-money is enabled.
+
+    Args:
+        institutional_momentum: Loaded institutional momentum data
+        market_data_by_ticker: Market data dict indexed by ticker
+        active_tickers: List of active tickers from Module 1
+        data_dir: Data directory path
+        smart_money_source: Smart money source setting ('13f', 'internal', 'auto')
+    """
+    logger.info("=" * 60)
+    logger.info("SMART MONEY DEBUG DIAGNOSTICS")
+    logger.info("=" * 60)
+
+    # File resolution
+    momentum_file = data_dir / "momentum_results.json"
+    root_momentum_file = Path("momentum_results.json")
+    holdings_file = data_dir / "holdings_snapshots.json"
+    coinvest_file = data_dir / "coinvest_signals.json"
+
+    logger.info(f"Source setting: --smart-money-source={smart_money_source}")
+    logger.info("")
+    logger.info("File paths searched:")
+    logger.info(f"  {momentum_file}: {'EXISTS' if momentum_file.exists() else 'NOT FOUND'}")
+    logger.info(f"  {root_momentum_file}: {'EXISTS' if root_momentum_file.exists() else 'NOT FOUND'}")
+    logger.info(f"  {holdings_file}: {'EXISTS' if holdings_file.exists() else 'NOT FOUND'}")
+    logger.info(f"  {coinvest_file}: {'EXISTS' if coinvest_file.exists() else 'NOT FOUND'}")
+    logger.info("")
+
+    if institutional_momentum is None:
+        logger.info("Institutional momentum data: NOT LOADED")
+        logger.info("  Reason: No momentum_results.json found in data_dir or root")
+        logger.info("=" * 60)
+        return
+
+    # Data statistics
+    rankings = institutional_momentum.get("rankings", [])
+    summary = institutional_momentum.get("summary", {})
+
+    logger.info(f"Institutional momentum data: LOADED")
+    logger.info(f"  Total tickers in file: {len(rankings)}")
+    logger.info(f"  Coordinated buys: {len(summary.get('coordinated_buys', []))}")
+    logger.info(f"  Coordinated sells: {len(summary.get('coordinated_sells', []))}")
+    logger.info("")
+
+    # Universe overlap analysis
+    momentum_tickers = {r.get("ticker", "").upper() for r in rankings if r.get("ticker")}
+    active_set = {t.upper() for t in active_tickers}
+
+    overlap = momentum_tickers & active_set
+    in_momentum_not_active = momentum_tickers - active_set
+    in_active_not_momentum = active_set - momentum_tickers
+
+    logger.info("Universe overlap:")
+    logger.info(f"  Tickers in momentum file: {len(momentum_tickers)}")
+    logger.info(f"  Active tickers (Module 1): {len(active_set)}")
+    logger.info(f"  Overlap (can be scored): {len(overlap)}")
+    logger.info(f"  In momentum but not active: {len(in_momentum_not_active)}")
+    logger.info(f"  In active but not momentum: {len(in_active_not_momentum)}")
+
+    if in_momentum_not_active and len(in_momentum_not_active) <= 10:
+        logger.info(f"    Examples not in active: {sorted(in_momentum_not_active)[:10]}")
+    if in_active_not_momentum and len(in_active_not_momentum) <= 10:
+        logger.info(f"    Examples missing momentum: {sorted(in_active_not_momentum)[:10]}")
+    logger.info("")
+
+    # Injection analysis
+    injected_count = 0
+    not_injected_reasons = {"no_market_data": 0, "already_has_return": 0, "invalid_score": 0}
+
+    for ranking in rankings:
+        ticker = ranking.get("ticker", "").upper()
+        momentum_score = ranking.get("momentum_score")
+
+        if ticker not in market_data_by_ticker:
+            not_injected_reasons["no_market_data"] += 1
+        elif market_data_by_ticker[ticker].get("return_60d") is not None:
+            # Check if it was us who set it
+            if market_data_by_ticker[ticker].get("_momentum_source") == "13f":
+                injected_count += 1
+            else:
+                not_injected_reasons["already_has_return"] += 1
+        elif momentum_score is None:
+            not_injected_reasons["invalid_score"] += 1
+
+    logger.info("Injection analysis (into market_data_by_ticker):")
+    logger.info(f"  Successfully injected: {injected_count}")
+    logger.info(f"  Not injected - no market data: {not_injected_reasons['no_market_data']}")
+    logger.info(f"  Not injected - already has return_60d: {not_injected_reasons['already_has_return']}")
+    logger.info(f"  Not injected - invalid score: {not_injected_reasons['invalid_score']}")
+    logger.info("=" * 60)
 
 
 # =============================================================================
@@ -750,6 +1198,17 @@ def run_screening_pipeline(
     resume_from: Optional[str] = None,
     audit_log_path: Optional[Path] = None,
     pipeline_timeout: int = DEFAULT_PIPELINE_TIMEOUT,
+    # New governance-friendly parameters
+    catalyst_window: Optional[tuple[int, int]] = None,
+    catalyst_decay: str = "step",
+    catalyst_half_life_days: int = 30,
+    enable_smart_money: bool = False,
+    smart_money_source: str = "auto",
+    debug_smart_money: bool = False,
+    compare_snapshots: bool = False,
+    snapshot_date_prior: Optional[str] = None,
+    min_component_coverage: Optional[float] = None,
+    min_component_coverage_mode: str = "applied",
 ) -> Dict[str, Any]:
     """
     Execute full screening pipeline with deterministic guarantees.
@@ -765,6 +1224,16 @@ def run_screening_pipeline(
         resume_from: Module name to resume from (e.g., "module_3")
         audit_log_path: Path to audit log file (JSONL format)
         pipeline_timeout: Maximum execution time in seconds (default: 1 hour)
+        catalyst_window: Tuple (start_days, end_days) for optimal catalyst window
+        catalyst_decay: Decay function ('step', 'linear', 'exp')
+        catalyst_half_life_days: Half-life for exponential decay
+        enable_smart_money: Enable smart money signal in composite
+        smart_money_source: Smart money data source ('13f', 'internal', 'auto')
+        debug_smart_money: Print detailed smart money diagnostics
+        compare_snapshots: Run detailed snapshot comparison
+        snapshot_date_prior: Override prior snapshot date for comparison
+        min_component_coverage: Minimum component coverage for rankability
+        min_component_coverage_mode: Coverage mode ('applied' or 'present')
 
     Returns:
         Complete screening results with provenance
@@ -975,6 +1444,17 @@ def run_screening_pipeline(
         if injected_count > 0:
             logger.info(f"  Injected 13F momentum for {injected_count} tickers into market data")
 
+    # Debug smart money if requested (before Module 1 so we can see pre-filter state)
+    if debug_smart_money:
+        # We'll call this again after Module 1 with active_tickers
+        log_smart_money_debug(
+            institutional_momentum=institutional_momentum,
+            market_data_by_ticker=market_data_by_ticker,
+            active_tickers=list(full_universe_tickers),  # Use full universe initially
+            data_dir=data_dir,
+            smart_money_source=smart_money_source,
+        )
+
     # Module 1: Universe filtering
     logger.info("[2/7] Module 1: Universe filtering...")
     m1_result = None
@@ -1039,6 +1519,37 @@ def run_screening_pipeline(
         state_dir = data_dir / "ctgov_state" / universe_hash
         state_dir.mkdir(parents=True, exist_ok=True)
         logger.info(f"  Using state directory: {state_dir.name} (universe hash)")
+
+        # Run snapshot comparison if requested
+        if compare_snapshots:
+            logger.info("  Running snapshot comparison (--compare-snapshots)...")
+            snapshot_comparison = compare_snapshots_detailed(
+                state_dir=state_dir,
+                current_date=as_of_date,
+                prior_date=snapshot_date_prior,
+            )
+            logger.info("  " + "=" * 56)
+            logger.info("  SNAPSHOT COMPARISON RESULTS")
+            logger.info("  " + "=" * 56)
+            logger.info(f"  Current: {snapshot_comparison['current_file']}")
+            logger.info(f"  Prior:   {snapshot_comparison['prior_file']}")
+            logger.info(f"  Status:  {snapshot_comparison['comparison_status']}")
+
+            if snapshot_comparison['comparison_status'] in ("OK", "IDENTICAL"):
+                logger.info(f"  Current SHA256: {snapshot_comparison['current_sha256'][:16]}...")
+                logger.info(f"  Prior SHA256:   {snapshot_comparison['prior_sha256'][:16]}...")
+                logger.info(f"  Current lines:  {snapshot_comparison['current_line_count']}")
+                logger.info(f"  Prior lines:    {snapshot_comparison['prior_line_count']}")
+
+                if snapshot_comparison['files_identical']:
+                    logger.warning("  ⚠️  Files are IDENTICAL (same SHA256)")
+                else:
+                    logger.info(f"  Records added:   {snapshot_comparison['records_added']}")
+                    logger.info(f"  Records removed: {snapshot_comparison['records_removed']}")
+                    logger.info(f"  Field changes:   {snapshot_comparison['field_changes_detected']}")
+                    if snapshot_comparison['top_changed_fields']:
+                        logger.info(f"  Top changed fields: {snapshot_comparison['top_changed_fields']}")
+            logger.info("  " + "=" * 56)
 
         # Run Module 3A with FULL UNIVERSE tickers (not post-Module-1 filtered)
         # This ensures stable delta comparisons regardless of Module 1 filtering
@@ -1472,6 +1983,14 @@ def run_screening_pipeline(
             "deterministic_timestamp": as_of_date + DETERMINISTIC_TIMESTAMP_SUFFIX,
             "input_hashes": dict(sorted(content_hashes.items())),
             "enhancements_enabled": enable_enhancements,
+            # New governance-friendly parameters
+            "catalyst_window": f"{catalyst_window[0]}-{catalyst_window[1]}" if catalyst_window else "15-45",
+            "catalyst_decay": catalyst_decay,
+            "catalyst_half_life_days": catalyst_half_life_days if catalyst_decay == "exp" else None,
+            "enable_smart_money": enable_smart_money,
+            "smart_money_source": smart_money_source,
+            "min_component_coverage": min_component_coverage,
+            "min_component_coverage_mode": min_component_coverage_mode,
         },
         "module_1_universe": m1_result,
         "module_2_financial": m2_result,
@@ -1702,15 +2221,190 @@ Module 3 Catalyst Detection:
         action="version",
         version=f"%(prog)s {VERSION}",
     )
-    
+
+    # =========================================================================
+    # NEW: Governance-friendly diagnostic and tuning arguments
+    # =========================================================================
+
+    # Tier 0: Observability
+    parser.add_argument(
+        "--log-level",
+        type=str,
+        choices=["DEBUG", "INFO", "WARNING", "ERROR"],
+        default="INFO",
+        help="Logging verbosity level. DEBUG prints feature coverage tables, gating reasons, "
+             "file paths, and per-component 'applied vs present' diagnostics. (default: INFO)",
+    )
+
+    parser.add_argument(
+        "--diagnostics",
+        type=str,
+        choices=["none", "summary", "full"],
+        default="summary",
+        help="Diagnostics output mode. 'summary': one-line coverage + gating counts (current behavior). "
+             "'full': dumps structured diagnostics to JSON sidecar. 'none': minimal output. (default: summary)",
+    )
+
+    parser.add_argument(
+        "--diagnostics-out",
+        type=Path,
+        default=None,
+        help="Path for diagnostics JSON output. Only used when --diagnostics=full. "
+             "(default: <data-dir>/diagnostics_<run_id>.json)",
+    )
+
+    # Catalyst tuning
+    parser.add_argument(
+        "--catalyst-window",
+        type=str,
+        default=None,
+        metavar="START-END",
+        help="Catalyst event window as 'START-END' days (e.g., '15-45'). "
+             "Events within this window are weighted highest. Overrides --catalyst-window-preset if both specified.",
+    )
+
+    parser.add_argument(
+        "--catalyst-window-preset",
+        type=str,
+        choices=["tight", "standard", "wide"],
+        default="standard",
+        help="Catalyst window preset. tight=7-30, standard=15-45, wide=15-90. (default: standard)",
+    )
+
+    parser.add_argument(
+        "--catalyst-decay",
+        type=str,
+        choices=["step", "linear", "exp"],
+        default="step",
+        help="Catalyst score decay function outside the window. "
+             "'step': binary on/off (current behavior), 'linear': gradual taper, "
+             "'exp': exponential decay with configurable half-life. (default: step)",
+    )
+
+    parser.add_argument(
+        "--catalyst-half-life-days",
+        type=int,
+        default=30,
+        metavar="DAYS",
+        help="Half-life in days for exponential decay (only used with --catalyst-decay=exp). (default: 30)",
+    )
+
+    # Smart money controls
+    parser.add_argument(
+        "--enable-smart-money",
+        action="store_true",
+        help="Enable smart money signal in composite scoring. When enabled, includes 13F institutional "
+             "momentum in coverage and gating reports even if it contributes zero.",
+    )
+
+    parser.add_argument(
+        "--smart-money-source",
+        type=str,
+        choices=["13f", "internal", "auto"],
+        default="auto",
+        help="Smart money data source. '13f': force 13F file paths, 'internal': alternative feed, "
+             "'auto': current behavior (search multiple locations). (default: auto)",
+    )
+
+    parser.add_argument(
+        "--debug-smart-money",
+        action="store_true",
+        help="Print detailed smart money diagnostics: file paths resolved, rows loaded, "
+             "ticker universe overlap, and gating reason counts.",
+    )
+
+    # Snapshot sanity checks
+    parser.add_argument(
+        "--compare-snapshots",
+        action="store_true",
+        help="Run hash + field-diff summary between current and prior CT.gov snapshots, "
+             "even if diff-events are zero. Outputs file paths, line counts, SHA256, and field changes.",
+    )
+
+    parser.add_argument(
+        "--snapshot-date-prior",
+        type=str,
+        default=None,
+        metavar="YYYY-MM-DD",
+        help="Override prior snapshot date for comparison (useful on weekends/missed runs). "
+             "Default: day before --as-of-date.",
+    )
+
+    # Coverage / ranking controls
+    parser.add_argument(
+        "--min-component-coverage",
+        type=float,
+        default=None,
+        metavar="0..1",
+        help="Minimum fraction of components required for a ticker to be rankable. "
+             "E.g., 0.6 means ticker must have >=60%% of components applied.",
+    )
+
+    parser.add_argument(
+        "--min-component-coverage-mode",
+        type=str,
+        choices=["applied", "present"],
+        default="applied",
+        help="Coverage counting mode. 'applied': respects confidence gating (recommended), "
+             "'present': counts all present components regardless of gating. (default: applied)",
+    )
+
     args = parser.parse_args()
 
+    # =========================================================================
+    # Configure logging level FIRST (before any logging calls)
+    # =========================================================================
+    log_level = getattr(logging, args.log_level.upper(), logging.INFO)
+    logging.getLogger().setLevel(log_level)
+    logger.setLevel(log_level)
+
+    # =========================================================================
     # Validate argument combinations
+    # =========================================================================
     if not args.dry_run and args.output is None:
         parser.error("--output is required unless --dry-run is specified")
 
     if args.resume_from and not args.checkpoint_dir:
         parser.error("--resume-from requires --checkpoint-dir")
+
+    # Validate catalyst window format if provided
+    catalyst_window = None
+    if args.catalyst_window:
+        try:
+            catalyst_window = parse_catalyst_window(args.catalyst_window)
+            logger.info(f"Using explicit catalyst window: {catalyst_window[0]}-{catalyst_window[1]} days")
+        except ValueError as e:
+            parser.error(str(e))
+    else:
+        catalyst_window = CATALYST_WINDOW_PRESETS[args.catalyst_window_preset]
+        logger.debug(f"Using catalyst window preset '{args.catalyst_window_preset}': {catalyst_window[0]}-{catalyst_window[1]} days")
+
+    # Log if explicit window overrides preset
+    if args.catalyst_window and args.catalyst_window_preset != "standard":
+        logger.info(f"Note: --catalyst-window overrides --catalyst-window-preset={args.catalyst_window_preset}")
+
+    # Validate catalyst half-life
+    if args.catalyst_decay == "exp" and args.catalyst_half_life_days <= 0:
+        parser.error("--catalyst-half-life-days must be positive when using --catalyst-decay=exp")
+
+    # Validate min-component-coverage
+    if args.min_component_coverage is not None:
+        if not (0.0 <= args.min_component_coverage <= 1.0):
+            parser.error("--min-component-coverage must be between 0.0 and 1.0")
+
+    # Validate snapshot-date-prior format if provided
+    if args.snapshot_date_prior:
+        try:
+            validate_date_format(args.snapshot_date_prior, "snapshot-date-prior")
+        except ValueError as e:
+            parser.error(f"Invalid --snapshot-date-prior: {e}")
+
+    # Set diagnostics output path default if full diagnostics enabled
+    diagnostics_out = args.diagnostics_out
+    if args.diagnostics == "full" and diagnostics_out is None:
+        run_id = args.run_id or f"screen_{args.as_of_date}"
+        diagnostics_out = args.data_dir / f"diagnostics_{run_id}.json"
+        logger.debug(f"Diagnostics output defaulting to: {diagnostics_out}")
 
     try:
         # SECURITY: Validate data_dir early
@@ -1768,6 +2462,17 @@ Module 3 Catalyst Detection:
             checkpoint_dir=args.checkpoint_dir,
             resume_from=args.resume_from,
             audit_log_path=args.audit_log,
+            # New governance-friendly parameters
+            catalyst_window=catalyst_window,
+            catalyst_decay=args.catalyst_decay,
+            catalyst_half_life_days=args.catalyst_half_life_days,
+            enable_smart_money=args.enable_smart_money,
+            smart_money_source=args.smart_money_source,
+            debug_smart_money=args.debug_smart_money,
+            compare_snapshots=args.compare_snapshots,
+            snapshot_date_prior=args.snapshot_date_prior,
+            min_component_coverage=args.min_component_coverage,
+            min_component_coverage_mode=args.min_component_coverage_mode,
         )
 
         # Add bootstrap analysis if requested
@@ -1789,6 +2494,15 @@ Module 3 Catalyst Detection:
         # Write output
         logger.info(f"[OUTPUT] Writing results to {args.output}")
         write_json_output(args.output, results)
+
+        # Write diagnostics output if requested
+        if args.diagnostics == "full":
+            write_diagnostics_output(
+                diagnostics_path=diagnostics_out,
+                results=results,
+                args=args,
+                catalyst_window=catalyst_window,
+            )
 
         # Print summary
         summary = results["summary"]
