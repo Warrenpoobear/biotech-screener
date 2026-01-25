@@ -62,6 +62,45 @@ EPS = 1e-9
 
 
 # =============================================================================
+# YTD PERIOD DETECTION
+# =============================================================================
+
+def get_ytd_months_from_date(date_str: Optional[str]) -> int:
+    """
+    Determine months-in-period from SEC filing date.
+
+    SEC 10-Q filings report income statement items as Year-to-Date (YTD):
+    - Q1 (Mar 31): 3 months YTD
+    - Q2 (Jun 30): 6 months YTD
+    - Q3 (Sep 30): 9 months YTD
+    - 10-K (Dec 31): 12 months (annual)
+
+    Returns:
+        Number of months in the reporting period (3, 6, 9, or 12)
+    """
+    if not date_str:
+        return 3  # Default to quarterly if unknown
+
+    try:
+        from datetime import datetime
+        date = datetime.fromisoformat(date_str.split('T')[0])
+        month = date.month
+
+        # Map fiscal quarter end month to YTD months
+        # Note: Some companies have non-calendar fiscal years, but most biotechs use calendar year
+        if month in [1, 2, 3]:
+            return 3   # Q1 or Jan/Feb year-end
+        elif month in [4, 5, 6]:
+            return 6   # Q2
+        elif month in [7, 8, 9]:
+            return 9   # Q3
+        else:  # 10, 11, 12
+            return 12  # Q4 / Annual
+    except Exception:
+        return 3  # Default to quarterly
+
+
+# =============================================================================
 # BURN RATE CALCULATION (HIERARCHICAL)
 # =============================================================================
 
@@ -69,11 +108,15 @@ def calculate_burn_rate(financial_data: Dict[str, Any]) -> Tuple[Optional[float]
     """
     Calculate monthly burn rate using hierarchical sources.
 
+    IMPORTANT: SEC 10-Q filings report income statement items as Year-to-Date (YTD),
+    not single quarter. This function detects the period from the data date and
+    uses the correct divisor.
+
     Priority:
     1. CFO (Cash Flow from Operations) - quarterly or YTD
     2. FCF (Free Cash Flow) - if available
-    3. NetIncome - if negative
-    4. R&D proxy (R&D * 1.5)
+    3. NetIncome - if negative (YTD-aware)
+    4. R&D proxy (R&D * 1.5) (YTD-aware)
 
     Returns:
         (monthly_burn, burn_source, burn_confidence, burn_period)
@@ -87,7 +130,7 @@ def calculate_burn_rate(financial_data: Dict[str, Any]) -> Tuple[Optional[float]
     fcf = financial_data.get('FCF') or financial_data.get('FreeCashFlow')
     fcf_quarterly = financial_data.get('FCF_quarterly') or financial_data.get('FCF_Q')
 
-    # Prefer quarterly CFO if available
+    # Prefer quarterly CFO if available (explicitly marked as quarterly)
     if cfo_quarterly is not None and cfo_quarterly < 0:
         monthly_burn = abs(cfo_quarterly) / 3.0
         return (monthly_burn, "CFO_quarterly", BURN_CONFIDENCE_HIGH, "quarterly")
@@ -100,35 +143,42 @@ def calculate_burn_rate(financial_data: Dict[str, Any]) -> Tuple[Optional[float]
         monthly_burn = abs(cfo_ytd) / max(months_in_ytd, 1)
         return (monthly_burn, "CFO_YTD", BURN_CONFIDENCE_HIGH, f"ytd_{quarters_in_ytd}q")
 
-    # Try annual/latest CFO
+    # Try annual/latest CFO - detect period from date
     if cfo is not None and cfo < 0:
-        monthly_burn = abs(cfo) / 3.0  # Assume quarterly
-        return (monthly_burn, "CFO", BURN_CONFIDENCE_HIGH, "quarterly")
+        cfo_date = financial_data.get('CFO_date')
+        ytd_months = get_ytd_months_from_date(cfo_date)
+        monthly_burn = abs(cfo) / ytd_months
+        return (monthly_burn, "CFO", BURN_CONFIDENCE_HIGH, f"ytd_{ytd_months}mo")
 
-    # Try quarterly FCF
+    # Try quarterly FCF (explicitly marked as quarterly)
     if fcf_quarterly is not None and fcf_quarterly < 0:
         monthly_burn = abs(fcf_quarterly) / 3.0
         return (monthly_burn, "FCF_quarterly", BURN_CONFIDENCE_HIGH, "quarterly")
 
-    # Try FCF
+    # Try FCF - detect period from date
     if fcf is not None and fcf < 0:
-        monthly_burn = abs(fcf) / 3.0
-        return (monthly_burn, "FCF", BURN_CONFIDENCE_HIGH, "quarterly")
+        fcf_date = financial_data.get('FCF_date')
+        ytd_months = get_ytd_months_from_date(fcf_date)
+        monthly_burn = abs(fcf) / ytd_months
+        return (monthly_burn, "FCF", BURN_CONFIDENCE_HIGH, f"ytd_{ytd_months}mo")
 
-    # Fallback to NetIncome if negative
+    # Fallback to NetIncome if negative - CRITICAL: Use YTD-aware calculation
     net_income = financial_data.get('NetIncome', 0)
     if net_income is not None and net_income < 0:
-        quarterly_burn = abs(net_income)
-        monthly_burn = quarterly_burn / 3.0
-        return (monthly_burn, "NetIncome", BURN_CONFIDENCE_MED, "quarterly")
+        ni_date = financial_data.get('NetIncome_date')
+        ytd_months = get_ytd_months_from_date(ni_date)
+        monthly_burn = abs(net_income) / ytd_months
+        return (monthly_burn, "NetIncome", BURN_CONFIDENCE_MED, f"ytd_{ytd_months}mo")
 
-    # Fallback to R&D proxy
+    # Fallback to R&D proxy - CRITICAL: Use YTD-aware calculation
     rd_expense = financial_data.get('R&D', 0) or financial_data.get('ResearchAndDevelopment', 0)
     if rd_expense is not None and rd_expense > 0:
+        rd_date = financial_data.get('R&D_date')
+        ytd_months = get_ytd_months_from_date(rd_date)
         # Assume total opex = R&D × 1.5 (add G&A overhead)
-        quarterly_burn = rd_expense * 1.5
-        monthly_burn = quarterly_burn / 3.0
-        return (monthly_burn, "R&D_proxy", BURN_CONFIDENCE_LOW, "estimated")
+        ytd_burn = rd_expense * 1.5
+        monthly_burn = ytd_burn / ytd_months
+        return (monthly_burn, "R&D_proxy", BURN_CONFIDENCE_LOW, f"ytd_{ytd_months}mo_estimated")
 
     # No burn data available
     return (None, "none", BURN_CONFIDENCE_NONE, "none")
