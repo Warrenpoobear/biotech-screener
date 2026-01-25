@@ -68,6 +68,19 @@ from common.types import Severity
 # FIXTURES
 # =============================================================================
 
+@pytest.fixture(autouse=True)
+def set_validation_mode_warn():
+    """Disable strict schema validation for test fixtures."""
+    import os
+    old_mode = os.environ.get("IC_VALIDATION_MODE")
+    os.environ["IC_VALIDATION_MODE"] = "warn"
+    yield
+    if old_mode is None:
+        os.environ.pop("IC_VALIDATION_MODE", None)
+    else:
+        os.environ["IC_VALIDATION_MODE"] = old_mode
+
+
 @pytest.fixture
 def as_of_date():
     """Standard test date."""

@@ -259,7 +259,7 @@ class TestAuditTypes:
         md = report.generate_markdown()
         assert "# Institutional Audit Report" in md
         assert "test123" in md
-        assert "Grade: A" in md
+        assert "Overall Grade:** A" in md
         assert "PASSED" in md
         assert "Test summary" in md
         assert "Fix issues" in md

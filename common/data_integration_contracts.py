@@ -507,7 +507,7 @@ def normalize_ticker_set(
         Set of normalized tickers
     """
     if to_upper:
-        return {t.upper() for t in tickers if isinstance(t, str) and t.strip()}
+        return {t.strip().upper() for t in tickers if isinstance(t, str) and t.strip()}
     else:
         return {t.strip() for t in tickers if isinstance(t, str) and t.strip()}
 

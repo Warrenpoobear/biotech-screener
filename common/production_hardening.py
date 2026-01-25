@@ -748,7 +748,7 @@ def json_serializer(obj: Any) -> Any:
     """
     JSON serializer for objects not serializable by default.
 
-    Handles: date, Decimal, Path, sets, bytes
+    Handles: date, Decimal, Path, sets, bytes, dataclasses
     """
     if isinstance(obj, date):
         return obj.isoformat()
@@ -760,6 +760,12 @@ def json_serializer(obj: Any) -> Any:
         return sorted(list(obj))
     if isinstance(obj, bytes):
         return obj.decode('utf-8', errors='replace')
+    # Handle dataclasses and objects with to_dict method
+    if hasattr(obj, 'to_dict'):
+        return obj.to_dict()
+    if hasattr(obj, '__dataclass_fields__'):
+        from dataclasses import asdict
+        return asdict(obj)
     raise TypeError(f"Object of type {type(obj).__name__} is not JSON serializable")
 
 

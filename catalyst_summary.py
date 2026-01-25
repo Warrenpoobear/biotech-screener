@@ -211,11 +211,11 @@ class CatalystOutputWriter:
     ):
         """Write run_log_YYYY-MM-DD.json (non-deterministic)"""
         from pathlib import Path
-        from datetime import datetime
+        from datetime import datetime, timezone
         import socket
-        
+
         log = {
-            'run_timestamp': datetime.utcnow().isoformat() + 'Z',
+            'run_timestamp': datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
             'execution_time_seconds': round(execution_time_seconds, 2),
             'host': socket.gethostname(),
             'config': config,

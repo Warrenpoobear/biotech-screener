@@ -131,11 +131,12 @@ class TestAdaptiveCoverageConfig:
     def test_get_confidence_for_coverage_marginal(self):
         """Marginal coverage returns reduced confidence."""
         config = AdaptiveCoverageConfig()
+        # 0.40 falls into "minimal" tier (>= 0.35, < 0.50)
         confidence, tier_name = config.get_confidence_for_coverage(
             "financial", Decimal("0.40")
         )
         assert confidence < Decimal("1.00")
-        assert tier_name in ("acceptable", "marginal")
+        assert tier_name in ("minimal", "marginal")
 
     def test_get_confidence_for_coverage_low(self):
         """Low coverage returns minimal confidence."""

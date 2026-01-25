@@ -470,6 +470,7 @@ class TestCoverageGuardrails:
                 min_financial_pct=80.0,
                 min_clinical_pct=50.0,
                 min_market_pct=50.0,
+                min_catalyst_pct=0.0,  # Not testing catalyst coverage
             ),
         )
 

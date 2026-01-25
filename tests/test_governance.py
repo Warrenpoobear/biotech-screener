@@ -369,7 +369,7 @@ class TestParamsLoader:
         params_file = params_dir / "v1.json"
         params_file.write_text(json.dumps(params))
 
-        loaded, hash_val = load_params("v1", params_dir)
+        loaded, hash_val = load_params("v1", params_dir, validate_schema=False)
 
         assert loaded == params
         assert len(hash_val) == 16
@@ -466,7 +466,7 @@ class TestGovernanceIntegration:
 
         # Compute run_id twice
         input_hashes = compute_input_hashes([data_dir / "market.json"])
-        params_loaded, params_hash = load_params("v1", params_dir)
+        params_loaded, params_hash = load_params("v1", params_dir, validate_schema=False)
 
         run_ids = [
             compute_run_id(

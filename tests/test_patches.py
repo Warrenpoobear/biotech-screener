@@ -387,16 +387,16 @@ class TestRegressionBugs:
         # because the check happens BEFORE the slice, but in buggy code
         # the slice happens first
 
-        # Fix: validate after slicing
+        # Fix: validate FIGI length (standard FIGI is 12 chars, CUSIP is last 9)
         def get_cusip_fixed(item):
             figi = item.get('compositeFIGI')
-            if not figi or len(figi) < 9:
+            if not figi or len(figi) < 12:
                 return None
             return figi[-9:]
 
         assert get_cusip_fixed({}) is None
         assert get_cusip_fixed({'compositeFIGI': 'too_short'}) is None
-        assert get_cusip_fixed({'compositeFIGI': 'BBGXYZ123ABC'}) == '123ABC'[:9]
+        assert get_cusip_fixed({'compositeFIGI': 'BBGXYZ123ABC'}) == 'XYZ123ABC'
 
 
 # =============================================================================
