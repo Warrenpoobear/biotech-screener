@@ -319,18 +319,19 @@ class TestSmartMoneyPositionChanges:
         assert "GAMA" in result
 
         # ACME: Baker Bros +50% = INCREASE, RA Capital +11% = INCREASE
+        # FIX: position_changes now keyed by holder name, not CIK
         acme_changes = result["ACME"]["position_changes"]
-        assert acme_changes.get("0001263508") == "INCREASE"  # Baker Bros
-        assert acme_changes.get("0001346824") == "INCREASE"  # RA Capital
+        assert acme_changes.get("Baker Bros") == "INCREASE"
+        assert acme_changes.get("RA Capital") == "INCREASE"
 
         # BETA: Perceptive -40% = DECREASE, Deerfield exited = EXIT
         beta_changes = result["BETA"]["position_changes"]
-        assert beta_changes.get("0000909661") == "DECREASE"  # Perceptive
-        assert beta_changes.get("0001167483") == "EXIT"  # Deerfield
+        assert beta_changes.get("Perceptive") == "DECREASE"
+        assert beta_changes.get("Deerfield") == "EXIT"
 
         # GAMA: RTW new position = NEW
         gama_changes = result["GAMA"]["position_changes"]
-        assert gama_changes.get("0001390295") == "NEW"  # RTW
+        assert gama_changes.get("RTW Investments") == "NEW"
 
     def test_holder_tier_identification(self, sample_holdings_snapshots: Dict):
         """Test that holder tiers are correctly identified."""
@@ -339,11 +340,10 @@ class TestSmartMoneyPositionChanges:
         result = _convert_holdings_to_coinvest(sample_holdings_snapshots)
 
         # Verify tier 1 managers are identified
+        # FIX: holder_tiers now Dict[name -> tier_int], not Dict[cik -> dict]
         acme_tiers = result["ACME"]["holder_tiers"]
-        assert acme_tiers["0001263508"]["tier"] == 1  # Baker Bros
-        assert acme_tiers["0001263508"]["name"] == "Baker Bros"
-        assert acme_tiers["0001346824"]["tier"] == 1  # RA Capital
-        assert acme_tiers["0001346824"]["name"] == "RA Capital"
+        assert acme_tiers["Baker Bros"] == 1
+        assert acme_tiers["RA Capital"] == 1
 
     def test_coinvest_overlap_count(self, sample_holdings_snapshots: Dict):
         """Test coinvest overlap count is correct."""
