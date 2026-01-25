@@ -800,13 +800,19 @@ def _score_single_ticker_v3(
         if market_data.get("_momentum_source") == "13f":
             momentum_source = "13f"
 
+        # Extract benchmark values with None-safe fallback (0.0 is a valid value)
+        # CRITICAL: Do NOT use `val or fallback` pattern - 0.0 is falsy but valid!
+        _xbi_20 = market_data.get("xbi_return_20d")
+        _xbi_60 = market_data.get("xbi_return_60d")
+        _xbi_120 = market_data.get("xbi_return_120d")
+
         momentum_input = MultiWindowMomentumInput(
             return_20d=_to_decimal(market_data.get("return_20d")),
             return_60d=_to_decimal(market_data.get("return_60d")),
             return_120d=_to_decimal(market_data.get("return_120d")),
-            benchmark_20d=_to_decimal(market_data.get("xbi_return_20d")),
-            benchmark_60d=_to_decimal(market_data.get("xbi_return_60d") or market_data.get("benchmark_return_60d")),
-            benchmark_120d=_to_decimal(market_data.get("xbi_return_120d")),
+            benchmark_20d=_to_decimal(_xbi_20 if _xbi_20 is not None else market_data.get("benchmark_return_20d")),
+            benchmark_60d=_to_decimal(_xbi_60 if _xbi_60 is not None else market_data.get("benchmark_return_60d")),
+            benchmark_120d=_to_decimal(_xbi_120 if _xbi_120 is not None else market_data.get("benchmark_return_120d")),
             trading_days_available=market_data.get("trading_days_available"),
             annualized_vol=annualized_vol,
         )
