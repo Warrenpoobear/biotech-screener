@@ -14,6 +14,10 @@ import json
 from decimal import Decimal
 from datetime import date
 
+from pathlib import Path
+import tempfile
+import os
+
 from pos_model_v2 import (
     PosModelV2,
     ClinicalStage,
@@ -22,6 +26,8 @@ from pos_model_v2 import (
     FDADesignation,
     TrialCharacteristic,
     BaseRateEntry,
+    FixtureProvenance,
+    FixtureLoadError,
     POS_FLOOR,
     POS_CEILING,
     MAX_MODIFIER_PRODUCT,
@@ -560,14 +566,277 @@ def test_string_input_convenience():
     return results
 
 
+def test_fixture_loading():
+    """Test loading model from JSON fixture file."""
+    results = TestResults()
+    print("\n--- Fixture Loading Tests ---")
+
+    # Test loading from the real fixture file
+    fixture_path = Path("pos_benchmarks_v1.json")
+    if fixture_path.exists():
+        try:
+            model = PosModelV2.from_fixture(fixture_path)
+            results.record("Load from fixture succeeds", True)
+        except Exception as e:
+            results.record("Load from fixture succeeds", False, str(e))
+            return results
+
+        # Test provenance is set
+        results.record(
+            "Fixture provenance is set",
+            model.fixture_provenance is not None
+        )
+        results.record(
+            "Fixture version is 1.0.0",
+            model.fixture_provenance.fixture_version == "1.0.0",
+            f"Got: {model.fixture_provenance.fixture_version}"
+        )
+        results.record(
+            "Fixture SHA256 is 64 chars",
+            len(model.fixture_provenance.fixture_sha256) == 64,
+            f"Got length: {len(model.fixture_provenance.fixture_sha256)}"
+        )
+
+        # Test base rate matrix loaded correctly
+        results.record(
+            "Base rate matrix has entries",
+            len(model.base_rate_matrix) > 0,
+            f"Got: {len(model.base_rate_matrix)}"
+        )
+        results.record(
+            "Base rate matrix has 37 entries",
+            len(model.base_rate_matrix) == 37,
+            f"Got: {len(model.base_rate_matrix)}"
+        )
+
+        # Test FDA modifiers loaded
+        results.record(
+            "FDA modifiers loaded",
+            len(model.fda_modifiers) == 6,
+            f"Got: {len(model.fda_modifiers)}"
+        )
+
+        # Test trial modifiers loaded
+        results.record(
+            "Trial modifiers loaded",
+            len(model.trial_modifiers) == 7,
+            f"Got: {len(model.trial_modifiers)}"
+        )
+
+        # Test bounds loaded
+        results.record(
+            "PoS floor loaded correctly",
+            model.pos_floor == Decimal("0.05"),
+            f"Got: {model.pos_floor}"
+        )
+        results.record(
+            "PoS ceiling loaded correctly",
+            model.pos_ceiling == Decimal("0.95"),
+            f"Got: {model.pos_ceiling}"
+        )
+
+        # Test calculation with fixture-loaded model
+        result = model.calculate(
+            ticker="FIXTURE_TEST",
+            stage=ClinicalStage.PHASE_3,
+            therapeutic_area=TherapeuticArea.ONCOLOGY,
+            mechanism_class=MechanismClass.SMALL_MOLECULE,
+        )
+        results.record(
+            "Calculation with fixture model works",
+            result.adjusted_pos == Decimal("0.4200"),
+            f"Got: {result.adjusted_pos}"
+        )
+
+        # Test provenance is included in result
+        results.record(
+            "Result includes fixture provenance",
+            result.fixture_provenance is not None
+        )
+        results.record(
+            "Result provenance matches model",
+            result.fixture_provenance == model.fixture_provenance
+        )
+
+        # Test provenance in to_dict output
+        result_dict = result.to_dict()
+        results.record(
+            "Fixture provenance in JSON output",
+            "fixture_provenance" in result_dict.get("metadata", {})
+        )
+    else:
+        results.record("Fixture file exists", False, f"File not found: {fixture_path}")
+
+    return results
+
+
+def test_fixture_round_trip():
+    """Test that fixture-loaded model matches baked-in defaults."""
+    results = TestResults()
+    print("\n--- Fixture Round-Trip Tests ---")
+
+    fixture_path = Path("pos_benchmarks_v1.json")
+    if not fixture_path.exists():
+        results.record("Fixture file exists", False, f"File not found: {fixture_path}")
+        return results
+
+    # Load both models
+    default_model = PosModelV2()
+    fixture_model = PosModelV2.from_fixture(fixture_path)
+
+    # Test same number of base rates
+    results.record(
+        "Same number of base rates",
+        len(default_model.base_rate_matrix) == len(fixture_model.base_rate_matrix),
+        f"Default: {len(default_model.base_rate_matrix)}, Fixture: {len(fixture_model.base_rate_matrix)}"
+    )
+
+    # Test same FDA modifiers
+    results.record(
+        "Same number of FDA modifiers",
+        len(default_model.fda_modifiers) == len(fixture_model.fda_modifiers),
+        f"Default: {len(default_model.fda_modifiers)}, Fixture: {len(fixture_model.fda_modifiers)}"
+    )
+
+    # Test same trial modifiers
+    results.record(
+        "Same number of trial modifiers",
+        len(default_model.trial_modifiers) == len(fixture_model.trial_modifiers),
+        f"Default: {len(default_model.trial_modifiers)}, Fixture: {len(fixture_model.trial_modifiers)}"
+    )
+
+    # Test calculations produce same results (for matching entries)
+    test_cases = [
+        (ClinicalStage.PHASE_3, TherapeuticArea.ONCOLOGY, MechanismClass.SMALL_MOLECULE),
+        (ClinicalStage.PHASE_2, TherapeuticArea.RARE_DISEASE, MechanismClass.GENE_THERAPY),
+        (ClinicalStage.PHASE_3, TherapeuticArea.CNS, MechanismClass.MONOCLONAL_ANTIBODY),
+    ]
+
+    for stage, ta, mech in test_cases:
+        default_result = default_model.calculate("TEST", stage, ta, mech)
+        fixture_result = fixture_model.calculate("TEST", stage, ta, mech)
+        results.record(
+            f"Same result for {stage.value}/{ta.value}/{mech.value}",
+            default_result.adjusted_pos == fixture_result.adjusted_pos,
+            f"Default: {default_result.adjusted_pos}, Fixture: {fixture_result.adjusted_pos}"
+        )
+
+    return results
+
+
+def test_fixture_validation():
+    """Test fixture validation and error handling."""
+    results = TestResults()
+    print("\n--- Fixture Validation Tests ---")
+
+    # Test with non-existent file
+    try:
+        PosModelV2.from_fixture(Path("/nonexistent/file.json"))
+        results.record("Raises error for missing file", False, "No exception raised")
+    except FixtureLoadError as e:
+        results.record("Raises error for missing file", "not found" in str(e).lower())
+
+    # Test with invalid JSON
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        f.write("not valid json")
+        temp_path = f.name
+    try:
+        PosModelV2.from_fixture(Path(temp_path))
+        results.record("Raises error for invalid JSON", False, "No exception raised")
+    except FixtureLoadError as e:
+        results.record("Raises error for invalid JSON", "json" in str(e).lower())
+    finally:
+        os.unlink(temp_path)
+
+    # Test with missing required keys
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        json.dump({"version": "1.0.0"}, f)
+        temp_path = f.name
+    try:
+        PosModelV2.from_fixture(Path(temp_path))
+        results.record("Raises error for missing keys", False, "No exception raised")
+    except FixtureLoadError as e:
+        results.record("Raises error for missing keys", "missing" in str(e).lower())
+    finally:
+        os.unlink(temp_path)
+
+    # Test strict mode with unknown enum
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        json.dump({
+            "version": "1.0.0",
+            "source_asof_date": "2024-01-01",
+            "base_rates": [{
+                "stage": "unknown_stage",
+                "indication": "oncology",
+                "mechanism_class": "small_molecule",
+                "base_pos": "0.50",
+                "n_support": 100,
+                "source": "Test"
+            }],
+            "fda_modifiers": [],
+            "trial_modifiers": [],
+            "bounds": {}
+        }, f)
+        temp_path = f.name
+    try:
+        PosModelV2.from_fixture(Path(temp_path), strict=True)
+        results.record("Strict mode raises on unknown enum", False, "No exception raised")
+    except FixtureLoadError as e:
+        results.record("Strict mode raises on unknown enum", "unknown stage" in str(e).lower())
+    finally:
+        os.unlink(temp_path)
+
+    # Test non-strict mode skips unknown entries
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        json.dump({
+            "version": "1.0.0",
+            "source_asof_date": "2024-01-01",
+            "base_rates": [
+                {
+                    "stage": "unknown_stage",
+                    "indication": "oncology",
+                    "mechanism_class": "small_molecule",
+                    "base_pos": "0.50",
+                    "n_support": 100,
+                    "source": "Test"
+                },
+                {
+                    "stage": "phase_3",
+                    "indication": "oncology",
+                    "mechanism_class": "small_molecule",
+                    "base_pos": "0.42",
+                    "n_support": 128,
+                    "source": "Test"
+                }
+            ],
+            "fda_modifiers": [],
+            "trial_modifiers": [],
+            "bounds": {}
+        }, f)
+        temp_path = f.name
+    try:
+        model = PosModelV2.from_fixture(Path(temp_path), strict=False)
+        results.record(
+            "Non-strict mode skips unknown entries",
+            len(model.base_rate_matrix) == 1,
+            f"Got {len(model.base_rate_matrix)} entries"
+        )
+    except Exception as e:
+        results.record("Non-strict mode skips unknown entries", False, str(e))
+    finally:
+        os.unlink(temp_path)
+
+    return results
+
+
 def run_all_tests():
     """Run all test suites."""
     print("=" * 60)
     print("Wake Robin PoS Model v2.0 - Test Suite")
     print("=" * 60)
-    
+
     all_results = []
-    
+
     all_results.append(test_enum_parsing())
     all_results.append(test_base_rate_lookup())
     all_results.append(test_modifier_calculations())
@@ -577,6 +846,9 @@ def run_all_tests():
     all_results.append(test_integration_helpers())
     all_results.append(test_model_validation())
     all_results.append(test_string_input_convenience())
+    all_results.append(test_fixture_loading())
+    all_results.append(test_fixture_round_trip())
+    all_results.append(test_fixture_validation())
     
     # Aggregate results
     total_passed = sum(r.passed for r in all_results)

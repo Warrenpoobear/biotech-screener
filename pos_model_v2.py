@@ -493,10 +493,27 @@ class PosLookupResult(NamedTuple):
     source: Optional[str]
 
 
+@dataclass(frozen=True)
+class FixtureProvenance:
+    """Provenance metadata for fixture-loaded models."""
+    fixture_path: str
+    fixture_version: str
+    fixture_source_asof_date: str
+    fixture_sha256: str
+
+    def to_dict(self) -> dict:
+        return {
+            "fixture_path": self.fixture_path,
+            "fixture_version": self.fixture_version,
+            "fixture_source_asof_date": self.fixture_source_asof_date,
+            "fixture_sha256": self.fixture_sha256,
+        }
+
+
 @dataclass
 class PosCalculationResult:
     """Complete result of a PoS calculation with full audit trail."""
-    
+
     # Inputs (for audit)
     ticker: str
     stage: ClinicalStage
@@ -504,29 +521,32 @@ class PosCalculationResult:
     mechanism_class: MechanismClass
     fda_designations: List[FDADesignation]
     trial_characteristics: List[TrialCharacteristic]
-    
+
     # Calculation components
     base_pos: Decimal
     base_pos_lookup: str  # How base rate was determined
     base_pos_n_support: Optional[int]
-    
+
     # Modifier details
     fda_modifier_product: Decimal
     trial_modifier_product: Decimal
     total_modifier_product: Decimal
     modifier_details: List[Dict]
-    
+
     # Final result
     adjusted_pos: Decimal
     confidence_level: str  # "high", "medium", "low"
-    
+
     # Metadata
     calculation_timestamp: datetime = field(default_factory=datetime.utcnow)
     model_version: str = "2.0.0"
+
+    # Fixture provenance (optional - only set when loaded from fixture)
+    fixture_provenance: Optional[FixtureProvenance] = None
     
     def to_dict(self) -> dict:
         """Convert to dictionary for JSON serialization."""
-        return {
+        result = {
             "ticker": self.ticker,
             "inputs": {
                 "stage": self.stage.value,
@@ -553,8 +573,12 @@ class PosCalculationResult:
             "metadata": {
                 "timestamp": self.calculation_timestamp.isoformat(),
                 "model_version": self.model_version,
-            }
+            },
         }
+        # Include fixture provenance if loaded from fixture
+        if self.fixture_provenance is not None:
+            result["metadata"]["fixture_provenance"] = self.fixture_provenance.to_dict()
+        return result
     
     def get_audit_hash(self) -> str:
         """Generate SHA256 hash of calculation for audit trail."""
@@ -562,37 +586,238 @@ class PosCalculationResult:
         return hashlib.sha256(content.encode()).hexdigest()
 
 
+class FixtureLoadError(Exception):
+    """Raised when fixture loading fails due to schema or validation errors."""
+    pass
+
+
 class PosModelV2:
     """
     Hybrid Probability-of-Success Model with FDA Designation Modifiers.
-    
+
     This model calculates PoS using:
     1. Base rate lookup: (stage, indication, mechanism) → empirical base rate
     2. FDA designation modifiers: BTD, Orphan, Fast Track, etc.
     3. Trial characteristic modifiers: biomarker selection, endpoint type, etc.
-    
+
     All calculations use Decimal arithmetic for regulatory compliance.
     Full audit trail provided for every calculation.
+
+    Can be loaded from baked-in defaults or from external JSON fixture for
+    point-in-time reproducibility and audit.
     """
-    
+
     def __init__(
         self,
         base_rate_matrix: Optional[Dict[PosKey, BaseRateEntry]] = None,
         fda_modifiers: Optional[Dict[FDADesignation, ModifierDefinition]] = None,
         trial_modifiers: Optional[Dict[TrialCharacteristic, ModifierDefinition]] = None,
+        pos_floor: Optional[Decimal] = None,
+        pos_ceiling: Optional[Decimal] = None,
+        max_modifier_product: Optional[Decimal] = None,
+        min_modifier_product: Optional[Decimal] = None,
+        fixture_provenance: Optional[FixtureProvenance] = None,
     ):
         """
         Initialize the PoS model.
-        
+
         Args:
             base_rate_matrix: Optional custom base rate matrix (for testing)
             fda_modifiers: Optional custom FDA modifiers (for testing)
             trial_modifiers: Optional custom trial modifiers (for testing)
+            pos_floor: Minimum PoS value (default: 0.05)
+            pos_ceiling: Maximum PoS value (default: 0.95)
+            max_modifier_product: Maximum modifier product (default: 2.00)
+            min_modifier_product: Minimum modifier product (default: 0.50)
+            fixture_provenance: Provenance metadata if loaded from fixture
         """
         self.base_rate_matrix = base_rate_matrix or BASE_RATE_MATRIX
         self.fda_modifiers = fda_modifiers or FDA_DESIGNATION_MODIFIERS
         self.trial_modifiers = trial_modifiers or TRIAL_CHARACTERISTIC_MODIFIERS
+        self.pos_floor = pos_floor if pos_floor is not None else POS_FLOOR
+        self.pos_ceiling = pos_ceiling if pos_ceiling is not None else POS_CEILING
+        self.max_modifier_product = max_modifier_product if max_modifier_product is not None else MAX_MODIFIER_PRODUCT
+        self.min_modifier_product = min_modifier_product if min_modifier_product is not None else MIN_MODIFIER_PRODUCT
+        self.fixture_provenance = fixture_provenance
         self._calculation_count = 0
+
+    @classmethod
+    def from_fixture(cls, fixture_path: Path, strict: bool = True) -> "PosModelV2":
+        """
+        Load model configuration from a JSON fixture file.
+
+        This provides point-in-time reproducibility by externalizing all model
+        parameters to a version-controlled JSON file.
+
+        Args:
+            fixture_path: Path to the fixture JSON file
+            strict: If True, fail on unknown enum values; if False, map to OTHER
+
+        Returns:
+            PosModelV2 instance configured from the fixture
+
+        Raises:
+            FixtureLoadError: If the fixture is invalid or contains unknown enums in strict mode
+        """
+        fixture_path = Path(fixture_path)
+        if not fixture_path.exists():
+            raise FixtureLoadError(f"Fixture file not found: {fixture_path}")
+
+        # Read and parse fixture
+        try:
+            content = fixture_path.read_text(encoding="utf-8")
+            fixture = json.loads(content)
+        except json.JSONDecodeError as e:
+            raise FixtureLoadError(f"Invalid JSON in fixture: {e}")
+
+        # Compute SHA256 of raw content for provenance
+        fixture_sha256 = hashlib.sha256(content.encode("utf-8")).hexdigest()
+
+        # Validate required top-level keys
+        required_keys = ["version", "base_rates", "fda_modifiers", "trial_modifiers", "bounds"]
+        for key in required_keys:
+            if key not in fixture:
+                raise FixtureLoadError(f"Missing required key in fixture: {key}")
+
+        # Build enum mappings for strict validation
+        stage_enum_map = {s.value: s for s in ClinicalStage}
+        ta_enum_map = {t.value: t for t in TherapeuticArea}
+        mech_enum_map = {m.value: m for m in MechanismClass}
+        fda_enum_map = {f.value: f for f in FDADesignation}
+        trial_enum_map = {t.value: t for t in TrialCharacteristic}
+
+        # Parse base rates
+        base_rate_matrix: Dict[PosKey, BaseRateEntry] = {}
+        for entry in fixture["base_rates"]:
+            # Validate required fields
+            for field in ["stage", "indication", "mechanism_class", "base_pos", "n_support", "source"]:
+                if field not in entry:
+                    raise FixtureLoadError(f"Missing field '{field}' in base_rate entry: {entry}")
+
+            # Parse stage (strict - must be known)
+            stage_str = entry["stage"].lower().strip()
+            if stage_str not in stage_enum_map:
+                if strict:
+                    raise FixtureLoadError(f"Unknown stage enum: '{entry['stage']}' - valid: {list(stage_enum_map.keys())}")
+                continue  # Skip unknown entries in non-strict mode
+            stage = stage_enum_map[stage_str]
+
+            # Parse therapeutic area (strict or map to OTHER)
+            ta_str = entry["indication"].lower().strip()
+            if ta_str not in ta_enum_map:
+                if strict:
+                    raise FixtureLoadError(f"Unknown therapeutic_area enum: '{entry['indication']}' - valid: {list(ta_enum_map.keys())}")
+                ta = TherapeuticArea.OTHER
+            else:
+                ta = ta_enum_map[ta_str]
+
+            # Parse mechanism class (strict or map to OTHER)
+            mech_str = entry["mechanism_class"].lower().strip()
+            if mech_str not in mech_enum_map:
+                if strict:
+                    raise FixtureLoadError(f"Unknown mechanism_class enum: '{entry['mechanism_class']}' - valid: {list(mech_enum_map.keys())}")
+                mech = MechanismClass.OTHER
+            else:
+                mech = mech_enum_map[mech_str]
+
+            # Parse base_pos as Decimal
+            try:
+                base_pos = Decimal(str(entry["base_pos"]))
+            except Exception as e:
+                raise FixtureLoadError(f"Invalid base_pos value: {entry['base_pos']} - {e}")
+
+            # Validate base_pos range
+            if base_pos < Decimal("0.01") or base_pos > Decimal("0.99"):
+                raise FixtureLoadError(f"base_pos out of range [0.01, 0.99]: {base_pos}")
+
+            key = (stage, ta, mech)
+            base_rate_matrix[key] = BaseRateEntry(
+                base_pos=base_pos,
+                n_support=int(entry["n_support"]),
+                source=str(entry["source"]),
+                source_date=date.fromisoformat(fixture.get("source_asof_date", "2024-01-01")),
+            )
+
+        # Parse FDA modifiers
+        fda_modifiers: Dict[FDADesignation, ModifierDefinition] = {}
+        for entry in fixture["fda_modifiers"]:
+            for field in ["designation", "factor", "direction", "source", "rationale"]:
+                if field not in entry:
+                    raise FixtureLoadError(f"Missing field '{field}' in fda_modifier entry: {entry}")
+
+            designation_str = entry["designation"].lower().strip()
+            if designation_str not in fda_enum_map:
+                if strict:
+                    raise FixtureLoadError(f"Unknown FDA designation: '{entry['designation']}' - valid: {list(fda_enum_map.keys())}")
+                continue
+            designation = fda_enum_map[designation_str]
+
+            try:
+                factor = Decimal(str(entry["factor"]))
+            except Exception as e:
+                raise FixtureLoadError(f"Invalid factor value: {entry['factor']} - {e}")
+
+            fda_modifiers[designation] = ModifierDefinition(
+                factor=factor,
+                direction=entry["direction"],
+                source=entry["source"],
+                rationale=entry["rationale"],
+            )
+
+        # Parse trial modifiers
+        trial_modifiers: Dict[TrialCharacteristic, ModifierDefinition] = {}
+        for entry in fixture["trial_modifiers"]:
+            for field in ["characteristic", "factor", "direction", "source", "rationale"]:
+                if field not in entry:
+                    raise FixtureLoadError(f"Missing field '{field}' in trial_modifier entry: {entry}")
+
+            char_str = entry["characteristic"].lower().strip()
+            if char_str not in trial_enum_map:
+                if strict:
+                    raise FixtureLoadError(f"Unknown trial characteristic: '{entry['characteristic']}' - valid: {list(trial_enum_map.keys())}")
+                continue
+            characteristic = trial_enum_map[char_str]
+
+            try:
+                factor = Decimal(str(entry["factor"]))
+            except Exception as e:
+                raise FixtureLoadError(f"Invalid factor value: {entry['factor']} - {e}")
+
+            trial_modifiers[characteristic] = ModifierDefinition(
+                factor=factor,
+                direction=entry["direction"],
+                source=entry["source"],
+                rationale=entry["rationale"],
+            )
+
+        # Parse bounds
+        bounds = fixture["bounds"]
+        try:
+            pos_floor = Decimal(str(bounds.get("pos_floor", "0.05")))
+            pos_ceiling = Decimal(str(bounds.get("pos_ceiling", "0.95")))
+            max_modifier_product = Decimal(str(bounds.get("max_modifier_product", "2.00")))
+            min_modifier_product = Decimal(str(bounds.get("min_modifier_product", "0.50")))
+        except Exception as e:
+            raise FixtureLoadError(f"Invalid bounds value: {e}")
+
+        # Build provenance
+        provenance = FixtureProvenance(
+            fixture_path=str(fixture_path.resolve()),
+            fixture_version=fixture["version"],
+            fixture_source_asof_date=fixture.get("source_asof_date", "unknown"),
+            fixture_sha256=fixture_sha256,
+        )
+
+        return cls(
+            base_rate_matrix=base_rate_matrix,
+            fda_modifiers=fda_modifiers,
+            trial_modifiers=trial_modifiers,
+            pos_floor=pos_floor,
+            pos_ceiling=pos_ceiling,
+            max_modifier_product=max_modifier_product,
+            min_modifier_product=min_modifier_product,
+            fixture_provenance=provenance,
+        )
     
     def _lookup_base_rate(
         self,
@@ -691,10 +916,10 @@ class PosModelV2:
                     "rationale": mod.rationale,
                 })
         
-        # Calculate total and apply bounds
+        # Calculate total and apply bounds (use instance bounds for fixture support)
         total_product = fda_product * trial_product
-        total_product = max(MIN_MODIFIER_PRODUCT, min(MAX_MODIFIER_PRODUCT, total_product))
-        
+        total_product = max(self.min_modifier_product, min(self.max_modifier_product, total_product))
+
         return fda_product, trial_product, total_product, details
     
     def _determine_confidence(
@@ -754,21 +979,21 @@ class PosModelV2:
         # Step 3: Calculate adjusted PoS
         adjusted_pos = lookup_result.base_pos * total_prod
         
-        # Step 4: Apply bounds
-        adjusted_pos = max(POS_FLOOR, min(POS_CEILING, adjusted_pos))
-        
+        # Step 4: Apply bounds (use instance bounds for fixture support)
+        adjusted_pos = max(self.pos_floor, min(self.pos_ceiling, adjusted_pos))
+
         # Step 5: Round to 4 decimal places
         adjusted_pos = adjusted_pos.quantize(Decimal("0.0001"), rounding=ROUND_HALF_UP)
-        
+
         # Step 6: Determine confidence
         confidence = self._determine_confidence(
             lookup_result.lookup_type,
             lookup_result.n_support,
             len(fda_designations) + len(trial_characteristics),
         )
-        
+
         self._calculation_count += 1
-        
+
         return PosCalculationResult(
             ticker=ticker,
             stage=stage,
@@ -785,6 +1010,7 @@ class PosModelV2:
             modifier_details=modifier_details,
             adjusted_pos=adjusted_pos,
             confidence_level=confidence,
+            fixture_provenance=self.fixture_provenance,
         )
     
     def calculate_from_strings(
