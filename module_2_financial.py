@@ -955,6 +955,11 @@ def compute_module_2_financial(*args: Any, **kwargs: Any) -> Dict[str, Any]:
             if field in rec:
                 fin_rec[field] = rec[field]
 
+        # CRITICAL: Pass through date fields for YTD period detection
+        for date_field in ['NetIncome_date', 'CFO_date', 'FCF_date', 'R&D_date', 'Cash_date']:
+            if date_field in rec:
+                fin_rec[date_field] = rec[date_field]
+
         mapped_financial.append(fin_rec)
 
         # Extract market data from combined record if present
