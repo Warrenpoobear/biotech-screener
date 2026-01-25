@@ -157,7 +157,7 @@ SMART_MONEY_TIER_BY_NAME = {
     "bvf": 1, "biotechnology value fund": 1,
     "ecor1": 1, "ecor1 capital": 1,
     # Tier 2
-    "orbimed": 1, "orbimed advisors": 2,
+    "orbimed": 2, "orbimed advisors": 2,
     "redmile": 2, "redmile group": 2,
     "deerfield": 2, "deerfield management": 2,
     "farallon": 2, "farallon capital": 2,

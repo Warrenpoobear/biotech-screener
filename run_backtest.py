@@ -363,7 +363,7 @@ def create_production_scorer():
         pit_filtered_trials = []
         for trial in ticker_trials:
             last_update = trial.get("last_update_posted")
-            if last_update and last_update > as_of_str:
+            if last_update and last_update >= as_of_str:
                 continue  # Trial info wasn't available yet
             pit_filtered_trials.append(trial)
 
