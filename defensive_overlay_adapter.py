@@ -183,7 +183,7 @@ def calculate_dynamic_floor(n_securities: int) -> Decimal:
 
 def apply_caps_and_renormalize(
     records: List[Dict],
-    cash_target: Decimal = Decimal("0.10"),
+    cash_target: Decimal = Decimal("0.00"),  # No cash reserve - fully invested
     max_pos: Decimal = Decimal("0.07"),  # 7% max
     min_pos: Optional[Decimal] = None,  # Dynamic - calculated based on universe
     top_n: Optional[int] = None,  # NEW: If set, only invest in top N includable names
@@ -459,7 +459,7 @@ def validate_defensive_integration(output: Dict) -> None:
 
     # 1. Check weights sum
     total_weight = sum(Decimal(r.get("position_weight", "0")) for r in ranked)
-    expected = Decimal("0.9000")
+    expected = Decimal("1.0000")  # Fully invested (no cash reserve)
     tolerance = Decimal("0.0001")
 
     if abs(total_weight - expected) >= tolerance:
@@ -559,7 +559,7 @@ if __name__ == "__main__":
     print("\nDynamic floor calculation:")
     for n in [20, 44, 50, 80, 100, 150, 200, 300]:
         floor = calculate_dynamic_floor(n)
-        avg = Decimal("0.90") / Decimal(str(n))
+        avg = Decimal("1.00") / Decimal(str(n))  # Fully invested
         ratio = floor / avg
         print(f"  {n:3} securities: floor={floor:.4f} ({floor*100:.2f}%), avg={avg:.4f}, floor/avg={ratio:.2f}x")
     
