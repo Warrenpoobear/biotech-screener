@@ -441,19 +441,30 @@ def _convert_holdings_to_coinvest(holdings_snapshots: Dict[str, Any]) -> Dict[st
             continue
 
         # Count managers and identify tiers
-        holder_ciks = list(current.keys())
-        holder_tiers = {}
-        position_changes = {}
+        # FIX: Use holder names (not CIKs) and proper Dict[name -> int] format
+        # for compatibility with compute_smart_money_signal()
+        holder_names = []  # Current holders by name
+        holder_tiers = {}  # Dict[name -> tier_int] (not Dict[cik -> dict])
+        position_changes = {}  # Dict[name -> change_type]
 
         # All CIKs that appear in either current or prior
         all_ciks = set(current.keys()) | set(prior.keys())
 
         for cik in all_ciks:
-            # Determine tier
+            # Determine tier and resolve holder name
             if cik in TIER1_MANAGERS:
-                holder_tiers[cik] = {"tier": 1, "name": TIER1_MANAGERS[cik]}
+                holder_name = TIER1_MANAGERS[cik]
+                tier = 1
             else:
-                holder_tiers[cik] = {"tier": 2, "name": f"Manager_{cik[-4:]}"}
+                holder_name = f"Manager_{cik[-4:]}"
+                tier = 2
+
+            # Track current holders by name (not CIK)
+            if cik in current:
+                holder_names.append(holder_name)
+
+            # Store tier by holder name (int, not dict)
+            holder_tiers[holder_name] = tier
 
             # Calculate position change
             current_val = current.get(cik, {}).get("value_kusd", 0) or 0
@@ -461,30 +472,30 @@ def _convert_holdings_to_coinvest(holdings_snapshots: Dict[str, Any]) -> Dict[st
 
             if cik in current and cik not in prior:
                 # New position
-                position_changes[cik] = "NEW"
+                position_changes[holder_name] = "NEW"
             elif cik not in current and cik in prior:
                 # Exited position
-                position_changes[cik] = "EXIT"
+                position_changes[holder_name] = "EXIT"
             elif prior_val > 0:
                 # Calculate percentage change
                 change_pct = (current_val - prior_val) / prior_val
 
                 if change_pct > CHANGE_THRESHOLD:
-                    position_changes[cik] = "INCREASE"
+                    position_changes[holder_name] = "INCREASE"
                 elif change_pct < -CHANGE_THRESHOLD:
-                    position_changes[cik] = "DECREASE"
+                    position_changes[holder_name] = "DECREASE"
                 else:
-                    position_changes[cik] = "HOLD"
+                    position_changes[holder_name] = "HOLD"
             else:
                 # Prior was zero but current exists (edge case)
                 if current_val > 0:
-                    position_changes[cik] = "NEW"
+                    position_changes[holder_name] = "NEW"
                 else:
-                    position_changes[cik] = "HOLD"
+                    position_changes[holder_name] = "HOLD"
 
         coinvest_signals[ticker] = {
-            "coinvest_overlap_count": len(holder_ciks),
-            "coinvest_holders": holder_ciks,
+            "coinvest_overlap_count": len(holder_names),
+            "coinvest_holders": holder_names,
             "position_changes": position_changes,
             "holder_tiers": holder_tiers,
         }
