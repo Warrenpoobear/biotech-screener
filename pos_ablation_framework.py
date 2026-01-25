@@ -264,16 +264,19 @@ class AblationPosModel:
         For EXACT_ONLY mode, we filter out test cases that would use partial
         lookups by checking if an exact match exists.
         """
-        # Create ablated model instance
+        # Create ablated model instance with bounds dict
+        bounds = {
+            "pos_floor": self.base_model.pos_floor,
+            "pos_ceiling": self.base_model.pos_ceiling,
+            "max_modifier_product": self.modifier_cap,
+            "min_modifier_product": self.base_model.min_modifier_product,
+        }
         ablated_model = PosModelV2(
             base_rate_matrix=self._filtered_matrix,
             fda_modifiers=self._fda_modifiers,
             trial_modifiers=self._trial_modifiers,
-            pos_floor=self.base_model.pos_floor,
-            pos_ceiling=self.base_model.pos_ceiling,
-            max_modifier_product=self.modifier_cap,
-            min_modifier_product=self.base_model.min_modifier_product,
-            fixture_provenance=self.base_model.fixture_provenance,
+            bounds=bounds,
+            provenance=self.base_model.provenance,
         )
 
         # Apply modifier mode filter - don't pass modifiers if mode disables them
@@ -483,8 +486,8 @@ def run_ablation_analysis(
     variants = variants or STANDARD_VARIANTS
 
     # Extract fixture provenance if available
-    fixture_prov = base_model.fixture_provenance.to_dict() if base_model.fixture_provenance else None
-    fixture_sha = base_model.fixture_provenance.fixture_sha256 if base_model.fixture_provenance else None
+    fixture_prov = base_model.provenance.to_dict() if base_model.provenance else None
+    fixture_sha = base_model.provenance.fixture_sha256 if base_model.provenance else None
 
     # Compute input hash
     input_hash = compute_input_hash(test_cases, variants, fixture_sha)
@@ -550,7 +553,7 @@ def run_ablation_analysis(
     return AblationReport(
         run_id=input_hash[:16],
         timestamp=datetime.utcnow().isoformat(),
-        model_version=base_model.fixture_provenance.fixture_version if base_model.fixture_provenance else "2.0.0",
+        model_version=base_model.provenance.fixture_version if base_model.provenance else "2.1.0",
         framework_version=__version__,
         fixture_provenance=fixture_prov,
         variants=[v.to_dict() for v in variants],
