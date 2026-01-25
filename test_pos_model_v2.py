@@ -8,11 +8,15 @@ Tests cover:
 4. Decimal precision and rounding
 5. Audit trail completeness
 6. Integration helpers
+7. Fixture loading and validation
+8. Fixture round-trip (fixture load == baked defaults)
 """
 
 import json
+import tempfile
 from decimal import Decimal
 from datetime import date
+from pathlib import Path
 
 from pos_model_v2 import (
     PosModelV2,
@@ -22,6 +26,11 @@ from pos_model_v2 import (
     FDADesignation,
     TrialCharacteristic,
     BaseRateEntry,
+    FixtureLoader,
+    FixtureValidationError,
+    FixtureSchemaError,
+    FixtureEnumError,
+    FixtureDecimalError,
     POS_FLOOR,
     POS_CEILING,
     MAX_MODIFIER_PRODUCT,
@@ -404,7 +413,7 @@ def test_audit_trail():
     )
     results.record(
         "Has model version",
-        result_dict.get("metadata", {}).get("model_version") == "2.0.0"
+        result_dict.get("metadata", {}).get("model_version") == "2.1.0"
     )
     
     # Check audit hash
@@ -560,10 +569,377 @@ def test_string_input_convenience():
     return results
 
 
+def test_fixture_loading():
+    """Test fixture loading from JSON file."""
+    results = TestResults()
+    print("\n--- Fixture Loading Tests ---")
+    
+    # Create a minimal valid fixture
+    fixture_data = {
+        "version": "1.0.0-test",
+        "source_asof_date": "2024-01-15",
+        "base_rates": [
+            {
+                "stage": "phase_3",
+                "indication": "oncology",
+                "mechanism_class": "small_molecule",
+                "base_pos": "0.45",
+                "n_support": 100,
+                "source": "Test"
+            }
+        ],
+        "fda_modifiers": [
+            {
+                "designation": "breakthrough_therapy",
+                "factor": "1.30",
+                "direction": "positive",
+                "rationale": "Test BTD"
+            }
+        ],
+        "trial_modifiers": [
+            {
+                "characteristic": "biomarker_selected",
+                "factor": "1.15",
+                "direction": "positive",
+                "rationale": "Test biomarker"
+            }
+        ]
+    }
+    
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        json.dump(fixture_data, f)
+        fixture_path = Path(f.name)
+    
+    try:
+        # Test loading
+        model = PosModelV2.from_fixture(fixture_path)
+        
+        results.record(
+            "Fixture loads without error",
+            True
+        )
+        results.record(
+            "Fixture provenance is set",
+            model.provenance is not None
+        )
+        results.record(
+            "Fixture version matches",
+            model.provenance.fixture_version == "1.0.0-test"
+        )
+        results.record(
+            "Fixture source date parsed",
+            model.provenance.fixture_source_asof_date == date(2024, 1, 15)
+        )
+        results.record(
+            "Base rate count matches",
+            model.provenance.base_rate_count == 1
+        )
+        results.record(
+            "FDA modifier count matches",
+            model.provenance.fda_modifier_count == 1
+        )
+        results.record(
+            "SHA256 hash present",
+            len(model.provenance.fixture_sha256) == 64
+        )
+        
+        # Test calculation with loaded fixture
+        result = model.calculate(
+            ticker="FIXTURE_TEST",
+            stage=ClinicalStage.PHASE_3,
+            therapeutic_area=TherapeuticArea.ONCOLOGY,
+            mechanism_class=MechanismClass.SMALL_MOLECULE,
+            fda_designations=[FDADesignation.BREAKTHROUGH_THERAPY],
+            trial_characteristics=[TrialCharacteristic.BIOMARKER_SELECTED],
+        )
+        
+        # Verify custom values are used
+        results.record(
+            "Custom base_pos used (0.45)",
+            result.base_pos == Decimal("0.45"),
+            f"Got: {result.base_pos}"
+        )
+        results.record(
+            "Custom FDA modifier used (1.30)",
+            result.fda_modifier_product == Decimal("1.30"),
+            f"Got: {result.fda_modifier_product}"
+        )
+        results.record(
+            "Custom trial modifier used (1.15)",
+            result.trial_modifier_product == Decimal("1.15"),
+            f"Got: {result.trial_modifier_product}"
+        )
+        results.record(
+            "Provenance in result",
+            result.fixture_provenance is not None
+        )
+        
+    finally:
+        fixture_path.unlink()
+    
+    return results
+
+
+def test_fixture_validation_errors():
+    """Test that fixture validation catches errors (fail-closed)."""
+    results = TestResults()
+    print("\n--- Fixture Validation Error Tests ---")
+    
+    # Test: Missing required field
+    bad_fixture_1 = {
+        "version": "1.0.0",
+        # Missing source_asof_date
+        "base_rates": []
+    }
+    
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        json.dump(bad_fixture_1, f)
+        path1 = Path(f.name)
+    
+    try:
+        try:
+            PosModelV2.from_fixture(path1)
+            results.record("Missing required field raises error", False, "No exception raised")
+        except FixtureSchemaError as e:
+            results.record(
+                "Missing required field raises FixtureSchemaError",
+                "source_asof_date" in str(e) or "missing" in str(e).lower()
+            )
+    finally:
+        path1.unlink()
+    
+    # Test: Invalid enum value (should fail-closed, not map to OTHER)
+    bad_fixture_2 = {
+        "version": "1.0.0",
+        "source_asof_date": "2024-01-01",
+        "base_rates": [
+            {
+                "stage": "phase_3",
+                "indication": "totally_invalid_indication",
+                "mechanism_class": "small_molecule",
+                "base_pos": "0.45"
+            }
+        ]
+    }
+    
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        json.dump(bad_fixture_2, f)
+        path2 = Path(f.name)
+    
+    try:
+        try:
+            PosModelV2.from_fixture(path2)
+            results.record("Invalid enum raises error", False, "No exception raised")
+        except FixtureEnumError as e:
+            results.record(
+                "Invalid enum raises FixtureEnumError",
+                "totally_invalid_indication" in str(e)
+            )
+    finally:
+        path2.unlink()
+    
+    # Test: Invalid Decimal value
+    bad_fixture_3 = {
+        "version": "1.0.0",
+        "source_asof_date": "2024-01-01",
+        "base_rates": [
+            {
+                "stage": "phase_3",
+                "indication": "oncology",
+                "mechanism_class": "small_molecule",
+                "base_pos": "not_a_number"
+            }
+        ]
+    }
+    
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        json.dump(bad_fixture_3, f)
+        path3 = Path(f.name)
+    
+    try:
+        try:
+            PosModelV2.from_fixture(path3)
+            results.record("Invalid Decimal raises error", False, "No exception raised")
+        except FixtureDecimalError as e:
+            results.record(
+                "Invalid Decimal raises FixtureDecimalError",
+                "not_a_number" in str(e)
+            )
+    finally:
+        path3.unlink()
+    
+    # Test: Out-of-range base_pos
+    bad_fixture_4 = {
+        "version": "1.0.0",
+        "source_asof_date": "2024-01-01",
+        "base_rates": [
+            {
+                "stage": "phase_3",
+                "indication": "oncology",
+                "mechanism_class": "small_molecule",
+                "base_pos": "1.50"  # Out of [0.01, 0.99] range
+            }
+        ]
+    }
+    
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        json.dump(bad_fixture_4, f)
+        path4 = Path(f.name)
+    
+    try:
+        try:
+            PosModelV2.from_fixture(path4)
+            results.record("Out-of-range base_pos raises error", False, "No exception raised")
+        except FixtureSchemaError as e:
+            results.record(
+                "Out-of-range base_pos raises FixtureSchemaError",
+                "out of valid range" in str(e)
+            )
+    finally:
+        path4.unlink()
+    
+    return results
+
+
+def test_fixture_roundtrip():
+    """Test that fixture load produces equivalent results to hardcoded defaults."""
+    results = TestResults()
+    print("\n--- Fixture Round-Trip Tests ---")
+    
+    # Load from the production fixture
+    fixture_path = Path("pos_benchmarks_v1.json")
+    
+    if not fixture_path.exists():
+        results.record("Production fixture exists", False, "pos_benchmarks_v1.json not found")
+        return results
+    
+    results.record("Production fixture exists", True)
+    
+    # Load both models
+    default_model = PosModelV2()
+    fixture_model = PosModelV2.from_fixture(fixture_path)
+    
+    # Compare key calculations
+    test_cases = [
+        {
+            "ticker": "TEST1",
+            "stage": ClinicalStage.PHASE_3,
+            "therapeutic_area": TherapeuticArea.ONCOLOGY,
+            "mechanism_class": MechanismClass.SMALL_MOLECULE,
+            "fda_designations": [FDADesignation.BREAKTHROUGH_THERAPY],
+            "trial_characteristics": [],
+        },
+        {
+            "ticker": "TEST2",
+            "stage": ClinicalStage.PHASE_3,
+            "therapeutic_area": TherapeuticArea.RARE_DISEASE,
+            "mechanism_class": MechanismClass.GENE_THERAPY,
+            "fda_designations": [],
+            "trial_characteristics": [TrialCharacteristic.BIOMARKER_SELECTED],
+        },
+        {
+            "ticker": "TEST3",
+            "stage": ClinicalStage.PHASE_2,
+            "therapeutic_area": TherapeuticArea.CNS,
+            "mechanism_class": MechanismClass.SMALL_MOLECULE,
+            "fda_designations": [],
+            "trial_characteristics": [],
+        },
+    ]
+    
+    for i, tc in enumerate(test_cases):
+        r1 = default_model.calculate(**tc)
+        r2 = fixture_model.calculate(**tc)
+        
+        # Base rates should match
+        results.record(
+            f"Case {i+1}: base_pos matches",
+            r1.base_pos == r2.base_pos,
+            f"Default: {r1.base_pos}, Fixture: {r2.base_pos}"
+        )
+        
+        # Adjusted PoS should match
+        results.record(
+            f"Case {i+1}: adjusted_pos matches",
+            r1.adjusted_pos == r2.adjusted_pos,
+            f"Default: {r1.adjusted_pos}, Fixture: {r2.adjusted_pos}"
+        )
+    
+    # Verify fixture model has provenance
+    results.record(
+        "Fixture model has provenance",
+        fixture_model.provenance is not None
+    )
+    results.record(
+        "Default model has no provenance",
+        default_model.provenance is None
+    )
+    
+    return results
+
+
+def test_fixture_provenance_in_results():
+    """Test that provenance flows through to calculation results."""
+    results = TestResults()
+    print("\n--- Fixture Provenance in Results Tests ---")
+    
+    fixture_path = Path("pos_benchmarks_v1.json")
+    if not fixture_path.exists():
+        results.record("Production fixture exists", False, "pos_benchmarks_v1.json not found")
+        return results
+    
+    model = PosModelV2.from_fixture(fixture_path)
+    
+    result = model.calculate(
+        ticker="PROVENANCE_TEST",
+        stage=ClinicalStage.PHASE_3,
+        therapeutic_area=TherapeuticArea.ONCOLOGY,
+        mechanism_class=MechanismClass.SMALL_MOLECULE,
+    )
+    
+    results.record(
+        "Result has fixture_provenance",
+        result.fixture_provenance is not None
+    )
+    
+    # Check provenance in JSON output
+    result_dict = result.to_dict()
+    
+    results.record(
+        "JSON has fixture_provenance in metadata",
+        "fixture_provenance" in result_dict.get("metadata", {})
+    )
+    
+    prov = result_dict["metadata"]["fixture_provenance"]
+    
+    results.record(
+        "Provenance has fixture_version",
+        "fixture_version" in prov
+    )
+    results.record(
+        "Provenance has fixture_sha256",
+        "fixture_sha256" in prov and len(prov["fixture_sha256"]) == 64
+    )
+    results.record(
+        "Provenance has loaded_at timestamp",
+        "loaded_at" in prov
+    )
+    
+    # Verify audit hash is deterministic even with provenance
+    hash1 = result.get_audit_hash()
+    hash2 = result.get_audit_hash()
+    results.record(
+        "Audit hash still deterministic with provenance",
+        hash1 == hash2
+    )
+    
+    return results
+
+
 def run_all_tests():
     """Run all test suites."""
     print("=" * 60)
-    print("Wake Robin PoS Model v2.0 - Test Suite")
+    print("Wake Robin PoS Model v2.1 - Test Suite")
     print("=" * 60)
     
     all_results = []
@@ -577,6 +953,12 @@ def run_all_tests():
     all_results.append(test_integration_helpers())
     all_results.append(test_model_validation())
     all_results.append(test_string_input_convenience())
+    
+    # Fixture loading tests
+    all_results.append(test_fixture_loading())
+    all_results.append(test_fixture_validation_errors())
+    all_results.append(test_fixture_roundtrip())
+    all_results.append(test_fixture_provenance_in_results())
     
     # Aggregate results
     total_passed = sum(r.passed for r in all_results)

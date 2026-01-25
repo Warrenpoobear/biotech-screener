@@ -1,0 +1,424 @@
+{
+  "comparative_analysis": {
+    "baseline_mean": 0.5609973805147058,
+    "comparisons": [
+      {
+        "ceiling_hit_change": 0.0,
+        "delta_mean": 0.0,
+        "direction": "lower",
+        "floor_hit_change": 0.0,
+        "lookup_shift": {
+          "default": 0.0,
+          "exact": 0.0
+        },
+        "variant": "exact_only"
+      },
+      {
+        "ceiling_hit_change": -2.6610644257703084,
+        "delta_mean": 0.00791604188550421,
+        "direction": "higher",
+        "floor_hit_change": 0.0,
+        "lookup_shift": {
+          "default": 88.23529411764706,
+          "exact": -88.23529411764706
+        },
+        "variant": "default_only"
+      },
+      {
+        "ceiling_hit_change": -7.983193277310924,
+        "delta_mean": -0.0033117187499999146,
+        "direction": "lower",
+        "floor_hit_change": 0.0,
+        "lookup_shift": {
+          "default": 0.0,
+          "exact": 0.0
+        },
+        "variant": "fda_only"
+      },
+      {
+        "ceiling_hit_change": -8.263305322128852,
+        "delta_mean": -0.09684738051470582,
+        "direction": "lower",
+        "floor_hit_change": 0.0,
+        "lookup_shift": {
+          "default": 0.0,
+          "exact": 0.0
+        },
+        "variant": "trial_only"
+      },
+      {
+        "ceiling_hit_change": -9.943977591036415,
+        "delta_mean": -0.11511502757352937,
+        "direction": "lower",
+        "floor_hit_change": 0.0,
+        "lookup_shift": {
+          "default": 0.0,
+          "exact": 0.0
+        },
+        "variant": "no_modifiers"
+      },
+      {
+        "ceiling_hit_change": -7.983193277310924,
+        "delta_mean": -0.026575980392156806,
+        "direction": "lower",
+        "floor_hit_change": 0.0,
+        "lookup_shift": {
+          "default": 0.0,
+          "exact": 0.0
+        },
+        "variant": "cap_1.5"
+      },
+      {
+        "ceiling_hit_change": 0.42016806722689104,
+        "delta_mean": 0.0023042489495799234,
+        "direction": "higher",
+        "floor_hit_change": 0.0,
+        "lookup_shift": {
+          "default": 0.0,
+          "exact": 0.0
+        },
+        "variant": "cap_2.5"
+      },
+      {
+        "ceiling_hit_change": 0.42016806722689104,
+        "delta_mean": 0.0023042489495799234,
+        "direction": "higher",
+        "floor_hit_change": 0.0,
+        "lookup_shift": {
+          "default": 0.0,
+          "exact": 0.0
+        },
+        "variant": "uncapped"
+      }
+    ],
+    "highest_mean_variant": "default_only",
+    "lowest_mean_variant": "no_modifiers",
+    "most_ceiling_hits": "cap_2.5",
+    "most_floor_hits": "baseline"
+  },
+  "metadata": {
+    "fixture_provenance": {
+      "base_rate_count": 37,
+      "fda_modifier_count": 6,
+      "fixture_path": "/home/claude/pos_benchmarks_v1.json",
+      "fixture_sha256": "fa9760664c0ce38a41779f408e38518bfa69f5e3ab00cc51bb51c27cc98fb969",
+      "fixture_source_asof_date": "2024-01-01",
+      "fixture_version": "1.0.0",
+      "loaded_at": "2026-01-25T01:51:43.363647+00:00",
+      "trial_modifier_count": 7
+    },
+    "generated_at": "2026-01-25T01:51:43.400976+00:00",
+    "model_version": "2.1.0",
+    "n_test_cases": 714,
+    "n_variants": 9,
+    "report_hash": "6fd080000c64bc21761fe81558dd89136d6893b2bba6b56d3f487e8ff5121a4f"
+  },
+  "summary_stats": {
+    "baseline": {
+      "boundary_hits": {
+        "pct_hit_ceiling": 9.94,
+        "pct_hit_floor": 0.0,
+        "pct_was_capped": 7.14
+      },
+      "confidence_distribution": {
+        "high": 88.24,
+        "low": 11.76
+      },
+      "delta_mean_vs_baseline": null,
+      "lookup_distribution": {
+        "default": 11.76,
+        "exact": 88.24
+      },
+      "n_cases": 714,
+      "pos_distribution": {
+        "max": 0.95,
+        "mean": 0.561,
+        "median": 0.5386,
+        "min": 0.0956,
+        "stdev": 0.2356
+      },
+      "variant_name": "baseline"
+    },
+    "cap_1.5": {
+      "boundary_hits": {
+        "pct_hit_ceiling": 1.96,
+        "pct_hit_floor": 0.0,
+        "pct_was_capped": 28.57
+      },
+      "confidence_distribution": {
+        "high": 88.24,
+        "low": 11.76
+      },
+      "delta_mean_vs_baseline": -0.0266,
+      "lookup_distribution": {
+        "default": 11.76,
+        "exact": 88.24
+      },
+      "n_cases": 714,
+      "pos_distribution": {
+        "max": 0.95,
+        "mean": 0.5344,
+        "median": 0.525,
+        "min": 0.0956,
+        "stdev": 0.2146
+      },
+      "variant_name": "cap_1.5"
+    },
+    "cap_2.5": {
+      "boundary_hits": {
+        "pct_hit_ceiling": 10.36,
+        "pct_hit_floor": 0.0,
+        "pct_was_capped": 0.0
+      },
+      "confidence_distribution": {
+        "high": 88.24,
+        "low": 11.76
+      },
+      "delta_mean_vs_baseline": 0.0023,
+      "lookup_distribution": {
+        "default": 11.76,
+        "exact": 88.24
+      },
+      "n_cases": 714,
+      "pos_distribution": {
+        "max": 0.95,
+        "mean": 0.5633,
+        "median": 0.5395,
+        "min": 0.0956,
+        "stdev": 0.2371
+      },
+      "variant_name": "cap_2.5"
+    },
+    "default_only": {
+      "boundary_hits": {
+        "pct_hit_ceiling": 7.28,
+        "pct_hit_floor": 0.0,
+        "pct_was_capped": 7.14
+      },
+      "confidence_distribution": {
+        "low": 100.0
+      },
+      "delta_mean_vs_baseline": 0.0079,
+      "lookup_distribution": {
+        "default": 100.0
+      },
+      "n_cases": 714,
+      "pos_distribution": {
+        "max": 0.95,
+        "mean": 0.5689,
+        "median": 0.5391,
+        "min": 0.0956,
+        "stdev": 0.2222
+      },
+      "variant_name": "default_only"
+    },
+    "exact_only": {
+      "boundary_hits": {
+        "pct_hit_ceiling": 9.94,
+        "pct_hit_floor": 0.0,
+        "pct_was_capped": 7.14
+      },
+      "confidence_distribution": {
+        "high": 88.24,
+        "low": 11.76
+      },
+      "delta_mean_vs_baseline": null,
+      "lookup_distribution": {
+        "default": 11.76,
+        "exact": 88.24
+      },
+      "n_cases": 714,
+      "pos_distribution": {
+        "max": 0.95,
+        "mean": 0.561,
+        "median": 0.5386,
+        "min": 0.0956,
+        "stdev": 0.2356
+      },
+      "variant_name": "exact_only"
+    },
+    "fda_only": {
+      "boundary_hits": {
+        "pct_hit_ceiling": 1.96,
+        "pct_hit_floor": 0.0,
+        "pct_was_capped": 0.0
+      },
+      "confidence_distribution": {
+        "high": 88.24,
+        "low": 11.76
+      },
+      "delta_mean_vs_baseline": -0.0033,
+      "lookup_distribution": {
+        "default": 11.76,
+        "exact": 88.24
+      },
+      "n_cases": 714,
+      "pos_distribution": {
+        "max": 0.95,
+        "mean": 0.5577,
+        "median": 0.5673,
+        "min": 0.15,
+        "stdev": 0.1985
+      },
+      "variant_name": "fda_only"
+    },
+    "no_modifiers": {
+      "boundary_hits": {
+        "pct_hit_ceiling": 0.0,
+        "pct_hit_floor": 0.0,
+        "pct_was_capped": 0.0
+      },
+      "confidence_distribution": {
+        "high": 88.24,
+        "low": 11.76
+      },
+      "delta_mean_vs_baseline": -0.1151,
+      "lookup_distribution": {
+        "default": 11.76,
+        "exact": 88.24
+      },
+      "n_cases": 714,
+      "pos_distribution": {
+        "max": 0.65,
+        "mean": 0.4459,
+        "median": 0.48,
+        "min": 0.15,
+        "stdev": 0.1417
+      },
+      "variant_name": "no_modifiers"
+    },
+    "trial_only": {
+      "boundary_hits": {
+        "pct_hit_ceiling": 1.68,
+        "pct_hit_floor": 0.0,
+        "pct_was_capped": 0.0
+      },
+      "confidence_distribution": {
+        "high": 88.24,
+        "low": 11.76
+      },
+      "delta_mean_vs_baseline": -0.0968,
+      "lookup_distribution": {
+        "default": 11.76,
+        "exact": 88.24
+      },
+      "n_cases": 714,
+      "pos_distribution": {
+        "max": 0.95,
+        "mean": 0.4642,
+        "median": 0.435,
+        "min": 0.0956,
+        "stdev": 0.2034
+      },
+      "variant_name": "trial_only"
+    },
+    "uncapped": {
+      "boundary_hits": {
+        "pct_hit_ceiling": 10.36,
+        "pct_hit_floor": 0.0,
+        "pct_was_capped": 0.0
+      },
+      "confidence_distribution": {
+        "high": 88.24,
+        "low": 11.76
+      },
+      "delta_mean_vs_baseline": 0.0023,
+      "lookup_distribution": {
+        "default": 11.76,
+        "exact": 88.24
+      },
+      "n_cases": 714,
+      "pos_distribution": {
+        "max": 0.95,
+        "mean": 0.5633,
+        "median": 0.5395,
+        "min": 0.0956,
+        "stdev": 0.2371
+      },
+      "variant_name": "uncapped"
+    }
+  },
+  "variants": [
+    {
+      "config_hash": "2abe491023404d62",
+      "description": "Production configuration: exact+partial lookup, all modifiers, 2.0x cap",
+      "lookup_mode": "exact_partial",
+      "modifier_cap": "2.0",
+      "name": "baseline",
+      "use_fda_modifiers": true,
+      "use_trial_modifiers": true
+    },
+    {
+      "config_hash": "47367f746ea26758",
+      "description": "Only use exact (stage, indication, mechanism) matches, no fallback",
+      "lookup_mode": "exact_only",
+      "modifier_cap": "2.0",
+      "name": "exact_only",
+      "use_fda_modifiers": true,
+      "use_trial_modifiers": true
+    },
+    {
+      "config_hash": "742f870bb2adb0e6",
+      "description": "Only use stage-based defaults, ignore granular base rates",
+      "lookup_mode": "default_only",
+      "modifier_cap": "2.0",
+      "name": "default_only",
+      "use_fda_modifiers": true,
+      "use_trial_modifiers": true
+    },
+    {
+      "config_hash": "6a782c00575451ef",
+      "description": "FDA designation modifiers only, no trial characteristics",
+      "lookup_mode": "exact_partial",
+      "modifier_cap": "2.0",
+      "name": "fda_only",
+      "use_fda_modifiers": true,
+      "use_trial_modifiers": false
+    },
+    {
+      "config_hash": "0c122e34539aa4e4",
+      "description": "Trial characteristic modifiers only, no FDA designations",
+      "lookup_mode": "exact_partial",
+      "modifier_cap": "2.0",
+      "name": "trial_only",
+      "use_fda_modifiers": false,
+      "use_trial_modifiers": true
+    },
+    {
+      "config_hash": "02802345d6dcd0b6",
+      "description": "No modifiers applied, pure base rate lookup",
+      "lookup_mode": "exact_partial",
+      "modifier_cap": "2.0",
+      "name": "no_modifiers",
+      "use_fda_modifiers": false,
+      "use_trial_modifiers": false
+    },
+    {
+      "config_hash": "9b9fb7050725bbe6",
+      "description": "Tighter modifier cap at 1.5x",
+      "lookup_mode": "exact_partial",
+      "modifier_cap": "1.5",
+      "name": "cap_1.5",
+      "use_fda_modifiers": true,
+      "use_trial_modifiers": true
+    },
+    {
+      "config_hash": "a499b7dbec20427a",
+      "description": "Looser modifier cap at 2.5x",
+      "lookup_mode": "exact_partial",
+      "modifier_cap": "2.5",
+      "name": "cap_2.5",
+      "use_fda_modifiers": true,
+      "use_trial_modifiers": true
+    },
+    {
+      "config_hash": "93a09c189d5a69b7",
+      "description": "No modifier cap (dangerous but informative)",
+      "lookup_mode": "exact_partial",
+      "modifier_cap": "uncapped",
+      "name": "uncapped",
+      "use_fda_modifiers": true,
+      "use_trial_modifiers": true
+    }
+  ]
+}
