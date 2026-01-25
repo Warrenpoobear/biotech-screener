@@ -210,6 +210,10 @@ def validate_market_data_schema(
     Raises:
         SchemaValidationError: If raise_on_error and validation fails
     """
+    if not records:
+        logger.warning("validate_market_data_schema: Empty dataset provided")
+        return True, []
+
     invalid_records = []
 
     for i, record in enumerate(records):
@@ -246,10 +250,25 @@ def validate_market_data_schema(
         for field_name in numeric_fields:
             value = record.get(field_name)
             if value is not None:
-                if not isinstance(value, (int, float, Decimal)):
+                if isinstance(value, bool):
+                    # Booleans pass isinstance check for int, but are not valid numerics
+                    invalid_records.append({
+                        "index": i,
+                        "ticker": ticker,
+                        "error": f"Field '{field_name}' is boolean, not numeric: {value}",
+                    })
+                elif not isinstance(value, (int, float, Decimal)):
                     try:
-                        # Allow string representations of numbers
+                        # Allow string representations of numbers but warn
                         float(str(value))
+                        if strict:
+                            invalid_records.append({
+                                "index": i,
+                                "ticker": ticker,
+                                "error": f"Field '{field_name}' is string type (strict mode): {value}",
+                            })
+                        else:
+                            logger.debug(f"Field '{field_name}' for {ticker} is string '{value}' - consider converting to numeric")
                     except (ValueError, TypeError):
                         invalid_records.append({
                             "index": i,
@@ -284,6 +303,10 @@ def validate_financial_records_schema(
     Returns:
         (is_valid, list of invalid records)
     """
+    if not records:
+        logger.warning("validate_financial_records_schema: Empty dataset provided")
+        return True, []
+
     invalid_records = []
 
     for i, record in enumerate(records):
@@ -339,6 +362,10 @@ def validate_trial_records_schema(
     Returns:
         (is_valid, list of invalid records)
     """
+    if not records:
+        logger.warning("validate_trial_records_schema: Empty dataset provided")
+        return True, []
+
     invalid_records = []
 
     for i, record in enumerate(records):
@@ -400,6 +427,7 @@ def validate_trial_records_schema(
 def validate_holdings_schema(
     data: Dict[str, Any],
     raise_on_error: bool = True,
+    deep_validate: bool = False,
 ) -> Tuple[bool, List[str]]:
     """
     Validate holdings_snapshots.json format.
@@ -415,6 +443,11 @@ def validate_holdings_schema(
         }
     }
 
+    Args:
+        data: Holdings data dict
+        raise_on_error: If True, raise SchemaValidationError on failure
+        deep_validate: If True, validate nested structures (current/prior holdings)
+
     Returns:
         (is_valid, list of error messages)
     """
@@ -425,6 +458,10 @@ def validate_holdings_schema(
         if raise_on_error:
             raise SchemaValidationError("Holdings data must be dict")
         return False, errors
+
+    if not data:
+        logger.warning("validate_holdings_schema: Empty holdings data provided")
+        return True, []
 
     for ticker, ticker_data in data.items():
         if not isinstance(ticker, str) or not ticker.strip():
@@ -438,6 +475,24 @@ def validate_holdings_schema(
         holdings = ticker_data.get("holdings")
         if holdings is not None and not isinstance(holdings, dict):
             errors.append(f"Ticker {ticker} holdings must be dict")
+            continue
+
+        # Deep validation of nested holdings structure
+        if deep_validate and holdings is not None:
+            for period in ["current", "prior"]:
+                period_data = holdings.get(period)
+                if period_data is not None:
+                    if not isinstance(period_data, dict):
+                        errors.append(f"Ticker {ticker} holdings.{period} must be dict")
+                        continue
+                    # Validate each manager entry
+                    for manager_id, manager_data in period_data.items():
+                        if not isinstance(manager_data, dict):
+                            errors.append(f"Ticker {ticker} holdings.{period}.{manager_id} must be dict")
+                        elif deep_validate and "value_kusd" in manager_data:
+                            value = manager_data.get("value_kusd")
+                            if value is not None and not safe_numeric_check(value):
+                                errors.append(f"Ticker {ticker} holdings.{period}.{manager_id}.value_kusd is not numeric")
 
     is_valid = len(errors) == 0
 
@@ -459,6 +514,10 @@ def validate_short_interest_schema(
     Returns:
         (is_valid, list of invalid records)
     """
+    if not records:
+        logger.warning("validate_short_interest_schema: Empty dataset provided")
+        return True, []
+
     invalid_records = []
 
     for i, record in enumerate(records):
@@ -578,6 +637,7 @@ def validate_join_invariants(
     min_financial_coverage_pct: float = 80.0,
     min_clinical_coverage_pct: float = 50.0,
     min_market_coverage_pct: float = 50.0,
+    max_orphan_pct: float = 10.0,
     raise_on_error: bool = False,
 ) -> Dict[str, Any]:
     """
@@ -614,20 +674,21 @@ def validate_join_invariants(
             "coverage": {},
         }
 
-    # Calculate coverage
-    financial_coverage = len(financial_norm & universe_norm) / n_universe * 100 if financial_tickers else None
-    clinical_coverage = len(clinical_norm & universe_norm) / n_universe * 100 if clinical_tickers else None
-    market_coverage = len(market_norm & universe_norm) / n_universe * 100 if market_tickers else None
+    # Calculate coverage - distinguish between None (not provided) and 0.0 (provided but empty)
+    # Use `is not None` instead of truthiness to handle empty sets correctly
+    financial_coverage = len(financial_norm & universe_norm) / n_universe * 100 if financial_tickers is not None else None
+    clinical_coverage = len(clinical_norm & universe_norm) / n_universe * 100 if clinical_tickers is not None else None
+    market_coverage = len(market_norm & universe_norm) / n_universe * 100 if market_tickers is not None else None
 
-    # Find missing tickers
-    missing_financial = universe_norm - financial_norm if financial_tickers else set()
-    missing_clinical = universe_norm - clinical_norm if clinical_tickers else set()
-    missing_market = universe_norm - market_norm if market_tickers else set()
+    # Find missing tickers (use `is not None` to handle empty sets)
+    missing_financial = universe_norm - financial_norm if financial_tickers is not None else set()
+    missing_clinical = universe_norm - clinical_norm if clinical_tickers is not None else set()
+    missing_market = universe_norm - market_norm if market_tickers is not None else set()
 
     # Find orphan tickers (in data but not in universe)
-    orphan_financial = financial_norm - universe_norm if financial_tickers else set()
-    orphan_clinical = clinical_norm - universe_norm if clinical_tickers else set()
-    orphan_market = market_norm - universe_norm if market_tickers else set()
+    orphan_financial = financial_norm - universe_norm if financial_tickers is not None else set()
+    orphan_clinical = clinical_norm - universe_norm if clinical_tickers is not None else set()
+    orphan_market = market_norm - universe_norm if market_tickers is not None else set()
 
     # Check thresholds
     coverage_failures = []
@@ -638,7 +699,23 @@ def validate_join_invariants(
     if market_coverage is not None and market_coverage < min_market_coverage_pct:
         coverage_failures.append(f"Market coverage {market_coverage:.1f}% < {min_market_coverage_pct}%")
 
-    is_valid = len(coverage_failures) == 0
+    # Check orphan tolerance - data for tickers not in universe may indicate stale data
+    orphan_failures = []
+    if max_orphan_pct > 0:
+        for name, orphan_set, ticker_set in [
+            ("financial", orphan_financial, financial_tickers),
+            ("clinical", orphan_clinical, clinical_tickers),
+            ("market", orphan_market, market_tickers),
+        ]:
+            if ticker_set is not None and len(ticker_set) > 0:
+                orphan_pct = (len(orphan_set) / len(ticker_set)) * 100
+                if orphan_pct > max_orphan_pct:
+                    orphan_failures.append(
+                        f"{name.capitalize()} has {orphan_pct:.1f}% orphan tickers (>{max_orphan_pct}%)"
+                    )
+                    logger.warning(f"Join validation: {name} has {len(orphan_set)} orphan tickers")
+
+    is_valid = len(coverage_failures) == 0 and len(orphan_failures) == 0
 
     result = {
         "is_valid": is_valid,
@@ -669,11 +746,13 @@ def validate_join_invariants(
             "market": len(orphan_market),
         },
         "coverage_failures": coverage_failures,
+        "orphan_failures": orphan_failures,
     }
 
     if not is_valid and raise_on_error:
+        all_failures = coverage_failures + orphan_failures
         raise JoinInvariantError(
-            f"Join invariant validation failed: {coverage_failures}",
+            f"Join invariant validation failed: {all_failures}",
             missing_tickers=missing_financial | missing_clinical | missing_market,
         )
 
@@ -704,6 +783,8 @@ def validate_pit_admissibility(
     fallback_fields: Optional[List[str]] = None,
     raise_on_error: bool = False,
     max_future_records: int = 0,
+    max_missing_date_pct: float = 50.0,
+    warn_on_fallback: bool = True,
 ) -> PITValidationResult:
     """
     Validate that all records are PIT-admissible (no future data).
@@ -717,6 +798,8 @@ def validate_pit_admissibility(
         fallback_fields: Alternative date fields to try if primary is missing
         raise_on_error: If True, raise on any future records
         max_future_records: Maximum allowed future records (0 = none allowed)
+        max_missing_date_pct: Maximum % of records allowed to have missing dates (default 50%)
+        warn_on_fallback: If True, log warning when fallback field is used
 
     Returns:
         PITValidationResult with validation details
@@ -740,10 +823,15 @@ def validate_pit_admissibility(
                 date_value = record.get(fallback)
                 if date_value is not None:
                     field_used = fallback
+                    if warn_on_fallback:
+                        ticker = record.get("ticker", "unknown")
+                        logger.debug(f"PIT validation using fallback field '{fallback}' for {ticker}")
                     break
 
         if date_value is None:
             missing_date += 1
+            ticker = record.get("ticker", "unknown")
+            logger.warning(f"PIT validation: record for {ticker} has no date field ({date_field})")
             continue
 
         # Check PIT admissibility
@@ -759,7 +847,19 @@ def validate_pit_admissibility(
                 "pit_cutoff": str(pit_cutoff),
             })
 
+    # Check validity: both future records and missing dates
     is_valid = pit_violated <= max_future_records
+
+    # Also fail if too many missing dates (silent data loss prevention)
+    total = len(records)
+    if total > 0:
+        missing_date_pct = (missing_date / total) * 100
+        if missing_date_pct > max_missing_date_pct:
+            logger.warning(
+                f"PIT validation: {missing_date_pct:.1f}% of records missing date field "
+                f"(threshold: {max_missing_date_pct}%)"
+            )
+            is_valid = False
 
     result = PITValidationResult(
         is_valid=is_valid,
@@ -883,14 +983,20 @@ def validate_coverage_guardrails(
             warnings=["Empty universe - coverage validation skipped"],
         )
 
-    # Calculate coverage percentages
+    # Calculate coverage percentages - use explicit None checks to handle 0 correctly
+    # Note: 0 count is valid and results in 0.0% coverage
+    def calc_pct(count: Optional[int]) -> float:
+        if count is None or count == 0:
+            return 0.0
+        return (count / universe_size) * 100
+
     coverage = {
-        "financial": (financial_count / universe_size) * 100 if financial_count else 0.0,
-        "clinical": (clinical_count / universe_size) * 100 if clinical_count else 0.0,
-        "market": (market_count / universe_size) * 100 if market_count else 0.0,
-        "catalyst": (catalyst_count / universe_size) * 100 if catalyst_count else 0.0,
-        "pos": (pos_count / universe_size) * 100 if pos_count else 0.0,
-        "momentum": (momentum_count / universe_size) * 100 if momentum_count else 0.0,
+        "financial": calc_pct(financial_count),
+        "clinical": calc_pct(clinical_count),
+        "market": calc_pct(market_count),
+        "catalyst": calc_pct(catalyst_count),
+        "pos": calc_pct(pos_count),
+        "momentum": calc_pct(momentum_count),
     }
 
     # Check against thresholds

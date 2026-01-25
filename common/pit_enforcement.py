@@ -9,16 +9,23 @@ from datetime import date, timedelta
 from typing import Any, Dict, List, Optional
 
 
-def compute_pit_cutoff(as_of_date: str) -> str:
+def compute_pit_cutoff(as_of_date: str, strict: bool = False) -> str:
     """
     Compute PIT cutoff date.
-    
-    Convention: source_date <= as_of_date - 1
+
+    Convention: source_date <= as_of_date - 1 (default)
+    Strict mode: source_date < as_of_date - 1 (extra day buffer for intraday data)
+
     This ensures we only use data that would have been available
     before the trading day begins.
+
+    Args:
+        as_of_date: The analysis date
+        strict: If True, add extra day buffer to prevent intraday data leakage
     """
     dt = date.fromisoformat(as_of_date)
-    cutoff = dt - timedelta(days=1)
+    buffer_days = 2 if strict else 1
+    cutoff = dt - timedelta(days=buffer_days)
     return cutoff.isoformat()
 
 
