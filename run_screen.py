@@ -117,50 +117,56 @@ try:
     from regime_engine import RegimeDetectionEngine
     from indication_mapper import IndicationMapper
     HAS_ENHANCEMENTS = True
-except ImportError:
+except ImportError as e:
     HAS_ENHANCEMENTS = False
+    logger.info(f"Enhancement modules not available: {e}")
 
 # Accuracy enhancements adapter (optional)
 try:
     from accuracy_enhancements_adapter import AccuracyEnhancementsAdapter
     HAS_ACCURACY_ENHANCEMENTS = True
-except ImportError:
+except ImportError as e:
     HAS_ACCURACY_ENHANCEMENTS = False
+    logger.info(f"Accuracy enhancements not available: {e}")
 
 # Dilution risk engine (optional)
 try:
     from dilution_risk_engine import DilutionRiskEngine
     HAS_DILUTION_RISK = True
-except ImportError:
+except ImportError as e:
     HAS_DILUTION_RISK = False
+    logger.info(f"Dilution risk engine not available: {e}")
 
 # Timeline slippage engine (optional)
 try:
     from timeline_slippage_engine import TimelineSlippageEngine
     HAS_TIMELINE_SLIPPAGE = True
-except ImportError:
+except ImportError as e:
     HAS_TIMELINE_SLIPPAGE = False
+    logger.info(f"Timeline slippage engine not available: {e}")
 
 # Optional: Risk gates for audit trail
 try:
     from risk_gates import get_parameters_snapshot as get_risk_params, compute_parameters_hash as risk_params_hash
     HAS_RISK_GATES = True
-except ImportError:
+except ImportError as e:
     HAS_RISK_GATES = False
+    logger.info(f"Risk gates not available: {e}")
 
 try:
     from liquidity_scoring import get_parameters_snapshot as get_liq_params, compute_parameters_hash as liq_params_hash
     HAS_LIQUIDITY_SCORING = True
-except ImportError:
+except ImportError as e:
     HAS_LIQUIDITY_SCORING = False
+    logger.info(f"Liquidity scoring not available: {e}")
 
 # Ticker validation for fail-loud data quality
 try:
     from src.validators.ticker_validator import validate_ticker_list
     HAS_TICKER_VALIDATION = True
-except ImportError:
+except ImportError as e:
     HAS_TICKER_VALIDATION = False
-    logger.warning("Ticker validation module not available - skipping validation")
+    logger.warning(f"Ticker validation module not available - skipping validation: {e}")
 
 VERSION = "1.6.0"  # Bumped for governance-friendly CLI enhancements
 DETERMINISTIC_TIMESTAMP_SUFFIX = "T00:00:00Z"

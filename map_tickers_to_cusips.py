@@ -1,8 +1,13 @@
 import json
+import logging
 import urllib.request
 import time
 
-universe = json.load(open('production_data/universe.json'))
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+with open('production_data/universe.json') as f:
+    universe = json.load(f)
 tickers = [s['ticker'] for s in universe if s.get('ticker') and s['ticker'] != '_XBI_BENCHMARK_']
 
 print(f'Mapping {len(tickers)} tickers to CUSIPs via OpenFIGI...')

@@ -12,14 +12,17 @@ Usage:
 """
 import argparse
 import json
+import logging
 import sys
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from decimal import Decimal
 from pathlib import Path
 from typing import Dict, Any, List, Optional, Set, Tuple
 
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent))
+
+logger = logging.getLogger(__name__)
 
 from backtest_engine import PointInTimeBacktester, create_sample_scoring_function
 from backtest.returns_provider import CSVReturnsProvider
@@ -232,7 +235,18 @@ def get_pit_financial_data(ticker: str, as_of_date: str, historical_financials: 
 
     if snapshots:
         # Find the most recent snapshot before or on as_of_date
-        valid_snapshots = [s for s in snapshots if s.get('date', '') <= as_of_date]
+        # Parse dates properly to avoid string comparison issues
+        as_of_dt = date.fromisoformat(as_of_date) if isinstance(as_of_date, str) else as_of_date
+        valid_snapshots = []
+        for s in snapshots:
+            snap_date_str = s.get('date', '')
+            if snap_date_str:
+                try:
+                    snap_dt = date.fromisoformat(snap_date_str[:10])
+                    if snap_dt <= as_of_dt:
+                        valid_snapshots.append(s)
+                except (ValueError, TypeError):
+                    logger.debug(f"Invalid date format for {ticker}: {snap_date_str}")
         if valid_snapshots:
             # Return the most recent valid snapshot
             latest = valid_snapshots[-1]
@@ -501,7 +515,8 @@ def create_production_scorer():
                 "pit_lookup": fin_record.get("pit_lookup", False),
             }
         except Exception as e:
-            # Fallback to basic scoring
+            # Fallback to basic scoring - log for debugging
+            logger.warning(f"Scoring failed for {ticker}, using fallback: {e}")
             return {
                 "ticker": ticker,
                 "final_score": 50.0,
@@ -734,7 +749,7 @@ def run_direct_backtest(
                             if ret is not None:
                                 ret_dict[ticker] = float(ret)
             except Exception as e:
-                pass  # Skip tickers with errors
+                logger.warning(f"Error processing {ticker} on {test_date}: {e}")
 
         print(f"    Scored: {scored_count}/{len(universe)} ({100*scored_count/len(universe):.1f}%)")
 

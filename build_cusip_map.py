@@ -1,7 +1,12 @@
 import json
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Load universe
-universe = json.load(open('production_data/universe.json'))
+with open('production_data/universe.json') as f:
+    universe = json.load(f)
 
 # Build CUSIP map from universe
 cusip_map = {}
@@ -21,12 +26,15 @@ for stock in universe:
 
 # Merge with existing manual entries
 try:
-    existing = json.load(open('production_data/cusip_static_map.json'))
+    with open('production_data/cusip_static_map.json') as f:
+        existing = json.load(f)
     for cusip, data in existing.items():
         if cusip not in cusip_map:
             cusip_map[cusip] = data
-except:
-    pass
+except FileNotFoundError:
+    logger.info("No existing cusip_static_map.json found, creating new one")
+except json.JSONDecodeError as e:
+    logger.warning(f"Failed to parse existing cusip_static_map.json: {e}")
 
 # Save
 with open('production_data/cusip_static_map.json', 'w') as f:

@@ -1,7 +1,8 @@
 import json
 
 # Load current registry
-registry = json.load(open('production_data/manager_registry.json'))
+with open('production_data/manager_registry.json') as f:
+    registry = json.load(f)
 
 # CIK corrections (old -> new)
 corrections = {
