@@ -268,7 +268,7 @@ class AdapterConfig:
     how many records were filtered and fail if >50% are filtered.
     """
     max_missing_overall_status: float = 0.05  # 5% threshold
-    allow_partial_dates: bool = False
+    allow_partial_dates: bool = True  # CT.gov frequently uses YYYY-MM format
     fail_on_future_data: bool = False  # Changed: filter (not crash) by default
     log_unknown_statuses: bool = True
     max_future_data_ratio: float = 0.50  # Fail if >50% of data is from future
@@ -511,20 +511,27 @@ class CTGovAdapter:
         return current
     
     def _parse_date(self, date_str: str | None) -> Optional[date]:
-        """Parse date with strict validation (ISO YYYY-MM-DD only)"""
+        """Parse date with support for partial dates (YYYY-MM -> YYYY-MM-01)"""
         if not date_str:
             return None
-        
+
         date_str = str(date_str).strip()
-        
-        # Strict: only full ISO dates
+
+        # Handle YYYY-MM format (convert to first of month)
+        if re.match(r'^\d{4}-\d{2}$', date_str):
+            if not self.config.allow_partial_dates:
+                self.stats.failed_date_parses += 1
+                return None
+            date_str = date_str + '-01'
+
+        # Strict check for other formats
         if not self.config.allow_partial_dates:
             if not re.match(r'^\d{4}-\d{2}-\d{2}$', date_str):
                 self.stats.failed_date_parses += 1
                 return None
-        
+
         try:
-            return date.fromisoformat(date_str)
+            return date.fromisoformat(date_str[:10])  # Truncate any time component
         except ValueError:
             self.stats.failed_date_parses += 1
             return None

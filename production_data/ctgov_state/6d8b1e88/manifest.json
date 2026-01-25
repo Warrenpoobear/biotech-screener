@@ -1,20 +1,20 @@
 {
   "snapshots": [
     {
-      "file_size_mb": 1.64,
+      "file_size_mb": 1.68,
       "first_key": "ABCL|NCT00190957",
       "last_key": "ZYME|NCT03765840",
       "record_count": 6399,
-      "sha256": "78c46b5768e5b8d54006bcd3f81290ba1666000139a66e3ec394ffd4b1679259",
+      "sha256": "a17523e9c5cc78cdc408f9c70fe4397bee39b1aac064ff2bbc8080a11ac5df07",
       "snapshot_date": "2026-01-15",
       "ticker_count": 163
     },
     {
-      "file_size_mb": 1.67,
+      "file_size_mb": 1.7,
       "first_key": "ABCL|NCT00190957",
       "last_key": "ZYME|NCT03765840",
       "record_count": 6479,
-      "sha256": "83a87b97e7e28bca892d8dfc76c2b77eb166106182308829600b667dea081c74",
+      "sha256": "284e0ef54cf4108fa7710d3cdaa5062f917a50a403bf033d4dd22f8ecb84dd65",
       "snapshot_date": "2026-01-20",
       "ticker_count": 163
     },
@@ -37,11 +37,11 @@
       "ticker_count": 163
     },
     {
-      "file_size_mb": 1.69,
+      "file_size_mb": 1.73,
       "first_key": "ABCL|NCT00190957",
       "last_key": "ZYME|NCT03765840",
       "record_count": 6575,
-      "sha256": "421ffab40e187010cdc2fb6232d4eecabc8fb234792a5276c70e880ed67b70e4",
+      "sha256": "836a67d9c62fddb8cfdc27420bdc00ae8ba2dad0b8504be40a97049e62cb2b42",
       "snapshot_date": "2026-01-25",
       "ticker_count": 163
     }

@@ -442,7 +442,7 @@ class TestAdapterConfig:
         """Default configuration values should be set."""
         config = AdapterConfig()
         assert config.max_missing_overall_status == 0.05
-        assert config.allow_partial_dates is False
+        assert config.allow_partial_dates is True  # CT.gov uses YYYY-MM format frequently
         assert config.fail_on_future_data is False
         assert config.max_future_data_ratio == 0.50
 
