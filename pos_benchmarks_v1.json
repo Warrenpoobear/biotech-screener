@@ -1,0 +1,457 @@
+{
+  "version": "1.0.0",
+  "source_asof_date": "2024-01-01",
+  "description": "Empirical PoS base rates by stage, indication, and mechanism",
+  "primary_sources": [
+    "BIO/Informa Clinical Development Success Rates 2011-2020",
+    "FDA CDER Novel Drug Approvals statistics",
+    "Nature Reviews Drug Discovery benchmarks",
+    "IQVIA Global Trends in R&D 2025"
+  ],
+  "base_rates": [
+    {
+      "stage": "phase_1",
+      "indication": "oncology",
+      "mechanism_class": "small_molecule",
+      "base_pos": "0.63",
+      "n_support": 245,
+      "source": "BIO/Informa",
+      "notes": "Phase 1 to Phase 2 transition rate"
+    },
+    {
+      "stage": "phase_2",
+      "indication": "oncology",
+      "mechanism_class": "small_molecule",
+      "base_pos": "0.30",
+      "n_support": 189,
+      "source": "BIO/Informa",
+      "notes": "Phase 2 to Phase 3 transition rate"
+    },
+    {
+      "stage": "phase_3",
+      "indication": "oncology",
+      "mechanism_class": "small_molecule",
+      "base_pos": "0.42",
+      "n_support": 128,
+      "source": "BIO/Informa",
+      "notes": "Phase 3 to approval rate"
+    },
+    {
+      "stage": "phase_2",
+      "indication": "oncology",
+      "mechanism_class": "monoclonal_antibody",
+      "base_pos": "0.32",
+      "n_support": 87,
+      "source": "BIO/Informa",
+      "notes": "mAb oncology Phase 2 transition"
+    },
+    {
+      "stage": "phase_3",
+      "indication": "oncology",
+      "mechanism_class": "monoclonal_antibody",
+      "base_pos": "0.45",
+      "n_support": 64,
+      "source": "BIO/Informa",
+      "notes": "mAb oncology Phase 3 approval"
+    },
+    {
+      "stage": "phase_2",
+      "indication": "oncology",
+      "mechanism_class": "adc",
+      "base_pos": "0.35",
+      "n_support": 42,
+      "source": "BIO/Informa",
+      "notes": "ADC showing higher success in targeted populations"
+    },
+    {
+      "stage": "phase_3",
+      "indication": "oncology",
+      "mechanism_class": "adc",
+      "base_pos": "0.48",
+      "n_support": 28,
+      "source": "BIO/Informa",
+      "notes": "ADC late-stage success rate"
+    },
+    {
+      "stage": "phase_2",
+      "indication": "oncology",
+      "mechanism_class": "car_t",
+      "base_pos": "0.40",
+      "n_support": 35,
+      "source": "FDA",
+      "notes": "CAR-T high efficacy in hematologic malignancies"
+    },
+    {
+      "stage": "phase_3",
+      "indication": "oncology",
+      "mechanism_class": "car_t",
+      "base_pos": "0.55",
+      "n_support": 18,
+      "source": "FDA",
+      "notes": "CAR-T confirmatory trial success"
+    },
+    {
+      "stage": "phase_2",
+      "indication": "rare_disease",
+      "mechanism_class": "gene_therapy",
+      "base_pos": "0.35",
+      "n_support": 22,
+      "source": "BIO/Informa",
+      "notes": "Gene therapy rare disease transition"
+    },
+    {
+      "stage": "phase_3",
+      "indication": "rare_disease",
+      "mechanism_class": "gene_therapy",
+      "base_pos": "0.58",
+      "n_support": 15,
+      "source": "BIO/Informa",
+      "notes": "Higher success due to unmet need, regulatory flexibility"
+    },
+    {
+      "stage": "phase_2",
+      "indication": "rare_disease",
+      "mechanism_class": "small_molecule",
+      "base_pos": "0.38",
+      "n_support": 56,
+      "source": "BIO/Informa",
+      "notes": "Rare disease small molecule Phase 2"
+    },
+    {
+      "stage": "phase_3",
+      "indication": "rare_disease",
+      "mechanism_class": "small_molecule",
+      "base_pos": "0.62",
+      "n_support": 41,
+      "source": "BIO/Informa",
+      "notes": "Orphan drugs historically higher approval"
+    },
+    {
+      "stage": "phase_2",
+      "indication": "rare_disease",
+      "mechanism_class": "biologic",
+      "base_pos": "0.40",
+      "n_support": 34,
+      "source": "BIO/Informa",
+      "notes": "Rare disease biologic Phase 2"
+    },
+    {
+      "stage": "phase_3",
+      "indication": "rare_disease",
+      "mechanism_class": "biologic",
+      "base_pos": "0.60",
+      "n_support": 28,
+      "source": "BIO/Informa",
+      "notes": "Rare disease biologic approval rate"
+    },
+    {
+      "stage": "phase_2",
+      "indication": "cns",
+      "mechanism_class": "small_molecule",
+      "base_pos": "0.22",
+      "n_support": 145,
+      "source": "BIO/Informa",
+      "notes": "CNS historically most challenging - BBB penetration, complex endpoints"
+    },
+    {
+      "stage": "phase_3",
+      "indication": "cns",
+      "mechanism_class": "small_molecule",
+      "base_pos": "0.38",
+      "n_support": 98,
+      "source": "BIO/Informa",
+      "notes": "CNS small molecule approval rate"
+    },
+    {
+      "stage": "phase_2",
+      "indication": "cns",
+      "mechanism_class": "monoclonal_antibody",
+      "base_pos": "0.25",
+      "n_support": 32,
+      "source": "BIO/Informa",
+      "notes": "CNS mAb limited by BBB"
+    },
+    {
+      "stage": "phase_3",
+      "indication": "cns",
+      "mechanism_class": "monoclonal_antibody",
+      "base_pos": "0.28",
+      "n_support": 24,
+      "source": "BIO/Informa",
+      "notes": "CNS mAb lowest approval category"
+    },
+    {
+      "stage": "phase_2",
+      "indication": "cardiovascular",
+      "mechanism_class": "small_molecule",
+      "base_pos": "0.35",
+      "n_support": 78,
+      "source": "BIO/Informa",
+      "notes": "CV small molecule Phase 2"
+    },
+    {
+      "stage": "phase_3",
+      "indication": "cardiovascular",
+      "mechanism_class": "small_molecule",
+      "base_pos": "0.55",
+      "n_support": 52,
+      "source": "BIO/Informa",
+      "notes": "CV trials well-established endpoints"
+    },
+    {
+      "stage": "phase_2",
+      "indication": "immunology",
+      "mechanism_class": "monoclonal_antibody",
+      "base_pos": "0.38",
+      "n_support": 67,
+      "source": "BIO/Informa",
+      "notes": "Autoimmune mAb Phase 2"
+    },
+    {
+      "stage": "phase_3",
+      "indication": "immunology",
+      "mechanism_class": "monoclonal_antibody",
+      "base_pos": "0.52",
+      "n_support": 48,
+      "source": "BIO/Informa",
+      "notes": "Immunology mAb approval rate"
+    },
+    {
+      "stage": "phase_2",
+      "indication": "immunology",
+      "mechanism_class": "biologic",
+      "base_pos": "0.40",
+      "n_support": 45,
+      "source": "BIO/Informa",
+      "notes": "Immunology biologic Phase 2"
+    },
+    {
+      "stage": "phase_3",
+      "indication": "immunology",
+      "mechanism_class": "biologic",
+      "base_pos": "0.50",
+      "n_support": 38,
+      "source": "BIO/Informa",
+      "notes": "Immunology biologic approval"
+    },
+    {
+      "stage": "phase_2",
+      "indication": "infectious_disease",
+      "mechanism_class": "small_molecule",
+      "base_pos": "0.45",
+      "n_support": 89,
+      "source": "BIO/Informa",
+      "notes": "Anti-infective Phase 2 - clear endpoints"
+    },
+    {
+      "stage": "phase_3",
+      "indication": "infectious_disease",
+      "mechanism_class": "small_molecule",
+      "base_pos": "0.65",
+      "n_support": 62,
+      "source": "BIO/Informa",
+      "notes": "Anti-infective high approval rate"
+    },
+    {
+      "stage": "phase_2",
+      "indication": "metabolic",
+      "mechanism_class": "small_molecule",
+      "base_pos": "0.32",
+      "n_support": 76,
+      "source": "BIO/Informa",
+      "notes": "Metabolic small molecule Phase 2"
+    },
+    {
+      "stage": "phase_3",
+      "indication": "metabolic",
+      "mechanism_class": "small_molecule",
+      "base_pos": "0.52",
+      "n_support": 54,
+      "source": "BIO/Informa",
+      "notes": "Metabolic approval rate"
+    },
+    {
+      "stage": "phase_2",
+      "indication": "metabolic",
+      "mechanism_class": "peptide",
+      "base_pos": "0.38",
+      "n_support": 28,
+      "source": "BIO/Informa",
+      "notes": "GLP-1 class success raising averages"
+    },
+    {
+      "stage": "phase_3",
+      "indication": "metabolic",
+      "mechanism_class": "peptide",
+      "base_pos": "0.58",
+      "n_support": 22,
+      "source": "BIO/Informa",
+      "notes": "Peptide metabolic approval"
+    },
+    {
+      "stage": "phase_2",
+      "indication": "hematology",
+      "mechanism_class": "small_molecule",
+      "base_pos": "0.42",
+      "n_support": 45,
+      "source": "BIO/Informa",
+      "notes": "Hematology Phase 2"
+    },
+    {
+      "stage": "phase_3",
+      "indication": "hematology",
+      "mechanism_class": "small_molecule",
+      "base_pos": "0.58",
+      "n_support": 32,
+      "source": "BIO/Informa",
+      "notes": "Hematology approval rate"
+    },
+    {
+      "stage": "phase_2",
+      "indication": "ophthalmology",
+      "mechanism_class": "biologic",
+      "base_pos": "0.35",
+      "n_support": 34,
+      "source": "BIO/Informa",
+      "notes": "Ophthalmology biologic Phase 2"
+    },
+    {
+      "stage": "phase_3",
+      "indication": "ophthalmology",
+      "mechanism_class": "biologic",
+      "base_pos": "0.55",
+      "n_support": 26,
+      "source": "BIO/Informa",
+      "notes": "Ophthalmology approval rate"
+    },
+    {
+      "stage": "phase_2",
+      "indication": "ophthalmology",
+      "mechanism_class": "gene_therapy",
+      "base_pos": "0.38",
+      "n_support": 12,
+      "source": "BIO/Informa",
+      "notes": "Ocular gene therapy emerging"
+    },
+    {
+      "stage": "phase_3",
+      "indication": "ophthalmology",
+      "mechanism_class": "gene_therapy",
+      "base_pos": "0.60",
+      "n_support": 8,
+      "source": "BIO/Informa",
+      "notes": "Luxturna precedent improving rates"
+    }
+  ],
+  "fda_modifiers": [
+    {
+      "designation": "breakthrough_therapy",
+      "factor": "1.25",
+      "direction": "positive",
+      "source": "FDA BTD approval rates 2012-2023",
+      "rationale": "BTD drugs show ~25% higher approval rates vs non-BTD"
+    },
+    {
+      "designation": "orphan_drug",
+      "factor": "1.15",
+      "direction": "positive",
+      "source": "FDA Orphan Drug Act statistics",
+      "rationale": "Orphan designation provides regulatory flexibility, smaller trials"
+    },
+    {
+      "designation": "fast_track",
+      "factor": "1.10",
+      "direction": "positive",
+      "source": "FDA Fast Track statistics",
+      "rationale": "Fast Track increases FDA interaction, rolling review"
+    },
+    {
+      "designation": "accelerated_approval",
+      "factor": "0.90",
+      "direction": "negative",
+      "source": "FDA Accelerated Approval confirmatory trial data",
+      "rationale": "~10% fail confirmatory trials post-approval"
+    },
+    {
+      "designation": "priority_review",
+      "factor": "1.08",
+      "direction": "positive",
+      "source": "FDA Priority Review approval data",
+      "rationale": "Priority Review correlates with differentiated profile"
+    },
+    {
+      "designation": "rmat",
+      "factor": "1.12",
+      "direction": "positive",
+      "source": "FDA RMAT program statistics",
+      "rationale": "RMAT provides expedited development pathway"
+    }
+  ],
+  "trial_modifiers": [
+    {
+      "characteristic": "biomarker_selected",
+      "factor": "1.20",
+      "direction": "positive",
+      "source": "Nature Reviews Drug Discovery 2020",
+      "rationale": "Biomarker-selected populations show ~20% higher response rates"
+    },
+    {
+      "characteristic": "surrogate_endpoint",
+      "factor": "0.75",
+      "direction": "negative",
+      "source": "FDA surrogate endpoint analysis",
+      "rationale": "Surrogate endpoints may not translate to clinical benefit"
+    },
+    {
+      "characteristic": "active_comparator",
+      "factor": "0.85",
+      "direction": "negative",
+      "source": "Clinical trial design literature",
+      "rationale": "Active comparator trials harder to show superiority vs SOC"
+    },
+    {
+      "characteristic": "placebo_controlled",
+      "factor": "1.05",
+      "direction": "positive",
+      "source": "Clinical trial success rate analysis",
+      "rationale": "Placebo-controlled trials have clearer efficacy signal"
+    },
+    {
+      "characteristic": "first_in_class",
+      "factor": "1.30",
+      "direction": "positive",
+      "source": "First-in-class approval analysis",
+      "rationale": "Validated novel mechanisms show higher success if de-risked"
+    },
+    {
+      "characteristic": "best_in_class",
+      "factor": "1.15",
+      "direction": "positive",
+      "source": "Best-in-class clinical precedent",
+      "rationale": "Improved profile over existing therapies reduces risk"
+    },
+    {
+      "characteristic": "prior_phase_success",
+      "factor": "1.15",
+      "direction": "positive",
+      "source": "Phase transition success rates",
+      "rationale": "Strong Phase 2 data (p<0.05) predicts Phase 3 success"
+    }
+  ],
+  "default_stage_rates": {
+    "preclinical": "0.10",
+    "phase_1": "0.15",
+    "phase_1_2": "0.18",
+    "phase_2": "0.30",
+    "phase_2_3": "0.40",
+    "phase_3": "0.50",
+    "filed": "0.85",
+    "approved": "1.00"
+  },
+  "bounds": {
+    "pos_floor": "0.05",
+    "pos_ceiling": "0.95",
+    "max_modifier_product": "2.00",
+    "min_modifier_product": "0.50"
+  }
+}
