@@ -939,6 +939,213 @@ def compute_momentum_signal_with_fallback(
 
 
 # =============================================================================
+# MULTI-WINDOW MOMENTUM BLENDING
+# =============================================================================
+
+# Multi-window blending weights (research-based)
+# 60d is primary signal, 120d confirms trend, 20d captures recent moves
+MULTIWINDOW_WEIGHTS = {
+    20: Decimal("0.20"),   # Short-term: 20%
+    60: Decimal("0.50"),   # Medium-term (primary): 50%
+    120: Decimal("0.30"),  # Long-term (trend): 30%
+}
+
+
+def compute_momentum_signal_multiwindow(
+    inputs: MultiWindowMomentumInput,
+    *,
+    use_vol_adjusted_alpha: bool = False,
+    blend_mode: str = "weighted",  # "weighted" or "fallback"
+) -> MomentumSignal:
+    """
+    Compute momentum signal using multi-window blending for robust signals.
+
+    Unlike the fallback approach, this function blends available windows
+    using a weighted average for a more stable momentum estimate.
+
+    BLENDING STRATEGY:
+        - Computes alpha for each available window
+        - Blends alphas using normalized weights: 60d=50%, 120d=30%, 20d=20%
+        - Re-normalizes weights based on available windows
+        - Falls back to single-window if only one is available
+
+    RESEARCH RATIONALE:
+        - 20d captures short-term momentum reversals (1 month)
+        - 60d is the primary signal (3 months, optimal IC in biotech)
+        - 120d confirms longer-term trend (6 months)
+        - Blending reduces noise and whipsaws from single-window approach
+
+    CONFIDENCE RULES:
+        - 3 windows: conf = 0.9 (full data)
+        - 2 windows: conf = 0.8 (good coverage)
+        - 1 window: conf = 0.6-0.7 (single window, use fallback logic)
+        - 0 windows: conf = 0.3 (neutral, missing prices)
+
+    Args:
+        inputs: MultiWindowMomentumInput with returns for each window
+        use_vol_adjusted_alpha: Whether to use vol-adjusted alpha
+        blend_mode: "weighted" for multi-window blend, "fallback" for waterfall
+
+    Returns:
+        MomentumSignal with blended score and diagnostics
+    """
+    if blend_mode == "fallback":
+        return compute_momentum_signal_with_fallback(inputs, use_vol_adjusted_alpha=use_vol_adjusted_alpha)
+
+    # Collect available windows with their alphas
+    available_windows = []
+    guardrail_flags: List[str] = []
+
+    window_data = [
+        (20, inputs.return_20d, inputs.benchmark_20d, inputs.return_clipped_20d),
+        (60, inputs.return_60d, inputs.benchmark_60d, inputs.return_clipped_60d),
+        (120, inputs.return_120d, inputs.benchmark_120d, inputs.return_clipped_120d),
+    ]
+
+    for window_days, ret, bench, was_clipped in window_data:
+        ret_dec = _to_decimal(ret)
+        bench_dec = _to_decimal(bench)
+
+        if ret_dec is not None and bench_dec is not None:
+            alpha = ret_dec - bench_dec
+            available_windows.append({
+                "window": window_days,
+                "alpha": alpha,
+                "return": ret_dec,
+                "benchmark": bench_dec,
+                "was_clipped": was_clipped,
+            })
+            if was_clipped:
+                guardrail_flags.append(f"return_clipped_{window_days}d")
+
+    # No windows available - missing prices
+    if not available_windows:
+        return MomentumSignal(
+            momentum_score=Decimal("50"),
+            alpha_60d=None,
+            alpha_vol_adjusted=None,
+            return_60d=None,
+            benchmark_return_60d=None,
+            confidence=Decimal("0.3"),
+            data_completeness=Decimal("0.0"),
+            window_used=None,
+            data_status="missing_prices",
+            benchmark_missing=False,
+            return_clipped=False,
+            guardrail_flags=guardrail_flags,
+        )
+
+    # Single window - use that window directly
+    if len(available_windows) == 1:
+        w = available_windows[0]
+        window_days = w["window"]
+        alpha = w["alpha"]
+
+        # Compute score from alpha
+        score_delta = alpha * MOMENTUM_SLOPE
+        momentum_score_raw = Decimal("50") + score_delta
+        momentum_score_raw = _clamp(momentum_score_raw, MOMENTUM_SCORE_MIN, MOMENTUM_SCORE_MAX)
+
+        # Single window confidence
+        window_confidence = {20: Decimal("0.5"), 60: Decimal("0.7"), 120: Decimal("0.6")}
+        base_confidence = window_confidence.get(window_days, Decimal("0.5"))
+
+        # Apply shrinkage
+        momentum_score = Decimal("50") + base_confidence * (momentum_score_raw - Decimal("50"))
+        momentum_score = _clamp(momentum_score, MOMENTUM_SCORE_MIN, MOMENTUM_SCORE_MAX)
+
+        guardrail_flags.append(f"single_window_{window_days}d")
+
+        return MomentumSignal(
+            momentum_score=_quantize_score(momentum_score),
+            alpha_60d=_quantize_weight(alpha),
+            alpha_vol_adjusted=None,
+            return_60d=_quantize_weight(w["return"]),
+            benchmark_return_60d=_quantize_weight(w["benchmark"]),
+            confidence=_quantize_weight(base_confidence),
+            data_completeness=Decimal("0.6"),
+            window_used=window_days,
+            data_status="applied",
+            benchmark_missing=False,
+            return_clipped=w["was_clipped"],
+            guardrail_flags=guardrail_flags,
+        )
+
+    # Multiple windows - compute weighted blend
+    # Normalize weights to sum to 1.0 based on available windows
+    available_weight_sum = sum(
+        MULTIWINDOW_WEIGHTS[w["window"]] for w in available_windows
+    )
+    normalized_weights = {
+        w["window"]: MULTIWINDOW_WEIGHTS[w["window"]] / available_weight_sum
+        for w in available_windows
+    }
+
+    # Compute weighted alpha blend
+    blended_alpha = sum(
+        w["alpha"] * normalized_weights[w["window"]]
+        for w in available_windows
+    )
+
+    # Track which windows were used
+    windows_used = sorted([w["window"] for w in available_windows])
+    guardrail_flags.append(f"blended_windows_{'+'.join(map(str, windows_used))}")
+
+    # Compute vol-adjusted alpha if requested
+    vol = _to_decimal(inputs.annualized_vol)
+    alpha_vol_adjusted: Optional[Decimal] = None
+    if vol is not None and vol > MOMENTUM_VOL_EPS:
+        alpha_vol_adjusted = blended_alpha / vol
+
+    # Select scoring alpha
+    scoring_alpha = blended_alpha
+    if use_vol_adjusted_alpha and alpha_vol_adjusted is not None:
+        scoring_alpha = alpha_vol_adjusted * VOLATILITY_BASELINE
+
+    # Convert alpha to score
+    score_delta = scoring_alpha * MOMENTUM_SLOPE
+    momentum_score_raw = Decimal("50") + score_delta
+    momentum_score_raw = _clamp(momentum_score_raw, MOMENTUM_SCORE_MIN, MOMENTUM_SCORE_MAX)
+
+    # Confidence based on number of windows
+    if len(available_windows) >= 3:
+        base_confidence = Decimal("0.9")  # Full data
+    else:
+        base_confidence = Decimal("0.8")  # 2 windows
+
+    # Boost confidence for strong blended signals
+    abs_alpha = abs(blended_alpha)
+    if abs_alpha >= Decimal("0.15"):
+        base_confidence = min(Decimal("0.95"), base_confidence + Decimal("0.05"))
+
+    # Apply shrinkage
+    momentum_score = Decimal("50") + base_confidence * (momentum_score_raw - Decimal("50"))
+    momentum_score = _clamp(momentum_score, MOMENTUM_SCORE_MIN, MOMENTUM_SCORE_MAX)
+
+    # Data completeness: higher for more windows
+    completeness = Decimal("0.7") + Decimal("0.1") * len(available_windows)
+    completeness = min(completeness, Decimal("1.0"))
+
+    # Get 60d values for backward compatibility (or best available)
+    w60 = next((w for w in available_windows if w["window"] == 60), available_windows[0])
+
+    return MomentumSignal(
+        momentum_score=_quantize_score(momentum_score),
+        alpha_60d=_quantize_weight(blended_alpha),  # Report blended alpha
+        alpha_vol_adjusted=_quantize_weight(alpha_vol_adjusted) if alpha_vol_adjusted else None,
+        return_60d=_quantize_weight(w60["return"]),
+        benchmark_return_60d=_quantize_weight(w60["benchmark"]),
+        confidence=_quantize_weight(base_confidence),
+        data_completeness=completeness,
+        window_used=60 if 60 in windows_used else windows_used[0],  # Primary or first
+        data_status="applied",
+        benchmark_missing=False,
+        return_clipped=any(w["was_clipped"] for w in available_windows),
+        guardrail_flags=guardrail_flags,
+    )
+
+
+# =============================================================================
 # PEER-RELATIVE VALUATION
 # =============================================================================
 

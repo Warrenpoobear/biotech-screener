@@ -33,6 +33,7 @@ from src.modules.ic_enhancements import (
     compute_volatility_adjustment,
     apply_volatility_to_score,
     compute_momentum_signal_with_fallback,
+    compute_momentum_signal_multiwindow,
     compute_valuation_signal,
     compute_catalyst_decay,
     apply_catalyst_decay,
@@ -828,10 +829,12 @@ def _score_single_ticker_v3(
     elif vol_adj.vol_bucket == VolatilityBucket.LOW:
         flags.append("low_volatility_boost")
 
-    # 2. Momentum signal
-    momentum = compute_momentum_signal_with_fallback(
+    # 2. Momentum signal (multi-window blended)
+    # Uses weighted blend of 20d (20%), 60d (50%), 120d (30%) for robust signal
+    momentum = compute_momentum_signal_multiwindow(
         momentum_input,
         use_vol_adjusted_alpha=False,
+        blend_mode="weighted",  # Use multi-window blend instead of fallback
     )
     momentum_norm = momentum.momentum_score
 

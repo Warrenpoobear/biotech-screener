@@ -1,20 +1,20 @@
 {
-  "as_of_date_used": "2026-01-25",
+  "as_of_date_used": "2026-01-26",
   "benchmark_symbol": "XBI",
   "coverage_stats": {
     "missing_prices": 0,
     "returns_clipped": 15,
-    "total": 307,
-    "with_120d": 307,
-    "with_20d": 307,
-    "with_60d": 307,
-    "with_any_window": 307,
-    "with_volatility": 302
+    "total": 306,
+    "with_120d": 306,
+    "with_20d": 306,
+    "with_60d": 306,
+    "with_any_window": 306,
+    "with_volatility": 301
   },
-  "enriched_at": "2026-01-25T11:49:09Z",
+  "enriched_at": "2026-01-26T18:31:34Z",
   "max_return_clip": 3.0,
   "momentum_enrichment_version": "1.1.0",
-  "output_hash": "sha256:ee1a945a7d48f3e30aecaf905c7bd2f89ec7a2d1ee9a78b10d2229f25ff4980c",
+  "output_hash": "sha256:c6bbd2f8d21f28a05cc57c435094eaa8a73902d05888af3118b2f686062a27d1",
   "price_field_used": "Close",
   "windows_computed": [
     20,
