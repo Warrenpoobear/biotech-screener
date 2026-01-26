@@ -197,15 +197,15 @@ class EnhancementOrchestrator:
         flags = []
 
         # Layer 1: PoS-Adjusted Score
-        pos_result = self.pos_engine.calculate_adjusted_stage_score(
+        pos_result = self.pos_engine.calculate_pos_score(
             base_stage=company_data.get("base_stage", "phase_2"),
             indication=company_data.get("indication"),
             trial_design_quality=self._to_decimal(company_data.get("trial_design_quality")),
             competitive_intensity=self._to_decimal(company_data.get("competitive_intensity")),
             as_of_date=as_of_date
         )
-        pos_score = pos_result["stage_score_adjusted"]
-        pos_multiplier = pos_result["pos_multiplier"]
+        pos_score = pos_result["stage_score"]
+        pos_multiplier = pos_result["loa_probability"]  # Use LOA probability as multiplier
         layer_scores["pos"] = pos_score
 
         # Layer 2: Short Interest Signal (if enabled)
