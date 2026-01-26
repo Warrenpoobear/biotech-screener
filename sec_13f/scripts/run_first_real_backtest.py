@@ -374,7 +374,7 @@ def run_first_real_backtest(
             delisting_policy=DELISTING_POLICY_CONSERVATIVE,
         )
         provider_type = "sharadar"
-    except:
+    except Exception:
         # Fall back to simple CSV
         provider = CSVReturnsProvider(prices_file)
         provider_type = "csv"

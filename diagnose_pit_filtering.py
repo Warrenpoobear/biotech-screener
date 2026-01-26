@@ -117,7 +117,7 @@ def diagnose_pit_coverage(trial_records_path="production_data/trial_records.json
                 # Try ISO format
                 dt = datetime.fromisoformat(val.replace('Z', '+00:00'))
                 parsed.append(dt)
-            except:
+            except (ValueError, TypeError):
                 try:
                     # Try common formats
                     for fmt in ['%Y-%m-%d', '%m/%d/%Y', '%Y/%m/%d']:
@@ -125,11 +125,11 @@ def diagnose_pit_coverage(trial_records_path="production_data/trial_records.json
                             dt = datetime.strptime(val, fmt)
                             parsed.append(dt)
                             break
-                        except:
+                        except ValueError:
                             continue
                     else:
                         unparsed.append(val)
-                except:
+                except (ValueError, TypeError):
                     unparsed.append(val)
         
         parse_rate = len(parsed) / (len(parsed) + len(unparsed)) * 100 if (parsed or unparsed) else 0

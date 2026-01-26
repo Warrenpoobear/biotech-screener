@@ -150,14 +150,14 @@ def get_basic_info(ticker: str) -> Dict:
     try:
         stock = yf.Ticker(ticker)
         info = stock.info
-        
+
         return {
             "name": info.get('longName', f"{ticker} Inc"),
             "market_cap": info.get('marketCap', 500000000),
             "price": info.get('currentPrice', 30.0),
             "shares": info.get('sharesOutstanding', 20000000)
         }
-    except:
+    except Exception:
         return {
             "name": f"{ticker} Inc",
             "market_cap": 500000000,

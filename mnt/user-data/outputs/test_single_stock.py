@@ -61,7 +61,7 @@ def test_yahoo_finance(ticker):
                     common_dates2 = stock_returns.index.intersection(xbi_returns.index)
                     corr = stock_returns.loc[common_dates2].corr(xbi_returns.loc[common_dates2])
                     print(f"   Correlation with XBI: {corr:.2f}")
-            except:
+            except Exception:
                 print(f"   Correlation with XBI: Could not calculate")
         
         return True
@@ -202,7 +202,7 @@ def test_all_sources(ticker):
         stock = yf.Ticker(ticker)
         company_name = stock.info.get('longName')
         print(f"\nCompany: {company_name}")
-    except:
+    except Exception:
         pass
     
     # Test each source

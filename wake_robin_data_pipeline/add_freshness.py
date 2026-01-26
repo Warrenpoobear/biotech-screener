@@ -7,7 +7,7 @@ def parse_iso_date(d):
         return None
     try:
         return datetime.fromisoformat(d[:10]).date()
-    except:
+    except (ValueError, TypeError):
         return None
 
 def sec_freshness(asof_date, period_end, filed_date):

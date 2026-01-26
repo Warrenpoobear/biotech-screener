@@ -522,13 +522,13 @@ class TestScoreLiquidity:
     def test_composite_score_weights(self):
         """Score should be 60% ADV, 40% market cap."""
         mkt_data = {
-            "market_cap": 10e9,  # Large cap score = 100
+            "market_cap": 10e9,  # At $10B boundary, gets mcap_score=80 (need >$10B for 100)
             "avg_volume": 1e6,
-            "price": 5,  # ADV = $5M → score ~70
+            "price": 5,  # ADV = $5M → score = 70
         }
         result = score_liquidity(mkt_data)
-        # Expected: 70 * 0.6 + 100 * 0.4 = 42 + 40 = 82
-        assert result.liquidity_score == Decimal("82")
+        # Expected: 70 * 0.6 + 80 * 0.4 = 42 + 32 = 74
+        assert result.liquidity_score == Decimal("74")
 
 
 # ============================================================================

@@ -17,7 +17,7 @@ Usage in module_5_composite.py:
     enrich_with_defensive_overlays(output, scores_by_ticker)
 """
 
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
 from typing import Dict, List, Optional, Tuple
 
 WQ = Decimal("0.0001")  # Weight quantization
@@ -46,7 +46,7 @@ def defensive_multiplier(defensive_features: Dict[str, str]) -> Tuple[Decimal, L
             elif corr < Decimal("0.40"):
                 m *= Decimal("1.05")
                 notes.append("def_mult_low_corr_1.05")
-        except:
+        except (ValueError, TypeError, InvalidOperation):
             pass
 
     # Drawdown warning
@@ -56,7 +56,7 @@ def defensive_multiplier(defensive_features: Dict[str, str]) -> Tuple[Decimal, L
         try:
             if Decimal(dd_s) < Decimal("-0.30"):
                 notes.append("def_warn_drawdown_gt_30pct")
-        except:
+        except (ValueError, TypeError, InvalidOperation):
             pass
 
     return m, notes
@@ -72,7 +72,7 @@ def raw_inv_vol_weight(defensive_features: Dict[str, str]) -> Optional[Decimal]:
         if vol <= 0:
             return None
         return Decimal("1") / vol
-    except:
+    except (ValueError, TypeError, InvalidOperation):
         return None
 
 
