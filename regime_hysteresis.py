@@ -427,6 +427,7 @@ def integrate_with_regime_engine(
     regime_engine_result: Dict[str, Any],
     hysteresis_engine: RegimeHysteresisEngine,
     as_of_date: date,
+    regime_engine: Optional[Any] = None,  # RegimeDetectionEngine for callback support
 ) -> Dict[str, Any]:
     """
     Integrate hysteresis with existing RegimeDetectionEngine output.
@@ -435,6 +436,7 @@ def integrate_with_regime_engine(
         regime_engine_result: Output from RegimeDetectionEngine.detect_regime()
         hysteresis_engine: Hysteresis engine instance
         as_of_date: Current analysis date
+        regime_engine: Optional RegimeDetectionEngine for callback notifications
 
     Returns:
         Enhanced result with hysteresis-stabilized regime
@@ -482,6 +484,21 @@ def integrate_with_regime_engine(
         "pending_transition": hysteresis_result["pending_transition"],
         "transition_type": hysteresis_result["transition_type"],
     }
+
+    # Notify callbacks on CONFIRMED transitions
+    if hysteresis_result["transition_type"] == TransitionType.CONFIRMED.value:
+        transition = hysteresis_result.get("transition")
+        if transition and regime_engine is not None:
+            # Check if regime_engine has the _notify_transition method
+            if hasattr(regime_engine, "_notify_transition"):
+                regime_engine._notify_transition(
+                    old_regime=transition["from_regime"],
+                    new_regime=transition["to_regime"],
+                    transition_date=as_of_date,
+                    days_in_prior_regime=transition["days_in_prior_regime"],
+                    trigger_values=transition["trigger_values"],
+                    confidence=Decimal(regime_engine_result.get("confidence", "0")),
+                )
 
     return regime_engine_result
 
