@@ -24,8 +24,11 @@ pytest tests/ -v
 # Run with coverage
 pytest tests/ --cov=. --cov-report=html
 
-# Run the full screening pipeline
-python run_screen.py --as-of-date 2026-01-15 --data-dir production_data --output results.json
+# Run the full screening pipeline (enhancements enabled by default)
+python run_screen.py --as-of-date 2026-01-25 --data-dir production_data --output results.json
+
+# Run without enhancements (if needed)
+python run_screen.py --as-of-date 2026-01-25 --data-dir production_data --output results.json --no-enhancements
 ```
 
 ## Project Structure
@@ -764,11 +767,24 @@ python run_screen.py \
 
 ```bash
 python run_screen.py \
-  --as-of-date 2026-01-15 \
+  --as-of-date 2026-01-25 \
   --data-dir production_data \
   --enable-defensive-overlay \
   --output screening_results.json
 ```
+
+### Current Data Coverage (as of 2026-01-25)
+
+| Component | Coverage | Notes |
+|-----------|----------|-------|
+| Market Data | 97.9% | |
+| Momentum | 100% | |
+| Valuation | 100% | Includes sector-based fallback |
+| Probability of Success | 97.7% | Indication-mapped |
+| Short Interest | 100% | |
+| Staleness Detection | 11.9% | Working correctly |
+| Catalyst (raw) | 100% | 235 events across 104 tickers |
+| Catalyst (effective) | 10.7% | After confidence gating |
 
 ## Configuration Management
 
@@ -940,7 +956,27 @@ Default weighting for final ranking (v1.4.0):
 
 ## Recent Changes
 
-### v1.4.0 (January 2026 - Latest)
+### v1.5.0 (January 2026 - Latest)
+
+- **Enhancements Enabled by Default**: `--enable-enhancements` and `--enable-short-interest` now default to True
+  - Added `--no-enhancements` and `--no-short-interest` flags to disable
+- **Data Flow Fixes**:
+  - Added `short_interest_signal` to ranked securities output (was missing)
+  - Fixed phase normalization for staleness detection ("PHASE3" → "phase 3")
+  - Fixed MarketRegimeType.NEUTRAL mapping to UNKNOWN (enum didn't have NEUTRAL)
+- **Valuation Coverage Improved** (85% → 100%):
+  - Added sector-based valuation fallback for companies without trial data
+  - 28 tickers without ClinicalTrials.gov data now use market cap percentile comparison
+  - Fallback uses lower confidence (0.4 vs 0.8) to reflect reduced precision
+- **Clinical Trials Pagination**: Fixed 100-trial limit per ticker
+  - `collect_ctgov_data.py` now paginates to fetch up to 1000 trials per ticker
+  - `data_sources/ctgov_client.py` updated with `nextPageToken` support
+  - Affects 48 tickers previously truncated (JAZZ, IONS, RNA, ACAD, RARE, FOLD, MRNA, etc.)
+- **Code Cleanup**:
+  - Removed test output files from repository
+  - Updated `.gitignore` for cache files and test outputs
+
+### v1.4.0 (January 2026)
 
 - **Data Flow Improvements**: Fixed data flow gaps and enabled enhancements by default
 - **13F Parsing Fixes**: Fixed 13F parsing and corrected all elite manager CIKs
