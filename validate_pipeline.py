@@ -27,7 +27,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 # Validation thresholds
-EXPECTED_WEIGHT_SUM = 0.90
+EXPECTED_WEIGHT_SUM = 1.00  # Fully invested, no cash reserve
 WEIGHT_SUM_TOLERANCE = 0.01
 MIN_UNIVERSE_SIZE = 50
 MAX_ZERO_SCORE_RATIO = 0.20  # Max 20% can have zero scores

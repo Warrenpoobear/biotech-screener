@@ -397,9 +397,7 @@ class TestTypeHandling:
 
     def test_non_serializable_raises(self):
         """Non-serializable types should raise TypeError."""
-        class CustomObject:
-            pass
-
-        data = {"obj": CustomObject()}
+        # Use a set which is not JSON serializable
+        data = {"obj": {1, 2, 3}}
         with pytest.raises(TypeError):
             canonical_dumps(data)
