@@ -270,7 +270,21 @@ class RegimeHysteresisEngine:
 
         Returns:
             Dict with regime info, transition details, and stability metrics
+
+        Raises:
+            TypeError: If vix or xbi_momentum are not Decimal types
+            ValueError: If vix is negative or as_of_date is None
         """
+        # Input validation
+        if not isinstance(vix, Decimal):
+            raise TypeError(f"vix must be Decimal, got {type(vix).__name__}")
+        if not isinstance(xbi_momentum, Decimal):
+            raise TypeError(f"xbi_momentum must be Decimal, got {type(xbi_momentum).__name__}")
+        if as_of_date is None:
+            raise ValueError("as_of_date cannot be None")
+        if vix < Decimal("0"):
+            raise ValueError(f"vix cannot be negative, got {vix}")
+
         # Initialize state if first call
         if self._state is None:
             initial_regime = self._classify_regime_raw(
@@ -438,8 +452,16 @@ def integrate_with_regime_engine(
         }
         return regime_engine_result
 
-    vix = Decimal(vix_str)
-    xbi = Decimal(xbi_str) / Decimal("100")  # Convert to decimal ratio
+    # Safe Decimal conversion with validation
+    try:
+        vix = Decimal(vix_str)
+        xbi = Decimal(xbi_str) / Decimal("100")  # Convert to decimal ratio
+    except (ValueError, TypeError, ArithmeticError) as e:
+        regime_engine_result["hysteresis"] = {
+            "applied": False,
+            "reason": f"Invalid VIX or XBI value: {e}",
+        }
+        return regime_engine_result
 
     # Update hysteresis
     hysteresis_result = hysteresis_engine.update(vix, xbi, as_of_date)

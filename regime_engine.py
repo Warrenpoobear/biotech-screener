@@ -116,6 +116,10 @@ class RegimeDetectionEngine:
     }
     STALENESS_MAX_DAYS = 10  # >10 days: force UNKNOWN regime
 
+    # Minimum confidence threshold for regime classification
+    # Below this, default to SECTOR_ROTATION for safety
+    MIN_CONFIDENCE_THRESHOLD = Decimal("0.30")
+
     # Signal weight adjustments by regime
     REGIME_ADJUSTMENTS: Dict[str, Dict[str, Decimal]] = {
         "BULL": {
@@ -544,7 +548,7 @@ class RegimeDetectionEngine:
             return "UNKNOWN", Decimal("0.00")
 
         # Require minimum confidence threshold
-        if confidence < Decimal("0.30"):
+        if confidence < self.MIN_CONFIDENCE_THRESHOLD:
             return "SECTOR_ROTATION", confidence
 
         return max_regime, confidence

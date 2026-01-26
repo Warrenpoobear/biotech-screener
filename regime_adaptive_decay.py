@@ -237,14 +237,21 @@ class RegimeAdaptiveDecayEngine:
         Compute regime-adaptive decay weight for an event.
 
         Args:
-            event_age_days: Days since event occurred
+            event_age_days: Days since event occurred (must be non-negative)
             event_category: Category of the event
             regime: Current market regime
             vix_level: Current VIX level (optional)
 
         Returns:
             DecayResult with decay weight and explanation
+
+        Raises:
+            ValueError: If event_age_days is negative
         """
+        # Validate event age
+        if event_age_days < 0:
+            raise ValueError(f"event_age_days must be non-negative, got {event_age_days}")
+
         # Base half-life
         base_half_life = self.base_half_lives.get(event_category, 30)
 
@@ -255,12 +262,14 @@ class RegimeAdaptiveDecayEngine:
         # Volatility adjustment
         vol_adjustment, vol_reason = self._compute_volatility_adjustment(vix_level)
 
-        # Adjusted half-life
-        adjusted_half_life = int(float(base_half_life) * float(regime_mult) * float(vol_adjustment))
-        adjusted_half_life = max(7, adjusted_half_life)  # Minimum 7 days
+        # Adjusted half-life using Decimal arithmetic for precision
+        adjusted_half_life_decimal = Decimal(str(base_half_life)) * regime_mult * vol_adjustment
+        adjusted_half_life = max(7, int(adjusted_half_life_decimal))  # Minimum 7 days
 
         # Exponential decay: weight = 2^(-age/half_life)
+        # Use float for math.pow but cap exponent to prevent precision issues
         decay_exponent = -event_age_days / adjusted_half_life
+        decay_exponent = max(-50, decay_exponent)  # Cap exponent to avoid underflow
         decay_weight = Decimal(str(math.pow(2, decay_exponent)))
         decay_weight = decay_weight.quantize(Decimal("0.0001"), rounding=ROUND_HALF_UP)
 
@@ -316,6 +325,11 @@ class RegimeAdaptiveDecayEngine:
 
         if age_days < 0:
             # Future event - no decay (shouldn't happen in PIT-safe system)
+            # Log warning as this indicates a potential PIT violation
+            logger.warning(
+                f"Future event detected: event_date={event_date}, as_of_date={as_of_date}. "
+                "This may indicate a PIT discipline violation."
+            )
             return (base_score, DecayResult(
                 event_age_days=age_days,
                 base_half_life=0,
@@ -325,7 +339,7 @@ class RegimeAdaptiveDecayEngine:
                 decay_weight=Decimal("1.0"),
                 decay_multiplier=Decimal("1.0"),
                 volatility_adjustment=None,
-                explanation="Future event - no decay applied",
+                explanation=f"Future event (age={age_days}d) - no decay applied, possible PIT violation",
             ))
 
         decay_result = self.compute_decay(
