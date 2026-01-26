@@ -64,42 +64,64 @@ class ClinicalTrialsClient:
         self,
         sponsor_name: str,
         status_filter: Optional[List[str]] = None,
-        max_results: int = 100,
+        max_results: int = 1000,
     ) -> List[Dict[str, Any]]:
         """
-        Search trials by sponsor/company name.
-        
+        Search trials by sponsor/company name with pagination.
+
         Args:
             sponsor_name: Company name to search
             status_filter: Optional list of statuses (e.g., ["RECRUITING", "ACTIVE_NOT_RECRUITING"])
-            max_results: Maximum results to return
-        
+            max_results: Maximum results to return (default 1000)
+
         Returns:
             List of trial records
         """
         # Check cache
         cache_key = f"sponsor_{sponsor_name.replace(' ', '_')}.json"
         cache_file = self.cache_dir / cache_key
-        
+
         if cache_file.exists():
             # Check if cache is fresh (< 24 hours)
             mtime = datetime.fromtimestamp(cache_file.stat().st_mtime)
             if (datetime.now() - mtime).days < 1:
                 with open(cache_file) as f:
                     return json.load(f)
-        
-        # Build query
-        params = {
+
+        # Build base query params
+        base_params = {
             "query.spons": sponsor_name,
-            "pageSize": str(min(max_results, 100)),
+            "pageSize": "100",  # API max is 100 per page
             "format": "json",
         }
-        
+
         if status_filter:
-            params["filter.overallStatus"] = ",".join(status_filter)
-        
-        result = self._make_request("studies", params)
-        studies = result.get("studies", [])
+            base_params["filter.overallStatus"] = ",".join(status_filter)
+
+        # Paginate through all results
+        all_studies = []
+        next_page_token = None
+
+        while len(all_studies) < max_results:
+            params = base_params.copy()
+            if next_page_token:
+                params["pageToken"] = next_page_token
+
+            result = self._make_request("studies", params)
+            studies = result.get("studies", [])
+
+            if not studies:
+                break
+
+            all_studies.extend(studies)
+
+            # Check for next page
+            next_page_token = result.get("nextPageToken")
+            if not next_page_token:
+                break
+
+        # Limit to max_results
+        studies = all_studies[:max_results]
         
         # Parse into simplified records
         trials = []
