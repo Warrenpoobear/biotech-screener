@@ -100,18 +100,28 @@ def compute_alpha_for_score_delta(
 # Uses exponential decay with asymmetric shape:
 # - Slow rise as event approaches (from 90+ days out)
 # - Peak at ~30 days before event
-# - Fast decay after event (information gets priced quickly)
+# - Moderate decay after event (information gets priced, but catalyst history matters)
 CATALYST_OPTIMAL_WINDOW_DAYS = 30
+# Optimal window half-width: events within ±CATALYST_OPTIMAL_HALF_WIDTH of peak are "in window"
+# Widened from 15 to 30 days to improve coverage (0-60 day window vs 15-45)
+CATALYST_OPTIMAL_HALF_WIDTH = 30
+# Decay rates - RELAXED by ~40% to keep signals stronger for longer
+# Original values were: PDUFA=0.05, DATA_READOUT=0.08, PHASE_COMPLETION=0.10, etc.
 CATALYST_DECAY_RATES = {
-    "PDUFA": Decimal("0.05"),       # Slowest decay - high anticipation events
-    "DATA_READOUT": Decimal("0.08"),
-    "PHASE_COMPLETION": Decimal("0.10"),
-    "ENROLLMENT_COMPLETE": Decimal("0.07"),
-    "DEFAULT": Decimal("0.07"),
+    "PDUFA": Decimal("0.03"),       # Slowest decay - high anticipation events
+    "DATA_READOUT": Decimal("0.05"),
+    "PHASE_COMPLETION": Decimal("0.06"),
+    "ENROLLMENT_COMPLETE": Decimal("0.04"),
+    "CT_PRIMARY_COMPLETION": Decimal("0.04"),  # Clinical trial primary completion
+    "CT_STUDY_COMPLETION": Decimal("0.05"),    # Clinical trial study completion
+    "DEFAULT": Decimal("0.04"),
 }
 # Post-event decay multiplier: tau_effective = tau * POST_EVENT_DECAY_MULT
-# Higher = faster decay after event (information priced quickly in biotech)
-CATALYST_POST_EVENT_DECAY_MULT = Decimal("2.0")
+# Reduced from 2.0 to 1.5 - past catalysts retain more signal value
+CATALYST_POST_EVENT_DECAY_MULT = Decimal("1.5")
+# Minimum decay floor - even distant catalysts contribute meaningfully
+# Raised from 0.05 to 0.25 to improve coverage
+CATALYST_DECAY_FLOOR = Decimal("0.25")
 # Decay precision: 0.0001 matches WEIGHT_PRECISION to avoid tie artifacts
 CATALYST_DECAY_PRECISION = Decimal("0.0001")
 
@@ -1233,8 +1243,9 @@ def compute_catalyst_decay(
     # days_to_catalyst=-10 at optimal_window=30 -> d=-40 (event 10 days ago)
     d = days - optimal
 
-    # Check if in optimal window (within 15 days of peak)
-    in_optimal_window = abs(d) <= Decimal("15")
+    # Check if in optimal window (within CATALYST_OPTIMAL_HALF_WIDTH days of peak)
+    # Widened from 15 to 30 days for better coverage
+    in_optimal_window = abs(d) <= Decimal(str(CATALYST_OPTIMAL_HALF_WIDTH))
 
     # ASYMMETRIC DECAY:
     # - d > 0: event is far out, signal building (use standard tau)
@@ -1260,8 +1271,8 @@ def compute_catalyst_decay(
     else:
         decay_factor = exponent.exp()
 
-    # Clamp to valid range
-    decay_factor = _clamp(decay_factor, Decimal("0.05"), Decimal("1.0"))
+    # Clamp to valid range - use CATALYST_DECAY_FLOOR for minimum
+    decay_factor = _clamp(decay_factor, CATALYST_DECAY_FLOOR, Decimal("1.0"))
 
     # Quantize with fine precision to avoid tie artifacts
     decay_factor = decay_factor.quantize(CATALYST_DECAY_PRECISION, rounding=ROUND_HALF_UP)

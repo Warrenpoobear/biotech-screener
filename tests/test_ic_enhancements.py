@@ -1268,7 +1268,7 @@ class TestCatalystDecay(unittest.TestCase):
         self.assertTrue(result.in_optimal_window)
 
     def test_in_optimal_window_range(self):
-        """Within 15 days of optimal should be in_optimal_window."""
+        """Within 30 days of optimal should be in_optimal_window (widened from 15)."""
         # At 20 days (optimal - 10)
         result_20 = self.compute_catalyst_decay(20, "PDUFA")
         self.assertTrue(result_20.in_optimal_window)
@@ -1277,9 +1277,13 @@ class TestCatalystDecay(unittest.TestCase):
         result_40 = self.compute_catalyst_decay(40, "PDUFA")
         self.assertTrue(result_40.in_optimal_window)
 
-        # At 60 days (optimal + 30) - outside window
+        # At 60 days (optimal + 30) - now inside widened window
         result_60 = self.compute_catalyst_decay(60, "PDUFA")
-        self.assertFalse(result_60.in_optimal_window)
+        self.assertTrue(result_60.in_optimal_window)
+
+        # At 65 days (optimal + 35) - outside window
+        result_65 = self.compute_catalyst_decay(65, "PDUFA")
+        self.assertFalse(result_65.in_optimal_window)
 
     def test_post_event_faster_decay(self):
         """Post-event decay should be faster than pre-event."""
@@ -1301,15 +1305,15 @@ class TestCatalystDecay(unittest.TestCase):
         self.assertEqual(result2.event_type, "DATA_READOUT")
 
     def test_decay_factor_bounds(self):
-        """Decay factor should be between 0.05 and 1.0."""
+        """Decay factor should be between 0.25 (floor) and 1.0."""
         # Far in the future
         far_future = self.compute_catalyst_decay(365, "PDUFA")
-        self.assertGreaterEqual(far_future.decay_factor, Decimal("0.05"))
+        self.assertGreaterEqual(far_future.decay_factor, Decimal("0.25"))
         self.assertLessEqual(far_future.decay_factor, Decimal("1.0"))
 
         # Far in the past
         far_past = self.compute_catalyst_decay(-365, "PDUFA")
-        self.assertGreaterEqual(far_past.decay_factor, Decimal("0.05"))
+        self.assertGreaterEqual(far_past.decay_factor, Decimal("0.25"))
         self.assertLessEqual(far_past.decay_factor, Decimal("1.0"))
 
     def test_apply_catalyst_decay_toward_neutral(self):

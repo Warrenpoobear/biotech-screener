@@ -596,19 +596,24 @@ class TestCatalystDecay:
     def test_asymmetric_decay_faster_after_peak(self):
         """Past optimal peak should decay faster than same distance before peak.
 
-        days_to_catalyst=60 is 30 days BEFORE optimal (d=+30)
-        days_to_catalyst=0 is 30 days AFTER optimal (d=-30)
+        Use PDUFA (slowest decay rate of 0.03) and larger distances to avoid
+        hitting the decay floor of 0.25.
 
-        Post-peak should decay faster due to information pricing.
+        days_to_catalyst=70 is 40 days BEFORE optimal (d=+40)
+        days_to_catalyst=-10 is 40 days AFTER optimal (d=-40)
+
+        Post-peak should decay faster due to information pricing (1.5x multiplier).
         """
-        # 30 days before optimal peak (event far in future)
-        before_peak = compute_catalyst_decay(60, "DATA_READOUT")  # d = 60 - 30 = +30
-        # 30 days after optimal peak (at event itself)
-        at_event = compute_catalyst_decay(0, "DATA_READOUT")  # d = 0 - 30 = -30
+        # 40 days before optimal peak (event far in future)
+        # exp(-0.03 * 40) ≈ 0.30
+        before_peak = compute_catalyst_decay(70, "PDUFA")  # d = 70 - 30 = +40
+        # 40 days after optimal peak (event happened 10 days ago)
+        # exp(-0.03 * 1.5 * 40) = exp(-1.8) ≈ 0.165 -> floored to 0.25
+        after_peak = compute_catalyst_decay(-10, "PDUFA")  # d = -10 - 30 = -40
 
-        # Both are same distance (30 days) from optimal, but post-peak should be lower
-        assert at_event.decay_factor < before_peak.decay_factor, \
-            f"Post-peak decay ({at_event.decay_factor}) should be < pre-peak ({before_peak.decay_factor})"
+        # Both are same distance (40 days) from optimal, but post-peak should be lower
+        assert after_peak.decay_factor < before_peak.decay_factor, \
+            f"Post-peak decay ({after_peak.decay_factor}) should be < pre-peak ({before_peak.decay_factor})"
 
     def test_asymmetric_decay_past_event(self):
         """Events that already happened should decay very fast."""
