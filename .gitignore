@@ -76,3 +76,13 @@ tests/golden/
 
 # Generated ablation reports
 ablation_report.json
+
+# Cache files
+data/13f_cache/
+data/cache/
+
+# Test output files
+output.json
+production_data/*_test*.json
+production_data/*debug*.json
+production_data/*verification*.json
