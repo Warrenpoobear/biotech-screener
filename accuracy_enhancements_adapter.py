@@ -111,11 +111,12 @@ class AccuracyEnhancementsAdapter:
         regime_map = {
             "BULL": MarketRegimeType.BULL,
             "BEAR": MarketRegimeType.BEAR,
-            "NEUTRAL": MarketRegimeType.NEUTRAL,
+            "NEUTRAL": MarketRegimeType.UNKNOWN,  # Map NEUTRAL to UNKNOWN
+            "UNKNOWN": MarketRegimeType.UNKNOWN,
             "SECTOR_ROTATION": MarketRegimeType.SECTOR_ROTATION,
             "VOLATILITY_SPIKE": MarketRegimeType.VOLATILITY_SPIKE,
         }
-        return regime_map.get(regime.upper())
+        return regime_map.get(regime.upper(), MarketRegimeType.UNKNOWN)
 
     def compute_adjustments(
         self,

@@ -386,10 +386,57 @@ PHASE_STALENESS_THRESHOLDS: Dict[str, PhaseStalenessConfig] = {
 }
 
 
+def _normalize_phase(phase: str) -> str:
+    """Normalize phase string to match threshold keys.
+
+    Handles various formats:
+    - "PHASE3" -> "phase 3"
+    - "Phase 3" -> "phase 3"
+    - "PHASE1, PHASE2" -> "phase 1/2"
+    - "NA", "N/A" -> "unknown"
+    """
+    if not phase:
+        return "unknown"
+
+    p = phase.lower().strip()
+
+    # Handle NA/N/A
+    if p in ("na", "n/a", ""):
+        return "unknown"
+
+    # Handle combined phases like "PHASE1, PHASE2" or "phase 1/2"
+    if "," in p or "/" in p:
+        # Extract numbers
+        import re
+        nums = re.findall(r'\d', p)
+        if nums:
+            nums = sorted(set(nums))
+            if len(nums) >= 2:
+                return f"phase {nums[0]}/{nums[1]}"
+            elif len(nums) == 1:
+                return f"phase {nums[0]}"
+
+    # Handle "phase3" -> "phase 3", "PHASE2" -> "phase 2", "PHASE4" -> "approved"
+    import re
+    match = re.match(r'phase\s*(\d)', p)
+    if match:
+        phase_num = match.group(1)
+        if phase_num == "4":
+            return "approved"  # Phase 4 = post-marketing
+        return f"phase {phase_num}"
+
+    # Handle "early_phase1" -> "phase 1"
+    if "early" in p and "1" in p:
+        return "phase 1"
+
+    return p
+
+
 def get_staleness_threshold_for_phase(phase: str) -> PhaseStalenessConfig:
     """Get staleness configuration for a given phase."""
+    normalized = _normalize_phase(phase)
     return PHASE_STALENESS_THRESHOLDS.get(
-        phase.lower(),
+        normalized,
         PHASE_STALENESS_THRESHOLDS["unknown"]
     )
 

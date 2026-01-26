@@ -707,6 +707,7 @@ def compute_module_5_composite_v3(
             "momentum_signal": rec.get("momentum_signal"),
             "valuation_signal": rec.get("valuation_signal"),
             "smart_money_signal": rec.get("smart_money_signal"),
+            "short_interest_signal": rec.get("short_interest_signal"),
             "volatility_adjustment": rec.get("volatility_adjustment"),
             "catalyst_decay": rec.get("catalyst_decay"),
             "interaction_terms": rec.get("interaction_terms"),

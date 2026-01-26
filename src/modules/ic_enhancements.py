@@ -960,13 +960,59 @@ def compute_valuation_signal(
     """
     mcap = _to_decimal(market_cap_mm)
 
-    if mcap is None or trial_count <= 0:
+    if mcap is None:
         return ValuationSignal(
             valuation_score=Decimal("50"),
             mcap_per_asset=None,
             peer_median_mcap_per_asset=None,
             peer_count=0,
             confidence=Decimal("0.2"),
+        )
+
+    # Fallback: sector-based valuation for companies without trial data
+    if trial_count <= 0:
+        # Compare market cap to all peers (regardless of stage)
+        all_peer_mcaps = [
+            _to_decimal(p.get("market_cap_mm"))
+            for p in peer_valuations
+            if _to_decimal(p.get("market_cap_mm")) is not None
+        ]
+        all_peer_mcaps = [m for m in all_peer_mcaps if m is not None]
+
+        if len(all_peer_mcaps) < VALUATION_MIN_PEERS:
+            return ValuationSignal(
+                valuation_score=Decimal("50"),
+                mcap_per_asset=None,
+                peer_median_mcap_per_asset=None,
+                peer_count=0,
+                confidence=Decimal("0.2"),
+            )
+
+        # Compute percentile rank of this company's mcap vs all peers
+        # Lower mcap = potentially undervalued = higher score
+        mcap_winsorized = _clamp(mcap, VALUATION_MCAP_MIN_MM, VALUATION_MCAP_MAX_MM)
+        peer_mcaps_sorted = sorted(all_peer_mcaps)
+        n_peers = len(peer_mcaps_sorted)
+
+        # Count how many peers have lower mcap (higher mcap = lower percentile)
+        below = sum(1 for pm in peer_mcaps_sorted if pm < mcap_winsorized)
+        equal = sum(1 for pm in peer_mcaps_sorted if pm == mcap_winsorized)
+
+        # Midrank percentile (inverted: lower mcap = higher score)
+        raw_percentile = Decimal(below) + Decimal(equal) / Decimal(2)
+        percentile = Decimal(100) - (raw_percentile * Decimal(100) / Decimal(n_peers))
+
+        # Shrink toward neutral for sector-based comparison (less reliable than trial-based)
+        shrink_factor = Decimal("0.5")  # More shrinkage for sector-based
+        valuation_score = Decimal("50") + (percentile - Decimal("50")) * shrink_factor
+        valuation_score = _clamp(valuation_score, Decimal("0"), Decimal("100"))
+
+        return ValuationSignal(
+            valuation_score=_quantize_score(valuation_score),
+            mcap_per_asset=None,  # Not applicable for sector-based
+            peer_median_mcap_per_asset=_quantize_score(peer_mcaps_sorted[n_peers // 2]),
+            peer_count=n_peers,
+            confidence=Decimal("0.4"),  # Lower confidence for sector-based fallback
         )
 
     # Winsorize inputs to reduce outlier impact

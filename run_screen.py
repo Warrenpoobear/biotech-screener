@@ -1209,8 +1209,8 @@ def run_screening_pipeline(
     data_dir: Path,
     universe_tickers: Optional[List[str]] = None,
     enable_coinvest: bool = False,
-    enable_enhancements: bool = False,
-    enable_short_interest: bool = False,
+    enable_enhancements: bool = True,
+    enable_short_interest: bool = True,
     checkpoint_dir: Optional[Path] = None,
     resume_from: Optional[str] = None,
     audit_log_path: Optional[Path] = None,
@@ -1626,8 +1626,14 @@ def run_screening_pipeline(
     # ========================================================================
     enhancement_result = None
 
-    if enable_enhancements and HAS_ENHANCEMENTS:
-        logger.info("[5.5/7] Enhancement Layer: PoS + Regime + Short Interest...")
+    # Run enhancement layer if enhancements enabled OR if short interest enabled with data
+    should_run_enhancements = (enable_enhancements and HAS_ENHANCEMENTS) or (enable_short_interest and short_interest_data)
+
+    if should_run_enhancements:
+        if enable_enhancements and HAS_ENHANCEMENTS:
+            logger.info("[5.5/7] Enhancement Layer: PoS + Regime + Short Interest...")
+        else:
+            logger.info("[5.5/7] Enhancement Layer: Short Interest only...")
 
         # Check for checkpoint
         if resume_index > 4 and checkpoint_dir:
@@ -1636,14 +1642,14 @@ def run_screening_pipeline(
         if enhancement_result is None:
             as_of_date_obj = to_date_object(as_of_date)
 
-            # Initialize engines
-            pos_engine = ProbabilityOfSuccessEngine()
-            regime_engine = RegimeDetectionEngine()
+            # Initialize engines (PoS/Regime only if full enhancements enabled)
+            pos_engine = ProbabilityOfSuccessEngine() if (enable_enhancements and HAS_ENHANCEMENTS) else None
+            regime_engine = RegimeDetectionEngine() if (enable_enhancements and HAS_ENHANCEMENTS) else None
             si_engine = ShortInterestSignalEngine() if short_interest_data else None
 
-            # Step 1: Detect market regime
+            # Step 1: Detect market regime (only if regime_engine available)
             regime_result = None
-            if market_snapshot:
+            if regime_engine and market_snapshot:
                 try:
                     # Extract data date from provenance for staleness check
                     data_date_str = None
@@ -1671,60 +1677,64 @@ def run_screening_pipeline(
                 except Exception as e:
                     logger.warning(f"  Regime detection failed: {e}")
                     regime_result = {"regime": "UNKNOWN", "signal_adjustments": {}}
-            else:
+            elif regime_engine:
                 regime_result = {"regime": "UNKNOWN", "signal_adjustments": {}}
                 logger.info("  Regime: UNKNOWN (no market snapshot)")
+            else:
+                regime_result = {"regime": "UNKNOWN", "signal_adjustments": {}}
 
-            # Step 2: Calculate PoS scores for each ticker
-            # Build universe data from trial records (extract stage and indication)
-            pos_universe = []
-            ticker_stage_map = {}  # ticker -> {stage, indication}
+            # Step 2: Calculate PoS scores for each ticker (only if pos_engine available)
+            pos_result = None
+            if pos_engine:
+                # Build universe data from trial records (extract stage and indication)
+                pos_universe = []
+                ticker_stage_map = {}  # ticker -> {stage, indication}
 
-            # Build stage map from clinical results (including design score for PoS)
-            for clinical_score in m4_result.get("scores", []):
-                ticker = clinical_score.get("ticker")
-                if ticker:
-                    # Extract design_score and normalize to 0.7-1.3 multiplier for PoS
-                    # design_score is 0-25 scale; 12 = baseline (1.0x)
-                    raw_design = Decimal(str(clinical_score.get("design_score", "12")))
-                    # Linear mapping: 0 -> 0.7, 12 -> 1.0, 25 -> 1.3
-                    design_quality = Decimal("0.7") + (raw_design / Decimal("25")) * Decimal("0.6")
-                    design_quality = max(Decimal("0.7"), min(Decimal("1.3"), design_quality))
+                # Build stage map from clinical results (including design score for PoS)
+                for clinical_score in m4_result.get("scores", []):
+                    ticker = clinical_score.get("ticker")
+                    if ticker:
+                        # Extract design_score and normalize to 0.7-1.3 multiplier for PoS
+                        # design_score is 0-25 scale; 12 = baseline (1.0x)
+                        raw_design = Decimal(str(clinical_score.get("design_score", "12")))
+                        # Linear mapping: 0 -> 0.7, 12 -> 1.0, 25 -> 1.3
+                        design_quality = Decimal("0.7") + (raw_design / Decimal("25")) * Decimal("0.6")
+                        design_quality = max(Decimal("0.7"), min(Decimal("1.3"), design_quality))
 
-                    ticker_stage_map[ticker] = {
-                        "base_stage": clinical_score.get("lead_phase", "phase_2"),
-                        "indication": clinical_score.get("lead_indication"),
-                        "trial_design_quality": design_quality,
-                    }
+                        ticker_stage_map[ticker] = {
+                            "base_stage": clinical_score.get("lead_phase", "phase_2"),
+                            "indication": clinical_score.get("lead_indication"),
+                            "trial_design_quality": design_quality,
+                        }
 
-            # Use IndicationMapper to auto-detect indications from trial conditions
-            indication_mapper = IndicationMapper()
-            indication_map = indication_mapper.map_universe(
-                tickers=active_tickers,
-                trial_records=trial_records,
-                as_of_date=as_of_date_obj
-            )
-            logger.info(f"  Indication mapping: {len(indication_map)} tickers mapped")
+                # Use IndicationMapper to auto-detect indications from trial conditions
+                indication_mapper = IndicationMapper()
+                indication_map = indication_mapper.map_universe(
+                    tickers=active_tickers,
+                    trial_records=trial_records,
+                    as_of_date=as_of_date_obj
+                )
+                logger.info(f"  Indication mapping: {len(indication_map)} tickers mapped")
 
-            for ticker in active_tickers:
-                stage_info = ticker_stage_map.get(ticker, {"base_stage": "phase_2"})
-                # Get indication from mapper (auto-detected from conditions)
-                mapped_indication = indication_map.get(ticker.upper(), {}).get("indication")
-                # Fall back to clinical data if mapper returns None
-                final_indication = mapped_indication or stage_info.get("indication")
-                pos_universe.append({
-                    "ticker": ticker,
-                    "base_stage": stage_info.get("base_stage", "phase_2"),
-                    "indication": final_indication,
-                    "trial_design_quality": stage_info.get("trial_design_quality"),
-                })
+                for ticker in active_tickers:
+                    stage_info = ticker_stage_map.get(ticker, {"base_stage": "phase_2"})
+                    # Get indication from mapper (auto-detected from conditions)
+                    mapped_indication = indication_map.get(ticker.upper(), {}).get("indication")
+                    # Fall back to clinical data if mapper returns None
+                    final_indication = mapped_indication or stage_info.get("indication")
+                    pos_universe.append({
+                        "ticker": ticker,
+                        "base_stage": stage_info.get("base_stage", "phase_2"),
+                        "indication": final_indication,
+                        "trial_design_quality": stage_info.get("trial_design_quality"),
+                    })
 
-            pos_result = pos_engine.score_universe(pos_universe, as_of_date_obj)
-            pos_diag = pos_result['diagnostic_counts']
-            conf_dist = pos_diag.get('confidence_distribution', {})
-            logger.info(f"  PoS: mapped={pos_diag['indication_coverage_pct']} | "
-                        f"effective(>=0.40)={pos_diag.get('effective_coverage_pct', 'N/A')} | "
-                        f"conf(H/M/L)={conf_dist.get('high', 0)}/{conf_dist.get('medium', 0)}/{conf_dist.get('low', 0)}")
+                pos_result = pos_engine.score_universe(pos_universe, as_of_date_obj)
+                pos_diag = pos_result['diagnostic_counts']
+                conf_dist = pos_diag.get('confidence_distribution', {})
+                logger.info(f"  PoS: mapped={pos_diag['indication_coverage_pct']} | "
+                            f"effective(>=0.40)={pos_diag.get('effective_coverage_pct', 'N/A')} | "
+                            f"conf(H/M/L)={conf_dist.get('high', 0)}/{conf_dist.get('medium', 0)}/{conf_dist.get('low', 0)}")
 
             # Step 3: Calculate short interest signals (if data available)
             si_result = None
@@ -1890,10 +1900,10 @@ def run_screening_pipeline(
                         logger.warning(f"  Timeline slippage scoring failed: {e}")
                         timeline_slippage_result = None
 
-            # Assemble enhancement result
+            # Assemble enhancement result (use empty dicts for None values to avoid downstream .get() errors)
             enhancement_result = {
-                "regime": regime_result,
-                "pos_scores": pos_result,
+                "regime": regime_result or {"regime": "UNKNOWN", "signal_adjustments": {}},
+                "pos_scores": pos_result or {},
                 "short_interest_scores": si_result,
                 "accuracy_enhancements": accuracy_result,
                 "dilution_risk_scores": dilution_risk_result,
@@ -1902,8 +1912,8 @@ def run_screening_pipeline(
                     "module": "enhancements",
                     "version": "1.2.0",  # Bumped for dilution risk + timeline slippage
                     "as_of_date": as_of_date,
-                    "pos_engine_version": pos_engine.VERSION,
-                    "regime_engine_version": regime_engine.VERSION,
+                    "pos_engine_version": pos_engine.VERSION if pos_engine else None,
+                    "regime_engine_version": regime_engine.VERSION if regime_engine else None,
                     "accuracy_adapter_version": "1.0.0" if HAS_ACCURACY_ENHANCEMENTS else None,
                     "dilution_risk_engine_version": "1.0.0" if HAS_DILUTION_RISK else None,
                     "timeline_slippage_engine_version": "1.0.0" if HAS_TIMELINE_SLIPPAGE else None,
@@ -2205,15 +2215,31 @@ Module 3 Catalyst Detection:
     parser.add_argument(
         "--enable-enhancements",
         action="store_true",
+        default=True,
+        dest="enable_enhancements",
         help="Enable enhancement modules (PoS, Short Interest, Regime Detection). "
-             "Requires market_snapshot.json for regime detection.",
+             "Enabled by default. Requires market_snapshot.json for regime detection.",
+    )
+    parser.add_argument(
+        "--no-enhancements",
+        action="store_false",
+        dest="enable_enhancements",
+        help="Disable enhancement modules (PoS, Short Interest, Regime Detection).",
     )
 
     parser.add_argument(
         "--enable-short-interest",
         action="store_true",
+        default=True,
+        dest="enable_short_interest",
         help="Enable short interest signals (requires short_interest.json in data-dir). "
-             "Implied by --enable-enhancements if data is available.",
+             "Enabled by default.",
+    )
+    parser.add_argument(
+        "--no-short-interest",
+        action="store_false",
+        dest="enable_short_interest",
+        help="Disable short interest signals.",
     )
 
     parser.add_argument(
