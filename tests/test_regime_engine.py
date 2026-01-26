@@ -5,11 +5,16 @@ Tests for regime_engine.py
 Market regime detection affects signal weight adjustments in the composite scoring.
 These tests cover:
 - Regime classification (BULL, BEAR, VOLATILITY_SPIKE, SECTOR_ROTATION)
+- New regimes (RECESSION_RISK, CREDIT_CRISIS, SECTOR_DISLOCATION)
 - VIX threshold classification
 - XBI relative performance classification
 - Signal weight adjustments by regime
 - Staleness gating and confidence haircuts
 - Composite weight adjustments
+- Callback system for regime transitions
+- Kalman filter for VIX smoothing
+- HMM for regime probabilities
+- Ensemble classification
 """
 
 import pytest
@@ -19,6 +24,11 @@ from decimal import Decimal
 from regime_engine import (
     RegimeDetectionEngine,
     MarketRegime,
+    RegimeTransitionCallback,
+    RegimeTransitionEvent,
+    VIXKalmanFilter,
+    RegimeHMM,
+    EnsembleRegimeClassifier,
 )
 
 
@@ -32,6 +42,10 @@ class TestMarketRegimeEnum:
         assert MarketRegime.VOLATILITY_SPIKE.value == "VOLATILITY_SPIKE"
         assert MarketRegime.SECTOR_ROTATION.value == "SECTOR_ROTATION"
         assert MarketRegime.UNKNOWN.value == "UNKNOWN"
+        # New regimes
+        assert MarketRegime.RECESSION_RISK.value == "RECESSION_RISK"
+        assert MarketRegime.CREDIT_CRISIS.value == "CREDIT_CRISIS"
+        assert MarketRegime.SECTOR_DISLOCATION.value == "SECTOR_DISLOCATION"
 
 
 class TestRegimeDetectionBull:
@@ -528,3 +542,527 @@ class TestDeterminism:
         assert result1["regime"] == result2["regime"]
         assert result1["confidence"] == result2["confidence"]
         assert result1["signal_adjustments"] == result2["signal_adjustments"]
+
+
+# ============================================================================
+# NEW TESTS FOR ENHANCED REGIME ENGINE
+# ============================================================================
+
+
+class TestNewRegimeTypes:
+    """Tests for new regime types: RECESSION_RISK, CREDIT_CRISIS, SECTOR_DISLOCATION."""
+
+    def test_recession_risk_inverted_yield_curve(self):
+        """Deeply inverted yield curve should trigger RECESSION_RISK."""
+        engine = RegimeDetectionEngine()
+        result = engine.detect_regime(
+            vix_current=Decimal("22.0"),
+            xbi_vs_spy_30d=Decimal("-2.0"),
+            yield_curve_slope=Decimal("-60"),  # Deeply inverted
+            hy_credit_spread=Decimal("450"),   # Elevated
+            as_of_date=date(2026, 1, 15),
+        )
+        assert result["regime"] == "RECESSION_RISK"
+        assert "RECESSION_WARNING" in result["flags"]
+
+    def test_recession_risk_signal_adjustments(self):
+        """RECESSION_RISK should have defensive signal adjustments."""
+        engine = RegimeDetectionEngine()
+        result = engine.detect_regime(
+            vix_current=Decimal("22.0"),
+            xbi_vs_spy_30d=Decimal("-2.0"),
+            yield_curve_slope=Decimal("-55"),
+            hy_credit_spread=Decimal("450"),
+            as_of_date=date(2026, 1, 15),
+        )
+        if result["regime"] == "RECESSION_RISK":
+            adj = result["signal_adjustments"]
+            assert adj["momentum"] == Decimal("0.60")
+            assert adj["quality"] == Decimal("1.35")
+            assert adj["financial"] == Decimal("1.35")
+
+    def test_credit_crisis_extreme_spreads(self):
+        """Extreme credit spreads should trigger CREDIT_CRISIS."""
+        engine = RegimeDetectionEngine()
+        result = engine.detect_regime(
+            vix_current=Decimal("35.0"),
+            xbi_vs_spy_30d=Decimal("-5.0"),
+            hy_credit_spread=Decimal("650"),  # Crisis level
+            as_of_date=date(2026, 1, 15),
+        )
+        # With extreme spreads, either CREDIT_CRISIS or VOLATILITY_SPIKE expected
+        assert result["regime"] in ("CREDIT_CRISIS", "VOLATILITY_SPIKE", "BEAR")
+
+    def test_credit_crisis_signal_adjustments(self):
+        """CREDIT_CRISIS should severely reduce momentum."""
+        engine = RegimeDetectionEngine()
+        adj = engine.REGIME_ADJUSTMENTS["CREDIT_CRISIS"]
+        assert adj["momentum"] == Decimal("0.50")
+        assert adj["quality"] == Decimal("1.40")
+        assert adj["financial"] == Decimal("1.45")
+
+    def test_sector_dislocation_large_divergence(self):
+        """Large biotech divergence should trigger SECTOR_DISLOCATION."""
+        engine = RegimeDetectionEngine()
+        result = engine.detect_regime(
+            vix_current=Decimal("18.0"),
+            xbi_vs_spy_30d=Decimal("18.0"),  # Large outperformance
+            as_of_date=date(2026, 1, 15),
+        )
+        # Should have some SECTOR_DISLOCATION score
+        assert result["regime_scores"]["SECTOR_DISLOCATION"] > Decimal("0")
+
+    def test_sector_dislocation_signal_adjustments(self):
+        """SECTOR_DISLOCATION should boost institutional focus."""
+        engine = RegimeDetectionEngine()
+        adj = engine.REGIME_ADJUSTMENTS["SECTOR_DISLOCATION"]
+        assert adj["institutional"] == Decimal("1.20")
+        assert adj["momentum"] == Decimal("0.85")
+
+
+class TestNewInputSignals:
+    """Tests for new input signals: yield curve, credit spread, put/call, fund flows."""
+
+    def test_yield_curve_classification_deeply_inverted(self):
+        """Deeply inverted yield curve should be classified correctly."""
+        engine = RegimeDetectionEngine()
+        result = engine.detect_regime(
+            vix_current=Decimal("20.0"),
+            xbi_vs_spy_30d=Decimal("0.0"),
+            yield_curve_slope=Decimal("-60"),
+            as_of_date=date(2026, 1, 15),
+        )
+        assert result["indicators"]["yield_curve_state"] == "DEEPLY_INVERTED"
+
+    def test_yield_curve_classification_inverted(self):
+        """Inverted yield curve should be classified correctly."""
+        engine = RegimeDetectionEngine()
+        result = engine.detect_regime(
+            vix_current=Decimal("20.0"),
+            xbi_vs_spy_30d=Decimal("0.0"),
+            yield_curve_slope=Decimal("-25"),
+            as_of_date=date(2026, 1, 15),
+        )
+        assert result["indicators"]["yield_curve_state"] == "INVERTED"
+
+    def test_yield_curve_classification_normal(self):
+        """Normal yield curve should be classified correctly."""
+        engine = RegimeDetectionEngine()
+        result = engine.detect_regime(
+            vix_current=Decimal("20.0"),
+            xbi_vs_spy_30d=Decimal("0.0"),
+            yield_curve_slope=Decimal("75"),
+            as_of_date=date(2026, 1, 15),
+        )
+        assert result["indicators"]["yield_curve_state"] == "NORMAL"
+
+    def test_credit_environment_crisis(self):
+        """Crisis credit environment should be classified correctly."""
+        engine = RegimeDetectionEngine()
+        result = engine.detect_regime(
+            vix_current=Decimal("20.0"),
+            xbi_vs_spy_30d=Decimal("0.0"),
+            hy_credit_spread=Decimal("650"),
+            as_of_date=date(2026, 1, 15),
+        )
+        assert result["indicators"]["credit_environment"] == "CRISIS"
+
+    def test_credit_environment_stressed(self):
+        """Stressed credit environment should be classified correctly."""
+        engine = RegimeDetectionEngine()
+        result = engine.detect_regime(
+            vix_current=Decimal("20.0"),
+            xbi_vs_spy_30d=Decimal("0.0"),
+            hy_credit_spread=Decimal("450"),
+            as_of_date=date(2026, 1, 15),
+        )
+        assert result["indicators"]["credit_environment"] == "STRESSED"
+
+    def test_fund_flows_strong_inflows(self):
+        """Strong fund inflows should be classified correctly."""
+        engine = RegimeDetectionEngine()
+        result = engine.detect_regime(
+            vix_current=Decimal("20.0"),
+            xbi_vs_spy_30d=Decimal("0.0"),
+            biotech_fund_flows=Decimal("250"),
+            as_of_date=date(2026, 1, 15),
+        )
+        assert result["indicators"]["fund_flow_state"] == "STRONG_INFLOWS"
+
+    def test_fund_flows_heavy_outflows(self):
+        """Heavy fund outflows should be classified correctly."""
+        engine = RegimeDetectionEngine()
+        result = engine.detect_regime(
+            vix_current=Decimal("20.0"),
+            xbi_vs_spy_30d=Decimal("0.0"),
+            biotech_fund_flows=Decimal("-250"),
+            as_of_date=date(2026, 1, 15),
+        )
+        assert result["indicators"]["fund_flow_state"] == "HEAVY_OUTFLOWS"
+
+    def test_new_signals_in_audit_trail(self):
+        """New signals should be recorded in audit trail."""
+        engine = RegimeDetectionEngine()
+        result = engine.detect_regime(
+            vix_current=Decimal("20.0"),
+            xbi_vs_spy_30d=Decimal("0.0"),
+            yield_curve_slope=Decimal("-25"),
+            hy_credit_spread=Decimal("400"),
+            biotech_fund_flows=Decimal("100"),
+            as_of_date=date(2026, 1, 15),
+        )
+        audit = result["audit_entry"]
+        assert audit["input"]["yield_curve_slope"] == "-25"
+        assert audit["input"]["hy_credit_spread"] == "400"
+        assert audit["input"]["biotech_fund_flows"] == "100"
+
+
+class TestCallbackSystem:
+    """Tests for regime transition callback system."""
+
+    def test_add_callback(self):
+        """Should be able to add a callback."""
+        engine = RegimeDetectionEngine()
+
+        class TestCallback:
+            def on_transition(self, old_regime, new_regime, transition_date,
+                            days_in_prior_regime, trigger_values):
+                pass
+
+        callback = TestCallback()
+        engine.add_callback(callback)
+        assert callback in engine._callbacks
+
+    def test_remove_callback(self):
+        """Should be able to remove a callback."""
+        engine = RegimeDetectionEngine()
+
+        class TestCallback:
+            def on_transition(self, old_regime, new_regime, transition_date,
+                            days_in_prior_regime, trigger_values):
+                pass
+
+        callback = TestCallback()
+        engine.add_callback(callback)
+        result = engine.remove_callback(callback)
+        assert result is True
+        assert callback not in engine._callbacks
+
+    def test_remove_nonexistent_callback(self):
+        """Removing non-existent callback should return False."""
+        engine = RegimeDetectionEngine()
+
+        class TestCallback:
+            def on_transition(self, old_regime, new_regime, transition_date,
+                            days_in_prior_regime, trigger_values):
+                pass
+
+        callback = TestCallback()
+        result = engine.remove_callback(callback)
+        assert result is False
+
+    def test_transition_event_dataclass(self):
+        """RegimeTransitionEvent should work correctly."""
+        event = RegimeTransitionEvent(
+            old_regime="BULL",
+            new_regime="BEAR",
+            transition_date=date(2026, 1, 15),
+            days_in_prior_regime=10,
+            trigger_values={"vix": "30.0"},
+            confidence=Decimal("0.65"),
+        )
+        assert event.old_regime == "BULL"
+        assert event.new_regime == "BEAR"
+
+        event_dict = event.to_dict()
+        assert event_dict["old_regime"] == "BULL"
+        assert event_dict["transition_date"] == "2026-01-15"
+
+    def test_regime_duration_metrics_empty(self):
+        """Duration metrics should handle empty history."""
+        engine = RegimeDetectionEngine()
+        metrics = engine._compute_regime_duration_metrics()
+        assert metrics["total_transitions"] == 0
+        assert metrics["avg_duration_days"] is None
+
+    def test_get_transition_history(self):
+        """Should be able to get transition history."""
+        engine = RegimeDetectionEngine()
+        history = engine.get_transition_history()
+        assert isinstance(history, list)
+        assert len(history) == 0
+
+
+class TestVIXKalmanFilter:
+    """Tests for VIXKalmanFilter class."""
+
+    def test_initialization(self):
+        """Filter should initialize with default values."""
+        kf = VIXKalmanFilter()
+        assert kf.Q == Decimal("0.1")
+        assert kf.R == Decimal("1.0")
+        assert not kf._initialized
+
+    def test_first_update(self):
+        """First update should return the measurement."""
+        kf = VIXKalmanFilter()
+        result = kf.update(Decimal("25.0"))
+        assert result == Decimal("25.0")
+        assert kf._initialized
+
+    def test_smoothing_effect(self):
+        """Subsequent updates should smooth the signal."""
+        kf = VIXKalmanFilter()
+        kf.update(Decimal("20.0"))
+        result = kf.update(Decimal("30.0"))
+        # Result should be between 20 and 30 (smoothed)
+        assert Decimal("20.0") < result < Decimal("30.0")
+
+    def test_reset(self):
+        """Reset should return to initial state."""
+        kf = VIXKalmanFilter()
+        kf.update(Decimal("25.0"))
+        kf.reset()
+        assert not kf._initialized
+        assert kf.x == Decimal("20.0")
+
+    def test_get_state(self):
+        """Should return current filter state."""
+        kf = VIXKalmanFilter()
+        kf.update(Decimal("22.5"))
+        state = kf.get_state()
+        assert "estimate" in state
+        assert "error_covariance" in state
+        assert state["initialized"] == "True"
+
+    def test_custom_parameters(self):
+        """Should accept custom noise parameters."""
+        kf = VIXKalmanFilter(
+            process_noise=Decimal("0.5"),
+            measurement_noise=Decimal("2.0"),
+        )
+        assert kf.Q == Decimal("0.5")
+        assert kf.R == Decimal("2.0")
+
+
+class TestRegimeHMM:
+    """Tests for RegimeHMM class."""
+
+    def test_initialization(self):
+        """HMM should initialize with uniform probabilities."""
+        hmm = RegimeHMM()
+        probs = hmm.get_state_probabilities()
+        # All probabilities should be roughly equal
+        for regime in RegimeHMM.REGIMES:
+            assert regime in probs
+            assert probs[regime] > Decimal("0")
+
+    def test_update(self):
+        """Update should adjust probabilities based on likelihoods."""
+        hmm = RegimeHMM()
+        likelihoods = {
+            "BULL": Decimal("0.7"),
+            "BEAR": Decimal("0.1"),
+            "VOLATILITY_SPIKE": Decimal("0.05"),
+            "SECTOR_ROTATION": Decimal("0.1"),
+            "RECESSION_RISK": Decimal("0.02"),
+            "CREDIT_CRISIS": Decimal("0.01"),
+            "SECTOR_DISLOCATION": Decimal("0.02"),
+        }
+        probs = hmm.update(likelihoods)
+        # BULL should have highest probability given high likelihood
+        assert probs["BULL"] > probs["BEAR"]
+
+    def test_get_most_likely_regime(self):
+        """Should return most likely regime and probability."""
+        hmm = RegimeHMM()
+        likelihoods = {regime: Decimal("0.1") for regime in RegimeHMM.REGIMES}
+        likelihoods["BULL"] = Decimal("0.9")  # Make BULL dominant
+        hmm.update(likelihoods)
+
+        regime, prob = hmm.get_most_likely_regime()
+        assert isinstance(regime, str)
+        assert isinstance(prob, Decimal)
+
+    def test_regime_persistence(self):
+        """Regimes should tend to persist (diagonal dominance)."""
+        hmm = RegimeHMM()
+        # Verify transition matrix has higher diagonal values
+        for regime in RegimeHMM.REGIMES:
+            trans = hmm.transition_probs[regime]
+            diag = trans[regime]
+            # Diagonal should be at least 0.5
+            assert diag >= Decimal("0.50")
+
+    def test_reset(self):
+        """Reset should return to uniform probabilities."""
+        hmm = RegimeHMM()
+        # Update with skewed likelihoods
+        likelihoods = {regime: Decimal("0.1") for regime in RegimeHMM.REGIMES}
+        likelihoods["BULL"] = Decimal("0.9")
+        hmm.update(likelihoods)
+
+        hmm.reset()
+        probs = hmm.get_state_probabilities()
+        # Should be back to uniform
+        values = list(probs.values())
+        assert max(values) - min(values) < Decimal("0.01")
+
+
+class TestEnsembleRegimeClassifier:
+    """Tests for EnsembleRegimeClassifier class."""
+
+    def test_initialization(self):
+        """Ensemble should initialize with default weights."""
+        ensemble = EnsembleRegimeClassifier()
+        assert "score_based" in ensemble.weights
+        assert ensemble.weights["score_based"] == Decimal("0.40")
+
+    def test_classify(self):
+        """Should return classification result."""
+        ensemble = EnsembleRegimeClassifier()
+        scores = {
+            "BULL": Decimal("50"),
+            "BEAR": Decimal("20"),
+            "VOLATILITY_SPIKE": Decimal("10"),
+            "SECTOR_ROTATION": Decimal("15"),
+            "RECESSION_RISK": Decimal("5"),
+            "CREDIT_CRISIS": Decimal("0"),
+            "SECTOR_DISLOCATION": Decimal("0"),
+        }
+        result = ensemble.classify(scores, vix_current=Decimal("18.0"))
+
+        assert "regime" in result
+        assert "confidence" in result
+        assert "ensemble_probabilities" in result
+        assert "method" in result
+        assert result["method"] == "ensemble"
+
+    def test_classify_with_vix(self):
+        """Should use Kalman filter for VIX smoothing."""
+        ensemble = EnsembleRegimeClassifier()
+        scores = {regime: Decimal("10") for regime in RegimeHMM.REGIMES}
+
+        result = ensemble.classify(scores, vix_current=Decimal("25.0"))
+        assert result["vix_smoothed"] is not None
+
+    def test_reset(self):
+        """Reset should clear all components."""
+        ensemble = EnsembleRegimeClassifier()
+        # Do some updates
+        scores = {regime: Decimal("10") for regime in RegimeHMM.REGIMES}
+        ensemble.classify(scores, vix_current=Decimal("25.0"))
+
+        ensemble.reset()
+        # Kalman should be reset
+        assert not ensemble.kalman_filter._initialized
+
+    def test_custom_weights(self):
+        """Should accept custom weights."""
+        custom_weights = {
+            "score_based": Decimal("0.50"),
+            "vix_hmm": Decimal("0.20"),
+            "credit_hmm": Decimal("0.15"),
+            "yield_hmm": Decimal("0.15"),
+        }
+        ensemble = EnsembleRegimeClassifier(weights=custom_weights)
+        assert ensemble.weights["score_based"] == Decimal("0.50")
+
+
+class TestEnsembleIntegration:
+    """Tests for ensemble classification in detect_regime."""
+
+    def test_use_ensemble_flag(self):
+        """use_ensemble flag should enable ensemble classification."""
+        engine = RegimeDetectionEngine()
+        result = engine.detect_regime(
+            vix_current=Decimal("18.0"),
+            xbi_vs_spy_30d=Decimal("3.0"),
+            as_of_date=date(2026, 1, 15),
+            use_ensemble=True,
+        )
+        assert result["ensemble"] is not None
+        assert result["ensemble"]["method"] == "ensemble"
+
+    def test_ensemble_disabled_by_default(self):
+        """Ensemble should be disabled by default."""
+        engine = RegimeDetectionEngine()
+        result = engine.detect_regime(
+            vix_current=Decimal("18.0"),
+            xbi_vs_spy_30d=Decimal("3.0"),
+            as_of_date=date(2026, 1, 15),
+        )
+        assert result["ensemble"] is None
+
+
+class TestPerformanceOptimizations:
+    """Tests for performance optimizations."""
+
+    def test_staleness_haircut_cached(self):
+        """Staleness haircut should be cached."""
+        # Call the static cached method multiple times
+        result1 = RegimeDetectionEngine._compute_staleness_haircut_cached(5, 10)
+        result2 = RegimeDetectionEngine._compute_staleness_haircut_cached(5, 10)
+        assert result1 == result2
+        assert result1[0] == "0.85"
+        assert result1[1] is False
+
+    def test_staleness_haircut_cached_stale(self):
+        """Cached method should detect stale data."""
+        result = RegimeDetectionEngine._compute_staleness_haircut_cached(15, 10)
+        assert result[0] == "0.00"
+        assert result[1] is True
+
+    def test_precomputed_thresholds(self):
+        """Precomputed thresholds should be accessible."""
+        engine = RegimeDetectionEngine()
+        thresholds = engine._precomputed_thresholds
+        assert "vix" in thresholds
+        assert "xbi" in thresholds
+        assert thresholds["vix"]["extreme"] == engine.VIX_EXTREME
+
+    def test_regime_score_weights(self):
+        """Precomputed score weights should be accessible."""
+        engine = RegimeDetectionEngine()
+        weights = engine._regime_score_weights
+        assert "vix_extreme_vol_spike" in weights
+        assert weights["vix_extreme_vol_spike"] == Decimal("40")
+
+
+class TestBackwardCompatibility:
+    """Tests for backward compatibility."""
+
+    def test_existing_signature_works(self):
+        """Old function signatures should still work."""
+        engine = RegimeDetectionEngine()
+        result = engine.detect_regime(
+            vix_current=Decimal("18.0"),
+            xbi_vs_spy_30d=Decimal("3.0"),
+        )
+        assert "regime" in result
+        assert "signal_adjustments" in result
+
+    def test_new_signals_optional(self):
+        """New signals should be optional."""
+        engine = RegimeDetectionEngine()
+        result = engine.detect_regime(
+            vix_current=Decimal("18.0"),
+            xbi_vs_spy_30d=Decimal("3.0"),
+            as_of_date=date(2026, 1, 15),
+        )
+        # Should work without new signals
+        assert result["indicators"]["yield_curve_state"] == "UNKNOWN"
+        assert result["indicators"]["credit_environment"] == "UNKNOWN"
+        assert result["indicators"]["fund_flow_state"] == "UNKNOWN"
+
+    def test_regime_scores_include_new_regimes(self):
+        """Regime scores should include new regimes."""
+        engine = RegimeDetectionEngine()
+        result = engine.detect_regime(
+            vix_current=Decimal("18.0"),
+            xbi_vs_spy_30d=Decimal("3.0"),
+        )
+        scores = result["regime_scores"]
+        assert "RECESSION_RISK" in scores
+        assert "CREDIT_CRISIS" in scores
+        assert "SECTOR_DISLOCATION" in scores

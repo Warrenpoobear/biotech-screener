@@ -121,6 +121,14 @@ except ImportError as e:
     HAS_ENHANCEMENTS = False
     logger.info(f"Enhancement modules not available: {e}")
 
+# Macro data collector for enhanced regime detection (optional)
+try:
+    from wake_robin_data_pipeline.collectors.macro_data_collector import MacroDataCollector
+    HAS_MACRO_COLLECTOR = True
+except ImportError as e:
+    HAS_MACRO_COLLECTOR = False
+    logger.info(f"Macro data collector not available: {e}")
+
 # Accuracy enhancements adapter (optional)
 try:
     from accuracy_enhancements_adapter import AccuracyEnhancementsAdapter
@@ -1647,8 +1655,28 @@ def run_screening_pipeline(
             regime_engine = RegimeDetectionEngine() if (enable_enhancements and HAS_ENHANCEMENTS) else None
             si_engine = ShortInterestSignalEngine() if short_interest_data else None
 
-            # Step 1: Detect market regime (only if regime_engine available)
+            # Step 1: Detect market regime with enhanced macro data
             regime_result = None
+            macro_snapshot = None
+
+            # Collect live macro data (yield curve, HY spread, fund flows) if available
+            if regime_engine and HAS_MACRO_COLLECTOR:
+                try:
+                    logger.info("  Collecting macro data (FRED + yfinance)...")
+                    macro_collector = MacroDataCollector()
+                    macro_snapshot = macro_collector.collect_snapshot(as_of_date_obj)
+                    macro_params = macro_collector.to_regime_engine_params(macro_snapshot)
+
+                    logger.info(f"    Yield curve: {macro_snapshot.yield_curve_slope_bps} bps")
+                    logger.info(f"    HY spread: {macro_snapshot.hy_credit_spread_bps} bps")
+                    logger.info(f"    Biotech flows (XBI+IBB): {macro_snapshot.biotech_fund_flows_mm} MM")
+                    logger.info(f"    Data quality: {macro_snapshot.data_quality.get('completeness', 'N/A')}")
+                except Exception as e:
+                    logger.warning(f"  Macro data collection failed: {e}")
+                    macro_params = {}
+            else:
+                macro_params = {}
+
             if regime_engine and market_snapshot:
                 try:
                     # Extract data date from provenance for staleness check
@@ -1657,23 +1685,32 @@ def run_screening_pipeline(
                         data_date_str = market_snapshot["provenance"].get("as_of_date")
                     data_as_of_date = date.fromisoformat(data_date_str) if data_date_str else None
 
+                    # Enhanced regime detection with macro data
                     regime_result = regime_engine.detect_regime(
                         vix_current=Decimal(str(market_snapshot.get("vix", "20"))),
                         xbi_vs_spy_30d=Decimal(str(market_snapshot.get("xbi_vs_spy_30d", "0"))),
                         fed_rate_change_3m=Decimal(str(market_snapshot.get("fed_rate_change_3m", "0")))
                             if market_snapshot.get("fed_rate_change_3m") is not None else None,
                         as_of_date=as_of_date_obj,
-                        data_as_of_date=data_as_of_date
+                        data_as_of_date=data_as_of_date,
+                        **macro_params  # Include yield curve, HY spread, fund flows
                     )
 
                     # Log regime with staleness info if applicable
                     staleness = regime_result.get('staleness')
+                    indicators = regime_result.get('indicators', {})
                     if staleness and staleness.get('is_stale'):
                         logger.warning(f"  Regime: UNKNOWN (data stale: {staleness['age_days']} days old)")
                     elif staleness and staleness.get('action') == 'HAIRCUT_APPLIED':
                         logger.info(f"  Regime: {regime_result['regime']} (confidence: {regime_result['confidence']}, {staleness['age_days']}d stale → {staleness['haircut_multiplier']}x haircut)")
                     else:
                         logger.info(f"  Regime: {regime_result['regime']} (confidence: {regime_result['confidence']})")
+
+                    # Log enhanced indicators if macro data was used
+                    if macro_params:
+                        logger.info(f"    Yield curve state: {indicators.get('yield_curve_state', 'N/A')}")
+                        logger.info(f"    Credit environment: {indicators.get('credit_environment', 'N/A')}")
+                        logger.info(f"    Fund flow state: {indicators.get('fund_flow_state', 'N/A')}")
                 except Exception as e:
                     logger.warning(f"  Regime detection failed: {e}")
                     regime_result = {"regime": "UNKNOWN", "signal_adjustments": {}}
@@ -1903,6 +1940,7 @@ def run_screening_pipeline(
             # Assemble enhancement result (use empty dicts for None values to avoid downstream .get() errors)
             enhancement_result = {
                 "regime": regime_result or {"regime": "UNKNOWN", "signal_adjustments": {}},
+                "macro_snapshot": macro_snapshot.to_dict() if macro_snapshot else None,
                 "pos_scores": pos_result or {},
                 "short_interest_scores": si_result,
                 "accuracy_enhancements": accuracy_result,
@@ -1910,10 +1948,11 @@ def run_screening_pipeline(
                 "timeline_slippage_scores": timeline_slippage_result,
                 "provenance": {
                     "module": "enhancements",
-                    "version": "1.2.0",  # Bumped for dilution risk + timeline slippage
+                    "version": "1.3.0",  # Bumped for enhanced regime detection with macro data
                     "as_of_date": as_of_date,
                     "pos_engine_version": pos_engine.VERSION if pos_engine else None,
                     "regime_engine_version": regime_engine.VERSION if regime_engine else None,
+                    "macro_collector_version": "1.0.0" if HAS_MACRO_COLLECTOR else None,
                     "accuracy_adapter_version": "1.0.0" if HAS_ACCURACY_ENHANCEMENTS else None,
                     "dilution_risk_engine_version": "1.0.0" if HAS_DILUTION_RISK else None,
                     "timeline_slippage_engine_version": "1.0.0" if HAS_TIMELINE_SLIPPAGE else None,
