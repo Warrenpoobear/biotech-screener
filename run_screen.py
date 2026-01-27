@@ -2383,6 +2383,7 @@ def run_screening_pipeline(
             validate=True,
             enhancement_result=enhancement_result,
             market_data_by_ticker=market_data_by_ticker,  # Enable volatility/momentum signals
+            enable_sanity_override=False,  # Disabled: mixed v2/v3 scores cause rank artifacts
         )
         if checkpoint_dir:
             save_checkpoint(checkpoint_dir, "module_5", as_of_date, m5_result)
@@ -2708,16 +2709,16 @@ Module 3 Catalyst Detection:
     parser.add_argument(
         "--min-trials",
         type=int,
-        default=5,
-        help="Minimum number of clinical trials required for ranking (default: 5). "
-             "Tickers with fewer trials are excluded from final rankings.",
+        default=1,
+        help="Minimum number of clinical trials required for ranking (default: 1). "
+             "Tickers with no trials are excluded from final rankings.",
     )
     parser.add_argument(
         "--min-phase",
         type=str,
         choices=["preclinical", "phase1", "phase2", "phase3", "approved"],
-        default="phase1",
-        help="Minimum lead phase required for ranking (default: phase1). "
+        default="preclinical",
+        help="Minimum lead phase required for ranking (default: preclinical). "
              "Tickers with earlier-phase pipelines are excluded.",
     )
     parser.add_argument(
