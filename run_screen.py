@@ -185,6 +185,14 @@ except ImportError as e:
     HAS_PARTNERSHIP_ENGINE = False
     logger.info(f"Partnership engine not available: {e}")
 
+# Cash burn trajectory engine (optional)
+try:
+    from cash_burn_engine import CashBurnEngine
+    HAS_CASH_BURN_ENGINE = True
+except ImportError as e:
+    HAS_CASH_BURN_ENGINE = False
+    logger.info(f"Cash burn engine not available: {e}")
+
 # Optional: Risk gates for audit trail
 try:
     from risk_gates import get_parameters_snapshot as get_risk_params, compute_parameters_hash as risk_params_hash
@@ -2091,6 +2099,66 @@ def run_screening_pipeline(
                            f"moderate={strength_dist.get('moderate', 0)}, "
                            f"weak={strength_dist.get('weak', 0)}")
 
+            # Step 11: Calculate cash burn trajectory scores (if available)
+            cash_burn_result = None
+            if HAS_CASH_BURN_ENGINE:
+                cash_burn_engine = CashBurnEngine()
+
+                # Load quarterly burn history data (if available)
+                quarterly_burn_path = Path(data_dir) / "quarterly_burn_history.json"
+                quarterly_burn_by_ticker = {}
+                if quarterly_burn_path.exists():
+                    try:
+                        with open(quarterly_burn_path) as f:
+                            quarterly_data = json.load(f)
+                        burn_history = quarterly_data.get("burn_history", {})
+                        for ticker, data in burn_history.items():
+                            quarterly_burn_by_ticker[ticker.upper()] = data.get("quarterly_burn", [])
+                        logger.info(f"  Loaded quarterly burn history for {len(quarterly_burn_by_ticker)} tickers")
+                    except Exception as e:
+                        logger.warning(f"  Failed to load quarterly_burn_history.json: {e}")
+
+                # Build financial data map for cash burn engine
+                # Uses runway_months from Module 2 and quarterly burn data
+                cash_burn_financial = {}
+                for score in m2_result.get("scores", []):
+                    ticker = score.get("ticker", "").upper()
+                    if ticker:
+                        cash_burn_financial[ticker] = {
+                            "runway_months": score.get("runway_months"),
+                            "cash_position": score.get("liquid_assets") or score.get("cash"),
+                            "quarterly_burn": quarterly_burn_by_ticker.get(ticker, []),
+                        }
+
+                # Build clinical data map for Phase 3 detection
+                cash_burn_clinical = {}
+                if m4_result:
+                    for score in m4_result.get("scores", []):
+                        ticker = score.get("ticker", "").upper()
+                        if ticker:
+                            cash_burn_clinical[ticker] = {
+                                "lead_phase": score.get("lead_phase"),
+                            }
+
+                cash_burn_universe = [{"ticker": t.upper()} for t in active_tickers]
+                cash_burn_result = cash_burn_engine.score_universe(
+                    cash_burn_universe, cash_burn_financial, cash_burn_clinical, as_of_date_obj
+                )
+
+                diag_cb = cash_burn_result.get("diagnostic_counts", {})
+                trajectory_dist = diag_cb.get("trajectory_distribution", {})
+                risk_dist = diag_cb.get("risk_distribution", {})
+                logger.info(f"  Cash burn trajectory: {diag_cb.get('total_scored', 0)} scored")
+                logger.info(f"    Trajectory: decel={trajectory_dist.get('decelerating', 0)}, "
+                           f"stable={trajectory_dist.get('stable', 0)}, "
+                           f"accel={trajectory_dist.get('accelerating', 0)}, "
+                           f"justified={trajectory_dist.get('accelerating_justified', 0)}, "
+                           f"unknown={trajectory_dist.get('unknown', 0)}")
+                logger.info(f"    Risk: low={risk_dist.get('low', 0)}, "
+                           f"moderate={risk_dist.get('moderate', 0)}, "
+                           f"high={risk_dist.get('high', 0)}, "
+                           f"critical={risk_dist.get('critical', 0)}")
+
             # Assemble enhancement result (use empty dicts for None values to avoid downstream .get() errors)
             enhancement_result = {
                 "regime": regime_result or {"regime": "UNKNOWN", "signal_adjustments": {}},
@@ -2104,9 +2172,10 @@ def run_screening_pipeline(
                 "pipeline_diversity_scores": pipeline_diversity_result,
                 "competitive_intensity_scores": competitive_intensity_result,
                 "partnership_scores": partnership_result,
+                "cash_burn_scores": cash_burn_result,
                 "provenance": {
                     "module": "enhancements",
-                    "version": "1.6.0",  # Bumped for partnership validation
+                    "version": "1.7.0",  # Bumped for cash burn trajectory
                     "as_of_date": as_of_date,
                     "pos_engine_version": pos_engine.VERSION if pos_engine else None,
                     "regime_engine_version": regime_engine.VERSION if regime_engine else None,
@@ -2118,6 +2187,7 @@ def run_screening_pipeline(
                     "pipeline_diversity_engine_version": PipelineDiversityEngine.VERSION if HAS_PIPELINE_DIVERSITY else None,
                     "competitive_intensity_engine_version": CompetitiveIntensityEngine.VERSION if HAS_COMPETITIVE_INTENSITY else None,
                     "partnership_engine_version": PartnershipEngine.VERSION if HAS_PARTNERSHIP_ENGINE else None,
+                    "cash_burn_engine_version": CashBurnEngine.VERSION if HAS_CASH_BURN_ENGINE else None,
                 }
             }
 
