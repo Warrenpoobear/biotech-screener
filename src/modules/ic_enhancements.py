@@ -401,7 +401,7 @@ class InteractionTerms:
     """Non-linear interaction term calculations.
 
     All adjustments use smooth ramps to avoid rank churn from discontinuities.
-    Magnitudes are bounded to ±5 points to prevent leaderboard rewrites.
+    Magnitudes are bounded to ±3 points to prevent leaderboard rewrites.
     """
     clinical_financial_synergy: Decimal  # [0, +1.5] smooth ramp
     stage_financial_interaction: Decimal  # [-2.0, 0] smooth ramp
@@ -1925,11 +1925,23 @@ def compute_interaction_terms(
 
     competitive_partnership_interaction = Decimal("0")
 
-    ci_low = competitive_crowding in ("uncrowded", "moderate")
-    ci_intense = competitive_crowding in ("highly_crowded", "crowded")
-    ps_strong = partnership_strength in ("strong", "exceptional")
-    ps_exceptional = partnership_strength == "exceptional"
-    ps_weak = partnership_strength in ("unknown", "weak", "none")
+    # Normalize CI labels (handle potential aliases from different sources)
+    ci_normalized = competitive_crowding.lower() if competitive_crowding else "unknown"
+    ci_alias_map = {
+        "low": "uncrowded",
+        "high": "crowded",
+        "intense": "highly_crowded",
+    }
+    ci_normalized = ci_alias_map.get(ci_normalized, ci_normalized)
+
+    # Normalize partnership labels
+    ps_normalized = partnership_strength.lower() if partnership_strength else "unknown"
+
+    ci_low = ci_normalized in ("uncrowded", "moderate")
+    ci_intense = ci_normalized in ("highly_crowded", "crowded")
+    ps_strong = ps_normalized in ("strong", "exceptional")
+    ps_exceptional = ps_normalized == "exceptional"
+    ps_weak = ps_normalized in ("unknown", "weak", "none", "")
 
     if ci_low and ps_strong:
         # Best combo: differentiated position + external validation
@@ -1957,7 +1969,7 @@ def compute_interaction_terms(
     # Note: catalyst dampening is informational, not added to total
     # (it's applied as a multiplier in the main function)
 
-    total = _clamp(total, Decimal("-5.0"), Decimal("5.0"))
+    total = _clamp(total, Decimal("-3.0"), Decimal("3.0"))
 
     return InteractionTerms(
         clinical_financial_synergy=_quantize_score(clinical_financial_synergy),
