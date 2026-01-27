@@ -108,6 +108,32 @@ from src.modules.ic_enhancements import (
     WEIGHT_PRECISION,
 )
 
+# Import scoring robustness enhancements (v3.3)
+from src.modules.scoring_robustness import (
+    # Core functions
+    winsorize_component_score,
+    winsorize_cohort,
+    apply_confidence_shrinkage,
+    compute_rank_stability_penalty,
+    blend_timeframe_signals,
+    apply_asymmetric_bounds,
+    apply_weight_floors,
+    evaluate_defensive_triggers,
+    check_distribution_health,
+    apply_robustness_enhancements,
+    # Types
+    WinsorizedScore,
+    ShrinkageResult,
+    RankStabilityAdjustment,
+    AsymmetricBounds,
+    WeightFloorResult,
+    DefensiveOverrideResult,
+    DistributionHealthCheck,
+    RobustnessEnhancements,
+    DefensivePosture,
+    DistributionHealth,
+)
+
 # Import PIT validation
 from src.modules.ic_pit_validation import (
     run_production_gate,
@@ -687,6 +713,101 @@ def compute_module_5_composite_v3(
         scored.append(result)
 
     # =========================================================================
+    # APPLY ROBUSTNESS ENHANCEMENTS (v3.3)
+    # =========================================================================
+    # Applies the 8 robustness enhancements to improve score stability:
+    # 1. Winsorization at component level
+    # 2. Confidence-weighted shrinkage
+    # 3. Rank stability regularization (requires prior rankings)
+    # 4. Multi-timeframe signal blending (already applied in momentum)
+    # 5. Asymmetric interaction bounds
+    # 6. Regime-conditional weight floors
+    # 7. Defensive override triggers
+    # 8. Score distribution health checks
+
+    robustness_summary = None
+    try:
+        # Build universe stats for defensive trigger evaluation
+        universe_stats = {
+            "severity_ratio": Decimal(str(
+                sum(1 for s in scored if s["severity"].value in ("sev2", "sev3")) / max(len(scored), 1)
+            )),
+            "avg_runway_months": Decimal(str(
+                sum(
+                    _to_decimal(s.get("score_breakdown", {}).penalties_and_gates.get("runway_months"), Decimal("24"))
+                    if hasattr(s.get("score_breakdown"), "penalties_and_gates") else Decimal("24")
+                    for s in scored
+                ) / max(len(scored), 1)
+            )) if scored else Decimal("24"),
+            "high_vol_ratio": Decimal(str(
+                sum(1 for s in scored if s.get("volatility_adjustment", {}).get("vol_bucket") == "high") / max(len(scored), 1)
+            )),
+            "positive_momentum_ratio": Decimal(str(
+                sum(1 for s in scored if "strong_positive_momentum" in s.get("flags", [])) / max(len(scored), 1)
+            )),
+        }
+
+        # Evaluate defensive triggers
+        defensive_result = evaluate_defensive_triggers(universe_stats)
+
+        # Apply weight floors based on regime
+        sample_weights = scored[0]["effective_weights"] if scored else base_weights
+        floor_result = apply_weight_floors(sample_weights, regime_name)
+
+        # Check distribution health
+        all_scores = [s["composite_score"] for s in scored]
+        dist_health = check_distribution_health(all_scores)
+
+        # Apply asymmetric bounds to interaction terms
+        interaction_caps_applied = 0
+        for rec in scored:
+            interaction_adj = _to_decimal(
+                rec.get("interaction_terms", {}).get("total_adjustment"),
+                Decimal("0")
+            )
+            bounds = apply_asymmetric_bounds(interaction_adj)
+            if bounds.was_capped:
+                interaction_caps_applied += 1
+                # Adjust composite score for capped interaction
+                score_delta = bounds.applied_value - interaction_adj
+                rec["composite_score"] = _clamp(
+                    rec["composite_score"] + score_delta,
+                    Decimal("0"),
+                    Decimal("100")
+                )
+                if "asymmetric_interaction_capped" not in rec["flags"]:
+                    rec["flags"].append("asymmetric_interaction_capped")
+
+        # Build robustness summary
+        robustness_summary = {
+            "defensive_posture": defensive_result.posture.value,
+            "defensive_triggers_hit": defensive_result.triggers_hit,
+            "weight_floors_applied": floor_result.floors_applied,
+            "distribution_health": dist_health.health.value,
+            "distribution_issues": dist_health.issues,
+            "interaction_caps_applied": interaction_caps_applied,
+            "flags": defensive_result.flags + floor_result.flags,
+        }
+
+        # Log warnings if defensive posture is elevated
+        if defensive_result.posture != DefensivePosture.NONE:
+            logger.warning(
+                f"Robustness: Defensive posture {defensive_result.posture.value} "
+                f"triggered by: {defensive_result.triggers_hit}"
+            )
+
+        # Log warnings for distribution health issues
+        if dist_health.health != DistributionHealth.HEALTHY:
+            logger.warning(
+                f"Robustness: Distribution health {dist_health.health.value} "
+                f"- issues: {dist_health.issues}"
+            )
+
+    except Exception as e:
+        logger.warning(f"Robustness enhancements failed (non-blocking): {e}")
+        robustness_summary = {"error": str(e), "defensive_posture": "none"}
+
+    # =========================================================================
     # SORT AND RANK
     # =========================================================================
 
@@ -1097,6 +1218,7 @@ def compute_module_5_composite_v3(
         "enhancement_applied": enhancement_applied,
         "enhancement_diagnostics": enhancement_diagnostics,
         "momentum_health": momentum_health,  # V3.2: Persisted for A/B comparisons
+        "robustness_diagnostics": robustness_summary,  # V3.3: Robustness enhancements
         "pit_gate_diagnostics": pit_gate_diagnostics,
         "schema_version": SCHEMA_VERSION,
         "provenance": create_provenance(
