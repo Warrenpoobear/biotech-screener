@@ -407,6 +407,8 @@ class InteractionTerms:
     stage_financial_interaction: Decimal  # [-2.0, 0] smooth ramp
     catalyst_volatility_dampening: Decimal  # Dampening applied (informational)
     competitive_partnership_interaction: Decimal  # [-3.0, +3.0] CI+partnership modifier
+    cash_burn_interaction: Decimal  # [-1.5, +1.5] burn trajectory modifier
+    phase_momentum_interaction: Decimal  # [-1.5, +1.5] phase momentum modifier
     total_interaction_adjustment: Decimal  # Sum of above (bounded)
     interaction_flags: List[str]
     # Gate status tracking to prevent double-counting
@@ -1785,6 +1787,10 @@ def compute_interaction_terms(
     dilution_gate_status: str = "UNKNOWN",
     competitive_crowding: str = "unknown",
     partnership_strength: str = "unknown",
+    cash_burn_trajectory: str = "unknown",
+    cash_burn_risk: str = "unknown",
+    phase_momentum: str = "unknown",
+    phase_momentum_confidence: Decimal = Decimal("0"),
 ) -> InteractionTerms:
     """
     Compute non-linear interaction terms between signals.
@@ -1962,10 +1968,73 @@ def compute_interaction_terms(
     )
 
     # =========================================================================
+    # 5. Cash Burn Trajectory Interaction (bounded ±1.5)
+    # =========================================================================
+    # Decelerating burn (financial discipline) → positive modifier
+    # Accelerating burn + high risk → negative modifier
+    # Only apply when confidence is sufficient
+
+    cash_burn_interaction = Decimal("0")
+    burn_traj = cash_burn_trajectory.lower() if cash_burn_trajectory else "unknown"
+    burn_risk = cash_burn_risk.lower() if cash_burn_risk else "unknown"
+
+    if burn_traj != "unknown":
+        if burn_traj == "decelerating":
+            # Financial discipline - reward
+            cash_burn_interaction = Decimal("1.0")
+            flags.append("burn_discipline_bonus")
+        elif burn_traj == "accelerating" and burn_risk in ("high", "critical"):
+            # Accelerating burn + short runway - penalty
+            cash_burn_interaction = Decimal("-1.5")
+            flags.append("burn_acceleration_penalty")
+        elif burn_traj == "accelerating_justified":
+            # Phase 3 justified - small penalty (already gated by risk)
+            if burn_risk == "critical":
+                cash_burn_interaction = Decimal("-0.75")
+                flags.append("burn_justified_but_critical")
+
+    cash_burn_interaction = _clamp(cash_burn_interaction, Decimal("-1.5"), Decimal("1.5"))
+
+    # =========================================================================
+    # 6. Phase Momentum Interaction (bounded ±1.5)
+    # =========================================================================
+    # Strong positive momentum → boost
+    # Strong negative momentum → penalty
+    # Only apply when confidence >= 0.6
+
+    phase_momentum_interaction = Decimal("0")
+    pm_normalized = phase_momentum.lower() if phase_momentum else "unknown"
+    pm_conf = _to_decimal(phase_momentum_confidence, Decimal("0"))
+
+    if pm_normalized != "unknown" and pm_conf >= Decimal("0.6"):
+        if pm_normalized == "strong_positive":
+            phase_momentum_interaction = Decimal("1.5")
+            flags.append("phase_momentum_boost")
+        elif pm_normalized == "positive":
+            phase_momentum_interaction = Decimal("0.75")
+            flags.append("phase_momentum_positive")
+        elif pm_normalized == "negative":
+            phase_momentum_interaction = Decimal("-0.75")
+            flags.append("phase_momentum_negative")
+        elif pm_normalized == "strong_negative":
+            phase_momentum_interaction = Decimal("-1.5")
+            flags.append("phase_momentum_penalty")
+
+    phase_momentum_interaction = _clamp(phase_momentum_interaction, Decimal("-1.5"), Decimal("1.5"))
+
+    # =========================================================================
     # Total with bounds
     # =========================================================================
     # Clamp total to prevent extreme adjustments
-    total = clinical_financial_synergy + stage_financial_interaction + competitive_partnership_interaction
+    # CI+partnership: ±3, burn: ±1.5, momentum: ±1.5, synergy: +1.5, distress: -2
+    # Max theoretical: +6.5 to -8.0, but clamped to ±3
+    total = (
+        clinical_financial_synergy
+        + stage_financial_interaction
+        + competitive_partnership_interaction
+        + cash_burn_interaction
+        + phase_momentum_interaction
+    )
     # Note: catalyst dampening is informational, not added to total
     # (it's applied as a multiplier in the main function)
 
@@ -1976,6 +2045,8 @@ def compute_interaction_terms(
         stage_financial_interaction=_quantize_score(stage_financial_interaction),
         catalyst_volatility_dampening=_quantize_score(catalyst_volatility_dampening),
         competitive_partnership_interaction=_quantize_score(competitive_partnership_interaction),
+        cash_burn_interaction=_quantize_score(cash_burn_interaction),
+        phase_momentum_interaction=_quantize_score(phase_momentum_interaction),
         total_interaction_adjustment=_quantize_score(total),
         interaction_flags=flags,
         runway_gate_already_applied=runway_gate_applied,

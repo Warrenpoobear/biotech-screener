@@ -250,7 +250,12 @@ def main():
         for q in data.get('quarterly_burn', []):
             all_quarters.add(q['period_end'])
 
-    # Build output
+    # Compute content hash for integrity verification
+    import hashlib
+    content_str = json.dumps(burn_history, sort_keys=True)
+    content_hash = hashlib.sha256(content_str.encode()).hexdigest()[:16]
+
+    # Build output with governance metadata
     output = {
         'metadata': {
             'description': 'Quarterly operating cash flow history for burn trajectory analysis',
@@ -258,8 +263,12 @@ def main():
             'quarters_included': sorted(all_quarters, reverse=True)[:8],
             'ticker_count': len(burn_history),
             'generated_date': datetime.now().strftime('%Y-%m-%d'),
+            'fetched_at': datetime.now().isoformat() + 'Z',
             'data_source': 'yahoo_finance',
-            'version': '1.0.0'
+            'data_is_pit_safe': False,  # Yahoo data can be revised retroactively
+            'pit_warning': 'Yahoo Finance cash flow data reflects current values and may be revised. Not suitable for strict PIT backtesting without frozen snapshots.',
+            'content_hash': content_hash,
+            'version': '1.1.0'
         },
         'burn_history': burn_history
     }

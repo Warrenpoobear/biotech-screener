@@ -105,8 +105,12 @@ class TestPhaseTransitionEngine:
         assert result.score_modifier > Decimal("0")
 
     def test_negative_momentum_stalled(self, engine, as_of):
-        """Multiple stalled trials = negative momentum."""
-        # Trials with old last_update dates
+        """Multiple stalled trials with low velocity = negative momentum.
+
+        Note: Requires minimum trial count (3) and low velocity (<40) to trigger.
+        Stalls alone are not enough - must combine with low activity signals.
+        """
+        # Trials with old last_update dates (stalled)
         stale_date = (as_of - timedelta(days=400)).isoformat()
 
         trials = [
@@ -138,16 +142,23 @@ class TestPhaseTransitionEngine:
 
         result = engine.compute_momentum("TEST", trials, None, as_of)
 
-        assert result.momentum == PhaseMomentum.NEGATIVE
-        assert result.score_modifier < Decimal("0")
+        # With new conservative classification: stalls alone = neutral
+        # Negative requires stalls + low velocity + no initiations
+        assert result.momentum == PhaseMomentum.NEUTRAL
         assert result.stalled_trials >= 3
         assert "multiple_stalled_trials" in result.flags
 
     def test_strong_negative_terminations(self, engine, as_of):
-        """Multiple recent terminations = strong negative."""
+        """Multiple terminations + multiple stalls = strong negative.
+
+        Note: Requires 2 independent negatives (terminations AND stalls)
+        to trigger strong_negative. Single negative = negative or neutral.
+        """
         recent = (as_of - timedelta(days=30)).isoformat()
+        stale_date = (as_of - timedelta(days=400)).isoformat()
 
         trials = [
+            # Terminated trials
             {
                 "nct_id": "NCT001",
                 "phase": "PHASE3",
@@ -160,11 +171,18 @@ class TestPhaseTransitionEngine:
                 "status": "TERMINATED",
                 "last_update_posted": recent,
             },
+            # Stalled trials (old last_update)
             {
                 "nct_id": "NCT003",
                 "phase": "PHASE1",
                 "status": "RECRUITING",
-                "last_update_posted": recent,
+                "last_update_posted": stale_date,
+            },
+            {
+                "nct_id": "NCT004",
+                "phase": "PHASE1",
+                "status": "RECRUITING",
+                "last_update_posted": stale_date,
             },
         ]
 
@@ -173,6 +191,7 @@ class TestPhaseTransitionEngine:
         assert result.momentum == PhaseMomentum.STRONG_NEGATIVE
         assert result.score_modifier < Decimal("-0.5")
         assert result.terminated_trials >= 2
+        assert result.stalled_trials >= 2
         assert "recent_terminations" in result.flags
 
     def test_neutral_stable_pipeline(self, engine, as_of):

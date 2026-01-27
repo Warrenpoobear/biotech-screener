@@ -722,6 +722,8 @@ def _score_single_ticker_v3(
     diversity_data: Optional[Dict] = None,
     intensity_data: Optional[Dict] = None,
     partnership_data: Optional[Dict] = None,
+    cash_burn_data: Optional[Dict] = None,
+    phase_momentum_data: Optional[Dict] = None,
 ) -> Dict[str, Any]:
     """Score a single ticker with all v3 enhancements."""
 
@@ -765,6 +767,14 @@ def _score_single_ticker_v3(
     partnership_top_tier = partnership_data.get("top_tier_partners", 0) if partnership_data else 0
     partnership_total_value = _to_decimal(partnership_data.get("total_deal_value", 0)) if partnership_data else Decimal("0")
     partnership_top_partners = partnership_data.get("top_partners", []) if partnership_data else []
+
+    # Extract cash burn trajectory data
+    cash_burn_trajectory = cash_burn_data.get("trajectory", "unknown") if cash_burn_data else "unknown"
+    cash_burn_risk = cash_burn_data.get("risk_level", "unknown") if cash_burn_data else "unknown"
+
+    # Extract phase momentum data
+    phase_momentum_value = phase_momentum_data.get("momentum", "unknown") if phase_momentum_data else "unknown"
+    phase_momentum_confidence = _to_decimal(phase_momentum_data.get("confidence", 0)) if phase_momentum_data else Decimal("0")
 
     # Extract catalyst scores and metadata
     if hasattr(cat_data, 'score_blended'):
@@ -938,6 +948,10 @@ def _score_single_ticker_v3(
         dilution_gate_status=dilution_gate,
         competitive_crowding=intensity_crowding,
         partnership_strength=partnership_strength,
+        cash_burn_trajectory=cash_burn_trajectory,
+        cash_burn_risk=cash_burn_risk,
+        phase_momentum=phase_momentum_value,
+        phase_momentum_confidence=phase_momentum_confidence,
     )
     flags.extend(interactions.interaction_flags)
 

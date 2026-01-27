@@ -360,6 +360,8 @@ def compute_module_5_composite_v3(
     intensity_by_ticker = {}
     partnership_by_ticker = {}
     accuracy_by_ticker = {}
+    cash_burn_by_ticker = {}
+    phase_momentum_by_ticker = {}
 
     if enhancement_result:
         # Extract PoS scores
@@ -405,6 +407,18 @@ def compute_module_5_composite_v3(
         for ps in partnership_scores_data.get("scores_by_ticker", {}).values():
             if ps.get("ticker"):
                 partnership_by_ticker[ps["ticker"].upper()] = ps
+
+        # Extract cash burn trajectory data
+        cash_burn_scores_data = enhancement_result.get("cash_burn_scores") or {}
+        for cb in cash_burn_scores_data.get("scores", []):
+            if cb.get("ticker"):
+                cash_burn_by_ticker[cb["ticker"].upper()] = cb
+
+        # Extract phase momentum data
+        phase_momentum_data = enhancement_result.get("phase_momentum_scores") or {}
+        for pm in phase_momentum_data.get("scores", []):
+            if pm.get("ticker"):
+                phase_momentum_by_ticker[pm["ticker"].upper()] = pm
 
     # =========================================================================
     # DETERMINE SCORING MODE AND WEIGHTS
@@ -476,6 +490,8 @@ def compute_module_5_composite_v3(
         diversity = diversity_by_ticker.get(ticker.upper())
         intensity = intensity_by_ticker.get(ticker.upper())
         partnership = partnership_by_ticker.get(ticker.upper())
+        cash_burn = cash_burn_by_ticker.get(ticker.upper())
+        phase_momentum = phase_momentum_by_ticker.get(ticker.upper())
 
         # Extract raw scores
         fin_score = _to_decimal(extract_financial_score(fin))
@@ -539,6 +555,8 @@ def compute_module_5_composite_v3(
             "diversity_data": diversity,
             "intensity_data": intensity,
             "partnership_data": partnership,
+            "cash_burn_data": cash_burn,
+            "phase_momentum_data": phase_momentum,
         })
 
     # =========================================================================
@@ -660,6 +678,8 @@ def compute_module_5_composite_v3(
             diversity_data=rec.get("diversity_data"),
             intensity_data=rec.get("intensity_data"),
             partnership_data=rec.get("partnership_data"),
+            cash_burn_data=rec.get("cash_burn_data"),
+            phase_momentum_data=rec.get("phase_momentum_data"),
         )
 
         result["market_cap_bucket"] = rec["market_cap_bucket"]

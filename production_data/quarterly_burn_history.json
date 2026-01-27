@@ -15,7 +15,11 @@
     "ticker_count": 304,
     "generated_date": "2026-01-26",
     "data_source": "yahoo_finance",
-    "version": "1.0.0"
+    "version": "1.1.0",
+    "fetched_at": "2026-01-26T21:08:00Z",
+    "data_is_pit_safe": false,
+    "pit_warning": "Yahoo Finance cash flow data reflects current values and may be revised. Not suitable for strict PIT backtesting without frozen snapshots.",
+    "content_hash": "627ba72692933553"
   },
   "burn_history": {
     "AARD": {

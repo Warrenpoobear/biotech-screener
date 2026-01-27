@@ -186,7 +186,7 @@ class PhaseTransitionEngine:
         # Count terminated/withdrawn trials
         terminated_trials = self._count_terminated_trials(pit_trials, as_of_date)
 
-        # Classify momentum
+        # Classify momentum (pass total trials to avoid small-denominator overreaction)
         momentum = self._classify_momentum(
             recent_advancements,
             recent_initiations,
@@ -194,6 +194,7 @@ class PhaseTransitionEngine:
             terminated_trials,
             velocity_score,
             phase_level,
+            total_trials=len(pit_trials),
         )
 
         # Add flags
@@ -477,29 +478,37 @@ class PhaseTransitionEngine:
         terminated: int,
         velocity: Decimal,
         phase_level: int,
+        total_trials: int = 0,
     ) -> PhaseMomentum:
-        """Classify overall momentum based on signals."""
+        """Classify overall momentum based on signals.
+
+        Governance notes:
+        - Require 2 independent negatives for strong_negative
+        - Minimum trial count (3) before applying harsh negatives
+        - Avoid small-denominator overreaction
+        """
         # Strong positive: recent advancement + high activity
         if advancements >= 1 and initiations >= 2 and terminated == 0:
             return PhaseMomentum.STRONG_POSITIVE
 
-        # Strong negative: multiple terminations or many stalled + terminations
-        if terminated >= 2 or (terminated >= 1 and stalled >= 3):
+        # Strong negative: require BOTH terminations AND stalls (2 independent negatives)
+        # Also require minimum trial count to avoid overreaction
+        if total_trials >= 3 and terminated >= 2 and stalled >= 2:
             return PhaseMomentum.STRONG_NEGATIVE
 
         # Positive: active pipeline with good velocity
         if initiations >= 2 and velocity >= Decimal("60") and terminated == 0:
             return PhaseMomentum.POSITIVE
 
-        # Negative: stalled or low activity
-        if stalled >= 3 or (stalled >= 1 and initiations == 0 and velocity < Decimal("40")):
+        # Negative: multiple stalls with low activity (require minimum trials)
+        if total_trials >= 3 and stalled >= 3 and initiations == 0 and velocity < Decimal("40"):
             return PhaseMomentum.NEGATIVE
 
-        # Negative: terminations without offsetting activity
-        if terminated >= 1 and initiations < 2:
+        # Negative: terminations without offsetting activity (require minimum trials)
+        if total_trials >= 3 and terminated >= 2 and initiations < 2:
             return PhaseMomentum.NEGATIVE
 
-        # Neutral: stable pipeline
+        # Neutral: stable pipeline (default)
         return PhaseMomentum.NEUTRAL
 
     def _calculate_confidence(
