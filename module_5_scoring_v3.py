@@ -775,7 +775,7 @@ def _score_single_ticker_v3(
     # Extract phase momentum data
     phase_momentum_value = phase_momentum_data.get("momentum", "unknown") if phase_momentum_data else "unknown"
     phase_momentum_confidence = _to_decimal(phase_momentum_data.get("confidence", 0)) if phase_momentum_data else Decimal("0")
-    phase_momentum_phase_level = int(phase_momentum_data.get("phase_level", 0)) if phase_momentum_data else 0
+    phase_momentum_lead_phase = phase_momentum_data.get("current_lead_phase", "unknown") if phase_momentum_data else "unknown"
 
     # Extract catalyst scores and metadata
     if hasattr(cat_data, 'score_blended'):
@@ -953,7 +953,7 @@ def _score_single_ticker_v3(
         cash_burn_risk=cash_burn_risk,
         phase_momentum=phase_momentum_value,
         phase_momentum_confidence=phase_momentum_confidence,
-        phase_momentum_phase_level=phase_momentum_phase_level,
+        phase_momentum_lead_phase=phase_momentum_lead_phase,
         days_to_nearest_catalyst=days_to_cat,
     )
     flags.extend(interactions.interaction_flags)

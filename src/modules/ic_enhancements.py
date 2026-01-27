@@ -1791,7 +1791,7 @@ def compute_interaction_terms(
     cash_burn_risk: str = "unknown",
     phase_momentum: str = "unknown",
     phase_momentum_confidence: Decimal = Decimal("0"),
-    phase_momentum_phase_level: int = 0,
+    phase_momentum_lead_phase: str = "unknown",
     days_to_nearest_catalyst: Optional[int] = None,
 ) -> InteractionTerms:
     """
@@ -2001,9 +2001,10 @@ def compute_interaction_terms(
     # 6. Phase Momentum Interaction (bounded ±2.5 with double jeopardy)
     # =========================================================================
     # Governance rules:
-    # - Rule A: Skip penalty for approved/commercial companies (phase_level >= 7)
+    # - Rule A: Skip penalty for approved/commercial (lead_phase in {approved, marketed})
     # - Rule B: Double jeopardy adds -1.0 if strong_neg AND funding pressure AND no catalyst
     # - Rule C: Confidence ramp instead of hard threshold (multiplier = (conf-0.5)/0.5)
+    # - Commercial boost cap: max +0.5 for commercial stage (momentum less meaningful)
 
     phase_momentum_interaction = Decimal("0")
     pm_normalized = phase_momentum.lower() if phase_momentum else "unknown"
@@ -2012,18 +2013,33 @@ def compute_interaction_terms(
     # Rule C: Confidence ramp (0 at conf=0.5, 1.0 at conf=1.0)
     conf_multiplier = _clamp((pm_conf - Decimal("0.5")) / Decimal("0.5"), Decimal("0"), Decimal("1"))
 
-    # Rule A: Check if approved/commercial stage (phase_level >= 7 = approved)
-    is_commercial_stage = phase_momentum_phase_level >= 7
+    # Rule A: Check if approved/commercial stage using lead_phase string (not numeric)
+    # This avoids magic number issues if phase mapper changes
+    lead_phase_lower = phase_momentum_lead_phase.lower() if phase_momentum_lead_phase else "unknown"
+    COMMERCIAL_PHASES = {"approved", "marketed", "phase 4", "commercial"}
+    is_commercial_stage = lead_phase_lower in COMMERCIAL_PHASES
+
+    # Extract runway_months from financial_data for Rule B
+    runway_months_local = _to_decimal(financial_data.get("runway_months"), Decimal("0"))
 
     if pm_normalized != "unknown" and conf_multiplier > Decimal("0"):
         if pm_normalized == "strong_positive":
-            # Boost applies to all stages
-            phase_momentum_interaction = Decimal("1.5") * conf_multiplier
-            flags.append("phase_momentum_boost")
+            # Boost applies to all stages, but capped for commercial
+            if is_commercial_stage:
+                # Cap boost at +0.5 for commercial (momentum less meaningful when approved)
+                phase_momentum_interaction = Decimal("0.5") * conf_multiplier
+                flags.append("phase_momentum_boost_capped_commercial")
+            else:
+                phase_momentum_interaction = Decimal("1.5") * conf_multiplier
+                flags.append("phase_momentum_boost")
 
         elif pm_normalized == "positive":
-            phase_momentum_interaction = Decimal("0.75") * conf_multiplier
-            flags.append("phase_momentum_positive")
+            if is_commercial_stage:
+                phase_momentum_interaction = Decimal("0.25") * conf_multiplier
+                flags.append("phase_momentum_positive_capped_commercial")
+            else:
+                phase_momentum_interaction = Decimal("0.75") * conf_multiplier
+                flags.append("phase_momentum_positive")
 
         elif pm_normalized == "negative":
             # Rule A: Skip penalty for commercial stage
@@ -2042,7 +2058,10 @@ def compute_interaction_terms(
                 # Rule B: Double jeopardy for development-stage stagnation
                 # Conditions: strong_neg AND (high/critical burn OR short runway) AND no near-term catalyst
                 burn_risk_lower = cash_burn_risk.lower() if cash_burn_risk else "unknown"
-                has_funding_pressure = burn_risk_lower in ("high", "critical") or runway_months < Decimal("12")
+                has_funding_pressure = (
+                    burn_risk_lower in ("high", "critical")
+                    or runway_months_local < Decimal("12")
+                )
                 has_near_catalyst = days_to_nearest_catalyst is not None and days_to_nearest_catalyst <= 90
 
                 if has_funding_pressure and not has_near_catalyst:
