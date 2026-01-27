@@ -177,6 +177,14 @@ except ImportError as e:
     HAS_COMPETITIVE_INTENSITY = False
     logger.info(f"Competitive intensity engine not available: {e}")
 
+# Partnership validation engine (optional)
+try:
+    from partnership_engine import PartnershipEngine
+    HAS_PARTNERSHIP_ENGINE = True
+except ImportError as e:
+    HAS_PARTNERSHIP_ENGINE = False
+    logger.info(f"Partnership engine not available: {e}")
+
 # Optional: Risk gates for audit trail
 try:
     from risk_gates import get_parameters_snapshot as get_risk_params, compute_parameters_hash as risk_params_hash
@@ -2051,6 +2059,38 @@ def run_screening_pipeline(
                            f"high={intensity_dist.get('high', 0)}, "
                            f"intense={intensity_dist.get('intense', 0)}")
 
+            # Step 10: Calculate partnership validation scores (if available)
+            partnership_result = None
+            if HAS_PARTNERSHIP_ENGINE:
+                partnership_engine = PartnershipEngine()
+
+                # Load partnership data from file
+                partnerships_path = Path(data_dir) / "partnerships.json"
+                partnership_records = []
+                if partnerships_path.exists():
+                    try:
+                        with open(partnerships_path) as f:
+                            partnership_data = json.load(f)
+                        partnership_records = partnership_data.get("partnerships", [])
+                        logger.info(f"  Loaded {len(partnership_records)} partnership records from file")
+                    except Exception as e:
+                        logger.warning(f"  Failed to load partnerships.json: {e}")
+
+                partnership_universe = [{"ticker": t.upper()} for t in active_tickers]
+                partnership_result = partnership_engine.score_universe(
+                    partnership_universe, partnership_records, as_of_date_obj
+                )
+
+                diag_ps = partnership_result.get("diagnostic_counts", {})
+                strength_dist = diag_ps.get("strength_distribution", {})
+                logger.info(f"  Partnership validation: {diag_ps.get('total_scored', 0)} scored, "
+                           f"with_partnerships={diag_ps.get('with_partnerships', 0)}, "
+                           f"with_top_tier={diag_ps.get('with_top_tier', 0)}")
+                logger.info(f"    Strength distribution: exceptional={strength_dist.get('exceptional', 0)}, "
+                           f"strong={strength_dist.get('strong', 0)}, "
+                           f"moderate={strength_dist.get('moderate', 0)}, "
+                           f"weak={strength_dist.get('weak', 0)}")
+
             # Assemble enhancement result (use empty dicts for None values to avoid downstream .get() errors)
             enhancement_result = {
                 "regime": regime_result or {"regime": "UNKNOWN", "signal_adjustments": {}},
@@ -2063,9 +2103,10 @@ def run_screening_pipeline(
                 "fda_designation_scores": fda_designation_result,
                 "pipeline_diversity_scores": pipeline_diversity_result,
                 "competitive_intensity_scores": competitive_intensity_result,
+                "partnership_scores": partnership_result,
                 "provenance": {
                     "module": "enhancements",
-                    "version": "1.5.0",  # Bumped for competitive intensity
+                    "version": "1.6.0",  # Bumped for partnership validation
                     "as_of_date": as_of_date,
                     "pos_engine_version": pos_engine.VERSION if pos_engine else None,
                     "regime_engine_version": regime_engine.VERSION if regime_engine else None,
@@ -2076,6 +2117,7 @@ def run_screening_pipeline(
                     "fda_designation_engine_version": FDADesignationEngine.VERSION if HAS_FDA_DESIGNATIONS else None,
                     "pipeline_diversity_engine_version": PipelineDiversityEngine.VERSION if HAS_PIPELINE_DIVERSITY else None,
                     "competitive_intensity_engine_version": CompetitiveIntensityEngine.VERSION if HAS_COMPETITIVE_INTENSITY else None,
+                    "partnership_engine_version": PartnershipEngine.VERSION if HAS_PARTNERSHIP_ENGINE else None,
                 }
             }
 

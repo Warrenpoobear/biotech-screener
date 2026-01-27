@@ -721,6 +721,7 @@ def _score_single_ticker_v3(
     fda_data: Optional[Dict] = None,
     diversity_data: Optional[Dict] = None,
     intensity_data: Optional[Dict] = None,
+    partnership_data: Optional[Dict] = None,
 ) -> Dict[str, Any]:
     """Score a single ticker with all v3 enhancements."""
 
@@ -756,6 +757,14 @@ def _score_single_ticker_v3(
     intensity_position = intensity_data.get("competitive_position", "unknown") if intensity_data else "unknown"
     intensity_competitor_count = intensity_data.get("competitor_count", 0) if intensity_data else 0
     intensity_has_approved = intensity_data.get("has_approved_competition", False) if intensity_data else False
+
+    # Extract partnership validation data
+    partnership_score = _to_decimal(partnership_data.get("partnership_score")) if partnership_data else None
+    partnership_strength = partnership_data.get("partnership_strength", "unknown") if partnership_data else "unknown"
+    partnership_count = partnership_data.get("partnership_count", 0) if partnership_data else 0
+    partnership_top_tier = partnership_data.get("top_tier_partners", 0) if partnership_data else 0
+    partnership_total_value = _to_decimal(partnership_data.get("total_deal_value", 0)) if partnership_data else Decimal("0")
+    partnership_top_partners = partnership_data.get("top_partners", []) if partnership_data else []
 
     # Extract catalyst scores and metadata
     if hasattr(cat_data, 'score_blended'):
@@ -1354,6 +1363,14 @@ def _score_single_ticker_v3(
             "competitive_position": intensity_position,
             "competitor_count": intensity_competitor_count,
             "has_approved_competition": intensity_has_approved,
+        },
+        "partnership_signal": {
+            "partnership_score": str(partnership_score) if partnership_score else None,
+            "partnership_strength": partnership_strength,
+            "partnership_count": partnership_count,
+            "top_tier_partners": partnership_top_tier,
+            "total_deal_value_mm": str(partnership_total_value),
+            "top_partners": partnership_top_partners,
         },
         "interaction_terms": {
             "total_adjustment": str(interactions.total_interaction_adjustment),

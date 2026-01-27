@@ -358,6 +358,7 @@ def compute_module_5_composite_v3(
     fda_by_ticker = {}
     diversity_by_ticker = {}
     intensity_by_ticker = {}
+    partnership_by_ticker = {}
     accuracy_by_ticker = {}
 
     if enhancement_result:
@@ -398,6 +399,12 @@ def compute_module_5_composite_v3(
         for ci in intensity_scores_data.get("scores", []):
             if ci.get("ticker"):
                 intensity_by_ticker[ci["ticker"].upper()] = ci
+
+        # Extract partnership validation scores
+        partnership_scores_data = enhancement_result.get("partnership_scores") or {}
+        for ps in partnership_scores_data.get("scores_by_ticker", {}).values():
+            if ps.get("ticker"):
+                partnership_by_ticker[ps["ticker"].upper()] = ps
 
     # =========================================================================
     # DETERMINE SCORING MODE AND WEIGHTS
@@ -468,6 +475,7 @@ def compute_module_5_composite_v3(
         fda = fda_by_ticker.get(ticker.upper())
         diversity = diversity_by_ticker.get(ticker.upper())
         intensity = intensity_by_ticker.get(ticker.upper())
+        partnership = partnership_by_ticker.get(ticker.upper())
 
         # Extract raw scores
         fin_score = _to_decimal(extract_financial_score(fin))
@@ -530,6 +538,7 @@ def compute_module_5_composite_v3(
             "fda_data": fda,
             "diversity_data": diversity,
             "intensity_data": intensity,
+            "partnership_data": partnership,
         })
 
     # =========================================================================
@@ -650,6 +659,7 @@ def compute_module_5_composite_v3(
             fda_data=rec.get("fda_data"),
             diversity_data=rec.get("diversity_data"),
             intensity_data=rec.get("intensity_data"),
+            partnership_data=rec.get("partnership_data"),
         )
 
         result["market_cap_bucket"] = rec["market_cap_bucket"]
@@ -746,6 +756,7 @@ def compute_module_5_composite_v3(
             "fda_designation_signal": rec.get("fda_designation_signal"),
             "pipeline_diversity_signal": rec.get("pipeline_diversity_signal"),
             "competitive_intensity_signal": rec.get("competitive_intensity_signal"),
+            "partnership_signal": rec.get("partnership_signal"),
         }
 
         ranked_securities.append(security_data)
@@ -769,6 +780,7 @@ def compute_module_5_composite_v3(
         "with_fda_designations": sum(1 for r in ranked_securities if r.get("fda_designation_signal", {}).get("has_designations")),
         "with_pipeline_diversity": sum(1 for r in ranked_securities if r.get("pipeline_diversity_signal", {}).get("diversity_score")),
         "with_competitive_intensity": sum(1 for r in ranked_securities if r.get("competitive_intensity_signal", {}).get("intensity_score")),
+        "with_partnerships": sum(1 for r in ranked_securities if r.get("partnership_signal", {}).get("partnership_count", 0) > 0),
 
         # Momentum state breakdown (for debugging/attribution)
         # Categories are MUTUALLY EXCLUSIVE and sum to total_rankable:
