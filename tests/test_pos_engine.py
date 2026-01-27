@@ -555,11 +555,43 @@ class TestEdgeCases:
         assert result["stage_normalized"] == "phase_3"
         assert result["indication_normalized"] == "oncology"
 
-    def test_commercial_stage_full_loa(self, engine):
-        """Commercial stage should have LOA = 1.0 (already approved)."""
-        result = engine.calculate_pos_score("commercial", as_of_date=date(2026, 1, 15))
-        assert result["loa_probability"] == Decimal("1.0")
-        assert result["loa_provenance"] == "commercial_approved"
+    def test_commercial_stage_differentiated_loa(self, engine):
+        """Commercial stage LOA varies based on pipeline metrics."""
+        as_of = date(2026, 1, 15)
+
+        # Minimal pipeline (no trials) - gets floor of 0.82
+        result_minimal = engine.calculate_pos_score(
+            "commercial",
+            indication="oncology",
+            as_of_date=as_of,
+            pipeline_trial_count=0
+        )
+        assert result_minimal["loa_probability"] == Decimal("0.82")
+        assert "commercial" in result_minimal["loa_provenance"]
+        assert "pipeline_minimal" in result_minimal["loa_provenance"]
+
+        # Strong pipeline (100+ trials) - gets full 1.0 minus indication risk
+        result_strong = engine.calculate_pos_score(
+            "commercial",
+            indication="rare_disease",  # No risk adjustment
+            as_of_date=as_of,
+            pipeline_trial_count=150,
+            pipeline_phase_diversity=4
+        )
+        # 1.0 (base) + 0.00 (exceptional pipeline) + 0.00 (rare disease) + 0.02 (diversity)
+        assert result_strong["loa_probability"] >= Decimal("0.98")
+        assert "pipeline_exceptional" in result_strong["loa_provenance"]
+
+        # Moderate pipeline (30 trials) with oncology indication
+        result_moderate = engine.calculate_pos_score(
+            "commercial",
+            indication="oncology",
+            as_of_date=as_of,
+            pipeline_trial_count=50
+        )
+        # 1.0 (base) + (-0.02) (strong pipeline) + (-0.03) (oncology risk) = 0.95
+        assert result_moderate["loa_probability"] == Decimal("0.95")
+        assert "pipeline_strong" in result_moderate["loa_provenance"]
 
 
 # ============================================================================
@@ -589,23 +621,30 @@ class TestConfidenceGating:
         assert result["pos_confidence"] == Decimal("0.30")
 
     def test_known_stage_has_higher_confidence(self, engine):
-        """Known stage should have higher confidence."""
+        """Known stage should have higher confidence than defaulted stage."""
         as_of = date(2026, 1, 15)
 
         result = engine.calculate_pos_score("phase_3", as_of_date=as_of)
         assert result["stage_was_defaulted"] is False
-        # Without indication, confidence is medium
-        assert result["pos_confidence"] == Decimal("0.55")
-        assert result["confidence_reason"] == "stage_known_indication_unknown"
+        # Stage-adjusted confidence: phase_3 base (0.75) + all_indications modifier (-0.03) = 0.72
+        assert result["pos_confidence"] == Decimal("0.72")
+        assert "stage_adjusted_phase_3" in result["confidence_reason"]
+        # Verify confidence components are present
+        assert "confidence_components" in result
+        assert result["confidence_components"]["stage"] == "phase_3"
 
     def test_known_stage_and_indication_has_high_confidence(self, engine):
-        """Known stage + known indication should have high confidence."""
+        """Known stage + known indication should have stage-adjusted confidence."""
         as_of = date(2026, 1, 15)
 
         result = engine.calculate_pos_score("phase_3", indication="oncology", as_of_date=as_of)
         assert result["stage_was_defaulted"] is False
+        # Stage-adjusted: phase_3 base (0.75) + oncology modifier (-0.05) = 0.70
         assert result["pos_confidence"] == Decimal("0.70")
-        assert result["confidence_reason"] == "stage_and_indication_known"
+        assert result["confidence_reason"] == "stage_adjusted_phase_3_oncology"
+        # Verify confidence components
+        assert result["confidence_components"]["indication"] == "oncology"
+        assert Decimal(result["confidence_components"]["indication_modifier"]) == Decimal("-0.05")
 
     def test_confidence_below_gating_threshold_flagged(self, engine):
         """Universe scoring should flag tickers below gating threshold."""
@@ -646,6 +685,91 @@ class TestConfidenceGating:
         assert diag["confidence_distribution"]["high"] == 1
         assert diag["confidence_distribution"]["medium"] == 1
         assert diag["confidence_distribution"]["low"] == 2
+
+
+# ============================================================================
+# DETERMINISM AND PIT DISCIPLINE TESTS
+# ============================================================================
+
+class TestStageAdjustedConfidence:
+    """Tests for stage-adjusted confidence system (industry best practice)."""
+
+    @pytest.fixture
+    def engine(self):
+        return ProbabilityOfSuccessEngine()
+
+    def test_earlier_stages_have_lower_confidence(self, engine):
+        """Earlier stages should have lower confidence (higher uncertainty)."""
+        as_of = date(2026, 1, 15)
+
+        preclinical = engine.calculate_pos_score("preclinical", indication="oncology", as_of_date=as_of)
+        phase_1 = engine.calculate_pos_score("phase_1", indication="oncology", as_of_date=as_of)
+        phase_2 = engine.calculate_pos_score("phase_2", indication="oncology", as_of_date=as_of)
+        phase_3 = engine.calculate_pos_score("phase_3", indication="oncology", as_of_date=as_of)
+        commercial = engine.calculate_pos_score("commercial", indication="oncology", as_of_date=as_of)
+
+        # Confidence should increase with stage progression
+        assert preclinical["pos_confidence"] < phase_1["pos_confidence"]
+        assert phase_1["pos_confidence"] < phase_2["pos_confidence"]
+        assert phase_2["pos_confidence"] < phase_3["pos_confidence"]
+        assert phase_3["pos_confidence"] < commercial["pos_confidence"]
+
+    def test_indication_modifiers_affect_confidence(self, engine):
+        """Indication-specific modifiers should adjust confidence."""
+        as_of = date(2026, 1, 15)
+
+        # Rare disease has positive modifier (+0.05)
+        rare = engine.calculate_pos_score("phase_3", indication="rare_disease", as_of_date=as_of)
+        # Oncology has negative modifier (-0.05)
+        onc = engine.calculate_pos_score("phase_3", indication="oncology", as_of_date=as_of)
+        # Neurology has larger negative modifier (-0.08)
+        neuro = engine.calculate_pos_score("phase_3", indication="neurology", as_of_date=as_of)
+
+        # Rare disease should have higher confidence than oncology
+        assert rare["pos_confidence"] > onc["pos_confidence"]
+        # Oncology should have higher confidence than neurology (neuro is more uncertain)
+        assert onc["pos_confidence"] > neuro["pos_confidence"]
+
+    def test_confidence_components_tracked(self, engine):
+        """Confidence calculation should track all components for audit."""
+        as_of = date(2026, 1, 15)
+
+        result = engine.calculate_pos_score("phase_2", indication="oncology", as_of_date=as_of)
+
+        components = result["confidence_components"]
+        assert "stage_base" in components
+        assert "indication_modifier" in components
+        assert "quality_modifier" in components
+        assert "final_confidence" in components
+        assert components["stage"] == "phase_2"
+        assert components["indication"] == "oncology"
+
+    def test_confidence_bounded(self, engine):
+        """Confidence should be bounded within valid range."""
+        as_of = date(2026, 1, 15)
+
+        # Even with worst case modifiers, confidence should stay in bounds
+        for stage in ["preclinical", "phase_1", "phase_2", "phase_3", "commercial"]:
+            for indication in ["oncology", "rare_disease", "neurology", None]:
+                result = engine.calculate_pos_score(stage, indication=indication, as_of_date=as_of)
+                assert result["pos_confidence"] >= Decimal("0.20")
+                assert result["pos_confidence"] <= Decimal("0.95")
+
+    def test_stage_adjusted_confidence_values(self, engine):
+        """Verify specific stage-adjusted confidence values."""
+        as_of = date(2026, 1, 15)
+
+        # Phase 3 oncology: base 0.75 + modifier -0.05 = 0.70
+        p3_onc = engine.calculate_pos_score("phase_3", indication="oncology", as_of_date=as_of)
+        assert p3_onc["pos_confidence"] == Decimal("0.70")
+
+        # Phase 3 rare disease: base 0.75 + modifier +0.05 = 0.80
+        p3_rare = engine.calculate_pos_score("phase_3", indication="rare_disease", as_of_date=as_of)
+        assert p3_rare["pos_confidence"] == Decimal("0.80")
+
+        # Commercial oncology: base 0.92 + modifier -0.05 = 0.87
+        comm_onc = engine.calculate_pos_score("commercial", indication="oncology", as_of_date=as_of)
+        assert comm_onc["pos_confidence"] == Decimal("0.87")
 
 
 # ============================================================================

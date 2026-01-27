@@ -1738,10 +1738,19 @@ def run_screening_pipeline(
                         design_quality = Decimal("0.7") + (raw_design / Decimal("25")) * Decimal("0.6")
                         design_quality = max(Decimal("0.7"), min(Decimal("1.3"), design_quality))
 
+                        # Extract pipeline metrics for commercial-stage differentiation
+                        pipeline_trial_count = clinical_score.get("n_trials_unique", 0)
+                        # Estimate phase diversity from phase_progress (0-5 scale maps to phases)
+                        phase_progress = int(clinical_score.get("phase_progress", 0) or 0)
+                        # Phase diversity: if progress >= 3, likely have trials in multiple phases
+                        pipeline_phase_diversity = min(phase_progress, 5) if phase_progress else 1
+
                         ticker_stage_map[ticker] = {
                             "base_stage": clinical_score.get("lead_phase", "phase_2"),
                             "indication": clinical_score.get("lead_indication"),
                             "trial_design_quality": design_quality,
+                            "pipeline_trial_count": pipeline_trial_count,
+                            "pipeline_phase_diversity": pipeline_phase_diversity,
                         }
 
                 # Use IndicationMapper to auto-detect indications from trial conditions
@@ -1764,6 +1773,8 @@ def run_screening_pipeline(
                         "base_stage": stage_info.get("base_stage", "phase_2"),
                         "indication": final_indication,
                         "trial_design_quality": stage_info.get("trial_design_quality"),
+                        "pipeline_trial_count": stage_info.get("pipeline_trial_count", 0),
+                        "pipeline_phase_diversity": stage_info.get("pipeline_phase_diversity", 1),
                     })
 
                 pos_result = pos_engine.score_universe(pos_universe, as_of_date_obj)
