@@ -355,6 +355,9 @@ def compute_module_5_composite_v3(
     si_by_ticker = {}
     regime_adjustments = {}
     regime_name = "NEUTRAL"
+    fda_by_ticker = {}
+    diversity_by_ticker = {}
+    accuracy_by_ticker = {}
 
     if enhancement_result:
         # Extract PoS scores
@@ -378,16 +381,14 @@ def compute_module_5_composite_v3(
         accuracy_by_ticker = accuracy_data.get("adjustments", {})
 
         # Extract FDA designation scores
-        fda_data = enhancement_result.get("fda_designation_scores") or {}
-        fda_by_ticker = {}
-        for fda in fda_data.get("scores", []):
+        fda_scores_data = enhancement_result.get("fda_designation_scores") or {}
+        for fda in fda_scores_data.get("scores", []):
             if fda.get("ticker"):
                 fda_by_ticker[fda["ticker"].upper()] = fda
 
         # Extract pipeline diversity scores
-        diversity_data = enhancement_result.get("pipeline_diversity_scores") or {}
-        diversity_by_ticker = {}
-        for div in diversity_data.get("scores", []):
+        diversity_scores_data = enhancement_result.get("pipeline_diversity_scores") or {}
+        for div in diversity_scores_data.get("scores", []):
             if div.get("ticker"):
                 diversity_by_ticker[div["ticker"].upper()] = div
 
@@ -457,8 +458,8 @@ def compute_module_5_composite_v3(
         pos = pos_by_ticker.get(ticker.upper())
         si = si_by_ticker.get(ticker.upper())
         market = market_data_dict.get(ticker, {})
-        fda = fda_by_ticker.get(ticker.upper()) if 'fda_by_ticker' in dir() else None
-        diversity = diversity_by_ticker.get(ticker.upper()) if 'diversity_by_ticker' in dir() else None
+        fda = fda_by_ticker.get(ticker.upper())
+        diversity = diversity_by_ticker.get(ticker.upper())
 
         # Extract raw scores
         fin_score = _to_decimal(extract_financial_score(fin))
@@ -732,6 +733,8 @@ def compute_module_5_composite_v3(
             "catalyst_decay": rec.get("catalyst_decay"),
             "interaction_terms": rec.get("interaction_terms"),
             "catalyst_effective": rec.get("catalyst_effective"),
+            "fda_designation_signal": rec.get("fda_designation_signal"),
+            "pipeline_diversity_signal": rec.get("pipeline_diversity_signal"),
         }
 
         ranked_securities.append(security_data)
@@ -752,6 +755,8 @@ def compute_module_5_composite_v3(
         "with_momentum_signal": sum(1 for r in ranked_securities if r.get("momentum_signal", {}).get("alpha_60d")),
         "with_valuation_signal": sum(1 for r in ranked_securities if r.get("valuation_signal", {}).get("peer_count", 0) >= 5),
         "with_smart_money": sum(1 for r in ranked_securities if r.get("coinvest_overlap_count", 0) > 0),
+        "with_fda_designations": sum(1 for r in ranked_securities if r.get("fda_designation_signal", {}).get("has_designations")),
+        "with_pipeline_diversity": sum(1 for r in ranked_securities if r.get("pipeline_diversity_signal", {}).get("diversity_score")),
 
         # Momentum state breakdown (for debugging/attribution)
         # Categories are MUTUALLY EXCLUSIVE and sum to total_rankable:

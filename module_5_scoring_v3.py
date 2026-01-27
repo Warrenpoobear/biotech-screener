@@ -718,6 +718,8 @@ def _score_single_ticker_v3(
     cohort_key: str,
     normalization_method: NormalizationMethod,
     peer_valuations: List[Dict],
+    fda_data: Optional[Dict] = None,
+    diversity_data: Optional[Dict] = None,
 ) -> Dict[str, Any]:
     """Score a single ticker with all v3 enhancements."""
 
@@ -734,6 +736,18 @@ def _score_single_ticker_v3(
     si_crowding_risk = si_data.get("crowding_risk", "UNKNOWN") if si_data else "UNKNOWN"
     si_signal_direction = si_data.get("signal_direction", "NEUTRAL") if si_data else "NEUTRAL"
     si_trend_direction = si_data.get("trend_direction", "UNKNOWN") if si_data else "UNKNOWN"
+
+    # Extract FDA designation data
+    fda_designation_score = _to_decimal(fda_data.get("designation_score")) if fda_data else None
+    fda_pos_multiplier = _to_decimal(fda_data.get("pos_multiplier")) if fda_data else Decimal("1.0")
+    fda_timeline_acceleration = fda_data.get("timeline_acceleration_months", 0) if fda_data else 0
+    fda_designation_types = fda_data.get("designation_types", []) if fda_data else []
+
+    # Extract pipeline diversity data
+    diversity_score = _to_decimal(diversity_data.get("diversity_score")) if diversity_data else None
+    diversity_risk_profile = diversity_data.get("risk_profile", "unknown") if diversity_data else "unknown"
+    diversity_program_count = diversity_data.get("program_count", 0) if diversity_data else 0
+    diversity_platform_validated = diversity_data.get("platform_validated", False) if diversity_data else False
 
     # Extract catalyst scores and metadata
     if hasattr(cat_data, 'score_blended'):
@@ -1312,6 +1326,19 @@ def _score_single_ticker_v3(
             "catalyst_score_effective": str(cat_effective),
             "catalyst_proximity_blended": cat_proximity_blended,
             "blend_mode": cat_blend_mode,
+        },
+        "fda_designation_signal": {
+            "designation_score": str(fda_designation_score) if fda_designation_score else None,
+            "pos_multiplier": str(fda_pos_multiplier),
+            "timeline_acceleration_months": fda_timeline_acceleration,
+            "designation_types": fda_designation_types,
+            "has_designations": len(fda_designation_types) > 0,
+        },
+        "pipeline_diversity_signal": {
+            "diversity_score": str(diversity_score) if diversity_score else None,
+            "risk_profile": diversity_risk_profile,
+            "program_count": diversity_program_count,
+            "platform_validated": diversity_platform_validated,
         },
         "interaction_terms": {
             "total_adjustment": str(interactions.total_interaction_adjustment),
