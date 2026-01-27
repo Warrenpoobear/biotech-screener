@@ -538,3 +538,61 @@ class TestCompetitivePartnershipInteraction:
 
         assert result.competitive_partnership_interaction <= Decimal("3.0")
         assert result.competitive_partnership_interaction >= Decimal("-3.0")
+
+    def test_end_to_end_scorer_uses_ci_partnership(self):
+        """End-to-end test: final score differs based on CI+partnership data."""
+        from module_5_scoring_v3 import _score_single_ticker_v3, ScoringMode, NormalizationMethod
+        from decimal import Decimal
+
+        # Minimal required inputs
+        base_inputs = {
+            "ticker": "TEST",
+            "fin_data": {"runway_months": 24, "financial_score": 60, "severity": "none"},
+            "cat_data": {"score_blended": 50, "catalyst_proximity_score": 0, "catalyst_delta_score": 0},
+            "clin_data": {"clinical_score": 70, "lead_phase": "phase_2", "severity": "none"},
+            "pos_data": None,
+            "si_data": None,
+            "market_data": {},
+            "coinvest_data": {},
+            "base_weights": {
+                "clinical": Decimal("0.30"),
+                "financial": Decimal("0.25"),
+                "catalyst": Decimal("0.25"),
+                "pos": Decimal("0.10"),
+                "momentum": Decimal("0.05"),
+                "valuation": Decimal("0.05"),
+            },
+            "regime": "NEUTRAL",
+            "mode": ScoringMode.DEFAULT,
+            "normalized_scores": {"clinical": Decimal("70"), "financial": Decimal("60"), "catalyst": Decimal("50"), "pos": None},
+            "cohort_key": "mid_small",
+            "normalization_method": NormalizationMethod.COHORT,
+            "peer_valuations": [],
+            "fda_data": None,
+            "diversity_data": None,
+        }
+
+        # Score with uncrowded + exceptional partnership (should get boost)
+        result_boosted = _score_single_ticker_v3(
+            **base_inputs,
+            intensity_data={"competitive_intensity_score": 25, "crowding_level": "uncrowded", "competitive_position": "first_in_class", "competitor_count": 2, "has_approved_competition": False},
+            partnership_data={"partnership_score": 80, "partnership_strength": "exceptional", "partnership_count": 2, "top_tier_partners": 2, "total_deal_value": 1000, "top_partners": ["Pfizer", "Roche"]},
+        )
+
+        # Score with crowded + no partnership (should get penalty)
+        result_penalized = _score_single_ticker_v3(
+            **base_inputs,
+            intensity_data={"competitive_intensity_score": 90, "crowding_level": "highly_crowded", "competitive_position": "me_too", "competitor_count": 50, "has_approved_competition": True},
+            partnership_data={"partnership_score": 50, "partnership_strength": "unknown", "partnership_count": 0, "top_tier_partners": 0, "total_deal_value": 0, "top_partners": []},
+        )
+
+        score_boosted = Decimal(str(result_boosted["composite_score"]))
+        score_penalized = Decimal(str(result_penalized["composite_score"]))
+
+        # Final scores should differ meaningfully (at least 2 points after all adjustments)
+        delta = score_boosted - score_penalized
+        assert delta >= Decimal("2.0"), f"Expected >=2pt delta, got {delta}"
+
+        # Verify flags are present in interaction_terms
+        assert "validated_uncrowded_boost" in result_boosted.get("interaction_terms", {}).get("flags", [])
+        assert "unvalidated_crowded_penalty" in result_penalized.get("interaction_terms", {}).get("flags", [])
