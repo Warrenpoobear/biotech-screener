@@ -27,7 +27,7 @@ import hashlib
 import time
 from pathlib import Path
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, timezone
 
 try:
     import requests
@@ -205,7 +205,7 @@ class CUSIPResolver:
         
         data = {
             'version': '1.0',
-            'updated_at': datetime.utcnow().isoformat(),
+            'updated_at': datetime.now(timezone.utc).isoformat(),
             'count': len(self._cache),
             'mappings': self._cache,
         }

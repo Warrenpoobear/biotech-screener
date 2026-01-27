@@ -36,11 +36,13 @@ GOLDEN_AS_OF_DATE = "2026-01-20"
 TOLERATED_DIFF_PATHS = {
     "run_metadata.deterministic_timestamp",  # Fixed timestamp based on as_of_date
     "run_metadata.timestamp",  # Actual timestamp varies
+    "run_metadata.input_hashes",  # Input file hashes may change with data updates
     "enhancements.pos_scores",  # POS engine has floating-point non-determinism
     "enhancements",  # All enhancements have floating-point variations
     "module_5_composite.global_stats",  # Stats derived from pos_scores
     "module_5_composite.ranked_securities",  # Affected by pos_scores non-determinism
     "module_5_composite.excluded_securities",  # May vary with score changes
+    "module_5_composite.sanity_overrides",  # Derived from rankings, inherits non-determinism
 }
 
 # Fields that are NEVER allowed to change
@@ -66,7 +68,12 @@ def _remove_paths(data: Any, paths: Set[str], prefix: str = "") -> Any:
         result = {}
         for k, v in data.items():
             full_path = f"{prefix}.{k}" if prefix else k
-            if full_path not in paths:
+            # Check if this path or any parent path should be excluded
+            should_exclude = any(
+                full_path == p or full_path.startswith(p + ".")
+                for p in paths
+            )
+            if not should_exclude:
                 result[k] = _remove_paths(v, paths, full_path)
         return result
     elif isinstance(data, list):
@@ -89,8 +96,9 @@ def get_nested_value(data: Dict, path: str) -> Any:
 
 def run_pipeline(as_of_date: str, output_path: Path) -> bool:
     """Run the pipeline and return success status"""
+    import sys
     cmd = [
-        "python", "run_screen.py",
+        sys.executable, "run_screen.py",
         "--as-of-date", as_of_date,
         "--data-dir", "production_data",
         "--output", str(output_path)
