@@ -193,6 +193,14 @@ except ImportError as e:
     HAS_CASH_BURN_ENGINE = False
     logger.info(f"Cash burn engine not available: {e}")
 
+# Phase transition momentum engine (optional)
+try:
+    from phase_momentum_engine import PhaseTransitionEngine
+    HAS_PHASE_MOMENTUM_ENGINE = True
+except ImportError as e:
+    HAS_PHASE_MOMENTUM_ENGINE = False
+    logger.info(f"Phase momentum engine not available: {e}")
+
 # Optional: Risk gates for audit trail
 try:
     from risk_gates import get_parameters_snapshot as get_risk_params, compute_parameters_hash as risk_params_hash
@@ -2159,6 +2167,34 @@ def run_screening_pipeline(
                            f"high={risk_dist.get('high', 0)}, "
                            f"critical={risk_dist.get('critical', 0)}")
 
+            # Step 12: Calculate phase transition momentum scores (if available)
+            phase_momentum_result = None
+            if HAS_PHASE_MOMENTUM_ENGINE:
+                phase_momentum_engine = PhaseTransitionEngine()
+
+                # Build trials by ticker map
+                trials_by_ticker = {}
+                for trial in trial_records:
+                    ticker = trial.get("ticker", "").upper()
+                    if ticker:
+                        if ticker not in trials_by_ticker:
+                            trials_by_ticker[ticker] = []
+                        trials_by_ticker[ticker].append(trial)
+
+                phase_momentum_universe = [{"ticker": t.upper()} for t in active_tickers]
+                phase_momentum_result = phase_momentum_engine.score_universe(
+                    phase_momentum_universe, trials_by_ticker, None, as_of_date_obj
+                )
+
+                diag_pm = phase_momentum_result.get("diagnostic_counts", {})
+                momentum_dist = diag_pm.get("momentum_distribution", {})
+                logger.info(f"  Phase momentum: {diag_pm.get('total_scored', 0)} scored")
+                logger.info(f"    Momentum: strong_pos={momentum_dist.get('strong_positive', 0)}, "
+                           f"pos={momentum_dist.get('positive', 0)}, "
+                           f"neutral={momentum_dist.get('neutral', 0)}, "
+                           f"neg={momentum_dist.get('negative', 0)}, "
+                           f"strong_neg={momentum_dist.get('strong_negative', 0)}")
+
             # Assemble enhancement result (use empty dicts for None values to avoid downstream .get() errors)
             enhancement_result = {
                 "regime": regime_result or {"regime": "UNKNOWN", "signal_adjustments": {}},
@@ -2173,9 +2209,10 @@ def run_screening_pipeline(
                 "competitive_intensity_scores": competitive_intensity_result,
                 "partnership_scores": partnership_result,
                 "cash_burn_scores": cash_burn_result,
+                "phase_momentum_scores": phase_momentum_result,
                 "provenance": {
                     "module": "enhancements",
-                    "version": "1.7.0",  # Bumped for cash burn trajectory
+                    "version": "1.8.0",  # Bumped for phase transition momentum
                     "as_of_date": as_of_date,
                     "pos_engine_version": pos_engine.VERSION if pos_engine else None,
                     "regime_engine_version": regime_engine.VERSION if regime_engine else None,
@@ -2188,6 +2225,7 @@ def run_screening_pipeline(
                     "competitive_intensity_engine_version": CompetitiveIntensityEngine.VERSION if HAS_COMPETITIVE_INTENSITY else None,
                     "partnership_engine_version": PartnershipEngine.VERSION if HAS_PARTNERSHIP_ENGINE else None,
                     "cash_burn_engine_version": CashBurnEngine.VERSION if HAS_CASH_BURN_ENGINE else None,
+                    "phase_momentum_engine_version": PhaseTransitionEngine.VERSION if HAS_PHASE_MOMENTUM_ENGINE else None,
                 }
             }
 
