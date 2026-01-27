@@ -357,6 +357,7 @@ def compute_module_5_composite_v3(
     regime_name = "NEUTRAL"
     fda_by_ticker = {}
     diversity_by_ticker = {}
+    intensity_by_ticker = {}
     accuracy_by_ticker = {}
 
     if enhancement_result:
@@ -391,6 +392,12 @@ def compute_module_5_composite_v3(
         for div in diversity_scores_data.get("scores", []):
             if div.get("ticker"):
                 diversity_by_ticker[div["ticker"].upper()] = div
+
+        # Extract competitive intensity scores
+        intensity_scores_data = enhancement_result.get("competitive_intensity_scores") or {}
+        for ci in intensity_scores_data.get("scores", []):
+            if ci.get("ticker"):
+                intensity_by_ticker[ci["ticker"].upper()] = ci
 
     # =========================================================================
     # DETERMINE SCORING MODE AND WEIGHTS
@@ -460,6 +467,7 @@ def compute_module_5_composite_v3(
         market = market_data_dict.get(ticker, {})
         fda = fda_by_ticker.get(ticker.upper())
         diversity = diversity_by_ticker.get(ticker.upper())
+        intensity = intensity_by_ticker.get(ticker.upper())
 
         # Extract raw scores
         fin_score = _to_decimal(extract_financial_score(fin))
@@ -521,6 +529,7 @@ def compute_module_5_composite_v3(
             "market_data": market,
             "fda_data": fda,
             "diversity_data": diversity,
+            "intensity_data": intensity,
         })
 
     # =========================================================================
@@ -640,6 +649,7 @@ def compute_module_5_composite_v3(
             peer_valuations=peer_valuations,
             fda_data=rec.get("fda_data"),
             diversity_data=rec.get("diversity_data"),
+            intensity_data=rec.get("intensity_data"),
         )
 
         result["market_cap_bucket"] = rec["market_cap_bucket"]
@@ -735,6 +745,7 @@ def compute_module_5_composite_v3(
             "catalyst_effective": rec.get("catalyst_effective"),
             "fda_designation_signal": rec.get("fda_designation_signal"),
             "pipeline_diversity_signal": rec.get("pipeline_diversity_signal"),
+            "competitive_intensity_signal": rec.get("competitive_intensity_signal"),
         }
 
         ranked_securities.append(security_data)
@@ -757,6 +768,7 @@ def compute_module_5_composite_v3(
         "with_smart_money": sum(1 for r in ranked_securities if r.get("coinvest_overlap_count", 0) > 0),
         "with_fda_designations": sum(1 for r in ranked_securities if r.get("fda_designation_signal", {}).get("has_designations")),
         "with_pipeline_diversity": sum(1 for r in ranked_securities if r.get("pipeline_diversity_signal", {}).get("diversity_score")),
+        "with_competitive_intensity": sum(1 for r in ranked_securities if r.get("competitive_intensity_signal", {}).get("intensity_score")),
 
         # Momentum state breakdown (for debugging/attribution)
         # Categories are MUTUALLY EXCLUSIVE and sum to total_rankable:

@@ -169,6 +169,14 @@ except ImportError as e:
     HAS_PIPELINE_DIVERSITY = False
     logger.info(f"Pipeline diversity engine not available: {e}")
 
+# Competitive intensity engine (optional)
+try:
+    from competitive_intensity_engine import CompetitiveIntensityEngine
+    HAS_COMPETITIVE_INTENSITY = True
+except ImportError as e:
+    HAS_COMPETITIVE_INTENSITY = False
+    logger.info(f"Competitive intensity engine not available: {e}")
+
 # Optional: Risk gates for audit trail
 try:
     from risk_gates import get_parameters_snapshot as get_risk_params, compute_parameters_hash as risk_params_hash
@@ -2025,6 +2033,24 @@ def run_screening_pipeline(
                            f"single_asset={risk_dist.get('single_asset', 0)}, "
                            f"diversified={risk_dist.get('diversified', 0) + risk_dist.get('broad_portfolio', 0)}")
 
+            # Step 9: Calculate competitive intensity scores (if available)
+            competitive_intensity_result = None
+            if HAS_COMPETITIVE_INTENSITY:
+                intensity_engine = CompetitiveIntensityEngine()
+
+                intensity_universe = [{"ticker": t.upper()} for t in active_tickers]
+                competitive_intensity_result = intensity_engine.score_universe(
+                    intensity_universe, trial_records, as_of_date_obj
+                )
+
+                diag_ci = competitive_intensity_result.get("diagnostic_counts", {})
+                intensity_dist = diag_ci.get("intensity_distribution", {})
+                logger.info(f"  Competitive intensity: {diag_ci.get('total_scored', 0)} scored, "
+                           f"low={intensity_dist.get('low', 0)}, "
+                           f"moderate={intensity_dist.get('moderate', 0)}, "
+                           f"high={intensity_dist.get('high', 0)}, "
+                           f"intense={intensity_dist.get('intense', 0)}")
+
             # Assemble enhancement result (use empty dicts for None values to avoid downstream .get() errors)
             enhancement_result = {
                 "regime": regime_result or {"regime": "UNKNOWN", "signal_adjustments": {}},
@@ -2036,9 +2062,10 @@ def run_screening_pipeline(
                 "timeline_slippage_scores": timeline_slippage_result,
                 "fda_designation_scores": fda_designation_result,
                 "pipeline_diversity_scores": pipeline_diversity_result,
+                "competitive_intensity_scores": competitive_intensity_result,
                 "provenance": {
                     "module": "enhancements",
-                    "version": "1.4.0",  # Bumped for FDA designations and pipeline diversity
+                    "version": "1.5.0",  # Bumped for competitive intensity
                     "as_of_date": as_of_date,
                     "pos_engine_version": pos_engine.VERSION if pos_engine else None,
                     "regime_engine_version": regime_engine.VERSION if regime_engine else None,
@@ -2048,6 +2075,7 @@ def run_screening_pipeline(
                     "timeline_slippage_engine_version": "1.0.0" if HAS_TIMELINE_SLIPPAGE else None,
                     "fda_designation_engine_version": FDADesignationEngine.VERSION if HAS_FDA_DESIGNATIONS else None,
                     "pipeline_diversity_engine_version": PipelineDiversityEngine.VERSION if HAS_PIPELINE_DIVERSITY else None,
+                    "competitive_intensity_engine_version": CompetitiveIntensityEngine.VERSION if HAS_COMPETITIVE_INTENSITY else None,
                 }
             }
 

@@ -720,6 +720,7 @@ def _score_single_ticker_v3(
     peer_valuations: List[Dict],
     fda_data: Optional[Dict] = None,
     diversity_data: Optional[Dict] = None,
+    intensity_data: Optional[Dict] = None,
 ) -> Dict[str, Any]:
     """Score a single ticker with all v3 enhancements."""
 
@@ -748,6 +749,13 @@ def _score_single_ticker_v3(
     diversity_risk_profile = diversity_data.get("risk_profile", "unknown") if diversity_data else "unknown"
     diversity_program_count = diversity_data.get("program_count", 0) if diversity_data else 0
     diversity_platform_validated = diversity_data.get("platform_validated", False) if diversity_data else False
+
+    # Extract competitive intensity data
+    intensity_score = _to_decimal(intensity_data.get("competitive_intensity_score")) if intensity_data else None
+    intensity_crowding = intensity_data.get("crowding_level", "unknown") if intensity_data else "unknown"
+    intensity_position = intensity_data.get("competitive_position", "unknown") if intensity_data else "unknown"
+    intensity_competitor_count = intensity_data.get("competitor_count", 0) if intensity_data else 0
+    intensity_has_approved = intensity_data.get("has_approved_competition", False) if intensity_data else False
 
     # Extract catalyst scores and metadata
     if hasattr(cat_data, 'score_blended'):
@@ -1339,6 +1347,13 @@ def _score_single_ticker_v3(
             "risk_profile": diversity_risk_profile,
             "program_count": diversity_program_count,
             "platform_validated": diversity_platform_validated,
+        },
+        "competitive_intensity_signal": {
+            "intensity_score": str(intensity_score) if intensity_score else None,
+            "crowding_level": intensity_crowding,
+            "competitive_position": intensity_position,
+            "competitor_count": intensity_competitor_count,
+            "has_approved_competition": intensity_has_approved,
         },
         "interaction_terms": {
             "total_adjustment": str(interactions.total_interaction_adjustment),
