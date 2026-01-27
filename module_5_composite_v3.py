@@ -377,6 +377,20 @@ def compute_module_5_composite_v3(
         accuracy_data = enhancement_result.get("accuracy_enhancements") or {}
         accuracy_by_ticker = accuracy_data.get("adjustments", {})
 
+        # Extract FDA designation scores
+        fda_data = enhancement_result.get("fda_designation_scores") or {}
+        fda_by_ticker = {}
+        for fda in fda_data.get("scores", []):
+            if fda.get("ticker"):
+                fda_by_ticker[fda["ticker"].upper()] = fda
+
+        # Extract pipeline diversity scores
+        diversity_data = enhancement_result.get("pipeline_diversity_scores") or {}
+        diversity_by_ticker = {}
+        for div in diversity_data.get("scores", []):
+            if div.get("ticker"):
+                diversity_by_ticker[div["ticker"].upper()] = div
+
     # =========================================================================
     # DETERMINE SCORING MODE AND WEIGHTS
     # =========================================================================
@@ -443,6 +457,8 @@ def compute_module_5_composite_v3(
         pos = pos_by_ticker.get(ticker.upper())
         si = si_by_ticker.get(ticker.upper())
         market = market_data_dict.get(ticker, {})
+        fda = fda_by_ticker.get(ticker.upper()) if 'fda_by_ticker' in dir() else None
+        diversity = diversity_by_ticker.get(ticker.upper()) if 'diversity_by_ticker' in dir() else None
 
         # Extract raw scores
         fin_score = _to_decimal(extract_financial_score(fin))
@@ -502,6 +518,8 @@ def compute_module_5_composite_v3(
             "pos_data": pos,
             "si_data": si,
             "market_data": market,
+            "fda_data": fda,
+            "diversity_data": diversity,
         })
 
     # =========================================================================
@@ -619,6 +637,8 @@ def compute_module_5_composite_v3(
             cohort_key=rec["cohort_key"],
             normalization_method=rec.get("normalization_method", NormalizationMethod.COHORT),
             peer_valuations=peer_valuations,
+            fda_data=rec.get("fda_data"),
+            diversity_data=rec.get("diversity_data"),
         )
 
         result["market_cap_bucket"] = rec["market_cap_bucket"]

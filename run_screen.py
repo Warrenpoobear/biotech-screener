@@ -153,6 +153,22 @@ except ImportError as e:
     HAS_TIMELINE_SLIPPAGE = False
     logger.info(f"Timeline slippage engine not available: {e}")
 
+# FDA designation engine (optional)
+try:
+    from fda_designation_engine import FDADesignationEngine, generate_sample_designations
+    HAS_FDA_DESIGNATIONS = True
+except ImportError as e:
+    HAS_FDA_DESIGNATIONS = False
+    logger.info(f"FDA designation engine not available: {e}")
+
+# Pipeline diversity engine (optional)
+try:
+    from pipeline_diversity_engine import PipelineDiversityEngine
+    HAS_PIPELINE_DIVERSITY = True
+except ImportError as e:
+    HAS_PIPELINE_DIVERSITY = False
+    logger.info(f"Pipeline diversity engine not available: {e}")
+
 # Optional: Risk gates for audit trail
 try:
     from risk_gates import get_parameters_snapshot as get_risk_params, compute_parameters_hash as risk_params_hash
@@ -1948,6 +1964,56 @@ def run_screening_pipeline(
                         logger.warning(f"  Timeline slippage scoring failed: {e}")
                         timeline_slippage_result = None
 
+            # Step 7: Calculate FDA designation scores (if available)
+            fda_designation_result = None
+            if HAS_FDA_DESIGNATIONS:
+                fda_engine = FDADesignationEngine()
+
+                # Load sample designations (in production, would load from data file)
+                # TODO: Load from fda_designations.json if exists
+                sample_designations = generate_sample_designations()
+                fda_engine.load_designations(sample_designations)
+
+                fda_universe = [{"ticker": t.upper()} for t in active_tickers]
+                fda_designation_result = fda_engine.score_universe(fda_universe, as_of_date_obj)
+
+                diag_fda = fda_designation_result.get("diagnostic_counts", {})
+                logger.info(f"  FDA designations: {diag_fda.get('total_scored', 0)} scored, "
+                           f"with_designations={diag_fda.get('with_designations', 0)}")
+
+            # Step 8: Calculate pipeline diversity scores (if available)
+            pipeline_diversity_result = None
+            if HAS_PIPELINE_DIVERSITY:
+                diversity_engine = PipelineDiversityEngine()
+
+                # Build clinical data map from Module 4 results
+                clinical_data_map = {}
+                for clinical_score in m4_result.get("scores", []):
+                    ticker = clinical_score.get("ticker")
+                    if ticker:
+                        clinical_data_map[ticker.upper()] = {
+                            "n_trials_unique": clinical_score.get("n_trials_unique", 0),
+                            "lead_phase": clinical_score.get("lead_phase", "phase_2"),
+                        }
+
+                diversity_universe = []
+                for t in active_tickers:
+                    ticker_upper = t.upper()
+                    diversity_universe.append({
+                        "ticker": ticker_upper,
+                        "clinical_data": clinical_data_map.get(ticker_upper, {}),
+                    })
+
+                pipeline_diversity_result = diversity_engine.score_universe(
+                    diversity_universe, trial_records, as_of_date_obj
+                )
+
+                diag_pd = pipeline_diversity_result.get("diagnostic_counts", {})
+                risk_dist = diag_pd.get("risk_distribution", {})
+                logger.info(f"  Pipeline diversity: {diag_pd.get('total_scored', 0)} scored, "
+                           f"single_asset={risk_dist.get('single_asset', 0)}, "
+                           f"diversified={risk_dist.get('diversified', 0) + risk_dist.get('broad_portfolio', 0)}")
+
             # Assemble enhancement result (use empty dicts for None values to avoid downstream .get() errors)
             enhancement_result = {
                 "regime": regime_result or {"regime": "UNKNOWN", "signal_adjustments": {}},
@@ -1957,9 +2023,11 @@ def run_screening_pipeline(
                 "accuracy_enhancements": accuracy_result,
                 "dilution_risk_scores": dilution_risk_result,
                 "timeline_slippage_scores": timeline_slippage_result,
+                "fda_designation_scores": fda_designation_result,
+                "pipeline_diversity_scores": pipeline_diversity_result,
                 "provenance": {
                     "module": "enhancements",
-                    "version": "1.3.0",  # Bumped for enhanced regime detection with macro data
+                    "version": "1.4.0",  # Bumped for FDA designations and pipeline diversity
                     "as_of_date": as_of_date,
                     "pos_engine_version": pos_engine.VERSION if pos_engine else None,
                     "regime_engine_version": regime_engine.VERSION if regime_engine else None,
@@ -1967,6 +2035,8 @@ def run_screening_pipeline(
                     "accuracy_adapter_version": "1.0.0" if HAS_ACCURACY_ENHANCEMENTS else None,
                     "dilution_risk_engine_version": "1.0.0" if HAS_DILUTION_RISK else None,
                     "timeline_slippage_engine_version": "1.0.0" if HAS_TIMELINE_SLIPPAGE else None,
+                    "fda_designation_engine_version": FDADesignationEngine.VERSION if HAS_FDA_DESIGNATIONS else None,
+                    "pipeline_diversity_engine_version": PipelineDiversityEngine.VERSION if HAS_PIPELINE_DIVERSITY else None,
                 }
             }
 
