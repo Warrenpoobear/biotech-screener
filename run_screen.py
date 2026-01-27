@@ -1969,10 +1969,21 @@ def run_screening_pipeline(
             if HAS_FDA_DESIGNATIONS:
                 fda_engine = FDADesignationEngine()
 
-                # Load sample designations (in production, would load from data file)
-                # TODO: Load from fda_designations.json if exists
-                sample_designations = generate_sample_designations()
-                fda_engine.load_designations(sample_designations)
+                # Load FDA designations from file (comprehensive) or fall back to sample data
+                fda_designations_path = Path(data_dir) / "fda_designations.json"
+                if fda_designations_path.exists():
+                    try:
+                        with open(fda_designations_path) as f:
+                            fda_data = json.load(f)
+                        designations_list = fda_data.get("designations", [])
+                        loaded_count = fda_engine.load_designations(designations_list)
+                        logger.info(f"  Loaded {loaded_count} FDA designations from {fda_designations_path.name}")
+                    except Exception as e:
+                        logger.warning(f"  Failed to load FDA designations: {e}, using sample data")
+                        fda_engine.load_designations(generate_sample_designations())
+                else:
+                    logger.info("  No fda_designations.json found, using sample data")
+                    fda_engine.load_designations(generate_sample_designations())
 
                 fda_universe = [{"ticker": t.upper()} for t in active_tickers]
                 fda_designation_result = fda_engine.score_universe(fda_universe, as_of_date_obj)

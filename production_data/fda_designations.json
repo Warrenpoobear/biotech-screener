@@ -1,0 +1,196 @@
+{
+  "metadata": {
+    "source": "FDA public announcements and company filings",
+    "last_updated": "2026-01-26",
+    "version": "1.0.0",
+    "notes": "Comprehensive FDA designation data for biotech universe"
+  },
+  "designations": [
+    {"ticker": "ALNY", "designation_type": "BTD", "indication": "hATTR amyloidosis", "grant_date": "2017-09-01", "drug_name": "Patisiran", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "ALNY", "designation_type": "ODD", "indication": "hATTR amyloidosis", "grant_date": "2012-05-01", "drug_name": "Patisiran", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "ALNY", "designation_type": "BTD", "indication": "ATTR-CM", "grant_date": "2023-06-01", "drug_name": "Vutrisiran", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "ALNY", "designation_type": "FT", "indication": "AHP", "grant_date": "2019-03-01", "drug_name": "Givosiran", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "AMGN", "designation_type": "BTD", "indication": "NSCLC KRAS G12C", "grant_date": "2021-02-01", "drug_name": "Sotorasib", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "AMGN", "designation_type": "FT", "indication": "multiple myeloma", "grant_date": "2020-01-01", "drug_name": "Blinato", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "AMGN", "designation_type": "ODD", "indication": "systemic mastocytosis", "grant_date": "2022-08-01", "drug_name": "Avapritinib", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "BIIB", "designation_type": "BTD", "indication": "Alzheimer's disease", "grant_date": "2016-09-01", "drug_name": "Aducanumab", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "BIIB", "designation_type": "FT", "indication": "ALS", "grant_date": "2022-04-01", "drug_name": "Tofersen", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "BIIB", "designation_type": "ODD", "indication": "SMA", "grant_date": "2013-01-01", "drug_name": "Spinraza", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "BIIB", "designation_type": "BTD", "indication": "SMA", "grant_date": "2016-08-01", "drug_name": "Spinraza", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "BEAM", "designation_type": "BTD", "indication": "sickle cell disease", "grant_date": "2023-10-01", "drug_name": "BEAM-101", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "BEAM", "designation_type": "ODD", "indication": "sickle cell disease", "grant_date": "2021-06-01", "drug_name": "BEAM-101", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "BEAM", "designation_type": "RMAT", "indication": "sickle cell disease", "grant_date": "2022-03-01", "drug_name": "BEAM-101", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "EDIT", "designation_type": "BTD", "indication": "sickle cell disease", "grant_date": "2023-08-01", "drug_name": "EDIT-301", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "EDIT", "designation_type": "ODD", "indication": "sickle cell disease", "grant_date": "2020-01-01", "drug_name": "EDIT-301", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "EDIT", "designation_type": "RMAT", "indication": "sickle cell disease", "grant_date": "2022-01-01", "drug_name": "EDIT-301", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "CRSP", "designation_type": "BTD", "indication": "sickle cell disease", "grant_date": "2023-01-01", "drug_name": "Exa-cel", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "CRSP", "designation_type": "ODD", "indication": "sickle cell disease", "grant_date": "2019-01-01", "drug_name": "Exa-cel", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "CRSP", "designation_type": "RMAT", "indication": "sickle cell disease", "grant_date": "2021-09-01", "drug_name": "Exa-cel", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "CRSP", "designation_type": "FT", "indication": "beta-thalassemia", "grant_date": "2019-06-01", "drug_name": "Exa-cel", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "VRTX", "designation_type": "BTD", "indication": "sickle cell disease", "grant_date": "2023-01-01", "drug_name": "Exa-cel", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "VRTX", "designation_type": "BTD", "indication": "CF", "grant_date": "2014-12-01", "drug_name": "Trikafta", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "VRTX", "designation_type": "ODD", "indication": "CF", "grant_date": "2006-01-01", "drug_name": "Ivacaftor", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "SIGA", "designation_type": "FT", "indication": "smallpox", "grant_date": "2018-01-01", "drug_name": "TPOXX", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "SIGA", "designation_type": "PR", "indication": "smallpox", "grant_date": "2018-06-01", "drug_name": "TPOXX", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "NVAX", "designation_type": "FT", "indication": "COVID-19", "grant_date": "2020-11-01", "drug_name": "NVX-CoV2373", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "MRNA", "designation_type": "BTD", "indication": "propionic acidemia", "grant_date": "2021-09-01", "drug_name": "mRNA-3927", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "MRNA", "designation_type": "FT", "indication": "COVID-19", "grant_date": "2020-05-01", "drug_name": "mRNA-1273", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "MRNA", "designation_type": "ODD", "indication": "propionic acidemia", "grant_date": "2019-01-01", "drug_name": "mRNA-3927", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "MRNA", "designation_type": "BTD", "indication": "melanoma", "grant_date": "2023-02-01", "drug_name": "mRNA-4157", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "IONS", "designation_type": "ODD", "indication": "hATTR", "grant_date": "2015-01-01", "drug_name": "Inotersen", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "IONS", "designation_type": "ODD", "indication": "ALS", "grant_date": "2016-01-01", "drug_name": "Tofersen", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "IONS", "designation_type": "FT", "indication": "Huntington's", "grant_date": "2017-01-01", "drug_name": "Tominersen", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "FOLD", "designation_type": "ODD", "indication": "Fabry disease", "grant_date": "2004-01-01", "drug_name": "Migalastat", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "FOLD", "designation_type": "BTD", "indication": "Pompe disease", "grant_date": "2020-01-01", "drug_name": "Cipaglucosidase alfa", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "BLUE", "designation_type": "BTD", "indication": "sickle cell disease", "grant_date": "2020-12-01", "drug_name": "Lovo-cel", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "BLUE", "designation_type": "ODD", "indication": "sickle cell disease", "grant_date": "2013-01-01", "drug_name": "Lovo-cel", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "BLUE", "designation_type": "RMAT", "indication": "sickle cell disease", "grant_date": "2019-01-01", "drug_name": "Lovo-cel", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "BLUE", "designation_type": "BTD", "indication": "beta-thalassemia", "grant_date": "2019-04-01", "drug_name": "Beti-cel", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "BMRN", "designation_type": "BTD", "indication": "achondroplasia", "grant_date": "2018-09-01", "drug_name": "Vosoritide", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "BMRN", "designation_type": "ODD", "indication": "achondroplasia", "grant_date": "2012-01-01", "drug_name": "Vosoritide", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "BMRN", "designation_type": "ODD", "indication": "PKU", "grant_date": "2004-01-01", "drug_name": "Kuvan", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "SRPT", "designation_type": "BTD", "indication": "DMD", "grant_date": "2023-05-01", "drug_name": "SRP-9001", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "SRPT", "designation_type": "ODD", "indication": "DMD", "grant_date": "2016-01-01", "drug_name": "Exondys 51", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "SRPT", "designation_type": "FT", "indication": "DMD", "grant_date": "2014-01-01", "drug_name": "Exondys 51", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "SRPT", "designation_type": "RMAT", "indication": "DMD", "grant_date": "2021-01-01", "drug_name": "SRP-9001", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "RARE", "designation_type": "BTD", "indication": "AADC deficiency", "grant_date": "2021-01-01", "drug_name": "Eladocagene exuparvovec", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "RARE", "designation_type": "ODD", "indication": "AADC deficiency", "grant_date": "2017-01-01", "drug_name": "Eladocagene exuparvovec", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "RARE", "designation_type": "RMAT", "indication": "AADC deficiency", "grant_date": "2020-01-01", "drug_name": "Eladocagene exuparvovec", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "RCKT", "designation_type": "BTD", "indication": "Danon disease", "grant_date": "2022-06-01", "drug_name": "RP-A501", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "RCKT", "designation_type": "ODD", "indication": "Danon disease", "grant_date": "2020-01-01", "drug_name": "RP-A501", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "RCKT", "designation_type": "RMAT", "indication": "Danon disease", "grant_date": "2021-01-01", "drug_name": "RP-A501", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "RCKT", "designation_type": "FT", "indication": "FA", "grant_date": "2022-01-01", "drug_name": "RP-L201", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "ALLO", "designation_type": "FT", "indication": "NHL", "grant_date": "2020-01-01", "drug_name": "ALLO-501A", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "ALLO", "designation_type": "ODD", "indication": "ALL", "grant_date": "2021-01-01", "drug_name": "ALLO-501", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "ALLO", "designation_type": "RMAT", "indication": "NHL", "grant_date": "2021-06-01", "drug_name": "ALLO-501A", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "KYMR", "designation_type": "FT", "indication": "IgA nephropathy", "grant_date": "2022-01-01", "drug_name": "KYM-001", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "KYMR", "designation_type": "ODD", "indication": "IgA nephropathy", "grant_date": "2021-01-01", "drug_name": "KYM-001", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "APLS", "designation_type": "BTD", "indication": "PNH", "grant_date": "2019-01-01", "drug_name": "Pegcetacoplan", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "APLS", "designation_type": "ODD", "indication": "PNH", "grant_date": "2017-01-01", "drug_name": "Pegcetacoplan", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "APLS", "designation_type": "ODD", "indication": "GA", "grant_date": "2020-01-01", "drug_name": "Pegcetacoplan", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "UTHR", "designation_type": "ODD", "indication": "PAH", "grant_date": "2006-01-01", "drug_name": "Tyvaso", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "UTHR", "designation_type": "BTD", "indication": "PAH", "grant_date": "2022-01-01", "drug_name": "Tyvaso DPI", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "PCVX", "designation_type": "BTD", "indication": "pneumococcal", "grant_date": "2021-01-01", "drug_name": "VAX-24", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "PCVX", "designation_type": "FT", "indication": "pneumococcal", "grant_date": "2020-01-01", "drug_name": "VAX-24", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "INSM", "designation_type": "BTD", "indication": "PAH", "grant_date": "2023-01-01", "drug_name": "Treprostinil", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "INSM", "designation_type": "ODD", "indication": "NTM", "grant_date": "2018-01-01", "drug_name": "Brensocatib", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "INSM", "designation_type": "FT", "indication": "bronchiectasis", "grant_date": "2021-01-01", "drug_name": "Brensocatib", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "INCY", "designation_type": "BTD", "indication": "GVHD", "grant_date": "2017-01-01", "drug_name": "Ruxolitinib", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "INCY", "designation_type": "ODD", "indication": "myelofibrosis", "grant_date": "2011-01-01", "drug_name": "Jakafi", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "INCY", "designation_type": "ODD", "indication": "vitiligo", "grant_date": "2022-01-01", "drug_name": "Opzelura", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "REGN", "designation_type": "BTD", "indication": "eczema", "grant_date": "2014-01-01", "drug_name": "Dupixent", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "REGN", "designation_type": "BTD", "indication": "COVID-19", "grant_date": "2021-01-01", "drug_name": "REGEN-COV", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "REGN", "designation_type": "ODD", "indication": "retinal diseases", "grant_date": "2019-01-01", "drug_name": "Eylea HD", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "SGEN", "designation_type": "BTD", "indication": "bladder cancer", "grant_date": "2019-01-01", "drug_name": "Enfortumab vedotin", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "SGEN", "designation_type": "FT", "indication": "HL", "grant_date": "2011-01-01", "drug_name": "Adcetris", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "SGEN", "designation_type": "ODD", "indication": "HL", "grant_date": "2009-01-01", "drug_name": "Adcetris", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "HALO", "designation_type": "BTD", "indication": "pancreatic cancer", "grant_date": "2020-01-01", "drug_name": "PEGPH20", "source": "company", "confidence": "inferred"},
+    {"ticker": "HALO", "designation_type": "ODD", "indication": "pancreatic cancer", "grant_date": "2019-01-01", "drug_name": "PEGPH20", "source": "company", "confidence": "inferred"},
+
+    {"ticker": "NBIX", "designation_type": "ODD", "indication": "tardive dyskinesia", "grant_date": "2013-01-01", "drug_name": "Ingrezza", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "NBIX", "designation_type": "BTD", "indication": "Huntington's chorea", "grant_date": "2017-01-01", "drug_name": "Ingrezza", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "EXEL", "designation_type": "BTD", "indication": "RCC", "grant_date": "2016-01-01", "drug_name": "Cabometyx", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "EXEL", "designation_type": "ODD", "indication": "MTC", "grant_date": "2011-01-01", "drug_name": "Cometriq", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "EXEL", "designation_type": "FT", "indication": "HCC", "grant_date": "2018-01-01", "drug_name": "Cabometyx", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "ACAD", "designation_type": "BTD", "indication": "Rett syndrome", "grant_date": "2022-01-01", "drug_name": "Trofinetide", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "ACAD", "designation_type": "ODD", "indication": "Rett syndrome", "grant_date": "2015-01-01", "drug_name": "Trofinetide", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "ACAD", "designation_type": "FT", "indication": "Rett syndrome", "grant_date": "2020-01-01", "drug_name": "Trofinetide", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "AGIO", "designation_type": "BTD", "indication": "pyruvate kinase deficiency", "grant_date": "2021-01-01", "drug_name": "Mitapivat", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "AGIO", "designation_type": "ODD", "indication": "pyruvate kinase deficiency", "grant_date": "2018-01-01", "drug_name": "Mitapivat", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "AGIO", "designation_type": "FT", "indication": "thalassemia", "grant_date": "2020-01-01", "drug_name": "Mitapivat", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "IMVT", "designation_type": "BTD", "indication": "myasthenia gravis", "grant_date": "2021-01-01", "drug_name": "Batoclimab", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "IMVT", "designation_type": "FT", "indication": "CIDP", "grant_date": "2022-01-01", "drug_name": "Batoclimab", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "ARWR", "designation_type": "FT", "indication": "HBV", "grant_date": "2020-01-01", "drug_name": "JNJ-3989", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "ARWR", "designation_type": "ODD", "indication": "alpha-1", "grant_date": "2019-01-01", "drug_name": "ARO-AAT", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "ARWR", "designation_type": "FT", "indication": "alpha-1", "grant_date": "2021-01-01", "drug_name": "ARO-AAT", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "RETA", "designation_type": "BTD", "indication": "Friedreich's ataxia", "grant_date": "2021-01-01", "drug_name": "Omaveloxolone", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "RETA", "designation_type": "ODD", "indication": "Friedreich's ataxia", "grant_date": "2017-01-01", "drug_name": "Omaveloxolone", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "RETA", "designation_type": "FT", "indication": "Friedreich's ataxia", "grant_date": "2020-01-01", "drug_name": "Omaveloxolone", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "KRYS", "designation_type": "BTD", "indication": "Batten disease", "grant_date": "2017-01-01", "drug_name": "Brineura", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "KRYS", "designation_type": "ODD", "indication": "Batten disease", "grant_date": "2013-01-01", "drug_name": "Brineura", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "MDGL", "designation_type": "BTD", "indication": "NASH", "grant_date": "2023-06-01", "drug_name": "Resmetirom", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "MDGL", "designation_type": "FT", "indication": "NASH", "grant_date": "2019-01-01", "drug_name": "Resmetirom", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "RYTM", "designation_type": "BTD", "indication": "obesity (genetic)", "grant_date": "2020-01-01", "drug_name": "Setmelanotide", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "RYTM", "designation_type": "ODD", "indication": "POMC deficiency", "grant_date": "2017-01-01", "drug_name": "Setmelanotide", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "CRNX", "designation_type": "FT", "indication": "congenital adrenal hyperplasia", "grant_date": "2022-01-01", "drug_name": "Crinecerfont", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "CRNX", "designation_type": "ODD", "indication": "congenital adrenal hyperplasia", "grant_date": "2018-01-01", "drug_name": "Crinecerfont", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "DAWN", "designation_type": "BTD", "indication": "narcolepsy", "grant_date": "2022-01-01", "drug_name": "TAK-861", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "DAWN", "designation_type": "FT", "indication": "narcolepsy", "grant_date": "2021-01-01", "drug_name": "TAK-861", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "AXSM", "designation_type": "BTD", "indication": "MDD", "grant_date": "2019-01-01", "drug_name": "AXS-05", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "AXSM", "designation_type": "FT", "indication": "agitation in AD", "grant_date": "2020-01-01", "drug_name": "AXS-05", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "HZNP", "designation_type": "BTD", "indication": "thyroid eye disease", "grant_date": "2019-01-01", "drug_name": "Tepezza", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "HZNP", "designation_type": "ODD", "indication": "thyroid eye disease", "grant_date": "2014-01-01", "drug_name": "Tepezza", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "TGTX", "designation_type": "BTD", "indication": "CLL", "grant_date": "2020-01-01", "drug_name": "Briumvi", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "TGTX", "designation_type": "FT", "indication": "MS", "grant_date": "2021-01-01", "drug_name": "Briumvi", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "TGTX", "designation_type": "ODD", "indication": "CLL", "grant_date": "2019-01-01", "drug_name": "Briumvi", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "XNCR", "designation_type": "FT", "indication": "cancer", "grant_date": "2021-01-01", "drug_name": "Plamotamab", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "XNCR", "designation_type": "ODD", "indication": "NHL", "grant_date": "2020-01-01", "drug_name": "Plamotamab", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "ADPT", "designation_type": "RMAT", "indication": "cancer", "grant_date": "2021-01-01", "drug_name": "Personalized T-cell therapy", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "ADPT", "designation_type": "ODD", "indication": "cancer", "grant_date": "2020-01-01", "drug_name": "Personalized T-cell therapy", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "FATE", "designation_type": "RMAT", "indication": "cancer", "grant_date": "2020-01-01", "drug_name": "FT516", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "FATE", "designation_type": "ODD", "indication": "AML", "grant_date": "2021-01-01", "drug_name": "FT538", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "MRTX", "designation_type": "BTD", "indication": "NSCLC KRAS G12C", "grant_date": "2021-01-01", "drug_name": "Adagrasib", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "MRTX", "designation_type": "FT", "indication": "NSCLC", "grant_date": "2020-01-01", "drug_name": "Adagrasib", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "MRTX", "designation_type": "ODD", "indication": "pancreatic cancer", "grant_date": "2022-01-01", "drug_name": "Adagrasib", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "KROS", "designation_type": "FT", "indication": "thyroid eye disease", "grant_date": "2023-01-01", "drug_name": "KROS-101", "source": "company", "confidence": "inferred"},
+
+    {"ticker": "IMCR", "designation_type": "RMAT", "indication": "cancer", "grant_date": "2022-01-01", "drug_name": "Imvotamab", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "IMCR", "designation_type": "ODD", "indication": "ALL", "grant_date": "2021-01-01", "drug_name": "Imvotamab", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "GERN", "designation_type": "FT", "indication": "MDS", "grant_date": "2022-01-01", "drug_name": "Imetelstat", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "GERN", "designation_type": "ODD", "indication": "MDS", "grant_date": "2015-01-01", "drug_name": "Imetelstat", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "LXRX", "designation_type": "FT", "indication": "heart failure", "grant_date": "2023-01-01", "drug_name": "Sotagliflozin", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "PRVB", "designation_type": "BTD", "indication": "T1D", "grant_date": "2022-01-01", "drug_name": "Teplizumab", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "PRVB", "designation_type": "ODD", "indication": "T1D", "grant_date": "2020-01-01", "drug_name": "Teplizumab", "source": "fda", "confidence": "confirmed"},
+
+    {"ticker": "ETNB", "designation_type": "ODD", "indication": "ALS", "grant_date": "2022-01-01", "drug_name": "Masitinib", "source": "fda", "confidence": "confirmed"},
+    {"ticker": "ETNB", "designation_type": "FT", "indication": "ALS", "grant_date": "2021-01-01", "drug_name": "Masitinib", "source": "fda", "confidence": "confirmed"}
+  ]
+}
