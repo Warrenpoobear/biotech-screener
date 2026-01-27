@@ -237,6 +237,75 @@ CATALYST_WINDOW_PRESETS = {
     "wide": (15, 90),
 }
 
+# =============================================================================
+# CLINICAL ACTIVITY FILTER
+# =============================================================================
+
+# Phase ordering for minimum phase filter (lower index = earlier phase)
+PHASE_ORDER = {
+    "preclinical": 0,
+    "phase1": 1,
+    "phase 1": 1,
+    "phase1/phase2": 1,
+    "phase2": 2,
+    "phase 2": 2,
+    "phase2/phase3": 2,
+    "phase3": 3,
+    "phase 3": 3,
+    "approved": 4,
+    "nda/bla": 4,
+}
+
+
+def apply_clinical_activity_filter(
+    m4_scores: List[Dict[str, Any]],
+    min_trials: int = 5,
+    min_phase: str = "phase1",
+) -> tuple[List[str], List[Dict[str, Any]]]:
+    """
+    Filter tickers based on clinical activity thresholds.
+
+    Args:
+        m4_scores: Module 4 clinical scores list
+        min_trials: Minimum number of trials required
+        min_phase: Minimum lead phase required (preclinical, phase1, phase2, phase3, approved)
+
+    Returns:
+        Tuple of (excluded_tickers, exclusion_details)
+    """
+    min_phase_order = PHASE_ORDER.get(min_phase.lower(), 1)
+
+    excluded = []
+    exclusion_details = []
+
+    for score in m4_scores:
+        ticker = score.get("ticker", "")
+        trial_count = score.get("n_trials_unique", score.get("trial_count", 0))
+        lead_phase = str(score.get("lead_phase", "preclinical")).lower()
+        phase_order = PHASE_ORDER.get(lead_phase, 0)
+
+        reasons = []
+
+        # Check minimum trials
+        if trial_count < min_trials:
+            reasons.append(f"trials={trial_count}<{min_trials}")
+
+        # Check minimum phase
+        if phase_order < min_phase_order:
+            reasons.append(f"phase={lead_phase}<{min_phase}")
+
+        if reasons:
+            excluded.append(ticker)
+            exclusion_details.append({
+                "ticker": ticker,
+                "reason": "clinical_activity_filter",
+                "details": ", ".join(reasons),
+                "trial_count": trial_count,
+                "lead_phase": lead_phase,
+            })
+
+    return excluded, exclusion_details
+
 
 def parse_catalyst_window(window_str: str) -> tuple[int, int]:
     """
@@ -1282,6 +1351,10 @@ def run_screening_pipeline(
     snapshot_date_prior: Optional[str] = None,
     min_component_coverage: Optional[float] = None,
     min_component_coverage_mode: str = "applied",
+    # Clinical activity filter parameters
+    min_trials: int = 5,
+    min_phase: str = "phase1",
+    no_clinical_filter: bool = False,
 ) -> Dict[str, Any]:
     """
     Execute full screening pipeline with deterministic guarantees.
@@ -1676,6 +1749,33 @@ def run_screening_pipeline(
     logger.info(f"  Scored: {diag.get('scored', len(m4_result.get('scores', [])))}, "
                 f"Trials evaluated: {diag.get('total_trials', 'N/A')}, "
                 f"PIT filtered: {diag.get('pit_filtered', 'N/A')}")
+
+    # ========================================================================
+    # Clinical Activity Filter (excludes low-activity tickers from ranking)
+    # ========================================================================
+    clinical_exclusions = []
+    if not no_clinical_filter:
+        excluded_tickers, exclusion_details = apply_clinical_activity_filter(
+            m4_scores=m4_result.get("scores", []),
+            min_trials=min_trials,
+            min_phase=min_phase,
+        )
+        clinical_exclusions = exclusion_details
+
+        if excluded_tickers:
+            logger.info(f"[5.1/7] Clinical activity filter: excluding {len(excluded_tickers)} tickers "
+                       f"(min_trials={min_trials}, min_phase={min_phase})")
+
+            # Remove excluded tickers from active_tickers
+            active_tickers = [t for t in active_tickers if t not in set(excluded_tickers)]
+
+            # Log sample exclusions
+            for ex in exclusion_details[:5]:
+                logger.info(f"    Excluded {ex['ticker']}: {ex['details']}")
+            if len(exclusion_details) > 5:
+                logger.info(f"    ... and {len(exclusion_details) - 5} more")
+    else:
+        logger.info("[5.1/7] Clinical activity filter: DISABLED (--no-clinical-filter)")
 
     # ========================================================================
     # Enhancement Layer: PoS, Short Interest, Regime Detection
@@ -2245,11 +2345,37 @@ def run_screening_pipeline(
         m5_result = load_checkpoint(checkpoint_dir, "module_5", as_of_date)
 
     if m5_result is None:
+        # Apply clinical activity filter exclusions to module results
+        # This ensures excluded tickers don't get ranked in Module 5
+        clinical_excluded_set = set(t['ticker'] for t in clinical_exclusions) if clinical_exclusions else set()
+
+        if clinical_excluded_set:
+            # Create filtered copies of results (don't modify originals)
+            m1_filtered = {
+                **m1_result,
+                "active_securities": [s for s in m1_result.get("active_securities", [])
+                                      if s.get("ticker") not in clinical_excluded_set],
+            }
+            m2_filtered = {
+                **m2_result,
+                "scores": [s for s in m2_result.get("scores", [])
+                           if s.get("ticker") not in clinical_excluded_set],
+            }
+            m4_filtered = {
+                **m4_result,
+                "scores": [s for s in m4_result.get("scores", [])
+                           if s.get("ticker") not in clinical_excluded_set],
+            }
+        else:
+            m1_filtered = m1_result
+            m2_filtered = m2_result
+            m4_filtered = m4_result
+
         m5_result = compute_module_5_composite_with_defensive(
-            universe_result=m1_result,
-            financial_result=m2_result,
+            universe_result=m1_filtered,
+            financial_result=m2_filtered,
             catalyst_result=m3_result,
-            clinical_result=m4_result,
+            clinical_result=m4_filtered,
             as_of_date=as_of_date,  # Explicit threading
             normalization="rank",
             cohort_mode="stage_only",
@@ -2337,10 +2463,17 @@ def run_screening_pipeline(
             "total_evaluated": len(raw_universe),
             "active_universe": len(active_tickers),
             "excluded": len(m1_result.get('excluded_securities', [])),
+            "clinical_activity_filter": {
+                "enabled": not no_clinical_filter,
+                "min_trials": min_trials,
+                "min_phase": min_phase,
+                "excluded_count": len(clinical_exclusions),
+            },
             "final_ranked": len(m5_result.get('ranked_securities', [])),
             "catalyst_events": diag3.get('events_detected_total', 0),
             "severe_negatives": diag3.get('tickers_with_severe_negative', 0),
-        }
+        },
+        "clinical_exclusions": clinical_exclusions,
     }
 
     # Add enhancement results if enabled
@@ -2567,6 +2700,30 @@ Module 3 Catalyst Detection:
         type=str,
         default=None,
         help="Run ID for seed derivation (default: auto)",
+    )
+
+    # =========================================================================
+    # Clinical Activity Filter
+    # =========================================================================
+    parser.add_argument(
+        "--min-trials",
+        type=int,
+        default=5,
+        help="Minimum number of clinical trials required for ranking (default: 5). "
+             "Tickers with fewer trials are excluded from final rankings.",
+    )
+    parser.add_argument(
+        "--min-phase",
+        type=str,
+        choices=["preclinical", "phase1", "phase2", "phase3", "approved"],
+        default="phase1",
+        help="Minimum lead phase required for ranking (default: phase1). "
+             "Tickers with earlier-phase pipelines are excluded.",
+    )
+    parser.add_argument(
+        "--no-clinical-filter",
+        action="store_true",
+        help="Disable clinical activity filter (include all tickers regardless of trials/phase).",
     )
     parser.add_argument(
         "--version",
@@ -2825,6 +2982,10 @@ Module 3 Catalyst Detection:
             snapshot_date_prior=args.snapshot_date_prior,
             min_component_coverage=args.min_component_coverage,
             min_component_coverage_mode=args.min_component_coverage_mode,
+            # Clinical activity filter parameters
+            min_trials=args.min_trials,
+            min_phase=args.min_phase,
+            no_clinical_filter=args.no_clinical_filter,
         )
 
         # Add bootstrap analysis if requested
