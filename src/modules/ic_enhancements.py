@@ -1791,6 +1791,8 @@ def compute_interaction_terms(
     cash_burn_risk: str = "unknown",
     phase_momentum: str = "unknown",
     phase_momentum_confidence: Decimal = Decimal("0"),
+    phase_momentum_phase_level: int = 0,
+    days_to_nearest_catalyst: Optional[int] = None,
 ) -> InteractionTerms:
     """
     Compute non-linear interaction terms between signals.
@@ -1996,31 +1998,60 @@ def compute_interaction_terms(
     cash_burn_interaction = _clamp(cash_burn_interaction, Decimal("-1.5"), Decimal("1.5"))
 
     # =========================================================================
-    # 6. Phase Momentum Interaction (bounded ±1.5)
+    # 6. Phase Momentum Interaction (bounded ±2.5 with double jeopardy)
     # =========================================================================
-    # Strong positive momentum → boost
-    # Strong negative momentum → penalty
-    # Only apply when confidence >= 0.6
+    # Governance rules:
+    # - Rule A: Skip penalty for approved/commercial companies (phase_level >= 7)
+    # - Rule B: Double jeopardy adds -1.0 if strong_neg AND funding pressure AND no catalyst
+    # - Rule C: Confidence ramp instead of hard threshold (multiplier = (conf-0.5)/0.5)
 
     phase_momentum_interaction = Decimal("0")
     pm_normalized = phase_momentum.lower() if phase_momentum else "unknown"
     pm_conf = _to_decimal(phase_momentum_confidence, Decimal("0"))
 
-    if pm_normalized != "unknown" and pm_conf >= Decimal("0.6"):
-        if pm_normalized == "strong_positive":
-            phase_momentum_interaction = Decimal("1.5")
-            flags.append("phase_momentum_boost")
-        elif pm_normalized == "positive":
-            phase_momentum_interaction = Decimal("0.75")
-            flags.append("phase_momentum_positive")
-        elif pm_normalized == "negative":
-            phase_momentum_interaction = Decimal("-0.75")
-            flags.append("phase_momentum_negative")
-        elif pm_normalized == "strong_negative":
-            phase_momentum_interaction = Decimal("-1.5")
-            flags.append("phase_momentum_penalty")
+    # Rule C: Confidence ramp (0 at conf=0.5, 1.0 at conf=1.0)
+    conf_multiplier = _clamp((pm_conf - Decimal("0.5")) / Decimal("0.5"), Decimal("0"), Decimal("1"))
 
-    phase_momentum_interaction = _clamp(phase_momentum_interaction, Decimal("-1.5"), Decimal("1.5"))
+    # Rule A: Check if approved/commercial stage (phase_level >= 7 = approved)
+    is_commercial_stage = phase_momentum_phase_level >= 7
+
+    if pm_normalized != "unknown" and conf_multiplier > Decimal("0"):
+        if pm_normalized == "strong_positive":
+            # Boost applies to all stages
+            phase_momentum_interaction = Decimal("1.5") * conf_multiplier
+            flags.append("phase_momentum_boost")
+
+        elif pm_normalized == "positive":
+            phase_momentum_interaction = Decimal("0.75") * conf_multiplier
+            flags.append("phase_momentum_positive")
+
+        elif pm_normalized == "negative":
+            # Rule A: Skip penalty for commercial stage
+            if not is_commercial_stage:
+                phase_momentum_interaction = Decimal("-0.75") * conf_multiplier
+                flags.append("phase_momentum_negative")
+            else:
+                flags.append("phase_momentum_negative_skipped_commercial")
+
+        elif pm_normalized == "strong_negative":
+            # Rule A: Skip penalty for commercial stage
+            if not is_commercial_stage:
+                phase_momentum_interaction = Decimal("-1.5") * conf_multiplier
+                flags.append("phase_momentum_penalty")
+
+                # Rule B: Double jeopardy for development-stage stagnation
+                # Conditions: strong_neg AND (high/critical burn OR short runway) AND no near-term catalyst
+                burn_risk_lower = cash_burn_risk.lower() if cash_burn_risk else "unknown"
+                has_funding_pressure = burn_risk_lower in ("high", "critical") or runway_months < Decimal("12")
+                has_near_catalyst = days_to_nearest_catalyst is not None and days_to_nearest_catalyst <= 90
+
+                if has_funding_pressure and not has_near_catalyst:
+                    phase_momentum_interaction -= Decimal("1.0") * conf_multiplier
+                    flags.append("phase_momentum_double_jeopardy")
+            else:
+                flags.append("phase_momentum_penalty_skipped_commercial")
+
+    phase_momentum_interaction = _clamp(phase_momentum_interaction, Decimal("-2.5"), Decimal("1.5"))
 
     # =========================================================================
     # Total with bounds

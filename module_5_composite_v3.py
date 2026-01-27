@@ -408,17 +408,15 @@ def compute_module_5_composite_v3(
             if ps.get("ticker"):
                 partnership_by_ticker[ps["ticker"].upper()] = ps
 
-        # Extract cash burn trajectory data
+        # Extract cash burn trajectory data (uses scores_by_ticker format)
         cash_burn_scores_data = enhancement_result.get("cash_burn_scores") or {}
-        for cb in cash_burn_scores_data.get("scores", []):
-            if cb.get("ticker"):
-                cash_burn_by_ticker[cb["ticker"].upper()] = cb
+        for ticker, cb in cash_burn_scores_data.get("scores_by_ticker", {}).items():
+            cash_burn_by_ticker[ticker.upper()] = cb
 
-        # Extract phase momentum data
+        # Extract phase momentum data (uses scores_by_ticker format)
         phase_momentum_data = enhancement_result.get("phase_momentum_scores") or {}
-        for pm in phase_momentum_data.get("scores", []):
-            if pm.get("ticker"):
-                phase_momentum_by_ticker[pm["ticker"].upper()] = pm
+        for ticker, pm in phase_momentum_data.get("scores_by_ticker", {}).items():
+            phase_momentum_by_ticker[ticker.upper()] = pm
 
     # =========================================================================
     # DETERMINE SCORING MODE AND WEIGHTS
