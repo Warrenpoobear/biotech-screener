@@ -451,3 +451,86 @@ class TestPartnerTierScoring:
 
         assert exclusive > non_exclusive
         assert exclusive > supply
+
+
+class TestCompetitivePartnershipInteraction:
+    """Tests for CI + Partnership interaction modifier affecting scores."""
+
+    def test_interaction_modifier_affects_ranking(self):
+        """Verify CI + partnership interaction changes final scores."""
+        from src.modules.ic_enhancements import compute_interaction_terms
+        from decimal import Decimal
+
+        # Common inputs
+        clinical = Decimal("70")
+        fin_data = {"runway_months": 24}
+        catalyst = Decimal("60")
+        stage = "mid"
+
+        # Ticker A: uncrowded + exceptional partnership (should get +2.5)
+        result_a = compute_interaction_terms(
+            clinical, fin_data, catalyst, stage, None,
+            competitive_crowding="uncrowded",
+            partnership_strength="exceptional",
+        )
+
+        # Ticker B: intense competition + no partnership (should get -1.5)
+        result_b = compute_interaction_terms(
+            clinical, fin_data, catalyst, stage, None,
+            competitive_crowding="highly_crowded",
+            partnership_strength="unknown",
+        )
+
+        # Verify the CI+partnership interaction differs
+        assert result_a.competitive_partnership_interaction == Decimal("2.5")
+        assert result_b.competitive_partnership_interaction == Decimal("-1.5")
+
+        # Total difference should be 4.0 points (2.5 - (-1.5))
+        delta = result_a.total_interaction_adjustment - result_b.total_interaction_adjustment
+        assert delta == Decimal("4.0")
+
+        # Verify flags
+        assert "validated_uncrowded_boost" in result_a.interaction_flags
+        assert "unvalidated_crowded_penalty" in result_b.interaction_flags
+
+    def test_validated_crowded_soften(self):
+        """Crowded but exceptional partnership gets small boost."""
+        from src.modules.ic_enhancements import compute_interaction_terms
+        from decimal import Decimal
+
+        result = compute_interaction_terms(
+            Decimal("70"), {"runway_months": 24}, Decimal("60"), "mid", None,
+            competitive_crowding="highly_crowded",
+            partnership_strength="exceptional",
+        )
+
+        assert result.competitive_partnership_interaction == Decimal("1.0")
+        assert "validated_crowded_soften" in result.interaction_flags
+
+    def test_no_interaction_for_neutral_cases(self):
+        """Neutral cases (moderate crowding, moderate partnership) get no modifier."""
+        from src.modules.ic_enhancements import compute_interaction_terms
+        from decimal import Decimal
+
+        result = compute_interaction_terms(
+            Decimal("70"), {"runway_months": 24}, Decimal("60"), "mid", None,
+            competitive_crowding="moderate",
+            partnership_strength="moderate",
+        )
+
+        # Moderate crowding + moderate partnership doesn't trigger any rule
+        assert result.competitive_partnership_interaction == Decimal("0")
+
+    def test_interaction_bounded_to_3(self):
+        """Interaction modifier is bounded to ±3."""
+        from src.modules.ic_enhancements import compute_interaction_terms
+        from decimal import Decimal
+
+        result = compute_interaction_terms(
+            Decimal("70"), {"runway_months": 24}, Decimal("60"), "mid", None,
+            competitive_crowding="uncrowded",
+            partnership_strength="exceptional",
+        )
+
+        assert result.competitive_partnership_interaction <= Decimal("3.0")
+        assert result.competitive_partnership_interaction >= Decimal("-3.0")

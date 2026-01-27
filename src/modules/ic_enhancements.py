@@ -401,11 +401,12 @@ class InteractionTerms:
     """Non-linear interaction term calculations.
 
     All adjustments use smooth ramps to avoid rank churn from discontinuities.
-    Magnitudes are bounded to ±2 points to prevent leaderboard rewrites.
+    Magnitudes are bounded to ±5 points to prevent leaderboard rewrites.
     """
     clinical_financial_synergy: Decimal  # [0, +1.5] smooth ramp
     stage_financial_interaction: Decimal  # [-2.0, 0] smooth ramp
     catalyst_volatility_dampening: Decimal  # Dampening applied (informational)
+    competitive_partnership_interaction: Decimal  # [-3.0, +3.0] CI+partnership modifier
     total_interaction_adjustment: Decimal  # Sum of above (bounded)
     interaction_flags: List[str]
     # Gate status tracking to prevent double-counting
@@ -1782,6 +1783,8 @@ def compute_interaction_terms(
     *,
     runway_gate_status: str = "UNKNOWN",
     dilution_gate_status: str = "UNKNOWN",
+    competitive_crowding: str = "unknown",
+    partnership_strength: str = "unknown",
 ) -> InteractionTerms:
     """
     Compute non-linear interaction terms between signals.
@@ -1914,19 +1917,53 @@ def compute_interaction_terms(
             flags.append("catalyst_vol_dampening")
 
     # =========================================================================
+    # 4. Competitive Intensity x Partnership Interaction (bounded ±3)
+    # =========================================================================
+    # Rule 1: Low/moderate competition + strong/exceptional partnership → +2.5
+    # Rule 2: Intense competition + exceptional partnership → +1.0 (validated but crowded)
+    # Rule 3: Intense competition + no/weak partnership → -1.5 (me-too economics risk)
+
+    competitive_partnership_interaction = Decimal("0")
+
+    ci_low = competitive_crowding in ("uncrowded", "moderate")
+    ci_intense = competitive_crowding in ("highly_crowded", "crowded")
+    ps_strong = partnership_strength in ("strong", "exceptional")
+    ps_exceptional = partnership_strength == "exceptional"
+    ps_weak = partnership_strength in ("unknown", "weak", "none")
+
+    if ci_low and ps_strong:
+        # Best combo: differentiated position + external validation
+        competitive_partnership_interaction = Decimal("2.5")
+        flags.append("validated_uncrowded_boost")
+    elif ci_intense and ps_exceptional:
+        # Validated but competitive - small boost
+        competitive_partnership_interaction = Decimal("1.0")
+        flags.append("validated_crowded_soften")
+    elif ci_intense and ps_weak:
+        # Crowded with no validation - penalty
+        competitive_partnership_interaction = Decimal("-1.5")
+        flags.append("unvalidated_crowded_penalty")
+
+    # Clamp CI+partnership interaction to ±3
+    competitive_partnership_interaction = _clamp(
+        competitive_partnership_interaction, Decimal("-3.0"), Decimal("3.0")
+    )
+
+    # =========================================================================
     # Total with bounds
     # =========================================================================
     # Clamp total to prevent extreme adjustments
-    total = clinical_financial_synergy + stage_financial_interaction
+    total = clinical_financial_synergy + stage_financial_interaction + competitive_partnership_interaction
     # Note: catalyst dampening is informational, not added to total
     # (it's applied as a multiplier in the main function)
 
-    total = _clamp(total, Decimal("-2.0"), Decimal("2.0"))
+    total = _clamp(total, Decimal("-5.0"), Decimal("5.0"))
 
     return InteractionTerms(
         clinical_financial_synergy=_quantize_score(clinical_financial_synergy),
         stage_financial_interaction=_quantize_score(stage_financial_interaction),
         catalyst_volatility_dampening=_quantize_score(catalyst_volatility_dampening),
+        competitive_partnership_interaction=_quantize_score(competitive_partnership_interaction),
         total_interaction_adjustment=_quantize_score(total),
         interaction_flags=flags,
         runway_gate_already_applied=runway_gate_applied,

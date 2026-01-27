@@ -936,6 +936,8 @@ def _score_single_ticker_v3(
         vol_adj,
         runway_gate_status=runway_gate,
         dilution_gate_status=dilution_gate,
+        competitive_crowding=intensity_crowding,
+        partnership_strength=partnership_strength,
     )
     flags.extend(interactions.interaction_flags)
 
