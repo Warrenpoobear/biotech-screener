@@ -64,10 +64,16 @@ def get_company_facts(cik: str, ticker: str) -> Optional[Dict]:
                 'LiabilitiesCurrent': 'CurrentLiabilities',
                 'StockholdersEquity': 'ShareholdersEquity',
                 'CashAndCashEquivalentsAtCarryingValue': 'Cash',
+                'MarketableSecuritiesCurrent': 'MarketableSecurities',
+                'ShortTermInvestments': 'ShortTermInvestments',
+                'AvailableForSaleSecuritiesCurrent': 'AvailableForSaleSecurities',
                 'Revenues': 'Revenue',
                 'CostOfRevenue': 'COGS',
                 'ResearchAndDevelopmentExpense': 'R&D',
-                'NetIncomeLoss': 'NetIncome'
+                'NetIncomeLoss': 'NetIncome',
+                'LongTermDebt': 'LongTermDebt',
+                'LongTermDebtCurrent': 'LongTermDebtCurrent',
+                'ConvertibleNotesPayable': 'ConvertibleDebt',
             }
             
             financial_data = {"ticker": ticker, "cik": cik}

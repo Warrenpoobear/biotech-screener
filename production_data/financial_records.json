@@ -14,6 +14,8 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 2455006000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 284870000,
+    "MarketableSecurities_date": "2019-12-31",
     "Revenue": 3394635000,
     "Revenue_date": "2022-12-31",
     "COGS": 250955000,
@@ -22,7 +24,11 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 987371000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 19094000000,
+    "LongTermDebt_date": "2018-12-31",
+    "LongTermDebtCurrent": 689118000,
+    "LongTermDebtCurrent_date": "2014-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "JAZZ",
@@ -37,13 +43,19 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 1326070000,
     "Cash_date": "2025-09-30",
+    "AvailableForSaleSecurities": 0,
+    "AvailableForSaleSecurities_date": "2012-12-31",
     "Revenue": 476457000,
     "Revenue_date": "2018-12-31",
     "R&D": 299726000,
     "R&D_date": "2019-12-31",
     "NetIncome": -559599000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 5361161000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 1029179000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "IONS",
@@ -60,13 +72,21 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 338341000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 1901830000,
+    "ShortTermInvestments_date": "2025-09-30",
+    "AvailableForSaleSecurities": 340622000,
+    "AvailableForSaleSecurities_date": "2011-03-31",
     "Revenue": 226577000,
     "Revenue_date": "2024-12-31",
     "R&D": 638200000,
     "R&D_date": "2021-12-31",
     "NetIncome": -151993000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 1253062000,
+    "LongTermDebt_date": "2024-12-31",
+    "LongTermDebtCurrent": 165000,
+    "LongTermDebtCurrent_date": "2024-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "BBIO",
@@ -83,13 +103,19 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 642951000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 7939000,
+    "MarketableSecurities_date": "2025-06-30",
     "COGS": 12855000,
     "COGS_date": "2025-09-30",
     "R&D": 335536000,
     "R&D_date": "2025-09-30",
     "NetIncome": -69000,
     "NetIncome_date": "2019-06-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 2007337000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 3646000,
+    "LongTermDebtCurrent_date": "2021-03-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "GOSS",
@@ -106,9 +132,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 8933000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 171291000,
+    "MarketableSecurities_date": "2025-09-30",
     "NetIncome": -123132000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 28548000,
+    "LongTermDebt_date": "2020-03-31",
+    "LongTermDebtCurrent": 0,
+    "LongTermDebtCurrent_date": "2024-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "RNA",
@@ -125,11 +157,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 350158000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 261849000,
+    "MarketableSecurities_date": "2022-09-30",
     "R&D": 392563000,
     "R&D_date": "2025-09-30",
     "NetIncome": -447530000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 0,
+    "LongTermDebt_date": "2020-09-30",
+    "LongTermDebtCurrent": 0,
+    "LongTermDebtCurrent_date": "2020-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "KYMR",
@@ -152,7 +190,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -224370000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "RYTM",
@@ -169,13 +207,21 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 52078000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 363974000,
+    "ShortTermInvestments_date": "2025-09-30",
+    "AvailableForSaleSecurities": 113846000,
+    "AvailableForSaleSecurities_date": "2017-12-31",
     "Revenue": 0,
     "Revenue_date": "2018-12-31",
     "R&D": 125307000,
     "R&D_date": "2025-09-30",
     "NetIncome": -149034000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 72961000,
+    "LongTermDebt_date": "2022-09-30",
+    "LongTermDebtCurrent": 5556000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "EPRX",
@@ -198,7 +244,7 @@
     "R&D_date": "2023-12-31",
     "NetIncome": -28220796,
     "NetIncome_date": "2023-12-31",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ACAD",
@@ -215,13 +261,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 257996000,
     "Cash_date": "2025-09-30",
+    "AvailableForSaleSecurities": 83027000,
+    "AvailableForSaleSecurities_date": "2013-03-31",
     "Revenue": 726437000,
     "Revenue_date": "2023-12-31",
     "R&D": 244045000,
     "R&D_date": "2025-09-30",
     "NetIncome": 117432000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebtCurrent": 22000,
+    "LongTermDebtCurrent_date": "2012-03-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ALNY",
@@ -244,7 +294,9 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 127328000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 677723000,
+    "LongTermDebt_date": "2022-06-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "BMRN",
@@ -261,6 +313,10 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 1250108000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 935662000,
+    "ShortTermInvestments_date": "2018-06-30",
+    "AvailableForSaleSecurities": 935662000,
+    "AvailableForSaleSecurities_date": "2018-06-30",
     "Revenue": 373447000,
     "Revenue_date": "2018-03-31",
     "COGS": 441733000,
@@ -269,7 +325,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 395474000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "CRSP",
@@ -286,13 +342,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 286497000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 1629213000,
+    "MarketableSecurities_date": "2025-09-30",
     "Revenue": 157000,
     "Revenue_date": "2020-03-31",
     "R&D": 201280000,
     "R&D_date": "2025-09-30",
     "NetIncome": -450986000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "VRTX",
@@ -309,13 +367,19 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 4939600000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 1347400000,
+    "MarketableSecurities_date": "2025-09-30",
+    "AvailableForSaleSecurities": 518108000,
+    "AvailableForSaleSecurities_date": "2018-12-31",
     "Revenue": 640799000,
     "Revenue_date": "2018-03-31",
     "R&D": 603100000,
     "R&D_date": "2022-03-31",
     "NetIncome": 2762100000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 105000000,
+    "LongTermDebt_date": "2011-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "SRPT",
@@ -332,13 +396,19 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 613077000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 237916000,
+    "ShortTermInvestments_date": "2025-09-30",
     "Revenue": 1755303000,
     "Revenue_date": "2025-09-30",
     "R&D": 207239000,
     "R&D_date": "2020-12-31",
     "NetIncome": -430563000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 1035146000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 0,
+    "LongTermDebtCurrent_date": "2024-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "UTHR",
@@ -355,13 +425,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 1340100000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 1427500000,
+    "MarketableSecurities_date": "2025-09-30",
     "Revenue": 1483300000,
     "Revenue_date": "2020-12-31",
     "R&D": 410500000,
     "R&D_date": "2025-09-30",
     "NetIncome": 970400000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "EXEL",
@@ -378,13 +450,21 @@
     "ShareholdersEquity_date": "2025-10-03",
     "Cash": 376300000,
     "Cash_date": "2025-10-03",
+    "MarketableSecurities": 612235000,
+    "MarketableSecurities_date": "2025-10-03",
+    "ShortTermInvestments": 803540000,
+    "ShortTermInvestments_date": "2024-06-28",
     "Revenue": 717486000,
     "Revenue_date": "2020-10-02",
     "R&D": 611753000,
     "R&D_date": "2025-10-03",
     "NetIncome": 538042000,
     "NetIncome_date": "2025-10-03",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 0,
+    "LongTermDebt_date": "2017-12-29",
+    "LongTermDebtCurrent": 189122000,
+    "LongTermDebtCurrent_date": "2016-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "RARE",
@@ -401,11 +481,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 202510000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 568034000,
+    "ShortTermInvestments_date": "2020-09-30",
     "R&D": 546720000,
     "R&D_date": "2025-09-30",
     "NetIncome": -446444000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "FOLD",
@@ -422,13 +504,19 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 190553000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 73290000,
+    "MarketableSecurities_date": "2025-09-30",
+    "AvailableForSaleSecurities": 309502000,
+    "AvailableForSaleSecurities_date": "2017-12-31",
     "Revenue": 16696000,
     "Revenue_date": "2018-03-31",
     "COGS": 10060000,
     "COGS_date": "2018-09-30",
     "NetIncome": -28800000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 391985000,
+    "LongTermDebt_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "AMGN",
@@ -443,11 +531,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 9445000000,
     "Cash_date": "2025-09-30",
+    "AvailableForSaleSecurities": 22431000000,
+    "AvailableForSaleSecurities_date": "2018-03-31",
     "Revenue": 12427000000,
     "Revenue_date": "2021-06-30",
     "NetIncome": 6378000000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 54587000000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 2153000000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "GILD",
@@ -462,13 +556,23 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 5412000000,
     "Cash_date": "2022-12-31",
+    "MarketableSecurities": 19000000,
+    "MarketableSecurities_date": "2025-09-30",
+    "AvailableForSaleSecurities": 78804000,
+    "AvailableForSaleSecurities_date": "2013-03-31",
     "Revenue": 24689000000,
     "Revenue_date": "2020-12-31",
     "R&D": 1101000000,
     "R&D_date": "2020-03-31",
     "NetIncome": 6327000000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 24941000000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 2806000000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "ConvertibleDebt": 2790000000,
+    "ConvertibleDebt_date": "2012-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "BIIB",
@@ -485,6 +589,10 @@
     "ShareholdersEquity_date": "2023-12-31",
     "Cash": 2913700000,
     "Cash_date": "2019-12-31",
+    "MarketableSecurities": 0,
+    "MarketableSecurities_date": "2013-03-31",
+    "AvailableForSaleSecurities": 1562200000,
+    "AvailableForSaleSecurities_date": "2019-12-31",
     "Revenue": 7611200000,
     "Revenue_date": "2025-09-30",
     "COGS": 133749000,
@@ -493,7 +601,9 @@
     "R&D_date": "2013-03-31",
     "NetIncome": 1341800000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 6285100000,
+    "LongTermDebt_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "MRNA",
@@ -516,7 +626,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -1996000000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "LGND",
@@ -533,13 +643,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 139376000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 525146000,
+    "ShortTermInvestments_date": "2025-09-30",
     "Revenue": 56157000,
     "Revenue_date": "2018-03-31",
     "R&D": 77671000,
     "R&D_date": "2025-09-30",
     "NetIncome": 79669000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 27500000,
+    "LongTermDebt_date": "2012-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "TECH",
@@ -554,11 +668,17 @@
     "ShareholdersEquity_date": "2025-03-31",
     "Cash": 144962000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 0,
+    "ShortTermInvestments_date": "2025-03-31",
+    "AvailableForSaleSecurities": 32463000,
+    "AvailableForSaleSecurities_date": "2021-06-30",
     "Revenue": 286555000,
     "Revenue_date": "2025-09-30",
     "NetIncome": 38185000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebtCurrent": 12500000,
+    "LongTermDebtCurrent_date": "2022-06-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "RGEN",
@@ -575,13 +695,23 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 748747000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 16270517,
+    "MarketableSecurities_date": "2014-06-30",
+    "ShortTermInvestments": 0,
+    "ShortTermInvestments_date": "2018-12-31",
+    "AvailableForSaleSecurities": 0,
+    "AvailableForSaleSecurities_date": "2017-09-30",
     "Revenue": 44830000,
     "Revenue_date": "2018-03-31",
     "R&D": 41057000,
     "R&D_date": "2025-09-30",
     "NetIncome": 35607000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 537927000,
+    "LongTermDebt_date": "2025-09-30",
+    "ConvertibleDebt": 240942000,
+    "ConvertibleDebt_date": "2020-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ROIV",
@@ -598,11 +728,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 1237010000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 3148825000,
+    "MarketableSecurities_date": "2025-09-30",
     "R&D": 317487000,
     "R&D_date": "2025-09-30",
     "NetIncome": -336874000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 311716000,
+    "LongTermDebt_date": "2024-06-30",
+    "LongTermDebtCurrent": 12000000,
+    "LongTermDebtCurrent_date": "2024-06-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "NTRA",
@@ -619,13 +755,19 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 466005000,
     "Cash_date": "2022-12-31",
+    "MarketableSecurities": 1000000,
+    "MarketableSecurities_date": "2025-09-30",
+    "AvailableForSaleSecurities": 186700000,
+    "AvailableForSaleSecurities_date": "2019-09-30",
     "Revenue": 210939000,
     "Revenue_date": "2017-12-31",
     "R&D": 448917000,
     "R&D_date": "2025-09-30",
     "NetIncome": -255418000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 282945000,
+    "LongTermDebt_date": "2023-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "DAWN",
@@ -642,13 +784,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 43277000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 408303000,
+    "ShortTermInvestments_date": "2025-09-30",
     "Revenue": 104464000,
     "Revenue_date": "2025-09-30",
     "R&D": 107187000,
     "R&D_date": "2025-09-30",
     "NetIncome": -86044000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "PCVX",
@@ -665,11 +809,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 281080000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 1430240000,
+    "ShortTermInvestments_date": "2025-09-30",
     "R&D": 552246000,
     "R&D_date": "2025-09-30",
     "NetIncome": -520121000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ARVN",
@@ -686,13 +832,19 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 101500000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 686100000,
+    "MarketableSecurities_date": "2025-09-30",
     "Revenue": 253100000,
     "Revenue_date": "2025-09-30",
     "R&D": 224100000,
     "R&D_date": "2025-09-30",
     "NetIncome": -13400000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 600000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 200000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "FATE",
@@ -707,11 +859,19 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 40622000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 174801000,
+    "ShortTermInvestments_date": "2025-09-30",
     "R&D": 82404000,
     "R&D_date": "2025-09-30",
     "NetIncome": -103941000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 18480000,
+    "LongTermDebt_date": "2018-12-31",
+    "LongTermDebtCurrent": 13932000,
+    "LongTermDebtCurrent_date": "2019-09-30",
+    "ConvertibleDebt": 23700000,
+    "ConvertibleDebt_date": "2013-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "NTLA",
@@ -728,11 +888,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 193389000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 317655000,
+    "MarketableSecurities_date": "2025-09-30",
     "R&D": 300209000,
     "R&D_date": "2025-09-30",
     "NetIncome": -316908000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "EDIT",
@@ -749,13 +911,19 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 165648000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 0,
+    "MarketableSecurities_date": "2025-09-30",
     "Revenue": 2069000,
     "Revenue_date": "2019-03-31",
     "R&D": 62549000,
     "R&D_date": "2025-09-30",
     "NetIncome": -154440000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 57434000,
+    "LongTermDebt_date": "2024-12-31",
+    "LongTermDebtCurrent": 5000000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "BEAM",
@@ -772,13 +940,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 267960000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 807010000,
+    "MarketableSecurities_date": "2025-09-30",
     "Revenue": 6000,
     "Revenue_date": "2021-03-31",
     "R&D": 310343000,
     "R&D_date": "2025-09-30",
     "NetIncome": -324289000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "VCYT",
@@ -803,7 +973,9 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 25204000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebtCurrent": 0,
+    "LongTermDebtCurrent_date": "2022-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "AXSM",
@@ -828,7 +1000,11 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -154615000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebtCurrent": 70000000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "ConvertibleDebt": 0,
+    "ConvertibleDebt_date": "2017-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "PTGX",
@@ -845,13 +1021,19 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 113713000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 462404000,
+    "MarketableSecurities_date": "2025-09-30",
+    "AvailableForSaleSecurities": 42469000,
+    "AvailableForSaleSecurities_date": "2019-03-31",
     "Revenue": 8781000,
     "Revenue_date": "2017-09-30",
     "R&D": 112932000,
     "R&D_date": "2025-09-30",
     "NetIncome": -85765000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 9832000,
+    "LongTermDebt_date": "2020-03-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "CDNA",
@@ -868,6 +1050,8 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 91435000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 102782000,
+    "MarketableSecurities_date": "2025-09-30",
     "Revenue": 14053000,
     "Revenue_date": "2018-03-31",
     "COGS": 27417000,
@@ -876,7 +1060,11 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -17246000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 0,
+    "LongTermDebt_date": "2024-09-30",
+    "LongTermDebtCurrent": 0,
+    "LongTermDebtCurrent_date": "2020-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "PRVA",
@@ -895,7 +1083,7 @@
     "Cash_date": "2025-09-30",
     "NetIncome": 13768000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "AGIO",
@@ -912,13 +1100,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 92710000,
     "Cash_date": "2025-09-30",
+    "AvailableForSaleSecurities": 370188000,
+    "AvailableForSaleSecurities_date": "2019-09-30",
     "Revenue": 30013000,
     "Revenue_date": "2018-12-31",
     "R&D": 251479000,
     "R&D_date": "2025-09-30",
     "NetIncome": -304742000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ALLO",
@@ -935,11 +1125,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 37815000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 283988000,
+    "ShortTermInvestments_date": "2021-12-31",
     "R&D": 121520000,
     "R&D_date": "2025-09-30",
     "NetIncome": -152076000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "APLS",
@@ -956,11 +1148,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 479171000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 124364000,
+    "MarketableSecurities_date": "2022-09-30",
     "R&D": 221621000,
     "R&D_date": "2025-09-30",
     "NetIncome": 81339000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 93109000,
+    "LongTermDebt_date": "2024-03-31",
+    "LongTermDebtCurrent": 1666667,
+    "LongTermDebtCurrent_date": "2018-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ARCT",
@@ -981,7 +1179,11 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -36704000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 13300000,
+    "LongTermDebt_date": "2022-09-30",
+    "LongTermDebtCurrent": 60655000,
+    "LongTermDebtCurrent_date": "2022-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ARWR",
@@ -996,13 +1198,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 69400000,
     "Cash_date": "2024-06-30",
+    "MarketableSecurities": 0,
+    "MarketableSecurities_date": "2022-09-30",
     "Revenue": 16142321,
     "Revenue_date": "2018-09-30",
     "R&D": 607159000,
     "R&D_date": "2025-09-30",
     "NetIncome": -1631000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "AVTR",
@@ -1023,7 +1227,11 @@
     "Revenue_date": "2025-09-30",
     "NetIncome": -582600000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 3857900000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 219800000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "BCRX",
@@ -1040,13 +1248,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 84078000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 128795000,
+    "ShortTermInvestments_date": "2025-09-30",
     "Revenue": 25186000,
     "Revenue_date": "2017-12-31",
     "R&D": 125259000,
     "R&D_date": "2025-09-30",
     "NetIncome": 18016000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 298142000,
+    "LongTermDebt_date": "2021-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "BDTX",
@@ -1067,7 +1279,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 37483000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "CRBU",
@@ -1084,13 +1296,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 11144000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 227778000,
+    "MarketableSecurities_date": "2022-06-30",
+    "ShortTermInvestments": 0,
+    "ShortTermInvestments_date": "2020-12-31",
     "Revenue": 0,
     "Revenue_date": "2021-06-30",
     "R&D": 85624000,
     "R&D_date": "2025-09-30",
     "NetIncome": -121637000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "CRNX",
@@ -1107,13 +1323,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 110901000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 981390000,
+    "ShortTermInvestments_date": "2025-09-30",
     "Revenue": 1392000,
     "Revenue_date": "2025-06-30",
     "R&D": 247005000,
     "R&D_date": "2025-09-30",
     "NetIncome": -342502000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "CRVS",
@@ -1134,7 +1352,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -2962000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "CLDX",
@@ -1151,13 +1369,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 36037000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 547186000,
+    "MarketableSecurities_date": "2025-09-30",
     "Revenue": 1764000,
     "Revenue_date": "2018-12-31",
     "R&D": 169741000,
     "R&D_date": "2025-09-30",
     "NetIncome": -177440000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "CYTK",
@@ -1180,7 +1400,11 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -601924000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 1001919000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 17280000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "DNLI",
@@ -1197,13 +1421,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 90963000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 757241000,
+    "MarketableSecurities_date": "2025-09-30",
     "Revenue": 0,
     "Revenue_date": "2024-12-31",
     "R&D": 320873000,
     "R&D_date": "2025-09-30",
     "NetIncome": -383991000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "DRMA",
@@ -1224,7 +1450,9 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -5696669,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebtCurrent": 0,
+    "LongTermDebtCurrent_date": "2021-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "DVAX",
@@ -1241,13 +1469,23 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 160247000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 123629000,
+    "MarketableSecurities_date": "2012-09-30",
+    "AvailableForSaleSecurities": 110916000,
+    "AvailableForSaleSecurities_date": "2014-09-30",
     "Revenue": 165000,
     "Revenue_date": "2018-03-31",
     "R&D": 55112000,
     "R&D_date": "2025-09-30",
     "NetIncome": -50451000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 8913000,
+    "LongTermDebt_date": "2015-03-31",
+    "LongTermDebtCurrent": 1498000,
+    "LongTermDebtCurrent_date": "2015-06-30",
+    "ConvertibleDebt": 260507000,
+    "ConvertibleDebt_date": "2025-03-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "FGEN",
@@ -1264,6 +1502,8 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 117975000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 0,
+    "ShortTermInvestments_date": "2024-12-31",
     "Revenue": 29621000,
     "Revenue_date": "2024-12-31",
     "COGS": 278000,
@@ -1272,7 +1512,9 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 197672000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 75000000,
+    "LongTermDebt_date": "2025-08-29",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "FULC",
@@ -1289,11 +1531,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 47078000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 0,
+    "MarketableSecurities_date": "2019-12-31",
     "R&D": 40687000,
     "R&D_date": "2025-09-30",
     "NetIncome": -54546000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "HALO",
@@ -1310,13 +1554,21 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 419665000,
     "Cash_date": "2025-09-30",
+    "AvailableForSaleSecurities": 263363000,
+    "AvailableForSaleSecurities_date": "2020-03-31",
     "Revenue": 121703000,
     "Revenue_date": "2020-12-31",
     "R&D": 49593000,
     "R&D_date": "2025-09-30",
     "NetIncome": 458480000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 1510757000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 710685000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "ConvertibleDebt": 1506100000,
+    "ConvertibleDebt_date": "2022-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "HRTX",
@@ -1333,11 +1585,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 43068000,
     "Cash_date": "2025-09-30",
+    "AvailableForSaleSecurities": 222967000,
+    "AvailableForSaleSecurities_date": "2019-06-30",
     "R&D": 8683000,
     "R&D_date": "2025-09-30",
     "NetIncome": -17241000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "ConvertibleDebt": 64000,
+    "ConvertibleDebt_date": "2011-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "IMCR",
@@ -1354,6 +1610,8 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 498413000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 393940000,
+    "MarketableSecurities_date": "2025-09-30",
     "Revenue": 226150000,
     "Revenue_date": "2024-09-30",
     "COGS": 2384000,
@@ -1362,7 +1620,9 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -5454000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 438695000,
+    "LongTermDebt_date": "2024-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "IMVT",
@@ -1383,7 +1643,7 @@
     "R&D_date": "2022-09-30",
     "NetIncome": -247115000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "IRWD",
@@ -1398,6 +1658,8 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 140407000,
     "Cash_date": "2025-09-30",
+    "AvailableForSaleSecurities": 95680000,
+    "AvailableForSaleSecurities_date": "2017-12-31",
     "Revenue": 69155000,
     "Revenue_date": "2018-03-31",
     "COGS": 19097000,
@@ -1406,7 +1668,13 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 26293000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 199506000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 120700000,
+    "LongTermDebtCurrent_date": "2022-03-31",
+    "ConvertibleDebt": 234243000,
+    "ConvertibleDebt_date": "2016-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "KALA",
@@ -1423,13 +1691,19 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 21096000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 9922000,
+    "ShortTermInvestments_date": "2023-06-30",
     "Revenue": 0,
     "Revenue_date": "2017-12-31",
     "R&D": 18414000,
     "R&D_date": "2025-09-30",
     "NetIncome": -27666000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 26948000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 28411000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "KALV",
@@ -1452,7 +1726,9 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -158914000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 5331000,
+    "LongTermDebt_date": "2015-03-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "KRYS",
@@ -1469,11 +1745,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 392604000,
     "Cash_date": "2025-09-30",
+    "AvailableForSaleSecurities": 8402000,
+    "AvailableForSaleSecurities_date": "2019-09-30",
     "R&D": 43251000,
     "R&D_date": "2025-09-30",
     "NetIncome": 153431000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 4254000,
+    "LongTermDebt_date": "2017-08-08",
+    "ConvertibleDebt": 0,
+    "ConvertibleDebt_date": "2017-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "LQDA",
@@ -1494,7 +1776,11 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -83479000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 19879000,
+    "LongTermDebt_date": "2022-12-31",
+    "LongTermDebtCurrent": 0,
+    "LongTermDebtCurrent_date": "2020-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "MCRB",
@@ -1511,13 +1797,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 47638000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 0,
+    "ShortTermInvestments_date": "2023-12-31",
     "Revenue": 351000,
     "Revenue_date": "2025-09-30",
     "R&D": 37376000,
     "R&D_date": "2025-09-30",
     "NetIncome": 21031000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 110000000,
+    "LongTermDebt_date": "2024-06-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "MDGL",
@@ -1534,11 +1824,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 295694000,
     "Cash_date": "2025-09-30",
+    "AvailableForSaleSecurities": 144700000,
+    "AvailableForSaleSecurities_date": "2018-03-31",
     "Revenue": 137250000,
     "Revenue_date": "2025-03-31",
     "NetIncome": -229709000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 339753000,
+    "LongTermDebt_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "MRSN",
@@ -1555,13 +1849,19 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 56391000,
     "Cash_date": "2025-09-30",
+    "AvailableForSaleSecurities": 88143000,
+    "AvailableForSaleSecurities_date": "2017-12-31",
     "Revenue": 7255000,
     "Revenue_date": "2018-06-30",
     "R&D": 46741000,
     "R&D_date": "2025-09-30",
     "NetIncome": -55964000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 20098000,
+    "LongTermDebt_date": "2024-03-31",
+    "LongTermDebtCurrent": 0,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "MRVI",
@@ -1584,7 +1884,11 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -95092000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 292821000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 5440000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "NVCR",
@@ -1609,7 +1913,9 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -111728000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 568822000,
+    "LongTermDebt_date": "2023-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "NVAX",
@@ -1626,6 +1932,10 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 268023000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 494871000,
+    "MarketableSecurities_date": "2025-09-30",
+    "AvailableForSaleSecurities": 143617000,
+    "AvailableForSaleSecurities_date": "2014-09-30",
     "Revenue": 976340000,
     "Revenue_date": "2025-09-30",
     "COGS": 50936000,
@@ -1634,7 +1944,9 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 422775000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "ConvertibleDebt": 169684000,
+    "ConvertibleDebt_date": "2024-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "OCGN",
@@ -1657,7 +1969,11 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -50140000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 1712000,
+    "LongTermDebt_date": "2021-12-31",
+    "LongTermDebtCurrent": 0,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "OPCH",
@@ -1680,7 +1996,11 @@
     "COGS_date": "2024-12-31",
     "NetIncome": 149081000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 1161836000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 6780000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "PCRX",
@@ -1697,6 +2017,8 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 147589000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 98745000,
+    "ShortTermInvestments_date": "2025-09-30",
     "Revenue": 541533000,
     "Revenue_date": "2021-12-31",
     "COGS": 109450000,
@@ -1705,7 +2027,11 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 5397000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 376721000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 118531000,
+    "LongTermDebtCurrent_date": "2016-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "PGEN",
@@ -1722,13 +2048,19 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 14322000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 106813000,
+    "ShortTermInvestments_date": "2025-09-30",
     "Revenue": 17002000,
     "Revenue_date": "2019-12-31",
     "R&D": 99060000,
     "R&D_date": "2019-09-30",
     "NetIncome": -227139000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 92890000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 43219000,
+    "LongTermDebtCurrent_date": "2022-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "PRTA",
@@ -1751,7 +2083,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -222503000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "PTCT",
@@ -1768,13 +2100,19 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 672617000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 1015200000,
+    "MarketableSecurities_date": "2025-09-30",
     "Revenue": 264734000,
     "Revenue_date": "2018-12-31",
     "R&D": 322121000,
     "R&D_date": "2025-09-30",
     "NetIncome": 817609000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 93198000,
+    "LongTermDebt_date": "2015-09-30",
+    "LongTermDebtCurrent": 286319000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "RVMD",
@@ -1791,11 +2129,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 217442000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 1714066000,
+    "MarketableSecurities_date": "2025-09-30",
     "R&D": 692389000,
     "R&D_date": "2025-09-30",
     "NetIncome": -766409000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "RXRX",
@@ -1812,11 +2152,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 659836000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 0,
+    "ShortTermInvestments_date": "2022-12-31",
     "R&D": 379331000,
     "R&D_date": "2025-09-30",
     "NetIncome": -536637000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 723000,
+    "LongTermDebt_date": "2021-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "RGNX",
@@ -1833,13 +2177,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 58802000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 215403000,
+    "MarketableSecurities_date": "2025-09-30",
     "Revenue": 132391000,
     "Revenue_date": "2018-03-31",
     "R&D": 168688000,
     "R&D_date": "2025-09-30",
     "NetIncome": -126729000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "SANA",
@@ -1856,11 +2202,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 103357000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 49697000,
+    "MarketableSecurities_date": "2025-09-30",
     "R&D": 97056000,
     "R&D_date": "2025-09-30",
     "NetIncome": -185341000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "SGMO",
@@ -1877,13 +2225,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 29616000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 94386000,
+    "MarketableSecurities_date": "2014-06-30",
+    "AvailableForSaleSecurities": 198818000,
+    "AvailableForSaleSecurities_date": "2018-03-31",
     "Revenue": 12637000,
     "Revenue_date": "2018-03-31",
     "R&D": 81232000,
     "R&D_date": "2025-09-30",
     "NetIncome": -85513000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "SNDX",
@@ -1900,11 +2252,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 116808000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 319171000,
+    "ShortTermInvestments_date": "2025-09-30",
     "R&D": 180143000,
     "R&D_date": "2025-09-30",
     "NetIncome": -217408000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebtCurrent": 327075000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "SPRY",
@@ -1921,11 +2277,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 59557000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 228652000,
+    "ShortTermInvestments_date": "2025-09-30",
     "R&D": 9738000,
     "R&D_date": "2025-09-30",
     "NetIncome": -129974000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 96229000,
+    "LongTermDebt_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "TARS",
@@ -1942,13 +2302,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 112724000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 289113000,
+    "MarketableSecurities_date": "2025-09-30",
     "Revenue": 299692000,
     "Revenue_date": "2025-09-30",
     "R&D": 46287000,
     "R&D_date": "2025-09-30",
     "NetIncome": -58045000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 72281000,
+    "LongTermDebt_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "TBPH",
@@ -1969,7 +2333,9 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 44871000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 0,
+    "LongTermDebt_date": "2023-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "TGTX",
@@ -1986,6 +2352,8 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 74081000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 57501000,
+    "ShortTermInvestments_date": "2025-09-30",
     "Revenue": 2785000,
     "Revenue_date": "2022-12-31",
     "COGS": 139000,
@@ -1994,7 +2362,13 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 424142000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 100403000,
+    "LongTermDebt_date": "2023-12-31",
+    "LongTermDebtCurrent": 0,
+    "LongTermDebtCurrent_date": "2023-09-30",
+    "ConvertibleDebt": 4380400,
+    "ConvertibleDebt_date": "2012-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "AARD",
@@ -2011,11 +2385,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 39285000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 87065000,
+    "ShortTermInvestments_date": "2025-09-30",
     "R&D": 34637000,
     "R&D_date": "2025-09-30",
     "NetIncome": -39993000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ABCL",
@@ -2036,7 +2412,9 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -137467000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebtCurrent": 190000,
+    "LongTermDebtCurrent_date": "2020-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ABSI",
@@ -2053,13 +2431,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 9476000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 142999000,
+    "MarketableSecurities_date": "2025-09-30",
     "Revenue": 4534000,
     "Revenue_date": "2024-12-31",
     "R&D": 56071000,
     "R&D_date": "2025-09-30",
     "NetIncome": -85621000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 3990000,
+    "LongTermDebt_date": "2024-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ABUS",
@@ -2076,13 +2458,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 22408000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 86293000,
+    "ShortTermInvestments_date": "2024-12-31",
     "Revenue": 13032000,
     "Revenue_date": "2025-09-30",
     "R&D": 20235000,
     "R&D_date": "2025-09-30",
     "NetIncome": -29745000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 0,
+    "LongTermDebt_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ACLX",
@@ -2099,11 +2485,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 79005000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 382378000,
+    "MarketableSecurities_date": "2025-09-30",
     "R&D": 123516000,
     "R&D_date": "2025-09-30",
     "NetIncome": -170822000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ACRS",
@@ -2128,7 +2516,9 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -45128000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 10731000,
+    "LongTermDebt_date": "2021-06-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ADCT",
@@ -2153,7 +2543,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -136214000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ADMA",
@@ -2170,6 +2560,8 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 61385000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 0,
+    "ShortTermInvestments_date": "2017-12-31",
     "Revenue": 16048618,
     "Revenue_date": "2021-03-31",
     "COGS": 167061000,
@@ -2178,7 +2570,13 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 97551000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 72428000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 2344000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "ConvertibleDebt": 200000,
+    "ConvertibleDebt_date": "2012-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ADPT",
@@ -2199,7 +2597,9 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -45920000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebtCurrent": 2429000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ALKS",
@@ -2216,11 +2616,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 616449000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 198767000,
+    "ShortTermInvestments_date": "2021-12-31",
     "R&D": 230926000,
     "R&D_date": "2025-09-30",
     "NetIncome": 192323000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 283666000,
+    "LongTermDebt_date": "2016-12-31",
+    "LongTermDebtCurrent": 3000000,
+    "LongTermDebtCurrent_date": "2024-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ALMS",
@@ -2237,11 +2643,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 65257000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 312467000,
+    "MarketableSecurities_date": "2025-09-30",
     "R&D": 303213000,
     "R&D_date": "2025-09-30",
     "NetIncome": -150394000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ALT",
@@ -2258,13 +2666,19 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 61236000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 149540000,
+    "ShortTermInvestments_date": "2025-09-30",
     "Revenue": 15000,
     "Revenue_date": "2025-09-30",
     "R&D": 48023000,
     "R&D_date": "2025-09-30",
     "NetIncome": -60735000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 568321,
+    "LongTermDebt_date": "2019-06-30",
+    "LongTermDebtCurrent": 0,
+    "LongTermDebtCurrent_date": "2015-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "AMLX",
@@ -2281,13 +2695,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 225178000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 118812000,
+    "MarketableSecurities_date": "2025-09-30",
+    "ShortTermInvestments": 234813000,
+    "ShortTermInvestments_date": "2024-06-30",
     "Revenue": 380786000,
     "Revenue_date": "2023-12-31",
     "R&D": 69191000,
     "R&D_date": "2025-09-30",
     "NetIncome": -111736000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ANAB",
@@ -2306,7 +2724,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -62846000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ANNX",
@@ -2327,7 +2745,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -158434000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ANRO",
@@ -2348,7 +2766,11 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -47056000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 10254000,
+    "LongTermDebt_date": "2024-12-31",
+    "LongTermDebtCurrent": 0,
+    "LongTermDebtCurrent_date": "2024-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "APGE",
@@ -2363,11 +2785,13 @@
     "CurrentLiabilities_date": "2025-09-30",
     "Cash": 107914000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 419375000,
+    "MarketableSecurities_date": "2025-09-30",
     "R&D": 156268000,
     "R&D_date": "2025-09-30",
     "NetIncome": -186456000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ARQT",
@@ -2390,7 +2814,11 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -33536000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 108498000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 1000000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ATAI",
@@ -2413,7 +2841,13 @@
     "R&D_date": "2024-12-31",
     "NetIncome": -115234000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 0,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 11366000,
+    "LongTermDebtCurrent_date": "2025-03-31",
+    "ConvertibleDebt": 0,
+    "ConvertibleDebt_date": "2022-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ATXS",
@@ -2430,13 +2864,21 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 96280000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 131441000,
+    "ShortTermInvestments_date": "2025-09-30",
+    "AvailableForSaleSecurities": 14931000,
+    "AvailableForSaleSecurities_date": "2016-12-31",
     "Revenue": 500000,
     "Revenue_date": "2017-12-31",
     "R&D": 9859000,
     "R&D_date": "2021-09-30",
     "NetIncome": -98404000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 833000,
+    "LongTermDebt_date": "2018-06-30",
+    "LongTermDebtCurrent": 831000,
+    "LongTermDebtCurrent_date": "2018-06-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "AUPH",
@@ -2459,7 +2901,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 76408000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "AURA",
@@ -2480,7 +2922,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -80632000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "AUTL",
@@ -2503,7 +2945,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -197196000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "AVBP",
@@ -2520,11 +2962,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 112672000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 187594000,
+    "ShortTermInvestments_date": "2025-09-30",
     "R&D": 121176000,
     "R&D_date": "2025-09-30",
     "NetIncome": -130764000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "AVIR",
@@ -2545,7 +2989,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -113482000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "AVXL",
@@ -2566,7 +3010,9 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -46377000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 265,
+    "LongTermDebt_date": "2015-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "BBOT",
@@ -2583,11 +3029,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 408741000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 59544000,
+    "MarketableSecurities_date": "2025-09-30",
     "R&D": 83125000,
     "R&D_date": "2025-09-30",
     "NetIncome": -95247000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "BCAX",
@@ -2604,11 +3052,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 171673000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 118494000,
+    "ShortTermInvestments_date": "2025-09-30",
     "R&D": 92100000,
     "R&D_date": "2025-09-30",
     "NetIncome": -100564000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "BCYC",
@@ -2631,7 +3081,11 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -198806000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 30909000,
+    "LongTermDebt_date": "2024-06-30",
+    "LongTermDebtCurrent": 22404000,
+    "LongTermDebtCurrent_date": "2024-06-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "BHVN",
@@ -2648,11 +3102,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 184847000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 75370000,
+    "MarketableSecurities_date": "2025-09-30",
     "R&D": 513120000,
     "R&D_date": "2025-09-30",
     "NetIncome": -593267000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "BIOA",
@@ -2669,11 +3125,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 215573000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 70205000,
+    "MarketableSecurities_date": "2025-09-30",
     "R&D": 49466000,
     "R&D_date": "2025-09-30",
     "NetIncome": -54662000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 7056000,
+    "LongTermDebt_date": "2025-03-31",
+    "LongTermDebtCurrent": 4126000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "BRKR",
@@ -2690,6 +3152,10 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 293100000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 0,
+    "ShortTermInvestments_date": "2022-12-31",
+    "AvailableForSaleSecurities": 114200000,
+    "AvailableForSaleSecurities_date": "2017-12-31",
     "Revenue": 1472700000,
     "Revenue_date": "2019-09-30",
     "COGS": 1330800000,
@@ -2698,7 +3164,9 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -34600000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 2008500000,
+    "LongTermDebt_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "CABA",
@@ -2715,11 +3183,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 60206000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 99725000,
+    "ShortTermInvestments_date": "2025-09-30",
     "R&D": 106480000,
     "R&D_date": "2025-09-30",
     "NetIncome": -125937000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "CADL",
@@ -2740,7 +3210,11 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -8686000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 560000,
+    "LongTermDebt_date": "2021-12-31",
+    "LongTermDebtCurrent": 4225000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "CAI",
@@ -2757,11 +3231,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 753221000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 2272000,
+    "MarketableSecurities_date": "2025-09-30",
     "R&D": 69739000,
     "R&D_date": "2025-09-30",
     "NetIncome": -150045000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 375880000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 164000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "CATX",
@@ -2778,13 +3258,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 26762000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 147375000,
+    "ShortTermInvestments_date": "2025-09-30",
     "Revenue": 6336000,
     "Revenue_date": "2023-09-30",
     "R&D": 51291000,
     "R&D_date": "2025-09-30",
     "NetIncome": -65631000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 1638000,
+    "LongTermDebt_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "CCCC",
@@ -2801,11 +3285,19 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 58809000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 264102000,
+    "MarketableSecurities_date": "2022-09-30",
+    "ShortTermInvestments": 135979000,
+    "ShortTermInvestments_date": "2020-09-30",
     "R&D": 79258000,
     "R&D_date": "2025-09-30",
     "NetIncome": -84508000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 10335000,
+    "LongTermDebt_date": "2023-06-30",
+    "LongTermDebtCurrent": 0,
+    "LongTermDebtCurrent_date": "2023-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "CDXS",
@@ -2822,13 +3314,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 25351000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 33350000,
+    "ShortTermInvestments_date": "2025-09-30",
     "Revenue": 138590000,
     "Revenue_date": "2022-12-31",
     "R&D": 40586000,
     "R&D_date": "2025-09-30",
     "NetIncome": -53575000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 39729000,
+    "LongTermDebt_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "CGEM",
@@ -2845,11 +3341,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 103335000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 229261000,
+    "ShortTermInvestments_date": "2025-09-30",
     "R&D": 144457000,
     "R&D_date": "2025-09-30",
     "NetIncome": -169166000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "CGON",
@@ -2866,11 +3364,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 45145000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 635118000,
+    "MarketableSecurities_date": "2025-09-30",
     "R&D": 86683000,
     "R&D_date": "2025-09-30",
     "NetIncome": -119686000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "CMPS",
@@ -2891,7 +3391,11 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -193984000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 31269000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 12669000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "CNTA",
@@ -2908,11 +3412,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 50811000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 195403000,
+    "ShortTermInvestments_date": "2025-09-30",
     "Revenue": 15000000,
     "Revenue_date": "2025-09-30",
     "NetIncome": -131369000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 109816000,
+    "LongTermDebt_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "COGT",
@@ -2929,11 +3437,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 125297000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 6696000,
+    "MarketableSecurities_date": "2018-03-31",
+    "AvailableForSaleSecurities": 0,
+    "AvailableForSaleSecurities_date": "2019-09-30",
     "R&D": 194221000,
     "R&D_date": "2025-09-30",
     "NetIncome": -226445000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 44250000,
+    "LongTermDebt_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "CRL",
@@ -2950,11 +3464,19 @@
     "ShareholdersEquity_date": "2025-09-27",
     "Cash": 207097000,
     "Cash_date": "2025-09-27",
+    "MarketableSecurities": 11855000,
+    "MarketableSecurities_date": "2014-06-28",
+    "ShortTermInvestments": 950000,
+    "ShortTermInvestments_date": "2022-09-24",
     "Revenue": 493970000,
     "Revenue_date": "2018-03-31",
     "NetIncome": 132217000,
     "NetIncome_date": "2025-09-27",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 1610546000,
+    "LongTermDebt_date": "2018-12-29",
+    "LongTermDebtCurrent": 54000,
+    "LongTermDebtCurrent_date": "2025-09-27",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "CSTL",
@@ -2971,13 +3493,19 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 85556000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 201986000,
+    "MarketableSecurities_date": "2025-09-30",
     "COGS": 52713000,
     "COGS_date": "2025-09-30",
     "R&D": 38335000,
     "R&D_date": "2025-09-30",
     "NetIncome": -21826000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 10049000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 0,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "CTKB",
@@ -3000,7 +3528,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -11402000,
     "NetIncome_date": "2025-03-31",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "CTMX",
@@ -3017,13 +3545,19 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 34185000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 77495000,
+    "ShortTermInvestments_date": "2015-09-30",
+    "AvailableForSaleSecurities": 204809000,
+    "AvailableForSaleSecurities_date": "2018-09-30",
     "Revenue": 75538000,
     "Revenue_date": "2025-09-30",
     "R&D": 47493000,
     "R&D_date": "2025-09-30",
     "NetIncome": 9142000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebtCurrent": 1419000,
+    "LongTermDebtCurrent_date": "2014-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "CTNM",
@@ -3040,11 +3574,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 42633000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 139774000,
+    "MarketableSecurities_date": "2025-09-30",
     "R&D": 38767000,
     "R&D_date": "2025-09-30",
     "NetIncome": -44822000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "DNA",
@@ -3061,11 +3597,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 111065000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 384419000,
+    "MarketableSecurities_date": "2025-09-30",
     "R&D": 193646000,
     "R&D_date": "2025-09-30",
     "NetIncome": -232012000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "DSGN",
@@ -3082,13 +3620,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 15088000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 190882000,
+    "MarketableSecurities_date": "2025-09-30",
     "Revenue": 0,
     "Revenue_date": "2025-09-30",
     "R&D": 45704000,
     "R&D_date": "2025-09-30",
     "NetIncome": -53795000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "DYN",
@@ -3109,7 +3649,9 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -334259000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 99147000,
+    "LongTermDebt_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "EBS",
@@ -3132,7 +3674,11 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 107200000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 693100000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 0,
+    "LongTermDebtCurrent_date": "2024-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ELVN",
@@ -3149,11 +3695,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 101732000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 375833000,
+    "MarketableSecurities_date": "2025-09-30",
     "R&D": 64611000,
     "R&D_date": "2025-09-30",
     "NetIncome": -74027000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ENTA",
@@ -3170,13 +3718,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 32298000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 193676000,
+    "MarketableSecurities_date": "2016-06-30",
+    "AvailableForSaleSecurities": 230750000,
+    "AvailableForSaleSecurities_date": "2018-06-30",
     "Revenue": 82158000,
     "Revenue_date": "2018-03-31",
     "R&D": 106740000,
     "R&D_date": "2025-09-30",
     "NetIncome": -81889000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ERAS",
@@ -3193,9 +3745,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 70230000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 218170000,
+    "MarketableSecurities_date": "2025-09-30",
+    "ShortTermInvestments": 53988000,
+    "ShortTermInvestments_date": "2021-12-31",
     "NetIncome": -95454000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "EWTX",
@@ -3216,7 +3772,9 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -117579000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 59000,
+    "LongTermDebt_date": "2022-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "FDMT",
@@ -3233,13 +3791,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 48555000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 256508000,
+    "MarketableSecurities_date": "2025-09-30",
+    "AvailableForSaleSecurities": 70686000,
+    "AvailableForSaleSecurities_date": "2021-09-30",
     "Revenue": 37000,
     "Revenue_date": "2024-12-31",
     "R&D": 43832000,
     "R&D_date": "2021-09-30",
     "NetIncome": -159506000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "FHTX",
@@ -3260,7 +3822,11 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -52619000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 19914000,
+    "LongTermDebt_date": "2021-09-30",
+    "LongTermDebtCurrent": 0,
+    "LongTermDebtCurrent_date": "2021-03-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "FLGT",
@@ -3277,6 +3843,8 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 117641000,
     "Cash_date": "2025-09-30",
+    "AvailableForSaleSecurities": 26949000,
+    "AvailableForSaleSecurities_date": "2018-06-30",
     "Revenue": 15678000,
     "Revenue_date": "2018-09-30",
     "COGS": 141042000,
@@ -3285,7 +3853,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -37095000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "FTRE",
@@ -3304,7 +3872,9 @@
     "Cash_date": "2025-09-30",
     "NetIncome": -953700000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebtCurrent": 74500000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "GERN",
@@ -3321,11 +3891,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 78117000,
     "Cash_date": "2025-09-30",
+    "AvailableForSaleSecurities": 141800000,
+    "AvailableForSaleSecurities_date": "2018-06-30",
     "Revenue": 1065000,
     "Revenue_date": "2017-12-31",
     "NetIncome": -54638000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebtCurrent": 71562000,
+    "LongTermDebtCurrent_date": "2024-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "GLUE",
@@ -3346,7 +3920,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 7509000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "GPCR",
@@ -3363,11 +3937,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 102912000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 696131000,
+    "ShortTermInvestments_date": "2025-09-30",
     "R&D": 156566000,
     "R&D_date": "2025-09-30",
     "NetIncome": -174206000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "GRAL",
@@ -3388,7 +3964,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -309175000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "HUMA",
@@ -3405,11 +3981,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 19488000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 0,
+    "ShortTermInvestments_date": "2023-12-31",
     "R&D": 54697000,
     "R&D_date": "2025-09-30",
     "NetIncome": -16029000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 30000000,
+    "LongTermDebt_date": "2022-06-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "IBRX",
@@ -3426,13 +4006,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 60241000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 197572000,
+    "MarketableSecurities_date": "2025-09-30",
+    "AvailableForSaleSecurities": 136349000,
+    "AvailableForSaleSecurities_date": "2015-12-31",
     "Revenue": 75003000,
     "Revenue_date": "2025-09-30",
     "R&D": 190144000,
     "R&D_date": "2024-12-31",
     "NetIncome": -289454000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "IDYA",
@@ -3449,11 +4033,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 298927000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 487967000,
+    "MarketableSecurities_date": "2025-09-30",
     "R&D": 228105000,
     "R&D_date": "2025-09-30",
     "NetIncome": -30425000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ILMN",
@@ -3468,13 +4054,19 @@
     "ShareholdersEquity_date": "2025-09-28",
     "Cash": 1144000000,
     "Cash_date": "2018-12-30",
+    "ShortTermInvestments": 228000000,
+    "ShortTermInvestments_date": "2025-09-28",
     "COGS": 1073000000,
     "COGS_date": "2025-09-28",
     "R&D": 728000000,
     "R&D_date": "2025-09-28",
     "NetIncome": 516000000,
     "NetIncome_date": "2025-09-28",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 838000000,
+    "LongTermDebt_date": "2018-12-31",
+    "LongTermDebtCurrent": 499000000,
+    "LongTermDebtCurrent_date": "2022-04-03",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "IMRX",
@@ -3491,6 +4083,8 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 227563077,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 32887970,
+    "MarketableSecurities_date": "2022-12-31",
     "Revenue": 0,
     "Revenue_date": "2023-12-31",
     "COGS": 0,
@@ -3499,7 +4093,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -44444888,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "INBX",
@@ -3522,7 +4116,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -107221000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "INSM",
@@ -3539,13 +4133,21 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 334764000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 1345222000,
+    "MarketableSecurities_date": "2025-09-30",
+    "ShortTermInvestments": 0,
+    "ShortTermInvestments_date": "2012-12-31",
     "Revenue": 0,
     "Revenue_date": "2018-09-30",
     "R&D": 516182000,
     "R&D_date": "2025-09-30",
     "NetIncome": -948290000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 546770000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 224448000,
+    "LongTermDebtCurrent_date": "2024-06-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "IOVA",
@@ -3562,6 +4164,10 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 158134000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 142669000,
+    "ShortTermInvestments_date": "2025-09-30",
+    "AvailableForSaleSecurities": 193112000,
+    "AvailableForSaleSecurities_date": "2020-03-31",
     "Revenue": 0,
     "Revenue_date": "2019-03-31",
     "COGS": 130073000,
@@ -3570,7 +4176,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -319074000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "IRON",
@@ -3587,11 +4193,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 140664000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 475256000,
+    "MarketableSecurities_date": "2025-09-30",
     "R&D": 124416000,
     "R&D_date": "2025-09-30",
     "NetIncome": -151653000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 28948000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 11689000,
+    "LongTermDebtCurrent_date": "2020-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "JANX",
@@ -3608,11 +4220,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 48389000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 940604000,
+    "ShortTermInvestments_date": "2025-09-30",
     "R&D": 94348000,
     "R&D_date": "2025-09-30",
     "NetIncome": -81679000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "KOD",
@@ -3629,11 +4243,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 72038000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 0,
+    "MarketableSecurities_date": "2023-12-31",
     "R&D": 136880000,
     "R&D_date": "2025-09-30",
     "NetIncome": -173231000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "KROS",
@@ -3656,7 +4272,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 110475000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "KURA",
@@ -3673,11 +4289,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 95287000,
     "Cash_date": "2025-09-30",
+    "AvailableForSaleSecurities": 166855000,
+    "AvailableForSaleSecurities_date": "2018-09-30",
     "R&D": 186666000,
     "R&D_date": "2025-09-30",
     "NetIncome": -197667000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 9523000,
+    "LongTermDebt_date": "2024-12-31",
+    "LongTermDebtCurrent": 4337000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "KYTX",
@@ -3694,11 +4316,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 34164000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 136974000,
+    "MarketableSecurities_date": "2025-09-30",
     "R&D": 103706000,
     "R&D_date": "2025-09-30",
     "NetIncome": -123503000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "LAB",
@@ -3715,6 +4339,10 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 129418000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 40874000,
+    "ShortTermInvestments_date": "2023-03-31",
+    "AvailableForSaleSecurities": 47049000,
+    "AvailableForSaleSecurities_date": "2011-09-30",
     "Revenue": 51676000,
     "Revenue_date": "2018-06-30",
     "COGS": 300000,
@@ -3723,7 +4351,11 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -94179000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 299000,
+    "LongTermDebt_date": "2024-12-31",
+    "LongTermDebtCurrent": 0,
+    "LongTermDebtCurrent_date": "2012-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "LCTX",
@@ -3740,6 +4372,8 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 40463000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 23000,
+    "MarketableSecurities_date": "2025-09-30",
     "Revenue": 7948000,
     "Revenue_date": "2025-09-30",
     "COGS": 36000,
@@ -3748,7 +4382,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -64384000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "LENZ",
@@ -3769,7 +4403,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -46231000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "LRMR",
@@ -3792,7 +4426,9 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -103175000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 14545000,
+    "LongTermDebt_date": "2019-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "LXEO",
@@ -3809,11 +4445,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 40996000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 70918000,
+    "ShortTermInvestments_date": "2025-03-31",
     "R&D": 47587000,
     "R&D_date": "2025-09-30",
     "NetIncome": -79042000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "LYEL",
@@ -3830,13 +4468,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 123575000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 196049000,
+    "MarketableSecurities_date": "2025-09-30",
     "Revenue": 30000,
     "Revenue_date": "2025-09-30",
     "R&D": 106476000,
     "R&D_date": "2025-09-30",
     "NetIncome": -133725000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "MAZE",
@@ -3853,11 +4493,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 316773000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 67162000,
+    "MarketableSecurities_date": "2025-09-30",
     "R&D": 80878000,
     "R&D_date": "2025-09-30",
     "NetIncome": -96552000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "MBX",
@@ -3874,11 +4516,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 223125000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 168548000,
+    "MarketableSecurities_date": "2025-09-30",
     "R&D": 59400000,
     "R&D_date": "2025-09-30",
     "NetIncome": -64909000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "MEDP",
@@ -3899,7 +4543,11 @@
     "Revenue_date": "2018-03-31",
     "NetIncome": 315990000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 161906000,
+    "LongTermDebt_date": "2017-03-31",
+    "LongTermDebtCurrent": 0,
+    "LongTermDebtCurrent_date": "2018-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "MGTX",
@@ -3922,7 +4570,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -129289000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "MIRM",
@@ -3939,13 +4587,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 282021000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 93527000,
+    "ShortTermInvestments_date": "2025-09-30",
     "Revenue": 19138000,
     "Revenue_date": "2021-12-31",
     "R&D": 28611000,
     "R&D_date": "2019-09-30",
     "NetIncome": -17633000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "MLYS",
@@ -3964,7 +4614,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -122417000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "MNKD",
@@ -3981,9 +4631,19 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 127392000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 132643000,
+    "ShortTermInvestments_date": "2025-09-30",
+    "AvailableForSaleSecurities": 350000,
+    "AvailableForSaleSecurities_date": "2012-09-30",
     "NetIncome": 21811000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 109652000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 45379000,
+    "LongTermDebtCurrent_date": "2020-09-30",
+    "ConvertibleDebt": 98439000,
+    "ConvertibleDebt_date": "2013-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "MNMD",
@@ -4000,11 +4660,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 19959000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 189111000,
+    "ShortTermInvestments_date": "2025-09-30",
     "R&D": 84144000,
     "R&D_date": "2025-09-30",
     "NetIncome": -133357000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "MYGN",
@@ -4021,6 +4683,8 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 145400000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 0,
+    "MarketableSecurities_date": "2024-12-31",
     "Revenue": 577700000,
     "Revenue_date": "2018-03-31",
     "COGS": 110700000,
@@ -4029,7 +4693,11 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -358000000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 119500000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 59400000,
+    "LongTermDebtCurrent_date": "2025-06-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "NAMS",
@@ -4046,11 +4714,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 538407000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 164539000,
+    "MarketableSecurities_date": "2025-09-30",
     "R&D": 103238000,
     "R&D_date": "2025-09-30",
     "NetIncome": -128896000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "NBIX",
@@ -4067,13 +4737,19 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 340200000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 370500000,
+    "MarketableSecurities_date": "2021-12-31",
+    "ShortTermInvestments": 252650000,
+    "ShortTermInvestments_date": "2015-06-30",
+    "AvailableForSaleSecurities": 439609000,
+    "AvailableForSaleSecurities_date": "2018-09-30",
     "Revenue": 167991000,
     "Revenue_date": "2018-06-30",
     "R&D": 73200000,
     "R&D_date": "2021-03-31",
     "NetIncome": 324900000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "NBP",
@@ -4090,6 +4766,8 @@
     "ShareholdersEquity_date": "2025-06-30",
     "Cash": 165404000,
     "Cash_date": "2025-06-30",
+    "ShortTermInvestments": 210000,
+    "ShortTermInvestments_date": "2025-06-30",
     "Revenue": 3893000,
     "Revenue_date": "2023-12-31",
     "COGS": 3949000,
@@ -4098,7 +4776,7 @@
     "R&D_date": "2025-06-30",
     "NetIncome": -8654000,
     "NetIncome_date": "2025-06-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "NGNE",
@@ -4115,11 +4793,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 71005000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 194405000,
+    "ShortTermInvestments_date": "2025-09-30",
+    "AvailableForSaleSecurities": 0,
+    "AvailableForSaleSecurities_date": "2018-09-30",
     "R&D": 54372000,
     "R&D_date": "2025-09-30",
     "NetIncome": -65616000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "NMRA",
@@ -4136,11 +4818,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 129071000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 42454000,
+    "MarketableSecurities_date": "2025-09-30",
     "R&D": 131395000,
     "R&D_date": "2025-09-30",
     "NetIncome": -177478000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 19563000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 20000000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "NRIX",
@@ -4157,13 +4845,17 @@
     "ShareholdersEquity_date": "2025-08-31",
     "Cash": 78438000,
     "Cash_date": "2025-08-31",
+    "MarketableSecurities": 216548000,
+    "MarketableSecurities_date": "2023-08-31",
+    "ShortTermInvestments": 244667000,
+    "ShortTermInvestments_date": "2022-11-30",
     "Revenue": 16585000,
     "Revenue_date": "2024-02-29",
     "R&D": 233879000,
     "R&D_date": "2025-08-31",
     "NetIncome": -186236000,
     "NetIncome_date": "2025-08-31",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "NUVB",
@@ -4180,13 +4872,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 98897000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 450148000,
+    "MarketableSecurities_date": "2025-09-30",
     "Revenue": 21037000,
     "Revenue_date": "2025-09-30",
     "R&D": 80809000,
     "R&D_date": "2025-09-30",
     "NetIncome": -168035000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 47089000,
+    "LongTermDebt_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "NUVL",
@@ -4203,11 +4899,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 115752000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 827351000,
+    "MarketableSecurities_date": "2025-09-30",
     "R&D": 239174000,
     "R&D_date": "2025-09-30",
     "NetIncome": -306672000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "OABI",
@@ -4228,7 +4926,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -50600000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "OLMA",
@@ -4245,11 +4943,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 35260000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 293700000,
+    "MarketableSecurities_date": "2025-09-30",
     "R&D": 114477000,
     "R&D_date": "2025-09-30",
     "NetIncome": -116390000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ONC",
@@ -4266,13 +4966,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 4036868000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 2600000,
+    "ShortTermInvestments_date": "2023-12-31",
     "Revenue": 139550000,
     "Revenue_date": "2018-09-30",
     "R&D": 1530445000,
     "R&D_date": "2025-09-30",
     "NetIncome": 220431000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebtCurrent": 808394000,
+    "LongTermDebtCurrent_date": "2025-06-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "OPK",
@@ -4289,11 +4993,19 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 411972000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 15634000,
+    "MarketableSecurities_date": "2016-06-30",
+    "AvailableForSaleSecurities": 26690000,
+    "AvailableForSaleSecurities_date": "2013-06-30",
     "R&D": 91261000,
     "R&D_date": "2025-09-30",
     "NetIncome": -194423000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 344217000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 1463000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ORIC",
@@ -4310,11 +5022,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 49668000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 90990000,
+    "MarketableSecurities_date": "2021-06-30",
     "R&D": 14977000,
     "R&D_date": "2020-06-30",
     "NetIncome": -98963000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 10500000,
+    "LongTermDebt_date": "2021-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ORKA",
@@ -4331,13 +5047,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 91253000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 257902000,
+    "MarketableSecurities_date": "2025-09-30",
     "Revenue": 0,
     "Revenue_date": "2024-06-30",
     "R&D": 73000000,
     "R&D_date": "2025-09-30",
     "NetIncome": -75850000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "PACB",
@@ -4354,6 +5072,8 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 56467000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 242187000,
+    "ShortTermInvestments_date": "2025-09-30",
     "Revenue": 93468000,
     "Revenue_date": "2017-12-31",
     "COGS": 86146000,
@@ -4362,7 +5082,11 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -506005000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 896839000,
+    "LongTermDebt_date": "2023-03-31",
+    "LongTermDebtCurrent": 182000,
+    "LongTermDebtCurrent_date": "2013-03-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "PEPG",
@@ -4379,11 +5103,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 142775000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 20890000,
+    "MarketableSecurities_date": "2025-09-30",
     "R&D": 57192000,
     "R&D_date": "2025-09-30",
     "NetIncome": -71315000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "PHAT",
@@ -4408,7 +5134,11 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -200099000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 207093000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 0,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "PRAX",
@@ -4431,7 +5161,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -214357000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "PRME",
@@ -4452,7 +5182,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -155063000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "PSNL",
@@ -4469,13 +5199,19 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 49973000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 100542000,
+    "ShortTermInvestments_date": "2025-09-30",
     "COGS": 38426000,
     "COGS_date": "2025-09-30",
     "R&D": 37192000,
     "R&D_date": "2025-09-30",
     "NetIncome": -57458000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 20000000,
+    "LongTermDebt_date": "2019-06-30",
+    "LongTermDebtCurrent": 1020000,
+    "LongTermDebtCurrent_date": "2019-06-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "PYXS",
@@ -4492,6 +5228,8 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 8919000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 67337000,
+    "MarketableSecurities_date": "2025-09-30",
     "Revenue": 2820000,
     "Revenue_date": "2025-09-30",
     "COGS": 475000,
@@ -4500,7 +5238,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -61515000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "QSI",
@@ -4517,13 +5255,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 30910000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 293811000,
+    "MarketableSecurities_date": "2022-09-30",
     "COGS": 954000,
     "COGS_date": "2025-09-30",
     "R&D": 42813000,
     "R&D_date": "2025-09-30",
     "NetIncome": -83728000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "QTRX",
@@ -4540,6 +5280,8 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 38298000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 0,
+    "MarketableSecurities_date": "2024-12-31",
     "Revenue": 37632000,
     "Revenue_date": "2018-12-31",
     "COGS": 50121000,
@@ -4548,7 +5290,11 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -84033000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 1943000,
+    "LongTermDebt_date": "2021-09-30",
+    "LongTermDebtCurrent": 1993000,
+    "LongTermDebtCurrent_date": "2021-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "QURE",
@@ -4571,7 +5317,11 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -161885000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 66019000,
+    "LongTermDebt_date": "2024-12-31",
+    "LongTermDebtCurrent": 11111000,
+    "LongTermDebtCurrent_date": "2018-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "RAPP",
@@ -4588,11 +5338,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 251359000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 261667000,
+    "ShortTermInvestments_date": "2025-09-30",
     "R&D": 64531000,
     "R&D_date": "2025-09-30",
     "NetIncome": -77720000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "RAPT",
@@ -4609,11 +5361,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 37930000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 119414000,
+    "MarketableSecurities_date": "2025-09-30",
     "R&D": 36416000,
     "R&D_date": "2025-09-30",
     "NetIncome": -52388000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "RCKT",
@@ -4630,11 +5384,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 75948000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 146810000,
+    "ShortTermInvestments_date": "2025-09-30",
     "R&D": 112668000,
     "R&D_date": "2025-09-30",
     "NetIncome": -180585000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "RCUS",
@@ -4651,13 +5407,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 238000000,
     "Cash_date": "2025-09-30",
+    "AvailableForSaleSecurities": 345210000,
+    "AvailableForSaleSecurities_date": "2021-09-30",
     "Revenue": 214000000,
     "Revenue_date": "2025-09-30",
     "R&D": 402000000,
     "R&D_date": "2025-09-30",
     "NetIncome": -247000000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 98000000,
+    "LongTermDebt_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "REGN",
@@ -4674,13 +5434,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 2506400000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 5937200000,
+    "MarketableSecurities_date": "2025-09-30",
     "Revenue": 1511485000,
     "Revenue_date": "2018-03-31",
     "R&D": 4224100000,
     "R&D_date": "2025-09-30",
     "NetIncome": 3660300000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "REPL",
@@ -4697,13 +5459,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 102298000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 221346000,
+    "ShortTermInvestments_date": "2025-09-30",
     "Revenue": 0,
     "Revenue_date": "2018-12-31",
     "R&D": 115721000,
     "R&D_date": "2025-09-30",
     "NetIncome": -169793000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 44434000,
+    "LongTermDebt_date": "2023-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "RIGL",
@@ -4720,11 +5486,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 48534000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 88609000,
+    "ShortTermInvestments_date": "2025-09-30",
+    "AvailableForSaleSecurities": 157672000,
+    "AvailableForSaleSecurities_date": "2014-09-30",
     "R&D": 32215000,
     "R&D_date": "2011-06-30",
     "NetIncome": 98959000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 60000000,
+    "LongTermDebt_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "RLAY",
@@ -4747,7 +5519,7 @@
     "R&D_date": "2021-03-31",
     "NetIncome": -221589000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "SEPN",
@@ -4764,11 +5536,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 319989000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 154357000,
+    "MarketableSecurities_date": "2025-09-30",
     "R&D": 65723000,
     "R&D_date": "2025-09-30",
     "NetIncome": -38141000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "SGMT",
@@ -4785,11 +5559,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 32496000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 84197000,
+    "MarketableSecurities_date": "2025-09-30",
     "R&D": 32320000,
     "R&D_date": "2025-09-30",
     "NetIncome": -41470000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "SION",
@@ -4810,7 +5586,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -54828000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "SLDB",
@@ -4827,13 +5603,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 61364000,
     "Cash_date": "2025-09-30",
+    "AvailableForSaleSecurities": 40750000,
+    "AvailableForSaleSecurities_date": "2019-03-31",
     "Revenue": 8094000,
     "Revenue_date": "2022-12-31",
     "R&D": 102190000,
     "R&D_date": "2025-09-30",
     "NetIncome": -53578000,
     "NetIncome_date": "2021-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "SLN",
@@ -4850,11 +5628,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 82031000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 20161000,
+    "ShortTermInvestments_date": "2025-09-30",
     "R&D": 59004000,
     "R&D_date": "2025-09-30",
     "NetIncome": -76842000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "SMMT",
@@ -4871,11 +5651,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 238554000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 0,
+    "ShortTermInvestments_date": "2025-09-30",
     "R&D": 30873000,
     "R&D_date": "2024-03-31",
     "NetIncome": -860414000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "SRRK",
@@ -4892,13 +5674,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 286770000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 82860000,
+    "MarketableSecurities_date": "2025-09-30",
     "Revenue": 0,
     "Revenue_date": "2018-12-31",
     "R&D": 161565000,
     "R&D_date": "2025-09-30",
     "NetIncome": -286974000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 51000000,
+    "LongTermDebt_date": "2023-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "STOK",
@@ -4921,7 +5707,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 51049000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "STRO",
@@ -4938,13 +5724,19 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 65927000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 101667000,
+    "MarketableSecurities_date": "2025-09-30",
     "Revenue": 11305000,
     "Revenue_date": "2019-12-31",
     "R&D": 129775000,
     "R&D_date": "2025-09-30",
     "NetIncome": -144324000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 4061000,
+    "LongTermDebt_date": "2023-12-31",
+    "LongTermDebtCurrent": 4061000,
+    "LongTermDebtCurrent_date": "2023-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "SVRA",
@@ -4961,13 +5753,19 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 16277000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 108109000,
+    "ShortTermInvestments_date": "2025-09-30",
     "Revenue": 0,
     "Revenue_date": "2017-12-31",
     "R&D": 1400000,
     "R&D_date": "2019-03-31",
     "NetIncome": -86601000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 29781000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 0,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "SYRE",
@@ -4984,11 +5782,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 64897000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 38070000,
+    "MarketableSecurities_date": "2019-03-31",
     "R&D": 13776000,
     "R&D_date": "2023-03-31",
     "NetIncome": -92673000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "TECX",
@@ -5009,7 +5809,9 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -54925000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 15000000,
+    "LongTermDebt_date": "2023-03-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "TEM",
@@ -5030,7 +5832,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -190862000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "TERN",
@@ -5047,9 +5849,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 150698000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 144937000,
+    "MarketableSecurities_date": "2025-09-30",
     "NetIncome": -24635000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 1033000,
+    "LongTermDebt_date": "2024-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "TKNO",
@@ -5066,11 +5872,19 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 3204000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 0,
+    "MarketableSecurities_date": "2021-12-31",
+    "ShortTermInvestments": 18912000,
+    "ShortTermInvestments_date": "2025-09-30",
     "R&D": 1675000,
     "R&D_date": "2025-09-30",
     "NetIncome": -12501000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 13076000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 0,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "TNGX",
@@ -5087,13 +5901,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 58338000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 94473000,
+    "MarketableSecurities_date": "2025-09-30",
     "Revenue": 62384000,
     "Revenue_date": "2025-09-30",
     "R&D": 100064000,
     "R&D_date": "2025-09-30",
     "NetIncome": -62845000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "TNYA",
@@ -5110,11 +5926,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 56312000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 114956000,
+    "MarketableSecurities_date": "2022-09-30",
+    "ShortTermInvestments": 8996000,
+    "ShortTermInvestments_date": "2025-06-30",
     "R&D": 53809000,
     "R&D_date": "2025-09-30",
     "NetIncome": -70422000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "TRDA",
@@ -5131,11 +5951,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 93286000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 162261000,
+    "MarketableSecurities_date": "2022-09-30",
     "R&D": 108312000,
     "R&D_date": "2025-09-30",
     "NetIncome": -104586000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "TRVI",
@@ -5152,11 +5974,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 56869000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 138058000,
+    "MarketableSecurities_date": "2025-09-30",
     "R&D": 27285000,
     "R&D_date": "2025-09-30",
     "NetIncome": -34443000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "TSHA",
@@ -5179,7 +6003,9 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -81144000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 38354000,
+    "LongTermDebt_date": "2023-06-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "TVTX",
@@ -5196,13 +6022,19 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 110930000,
     "Cash_date": "2025-09-30",
+    "AvailableForSaleSecurities": 166381000,
+    "AvailableForSaleSecurities_date": "2018-06-30",
     "Revenue": 0,
     "Revenue_date": "2012-11-30",
     "R&D": 7500000,
     "R&D_date": "2023-09-30",
     "NetIncome": -28275000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 46000000,
+    "LongTermDebt_date": "2015-09-30",
+    "ConvertibleDebt": 25000,
+    "ConvertibleDebt_date": "2012-05-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "TWST",
@@ -5219,13 +6051,19 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 183049000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 49385000,
+    "ShortTermInvestments_date": "2025-09-30",
     "COGS": 185570000,
     "COGS_date": "2025-09-30",
     "R&D": 80285000,
     "R&D_date": "2025-09-30",
     "NetIncome": -77670000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 4166000,
+    "LongTermDebt_date": "2020-09-30",
+    "LongTermDebtCurrent": 0,
+    "LongTermDebtCurrent_date": "2022-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "TXG",
@@ -5248,7 +6086,11 @@
     "COGS_date": "2025-09-30",
     "NetIncome": -27292000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 29719000,
+    "LongTermDebt_date": "2019-12-31",
+    "LongTermDebtCurrent": 0,
+    "LongTermDebtCurrent_date": "2020-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "TYRA",
@@ -5269,7 +6111,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -86113000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "UPB",
@@ -5286,11 +6128,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 72164000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 300263000,
+    "ShortTermInvestments_date": "2025-09-30",
     "R&D": 96637000,
     "R&D_date": "2025-09-30",
     "NetIncome": -100984000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "URGN",
@@ -5307,6 +6151,8 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 90039000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 63790000,
+    "ShortTermInvestments_date": "2025-09-30",
     "Revenue": 1128000,
     "Revenue_date": "2018-12-31",
     "COGS": 9158000,
@@ -5315,7 +6161,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -127130000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "VCEL",
@@ -5332,13 +6178,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 100403000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 34977000,
+    "ShortTermInvestments_date": "2025-09-30",
     "Revenue": 183341000,
     "Revenue_date": "2025-09-30",
     "R&D": 20310000,
     "R&D_date": "2025-09-30",
     "NetIncome": -6725000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebtCurrent": 38000,
+    "LongTermDebtCurrent_date": "2014-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "VERA",
@@ -5355,11 +6205,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 57773000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 439616000,
+    "MarketableSecurities_date": "2025-09-30",
     "R&D": 155946000,
     "R&D_date": "2025-09-30",
     "NetIncome": -208518000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 74648000,
+    "LongTermDebt_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "VIR",
@@ -5376,6 +6230,8 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 170084000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 327750000,
+    "MarketableSecurities_date": "2025-09-30",
     "Revenue": 4486000,
     "Revenue_date": "2025-09-30",
     "COGS": 11000,
@@ -5384,7 +6240,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -395064000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "VNDA",
@@ -5407,7 +6263,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -79287000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "VTYX",
@@ -5424,11 +6280,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 31970000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 160668000,
+    "MarketableSecurities_date": "2025-09-30",
     "R&D": 62870000,
     "R&D_date": "2025-09-30",
     "NetIncome": -77256000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "VYGR",
@@ -5445,13 +6303,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 45125000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 163805000,
+    "MarketableSecurities_date": "2025-09-30",
     "Revenue": 5611000,
     "Revenue_date": "2018-09-30",
     "R&D": 98722000,
     "R&D_date": "2025-09-30",
     "NetIncome": -92295000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "WVE",
@@ -5468,13 +6328,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 196218000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 25044000,
+    "ShortTermInvestments_date": "2022-09-30",
     "Revenue": 1422000,
     "Revenue_date": "2018-03-31",
     "R&D": 129965000,
     "R&D_date": "2025-09-30",
     "NetIncome": -151199000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "XENE",
@@ -5491,13 +6353,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 104514000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 357754000,
+    "MarketableSecurities_date": "2025-09-30",
     "Revenue": 311000,
     "Revenue_date": "2017-12-31",
     "R&D": 213239000,
     "R&D_date": "2025-09-30",
     "NetIncome": -240649000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebtCurrent": 15676000,
+    "LongTermDebtCurrent_date": "2020-03-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "XNCR",
@@ -5514,11 +6380,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 28291000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 487688000,
+    "MarketableSecurities_date": "2020-09-30",
     "R&D": 174610000,
     "R&D_date": "2025-09-30",
     "NetIncome": -85270000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ZBIO",
@@ -5535,13 +6403,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 115565000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 175319000,
+    "ShortTermInvestments_date": "2025-09-30",
     "Revenue": 10000000,
     "Revenue_date": "2025-09-30",
     "R&D": 112343000,
     "R&D_date": "2025-09-30",
     "NetIncome": -137295000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ZLAB",
@@ -5558,6 +6428,8 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 717155000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 0,
+    "ShortTermInvestments_date": "2025-09-30",
     "Revenue": 332559000,
     "Revenue_date": "2025-09-30",
     "COGS": 33619000,
@@ -5566,7 +6438,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -125128000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ZVRA",
@@ -5583,13 +6455,21 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 54439000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 1338000,
+    "MarketableSecurities_date": "2022-03-31",
+    "ShortTermInvestments": 5832000,
+    "ShortTermInvestments_date": "2022-09-30",
     "COGS": 2945000,
     "COGS_date": "2023-12-31",
     "R&D": 3082000,
     "R&D_date": "2022-03-31",
     "NetIncome": 71064000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 61310000,
+    "LongTermDebt_date": "2025-09-30",
+    "ConvertibleDebt": 0,
+    "ConvertibleDebt_date": "2022-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ZYME",
@@ -5606,11 +6486,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 64834000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 216770000,
+    "ShortTermInvestments_date": "2023-12-31",
     "R&D": 32042000,
     "R&D_date": "2024-03-31",
     "NetIncome": -39921000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "AMPH",
@@ -5627,6 +6509,8 @@
     "ShareholdersEquity_date": "2021-12-31",
     "Cash": 216265000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 59944000,
+    "ShortTermInvestments_date": "2025-09-30",
     "Revenue": 536782000,
     "Revenue_date": "2025-09-30",
     "COGS": 266395000,
@@ -5635,7 +6519,9 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 73665000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 40295000,
+    "LongTermDebt_date": "2015-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "AMRX",
@@ -5658,7 +6544,11 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 36981000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 2573702000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 7202000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ANIP",
@@ -5683,7 +6573,11 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 50847000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 134100000,
+    "LongTermDebt_date": "2018-09-30",
+    "LongTermDebtCurrent": 15241000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "AQST",
@@ -5706,7 +6600,9 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -51924000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 45000000,
+    "LongTermDebt_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ARDX",
@@ -5731,7 +6627,11 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -61192000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 202138000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 26541000,
+    "LongTermDebtCurrent_date": "2022-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "CHRS",
@@ -5748,13 +6648,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 103352000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 88311000,
+    "MarketableSecurities_date": "2025-09-30",
     "Revenue": 0,
     "Revenue_date": "2018-12-31",
     "R&D": 77914000,
     "R&D_date": "2025-09-30",
     "NetIncome": 205667000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 73663000,
+    "LongTermDebt_date": "2019-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "COLL",
@@ -5771,11 +6675,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 150096000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 135767000,
+    "MarketableSecurities_date": "2025-09-30",
     "R&D": 0,
     "R&D_date": "2024-12-31",
     "NetIncome": 45907000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 11500000,
+    "LongTermDebt_date": "2019-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "CRMD",
@@ -5792,6 +6700,10 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 48493076,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 8090909,
+    "MarketableSecurities_date": "2025-09-30",
+    "ShortTermInvestments": 7223735,
+    "ShortTermInvestments_date": "2025-09-30",
     "Revenue": 183093736,
     "Revenue_date": "2025-09-30",
     "COGS": 10921333,
@@ -5800,7 +6712,7 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 149034859,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "EOLS",
@@ -5821,7 +6733,9 @@
     "R&D_date": "2022-03-31",
     "NetIncome": -51771000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 121807000,
+    "LongTermDebt_date": "2025-03-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ESPR",
@@ -5838,9 +6752,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 92447000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 0,
+    "ShortTermInvestments_date": "2023-12-31",
+    "AvailableForSaleSecurities": 165731000,
+    "AvailableForSaleSecurities_date": "2017-12-31",
     "NetIncome": -84513000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 5000000,
+    "LongTermDebt_date": "2014-06-30",
+    "LongTermDebtCurrent": 152000,
+    "LongTermDebtCurrent_date": "2018-06-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "ETON",
@@ -5861,7 +6783,11 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -6084000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 29992000,
+    "LongTermDebt_date": "2025-03-31",
+    "LongTermDebtCurrent": 0,
+    "LongTermDebtCurrent_date": "2024-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "EYPT",
@@ -5878,13 +6804,19 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 74577000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 129445000,
+    "MarketableSecurities_date": "2025-09-30",
+    "AvailableForSaleSecurities": 0,
+    "AvailableForSaleSecurities_date": "2020-12-31",
     "Revenue": 2246000,
     "Revenue_date": "2018-03-31",
     "R&D": 161825000,
     "R&D_date": "2025-09-30",
     "NetIncome": -164353000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 30000000,
+    "LongTermDebt_date": "2023-03-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "GH",
@@ -5901,13 +6833,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 580013000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 869584000,
+    "MarketableSecurities_date": "2022-12-31",
     "Revenue": 700755000,
     "Revenue_date": "2025-09-30",
     "R&D": 265927000,
     "R&D_date": "2025-09-30",
     "NetIncome": -287783000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 1114594000,
+    "LongTermDebt_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "HRMY",
@@ -5924,11 +6860,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 646999000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 25582000,
+    "ShortTermInvestments_date": "2025-09-30",
     "R&D": 139661000,
     "R&D_date": "2025-09-30",
     "NetIncome": 136201000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 168506000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 20000000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "HROW",
@@ -5945,13 +6887,21 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 74290000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 7433000,
+    "ShortTermInvestments_date": "2024-03-31",
     "Revenue": 19249000,
     "Revenue_date": "2018-06-30",
     "R&D": 9217000,
     "R&D_date": "2025-09-30",
     "NetIncome": -11765000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 347239000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 553000,
+    "LongTermDebtCurrent_date": "2019-03-31",
+    "ConvertibleDebt": 0,
+    "ConvertibleDebt_date": "2012-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "INDV",
@@ -5968,9 +6918,13 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 445000000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 0,
+    "ShortTermInvestments_date": "2025-09-30",
     "NetIncome": 108000000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebtCurrent": 18000000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "INVA",
@@ -5985,13 +6939,19 @@
     "ShareholdersEquity_date": "2022-12-31",
     "Cash": 476513000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 282000,
+    "MarketableSecurities_date": "2022-09-30",
     "Revenue": 119466000,
     "Revenue_date": "2018-06-30",
     "R&D": 26049000,
     "R&D_date": "2025-09-30",
     "NetIncome": 4435000,
     "NetIncome_date": "2016-03-31",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 739126000,
+    "LongTermDebt_date": "2016-06-30",
+    "LongTermDebtCurrent": 15181000,
+    "LongTermDebtCurrent_date": "2017-06-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "IVVD",
@@ -6014,14 +6974,16 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -41419000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "KMDA",
     "cik": "0001567529",
     "CurrentLiabilities": 222000,
     "CurrentLiabilities_date": "2020-12-31",
-    "collected_at": "2026-01-26"
+    "ShortTermInvestments": 39069000,
+    "ShortTermInvestments_date": "2020-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "KNSA",
@@ -6038,13 +7000,15 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 174858000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 177244000,
+    "ShortTermInvestments_date": "2025-09-30",
     "Revenue": 475437000,
     "Revenue_date": "2025-09-30",
     "R&D": 62244000,
     "R&D_date": "2025-09-30",
     "NetIncome": 44806000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "LFCR",
@@ -6061,6 +7025,8 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 18856000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 1297000,
+    "MarketableSecurities_date": "2013-08-25",
     "Revenue": 557559000,
     "Revenue_date": "2019-05-26",
     "COGS": 309463000,
@@ -6069,7 +7035,11 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -9991000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 135951000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 947000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "OBIO",
@@ -6086,6 +7056,8 @@
     "ShareholdersEquity_date": "2023-03-31",
     "Cash": 42012000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 53808000,
+    "MarketableSecurities_date": "2025-09-30",
     "Revenue": 2565000,
     "Revenue_date": "2025-09-30",
     "COGS": 139000,
@@ -6094,7 +7066,9 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -58946000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 15000000,
+    "LongTermDebt_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "OCUL",
@@ -6117,7 +7091,9 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -201285000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 18000000,
+    "LongTermDebt_date": "2017-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "OMER",
@@ -6132,13 +7108,19 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 2395000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 33690000,
+    "ShortTermInvestments_date": "2025-09-30",
     "Revenue": 21779000,
     "Revenue_date": "2019-03-31",
     "R&D": 61850000,
     "R&D_date": "2025-09-30",
     "NetIncome": -89801000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 154939000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 2561000,
+    "LongTermDebtCurrent_date": "2019-03-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "PAHC",
@@ -6155,13 +7137,19 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 72769000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 12504000,
+    "ShortTermInvestments_date": "2025-09-30",
     "Revenue": 686996000,
     "Revenue_date": "2022-03-31",
     "R&D": 23726000,
     "R&D_date": "2025-06-30",
     "NetIncome": 26527000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 627962000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 18444000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "PBYI",
@@ -6178,13 +7166,19 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 53525000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 40863000,
+    "MarketableSecurities_date": "2025-09-30",
     "Revenue": 66516000,
     "Revenue_date": "2018-03-31",
     "R&D": 27203000,
     "R&D_date": "2022-06-30",
     "NetIncome": 17673000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 34007000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 33716000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "RANI",
@@ -6201,11 +7195,17 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 4144000,
     "Cash_date": "2025-09-30",
+    "MarketableSecurities": 98500000,
+    "MarketableSecurities_date": "2022-12-31",
     "R&D": 15296000,
     "R&D_date": "2025-09-30",
     "NetIncome": -19368000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 13750000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 13537000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "RPRX",
@@ -6226,7 +7226,11 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 556742000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 8945735000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 380000000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "SIGA",
@@ -6243,6 +7247,8 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 171955584,
     "Cash_date": "2025-09-30",
+    "AvailableForSaleSecurities": 0,
+    "AvailableForSaleSecurities_date": "2011-12-31",
     "Revenue": 4264000,
     "Revenue_date": "2019-12-31",
     "COGS": 1782838,
@@ -6251,51 +7257,11 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 28709061,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
-  },
-  {
-    "ticker": "SUPN",
-    "cik": "0001356576",
-    "Assets": 1419754000,
-    "Assets_date": "2025-09-30",
-    "CurrentAssets": 593891000,
-    "CurrentAssets_date": "2025-09-30",
-    "Liabilities": 370087000,
-    "Liabilities_date": "2025-09-30",
-    "CurrentLiabilities": 330629000,
-    "CurrentLiabilities_date": "2025-09-30",
-    "ShareholdersEquity": 1049667000,
-    "ShareholdersEquity_date": "2025-09-30",
-    "Cash": 151371000,
-    "Cash_date": "2025-09-30",
-    "Revenue": 94976000,
-    "Revenue_date": "2020-03-31",
-    "R&D": 78408000,
-    "R&D_date": "2025-09-30",
-    "NetIncome": -34445000,
-    "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
-  },
-  {
-    "ticker": "VOR",
-    "cik": "0001817229",
-    "Assets": 176237000,
-    "Assets_date": "2025-09-30",
-    "CurrentAssets": 172486000,
-    "CurrentAssets_date": "2025-09-30",
-    "Liabilities": 2401724000,
-    "Liabilities_date": "2025-09-30",
-    "CurrentLiabilities": 18839000,
-    "CurrentLiabilities_date": "2025-09-30",
-    "ShareholdersEquity": -2225487000,
-    "ShareholdersEquity_date": "2025-09-30",
-    "Cash": 160462000,
-    "Cash_date": "2025-09-30",
-    "R&D": 302342000,
-    "R&D_date": "2025-09-30",
-    "NetIncome": -2418839000,
-    "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 78911307,
+    "LongTermDebt_date": "2019-09-30",
+    "LongTermDebtCurrent": 0,
+    "LongTermDebtCurrent_date": "2015-12-31",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "VTRS",
@@ -6312,13 +7278,19 @@
     "ShareholdersEquity_date": "2020-09-27",
     "Cash": 975300000,
     "Cash_date": "2025-09-30",
+    "AvailableForSaleSecurities": 39100000,
+    "AvailableForSaleSecurities_date": "2020-12-31",
     "Revenue": 10596300000,
     "Revenue_date": "2025-09-30",
     "R&D": 691200000,
     "R&D_date": "2025-09-30",
     "NetIncome": -170000000,
     "NetIncome_date": "2020-09-27",
-    "collected_at": "2026-01-26"
+    "LongTermDebt": 11535000000,
+    "LongTermDebt_date": "2020-09-27",
+    "LongTermDebtCurrent": 1951900000,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   },
   {
     "ticker": "XERS",
@@ -6335,432 +7307,18 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 91598000,
     "Cash_date": "2025-09-30",
+    "ShortTermInvestments": 0,
+    "ShortTermInvestments_date": "2024-12-31",
     "Revenue": 22073000,
     "Revenue_date": "2022-03-31",
     "R&D": 23291000,
     "R&D_date": "2025-09-30",
     "NetIncome": -10527000,
     "NetIncome_date": "2025-09-30",
-    "collected_at": "2026-01-26"
-  },
-  {
-    "ticker": "ABVX",
-    "name": "ABIVAX Soci\u00e9t\u00e9 Anonyme",
-    "sector": "Healthcare",
-    "industry": "Biotechnology",
-    "market_cap": 9400745984,
-    "enterprise_value": 8892383232,
-    "collected_at": "2026-01-27",
-    "source": "yahoo_finance",
-    "Cash": 589703000.0,
-    "CurrentAssets": 619295000.0,
-    "Assets": 652052000.0,
-    "CurrentLiabilities": 78761000.0,
-    "Liabilities": 140814000.0,
-    "ShareholdersEquity": 511238000.0,
-    "Cash_date": "2025-09-30",
-    "OperatingCashFlow": -71283000.0,
-    "FreeCashFlow": -71275000.0,
-    "Revenue": 0.0,
-    "R&D": 55416000.0,
-    "NetIncome": -153358000.0
-  },
-  {
-    "ticker": "ACIU",
-    "name": "AC Immune SA",
-    "sector": "Healthcare",
-    "industry": "Biotechnology",
-    "market_cap": 359141984,
-    "enterprise_value": 247303136,
-    "collected_at": "2026-01-27",
-    "source": "yahoo_finance",
-    "Cash": 27741000.0,
-    "CurrentAssets": 113746000.0,
-    "Assets": 171607000.0,
-    "CurrentLiabilities": 98286000.0,
-    "Liabilities": 109163000.0,
-    "ShareholdersEquity": 62444000.0,
-    "Cash_date": "2025-09-30",
-    "OperatingCashFlow": -18340000.0,
-    "FreeCashFlow": -18398000.0,
-    "Revenue": 939000.0,
-    "R&D": 13071000.0,
-    "NetIncome": -15858000.0
-  },
-  {
-    "ticker": "ALVO",
-    "name": "Alvotech",
-    "sector": "Healthcare",
-    "industry": "Drug Manufacturers - Specialty & Generic",
-    "market_cap": 1682646272,
-    "enterprise_value": 2838405120,
-    "collected_at": "2026-01-27",
-    "source": "yahoo_finance",
-    "Cash": 42848000.0,
-    "CurrentAssets": 432006000.0,
-    "Assets": 1409178000.0,
-    "CurrentLiabilities": 304069000.0,
-    "Liabilities": 1585941000.0,
-    "ShareholdersEquity": -176763000.0,
-    "Cash_date": "2025-09-30",
-    "OperatingCashFlow": -55575000.0,
-    "FreeCashFlow": -83965000.0,
-    "Revenue": 113744000.0,
-    "R&D": 51619000.0,
-    "NetIncome": -5252000.0
-  },
-  {
-    "ticker": "ARGX",
-    "name": "argenx SE",
-    "sector": "Healthcare",
-    "industry": "Biotechnology",
-    "market_cap": 53910966272,
-    "enterprise_value": 47076249600,
-    "collected_at": "2026-01-27",
-    "source": "yahoo_finance",
-    "Cash": 2085976000.0,
-    "CurrentAssets": 5829739000.0,
-    "Assets": 7175592000.0,
-    "CurrentLiabilities": 1041904000.0,
-    "Liabilities": 1079840000.0,
-    "ShareholdersEquity": 6095752000.0,
-    "Cash_date": "2025-06-30",
-    "Revenue": 1126961000.0,
-    "R&D": 355651000.0,
-    "NetIncome": 344258000.0
-  },
-  {
-    "ticker": "ASND",
-    "name": "Ascendis Pharma A/S",
-    "sector": "Healthcare",
-    "industry": "Biotechnology",
-    "market_cap": 14461322240,
-    "enterprise_value": 14550141952,
-    "collected_at": "2026-01-27",
-    "source": "yahoo_finance",
-    "Cash": 539092000.0,
-    "CurrentAssets": 1017781000.0,
-    "Assets": 1154750000.0,
-    "CurrentLiabilities": 986484000.0,
-    "Liabilities": 1328825000.0,
-    "ShareholdersEquity": -174075000.0,
-    "Cash_date": "2025-09-30",
-    "OperatingCashFlow": 2153000.0,
-    "FreeCashFlow": 2100000.0,
-    "Revenue": 213634000.0,
-    "R&D": 66879000.0,
-    "NetIncome": -60989000.0
-  },
-  {
-    "ticker": "AZN",
-    "name": "AstraZeneca PLC",
-    "sector": "Healthcare",
-    "industry": "Drug Manufacturers - General",
-    "market_cap": 295949107200,
-    "enterprise_value": 170712727552,
-    "collected_at": "2026-01-27",
-    "source": "yahoo_finance",
-    "Cash": 8143000000.0,
-    "CurrentAssets": 29940000000.0,
-    "Assets": 114456000000.0,
-    "CurrentLiabilities": 34054000000.0,
-    "Liabilities": 68485000000.0,
-    "ShareholdersEquity": 45888000000.0,
-    "Cash_date": "2025-09-30",
-    "OperatingCashFlow": 5134000000.0,
-    "FreeCashFlow": 3408000000.0,
-    "Revenue": 15191000000.0,
-    "R&D": 3663000000.0,
-    "NetIncome": 2533000000.0
-  },
-  {
-    "ticker": "BNTX",
-    "name": "BioNTech SE",
-    "sector": "Healthcare",
-    "industry": "Biotechnology",
-    "market_cap": 30094123008,
-    "enterprise_value": 14091543552,
-    "collected_at": "2026-01-27",
-    "source": "yahoo_finance",
-    "Cash": 10092900000.0,
-    "CurrentAssets": 15830700000.0,
-    "Assets": 21341100000.0,
-    "CurrentLiabilities": 2222500000.0,
-    "Liabilities": 2863800000.0,
-    "ShareholdersEquity": 18477300000.0,
-    "Cash_date": "2025-09-30",
-    "OperatingCashFlow": 780700000.0,
-    "FreeCashFlow": 742100000.0,
-    "Revenue": 1518900000.0,
-    "R&D": 564800000.0,
-    "NetIncome": -28700000.0
-  },
-  {
-    "ticker": "CLLS",
-    "name": "Cellectis S.A.",
-    "sector": "Healthcare",
-    "industry": "Biotechnology",
-    "market_cap": 436646400,
-    "enterprise_value": 331694944,
-    "collected_at": "2026-01-27",
-    "source": "yahoo_finance",
-    "Cash": 52243000.0,
-    "CurrentAssets": 221193000.0,
-    "Assets": 343045000.0,
-    "CurrentLiabilities": 148577000.0,
-    "Liabilities": 242567000.0,
-    "ShareholdersEquity": 100478000.0,
-    "Cash_date": "2025-09-30",
-    "OperatingCashFlow": -1571000.0,
-    "FreeCashFlow": -3914000.0,
-    "Revenue": 35172000.0,
-    "R&D": 24069000.0,
-    "NetIncome": 589000.0
-  },
-  {
-    "ticker": "GHRS",
-    "name": "GH Research PLC",
-    "sector": "Healthcare",
-    "industry": "Biotechnology",
-    "market_cap": 998052992,
-    "enterprise_value": 741762944,
-    "collected_at": "2026-01-27",
-    "source": "yahoo_finance",
-    "Cash": 249654000.0,
-    "CurrentAssets": 294790000.0,
-    "Assets": 302022000.0,
-    "CurrentLiabilities": 10408000.0,
-    "Liabilities": 10625000.0,
-    "ShareholdersEquity": 291397000.0,
-    "Cash_date": "2025-09-30",
-    "OperatingCashFlow": -13682000.0,
-    "FreeCashFlow": -13721000.0,
-    "Revenue": 0.0,
-    "R&D": 10567000.0,
-    "NetIncome": -14020000.0
-  },
-  {
-    "ticker": "GLPG",
-    "name": "Galapagos NV",
-    "sector": "Healthcare",
-    "industry": "Biotechnology",
-    "market_cap": 2288605184,
-    "enterprise_value": -766781312,
-    "collected_at": "2026-01-27",
-    "source": "yahoo_finance",
-    "Cash": 64458000.0,
-    "CurrentAssets": 3162021000.0,
-    "Assets": 3511914000.0,
-    "CurrentLiabilities": 366563000.0,
-    "Liabilities": 1064951000.0,
-    "ShareholdersEquity": 2446963000.0,
-    "Cash_date": "2025-09-30",
-    "OperatingCashFlow": -62607000.0,
-    "FreeCashFlow": -65457000.0,
-    "Revenue": 71161000.0,
-    "R&D": 73882000.0,
-    "NetIncome": -202111000.0
-  },
-  {
-    "ticker": "GMAB",
-    "name": "Genmab A/S",
-    "sector": "Healthcare",
-    "industry": "Biotechnology",
-    "market_cap": 21276145664,
-    "enterprise_value": -1208344192,
-    "collected_at": "2026-01-27",
-    "source": "yahoo_finance",
-    "Cash": 1761000000.0,
-    "CurrentAssets": 4471000000.0,
-    "Assets": 7021000000.0,
-    "CurrentLiabilities": 741000000.0,
-    "Liabilities": 1270000000.0,
-    "ShareholdersEquity": 5751000000.0,
-    "Cash_date": "2025-09-30",
-    "OperatingCashFlow": 536000000.0,
-    "FreeCashFlow": 534000000.0,
-    "Revenue": 1022000000.0,
-    "R&D": 357000000.0,
-    "NetIncome": 401000000.0
-  },
-  {
-    "ticker": "GRFS",
-    "name": "Grifols, S.A.",
-    "sector": "Healthcare",
-    "industry": "Drug Manufacturers - General",
-    "market_cap": 7747151360,
-    "enterprise_value": 17492140032,
-    "collected_at": "2026-01-27",
-    "source": "yahoo_finance",
-    "Cash": 558691000.0,
-    "CurrentAssets": 5246207000.0,
-    "Assets": 19767159000.0,
-    "CurrentLiabilities": 1990152000.0,
-    "Liabilities": 12169006000.0,
-    "ShareholdersEquity": 5169080000.0,
-    "Cash_date": "2025-06-30",
-    "OperatingCashFlow": 514618000.0,
-    "FreeCashFlow": 371866000.0,
-    "Revenue": 1891131000.0,
-    "R&D": 96193000.0,
-    "NetIncome": 117063000.0
-  },
-  {
-    "ticker": "IMMP",
-    "name": "Immutep Limited",
-    "sector": "Healthcare",
-    "industry": "Biotechnology",
-    "market_cap": 454087424,
-    "enterprise_value": 4539742208,
-    "collected_at": "2026-01-27",
-    "source": "yahoo_finance",
-    "Cash": 73886442.0,
-    "CurrentAssets": 173764061.0,
-    "Assets": 182328516.0,
-    "CurrentLiabilities": 9211993.0,
-    "Liabilities": 9856310.0,
-    "ShareholdersEquity": 172472206.0,
-    "Cash_date": "2024-12-31",
-    "FreeCashFlow": -16262000.0
-  },
-  {
-    "ticker": "LEGN",
-    "name": "Legend Biotech Corporation",
-    "sector": "Healthcare",
-    "industry": "Biotechnology",
-    "market_cap": 3424144640,
-    "enterprise_value": 6421075456,
-    "collected_at": "2026-01-27",
-    "source": "yahoo_finance",
-    "Cash": 278893000.0,
-    "CurrentAssets": 1242004000.0,
-    "Assets": 1712948000.0,
-    "CurrentLiabilities": 433572000.0,
-    "Liabilities": 701688000.0,
-    "ShareholdersEquity": 1011260000.0,
-    "Cash_date": "2025-09-30",
-    "OperatingCashFlow": 28801000.0,
-    "FreeCashFlow": 23796000.0,
-    "Revenue": 272330000.0,
-    "R&D": 113148000.0,
-    "NetIncome": -39689000.0
-  },
-  {
-    "ticker": "MENS",
-    "name": "Jyong Biotech Ltd.",
-    "sector": "Healthcare",
-    "industry": "Biotechnology",
-    "market_cap": 226592864,
-    "enterprise_value": 232743424,
-    "collected_at": "2026-01-27",
-    "source": "yahoo_finance",
-    "Cash": 98000.0,
-    "CurrentAssets": 206000.0,
-    "Assets": 6366000.0,
-    "CurrentLiabilities": 12127000.0,
-    "Liabilities": 42885000.0,
-    "ShareholdersEquity": -36519000.0,
-    "Cash_date": "2024-12-31"
-  },
-  {
-    "ticker": "MESO",
-    "name": "Mesoblast Limited",
-    "sector": "Healthcare",
-    "industry": "Biotechnology",
-    "market_cap": 2519723264,
-    "enterprise_value": 23898204160,
-    "collected_at": "2026-01-27",
-    "source": "yahoo_finance",
-    "Cash": 161158000.0,
-    "CurrentAssets": 204350000.0,
-    "Assets": 784683000.0,
-    "CurrentLiabilities": 102626000.0,
-    "Liabilities": 187241000.0,
-    "ShareholdersEquity": 597442000.0,
-    "Cash_date": "2025-06-30",
-    "FreeCashFlow": -15255000.0
-  },
-  {
-    "ticker": "PHVS",
-    "name": "Pharvaris N.V.",
-    "sector": "Healthcare",
-    "industry": "Biotechnology",
-    "market_cap": 1805223296,
-    "enterprise_value": 1463524352,
-    "collected_at": "2026-01-27",
-    "source": "yahoo_finance",
-    "Cash": 329285629.0,
-    "CurrentAssets": 337186924.0,
-    "Assets": 338896201.0,
-    "CurrentLiabilities": 26214521.0,
-    "Liabilities": 26655561.0,
-    "ShareholdersEquity": 312240640.0,
-    "Cash_date": "2025-09-30",
-    "OperatingCashFlow": -30668913.0,
-    "FreeCashFlow": -30687627.0,
-    "Revenue": 0.0,
-    "R&D": 29814908.0,
-    "NetIncome": -37137035.0
-  },
-  {
-    "ticker": "SNY",
-    "name": "Sanofi",
-    "sector": "Healthcare",
-    "industry": "Drug Manufacturers - General",
-    "market_cap": 115445170176,
-    "enterprise_value": 70771671040,
-    "collected_at": "2026-01-27",
-    "source": "yahoo_finance",
-    "Cash": 8906000000.0,
-    "CurrentAssets": 34042000000.0,
-    "Assets": 129794000000.0,
-    "CurrentLiabilities": 32105000000.0,
-    "Liabilities": 56261000000.0,
-    "ShareholdersEquity": 73263000000.0,
-    "Cash_date": "2025-09-30",
-    "OperatingCashFlow": 3750000000.0,
-    "FreeCashFlow": 5170000000.0,
-    "Revenue": 13170000000.0,
-    "R&D": 1834000000.0,
-    "NetIncome": 2802000000.0
-  },
-  {
-    "ticker": "STVN",
-    "name": "Stevanato Group S.p.A.",
-    "sector": "Healthcare",
-    "industry": "Medical Instruments & Supplies",
-    "market_cap": 4616492032,
-    "enterprise_value": 5049682944,
-    "collected_at": "2026-01-27",
-    "source": "yahoo_finance",
-    "Cash": 113333000.0,
-    "CurrentAssets": 884474000.0,
-    "Assets": 2414007000.0,
-    "CurrentLiabilities": 467423000.0,
-    "Liabilities": 976721000.0,
-    "ShareholdersEquity": 1437245000.0,
-    "Cash_date": "2025-09-30",
-    "OperatingCashFlow": 47223000.0,
-    "FreeCashFlow": -1166000.0,
-    "Revenue": 303167000.0,
-    "R&D": 7648000.0,
-    "NetIncome": 36064000.0
-  },
-  {
-    "ticker": "CVAC",
-    "name": "CureVac N.V.",
-    "sector": "",
-    "industry": "",
-    "market_cap": 890743872,
-    "enterprise_value": 323220224,
-    "collected_at": "2026-01-27",
-    "source": "yahoo_finance_de",
-    "Cash": 416090000.0,
-    "CurrentAssets": 873111000.0,
-    "Assets": 1138619000.0,
-    "CurrentLiabilities": 236167000.0,
-    "Liabilities": 267389000.0,
-    "ShareholdersEquity": 871230000.0,
-    "Cash_date": "2025-09-30"
+    "LongTermDebt": 219469000,
+    "LongTermDebt_date": "2025-09-30",
+    "LongTermDebtCurrent": 0,
+    "LongTermDebtCurrent_date": "2025-09-30",
+    "collected_at": "2026-01-27"
   }
 ]

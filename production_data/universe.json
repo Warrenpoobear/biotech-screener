@@ -1967,7 +1967,23 @@
         }
       ]
     },
-    "cik": "0000879169"
+    "cik": "0000879169",
+    "Cash": 2455006000,
+    "MarketableSecurities": 284870000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 19094000000,
+    "LongTermDebtCurrent": 689118000,
+    "ConvertibleDebt": null,
+    "Assets": 6330356000,
+    "CurrentAssets": 4277889000,
+    "Liabilities": 1679162000,
+    "CurrentLiabilities": 1338729000,
+    "ShareholdersEquity": 4651194000,
+    "Revenue": 3394635000,
+    "COGS": 250955000,
+    "R&D": 1438780000,
+    "NetIncome": 987371000
   },
   {
     "ticker": "JAZZ",
@@ -3063,7 +3079,21 @@
         }
       ]
     },
-    "cik": "0001232524"
+    "cik": "0001232524",
+    "Cash": 1326070000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 0,
+    "LongTermDebt": 5361161000,
+    "LongTermDebtCurrent": 1029179000,
+    "ConvertibleDebt": null,
+    "Assets": 11356485000,
+    "CurrentAssets": 3755878000,
+    "CurrentLiabilities": 2274102000,
+    "ShareholdersEquity": 3959030000,
+    "Revenue": 476457000,
+    "R&D": 299726000,
+    "NetIncome": -559599000
   },
   {
     "ticker": "IONS",
@@ -4147,7 +4177,22 @@
         }
       ]
     },
-    "cik": "0000874015"
+    "cik": "0000874015",
+    "Cash": 338341000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 1901830000,
+    "AvailableForSaleSecurities": 340622000,
+    "LongTermDebt": 1253062000,
+    "LongTermDebtCurrent": 165000,
+    "ConvertibleDebt": null,
+    "Assets": 3033091000,
+    "CurrentAssets": 2518993000,
+    "Liabilities": 2415124000,
+    "CurrentLiabilities": 903456000,
+    "ShareholdersEquity": 617967000,
+    "Revenue": 226577000,
+    "R&D": 638200000,
+    "NetIncome": -151993000
   },
   {
     "ticker": "BBIO",
@@ -5129,7 +5174,22 @@
         }
       ]
     },
-    "cik": "0001743881"
+    "cik": "0001743881",
+    "Cash": 642951000,
+    "MarketableSecurities": 7939000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 2007337000,
+    "LongTermDebtCurrent": 3646000,
+    "ConvertibleDebt": null,
+    "Assets": 998250000,
+    "CurrentAssets": 839382000,
+    "Liabilities": 2920979000,
+    "CurrentLiabilities": 216600000,
+    "ShareholdersEquity": -1933070000,
+    "COGS": 12855000,
+    "R&D": 335536000,
+    "NetIncome": -69000
   },
   {
     "ticker": "GOSS",
@@ -6145,7 +6205,20 @@
         }
       ]
     },
-    "cik": "0001728117"
+    "cik": "0001728117",
+    "Cash": 8933000,
+    "MarketableSecurities": 171291000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 28548000,
+    "LongTermDebtCurrent": 0,
+    "ConvertibleDebt": null,
+    "Assets": 208820000,
+    "CurrentAssets": 203989000,
+    "Liabilities": 291153000,
+    "CurrentLiabilities": 62117000,
+    "ShareholdersEquity": -82333000,
+    "NetIncome": -123132000
   },
   {
     "ticker": "RNA",
@@ -7165,7 +7238,21 @@
         }
       ]
     },
-    "cik": "0001599901"
+    "cik": "0001599901",
+    "Cash": 350158000,
+    "MarketableSecurities": 261849000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 0,
+    "LongTermDebtCurrent": 0,
+    "ConvertibleDebt": null,
+    "Assets": 2134209000,
+    "CurrentAssets": 1966017000,
+    "Liabilities": 247944000,
+    "CurrentLiabilities": 169879000,
+    "ShareholdersEquity": 1886265000,
+    "R&D": 392563000,
+    "NetIncome": -447530000
   },
   {
     "ticker": "KYMR",
@@ -8181,7 +8268,22 @@
         }
       ]
     },
-    "cik": "0001815442"
+    "cik": "0001815442",
+    "Cash": 112949000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 1102044000,
+    "CurrentAssets": 528298000,
+    "Liabilities": 155786000,
+    "CurrentLiabilities": 71575000,
+    "ShareholdersEquity": 946258000,
+    "COGS": 36341000,
+    "R&D": 232737000,
+    "NetIncome": -224370000
   },
   {
     "ticker": "RYTM",
@@ -9245,7 +9347,22 @@
         }
       ]
     },
-    "cik": "0001649904"
+    "cik": "0001649904",
+    "Cash": 52078000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 363974000,
+    "AvailableForSaleSecurities": 113846000,
+    "LongTermDebt": 72961000,
+    "LongTermDebtCurrent": 5556000,
+    "ConvertibleDebt": null,
+    "Assets": 506874000,
+    "CurrentAssets": 494802000,
+    "Liabilities": 211191000,
+    "CurrentLiabilities": 104267000,
+    "ShareholdersEquity": 148817000,
+    "Revenue": 0,
+    "R&D": 125307000,
+    "NetIncome": -149034000
   },
   {
     "ticker": "EPRX",
@@ -10205,7 +10322,22 @@
         }
       ]
     },
-    "cik": "0001581178"
+    "cik": "0001581178",
+    "Cash": 19341756,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 20266229,
+    "CurrentAssets": 19803078,
+    "Liabilities": 19373903,
+    "CurrentLiabilities": 19373903,
+    "ShareholdersEquity": 2216207,
+    "Revenue": 0,
+    "R&D": 20563225,
+    "NetIncome": -28220796
   },
   {
     "ticker": "ACAD",
@@ -11261,7 +11393,22 @@
         }
       ]
     },
-    "cik": "0001070494"
+    "cik": "0001070494",
+    "Cash": 257996000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 83027000,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": 22000,
+    "ConvertibleDebt": null,
+    "Assets": 1330771000,
+    "CurrentAssets": 1076422000,
+    "Liabilities": 413499000,
+    "CurrentLiabilities": 356584000,
+    "ShareholdersEquity": 917272000,
+    "Revenue": 726437000,
+    "R&D": 244045000,
+    "NetIncome": 117432000
   },
   {
     "ticker": "ALNY",
@@ -12351,7 +12498,22 @@
         }
       ]
     },
-    "cik": "0001178670"
+    "cik": "0001178670",
+    "Cash": 1490249000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 677723000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 4851662000,
+    "CurrentAssets": 3952811000,
+    "Liabilities": 4617768000,
+    "CurrentLiabilities": 1555477000,
+    "ShareholdersEquity": 233894000,
+    "Revenue": 1037418000,
+    "R&D": 947557000,
+    "NetIncome": 127328000
   },
   {
     "ticker": "BMRN",
@@ -13425,7 +13587,23 @@
         }
       ]
     },
-    "cik": "0001048477"
+    "cik": "0001048477",
+    "Cash": 1250108000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 935662000,
+    "AvailableForSaleSecurities": 935662000,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 7614868000,
+    "CurrentAssets": 3854543000,
+    "Liabilities": 1558157000,
+    "CurrentLiabilities": 798438000,
+    "ShareholdersEquity": 6056711000,
+    "Revenue": 373447000,
+    "COGS": 441733000,
+    "R&D": 729517000,
+    "NetIncome": 395474000
   },
   {
     "ticker": "CRSP",
@@ -14455,7 +14633,22 @@
         }
       ]
     },
-    "cik": "0001674416"
+    "cik": "0001674416",
+    "Cash": 286497000,
+    "MarketableSecurities": 1629213000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 2245308000,
+    "CurrentAssets": 1929092000,
+    "Liabilities": 329326000,
+    "CurrentLiabilities": 118957000,
+    "ShareholdersEquity": 1915982000,
+    "Revenue": 157000,
+    "R&D": 201280000,
+    "NetIncome": -450986000
   },
   {
     "ticker": "VRTX",
@@ -15489,7 +15682,22 @@
         }
       ]
     },
-    "cik": "0000875320"
+    "cik": "0000875320",
+    "Cash": 4939600000,
+    "MarketableSecurities": 1347400000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 518108000,
+    "LongTermDebt": 105000000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 24862300000,
+    "CurrentAssets": 10569600000,
+    "Liabilities": 7543500000,
+    "CurrentLiabilities": 4475300000,
+    "ShareholdersEquity": 17318800000,
+    "Revenue": 640799000,
+    "R&D": 603100000,
+    "NetIncome": 2762100000
   },
   {
     "ticker": "SRPT",
@@ -16541,7 +16749,22 @@
         }
       ]
     },
-    "cik": "0000873303"
+    "cik": "0000873303",
+    "Cash": 613077000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 237916000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 1035146000,
+    "LongTermDebtCurrent": 0,
+    "ConvertibleDebt": null,
+    "Assets": 3493437000,
+    "CurrentAssets": 2722309000,
+    "Liabilities": 2173317000,
+    "CurrentLiabilities": 921425000,
+    "ShareholdersEquity": 1320120000,
+    "Revenue": 1755303000,
+    "R&D": 207239000,
+    "NetIncome": -430563000
   },
   {
     "ticker": "UTHR",
@@ -17621,7 +17844,22 @@
         }
       ]
     },
-    "cik": "0001082554"
+    "cik": "0001082554",
+    "Cash": 1340100000,
+    "MarketableSecurities": 1427500000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 7351100000,
+    "CurrentAssets": 3494000000,
+    "Liabilities": 760900000,
+    "CurrentLiabilities": 546300000,
+    "ShareholdersEquity": 6590200000,
+    "Revenue": 1483300000,
+    "R&D": 410500000,
+    "NetIncome": 970400000
   },
   {
     "ticker": "EXEL",
@@ -18721,7 +18959,22 @@
         }
       ]
     },
-    "cik": "0000939767"
+    "cik": "0000939767",
+    "Cash": 376300000,
+    "MarketableSecurities": 612235000,
+    "ShortTermInvestments": 803540000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 0,
+    "LongTermDebtCurrent": 189122000,
+    "ConvertibleDebt": null,
+    "Assets": 2823547000,
+    "CurrentAssets": 1402257000,
+    "Liabilities": 662847000,
+    "CurrentLiabilities": 373777000,
+    "ShareholdersEquity": 2160700000,
+    "Revenue": 717486000,
+    "R&D": 611753000,
+    "NetIncome": 538042000
   },
   {
     "ticker": "RARE",
@@ -19800,7 +20053,21 @@
         }
       ]
     },
-    "cik": "0001515673"
+    "cik": "0001515673",
+    "Cash": 202510000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 568034000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 1190445000,
+    "CurrentAssets": 643206000,
+    "Liabilities": 1174286000,
+    "CurrentLiabilities": 340022000,
+    "ShareholdersEquity": 9159000,
+    "R&D": 546720000,
+    "NetIncome": -446444000
   },
   {
     "ticker": "FOLD",
@@ -20839,7 +21106,22 @@
         }
       ]
     },
-    "cik": "0001178879"
+    "cik": "0001178879",
+    "Cash": 190553000,
+    "MarketableSecurities": 73290000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 309502000,
+    "LongTermDebt": 391985000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 868811000,
+    "CurrentAssets": 594066000,
+    "Liabilities": 638387000,
+    "CurrentLiabilities": 198930000,
+    "ShareholdersEquity": 230424000,
+    "Revenue": 16696000,
+    "COGS": 10060000,
+    "NetIncome": -28800000
   },
   {
     "ticker": "_XBI_BENCHMARK_",
@@ -21734,7 +22016,20 @@
         }
       ]
     },
-    "cik": "0000318154"
+    "cik": "0000318154",
+    "Cash": 9445000000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 22431000000,
+    "LongTermDebt": 54587000000,
+    "LongTermDebtCurrent": 2153000000,
+    "ConvertibleDebt": null,
+    "Assets": 90141000000,
+    "CurrentAssets": 27885000000,
+    "CurrentLiabilities": 21791000000,
+    "ShareholdersEquity": 9619000000,
+    "Revenue": 12427000000,
+    "NetIncome": 6378000000
   },
   {
     "ticker": "GILD",
@@ -21829,7 +22124,21 @@
         }
       ]
     },
-    "cik": "0000882095"
+    "cik": "0000882095",
+    "Cash": 5412000000,
+    "MarketableSecurities": 19000000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 78804000,
+    "LongTermDebt": 24941000000,
+    "LongTermDebtCurrent": 2806000000,
+    "ConvertibleDebt": 2790000000,
+    "Assets": 58533000000,
+    "CurrentAssets": 17874000000,
+    "CurrentLiabilities": 12298000000,
+    "ShareholdersEquity": 21540000000,
+    "Revenue": 24689000000,
+    "R&D": 1101000000,
+    "NetIncome": 6327000000
   },
   {
     "ticker": "BIIB",
@@ -21924,7 +22233,23 @@
         }
       ]
     },
-    "cik": "0000875045"
+    "cik": "0000875045",
+    "Cash": 2913700000,
+    "MarketableSecurities": 0,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 1562200000,
+    "LongTermDebt": 6285100000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 29207500000,
+    "CurrentAssets": 8936600000,
+    "Liabilities": 11000000000,
+    "CurrentLiabilities": 3290000000,
+    "ShareholdersEquity": 14799400000,
+    "Revenue": 7611200000,
+    "COGS": 133749000,
+    "R&D": 284340000,
+    "NetIncome": 1341800000
   },
   {
     "ticker": "MRNA",
@@ -22019,7 +22344,22 @@
         }
       ]
     },
-    "cik": "0001682852"
+    "cik": "0001682852",
+    "Cash": 1132000000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 12135000000,
+    "CurrentAssets": 6598000000,
+    "Liabilities": 2805000000,
+    "CurrentLiabilities": 1681000000,
+    "ShareholdersEquity": 9330000000,
+    "Revenue": 2206000000,
+    "R&D": 2357000000,
+    "NetIncome": -1996000000
   },
   {
     "ticker": "BNTX",
@@ -22209,7 +22549,22 @@
         }
       ]
     },
-    "cik": "0000886163"
+    "cik": "0000886163",
+    "Cash": 139376000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 525146000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 27500000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 1476772000,
+    "CurrentAssets": 753920000,
+    "Liabilities": 526601000,
+    "CurrentLiabilities": 30539000,
+    "ShareholdersEquity": 950171000,
+    "Revenue": 56157000,
+    "R&D": 77671000,
+    "NetIncome": 79669000
   },
   {
     "ticker": "TECH",
@@ -22304,7 +22659,20 @@
         }
       ]
     },
-    "cik": "0000842023"
+    "cik": "0000842023",
+    "Cash": 144962000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 0,
+    "AvailableForSaleSecurities": 32463000,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": 12500000,
+    "ConvertibleDebt": null,
+    "Assets": 2526148000,
+    "CurrentAssets": 609507000,
+    "CurrentLiabilities": 144545000,
+    "ShareholdersEquity": 2018025000,
+    "Revenue": 286555000,
+    "NetIncome": 38185000
   },
   {
     "ticker": "RGEN",
@@ -22399,7 +22767,22 @@
         }
       ]
     },
-    "cik": "0000730272"
+    "cik": "0000730272",
+    "Cash": 748747000,
+    "MarketableSecurities": 16270517,
+    "ShortTermInvestments": 0,
+    "AvailableForSaleSecurities": 0,
+    "LongTermDebt": 537927000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": 240942000,
+    "Assets": 2923711000,
+    "CurrentAssets": 1096485000,
+    "Liabilities": 840624000,
+    "CurrentLiabilities": 131136000,
+    "ShareholdersEquity": 2083087000,
+    "Revenue": 44830000,
+    "R&D": 41057000,
+    "NetIncome": 35607000
   },
   {
     "ticker": "ROIV",
@@ -22476,7 +22859,21 @@
         }
       ]
     },
-    "cik": "0001635088"
+    "cik": "0001635088",
+    "Cash": 1237010000,
+    "MarketableSecurities": 3148825000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 311716000,
+    "LongTermDebtCurrent": 12000000,
+    "ConvertibleDebt": null,
+    "Assets": 5062598000,
+    "CurrentAssets": 4511646000,
+    "Liabilities": 257140000,
+    "CurrentLiabilities": 133857000,
+    "ShareholdersEquity": 4362331000,
+    "R&D": 317487000,
+    "NetIncome": -336874000
   },
   {
     "ticker": "NTRA",
@@ -22571,7 +22968,22 @@
         }
       ]
     },
-    "cik": "0001604821"
+    "cik": "0001604821",
+    "Cash": 466005000,
+    "MarketableSecurities": 1000000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 186700000,
+    "LongTermDebt": 282945000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 1821482000,
+    "CurrentAssets": 1447323000,
+    "Liabilities": 569294000,
+    "CurrentLiabilities": 442016000,
+    "ShareholdersEquity": 1252188000,
+    "Revenue": 210939000,
+    "R&D": 448917000,
+    "NetIncome": -255418000
   },
   {
     "ticker": "DAWN",
@@ -22666,7 +23078,22 @@
         }
       ]
     },
-    "cik": "0001845337"
+    "cik": "0001845337",
+    "Cash": 43277000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 408303000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 513780000,
+    "CurrentAssets": 489971000,
+    "Liabilities": 62912000,
+    "CurrentLiabilities": 56466000,
+    "ShareholdersEquity": 450868000,
+    "Revenue": 104464000,
+    "R&D": 107187000,
+    "NetIncome": -86044000
   },
   {
     "ticker": "PCVX",
@@ -22761,7 +23188,21 @@
         }
       ]
     },
-    "cik": "0001649094"
+    "cik": "0001649094",
+    "Cash": 281080000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 1430240000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 3171600000,
+    "CurrentAssets": 1767167000,
+    "Liabilities": 278718000,
+    "CurrentLiabilities": 200046000,
+    "ShareholdersEquity": 2892882000,
+    "R&D": 552246000,
+    "NetIncome": -520121000
   },
   {
     "ticker": "ARVN",
@@ -22856,7 +23297,22 @@
         }
       ]
     },
-    "cik": "0001655759"
+    "cik": "0001655759",
+    "Cash": 101500000,
+    "MarketableSecurities": 686100000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 600000,
+    "LongTermDebtCurrent": 200000,
+    "ConvertibleDebt": null,
+    "Assets": 844300000,
+    "CurrentAssets": 826300000,
+    "Liabilities": 279900000,
+    "CurrentLiabilities": 144900000,
+    "ShareholdersEquity": 564400000,
+    "Revenue": 253100000,
+    "R&D": 224100000,
+    "NetIncome": -13400000
   },
   {
     "ticker": "LEGN",
@@ -23046,7 +23502,20 @@
         }
       ]
     },
-    "cik": "0001434316"
+    "cik": "0001434316",
+    "Cash": 40622000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 174801000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 18480000,
+    "LongTermDebtCurrent": 13932000,
+    "ConvertibleDebt": 23700000,
+    "Assets": 343671000,
+    "CurrentAssets": 221251000,
+    "CurrentLiabilities": 28111000,
+    "ShareholdersEquity": 234066000,
+    "R&D": 82404000,
+    "NetIncome": -103941000
   },
   {
     "ticker": "NTLA",
@@ -23141,7 +23610,21 @@
         }
       ]
     },
-    "cik": "0001652130"
+    "cik": "0001652130",
+    "Cash": 193389000,
+    "MarketableSecurities": 317655000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 925275000,
+    "CurrentAssets": 581941000,
+    "Liabilities": 176853000,
+    "CurrentLiabilities": 93726000,
+    "ShareholdersEquity": 748422000,
+    "R&D": 300209000,
+    "NetIncome": -316908000
   },
   {
     "ticker": "EDIT",
@@ -23236,7 +23719,22 @@
         }
       ]
     },
-    "cik": "0001650664"
+    "cik": "0001650664",
+    "Cash": 165648000,
+    "MarketableSecurities": 0,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 57434000,
+    "LongTermDebtCurrent": 5000000,
+    "ConvertibleDebt": null,
+    "Assets": 201751000,
+    "CurrentAssets": 176891000,
+    "Liabilities": 188298000,
+    "CurrentLiabilities": 61773000,
+    "ShareholdersEquity": 13453000,
+    "Revenue": 2069000,
+    "R&D": 62549000,
+    "NetIncome": -154440000
   },
   {
     "ticker": "BEAM",
@@ -23331,7 +23829,22 @@
         }
       ]
     },
-    "cik": "0001745999"
+    "cik": "0001745999",
+    "Cash": 267960000,
+    "MarketableSecurities": 807010000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 1311081000,
+    "CurrentAssets": 1098547000,
+    "Liabilities": 345079000,
+    "CurrentLiabilities": 182559000,
+    "ShareholdersEquity": 966002000,
+    "Revenue": 6000,
+    "R&D": 310343000,
+    "NetIncome": -324289000
   },
   {
     "ticker": "VCYT",
@@ -23426,7 +23939,23 @@
         }
       ]
     },
-    "cik": "0001384101"
+    "cik": "0001384101",
+    "Cash": 315573000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": 0,
+    "ConvertibleDebt": null,
+    "Assets": 1367787000,
+    "CurrentAssets": 449224000,
+    "Liabilities": 110120000,
+    "CurrentLiabilities": 72152000,
+    "ShareholdersEquity": 1257667000,
+    "Revenue": 66258000,
+    "COGS": 36077000,
+    "R&D": 49965000,
+    "NetIncome": 25204000
   },
   {
     "ticker": "AXSM",
@@ -23521,7 +24050,23 @@
         }
       ]
     },
-    "cik": "0001579428"
+    "cik": "0001579428",
+    "Cash": 325272000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": 70000000,
+    "ConvertibleDebt": 0,
+    "Assets": 669250000,
+    "CurrentAssets": 565342000,
+    "Liabilities": 595523000,
+    "CurrentLiabilities": 360290000,
+    "ShareholdersEquity": 73727000,
+    "Revenue": 31300000,
+    "COGS": 5200000,
+    "R&D": 134488000,
+    "NetIncome": -154615000
   },
   {
     "ticker": "PTGX",
@@ -23616,7 +24161,22 @@
         }
       ]
     },
-    "cik": "0001377121"
+    "cik": "0001377121",
+    "Cash": 113713000,
+    "MarketableSecurities": 462404000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 42469000,
+    "LongTermDebt": 9832000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 701688000,
+    "CurrentAssets": 586424000,
+    "Liabilities": 56251000,
+    "CurrentLiabilities": 44942000,
+    "ShareholdersEquity": 645437000,
+    "Revenue": 8781000,
+    "R&D": 112932000,
+    "NetIncome": -85765000
   },
   {
     "ticker": "CDNA",
@@ -23711,7 +24271,23 @@
         }
       ]
     },
-    "cik": "0001217234"
+    "cik": "0001217234",
+    "Cash": 91435000,
+    "MarketableSecurities": 102782000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 0,
+    "LongTermDebtCurrent": 0,
+    "ConvertibleDebt": null,
+    "Assets": 432307000,
+    "CurrentAssets": 300280000,
+    "Liabilities": 121167000,
+    "CurrentLiabilities": 99044000,
+    "ShareholdersEquity": 311140000,
+    "Revenue": 14053000,
+    "COGS": 27417000,
+    "R&D": 52123000,
+    "NetIncome": -17246000
   },
   {
     "ticker": "PRVA",
@@ -23806,7 +24382,20 @@
         }
       ]
     },
-    "cik": "0001759655"
+    "cik": "0001759655",
+    "Cash": 441352000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 1350987000,
+    "CurrentAssets": 970926000,
+    "Liabilities": 588226000,
+    "CurrentLiabilities": 582914000,
+    "ShareholdersEquity": 709124000,
+    "NetIncome": 13768000
   },
   {
     "ticker": "AGIO",
@@ -23901,7 +24490,22 @@
         }
       ]
     },
-    "cik": "0001439222"
+    "cik": "0001439222",
+    "Cash": 92710000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 370188000,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 1385705000,
+    "CurrentAssets": 1033109000,
+    "Liabilities": 101375000,
+    "CurrentLiabilities": 74757000,
+    "ShareholdersEquity": 1284330000,
+    "Revenue": 30013000,
+    "R&D": 251479000,
+    "NetIncome": -304742000
   },
   {
     "ticker": "ALLO",
@@ -23996,7 +24600,21 @@
         }
       ]
     },
-    "cik": "0001737287"
+    "cik": "0001737287",
+    "Cash": 37815000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 283988000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 439771000,
+    "CurrentAssets": 260719000,
+    "Liabilities": 124442000,
+    "CurrentLiabilities": 31833000,
+    "ShareholdersEquity": 315329000,
+    "R&D": 121520000,
+    "NetIncome": -152076000
   },
   {
     "ticker": "APLS",
@@ -24091,7 +24709,21 @@
         }
       ]
     },
-    "cik": "0001492422"
+    "cik": "0001492422",
+    "Cash": 479171000,
+    "MarketableSecurities": 124364000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 93109000,
+    "LongTermDebtCurrent": 1666667,
+    "ConvertibleDebt": null,
+    "Assets": 1058723000,
+    "CurrentAssets": 990676000,
+    "Liabilities": 657555000,
+    "CurrentLiabilities": 279527000,
+    "ShareholdersEquity": 401168000,
+    "R&D": 221621000,
+    "NetIncome": 81339000
   },
   {
     "ticker": "ARCT",
@@ -24186,7 +24818,21 @@
         }
       ]
     },
-    "cik": "0001768224"
+    "cik": "0001768224",
+    "Cash": 180360000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 13300000,
+    "LongTermDebtCurrent": 60655000,
+    "ConvertibleDebt": null,
+    "Assets": 282343000,
+    "CurrentAssets": 249200000,
+    "Liabilities": 57784000,
+    "CurrentLiabilities": 31699000,
+    "ShareholdersEquity": 224559000,
+    "R&D": 87736000,
+    "NetIncome": -36704000
   },
   {
     "ticker": "ARWR",
@@ -24281,7 +24927,21 @@
         }
       ]
     },
-    "cik": "0000879407"
+    "cik": "0000879407",
+    "Cash": 69400000,
+    "MarketableSecurities": 0,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 1385295000,
+    "CurrentAssets": 950639000,
+    "CurrentLiabilities": 195487000,
+    "ShareholdersEquity": 466052000,
+    "Revenue": 16142321,
+    "R&D": 607159000,
+    "NetIncome": -1631000
   },
   {
     "ticker": "AVTR",
@@ -24345,7 +25005,21 @@
       "conditions": [],
       "top_trials": []
     },
-    "cik": "0001722482"
+    "cik": "0001722482",
+    "Cash": 251900000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 3857900000,
+    "LongTermDebtCurrent": 219800000,
+    "ConvertibleDebt": null,
+    "Assets": 11675900000,
+    "CurrentAssets": 2257200000,
+    "Liabilities": 6105700000,
+    "CurrentLiabilities": 1516500000,
+    "ShareholdersEquity": 5570200000,
+    "Revenue": 4888600000,
+    "NetIncome": -582600000
   },
   {
     "ticker": "BCRX",
@@ -24440,7 +25114,22 @@
         }
       ]
     },
-    "cik": "0000882796"
+    "cik": "0000882796",
+    "Cash": 84078000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 128795000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 298142000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 446424000,
+    "CurrentAssets": 355684000,
+    "Liabilities": 834313000,
+    "CurrentLiabilities": 190237000,
+    "ShareholdersEquity": -387889000,
+    "Revenue": 25186000,
+    "R&D": 125259000,
+    "NetIncome": 18016000
   },
   {
     "ticker": "BDTX",
@@ -24535,7 +25224,21 @@
         }
       ]
     },
-    "cik": "0001701541"
+    "cik": "0001701541",
+    "Cash": 30864000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 157733000,
+    "CurrentAssets": 138992000,
+    "Liabilities": 31581000,
+    "CurrentLiabilities": 15545000,
+    "ShareholdersEquity": 126152000,
+    "R&D": 27262000,
+    "NetIncome": 37483000
   },
   {
     "ticker": "CRBU",
@@ -24630,7 +25333,22 @@
         }
       ]
     },
-    "cik": "0001619856"
+    "cik": "0001619856",
+    "Cash": 11144000,
+    "MarketableSecurities": 227778000,
+    "ShortTermInvestments": 0,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 194984000,
+    "CurrentAssets": 155506000,
+    "Liabilities": 53139000,
+    "CurrentLiabilities": 28058000,
+    "ShareholdersEquity": 141845000,
+    "Revenue": 0,
+    "R&D": 85624000,
+    "NetIncome": -121637000
   },
   {
     "ticker": "CRNX",
@@ -24725,7 +25443,22 @@
         }
       ]
     },
-    "cik": "0001658247"
+    "cik": "0001658247",
+    "Cash": 110901000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 981390000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 1196031000,
+    "CurrentAssets": 1121275000,
+    "Liabilities": 123862000,
+    "CurrentLiabilities": 74155000,
+    "ShareholdersEquity": 1072169000,
+    "Revenue": 1392000,
+    "R&D": 247005000,
+    "NetIncome": -342502000
   },
   {
     "ticker": "CRVS",
@@ -24820,7 +25553,21 @@
         }
       ]
     },
-    "cik": "0001626971"
+    "cik": "0001626971",
+    "Cash": 2867000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 80474000,
+    "CurrentAssets": 66944000,
+    "Liabilities": 8706000,
+    "CurrentLiabilities": 8074000,
+    "ShareholdersEquity": 71768000,
+    "R&D": 23780000,
+    "NetIncome": -2962000
   },
   {
     "ticker": "CVAC",
@@ -25012,7 +25759,22 @@
         }
       ]
     },
-    "cik": "0000744218"
+    "cik": "0000744218",
+    "Cash": 36037000,
+    "MarketableSecurities": 547186000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 648439000,
+    "CurrentAssets": 604339000,
+    "Liabilities": 50076000,
+    "CurrentLiabilities": 46465000,
+    "ShareholdersEquity": 598363000,
+    "Revenue": 1764000,
+    "R&D": 169741000,
+    "NetIncome": -177440000
   },
   {
     "ticker": "CYTK",
@@ -25107,7 +25869,22 @@
         }
       ]
     },
-    "cik": "0001061983"
+    "cik": "0001061983",
+    "Cash": 225467000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 1001919000,
+    "LongTermDebtCurrent": 17280000,
+    "ConvertibleDebt": null,
+    "Assets": 1436557000,
+    "CurrentAssets": 977349000,
+    "Liabilities": 1957680000,
+    "CurrentLiabilities": 142144000,
+    "ShareholdersEquity": -521123000,
+    "Revenue": 22124000,
+    "R&D": 311628000,
+    "NetIncome": -601924000
   },
   {
     "ticker": "DNLI",
@@ -25202,7 +25979,22 @@
         }
       ]
     },
-    "cik": "0001714899"
+    "cik": "0001714899",
+    "Cash": 90963000,
+    "MarketableSecurities": 757241000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 1055621000,
+    "CurrentAssets": 882598000,
+    "Liabilities": 129424000,
+    "CurrentLiabilities": 90146000,
+    "ShareholdersEquity": 926197000,
+    "Revenue": 0,
+    "R&D": 320873000,
+    "NetIncome": -383991000
   },
   {
     "ticker": "DRMA",
@@ -25297,7 +26089,21 @@
         }
       ]
     },
-    "cik": "0001853816"
+    "cik": "0001853816",
+    "Cash": 4664127,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": 0,
+    "ConvertibleDebt": null,
+    "Assets": 5071410,
+    "CurrentAssets": 11623940,
+    "Liabilities": 1111308,
+    "CurrentLiabilities": 1516836,
+    "ShareholdersEquity": 3960102,
+    "R&D": 2403363,
+    "NetIncome": -5696669
   },
   {
     "ticker": "DVAX",
@@ -25392,7 +26198,22 @@
         }
       ]
     },
-    "cik": "0001029142"
+    "cik": "0001029142",
+    "Cash": 160247000,
+    "MarketableSecurities": 123629000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 110916000,
+    "LongTermDebt": 8913000,
+    "LongTermDebtCurrent": 1498000,
+    "ConvertibleDebt": 260507000,
+    "Assets": 946506000,
+    "CurrentAssets": 814331000,
+    "Liabilities": 412368000,
+    "CurrentLiabilities": 106839000,
+    "ShareholdersEquity": 534138000,
+    "Revenue": 165000,
+    "R&D": 55112000,
+    "NetIncome": -50451000
   },
   {
     "ticker": "FGEN",
@@ -25487,7 +26308,23 @@
         }
       ]
     },
-    "cik": "0000921299"
+    "cik": "0000921299",
+    "Cash": 117975000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 0,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 75000000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 137014000,
+    "CurrentAssets": 133423000,
+    "Liabilities": 119529000,
+    "CurrentLiabilities": 35973000,
+    "ShareholdersEquity": -17028000,
+    "Revenue": 29621000,
+    "COGS": 278000,
+    "R&D": 16249000,
+    "NetIncome": 197672000
   },
   {
     "ticker": "FULC",
@@ -25582,7 +26419,21 @@
         }
       ]
     },
-    "cik": "0001680581"
+    "cik": "0001680581",
+    "Cash": 47078000,
+    "MarketableSecurities": 0,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 214858000,
+    "CurrentAssets": 205863000,
+    "Liabilities": 16492000,
+    "CurrentLiabilities": 11632000,
+    "ShareholdersEquity": 198366000,
+    "R&D": 40687000,
+    "NetIncome": -54546000
   },
   {
     "ticker": "GLPG",
@@ -25772,7 +26623,22 @@
         }
       ]
     },
-    "cik": "0001159036"
+    "cik": "0001159036",
+    "Cash": 419665000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 263363000,
+    "LongTermDebt": 1510757000,
+    "LongTermDebtCurrent": 710685000,
+    "ConvertibleDebt": 1506100000,
+    "Assets": 2221232000,
+    "CurrentAssets": 1328749000,
+    "Liabilities": 1717317000,
+    "CurrentLiabilities": 837228000,
+    "ShareholdersEquity": 503915000,
+    "Revenue": 121703000,
+    "R&D": 49593000,
+    "NetIncome": 458480000
   },
   {
     "ticker": "HRTX",
@@ -25867,7 +26733,21 @@
         }
       ]
     },
-    "cik": "0000818033"
+    "cik": "0000818033",
+    "Cash": 43068000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 222967000,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": 64000,
+    "Assets": 248950000,
+    "CurrentAssets": 229400000,
+    "Liabilities": 234065000,
+    "CurrentLiabilities": 89708000,
+    "ShareholdersEquity": 14885000,
+    "R&D": 8683000,
+    "NetIncome": -17241000
   },
   {
     "ticker": "IMCR",
@@ -25962,7 +26842,23 @@
         }
       ]
     },
-    "cik": "0001671927"
+    "cik": "0001671927",
+    "Cash": 498413000,
+    "MarketableSecurities": 393940000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 438695000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 1102500000,
+    "CurrentAssets": 1022848000,
+    "Liabilities": 705936000,
+    "CurrentLiabilities": 170353000,
+    "ShareholdersEquity": 396564000,
+    "Revenue": 226150000,
+    "COGS": 2384000,
+    "R&D": 196048000,
+    "NetIncome": -5454000
   },
   {
     "ticker": "IMMP",
@@ -26152,7 +27048,21 @@
         }
       ]
     },
-    "cik": "0001764013"
+    "cik": "0001764013",
+    "Cash": 521870000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 582959000,
+    "CurrentAssets": 573546000,
+    "Liabilities": 63254000,
+    "CurrentLiabilities": 63254000,
+    "ShareholdersEquity": 519705000,
+    "R&D": 66168000,
+    "NetIncome": -247115000
   },
   {
     "ticker": "IRWD",
@@ -26247,7 +27157,22 @@
         }
       ]
     },
-    "cik": "0001446847"
+    "cik": "0001446847",
+    "Cash": 140407000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 95680000,
+    "LongTermDebt": 199506000,
+    "LongTermDebtCurrent": 120700000,
+    "ConvertibleDebt": 234243000,
+    "Assets": 396062000,
+    "CurrentAssets": 273843000,
+    "CurrentLiabilities": 242503000,
+    "ShareholdersEquity": -264157000,
+    "Revenue": 69155000,
+    "COGS": 19097000,
+    "R&D": 73273000,
+    "NetIncome": 26293000
   },
   {
     "ticker": "KALA",
@@ -26342,7 +27267,22 @@
         }
       ]
     },
-    "cik": "0001479419"
+    "cik": "0001479419",
+    "Cash": 21096000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 9922000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 26948000,
+    "LongTermDebtCurrent": 28411000,
+    "ConvertibleDebt": null,
+    "Assets": 25021000,
+    "CurrentAssets": 24274000,
+    "Liabilities": 33686000,
+    "CurrentLiabilities": 32574000,
+    "ShareholdersEquity": -8665000,
+    "Revenue": 0,
+    "R&D": 18414000,
+    "NetIncome": -27666000
   },
   {
     "ticker": "KALV",
@@ -26437,7 +27377,22 @@
         }
       ]
     },
-    "cik": "0001348911"
+    "cik": "0001348911",
+    "Cash": 243497000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 5331000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 339931000,
+    "CurrentAssets": 325226000,
+    "Liabilities": 322932000,
+    "CurrentLiabilities": 45069000,
+    "ShareholdersEquity": 16999000,
+    "Revenue": 13700000,
+    "R&D": 41207000,
+    "NetIncome": -158914000
   },
   {
     "ticker": "KRYS",
@@ -26532,7 +27487,21 @@
         }
       ]
     },
-    "cik": "0001711279"
+    "cik": "0001711279",
+    "Cash": 392604000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 8402000,
+    "LongTermDebt": 4254000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": 0,
+    "Assets": 1240094000,
+    "CurrentAssets": 925650000,
+    "Liabilities": 102218000,
+    "CurrentLiabilities": 91268000,
+    "ShareholdersEquity": 1137876000,
+    "R&D": 43251000,
+    "NetIncome": 153431000
   },
   {
     "ticker": "LQDA",
@@ -26627,7 +27596,21 @@
         }
       ]
     },
-    "cik": "0001819576"
+    "cik": "0001819576",
+    "Cash": 157496000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 19879000,
+    "LongTermDebtCurrent": 0,
+    "ConvertibleDebt": null,
+    "Assets": 275981000,
+    "CurrentAssets": 226719000,
+    "Liabilities": 253929000,
+    "CurrentLiabilities": 102942000,
+    "ShareholdersEquity": 22052000,
+    "R&D": 22333000,
+    "NetIncome": -83479000
   },
   {
     "ticker": "MCRB",
@@ -26722,7 +27705,22 @@
         }
       ]
     },
-    "cik": "0001609809"
+    "cik": "0001609809",
+    "Cash": 47638000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 0,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 110000000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 143473000,
+    "CurrentAssets": 51527000,
+    "Liabilities": 99776000,
+    "CurrentLiabilities": 22429000,
+    "ShareholdersEquity": 43697000,
+    "Revenue": 351000,
+    "R&D": 37376000,
+    "NetIncome": 21031000
   },
   {
     "ticker": "MDGL",
@@ -26817,7 +27815,21 @@
         }
       ]
     },
-    "cik": "0001157601"
+    "cik": "0001157601",
+    "Cash": 295694000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 144700000,
+    "LongTermDebt": 339753000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 1362457000,
+    "CurrentAssets": 1346680000,
+    "Liabilities": 736725000,
+    "CurrentLiabilities": 391406000,
+    "ShareholdersEquity": 625732000,
+    "Revenue": 137250000,
+    "NetIncome": -229709000
   },
   {
     "ticker": "MRSN",
@@ -26914,7 +27926,22 @@
     },
     "exclusion_reason": "Acquired by Day One Biopharmaceuticals, delisted from NASDAQ January 6, 2026",
     "exclusion_date": "2026-01-06",
-    "cik": "0001442836"
+    "cik": "0001442836",
+    "Cash": 56391000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 88143000,
+    "LongTermDebt": 20098000,
+    "LongTermDebtCurrent": 0,
+    "ConvertibleDebt": null,
+    "Assets": 62686000,
+    "CurrentAssets": 59988000,
+    "Liabilities": 122223000,
+    "CurrentLiabilities": 43269000,
+    "ShareholdersEquity": -59537000,
+    "Revenue": 7255000,
+    "R&D": 46741000,
+    "NetIncome": -55964000
   },
   {
     "ticker": "MRVI",
@@ -26978,7 +28005,22 @@
       "conditions": [],
       "top_trials": []
     },
-    "cik": "0001823239"
+    "cik": "0001823239",
+    "Cash": 243574000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 292821000,
+    "LongTermDebtCurrent": 5440000,
+    "ConvertibleDebt": null,
+    "Assets": 849191000,
+    "CurrentAssets": 325867000,
+    "Liabilities": 417332000,
+    "CurrentLiabilities": 61574000,
+    "ShareholdersEquity": 245443000,
+    "COGS": 114729000,
+    "R&D": 13614000,
+    "NetIncome": -95092000
   },
   {
     "ticker": "NVCR",
@@ -27073,7 +28115,23 @@
         }
       ]
     },
-    "cik": "0001645113"
+    "cik": "0001645113",
+    "Cash": 342119000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 568822000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 1361194000,
+    "CurrentAssets": 1199854000,
+    "Liabilities": 1019861000,
+    "CurrentLiabilities": 776006000,
+    "ShareholdersEquity": 341333000,
+    "Revenue": 481003000,
+    "COGS": 124722000,
+    "R&D": 163639000,
+    "NetIncome": -111728000
   },
   {
     "ticker": "NVAX",
@@ -27168,7 +28226,23 @@
         }
       ]
     },
-    "cik": "0001000694"
+    "cik": "0001000694",
+    "Cash": 268023000,
+    "MarketableSecurities": 494871000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 143617000,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": 169684000,
+    "Assets": 1179889000,
+    "CurrentAssets": 974590000,
+    "Liabilities": 1336561000,
+    "CurrentLiabilities": 429869000,
+    "ShareholdersEquity": -156672000,
+    "Revenue": 976340000,
+    "COGS": 50936000,
+    "R&D": 266444000,
+    "NetIncome": 422775000
   },
   {
     "ticker": "OCGN",
@@ -27263,7 +28337,22 @@
         }
       ]
     },
-    "cik": "0001372299"
+    "cik": "0001372299",
+    "Cash": 37800000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 1712000,
+    "LongTermDebtCurrent": 0,
+    "ConvertibleDebt": null,
+    "Assets": 57596000,
+    "CurrentAssets": 37639000,
+    "Liabilities": 54063000,
+    "CurrentLiabilities": 20361000,
+    "ShareholdersEquity": 3533000,
+    "Revenue": 0,
+    "R&D": 29081000,
+    "NetIncome": -50140000
   },
   {
     "ticker": "OPCH",
@@ -27358,7 +28447,22 @@
         }
       ]
     },
-    "cik": "0001014739"
+    "cik": "0001014739",
+    "Cash": 309822000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 1161836000,
+    "LongTermDebtCurrent": 6780000,
+    "ConvertibleDebt": null,
+    "Assets": 3479845000,
+    "CurrentAssets": 1282766000,
+    "Liabilities": 2121186000,
+    "CurrentLiabilities": 823906000,
+    "ShareholdersEquity": 1358659000,
+    "Revenue": 1332972000,
+    "COGS": 3446735000,
+    "NetIncome": 149081000
   },
   {
     "ticker": "PCRX",
@@ -27453,7 +28557,23 @@
         }
       ]
     },
-    "cik": "0001396814"
+    "cik": "0001396814",
+    "Cash": 147589000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 98745000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 376721000,
+    "LongTermDebtCurrent": 118531000,
+    "ConvertibleDebt": null,
+    "Assets": 1297577000,
+    "CurrentAssets": 562751000,
+    "Liabilities": 570363000,
+    "CurrentLiabilities": 107078000,
+    "ShareholdersEquity": 727214000,
+    "Revenue": 541533000,
+    "COGS": 109450000,
+    "R&D": 79859000,
+    "NetIncome": 5397000
   },
   {
     "ticker": "PGEN",
@@ -27548,7 +28668,22 @@
         }
       ]
     },
-    "cik": "0001356090"
+    "cik": "0001356090",
+    "Cash": 14322000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 106813000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 92890000,
+    "LongTermDebtCurrent": 43219000,
+    "ConvertibleDebt": null,
+    "Assets": 171264000,
+    "CurrentAssets": 129597000,
+    "Liabilities": 129396000,
+    "CurrentLiabilities": 32069000,
+    "ShareholdersEquity": 41868000,
+    "Revenue": 17002000,
+    "R&D": 99060000,
+    "NetIncome": -227139000
   },
   {
     "ticker": "PRTA",
@@ -27643,7 +28778,22 @@
         }
       ]
     },
-    "cik": "0001559053"
+    "cik": "0001559053",
+    "Cash": 330843000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 352628000,
+    "CurrentAssets": 339974000,
+    "Liabilities": 57639000,
+    "CurrentLiabilities": 51436000,
+    "ShareholdersEquity": 294989000,
+    "Revenue": 141000,
+    "R&D": 120266000,
+    "NetIncome": -222503000
   },
   {
     "ticker": "PTCT",
@@ -27738,7 +28888,22 @@
         }
       ]
     },
-    "cik": "0001070081"
+    "cik": "0001070081",
+    "Cash": 672617000,
+    "MarketableSecurities": 1015200000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 93198000,
+    "LongTermDebtCurrent": 286319000,
+    "ConvertibleDebt": null,
+    "Assets": 2643700000,
+    "CurrentAssets": 2007803000,
+    "Liabilities": 2799458000,
+    "CurrentLiabilities": 866245000,
+    "ShareholdersEquity": -155758000,
+    "Revenue": 264734000,
+    "R&D": 322121000,
+    "NetIncome": 817609000
   },
   {
     "ticker": "RVMD",
@@ -27833,7 +28998,21 @@
         }
       ]
     },
-    "cik": "0001628171"
+    "cik": "0001628171",
+    "Cash": 217442000,
+    "MarketableSecurities": 1714066000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 2251920000,
+    "CurrentAssets": 1977489000,
+    "Liabilities": 655016000,
+    "CurrentLiabilities": 245622000,
+    "ShareholdersEquity": 1596904000,
+    "R&D": 692389000,
+    "NetIncome": -766409000
   },
   {
     "ticker": "RXRX",
@@ -27928,7 +29107,21 @@
         }
       ]
     },
-    "cik": "0001601830"
+    "cik": "0001601830",
+    "Cash": 659836000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 0,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 723000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 1399526000,
+    "CurrentAssets": 714105000,
+    "Liabilities": 352578000,
+    "CurrentLiabilities": 155103000,
+    "ShareholdersEquity": 1046948000,
+    "R&D": 379331000,
+    "NetIncome": -536637000
   },
   {
     "ticker": "RGNX",
@@ -28023,7 +29216,22 @@
         }
       ]
     },
-    "cik": "0001590877"
+    "cik": "0001590877",
+    "Cash": 58802000,
+    "MarketableSecurities": 215403000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 525203000,
+    "CurrentAssets": 331967000,
+    "Liabilities": 363751000,
+    "CurrentLiabilities": 124568000,
+    "ShareholdersEquity": 161452000,
+    "Revenue": 132391000,
+    "R&D": 168688000,
+    "NetIncome": -126729000
   },
   {
     "ticker": "SANA",
@@ -28118,7 +29326,21 @@
         }
       ]
     },
-    "cik": "0001770121"
+    "cik": "0001770121",
+    "Cash": 103357000,
+    "MarketableSecurities": 49697000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 435432000,
+    "CurrentAssets": 161759000,
+    "Liabilities": 240124000,
+    "CurrentLiabilities": 35513000,
+    "ShareholdersEquity": 195308000,
+    "R&D": 97056000,
+    "NetIncome": -185341000
   },
   {
     "ticker": "SGMO",
@@ -28213,7 +29435,22 @@
         }
       ]
     },
-    "cik": "0001001233"
+    "cik": "0001001233",
+    "Cash": 29616000,
+    "MarketableSecurities": 94386000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 198818000,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 88643000,
+    "CurrentAssets": 44076000,
+    "Liabilities": 82400000,
+    "CurrentLiabilities": 50125000,
+    "ShareholdersEquity": 6243000,
+    "Revenue": 12637000,
+    "R&D": 81232000,
+    "NetIncome": -85513000
   },
   {
     "ticker": "SNDX",
@@ -28308,7 +29545,21 @@
         }
       ]
     },
-    "cik": "0001395937"
+    "cik": "0001395937",
+    "Cash": 116808000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 319171000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": 327075000,
+    "ConvertibleDebt": null,
+    "Assets": 551792000,
+    "CurrentAssets": 529830000,
+    "Liabilities": 436362000,
+    "CurrentLiabilities": 114187000,
+    "ShareholdersEquity": 115430000,
+    "R&D": 180143000,
+    "NetIncome": -217408000
   },
   {
     "ticker": "SPRY",
@@ -28403,7 +29654,21 @@
         }
       ]
     },
-    "cik": "0001671858"
+    "cik": "0001671858",
+    "Cash": 59557000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 228652000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 96229000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 372803000,
+    "CurrentAssets": 338863000,
+    "Liabilities": 225148000,
+    "CurrentLiabilities": 50877000,
+    "ShareholdersEquity": 147655000,
+    "R&D": 9738000,
+    "NetIncome": -129974000
   },
   {
     "ticker": "TARS",
@@ -28498,7 +29763,22 @@
         }
       ]
     },
-    "cik": "0001819790"
+    "cik": "0001819790",
+    "Cash": 112724000,
+    "MarketableSecurities": 289113000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 72281000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 534561000,
+    "CurrentAssets": 501704000,
+    "Liabilities": 199479000,
+    "CurrentLiabilities": 117050000,
+    "ShareholdersEquity": 335082000,
+    "Revenue": 299692000,
+    "R&D": 46287000,
+    "NetIncome": -58045000
   },
   {
     "ticker": "TBPH",
@@ -28593,7 +29873,21 @@
         }
       ]
     },
-    "cik": "0001583107"
+    "cik": "0001583107",
+    "Cash": 174773000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 0,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 415460000,
+    "CurrentAssets": 354697000,
+    "CurrentLiabilities": 37407000,
+    "ShareholdersEquity": 232681000,
+    "Revenue": 8319000,
+    "R&D": 30054000,
+    "NetIncome": 44871000
   },
   {
     "ticker": "TGTX",
@@ -28688,7 +29982,23 @@
         }
       ]
     },
-    "cik": "0001001316"
+    "cik": "0001001316",
+    "Cash": 74081000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 57501000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 100403000,
+    "LongTermDebtCurrent": 0,
+    "ConvertibleDebt": 4380400,
+    "Assets": 1025024000,
+    "CurrentAssets": 599765000,
+    "Liabilities": 417806000,
+    "CurrentLiabilities": 156810000,
+    "ShareholdersEquity": 607218000,
+    "Revenue": 2785000,
+    "COGS": 139000,
+    "R&D": 119022000,
+    "NetIncome": 424142000
   },
   {
     "ticker": "AARD",
@@ -28732,7 +30042,21 @@
       "vol_20d": 0.4294,
       "ret_21d": 0.0608,
       "corr_xbi": "0.2477"
-    }
+    },
+    "Cash": 39285000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 87065000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 133229000,
+    "CurrentAssets": 129207000,
+    "Liabilities": 10852000,
+    "CurrentLiabilities": 10736000,
+    "ShareholdersEquity": 122377000,
+    "R&D": 34637000,
+    "NetIncome": -39993000
   },
   {
     "ticker": "ABCL",
@@ -28776,7 +30100,21 @@
       "vol_20d": 0.7996,
       "ret_21d": 0.1491,
       "corr_xbi": "0.5106"
-    }
+    },
+    "Cash": 83159000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": 190000,
+    "ConvertibleDebt": null,
+    "Assets": 1355992000,
+    "CurrentAssets": 695140000,
+    "Liabilities": 391954000,
+    "CurrentLiabilities": 68804000,
+    "ShareholdersEquity": 964038000,
+    "R&D": 136736000,
+    "NetIncome": -137467000
   },
   {
     "ticker": "ABSI",
@@ -28820,7 +30158,22 @@
       "vol_20d": 0.7987,
       "ret_21d": -0.1733,
       "corr_xbi": "0.5562"
-    }
+    },
+    "Cash": 9476000,
+    "MarketableSecurities": 142999000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 3990000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 244992000,
+    "CurrentAssets": 174994000,
+    "Liabilities": 34652000,
+    "CurrentLiabilities": 29708000,
+    "ShareholdersEquity": 210340000,
+    "Revenue": 4534000,
+    "R&D": 56071000,
+    "NetIncome": -85621000
   },
   {
     "ticker": "ABUS",
@@ -28864,7 +30217,22 @@
       "vol_20d": 0.6292,
       "ret_21d": -0.1325,
       "corr_xbi": "0.4589"
-    }
+    },
+    "Cash": 22408000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 86293000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 0,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 97710000,
+    "CurrentAssets": 97442000,
+    "Liabilities": 20311000,
+    "CurrentLiabilities": 5184000,
+    "ShareholdersEquity": 77399000,
+    "Revenue": 13032000,
+    "R&D": 20235000,
+    "NetIncome": -29745000
   },
   {
     "ticker": "ABVX",
@@ -28996,7 +30364,21 @@
       "vol_20d": 0.438,
       "ret_21d": 0.0334,
       "corr_xbi": "0.3925"
-    }
+    },
+    "Cash": 79005000,
+    "MarketableSecurities": 382378000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 655918000,
+    "CurrentAssets": 472081000,
+    "Liabilities": 215141000,
+    "CurrentLiabilities": 118392000,
+    "ShareholdersEquity": 440777000,
+    "R&D": 123516000,
+    "NetIncome": -170822000
   },
   {
     "ticker": "ACRS",
@@ -29040,7 +30422,23 @@
       "vol_20d": 2.5085,
       "ret_21d": 0.5517,
       "corr_xbi": "0.2760"
-    }
+    },
+    "Cash": 25256000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 10731000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 175534000,
+    "CurrentAssets": 100592000,
+    "Liabilities": 55434000,
+    "CurrentLiabilities": 25631000,
+    "ShareholdersEquity": 120100000,
+    "Revenue": 1118000,
+    "COGS": 1559000,
+    "R&D": 36061000,
+    "NetIncome": -45128000
   },
   {
     "ticker": "ADCT",
@@ -29084,7 +30482,23 @@
       "vol_20d": 0.448,
       "ret_21d": 0.0314,
       "corr_xbi": "0.2585"
-    }
+    },
+    "Cash": 234738000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 289758000,
+    "CurrentAssets": 287149000,
+    "Liabilities": 527941000,
+    "CurrentLiabilities": 62044000,
+    "ShareholdersEquity": -238183000,
+    "Revenue": 58299000,
+    "COGS": 5949000,
+    "R&D": 85821000,
+    "NetIncome": -136214000
   },
   {
     "ticker": "ADMA",
@@ -29128,7 +30542,23 @@
       "vol_20d": 0.3441,
       "ret_21d": -0.1416,
       "corr_xbi": "0.5207"
-    }
+    },
+    "Cash": 61385000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 0,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 72428000,
+    "LongTermDebtCurrent": 2344000,
+    "ConvertibleDebt": 200000,
+    "Assets": 568687000,
+    "CurrentAssets": 402655000,
+    "Liabilities": 137501000,
+    "CurrentLiabilities": 56490000,
+    "ShareholdersEquity": 431186000,
+    "Revenue": 16048618,
+    "COGS": 167061000,
+    "R&D": 3386000,
+    "NetIncome": 97551000
   },
   {
     "ticker": "ADPT",
@@ -29172,7 +30602,21 @@
       "vol_20d": 0.7132,
       "ret_21d": 0.1075,
       "corr_xbi": "0.3021"
-    }
+    },
+    "Cash": 55034000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": 2429000,
+    "ConvertibleDebt": null,
+    "Assets": 490610000,
+    "CurrentAssets": 281435000,
+    "Liabilities": 286357000,
+    "CurrentLiabilities": 83361000,
+    "ShareholdersEquity": 204435000,
+    "R&D": 72006000,
+    "NetIncome": -45920000
   },
   {
     "ticker": "ALKS",
@@ -29216,7 +30660,21 @@
       "vol_20d": 0.3302,
       "ret_21d": 0.1797,
       "corr_xbi": "0.4767"
-    }
+    },
+    "Cash": 616449000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 198767000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 283666000,
+    "LongTermDebtCurrent": 3000000,
+    "ConvertibleDebt": null,
+    "Assets": 2329512000,
+    "CurrentAssets": 1741664000,
+    "Liabilities": 596080000,
+    "CurrentLiabilities": 474360000,
+    "ShareholdersEquity": 1733432000,
+    "R&D": 230926000,
+    "NetIncome": 192323000
   },
   {
     "ticker": "ALMS",
@@ -29260,7 +30718,21 @@
       "vol_20d": 3.4901,
       "ret_21d": 1.1415,
       "corr_xbi": "0.2299"
-    }
+    },
+    "Cash": 65257000,
+    "MarketableSecurities": 312467000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 488014000,
+    "CurrentAssets": 393290000,
+    "Liabilities": 103241000,
+    "CurrentLiabilities": 65416000,
+    "ShareholdersEquity": 384773000,
+    "R&D": 303213000,
+    "NetIncome": -150394000
   },
   {
     "ticker": "ALT",
@@ -29304,7 +30776,22 @@
       "vol_20d": 0.9554,
       "ret_21d": 0.375,
       "corr_xbi": "0.3525"
-    }
+    },
+    "Cash": 61236000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 149540000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 568321,
+    "LongTermDebtCurrent": 0,
+    "ConvertibleDebt": null,
+    "Assets": 218447000,
+    "CurrentAssets": 216615000,
+    "Liabilities": 32846000,
+    "CurrentLiabilities": 12606000,
+    "ShareholdersEquity": 185601000,
+    "Revenue": 15000,
+    "R&D": 48023000,
+    "NetIncome": -60735000
   },
   {
     "ticker": "ALVO",
@@ -29392,7 +30879,22 @@
       "vol_20d": 0.8215,
       "ret_21d": 0.2803,
       "corr_xbi": "0.4341"
-    }
+    },
+    "Cash": 225178000,
+    "MarketableSecurities": 118812000,
+    "ShortTermInvestments": 234813000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 362741000,
+    "CurrentAssets": 353383000,
+    "Liabilities": 30745000,
+    "CurrentLiabilities": 25791000,
+    "ShareholdersEquity": 331996000,
+    "Revenue": 380786000,
+    "R&D": 69191000,
+    "NetIncome": -111736000
   },
   {
     "ticker": "ANAB",
@@ -29436,7 +30938,20 @@
       "vol_20d": 0.641,
       "ret_21d": -0.05,
       "corr_xbi": "0.3497"
-    }
+    },
+    "Cash": 109833000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 353098000,
+    "CurrentAssets": 330650000,
+    "CurrentLiabilities": 38104000,
+    "ShareholdersEquity": -29416000,
+    "R&D": 110411000,
+    "NetIncome": -62846000
   },
   {
     "ticker": "ANNX",
@@ -29480,7 +30995,21 @@
       "vol_20d": 0.9295,
       "ret_21d": 0.3268,
       "corr_xbi": "0.3724"
-    }
+    },
+    "Cash": 139419000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 229142000,
+    "CurrentAssets": 192822000,
+    "Liabilities": 67700000,
+    "CurrentLiabilities": 43580000,
+    "ShareholdersEquity": 161442000,
+    "R&D": 142039000,
+    "NetIncome": -158434000
   },
   {
     "ticker": "ANRO",
@@ -29524,7 +31053,21 @@
       "vol_20d": 0.6108,
       "ret_21d": -0.1551,
       "corr_xbi": "0.3332"
-    }
+    },
+    "Cash": 137816000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 10254000,
+    "LongTermDebtCurrent": 0,
+    "ConvertibleDebt": null,
+    "Assets": 147006000,
+    "CurrentAssets": 139448000,
+    "Liabilities": 35449000,
+    "CurrentLiabilities": 9045000,
+    "ShareholdersEquity": 111557000,
+    "R&D": 33623000,
+    "NetIncome": -47056000
   },
   {
     "ticker": "APGE",
@@ -29568,7 +31111,20 @@
       "vol_20d": 0.5127,
       "ret_21d": -0.0942,
       "corr_xbi": "0.5939"
-    }
+    },
+    "Cash": 107914000,
+    "MarketableSecurities": 419375000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 626159000,
+    "CurrentAssets": 540097000,
+    "Liabilities": 39821000,
+    "CurrentLiabilities": 34047000,
+    "R&D": 156268000,
+    "NetIncome": -186456000
   },
   {
     "ticker": "ARQT",
@@ -29612,7 +31168,22 @@
       "vol_20d": 0.4217,
       "ret_21d": -0.1061,
       "corr_xbi": "0.4021"
-    }
+    },
+    "Cash": 47120000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 108498000,
+    "LongTermDebtCurrent": 1000000,
+    "ConvertibleDebt": null,
+    "Assets": 370977000,
+    "CurrentAssets": 349224000,
+    "Liabilities": 212904000,
+    "CurrentLiabilities": 99770000,
+    "ShareholdersEquity": 158073000,
+    "Revenue": 246569000,
+    "R&D": 56600000,
+    "NetIncome": -33536000
   },
   {
     "ticker": "ASND",
@@ -29700,7 +31271,22 @@
       "vol_20d": 0.4755,
       "ret_21d": -0.0416,
       "corr_xbi": "0.2051"
-    }
+    },
+    "Cash": 30402000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 0,
+    "LongTermDebtCurrent": 11366000,
+    "ConvertibleDebt": 0,
+    "Assets": 239820000,
+    "CurrentAssets": 130666000,
+    "Liabilities": 79912000,
+    "CurrentLiabilities": 16544000,
+    "ShareholdersEquity": 159751000,
+    "Revenue": 3023000,
+    "R&D": 400000,
+    "NetIncome": -115234000
   },
   {
     "ticker": "ATXS",
@@ -29744,7 +31330,22 @@
       "vol_20d": 0.1949,
       "ret_21d": -0.0248,
       "corr_xbi": "0.2697"
-    }
+    },
+    "Cash": 96280000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 131441000,
+    "AvailableForSaleSecurities": 14931000,
+    "LongTermDebt": 833000,
+    "LongTermDebtCurrent": 831000,
+    "ConvertibleDebt": null,
+    "Assets": 271866000,
+    "CurrentAssets": 253546000,
+    "Liabilities": 38613000,
+    "CurrentLiabilities": 23517000,
+    "ShareholdersEquity": 233253000,
+    "Revenue": 500000,
+    "R&D": 9859000,
+    "NetIncome": -98404000
   },
   {
     "ticker": "AUPH",
@@ -29788,7 +31389,22 @@
       "vol_20d": 0.299,
       "ret_21d": -0.1036,
       "corr_xbi": "0.2705"
-    }
+    },
+    "Cash": 72889000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 527528000,
+    "CurrentAssets": 438737000,
+    "Liabilities": 161757000,
+    "CurrentLiabilities": 76220000,
+    "ShareholdersEquity": 365771000,
+    "COGS": 23866000,
+    "R&D": 21610000,
+    "NetIncome": 76408000
   },
   {
     "ticker": "AURA",
@@ -29832,7 +31448,21 @@
       "vol_20d": 0.6086,
       "ret_21d": -0.0596,
       "corr_xbi": "0.6194"
-    }
+    },
+    "Cash": 47553000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 190024000,
+    "CurrentAssets": 170120000,
+    "Liabilities": 33357000,
+    "CurrentLiabilities": 18823000,
+    "ShareholdersEquity": 156667000,
+    "R&D": 68403000,
+    "NetIncome": -80632000
   },
   {
     "ticker": "AUTL",
@@ -29876,7 +31506,22 @@
       "vol_20d": 1.0018,
       "ret_21d": -0.1098,
       "corr_xbi": "0.3869"
-    }
+    },
+    "Cash": 86124000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 661947000,
+    "CurrentAssets": 514577000,
+    "Liabilities": 396495000,
+    "CurrentLiabilities": 83071000,
+    "ShareholdersEquity": 265452000,
+    "Revenue": 8982000,
+    "R&D": 82056000,
+    "NetIncome": -197196000
   },
   {
     "ticker": "AVBP",
@@ -29920,7 +31565,21 @@
       "vol_20d": 0.7534,
       "ret_21d": 0.0401,
       "corr_xbi": "0.6390"
-    }
+    },
+    "Cash": 112672000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 187594000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 326555000,
+    "CurrentAssets": 321218000,
+    "Liabilities": 21558000,
+    "CurrentLiabilities": 21558000,
+    "ShareholdersEquity": 304997000,
+    "R&D": 121176000,
+    "NetIncome": -130764000
   },
   {
     "ticker": "AVIR",
@@ -29964,7 +31623,21 @@
       "vol_20d": 0.6197,
       "ret_21d": 0.2012,
       "corr_xbi": "0.2224"
-    }
+    },
+    "Cash": 77344000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 342963000,
+    "CurrentAssets": 336138000,
+    "Liabilities": 27183000,
+    "CurrentLiabilities": 20175000,
+    "ShareholdersEquity": 315780000,
+    "R&D": 100206000,
+    "NetIncome": -113482000
   },
   {
     "ticker": "AVXL",
@@ -30008,7 +31681,21 @@
       "vol_20d": 0.5278,
       "ret_21d": 0.4102,
       "corr_xbi": "0.1470"
-    }
+    },
+    "Cash": 102577000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 265,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 103815000,
+    "CurrentAssets": 31630256,
+    "Liabilities": 8946000,
+    "CurrentLiabilities": 9484544,
+    "ShareholdersEquity": 94869000,
+    "R&D": 37592000,
+    "NetIncome": -46377000
   },
   {
     "ticker": "BBOT",
@@ -30052,7 +31739,21 @@
       "vol_20d": 0.8013,
       "ret_21d": 0.0578,
       "corr_xbi": "0.1057"
-    }
+    },
+    "Cash": 408741000,
+    "MarketableSecurities": 59544000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 484793000,
+    "CurrentAssets": 476010000,
+    "Liabilities": 38093000,
+    "CurrentLiabilities": 35712000,
+    "ShareholdersEquity": 446700000,
+    "R&D": 83125000,
+    "NetIncome": -95247000
   },
   {
     "ticker": "BCAX",
@@ -30096,7 +31797,21 @@
       "vol_20d": 0.6064,
       "ret_21d": -0.0462,
       "corr_xbi": "0.5355"
-    }
+    },
+    "Cash": 171673000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 118494000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 424688000,
+    "CurrentAssets": 297372000,
+    "Liabilities": 21908000,
+    "CurrentLiabilities": 21028000,
+    "ShareholdersEquity": 402780000,
+    "R&D": 92100000,
+    "NetIncome": -100564000
   },
   {
     "ticker": "BCYC",
@@ -30140,7 +31855,22 @@
       "vol_20d": 0.4547,
       "ret_21d": 0.0014,
       "corr_xbi": "0.5334"
-    }
+    },
+    "Cash": 648325000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 30909000,
+    "LongTermDebtCurrent": 22404000,
+    "ConvertibleDebt": null,
+    "Assets": 763954000,
+    "CurrentAssets": 738819000,
+    "Liabilities": 145475000,
+    "CurrentLiabilities": 69282000,
+    "ShareholdersEquity": 618479000,
+    "Revenue": 0,
+    "R&D": 188513000,
+    "NetIncome": -198806000
   },
   {
     "ticker": "BHVN",
@@ -30184,7 +31914,21 @@
       "vol_20d": 1.0981,
       "ret_21d": 0.2867,
       "corr_xbi": "0.3757"
-    }
+    },
+    "Cash": 184847000,
+    "MarketableSecurities": 75370000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 409123000,
+    "CurrentAssets": 323615000,
+    "Liabilities": 426283000,
+    "CurrentLiabilities": 113023000,
+    "ShareholdersEquity": -17160000,
+    "R&D": 513120000,
+    "NetIncome": -593267000
   },
   {
     "ticker": "BIOA",
@@ -30228,7 +31972,21 @@
       "vol_20d": 1.5476,
       "ret_21d": 0.4239,
       "corr_xbi": "0.2151"
-    }
+    },
+    "Cash": 215573000,
+    "MarketableSecurities": 70205000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 7056000,
+    "LongTermDebtCurrent": 4126000,
+    "ConvertibleDebt": null,
+    "Assets": 305090000,
+    "CurrentAssets": 290828000,
+    "Liabilities": 27626000,
+    "CurrentLiabilities": 24493000,
+    "ShareholdersEquity": 277464000,
+    "R&D": 49466000,
+    "NetIncome": -54662000
   },
   {
     "ticker": "BRKR",
@@ -30272,7 +32030,23 @@
       "vol_20d": 0.4546,
       "ret_21d": 0.0481,
       "corr_xbi": "0.2697"
-    }
+    },
+    "Cash": 293100000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 0,
+    "AvailableForSaleSecurities": 114200000,
+    "LongTermDebt": 2008500000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 6434900000,
+    "CurrentAssets": 2350600000,
+    "Liabilities": 3991500000,
+    "CurrentLiabilities": 1268100000,
+    "ShareholdersEquity": 2431900000,
+    "Revenue": 1472700000,
+    "COGS": 1330800000,
+    "R&D": 295600000,
+    "NetIncome": -34600000
   },
   {
     "ticker": "CABA",
@@ -30316,7 +32090,21 @@
       "vol_20d": 1.0951,
       "ret_21d": 0.4587,
       "corr_xbi": "0.3873"
-    }
+    },
+    "Cash": 60206000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 99725000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 189759000,
+    "CurrentAssets": 164561000,
+    "Liabilities": 50293000,
+    "CurrentLiabilities": 45735000,
+    "ShareholdersEquity": 139466000,
+    "R&D": 106480000,
+    "NetIncome": -125937000
   },
   {
     "ticker": "CADL",
@@ -30360,7 +32148,21 @@
       "vol_20d": 0.6306,
       "ret_21d": 0.0562,
       "corr_xbi": "0.4585"
-    }
+    },
+    "Cash": 86963000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 560000,
+    "LongTermDebtCurrent": 4225000,
+    "ConvertibleDebt": null,
+    "Assets": 93598000,
+    "CurrentAssets": 90134000,
+    "Liabilities": 13474000,
+    "CurrentLiabilities": 10929000,
+    "ShareholdersEquity": 80124000,
+    "R&D": 19468000,
+    "NetIncome": -8686000
   },
   {
     "ticker": "CAI",
@@ -30404,7 +32206,21 @@
       "vol_20d": 0.527,
       "ret_21d": -0.1071,
       "corr_xbi": "0.1886"
-    }
+    },
+    "Cash": 753221000,
+    "MarketableSecurities": 2272000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 375880000,
+    "LongTermDebtCurrent": 164000,
+    "ConvertibleDebt": null,
+    "Assets": 984571000,
+    "CurrentAssets": 854245000,
+    "Liabilities": 506207000,
+    "CurrentLiabilities": 86030000,
+    "ShareholdersEquity": 478364000,
+    "R&D": 69739000,
+    "NetIncome": -150045000
   },
   {
     "ticker": "CATX",
@@ -30448,7 +32264,22 @@
       "vol_20d": 0.784,
       "ret_21d": -0.0109,
       "corr_xbi": "0.2582"
-    }
+    },
+    "Cash": 26762000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 147375000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 1638000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 294825000,
+    "CurrentAssets": 178500000,
+    "Liabilities": 52609000,
+    "CurrentLiabilities": 20618000,
+    "ShareholdersEquity": 242216000,
+    "Revenue": 6336000,
+    "R&D": 51291000,
+    "NetIncome": -65631000
   },
   {
     "ticker": "CCCC",
@@ -30492,7 +32323,21 @@
       "vol_20d": 0.6159,
       "ret_21d": 0.0644,
       "corr_xbi": "0.2214"
-    }
+    },
+    "Cash": 58809000,
+    "MarketableSecurities": 264102000,
+    "ShortTermInvestments": 135979000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 10335000,
+    "LongTermDebtCurrent": 0,
+    "ConvertibleDebt": null,
+    "Assets": 265488000,
+    "CurrentAssets": 206864000,
+    "Liabilities": 111080000,
+    "CurrentLiabilities": 35945000,
+    "ShareholdersEquity": 154408000,
+    "R&D": 79258000,
+    "NetIncome": -84508000
   },
   {
     "ticker": "CDXS",
@@ -30536,7 +32381,22 @@
       "vol_20d": 0.6259,
       "ret_21d": 0.0182,
       "corr_xbi": "0.4699"
-    }
+    },
+    "Cash": 25351000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 33350000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 39729000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 123961000,
+    "CurrentAssets": 76192000,
+    "Liabilities": 85417000,
+    "CurrentLiabilities": 18475000,
+    "ShareholdersEquity": 38544000,
+    "Revenue": 138590000,
+    "R&D": 40586000,
+    "NetIncome": -53575000
   },
   {
     "ticker": "CGEM",
@@ -30580,7 +32440,21 @@
       "vol_20d": 0.5359,
       "ret_21d": 0.25,
       "corr_xbi": "0.4931"
-    }
+    },
+    "Cash": 103335000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 229261000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 484126000,
+    "CurrentAssets": 342235000,
+    "Liabilities": 32757000,
+    "CurrentLiabilities": 32757000,
+    "ShareholdersEquity": 451369000,
+    "R&D": 144457000,
+    "NetIncome": -169166000
   },
   {
     "ticker": "CGON",
@@ -30624,7 +32498,21 @@
       "vol_20d": 1.1294,
       "ret_21d": 0.3436,
       "corr_xbi": "0.4430"
-    }
+    },
+    "Cash": 45145000,
+    "MarketableSecurities": 635118000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 729913000,
+    "CurrentAssets": 695790000,
+    "Liabilities": 42270000,
+    "CurrentLiabilities": 30528000,
+    "ShareholdersEquity": 687643000,
+    "R&D": 86683000,
+    "NetIncome": -119686000
   },
   {
     "ticker": "CLLS",
@@ -30712,7 +32600,21 @@
       "vol_20d": 0.6685,
       "ret_21d": 0.0406,
       "corr_xbi": "0.3456"
-    }
+    },
+    "Cash": 185937000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 31269000,
+    "LongTermDebtCurrent": 12669000,
+    "ConvertibleDebt": null,
+    "Assets": 255607000,
+    "CurrentAssets": 242388000,
+    "Liabilities": 218016000,
+    "CurrentLiabilities": 197450000,
+    "ShareholdersEquity": 37591000,
+    "R&D": 88530000,
+    "NetIncome": -193984000
   },
   {
     "ticker": "CNTA",
@@ -30756,7 +32658,21 @@
       "vol_20d": 0.4028,
       "ret_21d": 0.0004,
       "corr_xbi": "0.1797"
-    }
+    },
+    "Cash": 50811000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 195403000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 109816000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 448300000,
+    "CurrentAssets": 307675000,
+    "Liabilities": 146726000,
+    "CurrentLiabilities": 29122000,
+    "ShareholdersEquity": 301574000,
+    "Revenue": 15000000,
+    "NetIncome": -131369000
   },
   {
     "ticker": "COGT",
@@ -30800,7 +32716,21 @@
       "vol_20d": 0.5062,
       "ret_21d": -0.0869,
       "corr_xbi": "0.2140"
-    }
+    },
+    "Cash": 125297000,
+    "MarketableSecurities": 6696000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 0,
+    "LongTermDebt": 44250000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 425933000,
+    "CurrentAssets": 397244000,
+    "Liabilities": 123469000,
+    "CurrentLiabilities": 62246000,
+    "ShareholdersEquity": 302464000,
+    "R&D": 194221000,
+    "NetIncome": -226445000
   },
   {
     "ticker": "CRL",
@@ -30844,7 +32774,21 @@
       "vol_20d": 0.2983,
       "ret_21d": 0.0825,
       "corr_xbi": "0.3502"
-    }
+    },
+    "Cash": 207097000,
+    "MarketableSecurities": 11855000,
+    "ShortTermInvestments": 950000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 1610546000,
+    "LongTermDebtCurrent": 54000,
+    "ConvertibleDebt": null,
+    "Assets": 7513812000,
+    "CurrentAssets": 1532104000,
+    "Liabilities": 4062995000,
+    "CurrentLiabilities": 1121888000,
+    "ShareholdersEquity": 3405449000,
+    "Revenue": 493970000,
+    "NetIncome": 132217000
   },
   {
     "ticker": "CSTL",
@@ -30888,7 +32832,22 @@
       "vol_20d": 0.2429,
       "ret_21d": 0.0507,
       "corr_xbi": "0.1118"
-    }
+    },
+    "Cash": 85556000,
+    "MarketableSecurities": 201986000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 10049000,
+    "LongTermDebtCurrent": 0,
+    "ConvertibleDebt": null,
+    "Assets": 562786000,
+    "CurrentAssets": 357569000,
+    "Liabilities": 95740000,
+    "CurrentLiabilities": 55308000,
+    "ShareholdersEquity": 467046000,
+    "COGS": 52713000,
+    "R&D": 38335000,
+    "NetIncome": -21826000
   },
   {
     "ticker": "CTKB",
@@ -30932,7 +32891,22 @@
       "vol_20d": 0.5071,
       "ret_21d": 0.0456,
       "corr_xbi": "0.3096"
-    }
+    },
+    "Cash": 93281000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 494919000,
+    "CurrentAssets": 388489000,
+    "Liabilities": 116348000,
+    "CurrentLiabilities": 75207000,
+    "ShareholdersEquity": 378571000,
+    "Revenue": 142977000,
+    "R&D": 27506000,
+    "NetIncome": -11402000
   },
   {
     "ticker": "CTMX",
@@ -30976,7 +32950,22 @@
       "vol_20d": 1.0851,
       "ret_21d": 0.319,
       "corr_xbi": "0.2404"
-    }
+    },
+    "Cash": 34185000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 77495000,
+    "AvailableForSaleSecurities": 204809000,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": 1419000,
+    "ConvertibleDebt": null,
+    "Assets": 158254000,
+    "CurrentAssets": 149217000,
+    "Liabilities": 50865000,
+    "CurrentLiabilities": 41029000,
+    "ShareholdersEquity": 107389000,
+    "Revenue": 75538000,
+    "R&D": 47493000,
+    "NetIncome": 9142000
   },
   {
     "ticker": "CTNM",
@@ -31020,7 +33009,21 @@
       "vol_20d": 0.9597,
       "ret_21d": 0.0552,
       "corr_xbi": "0.0801"
-    }
+    },
+    "Cash": 42633000,
+    "MarketableSecurities": 139774000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 190847000,
+    "CurrentAssets": 184927000,
+    "Liabilities": 10377000,
+    "CurrentLiabilities": 6361000,
+    "ShareholdersEquity": 180470000,
+    "R&D": 38767000,
+    "NetIncome": -44822000
   },
   {
     "ticker": "DNA",
@@ -31064,7 +33067,21 @@
       "vol_20d": 0.7148,
       "ret_21d": 0.1425,
       "corr_xbi": "0.4301"
-    }
+    },
+    "Cash": 111065000,
+    "MarketableSecurities": 384419000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 1189165000,
+    "CurrentAssets": 506082000,
+    "Liabilities": 629382000,
+    "CurrentLiabilities": 115281000,
+    "ShareholdersEquity": 559783000,
+    "R&D": 193646000,
+    "NetIncome": -232012000
   },
   {
     "ticker": "DSGN",
@@ -31108,7 +33125,22 @@
       "vol_20d": 0.7761,
       "ret_21d": 0.0604,
       "corr_xbi": "0.5494"
-    }
+    },
+    "Cash": 15088000,
+    "MarketableSecurities": 190882000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 211770000,
+    "CurrentAssets": 209029000,
+    "Liabilities": 12050000,
+    "CurrentLiabilities": 11173000,
+    "ShareholdersEquity": 199720000,
+    "Revenue": 0,
+    "R&D": 45704000,
+    "NetIncome": -53795000
   },
   {
     "ticker": "DYN",
@@ -31152,7 +33184,21 @@
       "vol_20d": 0.547,
       "ret_21d": -0.1181,
       "corr_xbi": "0.4655"
-    }
+    },
+    "Cash": 573610000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 99147000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 867059000,
+    "CurrentAssets": 806263000,
+    "Liabilities": 175276000,
+    "CurrentLiabilities": 59849000,
+    "ShareholdersEquity": 691783000,
+    "R&D": 302902000,
+    "NetIncome": -334259000
   },
   {
     "ticker": "EBS",
@@ -31196,7 +33242,22 @@
       "vol_20d": 0.6448,
       "ret_21d": -0.047,
       "corr_xbi": "0.2778"
-    }
+    },
+    "Cash": 245500000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 693100000,
+    "LongTermDebtCurrent": 0,
+    "ConvertibleDebt": null,
+    "Assets": 1461000000,
+    "CurrentAssets": 786900000,
+    "Liabilities": 878500000,
+    "CurrentLiabilities": 136500000,
+    "ShareholdersEquity": 582500000,
+    "Revenue": 1043600000,
+    "R&D": 41100000,
+    "NetIncome": 107200000
   },
   {
     "ticker": "ELVN",
@@ -31240,7 +33301,21 @@
       "vol_20d": 1.8722,
       "ret_21d": 0.5596,
       "corr_xbi": "0.2578"
-    }
+    },
+    "Cash": 101732000,
+    "MarketableSecurities": 375833000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 490875000,
+    "CurrentAssets": 482683000,
+    "Liabilities": 14753000,
+    "CurrentLiabilities": 14650000,
+    "ShareholdersEquity": 476122000,
+    "R&D": 64611000,
+    "NetIncome": -74027000
   },
   {
     "ticker": "ENTA",
@@ -31284,7 +33359,22 @@
       "vol_20d": 0.5581,
       "ret_21d": -0.1712,
       "corr_xbi": "0.2510"
-    }
+    },
+    "Cash": 32298000,
+    "MarketableSecurities": 193676000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 230750000,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 280732000,
+    "CurrentAssets": 204336000,
+    "Liabilities": 216015000,
+    "CurrentLiabilities": 48555000,
+    "ShareholdersEquity": 64717000,
+    "Revenue": 82158000,
+    "R&D": 106740000,
+    "NetIncome": -81889000
   },
   {
     "ticker": "ERAS",
@@ -31328,7 +33418,20 @@
       "vol_20d": 1.787,
       "ret_21d": 1.9381,
       "corr_xbi": "0.3720"
-    }
+    },
+    "Cash": 70230000,
+    "MarketableSecurities": 218170000,
+    "ShortTermInvestments": 53988000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 420401000,
+    "CurrentAssets": 299925000,
+    "Liabilities": 72515000,
+    "CurrentLiabilities": 28712000,
+    "ShareholdersEquity": 347886000,
+    "NetIncome": -95454000
   },
   {
     "ticker": "EWTX",
@@ -31372,7 +33475,21 @@
       "vol_20d": 1.1589,
       "ret_21d": 0.3157,
       "corr_xbi": "0.5383"
-    }
+    },
+    "Cash": 46003000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 59000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 583466000,
+    "CurrentAssets": 573900000,
+    "Liabilities": 24819000,
+    "CurrentLiabilities": 21646000,
+    "ShareholdersEquity": 558647000,
+    "R&D": 107795000,
+    "NetIncome": -117579000
   },
   {
     "ticker": "FDMT",
@@ -31416,7 +33533,22 @@
       "vol_20d": 0.8145,
       "ret_21d": 0.0076,
       "corr_xbi": "0.5317"
-    }
+    },
+    "Cash": 48555000,
+    "MarketableSecurities": 256508000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 70686000,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 423982000,
+    "CurrentAssets": 312377000,
+    "Liabilities": 54999000,
+    "CurrentLiabilities": 37107000,
+    "ShareholdersEquity": 368983000,
+    "Revenue": 37000,
+    "R&D": 43832000,
+    "NetIncome": -159506000
   },
   {
     "ticker": "FHTX",
@@ -31460,7 +33592,21 @@
       "vol_20d": 1.1049,
       "ret_21d": 0.0595,
       "corr_xbi": "0.4168"
-    }
+    },
+    "Cash": 89334000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 19914000,
+    "LongTermDebtCurrent": 0,
+    "ConvertibleDebt": null,
+    "Assets": 204962000,
+    "CurrentAssets": 184117000,
+    "Liabilities": 294620000,
+    "CurrentLiabilities": 85088000,
+    "ShareholdersEquity": -89658000,
+    "R&D": 63420000,
+    "NetIncome": -52619000
   },
   {
     "ticker": "FLGT",
@@ -31504,7 +33650,23 @@
       "vol_20d": 0.3545,
       "ret_21d": 0.0243,
       "corr_xbi": "0.2088"
-    }
+    },
+    "Cash": 117641000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 26949000,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 1214563000,
+    "CurrentAssets": 507374000,
+    "Liabilities": 93806000,
+    "CurrentLiabilities": 72426000,
+    "ShareholdersEquity": 1125888000,
+    "Revenue": 15678000,
+    "COGS": 141042000,
+    "R&D": 39735000,
+    "NetIncome": -37095000
   },
   {
     "ticker": "FTRE",
@@ -31548,7 +33710,20 @@
       "vol_20d": 0.5664,
       "ret_21d": -0.0603,
       "corr_xbi": "0.3907"
-    }
+    },
+    "Cash": 131300000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": 74500000,
+    "ConvertibleDebt": null,
+    "Assets": 2742100000,
+    "CurrentAssets": 918500000,
+    "Liabilities": 2161300000,
+    "CurrentLiabilities": 914400000,
+    "ShareholdersEquity": 580800000,
+    "NetIncome": -953700000
   },
   {
     "ticker": "GERN",
@@ -31592,7 +33767,21 @@
       "vol_20d": 0.5622,
       "ret_21d": 0.0376,
       "corr_xbi": "0.4758"
-    }
+    },
+    "Cash": 78117000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 141800000,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": 71562000,
+    "ConvertibleDebt": null,
+    "Assets": 567382000,
+    "CurrentAssets": 522342000,
+    "Liabilities": 313461000,
+    "CurrentLiabilities": 87712000,
+    "ShareholdersEquity": 248707000,
+    "Revenue": 1065000,
+    "NetIncome": -54638000
   },
   {
     "ticker": "GHRS",
@@ -31680,7 +33869,21 @@
       "vol_20d": 1.776,
       "ret_21d": 0.3859,
       "corr_xbi": "0.3288"
-    }
+    },
+    "Cash": 208343000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 459841000,
+    "CurrentAssets": 401817000,
+    "Liabilities": 214004000,
+    "CurrentLiabilities": 61443000,
+    "ShareholdersEquity": 245837000,
+    "R&D": 99521000,
+    "NetIncome": 7509000
   },
   {
     "ticker": "GMAB",
@@ -31768,7 +33971,21 @@
       "vol_20d": 0.6763,
       "ret_21d": 0.2676,
       "corr_xbi": "0.1393"
-    }
+    },
+    "Cash": 102912000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 696131000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 832159000,
+    "CurrentAssets": 814022000,
+    "Liabilities": 62140000,
+    "CurrentLiabilities": 57527000,
+    "ShareholdersEquity": 770019000,
+    "R&D": 156566000,
+    "NetIncome": -174206000
   },
   {
     "ticker": "GRAL",
@@ -31812,7 +34029,21 @@
       "vol_20d": 0.9161,
       "ret_21d": 0.1478,
       "corr_xbi": "0.4700"
-    }
+    },
+    "Cash": 126892000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 2601031000,
+    "CurrentAssets": 589381000,
+    "Liabilities": 361068000,
+    "CurrentLiabilities": 77433000,
+    "ShareholdersEquity": 2239963000,
+    "R&D": 148898000,
+    "NetIncome": -309175000
   },
   {
     "ticker": "GRFS",
@@ -31900,7 +34131,21 @@
       "vol_20d": 0.919,
       "ret_21d": -0.0708,
       "corr_xbi": "0.2938"
-    }
+    },
+    "Cash": 19488000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 0,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 30000000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 91509000,
+    "CurrentAssets": 41351000,
+    "Liabilities": 96260000,
+    "CurrentLiabilities": 25581000,
+    "ShareholdersEquity": -4751000,
+    "R&D": 54697000,
+    "NetIncome": -16029000
   },
   {
     "ticker": "IBRX",
@@ -31944,7 +34189,22 @@
       "vol_20d": 1.8554,
       "ret_21d": 2.0714,
       "corr_xbi": "0.2568"
-    }
+    },
+    "Cash": 60241000,
+    "MarketableSecurities": 197572000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 136349000,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 518987000,
+    "CurrentAssets": 329497000,
+    "Liabilities": 1042397000,
+    "CurrentLiabilities": 57134000,
+    "ShareholdersEquity": -524319000,
+    "Revenue": 75003000,
+    "R&D": 190144000,
+    "NetIncome": -289454000
   },
   {
     "ticker": "IDYA",
@@ -31988,7 +34248,21 @@
       "vol_20d": 0.4489,
       "ret_21d": -0.0172,
       "corr_xbi": "0.6555"
-    }
+    },
+    "Cash": 298927000,
+    "MarketableSecurities": 487967000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 1185136000,
+    "CurrentAssets": 802655000,
+    "Liabilities": 93102000,
+    "CurrentLiabilities": 64509000,
+    "ShareholdersEquity": 1092034000,
+    "R&D": 228105000,
+    "NetIncome": -30425000
   },
   {
     "ticker": "ILMN",
@@ -32032,7 +34306,21 @@
       "vol_20d": 0.4124,
       "ret_21d": 0.1035,
       "corr_xbi": "0.2979"
-    }
+    },
+    "Cash": 1144000000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 228000000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 838000000,
+    "LongTermDebtCurrent": 499000000,
+    "ConvertibleDebt": null,
+    "Assets": 6177000000,
+    "CurrentAssets": 2796000000,
+    "CurrentLiabilities": 1962000000,
+    "ShareholdersEquity": 2381000000,
+    "COGS": 1073000000,
+    "R&D": 728000000,
+    "NetIncome": 516000000
   },
   {
     "ticker": "IMRX",
@@ -32076,7 +34364,23 @@
       "vol_20d": 1.9233,
       "ret_21d": -0.1612,
       "corr_xbi": "0.2666"
-    }
+    },
+    "Cash": 227563077,
+    "MarketableSecurities": 32887970,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 241056266,
+    "CurrentAssets": 229101829,
+    "Liabilities": 13079834,
+    "CurrentLiabilities": 9545265,
+    "ShareholdersEquity": 227976432,
+    "Revenue": 0,
+    "COGS": 0,
+    "R&D": 32793835,
+    "NetIncome": -44444888
   },
   {
     "ticker": "INBX",
@@ -32120,7 +34424,22 @@
       "vol_20d": 0.5287,
       "ret_21d": -0.0438,
       "corr_xbi": "0.1325"
-    }
+    },
+    "Cash": 153088000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 177471000,
+    "CurrentAssets": 161423000,
+    "Liabilities": 140641000,
+    "CurrentLiabilities": 35983000,
+    "ShareholdersEquity": 36830000,
+    "Revenue": 1300000,
+    "R&D": 87679000,
+    "NetIncome": -107221000
   },
   {
     "ticker": "INSM",
@@ -32164,7 +34483,22 @@
       "vol_20d": 0.3505,
       "ret_21d": -0.1163,
       "corr_xbi": "0.3782"
-    }
+    },
+    "Cash": 334764000,
+    "MarketableSecurities": 1345222000,
+    "ShortTermInvestments": 0,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 546770000,
+    "LongTermDebtCurrent": 224448000,
+    "ConvertibleDebt": null,
+    "Assets": 2360736000,
+    "CurrentAssets": 1931807000,
+    "Liabilities": 1415165000,
+    "CurrentLiabilities": 417214000,
+    "ShareholdersEquity": 945571000,
+    "Revenue": 0,
+    "R&D": 516182000,
+    "NetIncome": -948290000
   },
   {
     "ticker": "IOVA",
@@ -32208,7 +34542,23 @@
       "vol_20d": 0.7358,
       "ret_21d": -0.0638,
       "corr_xbi": "0.5197"
-    }
+    },
+    "Cash": 158134000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 142669000,
+    "AvailableForSaleSecurities": 193112000,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 904948000,
+    "CurrentAssets": 429091000,
+    "Liabilities": 202661000,
+    "CurrentLiabilities": 125785000,
+    "ShareholdersEquity": 702287000,
+    "Revenue": 0,
+    "COGS": 130073000,
+    "R&D": 229067000,
+    "NetIncome": -319074000
   },
   {
     "ticker": "IRON",
@@ -32252,7 +34602,21 @@
       "vol_20d": 0.4947,
       "ret_21d": -0.0437,
       "corr_xbi": "0.3231"
-    }
+    },
+    "Cash": 140664000,
+    "MarketableSecurities": 475256000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 28948000,
+    "LongTermDebtCurrent": 11689000,
+    "ConvertibleDebt": null,
+    "Assets": 630456000,
+    "CurrentAssets": 627168000,
+    "Liabilities": 57065000,
+    "CurrentLiabilities": 26744000,
+    "ShareholdersEquity": 573391000,
+    "R&D": 124416000,
+    "NetIncome": -151653000
   },
   {
     "ticker": "JANX",
@@ -32296,7 +34660,21 @@
       "vol_20d": 0.6012,
       "ret_21d": 0.0489,
       "corr_xbi": "0.4324"
-    }
+    },
+    "Cash": 48389000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 940604000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 1024766000,
+    "CurrentAssets": 998086000,
+    "Liabilities": 48211000,
+    "CurrentLiabilities": 27831000,
+    "ShareholdersEquity": 976555000,
+    "R&D": 94348000,
+    "NetIncome": -81679000
   },
   {
     "ticker": "KOD",
@@ -32340,7 +34718,21 @@
       "vol_20d": 0.816,
       "ret_21d": -0.0579,
       "corr_xbi": "0.4093"
-    }
+    },
+    "Cash": 72038000,
+    "MarketableSecurities": 0,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 218069000,
+    "CurrentAssets": 75728000,
+    "Liabilities": 194377000,
+    "CurrentLiabilities": 42429000,
+    "ShareholdersEquity": 23692000,
+    "R&D": 136880000,
+    "NetIncome": -173231000
   },
   {
     "ticker": "KROS",
@@ -32384,7 +34776,22 @@
       "vol_20d": 0.4724,
       "ret_21d": -0.102,
       "corr_xbi": "0.4040"
-    }
+    },
+    "Cash": 693472000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 742783000,
+    "CurrentAssets": 719307000,
+    "Liabilities": 39203000,
+    "CurrentLiabilities": 24092000,
+    "ShareholdersEquity": 703580000,
+    "Revenue": 243484000,
+    "R&D": 111731000,
+    "NetIncome": 110475000
   },
   {
     "ticker": "KURA",
@@ -32428,7 +34835,21 @@
       "vol_20d": 0.5346,
       "ret_21d": -0.2002,
       "corr_xbi": "0.6478"
-    }
+    },
+    "Cash": 95287000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 166855000,
+    "LongTermDebt": 9523000,
+    "LongTermDebtCurrent": 4337000,
+    "ConvertibleDebt": null,
+    "Assets": 649381000,
+    "CurrentAssets": 620663000,
+    "Liabilities": 406839000,
+    "CurrentLiabilities": 121304000,
+    "ShareholdersEquity": 242542000,
+    "R&D": 186666000,
+    "NetIncome": -197667000
   },
   {
     "ticker": "KYTX",
@@ -32472,7 +34893,21 @@
       "vol_20d": 0.8795,
       "ret_21d": 0.0991,
       "corr_xbi": "0.4745"
-    }
+    },
+    "Cash": 34164000,
+    "MarketableSecurities": 136974000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 187156000,
+    "CurrentAssets": 174925000,
+    "Liabilities": 35210000,
+    "CurrentLiabilities": 33871000,
+    "ShareholdersEquity": 151946000,
+    "R&D": 103706000,
+    "NetIncome": -123503000
   },
   {
     "ticker": "LAB",
@@ -32516,7 +34951,23 @@
       "vol_20d": 0.9795,
       "ret_21d": 0.0333,
       "corr_xbi": "0.1371"
-    }
+    },
+    "Cash": 129418000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 40874000,
+    "AvailableForSaleSecurities": 47049000,
+    "LongTermDebt": 299000,
+    "LongTermDebtCurrent": 0,
+    "ConvertibleDebt": null,
+    "Assets": 539636000,
+    "CurrentAssets": 472439000,
+    "Liabilities": 139977000,
+    "CurrentLiabilities": 107965000,
+    "ShareholdersEquity": 399659000,
+    "Revenue": 51676000,
+    "COGS": 300000,
+    "R&D": 18018000,
+    "NetIncome": -94179000
   },
   {
     "ticker": "LCTX",
@@ -32560,7 +35011,23 @@
       "vol_20d": 0.5066,
       "ret_21d": -0.0301,
       "corr_xbi": "0.4269"
-    }
+    },
+    "Cash": 40463000,
+    "MarketableSecurities": 23000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 89639000,
+    "CurrentAssets": 42260000,
+    "Liabilities": 68843000,
+    "CurrentLiabilities": 9382000,
+    "ShareholdersEquity": 22040000,
+    "Revenue": 7948000,
+    "COGS": 36000,
+    "R&D": 9491000,
+    "NetIncome": -64384000
   },
   {
     "ticker": "LENZ",
@@ -32604,7 +35071,21 @@
       "vol_20d": 0.7444,
       "ret_21d": 0.2102,
       "corr_xbi": "0.2579"
-    }
+    },
+    "Cash": 25399000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 210704000,
+    "CurrentAssets": 206997000,
+    "Liabilities": 16777000,
+    "CurrentLiabilities": 16316000,
+    "ShareholdersEquity": 193927000,
+    "R&D": 18670000,
+    "NetIncome": -46231000
   },
   {
     "ticker": "LRMR",
@@ -32648,7 +35129,22 @@
       "vol_20d": 0.5672,
       "ret_21d": -0.0563,
       "corr_xbi": "0.2885"
-    }
+    },
+    "Cash": 90140000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 14545000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 187350000,
+    "CurrentAssets": 183223000,
+    "Liabilities": 48312000,
+    "CurrentLiabilities": 45116000,
+    "ShareholdersEquity": 139038000,
+    "Revenue": 0,
+    "R&D": 94851000,
+    "NetIncome": -103175000
   },
   {
     "ticker": "LXEO",
@@ -32692,7 +35188,21 @@
       "vol_20d": 1.0767,
       "ret_21d": -0.2816,
       "corr_xbi": "0.3715"
-    }
+    },
+    "Cash": 40996000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 70918000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 143844000,
+    "CurrentAssets": 127793000,
+    "Liabilities": 23013000,
+    "CurrentLiabilities": 17271000,
+    "ShareholdersEquity": 120831000,
+    "R&D": 47587000,
+    "NetIncome": -79042000
   },
   {
     "ticker": "LYEL",
@@ -32736,7 +35246,22 @@
       "vol_20d": 0.7372,
       "ret_21d": -0.3233,
       "corr_xbi": "0.3940"
-    }
+    },
+    "Cash": 123575000,
+    "MarketableSecurities": 196049000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 407965000,
+    "CurrentAssets": 328201000,
+    "Liabilities": 78844000,
+    "CurrentLiabilities": 31878000,
+    "ShareholdersEquity": 329121000,
+    "Revenue": 30000,
+    "R&D": 106476000,
+    "NetIncome": -133725000
   },
   {
     "ticker": "MAZE",
@@ -32780,7 +35305,21 @@
       "vol_20d": 0.5831,
       "ret_21d": 0.0466,
       "corr_xbi": "0.3475"
-    }
+    },
+    "Cash": 316773000,
+    "MarketableSecurities": 67162000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 422058000,
+    "CurrentAssets": 391302000,
+    "Liabilities": 42622000,
+    "CurrentLiabilities": 22112000,
+    "ShareholdersEquity": 379436000,
+    "R&D": 80878000,
+    "NetIncome": -96552000
   },
   {
     "ticker": "MBX",
@@ -32824,7 +35363,21 @@
       "vol_20d": 1.1693,
       "ret_21d": 0.1755,
       "corr_xbi": "0.3023"
-    }
+    },
+    "Cash": 223125000,
+    "MarketableSecurities": 168548000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 400076000,
+    "CurrentAssets": 397502000,
+    "Liabilities": 12538000,
+    "CurrentLiabilities": 12062000,
+    "ShareholdersEquity": 387538000,
+    "R&D": 59400000,
+    "NetIncome": -64909000
   },
   {
     "ticker": "MEDP",
@@ -32868,7 +35421,21 @@
       "vol_20d": 0.2905,
       "ret_21d": 0.0322,
       "corr_xbi": "0.2101"
-    }
+    },
+    "Cash": 285351000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 161906000,
+    "LongTermDebtCurrent": 0,
+    "ConvertibleDebt": null,
+    "Assets": 1753012000,
+    "CurrentAssets": 737285000,
+    "Liabilities": 1459371000,
+    "CurrentLiabilities": 1283914000,
+    "ShareholdersEquity": 293641000,
+    "Revenue": 163077000,
+    "NetIncome": 315990000
   },
   {
     "ticker": "MENS",
@@ -33000,7 +35567,22 @@
       "vol_20d": 0.5659,
       "ret_21d": 0.0292,
       "corr_xbi": "0.5745"
-    }
+    },
+    "Cash": 14841000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 189471000,
+    "CurrentAssets": 34174000,
+    "Liabilities": 230028000,
+    "CurrentLiabilities": 152922000,
+    "ShareholdersEquity": -40557000,
+    "Revenue": 6027000,
+    "R&D": 98807000,
+    "NetIncome": -129289000
   },
   {
     "ticker": "MIRM",
@@ -33044,7 +35626,22 @@
       "vol_20d": 0.4145,
       "ret_21d": 0.1779,
       "corr_xbi": "0.3904"
-    }
+    },
+    "Cash": 282021000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 93527000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 785115000,
+    "CurrentAssets": 530575000,
+    "Liabilities": 493069000,
+    "CurrentLiabilities": 160359000,
+    "ShareholdersEquity": 292046000,
+    "Revenue": 19138000,
+    "R&D": 28611000,
+    "NetIncome": -17633000
   },
   {
     "ticker": "MLYS",
@@ -33088,7 +35685,20 @@
       "vol_20d": 0.5574,
       "ret_21d": -0.1224,
       "corr_xbi": "0.3093"
-    }
+    },
+    "Cash": 217597000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 599947000,
+    "CurrentAssets": 599796000,
+    "CurrentLiabilities": 23520000,
+    "ShareholdersEquity": 576427000,
+    "R&D": 107607000,
+    "NetIncome": -122417000
   },
   {
     "ticker": "MNKD",
@@ -33132,7 +35742,20 @@
       "vol_20d": 0.5232,
       "ret_21d": -0.0793,
       "corr_xbi": "0.3317"
-    }
+    },
+    "Cash": 127392000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 132643000,
+    "AvailableForSaleSecurities": 350000,
+    "LongTermDebt": 109652000,
+    "LongTermDebtCurrent": 45379000,
+    "ConvertibleDebt": 98439000,
+    "Assets": 494640000,
+    "CurrentAssets": 358837000,
+    "Liabilities": 539192000,
+    "CurrentLiabilities": 109130000,
+    "ShareholdersEquity": -44552000,
+    "NetIncome": 21811000
   },
   {
     "ticker": "MNMD",
@@ -33176,7 +35799,21 @@
       "vol_20d": 0.6476,
       "ret_21d": 0.2411,
       "corr_xbi": "0.3220"
-    }
+    },
+    "Cash": 19959000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 189111000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 236916000,
+    "CurrentAssets": 215848000,
+    "Liabilities": 106320000,
+    "CurrentLiabilities": 65416000,
+    "ShareholdersEquity": 130596000,
+    "R&D": 84144000,
+    "NetIncome": -133357000
   },
   {
     "ticker": "MYGN",
@@ -33220,7 +35857,23 @@
       "vol_20d": 0.4271,
       "ret_21d": -0.1052,
       "corr_xbi": "0.1990"
-    }
+    },
+    "Cash": 145400000,
+    "MarketableSecurities": 0,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 119500000,
+    "LongTermDebtCurrent": 59400000,
+    "ConvertibleDebt": null,
+    "Assets": 728100000,
+    "CurrentAssets": 344800000,
+    "Liabilities": 355300000,
+    "CurrentLiabilities": 148000000,
+    "ShareholdersEquity": 372800000,
+    "Revenue": 577700000,
+    "COGS": 110700000,
+    "R&D": 81300000,
+    "NetIncome": -358000000
   },
   {
     "ticker": "NAMS",
@@ -33264,7 +35917,21 @@
       "vol_20d": 0.4408,
       "ret_21d": -0.0732,
       "corr_xbi": "0.4627"
-    }
+    },
+    "Cash": 538407000,
+    "MarketableSecurities": 164539000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 786427000,
+    "CurrentAssets": 732328000,
+    "Liabilities": 58357000,
+    "CurrentLiabilities": 58272000,
+    "ShareholdersEquity": 728070000,
+    "R&D": 103238000,
+    "NetIncome": -128896000
   },
   {
     "ticker": "NBIX",
@@ -33308,7 +35975,22 @@
       "vol_20d": 0.2678,
       "ret_21d": -0.0754,
       "corr_xbi": "0.4815"
-    }
+    },
+    "Cash": 340200000,
+    "MarketableSecurities": 370500000,
+    "ShortTermInvestments": 252650000,
+    "AvailableForSaleSecurities": 439609000,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 4265700000,
+    "CurrentAssets": 2158400000,
+    "Liabilities": 1262100000,
+    "CurrentLiabilities": 638000000,
+    "ShareholdersEquity": 3003600000,
+    "Revenue": 167991000,
+    "R&D": 73200000,
+    "NetIncome": 324900000
   },
   {
     "ticker": "NBP",
@@ -33352,7 +36034,23 @@
       "vol_20d": 0.7256,
       "ret_21d": -0.1356,
       "corr_xbi": "0.2145"
-    }
+    },
+    "Cash": 165404000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 210000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 206708000,
+    "CurrentAssets": 167640000,
+    "Liabilities": 9975000,
+    "CurrentLiabilities": 7347000,
+    "ShareholdersEquity": 196733000,
+    "Revenue": 3893000,
+    "COGS": 3949000,
+    "R&D": 4071000,
+    "NetIncome": -8654000
   },
   {
     "ticker": "NGNE",
@@ -33396,7 +36094,21 @@
       "vol_20d": 0.787,
       "ret_21d": -0.0881,
       "corr_xbi": "0.4812"
-    }
+    },
+    "Cash": 71005000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 194405000,
+    "AvailableForSaleSecurities": 0,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 287832000,
+    "CurrentAssets": 270519000,
+    "Liabilities": 22292000,
+    "CurrentLiabilities": 14710000,
+    "ShareholdersEquity": 265540000,
+    "R&D": 54372000,
+    "NetIncome": -65616000
   },
   {
     "ticker": "NMRA",
@@ -33440,7 +36152,21 @@
       "vol_20d": 1.1778,
       "ret_21d": 0.1771,
       "corr_xbi": "0.3222"
-    }
+    },
+    "Cash": 129071000,
+    "MarketableSecurities": 42454000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 19563000,
+    "LongTermDebtCurrent": 20000000,
+    "ConvertibleDebt": null,
+    "Assets": 177833000,
+    "CurrentAssets": 177082000,
+    "Liabilities": 45672000,
+    "CurrentLiabilities": 25842000,
+    "ShareholdersEquity": 132161000,
+    "R&D": 131395000,
+    "NetIncome": -177478000
   },
   {
     "ticker": "NRIX",
@@ -33484,7 +36210,22 @@
       "vol_20d": 0.5005,
       "ret_21d": -0.0378,
       "corr_xbi": "0.5306"
-    }
+    },
+    "Cash": 78438000,
+    "MarketableSecurities": 216548000,
+    "ShortTermInvestments": 244667000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 522472000,
+    "CurrentAssets": 440603000,
+    "Liabilities": 150220000,
+    "CurrentLiabilities": 82350000,
+    "ShareholdersEquity": 372252000,
+    "Revenue": 16585000,
+    "R&D": 233879000,
+    "NetIncome": -186236000
   },
   {
     "ticker": "NUVB",
@@ -33528,7 +36269,22 @@
       "vol_20d": 0.7917,
       "ret_21d": -0.4015,
       "corr_xbi": "0.3108"
-    }
+    },
+    "Cash": 98897000,
+    "MarketableSecurities": 450148000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 47089000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 601561000,
+    "CurrentAssets": 577530000,
+    "Liabilities": 275679000,
+    "CurrentLiabilities": 68131000,
+    "ShareholdersEquity": 325882000,
+    "Revenue": 21037000,
+    "R&D": 80809000,
+    "NetIncome": -168035000
   },
   {
     "ticker": "NUVL",
@@ -33572,7 +36328,21 @@
       "vol_20d": 0.5926,
       "ret_21d": 0.0154,
       "corr_xbi": "0.6290"
-    }
+    },
+    "Cash": 115752000,
+    "MarketableSecurities": 827351000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 979910000,
+    "CurrentAssets": 956945000,
+    "Liabilities": 134511000,
+    "CurrentLiabilities": 89151000,
+    "ShareholdersEquity": 845399000,
+    "R&D": 239174000,
+    "NetIncome": -306672000
   },
   {
     "ticker": "OABI",
@@ -33616,7 +36386,21 @@
       "vol_20d": 0.3651,
       "ret_21d": 0.0103,
       "corr_xbi": "0.5379"
-    }
+    },
+    "Cash": 28537000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 309690000,
+    "CurrentAssets": 66349000,
+    "Liabilities": 32246000,
+    "CurrentLiabilities": 13277000,
+    "ShareholdersEquity": 277444000,
+    "R&D": 33845000,
+    "NetIncome": -50600000
   },
   {
     "ticker": "OLMA",
@@ -33660,7 +36444,21 @@
       "vol_20d": 0.6568,
       "ret_21d": -0.0882,
       "corr_xbi": "0.1662"
-    }
+    },
+    "Cash": 35260000,
+    "MarketableSecurities": 293700000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 352453000,
+    "CurrentAssets": 334329000,
+    "Liabilities": 44965000,
+    "CurrentLiabilities": 41655000,
+    "ShareholdersEquity": 307488000,
+    "R&D": 114477000,
+    "NetIncome": -116390000
   },
   {
     "ticker": "ONC",
@@ -33704,7 +36502,22 @@
       "vol_20d": 0.3994,
       "ret_21d": 0.0864,
       "corr_xbi": "0.4212"
-    }
+    },
+    "Cash": 4036868000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 2600000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": 808394000,
+    "ConvertibleDebt": null,
+    "Assets": 7632586000,
+    "CurrentAssets": 5664477000,
+    "Liabilities": 3503260000,
+    "CurrentLiabilities": 2368425000,
+    "ShareholdersEquity": 4129326000,
+    "Revenue": 139550000,
+    "R&D": 1530445000,
+    "NetIncome": 220431000
   },
   {
     "ticker": "OPK",
@@ -33748,7 +36561,21 @@
       "vol_20d": 0.3805,
       "ret_21d": 0.0076,
       "corr_xbi": "0.2563"
-    }
+    },
+    "Cash": 411972000,
+    "MarketableSecurities": 15634000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 26690000,
+    "LongTermDebt": 344217000,
+    "LongTermDebtCurrent": 1463000,
+    "ConvertibleDebt": null,
+    "Assets": 1995508000,
+    "CurrentAssets": 627130000,
+    "Liabilities": 690018000,
+    "CurrentLiabilities": 169321000,
+    "ShareholdersEquity": 1305490000,
+    "R&D": 91261000,
+    "NetIncome": -194423000
   },
   {
     "ticker": "ORIC",
@@ -33792,7 +36619,21 @@
       "vol_20d": 0.7059,
       "ret_21d": 0.4498,
       "corr_xbi": "0.4216"
-    }
+    },
+    "Cash": 49668000,
+    "MarketableSecurities": 90990000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 10500000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 431192000,
+    "CurrentAssets": 295594000,
+    "Liabilities": 24273000,
+    "CurrentLiabilities": 20179000,
+    "ShareholdersEquity": 406919000,
+    "R&D": 14977000,
+    "NetIncome": -98963000
   },
   {
     "ticker": "ORKA",
@@ -33836,7 +36677,22 @@
       "vol_20d": 0.6886,
       "ret_21d": 0.0845,
       "corr_xbi": "0.5496"
-    }
+    },
+    "Cash": 91253000,
+    "MarketableSecurities": 257902000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 509251000,
+    "CurrentAssets": 355163000,
+    "Liabilities": 22460000,
+    "CurrentLiabilities": 20967000,
+    "ShareholdersEquity": 486791000,
+    "Revenue": 0,
+    "R&D": 73000000,
+    "NetIncome": -75850000
   },
   {
     "ticker": "PACB",
@@ -33880,7 +36736,23 @@
       "vol_20d": 0.8593,
       "ret_21d": 0.4176,
       "corr_xbi": "0.4440"
-    }
+    },
+    "Cash": 56467000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 242187000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 896839000,
+    "LongTermDebtCurrent": 182000,
+    "ConvertibleDebt": null,
+    "Assets": 803158000,
+    "CurrentAssets": 394236000,
+    "Liabilities": 767068000,
+    "CurrentLiabilities": 63209000,
+    "ShareholdersEquity": 36090000,
+    "Revenue": 93468000,
+    "COGS": 86146000,
+    "R&D": 74428000,
+    "NetIncome": -506005000
   },
   {
     "ticker": "PEPG",
@@ -33924,7 +36796,21 @@
       "vol_20d": 1.0974,
       "ret_21d": 0.0206,
       "corr_xbi": "0.0667"
-    }
+    },
+    "Cash": 142775000,
+    "MarketableSecurities": 20890000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 190057000,
+    "CurrentAssets": 166206000,
+    "Liabilities": 26917000,
+    "CurrentLiabilities": 12642000,
+    "ShareholdersEquity": 163140000,
+    "R&D": 57192000,
+    "NetIncome": -71315000
   },
   {
     "ticker": "PHAT",
@@ -33968,7 +36854,23 @@
       "vol_20d": 0.8365,
       "ret_21d": -0.2174,
       "corr_xbi": "0.4026"
-    }
+    },
+    "Cash": 135156000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 207093000,
+    "LongTermDebtCurrent": 0,
+    "ConvertibleDebt": null,
+    "Assets": 240289000,
+    "CurrentAssets": 207783000,
+    "Liabilities": 662823000,
+    "CurrentLiabilities": 93123000,
+    "ShareholdersEquity": -422534000,
+    "Revenue": 117526000,
+    "COGS": 14951000,
+    "R&D": 25287000,
+    "NetIncome": -200099000
   },
   {
     "ticker": "PHVS",
@@ -34056,7 +36958,22 @@
       "vol_20d": 0.7189,
       "ret_21d": 0.1305,
       "corr_xbi": "0.0599"
-    }
+    },
+    "Cash": 149527000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 396388000,
+    "CurrentAssets": 273844000,
+    "Liabilities": 52883000,
+    "CurrentLiabilities": 52883000,
+    "ShareholdersEquity": 343505000,
+    "Revenue": 0,
+    "R&D": 189609000,
+    "NetIncome": -214357000
   },
   {
     "ticker": "PRME",
@@ -34100,7 +37017,21 @@
       "vol_20d": 0.8843,
       "ret_21d": 0.2005,
       "corr_xbi": "0.5200"
-    }
+    },
+    "Cash": 71396000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 385012000,
+    "CurrentAssets": 231406000,
+    "Liabilities": 223191000,
+    "CurrentLiabilities": 35019000,
+    "ShareholdersEquity": 161821000,
+    "R&D": 125927000,
+    "NetIncome": -155063000
   },
   {
     "ticker": "PSNL",
@@ -34144,7 +37075,22 @@
       "vol_20d": 1.0397,
       "ret_21d": 0.2078,
       "corr_xbi": "0.4216"
-    }
+    },
+    "Cash": 49973000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 100542000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 20000000,
+    "LongTermDebtCurrent": 1020000,
+    "ConvertibleDebt": null,
+    "Assets": 242839000,
+    "CurrentAssets": 174402000,
+    "Liabilities": 71424000,
+    "CurrentLiabilities": 36156000,
+    "ShareholdersEquity": 171415000,
+    "COGS": 38426000,
+    "R&D": 37192000,
+    "NetIncome": -57458000
   },
   {
     "ticker": "PYXS",
@@ -34188,7 +37134,23 @@
       "vol_20d": 1.2219,
       "ret_21d": 0.4954,
       "corr_xbi": "0.2622"
-    }
+    },
+    "Cash": 8919000,
+    "MarketableSecurities": 67337000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 105604000,
+    "CurrentAssets": 83073000,
+    "Liabilities": 36825000,
+    "CurrentLiabilities": 19382000,
+    "ShareholdersEquity": 68779000,
+    "Revenue": 2820000,
+    "COGS": 475000,
+    "R&D": 51985000,
+    "NetIncome": -61515000
   },
   {
     "ticker": "QSI",
@@ -34232,7 +37194,22 @@
       "vol_20d": 0.7346,
       "ret_21d": 0.0163,
       "corr_xbi": "0.4481"
-    }
+    },
+    "Cash": 30910000,
+    "MarketableSecurities": 293811000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 260127000,
+    "CurrentAssets": 237990000,
+    "Liabilities": 24968000,
+    "CurrentLiabilities": 22147000,
+    "ShareholdersEquity": 235159000,
+    "COGS": 954000,
+    "R&D": 42813000,
+    "NetIncome": -83728000
   },
   {
     "ticker": "QTRX",
@@ -34276,7 +37253,23 @@
       "vol_20d": 1.1087,
       "ret_21d": -0.0241,
       "corr_xbi": "0.3165"
-    }
+    },
+    "Cash": 38298000,
+    "MarketableSecurities": 0,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 1943000,
+    "LongTermDebtCurrent": 1993000,
+    "ConvertibleDebt": null,
+    "Assets": 444140000,
+    "CurrentAssets": 233278000,
+    "Liabilities": 129606000,
+    "CurrentLiabilities": 77352000,
+    "ShareholdersEquity": 314534000,
+    "Revenue": 37632000,
+    "COGS": 50121000,
+    "R&D": 27126000,
+    "NetIncome": -84033000
   },
   {
     "ticker": "QURE",
@@ -34320,7 +37313,22 @@
       "vol_20d": 0.7716,
       "ret_21d": 0.0372,
       "corr_xbi": "0.1181"
-    }
+    },
+    "Cash": 597056000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 66019000,
+    "LongTermDebtCurrent": 11111000,
+    "ConvertibleDebt": null,
+    "Assets": 888382000,
+    "CurrentAssets": 716193000,
+    "Liabilities": 659636000,
+    "CurrentLiabilities": 100632000,
+    "ShareholdersEquity": 228746000,
+    "Revenue": 9676000,
+    "R&D": 105889000,
+    "NetIncome": -161885000
   },
   {
     "ticker": "RAPP",
@@ -34364,7 +37372,21 @@
       "vol_20d": 0.622,
       "ret_21d": -0.1205,
       "corr_xbi": "0.0639"
-    }
+    },
+    "Cash": 251359000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 261667000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 535323000,
+    "CurrentAssets": 520659000,
+    "Liabilities": 23706000,
+    "CurrentLiabilities": 14316000,
+    "ShareholdersEquity": 511617000,
+    "R&D": 64531000,
+    "NetIncome": -77720000
   },
   {
     "ticker": "RAPT",
@@ -34408,7 +37430,21 @@
       "vol_20d": 2.3807,
       "ret_21d": 0.628,
       "corr_xbi": "0.3343"
-    }
+    },
+    "Cash": 37930000,
+    "MarketableSecurities": 119414000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 165739000,
+    "CurrentAssets": 161045000,
+    "Liabilities": 13762000,
+    "CurrentLiabilities": 13375000,
+    "ShareholdersEquity": 151977000,
+    "R&D": 36416000,
+    "NetIncome": -52388000
   },
   {
     "ticker": "RCKT",
@@ -34452,7 +37488,21 @@
       "vol_20d": 0.5712,
       "ret_21d": 0.0783,
       "corr_xbi": "0.4280"
-    }
+    },
+    "Cash": 75948000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 146810000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 368033000,
+    "CurrentAssets": 227680000,
+    "Liabilities": 54364000,
+    "CurrentLiabilities": 31170000,
+    "ShareholdersEquity": 313669000,
+    "R&D": 112668000,
+    "NetIncome": -180585000
   },
   {
     "ticker": "RCUS",
@@ -34496,7 +37546,22 @@
       "vol_20d": 0.7728,
       "ret_21d": -0.0255,
       "corr_xbi": "0.5236"
-    }
+    },
+    "Cash": 238000000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 345210000,
+    "LongTermDebt": 98000000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 974000000,
+    "CurrentAssets": 857000000,
+    "Liabilities": 695121000,
+    "CurrentLiabilities": 235000000,
+    "ShareholdersEquity": 436000000,
+    "Revenue": 214000000,
+    "R&D": 402000000,
+    "NetIncome": -247000000
   },
   {
     "ticker": "REGN",
@@ -34540,7 +37605,22 @@
       "vol_20d": 0.2676,
       "ret_21d": -0.0403,
       "corr_xbi": "0.3749"
-    }
+    },
+    "Cash": 2506400000,
+    "MarketableSecurities": 5937200000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 40169400000,
+    "CurrentAssets": 17980700000,
+    "Liabilities": 9211600000,
+    "CurrentLiabilities": 4425100000,
+    "ShareholdersEquity": 30957800000,
+    "Revenue": 1511485000,
+    "R&D": 4224100000,
+    "NetIncome": 3660300000
   },
   {
     "ticker": "REPL",
@@ -34584,7 +37664,22 @@
       "vol_20d": 0.683,
       "ret_21d": -0.2068,
       "corr_xbi": "0.2027"
-    }
+    },
+    "Cash": 102298000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 221346000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 44434000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 389450000,
+    "CurrentAssets": 333749000,
+    "Liabilities": 126114000,
+    "CurrentLiabilities": 52900000,
+    "ShareholdersEquity": 263336000,
+    "Revenue": 0,
+    "R&D": 115721000,
+    "NetIncome": -169793000
   },
   {
     "ticker": "RIGL",
@@ -34628,7 +37723,21 @@
       "vol_20d": 0.6122,
       "ret_21d": -0.1589,
       "corr_xbi": "0.3248"
-    }
+    },
+    "Cash": 48534000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 88609000,
+    "AvailableForSaleSecurities": 157672000,
+    "LongTermDebt": 60000000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 242534000,
+    "CurrentAssets": 214927000,
+    "Liabilities": 124925000,
+    "CurrentLiabilities": 94400000,
+    "ShareholdersEquity": 117609000,
+    "R&D": 32215000,
+    "NetIncome": 98959000
   },
   {
     "ticker": "RLAY",
@@ -34672,7 +37781,22 @@
       "vol_20d": 0.4127,
       "ret_21d": -0.1059,
       "corr_xbi": "0.5537"
-    }
+    },
+    "Cash": 91564000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 670000000,
+    "CurrentAssets": 624014000,
+    "Liabilities": 62291000,
+    "CurrentLiabilities": 32605000,
+    "ShareholdersEquity": 607709000,
+    "Revenue": 8355000,
+    "R&D": 30622000,
+    "NetIncome": -221589000
   },
   {
     "ticker": "SEPN",
@@ -34716,7 +37840,21 @@
       "vol_20d": 0.5137,
       "ret_21d": -0.0873,
       "corr_xbi": "0.4426"
-    }
+    },
+    "Cash": 319989000,
+    "MarketableSecurities": 154357000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 606653000,
+    "CurrentAssets": 491681000,
+    "Liabilities": 217922000,
+    "CurrentLiabilities": 75282000,
+    "ShareholdersEquity": 388731000,
+    "R&D": 65723000,
+    "NetIncome": -38141000
   },
   {
     "ticker": "SGMT",
@@ -34760,7 +37898,21 @@
       "vol_20d": 0.5537,
       "ret_21d": 0.0216,
       "corr_xbi": "0.3405"
-    }
+    },
+    "Cash": 32496000,
+    "MarketableSecurities": 84197000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 128401000,
+    "CurrentAssets": 119480000,
+    "Liabilities": 7180000,
+    "CurrentLiabilities": 9146000,
+    "ShareholdersEquity": 119255000,
+    "R&D": 32320000,
+    "NetIncome": -41470000
   },
   {
     "ticker": "SION",
@@ -34804,7 +37956,21 @@
       "vol_20d": 1.1098,
       "ret_21d": -0.0244,
       "corr_xbi": "0.3424"
-    }
+    },
+    "Cash": 50831000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 339270000,
+    "CurrentAssets": 252328000,
+    "Liabilities": 17602000,
+    "CurrentLiabilities": 9851000,
+    "ShareholdersEquity": 321668000,
+    "R&D": 45095000,
+    "NetIncome": -54828000
   },
   {
     "ticker": "SLDB",
@@ -34848,7 +38014,22 @@
       "vol_20d": 0.7991,
       "ret_21d": 0.1186,
       "corr_xbi": "0.5632"
-    }
+    },
+    "Cash": 61364000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 40750000,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 273914000,
+    "CurrentAssets": 244852000,
+    "Liabilities": 55966000,
+    "CurrentLiabilities": 36342000,
+    "ShareholdersEquity": 217948000,
+    "Revenue": 8094000,
+    "R&D": 102190000,
+    "NetIncome": -53578000
   },
   {
     "ticker": "SLN",
@@ -34892,7 +38073,21 @@
       "vol_20d": 0.6657,
       "ret_21d": -0.0957,
       "corr_xbi": "0.4239"
-    }
+    },
+    "Cash": 82031000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 20161000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 146790000,
+    "CurrentAssets": 133632000,
+    "Liabilities": 72727000,
+    "CurrentLiabilities": 17379000,
+    "ShareholdersEquity": 74063000,
+    "R&D": 59004000,
+    "NetIncome": -76842000
   },
   {
     "ticker": "SMMT",
@@ -34936,7 +38131,21 @@
       "vol_20d": 0.7166,
       "ret_21d": -0.09,
       "corr_xbi": "0.4787"
-    }
+    },
+    "Cash": 238554000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 0,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 261729000,
+    "CurrentAssets": 246466000,
+    "Liabilities": 69466000,
+    "CurrentLiabilities": 64928000,
+    "ShareholdersEquity": 192263000,
+    "R&D": 30873000,
+    "NetIncome": -860414000
   },
   {
     "ticker": "SRRK",
@@ -34980,7 +38189,22 @@
       "vol_20d": 0.5618,
       "ret_21d": -0.0349,
       "corr_xbi": "0.4457"
-    }
+    },
+    "Cash": 286770000,
+    "MarketableSecurities": 82860000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 51000000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 411718000,
+    "CurrentAssets": 390711000,
+    "Liabilities": 166723000,
+    "CurrentLiabilities": 61972000,
+    "ShareholdersEquity": 244995000,
+    "Revenue": 0,
+    "R&D": 161565000,
+    "NetIncome": -286974000
   },
   {
     "ticker": "STOK",
@@ -35024,7 +38248,22 @@
       "vol_20d": 0.6339,
       "ret_21d": -0.0753,
       "corr_xbi": "0.4466"
-    }
+    },
+    "Cash": 83394000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 360264000,
+    "CurrentAssets": 272437000,
+    "Liabilities": 52159000,
+    "CurrentLiabilities": 41727000,
+    "ShareholdersEquity": 308105000,
+    "Revenue": 183018000,
+    "R&D": 96227000,
+    "NetIncome": 51049000
   },
   {
     "ticker": "STRO",
@@ -35068,7 +38307,22 @@
       "vol_20d": 1.0097,
       "ret_21d": 0.4499,
       "corr_xbi": "0.4541"
-    }
+    },
+    "Cash": 65927000,
+    "MarketableSecurities": 101667000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 4061000,
+    "LongTermDebtCurrent": 4061000,
+    "ConvertibleDebt": null,
+    "Assets": 209658000,
+    "CurrentAssets": 182113000,
+    "Liabilities": 296926000,
+    "CurrentLiabilities": 71895000,
+    "ShareholdersEquity": -87268000,
+    "Revenue": 11305000,
+    "R&D": 129775000,
+    "NetIncome": -144324000
   },
   {
     "ticker": "STVN",
@@ -35156,7 +38410,22 @@
       "vol_20d": 0.5206,
       "ret_21d": -0.0652,
       "corr_xbi": "0.3558"
-    }
+    },
+    "Cash": 16277000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 108109000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 29781000,
+    "LongTermDebtCurrent": 0,
+    "ConvertibleDebt": null,
+    "Assets": 140924000,
+    "CurrentAssets": 128198000,
+    "Liabilities": 46538000,
+    "CurrentLiabilities": 16757000,
+    "ShareholdersEquity": 94386000,
+    "Revenue": 0,
+    "R&D": 1400000,
+    "NetIncome": -86601000
   },
   {
     "ticker": "SYRE",
@@ -35200,7 +38469,21 @@
       "vol_20d": 0.5306,
       "ret_21d": -0.036,
       "corr_xbi": "0.5938"
-    }
+    },
+    "Cash": 64897000,
+    "MarketableSecurities": 38070000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 504604000,
+    "CurrentAssets": 504604000,
+    "Liabilities": 49504000,
+    "CurrentLiabilities": 46274000,
+    "ShareholdersEquity": 455100000,
+    "R&D": 13776000,
+    "NetIncome": -92673000
   },
   {
     "ticker": "TECX",
@@ -35244,7 +38527,21 @@
       "vol_20d": 0.5194,
       "ret_21d": -0.054,
       "corr_xbi": "0.2708"
-    }
+    },
+    "Cash": 268435000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 15000000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 277001000,
+    "CurrentAssets": 273241000,
+    "Liabilities": 9473000,
+    "CurrentLiabilities": 9373000,
+    "ShareholdersEquity": 267528000,
+    "R&D": 47148000,
+    "NetIncome": -54925000
   },
   {
     "ticker": "TEM",
@@ -35288,7 +38585,21 @@
       "vol_20d": 0.5745,
       "ret_21d": 0.0093,
       "corr_xbi": "0.4642"
-    }
+    },
+    "Cash": 655918000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 2281424000,
+    "CurrentAssets": 1146511000,
+    "Liabilities": 1773600000,
+    "CurrentLiabilities": 350028000,
+    "ShareholdersEquity": 507824000,
+    "R&D": 122453000,
+    "NetIncome": -190862000
   },
   {
     "ticker": "TERN",
@@ -35332,7 +38643,20 @@
       "vol_20d": 0.5143,
       "ret_21d": -0.1734,
       "corr_xbi": "0.0847"
-    }
+    },
+    "Cash": 150698000,
+    "MarketableSecurities": 144937000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 1033000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 301651000,
+    "CurrentAssets": 300295000,
+    "Liabilities": 17585000,
+    "CurrentLiabilities": 15387000,
+    "ShareholdersEquity": 284066000,
+    "NetIncome": -24635000
   },
   {
     "ticker": "TKNO",
@@ -35376,7 +38700,21 @@
       "vol_20d": 0.5664,
       "ret_21d": -0.1902,
       "corr_xbi": "0.3375"
-    }
+    },
+    "Cash": 3204000,
+    "MarketableSecurities": 0,
+    "ShortTermInvestments": 18912000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 13076000,
+    "LongTermDebtCurrent": 0,
+    "ConvertibleDebt": null,
+    "Assets": 107625000,
+    "CurrentAssets": 36563000,
+    "Liabilities": 34975000,
+    "CurrentLiabilities": 6936000,
+    "ShareholdersEquity": 72650000,
+    "R&D": 1675000,
+    "NetIncome": -12501000
   },
   {
     "ticker": "TNGX",
@@ -35420,7 +38758,22 @@
       "vol_20d": 1.2708,
       "ret_21d": 0.3728,
       "corr_xbi": "0.4193"
-    }
+    },
+    "Cash": 58338000,
+    "MarketableSecurities": 94473000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 210136000,
+    "CurrentAssets": 163779000,
+    "Liabilities": 50105000,
+    "CurrentLiabilities": 18444000,
+    "ShareholdersEquity": 160031000,
+    "Revenue": 62384000,
+    "R&D": 100064000,
+    "NetIncome": -62845000
   },
   {
     "ticker": "TNYA",
@@ -35464,7 +38817,21 @@
       "vol_20d": 0.5625,
       "ret_21d": 0.0384,
       "corr_xbi": "0.3759"
-    }
+    },
+    "Cash": 56312000,
+    "MarketableSecurities": 114956000,
+    "ShortTermInvestments": 8996000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 104980000,
+    "CurrentAssets": 61239000,
+    "Liabilities": 22112000,
+    "CurrentLiabilities": 13210000,
+    "ShareholdersEquity": 82868000,
+    "R&D": 53809000,
+    "NetIncome": -70422000
   },
   {
     "ticker": "TRDA",
@@ -35508,7 +38875,21 @@
       "vol_20d": 0.5498,
       "ret_21d": 0.0753,
       "corr_xbi": "0.3748"
-    }
+    },
+    "Cash": 93286000,
+    "MarketableSecurities": 162261000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 412898000,
+    "CurrentAssets": 338257000,
+    "Liabilities": 72182000,
+    "CurrentLiabilities": 24019000,
+    "ShareholdersEquity": 340716000,
+    "R&D": 108312000,
+    "NetIncome": -104586000
   },
   {
     "ticker": "TRVI",
@@ -35552,7 +38933,21 @@
       "vol_20d": 0.5853,
       "ret_21d": -0.2207,
       "corr_xbi": "0.4046"
-    }
+    },
+    "Cash": 56869000,
+    "MarketableSecurities": 138058000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 199356000,
+    "CurrentAssets": 198299000,
+    "Liabilities": 9568000,
+    "CurrentLiabilities": 9041000,
+    "ShareholdersEquity": 189788000,
+    "R&D": 27285000,
+    "NetIncome": -34443000
   },
   {
     "ticker": "TSHA",
@@ -35596,7 +38991,22 @@
       "vol_20d": 0.6877,
       "ret_21d": -0.1839,
       "corr_xbi": "0.4290"
-    }
+    },
+    "Cash": 297344000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 38354000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 316554000,
+    "CurrentAssets": 299951000,
+    "Liabilities": 97565000,
+    "CurrentLiabilities": 28631000,
+    "ShareholdersEquity": 218989000,
+    "Revenue": 4288000,
+    "R&D": 61451000,
+    "NetIncome": -81144000
   },
   {
     "ticker": "TVTX",
@@ -35640,7 +39050,22 @@
       "vol_20d": 0.8359,
       "ret_21d": -0.1674,
       "corr_xbi": "0.2672"
-    }
+    },
+    "Cash": 110930000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 166381000,
+    "LongTermDebt": 46000000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": 25000,
+    "Assets": 538581000,
+    "CurrentAssets": 371110000,
+    "Liabilities": 465017000,
+    "CurrentLiabilities": 135074000,
+    "ShareholdersEquity": 73564000,
+    "Revenue": 0,
+    "R&D": 7500000,
+    "NetIncome": -28275000
   },
   {
     "ticker": "TWST",
@@ -35684,7 +39109,22 @@
       "vol_20d": 0.5897,
       "ret_21d": 0.2689,
       "corr_xbi": "0.4094"
-    }
+    },
+    "Cash": 183049000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 49385000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 4166000,
+    "LongTermDebtCurrent": 0,
+    "ConvertibleDebt": null,
+    "Assets": 641861000,
+    "CurrentAssets": 332966000,
+    "Liabilities": 168903000,
+    "CurrentLiabilities": 91406000,
+    "ShareholdersEquity": 472958000,
+    "COGS": 185570000,
+    "R&D": 80285000,
+    "NetIncome": -77670000
   },
   {
     "ticker": "TXG",
@@ -35728,7 +39168,22 @@
       "vol_20d": 0.6048,
       "ret_21d": 0.3564,
       "corr_xbi": "0.2850"
-    }
+    },
+    "Cash": 344067000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 29719000,
+    "LongTermDebtCurrent": 0,
+    "ConvertibleDebt": null,
+    "Assets": 1027361000,
+    "CurrentAssets": 659827000,
+    "Liabilities": 242241000,
+    "CurrentLiabilities": 147324000,
+    "ShareholdersEquity": 785120000,
+    "Revenue": 71905000,
+    "COGS": 145957000,
+    "NetIncome": -27292000
   },
   {
     "ticker": "TYRA",
@@ -35772,7 +39227,21 @@
       "vol_20d": 0.5881,
       "ret_21d": 0.1758,
       "corr_xbi": "0.4128"
-    }
+    },
+    "Cash": 61951000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 301851000,
+    "CurrentAssets": 281216000,
+    "Liabilities": 21342000,
+    "CurrentLiabilities": 15879000,
+    "ShareholdersEquity": 280509000,
+    "R&D": 74742000,
+    "NetIncome": -86113000
   },
   {
     "ticker": "UPB",
@@ -35816,7 +39285,21 @@
       "vol_20d": 0.642,
       "ret_21d": 0.0277,
       "corr_xbi": "0.5630"
-    }
+    },
+    "Cash": 72164000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 300263000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 391195000,
+    "CurrentAssets": 389017000,
+    "Liabilities": 12611000,
+    "CurrentLiabilities": 11908000,
+    "ShareholdersEquity": 378584000,
+    "R&D": 96637000,
+    "NetIncome": -100984000
   },
   {
     "ticker": "URGN",
@@ -35860,7 +39343,23 @@
       "vol_20d": 0.6213,
       "ret_21d": -0.1453,
       "corr_xbi": "0.3270"
-    }
+    },
+    "Cash": 90039000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 63790000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 185046000,
+    "CurrentAssets": 168546000,
+    "Liabilities": 300454000,
+    "CurrentLiabilities": 42244000,
+    "ShareholdersEquity": -115408000,
+    "Revenue": 1128000,
+    "COGS": 9158000,
+    "R&D": 52793000,
+    "NetIncome": -127130000
   },
   {
     "ticker": "VCEL",
@@ -35904,7 +39403,22 @@
       "vol_20d": 0.5129,
       "ret_21d": 0.0126,
       "corr_xbi": "0.3047"
-    }
+    },
+    "Cash": 100403000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 34977000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": 38000,
+    "ConvertibleDebt": null,
+    "Assets": 453274000,
+    "CurrentAssets": 221967000,
+    "Liabilities": 131416000,
+    "CurrentLiabilities": 45582000,
+    "ShareholdersEquity": 321858000,
+    "Revenue": 183341000,
+    "R&D": 20310000,
+    "NetIncome": -6725000
   },
   {
     "ticker": "VERA",
@@ -35948,7 +39462,21 @@
       "vol_20d": 0.5496,
       "ret_21d": -0.1191,
       "corr_xbi": "0.5290"
-    }
+    },
+    "Cash": 57773000,
+    "MarketableSecurities": 439616000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 74648000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 517503000,
+    "CurrentAssets": 511311000,
+    "Liabilities": 118623000,
+    "CurrentLiabilities": 41880000,
+    "ShareholdersEquity": 398880000,
+    "R&D": 155946000,
+    "NetIncome": -208518000
   },
   {
     "ticker": "VIR",
@@ -35992,7 +39520,23 @@
       "vol_20d": 0.835,
       "ret_21d": 0.2621,
       "corr_xbi": "0.6380"
-    }
+    },
+    "Cash": 170084000,
+    "MarketableSecurities": 327750000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 1019453000,
+    "CurrentAssets": 545684000,
+    "Liabilities": 223355000,
+    "CurrentLiabilities": 75222000,
+    "ShareholdersEquity": 796098000,
+    "Revenue": 4486000,
+    "COGS": 11000,
+    "R&D": 367617000,
+    "NetIncome": -395064000
   },
   {
     "ticker": "VNDA",
@@ -36036,7 +39580,22 @@
       "vol_20d": 1.1447,
       "ret_21d": 0.1711,
       "corr_xbi": "0.2900"
-    }
+    },
+    "Cash": 70022000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 601140000,
+    "CurrentAssets": 367496000,
+    "Liabilities": 135141000,
+    "CurrentLiabilities": 117870000,
+    "ShareholdersEquity": 465999000,
+    "Revenue": 158889000,
+    "R&D": 80265000,
+    "NetIncome": -79287000
   },
   {
     "ticker": "VTYX",
@@ -36080,7 +39639,21 @@
       "vol_20d": 1.6848,
       "ret_21d": 0.5469,
       "corr_xbi": "0.3215"
-    }
+    },
+    "Cash": 31970000,
+    "MarketableSecurities": 160668000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 211465000,
+    "CurrentAssets": 201094000,
+    "Liabilities": 20101000,
+    "CurrentLiabilities": 11259000,
+    "ShareholdersEquity": 191364000,
+    "R&D": 62870000,
+    "NetIncome": -77256000
   },
   {
     "ticker": "VYGR",
@@ -36124,7 +39697,22 @@
       "vol_20d": 0.523,
       "ret_21d": 0.0025,
       "corr_xbi": "0.5912"
-    }
+    },
+    "Cash": 45125000,
+    "MarketableSecurities": 163805000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 288311000,
+    "CurrentAssets": 219585000,
+    "Liabilities": 68486000,
+    "CurrentLiabilities": 35495000,
+    "ShareholdersEquity": 219825000,
+    "Revenue": 5611000,
+    "R&D": 98722000,
+    "NetIncome": -92295000
   },
   {
     "ticker": "WVE",
@@ -36168,7 +39756,22 @@
       "vol_20d": 0.4976,
       "ret_21d": -0.2294,
       "corr_xbi": "0.1196"
-    }
+    },
+    "Cash": 196218000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 25044000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 241378000,
+    "CurrentAssets": 215488000,
+    "Liabilities": 108955000,
+    "CurrentLiabilities": 85896000,
+    "ShareholdersEquity": 124549000,
+    "Revenue": 1422000,
+    "R&D": 129965000,
+    "NetIncome": -151199000
   },
   {
     "ticker": "XENE",
@@ -36212,7 +39815,22 @@
       "vol_20d": 0.3882,
       "ret_21d": -0.0624,
       "corr_xbi": "0.6575"
-    }
+    },
+    "Cash": 104514000,
+    "MarketableSecurities": 357754000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": 15676000,
+    "ConvertibleDebt": null,
+    "Assets": 607836000,
+    "CurrentAssets": 480137000,
+    "Liabilities": 48325000,
+    "CurrentLiabilities": 38335000,
+    "ShareholdersEquity": 559511000,
+    "Revenue": 311000,
+    "R&D": 213239000,
+    "NetIncome": -240649000
   },
   {
     "ticker": "XNCR",
@@ -36256,7 +39874,21 @@
       "vol_20d": 0.5264,
       "ret_21d": -0.1739,
       "corr_xbi": "0.6238"
-    }
+    },
+    "Cash": 28291000,
+    "MarketableSecurities": 487688000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 868811000,
+    "CurrentAssets": 518441000,
+    "Liabilities": 243495000,
+    "CurrentLiabilities": 86485000,
+    "ShareholdersEquity": 625316000,
+    "R&D": 174610000,
+    "NetIncome": -85270000
   },
   {
     "ticker": "ZBIO",
@@ -36300,7 +39932,22 @@
       "vol_20d": 2.2133,
       "ret_21d": -0.5307,
       "corr_xbi": "0.4474"
-    }
+    },
+    "Cash": 115565000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 175319000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 322018000,
+    "CurrentAssets": 296642000,
+    "Liabilities": 125590000,
+    "CurrentLiabilities": 52421000,
+    "ShareholdersEquity": 196428000,
+    "Revenue": 10000000,
+    "R&D": 112343000,
+    "NetIncome": -137295000
   },
   {
     "ticker": "ZLAB",
@@ -36344,7 +39991,23 @@
       "vol_20d": 0.4521,
       "ret_21d": 0.0486,
       "corr_xbi": "0.3572"
-    }
+    },
+    "Cash": 717155000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 0,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 1158940000,
+    "CurrentAssets": 1032948000,
+    "Liabilities": 398995000,
+    "CurrentLiabilities": 359769000,
+    "ShareholdersEquity": 759945000,
+    "Revenue": 332559000,
+    "COGS": 33619000,
+    "R&D": 159271000,
+    "NetIncome": -125128000
   },
   {
     "ticker": "ZVRA",
@@ -36388,7 +40051,22 @@
       "vol_20d": 0.4086,
       "ret_21d": 0.0516,
       "corr_xbi": "0.2530"
-    }
+    },
+    "Cash": 54439000,
+    "MarketableSecurities": 1338000,
+    "ShortTermInvestments": 5832000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 61310000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": 0,
+    "Assets": 270116000,
+    "CurrentAssets": 225115000,
+    "Liabilities": 136951000,
+    "CurrentLiabilities": 26112000,
+    "ShareholdersEquity": 133165000,
+    "COGS": 2945000,
+    "R&D": 3082000,
+    "NetIncome": 71064000
   },
   {
     "ticker": "ZYME",
@@ -36432,7 +40110,21 @@
       "vol_20d": 0.4278,
       "ret_21d": -0.1325,
       "corr_xbi": "0.3925"
-    }
+    },
+    "Cash": 64834000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 216770000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 397269000,
+    "CurrentAssets": 291712000,
+    "Liabilities": 77205000,
+    "CurrentLiabilities": 42043000,
+    "ShareholdersEquity": 320064000,
+    "R&D": 32042000,
+    "NetIncome": -39921000
   },
   {
     "ticker": "AMPH",
@@ -36476,7 +40168,23 @@
       "vol_20d": 0.3985,
       "ret_21d": -0.02,
       "corr_xbi": "0.2075"
-    }
+    },
+    "Cash": 216265000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 59944000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 40295000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 1666222000,
+    "CurrentAssets": 639470000,
+    "Liabilities": 889476000,
+    "CurrentLiabilities": 205227000,
+    "ShareholdersEquity": 445522000,
+    "Revenue": 536782000,
+    "COGS": 266395000,
+    "R&D": 62530000,
+    "NetIncome": 73665000
   },
   {
     "ticker": "AMRX",
@@ -36520,7 +40228,22 @@
       "vol_20d": 0.2198,
       "ret_21d": 0.0428,
       "corr_xbi": "0.3463"
-    }
+    },
+    "Cash": 201249000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 2573702000,
+    "LongTermDebtCurrent": 7202000,
+    "ConvertibleDebt": null,
+    "Assets": 3599874000,
+    "CurrentAssets": 1838478000,
+    "Liabilities": 0,
+    "CurrentLiabilities": 862106000,
+    "ShareholdersEquity": -109458000,
+    "Revenue": 0,
+    "R&D": 151356000,
+    "NetIncome": 36981000
   },
   {
     "ticker": "ANIP",
@@ -36564,7 +40287,23 @@
       "vol_20d": 0.5109,
       "ret_21d": 0.028,
       "corr_xbi": "0.0607"
-    }
+    },
+    "Cash": 262610000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 134100000,
+    "LongTermDebtCurrent": 15241000,
+    "ConvertibleDebt": null,
+    "Assets": 1408152000,
+    "CurrentAssets": 698402000,
+    "Liabilities": 902335000,
+    "CurrentLiabilities": 270555000,
+    "ShareholdersEquity": 505817000,
+    "Revenue": 49774000,
+    "COGS": 19985000,
+    "R&D": 39403000,
+    "NetIncome": 50847000
   },
   {
     "ticker": "AQST",
@@ -36608,7 +40347,22 @@
       "vol_20d": 1.425,
       "ret_21d": -0.448,
       "corr_xbi": "0.2351"
-    }
+    },
+    "Cash": 129063000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 45000000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 163559000,
+    "CurrentAssets": 151673000,
+    "Liabilities": 167668000,
+    "CurrentLiabilities": 25574000,
+    "ShareholdersEquity": -4109000,
+    "Revenue": 67430000,
+    "R&D": 13996000,
+    "NetIncome": -51924000
   },
   {
     "ticker": "ARDX",
@@ -36652,7 +40406,23 @@
       "vol_20d": 1.1067,
       "ret_21d": 0.3397,
       "corr_xbi": "0.1926"
-    }
+    },
+    "Cash": 42715000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 202138000,
+    "LongTermDebtCurrent": 26541000,
+    "ConvertibleDebt": null,
+    "Assets": 486170000,
+    "CurrentAssets": 367985000,
+    "Liabilities": 331890000,
+    "CurrentLiabilities": 83389000,
+    "ShareholdersEquity": 154280000,
+    "Revenue": 3031000,
+    "COGS": 1537000,
+    "R&D": 48671000,
+    "NetIncome": -61192000
   },
   {
     "ticker": "AZN",
@@ -36740,7 +40510,22 @@
       "vol_20d": 1.2417,
       "ret_21d": 0.5606,
       "corr_xbi": "0.2299"
-    }
+    },
+    "Cash": 103352000,
+    "MarketableSecurities": 88311000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 73663000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 516519000,
+    "CurrentAssets": 460955000,
+    "Liabilities": 428745000,
+    "CurrentLiabilities": 372297000,
+    "ShareholdersEquity": 87774000,
+    "Revenue": 0,
+    "R&D": 77914000,
+    "NetIncome": 205667000
   },
   {
     "ticker": "COLL",
@@ -36784,7 +40569,21 @@
       "vol_20d": 0.4777,
       "ret_21d": -0.0686,
       "corr_xbi": "0.1745"
-    }
+    },
+    "Cash": 150096000,
+    "MarketableSecurities": 135767000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 11500000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 1607328000,
+    "CurrentAssets": 613870000,
+    "Liabilities": 1332520000,
+    "CurrentLiabilities": 452929000,
+    "ShareholdersEquity": 274808000,
+    "R&D": 0,
+    "NetIncome": 45907000
   },
   {
     "ticker": "CRMD",
@@ -36828,7 +40627,23 @@
       "vol_20d": 1.2815,
       "ret_21d": -0.3932,
       "corr_xbi": "0.2952"
-    }
+    },
+    "Cash": 48493076,
+    "MarketableSecurities": 8090909,
+    "ShortTermInvestments": 7223735,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 750861478,
+    "CurrentAssets": 259535273,
+    "Liabilities": 376732072,
+    "CurrentLiabilities": 133643797,
+    "ShareholdersEquity": 374129406,
+    "Revenue": 183093736,
+    "COGS": 10921333,
+    "R&D": 10732793,
+    "NetIncome": 149034859
   },
   {
     "ticker": "EOLS",
@@ -36872,7 +40687,21 @@
       "vol_20d": 0.6373,
       "ret_21d": -0.2775,
       "corr_xbi": "0.2337"
-    }
+    },
+    "Cash": 43523000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 121807000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 218997000,
+    "CurrentAssets": 134889000,
+    "Liabilities": 247757000,
+    "CurrentLiabilities": 66711000,
+    "ShareholdersEquity": -28760000,
+    "R&D": 468000,
+    "NetIncome": -51771000
   },
   {
     "ticker": "ESPR",
@@ -36916,7 +40745,20 @@
       "vol_20d": 0.6056,
       "ret_21d": -0.1907,
       "corr_xbi": "0.2681"
-    }
+    },
+    "Cash": 92447000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 0,
+    "AvailableForSaleSecurities": 165731000,
+    "LongTermDebt": 5000000,
+    "LongTermDebtCurrent": 152000,
+    "ConvertibleDebt": null,
+    "Assets": 364020000,
+    "CurrentAssets": 360464000,
+    "Liabilities": 815381000,
+    "CurrentLiabilities": 359033000,
+    "ShareholdersEquity": -451361000,
+    "NetIncome": -84513000
   },
   {
     "ticker": "ETON",
@@ -36960,7 +40802,21 @@
       "vol_20d": 0.337,
       "ret_21d": -0.0943,
       "corr_xbi": "0.2172"
-    }
+    },
+    "Cash": 37121000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 29992000,
+    "LongTermDebtCurrent": 0,
+    "ConvertibleDebt": null,
+    "Assets": 104510000,
+    "CurrentAssets": 72000000,
+    "Liabilities": 81384000,
+    "CurrentLiabilities": 44183000,
+    "ShareholdersEquity": 23126000,
+    "R&D": 5985000,
+    "NetIncome": -6084000
   },
   {
     "ticker": "EYPT",
@@ -37004,7 +40860,22 @@
       "vol_20d": 0.4765,
       "ret_21d": -0.1741,
       "corr_xbi": "0.4074"
-    }
+    },
+    "Cash": 74577000,
+    "MarketableSecurities": 129445000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 0,
+    "LongTermDebt": 30000000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 251695000,
+    "CurrentAssets": 216106000,
+    "Liabilities": 51513000,
+    "CurrentLiabilities": 30094000,
+    "ShareholdersEquity": 200182000,
+    "Revenue": 2246000,
+    "R&D": 161825000,
+    "NetIncome": -164353000
   },
   {
     "ticker": "GH",
@@ -37048,7 +40919,22 @@
       "vol_20d": 0.4351,
       "ret_21d": 0.1195,
       "corr_xbi": "0.1582"
-    }
+    },
+    "Cash": 580013000,
+    "MarketableSecurities": 869584000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 1114594000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 1276786000,
+    "CurrentAssets": 828885000,
+    "Liabilities": 1631259000,
+    "CurrentLiabilities": 236919000,
+    "ShareholdersEquity": -354473000,
+    "Revenue": 700755000,
+    "R&D": 265927000,
+    "NetIncome": -287783000
   },
   {
     "ticker": "HRMY",
@@ -37092,7 +40978,21 @@
       "vol_20d": 0.2909,
       "ret_21d": -0.0421,
       "corr_xbi": "0.1710"
-    }
+    },
+    "Cash": 646999000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 25582000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 168506000,
+    "LongTermDebtCurrent": 20000000,
+    "ConvertibleDebt": null,
+    "Assets": 1208218000,
+    "CurrentAssets": 838800000,
+    "Liabilities": 373095000,
+    "CurrentLiabilities": 223403000,
+    "ShareholdersEquity": 835123000,
+    "R&D": 139661000,
+    "NetIncome": 136201000
   },
   {
     "ticker": "HROW",
@@ -37136,7 +41036,22 @@
       "vol_20d": 0.5618,
       "ret_21d": -0.0952,
       "corr_xbi": "0.3194"
-    }
+    },
+    "Cash": 74290000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 7433000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 347239000,
+    "LongTermDebtCurrent": 553000,
+    "ConvertibleDebt": 0,
+    "Assets": 363074000,
+    "CurrentAssets": 177604000,
+    "Liabilities": 316413000,
+    "CurrentLiabilities": 65400000,
+    "ShareholdersEquity": 47016000,
+    "Revenue": 19249000,
+    "R&D": 9217000,
+    "NetIncome": -11765000
   },
   {
     "ticker": "INDV",
@@ -37180,7 +41095,20 @@
       "vol_20d": 0.1872,
       "ret_21d": -0.093,
       "corr_xbi": "0.1532"
-    }
+    },
+    "Cash": 445000000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 0,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": 18000000,
+    "ConvertibleDebt": null,
+    "Assets": 1416000000,
+    "CurrentAssets": 922000000,
+    "Liabilities": 1623000000,
+    "CurrentLiabilities": 965000000,
+    "ShareholdersEquity": -207000000,
+    "NetIncome": 108000000
   },
   {
     "ticker": "INVA",
@@ -37224,7 +41152,21 @@
       "vol_20d": 0.1826,
       "ret_21d": 0.0026,
       "corr_xbi": "0.1955"
-    }
+    },
+    "Cash": 476513000,
+    "MarketableSecurities": 282000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 739126000,
+    "LongTermDebtCurrent": 15181000,
+    "ConvertibleDebt": null,
+    "Assets": 1429106000,
+    "CurrentAssets": 684570000,
+    "CurrentLiabilities": 48471000,
+    "ShareholdersEquity": 565788000,
+    "Revenue": 119466000,
+    "R&D": 26049000,
+    "NetIncome": 4435000
   },
   {
     "ticker": "IVVD",
@@ -37268,7 +41210,22 @@
       "vol_20d": 0.7246,
       "ret_21d": -0.2464,
       "corr_xbi": "0.2216"
-    }
+    },
+    "Cash": 84967000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 139158000,
+    "CurrentAssets": 109769000,
+    "Liabilities": 46090000,
+    "CurrentLiabilities": 44496000,
+    "ShareholdersEquity": 93068000,
+    "Revenue": 36219000,
+    "R&D": 28260000,
+    "NetIncome": -41419000
   },
   {
     "ticker": "KMDA",
@@ -37312,7 +41269,15 @@
       "vol_20d": 0.3448,
       "ret_21d": 0.1202,
       "corr_xbi": "0.2202"
-    }
+    },
+    "Cash": null,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 39069000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "CurrentLiabilities": 222000
   },
   {
     "ticker": "KNSA",
@@ -37356,7 +41321,22 @@
       "vol_20d": 0.4494,
       "ret_21d": -0.0075,
       "corr_xbi": "0.4817"
-    }
+    },
+    "Cash": 174858000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 177244000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": null,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 712333000,
+    "CurrentAssets": 475530000,
+    "Liabilities": 176950000,
+    "CurrentLiabilities": 123592000,
+    "ShareholdersEquity": 535383000,
+    "Revenue": 475437000,
+    "R&D": 62244000,
+    "NetIncome": 44806000
   },
   {
     "ticker": "LFCR",
@@ -37400,7 +41380,23 @@
       "vol_20d": 0.3705,
       "ret_21d": 0.0645,
       "corr_xbi": "0.2461"
-    }
+    },
+    "Cash": 18856000,
+    "MarketableSecurities": 1297000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 135951000,
+    "LongTermDebtCurrent": 947000,
+    "ConvertibleDebt": null,
+    "Assets": 235204000,
+    "CurrentAssets": 83928000,
+    "Liabilities": 198418000,
+    "CurrentLiabilities": 29958000,
+    "ShareholdersEquity": -10537000,
+    "Revenue": 557559000,
+    "COGS": 309463000,
+    "R&D": 1963000,
+    "NetIncome": -9991000
   },
   {
     "ticker": "OBIO",
@@ -37444,7 +41440,23 @@
       "vol_20d": 0.6005,
       "ret_21d": -0.067,
       "corr_xbi": "0.3732"
-    }
+    },
+    "Cash": 42012000,
+    "MarketableSecurities": 53808000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 15000000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 104807000,
+    "CurrentAssets": 97768000,
+    "Liabilities": 61068000,
+    "CurrentLiabilities": 20655000,
+    "ShareholdersEquity": 99753000,
+    "Revenue": 2565000,
+    "COGS": 139000,
+    "R&D": 41362000,
+    "NetIncome": -58946000
   },
   {
     "ticker": "OCUL",
@@ -37488,7 +41500,22 @@
       "vol_20d": 0.4491,
       "ret_21d": -0.1939,
       "corr_xbi": "0.3569"
-    }
+    },
+    "Cash": 344772000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 18000000,
+    "LongTermDebtCurrent": null,
+    "ConvertibleDebt": null,
+    "Assets": 410882000,
+    "CurrentAssets": 386980000,
+    "Liabilities": 152653000,
+    "CurrentLiabilities": 49294000,
+    "ShareholdersEquity": 258229000,
+    "Revenue": 1990000,
+    "R&D": 146296000,
+    "NetIncome": -201285000
   },
   {
     "ticker": "OMER",
@@ -37532,7 +41559,21 @@
       "vol_20d": 2.8174,
       "ret_21d": 0.3634,
       "corr_xbi": "0.2816"
-    }
+    },
+    "Cash": 2395000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 33690000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 154939000,
+    "LongTermDebtCurrent": 2561000,
+    "ConvertibleDebt": null,
+    "Assets": 185706000,
+    "CurrentAssets": 71805000,
+    "CurrentLiabilities": 80756000,
+    "ShareholdersEquity": -220478000,
+    "Revenue": 21779000,
+    "R&D": 61850000,
+    "NetIncome": -89801000
   },
   {
     "ticker": "PAHC",
@@ -37576,7 +41617,22 @@
       "vol_20d": 0.3216,
       "ret_21d": 0.0433,
       "corr_xbi": "0.1922"
-    }
+    },
+    "Cash": 72769000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 12504000,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 627962000,
+    "LongTermDebtCurrent": 18444000,
+    "ConvertibleDebt": null,
+    "Assets": 1385524000,
+    "CurrentAssets": 835799000,
+    "Liabilities": 1073843000,
+    "CurrentLiabilities": 270139000,
+    "ShareholdersEquity": 311681000,
+    "Revenue": 686996000,
+    "R&D": 23726000,
+    "NetIncome": 26527000
   },
   {
     "ticker": "PBYI",
@@ -37620,7 +41676,22 @@
       "vol_20d": 0.4354,
       "ret_21d": 0.0863,
       "corr_xbi": "0.2102"
-    }
+    },
+    "Cash": 53525000,
+    "MarketableSecurities": 40863000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 34007000,
+    "LongTermDebtCurrent": 33716000,
+    "ConvertibleDebt": null,
+    "Assets": 202862000,
+    "CurrentAssets": 143580000,
+    "Liabilities": 87594000,
+    "CurrentLiabilities": 82728000,
+    "ShareholdersEquity": 115268000,
+    "Revenue": 66516000,
+    "R&D": 27203000,
+    "NetIncome": 17673000
   },
   {
     "ticker": "RANI",
@@ -37664,7 +41735,21 @@
       "vol_20d": 0.397,
       "ret_21d": -0.0544,
       "corr_xbi": "0.0447"
-    }
+    },
+    "Cash": 4144000,
+    "MarketableSecurities": 98500000,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 13750000,
+    "LongTermDebtCurrent": 13537000,
+    "ConvertibleDebt": null,
+    "Assets": 10139000,
+    "CurrentAssets": 4955000,
+    "Liabilities": 22112000,
+    "CurrentLiabilities": 19144000,
+    "ShareholdersEquity": -7860000,
+    "R&D": 15296000,
+    "NetIncome": -19368000
   },
   {
     "ticker": "RPRX",
@@ -37708,7 +41793,21 @@
       "vol_20d": 0.1986,
       "ret_21d": 0.0256,
       "corr_xbi": "0.2616"
-    }
+    },
+    "Cash": 938944000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 8945735000,
+    "LongTermDebtCurrent": 380000000,
+    "ConvertibleDebt": null,
+    "Assets": 19347280000,
+    "CurrentAssets": 1849537000,
+    "Liabilities": 9726419000,
+    "CurrentLiabilities": 530802000,
+    "Revenue": 1756203000,
+    "R&D": 401500000,
+    "NetIncome": 556742000
   },
   {
     "ticker": "SIGA",
@@ -37752,7 +41851,23 @@
       "vol_20d": 0.2756,
       "ret_21d": 0.0658,
       "corr_xbi": "0.1682"
-    }
+    },
+    "Cash": 171955584,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 0,
+    "LongTermDebt": 78911307,
+    "LongTermDebtCurrent": 0,
+    "ConvertibleDebt": null,
+    "Assets": 231603076,
+    "CurrentAssets": 227745471,
+    "Liabilities": 28124200,
+    "CurrentLiabilities": 24842321,
+    "ShareholdersEquity": 203478876,
+    "Revenue": 4264000,
+    "COGS": 1782838,
+    "R&D": 14914895,
+    "NetIncome": 28709061
   },
   {
     "ticker": "SNY",
@@ -37928,7 +42043,22 @@
       "vol_20d": 0.2766,
       "ret_21d": 0.099,
       "corr_xbi": "0.2793"
-    }
+    },
+    "Cash": 975300000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": null,
+    "AvailableForSaleSecurities": 39100000,
+    "LongTermDebt": 11535000000,
+    "LongTermDebtCurrent": 1951900000,
+    "ConvertibleDebt": null,
+    "Assets": 37920400000,
+    "CurrentAssets": 9951400000,
+    "Liabilities": 22702800000,
+    "CurrentLiabilities": 7364100000,
+    "ShareholdersEquity": -201000000,
+    "Revenue": 10596300000,
+    "R&D": 691200000,
+    "NetIncome": -170000000
   },
   {
     "ticker": "XERS",
@@ -37972,6 +42102,21 @@
       "vol_20d": 0.654,
       "ret_21d": 0.022,
       "corr_xbi": "0.1723"
-    }
+    },
+    "Cash": 91598000,
+    "MarketableSecurities": null,
+    "ShortTermInvestments": 0,
+    "AvailableForSaleSecurities": null,
+    "LongTermDebt": 219469000,
+    "LongTermDebtCurrent": 0,
+    "ConvertibleDebt": null,
+    "Assets": 370191000,
+    "CurrentAssets": 224017000,
+    "Liabilities": 371052000,
+    "CurrentLiabilities": 116200000,
+    "ShareholdersEquity": -861000,
+    "Revenue": 22073000,
+    "R&D": 23291000,
+    "NetIncome": -10527000
   }
 ]
