@@ -219,9 +219,379 @@ Final Score = Base Score
 
 ---
 
-## 4. Output Specification
+## 4. Regime Detection Methodology
 
-### 4.1 Ranked Securities Output
+The regime detection system determines the current market environment and adjusts component weights accordingly. This section provides comprehensive documentation of the regime engine architecture.
+
+### 4.1 Regime Definitions
+
+The system recognizes seven distinct market regimes:
+
+| Regime | Description | Primary Triggers |
+|--------|-------------|------------------|
+| **BULL** | Risk-on environment with positive momentum | VIX < 18, XBI outperforming SPY, positive fund flows |
+| **BEAR** | Risk-off environment with negative momentum | VIX > 25, XBI underperforming SPY, negative fund flows |
+| **NEUTRAL** | Balanced market conditions | VIX 18-25, mixed signals |
+| **VOLATILITY_SPIKE** | Acute volatility event | VIX > 30, VIX rate of change > 25% |
+| **SECTOR_ROTATION** | Capital rotating between sectors | XBI vs SPY divergence > 2σ |
+| **RECESSION_RISK** | Macro deterioration signals | Yield curve inversion, credit spreads widening |
+| **CREDIT_CRISIS** | Systemic credit stress | Credit spreads > 500bps, fund flow collapse |
+
+### 4.2 Input Signals
+
+The regime engine ingests multiple market signals with defined thresholds:
+
+#### 4.2.1 Volatility Signals
+
+| Signal | Source | Thresholds |
+|--------|--------|------------|
+| VIX Level | CBOE | < 18 (low), 18-25 (normal), > 25 (elevated), > 30 (spike) |
+| VIX Rate of Change | Calculated | > 25% daily = spike trigger |
+| VIX Term Structure | VIX futures | Contango/backwardation state |
+| Biotech Vol (RVOL) | XBI options | Realized vs implied divergence |
+
+#### 4.2.2 Relative Performance Signals
+
+| Signal | Calculation | Interpretation |
+|--------|-------------|----------------|
+| XBI vs SPY (20-day) | Rolling beta-adjusted return | Sector momentum |
+| XBI vs SPY (60-day) | Rolling beta-adjusted return | Sector trend |
+| Biotech vs Healthcare | XBI vs XLV relative | Subsector rotation |
+| Small vs Large Cap | IWM vs SPY | Risk appetite proxy |
+
+#### 4.2.3 Macro Signals
+
+| Signal | Source | Thresholds |
+|--------|--------|------------|
+| 2s10s Yield Curve | Treasury rates | < 0 = inversion warning |
+| Fed Funds Rate | FRED | Rate change direction |
+| Credit Spreads (HY) | ICE BofA HY Index | > 400bps = stress, > 500bps = crisis |
+| Investment Grade Spreads | ICE BofA IG Index | > 150bps = stress |
+
+#### 4.2.4 Fund Flow Signals
+
+| Signal | Source | Interpretation |
+|--------|--------|----------------|
+| Biotech ETF Flows | XBI, IBB, ARKG | 20-day cumulative flow direction |
+| Healthcare Sector Flows | XLV | Sector allocation proxy |
+| Equity Fund Flows | ICI data | Broad risk appetite |
+
+### 4.3 VIX Kalman Filter
+
+The regime engine applies a Kalman filter to smooth VIX observations and reduce noise:
+
+```
+Kalman Filter Parameters:
+├── Process Noise (Q):     0.01
+├── Measurement Noise (R): 0.1
+├── Initial Estimate:      Current VIX
+└── Initial Error:         1.0
+
+State Update:
+1. Predict: x_pred = x_prev (random walk assumption)
+2. Predict error: P_pred = P_prev + Q
+3. Kalman gain: K = P_pred / (P_pred + R)
+4. Update: x_new = x_pred + K × (measurement - x_pred)
+5. Update error: P_new = (1 - K) × P_pred
+```
+
+**Purpose**: The Kalman filter prevents regime whipsaw on single-day VIX spikes by smoothing the signal while remaining responsive to genuine regime shifts.
+
+**Smoothing Factor**: Effective smoothing of ~0.9 (90% prior, 10% new observation), resulting in 3-5 day lag for regime transitions.
+
+### 4.4 Hidden Markov Model (HMM)
+
+The regime engine uses a Hidden Markov Model to estimate regime probabilities:
+
+#### 4.4.1 State Space
+
+```
+States = {BULL, BEAR, NEUTRAL, VOLATILITY_SPIKE,
+          SECTOR_ROTATION, RECESSION_RISK, CREDIT_CRISIS}
+```
+
+#### 4.4.2 Transition Probability Matrix
+
+The HMM uses empirically-derived transition probabilities:
+
+```
+                   To:
+           BULL  BEAR  NEUT  VSPK  SROT  RESK  CRIS
+From:     ┌─────────────────────────────────────────┐
+BULL      │ 0.85  0.03  0.08  0.02  0.01  0.01  0.00│
+BEAR      │ 0.03  0.82  0.10  0.03  0.01  0.01  0.00│
+NEUTRAL   │ 0.15  0.15  0.60  0.05  0.03  0.02  0.00│
+VOL_SPIKE │ 0.05  0.25  0.20  0.45  0.03  0.02  0.00│
+SECT_ROT  │ 0.20  0.15  0.40  0.05  0.18  0.02  0.00│
+RECESS    │ 0.02  0.15  0.10  0.08  0.05  0.55  0.05│
+CREDIT    │ 0.01  0.10  0.05  0.10  0.02  0.12  0.60│
+          └─────────────────────────────────────────┘
+```
+
+**Key Properties**:
+- High diagonal values (persistence): Regimes tend to persist
+- NEUTRAL acts as transition hub (highest off-diagonal mass)
+- Crisis regimes (RECESSION_RISK, CREDIT_CRISIS) are sticky once entered
+- VOLATILITY_SPIKE is transient (low diagonal)
+
+#### 4.4.3 Emission Probabilities
+
+Each regime has associated emission distributions for observable signals:
+
+| Regime | VIX Mean | XBI-SPY Mean | Credit Spread Mean |
+|--------|----------|--------------|-------------------|
+| BULL | 15 ± 3 | +0.5% ± 1% | 350bps ± 50 |
+| BEAR | 28 ± 5 | -1.5% ± 2% | 450bps ± 75 |
+| NEUTRAL | 20 ± 4 | 0% ± 1.5% | 380bps ± 60 |
+| VOL_SPIKE | 35 ± 8 | -2% ± 3% | 500bps ± 100 |
+| RECESSION | 25 ± 6 | -1% ± 2% | 480bps ± 80 |
+| CREDIT_CRISIS | 40 ± 10 | -3% ± 4% | 600bps ± 150 |
+
+### 4.5 Ensemble Classification
+
+The regime engine uses ensemble classification combining multiple methods:
+
+#### 4.5.1 Score-Based Classifier
+
+Deterministic rules based on signal thresholds:
+
+```python
+def score_based_regime(signals):
+    vix = signals["vix_smoothed"]
+    xbi_rel = signals["xbi_vs_spy_20d"]
+    credit = signals["hy_spread"]
+
+    # Crisis detection (highest priority)
+    if credit > 500 and vix > 30:
+        return "CREDIT_CRISIS"
+
+    # Volatility spike detection
+    if vix > 30 and signals["vix_roc"] > 0.25:
+        return "VOLATILITY_SPIKE"
+
+    # Recession risk detection
+    if signals["yield_curve"] < 0 and credit > 400:
+        return "RECESSION_RISK"
+
+    # Bull/Bear/Neutral classification
+    bull_score = sum([
+        vix < 18,
+        xbi_rel > 0.01,
+        signals["fund_flows"] > 0,
+        credit < 380,
+    ])
+
+    if bull_score >= 3:
+        return "BULL"
+    elif bull_score <= 1:
+        return "BEAR"
+    else:
+        return "NEUTRAL"
+```
+
+#### 4.5.2 Ensemble Combination
+
+The final regime is determined by combining classifiers:
+
+```
+Final Regime = weighted_vote([
+    (score_based_regime, weight=0.4),
+    (hmm_viterbi_regime, weight=0.35),
+    (hmm_forward_regime, weight=0.25),
+])
+```
+
+**Confidence Score**: The ensemble also outputs a confidence score (0-1) based on classifier agreement:
+- All three agree: confidence = 1.0
+- Two agree: confidence = 0.7
+- All disagree: confidence = 0.4 (defaults to NEUTRAL)
+
+### 4.6 Staleness Gating
+
+The regime engine implements staleness checks on input data:
+
+#### 4.6.1 Staleness Thresholds
+
+| Signal Category | Max Age | Fallback Behavior |
+|-----------------|---------|-------------------|
+| VIX | 1 trading day | Use last known + uncertainty haircut |
+| XBI/SPY prices | 1 trading day | Use last known + uncertainty haircut |
+| Credit spreads | 2 trading days | Use last known + 10% confidence reduction |
+| Fund flows | 5 trading days | Ignore signal, rely on others |
+| Fed rates | 30 days | Use last known (slow-moving) |
+
+#### 4.6.2 Confidence Haircuts
+
+When data is stale, confidence is reduced:
+
+```
+haircut = min(0.3, staleness_days × 0.05)
+adjusted_confidence = base_confidence × (1 - haircut)
+```
+
+### 4.7 Signal Weight Adjustments by Regime
+
+Once the regime is detected, component weights are adjusted:
+
+#### 4.7.1 BEAR Regime Adjustments
+
+```python
+BEAR_ADJUSTMENTS = {
+    "momentum": {
+        "weight_multiplier": Decimal("0.6"),    # Reduce momentum influence
+        "max_contribution_cap": Decimal("30"),   # Cap at 30% of normal
+    },
+    "financial": {
+        "severity_multiplier": Decimal("1.25"), # Amplify runway penalties
+        "liquidity_threshold_mult": Decimal("1.5"),  # Tighter liquidity
+    },
+    "catalyst": {
+        "weight_multiplier": Decimal("1.0"),    # Unchanged
+    },
+    "valuation": {
+        "upside_cap": Decimal("55"),            # Cap optimistic valuations
+    },
+}
+```
+
+#### 4.7.2 BULL Regime Adjustments
+
+```python
+BULL_ADJUSTMENTS = {
+    "momentum": {
+        "weight_multiplier": Decimal("1.0"),    # Full momentum
+    },
+    "financial": {
+        "severity_multiplier": Decimal("0.85"), # Soften penalties
+    },
+    "catalyst": {
+        "weight_multiplier": Decimal("1.15"),   # Boost catalysts
+    },
+    "valuation": {
+        "upside_cap": Decimal("100"),           # No cap
+    },
+}
+```
+
+#### 4.7.3 VOLATILITY_SPIKE Adjustments
+
+```python
+VOLATILITY_SPIKE_ADJUSTMENTS = {
+    "momentum": {
+        "weight_multiplier": Decimal("0.3"),    # Heavy dampening
+        "confidence_floor": Decimal("0.5"),     # Force low confidence
+    },
+    "financial": {
+        "severity_multiplier": Decimal("1.5"),  # Heavy penalty amplification
+    },
+    "catalyst": {
+        "weight_multiplier": Decimal("0.8"),    # Slightly reduce
+    },
+    "short_interest": {
+        "weight_multiplier": Decimal("1.3"),    # Squeeze risk elevated
+    },
+}
+```
+
+### 4.8 Momentum Health Kill Switch
+
+The regime engine includes a kill switch for momentum when signal health degrades:
+
+#### 4.8.1 Information Coefficient (IC) Monitoring
+
+```python
+def check_momentum_health(momentum_signals, lookback=60):
+    """
+    Calculate rolling IC between momentum signal and forward returns.
+    Kill switch triggers if IC drops below threshold.
+    """
+    ic = calculate_ic(
+        momentum_signals["score"],
+        momentum_signals["forward_5d_return"],
+        lookback=lookback
+    )
+
+    if ic < IC_KILL_THRESHOLD:  # -0.05
+        return MomentumHealth.KILLED
+    elif ic < IC_WARNING_THRESHOLD:  # 0.02
+        return MomentumHealth.DEGRADED
+    else:
+        return MomentumHealth.HEALTHY
+```
+
+#### 4.8.2 Kill Switch Effects
+
+| Health State | Momentum Weight | Flag |
+|--------------|-----------------|------|
+| HEALTHY | Base weight | None |
+| DEGRADED | Base × 0.5 | `momentum_ic_degraded` |
+| KILLED | 0 (redistributed) | `momentum_ic_killed` |
+
+When momentum is killed, its weight is redistributed pro-rata to Clinical (50%) and Financial (50%).
+
+### 4.9 Regime Output Specification
+
+The regime engine outputs a structured result:
+
+```json
+{
+  "regime": "BEAR",
+  "confidence": 0.85,
+  "signals": {
+    "vix_raw": 27.5,
+    "vix_smoothed": 26.2,
+    "xbi_vs_spy_20d": -0.012,
+    "xbi_vs_spy_60d": -0.025,
+    "hy_spread": 425,
+    "yield_curve_2s10s": -0.15,
+    "fund_flows_20d": -250000000
+  },
+  "classifier_votes": {
+    "score_based": "BEAR",
+    "hmm_viterbi": "BEAR",
+    "hmm_forward": "NEUTRAL"
+  },
+  "staleness_flags": [],
+  "adjustments_applied": {
+    "momentum_weight_mult": 0.6,
+    "financial_severity_mult": 1.25,
+    "valuation_upside_cap": 55
+  },
+  "momentum_health": "HEALTHY",
+  "as_of_date": "2026-01-28T16:00:00Z"
+}
+```
+
+### 4.10 Regime Transition Logging
+
+All regime transitions are logged for audit:
+
+```
+[2026-01-15 16:00:00] REGIME_TRANSITION: NEUTRAL → BEAR
+  - Trigger: VIX crossed 25 threshold (25.3)
+  - Confidence: 0.78
+  - Duration in prior regime: 12 days
+  - Classifier agreement: 2/3
+
+[2026-01-22 16:00:00] REGIME_TRANSITION: BEAR → BEAR (reconfirmed)
+  - Confidence increased: 0.78 → 0.91
+  - VIX: 28.1, XBI-SPY: -1.8%
+```
+
+### 4.11 Backtesting Considerations
+
+The regime engine is designed for PIT-safe backtesting:
+
+1. **No Look-Ahead**: All signals use as-of-date data only
+2. **Staleness Simulation**: Historical staleness patterns replicated
+3. **Transition Lag**: 1-day lag enforced between signal observation and regime change
+4. **HMM Warm-Up**: Requires 30 days of history before regime output is valid
+
+---
+
+## 5. Output Specification
+
+### 5.1 Ranked Securities Output
 
 | Field | Type | Description |
 |-------|------|-------------|
@@ -231,8 +601,10 @@ Final Score = Base Score
 | score_breakdown | object | Component details |
 | flags | array | All applied adjustments |
 | effective_weights | object | Final component weights |
+| regime | string | Active regime at scoring time |
+| regime_confidence | decimal | Regime classification confidence |
 
-### 4.2 Score Breakdown Structure
+### 5.2 Score Breakdown Structure
 
 ```json
 {
@@ -246,6 +618,11 @@ Final Score = Base Score
       "weight_effective": 0.2859
     }
   ],
+  "regime_info": {
+    "regime": "BEAR",
+    "confidence": 0.85,
+    "adjustments": ["momentum_gated", "financial_amplified"]
+  },
   "final": {
     "pre_penalty_score": 68.01,
     "post_cap_score": 68.01,
@@ -254,7 +631,7 @@ Final Score = Base Score
 }
 ```
 
-### 4.3 Diagnostic Flags
+### 5.3 Diagnostic Flags
 
 Flags provide full transparency on score adjustments:
 
@@ -266,12 +643,15 @@ Flags provide full transparency on score adjustments:
 | Existential | `existential_runway`, `existential_binary_clinical_risk` |
 | Asymmetric | `clinical_asymmetric_upside_dampened` |
 | Contradiction | `momentum_liquidity_conflict` |
+| Regime | `regime_bear_active`, `regime_momentum_gated`, `regime_financial_amplified` |
+| Momentum Health | `momentum_ic_degraded`, `momentum_ic_killed` |
+| Staleness | `vix_stale_haircut`, `credit_spread_stale` |
 
 ---
 
-## 5. Expected Behavior
+## 6. Expected Behavior
 
-### 5.1 Distribution Characteristics
+### 6.1 Distribution Characteristics
 
 | Metric | Expected | Rationale |
 |--------|----------|-----------|
@@ -280,7 +660,7 @@ Flags provide full transparency on score adjustments:
 | % below 40 | > 45% | Easy to disappoint |
 | Max score | < 80 | Ceiling enforcement |
 
-### 5.2 Acceptable Failure Modes
+### 6.2 Acceptable Failure Modes
 
 These behaviors are **by design**, not bugs:
 
@@ -289,19 +669,21 @@ These behaviors are **by design**, not bugs:
 3. **Zero financial contribution (~15%)**: SEV2/SEV3 severity gating working correctly
 4. **Sparse data → low scores**: Confidence dampening on uncertain signals
 
-### 5.3 Red Flags (Investigate Immediately)
+### 6.3 Red Flags (Investigate Immediately)
 
 - Mean score > 50
 - Any score > 85
 - SEV3 in top 50 ranks
 - Phase 1 names dominating top 20
 - Hash mismatch on identical inputs
+- Regime stuck for > 90 days without signal support
+- Momentum IC negative for > 30 days
 
 ---
 
-## 6. Testing Framework
+## 7. Testing Framework
 
-### 6.1 Test Coverage
+### 7.1 Test Coverage
 
 | Test Type | Count | Description |
 |-----------|-------|-------------|
@@ -309,8 +691,20 @@ These behaviors are **by design**, not bugs:
 | Integration | 12 | Cross-module data flow |
 | Determinism | 8 | Reproducibility verification |
 | Invariant | 15 | Behavioral constraint checks |
+| Regime tests | 18 | Regime detection and gating |
 
-### 6.2 Sanity Check Framework
+### 7.2 Regime-Specific Tests
+
+| Test | Description |
+|------|-------------|
+| HMM transition | Verify transition probabilities sum to 1 |
+| Kalman convergence | VIX smoother converges in < 10 iterations |
+| Staleness handling | Stale data reduces confidence appropriately |
+| BEAR gating | Momentum capped to 30% in BEAR regime |
+| BULL boost | Catalyst boosted 15% in BULL regime |
+| Kill switch | Momentum zeroed when IC < -0.05 |
+
+### 7.3 Sanity Check Framework
 
 Nine-point validation performed on every production run:
 
@@ -326,9 +720,9 @@ Nine-point validation performed on every production run:
 
 ---
 
-## 7. Governance
+## 8. Governance
 
-### 7.1 Change Control
+### 8.1 Change Control
 
 | Class | Description | Approval |
 |-------|-------------|----------|
@@ -337,8 +731,9 @@ Nine-point validation performed on every production run:
 | C | Threshold adjustment | Quant Lead |
 | D | Bug fix (invariant-preserving) | Quant Lead |
 | E | Documentation/logging | Self-approve |
+| R | Regime threshold changes | IC + Quant Lead |
 
-### 7.2 Prohibited Changes
+### 8.2 Prohibited Changes
 
 Without explicit IC override:
 - Removing severity gates
@@ -346,51 +741,70 @@ Without explicit IC override:
 - Removing existential flaw detection
 - Changing to float arithmetic
 - Allowing valuation to exceed 10% weight
+- Removing regime gating mechanisms
+- Disabling momentum kill switch
+- Modifying HMM transition probabilities without backtest
 
-### 7.3 Monitoring Requirements
+### 8.3 Monitoring Requirements
 
 | Frequency | Metrics |
 |-----------|---------|
-| Daily | Mean drift, top 10 composition, invariants |
-| Weekly | Distribution shape, severity effectiveness |
-| Monthly | Post-catalyst attribution, known-name review |
+| Daily | Mean drift, top 10 composition, invariants, regime state |
+| Weekly | Distribution shape, severity effectiveness, regime transitions |
+| Monthly | Post-catalyst attribution, known-name review, IC health |
+| Quarterly | HMM calibration review, regime threshold validation |
 
 ---
 
-## 8. Limitations & Assumptions
+## 9. Limitations & Assumptions
 
-### 8.1 Known Limitations
+### 9.1 Known Limitations
 
 1. **Data Dependency**: Quality bounded by source data (SEC, trial registries)
 2. **Biotech-Specific**: Not applicable to other healthcare subsectors
 3. **US-Centric**: ADR/foreign listings may have data gaps
 4. **Backward-Looking**: Financial data has reporting lag
+5. **Regime Lag**: 1-3 day lag in regime detection due to smoothing
+6. **HMM Cold Start**: Requires 30-day warm-up for stable regime probabilities
 
-### 8.2 Key Assumptions
+### 9.2 Key Assumptions
 
 1. Historical phase transition rates are predictive
 2. Cash burn rates are relatively stable near-term
 3. Catalyst dates from public sources are accurate
 4. Market regime classification is correct
+5. VIX is a valid proxy for biotech risk environment
+6. HMM transition probabilities remain stable over time
 
-### 8.3 Not Designed For
+### 9.3 Regime-Specific Limitations
+
+| Limitation | Impact | Mitigation |
+|------------|--------|------------|
+| VIX-centric | May miss biotech-specific stress | XBI relative performance as secondary signal |
+| US market hours | Non-US events may lag | Pre-market VIX futures monitoring |
+| Credit spread staleness | Corporate bond data delayed | 2-day tolerance with confidence haircut |
+| Rapid regime shifts | Kalman smoother introduces lag | VIX ROC override for spike detection |
+
+### 9.4 Not Designed For
 
 - Intraday trading signals
 - Options strategy construction
 - Macro/sector timing
 - Position sizing (separate module)
+- Non-biotech healthcare (pharma, devices, services)
 
 ---
 
-## 9. Version History
+## 10. Version History
 
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0.0 | 2026-01-28 | Initial production release |
+| 1.0.1 | 2026-01-28 | Expanded regime detection documentation |
 
 ---
 
-## 10. Contact & Support
+## 11. Contact & Support
 
 **Model Owner**: Wake Robin Capital Management
 **Documentation**: `/docs/MODEL_DOCUMENTATION.md`
