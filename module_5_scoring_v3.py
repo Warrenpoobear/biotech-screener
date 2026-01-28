@@ -27,6 +27,9 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from common.types import Severity
 
+# Import Financial Module 2: Survivability scoring
+from financial_module_2_survivability import compute_survivability_score
+
 # Import IC enhancement utilities
 from src.modules.ic_enhancements import (
     # Core enhancement functions
@@ -958,6 +961,25 @@ def _score_single_ticker_v3(
     )
     flags.extend(interactions.interaction_flags)
 
+    # 7. Financial Module 2: Survivability & Capital Discipline
+    # Bounded additive term [-10, +5] with 0.06 weight
+    survivability_result = compute_survivability_score(fin_data)
+    survivability_score = Decimal(str(survivability_result.get("score", 0)))
+    survivability_subscores = survivability_result.get("subscores", {})
+    survivability_coverage = survivability_result.get("coverage", [])
+
+    if survivability_score < Decimal("-3"):
+        flags.append("survivability_critical")
+    elif survivability_score < Decimal("0"):
+        flags.append("survivability_warning")
+    elif survivability_score >= Decimal("3"):
+        flags.append("survivability_strong")
+
+    if "missing_cash" in survivability_coverage:
+        flags.append("survivability_missing_cash")
+    if "missing_burn_data" in survivability_coverage:
+        flags.append("survivability_missing_burn")
+
     # =========================================================================
     # CONFIDENCE EXTRACTION
     # =========================================================================
@@ -1201,7 +1223,12 @@ def _score_single_ticker_v3(
 
     delta_bonus = (cat_delta / Decimal("25")).quantize(SCORE_PRECISION)
 
-    final_score = _clamp(post_vol + delta_bonus, Decimal("0"), Decimal("100"))
+    # Financial Module 2: Survivability contribution (bounded additive term)
+    # Weight 0.06, score range [-10, +5] -> contribution range [-0.6, +0.3]
+    SURVIVABILITY_WEIGHT = Decimal("0.06")
+    survivability_contribution = (survivability_score * SURVIVABILITY_WEIGHT).quantize(SCORE_PRECISION)
+
+    final_score = _clamp(post_vol + delta_bonus + survivability_contribution, Decimal("0"), Decimal("100"))
     final_score = _quantize_score(final_score)
 
     # =========================================================================
@@ -1224,6 +1251,8 @@ def _score_single_ticker_v3(
         "vol_bucket": vol_adj.vol_bucket.value,
         "catalyst_decay": decay.decay_factor,
         "interaction_adjustment": interactions.total_interaction_adjustment,
+        "survivability_score": survivability_score,
+        "survivability_contribution": survivability_contribution,
     }
 
     determinism_hash = _compute_determinism_hash(
@@ -1390,6 +1419,13 @@ def _score_single_ticker_v3(
             "top_tier_partners": partnership_top_tier,
             "total_deal_value_mm": str(partnership_total_value),
             "top_partners": partnership_top_partners,
+        },
+        "survivability_signal": {
+            "score": str(survivability_score),
+            "contribution": str(survivability_contribution),
+            "subscores": {k: str(v) for k, v in survivability_subscores.items()},
+            "coverage": survivability_coverage,
+            "metrics": survivability_result.get("metrics", {}),
         },
         "interaction_terms": {
             "total_adjustment": str(interactions.total_interaction_adjustment),
