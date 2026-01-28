@@ -634,6 +634,144 @@ def _convert_holdings_to_coinvest(holdings_snapshots: Dict[str, Any]) -> Dict[st
     return coinvest_signals
 
 
+def compute_momentum_from_price_history(
+    price_history_path: Path,
+    as_of_date: str,
+    market_data_by_ticker: Dict[str, Dict],
+    xbi_ticker: str = "XBI"
+) -> int:
+    """
+    Compute momentum returns from price_history.csv and inject into market_data.
+
+    Computes return_20d, return_60d, return_120d for each ticker and XBI benchmark.
+
+    Args:
+        price_history_path: Path to price_history.csv
+        as_of_date: Analysis date (YYYY-MM-DD)
+        market_data_by_ticker: Dict to inject returns into (modified in place)
+        xbi_ticker: Benchmark ticker (default XBI)
+
+    Returns:
+        Number of tickers enriched with momentum data
+    """
+    import csv
+    from datetime import datetime, timedelta
+
+    if not price_history_path.exists():
+        logger.warning(f"Price history file not found: {price_history_path}")
+        return 0
+
+    # Parse as_of_date
+    try:
+        ref_date = datetime.strptime(as_of_date, "%Y-%m-%d").date()
+    except ValueError:
+        logger.warning(f"Invalid as_of_date format: {as_of_date}")
+        return 0
+
+    # Load price history into dict: ticker -> [(date, close), ...]
+    logger.info(f"Loading price history from {price_history_path}...")
+    prices_by_ticker = {}
+
+    with open(price_history_path, 'r', encoding='utf-8') as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            ticker = row.get('ticker', '').upper()
+            date_str = row.get('date', '')
+            close_str = row.get('close', '')
+
+            if not ticker or not date_str or not close_str:
+                continue
+
+            try:
+                row_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+                close_price = float(close_str)
+            except (ValueError, TypeError):
+                continue
+
+            if ticker not in prices_by_ticker:
+                prices_by_ticker[ticker] = []
+            prices_by_ticker[ticker].append((row_date, close_price))
+
+    logger.info(f"Loaded price history for {len(prices_by_ticker)} tickers")
+
+    # Sort each ticker's prices by date (most recent first for easy lookups)
+    for ticker in prices_by_ticker:
+        prices_by_ticker[ticker].sort(key=lambda x: x[0], reverse=True)
+
+    def get_return(ticker: str, days_back: int) -> Optional[float]:
+        """Get return over specified trading days (approximate)."""
+        if ticker not in prices_by_ticker:
+            return None
+
+        prices = prices_by_ticker[ticker]
+        if len(prices) < 2:
+            return None
+
+        # Find most recent price on or before ref_date
+        current_price = None
+        current_date = None
+        for dt, price in prices:
+            if dt <= ref_date:
+                current_price = price
+                current_date = dt
+                break
+
+        if current_price is None:
+            return None
+
+        # Find price approximately days_back trading days ago
+        # Trading days ≈ calendar days * 252/365
+        calendar_days_back = int(days_back * 365 / 252)
+        target_date = current_date - timedelta(days=calendar_days_back)
+
+        past_price = None
+        for dt, price in prices:
+            if dt <= target_date:
+                past_price = price
+                break
+
+        if past_price is None or past_price == 0:
+            return None
+
+        return (current_price / past_price) - 1.0
+
+    # Compute XBI benchmark returns first
+    xbi_return_20d = get_return(xbi_ticker, 20)
+    xbi_return_60d = get_return(xbi_ticker, 60)
+    xbi_return_120d = get_return(xbi_ticker, 120)
+
+    if xbi_return_60d is not None:
+        logger.info(f"XBI benchmark returns: 20d={xbi_return_20d:.2%}, 60d={xbi_return_60d:.2%}, 120d={xbi_return_120d:.2%}")
+    else:
+        logger.warning(f"Could not compute XBI benchmark returns - XBI not in price history")
+
+    # Compute returns for each ticker in market_data
+    enriched_count = 0
+    for ticker in market_data_by_ticker:
+        # Skip if already has return data (don't overwrite 13F momentum)
+        if market_data_by_ticker[ticker].get("return_60d") is not None:
+            continue
+
+        ticker_upper = ticker.upper()
+        return_20d = get_return(ticker_upper, 20)
+        return_60d = get_return(ticker_upper, 60)
+        return_120d = get_return(ticker_upper, 120)
+
+        if return_60d is not None:
+            market_data_by_ticker[ticker]["return_20d"] = return_20d
+            market_data_by_ticker[ticker]["return_60d"] = return_60d
+            market_data_by_ticker[ticker]["return_120d"] = return_120d
+            market_data_by_ticker[ticker]["xbi_return_20d"] = xbi_return_20d
+            market_data_by_ticker[ticker]["xbi_return_60d"] = xbi_return_60d
+            market_data_by_ticker[ticker]["xbi_return_120d"] = xbi_return_120d
+            market_data_by_ticker[ticker]["trading_days_available"] = len(prices_by_ticker.get(ticker_upper, []))
+            market_data_by_ticker[ticker]["_momentum_source"] = "price_history"
+            enriched_count += 1
+
+    logger.info(f"Enriched {enriched_count} tickers with momentum data from price history")
+    return enriched_count
+
+
 def write_json_output(filepath: Path, data: Dict[str, Any], secure: bool = True) -> None:
     """
     Write JSON output with deterministic formatting and security.
@@ -1479,6 +1617,21 @@ def run_screening_pipeline(
                 ticker = record['ticker'].upper()  # Normalize to uppercase for consistent lookups
                 market_data_by_ticker[ticker] = record
         logger.info(f"  Market data indexed for {len(market_data_by_ticker)} tickers")
+
+    # Compute momentum returns from price history
+    # This enriches market_data_by_ticker with return_20d, return_60d, return_120d and XBI benchmarks
+    price_history_path = data_dir / "price_history.csv"
+    if price_history_path.exists() and market_data_by_ticker:
+        momentum_enriched = compute_momentum_from_price_history(
+            price_history_path=price_history_path,
+            as_of_date=as_of_date,
+            market_data_by_ticker=market_data_by_ticker,
+        )
+        if momentum_enriched > 0:
+            logger.info(f"  Momentum data computed for {momentum_enriched} tickers")
+    else:
+        if not price_history_path.exists():
+            logger.info("  Price history not found, skipping momentum computation")
 
     coinvest_signals = None
     if enable_coinvest:
@@ -2653,7 +2806,9 @@ Module 3 Catalyst Detection:
     parser.add_argument(
         "--enable-coinvest",
         action="store_true",
-        help="Enable co-invest overlay (requires coinvest_signals.json in data-dir)",
+        default=True,
+        help="Enable co-invest overlay (requires coinvest_signals.json or holdings_snapshots.json in data-dir). "
+             "Enabled by default.",
     )
 
     parser.add_argument(
