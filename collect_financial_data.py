@@ -56,7 +56,7 @@ def get_company_facts(cik: str, ticker: str) -> Optional[Dict]:
             data = response.json()
             facts = data.get('facts', {}).get('us-gaap', {})
             
-            # Key metrics to extract
+            # Key metrics to extract (single XBRL tag -> friendly name)
             metrics = {
                 'Assets': 'Assets',
                 'AssetsCurrent': 'CurrentAssets',
@@ -67,7 +67,6 @@ def get_company_facts(cik: str, ticker: str) -> Optional[Dict]:
                 'MarketableSecuritiesCurrent': 'MarketableSecurities',
                 'ShortTermInvestments': 'ShortTermInvestments',
                 'AvailableForSaleSecuritiesCurrent': 'AvailableForSaleSecurities',
-                'Revenues': 'Revenue',
                 'CostOfRevenue': 'COGS',
                 'ResearchAndDevelopmentExpense': 'R&D',
                 'NetIncomeLoss': 'NetIncome',
@@ -75,21 +74,48 @@ def get_company_facts(cik: str, ticker: str) -> Optional[Dict]:
                 'LongTermDebtCurrent': 'LongTermDebtCurrent',
                 'ConvertibleNotesPayable': 'ConvertibleDebt',
             }
-            
+
+            # Metrics with fallback tags (try in order, use first found)
+            metrics_with_fallback = {
+                'Revenue': [
+                    'RevenueFromContractWithCustomerExcludingAssessedTax',  # ASC 606 (2018+)
+                    'Revenues',  # Legacy
+                    'SalesRevenueNet',  # Alternative
+                    'SalesRevenueGoodsNet',  # Product-specific
+                ],
+            }
+
             financial_data = {"ticker": ticker, "cik": cik}
-            
-            # Extract most recent values
+
+            # Extract most recent values (simple metrics)
             for gaap_key, friendly_name in metrics.items():
                 if gaap_key in facts:
                     units = facts[gaap_key].get('units', {})
-                    
+
                     if 'USD' in units:
                         values = units['USD']
                         recent = sorted(values, key=lambda x: x.get('end', ''), reverse=True)
-                        
+
                         if recent:
                             financial_data[friendly_name] = recent[0].get('val')
                             financial_data[f"{friendly_name}_date"] = recent[0].get('end')
+
+            # Extract metrics with fallback (use most recent across all tags)
+            for friendly_name, tag_list in metrics_with_fallback.items():
+                best_val, best_date = None, None
+                for gaap_key in tag_list:
+                    if gaap_key in facts:
+                        units = facts[gaap_key].get('units', {})
+                        if 'USD' in units:
+                            values = units['USD']
+                            recent = sorted(values, key=lambda x: x.get('end', ''), reverse=True)
+                            if recent:
+                                val, dt = recent[0].get('val'), recent[0].get('end')
+                                if best_date is None or (dt and dt > best_date):
+                                    best_val, best_date = val, dt
+                if best_val is not None:
+                    financial_data[friendly_name] = best_val
+                    financial_data[f"{friendly_name}_date"] = best_date
             
             financial_data['collected_at'] = date.today().isoformat()
             return financial_data
