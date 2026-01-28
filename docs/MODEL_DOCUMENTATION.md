@@ -130,6 +130,64 @@ The Biotech Alpha Screener is a quantitative ranking system designed to identify
 
 **Confidence Gating**: Requires minimum price history; low-confidence signals dampened.
 
+#### 2.5.1 Smart Money: Elite 13F Manager Tracking
+
+The smart money signal tracks 13F filings from 11 elite biotech-focused institutional managers, weighted by tier and investment style.
+
+**Selection Criteria**:
+- Biotech/healthcare specialist (>50% portfolio in life sciences)
+- Long-term track record (10+ years)
+- Significant AUM ($1B+ in 13F securities)
+- Known for deep scientific/clinical due diligence
+
+**Tier 1 — Core Biotech Specialists** (Weight: 1.0×)
+
+| Manager | CIK | Style | Focus Areas |
+|---------|-----|-------|-------------|
+| Baker Bros. Advisors LP | 1263508 | Concentrated Conviction | Rare disease, oncology, genetic medicine |
+| RA Capital Management | 1346824 | Crossover Specialist | Platform technologies, rare disease, oncology |
+| BVF Inc. | 1056807 | Value Activist | Undervalued biotech, activist situations |
+| EcoR1 Capital | 1587114 | Scientific Deep-Dive | Genetic medicine, cell therapy, rare disease |
+
+**Tier 2 — Excellent Biotech Specialists** (Weight: 0.7×)
+
+| Manager | CIK | Style | Focus Areas |
+|---------|-----|-------|-------------|
+| OrbiMed Advisors | 1055951 | Diversified Healthcare | Broad healthcare, biotech, medtech |
+| Redmile Group | 1425738 | Crossover Specialist | Clinical-stage, platform technologies |
+| Deerfield Management | 1009258 | Multi-Strategy Healthcare | Royalties, structured finance, equity |
+| Farallon Capital | 909661 | Event-Driven | Healthcare events, M&A, special situations |
+| Citadel Advisors | 1423053 | Quantitative Fundamental | Broad market, healthcare allocation |
+
+**Tier 3 — Notable Biotech Allocators** (Weight: 0.4×)
+
+| Manager | CIK | Style | Focus Areas |
+|---------|-----|-------|-------------|
+| Avoro Capital Advisors | 1633313 | Concentrated Biotech | Clinical-stage, rare disease |
+| Cormorant Asset Management | 1583977 | Healthcare Specialist | Biotech, medtech, healthcare services |
+
+**Style Conviction Multipliers**:
+
+| Style | Multiplier | Rationale |
+|-------|------------|-----------|
+| Concentrated Conviction | 1.2× | High conviction per position |
+| Scientific Deep-Dive | 1.1× | Deep fundamental research |
+| Crossover Specialist | 1.0× | Public/private expertise |
+| Value Activist | 1.0× | Catalyst-focused |
+| Diversified Healthcare | 0.8× | Broader mandate |
+| Multi-Strategy | 0.7× | Healthcare is one sleeve |
+| Quantitative | 0.5× | Less fundamental signal |
+| Event-Driven | 0.6× | Shorter-term focus |
+
+**Signal Calculation**:
+```
+manager_weight = tier_weight × style_multiplier
+position_signal = Σ(manager_weight × position_change)
+smart_money_score = normalize(position_signal, lookback=4 quarters)
+```
+
+**Data Freshness**: 13F filings have 45-day lag from quarter-end. Signal is marked stale if most recent filing is >60 days old.
+
 ### 2.6 Short Interest (6% base weight)
 
 **Purpose**: Assess crowding risk and squeeze potential.
@@ -801,6 +859,7 @@ Without explicit IC override:
 |---------|------|---------|
 | 1.0.0 | 2026-01-28 | Initial production release |
 | 1.0.1 | 2026-01-28 | Expanded regime detection documentation |
+| 1.0.2 | 2026-01-28 | Added 13F elite manager tracking documentation |
 
 ---
 
