@@ -1,0 +1,101 @@
+[
+  {
+    "ticker": "ACAD",
+    "drug_name": "Pimavanserin",
+    "indication": "Major Depressive Disorder",
+    "pdufa_date": "2026-04-03",
+    "submission_type": "sNDA",
+    "confidence": "confirmed",
+    "source": "company_guidance"
+  },
+  {
+    "ticker": "AXSM",
+    "drug_name": "AXS-05",
+    "indication": "Alzheimer's Disease Agitation",
+    "pdufa_date": "2026-05-22",
+    "submission_type": "NDA",
+    "confidence": "confirmed",
+    "source": "company_guidance"
+  },
+  {
+    "ticker": "CYTK",
+    "drug_name": "Aficamten",
+    "indication": "Hypertrophic Cardiomyopathy",
+    "pdufa_date": "2026-03-28",
+    "submission_type": "NDA",
+    "confidence": "confirmed",
+    "source": "company_guidance"
+  },
+  {
+    "ticker": "INSM",
+    "drug_name": "Brensocatib",
+    "indication": "Bronchiectasis",
+    "pdufa_date": "2026-03-14",
+    "submission_type": "NDA",
+    "confidence": "confirmed",
+    "source": "company_guidance"
+  },
+  {
+    "ticker": "KRYS",
+    "drug_name": "KarXT",
+    "indication": "Schizophrenia",
+    "pdufa_date": "2026-02-28",
+    "submission_type": "NDA",
+    "confidence": "confirmed",
+    "source": "company_guidance"
+  },
+  {
+    "ticker": "MRNA",
+    "drug_name": "mRNA-1345",
+    "indication": "RSV Vaccine",
+    "pdufa_date": "2026-05-12",
+    "submission_type": "BLA",
+    "confidence": "estimated",
+    "source": "analyst_estimate"
+  },
+  {
+    "ticker": "NBIX",
+    "drug_name": "Elahere",
+    "indication": "Ovarian Cancer 2L",
+    "pdufa_date": "2026-04-15",
+    "submission_type": "sBLA",
+    "confidence": "confirmed",
+    "source": "company_guidance"
+  },
+  {
+    "ticker": "REGN",
+    "drug_name": "Dupixent",
+    "indication": "COPD",
+    "pdufa_date": "2026-06-27",
+    "submission_type": "sBLA",
+    "confidence": "confirmed",
+    "source": "company_guidance"
+  },
+  {
+    "ticker": "RVMD",
+    "drug_name": "RVT-3101",
+    "indication": "Ulcerative Colitis",
+    "pdufa_date": "2026-07-15",
+    "submission_type": "BLA",
+    "confidence": "estimated",
+    "source": "analyst_estimate"
+  },
+  {
+    "ticker": "SRPT",
+    "drug_name": "Elevidys",
+    "indication": "DMD (Full Approval)",
+    "pdufa_date": "2026-06-21",
+    "submission_type": "sBLA",
+    "confidence": "confirmed",
+    "source": "company_guidance"
+  },
+  {
+    "ticker": "VRTX",
+    "drug_name": "VX-548",
+    "indication": "Acute Pain",
+    "pdufa_date": "2026-03-30",
+    "submission_type": "NDA",
+    "confidence": "confirmed",
+    "source": "company_guidance"
+  }
+]

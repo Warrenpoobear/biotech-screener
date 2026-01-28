@@ -114,6 +114,10 @@ class Module3Config:
         self.enable_time_decay = True
         self.time_decay_config = TimeDecayConfig()
 
+        # Corporate catalyst config
+        self.enable_corporate_catalysts = True
+        self.corporate_catalysts_file = "corporate_catalysts.json"
+
     @classmethod
     def from_dict(cls, config_dict: Dict[str, Any]) -> 'Module3Config':
         """Create config from dict"""
@@ -134,6 +138,12 @@ class Module3Config:
             config.enable_time_decay = config_dict['enable_time_decay']
         if 'time_decay_config' in config_dict:
             config.time_decay_config = TimeDecayConfig.from_dict(config_dict['time_decay_config'])
+
+        # Corporate catalyst settings
+        if 'enable_corporate_catalysts' in config_dict:
+            config.enable_corporate_catalysts = config_dict['enable_corporate_catalysts']
+        if 'corporate_catalysts_file' in config_dict:
+            config.corporate_catalysts_file = config_dict['corporate_catalysts_file']
 
         return config
 
@@ -187,6 +197,180 @@ def convert_calendar_catalyst_to_v2(
         confidence=confidence,
         disclosed_at=calendar_catalyst.target_date.isoformat(),  # Use target date as disclosed_at
     )
+
+
+# ============================================================================
+# CORPORATE CATALYST LOADING AND CONVERSION
+# ============================================================================
+
+def load_corporate_catalysts(
+    data_dir: Path,
+    filename: str = "corporate_catalysts.json",
+    as_of_date: Optional[date] = None,
+) -> List[Dict[str, Any]]:
+    """
+    Load corporate catalyst events from JSON file.
+
+    Args:
+        data_dir: Directory containing the corporate catalysts file
+        filename: Name of the corporate catalysts file
+        as_of_date: Filter events to only include those on or after this date
+
+    Returns:
+        List of corporate catalyst event dicts
+    """
+    filepath = data_dir / filename
+    if not filepath.exists():
+        logger.debug(f"Corporate catalysts file not found: {filepath}")
+        return []
+
+    try:
+        with open(filepath, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+
+        events = data.get('events', [])
+
+        # Filter events by as_of_date if provided
+        if as_of_date:
+            filtered_events = []
+            for event in events:
+                event_date_str = event.get('event_date')
+                if event_date_str:
+                    try:
+                        event_date = date.fromisoformat(event_date_str)
+                        # Only include future events (on or after as_of_date)
+                        if event_date >= as_of_date:
+                            filtered_events.append(event)
+                    except ValueError:
+                        continue
+            return filtered_events
+
+        return events
+
+    except Exception as e:
+        logger.warning(f"Error loading corporate catalysts: {e}")
+        return []
+
+
+def convert_corporate_catalyst_to_v2(
+    event: Dict[str, Any],
+    as_of_date: date,
+) -> Optional[CatalystEventV2]:
+    """
+    Convert corporate catalyst event dict to CatalystEventV2.
+
+    Maps corporate event types (FDA_PDUFA_DATE, EARNINGS_RELEASE, etc.)
+    to CatalystEventV2 format for scoring integration.
+    """
+    ticker = event.get('ticker')
+    event_type_str = event.get('event_type')
+    event_date_str = event.get('event_date')
+
+    if not ticker or not event_type_str or not event_date_str:
+        return None
+
+    # Map event type string to EventType enum
+    try:
+        event_type = EventType(event_type_str)
+    except ValueError:
+        logger.debug(f"Unknown corporate event type: {event_type_str}")
+        return None
+
+    # Get severity from mapping
+    severity = EVENT_SEVERITY_MAP.get(event_type, EventSeverity.POSITIVE)
+
+    # Map confidence string to ConfidenceLevel
+    confidence_str = event.get('confidence', 'MED').upper()
+    if confidence_str == 'HIGH':
+        confidence = ConfidenceLevel.HIGH
+    elif confidence_str == 'LOW':
+        confidence = ConfidenceLevel.LOW
+    else:
+        confidence = ConfidenceLevel.MED
+
+    # Calculate days until event
+    try:
+        event_date = date.fromisoformat(event_date_str)
+        days_until = (event_date - as_of_date).days
+    except ValueError:
+        days_until = 0
+
+    # Build event name/description
+    event_name = event.get('event_name', event_type_str)
+    drug_name = event.get('drug_name', '')
+    indication = event.get('indication', '')
+
+    # Create descriptive new_value
+    if drug_name:
+        new_value = f"{days_until}d_ahead: {drug_name}"
+        if indication:
+            new_value += f" ({indication})"
+    else:
+        new_value = f"{days_until}d_ahead"
+
+    # Source mapping
+    source_map = {
+        'FDA_PDUFA_DATE': 'FDA_CALENDAR',
+        'FDA_ADCOM': 'FDA_CALENDAR',
+        'FDA_SUBMISSION': 'FDA_CALENDAR',
+        'FDA_APPROVAL': 'FDA_CALENDAR',
+        'FDA_CRL': 'FDA_CALENDAR',
+        'FDA_DESIGNATION': 'FDA_CALENDAR',
+        'EARNINGS_RELEASE': 'CORPORATE_CALENDAR',
+        'CONFERENCE_PRESENTATION': 'CORPORATE_CALENDAR',
+        'INVESTOR_DAY': 'CORPORATE_CALENDAR',
+        'DATA_READOUT': 'COMPANY_GUIDANCE',
+        'DATA_PRESENTATION': 'COMPANY_GUIDANCE',
+        'DATA_PUBLICATION': 'COMPANY_GUIDANCE',
+        'PARTNERSHIP': 'CORPORATE_EVENT',
+        'MA_ACTIVITY': 'CORPORATE_EVENT',
+        'LICENSING_DEAL': 'CORPORATE_EVENT',
+    }
+    source = source_map.get(event_type_str, 'CORPORATE_CALENDAR')
+
+    return CatalystEventV2(
+        ticker=ticker,
+        nct_id=f"CORP_{event_type_str}_{ticker}_{event_date_str}",  # Synthetic ID for corporate events
+        event_type=event_type,
+        event_severity=severity,
+        event_date=event_date_str,
+        field_changed=f"corporate_{event_type_str.lower()}",
+        prior_value=None,
+        new_value=new_value,
+        source=source,
+        confidence=confidence,
+        disclosed_at=as_of_date.isoformat(),  # Use as_of_date since we don't have disclosure date
+    )
+
+
+def summarize_corporate_catalysts(events: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """
+    Summarize corporate catalyst events for logging.
+    """
+    if not events:
+        return {
+            'total_events': 0,
+            'tickers_with_events': 0,
+            'by_type': {},
+        }
+
+    tickers = set()
+    by_type = {}
+
+    for event in events:
+        ticker = event.get('ticker')
+        event_type = event.get('event_type', 'UNKNOWN')
+
+        if ticker:
+            tickers.add(ticker)
+
+        by_type[event_type] = by_type.get(event_type, 0) + 1
+
+    return {
+        'total_events': len(events),
+        'tickers_with_events': len(tickers),
+        'by_type': by_type,
+    }
 
 
 def convert_legacy_event_to_v2(
@@ -378,6 +562,9 @@ def compute_module_3_catalyst(
 
     if market_calendar is None:
         market_calendar = SimpleMarketCalendar()
+
+    # Derive data_dir from trial_records_path for loading supplementary data
+    data_dir = trial_records_path.parent
 
     if output_dir is None:
         output_dir = state_dir.parent
@@ -761,7 +948,61 @@ def compute_module_3_catalyst(
                    f"{calendar_summary['tickers_with_catalysts']} tickers "
                    f"(new tickers: {calendar_tickers_added}, deduped: {calendar_deduped})")
 
-    # Update total event count for combined diff + calendar events
+    # =========================================================================
+    # MERGE CORPORATE CATALYSTS INTO SCORING PIPELINE
+    # =========================================================================
+    # Load and convert corporate catalyst events (PDUFA dates, earnings, conferences, etc.)
+    corporate_catalysts = []
+    corporate_summary = {'total_events': 0, 'tickers_with_events': 0, 'by_type': {}}
+
+    if config.enable_corporate_catalysts:
+        corporate_catalysts = load_corporate_catalysts(
+            data_dir=data_dir,
+            filename=config.corporate_catalysts_file,
+            as_of_date=as_of_date,
+        )
+        corporate_summary = summarize_corporate_catalysts(corporate_catalysts)
+
+        if corporate_catalysts:
+            logger.info(f"Merging corporate catalysts into scoring pipeline...")
+            corporate_events_added = 0
+            corporate_tickers_added = 0
+
+            for corp_event in corporate_catalysts:
+                ticker = corp_event.get('ticker')
+                if not ticker or ticker not in active_tickers:
+                    continue
+
+                v2_event = convert_corporate_catalyst_to_v2(corp_event, as_of_date)
+                if v2_event is None:
+                    continue
+
+                if ticker not in events_by_ticker_v2:
+                    events_by_ticker_v2[ticker] = []
+                    corporate_tickers_added += 1
+
+                events_by_ticker_v2[ticker].append(v2_event)
+                corporate_events_added += 1
+
+            # Re-dedup and re-sort after merging corporate events
+            if corporate_events_added > 0:
+                corporate_deduped = 0
+                for ticker in events_by_ticker_v2:
+                    events_by_ticker_v2[ticker], deduped = dedup_events(events_by_ticker_v2[ticker])
+                    corporate_deduped += deduped
+                    events_by_ticker_v2[ticker] = sort_events_v2(events_by_ticker_v2[ticker])
+
+                total_deduped += corporate_deduped
+                total_events += corporate_events_added
+
+                logger.info(f"Merged {corporate_events_added} corporate events across "
+                           f"{corporate_summary['tickers_with_events']} tickers "
+                           f"(new tickers: {corporate_tickers_added}, deduped: {corporate_deduped})")
+                logger.info(f"  By type: {corporate_summary['by_type']}")
+        else:
+            logger.debug("No corporate catalysts to merge (file not found or empty)")
+
+    # Update total event count for combined diff + calendar + corporate events
     combined_tickers_with_events = len([t for t in events_by_ticker_v2 if events_by_ticker_v2[t]])
     logger.info(f"Total events for scoring: {total_events} across {combined_tickers_with_events} tickers")
 
@@ -924,6 +1165,9 @@ def compute_module_3_catalyst(
         "delta_diagnostics": delta_diagnostics.to_dict(),
         "staleness": staleness_result.to_dict(),
         "calendar_catalysts": calendar_summary,
+        # New in v2.4: Corporate catalysts (PDUFA, earnings, conferences, etc.)
+        "corporate_catalysts_enabled": config.enable_corporate_catalysts,
+        "corporate_catalysts": corporate_summary,
         # New in v2.2: Time-decay scoring
         "time_decay_enabled": config.enable_time_decay,
         "time_decay_diagnostics": time_decay_diagnostics,

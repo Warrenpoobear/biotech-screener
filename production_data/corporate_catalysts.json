@@ -1,0 +1,179 @@
+{
+  "collection_date": "2026-01-28",
+  "lookahead_days": 180,
+  "summary": {
+    "total_events": 11,
+    "earnings_events": 0,
+    "pdufa_events": 11,
+    "readout_events": 0,
+    "tickers_with_events": 11
+  },
+  "upcoming_conferences": [
+    {
+      "conference_name": "AACR Annual Meeting",
+      "conference_abbrev": "AACR",
+      "start_date": "2026-04-05",
+      "end_date": "2026-04-10",
+      "tier": 1,
+      "days_until": 67
+    },
+    {
+      "conference_name": "AAN Annual Meeting",
+      "conference_abbrev": "AAN",
+      "start_date": "2026-04-15",
+      "end_date": "2026-04-20",
+      "tier": 2,
+      "days_until": 77
+    },
+    {
+      "conference_name": "ASCO Annual Meeting",
+      "conference_abbrev": "ASCO",
+      "start_date": "2026-06-01",
+      "end_date": "2026-06-05",
+      "tier": 1,
+      "days_until": 124
+    },
+    {
+      "conference_name": "EASL Congress",
+      "conference_abbrev": "EASL",
+      "start_date": "2026-06-15",
+      "end_date": "2026-06-19",
+      "tier": 2,
+      "days_until": 138
+    }
+  ],
+  "events": [
+    {
+      "ticker": "KRYS",
+      "event_type": "FDA_PDUFA_DATE",
+      "event_date": "2026-02-28",
+      "event_name": "PDUFA: KarXT",
+      "drug_name": "KarXT",
+      "indication": "Schizophrenia",
+      "submission_type": "NDA",
+      "confidence": "HIGH",
+      "source": "pdufa_file",
+      "days_until": 31
+    },
+    {
+      "ticker": "INSM",
+      "event_type": "FDA_PDUFA_DATE",
+      "event_date": "2026-03-14",
+      "event_name": "PDUFA: Brensocatib",
+      "drug_name": "Brensocatib",
+      "indication": "Bronchiectasis",
+      "submission_type": "NDA",
+      "confidence": "HIGH",
+      "source": "pdufa_file",
+      "days_until": 45
+    },
+    {
+      "ticker": "CYTK",
+      "event_type": "FDA_PDUFA_DATE",
+      "event_date": "2026-03-28",
+      "event_name": "PDUFA: Aficamten",
+      "drug_name": "Aficamten",
+      "indication": "Hypertrophic Cardiomyopathy",
+      "submission_type": "NDA",
+      "confidence": "HIGH",
+      "source": "pdufa_file",
+      "days_until": 59
+    },
+    {
+      "ticker": "VRTX",
+      "event_type": "FDA_PDUFA_DATE",
+      "event_date": "2026-03-30",
+      "event_name": "PDUFA: VX-548",
+      "drug_name": "VX-548",
+      "indication": "Acute Pain",
+      "submission_type": "NDA",
+      "confidence": "HIGH",
+      "source": "pdufa_file",
+      "days_until": 61
+    },
+    {
+      "ticker": "ACAD",
+      "event_type": "FDA_PDUFA_DATE",
+      "event_date": "2026-04-03",
+      "event_name": "PDUFA: Pimavanserin",
+      "drug_name": "Pimavanserin",
+      "indication": "Major Depressive Disorder",
+      "submission_type": "sNDA",
+      "confidence": "HIGH",
+      "source": "pdufa_file",
+      "days_until": 65
+    },
+    {
+      "ticker": "NBIX",
+      "event_type": "FDA_PDUFA_DATE",
+      "event_date": "2026-04-15",
+      "event_name": "PDUFA: Elahere",
+      "drug_name": "Elahere",
+      "indication": "Ovarian Cancer 2L",
+      "submission_type": "sBLA",
+      "confidence": "HIGH",
+      "source": "pdufa_file",
+      "days_until": 77
+    },
+    {
+      "ticker": "MRNA",
+      "event_type": "FDA_PDUFA_DATE",
+      "event_date": "2026-05-12",
+      "event_name": "PDUFA: mRNA-1345",
+      "drug_name": "mRNA-1345",
+      "indication": "RSV Vaccine",
+      "submission_type": "BLA",
+      "confidence": "MED",
+      "source": "pdufa_file",
+      "days_until": 104
+    },
+    {
+      "ticker": "AXSM",
+      "event_type": "FDA_PDUFA_DATE",
+      "event_date": "2026-05-22",
+      "event_name": "PDUFA: AXS-05",
+      "drug_name": "AXS-05",
+      "indication": "Alzheimer's Disease Agitation",
+      "submission_type": "NDA",
+      "confidence": "HIGH",
+      "source": "pdufa_file",
+      "days_until": 114
+    },
+    {
+      "ticker": "SRPT",
+      "event_type": "FDA_PDUFA_DATE",
+      "event_date": "2026-06-21",
+      "event_name": "PDUFA: Elevidys",
+      "drug_name": "Elevidys",
+      "indication": "DMD (Full Approval)",
+      "submission_type": "sBLA",
+      "confidence": "HIGH",
+      "source": "pdufa_file",
+      "days_until": 144
+    },
+    {
+      "ticker": "REGN",
+      "event_type": "FDA_PDUFA_DATE",
+      "event_date": "2026-06-27",
+      "event_name": "PDUFA: Dupixent",
+      "drug_name": "Dupixent",
+      "indication": "COPD",
+      "submission_type": "sBLA",
+      "confidence": "HIGH",
+      "source": "pdufa_file",
+      "days_until": 150
+    },
+    {
+      "ticker": "RVMD",
+      "event_type": "FDA_PDUFA_DATE",
+      "event_date": "2026-07-15",
+      "event_name": "PDUFA: RVT-3101",
+      "drug_name": "RVT-3101",
+      "indication": "Ulcerative Colitis",
+      "submission_type": "BLA",
+      "confidence": "MED",
+      "source": "pdufa_file",
+      "days_until": 168
+    }
+  ]
+}

@@ -403,11 +403,12 @@ def compute_survivability_score(
     if burn_method == "none":
         coverage_flags.append("missing_burn_data")
 
-    # Interest expense
-    interest_cash = to_decimal(financial_data.get('interest_expense_ttm'))
+    # Interest expense (check both normalized and raw SEC field names)
+    interest_cash = to_decimal(financial_data.get('interest_expense_ttm') or
+                                financial_data.get('InterestExpense'))
     if interest_cash < 0:
         interest_cash = abs(interest_cash)
-    if financial_data.get('interest_expense_ttm') is None:
+    if financial_data.get('interest_expense_ttm') is None and financial_data.get('InterestExpense') is None:
         coverage_flags.append("missing_interest_expense")
 
     # Near-term debt
@@ -441,7 +442,8 @@ def compute_survivability_score(
         r_and_d_expense = None
         coverage_flags.append("missing_rd_expense")
 
-    total_opex = to_decimal(financial_data.get('total_operating_expense_ttm'))
+    total_opex = to_decimal(financial_data.get('total_operating_expense_ttm') or
+                             financial_data.get('OperatingExpenses'))
     if total_opex <= 0:
         total_opex = None
         coverage_flags.append("missing_total_opex")

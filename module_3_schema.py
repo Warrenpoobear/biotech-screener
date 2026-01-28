@@ -80,6 +80,52 @@ class EventType(str, Enum):
     # Indicates ongoing trial engagement without specific event type
     CT_ACTIVITY_PROXY = "CT_ACTIVITY_PROXY"
 
+    # ==========================================================================
+    # REGULATORY/FDA EVENTS (non-CT.gov)
+    # ==========================================================================
+    # PDUFA dates - FDA approval decision deadlines
+    FDA_PDUFA_DATE = "FDA_PDUFA_DATE"
+    # Advisory Committee meetings
+    FDA_ADCOM = "FDA_ADCOM"
+    # Complete Response Letter (negative)
+    FDA_CRL = "FDA_CRL"
+    # FDA approval granted
+    FDA_APPROVAL = "FDA_APPROVAL"
+    # Regulatory submission (NDA/BLA/sNDA)
+    FDA_SUBMISSION = "FDA_SUBMISSION"
+    # FDA designation granted (BTD, Fast Track, etc.)
+    FDA_DESIGNATION = "FDA_DESIGNATION"
+
+    # ==========================================================================
+    # CORPORATE EVENTS
+    # ==========================================================================
+    # Earnings release / conference call
+    EARNINGS_RELEASE = "EARNINGS_RELEASE"
+    # Major conference presentation (ASCO, ASH, AACR, JPM, etc.)
+    CONFERENCE_PRESENTATION = "CONFERENCE_PRESENTATION"
+    # Investor day
+    INVESTOR_DAY = "INVESTOR_DAY"
+
+    # ==========================================================================
+    # DATA EVENTS
+    # ==========================================================================
+    # Top-line data readout expected
+    DATA_READOUT = "DATA_READOUT"
+    # Full data presentation
+    DATA_PRESENTATION = "DATA_PRESENTATION"
+    # Peer-reviewed publication
+    DATA_PUBLICATION = "DATA_PUBLICATION"
+
+    # ==========================================================================
+    # BUSINESS DEVELOPMENT
+    # ==========================================================================
+    # Partnership announcement
+    PARTNERSHIP = "PARTNERSHIP"
+    # M&A activity
+    MA_ACTIVITY = "MA_ACTIVITY"
+    # Licensing deal
+    LICENSING_DEAL = "LICENSING_DEAL"
+
     # Unknown (catch-all, zero score)
     UNKNOWN = "UNKNOWN"
 
@@ -115,7 +161,7 @@ class CatalystWindowBucket(str, Enum):
 # =============================================================================
 
 EVENT_SEVERITY_MAP: Dict[EventType, EventSeverity] = {
-    # Critical positive
+    # Critical positive - CT.gov events
     EventType.CT_STATUS_UPGRADE: EventSeverity.POSITIVE,  # Can be critical depending on phase
     EventType.CT_TIMELINE_PULLIN: EventSeverity.POSITIVE,
     EventType.CT_DATE_CONFIRMED_ACTUAL: EventSeverity.POSITIVE,
@@ -125,6 +171,28 @@ EVENT_SEVERITY_MAP: Dict[EventType, EventSeverity] = {
     EventType.CT_ENROLLMENT_STARTED: EventSeverity.POSITIVE,
     EventType.CT_ENROLLMENT_RESUMED: EventSeverity.POSITIVE,
     EventType.CT_ARM_ADDED: EventSeverity.NEUTRAL,
+
+    # Critical positive - Regulatory events
+    EventType.FDA_PDUFA_DATE: EventSeverity.CRITICAL_POSITIVE,
+    EventType.FDA_ADCOM: EventSeverity.CRITICAL_POSITIVE,
+    EventType.FDA_APPROVAL: EventSeverity.CRITICAL_POSITIVE,
+    EventType.FDA_SUBMISSION: EventSeverity.POSITIVE,
+    EventType.FDA_DESIGNATION: EventSeverity.POSITIVE,
+
+    # Critical positive - Data events
+    EventType.DATA_READOUT: EventSeverity.CRITICAL_POSITIVE,
+    EventType.DATA_PRESENTATION: EventSeverity.POSITIVE,
+    EventType.DATA_PUBLICATION: EventSeverity.POSITIVE,
+
+    # Positive - Corporate events
+    EventType.EARNINGS_RELEASE: EventSeverity.NEUTRAL,  # Can go either way
+    EventType.CONFERENCE_PRESENTATION: EventSeverity.POSITIVE,
+    EventType.INVESTOR_DAY: EventSeverity.NEUTRAL,
+
+    # Positive - Business development
+    EventType.PARTNERSHIP: EventSeverity.POSITIVE,
+    EventType.MA_ACTIVITY: EventSeverity.NEUTRAL,  # Can go either way
+    EventType.LICENSING_DEAL: EventSeverity.POSITIVE,
 
     # Neutral
     EventType.CT_RESULTS_POSTED: EventSeverity.NEUTRAL,
@@ -138,6 +206,7 @@ EVENT_SEVERITY_MAP: Dict[EventType, EventSeverity] = {
     EventType.CT_TIMELINE_PUSHOUT: EventSeverity.NEGATIVE,
     EventType.CT_ARM_REMOVED: EventSeverity.NEGATIVE,
     EventType.CT_ENROLLMENT_PAUSED: EventSeverity.NEGATIVE,
+    EventType.FDA_CRL: EventSeverity.SEVERE_NEGATIVE,
 
     # Severe negative
     EventType.CT_STATUS_SEVERE_NEG: EventSeverity.SEVERE_NEGATIVE,
@@ -149,6 +218,7 @@ EVENT_SEVERITY_MAP: Dict[EventType, EventSeverity] = {
 # =============================================================================
 
 EVENT_DEFAULT_CONFIDENCE: Dict[EventType, ConfidenceLevel] = {
+    # CT.gov events
     EventType.CT_STATUS_SEVERE_NEG: ConfidenceLevel.HIGH,
     EventType.CT_STATUS_DOWNGRADE: ConfidenceLevel.HIGH,
     EventType.CT_STATUS_UPGRADE: ConfidenceLevel.HIGH,
@@ -167,6 +237,30 @@ EVENT_DEFAULT_CONFIDENCE: Dict[EventType, ConfidenceLevel] = {
     EventType.CT_ENROLLMENT_PAUSED: ConfidenceLevel.HIGH,
     EventType.CT_ENROLLMENT_RESUMED: ConfidenceLevel.HIGH,
     EventType.CT_ACTIVITY_PROXY: ConfidenceLevel.LOW,  # Unknown change type
+
+    # Regulatory/FDA events - HIGH confidence (official dates)
+    EventType.FDA_PDUFA_DATE: ConfidenceLevel.HIGH,
+    EventType.FDA_ADCOM: ConfidenceLevel.HIGH,
+    EventType.FDA_CRL: ConfidenceLevel.HIGH,
+    EventType.FDA_APPROVAL: ConfidenceLevel.HIGH,
+    EventType.FDA_SUBMISSION: ConfidenceLevel.HIGH,
+    EventType.FDA_DESIGNATION: ConfidenceLevel.HIGH,
+
+    # Corporate events - MED confidence (dates can shift)
+    EventType.EARNINGS_RELEASE: ConfidenceLevel.MED,
+    EventType.CONFERENCE_PRESENTATION: ConfidenceLevel.MED,
+    EventType.INVESTOR_DAY: ConfidenceLevel.MED,
+
+    # Data events - MED confidence (estimates)
+    EventType.DATA_READOUT: ConfidenceLevel.MED,
+    EventType.DATA_PRESENTATION: ConfidenceLevel.MED,
+    EventType.DATA_PUBLICATION: ConfidenceLevel.LOW,
+
+    # Business development - LOW confidence (unpredictable)
+    EventType.PARTNERSHIP: ConfidenceLevel.LOW,
+    EventType.MA_ACTIVITY: ConfidenceLevel.LOW,
+    EventType.LICENSING_DEAL: ConfidenceLevel.LOW,
+
     EventType.UNKNOWN: ConfidenceLevel.LOW,
 }
 
@@ -200,31 +294,58 @@ SEVERITY_SCORE_CONTRIBUTION: Dict[EventSeverity, Decimal] = {
 # =============================================================================
 
 EVENT_TYPE_WEIGHT: Dict[EventType, Decimal] = {
-    # High-impact upcoming events
+    # ==========================================================================
+    # HIGHEST IMPACT - Binary regulatory events
+    # ==========================================================================
+    EventType.FDA_PDUFA_DATE: Decimal("25.0"),      # FDA approval decision
+    EventType.FDA_ADCOM: Decimal("22.0"),           # Advisory committee (precedes PDUFA)
+    EventType.DATA_READOUT: Decimal("22.0"),        # Top-line data readout
+
+    # ==========================================================================
+    # HIGH IMPACT - Clinical milestones
+    # ==========================================================================
     EventType.CT_PRIMARY_COMPLETION: Decimal("20.0"),
-    EventType.CT_STUDY_COMPLETION: Decimal("15.0"),
     EventType.CT_RESULTS_POSTED: Decimal("18.0"),
+    EventType.FDA_APPROVAL: Decimal("18.0"),        # Already approved (confirmed)
+    EventType.DATA_PRESENTATION: Decimal("16.0"),   # Full data at conference
+    EventType.CT_STUDY_COMPLETION: Decimal("15.0"),
+    EventType.CONFERENCE_PRESENTATION: Decimal("14.0"),  # Major conference
+
+    # ==========================================================================
+    # MEDIUM IMPACT - Regulatory progress
+    # ==========================================================================
+    EventType.FDA_SUBMISSION: Decimal("12.0"),      # NDA/BLA submission
     EventType.CT_DATE_CONFIRMED_ACTUAL: Decimal("12.0"),
-
-    # Medium-impact
+    EventType.FDA_DESIGNATION: Decimal("10.0"),     # BTD, Fast Track, etc.
     EventType.CT_ENROLLMENT_COMPLETE: Decimal("10.0"),
-    EventType.CT_STATUS_UPGRADE: Decimal("8.0"),
-    EventType.CT_TIMELINE_PULLIN: Decimal("6.0"),
+    EventType.PARTNERSHIP: Decimal("10.0"),
+    EventType.LICENSING_DEAL: Decimal("10.0"),
 
-    # Lower-impact
+    # ==========================================================================
+    # LOWER IMPACT - Operational events
+    # ==========================================================================
+    EventType.CT_STATUS_UPGRADE: Decimal("8.0"),
+    EventType.DATA_PUBLICATION: Decimal("7.0"),
+    EventType.CT_TIMELINE_PULLIN: Decimal("6.0"),
+    EventType.EARNINGS_RELEASE: Decimal("5.0"),
     EventType.CT_ENROLLMENT_STARTED: Decimal("5.0"),
+    EventType.INVESTOR_DAY: Decimal("5.0"),
+    EventType.MA_ACTIVITY: Decimal("5.0"),
     EventType.CT_ENROLLMENT_RESUMED: Decimal("4.0"),
     EventType.CT_ARM_ADDED: Decimal("3.0"),
     EventType.CT_PROTOCOL_AMENDMENT: Decimal("2.0"),
+    EventType.CT_ACTIVITY_PROXY: Decimal("2.0"),    # Low weight, indicates engagement
+    EventType.CT_ENDPOINT_CHANGED: Decimal("1.0"),
 
-    # Neutral/negative (shouldn't affect upcoming score positively)
+    # ==========================================================================
+    # NEUTRAL/NEGATIVE - Don't boost upcoming score
+    # ==========================================================================
     EventType.CT_STATUS_SEVERE_NEG: Decimal("0.0"),
     EventType.CT_STATUS_DOWNGRADE: Decimal("0.0"),
     EventType.CT_TIMELINE_PUSHOUT: Decimal("0.0"),
     EventType.CT_ARM_REMOVED: Decimal("0.0"),
     EventType.CT_ENROLLMENT_PAUSED: Decimal("0.0"),
-    EventType.CT_ENDPOINT_CHANGED: Decimal("1.0"),
-    EventType.CT_ACTIVITY_PROXY: Decimal("2.0"),  # Low weight, indicates engagement
+    EventType.FDA_CRL: Decimal("0.0"),              # Complete Response Letter (negative)
     EventType.UNKNOWN: Decimal("0.0"),
 }
 
