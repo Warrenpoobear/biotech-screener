@@ -3,9 +3,14 @@
 module_2_financial.py - Financial Health Scoring (vNext)
 
 Scores tickers on financial health using:
-1. Cash runway (50% weight)
-2. Dilution risk (30% weight)
-3. Liquidity (20% weight)
+1. Cash runway (45% weight)
+2. Dilution risk (25% weight)
+3. Liquidity (15% weight)
+4. Revenue score (15% weight) - Tier 1 approach:
+   - Revenue Presence (binary): +40 pts for >$10M revenue
+   - Revenue Scale (log-bucketed): +15/30/40 pts by size
+   - Coverage Penalty: -10/-20 pts if burning despite revenue
+   Pre-revenue biotechs get neutral 50 pts (not penalized)
 
 Severity levels based on financial health:
 - SEV3: Runway < 6 months (critical)
@@ -537,6 +542,144 @@ def assess_data_quality(financial_data: Dict[str, Any], market_data: Dict[str, A
 
 
 # =============================================================================
+# REVENUE SCORING (TIER 1 APPROACH)
+# =============================================================================
+
+# Revenue scale thresholds (annual)
+REVENUE_THRESHOLD_PRESENCE = 10e6    # $10M minimum for "has revenue"
+REVENUE_THRESHOLD_SCALE_1 = 100e6    # $100M
+REVENUE_THRESHOLD_SCALE_2 = 1e9      # $1B
+
+def calculate_revenue_score(
+    financial_data: Dict[str, Any],
+    monthly_burn: Optional[float]
+) -> Tuple[Dict[str, Any], float]:
+    """
+    Calculate revenue score using Tier 1 approach.
+
+    Key principle: Pre-revenue is the POINT of biotech screening.
+    Revenue shapes rank ordering, it doesn't dominate.
+
+    Three components:
+
+    1. Revenue Presence (binary) - 0 or 40 pts
+       - Has meaningful revenue (>$10M annual): 40 pts
+       - Pre-revenue: 0 pts (neutral baseline, not penalized)
+
+    2. Revenue Scale (log-bucketed) - 0-40 pts
+       - <$10M: 0 pts
+       - $10M-100M: 15 pts
+       - $100M-1B: 30 pts
+       - >$1B: 40 pts
+       Uses log buckets to avoid mega-cap dominance
+
+    3. Revenue Coverage Penalty - 0 to -20 pts
+       - Applied ONLY when: revenue > 0 AND burn > 0 AND coverage < 0.5
+       - Catches companies with revenue but still burning fast
+       - Coverage < 0.25: -20 pts
+       - Coverage 0.25-0.5: -10 pts
+       - Coverage >= 0.5: no penalty
+
+    Pre-revenue baseline: 50 pts (neutral, ensures no penalty)
+    Max score: 80 pts (40 presence + 40 scale + 0 penalty)
+
+    Args:
+        financial_data: Financial data dict with Revenue field
+        monthly_burn: Monthly burn rate (positive number, or None/0 if profitable)
+
+    Returns:
+        (details_dict, revenue_score)
+
+        details_dict contains:
+        - revenue: Annual revenue in dollars
+        - has_revenue: Boolean
+        - revenue_scale_bucket: str ('pre_revenue', 'small', 'medium', 'large')
+        - revenue_coverage: Optional float (revenue / annual_burn)
+        - presence_pts: Points from presence component
+        - scale_pts: Points from scale component
+        - coverage_penalty: Penalty points (0 or negative)
+    """
+    revenue = financial_data.get('Revenue', 0) or 0
+
+    details = {
+        'revenue': revenue,
+        'has_revenue': False,
+        'revenue_scale_bucket': 'pre_revenue',
+        'revenue_coverage': None,
+        'presence_pts': 0.0,
+        'scale_pts': 0.0,
+        'coverage_penalty': 0.0,
+    }
+
+    # =========================================================================
+    # CASE 1: Pre-revenue company
+    # =========================================================================
+    if revenue < REVENUE_THRESHOLD_PRESENCE:
+        # Neutral baseline - don't penalize pre-revenue biotechs
+        # Score = 50 (middle of 0-100 range)
+        details['revenue_scale_bucket'] = 'pre_revenue'
+        return details, 50.0
+
+    # =========================================================================
+    # CASE 2: Has meaningful revenue
+    # =========================================================================
+    details['has_revenue'] = True
+
+    # Component 1: Presence bonus (binary)
+    details['presence_pts'] = 40.0
+
+    # Component 2: Scale bonus (log-bucketed)
+    if revenue >= REVENUE_THRESHOLD_SCALE_2:  # >$1B
+        details['scale_pts'] = 40.0
+        details['revenue_scale_bucket'] = 'large'
+    elif revenue >= REVENUE_THRESHOLD_SCALE_1:  # $100M-1B
+        details['scale_pts'] = 30.0
+        details['revenue_scale_bucket'] = 'medium'
+    else:  # $10M-100M
+        details['scale_pts'] = 15.0
+        details['revenue_scale_bucket'] = 'small'
+
+    # Component 3: Coverage penalty (only applies if burning despite revenue)
+    if monthly_burn is not None and monthly_burn > 0:
+        annual_burn = monthly_burn * 12
+        coverage = revenue / annual_burn
+        details['revenue_coverage'] = coverage
+
+        if coverage < 0.25:
+            # Significant burn despite revenue - penalty
+            details['coverage_penalty'] = -20.0
+        elif coverage < 0.5:
+            # Moderate burn despite revenue - smaller penalty
+            details['coverage_penalty'] = -10.0
+        # else: coverage >= 0.5, no penalty
+
+    # Calculate final score
+    score = (
+        details['presence_pts'] +
+        details['scale_pts'] +
+        details['coverage_penalty']
+    )
+
+    # Clamp to [0, 100] (though max should be 80)
+    score = max(0.0, min(100.0, score))
+
+    return details, score
+
+
+# Legacy wrapper for backwards compatibility
+def calculate_revenue_coverage(
+    financial_data: Dict[str, Any],
+    monthly_burn: Optional[float]
+) -> Tuple[Optional[float], float]:
+    """
+    Legacy wrapper - returns (coverage_ratio, score) for backwards compatibility.
+    Internally uses the new Tier 1 scoring.
+    """
+    details, score = calculate_revenue_score(financial_data, monthly_burn)
+    return details.get('revenue_coverage'), score
+
+
+# =============================================================================
 # SEVERITY DETERMINATION
 # =============================================================================
 
@@ -592,10 +735,14 @@ def score_financial_health(ticker: str, financial_data: Dict[str, Any], market_d
         financial_data, market_data, runway_months
     )
 
-    # Component 3: Liquidity (20%)
+    # Component 3: Liquidity (15%)
     liquidity_score, liquidity_gate, dollar_adv = score_liquidity(market_data)
 
+    # Component 4: Revenue Score (15%) - Tier 1 approach
+    revenue_details, revenue_score = calculate_revenue_score(financial_data, burn_rate)
+
     # Composite score - BUGFIX: Use `is not None` checks
+    # Weights: Runway 45%, Dilution 25%, Liquidity 15%, Revenue 15%
     scores_valid = (
         runway_score is not None and
         dilution_score is not None and
@@ -603,7 +750,12 @@ def score_financial_health(ticker: str, financial_data: Dict[str, Any], market_d
     )
 
     if scores_valid:
-        composite = runway_score * 0.50 + dilution_score * 0.30 + liquidity_score * 0.20
+        composite = (
+            runway_score * 0.45 +
+            dilution_score * 0.25 +
+            liquidity_score * 0.15 +
+            revenue_score * 0.15
+        )
         # Clamp composite to [0, 100]
         composite = max(0.0, min(100.0, composite))
         has_data = True
@@ -641,6 +793,13 @@ def score_financial_health(ticker: str, financial_data: Dict[str, Any], market_d
         "runway_score": float(runway_score) if runway_score is not None else None,
         "dilution_score": float(dilution_score) if dilution_score is not None else None,
         "liquidity_score": float(liquidity_score) if liquidity_score is not None else None,
+        "revenue_score": float(revenue_score),
+        "revenue_coverage": float(revenue_details['revenue_coverage']) if revenue_details.get('revenue_coverage') is not None else None,
+        "has_revenue": revenue_details.get('has_revenue', False),
+        "revenue_scale_bucket": revenue_details.get('revenue_scale_bucket', 'pre_revenue'),
+        "revenue_presence_pts": float(revenue_details.get('presence_pts', 0)),
+        "revenue_scale_pts": float(revenue_details.get('scale_pts', 0)),
+        "revenue_coverage_penalty": float(revenue_details.get('coverage_penalty', 0)),
         "cash_to_mcap": float(cash_to_mcap) if cash_to_mcap is not None else None,
         "monthly_burn": float(burn_rate) if burn_rate is not None else None,
         "market_cap_mm": market_cap_mm,  # Added for Module 5 integration
@@ -782,19 +941,59 @@ def _run_self_checks() -> List[str]:
     if result['dilution_score'] < 0 or result['dilution_score'] > 100:
         errors.append(f"CHECK7 FAIL: dilution_score={result['dilution_score']}, not clamped")
 
-    # CHECK 8: Determinism - same inputs produce same outputs
-    result1 = score_financial_health(
+    # CHECK 8: Revenue scoring - pre-revenue gets neutral 50 pts
+    result = score_financial_health(
         "CHECK8",
+        {'Cash': 100e6, 'NetIncome': -20e6, 'Revenue': 0},
+        {'market_cap': 500e6, 'avg_volume': 50000, 'price': 20}
+    )
+    if result['revenue_score'] != 50.0:
+        errors.append(f"CHECK8 FAIL: revenue_score={result['revenue_score']}, expected 50.0 (pre-revenue neutral)")
+
+    # CHECK 9: Revenue scoring - small revenue ($50M) gets presence + scale
+    result = score_financial_health(
+        "CHECK9",
+        {'Cash': 100e6, 'NetIncome': 50e6, 'Revenue': 50e6},  # Profitable
+        {'market_cap': 500e6, 'avg_volume': 50000, 'price': 20}
+    )
+    # $50M revenue: presence (40) + scale_small (15) = 55 pts
+    if result['revenue_score'] != 55.0:
+        errors.append(f"CHECK9 FAIL: revenue_score={result['revenue_score']}, expected 55.0")
+
+    # CHECK 10: Revenue scoring - large revenue (>$1B) gets full points
+    result = score_financial_health(
+        "CHECK10",
+        {'Cash': 5e9, 'NetIncome': 1e9, 'Revenue': 2e9},  # Large pharma
+        {'market_cap': 50e9, 'avg_volume': 1000000, 'price': 100}
+    )
+    # $2B revenue: presence (40) + scale_large (40) = 80 pts
+    if result['revenue_score'] != 80.0:
+        errors.append(f"CHECK10 FAIL: revenue_score={result['revenue_score']}, expected 80.0")
+
+    # CHECK 11: Revenue scoring - burning despite revenue gets penalty
+    result = score_financial_health(
+        "CHECK11",
+        {'Cash': 200e6, 'NetIncome': -500e6, 'Revenue': 100e6},  # Low coverage
+        {'market_cap': 1e9, 'avg_volume': 100000, 'price': 50}
+    )
+    # $100M revenue, $500M burn -> coverage = 0.2 < 0.25 -> penalty -20
+    # presence (40) + scale_small (15) + penalty (-20) = 35 pts
+    if result['revenue_coverage_penalty'] != -20.0:
+        errors.append(f"CHECK11 FAIL: revenue_coverage_penalty={result['revenue_coverage_penalty']}, expected -20.0")
+
+    # CHECK 12: Determinism - same inputs produce same outputs
+    result1 = score_financial_health(
+        "CHECK12",
         {'Cash': 100e6, 'NetIncome': -20e6},
         {'market_cap': 500e6, 'avg_volume': 50000, 'price': 20}
     )
     result2 = score_financial_health(
-        "CHECK8",
+        "CHECK12",
         {'Cash': 100e6, 'NetIncome': -20e6},
         {'market_cap': 500e6, 'avg_volume': 50000, 'price': 20}
     )
     if result1 != result2:
-        errors.append("CHECK8 FAIL: Non-deterministic outputs")
+        errors.append("CHECK12 FAIL: Non-deterministic outputs")
 
     return errors
 
@@ -949,14 +1148,14 @@ def compute_module_2_financial(*args: Any, **kwargs: Any) -> Dict[str, Any]:
         elif 'R&D' in rec:
             fin_rec['R&D'] = rec['R&D']
 
-        # CFO/FCF pass-through
+        # CFO/FCF/Revenue pass-through
         for field in ['CFO', 'CFO_quarterly', 'CFO_YTD', 'FCF', 'FCF_quarterly',
-                      'MarketableSecurities', 'Debt']:
+                      'MarketableSecurities', 'Debt', 'Revenue']:
             if field in rec:
                 fin_rec[field] = rec[field]
 
         # CRITICAL: Pass through date fields for YTD period detection
-        for date_field in ['NetIncome_date', 'CFO_date', 'FCF_date', 'R&D_date', 'Cash_date']:
+        for date_field in ['NetIncome_date', 'CFO_date', 'FCF_date', 'R&D_date', 'Cash_date', 'Revenue_date']:
             if date_field in rec:
                 fin_rec[date_field] = rec[date_field]
 
