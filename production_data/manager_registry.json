@@ -71,6 +71,12 @@
       "name": "Farallon Capital",
       "aum_b": 36.0,
       "style": "multi_strategy_macro"
+    },
+    {
+      "cik": "0001569064",
+      "name": "Suvretta Capital Management",
+      "aum_b": 5.1,
+      "style": "healthcare_long_short"
     }
   ],
   "conditional": [
@@ -100,9 +106,9 @@
     }
   ],
   "metadata": {
-    "version": "1.0",
-    "last_updated": "2026-01-09",
-    "total_elite_aum_b": 70.8,
+    "version": "1.1",
+    "last_updated": "2026-01-28",
+    "total_elite_aum_b": 75.9,
     "notes": [
       "Elite Core = primary signal source",
       "Conditional = secondary breadth signal"
