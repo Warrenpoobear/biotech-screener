@@ -820,6 +820,10 @@ def score_financial_health(ticker: str, financial_data: Dict[str, Any], market_d
         "liquid_assets": float(runway_result['liquid_assets']),
         "liquid_components": runway_result['liquid_components'],
 
+        # V2: Raw CFO and Revenue for valuation regime routing
+        "CFO": financial_data.get('CFO'),
+        "Revenue": financial_data.get('Revenue'),
+
         # New data quality fields
         "financial_data_state": data_state,
         "missing_fields": missing_fields,
@@ -1150,7 +1154,8 @@ def compute_module_2_financial(*args: Any, **kwargs: Any) -> Dict[str, Any]:
 
         # CFO/FCF/Revenue pass-through
         for field in ['CFO', 'CFO_quarterly', 'CFO_YTD', 'FCF', 'FCF_quarterly',
-                      'MarketableSecurities', 'Debt', 'Revenue']:
+                      'MarketableSecurities', 'ShortTermInvestments', 'AvailableForSaleSecurities',
+                      'Debt', 'Revenue']:
             if field in rec:
                 fin_rec[field] = rec[field]
 
@@ -1218,13 +1223,15 @@ def compute_module_2_financial(*args: Any, **kwargs: Any) -> Dict[str, Any]:
     for score in result:
         if 'flags' not in score:
             score['flags'] = []
-        # Add cash_mm if we have Cash
-        if 'cash_mm' not in score and 'Cash' in score:
-            score['cash_mm'] = score['Cash'] / 1e6 if score['Cash'] else None
-        elif 'cash_mm' not in score:
-            score['cash_mm'] = None
-            if 'missing_cash' not in score['flags']:
-                score['flags'].append('missing_cash')
+        # Add cash_mm from liquid_assets if available
+        if 'cash_mm' not in score:
+            liquid = score.get('liquid_assets', 0) or 0
+            if liquid > 0:
+                score['cash_mm'] = liquid / 1e6
+            else:
+                score['cash_mm'] = None
+                if 'missing_cash' not in score['flags']:
+                    score['flags'].append('missing_cash')
 
     # DETERMINISM: Sort results by ticker to ensure consistent output order
     result_sorted = sorted(result, key=lambda x: x.get('ticker', ''))

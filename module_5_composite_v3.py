@@ -611,16 +611,37 @@ def compute_module_5_composite_v3(
     # BUILD PEER VALUATION DATA
     # =========================================================================
 
-    peer_valuations = [
-        {
+    peer_valuations = []
+    for r in combined:
+        if r["market_cap_mm"] is None:
+            continue
+        # Development valuation requires trial_count > 0, but commercial doesn't
+        # Include all for peer comparison
+        fin = r.get("fin_data", {})
+        mkt = r.get("market_data", {})
+
+        # Extract revenue_mm (convert from raw to millions)
+        revenue_raw = fin.get("Revenue")
+        revenue_mm = Decimal(str(revenue_raw)) / Decimal("1000000") if revenue_raw else None
+
+        # Extract cfo_mm (convert from raw to millions)
+        cfo_raw = fin.get("CFO")
+        cfo_mm = Decimal(str(cfo_raw)) / Decimal("1000000") if cfo_raw else None
+
+        # Extract enterprise_value_mm
+        ev_raw = mkt.get("enterprise_value")
+        enterprise_value_mm = Decimal(str(ev_raw)) / Decimal("1000000") if ev_raw else None
+
+        peer_valuations.append({
             "ticker": r["ticker"],
             "market_cap_mm": r["market_cap_mm"],
             "trial_count": r["trial_count"],
             "stage_bucket": r["stage_bucket"],
-        }
-        for r in combined
-        if r["market_cap_mm"] is not None and r["trial_count"] > 0
-    ]
+            "has_revenue": fin.get("has_revenue", False),
+            "revenue_mm": revenue_mm,
+            "cfo_mm": cfo_mm,
+            "enterprise_value_mm": enterprise_value_mm,
+        })
 
     # =========================================================================
     # COHORT GROUPING AND NORMALIZATION
