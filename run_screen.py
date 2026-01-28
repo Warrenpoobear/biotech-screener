@@ -2383,6 +2383,7 @@ def run_screening_pipeline(
             validate=True,
             enhancement_result=enhancement_result,
             market_data_by_ticker=market_data_by_ticker,  # Enable volatility/momentum signals
+            raw_financial_data=financial_records,  # Raw financial data for survivability scoring
             enable_sanity_override=False,  # Disabled: mixed v2/v3 scores cause rank artifacts
         )
         if checkpoint_dir:

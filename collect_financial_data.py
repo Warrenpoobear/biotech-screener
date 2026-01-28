@@ -83,6 +83,21 @@ def get_company_facts(cik: str, ticker: str) -> Optional[Dict]:
                     'SalesRevenueNet',  # Alternative
                     'SalesRevenueGoodsNet',  # Product-specific
                 ],
+                'CFO': [
+                    'NetCashProvidedByUsedInOperatingActivities',  # Standard
+                    'NetCashProvidedByUsedInOperatingActivitiesContinuingOperations',  # Alternative
+                    'CashFlowsFromUsedInOperatingActivities',  # IFRS-style
+                ],
+                'OperatingExpenses': [
+                    'OperatingExpenses',  # Standard
+                    'CostsAndExpenses',  # Alternative (includes COGS)
+                    'OperatingCostsAndExpenses',  # Alternative
+                ],
+                'InterestExpense': [
+                    'InterestExpense',  # Standard
+                    'InterestAndDebtExpense',  # Alternative
+                    'InterestExpenseDebt',  # Specific to debt
+                ],
             }
 
             financial_data = {"ticker": ticker, "cik": cik}

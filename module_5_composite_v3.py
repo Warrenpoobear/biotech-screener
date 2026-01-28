@@ -271,6 +271,7 @@ def compute_module_5_composite_v3(
     coinvest_signals: Optional[Dict] = None,
     enhancement_result: Optional[Dict[str, Any]] = None,
     market_data_by_ticker: Optional[Dict[str, Dict]] = None,
+    raw_financial_data: Optional[List[Dict[str, Any]]] = None,
     historical_scores: Optional[List[Dict]] = None,
     historical_returns: Optional[Dict[Tuple[date, str], Decimal]] = None,
     use_adaptive_weights: bool = False,
@@ -496,6 +497,14 @@ def compute_module_5_composite_v3(
     catalyst_by_ticker = catalyst_result.get("summaries", {})
     clinical_by_ticker = {s["ticker"]: s for s in clinical_result.get("scores", [])}
 
+    # Index raw financial data for survivability scoring
+    raw_financial_by_ticker = {}
+    if raw_financial_data:
+        for rec in raw_financial_data:
+            ticker = rec.get("ticker")
+            if ticker:
+                raw_financial_by_ticker[ticker.upper()] = rec
+
     # =========================================================================
     # BUILD COMBINED RECORDS
     # =========================================================================
@@ -504,7 +513,16 @@ def compute_module_5_composite_v3(
     excluded = []
 
     for ticker in active_tickers:
-        fin = financial_by_ticker.get(ticker, {})
+        fin = financial_by_ticker.get(ticker, {}).copy()  # Copy to avoid mutating original
+        # Merge raw financial data for survivability scoring
+        raw_fin = raw_financial_by_ticker.get(ticker.upper(), {})
+        if raw_fin:
+            # Add raw fields that survivability module needs
+            for key in ['Cash', 'CFO', 'R&D', 'OperatingExpenses', 'InterestExpense',
+                        'LongTermDebt', 'LongTermDebtCurrent', 'ShortTermInvestments',
+                        'MarketableSecurities', 'Revenue']:
+                if key in raw_fin and key not in fin:
+                    fin[key] = raw_fin[key]
         cat = catalyst_by_ticker.get(ticker, {})
         clin = clinical_by_ticker.get(ticker, {})
         pos = pos_by_ticker.get(ticker.upper())
@@ -896,6 +914,7 @@ def compute_module_5_composite_v3(
             "pipeline_diversity_signal": rec.get("pipeline_diversity_signal"),
             "competitive_intensity_signal": rec.get("competitive_intensity_signal"),
             "partnership_signal": rec.get("partnership_signal"),
+            "survivability_signal": rec.get("survivability_signal"),
         }
 
         ranked_securities.append(security_data)
@@ -1334,6 +1353,7 @@ if __name__ == "__main__":
     parser.add_argument("--clinical", required=True, help="Path to Module 4 output JSON")
     parser.add_argument("--enhancement", help="Path to enhancement data JSON")
     parser.add_argument("--market-data", help="Path to market data JSON")
+    parser.add_argument("--financial-raw", help="Path to raw financial records JSON (for survivability scoring)")
     parser.add_argument("--output", required=True, help="Output path for results")
     parser.add_argument("--adaptive-weights", action="store_true", help="Enable adaptive weight learning")
 
@@ -1359,6 +1379,11 @@ if __name__ == "__main__":
         with open(args.market_data) as f:
             market_data = json.load(f)
 
+    raw_financial_data = None
+    if args.financial_raw:
+        with open(args.financial_raw) as f:
+            raw_financial_data = json.load(f)
+
     # Compute
     result = compute_module_5_composite_v3(
         universe_result=universe_result,
@@ -1368,6 +1393,7 @@ if __name__ == "__main__":
         as_of_date=args.as_of_date,
         enhancement_result=enhancement_result,
         market_data_by_ticker=market_data,
+        raw_financial_data=raw_financial_data,
         use_adaptive_weights=args.adaptive_weights,
     )
 
