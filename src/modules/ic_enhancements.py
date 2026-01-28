@@ -236,6 +236,22 @@ VALUATION_CONFIDENCE_MAX = Decimal("0.80")
 VALUATION_SHRINKAGE_FULL_AT_N = 20  # No shrinkage at 20+ peers
 VALUATION_SHRINKAGE_MAX = Decimal("0.50")  # Max 50% shrinkage at N=5
 
+# Commercial vs Development regime classification thresholds
+# A company is COMMERCIAL if ANY of these conditions are met
+VALUATION_COMMERCIAL_REVENUE_THRESHOLD_MM = Decimal("200")  # $200M revenue
+VALUATION_COMMERCIAL_CFO_POSITIVE = True  # Positive operating cash flow
+
+# Development-stage trial count gate
+# If trial_count < this threshold, mcap/trial is unreliable -> neutral score
+VALUATION_DEV_MIN_TRIALS = 3
+
+# Commercial valuation parameters (EV/CFO or MCAP/Revenue)
+VALUATION_COMMERCIAL_MIN_PEERS = 5
+VALUATION_COMMERCIAL_EV_CFO_MIN = Decimal("2")    # Floor EV/CFO at 2x
+VALUATION_COMMERCIAL_EV_CFO_MAX = Decimal("50")   # Cap EV/CFO at 50x
+VALUATION_COMMERCIAL_EV_REV_MIN = Decimal("0.5")  # Floor EV/Revenue at 0.5x
+VALUATION_COMMERCIAL_EV_REV_MAX = Decimal("20")   # Cap EV/Revenue at 20x
+
 
 # =============================================================================
 # ENUMS
@@ -264,6 +280,18 @@ class PositionChangeType(str, Enum):
     HOLD = "HOLD"
     DECREASE = "DECREASE"
     EXIT = "EXIT"
+
+
+class ValuationRegime(str, Enum):
+    """Valuation model regime classification.
+
+    COMMERCIAL: Revenue-generating companies where cashflow-based metrics apply
+    DEVELOPMENT: Pipeline companies where mcap/trial_count is meaningful
+    UNKNOWN: Insufficient data to classify
+    """
+    COMMERCIAL = "commercial"
+    DEVELOPMENT = "development"
+    UNKNOWN = "unknown"
 
 
 # =============================================================================
@@ -355,12 +383,23 @@ class MultiWindowMomentumInput:
 
 @dataclass
 class ValuationSignal:
-    """Peer-relative valuation signal result."""
+    """Peer-relative valuation signal result.
+
+    Supports two valuation regimes:
+    - DEVELOPMENT: Uses mcap/trial_count vs stage-matched peers
+    - COMMERCIAL: Uses EV/CFO or MCAP/Revenue vs commercial peers
+    """
     valuation_score: Decimal  # 0-100 (higher = cheaper)
-    mcap_per_asset: Optional[Decimal]
-    peer_median_mcap_per_asset: Optional[Decimal]
+    mcap_per_asset: Optional[Decimal]  # For dev-stage only
+    peer_median_mcap_per_asset: Optional[Decimal]  # For dev-stage only
     peer_count: int
     confidence: Decimal
+    # V2 regime routing fields
+    regime: ValuationRegime = ValuationRegime.UNKNOWN
+    method: str = "unknown"  # "mcap_per_trial", "ev_cfo", "ev_revenue", "sector_mcap", "neutral"
+    ev_multiple: Optional[Decimal] = None  # EV/CFO or EV/Revenue for commercial
+    peer_median_ev_multiple: Optional[Decimal] = None  # Commercial peer median
+    flags: List[str] = field(default_factory=list)  # Diagnostic flags
 
 
 @dataclass
@@ -1152,20 +1191,405 @@ def compute_momentum_signal_multiwindow(
 # PEER-RELATIVE VALUATION
 # =============================================================================
 
-def compute_valuation_signal(
-    market_cap_mm: Optional[Decimal],
+def _classify_valuation_regime(
+    revenue_mm: Optional[Decimal],
+    cfo_mm: Optional[Decimal],
+    has_revenue: bool = False,
+) -> Tuple[ValuationRegime, List[str]]:
+    """
+    Classify company into valuation regime based on financial characteristics.
+
+    COMMERCIAL if ANY of:
+    - revenue_mm >= $200M
+    - cfo_mm > 0 (positive operating cash flow)
+
+    DEVELOPMENT otherwise (pipeline companies where mcap/trial matters)
+
+    Args:
+        revenue_mm: Trailing twelve month revenue in millions
+        cfo_mm: Cash flow from operations in millions
+        has_revenue: Flag indicating any material revenue
+
+    Returns:
+        (ValuationRegime, list of classification flags)
+    """
+    flags: List[str] = []
+
+    revenue = _to_decimal(revenue_mm)
+    cfo = _to_decimal(cfo_mm)
+
+    # Check commercial conditions
+    is_commercial = False
+
+    if revenue is not None and revenue >= VALUATION_COMMERCIAL_REVENUE_THRESHOLD_MM:
+        is_commercial = True
+        flags.append("commercial_revenue_threshold")
+
+    if cfo is not None and cfo > Decimal("0"):
+        is_commercial = True
+        flags.append("commercial_cfo_positive")
+
+    if is_commercial:
+        return ValuationRegime.COMMERCIAL, flags
+
+    # Default to development
+    return ValuationRegime.DEVELOPMENT, flags
+
+
+def _compute_commercial_valuation(
+    market_cap_mm: Decimal,
+    enterprise_value_mm: Optional[Decimal],
+    cfo_mm: Optional[Decimal],
+    revenue_mm: Optional[Decimal],
+    peer_valuations: List[Dict[str, Any]],
+) -> ValuationSignal:
+    """
+    Compute valuation signal for commercial-stage companies.
+
+    Uses EV/CFO (preferred) or MCAP/Revenue as valuation metric.
+    Compares to commercial peers (revenue > threshold or CFO > 0).
+
+    Args:
+        market_cap_mm: Market cap in millions
+        enterprise_value_mm: Enterprise value in millions (optional)
+        cfo_mm: Cash flow from operations in millions
+        revenue_mm: Revenue in millions
+        peer_valuations: List of peer dicts
+
+    Returns:
+        ValuationSignal with commercial valuation score
+    """
+    flags: List[str] = []
+    ev = _to_decimal(enterprise_value_mm) or market_cap_mm
+    cfo = _to_decimal(cfo_mm)
+    revenue = _to_decimal(revenue_mm)
+
+    # Filter to commercial peers
+    commercial_peers = [
+        p for p in peer_valuations
+        if (_to_decimal(p.get("revenue_mm")) is not None and
+            _to_decimal(p.get("revenue_mm")) >= VALUATION_COMMERCIAL_REVENUE_THRESHOLD_MM) or
+           (_to_decimal(p.get("cfo_mm")) is not None and
+            _to_decimal(p.get("cfo_mm")) > Decimal("0"))
+    ]
+
+    # Determine which metric to use: EV/CFO (preferred) or EV/Revenue
+    use_cfo = cfo is not None and cfo > Decimal("0")
+    method = "ev_cfo" if use_cfo else "ev_revenue"
+
+    if use_cfo:
+        # EV/CFO valuation
+        ev_multiple = ev / cfo
+        ev_multiple_clamped = _clamp(ev_multiple, VALUATION_COMMERCIAL_EV_CFO_MIN, VALUATION_COMMERCIAL_EV_CFO_MAX)
+
+        # Get peer EV/CFO multiples
+        peer_multiples: List[Decimal] = []
+        for p in commercial_peers:
+            p_ev = _to_decimal(p.get("enterprise_value_mm")) or _to_decimal(p.get("market_cap_mm"))
+            p_cfo = _to_decimal(p.get("cfo_mm"))
+            if p_ev is not None and p_cfo is not None and p_cfo > Decimal("0"):
+                p_mult = _clamp(p_ev / p_cfo, VALUATION_COMMERCIAL_EV_CFO_MIN, VALUATION_COMMERCIAL_EV_CFO_MAX)
+                peer_multiples.append(p_mult)
+
+        flags.append("valuation_ev_cfo")
+
+    elif revenue is not None and revenue > Decimal("0"):
+        # EV/Revenue valuation (fallback)
+        ev_multiple = ev / revenue
+        ev_multiple_clamped = _clamp(ev_multiple, VALUATION_COMMERCIAL_EV_REV_MIN, VALUATION_COMMERCIAL_EV_REV_MAX)
+        method = "ev_revenue"
+
+        # Get peer EV/Revenue multiples
+        peer_multiples = []
+        for p in commercial_peers:
+            p_ev = _to_decimal(p.get("enterprise_value_mm")) or _to_decimal(p.get("market_cap_mm"))
+            p_rev = _to_decimal(p.get("revenue_mm"))
+            if p_ev is not None and p_rev is not None and p_rev > Decimal("0"):
+                p_mult = _clamp(p_ev / p_rev, VALUATION_COMMERCIAL_EV_REV_MIN, VALUATION_COMMERCIAL_EV_REV_MAX)
+                peer_multiples.append(p_mult)
+
+        flags.append("valuation_ev_revenue")
+
+    else:
+        # No valid commercial metric available
+        flags.append("valuation_commercial_no_metric")
+        return ValuationSignal(
+            valuation_score=Decimal("50"),
+            mcap_per_asset=None,
+            peer_median_mcap_per_asset=None,
+            peer_count=0,
+            confidence=Decimal("0.2"),
+            regime=ValuationRegime.COMMERCIAL,
+            method="neutral",
+            ev_multiple=None,
+            peer_median_ev_multiple=None,
+            flags=flags,
+        )
+
+    # Need minimum peers for reliable comparison
+    if len(peer_multiples) < VALUATION_COMMERCIAL_MIN_PEERS:
+        flags.append("valuation_insufficient_commercial_peers")
+        return ValuationSignal(
+            valuation_score=Decimal("50"),
+            mcap_per_asset=None,
+            peer_median_mcap_per_asset=None,
+            peer_count=len(peer_multiples),
+            confidence=Decimal("0.3"),
+            regime=ValuationRegime.COMMERCIAL,
+            method=method,
+            ev_multiple=_quantize_score(ev_multiple_clamped),
+            peer_median_ev_multiple=None,
+            flags=flags,
+        )
+
+    n_peers = len(peer_multiples)
+
+    # Compute percentile (lower multiple = cheaper = higher score)
+    lt_count = sum(1 for p in peer_multiples if p < ev_multiple_clamped)
+    eq_count = sum(1 for p in peer_multiples if p == ev_multiple_clamped)
+
+    percentile = (
+        (Decimal(lt_count) + Decimal("0.5") * Decimal(eq_count))
+        / Decimal(n_peers)
+        * Decimal("100")
+    )
+
+    # Invert: lower multiple = higher score (cheaper is better)
+    raw_valuation_score = Decimal("100") - percentile
+
+    # Compute peer median
+    sorted_multiples = sorted(peer_multiples)
+    mid = n_peers // 2
+    if n_peers % 2 == 0:
+        peer_median_mult = (sorted_multiples[mid - 1] + sorted_multiples[mid]) / Decimal("2")
+    else:
+        peer_median_mult = sorted_multiples[mid]
+
+    # Confidence ramp
+    confidence = _clamp(
+        VALUATION_CONFIDENCE_BASE + VALUATION_CONFIDENCE_SLOPE * Decimal(n_peers),
+        Decimal("0.2"),
+        VALUATION_CONFIDENCE_MAX,
+    )
+
+    # Shrinkage for small samples
+    if n_peers < VALUATION_SHRINKAGE_FULL_AT_N:
+        shrink_range = VALUATION_SHRINKAGE_FULL_AT_N - VALUATION_COMMERCIAL_MIN_PEERS
+        if shrink_range > 0:
+            progress = Decimal(n_peers - VALUATION_COMMERCIAL_MIN_PEERS) / Decimal(shrink_range)
+            shrink_factor = VALUATION_SHRINKAGE_MAX * (Decimal("1") - progress)
+        else:
+            shrink_factor = VALUATION_SHRINKAGE_MAX
+        raw_valuation_score = (
+            raw_valuation_score * (Decimal("1") - shrink_factor)
+            + Decimal("50") * shrink_factor
+        )
+
+    # Clamp final score
+    valuation_score = _clamp(raw_valuation_score, Decimal("10"), Decimal("90"))
+
+    return ValuationSignal(
+        valuation_score=_quantize_score(valuation_score),
+        mcap_per_asset=None,
+        peer_median_mcap_per_asset=None,
+        peer_count=n_peers,
+        confidence=_quantize_weight(confidence),
+        regime=ValuationRegime.COMMERCIAL,
+        method=method,
+        ev_multiple=_quantize_score(ev_multiple_clamped),
+        peer_median_ev_multiple=_quantize_score(peer_median_mult),
+        flags=flags,
+    )
+
+
+def _compute_development_valuation(
+    market_cap_mm: Decimal,
     trial_count: int,
     lead_phase: Optional[str],
     peer_valuations: List[Dict[str, Any]],
 ) -> ValuationSignal:
     """
-    Compute peer-relative valuation signal.
+    Compute valuation signal for development-stage companies.
 
-    Compares market cap per pipeline asset to peers at same development stage.
-    Undervalued names (low mcap/trial) tend to outperform.
+    Uses mcap/trial_count vs stage-matched peers.
+    Includes trial_count < 3 gate for unreliable denominators.
+
+    Args:
+        market_cap_mm: Market cap in millions
+        trial_count: Number of active clinical trials
+        lead_phase: Lead development phase
+        peer_valuations: List of peer dicts
+
+    Returns:
+        ValuationSignal with development-stage valuation score
+    """
+    flags: List[str] = []
+
+    # GATE: If trial_count < 3, mcap/trial is unreliable -> neutral score
+    if trial_count < VALUATION_DEV_MIN_TRIALS:
+        flags.append("trial_count_low")
+        flags.append(f"trial_count_{trial_count}")
+        return ValuationSignal(
+            valuation_score=Decimal("50"),
+            mcap_per_asset=market_cap_mm / Decimal(max(1, trial_count)) if trial_count > 0 else None,
+            peer_median_mcap_per_asset=None,
+            peer_count=0,
+            confidence=Decimal("0.2"),
+            regime=ValuationRegime.DEVELOPMENT,
+            method="neutral",
+            ev_multiple=None,
+            peer_median_ev_multiple=None,
+            flags=flags,
+        )
+
+    # Winsorize inputs
+    mcap_winsorized = _clamp(market_cap_mm, VALUATION_MCAP_MIN_MM, VALUATION_MCAP_MAX_MM)
+    trials_winsorized = max(VALUATION_TRIAL_COUNT_MIN, min(trial_count, VALUATION_TRIAL_COUNT_MAX))
+
+    # Compute mcap per asset
+    mcap_per_asset = mcap_winsorized / Decimal(trials_winsorized)
+
+    # Determine stage bucket
+    stage = _stage_bucket(lead_phase)
+
+    # Filter to same-stage development peers with valid trial data
+    same_stage_peers = [
+        p for p in peer_valuations
+        if p.get("stage_bucket") == stage and p.get("trial_count", 0) >= VALUATION_DEV_MIN_TRIALS
+    ]
+
+    if len(same_stage_peers) < VALUATION_MIN_PEERS:
+        flags.append("insufficient_stage_peers")
+        return ValuationSignal(
+            valuation_score=Decimal("50"),
+            mcap_per_asset=_quantize_score(mcap_per_asset),
+            peer_median_mcap_per_asset=None,
+            peer_count=len(same_stage_peers),
+            confidence=Decimal("0.3"),
+            regime=ValuationRegime.DEVELOPMENT,
+            method="mcap_per_trial",
+            ev_multiple=None,
+            peer_median_ev_multiple=None,
+            flags=flags,
+        )
+
+    # Compute peer mcap/asset values
+    peer_mcap_per_asset: List[Decimal] = []
+    for p in same_stage_peers:
+        p_mcap = _to_decimal(p.get("market_cap_mm"))
+        p_trials = p.get("trial_count", 0)
+        if p_mcap is not None and p_trials >= VALUATION_DEV_MIN_TRIALS:
+            p_mcap_w = _clamp(p_mcap, VALUATION_MCAP_MIN_MM, VALUATION_MCAP_MAX_MM)
+            p_trials_w = max(VALUATION_TRIAL_COUNT_MIN, min(p_trials, VALUATION_TRIAL_COUNT_MAX))
+            peer_mcap_per_asset.append(p_mcap_w / Decimal(p_trials_w))
+
+    if not peer_mcap_per_asset:
+        flags.append("no_valid_peers")
+        return ValuationSignal(
+            valuation_score=Decimal("50"),
+            mcap_per_asset=_quantize_score(mcap_per_asset),
+            peer_median_mcap_per_asset=None,
+            peer_count=0,
+            confidence=Decimal("0.2"),
+            regime=ValuationRegime.DEVELOPMENT,
+            method="mcap_per_trial",
+            ev_multiple=None,
+            peer_median_ev_multiple=None,
+            flags=flags,
+        )
+
+    n_peers = len(peer_mcap_per_asset)
+
+    # Compute percentile (lower mcap/asset = cheaper = higher score)
+    lt_count = sum(1 for p in peer_mcap_per_asset if p < mcap_per_asset)
+    eq_count = sum(1 for p in peer_mcap_per_asset if p == mcap_per_asset)
+
+    percentile = (
+        (Decimal(lt_count) + Decimal("0.5") * Decimal(eq_count))
+        / Decimal(n_peers)
+        * Decimal("100")
+    )
+
+    raw_valuation_score = Decimal("100") - percentile
+
+    # Peer median
+    sorted_peers = sorted(peer_mcap_per_asset)
+    mid = n_peers // 2
+    if n_peers % 2 == 0:
+        peer_median = (sorted_peers[mid - 1] + sorted_peers[mid]) / Decimal("2")
+    else:
+        peer_median = sorted_peers[mid]
+
+    # Confidence ramp
+    confidence = _clamp(
+        VALUATION_CONFIDENCE_BASE + VALUATION_CONFIDENCE_SLOPE * Decimal(n_peers),
+        Decimal("0.2"),
+        VALUATION_CONFIDENCE_MAX,
+    )
+
+    # CV penalty for tight distributions
+    if n_peers >= 3:
+        peer_mean = sum(peer_mcap_per_asset) / Decimal(n_peers)
+        if peer_mean > EPS:
+            variance = sum((p - peer_mean) ** 2 for p in peer_mcap_per_asset) / Decimal(n_peers)
+            std_approx = _decimal_sqrt_approx(variance)
+            cv = std_approx / peer_mean
+            if cv < Decimal("0.3"):
+                cv_penalty = (Decimal("0.3") - cv) / Decimal("0.3") * Decimal("0.2")
+                confidence = _clamp(confidence - cv_penalty, Decimal("0.2"), VALUATION_CONFIDENCE_MAX)
+
+    # Shrinkage for small samples
+    if n_peers < VALUATION_SHRINKAGE_FULL_AT_N:
+        shrink_range = VALUATION_SHRINKAGE_FULL_AT_N - VALUATION_MIN_PEERS
+        if shrink_range > 0:
+            progress = Decimal(n_peers - VALUATION_MIN_PEERS) / Decimal(shrink_range)
+            shrink_factor = VALUATION_SHRINKAGE_MAX * (Decimal("1") - progress)
+        else:
+            shrink_factor = VALUATION_SHRINKAGE_MAX
+        raw_valuation_score = (
+            raw_valuation_score * (Decimal("1") - shrink_factor)
+            + Decimal("50") * shrink_factor
+        )
+
+    # Clamp
+    valuation_score = _clamp(raw_valuation_score, Decimal("10"), Decimal("90"))
+
+    flags.append("valuation_mcap_per_trial")
+
+    return ValuationSignal(
+        valuation_score=_quantize_score(valuation_score),
+        mcap_per_asset=_quantize_score(mcap_per_asset),
+        peer_median_mcap_per_asset=_quantize_score(peer_median),
+        peer_count=n_peers,
+        confidence=_quantize_weight(confidence),
+        regime=ValuationRegime.DEVELOPMENT,
+        method="mcap_per_trial",
+        ev_multiple=None,
+        peer_median_ev_multiple=None,
+        flags=flags,
+    )
+
+
+def compute_valuation_signal(
+    market_cap_mm: Optional[Decimal],
+    trial_count: int,
+    lead_phase: Optional[str],
+    peer_valuations: List[Dict[str, Any]],
+    # V2: Financial data for regime routing (optional for backwards compatibility)
+    revenue_mm: Optional[Decimal] = None,
+    cfo_mm: Optional[Decimal] = None,
+    enterprise_value_mm: Optional[Decimal] = None,
+    has_revenue: bool = False,
+) -> ValuationSignal:
+    """
+    Compute peer-relative valuation signal with regime-aware routing.
+
+    V2 ENHANCEMENT: Routes to different valuation models based on company stage:
+    - COMMERCIAL (revenue >= $200M or CFO > 0): Uses EV/CFO or EV/Revenue
+    - DEVELOPMENT (pipeline companies): Uses mcap/trial_count with trial >= 3 gate
 
     DETERMINISM: All calculations use pure Decimal arithmetic.
-    ROBUSTNESS: Winsorizes mcap and trial_count to reduce outlier impact.
+    ROBUSTNESS: Winsorizes inputs, gates unreliable denominators.
     TIE-HANDLING: Uses midrank for ties to avoid bias.
     SHRINKAGE: Shrinks toward neutral (50) when peer sample is small.
 
@@ -1173,10 +1597,15 @@ def compute_valuation_signal(
         market_cap_mm: Market cap in millions
         trial_count: Number of active clinical trials
         lead_phase: Lead development phase (must be PIT-safe)
-        peer_valuations: List of peer dicts with market_cap_mm, trial_count, stage_bucket
+        peer_valuations: List of peer dicts with market_cap_mm, trial_count, stage_bucket,
+                         and optionally revenue_mm, cfo_mm, enterprise_value_mm
+        revenue_mm: Company's TTM revenue in millions (for regime classification)
+        cfo_mm: Company's TTM operating cash flow in millions (for regime classification)
+        enterprise_value_mm: Company's enterprise value in millions (for commercial valuation)
+        has_revenue: Flag indicating any material revenue
 
     Returns:
-        ValuationSignal with normalized score and components
+        ValuationSignal with normalized score, regime, method, and diagnostic flags
     """
     mcap = _to_decimal(market_cap_mm)
 
@@ -1187,173 +1616,33 @@ def compute_valuation_signal(
             peer_median_mcap_per_asset=None,
             peer_count=0,
             confidence=Decimal("0.2"),
+            regime=ValuationRegime.UNKNOWN,
+            method="neutral",
+            ev_multiple=None,
+            peer_median_ev_multiple=None,
+            flags=["missing_market_cap"],
         )
 
-    # Fallback: sector-based valuation for companies without trial data
-    if trial_count <= 0:
-        # Compare market cap to all peers (regardless of stage)
-        all_peer_mcaps = [
-            _to_decimal(p.get("market_cap_mm"))
-            for p in peer_valuations
-            if _to_decimal(p.get("market_cap_mm")) is not None
-        ]
-        all_peer_mcaps = [m for m in all_peer_mcaps if m is not None]
+    # Step 1: Classify valuation regime
+    regime, regime_flags = _classify_valuation_regime(revenue_mm, cfo_mm, has_revenue)
 
-        if len(all_peer_mcaps) < VALUATION_MIN_PEERS:
-            return ValuationSignal(
-                valuation_score=Decimal("50"),
-                mcap_per_asset=None,
-                peer_median_mcap_per_asset=None,
-                peer_count=0,
-                confidence=Decimal("0.2"),
-            )
-
-        # Compute percentile rank of this company's mcap vs all peers
-        # Lower mcap = potentially undervalued = higher score
-        mcap_winsorized = _clamp(mcap, VALUATION_MCAP_MIN_MM, VALUATION_MCAP_MAX_MM)
-        peer_mcaps_sorted = sorted(all_peer_mcaps)
-        n_peers = len(peer_mcaps_sorted)
-
-        # Count how many peers have lower mcap (higher mcap = lower percentile)
-        below = sum(1 for pm in peer_mcaps_sorted if pm < mcap_winsorized)
-        equal = sum(1 for pm in peer_mcaps_sorted if pm == mcap_winsorized)
-
-        # Midrank percentile (inverted: lower mcap = higher score)
-        raw_percentile = Decimal(below) + Decimal(equal) / Decimal(2)
-        percentile = Decimal(100) - (raw_percentile * Decimal(100) / Decimal(n_peers))
-
-        # Shrink toward neutral for sector-based comparison (less reliable than trial-based)
-        shrink_factor = Decimal("0.5")  # More shrinkage for sector-based
-        valuation_score = Decimal("50") + (percentile - Decimal("50")) * shrink_factor
-        valuation_score = _clamp(valuation_score, Decimal("0"), Decimal("100"))
-
-        return ValuationSignal(
-            valuation_score=_quantize_score(valuation_score),
-            mcap_per_asset=None,  # Not applicable for sector-based
-            peer_median_mcap_per_asset=_quantize_score(peer_mcaps_sorted[n_peers // 2]),
-            peer_count=n_peers,
-            confidence=Decimal("0.4"),  # Lower confidence for sector-based fallback
+    # Step 2: Route to appropriate valuation model
+    if regime == ValuationRegime.COMMERCIAL:
+        result = _compute_commercial_valuation(
+            mcap, enterprise_value_mm, cfo_mm, revenue_mm, peer_valuations
         )
+        # Add regime classification flags
+        result.flags = regime_flags + result.flags
+        return result
 
-    # Winsorize inputs to reduce outlier impact
-    mcap_winsorized = _clamp(mcap, VALUATION_MCAP_MIN_MM, VALUATION_MCAP_MAX_MM)
-    trials_winsorized = max(VALUATION_TRIAL_COUNT_MIN, min(trial_count, VALUATION_TRIAL_COUNT_MAX))
-
-    # Compute mcap per asset (all Decimal)
-    mcap_per_asset = mcap_winsorized / Decimal(trials_winsorized)
-
-    # Determine stage bucket for peer comparison
-    stage = _stage_bucket(lead_phase)
-
-    # Filter peers to same stage with valid data
-    same_stage_peers = [
-        p for p in peer_valuations
-        if p.get("stage_bucket") == stage and p.get("trial_count", 0) > 0
-    ]
-
-    if len(same_stage_peers) < VALUATION_MIN_PEERS:
-        return ValuationSignal(
-            valuation_score=Decimal("50"),
-            mcap_per_asset=_quantize_score(mcap_per_asset),
-            peer_median_mcap_per_asset=None,
-            peer_count=len(same_stage_peers),
-            confidence=Decimal("0.3"),
-        )
-
-    # Compute peer mcap/asset values with winsorization
-    peer_mcap_per_asset: List[Decimal] = []
-    for p in same_stage_peers:
-        p_mcap = _to_decimal(p.get("market_cap_mm"))
-        p_trials = p.get("trial_count", 0)
-        if p_mcap is not None and p_trials > 0:
-            # Winsorize peer values too
-            p_mcap_w = _clamp(p_mcap, VALUATION_MCAP_MIN_MM, VALUATION_MCAP_MAX_MM)
-            p_trials_w = max(VALUATION_TRIAL_COUNT_MIN, min(p_trials, VALUATION_TRIAL_COUNT_MAX))
-            peer_mcap_per_asset.append(p_mcap_w / Decimal(p_trials_w))
-
-    if not peer_mcap_per_asset:
-        return ValuationSignal(
-            valuation_score=Decimal("50"),
-            mcap_per_asset=_quantize_score(mcap_per_asset),
-            peer_median_mcap_per_asset=None,
-            peer_count=0,
-            confidence=Decimal("0.2"),
-        )
-
-    n_peers = len(peer_mcap_per_asset)
-
-    # Compute TIE-AWARE midrank percentile (pure Decimal, deterministic)
-    # percentile = (lt + 0.5 * eq) / N * 100
-    # where lt = count strictly less than, eq = count equal
-    lt_count = sum(1 for p in peer_mcap_per_asset if p < mcap_per_asset)
-    eq_count = sum(1 for p in peer_mcap_per_asset if p == mcap_per_asset)
-
-    # All Decimal arithmetic - no floats
-    percentile = (
-        (Decimal(lt_count) + Decimal("0.5") * Decimal(eq_count))
-        / Decimal(n_peers)
-        * Decimal("100")
-    )
-
-    # Invert: cheap is high signal (100 - percentile = valuation_score)
-    # Lower mcap/asset = lower percentile = higher valuation_score = better
-    raw_valuation_score = Decimal("100") - percentile
-
-    # Compute peer median for reference (deterministic: no float sorting)
-    sorted_peers = sorted(peer_mcap_per_asset)
-    mid = n_peers // 2
-    if n_peers % 2 == 0:
-        peer_median = (sorted_peers[mid - 1] + sorted_peers[mid]) / Decimal("2")
     else:
-        peer_median = sorted_peers[mid]
-
-    # Compute confidence with smooth ramp: conf = base + slope * N (capped)
-    confidence = _clamp(
-        VALUATION_CONFIDENCE_BASE + VALUATION_CONFIDENCE_SLOPE * Decimal(n_peers),
-        Decimal("0.2"),
-        VALUATION_CONFIDENCE_MAX,
-    )
-
-    # Penalize confidence for low dispersion (tight peer distribution = noisy percentile)
-    if n_peers >= 3:
-        # Compute coefficient of variation (std / mean)
-        peer_mean = sum(peer_mcap_per_asset) / Decimal(n_peers)
-        if peer_mean > EPS:
-            variance = sum((p - peer_mean) ** 2 for p in peer_mcap_per_asset) / Decimal(n_peers)
-            # Decimal doesn't have sqrt, use Newton-Raphson approximation
-            std_approx = _decimal_sqrt_approx(variance)
-            cv = std_approx / peer_mean
-            # If CV < 0.3 (very tight distribution), reduce confidence
-            if cv < Decimal("0.3"):
-                cv_penalty = (Decimal("0.3") - cv) / Decimal("0.3") * Decimal("0.2")
-                confidence = _clamp(confidence - cv_penalty, Decimal("0.2"), VALUATION_CONFIDENCE_MAX)
-
-    # Apply shrinkage toward neutral (50) when sample is small
-    # shrink_factor ramps from SHRINKAGE_MAX at N=MIN_PEERS to 0 at N>=FULL_AT_N
-    if n_peers < VALUATION_SHRINKAGE_FULL_AT_N:
-        shrink_range = VALUATION_SHRINKAGE_FULL_AT_N - VALUATION_MIN_PEERS
-        if shrink_range > 0:
-            progress = Decimal(n_peers - VALUATION_MIN_PEERS) / Decimal(shrink_range)
-            shrink_factor = VALUATION_SHRINKAGE_MAX * (Decimal("1") - progress)
-        else:
-            shrink_factor = VALUATION_SHRINKAGE_MAX
-        # Apply shrinkage: move toward 50
-        neutral = Decimal("50")
-        raw_valuation_score = (
-            raw_valuation_score * (Decimal("1") - shrink_factor)
-            + neutral * shrink_factor
+        # DEVELOPMENT or UNKNOWN -> use development model
+        result = _compute_development_valuation(
+            mcap, trial_count, lead_phase, peer_valuations
         )
-
-    # Clamp final score
-    valuation_score = _clamp(raw_valuation_score, Decimal("10"), Decimal("90"))
-
-    return ValuationSignal(
-        valuation_score=_quantize_score(valuation_score),
-        mcap_per_asset=_quantize_score(mcap_per_asset),
-        peer_median_mcap_per_asset=_quantize_score(peer_median),
-        peer_count=n_peers,
-        confidence=_quantize_weight(confidence),
-    )
+        # Add regime classification flags
+        result.flags = regime_flags + result.flags
+        return result
 
 
 def _decimal_sqrt_approx(value: Decimal, iterations: int = 10) -> Decimal:
@@ -2941,4 +3230,160 @@ def compute_enhanced_score(
         effective_weights=effective_weights,
         enhancement_flags=sorted(set(flags)),
         confidence_overall=_quantize_weight(confidence_overall),
+    )
+
+
+# =============================================================================
+# ENHANCEMENT 6: CONTRADICTION DETECTOR
+# =============================================================================
+
+@dataclass
+class ContradictionResult:
+    """Result of contradiction detection between signals.
+
+    Contradictions arise when different signals provide conflicting information,
+    suggesting measurement error or structural inconsistency that should reduce
+    confidence in the overall score.
+
+    Example contradictions:
+    - Strong momentum but failed liquidity gate (price moves without depth)
+    - High valuation score but short runway (cheap for a reason)
+    - Strong clinical score but severe dilution (market doesn't believe the data)
+    """
+    contradictions: List[str]
+    confidence_penalty: Decimal
+    score_penalty: Decimal
+    diagnostics: Dict[str, Any]
+
+
+# Contradiction detection rules
+# Each rule specifies a condition and the penalties to apply when triggered
+CONTRADICTION_RULES = [
+    {
+        "name": "momentum_liquidity_conflict",
+        "description": "Strong momentum but liquidity gate failed - price moves without depth",
+        "confidence_penalty": Decimal("0.15"),
+        "score_penalty": Decimal("5"),
+    },
+    {
+        "name": "valuation_financing_conflict",
+        "description": "High valuation score but short runway - cheap for a reason",
+        "confidence_penalty": Decimal("0.10"),
+        "score_penalty": Decimal("3"),
+    },
+    {
+        "name": "clinical_dilution_conflict",
+        "description": "Strong clinical score but severe dilution - market skepticism",
+        "confidence_penalty": Decimal("0.10"),
+        "score_penalty": Decimal("4"),
+    },
+    {
+        "name": "momentum_fundamental_divergence",
+        "description": "Strong momentum but poor financial health - unsustainable rally",
+        "confidence_penalty": Decimal("0.12"),
+        "score_penalty": Decimal("4"),
+    },
+]
+
+# Penalty caps to prevent excessive penalization
+CONTRADICTION_MAX_CONF_PENALTY = Decimal("0.30")
+CONTRADICTION_MAX_SCORE_PENALTY = Decimal("10")
+
+
+def detect_contradictions(data: Dict[str, Any]) -> ContradictionResult:
+    """
+    Detect contradictions between scoring signals.
+
+    Examines relationships between different signals to identify cases where
+    signals conflict, suggesting measurement error or structural inconsistency.
+
+    Args:
+        data: Dict containing scoring signals with keys:
+            - momentum_score: Decimal (0-100)
+            - valuation_score: Decimal (0-100)
+            - clinical_score: Decimal (0-100)
+            - financial_score: Decimal (0-100)
+            - liquidity_gate: str ("PASS", "WARN", "FAIL")
+            - runway_months: Decimal or int
+            - dilution_bucket: str ("LOW", "MEDIUM", "HIGH", "SEVERE")
+
+    Returns:
+        ContradictionResult with detected contradictions and penalties
+    """
+    contradictions = []
+    total_conf_penalty = Decimal("0")
+    total_score_penalty = Decimal("0")
+    diagnostics: Dict[str, Any] = {"rules_checked": 0, "rules_triggered": []}
+
+    # Helper to safely get Decimal value
+    def get_decimal(key: str, default: Decimal = Decimal("50")) -> Optional[Decimal]:
+        val = data.get(key)
+        if val is None:
+            return None
+        try:
+            return Decimal(str(val))
+        except (ValueError, InvalidOperation):
+            return default
+
+    # Extract values
+    momentum_score = get_decimal("momentum_score")
+    valuation_score = get_decimal("valuation_score")
+    clinical_score = get_decimal("clinical_score")
+    financial_score = get_decimal("financial_score")
+    liquidity_gate = data.get("liquidity_gate", "UNKNOWN")
+    runway_months = get_decimal("runway_months")
+    dilution_bucket = data.get("dilution_bucket", "UNKNOWN")
+
+    # Rule 1: momentum_liquidity_conflict
+    # Strong momentum (>70) but liquidity gate failed
+    diagnostics["rules_checked"] += 1
+    if momentum_score is not None and momentum_score > Decimal("70") and liquidity_gate == "FAIL":
+        rule = CONTRADICTION_RULES[0]
+        contradictions.append(rule["name"])
+        total_conf_penalty += rule["confidence_penalty"]
+        total_score_penalty += rule["score_penalty"]
+        diagnostics["rules_triggered"].append(rule["name"])
+
+    # Rule 2: valuation_financing_conflict
+    # High valuation score (>70) but short runway (<12 months)
+    diagnostics["rules_checked"] += 1
+    if (valuation_score is not None and valuation_score > Decimal("70") and
+            runway_months is not None and runway_months < Decimal("12")):
+        rule = CONTRADICTION_RULES[1]
+        contradictions.append(rule["name"])
+        total_conf_penalty += rule["confidence_penalty"]
+        total_score_penalty += rule["score_penalty"]
+        diagnostics["rules_triggered"].append(rule["name"])
+
+    # Rule 3: clinical_dilution_conflict
+    # Strong clinical score (>70) but severe dilution
+    diagnostics["rules_checked"] += 1
+    if (clinical_score is not None and clinical_score > Decimal("70") and
+            dilution_bucket in ("HIGH", "SEVERE")):
+        rule = CONTRADICTION_RULES[2]
+        contradictions.append(rule["name"])
+        total_conf_penalty += rule["confidence_penalty"]
+        total_score_penalty += rule["score_penalty"]
+        diagnostics["rules_triggered"].append(rule["name"])
+
+    # Rule 4: momentum_fundamental_divergence
+    # Strong momentum (>70) but poor financial health (<40)
+    diagnostics["rules_checked"] += 1
+    if (momentum_score is not None and momentum_score > Decimal("70") and
+            financial_score is not None and financial_score < Decimal("40")):
+        rule = CONTRADICTION_RULES[3]
+        contradictions.append(rule["name"])
+        total_conf_penalty += rule["confidence_penalty"]
+        total_score_penalty += rule["score_penalty"]
+        diagnostics["rules_triggered"].append(rule["name"])
+
+    # Cap penalties
+    total_conf_penalty = min(total_conf_penalty, CONTRADICTION_MAX_CONF_PENALTY)
+    total_score_penalty = min(total_score_penalty, CONTRADICTION_MAX_SCORE_PENALTY)
+
+    return ContradictionResult(
+        contradictions=contradictions,
+        confidence_penalty=_quantize_weight(total_conf_penalty),
+        score_penalty=_quantize_score(total_score_penalty),
+        diagnostics=diagnostics,
     )

@@ -44,15 +44,18 @@ from src.modules.ic_enhancements import (
     compute_interaction_terms,
     shrinkage_normalize,
     apply_regime_to_weights,
+    detect_contradictions,  # Enhancement 6: Contradiction detector
     # Types
     VolatilityAdjustment,
     VolatilityBucket,
     MomentumSignal,
     MultiWindowMomentumInput,
     ValuationSignal,
+    ValuationRegime,
     CatalystDecayResult,
     SmartMoneySignal,
     InteractionTerms,
+    ContradictionResult,  # Enhancement 6: Contradiction result type
     # Helpers
     _to_decimal,
     _quantize_score,
@@ -110,6 +113,74 @@ CATALYST_DEFAULT_SCORE = Decimal("50")
 
 # Confidence gate threshold
 CONFIDENCE_GATE_THRESHOLD = Decimal("0.4")
+
+# =============================================================================
+# ENHANCEMENT 1: HARD REGIME GATING CONFIGURATION
+# =============================================================================
+
+REGIME_GATE_CONFIG = {
+    "BEAR": {
+        "momentum_cap_pct": Decimal("0.30"),      # Cap momentum at 30% of deviation from neutral
+        "valuation_upside_cap": Decimal("55"),    # Cap valuation score at 55
+        "financial_penalty_mult": Decimal("1.25"), # Amplify financial penalties 25%
+    },
+    "BULL": {
+        "momentum_cap_pct": Decimal("1.0"),       # Full momentum
+        "catalyst_boost": Decimal("1.15"),        # 15% catalyst boost
+        "financial_penalty_mult": Decimal("0.85"), # Soften penalties 15%
+    },
+    "NEUTRAL": {},  # No gating
+}
+
+# =============================================================================
+# ENHANCEMENT 2: EXISTENTIAL FLAW CONFIGURATION
+# =============================================================================
+
+EXISTENTIAL_FLAW_CONFIG = {
+    "runway_critical_months": Decimal("9"),
+    "binary_clinical_risk_phases": ["phase_1", "phase_2", "phase 1", "phase 2", "p1", "p2"],
+    "existential_cap": Decimal("65"),
+    "existential_penalty": Decimal("0.20"),  # 20% penalty alternative
+}
+
+# =============================================================================
+# ENHANCEMENT 3: CONFIDENCE-WEIGHTED AGGREGATION
+# =============================================================================
+
+CONFIDENCE_WEIGHTED_CONFIG = {
+    "confidence_floor": Decimal("0.3"),  # Minimum confidence factor applied
+}
+
+# =============================================================================
+# ENHANCEMENT 4: DYNAMIC SCORE CEILINGS
+# =============================================================================
+
+STAGE_CEILING_CONFIG = {
+    "preclinical": Decimal("65"),
+    "phase_1": Decimal("70"),
+    "phase 1": Decimal("70"),
+    "p1": Decimal("70"),
+    # phase_2+ has no stage ceiling
+}
+
+CATALYST_CEILING_CONFIG = {
+    "no_catalyst_12mo": Decimal("75"),
+    "no_catalyst_6mo": Decimal("70"),
+}
+
+COMMERCIAL_CEILING_CONFIG = {
+    "revenue_declining": Decimal("70"),  # YoY revenue decline
+}
+
+# =============================================================================
+# ENHANCEMENT 5: ASYMMETRIC TRANSFORM CONFIGURATION
+# =============================================================================
+
+ASYMMETRY_CONFIG = {
+    "upside_dampening": Decimal("0.6"),       # +10 → +6
+    "downside_amplification": Decimal("1.2"), # -10 → -12
+    "neutral_threshold": Decimal("50"),       # Scores above/below this
+}
 
 
 # =============================================================================
@@ -702,6 +773,338 @@ def _compute_global_stats(combined: List[Dict]) -> Dict[str, Tuple[Decimal, Deci
 
 
 # =============================================================================
+# ENHANCEMENT 1: HARD REGIME GATING
+# =============================================================================
+
+def apply_regime_gates(
+    normalized_scores: Dict[str, Decimal],
+    regime: str,
+) -> Tuple[Dict[str, Decimal], Dict[str, Any], List[str]]:
+    """
+    Apply hard regime-based gating to normalized scores.
+
+    In BEAR regime: Cap momentum upside, cap valuation, amplify financial penalties
+    In BULL regime: Allow full momentum, boost catalysts, soften penalties
+
+    Args:
+        normalized_scores: Dict of component name -> normalized score (0-100)
+        regime: Current market regime ("BULL", "BEAR", "NEUTRAL")
+
+    Returns:
+        Tuple of (gated_scores, config_applied, flags)
+    """
+    gated = normalized_scores.copy()
+    config = REGIME_GATE_CONFIG.get(regime.upper(), {})
+    flags = []
+
+    if not config:
+        return gated, {}, flags
+
+    # Gate momentum in BEAR regime
+    if "momentum_cap_pct" in config and "momentum" in gated and gated["momentum"] is not None:
+        cap_pct = config["momentum_cap_pct"]
+        if cap_pct < Decimal("1.0"):
+            original = gated["momentum"]
+            # Cap deviation from neutral: max_deviation = (score - 50) * cap_pct
+            deviation = original - Decimal("50")
+            if deviation > 0:  # Only cap upside momentum
+                max_deviation = deviation * cap_pct
+                max_momentum = Decimal("50") + max_deviation
+                if original > max_momentum:
+                    gated["momentum"] = _quantize_score(max_momentum)
+                    flags.append("regime_momentum_gated")
+
+    # Cap valuation upside in BEAR regime
+    if "valuation_upside_cap" in config and "valuation" in gated and gated["valuation"] is not None:
+        cap = config["valuation_upside_cap"]
+        if gated["valuation"] > cap:
+            gated["valuation"] = cap
+            flags.append("regime_valuation_capped")
+
+    # Track financial penalty multiplier for downstream use
+    if "financial_penalty_mult" in config:
+        flags.append("regime_financial_amplified" if config["financial_penalty_mult"] > Decimal("1.0") else "regime_financial_softened")
+
+    return gated, config, flags
+
+
+# =============================================================================
+# ENHANCEMENT 2: EXISTENTIAL FLAW DETECTION
+# =============================================================================
+
+def detect_existential_flaws(
+    fin_data: Dict,
+    clin_data: Dict,
+    cat_data: Any,
+) -> List[str]:
+    """
+    Detect existential flaws that warrant hard score caps.
+
+    Existential flaws are binary risk factors that, if present, should prevent
+    a security from scoring too high regardless of other positive factors.
+
+    Args:
+        fin_data: Financial data dict
+        clin_data: Clinical data dict
+        cat_data: Catalyst data (object or dict)
+
+    Returns:
+        List of existential flaw identifiers
+    """
+    flaws = []
+    config = EXISTENTIAL_FLAW_CONFIG
+
+    # Flaw 1: Critical runway (< 9 months)
+    runway = _to_decimal(fin_data.get("runway_months"))
+    if runway is not None and runway < config["runway_critical_months"]:
+        flaws.append("runway_existential")
+
+    # Flaw 2: Binary clinical risk (single asset in early phase)
+    trial_count = clin_data.get("trial_count", 0)
+    lead_phase = clin_data.get("lead_phase", "").lower() if clin_data.get("lead_phase") else ""
+
+    # Check if in risky early phases
+    is_early_phase = any(phase in lead_phase for phase in config["binary_clinical_risk_phases"])
+
+    if trial_count <= 1 and is_early_phase:
+        flaws.append("binary_clinical_risk")
+
+    # Flaw 3: Debt maturity before next catalyst (if data available)
+    # This requires debt_maturity_date and next_catalyst_date comparison
+    debt_maturity = fin_data.get("debt_maturity_months")
+    days_to_cat = None
+
+    if hasattr(cat_data, 'days_to_nearest_catalyst'):
+        days_to_cat = cat_data.days_to_nearest_catalyst
+    elif isinstance(cat_data, dict):
+        scores = cat_data.get("scores", cat_data)
+        days_to_cat = scores.get("days_to_nearest_catalyst")
+
+    if debt_maturity is not None and days_to_cat is not None:
+        debt_maturity_dec = _to_decimal(debt_maturity)
+        days_to_cat_months = Decimal(str(days_to_cat)) / Decimal("30") if days_to_cat else None
+
+        if debt_maturity_dec is not None and days_to_cat_months is not None:
+            if debt_maturity_dec < days_to_cat_months:
+                flaws.append("debt_before_catalyst")
+
+    return flaws
+
+
+def apply_existential_cap(
+    score: Decimal,
+    flaws: List[str],
+) -> Tuple[Decimal, List[str]]:
+    """
+    Apply existential flaw cap to score.
+
+    Args:
+        score: Pre-cap composite score
+        flaws: List of existential flaw identifiers
+
+    Returns:
+        Tuple of (capped_score, flags)
+    """
+    flags = []
+    if flaws:
+        cap = EXISTENTIAL_FLAW_CONFIG["existential_cap"]
+        if score > cap:
+            score = cap
+            flags.append("existential_capped")
+        # Add individual flaw flags
+        for flaw in flaws:
+            flags.append(f"existential_{flaw}")
+
+    return score, flags
+
+
+# =============================================================================
+# ENHANCEMENT 3: CONFIDENCE-WEIGHTED AGGREGATION
+# =============================================================================
+
+def compute_confidence_weighted_contribution(
+    normalized_score: Decimal,
+    weight: Decimal,
+    confidence: Decimal,
+    confidence_floor: Decimal = None,
+) -> Tuple[Decimal, Decimal]:
+    """
+    Compute contribution with confidence as a binding factor.
+
+    The effective score is reduced based on confidence level, making
+    low-confidence signals contribute less to the final score.
+
+    Formula:
+        conf_factor = confidence_floor + (1 - confidence_floor) * confidence
+        effective_score = score * conf_factor
+        contribution = effective_score * weight
+
+    Args:
+        normalized_score: Normalized component score (0-100)
+        weight: Effective weight for this component
+        confidence: Confidence level (0-1)
+        confidence_floor: Minimum confidence factor (default from config)
+
+    Returns:
+        Tuple of (contribution, conf_factor)
+    """
+    if confidence_floor is None:
+        confidence_floor = CONFIDENCE_WEIGHTED_CONFIG["confidence_floor"]
+
+    # Confidence factor ranges from confidence_floor (low conf) to 1.0 (high conf)
+    conf_factor = confidence_floor + (Decimal("1") - confidence_floor) * confidence
+    conf_factor = _clamp(conf_factor, confidence_floor, Decimal("1.0"))
+
+    effective_score = normalized_score * conf_factor
+    contribution = effective_score * weight
+
+    return _quantize_score(contribution), conf_factor
+
+
+# =============================================================================
+# ENHANCEMENT 4: DYNAMIC SCORE CEILINGS
+# =============================================================================
+
+def apply_dynamic_ceilings(
+    score: Decimal,
+    lead_phase: Optional[str],
+    days_to_catalyst: Optional[int],
+    revenue_growth: Optional[Decimal],
+    is_commercial: bool,
+) -> Tuple[Decimal, List[str]]:
+    """
+    Apply dynamic score ceilings based on stage, catalyst timing, and commercial status.
+
+    Ceilings prevent scores from being too high in structurally disadvantaged situations:
+    - Early-stage companies (preclinical, phase 1) have lower ceilings
+    - No near-term catalyst means limited upside
+    - Commercial companies with declining revenue face ceiling
+
+    Args:
+        score: Pre-ceiling composite score
+        lead_phase: Lead program phase (e.g., "preclinical", "phase_1", "phase_2")
+        days_to_catalyst: Days until next catalyst (None if no catalyst)
+        revenue_growth: YoY revenue growth rate (negative = decline)
+        is_commercial: Whether company is revenue-generating commercial stage
+
+    Returns:
+        Tuple of (capped_score, ceilings_applied)
+    """
+    ceilings_applied = []
+    result = score
+
+    # Normalize lead_phase for matching
+    phase_lower = lead_phase.lower() if lead_phase else ""
+
+    # Stage ceiling for early-stage companies
+    for phase_key, cap in STAGE_CEILING_CONFIG.items():
+        if phase_key in phase_lower:
+            if result > cap:
+                result = cap
+                ceilings_applied.append(f"stage_ceiling_{phase_key.replace(' ', '_')}")
+            break  # Only apply one stage ceiling
+
+    # Catalyst ceiling - no near-term catalyst limits upside
+    if days_to_catalyst is None or days_to_catalyst > 365:
+        cap = CATALYST_CEILING_CONFIG["no_catalyst_12mo"]
+        if result > cap:
+            result = cap
+            ceilings_applied.append("no_catalyst_12mo_ceiling")
+    elif days_to_catalyst > 180:
+        cap = CATALYST_CEILING_CONFIG["no_catalyst_6mo"]
+        if result > cap:
+            result = cap
+            ceilings_applied.append("no_catalyst_6mo_ceiling")
+
+    # Commercial revenue declining ceiling
+    if is_commercial and revenue_growth is not None and revenue_growth < Decimal("0"):
+        cap = COMMERCIAL_CEILING_CONFIG["revenue_declining"]
+        if result > cap:
+            result = cap
+            ceilings_applied.append("commercial_revenue_declining_ceiling")
+
+    return _quantize_score(result), ceilings_applied
+
+
+# =============================================================================
+# ENHANCEMENT 5: ASYMMETRIC TRANSFORM (CONVEX DOWNSIDE, CONCAVE UPSIDE)
+# =============================================================================
+
+def apply_asymmetric_transform(
+    normalized_score: Decimal,
+    component: str,
+) -> Decimal:
+    """
+    Apply asymmetric transformation to a normalized score.
+
+    This transformation creates:
+    - Concave upside: Positive deviations from neutral are dampened (+10 → +6)
+    - Convex downside: Negative deviations from neutral are amplified (-10 → -12)
+
+    This reflects the asymmetric nature of biotech investing where downside risks
+    are often more severe than upside surprises.
+
+    Args:
+        normalized_score: Normalized component score (0-100)
+        component: Component name (for potential future component-specific transforms)
+
+    Returns:
+        Transformed score (0-100)
+    """
+    config = ASYMMETRY_CONFIG
+    neutral = config["neutral_threshold"]
+
+    delta = normalized_score - neutral
+
+    if delta > 0:
+        # Concave upside: dampen positive deviations
+        transformed_delta = delta * config["upside_dampening"]
+    elif delta < 0:
+        # Convex downside: amplify negative deviations
+        transformed_delta = delta * config["downside_amplification"]
+    else:
+        transformed_delta = Decimal("0")
+
+    transformed_score = neutral + transformed_delta
+
+    # Clamp to valid range
+    return _clamp(_quantize_score(transformed_score), Decimal("0"), Decimal("100"))
+
+
+def apply_asymmetric_transform_to_contribution(
+    contribution_delta: Decimal,
+    component: str,
+) -> Tuple[Decimal, List[str]]:
+    """
+    Apply asymmetric transform to contribution delta from neutral.
+
+    Args:
+        contribution_delta: Deviation of contribution from neutral
+        component: Component name
+
+    Returns:
+        Tuple of (transformed_delta, flags)
+    """
+    flags = []
+    config = ASYMMETRY_CONFIG
+
+    if contribution_delta > 0:
+        # Concave upside: dampen positive contributions
+        transformed = contribution_delta * config["upside_dampening"]
+        if abs(transformed - contribution_delta) > Decimal("0.5"):
+            flags.append("asymmetric_upside_dampened")
+    elif contribution_delta < 0:
+        # Convex downside: amplify negative contributions
+        transformed = contribution_delta * config["downside_amplification"]
+        if abs(transformed - contribution_delta) > Decimal("0.5"):
+            flags.append("asymmetric_downside_amplified")
+    else:
+        transformed = Decimal("0")
+
+    return _quantize_score(transformed), flags
+
+
+# =============================================================================
 # MAIN SCORING FUNCTION
 # =============================================================================
 
@@ -829,6 +1232,38 @@ def _score_single_ticker_v3(
     dilution_bucket = fin_data.get("dilution_risk_bucket")
     market_cap_mm = _to_decimal(fin_data.get("market_cap_mm"))
 
+    # V2: Extract financial data for valuation regime routing
+    has_revenue = fin_data.get("has_revenue", False)
+    revenue_mm = None
+    cfo_mm = None
+    enterprise_value_mm = None
+
+    # Extract actual CFO and Revenue from financial data (raw values in dollars)
+    raw_cfo = fin_data.get("CFO")
+    raw_revenue = fin_data.get("Revenue")
+
+    # Convert to millions
+    if raw_revenue is not None:
+        revenue_mm = _to_decimal(raw_revenue) / Decimal("1000000")
+    elif fin_data.get("revenue_scale_bucket") in ("medium", "large", "mega"):
+        # Fallback: Use market_cap as proxy if exact revenue not available
+        revenue_mm = market_cap_mm
+
+    if raw_cfo is not None:
+        cfo_mm = _to_decimal(raw_cfo) / Decimal("1000000")
+    elif fin_data.get("burn_source") == "profitable":
+        # Fallback: Profitable = positive CFO, use liquid_assets as proxy
+        cfo_mm = _to_decimal(fin_data.get("liquid_assets")) / Decimal("1000000") if fin_data.get("liquid_assets") else Decimal("1")
+    elif fin_data.get("monthly_burn") == 0 or fin_data.get("monthly_burn") == 0.0:
+        # Fallback: No burn = likely profitable
+        cfo_mm = Decimal("1")
+
+    # Enterprise value from market data if available
+    if market_data:
+        enterprise_value_mm = _to_decimal(market_data.get("enterprise_value"))
+        if enterprise_value_mm:
+            enterprise_value_mm = enterprise_value_mm / Decimal("1000000")  # Convert to millions
+
     # Get stage and trial count
     lead_phase = clin_data.get("lead_phase")
     stage = _stage_bucket(lead_phase)
@@ -900,13 +1335,25 @@ def _score_single_ticker_v3(
     if momentum.data_completeness < Decimal("0.5"):
         flags.append("momentum_data_incomplete")
 
-    # 3. Valuation signal
-    valuation = compute_valuation_signal(market_cap_mm, trial_count, lead_phase, peer_valuations)
+    # 3. Valuation signal (V2: with regime routing)
+    valuation = compute_valuation_signal(
+        market_cap_mm, trial_count, lead_phase, peer_valuations,
+        revenue_mm=revenue_mm,
+        cfo_mm=cfo_mm,
+        enterprise_value_mm=enterprise_value_mm,
+        has_revenue=has_revenue,
+    )
     valuation_norm = valuation.valuation_score
     if valuation.valuation_score >= Decimal("70"):
         flags.append("undervalued_vs_peers")
     elif valuation.valuation_score <= Decimal("30"):
         flags.append("overvalued_vs_peers")
+
+    # Add valuation regime and method flags
+    if valuation.regime:
+        flags.append(f"valuation_regime_{valuation.regime.value}")
+    if valuation.flags:
+        flags.extend(valuation.flags)
 
     # 4. Catalyst decay
     decay = compute_catalyst_decay(days_to_cat, cat_event_type or "DEFAULT")
@@ -1000,6 +1447,31 @@ def _score_single_ticker_v3(
 
     regime_weights = apply_regime_to_weights(base_weights, regime)
 
+    # =========================================================================
+    # ENHANCEMENT 1: HARD REGIME GATING
+    # Apply regime-specific gates to normalized scores before contribution calc
+    # =========================================================================
+
+    pre_gate_scores = {
+        "clinical": clin_norm,
+        "financial": fin_norm,
+        "catalyst": cat_norm,
+        "momentum": momentum_norm,
+        "valuation": valuation_norm,
+    }
+
+    gated_scores, regime_config, regime_gate_flags = apply_regime_gates(pre_gate_scores, regime)
+    flags.extend(regime_gate_flags)
+
+    # Update normalized scores with gated values
+    if gated_scores.get("momentum") is not None and gated_scores["momentum"] != momentum_norm:
+        momentum_norm = gated_scores["momentum"]
+    if gated_scores.get("valuation") is not None and gated_scores["valuation"] != valuation_norm:
+        valuation_norm = gated_scores["valuation"]
+
+    # Store financial penalty multiplier for later use
+    financial_penalty_mult = regime_config.get("financial_penalty_mult", Decimal("1.0"))
+
     vol_adjusted_weights = {
         k: v * vol_adj.weight_adjustment_factor
         for k, v in regime_weights.items()
@@ -1039,6 +1511,8 @@ def _score_single_ticker_v3(
 
     component_scores = []
     contributions = {}
+    confidence_factors = {}  # Track confidence factors for each component
+    asymmetric_flags = []  # Track asymmetric transform flags
 
     core_scores = {
         "clinical": (clin_norm, clin_raw, conf_clin),
@@ -1048,19 +1522,35 @@ def _score_single_ticker_v3(
 
     for name, (norm, raw, conf) in core_scores.items():
         w_eff = effective_weights.get(name, Decimal("0"))
-        contrib = norm * w_eff
+
+        # ENHANCEMENT 5: Apply asymmetric transform to normalized score
+        transformed_norm = apply_asymmetric_transform(norm, name)
+        delta_from_transform = transformed_norm - norm
+        if abs(delta_from_transform) > Decimal("0.5"):
+            if delta_from_transform < 0:
+                asymmetric_flags.append(f"{name}_asymmetric_upside_dampened")
+            else:
+                asymmetric_flags.append(f"{name}_asymmetric_downside_amplified")
+
+        # ENHANCEMENT 3: Confidence-weighted contribution
+        contrib, conf_factor = compute_confidence_weighted_contribution(
+            transformed_norm, w_eff, conf
+        )
         contributions[name] = contrib
+        confidence_factors[name] = conf_factor
 
         notes = []
         if raw is None:
             notes.append("missing_raw")
         if name == "catalyst" and decay.decay_factor < Decimal("0.9"):
             notes.append(f"decay_factor_{decay.decay_factor}")
+        if conf_factor < Decimal("0.7"):
+            notes.append(f"conf_weighted_{conf_factor}")
 
         component_scores.append(ComponentScore(
             name=name,
             raw=raw,
-            normalized=norm,
+            normalized=transformed_norm,  # Store transformed value
             confidence=conf,
             weight_base=base_weights.get(name, Decimal("0")),
             weight_effective=w_eff,
@@ -1069,35 +1559,76 @@ def _score_single_ticker_v3(
             notes=notes,
         ))
 
+    # Add asymmetric transform flags
+    flags.extend(asymmetric_flags)
+
     if mode in (ScoringMode.ENHANCED, ScoringMode.PARTIAL):
         if "momentum" in effective_weights:
             w_eff = effective_weights["momentum"]
-            contrib = momentum_norm * w_eff
+
+            # ENHANCEMENT 5: Apply asymmetric transform
+            transformed_momentum = apply_asymmetric_transform(momentum_norm, "momentum")
+            delta_from_transform = transformed_momentum - momentum_norm
+            if abs(delta_from_transform) > Decimal("0.5"):
+                if delta_from_transform < 0:
+                    flags.append("momentum_asymmetric_upside_dampened")
+                else:
+                    flags.append("momentum_asymmetric_downside_amplified")
+
+            # ENHANCEMENT 3: Confidence-weighted contribution
+            contrib, conf_factor = compute_confidence_weighted_contribution(
+                transformed_momentum, w_eff, momentum.confidence
+            )
             contributions["momentum"] = contrib
+            confidence_factors["momentum"] = conf_factor
+
+            mom_notes = [] if momentum.alpha_60d is not None else ["missing_price_data"]
+            if conf_factor < Decimal("0.7"):
+                mom_notes.append(f"conf_weighted_{conf_factor}")
+
             component_scores.append(ComponentScore(
                 name="momentum",
                 raw=momentum.alpha_60d,
-                normalized=momentum_norm,
+                normalized=transformed_momentum,
                 confidence=momentum.confidence,
                 weight_base=base_weights.get("momentum", Decimal("0")),
                 weight_effective=w_eff,
                 contribution=_quantize_score(contrib),
-                notes=[] if momentum.alpha_60d is not None else ["missing_price_data"],
+                notes=mom_notes,
             ))
 
         if "valuation" in effective_weights:
             w_eff = effective_weights["valuation"]
-            contrib = valuation_norm * w_eff
+
+            # ENHANCEMENT 5: Apply asymmetric transform
+            transformed_valuation = apply_asymmetric_transform(valuation_norm, "valuation")
+            delta_from_transform = transformed_valuation - valuation_norm
+            if abs(delta_from_transform) > Decimal("0.5"):
+                if delta_from_transform < 0:
+                    flags.append("valuation_asymmetric_upside_dampened")
+                else:
+                    flags.append("valuation_asymmetric_downside_amplified")
+
+            # ENHANCEMENT 3: Confidence-weighted contribution
+            contrib, conf_factor = compute_confidence_weighted_contribution(
+                transformed_valuation, w_eff, valuation.confidence
+            )
             contributions["valuation"] = contrib
+            confidence_factors["valuation"] = conf_factor
+
+            val_notes = [] if valuation.peer_count >= 5 else ["insufficient_peers"]
+            if conf_factor < Decimal("0.7"):
+                val_notes.append(f"conf_weighted_{conf_factor}")
+
             component_scores.append(ComponentScore(
                 name="valuation",
                 raw=valuation.mcap_per_asset,
-                normalized=valuation_norm,
+                normalized=transformed_valuation,
                 confidence=valuation.confidence,
                 weight_base=base_weights.get("valuation", Decimal("0")),
                 weight_effective=w_eff,
                 contribution=_quantize_score(contrib),
-                notes=[] if valuation.peer_count >= 5 else ["insufficient_peers"],
+                notes=val_notes,
             ))
 
         # Short interest signal integration
@@ -1187,6 +1718,32 @@ def _score_single_ticker_v3(
     pre_penalty = _quantize_score(pre_penalty)
 
     # =========================================================================
+    # ENHANCEMENT 6: CONTRADICTION DETECTOR
+    # Detect conflicting signals that reduce confidence in the score
+    # =========================================================================
+
+    contradiction_data = {
+        "momentum_score": momentum_norm,
+        "valuation_score": valuation_norm,
+        "clinical_score": clin_norm,
+        "financial_score": fin_norm,
+        "liquidity_gate": liquidity_status,
+        "runway_months": runway_months,
+        "dilution_bucket": dilution_bucket,
+    }
+
+    contradictions = detect_contradictions(contradiction_data)
+
+    if contradictions.contradictions:
+        # Apply contradiction score penalty
+        pre_penalty = pre_penalty - contradictions.score_penalty
+        pre_penalty = _quantize_score(max(pre_penalty, Decimal("0")))
+
+        # Add contradiction flags
+        for contradiction in contradictions.contradictions:
+            flags.append(f"contradiction_{contradiction}")
+
+    # =========================================================================
     # PENALTIES AND CAPS
     # =========================================================================
 
@@ -1219,7 +1776,51 @@ def _score_single_ticker_v3(
         dilution_bucket
     )
 
-    post_vol = apply_volatility_to_score(post_cap, vol_adj)
+    # =========================================================================
+    # ENHANCEMENT 4: DYNAMIC SCORE CEILINGS
+    # Apply stage, catalyst, and commercial revenue ceilings
+    # =========================================================================
+
+    # Determine if commercial (has revenue)
+    is_commercial = has_revenue or (revenue_mm is not None and revenue_mm > Decimal("0"))
+
+    # Calculate revenue growth if available
+    revenue_growth = None
+    if fin_data.get("revenue_yoy_growth") is not None:
+        revenue_growth = _to_decimal(fin_data.get("revenue_yoy_growth"))
+    elif fin_data.get("revenue_growth_rate") is not None:
+        revenue_growth = _to_decimal(fin_data.get("revenue_growth_rate"))
+
+    post_ceiling, ceilings_applied = apply_dynamic_ceilings(
+        post_cap,
+        lead_phase,
+        days_to_cat,
+        revenue_growth,
+        is_commercial,
+    )
+
+    if ceilings_applied:
+        flags.extend(ceilings_applied)
+        caps_applied.extend([{"reason": c, "cap": str(post_ceiling)} for c in ceilings_applied])
+
+    # =========================================================================
+    # ENHANCEMENT 2: EXISTENTIAL FLAW CAPS
+    # Detect and cap for existential risks (runway, binary clinical, debt)
+    # =========================================================================
+
+    existential_flaws = detect_existential_flaws(fin_data, clin_data, cat_data)
+    post_existential, existential_flags = apply_existential_cap(post_ceiling, existential_flaws)
+
+    if existential_flags:
+        flags.extend(existential_flags)
+        if post_existential < post_ceiling:
+            caps_applied.append({
+                "reason": "existential_cap",
+                "cap": str(EXISTENTIAL_FLAW_CONFIG["existential_cap"]),
+                "flaws": existential_flaws,
+            })
+
+    post_vol = apply_volatility_to_score(post_existential, vol_adj)
 
     delta_bonus = (cat_delta / Decimal("25")).quantize(SCORE_PRECISION)
 
@@ -1253,6 +1854,13 @@ def _score_single_ticker_v3(
         "interaction_adjustment": interactions.total_interaction_adjustment,
         "survivability_score": survivability_score,
         "survivability_contribution": survivability_contribution,
+        # New enhancement tracking
+        "regime_gates_applied": bool(regime_gate_flags),
+        "contradiction_penalty": contradictions.score_penalty,
+        "contradictions_detected": contradictions.contradictions,
+        "ceilings_applied": ceilings_applied,
+        "existential_flaws": existential_flaws,
+        "confidence_factors": {k: str(v) for k, v in confidence_factors.items()},
     }
 
     determinism_hash = _compute_determinism_hash(
@@ -1295,6 +1903,12 @@ def _score_single_ticker_v3(
             "severity_gate": SEVERITY_GATE_LABELS[worst_severity],
             "severity_multiplier": str(severity_multiplier),
             "monotonic_caps_applied": caps_applied,
+            # New enhancement penalties
+            "contradiction_penalty": str(contradictions.score_penalty),
+            "contradictions": contradictions.contradictions,
+            "dynamic_ceilings": ceilings_applied,
+            "existential_flaws": existential_flaws,
+            "regime_gates": regime_gate_flags,
         },
         interaction_terms={
             "clinical_financial_synergy": str(interactions.clinical_financial_synergy),
@@ -1305,9 +1919,12 @@ def _score_single_ticker_v3(
         },
         final={
             "pre_penalty_score": str(pre_penalty),
+            "post_contradiction_score": str(_quantize_score(pre_penalty - contradictions.score_penalty)),
             "post_uncertainty_score": str(_quantize_score(post_uncertainty)),
             "post_severity_score": str(post_severity),
             "post_cap_score": str(post_cap),
+            "post_ceiling_score": str(post_ceiling),
+            "post_existential_score": str(post_existential),
             "post_vol_score": str(post_vol),
             "delta_bonus": str(delta_bonus),
             "composite_score": str(final_score),
@@ -1349,9 +1966,17 @@ def _score_single_ticker_v3(
             "source": momentum_source,
         },
         "valuation_signal": {
-            "score": str(valuation.valuation_score),
+            "valuation_score": str(valuation.valuation_score),
             "peer_count": valuation.peer_count,
             "confidence": str(valuation.confidence),
+            # V2 regime routing fields
+            "regime": valuation.regime.value if hasattr(valuation.regime, 'value') else str(valuation.regime),
+            "method": valuation.method,
+            "ev_multiple": str(valuation.ev_multiple) if valuation.ev_multiple else None,
+            "peer_median_ev_multiple": str(valuation.peer_median_ev_multiple) if valuation.peer_median_ev_multiple else None,
+            "mcap_per_asset": str(valuation.mcap_per_asset) if valuation.mcap_per_asset else None,
+            "peer_median_mcap_per_asset": str(valuation.peer_median_mcap_per_asset) if valuation.peer_median_mcap_per_asset else None,
+            "flags": valuation.flags if valuation.flags else [],
         },
         "smart_money_signal": {
             "score": str(smart_money.smart_money_score),
@@ -1430,5 +2055,38 @@ def _score_single_ticker_v3(
         "interaction_terms": {
             "total_adjustment": str(interactions.total_interaction_adjustment),
             "flags": interactions.interaction_flags,
+        },
+        # New composite scoring enhancements tracking
+        "regime_gating": {
+            "regime": regime,
+            "gates_applied": regime_gate_flags,
+            "financial_penalty_mult": str(financial_penalty_mult),
+        },
+        "contradiction_detection": {
+            "contradictions": contradictions.contradictions,
+            "confidence_penalty": str(contradictions.confidence_penalty),
+            "score_penalty": str(contradictions.score_penalty),
+            "diagnostics": contradictions.diagnostics,
+        },
+        "dynamic_ceilings": {
+            "ceilings_applied": ceilings_applied,
+            "lead_phase": lead_phase,
+            "days_to_catalyst": days_to_cat,
+            "is_commercial": is_commercial,
+            "revenue_growth": str(revenue_growth) if revenue_growth is not None else None,
+        },
+        "existential_flaw_detection": {
+            "flaws": existential_flaws,
+            "cap_applied": "existential_capped" in existential_flags,
+            "cap_value": str(EXISTENTIAL_FLAW_CONFIG["existential_cap"]) if existential_flaws else None,
+        },
+        "confidence_weighting": {
+            "factors": {k: str(v) for k, v in confidence_factors.items()},
+            "floor": str(CONFIDENCE_WEIGHTED_CONFIG["confidence_floor"]),
+        },
+        "asymmetric_transform": {
+            "upside_dampening": str(ASYMMETRY_CONFIG["upside_dampening"]),
+            "downside_amplification": str(ASYMMETRY_CONFIG["downside_amplification"]),
+            "flags_triggered": [f for f in flags if "asymmetric" in f],
         },
     }
