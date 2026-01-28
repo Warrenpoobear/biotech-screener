@@ -132,7 +132,7 @@ The Biotech Alpha Screener is a quantitative ranking system designed to identify
 
 #### 2.5.1 Smart Money: Elite 13F Manager Tracking
 
-The smart money signal tracks 13F filings from 11 elite biotech-focused institutional managers, weighted by tier and investment style.
+The smart money signal tracks 13F filings from **16 elite biotech-focused institutional managers** (~$107B combined AUM), classified into Elite Core and Conditional tiers.
 
 **Selection Criteria**:
 - Biotech/healthcare specialist (>50% portfolio in life sciences)
@@ -140,51 +140,62 @@ The smart money signal tracks 13F filings from 11 elite biotech-focused institut
 - Significant AUM ($1B+ in 13F securities)
 - Known for deep scientific/clinical due diligence
 
-**Tier 1 — Core Biotech Specialists** (Weight: 1.0×)
+**Elite Core — Primary Signal Source** (12 managers, ~$71B AUM, Weight: 1.5×)
 
-| Manager | CIK | Style | Focus Areas |
-|---------|-----|-------|-------------|
-| Baker Bros. Advisors LP | 1263508 | Concentrated Conviction | Rare disease, oncology, genetic medicine |
-| RA Capital Management | 1346824 | Crossover Specialist | Platform technologies, rare disease, oncology |
-| BVF Inc. | 1056807 | Value Activist | Undervalued biotech, activist situations |
-| EcoR1 Capital | 1587114 | Scientific Deep-Dive | Genetic medicine, cell therapy, rare disease |
+| Manager | CIK | AUM ($B) | Style |
+|---------|-----|----------|-------|
+| Baker Bros Advisors | 0001263508 | 13.8 | Concentrated Conviction |
+| RA Capital Management | 0001346824 | 8.1 | Clinical Probability Engine |
+| Perceptive Advisors | 0001224962 | 3.5 | Event-Driven |
+| Deerfield Management | 0001009258 | 7.2 | Multi-Strategy |
+| Ally Bridge Group | 0001822947 | 2.5 | Asia Biotech |
+| Redmile Group | 0001425738 | 4.8 | Growth Equity |
+| OrbiMed Advisors | 0001055951 | 17.2 | Diversified Healthcare |
+| Venbio Partners | 0001776382 | 2.3 | Venture Crossover |
+| Bain Capital Life Sciences | 0001703031 | 5.5 | Private Equity Crossover |
+| RTW Investments | 0001493215 | 3.2 | Clinical-Stage Specialists |
+| Tang Capital Partners | 0001232621 | 2.8 | Oncology Focused |
+| Farallon Capital | 0000909661 | 36.0 | Multi-Strategy Macro |
 
-**Tier 2 — Excellent Biotech Specialists** (Weight: 0.7×)
+**Conditional — Secondary Breadth Signal** (4 managers, ~$36B AUM, Weight: 1.0×)
 
-| Manager | CIK | Style | Focus Areas |
-|---------|-----|-------|-------------|
-| OrbiMed Advisors | 1055951 | Diversified Healthcare | Broad healthcare, biotech, medtech |
-| Redmile Group | 1425738 | Crossover Specialist | Clinical-stage, platform technologies |
-| Deerfield Management | 1009258 | Multi-Strategy Healthcare | Royalties, structured finance, equity |
-| Farallon Capital | 909661 | Event-Driven | Healthcare events, M&A, special situations |
-| Citadel Advisors | 1423053 | Quantitative Fundamental | Broad market, healthcare allocation |
+| Manager | CIK | AUM ($B) | Style |
+|---------|-----|----------|-------|
+| Venrock | 0001005477 | 2.5 | Venture Capital |
+| Cormorant Asset Management | 0001398659 | 4.1 | Event-Driven |
+| Deep Track Capital | 0001631282 | 1.8 | Fundamental Long/Short |
+| Viking Global | 0001103804 | 27.0 | Multi-Strategy Macro |
 
-**Tier 3 — Notable Biotech Allocators** (Weight: 0.4×)
+**Position Change Scoring**:
 
-| Manager | CIK | Style | Focus Areas |
-|---------|-----|-------|-------------|
-| Avoro Capital Advisors | 1633313 | Concentrated Biotech | Clinical-stage, rare disease |
-| Cormorant Asset Management | 1583977 | Healthcare Specialist | Biotech, medtech, healthcare services |
+| Change Type | Score | Description |
+|-------------|-------|-------------|
+| NEW | +10 pts | Fresh position (wasn't held prior quarter) |
+| ADD | +5 pts | Increased position by >10% |
+| HOLD | +2 pts | Position unchanged (±10%) |
+| TRIM | -3 pts | Decreased position by >10% |
+| EXIT | -8 pts | Completely exited position |
 
-**Style Conviction Multipliers**:
+**Coordinated Activity Thresholds**:
 
-| Style | Multiplier | Rationale |
-|-------|------------|-----------|
-| Concentrated Conviction | 1.2× | High conviction per position |
-| Scientific Deep-Dive | 1.1× | Deep fundamental research |
-| Crossover Specialist | 1.0× | Public/private expertise |
-| Value Activist | 1.0× | Catalyst-focused |
-| Diversified Healthcare | 0.8× | Broader mandate |
-| Multi-Strategy | 0.7× | Healthcare is one sleeve |
-| Quantitative | 0.5× | Less fundamental signal |
-| Event-Driven | 0.6× | Shorter-term focus |
+| Signal | Threshold | Interpretation |
+|--------|-----------|----------------|
+| Coordinated Buying | ≥3 managers adding | Strong bullish signal |
+| Fresh Conviction | ≥2 managers initiating | New opportunity identified |
+| Coordinated Selling | ≥3 managers trimming/exiting | Risk signal |
+| Crowded Position | ≥6 managers holding | Crowding risk |
 
 **Signal Calculation**:
 ```
-manager_weight = tier_weight × style_multiplier
-position_signal = Σ(manager_weight × position_change)
-smart_money_score = normalize(position_signal, lookback=4 quarters)
+position_score = change_score × tier_weight
+ticker_momentum = Σ(position_score for all managers)
+smart_money_score = normalize(ticker_momentum, lookback=4 quarters)
 ```
+
+**Crowding Levels**:
+- LOW: 1-2 managers holding
+- MODERATE: 3-5 managers holding
+- HIGH: 6+ managers holding (crowding risk flag)
 
 **Data Freshness**: 13F filings have 45-day lag from quarter-end. Signal is marked stale if most recent filing is >60 days old.
 
@@ -859,7 +870,7 @@ Without explicit IC override:
 |---------|------|---------|
 | 1.0.0 | 2026-01-28 | Initial production release |
 | 1.0.1 | 2026-01-28 | Expanded regime detection documentation |
-| 1.0.2 | 2026-01-28 | Added 13F elite manager tracking documentation |
+| 1.0.2 | 2026-01-28 | Added 13F elite manager tracking (corrected to 16 managers) |
 
 ---
 
