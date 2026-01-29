@@ -1,0 +1,43 @@
+{
+  "ticker": "BNTC",
+  "success": true,
+  "price": {
+    "current": 12.34,
+    "currency": "USD",
+    "day_high": 12.6,
+    "day_low": 12.04,
+    "52_week_high": 17.15,
+    "52_week_low": 9.7
+  },
+  "market_cap": {
+    "value": 417859840.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 33862226.0,
+  "volume": {
+    "last": 58339,
+    "average_30d": 145433
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -1.3099787,
+    "price_to_book": 3.46046
+  },
+  "company_info": {
+    "name": "Benitec Biopharma Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T13:59:59.140960",
+    "url": "https://finance.yahoo.com/quote/BNTC",
+    "data_hash": "1006e36396c833cc"
+  }
+}

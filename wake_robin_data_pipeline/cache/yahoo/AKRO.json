@@ -1,0 +1,46 @@
+{
+  "ticker": "AKRO",
+  "success": true,
+  "price": {
+    "current": 54.65,
+    "currency": "USD",
+    "day_high": 54.825,
+    "day_low": 54.42,
+    "52_week_high": 58.4,
+    "52_week_low": 21.34
+  },
+  "market_cap": {
+    "value": 4499031040.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 82324445.0,
+  "volume": {
+    "last": 11609142,
+    "average_30d": 0
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -12.944102,
+    "price_to_book": 4.5739875
+  },
+  "company_info": {
+    "name": "Akero Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [
+      "missing_volume",
+      "volume_error:empty_history"
+    ],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": false
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T13:59:56.424534",
+    "url": "https://finance.yahoo.com/quote/AKRO",
+    "data_hash": "841262b273bebb51"
+  }
+}

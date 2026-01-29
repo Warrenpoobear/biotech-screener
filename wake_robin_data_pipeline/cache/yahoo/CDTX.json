@@ -1,0 +1,43 @@
+{
+  "ticker": "CDTX",
+  "success": true,
+  "price": {
+    "current": 221.38,
+    "currency": "USD",
+    "day_high": 221.41,
+    "day_low": 221.31,
+    "52_week_high": 221.42,
+    "52_week_low": 15.22
+  },
+  "market_cap": {
+    "value": 6961583616.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 31446306.0,
+  "volume": {
+    "last": 2690958,
+    "average_30d": 1003995
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -30.70215,
+    "price_to_book": 15.374679
+  },
+  "company_info": {
+    "name": "Cidara Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T13:59:57.823344",
+    "url": "https://finance.yahoo.com/quote/CDTX",
+    "data_hash": "cac38d5d0b67b474"
+  }
+}
