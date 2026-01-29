@@ -145,6 +145,140 @@ KNOWN_CUSIP_MAPPINGS = {
     '04335A105': 'ARVN',   # Arvinas
     '48115J109': 'DERM',   # Journey Medical
 
+    # Cormorant holdings CUSIPs
+    '107924102': 'BIOR',   # BridgeBio Oncology (was Eidos)
+    '30233G209': 'EYPT',   # EyePoint Pharmaceuticals
+    '75383L102': 'RAPP',   # Rapport Therapeutics
+    '10806X102': 'BBIO',   # BridgeBio Pharma
+    '10919W405': 'DRUG',   # Bright Minds Biosciences
+    'N62509109': 'NAMS',   # NewAmsterdam Pharma
+    '74006W207': 'PRAX',   # Praxis Precision Medicines
+    'N69605108': 'PHVS',   # Pharvaris
+    '21833P301': 'CRBP',   # Corbus Pharmaceuticals
+    'G3855L106': 'GHRS',   # GH Research
+    '500946108': 'KRBP',   # Korro Bio (now Voyager)
+    '59267L107': 'MTSR',   # Metsera
+    '47103J105': 'JANX',   # Janux Therapeutics
+    '27414W102': 'EARS',   # Auris Medical (placeholder)
+    '30231G208': 'EYPT',   # EyePoint alt CUSIP
+    '10919W108': 'DRUG',   # Bright Minds alt
+    '74006W108': 'PRAX',   # Praxis alt
+
+    # Rock Springs holdings CUSIPs
+    '04016X101': 'ARGX',   # argenx SE
+    '532457108': 'LLY',    # Eli Lilly
+    'N5749R100': 'MRUS',   # Merus
+    '604749101': 'MIRM',   # Mirum Pharmaceuticals
+    '89422G107': 'TVTX',   # Travere Therapeutics
+    '450056106': 'IRTC',   # iRhythm Technologies
+    '00847X104': 'AGIO',   # Agios Pharmaceuticals
+    '90400D108': 'RARE',   # Ultragenyx
+    '46120E602': 'ISRG',   # Intuitive Surgical
+    '101137107': 'BSX',    # Boston Scientific
+    '98420N105': 'XENE',   # Xenon Pharmaceuticals
+    '02043Q107': 'ALNY',   # Alnylam
+    '30063P105': 'EXAS',   # Exact Sciences
+    '70975L107': 'PEN',    # Penumbra
+    '00973Y108': 'AKRO',   # Akero Therapeutics
+    '72815L107': 'PLRX',   # Pliant Therapeutics
+    '29275Y102': 'ENTA',   # Enanta (alt CUSIP)
+    '464287622': 'IONS',   # Ionis Pharmaceuticals
+    '191098102': 'KOD',    # Kodiak Sciences
+    '46619B108': 'JNPR',   # Juniper (placeholder)
+    '74587V107': 'QTTB',   # Q32 Bio
+    '86881A200': 'SUPN',   # Supernus Pharmaceuticals
+    '37954A104': 'GILD',   # Gilead Sciences
+    '88160R101': 'TSLA',   # Tesla (already have)
+    '004644107': 'ACHC',   # Acadia Healthcare
+    '902973304': 'UTHR',   # United Therapeutics
+    '87612E106': 'TARS',   # Tarsus Pharmaceuticals
+    '04621X108': 'ASTH',   # Astellas/Astria
+    '29260X109': 'ENTA',   # Enanta (primary)
+    '92926F101': 'WVE',    # Wave Life Sciences
+    '92537Y105': 'VERA',   # Vera Therapeutics
+    '46266C105': 'IRWD',   # Ironwood Pharmaceuticals
+    '81211K100': 'SEER',   # Seer Bio
+    '98310A106': 'XERS',   # Xeris Biopharma
+    '882681109': 'TNDM',   # Tandem Diabetes
+    '26441C204': 'DVAX',   # Dynavax Technologies
+    '88642R109': 'THRX',   # Theseus Pharmaceuticals
+    '55279C100': 'MGNX',   # MacroGenics
+    '45826H109': 'INSM',   # Insmed (already have)
+    '92556V106': 'VKTX',   # Viking (already have)
+
+    # EcoR1 Capital holdings CUSIPs
+    '032724106': 'ANAB',   # AnaptysBio (alt CUSIP)
+    'G50871105': 'JAZZ',   # Jazz Pharmaceuticals
+    'H17182108': 'CRSP',   # CRISPR Therapeutics (Swiss)
+    '87583X109': 'TNGX',   # Tango Therapeutics
+    '68622P109': 'ORIC',   # ORIC Pharmaceuticals (alt)
+    '03753U106': 'APLS',   # Apellis Pharmaceuticals
+    '36315X101': 'GLPG',   # Galapagos
+    '64135M105': 'NGNE',   # Neurogene
+    '03843E104': 'AQST',   # Aquestive Therapeutics
+    '81533L109': 'SEEL',   # Seelos Therapeutics
+    '82489N103': 'SIAB',   # SI-BONE
+    '45338J108': 'IVA',    # Inventiva
+    '74587V305': 'QTTB',   # Q32 Bio (alt)
+    '46266C204': 'IRWD',   # Ironwood (alt)
+    '06406J109': 'KURA',   # Kura Oncology
+    '58471A109': 'MCRB',   # Seres Therapeutics
+    '09857L108': 'BPMC',   # Blueprint Medicines
+    '56400P203': 'MASI',   # Masimo
+    '35137L105': 'FOLD',   # Amicus Therapeutics
+    '60770K108': 'MRNA',   # Moderna (alt)
+    '02154V103': 'ALTM',   # Altimmune
+    '04621X108': 'ATXS',   # Astria Therapeutics
+    '92537N108': 'VCEL',   # Vericel
+    '92763M105': 'VRTX',   # Vertex (alt)
+    '40435L108': 'HIMS',   # Hims & Hers Health
+    '50189K103': 'LGND',   # Ligand Pharmaceuticals
+    '88688T100': 'TMDX',   # TransMedics Group
+    '74587V107': 'PTCT',   # PTC Therapeutics
+    '893641100': 'TSHA',   # Taysha Gene Therapies
+    '02208R107': 'ALPN',   # Alpine Immune Sciences
+
+    # Sofinnova & additional manager CUSIPs
+    '632307104': 'NTRA',   # Natera
+    '375558103': 'GILD',   # Gilead Sciences
+    '92337R101': 'VERA',   # Vera Therapeutics
+    '91307C102': 'UTHR',   # United Therapeutics
+    '046353108': 'AZN',    # AstraZeneca
+    '252131107': 'DXCM',   # Dexcom
+    '05464T104': 'AXSM',   # Axsome Therapeutics
+    'G76279101': 'ROIV',   # Roivant Sciences
+    '04272N102': 'AVBP',   # ArriVent BioPharma
+    '37045V100': 'GERN',   # Geron Corporation
+    '31573A105': 'FGEN',   # FibroGen
+    '742718109': 'PRCT',   # Procept BioRobotics
+    '825690100': 'SI',     # Silvergate (placeholder)
+    '74587W107': 'PTCT',   # PTC Therapeutics (alt)
+    '82481R106': 'SHPG',   # Shire (now Takeda)
+    '460690100': 'IONS',   # Ionis (alt)
+    '86882H100': 'SURF',   # Surface Oncology
+    '370437100': 'GERN',   # Geron (alt)
+    '11135F101': 'BMY',    # Bristol-Myers (alt)
+    '78397Y103': 'RXDX',   # Prometheus Bio
+    '71376T109': 'PEPG',   # Pepgen (alt)
+    '86267D101': 'SRRK',   # Scholar Rock
+    '20016X104': 'CMLF',   # CM Life Sciences (SPAC)
+    '05377R102': 'RNA',    # Avidity (alt)
+    'N80584105': 'TALK',   # Talkspace
+    '82488Y107': 'SHEN',   # Shenandoah Tel
+    '13123X508': 'CALM',   # Cal-Maine Foods
+    '45780R101': 'INSP',   # Inspire Medical
+    '09061G101': 'BIIB',   # Biogen (alt)
+    '84611G104': 'SPXC',   # SPX Corp
+    '872589104': 'TW',     # Tradeweb Markets
+    '00912X302': 'AIMD',   # Ainos
+    '42824C109': 'HEWG',   # iShares Currency Hedged
+    '12572Q105': 'CDMO',   # Avid Bioservices
+    '92763M107': 'VRTX',   # Vertex (another alt)
+    '458140100': 'INTC',   # Intel
+    '655044105': 'NKE',    # Nike
+    '78463V107': 'SPY',    # SPDR S&P 500
+    '464287655': 'IWM',    # iShares Russell 2000
+
     # AI/diagnostics biotech
     '88023B103': 'TEM',    # Tempus AI
 
