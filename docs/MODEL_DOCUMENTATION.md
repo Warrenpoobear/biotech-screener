@@ -132,7 +132,7 @@ The Biotech Alpha Screener is a quantitative ranking system designed to identify
 
 #### 2.5.1 Smart Money: Elite 13F Manager Tracking
 
-The smart money signal tracks 13F filings from **28 elite biotech-focused institutional managers** (~$1.2T combined AUM), classified into Elite Core and Conditional tiers.
+The smart money signal tracks 13F filings from **29 elite biotech-focused institutional managers** (~$1.2T combined AUM), classified into Elite Core and Conditional tiers.
 
 **Selection Criteria**:
 - Biotech/healthcare specialist (>50% portfolio in life sciences)
@@ -140,7 +140,7 @@ The smart money signal tracks 13F filings from **28 elite biotech-focused instit
 - Significant AUM ($1B+ in 13F securities)
 - Known for deep scientific/clinical due diligence
 
-**Elite Core — Primary Signal Source** (18 managers, ~$90B AUM, Weight: 1.5×)
+**Elite Core — Primary Signal Source** (19 managers, ~$92B AUM, Weight: 1.5×)
 
 | Manager | CIK | AUM ($B) | Style |
 |---------|-----|----------|-------|
@@ -162,6 +162,7 @@ The smart money signal tracks 13F filings from **28 elite biotech-focused instit
 | Logos Global Management | 0001792126 | 1.4 | Scientific Data-Driven |
 | Sofinnova Investments | 0001631134 | 3.8 | Venture Crossover |
 | Boxer Capital | 0001465837 | 1.4 | Oncology Focused |
+| EcoR1 Capital | 0001587114 | 2.1 | Scientific Deep-Dive |
 
 **Conditional — Secondary Breadth Signal** (10 managers, ~$1.1T AUM, Weight: 1.0×)
 
