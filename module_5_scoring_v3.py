@@ -2021,18 +2021,10 @@ def _score_single_ticker_v3(
         "effective_weights": effective_weights,
         "normalization_method": normalization_method.value,
         "caps_applied": caps_applied,
-        # Serialize component_scores consistently with score_breakdown.components
-        "component_scores": [{
-            "name": c.name,
-            "raw": str(c.raw) if c.raw is not None else None,
-            "normalized": str(c.normalized) if c.normalized is not None else None,
-            "confidence": str(c.confidence),
-            "weight_base": str(c.weight_base),
-            "weight_effective": str(c.weight_effective),
-            "contribution": str(c.contribution),
-            "decay_factor": str(c.decay_factor) if c.decay_factor is not None else None,
-            "notes": c.notes,
-        } for c in component_scores],
+        # NOTE: component_scores kept as raw dataclass list for internal use.
+        # Serialization happens in module_5_composite_v3.py via score_breakdown.components
+        # which is the single source of truth for JSON output.
+        "component_scores": component_scores,
         "uncertainty_penalty": uncertainty_penalty,
         "momentum_signal": {
             "momentum_score": str(momentum.momentum_score),
