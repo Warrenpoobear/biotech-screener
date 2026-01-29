@@ -773,17 +773,18 @@ python run_screen.py \
   --output screening_results.json
 ```
 
-### Current Data Coverage (as of 2026-01-25)
+### Current Data Coverage (as of 2026-01-28)
 
 | Component | Coverage | Notes |
 |-----------|----------|-------|
 | Market Data | 97.9% | |
-| Momentum | 100% | |
+| Momentum | 99.6% | 247/248 tickers |
 | Valuation | 100% | Includes sector-based fallback |
 | Probability of Success | 97.7% | Indication-mapped |
 | Short Interest | 100% | |
+| Smart Money | 55.6% | 138/248 tickers (31/33 managers) |
 | Staleness Detection | 11.9% | Working correctly |
-| Catalyst (raw) | 100% | 235 events across 104 tickers |
+| Catalyst (raw) | 100% | 138 events across 79 tickers |
 | Catalyst (effective) | 10.7% | After confidence gating |
 
 ## Configuration Management
@@ -956,7 +957,28 @@ Default weighting for final ranking (v1.4.0):
 
 ## Recent Changes
 
-### v1.5.0 (January 2026 - Latest)
+### v1.5.1 (January 2026 - Latest)
+
+- **CUSIP Resolution Fixes**:
+  - Added TEM (Tempus AI) CUSIP mapping `88023B103`
+  - Fixed 13 CUSIP resolution errors due to 8-char vs 9-char format mismatch
+  - Added full 9-char CUSIPs: ASND, AVLO, CRNX, CTMX, INSM, MBX, MDGL, RVMD, SEPN, SION, SRZN, TYRA, QURE
+  - Synced root `cusip_resolver.py` with `sec_13f/cusip_resolver.py`
+  - CUSIP cache now 102/102 resolved (0 null)
+- **Smart Money Coverage Improved** (48% → 55.6%):
+  - Re-processed all 33 elite managers with updated CUSIP mappings
+  - Added 235 new ticker entries to holdings_snapshots.json
+  - TEM now shows Perceptive (85k shares) and RTW (200k shares) as holders
+- **Composite Scoring Enhancements (E1-E6)**:
+  - E1: Hard Regime Gating (momentum caps in BEAR regime)
+  - E2: Weakest-Link Authority Escalation (existential flaw caps)
+  - E3: Confidence-Weighted Aggregation (binding confidence factors)
+  - E4: Dynamic Score Ceilings (stage, catalyst, commercial)
+  - E5: Convex Downside, Concave Upside (asymmetric transforms)
+  - E6: Contradiction Detector (momentum/liquidity, valuation/financing conflicts)
+- **Observability**: Added `confidence_factors` to score_breakdown.enhancements output
+
+### v1.5.0 (January 2026)
 
 - **Enhancements Enabled by Default**: `--enable-enhancements` and `--enable-short-interest` now default to True
   - Added `--no-enhancements` and `--no-short-interest` flags to disable
