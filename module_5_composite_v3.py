@@ -242,7 +242,7 @@ V3_PARTIAL_WEIGHTS = {
 HEALTH_GATE_THRESHOLDS = {
     "catalyst": Decimal("0.10"),    # Fail if <10% have catalyst events (core component)
     "momentum": Decimal("0.00"),    # Optional: 13F fallback provides sparse coverage by design
-    "smart_money": Decimal("0.00"), # Optional: 13F data only covers subset of universe
+    "smart_money": Decimal("0.00"), # Coverage-gated at runtime (5% when covered, 0% otherwise)
 }
 
 # =============================================================================
@@ -916,6 +916,9 @@ def compute_module_5_composite_v3(
                 "cohort_info": bd.cohort_info,
                 "hybrid_aggregation": bd.hybrid_aggregation,
             },
+
+            # Top-level component_scores (mirrors score_breakdown.components for convenience)
+            "component_scores": bd.components,
 
             # Co-invest
             "coinvest_overlap_count": coinvest.get("coinvest_overlap_count", 0),

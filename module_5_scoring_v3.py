@@ -182,6 +182,18 @@ ASYMMETRY_CONFIG = {
     "neutral_threshold": Decimal("50"),       # Scores above/below this
 }
 
+# =============================================================================
+# COVERAGE-GATED SMART MONEY WEIGHTING (OPTION A)
+# =============================================================================
+# If a security has 13F coverage (any elite manager holds it), include smart_money
+# at the configured weight. If no coverage, set smart_money weight to 0 and
+# renormalize other weights. This prevents penalizing uncovered securities while
+# still allowing SM signal to influence rankings for covered names.
+#
+# Key invariant: Weights always sum to 1.0 after renormalization.
+
+SMART_MONEY_COVERAGE_GATED_WEIGHT = Decimal("0.05")  # 5% when coverage exists
+
 
 # =============================================================================
 # TYPES
@@ -1506,6 +1518,27 @@ def _score_single_ticker_v3(
         effective_weights = {k: _quantize_weight(v / total) for k, v in effective_weights.items()}
 
     # =========================================================================
+    # COVERAGE-GATED SMART MONEY WEIGHTING (OPTION A)
+    # =========================================================================
+    # If security has 13F coverage, include smart_money at 5% and renormalize.
+    # If no coverage, smart_money weight is 0 (no penalty for missing data).
+    # This allows SM signal to influence covered names without taxing uncovered ones.
+
+    has_smart_money_coverage = smart_money.overlap_count > 0
+    if has_smart_money_coverage:
+        # Add smart_money at configured weight, then renormalize
+        effective_weights["smart_money"] = SMART_MONEY_COVERAGE_GATED_WEIGHT
+        flags.append("smart_money_coverage_included")
+    else:
+        effective_weights["smart_money"] = Decimal("0")
+        flags.append("smart_money_no_coverage")
+
+    # Renormalize weights to sum to 1.0 after adding smart_money
+    total = sum(effective_weights.values())
+    if total > EPS:
+        effective_weights = {k: _quantize_weight(v / total) for k, v in effective_weights.items()}
+
+    # =========================================================================
     # COMPOSITE SCORE COMPUTATION
     # =========================================================================
 
@@ -1697,6 +1730,40 @@ def _score_single_ticker_v3(
             notes=["delta_capped"] if pos_delta_was_capped else [],
         ))
         flags.append("pos_score_applied")
+
+    # =========================================================================
+    # SMART MONEY CONTRIBUTION (Coverage-Gated)
+    # =========================================================================
+    # Only add contribution if coverage exists (weight > 0 after gating)
+
+    sm_w_eff = effective_weights.get("smart_money", Decimal("0"))
+    if sm_w_eff > EPS and has_smart_money_coverage:
+        # smart_money.smart_money_score is already 20-80 range, use directly
+        sm_norm = smart_money.smart_money_score
+        sm_contrib = sm_norm * sm_w_eff
+        contributions["smart_money"] = sm_contrib
+
+        sm_notes = []
+        if smart_money.holders_increasing:
+            sm_notes.append(f"buying:{len(smart_money.holders_increasing)}")
+        if smart_money.holders_decreasing:
+            sm_notes.append(f"selling:{len(smart_money.holders_decreasing)}")
+        if smart_money.tier1_holders:
+            sm_notes.append(f"tier1:{len(smart_money.tier1_holders)}")
+        if smart_money.conditional_capped:
+            sm_notes.append("conditional_capped")
+
+        component_scores.append(ComponentScore(
+            name="smart_money",
+            raw=Decimal(str(smart_money.overlap_count)),  # Raw overlap count
+            normalized=sm_norm,
+            confidence=smart_money.confidence,
+            weight_base=SMART_MONEY_COVERAGE_GATED_WEIGHT,  # Base weight when covered
+            weight_effective=sm_w_eff,
+            contribution=_quantize_score(sm_contrib),
+            notes=sm_notes if sm_notes else [],
+        ))
+        flags.append("smart_money_applied")
 
     # =========================================================================
     # AGGREGATION
@@ -1954,7 +2021,18 @@ def _score_single_ticker_v3(
         "effective_weights": effective_weights,
         "normalization_method": normalization_method.value,
         "caps_applied": caps_applied,
-        "component_scores": component_scores,
+        # Serialize component_scores consistently with score_breakdown.components
+        "component_scores": [{
+            "name": c.name,
+            "raw": str(c.raw) if c.raw is not None else None,
+            "normalized": str(c.normalized) if c.normalized is not None else None,
+            "confidence": str(c.confidence),
+            "weight_base": str(c.weight_base),
+            "weight_effective": str(c.weight_effective),
+            "contribution": str(c.contribution),
+            "decay_factor": str(c.decay_factor) if c.decay_factor is not None else None,
+            "notes": c.notes,
+        } for c in component_scores],
         "uncertainty_penalty": uncertainty_penalty,
         "momentum_signal": {
             "momentum_score": str(momentum.momentum_score),
