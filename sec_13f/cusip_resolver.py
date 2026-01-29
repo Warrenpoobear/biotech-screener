@@ -77,6 +77,9 @@ KNOWN_CUSIP_MAPPINGS = {
     '15230910': 'CNTA',    # Centessa
 
 
+    # AI/diagnostics biotech
+    '88023B103': 'TEM',    # Tempus AI
+
     # Large-cap biotech
     '031162100': 'AMGN',   # Amgen
     '92532F100': 'VRTX',   # Vertex Pharmaceuticals

@@ -19035,5 +19035,35 @@
         }
       }
     }
+  },
+  "TEM": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001224962": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 85000,
+          "value_kusd": 6860350,
+          "put_call": ""
+        },
+        "0001493215": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 200000,
+          "value_kusd": 16142000,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001493215": {
+          "quarter_end": "2025-06-30",
+          "state": "KNOWN",
+          "shares": 400000,
+          "value_kusd": 25416000,
+          "put_call": ""
+        }
+      }
+    }
   }
 }
