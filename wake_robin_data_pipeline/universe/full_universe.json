@@ -1,7 +1,7 @@
 {
   "metadata": {
     "creation_date": "2026-01-29",
-    "description": "Full biotech universe - 378 tickers from ETF holdings + Tier 1/Conditional manager 13F analysis",
+    "description": "Full biotech universe - 382 tickers from ETF holdings + Tier 1/Conditional manager 13F analysis",
     "source": "Major biotech ETFs and manager_registry.json (29 Elite Core + 6 Conditional managers)",
     "selection_criteria": "All biotech companies from major ETF holdings plus holdings from canonical manager registry",
     "manager_registry": "production_data/manager_registry.json",
@@ -121,6 +121,13 @@
       "market_cap_tier": "small"
     },
     {
+      "ticker": "AKRO",
+      "company": "Akero Therapeutics, Inc.",
+      "stage": "clinical",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
+    },
+    {
       "ticker": "AKTX",
       "company": "Healthcare",
       "stage": "commercial",
@@ -182,6 +189,13 @@
       "stage": "commercial",
       "primary_indication": "Biotechnology",
       "market_cap_tier": "small"
+    },
+    {
+      "ticker": "ALXO",
+      "company": "ALX Oncology Holdings Inc.",
+      "stage": "clinical",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "micro"
     },
     {
       "ticker": "AMGN",
@@ -513,6 +527,13 @@
       "market_cap_tier": "large"
     },
     {
+      "ticker": "BNTC",
+      "company": "Benitec Biopharma Inc.",
+      "stage": "clinical",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
       "ticker": "BNTX",
       "company": "BioNTech SE",
       "stage": "commercial",
@@ -574,6 +595,13 @@
       "stage": "commercial",
       "primary_indication": "Biotechnology",
       "market_cap_tier": "small"
+    },
+    {
+      "ticker": "CDTX",
+      "company": "Cidara Therapeutics, Inc.",
+      "stage": "clinical",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "mid"
     },
     {
       "ticker": "CDXS",
@@ -2656,7 +2684,7 @@
     }
   ],
   "validation": {
-    "total_count": 378,
+    "total_count": 382,
     "coverage_target": "100% price data, 80% financial data, 60% trial data"
   }
 }
