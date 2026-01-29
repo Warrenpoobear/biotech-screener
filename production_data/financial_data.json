@@ -32,8 +32,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 2455407000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 430000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 2368000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 2455006000.0,
     "Cash_source": "SEC",
@@ -45,7 +45,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "JAZZ",
@@ -62,8 +63,8 @@
     "Cash_date": "2025-09-30",
     "AvailableForSaleSecurities": 0,
     "AvailableForSaleSecurities_date": "2012-12-31",
-    "R&D": 299726000,
-    "R&D_date": "2019-12-31",
+    "R&D": 792812000.0,
+    "R&D_date": "2025-09-30",
     "NetIncome": -559599000,
     "NetIncome_date": "2025-09-30",
     "LongTermDebt": 5361161000.0,
@@ -76,8 +77,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 3754435000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 32800000,
-    "InterestExpense_date": "2023-12-31",
+    "InterestExpense": 194304000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 0.0,
     "TotalLiquidity": 1326070000.0,
@@ -92,7 +93,9 @@
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "R&D_source": "Yahoo",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "IONS",
@@ -113,8 +116,8 @@
     "ShortTermInvestments_date": "2025-09-30",
     "AvailableForSaleSecurities": 340622000,
     "AvailableForSaleSecurities_date": "2011-03-31",
-    "R&D": 638200000,
-    "R&D_date": "2021-12-31",
+    "R&D": 871016000.0,
+    "R&D_date": "2025-09-30",
     "NetIncome": -151993000,
     "NetIncome_date": "2025-09-30",
     "LongTermDebt": 0.0,
@@ -143,7 +146,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "R&D_source": "Yahoo"
   },
   {
     "ticker": "BBIO",
@@ -224,8 +228,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 159361000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 3129000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 10992000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 180224000.0,
     "Cash_source": "SEC",
@@ -238,7 +242,11 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "R&D": 182168000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "RNA",
@@ -328,7 +336,10 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense": 392000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "RYTM",
@@ -363,8 +374,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 277457000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 4755000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 18968000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 363974000.0,
     "TotalLiquidity": 416052000.0,
@@ -379,7 +390,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "EPRX",
@@ -396,18 +408,18 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 88959281.0,
     "Cash_date": "2025-09-30",
-    "R&D": 20563225,
-    "R&D_date": "2023-12-31",
+    "R&D": 17670888.0,
+    "R&D_date": "2025-09-30",
     "NetIncome": -28220796,
     "NetIncome_date": "2023-12-31",
     "Revenue": 0,
     "Revenue_date": "2023-12-31",
-    "CFO": -20683623,
-    "CFO_date": "2023-12-31",
-    "OperatingExpenses": 27847229,
-    "OperatingExpenses_date": "2023-12-31",
-    "InterestExpense": 1170173,
-    "InterestExpense_date": "2023-12-31",
+    "CFO": -18026224.0,
+    "CFO_date": "2025-09-30",
+    "OperatingExpenses": 27532400.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "InterestExpense": 0.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 88959281.0,
     "Cash_source": "Yahoo",
@@ -421,7 +433,11 @@
     "LongTermDebt_source": "Yahoo",
     "Assets_source": "Yahoo",
     "Liabilities_source": "Yahoo",
-    "ShareholdersEquity_source": "Yahoo"
+    "ShareholdersEquity_source": "Yahoo",
+    "CFO_source": "Yahoo",
+    "R&D_source": "Yahoo",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "ACAD",
@@ -498,8 +514,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 2247044000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 35253000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 177592000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 1490249000.0,
     "Cash_source": "SEC",
@@ -515,7 +531,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "BMRN",
@@ -548,8 +565,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 1892600000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 3547000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 10316000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 227731000.0,
     "TotalLiquidity": 1250108000.0,
@@ -567,7 +584,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "CRSP",
@@ -632,8 +650,8 @@
     "MarketableSecurities_date": "2025-09-30",
     "AvailableForSaleSecurities": 518108000,
     "AvailableForSaleSecurities_date": "2018-12-31",
-    "R&D": 603100000,
-    "R&D_date": "2022-03-31",
+    "R&D": 3910800000.0,
+    "R&D_date": "2025-09-30",
     "NetIncome": 2762100000,
     "NetIncome_date": "2025-09-30",
     "LongTermDebt": 0.0,
@@ -644,8 +662,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 5843900000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 58151000,
-    "InterestExpense_date": "2020-12-31",
+    "InterestExpense": 13200000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 6287000000.0,
     "Cash_source": "SEC",
@@ -658,7 +676,9 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "R&D_source": "Yahoo",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "SRPT",
@@ -677,8 +697,8 @@
     "Cash_date": "2025-09-30",
     "ShortTermInvestments": 237916000,
     "ShortTermInvestments_date": "2025-09-30",
-    "R&D": 207239000,
-    "R&D_date": "2020-12-31",
+    "R&D": 875560000.0,
+    "R&D_date": "2025-09-30",
     "NetIncome": -430563000,
     "NetIncome_date": "2025-09-30",
     "LongTermDebt": 1035146000.0,
@@ -707,7 +727,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "R&D_source": "Yahoo"
   },
   {
     "ticker": "UTHR",
@@ -736,8 +757,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 1256700000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 13300000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 12000000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 2767600000.0,
     "LongTermDebt": 0.0,
@@ -751,7 +772,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "EXEL",
@@ -828,10 +850,10 @@
     "Revenue_date": "2025-09-30",
     "CFO": -366171000,
     "CFO_date": "2025-09-30",
-    "OperatingExpenses": 375715000,
-    "OperatingExpenses_date": "2021-06-30",
-    "InterestExpense": 318000,
-    "InterestExpense_date": "2014-03-31",
+    "OperatingExpenses": 1211328000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "InterestExpense": 56592000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 568034000.0,
     "TotalLiquidity": 202510000.0,
@@ -845,7 +867,9 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "FOLD",
@@ -878,8 +902,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 385773000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 12436000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 46844000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 263843000.0,
     "Cash_source": "SEC",
@@ -893,7 +917,11 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "R&D": 93660000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "AMGN",
@@ -939,7 +967,10 @@
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "R&D": 7600000000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo"
   },
   {
     "ticker": "GILD",
@@ -958,8 +989,8 @@
     "MarketableSecurities_date": "2025-09-30",
     "AvailableForSaleSecurities": 78804000,
     "AvailableForSaleSecurities_date": "2013-03-31",
-    "R&D": 1101000000,
-    "R&D_date": "2020-03-31",
+    "R&D": 5384000000.0,
+    "R&D_date": "2025-09-30",
     "NetIncome": 6327000000,
     "NetIncome_date": "2025-09-30",
     "LongTermDebt": 22135000000.0,
@@ -974,8 +1005,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 13480000000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 254000000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 1024000000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 7349000000.0,
     "Liabilities": 36993000000.0,
@@ -991,7 +1022,9 @@
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "R&D_source": "Yahoo",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "BIIB",
@@ -1014,8 +1047,8 @@
     "AvailableForSaleSecurities_date": "2019-12-31",
     "COGS": 133749000,
     "COGS_date": "2013-03-31",
-    "R&D": 284340000,
-    "R&D_date": "2013-03-31",
+    "R&D": 1744400000.0,
+    "R&D_date": "2025-09-30",
     "NetIncome": 1341800000,
     "NetIncome_date": "2025-09-30",
     "LongTermDebt": 6285100000.0,
@@ -1041,7 +1074,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "R&D_source": "Yahoo"
   },
   {
     "ticker": "MRNA",
@@ -1080,7 +1114,10 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense": 0.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "LGND",
@@ -1111,8 +1148,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 181262000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 141000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 3640000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 525146000.0,
     "TotalLiquidity": 664522000.0,
@@ -1127,7 +1164,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "TECH",
@@ -1156,8 +1194,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 140454000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 13227000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 11736000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 0.0,
     "TotalLiquidity": 144962000.0,
@@ -1175,7 +1213,11 @@
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "R&D": 96964000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "RGEN",
@@ -1671,8 +1713,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 239977000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 116000,
-    "InterestExpense_date": "2021-06-30",
+    "InterestExpense": 0.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 315573000.0,
     "LongTermDebt": 0.0,
@@ -1685,7 +1727,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "AXSM",
@@ -1941,8 +1984,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 166911000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 0,
-    "InterestExpense_date": "2020-12-31",
+    "InterestExpense": 1376000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 214379000.0,
     "TotalLiquidity": 37815000.0,
@@ -1960,7 +2003,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "APLS",
@@ -1993,8 +2037,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 697300000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 2687000,
-    "InterestExpense_date": "2023-09-30",
+    "InterestExpense": 45116000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 479171000.0,
     "Cash_source": "SEC",
@@ -2007,7 +2051,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "ARCT",
@@ -2077,8 +2122,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 731102000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 12611000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 86776000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 919366000.0,
     "Liabilities": 881879000.0,
@@ -2096,7 +2141,8 @@
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "AVTR",
@@ -2137,7 +2183,10 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "OperatingExpenses": 1561200000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "BCRX",
@@ -2168,8 +2217,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 387678000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 49239000,
-    "InterestExpense_date": "2024-06-30",
+    "InterestExpense": 78644000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 128795000.0,
     "TotalLiquidity": 212873000.0,
@@ -2184,7 +2233,8 @@
     "LongTermDebt_source": "Yahoo",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "BDTX",
@@ -2715,8 +2765,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 382947000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 4507000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 17184000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 48408220.0,
     "TotalLiquidity": 419665000.0,
@@ -2729,7 +2779,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "HRTX",
@@ -2808,7 +2859,10 @@
     "InterestExpense": 9113000,
     "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
-    "TotalLiquidity": 342341000.0
+    "TotalLiquidity": 342341000.0,
+    "OperatingExpenses": 441404000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "IMVT",
@@ -2825,8 +2879,8 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 521870000.0,
     "Cash_date": "2025-09-30",
-    "R&D": 66168000,
-    "R&D_date": "2022-09-30",
+    "R&D": 456996000.0,
+    "R&D_date": "2025-09-30",
     "NetIncome": -247115000,
     "NetIncome_date": "2025-09-30",
     "CFO": -219926000,
@@ -2846,7 +2900,8 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "R&D_source": "Yahoo"
   },
   {
     "ticker": "IRWD",
@@ -2881,8 +2936,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 156745000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 7231000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 33736000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 95680000.0,
     "TotalLiquidity": 140407000.0,
@@ -2897,7 +2952,8 @@
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "KALA",
@@ -2930,8 +2986,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 28936000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 1455000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 3852000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 9922000.0,
     "TotalLiquidity": 21096000.0,
@@ -2943,7 +2999,8 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "KALV",
@@ -2972,8 +3029,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 168436000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 493000,
-    "InterestExpense_date": "2016-09-30",
+    "InterestExpense": 19028000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 243497000.0,
     "Cash_source": "SEC",
@@ -2985,7 +3042,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "KRYS",
@@ -3063,8 +3121,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 137462000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 8120000,
-    "InterestExpense_date": "2024-09-30",
+    "InterestExpense": 27780000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 157496000.0,
     "Cash_source": "SEC",
@@ -3076,7 +3134,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "MCRB",
@@ -3164,7 +3223,10 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "R&D": 696016000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo"
   },
   {
     "ticker": "MRSN",
@@ -3197,9 +3259,10 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 73515000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 1002000,
-    "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "InterestExpense": 1576000.0,
+    "InterestExpense_date": "2025-09-30",
+    "collected_at": "2026-01-27",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "MRVI",
@@ -3232,8 +3295,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 177619000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 36437000,
-    "InterestExpense_date": "2024-09-30",
+    "InterestExpense": 27376000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 243574000.0,
     "Cash_source": "SEC",
@@ -3245,7 +3308,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "NVCR",
@@ -3501,8 +3565,8 @@
     "Cash_date": "2025-09-30",
     "ShortTermInvestments": 106813000,
     "ShortTermInvestments_date": "2025-09-30",
-    "R&D": 99060000,
-    "R&D_date": "2019-09-30",
+    "R&D": 49508000.0,
+    "R&D_date": "2025-09-30",
     "NetIncome": -227139000,
     "NetIncome_date": "2025-09-30",
     "LongTermDebt": 92890000.0,
@@ -3513,10 +3577,10 @@
     "Revenue_date": "2023-06-30",
     "CFO": -64371000,
     "CFO_date": "2025-09-30",
-    "OperatingExpenses": 227093000,
-    "OperatingExpenses_date": "2019-09-30",
-    "InterestExpense": 13140000,
-    "InterestExpense_date": "2019-09-30",
+    "OperatingExpenses": 145472000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "InterestExpense": 3608000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 106813000.0,
     "TotalLiquidity": 121135000.0,
@@ -3530,7 +3594,10 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "R&D_source": "Yahoo",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "PRTA",
@@ -3614,7 +3681,10 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense": 130368000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "RVMD",
@@ -3643,8 +3713,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 820743000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 0,
-    "InterestExpense_date": "2022-12-31",
+    "InterestExpense": 45712000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 1931508000.0,
     "LongTermDebt": 0.0,
@@ -3657,7 +3727,8 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "RXRX",
@@ -3688,8 +3759,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 578941000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 20000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 3332000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 0.0,
     "TotalLiquidity": 659836000.0,
@@ -3702,7 +3773,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "RGNX",
@@ -3731,8 +3803,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 243666000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 2422000,
-    "InterestExpense_date": "2024-06-30",
+    "InterestExpense": 52676000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 274205000.0,
     "LongTermDebt": 0.0,
@@ -3746,7 +3818,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "SANA",
@@ -3859,8 +3932,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 314160000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 100000,
-    "InterestExpense_date": "2024-06-30",
+    "InterestExpense": 33132000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 319171000.0,
     "TotalLiquidity": 435979000.0,
@@ -3876,7 +3949,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "SPRY",
@@ -3993,8 +4067,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 85186000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 629000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 2292000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 370228000.0,
     "TotalLiquidity": 174773000.0,
@@ -4009,7 +4083,8 @@
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "TGTX",
@@ -4046,8 +4121,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 350883000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 2288000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 26884000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 57501000.0,
     "TotalLiquidity": 131582000.0,
@@ -4062,7 +4137,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "AARD",
@@ -4182,8 +4258,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 91426000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 176000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 180000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 152475000.0,
     "Cash_source": "SEC",
@@ -4196,7 +4272,8 @@
     "LongTermDebt_source": "Yahoo",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "ABUS",
@@ -4227,8 +4304,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 45902000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 78000,
-    "InterestExpense_date": "2024-06-30",
+    "InterestExpense": 92000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 93700000.0,
     "TotalLiquidity": 116108000.0,
@@ -4244,7 +4321,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "ACLX",
@@ -4273,8 +4351,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 210032000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 595000,
-    "InterestExpense_date": "2022-09-30",
+    "InterestExpense": 0.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 461383000.0,
     "LongTermDebt": 44323000.0,
@@ -4290,7 +4368,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "ACRS",
@@ -4417,8 +4496,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 75257000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 3769000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 6700000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 0.0,
     "TotalLiquidity": 61385000.0,
@@ -4432,7 +4511,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "ADPT",
@@ -4513,8 +4593,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 895500000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 11930000,
-    "InterestExpense_date": "2024-06-30",
+    "InterestExpense": 0.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 494665000.0,
     "TotalLiquidity": 616449000.0,
@@ -4530,7 +4610,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "ALMS",
@@ -4607,8 +4688,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 65611000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 1000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 1980000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 149540000.0,
     "TotalLiquidity": 210776000.0,
@@ -4624,7 +4705,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "AMLX",
@@ -4695,8 +4777,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 145359000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 0,
-    "InterestExpense_date": "2021-12-31",
+    "InterestExpense": 90060000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 109833000.0,
     "Liabilities": 382514000.0,
@@ -4716,7 +4798,8 @@
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "ANNX",
@@ -4797,7 +4880,10 @@
     "LongTermDebt_source": "Yahoo",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "InterestExpense": 2600000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "APGE",
@@ -4869,8 +4955,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 277183000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 7480000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 12284000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 47120000.0,
     "Cash_source": "SEC",
@@ -4886,7 +4972,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "ATAI",
@@ -4903,8 +4990,8 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 30402000.0,
     "Cash_date": "2025-09-30",
-    "R&D": 400000,
-    "R&D_date": "2024-12-31",
+    "R&D": 58720000.0,
+    "R&D_date": "2025-09-30",
     "NetIncome": -115234000,
     "NetIncome_date": "2025-09-30",
     "LongTermDebt": 2426000.0,
@@ -4919,8 +5006,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 77102000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 1388000,
-    "InterestExpense_date": "2024-06-30",
+    "InterestExpense": 0.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 30402000.0,
     "Cash_source": "SEC",
@@ -4936,7 +5023,9 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "R&D_source": "Yahoo",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "ATXS",
@@ -4957,8 +5046,8 @@
     "ShortTermInvestments_date": "2025-09-30",
     "AvailableForSaleSecurities": 14931000,
     "AvailableForSaleSecurities_date": "2016-12-31",
-    "R&D": 9859000,
-    "R&D_date": "2021-09-30",
+    "R&D": 96596000.0,
+    "R&D_date": "2025-09-30",
     "NetIncome": -98404000,
     "NetIncome_date": "2025-09-30",
     "LongTermDebt": 3055000.0,
@@ -4988,7 +5077,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "R&D_source": "Yahoo"
   },
   {
     "ticker": "AUPH",
@@ -5017,8 +5107,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 134266000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 2481000,
-    "InterestExpense_date": "2024-06-30",
+    "InterestExpense": 4396000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 72889000.0,
     "LongTermDebt": 60846000.0,
@@ -5036,7 +5126,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "AURA",
@@ -5102,8 +5193,8 @@
     "Revenue_date": "2025-03-31",
     "CFO": -216245000,
     "CFO_date": "2025-09-30",
-    "OperatingExpenses": 102982000,
-    "OperatingExpenses_date": "2019-09-30",
+    "OperatingExpenses": 256688000.0,
+    "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 13834000,
     "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
@@ -5123,7 +5214,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "AVBP",
@@ -5363,8 +5455,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 246988000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 821000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 176000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 648325000.0,
     "Cash_source": "SEC",
@@ -5377,7 +5469,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "BHVN",
@@ -5464,7 +5557,10 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense": 596000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "BRKR",
@@ -5499,8 +5595,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 1136600000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 47900000,
-    "InterestExpense_date": "2024-12-31",
+    "InterestExpense": 81200000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 0.0,
     "TotalLiquidity": 293100000.0,
@@ -5514,7 +5610,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "CABA",
@@ -5682,8 +5779,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 74573000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 84000,
-    "InterestExpense_date": "2023-12-31",
+    "InterestExpense": 260000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 147375000.0,
     "TotalLiquidity": 174137000.0,
@@ -5698,7 +5795,8 @@
     "LongTermDebt_source": "Yahoo",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "CCCC",
@@ -5777,8 +5875,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 83770000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 13000,
-    "InterestExpense_date": "2013-12-31",
+    "InterestExpense": 5168000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 33350000.0,
     "TotalLiquidity": 58701000.0,
@@ -5794,7 +5892,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "CGEM",
@@ -5949,8 +6048,8 @@
     "Revenue_date": "2025-09-30",
     "CFO": -138010000,
     "CFO_date": "2025-09-30",
-    "InterestExpense": 2529000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 11560000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 195403000.0,
     "TotalLiquidity": 246214000.0,
@@ -5966,7 +6065,14 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "R&D": 166252000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 215160000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "COGT",
@@ -6009,7 +6115,10 @@
     "LongTermDebt_source": "Yahoo",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "InterestExpense": 5836000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "CRL",
@@ -6040,8 +6149,8 @@
     "Revenue_date": "2025-09-27",
     "CFO": 590126000,
     "CFO_date": "2025-09-27",
-    "InterestExpense": 35001000,
-    "InterestExpense_date": "2024-03-30",
+    "InterestExpense": 101612000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 207097000.0,
     "Cash_source": "SEC",
@@ -6054,7 +6163,11 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 819972000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "CSTL",
@@ -6087,8 +6200,8 @@
     "Revenue_date": "2025-09-30",
     "CFO": 37416000,
     "CFO_date": "2025-09-30",
-    "OperatingExpenses": 24069000,
-    "OperatingExpenses_date": "2021-03-31",
+    "OperatingExpenses": 284572000.0,
+    "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 17000,
     "InterestExpense_date": "2025-06-30",
     "collected_at": "2026-01-27",
@@ -6104,7 +6217,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "CTKB",
@@ -6131,8 +6245,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 106365000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 441000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 1976000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 168453000.0,
     "TotalLiquidity": 261734000.0,
@@ -6150,7 +6264,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "CTMX",
@@ -6409,8 +6524,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 466200000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 24300000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 60800000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 245500000.0,
     "Cash_source": "SEC",
@@ -6423,7 +6538,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "ELVN",
@@ -6493,8 +6609,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 150673000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 8359000,
-    "InterestExpense_date": "2024-06-30",
+    "InterestExpense": 9548000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 32298000.0,
     "LongTermDebt": 54757000.0,
@@ -6510,7 +6626,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "ERAS",
@@ -6551,7 +6668,10 @@
     "LongTermDebt_source": "Yahoo",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "R&D": 89896000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo"
   },
   {
     "ticker": "EWTX",
@@ -6613,8 +6733,8 @@
     "MarketableSecurities_date": "2025-09-30",
     "AvailableForSaleSecurities": 70686000,
     "AvailableForSaleSecurities_date": "2021-09-30",
-    "R&D": 43832000,
-    "R&D_date": "2021-09-30",
+    "R&D": 197752000.0,
+    "R&D_date": "2025-09-30",
     "NetIncome": -159506000,
     "NetIncome_date": "2025-09-30",
     "Revenue": 119000.0,
@@ -6638,7 +6758,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "R&D_source": "Yahoo"
   },
   {
     "ticker": "FHTX",
@@ -6717,8 +6838,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 153151000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 336000,
-    "InterestExpense_date": "2023-09-30",
+    "InterestExpense": 112000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 258162000.0,
     "TotalLiquidity": 117641000.0,
@@ -6736,7 +6857,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "FTRE",
@@ -6763,8 +6885,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 2921900000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 69800000,
-    "InterestExpense_date": "2023-12-31",
+    "InterestExpense": 90400000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 131300000.0,
     "LongTermDebt": 1052100000.0,
@@ -6779,7 +6901,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "GERN",
@@ -6808,8 +6931,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 178911000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 18504000,
-    "InterestExpense_date": "2024-12-31",
+    "InterestExpense": 34576000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 302415000.0,
     "TotalLiquidity": 78117000.0,
@@ -6827,7 +6950,11 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "R&D": 84280000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "GLUE",
@@ -6979,8 +7106,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 78872000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 1816000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 10448000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 100031414.0,
     "TotalLiquidity": 19488000.0,
@@ -6993,7 +7120,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "IBRX",
@@ -7014,8 +7142,8 @@
     "MarketableSecurities_date": "2025-09-30",
     "AvailableForSaleSecurities": 136349000,
     "AvailableForSaleSecurities_date": "2015-12-31",
-    "R&D": 190144000,
-    "R&D_date": "2024-12-31",
+    "R&D": 204928000.0,
+    "R&D_date": "2025-09-30",
     "NetIncome": -289454000,
     "NetIncome_date": "2025-09-30",
     "Revenue": 75003000.0,
@@ -7039,7 +7167,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "R&D_source": "Yahoo"
   },
   {
     "ticker": "IDYA",
@@ -7114,8 +7243,8 @@
     "CFO_date": "2025-09-28",
     "OperatingExpenses": 1505000000,
     "OperatingExpenses_date": "2025-09-28",
-    "InterestExpense": 18000000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 100000000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 228000000.0,
     "TotalLiquidity": 1372000000.0,
@@ -7129,7 +7258,8 @@
     "Liabilities_date": "2025-09-28",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "IMRX",
@@ -7210,7 +7340,10 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense": 12724000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "INSM",
@@ -7340,8 +7473,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 169052000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 155000,
-    "InterestExpense_date": "2022-09-30",
+    "InterestExpense": 3668000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 615920000.0,
     "Cash_source": "SEC",
@@ -7353,7 +7486,8 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "JANX",
@@ -7509,8 +7643,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 267509000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 804000,
-    "InterestExpense_date": "2024-06-30",
+    "InterestExpense": 1572000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 166855000.0,
     "TotalLiquidity": 95287000.0,
@@ -7523,7 +7657,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "KYTX",
@@ -7550,8 +7685,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 130545000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 83000,
-    "InterestExpense_date": "2024-06-30",
+    "InterestExpense": 28000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 171138000.0,
     "LongTermDebt": 0.0,
@@ -7564,7 +7699,8 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "LAB",
@@ -7601,8 +7737,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 116766000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 4567000,
-    "InterestExpense_date": "2023-12-31",
+    "InterestExpense": 40000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 40874000.0,
     "TotalLiquidity": 129418000.0,
@@ -7615,7 +7751,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "LCTX",
@@ -7766,8 +7903,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 86141000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 72000,
-    "InterestExpense_date": "2024-06-30",
+    "InterestExpense": 328000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 70918000.0,
     "TotalLiquidity": 111914000.0,
@@ -7782,7 +7919,8 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "LYEL",
@@ -8005,8 +8143,8 @@
     "Cash_date": "2025-09-30",
     "ShortTermInvestments": 93527000,
     "ShortTermInvestments_date": "2025-09-30",
-    "R&D": 28611000,
-    "R&D_date": "2019-09-30",
+    "R&D": 171840000.0,
+    "R&D_date": "2025-09-30",
     "NetIncome": -17633000,
     "NetIncome_date": "2025-09-30",
     "Revenue": 372380000.0,
@@ -8030,7 +8168,11 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 14424000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "MLYS",
@@ -8104,8 +8246,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 190523000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 8618000,
-    "InterestExpense_date": "2024-06-30",
+    "InterestExpense": 29336000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 132643000.0,
     "TotalLiquidity": 260035000.0,
@@ -8120,7 +8262,11 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "R&D": 56252000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "MNMD",
@@ -8184,8 +8330,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 811300000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 500000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 15200000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 145400000.0,
     "Cash_source": "SEC",
@@ -8197,7 +8343,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "NAMS",
@@ -8264,8 +8411,8 @@
     "ShortTermInvestments_date": "2015-06-30",
     "AvailableForSaleSecurities": 439609000,
     "AvailableForSaleSecurities_date": "2018-09-30",
-    "R&D": 73200000,
-    "R&D_date": "2021-03-31",
+    "R&D": 1000000000.0,
+    "R&D_date": "2025-09-30",
     "NetIncome": 324900000,
     "NetIncome_date": "2025-09-30",
     "Revenue": 2055000000.0,
@@ -8288,7 +8435,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "R&D_source": "Yahoo"
   },
   {
     "ticker": "NBP",
@@ -8366,8 +8514,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 75799000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 3000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 4000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 194405000.0,
     "TotalLiquidity": 265410000.0,
@@ -8383,7 +8531,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "NMRA",
@@ -8425,7 +8574,10 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "InterestExpense": 2988000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "NRIX",
@@ -8715,8 +8867,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 537521000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 7686000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 45432000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 411972000.0,
     "Cash_source": "SEC",
@@ -8728,7 +8880,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "ORIC",
@@ -8747,8 +8900,8 @@
     "Cash_date": "2025-09-30",
     "MarketableSecurities": 90990000.0,
     "MarketableSecurities_date": "2021-06-30",
-    "R&D": 14977000,
-    "R&D_date": "2020-06-30",
+    "R&D": 115092000.0,
+    "R&D_date": "2025-09-30",
     "NetIncome": -98963000,
     "NetIncome_date": "2025-09-30",
     "LongTermDebt": 0.0,
@@ -8767,7 +8920,8 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "R&D_source": "Yahoo"
   },
   {
     "ticker": "ORKA",
@@ -8796,8 +8950,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 87620000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 1500000,
-    "InterestExpense_date": "2024-09-30",
+    "InterestExpense": 0.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 349155000.0,
     "LongTermDebt": 0.0,
@@ -8810,7 +8964,8 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "PACB",
@@ -8845,8 +9000,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 541878000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 3575000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 6956000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 242187000.0,
     "TotalLiquidity": 298654000.0,
@@ -8861,7 +9016,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "PEPG",
@@ -8933,8 +9089,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 256633000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 34932000,
-    "InterestExpense_date": "2024-06-30",
+    "InterestExpense": 64432000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 135156000.0,
     "Cash_source": "SEC",
@@ -8946,7 +9102,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "PRAX",
@@ -9104,8 +9261,8 @@
     "Revenue_date": "2025-09-30",
     "CFO": -53075000,
     "CFO_date": "2025-09-30",
-    "OperatingExpenses": 82196000,
-    "OperatingExpenses_date": "2023-12-31",
+    "OperatingExpenses": 93844000.0,
+    "OperatingExpenses_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 76256000.0,
     "LongTermDebt": 0.0,
@@ -9119,7 +9276,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "QSI",
@@ -9243,8 +9401,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 150986000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 16097000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 66884000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 597056000.0,
     "Cash_source": "SEC",
@@ -9255,7 +9413,8 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "RAPP",
@@ -9459,8 +9618,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 7760600000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 16100000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 77200000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 8443600000.0,
     "LongTermDebt": 1985500000.0,
@@ -9474,7 +9633,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "REPL",
@@ -9541,8 +9701,8 @@
     "ShortTermInvestments_date": "2025-09-30",
     "AvailableForSaleSecurities": 157672000,
     "AvailableForSaleSecurities_date": "2014-09-30",
-    "R&D": 32215000,
-    "R&D_date": "2011-06-30",
+    "R&D": 29412000.0,
+    "R&D_date": "2025-09-30",
     "NetIncome": 98959000,
     "NetIncome_date": "2025-09-30",
     "LongTermDebt": 60000000.0,
@@ -9569,7 +9729,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "R&D_source": "Yahoo"
   },
   {
     "ticker": "RLAY",
@@ -9586,8 +9747,8 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 91564000.0,
     "Cash_date": "2025-09-30",
-    "R&D": 30622000,
-    "R&D_date": "2021-03-31",
+    "R&D": 273048000.0,
+    "R&D_date": "2025-09-30",
     "NetIncome": -221589000,
     "NetIncome_date": "2025-09-30",
     "Revenue": 8355000.0,
@@ -9608,7 +9769,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "R&D_source": "Yahoo"
   },
   {
     "ticker": "SEPN",
@@ -9812,7 +9974,10 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "OperatingExpenses": 105356000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "SMMT",
@@ -9831,8 +9996,8 @@
     "Cash_date": "2025-09-30",
     "ShortTermInvestments": 0,
     "ShortTermInvestments_date": "2025-09-30",
-    "R&D": 30873000,
-    "R&D_date": "2024-03-31",
+    "R&D": 524384000.0,
+    "R&D_date": "2025-09-30",
     "NetIncome": -860414000,
     "NetIncome_date": "2025-09-30",
     "Revenue": 0,
@@ -9841,8 +10006,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 869499000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 8677000,
-    "InterestExpense_date": "2024-09-30",
+    "InterestExpense": 0.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 0.0,
     "TotalLiquidity": 238554000.0,
@@ -9857,7 +10022,9 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "R&D_source": "Yahoo",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "SRRK",
@@ -9888,8 +10055,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 292749000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 6600000,
-    "InterestExpense_date": "2024-12-31",
+    "InterestExpense": 5336000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 369630000.0,
     "Cash_source": "SEC",
@@ -9902,7 +10069,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "STOK",
@@ -9976,8 +10144,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 211155000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 1300000,
-    "InterestExpense_date": "2023-12-31",
+    "InterestExpense": 41628000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 167594000.0,
     "Cash_source": "SEC",
@@ -9990,7 +10158,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "SVRA",
@@ -10009,8 +10178,8 @@
     "Cash_date": "2025-09-30",
     "ShortTermInvestments": 108109000,
     "ShortTermInvestments_date": "2025-09-30",
-    "R&D": 1400000,
-    "R&D_date": "2019-03-31",
+    "R&D": 82368000.0,
+    "R&D_date": "2025-09-30",
     "NetIncome": -86601000,
     "NetIncome_date": "2025-09-30",
     "LongTermDebt": 29781000.0,
@@ -10038,7 +10207,8 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "R&D_source": "Yahoo"
   },
   {
     "ticker": "SYRE",
@@ -10057,8 +10227,8 @@
     "Cash_date": "2025-09-30",
     "MarketableSecurities": 486200000.0,
     "MarketableSecurities_date": "2025-09-30",
-    "R&D": 13776000,
-    "R&D_date": "2023-03-31",
+    "R&D": 180988000.0,
+    "R&D_date": "2025-09-30",
     "NetIncome": -92673000,
     "NetIncome_date": "2025-09-30",
     "Revenue": 0,
@@ -10079,7 +10249,8 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "R&D_source": "Yahoo"
   },
   {
     "ticker": "TECX",
@@ -10106,8 +10277,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 62520000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 1917000,
-    "InterestExpense_date": "2023-12-31",
+    "InterestExpense": 56000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 268435000.0,
     "Cash_source": "SEC",
@@ -10118,7 +10289,8 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "TEM",
@@ -10199,7 +10371,10 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "R&D": 79668000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo"
   },
   {
     "ticker": "TKNO",
@@ -10246,7 +10421,10 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense": 760000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "TNGX",
@@ -10397,8 +10575,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 39108000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 2000,
-    "InterestExpense_date": "2024-06-30",
+    "InterestExpense": 0.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 194927000.0,
     "LongTermDebt": 0.0,
@@ -10411,7 +10589,8 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "TSHA",
@@ -10440,8 +10619,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 86486000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 56000,
-    "InterestExpense_date": "2024-06-30",
+    "InterestExpense": 60000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 297344000.0,
     "Cash_source": "SEC",
@@ -10453,7 +10632,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "TVTX",
@@ -10472,8 +10652,8 @@
     "Cash_date": "2025-09-30",
     "AvailableForSaleSecurities": 166381000,
     "AvailableForSaleSecurities_date": "2018-06-30",
-    "R&D": 7500000,
-    "R&D_date": "2023-09-30",
+    "R&D": 207560000.0,
+    "R&D_date": "2025-09-30",
     "NetIncome": -28275000,
     "NetIncome_date": "2025-09-30",
     "LongTermDebt": 311370000.0,
@@ -10486,8 +10666,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 391435000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 2800000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 11004000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 289441000.0,
     "TotalLiquidity": 110930000.0,
@@ -10500,7 +10680,9 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "R&D_source": "Yahoo",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "TWST",
@@ -10589,7 +10771,10 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "R&D": 228776000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo"
   },
   {
     "ticker": "TYRA",
@@ -10701,8 +10886,8 @@
     "Revenue_date": "2025-09-30",
     "CFO": -124119000,
     "CFO_date": "2025-09-30",
-    "OperatingExpenses": 109496000,
-    "OperatingExpenses_date": "2019-12-31",
+    "OperatingExpenses": 206360000.0,
+    "OperatingExpenses_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 63790000.0,
     "TotalLiquidity": 153829000.0,
@@ -10718,7 +10903,11 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense": 13492000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "VCEL",
@@ -10749,8 +10938,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 143842000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 153000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 632000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 34977000.0,
     "TotalLiquidity": 135380000.0,
@@ -10766,7 +10955,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "VERA",
@@ -10795,8 +10985,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 221267000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 3819000,
-    "InterestExpense_date": "2024-06-30",
+    "InterestExpense": 7840000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 497389000.0,
     "Cash_source": "SEC",
@@ -10808,7 +10998,8 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "VIR",
@@ -11091,8 +11282,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 221213000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 9676000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 30660000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 28291000.0,
     "LongTermDebt": 87776000.0,
@@ -11105,7 +11296,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "ZBIO",
@@ -11178,8 +11370,8 @@
     "Revenue_date": "2025-09-30",
     "CFO": -124767000,
     "CFO_date": "2025-09-30",
-    "InterestExpense": 2254000,
-    "InterestExpense_date": "2024-12-31",
+    "InterestExpense": 5600000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 0.0,
     "TotalLiquidity": 717155000.0,
@@ -11195,7 +11387,11 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 468720000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "ZVRA",
@@ -11218,8 +11414,8 @@
     "ShortTermInvestments_date": "2022-09-30",
     "COGS": 2945000,
     "COGS_date": "2023-12-31",
-    "R&D": 3082000,
-    "R&D_date": "2022-03-31",
+    "R&D": 13728000.0,
+    "R&D_date": "2025-09-30",
     "NetIncome": 71064000,
     "NetIncome_date": "2025-09-30",
     "LongTermDebt": 61310000.0,
@@ -11232,8 +11428,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 67385000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 735000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 8204000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 54439000.0,
     "Cash_source": "SEC",
@@ -11244,7 +11440,9 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "R&D_source": "Yahoo",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "ZYME",
@@ -11263,8 +11461,8 @@
     "Cash_date": "2025-09-30",
     "ShortTermInvestments": 216770000,
     "ShortTermInvestments_date": "2023-12-31",
-    "R&D": 32042000,
-    "R&D_date": "2024-03-31",
+    "R&D": 142312000.0,
+    "R&D_date": "2025-09-30",
     "NetIncome": -39921000,
     "NetIncome_date": "2025-09-30",
     "Revenue": 103450000.0,
@@ -11286,7 +11484,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "R&D_source": "Yahoo"
   },
   {
     "ticker": "AMPH",
@@ -11319,8 +11518,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 165590000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 8611000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 25136000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 59944000.0,
     "TotalLiquidity": 276209000.0,
@@ -11336,7 +11535,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "AMRX",
@@ -11365,8 +11565,8 @@
     "Revenue_date": "2025-09-30",
     "CFO": 209677000,
     "CFO_date": "2025-09-30",
-    "OperatingExpenses": 0,
-    "OperatingExpenses_date": "2018-03-31",
+    "OperatingExpenses": 813948000.0,
+    "OperatingExpenses_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 201249000.0,
     "Cash_source": "SEC",
@@ -11379,7 +11579,11 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense": 251256000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "ANIP",
@@ -11458,8 +11662,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 73742000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 5563000,
-    "InterestExpense_date": "2024-06-30",
+    "InterestExpense": 17092000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 129063000.0,
     "Cash_source": "SEC",
@@ -11472,7 +11676,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "ARDX",
@@ -11505,8 +11710,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 299493000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 2356000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 31936000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 242705000.0,
     "TotalLiquidity": 285420000.0,
@@ -11522,7 +11727,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "CHRS",
@@ -11598,8 +11804,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 216000000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 17339000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 87068000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 285863000.0,
     "Cash_source": "SEC",
@@ -11613,7 +11819,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "CRMD",
@@ -11646,8 +11853,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 77425206,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 16391,
-    "InterestExpense_date": "2024-06-30",
+    "InterestExpense": 3792968.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 56583985.0,
     "LongTermDebt": 144528552.0,
@@ -11663,7 +11870,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "EOLS",
@@ -11680,8 +11888,8 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 43523000.0,
     "Cash_date": "2025-09-30",
-    "R&D": 468000,
-    "R&D_date": "2022-03-31",
+    "R&D": 8184000.0,
+    "R&D_date": "2025-09-30",
     "NetIncome": -51771000,
     "NetIncome_date": "2025-09-30",
     "LongTermDebt": 145780000.0,
@@ -11692,8 +11900,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 174698000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 4702000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 16376000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 43523000.0,
     "Cash_source": "SEC",
@@ -11706,7 +11914,9 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "R&D_source": "Yahoo",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "ESPR",
@@ -11739,8 +11949,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 259649000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 14024000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 88204000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 0.0,
     "TotalLiquidity": 92447000.0,
@@ -11754,7 +11964,11 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "R&D": 56524000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "ETON",
@@ -11976,8 +12190,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 118821000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 5415000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 24152000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 7433000.0,
     "TotalLiquidity": 74290000.0,
@@ -11990,7 +12204,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "INDV",
@@ -12036,7 +12251,10 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "R&D": 132000000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo"
   },
   {
     "ticker": "INVA",
@@ -12147,7 +12365,19 @@
     "Assets_source": "SEC",
     "Revenue": 135782000.0,
     "Revenue_date": "2025-09-30",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "CFO": 41664000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 10544000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 884000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 47784000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "KNSA",
@@ -12174,8 +12404,8 @@
     "Revenue_date": "2025-09-30",
     "CFO": 84091000,
     "CFO_date": "2025-09-30",
-    "OperatingExpenses": 49283000,
-    "OperatingExpenses_date": "2021-03-31",
+    "OperatingExpenses": 293080000.0,
+    "OperatingExpenses_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 177244000.0,
     "TotalLiquidity": 352102000.0,
@@ -12191,7 +12421,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "LFCR",
@@ -12224,8 +12455,8 @@
     "Revenue_date": "2019-05-26",
     "CFO": 1762000,
     "CFO_date": "2025-09-30",
-    "OperatingExpenses": 30014000,
-    "OperatingExpenses_date": "2024-11-24",
+    "OperatingExpenses": 43432000.0,
+    "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 6384000,
     "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
@@ -12238,7 +12469,8 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "OBIO",
@@ -12314,8 +12546,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 238958000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 4051000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 12008000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 344772000.0,
     "Cash_source": "SEC",
@@ -12327,7 +12559,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "OMER",
@@ -12406,8 +12639,8 @@
     "Revenue_date": "2025-09-30",
     "CFO": 9302000,
     "CFO_date": "2025-09-30",
-    "InterestExpense": 17013000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 47884000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "MarketableSecurities": 12504000.0,
     "TotalLiquidity": 85273000.0,
@@ -12422,7 +12655,11 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 274092000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "PBYI",
@@ -12441,8 +12678,8 @@
     "Cash_date": "2025-09-30",
     "MarketableSecurities": 40863000.0,
     "MarketableSecurities_date": "2025-09-30",
-    "R&D": 27203000,
-    "R&D_date": "2022-06-30",
+    "R&D": 63648000.0,
+    "R&D_date": "2025-09-30",
     "NetIncome": 17673000,
     "NetIncome_date": "2025-09-30",
     "LongTermDebt": 34007000.0,
@@ -12455,8 +12692,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 132725000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 3359000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 5956000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-27",
     "TotalLiquidity": 94388000.0,
     "Cash_source": "SEC",
@@ -12469,7 +12706,9 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "R&D_source": "Yahoo",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "RPRX",
@@ -12498,8 +12737,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 585067000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 44232000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 318256000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-28",
     "TotalLiquidity": 938944000.0,
     "ShareholdersEquity": 9620861000.0,
@@ -12513,7 +12752,8 @@
     "Liabilities_source": "SEC",
     "ShareholdersEquity_date": "2025-09-30",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "SIGA",
@@ -12729,8 +12969,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 197915000,
     "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 7032000,
-    "InterestExpense_date": "2024-03-31",
+    "InterestExpense": 29072000.0,
+    "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-01-28",
     "MarketableSecurities": 0.0,
     "TotalLiquidity": 91598000.0,
@@ -12743,7 +12983,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "InterestExpense_source": "Yahoo"
   },
   {
     "ticker": "ABEO",
@@ -12781,7 +13022,19 @@
     "ShareholdersEquity_source": "SEC",
     "Revenue": 400000.0,
     "Revenue_date": "2025-09-30",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "CFO": -84748000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 16864000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 3604000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 94120000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "ABOS",
@@ -12816,7 +13069,19 @@
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_date": "2025-09-30",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "CFO": -121956000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 87872000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 4272000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 106052000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "ACRV",
@@ -12851,7 +13116,16 @@
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_date": "2025-09-30",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "CFO": -49132000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 54592000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "OperatingExpenses": 78748000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "AKTX",
@@ -12882,7 +13156,19 @@
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_date": "2025-09-30",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "CFO": -8484000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 996000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 484000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 8896000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "ALDX",
@@ -12917,7 +13203,19 @@
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_date": "2025-09-30",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "CFO": -28085664.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 21723028.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 1903612.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 32004528.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "ALGS",
@@ -12955,7 +13253,16 @@
     "ShareholdersEquity_source": "SEC",
     "Revenue": 2017000.0,
     "Revenue_date": "2025-09-30",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "CFO": -97380000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 95748000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "OperatingExpenses": 116408000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "ARTV",
@@ -12990,7 +13297,16 @@
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_date": "2025-09-30",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "CFO": -76804000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 70532000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "OperatingExpenses": 91588000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "ASMB",
@@ -13025,7 +13341,16 @@
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_date": "2025-09-30",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "CFO": -60532000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 66348000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "OperatingExpenses": 86688000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "BLTE",
@@ -13060,7 +13385,16 @@
     "Liabilities_source": "Yahoo",
     "ShareholdersEquity": 274082000.0,
     "ShareholdersEquity_date": "2025-09-30",
-    "ShareholdersEquity_source": "Yahoo"
+    "ShareholdersEquity_source": "Yahoo",
+    "CFO": -18404000.0,
+    "CFO_date": "2024-12-31",
+    "CFO_source": "Yahoo",
+    "R&D": 41232000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "OperatingExpenses": 92072000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "BMEA",
@@ -13093,7 +13427,16 @@
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_date": "2025-09-30",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "CFO": -46200000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 57604000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "OperatingExpenses": 74400000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "CELC",
@@ -13128,7 +13471,19 @@
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_date": "2025-09-30",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "CFO": -179264000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 139660000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 18380000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 171396000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "CERS",
@@ -13163,7 +13518,19 @@
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_date": "2025-09-30",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "CFO": 7708000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 63300000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 8476000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 107616000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "CLYM",
@@ -13198,7 +13565,16 @@
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_date": "2025-09-30",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "CFO": -48556000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 36292000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "OperatingExpenses": 59568000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "DNTH",
@@ -13236,7 +13612,16 @@
     "ShareholdersEquity_source": "SEC",
     "Revenue": 1752000.0,
     "Revenue_date": "2025-09-30",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "CFO": -122220000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 129956000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "OperatingExpenses": 162736000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "DRUG",
@@ -13268,7 +13653,16 @@
     "Liabilities_source": "Yahoo",
     "ShareholdersEquity": 82044923.0,
     "ShareholdersEquity_date": "2025-09-30",
-    "ShareholdersEquity_source": "Yahoo"
+    "ShareholdersEquity_source": "Yahoo",
+    "CFO": -5072032.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 19136820.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "OperatingExpenses": 22658168.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "ELDN",
@@ -13303,7 +13697,16 @@
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_date": "2025-09-30",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "CFO": -57908000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 59876000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "OperatingExpenses": 76280000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "ENGN",
@@ -13338,7 +13741,19 @@
     "Liabilities_date": "2025-10-31",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_date": "2025-10-31",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "CFO": -99848000.0,
+    "CFO_date": "2025-10-31",
+    "CFO_source": "Yahoo",
+    "R&D": 126888000.0,
+    "R&D_date": "2025-10-31",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 3000000.0,
+    "InterestExpense_date": "2025-10-31",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 157924000.0,
+    "OperatingExpenses_date": "2025-10-31",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "GBIO",
@@ -13376,7 +13791,16 @@
     "ShareholdersEquity_source": "SEC",
     "Revenue": 11082000.0,
     "Revenue_date": "2025-09-30",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "CFO": -210720000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 86520000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "OperatingExpenses": 135168000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "HOWL",
@@ -13406,7 +13830,19 @@
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_date": "2025-09-30",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "CFO": -60624000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 46536000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 5364000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 62904000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "IKT",
@@ -13442,7 +13878,16 @@
     "ShareholdersEquity_source": "SEC",
     "Revenue": 0.0,
     "Revenue_date": "2025-09-30",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "CFO": -42370920.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 30598788.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "OperatingExpenses": 53044800.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "IMTX",
@@ -13469,7 +13914,19 @@
     "Debt_date": "2025-06-30",
     "Debt_source": "SEC",
     "Assets_date": "2025-06-30",
-    "Assets_source": "SEC"
+    "Assets_source": "SEC",
+    "CFO": -178800000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 188704000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 924000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 239280000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "JBIO",
@@ -13502,7 +13959,16 @@
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_date": "2025-09-30",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "CFO": -88496000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 88040000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "OperatingExpenses": 109604000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "LBRX",
@@ -13535,7 +14001,16 @@
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_date": "2025-09-30",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "CFO": -13492000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 9676000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "OperatingExpenses": 20984000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "LYRA",
@@ -13569,7 +14044,16 @@
     "ShareholdersEquity_source": "SEC",
     "Revenue": 391000.0,
     "Revenue_date": "2025-09-30",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "CFO": -29444000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 16188000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "OperatingExpenses": 25132000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "MLTX",
@@ -13599,7 +14083,19 @@
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_date": "2025-09-30",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "CFO": -178172000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 242540000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 12792000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 285736000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "MTSR",
@@ -13640,7 +14136,16 @@
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_date": "2025-09-30",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "CFO": -44136000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 38420000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "OperatingExpenses": 61888000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "NKTX",
@@ -13673,7 +14178,16 @@
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_date": "2025-09-30",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "CFO": -74748000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 80792000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "OperatingExpenses": 109144000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "OCS",
@@ -13706,7 +14220,19 @@
     "Liabilities_date": "2025-06-30",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_date": "2025-06-30",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "CFO": -53672000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 56468000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 648000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 81184000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "PRLD",
@@ -13742,7 +14268,16 @@
     "ShareholdersEquity_source": "SEC",
     "Revenue": 6500000.0,
     "Revenue_date": "2025-09-30",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "CFO": -76460000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 86832000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "OperatingExpenses": 107672000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "PRQR",
@@ -13770,7 +14305,16 @@
     "ShareholdersEquity_source": "SEC",
     "Revenue": 11218000.0,
     "Revenue_date": "2025-09-30",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "CFO": -48940000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 44320000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "OperatingExpenses": 56664000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "PVLA",
@@ -13801,7 +14345,19 @@
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_date": "2025-09-30",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "CFO": -31512000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 26112000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 6040000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 40708000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "SABS",
@@ -13834,7 +14390,19 @@
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_date": "2025-09-30",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "CFO": -52200092.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 35880040.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 173168.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 50715876.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "SERA",
@@ -13870,7 +14438,19 @@
     "ShareholdersEquity_source": "SEC",
     "Revenue": 71000.0,
     "Revenue_date": "2025-09-30",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "CFO": -25908000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 13136000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 8000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 35820000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "SKYE",
@@ -13903,7 +14483,19 @@
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_date": "2025-09-30",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "CFO": -53457500.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 37429776.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 0.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 53058136.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "TARA",
@@ -13936,7 +14528,16 @@
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_date": "2025-09-30",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "CFO": -49808000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 38364000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "OperatingExpenses": 59040000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "TCRX",
@@ -13972,7 +14573,19 @@
     "ShareholdersEquity_source": "SEC",
     "Revenue": 7758000.0,
     "Revenue_date": "2025-09-30",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "CFO": -129856000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 126756000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 2796000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 158252000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "TENX",
@@ -14006,7 +14619,19 @@
     "ShareholdersEquity_source": "SEC",
     "Revenue": 0.0,
     "Revenue_date": "2025-09-30",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "CFO": -36620000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 41312000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 0.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 67224000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "VKTX",
@@ -14040,7 +14665,16 @@
     "ShareholdersEquity_source": "SEC",
     "Revenue": 0.0,
     "Revenue_date": "2025-09-30",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "CFO": -376012000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 359812000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "OperatingExpenses": 394244000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "VRDN",
@@ -14066,7 +14700,19 @@
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_date": "2025-09-30",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "CFO": -338444000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 345044000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 2240000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 442332000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "ABVX",
@@ -14093,7 +14739,19 @@
     "Liabilities_source": "Yahoo",
     "ShareholdersEquity": 511238000.0,
     "ShareholdersEquity_date": "2025-09-30",
-    "ShareholdersEquity_source": "Yahoo"
+    "ShareholdersEquity_source": "Yahoo",
+    "CFO": -285132000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 221664000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 16852000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 322848000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "ACIU",
@@ -14123,7 +14781,19 @@
     "ShareholdersEquity_source": "SEC",
     "Revenue": 2296000.0,
     "Revenue_date": "2025-06-30",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "CFO": -73360000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 52284000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 184000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 66552000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "ALVO",
@@ -14150,7 +14820,19 @@
     "ShareholdersEquity_source": "SEC",
     "Revenue": 204733000.0,
     "Revenue_date": "2025-06-30",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "CFO": -222300000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 206476000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 157500000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 309700000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "ARGX",
@@ -14180,7 +14862,16 @@
     "ShareholdersEquity_source": "SEC",
     "Revenue": 1738644000.0,
     "Revenue_date": "2025-06-30",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "R&D": 1422604000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 3972000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 2670260000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "ASND",
@@ -14210,7 +14901,19 @@
     "ShareholdersEquity_source": "SEC",
     "Revenue": 443480000.0,
     "Revenue_date": "2025-09-30",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "CFO": 8612000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 267516000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 78884000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 721132000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "AZN",
@@ -14240,7 +14943,19 @@
     "ShareholdersEquity_source": "SEC",
     "Revenue": 26670000000.0,
     "Revenue_date": "2025-06-30",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "CFO": 20536000000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 14652000000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 1736000000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 35228000000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "BNTX",
@@ -14267,7 +14982,16 @@
     "Liabilities_source": "Yahoo",
     "ShareholdersEquity": 18477300000.0,
     "ShareholdersEquity_date": "2025-09-30",
-    "ShareholdersEquity_source": "Yahoo"
+    "ShareholdersEquity_source": "Yahoo",
+    "CFO": 3122800000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 2259200000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "OperatingExpenses": 2866800000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "CLLS",
@@ -14297,7 +15021,19 @@
     "ShareholdersEquity_source": "SEC",
     "Revenue": 27380000.0,
     "Revenue_date": "2025-06-30",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "CFO": -6284000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 96276000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 8428000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 99096000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "CVAC",
@@ -14324,7 +15060,19 @@
     "Liabilities_source": "Yahoo",
     "ShareholdersEquity": 871230000.0,
     "ShareholdersEquity_date": "2025-09-30",
-    "ShareholdersEquity_source": "Yahoo"
+    "ShareholdersEquity_source": "Yahoo",
+    "CFO": 119444000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 153016000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 23676000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": -1025796000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "GHRS",
@@ -14351,7 +15099,19 @@
     "Liabilities_source": "SEC",
     "ShareholdersEquity": 291397000.0,
     "ShareholdersEquity_date": "2025-09-30",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "CFO": -54728000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 42268000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 32000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 66140000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "GLPG",
@@ -14378,7 +15138,16 @@
     "Liabilities_source": "Yahoo",
     "ShareholdersEquity": 2446963000.0,
     "ShareholdersEquity_date": "2025-09-30",
-    "ShareholdersEquity_source": "Yahoo"
+    "ShareholdersEquity_source": "Yahoo",
+    "CFO": -250428000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 295528000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "OperatingExpenses": 407948000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "GMAB",
@@ -14408,7 +15177,19 @@
     "ShareholdersEquity_source": "SEC",
     "Revenue": 1640000000.0,
     "Revenue_date": "2025-06-30",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "CFO": 2144000000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 1428000000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 12000000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 2020000000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "IMMP",
@@ -14456,7 +15237,19 @@
     "ShareholdersEquity_source": "SEC",
     "Revenue": 722523000.0,
     "Revenue_date": "2025-09-30",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "CFO": 115204000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 452592000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 22544000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 801904000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "MESO",
@@ -14501,7 +15294,16 @@
     "Liabilities_source": "SEC",
     "ShareholdersEquity": 184335892.0,
     "ShareholdersEquity_date": "2025-06-30",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "CFO": -122675652.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 119259632.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "OperatingExpenses": 158657996.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "RANI",
@@ -14528,7 +15330,19 @@
     "ShareholdersEquity_source": "SEC",
     "Revenue": 172000.0,
     "Revenue_date": "2025-09-30",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "CFO": -20252000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 12884000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 2900000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 29028000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   },
   {
     "ticker": "SNY",
@@ -14546,6 +15360,18 @@
     "Assets_source": "SEC",
     "Revenue": 19889000000.0,
     "Revenue_date": "2025-06-30",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "CFO": 15000000000.0,
+    "CFO_date": "2025-09-30",
+    "CFO_source": "Yahoo",
+    "R&D": 7336000000.0,
+    "R&D_date": "2025-09-30",
+    "R&D_source": "Yahoo",
+    "InterestExpense": 908000000.0,
+    "InterestExpense_date": "2025-09-30",
+    "InterestExpense_source": "Yahoo",
+    "OperatingExpenses": 23892000000.0,
+    "OperatingExpenses_date": "2025-09-30",
+    "OperatingExpenses_source": "Yahoo"
   }
 ]

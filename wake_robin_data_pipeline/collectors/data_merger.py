@@ -129,12 +129,46 @@ def merge_financial_data(ticker: str) -> Dict[str, Any]:
          ("balance_sheet", "stockholders_equity"),
          ("data_dates", "assets"),  # Use assets date for equity
          ("balance_sheet", "period_date")),
-        # Revenue (SEC only typically)
+        # Revenue
         ("revenue_ttm",
          ("financials", "revenue_ttm"),
-         None,
+         ("income_statement", "revenue"),
          ("data_dates", "revenue"),
-         None),
+         ("income_statement", "period_date")),
+        # Burn rate / Cash flow metrics
+        ("operating_cash_flow",
+         None,  # SEC collector doesn't extract CFO yet
+         ("cash_flow", "operating_cash_flow"),
+         None,
+         ("cash_flow", "period_date")),
+        ("free_cash_flow",
+         None,
+         ("cash_flow", "free_cash_flow"),
+         None,
+         ("cash_flow", "period_date")),
+        # Operating expenses
+        ("operating_expense",
+         None,  # SEC collector doesn't extract OpEx yet
+         ("income_statement", "operating_expense"),
+         None,
+         ("income_statement", "period_date")),
+        ("research_and_development",
+         None,  # SEC collector doesn't extract R&D yet
+         ("income_statement", "research_and_development"),
+         None,
+         ("income_statement", "period_date")),
+        # Interest expense
+        ("interest_expense",
+         None,  # SEC collector doesn't extract InterestExpense yet
+         ("income_statement", "interest_expense"),
+         None,
+         ("income_statement", "period_date")),
+        # Net income
+        ("net_income",
+         None,
+         ("income_statement", "net_income"),
+         None,
+         ("income_statement", "period_date")),
     ]
 
     def get_nested(data: dict, path: tuple) -> Any:

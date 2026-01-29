@@ -12,9 +12,24 @@ import json
 import requests
 import time
 from pathlib import Path
-from datetime import date
+from datetime import date, datetime, timedelta
 from typing import Dict, Optional
 import argparse
+
+# Maximum age in days for financial data to be considered valid
+MAX_DATA_AGE_DAYS = 365
+
+
+def is_data_fresh(date_str: str, max_age_days: int = MAX_DATA_AGE_DAYS) -> bool:
+    """Check if data date is within acceptable age range."""
+    if not date_str:
+        return False
+    try:
+        data_date = datetime.fromisoformat(date_str)
+        age_days = (datetime.now() - data_date).days
+        return age_days <= max_age_days
+    except (ValueError, TypeError):
+        return False
 
 
 def get_cik_from_ticker(ticker: str) -> Optional[str]:
@@ -102,20 +117,25 @@ def get_company_facts(cik: str, ticker: str) -> Optional[Dict]:
 
             financial_data = {"ticker": ticker, "cik": cik}
 
-            # Extract most recent values (simple metrics)
+            # Extract most recent values (simple metrics) with staleness filter
             for gaap_key, friendly_name in metrics.items():
                 if gaap_key in facts:
                     units = facts[gaap_key].get('units', {})
 
                     if 'USD' in units:
                         values = units['USD']
+                        # Sort by date and find most recent FRESH value
                         recent = sorted(values, key=lambda x: x.get('end', ''), reverse=True)
 
-                        if recent:
-                            financial_data[friendly_name] = recent[0].get('val')
-                            financial_data[f"{friendly_name}_date"] = recent[0].get('end')
+                        for entry in recent:
+                            entry_date = entry.get('end')
+                            if is_data_fresh(entry_date):
+                                financial_data[friendly_name] = entry.get('val')
+                                financial_data[f"{friendly_name}_date"] = entry_date
+                                break
+                        # If no fresh data found, don't include (leave as None)
 
-            # Extract metrics with fallback (use most recent across all tags)
+            # Extract metrics with fallback (use most recent FRESH value across all tags)
             for friendly_name, tag_list in metrics_with_fallback.items():
                 best_val, best_date = None, None
                 for gaap_key in tag_list:
@@ -124,10 +144,12 @@ def get_company_facts(cik: str, ticker: str) -> Optional[Dict]:
                         if 'USD' in units:
                             values = units['USD']
                             recent = sorted(values, key=lambda x: x.get('end', ''), reverse=True)
-                            if recent:
-                                val, dt = recent[0].get('val'), recent[0].get('end')
-                                if best_date is None or (dt and dt > best_date):
-                                    best_val, best_date = val, dt
+                            for entry in recent:
+                                val, dt = entry.get('val'), entry.get('end')
+                                if is_data_fresh(dt):
+                                    if best_date is None or (dt and dt > best_date):
+                                        best_val, best_date = val, dt
+                                    break  # Found fresh value for this tag
                 if best_val is not None:
                     financial_data[friendly_name] = best_val
                     financial_data[f"{friendly_name}_date"] = best_date
