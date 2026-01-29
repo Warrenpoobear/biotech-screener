@@ -4,6 +4,8 @@
   "success": true,
   "financials": {
     "cash": 262610000.0,
+    "marketable_securities": null,
+    "total_liquidity": 262610000.0,
     "debt": 134100000.0,
     "net_debt": -128510000.0,
     "revenue_ttm": 49774000.0,
@@ -28,6 +30,8 @@
   },
   "coverage": {
     "has_cash": true,
+    "has_marketable_securities": false,
+    "has_total_liquidity": true,
     "has_debt": true,
     "has_revenue": true,
     "has_balance_sheet": true,
@@ -35,7 +39,7 @@
   },
   "provenance": {
     "source": "SEC EDGAR Company Facts API",
-    "timestamp": "2026-01-29T11:11:50.952864",
+    "timestamp": "2026-01-29T15:52:00.639794",
     "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001023024.json",
     "cik": "0001023024",
     "accounting_standard": "us-gaap"

@@ -218,6 +218,12 @@ def fetch_sec_financials(ticker: str, cik: Optional[str] = None) -> dict:
         if namespace == 'ifrs-full':
             # IFRS metric names
             cash_metrics = ['CashAndCashEquivalents', 'Cash']
+            # IFRS marketable securities / short-term investments
+            marketable_securities_metrics = [
+                'OtherCurrentFinancialAssets',
+                'CurrentFinancialAssets',
+                'ShortTermInvestments'
+            ]
             debt_metrics = ['NoncurrentLiabilities', 'LongTermBorrowings', 'BorrowingsNoncurrent']
             revenue_metrics = ['RevenueFromSaleOfGoods', 'Revenue', 'RevenueFromContractsWithCustomers']
             assets_metric = 'Assets'
@@ -225,6 +231,17 @@ def fetch_sec_financials(ticker: str, cik: Optional[str] = None) -> dict:
         else:
             # US-GAAP metric names
             cash_metrics = ['CashAndCashEquivalentsAtCarryingValue', 'Cash', 'CashAndCashEquivalents']
+            # Marketable securities and short-term investments (common in biotech)
+            marketable_securities_metrics = [
+                'MarketableSecuritiesCurrent',
+                'MarketableSecurities',
+                'ShortTermInvestments',
+                'AvailableForSaleSecuritiesCurrent',
+                'AvailableForSaleSecurities',
+                'HeldToMaturitySecuritiesCurrent',
+                'InvestmentsAndCash',
+                'ShortTermInvestmentsAndCash'
+            ]
             # Comprehensive debt metrics - try most common first, then alternatives
             debt_metrics = [
                 'LongTermDebt', 'LongTermDebtNoncurrent', 'DebtCurrent',
@@ -246,6 +263,21 @@ def fetch_sec_financials(ticker: str, cik: Optional[str] = None) -> dict:
             if cash is not None:
                 data_dates['cash'] = cash_date
                 break
+
+        # Extract marketable securities / short-term investments
+        marketable_securities, ms_date = None, None
+        for metric in marketable_securities_metrics:
+            marketable_securities, ms_date = extract_latest_metric(facts_data, metric, namespace=namespace)
+            if marketable_securities is not None:
+                data_dates['marketable_securities'] = ms_date
+                break
+
+        # Calculate total liquidity (cash + marketable securities)
+        total_liquidity = None
+        if cash is not None:
+            total_liquidity = cash
+            if marketable_securities is not None:
+                total_liquidity += marketable_securities
 
         debt, debt_date = None, None
         for metric in debt_metrics:
@@ -280,8 +312,11 @@ def fetch_sec_financials(ticker: str, cik: Optional[str] = None) -> dict:
             data_dates['debt'] = assets_date
 
         # Calculate derived metrics
+        # Use total_liquidity (cash + marketable securities) for net debt calculation
         net_debt = None
-        if cash is not None and debt is not None:
+        if total_liquidity is not None and debt is not None:
+            net_debt = debt - total_liquidity
+        elif cash is not None and debt is not None:
             net_debt = debt - cash
         elif debt is not None:
             net_debt = debt
@@ -316,6 +351,8 @@ def fetch_sec_financials(ticker: str, cik: Optional[str] = None) -> dict:
             "success": True,
             "financials": {
                 "cash": cash,
+                "marketable_securities": marketable_securities,
+                "total_liquidity": total_liquidity,
                 "debt": debt,
                 "net_debt": net_debt,
                 "revenue_ttm": revenue,
@@ -332,11 +369,13 @@ def fetch_sec_financials(ticker: str, cik: Optional[str] = None) -> dict:
             },
             "coverage": {
                 "has_cash": cash is not None,
+                "has_marketable_securities": marketable_securities is not None,
+                "has_total_liquidity": total_liquidity is not None,
                 "has_debt": debt is not None,
                 "has_revenue": revenue is not None,
                 "has_balance_sheet": assets is not None and liabilities is not None,
                 "pct_complete": sum([
-                    cash is not None,
+                    total_liquidity is not None,  # Use total_liquidity instead of just cash
                     debt is not None,
                     revenue is not None,
                     assets is not None
@@ -416,9 +455,11 @@ def collect_batch(tickers: list[str], delay_seconds: float = 1.0) -> dict:
         if data.get('success'):
             fin = data['financials']
             coverage = data['coverage']['pct_complete']
-            cash_str = f"${fin['cash']/1e6:.0f}M" if fin['cash'] else "N/A"
+            # Show total liquidity (cash + marketable securities) instead of just cash
+            liquidity = fin.get('total_liquidity') or fin.get('cash')
+            liquidity_str = f"${liquidity/1e6:.0f}M" if liquidity else "N/A"
             cached = " (cached)" if data.get('from_cache') else ""
-            print(f"✓ Cash: {cash_str}, Coverage: {coverage:.0f}%{cached}")
+            print(f"✓ Liquidity: {liquidity_str}, Coverage: {coverage:.0f}%{cached}")
         else:
             print(f"✗ {data.get('error', 'Unknown error')}")
         
