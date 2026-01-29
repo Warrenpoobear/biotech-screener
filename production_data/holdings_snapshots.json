@@ -2513,6 +2513,13 @@
           "shares": 0,
           "value_kusd": 411600679,
           "put_call": ""
+        },
+        "0001595855": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 105000,
+          "value_kusd": 6975150,
+          "put_call": null
         }
       },
       "prior": {
@@ -2536,6 +2543,13 @@
           "shares": 0,
           "value_kusd": 341126772,
           "put_call": ""
+        },
+        "0001595855": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 105000,
+          "value_kusd": 6975150,
+          "put_call": null
         }
       }
     },
@@ -4402,6 +4416,13 @@
           "shares": 0,
           "value_kusd": 53632000,
           "put_call": ""
+        },
+        "0001595855": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 65000,
+          "value_kusd": 1089400,
+          "put_call": null
         }
       },
       "prior": {
@@ -4439,6 +4460,13 @@
           "shares": 0,
           "value_kusd": 47904000,
           "put_call": ""
+        },
+        "0001595855": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 65000,
+          "value_kusd": 1089400,
+          "put_call": null
         }
       }
     },
@@ -4711,6 +4739,13 @@
           "shares": 0,
           "value_kusd": 21728200,
           "put_call": ""
+        },
+        "0001595855": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 461700,
+          "value_kusd": 46627083,
+          "put_call": null
         }
       },
       "prior": {
@@ -4741,6 +4776,13 @@
           "shares": 0,
           "value_kusd": 15703473,
           "put_call": ""
+        },
+        "0001595855": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 461700,
+          "value_kusd": 46627083,
+          "put_call": null
         }
       }
     },
@@ -7223,6 +7265,13 @@
           "shares": 0,
           "value_kusd": 6930000,
           "put_call": ""
+        },
+        "0001595855": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 75000,
+          "value_kusd": 346500,
+          "put_call": null
         }
       },
       "prior": {
@@ -7232,6 +7281,13 @@
           "shares": 0,
           "value_kusd": 11865395,
           "put_call": ""
+        },
+        "0001595855": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 75000,
+          "value_kusd": 346500,
+          "put_call": null
         }
       }
     },
@@ -22223,6 +22279,13 @@
           "shares": 113279,
           "value_kusd": 1324232000,
           "put_call": ""
+        },
+        "0001595855": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 1595000,
+          "value_kusd": 18645550,
+          "put_call": null
         }
       },
       "prior": {
@@ -22267,6 +22330,13 @@
           "shares": 102833,
           "value_kusd": 954290000,
           "put_call": ""
+        },
+        "0001595855": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 1595000,
+          "value_kusd": 18645550,
+          "put_call": null
         }
       }
     }
@@ -23122,6 +23192,121 @@
           "state": "KNOWN",
           "shares": 390000,
           "value_kusd": 3568500,
+          "put_call": null
+        }
+      }
+    }
+  },
+  "ADCT": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001595855": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 682529,
+          "value_kusd": 2730116,
+          "put_call": null
+        }
+      },
+      "prior": {
+        "0001595855": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 682529,
+          "value_kusd": 2730116,
+          "put_call": null
+        }
+      }
+    }
+  },
+  "ALKS": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001595855": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 450000,
+          "value_kusd": 13500000,
+          "put_call": null
+        }
+      },
+      "prior": {
+        "0001595855": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 450000,
+          "value_kusd": 13500000,
+          "put_call": null
+        }
+      }
+    }
+  },
+  "LQDA": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001595855": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 2615000,
+          "value_kusd": 59465100,
+          "put_call": null
+        }
+      },
+      "prior": {
+        "0001595855": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 2615000,
+          "value_kusd": 59465100,
+          "put_call": null
+        }
+      }
+    }
+  },
+  "RIGL": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001595855": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 37787,
+          "value_kusd": 1070506,
+          "put_call": null
+        }
+      },
+      "prior": {
+        "0001595855": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 37787,
+          "value_kusd": 1070506,
+          "put_call": null
+        }
+      }
+    }
+  },
+  "SRPT": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001595855": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 585000,
+          "value_kusd": 11272950,
+          "put_call": null
+        }
+      },
+      "prior": {
+        "0001595855": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 585000,
+          "value_kusd": 11272950,
           "put_call": null
         }
       }

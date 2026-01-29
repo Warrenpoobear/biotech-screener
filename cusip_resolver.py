@@ -27,7 +27,7 @@ import hashlib
 import time
 from pathlib import Path
 from typing import Optional
-from datetime import datetime, timezone
+from datetime import datetime
 
 try:
     import requests
@@ -91,6 +91,59 @@ KNOWN_CUSIP_MAPPINGS = {
     '90240B106': 'TYRA',   # Tyra Biosciences
     'N90064101': 'QURE',   # uniQure
     '38341P102': 'GOSS',   # Gossamer Bio
+    '713317105': 'PEPG',   # Pepgen (9-char)
+    '98985Y108': 'ZYME',   # Zymeworks (9-char)
+    '152309100': 'CNTA',   # Centessa (9-char)
+    '21217B100': 'CTNM',   # Contineum (9-char)
+    '03940C100': 'ACLX',   # Arcellx (9-char)
+    '15102K100': 'CELC',   # Celcuity (9-char)
+    '50157510': 'KYMR',    # Kymera (9-char)
+    '501575104': 'KYMR',   # Kymera (9-char)
+    '00370M103': 'ABVX',   # Abivax (9-char)
+    '670703107': 'NUVL',   # Nuvalent (9-char)
+    '171757206': 'CDTX',   # Cidara (9-char)
+    '98401F105': 'XNCR',   # Xencor (9-char)
+    '28036F105': 'EWTX',   # Edgewise (9-char)
+    '86366E106': 'GPCR',   # Structure Therapeutics (9-char)
+    '76243J105': 'RYTM',   # Rhythm Pharmaceuticals (9-char)
+    '74366E102': 'PTGX',   # Protagonist (9-char)
+    '50180M108': 'LBRX',   # Liberum/Longboard (9-char)
+
+    # International biotech (non-US CUSIPs)
+    'G01767105': 'ALKS',   # Alkermes (Irish)
+    'H0036K147': 'ADCT',   # ADC Therapeutics (Swiss)
+    'M8694L137': 'SLGL',   # Sol-Gel Technologies (Israeli)
+
+    # Additional biotech CUSIPs from Opaleye holdings
+    '89532M101': 'TRVI',   # Trevi Therapeutics
+    '12674W109': 'CABA',   # Cabaletta Bio
+    '022307102': 'ALMS',   # Alumis
+    '00773J202': 'SYRE',   # Spyre Therapeutics
+    '76655970': 'RIGL',    # Rigel Pharmaceuticals (8-char)
+    '766559702': 'RIGL',   # Rigel Pharmaceuticals (9-char)
+    '74365A309': 'PLX',    # Protalix BioTherapeutics
+    '89455T109': 'TMCI',   # Treace Medical Concepts
+    '67577R102': 'OPUS',   # Opus Genetics
+    '451033708': 'IBIO',   # iBio
+    '00534B100': 'ADGI',   # Adagio Medical
+    '415858109': 'HROW',   # Harrow Health
+    '29772L108': 'ETON',   # Eton Pharmaceuticals
+    '53635D202': 'LQDA',   # Liquidia Corporation
+    '45257U108': 'IMNM',   # Immunome
+    '80303D305': 'SNWV',   # Sanuwave Health
+    '192005106': 'CDXS',   # Codexis
+    '88322Q108': 'TGTX',   # TG Therapeutics
+    '67576A100': 'OCUL',   # Ocular Therapeutix
+    '156944100': 'CGON',   # CG Oncology
+    '86150R107': 'STOK',   # Stoke Therapeutics
+    '03770N101': 'APGE',   # Apogee Therapeutics
+    '254604101': 'IRON',   # Disc Medicine
+    '803607100': 'SRPT',   # Sarepta Therapeutics
+    '517125100': 'LRMR',   # Larimar Therapeutics
+    '98419J206': 'XOMA',   # XOMA Corporation
+    '76200L309': 'RZLT',   # Rezolute
+    '04335A105': 'ARVN',   # Arvinas
+    '48115J109': 'DERM',   # Journey Medical
 
     # AI/diagnostics biotech
     '88023B103': 'TEM',    # Tempus AI
@@ -125,7 +178,7 @@ KNOWN_CUSIP_MAPPINGS = {
     
     # Cell/gene therapy
     '07400F101': 'BEAM',   # Beam Therapeutics
-    '24703L102': 'BLUE',   # bluebird bio (DELISTED 2025 - acquired by Carlyle/SK Capital)
+    '24703L102': 'BLUE',   # bluebird bio
     '17323P108': 'CRSP',   # CRISPR Therapeutics
     '33767L109': 'FATE',   # Fate Therapeutics
     '454140100': 'IMTX',   # Immatics
@@ -223,7 +276,7 @@ class CUSIPResolver:
         
         data = {
             'version': '1.0',
-            'updated_at': datetime.now(timezone.utc).isoformat(),
+            'updated_at': datetime.utcnow().isoformat(),
             'count': len(self._cache),
             'mappings': self._cache,
         }
