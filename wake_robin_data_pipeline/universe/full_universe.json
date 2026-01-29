@@ -1,7 +1,7 @@
 {
   "metadata": {
     "creation_date": "2026-01-29",
-    "description": "Full biotech universe - 382 tickers from ETF holdings + Tier 1/Conditional manager 13F analysis",
+    "description": "Full biotech universe - 381 tickers from ETF holdings + Tier 1/Conditional manager 13F analysis",
     "source": "Major biotech ETFs and manager_registry.json (29 Elite Core + 6 Conditional managers)",
     "selection_criteria": "All biotech companies from major ETF holdings plus holdings from canonical manager registry",
     "manager_registry": "production_data/manager_registry.json",
@@ -1124,13 +1124,6 @@
     {
       "ticker": "HALO",
       "company": "Halozyme Therapeutics, Inc.",
-      "stage": "commercial",
-      "primary_indication": "Biotechnology",
-      "market_cap_tier": "mid"
-    },
-    {
-      "ticker": "HIMS",
-      "company": "Hims & Hers Health, Inc.",
       "stage": "commercial",
       "primary_indication": "Biotechnology",
       "market_cap_tier": "mid"
@@ -2684,7 +2677,7 @@
     }
   ],
   "validation": {
-    "total_count": 382,
+    "total_count": 381,
     "coverage_target": "100% price data, 80% financial data, 60% trial data"
   }
 }
