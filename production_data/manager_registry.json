@@ -167,6 +167,12 @@
       "name": "Rock Springs Capital Management",
       "aum_b": 3.3,
       "style": "healthcare_fundamental"
+    },
+    {
+      "cik": "0001595855",
+      "name": "Opaleye Management",
+      "aum_b": 0.64,
+      "style": "binary_catalyst_biotech"
     }
   ],
   "conditional": [
@@ -208,9 +214,9 @@
     }
   ],
   "metadata": {
-    "version": "2.0",
+    "version": "2.1",
     "last_updated": "2026-01-28",
-    "total_elite_aum_b": 68.2,
+    "total_elite_aum_b": 68.84,
     "notes": [
       "Elite Core = primary signal source",
       "Conditional = secondary breadth signal"
