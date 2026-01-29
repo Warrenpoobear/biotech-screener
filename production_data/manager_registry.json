@@ -161,6 +161,12 @@
       "name": "Acuta Capital Partners",
       "aum_b": 0.1,
       "style": "biotech_value"
+    },
+    {
+      "cik": "0001595725",
+      "name": "Rock Springs Capital Management",
+      "aum_b": 3.3,
+      "style": "healthcare_fundamental"
     }
   ],
   "conditional": [
@@ -202,9 +208,9 @@
     }
   ],
   "metadata": {
-    "version": "1.9",
+    "version": "2.0",
     "last_updated": "2026-01-28",
-    "total_elite_aum_b": 64.9,
+    "total_elite_aum_b": 68.2,
     "notes": [
       "Elite Core = primary signal source",
       "Conditional = secondary breadth signal"
