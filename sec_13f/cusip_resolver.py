@@ -279,6 +279,89 @@ KNOWN_CUSIP_MAPPINGS = {
     '78463V107': 'SPY',    # SPDR S&P 500
     '464287655': 'IWM',    # iShares Russell 2000
 
+    # Perceptive Advisors holdings CUSIPs
+    '03237H101': 'AMLX',   # Amylyx Pharmaceuticals
+    'G59665102': 'MGTX',   # MeiraGTx Holdings
+    '228903100': 'AORT',   # Artivion
+    'N44445109': 'IMTX',   # Immatics N.V.
+    '83422E204': 'SLDB',   # Solid Biosciences
+    '64125C109': 'NBIX',   # Neurocrine Biosciences
+    '925050106': 'VRNA',   # Verona Pharma
+    '31573A105': 'FGEN',   # FibroGen
+    '74587V207': 'QURE',   # uniQure (alt)
+    '89214P109': 'TSVT',   # 2seventy bio
+    '74587V305': 'PTCT',   # PTC Therapeutics (alt2)
+    '29414B104': 'EOLS',   # Evolus
+    '86882H100': 'SURF',   # Surface Oncology
+    '53635D103': 'LQDA',   # Liquidia (alt)
+    '60783X104': 'MLAB',   # Mesa Labs
+    '03073E105': 'AMRX',   # Amneal Pharmaceuticals
+    '98419J107': 'XOMA',   # XOMA (alt)
+    'G5876H105': 'MDXH',   # MDxHealth
+    '46266C303': 'IRWD',   # Ironwood (alt2)
+    '29275Y201': 'ENTA',   # Enanta (alt2)
+    '90384S303': 'ULTA',   # Ulta Beauty
+    '92763M305': 'VRTX',   # Vertex (alt3)
+    '69007J106': 'OTIC',   # Otonomy
+    '74158J100': 'PRGO',   # Perrigo
+    '86882H209': 'SURF',   # Surface Oncology (alt)
+    '04621X207': 'ATXS',   # Astria (alt)
+    '44107P104': 'HZNP',   # Horizon Therapeutics
+    '00508Y102': 'ACAD',   # Acadia Pharmaceuticals
+    '00287Y208': 'ABBV',   # AbbVie (alt)
+    '92532F209': 'VRTX',   # Vertex (alt4)
+    '744849104': 'PSNL',   # Personalis
+    '30063P204': 'EXAS',   # Exact Sciences (alt)
+    '74340E103': 'PRTA',   # Prothena
+    '05379R107': 'AXGN',   # AxoGen
+    '00771V108': 'ADPT',   # Adaptive Biotech
+    '87612E205': 'TARS',   # Tarsus (alt)
+    '30233G308': 'EYPT',   # EyePoint (alt)
+    '004421403': 'AAON',   # AAON
+    '73754Y100': 'POWI',   # Power Integrations
+    '74587V404': 'PTCT',   # PTC (alt3)
+    '57060D108': 'MASI',   # Masimo (alt)
+
+    # Additional unresolved CUSIPs from Perceptive
+    '142152107': 'CRIS',   # Caris Life Sciences
+    '45258J102': 'IMVT',   # Immunovant
+    '29286M105': 'ENGN',   # EnGene Holdings
+    '221015100': 'CRVS',   # Corvus Pharmaceuticals
+    '45719W205': 'IKT',    # Inhibikase Therapeutics
+    '26818M108': 'DYN',    # Dyne Therapeutics
+    '08659B102': 'BXIA',   # Beta Bionics (placeholder)
+    'G2545C104': 'CRBN',   # Crescent Biopharma
+    '42238D107': 'HFLO',   # HeartFlow (placeholder)
+    '29415J106': 'NVNO',   # enVVeno Medical
+    '09075X207': 'BDSX',   # Biodesix
+    '293602504': 'ENSC',   # Ensysce Biosciences
+    '45719W106': 'IKT',    # Inhibikase (alt)
+    '45256X103': 'IMVT',   # Immunovant (alt)
+    '29286M204': 'ENGN',   # EnGene (alt)
+    '26818M207': 'DYN',    # Dyne (alt)
+
+    # RA Capital holdings CUSIPs
+    '92243G108': 'PCVX',   # Vaxcyte
+    '282559103': 'ETNB',   # 89bio
+    '603170101': 'MLYS',   # Mineralys Therapeutics
+    '52635N103': 'LENZ',   # Lenz Therapeutics
+    'Y95308105': 'WVE',    # Wave Life Sciences (Singapore)
+    '252828108': 'DNTH',   # Dianthus Therapeutics
+    '055477103': 'BCAX',   # Bicara Therapeutics
+    '82835W108': 'SPRY',   # ARS Pharmaceuticals
+    '37954A203': 'GILD',   # Gilead (alt)
+    '460690100': 'IONS',   # Ionis (alt2)
+    '05377R201': 'RNA',    # Avidity (alt2)
+    '002824100': 'ABT',    # Abbott Labs
+    '00724F101': 'ADBE',   # Adobe
+    '03073E204': 'AMRX',   # Amneal (alt)
+    '29260X208': 'ENTA',   # Enanta (alt3)
+    '98420N204': 'XENE',   # Xenon (alt)
+    '282559202': 'ETNB',   # 89bio (alt)
+    '46266C402': 'IRWD',   # Ironwood (alt3)
+    '74587V503': 'PTCT',   # PTC (alt4)
+    '92243G207': 'PCVX',   # Vaxcyte (alt)
+
     # AI/diagnostics biotech
     '88023B103': 'TEM',    # Tempus AI
 
