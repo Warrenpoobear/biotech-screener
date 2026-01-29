@@ -1964,6 +1964,7 @@ def _score_single_ticker_v3(
             "smart_money": {"score": str(smart_money.smart_money_score), "overlap_count": smart_money.overlap_count},
             "volatility": {"bucket": vol_adj.vol_bucket.value, "weight_factor": str(vol_adj.weight_adjustment_factor), "score_factor": str(vol_adj.score_adjustment_factor)},
             "catalyst_decay": {"factor": str(decay.decay_factor), "in_optimal_window": decay.in_optimal_window},
+            "confidence_factors": {k: str(v) for k, v in confidence_factors.items()},
         },
         penalties_and_gates={
             "uncertainty_penalty_pct": str(_quantize_score(uncertainty_penalty * Decimal("100"))),
