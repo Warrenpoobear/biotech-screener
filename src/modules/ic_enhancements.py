@@ -27,13 +27,15 @@ Version: 1.0.0
 """
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass, field
 from datetime import date, timedelta
 from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
 from enum import Enum
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Callable
 
-__version__ = "1.1.0"  # V2 smart money signal with tier weighting
+__version__ = "1.2.0"  # V3 smart money signal with canonical manager registry
 
 
 # =============================================================================
@@ -162,95 +164,132 @@ SMART_MONEY_UNKNOWN_TIER_WEIGHT = Decimal("0.2")
 SMART_MONEY_CONDITIONAL_WEIGHT = Decimal("0.3")  # Lower base weight
 SMART_MONEY_CONDITIONAL_SIGNAL_CAP = Decimal("0.30")  # Max 30% of total signal
 
-# Known elite manager short names -> tier mapping (deterministic lookup)
-# This allows tier lookup by holder name when CIK is not available
-SMART_MONEY_TIER_BY_NAME = {
-    # Tier 1 - Elite Core (biotech specialists)
-    "baker bros": 1, "baker bros.": 1, "baker brothers": 1,
-    "ra capital": 1, "ra capital management": 1,
-    "perceptive": 1, "perceptive advisors": 1,
-    "ecor1": 1, "ecor1 capital": 1,
-    "rtw": 1, "rtw investments": 1,
-    "tang capital": 1, "tang capital partners": 1,
-    "casdin": 1, "casdin capital": 1,
-    "suvretta": 1, "suvretta capital": 1,
-    "cormorant": 1, "cormorant asset": 1,
-    "logos": 1, "logos global": 1,
-    "boxer": 1, "boxer capital": 1,
-    "palo alto": 1, "palo alto investors": 1,
-    "ghost tree": 1, "ghost tree capital": 1,
-    "samsara": 1, "samsara biocapital": 1,
-    "deep track": 1, "deep track capital": 1,
-    "avidity": 1, "avidity partners": 1,
-    "great point": 1, "great point partners": 1,
-    "krensavage": 1, "krensavage asset": 1,
-    "acuta": 1, "acuta capital": 1,
-    # Tier 2 - Elite Core (diversified healthcare)
-    "orbimed": 2, "orbimed advisors": 2,
-    "redmile": 2, "redmile group": 2,
-    "deerfield": 2, "deerfield management": 2,
-    "bain capital life": 2, "bain capital life sciences": 2,
-    "venbio": 2, "venbio partners": 2,
-    "sofinnova": 2, "sofinnova investments": 2,
-    "ally bridge": 2, "ally bridge group": 2,
-    "sectoral": 2, "sectoral asset": 2,
-}
+# =============================================================================
+# SMART MONEY MANAGER REGISTRY - Loaded from canonical source
+# =============================================================================
+# CANONICAL SOURCE: production_data/manager_registry.json
+# This replaces hardcoded manager lists with dynamically loaded data.
+# Elite Core (Tier 1) = Primary biotech specialists
+# Conditional (Tier 2) = Multi-strategy/quant platforms with healthcare exposure
+# =============================================================================
 
-# CIK -> tier mapping (for when holders are identified by CIK instead of name)
-# Derived from manager_registry.json - Elite Core = Tier 1/2, Conditional = Tier 0 (handled separately)
-SMART_MONEY_TIER_BY_CIK = {
-    # Tier 1 - Elite Core (biotech specialists) - from registry
-    "1263508": 1, "0001263508": 1,   # Baker Bros
-    "1346824": 1, "0001346824": 1,   # RA Capital
-    "1224962": 1, "0001224962": 1,   # Perceptive
-    "1493215": 1, "0001493215": 1,   # RTW
-    "1232621": 1, "0001232621": 1,   # Tang Capital
-    "1534261": 1, "0001534261": 1,   # Casdin
-    "1569064": 1, "0001569064": 1,   # Suvretta
-    "1583977": 1, "0001583977": 1,   # Cormorant
-    "1792126": 1, "0001792126": 1,   # Logos Global
-    "1465837": 1, "0001465837": 1,   # Boxer Capital
-    "1306923": 1, "0001306923": 1,   # Palo Alto Investors
-    "1595851": 1, "0001595851": 1,   # Ghost Tree
-    "1744967": 1, "0001744967": 1,   # Samsara BioCapital
-    "1856083": 1, "0001856083": 1,   # Deep Track
-    "1791827": 1, "0001791827": 1,   # Avidity Partners
-    "1281446": 1, "0001281446": 1,   # Great Point Partners
-    "1609251": 1, "0001609251": 1,   # Krensavage
-    "1582844": 1, "0001582844": 1,   # Acuta Capital
-    "1587114": 1, "0001587114": 1,   # EcoR1 Capital
-    # Tier 2 - Elite Core (diversified healthcare)
-    "1055951": 2, "0001055951": 2,   # OrbiMed
-    "1425738": 2, "0001425738": 2,   # Redmile
-    "1009258": 2, "0001009258": 2,   # Deerfield
-    "1703031": 2, "0001703031": 2,   # Bain Capital Life Sciences
-    "1776382": 2, "0001776382": 2,   # Venbio
-    "1631134": 2, "0001631134": 2,   # Sofinnova
-    "1822947": 2, "0001822947": 2,   # Ally Bridge
-    "1274413": 2, "0001274413": 2,   # Sectoral Asset
-}
+def _load_manager_registry() -> Dict[str, Any]:
+    """
+    Load manager registry from canonical JSON source.
 
-# Conditional manager CIKs (for CIK-based lookup)
-SMART_MONEY_CONDITIONAL_CIKS = {
-    "909661", "0000909661",     # Farallon
-    "1103804", "0001103804",   # Viking Global
-    "1273087", "0001273087",   # Millennium
-    "1218710", "0001218710",   # Balyasny
-    "1037389", "0001037389",   # Renaissance
-    "1009207", "0001009207",   # D.E. Shaw
-}
+    Searches in multiple locations for flexibility across project structure.
+    Returns empty dict if not found (graceful degradation).
+    """
+    search_paths = [
+        Path(__file__).parent.parent.parent / "production_data" / "manager_registry.json",
+        Path(__file__).parent.parent.parent.parent / "production_data" / "manager_registry.json",
+        Path.cwd() / "production_data" / "manager_registry.json",
+        Path.cwd().parent / "production_data" / "manager_registry.json",
+    ]
 
-# Conditional managers - multi-strategy/quant platforms with healthcare pods
-# Signal capped at SMART_MONEY_CONDITIONAL_SIGNAL_CAP (30%) to prevent AUM dominance
-SMART_MONEY_CONDITIONAL_MANAGERS = {
-    "farallon", "farallon capital",
-    "viking", "viking global",
-    "millennium", "millennium management",
-    "balyasny", "balyasny asset",
-    "renaissance", "renaissance technologies",
-    "de shaw", "d.e. shaw", "d e shaw",
-    "citadel", "citadel advisors",
-}
+    for path in search_paths:
+        if path.exists():
+            try:
+                with open(path, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+            except (json.JSONDecodeError, IOError):
+                continue
+
+    # Fallback: return empty structure (will use empty lookups)
+    return {"elite_core": [], "conditional": []}
+
+
+def _build_tier_by_name(registry: Dict[str, Any]) -> Dict[str, int]:
+    """Build name -> tier mapping from registry."""
+    result = {}
+
+    # Elite Core managers get tier 1 (primary signal)
+    for mgr in registry.get("elite_core", []):
+        name = mgr.get("name", "").lower()
+        if name:
+            result[name] = 1
+            # Add common variations
+            words = name.split()
+            if len(words) >= 2:
+                # First two words (e.g., "baker bros" from "Baker Bros Advisors")
+                result[" ".join(words[:2]).lower()] = 1
+                # First word only for distinctive names
+                if words[0].lower() not in {"the", "a", "an"}:
+                    result[words[0].lower()] = 1
+
+    # Conditional managers get tier 2 (breadth signal, capped)
+    for mgr in registry.get("conditional", []):
+        name = mgr.get("name", "").lower()
+        if name:
+            result[name] = 2
+            words = name.split()
+            if len(words) >= 2:
+                result[" ".join(words[:2]).lower()] = 2
+                if words[0].lower() not in {"the", "a", "an"}:
+                    result[words[0].lower()] = 2
+
+    return result
+
+
+def _build_tier_by_cik(registry: Dict[str, Any]) -> Dict[str, int]:
+    """Build CIK -> tier mapping from registry."""
+    result = {}
+
+    # Elite Core managers get tier 1
+    for mgr in registry.get("elite_core", []):
+        cik = mgr.get("cik", "")
+        if cik:
+            # Store both with and without leading zeros
+            cik_clean = cik.lstrip("0")
+            result[cik] = 1
+            result[cik_clean] = 1
+
+    # Conditional managers get tier 2
+    for mgr in registry.get("conditional", []):
+        cik = mgr.get("cik", "")
+        if cik:
+            cik_clean = cik.lstrip("0")
+            result[cik] = 2
+            result[cik_clean] = 2
+
+    return result
+
+
+def _build_conditional_ciks(registry: Dict[str, Any]) -> set:
+    """Build set of Conditional manager CIKs."""
+    result = set()
+    for mgr in registry.get("conditional", []):
+        cik = mgr.get("cik", "")
+        if cik:
+            result.add(cik)
+            result.add(cik.lstrip("0"))
+    return result
+
+
+def _build_conditional_names(registry: Dict[str, Any]) -> set:
+    """Build set of Conditional manager name patterns."""
+    result = set()
+    for mgr in registry.get("conditional", []):
+        name = mgr.get("name", "").lower()
+        if name:
+            result.add(name)
+            words = name.split()
+            if len(words) >= 2:
+                result.add(" ".join(words[:2]).lower())
+            if words and words[0].lower() not in {"the", "a", "an"}:
+                result.add(words[0].lower())
+    return result
+
+
+# Load registry at module initialization
+_MANAGER_REGISTRY = _load_manager_registry()
+
+# Build lookup dictionaries from canonical registry
+# These replace the previously hardcoded dictionaries
+SMART_MONEY_TIER_BY_NAME = _build_tier_by_name(_MANAGER_REGISTRY)
+SMART_MONEY_TIER_BY_CIK = _build_tier_by_cik(_MANAGER_REGISTRY)
+SMART_MONEY_CONDITIONAL_CIKS = _build_conditional_ciks(_MANAGER_REGISTRY)
+SMART_MONEY_CONDITIONAL_MANAGERS = _build_conditional_names(_MANAGER_REGISTRY)
 
 # Overlap bonus: saturating function applied to weighted overlap
 # Piecewise: linear 0-1.5 weighted overlap, then diminishing above

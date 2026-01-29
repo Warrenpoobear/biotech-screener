@@ -4,127 +4,222 @@
       "cik": "0001263508",
       "name": "Baker Bros Advisors",
       "aum_b": 13.8,
-      "style": "concentrated_conviction",
-      "notes": "Felix & Julian Baker, biotech specialists since 2000"
+      "style": "concentrated_conviction"
     },
     {
       "cik": "0001346824",
       "name": "RA Capital Management",
       "aum_b": 8.1,
-      "style": "clinical_probability_engine",
-      "notes": "Peter Kolchinsky, PhD, clinical trial specialists"
+      "style": "clinical_probability_engine"
     },
     {
       "cik": "0001224962",
       "name": "Perceptive Advisors",
       "aum_b": 3.5,
-      "style": "event_driven",
-      "notes": "Joseph Edelman, clinical catalyst focused"
+      "style": "event_driven"
     },
     {
-      "cik": "0001102854",
+      "cik": "0001009258",
       "name": "Deerfield Management",
       "aum_b": 7.2,
-      "style": "multi_strategy",
-      "notes": "James Flynn, biotech + healthcare services"
+      "style": "multi_strategy"
     },
     {
-      "cik": "0001555280",
-      "name": "Ally Bridge Group (Biotech)",
+      "cik": "0001822947",
+      "name": "Ally Bridge Group",
       "aum_b": 2.5,
-      "style": "asia_biotech",
-      "notes": "Frank Yu, US/China biotech crossover"
+      "style": "asia_biotech"
     },
     {
-      "cik": "0001496147",
+      "cik": "0001425738",
       "name": "Redmile Group",
       "aum_b": 4.8,
-      "style": "growth_equity",
-      "notes": "Jeremy Green, long-term compounders"
+      "style": "growth_equity"
     },
     {
-      "cik": "0001107208",
+      "cik": "0001055951",
       "name": "Orbimed Advisors",
       "aum_b": 17.2,
-      "style": "diversified_healthcare",
-      "notes": "Samuel Isaly, largest healthcare investor"
+      "style": "diversified_healthcare"
     },
     {
-      "cik": "0001655352",
+      "cik": "0001776382",
       "name": "Venbio Partners",
       "aum_b": 2.3,
-      "style": "venture_crossover",
-      "notes": "Behzad Aghazadeh, early-stage biotech"
+      "style": "venture_crossover"
     },
     {
-      "cik": "0001067983",
+      "cik": "0001703031",
       "name": "Bain Capital Life Sciences",
       "aum_b": 5.5,
-      "style": "private_equity_crossover",
-      "notes": "Stephen Kraus, private equity + public"
+      "style": "private_equity_crossover"
     },
     {
-      "cik": "0001713407",
+      "cik": "0001493215",
       "name": "RTW Investments",
       "aum_b": 3.2,
-      "style": "clinical_stage_specialists",
-      "notes": "Roderick Wong, MD, clinical trial analysis"
+      "style": "clinical_stage_specialists"
     },
     {
-      "cik": "0001556308",
+      "cik": "0001232621",
       "name": "Tang Capital Partners",
       "aum_b": 2.8,
-      "style": "oncology_focused",
-      "notes": "Mitch Tang, oncology specialists"
+      "style": "oncology_focused"
     },
     {
-      "cik": "0001105977",
-      "name": "Farallon Capital (Healthcare)",
-      "aum_b": 36.0,
-      "style": "multi_strategy_macro",
-      "notes": "Tom Steyer (founder), large allocation to biotech"
+      "cik": "0001569064",
+      "name": "Suvretta Capital Management",
+      "aum_b": 5.1,
+      "style": "healthcare_long_short"
+    },
+    {
+      "cik": "0001534261",
+      "name": "Casdin Capital",
+      "aum_b": 2.9,
+      "style": "genomics_focused"
+    },
+    {
+      "cik": "0001583977",
+      "name": "Cormorant Asset Management",
+      "aum_b": 3.9,
+      "style": "event_driven"
+    },
+    {
+      "cik": "0001792126",
+      "name": "Logos Global Management",
+      "aum_b": 1.4,
+      "style": "scientific_data_driven"
+    },
+    {
+      "cik": "0001631134",
+      "name": "Sofinnova Investments",
+      "aum_b": 3.8,
+      "style": "venture_crossover"
+    },
+    {
+      "cik": "0001465837",
+      "name": "Boxer Capital",
+      "aum_b": 1.4,
+      "style": "oncology_focused"
+    },
+    {
+      "cik": "0001587114",
+      "name": "EcoR1 Capital",
+      "aum_b": 2.1,
+      "style": "scientific_deep_dive"
+    },
+    {
+      "cik": "0001306923",
+      "name": "Palo Alto Investors",
+      "aum_b": 0.67,
+      "style": "physician_led_fundamental"
+    },
+    {
+      "cik": "0001595851",
+      "name": "Ghost Tree Capital",
+      "aum_b": 0.36,
+      "style": "healthcare_long_short"
+    },
+    {
+      "cik": "0001274413",
+      "name": "Sectoral Asset Management",
+      "aum_b": 0.39,
+      "style": "garp_healthcare"
+    },
+    {
+      "cik": "0001281446",
+      "name": "Great Point Partners",
+      "aum_b": 1.46,
+      "style": "life_sciences_value"
+    },
+    {
+      "cik": "0001791827",
+      "name": "Avidity Partners Management",
+      "aum_b": 1.3,
+      "style": "healthcare_fundamental"
+    },
+    {
+      "cik": "0001744967",
+      "name": "Samsara BioCapital",
+      "aum_b": 1.86,
+      "style": "concentrated_life_sciences"
+    },
+    {
+      "cik": "0001856083",
+      "name": "Deep Track Capital",
+      "aum_b": 5.2,
+      "style": "fundamental_long_short"
+    },
+    {
+      "cik": "0001609251",
+      "name": "Krensavage Asset Management",
+      "aum_b": 0.3,
+      "style": "value_healthcare"
+    },
+    {
+      "cik": "0001582844",
+      "name": "Acuta Capital Partners",
+      "aum_b": 0.1,
+      "style": "biotech_value"
+    },
+    {
+      "cik": "0001595725",
+      "name": "Rock Springs Capital Management",
+      "aum_b": 3.3,
+      "style": "healthcare_fundamental"
+    },
+    {
+      "cik": "0001595855",
+      "name": "Opaleye Management",
+      "aum_b": 0.64,
+      "style": "binary_catalyst_biotech"
     }
   ],
   "conditional": [
     {
-      "cik": "0001005477",
-      "name": "Venrock",
-      "aum_b": 2.5,
-      "style": "venture_capital",
-      "notes": "Bryan Roberts, venture + growth equity"
-    },
-    {
-      "cik": "0001398659",
-      "name": "Cormorant Asset Management",
-      "aum_b": 4.1,
-      "style": "event_driven",
-      "notes": "Bihua Chen, activist biotech investor"
-    },
-    {
-      "cik": "0001631282",
-      "name": "Deep Track Capital",
-      "aum_b": 1.8,
-      "style": "fundamental_long_short",
-      "notes": "David Kroin, fundamental biotech"
+      "cik": "0000909661",
+      "name": "Farallon Capital",
+      "aum_b": 36.0,
+      "style": "multi_strategy_macro"
     },
     {
       "cik": "0001103804",
-      "name": "Viking Global (Healthcare)",
+      "name": "Viking Global",
       "aum_b": 27.0,
-      "style": "multi_strategy_macro",
-      "notes": "Ole Andreas Halvorsen, large healthcare allocation"
+      "style": "multi_strategy_macro"
+    },
+    {
+      "cik": "0001273087",
+      "name": "Millennium Management",
+      "aum_b": 571.0,
+      "style": "multi_strategy_platform"
+    },
+    {
+      "cik": "0001218710",
+      "name": "Balyasny Asset Management",
+      "aum_b": 265.0,
+      "style": "multi_strategy_platform"
+    },
+    {
+      "cik": "0001037389",
+      "name": "Renaissance Technologies",
+      "aum_b": 92.0,
+      "style": "quantitative"
+    },
+    {
+      "cik": "0001009207",
+      "name": "D.E. Shaw",
+      "aum_b": 155.0,
+      "style": "quantitative"
     }
   ],
   "metadata": {
-    "version": "1.0",
-    "last_updated": "2026-01-09",
-    "total_elite_aum_b": 70.8,
-    "coverage_target": "45-55% of biotech universe",
+    "version": "2.1",
+    "last_updated": "2026-01-28",
+    "total_elite_aum_b": 68.84,
     "notes": [
-      "Elite Core = primary signal source, high conviction specialists",
-      "Conditional = secondary breadth signal, not used for activity detection",
-      "AUM figures approximate as of Q3 2024",
-      "CIKs verified against SEC EDGAR as of 2026-01-09"
+      "Elite Core = primary signal source",
+      "Conditional = secondary breadth signal"
     ]
   }
 }
