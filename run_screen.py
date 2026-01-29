@@ -503,7 +503,49 @@ def load_json_data(
     return data
 
 
-def _convert_holdings_to_coinvest(holdings_snapshots: Dict[str, Any]) -> Dict[str, Dict]:
+def _load_manager_registry(data_dir: Path = None) -> Dict[str, Dict]:
+    """
+    Load manager registry and build CIK to manager info mapping.
+
+    Returns dict: {cik: {"name": str, "tier": int}}
+    """
+    registry_paths = [
+        Path("production_data/manager_registry.json"),
+    ]
+    if data_dir:
+        registry_paths.insert(0, data_dir / "manager_registry.json")
+
+    for registry_path in registry_paths:
+        if registry_path.exists():
+            try:
+                with open(registry_path) as f:
+                    registry = json.load(f)
+
+                manager_map = {}
+                # Elite Core managers are Tier 1
+                for mgr in registry.get("elite_core", []):
+                    cik = mgr.get("cik", "").zfill(10)
+                    if cik:
+                        manager_map[cik] = {
+                            "name": mgr.get("name", f"Manager_{cik[-4:]}"),
+                            "tier": 1
+                        }
+                # Conditional managers are Tier 2
+                for mgr in registry.get("conditional", []):
+                    cik = mgr.get("cik", "").zfill(10)
+                    if cik:
+                        manager_map[cik] = {
+                            "name": mgr.get("name", f"Manager_{cik[-4:]}"),
+                            "tier": 2
+                        }
+                return manager_map
+            except Exception as e:
+                logger.warning(f"Failed to load manager registry from {registry_path}: {e}")
+
+    return {}
+
+
+def _convert_holdings_to_coinvest(holdings_snapshots: Dict[str, Any], data_dir: Path = None) -> Dict[str, Dict]:
     """
     Convert holdings_snapshots.json format to coinvest_signals format for Module 5.
 
@@ -540,17 +582,10 @@ def _convert_holdings_to_coinvest(holdings_snapshots: Dict[str, Any]) -> Dict[st
     - EXIT: Manager in prior but not in current (position closed)
     - HOLD: Position relatively unchanged (±10%)
     """
-    # Known elite managers (Tier 1) by CIK
-    TIER1_MANAGERS = {
-        "0001263508": "Baker Bros",
-        "0001346824": "RA Capital",
-        "0000909661": "Perceptive",
-        "0001167483": "Deerfield",
-        "0001390295": "RTW Investments",
-        "0001495385": "Orbimed",
-        "0001043233": "Viking Global",
-        "0001535472": "Citadel",
-    }
+    # Load manager registry for name resolution
+    MANAGER_REGISTRY = _load_manager_registry(data_dir)
+    if MANAGER_REGISTRY:
+        logger.info(f"  Loaded {len(MANAGER_REGISTRY)} managers from registry for name resolution")
 
     # Threshold for detecting meaningful position changes (10%)
     CHANGE_THRESHOLD = 0.10
@@ -582,10 +617,10 @@ def _convert_holdings_to_coinvest(holdings_snapshots: Dict[str, Any]) -> Dict[st
         all_ciks = set(current.keys()) | set(prior.keys())
 
         for cik in all_ciks:
-            # Determine tier and resolve holder name
-            if cik in TIER1_MANAGERS:
-                holder_name = TIER1_MANAGERS[cik]
-                tier = 1
+            # Determine tier and resolve holder name from registry
+            if cik in MANAGER_REGISTRY:
+                holder_name = MANAGER_REGISTRY[cik]["name"]
+                tier = MANAGER_REGISTRY[cik]["tier"]
             else:
                 holder_name = f"Manager_{cik[-4:]}"
                 tier = 2
@@ -1650,7 +1685,7 @@ def run_screening_pipeline(
                     holdings_snapshots = json.load(f)
                 if holdings_snapshots and isinstance(holdings_snapshots, dict):
                     # Convert holdings format to coinvest_signals format
-                    coinvest_signals = _convert_holdings_to_coinvest(holdings_snapshots)
+                    coinvest_signals = _convert_holdings_to_coinvest(holdings_snapshots, data_dir)
                     logger.info(f"  Converted holdings to coinvest signals for {len(coinvest_signals)} tickers")
             else:
                 logger.warning(f"  --enable-coinvest specified but neither coinvest_signals.json nor holdings_snapshots.json found")
