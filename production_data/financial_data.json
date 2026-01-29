@@ -14,7 +14,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 2455006000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 284870000,
+    "MarketableSecurities": 284870000.0,
     "MarketableSecurities_date": "2019-12-31",
     "COGS": 250955000,
     "COGS_date": "2025-09-30",
@@ -34,7 +34,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 430000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 2739876000.0
   },
   {
     "ticker": "JAZZ",
@@ -67,7 +68,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 32800000,
     "InterestExpense_date": "2023-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 0.0,
+    "TotalLiquidity": 1326070000.0
   },
   {
     "ticker": "IONS",
@@ -104,7 +107,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 12434000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 1901830000.0,
+    "TotalLiquidity": 2240171000.0
   },
   {
     "ticker": "BBIO",
@@ -121,7 +126,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 642951000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 7939000,
+    "MarketableSecurities": 7939000.0,
     "MarketableSecurities_date": "2025-06-30",
     "COGS": 12855000,
     "COGS_date": "2025-09-30",
@@ -141,7 +146,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 21186000,
     "InterestExpense_date": "2025-06-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 650890000.0
   },
   {
     "ticker": "GOSS",
@@ -158,7 +164,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 8933000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 171291000,
+    "MarketableSecurities": 171291000.0,
     "MarketableSecurities_date": "2025-09-30",
     "NetIncome": -123132000,
     "NetIncome_date": "2025-09-30",
@@ -174,7 +180,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 3129000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 180224000.0
   },
   {
     "ticker": "RNA",
@@ -191,7 +198,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 350158000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 261849000,
+    "MarketableSecurities": 261849000.0,
     "MarketableSecurities_date": "2022-09-30",
     "R&D": 392563000,
     "R&D_date": "2025-09-30",
@@ -209,7 +216,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 0,
     "InterestExpense_date": "2022-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 612007000.0
   },
   {
     "ticker": "KYMR",
@@ -238,7 +246,9 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 287844000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 978700000.0,
+    "TotalLiquidity": 1091649000.0
   },
   {
     "ticker": "RYTM",
@@ -275,7 +285,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 4755000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 363974000.0,
+    "TotalLiquidity": 416052000.0
   },
   {
     "ticker": "EPRX",
@@ -304,7 +316,8 @@
     "OperatingExpenses_date": "2023-12-31",
     "InterestExpense": 1170173,
     "InterestExpense_date": "2023-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 19341756.0
   },
   {
     "ticker": "ACAD",
@@ -335,7 +348,9 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 700096000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 83027000.0,
+    "TotalLiquidity": 341023000.0
   },
   {
     "ticker": "ALNY",
@@ -366,7 +381,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 35253000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 1490249000.0
   },
   {
     "ticker": "BMRN",
@@ -401,7 +417,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 3547000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 935662000.0,
+    "TotalLiquidity": 2185770000.0
   },
   {
     "ticker": "CRSP",
@@ -418,7 +436,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 286497000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 1629213000,
+    "MarketableSecurities": 1629213000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 201280000,
     "R&D_date": "2025-09-30",
@@ -430,7 +448,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 512453000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 1915710000.0
   },
   {
     "ticker": "VRTX",
@@ -447,7 +466,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 4939600000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 1347400000,
+    "MarketableSecurities": 1347400000.0,
     "MarketableSecurities_date": "2025-09-30",
     "AvailableForSaleSecurities": 518108000,
     "AvailableForSaleSecurities_date": "2018-12-31",
@@ -465,7 +484,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 58151000,
     "InterestExpense_date": "2020-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 6287000000.0
   },
   {
     "ticker": "SRPT",
@@ -500,7 +520,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 17296000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 237916000.0,
+    "TotalLiquidity": 850993000.0
   },
   {
     "ticker": "UTHR",
@@ -517,7 +539,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 1340100000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 1427500000,
+    "MarketableSecurities": 1427500000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 410500000,
     "R&D_date": "2025-09-30",
@@ -531,7 +553,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 13300000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 2767600000.0
   },
   {
     "ticker": "EXEL",
@@ -548,7 +571,7 @@
     "ShareholdersEquity_date": "2025-10-03",
     "Cash": 376300000,
     "Cash_date": "2025-10-03",
-    "MarketableSecurities": 612235000,
+    "MarketableSecurities": 612235000.0,
     "MarketableSecurities_date": "2025-10-03",
     "ShortTermInvestments": 803540000,
     "ShortTermInvestments_date": "2024-06-28",
@@ -568,7 +591,8 @@
     "OperatingExpenses_date": "2025-10-03",
     "InterestExpense": 0,
     "InterestExpense_date": "2020-01-03",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 988535000.0
   },
   {
     "ticker": "RARE",
@@ -599,7 +623,9 @@
     "OperatingExpenses_date": "2021-06-30",
     "InterestExpense": 318000,
     "InterestExpense_date": "2014-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 568034000.0,
+    "TotalLiquidity": 770544000.0
   },
   {
     "ticker": "FOLD",
@@ -616,7 +642,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 190553000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 73290000,
+    "MarketableSecurities": 73290000.0,
     "MarketableSecurities_date": "2025-09-30",
     "AvailableForSaleSecurities": 309502000,
     "AvailableForSaleSecurities_date": "2017-12-31",
@@ -634,7 +660,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 12436000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 263843000.0
   },
   {
     "ticker": "AMGN",
@@ -665,7 +692,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 2102000000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 22431000000.0,
+    "TotalLiquidity": 31876000000.0
   },
   {
     "ticker": "GILD",
@@ -680,7 +709,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 5412000000,
     "Cash_date": "2022-12-31",
-    "MarketableSecurities": 19000000,
+    "MarketableSecurities": 19000000.0,
     "MarketableSecurities_date": "2025-09-30",
     "AvailableForSaleSecurities": 78804000,
     "AvailableForSaleSecurities_date": "2013-03-31",
@@ -702,7 +731,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 254000000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 5431000000.0
   },
   {
     "ticker": "BIIB",
@@ -719,7 +749,7 @@
     "ShareholdersEquity_date": "2023-12-31",
     "Cash": 2913700000,
     "Cash_date": "2019-12-31",
-    "MarketableSecurities": 0,
+    "MarketableSecurities": 0.0,
     "MarketableSecurities_date": "2013-03-31",
     "AvailableForSaleSecurities": 1562200000,
     "AvailableForSaleSecurities_date": "2019-12-31",
@@ -739,7 +769,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 200000000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 2913700000.0
   },
   {
     "ticker": "MRNA",
@@ -766,7 +797,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 3483000000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 1132000000.0
   },
   {
     "ticker": "LGND",
@@ -799,7 +831,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 141000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 525146000.0,
+    "TotalLiquidity": 664522000.0
   },
   {
     "ticker": "TECH",
@@ -830,7 +864,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 13227000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 0.0,
+    "TotalLiquidity": 144962000.0
   },
   {
     "ticker": "RGEN",
@@ -847,7 +883,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 748747000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 16270517,
+    "MarketableSecurities": 16270517.0,
     "MarketableSecurities_date": "2014-06-30",
     "ShortTermInvestments": 0,
     "ShortTermInvestments_date": "2018-12-31",
@@ -869,7 +905,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 16860000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 765017517.0
   },
   {
     "ticker": "ROIV",
@@ -886,7 +923,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 1237010000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 3148825000,
+    "MarketableSecurities": 3148825000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 317487000,
     "R&D_date": "2025-09-30",
@@ -904,7 +941,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 13399000,
     "InterestExpense_date": "2024-06-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 4385835000.0
   },
   {
     "ticker": "NTRA",
@@ -921,7 +959,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 466005000,
     "Cash_date": "2022-12-31",
-    "MarketableSecurities": 1000000,
+    "MarketableSecurities": 1000000.0,
     "MarketableSecurities_date": "2025-09-30",
     "AvailableForSaleSecurities": 186700000,
     "AvailableForSaleSecurities_date": "2019-09-30",
@@ -939,7 +977,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 3078000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 467005000.0
   },
   {
     "ticker": "DAWN",
@@ -970,7 +1009,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 19000,
     "InterestExpense_date": "2021-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 5987000.0,
+    "TotalLiquidity": 49264000.0
   },
   {
     "ticker": "PCVX",
@@ -999,7 +1040,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 0,
     "InterestExpense_date": "2023-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 1430240000.0,
+    "TotalLiquidity": 1711320000.0
   },
   {
     "ticker": "ARVN",
@@ -1016,7 +1059,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 101500000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 686100000,
+    "MarketableSecurities": 686100000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 224100000,
     "R&D_date": "2025-09-30",
@@ -1034,7 +1077,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 0,
     "InterestExpense_date": "2025-06-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 787600000.0
   },
   {
     "ticker": "FATE",
@@ -1069,7 +1113,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 0,
     "InterestExpense_date": "2021-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 174801000.0,
+    "TotalLiquidity": 215423000.0
   },
   {
     "ticker": "NTLA",
@@ -1086,7 +1132,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 193389000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 317655000,
+    "MarketableSecurities": 317655000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 300209000,
     "R&D_date": "2025-09-30",
@@ -1098,7 +1144,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 386934000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 511044000.0
   },
   {
     "ticker": "EDIT",
@@ -1115,7 +1162,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 165648000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 0,
+    "MarketableSecurities": 0.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 62549000,
     "R&D_date": "2025-09-30",
@@ -1133,7 +1180,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 6635000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 165648000.0
   },
   {
     "ticker": "BEAM",
@@ -1150,7 +1198,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 267960000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 807010000,
+    "MarketableSecurities": 807010000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 310343000,
     "R&D_date": "2025-09-30",
@@ -1162,7 +1210,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 391882000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 1074970000.0
   },
   {
     "ticker": "VCYT",
@@ -1195,7 +1244,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 116000,
     "InterestExpense_date": "2021-06-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 315573000.0
   },
   {
     "ticker": "AXSM",
@@ -1230,7 +1280,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": -12719000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 325272000.0
   },
   {
     "ticker": "PTGX",
@@ -1247,7 +1298,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 113713000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 462404000,
+    "MarketableSecurities": 462404000.0,
     "MarketableSecurities_date": "2025-09-30",
     "AvailableForSaleSecurities": 42469000,
     "AvailableForSaleSecurities_date": "2019-03-31",
@@ -1265,7 +1316,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 598000,
     "InterestExpense_date": "2020-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 576117000.0
   },
   {
     "ticker": "CDNA",
@@ -1282,7 +1334,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 91435000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 102782000,
+    "MarketableSecurities": 102782000.0,
     "MarketableSecurities_date": "2025-09-30",
     "COGS": 27417000,
     "COGS_date": "2020-06-30",
@@ -1302,7 +1354,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 1351000,
     "InterestExpense_date": "2016-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 194217000.0
   },
   {
     "ticker": "PRVA",
@@ -1327,7 +1380,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 500000,
     "InterestExpense_date": "2022-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 441352000.0
   },
   {
     "ticker": "AGIO",
@@ -1356,7 +1410,9 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 384615000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 370188000.0,
+    "TotalLiquidity": 462898000.0
   },
   {
     "ticker": "ALLO",
@@ -1387,7 +1443,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 0,
     "InterestExpense_date": "2020-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 283988000.0,
+    "TotalLiquidity": 321803000.0
   },
   {
     "ticker": "APLS",
@@ -1404,7 +1462,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 479171000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 124364000,
+    "MarketableSecurities": 124364000.0,
     "MarketableSecurities_date": "2022-09-30",
     "R&D": 221621000,
     "R&D_date": "2025-09-30",
@@ -1422,7 +1480,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 2687000,
     "InterestExpense_date": "2023-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 603535000.0
   },
   {
     "ticker": "ARCT",
@@ -1453,7 +1512,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 119788000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 180360000.0
   },
   {
     "ticker": "ARWR",
@@ -1468,7 +1528,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 69400000,
     "Cash_date": "2024-06-30",
-    "MarketableSecurities": 0,
+    "MarketableSecurities": 0.0,
     "MarketableSecurities_date": "2022-09-30",
     "R&D": 607159000,
     "R&D_date": "2025-09-30",
@@ -1482,7 +1542,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 12611000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 69400000.0
   },
   {
     "ticker": "AVTR",
@@ -1511,7 +1572,8 @@
     "CFO_date": "2025-09-30",
     "InterestExpense": 129800000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 251900000.0
   },
   {
     "ticker": "BCRX",
@@ -1544,7 +1606,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 49239000,
     "InterestExpense_date": "2024-06-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 128795000.0,
+    "TotalLiquidity": 212873000.0
   },
   {
     "ticker": "BDTX",
@@ -1573,7 +1637,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 0,
     "InterestExpense_date": "2021-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 30864000.0
   },
   {
     "ticker": "CRBU",
@@ -1590,7 +1655,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 11144000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 227778000,
+    "MarketableSecurities": 227778000.0,
     "MarketableSecurities_date": "2022-06-30",
     "ShortTermInvestments": 0,
     "ShortTermInvestments_date": "2020-12-31",
@@ -1606,7 +1671,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 0,
     "InterestExpense_date": "2022-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 238922000.0
   },
   {
     "ticker": "CRNX",
@@ -1637,7 +1703,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 8000,
     "InterestExpense_date": "2017-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 981390000.0,
+    "TotalLiquidity": 1092291000.0
   },
   {
     "ticker": "CRVS",
@@ -1662,7 +1730,9 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 30754000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 44949000.0,
+    "TotalLiquidity": 47816000.0
   },
   {
     "ticker": "CLDX",
@@ -1679,7 +1749,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 36037000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 547186000,
+    "MarketableSecurities": 547186000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 169741000,
     "R&D_date": "2025-09-30",
@@ -1693,7 +1763,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 927000,
     "InterestExpense_date": "2013-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 583223000.0
   },
   {
     "ticker": "CYTK",
@@ -1726,7 +1797,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 31305000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 249170000.0,
+    "TotalLiquidity": 474637000.0
   },
   {
     "ticker": "DNLI",
@@ -1743,7 +1816,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 90963000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 757241000,
+    "MarketableSecurities": 757241000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 320873000,
     "R&D_date": "2025-09-30",
@@ -1755,7 +1828,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 417977000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 848204000.0
   },
   {
     "ticker": "DRMA",
@@ -1784,7 +1858,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 0,
     "InterestExpense_date": "2022-06-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 4664127.0
   },
   {
     "ticker": "DVAX",
@@ -1801,7 +1876,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 160247000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 123629000,
+    "MarketableSecurities": 123629000.0,
     "MarketableSecurities_date": "2012-09-30",
     "AvailableForSaleSecurities": 110916000,
     "AvailableForSaleSecurities_date": "2014-09-30",
@@ -1823,7 +1898,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 4976000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 283876000.0
   },
   {
     "ticker": "FGEN",
@@ -1875,7 +1951,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 47078000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 0,
+    "MarketableSecurities": 0.0,
     "MarketableSecurities_date": "2019-12-31",
     "R&D": 40687000,
     "R&D_date": "2025-09-30",
@@ -1887,7 +1963,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 62076000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 47078000.0
   },
   {
     "ticker": "HALO",
@@ -1924,7 +2001,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 4507000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 48408220.0,
+    "TotalLiquidity": 468073220.0
   },
   {
     "ticker": "HRTX",
@@ -1957,7 +2036,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 3868000,
     "InterestExpense_date": "2023-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 222967000.0,
+    "TotalLiquidity": 266035000.0
   },
   {
     "ticker": "IMCR",
@@ -1990,7 +2071,8 @@
     "CFO_date": "2025-09-30",
     "InterestExpense": 9113000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 342341000.0
   },
   {
     "ticker": "IMVT",
@@ -2017,7 +2099,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 0,
     "InterestExpense_date": "2021-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 521870000.0
   },
   {
     "ticker": "IRWD",
@@ -2054,7 +2137,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 7231000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 95680000.0,
+    "TotalLiquidity": 236087000.0
   },
   {
     "ticker": "KALA",
@@ -2089,7 +2174,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 1455000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 9922000.0,
+    "TotalLiquidity": 31018000.0
   },
   {
     "ticker": "KALV",
@@ -2120,7 +2207,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 493000,
     "InterestExpense_date": "2016-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 243497000.0
   },
   {
     "ticker": "KRYS",
@@ -2155,7 +2243,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 0,
     "InterestExpense_date": "2023-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 8402000.0,
+    "TotalLiquidity": 401006000.0
   },
   {
     "ticker": "LQDA",
@@ -2188,7 +2278,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 8120000,
     "InterestExpense_date": "2024-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 157496000.0
   },
   {
     "ticker": "MCRB",
@@ -2221,7 +2312,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 0,
     "InterestExpense_date": "2025-06-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 0.0,
+    "TotalLiquidity": 47638000.0
   },
   {
     "ticker": "MDGL",
@@ -2252,7 +2345,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 3297000,
     "InterestExpense_date": "2025-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 144700000.0,
+    "TotalLiquidity": 440394000.0
   },
   {
     "ticker": "MRSN",
@@ -2322,7 +2417,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 36437000,
     "InterestExpense_date": "2024-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 243574000.0
   },
   {
     "ticker": "NVCR",
@@ -2355,7 +2451,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 11663000,
     "InterestExpense_date": "2024-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 691382000.0,
+    "TotalLiquidity": 1033501000.0
   },
   {
     "ticker": "NVAX",
@@ -2372,7 +2470,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 268023000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 494871000,
+    "MarketableSecurities": 494871000.0,
     "MarketableSecurities_date": "2025-09-30",
     "AvailableForSaleSecurities": 143617000,
     "AvailableForSaleSecurities_date": "2014-09-30",
@@ -2392,7 +2490,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 8224000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 762894000.0
   },
   {
     "ticker": "OCGN",
@@ -2425,7 +2524,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 1300000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 0.0,
+    "TotalLiquidity": 37800000.0
   },
   {
     "ticker": "OPCH",
@@ -2458,7 +2559,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 27678000,
     "InterestExpense_date": "2025-06-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 309822000.0
   },
   {
     "ticker": "PCRX",
@@ -2495,7 +2597,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 13554000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 98745000.0,
+    "TotalLiquidity": 246334000.0
   },
   {
     "ticker": "PGEN",
@@ -2530,7 +2634,9 @@
     "OperatingExpenses_date": "2019-09-30",
     "InterestExpense": 13140000,
     "InterestExpense_date": "2019-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 106813000.0,
+    "TotalLiquidity": 121135000.0
   },
   {
     "ticker": "PRTA",
@@ -2557,7 +2663,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 200100000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 330843000.0
   },
   {
     "ticker": "PTCT",
@@ -2574,7 +2681,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 672617000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 1015200000,
+    "MarketableSecurities": 1015200000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 322121000,
     "R&D_date": "2025-09-30",
@@ -2590,7 +2697,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 627694000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 1687817000.0
   },
   {
     "ticker": "RVMD",
@@ -2607,7 +2715,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 217442000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 1714066000,
+    "MarketableSecurities": 1714066000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 692389000,
     "R&D_date": "2025-09-30",
@@ -2621,7 +2729,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 0,
     "InterestExpense_date": "2022-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 1931508000.0
   },
   {
     "ticker": "RXRX",
@@ -2654,7 +2763,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 20000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 0.0,
+    "TotalLiquidity": 659836000.0
   },
   {
     "ticker": "RGNX",
@@ -2671,7 +2782,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 58802000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 215403000,
+    "MarketableSecurities": 215403000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 168688000,
     "R&D_date": "2025-09-30",
@@ -2685,7 +2796,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 2422000,
     "InterestExpense_date": "2024-06-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 274205000.0
   },
   {
     "ticker": "SANA",
@@ -2702,7 +2814,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 103357000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 49697000,
+    "MarketableSecurities": 49697000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 97056000,
     "R&D_date": "2025-09-30",
@@ -2712,7 +2824,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 189120000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 153054000.0
   },
   {
     "ticker": "SGMO",
@@ -2729,7 +2842,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 29616000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 94386000,
+    "MarketableSecurities": 94386000.0,
     "MarketableSecurities_date": "2014-06-30",
     "AvailableForSaleSecurities": 198818000,
     "AvailableForSaleSecurities_date": "2018-03-31",
@@ -2743,7 +2856,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 108360000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 124002000.0
   },
   {
     "ticker": "SNDX",
@@ -2776,7 +2890,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 100000,
     "InterestExpense_date": "2024-06-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 319171000.0,
+    "TotalLiquidity": 435979000.0
   },
   {
     "ticker": "SPRY",
@@ -2807,7 +2923,9 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 194174000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 228652000.0,
+    "TotalLiquidity": 288209000.0
   },
   {
     "ticker": "TARS",
@@ -2824,7 +2942,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 112724000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 289113000,
+    "MarketableSecurities": 289113000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 46287000,
     "R&D_date": "2025-09-30",
@@ -2840,7 +2958,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 6721000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 401837000.0
   },
   {
     "ticker": "TBPH",
@@ -2869,7 +2988,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 629000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 370228000.0,
+    "TotalLiquidity": 545001000.0
   },
   {
     "ticker": "TGTX",
@@ -2908,7 +3029,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 2288000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 57501000.0,
+    "TotalLiquidity": 131582000.0
   },
   {
     "ticker": "AARD",
@@ -2935,7 +3058,9 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 44021000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 87065000.0,
+    "TotalLiquidity": 126350000.0
   },
   {
     "ticker": "ABCL",
@@ -2964,7 +3089,9 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 218796000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 500000000.0,
+    "TotalLiquidity": 583159000.0
   },
   {
     "ticker": "ABSI",
@@ -2981,7 +3108,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 9476000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 142999000,
+    "MarketableSecurities": 142999000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 56071000,
     "R&D_date": "2025-09-30",
@@ -2997,7 +3124,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 176000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 152475000.0
   },
   {
     "ticker": "ABUS",
@@ -3030,7 +3158,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 78000,
     "InterestExpense_date": "2024-06-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 86293000.0,
+    "TotalLiquidity": 108701000.0
   },
   {
     "ticker": "ACLX",
@@ -3047,7 +3177,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 79005000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 382378000,
+    "MarketableSecurities": 382378000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 123516000,
     "R&D_date": "2025-09-30",
@@ -3061,7 +3191,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 595000,
     "InterestExpense_date": "2022-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 461383000.0
   },
   {
     "ticker": "ACRS",
@@ -3092,7 +3223,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 60172000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 25256000.0
   },
   {
     "ticker": "ADCT",
@@ -3123,7 +3255,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 12230000,
     "InterestExpense_date": "2025-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 234738000.0
   },
   {
     "ticker": "ADMA",
@@ -3162,7 +3295,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 3769000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 0.0,
+    "TotalLiquidity": 61385000.0
   },
   {
     "ticker": "ADPT",
@@ -3193,7 +3328,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 8824000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 55034000.0
   },
   {
     "ticker": "ALKS",
@@ -3228,7 +3364,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 11930000,
     "InterestExpense_date": "2024-06-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 198767000.0,
+    "TotalLiquidity": 815216000.0
   },
   {
     "ticker": "ALMS",
@@ -3245,7 +3383,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 65257000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 312467000,
+    "MarketableSecurities": 312467000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 303213000,
     "R&D_date": "2025-09-30",
@@ -3257,7 +3395,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 379480000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 377724000.0
   },
   {
     "ticker": "ALT",
@@ -3292,7 +3431,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 1000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 149540000.0,
+    "TotalLiquidity": 210776000.0
   },
   {
     "ticker": "AMLX",
@@ -3309,7 +3450,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 225178000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 118812000,
+    "MarketableSecurities": 118812000.0,
     "MarketableSecurities_date": "2025-09-30",
     "ShortTermInvestments": 234813000,
     "ShortTermInvestments_date": "2024-06-30",
@@ -3323,7 +3464,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 116686000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 343990000.0
   },
   {
     "ticker": "ANAB",
@@ -3350,7 +3492,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 0,
     "InterestExpense_date": "2021-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 109833000.0
   },
   {
     "ticker": "ANNX",
@@ -3375,7 +3518,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 166149000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 139419000.0
   },
   {
     "ticker": "ANRO",
@@ -3404,7 +3548,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 49309000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 137816000.0
   },
   {
     "ticker": "APGE",
@@ -3419,7 +3564,7 @@
     "CurrentLiabilities_date": "2025-09-30",
     "Cash": 107914000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 419375000,
+    "MarketableSecurities": 419375000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 156268000,
     "R&D_date": "2025-09-30",
@@ -3429,7 +3574,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 207539000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 527289000.0
   },
   {
     "ticker": "ARQT",
@@ -3462,7 +3608,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 7480000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 47120000.0
   },
   {
     "ticker": "ATAI",
@@ -3497,7 +3644,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 1388000,
     "InterestExpense_date": "2024-06-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 30402000.0
   },
   {
     "ticker": "ATXS",
@@ -3534,7 +3682,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 100000,
     "InterestExpense_date": "2018-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 131441000.0,
+    "TotalLiquidity": 227721000.0
   },
   {
     "ticker": "AUPH",
@@ -3565,7 +3715,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 2481000,
     "InterestExpense_date": "2024-06-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 72889000.0
   },
   {
     "ticker": "AURA",
@@ -3590,7 +3741,9 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 85554000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 114313000.0,
+    "TotalLiquidity": 161866000.0
   },
   {
     "ticker": "AUTL",
@@ -3619,7 +3772,8 @@
     "OperatingExpenses_date": "2019-09-30",
     "InterestExpense": 13834000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 86124000.0
   },
   {
     "ticker": "AVBP",
@@ -3646,7 +3800,9 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 138711000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 187594000.0,
+    "TotalLiquidity": 300266000.0
   },
   {
     "ticker": "AVIR",
@@ -3673,7 +3829,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 125953000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 77344000.0
   },
   {
     "ticker": "AVXL",
@@ -3702,7 +3859,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": -4206,
     "InterestExpense_date": "2016-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 102577000.0
   },
   {
     "ticker": "BBOT",
@@ -3719,7 +3877,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 408741000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 59544000,
+    "MarketableSecurities": 59544000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 83125000,
     "R&D_date": "2025-09-30",
@@ -3729,7 +3887,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 102411000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 468285000.0
   },
   {
     "ticker": "BCAX",
@@ -3756,7 +3915,9 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 114482000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 118494000.0,
+    "TotalLiquidity": 290167000.0
   },
   {
     "ticker": "BCYC",
@@ -3789,7 +3950,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 821000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 648325000.0
   },
   {
     "ticker": "BHVN",
@@ -3806,7 +3968,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 184847000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 75370000,
+    "MarketableSecurities": 75370000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 513120000,
     "R&D_date": "2025-09-30",
@@ -3816,7 +3978,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 602644000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 260217000.0
   },
   {
     "ticker": "BIOA",
@@ -3833,7 +3996,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 215573000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 70205000,
+    "MarketableSecurities": 70205000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 49466000,
     "R&D_date": "2025-09-30",
@@ -3849,7 +4012,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 70274000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 285778000.0
   },
   {
     "ticker": "BRKR",
@@ -3886,7 +4050,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 47900000,
     "InterestExpense_date": "2024-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 0.0,
+    "TotalLiquidity": 293100000.0
   },
   {
     "ticker": "CABA",
@@ -3915,7 +4081,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 1449000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 99725000.0,
+    "TotalLiquidity": 159931000.0
   },
   {
     "ticker": "CADL",
@@ -3948,7 +4116,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 703000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 86963000.0
   },
   {
     "ticker": "CAI",
@@ -3965,7 +4134,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 753221000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 2272000,
+    "MarketableSecurities": 2272000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 69739000,
     "R&D_date": "2025-09-30",
@@ -3983,7 +4152,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 45474000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 755493000.0
   },
   {
     "ticker": "CATX",
@@ -4016,7 +4186,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 84000,
     "InterestExpense_date": "2023-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 147375000.0,
+    "TotalLiquidity": 174137000.0
   },
   {
     "ticker": "CCCC",
@@ -4033,7 +4205,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 58809000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 264102000,
+    "MarketableSecurities": 264102000.0,
     "MarketableSecurities_date": "2022-09-30",
     "ShortTermInvestments": 135979000,
     "ShortTermInvestments_date": "2020-09-30",
@@ -4051,7 +4223,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 117008000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 322911000.0
   },
   {
     "ticker": "CDXS",
@@ -4084,7 +4257,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 13000,
     "InterestExpense_date": "2013-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 0.0,
+    "TotalLiquidity": 25351000.0
   },
   {
     "ticker": "CGEM",
@@ -4113,7 +4288,9 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 186389000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 229261000.0,
+    "TotalLiquidity": 332596000.0
   },
   {
     "ticker": "CGON",
@@ -4130,7 +4307,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 45145000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 635118000,
+    "MarketableSecurities": 635118000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 86683000,
     "R&D_date": "2025-09-30",
@@ -4140,7 +4317,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 143792000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 680263000.0
   },
   {
     "ticker": "CMPS",
@@ -4171,7 +4349,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 3400000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 185937000.0
   },
   {
     "ticker": "CNTA",
@@ -4200,7 +4379,9 @@
     "CFO_date": "2025-09-30",
     "InterestExpense": 2529000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 195403000.0,
+    "TotalLiquidity": 246214000.0
   },
   {
     "ticker": "COGT",
@@ -4217,7 +4398,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 125297000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 6696000,
+    "MarketableSecurities": 6696000.0,
     "MarketableSecurities_date": "2018-03-31",
     "AvailableForSaleSecurities": 0,
     "AvailableForSaleSecurities_date": "2019-09-30",
@@ -4231,7 +4412,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 233870000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 131993000.0
   },
   {
     "ticker": "CRL",
@@ -4248,7 +4430,7 @@
     "ShareholdersEquity_date": "2025-09-27",
     "Cash": 207097000,
     "Cash_date": "2025-09-27",
-    "MarketableSecurities": 11855000,
+    "MarketableSecurities": 11855000.0,
     "MarketableSecurities_date": "2014-06-28",
     "ShortTermInvestments": 950000,
     "ShortTermInvestments_date": "2022-09-24",
@@ -4264,7 +4446,8 @@
     "CFO_date": "2025-09-27",
     "InterestExpense": 35001000,
     "InterestExpense_date": "2024-03-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 218952000.0
   },
   {
     "ticker": "CSTL",
@@ -4281,7 +4464,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 85556000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 201986000,
+    "MarketableSecurities": 201986000.0,
     "MarketableSecurities_date": "2025-09-30",
     "COGS": 52713000,
     "COGS_date": "2025-09-30",
@@ -4301,7 +4484,8 @@
     "OperatingExpenses_date": "2021-03-31",
     "InterestExpense": 17000,
     "InterestExpense_date": "2025-06-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 287542000.0
   },
   {
     "ticker": "CTKB",
@@ -4330,7 +4514,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 441000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 168453000.0,
+    "TotalLiquidity": 261734000.0
   },
   {
     "ticker": "CTMX",
@@ -4365,7 +4551,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 206000,
     "InterestExpense_date": "2017-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 77495000.0,
+    "TotalLiquidity": 111680000.0
   },
   {
     "ticker": "CTNM",
@@ -4382,7 +4570,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 42633000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 139774000,
+    "MarketableSecurities": 139774000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 38767000,
     "R&D_date": "2025-09-30",
@@ -4394,7 +4582,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 50944000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 182407000.0
   },
   {
     "ticker": "DNA",
@@ -4411,7 +4600,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 111065000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 384419000,
+    "MarketableSecurities": 384419000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 193646000,
     "R&D_date": "2025-09-30",
@@ -4425,7 +4614,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 93000,
     "InterestExpense_date": "2023-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 495484000.0
   },
   {
     "ticker": "DSGN",
@@ -4442,7 +4632,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 15088000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 190882000,
+    "MarketableSecurities": 190882000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 45704000,
     "R&D_date": "2025-09-30",
@@ -4454,7 +4644,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 61298000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 205970000.0
   },
   {
     "ticker": "DYN",
@@ -4483,7 +4674,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 2998000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 573610000.0
   },
   {
     "ticker": "EBS",
@@ -4516,7 +4708,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 24300000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 245500000.0
   },
   {
     "ticker": "ELVN",
@@ -4533,7 +4726,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 101732000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 375833000,
+    "MarketableSecurities": 375833000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 64611000,
     "R&D_date": "2025-09-30",
@@ -4543,7 +4736,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 85373000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 477565000.0
   },
   {
     "ticker": "ENTA",
@@ -4560,7 +4754,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 32298000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 193676000,
+    "MarketableSecurities": 193676000.0,
     "MarketableSecurities_date": "2016-06-30",
     "AvailableForSaleSecurities": 230750000,
     "AvailableForSaleSecurities_date": "2018-06-30",
@@ -4576,7 +4770,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 8359000,
     "InterestExpense_date": "2024-06-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 225974000.0
   },
   {
     "ticker": "ERAS",
@@ -4593,7 +4788,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 70230000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 218170000,
+    "MarketableSecurities": 218170000.0,
     "MarketableSecurities_date": "2025-09-30",
     "ShortTermInvestments": 53988000,
     "ShortTermInvestments_date": "2021-12-31",
@@ -4603,7 +4798,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 108301000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 288400000.0
   },
   {
     "ticker": "EWTX",
@@ -4630,7 +4826,9 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 135427000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 517337000.0,
+    "TotalLiquidity": 563340000.0
   },
   {
     "ticker": "FDMT",
@@ -4647,7 +4845,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 48555000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 256508000,
+    "MarketableSecurities": 256508000.0,
     "MarketableSecurities_date": "2025-09-30",
     "AvailableForSaleSecurities": 70686000,
     "AvailableForSaleSecurities_date": "2021-09-30",
@@ -4661,7 +4859,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 174381000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 305063000.0
   },
   {
     "ticker": "FHTX",
@@ -4694,7 +4893,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 0,
     "InterestExpense_date": "2022-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 90944000.0,
+    "TotalLiquidity": 180278000.0
   },
   {
     "ticker": "FLGT",
@@ -4727,7 +4928,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 336000,
     "InterestExpense_date": "2023-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 26949000.0,
+    "TotalLiquidity": 144590000.0
   },
   {
     "ticker": "FTRE",
@@ -4756,7 +4959,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 69800000,
     "InterestExpense_date": "2023-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 131300000.0
   },
   {
     "ticker": "GERN",
@@ -4787,7 +4991,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 18504000,
     "InterestExpense_date": "2024-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 141800000.0,
+    "TotalLiquidity": 219917000.0
   },
   {
     "ticker": "GLUE",
@@ -4812,7 +5018,9 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 125384000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 182915000.0,
+    "TotalLiquidity": 391258000.0
   },
   {
     "ticker": "GPCR",
@@ -4839,7 +5047,9 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 200549000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 696131000.0,
+    "TotalLiquidity": 799043000.0
   },
   {
     "ticker": "GRAL",
@@ -4866,7 +5076,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 541327000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 126892000.0
   },
   {
     "ticker": "HUMA",
@@ -4899,7 +5110,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 1816000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 100031414.0,
+    "TotalLiquidity": 119519414.0
   },
   {
     "ticker": "IBRX",
@@ -4916,7 +5129,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 60241000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 197572000,
+    "MarketableSecurities": 197572000.0,
     "MarketableSecurities_date": "2025-09-30",
     "AvailableForSaleSecurities": 136349000,
     "AvailableForSaleSecurities_date": "2015-12-31",
@@ -4932,7 +5145,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 46043000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 257813000.0
   },
   {
     "ticker": "IDYA",
@@ -4949,7 +5163,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 298927000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 487967000,
+    "MarketableSecurities": 487967000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 228105000,
     "R&D_date": "2025-09-30",
@@ -4961,7 +5175,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 272577000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 786894000.0
   },
   {
     "ticker": "ILMN",
@@ -4996,7 +5211,9 @@
     "OperatingExpenses_date": "2025-09-28",
     "InterestExpense": 18000000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 228000000.0,
+    "TotalLiquidity": 1372000000.0
   },
   {
     "ticker": "IMRX",
@@ -5013,7 +5230,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 227563077,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 32887970,
+    "MarketableSecurities": 32887970.0,
     "MarketableSecurities_date": "2022-12-31",
     "COGS": 0,
     "COGS_date": "2023-12-31",
@@ -5027,7 +5244,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 45623250,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 260451047.0
   },
   {
     "ticker": "INBX",
@@ -5054,7 +5272,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 105402000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 153088000.0
   },
   {
     "ticker": "INSM",
@@ -5071,7 +5290,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 334764000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 1345222000,
+    "MarketableSecurities": 1345222000.0,
     "MarketableSecurities_date": "2025-09-30",
     "ShortTermInvestments": 0,
     "ShortTermInvestments_date": "2012-12-31",
@@ -5091,7 +5310,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 42814000,
     "InterestExpense_date": "2025-06-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 1679986000.0
   },
   {
     "ticker": "IOVA",
@@ -5126,7 +5346,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": -5660,
     "InterestExpense_date": "2014-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 142669000.0,
+    "TotalLiquidity": 300803000.0
   },
   {
     "ticker": "IRON",
@@ -5143,7 +5365,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 140664000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 475256000,
+    "MarketableSecurities": 475256000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 124416000,
     "R&D_date": "2025-09-30",
@@ -5159,7 +5381,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 155000,
     "InterestExpense_date": "2022-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 615920000.0
   },
   {
     "ticker": "JANX",
@@ -5186,7 +5409,9 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 125266000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 940604000.0,
+    "TotalLiquidity": 988993000.0
   },
   {
     "ticker": "KOD",
@@ -5203,7 +5428,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 72038000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 0,
+    "MarketableSecurities": 0.0,
     "MarketableSecurities_date": "2023-12-31",
     "R&D": 136880000,
     "R&D_date": "2025-09-30",
@@ -5215,7 +5440,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 0,
     "InterestExpense_date": "2024-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 72038000.0
   },
   {
     "ticker": "KROS",
@@ -5244,7 +5470,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 0,
     "InterestExpense_date": "2024-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 693472000.0
   },
   {
     "ticker": "KURA",
@@ -5279,7 +5506,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 804000,
     "InterestExpense_date": "2024-06-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 166855000.0,
+    "TotalLiquidity": 262142000.0
   },
   {
     "ticker": "KYTX",
@@ -5296,7 +5525,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 34164000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 136974000,
+    "MarketableSecurities": 136974000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 103706000,
     "R&D_date": "2025-09-30",
@@ -5308,7 +5537,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 83000,
     "InterestExpense_date": "2024-06-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 171138000.0
   },
   {
     "ticker": "LAB",
@@ -5347,7 +5577,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 4567000,
     "InterestExpense_date": "2023-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 40874000.0,
+    "TotalLiquidity": 170292000.0
   },
   {
     "ticker": "LCTX",
@@ -5364,7 +5596,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 40463000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 23000,
+    "MarketableSecurities": 23000.0,
     "MarketableSecurities_date": "2025-09-30",
     "COGS": 36000,
     "COGS_date": "2025-03-31",
@@ -5378,7 +5610,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 38019000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 40486000.0
   },
   {
     "ticker": "LENZ",
@@ -5403,7 +5636,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 70175000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 25399000.0
   },
   {
     "ticker": "LRMR",
@@ -5434,7 +5668,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 301000,
     "InterestExpense_date": "2020-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 0.0,
+    "TotalLiquidity": 90140000.0
   },
   {
     "ticker": "LXEO",
@@ -5465,7 +5701,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 72000,
     "InterestExpense_date": "2024-06-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 70918000.0,
+    "TotalLiquidity": 111914000.0
   },
   {
     "ticker": "LYEL",
@@ -5482,7 +5720,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 123575000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 196049000,
+    "MarketableSecurities": 196049000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 106476000,
     "R&D_date": "2025-09-30",
@@ -5494,7 +5732,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 141790000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 319624000.0
   },
   {
     "ticker": "MAZE",
@@ -5511,7 +5750,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 316773000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 67162000,
+    "MarketableSecurities": 67162000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 80878000,
     "R&D_date": "2025-09-30",
@@ -5523,7 +5762,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 104840000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 383935000.0
   },
   {
     "ticker": "MBX",
@@ -5540,7 +5780,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 223125000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 168548000,
+    "MarketableSecurities": 168548000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 59400000,
     "R&D_date": "2025-09-30",
@@ -5550,7 +5790,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 72260000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 391673000.0
   },
   {
     "ticker": "MEDP",
@@ -5579,7 +5820,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 1440118000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 285351000.0
   },
   {
     "ticker": "MGTX",
@@ -5608,7 +5850,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 9142000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 14841000.0
   },
   {
     "ticker": "MIRM",
@@ -5637,7 +5880,9 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 389949000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 93527000.0,
+    "TotalLiquidity": 375548000.0
   },
   {
     "ticker": "MLYS",
@@ -5660,7 +5905,9 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 132324000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 593600000.0,
+    "TotalLiquidity": 811197000.0
   },
   {
     "ticker": "MNKD",
@@ -5697,7 +5944,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 8618000,
     "InterestExpense_date": "2024-06-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 132643000.0,
+    "TotalLiquidity": 260035000.0
   },
   {
     "ticker": "MNMD",
@@ -5743,7 +5992,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 145400000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 0,
+    "MarketableSecurities": 0.0,
     "MarketableSecurities_date": "2024-12-31",
     "COGS": 110700000,
     "COGS_date": "2018-03-31",
@@ -5763,7 +6012,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 500000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 145400000.0
   },
   {
     "ticker": "NAMS",
@@ -5780,7 +6030,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 538407000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 164539000,
+    "MarketableSecurities": 164539000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 103238000,
     "R&D_date": "2025-09-30",
@@ -5794,7 +6044,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 287000,
     "InterestExpense_date": "2022-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 702946000.0
   },
   {
     "ticker": "NBIX",
@@ -5811,7 +6062,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 340200000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 370500000,
+    "MarketableSecurities": 370500000.0,
     "MarketableSecurities_date": "2021-12-31",
     "ShortTermInvestments": 252650000,
     "ShortTermInvestments_date": "2015-06-30",
@@ -5829,7 +6080,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 1100000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 710700000.0
   },
   {
     "ticker": "NBP",
@@ -5862,7 +6114,9 @@
     "OperatingExpenses_date": "2025-06-30",
     "InterestExpense": 102000,
     "InterestExpense_date": "2023-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 210000.0,
+    "TotalLiquidity": 165614000.0
   },
   {
     "ticker": "NGNE",
@@ -5895,7 +6149,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 3000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 194405000.0,
+    "TotalLiquidity": 265410000.0
   },
   {
     "ticker": "NMRA",
@@ -5912,7 +6168,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 129071000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 42454000,
+    "MarketableSecurities": 42454000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 131395000,
     "R&D_date": "2025-09-30",
@@ -5926,7 +6182,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 182676000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 171525000.0
   },
   {
     "ticker": "NRIX",
@@ -5943,7 +6200,7 @@
     "ShareholdersEquity_date": "2025-08-31",
     "Cash": 78438000,
     "Cash_date": "2025-08-31",
-    "MarketableSecurities": 216548000,
+    "MarketableSecurities": 216548000.0,
     "MarketableSecurities_date": "2023-08-31",
     "ShortTermInvestments": 244667000,
     "ShortTermInvestments_date": "2022-11-30",
@@ -5957,7 +6214,8 @@
     "CFO_date": "2025-08-31",
     "OperatingExpenses": 272974000,
     "OperatingExpenses_date": "2025-08-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 463508000.0
   },
   {
     "ticker": "NUVB",
@@ -5974,7 +6232,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 98897000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 450148000,
+    "MarketableSecurities": 450148000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 80809000,
     "R&D_date": "2025-09-30",
@@ -5990,7 +6248,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 5121000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 549045000.0
   },
   {
     "ticker": "NUVL",
@@ -6007,7 +6266,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 115752000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 827351000,
+    "MarketableSecurities": 827351000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 239174000,
     "R&D_date": "2025-09-30",
@@ -6017,7 +6276,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 312079000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 943103000.0
   },
   {
     "ticker": "OABI",
@@ -6046,7 +6306,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 0,
     "InterestExpense_date": "2022-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 28537000.0
   },
   {
     "ticker": "OLMA",
@@ -6063,7 +6324,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 35260000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 293700000,
+    "MarketableSecurities": 293700000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 114477000,
     "R&D_date": "2025-09-30",
@@ -6075,7 +6336,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 653000,
     "InterestExpense_date": "2020-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 328960000.0
   },
   {
     "ticker": "ONC",
@@ -6108,7 +6370,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 37659000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 2600000.0,
+    "TotalLiquidity": 4039468000.0
   },
   {
     "ticker": "OPK",
@@ -6125,7 +6389,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 411972000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 15634000,
+    "MarketableSecurities": 15634000.0,
     "MarketableSecurities_date": "2016-06-30",
     "AvailableForSaleSecurities": 26690000,
     "AvailableForSaleSecurities_date": "2013-06-30",
@@ -6145,7 +6409,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 7686000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 427606000.0
   },
   {
     "ticker": "ORIC",
@@ -6162,7 +6427,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 49668000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 90990000,
+    "MarketableSecurities": 90990000.0,
     "MarketableSecurities_date": "2021-06-30",
     "R&D": 14977000,
     "R&D_date": "2020-06-30",
@@ -6174,7 +6439,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 108453000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 140658000.0
   },
   {
     "ticker": "ORKA",
@@ -6191,7 +6457,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 91253000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 257902000,
+    "MarketableSecurities": 257902000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 73000000,
     "R&D_date": "2025-09-30",
@@ -6205,7 +6471,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 1500000,
     "InterestExpense_date": "2024-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 349155000.0
   },
   {
     "ticker": "PACB",
@@ -6242,7 +6509,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 3575000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 242187000.0,
+    "TotalLiquidity": 298654000.0
   },
   {
     "ticker": "PEPG",
@@ -6259,7 +6528,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 142775000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 20890000,
+    "MarketableSecurities": 20890000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 57192000,
     "R&D_date": "2025-09-30",
@@ -6269,7 +6538,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 73907000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 163665000.0
   },
   {
     "ticker": "PHAT",
@@ -6304,7 +6574,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 34932000,
     "InterestExpense_date": "2024-06-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 135156000.0
   },
   {
     "ticker": "PRAX",
@@ -6331,7 +6602,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 229154000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 149527000.0
   },
   {
     "ticker": "PRME",
@@ -6358,7 +6630,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 163536000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 71396000.0
   },
   {
     "ticker": "PSNL",
@@ -6395,7 +6668,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 140000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 100542000.0,
+    "TotalLiquidity": 150515000.0
   },
   {
     "ticker": "PYXS",
@@ -6412,7 +6687,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 8919000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 67337000,
+    "MarketableSecurities": 67337000.0,
     "MarketableSecurities_date": "2025-09-30",
     "COGS": 475000,
     "COGS_date": "2024-12-31",
@@ -6426,7 +6701,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 82196000,
     "OperatingExpenses_date": "2023-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 76256000.0
   },
   {
     "ticker": "QSI",
@@ -6443,7 +6719,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 30910000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 293811000,
+    "MarketableSecurities": 293811000.0,
     "MarketableSecurities_date": "2022-09-30",
     "COGS": 954000,
     "COGS_date": "2025-09-30",
@@ -6459,7 +6735,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 0,
     "InterestExpense_date": "2022-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 324721000.0
   },
   {
     "ticker": "QTRX",
@@ -6476,7 +6753,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 38298000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 0,
+    "MarketableSecurities": 0.0,
     "MarketableSecurities_date": "2024-12-31",
     "COGS": 50121000,
     "COGS_date": "2025-09-30",
@@ -6496,7 +6773,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 24000,
     "InterestExpense_date": "2018-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 38298000.0
   },
   {
     "ticker": "QURE",
@@ -6529,7 +6807,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 16097000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 597056000.0
   },
   {
     "ticker": "RAPP",
@@ -6556,7 +6835,9 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 86590000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 261667000.0,
+    "TotalLiquidity": 513026000.0
   },
   {
     "ticker": "RAPT",
@@ -6573,7 +6854,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 37930000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 119414000,
+    "MarketableSecurities": 119414000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 36416000,
     "R&D_date": "2025-09-30",
@@ -6585,7 +6866,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 58171000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 157344000.0
   },
   {
     "ticker": "RCKT",
@@ -6616,7 +6898,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 1418000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 146810000.0,
+    "TotalLiquidity": 222758000.0
   },
   {
     "ticker": "RCUS",
@@ -6649,7 +6933,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 7000000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 345210000.0,
+    "TotalLiquidity": 583210000.0
   },
   {
     "ticker": "REGN",
@@ -6666,7 +6952,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 2506400000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 5937200000,
+    "MarketableSecurities": 5937200000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 4224100000,
     "R&D_date": "2025-09-30",
@@ -6680,7 +6966,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 16100000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 8443600000.0
   },
   {
     "ticker": "REPL",
@@ -6713,7 +7000,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 2963000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 221346000.0,
+    "TotalLiquidity": 323644000.0
   },
   {
     "ticker": "RIGL",
@@ -6748,7 +7037,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 5621000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 88609000.0,
+    "TotalLiquidity": 137143000.0
   },
   {
     "ticker": "RLAY",
@@ -6775,7 +7066,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 250463000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 91564000.0
   },
   {
     "ticker": "SEPN",
@@ -6792,7 +7084,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 319989000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 154357000,
+    "MarketableSecurities": 154357000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 65723000,
     "R&D_date": "2025-09-30",
@@ -6804,7 +7096,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 74107000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 474346000.0
   },
   {
     "ticker": "SGMT",
@@ -6821,7 +7114,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 32496000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 84197000,
+    "MarketableSecurities": 84197000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 32320000,
     "R&D_date": "2025-09-30",
@@ -6833,7 +7126,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 46124000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 116693000.0
   },
   {
     "ticker": "SION",
@@ -6858,7 +7152,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 65370000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 50831000.0
   },
   {
     "ticker": "SLDB",
@@ -6889,7 +7184,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 183000,
     "InterestExpense_date": "2024-06-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 40750000.0,
+    "TotalLiquidity": 102114000.0
   },
   {
     "ticker": "SLN",
@@ -6916,7 +7213,9 @@
     "Revenue_date": "2025-09-30",
     "CFO": -44984000,
     "CFO_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 20161000.0,
+    "TotalLiquidity": 102192000.0
   },
   {
     "ticker": "SMMT",
@@ -6947,7 +7246,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 8677000,
     "InterestExpense_date": "2024-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 0.0,
+    "TotalLiquidity": 238554000.0
   },
   {
     "ticker": "SRRK",
@@ -6964,7 +7265,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 286770000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 82860000,
+    "MarketableSecurities": 82860000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 161565000,
     "R&D_date": "2025-09-30",
@@ -6980,7 +7281,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 6600000,
     "InterestExpense_date": "2024-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 369630000.0
   },
   {
     "ticker": "STOK",
@@ -7009,7 +7311,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 6000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 83394000.0
   },
   {
     "ticker": "STRO",
@@ -7026,7 +7329,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 65927000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 101667000,
+    "MarketableSecurities": 101667000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 129775000,
     "R&D_date": "2025-09-30",
@@ -7044,7 +7347,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 1300000,
     "InterestExpense_date": "2023-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 167594000.0
   },
   {
     "ticker": "SVRA",
@@ -7079,7 +7383,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 217000,
     "InterestExpense_date": "2018-06-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 108109000.0,
+    "TotalLiquidity": 124386000.0
   },
   {
     "ticker": "SYRE",
@@ -7096,7 +7402,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 64897000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 38070000,
+    "MarketableSecurities": 38070000.0,
     "MarketableSecurities_date": "2019-03-31",
     "R&D": 13776000,
     "R&D_date": "2023-03-31",
@@ -7108,7 +7414,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 152390000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 102967000.0
   },
   {
     "ticker": "TECX",
@@ -7137,7 +7444,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 1917000,
     "InterestExpense_date": "2023-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 268435000.0
   },
   {
     "ticker": "TEM",
@@ -7166,7 +7474,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 54981000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 655918000.0
   },
   {
     "ticker": "TERN",
@@ -7183,7 +7492,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 150698000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 144937000,
+    "MarketableSecurities": 144937000.0,
     "MarketableSecurities_date": "2025-09-30",
     "NetIncome": -24635000,
     "NetIncome_date": "2025-09-30",
@@ -7195,7 +7504,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 82526000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 295635000.0
   },
   {
     "ticker": "TKNO",
@@ -7212,7 +7522,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 3204000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 0,
+    "MarketableSecurities": 0.0,
     "MarketableSecurities_date": "2021-12-31",
     "ShortTermInvestments": 18912000,
     "ShortTermInvestments_date": "2025-09-30",
@@ -7230,7 +7540,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 22564000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 3204000.0
   },
   {
     "ticker": "TNGX",
@@ -7247,7 +7558,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 58338000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 94473000,
+    "MarketableSecurities": 94473000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 100064000,
     "R&D_date": "2025-09-30",
@@ -7259,7 +7570,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 131809000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 152811000.0
   },
   {
     "ticker": "TNYA",
@@ -7276,7 +7588,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 56312000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 114956000,
+    "MarketableSecurities": 114956000.0,
     "MarketableSecurities_date": "2022-09-30",
     "ShortTermInvestments": 8996000,
     "ShortTermInvestments_date": "2025-06-30",
@@ -7288,7 +7600,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 72556000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 171268000.0
   },
   {
     "ticker": "TRDA",
@@ -7305,7 +7618,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 93286000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 162261000,
+    "MarketableSecurities": 162261000.0,
     "MarketableSecurities_date": "2022-09-30",
     "R&D": 108312000,
     "R&D_date": "2025-09-30",
@@ -7317,7 +7630,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 139812000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 255547000.0
   },
   {
     "ticker": "TRVI",
@@ -7334,7 +7648,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 56869000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 138058000,
+    "MarketableSecurities": 138058000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 27285000,
     "R&D_date": "2025-09-30",
@@ -7346,7 +7660,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 2000,
     "InterestExpense_date": "2024-06-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 194927000.0
   },
   {
     "ticker": "TSHA",
@@ -7377,7 +7692,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 56000,
     "InterestExpense_date": "2024-06-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 297344000.0
   },
   {
     "ticker": "TVTX",
@@ -7412,7 +7728,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 2800000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 289441000.0,
+    "TotalLiquidity": 400371000.0
   },
   {
     "ticker": "TWST",
@@ -7447,7 +7765,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 0,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 49385000.0,
+    "TotalLiquidity": 232434000.0
   },
   {
     "ticker": "TXG",
@@ -7480,7 +7800,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 1000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 344067000.0
   },
   {
     "ticker": "TYRA",
@@ -7505,7 +7826,9 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 96246000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 212973000.0,
+    "TotalLiquidity": 274924000.0
   },
   {
     "ticker": "UPB",
@@ -7534,7 +7857,9 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 116380000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 300263000.0,
+    "TotalLiquidity": 372427000.0
   },
   {
     "ticker": "URGN",
@@ -7565,7 +7890,9 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 109496000,
     "OperatingExpenses_date": "2019-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 63790000.0,
+    "TotalLiquidity": 153829000.0
   },
   {
     "ticker": "VCEL",
@@ -7598,7 +7925,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 153000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 34977000.0,
+    "TotalLiquidity": 135380000.0
   },
   {
     "ticker": "VERA",
@@ -7615,7 +7944,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 57773000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 439616000,
+    "MarketableSecurities": 439616000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 155946000,
     "R&D_date": "2025-09-30",
@@ -7629,7 +7958,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 3819000,
     "InterestExpense_date": "2024-06-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 497389000.0
   },
   {
     "ticker": "VIR",
@@ -7646,7 +7976,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 170084000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 327750000,
+    "MarketableSecurities": 327750000.0,
     "MarketableSecurities_date": "2025-09-30",
     "COGS": 11000,
     "COGS_date": "2025-06-30",
@@ -7660,7 +7990,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 435893000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 497834000.0
   },
   {
     "ticker": "VNDA",
@@ -7687,7 +8018,9 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 269704000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 100914000.0,
+    "TotalLiquidity": 170936000.0
   },
   {
     "ticker": "VTYX",
@@ -7704,7 +8037,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 31970000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 160668000,
+    "MarketableSecurities": 160668000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 62870000,
     "R&D_date": "2025-09-30",
@@ -7714,7 +8047,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 84304000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 192638000.0
   },
   {
     "ticker": "VYGR",
@@ -7731,7 +8065,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 45125000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 163805000,
+    "MarketableSecurities": 163805000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 98722000,
     "R&D_date": "2025-09-30",
@@ -7745,7 +8079,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": -562000,
     "InterestExpense_date": "2016-06-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 208930000.0
   },
   {
     "ticker": "WVE",
@@ -7774,7 +8109,9 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 184398000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 25044000.0,
+    "TotalLiquidity": 221262000.0
   },
   {
     "ticker": "XENE",
@@ -7791,7 +8128,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 104514000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 357754000,
+    "MarketableSecurities": 357754000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 213239000,
     "R&D_date": "2025-09-30",
@@ -7807,7 +8144,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 484000,
     "InterestExpense_date": "2020-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 462268000.0
   },
   {
     "ticker": "XNCR",
@@ -7824,7 +8162,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 28291000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 487688000,
+    "MarketableSecurities": 487688000.0,
     "MarketableSecurities_date": "2020-09-30",
     "R&D": 174610000,
     "R&D_date": "2025-09-30",
@@ -7838,7 +8176,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 9676000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 515979000.0
   },
   {
     "ticker": "ZBIO",
@@ -7867,7 +8206,9 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 155073000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 175319000.0,
+    "TotalLiquidity": 290884000.0
   },
   {
     "ticker": "ZLAB",
@@ -7898,7 +8239,9 @@
     "CFO_date": "2025-09-30",
     "InterestExpense": 2254000,
     "InterestExpense_date": "2024-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 0.0,
+    "TotalLiquidity": 717155000.0
   },
   {
     "ticker": "ZVRA",
@@ -7915,7 +8258,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 54439000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 1338000,
+    "MarketableSecurities": 1338000.0,
     "MarketableSecurities_date": "2022-03-31",
     "ShortTermInvestments": 5832000,
     "ShortTermInvestments_date": "2022-09-30",
@@ -7937,7 +8280,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 735000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 55777000.0
   },
   {
     "ticker": "ZYME",
@@ -7966,7 +8310,9 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 151847000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 216770000.0,
+    "TotalLiquidity": 281604000.0
   },
   {
     "ticker": "AMPH",
@@ -8001,7 +8347,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 8611000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 59944000.0,
+    "TotalLiquidity": 276209000.0
   },
   {
     "ticker": "AMRX",
@@ -8032,7 +8380,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 0,
     "OperatingExpenses_date": "2018-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 201249000.0
   },
   {
     "ticker": "ANIP",
@@ -8067,7 +8416,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 24607000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 262610000.0
   },
   {
     "ticker": "AQST",
@@ -8098,7 +8448,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 5563000,
     "InterestExpense_date": "2024-06-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 129063000.0
   },
   {
     "ticker": "ARDX",
@@ -8133,7 +8484,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 2356000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 10870000.0,
+    "TotalLiquidity": 53585000.0
   },
   {
     "ticker": "CHRS",
@@ -8150,7 +8503,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 103352000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 88311000,
+    "MarketableSecurities": 88311000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 77914000,
     "R&D_date": "2025-09-30",
@@ -8166,7 +8519,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 6752000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 191663000.0
   },
   {
     "ticker": "COLL",
@@ -8183,7 +8537,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 150096000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 135767000,
+    "MarketableSecurities": 135767000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 0,
     "R&D_date": "2024-12-31",
@@ -8199,7 +8553,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 17339000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 285863000.0
   },
   {
     "ticker": "CRMD",
@@ -8216,7 +8571,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 48493076,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 8090909,
+    "MarketableSecurities": 8090909.0,
     "MarketableSecurities_date": "2025-09-30",
     "ShortTermInvestments": 7223735,
     "ShortTermInvestments_date": "2025-09-30",
@@ -8234,7 +8589,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 16391,
     "InterestExpense_date": "2024-06-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 56583985.0
   },
   {
     "ticker": "EOLS",
@@ -8265,7 +8621,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 4702000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 43523000.0
   },
   {
     "ticker": "ESPR",
@@ -8300,7 +8657,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 14024000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 0.0,
+    "TotalLiquidity": 92447000.0
   },
   {
     "ticker": "ETON",
@@ -8333,7 +8692,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 1212000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 37121000.0
   },
   {
     "ticker": "EYPT",
@@ -8350,7 +8710,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 74577000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 129445000,
+    "MarketableSecurities": 129445000.0,
     "MarketableSecurities_date": "2025-09-30",
     "AvailableForSaleSecurities": 0,
     "AvailableForSaleSecurities_date": "2020-12-31",
@@ -8368,7 +8728,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 0,
     "InterestExpense_date": "2024-06-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 204022000.0
   },
   {
     "ticker": "GH",
@@ -8385,7 +8746,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 580013000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 869584000,
+    "MarketableSecurities": 869584000.0,
     "MarketableSecurities_date": "2022-12-31",
     "R&D": 265927000,
     "R&D_date": "2025-09-30",
@@ -8401,7 +8762,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 2717000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 1449597000.0
   },
   {
     "ticker": "HRMY",
@@ -8436,7 +8798,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 11103000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 25582000.0,
+    "TotalLiquidity": 672581000.0
   },
   {
     "ticker": "HROW",
@@ -8473,7 +8837,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 5415000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 7433000.0,
+    "TotalLiquidity": 81723000.0
   },
   {
     "ticker": "INDV",
@@ -8504,7 +8870,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 26000000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 0.0,
+    "TotalLiquidity": 445000000.0
   },
   {
     "ticker": "INVA",
@@ -8519,7 +8887,7 @@
     "ShareholdersEquity_date": "2022-12-31",
     "Cash": 476513000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 282000,
+    "MarketableSecurities": 282000.0,
     "MarketableSecurities_date": "2022-09-30",
     "R&D": 26049000,
     "R&D_date": "2025-09-30",
@@ -8537,7 +8905,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 13389000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 476795000.0
   },
   {
     "ticker": "IVVD",
@@ -8564,7 +8933,9 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 79224000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 0.0,
+    "TotalLiquidity": 84967000.0
   },
   {
     "ticker": "KMDA",
@@ -8573,7 +8944,8 @@
     "CurrentLiabilities_date": "2020-12-31",
     "ShortTermInvestments": 39069000,
     "ShortTermInvestments_date": "2020-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 71997000.0
   },
   {
     "ticker": "KNSA",
@@ -8602,7 +8974,9 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 49283000,
     "OperatingExpenses_date": "2021-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 177244000.0,
+    "TotalLiquidity": 352102000.0
   },
   {
     "ticker": "LFCR",
@@ -8619,7 +8993,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 18856000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 1297000,
+    "MarketableSecurities": 1297000.0,
     "MarketableSecurities_date": "2013-08-25",
     "COGS": 309463000,
     "COGS_date": "2014-02-23",
@@ -8639,7 +9013,8 @@
     "OperatingExpenses_date": "2024-11-24",
     "InterestExpense": 6384000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 20153000.0
   },
   {
     "ticker": "OBIO",
@@ -8656,7 +9031,7 @@
     "ShareholdersEquity_date": "2023-03-31",
     "Cash": 42012000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 53808000,
+    "MarketableSecurities": 53808000.0,
     "MarketableSecurities_date": "2025-09-30",
     "COGS": 139000,
     "COGS_date": "2025-09-30",
@@ -8674,7 +9049,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 297000,
     "InterestExpense_date": "2024-12-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 95820000.0
   },
   {
     "ticker": "OCUL",
@@ -8705,7 +9081,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 4051000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 344772000.0
   },
   {
     "ticker": "OMER",
@@ -8738,7 +9115,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 21498000,
     "InterestExpense_date": "2024-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 33690000.0,
+    "TotalLiquidity": 36085000.0
   },
   {
     "ticker": "PAHC",
@@ -8771,7 +9150,9 @@
     "CFO_date": "2025-09-30",
     "InterestExpense": 17013000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "MarketableSecurities": 12504000.0,
+    "TotalLiquidity": 85273000.0
   },
   {
     "ticker": "PBYI",
@@ -8788,7 +9169,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 53525000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 40863000,
+    "MarketableSecurities": 40863000.0,
     "MarketableSecurities_date": "2025-09-30",
     "R&D": 27203000,
     "R&D_date": "2022-06-30",
@@ -8806,7 +9187,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 3359000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "TotalLiquidity": 94388000.0
   },
   {
     "ticker": "RPRX",
@@ -8837,7 +9219,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 44232000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "TotalLiquidity": 938944000.0
   },
   {
     "ticker": "SIGA",
@@ -8874,7 +9257,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 0,
     "InterestExpense_date": "2022-12-31",
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 0.0,
+    "TotalLiquidity": 171955584.0
   },
   {
     "ticker": "SUPN",
@@ -8891,7 +9276,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 151371000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 368214000,
+    "MarketableSecurities": 368214000.0,
     "MarketableSecurities_date": "2022-12-31",
     "R&D": 78408000,
     "R&D_date": "2025-09-30",
@@ -8909,7 +9294,8 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 0,
     "InterestExpense_date": "2024-12-31",
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "TotalLiquidity": 519585000.0
   },
   {
     "ticker": "VOR",
@@ -8926,7 +9312,7 @@
     "ShareholdersEquity_date": "2025-09-30",
     "Cash": 160462000,
     "Cash_date": "2025-09-30",
-    "MarketableSecurities": 10000000,
+    "MarketableSecurities": 10000000.0,
     "MarketableSecurities_date": "2025-09-30",
     "ShortTermInvestments": 87668000,
     "ShortTermInvestments_date": "2021-12-31",
@@ -8938,7 +9324,8 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 335682000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "TotalLiquidity": 170462000.0
   },
   {
     "ticker": "VTRS",
@@ -8973,7 +9360,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 351700000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 39100000.0,
+    "TotalLiquidity": 1014400000.0
   },
   {
     "ticker": "XERS",
@@ -9008,7 +9397,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 7032000,
     "InterestExpense_date": "2024-03-31",
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 0.0,
+    "TotalLiquidity": 91598000.0
   },
   {
     "ticker": "ABEO",
@@ -9019,7 +9410,9 @@
     "operating_cashflow": -74932000,
     "free_cashflow": -54261876,
     "book_value": 3.268,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 78625000.0,
+    "TotalLiquidity": 161509000.0
   },
   {
     "ticker": "ABOS",
@@ -9030,7 +9423,9 @@
     "operating_cashflow": -123657000,
     "free_cashflow": -78959504,
     "book_value": 1.538,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 79777000.0,
+    "TotalLiquidity": 126609000.0
   },
   {
     "ticker": "ACRV",
@@ -9041,7 +9436,9 @@
     "operating_cashflow": -65788000,
     "free_cashflow": -40886000,
     "book_value": 4.076,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 93849000.0,
+    "TotalLiquidity": 129254000.0
   },
   {
     "ticker": "AKTX",
@@ -9052,7 +9449,9 @@
     "operating_cashflow": -9651000,
     "free_cashflow": 279375,
     "book_value": 0.696,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 0.0,
+    "TotalLiquidity": 2711000.0
   },
   {
     "ticker": "ALDX",
@@ -9063,7 +9462,9 @@
     "operating_cashflow": -40083184,
     "free_cashflow": 15577039,
     "book_value": 0.819,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 15956740.0,
+    "TotalLiquidity": 75297339.0
   },
   {
     "ticker": "ALGS",
@@ -9074,7 +9475,9 @@
     "operating_cashflow": -79161000,
     "free_cashflow": -45352752,
     "book_value": 11.674,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 57150000.0,
+    "TotalLiquidity": 99096000.0
   },
   {
     "ticker": "ARTV",
@@ -9085,7 +9488,9 @@
     "operating_cashflow": -76675000,
     "free_cashflow": -50343624,
     "book_value": 5.265,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 97460000.0,
+    "TotalLiquidity": 122968000.0
   },
   {
     "ticker": "ASMB",
@@ -9096,7 +9501,9 @@
     "operating_cashflow": -55737000,
     "free_cashflow": -11571625,
     "book_value": 11.551,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 139553000.0,
+    "TotalLiquidity": 162087000.0
   },
   {
     "ticker": "BLTE",
@@ -9107,7 +9514,8 @@
     "operating_cashflow": -31204000,
     "free_cashflow": 103463000,
     "book_value": 7.855,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "TotalLiquidity": 88157000.0
   },
   {
     "ticker": "BMEA",
@@ -9118,7 +9526,9 @@
     "operating_cashflow": -86433000,
     "free_cashflow": -55621752,
     "book_value": 0.262,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 1150000.0,
+    "TotalLiquidity": 47792000.0
   },
   {
     "ticker": "CELC",
@@ -9129,7 +9539,9 @@
     "operating_cashflow": -144650736,
     "free_cashflow": -91554760,
     "book_value": 2.703,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 380726000.0,
+    "TotalLiquidity": 454978000.0
   },
   {
     "ticker": "CERS",
@@ -9140,7 +9552,9 @@
     "operating_cashflow": 3566000,
     "free_cashflow": 2649375,
     "book_value": 0.32,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 613000.0,
+    "TotalLiquidity": 16283000.0
   },
   {
     "ticker": "CLYM",
@@ -9151,7 +9565,9 @@
     "operating_cashflow": -44242000,
     "free_cashflow": -24984500,
     "book_value": 2.596,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 61098000.0,
+    "TotalLiquidity": 86901000.0
   },
   {
     "ticker": "DNTH",
@@ -9162,7 +9578,9 @@
     "operating_cashflow": -109521000,
     "free_cashflow": -63263500,
     "book_value": 12.751,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 54415000.0,
+    "TotalLiquidity": 110399000.0
   },
   {
     "ticker": "DRUG",
@@ -9173,7 +9591,8 @@
     "operating_cashflow": -8691619,
     "free_cashflow": -4604230,
     "book_value": 7.904559,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "TotalLiquidity": 5720092.0
   },
   {
     "ticker": "ELDN",
@@ -9184,7 +9603,9 @@
     "operating_cashflow": -67237000,
     "free_cashflow": -37047376,
     "book_value": 1.518,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 0.0,
+    "TotalLiquidity": 3669000.0
   },
   {
     "ticker": "ENGN",
@@ -9195,7 +9616,9 @@
     "operating_cashflow": -99239000,
     "free_cashflow": -60380376,
     "book_value": 3.224,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 143584000.0,
+    "TotalLiquidity": 193736000.0
   },
   {
     "ticker": "GBIO",
@@ -9206,7 +9629,9 @@
     "operating_cashflow": -113652000,
     "free_cashflow": -40196752,
     "book_value": 7.506,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 67682000.0,
+    "TotalLiquidity": 89622000.0
   },
   {
     "ticker": "HOWL",
@@ -9217,7 +9642,8 @@
     "operating_cashflow": -63520000,
     "free_cashflow": -39992876,
     "book_value": 0.626,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "TotalLiquidity": 65711000.0
   },
   {
     "ticker": "IKT",
@@ -9228,7 +9654,9 @@
     "operating_cashflow": -25616066,
     "free_cashflow": -13177324,
     "book_value": 0.807,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 39052511.0,
+    "TotalLiquidity": 95552511.0
   },
   {
     "ticker": "IMTX",
@@ -9239,7 +9667,9 @@
     "operating_cashflow": -176436992,
     "free_cashflow": -140092496,
     "book_value": 4.1192217,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 221551000.0,
+    "TotalLiquidity": 478186000.0
   },
   {
     "ticker": "JBIO",
@@ -9250,7 +9680,9 @@
     "operating_cashflow": -45228000,
     "free_cashflow": null,
     "book_value": 5.497,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 148799000.0,
+    "TotalLiquidity": 198905000.0
   },
   {
     "ticker": "LBRX",
@@ -9261,7 +9693,9 @@
     "operating_cashflow": -22770000,
     "free_cashflow": null,
     "book_value": 12.262,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 44735000.0,
+    "TotalLiquidity": 314479000.0
   },
   {
     "ticker": "LYRA",
@@ -9272,7 +9706,9 @@
     "operating_cashflow": -34145000,
     "free_cashflow": -20296000,
     "book_value": -2.632,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 0.0,
+    "TotalLiquidity": 22055000.0
   },
   {
     "ticker": "MLTX",
@@ -9283,7 +9719,8 @@
     "operating_cashflow": -185686256,
     "free_cashflow": -117383136,
     "book_value": 4.535,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "TotalLiquidity": 350736000.0
   },
   {
     "ticker": "MTSR",
@@ -9305,7 +9742,8 @@
     "operating_cashflow": -52630000,
     "free_cashflow": -30972624,
     "book_value": 1.339,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "TotalLiquidity": 23875000.0
   },
   {
     "ticker": "NKTX",
@@ -9316,7 +9754,9 @@
     "operating_cashflow": -91803000,
     "free_cashflow": -57524000,
     "book_value": 4.758,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 222217000.0,
+    "TotalLiquidity": 282331000.0
   },
   {
     "ticker": "OCS",
@@ -9327,7 +9767,9 @@
     "operating_cashflow": -58847000,
     "free_cashflow": -29590624,
     "book_value": 3.265905,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 148000.0,
+    "TotalLiquidity": 64413000.0
   },
   {
     "ticker": "PRLD",
@@ -9338,7 +9780,9 @@
     "operating_cashflow": -100165000,
     "free_cashflow": -64799624,
     "book_value": 0.769,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 7425000.0,
+    "TotalLiquidity": 54957000.0
   },
   {
     "ticker": "PRQR",
@@ -9349,7 +9793,8 @@
     "operating_cashflow": -48782000,
     "free_cashflow": -31538876,
     "book_value": 0.65128887,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "TotalLiquidity": 74792000.0
   },
   {
     "ticker": "PVLA",
@@ -9360,7 +9805,9 @@
     "operating_cashflow": -25473000,
     "free_cashflow": -17148376,
     "book_value": 3.489,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 0.0,
+    "TotalLiquidity": 63567000.0
   },
   {
     "ticker": "SABS",
@@ -9371,7 +9818,9 @@
     "operating_cashflow": -37530972,
     "free_cashflow": -20132516,
     "book_value": 3.476,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 81455925.0,
+    "TotalLiquidity": 110880633.0
   },
   {
     "ticker": "SERA",
@@ -9382,7 +9831,9 @@
     "operating_cashflow": -25763000,
     "free_cashflow": -16543875,
     "book_value": 2.131,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 39223000.0,
+    "TotalLiquidity": 43304000.0
   },
   {
     "ticker": "SKYE",
@@ -9393,7 +9844,9 @@
     "operating_cashflow": -41469144,
     "free_cashflow": -14401440,
     "book_value": 1.06,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 16871229.0,
+    "TotalLiquidity": 35312308.0
   },
   {
     "ticker": "TARA",
@@ -9404,7 +9857,9 @@
     "operating_cashflow": -48723000,
     "free_cashflow": -31660750,
     "book_value": 3.428,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 120119000.0,
+    "TotalLiquidity": 132670000.0
   },
   {
     "ticker": "TCRX",
@@ -9415,7 +9870,9 @@
     "operating_cashflow": -130729000,
     "free_cashflow": -87761752,
     "book_value": 2.538,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 14947000.0,
+    "TotalLiquidity": 184453000.0
   },
   {
     "ticker": "TENX",
@@ -9426,7 +9883,9 @@
     "operating_cashflow": -25912000,
     "free_cashflow": -12107355,
     "book_value": 2.391,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 0.0,
+    "TotalLiquidity": 99400000.0
   },
   {
     "ticker": "VKTX",
@@ -9437,7 +9896,9 @@
     "operating_cashflow": -224576000,
     "free_cashflow": -150900256,
     "book_value": 6.341,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 204871000.0,
+    "TotalLiquidity": 305247000.0
   },
   {
     "ticker": "VRDN",
@@ -9448,6 +9909,8 @@
     "operating_cashflow": -325968992,
     "free_cashflow": -220702256,
     "book_value": 3.82,
-    "collected_at": "2026-01-28"
+    "collected_at": "2026-01-28",
+    "MarketableSecurities": 144570000.0,
+    "TotalLiquidity": 169427000.0
   }
 ]
