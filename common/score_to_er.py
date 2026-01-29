@@ -130,11 +130,22 @@ def _norm_ppf(p: float) -> float:
 # SCORE → PERCENTILE → Z-SCORE
 # =============================================================================
 
+def _safe_float(val: Any, default: float = 0.0) -> float:
+    """Safely convert value to float, returning default on failure."""
+    if val is None:
+        return default
+    try:
+        return float(val)
+    except (ValueError, TypeError):
+        return default
+
+
 def attach_rank_and_z(
     rows: List[Dict[str, Any]],
     score_key: str = "composite_score",
     ticker_key: str = "ticker",
-) -> None:
+    max_invalid_pct: float = 0.10,
+) -> Dict[str, Any]:
     """
     Compute rank percentile and z-score for each row.
 
@@ -151,15 +162,70 @@ def attach_rank_and_z(
         rows: List of security dicts with score_key field
         score_key: Field name for composite score
         ticker_key: Field name for ticker (used for tie-breaking)
+        max_invalid_pct: Max fraction of invalid scores before degraded mode (default 10%)
+
+    Returns:
+        Dict with validation metadata: {valid_count, invalid_count, degraded, warnings}
     """
     n = len(rows)
+    result = {
+        "valid_count": 0,
+        "invalid_count": 0,
+        "degraded": False,
+        "warnings": [],
+    }
+
     if n == 0:
-        return
+        return result
+
+    # Validate scores before sorting
+    valid_count = 0
+    invalid_tickers = []
+
+    for r in rows:
+        score_raw = r.get(score_key)
+        ticker = r.get(ticker_key, "???")
+
+        if score_raw is None:
+            invalid_tickers.append(f"{ticker}:missing")
+        else:
+            try:
+                float(score_raw)
+                valid_count += 1
+            except (ValueError, TypeError):
+                invalid_tickers.append(f"{ticker}:non-numeric")
+
+    invalid_count = n - valid_count
+    invalid_pct = invalid_count / n if n > 0 else 0
+
+    result["valid_count"] = valid_count
+    result["invalid_count"] = invalid_count
+
+    # Check degradation threshold
+    if invalid_pct > max_invalid_pct:
+        result["degraded"] = True
+        result["warnings"].append(
+            f"ER DEGRADED: {invalid_count}/{n} ({invalid_pct:.1%}) rows have invalid '{score_key}'. "
+            f"Threshold: {max_invalid_pct:.0%}. First 5: {invalid_tickers[:5]}"
+        )
+        # In degraded mode, set z=0 for all rows (neutral ER)
+        for r in rows:
+            r["score_rank_pct"] = 0.5
+            r["score_z"] = 0.0
+        return result
+
+    # Log warning if any invalid (but below threshold)
+    if invalid_count > 0:
+        result["warnings"].append(
+            f"ER WARNING: {invalid_count}/{n} ({invalid_pct:.1%}) rows have invalid '{score_key}'. "
+            f"Proceeding with valid rows. Invalid: {invalid_tickers[:5]}"
+        )
 
     # Stable sort: highest score first, then alphabetically by ticker for ties
+    # Use _safe_float to handle any edge cases gracefully
     ordered = sorted(
         rows,
-        key=lambda r: (-float(r.get(score_key, 0)), str(r.get(ticker_key, ""))),
+        key=lambda r: (-_safe_float(r.get(score_key), 0.0), str(r.get(ticker_key, ""))),
     )
 
     # Continuity-corrected percentile: p = (N - rank + 0.5) / N
@@ -176,6 +242,8 @@ def attach_rank_and_z(
         # Store as floats for JSON serialization
         r["score_rank_pct"] = round(p, 6)
         r["score_z"] = round(z, 4)
+
+    return result
 
 
 # =============================================================================
@@ -255,25 +323,43 @@ def compute_expected_returns(
     Returns:
         Provenance dict with model metadata
     """
-    # Step 1: Rank → percentile → z-score
-    attach_rank_and_z(ranked_securities, score_key=score_key)
+    # Step 1: Rank → percentile → z-score (with validation)
+    validation = attach_rank_and_z(ranked_securities, score_key=score_key)
 
-    # Step 2: z-score → expected return
-    attach_expected_return(
-        ranked_securities,
-        lambda_annual=lambda_annual,
-        include_daily=include_daily,
-    )
+    # Step 2: z-score → expected return (skip if degraded)
+    if not validation.get("degraded", False):
+        attach_expected_return(
+            ranked_securities,
+            lambda_annual=lambda_annual,
+            include_daily=include_daily,
+        )
+    else:
+        # In degraded mode, set ER=0 for all rows
+        for r in ranked_securities:
+            r["expected_excess_return_annual"] = 0.0
+            if include_daily:
+                r["expected_excess_return_daily"] = 0.0
 
-    # Return provenance metadata
-    return {
+    # Return provenance metadata with validation status
+    provenance = {
         "er_model": ER_MODEL_ID,
         "er_model_version": ER_MODEL_VERSION,
         "lambda_annual": str(lambda_annual),
         "lambda_interpretation": "annualized_excess_return_per_sigma",
         "z_method": "acklam_inverse_normal",
         "percentile_method": "continuity_corrected",
+        "validation": {
+            "valid_count": validation["valid_count"],
+            "invalid_count": validation["invalid_count"],
+            "degraded": validation["degraded"],
+        },
     }
+
+    # Add warnings to provenance if any
+    if validation["warnings"]:
+        provenance["warnings"] = validation["warnings"]
+
+    return provenance
 
 
 # =============================================================================
