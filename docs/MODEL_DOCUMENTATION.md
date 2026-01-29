@@ -132,7 +132,7 @@ The Biotech Alpha Screener is a quantitative ranking system designed to identify
 
 #### 2.5.1 Smart Money: Elite 13F Manager Tracking
 
-The smart money signal tracks 13F filings from **24 elite biotech-focused institutional managers** (~$125B combined AUM), classified into Elite Core and Conditional tiers.
+The smart money signal tracks 13F filings from **25 elite biotech-focused institutional managers** (~$696B combined AUM), classified into Elite Core and Conditional tiers.
 
 **Selection Criteria**:
 - Biotech/healthcare specialist (>50% portfolio in life sciences)
@@ -163,7 +163,7 @@ The smart money signal tracks 13F filings from **24 elite biotech-focused instit
 | Sofinnova Investments | 0001631134 | 3.8 | Venture Crossover |
 | Boxer Capital | 0001465837 | 1.4 | Oncology Focused |
 
-**Conditional — Secondary Breadth Signal** (6 managers, ~$35B AUM, Weight: 1.0×)
+**Conditional — Secondary Breadth Signal** (7 managers, ~$606B AUM, Weight: 1.0×)
 
 | Manager | CIK | AUM ($B) | Style |
 |---------|-----|----------|-------|
@@ -173,6 +173,7 @@ The smart money signal tracks 13F filings from **24 elite biotech-focused instit
 | Foresite Capital Management | 0001581219 | 3.6 | Multi-Stage Healthcare |
 | Krensavage Asset Management | 0001609251 | 0.3 | Value Healthcare |
 | Acuta Capital Partners | 0001582844 | 0.1 | Biotech Value |
+| Millennium Management | 0001273087 | 571.0 | Multi-Strategy Platform |
 
 **Position Change Scoring**:
 
