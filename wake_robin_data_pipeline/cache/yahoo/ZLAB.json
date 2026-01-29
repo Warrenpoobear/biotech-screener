@@ -2,42 +2,80 @@
   "ticker": "ZLAB",
   "success": true,
   "price": {
-    "current": 17.1699,
+    "current": 17.25,
     "currency": "USD",
-    "day_high": 17.36,
+    "day_high": 17.405,
     "day_low": 16.995,
     "52_week_high": 44.34,
     "52_week_low": 16.82
   },
   "market_cap": {
-    "value": 1898883840.0,
+    "value": 1907742336.0,
     "currency": "USD"
   },
   "shares_outstanding": 110593760.0,
   "volume": {
-    "last": 111343,
-    "average_30d": 742824
+    "last": 572612,
+    "average_30d": 776488
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -23.48406,
-    "price_to_book": 2.4985304
+    "forward_pe": -23.593615,
+    "price_to_book": 2.5101862
   },
   "company_info": {
     "name": "Zai Lab Limited",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1158940000.0,
+    "total_liabilities": 398995000.0,
+    "stockholders_equity": 759945000.0,
+    "cash": 717155000.0,
+    "marketable_securities": null,
+    "total_liquidity": 717155000.0,
+    "total_debt": 219362000.0,
+    "long_term_debt": 10840000.0,
+    "current_debt": 203026000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -32044000.0,
+    "free_cash_flow": -36130000.0,
+    "investing_cash_flow": -4049000.0,
+    "financing_cash_flow": 20793000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 117180000.0,
+    "research_and_development": 47928000.0,
+    "interest_expense": 1400000.0,
+    "net_income": -35963000.0,
+    "revenue": 116095000.0,
+    "gross_profit": 69212000.0,
+    "ebitda": -30662000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:10:54.377542",
+    "timestamp": "2026-01-29T16:53:06.980106",
     "url": "https://finance.yahoo.com/quote/ZLAB",
-    "data_hash": "7efcea34082cfa6a"
+    "data_hash": "d3403a469875e14c"
   }
 }

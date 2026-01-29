@@ -2,42 +2,80 @@
   "ticker": "HUMA",
   "success": true,
   "price": {
-    "current": 1.0,
+    "current": 1.03,
     "currency": "USD",
-    "day_high": 1.02,
+    "day_high": 1.0499,
     "day_low": 0.975,
     "52_week_high": 4.85,
     "52_week_low": 0.91
   },
   "market_cap": {
-    "value": 192996512.0,
+    "value": 198786400.0,
     "currency": "USD"
   },
   "shares_outstanding": 192996511.0,
   "volume": {
-    "last": 1032961,
-    "average_30d": 5212589
+    "last": 2658601,
+    "average_30d": 5308919
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -1.9011406,
-    "price_to_book": -33.333336
+    "forward_pe": -1.9581748,
+    "price_to_book": -34.333332
   },
   "company_info": {
     "name": "Humacyte, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 91509000.0,
+    "total_liabilities": 96260000.0,
+    "stockholders_equity": -4751000.0,
+    "cash": 19488000.0,
+    "marketable_securities": null,
+    "total_liquidity": 19488000.0,
+    "total_debt": 29825000.0,
+    "long_term_debt": 27155000.0,
+    "current_debt": 2670000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -23904000.0,
+    "free_cash_flow": -23953000.0,
+    "investing_cash_flow": -49000.0,
+    "financing_cash_flow": -44591000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 24883000.0,
+    "research_and_development": 17273000.0,
+    "interest_expense": 2612000.0,
+    "net_income": -17510000.0,
+    "revenue": 753000.0,
+    "gross_profit": 493000.0,
+    "ebitda": -13033000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:07:01.265629",
+    "timestamp": "2026-01-29T16:47:57.605925",
     "url": "https://finance.yahoo.com/quote/HUMA",
-    "data_hash": "4de56c9bf5cafaeb"
+    "data_hash": "ddc7d73b4af29ab4"
   }
 }

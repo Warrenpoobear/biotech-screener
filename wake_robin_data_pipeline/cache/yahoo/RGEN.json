@@ -2,7 +2,7 @@
   "ticker": "RGEN",
   "success": true,
   "price": {
-    "current": 152.895,
+    "current": 156.37,
     "currency": "USD",
     "day_high": 158.95,
     "day_low": 152.45,
@@ -10,34 +10,72 @@
     "52_week_low": 102.97
   },
   "market_cap": {
-    "value": 8606574592.0,
+    "value": 8802184192.0,
     "currency": "USD"
   },
   "shares_outstanding": 56290749.0,
   "volume": {
-    "last": 156749,
-    "average_30d": 579847
+    "last": 707009,
+    "average_30d": 616181
   },
   "valuation": {
-    "pe_ratio": 7644.7505,
-    "forward_pe": 73.68505,
-    "price_to_book": 4.131069
+    "pe_ratio": 7818.5,
+    "forward_pe": 75.35976,
+    "price_to_book": 4.22496
   },
   "company_info": {
     "name": "Repligen Corporation",
     "sector": "Healthcare",
     "industry": "Medical Instruments & Supplies"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 2923711000.0,
+    "total_liabilities": 840624000.0,
+    "stockholders_equity": 2083087000.0,
+    "cash": 748747000.0,
+    "marketable_securities": null,
+    "total_liquidity": 748747000.0,
+    "total_debt": 688867000.0,
+    "long_term_debt": 537927000.0,
+    "current_debt": 19314000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 48099000.0,
+    "free_cash_flow": 42713000.0,
+    "investing_cash_flow": -7783000.0,
+    "financing_cash_flow": -239000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 87838000.0,
+    "research_and_development": 14175000.0,
+    "interest_expense": 5414000.0,
+    "net_income": 14911000.0,
+    "revenue": 188805000.0,
+    "gross_profit": 100515000.0,
+    "ebitda": 46936000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:27.293733",
+    "timestamp": "2026-01-29T16:51:10.279088",
     "url": "https://finance.yahoo.com/quote/RGEN",
-    "data_hash": "714122adc0c28132"
+    "data_hash": "b66e173fd9e0e423"
   }
 }

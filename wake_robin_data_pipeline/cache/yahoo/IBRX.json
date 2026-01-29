@@ -2,42 +2,80 @@
   "ticker": "IBRX",
   "success": true,
   "price": {
-    "current": 5.855,
+    "current": 5.91,
     "currency": "USD",
     "day_high": 6.35,
-    "day_low": 5.8201,
+    "day_low": 5.7314,
     "52_week_high": 8.28,
     "52_week_low": 1.83
   },
   "market_cap": {
-    "value": 5766971392.0,
+    "value": 5821144064.0,
     "currency": "USD"
   },
   "shares_outstanding": 984965179.0,
   "volume": {
-    "last": 9501548,
-    "average_30d": 46878824
+    "last": 23936757,
+    "average_30d": 49237488
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -22.811392,
-    "price_to_book": -11.005639
+    "forward_pe": -23.025675,
+    "price_to_book": -11.109022
   },
   "company_info": {
     "name": "ImmunityBio, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 518987000.0,
+    "total_liabilities": 1042397000.0,
+    "stockholders_equity": -524319000.0,
+    "cash": 60241000.0,
+    "marketable_securities": 197572000.0,
+    "total_liquidity": 257813000.0,
+    "total_debt": 542250000.0,
+    "long_term_debt": 500804000.0,
+    "current_debt": 7316000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -68907000.0,
+    "free_cash_flow": -69682000.0,
+    "investing_cash_flow": -181361000.0,
+    "financing_cash_flow": 173519000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 87514000.0,
+    "research_and_development": 51232000.0,
+    "interest_expense": 27584000.0,
+    "net_income": -67253000.0,
+    "revenue": 32061000.0,
+    "gross_profit": 31884000.0,
+    "ebitda": -35774000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:07:02.640826",
+    "timestamp": "2026-01-29T16:47:59.061013",
     "url": "https://finance.yahoo.com/quote/IBRX",
-    "data_hash": "bf0260e2fc9c67d0"
+    "data_hash": "12ff8188f6c14814"
   }
 }

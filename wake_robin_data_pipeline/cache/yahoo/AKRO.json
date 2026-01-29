@@ -28,6 +28,41 @@
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1005577000.0,
+    "total_liabilities": 47940000.0,
+    "stockholders_equity": 957637000.0,
+    "cash": 176032000.0,
+    "marketable_securities": 561794000.0,
+    "total_liquidity": 737826000.0,
+    "total_debt": 1164000.0,
+    "long_term_debt": 289000.0,
+    "current_debt": 875000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -67171000.0,
+    "free_cash_flow": -67171000.0,
+    "investing_cash_flow": 56781000.0,
+    "financing_cash_flow": -34027000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 90236000.0,
+    "research_and_development": 78883000.0,
+    "interest_expense": 1092000.0,
+    "net_income": -81566000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -80474000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [
       "missing_volume",
@@ -35,11 +70,14 @@
     ],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": false
+    "has_volume": false,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T13:59:56.424534",
+    "timestamp": "2026-01-29T16:47:24.097748",
     "url": "https://finance.yahoo.com/quote/AKRO",
     "data_hash": "841262b273bebb51"
   }

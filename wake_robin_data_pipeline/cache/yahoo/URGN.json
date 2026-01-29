@@ -2,42 +2,80 @@
   "ticker": "URGN",
   "success": true,
   "price": {
-    "current": 20.86,
+    "current": 20.69,
     "currency": "USD",
     "day_high": 21.6362,
-    "day_low": 20.37,
+    "day_low": 20.2254,
     "52_week_high": 30.0,
     "52_week_low": 3.42
   },
   "market_cap": {
-    "value": 976433536.0,
+    "value": 968476032.0,
     "currency": "USD"
   },
   "shares_outstanding": 46808892.0,
   "volume": {
-    "last": 74956,
-    "average_30d": 703529
+    "last": 402703,
+    "average_30d": 730704
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -21.536905,
-    "price_to_book": -8.455614
+    "forward_pe": -21.36139,
+    "price_to_book": -8.386704
   },
   "company_info": {
     "name": "UroGen Pharma Ltd.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 185046000.0,
+    "total_liabilities": 300454000.0,
+    "stockholders_equity": -115408000.0,
+    "cash": 90039000.0,
+    "marketable_securities": 36994000.0,
+    "total_liquidity": 127033000.0,
+    "total_debt": 128352000.0,
+    "long_term_debt": 122111000.0,
+    "current_debt": null,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -42270000.0,
+    "free_cash_flow": -42357000.0,
+    "investing_cash_flow": 31398000.0,
+    "financing_cash_flow": 8272000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 51590000.0,
+    "research_and_development": 14008000.0,
+    "interest_expense": 3373000.0,
+    "net_income": -33347000.0,
+    "revenue": 27482000.0,
+    "gross_profit": 24204000.0,
+    "ebitda": -30389000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:10:33.924027",
+    "timestamp": "2026-01-29T16:52:32.488832",
     "url": "https://finance.yahoo.com/quote/URGN",
-    "data_hash": "26213c132544d3fd"
+    "data_hash": "93627953bb1f78f2"
   }
 }

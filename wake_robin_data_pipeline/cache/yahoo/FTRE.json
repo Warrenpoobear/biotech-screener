@@ -42,16 +42,39 @@
     "current_debt": 74500000.0,
     "error": null
   },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 86800000.0,
+    "free_cash_flow": 79500000.0,
+    "investing_cash_flow": 13300000.0,
+    "financing_cash_flow": -50000000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 126400000.0,
+    "research_and_development": null,
+    "interest_expense": 22600000.0,
+    "net_income": -15900000.0,
+    "revenue": 701300000.0,
+    "gross_profit": 122700000.0,
+    "ebitda": 13500000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
     "has_volume": true,
-    "has_balance_sheet": true
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T16:31:53.967973",
+    "timestamp": "2026-01-29T16:46:18.751418",
     "url": "https://finance.yahoo.com/quote/FTRE",
     "data_hash": "dbbaee9cdb345acd"
   }

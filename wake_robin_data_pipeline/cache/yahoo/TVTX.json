@@ -2,42 +2,80 @@
   "ticker": "TVTX",
   "success": true,
   "price": {
-    "current": 30.77,
+    "current": 31.99,
     "currency": "USD",
-    "day_high": 31.64,
+    "day_high": 32.11,
     "day_low": 30.08,
     "52_week_high": 42.13,
     "52_week_low": 12.91
   },
   "market_cap": {
-    "value": 2753063680.0,
+    "value": 2862219776.0,
     "currency": "USD"
   },
   "shares_outstanding": 89472327.0,
   "volume": {
-    "last": 480606,
-    "average_30d": 2857377
+    "last": 2027163,
+    "average_30d": 3002693
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 16.21915,
-    "price_to_book": 37.43309
+    "forward_pe": 16.862225,
+    "price_to_book": 38.917274
   },
   "company_info": {
     "name": "Travere Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 538581000.0,
+    "total_liabilities": 465017000.0,
+    "stockholders_equity": 73564000.0,
+    "cash": 110930000.0,
+    "marketable_securities": 143600000.0,
+    "total_liquidity": 254530000.0,
+    "total_debt": 329749000.0,
+    "long_term_debt": 311370000.0,
+    "current_debt": 5734000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 14317000.0,
+    "free_cash_flow": -871000.0,
+    "investing_cash_flow": 86591000.0,
+    "financing_cash_flow": -65339000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 138343000.0,
+    "research_and_development": 51890000.0,
+    "interest_expense": 2751000.0,
+    "net_income": 25706000.0,
+    "revenue": 164859000.0,
+    "gross_profit": 163274000.0,
+    "ebitda": 44253000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:10:26.908606",
+    "timestamp": "2026-01-29T16:52:23.383079",
     "url": "https://finance.yahoo.com/quote/TVTX",
-    "data_hash": "6d326c120b6d28a8"
+    "data_hash": "e8935dd2739200e1"
   }
 }

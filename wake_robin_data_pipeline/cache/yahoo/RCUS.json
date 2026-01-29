@@ -2,7 +2,7 @@
   "ticker": "RCUS",
   "success": true,
   "price": {
-    "current": 21.8,
+    "current": 21.79,
     "currency": "USD",
     "day_high": 22.17,
     "day_low": 21.36,
@@ -10,34 +10,72 @@
     "52_week_low": 6.5
   },
   "market_cap": {
-    "value": 2697282048.0,
+    "value": 2696044800.0,
     "currency": "USD"
   },
   "shares_outstanding": 123728536.0,
   "volume": {
-    "last": 129998,
-    "average_30d": 1363445
+    "last": 640300,
+    "average_30d": 1407057
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -5.6586633,
-    "price_to_book": 5.3549495
+    "forward_pe": -5.656068,
+    "price_to_book": 5.3524933
   },
   "company_info": {
     "name": "Arcus Biosciences, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 974000000.0,
+    "total_liabilities": 538000000.0,
+    "stockholders_equity": 436000000.0,
+    "cash": 238000000.0,
+    "marketable_securities": 593000000.0,
+    "total_liquidity": 831000000.0,
+    "total_debt": 111000000.0,
+    "long_term_debt": 98000000.0,
+    "current_debt": 13000000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -97000000.0,
+    "free_cash_flow": -97000000.0,
+    "investing_cash_flow": 79000000.0,
+    "financing_cash_flow": 8000000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 168000000.0,
+    "research_and_development": 141000000.0,
+    "interest_expense": 3000000.0,
+    "net_income": -135000000.0,
+    "revenue": 26000000.0,
+    "gross_profit": null,
+    "ebitda": -130000000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:25.664062",
+    "timestamp": "2026-01-29T16:51:05.866946",
     "url": "https://finance.yahoo.com/quote/RCUS",
-    "data_hash": "09dadd56da8b241b"
+    "data_hash": "8a21a6baacf1b932"
   }
 }

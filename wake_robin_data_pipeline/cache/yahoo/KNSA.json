@@ -2,7 +2,7 @@
   "ticker": "KNSA",
   "success": true,
   "price": {
-    "current": 43.87,
+    "current": 43.96,
     "currency": "USD",
     "day_high": 44.155,
     "day_low": 43.15,
@@ -10,34 +10,72 @@
     "52_week_low": 18.12
   },
   "market_cap": {
-    "value": 3325159936.0,
+    "value": 3331981568.0,
     "currency": "USD"
   },
   "shares_outstanding": 45161019.0,
   "volume": {
-    "last": 44802,
-    "average_30d": 641409
+    "last": 478471,
+    "average_30d": 679217
   },
   "valuation": {
-    "pe_ratio": 97.48889,
-    "forward_pe": 25.731714,
-    "price_to_book": 6.180614
+    "pe_ratio": 97.68889,
+    "forward_pe": 25.784502,
+    "price_to_book": 6.1932936
   },
   "company_info": {
     "name": "Kiniksa Pharmaceuticals International, plc",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 712333000.0,
+    "total_liabilities": 176950000.0,
+    "stockholders_equity": 535383000.0,
+    "cash": 174858000.0,
+    "marketable_securities": 177244000.0,
+    "total_liquidity": 352102000.0,
+    "total_debt": 9718000.0,
+    "long_term_debt": 7022000.0,
+    "current_debt": 2696000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 33677000.0,
+    "free_cash_flow": 33006000.0,
+    "investing_cash_flow": -62755000.0,
+    "financing_cash_flow": 11899000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 73270000.0,
+    "research_and_development": 24166000.0,
+    "interest_expense": null,
+    "net_income": 18435000.0,
+    "revenue": 180855000.0,
+    "gross_profit": 97291000.0,
+    "ebitda": 24405000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:07:31.448291",
+    "timestamp": "2026-01-29T16:48:41.964706",
     "url": "https://finance.yahoo.com/quote/KNSA",
-    "data_hash": "f29685953b25ae31"
+    "data_hash": "4c385773fa478a5b"
   }
 }

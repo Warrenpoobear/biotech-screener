@@ -2,7 +2,7 @@
   "ticker": "XNCR",
   "success": true,
   "price": {
-    "current": 12.43,
+    "current": 12.38,
     "currency": "USD",
     "day_high": 12.795,
     "day_low": 12.33,
@@ -10,34 +10,72 @@
     "52_week_low": 6.92
   },
   "market_cap": {
-    "value": 887632192.0,
+    "value": 884061632.0,
     "currency": "USD"
   },
   "shares_outstanding": 71410469.0,
   "volume": {
-    "last": 65139,
-    "average_30d": 702606
+    "last": 334741,
+    "average_30d": 729906
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -4.742175,
-    "price_to_book": 1.4181403
+    "forward_pe": -4.7230997,
+    "price_to_book": 1.4124358
   },
   "company_info": {
     "name": "Xencor, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 868811000.0,
+    "total_liabilities": 243495000.0,
+    "stockholders_equity": 625316000.0,
+    "cash": 28291000.0,
+    "marketable_securities": 442753000.0,
+    "total_liquidity": 471044000.0,
+    "total_debt": 69267000.0,
+    "long_term_debt": 65331000.0,
+    "current_debt": 3936000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -30817000.0,
+    "free_cash_flow": -31000000.0,
+    "investing_cash_flow": 14668000.0,
+    "financing_cash_flow": 0.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 68518000.0,
+    "research_and_development": 54367000.0,
+    "interest_expense": 7665000.0,
+    "net_income": -6027000.0,
+    "revenue": 20999000.0,
+    "gross_profit": null,
+    "ebitda": 4227000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:10:54.151117",
+    "timestamp": "2026-01-29T16:53:03.888059",
     "url": "https://finance.yahoo.com/quote/XNCR",
-    "data_hash": "1979e96cbb27741a"
+    "data_hash": "767753b121163e24"
   }
 }

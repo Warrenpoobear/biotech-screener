@@ -2,42 +2,80 @@
   "ticker": "PRTA",
   "success": true,
   "price": {
-    "current": 9.04,
+    "current": 9.06,
     "currency": "USD",
     "day_high": 9.5,
-    "day_low": 9.0,
+    "day_low": 8.95,
     "52_week_high": 16.665,
     "52_week_low": 4.32
   },
   "market_cap": {
-    "value": 486623040.0,
+    "value": 487699680.0,
     "currency": "USD"
   },
   "shares_outstanding": 53829982.0,
   "volume": {
-    "last": 73268,
-    "average_30d": 493398
+    "last": 345483,
+    "average_30d": 506630
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 17.16445,
-    "price_to_book": 1.6496351
+    "forward_pe": 17.202425,
+    "price_to_book": 1.6532848
   },
   "company_info": {
     "name": "Prothena Corporation plc",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 352628000.0,
+    "total_liabilities": 57639000.0,
+    "stockholders_equity": 294989000.0,
+    "cash": 330843000.0,
+    "marketable_securities": null,
+    "total_liquidity": 330843000.0,
+    "total_debt": 9082000.0,
+    "long_term_debt": 6203000.0,
+    "current_debt": 2879000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -40565000.0,
+    "free_cash_flow": -40575000.0,
+    "investing_cash_flow": -10000.0,
+    "financing_cash_flow": -17000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 42176000.0,
+    "research_and_development": 28938000.0,
+    "interest_expense": null,
+    "net_income": -36541000.0,
+    "revenue": 2415000.0,
+    "gross_profit": null,
+    "ebitda": -39532000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:06.381744",
+    "timestamp": "2026-01-29T16:50:43.037031",
     "url": "https://finance.yahoo.com/quote/PRTA",
-    "data_hash": "45fc7432ab2b0362"
+    "data_hash": "811507f191359905"
   }
 }

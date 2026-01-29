@@ -2,42 +2,80 @@
   "ticker": "TEM",
   "success": true,
   "price": {
-    "current": 62.86,
+    "current": 63.51,
     "currency": "USD",
     "day_high": 64.22,
-    "day_low": 62.71,
+    "day_low": 62.65,
     "52_week_high": 104.32,
     "52_week_low": 36.22
   },
   "market_cap": {
-    "value": 11183250432.0,
+    "value": 11298889728.0,
     "currency": "USD"
   },
   "shares_outstanding": 172863470.0,
   "volume": {
-    "last": 1999501,
-    "average_30d": 5234981
+    "last": 4618762,
+    "average_30d": 5425955
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -134.4599,
-    "price_to_book": 21.994402
+    "forward_pe": -135.85027,
+    "price_to_book": 22.221832
   },
   "company_info": {
     "name": "Tempus AI, Inc.",
     "sector": "Healthcare",
     "industry": "Health Information Services"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 2281424000.0,
+    "total_liabilities": 1773600000.0,
+    "stockholders_equity": 507824000.0,
+    "cash": 655918000.0,
+    "marketable_securities": 103720000.0,
+    "total_liquidity": 759638000.0,
+    "total_debt": 1335821000.0,
+    "long_term_debt": 1245681000.0,
+    "current_debt": 12417000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -119842000.0,
+    "free_cash_flow": -127888000.0,
+    "investing_cash_flow": -2309000.0,
+    "financing_cash_flow": 594690000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 270938000.0,
+    "research_and_development": 83047000.0,
+    "interest_expense": 15399000.0,
+    "net_income": -79982000.0,
+    "revenue": 334206000.0,
+    "gross_profit": 209942000.0,
+    "ebitda": -38794000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:10:15.778680",
+    "timestamp": "2026-01-29T16:52:09.491810",
     "url": "https://finance.yahoo.com/quote/TEM",
-    "data_hash": "7a43ba738eb57828"
+    "data_hash": "53953b8e7b5a4bb5"
   }
 }

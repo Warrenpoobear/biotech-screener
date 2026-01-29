@@ -2,42 +2,80 @@
   "ticker": "HRMY",
   "success": true,
   "price": {
-    "current": 36.795,
+    "current": 36.86,
     "currency": "USD",
     "day_high": 37.0799,
-    "day_low": 36.67,
+    "day_low": 36.43,
     "52_week_high": 40.87,
     "52_week_low": 25.52
   },
   "market_cap": {
-    "value": 2119257984.0,
+    "value": 2123001856.0,
     "currency": "USD"
   },
   "shares_outstanding": 57596358.0,
   "volume": {
-    "last": 82806,
-    "average_30d": 608609
+    "last": 406975,
+    "average_30d": 634974
   },
   "valuation": {
-    "pe_ratio": 11.607255,
-    "forward_pe": 6.838609,
-    "price_to_book": 2.537586
+    "pe_ratio": 11.62776,
+    "forward_pe": 6.8506904,
+    "price_to_book": 2.542069
   },
   "company_info": {
     "name": "Harmony Biosciences Holdings, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1208218000.0,
+    "total_liabilities": 373095000.0,
+    "stockholders_equity": 835123000.0,
+    "cash": 646999000.0,
+    "marketable_securities": 25582000.0,
+    "total_liquidity": 672581000.0,
+    "total_debt": 168506000.0,
+    "long_term_debt": 148506000.0,
+    "current_debt": 20000000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 108734000.0,
+    "free_cash_flow": 108663000.0,
+    "investing_cash_flow": -4789000.0,
+    "financing_cash_flow": -2996000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 114318000.0,
+    "research_and_development": 54962000.0,
+    "interest_expense": 3621000.0,
+    "net_income": 50865000.0,
+    "revenue": 239455000.0,
+    "gross_profit": 179805000.0,
+    "ebitda": 77079000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:57.136311",
+    "timestamp": "2026-01-29T16:47:53.105948",
     "url": "https://finance.yahoo.com/quote/HRMY",
-    "data_hash": "6c10777dedff2bfe"
+    "data_hash": "d17c0c6a84fe6cfc"
   }
 }

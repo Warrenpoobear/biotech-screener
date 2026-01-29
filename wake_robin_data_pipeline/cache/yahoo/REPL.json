@@ -15,8 +15,8 @@
   },
   "shares_outstanding": 78443334.0,
   "volume": {
-    "last": 131006,
-    "average_30d": 1391173
+    "last": 669651,
+    "average_30d": 1426050
   },
   "valuation": {
     "pe_ratio": null,
@@ -28,15 +28,53 @@
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 389450000.0,
+    "total_liabilities": 126114000.0,
+    "stockholders_equity": 263336000.0,
+    "cash": 102298000.0,
+    "marketable_securities": 221346000.0,
+    "total_liquidity": 323644000.0,
+    "total_debt": 76324000.0,
+    "long_term_debt": 47206000.0,
+    "current_debt": 4051000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -81212000.0,
+    "free_cash_flow": -82555000.0,
+    "investing_cash_flow": 84169000.0,
+    "financing_cash_flow": 324000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 83914000.0,
+    "research_and_development": 57877000.0,
+    "interest_expense": 2006000.0,
+    "net_income": -83100000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -80252000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:25.985758",
+    "timestamp": "2026-01-29T16:51:08.834668",
     "url": "https://finance.yahoo.com/quote/REPL",
     "data_hash": "a410aaca645228ac"
   }

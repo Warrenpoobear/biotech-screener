@@ -2,42 +2,80 @@
   "ticker": "SNY",
   "success": true,
   "price": {
-    "current": 46.03,
+    "current": 46.2,
     "currency": "USD",
-    "day_high": 46.37,
+    "day_high": 46.4,
     "day_low": 45.79,
     "52_week_high": 60.12,
     "52_week_low": 44.62
   },
   "market_cap": {
-    "value": 111801835520.0,
+    "value": 112214745088.0,
     "currency": "USD"
   },
   "shares_outstanding": 2415283024.0,
   "volume": {
-    "last": 1184193,
-    "average_30d": 3009159
+    "last": 6128475,
+    "average_30d": 3330260
   },
   "valuation": {
-    "pe_ratio": 14.612698,
-    "forward_pe": 8.953511,
-    "price_to_book": 0.63689387
+    "pe_ratio": 14.666666,
+    "forward_pe": 8.870627,
+    "price_to_book": 0.6392461
   },
   "company_info": {
     "name": "Sanofi",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - General"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 129794000000.0,
+    "total_liabilities": 56261000000.0,
+    "stockholders_equity": 73263000000.0,
+    "cash": 8906000000.0,
+    "marketable_securities": null,
+    "total_liquidity": 8906000000.0,
+    "total_debt": 21755000000.0,
+    "long_term_debt": 11700000000.0,
+    "current_debt": 8202000000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 3750000000.0,
+    "free_cash_flow": 5170000000.0,
+    "investing_cash_flow": -9043000000.0,
+    "financing_cash_flow": -1148000000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 5973000000.0,
+    "research_and_development": 1834000000.0,
+    "interest_expense": 227000000.0,
+    "net_income": 2802000000.0,
+    "revenue": 13170000000.0,
+    "gross_profit": 9758000000.0,
+    "ebitda": 4198000000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:54.297932",
+    "timestamp": "2026-01-29T16:51:46.180104",
     "url": "https://finance.yahoo.com/quote/SNY",
-    "data_hash": "569daf4bada5c524"
+    "data_hash": "8bc5153252e104dc"
   }
 }

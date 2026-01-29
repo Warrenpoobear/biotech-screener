@@ -2,7 +2,7 @@
   "ticker": "SLN",
   "success": true,
   "price": {
-    "current": 5.1,
+    "current": 4.96,
     "currency": "USD",
     "day_high": 5.13,
     "day_low": 4.94,
@@ -10,34 +10,72 @@
     "52_week_low": 1.97
   },
   "market_cap": {
-    "value": 240893136.0,
+    "value": 234280384.0,
     "currency": "USD"
   },
   "shares_outstanding": 47233949.0,
   "volume": {
-    "last": 36023,
-    "average_30d": 341396
+    "last": 125172,
+    "average_30d": 350866
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -5.6666665,
-    "price_to_book": 3.252551
+    "forward_pe": -5.5111113,
+    "price_to_book": 3.1632655
   },
   "company_info": {
     "name": "Silence Therapeutics plc",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 146790000.0,
+    "total_liabilities": 72727000.0,
+    "stockholders_equity": 74063000.0,
+    "cash": 82031000.0,
+    "marketable_securities": 20161000.0,
+    "total_liquidity": 102192000.0,
+    "total_debt": 182000.0,
+    "long_term_debt": 97000.0,
+    "current_debt": 85000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -10891000.0,
+    "free_cash_flow": -10894000.0,
+    "investing_cash_flow": 51289000.0,
+    "financing_cash_flow": 0.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 26339000.0,
+    "research_and_development": 20544000.0,
+    "interest_expense": null,
+    "net_income": -20958000.0,
+    "revenue": 159000.0,
+    "gross_profit": 95000.0,
+    "ebitda": -26088000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:52.340396",
+    "timestamp": "2026-01-29T16:51:40.106331",
     "url": "https://finance.yahoo.com/quote/SLN",
-    "data_hash": "2686d4ef011e3b78"
+    "data_hash": "c0b32fde7bd97ae1"
   }
 }

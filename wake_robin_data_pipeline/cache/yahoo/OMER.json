@@ -2,42 +2,80 @@
   "ticker": "OMER",
   "success": true,
   "price": {
-    "current": 11.78,
+    "current": 11.95,
     "currency": "USD",
-    "day_high": 11.91,
+    "day_high": 12.08,
     "day_low": 11.66,
     "52_week_high": 17.65,
     "52_week_low": 2.95
   },
   "market_cap": {
-    "value": 835207360.0,
+    "value": 847260416.0,
     "currency": "USD"
   },
   "shares_outstanding": 70900459.0,
   "volume": {
-    "last": 238407,
-    "average_30d": 2876573
+    "last": 779137,
+    "average_30d": 2776216
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 24.205315,
-    "price_to_book": -3.7444375
+    "forward_pe": 24.554626,
+    "price_to_book": -3.7984743
   },
   "company_info": {
     "name": "Omeros Corporation",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 185706000.0,
+    "total_liabilities": 406184000.0,
+    "stockholders_equity": -220478000.0,
+    "cash": 2395000.0,
+    "marketable_securities": 33690000.0,
+    "total_liquidity": 36085000.0,
+    "total_debt": 191609000.0,
+    "long_term_debt": 159555000.0,
+    "current_debt": 17036000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -18473000.0,
+    "free_cash_flow": -18484000.0,
+    "investing_cash_flow": -6861000.0,
+    "financing_cash_flow": 25825000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 26392000.0,
+    "research_and_development": 15995000.0,
+    "interest_expense": null,
+    "net_income": -30917000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -26152000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:42.641516",
+    "timestamp": "2026-01-29T16:50:11.178676",
     "url": "https://finance.yahoo.com/quote/OMER",
-    "data_hash": "a3da6c9327189177"
+    "data_hash": "cbab900140490c06"
   }
 }

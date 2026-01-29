@@ -2,42 +2,80 @@
   "ticker": "XENE",
   "success": true,
   "price": {
-    "current": 41.47,
+    "current": 41.76,
     "currency": "USD",
     "day_high": 42.14,
-    "day_low": 41.155,
+    "day_low": 41.14,
     "52_week_high": 46.6,
     "52_week_low": 26.74
   },
   "market_cap": {
-    "value": 3204594688.0,
+    "value": 3227004160.0,
     "currency": "USD"
   },
   "shares_outstanding": 77275005.0,
   "volume": {
-    "last": 234748,
-    "average_30d": 1022247
+    "last": 601576,
+    "average_30d": 1060570
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -9.01857,
-    "price_to_book": 5.716058
+    "forward_pe": -9.081636,
+    "price_to_book": 5.75603
   },
   "company_info": {
     "name": "Xenon Pharmaceuticals Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 607836000.0,
+    "total_liabilities": 48325000.0,
+    "stockholders_equity": 559511000.0,
+    "cash": 104514000.0,
+    "marketable_securities": 357754000.0,
+    "total_liquidity": 462268000.0,
+    "total_debt": 8327000.0,
+    "long_term_debt": 6832000.0,
+    "current_debt": 1495000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -71752000.0,
+    "free_cash_flow": -72033000.0,
+    "investing_cash_flow": 38531000.0,
+    "financing_cash_flow": 2360000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 96336000.0,
+    "research_and_development": 77054000.0,
+    "interest_expense": null,
+    "net_income": -90896000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -95695000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:10:51.521664",
+    "timestamp": "2026-01-29T16:53:00.754858",
     "url": "https://finance.yahoo.com/quote/XENE",
-    "data_hash": "620eaa027f362fec"
+    "data_hash": "e35563cc9e56a4cd"
   }
 }

@@ -2,7 +2,7 @@
   "ticker": "KZR",
   "success": true,
   "price": {
-    "current": 6.2,
+    "current": 6.17,
     "currency": "USD",
     "day_high": 6.23,
     "day_low": 6.11,
@@ -10,34 +10,72 @@
     "52_week_low": 3.53
   },
   "market_cap": {
-    "value": 45403564.0,
+    "value": 45183872.0,
     "currency": "USD"
   },
   "shares_outstanding": 7323156.0,
   "volume": {
-    "last": 7843,
-    "average_30d": 34742
+    "last": 12844,
+    "average_30d": 36349
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -1.8960245,
-    "price_to_book": 0.5471715
+    "forward_pe": -1.8868502,
+    "price_to_book": 0.54452384
   },
   "company_info": {
     "name": "Kezar Life Sciences, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 97726000.0,
+    "total_liabilities": 14750000.0,
+    "stockholders_equity": 82976000.0,
+    "cash": 38935000.0,
+    "marketable_securities": 51281000.0,
+    "total_liquidity": 90216000.0,
+    "total_debt": 9912000.0,
+    "long_term_debt": 1374000.0,
+    "current_debt": 5279000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -9830000.0,
+    "free_cash_flow": -9830000.0,
+    "investing_cash_flow": 15712000.0,
+    "financing_cash_flow": -1305000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 11715000.0,
+    "research_and_development": 6914000.0,
+    "interest_expense": 538000.0,
+    "net_income": -11227000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -10462000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T13:11:28.476959",
+    "timestamp": "2026-01-29T16:48:51.210760",
     "url": "https://finance.yahoo.com/quote/KZR",
-    "data_hash": "7318525a65e095bc"
+    "data_hash": "6ba5de9888f41de2"
   }
 }

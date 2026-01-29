@@ -2,42 +2,80 @@
   "ticker": "NEO",
   "success": true,
   "price": {
-    "current": 12.395,
+    "current": 12.4,
     "currency": "USD",
-    "day_high": 12.59,
-    "day_low": 12.3,
+    "day_high": 12.595,
+    "day_low": 12.285,
     "52_week_high": 15.26,
     "52_week_low": 4.72
   },
   "market_cap": {
-    "value": 1603761792.0,
+    "value": 1604408704.0,
     "currency": "USD"
   },
   "shares_outstanding": 129387801.0,
   "volume": {
-    "last": 686405,
-    "average_30d": 1904600
+    "last": 1672435,
+    "average_30d": 1987213
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 67.16337,
-    "price_to_book": 1.9057503
+    "forward_pe": 67.19046,
+    "price_to_book": 1.9065189
   },
   "company_info": {
     "name": "NeoGenomics, Inc.",
     "sector": "Healthcare",
     "industry": "Diagnostics & Research"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1374780000.0,
+    "total_liabilities": 536490000.0,
+    "stockholders_equity": 838290000.0,
+    "cash": 164117000.0,
+    "marketable_securities": null,
+    "total_liquidity": 164117000.0,
+    "total_debt": 410308000.0,
+    "long_term_debt": 341476000.0,
+    "current_debt": 4507000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 8884000.0,
+    "free_cash_flow": 570000.0,
+    "investing_cash_flow": -277000.0,
+    "financing_cash_flow": 765000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 100374000.0,
+    "research_and_development": 8694000.0,
+    "interest_expense": 603000.0,
+    "net_income": -27129000.0,
+    "revenue": 187797000.0,
+    "gross_profit": 80446000.0,
+    "ebitda": -9349000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T12:35:34.424668",
+    "timestamp": "2026-01-29T16:49:45.426198",
     "url": "https://finance.yahoo.com/quote/NEO",
-    "data_hash": "00f370a6929add8c"
+    "data_hash": "e0f0cc2b4c27444d"
   }
 }

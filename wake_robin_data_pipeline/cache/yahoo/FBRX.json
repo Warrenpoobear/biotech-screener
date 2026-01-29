@@ -2,7 +2,7 @@
   "ticker": "FBRX",
   "success": true,
   "price": {
-    "current": 29.925,
+    "current": 29.22,
     "currency": "USD",
     "day_high": 30.14,
     "day_low": 27.13,
@@ -10,34 +10,72 @@
     "52_week_low": 4.9
   },
   "market_cap": {
-    "value": 374868512.0,
+    "value": 366037024.0,
     "currency": "USD"
   },
   "shares_outstanding": 12526935.0,
   "volume": {
-    "last": 74573,
-    "average_30d": 209266
+    "last": 161949,
+    "average_30d": 216240
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -7.91248,
-    "price_to_book": 6.3440742
+    "forward_pe": -7.7260704,
+    "price_to_book": 6.194615
   },
   "company_info": {
     "name": "Forte Biosciences, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 97089000.0,
+    "total_liabilities": 12992000.0,
+    "stockholders_equity": 84097000.0,
+    "cash": 93414000.0,
+    "marketable_securities": null,
+    "total_liquidity": 93414000.0,
+    "total_debt": null,
+    "long_term_debt": null,
+    "current_debt": null,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -14000000.0,
+    "free_cash_flow": -14055000.0,
+    "investing_cash_flow": -55000.0,
+    "financing_cash_flow": 1325000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 18383000.0,
+    "research_and_development": 15200000.0,
+    "interest_expense": null,
+    "net_income": -17682000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -18366000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T12:46:47.423096",
+    "timestamp": "2026-01-29T16:47:43.680483",
     "url": "https://finance.yahoo.com/quote/FBRX",
-    "data_hash": "858231f4a4687026"
+    "data_hash": "2a33a3ac4b4d7319"
   }
 }

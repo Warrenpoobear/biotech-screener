@@ -2,42 +2,80 @@
   "ticker": "LGND",
   "success": true,
   "price": {
-    "current": 192.75,
+    "current": 195.17,
     "currency": "USD",
-    "day_high": 192.9,
+    "day_high": 195.405,
     "day_low": 189.3,
     "52_week_high": 212.49,
     "52_week_low": 93.58
   },
   "market_cap": {
-    "value": 3793651456.0,
+    "value": 3841281280.0,
     "currency": "USD"
   },
   "shares_outstanding": 19681720.0,
   "volume": {
-    "last": 46996,
-    "average_30d": 222931
+    "last": 156321,
+    "average_30d": 235095
   },
   "valuation": {
-    "pe_ratio": 85.28761,
-    "forward_pe": 22.903593,
-    "price_to_book": 3.987381
+    "pe_ratio": 86.358406,
+    "forward_pe": 23.191149,
+    "price_to_book": 4.037443
   },
   "company_info": {
     "name": "Ligand Pharmaceuticals Incorporated",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1476772000.0,
+    "total_liabilities": 526601000.0,
+    "stockholders_equity": 950171000.0,
+    "cash": 139376000.0,
+    "marketable_securities": 537562000.0,
+    "total_liquidity": 676938000.0,
+    "total_debt": 450997000.0,
+    "long_term_debt": 445493000.0,
+    "current_debt": 1089000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 13090000.0,
+    "free_cash_flow": 4684000.0,
+    "investing_cash_flow": -353445000.0,
+    "financing_cash_flow": 409645000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 57562000.0,
+    "research_and_development": 21019000.0,
+    "interest_expense": 910000.0,
+    "net_income": 117273000.0,
+    "revenue": 115461000.0,
+    "gross_profit": 111660000.0,
+    "ebitda": 150316000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:07:47.962417",
+    "timestamp": "2026-01-29T16:49:01.541451",
     "url": "https://finance.yahoo.com/quote/LGND",
-    "data_hash": "c00f112fe3bc95a3"
+    "data_hash": "fa5ad64e9dc6dff4"
   }
 }

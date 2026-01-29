@@ -2,7 +2,7 @@
   "ticker": "MLYS",
   "success": true,
   "price": {
-    "current": 31.68,
+    "current": 32.09,
     "currency": "USD",
     "day_high": 32.555,
     "day_low": 31.575,
@@ -10,34 +10,72 @@
     "52_week_low": 8.241
   },
   "market_cap": {
-    "value": 2507153664.0,
+    "value": 2539601152.0,
     "currency": "USD"
   },
   "shares_outstanding": 79139956.0,
   "volume": {
-    "last": 146384,
-    "average_30d": 1159385
+    "last": 507563,
+    "average_30d": 1184412
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -13.734085,
-    "price_to_book": 4.3403206
+    "forward_pe": -13.91183,
+    "price_to_book": 4.396493
   },
   "company_info": {
     "name": "Mineralys Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 599947000.0,
+    "total_liabilities": 23520000.0,
+    "stockholders_equity": 576427000.0,
+    "cash": 217597000.0,
+    "marketable_securities": 376031000.0,
+    "total_liquidity": 593628000.0,
+    "total_debt": null,
+    "long_term_debt": null,
+    "current_debt": null,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -28872000.0,
+    "free_cash_flow": -28872000.0,
+    "investing_cash_flow": -150507000.0,
+    "financing_cash_flow": 295188000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 41131000.0,
+    "research_and_development": 31450000.0,
+    "interest_expense": null,
+    "net_income": -36932000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -41116000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:07.813832",
+    "timestamp": "2026-01-29T16:49:25.801808",
     "url": "https://finance.yahoo.com/quote/MLYS",
-    "data_hash": "3b3ef3658c655eda"
+    "data_hash": "87ddee8917e616b0"
   }
 }

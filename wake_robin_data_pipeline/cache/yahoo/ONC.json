@@ -2,7 +2,7 @@
   "ticker": "ONC",
   "success": true,
   "price": {
-    "current": 350.08,
+    "current": 350.0,
     "currency": "USD",
     "day_high": 353.0,
     "day_low": 345.5418,
@@ -10,34 +10,72 @@
     "52_week_low": 196.45
   },
   "market_cap": {
-    "value": 38739132416.0,
+    "value": 38730280960.0,
     "currency": "USD"
   },
   "shares_outstanding": 101807539.0,
   "volume": {
-    "last": 83342,
-    "average_30d": 283206
+    "last": 309519,
+    "average_30d": 297072
   },
   "valuation": {
-    "pe_ratio": 660.5283,
-    "forward_pe": 55.20617,
-    "price_to_book": 9.378483
+    "pe_ratio": 660.3774,
+    "forward_pe": 55.193554,
+    "price_to_book": 9.37634
   },
   "company_info": {
     "name": "BeOne Medicines AG",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 7632586000.0,
+    "total_liabilities": 3503260000.0,
+    "stockholders_equity": 4129326000.0,
+    "cash": 4036868000.0,
+    "marketable_securities": null,
+    "total_liquidity": 4036868000.0,
+    "total_debt": 1019986000.0,
+    "long_term_debt": 139571000.0,
+    "current_debt": 813296000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 402553000.0,
+    "free_cash_flow": 353778000.0,
+    "investing_cash_flow": -49274000.0,
+    "financing_cash_flow": 961272000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 1052660000.0,
+    "research_and_development": 523662000.0,
+    "interest_expense": null,
+    "net_income": 124841000.0,
+    "revenue": 1412284000.0,
+    "gross_profit": 1215774000.0,
+    "ebitda": 200398000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:43.938230",
+    "timestamp": "2026-01-29T16:50:12.802454",
     "url": "https://finance.yahoo.com/quote/ONC",
-    "data_hash": "4b9d4b0f4a27b320"
+    "data_hash": "163e56949c487e84"
   }
 }

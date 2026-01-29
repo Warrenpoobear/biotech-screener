@@ -2,7 +2,7 @@
   "ticker": "NKTR",
   "success": true,
   "price": {
-    "current": 35.7516,
+    "current": 35.23,
     "currency": "USD",
     "day_high": 36.2,
     "day_low": 34.82,
@@ -10,34 +10,72 @@
     "52_week_low": 6.45
   },
   "market_cap": {
-    "value": 727244288.0,
+    "value": 716634112.0,
     "currency": "USD"
   },
   "shares_outstanding": 20341589.0,
   "volume": {
-    "last": 260103,
-    "average_30d": 708654
+    "last": 488069,
+    "average_30d": 716852
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -3.0144687,
-    "price_to_book": 8.256721
+    "forward_pe": -2.970489,
+    "price_to_book": 8.136259
   },
   "company_info": {
     "name": "Nektar Therapeutics",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 301347000.0,
+    "total_liabilities": 216261000.0,
+    "stockholders_equity": 85086000.0,
+    "cash": 41032000.0,
+    "marketable_securities": 229176000.0,
+    "total_liquidity": 270208000.0,
+    "total_debt": 91915000.0,
+    "long_term_debt": 69732000.0,
+    "current_debt": 22183000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -48761000.0,
+    "free_cash_flow": -48875000.0,
+    "investing_cash_flow": -94873000.0,
+    "financing_cash_flow": 141677000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 43322000.0,
+    "research_and_development": 27252000.0,
+    "interest_expense": 6047000.0,
+    "net_income": -35522000.0,
+    "revenue": 11790000.0,
+    "gross_profit": 11790000.0,
+    "ebitda": -28778000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T13:11:14.624754",
+    "timestamp": "2026-01-29T16:49:48.347105",
     "url": "https://finance.yahoo.com/quote/NKTR",
-    "data_hash": "23d6a71b05b8dba3"
+    "data_hash": "08d1c3e0567ea827"
   }
 }

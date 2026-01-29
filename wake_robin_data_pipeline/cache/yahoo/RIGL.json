@@ -2,7 +2,7 @@
   "ticker": "RIGL",
   "success": true,
   "price": {
-    "current": 35.58,
+    "current": 35.16,
     "currency": "USD",
     "day_high": 35.9423,
     "day_low": 34.72,
@@ -10,34 +10,72 @@
     "52_week_low": 15.5
   },
   "market_cap": {
-    "value": 645824832.0,
+    "value": 638201280.0,
     "currency": "USD"
   },
   "shares_outstanding": 18151344.0,
   "volume": {
-    "last": 94751,
-    "average_30d": 494361
+    "last": 322894,
+    "average_30d": 494752
   },
   "valuation": {
-    "pe_ratio": 5.747981,
-    "forward_pe": 9.570356,
-    "price_to_book": 5.489047
+    "pe_ratio": 5.680129,
+    "forward_pe": 9.457384,
+    "price_to_book": 5.424252
   },
   "company_info": {
     "name": "Rigel Pharmaceuticals, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 242534000.0,
+    "total_liabilities": 124925000.0,
+    "stockholders_equity": 117609000.0,
+    "cash": 48534000.0,
+    "marketable_securities": 88609000.0,
+    "total_liquidity": 137143000.0,
+    "total_debt": 60880000.0,
+    "long_term_debt": 29969000.0,
+    "current_debt": 29761000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 24031000.0,
+    "free_cash_flow": 24019000.0,
+    "investing_cash_flow": -33175000.0,
+    "financing_cash_flow": 4271000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 36289000.0,
+    "research_and_development": 7353000.0,
+    "interest_expense": 1894000.0,
+    "net_income": 27900000.0,
+    "revenue": 69462000.0,
+    "gross_profit": 64709000.0,
+    "ebitda": 30117000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:30.451950",
+    "timestamp": "2026-01-29T16:51:13.221632",
     "url": "https://finance.yahoo.com/quote/RIGL",
-    "data_hash": "673fa3ccd01c24f6"
+    "data_hash": "1f23d3abbf6b858b"
   }
 }

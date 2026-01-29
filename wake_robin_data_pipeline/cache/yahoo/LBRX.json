@@ -2,7 +2,7 @@
   "ticker": "LBRX",
   "success": true,
   "price": {
-    "current": 21.145,
+    "current": 21.17,
     "currency": "USD",
     "day_high": 21.785,
     "day_low": 20.8,
@@ -10,34 +10,72 @@
     "52_week_low": 13.36
   },
   "market_cap": {
-    "value": 534949536.0,
+    "value": 535581984.0,
     "currency": "USD"
   },
   "shares_outstanding": 25299102.0,
   "volume": {
-    "last": 23607,
-    "average_30d": 230782
+    "last": 123795,
+    "average_30d": 232633
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -5.679056,
-    "price_to_book": 1.7244332
+    "forward_pe": -5.6857705,
+    "price_to_book": 1.726472
   },
   "company_info": {
     "name": "LB Pharmaceuticals Inc",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 320746000.0,
+    "total_liabilities": 10525000.0,
+    "stockholders_equity": 310221000.0,
+    "cash": 269744000.0,
+    "marketable_securities": 44735000.0,
+    "total_liquidity": 314479000.0,
+    "total_debt": 3666000.0,
+    "long_term_debt": 2936000.0,
+    "current_debt": 730000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -3373000.0,
+    "free_cash_flow": -3373000.0,
+    "investing_cash_flow": -44836000.0,
+    "financing_cash_flow": 303732000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 5246000.0,
+    "research_and_development": 2419000.0,
+    "interest_expense": null,
+    "net_income": -3556000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -5165000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:07:40.943832",
+    "timestamp": "2026-01-29T16:48:54.158235",
     "url": "https://finance.yahoo.com/quote/LBRX",
-    "data_hash": "4834fa77522ed0e3"
+    "data_hash": "b57b0a4e940072c1"
   }
 }

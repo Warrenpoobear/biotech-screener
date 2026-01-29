@@ -42,16 +42,39 @@
     "current_debt": 548000.0,
     "error": null
   },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -15133000.0,
+    "free_cash_flow": -15175000.0,
+    "investing_cash_flow": -158271000.0,
+    "financing_cash_flow": 171932000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 21672000.0,
+    "research_and_development": 16587000.0,
+    "interest_expense": null,
+    "net_income": -9196000.0,
+    "revenue": 10789000.0,
+    "gross_profit": null,
+    "ebitda": -10851000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
     "has_volume": true,
-    "has_balance_sheet": true
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T16:30:01.539400",
+    "timestamp": "2026-01-29T16:43:54.572550",
     "url": "https://finance.yahoo.com/quote/ASMB",
     "data_hash": "20fd9cee053625b4"
   }

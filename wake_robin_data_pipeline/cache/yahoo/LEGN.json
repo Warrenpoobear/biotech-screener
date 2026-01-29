@@ -2,42 +2,80 @@
   "ticker": "LEGN",
   "success": true,
   "price": {
-    "current": 17.87,
+    "current": 17.72,
     "currency": "USD",
-    "day_high": 18.0,
+    "day_high": 18.1299,
     "day_low": 17.56,
     "52_week_high": 45.297,
     "52_week_low": 17.56
   },
   "market_cap": {
-    "value": 3300402688.0,
+    "value": 3272699136.0,
     "currency": "USD"
   },
   "shares_outstanding": 184689565.0,
   "volume": {
-    "last": 622795,
-    "average_30d": 2867028
+    "last": 2320681,
+    "average_30d": 2951538
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 28.578283,
-    "price_to_book": 3.2639272
+    "forward_pe": 28.338396,
+    "price_to_book": 3.2365296
   },
   "company_info": {
     "name": "Legend Biotech Corporation",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1712948000.0,
+    "total_liabilities": 701688000.0,
+    "stockholders_equity": 1011260000.0,
+    "cash": 278893000.0,
+    "marketable_securities": 713698000.0,
+    "total_liquidity": 992591000.0,
+    "total_debt": 410238000.0,
+    "long_term_debt": 171930000.0,
+    "current_debt": 142873000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 28801000.0,
+    "free_cash_flow": 23796000.0,
+    "investing_cash_flow": -20001000.0,
+    "financing_cash_flow": 670000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 200476000.0,
+    "research_and_development": 113148000.0,
+    "interest_expense": 5636000.0,
+    "net_income": -39689000.0,
+    "revenue": 272330000.0,
+    "gross_profit": 157024000.0,
+    "ebitda": -27558000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:07:43.731268",
+    "timestamp": "2026-01-29T16:48:57.109417",
     "url": "https://finance.yahoo.com/quote/LEGN",
-    "data_hash": "e4d9027e778147ca"
+    "data_hash": "5ee1dc41e4cfb8c3"
   }
 }

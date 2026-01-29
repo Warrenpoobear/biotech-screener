@@ -2,42 +2,80 @@
   "ticker": "QURE",
   "success": true,
   "price": {
-    "current": 22.935,
+    "current": 23.655,
     "currency": "USD",
-    "day_high": 23.42,
+    "day_high": 23.75,
     "day_low": 22.725,
     "52_week_high": 71.5,
     "52_week_low": 7.76
   },
   "market_cap": {
-    "value": 1428659328.0,
+    "value": 1473509376.0,
     "currency": "USD"
   },
   "shares_outstanding": 62291663.0,
   "volume": {
-    "last": 183767,
-    "average_30d": 1752139
+    "last": 747172,
+    "average_30d": 1814236
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -6.876872,
-    "price_to_book": 6.2323365
+    "forward_pe": -7.0927587,
+    "price_to_book": 6.427989
   },
   "company_info": {
     "name": "uniQure N.V.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 888382000.0,
+    "total_liabilities": 659636000.0,
+    "stockholders_equity": 228746000.0,
+    "cash": 597056000.0,
+    "marketable_securities": 97189000.0,
+    "total_liquidity": 694245000.0,
+    "total_debt": 66155000.0,
+    "long_term_debt": 51880000.0,
+    "current_debt": 3914000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -16399000.0,
+    "free_cash_flow": -16333000.0,
+    "investing_cash_flow": 26579000.0,
+    "financing_cash_flow": 332235000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 52792000.0,
+    "research_and_development": 34366000.0,
+    "interest_expense": 16721000.0,
+    "net_income": -80529000.0,
+    "revenue": 3701000.0,
+    "gross_profit": 3303000.0,
+    "ebitda": -51550000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:18.558648",
+    "timestamp": "2026-01-29T16:50:56.957720",
     "url": "https://finance.yahoo.com/quote/QURE",
-    "data_hash": "f8715852c9ede513"
+    "data_hash": "4639138fce5f9597"
   }
 }

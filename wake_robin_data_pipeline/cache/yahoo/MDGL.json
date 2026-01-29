@@ -2,42 +2,80 @@
   "ticker": "MDGL",
   "success": true,
   "price": {
-    "current": 493.775,
+    "current": 494.69,
     "currency": "USD",
-    "day_high": 499.02,
+    "day_high": 500.145,
     "day_low": 485.96,
     "52_week_high": 615.0,
     "52_week_low": 265.0
   },
   "market_cap": {
-    "value": 11214330880.0,
+    "value": 11235111936.0,
     "currency": "USD"
   },
   "shares_outstanding": 22711420.0,
   "volume": {
-    "last": 61460,
-    "average_30d": 313989
+    "last": 236263,
+    "average_30d": 323279
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 292.21085,
-    "price_to_book": 17.916365
+    "forward_pe": 292.75235,
+    "price_to_book": 17.949566
   },
   "company_info": {
     "name": "Madrigal Pharmaceuticals, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1362457000.0,
+    "total_liabilities": 736725000.0,
+    "stockholders_equity": 625732000.0,
+    "cash": 295694000.0,
+    "marketable_securities": 814055000.0,
+    "total_liquidity": 1109749000.0,
+    "total_debt": 346402000.0,
+    "long_term_debt": 339753000.0,
+    "current_debt": 1083000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 79850000.0,
+    "free_cash_flow": 75993000.0,
+    "investing_cash_flow": -206996000.0,
+    "financing_cash_flow": 236647000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 383121000.0,
+    "research_and_development": 174004000.0,
+    "interest_expense": 7451000.0,
+    "net_income": -114190000.0,
+    "revenue": 287268000.0,
+    "gross_profit": 269146000.0,
+    "ebitda": -106381000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:07:58.223436",
+    "timestamp": "2026-01-29T16:49:15.315659",
     "url": "https://finance.yahoo.com/quote/MDGL",
-    "data_hash": "7e32dcef4a1ec2ae"
+    "data_hash": "7a6951639380b055"
   }
 }

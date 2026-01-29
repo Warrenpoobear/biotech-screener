@@ -2,42 +2,80 @@
   "ticker": "KMDA",
   "success": true,
   "price": {
-    "current": 8.32,
+    "current": 8.37,
     "currency": "USD",
     "day_high": 8.61,
-    "day_low": 8.3198,
+    "day_low": 8.27,
     "52_week_high": 9.15,
     "52_week_low": 5.54
   },
   "market_cap": {
-    "value": 479909408.0,
+    "value": 482793472.0,
     "currency": "USD"
   },
   "shares_outstanding": 57681420.0,
   "volume": {
-    "last": 24796,
-    "average_30d": 77168
+    "last": 60815,
+    "average_30d": 81248
   },
   "valuation": {
-    "pe_ratio": 23.771427,
-    "forward_pe": 17.333334,
-    "price_to_book": 1.8460172
+    "pe_ratio": 23.914286,
+    "forward_pe": 17.4375,
+    "price_to_book": 1.8571111
   },
   "company_info": {
     "name": "Kamada Ltd.",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 377210000.0,
+    "total_liabilities": 111978000.0,
+    "stockholders_equity": 265232000.0,
+    "cash": 71997000.0,
+    "marketable_securities": null,
+    "total_liquidity": 71997000.0,
+    "total_debt": 11470000.0,
+    "long_term_debt": 9558000.0,
+    "current_debt": 1912000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 10416000.0,
+    "free_cash_flow": 6827000.0,
+    "investing_cash_flow": -3589000.0,
+    "financing_cash_flow": -754000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 11946000.0,
+    "research_and_development": 2636000.0,
+    "interest_expense": 221000.0,
+    "net_income": 5296000.0,
+    "revenue": 47010000.0,
+    "gross_profit": 19762000.0,
+    "ebitda": 10348000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:07:30.132557",
+    "timestamp": "2026-01-29T16:48:40.472941",
     "url": "https://finance.yahoo.com/quote/KMDA",
-    "data_hash": "3bd511d154fd9760"
+    "data_hash": "7e3b8116c19fbf5f"
   }
 }

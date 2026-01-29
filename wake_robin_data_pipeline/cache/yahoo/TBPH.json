@@ -2,7 +2,7 @@
   "ticker": "TBPH",
   "success": true,
   "price": {
-    "current": 19.35,
+    "current": 19.18,
     "currency": "USD",
     "day_high": 19.609,
     "day_low": 18.96,
@@ -10,34 +10,72 @@
     "52_week_low": 7.9
   },
   "market_cap": {
-    "value": 980511552.0,
+    "value": 971897280.0,
     "currency": "USD"
   },
   "shares_outstanding": 50672431.0,
   "volume": {
-    "last": 59856,
-    "average_30d": 378629
+    "last": 221262,
+    "average_30d": 392217
   },
   "valuation": {
-    "pe_ratio": 33.94737,
-    "forward_pe": 11.449704,
-    "price_to_book": 4.21385
+    "pe_ratio": 33.649124,
+    "forward_pe": 11.3491125,
+    "price_to_book": 4.1768293
   },
   "company_info": {
     "name": "Theravance Biopharma, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 415460000.0,
+    "total_liabilities": 182779000.0,
+    "stockholders_equity": 232681000.0,
+    "cash": 174773000.0,
+    "marketable_securities": 154907000.0,
+    "total_liquidity": 329680000.0,
+    "total_debt": 44595000.0,
+    "long_term_debt": 33681000.0,
+    "current_debt": 10914000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -6508000.0,
+    "free_cash_flow": -6508000.0,
+    "investing_cash_flow": -100246000.0,
+    "financing_cash_flow": -400000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 26445000.0,
+    "research_and_development": 8112000.0,
+    "interest_expense": 573000.0,
+    "net_income": 3615000.0,
+    "revenue": 19990000.0,
+    "gross_profit": null,
+    "ebitda": -1680000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:10:10.351381",
+    "timestamp": "2026-01-29T16:52:03.164697",
     "url": "https://finance.yahoo.com/quote/TBPH",
-    "data_hash": "23c0e02947bfe9c0"
+    "data_hash": "0c52187080bb6157"
   }
 }

@@ -42,16 +42,39 @@
     "current_debt": 1738000.0,
     "error": null
   },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -62607000.0,
+    "free_cash_flow": -65457000.0,
+    "investing_cash_flow": 56739000.0,
+    "financing_cash_flow": -1257000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 101987000.0,
+    "research_and_development": 73882000.0,
+    "interest_expense": null,
+    "net_income": -202111000.0,
+    "revenue": 71161000.0,
+    "gross_profit": 60315000.0,
+    "ebitda": 2419000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
     "has_volume": true,
-    "has_balance_sheet": true
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T16:32:03.234784",
+    "timestamp": "2026-01-29T16:46:30.755633",
     "url": "https://finance.yahoo.com/quote/GLPG",
     "data_hash": "7e47b3b2cc3869b3"
   }

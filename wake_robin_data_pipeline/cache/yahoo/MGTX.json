@@ -2,7 +2,7 @@
   "ticker": "MGTX",
   "success": true,
   "price": {
-    "current": 7.68,
+    "current": 7.74,
     "currency": "USD",
     "day_high": 7.9625,
     "day_low": 7.6341,
@@ -10,34 +10,72 @@
     "52_week_low": 4.55
   },
   "market_cap": {
-    "value": 618169984.0,
+    "value": 622999424.0,
     "currency": "USD"
   },
   "shares_outstanding": 80490889.0,
   "volume": {
-    "last": 50351,
-    "average_30d": 403265
+    "last": 291987,
+    "average_30d": 420285
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -3.0597608,
-    "price_to_book": -15.238094
+    "forward_pe": -3.0836654,
+    "price_to_book": -15.357142
   },
   "company_info": {
     "name": "MeiraGTx Holdings plc",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 189471000.0,
+    "total_liabilities": 230028000.0,
+    "stockholders_equity": -40557000.0,
+    "cash": 14841000.0,
+    "marketable_securities": null,
+    "total_liquidity": 14841000.0,
+    "total_debt": 88061000.0,
+    "long_term_debt": 11531000.0,
+    "current_debt": 74055000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -12215000.0,
+    "free_cash_flow": -12825000.0,
+    "investing_cash_flow": -547000.0,
+    "financing_cash_flow": -219000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 46148000.0,
+    "research_and_development": 32532000.0,
+    "interest_expense": 3065000.0,
+    "net_income": -50513000.0,
+    "revenue": 410000.0,
+    "gross_profit": 97000.0,
+    "ebitda": -44292000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:03.670828",
+    "timestamp": "2026-01-29T16:49:19.999981",
     "url": "https://finance.yahoo.com/quote/MGTX",
-    "data_hash": "4a8bd007f319d1fd"
+    "data_hash": "aa280b1e6f7828f6"
   }
 }

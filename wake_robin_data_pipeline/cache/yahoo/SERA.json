@@ -2,42 +2,80 @@
   "ticker": "SERA",
   "success": true,
   "price": {
-    "current": 2.8801,
+    "current": 2.8,
     "currency": "USD",
     "day_high": 2.9048,
-    "day_low": 2.86,
+    "day_low": 2.775,
     "52_week_high": 6.918,
     "52_week_low": 1.37
   },
   "market_cap": {
-    "value": 111156864.0,
+    "value": 108065416.0,
     "currency": "USD"
   },
   "shares_outstanding": 37627034.0,
   "volume": {
-    "last": 6267,
-    "average_30d": 62812
+    "last": 24708,
+    "average_30d": 63743
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -4.1144285,
-    "price_to_book": 1.3515251
+    "forward_pe": -4.0,
+    "price_to_book": 1.3139371
   },
   "company_info": {
     "name": "Sera Prognostics, Inc.",
     "sector": "Healthcare",
     "industry": "Medical Devices"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 108125000.0,
+    "total_liabilities": 25943000.0,
+    "stockholders_equity": 82182000.0,
+    "cash": 4081000.0,
+    "marketable_securities": 39223000.0,
+    "total_liquidity": 43304000.0,
+    "total_debt": 2446000.0,
+    "long_term_debt": 2443000.0,
+    "current_debt": 3000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -6477000.0,
+    "free_cash_flow": -6589000.0,
+    "investing_cash_flow": 5169000.0,
+    "financing_cash_flow": 373000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 8955000.0,
+    "research_and_development": 3284000.0,
+    "interest_expense": 2000.0,
+    "net_income": -7814000.0,
+    "revenue": 16000.0,
+    "gross_profit": -25000.0,
+    "ebitda": -7569000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:42.892386",
+    "timestamp": "2026-01-29T16:51:29.764365",
     "url": "https://finance.yahoo.com/quote/SERA",
-    "data_hash": "836bfb532b7c75ee"
+    "data_hash": "766a387df93388c2"
   }
 }

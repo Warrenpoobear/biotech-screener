@@ -42,16 +42,39 @@
     "current_debt": 17987000.0,
     "error": null
   },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -88151000.0,
+    "free_cash_flow": -89706000.0,
+    "investing_cash_flow": 95555000.0,
+    "financing_cash_flow": 4435000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 128070000.0,
+    "research_and_development": 86796000.0,
+    "interest_expense": null,
+    "net_income": -103433000.0,
+    "revenue": 12880000.0,
+    "gross_profit": 11201000.0,
+    "ebitda": -115495000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
     "has_volume": true,
-    "has_balance_sheet": true
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T16:29:26.471007",
+    "timestamp": "2026-01-29T16:43:08.579574",
     "url": "https://finance.yahoo.com/quote/AGIO",
     "data_hash": "32b084de5c2b1f6b"
   }

@@ -2,42 +2,80 @@
   "ticker": "NKTX",
   "success": true,
   "price": {
-    "current": 2.395,
+    "current": 2.43,
     "currency": "USD",
     "day_high": 2.47,
-    "day_low": 2.385,
+    "day_low": 2.3801,
     "52_week_high": 2.74,
     "52_week_low": 1.31
   },
   "market_cap": {
-    "value": 170115680.0,
+    "value": 172601712.0,
     "currency": "USD"
   },
   "shares_outstanding": 71029512.0,
   "volume": {
-    "last": 170059,
-    "average_30d": 817889
+    "last": 492002,
+    "average_30d": 845528
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -1.8236086,
-    "price_to_book": 0.5033628
+    "forward_pe": -1.8502585,
+    "price_to_book": 0.5107188
   },
   "company_info": {
     "name": "Nkarta, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 427236000.0,
+    "total_liabilities": 89336000.0,
+    "stockholders_equity": 337900000.0,
+    "cash": 60114000.0,
+    "marketable_securities": 222217000.0,
+    "total_liquidity": 282331000.0,
+    "total_debt": 76634000.0,
+    "long_term_debt": 70261000.0,
+    "current_debt": 6373000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -18687000.0,
+    "free_cash_flow": -18679000.0,
+    "investing_cash_flow": 25387000.0,
+    "financing_cash_flow": 0.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 27286000.0,
+    "research_and_development": 20198000.0,
+    "interest_expense": null,
+    "net_income": -21715000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -24980000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:24.370157",
+    "timestamp": "2026-01-29T16:49:48.611039",
     "url": "https://finance.yahoo.com/quote/NKTX",
-    "data_hash": "d91a26044b588dbb"
+    "data_hash": "0dc3e5395368ca34"
   }
 }

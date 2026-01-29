@@ -2,42 +2,80 @@
   "ticker": "VTRS",
   "success": true,
   "price": {
-    "current": 12.9639,
+    "current": 13.07,
     "currency": "USD",
-    "day_high": 13.045,
+    "day_high": 13.18,
     "day_low": 12.92,
     "52_week_high": 13.49,
     "52_week_low": 6.85
   },
   "market_cap": {
-    "value": 14966396928.0,
+    "value": 15088885760.0,
     "currency": "USD"
   },
   "shares_outstanding": 1151769872.0,
   "volume": {
-    "last": 970173,
-    "average_30d": 7942507
+    "last": 5288095,
+    "average_30d": 8264285
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 5.225967,
-    "price_to_book": 0.98749995
+    "forward_pe": 5.268738,
+    "price_to_book": 0.9955819
   },
   "company_info": {
     "name": "Viatris Inc.",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 37920400000.0,
+    "total_liabilities": 22702800000.0,
+    "stockholders_equity": 15217600000.0,
+    "cash": 975300000.0,
+    "marketable_securities": 181800000.0,
+    "total_liquidity": 1157100000.0,
+    "total_debt": 14715200000.0,
+    "long_term_debt": 12487600000.0,
+    "current_debt": 1944300000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 744900000.0,
+    "free_cash_flow": 645200000.0,
+    "investing_cash_flow": -98900000.0,
+    "financing_cash_flow": -228100000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 1137000000.0,
+    "research_and_development": 250400000.0,
+    "interest_expense": 119600000.0,
+    "net_income": -128200000.0,
+    "revenue": 3759900000.0,
+    "gross_profit": 1371500000.0,
+    "ebitda": 800200000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:10:46.099260",
+    "timestamp": "2026-01-29T16:52:51.199376",
     "url": "https://finance.yahoo.com/quote/VTRS",
-    "data_hash": "06c8b26e9bf6f689"
+    "data_hash": "2f157b3a7ccf61f4"
   }
 }

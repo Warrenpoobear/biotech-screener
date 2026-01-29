@@ -42,16 +42,39 @@
     "current_debt": 981000.0,
     "error": null
   },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -30368000.0,
+    "free_cash_flow": -30392000.0,
+    "investing_cash_flow": 5236000.0,
+    "financing_cash_flow": 191606000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 36027000.0,
+    "research_and_development": 19855000.0,
+    "interest_expense": null,
+    "net_income": -34386000.0,
+    "revenue": 0.0,
+    "gross_profit": 0.0,
+    "ebitda": -35907000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
     "has_volume": true,
-    "has_balance_sheet": true
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T16:29:39.350895",
+    "timestamp": "2026-01-29T16:43:27.574938",
     "url": "https://finance.yahoo.com/quote/AMLX",
     "data_hash": "0bf037a873ae962b"
   }

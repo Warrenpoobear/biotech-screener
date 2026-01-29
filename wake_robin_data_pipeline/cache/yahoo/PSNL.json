@@ -2,42 +2,80 @@
   "ticker": "PSNL",
   "success": true,
   "price": {
-    "current": 9.88,
+    "current": 9.97,
     "currency": "USD",
-    "day_high": 10.13,
+    "day_high": 10.16,
     "day_low": 9.63,
     "52_week_high": 11.5,
     "52_week_low": 2.826
   },
   "market_cap": {
-    "value": 877387008.0,
+    "value": 885379392.0,
     "currency": "USD"
   },
   "shares_outstanding": 88804348.0,
   "volume": {
-    "last": 255918,
-    "average_30d": 1252282
+    "last": 808372,
+    "average_30d": 1303044
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -10.096365,
-    "price_to_book": 5.1138716
+    "forward_pe": -10.188336,
+    "price_to_book": 5.1604557
   },
   "company_info": {
     "name": "Personalis, Inc.",
     "sector": "Healthcare",
     "industry": "Diagnostics & Research"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 242839000.0,
+    "total_liabilities": 71424000.0,
+    "stockholders_equity": 171415000.0,
+    "cash": 49973000.0,
+    "marketable_securities": 100542000.0,
+    "total_liquidity": 150515000.0,
+    "total_debt": 41031000.0,
+    "long_term_debt": 32658000.0,
+    "current_debt": 1473000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -21804000.0,
+    "free_cash_flow": -23430000.0,
+    "investing_cash_flow": 18724000.0,
+    "financing_cash_flow": -317000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 25205000.0,
+    "research_and_development": 12171000.0,
+    "interest_expense": 64000.0,
+    "net_income": -21652000.0,
+    "revenue": 14495000.0,
+    "gross_profit": 1914000.0,
+    "ebitda": -19119000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:09.002201",
+    "timestamp": "2026-01-29T16:50:46.062043",
     "url": "https://finance.yahoo.com/quote/PSNL",
-    "data_hash": "cbc662d26cbd96ea"
+    "data_hash": "a0c801265626d6e8"
   }
 }

@@ -2,7 +2,7 @@
   "ticker": "OCGN",
   "success": true,
   "price": {
-    "current": 1.505,
+    "current": 1.52,
     "currency": "USD",
     "day_high": 1.56,
     "day_low": 1.5,
@@ -10,34 +10,72 @@
     "52_week_low": 0.515
   },
   "market_cap": {
-    "value": 492616800.0,
+    "value": 497526592.0,
     "currency": "USD"
   },
   "shares_outstanding": 327320112.0,
   "volume": {
-    "last": 1122609,
-    "average_30d": 6062364
+    "last": 3162999,
+    "average_30d": 6204028
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -6.336842,
-    "price_to_book": 136.81818
+    "forward_pe": -6.4,
+    "price_to_book": 138.18182
   },
   "company_info": {
     "name": "Ocugen, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 57596000.0,
+    "total_liabilities": 54063000.0,
+    "stockholders_equity": 3533000.0,
+    "cash": 32565000.0,
+    "marketable_securities": null,
+    "total_liquidity": 32565000.0,
+    "total_debt": 32964000.0,
+    "long_term_debt": 28400000.0,
+    "current_debt": 855000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -12916000.0,
+    "free_cash_flow": -13007000.0,
+    "investing_cash_flow": -86000.0,
+    "financing_cash_flow": 18510000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 19377000.0,
+    "research_and_development": 11149000.0,
+    "interest_expense": 1314000.0,
+    "net_income": -20051000.0,
+    "revenue": 1752000.0,
+    "gross_profit": null,
+    "ebitda": -17787000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:36.999992",
+    "timestamp": "2026-01-29T16:50:05.104714",
     "url": "https://finance.yahoo.com/quote/OCGN",
-    "data_hash": "febce4d1bcdbda08"
+    "data_hash": "126611d8c41b7969"
   }
 }

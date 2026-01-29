@@ -2,42 +2,80 @@
   "ticker": "VCYT",
   "success": true,
   "price": {
-    "current": 38.06,
+    "current": 38.74,
     "currency": "USD",
-    "day_high": 38.705,
+    "day_high": 38.755,
     "day_low": 37.81,
     "52_week_high": 50.71,
     "52_week_low": 22.61
   },
   "market_cap": {
-    "value": 3008611840.0,
+    "value": 3062365184.0,
     "currency": "USD"
   },
   "shares_outstanding": 79049173.0,
   "volume": {
-    "last": 100909,
-    "average_30d": 712886
+    "last": 604365,
+    "average_30d": 740188
   },
   "valuation": {
-    "pe_ratio": 100.1579,
-    "forward_pe": 24.851942,
-    "price_to_book": 2.3917553
+    "pe_ratio": 101.94737,
+    "forward_pe": 25.29596,
+    "price_to_book": 2.4344876
   },
   "company_info": {
     "name": "Veracyte, Inc.",
     "sector": "Healthcare",
     "industry": "Diagnostics & Research"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1367787000.0,
+    "total_liabilities": 110120000.0,
+    "stockholders_equity": 1257667000.0,
+    "cash": 315573000.0,
+    "marketable_securities": 50855000.0,
+    "total_liquidity": 366428000.0,
+    "total_debt": 40453000.0,
+    "long_term_debt": 36171000.0,
+    "current_debt": 4282000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 44757000.0,
+    "free_cash_flow": 41965000.0,
+    "investing_cash_flow": 48263000.0,
+    "financing_cash_flow": 2977000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 68170000.0,
+    "research_and_development": 15981000.0,
+    "interest_expense": 0.0,
+    "net_income": 19137000.0,
+    "revenue": 131872000.0,
+    "gross_profit": 91282000.0,
+    "ebitda": 24155000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:10:36.617708",
+    "timestamp": "2026-01-29T16:52:37.330347",
     "url": "https://finance.yahoo.com/quote/VCYT",
-    "data_hash": "46ea8d520f1c583b"
+    "data_hash": "728e4d7ee03af125"
   }
 }

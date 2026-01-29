@@ -2,42 +2,80 @@
   "ticker": "NAMS",
   "success": true,
   "price": {
-    "current": 31.525,
+    "current": 31.44,
     "currency": "USD",
     "day_high": 32.275,
-    "day_low": 31.37,
+    "day_low": 31.26,
     "52_week_high": 42.0,
     "52_week_low": 14.06
   },
   "market_cap": {
-    "value": 3574644992.0,
+    "value": 3565006848.0,
     "currency": "USD"
   },
   "shares_outstanding": 113390804.0,
   "volume": {
-    "last": 48715,
-    "average_30d": 705023
+    "last": 320259,
+    "average_30d": 733764
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -18.1567,
-    "price_to_book": 4.9005127
+    "forward_pe": -18.168072,
+    "price_to_book": 4.8873
   },
   "company_info": {
     "name": "NewAmsterdam Pharma Company N.V.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 786427000.0,
+    "total_liabilities": 58357000.0,
+    "stockholders_equity": 728070000.0,
+    "cash": 538407000.0,
+    "marketable_securities": 164539000.0,
+    "total_liquidity": 702946000.0,
+    "total_debt": 266000.0,
+    "long_term_debt": 85000.0,
+    "current_debt": 181000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -32769000.0,
+    "free_cash_flow": -32811000.0,
+    "investing_cash_flow": 2506000.0,
+    "financing_cash_flow": 5892000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 55491000.0,
+    "research_and_development": 30971000.0,
+    "interest_expense": null,
+    "net_income": -72005000.0,
+    "revenue": 348000.0,
+    "gross_profit": null,
+    "ebitda": -55079000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:17.551788",
+    "timestamp": "2026-01-29T16:49:39.575941",
     "url": "https://finance.yahoo.com/quote/NAMS",
-    "data_hash": "cc74edc35481327a"
+    "data_hash": "1113210520966fe9"
   }
 }

@@ -2,42 +2,80 @@
   "ticker": "NTRA",
   "success": true,
   "price": {
-    "current": 230.91,
+    "current": 231.48,
     "currency": "USD",
     "day_high": 235.01,
-    "day_low": 229.44,
+    "day_low": 229.18,
     "52_week_high": 256.36,
     "52_week_low": 125.38
   },
   "market_cap": {
-    "value": 32200196096.0,
+    "value": 32279681024.0,
     "currency": "USD"
   },
   "shares_outstanding": 139449120.0,
   "volume": {
-    "last": 189896,
-    "average_30d": 1037390
+    "last": 879656,
+    "average_30d": 1096216
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -116.246056,
-    "price_to_book": 25.360792
+    "forward_pe": -116.533005,
+    "price_to_book": 25.423395
   },
   "company_info": {
     "name": "Natera, Inc.",
     "sector": "Healthcare",
     "industry": "Diagnostics & Research"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1821482000.0,
+    "total_liabilities": 569294000.0,
+    "stockholders_equity": 1252188000.0,
+    "cash": 1041438000.0,
+    "marketable_securities": 1000000.0,
+    "total_liquidity": 1042438000.0,
+    "total_debt": 198727000.0,
+    "long_term_debt": 104380000.0,
+    "current_debt": 80341000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 59387000.0,
+    "free_cash_flow": 24482000.0,
+    "investing_cash_flow": -19905000.0,
+    "financing_cash_flow": 1935000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 481958000.0,
+    "research_and_development": 173412000.0,
+    "interest_expense": 1045000.0,
+    "net_income": -87544000.0,
+    "revenue": 592183000.0,
+    "gross_profit": 384382000.0,
+    "ebitda": -76000000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:27.364416",
+    "timestamp": "2026-01-29T16:49:54.486422",
     "url": "https://finance.yahoo.com/quote/NTRA",
-    "data_hash": "1d94a30eeeb18c6d"
+    "data_hash": "882e91d2570a431f"
   }
 }

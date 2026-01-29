@@ -2,42 +2,80 @@
   "ticker": "INBX",
   "success": true,
   "price": {
-    "current": 73.69,
+    "current": 72.56,
     "currency": "USD",
     "day_high": 75.25,
-    "day_low": 72.945,
+    "day_low": 72.4,
     "52_week_high": 94.565,
     "52_week_low": 10.805
   },
   "market_cap": {
-    "value": 1071728064.0,
+    "value": 1055293568.0,
     "currency": "USD"
   },
   "shares_outstanding": 14543738.0,
   "volume": {
-    "last": 61062,
-    "average_30d": 194380
+    "last": 184688,
+    "average_30d": 202986
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -15.481092,
-    "price_to_book": 29.011812
+    "forward_pe": -15.243696,
+    "price_to_book": 28.566929
   },
   "company_info": {
     "name": "Inhibrx Biosciences, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 177471000.0,
+    "total_liabilities": 140641000.0,
+    "stockholders_equity": 36830000.0,
+    "cash": 153088000.0,
+    "marketable_securities": null,
+    "total_liquidity": 153088000.0,
+    "total_debt": 106905000.0,
+    "long_term_debt": 99917000.0,
+    "current_debt": 2247000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -33824000.0,
+    "free_cash_flow": -33834000.0,
+    "investing_cash_flow": -7000.0,
+    "financing_cash_flow": 352000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 33812000.0,
+    "research_and_development": 28535000.0,
+    "interest_expense": 3181000.0,
+    "net_income": -35256000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -31492000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:07:15.445666",
+    "timestamp": "2026-01-29T16:48:14.951654",
     "url": "https://finance.yahoo.com/quote/INBX",
-    "data_hash": "f15193708af4506d"
+    "data_hash": "e2d89bb717b74a87"
   }
 }

@@ -2,7 +2,7 @@
   "ticker": "IMMP",
   "success": true,
   "price": {
-    "current": 3.0,
+    "current": 2.97,
     "currency": "USD",
     "day_high": 3.073,
     "day_low": 2.93,
@@ -10,34 +10,75 @@
     "52_week_low": 1.32
   },
   "market_cap": {
-    "value": 441576096.0,
+    "value": 437160352.0,
     "currency": "USD"
   },
   "shares_outstanding": 147192034.0,
   "volume": {
-    "last": 92617,
-    "average_30d": 190732
+    "last": 209378,
+    "average_30d": 185956
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -12.947777,
-    "price_to_book": 43.761784
+    "forward_pe": -12.1273985,
+    "price_to_book": 43.05275
   },
   "company_info": {
     "name": "Immutep Limited",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2024-12-31",
+    "total_assets": 182328516.0,
+    "total_liabilities": 9856310.0,
+    "stockholders_equity": 172472206.0,
+    "cash": 73886442.0,
+    "marketable_securities": 85374520.0,
+    "total_liquidity": 159260962.0,
+    "total_debt": 1684817.0,
+    "long_term_debt": 391045.0,
+    "current_debt": 1032612.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": false,
+    "period_date": "2025-03-31",
+    "operating_cash_flow": null,
+    "free_cash_flow": -16262000.0,
+    "investing_cash_flow": 32342000.0,
+    "financing_cash_flow": -65000.0,
+    "error": "no_operating_cf_found"
+  },
+  "income_statement": {
+    "success": false,
+    "period_date": null,
+    "operating_expense": null,
+    "research_and_development": null,
+    "interest_expense": null,
+    "net_income": null,
+    "revenue": null,
+    "gross_profit": null,
+    "ebitda": null,
+    "error": "no_income_stmt_data"
+  },
   "data_quality": {
-    "flags": [],
+    "flags": [
+      "cash_flow_error:no_operating_cf_found",
+      "income_stmt_error:no_income_stmt_data"
+    ],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": false,
+    "has_income_statement": false
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:07:09.746810",
+    "timestamp": "2026-01-29T16:48:08.185435",
     "url": "https://finance.yahoo.com/quote/IMMP",
-    "data_hash": "80a67da3519c8b0e"
+    "data_hash": "1706e699e3333c59"
   }
 }

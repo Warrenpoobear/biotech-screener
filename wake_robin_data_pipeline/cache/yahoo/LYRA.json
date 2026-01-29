@@ -2,7 +2,7 @@
   "ticker": "LYRA",
   "success": true,
   "price": {
-    "current": 1.91,
+    "current": 2.04,
     "currency": "USD",
     "day_high": 2.05,
     "day_low": 1.86,
@@ -10,34 +10,72 @@
     "52_week_low": 1.6
   },
   "market_cap": {
-    "value": 3390024.0,
+    "value": 3620759.0,
     "currency": "USD"
   },
   "shares_outstanding": 1774882.0,
   "volume": {
-    "last": 26630,
-    "average_30d": 129792
+    "last": 58155,
+    "average_30d": 135169
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -1.9292929,
-    "price_to_book": -0.72568387
+    "forward_pe": -2.060606,
+    "price_to_book": -0.775076
   },
   "company_info": {
     "name": "Lyra Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 43709000.0,
+    "total_liabilities": 48037000.0,
+    "stockholders_equity": -4328000.0,
+    "cash": 22055000.0,
+    "marketable_securities": null,
+    "total_liquidity": 22055000.0,
+    "total_debt": 31379000.0,
+    "long_term_debt": 26695000.0,
+    "current_debt": 4684000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -7361000.0,
+    "free_cash_flow": -7361000.0,
+    "investing_cash_flow": 0.0,
+    "financing_cash_flow": -368000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 6283000.0,
+    "research_and_development": 4047000.0,
+    "interest_expense": null,
+    "net_income": -5984000.0,
+    "revenue": 25000.0,
+    "gross_profit": null,
+    "ebitda": -6154000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:07:54.938637",
+    "timestamp": "2026-01-29T16:49:09.125757",
     "url": "https://finance.yahoo.com/quote/LYRA",
-    "data_hash": "c02c1efec5da9840"
+    "data_hash": "c87a7acf1fc20201"
   }
 }

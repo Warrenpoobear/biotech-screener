@@ -2,42 +2,80 @@
   "ticker": "VRTX",
   "success": true,
   "price": {
-    "current": 481.76,
+    "current": 475.68,
     "currency": "USD",
     "day_high": 484.35,
-    "day_low": 478.05,
+    "day_low": 473.86,
     "52_week_high": 519.68,
     "52_week_low": 362.5
   },
   "market_cap": {
-    "value": 123518763008.0,
+    "value": 121959907328.0,
     "currency": "USD"
   },
   "shares_outstanding": 253718831.0,
   "volume": {
-    "last": 217311,
-    "average_30d": 1373055
+    "last": 1453158,
+    "average_30d": 1467393
   },
   "valuation": {
-    "pe_ratio": 33.950672,
-    "forward_pe": 23.851904,
-    "price_to_book": 7.0642405
+    "pe_ratio": 33.522198,
+    "forward_pe": 23.550882,
+    "price_to_book": 6.9750867
   },
   "company_info": {
     "name": "Vertex Pharmaceuticals Incorporated",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 24862300000.0,
+    "total_liabilities": 7543500000.0,
+    "stockholders_equity": 17318800000.0,
+    "cash": 4939600000.0,
+    "marketable_securities": 1347400000.0,
+    "total_liquidity": 6287000000.0,
+    "total_debt": 1834800000.0,
+    "long_term_debt": 1834800000.0,
+    "current_debt": null,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 1241400000.0,
+    "free_cash_flow": 1139600000.0,
+    "investing_cash_flow": -117000000.0,
+    "financing_cash_flow": -1154500000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 1422800000.0,
+    "research_and_development": 977700000.0,
+    "interest_expense": 3300000.0,
+    "net_income": 1082900000.0,
+    "revenue": 3076400000.0,
+    "gross_profit": 2661600000.0,
+    "ebitda": 1356100000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T10:59:30.497804",
+    "timestamp": "2026-01-29T16:52:47.953679",
     "url": "https://finance.yahoo.com/quote/VRTX",
-    "data_hash": "da975722f427e61c"
+    "data_hash": "c3c7dfabfd79e072"
   }
 }

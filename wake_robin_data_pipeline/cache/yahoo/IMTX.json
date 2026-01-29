@@ -2,42 +2,80 @@
   "ticker": "IMTX",
   "success": true,
   "price": {
-    "current": 9.6,
+    "current": 9.38,
     "currency": "USD",
     "day_high": 9.815,
-    "day_low": 9.57,
+    "day_low": 9.32,
     "52_week_high": 12.41,
     "52_week_low": 3.3
   },
   "market_cap": {
-    "value": 1287012864.0,
+    "value": 1257518720.0,
     "currency": "USD"
   },
   "shares_outstanding": 134063829.0,
   "volume": {
-    "last": 38369,
-    "average_30d": 352098
+    "last": 355216,
+    "average_30d": 375214
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -5.2273345,
-    "price_to_book": 2.3305376
+    "forward_pe": -5.1075416,
+    "price_to_book": 2.2771292
   },
   "company_info": {
     "name": "Immatics N.V.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 518557000.0,
+    "total_liabilities": 101878000.0,
+    "stockholders_equity": 416679000.0,
+    "cash": 334922000.0,
+    "marketable_securities": 95915000.0,
+    "total_liquidity": 430837000.0,
+    "total_debt": 16379000.0,
+    "long_term_debt": 13500000.0,
+    "current_debt": 2879000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -44700000.0,
+    "free_cash_flow": -45785000.0,
+    "investing_cash_flow": 122651000.0,
+    "financing_cash_flow": -734000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 59820000.0,
+    "research_and_development": 47176000.0,
+    "interest_expense": 231000.0,
+    "net_income": -50545000.0,
+    "revenue": 5187000.0,
+    "gross_profit": null,
+    "ebitda": -47376000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:07:12.546861",
+    "timestamp": "2026-01-29T16:48:12.995225",
     "url": "https://finance.yahoo.com/quote/IMTX",
-    "data_hash": "027d5f3c19afaef0"
+    "data_hash": "0b3c960e61489cad"
   }
 }

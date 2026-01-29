@@ -2,42 +2,83 @@
   "ticker": "MESO",
   "success": true,
   "price": {
-    "current": 17.89,
+    "current": 17.96,
     "currency": "USD",
     "day_high": 18.49,
-    "day_low": 17.84,
+    "day_low": 17.67,
     "52_week_high": 21.5,
     "52_week_low": 9.61
   },
   "market_cap": {
-    "value": 2373767680.0,
+    "value": 2383055616.0,
     "currency": "USD"
   },
   "shares_outstanding": 129026980.0,
   "volume": {
-    "last": 61865,
-    "average_30d": 211266
+    "last": 179499,
+    "average_30d": 220057
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 105.23529,
-    "price_to_book": 38.30835
+    "forward_pe": 105.64705,
+    "price_to_book": 38.45824
   },
   "company_info": {
     "name": "Mesoblast Limited",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-06-30",
+    "total_assets": 784683000.0,
+    "total_liabilities": 187241000.0,
+    "stockholders_equity": 597442000.0,
+    "cash": 161158000.0,
+    "marketable_securities": null,
+    "total_liquidity": 161158000.0,
+    "total_debt": 128157000.0,
+    "long_term_debt": 67739000.0,
+    "current_debt": 54155000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": false,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": null,
+    "free_cash_flow": -15255000.0,
+    "investing_cash_flow": -310000.0,
+    "financing_cash_flow": -1865000.0,
+    "error": "no_operating_cf_found"
+  },
+  "income_statement": {
+    "success": false,
+    "period_date": null,
+    "operating_expense": null,
+    "research_and_development": null,
+    "interest_expense": null,
+    "net_income": null,
+    "revenue": null,
+    "gross_profit": null,
+    "ebitda": null,
+    "error": "no_income_stmt_data"
+  },
   "data_quality": {
-    "flags": [],
+    "flags": [
+      "cash_flow_error:no_operating_cf_found",
+      "income_stmt_error:no_income_stmt_data"
+    ],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": false,
+    "has_income_statement": false
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:02.303925",
+    "timestamp": "2026-01-29T16:49:18.529504",
     "url": "https://finance.yahoo.com/quote/MESO",
-    "data_hash": "e95030b7eb30ed1b"
+    "data_hash": "6aed03440100a69b"
   }
 }

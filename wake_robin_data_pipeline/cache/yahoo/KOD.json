@@ -2,42 +2,80 @@
   "ticker": "KOD",
   "success": true,
   "price": {
-    "current": 25.12,
+    "current": 25.43,
     "currency": "USD",
     "day_high": 26.4999,
-    "day_low": 25.0,
+    "day_low": 24.87,
     "52_week_high": 31.18,
     "52_week_low": 1.92
   },
   "market_cap": {
-    "value": 1533536512.0,
+    "value": 1552461568.0,
     "currency": "USD"
   },
   "shares_outstanding": 61048428.0,
   "volume": {
-    "last": 85632,
-    "average_30d": 808065
+    "last": 430742,
+    "average_30d": 800571
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -6.7409463,
-    "price_to_book": 56.07143
+    "forward_pe": -6.8241343,
+    "price_to_book": 56.763393
   },
   "company_info": {
     "name": "Kodiak Sciences Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 218069000.0,
+    "total_liabilities": 194377000.0,
+    "stockholders_equity": 23692000.0,
+    "cash": 72038000.0,
+    "marketable_securities": null,
+    "total_liquidity": 72038000.0,
+    "total_debt": 62201000.0,
+    "long_term_debt": 50448000.0,
+    "current_debt": 11753000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -32880000.0,
+    "free_cash_flow": -32940000.0,
+    "investing_cash_flow": -60000.0,
+    "financing_cash_flow": 813000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 62352000.0,
+    "research_and_development": 50476000.0,
+    "interest_expense": null,
+    "net_income": -61457000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -55813000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:07:32.831288",
+    "timestamp": "2026-01-29T16:48:43.494664",
     "url": "https://finance.yahoo.com/quote/KOD",
-    "data_hash": "9d5c9fc602a5565d"
+    "data_hash": "bc9cc1c3a0b972f9"
   }
 }

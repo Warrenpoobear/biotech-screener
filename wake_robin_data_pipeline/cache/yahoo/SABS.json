@@ -2,42 +2,80 @@
   "ticker": "SABS",
   "success": true,
   "price": {
-    "current": 4.36,
+    "current": 4.42,
     "currency": "USD",
     "day_high": 4.525,
-    "day_low": 4.36,
+    "day_low": 4.3001,
     "52_week_high": 6.6,
     "52_week_low": 1.0
   },
   "market_cap": {
-    "value": 207565888.0,
+    "value": 210422288.0,
     "currency": "USD"
   },
   "shares_outstanding": 47606851.0,
   "volume": {
-    "last": 379785,
-    "average_30d": 426544
+    "last": 495128,
+    "average_30d": 447103
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -14.533333,
-    "price_to_book": 1.2543154
+    "forward_pe": -14.733333,
+    "price_to_book": 1.2715765
   },
   "company_info": {
     "name": "SAB Biotherapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 183448368.0,
+    "total_liabilities": 18374019.0,
+    "stockholders_equity": 165074349.0,
+    "cash": 29424708.0,
+    "marketable_securities": 81455925.0,
+    "total_liquidity": 110880633.0,
+    "total_debt": 6187342.0,
+    "long_term_debt": 5199023.0,
+    "current_debt": 988319.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -13050023.0,
+    "free_cash_flow": -13050023.0,
+    "investing_cash_flow": -129868915.0,
+    "financing_cash_flow": 168688966.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 12678969.0,
+    "research_and_development": 8970010.0,
+    "interest_expense": 43292.0,
+    "net_income": 45445469.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": 46254230.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:38.509284",
+    "timestamp": "2026-01-29T16:51:25.293458",
     "url": "https://finance.yahoo.com/quote/SABS",
-    "data_hash": "2662c3f25258e833"
+    "data_hash": "b1f50734a4048a38"
   }
 }

@@ -2,7 +2,7 @@
   "ticker": "MNKD",
   "success": true,
   "price": {
-    "current": 5.765,
+    "current": 5.79,
     "currency": "USD",
     "day_high": 5.93,
     "day_low": 5.61,
@@ -10,34 +10,72 @@
     "52_week_low": 3.38
   },
   "market_cap": {
-    "value": 1770260096.0,
+    "value": 1777936896.0,
     "currency": "USD"
   },
   "shares_outstanding": 307070281.0,
   "volume": {
-    "last": 1318500,
-    "average_30d": 3826927
+    "last": 4219042,
+    "average_30d": 4070403
   },
   "valuation": {
-    "pe_ratio": 57.649998,
-    "forward_pe": 39.305923,
-    "price_to_book": -39.75862
+    "pe_ratio": 57.899998,
+    "forward_pe": 39.476376,
+    "price_to_book": -39.931034
   },
   "company_info": {
     "name": "MannKind Corporation",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 494640000.0,
+    "total_liabilities": 539192000.0,
+    "stockholders_equity": -44552000.0,
+    "cash": 127392000.0,
+    "marketable_securities": 132643000.0,
+    "total_liquidity": 260035000.0,
+    "total_debt": 119910000.0,
+    "long_term_debt": 73428000.0,
+    "current_debt": 36224000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 23640000.0,
+    "free_cash_flow": 22515000.0,
+    "investing_cash_flow": -25058000.0,
+    "financing_cash_flow": 71806000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 43151000.0,
+    "research_and_development": 14063000.0,
+    "interest_expense": 7334000.0,
+    "net_income": 7985000.0,
+    "revenue": 82130000.0,
+    "gross_profit": 61927000.0,
+    "ebitda": 17916000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:09.139280",
+    "timestamp": "2026-01-29T16:49:27.362919",
     "url": "https://finance.yahoo.com/quote/MNKD",
-    "data_hash": "7021b230656e87cd"
+    "data_hash": "eed82850278655ea"
   }
 }

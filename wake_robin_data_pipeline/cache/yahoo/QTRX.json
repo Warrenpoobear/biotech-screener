@@ -2,42 +2,80 @@
   "ticker": "QTRX",
   "success": true,
   "price": {
-    "current": 6.59,
+    "current": 6.69,
     "currency": "USD",
-    "day_high": 6.68,
+    "day_high": 6.77,
     "day_low": 6.33,
     "52_week_high": 9.92,
     "52_week_low": 4.05
   },
   "market_cap": {
-    "value": 307824160.0,
+    "value": 312495232.0,
     "currency": "USD"
   },
   "shares_outstanding": 46710797.0,
   "volume": {
-    "last": 207860,
-    "average_30d": 699298
+    "last": 995847,
+    "average_30d": 749007
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -7.4886365,
-    "price_to_book": 0.97803503
+    "forward_pe": -7.602273,
+    "price_to_book": 0.99287623
   },
   "company_info": {
     "name": "Quanterix Corporation",
     "sector": "Healthcare",
     "industry": "Medical Devices"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 444140000.0,
+    "total_liabilities": 129606000.0,
+    "stockholders_equity": 314534000.0,
+    "cash": 38298000.0,
+    "marketable_securities": 96511000.0,
+    "total_liquidity": 134809000.0,
+    "total_debt": 40120000.0,
+    "long_term_debt": 31708000.0,
+    "current_debt": 8412000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -41249000.0,
+    "free_cash_flow": -41926000.0,
+    "investing_cash_flow": -52850000.0,
+    "financing_cash_flow": 150000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 47274000.0,
+    "research_and_development": 8009000.0,
+    "interest_expense": null,
+    "net_income": -33517000.0,
+    "revenue": 40150000.0,
+    "gross_profit": 17123000.0,
+    "ebitda": -25570000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:17.222316",
+    "timestamp": "2026-01-29T16:50:53.856408",
     "url": "https://finance.yahoo.com/quote/QTRX",
-    "data_hash": "4c6bf7897f785c02"
+    "data_hash": "d0acde0b5765195e"
   }
 }

@@ -2,42 +2,80 @@
   "ticker": "RXRX",
   "success": true,
   "price": {
-    "current": 4.371,
+    "current": 4.32,
     "currency": "USD",
     "day_high": 4.48,
-    "day_low": 4.35,
+    "day_low": 4.3,
     "52_week_high": 12.36,
     "52_week_low": 3.79
   },
   "market_cap": {
-    "value": 2278439424.0,
+    "value": 2251855104.0,
     "currency": "USD"
   },
   "shares_outstanding": 514190251.0,
   "volume": {
-    "last": 7432137,
-    "average_30d": 20028506
+    "last": 17010880,
+    "average_30d": 20274170
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -3.7391891,
-    "price_to_book": 2.0530765
+    "forward_pe": -3.6955612,
+    "price_to_book": 2.0291219
   },
   "company_info": {
     "name": "Recursion Pharmaceuticals, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1399526000.0,
+    "total_liabilities": 352578000.0,
+    "stockholders_equity": 1046948000.0,
+    "cash": 659836000.0,
+    "marketable_securities": null,
+    "total_liquidity": 659836000.0,
+    "total_debt": 82374000.0,
+    "long_term_debt": 11902000.0,
+    "current_debt": 8919000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -117360000.0,
+    "free_cash_flow": -117603000.0,
+    "investing_cash_flow": -2549000.0,
+    "financing_cash_flow": 251340000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 162498000.0,
+    "research_and_development": 121062000.0,
+    "interest_expense": 833000.0,
+    "net_income": -162253000.0,
+    "revenue": 4983000.0,
+    "gross_profit": -9704000.0,
+    "ebitda": -140374000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:37.128623",
+    "timestamp": "2026-01-29T16:51:22.417709",
     "url": "https://finance.yahoo.com/quote/RXRX",
-    "data_hash": "8dee513684728ff7"
+    "data_hash": "f962d48cb91fe57b"
   }
 }

@@ -2,42 +2,80 @@
   "ticker": "BNTC",
   "success": true,
   "price": {
-    "current": 12.34,
+    "current": 12.61,
     "currency": "USD",
-    "day_high": 12.6,
+    "day_high": 12.7,
     "day_low": 12.04,
     "52_week_high": 17.15,
     "52_week_low": 9.7
   },
   "market_cap": {
-    "value": 417859840.0,
+    "value": 427002624.0,
     "currency": "USD"
   },
   "shares_outstanding": 33862226.0,
   "volume": {
-    "last": 58339,
-    "average_30d": 145433
+    "last": 90609,
+    "average_30d": 144319
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -1.3099787,
-    "price_to_book": 3.46046
+    "forward_pe": -1.3386412,
+    "price_to_book": 3.536175
   },
   "company_info": {
     "name": "Benitec Biopharma Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 96027000.0,
+    "total_liabilities": 2428000.0,
+    "stockholders_equity": 93599000.0,
+    "cash": 94479000.0,
+    "marketable_securities": null,
+    "total_liquidity": 94479000.0,
+    "total_debt": 817000.0,
+    "long_term_debt": 403000.0,
+    "current_debt": 414000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -3351000.0,
+    "free_cash_flow": -3351000.0,
+    "investing_cash_flow": 0.0,
+    "financing_cash_flow": 0.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 9803000.0,
+    "research_and_development": 3370000.0,
+    "interest_expense": null,
+    "net_income": -8965000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -9685000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T13:59:59.140960",
+    "timestamp": "2026-01-29T16:47:31.851820",
     "url": "https://finance.yahoo.com/quote/BNTC",
-    "data_hash": "1006e36396c833cc"
+    "data_hash": "1ffb8f4a1b95ea4a"
   }
 }

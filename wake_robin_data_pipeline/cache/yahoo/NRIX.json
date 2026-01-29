@@ -2,42 +2,80 @@
   "ticker": "NRIX",
   "success": true,
   "price": {
-    "current": 17.72,
+    "current": 17.59,
     "currency": "USD",
     "day_high": 19.315,
-    "day_low": 17.52,
+    "day_low": 17.22,
     "52_week_high": 22.5,
     "52_week_low": 8.18
   },
   "market_cap": {
-    "value": 1796262784.0,
+    "value": 1783084800.0,
     "currency": "USD"
   },
   "shares_outstanding": 101369235.0,
   "volume": {
-    "last": 542531,
-    "average_30d": 1232092
+    "last": 1541864,
+    "average_30d": 1299055
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -5.3121324,
-    "price_to_book": 3.6596446
+    "forward_pe": -5.3690577,
+    "price_to_book": 3.6327963
   },
   "company_info": {
     "name": "Nurix Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-08-31",
+    "total_assets": 522472000.0,
+    "total_liabilities": 150220000.0,
+    "stockholders_equity": 372252000.0,
+    "cash": 78438000.0,
+    "marketable_securities": 350391000.0,
+    "total_liquidity": 428829000.0,
+    "total_debt": 56486000.0,
+    "long_term_debt": 52695000.0,
+    "current_debt": 3791000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-08-31",
+    "operating_cash_flow": -57385000.0,
+    "free_cash_flow": -60096000.0,
+    "investing_cash_flow": 50475000.0,
+    "financing_cash_flow": 1155000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-08-31",
+    "operating_expense": 99279000.0,
+    "research_and_development": 86120000.0,
+    "interest_expense": null,
+    "net_income": -86421000.0,
+    "revenue": 7894000.0,
+    "gross_profit": null,
+    "ebitda": -86385000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:24.636964",
+    "timestamp": "2026-01-29T16:49:51.582602",
     "url": "https://finance.yahoo.com/quote/NRIX",
-    "data_hash": "653e6f61d9e39864"
+    "data_hash": "414277867bdd732d"
   }
 }

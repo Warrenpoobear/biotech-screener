@@ -2,7 +2,7 @@
   "ticker": "NVAX",
   "success": true,
   "price": {
-    "current": 9.34,
+    "current": 9.44,
     "currency": "USD",
     "day_high": 9.6,
     "day_low": 9.23,
@@ -10,34 +10,72 @@
     "52_week_low": 5.01
   },
   "market_cap": {
-    "value": 1517740672.0,
+    "value": 1533990400.0,
     "currency": "USD"
   },
   "shares_outstanding": 162498995.0,
   "volume": {
-    "last": 2329481,
-    "average_30d": 5921199
+    "last": 4428759,
+    "average_30d": 6164459
   },
   "valuation": {
-    "pe_ratio": 4.646766,
-    "forward_pe": -25.732862,
-    "price_to_book": -9.688797
+    "pe_ratio": 4.696517,
+    "forward_pe": -26.008373,
+    "price_to_book": -9.792531
   },
   "company_info": {
     "name": "Novavax, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1179889000.0,
+    "total_liabilities": 1336561000.0,
+    "stockholders_equity": -156672000.0,
+    "cash": 268023000.0,
+    "marketable_securities": 494871000.0,
+    "total_liquidity": 762894000.0,
+    "total_debt": 251140000.0,
+    "long_term_debt": 243835000.0,
+    "current_debt": 5036000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 107804000.0,
+    "free_cash_flow": 105787000.0,
+    "investing_cash_flow": -136529000.0,
+    "financing_cash_flow": 42442000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 129929000.0,
+    "research_and_development": 98274000.0,
+    "interest_expense": 5482000.0,
+    "net_income": -202379000.0,
+    "revenue": 70445000.0,
+    "gross_profit": 48949000.0,
+    "ebitda": -190969000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:31.540784",
+    "timestamp": "2026-01-29T16:49:58.864654",
     "url": "https://finance.yahoo.com/quote/NVAX",
-    "data_hash": "3b04f86b3fd15eeb"
+    "data_hash": "f7a640f49d2d7efc"
   }
 }

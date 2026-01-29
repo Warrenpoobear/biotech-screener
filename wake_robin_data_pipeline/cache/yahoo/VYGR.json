@@ -2,42 +2,80 @@
   "ticker": "VYGR",
   "success": true,
   "price": {
-    "current": 3.95,
+    "current": 3.98,
     "currency": "USD",
-    "day_high": 4.02,
+    "day_high": 4.09,
     "day_low": 3.87,
     "52_week_high": 5.78,
     "52_week_low": 2.65
   },
   "market_cap": {
-    "value": 219620336.0,
+    "value": 221288336.0,
     "currency": "USD"
   },
   "shares_outstanding": 55600084.0,
   "volume": {
-    "last": 140141,
-    "average_30d": 586942
+    "last": 724910,
+    "average_30d": 626656
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -2.5330906,
-    "price_to_book": 0.99697125
+    "forward_pe": -2.552329,
+    "price_to_book": 1.0045432
   },
   "company_info": {
     "name": "Voyager Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 288311000.0,
+    "total_liabilities": 68486000.0,
+    "stockholders_equity": 219762000.0,
+    "cash": 45125000.0,
+    "marketable_securities": null,
+    "total_liquidity": 45125000.0,
+    "total_debt": 38368000.0,
+    "long_term_debt": 30520000.0,
+    "current_debt": null,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -31048000.0,
+    "free_cash_flow": -31255000.0,
+    "investing_cash_flow": 34888000.0,
+    "financing_cash_flow": 85000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 43959000.0,
+    "research_and_development": 35866000.0,
+    "interest_expense": null,
+    "net_income": -27892000.0,
+    "revenue": 13365000.0,
+    "gross_profit": null,
+    "ebitda": -29662000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:10:48.828932",
+    "timestamp": "2026-01-29T16:52:54.531150",
     "url": "https://finance.yahoo.com/quote/VYGR",
-    "data_hash": "2702cd17a0e718c0"
+    "data_hash": "34bf5107f69b4d75"
   }
 }

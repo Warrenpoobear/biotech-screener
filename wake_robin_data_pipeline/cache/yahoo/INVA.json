@@ -2,42 +2,80 @@
   "ticker": "INVA",
   "success": true,
   "price": {
-    "current": 19.905,
+    "current": 19.75,
     "currency": "USD",
-    "day_high": 19.92,
+    "day_high": 19.96,
     "day_low": 19.62,
     "52_week_high": 22.76,
     "52_week_low": 16.52
   },
   "market_cap": {
-    "value": 1488278272.0,
+    "value": 1476689024.0,
     "currency": "USD"
   },
   "shares_outstanding": 74769062.0,
   "volume": {
-    "last": 78347,
-    "average_30d": 604188
+    "last": 583188,
+    "average_30d": 630494
   },
   "valuation": {
-    "pe_ratio": 11.990965,
-    "forward_pe": 9.781326,
-    "price_to_book": 1.4735712
+    "pe_ratio": 11.897591,
+    "forward_pe": 9.705159,
+    "price_to_book": 1.4620965
   },
   "company_info": {
     "name": "Innoviva, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1429106000.0,
+    "total_liabilities": 419155000.0,
+    "stockholders_equity": 1009951000.0,
+    "cash": 476513000.0,
+    "marketable_securities": 56589000.0,
+    "total_liquidity": 533102000.0,
+    "total_debt": 258962000.0,
+    "long_term_debt": 257377000.0,
+    "current_debt": 680000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 49727000.0,
+    "free_cash_flow": 39238000.0,
+    "investing_cash_flow": 18412000.0,
+    "financing_cash_flow": 10842000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 40961000.0,
+    "research_and_development": 13670000.0,
+    "interest_expense": 4015000.0,
+    "net_income": 89908000.0,
+    "revenue": 107800000.0,
+    "gross_profit": 75539000.0,
+    "ebitda": 108450000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:07:19.744870",
+    "timestamp": "2026-01-29T16:48:21.030926",
     "url": "https://finance.yahoo.com/quote/INVA",
-    "data_hash": "2028cfc18dce962b"
+    "data_hash": "e8596b55214fe8bd"
   }
 }

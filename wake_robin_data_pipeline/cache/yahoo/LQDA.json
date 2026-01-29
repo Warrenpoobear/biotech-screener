@@ -2,42 +2,80 @@
   "ticker": "LQDA",
   "success": true,
   "price": {
-    "current": 41.97,
+    "current": 43.06,
     "currency": "USD",
-    "day_high": 43.145,
-    "day_low": 41.55,
-    "52_week_high": 43.42,
+    "day_high": 44.21,
+    "day_low": 41.38,
+    "52_week_high": 44.21,
     "52_week_low": 11.26
   },
   "market_cap": {
-    "value": 3651200512.0,
+    "value": 3746025472.0,
     "currency": "USD"
   },
   "shares_outstanding": 86995483.0,
   "volume": {
-    "last": 714373,
-    "average_30d": 2096594
+    "last": 3651915,
+    "average_30d": 2297057
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 15.579065,
-    "price_to_book": 165.23622
+    "forward_pe": 15.983668,
+    "price_to_book": 169.52756
   },
   "company_info": {
     "name": "Liquidia Corporation",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 275981000.0,
+    "total_liabilities": 253929000.0,
+    "stockholders_equity": 22052000.0,
+    "cash": 157496000.0,
+    "marketable_securities": null,
+    "total_liquidity": 157496000.0,
+    "total_debt": 199182000.0,
+    "long_term_debt": 136446000.0,
+    "current_debt": 56051000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -9770000.0,
+    "free_cash_flow": -10681000.0,
+    "investing_cash_flow": -911000.0,
+    "financing_cash_flow": -5245000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 49402000.0,
+    "research_and_development": 9346000.0,
+    "interest_expense": 6945000.0,
+    "net_income": -3533000.0,
+    "revenue": 54342000.0,
+    "gross_profit": 51169000.0,
+    "ebitda": 3888000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:07:49.433374",
+    "timestamp": "2026-01-29T16:49:03.007453",
     "url": "https://finance.yahoo.com/quote/LQDA",
-    "data_hash": "28871e3fe3d50378"
+    "data_hash": "36f677ccfa20e0a8"
   }
 }

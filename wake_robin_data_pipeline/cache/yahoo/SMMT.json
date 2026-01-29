@@ -2,42 +2,80 @@
   "ticker": "SMMT",
   "success": true,
   "price": {
-    "current": 15.64,
+    "current": 15.4,
     "currency": "USD",
     "day_high": 16.388,
-    "day_low": 15.6,
+    "day_low": 15.17,
     "52_week_high": 36.91,
-    "52_week_low": 15.45
+    "52_week_low": 15.17
   },
   "market_cap": {
-    "value": 11643081728.0,
+    "value": 11464415232.0,
     "currency": "USD"
   },
   "shares_outstanding": 744442538.0,
   "volume": {
-    "last": 939000,
-    "average_30d": 2836300
+    "last": 3138384,
+    "average_30d": 2998908
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -15.217636,
-    "price_to_book": 60.62016
+    "forward_pe": -14.983683,
+    "price_to_book": 59.689922
   },
   "company_info": {
     "name": "Summit Therapeutics Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 261729000.0,
+    "total_liabilities": 69466000.0,
+    "stockholders_equity": 192263000.0,
+    "cash": 238554000.0,
+    "marketable_securities": null,
+    "total_liquidity": 238554000.0,
+    "total_debt": 5428000.0,
+    "long_term_debt": 2708000.0,
+    "current_debt": 2720000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -93080000.0,
+    "free_cash_flow": -93151000.0,
+    "investing_cash_flow": -71000.0,
+    "financing_cash_flow": 33813000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 234211000.0,
+    "research_and_development": 131096000.0,
+    "interest_expense": 0.0,
+    "net_income": -231793000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -231751000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:53.650392",
+    "timestamp": "2026-01-29T16:51:43.160987",
     "url": "https://finance.yahoo.com/quote/SMMT",
-    "data_hash": "255aa05a55399b67"
+    "data_hash": "a8c304505608da64"
   }
 }

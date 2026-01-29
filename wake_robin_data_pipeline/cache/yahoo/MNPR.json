@@ -2,42 +2,80 @@
   "ticker": "MNPR",
   "success": true,
   "price": {
-    "current": 68.58,
+    "current": 67.34,
     "currency": "USD",
-    "day_high": 69.2,
-    "day_low": 67.0,
+    "day_high": 69.2625,
+    "day_low": 66.51,
     "52_week_high": 105.0,
     "52_week_low": 26.055
   },
   "market_cap": {
-    "value": 458291616.0,
+    "value": 450005184.0,
     "currency": "USD"
   },
   "shares_outstanding": 6682584.0,
   "volume": {
-    "last": 189899,
-    "average_30d": 338999
+    "last": 276550,
+    "average_30d": 336230
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -19.69145,
-    "price_to_book": 3.2279017
+    "forward_pe": -19.335405,
+    "price_to_book": 3.1695375
   },
   "company_info": {
     "name": "Monopar Therapeutics Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 144197278.0,
+    "total_liabilities": 2639430.0,
+    "stockholders_equity": 141557848.0,
+    "cash": 127677360.0,
+    "marketable_securities": 15998427.0,
+    "total_liquidity": 143675787.0,
+    "total_debt": 70881.0,
+    "long_term_debt": 70881.0,
+    "current_debt": null,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -2090532.0,
+    "free_cash_flow": -2090532.0,
+    "investing_cash_flow": -2126027.0,
+    "financing_cash_flow": 92391609.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 4093075.0,
+    "research_and_development": 2589749.0,
+    "interest_expense": null,
+    "net_income": -3437601.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -4093075.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T12:35:33.009485",
+    "timestamp": "2026-01-29T16:49:30.435602",
     "url": "https://finance.yahoo.com/quote/MNPR",
-    "data_hash": "6cc9ad24c28ff1b5"
+    "data_hash": "a637f62cba15e6f1"
   }
 }

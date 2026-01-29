@@ -2,42 +2,80 @@
   "ticker": "TYRA",
   "success": true,
   "price": {
-    "current": 30.93,
+    "current": 32.34,
     "currency": "USD",
-    "day_high": 31.7,
+    "day_high": 32.394,
     "day_low": 30.66,
     "52_week_high": 32.44,
     "52_week_low": 6.42
   },
   "market_cap": {
-    "value": 1650798976.0,
+    "value": 1726053632.0,
     "currency": "USD"
   },
   "shares_outstanding": 53372098.0,
   "volume": {
-    "last": 63752,
-    "average_30d": 636293
+    "last": 333054,
+    "average_30d": 662897
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -13.966594,
-    "price_to_book": 5.8791103
+    "forward_pe": -14.603286,
+    "price_to_book": 6.14712
   },
   "company_info": {
     "name": "Tyra Biosciences, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 301851000.0,
+    "total_liabilities": 21342000.0,
+    "stockholders_equity": 280509000.0,
+    "cash": 61951000.0,
+    "marketable_securities": 212973000.0,
+    "total_liquidity": 274924000.0,
+    "total_debt": 5919000.0,
+    "long_term_debt": 5463000.0,
+    "current_debt": 456000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -22380000.0,
+    "free_cash_flow": -22419000.0,
+    "investing_cash_flow": -14806000.0,
+    "financing_cash_flow": 647000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 32944000.0,
+    "research_and_development": 25469000.0,
+    "interest_expense": null,
+    "net_income": -29868000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -32813000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:10:31.148579",
+    "timestamp": "2026-01-29T16:52:27.845008",
     "url": "https://finance.yahoo.com/quote/TYRA",
-    "data_hash": "5ba517a1b4155ce9"
+    "data_hash": "689288343fd49b67"
   }
 }

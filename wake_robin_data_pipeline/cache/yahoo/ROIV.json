@@ -2,42 +2,80 @@
   "ticker": "ROIV",
   "success": true,
   "price": {
-    "current": 21.895,
+    "current": 22.02,
     "currency": "USD",
-    "day_high": 22.17,
+    "day_high": 22.18,
     "day_low": 21.805,
     "52_week_high": 23.91,
     "52_week_low": 8.73
   },
   "market_cap": {
-    "value": 15227788288.0,
+    "value": 15314724864.0,
     "currency": "USD"
   },
   "shares_outstanding": 695491615.0,
   "volume": {
-    "last": 544756,
-    "average_30d": 5585420
+    "last": 3795839,
+    "average_30d": 5755397
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -19.330772,
-    "price_to_book": 3.4616601
+    "forward_pe": -19.441133,
+    "price_to_book": 3.4814231
   },
   "company_info": {
     "name": "Roivant Sciences Ltd.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 5062598000.0,
+    "total_liabilities": 257140000.0,
+    "stockholders_equity": 4362331000.0,
+    "cash": 1237010000.0,
+    "marketable_securities": 3148825000.0,
+    "total_liquidity": 4385835000.0,
+    "total_debt": 98846000.0,
+    "long_term_debt": 89844000.0,
+    "current_debt": 9002000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -185664000.0,
+    "free_cash_flow": -193512000.0,
+    "investing_cash_flow": 120422000.0,
+    "financing_cash_flow": 62587000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 307693000.0,
+    "research_and_development": 164568000.0,
+    "interest_expense": null,
+    "net_income": -113519000.0,
+    "revenue": 1571000.0,
+    "gross_profit": 1460000.0,
+    "ebitda": -305312000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:33.054033",
+    "timestamp": "2026-01-29T16:51:17.616267",
     "url": "https://finance.yahoo.com/quote/ROIV",
-    "data_hash": "7e197f1f2385c63a"
+    "data_hash": "aa0f774076f8a837"
   }
 }

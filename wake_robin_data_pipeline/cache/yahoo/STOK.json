@@ -2,42 +2,80 @@
   "ticker": "STOK",
   "success": true,
   "price": {
-    "current": 30.065,
+    "current": 31.07,
     "currency": "USD",
-    "day_high": 30.425,
+    "day_high": 31.755,
     "day_low": 29.29,
     "52_week_high": 38.693,
     "52_week_low": 5.35
   },
   "market_cap": {
-    "value": 1717227264.0,
+    "value": 1774629888.0,
     "currency": "USD"
   },
   "shares_outstanding": 57117150.0,
   "volume": {
-    "last": 105000,
-    "average_30d": 706377
+    "last": 522479,
+    "average_30d": 739782
   },
   "valuation": {
-    "pe_ratio": 44.213234,
-    "forward_pe": -9.586289,
-    "price_to_book": 5.378354
+    "pe_ratio": 45.691177,
+    "forward_pe": -9.906735,
+    "price_to_book": 5.5581393
   },
   "company_info": {
     "name": "Stoke Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 360264000.0,
+    "total_liabilities": 52159000.0,
+    "stockholders_equity": 308105000.0,
+    "cash": 83394000.0,
+    "marketable_securities": 164916000.0,
+    "total_liquidity": 248310000.0,
+    "total_debt": 2908000.0,
+    "long_term_debt": null,
+    "current_debt": 2908000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -30366000.0,
+    "free_cash_flow": -30498000.0,
+    "investing_cash_flow": 9094000.0,
+    "financing_cash_flow": 3120000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 53723000.0,
+    "research_and_development": 37696000.0,
+    "interest_expense": null,
+    "net_income": -38347000.0,
+    "revenue": 10632000.0,
+    "gross_profit": null,
+    "ebitda": -42649000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:58.419469",
+    "timestamp": "2026-01-29T16:51:52.288155",
     "url": "https://finance.yahoo.com/quote/STOK",
-    "data_hash": "af882131eb007102"
+    "data_hash": "88547ffdfe641e14"
   }
 }

@@ -2,7 +2,7 @@
   "ticker": "GPCR",
   "success": true,
   "price": {
-    "current": 86.905,
+    "current": 87.15,
     "currency": "USD",
     "day_high": 89.39,
     "day_low": 86.1,
@@ -10,34 +10,72 @@
     "52_week_low": 13.22
   },
   "market_cap": {
-    "value": 6138897408.0,
+    "value": 6156204544.0,
     "currency": "USD"
   },
   "shares_outstanding": 70639178.0,
   "volume": {
-    "last": 313696,
-    "average_30d": 1124364
+    "last": 735043,
+    "average_30d": 1180673
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -68.780075,
-    "price_to_book": 6.8483057
+    "forward_pe": -68.973976,
+    "price_to_book": 6.867613
   },
   "company_info": {
     "name": "Structure Therapeutics Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 832159000.0,
+    "total_liabilities": 62140000.0,
+    "stockholders_equity": 770019000.0,
+    "cash": 102912000.0,
+    "marketable_securities": 696131000.0,
+    "total_liquidity": 799043000.0,
+    "total_debt": 7090000.0,
+    "long_term_debt": 4288000.0,
+    "current_debt": 2802000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -50996000.0,
+    "free_cash_flow": -52568000.0,
+    "investing_cash_flow": -49319000.0,
+    "financing_cash_flow": 56203000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 73787000.0,
+    "research_and_development": 58989000.0,
+    "interest_expense": null,
+    "net_income": -65712000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -73431000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:52.284295",
+    "timestamp": "2026-01-29T16:47:44.043521",
     "url": "https://finance.yahoo.com/quote/GPCR",
-    "data_hash": "255b627839e250b5"
+    "data_hash": "14009141fde199ae"
   }
 }

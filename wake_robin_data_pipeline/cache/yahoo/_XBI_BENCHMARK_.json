@@ -28,20 +28,61 @@
     "sector": "",
     "industry": ""
   },
+  "balance_sheet": {
+    "success": false,
+    "period_date": null,
+    "total_assets": null,
+    "total_liabilities": null,
+    "stockholders_equity": null,
+    "cash": null,
+    "marketable_securities": null,
+    "total_liquidity": null,
+    "total_debt": null,
+    "long_term_debt": null,
+    "current_debt": null,
+    "error": "no_balance_sheet_data"
+  },
+  "cash_flow": {
+    "success": false,
+    "period_date": null,
+    "operating_cash_flow": null,
+    "free_cash_flow": null,
+    "investing_cash_flow": null,
+    "financing_cash_flow": null,
+    "error": "no_cashflow_data"
+  },
+  "income_statement": {
+    "success": false,
+    "period_date": null,
+    "operating_expense": null,
+    "research_and_development": null,
+    "interest_expense": null,
+    "net_income": null,
+    "revenue": null,
+    "gross_profit": null,
+    "ebitda": null,
+    "error": "no_income_stmt_data"
+  },
   "data_quality": {
     "flags": [
       "missing_price",
       "missing_market_cap",
       "missing_volume",
-      "volume_error:empty_history"
+      "volume_error:empty_history",
+      "balance_sheet_error:no_balance_sheet_data",
+      "cash_flow_error:no_cashflow_data",
+      "income_stmt_error:no_income_stmt_data"
     ],
     "has_price": false,
     "has_market_cap": false,
-    "has_volume": false
+    "has_volume": false,
+    "has_balance_sheet": false,
+    "has_cash_flow": false,
+    "has_income_statement": false
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:10:59.340254",
+    "timestamp": "2026-01-29T16:53:13.622404",
     "url": "https://finance.yahoo.com/quote/_XBI_BENCHMARK_",
     "data_hash": "c7525605d584328d"
   }

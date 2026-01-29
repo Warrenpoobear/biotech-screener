@@ -15,8 +15,8 @@
   },
   "shares_outstanding": 173322385.0,
   "volume": {
-    "last": 264833,
-    "average_30d": 2095851
+    "last": 1358869,
+    "average_30d": 2184179
   },
   "valuation": {
     "pe_ratio": null,
@@ -28,15 +28,53 @@
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 670000000.0,
+    "total_liabilities": 62291000.0,
+    "stockholders_equity": 607709000.0,
+    "cash": 91564000.0,
+    "marketable_securities": 504867000.0,
+    "total_liquidity": 596431000.0,
+    "total_debt": 33329000.0,
+    "long_term_debt": 29686000.0,
+    "current_debt": 3643000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -62119000.0,
+    "free_cash_flow": -62118000.0,
+    "investing_cash_flow": 39725000.0,
+    "financing_cash_flow": 17000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 80391000.0,
+    "research_and_development": 68262000.0,
+    "interest_expense": null,
+    "net_income": -74149000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -79643000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:31.757964",
+    "timestamp": "2026-01-29T16:51:14.665241",
     "url": "https://finance.yahoo.com/quote/RLAY",
     "data_hash": "766c411bad1554f5"
   }

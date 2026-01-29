@@ -2,7 +2,7 @@
   "ticker": "ILMN",
   "success": true,
   "price": {
-    "current": 146.625,
+    "current": 149.69,
     "currency": "USD",
     "day_high": 149.83,
     "day_low": 145.68,
@@ -10,34 +10,72 @@
     "52_week_low": 68.7
   },
   "market_cap": {
-    "value": 22536261632.0,
+    "value": 23007352832.0,
     "currency": "USD"
   },
   "shares_outstanding": 152800000.0,
   "volume": {
-    "last": 714893,
-    "average_30d": 1787449
+    "last": 2173810,
+    "average_30d": 1894314
   },
   "valuation": {
-    "pe_ratio": 32.802013,
-    "forward_pe": 28.926565,
-    "price_to_book": 9.421989
+    "pe_ratio": 33.487698,
+    "forward_pe": 29.531237,
+    "price_to_book": 9.618943
   },
   "company_info": {
     "name": "Illumina, Inc.",
     "sector": "Healthcare",
     "industry": "Diagnostics & Research"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 6177000000.0,
+    "total_liabilities": 3796000000.0,
+    "stockholders_equity": 2381000000.0,
+    "cash": 1050000000.0,
+    "marketable_securities": 228000000.0,
+    "total_liquidity": 1278000000.0,
+    "total_debt": 2576000000.0,
+    "long_term_debt": 994000000.0,
+    "current_debt": 998000000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 284000000.0,
+    "free_cash_flow": 260000000.0,
+    "investing_cash_flow": -51000000.0,
+    "financing_cash_flow": -115000000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 506000000.0,
+    "research_and_development": 229000000.0,
+    "interest_expense": 25000000.0,
+    "net_income": 150000000.0,
+    "revenue": 1084000000.0,
+    "gross_profit": 733000000.0,
+    "ebitda": 312000000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:07:06.857657",
+    "timestamp": "2026-01-29T16:48:05.179191",
     "url": "https://finance.yahoo.com/quote/ILMN",
-    "data_hash": "8bd5b2f400a15520"
+    "data_hash": "1d1dece38142b904"
   }
 }

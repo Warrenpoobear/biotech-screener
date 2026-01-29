@@ -2,42 +2,80 @@
   "ticker": "SANA",
   "success": true,
   "price": {
-    "current": 4.692,
+    "current": 4.6,
     "currency": "USD",
     "day_high": 4.86,
-    "day_low": 4.6414,
+    "day_low": 4.59,
     "52_week_high": 6.55,
     "52_week_low": 1.26
   },
   "market_cap": {
-    "value": 1249789824.0,
+    "value": 1225284096.0,
     "currency": "USD"
   },
   "shares_outstanding": 266366120.0,
   "volume": {
-    "last": 573435,
-    "average_30d": 2487551
+    "last": 1929582,
+    "average_30d": 2536528
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -8.288874,
-    "price_to_book": 6.2979865
+    "forward_pe": -8.126347,
+    "price_to_book": 6.1744967
   },
   "company_info": {
     "name": "Sana Biotechnology, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 435432000.0,
+    "total_liabilities": 240124000.0,
+    "stockholders_equity": 195308000.0,
+    "cash": 103357000.0,
+    "marketable_securities": 49697000.0,
+    "total_liquidity": 153054000.0,
+    "total_debt": 82236000.0,
+    "long_term_debt": 67868000.0,
+    "current_debt": 14368000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -29429000.0,
+    "free_cash_flow": -29470000.0,
+    "investing_cash_flow": -48025000.0,
+    "financing_cash_flow": 109540000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 43515000.0,
+    "research_and_development": 33230000.0,
+    "interest_expense": null,
+    "net_income": -42152000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -40324000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:40.093254",
+    "timestamp": "2026-01-29T16:51:26.818923",
     "url": "https://finance.yahoo.com/quote/SANA",
-    "data_hash": "e426f6b8201f4806"
+    "data_hash": "58b4802c4d3a4d0d"
   }
 }

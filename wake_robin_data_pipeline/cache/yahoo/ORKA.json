@@ -2,7 +2,7 @@
   "ticker": "ORKA",
   "success": true,
   "price": {
-    "current": 34.57,
+    "current": 35.26,
     "currency": "USD",
     "day_high": 35.785,
     "day_low": 34.478,
@@ -10,34 +10,72 @@
     "52_week_low": 5.49
   },
   "market_cap": {
-    "value": 1673507072.0,
+    "value": 1706909440.0,
     "currency": "USD"
   },
   "shares_outstanding": 48409232.0,
   "volume": {
-    "last": 96198,
-    "average_30d": 526199
+    "last": 337196,
+    "average_30d": 541833
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -14.462983,
-    "price_to_book": 3.457
+    "forward_pe": -14.751657,
+    "price_to_book": 3.5259998
   },
   "company_info": {
     "name": "Oruka Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 509251000.0,
+    "total_liabilities": 22460000.0,
+    "stockholders_equity": 486791000.0,
+    "cash": 91253000.0,
+    "marketable_securities": 257902000.0,
+    "total_liquidity": 349155000.0,
+    "total_debt": 1912000.0,
+    "long_term_debt": 1493000.0,
+    "current_debt": 419000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -21602000.0,
+    "free_cash_flow": -21701000.0,
+    "investing_cash_flow": -122449000.0,
+    "financing_cash_flow": 169908000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 34105000.0,
+    "research_and_development": 28988000.0,
+    "interest_expense": 0.0,
+    "net_income": -30277000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -30257000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:49.475845",
+    "timestamp": "2026-01-29T16:50:18.854391",
     "url": "https://finance.yahoo.com/quote/ORKA",
-    "data_hash": "6d7dba38db5e8e0c"
+    "data_hash": "b0ca20dd375a1852"
   }
 }

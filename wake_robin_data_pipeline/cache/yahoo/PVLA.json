@@ -2,42 +2,80 @@
   "ticker": "PVLA",
   "success": true,
   "price": {
-    "current": 80.52,
+    "current": 81.9,
     "currency": "USD",
-    "day_high": 80.595,
+    "day_high": 83.115,
     "day_low": 76.82,
     "52_week_high": 114.69,
     "52_week_low": 12.6
   },
   "market_cap": {
-    "value": 953074112.0,
+    "value": 969408576.0,
     "currency": "USD"
   },
   "shares_outstanding": 11836490.0,
   "volume": {
-    "last": 41382,
-    "average_30d": 208035
+    "last": 182982,
+    "average_30d": 216351
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -19.911716,
-    "price_to_book": 23.078245
+    "forward_pe": -20.252977,
+    "price_to_book": 23.473774
   },
   "company_info": {
     "name": "Palvella Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 66937000.0,
+    "total_liabilities": 28255000.0,
+    "stockholders_equity": 38682000.0,
+    "cash": 63567000.0,
+    "marketable_securities": null,
+    "total_liquidity": 63567000.0,
+    "total_debt": null,
+    "long_term_debt": null,
+    "current_debt": null,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -7878000.0,
+    "free_cash_flow": -7878000.0,
+    "investing_cash_flow": null,
+    "financing_cash_flow": 242000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 10177000.0,
+    "research_and_development": 6528000.0,
+    "interest_expense": 1510000.0,
+    "net_income": -11345000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -9835000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:13.106905",
+    "timestamp": "2026-01-29T16:50:50.554093",
     "url": "https://finance.yahoo.com/quote/PVLA",
-    "data_hash": "a20d26b4fc536d12"
+    "data_hash": "ec6b807737ce94e0"
   }
 }

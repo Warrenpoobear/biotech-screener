@@ -2,42 +2,80 @@
   "ticker": "OLMA",
   "success": true,
   "price": {
-    "current": 26.3858,
+    "current": 26.06,
     "currency": "USD",
-    "day_high": 26.45,
+    "day_high": 26.59,
     "day_low": 24.45,
     "52_week_high": 36.259,
     "52_week_low": 2.86
   },
   "market_cap": {
-    "value": 2115083520.0,
+    "value": 2088967424.0,
     "currency": "USD"
   },
   "shares_outstanding": 80159923.0,
   "volume": {
-    "last": 472821,
-    "average_30d": 1128128
+    "last": 1187554,
+    "average_30d": 1163712
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -11.419656,
-    "price_to_book": 5.891002
+    "forward_pe": -11.278651,
+    "price_to_book": 5.8182626
   },
   "company_info": {
     "name": "Olema Pharmaceuticals, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 352453000.0,
+    "total_liabilities": 44965000.0,
+    "stockholders_equity": 307488000.0,
+    "cash": 35260000.0,
+    "marketable_securities": 293700000.0,
+    "total_liquidity": 328960000.0,
+    "total_debt": 4478000.0,
+    "long_term_debt": 3000000.0,
+    "current_debt": 1168000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -34527000.0,
+    "free_cash_flow": -34527000.0,
+    "investing_cash_flow": 17273000.0,
+    "financing_cash_flow": 41000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 45877000.0,
+    "research_and_development": 39951000.0,
+    "interest_expense": null,
+    "net_income": -42217000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -45834000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:41.214551",
+    "timestamp": "2026-01-29T16:50:09.651791",
     "url": "https://finance.yahoo.com/quote/OLMA",
-    "data_hash": "b5b5378cfb0b1e39"
+    "data_hash": "522ec6584764f517"
   }
 }

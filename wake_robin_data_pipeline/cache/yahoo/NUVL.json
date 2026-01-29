@@ -2,42 +2,80 @@
   "ticker": "NUVL",
   "success": true,
   "price": {
-    "current": 101.95,
+    "current": 102.43,
     "currency": "USD",
-    "day_high": 103.44,
+    "day_high": 103.53,
     "day_low": 100.25,
     "52_week_high": 113.015,
     "52_week_low": 55.535
   },
   "market_cap": {
-    "value": 7412449280.0,
+    "value": 7447348736.0,
     "currency": "USD"
   },
   "shares_outstanding": 67271461.0,
   "volume": {
-    "last": 134692,
-    "average_30d": 547226
+    "last": 460797,
+    "average_30d": 577909
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -18.195383,
-    "price_to_book": 8.71591
+    "forward_pe": -18.28105,
+    "price_to_book": 8.756947
   },
   "company_info": {
     "name": "Nuvalent, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 979910000.0,
+    "total_liabilities": 134511000.0,
+    "stockholders_equity": 845399000.0,
+    "cash": 115752000.0,
+    "marketable_securities": 827351000.0,
+    "total_liquidity": 943103000.0,
+    "total_debt": null,
+    "long_term_debt": null,
+    "current_debt": null,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -70462000.0,
+    "free_cash_flow": -70462000.0,
+    "investing_cash_flow": 53971000.0,
+    "financing_cash_flow": 4773000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 112696000.0,
+    "research_and_development": 83843000.0,
+    "interest_expense": null,
+    "net_income": -122437000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -112696000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:30.105284",
+    "timestamp": "2026-01-29T16:49:57.459916",
     "url": "https://finance.yahoo.com/quote/NUVL",
-    "data_hash": "babcdbb158498baf"
+    "data_hash": "ddac8472102270fe"
   }
 }

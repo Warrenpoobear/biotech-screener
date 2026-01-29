@@ -2,42 +2,80 @@
   "ticker": "HROW",
   "success": true,
   "price": {
-    "current": 41.9,
+    "current": 41.93,
     "currency": "USD",
     "day_high": 43.185,
-    "day_low": 41.62,
+    "day_low": 41.5,
     "52_week_high": 54.85,
     "52_week_low": 20.85
   },
   "market_cap": {
-    "value": 1551869312.0,
+    "value": 1552980352.0,
     "currency": "USD"
   },
   "shares_outstanding": 37037453.0,
   "volume": {
-    "last": 107974,
-    "average_30d": 561235
+    "last": 445570,
+    "average_30d": 583569
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 19.161556,
-    "price_to_book": 32.992126
+    "forward_pe": 19.175276,
+    "price_to_book": 33.015747
   },
   "company_info": {
     "name": "Harrow, Inc.",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 363074000.0,
+    "total_liabilities": 316413000.0,
+    "stockholders_equity": 47016000.0,
+    "cash": 74290000.0,
+    "marketable_securities": null,
+    "total_liquidity": 74290000.0,
+    "total_debt": 251872000.0,
+    "long_term_debt": 242874000.0,
+    "current_debt": 859000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 16588000.0,
+    "free_cash_flow": 16363000.0,
+    "investing_cash_flow": -225000.0,
+    "financing_cash_flow": 4964000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 39179000.0,
+    "research_and_development": 3323000.0,
+    "interest_expense": 6038000.0,
+    "net_income": 1020000.0,
+    "revenue": 71638000.0,
+    "gross_profit": 53926000.0,
+    "ebitda": 11956000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:58.457171",
+    "timestamp": "2026-01-29T16:47:54.585840",
     "url": "https://finance.yahoo.com/quote/HROW",
-    "data_hash": "004e65b276732fc5"
+    "data_hash": "4bec6528bc16ad0b"
   }
 }

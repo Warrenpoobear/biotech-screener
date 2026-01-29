@@ -2,7 +2,7 @@
   "ticker": "SKYE",
   "success": true,
   "price": {
-    "current": 0.982,
+    "current": 0.96,
     "currency": "USD",
     "day_high": 1.0299,
     "day_low": 0.956,
@@ -10,34 +10,72 @@
     "52_week_low": 0.684
   },
   "market_cap": {
-    "value": 31480426.0,
+    "value": 30775160.0,
     "currency": "USD"
   },
   "shares_outstanding": 32057461.0,
   "volume": {
-    "last": 145098,
-    "average_30d": 414963
+    "last": 196095,
+    "average_30d": 398944
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -0.8465517,
-    "price_to_book": 0.92641515
+    "forward_pe": -0.82758623,
+    "price_to_book": 0.9056604
   },
   "company_info": {
     "name": "Skye Bioscience, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 41324289.0,
+    "total_liabilities": 8488104.0,
+    "stockholders_equity": 32836185.0,
+    "cash": 18441079.0,
+    "marketable_securities": 16871229.0,
+    "total_liquidity": 35312308.0,
+    "total_debt": 321845.0,
+    "long_term_debt": 120207.0,
+    "current_debt": 201638.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -13364375.0,
+    "free_cash_flow": -13364375.0,
+    "investing_cash_flow": 7967210.0,
+    "financing_cash_flow": 0.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 13264534.0,
+    "research_and_development": 9357444.0,
+    "interest_expense": 0.0,
+    "net_income": -12754660.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -12575762.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:49.738186",
+    "timestamp": "2026-01-29T16:51:37.145329",
     "url": "https://finance.yahoo.com/quote/SKYE",
-    "data_hash": "a9a9b0d05c30b352"
+    "data_hash": "409458254aba9382"
   }
 }

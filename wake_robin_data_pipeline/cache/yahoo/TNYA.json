@@ -2,42 +2,80 @@
   "ticker": "TNYA",
   "success": true,
   "price": {
-    "current": 0.7488,
+    "current": 0.79,
     "currency": "USD",
-    "day_high": 0.7687,
+    "day_high": 0.81,
     "day_low": 0.7,
     "52_week_high": 2.35,
     "52_week_low": 0.36
   },
   "market_cap": {
-    "value": 162119600.0,
+    "value": 171039664.0,
     "currency": "USD"
   },
   "shares_outstanding": 216505885.0,
   "volume": {
-    "last": 6903902,
-    "average_30d": 3135131
+    "last": 14130748,
+    "average_30d": 3479497
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -1.6219376,
-    "price_to_book": 1.479842
+    "forward_pe": -1.711179,
+    "price_to_book": 1.5612649
   },
   "company_info": {
     "name": "Tenaya Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 104980000.0,
+    "total_liabilities": 22112000.0,
+    "stockholders_equity": 82868000.0,
+    "cash": 56312000.0,
+    "marketable_securities": null,
+    "total_liquidity": 56312000.0,
+    "total_debt": 11527000.0,
+    "long_term_debt": 8601000.0,
+    "current_debt": 2926000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -15599000.0,
+    "free_cash_flow": -15625000.0,
+    "investing_cash_flow": 8860000.0,
+    "financing_cash_flow": 380000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 20936000.0,
+    "research_and_development": 15363000.0,
+    "interest_expense": null,
+    "net_income": -20275000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -19072000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:10:23.950894",
+    "timestamp": "2026-01-29T16:52:18.633878",
     "url": "https://finance.yahoo.com/quote/TNYA",
-    "data_hash": "c715031615292885"
+    "data_hash": "873eb08abd3e91c9"
   }
 }

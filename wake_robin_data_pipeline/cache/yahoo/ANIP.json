@@ -42,16 +42,39 @@
     "current_debt": 15241000.0,
     "error": null
   },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 44055000.0,
+    "free_cash_flow": 37892000.0,
+    "investing_cash_flow": -6163000.0,
+    "financing_cash_flow": 6345000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 111592000.0,
+    "research_and_development": 12304000.0,
+    "interest_expense": 4727000.0,
+    "net_income": 26617000.0,
+    "revenue": 227813000.0,
+    "gross_profit": 134424000.0,
+    "ebitda": 61159000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
     "has_volume": true,
-    "has_balance_sheet": true
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T16:29:44.436806",
+    "timestamp": "2026-01-29T16:43:34.061890",
     "url": "https://finance.yahoo.com/quote/ANIP",
     "data_hash": "c25a684d790832e0"
   }

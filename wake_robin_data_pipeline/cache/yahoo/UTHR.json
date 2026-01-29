@@ -2,42 +2,80 @@
   "ticker": "UTHR",
   "success": true,
   "price": {
-    "current": 467.96,
+    "current": 467.7,
     "currency": "USD",
     "day_high": 472.4099,
-    "day_low": 466.78,
+    "day_low": 465.5,
     "52_week_high": 519.99,
     "52_week_low": 266.98
   },
   "market_cap": {
-    "value": 21164081152.0,
+    "value": 21152323584.0,
     "currency": "USD"
   },
   "shares_outstanding": 43056599.0,
   "volume": {
-    "last": 26160,
-    "average_30d": 332066
+    "last": 240425,
+    "average_30d": 345863
   },
   "valuation": {
-    "pe_ratio": 17.725758,
-    "forward_pe": 16.084555,
-    "price_to_book": 3.0464559
+    "pe_ratio": 17.71591,
+    "forward_pe": 16.075619,
+    "price_to_book": 3.0447633
   },
   "company_info": {
     "name": "United Therapeutics Corporation",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 7351100000.0,
+    "total_liabilities": 760900000.0,
+    "stockholders_equity": 6590200000.0,
+    "cash": 1340100000.0,
+    "marketable_securities": 1427500000.0,
+    "total_liquidity": 2767600000.0,
+    "total_debt": null,
+    "long_term_debt": null,
+    "current_debt": null,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 562100000.0,
+    "free_cash_flow": 346100000.0,
+    "investing_cash_flow": 140900000.0,
+    "financing_cash_flow": -956000000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 309300000.0,
+    "research_and_development": 127500000.0,
+    "interest_expense": 3000000.0,
+    "net_income": 338700000.0,
+    "revenue": 799500000.0,
+    "gross_profit": 698600000.0,
+    "ebitda": 462900000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T10:59:30.652882",
+    "timestamp": "2026-01-29T16:52:34.006606",
     "url": "https://finance.yahoo.com/quote/UTHR",
-    "data_hash": "86ef484fc3e03200"
+    "data_hash": "6bdf6ff478031a9f"
   }
 }

@@ -2,42 +2,80 @@
   "ticker": "INCY",
   "success": true,
   "price": {
-    "current": 100.84,
+    "current": 101.08,
     "currency": "USD",
-    "day_high": 101.345,
+    "day_high": 101.89,
     "day_low": 100.21,
     "52_week_high": 112.29,
     "52_week_low": 53.56
   },
   "market_cap": {
-    "value": 19797180416.0,
+    "value": 19844298752.0,
     "currency": "USD"
   },
   "shares_outstanding": 196322703.0,
   "volume": {
-    "last": 197761,
-    "average_30d": 1915648
+    "last": 1337080,
+    "average_30d": 2002878
   },
   "valuation": {
-    "pe_ratio": 17.091524,
-    "forward_pe": 12.800235,
-    "price_to_book": 4.252161
+    "pe_ratio": 17.132204,
+    "forward_pe": 12.8307,
+    "price_to_book": 4.2622814
   },
   "company_info": {
     "name": "Incyte Corporation",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 6330356000.0,
+    "total_liabilities": 1679162000.0,
+    "stockholders_equity": 4651194000.0,
+    "cash": 2455006000.0,
+    "marketable_securities": 474814000.0,
+    "total_liquidity": 2929820000.0,
+    "total_debt": 41267000.0,
+    "long_term_debt": 30881000.0,
+    "current_debt": 10386000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 559389000.0,
+    "free_cash_flow": 519642000.0,
+    "investing_cash_flow": -47416000.0,
+    "financing_cash_flow": -12778000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 835684000.0,
+    "research_and_development": 506584000.0,
+    "interest_expense": 592000.0,
+    "net_income": 424169000.0,
+    "revenue": 1365980000.0,
+    "gross_profit": 1266980000.0,
+    "ebitda": 506923000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T10:59:12.656621",
+    "timestamp": "2026-01-29T16:48:16.562055",
     "url": "https://finance.yahoo.com/quote/INCY",
-    "data_hash": "8954ef51a23db2c2"
+    "data_hash": "b101c52ef83a042f"
   }
 }

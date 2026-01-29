@@ -2,42 +2,80 @@
   "ticker": "JANX",
   "success": true,
   "price": {
-    "current": 13.81,
+    "current": 13.83,
     "currency": "USD",
     "day_high": 14.15,
-    "day_low": 13.7686,
+    "day_low": 13.75,
     "52_week_high": 46.095,
     "52_week_low": 12.8
   },
   "market_cap": {
-    "value": 830641280.0,
+    "value": 831844160.0,
     "currency": "USD"
   },
   "shares_outstanding": 60147807.0,
   "volume": {
-    "last": 201334,
-    "average_30d": 1703437
+    "last": 866560,
+    "average_30d": 1716645
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -4.6444683,
-    "price_to_book": 0.8502647
+    "forward_pe": -4.651194,
+    "price_to_book": 0.8514961
   },
   "company_info": {
     "name": "Janux Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1024766000.0,
+    "total_liabilities": 48211000.0,
+    "stockholders_equity": 976555000.0,
+    "cash": 48389000.0,
+    "marketable_securities": 940604000.0,
+    "total_liquidity": 988993000.0,
+    "total_debt": 22660000.0,
+    "long_term_debt": 20380000.0,
+    "current_debt": 2280000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -12856000.0,
+    "free_cash_flow": -12949000.0,
+    "investing_cash_flow": 8306000.0,
+    "financing_cash_flow": 493000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 45251000.0,
+    "research_and_development": 34629000.0,
+    "interest_expense": null,
+    "net_income": -24313000.0,
+    "revenue": 10000000.0,
+    "gross_profit": null,
+    "ebitda": -34750000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:07:26.737880",
+    "timestamp": "2026-01-29T16:48:31.411811",
     "url": "https://finance.yahoo.com/quote/JANX",
-    "data_hash": "0b084af54345a6af"
+    "data_hash": "1baa705b327f4dea"
   }
 }

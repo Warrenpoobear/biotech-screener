@@ -2,42 +2,80 @@
   "ticker": "PRLD",
   "success": true,
   "price": {
-    "current": 1.9259,
+    "current": 1.9,
     "currency": "USD",
     "day_high": 2.0503,
-    "day_low": 1.9,
+    "day_low": 1.8,
     "52_week_high": 4.22,
     "52_week_low": 0.61
   },
   "market_cap": {
-    "value": 121072224.0,
+    "value": 119444016.0,
     "currency": "USD"
   },
   "shares_outstanding": 43765011.0,
   "volume": {
-    "last": 65570,
-    "average_30d": 506966
+    "last": 893717,
+    "average_30d": 496405
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -1.6820087,
-    "price_to_book": 2.5044212
+    "forward_pe": -1.6593887,
+    "price_to_book": 2.4707413
   },
   "company_info": {
     "name": "Prelude Therapeutics Incorporated",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 94755000.0,
+    "total_liabilities": 36221000.0,
+    "stockholders_equity": 58534000.0,
+    "cash": 47532000.0,
+    "marketable_securities": 7425000.0,
+    "total_liquidity": 54957000.0,
+    "total_debt": 17854000.0,
+    "long_term_debt": 15127000.0,
+    "current_debt": 2727000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -19115000.0,
+    "free_cash_flow": -19115000.0,
+    "investing_cash_flow": 40091000.0,
+    "financing_cash_flow": -5000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 26918000.0,
+    "research_and_development": 21708000.0,
+    "interest_expense": null,
+    "net_income": -19725000.0,
+    "revenue": 6500000.0,
+    "gross_profit": null,
+    "ebitda": -19993000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:02.225597",
+    "timestamp": "2026-01-29T16:50:38.483065",
     "url": "https://finance.yahoo.com/quote/PRLD",
-    "data_hash": "fb3225fa51932843"
+    "data_hash": "635d572ebfd2e013"
   }
 }

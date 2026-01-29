@@ -2,42 +2,80 @@
   "ticker": "SYRE",
   "success": true,
   "price": {
-    "current": 33.13,
+    "current": 33.58,
     "currency": "USD",
-    "day_high": 33.55,
+    "day_high": 33.765,
     "day_low": 32.83,
     "52_week_high": 35.31,
     "52_week_low": 10.91
   },
   "market_cap": {
-    "value": 2570627328.0,
+    "value": 2605543680.0,
     "currency": "USD"
   },
   "shares_outstanding": 77592130.0,
   "volume": {
-    "last": 73959,
-    "average_30d": 571479
+    "last": 557105,
+    "average_30d": 605105
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -11.828045,
-    "price_to_book": 6.694282
+    "forward_pe": -11.988705,
+    "price_to_book": 6.7852097
   },
   "company_info": {
     "name": "Spyre Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 504604000.0,
+    "total_liabilities": 49504000.0,
+    "stockholders_equity": 455100000.0,
+    "cash": 64897000.0,
+    "marketable_securities": 421301000.0,
+    "total_liquidity": 486198000.0,
+    "total_debt": null,
+    "long_term_debt": null,
+    "current_debt": null,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -37117000.0,
+    "free_cash_flow": -37117000.0,
+    "investing_cash_flow": 24998000.0,
+    "financing_cash_flow": -4643000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 56888000.0,
+    "research_and_development": 45247000.0,
+    "interest_expense": null,
+    "net_income": -11183000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -56888000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:10:05.820798",
+    "timestamp": "2026-01-29T16:51:58.657061",
     "url": "https://finance.yahoo.com/quote/SYRE",
-    "data_hash": "7d4ca9900bea5fd2"
+    "data_hash": "1ebbf99f55af7a15"
   }
 }

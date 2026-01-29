@@ -2,7 +2,7 @@
   "ticker": "ZNTL",
   "success": true,
   "price": {
-    "current": 2.495,
+    "current": 2.51,
     "currency": "USD",
     "day_high": 2.7201,
     "day_low": 2.455,
@@ -10,34 +10,72 @@
     "52_week_low": 1.01
   },
   "market_cap": {
-    "value": 161553184.0,
+    "value": 162524464.0,
     "currency": "USD"
   },
   "shares_outstanding": 64750779.0,
   "volume": {
-    "last": 339754,
-    "average_30d": 2426366
+    "last": 530845,
+    "average_30d": 2527330
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -1.3765516,
-    "price_to_book": 0.7128571
+    "forward_pe": -1.3848276,
+    "price_to_book": 0.7171429
   },
   "company_info": {
     "name": "Zentalis Pharmaceuticals, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 327250000.0,
+    "total_liabilities": 74376000.0,
+    "stockholders_equity": 252874000.0,
+    "cash": 39072000.0,
+    "marketable_securities": 241625000.0,
+    "total_liquidity": 280697000.0,
+    "total_debt": 36708000.0,
+    "long_term_debt": 36708000.0,
+    "current_debt": null,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -26963000.0,
+    "free_cash_flow": -26963000.0,
+    "investing_cash_flow": 28321000.0,
+    "financing_cash_flow": 115000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 33734000.0,
+    "research_and_development": 22950000.0,
+    "interest_expense": null,
+    "net_income": -26691000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -33574000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T13:11:17.420180",
+    "timestamp": "2026-01-29T16:53:08.469898",
     "url": "https://finance.yahoo.com/quote/ZNTL",
-    "data_hash": "061b1449261b7125"
+    "data_hash": "576c0175bfade8a7"
   }
 }

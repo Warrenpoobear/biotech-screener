@@ -2,42 +2,80 @@
   "ticker": "ORIC",
   "success": true,
   "price": {
-    "current": 10.77,
+    "current": 10.76,
     "currency": "USD",
     "day_high": 11.2,
-    "day_low": 10.77,
+    "day_low": 10.61,
     "52_week_high": 14.93,
     "52_week_low": 3.895
   },
   "market_cap": {
-    "value": 1048882560.0,
+    "value": 1047908672.0,
     "currency": "USD"
   },
   "shares_outstanding": 97389279.0,
   "volume": {
-    "last": 270592,
-    "average_30d": 1692895
+    "last": 1745782,
+    "average_30d": 1795956
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -6.7790856,
-    "price_to_book": 2.5747073
+    "forward_pe": -6.772791,
+    "price_to_book": 2.5723164
   },
   "company_info": {
     "name": "ORIC Pharmaceuticals, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 431192000.0,
+    "total_liabilities": 24273000.0,
+    "stockholders_equity": 406919000.0,
+    "cash": 49668000.0,
+    "marketable_securities": 237472000.0,
+    "total_liquidity": 287140000.0,
+    "total_debt": 3301000.0,
+    "long_term_debt": null,
+    "current_debt": 3301000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -25112000.0,
+    "free_cash_flow": -25147000.0,
+    "investing_cash_flow": -110535000.0,
+    "financing_cash_flow": 109451000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 36671000.0,
+    "research_and_development": 28773000.0,
+    "interest_expense": null,
+    "net_income": -32587000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -36383000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:48.087329",
+    "timestamp": "2026-01-29T16:50:17.459411",
     "url": "https://finance.yahoo.com/quote/ORIC",
-    "data_hash": "3e683c0c33b73b0c"
+    "data_hash": "6e7b253377d9262e"
   }
 }

@@ -2,7 +2,7 @@
   "ticker": "PHGE",
   "success": true,
   "price": {
-    "current": 7.12,
+    "current": 7.05,
     "currency": "USD",
     "day_high": 8.5,
     "day_low": 5.95,
@@ -10,34 +10,72 @@
     "52_week_low": 1.5
   },
   "market_cap": {
-    "value": 10869677.0,
+    "value": 10762812.0,
     "currency": "USD"
   },
   "shares_outstanding": 1526640.0,
   "volume": {
-    "last": 811615,
-    "average_30d": 2641350
+    "last": 1056582,
+    "average_30d": 2774589
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -0.5819371,
-    "price_to_book": -1.2352533
+    "forward_pe": -0.5762158,
+    "price_to_book": -1.223109
   },
   "company_info": {
     "name": "BiomX Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 26168000.0,
+    "total_liabilities": 15682000.0,
+    "stockholders_equity": 10486000.0,
+    "cash": 6923000.0,
+    "marketable_securities": null,
+    "total_liquidity": 6923000.0,
+    "total_debt": 6583000.0,
+    "long_term_debt": 5287000.0,
+    "current_debt": 1296000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -7183000.0,
+    "free_cash_flow": -7185000.0,
+    "investing_cash_flow": -2000.0,
+    "financing_cash_flow": 54000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 8536000.0,
+    "research_and_development": 6122000.0,
+    "interest_expense": 5000.0,
+    "net_income": -9166000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -7917000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T13:11:32.535040",
+    "timestamp": "2026-01-29T16:50:31.209988",
     "url": "https://finance.yahoo.com/quote/PHGE",
-    "data_hash": "83b0af5475c73e55"
+    "data_hash": "71e2b62e3ed491e4"
   }
 }

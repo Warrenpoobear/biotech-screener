@@ -4,7 +4,7 @@
   "price": {
     "current": 3.43,
     "currency": "USD",
-    "day_high": 3.45,
+    "day_high": 3.53,
     "day_low": 3.3518,
     "52_week_high": 5.22,
     "52_week_low": 1.665
@@ -15,8 +15,8 @@
   },
   "shares_outstanding": 145022751.0,
   "volume": {
-    "last": 297904,
-    "average_30d": 1092250
+    "last": 979774,
+    "average_30d": 1130054
   },
   "valuation": {
     "pe_ratio": null,
@@ -28,15 +28,53 @@
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 849191000.0,
+    "total_liabilities": 417332000.0,
+    "stockholders_equity": 245443000.0,
+    "cash": 243574000.0,
+    "marketable_securities": null,
+    "total_liquidity": 243574000.0,
+    "total_debt": 367941000.0,
+    "long_term_debt": 287381000.0,
+    "current_debt": 5440000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -15150000.0,
+    "free_cash_flow": -18076000.0,
+    "investing_cash_flow": -2926000.0,
+    "financing_cash_flow": -8249000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 39240000.0,
+    "research_and_development": 3844000.0,
+    "interest_expense": 6844000.0,
+    "net_income": -25556000.0,
+    "revenue": 41630000.0,
+    "gross_profit": 5655000.0,
+    "ebitda": -22862000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:14.903281",
+    "timestamp": "2026-01-29T16:49:35.263718",
     "url": "https://finance.yahoo.com/quote/MRVI",
     "data_hash": "e0d7af2fd0277c1f"
   }

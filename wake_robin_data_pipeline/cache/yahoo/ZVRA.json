@@ -2,42 +2,80 @@
   "ticker": "ZVRA",
   "success": true,
   "price": {
-    "current": 8.7,
+    "current": 8.86,
     "currency": "USD",
-    "day_high": 8.81,
+    "day_high": 8.96,
     "day_low": 8.5101,
     "52_week_high": 13.16,
     "52_week_low": 6.19
   },
   "market_cap": {
-    "value": 489788544.0,
+    "value": 498796160.0,
     "currency": "USD"
   },
   "shares_outstanding": 56297535.0,
   "volume": {
-    "last": 122936,
-    "average_30d": 1053147
+    "last": 694789,
+    "average_30d": 1062067
   },
   "valuation": {
-    "pe_ratio": 18.510637,
-    "forward_pe": 14.032258,
-    "price_to_book": 3.6724355
+    "pe_ratio": 18.851063,
+    "forward_pe": 14.290322,
+    "price_to_book": 3.7399745
   },
   "company_info": {
     "name": "Zevra Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 270116000.0,
+    "total_liabilities": 136951000.0,
+    "stockholders_equity": 133165000.0,
+    "cash": 54439000.0,
+    "marketable_securities": 145070000.0,
+    "total_liquidity": 199509000.0,
+    "total_debt": 62717000.0,
+    "long_term_debt": 61310000.0,
+    "current_debt": 441000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 4709000.0,
+    "free_cash_flow": 4155000.0,
+    "investing_cash_flow": -4576000.0,
+    "financing_cash_flow": 6530000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 20682000.0,
+    "research_and_development": 3432000.0,
+    "interest_expense": 2051000.0,
+    "net_income": -544000.0,
+    "revenue": 26063000.0,
+    "gross_profit": 24825000.0,
+    "ebitda": 1466000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:10:55.721296",
+    "timestamp": "2026-01-29T16:53:09.908721",
     "url": "https://finance.yahoo.com/quote/ZVRA",
-    "data_hash": "61d29f12b9e2c917"
+    "data_hash": "c433ae908ef5836c"
   }
 }

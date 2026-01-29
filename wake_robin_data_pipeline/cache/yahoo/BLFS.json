@@ -2,42 +2,80 @@
   "ticker": "BLFS",
   "success": true,
   "price": {
-    "current": 23.0,
+    "current": 22.58,
     "currency": "USD",
-    "day_high": 23.0,
+    "day_high": 23.02,
     "day_low": 22.36,
     "52_week_high": 29.62,
     "52_week_low": 19.1
   },
   "market_cap": {
-    "value": 1107405056.0,
+    "value": 1087182976.0,
     "currency": "USD"
   },
   "shares_outstanding": 48148046.0,
   "volume": {
-    "last": 171124,
-    "average_30d": 283637
+    "last": 372925,
+    "average_30d": 295916
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 143.75,
-    "price_to_book": 3.118644
+    "forward_pe": 141.125,
+    "price_to_book": 3.0616949
   },
   "company_info": {
     "name": "BioLife Solutions, Inc.",
     "sector": "Healthcare",
     "industry": "Medical Instruments & Supplies"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 392081000.0,
+    "total_liabilities": 38342000.0,
+    "stockholders_equity": 353739000.0,
+    "cash": 29481000.0,
+    "marketable_securities": 49473000.0,
+    "total_liquidity": 78954000.0,
+    "total_debt": 20677000.0,
+    "long_term_debt": 11007000.0,
+    "current_debt": 7492000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 6104000.0,
+    "free_cash_flow": 2802000.0,
+    "investing_cash_flow": -5967000.0,
+    "financing_cash_flow": -2558000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 18010000.0,
+    "research_and_development": 2709000.0,
+    "interest_expense": null,
+    "net_income": 621000.0,
+    "revenue": 28067000.0,
+    "gross_profit": 17921000.0,
+    "ebitda": 1246000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T12:35:25.998872",
+    "timestamp": "2026-01-29T16:47:30.387620",
     "url": "https://finance.yahoo.com/quote/BLFS",
-    "data_hash": "7e92b18bdaf5d313"
+    "data_hash": "957e7dd003fb4929"
   }
 }

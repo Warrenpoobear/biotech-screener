@@ -2,42 +2,80 @@
   "ticker": "TARA",
   "success": true,
   "price": {
-    "current": 7.025,
+    "current": 7.0,
     "currency": "USD",
     "day_high": 7.15,
-    "day_low": 6.96,
+    "day_low": 6.87,
     "52_week_high": 7.82,
     "52_week_low": 2.77
   },
   "market_cap": {
-    "value": 376450496.0,
+    "value": 375110816.0,
     "currency": "USD"
   },
   "shares_outstanding": 53587260.0,
   "volume": {
-    "last": 255654,
-    "average_30d": 1102579
+    "last": 1034220,
+    "average_30d": 1172091
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -4.824863,
-    "price_to_book": 2.0493
+    "forward_pe": -4.8076925,
+    "price_to_book": 2.042007
   },
   "company_info": {
     "name": "Protara Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 144636000.0,
+    "total_liabilities": 12345000.0,
+    "stockholders_equity": 132291000.0,
+    "cash": 12551000.0,
+    "marketable_securities": 120119000.0,
+    "total_liquidity": 132670000.0,
+    "total_debt": 3656000.0,
+    "long_term_debt": 2436000.0,
+    "current_debt": 1220000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -12452000.0,
+    "free_cash_flow": -12456000.0,
+    "investing_cash_flow": -6506000.0,
+    "financing_cash_flow": 13000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 14760000.0,
+    "research_and_development": 9591000.0,
+    "interest_expense": null,
+    "net_income": -13258000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -14672000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:10:07.423274",
+    "timestamp": "2026-01-29T16:52:00.116423",
     "url": "https://finance.yahoo.com/quote/TARA",
-    "data_hash": "75008fc74dc693f7"
+    "data_hash": "cc7091e2567c0a71"
   }
 }

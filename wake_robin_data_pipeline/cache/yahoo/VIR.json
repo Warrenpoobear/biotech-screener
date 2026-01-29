@@ -2,42 +2,80 @@
   "ticker": "VIR",
   "success": true,
   "price": {
-    "current": 7.71,
+    "current": 7.78,
     "currency": "USD",
-    "day_high": 7.79,
+    "day_high": 7.8,
     "day_low": 7.5,
     "52_week_high": 11.0,
     "52_week_low": 4.155
   },
   "market_cap": {
-    "value": 1072653952.0,
+    "value": 1082392704.0,
     "currency": "USD"
   },
   "shares_outstanding": 139125032.0,
   "volume": {
-    "last": 288500,
-    "average_30d": 1844568
+    "last": 1054907,
+    "average_30d": 1915824
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -2.640212,
-    "price_to_book": 1.3464898
+    "forward_pe": -2.664183,
+    "price_to_book": 1.3587147
   },
   "company_info": {
     "name": "Vir Biotechnology, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1019453000.0,
+    "total_liabilities": 223355000.0,
+    "stockholders_equity": 796098000.0,
+    "cash": 170084000.0,
+    "marketable_securities": 336429000.0,
+    "total_liquidity": 506513000.0,
+    "total_debt": 100175000.0,
+    "long_term_debt": 91215000.0,
+    "current_debt": 8960000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -167570000.0,
+    "free_cash_flow": -167887000.0,
+    "investing_cash_flow": 40446000.0,
+    "financing_cash_flow": 102000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 173389000.0,
+    "research_and_development": 151463000.0,
+    "interest_expense": null,
+    "net_income": -163141000.0,
+    "revenue": -65000.0,
+    "gross_profit": -54000.0,
+    "ebitda": -170445000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:10:39.275589",
+    "timestamp": "2026-01-29T16:52:40.218562",
     "url": "https://finance.yahoo.com/quote/VIR",
-    "data_hash": "1e49898b559e098a"
+    "data_hash": "e7e8461fc3d79e0f"
   }
 }

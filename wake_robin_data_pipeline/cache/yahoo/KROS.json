@@ -2,7 +2,7 @@
   "ticker": "KROS",
   "success": true,
   "price": {
-    "current": 17.88,
+    "current": 17.99,
     "currency": "USD",
     "day_high": 18.1873,
     "day_low": 17.81,
@@ -10,34 +10,72 @@
     "52_week_low": 9.12
   },
   "market_cap": {
-    "value": 544733248.0,
+    "value": 548084544.0,
     "currency": "USD"
   },
   "shares_outstanding": 30466069.0,
   "volume": {
-    "last": 37717,
-    "average_30d": 337655
+    "last": 201573,
+    "average_30d": 349670
   },
   "valuation": {
-    "pe_ratio": 11.461538,
-    "forward_pe": -6.0786757,
-    "price_to_book": 1.032571
+    "pe_ratio": 11.532051,
+    "forward_pe": -6.1160727,
+    "price_to_book": 1.0389235
   },
   "company_info": {
     "name": "Keros Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 742783000.0,
+    "total_liabilities": 39203000.0,
+    "stockholders_equity": 703580000.0,
+    "cash": 693472000.0,
+    "marketable_securities": null,
+    "total_liquidity": 693472000.0,
+    "total_debt": 17429000.0,
+    "long_term_debt": 15111000.0,
+    "current_debt": 2318000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 3249000.0,
+    "free_cash_flow": 3117000.0,
+    "investing_cash_flow": -132000.0,
+    "financing_cash_flow": 140000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 29646000.0,
+    "research_and_development": 19519000.0,
+    "interest_expense": null,
+    "net_income": -7280000.0,
+    "revenue": 14262000.0,
+    "gross_profit": null,
+    "ebitda": -14989000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:07:34.167440",
+    "timestamp": "2026-01-29T16:48:44.970391",
     "url": "https://finance.yahoo.com/quote/KROS",
-    "data_hash": "23cd55001d747ca5"
+    "data_hash": "37aafa5104e0fcd1"
   }
 }

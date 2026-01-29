@@ -2,42 +2,80 @@
   "ticker": "OPK",
   "success": true,
   "price": {
-    "current": 1.265,
+    "current": 1.27,
     "currency": "USD",
     "day_high": 1.29,
-    "day_low": 1.2601,
+    "day_low": 1.24,
     "52_week_high": 2.04,
     "52_week_low": 1.11
   },
   "market_cap": {
-    "value": 1004135232.0,
+    "value": 1008104128.0,
     "currency": "USD"
   },
   "shares_outstanding": 767701280.0,
   "volume": {
-    "last": 493243,
-    "average_30d": 3575611
+    "last": 3686277,
+    "average_30d": 3628994
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -4.080645,
-    "price_to_book": 0.7449941
+    "forward_pe": -4.096774,
+    "price_to_book": 0.74793875
   },
   "company_info": {
     "name": "OPKO Health, Inc.",
     "sector": "Healthcare",
     "industry": "Diagnostics & Research"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1995508000.0,
+    "total_liabilities": 690018000.0,
+    "stockholders_equity": 1305490000.0,
+    "cash": 415198000.0,
+    "marketable_securities": null,
+    "total_liquidity": 415198000.0,
+    "total_debt": 395420000.0,
+    "long_term_debt": 331432000.0,
+    "current_debt": 12785000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -34647000.0,
+    "free_cash_flow": -37782000.0,
+    "investing_cash_flow": 194648000.0,
+    "financing_cash_flow": -16206000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 103413000.0,
+    "research_and_development": 30078000.0,
+    "interest_expense": 11358000.0,
+    "net_income": 21631000.0,
+    "revenue": 151669000.0,
+    "gross_profit": 49893000.0,
+    "ebitda": 75529000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:46.731683",
+    "timestamp": "2026-01-29T16:50:15.849692",
     "url": "https://finance.yahoo.com/quote/OPK",
-    "data_hash": "68a481aba2c7d1b0"
+    "data_hash": "79ebb0a8668e382d"
   }
 }

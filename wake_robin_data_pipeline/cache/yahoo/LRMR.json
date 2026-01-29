@@ -2,42 +2,80 @@
   "ticker": "LRMR",
   "success": true,
   "price": {
-    "current": 3.5401,
+    "current": 3.57,
     "currency": "USD",
     "day_high": 3.66,
-    "day_low": 3.5401,
+    "day_low": 3.52,
     "52_week_high": 5.37,
     "52_week_low": 1.61
   },
   "market_cap": {
-    "value": 302998560.0,
+    "value": 305557696.0,
     "currency": "USD"
   },
   "shares_outstanding": 83090392.0,
   "volume": {
-    "last": 270449,
-    "average_30d": 1188434
+    "last": 722768,
+    "average_30d": 1240769
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -1.9464253,
-    "price_to_book": 2.1798646
+    "forward_pe": -1.9628649,
+    "price_to_book": 2.1982758
   },
   "company_info": {
     "name": "Larimar Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 187350000.0,
+    "total_liabilities": 48312000.0,
+    "stockholders_equity": 139038000.0,
+    "cash": 90140000.0,
+    "marketable_securities": 85295000.0,
+    "total_liquidity": 175435000.0,
+    "total_debt": 4347000.0,
+    "long_term_debt": 3196000.0,
+    "current_debt": 1151000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -28753000.0,
+    "free_cash_flow": -28776000.0,
+    "investing_cash_flow": 33019000.0,
+    "financing_cash_flow": 65287000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 49499000.0,
+    "research_and_development": 44931000.0,
+    "interest_expense": null,
+    "net_income": -47712000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -49411000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:07:50.852770",
+    "timestamp": "2026-01-29T16:49:04.573596",
     "url": "https://finance.yahoo.com/quote/LRMR",
-    "data_hash": "847276ffdadea6b8"
+    "data_hash": "49d657b2a4a80dd9"
   }
 }

@@ -2,42 +2,80 @@
   "ticker": "IDYA",
   "success": true,
   "price": {
-    "current": 33.07,
+    "current": 32.99,
     "currency": "USD",
     "day_high": 34.02,
-    "day_low": 32.97,
+    "day_low": 32.51,
     "52_week_high": 39.28,
     "52_week_low": 13.45
   },
   "market_cap": {
-    "value": 2899128064.0,
+    "value": 2892114944.0,
     "currency": "USD"
   },
   "shares_outstanding": 87666408.0,
   "volume": {
-    "last": 100855,
-    "average_30d": 860493
+    "last": 788696,
+    "average_30d": 911674
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -9.285622,
-    "price_to_book": 2.6547322
+    "forward_pe": -9.26316,
+    "price_to_book": 2.6483104
   },
   "company_info": {
     "name": "IDEAYA Biosciences, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1185136000.0,
+    "total_liabilities": 93102000.0,
+    "stockholders_equity": 1092034000.0,
+    "cash": 298927000.0,
+    "marketable_securities": 487967000.0,
+    "total_liquidity": 786894000.0,
+    "total_debt": 27245000.0,
+    "long_term_debt": 26917000.0,
+    "current_debt": 328000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 142214000.0,
+    "free_cash_flow": 142172000.0,
+    "investing_cash_flow": 41767000.0,
+    "financing_cash_flow": 301000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 99382000.0,
+    "research_and_development": 82993000.0,
+    "interest_expense": null,
+    "net_income": 119244000.0,
+    "revenue": 207834000.0,
+    "gross_profit": null,
+    "ebitda": 109482000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:07:04.105506",
+    "timestamp": "2026-01-29T16:48:00.582669",
     "url": "https://finance.yahoo.com/quote/IDYA",
-    "data_hash": "31e69aaf2f39a38c"
+    "data_hash": "75df7d47d4a69da7"
   }
 }

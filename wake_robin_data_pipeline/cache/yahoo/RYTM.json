@@ -2,7 +2,7 @@
   "ticker": "RYTM",
   "success": true,
   "price": {
-    "current": 101.31,
+    "current": 103.7,
     "currency": "USD",
     "day_high": 105.0,
     "day_low": 101.27,
@@ -10,34 +10,72 @@
     "52_week_low": 45.905
   },
   "market_cap": {
-    "value": 6761029632.0,
+    "value": 6920528896.0,
     "currency": "USD"
   },
   "shares_outstanding": 66736056.0,
   "volume": {
-    "last": 26322,
-    "average_30d": 585728
+    "last": 241489,
+    "average_30d": 596213
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -38.68285,
-    "price_to_book": 45.389782
+    "forward_pe": -39.595417,
+    "price_to_book": 46.46057
   },
   "company_info": {
     "name": "Rhythm Pharmaceuticals, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 506874000.0,
+    "total_liabilities": 211191000.0,
+    "stockholders_equity": 295683000.0,
+    "cash": 52078000.0,
+    "marketable_securities": 363974000.0,
+    "total_liquidity": 416052000.0,
+    "total_debt": 4139000.0,
+    "long_term_debt": 3515000.0,
+    "current_debt": 624000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -26622000.0,
+    "free_cash_flow": -26622000.0,
+    "investing_cash_flow": -246347000.0,
+    "financing_cash_flow": 189301000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 98452000.0,
+    "research_and_development": 46027000.0,
+    "interest_expense": 4742000.0,
+    "net_income": -52904000.0,
+    "revenue": 51298000.0,
+    "gross_profit": 45799000.0,
+    "ebitda": -47747000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T10:59:22.420082",
+    "timestamp": "2026-01-29T16:51:23.881209",
     "url": "https://finance.yahoo.com/quote/RYTM",
-    "data_hash": "61b14b9f7e9040d8"
+    "data_hash": "eff1e7a442f833d2"
   }
 }

@@ -2,42 +2,80 @@
   "ticker": "LFCR",
   "success": true,
   "price": {
-    "current": 8.565,
+    "current": 8.51,
     "currency": "USD",
-    "day_high": 8.68,
+    "day_high": 8.73,
     "day_low": 8.46,
     "52_week_high": 8.98,
     "52_week_low": 4.76
   },
   "market_cap": {
-    "value": 320899296.0,
+    "value": 318838656.0,
     "currency": "USD"
   },
   "shares_outstanding": 37466352.0,
   "volume": {
-    "last": 17557,
-    "average_30d": 131193
+    "last": 77844,
+    "average_30d": 135668
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -9.959302,
-    "price_to_book": 237.91667
+    "forward_pe": -9.895349,
+    "price_to_book": 236.3889
   },
   "company_info": {
     "name": "Lifecore Biomedical, Inc.",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 235204000.0,
+    "total_liabilities": 245741000.0,
+    "stockholders_equity": -10537000.0,
+    "cash": 18856000.0,
+    "marketable_securities": null,
+    "total_liquidity": 18856000.0,
+    "total_debt": 135951000.0,
+    "long_term_debt": 135004000.0,
+    "current_debt": 947000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 1762000.0,
+    "free_cash_flow": 25000.0,
+    "investing_cash_flow": -1737000.0,
+    "financing_cash_flow": -1388000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 10858000.0,
+    "research_and_development": 1963000.0,
+    "interest_expense": 6384000.0,
+    "net_income": -9991000.0,
+    "revenue": 31109000.0,
+    "gross_profit": 7791000.0,
+    "ebitda": -1293000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:07:46.450879",
+    "timestamp": "2026-01-29T16:49:00.106052",
     "url": "https://finance.yahoo.com/quote/LFCR",
-    "data_hash": "74fe31d180ffeb5c"
+    "data_hash": "46b905143cbd904f"
   }
 }

@@ -2,7 +2,7 @@
   "ticker": "NMRA",
   "success": true,
   "price": {
-    "current": 1.99,
+    "current": 2.05,
     "currency": "USD",
     "day_high": 2.06,
     "day_low": 1.99,
@@ -10,34 +10,72 @@
     "52_week_low": 0.611
   },
   "market_cap": {
-    "value": 338177504.0,
+    "value": 348373824.0,
     "currency": "USD"
   },
   "shares_outstanding": 169938441.0,
   "volume": {
-    "last": 215980,
-    "average_30d": 2233562
+    "last": 602493,
+    "average_30d": 2326147
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -2.0382452,
-    "price_to_book": 2.4387255
+    "forward_pe": -2.0997,
+    "price_to_book": 2.512255
   },
   "company_info": {
     "name": "Neumora Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 177833000.0,
+    "total_liabilities": 45672000.0,
+    "stockholders_equity": 132161000.0,
+    "cash": 129071000.0,
+    "marketable_securities": 42454000.0,
+    "total_liquidity": 171525000.0,
+    "total_debt": 20086000.0,
+    "long_term_debt": 19563000.0,
+    "current_debt": 256000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -46633000.0,
+    "free_cash_flow": -46649000.0,
+    "investing_cash_flow": 51317000.0,
+    "financing_cash_flow": -136000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 57700000.0,
+    "research_and_development": 45520000.0,
+    "interest_expense": 747000.0,
+    "net_income": -56755000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -55985000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:25.756345",
+    "timestamp": "2026-01-29T16:49:50.085891",
     "url": "https://finance.yahoo.com/quote/NMRA",
-    "data_hash": "4452e41d9ffeeb1a"
+    "data_hash": "d478be347bc72cd0"
   }
 }

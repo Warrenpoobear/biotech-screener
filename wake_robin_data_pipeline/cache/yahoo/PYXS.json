@@ -2,42 +2,80 @@
   "ticker": "PYXS",
   "success": true,
   "price": {
-    "current": 1.54,
+    "current": 1.56,
     "currency": "USD",
-    "day_high": 1.5899,
+    "day_high": 1.59,
     "day_low": 1.49,
     "52_week_high": 5.55,
     "52_week_low": 0.833
   },
   "market_cap": {
-    "value": 95886888.0,
+    "value": 97132176.0,
     "currency": "USD"
   },
   "shares_outstanding": 62264215.0,
   "volume": {
-    "last": 119844,
-    "average_30d": 1398261
+    "last": 292513,
+    "average_30d": 1390200
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -1.3009503,
-    "price_to_book": 1.3911473
+    "forward_pe": -1.3178457,
+    "price_to_book": 1.409214
   },
   "company_info": {
     "name": "Pyxis Oncology, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 105604000.0,
+    "total_liabilities": 36825000.0,
+    "stockholders_equity": 68779000.0,
+    "cash": 8919000.0,
+    "marketable_securities": 67337000.0,
+    "total_liquidity": 76256000.0,
+    "total_debt": 19073000.0,
+    "long_term_debt": 17443000.0,
+    "current_debt": 1630000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -13277000.0,
+    "free_cash_flow": -13286000.0,
+    "investing_cash_flow": 11471000.0,
+    "financing_cash_flow": -8000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 23461000.0,
+    "research_and_development": 17808000.0,
+    "interest_expense": null,
+    "net_income": -22003000.0,
+    "revenue": 0.0,
+    "gross_profit": 0.0,
+    "ebitda": -22934000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:14.390394",
+    "timestamp": "2026-01-29T16:50:50.862469",
     "url": "https://finance.yahoo.com/quote/PYXS",
-    "data_hash": "09b402d95e1f36ea"
+    "data_hash": "5c96fc8006770bc4"
   }
 }

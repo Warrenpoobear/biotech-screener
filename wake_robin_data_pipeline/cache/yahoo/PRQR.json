@@ -2,42 +2,80 @@
   "ticker": "PRQR",
   "success": true,
   "price": {
-    "current": 1.61,
+    "current": 1.6,
     "currency": "USD",
-    "day_high": 1.63,
+    "day_high": 1.65,
     "day_low": 1.6,
     "52_week_high": 3.1,
     "52_week_low": 1.07
   },
   "market_cap": {
-    "value": 169605760.0,
+    "value": 168552304.0,
     "currency": "USD"
   },
   "shares_outstanding": 105345192.0,
   "volume": {
-    "last": 134022,
-    "average_30d": 527341
+    "last": 345385,
+    "average_30d": 529923
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -3.4255319,
-    "price_to_book": 2.4720213
+    "forward_pe": -3.4042554,
+    "price_to_book": 2.4566672
   },
   "company_info": {
     "name": "ProQR Therapeutics N.V.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 124349000.0,
+    "total_liabilities": 67278000.0,
+    "stockholders_equity": 57071000.0,
+    "cash": 106883000.0,
+    "marketable_securities": null,
+    "total_liquidity": 106883000.0,
+    "total_debt": 16491000.0,
+    "long_term_debt": 10017000.0,
+    "current_debt": 4800000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -12235000.0,
+    "free_cash_flow": -12404000.0,
+    "investing_cash_flow": -169000.0,
+    "financing_cash_flow": -444000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 14166000.0,
+    "research_and_development": 11080000.0,
+    "interest_expense": null,
+    "net_income": -11006000.0,
+    "revenue": 2882000.0,
+    "gross_profit": null,
+    "ebitda": -10613000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:04.972727",
+    "timestamp": "2026-01-29T16:50:41.592810",
     "url": "https://finance.yahoo.com/quote/PRQR",
-    "data_hash": "a975f150384c9665"
+    "data_hash": "43f071ce9914bbad"
   }
 }

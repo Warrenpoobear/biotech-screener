@@ -2,42 +2,80 @@
   "ticker": "UNCY",
   "success": true,
   "price": {
-    "current": 6.54,
+    "current": 6.67,
     "currency": "USD",
     "day_high": 7.0,
-    "day_low": 6.455,
+    "day_low": 6.41,
     "52_week_high": 11.0,
     "52_week_low": 3.71
   },
   "market_cap": {
-    "value": 140553728.0,
+    "value": 143347616.0,
     "currency": "USD"
   },
   "shares_outstanding": 21491396.0,
   "volume": {
-    "last": 1081203,
-    "average_30d": 560668
+    "last": 1731736,
+    "average_30d": 593413
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 1.106365,
-    "price_to_book": 3.6373749
+    "forward_pe": 1.1283569,
+    "price_to_book": 3.7096775
   },
   "company_info": {
     "name": "Unicycive Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 50611000.0,
+    "total_liabilities": 13131000.0,
+    "stockholders_equity": 37480000.0,
+    "cash": 42695000.0,
+    "marketable_securities": null,
+    "total_liquidity": 42695000.0,
+    "total_debt": 505000.0,
+    "long_term_debt": 0.0,
+    "current_debt": 240000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -5962000.0,
+    "free_cash_flow": -5964000.0,
+    "investing_cash_flow": -2000.0,
+    "financing_cash_flow": 26332000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 7342000.0,
+    "research_and_development": 2964000.0,
+    "interest_expense": 15000.0,
+    "net_income": -6011000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -5848000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T13:11:13.195975",
+    "timestamp": "2026-01-29T16:52:29.405989",
     "url": "https://finance.yahoo.com/quote/UNCY",
-    "data_hash": "9950fabe3292c23d"
+    "data_hash": "6c61e15708180c0c"
   }
 }

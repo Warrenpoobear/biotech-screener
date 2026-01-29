@@ -2,7 +2,7 @@
   "ticker": "TXG",
   "success": true,
   "price": {
-    "current": 20.065,
+    "current": 20.8,
     "currency": "USD",
     "day_high": 20.92,
     "day_low": 19.97,
@@ -10,34 +10,72 @@
     "52_week_low": 6.78
   },
   "market_cap": {
-    "value": 2539287040.0,
+    "value": 2632303360.0,
     "currency": "USD"
   },
   "shares_outstanding": 116474179.0,
   "volume": {
-    "last": 652514,
-    "average_30d": 2408432
+    "last": 3271123,
+    "average_30d": 2578720
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -51.891796,
-    "price_to_book": 3.2336826
+    "forward_pe": -53.792637,
+    "price_to_book": 3.3521352
   },
   "company_info": {
     "name": "10x Genomics, Inc.",
     "sector": "Healthcare",
     "industry": "Health Information Services"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1027361000.0,
+    "total_liabilities": 242241000.0,
+    "stockholders_equity": 785120000.0,
+    "cash": 432508000.0,
+    "marketable_securities": 49576000.0,
+    "total_liquidity": 482084000.0,
+    "total_debt": 86985000.0,
+    "long_term_debt": 76442000.0,
+    "current_debt": 10543000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 43214000.0,
+    "free_cash_flow": 42527000.0,
+    "investing_cash_flow": -8801000.0,
+    "financing_cash_flow": 617000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 132549000.0,
+    "research_and_development": 57194000.0,
+    "interest_expense": null,
+    "net_income": -27472000.0,
+    "revenue": 149002000.0,
+    "gross_profit": 100307000.0,
+    "ebitda": -19991000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:10:29.723251",
+    "timestamp": "2026-01-29T16:52:26.436266",
     "url": "https://finance.yahoo.com/quote/TXG",
-    "data_hash": "f9141667b37811e3"
+    "data_hash": "287bb03d743ef140"
   }
 }

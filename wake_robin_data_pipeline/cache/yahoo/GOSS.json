@@ -2,42 +2,80 @@
   "ticker": "GOSS",
   "success": true,
   "price": {
-    "current": 2.475,
+    "current": 2.42,
     "currency": "USD",
     "day_high": 2.57,
-    "day_low": 2.47,
+    "day_low": 2.4,
     "52_week_high": 3.87,
     "52_week_low": 0.76
   },
   "market_cap": {
-    "value": 572854144.0,
+    "value": 560124096.0,
     "currency": "USD"
   },
   "shares_outstanding": 231456247.0,
   "volume": {
-    "last": 1246730,
-    "average_30d": 4450537
+    "last": 4750247,
+    "average_30d": 4634843
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -4.2787495,
-    "price_to_book": -6.9522467
+    "forward_pe": -4.1836667,
+    "price_to_book": -6.797753
   },
   "company_info": {
     "name": "Gossamer Bio, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 208820000.0,
+    "total_liabilities": 291153000.0,
+    "stockholders_equity": -82333000.0,
+    "cash": 8933000.0,
+    "marketable_securities": 171291000.0,
+    "total_liquidity": 180224000.0,
+    "total_debt": 202876000.0,
+    "long_term_debt": 198257000.0,
+    "current_debt": 919000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -36167000.0,
+    "free_cash_flow": -36167000.0,
+    "investing_cash_flow": 17014000.0,
+    "financing_cash_flow": 1872000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 54932000.0,
+    "research_and_development": 45542000.0,
+    "interest_expense": 2748000.0,
+    "net_income": -48221000.0,
+    "revenue": 13294000.0,
+    "gross_profit": null,
+    "ebitda": -45253000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T10:59:18.261396",
+    "timestamp": "2026-01-29T16:42:31.168444",
     "url": "https://finance.yahoo.com/quote/GOSS",
-    "data_hash": "44474d784877b8d4"
+    "data_hash": "626a4e544098b77c"
   }
 }

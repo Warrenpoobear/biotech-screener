@@ -2,7 +2,7 @@
   "ticker": "IMNM",
   "success": true,
   "price": {
-    "current": 24.9,
+    "current": 25.07,
     "currency": "USD",
     "day_high": 25.61,
     "day_low": 24.28,
@@ -10,34 +10,72 @@
     "52_week_low": 5.15
   },
   "market_cap": {
-    "value": 2747348480.0,
+    "value": 2766105344.0,
     "currency": "USD"
   },
   "shares_outstanding": 110335277.0,
   "volume": {
-    "last": 475853,
-    "average_30d": 2053266
+    "last": 929203,
+    "average_30d": 2071523
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -10.128827,
-    "price_to_book": 8.651841
+    "forward_pe": -10.19798,
+    "price_to_book": 8.71091
   },
   "company_info": {
     "name": "Immunome, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 299377000.0,
+    "total_liabilities": 35458000.0,
+    "stockholders_equity": 263919000.0,
+    "cash": 272639000.0,
+    "marketable_securities": null,
+    "total_liquidity": 272639000.0,
+    "total_debt": 4013000.0,
+    "long_term_debt": 4013000.0,
+    "current_debt": null,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -40510000.0,
+    "free_cash_flow": -41626000.0,
+    "investing_cash_flow": 123884000.0,
+    "financing_cash_flow": 45389000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 60138000.0,
+    "research_and_development": 49193000.0,
+    "interest_expense": null,
+    "net_income": -57457000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -59405000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T12:35:29.725451",
+    "timestamp": "2026-01-29T16:48:09.685984",
     "url": "https://finance.yahoo.com/quote/IMNM",
-    "data_hash": "d0f61740f63bcb89"
+    "data_hash": "deb3b52eef40aed8"
   }
 }

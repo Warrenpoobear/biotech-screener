@@ -16,7 +16,7 @@
   "shares_outstanding": 4998750.0,
   "volume": {
     "last": 624025,
-    "average_30d": 240615
+    "average_30d": 258789
   },
   "valuation": {
     "pe_ratio": null,
@@ -28,15 +28,53 @@
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 62686000.0,
+    "total_liabilities": 122223000.0,
+    "stockholders_equity": -59537000.0,
+    "cash": 56391000.0,
+    "marketable_securities": null,
+    "total_liquidity": 56391000.0,
+    "total_debt": 2293000.0,
+    "long_term_debt": 0.0,
+    "current_debt": 2293000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -3192000.0,
+    "free_cash_flow": -3192000.0,
+    "investing_cash_flow": 372000.0,
+    "financing_cash_flow": -17761000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 18485000.0,
+    "research_and_development": 12182000.0,
+    "interest_expense": 394000.0,
+    "net_income": -7545000.0,
+    "revenue": 11009000.0,
+    "gross_profit": null,
+    "ebitda": -7068000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:13.570893",
+    "timestamp": "2026-01-29T16:49:33.551731",
     "url": "https://finance.yahoo.com/quote/MRSN",
     "data_hash": "43c8a8596a6d1533"
   }

@@ -2,42 +2,80 @@
   "ticker": "TRDA",
   "success": true,
   "price": {
-    "current": 11.67,
+    "current": 11.66,
     "currency": "USD",
-    "day_high": 11.79,
+    "day_high": 11.82,
     "day_low": 11.45,
     "52_week_high": 14.27,
     "52_week_low": 4.93
   },
   "market_cap": {
-    "value": 446018432.0,
+    "value": 445636224.0,
     "currency": "USD"
   },
   "shares_outstanding": 38219232.0,
   "volume": {
-    "last": 31498,
-    "average_30d": 240054
+    "last": 167146,
+    "average_30d": 248626
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -2.8449535,
-    "price_to_book": 1.2282917
+    "forward_pe": -2.8425157,
+    "price_to_book": 1.2272391
   },
   "company_info": {
     "name": "Entrada Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 412898000.0,
+    "total_liabilities": 72182000.0,
+    "stockholders_equity": 340716000.0,
+    "cash": 93286000.0,
+    "marketable_securities": 233552000.0,
+    "total_liquidity": 326838000.0,
+    "total_debt": 52400000.0,
+    "long_term_debt": 48050000.0,
+    "current_debt": 4350000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -28313000.0,
+    "free_cash_flow": -28142000.0,
+    "investing_cash_flow": 49109000.0,
+    "financing_cash_flow": 8000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 48665000.0,
+    "research_and_development": 38361000.0,
+    "interest_expense": null,
+    "net_income": -44134000.0,
+    "revenue": 1614000.0,
+    "gross_profit": null,
+    "ebitda": -45821000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:10:25.344752",
+    "timestamp": "2026-01-29T16:52:20.169722",
     "url": "https://finance.yahoo.com/quote/TRDA",
-    "data_hash": "0f63b95123b39a90"
+    "data_hash": "8c4d33c55a4823c7"
   }
 }

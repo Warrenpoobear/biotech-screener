@@ -42,16 +42,39 @@
     "current_debt": 36249000.0,
     "error": null
   },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 1927000.0,
+    "free_cash_flow": 94000.0,
+    "investing_cash_flow": -2509000.0,
+    "financing_cash_flow": 320000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 26904000.0,
+    "research_and_development": 15825000.0,
+    "interest_expense": 2119000.0,
+    "net_income": -19000.0,
+    "revenue": 52698000.0,
+    "gross_profit": 28140000.0,
+    "ebitda": 2566000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
     "has_volume": true,
-    "has_balance_sheet": true
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T16:30:45.422992",
+    "timestamp": "2026-01-29T16:44:53.733215",
     "url": "https://finance.yahoo.com/quote/CERS",
     "data_hash": "a6d2cd4aa7d122a4"
   }

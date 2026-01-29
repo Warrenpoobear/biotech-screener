@@ -2,42 +2,80 @@
   "ticker": "KLRS",
   "success": true,
   "price": {
-    "current": 9.475,
+    "current": 9.2,
     "currency": "USD",
     "day_high": 9.61,
-    "day_low": 9.35,
+    "day_low": 9.09,
     "52_week_high": 12.9,
     "52_week_low": 2.14
   },
   "market_cap": {
-    "value": 177205424.0,
+    "value": 172062240.0,
     "currency": "USD"
   },
   "shares_outstanding": 18702418.0,
   "volume": {
-    "last": 2429,
-    "average_30d": 81492
+    "last": 16943,
+    "average_30d": 81240
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -3.8179939,
-    "price_to_book": 4.233691
+    "forward_pe": -3.7071812,
+    "price_to_book": 4.110813
   },
   "company_info": {
     "name": "Kalaris Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 81175000.0,
+    "total_liabilities": 39310000.0,
+    "stockholders_equity": 41865000.0,
+    "cash": 42387000.0,
+    "marketable_securities": 34612000.0,
+    "total_liquidity": 76999000.0,
+    "total_debt": 1545000.0,
+    "long_term_debt": 1169000.0,
+    "current_debt": 376000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -11333000.0,
+    "free_cash_flow": -11516000.0,
+    "investing_cash_flow": null,
+    "financing_cash_flow": 0.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 12741000.0,
+    "research_and_development": 9126000.0,
+    "interest_expense": 0.0,
+    "net_income": -11894000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -11894000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T12:46:49.318504",
+    "timestamp": "2026-01-29T16:48:38.804090",
     "url": "https://finance.yahoo.com/quote/KLRS",
-    "data_hash": "59d3a73866557542"
+    "data_hash": "e2af3d7417f19420"
   }
 }

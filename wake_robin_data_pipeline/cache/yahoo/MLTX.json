@@ -2,7 +2,7 @@
   "ticker": "MLTX",
   "success": true,
   "price": {
-    "current": 15.77,
+    "current": 16.21,
     "currency": "USD",
     "day_high": 16.56,
     "day_low": 15.62,
@@ -10,34 +10,72 @@
     "52_week_low": 5.95
   },
   "market_cap": {
-    "value": 1117263488.0,
+    "value": 1148436352.0,
     "currency": "USD"
   },
   "shares_outstanding": 70847401.0,
   "volume": {
-    "last": 262858,
-    "average_30d": 3353616
+    "last": 1215297,
+    "average_30d": 3513299
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -4.1979117,
-    "price_to_book": 3.4773982
+    "forward_pe": -4.3150377,
+    "price_to_book": 3.5744212
   },
   "company_info": {
     "name": "MoonLake Immunotherapeutics",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 414335000.0,
+    "total_liabilities": 123144000.0,
+    "stockholders_equity": 288906000.0,
+    "cash": 350736000.0,
+    "marketable_securities": 29743000.0,
+    "total_liquidity": 380479000.0,
+    "total_debt": 75726000.0,
+    "long_term_debt": 73741000.0,
+    "current_debt": 1499000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -44543000.0,
+    "free_cash_flow": -44543000.0,
+    "investing_cash_flow": 88403000.0,
+    "financing_cash_flow": 480000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 71434000.0,
+    "research_and_development": 60635000.0,
+    "interest_expense": 3198000.0,
+    "net_income": -69729000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -66636000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:06.384209",
+    "timestamp": "2026-01-29T16:49:24.378816",
     "url": "https://finance.yahoo.com/quote/MLTX",
-    "data_hash": "7fdaa370e9990027"
+    "data_hash": "aed18ded9e9db262"
   }
 }

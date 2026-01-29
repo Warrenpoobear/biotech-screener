@@ -2,42 +2,80 @@
   "ticker": "IRWD",
   "success": true,
   "price": {
-    "current": 4.8296,
+    "current": 4.86,
     "currency": "USD",
-    "day_high": 4.9313,
+    "day_high": 4.9999,
     "day_low": 4.72,
     "52_week_high": 5.78,
     "52_week_low": 0.53
   },
   "market_cap": {
-    "value": 785672768.0,
+    "value": 790618240.0,
     "currency": "USD"
   },
   "shares_outstanding": 162678647.0,
   "volume": {
-    "last": 362950,
-    "average_30d": 7063288
+    "last": 1572693,
+    "average_30d": 7357933
   },
   "valuation": {
-    "pe_ratio": 26.83111,
-    "forward_pe": 5.6597095,
-    "price_to_book": -2.9738917
+    "pe_ratio": 27.0,
+    "forward_pe": 5.695335,
+    "price_to_book": -2.992611
   },
   "company_info": {
     "name": "Ironwood Pharmaceuticals, Inc.",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 396062000.0,
+    "total_liabilities": 660219000.0,
+    "stockholders_equity": -264157000.0,
+    "cash": 140407000.0,
+    "marketable_securities": null,
+    "total_liquidity": 140407000.0,
+    "total_debt": 598240000.0,
+    "long_term_debt": 385000000.0,
+    "current_debt": 199506000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 47583000.0,
+    "free_cash_flow": 47581000.0,
+    "investing_cash_flow": -2000.0,
+    "financing_cash_flow": 0.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 44376000.0,
+    "research_and_development": 22468000.0,
+    "interest_expense": 8434000.0,
+    "net_income": 40080000.0,
+    "revenue": 122060000.0,
+    "gross_profit": null,
+    "ebitda": 76929000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:07:23.894445",
+    "timestamp": "2026-01-29T16:48:28.430542",
     "url": "https://finance.yahoo.com/quote/IRWD",
-    "data_hash": "f8a5c0a97148b4b2"
+    "data_hash": "0fa9b6e8a2f9bdcd"
   }
 }

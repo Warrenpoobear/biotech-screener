@@ -2,42 +2,80 @@
   "ticker": "STRO",
   "success": true,
   "price": {
-    "current": 15.0034,
+    "current": 14.92,
     "currency": "USD",
     "day_high": 15.75,
-    "day_low": 15.0,
+    "day_low": 14.75,
     "52_week_high": 21.3,
     "52_week_low": 5.2
   },
   "market_cap": {
-    "value": 127819848.0,
+    "value": 127109328.0,
     "currency": "USD"
   },
   "shares_outstanding": 8519392.0,
   "volume": {
-    "last": 16915,
-    "average_30d": 123477
+    "last": 87649,
+    "average_30d": 127897
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -1.3879185,
-    "price_to_book": -1.4630326
+    "forward_pe": -1.3802035,
+    "price_to_book": -1.4549
   },
   "company_info": {
     "name": "Sutro Biopharma, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 209658000.0,
+    "total_liabilities": 296926000.0,
+    "stockholders_equity": -87268000.0,
+    "cash": 65927000.0,
+    "marketable_securities": 101667000.0,
+    "total_liquidity": 167594000.0,
+    "total_debt": 17661000.0,
+    "long_term_debt": 9701000.0,
+    "current_debt": 7960000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -38189000.0,
+    "free_cash_flow": -38440000.0,
+    "investing_cash_flow": 39989000.0,
+    "financing_cash_flow": 102000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 48594000.0,
+    "research_and_development": 39853000.0,
+    "interest_expense": 10407000.0,
+    "net_income": -56857000.0,
+    "revenue": 9693000.0,
+    "gross_profit": null,
+    "ebitda": -44550000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:59.836634",
+    "timestamp": "2026-01-29T16:51:52.519143",
     "url": "https://finance.yahoo.com/quote/STRO",
-    "data_hash": "e0e2f9238b439fbe"
+    "data_hash": "b704665b17f0eeb8"
   }
 }

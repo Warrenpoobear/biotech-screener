@@ -2,42 +2,80 @@
   "ticker": "REGN",
   "success": true,
   "price": {
-    "current": 748.515,
+    "current": 749.44,
     "currency": "USD",
     "day_high": 755.73,
-    "day_low": 746.25,
+    "day_low": 742.885,
     "52_week_high": 821.11,
     "52_week_low": 476.49
   },
   "market_cap": {
-    "value": 79333187584.0,
+    "value": 79431229440.0,
     "currency": "USD"
   },
   "shares_outstanding": 103282318.0,
   "volume": {
-    "last": 174368,
-    "average_30d": 803398
+    "last": 886551,
+    "average_30d": 849611
   },
   "valuation": {
-    "pe_ratio": 17.954306,
-    "forward_pe": 16.5818,
-    "price_to_book": 2.4855552
+    "pe_ratio": 17.976494,
+    "forward_pe": 16.606106,
+    "price_to_book": 2.4886267
   },
   "company_info": {
     "name": "Regeneron Pharmaceuticals, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 40169400000.0,
+    "total_liabilities": 9211600000.0,
+    "stockholders_equity": 30957800000.0,
+    "cash": 2506400000.0,
+    "marketable_securities": 5937200000.0,
+    "total_liquidity": 8443600000.0,
+    "total_debt": 2705500000.0,
+    "long_term_debt": 1985500000.0,
+    "current_debt": null,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 1618700000.0,
+    "free_cash_flow": 1374000000.0,
+    "investing_cash_flow": -402900000.0,
+    "financing_cash_flow": -717900000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 2122800000.0,
+    "research_and_development": 1475000000.0,
+    "interest_expense": 19300000.0,
+    "net_income": 1460000000.0,
+    "revenue": 3754300000.0,
+    "gross_profit": 3232700000.0,
+    "ebitda": 1919300000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:24.545191",
+    "timestamp": "2026-01-29T16:51:07.331100",
     "url": "https://finance.yahoo.com/quote/REGN",
-    "data_hash": "d1f1c16cd9cb6a69"
+    "data_hash": "d95ab2621db5265a"
   }
 }

@@ -2,42 +2,80 @@
   "ticker": "IONS",
   "success": true,
   "price": {
-    "current": 82.375,
+    "current": 83.88,
     "currency": "USD",
-    "day_high": 83.11,
+    "day_high": 84.3,
     "day_low": 81.895,
     "52_week_high": 86.15,
     "52_week_low": 23.95
   },
   "market_cap": {
-    "value": 13342641152.0,
+    "value": 13586412544.0,
     "currency": "USD"
   },
   "shares_outstanding": 161974393.0,
   "volume": {
-    "last": 151701,
-    "average_30d": 2152659
+    "last": 1565694,
+    "average_30d": 2271184
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -35.981514,
-    "price_to_book": 21.479792
+    "forward_pe": -36.638897,
+    "price_to_book": 21.872229
   },
   "company_info": {
     "name": "Ionis Pharmaceuticals, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 3033091000.0,
+    "total_liabilities": 2415124000.0,
+    "stockholders_equity": 617967000.0,
+    "cash": 338341000.0,
+    "marketable_securities": 1901830000.0,
+    "total_liquidity": 2240171000.0,
+    "total_debt": 1489491000.0,
+    "long_term_debt": 595908000.0,
+    "current_debt": 630911000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -131437000.0,
+    "free_cash_flow": -138367000.0,
+    "investing_cash_flow": 91338000.0,
+    "financing_cash_flow": 81218000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 314554000.0,
+    "research_and_development": 217754000.0,
+    "interest_expense": 20552000.0,
+    "net_income": -128606000.0,
+    "revenue": 156719000.0,
+    "gross_profit": 154381000.0,
+    "ebitda": -103339000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T10:59:15.349057",
+    "timestamp": "2026-01-29T16:48:22.504643",
     "url": "https://finance.yahoo.com/quote/IONS",
-    "data_hash": "1dc3d2be3d55d158"
+    "data_hash": "feebc896901eace3"
   }
 }

@@ -2,42 +2,80 @@
   "ticker": "GRFS",
   "success": true,
   "price": {
-    "current": 9.2089,
+    "current": 9.29,
     "currency": "USD",
-    "day_high": 9.27,
+    "day_high": 9.295,
     "day_low": 9.17,
     "52_week_high": 11.14,
     "52_week_low": 6.19
   },
   "market_cap": {
-    "value": 7597735936.0,
+    "value": 7664646656.0,
     "currency": "USD"
   },
   "shares_outstanding": 258223736.0,
   "volume": {
-    "last": 42872,
-    "average_30d": 459953
+    "last": 424198,
+    "average_30d": 482995
   },
   "valuation": {
-    "pe_ratio": 13.952879,
-    "forward_pe": 7.7024546,
-    "price_to_book": 1.0070447
+    "pe_ratio": 14.075757,
+    "forward_pe": 7.770287,
+    "price_to_book": 1.0159134
   },
   "company_info": {
     "name": "Grifols, S.A.",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - General"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-06-30",
+    "total_assets": 19767159000.0,
+    "total_liabilities": 12169006000.0,
+    "stockholders_equity": 5169080000.0,
+    "cash": 558691000.0,
+    "marketable_securities": 7109000.0,
+    "total_liquidity": 565800000.0,
+    "total_debt": 8819439000.0,
+    "long_term_debt": 7447823000.0,
+    "current_debt": 282141000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2024-12-31",
+    "operating_cash_flow": 514618000.0,
+    "free_cash_flow": 371866000.0,
+    "investing_cash_flow": -178309000.0,
+    "financing_cash_flow": -27161000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-06-30",
+    "operating_expense": 394254000.0,
+    "research_and_development": 96193000.0,
+    "interest_expense": 141430000.0,
+    "net_income": 117063000.0,
+    "revenue": 1891131000.0,
+    "gross_profit": 743795000.0,
+    "ebitda": 347244000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:55.470886",
+    "timestamp": "2026-01-29T16:47:47.226061",
     "url": "https://finance.yahoo.com/quote/GRFS",
-    "data_hash": "c755292d2f2a18c0"
+    "data_hash": "5a6d27a25a45c688"
   }
 }

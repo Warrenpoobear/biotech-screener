@@ -2,42 +2,80 @@
   "ticker": "OCUL",
   "success": true,
   "price": {
-    "current": 10.07,
+    "current": 9.95,
     "currency": "USD",
     "day_high": 10.64,
-    "day_low": 10.0,
+    "day_low": 9.915,
     "52_week_high": 16.44,
     "52_week_low": 5.785
   },
   "market_cap": {
-    "value": 2145388032.0,
+    "value": 2119822336.0,
     "currency": "USD"
   },
   "shares_outstanding": 213047472.0,
   "volume": {
-    "last": 1696344,
-    "average_30d": 4595974
+    "last": 4251104,
+    "average_30d": 4837166
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -6.804054,
-    "price_to_book": 6.822493
+    "forward_pe": -6.722973,
+    "price_to_book": 6.7411923
   },
   "company_info": {
     "name": "Ocular Therapeutix, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 410882000.0,
+    "total_liabilities": 152653000.0,
+    "stockholders_equity": 258229000.0,
+    "cash": 344772000.0,
+    "marketable_securities": null,
+    "total_liquidity": 344772000.0,
+    "total_debt": 77008000.0,
+    "long_term_debt": 70617000.0,
+    "current_debt": 2762000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -50725000.0,
+    "free_cash_flow": -56718000.0,
+    "investing_cash_flow": -5993000.0,
+    "financing_cash_flow": 10356000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 81468000.0,
+    "research_and_development": 52358000.0,
+    "interest_expense": 3002000.0,
+    "net_income": -69418000.0,
+    "revenue": 14544000.0,
+    "gross_profit": 12770000.0,
+    "ebitda": -65347000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:39.789123",
+    "timestamp": "2026-01-29T16:50:08.152865",
     "url": "https://finance.yahoo.com/quote/OCUL",
-    "data_hash": "581b63f6417b0aec"
+    "data_hash": "aaf522340b71b7fe"
   }
 }

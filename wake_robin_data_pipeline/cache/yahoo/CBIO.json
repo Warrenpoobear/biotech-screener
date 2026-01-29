@@ -2,42 +2,80 @@
   "ticker": "CBIO",
   "success": true,
   "price": {
-    "current": 10.27,
+    "current": 10.145,
     "currency": "USD",
     "day_high": 11.21,
-    "day_low": 10.27,
+    "day_low": 10.13,
     "52_week_high": 37.0,
     "52_week_low": 9.81
   },
   "market_cap": {
-    "value": 312688320.0,
+    "value": 308882464.0,
     "currency": "USD"
   },
   "shares_outstanding": 27556767.0,
   "volume": {
-    "last": 99548,
-    "average_30d": 145161
+    "last": 204973,
+    "average_30d": 154560
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -3.3782897,
-    "price_to_book": 1.7823672
+    "forward_pe": -3.3371713,
+    "price_to_book": 1.7606734
   },
   "company_info": {
     "name": "Crescent Biopharma, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 138269000.0,
+    "total_liabilities": 21628000.0,
+    "stockholders_equity": 116641000.0,
+    "cash": 133265000.0,
+    "marketable_securities": null,
+    "total_liquidity": 133265000.0,
+    "total_debt": 1741000.0,
+    "long_term_debt": 1324000.0,
+    "current_debt": 417000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -17539000.0,
+    "free_cash_flow": -18125000.0,
+    "investing_cash_flow": -586000.0,
+    "financing_cash_flow": -1254000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 25885000.0,
+    "research_and_development": 20347000.0,
+    "interest_expense": 0.0,
+    "net_income": -24607000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -24579000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T12:46:41.297046",
+    "timestamp": "2026-01-29T16:47:33.299952",
     "url": "https://finance.yahoo.com/quote/CBIO",
-    "data_hash": "1512347657252e42"
+    "data_hash": "d56b98dce26d596e"
   }
 }

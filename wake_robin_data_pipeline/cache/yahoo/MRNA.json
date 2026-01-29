@@ -2,42 +2,80 @@
   "ticker": "MRNA",
   "success": true,
   "price": {
-    "current": 46.71,
+    "current": 46.86,
     "currency": "USD",
     "day_high": 47.8452,
-    "day_low": 45.76,
+    "day_low": 45.7202,
     "52_week_high": 55.2,
     "52_week_low": 22.28
   },
   "market_cap": {
-    "value": 18251167744.0,
+    "value": 18309777408.0,
     "currency": "USD"
   },
   "shares_outstanding": 390733636.0,
   "volume": {
-    "last": 4317712,
-    "average_30d": 13549646
+    "last": 10734826,
+    "average_30d": 14219229
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -6.747601,
-    "price_to_book": 1.9575057
+    "forward_pe": -6.76927,
+    "price_to_book": 1.9637918
   },
   "company_info": {
     "name": "Moderna, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 12135000000.0,
+    "total_liabilities": 2805000000.0,
+    "stockholders_equity": 9330000000.0,
+    "cash": 1132000000.0,
+    "marketable_securities": 3372000000.0,
+    "total_liquidity": 4504000000.0,
+    "total_debt": 734000000.0,
+    "long_term_debt": 686000000.0,
+    "current_debt": 48000000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -847000000.0,
+    "free_cash_flow": -880000000.0,
+    "investing_cash_flow": 700000000.0,
+    "financing_cash_flow": -1000000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 1055000000.0,
+    "research_and_development": 801000000.0,
+    "interest_expense": 0.0,
+    "net_income": -200000000.0,
+    "revenue": 1002000000.0,
+    "gross_profit": 795000000.0,
+    "ebitda": -135000000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:12.167863",
+    "timestamp": "2026-01-29T16:49:32.030811",
     "url": "https://finance.yahoo.com/quote/MRNA",
-    "data_hash": "2185b0b2e5e08d63"
+    "data_hash": "f7f7da69f35a4ff7"
   }
 }

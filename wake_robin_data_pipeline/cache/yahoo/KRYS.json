@@ -2,7 +2,7 @@
   "ticker": "KRYS",
   "success": true,
   "price": {
-    "current": 277.0,
+    "current": 279.34,
     "currency": "USD",
     "day_high": 283.61,
     "day_low": 273.03,
@@ -10,34 +10,72 @@
     "52_week_low": 122.8
   },
   "market_cap": {
-    "value": 8032312832.0,
+    "value": 8100167168.0,
     "currency": "USD"
   },
   "shares_outstanding": 28997519.0,
   "volume": {
-    "last": 35216,
-    "average_30d": 292664
+    "last": 211048,
+    "average_30d": 306340
   },
   "valuation": {
-    "pe_ratio": 41.467068,
-    "forward_pe": 32.9919,
-    "price_to_book": 7.055707
+    "pe_ratio": 41.817368,
+    "forward_pe": 33.270603,
+    "price_to_book": 7.115311
   },
   "company_info": {
     "name": "Krystal Biotech, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1240094000.0,
+    "total_liabilities": 102218000.0,
+    "stockholders_equity": 1137876000.0,
+    "cash": 392604000.0,
+    "marketable_securities": 338465000.0,
+    "total_liquidity": 731069000.0,
+    "total_debt": 9511000.0,
+    "long_term_debt": 7813000.0,
+    "current_debt": 1698000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 39659000.0,
+    "free_cash_flow": 37955000.0,
+    "investing_cash_flow": -4286000.0,
+    "financing_cash_flow": 3709000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 52163000.0,
+    "research_and_development": 14585000.0,
+    "interest_expense": null,
+    "net_income": 79365000.0,
+    "revenue": 97800000.0,
+    "gross_profit": 93537000.0,
+    "ebitda": 42986000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:07:35.589690",
+    "timestamp": "2026-01-29T16:48:46.362112",
     "url": "https://finance.yahoo.com/quote/KRYS",
-    "data_hash": "d66f09bd8d1958fe"
+    "data_hash": "2428f2b0c9da7c62"
   }
 }

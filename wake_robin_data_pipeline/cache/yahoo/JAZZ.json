@@ -2,7 +2,7 @@
   "ticker": "JAZZ",
   "success": true,
   "price": {
-    "current": 163.89,
+    "current": 163.98,
     "currency": "USD",
     "day_high": 167.27,
     "day_low": 162.84,
@@ -10,34 +10,72 @@
     "52_week_low": 95.49
   },
   "market_cap": {
-    "value": 9958795264.0,
+    "value": 9964263424.0,
     "currency": "USD"
   },
   "shares_outstanding": 60765116.0,
   "volume": {
-    "last": 118678,
-    "average_30d": 1079276
+    "last": 662715,
+    "average_30d": 1135009
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 7.6191974,
-    "price_to_book": 2.5144215
+    "forward_pe": 7.623381,
+    "price_to_book": 2.5158024
   },
   "company_info": {
     "name": "Jazz Pharmaceuticals plc",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 11356485000.0,
+    "total_liabilities": 7397455000.0,
+    "stockholders_equity": 3959030000.0,
+    "cash": 1326070000.0,
+    "marketable_securities": 720000000.0,
+    "total_liquidity": 2046070000.0,
+    "total_debt": 5428525000.0,
+    "long_term_debt": 4331982000.0,
+    "current_debt": 1029179000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 474616000.0,
+    "free_cash_flow": 386941000.0,
+    "investing_cash_flow": -327800000.0,
+    "financing_cash_flow": -10829000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 897218000.0,
+    "research_and_development": 198203000.0,
+    "interest_expense": 48576000.0,
+    "net_income": 251412000.0,
+    "revenue": 1126107000.0,
+    "gross_profit": 997227000.0,
+    "ebitda": 235857000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T10:59:13.995343",
+    "timestamp": "2026-01-29T16:48:33.045411",
     "url": "https://finance.yahoo.com/quote/JAZZ",
-    "data_hash": "1f5ade590db93305"
+    "data_hash": "efef92f855cf9227"
   }
 }

@@ -2,7 +2,7 @@
   "ticker": "WVE",
   "success": true,
   "price": {
-    "current": 12.92,
+    "current": 13.01,
     "currency": "USD",
     "day_high": 13.1389,
     "day_low": 12.61,
@@ -10,34 +10,72 @@
     "52_week_low": 5.28
   },
   "market_cap": {
-    "value": 2400017920.0,
+    "value": 2416736512.0,
     "currency": "USD"
   },
   "shares_outstanding": 185759908.0,
   "volume": {
-    "last": 480183,
-    "average_30d": 4285531
+    "last": 1832887,
+    "average_30d": 4450766
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -10.867828,
-    "price_to_book": 16.628056
+    "forward_pe": -10.943533,
+    "price_to_book": 16.743887
   },
   "company_info": {
     "name": "Wave Life Sciences Ltd.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 241378000.0,
+    "total_liabilities": 116829000.0,
+    "stockholders_equity": 124549000.0,
+    "cash": 196218000.0,
+    "marketable_securities": null,
+    "total_liquidity": 196218000.0,
+    "total_debt": 19772000.0,
+    "long_term_debt": 11378000.0,
+    "current_debt": 8394000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -44666000.0,
+    "free_cash_flow": -44914000.0,
+    "investing_cash_flow": -248000.0,
+    "financing_cash_flow": 32692000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 63961000.0,
+    "research_and_development": 45874000.0,
+    "interest_expense": null,
+    "net_income": -53852000.0,
+    "revenue": 7608000.0,
+    "gross_profit": null,
+    "ebitda": -54123000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:10:50.231007",
+    "timestamp": "2026-01-29T16:52:59.138851",
     "url": "https://finance.yahoo.com/quote/WVE",
-    "data_hash": "fdd43c68d99c2330"
+    "data_hash": "3f7359a2fd38e2c6"
   }
 }

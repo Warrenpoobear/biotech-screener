@@ -2,42 +2,80 @@
   "ticker": "PCVX",
   "success": true,
   "price": {
-    "current": 52.01,
+    "current": 52.82,
     "currency": "USD",
-    "day_high": 52.33,
+    "day_high": 52.8799,
     "day_low": 51.2,
     "52_week_high": 92.585,
     "52_week_low": 27.66
   },
   "market_cap": {
-    "value": 6808434688.0,
+    "value": 6914468864.0,
     "currency": "USD"
   },
   "shares_outstanding": 130906263.0,
   "volume": {
-    "last": 103610,
-    "average_30d": 1035255
+    "last": 527735,
+    "average_30d": 1068184
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -8.363982,
-    "price_to_book": 2.3377383
+    "forward_pe": -8.494242,
+    "price_to_book": 2.374146
   },
   "company_info": {
     "name": "Vaxcyte, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 3171600000.0,
+    "total_liabilities": 278718000.0,
+    "stockholders_equity": 2892882000.0,
+    "cash": 281080000.0,
+    "marketable_securities": 1430240000.0,
+    "total_liquidity": 1711320000.0,
+    "total_debt": 84443000.0,
+    "long_term_debt": 78672000.0,
+    "current_debt": 5771000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -143305000.0,
+    "free_cash_flow": -155351000.0,
+    "investing_cash_flow": 121170000.0,
+    "financing_cash_flow": -3671000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 242380000.0,
+    "research_and_development": 209933000.0,
+    "interest_expense": null,
+    "net_income": -212830000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -237183000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:54.043631",
+    "timestamp": "2026-01-29T16:50:25.129478",
     "url": "https://finance.yahoo.com/quote/PCVX",
-    "data_hash": "05cb4a738397fea6"
+    "data_hash": "a153233f0f437741"
   }
 }

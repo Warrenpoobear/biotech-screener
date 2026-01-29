@@ -2,42 +2,80 @@
   "ticker": "NBIX",
   "success": true,
   "price": {
-    "current": 135.52,
+    "current": 137.96,
     "currency": "USD",
-    "day_high": 136.99,
+    "day_high": 138.01,
     "day_low": 133.405,
     "52_week_high": 160.18,
     "52_week_low": 84.23
   },
   "market_cap": {
-    "value": 13512116224.0,
+    "value": 13755398144.0,
     "currency": "USD"
   },
   "shares_outstanding": 99705698.0,
   "volume": {
-    "last": 139943,
-    "average_30d": 1051047
+    "last": 896795,
+    "average_30d": 1104384
   },
   "valuation": {
-    "pe_ratio": 32.343678,
-    "forward_pe": 14.73814,
-    "price_to_book": 4.4984403
+    "pe_ratio": 32.926014,
+    "forward_pe": 15.003496,
+    "price_to_book": 4.5794334
   },
   "company_info": {
     "name": "Neurocrine Biosciences, Inc.",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 4265700000.0,
+    "total_liabilities": 1262100000.0,
+    "stockholders_equity": 3003600000.0,
+    "cash": 340200000.0,
+    "marketable_securities": 774600000.0,
+    "total_liquidity": 1114800000.0,
+    "total_debt": 428400000.0,
+    "long_term_debt": 428400000.0,
+    "current_debt": null,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 227500000.0,
+    "free_cash_flow": 214300000.0,
+    "investing_cash_flow": -196700000.0,
+    "financing_cash_flow": 45600000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 541600000.0,
+    "research_and_development": 250000000.0,
+    "interest_expense": null,
+    "net_income": 209500000.0,
+    "revenue": 794900000.0,
+    "gross_profit": 780900000.0,
+    "ebitda": 247000000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:20.215089",
+    "timestamp": "2026-01-29T16:49:42.501811",
     "url": "https://finance.yahoo.com/quote/NBIX",
-    "data_hash": "dc16c1f110702b73"
+    "data_hash": "0eff978c627659de"
   }
 }

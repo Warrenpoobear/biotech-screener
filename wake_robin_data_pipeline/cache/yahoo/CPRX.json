@@ -2,42 +2,80 @@
   "ticker": "CPRX",
   "success": true,
   "price": {
-    "current": 24.26,
+    "current": 24.58,
     "currency": "USD",
-    "day_high": 24.46,
+    "day_high": 24.5951,
     "day_low": 24.05,
     "52_week_high": 26.58,
     "52_week_low": 19.05
   },
   "market_cap": {
-    "value": 2981854464.0,
+    "value": 3021186304.0,
     "currency": "USD"
   },
   "shares_outstanding": 122912387.0,
   "volume": {
-    "last": 310366,
-    "average_30d": 1158489
+    "last": 871605,
+    "average_30d": 1207760
   },
   "valuation": {
-    "pe_ratio": 14.187135,
-    "forward_pe": 9.376062,
-    "price_to_book": 3.2493973
+    "pe_ratio": 14.374269,
+    "forward_pe": 9.499737,
+    "price_to_book": 3.2922583
   },
   "company_info": {
     "name": "Catalyst Pharmaceuticals, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1051602000.0,
+    "total_liabilities": 131357000.0,
+    "stockholders_equity": 920245000.0,
+    "cash": 689892000.0,
+    "marketable_securities": null,
+    "total_liquidity": 689892000.0,
+    "total_debt": 2889000.0,
+    "long_term_debt": 2461000.0,
+    "current_debt": 428000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 32438000.0,
+    "free_cash_flow": 32438000.0,
+    "investing_cash_flow": 0.0,
+    "financing_cash_flow": 4654000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 59471000.0,
+    "research_and_development": 2657000.0,
+    "interest_expense": null,
+    "net_income": 52783000.0,
+    "revenue": 148392000.0,
+    "gross_profit": 125738000.0,
+    "ebitda": 75683000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T12:46:44.284933",
+    "timestamp": "2026-01-29T16:47:37.707785",
     "url": "https://finance.yahoo.com/quote/CPRX",
-    "data_hash": "77fce01f4ec07727"
+    "data_hash": "0f9109640ef682a3"
   }
 }

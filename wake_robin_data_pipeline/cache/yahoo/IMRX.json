@@ -2,42 +2,80 @@
   "ticker": "IMRX",
   "success": true,
   "price": {
-    "current": 4.854,
+    "current": 4.87,
     "currency": "USD",
     "day_high": 5.15,
-    "day_low": 4.85,
+    "day_low": 4.815,
     "52_week_high": 10.08,
     "52_week_low": 1.1
   },
   "market_cap": {
-    "value": 313422624.0,
+    "value": 314455744.0,
     "currency": "USD"
   },
   "shares_outstanding": 64569967.0,
   "volume": {
-    "last": 305514,
-    "average_30d": 2832187
+    "last": 847749,
+    "average_30d": 2941754
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -3.320859,
-    "price_to_book": 1.3517126
+    "forward_pe": -3.3318052,
+    "price_to_book": 1.3561682
   },
   "company_info": {
     "name": "Immuneering Corporation",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 241056266.0,
+    "total_liabilities": 13079834.0,
+    "stockholders_equity": 227976432.0,
+    "cash": 227563077.0,
+    "marketable_securities": null,
+    "total_liquidity": 227563077.0,
+    "total_debt": 3916329.0,
+    "long_term_debt": 3534569.0,
+    "current_debt": 381760.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -11977235.0,
+    "free_cash_flow": -11984490.0,
+    "investing_cash_flow": -7255.0,
+    "financing_cash_flow": 213192069.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 15380300.0,
+    "research_and_development": 10867983.0,
+    "interest_expense": null,
+    "net_income": -14964875.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -15294143.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:07:11.123457",
+    "timestamp": "2026-01-29T16:48:11.502070",
     "url": "https://finance.yahoo.com/quote/IMRX",
-    "data_hash": "1b9863ad67055d05"
+    "data_hash": "c209996818464654"
   }
 }

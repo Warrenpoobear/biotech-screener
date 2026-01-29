@@ -2,7 +2,7 @@
   "ticker": "TARS",
   "success": true,
   "price": {
-    "current": 64.69,
+    "current": 65.71,
     "currency": "USD",
     "day_high": 67.9999,
     "day_low": 64.02,
@@ -10,34 +10,72 @@
     "52_week_low": 38.51
   },
   "market_cap": {
-    "value": 2746032640.0,
+    "value": 2789330688.0,
     "currency": "USD"
   },
   "shares_outstanding": 42449105.0,
   "volume": {
-    "last": 128965,
-    "average_30d": 593980
+    "last": 459871,
+    "average_30d": 613589
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 47.102085,
-    "price_to_book": 8.194832
+    "forward_pe": 47.844765,
+    "price_to_book": 8.324043
   },
   "company_info": {
     "name": "Tarsus Pharmaceuticals, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 534561000.0,
+    "total_liabilities": 199479000.0,
+    "stockholders_equity": 335082000.0,
+    "cash": 112724000.0,
+    "marketable_securities": 289113000.0,
+    "total_liquidity": 401837000.0,
+    "total_debt": 72361000.0,
+    "long_term_debt": 72281000.0,
+    "current_debt": 80000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 18257000.0,
+    "free_cash_flow": 16347000.0,
+    "investing_cash_flow": -4743000.0,
+    "financing_cash_flow": 2562000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 124917000.0,
+    "research_and_development": 16284000.0,
+    "interest_expense": 2116000.0,
+    "net_income": -12585000.0,
+    "revenue": 118697000.0,
+    "gross_profit": 110388000.0,
+    "ebitda": -10009000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:10:09.038724",
+    "timestamp": "2026-01-29T16:52:01.664726",
     "url": "https://finance.yahoo.com/quote/TARS",
-    "data_hash": "68fcb6790c0f8e84"
+    "data_hash": "b9378176f388504a"
   }
 }

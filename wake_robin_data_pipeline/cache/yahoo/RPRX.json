@@ -2,42 +2,80 @@
   "ticker": "RPRX",
   "success": true,
   "price": {
-    "current": 40.6,
+    "current": 40.86,
     "currency": "USD",
-    "day_high": 40.76,
+    "day_high": 40.91,
     "day_low": 40.375,
     "52_week_high": 41.7,
     "52_week_low": 29.66
   },
   "market_cap": {
-    "value": 23676874752.0,
+    "value": 23828500480.0,
     "currency": "USD"
   },
   "shares_outstanding": 427247489.0,
   "volume": {
-    "last": 437356,
-    "average_30d": 3535420
+    "last": 2906310,
+    "average_30d": 3744624
   },
   "valuation": {
-    "pe_ratio": 23.199999,
-    "forward_pe": 8.0537815,
-    "price_to_book": 2.7155373
+    "pe_ratio": 23.348572,
+    "forward_pe": 8.105358,
+    "price_to_book": 2.7329276
   },
   "company_info": {
     "name": "Royalty Pharma plc",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 19347280000.0,
+    "total_liabilities": 9726419000.0,
+    "stockholders_equity": 6414348000.0,
+    "cash": 938944000.0,
+    "marketable_securities": 876173000.0,
+    "total_liquidity": 1815117000.0,
+    "total_debt": 8945735000.0,
+    "long_term_debt": 8565735000.0,
+    "current_debt": 380000000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 702615000.0,
+    "free_cash_flow": 702615000.0,
+    "investing_cash_flow": -958314000.0,
+    "financing_cash_flow": 562735000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 182135000.0,
+    "research_and_development": 50500000.0,
+    "interest_expense": 79564000.0,
+    "net_income": 288217000.0,
+    "revenue": 609291000.0,
+    "gross_profit": null,
+    "ebitda": 525052000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:34.407128",
+    "timestamp": "2026-01-29T16:51:19.116047",
     "url": "https://finance.yahoo.com/quote/RPRX",
-    "data_hash": "eafaa54b416ee126"
+    "data_hash": "8b53db5c6e1de8fe"
   }
 }

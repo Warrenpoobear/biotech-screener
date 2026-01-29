@@ -2,42 +2,80 @@
   "ticker": "INDV",
   "success": true,
   "price": {
-    "current": 34.615,
+    "current": 34.71,
     "currency": "USD",
     "day_high": 35.47,
-    "day_low": 34.615,
+    "day_low": 34.605,
     "52_week_high": 38.0,
     "52_week_low": 7.62
   },
   "market_cap": {
-    "value": 4327720960.0,
+    "value": 4339597824.0,
     "currency": "USD"
   },
   "shares_outstanding": 125024430.0,
   "volume": {
-    "last": 253616,
-    "average_30d": 1727828
+    "last": 1616225,
+    "average_30d": 1812189
   },
   "valuation": {
-    "pe_ratio": 35.32143,
-    "forward_pe": 11.588008,
-    "price_to_book": -20.902779
+    "pe_ratio": 35.418365,
+    "forward_pe": 11.61981,
+    "price_to_book": -20.960144
   },
   "company_info": {
     "name": "Indivior Pharmaceuticals, Inc.",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1416000000.0,
+    "total_liabilities": 1623000000.0,
+    "stockholders_equity": -207000000.0,
+    "cash": 445000000.0,
+    "marketable_securities": null,
+    "total_liquidity": 445000000.0,
+    "total_debt": 356000000.0,
+    "long_term_debt": 304000000.0,
+    "current_debt": 18000000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -39000000.0,
+    "free_cash_flow": -59000000.0,
+    "investing_cash_flow": -20000000.0,
+    "financing_cash_flow": -3000000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 187000000.0,
+    "research_and_development": 33000000.0,
+    "interest_expense": 12000000.0,
+    "net_income": 42000000.0,
+    "revenue": 314000000.0,
+    "gross_profit": 231000000.0,
+    "ebitda": 54000000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:07:16.896055",
+    "timestamp": "2026-01-29T16:48:17.993020",
     "url": "https://finance.yahoo.com/quote/INDV",
-    "data_hash": "5a4de6598a8fe886"
+    "data_hash": "c9e385f024221dc8"
   }
 }

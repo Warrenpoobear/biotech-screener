@@ -2,42 +2,80 @@
   "ticker": "IVVD",
   "success": true,
   "price": {
-    "current": 1.855,
+    "current": 1.85,
     "currency": "USD",
     "day_high": 1.942,
-    "day_low": 1.8502,
+    "day_low": 1.83,
     "52_week_high": 3.07,
     "52_week_low": 0.355
   },
   "market_cap": {
-    "value": 523085952.0,
+    "value": 521676032.0,
     "currency": "USD"
   },
   "shares_outstanding": 281987033.0,
   "volume": {
-    "last": 860086,
-    "average_30d": 3142726
+    "last": 2271001,
+    "average_30d": 3273961
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -13.740741,
-    "price_to_book": 4.274194
+    "forward_pe": -13.703703,
+    "price_to_book": 4.262673
   },
   "company_info": {
     "name": "Invivyd, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 139158000.0,
+    "total_liabilities": 46090000.0,
+    "stockholders_equity": 93068000.0,
+    "cash": 84967000.0,
+    "marketable_securities": null,
+    "total_liquidity": 84967000.0,
+    "total_debt": 2677000.0,
+    "long_term_debt": 1594000.0,
+    "current_debt": 1083000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -8250000.0,
+    "free_cash_flow": -8250000.0,
+    "investing_cash_flow": 0.0,
+    "financing_cash_flow": 58312000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 23064000.0,
+    "research_and_development": 8046000.0,
+    "interest_expense": null,
+    "net_income": -10470000.0,
+    "revenue": 13129000.0,
+    "gross_profit": 12041000.0,
+    "ebitda": -10592000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:07:25.318051",
+    "timestamp": "2026-01-29T16:48:29.953602",
     "url": "https://finance.yahoo.com/quote/IVVD",
-    "data_hash": "f5c157e2faca33ae"
+    "data_hash": "548b6d5bc1aae617"
   }
 }

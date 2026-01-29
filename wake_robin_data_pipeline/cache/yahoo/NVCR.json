@@ -2,42 +2,80 @@
   "ticker": "NVCR",
   "success": true,
   "price": {
-    "current": 12.51,
+    "current": 12.38,
     "currency": "USD",
     "day_high": 12.78,
-    "day_low": 12.45,
+    "day_low": 12.335,
     "52_week_high": 26.465,
     "52_week_low": 10.7
   },
   "market_cap": {
-    "value": 1400894592.0,
+    "value": 1386337024.0,
     "currency": "USD"
   },
   "shares_outstanding": 111981981.0,
   "volume": {
-    "last": 190994,
-    "average_30d": 1111008
+    "last": 791259,
+    "average_30d": 1155583
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -8.404039,
-    "price_to_book": 4.1043305
+    "forward_pe": -8.316707,
+    "price_to_book": 4.06168
   },
   "company_info": {
     "name": "NovoCure Limited",
     "sector": "Healthcare",
     "industry": "Medical Devices"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1361194000.0,
+    "total_liabilities": 1019861000.0,
+    "stockholders_equity": 341333000.0,
+    "cash": 342119000.0,
+    "marketable_securities": 691382000.0,
+    "total_liquidity": 1033501000.0,
+    "total_debt": 797941000.0,
+    "long_term_debt": 194639000.0,
+    "current_debt": 560620000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 20574000.0,
+    "free_cash_flow": 14919000.0,
+    "investing_cash_flow": 71436000.0,
+    "financing_cash_flow": 100517000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 158496000.0,
+    "research_and_development": 54029000.0,
+    "interest_expense": null,
+    "net_income": -37270000.0,
+    "revenue": 167204000.0,
+    "gross_profit": 122475000.0,
+    "ebitda": -32358000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:32.912714",
+    "timestamp": "2026-01-29T16:50:00.340168",
     "url": "https://finance.yahoo.com/quote/NVCR",
-    "data_hash": "e118d79d1824a809"
+    "data_hash": "d08499435a4e3226"
   }
 }

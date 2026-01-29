@@ -2,42 +2,80 @@
   "ticker": "PRVA",
   "success": true,
   "price": {
-    "current": 22.6,
+    "current": 22.87,
     "currency": "USD",
-    "day_high": 22.715,
+    "day_high": 22.97,
     "day_low": 22.4,
     "52_week_high": 26.51,
     "52_week_low": 18.77
   },
   "market_cap": {
-    "value": 2779834624.0,
+    "value": 2813044992.0,
     "currency": "USD"
   },
   "shares_outstanding": 123001529.0,
   "volume": {
-    "last": 131691,
-    "average_30d": 642149
+    "last": 751197,
+    "average_30d": 680966
   },
   "valuation": {
-    "pe_ratio": 161.42857,
-    "forward_pe": 21.605705,
-    "price_to_book": 3.9161325
+    "pe_ratio": 163.35715,
+    "forward_pe": 21.863827,
+    "price_to_book": 3.9629183
   },
   "company_info": {
     "name": "Privia Health Group, Inc.",
     "sector": "Healthcare",
     "industry": "Health Information Services"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1350987000.0,
+    "total_liabilities": 588226000.0,
+    "stockholders_equity": 709124000.0,
+    "cash": 441352000.0,
+    "marketable_securities": null,
+    "total_liquidity": 441352000.0,
+    "total_debt": 6235000.0,
+    "long_term_debt": 3672000.0,
+    "current_debt": 2563000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 51994000.0,
+    "free_cash_flow": 51994000.0,
+    "investing_cash_flow": -1200000.0,
+    "financing_cash_flow": 431000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 49367000.0,
+    "research_and_development": null,
+    "interest_expense": null,
+    "net_income": 6861000.0,
+    "revenue": 580419000.0,
+    "gross_profit": 63770000.0,
+    "ebitda": 17169000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:07.687100",
+    "timestamp": "2026-01-29T16:50:44.561622",
     "url": "https://finance.yahoo.com/quote/PRVA",
-    "data_hash": "eaa3c6c1d589dde4"
+    "data_hash": "42f591fe27fedcdc"
   }
 }

@@ -2,7 +2,7 @@
   "ticker": "HIMS",
   "success": true,
   "price": {
-    "current": 29.665,
+    "current": 29.87,
     "currency": "USD",
     "day_high": 30.7,
     "day_low": 28.465,
@@ -10,34 +10,72 @@
     "52_week_low": 23.97
   },
   "market_cap": {
-    "value": 6753193472.0,
+    "value": 6799861248.0,
     "currency": "USD"
   },
   "shares_outstanding": 219270891.0,
   "volume": {
-    "last": 14618194,
-    "average_30d": 15686645
+    "last": 21830785,
+    "average_30d": 16340770
   },
   "valuation": {
-    "pe_ratio": 55.971703,
-    "forward_pe": 26.599895,
-    "price_to_book": 11.615114
+    "pe_ratio": 56.358494,
+    "forward_pe": 26.783714,
+    "price_to_book": 11.69538
   },
   "company_info": {
     "name": "Hims & Hers Health, Inc.",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 2233304000.0,
+    "total_liabilities": 1652322000.0,
+    "stockholders_equity": 580982000.0,
+    "cash": 345778000.0,
+    "marketable_securities": 283966000.0,
+    "total_liquidity": 629744000.0,
+    "total_debt": 1118023000.0,
+    "long_term_debt": 971023000.0,
+    "current_debt": 3422000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 148721000.0,
+    "free_cash_flow": 79364000.0,
+    "investing_cash_flow": -887398000.0,
+    "financing_cash_flow": -39009000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 430251000.0,
+    "research_and_development": 40577000.0,
+    "interest_expense": null,
+    "net_income": 15774000.0,
+    "revenue": 598976000.0,
+    "gross_profit": 442058000.0,
+    "ebitda": 29476000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T13:11:20.254426",
+    "timestamp": "2026-01-29T16:47:50.318505",
     "url": "https://finance.yahoo.com/quote/HIMS",
-    "data_hash": "e1e77c5f2f601ca8"
+    "data_hash": "5aa26053981b4a60"
   }
 }

@@ -42,16 +42,39 @@
     "current_debt": 6216000.0,
     "error": null
   },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -31207000.0,
+    "free_cash_flow": -31618000.0,
+    "investing_cash_flow": 4086000.0,
+    "financing_cash_flow": 7773000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 34909000.0,
+    "research_and_development": 25989000.0,
+    "interest_expense": null,
+    "net_income": -32166000.0,
+    "revenue": 11230000.0,
+    "gross_profit": null,
+    "ebitda": -23219000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
     "has_volume": true,
-    "has_balance_sheet": true
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T16:30:40.139925",
+    "timestamp": "2026-01-29T16:44:46.287886",
     "url": "https://finance.yahoo.com/quote/CCCC",
     "data_hash": "28113be7b83e3017"
   }

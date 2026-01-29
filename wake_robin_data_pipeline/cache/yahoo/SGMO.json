@@ -2,42 +2,80 @@
   "ticker": "SGMO",
   "success": true,
   "price": {
-    "current": 0.468,
+    "current": 0.513,
     "currency": "USD",
-    "day_high": 0.47,
+    "day_high": 0.528,
     "day_low": 0.4,
     "52_week_high": 1.4,
     "52_week_low": 0.36
   },
   "market_cap": {
-    "value": 157479424.0,
+    "value": 172621680.0,
     "currency": "USD"
   },
   "shares_outstanding": 336494489.0,
   "volume": {
-    "last": 16442490,
-    "average_30d": 4909057
+    "last": 33480784,
+    "average_30d": 5681880
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -2.0347826,
-    "price_to_book": 24.63158
+    "forward_pe": -2.230435,
+    "price_to_book": 27.000002
   },
   "company_info": {
     "name": "Sangamo Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 88643000.0,
+    "total_liabilities": 82400000.0,
+    "stockholders_equity": 6243000.0,
+    "cash": 29616000.0,
+    "marketable_securities": null,
+    "total_liquidity": 29616000.0,
+    "total_debt": 25424000.0,
+    "long_term_debt": 25424000.0,
+    "current_debt": null,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -28498000.0,
+    "free_cash_flow": -28562000.0,
+    "investing_cash_flow": -64000.0,
+    "financing_cash_flow": 19204000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 36134000.0,
+    "research_and_development": 28142000.0,
+    "interest_expense": null,
+    "net_income": -34930000.0,
+    "revenue": 581000.0,
+    "gross_profit": null,
+    "ebitda": -33655000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:44.251883",
+    "timestamp": "2026-01-29T16:51:31.290261",
     "url": "https://finance.yahoo.com/quote/SGMO",
-    "data_hash": "b6d13bdf23ad998c"
+    "data_hash": "5f65ea4810bbb68d"
   }
 }

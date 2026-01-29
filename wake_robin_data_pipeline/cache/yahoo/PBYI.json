@@ -2,42 +2,80 @@
   "ticker": "PBYI",
   "success": true,
   "price": {
-    "current": 6.415,
+    "current": 6.43,
     "currency": "USD",
-    "day_high": 6.48,
+    "day_high": 6.4884,
     "day_low": 6.33,
     "52_week_high": 7.21,
     "52_week_low": 2.58
   },
   "market_cap": {
-    "value": 323258944.0,
+    "value": 324014816.0,
     "currency": "USD"
   },
   "shares_outstanding": 50391107.0,
   "volume": {
-    "last": 59027,
-    "average_30d": 391651
+    "last": 285175,
+    "average_30d": 396134
   },
   "valuation": {
-    "pe_ratio": 8.668919,
-    "forward_pe": 11.663636,
-    "price_to_book": 2.8037586
+    "pe_ratio": 8.689189,
+    "forward_pe": 11.690908,
+    "price_to_book": 2.8103144
   },
   "company_info": {
     "name": "Puma Biotechnology, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 202862000.0,
+    "total_liabilities": 87594000.0,
+    "stockholders_equity": 115268000.0,
+    "cash": 53525000.0,
+    "marketable_securities": 40863000.0,
+    "total_liquidity": 94388000.0,
+    "total_debt": 41052000.0,
+    "long_term_debt": 4866000.0,
+    "current_debt": 33716000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 9689000.0,
+    "free_cash_flow": 9663000.0,
+    "investing_cash_flow": 506000.0,
+    "financing_cash_flow": -11332000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 32729000.0,
+    "research_and_development": 15912000.0,
+    "interest_expense": 1489000.0,
+    "net_income": 8844000.0,
+    "revenue": 54475000.0,
+    "gross_profit": 42302000.0,
+    "ebitda": 13454000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:53.718154",
+    "timestamp": "2026-01-29T16:50:22.181061",
     "url": "https://finance.yahoo.com/quote/PBYI",
-    "data_hash": "9ef9796ad407588c"
+    "data_hash": "fc418c4decde30b1"
   }
 }

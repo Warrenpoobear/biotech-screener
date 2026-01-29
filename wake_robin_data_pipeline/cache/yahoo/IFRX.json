@@ -2,7 +2,7 @@
   "ticker": "IFRX",
   "success": true,
   "price": {
-    "current": 0.8998,
+    "current": 0.9227,
     "currency": "USD",
     "day_high": 0.9611,
     "day_low": 0.8812,
@@ -10,34 +10,72 @@
     "52_week_low": 0.711
   },
   "market_cap": {
-    "value": 60958864.0,
+    "value": 62510276.0,
     "currency": "USD"
   },
   "shares_outstanding": 67747130.0,
   "volume": {
-    "last": 337185,
-    "average_30d": 679862
+    "last": 585772,
+    "average_30d": 684771
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -1.0915598,
-    "price_to_book": 1.1176269
+    "forward_pe": -1.123069,
+    "price_to_book": 1.1498886
   },
   "company_info": {
     "name": "InflaRx N.V.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 65157050.0,
+    "total_liabilities": 19790235.0,
+    "stockholders_equity": 45366816.0,
+    "cash": 6448116.0,
+    "marketable_securities": 38197197.0,
+    "total_liquidity": 44645313.0,
+    "total_debt": 970862.0,
+    "long_term_debt": 700144.0,
+    "current_debt": 270718.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -9039961.0,
+    "free_cash_flow": -9127933.0,
+    "investing_cash_flow": 2603882.0,
+    "financing_cash_flow": -84953.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 9500502.0,
+    "research_and_development": 6240825.0,
+    "interest_expense": 14359.0,
+    "net_income": -12261089.0,
+    "revenue": 23830.0,
+    "gross_profit": 23497.0,
+    "ebitda": -12134656.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T13:11:25.706248",
+    "timestamp": "2026-01-29T16:48:02.161574",
     "url": "https://finance.yahoo.com/quote/IFRX",
-    "data_hash": "e7d9ce0ba6bd3cc2"
+    "data_hash": "1691faa0cf2156f2"
   }
 }

@@ -2,42 +2,80 @@
   "ticker": "MCRB",
   "success": true,
   "price": {
-    "current": 15.0,
+    "current": 15.28,
     "currency": "USD",
-    "day_high": 15.245,
-    "day_low": 15.0,
+    "day_high": 15.28,
+    "day_low": 14.96,
     "52_week_high": 29.98,
     "52_week_low": 6.53
   },
   "market_cap": {
-    "value": 135697792.0,
+    "value": 138230800.0,
     "currency": "USD"
   },
   "shares_outstanding": 9046519.0,
   "volume": {
-    "last": 6504,
-    "average_30d": 45168
+    "last": 17019,
+    "average_30d": 42843
   },
   "valuation": {
-    "pe_ratio": 17.045454,
-    "forward_pe": -1.4381591,
-    "price_to_book": 3.0084236
+    "pe_ratio": 17.363636,
+    "forward_pe": -1.4650047,
+    "price_to_book": 3.0645807
   },
   "company_info": {
     "name": "Seres Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 143473000.0,
+    "total_liabilities": 99776000.0,
+    "stockholders_equity": 43697000.0,
+    "cash": 47638000.0,
+    "marketable_securities": null,
+    "total_liquidity": 47638000.0,
+    "total_debt": 85253000.0,
+    "long_term_debt": 75333000.0,
+    "current_debt": 9920000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 2206000.0,
+    "free_cash_flow": 2198000.0,
+    "investing_cash_flow": -8000.0,
+    "financing_cash_flow": 61000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 21741000.0,
+    "research_and_development": 12616000.0,
+    "interest_expense": null,
+    "net_income": 8204000.0,
+    "revenue": 0.0,
+    "gross_profit": -736000.0,
+    "ebitda": -21433000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:07:56.768232",
+    "timestamp": "2026-01-29T16:49:13.775885",
     "url": "https://finance.yahoo.com/quote/MCRB",
-    "data_hash": "9bbc8050a5722783"
+    "data_hash": "81fb499401158de7"
   }
 }

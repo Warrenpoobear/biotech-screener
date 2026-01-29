@@ -2,42 +2,83 @@
   "ticker": "MENS",
   "success": true,
   "price": {
-    "current": 2.545,
+    "current": 2.56,
     "currency": "USD",
-    "day_high": 2.6599,
-    "day_low": 2.51,
+    "day_high": 2.84,
+    "day_low": 2.47,
     "52_week_high": 67.0,
-    "52_week_low": 2.51
+    "52_week_low": 2.47
   },
   "market_cap": {
-    "value": 193490416.0,
+    "value": 194630816.0,
     "currency": "USD"
   },
   "shares_outstanding": 74233667.0,
   "volume": {
-    "last": 115353,
-    "average_30d": 628597
+    "last": 502151,
+    "average_30d": 636592
   },
   "valuation": {
     "pe_ratio": null,
     "forward_pe": null,
-    "price_to_book": -8.130991
+    "price_to_book": -8.178914
   },
   "company_info": {
     "name": "Jyong Biotech Ltd.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2024-12-31",
+    "total_assets": 6366000.0,
+    "total_liabilities": 42885000.0,
+    "stockholders_equity": -36519000.0,
+    "cash": 98000.0,
+    "marketable_securities": null,
+    "total_liquidity": 98000.0,
+    "total_debt": 18135000.0,
+    "long_term_debt": 10678000.0,
+    "current_debt": 7282000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": false,
+    "period_date": null,
+    "operating_cash_flow": null,
+    "free_cash_flow": null,
+    "investing_cash_flow": null,
+    "financing_cash_flow": null,
+    "error": "no_cashflow_data"
+  },
+  "income_statement": {
+    "success": false,
+    "period_date": null,
+    "operating_expense": null,
+    "research_and_development": null,
+    "interest_expense": null,
+    "net_income": null,
+    "revenue": null,
+    "gross_profit": null,
+    "ebitda": null,
+    "error": "no_income_stmt_data"
+  },
   "data_quality": {
-    "flags": [],
+    "flags": [
+      "cash_flow_error:no_cashflow_data",
+      "income_stmt_error:no_income_stmt_data"
+    ],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": false,
+    "has_income_statement": false
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:00.941445",
+    "timestamp": "2026-01-29T16:49:17.131382",
     "url": "https://finance.yahoo.com/quote/MENS",
-    "data_hash": "5d4f6ca6c22c223c"
+    "data_hash": "d8cd68af32b615ba"
   }
 }

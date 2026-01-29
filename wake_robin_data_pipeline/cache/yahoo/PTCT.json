@@ -2,42 +2,80 @@
   "ticker": "PTCT",
   "success": true,
   "price": {
-    "current": 77.0,
+    "current": 76.43,
     "currency": "USD",
-    "day_high": 77.97,
+    "day_high": 78.16,
     "day_low": 75.61,
     "52_week_high": 87.5,
     "52_week_low": 35.95
   },
   "market_cap": {
-    "value": 6182199296.0,
+    "value": 6136435200.0,
     "currency": "USD"
   },
   "shares_outstanding": 80288305.0,
   "volume": {
-    "last": 218244,
-    "average_30d": 1267279
+    "last": 1013549,
+    "average_30d": 1324675
   },
   "valuation": {
-    "pe_ratio": 8.953488,
-    "forward_pe": -84.24508,
-    "price_to_book": -39.50744
+    "pe_ratio": 8.887209,
+    "forward_pe": -83.621445,
+    "price_to_book": -39.21498
   },
   "company_info": {
     "name": "PTC Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 2643700000.0,
+    "total_liabilities": 2799458000.0,
+    "stockholders_equity": -155758000.0,
+    "cash": 672617000.0,
+    "marketable_securities": 1015200000.0,
+    "total_liquidity": 1687817000.0,
+    "total_debt": 410126000.0,
+    "long_term_debt": 109321000.0,
+    "current_debt": 286319000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -66301000.0,
+    "free_cash_flow": -322496000.0,
+    "investing_cash_flow": -289623000.0,
+    "financing_cash_flow": 15219000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 191738000.0,
+    "research_and_development": 100158000.0,
+    "interest_expense": 32592000.0,
+    "net_income": 15896000.0,
+    "revenue": 211007000.0,
+    "gross_profit": 195226000.0,
+    "ebitda": 20627000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:10.356816",
+    "timestamp": "2026-01-29T16:50:47.675222",
     "url": "https://finance.yahoo.com/quote/PTCT",
-    "data_hash": "a2ac963a5e37448a"
+    "data_hash": "64d5fb7f7ce01b98"
   }
 }

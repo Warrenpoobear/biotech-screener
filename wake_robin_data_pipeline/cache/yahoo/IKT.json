@@ -2,7 +2,7 @@
   "ticker": "IKT",
   "success": true,
   "price": {
-    "current": 1.575,
+    "current": 1.57,
     "currency": "USD",
     "day_high": 1.6,
     "day_low": 1.55,
@@ -10,34 +10,72 @@
     "52_week_low": 1.33
   },
   "market_cap": {
-    "value": 190995600.0,
+    "value": 190389264.0,
     "currency": "USD"
   },
   "shares_outstanding": 121267045.0,
   "volume": {
-    "last": 107450,
-    "average_30d": 506661
+    "last": 318642,
+    "average_30d": 504161
   },
   "valuation": {
-    "pe_ratio": 3.351064,
-    "forward_pe": -6.3,
-    "price_to_book": 1.9516729
+    "pe_ratio": 3.3404257,
+    "forward_pe": -6.28,
+    "price_to_book": 1.9454771
   },
   "company_info": {
     "name": "Inhibikase Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 79594541.0,
+    "total_liabilities": 6696243.0,
+    "stockholders_equity": 72898298.0,
+    "cash": 38269706.0,
+    "marketable_securities": 39052511.0,
+    "total_liquidity": 77322217.0,
+    "total_debt": 0.0,
+    "long_term_debt": null,
+    "current_debt": null,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -10592730.0,
+    "free_cash_flow": -10592730.0,
+    "investing_cash_flow": -28746103.0,
+    "financing_cash_flow": -134130.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 13261200.0,
+    "research_and_development": 7649697.0,
+    "interest_expense": null,
+    "net_income": -11930280.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -13237513.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:07:05.455000",
+    "timestamp": "2026-01-29T16:48:03.660244",
     "url": "https://finance.yahoo.com/quote/IKT",
-    "data_hash": "0cab3941a3016d07"
+    "data_hash": "4d10a6be05938d04"
   }
 }

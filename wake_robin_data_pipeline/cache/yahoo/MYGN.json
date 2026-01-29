@@ -2,42 +2,80 @@
   "ticker": "MYGN",
   "success": true,
   "price": {
-    "current": 5.6,
+    "current": 5.54,
     "currency": "USD",
     "day_high": 5.75,
-    "day_low": 5.58,
+    "day_low": 5.525,
     "52_week_high": 15.47,
     "52_week_low": 3.76
   },
   "market_cap": {
-    "value": 521996832.0,
+    "value": 516404000.0,
     "currency": "USD"
   },
   "shares_outstanding": 93213722.0,
   "volume": {
-    "last": 105084,
-    "average_30d": 851653
+    "last": 644879,
+    "average_30d": 886541
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 82.47422,
-    "price_to_book": 1.3986013
+    "forward_pe": 81.59057,
+    "price_to_book": 1.3836163
   },
   "company_info": {
     "name": "Myriad Genetics, Inc.",
     "sector": "Healthcare",
     "industry": "Diagnostics & Research"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 728100000.0,
+    "total_liabilities": 355300000.0,
+    "stockholders_equity": 372800000.0,
+    "cash": 145400000.0,
+    "marketable_securities": null,
+    "total_liquidity": 145400000.0,
+    "total_debt": 212300000.0,
+    "long_term_debt": 119500000.0,
+    "current_debt": 7900000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 21100000.0,
+    "free_cash_flow": 14900000.0,
+    "investing_cash_flow": -6200000.0,
+    "financing_cash_flow": 56200000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 167100000.0,
+    "research_and_development": 28200000.0,
+    "interest_expense": 3800000.0,
+    "net_income": -27400000.0,
+    "revenue": 205700000.0,
+    "gross_profit": 143800000.0,
+    "ebitda": -9800000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:16.276544",
+    "timestamp": "2026-01-29T16:49:38.093597",
     "url": "https://finance.yahoo.com/quote/MYGN",
-    "data_hash": "6efee46ca3c1f033"
+    "data_hash": "420b65c7c461ef41"
   }
 }

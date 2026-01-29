@@ -2,42 +2,80 @@
   "ticker": "SIGA",
   "success": true,
   "price": {
-    "current": 6.655,
+    "current": 6.81,
     "currency": "USD",
-    "day_high": 6.77,
-    "day_low": 6.65,
+    "day_high": 6.825,
+    "day_low": 6.585,
     "52_week_high": 9.62,
     "52_week_low": 4.95
   },
   "market_cap": {
-    "value": 476573248.0,
+    "value": 487672992.0,
     "currency": "USD"
   },
   "shares_outstanding": 71611302.0,
   "volume": {
-    "last": 45894,
-    "average_30d": 327758
+    "last": 268596,
+    "average_30d": 341408
   },
   "valuation": {
-    "pe_ratio": 6.4611654,
-    "forward_pe": 4.4072847,
-    "price_to_book": 2.342485
+    "pe_ratio": 6.6116505,
+    "forward_pe": 4.509934,
+    "price_to_book": 2.3970432
   },
   "company_info": {
     "name": "SIGA Technologies, Inc.",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 231603076.0,
+    "total_liabilities": 28124200.0,
+    "stockholders_equity": 203478876.0,
+    "cash": 171955584.0,
+    "marketable_securities": null,
+    "total_liquidity": 171955584.0,
+    "total_debt": 582666.0,
+    "long_term_debt": null,
+    "current_debt": 582666.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -9814444.0,
+    "free_cash_flow": -10104020.0,
+    "investing_cash_flow": -289576.0,
+    "financing_cash_flow": -403480.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 11840496.0,
+    "research_and_development": 7053985.0,
+    "interest_expense": null,
+    "net_income": -6365819.0,
+    "revenue": 2620000.0,
+    "gross_profit": 1617917.0,
+    "ebitda": -10080784.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:46.986063",
+    "timestamp": "2026-01-29T16:51:34.185207",
     "url": "https://finance.yahoo.com/quote/SIGA",
-    "data_hash": "5f8a750841c1ffe6"
+    "data_hash": "518cd315bd8e28bb"
   }
 }

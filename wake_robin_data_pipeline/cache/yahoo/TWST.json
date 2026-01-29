@@ -2,7 +2,7 @@
   "ticker": "TWST",
   "success": true,
   "price": {
-    "current": 40.7775,
+    "current": 41.58,
     "currency": "USD",
     "day_high": 41.9199,
     "day_low": 40.4,
@@ -10,34 +10,72 @@
     "52_week_low": 23.3
   },
   "market_cap": {
-    "value": 2498586368.0,
+    "value": 2547758592.0,
     "currency": "USD"
   },
   "shares_outstanding": 61273653.0,
   "volume": {
-    "last": 197958,
-    "average_30d": 1218616
+    "last": 828369,
+    "average_30d": 1257736
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -19.891464,
-    "price_to_book": 5.2278843
+    "forward_pe": -20.282928,
+    "price_to_book": 5.3307695
   },
   "company_info": {
     "name": "Twist Bioscience Corporation",
     "sector": "Healthcare",
     "industry": "Diagnostics & Research"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 641861000.0,
+    "total_liabilities": 168903000.0,
+    "stockholders_equity": 472958000.0,
+    "cash": 183049000.0,
+    "marketable_securities": 49385000.0,
+    "total_liquidity": 232434000.0,
+    "total_debt": 75572000.0,
+    "long_term_debt": 61750000.0,
+    "current_debt": 13822000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -11814000.0,
+    "free_cash_flow": -24241000.0,
+    "investing_cash_flow": -12403000.0,
+    "financing_cash_flow": 5574000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 80771000.0,
+    "research_and_development": 17014000.0,
+    "interest_expense": null,
+    "net_income": -27138000.0,
+    "revenue": 99009000.0,
+    "gross_profit": 50837000.0,
+    "ebitda": -23930000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:10:28.294453",
+    "timestamp": "2026-01-29T16:52:24.936730",
     "url": "https://finance.yahoo.com/quote/TWST",
-    "data_hash": "fb65bda7752f6ebe"
+    "data_hash": "797cf39281431f04"
   }
 }

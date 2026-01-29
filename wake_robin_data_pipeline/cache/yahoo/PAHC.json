@@ -2,42 +2,80 @@
   "ticker": "PAHC",
   "success": true,
   "price": {
-    "current": 39.68,
+    "current": 39.89,
     "currency": "USD",
-    "day_high": 39.84,
+    "day_high": 40.63,
     "day_low": 39.13,
     "52_week_high": 46.42,
     "52_week_low": 16.16
   },
   "market_cap": {
-    "value": 1608373632.0,
+    "value": 1616885632.0,
     "currency": "USD"
   },
   "shares_outstanding": 20447574.0,
   "volume": {
-    "last": 21451,
-    "average_30d": 192579
+    "last": 172743,
+    "average_30d": 198906
   },
   "valuation": {
-    "pe_ratio": 23.760479,
-    "forward_pe": 13.145776,
-    "price_to_book": 5.160619
+    "pe_ratio": 23.886229,
+    "forward_pe": 13.215348,
+    "price_to_book": 5.1879306
   },
   "company_info": {
     "name": "Phibro Animal Health Corporation",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1385524000.0,
+    "total_liabilities": 1073843000.0,
+    "stockholders_equity": 311681000.0,
+    "cash": 72769000.0,
+    "marketable_securities": 12504000.0,
+    "total_liquidity": 85273000.0,
+    "total_debt": 785099000.0,
+    "long_term_debt": 724518000.0,
+    "current_debt": 18444000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 9302000.0,
+    "free_cash_flow": -4504000.0,
+    "investing_cash_flow": -21014000.0,
+    "financing_cash_flow": 16335000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 68523000.0,
+    "research_and_development": null,
+    "interest_expense": 11971000.0,
+    "net_income": 26527000.0,
+    "revenue": 363893000.0,
+    "gross_profit": 119783000.0,
+    "ebitda": 61068000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:52.374303",
+    "timestamp": "2026-01-29T16:50:20.678024",
     "url": "https://finance.yahoo.com/quote/PAHC",
-    "data_hash": "bedb90a26fd814ff"
+    "data_hash": "f911ba47a592148c"
   }
 }

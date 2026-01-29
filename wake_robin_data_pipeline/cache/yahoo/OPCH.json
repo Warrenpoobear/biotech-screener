@@ -2,42 +2,80 @@
   "ticker": "OPCH",
   "success": true,
   "price": {
-    "current": 33.935,
+    "current": 33.89,
     "currency": "USD",
     "day_high": 35.23,
-    "day_low": 33.86,
+    "day_low": 33.82,
     "52_week_high": 36.8,
     "52_week_low": 24.24
   },
   "market_cap": {
-    "value": 5507483136.0,
+    "value": 5500179456.0,
     "currency": "USD"
   },
   "shares_outstanding": 158732706.0,
   "volume": {
-    "last": 366820,
-    "average_30d": 1774123
+    "last": 1649268,
+    "average_30d": 1869393
   },
   "valuation": {
-    "pe_ratio": 26.93254,
-    "forward_pe": 18.105524,
-    "price_to_book": 3.9989395
+    "pe_ratio": 26.896826,
+    "forward_pe": 18.081512,
+    "price_to_book": 3.9936364
   },
   "company_info": {
     "name": "Option Care Health, Inc.",
     "sector": "Healthcare",
     "industry": "Medical Care Facilities"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 3479845000.0,
+    "total_liabilities": 2121186000.0,
+    "stockholders_equity": 1358659000.0,
+    "cash": 309822000.0,
+    "marketable_securities": null,
+    "total_liquidity": 309822000.0,
+    "total_debt": 1276205000.0,
+    "long_term_debt": 1155056000.0,
+    "current_debt": 6780000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 139437000.0,
+    "free_cash_flow": 130242000.0,
+    "investing_cash_flow": -11724000.0,
+    "financing_cash_flow": -16709000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 188395000.0,
+    "research_and_development": null,
+    "interest_expense": 14146000.0,
+    "net_income": 51816000.0,
+    "revenue": 1435016000.0,
+    "gross_profit": 272902000.0,
+    "ebitda": 100161000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:45.311337",
+    "timestamp": "2026-01-29T16:50:14.281353",
     "url": "https://finance.yahoo.com/quote/OPCH",
-    "data_hash": "2853cf3dc46db8c0"
+    "data_hash": "0089c86ed9d9ee76"
   }
 }

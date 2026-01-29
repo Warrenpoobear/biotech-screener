@@ -2,42 +2,80 @@
   "ticker": "ZBIO",
   "success": true,
   "price": {
-    "current": 20.9,
+    "current": 20.88,
     "currency": "USD",
-    "day_high": 22.52,
-    "day_low": 20.77,
+    "day_high": 22.7,
+    "day_low": 20.42,
     "52_week_high": 44.6,
     "52_week_low": 6.11
   },
   "market_cap": {
-    "value": 1121894528.0,
+    "value": 1120820992.0,
     "currency": "USD"
   },
   "shares_outstanding": 53679166.0,
   "volume": {
-    "last": 166963,
-    "average_30d": 1203048
+    "last": 477775,
+    "average_30d": 1267746
   },
   "valuation": {
-    "pe_ratio": 1.5288954,
-    "forward_pe": -5.3045683,
-    "price_to_book": 4.491726
+    "pe_ratio": 1.5274323,
+    "forward_pe": -5.299492,
+    "price_to_book": 4.487427
   },
   "company_info": {
     "name": "Zenas BioPharma, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 322018000.0,
+    "total_liabilities": 125590000.0,
+    "stockholders_equity": 196428000.0,
+    "cash": 115565000.0,
+    "marketable_securities": 175319000.0,
+    "total_liquidity": 290884000.0,
+    "total_debt": 798000.0,
+    "long_term_debt": 180000.0,
+    "current_debt": 618000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -41125000.0,
+    "free_cash_flow": -46125000.0,
+    "investing_cash_flow": 40043000.0,
+    "financing_cash_flow": 72616000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 47580000.0,
+    "research_and_development": 34402000.0,
+    "interest_expense": null,
+    "net_income": -51499000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -47569000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:10:52.970869",
+    "timestamp": "2026-01-29T16:53:05.371118",
     "url": "https://finance.yahoo.com/quote/ZBIO",
-    "data_hash": "c2691dbbe49f743d"
+    "data_hash": "15a72762a0ce3532"
   }
 }

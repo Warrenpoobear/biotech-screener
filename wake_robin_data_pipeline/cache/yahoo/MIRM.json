@@ -2,42 +2,80 @@
   "ticker": "MIRM",
   "success": true,
   "price": {
-    "current": 101.675,
+    "current": 102.92,
     "currency": "USD",
-    "day_high": 102.7,
+    "day_high": 103.81,
     "day_low": 100.01,
-    "52_week_high": 102.7,
+    "52_week_high": 103.81,
     "52_week_low": 36.88
   },
   "market_cap": {
-    "value": 6088294912.0,
+    "value": 6162845184.0,
     "currency": "USD"
   },
   "shares_outstanding": 59879958.0,
   "volume": {
-    "last": 126326,
-    "average_30d": 795278
+    "last": 557248,
+    "average_30d": 832042
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -575.50806,
-    "price_to_book": 17.865929
+    "forward_pe": -582.55505,
+    "price_to_book": 18.084694
   },
   "company_info": {
     "name": "Mirum Pharmaceuticals, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 785115000.0,
+    "total_liabilities": 493069000.0,
+    "stockholders_equity": 292046000.0,
+    "cash": 282021000.0,
+    "marketable_securities": 93527000.0,
+    "total_liquidity": 375548000.0,
+    "total_debt": 318764000.0,
+    "long_term_debt": 309368000.0,
+    "current_debt": 2035000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 39681000.0,
+    "free_cash_flow": 39494000.0,
+    "investing_cash_flow": -2227000.0,
+    "financing_cash_flow": 16096000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 104870000.0,
+    "research_and_development": 42960000.0,
+    "interest_expense": 3606000.0,
+    "net_income": 2905000.0,
+    "revenue": 133010000.0,
+    "gross_profit": 107473000.0,
+    "ebitda": 12311000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:05.092649",
+    "timestamp": "2026-01-29T16:49:21.446781",
     "url": "https://finance.yahoo.com/quote/MIRM",
-    "data_hash": "c6e1c2ffc8881de2"
+    "data_hash": "51a80b6c8221b52f"
   }
 }

@@ -2,42 +2,80 @@
   "ticker": "PRAX",
   "success": true,
   "price": {
-    "current": 311.84,
+    "current": 314.28,
     "currency": "USD",
-    "day_high": 315.665,
+    "day_high": 319.56,
     "day_low": 304.075,
     "52_week_high": 326.91,
     "52_week_low": 26.7
   },
   "market_cap": {
-    "value": 8650095616.0,
+    "value": 8717778944.0,
     "currency": "USD"
   },
   "shares_outstanding": 27738892.0,
   "volume": {
-    "last": 191054,
-    "average_30d": 631987
+    "last": 402368,
+    "average_30d": 595255
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -24.824053,
-    "price_to_book": 19.214985
+    "forward_pe": -25.01829,
+    "price_to_book": 19.365334
   },
   "company_info": {
     "name": "Praxis Precision Medicines, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 396388000.0,
+    "total_liabilities": 52883000.0,
+    "stockholders_equity": 343505000.0,
+    "cash": 149527000.0,
+    "marketable_securities": 117630000.0,
+    "total_liquidity": 267157000.0,
+    "total_debt": 436000.0,
+    "long_term_debt": 0.0,
+    "current_debt": 436000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -65057000.0,
+    "free_cash_flow": -65057000.0,
+    "investing_cash_flow": 50413000.0,
+    "financing_cash_flow": 6756000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 78359000.0,
+    "research_and_development": 65797000.0,
+    "interest_expense": null,
+    "net_income": -73934000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -78340000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:00.855911",
+    "timestamp": "2026-01-29T16:50:36.992540",
     "url": "https://finance.yahoo.com/quote/PRAX",
-    "data_hash": "8527776a7543acf9"
+    "data_hash": "ff3c75b9cf54db13"
   }
 }

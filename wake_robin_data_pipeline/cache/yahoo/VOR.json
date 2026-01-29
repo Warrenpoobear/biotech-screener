@@ -2,7 +2,7 @@
   "ticker": "VOR",
   "success": true,
   "price": {
-    "current": 13.43,
+    "current": 13.99,
     "currency": "USD",
     "day_high": 14.105,
     "day_low": 13.3,
@@ -10,34 +10,72 @@
     "52_week_low": 2.62
   },
   "market_cap": {
-    "value": 520012256.0,
+    "value": 541695552.0,
     "currency": "USD"
   },
   "shares_outstanding": 38720196.0,
   "volume": {
-    "last": 229841,
-    "average_30d": 1047329
+    "last": 460763,
+    "average_30d": 1075383
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -2.9143193,
-    "price_to_book": -0.05447414
+    "forward_pe": -3.0358396,
+    "price_to_book": -0.056745585
   },
   "company_info": {
     "name": "Vor Biopharma Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 176237000.0,
+    "total_liabilities": 2401724000.0,
+    "stockholders_equity": -2225487000.0,
+    "cash": 160462000.0,
+    "marketable_securities": 10000000.0,
+    "total_liquidity": 170462000.0,
+    "total_debt": 3059000.0,
+    "long_term_debt": 2807000.0,
+    "current_debt": 252000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -53662000.0,
+    "free_cash_flow": -53906000.0,
+    "investing_cash_flow": -244000.0,
+    "financing_cash_flow": 21549000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 28107000.0,
+    "research_and_development": 14142000.0,
+    "interest_expense": null,
+    "net_income": -812684000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -28105000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:10:43.341325",
+    "timestamp": "2026-01-29T16:52:44.750314",
     "url": "https://finance.yahoo.com/quote/VOR",
-    "data_hash": "70d6c7cc5e3bea55"
+    "data_hash": "2fe2b8db01f9ac4c"
   }
 }

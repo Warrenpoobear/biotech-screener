@@ -2,7 +2,7 @@
   "ticker": "TRVI",
   "success": true,
   "price": {
-    "current": 10.445,
+    "current": 10.69,
     "currency": "USD",
     "day_high": 10.895,
     "day_low": 10.35,
@@ -10,34 +10,72 @@
     "52_week_low": 3.771
   },
   "market_cap": {
-    "value": 1339363712.0,
+    "value": 1370780160.0,
     "currency": "USD"
   },
   "shares_outstanding": 128230134.0,
   "volume": {
-    "last": 436445,
-    "average_30d": 1435356
+    "last": 1107253,
+    "average_30d": 1497693
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -22.223404,
-    "price_to_book": 7.057432
+    "forward_pe": -22.74468,
+    "price_to_book": 7.2229724
   },
   "company_info": {
     "name": "Trevi Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 199356000.0,
+    "total_liabilities": 9568000.0,
+    "stockholders_equity": 189788000.0,
+    "cash": 56869000.0,
+    "marketable_securities": 138058000.0,
+    "total_liquidity": 194927000.0,
+    "total_debt": 823000.0,
+    "long_term_debt": 527000.0,
+    "current_debt": 296000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -10880000.0,
+    "free_cash_flow": -10892000.0,
+    "investing_cash_flow": -50938000.0,
+    "financing_cash_flow": 1629000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 13916000.0,
+    "research_and_development": 10085000.0,
+    "interest_expense": 0.0,
+    "net_income": -11802000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -11779000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:10:24.265621",
+    "timestamp": "2026-01-29T16:52:21.651795",
     "url": "https://finance.yahoo.com/quote/TRVI",
-    "data_hash": "4f8c3ba09f3a3f2d"
+    "data_hash": "084e0ae4dd81575b"
   }
 }

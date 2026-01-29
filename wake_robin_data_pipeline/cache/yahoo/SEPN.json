@@ -2,7 +2,7 @@
   "ticker": "SEPN",
   "success": true,
   "price": {
-    "current": 23.93,
+    "current": 23.8,
     "currency": "USD",
     "day_high": 24.805,
     "day_low": 23.665,
@@ -10,34 +10,72 @@
     "52_week_low": 4.17
   },
   "market_cap": {
-    "value": 1071446400.0,
+    "value": 1065625728.0,
     "currency": "USD"
   },
   "shares_outstanding": 44774192.0,
   "volume": {
-    "last": 62716,
-    "average_30d": 260291
+    "last": 279075,
+    "average_30d": 277070
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -28.532253,
-    "price_to_book": 2.7480478
+    "forward_pe": -28.377249,
+    "price_to_book": 2.7331188
   },
   "company_info": {
     "name": "Septerna, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 606653000.0,
+    "total_liabilities": 217922000.0,
+    "stockholders_equity": 388731000.0,
+    "cash": 319989000.0,
+    "marketable_securities": 154357000.0,
+    "total_liquidity": 474346000.0,
+    "total_debt": 24110000.0,
+    "long_term_debt": 21993000.0,
+    "current_debt": 2117000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 168807000.0,
+    "free_cash_flow": 168794000.0,
+    "investing_cash_flow": -38392000.0,
+    "financing_cash_flow": 263000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 31381000.0,
+    "research_and_development": 24264000.0,
+    "interest_expense": null,
+    "net_income": 8173000.0,
+    "revenue": 21495000.0,
+    "gross_profit": null,
+    "ebitda": -9485000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:41.468058",
+    "timestamp": "2026-01-29T16:51:28.296206",
     "url": "https://finance.yahoo.com/quote/SEPN",
-    "data_hash": "525aa98661f3d971"
+    "data_hash": "4307711428dcf4b7"
   }
 }

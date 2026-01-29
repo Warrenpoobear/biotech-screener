@@ -2,42 +2,80 @@
   "ticker": "GRAL",
   "success": true,
   "price": {
-    "current": 99.25,
+    "current": 100.98,
     "currency": "USD",
-    "day_high": 101.55,
+    "day_high": 102.56,
     "day_low": 97.6253,
     "52_week_high": 118.84,
     "52_week_low": 20.44
   },
   "market_cap": {
-    "value": 3868985856.0,
+    "value": 3936425216.0,
     "currency": "USD"
   },
   "shares_outstanding": 38982223.0,
   "volume": {
-    "last": 235007,
-    "average_30d": 787791
+    "last": 689110,
+    "average_30d": 821562
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -9.167177,
-    "price_to_book": 1.6022537
+    "forward_pe": -9.326968,
+    "price_to_book": 1.6301821
   },
   "company_info": {
     "name": "GRAIL, Inc.",
     "sector": "Healthcare",
     "industry": "Diagnostics & Research"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 2601031000.0,
+    "total_liabilities": 361068000.0,
+    "stockholders_equity": 2239963000.0,
+    "cash": 126892000.0,
+    "marketable_securities": 413238000.0,
+    "total_liquidity": 540130000.0,
+    "total_debt": 58590000.0,
+    "long_term_debt": 44568000.0,
+    "current_debt": 14022000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -63245000.0,
+    "free_cash_flow": -63629000.0,
+    "investing_cash_flow": 66673000.0,
+    "financing_cash_flow": 0.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 111558000.0,
+    "research_and_development": 48647000.0,
+    "interest_expense": null,
+    "net_income": -88977000.0,
+    "revenue": 36194000.0,
+    "gross_profit": -13733000.0,
+    "ebitda": -86309000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:53.843098",
+    "timestamp": "2026-01-29T16:47:45.439154",
     "url": "https://finance.yahoo.com/quote/GRAL",
-    "data_hash": "d3f589ea3d7a8ba1"
+    "data_hash": "f858e8c3bb202544"
   }
 }

@@ -2,42 +2,80 @@
   "ticker": "NBP",
   "success": true,
   "price": {
-    "current": 3.78,
+    "current": 3.68,
     "currency": "USD",
     "day_high": 3.92,
-    "day_low": 3.74,
+    "day_low": 3.65,
     "52_week_high": 6.79,
     "52_week_low": 0.595
   },
   "market_cap": {
-    "value": 435800096.0,
+    "value": 424271008.0,
     "currency": "USD"
   },
   "shares_outstanding": 115291032.0,
   "volume": {
-    "last": 254530,
-    "average_30d": 931805
+    "last": 689445,
+    "average_30d": 963614
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -11.8125,
-    "price_to_book": 1.682992
+    "forward_pe": -11.5,
+    "price_to_book": 1.6384684
   },
   "company_info": {
     "name": "NovaBridge Biosciences",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 277410000.0,
+    "total_liabilities": 18495000.0,
+    "stockholders_equity": 258915000.0,
+    "cash": 228064000.0,
+    "marketable_securities": 210000.0,
+    "total_liquidity": 228274000.0,
+    "total_debt": 3275000.0,
+    "long_term_debt": 2403000.0,
+    "current_debt": 872000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 1839000.0,
+    "free_cash_flow": 1839000.0,
+    "investing_cash_flow": 0.0,
+    "financing_cash_flow": 60748000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 8989000.0,
+    "research_and_development": 3176000.0,
+    "interest_expense": null,
+    "net_income": -6828000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -8773000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:21.617260",
+    "timestamp": "2026-01-29T16:49:43.947910",
     "url": "https://finance.yahoo.com/quote/NBP",
-    "data_hash": "c1c75bf5f0dea65b"
+    "data_hash": "d15ad87fec872d0c"
   }
 }

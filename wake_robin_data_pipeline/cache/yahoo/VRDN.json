@@ -2,7 +2,7 @@
   "ticker": "VRDN",
   "success": true,
   "price": {
-    "current": 33.07,
+    "current": 33.57,
     "currency": "USD",
     "day_high": 34.18,
     "day_low": 33.0,
@@ -10,34 +10,72 @@
     "52_week_low": 9.9
   },
   "market_cap": {
-    "value": 3156267264.0,
+    "value": 3203988224.0,
     "currency": "USD"
   },
   "shares_outstanding": 95367908.0,
   "volume": {
-    "last": 215376,
-    "average_30d": 1388248
+    "last": 851495,
+    "average_30d": 1444042
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -9.2618265,
-    "price_to_book": 8.657068
+    "forward_pe": -9.40186,
+    "price_to_book": 8.787958
   },
   "company_info": {
     "name": "Viridian Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 577138000.0,
+    "total_liabilities": 74168000.0,
+    "stockholders_equity": 502970000.0,
+    "cash": 169647000.0,
+    "marketable_securities": 321254000.0,
+    "total_liquidity": 490901000.0,
+    "total_debt": 21620000.0,
+    "long_term_debt": 20890000.0,
+    "current_debt": 730000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -84611000.0,
+    "free_cash_flow": -84738000.0,
+    "investing_cash_flow": 126077000.0,
+    "financing_cash_flow": 10857000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 110583000.0,
+    "research_and_development": 86261000.0,
+    "interest_expense": 560000.0,
+    "net_income": -34599000.0,
+    "revenue": 70570000.0,
+    "gross_profit": null,
+    "ebitda": -33929000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:10:44.654803",
+    "timestamp": "2026-01-29T16:52:46.364492",
     "url": "https://finance.yahoo.com/quote/VRDN",
-    "data_hash": "52a6727077a7cbb4"
+    "data_hash": "3153a8eb3bda0948"
   }
 }

@@ -2,42 +2,80 @@
   "ticker": "RGNX",
   "success": true,
   "price": {
-    "current": 11.48,
+    "current": 11.6,
     "currency": "USD",
-    "day_high": 11.61,
+    "day_high": 11.78,
     "day_low": 10.61,
     "52_week_high": 16.19,
     "52_week_low": 5.035
   },
   "market_cap": {
-    "value": 581153024.0,
+    "value": 587227840.0,
     "currency": "USD"
   },
   "shares_outstanding": 50623086.0,
   "volume": {
-    "last": 493450,
-    "average_30d": 1013875
+    "last": 1186998,
+    "average_30d": 1054295
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -5.5559583,
-    "price_to_book": 3.5987458
+    "forward_pe": -5.614035,
+    "price_to_book": 3.6363637
   },
   "company_info": {
     "name": "REGENXBIO Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 525203000.0,
+    "total_liabilities": 363751000.0,
+    "stockholders_equity": 161452000.0,
+    "cash": 58802000.0,
+    "marketable_securities": 215403000.0,
+    "total_liquidity": 274205000.0,
+    "total_debt": 76506000.0,
+    "long_term_debt": 67433000.0,
+    "current_debt": 9073000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -55960000.0,
+    "free_cash_flow": -56451000.0,
+    "investing_cash_flow": 42287000.0,
+    "financing_cash_flow": -7083000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 76419000.0,
+    "research_and_development": 56101000.0,
+    "interest_expense": 13169000.0,
+    "net_income": -61941000.0,
+    "revenue": 29733000.0,
+    "gross_profit": 24008000.0,
+    "ebitda": -44886000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:28.584616",
+    "timestamp": "2026-01-29T16:51:11.716914",
     "url": "https://finance.yahoo.com/quote/RGNX",
-    "data_hash": "d2eba07c3a9277a8"
+    "data_hash": "744f6157e55830ba"
   }
 }

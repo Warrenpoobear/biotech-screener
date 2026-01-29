@@ -2,42 +2,80 @@
   "ticker": "TECX",
   "success": true,
   "price": {
-    "current": 19.6025,
+    "current": 20.69,
     "currency": "USD",
-    "day_high": 19.9468,
+    "day_high": 20.98,
     "day_low": 19.54,
     "52_week_high": 61.07,
     "52_week_low": 13.7
   },
   "market_cap": {
-    "value": 366885888.0,
+    "value": 387239840.0,
     "currency": "USD"
   },
   "shares_outstanding": 18716280.0,
   "volume": {
-    "last": 29929,
-    "average_30d": 216346
+    "last": 304482,
+    "average_30d": 231775
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -4.1885686,
-    "price_to_book": 1.3711878
+    "forward_pe": -4.4209404,
+    "price_to_book": 1.4472581
   },
   "company_info": {
     "name": "Tectonic Therapeutic, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 277001000.0,
+    "total_liabilities": 9473000.0,
+    "stockholders_equity": 267528000.0,
+    "cash": 268435000.0,
+    "marketable_securities": null,
+    "total_liquidity": 268435000.0,
+    "total_debt": 1238000.0,
+    "long_term_debt": 100000.0,
+    "current_debt": 1138000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -17815000.0,
+    "free_cash_flow": -17996000.0,
+    "investing_cash_flow": -166000.0,
+    "financing_cash_flow": -457000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 21890000.0,
+    "research_and_development": 16927000.0,
+    "interest_expense": 14000.0,
+    "net_income": -19035000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -18679000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:10:14.440939",
+    "timestamp": "2026-01-29T16:52:07.904324",
     "url": "https://finance.yahoo.com/quote/TECX",
-    "data_hash": "19e2cb22e1f14752"
+    "data_hash": "eed8eeb7029f0570"
   }
 }

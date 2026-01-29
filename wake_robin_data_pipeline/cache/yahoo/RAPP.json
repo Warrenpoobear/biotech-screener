@@ -2,42 +2,80 @@
   "ticker": "RAPP",
   "success": true,
   "price": {
-    "current": 26.66,
+    "current": 26.75,
     "currency": "USD",
-    "day_high": 27.19,
+    "day_high": 27.42,
     "day_low": 26.345,
     "52_week_high": 42.269,
     "52_week_low": 6.43
   },
   "market_cap": {
-    "value": 1270645888.0,
+    "value": 1274935424.0,
     "currency": "USD"
   },
   "shares_outstanding": 47661138.0,
   "volume": {
-    "last": 29680,
-    "average_30d": 339167
+    "last": 526163,
+    "average_30d": 370735
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -7.780148,
-    "price_to_book": 2.4830027
+    "forward_pe": -7.8064127,
+    "price_to_book": 2.4913847
   },
   "company_info": {
     "name": "Rapport Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 535323000.0,
+    "total_liabilities": 23706000.0,
+    "stockholders_equity": 511617000.0,
+    "cash": 251359000.0,
+    "marketable_securities": 261667000.0,
+    "total_liquidity": 513026000.0,
+    "total_debt": 11872000.0,
+    "long_term_debt": 9390000.0,
+    "current_debt": 2482000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -17465000.0,
+    "free_cash_flow": -17599000.0,
+    "investing_cash_flow": -56776000.0,
+    "financing_cash_flow": 270533000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 29986000.0,
+    "research_and_development": 22279000.0,
+    "interest_expense": null,
+    "net_income": -26925000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -29730000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:21.437972",
+    "timestamp": "2026-01-29T16:50:59.900796",
     "url": "https://finance.yahoo.com/quote/RAPP",
-    "data_hash": "2ba436788ebca44a"
+    "data_hash": "7bf8edf292c59399"
   }
 }

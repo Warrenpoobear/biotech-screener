@@ -2,7 +2,7 @@
   "ticker": "VYNE",
   "success": true,
   "price": {
-    "current": 0.567,
+    "current": 0.5665,
     "currency": "USD",
     "day_high": 0.573,
     "day_low": 0.56,
@@ -10,34 +10,72 @@
     "52_week_low": 0.281
   },
   "market_cap": {
-    "value": 18873400.0,
+    "value": 18856758.0,
     "currency": "USD"
   },
   "shares_outstanding": 33286422.0,
   "volume": {
-    "last": 640008,
-    "average_30d": 582404
+    "last": 1022315,
+    "average_30d": 557143
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -0.51545453,
-    "price_to_book": 0.5613861
+    "forward_pe": -0.515,
+    "price_to_book": 0.5608911
   },
   "company_info": {
     "name": "VYNE Therapeutics Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 36132000.0,
+    "total_liabilities": 4044000.0,
+    "stockholders_equity": 32088000.0,
+    "cash": 19346000.0,
+    "marketable_securities": 13354000.0,
+    "total_liquidity": 32700000.0,
+    "total_debt": 0.0,
+    "long_term_debt": null,
+    "current_debt": null,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -7096000.0,
+    "free_cash_flow": -7096000.0,
+    "investing_cash_flow": 4402000.0,
+    "financing_cash_flow": -7000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 7961000.0,
+    "research_and_development": 5256000.0,
+    "interest_expense": null,
+    "net_income": -7280000.0,
+    "revenue": 169000.0,
+    "gross_profit": null,
+    "ebitda": -7786000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T13:11:31.148033",
+    "timestamp": "2026-01-29T16:52:56.080736",
     "url": "https://finance.yahoo.com/quote/VYNE",
-    "data_hash": "1e703d902f9263ce"
+    "data_hash": "e07368941dec2119"
   }
 }

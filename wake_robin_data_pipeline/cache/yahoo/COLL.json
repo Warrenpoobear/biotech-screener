@@ -42,16 +42,39 @@
     "current_debt": 64583000.0,
     "error": null
   },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 78438000.0,
+    "free_cash_flow": 78250000.0,
+    "investing_cash_flow": -30868000.0,
+    "financing_cash_flow": -14818000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 67103000.0,
+    "research_and_development": null,
+    "interest_expense": 21767000.0,
+    "net_income": 31507000.0,
+    "revenue": 209361000.0,
+    "gross_profit": 129171000.0,
+    "ebitda": 121709000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
     "has_volume": true,
-    "has_balance_sheet": true
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T16:30:58.448072",
+    "timestamp": "2026-01-29T16:45:09.362254",
     "url": "https://finance.yahoo.com/quote/COLL",
     "data_hash": "db2367175ad75fa3"
   }

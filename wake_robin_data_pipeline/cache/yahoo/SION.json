@@ -2,42 +2,80 @@
   "ticker": "SION",
   "success": true,
   "price": {
-    "current": 42.19,
+    "current": 42.44,
     "currency": "USD",
     "day_high": 43.745,
-    "day_low": 42.1,
+    "day_low": 41.51,
     "52_week_high": 45.0,
     "52_week_low": 7.255
   },
   "market_cap": {
-    "value": 1882888448.0,
+    "value": 1894045696.0,
     "currency": "USD"
   },
   "shares_outstanding": 44628788.0,
   "volume": {
-    "last": 55827,
-    "average_30d": 265733
+    "last": 206069,
+    "average_30d": 279174
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -19.566376,
-    "price_to_book": 5.832181
+    "forward_pe": -19.858315,
+    "price_to_book": 5.86674
   },
   "company_info": {
     "name": "Sionna Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 339270000.0,
+    "total_liabilities": 17602000.0,
+    "stockholders_equity": 321668000.0,
+    "cash": 50831000.0,
+    "marketable_securities": 197498000.0,
+    "total_liquidity": 248329000.0,
+    "total_debt": 8968000.0,
+    "long_term_debt": 7751000.0,
+    "current_debt": 1217000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -15230000.0,
+    "free_cash_flow": -15317000.0,
+    "investing_cash_flow": 23102000.0,
+    "financing_cash_flow": 1974000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 23805000.0,
+    "research_and_development": 16044000.0,
+    "interest_expense": null,
+    "net_income": -20278000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -23285000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:48.338097",
+    "timestamp": "2026-01-29T16:51:35.568777",
     "url": "https://finance.yahoo.com/quote/SION",
-    "data_hash": "e1d66277521545ee"
+    "data_hash": "913c70262406d7f3"
   }
 }

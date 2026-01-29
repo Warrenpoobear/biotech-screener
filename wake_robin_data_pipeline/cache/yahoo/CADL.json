@@ -42,16 +42,39 @@
     "current_debt": 4225000.0,
     "error": null
   },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -10236000.0,
+    "free_cash_flow": -10380000.0,
+    "investing_cash_flow": -117000.0,
+    "financing_cash_flow": -3371000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 13207000.0,
+    "research_and_development": 8461000.0,
+    "interest_expense": 161000.0,
+    "net_income": -11269000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -10913000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
     "has_volume": true,
-    "has_balance_sheet": true
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T16:30:37.471836",
+    "timestamp": "2026-01-29T16:44:41.141502",
     "url": "https://finance.yahoo.com/quote/CADL",
     "data_hash": "7a9125dd668ff769"
   }

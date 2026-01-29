@@ -2,42 +2,80 @@
   "ticker": "VERA",
   "success": true,
   "price": {
-    "current": 44.74,
+    "current": 45.0,
     "currency": "USD",
     "day_high": 45.745,
-    "day_low": 44.4901,
+    "day_low": 44.3,
     "52_week_high": 56.05,
     "52_week_low": 18.53
   },
   "market_cap": {
-    "value": 3175953408.0,
+    "value": 3194409984.0,
     "currency": "USD"
   },
   "shares_outstanding": 70986890.0,
   "volume": {
-    "last": 123807,
-    "average_30d": 1082563
+    "last": 683228,
+    "average_30d": 1095839
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -9.897288,
-    "price_to_book": 7.1664267
+    "forward_pe": -9.954805,
+    "price_to_book": 7.208073
   },
   "company_info": {
     "name": "Vera Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 517503000.0,
+    "total_liabilities": 118623000.0,
+    "stockholders_equity": 398880000.0,
+    "cash": 57773000.0,
+    "marketable_securities": 439616000.0,
+    "total_liquidity": 497389000.0,
+    "total_debt": 77216000.0,
+    "long_term_debt": 74648000.0,
+    "current_debt": 473000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -61906000.0,
+    "free_cash_flow": -62039000.0,
+    "investing_cash_flow": 69761000.0,
+    "financing_cash_flow": 797000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 83932000.0,
+    "research_and_development": 56473000.0,
+    "interest_expense": 1960000.0,
+    "net_income": -80293000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -78204000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:10:37.942238",
+    "timestamp": "2026-01-29T16:52:38.817326",
     "url": "https://finance.yahoo.com/quote/VERA",
-    "data_hash": "34b76ddfba16c715"
+    "data_hash": "f1b6d3639fc66a0e"
   }
 }

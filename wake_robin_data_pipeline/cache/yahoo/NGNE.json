@@ -2,42 +2,80 @@
   "ticker": "NGNE",
   "success": true,
   "price": {
-    "current": 18.605,
+    "current": 18.89,
     "currency": "USD",
     "day_high": 19.675,
-    "day_low": 18.605,
+    "day_low": 18.27,
     "52_week_high": 37.266,
     "52_week_low": 6.875
   },
   "market_cap": {
-    "value": 288187712.0,
+    "value": 292602304.0,
     "currency": "USD"
   },
   "shares_outstanding": 15489800.0,
   "volume": {
-    "last": 17494,
-    "average_30d": 150513
+    "last": 89451,
+    "average_30d": 153864
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -4.0622272,
-    "price_to_book": 1.0352215
+    "forward_pe": -4.124454,
+    "price_to_book": 1.0510794
   },
   "company_info": {
     "name": "Neurogene Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 287832000.0,
+    "total_liabilities": 22292000.0,
+    "stockholders_equity": 265540000.0,
+    "cash": 71005000.0,
+    "marketable_securities": 194405000.0,
+    "total_liquidity": 265410000.0,
+    "total_debt": 11273000.0,
+    "long_term_debt": 7531000.0,
+    "current_debt": 3742000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -19508000.0,
+    "free_cash_flow": -19635000.0,
+    "investing_cash_flow": 21990000.0,
+    "financing_cash_flow": 9710000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 23798000.0,
+    "research_and_development": 17241000.0,
+    "interest_expense": 1000.0,
+    "net_income": -20953000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -20176000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:23.024264",
+    "timestamp": "2026-01-29T16:49:46.859143",
     "url": "https://finance.yahoo.com/quote/NGNE",
-    "data_hash": "640233166f3d34b7"
+    "data_hash": "30d7d17c3453323f"
   }
 }

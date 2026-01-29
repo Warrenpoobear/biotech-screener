@@ -2,42 +2,80 @@
   "ticker": "PCRX",
   "success": true,
   "price": {
-    "current": 20.16,
+    "current": 20.09,
     "currency": "USD",
     "day_high": 20.7,
-    "day_low": 20.15,
+    "day_low": 19.96,
     "52_week_high": 27.64,
     "52_week_low": 18.8
   },
   "market_cap": {
-    "value": 867308928.0,
+    "value": 864297472.0,
     "currency": "USD"
   },
   "shares_outstanding": 41100000.0,
   "volume": {
-    "last": 78451,
-    "average_30d": 992106
+    "last": 590249,
+    "average_30d": 1035840
   },
   "valuation": {
-    "pe_ratio": 42.893616,
-    "forward_pe": 5.917229,
-    "price_to_book": 1.1911374
+    "pe_ratio": 42.744682,
+    "forward_pe": 5.896683,
+    "price_to_book": 1.1870016
   },
   "company_info": {
     "name": "Pacira BioSciences, Inc.",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1297577000.0,
+    "total_liabilities": 570363000.0,
+    "stockholders_equity": 727214000.0,
+    "cash": 147589000.0,
+    "marketable_securities": 98745000.0,
+    "total_liquidity": 246334000.0,
+    "total_debt": 425308000.0,
+    "long_term_debt": 376721000.0,
+    "current_debt": 9748000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 60834000.0,
+    "free_cash_flow": 56964000.0,
+    "investing_cash_flow": 43614000.0,
+    "financing_cash_flow": -257476000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 132085000.0,
+    "research_and_development": 25966000.0,
+    "interest_expense": 3653000.0,
+    "net_income": 5432000.0,
+    "revenue": 179516000.0,
+    "gross_profit": 145238000.0,
+    "ebitda": 34368000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:55.157546",
+    "timestamp": "2026-01-29T16:50:23.633359",
     "url": "https://finance.yahoo.com/quote/PCRX",
-    "data_hash": "5f90ff3eb742fb3a"
+    "data_hash": "c5c3379aa33c323d"
   }
 }

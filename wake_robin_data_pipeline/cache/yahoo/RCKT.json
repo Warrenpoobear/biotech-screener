@@ -2,7 +2,7 @@
   "ticker": "RCKT",
   "success": true,
   "price": {
-    "current": 3.5186,
+    "current": 3.55,
     "currency": "USD",
     "day_high": 3.59,
     "day_low": 3.5,
@@ -10,34 +10,72 @@
     "52_week_low": 2.19
   },
   "market_cap": {
-    "value": 380790720.0,
+    "value": 384188896.0,
     "currency": "USD"
   },
   "shares_outstanding": 108222228.0,
   "volume": {
-    "last": 401540,
-    "average_30d": 2190138
+    "last": 1004683,
+    "average_30d": 2274880
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -2.823101,
-    "price_to_book": 1.2137289
+    "forward_pe": -2.8482943,
+    "price_to_book": 1.2245603
   },
   "company_info": {
     "name": "Rocket Pharmaceuticals, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 368033000.0,
+    "total_liabilities": 54364000.0,
+    "stockholders_equity": 313669000.0,
+    "cash": 75948000.0,
+    "marketable_securities": 146810000.0,
+    "total_liquidity": 222758000.0,
+    "total_debt": 25045000.0,
+    "long_term_debt": 22133000.0,
+    "current_debt": 2912000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -50420000.0,
+    "free_cash_flow": -50366000.0,
+    "investing_cash_flow": 93616000.0,
+    "financing_cash_flow": -67000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 52419000.0,
+    "research_and_development": 34068000.0,
+    "interest_expense": 473000.0,
+    "net_income": -50332000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -46619000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:24.244086",
+    "timestamp": "2026-01-29T16:51:04.466775",
     "url": "https://finance.yahoo.com/quote/RCKT",
-    "data_hash": "6078b91f87bc4c13"
+    "data_hash": "a13387547fcf8365"
   }
 }

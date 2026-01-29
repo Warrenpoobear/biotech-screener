@@ -16,7 +16,7 @@
   "shares_outstanding": 271462285.0,
   "volume": {
     "last": 100,
-    "average_30d": 28
+    "average_30d": 25
   },
   "valuation": {
     "pe_ratio": null,
@@ -28,15 +28,53 @@
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 110495000.0,
+    "total_liabilities": 57641000.0,
+    "stockholders_equity": 52853000.0,
+    "cash": 69837000.0,
+    "marketable_securities": null,
+    "total_liquidity": 69837000.0,
+    "total_debt": 8589000.0,
+    "long_term_debt": 6690000.0,
+    "current_debt": 898000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -32435000.0,
+    "free_cash_flow": -32552000.0,
+    "investing_cash_flow": -241000.0,
+    "financing_cash_flow": 130000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 34277000.0,
+    "research_and_development": 28615000.0,
+    "interest_expense": null,
+    "net_income": -33164000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -31653000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T13:11:16.063320",
+    "timestamp": "2026-01-29T16:47:40.696513",
     "url": "https://finance.yahoo.com/quote/DBVTF",
     "data_hash": "3f3a59aeb9da821f"
   }

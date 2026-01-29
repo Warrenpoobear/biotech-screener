@@ -42,16 +42,39 @@
     "current_debt": 2687000.0,
     "error": null
   },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -25185000.0,
+    "free_cash_flow": -25300000.0,
+    "investing_cash_flow": 10851000.0,
+    "financing_cash_flow": 277000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 31598000.0,
+    "research_and_development": 22401000.0,
+    "interest_expense": null,
+    "net_income": -27548000.0,
+    "revenue": 2198000.0,
+    "gross_profit": null,
+    "ebitda": -28769000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
     "has_volume": true,
-    "has_balance_sheet": true
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T16:30:59.991344",
+    "timestamp": "2026-01-29T16:45:11.040426",
     "url": "https://finance.yahoo.com/quote/CRBU",
     "data_hash": "340dc4e063c8b234"
   }

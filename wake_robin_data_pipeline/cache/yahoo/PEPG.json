@@ -2,7 +2,7 @@
   "ticker": "PEPG",
   "success": true,
   "price": {
-    "current": 5.0514,
+    "current": 5.22,
     "currency": "USD",
     "day_high": 5.33,
     "day_low": 4.975,
@@ -10,34 +10,72 @@
     "52_week_low": 0.88
   },
   "market_cap": {
-    "value": 347274784.0,
+    "value": 358865728.0,
     "currency": "USD"
   },
   "shares_outstanding": 68748224.0,
   "volume": {
-    "last": 147339,
-    "average_30d": 693497
+    "last": 562466,
+    "average_30d": 720046
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -3.9541292,
-    "price_to_book": 2.128698
+    "forward_pe": -4.0861053,
+    "price_to_book": 2.199747
   },
   "company_info": {
     "name": "PepGen Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 190057000.0,
+    "total_liabilities": 26917000.0,
+    "stockholders_equity": 163140000.0,
+    "cash": 142775000.0,
+    "marketable_securities": 20890000.0,
+    "total_liquidity": 163665000.0,
+    "total_debt": 17438000.0,
+    "long_term_debt": 14275000.0,
+    "current_debt": 3163000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -19259000.0,
+    "free_cash_flow": -19356000.0,
+    "investing_cash_flow": 18903000.0,
+    "financing_cash_flow": 108052000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 18654000.0,
+    "research_and_development": 13423000.0,
+    "interest_expense": null,
+    "net_income": -18026000.0,
+    "revenue": 0.0,
+    "gross_profit": null,
+    "ebitda": -17378000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:55.416980",
+    "timestamp": "2026-01-29T16:50:26.756889",
     "url": "https://finance.yahoo.com/quote/PEPG",
-    "data_hash": "1c939d93f13ff878"
+    "data_hash": "3bfce6efdce0de56"
   }
 }

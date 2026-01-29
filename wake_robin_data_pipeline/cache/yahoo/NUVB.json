@@ -2,7 +2,7 @@
   "ticker": "NUVB",
   "success": true,
   "price": {
-    "current": 5.255,
+    "current": 5.34,
     "currency": "USD",
     "day_high": 5.3978,
     "day_low": 5.23,
@@ -10,34 +10,72 @@
     "52_week_low": 1.54
   },
   "market_cap": {
-    "value": 1801589760.0,
+    "value": 1830730624.0,
     "currency": "USD"
   },
   "shares_outstanding": 341833433.0,
   "volume": {
-    "last": 849327,
-    "average_30d": 6094642
+    "last": 4804479,
+    "average_30d": 6242784
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 9.554545,
-    "price_to_book": 5.5257626
+    "forward_pe": 9.709091,
+    "price_to_book": 5.6151423
   },
   "company_info": {
     "name": "Nuvation Bio Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 601561000.0,
+    "total_liabilities": 275679000.0,
+    "stockholders_equity": 325882000.0,
+    "cash": 98897000.0,
+    "marketable_securities": 450148000.0,
+    "total_liquidity": 549045000.0,
+    "total_debt": 57548000.0,
+    "long_term_debt": 47089000.0,
+    "current_debt": 5618000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -52889000.0,
+    "free_cash_flow": -60901000.0,
+    "investing_cash_flow": -96621000.0,
+    "financing_cash_flow": 501000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 66205000.0,
+    "research_and_development": 28846000.0,
+    "interest_expense": 6534000.0,
+    "net_income": -55792000.0,
+    "revenue": 13120000.0,
+    "gross_profit": 9771000.0,
+    "ebitda": -48724000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:08:28.755034",
+    "timestamp": "2026-01-29T16:49:55.967724",
     "url": "https://finance.yahoo.com/quote/NUVB",
-    "data_hash": "d3c643ef9642f9f4"
+    "data_hash": "d9a56b91a536a032"
   }
 }

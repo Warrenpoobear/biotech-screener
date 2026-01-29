@@ -2,42 +2,80 @@
   "ticker": "PTGX",
   "success": true,
   "price": {
-    "current": 79.8,
+    "current": 79.73,
     "currency": "USD",
     "day_high": 82.49,
-    "day_low": 79.69,
+    "day_low": 77.695,
     "52_week_high": 96.54,
     "52_week_low": 33.7
   },
   "market_cap": {
-    "value": 4988750336.0,
+    "value": 4984374272.0,
     "currency": "USD"
   },
   "shares_outstanding": 62515666.0,
   "volume": {
-    "last": 75782,
-    "average_30d": 758462
+    "last": 877665,
+    "average_30d": 817872
   },
   "valuation": {
-    "pe_ratio": 120.90909,
-    "forward_pe": 75.173096,
-    "price_to_book": 7.720588
+    "pe_ratio": 120.80303,
+    "forward_pe": 75.107155,
+    "price_to_book": 7.7138157
   },
   "company_info": {
     "name": "Protagonist Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 701688000.0,
+    "total_liabilities": 56251000.0,
+    "stockholders_equity": 645437000.0,
+    "cash": 113713000.0,
+    "marketable_securities": 462404000.0,
+    "total_liquidity": 576117000.0,
+    "total_debt": 10749000.0,
+    "long_term_debt": 8521000.0,
+    "current_debt": 2228000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": -1937000.0,
+    "free_cash_flow": -2025000.0,
+    "investing_cash_flow": -58555000.0,
+    "financing_cash_flow": 5659000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 51133000.0,
+    "research_and_development": 40003000.0,
+    "interest_expense": null,
+    "net_income": -39339000.0,
+    "revenue": 4712000.0,
+    "gross_profit": null,
+    "ebitda": -45954000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:09:11.652982",
+    "timestamp": "2026-01-29T16:50:49.054300",
     "url": "https://finance.yahoo.com/quote/PTGX",
-    "data_hash": "4cccaac48c669e7e"
+    "data_hash": "2e250dc3577c81a8"
   }
 }

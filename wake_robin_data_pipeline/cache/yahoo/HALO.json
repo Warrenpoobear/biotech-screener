@@ -2,42 +2,80 @@
   "ticker": "HALO",
   "success": true,
   "price": {
-    "current": 71.495,
+    "current": 73.34,
     "currency": "USD",
-    "day_high": 72.95,
+    "day_high": 73.36,
     "day_low": 70.79,
     "52_week_high": 79.5,
     "52_week_low": 47.5
   },
   "market_cap": {
-    "value": 8407598080.0,
+    "value": 8624563200.0,
     "currency": "USD"
   },
   "shares_outstanding": 117597000.0,
   "volume": {
-    "last": 392169,
-    "average_30d": 1662384
+    "last": 2061441,
+    "average_30d": 1773255
   },
   "valuation": {
-    "pe_ratio": 15.083335,
-    "forward_pe": 8.753597,
-    "price_to_book": 16.673275
+    "pe_ratio": 15.472574,
+    "forward_pe": 8.979492,
+    "price_to_book": 17.103544
   },
   "company_info": {
     "name": "Halozyme Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 2221232000.0,
+    "total_liabilities": 1717317000.0,
+    "stockholders_equity": 503915000.0,
+    "cash": 419665000.0,
+    "marketable_securities": 282298000.0,
+    "total_liquidity": 701963000.0,
+    "total_debt": 1510757000.0,
+    "long_term_debt": 800072000.0,
+    "current_debt": 710685000.0,
+    "error": null
+  },
+  "cash_flow": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_cash_flow": 178597000.0,
+    "free_cash_flow": 175567000.0,
+    "investing_cash_flow": 201609000.0,
+    "financing_cash_flow": -22402000.0,
+    "error": null
+  },
+  "income_statement": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "operating_expense": 81101000.0,
+    "research_and_development": 17251000.0,
+    "interest_expense": 4296000.0,
+    "net_income": 175225000.0,
+    "revenue": 354264000.0,
+    "gross_profit": 299022000.0,
+    "ebitda": 243674000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true,
+    "has_cash_flow": true,
+    "has_income_statement": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:56.858222",
+    "timestamp": "2026-01-29T16:47:48.920894",
     "url": "https://finance.yahoo.com/quote/HALO",
-    "data_hash": "43cbd88329dd9573"
+    "data_hash": "431c6dae433a994d"
   }
 }
