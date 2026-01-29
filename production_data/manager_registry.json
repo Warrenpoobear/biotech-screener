@@ -67,12 +67,6 @@
       "style": "oncology_focused"
     },
     {
-      "cik": "0000909661",
-      "name": "Farallon Capital",
-      "aum_b": 36.0,
-      "style": "multi_strategy_macro"
-    },
-    {
       "cik": "0001569064",
       "name": "Suvretta Capital Management",
       "aum_b": 5.1,
@@ -85,9 +79,9 @@
       "style": "genomics_focused"
     },
     {
-      "cik": "0001398659",
+      "cik": "0001583977",
       "name": "Cormorant Asset Management",
-      "aum_b": 4.1,
+      "aum_b": 3.9,
       "style": "event_driven"
     },
     {
@@ -113,32 +107,48 @@
       "name": "EcoR1 Capital",
       "aum_b": 2.1,
       "style": "scientific_deep_dive"
-    }
-  ],
-  "conditional": [
-    {
-      "cik": "0001005477",
-      "name": "Venrock",
-      "aum_b": 2.5,
-      "style": "venture_capital"
     },
     {
-      "cik": "0001631282",
+      "cik": "0001306923",
+      "name": "Palo Alto Investors",
+      "aum_b": 0.67,
+      "style": "physician_led_fundamental"
+    },
+    {
+      "cik": "0001595851",
+      "name": "Ghost Tree Capital",
+      "aum_b": 0.36,
+      "style": "healthcare_long_short"
+    },
+    {
+      "cik": "0001274413",
+      "name": "Sectoral Asset Management",
+      "aum_b": 0.39,
+      "style": "garp_healthcare"
+    },
+    {
+      "cik": "0001281446",
+      "name": "Great Point Partners",
+      "aum_b": 1.46,
+      "style": "life_sciences_value"
+    },
+    {
+      "cik": "0001791827",
+      "name": "Avidity Partners Management",
+      "aum_b": 1.3,
+      "style": "healthcare_fundamental"
+    },
+    {
+      "cik": "0001744967",
+      "name": "Samsara BioCapital",
+      "aum_b": 1.86,
+      "style": "concentrated_life_sciences"
+    },
+    {
+      "cik": "0001856083",
       "name": "Deep Track Capital",
-      "aum_b": 1.8,
+      "aum_b": 5.2,
       "style": "fundamental_long_short"
-    },
-    {
-      "cik": "0001103804",
-      "name": "Viking Global",
-      "aum_b": 27.0,
-      "style": "multi_strategy_macro"
-    },
-    {
-      "cik": "0001581219",
-      "name": "Foresite Capital Management",
-      "aum_b": 3.6,
-      "style": "multi_stage_healthcare"
     },
     {
       "cik": "0001609251",
@@ -151,6 +161,20 @@
       "name": "Acuta Capital Partners",
       "aum_b": 0.1,
       "style": "biotech_value"
+    }
+  ],
+  "conditional": [
+    {
+      "cik": "0000909661",
+      "name": "Farallon Capital",
+      "aum_b": 36.0,
+      "style": "multi_strategy_macro"
+    },
+    {
+      "cik": "0001103804",
+      "name": "Viking Global",
+      "aum_b": 27.0,
+      "style": "multi_strategy_macro"
     },
     {
       "cik": "0001273087",
@@ -178,9 +202,9 @@
     }
   ],
   "metadata": {
-    "version": "1.4",
+    "version": "1.9",
     "last_updated": "2026-01-28",
-    "total_elite_aum_b": 89.5,
+    "total_elite_aum_b": 64.9,
     "notes": [
       "Elite Core = primary signal source",
       "Conditional = secondary breadth signal"

@@ -20,35 +20,57 @@ from risk_gates import (
     compute_parameters_hash as compute_risk_gates_hash,
 )
 
+# Import from canonical manager registry
+from elite_managers import (
+    get_elite_managers,
+    get_all_managers,
+    get_elite_ciks,
+)
+
 # =============================================================================
 # VERSION TRACKING
 # =============================================================================
 
-SIGNAL_SCORE_VERSION = "2.0.0"
+SIGNAL_SCORE_VERSION = "2.1.0"  # Updated: now loads from registry
+
 
 # =============================================================================
-# MANAGER REGISTRY
+# MANAGER REGISTRY (loaded from canonical source)
 # =============================================================================
 
-MANAGER_NAMES = {
-    "0001263508": "Baker Bros Advisors",
-    "0001346824": "RA Capital Management",
-    "0001224962": "Perceptive Advisors",
-    "0001009258": "Deerfield Management",
-    "0001425738": "Redmile Group",
-    "0001055951": "OrbiMed Advisors",
-    "0001493215": "RTW Investments",
-    "0001232621": "Tang Capital Partners",
-    "0000909661": "Farallon Capital",
-    "0001776382": "Venbio Partners",
-    "0001822947": "Ally Bridge Group",
-    "0001703031": "Bain Capital Life Sciences"
-}
+def _build_manager_names() -> Dict[str, str]:
+    """Build CIK -> name mapping from registry."""
+    return {m['cik']: m['name'] for m in get_all_managers()}
 
-ELITE_MANAGERS = {
-    "0001263508", "0001346824", "0001224962", "0001055951",
-    "0001232621", "0001493215", "0000909661", "0001425738", "0001009258"
-}
+
+def _build_elite_managers() -> set:
+    """Build set of Elite Core manager CIKs from registry."""
+    return set(get_elite_ciks())
+
+
+# Lazy-loaded manager data (cached on first access)
+_manager_names_cache = None
+_elite_managers_cache = None
+
+
+def get_manager_names() -> Dict[str, str]:
+    """Get CIK -> name mapping (cached)."""
+    global _manager_names_cache
+    if _manager_names_cache is None:
+        _manager_names_cache = _build_manager_names()
+    return _manager_names_cache
+
+
+def get_elite_manager_ciks() -> set:
+    """Get set of Elite Core CIKs (cached)."""
+    global _elite_managers_cache
+    if _elite_managers_cache is None:
+        _elite_managers_cache = _build_elite_managers()
+    return _elite_managers_cache
+
+
+# Note: Use get_manager_names() and get_elite_manager_ciks() functions
+# instead of direct dict/set access to ensure fresh data from registry
 
 
 # =============================================================================
@@ -170,7 +192,8 @@ def calculate_signal_score(
     net_buyers = len(up_list) + len(new_list) - len(down_list)
 
     # Elite managers get 2x bonus for new positions
-    elite_new_boost = sum(2 for cik in new_list if cik in ELITE_MANAGERS)
+    elite_ciks = get_elite_manager_ciks()
+    elite_new_boost = sum(2 for cik in new_list if cik in elite_ciks)
 
     # Consensus boost
     if mgr_count >= 6:
@@ -207,9 +230,9 @@ def calculate_signal_score(
         "signal_score": signal_score,
         "net_flow_kusd": net_flow_kusd,
         "conviction_avg": round(avg_conviction, 2),
-        "new": [MANAGER_NAMES.get(cik, cik) for cik in sorted(new_list)],
-        "increased": [MANAGER_NAMES.get(cik, cik) for cik in sorted(up_list)],
-        "decreased": [MANAGER_NAMES.get(cik, cik) for cik in sorted(down_list)],
+        "new": [get_manager_names().get(cik, cik) for cik in sorted(new_list)],
+        "increased": [get_manager_names().get(cik, cik) for cik in sorted(up_list)],
+        "decreased": [get_manager_names().get(cik, cik) for cik in sorted(down_list)],
         # Risk gate fields (defaults before applying gates)
         "passes_gates": True,
         "risk_flags": [],
@@ -263,7 +286,7 @@ def get_signal_parameters() -> Dict[str, Any]:
         "dollar_flow_divisor": 100_000,
         "dollar_boost_max": 3,
         "staleness_penalty": 1.0,
-        "elite_managers": sorted(list(ELITE_MANAGERS)),
+        "elite_managers": sorted(list(get_elite_manager_ciks())),
     }
 
 
@@ -430,8 +453,14 @@ def generate_report(
     report.append("    MICRO_CAP - Market cap below $50M")
     report.append("    CASH_RISK - Cash runway below 6 months")
     report.append("")
-    report.append("  Elite Managers: Baker Bros, RA Capital, Perceptive, OrbiMed, Tang,")
-    report.append("                  RTW, Farallon, Redmile, Deerfield")
+    # Build elite manager list dynamically from registry
+    elite_mgrs = get_elite_managers()
+    elite_names = [m['short_name'] for m in elite_mgrs[:9]]
+    remaining = len(elite_mgrs) - 9
+    elite_str = ", ".join(elite_names)
+    if remaining > 0:
+        elite_str += f" +{remaining} more"
+    report.append(f"  Elite Core Managers ({len(elite_mgrs)}): {elite_str}")
     report.append("=" * 120)
 
     # Write output

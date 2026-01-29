@@ -132,15 +132,16 @@ The Biotech Alpha Screener is a quantitative ranking system designed to identify
 
 #### 2.5.1 Smart Money: Elite 13F Manager Tracking
 
-The smart money signal tracks 13F filings from **29 elite biotech-focused institutional managers** (~$1.2T combined AUM), classified into Elite Core and Conditional tiers.
+The smart money signal tracks 13F filings from **33 elite biotech-focused institutional managers** (~$1.2T combined AUM), classified into Elite Core and Conditional tiers.
 
 **Selection Criteria**:
 - Biotech/healthcare specialist (>50% portfolio in life sciences)
 - Long-term track record (10+ years)
-- Significant AUM ($1B+ in 13F securities)
+- Significant AUM ($100M+ in 13F securities)
 - Known for deep scientific/clinical due diligence
+- Active 13F filer (filed within last 12 months)
 
-**Elite Core — Primary Signal Source** (19 managers, ~$92B AUM, Weight: 1.5×)
+**Elite Core — Primary Signal Source** (27 managers, ~$64.9B AUM, Weight: 1.5×)
 
 | Manager | CIK | AUM ($B) | Style |
 |---------|-----|----------|-------|
@@ -155,25 +156,29 @@ The smart money signal tracks 13F filings from **29 elite biotech-focused instit
 | Bain Capital Life Sciences | 0001703031 | 5.5 | Private Equity Crossover |
 | RTW Investments | 0001493215 | 3.2 | Clinical-Stage Specialists |
 | Tang Capital Partners | 0001232621 | 2.8 | Oncology Focused |
-| Farallon Capital | 0000909661 | 36.0 | Multi-Strategy Macro |
 | Suvretta Capital Management | 0001569064 | 5.1 | Healthcare Long/Short |
 | Casdin Capital | 0001534261 | 2.9 | Genomics Focused |
-| Cormorant Asset Management | 0001398659 | 4.1 | Event-Driven |
+| Cormorant Asset Management | 0001583977 | 3.9 | Event-Driven |
 | Logos Global Management | 0001792126 | 1.4 | Scientific Data-Driven |
 | Sofinnova Investments | 0001631134 | 3.8 | Venture Crossover |
 | Boxer Capital | 0001465837 | 1.4 | Oncology Focused |
 | EcoR1 Capital | 0001587114 | 2.1 | Scientific Deep-Dive |
+| Palo Alto Investors | 0001306923 | 0.67 | Physician-Led Fundamental |
+| Ghost Tree Capital | 0001595851 | 0.36 | Healthcare Long/Short |
+| Sectoral Asset Management | 0001274413 | 0.39 | GARP Healthcare |
+| Great Point Partners | 0001281446 | 1.46 | Life Sciences Value |
+| Avidity Partners Management | 0001791827 | 1.3 | Healthcare Fundamental |
+| Samsara BioCapital | 0001744967 | 1.86 | Concentrated Life Sciences |
+| Deep Track Capital | 0001856083 | 5.2 | Fundamental Long/Short |
+| Krensavage Asset Management | 0001609251 | 0.3 | Value Healthcare |
+| Acuta Capital Partners | 0001582844 | 0.1 | Biotech Value |
 
-**Conditional — Secondary Breadth Signal** (10 managers, ~$1.1T AUM, Weight: 1.0×)
+**Conditional — Secondary Breadth Signal** (6 managers, ~$1.1T AUM, Weight: 1.0×)
 
 | Manager | CIK | AUM ($B) | Style |
 |---------|-----|----------|-------|
-| Venrock | 0001005477 | 2.5 | Venture Capital |
-| Deep Track Capital | 0001631282 | 1.8 | Fundamental Long/Short |
+| Farallon Capital | 0000909661 | 36.0 | Multi-Strategy Macro |
 | Viking Global | 0001103804 | 27.0 | Multi-Strategy Macro |
-| Foresite Capital Management | 0001581219 | 3.6 | Multi-Stage Healthcare |
-| Krensavage Asset Management | 0001609251 | 0.3 | Value Healthcare |
-| Acuta Capital Partners | 0001582844 | 0.1 | Biotech Value |
 | Millennium Management | 0001273087 | 571.0 | Multi-Strategy Platform |
 | Balyasny Asset Management | 0001218710 | 265.0 | Multi-Strategy Platform |
 | Renaissance Technologies | 0001037389 | 92.0 | Quantitative |
@@ -884,6 +889,8 @@ Without explicit IC override:
 | 1.0.0 | 2026-01-28 | Initial production release |
 | 1.0.1 | 2026-01-28 | Expanded regime detection documentation |
 | 1.0.2 | 2026-01-28 | Added 13F elite manager tracking (18 managers) |
+| 1.0.3 | 2026-01-28 | Expanded 13F roster to 36 managers (30 Elite Core, 6 Conditional) |
+| 1.0.4 | 2026-01-28 | Validated CIKs, fixed Cormorant/Deep Track, removed 3 inactive filers |
 
 ---
 

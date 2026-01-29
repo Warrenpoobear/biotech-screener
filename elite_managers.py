@@ -1,235 +1,260 @@
 """
 Elite Biotech Manager Registry for Wake Robin Biotech Alpha System
 
-This module maintains the canonical list of elite biotech-focused hedge funds
+This module provides access to the canonical list of elite biotech-focused hedge funds
 whose 13F filings we track for co-investment signals.
+
+IMPORTANT: The canonical source of truth is production_data/manager_registry.json
+This module loads from that file - DO NOT hardcode manager lists here.
 
 CIK (Central Index Key) is the SEC's unique identifier for filers.
 Find CIKs at: https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany
 
 Usage:
-    from wake_robin.providers.sec_13f.elite_managers import ELITE_MANAGERS, get_manager_by_cik
-    
-    for manager in ELITE_MANAGERS:
+    from elite_managers import get_elite_managers, get_manager_by_cik
+
+    for manager in get_elite_managers():
         print(f"{manager['name']}: CIK {manager['cik']}")
 """
 
-from typing import Optional
+import json
+from pathlib import Path
+from typing import Optional, List, Dict, Any
 
 # =============================================================================
-# ELITE BIOTECH MANAGER REGISTRY
-# =============================================================================
-# 
-# Selection criteria:
-# - Biotech/healthcare specialist (>50% portfolio in life sciences)
-# - Long-term track record (10+ years)
-# - Significant AUM ($1B+ in 13F securities)
-# - Known for deep scientific/clinical due diligence
-#
-# These represent the "Mount Rushmore" of biotech investing.
+# REGISTRY LOADING
 # =============================================================================
 
-ELITE_MANAGERS = [
-    # =========================================================================
-    # TIER 1: Core biotech specialists with 20+ year track records
-    # =========================================================================
-    {
-        'cik': '1263508',
-        'name': 'Baker Bros. Advisors LP',
-        'short_name': 'Baker Bros',
-        'style': 'concentrated_conviction',
-        'focus': ['rare_disease', 'oncology', 'genetic_medicine'],
-        'typical_position_size': 'large',  # Often 10-20% positions
-        'holding_period': 'long',  # 3-10 year holds
-        'tier': 1,
-    },
-    {
-        'cik': '1346824',
-        'name': 'RA Capital Management, L.P.',
-        'short_name': 'RA Capital',
-        'style': 'crossover_specialist',
-        'focus': ['platform_technologies', 'rare_disease', 'oncology'],
-        'typical_position_size': 'medium',
-        'holding_period': 'long',
-        'tier': 1,
-    },
-    # NOTE: Perceptive Advisors uses offshore fund structure, does not file 13F-HR
-    {
-        'cik': '1056807',
-        'name': 'BVF Inc.',
-        'short_name': 'BVF',
-        'style': 'value_activist',
-        'focus': ['undervalued_biotech', 'activist_situations'],
-        'typical_position_size': 'medium',
-        'holding_period': 'medium',
-        'tier': 1,
-    },
-    {
-        'cik': '1587114',
-        'name': 'EcoR1 Capital, LLC',
-        'short_name': 'EcoR1',
-        'style': 'scientific_deep_dive',
-        'focus': ['genetic_medicine', 'cell_therapy', 'rare_disease'],
-        'typical_position_size': 'medium',
-        'holding_period': 'long',
-        'tier': 1,
-    },
-    
-    # =========================================================================
-    # TIER 2: Excellent biotech specialists
-    # =========================================================================
-    {
-        'cik': '1055951',
-        'name': 'OrbiMed Advisors LLC',
-        'short_name': 'OrbiMed',
-        'style': 'diversified_healthcare',
-        'focus': ['broad_healthcare', 'biotech', 'medtech'],
-        'typical_position_size': 'medium',
-        'holding_period': 'medium',
-        'tier': 2,
-    },
-    {
-        'cik': '1425738',
-        'name': 'Redmile Group, LLC',
-        'short_name': 'Redmile',
-        'style': 'crossover_specialist',
-        'focus': ['clinical_stage', 'platform_technologies'],
-        'typical_position_size': 'medium',
-        'holding_period': 'medium',
-        'tier': 2,
-    },
-    {
-        'cik': '1009258',
-        'name': 'Deerfield Management Company, L.P.',
-        'short_name': 'Deerfield',
-        'style': 'multi_strategy_healthcare',
-        'focus': ['royalties', 'structured_finance', 'equity'],
-        'typical_position_size': 'medium',
-        'holding_period': 'medium',
-        'tier': 2,
-    },
-    {
-        'cik': '909661',
-        'name': 'Farallon Capital Management, L.L.C.',
-        'short_name': 'Farallon',
-        'style': 'event_driven',
-        'focus': ['healthcare_events', 'M&A', 'special_situations'],
-        'typical_position_size': 'medium',
-        'holding_period': 'short_to_medium',
-        'tier': 2,
-    },
-    {
-        'cik': '1423053',
-        'name': 'Citadel Advisors LLC',
-        'short_name': 'Citadel',
-        'style': 'quantitative_fundamental',
-        'focus': ['broad_market', 'healthcare_allocation'],
-        'typical_position_size': 'small',
-        'holding_period': 'short',
-        'tier': 2,
-        'note': 'Multi-strategy; healthcare is one sleeve',
-    },
-    
-    # =========================================================================
-    # TIER 3: Notable biotech allocators (smaller or narrower focus)
-    # =========================================================================
-    {
-        'cik': '1633313',
-        'name': 'Avoro Capital Advisors LLC',
-        'short_name': 'Avoro',
-        'style': 'concentrated_biotech',
-        'focus': ['clinical_stage', 'rare_disease'],
-        'typical_position_size': 'large',
-        'holding_period': 'medium',
-        'tier': 3,
-    },
-    # NOTE: Venrock Healthcare Capital Partners does not file 13F-HR
-    {
-        'cik': '1583977',
-        'name': 'Cormorant Asset Management, LP',
-        'short_name': 'Cormorant',
-        'style': 'healthcare_specialist',
-        'focus': ['biotech', 'medtech', 'healthcare_services'],
-        'typical_position_size': 'medium',
-        'holding_period': 'medium',
-        'tier': 3,
-    },
-]
+REGISTRY_PATH = Path(__file__).parent / "production_data" / "manager_registry.json"
+
+_registry_cache: Optional[Dict[str, Any]] = None
+
+
+def _load_registry() -> Dict[str, Any]:
+    """Load manager registry from canonical JSON source."""
+    global _registry_cache
+    if _registry_cache is None:
+        with open(REGISTRY_PATH, 'r', encoding='utf-8') as f:
+            _registry_cache = json.load(f)
+    return _registry_cache
+
+
+def _normalize_cik(cik: str) -> str:
+    """Normalize CIK to 10-digit format with leading zeros."""
+    return cik.lstrip('0').zfill(10)
+
+
+def _manager_to_legacy_format(mgr: Dict[str, Any], tier: int) -> Dict[str, Any]:
+    """
+    Convert registry format to legacy format for backwards compatibility.
+
+    Registry format: {cik, name, aum_b, style}
+    Legacy format: {cik, name, short_name, style, tier, ...}
+    """
+    name = mgr['name']
+
+    # Generate short name from full name
+    # "Baker Bros Advisors" -> "Baker Bros"
+    # "RA Capital Management" -> "RA Capital"
+    words = name.split()
+    if len(words) >= 2:
+        # Check for common suffixes to exclude
+        suffixes = {'Advisors', 'Management', 'Partners', 'Capital', 'Group',
+                    'Investments', 'Asset', 'LP', 'LLC', 'Inc', 'Ltd'}
+        short_words = []
+        for w in words:
+            if w in suffixes and len(short_words) >= 2:
+                break
+            short_words.append(w)
+        short_name = ' '.join(short_words[:3])  # Max 3 words
+    else:
+        short_name = name
+
+    return {
+        'cik': mgr['cik'].lstrip('0'),  # Legacy format without leading zeros
+        'name': name,
+        'short_name': short_name,
+        'style': mgr.get('style', 'diversified_healthcare'),
+        'aum_b': mgr.get('aum_b', 0),
+        'tier': tier,
+    }
+
 
 # =============================================================================
-# HELPER FUNCTIONS
+# MANAGER ACCESS FUNCTIONS
 # =============================================================================
 
-def get_manager_by_cik(cik: str) -> Optional[dict]:
+def get_elite_managers() -> List[Dict[str, Any]]:
+    """
+    Get all Elite Core managers (primary signal source).
+
+    Returns list of manager dicts in legacy format.
+    """
+    registry = _load_registry()
+    return [_manager_to_legacy_format(m, tier=1) for m in registry['elite_core']]
+
+
+def get_conditional_managers() -> List[Dict[str, Any]]:
+    """
+    Get all Conditional managers (secondary breadth signal).
+
+    Returns list of manager dicts in legacy format.
+    """
+    registry = _load_registry()
+    return [_manager_to_legacy_format(m, tier=2) for m in registry['conditional']]
+
+
+def get_all_managers() -> List[Dict[str, Any]]:
+    """Get all managers (Elite Core + Conditional)."""
+    return get_elite_managers() + get_conditional_managers()
+
+
+# Backwards compatibility: ELITE_MANAGERS as a property-like access
+# This allows existing code using `from elite_managers import ELITE_MANAGERS` to work
+def _get_elite_managers_compat():
+    """Backwards compatible access to elite managers."""
+    return get_elite_managers()
+
+
+# For backwards compatibility with existing imports
+# WARNING: This is loaded at import time - prefer using get_elite_managers()
+ELITE_MANAGERS = property(lambda self: get_elite_managers())
+
+
+# Create a class to make ELITE_MANAGERS work as expected
+class _ManagersProxy:
+    """Proxy class to make ELITE_MANAGERS behave like a list."""
+
+    def __iter__(self):
+        return iter(get_elite_managers())
+
+    def __len__(self):
+        return len(get_elite_managers())
+
+    def __getitem__(self, idx):
+        return get_elite_managers()[idx]
+
+    def __contains__(self, item):
+        return item in get_elite_managers()
+
+
+# This is the backwards-compatible ELITE_MANAGERS "list"
+ELITE_MANAGERS = _ManagersProxy()
+
+
+# =============================================================================
+# LOOKUP FUNCTIONS
+# =============================================================================
+
+def get_manager_by_cik(cik: str) -> Optional[Dict[str, Any]]:
     """Look up manager metadata by CIK."""
-    cik_clean = cik.lstrip('0')  # Normalize leading zeros
-    for manager in ELITE_MANAGERS:
+    cik_clean = cik.lstrip('0')
+    for manager in get_all_managers():
         if manager['cik'].lstrip('0') == cik_clean:
             return manager
     return None
 
 
-def get_manager_by_short_name(short_name: str) -> Optional[dict]:
+def get_manager_by_short_name(short_name: str) -> Optional[Dict[str, Any]]:
     """Look up manager by short name (case-insensitive)."""
-    for manager in ELITE_MANAGERS:
-        if manager['short_name'].lower() == short_name.lower():
+    short_lower = short_name.lower()
+    for manager in get_all_managers():
+        if manager['short_name'].lower() == short_lower:
+            return manager
+        # Also check if query is contained in name
+        if short_lower in manager['name'].lower():
             return manager
     return None
 
 
-def get_tier_1_managers() -> list[dict]:
-    """Return only Tier 1 (highest conviction) managers."""
-    return [m for m in ELITE_MANAGERS if m['tier'] == 1]
+def get_tier_1_managers() -> List[Dict[str, Any]]:
+    """Return only Elite Core (Tier 1) managers."""
+    return get_elite_managers()
 
 
-def get_all_ciks() -> list[str]:
-    """Return list of all elite manager CIKs."""
-    return [m['cik'] for m in ELITE_MANAGERS]
+def get_all_ciks() -> List[str]:
+    """Return list of all manager CIKs."""
+    return [m['cik'] for m in get_all_managers()]
 
 
-def get_ciks_by_tier(tier: int) -> list[str]:
-    """Return CIKs for managers of a specific tier."""
-    return [m['cik'] for m in ELITE_MANAGERS if m['tier'] == tier]
+def get_elite_ciks() -> List[str]:
+    """Return list of Elite Core manager CIKs."""
+    return [m['cik'] for m in get_elite_managers()]
+
+
+def get_conditional_ciks() -> List[str]:
+    """Return list of Conditional manager CIKs."""
+    return [m['cik'] for m in get_conditional_managers()]
+
+
+def get_ciks_by_tier(tier: int) -> List[str]:
+    """Return CIKs for managers of a specific tier (1=Elite, 2=Conditional)."""
+    if tier == 1:
+        return get_elite_ciks()
+    elif tier == 2:
+        return get_conditional_ciks()
+    return []
 
 
 # =============================================================================
 # CONVICTION WEIGHTING
 # =============================================================================
-# 
+#
 # When scoring positions, we weight by manager tier and style:
-# - Tier 1 managers get higher weight (they're pure biotech specialists)
-# - Concentrated styles get higher weight (higher conviction per position)
+# - Elite Core (Tier 1) managers get full weight
+# - Conditional (Tier 2) managers get reduced weight
+# - Conditional signal is also capped at 30% of total (see ic_enhancements.py)
 # =============================================================================
 
 TIER_WEIGHTS = {
-    1: 1.0,   # Full weight for tier 1
-    2: 0.7,  # 70% weight for tier 2
-    3: 0.4,  # 40% weight for tier 3
+    1: 1.0,   # Full weight for Elite Core
+    2: 0.3,   # Reduced weight for Conditional (also capped at 30% in scoring)
 }
 
 STYLE_CONVICTION_MULTIPLIER = {
+    # High conviction styles (biotech specialists)
     'concentrated_conviction': 1.2,
+    'concentrated_life_sciences': 1.2,
     'scientific_deep_dive': 1.1,
-    'crossover_specialist': 1.0,
-    'value_activist': 1.0,
-    'diversified_biotech': 0.9,
+    'clinical_probability_engine': 1.1,
+    'clinical_stage_specialists': 1.1,
+    'physician_led_fundamental': 1.1,
+    # Standard biotech styles
+    'event_driven': 1.0,
+    'oncology_focused': 1.0,
+    'genomics_focused': 1.0,
+    'healthcare_fundamental': 1.0,
+    'fundamental_long_short': 1.0,
+    'life_sciences_value': 1.0,
+    'value_healthcare': 1.0,
+    'biotech_value': 1.0,
+    'garp_healthcare': 1.0,
+    # Crossover/diversified styles
+    'venture_crossover': 0.9,
+    'life_sciences_crossover': 0.9,
+    'growth_equity': 0.9,
+    'healthcare_long_short': 0.9,
     'diversified_healthcare': 0.8,
-    'multi_strategy_healthcare': 0.7,
-    'quantitative_fundamental': 0.5,
-    'event_driven': 0.6,
-    'venture_crossover': 0.8,
-    'healthcare_specialist': 0.9,
+    'multi_strategy': 0.8,
+    'multi_stage_healthcare': 0.8,
+    'private_equity_crossover': 0.8,
+    'asia_biotech': 0.8,
+    'scientific_data_driven': 0.9,
+    # Multi-strategy/quant (Conditional tier)
+    'multi_strategy_macro': 0.5,
+    'multi_strategy_platform': 0.4,
+    'quantitative': 0.3,
 }
 
 
-def get_manager_weight(manager: dict) -> float:
+def get_manager_weight(manager: Dict[str, Any]) -> float:
     """
     Calculate conviction weight for a manager.
-    
+
     Used when aggregating signals across multiple managers.
     """
-    tier_weight = TIER_WEIGHTS.get(manager.get('tier', 3), 0.4)
-    style = manager.get('style', 'diversified_biotech')
+    tier_weight = TIER_WEIGHTS.get(manager.get('tier', 2), 0.3)
+    style = manager.get('style', 'diversified_healthcare')
     style_mult = STYLE_CONVICTION_MULTIPLIER.get(style, 0.8)
     return tier_weight * style_mult
 
@@ -238,38 +263,63 @@ def get_manager_weight(manager: dict) -> float:
 # VALIDATION
 # =============================================================================
 
-def validate_registry():
+def validate_registry() -> bool:
     """Validate registry integrity."""
-    ciks = [m['cik'] for m in ELITE_MANAGERS]
-    
+    registry = _load_registry()
+
+    all_mgrs = registry['elite_core'] + registry['conditional']
+    ciks = [m['cik'] for m in all_mgrs]
+
     # Check for duplicate CIKs
     if len(ciks) != len(set(ciks)):
         raise ValueError("Duplicate CIKs in registry")
-    
+
     # Check required fields
-    required = ['cik', 'name', 'short_name', 'tier']
-    for manager in ELITE_MANAGERS:
+    required = ['cik', 'name', 'style']
+    for manager in all_mgrs:
         for field in required:
             if field not in manager:
                 raise ValueError(f"Missing {field} for manager: {manager}")
-    
+
     return True
+
+
+def get_registry_info() -> Dict[str, Any]:
+    """Get registry metadata."""
+    registry = _load_registry()
+    return {
+        'elite_core_count': len(registry['elite_core']),
+        'conditional_count': len(registry['conditional']),
+        'total_count': len(registry['elite_core']) + len(registry['conditional']),
+        'version': registry.get('metadata', {}).get('version', 'unknown'),
+        'last_updated': registry.get('metadata', {}).get('last_updated', 'unknown'),
+        'elite_aum_b': registry.get('metadata', {}).get('total_elite_aum_b', 0),
+    }
 
 
 if __name__ == '__main__':
     # Quick validation
     validate_registry()
-    
+
+    info = get_registry_info()
     print("Elite Biotech Manager Registry")
     print("=" * 50)
-    print(f"Total managers: {len(ELITE_MANAGERS)}")
-    print(f"Tier 1: {len(get_tier_1_managers())}")
+    print(f"Version: {info['version']}")
+    print(f"Last Updated: {info['last_updated']}")
+    print(f"Elite Core: {info['elite_core_count']} managers (~${info['elite_aum_b']}B)")
+    print(f"Conditional: {info['conditional_count']} managers")
+    print(f"Total: {info['total_count']} managers")
     print()
-    
-    for tier in [1, 2, 3]:
-        managers = [m for m in ELITE_MANAGERS if m['tier'] == tier]
-        print(f"TIER {tier}:")
-        for m in managers:
-            weight = get_manager_weight(m)
-            print(f"  {m['short_name']:20} CIK {m['cik']:10} weight={weight:.2f}")
-        print()
+
+    print("ELITE CORE (Tier 1):")
+    for m in get_elite_managers()[:10]:
+        weight = get_manager_weight(m)
+        print(f"  {m['short_name']:25} CIK {m['cik']:10} weight={weight:.2f}")
+    if len(get_elite_managers()) > 10:
+        print(f"  ... and {len(get_elite_managers()) - 10} more")
+    print()
+
+    print("CONDITIONAL (Tier 2):")
+    for m in get_conditional_managers():
+        weight = get_manager_weight(m)
+        print(f"  {m['short_name']:25} CIK {m['cik']:10} weight={weight:.2f}")

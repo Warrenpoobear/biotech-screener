@@ -151,31 +151,105 @@ SMART_MONEY_POSITION_CHANGE_WEIGHTS = {
 
 # Tier weights: Tier1 pure biotech specialists, Tier2 diversified healthcare
 SMART_MONEY_TIER_WEIGHTS = {
-    1: Decimal("1.0"),   # Baker Bros, RA Capital, Perceptive, BVF, EcoR1
-    2: Decimal("0.6"),   # OrbiMed, Redmile, Deerfield, Farallon
-    3: Decimal("0.4"),   # Avoro, Venrock HCP, Cormorant
+    1: Decimal("1.0"),   # Elite Core biotech specialists
+    2: Decimal("0.6"),   # Elite Core diversified healthcare
+    3: Decimal("0.4"),   # Elite Core smaller/narrower focus
 }
 SMART_MONEY_UNKNOWN_TIER_WEIGHT = Decimal("0.2")
+
+# Conditional managers (multi-strategy, quant) - capped signal contribution
+# These are tracked for breadth signal but shouldn't dominate due to AUM scale
+SMART_MONEY_CONDITIONAL_WEIGHT = Decimal("0.3")  # Lower base weight
+SMART_MONEY_CONDITIONAL_SIGNAL_CAP = Decimal("0.30")  # Max 30% of total signal
 
 # Known elite manager short names -> tier mapping (deterministic lookup)
 # This allows tier lookup by holder name when CIK is not available
 SMART_MONEY_TIER_BY_NAME = {
-    # Tier 1
+    # Tier 1 - Elite Core (biotech specialists)
     "baker bros": 1, "baker bros.": 1, "baker brothers": 1,
     "ra capital": 1, "ra capital management": 1,
     "perceptive": 1, "perceptive advisors": 1,
-    "bvf": 1, "biotechnology value fund": 1,
     "ecor1": 1, "ecor1 capital": 1,
-    # Tier 2
+    "rtw": 1, "rtw investments": 1,
+    "tang capital": 1, "tang capital partners": 1,
+    "casdin": 1, "casdin capital": 1,
+    "suvretta": 1, "suvretta capital": 1,
+    "cormorant": 1, "cormorant asset": 1,
+    "logos": 1, "logos global": 1,
+    "boxer": 1, "boxer capital": 1,
+    "palo alto": 1, "palo alto investors": 1,
+    "ghost tree": 1, "ghost tree capital": 1,
+    "samsara": 1, "samsara biocapital": 1,
+    "deep track": 1, "deep track capital": 1,
+    "avidity": 1, "avidity partners": 1,
+    "great point": 1, "great point partners": 1,
+    "krensavage": 1, "krensavage asset": 1,
+    "acuta": 1, "acuta capital": 1,
+    # Tier 2 - Elite Core (diversified healthcare)
     "orbimed": 2, "orbimed advisors": 2,
     "redmile": 2, "redmile group": 2,
     "deerfield": 2, "deerfield management": 2,
-    "farallon": 2, "farallon capital": 2,
-    "citadel": 2, "citadel advisors": 2,
-    # Tier 3
-    "avoro": 3, "avoro capital": 3,
-    "venrock": 3, "venrock hcp": 3,
-    "cormorant": 3, "cormorant asset": 3,
+    "bain capital life": 2, "bain capital life sciences": 2,
+    "venbio": 2, "venbio partners": 2,
+    "sofinnova": 2, "sofinnova investments": 2,
+    "ally bridge": 2, "ally bridge group": 2,
+    "sectoral": 2, "sectoral asset": 2,
+}
+
+# CIK -> tier mapping (for when holders are identified by CIK instead of name)
+# Derived from manager_registry.json - Elite Core = Tier 1/2, Conditional = Tier 0 (handled separately)
+SMART_MONEY_TIER_BY_CIK = {
+    # Tier 1 - Elite Core (biotech specialists) - from registry
+    "1263508": 1, "0001263508": 1,   # Baker Bros
+    "1346824": 1, "0001346824": 1,   # RA Capital
+    "1224962": 1, "0001224962": 1,   # Perceptive
+    "1493215": 1, "0001493215": 1,   # RTW
+    "1232621": 1, "0001232621": 1,   # Tang Capital
+    "1534261": 1, "0001534261": 1,   # Casdin
+    "1569064": 1, "0001569064": 1,   # Suvretta
+    "1583977": 1, "0001583977": 1,   # Cormorant
+    "1792126": 1, "0001792126": 1,   # Logos Global
+    "1465837": 1, "0001465837": 1,   # Boxer Capital
+    "1306923": 1, "0001306923": 1,   # Palo Alto Investors
+    "1595851": 1, "0001595851": 1,   # Ghost Tree
+    "1744967": 1, "0001744967": 1,   # Samsara BioCapital
+    "1856083": 1, "0001856083": 1,   # Deep Track
+    "1791827": 1, "0001791827": 1,   # Avidity Partners
+    "1281446": 1, "0001281446": 1,   # Great Point Partners
+    "1609251": 1, "0001609251": 1,   # Krensavage
+    "1582844": 1, "0001582844": 1,   # Acuta Capital
+    "1587114": 1, "0001587114": 1,   # EcoR1 Capital
+    # Tier 2 - Elite Core (diversified healthcare)
+    "1055951": 2, "0001055951": 2,   # OrbiMed
+    "1425738": 2, "0001425738": 2,   # Redmile
+    "1009258": 2, "0001009258": 2,   # Deerfield
+    "1703031": 2, "0001703031": 2,   # Bain Capital Life Sciences
+    "1776382": 2, "0001776382": 2,   # Venbio
+    "1631134": 2, "0001631134": 2,   # Sofinnova
+    "1822947": 2, "0001822947": 2,   # Ally Bridge
+    "1274413": 2, "0001274413": 2,   # Sectoral Asset
+}
+
+# Conditional manager CIKs (for CIK-based lookup)
+SMART_MONEY_CONDITIONAL_CIKS = {
+    "909661", "0000909661",     # Farallon
+    "1103804", "0001103804",   # Viking Global
+    "1273087", "0001273087",   # Millennium
+    "1218710", "0001218710",   # Balyasny
+    "1037389", "0001037389",   # Renaissance
+    "1009207", "0001009207",   # D.E. Shaw
+}
+
+# Conditional managers - multi-strategy/quant platforms with healthcare pods
+# Signal capped at SMART_MONEY_CONDITIONAL_SIGNAL_CAP (30%) to prevent AUM dominance
+SMART_MONEY_CONDITIONAL_MANAGERS = {
+    "farallon", "farallon capital",
+    "viking", "viking global",
+    "millennium", "millennium management",
+    "balyasny", "balyasny asset",
+    "renaissance", "renaissance technologies",
+    "de shaw", "d.e. shaw", "d e shaw",
+    "citadel", "citadel advisors",
 }
 
 # Overlap bonus: saturating function applied to weighted overlap
@@ -420,6 +494,10 @@ class SmartMoneySignal:
     - tier_breakdown: Dict of tier -> count for diagnostics
     - per_holder_contributions: Detailed breakdown by holder
     - Uses saturation to prevent gaming by many small holders
+
+    V3 ENHANCEMENTS:
+    - Elite Core vs Conditional separation
+    - Conditional signal capped at 30% to prevent AUM dominance
     """
     smart_money_score: Decimal  # 20-80 range
     overlap_count: int  # Raw holder count (for backwards compat)
@@ -433,6 +511,11 @@ class SmartMoneySignal:
     tier_breakdown: Dict[int, int] = field(default_factory=dict)  # tier -> count
     tier1_holders: List[str] = field(default_factory=list)  # For diagnostics
     per_holder_contributions: Dict[str, Decimal] = field(default_factory=dict)
+    # V3 fields - Elite Core vs Conditional separation
+    elite_core_contribution: Decimal = Decimal("0")  # Signal from Elite Core managers
+    conditional_contribution: Decimal = Decimal("0")  # Signal from Conditional (may be capped)
+    conditional_raw_contribution: Decimal = Decimal("0")  # Pre-cap Conditional signal
+    conditional_capped: bool = False  # True if Conditional signal was capped
 
 
 @dataclass
@@ -1811,33 +1894,106 @@ def apply_catalyst_decay(
 # SMART MONEY SIGNAL
 # =============================================================================
 
-def _get_holder_tier(holder_name: str, holder_tiers: Optional[Dict[str, int]] = None) -> int:
+
+@dataclass
+class _NormalizedHolderId:
+    """Normalized holder identifier for consistent lookup."""
+    raw: str           # Original input, whitespace-stripped
+    name_lower: str    # Lowercase for name matching
+    is_cik: bool       # True if input is numeric (CIK)
+    cik_raw: str       # Original CIK string (if is_cik)
+    cik_clean: str     # CIK without leading zeros (if is_cik)
+    is_invalid: bool   # True if empty or malformed
+
+
+def _normalize_holder_id(holder_name: str) -> _NormalizedHolderId:
     """
-    Get tier for a holder by name.
+    Normalize a holder identifier for consistent lookup.
 
-    Uses explicit holder_tiers dict first, then falls back to name-based lookup.
-    Returns tier 0 for unknown holders (will use SMART_MONEY_UNKNOWN_TIER_WEIGHT).
+    Handles:
+    - Whitespace stripping
+    - Empty/malformed input detection
+    - CIK detection (all digits)
+    - Edge case: "0000000000" → cik_clean = "0" (not empty)
 
-    DETERMINISM: Always normalizes holder name to lowercase for lookup.
+    DETERMINISM: Pure function, no external calls.
 
     Args:
-        holder_name: Name of the holder/manager
+        holder_name: Raw holder name or CIK string
+
+    Returns:
+        _NormalizedHolderId with all normalized forms
+    """
+    raw = holder_name.strip() if holder_name else ""
+
+    # Handle empty/invalid input
+    if not raw:
+        return _NormalizedHolderId(
+            raw="", name_lower="", is_cik=False,
+            cik_raw="", cik_clean="", is_invalid=True
+        )
+
+    name_lower = raw.lower()
+
+    # Check if it's a CIK (all digits)
+    if raw.isdigit():
+        # Handle edge case: "0000000000" → "0", not ""
+        cik_clean = raw.lstrip('0') or "0"
+        return _NormalizedHolderId(
+            raw=raw, name_lower=name_lower, is_cik=True,
+            cik_raw=raw, cik_clean=cik_clean, is_invalid=False
+        )
+
+    # It's a name, not a CIK
+    return _NormalizedHolderId(
+        raw=raw, name_lower=name_lower, is_cik=False,
+        cik_raw="", cik_clean="", is_invalid=False
+    )
+
+
+def _get_holder_tier(holder_name: str, holder_tiers: Optional[Dict[str, int]] = None) -> int:
+    """
+    Get tier for a holder by name or CIK.
+
+    Lookup order:
+    1. Explicit holder_tiers dict (if provided)
+    2. CIK-based lookup (if holder_name looks like a CIK)
+    3. Name-based pattern matching
+
+    Returns tier 0 for unknown holders (will use SMART_MONEY_UNKNOWN_TIER_WEIGHT).
+
+    DETERMINISM: Uses _normalize_holder_id for consistent normalization.
+
+    Args:
+        holder_name: Name or CIK of the holder/manager
         holder_tiers: Optional dict mapping holder name -> tier (1, 2, or 3)
 
     Returns:
         Tier number (1, 2, 3) or 0 for unknown
     """
-    name_lower = holder_name.lower().strip()
+    nid = _normalize_holder_id(holder_name)
+
+    # Invalid input → unknown
+    if nid.is_invalid:
+        return 0
 
     # First check explicit mapping (e.g., from 13F metadata)
     if holder_tiers:
         for name_variant, tier in holder_tiers.items():
-            if name_variant.lower() == name_lower:
+            if name_variant.lower() == nid.name_lower:
                 return tier
+
+    # Check if it's a CIK
+    if nid.is_cik:
+        # Check CIK mapping (try both raw and cleaned)
+        if nid.cik_raw in SMART_MONEY_TIER_BY_CIK:
+            return SMART_MONEY_TIER_BY_CIK[nid.cik_raw]
+        if nid.cik_clean in SMART_MONEY_TIER_BY_CIK:
+            return SMART_MONEY_TIER_BY_CIK[nid.cik_clean]
 
     # Fall back to built-in name mapping
     for name_pattern, tier in SMART_MONEY_TIER_BY_NAME.items():
-        if name_pattern in name_lower or name_lower in name_pattern:
+        if name_pattern in nid.name_lower or nid.name_lower in name_pattern:
             return tier
 
     return 0  # Unknown
@@ -1848,6 +2004,42 @@ def _get_holder_weight(tier: int) -> Decimal:
     if tier == 0:
         return SMART_MONEY_UNKNOWN_TIER_WEIGHT
     return SMART_MONEY_TIER_WEIGHTS.get(tier, SMART_MONEY_UNKNOWN_TIER_WEIGHT)
+
+
+def _is_conditional_manager(holder_name: str) -> bool:
+    """
+    Check if a holder is a Conditional (multi-strategy/quant) manager.
+
+    Conditional managers have their signal contribution capped to prevent
+    their large AUM from dominating the biotech-specialist signal.
+
+    DETERMINISM: Uses _normalize_holder_id for consistent normalization.
+
+    Args:
+        holder_name: Name or CIK of the holder/manager
+
+    Returns:
+        True if conditional manager, False otherwise
+    """
+    nid = _normalize_holder_id(holder_name)
+
+    # Invalid input → not conditional
+    if nid.is_invalid:
+        return False
+
+    # Check if it's a CIK
+    if nid.is_cik:
+        # Check CIK-based Conditional set (try both raw and cleaned)
+        if nid.cik_raw in SMART_MONEY_CONDITIONAL_CIKS:
+            return True
+        if nid.cik_clean in SMART_MONEY_CONDITIONAL_CIKS:
+            return True
+
+    # Fall back to name-based lookup
+    for pattern in SMART_MONEY_CONDITIONAL_MANAGERS:
+        if pattern in nid.name_lower or nid.name_lower in pattern:
+            return True
+    return False
 
 
 def _saturating_bonus(weighted_sum: Decimal) -> Decimal:
@@ -1907,6 +2099,11 @@ def compute_smart_money_signal(
     4. Reduces EXIT weight (data quality sensitive)
     5. Deterministic: sorts holders before processing
 
+    V3 IMPROVEMENTS:
+    6. Separates Elite Core vs Conditional manager contributions
+    7. Caps Conditional signal at 30% to prevent AUM dominance
+    8. Elite Core (~$65B) drives signal, Conditional (~$1.1T) provides breadth
+
     BREADTH vs DIRECTION:
     - Overlap bonus (breadth): How many high-quality co-investors
     - Change bonus (direction): Net weighted change (new/increase vs decrease/exit)
@@ -1914,6 +2111,11 @@ def compute_smart_money_signal(
     TIER SENSITIVITY:
     - 2 Tier1 holders beats 4 unknown holders
     - 1 Tier1 + 1 Tier2 = 1.6 weighted overlap vs 2 unknowns = 0.4
+
+    CONDITIONAL CAP (V3):
+    - Conditional managers (multi-strategy, quant) capped at 30% of total signal
+    - Prevents $1.1T AUM from drowning out $65B of biotech-specialist signal
+    - Elite Core always contributes ≥70% of smart money signal
 
     PIT SAFETY:
     - position_changes should use filing dates, not quarter-end
@@ -1936,16 +2138,30 @@ def compute_smart_money_signal(
 
     # =========================================================================
     # STEP 1: Compute tier-weighted overlap (breadth signal)
+    # V3: Separate Elite Core vs Conditional contributions
     # =========================================================================
     tier_breakdown: Dict[int, int] = {1: 0, 2: 0, 3: 0, 0: 0}
     weighted_overlap = Decimal("0")
     tier1_holders: List[str] = []
     per_holder_contributions: Dict[str, Decimal] = {}
 
+    # V3: Track Elite Core vs Conditional separately
+    elite_core_overlap = Decimal("0")
+    conditional_overlap = Decimal("0")
+
     for holder in sorted_holders:
         tier = _get_holder_tier(holder, holder_tiers)
         tier_breakdown[tier] = tier_breakdown.get(tier, 0) + 1
-        holder_weight = _get_holder_weight(tier)
+
+        # V3: Check if Conditional manager (uses reduced weight)
+        is_conditional = _is_conditional_manager(holder)
+        if is_conditional:
+            holder_weight = SMART_MONEY_CONDITIONAL_WEIGHT
+            conditional_overlap += holder_weight
+        else:
+            holder_weight = _get_holder_weight(tier)
+            elite_core_overlap += holder_weight
+
         weighted_overlap += holder_weight
 
         if tier == 1:
@@ -1959,8 +2175,11 @@ def compute_smart_money_signal(
 
     # =========================================================================
     # STEP 2: Compute tier-weighted position changes (direction signal)
+    # V3: Separate Elite Core vs Conditional change contributions
     # =========================================================================
     change_bonus = Decimal("0")
+    elite_core_change = Decimal("0")
+    conditional_change = Decimal("0")
     holders_increasing: List[str] = []
     holders_decreasing: List[str] = []
 
@@ -1970,9 +2189,15 @@ def compute_smart_money_signal(
             change = position_changes[holder]
             change_upper = change.upper() if isinstance(change, str) else "HOLD"
 
-            # Get tier-based weight
-            tier = _get_holder_tier(holder, holder_tiers)
-            tier_weight = _get_holder_weight(tier)
+            # V3: Check if Conditional manager
+            is_conditional = _is_conditional_manager(holder)
+
+            # Get tier-based weight (or Conditional weight)
+            if is_conditional:
+                tier_weight = SMART_MONEY_CONDITIONAL_WEIGHT
+            else:
+                tier = _get_holder_tier(holder, holder_tiers)
+                tier_weight = _get_holder_weight(tier)
 
             # Get change weight (using V2 weights with reduced EXIT)
             base_change_weight = SMART_MONEY_V2_CHANGE_WEIGHTS.get(change_upper, Decimal("0"))
@@ -1986,6 +2211,12 @@ def compute_smart_money_signal(
                 -SMART_MONEY_PER_HOLDER_CAP,
                 SMART_MONEY_PER_HOLDER_CAP
             )
+
+            # V3: Track by category
+            if is_conditional:
+                conditional_change += holder_contribution
+            else:
+                elite_core_change += holder_contribution
 
             change_bonus += holder_contribution
 
@@ -2009,18 +2240,46 @@ def compute_smart_money_signal(
     )
 
     # =========================================================================
-    # STEP 3: Compute final score
+    # STEP 3: Compute Elite Core vs Conditional contributions
+    # V3: Apply 30% cap to Conditional signal
     # =========================================================================
-    smart_money_score = base_signal + overlap_bonus + change_bonus
+    elite_core_contribution = elite_core_overlap + elite_core_change
+    conditional_raw_contribution = conditional_overlap + conditional_change
+
+    # Apply Conditional cap: max 30% of total signal above base
+    # If Conditional would exceed 30%, cap it and recalculate
+    total_raw = elite_core_contribution + conditional_raw_contribution
+    conditional_capped = False
+
+    if total_raw > Decimal("0"):
+        max_conditional = elite_core_contribution * (
+            SMART_MONEY_CONDITIONAL_SIGNAL_CAP / (Decimal("1") - SMART_MONEY_CONDITIONAL_SIGNAL_CAP)
+        )
+        if conditional_raw_contribution > max_conditional:
+            conditional_contribution = max_conditional
+            conditional_capped = True
+        else:
+            conditional_contribution = conditional_raw_contribution
+    else:
+        conditional_contribution = conditional_raw_contribution
+
+    # Recompute total signal with capped Conditional
+    total_signal = elite_core_contribution + conditional_contribution
+
+    # =========================================================================
+    # STEP 4: Compute final score
+    # =========================================================================
+    smart_money_score = base_signal + total_signal
     smart_money_score = _clamp(smart_money_score, Decimal("20"), Decimal("80"))
 
     # =========================================================================
-    # STEP 4: Compute confidence based on tier coverage
+    # STEP 5: Compute confidence based on tier coverage
     # =========================================================================
     # Confidence scales with:
     # - Number of Tier1 holders (highest signal quality)
     # - Presence of position change data
     # - Overall weighted overlap
+    # V3: Boost confidence for Elite Core coverage
 
     num_tier1 = tier_breakdown.get(1, 0)
     num_tier2 = tier_breakdown.get(2, 0)
@@ -2045,6 +2304,10 @@ def compute_smart_money_signal(
     if has_changes and overlap_count >= 2:
         confidence = _clamp(confidence + Decimal("0.1"), Decimal("0"), Decimal("0.9"))
 
+    # V3: Slight confidence boost if signal is Elite Core dominated (not capped)
+    if elite_core_contribution > Decimal("0") and not conditional_capped:
+        confidence = _clamp(confidence + Decimal("0.05"), Decimal("0"), Decimal("0.95"))
+
     return SmartMoneySignal(
         smart_money_score=_quantize_score(smart_money_score),
         overlap_count=overlap_count,
@@ -2058,6 +2321,11 @@ def compute_smart_money_signal(
         tier_breakdown=tier_breakdown,
         tier1_holders=sorted(tier1_holders),
         per_holder_contributions={k: _quantize_score(v) for k, v in sorted(per_holder_contributions.items())},
+        # V3 fields - Elite Core vs Conditional separation
+        elite_core_contribution=_quantize_score(elite_core_contribution),
+        conditional_contribution=_quantize_score(conditional_contribution),
+        conditional_raw_contribution=_quantize_score(conditional_raw_contribution),
+        conditional_capped=conditional_capped,
     )
 
 
