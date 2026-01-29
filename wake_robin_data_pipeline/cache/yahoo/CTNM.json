@@ -2,7 +2,7 @@
   "ticker": "CTNM",
   "success": true,
   "price": {
-    "current": 14.06,
+    "current": 14.6,
     "currency": "USD",
     "day_high": 14.86,
     "day_low": 14.09,
@@ -10,34 +10,49 @@
     "52_week_low": 3.35
   },
   "market_cap": {
-    "value": 513604064.0,
+    "value": 533329952.0,
     "currency": "USD"
   },
   "shares_outstanding": 30446111.0,
   "volume": {
-    "last": 69419,
-    "average_30d": 245214
+    "last": 266247,
+    "average_30d": 249211
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -6.3950663,
-    "price_to_book": 2.2736094
+    "forward_pe": -6.6406803,
+    "price_to_book": 2.3609314
   },
   "company_info": {
     "name": "Contineum Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 190847000.0,
+    "total_liabilities": 10377000.0,
+    "stockholders_equity": 180470000.0,
+    "cash": 42633000.0,
+    "marketable_securities": 139774000.0,
+    "total_liquidity": 182407000.0,
+    "total_debt": 5493000.0,
+    "long_term_debt": 4016000.0,
+    "current_debt": 1477000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:58.280059",
+    "timestamp": "2026-01-29T16:31:10.480315",
     "url": "https://finance.yahoo.com/quote/CTNM",
-    "data_hash": "49e706a4fc26efaf"
+    "data_hash": "ddd67cd0297b4be8"
   }
 }

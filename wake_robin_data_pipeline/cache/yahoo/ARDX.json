@@ -2,7 +2,7 @@
   "ticker": "ARDX",
   "success": true,
   "price": {
-    "current": 7.765,
+    "current": 7.85,
     "currency": "USD",
     "day_high": 7.9899,
     "day_low": 7.7301,
@@ -10,34 +10,49 @@
     "52_week_low": 3.21
   },
   "market_cap": {
-    "value": 1886695424.0,
+    "value": 1907348224.0,
     "currency": "USD"
   },
   "shares_outstanding": 242974306.0,
   "volume": {
-    "last": 642935,
-    "average_30d": 6215433
+    "last": 2303463,
+    "average_30d": 6495226
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 42.54328,
-    "price_to_book": 12.228347
+    "forward_pe": 43.008984,
+    "price_to_book": 12.362205
   },
   "company_info": {
     "name": "Ardelyx, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 486170000.0,
+    "total_liabilities": 331890000.0,
+    "stockholders_equity": 154280000.0,
+    "cash": 42715000.0,
+    "marketable_securities": 199990000.0,
+    "total_liquidity": 242705000.0,
+    "total_debt": 207611000.0,
+    "long_term_debt": 202138000.0,
+    "current_debt": 1435000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:43.207853",
+    "timestamp": "2026-01-29T16:29:54.495760",
     "url": "https://finance.yahoo.com/quote/ARDX",
-    "data_hash": "76c0c27e95512775"
+    "data_hash": "f727d09416038fe3"
   }
 }

@@ -2,7 +2,7 @@
   "ticker": "ATAI",
   "success": true,
   "price": {
-    "current": 3.83,
+    "current": 3.84,
     "currency": "USD",
     "day_high": 3.9963,
     "day_low": 3.785,
@@ -10,34 +10,49 @@
     "52_week_low": 1.15
   },
   "market_cap": {
-    "value": 1391111808.0,
+    "value": 1394744064.0,
     "currency": "USD"
   },
   "shares_outstanding": 363214602.0,
   "volume": {
-    "last": 1146988,
-    "average_30d": 3878176
+    "last": 3368067,
+    "average_30d": 4046193
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -7.8519,
-    "price_to_book": 5.7680726
+    "forward_pe": -7.872401,
+    "price_to_book": 5.7831326
   },
   "company_info": {
     "name": "AtaiBeckley Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 239820000.0,
+    "total_liabilities": 79912000.0,
+    "stockholders_equity": 159751000.0,
+    "cash": 30402000.0,
+    "marketable_securities": 84204000.0,
+    "total_liquidity": 114606000.0,
+    "total_debt": 2958000.0,
+    "long_term_debt": 2426000.0,
+    "current_debt": 532000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:52.894707",
+    "timestamp": "2026-01-29T16:30:04.066428",
     "url": "https://finance.yahoo.com/quote/ATAI",
-    "data_hash": "e487443724598c76"
+    "data_hash": "f263cbeee2c1df05"
   }
 }

@@ -2,42 +2,57 @@
   "ticker": "EWTX",
   "success": true,
   "price": {
-    "current": 28.99,
+    "current": 28.78,
     "currency": "USD",
-    "day_high": 29.1318,
+    "day_high": 29.315,
     "day_low": 28.395,
     "52_week_high": 30.48,
     "52_week_low": 10.6
   },
   "market_cap": {
-    "value": 3069125888.0,
+    "value": 3046893568.0,
     "currency": "USD"
   },
   "shares_outstanding": 105868434.0,
   "volume": {
-    "last": 90187,
-    "average_30d": 1162899
+    "last": 495599,
+    "average_30d": 1161629
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -14.645482,
-    "price_to_book": 5.488451
+    "forward_pe": -14.539392,
+    "price_to_book": 5.4486938
   },
   "company_info": {
     "name": "Edgewise Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 583466000.0,
+    "total_liabilities": 24819000.0,
+    "stockholders_equity": 558647000.0,
+    "cash": 46003000.0,
+    "marketable_securities": 517337000.0,
+    "total_liquidity": 563340000.0,
+    "total_debt": 4181000.0,
+    "long_term_debt": 3173000.0,
+    "current_debt": 1008000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:27.512100",
+    "timestamp": "2026-01-29T16:31:40.048704",
     "url": "https://finance.yahoo.com/quote/EWTX",
-    "data_hash": "171654bc37b4d8da"
+    "data_hash": "2e9740a37fb6c7e5"
   }
 }

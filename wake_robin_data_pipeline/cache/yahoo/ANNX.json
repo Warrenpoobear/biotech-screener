@@ -2,42 +2,57 @@
   "ticker": "ANNX",
   "success": true,
   "price": {
-    "current": 6.36,
+    "current": 6.52,
     "currency": "USD",
-    "day_high": 6.53,
+    "day_high": 6.55,
     "day_low": 6.3,
     "52_week_high": 7.18,
     "52_week_low": 1.285
   },
   "market_cap": {
-    "value": 947995392.0,
+    "value": 971844288.0,
     "currency": "USD"
   },
   "shares_outstanding": 149055879.0,
   "volume": {
-    "last": 352924,
-    "average_30d": 2532660
+    "last": 1244871,
+    "average_30d": 2632452
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -5.349843,
-    "price_to_book": 4.536377
+    "forward_pe": -5.48443,
+    "price_to_book": 4.6504993
   },
   "company_info": {
     "name": "Annexon, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 229142000.0,
+    "total_liabilities": 67700000.0,
+    "stockholders_equity": 161442000.0,
+    "cash": 139419000.0,
+    "marketable_securities": 49302000.0,
+    "total_liquidity": 188721000.0,
+    "total_debt": 26938000.0,
+    "long_term_debt": 24120000.0,
+    "current_debt": 2818000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:34.878430",
+    "timestamp": "2026-01-29T16:29:45.695709",
     "url": "https://finance.yahoo.com/quote/ANNX",
-    "data_hash": "b4c5f87695c40a64"
+    "data_hash": "3c07f81bdad74062"
   }
 }

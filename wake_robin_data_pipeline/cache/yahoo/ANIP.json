@@ -2,7 +2,7 @@
   "ticker": "ANIP",
   "success": true,
   "price": {
-    "current": 81.55,
+    "current": 82.0,
     "currency": "USD",
     "day_high": 82.595,
     "day_low": 79.12,
@@ -10,34 +10,49 @@
     "52_week_low": 54.1
   },
   "market_cap": {
-    "value": 1831463680.0,
+    "value": 1841569792.0,
     "currency": "USD"
   },
   "shares_outstanding": 22458168.0,
   "volume": {
-    "last": 115864,
-    "average_30d": 541652
+    "last": 494133,
+    "average_30d": 572311
   },
   "valuation": {
-    "pe_ratio": 50.96875,
-    "forward_pe": 9.752544,
-    "price_to_book": 3.3709493
+    "pe_ratio": 51.25,
+    "forward_pe": 9.80636,
+    "price_to_book": 3.3895504
   },
   "company_info": {
     "name": "ANI Pharmaceuticals, Inc.",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1408152000.0,
+    "total_liabilities": 902335000.0,
+    "stockholders_equity": 505817000.0,
+    "cash": 262610000.0,
+    "marketable_securities": 8859000.0,
+    "total_liquidity": 271469000.0,
+    "total_debt": 620310000.0,
+    "long_term_debt": 605069000.0,
+    "current_debt": 15241000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:33.543820",
+    "timestamp": "2026-01-29T16:29:44.436806",
     "url": "https://finance.yahoo.com/quote/ANIP",
-    "data_hash": "753fa8bd44bc44c0"
+    "data_hash": "c25a684d790832e0"
   }
 }

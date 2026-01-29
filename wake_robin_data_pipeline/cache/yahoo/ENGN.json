@@ -2,42 +2,57 @@
   "ticker": "ENGN",
   "success": true,
   "price": {
-    "current": 10.1,
+    "current": 10.27,
     "currency": "USD",
-    "day_high": 10.4,
-    "day_low": 10.0725,
+    "day_high": 10.44,
+    "day_low": 9.78,
     "52_week_high": 12.25,
     "52_week_low": 2.65
   },
   "market_cap": {
-    "value": 676545088.0,
+    "value": 687932480.0,
     "currency": "USD"
   },
   "shares_outstanding": 66984661.0,
   "volume": {
-    "last": 9040,
-    "average_30d": 400556
+    "last": 136383,
+    "average_30d": 406065
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -4.997551,
-    "price_to_book": 3.1327546
+    "forward_pe": -5.0816684,
+    "price_to_book": 3.185484
   },
   "company_info": {
     "name": "enGene Holdings Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-10-31",
+    "total_assets": 221468000.0,
+    "total_liabilities": 53758000.0,
+    "stockholders_equity": 167710000.0,
+    "cash": 50152000.0,
+    "marketable_securities": 143584000.0,
+    "total_liquidity": 193736000.0,
+    "total_debt": 31795000.0,
+    "long_term_debt": 15324000.0,
+    "current_debt": 8002000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:21.154565",
+    "timestamp": "2026-01-29T16:31:31.728906",
     "url": "https://finance.yahoo.com/quote/ENGN",
-    "data_hash": "de703007d17b9332"
+    "data_hash": "64ac1608f9d56b67"
   }
 }

@@ -2,7 +2,7 @@
   "ticker": "ALMS",
   "success": true,
   "price": {
-    "current": 26.93,
+    "current": 26.84,
     "currency": "USD",
     "day_high": 28.29,
     "day_low": 26.602,
@@ -10,34 +10,49 @@
     "52_week_low": 2.76
   },
   "market_cap": {
-    "value": 3357926144.0,
+    "value": 3346703872.0,
     "currency": "USD"
   },
   "shares_outstanding": 117505995.0,
   "volume": {
-    "last": 388039,
-    "average_30d": 5839051
+    "last": 1104297,
+    "average_30d": 6120633
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -8.504202,
-    "price_to_book": 7.3040414
+    "forward_pe": -8.4757805,
+    "price_to_book": 7.279631
   },
   "company_info": {
     "name": "Alumis Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 488014000.0,
+    "total_liabilities": 103241000.0,
+    "stockholders_equity": 384773000.0,
+    "cash": 65257000.0,
+    "marketable_securities": 312467000.0,
+    "total_liquidity": 377724000.0,
+    "total_debt": 37797000.0,
+    "long_term_debt": 33385000.0,
+    "current_debt": 4412000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:25.028118",
+    "timestamp": "2026-01-29T16:29:34.126495",
     "url": "https://finance.yahoo.com/quote/ALMS",
-    "data_hash": "0359963f6c12ea45"
+    "data_hash": "1c52abbf7f303bfc"
   }
 }

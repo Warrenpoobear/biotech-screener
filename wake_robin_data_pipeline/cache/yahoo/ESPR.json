@@ -2,42 +2,57 @@
   "ticker": "ESPR",
   "success": true,
   "price": {
-    "current": 3.435,
+    "current": 3.55,
     "currency": "USD",
-    "day_high": 3.48,
+    "day_high": 3.55,
     "day_low": 3.3948,
     "52_week_high": 4.18,
     "52_week_low": 0.69
   },
   "market_cap": {
-    "value": 814332800.0,
+    "value": 841595776.0,
     "currency": "USD"
   },
   "shares_outstanding": 237069239.0,
   "volume": {
-    "last": 1521510,
-    "average_30d": 5399145
+    "last": 4679171,
+    "average_30d": 5648060
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 55.917305,
-    "price_to_book": -1.5634956
+    "forward_pe": 57.789352,
+    "price_to_book": -1.6158397
   },
   "company_info": {
     "name": "Esperion Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 364020000.0,
+    "total_liabilities": 815381000.0,
+    "stockholders_equity": -451361000.0,
+    "cash": 92447000.0,
+    "marketable_securities": null,
+    "total_liquidity": 92447000.0,
+    "total_debt": 306795000.0,
+    "long_term_debt": 248781000.0,
+    "current_debt": 54863000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:27.069114",
+    "timestamp": "2026-01-29T16:31:38.577658",
     "url": "https://finance.yahoo.com/quote/ESPR",
-    "data_hash": "b1b40808a05901f0"
+    "data_hash": "5f822dedab2f7e8c"
   }
 }

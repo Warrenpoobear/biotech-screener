@@ -2,7 +2,7 @@
   "ticker": "DVAX",
   "success": true,
   "price": {
-    "current": 15.485,
+    "current": 15.48,
     "currency": "USD",
     "day_high": 15.495,
     "day_low": 15.48,
@@ -10,34 +10,49 @@
     "52_week_low": 9.2
   },
   "market_cap": {
-    "value": 1818325632.0,
+    "value": 1817738496.0,
     "currency": "USD"
   },
   "shares_outstanding": 113684064.0,
   "volume": {
-    "last": 187204,
-    "average_30d": 3665363
+    "last": 815502,
+    "average_30d": 3540428
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 46.92424,
-    "price_to_book": 3.4025488
+    "forward_pe": 46.90909,
+    "price_to_book": 3.4014502
   },
   "company_info": {
     "name": "Dynavax Technologies Corporation",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 946506000.0,
+    "total_liabilities": 412368000.0,
+    "stockholders_equity": 534138000.0,
+    "cash": 160247000.0,
+    "marketable_securities": 487568000.0,
+    "total_liquidity": 647815000.0,
+    "total_debt": 285024000.0,
+    "long_term_debt": 220966000.0,
+    "current_debt": 40073000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:12.609787",
+    "timestamp": "2026-01-29T16:31:23.763652",
     "url": "https://finance.yahoo.com/quote/DVAX",
-    "data_hash": "98e33fb4bf80508e"
+    "data_hash": "676391e18fb86261"
   }
 }

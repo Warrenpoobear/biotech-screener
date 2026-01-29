@@ -2,7 +2,7 @@
   "ticker": "DRMA",
   "success": true,
   "price": {
-    "current": 2.8438,
+    "current": 2.81,
     "currency": "USD",
     "day_high": 2.98,
     "day_low": 2.45,
@@ -10,34 +10,49 @@
     "52_week_low": 1.58
   },
   "market_cap": {
-    "value": 9094077.0,
+    "value": 8985989.0,
     "currency": "USD"
   },
   "shares_outstanding": 3197860.0,
   "volume": {
-    "last": 1059515,
-    "average_30d": 2799582
+    "last": 1619075,
+    "average_30d": 2818422
   },
   "valuation": {
-    "pe_ratio": 0.18660106,
-    "forward_pe": -0.7348321,
-    "price_to_book": 0.60635394
+    "pe_ratio": 0.1843832,
+    "forward_pe": -0.7260982,
+    "price_to_book": 0.5991471
   },
   "company_info": {
     "name": "Dermata Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 5071410.0,
+    "total_liabilities": 1111308.0,
+    "stockholders_equity": 3960102.0,
+    "cash": 4664127.0,
+    "marketable_securities": null,
+    "total_liquidity": 4664127.0,
+    "total_debt": null,
+    "long_term_debt": null,
+    "current_debt": null,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:08.326815",
+    "timestamp": "2026-01-29T16:31:19.596499",
     "url": "https://finance.yahoo.com/quote/DRMA",
-    "data_hash": "7c6e746ad688d350"
+    "data_hash": "43a89111b3977b3d"
   }
 }

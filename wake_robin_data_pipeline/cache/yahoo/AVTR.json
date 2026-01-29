@@ -2,42 +2,57 @@
   "ticker": "AVTR",
   "success": true,
   "price": {
-    "current": 10.745,
+    "current": 10.81,
     "currency": "USD",
     "day_high": 11.005,
-    "day_low": 10.72,
+    "day_low": 10.67,
     "52_week_high": 22.73,
     "52_week_low": 10.62
   },
   "market_cap": {
-    "value": 7326100480.0,
+    "value": 7370418688.0,
     "currency": "USD"
   },
   "shares_outstanding": 681814859.0,
   "volume": {
-    "last": 4496439,
-    "average_30d": 10718719
+    "last": 17948013,
+    "average_30d": 11608872
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 11.807302,
-    "price_to_book": 1.3153385
+    "forward_pe": 11.87873,
+    "price_to_book": 1.3232955
   },
   "company_info": {
     "name": "Avantor, Inc.",
     "sector": "Healthcare",
     "industry": "Medical Instruments & Supplies"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 11675900000.0,
+    "total_liabilities": 6105700000.0,
+    "stockholders_equity": 5570200000.0,
+    "cash": 251900000.0,
+    "marketable_securities": null,
+    "total_liquidity": 251900000.0,
+    "total_debt": 3857900000.0,
+    "long_term_debt": 3638100000.0,
+    "current_debt": 219800000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:00.291630",
+    "timestamp": "2026-01-29T16:30:11.590088",
     "url": "https://finance.yahoo.com/quote/AVTR",
-    "data_hash": "cca90312c307db3a"
+    "data_hash": "385550fb4d9789bf"
   }
 }

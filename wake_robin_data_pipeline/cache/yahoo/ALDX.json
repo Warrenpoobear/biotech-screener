@@ -2,42 +2,57 @@
   "ticker": "ALDX",
   "success": true,
   "price": {
-    "current": 5.295,
+    "current": 5.32,
     "currency": "USD",
-    "day_high": 5.42,
+    "day_high": 5.44,
     "day_low": 5.225,
     "52_week_high": 7.2,
     "52_week_low": 1.14
   },
   "market_cap": {
-    "value": 318561888.0,
+    "value": 320065952.0,
     "currency": "USD"
   },
   "shares_outstanding": 60162773.0,
   "volume": {
-    "last": 154031,
-    "average_30d": 812560
+    "last": 502839,
+    "average_30d": 848589
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 13.576923,
-    "price_to_book": 6.4652014
+    "forward_pe": 13.6410265,
+    "price_to_book": 6.4957266
   },
   "company_info": {
     "name": "Aldeyra Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 77801012.0,
+    "total_liabilities": 28556469.0,
+    "stockholders_equity": 49244543.0,
+    "cash": 59340599.0,
+    "marketable_securities": 15956740.0,
+    "total_liquidity": 75297339.0,
+    "total_debt": 15543749.0,
+    "long_term_debt": 72536.0,
+    "current_debt": 15199265.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:19.790076",
+    "timestamp": "2026-01-29T16:29:29.094745",
     "url": "https://finance.yahoo.com/quote/ALDX",
-    "data_hash": "97327b146e7633b0"
+    "data_hash": "7220c3ccb4dc3ef4"
   }
 }

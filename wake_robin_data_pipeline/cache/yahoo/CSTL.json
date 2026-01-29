@@ -2,42 +2,57 @@
   "ticker": "CSTL",
   "success": true,
   "price": {
-    "current": 38.705,
+    "current": 39.16,
     "currency": "USD",
     "day_high": 39.66,
-    "day_low": 38.5,
+    "day_low": 38.44,
     "52_week_high": 44.28,
     "52_week_low": 14.59
   },
   "market_cap": {
-    "value": 1129747200.0,
+    "value": 1143027968.0,
     "currency": "USD"
   },
   "shares_outstanding": 29188659.0,
   "volume": {
-    "last": 82634,
-    "average_30d": 355251
+    "last": 300357,
+    "average_30d": 370584
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -33.69843,
-    "price_to_book": 2.4166458
+    "forward_pe": -34.09457,
+    "price_to_book": 2.4450548
   },
   "company_info": {
     "name": "Castle Biosciences, Inc.",
     "sector": "Healthcare",
     "industry": "Diagnostics & Research"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 562786000.0,
+    "total_liabilities": 95740000.0,
+    "stockholders_equity": 467046000.0,
+    "cash": 85556000.0,
+    "marketable_securities": 201986000.0,
+    "total_liquidity": 287542000.0,
+    "total_debt": 37139000.0,
+    "long_term_debt": 10049000.0,
+    "current_debt": 1449000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:56.673376",
+    "timestamp": "2026-01-29T16:31:07.797198",
     "url": "https://finance.yahoo.com/quote/CSTL",
-    "data_hash": "71e89c3bda500b5c"
+    "data_hash": "d5f3518b23c8cfc1"
   }
 }

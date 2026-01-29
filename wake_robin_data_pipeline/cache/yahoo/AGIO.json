@@ -2,42 +2,57 @@
   "ticker": "AGIO",
   "success": true,
   "price": {
-    "current": 27.66,
+    "current": 27.61,
     "currency": "USD",
     "day_high": 28.565,
-    "day_low": 27.56,
+    "day_low": 27.43,
     "52_week_high": 46.0,
     "52_week_low": 22.24
   },
   "market_cap": {
-    "value": 1612960000.0,
+    "value": 1610044416.0,
     "currency": "USD"
   },
   "shares_outstanding": 58313812.0,
   "volume": {
-    "last": 56483,
-    "average_30d": 936903
+    "last": 811051,
+    "average_30d": 968900
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -4.2068443,
-    "price_to_book": 1.2551618
+    "forward_pe": -4.1992397,
+    "price_to_book": 1.2528929
   },
   "company_info": {
     "name": "Agios Pharmaceuticals, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1385705000.0,
+    "total_liabilities": 101375000.0,
+    "stockholders_equity": 1284330000.0,
+    "cash": 92710000.0,
+    "marketable_securities": 860150000.0,
+    "total_liquidity": 952860000.0,
+    "total_debt": 44515000.0,
+    "long_term_debt": 26528000.0,
+    "current_debt": 17987000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:17.114151",
+    "timestamp": "2026-01-29T16:29:26.471007",
     "url": "https://finance.yahoo.com/quote/AGIO",
-    "data_hash": "706e4dfa5154daaf"
+    "data_hash": "32b084de5c2b1f6b"
   }
 }

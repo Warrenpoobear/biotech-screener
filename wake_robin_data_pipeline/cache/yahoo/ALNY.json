@@ -2,42 +2,57 @@
   "ticker": "ALNY",
   "success": true,
   "price": {
-    "current": 349.37,
+    "current": 346.79,
     "currency": "USD",
-    "day_high": 350.32,
-    "day_low": 346.87,
+    "day_high": 350.34,
+    "day_low": 345.01,
     "52_week_high": 495.55,
     "52_week_low": 205.87
   },
   "market_cap": {
-    "value": 46156603392.0,
+    "value": 45815750656.0,
     "currency": "USD"
   },
   "shares_outstanding": 132113818.0,
   "volume": {
-    "last": 262790,
-    "average_30d": 1308331
+    "last": 1597310,
+    "average_30d": 1404208
   },
   "valuation": {
-    "pe_ratio": 1127.0,
-    "forward_pe": 31.095827,
-    "price_to_book": 196.82817
+    "pe_ratio": 1118.6775,
+    "forward_pe": 30.866194,
+    "price_to_book": 195.37465
   },
   "company_info": {
     "name": "Alnylam Pharmaceuticals, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 4851662000.0,
+    "total_liabilities": 4617768000.0,
+    "stockholders_equity": 233894000.0,
+    "cash": 1490249000.0,
+    "marketable_securities": 1234375000.0,
+    "total_liquidity": 2724624000.0,
+    "total_debt": 1308452000.0,
+    "long_term_debt": 1040276000.0,
+    "current_debt": 44755000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T10:59:26.453071",
+    "timestamp": "2026-01-29T16:29:34.324618",
     "url": "https://finance.yahoo.com/quote/ALNY",
-    "data_hash": "459430a6357d1c0b"
+    "data_hash": "c74f1995eefba239"
   }
 }

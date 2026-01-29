@@ -2,42 +2,57 @@
   "ticker": "BCRX",
   "success": true,
   "price": {
-    "current": 6.6496,
+    "current": 6.67,
     "currency": "USD",
-    "day_high": 6.71,
-    "day_low": 6.61,
+    "day_high": 6.795,
+    "day_low": 6.605,
     "52_week_high": 11.31,
     "52_week_low": 6.0
   },
   "market_cap": {
-    "value": 1649360512.0,
+    "value": 1654420480.0,
     "currency": "USD"
   },
   "shares_outstanding": 248039061.0,
   "volume": {
-    "last": 571888,
-    "average_30d": 4596126
+    "last": 3541808,
+    "average_30d": 4847295
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 15.832381,
-    "price_to_book": -3.6080303
+    "forward_pe": 15.880953,
+    "price_to_book": -3.6190991
   },
   "company_info": {
     "name": "BioCryst Pharmaceuticals, Inc.",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 446424000.0,
+    "total_liabilities": 834313000.0,
+    "stockholders_equity": -387889000.0,
+    "cash": 84078000.0,
+    "marketable_securities": 128795000.0,
+    "total_liquidity": 212873000.0,
+    "total_debt": 645423000.0,
+    "long_term_debt": 633473000.0,
+    "current_debt": 1783000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:09.165022",
+    "timestamp": "2026-01-29T16:30:20.179577",
     "url": "https://finance.yahoo.com/quote/BCRX",
-    "data_hash": "c460612035aefdd4"
+    "data_hash": "7053a71dab4abff0"
   }
 }

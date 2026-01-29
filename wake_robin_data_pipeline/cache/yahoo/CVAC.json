@@ -16,7 +16,7 @@
   "shares_outstanding": 225172749.0,
   "volume": {
     "last": 728780,
-    "average_30d": 1070467
+    "average_30d": 1155772
   },
   "valuation": {
     "pe_ratio": 6.9552236,
@@ -28,15 +28,30 @@
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1138619000.0,
+    "total_liabilities": 267389000.0,
+    "stockholders_equity": 871230000.0,
+    "cash": 416090000.0,
+    "marketable_securities": 3123000.0,
+    "total_liquidity": 419213000.0,
+    "total_debt": 35067000.0,
+    "long_term_debt": 30302000.0,
+    "current_debt": 4765000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:59.832263",
+    "timestamp": "2026-01-29T16:31:11.808023",
     "url": "https://finance.yahoo.com/quote/CVAC",
     "data_hash": "2d05d7b1ab439a39"
   }

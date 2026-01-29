@@ -2,7 +2,7 @@
   "ticker": "APGE",
   "success": true,
   "price": {
-    "current": 67.49,
+    "current": 69.98,
     "currency": "USD",
     "day_high": 70.8163,
     "day_low": 67.22,
@@ -10,34 +10,49 @@
     "52_week_low": 26.2
   },
   "market_cap": {
-    "value": 4610932224.0,
+    "value": 4781049856.0,
     "currency": "USD"
   },
   "shares_outstanding": 54833587.0,
   "volume": {
-    "last": 219011,
-    "average_30d": 1031459
+    "last": 992332,
+    "average_30d": 1058244
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -13.895865,
-    "price_to_book": 6.827516
+    "forward_pe": -14.4085455,
+    "price_to_book": 7.0794134
   },
   "company_info": {
     "name": "Apogee Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 626159000.0,
+    "total_liabilities": 39821000.0,
+    "stockholders_equity": 586338000.0,
+    "cash": 107914000.0,
+    "marketable_securities": 419375000.0,
+    "total_liquidity": 527289000.0,
+    "total_debt": 9853000.0,
+    "long_term_debt": 5774000.0,
+    "current_debt": 4079000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:37.706277",
+    "timestamp": "2026-01-29T16:29:48.304397",
     "url": "https://finance.yahoo.com/quote/APGE",
-    "data_hash": "6a03fadbaf27640c"
+    "data_hash": "77ff3e2f093b5af9"
   }
 }

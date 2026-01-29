@@ -2,7 +2,7 @@
   "ticker": "DNA",
   "success": true,
   "price": {
-    "current": 9.13,
+    "current": 9.31,
     "currency": "USD",
     "day_high": 9.365,
     "day_low": 9.0974,
@@ -10,34 +10,49 @@
     "52_week_low": 5.0
   },
   "market_cap": {
-    "value": 553188736.0,
+    "value": 564094976.0,
     "currency": "USD"
   },
   "shares_outstanding": 48523595.0,
   "volume": {
-    "last": 241843,
-    "average_30d": 842024
+    "last": 530103,
+    "average_30d": 857919
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -2.5151515,
-    "price_to_book": 0.92699766
+    "forward_pe": -2.5647383,
+    "price_to_book": 0.9452737
   },
   "company_info": {
     "name": "Ginkgo Bioworks Holdings, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1189165000.0,
+    "total_liabilities": 629382000.0,
+    "stockholders_equity": 559783000.0,
+    "cash": 111065000.0,
+    "marketable_securities": 350797000.0,
+    "total_liquidity": 461862000.0,
+    "total_debt": 422870000.0,
+    "long_term_debt": 422870000.0,
+    "current_debt": null,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:04.151660",
+    "timestamp": "2026-01-29T16:31:15.767901",
     "url": "https://finance.yahoo.com/quote/DNA",
-    "data_hash": "2c2f73c7c0bd0eaf"
+    "data_hash": "3b1e78a8a30f1962"
   }
 }

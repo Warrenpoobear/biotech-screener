@@ -2,42 +2,57 @@
   "ticker": "CLYM",
   "success": true,
   "price": {
-    "current": 4.8,
+    "current": 4.78,
     "currency": "USD",
     "day_high": 5.27,
-    "day_low": 4.8,
+    "day_low": 4.68,
     "52_week_high": 5.3,
     "52_week_low": 1.05
   },
   "market_cap": {
-    "value": 327285280.0,
+    "value": 325921600.0,
     "currency": "USD"
   },
   "shares_outstanding": 47744435.0,
   "volume": {
-    "last": 105857,
-    "average_30d": 771507
+    "last": 536344,
+    "average_30d": 799235
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -5.925926,
-    "price_to_book": 1.8489985
+    "forward_pe": -5.9012346,
+    "price_to_book": 1.8412944
   },
   "company_info": {
     "name": "Climb Bio, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 182304000.0,
+    "total_liabilities": 5301000.0,
+    "stockholders_equity": 177003000.0,
+    "cash": 25803000.0,
+    "marketable_securities": 61098000.0,
+    "total_liquidity": 86901000.0,
+    "total_debt": 580000.0,
+    "long_term_debt": 352000.0,
+    "current_debt": 228000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:42.622132",
+    "timestamp": "2026-01-29T16:30:53.301394",
     "url": "https://finance.yahoo.com/quote/CLYM",
-    "data_hash": "6a508b808a6169ab"
+    "data_hash": "8aa4312bb2ba262a"
   }
 }

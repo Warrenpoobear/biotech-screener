@@ -2,42 +2,57 @@
   "ticker": "CELC",
   "success": true,
   "price": {
-    "current": 111.94,
+    "current": 112.12,
     "currency": "USD",
     "day_high": 114.74,
-    "day_low": 111.625,
+    "day_low": 109.0,
     "52_week_high": 120.315,
     "52_week_low": 7.575
   },
   "market_cap": {
-    "value": 5179604992.0,
+    "value": 5187933696.0,
     "currency": "USD"
   },
   "shares_outstanding": 46271259.0,
   "volume": {
-    "last": 177021,
-    "average_30d": 727760
+    "last": 787766,
+    "average_30d": 763721
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -24.783745,
-    "price_to_book": 41.413246
+    "forward_pe": -24.823597,
+    "price_to_book": 41.479836
   },
   "company_info": {
     "name": "Celcuity Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 476004000.0,
+    "total_liabilities": 359041000.0,
+    "stockholders_equity": 116963000.0,
+    "cash": 74252000.0,
+    "marketable_securities": 380726000.0,
+    "total_liquidity": 454978000.0,
+    "total_debt": 320345000.0,
+    "long_term_debt": 320249000.0,
+    "current_debt": 96000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:32.595552",
+    "timestamp": "2026-01-29T16:30:44.133405",
     "url": "https://finance.yahoo.com/quote/CELC",
-    "data_hash": "43b7f301195e3014"
+    "data_hash": "68f1af422ae46192"
   }
 }

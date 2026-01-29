@@ -2,7 +2,7 @@
   "ticker": "DYN",
   "success": true,
   "price": {
-    "current": 17.58,
+    "current": 17.88,
     "currency": "USD",
     "day_high": 18.06,
     "day_low": 17.305,
@@ -10,34 +10,49 @@
     "52_week_low": 6.36
   },
   "market_cap": {
-    "value": 2894586368.0,
+    "value": 2943981824.0,
     "currency": "USD"
   },
   "shares_outstanding": 164652236.0,
   "volume": {
-    "last": 724868,
-    "average_30d": 2108971
+    "last": 1879578,
+    "average_30d": 2158274
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -5.29542,
-    "price_to_book": 3.623995
+    "forward_pe": -5.385785,
+    "price_to_book": 3.685838
   },
   "company_info": {
     "name": "Dyne Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 867059000.0,
+    "total_liabilities": 175276000.0,
+    "stockholders_equity": 691783000.0,
+    "cash": 573610000.0,
+    "marketable_securities": 218277000.0,
+    "total_liquidity": 791887000.0,
+    "total_debt": 120466000.0,
+    "long_term_debt": 99147000.0,
+    "current_debt": 5039000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:14.097117",
+    "timestamp": "2026-01-29T16:31:25.074824",
     "url": "https://finance.yahoo.com/quote/DYN",
-    "data_hash": "eb59df5c5403cdb5"
+    "data_hash": "e613d9fac0b1e0a3"
   }
 }

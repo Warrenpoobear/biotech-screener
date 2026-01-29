@@ -2,7 +2,7 @@
   "ticker": "AVXL",
   "success": true,
   "price": {
-    "current": 4.95,
+    "current": 4.91,
     "currency": "USD",
     "day_high": 4.985,
     "day_low": 4.78,
@@ -10,34 +10,49 @@
     "52_week_low": 2.86
   },
   "market_cap": {
-    "value": 442273088.0,
+    "value": 438699168.0,
     "currency": "USD"
   },
   "shares_outstanding": 89348107.0,
   "volume": {
-    "last": 198677,
-    "average_30d": 1569798
+    "last": 728532,
+    "average_30d": 1588139
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 3.8976376,
-    "price_to_book": 4.520548
+    "forward_pe": 3.8661416,
+    "price_to_book": 4.484018
   },
   "company_info": {
     "name": "Anavex Life Sciences Corp.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 103815000.0,
+    "total_liabilities": 8946000.0,
+    "stockholders_equity": 94869000.0,
+    "cash": 102577000.0,
+    "marketable_securities": null,
+    "total_liquidity": 102577000.0,
+    "total_debt": null,
+    "long_term_debt": null,
+    "current_debt": null,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:01.648718",
+    "timestamp": "2026-01-29T16:30:12.719696",
     "url": "https://finance.yahoo.com/quote/AVXL",
-    "data_hash": "97f33d7ba0338261"
+    "data_hash": "50b043ac44c6aa9f"
   }
 }

@@ -2,42 +2,57 @@
   "ticker": "AMLX",
   "success": true,
   "price": {
-    "current": 14.685,
+    "current": 14.85,
     "currency": "USD",
-    "day_high": 14.865,
+    "day_high": 15.0,
     "day_low": 14.21,
     "52_week_high": 17.49,
     "52_week_low": 2.6
   },
   "market_cap": {
-    "value": 1612700416.0,
+    "value": 1630820608.0,
     "currency": "USD"
   },
   "shares_outstanding": 109819569.0,
   "volume": {
-    "last": 362140,
-    "average_30d": 1856320
+    "last": 1471914,
+    "average_30d": 1906491
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -11.7517605,
-    "price_to_book": 4.8545456
+    "forward_pe": -11.883802,
+    "price_to_book": 4.909091
   },
   "company_info": {
     "name": "Amylyx Pharmaceuticals, Inc.",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 362741000.0,
+    "total_liabilities": 30745000.0,
+    "stockholders_equity": 331996000.0,
+    "cash": 225178000.0,
+    "marketable_securities": 118812000.0,
+    "total_liquidity": 343990000.0,
+    "total_debt": 5935000.0,
+    "long_term_debt": 4954000.0,
+    "current_debt": 981000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:27.850196",
+    "timestamp": "2026-01-29T16:29:39.350895",
     "url": "https://finance.yahoo.com/quote/AMLX",
-    "data_hash": "5661cab99fb3eabb"
+    "data_hash": "0bf037a873ae962b"
   }
 }

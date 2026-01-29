@@ -2,7 +2,7 @@
   "ticker": "BCYC",
   "success": true,
   "price": {
-    "current": 6.58,
+    "current": 6.52,
     "currency": "USD",
     "day_high": 6.78,
     "day_low": 6.5,
@@ -10,34 +10,49 @@
     "52_week_low": 6.03
   },
   "market_cap": {
-    "value": 456440736.0,
+    "value": 452278688.0,
     "currency": "USD"
   },
   "shares_outstanding": 49929952.0,
   "volume": {
-    "last": 44128,
-    "average_30d": 237760
+    "last": 181981,
+    "average_30d": 241976
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -1.8887691,
-    "price_to_book": 0.7373375
+    "forward_pe": -1.8715464,
+    "price_to_book": 0.73061407
   },
   "company_info": {
     "name": "Bicycle Therapeutics plc",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 763954000.0,
+    "total_liabilities": 145475000.0,
+    "stockholders_equity": 618479000.0,
+    "cash": 648325000.0,
+    "marketable_securities": null,
+    "total_liquidity": 648325000.0,
+    "total_debt": 5743000.0,
+    "long_term_debt": 981000.0,
+    "current_debt": 4762000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:10.688007",
+    "timestamp": "2026-01-29T16:30:21.514907",
     "url": "https://finance.yahoo.com/quote/BCYC",
-    "data_hash": "1647dd12ed1534bf"
+    "data_hash": "1d6aa75b93459fcf"
   }
 }

@@ -2,7 +2,7 @@
   "ticker": "COGT",
   "success": true,
   "price": {
-    "current": 37.53,
+    "current": 37.65,
     "currency": "USD",
     "day_high": 38.505,
     "day_low": 37.3,
@@ -10,34 +10,49 @@
     "52_week_low": 3.72
   },
   "market_cap": {
-    "value": 5761063936.0,
+    "value": 5779484672.0,
     "currency": "USD"
   },
   "shares_outstanding": 153505562.0,
   "volume": {
-    "last": 185337,
-    "average_30d": 2419547
+    "last": 838799,
+    "average_30d": 2516923
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -21.077637,
-    "price_to_book": 26.980589
+    "forward_pe": -21.145033,
+    "price_to_book": 27.066858
   },
   "company_info": {
     "name": "Cogent Biosciences, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 425933000.0,
+    "total_liabilities": 123469000.0,
+    "stockholders_equity": 302464000.0,
+    "cash": 125297000.0,
+    "marketable_securities": 265593000.0,
+    "total_liquidity": 390890000.0,
+    "total_debt": 60559000.0,
+    "long_term_debt": 44250000.0,
+    "current_debt": 1706000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:46.997645",
+    "timestamp": "2026-01-29T16:30:57.143355",
     "url": "https://finance.yahoo.com/quote/COGT",
-    "data_hash": "9c121354c2d04f45"
+    "data_hash": "d2d42de56e41d7a2"
   }
 }

@@ -2,42 +2,57 @@
   "ticker": "CADL",
   "success": true,
   "price": {
-    "current": 5.72,
+    "current": 5.93,
     "currency": "USD",
-    "day_high": 5.87,
+    "day_high": 5.95,
     "day_low": 5.68,
     "52_week_high": 13.68,
     "52_week_low": 4.25
   },
   "market_cap": {
-    "value": 314018272.0,
+    "value": 325546944.0,
     "currency": "USD"
   },
   "shares_outstanding": 54898303.0,
   "volume": {
-    "last": 151245,
-    "average_30d": 704252
+    "last": 484747,
+    "average_30d": 733217
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -9.533333,
-    "price_to_book": 3.917808
+    "forward_pe": -9.883332,
+    "price_to_book": 4.0616436
   },
   "company_info": {
     "name": "Candel Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 93598000.0,
+    "total_liabilities": 13474000.0,
+    "stockholders_equity": 80124000.0,
+    "cash": 86963000.0,
+    "marketable_securities": null,
+    "total_liquidity": 86963000.0,
+    "total_debt": 7207000.0,
+    "long_term_debt": 973000.0,
+    "current_debt": 4225000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:26.659410",
+    "timestamp": "2026-01-29T16:30:37.471836",
     "url": "https://finance.yahoo.com/quote/CADL",
-    "data_hash": "535594ad2d33a5d4"
+    "data_hash": "7a9125dd668ff769"
   }
 }

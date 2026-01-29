@@ -2,42 +2,57 @@
   "ticker": "ENTA",
   "success": true,
   "price": {
-    "current": 12.79,
+    "current": 12.9,
     "currency": "USD",
-    "day_high": 12.965,
+    "day_high": 13.03,
     "day_low": 12.53,
     "52_week_high": 17.15,
     "52_week_low": 4.09
   },
   "market_cap": {
-    "value": 371146880.0,
+    "value": 374338912.0,
     "currency": "USD"
   },
   "shares_outstanding": 29018522.0,
   "volume": {
-    "last": 23887,
-    "average_30d": 262231
+    "last": 122186,
+    "average_30d": 264767
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -4.6781273,
-    "price_to_book": 4.2267017
+    "forward_pe": -4.7183614,
+    "price_to_book": 4.2630534
   },
   "company_info": {
     "name": "Enanta Pharmaceuticals, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 280732000.0,
+    "total_liabilities": 216015000.0,
+    "stockholders_equity": 64717000.0,
+    "cash": 32298000.0,
+    "marketable_securities": 156566000.0,
+    "total_liquidity": 188864000.0,
+    "total_debt": 57903000.0,
+    "long_term_debt": 54757000.0,
+    "current_debt": 3146000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:22.627741",
+    "timestamp": "2026-01-29T16:31:33.041380",
     "url": "https://finance.yahoo.com/quote/ENTA",
-    "data_hash": "da188d517036d75d"
+    "data_hash": "c7512a52e293e7db"
   }
 }

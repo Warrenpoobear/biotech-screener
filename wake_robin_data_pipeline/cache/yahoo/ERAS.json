@@ -2,42 +2,57 @@
   "ticker": "ERAS",
   "success": true,
   "price": {
-    "current": 10.215,
+    "current": 10.31,
     "currency": "USD",
     "day_high": 10.58,
-    "day_low": 10.14,
+    "day_low": 10.115,
     "52_week_high": 10.708,
     "52_week_low": 1.01
   },
   "market_cap": {
-    "value": 3162429440.0,
+    "value": 3191840256.0,
     "currency": "USD"
   },
   "shares_outstanding": 309586805.0,
   "volume": {
-    "last": 804963,
-    "average_30d": 8811371
+    "last": 4571500,
+    "average_30d": 9333222
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -22.06359,
-    "price_to_book": 8.331974
+    "forward_pe": -22.268782,
+    "price_to_book": 8.409462
   },
   "company_info": {
     "name": "Erasca, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 420401000.0,
+    "total_liabilities": 72515000.0,
+    "stockholders_equity": 347886000.0,
+    "cash": 70230000.0,
+    "marketable_securities": 218170000.0,
+    "total_liquidity": 288400000.0,
+    "total_debt": 48293000.0,
+    "long_term_debt": 43408000.0,
+    "current_debt": 4885000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:25.635604",
+    "timestamp": "2026-01-29T16:31:37.118642",
     "url": "https://finance.yahoo.com/quote/ERAS",
-    "data_hash": "c59d5bc286c37b6a"
+    "data_hash": "8a8bb2695a034fd9"
   }
 }

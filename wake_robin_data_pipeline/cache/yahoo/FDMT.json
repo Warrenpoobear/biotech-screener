@@ -2,42 +2,57 @@
   "ticker": "FDMT",
   "success": true,
   "price": {
-    "current": 8.96,
+    "current": 8.97,
     "currency": "USD",
-    "day_high": 9.085,
+    "day_high": 9.1,
     "day_low": 8.3,
     "52_week_high": 12.34,
     "52_week_low": 2.235
   },
   "market_cap": {
-    "value": 511930272.0,
+    "value": 512501632.0,
     "currency": "USD"
   },
   "shares_outstanding": 51007874.0,
   "volume": {
-    "last": 189900,
-    "average_30d": 734650
+    "last": 591078,
+    "average_30d": 754022
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -2.5758674,
-    "price_to_book": 1.1357586
+    "forward_pe": -2.5787423,
+    "price_to_book": 1.1370263
   },
   "company_info": {
     "name": "4D Molecular Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 423982000.0,
+    "total_liabilities": 54999000.0,
+    "stockholders_equity": 368983000.0,
+    "cash": 48555000.0,
+    "marketable_securities": 256508000.0,
+    "total_liquidity": 305063000.0,
+    "total_debt": 22263000.0,
+    "long_term_debt": 16568000.0,
+    "current_debt": 5695000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:31.766608",
+    "timestamp": "2026-01-29T16:31:47.422648",
     "url": "https://finance.yahoo.com/quote/FDMT",
-    "data_hash": "90576388812e4f53"
+    "data_hash": "d414e13837be5ff9"
   }
 }

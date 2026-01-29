@@ -2,42 +2,57 @@
   "ticker": "CHRS",
   "success": true,
   "price": {
-    "current": 2.235,
+    "current": 2.33,
     "currency": "USD",
-    "day_high": 2.2488,
+    "day_high": 2.39,
     "day_low": 2.08,
     "52_week_high": 2.616,
     "52_week_low": 0.71
   },
   "market_cap": {
-    "value": 270146720.0,
+    "value": 281629472.0,
     "currency": "USD"
   },
   "shares_outstanding": 120871013.0,
   "volume": {
-    "last": 1032913,
-    "average_30d": 3099541
+    "last": 2239994,
+    "average_30d": 3271261
   },
   "valuation": {
-    "pe_ratio": 4.0636363,
-    "forward_pe": -4.561224,
-    "price_to_book": 2.9602647
+    "pe_ratio": 4.2363634,
+    "forward_pe": -4.7551017,
+    "price_to_book": 3.0860927
   },
   "company_info": {
     "name": "Coherus Oncology, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 516519000.0,
+    "total_liabilities": 428745000.0,
+    "stockholders_equity": 87774000.0,
+    "cash": 103352000.0,
+    "marketable_securities": 88311000.0,
+    "total_liquidity": 191663000.0,
+    "total_debt": 40694000.0,
+    "long_term_debt": 36957000.0,
+    "current_debt": 1791000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:38.436840",
+    "timestamp": "2026-01-29T16:30:49.274753",
     "url": "https://finance.yahoo.com/quote/CHRS",
-    "data_hash": "cbbbfb8d67d8ebbc"
+    "data_hash": "5942d5bb4d5c5f8c"
   }
 }

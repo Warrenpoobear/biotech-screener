@@ -2,7 +2,7 @@
   "ticker": "ANAB",
   "success": true,
   "price": {
-    "current": 47.24,
+    "current": 47.85,
     "currency": "USD",
     "day_high": 48.5,
     "day_low": 46.89,
@@ -10,34 +10,49 @@
     "52_week_low": 12.21
   },
   "market_cap": {
-    "value": 1321444480.0,
+    "value": 1338507904.0,
     "currency": "USD"
   },
   "shares_outstanding": 27688470.0,
   "volume": {
-    "last": 78067,
-    "average_30d": 473525
+    "last": 317384,
+    "average_30d": 486652
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -11.521418,
-    "price_to_book": -44.273666
+    "forward_pe": -11.67019,
+    "price_to_book": -44.84536
   },
   "company_info": {
     "name": "AnaptysBio, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 353098000.0,
+    "total_liabilities": 382514000.0,
+    "stockholders_equity": -29416000.0,
+    "cash": 109833000.0,
+    "marketable_securities": 139123000.0,
+    "total_liquidity": 248956000.0,
+    "total_debt": 14606000.0,
+    "long_term_debt": 12566000.0,
+    "current_debt": 2040000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:32.137033",
+    "timestamp": "2026-01-29T16:29:43.154682",
     "url": "https://finance.yahoo.com/quote/ANAB",
-    "data_hash": "30018b0d1245c966"
+    "data_hash": "dff2ec5ca4f9c16a"
   }
 }

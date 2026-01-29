@@ -2,7 +2,7 @@
   "ticker": "ETON",
   "success": true,
   "price": {
-    "current": 15.17,
+    "current": 15.25,
     "currency": "USD",
     "day_high": 15.405,
     "day_low": 14.81,
@@ -10,34 +10,49 @@
     "52_week_low": 11.09
   },
   "market_cap": {
-    "value": 406822016.0,
+    "value": 408967424.0,
     "currency": "USD"
   },
   "shares_outstanding": 26817535.0,
   "volume": {
-    "last": 57978,
-    "average_30d": 206999
+    "last": 194501,
+    "average_30d": 217376
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 15.019802,
-    "price_to_book": 17.598608
+    "forward_pe": 15.09901,
+    "price_to_book": 17.691416
   },
   "company_info": {
     "name": "Eton Pharmaceuticals, Inc.",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 104510000.0,
+    "total_liabilities": 81384000.0,
+    "stockholders_equity": 23126000.0,
+    "cash": 37121000.0,
+    "marketable_securities": null,
+    "total_liquidity": 37121000.0,
+    "total_debt": 30847000.0,
+    "long_term_debt": 27591000.0,
+    "current_debt": 2776000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:26.043199",
+    "timestamp": "2026-01-29T16:31:39.852570",
     "url": "https://finance.yahoo.com/quote/ETON",
-    "data_hash": "e3be476a35d0fac4"
+    "data_hash": "2ab381b539db20aa"
   }
 }

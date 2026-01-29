@@ -2,42 +2,57 @@
   "ticker": "ACRS",
   "success": true,
   "price": {
-    "current": 3.505,
+    "current": 3.43,
     "currency": "USD",
     "day_high": 3.6267,
-    "day_low": 3.5,
+    "day_low": 3.42,
     "52_week_high": 4.89,
     "52_week_low": 1.05
   },
   "market_cap": {
-    "value": 379750080.0,
+    "value": 371624192.0,
     "currency": "USD"
   },
   "shares_outstanding": 108345239.0,
   "volume": {
-    "last": 174996,
-    "average_30d": 2878372
+    "last": 706407,
+    "average_30d": 3019938
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -6.1707745,
-    "price_to_book": 3.160505
+    "forward_pe": -6.0387325,
+    "price_to_book": 3.0928767
   },
   "company_info": {
     "name": "Aclaris Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 175534000.0,
+    "total_liabilities": 55434000.0,
+    "stockholders_equity": 120100000.0,
+    "cash": 25256000.0,
+    "marketable_securities": 70656000.0,
+    "total_liquidity": 95912000.0,
+    "total_debt": null,
+    "long_term_debt": null,
+    "current_debt": null,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:10.349561",
+    "timestamp": "2026-01-29T16:29:20.398775",
     "url": "https://finance.yahoo.com/quote/ACRS",
-    "data_hash": "16b70811f7a4818e"
+    "data_hash": "752d558ba767f23b"
   }
 }

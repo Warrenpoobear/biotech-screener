@@ -2,42 +2,57 @@
   "ticker": "ADCT",
   "success": true,
   "price": {
-    "current": 3.56,
+    "current": 3.76,
     "currency": "USD",
-    "day_high": 3.595,
+    "day_high": 3.805,
     "day_low": 3.5,
     "52_week_high": 4.8,
     "52_week_low": 1.05
   },
   "market_cap": {
-    "value": 441002496.0,
+    "value": 465777952.0,
     "currency": "USD"
   },
   "shares_outstanding": 123877111.0,
   "volume": {
-    "last": 142258,
-    "average_30d": 678748
+    "last": 685680,
+    "average_30d": 710184
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -2.3892617,
-    "price_to_book": -1.6832151
+    "forward_pe": -2.52349,
+    "price_to_book": -1.7777778
   },
   "company_info": {
     "name": "ADC Therapeutics SA",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 289758000.0,
+    "total_liabilities": 527941000.0,
+    "stockholders_equity": -238183000.0,
+    "cash": 234738000.0,
+    "marketable_securities": null,
+    "total_liquidity": 234738000.0,
+    "total_debt": 117266000.0,
+    "long_term_debt": 115206000.0,
+    "current_debt": 933000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:13.081445",
+    "timestamp": "2026-01-29T16:29:22.831179",
     "url": "https://finance.yahoo.com/quote/ADCT",
-    "data_hash": "81291cdea80eb562"
+    "data_hash": "b6b75d9419b46ec8"
   }
 }

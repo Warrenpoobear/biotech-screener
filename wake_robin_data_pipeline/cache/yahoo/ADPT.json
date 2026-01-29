@@ -2,7 +2,7 @@
   "ticker": "ADPT",
   "success": true,
   "price": {
-    "current": 18.185,
+    "current": 18.37,
     "currency": "USD",
     "day_high": 18.48,
     "day_low": 17.65,
@@ -10,34 +10,49 @@
     "52_week_low": 6.255
   },
   "market_cap": {
-    "value": 2776216320.0,
+    "value": 2804459520.0,
     "currency": "USD"
   },
   "shares_outstanding": 152665188.0,
   "volume": {
-    "last": 391206,
-    "average_30d": 1906118
+    "last": 1547413,
+    "average_30d": 1945424
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -31.199602,
-    "price_to_book": 13.570895
+    "forward_pe": -31.517004,
+    "price_to_book": 13.708956
   },
   "company_info": {
     "name": "Adaptive Biotechnologies Corporation",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 490610000.0,
+    "total_liabilities": 286357000.0,
+    "stockholders_equity": 204435000.0,
+    "cash": 55034000.0,
+    "marketable_securities": 157735000.0,
+    "total_liquidity": 212769000.0,
+    "total_debt": 81803000.0,
+    "long_term_debt": 72361000.0,
+    "current_debt": 9442000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:15.793452",
+    "timestamp": "2026-01-29T16:29:25.218128",
     "url": "https://finance.yahoo.com/quote/ADPT",
-    "data_hash": "3ada9fc470796df1"
+    "data_hash": "dbc650537cb0dedc"
   }
 }

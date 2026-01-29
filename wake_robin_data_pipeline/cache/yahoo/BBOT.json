@@ -2,42 +2,57 @@
   "ticker": "BBOT",
   "success": true,
   "price": {
-    "current": 12.585,
+    "current": 12.5,
     "currency": "USD",
     "day_high": 13.28,
-    "day_low": 12.585,
+    "day_low": 12.4,
     "52_week_high": 14.87,
     "52_week_low": 8.5
   },
   "market_cap": {
-    "value": 1006657664.0,
+    "value": 999858624.0,
     "currency": "USD"
   },
   "shares_outstanding": 79988687.0,
   "volume": {
-    "last": 61080,
-    "average_30d": 345640
+    "last": 252517,
+    "average_30d": 364877
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -4.9973593,
-    "price_to_book": 2.231383
+    "forward_pe": -4.963607,
+    "price_to_book": 2.2163122
   },
   "company_info": {
     "name": "BridgeBio Oncology Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 484793000.0,
+    "total_liabilities": 38093000.0,
+    "stockholders_equity": 446700000.0,
+    "cash": 408741000.0,
+    "marketable_securities": 59544000.0,
+    "total_liquidity": 468285000.0,
+    "total_debt": 2887000.0,
+    "long_term_debt": 2381000.0,
+    "current_debt": 506000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:06.053053",
+    "timestamp": "2026-01-29T16:30:17.695647",
     "url": "https://finance.yahoo.com/quote/BBOT",
-    "data_hash": "311b0e95b6505c1e"
+    "data_hash": "85ec47fe39118423"
   }
 }

@@ -2,42 +2,57 @@
   "ticker": "CERS",
   "success": true,
   "price": {
-    "current": 2.355,
+    "current": 2.32,
     "currency": "USD",
-    "day_high": 2.365,
+    "day_high": 2.38,
     "day_low": 2.29,
     "52_week_high": 2.96,
     "52_week_low": 1.12
   },
   "market_cap": {
-    "value": 452366080.0,
+    "value": 445643008.0,
     "currency": "USD"
   },
   "shares_outstanding": 192087501.0,
   "volume": {
-    "last": 376524,
-    "average_30d": 1516087
+    "last": 844860,
+    "average_30d": 1551526
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -94.2,
-    "price_to_book": 7.359375
+    "forward_pe": -92.799995,
+    "price_to_book": 7.25
   },
   "company_info": {
     "name": "Cerus Corporation",
     "sector": "Healthcare",
     "industry": "Medical Devices"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 215185000.0,
+    "total_liabilities": 152981000.0,
+    "stockholders_equity": 61463000.0,
+    "cash": 15670000.0,
+    "marketable_securities": 62842000.0,
+    "total_liquidity": 78512000.0,
+    "total_debt": 98186000.0,
+    "long_term_debt": 48655000.0,
+    "current_debt": 36249000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:34.115016",
+    "timestamp": "2026-01-29T16:30:45.422992",
     "url": "https://finance.yahoo.com/quote/CERS",
-    "data_hash": "dc64ab539712e8f7"
+    "data_hash": "a6d2cd4aa7d122a4"
   }
 }

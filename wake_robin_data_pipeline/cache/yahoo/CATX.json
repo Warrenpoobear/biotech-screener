@@ -2,42 +2,57 @@
   "ticker": "CATX",
   "success": true,
   "price": {
-    "current": 3.025,
+    "current": 4.26,
     "currency": "USD",
-    "day_high": 3.125,
+    "day_high": 6.1504,
     "day_low": 2.56,
-    "52_week_high": 5.39,
+    "52_week_high": 6.1504,
     "52_week_low": 1.6
   },
   "market_cap": {
-    "value": 224872432.0,
+    "value": 316679872.0,
     "currency": "USD"
   },
   "shares_outstanding": 74337990.0,
   "volume": {
-    "last": 2447239,
-    "average_30d": 1220569
+    "last": 79566087,
+    "average_30d": 4909289
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -2.2311716,
-    "price_to_book": 0.9284838
+    "forward_pe": -3.1420796,
+    "price_to_book": 1.3075508
   },
   "company_info": {
     "name": "Perspective Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Medical Devices"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 294825000.0,
+    "total_liabilities": 52609000.0,
+    "stockholders_equity": 242216000.0,
+    "cash": 26762000.0,
+    "marketable_securities": 147375000.0,
+    "total_liquidity": 174137000.0,
+    "total_debt": 3313000.0,
+    "long_term_debt": 1583000.0,
+    "current_debt": 55000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:26.841555",
+    "timestamp": "2026-01-29T16:30:38.933616",
     "url": "https://finance.yahoo.com/quote/CATX",
-    "data_hash": "fec4418c2f7ad9ed"
+    "data_hash": "cce575eb9dab30a2"
   }
 }

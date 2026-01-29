@@ -2,42 +2,57 @@
   "ticker": "GILD",
   "success": true,
   "price": {
-    "current": 139.95,
+    "current": 139.55,
     "currency": "USD",
     "day_high": 140.51,
-    "day_low": 138.935,
+    "day_low": 138.23,
     "52_week_high": 141.71,
     "52_week_low": 93.37
   },
   "market_cap": {
-    "value": 173650919424.0,
+    "value": 173154615296.0,
     "currency": "USD"
   },
   "shares_outstanding": 1240679623.0,
   "volume": {
-    "last": 1582734,
-    "average_30d": 6794414
+    "last": 7146139,
+    "average_30d": 7237192
   },
   "valuation": {
-    "pe_ratio": 21.664085,
-    "forward_pe": 15.911654,
-    "price_to_book": 8.069538
+    "pe_ratio": 21.602167,
+    "forward_pe": 15.866177,
+    "price_to_book": 8.046474
   },
   "company_info": {
     "name": "Gilead Sciences, Inc.",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - General"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 58533000000.0,
+    "total_liabilities": 37077000000.0,
+    "stockholders_equity": 21540000000.0,
+    "cash": 7330000000.0,
+    "marketable_securities": 19000000.0,
+    "total_liquidity": 7349000000.0,
+    "total_debt": 24941000000.0,
+    "long_term_debt": 22135000000.0,
+    "current_debt": 2806000000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:46.216551",
+    "timestamp": "2026-01-29T16:32:01.541594",
     "url": "https://finance.yahoo.com/quote/GILD",
-    "data_hash": "06d4662ad2efe972"
+    "data_hash": "b675f03ef476f647"
   }
 }

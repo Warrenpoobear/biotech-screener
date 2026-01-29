@@ -2,7 +2,7 @@
   "ticker": "CTKB",
   "success": true,
   "price": {
-    "current": 4.995,
+    "current": 5.01,
     "currency": "USD",
     "day_high": 5.11,
     "day_low": 4.91,
@@ -10,34 +10,49 @@
     "52_week_low": 2.37
   },
   "market_cap": {
-    "value": 638684800.0,
+    "value": 640602816.0,
     "currency": "USD"
   },
   "shares_outstanding": 127864830.0,
   "volume": {
-    "last": 252906,
-    "average_30d": 778254
+    "last": 729608,
+    "average_30d": 812919
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -333.0,
-    "price_to_book": 1.6869301
+    "forward_pe": -334.00003,
+    "price_to_book": 1.6919961
   },
   "company_info": {
     "name": "Cytek Biosciences, Inc.",
     "sector": "Healthcare",
     "industry": "Medical Devices"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 494919000.0,
+    "total_liabilities": 116348000.0,
+    "stockholders_equity": 378571000.0,
+    "cash": 93281000.0,
+    "marketable_securities": 168453000.0,
+    "total_liquidity": 261734000.0,
+    "total_debt": 24826000.0,
+    "long_term_debt": 655000.0,
+    "current_debt": 7585000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:55.567855",
+    "timestamp": "2026-01-29T16:31:08.023342",
     "url": "https://finance.yahoo.com/quote/CTKB",
-    "data_hash": "1162666c3faa1d3f"
+    "data_hash": "c94e0944bea49c05"
   }
 }

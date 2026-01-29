@@ -2,42 +2,57 @@
   "ticker": "DNLI",
   "success": true,
   "price": {
-    "current": 21.77,
+    "current": 21.59,
     "currency": "USD",
-    "day_high": 21.86,
+    "day_high": 21.98,
     "day_low": 20.67,
     "52_week_high": 24.345,
     "52_week_low": 10.57
   },
   "market_cap": {
-    "value": 3399567616.0,
+    "value": 3371459072.0,
     "currency": "USD"
   },
   "shares_outstanding": 156158364.0,
   "volume": {
-    "last": 399825,
-    "average_30d": 1579096
+    "last": 1490936,
+    "average_30d": 1646058
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -7.362789,
-    "price_to_book": 3.4462562
+    "forward_pe": -7.301912,
+    "price_to_book": 3.4177616
   },
   "company_info": {
     "name": "Denali Therapeutics Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1055621000.0,
+    "total_liabilities": 129424000.0,
+    "stockholders_equity": 926197000.0,
+    "cash": 90963000.0,
+    "marketable_securities": 757241000.0,
+    "total_liquidity": 848204000.0,
+    "total_debt": 44404000.0,
+    "long_term_debt": 35240000.0,
+    "current_debt": 9164000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:05.510133",
+    "timestamp": "2026-01-29T16:31:17.059253",
     "url": "https://finance.yahoo.com/quote/DNLI",
-    "data_hash": "af4ee3187b8e1d1b"
+    "data_hash": "c7fca549ff75b4fa"
   }
 }

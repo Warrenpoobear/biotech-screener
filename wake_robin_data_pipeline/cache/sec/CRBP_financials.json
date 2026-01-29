@@ -4,11 +4,11 @@
   "success": true,
   "financials": {
     "cash": 26983000.0,
-    "marketable_securities": 69744151.0,
-    "total_liquidity": 96727151.0,
-    "debt": 17893738.0,
-    "net_debt": -78833413.0,
-    "revenue_ttm": 1885682.0,
+    "marketable_securities": 76999000.0,
+    "total_liquidity": 103982000.0,
+    "debt": 0.0,
+    "net_debt": -103982000.0,
+    "revenue_ttm": null,
     "assets": 109514000.0,
     "liabilities": 17367000.0,
     "equity": 92147000.0,
@@ -16,17 +16,16 @@
   },
   "data_dates": {
     "cash": "2025-09-30",
-    "marketable_securities": "2021-09-30",
-    "debt": "2023-12-31",
-    "revenue": "2019-03-31",
+    "marketable_securities": "2025-09-30",
     "assets": "2025-09-30",
-    "liabilities": "2025-09-30"
+    "liabilities": "2025-09-30",
+    "debt": "2025-09-30"
   },
   "data_freshness": {
     "most_recent_date": "2025-09-30",
-    "oldest_date": "2019-03-31",
+    "oldest_date": "2025-09-30",
     "staleness_flags": [
-      "critical_staleness:2496d"
+      "stale_data:121d"
     ]
   },
   "coverage": {
@@ -34,15 +33,17 @@
     "has_marketable_securities": true,
     "has_total_liquidity": true,
     "has_debt": true,
-    "has_revenue": true,
+    "has_revenue": false,
     "has_balance_sheet": true,
-    "pct_complete": 100.0
+    "pct_complete": 75.0
   },
   "provenance": {
     "source": "SEC EDGAR Company Facts API",
-    "timestamp": "2026-01-29T15:53:22.923291",
+    "timestamp": "2026-01-29T16:18:30.232024",
     "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001595097.json",
     "cik": "0001595097",
-    "accounting_standard": "us-gaap"
+    "accounting_standard": "us-gaap",
+    "liabilities_method": "direct",
+    "equity_method": "direct"
   }
 }

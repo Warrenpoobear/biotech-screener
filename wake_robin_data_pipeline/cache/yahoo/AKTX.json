@@ -2,42 +2,57 @@
   "ticker": "AKTX",
   "success": true,
   "price": {
-    "current": 0.241,
+    "current": 0.2315,
     "currency": "USD",
     "day_high": 0.2635,
-    "day_low": 0.241,
+    "day_low": 0.225,
     "52_week_high": 1.73,
     "52_week_low": 0.218
   },
   "market_cap": {
-    "value": 8613275.0,
+    "value": 8273748.0,
     "currency": "USD"
   },
   "shares_outstanding": 35739731.0,
   "volume": {
-    "last": 218785,
-    "average_30d": 464153
+    "last": 603007,
+    "average_30d": 469657
   },
   "valuation": {
     "pe_ratio": Infinity,
-    "forward_pe": -0.8033333,
-    "price_to_book": 0.34626436
+    "forward_pe": -0.77166665,
+    "price_to_book": 0.33261496
   },
   "company_info": {
     "name": "Akari Therapeutics, Plc",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 45376000.0,
+    "total_liabilities": 22689000.0,
+    "stockholders_equity": 22687000.0,
+    "cash": 2484000.0,
+    "marketable_securities": null,
+    "total_liquidity": 2484000.0,
+    "total_debt": 2117000.0,
+    "long_term_debt": null,
+    "current_debt": 2117000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:18.487490",
+    "timestamp": "2026-01-29T16:29:27.800135",
     "url": "https://finance.yahoo.com/quote/AKTX",
-    "data_hash": "f4055143d678d402"
+    "data_hash": "1d20192b0fc7de87"
   }
 }

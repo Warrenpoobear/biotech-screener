@@ -2,42 +2,57 @@
   "ticker": "CNTA",
   "success": true,
   "price": {
-    "current": 24.6,
+    "current": 24.89,
     "currency": "USD",
     "day_high": 25.515,
-    "day_low": 24.57,
+    "day_low": 24.13,
     "52_week_high": 30.58,
     "52_week_low": 9.6
   },
   "market_cap": {
-    "value": 3593463296.0,
+    "value": 3635825152.0,
     "currency": "USD"
   },
   "shares_outstanding": 146075743.0,
   "volume": {
-    "last": 111782,
-    "average_30d": 1516499
+    "last": 1141489,
+    "average_30d": 1624218
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -14.677805,
-    "price_to_book": 10.962567
+    "forward_pe": -14.850835,
+    "price_to_book": 11.091801
   },
   "company_info": {
     "name": "Centessa Pharmaceuticals plc",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 448300000.0,
+    "total_liabilities": 146726000.0,
+    "stockholders_equity": 301574000.0,
+    "cash": 50811000.0,
+    "marketable_securities": 195403000.0,
+    "total_liquidity": 246214000.0,
+    "total_debt": 118259000.0,
+    "long_term_debt": 109816000.0,
+    "current_debt": 684000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:45.542856",
+    "timestamp": "2026-01-29T16:30:55.899746",
     "url": "https://finance.yahoo.com/quote/CNTA",
-    "data_hash": "f9bc93326768322e"
+    "data_hash": "62fd316b115b3732"
   }
 }

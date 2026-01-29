@@ -2,42 +2,57 @@
   "ticker": "ARQT",
   "success": true,
   "price": {
-    "current": 25.312,
+    "current": 25.73,
     "currency": "USD",
-    "day_high": 25.7479,
+    "day_high": 25.95,
     "day_low": 25.22,
     "52_week_high": 31.77,
     "52_week_low": 11.13
   },
   "market_cap": {
-    "value": 3100522496.0,
+    "value": 3151724032.0,
     "currency": "USD"
   },
   "shares_outstanding": 122492192.0,
   "volume": {
-    "last": 224741,
-    "average_30d": 1512961
+    "last": 1220661,
+    "average_30d": 1537379
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 53.69196,
-    "price_to_book": 19.263319
+    "forward_pe": 54.57862,
+    "price_to_book": 19.58143
   },
   "company_info": {
     "name": "Arcutis Biotherapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 370977000.0,
+    "total_liabilities": 212904000.0,
+    "stockholders_equity": 158073000.0,
+    "cash": 47120000.0,
+    "marketable_securities": 143948000.0,
+    "total_liquidity": 191068000.0,
+    "total_debt": 113774000.0,
+    "long_term_debt": 107498000.0,
+    "current_debt": 1000000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:44.514125",
+    "timestamp": "2026-01-29T16:29:56.832249",
     "url": "https://finance.yahoo.com/quote/ARQT",
-    "data_hash": "dd8c4b2f8ae8c2ed"
+    "data_hash": "aafb15eecce8a7f1"
   }
 }

@@ -39,9 +39,11 @@
   },
   "provenance": {
     "source": "SEC EDGAR Company Facts API",
-    "timestamp": "2026-01-29T15:55:45.072108",
+    "timestamp": "2026-01-29T16:20:27.929978",
     "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001345099.json",
     "cik": "0001345099",
-    "accounting_standard": "ifrs-full"
+    "accounting_standard": "ifrs-full",
+    "liabilities_method": "direct",
+    "equity_method": "derived"
   }
 }

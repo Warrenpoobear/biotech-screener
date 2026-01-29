@@ -2,42 +2,57 @@
   "ticker": "CGON",
   "success": true,
   "price": {
-    "current": 54.14,
+    "current": 53.42,
     "currency": "USD",
-    "day_high": 54.5999,
+    "day_high": 54.86,
     "day_low": 53.0,
     "52_week_high": 57.88,
     "52_week_low": 14.8
   },
   "market_cap": {
-    "value": 4473278976.0,
+    "value": 4413789184.0,
     "currency": "USD"
   },
   "shares_outstanding": 82624285.0,
   "volume": {
-    "last": 113828,
-    "average_30d": 1413933
+    "last": 608286,
+    "average_30d": 1478932
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -21.4158,
-    "price_to_book": 6.1627774
+    "forward_pe": -21.130995,
+    "price_to_book": 6.0808196
   },
   "company_info": {
     "name": "CG Oncology, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 729913000.0,
+    "total_liabilities": 42270000.0,
+    "stockholders_equity": 687643000.0,
+    "cash": 45145000.0,
+    "marketable_securities": 635118000.0,
+    "total_liquidity": 680263000.0,
+    "total_debt": 7241000.0,
+    "long_term_debt": 3000000.0,
+    "current_debt": 912000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:37.020428",
+    "timestamp": "2026-01-29T16:30:47.898673",
     "url": "https://finance.yahoo.com/quote/CGON",
-    "data_hash": "ffa238f80833b1cd"
+    "data_hash": "bdfdb1a95b724231"
   }
 }

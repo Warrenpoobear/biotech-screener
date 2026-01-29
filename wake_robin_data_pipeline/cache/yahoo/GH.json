@@ -2,42 +2,57 @@
   "ticker": "GH",
   "success": true,
   "price": {
-    "current": 107.38,
+    "current": 110.48,
     "currency": "USD",
-    "day_high": 109.61,
+    "day_high": 110.48,
     "day_low": 105.78,
     "52_week_high": 120.74,
     "52_week_low": 34.88
   },
   "market_cap": {
-    "value": 13945915392.0,
+    "value": 14348526592.0,
     "currency": "USD"
   },
   "shares_outstanding": 129874421.0,
   "volume": {
-    "last": 368107,
-    "average_30d": 1831909
+    "last": 1144724,
+    "average_30d": 1913363
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -74.589645,
-    "price_to_book": -37.863186
+    "forward_pe": -76.74301,
+    "price_to_book": -38.95628
   },
   "company_info": {
     "name": "Guardant Health, Inc.",
     "sector": "Healthcare",
     "industry": "Diagnostics & Research"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1276786000.0,
+    "total_liabilities": 1631259000.0,
+    "stockholders_equity": -354473000.0,
+    "cash": 580013000.0,
+    "marketable_securities": null,
+    "total_liquidity": 580013000.0,
+    "total_debt": 1326376000.0,
+    "long_term_debt": 1114594000.0,
+    "current_debt": 26395000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:43.231585",
+    "timestamp": "2026-01-29T16:31:58.942816",
     "url": "https://finance.yahoo.com/quote/GH",
-    "data_hash": "d4ee59595dba0d74"
+    "data_hash": "e55ae3b36d046017"
   }
 }

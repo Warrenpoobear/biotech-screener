@@ -2,42 +2,57 @@
   "ticker": "AUPH",
   "success": true,
   "price": {
-    "current": 14.59,
+    "current": 14.65,
     "currency": "USD",
-    "day_high": 14.67,
+    "day_high": 14.82,
     "day_low": 14.405,
     "52_week_high": 16.54,
     "52_week_low": 6.55
   },
   "market_cap": {
-    "value": 1923553792.0,
+    "value": 1931464192.0,
     "currency": "USD"
   },
   "shares_outstanding": 131840559.0,
   "volume": {
-    "last": 153970,
-    "average_30d": 1014966
+    "last": 630891,
+    "average_30d": 1053590
   },
   "valuation": {
-    "pe_ratio": 26.053572,
-    "forward_pe": 15.604279,
-    "price_to_book": 5.259553
+    "pe_ratio": 26.160713,
+    "forward_pe": 15.668448,
+    "price_to_book": 5.2811823
   },
   "company_info": {
     "name": "Aurinia Pharmaceuticals Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 527528000.0,
+    "total_liabilities": 161757000.0,
+    "stockholders_equity": 365771000.0,
+    "cash": 73189000.0,
+    "marketable_securities": 278619000.0,
+    "total_liquidity": 351808000.0,
+    "total_debt": 78212000.0,
+    "long_term_debt": 60846000.0,
+    "current_debt": 17366000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:55.694878",
+    "timestamp": "2026-01-29T16:30:05.480166",
     "url": "https://finance.yahoo.com/quote/AUPH",
-    "data_hash": "deea64fd788d0047"
+    "data_hash": "f721fe5f0dc9e29f"
   }
 }

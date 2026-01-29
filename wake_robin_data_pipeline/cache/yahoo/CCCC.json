@@ -2,42 +2,57 @@
   "ticker": "CCCC",
   "success": true,
   "price": {
-    "current": 1.965,
+    "current": 1.96,
     "currency": "USD",
     "day_high": 2.04,
-    "day_low": 1.95,
+    "day_low": 1.935,
     "52_week_high": 3.84,
     "52_week_low": 1.085
   },
   "market_cap": {
-    "value": 190436832.0,
+    "value": 189952256.0,
     "currency": "USD"
   },
   "shares_outstanding": 96914418.0,
   "volume": {
-    "last": 356507,
-    "average_30d": 1467286
+    "last": 929141,
+    "average_30d": 1523171
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -1.5271982,
-    "price_to_book": 0.943804
+    "forward_pe": -1.5233122,
+    "price_to_book": 0.9414025
   },
   "company_info": {
     "name": "C4 Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 265488000.0,
+    "total_liabilities": 111080000.0,
+    "stockholders_equity": 154408000.0,
+    "cash": 58809000.0,
+    "marketable_securities": 133075000.0,
+    "total_liquidity": 191884000.0,
+    "total_debt": 61463000.0,
+    "long_term_debt": 55247000.0,
+    "current_debt": 6216000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:28.299059",
+    "timestamp": "2026-01-29T16:30:40.139925",
     "url": "https://finance.yahoo.com/quote/CCCC",
-    "data_hash": "d27c4d4b0343ef31"
+    "data_hash": "28113be7b83e3017"
   }
 }

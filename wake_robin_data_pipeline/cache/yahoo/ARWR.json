@@ -2,42 +2,57 @@
   "ticker": "ARWR",
   "success": true,
   "price": {
-    "current": 67.26,
+    "current": 69.12,
     "currency": "USD",
-    "day_high": 68.96,
+    "day_high": 69.85,
     "day_low": 65.4501,
     "52_week_high": 76.76,
     "52_week_low": 9.57
   },
   "market_cap": {
-    "value": 9417118720.0,
+    "value": 9677539328.0,
     "currency": "USD"
   },
   "shares_outstanding": 140010690.0,
   "volume": {
-    "last": 402650,
-    "average_30d": 2488097
+    "last": 1819887,
+    "average_30d": 2631423
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -15.321185,
-    "price_to_book": 19.586489
+    "forward_pe": -15.744876,
+    "price_to_book": 20.128132
   },
   "company_info": {
     "name": "Arrowhead Pharmaceuticals, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1385295000.0,
+    "total_liabilities": 881879000.0,
+    "stockholders_equity": 466052000.0,
+    "cash": 88706000.0,
+    "marketable_securities": 830660000.0,
+    "total_liquidity": 919366000.0,
+    "total_debt": 366284000.0,
+    "long_term_debt": 214883000.0,
+    "current_debt": 40000000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:48.649443",
+    "timestamp": "2026-01-29T16:30:00.433852",
     "url": "https://finance.yahoo.com/quote/ARWR",
-    "data_hash": "d9735b18f70b5433"
+    "data_hash": "67c03a999190c81e"
   }
 }

@@ -2,7 +2,7 @@
   "ticker": "BEAM",
   "success": true,
   "price": {
-    "current": 29.04,
+    "current": 29.29,
     "currency": "USD",
     "day_high": 29.93,
     "day_low": 28.64,
@@ -10,34 +10,49 @@
     "52_week_low": 13.525
   },
   "market_cap": {
-    "value": 2946832384.0,
+    "value": 2972201216.0,
     "currency": "USD"
   },
   "shares_outstanding": 101474944.0,
   "volume": {
-    "last": 598234,
-    "average_30d": 1992237
+    "last": 1424589,
+    "average_30d": 2056968
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -6.310862,
-    "price_to_book": 2.963568
+    "forward_pe": -6.365191,
+    "price_to_book": 2.9890807
   },
   "company_info": {
     "name": "Beam Therapeutics Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1311081000.0,
+    "total_liabilities": 345079000.0,
+    "stockholders_equity": 966002000.0,
+    "cash": 267960000.0,
+    "marketable_securities": 807010000.0,
+    "total_liquidity": 1074970000.0,
+    "total_debt": 151420000.0,
+    "long_term_debt": 138732000.0,
+    "current_debt": 12688000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:13.763227",
+    "timestamp": "2026-01-29T16:30:24.117719",
     "url": "https://finance.yahoo.com/quote/BEAM",
-    "data_hash": "c3c2d6064472c412"
+    "data_hash": "ff49768eecba01a8"
   }
 }

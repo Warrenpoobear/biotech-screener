@@ -2,42 +2,57 @@
   "ticker": "CAI",
   "success": true,
   "price": {
-    "current": 25.4925,
+    "current": 25.2,
     "currency": "USD",
     "day_high": 26.21,
-    "day_low": 25.27,
+    "day_low": 24.695,
     "52_week_high": 42.5,
     "52_week_low": 22.86
   },
   "market_cap": {
-    "value": 7192630272.0,
+    "value": 7110102528.0,
     "currency": "USD"
   },
   "shares_outstanding": 282146923.0,
   "volume": {
-    "last": 1239453,
-    "average_30d": 2330661
+    "last": 3497601,
+    "average_30d": 2504547
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 117.072334,
-    "price_to_book": 15.030955
+    "forward_pe": 115.72905,
+    "price_to_book": 14.858491
   },
   "company_info": {
     "name": "Caris Life Sciences, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 984571000.0,
+    "total_liabilities": 506207000.0,
+    "stockholders_equity": 478364000.0,
+    "cash": 753221000.0,
+    "marketable_securities": 2272000.0,
+    "total_liquidity": 755493000.0,
+    "total_debt": 426738000.0,
+    "long_term_debt": 376296000.0,
+    "current_debt": 164000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:25.467748",
+    "timestamp": "2026-01-29T16:30:37.661179",
     "url": "https://finance.yahoo.com/quote/CAI",
-    "data_hash": "379eb2cf60308b22"
+    "data_hash": "36db54d948aa7498"
   }
 }

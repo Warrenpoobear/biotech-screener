@@ -2,7 +2,7 @@
   "ticker": "AXSM",
   "success": true,
   "price": {
-    "current": 185.645,
+    "current": 185.265,
     "currency": "USD",
     "day_high": 187.1,
     "day_low": 181.13,
@@ -10,34 +10,49 @@
     "52_week_low": 86.99
   },
   "market_cap": {
-    "value": 9358855168.0,
+    "value": 9339698176.0,
     "currency": "USD"
   },
   "shares_outstanding": 50412640.0,
   "volume": {
-    "last": 74158,
-    "average_30d": 831663
+    "last": 475992,
+    "average_30d": 864638
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 489.99655,
-    "price_to_book": 126.633705
+    "forward_pe": 488.99356,
+    "price_to_book": 126.37449
   },
   "company_info": {
     "name": "Axsome Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 669250000.0,
+    "total_liabilities": 595523000.0,
+    "stockholders_equity": 73727000.0,
+    "cash": 325272000.0,
+    "marketable_securities": null,
+    "total_liquidity": 325272000.0,
+    "total_debt": 218596000.0,
+    "long_term_debt": 117642000.0,
+    "current_debt": 70000000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:03.038607",
+    "timestamp": "2026-01-29T16:30:13.901864",
     "url": "https://finance.yahoo.com/quote/AXSM",
-    "data_hash": "e8873d4ca9a93144"
+    "data_hash": "c6d4cc6b60acd126"
   }
 }

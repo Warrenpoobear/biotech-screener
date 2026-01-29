@@ -2,42 +2,57 @@
   "ticker": "EDIT",
   "success": true,
   "price": {
-    "current": 2.0485,
+    "current": 2.06,
     "currency": "USD",
-    "day_high": 2.09,
+    "day_high": 2.11,
     "day_low": 2.01,
     "52_week_high": 4.537,
     "52_week_low": 0.91
   },
   "market_cap": {
-    "value": 199971824.0,
+    "value": 201094432.0,
     "currency": "USD"
   },
   "shares_outstanding": 97618660.0,
   "volume": {
-    "last": 542432,
-    "average_30d": 1883115
+    "last": 1288080,
+    "average_30d": 1913901
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -1.8001671,
-    "price_to_book": 14.225696
+    "forward_pe": -1.8102729,
+    "price_to_book": 14.305555
   },
   "company_info": {
     "name": "Editas Medicine, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 201751000.0,
+    "total_liabilities": 188298000.0,
+    "stockholders_equity": 13453000.0,
+    "cash": 165648000.0,
+    "marketable_securities": null,
+    "total_liquidity": 165648000.0,
+    "total_debt": 19652000.0,
+    "long_term_debt": 13564000.0,
+    "current_debt": 6088000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:16.835572",
+    "timestamp": "2026-01-29T16:31:27.783975",
     "url": "https://finance.yahoo.com/quote/EDIT",
-    "data_hash": "f5225e7ba6621b94"
+    "data_hash": "d74d2b38ea999b48"
   }
 }

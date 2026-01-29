@@ -2,7 +2,7 @@
   "ticker": "BDTX",
   "success": true,
   "price": {
-    "current": 2.635,
+    "current": 2.63,
     "currency": "USD",
     "day_high": 2.7,
     "day_low": 2.565,
@@ -10,34 +10,49 @@
     "52_week_low": 1.195
   },
   "market_cap": {
-    "value": 150128896.0,
+    "value": 149844032.0,
     "currency": "USD"
   },
   "shares_outstanding": 56974913.0,
   "volume": {
-    "last": 274147,
-    "average_30d": 902811
+    "last": 593027,
+    "average_30d": 926010
   },
   "valuation": {
-    "pe_ratio": 7.1216216,
-    "forward_pe": -4.3916664,
-    "price_to_book": 1.1896163
+    "pe_ratio": 7.1081085,
+    "forward_pe": -4.383333,
+    "price_to_book": 1.187359
   },
   "company_info": {
     "name": "Black Diamond Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 157733000.0,
+    "total_liabilities": 31581000.0,
+    "stockholders_equity": 126152000.0,
+    "cash": 30864000.0,
+    "marketable_securities": 104639000.0,
+    "total_liquidity": 135503000.0,
+    "total_debt": 19670000.0,
+    "long_term_debt": 16036000.0,
+    "current_debt": 3634000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:12.229556",
+    "timestamp": "2026-01-29T16:30:22.850355",
     "url": "https://finance.yahoo.com/quote/BDTX",
-    "data_hash": "1b8ab99e69e6f5d8"
+    "data_hash": "daf73ef0d28a73a3"
   }
 }

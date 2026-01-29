@@ -2,42 +2,57 @@
   "ticker": "GBIO",
   "success": true,
   "price": {
-    "current": 5.57,
+    "current": 5.61,
     "currency": "USD",
-    "day_high": 5.6,
+    "day_high": 5.645,
     "day_low": 5.53,
     "52_week_high": 8.66,
     "52_week_low": 3.0
   },
   "market_cap": {
-    "value": 37533696.0,
+    "value": 37803240.0,
     "currency": "USD"
   },
   "shares_outstanding": 6738545.0,
   "volume": {
-    "last": 12757,
-    "average_30d": 88811
+    "last": 53227,
+    "average_30d": 92044
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -4.1567163,
-    "price_to_book": 0.742073
+    "forward_pe": -4.1865673,
+    "price_to_book": 0.7474021
   },
   "company_info": {
     "name": "Generation Bio Co.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 121896000.0,
+    "total_liabilities": 71336000.0,
+    "stockholders_equity": 50560000.0,
+    "cash": 21940000.0,
+    "marketable_securities": 67682000.0,
+    "total_liquidity": 89622000.0,
+    "total_debt": 26096000.0,
+    "long_term_debt": 19744000.0,
+    "current_debt": 6352000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:40.236588",
+    "timestamp": "2026-01-29T16:31:56.456375",
     "url": "https://finance.yahoo.com/quote/GBIO",
-    "data_hash": "39cac91dafa2fc9f"
+    "data_hash": "28b0d4ebe651470e"
   }
 }

@@ -2,7 +2,7 @@
   "ticker": "CTMX",
   "success": true,
   "price": {
-    "current": 5.755,
+    "current": 5.74,
     "currency": "USD",
     "day_high": 6.14,
     "day_low": 5.65,
@@ -10,34 +10,49 @@
     "52_week_low": 0.4
   },
   "market_cap": {
-    "value": 975100672.0,
+    "value": 972559104.0,
     "currency": "USD"
   },
   "shares_outstanding": 169435395.0,
   "volume": {
-    "last": 709153,
-    "average_30d": 3080356
+    "last": 1545304,
+    "average_30d": 3185089
   },
   "valuation": {
-    "pe_ratio": 19.183332,
-    "forward_pe": -15.765828,
-    "price_to_book": 8.840245
+    "pe_ratio": 19.133331,
+    "forward_pe": -15.724734,
+    "price_to_book": 8.8172035
   },
   "company_info": {
     "name": "CytomX Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 158254000.0,
+    "total_liabilities": 50865000.0,
+    "stockholders_equity": 107389000.0,
+    "cash": 34185000.0,
+    "marketable_securities": 109441000.0,
+    "total_liquidity": 143626000.0,
+    "total_debt": 5596000.0,
+    "long_term_debt": 0.0,
+    "current_debt": 5596000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:56.900369",
+    "timestamp": "2026-01-29T16:31:09.250910",
     "url": "https://finance.yahoo.com/quote/CTMX",
-    "data_hash": "9c294a5e289af214"
+    "data_hash": "b2490cbfccf2ac9c"
   }
 }

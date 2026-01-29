@@ -2,7 +2,7 @@
   "ticker": "EYPT",
   "success": true,
   "price": {
-    "current": 14.81,
+    "current": 14.75,
     "currency": "USD",
     "day_high": 15.275,
     "day_low": 14.64,
@@ -10,34 +10,49 @@
     "52_week_low": 3.91
   },
   "market_cap": {
-    "value": 1226078720.0,
+    "value": 1221111424.0,
     "currency": "USD"
   },
   "shares_outstanding": 82787220.0,
   "volume": {
-    "last": 176948,
-    "average_30d": 864329
+    "last": 647082,
+    "average_30d": 894670
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -5.2439632,
-    "price_to_book": 5.147723
+    "forward_pe": -5.2227182,
+    "price_to_book": 5.1268682
   },
   "company_info": {
     "name": "EyePoint, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 251695000.0,
+    "total_liabilities": 51513000.0,
+    "stockholders_equity": 200182000.0,
+    "cash": 74577000.0,
+    "marketable_securities": 129445000.0,
+    "total_liquidity": 204022000.0,
+    "total_debt": 21301000.0,
+    "long_term_debt": 21301000.0,
+    "current_debt": null,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:28.930498",
+    "timestamp": "2026-01-29T16:31:44.802776",
     "url": "https://finance.yahoo.com/quote/EYPT",
-    "data_hash": "72c7a663ae00e8da"
+    "data_hash": "ca932f65adc8561f"
   }
 }

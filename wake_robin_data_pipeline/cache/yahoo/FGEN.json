@@ -16,7 +16,7 @@
   "shares_outstanding": 4045445.0,
   "volume": {
     "last": 31124,
-    "average_30d": 22191
+    "average_30d": 21836
   },
   "valuation": {
     "pe_ratio": null,
@@ -28,15 +28,30 @@
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 137014000.0,
+    "total_liabilities": 119529000.0,
+    "stockholders_equity": -17028000.0,
+    "cash": 117975000.0,
+    "marketable_securities": null,
+    "total_liquidity": 117975000.0,
+    "total_debt": null,
+    "long_term_debt": null,
+    "current_debt": null,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:33.126467",
+    "timestamp": "2026-01-29T16:31:48.632665",
     "url": "https://finance.yahoo.com/quote/FGEN",
     "data_hash": "4435d499cb38ca03"
   }

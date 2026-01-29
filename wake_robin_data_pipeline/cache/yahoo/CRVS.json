@@ -2,42 +2,57 @@
   "ticker": "CRVS",
   "success": true,
   "price": {
-    "current": 20.9,
+    "current": 20.94,
     "currency": "USD",
     "day_high": 22.1,
-    "day_low": 20.5,
+    "day_low": 20.38,
     "52_week_high": 26.95,
     "52_week_low": 2.54
   },
   "market_cap": {
-    "value": 1750743808.0,
+    "value": 1754094592.0,
     "currency": "USD"
   },
   "shares_outstanding": 83767650.0,
   "volume": {
-    "last": 602662,
-    "average_30d": 7001940
+    "last": 2243851,
+    "average_30d": 7344502
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -33.983738,
-    "price_to_book": 21.748178
+    "forward_pe": -34.048782,
+    "price_to_book": 21.789803
   },
   "company_info": {
     "name": "Corvus Pharmaceuticals, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 80474000.0,
+    "total_liabilities": 8706000.0,
+    "stockholders_equity": 71768000.0,
+    "cash": 2867000.0,
+    "marketable_securities": 62822000.0,
+    "total_liquidity": 65689000.0,
+    "total_debt": 1011000.0,
+    "long_term_debt": 632000.0,
+    "current_debt": 379000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:55.242505",
+    "timestamp": "2026-01-29T16:31:06.459347",
     "url": "https://finance.yahoo.com/quote/CRVS",
-    "data_hash": "949e2c52fc31fea8"
+    "data_hash": "10f5ae5dd3cded09"
   }
 }

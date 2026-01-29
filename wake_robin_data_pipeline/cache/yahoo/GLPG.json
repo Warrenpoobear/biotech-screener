@@ -2,7 +2,7 @@
   "ticker": "GLPG",
   "success": true,
   "price": {
-    "current": 33.97,
+    "current": 34.13,
     "currency": "USD",
     "day_high": 34.35,
     "day_low": 33.95,
@@ -10,34 +10,49 @@
     "52_week_low": 22.36
   },
   "market_cap": {
-    "value": 2238523648.0,
+    "value": 2249067264.0,
     "currency": "USD"
   },
   "shares_outstanding": 65897071.0,
   "volume": {
-    "last": 24850,
-    "average_30d": 118075
+    "last": 56834,
+    "average_30d": 120249
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 148.78789,
-    "price_to_book": 0.7612273
+    "forward_pe": 149.4887,
+    "price_to_book": 0.7648127
   },
   "company_info": {
     "name": "Galapagos NV",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 3511914000.0,
+    "total_liabilities": 1064951000.0,
+    "stockholders_equity": 2446963000.0,
+    "cash": 64458000.0,
+    "marketable_securities": 2985656000.0,
+    "total_liquidity": 3050114000.0,
+    "total_debt": 7502000.0,
+    "long_term_debt": 5764000.0,
+    "current_debt": 1738000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:47.655527",
+    "timestamp": "2026-01-29T16:32:03.234784",
     "url": "https://finance.yahoo.com/quote/GLPG",
-    "data_hash": "401f294fdff4f9d1"
+    "data_hash": "7e47b3b2cc3869b3"
   }
 }

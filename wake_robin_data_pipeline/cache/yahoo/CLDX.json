@@ -2,7 +2,7 @@
   "ticker": "CLDX",
   "success": true,
   "price": {
-    "current": 24.77,
+    "current": 24.69,
     "currency": "USD",
     "day_high": 25.0978,
     "day_low": 24.3709,
@@ -10,34 +10,49 @@
     "52_week_low": 14.4
   },
   "market_cap": {
-    "value": 1645953408.0,
+    "value": 1640637440.0,
     "currency": "USD"
   },
   "shares_outstanding": 66449471.0,
   "volume": {
-    "last": 56631,
-    "average_30d": 667951
+    "last": 383651,
+    "average_30d": 691931
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -5.606432,
-    "price_to_book": 2.750694
+    "forward_pe": -5.5883245,
+    "price_to_book": 2.74181
   },
   "company_info": {
     "name": "Celldex Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 648439000.0,
+    "total_liabilities": 50076000.0,
+    "stockholders_equity": 598363000.0,
+    "cash": 36037000.0,
+    "marketable_securities": 547186000.0,
+    "total_liquidity": 583223000.0,
+    "total_debt": 2621000.0,
+    "long_term_debt": 1068000.0,
+    "current_debt": 1553000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:39.883045",
+    "timestamp": "2026-01-29T16:30:50.753754",
     "url": "https://finance.yahoo.com/quote/CLDX",
-    "data_hash": "78514c6c10df6675"
+    "data_hash": "ddec6f91526828cd"
   }
 }

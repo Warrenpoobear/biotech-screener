@@ -2,7 +2,7 @@
   "ticker": "CYTK",
   "success": true,
   "price": {
-    "current": 64.64,
+    "current": 65.6,
     "currency": "USD",
     "day_high": 65.8797,
     "day_low": 64.29,
@@ -10,34 +10,49 @@
     "52_week_low": 29.31
   },
   "market_cap": {
-    "value": 7903204864.0,
+    "value": 8020579328.0,
     "currency": "USD"
   },
   "shares_outstanding": 122264929.0,
   "volume": {
-    "last": 254597,
-    "average_30d": 1714227
+    "last": 1650760,
+    "average_30d": 1784601
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -10.873002,
-    "price_to_book": -15.166588
+    "forward_pe": -11.034482,
+    "price_to_book": -15.391834
   },
   "company_info": {
     "name": "Cytokinetics, Incorporated",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1436557000.0,
+    "total_liabilities": 1957680000.0,
+    "stockholders_equity": -521123000.0,
+    "cash": 225467000.0,
+    "marketable_securities": 737068000.0,
+    "total_liquidity": 962535000.0,
+    "total_debt": 1196853000.0,
+    "long_term_debt": 1048271000.0,
+    "current_debt": 17280000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:01.283554",
+    "timestamp": "2026-01-29T16:31:13.182040",
     "url": "https://finance.yahoo.com/quote/CYTK",
-    "data_hash": "f43169c05e45130e"
+    "data_hash": "1b2f50637449882c"
   }
 }

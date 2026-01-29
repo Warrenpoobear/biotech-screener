@@ -2,7 +2,7 @@
   "ticker": "GHRS",
   "success": true,
   "price": {
-    "current": 16.06,
+    "current": 16.24,
     "currency": "USD",
     "day_high": 16.48,
     "day_low": 15.825,
@@ -10,34 +10,49 @@
     "52_week_low": 7.98
   },
   "market_cap": {
-    "value": 996192064.0,
+    "value": 1007357376.0,
     "currency": "USD"
   },
   "shares_outstanding": 62029395.0,
   "volume": {
-    "last": 23770,
-    "average_30d": 640912
+    "last": 102397,
+    "average_30d": 668633
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -10.257327,
-    "price_to_book": 3.4184759
+    "forward_pe": -10.372292,
+    "price_to_book": 3.4567902
   },
   "company_info": {
     "name": "GH Research PLC",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 302022000.0,
+    "total_liabilities": 10625000.0,
+    "stockholders_equity": 291397000.0,
+    "cash": 249654000.0,
+    "marketable_securities": 38853000.0,
+    "total_liquidity": 288507000.0,
+    "total_debt": 582000.0,
+    "long_term_debt": 217000.0,
+    "current_debt": 365000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:44.687736",
+    "timestamp": "2026-01-29T16:32:00.226652",
     "url": "https://finance.yahoo.com/quote/GHRS",
-    "data_hash": "0d46dc60f126f8f5"
+    "data_hash": "6b6d3e69c86766df"
   }
 }

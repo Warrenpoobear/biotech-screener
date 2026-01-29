@@ -39,9 +39,11 @@
   },
   "provenance": {
     "source": "SEC EDGAR Company Facts API",
-    "timestamp": "2026-01-29T15:51:33.827831",
+    "timestamp": "2026-01-29T16:17:04.096847",
     "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001781174.json",
     "cik": "0001781174",
-    "accounting_standard": "us-gaap"
+    "accounting_standard": "us-gaap",
+    "liabilities_method": "direct",
+    "equity_method": "direct"
   }
 }

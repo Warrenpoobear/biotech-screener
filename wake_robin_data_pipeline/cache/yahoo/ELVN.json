@@ -2,42 +2,57 @@
   "ticker": "ELVN",
   "success": true,
   "price": {
-    "current": 25.49,
+    "current": 25.67,
     "currency": "USD",
     "day_high": 25.75,
-    "day_low": 25.0,
+    "day_low": 24.895,
     "52_week_high": 29.98,
     "52_week_low": 13.3
   },
   "market_cap": {
-    "value": 1512763008.0,
+    "value": 1523445632.0,
     "currency": "USD"
   },
   "shares_outstanding": 59347317.0,
   "volume": {
-    "last": 88842,
-    "average_30d": 1407965
+    "last": 1095130,
+    "average_30d": 1505092
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -10.755275,
-    "price_to_book": 3.1727655
+    "forward_pe": -10.831224,
+    "price_to_book": 3.1951704
   },
   "company_info": {
     "name": "Enliven Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 490875000.0,
+    "total_liabilities": 14753000.0,
+    "stockholders_equity": 476122000.0,
+    "cash": 101732000.0,
+    "marketable_securities": 375833000.0,
+    "total_liquidity": 477565000.0,
+    "total_debt": 387000.0,
+    "long_term_debt": null,
+    "current_debt": 387000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:19.734810",
+    "timestamp": "2026-01-29T16:31:30.308415",
     "url": "https://finance.yahoo.com/quote/ELVN",
-    "data_hash": "36f3199dbd0f0102"
+    "data_hash": "04488eb623f42fe4"
   }
 }

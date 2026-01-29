@@ -16,15 +16,15 @@
   },
   "data_dates": {
     "cash": "2025-09-30",
-    "debt": "2021-12-31",
     "assets": "2025-09-30",
-    "liabilities": "2025-09-30"
+    "liabilities": "2025-09-30",
+    "debt": "2025-09-30"
   },
   "data_freshness": {
     "most_recent_date": "2025-09-30",
-    "oldest_date": "2021-12-31",
+    "oldest_date": "2025-09-30",
     "staleness_flags": [
-      "critical_staleness:1490d"
+      "stale_data:121d"
     ]
   },
   "coverage": {
@@ -38,9 +38,11 @@
   },
   "provenance": {
     "source": "SEC EDGAR Company Facts API",
-    "timestamp": "2026-01-29T15:53:44.062116",
+    "timestamp": "2026-01-29T16:18:46.987155",
     "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001853816.json",
     "cik": "0001853816",
-    "accounting_standard": "us-gaap"
+    "accounting_standard": "us-gaap",
+    "liabilities_method": "direct",
+    "equity_method": "direct"
   }
 }

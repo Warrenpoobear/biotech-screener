@@ -2,42 +2,57 @@
   "ticker": "DAWN",
   "success": true,
   "price": {
-    "current": 11.29,
+    "current": 11.16,
     "currency": "USD",
     "day_high": 12.15,
-    "day_low": 11.28,
+    "day_low": 11.11,
     "52_week_high": 13.2,
     "52_week_low": 5.635
   },
   "market_cap": {
-    "value": 1159206400.0,
+    "value": 1145858560.0,
     "currency": "USD"
   },
   "shares_outstanding": 102675502.0,
   "volume": {
-    "last": 756280,
-    "average_30d": 2617830
+    "last": 2877500,
+    "average_30d": 2809185
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -20.787685,
-    "price_to_book": 2.5711684
+    "forward_pe": -20.548323,
+    "price_to_book": 2.5415623
   },
   "company_info": {
     "name": "Day One Biopharmaceuticals, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 513780000.0,
+    "total_liabilities": 62912000.0,
+    "stockholders_equity": 450868000.0,
+    "cash": 43277000.0,
+    "marketable_securities": 408303000.0,
+    "total_liquidity": 451580000.0,
+    "total_debt": 2893000.0,
+    "long_term_debt": 2732000.0,
+    "current_debt": 161000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:02.676555",
+    "timestamp": "2026-01-29T16:31:14.467679",
     "url": "https://finance.yahoo.com/quote/DAWN",
-    "data_hash": "9158fbee965aaba1"
+    "data_hash": "86ace69c2f9beb2e"
   }
 }

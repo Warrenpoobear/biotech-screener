@@ -2,42 +2,57 @@
   "ticker": "ANRO",
   "success": true,
   "price": {
-    "current": 14.865,
+    "current": 15.32,
     "currency": "USD",
-    "day_high": 15.44,
+    "day_high": 15.5,
     "day_low": 14.78,
     "52_week_high": 20.908,
     "52_week_low": 1.6
   },
   "market_cap": {
-    "value": 461801088.0,
+    "value": 475936256.0,
     "currency": "USD"
   },
   "shares_outstanding": 31066335.0,
   "volume": {
-    "last": 79343,
-    "average_30d": 188479
+    "last": 295547,
+    "average_30d": 194549
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -6.978873,
-    "price_to_book": 3.6203117
+    "forward_pe": -7.1924877,
+    "price_to_book": 3.731125
   },
   "company_info": {
     "name": "Alto Neuroscience, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 147006000.0,
+    "total_liabilities": 35449000.0,
+    "stockholders_equity": 111557000.0,
+    "cash": 137816000.0,
+    "marketable_securities": null,
+    "total_liquidity": 137816000.0,
+    "total_debt": 27522000.0,
+    "long_term_debt": 22438000.0,
+    "current_debt": 1118000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:36.315608",
+    "timestamp": "2026-01-29T16:29:46.939679",
     "url": "https://finance.yahoo.com/quote/ANRO",
-    "data_hash": "42cd62d9b13ecb3e"
+    "data_hash": "fc1021f154e11923"
   }
 }

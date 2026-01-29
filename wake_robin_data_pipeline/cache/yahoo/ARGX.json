@@ -2,7 +2,7 @@
   "ticker": "ARGX",
   "success": true,
   "price": {
-    "current": 843.79,
+    "current": 847.72,
     "currency": "USD",
     "day_high": 852.45,
     "day_low": 840.55,
@@ -10,34 +10,49 @@
     "52_week_low": 510.055
   },
   "market_cap": {
-    "value": 52216598528.0,
+    "value": 52459802624.0,
     "currency": "USD"
   },
   "shares_outstanding": 61883406.0,
   "volume": {
-    "last": 63261,
-    "average_30d": 378489
+    "last": 183464,
+    "average_30d": 394226
   },
   "valuation": {
-    "pe_ratio": 36.121147,
-    "forward_pe": 26.05581,
-    "price_to_book": 8.466772
+    "pe_ratio": 36.289383,
+    "forward_pe": 26.177168,
+    "price_to_book": 8.5062065
   },
   "company_info": {
     "name": "argenx SE",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-06-30",
+    "total_assets": 7175592000.0,
+    "total_liabilities": 1079840000.0,
+    "stockholders_equity": 6095752000.0,
+    "cash": 2085976000.0,
+    "marketable_securities": 1842200000.0,
+    "total_liquidity": 3928176000.0,
+    "total_debt": 43152000.0,
+    "long_term_debt": 35568000.0,
+    "current_debt": 7584000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T10:59:11.058300",
+    "timestamp": "2026-01-29T16:29:55.669880",
     "url": "https://finance.yahoo.com/quote/ARGX",
-    "data_hash": "0a7cf95ebe152f69"
+    "data_hash": "3c5d55757465ba9d"
   }
 }

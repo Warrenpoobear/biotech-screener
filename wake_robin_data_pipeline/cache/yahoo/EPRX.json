@@ -2,42 +2,57 @@
   "ticker": "EPRX",
   "success": true,
   "price": {
-    "current": 8.32,
+    "current": 8.35,
     "currency": "USD",
     "day_high": 8.68,
-    "day_low": 8.32,
+    "day_low": 8.24,
     "52_week_high": 9.32,
     "52_week_low": 2.68
   },
   "market_cap": {
-    "value": 426292032.0,
+    "value": 427829184.0,
     "currency": "USD"
   },
   "shares_outstanding": 50648331.0,
   "volume": {
-    "last": 10194,
-    "average_30d": 164958
+    "last": 52992,
+    "average_30d": 161899
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -11.745937,
-    "price_to_book": 7.215958
+    "forward_pe": -11.788292,
+    "price_to_book": 7.2419777
   },
   "company_info": {
     "name": "Eupraxia Pharmaceuticals Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 92349055.0,
+    "total_liabilities": 3905493.0,
+    "stockholders_equity": 90028821.0,
+    "cash": 88959281.0,
+    "marketable_securities": null,
+    "total_liquidity": 88959281.0,
+    "total_debt": 170603.0,
+    "long_term_debt": 94467.0,
+    "current_debt": 76136.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T10:59:23.741409",
+    "timestamp": "2026-01-29T16:31:35.859695",
     "url": "https://finance.yahoo.com/quote/EPRX",
-    "data_hash": "92abefff42b2c121"
+    "data_hash": "e72572e55749ad42"
   }
 }

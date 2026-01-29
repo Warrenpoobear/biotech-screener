@@ -2,42 +2,57 @@
   "ticker": "FTRE",
   "success": true,
   "price": {
-    "current": 16.5,
+    "current": 17.05,
     "currency": "USD",
-    "day_high": 16.75,
+    "day_high": 17.16,
     "day_low": 16.085,
     "52_week_high": 18.67,
     "52_week_low": 3.97
   },
   "market_cap": {
-    "value": 1524600064.0,
+    "value": 1575419904.0,
     "currency": "USD"
   },
   "shares_outstanding": 92400000.0,
   "volume": {
-    "last": 139625,
-    "average_30d": 1184378
+    "last": 893027,
+    "average_30d": 1245358
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 21.102173,
-    "price_to_book": 2.6194634
+    "forward_pe": 21.805578,
+    "price_to_book": 2.7067788
   },
   "company_info": {
     "name": "Fortrea Holdings Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 2742100000.0,
+    "total_liabilities": 2161300000.0,
+    "stockholders_equity": 580800000.0,
+    "cash": 131300000.0,
+    "marketable_securities": null,
+    "total_liquidity": 131300000.0,
+    "total_debt": 1187300000.0,
+    "long_term_debt": 1052100000.0,
+    "current_debt": 74500000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:37.428726",
+    "timestamp": "2026-01-29T16:31:53.967973",
     "url": "https://finance.yahoo.com/quote/FTRE",
-    "data_hash": "4c769bec82ba8e96"
+    "data_hash": "dbbaee9cdb345acd"
   }
 }

@@ -2,7 +2,7 @@
   "ticker": "ABCL",
   "success": true,
   "price": {
-    "current": 3.77,
+    "current": 3.86,
     "currency": "USD",
     "day_high": 3.91,
     "day_low": 3.75,
@@ -10,34 +10,49 @@
     "52_week_low": 1.891
   },
   "market_cap": {
-    "value": 1128493056.0,
+    "value": 1155433216.0,
     "currency": "USD"
   },
   "shares_outstanding": 299335048.0,
   "volume": {
-    "last": 1148903,
-    "average_30d": 4721627
+    "last": 2423245,
+    "average_30d": 4878478
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -5.463768,
-    "price_to_book": 1.1693548
+    "forward_pe": -5.594203,
+    "price_to_book": 1.1972704
   },
   "company_info": {
     "name": "AbCellera Biologics Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1355992000.0,
+    "total_liabilities": 391954000.0,
+    "stockholders_equity": 964038000.0,
+    "cash": 83159000.0,
+    "marketable_securities": 412513000.0,
+    "total_liquidity": 495672000.0,
+    "total_debt": 142218000.0,
+    "long_term_debt": 137052000.0,
+    "current_debt": 5166000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:03:59.405750",
+    "timestamp": "2026-01-29T16:29:09.097911",
     "url": "https://finance.yahoo.com/quote/ABCL",
-    "data_hash": "177887cf473ea354"
+    "data_hash": "7f0268d5bd5e59b7"
   }
 }

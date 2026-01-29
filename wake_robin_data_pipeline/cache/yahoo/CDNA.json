@@ -2,42 +2,57 @@
   "ticker": "CDNA",
   "success": true,
   "price": {
-    "current": 20.375,
+    "current": 20.8,
     "currency": "USD",
-    "day_high": 20.67,
+    "day_high": 20.81,
     "day_low": 20.045,
     "52_week_high": 25.55,
     "52_week_low": 10.96
   },
   "market_cap": {
-    "value": 1084499072.0,
+    "value": 1107120512.0,
     "currency": "USD"
   },
   "shares_outstanding": 51432639.0,
   "volume": {
-    "last": 87711,
-    "average_30d": 719450
+    "last": 492027,
+    "average_30d": 751853
   },
   "valuation": {
-    "pe_ratio": 15.917969,
-    "forward_pe": 23.41954,
-    "price_to_book": 3.3666556
+    "pe_ratio": 16.25,
+    "forward_pe": 23.908045,
+    "price_to_book": 3.43688
   },
   "company_info": {
     "name": "CareDx, Inc.",
     "sector": "Healthcare",
     "industry": "Diagnostics & Research"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 432307000.0,
+    "total_liabilities": 121167000.0,
+    "stockholders_equity": 311140000.0,
+    "cash": 91435000.0,
+    "marketable_securities": 102782000.0,
+    "total_liquidity": 194217000.0,
+    "total_debt": 27644000.0,
+    "long_term_debt": 21212000.0,
+    "current_debt": 6432000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:29.765687",
+    "timestamp": "2026-01-29T16:30:41.544630",
     "url": "https://finance.yahoo.com/quote/CDNA",
-    "data_hash": "dc4f29e617929f0a"
+    "data_hash": "a62e7b0ce82c6419"
   }
 }

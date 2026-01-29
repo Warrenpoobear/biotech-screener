@@ -2,42 +2,57 @@
   "ticker": "BIIB",
   "success": true,
   "price": {
-    "current": 175.89,
+    "current": 176.18,
     "currency": "USD",
-    "day_high": 176.7387,
+    "day_high": 177.17,
     "day_low": 173.51,
     "52_week_high": 190.2,
     "52_week_low": 110.04
   },
   "market_cap": {
-    "value": 25803462656.0,
+    "value": 25846005760.0,
     "currency": "USD"
   },
   "shares_outstanding": 146702272.0,
   "volume": {
-    "last": 216395,
-    "average_30d": 1420422
+    "last": 1090301,
+    "average_30d": 1485481
   },
   "valuation": {
-    "pe_ratio": 16.048357,
-    "forward_pe": 11.66736,
-    "price_to_book": 1.4171649
+    "pe_ratio": 16.074818,
+    "forward_pe": 11.686596,
+    "price_to_book": 1.4195014
   },
   "company_info": {
     "name": "Biogen Inc.",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - General"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 29207500000.0,
+    "total_liabilities": 11000000000.0,
+    "stockholders_equity": 18207500000.0,
+    "cash": 3862800000.0,
+    "marketable_securities": 97600000.0,
+    "total_liquidity": 3960400000.0,
+    "total_debt": 6590100000.0,
+    "long_term_debt": 6285100000.0,
+    "current_debt": null,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:16.587422",
+    "timestamp": "2026-01-29T16:30:27.055907",
     "url": "https://finance.yahoo.com/quote/BIIB",
-    "data_hash": "b0ea058192ba023e"
+    "data_hash": "6295ed8d722825eb"
   }
 }

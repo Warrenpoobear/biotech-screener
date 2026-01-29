@@ -2,42 +2,57 @@
   "ticker": "ABVX",
   "success": true,
   "price": {
-    "current": 112.63,
+    "current": 113.54,
     "currency": "USD",
-    "day_high": 114.58,
+    "day_high": 114.9899,
     "day_low": 111.34,
     "52_week_high": 148.83,
     "52_week_low": 4.77
   },
   "market_cap": {
-    "value": 8835164160.0,
+    "value": 8906548224.0,
     "currency": "USD"
   },
   "shares_outstanding": 78444148.0,
   "volume": {
-    "last": 415794,
-    "average_30d": 1758245
+    "last": 1032913,
+    "average_30d": 1825208
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -34.378242,
-    "price_to_book": 14.268569
+    "forward_pe": -34.656002,
+    "price_to_book": 14.383853
   },
   "company_info": {
     "name": "ABIVAX Soci\u00e9t\u00e9 Anonyme",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 652052000.0,
+    "total_liabilities": 140814000.0,
+    "stockholders_equity": 511238000.0,
+    "cash": 589703000.0,
+    "marketable_securities": null,
+    "total_liquidity": 589703000.0,
+    "total_debt": 45889000.0,
+    "long_term_debt": 15878000.0,
+    "current_debt": 28462000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:06.225574",
+    "timestamp": "2026-01-29T16:29:15.311212",
     "url": "https://finance.yahoo.com/quote/ABVX",
-    "data_hash": "11ac6f990b942581"
+    "data_hash": "e2c904158c988e7c"
   }
 }

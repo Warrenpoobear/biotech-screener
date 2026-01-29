@@ -2,42 +2,57 @@
   "ticker": "GLUE",
   "success": true,
   "price": {
-    "current": 20.96,
+    "current": 21.36,
     "currency": "USD",
     "day_high": 21.5799,
-    "day_low": 20.78,
+    "day_low": 20.74,
     "52_week_high": 25.77,
     "52_week_low": 3.5
   },
   "market_cap": {
-    "value": 1598048128.0,
+    "value": 1628545408.0,
     "currency": "USD"
   },
   "shares_outstanding": 76242761.0,
   "volume": {
-    "last": 236627,
-    "average_30d": 2450410
+    "last": 945733,
+    "average_30d": 2555592
   },
   "valuation": {
-    "pe_ratio": 65.5,
-    "forward_pe": -15.173232,
-    "price_to_book": 5.267655
+    "pe_ratio": 66.75,
+    "forward_pe": -15.462799,
+    "price_to_book": 5.368183
   },
   "company_info": {
     "name": "Monte Rosa Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 459841000.0,
+    "total_liabilities": 214004000.0,
+    "stockholders_equity": 245837000.0,
+    "cash": 208343000.0,
+    "marketable_securities": 182915000.0,
+    "total_liquidity": 391258000.0,
+    "total_debt": 40168000.0,
+    "long_term_debt": 35927000.0,
+    "current_debt": 4241000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:49.085927",
+    "timestamp": "2026-01-29T16:32:04.493666",
     "url": "https://finance.yahoo.com/quote/GLUE",
-    "data_hash": "ce6b2f87e750f517"
+    "data_hash": "978d4f873b9c4ed5"
   }
 }

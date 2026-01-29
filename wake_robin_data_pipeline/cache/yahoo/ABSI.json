@@ -2,42 +2,57 @@
   "ticker": "ABSI",
   "success": true,
   "price": {
-    "current": 2.915,
+    "current": 3.03,
     "currency": "USD",
-    "day_high": 3.0,
+    "day_high": 3.11,
     "day_low": 2.88,
     "52_week_high": 6.33,
     "52_week_low": 2.01
   },
   "market_cap": {
-    "value": 438333024.0,
+    "value": 455625760.0,
     "currency": "USD"
   },
   "shares_outstanding": 150371531.0,
   "volume": {
-    "last": 1198833,
-    "average_30d": 3424838
+    "last": 3683076,
+    "average_30d": 3621341
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -4.1351037,
-    "price_to_book": 2.074733
+    "forward_pe": -4.298238,
+    "price_to_book": 2.1565835
   },
   "company_info": {
     "name": "Absci Corporation",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 244992000.0,
+    "total_liabilities": 34652000.0,
+    "stockholders_equity": 210340000.0,
+    "cash": 9476000.0,
+    "marketable_securities": 142999000.0,
+    "total_liquidity": 152475000.0,
+    "total_debt": 6220000.0,
+    "long_term_debt": 65000.0,
+    "current_debt": 1306000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:03.545939",
+    "timestamp": "2026-01-29T16:29:12.732746",
     "url": "https://finance.yahoo.com/quote/ABSI",
-    "data_hash": "24cfec391759bf0b"
+    "data_hash": "0d003818cef329e7"
   }
 }

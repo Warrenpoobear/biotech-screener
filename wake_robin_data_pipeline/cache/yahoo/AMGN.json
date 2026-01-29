@@ -2,42 +2,57 @@
   "ticker": "AMGN",
   "success": true,
   "price": {
-    "current": 345.835,
+    "current": 342.94,
     "currency": "USD",
-    "day_high": 346.38,
+    "day_high": 347.26,
     "day_low": 338.75,
     "52_week_high": 353.25,
     "52_week_low": 261.43
   },
   "market_cap": {
-    "value": 186225442816.0,
+    "value": 184666554368.0,
     "currency": "USD"
   },
   "shares_outstanding": 538480671.0,
   "volume": {
-    "last": 553476,
-    "average_30d": 2486344
+    "last": 2384047,
+    "average_30d": 2588116
   },
   "valuation": {
-    "pe_ratio": 26.726044,
-    "forward_pe": 15.635829,
-    "price_to_book": 19.360409
+    "pe_ratio": 26.50232,
+    "forward_pe": 15.504941,
+    "price_to_book": 19.198341
   },
   "company_info": {
     "name": "Amgen Inc.",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - General"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 90141000000.0,
+    "total_liabilities": 80522000000.0,
+    "stockholders_equity": 9619000000.0,
+    "cash": 9445000000.0,
+    "marketable_securities": null,
+    "total_liquidity": 9445000000.0,
+    "total_debt": 54587000000.0,
+    "long_term_debt": 52434000000.0,
+    "current_debt": 2153000000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:26.485525",
+    "timestamp": "2026-01-29T16:29:38.119980",
     "url": "https://finance.yahoo.com/quote/AMGN",
-    "data_hash": "5b27289cfbe140d1"
+    "data_hash": "734ec5ba8d551499"
   }
 }

@@ -3,45 +3,39 @@
   "cik": "0001671927",
   "success": true,
   "financials": {
-    "cash": 342341000.0,
+    "cash": null,
     "marketable_securities": null,
-    "total_liquidity": 342341000.0,
-    "debt": 70799000.0,
-    "net_debt": -271542000.0,
-    "revenue_ttm": 92305000.0,
-    "assets": 440360000.0,
-    "liabilities": 163086000.0,
-    "equity": 277274000.0,
+    "total_liquidity": null,
+    "debt": null,
+    "net_debt": null,
+    "revenue_ttm": null,
+    "assets": null,
+    "liabilities": null,
+    "equity": null,
     "currency": "USD"
   },
-  "data_dates": {
-    "cash": "2023-06-30",
-    "debt": "2023-06-30",
-    "revenue": "2023-06-30",
-    "assets": "2023-06-30",
-    "liabilities": "2023-06-30"
-  },
+  "data_dates": {},
   "data_freshness": {
-    "most_recent_date": "2023-06-30",
-    "oldest_date": "2023-06-30",
-    "staleness_flags": [
-      "critical_staleness:944d"
-    ]
+    "most_recent_date": null,
+    "oldest_date": null,
+    "staleness_flags": []
   },
   "coverage": {
-    "has_cash": true,
+    "has_cash": false,
     "has_marketable_securities": false,
-    "has_total_liquidity": true,
-    "has_debt": true,
-    "has_revenue": true,
-    "has_balance_sheet": true,
-    "pct_complete": 100.0
+    "has_total_liquidity": false,
+    "has_debt": false,
+    "has_revenue": false,
+    "has_balance_sheet": false,
+    "pct_complete": 0.0
   },
   "provenance": {
     "source": "SEC EDGAR Company Facts API",
-    "timestamp": "2026-01-29T15:54:46.023234",
+    "timestamp": "2026-01-29T16:19:39.461097",
     "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001671927.json",
     "cik": "0001671927",
-    "accounting_standard": "ifrs-full"
+    "accounting_standard": "ifrs-full",
+    "liabilities_method": null,
+    "equity_method": null
   }
 }

@@ -2,42 +2,57 @@
   "ticker": "BRKR",
   "success": true,
   "price": {
-    "current": 44.35,
+    "current": 44.23,
     "currency": "USD",
     "day_high": 46.55,
-    "day_low": 44.1,
+    "day_low": 43.71,
     "52_week_high": 59.4,
     "52_week_low": 28.53
   },
   "market_cap": {
-    "value": 6738589696.0,
+    "value": 6720356864.0,
     "currency": "USD"
   },
   "shares_outstanding": 151941144.0,
   "volume": {
-    "last": 729285,
-    "average_30d": 2369685
+    "last": 3953781,
+    "average_30d": 2574856
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 20.690264,
-    "price_to_book": 2.7608318
+    "forward_pe": 20.634283,
+    "price_to_book": 2.7533617
   },
   "company_info": {
     "name": "Bruker Corporation",
     "sector": "Healthcare",
     "industry": "Medical Devices"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 6434900000.0,
+    "total_liabilities": 3942500000.0,
+    "stockholders_equity": 2431900000.0,
+    "cash": 293100000.0,
+    "marketable_securities": null,
+    "total_liquidity": 293100000.0,
+    "total_debt": 2008500000.0,
+    "long_term_debt": 1984200000.0,
+    "current_debt": 24300000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:23.735784",
+    "timestamp": "2026-01-29T16:30:34.775070",
     "url": "https://finance.yahoo.com/quote/BRKR",
-    "data_hash": "b5ba42a0a1607c34"
+    "data_hash": "6fddbcc9e7113f9b"
   }
 }

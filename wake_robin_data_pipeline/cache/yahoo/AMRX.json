@@ -2,42 +2,57 @@
   "ticker": "AMRX",
   "success": true,
   "price": {
-    "current": 14.03,
+    "current": 14.11,
     "currency": "USD",
-    "day_high": 14.3532,
+    "day_high": 14.94,
     "day_low": 13.96,
-    "52_week_high": 14.66,
+    "52_week_high": 14.94,
     "52_week_low": 6.685
   },
   "market_cap": {
-    "value": 4410511360.0,
+    "value": 4435660800.0,
     "currency": "USD"
   },
   "shares_outstanding": 314362920.0,
   "volume": {
-    "last": 1354590,
-    "average_30d": 1809631
+    "last": 23661726,
+    "average_30d": 2903001
   },
   "valuation": {
-    "pe_ratio": 1403.0,
-    "forward_pe": 14.980513,
-    "price_to_book": -40.316093
+    "pe_ratio": 1411.0,
+    "forward_pe": 15.065933,
+    "price_to_book": -40.54598
   },
   "company_info": {
     "name": "Amneal Pharmaceuticals, Inc.",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 3599874000.0,
+    "total_liabilities": 3709829000.0,
+    "stockholders_equity": -109458000.0,
+    "cash": 201249000.0,
+    "marketable_securities": null,
+    "total_liquidity": 201249000.0,
+    "total_debt": 2685724000.0,
+    "long_term_debt": 2566500000.0,
+    "current_debt": 7202000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:30.746689",
+    "timestamp": "2026-01-29T16:29:41.927541",
     "url": "https://finance.yahoo.com/quote/AMRX",
-    "data_hash": "5b1bcebdc683872b"
+    "data_hash": "63f9cfb590fdeb05"
   }
 }

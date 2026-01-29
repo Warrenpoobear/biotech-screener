@@ -2,7 +2,7 @@
   "ticker": "AQST",
   "success": true,
   "price": {
-    "current": 3.145,
+    "current": 3.16,
     "currency": "USD",
     "day_high": 3.245,
     "day_low": 3.13,
@@ -10,34 +10,49 @@
     "52_week_low": 2.12
   },
   "market_cap": {
-    "value": 383699776.0,
+    "value": 385529856.0,
     "currency": "USD"
   },
   "shares_outstanding": 122003113.0,
   "volume": {
-    "last": 1650282,
-    "average_30d": 6034271
+    "last": 3377999,
+    "average_30d": 6239577
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -7.0674157,
-    "price_to_book": -92.49999
+    "forward_pe": -7.101124,
+    "price_to_book": -92.94118
   },
   "company_info": {
     "name": "Aquestive Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 163559000.0,
+    "total_liabilities": 167668000.0,
+    "stockholders_equity": -4109000.0,
+    "cash": 129063000.0,
+    "marketable_securities": null,
+    "total_liquidity": 129063000.0,
+    "total_debt": 41376000.0,
+    "long_term_debt": 29940000.0,
+    "current_debt": 6327000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:40.404355",
+    "timestamp": "2026-01-29T16:29:51.656148",
     "url": "https://finance.yahoo.com/quote/AQST",
-    "data_hash": "4b28d1721e3f40f7"
+    "data_hash": "2ac26e62c607855d"
   }
 }

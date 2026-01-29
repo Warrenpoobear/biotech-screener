@@ -11,7 +11,7 @@
     "revenue_ttm": 3023000.0,
     "assets": 239820000.0,
     "liabilities": 79912000.0,
-    "equity": 159908000.0,
+    "equity": 159751000.0,
     "currency": "USD"
   },
   "data_dates": {
@@ -39,9 +39,11 @@
   },
   "provenance": {
     "source": "SEC EDGAR Company Facts API",
-    "timestamp": "2026-01-29T15:52:18.556261",
+    "timestamp": "2026-01-29T16:17:38.159579",
     "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001840904.json",
     "cik": "0001840904",
-    "accounting_standard": "us-gaap"
+    "accounting_standard": "us-gaap",
+    "liabilities_method": "direct",
+    "equity_method": "direct"
   }
 }

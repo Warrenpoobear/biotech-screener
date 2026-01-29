@@ -2,42 +2,57 @@
   "ticker": "DNTH",
   "success": true,
   "price": {
-    "current": 51.465,
+    "current": 53.36,
     "currency": "USD",
-    "day_high": 53.7999,
+    "day_high": 54.59,
     "day_low": 50.79,
-    "52_week_high": 54.0,
+    "52_week_high": 54.59,
     "52_week_low": 13.37
   },
   "market_cap": {
-    "value": 2206614272.0,
+    "value": 2287864320.0,
     "currency": "USD"
   },
   "shares_outstanding": 42876015.0,
   "volume": {
-    "last": 201489,
-    "average_30d": 737349
+    "last": 1172491,
+    "average_30d": 805404
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -13.304191,
-    "price_to_book": 4.036154
+    "forward_pe": -13.794066,
+    "price_to_book": 4.1847696
   },
   "company_info": {
     "name": "Dianthus Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 577445000.0,
+    "total_liabilities": 30991000.0,
+    "stockholders_equity": 546454000.0,
+    "cash": 55984000.0,
+    "marketable_securities": 346629000.0,
+    "total_liquidity": 402613000.0,
+    "total_debt": 1285000.0,
+    "long_term_debt": 1068000.0,
+    "current_debt": 217000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:06.887648",
+    "timestamp": "2026-01-29T16:31:18.343075",
     "url": "https://finance.yahoo.com/quote/DNTH",
-    "data_hash": "fadfdc4fade324b1"
+    "data_hash": "5dcb78abc5a79928"
   }
 }

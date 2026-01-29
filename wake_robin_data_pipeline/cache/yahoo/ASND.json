@@ -2,7 +2,7 @@
   "ticker": "ASND",
   "success": true,
   "price": {
-    "current": 223.61,
+    "current": 223.95,
     "currency": "USD",
     "day_high": 227.34,
     "day_low": 220.53,
@@ -10,34 +10,49 @@
     "52_week_low": 118.03
   },
   "market_cap": {
-    "value": 13662158848.0,
+    "value": 13682931712.0,
     "currency": "USD"
   },
   "shares_outstanding": 61098156.0,
   "volume": {
-    "last": 156639,
-    "average_30d": 631169
+    "last": 606111,
+    "average_30d": 669283
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 46.738823,
-    "price_to_book": -65.31673
+    "forward_pe": 46.809887,
+    "price_to_book": -65.41604
   },
   "company_info": {
     "name": "Ascendis Pharma A/S",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1154750000.0,
+    "total_liabilities": 1328825000.0,
+    "stockholders_equity": -174075000.0,
+    "cash": 539092000.0,
+    "marketable_securities": null,
+    "total_liquidity": 539092000.0,
+    "total_debt": 813650000.0,
+    "long_term_debt": 331369000.0,
+    "current_debt": 482281000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:51.457362",
+    "timestamp": "2026-01-29T16:30:02.742491",
     "url": "https://finance.yahoo.com/quote/ASND",
-    "data_hash": "4c9a10afb6d79965"
+    "data_hash": "615a53e2ff0a19e1"
   }
 }

@@ -2,42 +2,57 @@
   "ticker": "ELDN",
   "success": true,
   "price": {
-    "current": 2.08,
+    "current": 2.15,
     "currency": "USD",
-    "day_high": 2.14,
-    "day_low": 2.0702,
+    "day_high": 2.17,
+    "day_low": 2.06,
     "52_week_high": 4.965,
     "52_week_low": 1.35
   },
   "market_cap": {
-    "value": 165631008.0,
+    "value": 171205136.0,
     "currency": "USD"
   },
   "shares_outstanding": 79630297.0,
   "volume": {
-    "last": 69651,
-    "average_30d": 747184
+    "last": 527780,
+    "average_30d": 778243
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -2.183727,
-    "price_to_book": 1.3702239
+    "forward_pe": -2.257218,
+    "price_to_book": 1.4163374
   },
   "company_info": {
     "name": "Eledon Pharmaceuticals, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 129857000.0,
+    "total_liabilities": 94497000.0,
+    "stockholders_equity": 35360000.0,
+    "cash": 3669000.0,
+    "marketable_securities": 89732000.0,
+    "total_liquidity": 93401000.0,
+    "total_debt": 722000.0,
+    "long_term_debt": 376000.0,
+    "current_debt": 346000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:18.297269",
+    "timestamp": "2026-01-29T16:31:29.050445",
     "url": "https://finance.yahoo.com/quote/ELDN",
-    "data_hash": "2c171531e5dcd3dc"
+    "data_hash": "8c9bf936412b3309"
   }
 }

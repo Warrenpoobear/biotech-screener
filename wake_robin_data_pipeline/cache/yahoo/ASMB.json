@@ -2,42 +2,57 @@
   "ticker": "ASMB",
   "success": true,
   "price": {
-    "current": 25.62,
+    "current": 25.71,
     "currency": "USD",
     "day_high": 26.45,
-    "day_low": 25.4,
+    "day_low": 25.01,
     "52_week_high": 39.71,
     "52_week_low": 7.75
   },
   "market_cap": {
-    "value": 405235136.0,
+    "value": 406658656.0,
     "currency": "USD"
   },
   "shares_outstanding": 15817140.0,
   "volume": {
-    "last": 15766,
-    "average_30d": 106766
+    "last": 82717,
+    "average_30d": 109567
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -7.3130426,
-    "price_to_book": 2.21799
+    "forward_pe": -7.338732,
+    "price_to_book": 2.2257812
   },
   "company_info": {
     "name": "Assembly Biosciences, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 239997000.0,
+    "total_liabilities": 57302000.0,
+    "stockholders_equity": 182695000.0,
+    "cash": 22534000.0,
+    "marketable_securities": 210023000.0,
+    "total_liquidity": 232557000.0,
+    "total_debt": 2755000.0,
+    "long_term_debt": 2207000.0,
+    "current_debt": 548000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:49.999250",
+    "timestamp": "2026-01-29T16:30:01.539400",
     "url": "https://finance.yahoo.com/quote/ASMB",
-    "data_hash": "e26cd3930a90fe30"
+    "data_hash": "20fd9cee053625b4"
   }
 }

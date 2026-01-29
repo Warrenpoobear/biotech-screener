@@ -2,42 +2,57 @@
   "ticker": "AURA",
   "success": true,
   "price": {
-    "current": 5.49,
+    "current": 5.48,
     "currency": "USD",
-    "day_high": 5.49,
+    "day_high": 5.51,
     "day_low": 5.305,
     "52_week_high": 8.27,
     "52_week_low": 4.345
   },
   "market_cap": {
-    "value": 348632928.0,
+    "value": 347997920.0,
     "currency": "USD"
   },
   "shares_outstanding": 63503269.0,
   "volume": {
-    "last": 26641,
-    "average_30d": 193547
+    "last": 128908,
+    "average_30d": 188395
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -2.7044334,
-    "price_to_book": 2.2074788
+    "forward_pe": -2.6995075,
+    "price_to_book": 2.203458
   },
   "company_info": {
     "name": "Aura Biosciences, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 190024000.0,
+    "total_liabilities": 33357000.0,
+    "stockholders_equity": 156667000.0,
+    "cash": 47553000.0,
+    "marketable_securities": 114313000.0,
+    "total_liquidity": 161866000.0,
+    "total_debt": 17754000.0,
+    "long_term_debt": 14534000.0,
+    "current_debt": 3220000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:57.061281",
+    "timestamp": "2026-01-29T16:30:06.704589",
     "url": "https://finance.yahoo.com/quote/AURA",
-    "data_hash": "0f7b60085332337f"
+    "data_hash": "76f705cdb41e5566"
   }
 }

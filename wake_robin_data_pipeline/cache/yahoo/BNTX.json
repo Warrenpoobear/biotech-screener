@@ -2,7 +2,7 @@
   "ticker": "BNTX",
   "success": true,
   "price": {
-    "current": 116.5475,
+    "current": 116.77,
     "currency": "USD",
     "day_high": 117.33,
     "day_low": 115.44,
@@ -10,34 +10,49 @@
     "52_week_low": 81.2
   },
   "market_cap": {
-    "value": 29245349888.0,
+    "value": 29301180416.0,
     "currency": "USD"
   },
   "shares_outstanding": 250930737.0,
   "volume": {
-    "last": 130103,
-    "average_30d": 968677
+    "last": 517463,
+    "average_30d": 1011226
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -41.26284,
-    "price_to_book": 1.2621887
+    "forward_pe": -41.34161,
+    "price_to_book": 1.2645983
   },
   "company_info": {
     "name": "BioNTech SE",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 21341100000.0,
+    "total_liabilities": 2863800000.0,
+    "stockholders_equity": 18477300000.0,
+    "cash": 10092900000.0,
+    "marketable_securities": 4425700000.0,
+    "total_liquidity": 14518600000.0,
+    "total_debt": 245400000.0,
+    "long_term_debt": 192000000.0,
+    "current_debt": 53400000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:22.345839",
+    "timestamp": "2026-01-29T16:30:33.474764",
     "url": "https://finance.yahoo.com/quote/BNTX",
-    "data_hash": "c9cd6d9fcc406c54"
+    "data_hash": "3b484c28d463d176"
   }
 }

@@ -2,42 +2,57 @@
   "ticker": "EBS",
   "success": true,
   "price": {
-    "current": 11.785,
+    "current": 11.9,
     "currency": "USD",
-    "day_high": 11.9558,
+    "day_high": 12.13,
     "day_low": 11.62,
     "52_week_high": 14.06,
     "52_week_low": 4.02
   },
   "market_cap": {
-    "value": 628742720.0,
+    "value": 634878080.0,
     "currency": "USD"
   },
   "shares_outstanding": 52519964.0,
   "volume": {
-    "last": 105516,
-    "average_30d": 907537
+    "last": 476228,
+    "average_30d": 941406
   },
   "valuation": {
-    "pe_ratio": 8.92803,
-    "forward_pe": 3.9414716,
-    "price_to_book": 1.0662264
+    "pe_ratio": 9.015151,
+    "forward_pe": 3.979933,
+    "price_to_book": 1.0766307
   },
   "company_info": {
     "name": "Emergent BioSolutions Inc.",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1461000000.0,
+    "total_liabilities": 878500000.0,
+    "stockholders_equity": 582500000.0,
+    "cash": 245500000.0,
+    "marketable_securities": null,
+    "total_liquidity": 245500000.0,
+    "total_debt": 663100000.0,
+    "long_term_debt": 663100000.0,
+    "current_debt": null,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:15.451501",
+    "timestamp": "2026-01-29T16:31:26.457567",
     "url": "https://finance.yahoo.com/quote/EBS",
-    "data_hash": "7b6706ab0dca692a"
+    "data_hash": "32a1b5d52fc97754"
   }
 }

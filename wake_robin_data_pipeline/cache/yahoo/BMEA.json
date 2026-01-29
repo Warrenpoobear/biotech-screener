@@ -15,8 +15,8 @@
   },
   "shares_outstanding": 70703639.0,
   "volume": {
-    "last": 885672,
-    "average_30d": 1208203
+    "last": 1633265,
+    "average_30d": 1257669
   },
   "valuation": {
     "pe_ratio": null,
@@ -28,15 +28,30 @@
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 55187000.0,
+    "total_liabilities": 39568000.0,
+    "stockholders_equity": 15619000.0,
+    "cash": 46642000.0,
+    "marketable_securities": null,
+    "total_liquidity": 46642000.0,
+    "total_debt": 6876000.0,
+    "long_term_debt": 6089000.0,
+    "current_debt": 787000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:20.939529",
+    "timestamp": "2026-01-29T16:30:30.849495",
     "url": "https://finance.yahoo.com/quote/BMEA",
     "data_hash": "1b02136382401217"
   }

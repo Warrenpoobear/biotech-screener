@@ -2,42 +2,57 @@
   "ticker": "DRUG",
   "success": true,
   "price": {
-    "current": 80.9,
+    "current": 82.48,
     "currency": "USD",
-    "day_high": 81.5,
-    "day_low": 79.7499,
+    "day_high": 83.15,
+    "day_low": 79.0,
     "52_week_high": 123.75,
     "52_week_low": 23.175
   },
   "market_cap": {
-    "value": 803210944.0,
+    "value": 818897920.0,
     "currency": "USD"
   },
   "shares_outstanding": 9732161.0,
   "volume": {
-    "last": 26920,
-    "average_30d": 247628
+    "last": 122753,
+    "average_30d": 257231
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -9.319557,
-    "price_to_book": 10.2346
+    "forward_pe": -9.501572,
+    "price_to_book": 10.4344845
   },
   "company_info": {
     "name": "Bright Minds Biosciences Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 84421539.0,
+    "total_liabilities": 2376616.0,
+    "stockholders_equity": 82044923.0,
+    "cash": 82908589.0,
+    "marketable_securities": null,
+    "total_liquidity": 82908589.0,
+    "total_debt": 125777.0,
+    "long_term_debt": 41249.0,
+    "current_debt": 84528.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:09.763007",
+    "timestamp": "2026-01-29T16:31:20.914650",
     "url": "https://finance.yahoo.com/quote/DRUG",
-    "data_hash": "63ce6dc800a83469"
+    "data_hash": "c9e02f853091ca9e"
   }
 }

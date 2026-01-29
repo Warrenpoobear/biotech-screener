@@ -2,42 +2,57 @@
   "ticker": "CRL",
   "success": true,
   "price": {
-    "current": 211.29,
+    "current": 211.68,
     "currency": "USD",
     "day_high": 217.73,
-    "day_low": 210.41,
+    "day_low": 210.14,
     "52_week_high": 228.88,
     "52_week_low": 91.86
   },
   "market_cap": {
-    "value": 10398736384.0,
+    "value": 10417931264.0,
     "currency": "USD"
   },
   "shares_outstanding": 49215471.0,
   "volume": {
-    "last": 120254,
-    "average_30d": 640125
+    "last": 439571,
+    "average_30d": 663360
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 19.289831,
-    "price_to_book": 3.0535443
+    "forward_pe": 19.325436,
+    "price_to_book": 3.0591805
   },
   "company_info": {
     "name": "Charles River Laboratories International, Inc.",
     "sector": "Healthcare",
     "industry": "Diagnostics & Research"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 7513812000.0,
+    "total_liabilities": 4062995000.0,
+    "stockholders_equity": 3405449000.0,
+    "cash": 207097000.0,
+    "marketable_securities": null,
+    "total_liquidity": 207097000.0,
+    "total_debt": 2628638000.0,
+    "long_term_debt": 2185453000.0,
+    "current_debt": null,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:51.065536",
+    "timestamp": "2026-01-29T16:31:01.360798",
     "url": "https://finance.yahoo.com/quote/CRL",
-    "data_hash": "6eda8f702aacf12c"
+    "data_hash": "8ead58aa76f933fb"
   }
 }

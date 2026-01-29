@@ -16,7 +16,7 @@
   "shares_outstanding": 57084838.0,
   "volume": {
     "last": 0,
-    "average_30d": 823387
+    "average_30d": 855014
   },
   "valuation": {
     "pe_ratio": null,
@@ -28,15 +28,30 @@
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 271866000.0,
+    "total_liabilities": 38613000.0,
+    "stockholders_equity": 233253000.0,
+    "cash": 96280000.0,
+    "marketable_securities": 131441000.0,
+    "total_liquidity": 227721000.0,
+    "total_debt": 4459000.0,
+    "long_term_debt": 3055000.0,
+    "current_debt": 1404000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:54.318248",
+    "timestamp": "2026-01-29T16:30:05.299005",
     "url": "https://finance.yahoo.com/quote/ATXS",
     "data_hash": "f64a89fd1861a9e5"
   }

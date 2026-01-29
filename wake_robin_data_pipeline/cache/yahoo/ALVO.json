@@ -2,7 +2,7 @@
   "ticker": "ALVO",
   "success": true,
   "price": {
-    "current": 5.405,
+    "current": 5.42,
     "currency": "USD",
     "day_high": 5.57,
     "day_low": 5.3501,
@@ -10,34 +10,49 @@
     "52_week_low": 4.32
   },
   "market_cap": {
-    "value": 1684204288.0,
+    "value": 1688878208.0,
     "currency": "USD"
   },
   "shares_outstanding": 311601154.0,
   "volume": {
-    "last": 172169,
-    "average_30d": 347439
+    "last": 406242,
+    "average_30d": 356802
   },
   "valuation": {
-    "pe_ratio": 23.5,
-    "forward_pe": 15.741496,
-    "price_to_book": -9.176571
+    "pe_ratio": 23.565218,
+    "forward_pe": 15.785182,
+    "price_to_book": -9.202038
   },
   "company_info": {
     "name": "Alvotech",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1409178000.0,
+    "total_liabilities": 1585941000.0,
+    "stockholders_equity": -176763000.0,
+    "cash": 42848000.0,
+    "marketable_securities": null,
+    "total_liquidity": 42848000.0,
+    "total_debt": 1282161000.0,
+    "long_term_debt": 1081626000.0,
+    "current_debt": 42722000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:27.655252",
+    "timestamp": "2026-01-29T16:29:36.902457",
     "url": "https://finance.yahoo.com/quote/ALVO",
-    "data_hash": "88a6f41353e80f4c"
+    "data_hash": "aa515054048d2399"
   }
 }

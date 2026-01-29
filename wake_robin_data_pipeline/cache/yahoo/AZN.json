@@ -2,42 +2,57 @@
   "ticker": "AZN",
   "success": true,
   "price": {
-    "current": 92.94,
+    "current": 92.59,
     "currency": "USD",
     "day_high": 93.53,
-    "day_low": 92.74,
+    "day_low": 92.575,
     "52_week_high": 96.51,
     "52_week_low": 61.24
   },
   "market_cap": {
-    "value": 288166707200.0,
+    "value": 287081496576.0,
     "currency": "USD"
   },
   "shares_outstanding": 3100567054.0,
   "volume": {
-    "last": 1931632,
-    "average_30d": 8411374
+    "last": 6402470,
+    "average_30d": 8912087
   },
   "valuation": {
-    "pe_ratio": 30.877077,
-    "forward_pe": 18.133715,
-    "price_to_book": 3.1413507
+    "pe_ratio": 30.760796,
+    "forward_pe": 18.065424,
+    "price_to_book": 3.1295207
   },
   "company_info": {
     "name": "AstraZeneca PLC",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - General"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 114456000000.0,
+    "total_liabilities": 68485000000.0,
+    "stockholders_equity": 45888000000.0,
+    "cash": 8143000000.0,
+    "marketable_securities": 39000000.0,
+    "total_liquidity": 8182000000.0,
+    "total_debt": 32632000000.0,
+    "long_term_debt": 24700000000.0,
+    "current_debt": 6174000000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:05:04.569050",
+    "timestamp": "2026-01-29T16:30:15.216249",
     "url": "https://finance.yahoo.com/quote/AZN",
-    "data_hash": "dcf769eafd7e90eb"
+    "data_hash": "0c5ba6ae200eb4db"
   }
 }

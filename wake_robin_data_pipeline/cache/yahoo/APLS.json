@@ -2,42 +2,57 @@
   "ticker": "APLS",
   "success": true,
   "price": {
-    "current": 23.14,
+    "current": 23.05,
     "currency": "USD",
-    "day_high": 23.6,
+    "day_high": 23.56,
     "day_low": 22.69,
     "52_week_high": 30.6,
     "52_week_low": 16.1
   },
   "market_cap": {
-    "value": 2927793408.0,
+    "value": 2916406016.0,
     "currency": "USD"
   },
   "shares_outstanding": 126525218.0,
   "volume": {
-    "last": 579050,
-    "average_30d": 2875749
+    "last": 3670992,
+    "average_30d": 3043675
   },
   "valuation": {
-    "pe_ratio": 64.27777,
-    "forward_pe": -17.8,
-    "price_to_book": 7.2973824
+    "pe_ratio": 64.02777,
+    "forward_pe": -17.73077,
+    "price_to_book": 7.269
   },
   "company_info": {
     "name": "Apellis Pharmaceuticals, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 1058723000.0,
+    "total_liabilities": 657555000.0,
+    "stockholders_equity": 401168000.0,
+    "cash": 479171000.0,
+    "marketable_securities": null,
+    "total_liquidity": 479171000.0,
+    "total_debt": 475374000.0,
+    "long_term_debt": 361091000.0,
+    "current_debt": 93581000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:38.997939",
+    "timestamp": "2026-01-29T16:29:50.213519",
     "url": "https://finance.yahoo.com/quote/APLS",
-    "data_hash": "5d0266a65bf95350"
+    "data_hash": "0ed2c4adcfe81415"
   }
 }

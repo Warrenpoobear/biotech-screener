@@ -2,7 +2,7 @@
   "ticker": "FHTX",
   "success": true,
   "price": {
-    "current": 5.7499,
+    "current": 5.77,
     "currency": "USD",
     "day_high": 5.93,
     "day_low": 5.68,
@@ -10,34 +10,49 @@
     "52_week_low": 2.945
   },
   "market_cap": {
-    "value": 336838368.0,
+    "value": 338015840.0,
     "currency": "USD"
   },
   "shares_outstanding": 58581603.0,
   "volume": {
-    "last": 9455,
-    "average_30d": 191297
+    "last": 74509,
+    "average_30d": 197390
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -5.7244835,
-    "price_to_book": -3.6254098
+    "forward_pe": -5.744495,
+    "price_to_book": -3.6380832
   },
   "company_info": {
     "name": "Foghorn Therapeutics Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 204962000.0,
+    "total_liabilities": 294620000.0,
+    "stockholders_equity": -89658000.0,
+    "cash": 89334000.0,
+    "marketable_securities": 90944000.0,
+    "total_liquidity": 180278000.0,
+    "total_debt": 22529000.0,
+    "long_term_debt": 15774000.0,
+    "current_debt": 6755000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:06:34.542663",
+    "timestamp": "2026-01-29T16:31:49.867548",
     "url": "https://finance.yahoo.com/quote/FHTX",
-    "data_hash": "29f89efa31ebab6e"
+    "data_hash": "01755b248e494f6a"
   }
 }

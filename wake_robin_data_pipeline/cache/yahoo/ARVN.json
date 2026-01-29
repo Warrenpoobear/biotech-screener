@@ -2,42 +2,57 @@
   "ticker": "ARVN",
   "success": true,
   "price": {
-    "current": 13.18,
+    "current": 13.38,
     "currency": "USD",
-    "day_high": 13.39,
+    "day_high": 13.41,
     "day_low": 12.77,
     "52_week_high": 20.38,
     "52_week_low": 5.9
   },
   "market_cap": {
-    "value": 967643904.0,
+    "value": 982327360.0,
     "currency": "USD"
   },
   "shares_outstanding": 64224294.0,
   "volume": {
-    "last": 232062,
-    "average_30d": 701548
+    "last": 782191,
+    "average_30d": 734085
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -4.483344,
-    "price_to_book": 1.6532865
+    "forward_pe": -4.5513763,
+    "price_to_book": 1.6783743
   },
   "company_info": {
     "name": "Arvinas, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 844300000.0,
+    "total_liabilities": 279900000.0,
+    "stockholders_equity": 564400000.0,
+    "cash": 101500000.0,
+    "marketable_securities": 686100000.0,
+    "total_liquidity": 787600000.0,
+    "total_debt": 9300000.0,
+    "long_term_debt": 400000.0,
+    "current_debt": 1700000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:47.203762",
+    "timestamp": "2026-01-29T16:29:59.270695",
     "url": "https://finance.yahoo.com/quote/ARVN",
-    "data_hash": "ed1cd90fdc3b2969"
+    "data_hash": "f003cd0e711b578d"
   }
 }

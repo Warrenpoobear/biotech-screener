@@ -6,8 +6,8 @@
     "cash": 268435000.0,
     "marketable_securities": null,
     "total_liquidity": 268435000.0,
-    "debt": 15000000.0,
-    "net_debt": -253435000.0,
+    "debt": 0.0,
+    "net_debt": -268435000.0,
     "revenue_ttm": null,
     "assets": 277001000.0,
     "liabilities": 9473000.0,
@@ -16,15 +16,15 @@
   },
   "data_dates": {
     "cash": "2025-09-30",
-    "debt": "2023-03-31",
     "assets": "2025-09-30",
-    "liabilities": "2025-09-30"
+    "liabilities": "2025-09-30",
+    "debt": "2025-09-30"
   },
   "data_freshness": {
     "most_recent_date": "2025-09-30",
-    "oldest_date": "2023-03-31",
+    "oldest_date": "2025-09-30",
     "staleness_flags": [
-      "critical_staleness:1035d"
+      "stale_data:121d"
     ]
   },
   "coverage": {
@@ -38,9 +38,11 @@
   },
   "provenance": {
     "source": "SEC EDGAR Company Facts API",
-    "timestamp": "2026-01-29T15:58:03.112554",
+    "timestamp": "2026-01-29T16:22:21.365127",
     "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001681087.json",
     "cik": "0001681087",
-    "accounting_standard": "us-gaap"
+    "accounting_standard": "us-gaap",
+    "liabilities_method": "direct",
+    "equity_method": "direct"
   }
 }

@@ -2,42 +2,57 @@
   "ticker": "ADMA",
   "success": true,
   "price": {
-    "current": 16.6488,
+    "current": 17.01,
     "currency": "USD",
-    "day_high": 16.69,
+    "day_high": 17.02,
     "day_low": 16.22,
     "52_week_high": 25.67,
     "52_week_low": 13.5
   },
   "market_cap": {
-    "value": 3972915200.0,
+    "value": 4059108608.0,
     "currency": "USD"
   },
   "shares_outstanding": 237997765.0,
   "volume": {
-    "last": 269343,
-    "average_30d": 2196265
+    "last": 1540852,
+    "average_30d": 2285769
   },
   "valuation": {
-    "pe_ratio": 19.35907,
-    "forward_pe": 17.711489,
-    "price_to_book": 9.203317
+    "pe_ratio": 19.77907,
+    "forward_pe": 18.095745,
+    "price_to_book": 9.402986
   },
   "company_info": {
     "name": "ADMA Biologics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 568687000.0,
+    "total_liabilities": 137501000.0,
+    "stockholders_equity": 431186000.0,
+    "cash": 61385000.0,
+    "marketable_securities": null,
+    "total_liquidity": 61385000.0,
+    "total_debt": 83123000.0,
+    "long_term_debt": 70084000.0,
+    "current_debt": 2344000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:14.455531",
+    "timestamp": "2026-01-29T16:29:24.013028",
     "url": "https://finance.yahoo.com/quote/ADMA",
-    "data_hash": "63635833745a32f7"
+    "data_hash": "22ac11f7b4654b14"
   }
 }

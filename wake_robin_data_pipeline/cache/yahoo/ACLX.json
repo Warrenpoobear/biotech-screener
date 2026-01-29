@@ -2,42 +2,57 @@
   "ticker": "ACLX",
   "success": true,
   "price": {
-    "current": 68.08,
+    "current": 68.26,
     "currency": "USD",
     "day_high": 68.87,
-    "day_low": 67.6,
+    "day_low": 67.43,
     "52_week_high": 94.07,
     "52_week_low": 47.86
   },
   "market_cap": {
-    "value": 3936581120.0,
+    "value": 3946989312.0,
     "currency": "USD"
   },
   "shares_outstanding": 57822871.0,
   "volume": {
-    "last": 86248,
-    "average_30d": 888274
+    "last": 397018,
+    "average_30d": 927298
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -20.094213,
-    "price_to_book": 8.923843
+    "forward_pe": -20.147343,
+    "price_to_book": 8.947437
   },
   "company_info": {
     "name": "Arcellx, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 655918000.0,
+    "total_liabilities": 215141000.0,
+    "stockholders_equity": 440777000.0,
+    "cash": 79005000.0,
+    "marketable_securities": 382378000.0,
+    "total_liquidity": 461383000.0,
+    "total_debt": 51794000.0,
+    "long_term_debt": 44323000.0,
+    "current_debt": 7471000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:08.851655",
+    "timestamp": "2026-01-29T16:29:19.142020",
     "url": "https://finance.yahoo.com/quote/ACLX",
-    "data_hash": "e69a74ee296c2624"
+    "data_hash": "b3f0922d96991348"
   }
 }

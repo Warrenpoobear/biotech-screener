@@ -2,7 +2,7 @@
   "ticker": "ABUS",
   "success": true,
   "price": {
-    "current": 4.105,
+    "current": 4.13,
     "currency": "USD",
     "day_high": 4.19,
     "day_low": 4.085,
@@ -10,34 +10,49 @@
     "52_week_low": 2.71
   },
   "market_cap": {
-    "value": 789490112.0,
+    "value": 794298240.0,
     "currency": "USD"
   },
   "shares_outstanding": 192324017.0,
   "volume": {
-    "last": 227263,
-    "average_30d": 1478443
+    "last": 644632,
+    "average_30d": 1543785
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -24.314157,
-    "price_to_book": 10.186105
+    "forward_pe": -24.462234,
+    "price_to_book": 10.248139
   },
   "company_info": {
     "name": "Arbutus Biopharma Corporation",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 97710000.0,
+    "total_liabilities": 20311000.0,
+    "stockholders_equity": 77399000.0,
+    "cash": 22408000.0,
+    "marketable_securities": 71294000.0,
+    "total_liquidity": 93702000.0,
+    "total_debt": 922000.0,
+    "long_term_debt": 391000.0,
+    "current_debt": 531000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:04.845312",
+    "timestamp": "2026-01-29T16:29:14.060338",
     "url": "https://finance.yahoo.com/quote/ABUS",
-    "data_hash": "bb437276b32735e0"
+    "data_hash": "323c178b2cd77281"
   }
 }

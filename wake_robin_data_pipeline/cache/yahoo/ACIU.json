@@ -2,7 +2,7 @@
   "ticker": "ACIU",
   "success": true,
   "price": {
-    "current": 3.35,
+    "current": 3.4,
     "currency": "USD",
     "day_high": 3.45,
     "day_low": 3.31,
@@ -10,34 +10,49 @@
     "52_week_low": 1.43
   },
   "market_cap": {
-    "value": 337009984.0,
+    "value": 342040000.0,
     "currency": "USD"
   },
   "shares_outstanding": 100600000.0,
   "volume": {
-    "last": 86385,
-    "average_30d": 398188
+    "last": 169370,
+    "average_30d": 406917
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -4.212839,
-    "price_to_book": 4.1311684
+    "forward_pe": -4.2757177,
+    "price_to_book": 4.192828
   },
   "company_info": {
     "name": "AC Immune SA",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 171607000.0,
+    "total_liabilities": 109163000.0,
+    "stockholders_equity": 62444000.0,
+    "cash": 27741000.0,
+    "marketable_securities": 80727000.0,
+    "total_liquidity": 108468000.0,
+    "total_debt": 4661000.0,
+    "long_term_debt": 3616000.0,
+    "current_debt": 1045000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:07.489609",
+    "timestamp": "2026-01-29T16:29:17.905912",
     "url": "https://finance.yahoo.com/quote/ACIU",
-    "data_hash": "68fbcdb5d22d568b"
+    "data_hash": "0ecc1bb8e9d1d24d"
   }
 }

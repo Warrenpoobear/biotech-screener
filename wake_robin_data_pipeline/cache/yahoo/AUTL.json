@@ -2,42 +2,57 @@
   "ticker": "AUTL",
   "success": true,
   "price": {
-    "current": 1.4314,
+    "current": 1.43,
     "currency": "USD",
-    "day_high": 1.47,
-    "day_low": 1.4301,
+    "day_high": 1.48,
+    "day_low": 1.42,
     "52_week_high": 2.7,
     "52_week_low": 1.105
   },
   "market_cap": {
-    "value": 380957472.0,
+    "value": 380584864.0,
     "currency": "USD"
   },
   "shares_outstanding": 266143286.0,
   "volume": {
-    "last": 240300,
-    "average_30d": 2553577
+    "last": 881590,
+    "average_30d": 2468268
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -1.8854057,
-    "price_to_book": 1.4357071
+    "forward_pe": -1.8835616,
+    "price_to_book": 1.4343029
   },
   "company_info": {
     "name": "Autolus Therapeutics plc",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "balance_sheet": {
+    "success": true,
+    "period_date": "2025-09-30",
+    "total_assets": 661947000.0,
+    "total_liabilities": 396495000.0,
+    "stockholders_equity": 265452000.0,
+    "cash": 86124000.0,
+    "marketable_securities": 281289000.0,
+    "total_liquidity": 367413000.0,
+    "total_debt": 65835000.0,
+    "long_term_debt": 61007000.0,
+    "current_debt": 4828000.0,
+    "error": null
+  },
   "data_quality": {
     "flags": [],
     "has_price": true,
     "has_market_cap": true,
-    "has_volume": true
+    "has_volume": true,
+    "has_balance_sheet": true
   },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-29T11:04:56.152331",
+    "timestamp": "2026-01-29T16:30:07.909683",
     "url": "https://finance.yahoo.com/quote/AUTL",
-    "data_hash": "5b89326f04c56a40"
+    "data_hash": "cab66f91cd0d63ad"
   }
 }
