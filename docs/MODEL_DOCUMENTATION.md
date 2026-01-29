@@ -1,6 +1,6 @@
 # Biotech Alpha Screener — Model Documentation
 
-**Version**: 1.0.0
+**Version**: 1.1.1
 **Effective Date**: 2026-01-28
 **Classification**: Internal Use
 **Owner**: Wake Robin Capital Management
@@ -133,6 +133,11 @@ The Biotech Alpha Screener is a quantitative ranking system designed to identify
 #### 2.5.1 Smart Money: Elite 13F Manager Tracking
 
 The smart money signal tracks 13F filings from **33 elite biotech-focused institutional managers** (~$1.2T combined AUM), classified into Elite Core and Conditional tiers.
+
+**Current Coverage (as of 2026-01-28)**:
+- Manager data: 31/33 (93.9%)
+- Ticker coverage: 138/248 (55.6%)
+- CUSIP resolution: 102/102 (100%)
 
 **Selection Criteria**:
 - Biotech/healthcare specialist (>50% portfolio in life sciences)
@@ -891,6 +896,8 @@ Without explicit IC override:
 | 1.0.2 | 2026-01-28 | Added 13F elite manager tracking (18 managers) |
 | 1.0.3 | 2026-01-28 | Expanded 13F roster to 36 managers (30 Elite Core, 6 Conditional) |
 | 1.0.4 | 2026-01-28 | Validated CIKs, fixed Cormorant/Deep Track, removed 3 inactive filers |
+| 1.1.0 | 2026-01-28 | Composite scoring enhancements E1-E6 (regime gating, existential flaws, confidence weighting, dynamic ceilings, asymmetric transforms, contradiction detector) |
+| 1.1.1 | 2026-01-28 | Fixed 13 CUSIP resolution errors (8-char vs 9-char format mismatch); Added TEM (Tempus AI) mapping; SM coverage improved 48% → 55.6% |
 
 ---
 
@@ -907,3 +914,4 @@ Without explicit IC override:
 
 **Document Hash**: Generated on demand
 **Last Validated**: 2026-01-28
+**Model Version**: 1.1.1
