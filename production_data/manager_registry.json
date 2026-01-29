@@ -89,6 +89,24 @@
       "name": "Cormorant Asset Management",
       "aum_b": 4.1,
       "style": "event_driven"
+    },
+    {
+      "cik": "0001792126",
+      "name": "Logos Global Management",
+      "aum_b": 1.4,
+      "style": "scientific_data_driven"
+    },
+    {
+      "cik": "0001631134",
+      "name": "Sofinnova Investments",
+      "aum_b": 3.8,
+      "style": "venture_crossover"
+    },
+    {
+      "cik": "0001465837",
+      "name": "Boxer Capital",
+      "aum_b": 1.4,
+      "style": "oncology_focused"
     }
   ],
   "conditional": [
@@ -109,12 +127,24 @@
       "name": "Viking Global",
       "aum_b": 27.0,
       "style": "multi_strategy_macro"
+    },
+    {
+      "cik": "0001581219",
+      "name": "Foresite Capital Management",
+      "aum_b": 3.6,
+      "style": "multi_stage_healthcare"
+    },
+    {
+      "cik": "0001609251",
+      "name": "Krensavage Asset Management",
+      "aum_b": 0.3,
+      "style": "value_healthcare"
     }
   ],
   "metadata": {
-    "version": "1.3",
+    "version": "1.4",
     "last_updated": "2026-01-28",
-    "total_elite_aum_b": 82.9,
+    "total_elite_aum_b": 89.5,
     "notes": [
       "Elite Core = primary signal source",
       "Conditional = secondary breadth signal"

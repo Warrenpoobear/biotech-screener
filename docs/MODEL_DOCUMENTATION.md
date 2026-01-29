@@ -132,7 +132,7 @@ The Biotech Alpha Screener is a quantitative ranking system designed to identify
 
 #### 2.5.1 Smart Money: Elite 13F Manager Tracking
 
-The smart money signal tracks 13F filings from **18 elite biotech-focused institutional managers** (~$114B combined AUM), classified into Elite Core and Conditional tiers.
+The smart money signal tracks 13F filings from **23 elite biotech-focused institutional managers** (~$125B combined AUM), classified into Elite Core and Conditional tiers.
 
 **Selection Criteria**:
 - Biotech/healthcare specialist (>50% portfolio in life sciences)
@@ -140,7 +140,7 @@ The smart money signal tracks 13F filings from **18 elite biotech-focused instit
 - Significant AUM ($1B+ in 13F securities)
 - Known for deep scientific/clinical due diligence
 
-**Elite Core — Primary Signal Source** (15 managers, ~$83B AUM, Weight: 1.5×)
+**Elite Core — Primary Signal Source** (18 managers, ~$90B AUM, Weight: 1.5×)
 
 | Manager | CIK | AUM ($B) | Style |
 |---------|-----|----------|-------|
@@ -159,14 +159,19 @@ The smart money signal tracks 13F filings from **18 elite biotech-focused instit
 | Suvretta Capital Management | 0001569064 | 5.1 | Healthcare Long/Short |
 | Casdin Capital | 0001534261 | 2.9 | Genomics Focused |
 | Cormorant Asset Management | 0001398659 | 4.1 | Event-Driven |
+| Logos Global Management | 0001792126 | 1.4 | Scientific Data-Driven |
+| Sofinnova Investments | 0001631134 | 3.8 | Venture Crossover |
+| Boxer Capital | 0001465837 | 1.4 | Oncology Focused |
 
-**Conditional — Secondary Breadth Signal** (3 managers, ~$31B AUM, Weight: 1.0×)
+**Conditional — Secondary Breadth Signal** (5 managers, ~$35B AUM, Weight: 1.0×)
 
 | Manager | CIK | AUM ($B) | Style |
 |---------|-----|----------|-------|
 | Venrock | 0001005477 | 2.5 | Venture Capital |
 | Deep Track Capital | 0001631282 | 1.8 | Fundamental Long/Short |
 | Viking Global | 0001103804 | 27.0 | Multi-Strategy Macro |
+| Foresite Capital Management | 0001581219 | 3.6 | Multi-Stage Healthcare |
+| Krensavage Asset Management | 0001609251 | 0.3 | Value Healthcare |
 
 **Position Change Scoring**:
 
