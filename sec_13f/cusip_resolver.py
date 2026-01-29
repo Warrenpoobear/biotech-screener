@@ -76,6 +76,20 @@ KNOWN_CUSIP_MAPPINGS = {
     '74366E10': 'PTGX',    # Protagonist
     '15230910': 'CNTA',    # Centessa
 
+    # Full 9-char CUSIPs (some 13F filers use 9-char format)
+    '04351P101': 'ASND',   # Ascendis Pharma
+    '05338F306': 'AVLO',   # Avalo Therapeutics
+    '22663K107': 'CRNX',   # Crinetics Pharmaceuticals
+    '23284F105': 'CTMX',   # CytomX Therapeutics
+    '457669307': 'INSM',   # Insmed
+    '55287L101': 'MBX',    # MBX Biosciences
+    '558868105': 'MDGL',   # Madrigal Pharmaceuticals
+    '76155X100': 'RVMD',   # Revolution Medicines
+    '81734D104': 'SEPN',   # Septerna
+    '829401108': 'SION',   # Sionna Therapeutics
+    '86889P117': 'SRZN',   # Surrozen
+    '90240B106': 'TYRA',   # Tyra Biosciences
+    'N90064101': 'QURE',   # uniQure
 
     # AI/diagnostics biotech
     '88023B103': 'TEM',    # Tempus AI
