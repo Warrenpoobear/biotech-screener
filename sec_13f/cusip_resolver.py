@@ -362,6 +362,97 @@ KNOWN_CUSIP_MAPPINGS = {
     '74587V503': 'PTCT',   # PTC (alt4)
     '92243G207': 'PCVX',   # Vaxcyte (alt)
 
+    # Baker Bros holdings CUSIPs
+    '07725L102': 'BEONE',  # BeOne Medicines
+    '45337C102': 'INCY',   # Incyte Corporation
+    '004225108': 'ACAD',   # Acadia Pharmaceuticals
+    '86627T108': 'SMMT',   # Summit Therapeutics
+    '50015M109': 'KOD',    # Kodiak Sciences
+    '00288U106': 'ABCL',   # AbCellera Biologics
+    'G52694109': 'KNSA',   # Kiniksa Pharmaceuticals
+    '384747101': 'GRAL',   # GRAIL
+    '45166A102': 'IDYA',   # IDEAYA Biosciences
+    '87901J105': 'TELA',   # TELA Bio
+    '92536R108': 'VRCA',   # Verrica Pharmaceuticals
+    '86881A109': 'SURF',   # Surface Oncology (alt2)
+    '69007J205': 'OTIC',   # Otonomy (alt)
+    '98420N303': 'XENE',   # Xenon (alt2)
+    '72815L206': 'PLRX',   # Pliant (alt)
+    '05379R206': 'AXGN',   # AxoGen (alt)
+    '64125C208': 'NBIX',   # Neurocrine (alt)
+    '86882H308': 'SURF',   # Surface (alt3)
+    '00508Y201': 'ACAD',   # Acadia (alt)
+    '45166A201': 'IDYA',   # IDEAYA (alt)
+    '50015M208': 'KOD',    # Kodiak (alt)
+    '86627T207': 'SMMT',   # Summit (alt)
+
+    # Additional elite manager biotech CUSIPs
+    '15102K100': 'CELC',   # Celcuity (confirmed in universe check)
+    'N5749R109': 'MRUS',   # Merus (alt)
+    '00973Y207': 'AKRO',   # Akero (alt)
+    '92556V205': 'VKTX',   # Viking (alt)
+    '05464T203': 'AXSM',   # Axsome (alt)
+    '04272N201': 'AVBP',   # ArriVent (alt)
+    '37045V209': 'GERN',   # Geron (alt)
+    '74587V602': 'PTCT',   # PTC (alt5)
+    '86267D200': 'SRRK',   # Scholar Rock (alt)
+
+    # Confirmed CUSIP mappings from Baker/RA/Perceptive analysis
+    '45258D105': 'IMCR',   # Immunocore Holdings
+    '088786108': 'BCYC',   # Bicycle Therapeutics
+    '04280A100': 'ARWR',   # Arrowhead Pharmaceuticals (alt)
+    '24823R105': 'DNLI',   # Denali Therapeutics
+    '45826J105': 'NTLA',   # Intellia Therapeutics
+    '92790C104': 'VRDN',   # Viridian Therapeutics
+    '462222100': 'IONS',   # Ionis Pharmaceuticals (alt3)
+    '61225M102': 'GLUE',   # Monte Rosa Therapeutics
+    '09075V102': 'BNTX',   # BioNTech
+    '67080M103': 'NRIX',   # Nurix Therapeutics
+    '29384C108': 'TRDA',   # Entrada Therapeutics
+    '15117B202': 'CLDX',   # Celldex Therapeutics
+    '157085101': 'CERS',   # Cerus Corporation
+    '359616109': 'FULC',   # Fulcrum Therapeutics
+    '28658R106': 'CLYM',   # Climb Bio
+    '61023L207': 'MNPR',   # Monopar Therapeutics
+    '35104E100': 'FDMT',   # 4D Molecular Therapeutics
+    '04317A107': 'ARTV',   # Artiva Biotherapeutics
+    '00509G209': 'ABOS',   # Acumen Pharmaceuticals
+    '65487U108': 'NKTX',   # Nkarta
+    '03969F109': 'RCUS',   # Arcus Biosciences
+    '95075A107': 'HOWL',   # Werewolf Therapeutics
+    '28617K101': 'ELDN',   # Eledon Pharmaceuticals
+    '03152W109': 'FOLD',   # Amicus Therapeutics
+    '04635X102': 'ATXS',   # Astria Therapeutics (confirmed)
+    '45720N103': 'INBX',   # Inhibrx Biosciences
+    '01438T106': 'ALDX',   # Aldeyra Therapeutics
+    '697947109': 'PVLA',   # Palvella Therapeutics
+    '687604108': 'ORKA',   # Oruka Therapeutics
+    '63909J108': 'NAUT',   # Nautilus Biotechnology
+
+    # Acuta/Krensavage/Palo Alto/RTW/Cormorant unresolved CUSIPs
+    '69366J200': 'PTCT',   # PTC Therapeutics (alt6)
+    '87650L103': 'TARS',   # Tarsus Pharmaceuticals (alt2)
+    'M96088105': 'URGN',   # UroGen Pharma (Israeli)
+    '98887Q104': 'ZLAB',   # Zai Lab
+    '77313F106': 'RCKT',   # Rocket Pharmaceuticals
+    '462260100': 'IOVA',   # Iovance Biotherapeutics
+    '03969K108': 'ARQT',   # Arcutis Biotherapeutics
+    '61559X104': 'MLTX',   # Moonlake Immunotherapeutics
+    'G72800108': 'PRTA',   # Prothena (Irish)
+    '09077V100': 'BIOA',   # BioAge Labs
+    '09077A106': 'BMEA',   # Biomea Fusion
+    '29337E102': 'ELVN',   # Enliven Therapeutics
+    '67080N101': 'NUVB',   # Nuvation Bio
+    '00461U105': 'ACRS',   # Aclaris Therapeutics
+    '88032L605': 'TENX',   # Tenax Therapeutics
+    'H5870P102': 'OCS',    # Oculis Holding (Swiss)
+    '00289Y206': 'ABEO',   # Abeona Therapeutics
+    'N71542109': 'PRQR',   # ProQR Therapeutics (Dutch)
+    'G1110E107': 'BHVN',   # Biohaven (Irish)
+    '00972G207': 'AKTX',   # Akari Therapeutics
+    '14167L103': 'CDNA',   # CareDx (diagnostics)
+    'G6674U108': 'NVCR',   # Novocure (oncology)
+
     # AI/diagnostics biotech
     '88023B103': 'TEM',    # Tempus AI
 
