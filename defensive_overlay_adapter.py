@@ -318,25 +318,29 @@ def enrich_with_defensive_overlays(
     output: Dict,
     scores_by_ticker: Dict[str, Dict],
     apply_multiplier: bool = True,
-    apply_position_sizing: bool = True,
-    top_n: Optional[int] = None,  # NEW: Top-N selection for conviction portfolios
+    apply_position_sizing: bool = False,  # Deprecated: position sizing separate from scoring
+    top_n: Optional[int] = None,  # Top-N selection for conviction portfolios
+    include_position_weight: bool = False,  # Output position_weight (risk-budget, not alpha)
 ) -> Dict:
     """
     Enrich Module 5 output with defensive overlays.
-    
+
     This function:
     1. Applies defensive multiplier to existing composite scores
-    2. Calculates position weights using inverse-volatility
-    3. Adds defensive_notes and position_weight fields to each security
-    4. NEW: Optionally applies top-N selection for conviction portfolios
-    
+    2. Optionally calculates position weights using inverse-volatility (deprecated)
+    3. Adds defensive_notes field to each security
+
+    NOTE: Position sizing (risk-budget weights) is now separate from alpha research.
+    Expected Returns (score_z * lambda) are computed in module_5_composite_v3.py.
+
     Args:
         output: Output dict from rank_securities()
         scores_by_ticker: Dict with defensive_features per ticker
         apply_multiplier: If True, apply correlation-based score multiplier
-        apply_position_sizing: If True, calculate position weights
-        top_n: If provided, only invest in top N names (e.g., 60 for balanced, 40 for conviction)
-    
+        apply_position_sizing: If True, calculate position weights (deprecated)
+        top_n: If provided, only invest in top N names (deprecated)
+        include_position_weight: If True, include position_weight in output (deprecated)
+
     Returns:
         Modified output dict (mutated in-place, also returned for convenience)
     """

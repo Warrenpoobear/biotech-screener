@@ -246,6 +246,29 @@ HEALTH_GATE_THRESHOLDS = {
 }
 
 # =============================================================================
+# EXPECTED RETURN CALCULATION
+# =============================================================================
+# EXPECTED RETURN COMPUTATION
+# =============================================================================
+# Institutional methodology: score → rank → percentile → z-score → expected return
+# Lambda (λ) = annualized excess return per 1σ of signal
+# Biotech alpha typically 6-12% per σ; we use 8% as conservative baseline
+#
+# Implementation moved to common/score_to_er.py for reuse across modules.
+# =============================================================================
+
+from common.score_to_er import (
+    compute_expected_returns,
+    DEFAULT_LAMBDA_ANNUAL,
+    ER_MODEL_ID,
+    ER_MODEL_VERSION,
+)
+
+# Re-export for backward compatibility
+EXPECTED_RETURN_LAMBDA = DEFAULT_LAMBDA_ANNUAL  # 8% per 1σ per year (conservative)
+
+
+# =============================================================================
 # SCORING TYPES & HELPERS (extracted to module_5_scoring_v3.py)
 # =============================================================================
 # The following are now imported from module_5_scoring_v3 for maintainability:
@@ -944,6 +967,14 @@ def compute_module_5_composite_v3(
         ranked_securities.append(security_data)
 
     # =========================================================================
+    # COMPUTE EXPECTED RETURNS
+    # =========================================================================
+    # Convert score → rank → percentile → z-score → expected excess return
+    # This separates signal research from portfolio engineering
+    # λ = 0.08 (8% per 1σ per year) - conservative biotech-appropriate default
+    er_provenance = compute_expected_returns(ranked_securities)
+
+    # =========================================================================
     # BUILD DIAGNOSTIC COUNTS
     # =========================================================================
 
@@ -1263,6 +1294,7 @@ def compute_module_5_composite_v3(
         "momentum_health": momentum_health,  # V3.2: Persisted for A/B comparisons
         "robustness_diagnostics": robustness_summary,  # V3.3: Robustness enhancements
         "pit_gate_diagnostics": pit_gate_diagnostics,
+        "expected_return_model": er_provenance,  # V3.4: ER provenance for audit
         "schema_version": SCHEMA_VERSION,
         "provenance": create_provenance(
             RULESET_VERSION,

@@ -162,7 +162,7 @@ def compute_module_5_composite_with_defensive(
     coinvest_signals: dict = None,
     cohort_mode: str = "stage_only",
     apply_defensive_multiplier: bool = False,
-    apply_position_sizing: bool = True,
+    apply_position_sizing: bool = False,  # Deprecated: use expected_return for alpha signal
     validate: bool = False,
     universe_path: Optional[str] = None,
     universe_search_paths: Optional[List[str]] = None,
@@ -192,7 +192,7 @@ def compute_module_5_composite_with_defensive(
         coinvest_signals: Optional co-invest overlay data
         cohort_mode: "stage_only" (recommended) or "stage_mcap" (v1 only)
         apply_defensive_multiplier: Apply defensive score multiplier
-        apply_position_sizing: Apply position sizing based on volatility
+        apply_position_sizing: Apply position sizing (deprecated, use expected_return)
         validate: Run validation checks
         universe_path: Explicit path to universe file with defensive_features
         universe_search_paths: Custom list of paths to search for universe file
@@ -216,6 +216,7 @@ def compute_module_5_composite_with_defensive(
         - Smart money signal (13F overlap with tier weighting)
         - Shrinkage normalization (Bayesian cohort adjustment)
         - Sanity override (fallback for pathological rankings)
+        - Expected Return (score → rank → z-score → ER, λ=8%/σ/yr)
     """
     output_v2_for_sanity = None
 

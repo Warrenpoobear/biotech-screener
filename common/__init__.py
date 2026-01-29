@@ -13,9 +13,34 @@ Provides:
 - score_utils: Score clamping and normalization
 - null_safety: Defensive null handling
 - robustness: Data staleness, consistency checks, retry logic, memory guards
+- score_to_er: Score to Expected Return conversion (institutional methodology)
+- clustering: Correlated security clustering (return correlation based)
 """
 
 from common.date_utils import normalize_date, to_date_string, to_date_object, validate_as_of_date
+
+# Score to Expected Return conversion (institutional methodology)
+from common.score_to_er import (
+    compute_expected_returns,
+    attach_rank_and_z,
+    attach_expected_return,
+    validate_er_output,
+    DEFAULT_LAMBDA_ANNUAL,
+    ER_MODEL_ID,
+    ER_MODEL_VERSION,
+)
+
+# Correlated security clustering
+from common.clustering import (
+    build_corr_clusters,
+    attach_cluster_ids,
+    attach_indication_clusters,
+    compute_pairwise_correlations,
+    DEFAULT_CORR_THRESHOLD,
+    DEFAULT_CORR_WINDOW,
+    CLUSTER_MODEL_ID,
+    CLUSTER_MODEL_VERSION,
+)
 
 # Hash utilities
 from common.hash_utils import (
@@ -200,4 +225,21 @@ __all__ = [
     "DegradationReport",
     "GracefulDegradationConfig",
     "compute_with_degradation",
+    # Score to Expected Return
+    "compute_expected_returns",
+    "attach_rank_and_z",
+    "attach_expected_return",
+    "validate_er_output",
+    "DEFAULT_LAMBDA_ANNUAL",
+    "ER_MODEL_ID",
+    "ER_MODEL_VERSION",
+    # Clustering
+    "build_corr_clusters",
+    "attach_cluster_ids",
+    "attach_indication_clusters",
+    "compute_pairwise_correlations",
+    "DEFAULT_CORR_THRESHOLD",
+    "DEFAULT_CORR_WINDOW",
+    "CLUSTER_MODEL_ID",
+    "CLUSTER_MODEL_VERSION",
 ]
