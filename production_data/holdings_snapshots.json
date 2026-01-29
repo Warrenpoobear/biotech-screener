@@ -2757,7 +2757,7 @@
           "quarter_end": "2025-09-30",
           "state": "KNOWN",
           "shares": 185661,
-          "value_kusd": 26007393000,
+          "value_kusd": 26007393,
           "put_call": ""
         },
         "0001274413": {
@@ -2829,7 +2829,7 @@
           "quarter_end": "2025-06-30",
           "state": "KNOWN",
           "shares": 205759,
-          "value_kusd": 25841273000,
+          "value_kusd": 25841273,
           "put_call": ""
         },
         "0001274413": {
@@ -16452,6 +16452,13 @@
           "shares": 14726,
           "value_kusd": 189747,
           "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 166666,
+          "value_kusd": 2967,
+          "put_call": ""
         }
       },
       "prior": {
@@ -16474,6 +16481,13 @@
           "state": "KNOWN",
           "shares": 14626,
           "value_kusd": 130756,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2025-06-30",
+          "state": "KNOWN",
+          "shares": 166666,
+          "value_kusd": 3017,
           "put_call": ""
         }
       }
@@ -17605,6 +17619,20 @@
           "shares": 290000,
           "value_kusd": 29965700000,
           "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 702130,
+          "value_kusd": 101113741,
+          "put_call": ""
+        },
+        "0001306923": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 491805,
+          "value_kusd": 70824838,
+          "put_call": ""
         }
       },
       "prior": {
@@ -17634,6 +17662,20 @@
           "state": "KNOWN",
           "shares": 433400,
           "value_kusd": 53295198000,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2025-06-30",
+          "state": "KNOWN",
+          "shares": 650252,
+          "value_kusd": 65441361,
+          "put_call": ""
+        },
+        "0001306923": {
+          "quarter_end": "2025-06-30",
+          "state": "KNOWN",
+          "shares": 865113,
+          "value_kusd": 87064972,
           "put_call": ""
         }
       }
@@ -18297,6 +18339,13 @@
           "shares": 2545260,
           "value_kusd": 8119379,
           "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 9680185,
+          "value_kusd": 30879790,
+          "put_call": ""
         }
       },
       "prior": {
@@ -18319,6 +18368,13 @@
           "state": "KNOWN",
           "shares": 1862200,
           "value_kusd": 4227194,
+          "put_call": ""
+        },
+        "0001224962": {
+          "quarter_end": "2025-06-30",
+          "state": "KNOWN",
+          "shares": 6993646,
+          "value_kusd": 15875576,
           "put_call": ""
         }
       }
@@ -22534,6 +22590,143 @@
           "put_call": ""
         }
       }
+    }
+  },
+  "ASND": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001224962": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 1088501,
+          "value_kusd": 216404884,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001224962": {
+          "quarter_end": "2025-06-30",
+          "state": "KNOWN",
+          "shares": 963886,
+          "value_kusd": 166366724,
+          "put_call": ""
+        }
+      }
+    }
+  },
+  "AVLO": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001224962": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 139667,
+          "value_kusd": 1775168,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001224962": {
+          "quarter_end": "2025-06-30",
+          "state": "KNOWN",
+          "shares": 139667,
+          "value_kusd": 696938,
+          "put_call": ""
+        }
+      }
+    }
+  },
+  "GOSS": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001224962": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 3812797,
+          "value_kusd": 10027656,
+          "put_call": ""
+        },
+        "0001306923": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 5464349,
+          "value_kusd": 14371238,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001306923": {
+          "quarter_end": "2025-06-30",
+          "state": "KNOWN",
+          "shares": 5739013,
+          "value_kusd": 7058986,
+          "put_call": ""
+        }
+      }
+    }
+  },
+  "SEPN": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001224962": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 541450,
+          "value_kusd": 10184675,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001224962": {
+          "quarter_end": "2025-06-30",
+          "state": "KNOWN",
+          "shares": 541450,
+          "value_kusd": 5723127,
+          "put_call": ""
+        }
+      }
+    }
+  },
+  "SION": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001224962": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 1179098,
+          "value_kusd": 34677272,
+          "put_call": ""
+        }
+      },
+      "prior": {
+        "0001224962": {
+          "quarter_end": "2025-06-30",
+          "state": "KNOWN",
+          "shares": 1216045,
+          "value_kusd": 21098381,
+          "put_call": ""
+        }
+      }
+    }
+  },
+  "QURE": {
+    "market_cap_usd": 0,
+    "holdings": {
+      "current": {
+        "0001224962": {
+          "quarter_end": "2025-09-30",
+          "state": "KNOWN",
+          "shares": 20000,
+          "value_kusd": 1167400,
+          "put_call": ""
+        }
+      },
+      "prior": {}
     }
   }
 }

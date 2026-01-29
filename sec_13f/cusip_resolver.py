@@ -90,6 +90,7 @@ KNOWN_CUSIP_MAPPINGS = {
     '86889P117': 'SRZN',   # Surrozen
     '90240B106': 'TYRA',   # Tyra Biosciences
     'N90064101': 'QURE',   # uniQure
+    '38341P102': 'GOSS',   # Gossamer Bio
 
     # AI/diagnostics biotech
     '88023B103': 'TEM',    # Tempus AI
