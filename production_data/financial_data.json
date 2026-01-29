@@ -170,8 +170,8 @@
     "COGS_date": "2025-09-30",
     "R&D": 335536000,
     "R&D_date": "2025-09-30",
-    "NetIncome": -69000,
-    "NetIncome_date": "2019-06-30",
+    "NetIncome": -730972000.0,
+    "NetIncome_date": "2025-09-30",
     "LongTermDebt": 1851016000.0,
     "LongTermDebt_date": "2025-09-30",
     "LongTermDebtCurrent": 3646000,
@@ -197,7 +197,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "GOSS",
@@ -410,10 +411,10 @@
     "Cash_date": "2025-09-30",
     "R&D": 17670888.0,
     "R&D_date": "2025-09-30",
-    "NetIncome": -28220796,
-    "NetIncome_date": "2023-12-31",
-    "Revenue": 0,
-    "Revenue_date": "2023-12-31",
+    "NetIncome": -25445468.0,
+    "NetIncome_date": "2025-09-30",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
     "CFO": -18026224.0,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 27532400.0,
@@ -437,7 +438,9 @@
     "CFO_source": "Yahoo",
     "R&D_source": "Yahoo",
     "InterestExpense_source": "Yahoo",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue_source": "Yahoo",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "ACAD",
@@ -1248,8 +1251,8 @@
     "LongTermDebt_date": "2025-09-30",
     "ConvertibleDebt": 240942000,
     "ConvertibleDebt_date": "2020-09-30",
-    "Revenue": 44830000,
-    "Revenue_date": "2018-03-31",
+    "Revenue": 755220000.0,
+    "Revenue_date": "2025-09-30",
     "CFO": 91713000,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 503044000,
@@ -1266,7 +1269,8 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "ROIV",
@@ -1448,7 +1452,10 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "ARVN",
@@ -1804,8 +1811,8 @@
     "NetIncome_date": "2025-09-30",
     "LongTermDebt": 0.0,
     "LongTermDebt_date": "2020-03-31",
-    "Revenue": 8781000,
-    "Revenue_date": "2017-09-30",
+    "Revenue": 18848000.0,
+    "Revenue_date": "2025-09-30",
     "CFO": 94646000,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 146351000,
@@ -1823,7 +1830,8 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "CDNA",
@@ -1909,7 +1917,10 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 2321676000.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "AGIO",
@@ -2211,8 +2222,8 @@
     "NetIncome_date": "2025-09-30",
     "LongTermDebt": 633473000.0,
     "LongTermDebt_date": "2025-09-30",
-    "Revenue": 25186000,
-    "Revenue_date": "2017-12-31",
+    "Revenue": 637580000.0,
+    "Revenue_date": "2025-09-30",
     "CFO": 55409000,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 387678000,
@@ -2234,7 +2245,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "InterestExpense_source": "Yahoo"
+    "InterestExpense_source": "Yahoo",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "BDTX",
@@ -2255,8 +2267,8 @@
     "R&D_date": "2025-09-30",
     "NetIncome": 37483000,
     "NetIncome_date": "2025-09-30",
-    "Revenue": 0,
-    "Revenue_date": "2020-12-31",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
     "CFO": 36401000,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 39868000,
@@ -2279,7 +2291,8 @@
     "LongTermDebt_source": "Yahoo",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "CRBU",
@@ -2416,7 +2429,10 @@
     "LongTermDebt_source": "Yahoo",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "CLDX",
@@ -2533,8 +2549,8 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -383991000,
     "NetIncome_date": "2025-09-30",
-    "Revenue": 0,
-    "Revenue_date": "2024-12-31",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
     "CFO": -314062000,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 417977000,
@@ -2553,7 +2569,8 @@
     "LongTermDebt_source": "Yahoo",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "DRMA",
@@ -2593,7 +2610,10 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "DVAX",
@@ -2710,8 +2730,8 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -54546000,
     "NetIncome_date": "2025-09-30",
-    "Revenue": 7800000,
-    "Revenue_date": "2021-09-30",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
     "CFO": -43267000,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 62076000,
@@ -2730,7 +2750,8 @@
     "LongTermDebt_source": "Yahoo",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "HALO",
@@ -2805,8 +2826,8 @@
     "NetIncome_date": "2025-09-30",
     "ConvertibleDebt": 64000,
     "ConvertibleDebt_date": "2011-09-30",
-    "Revenue": 30767000,
-    "Revenue_date": "2017-12-31",
+    "Revenue": 152852000.0,
+    "Revenue_date": "2025-09-30",
     "CFO": -18407000,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 86664000,
@@ -2825,7 +2846,8 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "IMCR",
@@ -2901,7 +2923,10 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "R&D_source": "Yahoo"
+    "R&D_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "IRWD",
@@ -2980,8 +3005,8 @@
     "LongTermDebt_date": "2025-09-30",
     "LongTermDebtCurrent": 28411000,
     "LongTermDebtCurrent_date": "2025-09-30",
-    "Revenue": 0,
-    "Revenue_date": "2017-12-31",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
     "CFO": -27435000,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 28936000,
@@ -3000,7 +3025,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "InterestExpense_source": "Yahoo"
+    "InterestExpense_source": "Yahoo",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "KALV",
@@ -3573,8 +3599,8 @@
     "LongTermDebt_date": "2025-09-30",
     "LongTermDebtCurrent": 43219000,
     "LongTermDebtCurrent_date": "2022-12-31",
-    "Revenue": 3618000,
-    "Revenue_date": "2023-06-30",
+    "Revenue": 11688000.0,
+    "Revenue_date": "2025-09-30",
     "CFO": -64371000,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 145472000.0,
@@ -3597,7 +3623,8 @@
     "ShareholdersEquity_source": "SEC",
     "R&D_source": "Yahoo",
     "InterestExpense_source": "Yahoo",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "PRTA",
@@ -3707,8 +3734,8 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -766409000,
     "NetIncome_date": "2025-09-30",
-    "Revenue": 0,
-    "Revenue_date": "2024-12-31",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
     "CFO": -623503000,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 820743000,
@@ -3728,7 +3755,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "InterestExpense_source": "Yahoo"
+    "InterestExpense_source": "Yahoo",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "RXRX",
@@ -3858,7 +3886,10 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "SGMO",
@@ -4181,7 +4212,10 @@
     "LongTermDebt_source": "Yahoo",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "ABCL",
@@ -4252,8 +4286,8 @@
     "NetIncome_date": "2025-09-30",
     "LongTermDebt": 65000.0,
     "LongTermDebt_date": "2025-09-30",
-    "Revenue": 4534000,
-    "Revenue_date": "2024-12-31",
+    "Revenue": 1512000.0,
+    "Revenue_date": "2025-09-30",
     "CFO": -63743000,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 91426000,
@@ -4273,7 +4307,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "InterestExpense_source": "Yahoo"
+    "InterestExpense_source": "Yahoo",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "ABUS",
@@ -4840,7 +4875,10 @@
     "LongTermDebt_source": "Yahoo",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "ANRO",
@@ -4883,7 +4921,10 @@
     "ShareholdersEquity_source": "SEC",
     "InterestExpense": 2600000.0,
     "InterestExpense_date": "2025-09-30",
-    "InterestExpense_source": "Yahoo"
+    "InterestExpense_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "APGE",
@@ -4924,7 +4965,10 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_date": "2025-09-30",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "ARQT",
@@ -5168,7 +5212,10 @@
     "LongTermDebt_source": "Yahoo",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "AUTL",
@@ -5258,7 +5305,10 @@
     "LongTermDebt_source": "Yahoo",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "AVIR",
@@ -5279,8 +5329,8 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -113482000,
     "NetIncome_date": "2025-09-30",
-    "Revenue": 351367000,
-    "Revenue_date": "2021-12-31",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
     "CFO": -103808000,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 125953000,
@@ -5301,7 +5351,8 @@
     "LongTermDebt_source": "Yahoo",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "AVXL",
@@ -5340,7 +5391,10 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "BBOT",
@@ -5381,7 +5435,10 @@
     "LongTermDebt_source": "Yahoo",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "BCAX",
@@ -5424,7 +5481,10 @@
     "LongTermDebt_source": "Yahoo",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "BCYC",
@@ -5511,7 +5571,10 @@
     "LongTermDebt_source": "Yahoo",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "BIOA",
@@ -5656,7 +5719,10 @@
     "LongTermDebt_source": "Yahoo",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "CADL",
@@ -5681,8 +5747,8 @@
     "LongTermDebt_date": "2025-09-30",
     "LongTermDebtCurrent": 4225000,
     "LongTermDebtCurrent_date": "2025-09-30",
-    "Revenue": 125000,
-    "Revenue_date": "2022-12-31",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
     "CFO": -27743000,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 32514000,
@@ -5700,7 +5766,8 @@
     "LongTermDebt_source": "Yahoo",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "CAI",
@@ -5773,8 +5840,8 @@
     "NetIncome_date": "2025-09-30",
     "LongTermDebt": 1583000.0,
     "LongTermDebt_date": "2025-09-30",
-    "Revenue": 6336000,
-    "Revenue_date": "2023-09-30",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
     "CFO": -57827000,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 74573000,
@@ -5796,7 +5863,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "InterestExpense_source": "Yahoo"
+    "InterestExpense_source": "Yahoo",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "CCCC",
@@ -5916,8 +5984,8 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -169166000,
     "NetIncome_date": "2025-09-30",
-    "Revenue": 0,
-    "Revenue_date": "2022-12-31",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
     "CFO": -137641000,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 186389000,
@@ -5938,7 +6006,8 @@
     "LongTermDebt_source": "Yahoo",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "CGON",
@@ -5979,7 +6048,10 @@
     "LongTermDebt_source": "Yahoo",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 6664000.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "CMPS",
@@ -6021,7 +6093,10 @@
     "LongTermDebt_source": "Yahoo",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "CNTA",
@@ -6118,7 +6193,10 @@
     "ShareholdersEquity_source": "SEC",
     "InterestExpense": 5836000.0,
     "InterestExpense_date": "2025-09-30",
-    "InterestExpense_source": "Yahoo"
+    "InterestExpense_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "CRL",
@@ -6340,8 +6418,8 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -44822000,
     "NetIncome_date": "2025-09-30",
-    "Revenue": 0,
-    "Revenue_date": "2024-12-31",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
     "CFO": -42270000,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 50944000,
@@ -6360,7 +6438,8 @@
     "LongTermDebt_source": "Yahoo",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "DNA",
@@ -6493,7 +6572,10 @@
     "LongTermDebt_source": "Yahoo",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "EBS",
@@ -6578,7 +6660,10 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "ENTA",
@@ -6671,7 +6756,10 @@
     "ShareholdersEquity_source": "SEC",
     "R&D": 89896000.0,
     "R&D_date": "2025-09-30",
-    "R&D_source": "Yahoo"
+    "R&D_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "EWTX",
@@ -6712,7 +6800,10 @@
     "LongTermDebt_source": "Yahoo",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "FDMT",
@@ -6995,7 +7086,10 @@
     "LongTermDebt_source": "Yahoo",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 51072000.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "GPCR",
@@ -7036,7 +7130,10 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "GRAL",
@@ -7284,8 +7381,8 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -44444888,
     "NetIncome_date": "2025-09-30",
-    "Revenue": 0,
-    "Revenue_date": "2023-12-31",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
     "CFO": -35503997,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 45623250,
@@ -7301,7 +7398,8 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "INBX",
@@ -7487,7 +7585,10 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "InterestExpense_source": "Yahoo"
+    "InterestExpense_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "JANX",
@@ -7528,7 +7629,10 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 40000000.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "KOD",
@@ -7569,7 +7673,10 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "KROS",
@@ -7700,7 +7807,10 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "InterestExpense_source": "Yahoo"
+    "InterestExpense_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "LAB",
@@ -7832,7 +7942,10 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 50000000.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "LRMR",
@@ -7855,8 +7968,8 @@
     "NetIncome_date": "2025-09-30",
     "LongTermDebt": 0.0,
     "LongTermDebt_date": "2019-12-31",
-    "Revenue": 0,
-    "Revenue_date": "2020-03-31",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
     "CFO": -45921000,
     "CFO_date": "2025-06-30",
     "OperatingExpenses": 108479000,
@@ -7874,7 +7987,8 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "LXEO",
@@ -7897,8 +8011,8 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -79042000,
     "NetIncome_date": "2025-09-30",
-    "Revenue": 654000,
-    "Revenue_date": "2022-12-31",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
     "CFO": -78482000,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 86141000,
@@ -7920,7 +8034,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "InterestExpense_source": "Yahoo"
+    "InterestExpense_source": "Yahoo",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "LYEL",
@@ -8043,7 +8158,10 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "MEDP",
@@ -8211,7 +8329,10 @@
     "Assets_source": "SEC",
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "MNKD",
@@ -8295,7 +8416,10 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 4214000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-27"
+    "collected_at": "2026-01-27",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "MYGN",
@@ -8461,8 +8585,8 @@
     "R&D_date": "2025-06-30",
     "NetIncome": -8654000,
     "NetIncome_date": "2025-06-30",
-    "Revenue": 3893000,
-    "Revenue_date": "2023-12-31",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
     "CFO": -7840000,
     "CFO_date": "2025-06-30",
     "OperatingExpenses": 12380000,
@@ -8483,7 +8607,8 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "NGNE",
@@ -8577,7 +8702,10 @@
     "ShareholdersEquity_source": "SEC",
     "InterestExpense": 2988000.0,
     "InterestExpense_date": "2025-09-30",
-    "InterestExpense_source": "Yahoo"
+    "InterestExpense_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "NRIX",
@@ -8704,7 +8832,10 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "OABI",
@@ -8786,7 +8917,10 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "ONC",
@@ -8921,7 +9055,10 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "R&D_source": "Yahoo"
+    "R&D_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "ORKA",
@@ -8944,8 +9081,8 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -75850000,
     "NetIncome_date": "2025-09-30",
-    "Revenue": 0,
-    "Revenue_date": "2024-06-30",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
     "CFO": -65616000,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 87620000,
@@ -8965,7 +9102,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "InterestExpense_source": "Yahoo"
+    "InterestExpense_source": "Yahoo",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "PACB",
@@ -9056,7 +9194,10 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "PHAT",
@@ -9395,8 +9536,8 @@
     "LongTermDebt_date": "2024-12-31",
     "LongTermDebtCurrent": 11111000,
     "LongTermDebtCurrent_date": "2018-09-30",
-    "Revenue": 9676000,
-    "Revenue_date": "2018-09-30",
+    "Revenue": 14804000.0,
+    "Revenue_date": "2025-09-30",
     "CFO": -100394000,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 150986000,
@@ -9414,7 +9555,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "InterestExpense_source": "Yahoo"
+    "InterestExpense_source": "Yahoo",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "RAPP",
@@ -9455,7 +9597,10 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "RAPT",
@@ -9478,8 +9623,8 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -52388000,
     "NetIncome_date": "2025-09-30",
-    "Revenue": 0,
-    "Revenue_date": "2023-12-31",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
     "CFO": -76143000,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 58171000,
@@ -9496,7 +9641,8 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "RCKT",
@@ -9659,8 +9805,8 @@
     "NetIncome_date": "2025-09-30",
     "LongTermDebt": 47206000.0,
     "LongTermDebt_date": "2023-12-31",
-    "Revenue": 0,
-    "Revenue_date": "2018-12-31",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
     "CFO": -158228000,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 174715000,
@@ -9680,7 +9826,8 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "RIGL",
@@ -9835,8 +9982,8 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -41470000,
     "NetIncome_date": "2025-09-30",
-    "Revenue": 2000000,
-    "Revenue_date": "2023-12-31",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
     "CFO": -33817000,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 46124000,
@@ -9853,7 +10000,8 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "SION",
@@ -9889,7 +10037,10 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "SLDB",
@@ -9910,10 +10061,10 @@
     "AvailableForSaleSecurities_date": "2019-03-31",
     "R&D": 102190000,
     "R&D_date": "2025-09-30",
-    "NetIncome": -53578000,
-    "NetIncome_date": "2021-09-30",
-    "Revenue": 8094000,
-    "Revenue_date": "2022-12-31",
+    "NetIncome": -183104000.0,
+    "NetIncome_date": "2025-09-30",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
     "CFO": -102734000,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 129803000,
@@ -9932,7 +10083,9 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue_source": "Yahoo",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "SLN",
@@ -10000,8 +10153,8 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -860414000,
     "NetIncome_date": "2025-09-30",
-    "Revenue": 0,
-    "Revenue_date": "2024-12-31",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
     "CFO": -220992000,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 869499000,
@@ -10024,7 +10177,8 @@
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
     "R&D_source": "Yahoo",
-    "InterestExpense_source": "Yahoo"
+    "InterestExpense_source": "Yahoo",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "SRRK",
@@ -10186,8 +10340,8 @@
     "LongTermDebt_date": "2025-09-30",
     "LongTermDebtCurrent": 0,
     "LongTermDebtCurrent_date": "2025-09-30",
-    "Revenue": 0,
-    "Revenue_date": "2021-09-30",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
     "CFO": -75980000,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 90128000,
@@ -10208,7 +10362,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "R&D_source": "Yahoo"
+    "R&D_source": "Yahoo",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "SYRE",
@@ -10231,8 +10386,8 @@
     "R&D_date": "2025-09-30",
     "NetIncome": -92673000,
     "NetIncome_date": "2025-09-30",
-    "Revenue": 0,
-    "Revenue_date": "2024-12-31",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
     "CFO": -124674000,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 152390000,
@@ -10250,7 +10405,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "R&D_source": "Yahoo"
+    "R&D_source": "Yahoo",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "TECX",
@@ -10290,7 +10446,10 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "InterestExpense_source": "Yahoo"
+    "InterestExpense_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "TEM",
@@ -10354,8 +10513,8 @@
     "NetIncome_date": "2025-09-30",
     "LongTermDebt": 0.0,
     "LongTermDebt_date": "2024-09-30",
-    "Revenue": 0,
-    "Revenue_date": "2022-12-31",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
     "CFO": -63093000,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 82526000,
@@ -10374,7 +10533,8 @@
     "ShareholdersEquity_source": "SEC",
     "R&D": 79668000.0,
     "R&D_date": "2025-09-30",
-    "R&D_source": "Yahoo"
+    "R&D_source": "Yahoo",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "TKNO",
@@ -10507,7 +10667,10 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "TRDA",
@@ -10590,7 +10753,10 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "InterestExpense_source": "Yahoo"
+    "InterestExpense_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "TSHA",
@@ -10730,7 +10896,10 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 396036000.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "TXG",
@@ -10813,7 +10982,10 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "UPB",
@@ -10999,7 +11171,10 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "InterestExpense_source": "Yahoo"
+    "InterestExpense_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "VIR",
@@ -11122,7 +11297,10 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "VYGR",
@@ -11233,8 +11411,8 @@
     "NetIncome_date": "2025-09-30",
     "LongTermDebtCurrent": 15676000,
     "LongTermDebtCurrent_date": "2020-03-31",
-    "Revenue": 311000,
-    "Revenue_date": "2017-12-31",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
     "CFO": -197637000,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 270803000,
@@ -11253,7 +11431,8 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "XNCR",
@@ -11422,8 +11601,8 @@
     "LongTermDebt_date": "2025-09-30",
     "ConvertibleDebt": 0,
     "ConvertibleDebt_date": "2022-09-30",
-    "Revenue": 0,
-    "Revenue_date": "2016-03-31",
+    "Revenue": 104252000.0,
+    "Revenue_date": "2025-09-30",
     "CFO": -7114000,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 67385000,
@@ -11442,7 +11621,8 @@
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
     "R&D_source": "Yahoo",
-    "InterestExpense_source": "Yahoo"
+    "InterestExpense_source": "Yahoo",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "ZYME",
@@ -11753,8 +11933,8 @@
     "NetIncome_date": "2025-09-30",
     "LongTermDebt": 36957000.0,
     "LongTermDebt_date": "2025-09-30",
-    "Revenue": 123856000,
-    "Revenue_date": "2019-12-31",
+    "Revenue": 46284000.0,
+    "Revenue_date": "2025-09-30",
     "CFO": -118797000,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 164678000,
@@ -11773,7 +11953,8 @@
     "LongTermDebt_source": "Yahoo",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "COLL",
@@ -12273,8 +12454,8 @@
     "MarketableSecurities_date": "2022-09-30",
     "R&D": 26049000,
     "R&D_date": "2025-09-30",
-    "NetIncome": 4435000,
-    "NetIncome_date": "2016-03-31",
+    "NetIncome": 359632000.0,
+    "NetIncome_date": "2025-09-30",
     "LongTermDebt": 257377000.0,
     "LongTermDebt_date": "2016-06-30",
     "LongTermDebtCurrent": 15181000,
@@ -12300,7 +12481,8 @@
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "IVVD",
@@ -12377,7 +12559,10 @@
     "InterestExpense_source": "Yahoo",
     "OperatingExpenses": 47784000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "NetIncome": 21184000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "KNSA",
@@ -12451,8 +12636,8 @@
     "LongTermDebt_date": "2025-09-30",
     "LongTermDebtCurrent": 947000,
     "LongTermDebtCurrent_date": "2025-09-30",
-    "Revenue": 557559000,
-    "Revenue_date": "2019-05-26",
+    "Revenue": 124436000.0,
+    "Revenue_date": "2025-09-30",
     "CFO": 1762000,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 43432000.0,
@@ -12470,7 +12655,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "OBIO",
@@ -12585,8 +12771,8 @@
     "LongTermDebt_date": "2025-09-30",
     "LongTermDebtCurrent": 2561000,
     "LongTermDebtCurrent_date": "2019-03-31",
-    "Revenue": 79889000,
-    "Revenue_date": "2021-09-30",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
     "CFO": -76252000,
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 93715000,
@@ -12608,7 +12794,8 @@
     "Assets_source": "SEC",
     "Liabilities_date": "2025-09-30",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "PAHC",
@@ -12889,7 +13076,10 @@
     "Debt_source": "SEC",
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
-    "ShareholdersEquity_source": "SEC"
+    "ShareholdersEquity_source": "SEC",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo"
   },
   {
     "ticker": "VTRS",
@@ -12910,8 +13100,8 @@
     "AvailableForSaleSecurities_date": "2020-12-31",
     "R&D": 691200000,
     "R&D_date": "2025-09-30",
-    "NetIncome": -170000000,
-    "NetIncome_date": "2020-09-27",
+    "NetIncome": -512800000.0,
+    "NetIncome_date": "2025-09-30",
     "LongTermDebt": 12487600000.0,
     "LongTermDebt_date": "2020-09-27",
     "LongTermDebtCurrent": 1951900000,
@@ -12936,7 +13126,8 @@
     "Assets_source": "SEC",
     "Liabilities_source": "SEC",
     "ShareholdersEquity_source": "SEC",
-    "Revenue_source": "SEC"
+    "Revenue_source": "SEC",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "XERS",
@@ -13034,7 +13225,10 @@
     "InterestExpense_source": "Yahoo",
     "OperatingExpenses": 94120000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "NetIncome": -20644000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "ABOS",
@@ -13081,7 +13275,13 @@
     "InterestExpense_source": "Yahoo",
     "OperatingExpenses": 106052000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo",
+    "NetIncome": -105804000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "ACRV",
@@ -13125,7 +13325,13 @@
     "R&D_source": "Yahoo",
     "OperatingExpenses": 78748000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo",
+    "NetIncome": -72936000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "AKTX",
@@ -13168,7 +13374,13 @@
     "InterestExpense_source": "Yahoo",
     "OperatingExpenses": 8896000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo",
+    "NetIncome": -25600000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "ALDX",
@@ -13215,7 +13427,13 @@
     "InterestExpense_source": "Yahoo",
     "OperatingExpenses": 32004528.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo",
+    "NetIncome": -30753364.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "ALGS",
@@ -13262,7 +13480,10 @@
     "R&D_source": "Yahoo",
     "OperatingExpenses": 116408000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "NetIncome": -126148000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "ARTV",
@@ -13306,7 +13527,13 @@
     "R&D_source": "Yahoo",
     "OperatingExpenses": 91588000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo",
+    "NetIncome": -86112000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "ASMB",
@@ -13350,7 +13577,13 @@
     "R&D_source": "Yahoo",
     "OperatingExpenses": 86688000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 43156000.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo",
+    "NetIncome": -36784000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "BLTE",
@@ -13394,7 +13627,13 @@
     "R&D_source": "Yahoo",
     "OperatingExpenses": 92072000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo",
+    "NetIncome": -86760000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "BMEA",
@@ -13436,7 +13675,13 @@
     "R&D_source": "Yahoo",
     "OperatingExpenses": 74400000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo",
+    "NetIncome": -65628000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "CELC",
@@ -13483,7 +13728,13 @@
     "InterestExpense_source": "Yahoo",
     "OperatingExpenses": 171396000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo",
+    "NetIncome": -175216000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "CERS",
@@ -13530,7 +13781,13 @@
     "InterestExpense_source": "Yahoo",
     "OperatingExpenses": 107616000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 210792000.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo",
+    "NetIncome": -76000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "CLYM",
@@ -13574,7 +13831,13 @@
     "R&D_source": "Yahoo",
     "OperatingExpenses": 59568000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo",
+    "NetIncome": -51552000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "DNTH",
@@ -13621,7 +13884,10 @@
     "R&D_source": "Yahoo",
     "OperatingExpenses": 162736000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "NetIncome": -147060000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "DRUG",
@@ -13662,7 +13928,13 @@
     "R&D_source": "Yahoo",
     "OperatingExpenses": 22658168.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo",
+    "NetIncome": -16342412.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "ELDN",
@@ -13706,7 +13978,13 @@
     "R&D_source": "Yahoo",
     "OperatingExpenses": 76280000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo",
+    "NetIncome": -69836000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "ENGN",
@@ -13753,7 +14031,13 @@
     "InterestExpense_source": "Yahoo",
     "OperatingExpenses": 157924000.0,
     "OperatingExpenses_date": "2025-10-31",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-10-31",
+    "Revenue_source": "Yahoo",
+    "NetIncome": -151520000.0,
+    "NetIncome_date": "2025-10-31",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "GBIO",
@@ -13800,7 +14084,10 @@
     "R&D_source": "Yahoo",
     "OperatingExpenses": 135168000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "NetIncome": -22080000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "HOWL",
@@ -13842,7 +14129,13 @@
     "InterestExpense_source": "Yahoo",
     "OperatingExpenses": 62904000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo",
+    "NetIncome": -65480000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "IKT",
@@ -13887,7 +14180,10 @@
     "R&D_source": "Yahoo",
     "OperatingExpenses": 53044800.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "NetIncome": -47721120.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "IMTX",
@@ -13926,7 +14222,13 @@
     "InterestExpense_source": "Yahoo",
     "OperatingExpenses": 239280000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 20748000.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo",
+    "NetIncome": -202180000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "JBIO",
@@ -13968,7 +14270,13 @@
     "R&D_source": "Yahoo",
     "OperatingExpenses": 109604000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo",
+    "NetIncome": -100700000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "LBRX",
@@ -14010,7 +14318,13 @@
     "R&D_source": "Yahoo",
     "OperatingExpenses": 20984000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo",
+    "NetIncome": -14224000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "LYRA",
@@ -14053,7 +14367,10 @@
     "R&D_source": "Yahoo",
     "OperatingExpenses": 25132000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "NetIncome": -23936000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "MLTX",
@@ -14095,7 +14412,13 @@
     "InterestExpense_source": "Yahoo",
     "OperatingExpenses": 285736000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo",
+    "NetIncome": -278916000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "MTSR",
@@ -14145,7 +14468,13 @@
     "R&D_source": "Yahoo",
     "OperatingExpenses": 61888000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo",
+    "NetIncome": -54296000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "NKTX",
@@ -14187,7 +14516,13 @@
     "R&D_source": "Yahoo",
     "OperatingExpenses": 109144000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo",
+    "NetIncome": -86860000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "OCS",
@@ -14232,7 +14567,13 @@
     "InterestExpense_source": "Yahoo",
     "OperatingExpenses": 81184000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo",
+    "NetIncome": -67420000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "PRLD",
@@ -14277,7 +14618,10 @@
     "R&D_source": "Yahoo",
     "OperatingExpenses": 107672000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "NetIncome": -78900000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "PRQR",
@@ -14314,7 +14658,10 @@
     "R&D_source": "Yahoo",
     "OperatingExpenses": 56664000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "NetIncome": -44024000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "PVLA",
@@ -14357,7 +14704,13 @@
     "InterestExpense_source": "Yahoo",
     "OperatingExpenses": 40708000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo",
+    "NetIncome": -45380000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "SABS",
@@ -14402,7 +14755,13 @@
     "InterestExpense_source": "Yahoo",
     "OperatingExpenses": 50715876.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo",
+    "NetIncome": 181781876.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "SERA",
@@ -14450,7 +14809,10 @@
     "InterestExpense_source": "Yahoo",
     "OperatingExpenses": 35820000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "NetIncome": -31256000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "SKYE",
@@ -14495,7 +14857,13 @@
     "InterestExpense_source": "Yahoo",
     "OperatingExpenses": 53058136.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo",
+    "NetIncome": -51018640.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "TARA",
@@ -14537,7 +14905,13 @@
     "R&D_source": "Yahoo",
     "OperatingExpenses": 59040000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo",
+    "NetIncome": -53032000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "TCRX",
@@ -14585,7 +14959,10 @@
     "InterestExpense_source": "Yahoo",
     "OperatingExpenses": 158252000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "NetIncome": -142840000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "TENX",
@@ -14631,7 +15008,10 @@
     "InterestExpense_source": "Yahoo",
     "OperatingExpenses": 67224000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "NetIncome": -63216000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "VKTX",
@@ -14674,7 +15054,10 @@
     "R&D_source": "Yahoo",
     "OperatingExpenses": 394244000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "NetIncome": -363148000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "VRDN",
@@ -14712,7 +15095,13 @@
     "InterestExpense_source": "Yahoo",
     "OperatingExpenses": 442332000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 282280000.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo",
+    "NetIncome": -138396000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "ABVX",
@@ -14751,7 +15140,13 @@
     "InterestExpense_source": "Yahoo",
     "OperatingExpenses": 322848000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo",
+    "NetIncome": -613432000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "ACIU",
@@ -14793,7 +15188,10 @@
     "InterestExpense_source": "Yahoo",
     "OperatingExpenses": 66552000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "NetIncome": -63432000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "ALVO",
@@ -14832,7 +15230,10 @@
     "InterestExpense_source": "Yahoo",
     "OperatingExpenses": 309700000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "NetIncome": -21008000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "ARGX",
@@ -14871,7 +15272,10 @@
     "InterestExpense_source": "Yahoo",
     "OperatingExpenses": 2670260000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "NetIncome": 1377032000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "ASND",
@@ -14913,7 +15317,10 @@
     "InterestExpense_source": "Yahoo",
     "OperatingExpenses": 721132000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "NetIncome": -243956000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "AZN",
@@ -14955,7 +15362,10 @@
     "InterestExpense_source": "Yahoo",
     "OperatingExpenses": 35228000000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "NetIncome": 10132000000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "BNTX",
@@ -14991,7 +15401,13 @@
     "R&D_source": "Yahoo",
     "OperatingExpenses": 2866800000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 6075600000.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo",
+    "NetIncome": -114800000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "CLLS",
@@ -15033,7 +15449,10 @@
     "InterestExpense_source": "Yahoo",
     "OperatingExpenses": 99096000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "NetIncome": 2356000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "CVAC",
@@ -15072,7 +15491,13 @@
     "InterestExpense_source": "Yahoo",
     "OperatingExpenses": -1025796000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 216536000.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo",
+    "NetIncome": 1092916000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "GHRS",
@@ -15111,7 +15536,13 @@
     "InterestExpense_source": "Yahoo",
     "OperatingExpenses": 66140000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo",
+    "NetIncome": -56080000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "GLPG",
@@ -15147,7 +15578,13 @@
     "R&D_source": "Yahoo",
     "OperatingExpenses": 407948000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 284644000.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo",
+    "NetIncome": -808444000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "GMAB",
@@ -15189,7 +15626,10 @@
     "InterestExpense_source": "Yahoo",
     "OperatingExpenses": 2020000000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "NetIncome": 1604000000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "IMMP",
@@ -15249,7 +15689,10 @@
     "InterestExpense_source": "Yahoo",
     "OperatingExpenses": 801904000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "NetIncome": -158756000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "MESO",
@@ -15303,7 +15746,13 @@
     "R&D_source": "Yahoo",
     "OperatingExpenses": 158657996.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "Revenue": 0.0,
+    "Revenue_date": "2025-09-30",
+    "Revenue_source": "Yahoo",
+    "NetIncome": -148548140.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "RANI",
@@ -15342,7 +15791,10 @@
     "InterestExpense_source": "Yahoo",
     "OperatingExpenses": 29028000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "NetIncome": -21648000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   },
   {
     "ticker": "SNY",
@@ -15372,6 +15824,9 @@
     "InterestExpense_source": "Yahoo",
     "OperatingExpenses": 23892000000.0,
     "OperatingExpenses_date": "2025-09-30",
-    "OperatingExpenses_source": "Yahoo"
+    "OperatingExpenses_source": "Yahoo",
+    "NetIncome": 11208000000.0,
+    "NetIncome_date": "2025-09-30",
+    "NetIncome_source": "Yahoo"
   }
 ]
