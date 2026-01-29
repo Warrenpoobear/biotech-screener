@@ -1,0 +1,43 @@
+{
+  "ticker": "SKYE",
+  "success": true,
+  "price": {
+    "current": 0.982,
+    "currency": "USD",
+    "day_high": 1.0299,
+    "day_low": 0.956,
+    "52_week_high": 5.75,
+    "52_week_low": 0.684
+  },
+  "market_cap": {
+    "value": 31480426.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 32057461.0,
+  "volume": {
+    "last": 145098,
+    "average_30d": 414963
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -0.8465517,
+    "price_to_book": 0.92641515
+  },
+  "company_info": {
+    "name": "Skye Bioscience, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:09:49.738186",
+    "url": "https://finance.yahoo.com/quote/SKYE",
+    "data_hash": "a9a9b0d05c30b352"
+  }
+}

@@ -1,0 +1,144 @@
+{
+  "ticker": "CGON",
+  "company_name": "CG Oncology, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06443944",
+      "title": "An Expanded Access Program of Cretostimogene Grenadenorepvec for Treatment of NMIBC for Patients Unresponsive to BCG",
+      "status": "AVAILABLE",
+      "phase": "",
+      "condition": "Non-Muscle Invasive Bladder Cancer, Urothelial Carcinoma, Urologic Cancer, Bladder Cancer",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "CG Oncology, Inc."
+    },
+    {
+      "nct_id": "NCT04610671",
+      "title": "Study of CG0070 Combined With Nivolumab in Cisplatin Ineligible Patients With MIBC",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Muscle-Invasive Bladder Carcinoma, Bladder Cancer",
+      "start_date": "2020-10-26",
+      "completion_date": "2026-01",
+      "enrollment": 0,
+      "sponsor": "H. Lee Moffitt Cancer Center and Research Institute"
+    },
+    {
+      "nct_id": "NCT04387461",
+      "title": "Study of CG0070 Given in Combination With Pembrolizumab, in Non-Muscle Invasive Bladder Cancer, Unresponsive to Bacillus Calmette-Guerin",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Non Muscle Invasive Bladder Cancer",
+      "start_date": "2020-12-08",
+      "completion_date": "2024-05-28",
+      "enrollment": 0,
+      "sponsor": "CG Oncology, Inc."
+    },
+    {
+      "nct_id": "NCT04452591",
+      "title": "Study of Cretostimogene Given in Patients With Non-Muscle Invasive Bladder Cancer ,Unresponsive to Bacillus-Calmette-Guerin",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Non Muscle Invasive Bladder Cancer, High-grade Ta/ T1 Papillary Disease Bladder Cancer",
+      "start_date": "2020-10-27",
+      "completion_date": "2029-12-24",
+      "enrollment": 0,
+      "sponsor": "CG Oncology, Inc."
+    },
+    {
+      "nct_id": "NCT02365818",
+      "title": "Safety and Efficacy of CG0070 Oncolytic Virus Regimen for High Grade NMIBC After BCG Failure",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Bladder Cancer",
+      "start_date": "2015-06-02",
+      "completion_date": "2019-02",
+      "enrollment": 0,
+      "sponsor": "CG Oncology, Inc."
+    },
+    {
+      "nct_id": "NCT06567743",
+      "title": "Phase 2 Study to Evaluate Safety and Efficacy of Cretostimogene Grenadenorepvec in High-Risk NMIBC",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "High-Risk Non-Muscle-Invasive Bladder Cancer",
+      "start_date": "2024-09-16",
+      "completion_date": "2027-12-30",
+      "enrollment": 0,
+      "sponsor": "CG Oncology, Inc."
+    },
+    {
+      "nct_id": "NCT02143804",
+      "title": "Safety and Efficacy of CG0070 Oncolytic Virus Regimen in Patients With High Grade Non-Muscle Invasive Bladder Cancer",
+      "status": "WITHDRAWN",
+      "phase": "PHASE2",
+      "condition": "Bladder Cancer, High Grade, Non Muscle Invasive",
+      "start_date": "2014-03",
+      "completion_date": "2015-03",
+      "enrollment": 0,
+      "sponsor": "CG Oncology, Inc."
+    },
+    {
+      "nct_id": "NCT01438112",
+      "title": "Efficacy Study of Recombinant Adenovirus for Non Muscle Invasive Bladder Cancer",
+      "status": "TERMINATED",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Transitional Cell Carcinoma, Bladder Cancer, Carcinoma in Situ, Carcinoma in Situ Concurrent With Papillary Tumors",
+      "start_date": "2014-03",
+      "completion_date": "2016-06",
+      "enrollment": 0,
+      "sponsor": "CG Oncology, Inc."
+    },
+    {
+      "nct_id": "NCT06111235",
+      "title": "A Study of Adjuvant Cretostimogene Grenadenorepvec for Treatment of Intermediate Risk NMIBC Following TURBT",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Non Muscle Invasive Bladder Cancer, Urologic Cancer, Bladder Cancer, Urothelial Carcinoma",
+      "start_date": "2023-12-14",
+      "completion_date": "2029-02",
+      "enrollment": 0,
+      "sponsor": "CG Oncology, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 9,
+    "by_phase": {
+      "": 1,
+      "PHASE1": 1,
+      "PHASE2": 4,
+      "PHASE3": 2,
+      "PHASE2, PHASE3": 1
+    },
+    "by_status": {
+      "AVAILABLE": 1,
+      "ACTIVE_NOT_RECRUITING": 3,
+      "COMPLETED": 2,
+      "RECRUITING": 1,
+      "WITHDRAWN": 1,
+      "TERMINATED": 1
+    },
+    "active_trials": 4,
+    "completed_trials": 2,
+    "conditions": [
+      "Bladder Cancer",
+      "Bladder Cancer, High Grade, Non Muscle Invasive",
+      "High-Risk Non-Muscle-Invasive Bladder Cancer",
+      "Muscle-Invasive Bladder Carcinoma, Bladder Cancer",
+      "Non Muscle Invasive Bladder Cancer",
+      "Non Muscle Invasive Bladder Cancer, High-grade Ta/ T1 Papillary Disease Bladder Cancer",
+      "Non Muscle Invasive Bladder Cancer, Urologic Cancer, Bladder Cancer, Urothelial Carcinoma",
+      "Non-Muscle Invasive Bladder Cancer, Urothelial Carcinoma, Urologic Cancer, Bladder Cancer",
+      "Transitional Cell Carcinoma, Bladder Cancer, Carcinoma in Situ, Carcinoma in Situ Concurrent With Papillary Tumors"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:17:26.619278",
+    "search_query": "CG Oncology, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=CG+Oncology,+Inc."
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "PTCT",
+  "success": true,
+  "price": {
+    "current": 77.0,
+    "currency": "USD",
+    "day_high": 77.97,
+    "day_low": 75.61,
+    "52_week_high": 87.5,
+    "52_week_low": 35.95
+  },
+  "market_cap": {
+    "value": 6182199296.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 80288305.0,
+  "volume": {
+    "last": 218244,
+    "average_30d": 1267279
+  },
+  "valuation": {
+    "pe_ratio": 8.953488,
+    "forward_pe": -84.24508,
+    "price_to_book": -39.50744
+  },
+  "company_info": {
+    "name": "PTC Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:09:10.356816",
+    "url": "https://finance.yahoo.com/quote/PTCT",
+    "data_hash": "a2ac963a5e37448a"
+  }
+}

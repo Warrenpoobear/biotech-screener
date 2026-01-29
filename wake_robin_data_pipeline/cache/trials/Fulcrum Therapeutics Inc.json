@@ -1,0 +1,125 @@
+{
+  "ticker": "FULC",
+  "company_name": "Fulcrum Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04511819",
+      "title": "Losmapimod Safety and Efficacy in COVID-19",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "COVID-19",
+      "start_date": "2020-08-28",
+      "completion_date": "2021-03-31",
+      "enrollment": 0,
+      "sponsor": "Fulcrum Therapeutics"
+    },
+    {
+      "nct_id": "NCT04003974",
+      "title": "Efficacy and Safety of Losmapimod in Subjects With Facioscapulohumeral Muscular Dystrophy (FSHD)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Facioscapulohumeral Muscular Dystrophy (FSHD)",
+      "start_date": "2019-08-09",
+      "completion_date": "2021-01-28",
+      "enrollment": 0,
+      "sponsor": "Fulcrum Therapeutics"
+    },
+    {
+      "nct_id": "NCT05169580",
+      "title": "Safety, Tolerability, Pharmacokinetics and Pharmacodynamics of Pociredir",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Sickle Cell Disease, Sickle Cell Anemia",
+      "start_date": "2021-12-13",
+      "completion_date": "2026-01",
+      "enrollment": 0,
+      "sponsor": "Fulcrum Therapeutics"
+    },
+    {
+      "nct_id": "NCT04004000",
+      "title": "Evaluation of Safety, Tolerability, and Changes in Biomarker and Clinical Outcome Assessments of Losmapimod for FSHD1 With Extension",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Facioscapulohumeral Muscular Dystrophy 1",
+      "start_date": "2019-08-23",
+      "completion_date": "2024-10-31",
+      "enrollment": 0,
+      "sponsor": "Fulcrum Therapeutics"
+    },
+    {
+      "nct_id": "NCT05397470",
+      "title": "Efficacy and Safety of Losmapimod in Treating Participants With Facioscapulohumeral Muscular Dystrophy (FSHD) (REACH)",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Facioscapulohumeral Muscular Dystrophy (FSHD)",
+      "start_date": "2022-06-16",
+      "completion_date": "2024-11-19",
+      "enrollment": 0,
+      "sponsor": "Fulcrum Therapeutics"
+    },
+    {
+      "nct_id": "NCT04264442",
+      "title": "Efficacy and Safety of Losmapimod in Treating Subjects With Facioscapulohumeral Muscular Dystrophy (FSHD) With Open-Label Extension (OLE)",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Facioscapulohumeral Muscular Dystrophy (FSHD)",
+      "start_date": "2020-02-13",
+      "completion_date": "2024-11-07",
+      "enrollment": 0,
+      "sponsor": "Fulcrum Therapeutics"
+    },
+    {
+      "nct_id": "NCT05002231",
+      "title": "Relative Bioavailability and Food Effect Study of Losmapimod 15 mg Tablets",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Adult Subjects",
+      "start_date": "2021-08-19",
+      "completion_date": "2021-10-22",
+      "enrollment": 0,
+      "sponsor": "Fulcrum Therapeutics"
+    },
+    {
+      "nct_id": "NCT04586985",
+      "title": "Safety, Tolerability and Pharmacokinetics of FTX-6058",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Adult Subjects, Sickle Cell Disease",
+      "start_date": "2020-10-26",
+      "completion_date": "2022-11-15",
+      "enrollment": 0,
+      "sponsor": "Fulcrum Therapeutics"
+    }
+  ],
+  "summary": {
+    "total_trials": 8,
+    "by_phase": {
+      "PHASE3": 2,
+      "PHASE2": 3,
+      "PHASE1": 3
+    },
+    "by_status": {
+      "TERMINATED": 4,
+      "COMPLETED": 3,
+      "RECRUITING": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 3,
+    "conditions": [
+      "COVID-19",
+      "Facioscapulohumeral Muscular Dystrophy (FSHD)",
+      "Facioscapulohumeral Muscular Dystrophy 1",
+      "Healthy Adult Subjects",
+      "Healthy Adult Subjects, Sickle Cell Disease",
+      "Sickle Cell Disease, Sickle Cell Anemia"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:18:31.179835",
+    "search_query": "Fulcrum Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Fulcrum+Therapeutics,+Inc."
+  }
+}

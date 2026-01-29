@@ -1,0 +1,113 @@
+{
+  "ticker": "IVVD",
+  "company_name": "Invivyd, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05791318",
+      "title": "A Study to Investigate the Safety, Tolerability, and Pharmacokinetics of the Monoclonal Antibody VYD222 in Healthy Adult Participants",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "COVID-19",
+      "start_date": "2023-03-28",
+      "completion_date": "2024-05-08",
+      "enrollment": 0,
+      "sponsor": "Invivyd, Inc."
+    },
+    {
+      "nct_id": "NCT04859517",
+      "title": "Evaluation of ADG20 for the Prevention of COVID-19",
+      "status": "TERMINATED",
+      "phase": "PHASE2, PHASE3",
+      "condition": "COVID-19",
+      "start_date": "2021-04-27",
+      "completion_date": "2022-11-04",
+      "enrollment": 0,
+      "sponsor": "Invivyd, Inc."
+    },
+    {
+      "nct_id": "NCT06004128",
+      "title": "Provide Pre-approval Single-patient Expanded Access (Compassionate Use) of VYD222 for Patients With Symptomatic COVID-19 Refractory to Other Treatments",
+      "status": "NO_LONGER_AVAILABLE",
+      "phase": "",
+      "condition": "COVID-19",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Invivyd, Inc."
+    },
+    {
+      "nct_id": "NCT06523153",
+      "title": "A Study of the Investigational Monoclonal Antibody, VYD2311, in Healthy Participants",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "COVID-19",
+      "start_date": "2024-08-28",
+      "completion_date": "2025-05",
+      "enrollment": 0,
+      "sponsor": "Invivyd, Inc."
+    },
+    {
+      "nct_id": "NCT04805671",
+      "title": "Evaluation of ADG20 for the Treatment of Mild or Moderate COVID-19",
+      "status": "TERMINATED",
+      "phase": "PHASE2, PHASE3",
+      "condition": "COVID-19",
+      "start_date": "2021-07-26",
+      "completion_date": "2022-11-03",
+      "enrollment": 0,
+      "sponsor": "Invivyd, Inc."
+    },
+    {
+      "nct_id": "NCT06039449",
+      "title": "A Study to Investigate the Prevention of COVID-19 WithVYD222 in Adults with Immune Compromise and in Participants Aged 12 Years or Older Who Are At Risk of Exposure to SARS-CoV-2",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "COVID-19, SARS-CoV-2",
+      "start_date": "2023-09-08",
+      "completion_date": "2024-11-19",
+      "enrollment": 0,
+      "sponsor": "Invivyd, Inc."
+    },
+    {
+      "nct_id": "NCT07298434",
+      "title": "Study of VYD2311 for the Prevention of COVID-19",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "COVID-19",
+      "start_date": "2026-01-08",
+      "completion_date": "2026-06",
+      "enrollment": 0,
+      "sponsor": "Invivyd, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 7,
+    "by_phase": {
+      "PHASE1": 2,
+      "PHASE2, PHASE3": 2,
+      "": 1,
+      "PHASE3": 2
+    },
+    "by_status": {
+      "COMPLETED": 2,
+      "TERMINATED": 2,
+      "NO_LONGER_AVAILABLE": 1,
+      "ACTIVE_NOT_RECRUITING": 1,
+      "RECRUITING": 1
+    },
+    "active_trials": 2,
+    "completed_trials": 2,
+    "conditions": [
+      "COVID-19",
+      "COVID-19, SARS-CoV-2"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:19:15.931647",
+    "search_query": "Invivyd, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Invivyd,+Inc."
+  }
+}

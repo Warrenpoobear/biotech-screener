@@ -1,0 +1,42 @@
+{
+  "ticker": "ALDX",
+  "cik": "0001341235",
+  "success": true,
+  "financials": {
+    "cash": 59340599.0,
+    "debt": 15300000.0,
+    "net_debt": -44040599.0,
+    "revenue_ttm": null,
+    "assets": 77801012.0,
+    "liabilities": 28556469.0,
+    "equity": 49244543.0,
+    "currency": "USD"
+  },
+  "data_dates": {
+    "cash": "2025-09-30",
+    "debt": "2025-09-30",
+    "assets": "2025-09-30",
+    "liabilities": "2025-09-30"
+  },
+  "data_freshness": {
+    "most_recent_date": "2025-09-30",
+    "oldest_date": "2025-09-30",
+    "staleness_flags": [
+      "stale_data:121d"
+    ]
+  },
+  "coverage": {
+    "has_cash": true,
+    "has_debt": true,
+    "has_revenue": false,
+    "has_balance_sheet": true,
+    "pct_complete": 75.0
+  },
+  "provenance": {
+    "source": "SEC EDGAR Company Facts API",
+    "timestamp": "2026-01-29T11:11:29.141184",
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001341235.json",
+    "cik": "0001341235",
+    "accounting_standard": "us-gaap"
+  }
+}

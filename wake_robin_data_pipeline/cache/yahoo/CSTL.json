@@ -1,0 +1,43 @@
+{
+  "ticker": "CSTL",
+  "success": true,
+  "price": {
+    "current": 38.705,
+    "currency": "USD",
+    "day_high": 39.66,
+    "day_low": 38.5,
+    "52_week_high": 44.28,
+    "52_week_low": 14.59
+  },
+  "market_cap": {
+    "value": 1129747200.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 29188659.0,
+  "volume": {
+    "last": 82634,
+    "average_30d": 355251
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -33.69843,
+    "price_to_book": 2.4166458
+  },
+  "company_info": {
+    "name": "Castle Biosciences, Inc.",
+    "sector": "Healthcare",
+    "industry": "Diagnostics & Research"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:05:56.673376",
+    "url": "https://finance.yahoo.com/quote/CSTL",
+    "data_hash": "71e89c3bda500b5c"
+  }
+}

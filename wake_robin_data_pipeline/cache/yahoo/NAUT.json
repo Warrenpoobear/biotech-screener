@@ -1,0 +1,43 @@
+{
+  "ticker": "NAUT",
+  "success": true,
+  "price": {
+    "current": 1.97,
+    "currency": "USD",
+    "day_high": 2.15,
+    "day_low": 1.965,
+    "52_week_high": 2.54,
+    "52_week_low": 0.62
+  },
+  "market_cap": {
+    "value": 248821088.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 126305122.0,
+  "volume": {
+    "last": 50719,
+    "average_30d": 207062
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -2.662162,
+    "price_to_book": 1.4712472
+  },
+  "company_info": {
+    "name": "Nautilus Biotechnology, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:18.919964",
+    "url": "https://finance.yahoo.com/quote/NAUT",
+    "data_hash": "b8139056c71bba92"
+  }
+}

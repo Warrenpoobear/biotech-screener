@@ -1,0 +1,154 @@
+{
+  "ticker": "AMLX",
+  "company_name": "Amylyx Pharmaceuticals, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04987671",
+      "title": "Pharmacokinetic and Pharmacodynamic Study of AMX0035 in Patients With ALS",
+      "status": "UNKNOWN",
+      "phase": "PHASE1, PHASE2",
+      "condition": "ALS",
+      "start_date": "2021-08-05",
+      "completion_date": "2023-09",
+      "enrollment": 0,
+      "sponsor": "Amylyx Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT05676034",
+      "title": "AMX0035 in Adult Patients With Wolfram Syndrome",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Wolfram Syndrome",
+      "start_date": "2023-03-03",
+      "completion_date": "2026-12-31",
+      "enrollment": 0,
+      "sponsor": "Amylyx Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT03488524",
+      "title": "Open Label Extension Study of AMX0035 in Patients With ALS",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Amyotrophic Lateral Sclerosis, ALS",
+      "start_date": "2018-03-29",
+      "completion_date": "2021-03-01",
+      "enrollment": 0,
+      "sponsor": "Amylyx Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT06122662",
+      "title": "AMX0035 and Progressive Supranuclear Palsy",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Progressive Supranuclear Palsy, PSP, Neurodegenerative Diseases, Atypical Parkinsonism",
+      "start_date": "2023-12-21",
+      "completion_date": "2029-11-30",
+      "enrollment": 0,
+      "sponsor": "Amylyx Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT06665165",
+      "title": "AMX0114 in Adult Participants With Amyotrophic Lateral Sclerosis",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "ALS",
+      "start_date": "2025-04-07",
+      "completion_date": "2027-10",
+      "enrollment": 0,
+      "sponsor": "Amylyx Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT03127514",
+      "title": "AMX0035 in Patients With Amyotrophic Lateral Sclerosis (ALS)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Amyotrophic Lateral Sclerosis, Motor Neuron Disease, Neuromuscular Diseases, Neurodegenerative Diseases, Spinal Cord Diseases, TDP-43 Proteinopathies, Nervous System Diseases, Central Nervous System Diseases",
+      "start_date": "2017-06-22",
+      "completion_date": "2019-11-24",
+      "enrollment": 0,
+      "sponsor": "Amylyx Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT04516096",
+      "title": "A Compassionate Use Protocol of AMX0035 for Treatment of Patients With Amyotrophic Lateral Sclerosis (ALS)",
+      "status": "COMPLETED",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Amyotrophic Lateral Sclerosis",
+      "start_date": "2020-11-22",
+      "completion_date": "2023-01-31",
+      "enrollment": 0,
+      "sponsor": "Amylyx Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT05286372",
+      "title": "An Intermediate Size Expanded Access Protocol of AMX0035 for ALS",
+      "status": "APPROVED_FOR_MARKETING",
+      "phase": "",
+      "condition": "Amyotrophic Lateral Sclerosis",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Amylyx Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT06747468",
+      "title": "Avexitide for Treatment of Post-Bariatric Hypoglycemia",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Post Bariatric Hypoglycemia",
+      "start_date": "2025-04-29",
+      "completion_date": "2026-10",
+      "enrollment": 0,
+      "sponsor": "Amylyx Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT03533257",
+      "title": "Study to Assess the Safety and Biological Activity of AMX0035 for the Treatment of Alzheimer's Disease",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Alzheimer Disease",
+      "start_date": "2018-09-14",
+      "completion_date": "2020-11-06",
+      "enrollment": 0,
+      "sponsor": "Amylyx Pharmaceuticals Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 12,
+    "by_phase": {
+      "PHASE1, PHASE2": 1,
+      "PHASE2": 4,
+      "PHASE2, PHASE3": 2,
+      "PHASE1": 1,
+      "": 1,
+      "PHASE3": 3
+    },
+    "by_status": {
+      "UNKNOWN": 1,
+      "ACTIVE_NOT_RECRUITING": 3,
+      "COMPLETED": 5,
+      "RECRUITING": 2,
+      "APPROVED_FOR_MARKETING": 1
+    },
+    "active_trials": 5,
+    "completed_trials": 5,
+    "conditions": [
+      "ALS",
+      "Alzheimer Disease",
+      "Amyotrophic Lateral Sclerosis",
+      "Amyotrophic Lateral Sclerosis, ALS",
+      "Amyotrophic Lateral Sclerosis, Motor Neuron Disease, Neuromuscular Diseases, Neurodegenerative Diseases, Spinal Cord Diseases, TDP-43 Proteinopathies, Nervous System Diseases, Central Nervous System Diseases",
+      "Post Bariatric Hypoglycemia",
+      "Progressive Supranuclear Palsy, PSP, Neurodegenerative Diseases, Atypical Parkinsonism",
+      "Wolfram Syndrome"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:16:18.765047",
+    "search_query": "Amylyx Pharmaceuticals, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Amylyx+Pharmaceuticals,+Inc."
+  }
+}

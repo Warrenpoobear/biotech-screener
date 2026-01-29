@@ -1,0 +1,153 @@
+{
+  "ticker": "KYTX",
+  "company_name": "Kyverna Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06475495",
+      "title": "Comparison of B-cell Depletion by Rituximab and Anti-CD 19 CAR-T Therapy in Patients With Rheumatoid Arthritis",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Rheumatoid Arthritis",
+      "start_date": "2024-11",
+      "completion_date": "2027-03",
+      "enrollment": 0,
+      "sponsor": "Charite University, Berlin, Germany"
+    },
+    {
+      "nct_id": "NCT06193889",
+      "title": "KYSA-6: A Study of Anti-CD19 Chimeric Antigen Receptor T-Cell Therapy, in Patients With Generalized Myasthenia Gravis",
+      "status": "RECRUITING",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Myasthenia Gravis, Generalized Myasthenia Gravis",
+      "start_date": "2024-08-28",
+      "completion_date": "2028-09",
+      "enrollment": 0,
+      "sponsor": "Kyverna Therapeutics"
+    },
+    {
+      "nct_id": "NCT05938725",
+      "title": "KYSA-1: A Study of Anti-CD19 Chimeric Antigen Receptor T-Cell (CD19 CAR T) Therapy, in Subjects With Refractory Lupus Nephritis",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Lupus Nephritis, Lupus Nephritis - World Health Organization (WHO) Class III, Lupus Nephritis - WHO Class IV",
+      "start_date": "2023-04-28",
+      "completion_date": "2027-08",
+      "enrollment": 0,
+      "sponsor": "Kyverna Therapeutics"
+    },
+    {
+      "nct_id": "NCT06588491",
+      "title": "KYSA-8: A Study of Anti-CD19 Chimeric Antigen Receptor T-Cell (CD19 CAR T) Therapy, in Subjects With Treatment Refractory Stiff Person Syndrome",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Stiff-Person Syndrome, SPS",
+      "start_date": "2024-09-25",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "Kyverna Therapeutics"
+    },
+    {
+      "nct_id": "NCT06400303",
+      "title": "KYSA-5: A Study of Anti-CD19 Chimeric Antigen Receptor T-Cell (CD19 CAR T) Therapy, in Subjects With Systemic Sclerosis",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Systemic Sclerosis, Systemic Sclerosis - Diffuse Cutaneous, Systemic Sclerosis - 2013 ACR/EULAR Classification Criteria",
+      "start_date": "2024-08-06",
+      "completion_date": "2027-03",
+      "enrollment": 0,
+      "sponsor": "Kyverna Therapeutics"
+    },
+    {
+      "nct_id": "NCT06152172",
+      "title": "CARTIMMUNE: Study of Patients With Autoimmune Diseases Receiving KYV-101",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Idiopathic Inflammatory Myopathies, Diffuse Cutaneous Systemic Sclerosis, SLE Nephritis, ANCA Associated Vasculitis",
+      "start_date": "2024-08-05",
+      "completion_date": "2026-02",
+      "enrollment": 0,
+      "sponsor": "David Porter"
+    },
+    {
+      "nct_id": "NCT06590545",
+      "title": "Anti-CD 19 CAR-T Cell Therapy in Patients with ANCA Vasculitis",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "ANCA-IgG-positive ANCA Associated Vasculitis",
+      "start_date": "2025-01",
+      "completion_date": "2027-07",
+      "enrollment": 0,
+      "sponsor": "David Simon"
+    },
+    {
+      "nct_id": "NCT06384976",
+      "title": "KYSA-7: A Study of Anti-CD19 CAR T-Cell Therapy, in Subjects With Refractory Primary and Secondary Progressive Multiple Sclerosis",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Multiple Sclerosis, Primary Progressive, Multiple Sclerosis, Secondary Progressive, Multiple Sclerosis, MS",
+      "start_date": "2024-09-20",
+      "completion_date": "2029-01",
+      "enrollment": 0,
+      "sponsor": "Kyverna Therapeutics"
+    },
+    {
+      "nct_id": "NCT06451159",
+      "title": "A Study of KYV-101, a CD19 CAR T Cell Therapy, in Participants With Treatment Refractory Progressive Multiple Sclerosis",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Progressive Multiple Sclerosis",
+      "start_date": "2024-06-20",
+      "completion_date": "2027-02",
+      "enrollment": 0,
+      "sponsor": "Bruce Cree"
+    },
+    {
+      "nct_id": "NCT06342960",
+      "title": "KYSA-3: A Study of Anti-CD19 Chimeric Antigen Receptor T-Cell (CD19 CAR T) Therapy, in Subjects With Refractory Lupus Nephritis",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Lupus Nephritis, Lupus Nephritis - WHO Class III, Lupus Nephritis - WHO Class IV",
+      "start_date": "2022-12-01",
+      "completion_date": "2029-01",
+      "enrollment": 0,
+      "sponsor": "Kyverna Therapeutics"
+    }
+  ],
+  "summary": {
+    "total_trials": 11,
+    "by_phase": {
+      "PHASE1, PHASE2": 5,
+      "PHASE2, PHASE3": 1,
+      "PHASE2": 2,
+      "PHASE1": 3
+    },
+    "by_status": {
+      "NOT_YET_RECRUITING": 2,
+      "RECRUITING": 1,
+      "ACTIVE_NOT_RECRUITING": 8
+    },
+    "active_trials": 9,
+    "completed_trials": 0,
+    "conditions": [
+      "ANCA-IgG-positive ANCA Associated Vasculitis",
+      "Idiopathic Inflammatory Myopathies, Diffuse Cutaneous Systemic Sclerosis, SLE Nephritis, ANCA Associated Vasculitis",
+      "Lupus Nephritis, Lupus Nephritis - WHO Class III, Lupus Nephritis - WHO Class IV",
+      "Lupus Nephritis, Lupus Nephritis - World Health Organization (WHO) Class III, Lupus Nephritis - WHO Class IV",
+      "Multiple Sclerosis, Multiple Sclerosis, Primary Progressive, Multiple Sclerosis, Secondary Progressive",
+      "Multiple Sclerosis, Primary Progressive, Multiple Sclerosis, Secondary Progressive, Multiple Sclerosis, MS",
+      "Myasthenia Gravis, Generalized Myasthenia Gravis",
+      "Progressive Multiple Sclerosis",
+      "Rheumatoid Arthritis",
+      "Stiff-Person Syndrome, SPS",
+      "Systemic Sclerosis, Systemic Sclerosis - Diffuse Cutaneous, Systemic Sclerosis - 2013 ACR/EULAR Classification Criteria"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:19:33.739813",
+    "search_query": "Kyverna Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Kyverna+Therapeutics,+Inc."
+  }
+}

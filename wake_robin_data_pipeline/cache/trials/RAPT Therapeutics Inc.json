@@ -1,0 +1,126 @@
+{
+  "ticker": "RAPT",
+  "company_name": "RAPT Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04894994",
+      "title": "FLX475 in Combination With Ipilimumab in Advanced Melanoma",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Advanced Melanoma",
+      "start_date": "2021-09-03",
+      "completion_date": "2022-09-13",
+      "enrollment": 0,
+      "sponsor": "RAPT Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05399368",
+      "title": "An Efficacy and Safety Study of RPT193 in Adults With Atopic Dermatitis",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Atopic Dermatitis",
+      "start_date": "2022-06-07",
+      "completion_date": "2024-05-24",
+      "enrollment": 0,
+      "sponsor": "RAPT Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT02335814",
+      "title": "First-in-Human Study of FLX925 in Subjects With Relapsed or Refractory Acute Myeloid Leukemia",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Acute Myeloid Leukemia",
+      "start_date": "2015-04-08",
+      "completion_date": "2017-05-03",
+      "enrollment": 0,
+      "sponsor": "RAPT Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06087978",
+      "title": "Study of RPT193 in Healthy Adult Male Subjects",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Male Subjects",
+      "start_date": "2023-07-05",
+      "completion_date": "2023-10-12",
+      "enrollment": 0,
+      "sponsor": "RAPT Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT07220811",
+      "title": "Phase 2b Study of RPT904 as Monotherapy in Participants With IgE-Mediated Food Allergy",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Ig-E Mediated Food Allergy",
+      "start_date": "2025-10-22",
+      "completion_date": "2028-01",
+      "enrollment": 0,
+      "sponsor": "RAPT Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04271514",
+      "title": "A First-in-Human Study of RPT193 in Healthy Volunteers and Patients With Atopic Dermatitis",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Atopic Dermatitis",
+      "start_date": "2019-08-12",
+      "completion_date": "2021-04-26",
+      "enrollment": 0,
+      "sponsor": "RAPT Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05935332",
+      "title": "Phase 2 Study to Evaluate RPT193 in Adults With Moderate to Severe T2-high Asthma",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Asthma",
+      "start_date": "2023-07-05",
+      "completion_date": "2024-06-21",
+      "enrollment": 0,
+      "sponsor": "RAPT Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT03674567",
+      "title": "Dose Escalation and Expansion Study of FLX475 Monotherapy and in Combination with Pembrolizumab",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Advanced Cancer",
+      "start_date": "2018-09-25",
+      "completion_date": "2024-12-31",
+      "enrollment": 0,
+      "sponsor": "RAPT Therapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 8,
+    "by_phase": {
+      "PHASE2": 4,
+      "PHASE1": 3,
+      "PHASE1, PHASE2": 1
+    },
+    "by_status": {
+      "TERMINATED": 4,
+      "COMPLETED": 3,
+      "RECRUITING": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 3,
+    "conditions": [
+      "Acute Myeloid Leukemia",
+      "Advanced Cancer",
+      "Advanced Melanoma",
+      "Asthma",
+      "Atopic Dermatitis",
+      "Healthy Male Subjects",
+      "Ig-E Mediated Food Allergy"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:21:20.107012",
+    "search_query": "RAPT Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=RAPT+Therapeutics,+Inc."
+  }
+}

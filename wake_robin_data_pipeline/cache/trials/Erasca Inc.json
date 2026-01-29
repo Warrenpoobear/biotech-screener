@@ -1,0 +1,149 @@
+{
+  "ticker": "ERAS",
+  "company_name": "Erasca, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05039177",
+      "title": "A Study of ERAS-007 in Patients With Advanced Gastrointestinal Malignancies",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Metastatic Colorectal Cancer, Metastatic Pancreatic Ductal Adenocarcinoma",
+      "start_date": "2021-09-20",
+      "completion_date": "2025-12",
+      "enrollment": 0,
+      "sponsor": "Erasca, Inc."
+    },
+    {
+      "nct_id": "NCT06983743",
+      "title": "A Study of ERAS-0015 in Patients With Advanced or Metastatic Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Metastatic Solid Tumors",
+      "start_date": "2025-06-05",
+      "completion_date": "2028-12-01",
+      "enrollment": 0,
+      "sponsor": "Erasca, Inc."
+    },
+    {
+      "nct_id": "NCT04866134",
+      "title": "A Study of ERAS-007 as Monotherapy or in Combination With ERAS-601 in Patients With Advanced or Metastatic Solid Tumors",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Advanced or Metastatic Solid Tumors",
+      "start_date": "2021-05-07",
+      "completion_date": "2025-11-01",
+      "enrollment": 0,
+      "sponsor": "Erasca, Inc."
+    },
+    {
+      "nct_id": "NCT05279859",
+      "title": "A Study of Anti-Cancer Therapies Targeting the MAPK Pathway in Patients With Hematologic Malignancies",
+      "status": "WITHDRAWN",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Acute Myeloid Leukemia",
+      "start_date": "2022-03-15",
+      "completion_date": "2025-06-01",
+      "enrollment": 0,
+      "sponsor": "Erasca, Inc."
+    },
+    {
+      "nct_id": "NCT05222802",
+      "title": "A Study to Evaluate ERAS-801 in Patients With Recurrent Glioblastoma (THUNDERBBOLT-1)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Glioblastoma Multiforme",
+      "start_date": "2022-02-25",
+      "completion_date": "2025-09-30",
+      "enrollment": 0,
+      "sponsor": "Katmai Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT04959981",
+      "title": "A Study of Anti-Cancer Therapies Targeting the MAPK Pathway in Patients With Advanced NSCLC",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Advanced Non-squamous Non-small-cell Lung Cancer",
+      "start_date": "2021-09-02",
+      "completion_date": "2023-04-27",
+      "enrollment": 0,
+      "sponsor": "Erasca, Inc."
+    },
+    {
+      "nct_id": "NCT04670679",
+      "title": "A Dose Escalation/Expansion Study of ERAS-601 in Patients With Advanced or Metastatic Solid Tumors",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Advanced or Metastatic Solid Tumors",
+      "start_date": "2020-12-15",
+      "completion_date": "2026-02",
+      "enrollment": 0,
+      "sponsor": "Erasca, Inc."
+    },
+    {
+      "nct_id": "NCT07021898",
+      "title": "A Study of ERAS-4001 in Patients With Advanced or Metastatic Solid Tumors.",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Metastatic Solid Tumors",
+      "start_date": "2025-08-06",
+      "completion_date": "2028-12",
+      "enrollment": 0,
+      "sponsor": "Erasca, Inc."
+    },
+    {
+      "nct_id": "NCT05907304",
+      "title": "A Study to Assess Naporafenib (ERAS-254) Administered With Trametinib in Patients With RAS Q61X Mutations",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Advanced or Metastatic Solid Tumors",
+      "start_date": "2023-08-17",
+      "completion_date": "2025-11",
+      "enrollment": 0,
+      "sponsor": "Erasca, Inc."
+    },
+    {
+      "nct_id": "NCT06346067",
+      "title": "A Study to Assess Naporafenib (ERAS-254) Administered With Trametinib in Patients With NRAS-mutant Melanoma (SEACRAFT-2)",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Advanced or Metastatic NRAS-mutant Melanoma",
+      "start_date": "2024-04-29",
+      "completion_date": "2028-12",
+      "enrollment": 0,
+      "sponsor": "Erasca, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 10,
+    "by_phase": {
+      "PHASE1, PHASE2": 3,
+      "PHASE1": 6,
+      "PHASE3": 1
+    },
+    "by_status": {
+      "ACTIVE_NOT_RECRUITING": 5,
+      "RECRUITING": 3,
+      "WITHDRAWN": 1,
+      "COMPLETED": 1
+    },
+    "active_trials": 8,
+    "completed_trials": 1,
+    "conditions": [
+      "Acute Myeloid Leukemia",
+      "Advanced Non-squamous Non-small-cell Lung Cancer",
+      "Advanced or Metastatic NRAS-mutant Melanoma",
+      "Advanced or Metastatic Solid Tumors",
+      "Glioblastoma Multiforme",
+      "Metastatic Colorectal Cancer, Metastatic Pancreatic Ductal Adenocarcinoma",
+      "Metastatic Solid Tumors"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:18:14.113884",
+    "search_query": "Erasca, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Erasca,+Inc."
+  }
+}

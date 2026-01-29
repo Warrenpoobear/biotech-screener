@@ -1,0 +1,124 @@
+{
+  "ticker": "PLRX",
+  "company_name": "Pliant Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05621252",
+      "title": "Imaging Evaluation of PLN-74809 in Participants With IPF (PLN-74809)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Idiopathic Pulmonary Fibrosis",
+      "start_date": "2022-07-13",
+      "completion_date": "2024-01-08",
+      "enrollment": 0,
+      "sponsor": "Pliant Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06097260",
+      "title": "Randomized, Double-blind Study of Efficacy and Safety of Bexotegrast (PLN-74809) for Idiopathic Pulmonary Fibrosis",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Idiopathic Pulmonary Fibrosis",
+      "start_date": "2023-11-16",
+      "completion_date": "2025-04-04",
+      "enrollment": 0,
+      "sponsor": "Pliant Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT03183570",
+      "title": "Detection of Integrin avb6 in IPF, PSC, and COVID19 Using PET/CT",
+      "status": "COMPLETED",
+      "phase": "EARLY_PHASE1",
+      "condition": "Idiopathic Pulmonary Fibrosis, Primary Sclerosing Cholangitis, Covid19 Pneumonia",
+      "start_date": "2017-11-08",
+      "completion_date": "2025-01-25",
+      "enrollment": 0,
+      "sponsor": "Stanford University"
+    },
+    {
+      "nct_id": "NCT06270706",
+      "title": "A Phase 1 Study of PLN-101095 in Adults With Advanced or Metastatic Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Metastatic Solid Tumor",
+      "start_date": "2023-08-30",
+      "completion_date": "2025-12",
+      "enrollment": 0,
+      "sponsor": "Pliant Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04480840",
+      "title": "Phase 2a Evaluation of Safety, Tolerability, and Pharmacokinetics of PLN-74809 in Patients With Primary Sclerosing Cholangitis (PSC)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Primary Sclerosing Cholangitis",
+      "start_date": "2020-07-27",
+      "completion_date": "2024-03-18",
+      "enrollment": 0,
+      "sponsor": "Pliant Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04072315",
+      "title": "Phase 2a Evaluation of PLN-74809 on \u03b1v\u03b26 Receptor Occupancy Using PET Imaging in Participants With IPF/",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Idiopathic Pulmonary Fibrosis",
+      "start_date": "2020-02-13",
+      "completion_date": "2022-07-05",
+      "enrollment": 0,
+      "sponsor": "Pliant Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04396756",
+      "title": "Evaluation of Efficacy and Safety of PLN-74809 in Patients With Idiopathic Pulmonary Fibrosis",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Idiopathic Pulmonary Fibrosis",
+      "start_date": "2020-03-03",
+      "completion_date": "2023-02-15",
+      "enrollment": 0,
+      "sponsor": "Pliant Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04565249",
+      "title": "Evaluation of the Safety, Tolerability, and Pharmacokinetics of PLN-74809 in Participants With Acute Respiratory Distress Syndrome (ARDS) Associated With at Least Severe COVID-19",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Acute Respiratory Distress Syndrome, SARS-CoV-2",
+      "start_date": "2020-10-22",
+      "completion_date": "2021-08-02",
+      "enrollment": 0,
+      "sponsor": "Pliant Therapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 8,
+    "by_phase": {
+      "PHASE2": 6,
+      "EARLY_PHASE1": 1,
+      "PHASE1": 1
+    },
+    "by_status": {
+      "COMPLETED": 5,
+      "TERMINATED": 2,
+      "RECRUITING": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 5,
+    "conditions": [
+      "Acute Respiratory Distress Syndrome, SARS-CoV-2",
+      "Idiopathic Pulmonary Fibrosis",
+      "Idiopathic Pulmonary Fibrosis, Primary Sclerosing Cholangitis, Covid19 Pneumonia",
+      "Metastatic Solid Tumor",
+      "Primary Sclerosing Cholangitis"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T13:12:11.418899",
+    "search_query": "Pliant Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Pliant+Therapeutics,+Inc."
+  }
+}

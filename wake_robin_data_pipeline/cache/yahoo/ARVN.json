@@ -1,0 +1,43 @@
+{
+  "ticker": "ARVN",
+  "success": true,
+  "price": {
+    "current": 13.18,
+    "currency": "USD",
+    "day_high": 13.39,
+    "day_low": 12.77,
+    "52_week_high": 20.38,
+    "52_week_low": 5.9
+  },
+  "market_cap": {
+    "value": 967643904.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 64224294.0,
+  "volume": {
+    "last": 232062,
+    "average_30d": 701548
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -4.483344,
+    "price_to_book": 1.6532865
+  },
+  "company_info": {
+    "name": "Arvinas, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:04:47.203762",
+    "url": "https://finance.yahoo.com/quote/ARVN",
+    "data_hash": "ed1cd90fdc3b2969"
+  }
+}

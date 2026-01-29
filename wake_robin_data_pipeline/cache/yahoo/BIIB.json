@@ -1,0 +1,43 @@
+{
+  "ticker": "BIIB",
+  "success": true,
+  "price": {
+    "current": 175.89,
+    "currency": "USD",
+    "day_high": 176.7387,
+    "day_low": 173.51,
+    "52_week_high": 190.2,
+    "52_week_low": 110.04
+  },
+  "market_cap": {
+    "value": 25803462656.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 146702272.0,
+  "volume": {
+    "last": 216395,
+    "average_30d": 1420422
+  },
+  "valuation": {
+    "pe_ratio": 16.048357,
+    "forward_pe": 11.66736,
+    "price_to_book": 1.4171649
+  },
+  "company_info": {
+    "name": "Biogen Inc.",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - General"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:05:16.587422",
+    "url": "https://finance.yahoo.com/quote/BIIB",
+    "data_hash": "b0ea058192ba023e"
+  }
+}

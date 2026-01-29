@@ -1,0 +1,43 @@
+{
+  "ticker": "NBP",
+  "cik": "0001778016",
+  "success": true,
+  "financials": {
+    "cash": 165404000.0,
+    "debt": 9540000.0,
+    "net_debt": -155864000.0,
+    "revenue_ttm": 3893000.0,
+    "assets": 206708000.0,
+    "liabilities": 9975000.0,
+    "equity": 196733000.0,
+    "currency": "USD"
+  },
+  "data_dates": {
+    "cash": "2025-06-30",
+    "debt": "2020-09-30",
+    "revenue": "2023-12-31",
+    "assets": "2025-06-30",
+    "liabilities": "2025-06-30"
+  },
+  "data_freshness": {
+    "most_recent_date": "2025-06-30",
+    "oldest_date": "2020-09-30",
+    "staleness_flags": [
+      "critical_staleness:1947d"
+    ]
+  },
+  "coverage": {
+    "has_cash": true,
+    "has_debt": true,
+    "has_revenue": true,
+    "has_balance_sheet": true,
+    "pct_complete": 100.0
+  },
+  "provenance": {
+    "source": "SEC EDGAR Company Facts API",
+    "timestamp": "2026-01-29T11:16:36.227904",
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001778016.json",
+    "cik": "0001778016",
+    "accounting_standard": "us-gaap"
+  }
+}

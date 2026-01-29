@@ -1,0 +1,43 @@
+{
+  "ticker": "SIGA",
+  "success": true,
+  "price": {
+    "current": 6.655,
+    "currency": "USD",
+    "day_high": 6.77,
+    "day_low": 6.65,
+    "52_week_high": 9.62,
+    "52_week_low": 4.95
+  },
+  "market_cap": {
+    "value": 476573248.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 71611302.0,
+  "volume": {
+    "last": 45894,
+    "average_30d": 327758
+  },
+  "valuation": {
+    "pe_ratio": 6.4611654,
+    "forward_pe": 4.4072847,
+    "price_to_book": 2.342485
+  },
+  "company_info": {
+    "name": "SIGA Technologies, Inc.",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:09:46.986063",
+    "url": "https://finance.yahoo.com/quote/SIGA",
+    "data_hash": "5f8a750841c1ffe6"
+  }
+}

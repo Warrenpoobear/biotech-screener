@@ -1,0 +1,43 @@
+{
+  "ticker": "PHAT",
+  "success": true,
+  "price": {
+    "current": 13.63,
+    "currency": "USD",
+    "day_high": 14.15,
+    "day_low": 13.6,
+    "52_week_high": 18.31,
+    "52_week_low": 2.21
+  },
+  "market_cap": {
+    "value": 1063323200.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 78013440.0,
+  "volume": {
+    "last": 108059,
+    "average_30d": 1255948
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -121.91413,
+    "price_to_book": -2.2915266
+  },
+  "company_info": {
+    "name": "Phathom Pharmaceuticals, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:58.227256",
+    "url": "https://finance.yahoo.com/quote/PHAT",
+    "data_hash": "b6186cb6d90f767d"
+  }
+}

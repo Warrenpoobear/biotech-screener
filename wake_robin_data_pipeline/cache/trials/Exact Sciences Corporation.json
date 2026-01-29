@@ -1,0 +1,164 @@
+{
+  "ticker": "EXAS",
+  "company_name": "Exact Sciences Corporation",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06589310",
+      "title": "Falcon Real World Evidence Registry",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Cancer",
+      "start_date": "2024-08-01",
+      "completion_date": "2031-01",
+      "enrollment": 0,
+      "sponsor": "Exact Sciences Corporation"
+    },
+    {
+      "nct_id": "NCT01397747",
+      "title": "Multi-Target Colorectal Cancer Screening Test for the Detection of Colorectal Advanced Adenomatous Polyps and Cancer",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Colorectal Neoplasms, Digestive System Diseases, Colonic Diseases, Colorectal Cancer",
+      "start_date": "2011-06",
+      "completion_date": "2013-05",
+      "enrollment": 0,
+      "sponsor": "Exact Sciences Corporation"
+    },
+    {
+      "nct_id": "NCT05410977",
+      "title": "Collecting Blood and Stool Samples to Detect Colorectal Cancer or Advanced Neoplasia in Lynch Syndrome Patients",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Colorectal Carcinoma, Lynch Syndrome",
+      "start_date": "2022-03-30",
+      "completion_date": "2027-04-01",
+      "enrollment": 0,
+      "sponsor": "Mayo Clinic"
+    },
+    {
+      "nct_id": "NCT04124406",
+      "title": "Voyage: Real-World Impact of the Multi-target Stool DNA Test on CRC Screening and Mortality",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "",
+      "condition": "Colon Cancer",
+      "start_date": "2019-10-18",
+      "completion_date": "2025-12",
+      "enrollment": 0,
+      "sponsor": "Exact Sciences Corporation"
+    },
+    {
+      "nct_id": "NCT06398743",
+      "title": "First CORRECT Study of Minimal Residual Disease (MRD) Detection in Colorectal Cancer",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "",
+      "condition": "Colorectal Cancer",
+      "start_date": "2023-06-20",
+      "completion_date": "2027-12",
+      "enrollment": 0,
+      "sponsor": "Exact Sciences Corporation"
+    },
+    {
+      "nct_id": "NCT04473625",
+      "title": "Stool Collection Sub-Study of Exact Sciences Protocol 2018-01",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Colorectal Cancer, Colo-rectal Cancer, Cancer",
+      "start_date": "2020-07-21",
+      "completion_date": "2022-05-25",
+      "enrollment": 0,
+      "sponsor": "Exact Sciences Corporation"
+    },
+    {
+      "nct_id": "NCT06401421",
+      "title": "EXActDNA-003 / NSABP B-64: Study of Molecular Residual Disease Detection in Breast Cancer (MRD)",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Breast Cancer",
+      "start_date": "2024-06-07",
+      "completion_date": "2030-04",
+      "enrollment": 0,
+      "sponsor": "Exact Sciences Corporation"
+    },
+    {
+      "nct_id": "NCT03727087",
+      "title": "Blood Sample Collection to Evaluate Biomarkers in Subjects With Untreated Melanoma",
+      "status": "TERMINATED",
+      "phase": "",
+      "condition": "Melanoma",
+      "start_date": "2019-01-10",
+      "completion_date": "2020-03-24",
+      "enrollment": 0,
+      "sponsor": "Exact Sciences Corporation"
+    },
+    {
+      "nct_id": "NCT03741166",
+      "title": "Blood Collection Sub-Study for CRC Screening in Individuals 45-49 at Average Risk for CRC.",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Colo-rectal Cancer",
+      "start_date": "2018-11-08",
+      "completion_date": "2019-04-05",
+      "enrollment": 0,
+      "sponsor": "Exact Sciences Corporation"
+    },
+    {
+      "nct_id": "NCT02419716",
+      "title": "A Study of Cologuard\u2122 in an Average Risk Population Assessing a Three Year Test Interval",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Colorectal Cancer Screening, Colorectal Cancer",
+      "start_date": "2015-04",
+      "completion_date": "2020-03-16",
+      "enrollment": 0,
+      "sponsor": "Exact Sciences Corporation"
+    }
+  ],
+  "summary": {
+    "total_trials": 36,
+    "by_phase": {
+      "": 33,
+      "NA": 3
+    },
+    "by_status": {
+      "RECRUITING": 6,
+      "COMPLETED": 21,
+      "ACTIVE_NOT_RECRUITING": 4,
+      "TERMINATED": 5
+    },
+    "active_trials": 10,
+    "completed_trials": 21,
+    "conditions": [
+      "Barrett Esophagus",
+      "Breast Cancer",
+      "Breast Cancer, Lung Cancer, Colorectal Cancer, Prostate Cancer, Bladder Cancer, Uterine Cancer, Kidney Cancer, Renal Pelvis Cancer, Pancreatic Cancer, Liver Cancer, Stomach Cancer, Ovarian Cancer, Esophageal Cancer",
+      "COVID-19",
+      "Cancer",
+      "Colo-rectal Cancer",
+      "Colon Cancer",
+      "Colorectal Cancer",
+      "Colorectal Cancer Screening, Colorectal Cancer",
+      "Colorectal Cancer, Colo-rectal Cancer, Cancer",
+      "Colorectal Carcinoma, Lynch Syndrome",
+      "Colorectal Neoplasms, Digestive System Diseases, Colonic Diseases, Colorectal Cancer",
+      "Early Cancer Detection",
+      "Gastro Esophageal Reflux Disease, Barrett Esophagus",
+      "Healthy",
+      "Hematologic Malignancy",
+      "Hepatocellular Carcinoma, Hepatocellular Cancer, Hepatitis B, Cirrhosis, Liver Cancer",
+      "Hepatocellular Carcinoma, Hepatocellular Carcinoma Surveillance",
+      "Inflammatory Bowel Disease (IBD), Primary Sclerosing Cholangitis (PSC), Colorectal Neoplasms, Colorectal Cancer",
+      "Inflammatory Bowel Disease, Colorectal Neoplasms, Digestive System Diseases, Colonic Diseases, Colorectal Cancer",
+      "Lung Cancer (Diagnosis)",
+      "Melanoma",
+      "Prostate Cancer"
+    ],
+    "lead_stage": "preclinical"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:36:05.945732",
+    "search_query": "Exact Sciences Corporation",
+    "url": "https://clinicaltrials.gov/search?term=Exact+Sciences+Corporation"
+  }
+}

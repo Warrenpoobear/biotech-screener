@@ -1,0 +1,76 @@
+{
+  "ticker": "TNYA",
+  "company_name": "Tenaya Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06228924",
+      "title": "Open-label, Dose Escalation Study of Safety and Preliminary Efficacy of TN-401 in Adults With PKP2 Mutation-associated ARVC",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Arrhythmogenic Right Ventricular Cardiomyopathy",
+      "start_date": "2024-03-26",
+      "completion_date": "2029-10-01",
+      "enrollment": 0,
+      "sponsor": "Tenaya Therapeutics"
+    },
+    {
+      "nct_id": "NCT05112237",
+      "title": "Natural History Study in Pediatric Patients With MYBPC3 Mutation-associated Cardiomyopathy",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Cardiomyopathy",
+      "start_date": "2021-11-01",
+      "completion_date": "2028-06",
+      "enrollment": 0,
+      "sponsor": "Tenaya Therapeutics"
+    },
+    {
+      "nct_id": "NCT06311708",
+      "title": "Non-interventional Study of Seroprevalence of Pre-existing Antibodies Against Adenovirus-associated Virus Vector (AAV9) and the Progression of Disease in Patients With Plakophilin 2 (PKP2)-Associated Arrhythmogenic Right Ventricular Cardiomyopathy (ARVC)",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Arrhythmogenic Right Ventricular Cardiomyopathy",
+      "start_date": "2023-01-31",
+      "completion_date": "2030-07-11",
+      "enrollment": 0,
+      "sponsor": "Tenaya Therapeutics"
+    },
+    {
+      "nct_id": "NCT05836259",
+      "title": "Multi-center, Open-label, Single-ascending Dose Study of Safety and Tolerability of TN-201 in Adults With Symptomatic MYBPC3 Mutation-associated HCM",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Hypertrophic Cardiomyopathy",
+      "start_date": "2023-08-10",
+      "completion_date": "2032-08",
+      "enrollment": 0,
+      "sponsor": "Tenaya Therapeutics"
+    }
+  ],
+  "summary": {
+    "total_trials": 4,
+    "by_phase": {
+      "PHASE1": 1,
+      "": 2,
+      "PHASE1, PHASE2": 1
+    },
+    "by_status": {
+      "RECRUITING": 4
+    },
+    "active_trials": 4,
+    "completed_trials": 0,
+    "conditions": [
+      "Arrhythmogenic Right Ventricular Cardiomyopathy",
+      "Cardiomyopathy",
+      "Hypertrophic Cardiomyopathy"
+    ],
+    "lead_stage": "phase_1"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:22:27.620084",
+    "search_query": "Tenaya Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Tenaya+Therapeutics,+Inc."
+  }
+}

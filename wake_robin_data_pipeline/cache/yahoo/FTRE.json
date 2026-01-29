@@ -1,0 +1,43 @@
+{
+  "ticker": "FTRE",
+  "success": true,
+  "price": {
+    "current": 16.5,
+    "currency": "USD",
+    "day_high": 16.75,
+    "day_low": 16.085,
+    "52_week_high": 18.67,
+    "52_week_low": 3.97
+  },
+  "market_cap": {
+    "value": 1524600064.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 92400000.0,
+  "volume": {
+    "last": 139625,
+    "average_30d": 1184378
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": 21.102173,
+    "price_to_book": 2.6194634
+  },
+  "company_info": {
+    "name": "Fortrea Holdings Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:06:37.428726",
+    "url": "https://finance.yahoo.com/quote/FTRE",
+    "data_hash": "4c769bec82ba8e96"
+  }
+}

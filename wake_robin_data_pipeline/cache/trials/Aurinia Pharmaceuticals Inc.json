@@ -1,0 +1,156 @@
+{
+  "ticker": "AUPH",
+  "company_name": "Aurinia Pharmaceuticals Inc",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT01586845",
+      "title": "Safety and Efficacy Study of Voclosporin and Tacrolimus in Transplantation",
+      "status": "WITHDRAWN",
+      "phase": "PHASE3",
+      "condition": "Renal Transplantation",
+      "start_date": "2013-03",
+      "completion_date": "2015-12",
+      "enrollment": 0,
+      "sponsor": "Aurinia Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT04147650",
+      "title": "Dose Ranging Study to Assess the Efficacy and Safety of Voclosporin Ophthalmic Solution in Subjects With Dry Eye Syndrome",
+      "status": "COMPLETED",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Dry Eye Syndrome, Keratoconjunctivitis Sicca",
+      "start_date": "2019-10-14",
+      "completion_date": "2020-10-08",
+      "enrollment": 0,
+      "sponsor": "Aurinia Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT03598036",
+      "title": "Dose-Exploration Evaluating the Efficacy and Safety of Voclosporin in Subjects With Focal Segmental Glomerulosclerosis",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Focal Segmental Glomerulosclerosis",
+      "start_date": "2018-06-21",
+      "completion_date": "2020-05-19",
+      "enrollment": 0,
+      "sponsor": "Aurinia Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT03597139",
+      "title": "Ocular Tolerability of Voclosporin Ophthalmic Solution Versus Restasis\u00ae in Subjects With Dry Eye Disease",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Dry Eye",
+      "start_date": "2018-08-13",
+      "completion_date": "2018-12-13",
+      "enrollment": 0,
+      "sponsor": "Aurinia Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT03021499",
+      "title": "Aurinia Renal Response in Active Lupus With Voclosporin",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Lupus Nephritis",
+      "start_date": "2017-05-17",
+      "completion_date": "2019-10-10",
+      "enrollment": 0,
+      "sponsor": "Aurinia Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT00408187",
+      "title": "Randomized, Placebo and Ciclosporin Controlled Study of ISA247 in Plaque Psoriasis Patients",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Psoriasis",
+      "start_date": "2006-12",
+      "completion_date": "2008-12",
+      "enrollment": 0,
+      "sponsor": "Aurinia Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT02949973",
+      "title": "Aurinia Early Urinary Protein Reduction Predicts Response",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Lupus Nephritis",
+      "start_date": "2015-06",
+      "completion_date": "2017-02-17",
+      "enrollment": 0,
+      "sponsor": "Aurinia Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT05306379",
+      "title": "Drug-Drug Interaction Study to Investigate Effects of Voclosporin on Pharmacokinetics of Simvastatin",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Drug-drug Interaction",
+      "start_date": "2022-01-24",
+      "completion_date": "2022-04-05",
+      "enrollment": 0,
+      "sponsor": "Aurinia Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT05962788",
+      "title": "Long-Term Voclosporin Treatment in Adolescent and Pediatric Subjects With Lupus Nephritis",
+      "status": "ENROLLING_BY_INVITATION",
+      "phase": "PHASE3",
+      "condition": "Adolescent Lupus Nephritis, Pediatric Lupus Nephritis",
+      "start_date": "2024-03-27",
+      "completion_date": "2029-06",
+      "enrollment": 0,
+      "sponsor": "Aurinia Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT05337124",
+      "title": "A Prospective Observational Registry of Patients Treated With LUPKYNIS\u00ae (Voclosporin) in the US",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Lupus Nephritis",
+      "start_date": "2022-04-05",
+      "completion_date": "2025-01-31",
+      "enrollment": 0,
+      "sponsor": "Aurinia Pharmaceuticals Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 18,
+    "by_phase": {
+      "PHASE3": 8,
+      "PHASE2, PHASE3": 1,
+      "PHASE2": 6,
+      "PHASE1": 2,
+      "": 1
+    },
+    "by_status": {
+      "WITHDRAWN": 1,
+      "COMPLETED": 14,
+      "TERMINATED": 1,
+      "ENROLLING_BY_INVITATION": 1,
+      "RECRUITING": 1
+    },
+    "active_trials": 2,
+    "completed_trials": 14,
+    "conditions": [
+      "Adolescent Lupus Nephritis, Pediatric Lupus Nephritis",
+      "Covid19, Kidney Transplant Infection",
+      "Drug-drug Interaction",
+      "Dry Eye",
+      "Dry Eye Syndrome, Keratoconjunctivitis Sicca",
+      "Focal Segmental Glomerulosclerosis",
+      "Kidney Diseases",
+      "Lupus Nephritis",
+      "Psoriasis",
+      "Renal Transplantation",
+      "Volunteers"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:16:44.225453",
+    "search_query": "Aurinia Pharmaceuticals Inc",
+    "url": "https://clinicaltrials.gov/search?term=Aurinia+Pharmaceuticals+Inc"
+  }
+}

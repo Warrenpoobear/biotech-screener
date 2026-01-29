@@ -1,0 +1,160 @@
+{
+  "ticker": "SLDB",
+  "company_name": "Solid Biosciences Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT00004921",
+      "title": "High-Dose Chemotherapy Compared With Standard Chemotherapy in Treating Patients With Stage III or Stage IV Ovarian Epithelial Cancer That Has Been Removed During Surgery",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Ovarian Cancer",
+      "start_date": "1998-09",
+      "completion_date": "2007-09",
+      "enrollment": 0,
+      "sponsor": "EBMT Solid Tumors Working Party"
+    },
+    {
+      "nct_id": "NCT00005589",
+      "title": "Combination Chemotherapy Plus Peripheral Stem Cell Transplantation With or Without Rituximab in Treating Patients With Relapsed Non-Hodgkin's Lymphoma",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Lymphoma",
+      "start_date": "1999-10",
+      "completion_date": "2013-04",
+      "enrollment": 0,
+      "sponsor": "EBMT Solid Tumors Working Party"
+    },
+    {
+      "nct_id": "NCT07160634",
+      "title": "A Study of SGT-003 Gene Therapy in Ambulant Males With Duchenne Muscular Dystrophy (IMPACT DUCHENNE)",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Duchenne Muscular Dystrophy",
+      "start_date": "2025-10-22",
+      "completion_date": "2034-01",
+      "enrollment": 0,
+      "sponsor": "Solid Biosciences Inc."
+    },
+    {
+      "nct_id": "NCT00830245",
+      "title": "A Study to Assess the Efficacy of Erlotinib for Leptomeningeal Carcinomatosis in EGFR Mutation Positive Non-small Cell Lung Cancer",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Leptomeningeal Carcinomatosis, Non-small Cell Lung Cancer",
+      "start_date": "2009-01",
+      "completion_date": "2011-07",
+      "enrollment": 0,
+      "sponsor": "Clinical Research Center for Solid Tumor, Korea"
+    },
+    {
+      "nct_id": "NCT00921167",
+      "title": "A Study to Evaluate the Efficacy of Bevacizumab Plus Irinotecan in Recurrent Gliomas",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Glioblastoma, Astrocytoma",
+      "start_date": "2009-06",
+      "completion_date": "2013-12",
+      "enrollment": 0,
+      "sponsor": "Clinical Research Center for Solid Tumor, Korea"
+    },
+    {
+      "nct_id": "NCT03368742",
+      "title": "Microdystrophin Gene Transfer Study in Adolescents and Children With DMD",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Duchenne Muscular Dystrophy",
+      "start_date": "2017-12-06",
+      "completion_date": "2026-10-15",
+      "enrollment": 0,
+      "sponsor": "Solid Biosciences Inc."
+    },
+    {
+      "nct_id": "NCT07148089",
+      "title": "A Study of SGT-501 Gene Therapy in Catecholaminergic Polymorphic Ventricular Tachycardia (CPVT)",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Catecholaminergic Polymorphic Ventricular Tachycardia",
+      "start_date": "2026-01-05",
+      "completion_date": "2031-05",
+      "enrollment": 0,
+      "sponsor": "Solid Biosciences Inc."
+    },
+    {
+      "nct_id": "NCT00349492",
+      "title": "A Study Comparing Etoposide/Cisplatin With Irinotecan/Cisplatin to Treat Extensive Disease Small Lung Cancer",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Small Cell Lung Cancer",
+      "start_date": "2006-06",
+      "completion_date": "2013-10",
+      "enrollment": 0,
+      "sponsor": "Clinical Research Center for Solid Tumor, Korea"
+    },
+    {
+      "nct_id": "NCT05657938",
+      "title": "Evaluation of Home Based Assessments on Participants With DMD",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Duchenne Muscular Dystrophy",
+      "start_date": "2022-10-13",
+      "completion_date": "2023-04-04",
+      "enrollment": 0,
+      "sponsor": "Solid Biosciences Inc."
+    },
+    {
+      "nct_id": "NCT00020566",
+      "title": "Combination Chemotherapy With or Without Peripheral Stem Cell Transplantation, Radiation Therapy, and/or Surgery in Treating Patients With Ewing's Sarcoma",
+      "status": "UNKNOWN",
+      "phase": "PHASE3",
+      "condition": "Sarcoma",
+      "start_date": "2001-02",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "University of Leicester"
+    }
+  ],
+  "summary": {
+    "total_trials": 19,
+    "by_phase": {
+      "PHASE3": 8,
+      "PHASE2": 5,
+      "PHASE1, PHASE2": 2,
+      "PHASE1": 2,
+      "": 2
+    },
+    "by_status": {
+      "COMPLETED": 9,
+      "RECRUITING": 4,
+      "TERMINATED": 2,
+      "ACTIVE_NOT_RECRUITING": 1,
+      "UNKNOWN": 3
+    },
+    "active_trials": 5,
+    "completed_trials": 9,
+    "conditions": [
+      "Catecholaminergic Polymorphic Ventricular Tachycardia",
+      "Duchenne Muscular Dystrophy",
+      "Duchenne Muscular Dystrophy, Burden, Dependency, Disability Physical, Disease Management, Impairment, Rare Diseases",
+      "Friedreich's Ataxia (FA)",
+      "Glioblastoma, Astrocytoma",
+      "Head and Neck Neoplasm",
+      "Head and Neck Squamous Cell Carcinoma",
+      "Leptomeningeal Carcinomatosis, Non-small Cell Lung Cancer",
+      "Locally Advanced Head and Neck Squamous Cell Carcinoma",
+      "Lung Cancer",
+      "Lymphoma",
+      "Ovarian Cancer",
+      "Sarcoma",
+      "Small Cell Lung Cancer",
+      "Soft Tissue Sarcoma"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:21:53.887633",
+    "search_query": "Solid Biosciences Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Solid+Biosciences+Inc."
+  }
+}

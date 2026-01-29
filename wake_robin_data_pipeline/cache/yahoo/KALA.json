@@ -1,0 +1,43 @@
+{
+  "ticker": "KALA",
+  "success": true,
+  "price": {
+    "current": 0.5343,
+    "currency": "USD",
+    "day_high": 0.5799,
+    "day_low": 0.53,
+    "52_week_high": 20.6,
+    "52_week_low": 0.51
+  },
+  "market_cap": {
+    "value": 14880108.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 27849725.0,
+  "volume": {
+    "last": 482246,
+    "average_30d": 2014661
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -0.080104955,
+    "price_to_book": -0.4582333
+  },
+  "company_info": {
+    "name": "KALA BIO, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:07:26.989510",
+    "url": "https://finance.yahoo.com/quote/KALA",
+    "data_hash": "59df9f6f7ba6e481"
+  }
+}

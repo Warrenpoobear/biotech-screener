@@ -1,0 +1,179 @@
+{
+  "ticker": "INDV",
+  "company_name": "Indivior PLC",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT01738503",
+      "title": "Multiple Dose Pharmacokinetics Depot Buprenorphine in Opioid-Dependent Subjects",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Opioid Related Disorder",
+      "start_date": "2012-10",
+      "completion_date": "2014-05",
+      "enrollment": 0,
+      "sponsor": "Indivior Inc."
+    },
+    {
+      "nct_id": "NCT02510014",
+      "title": "Safety and Tolerability Study of Depot Buprenorphine in Treatment Seeking Subjects With Opioid Use Disorder",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Opioid Use Disorder, Opioid-related Disorders",
+      "start_date": "2015-07-27",
+      "completion_date": "2017-01-31",
+      "enrollment": 0,
+      "sponsor": "Indivior Inc."
+    },
+    {
+      "nct_id": "NCT02357901",
+      "title": "Treatment Seeking Participants With Opioid Use Disorders Assessing Tolerability of Depot Injections of Buprenorphine",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Opioid Dependence, Opioid Related Disorders",
+      "start_date": "2015-01-28",
+      "completion_date": "2016-04-29",
+      "enrollment": 0,
+      "sponsor": "Indivior Inc."
+    },
+    {
+      "nct_id": "NCT00725608",
+      "title": "Acceptability and Safety of Switching From Subutex or Other Opioid Drug Dependence Therapy to Suboxone (NIS P05444)",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Opioid-Related Disorders, Opiate Dependence, Drug Abuse",
+      "start_date": "2008-05",
+      "completion_date": "2011-04",
+      "enrollment": 0,
+      "sponsor": "Indivior Inc."
+    },
+    {
+      "nct_id": "NCT03002961",
+      "title": "Single Ascending Dose Study of RBP-6000",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Opioid Use Disorder",
+      "start_date": "2012-07",
+      "completion_date": "2013-10",
+      "enrollment": 0,
+      "sponsor": "Indivior Inc."
+    },
+    {
+      "nct_id": "NCT00723749",
+      "title": "Treatment of Opioid Dependent Patients With Suboxone: Acceptability & Safety Data From Real Life Scenario (Study P05603)",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Opioid-Related Disorders, Opiate Dependence, Drug Abuse",
+      "start_date": "2008-03",
+      "completion_date": "2010-12",
+      "enrollment": 0,
+      "sponsor": "Indivior Inc."
+    },
+    {
+      "nct_id": "NCT04995029",
+      "title": "Buprenorphine Extended-Release Subcutaneous Injection (RBP-6000) in High-risk Users",
+      "status": "COMPLETED",
+      "phase": "PHASE4",
+      "condition": "Moderate to Severe Opioid-use Disorder",
+      "start_date": "2021-10-26",
+      "completion_date": "2024-06-26",
+      "enrollment": 0,
+      "sponsor": "Indivior Inc."
+    },
+    {
+      "nct_id": "NCT03978832",
+      "title": "Safety, Tolerability, Pharmacokinetics and Efficacy of 180 mg Subcutaneous Risperidone From 6 mg Oral Risperidone",
+      "status": "COMPLETED",
+      "phase": "PHASE4",
+      "condition": "Schizophrenia",
+      "start_date": "2019-06-28",
+      "completion_date": "2020-05-12",
+      "enrollment": 0,
+      "sponsor": "Indivior Inc."
+    },
+    {
+      "nct_id": "NCT04060654",
+      "title": "SUBLOCADE Rapid Initiation Extension Study",
+      "status": "COMPLETED",
+      "phase": "PHASE4",
+      "condition": "Opioid Use Disorder, Severe, Opioid Use Disorder, Moderate",
+      "start_date": "2019-10-21",
+      "completion_date": "2020-05-15",
+      "enrollment": 0,
+      "sponsor": "Indivior Inc."
+    },
+    {
+      "nct_id": "NCT01846455",
+      "title": "Single Dose Pharmacokinetics of Suboxone Study in Hepatic Impaired Subjects",
+      "status": "COMPLETED",
+      "phase": "PHASE4",
+      "condition": "Hepatic Failure, Hepatic Impairment, Chronic Hepatitis C Infection With Hepatic Coma",
+      "start_date": "2012-09",
+      "completion_date": "2013-05",
+      "enrollment": 0,
+      "sponsor": "Indivior Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 50,
+    "by_phase": {
+      "PHASE2": 11,
+      "PHASE3": 6,
+      "": 9,
+      "PHASE1": 10,
+      "PHASE4": 11,
+      "NA": 3
+    },
+    "by_status": {
+      "COMPLETED": 46,
+      "ACTIVE_NOT_RECRUITING": 1,
+      "TERMINATED": 1,
+      "UNKNOWN": 2
+    },
+    "active_trials": 1,
+    "completed_trials": 46,
+    "conditions": [
+      "Alcohol Use Disorder",
+      "Analgesic Response",
+      "Buprenorphine, Naloxone, Opiate-related Disorders, Opiate Dependence, Drug Abuse",
+      "Drug Addiction",
+      "GERD",
+      "Healthy",
+      "Healthy Volunteer, Opioid-use Disorder",
+      "Healthy Volunteers",
+      "Healthy, Opioid Use",
+      "Hepatic Failure, Hepatic Impairment, Chronic Hepatitis C Infection With Hepatic Coma",
+      "Hepatitis C, Chronic",
+      "Heroin Dependence",
+      "Moderate to Severe Opioid Use Disorder",
+      "Moderate to Severe Opioid-use Disorder",
+      "Opiate Dependence",
+      "Opiate Dependence, Drug Dependence",
+      "Opiate-related Disorders, Opiate Dependence, Drug Abuse",
+      "Opioid Dependence",
+      "Opioid Dependence, Opioid Related Disorders",
+      "Opioid Dependence, Opioid Related Disorders, Cocaine Dependence",
+      "Opioid Dependency",
+      "Opioid Overdose",
+      "Opioid Related Disorder",
+      "Opioid Use Disorder",
+      "Opioid Use Disorder, Opioid-related Disorders",
+      "Opioid Use Disorder, Severe, Opioid Use Disorder, Moderate",
+      "Opioid-Related Disorders",
+      "Opioid-Related Disorders, Opiate Dependence, Drug Abuse",
+      "Opioid-Use Disorder, Opioid Overdose",
+      "Opioid-related Disorders",
+      "Opioid-use Disorder",
+      "Opioid-use Disorder, Opioid-related Disorders",
+      "Pain",
+      "Schizophrenia"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:19:07.132061",
+    "search_query": "Indivior PLC",
+    "url": "https://clinicaltrials.gov/search?term=Indivior+PLC"
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "ticker": "CCCC",
+  "company_name": "C4 Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04756726",
+      "title": "Study to Assess the Safety and Tolerability of CFT7455 in Relapsed/Refractory Non-Hodgkin's Lymphoma or Multiple Myeloma",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Multiple Myeloma, Lymphoma, Non-Hodgkin's",
+      "start_date": "2021-04-27",
+      "completion_date": "2026-03-31",
+      "enrollment": 0,
+      "sponsor": "C4 Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05355753",
+      "title": "A Study to Assess the Safety and Tolerability of CFT8634 in Locally Advanced or Metastatic SMARCB1-Perturbed Cancers, Including Synovial Sarcoma and SMARCB1-Null Tumors",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Synovial Sarcoma, Soft Tissue Sarcoma",
+      "start_date": "2022-03-25",
+      "completion_date": "2023-12-19",
+      "enrollment": 0,
+      "sponsor": "C4 Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT07280013",
+      "title": "A Study to Learn About the Effects of Cemsidomide in Combination With Elranatamab in Relapsed/Refractory Multiple Myeloma Subjects",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Multiple Myeloma (MM)",
+      "start_date": "2026-04",
+      "completion_date": "2029-06",
+      "enrollment": 0,
+      "sponsor": "C4 Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05668585",
+      "title": "A Study to Characterize the Safety, Tolerability, and Preliminary Efficacy of CFT1946 as Monotherapy and Combination Therapy in Subjects With BRAF V600 Mutant Solid Tumors",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Solid Tumors, Melanoma, NSCLC, CRC, ATC",
+      "start_date": "2022-12-08",
+      "completion_date": "2025-11-05",
+      "enrollment": 0,
+      "sponsor": "C4 Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT07284758",
+      "title": "A Study to Evaluate the Efficacy of Cemsidomide + Dexamethasone in Participants With Relapsed/Refractory Multiple Myeloma",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Multiple Myeloma, Relapsed/Refractory Multiple Myeloma",
+      "start_date": "2026-01",
+      "completion_date": "2030-03",
+      "enrollment": 0,
+      "sponsor": "C4 Therapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 5,
+    "by_phase": {
+      "PHASE1": 4,
+      "PHASE2": 1
+    },
+    "by_status": {
+      "ACTIVE_NOT_RECRUITING": 1,
+      "TERMINATED": 1,
+      "RECRUITING": 2,
+      "COMPLETED": 1
+    },
+    "active_trials": 3,
+    "completed_trials": 1,
+    "conditions": [
+      "Multiple Myeloma (MM)",
+      "Multiple Myeloma, Lymphoma, Non-Hodgkin's",
+      "Multiple Myeloma, Relapsed/Refractory Multiple Myeloma",
+      "Solid Tumors, Melanoma, NSCLC, CRC, ATC",
+      "Synovial Sarcoma, Soft Tissue Sarcoma"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:17:21.449761",
+    "search_query": "C4 Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=C4+Therapeutics,+Inc."
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "ticker": "MLYS",
+  "company_name": "Mineralys Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06150924",
+      "title": "Efficacy and Safety of Lorundrostat in Addition to Sodium-Glucose Cotransporter-2 Inhibitors (SGLT2i) in Subjects With Hypertension and Chronic Kidney Disease (CKD) With Albuminuria",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Chronic Kidney Disease",
+      "start_date": "2023-12-14",
+      "completion_date": "2025-04-23",
+      "enrollment": 0,
+      "sponsor": "Mineralys Therapeutics Inc."
+    },
+    {
+      "nct_id": "NCT05001945",
+      "title": "Trial on the Safety and Efficacy of MLS-101 in Patients With Uncontrolled Hypertension",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Hypertension, Renal",
+      "start_date": "2021-07-01",
+      "completion_date": "2022-10-07",
+      "enrollment": 0,
+      "sponsor": "Mineralys Therapeutics Inc."
+    },
+    {
+      "nct_id": "NCT05769608",
+      "title": "A Pivotal Study to Evaluate the Efficacy of Lorundrostat in Subjects With Uncontrolled Hypertension on a Standardized Antihypertensive Medication Regimen",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Hypertension",
+      "start_date": "2023-03-13",
+      "completion_date": "2025-01-15",
+      "enrollment": 0,
+      "sponsor": "Mineralys Therapeutics Inc."
+    },
+    {
+      "nct_id": "NCT05968430",
+      "title": "Open-Label Extension (OLE) Study to Assess Safety, Efficacy, and Tolerability of Lorundrostat in Subjects With Hypertension",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Hypertension",
+      "start_date": "2023-07-14",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "Mineralys Therapeutics Inc."
+    },
+    {
+      "nct_id": "NCT06785454",
+      "title": "A Study to Assess the Efficacy and Safety of Lorundrostat in Participants With Obstructive Sleep Apnea and Hypertension",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Obstructive Sleep Apnea, Hypertension",
+      "start_date": "2025-02-28",
+      "completion_date": "2025-12-29",
+      "enrollment": 0,
+      "sponsor": "Mineralys Therapeutics Inc."
+    },
+    {
+      "nct_id": "NCT06153693",
+      "title": "Efficacy and Safety of Lorundrostat in Subjects With Uncontrolled and Resistant Hypertension",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Hypertension",
+      "start_date": "2023-11-22",
+      "completion_date": "2025-01-24",
+      "enrollment": 0,
+      "sponsor": "Mineralys Therapeutics Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 6,
+    "by_phase": {
+      "PHASE2": 4,
+      "PHASE3": 2
+    },
+    "by_status": {
+      "COMPLETED": 5,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 5,
+    "conditions": [
+      "Chronic Kidney Disease",
+      "Hypertension",
+      "Hypertension, Renal",
+      "Obstructive Sleep Apnea, Hypertension"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:20:01.510617",
+    "search_query": "Mineralys Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Mineralys+Therapeutics,+Inc."
+  }
+}

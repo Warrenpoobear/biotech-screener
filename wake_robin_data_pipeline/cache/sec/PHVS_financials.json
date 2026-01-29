@@ -1,0 +1,42 @@
+{
+  "ticker": "PHVS",
+  "cik": "0001830487",
+  "success": true,
+  "financials": {
+    "cash": 199571685.0,
+    "debt": 0.0,
+    "net_debt": -199571685.0,
+    "revenue_ttm": null,
+    "assets": 209810326.0,
+    "liabilities": 25474434.0,
+    "equity": 184335892.0,
+    "currency": "USD"
+  },
+  "data_dates": {
+    "cash": "2025-06-30",
+    "assets": "2025-06-30",
+    "liabilities": "2025-06-30",
+    "debt": "2025-06-30"
+  },
+  "data_freshness": {
+    "most_recent_date": "2025-06-30",
+    "oldest_date": "2025-06-30",
+    "staleness_flags": [
+      "critical_staleness:213d"
+    ]
+  },
+  "coverage": {
+    "has_cash": true,
+    "has_debt": true,
+    "has_revenue": false,
+    "has_balance_sheet": true,
+    "pct_complete": 75.0
+  },
+  "provenance": {
+    "source": "SEC EDGAR Company Facts API",
+    "timestamp": "2026-01-29T11:17:26.575814",
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001830487.json",
+    "cik": "0001830487",
+    "accounting_standard": "ifrs-full"
+  }
+}

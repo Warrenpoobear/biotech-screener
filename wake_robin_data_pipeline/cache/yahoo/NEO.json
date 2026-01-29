@@ -1,0 +1,43 @@
+{
+  "ticker": "NEO",
+  "success": true,
+  "price": {
+    "current": 12.395,
+    "currency": "USD",
+    "day_high": 12.59,
+    "day_low": 12.3,
+    "52_week_high": 15.26,
+    "52_week_low": 4.72
+  },
+  "market_cap": {
+    "value": 1603761792.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 129387801.0,
+  "volume": {
+    "last": 686405,
+    "average_30d": 1904600
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": 67.16337,
+    "price_to_book": 1.9057503
+  },
+  "company_info": {
+    "name": "NeoGenomics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Diagnostics & Research"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T12:35:34.424668",
+    "url": "https://finance.yahoo.com/quote/NEO",
+    "data_hash": "00f370a6929add8c"
+  }
+}

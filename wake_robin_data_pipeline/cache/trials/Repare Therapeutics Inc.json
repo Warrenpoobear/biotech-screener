@@ -1,0 +1,136 @@
+{
+  "ticker": "RPTX",
+  "company_name": "Repare Therapeutics Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05147350",
+      "title": "Study of RP-6306 With FOLFIRI in Advanced Solid Tumors",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Advanced Solid Tumor",
+      "start_date": "2022-08-09",
+      "completion_date": "2025-02-12",
+      "enrollment": 0,
+      "sponsor": "Debiopharm International SA"
+    },
+    {
+      "nct_id": "NCT06560632",
+      "title": "Phase 1 Trial of RP-3467 Alone and in Combination With Olaparib in Participants With Advanced Solid Tumors",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Advanced Solid Tumor",
+      "start_date": "2024-09-17",
+      "completion_date": "2025-10-28",
+      "enrollment": 0,
+      "sponsor": "Repare Therapeutics"
+    },
+    {
+      "nct_id": "NCT05147272",
+      "title": "Study of RP-6306 With Gemcitabine in Advanced Solid Tumors",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Adult Solid Tumor",
+      "start_date": "2021-12-16",
+      "completion_date": "2024-08-28",
+      "enrollment": 0,
+      "sponsor": "Debiopharm International SA"
+    },
+    {
+      "nct_id": "NCT05405309",
+      "title": "RP-3500 and Olaparib in DNA Damage Repair Pathway Deficient Relapsed/Refractory Chronic Lymphocytic Leukemia",
+      "status": "TERMINATED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Chronic Lymphocytic Leukemia",
+      "start_date": "2022-09-23",
+      "completion_date": "2025-01-10",
+      "enrollment": 0,
+      "sponsor": "University of Utah"
+    },
+    {
+      "nct_id": "NCT04497116",
+      "title": "Study of RP-3500, Camonsertib, in Advanced Solid Tumors",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Advanced Solid Tumor",
+      "start_date": "2020-07-22",
+      "completion_date": "2025-06-13",
+      "enrollment": 0,
+      "sponsor": "Repare Therapeutics"
+    },
+    {
+      "nct_id": "NCT04972110",
+      "title": "Study of RP-3500 (Camonsertib) With Niraparib or Olaparib in Advanced Solid Tumors",
+      "status": "TERMINATED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Advanced Solid Tumor, Adult",
+      "start_date": "2021-07-21",
+      "completion_date": "2024-11-13",
+      "enrollment": 0,
+      "sponsor": "Repare Therapeutics"
+    },
+    {
+      "nct_id": "NCT06232408",
+      "title": "LIONS (PLK4 Inhibitor in Advanced Solid Tumors)",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Advanced Solid Tumor",
+      "start_date": "2024-02-14",
+      "completion_date": "2025-08-27",
+      "enrollment": 0,
+      "sponsor": "Repare Therapeutics"
+    },
+    {
+      "nct_id": "NCT05566574",
+      "title": "A Study of RP-3500 in Combination With Standard Radiation Therapy in People With Solid Tumor Cancer",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Solid Tumor, Metastatic Cancer",
+      "start_date": "2022-09-30",
+      "completion_date": "2026-09-30",
+      "enrollment": 0,
+      "sponsor": "Memorial Sloan Kettering Cancer Center"
+    },
+    {
+      "nct_id": "NCT05605509",
+      "title": "RP-6306 in Patients With Advanced Cancer",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Advanced Cancer",
+      "start_date": "2023-05-24",
+      "completion_date": "2026-03-31",
+      "enrollment": 0,
+      "sponsor": "Canadian Cancer Trials Group"
+    }
+  ],
+  "summary": {
+    "total_trials": 9,
+    "by_phase": {
+      "PHASE1": 4,
+      "PHASE1, PHASE2": 4,
+      "PHASE2": 1
+    },
+    "by_status": {
+      "TERMINATED": 6,
+      "COMPLETED": 1,
+      "ACTIVE_NOT_RECRUITING": 2
+    },
+    "active_trials": 2,
+    "completed_trials": 1,
+    "conditions": [
+      "Adult Solid Tumor",
+      "Advanced Cancer",
+      "Advanced Solid Tumor",
+      "Advanced Solid Tumor, Adult",
+      "Chronic Lymphocytic Leukemia",
+      "Solid Tumor, Metastatic Cancer"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:36:13.871135",
+    "search_query": "Repare Therapeutics Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Repare+Therapeutics+Inc."
+  }
+}

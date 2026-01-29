@@ -1,0 +1,159 @@
+{
+  "ticker": "XENE",
+  "company_name": "Xenon Pharmaceuticals Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT07217860",
+      "title": "An Open-label Study of Azetukalner in Bipolar I or II Depression (X-CEED-OLE)",
+      "status": "ENROLLING_BY_INVITATION",
+      "phase": "PHASE3",
+      "condition": "Bipolar Depression, Bipolar I Disorder, Bipolar Disorder, Bipolar II Disorder",
+      "start_date": "2025-10-30",
+      "completion_date": "2029-08",
+      "enrollment": 0,
+      "sponsor": "Xenon Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT07172516",
+      "title": "A Randomized Study of Azetukalner Versus Placebo in Depressive Episodes Associated With Bipolar I or II Disorder (Bipolar Depression)",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Bipolar Disorder, Bipolar Depression, Bipolar I Disorder, Bipolar II Disorder",
+      "start_date": "2025-08-08",
+      "completion_date": "2028-08",
+      "enrollment": 0,
+      "sponsor": "Xenon Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT07076407",
+      "title": "A Randomized Study of Azetukalner Versus Placebo in Major Depressive Disorder (X-NOVA3)",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Major Depressive Disorder",
+      "start_date": "2025-07-08",
+      "completion_date": "2027-07",
+      "enrollment": 0,
+      "sponsor": "Xenon Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT02656043",
+      "title": "A Safety, Tolerability, Efficacy and Exposure Study of XEN801 Topical Gel",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Acne Vulgaris",
+      "start_date": "2015-09-17",
+      "completion_date": "2017-03-17",
+      "enrollment": 0,
+      "sponsor": "Xenon Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT03467100",
+      "title": "Safety, Tolerability, and Pharmacokinetics of Single and Multiple Ascending Oral Doses of XEN901",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2018-02-19",
+      "completion_date": "2018-12-19",
+      "enrollment": 0,
+      "sponsor": "Xenon Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT03468725",
+      "title": "Safety, Tolerability, Pharmacokinetics and Effects on Transcranial Magnetic Stimulation of Oral Doses of XEN1101",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Male Volunteers",
+      "start_date": "2018-02-13",
+      "completion_date": "2018-07-31",
+      "enrollment": 0,
+      "sponsor": "Xenon Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT04952467",
+      "title": "Single-dose Mass Balance Recovery and Metabolite Profile and Identification of 14C-XEN1101",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2021-07-14",
+      "completion_date": "2021-10-04",
+      "enrollment": 0,
+      "sponsor": "Xenon Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT01195636",
+      "title": "A Crossover Study to Evaluate the Safety, Tolerability and Efficacy of XPF-002 in Subjects With Postherpetic Neuralgia (PHN)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Postherpetic Neuralgia",
+      "start_date": "2010-08",
+      "completion_date": "2011-03",
+      "enrollment": 0,
+      "sponsor": "Xenon Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT00813670",
+      "title": "Single and Multiple Ascending Dose Safety Study of XPF-001 in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Human Volunteers",
+      "start_date": "2008-11",
+      "completion_date": "2009-07",
+      "enrollment": 0,
+      "sponsor": "Xenon Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT04912856",
+      "title": "An Open-Label Extension of the Study XEN496 (Ezogabine) in Children With KCNQ2-DEE",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Epilepsy, Epilepsy in Children, Epilepsy; Seizure, Disease, Brain Diseases, Central Nervous System Diseases, Nervous System Diseases, Epileptic Syndromes",
+      "start_date": "2021-08-17",
+      "completion_date": "2023-11-17",
+      "enrollment": 0,
+      "sponsor": "Xenon Pharmaceuticals Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 23,
+    "by_phase": {
+      "PHASE3": 11,
+      "PHASE1, PHASE2": 3,
+      "PHASE1": 5,
+      "PHASE2": 4
+    },
+    "by_status": {
+      "ENROLLING_BY_INVITATION": 3,
+      "RECRUITING": 5,
+      "COMPLETED": 11,
+      "TERMINATED": 2,
+      "ACTIVE_NOT_RECRUITING": 2
+    },
+    "active_trials": 10,
+    "completed_trials": 11,
+    "conditions": [
+      "Acne Vulgaris",
+      "Bipolar Depression, Bipolar I Disorder, Bipolar Disorder, Bipolar II Disorder",
+      "Bipolar Disorder, Bipolar Depression, Bipolar I Disorder, Bipolar II Disorder",
+      "Dental Pain",
+      "Epilepsy, Epilepsy in Children, Epilepsy; Seizure, Disease, Brain Diseases, Central Nervous System Diseases, Nervous System Diseases, Epileptic Syndromes",
+      "Focal Epilepsy",
+      "Focal Epilepsy, Tonic-Clonic Seizures",
+      "Focal Onset Seizures",
+      "Healthy Human Volunteers",
+      "Healthy Male Volunteers",
+      "Healthy Volunteers",
+      "Major Depressive Disorder",
+      "Postherpetic Neuralgia",
+      "Primary Erythromelalgia, Inherited Erythromelalgia",
+      "Primary Generalized Tonic-Clonic Seizures"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:22:57.905879",
+    "search_query": "Xenon Pharmaceuticals Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Xenon+Pharmaceuticals+Inc."
+  }
+}

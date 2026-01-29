@@ -1,0 +1,114 @@
+{
+  "ticker": "GPCR",
+  "company_name": "Structure Therapeutics Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04558450",
+      "title": "Covid-19 Effects on Arterial Stiffness and Vascular Aging (CARTESIAN)",
+      "status": "RECRUITING",
+      "phase": "NA",
+      "condition": "Covid19, Arterial Stiffness, Endothelial Dysfunction, Diastolic Dysfunction",
+      "start_date": "2020-09-21",
+      "completion_date": "2033-03",
+      "enrollment": 0,
+      "sponsor": "Assistance Publique - H\u00f4pitaux de Paris"
+    },
+    {
+      "nct_id": "NCT06703021",
+      "title": "A Dose-Range Study of Aleniglipron (GSBR-1290) in Participants Living With Obesity or Overweight With at Least One Weight-related Comorbidity",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Obesity, Overweight, Chronic Weight Management",
+      "start_date": "2024-12-20",
+      "completion_date": "2025-12",
+      "enrollment": 0,
+      "sponsor": "Gasherbrum Bio, Inc., a wholly owned subsidiary of Structure Therapeutics"
+    },
+    {
+      "nct_id": "NCT06693843",
+      "title": "A Phase 2b, Dose-range Finding Study of the Efficacy and Safety of Multiple Doses of Aleniglipron (GSBR-1290) in Participants Living With Obesity or Overweight With at Least One Weight-related Comorbidity",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Obesity, Overweight, or Chronic Weight Management",
+      "start_date": "2024-10-17",
+      "completion_date": "2026-08",
+      "enrollment": 0,
+      "sponsor": "Gasherbrum Bio, Inc., a wholly owned subsidiary of Structure Therapeutics"
+    },
+    {
+      "nct_id": "NCT06139055",
+      "title": "A Study of Multiple-ascending Doses of GSBR-1290 in Healthy Overweight/Obese Participants",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2023-10-02",
+      "completion_date": "2024-03",
+      "enrollment": 0,
+      "sponsor": "Gasherbrum Bio, Inc., a wholly owned subsidiary of Structure Therapeutics"
+    },
+    {
+      "nct_id": "NCT05893043",
+      "title": "A Study of Multiple Ascending Doses of GSBR-1290 in Japanese and Non-Japanese Healthy Participants",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2023-04-24",
+      "completion_date": "2023-06-28",
+      "enrollment": 0,
+      "sponsor": "Gasherbrum Bio, Inc., a wholly owned subsidiary of Structure Therapeutics"
+    },
+    {
+      "nct_id": "NCT07169942",
+      "title": "Aleniglipron Phase 2 Body Composition Study",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Obesity, Overweight, or Chronic Weight Management",
+      "start_date": "2025-08-15",
+      "completion_date": "2026-09",
+      "enrollment": 0,
+      "sponsor": "Gasherbrum Bio, Inc., a wholly owned subsidiary of Structure Therapeutics"
+    },
+    {
+      "nct_id": "NCT05762471",
+      "title": "Phase 1b/2a Study of GSBR-1290 in Adult Overweight or Obese Healthy Subjects and Subjects With Type 2 Diabetes Mellitus",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Overweight or Obesity, Type2 Diabetes Mellitus",
+      "start_date": "2023-01-09",
+      "completion_date": "2024-04-11",
+      "enrollment": 0,
+      "sponsor": "Gasherbrum Bio, Inc., a wholly owned subsidiary of Structure Therapeutics"
+    }
+  ],
+  "summary": {
+    "total_trials": 7,
+    "by_phase": {
+      "NA": 1,
+      "PHASE2": 3,
+      "PHASE1": 2,
+      "PHASE1, PHASE2": 1
+    },
+    "by_status": {
+      "RECRUITING": 1,
+      "ACTIVE_NOT_RECRUITING": 4,
+      "COMPLETED": 2
+    },
+    "active_trials": 5,
+    "completed_trials": 2,
+    "conditions": [
+      "Covid19, Arterial Stiffness, Endothelial Dysfunction, Diastolic Dysfunction",
+      "Healthy Volunteers",
+      "Obesity, Overweight, Chronic Weight Management",
+      "Obesity, Overweight, or Chronic Weight Management",
+      "Overweight or Obesity, Type2 Diabetes Mellitus"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:18:43.523997",
+    "search_query": "Structure Therapeutics Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Structure+Therapeutics+Inc."
+  }
+}

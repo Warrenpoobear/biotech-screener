@@ -1,0 +1,150 @@
+{
+  "ticker": "CRNX",
+  "company_name": "Crinetics Pharmaceuticals, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05192382",
+      "title": "A Study to Evaluate the Safety and Efficacy of Paltusotine for the Treatment of Acromegaly (PATHFNDR-2)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Acromegaly",
+      "start_date": "2021-12-17",
+      "completion_date": "2028-01",
+      "enrollment": 0,
+      "sponsor": "Crinetics Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT05907291",
+      "title": "Evaluate the Safety, Efficacy, and Pharmacokinetics of CRN04894 in Participants With Congenital Adrenal Hyperplasia (TouCAHn)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Congenital Adrenal Hyperplasia, Classic Congenital Adrenal Hyperplasia",
+      "start_date": "2023-07-03",
+      "completion_date": "2025-08-22",
+      "enrollment": 0,
+      "sponsor": "Crinetics Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT04246749",
+      "title": "Mass Balance and Pharmacokinetics of [14C]-CRN00808 in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2019-09-17",
+      "completion_date": "2019-10-25",
+      "enrollment": 0,
+      "sponsor": "Crinetics Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT07221084",
+      "title": "A Study to Assess Pharmacokinetics, Safety, and Tolerability of Atumelnant in Healthy Japanese and Caucasian Participants",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2025-10",
+      "completion_date": "2026-02",
+      "enrollment": 0,
+      "sponsor": "Crinetics Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT07129252",
+      "title": "A Study to Investigate Safety and Effectiveness of CRN09682 in Participants With SST2-Expressing NENs and Other Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "SST2-positive Neuroendocrine Neoplasms, Neuroendocrine Tumors, Neuroendocrine Neoplasm",
+      "start_date": "2025-11-26",
+      "completion_date": "2029-08",
+      "enrollment": 0,
+      "sponsor": "Crinetics Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT05804669",
+      "title": "A Study to Evaluate the Safety and PK of CRN04894 for the Treatment of Cushing's Syndrome",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Cushing Syndrome, Cushing Disease, Ectopic ACTH Syndrome",
+      "start_date": "2023-10-12",
+      "completion_date": "2026-10",
+      "enrollment": 0,
+      "sponsor": "Crinetics Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT03789656",
+      "title": "An Study to Evaluate the Safety and Efficacy of Paltusotine for the Treatment of Acromegaly (ACROBAT Edge)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Acromegaly",
+      "start_date": "2019-03-12",
+      "completion_date": "2020-08-31",
+      "enrollment": 0,
+      "sponsor": "Crinetics Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT07159841",
+      "title": "A Study in Pediatric Participants With Congenital Adrenal Hyperplasia (Balance-CAH)",
+      "status": "RECRUITING",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Congenital Adrenal Hyperplasia, Classic Congenital Adrenal Hyperplasia",
+      "start_date": "2026-01-31",
+      "completion_date": "2030-03",
+      "enrollment": 0,
+      "sponsor": "Crinetics Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT03936166",
+      "title": "A Single and Multiple-Ascending Dose Study of CRN01941 in Healthy Adult Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2019-04-29",
+      "completion_date": "2019-12-16",
+      "enrollment": 0,
+      "sponsor": "Crinetics Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT04837040",
+      "title": "A Study to Evaluate the Safety and Efficacy of Paltusotine for the Treatment of Acromegaly",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Acromegaly",
+      "start_date": "2021-05-12",
+      "completion_date": "2027-06",
+      "enrollment": 0,
+      "sponsor": "Crinetics Pharmaceuticals Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 18,
+    "by_phase": {
+      "PHASE3": 4,
+      "PHASE2": 6,
+      "PHASE1": 5,
+      "PHASE1, PHASE2": 2,
+      "PHASE2, PHASE3": 1
+    },
+    "by_status": {
+      "ACTIVE_NOT_RECRUITING": 4,
+      "COMPLETED": 7,
+      "RECRUITING": 7
+    },
+    "active_trials": 11,
+    "completed_trials": 7,
+    "conditions": [
+      "Acromegaly",
+      "Carcinoid Syndrome, Carcinoid, Carcinoid Tumor, Carcinoid Tumor of Ileum, Carcinoid Tumor of Cecum, Carcinoid Syndrome Diarrhea, Carcinoid Intestine Tumor, Carcinoid Tumor of Liver, Carcinoid Tumor of Pancreas",
+      "Carcinoid Syndrome, Carcinoid, Carcinoid Tumor, Carcinoid Tumor of Ileum, Carcinoid Tumor of Cecum, Carcinoid Tumor of Liver, Carcinoid Tumor of Pancreas, Carcinoid Syndrome Diarrhea, Carcinoid Intestine Tumor",
+      "Congenital Adrenal Hyperplasia, Classic Congenital Adrenal Hyperplasia",
+      "Cushing Syndrome, Cushing Disease, Ectopic ACTH Syndrome",
+      "Healthy Volunteers",
+      "SST2-positive Neuroendocrine Neoplasms, Neuroendocrine Tumors, Neuroendocrine Neoplasm"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:17:42.723009",
+    "search_query": "Crinetics Pharmaceuticals, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Crinetics+Pharmaceuticals,+Inc."
+  }
+}

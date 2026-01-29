@@ -1,0 +1,177 @@
+{
+  "ticker": "HALO",
+  "company_name": "Halozyme Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT02667223",
+      "title": "Pharmacokinetic and Pharmacodynamic Study of Bococizumab Alone and When Combined With Recombinant Human Hyaluronidase",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Healthy, Hypercholesterolemia",
+      "start_date": "2016-02",
+      "completion_date": "2016-07",
+      "enrollment": 0,
+      "sponsor": "Pfizer"
+    },
+    {
+      "nct_id": "NCT06689085",
+      "title": "52 Week Study of Safety, PK, & Efficacy of XYOSTED\u00ae for Testosterone Replacement in Male Adolescents With Hypogonadism",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Hypogonadism, Male",
+      "start_date": "2025-02-05",
+      "completion_date": "2027-12",
+      "enrollment": 0,
+      "sponsor": "Halozyme Therapeutics"
+    },
+    {
+      "nct_id": "NCT01275131",
+      "title": "Randomized, Double-blind, Crossover, Pharmacokinetic (PK) and Glucodynamic (GD) Study of Continuous Subcutaneous Insulin Infusion (CSII) in Participants With Type 1 Diabetes Mellitus (T1DM)",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Type 1 Diabetes Mellitus",
+      "start_date": "2011-01",
+      "completion_date": "2011-12",
+      "enrollment": 0,
+      "sponsor": "Halozyme Therapeutics"
+    },
+    {
+      "nct_id": "NCT00979875",
+      "title": "A Pharmacokinetic and Glucodynamic Study of Subcutaneously Administered Insulin Analogs With rHuPH20 Compared to Insulin Analogs Alone",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2009-09",
+      "completion_date": "2010-05",
+      "enrollment": 0,
+      "sponsor": "Halozyme Therapeutics"
+    },
+    {
+      "nct_id": "NCT01839487",
+      "title": "PEGPH20 Plus Nab-Paclitaxel Plus Gemcitabine Compared With Nab-Paclitaxel Plus Gemcitabine in Participants With Stage IV Untreated Pancreatic Cancer",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Metastatic Pancreatic Cancer",
+      "start_date": "2013-05-14",
+      "completion_date": "2018-09-26",
+      "enrollment": 0,
+      "sponsor": "Halozyme Therapeutics"
+    },
+    {
+      "nct_id": "NCT01959139",
+      "title": "S1313, PEGPH20 in Treating Patients With Newly Diagnosed Metastatic Pancreatic Cancer",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Metastatic Pancreatic Adenocarcinoma",
+      "start_date": "2014-01-23",
+      "completion_date": "2023-11-09",
+      "enrollment": 0,
+      "sponsor": "SWOG Cancer Research Network"
+    },
+    {
+      "nct_id": "NCT03979066",
+      "title": "Study Evaluating NEOadjuvant Immunotherapy in Resectable PANCreatic Ductal Adenocarcinoma",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Pancreatic Ductal Adenocarcinoma",
+      "start_date": "2019-11-01",
+      "completion_date": "2019-11-03",
+      "enrollment": 0,
+      "sponsor": "Gulam Manji"
+    },
+    {
+      "nct_id": "NCT00435604",
+      "title": "A Study of the Subcutaneous Injection of a Viscous Antibody Solution With Recombinant Human Hyaluronidase",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2007-02",
+      "completion_date": "2007-05",
+      "enrollment": 0,
+      "sponsor": "Halozyme Therapeutics"
+    },
+    {
+      "nct_id": "NCT00369187",
+      "title": "Study of a Large Protein Molecule Administered With Escalating Doses of Recombinant Human Hyaluronidase",
+      "status": "COMPLETED",
+      "phase": "PHASE4",
+      "condition": "Rheumatoid Arthritis",
+      "start_date": "2006-07",
+      "completion_date": "2006-10",
+      "enrollment": 0,
+      "sponsor": "Halozyme Therapeutics"
+    },
+    {
+      "nct_id": "NCT03267940",
+      "title": "Study of PEGPH20 With Cisplatin (CIS) and Gemcitabine (GEM); PEGPH20 With Atezolizumab (ATEZO), CIS, and GEM; and CIS and GEM Alone in Participants With Previously Untreated, Unresectable, Locally Advanced, or Metastatic Intrahepatic and Extrahepatic Cholangiocarcinoma and Gallbladder Adenocarcinoma",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Cholangiocarcinoma Non-resectable, Cholangiocarcinoma, Intrahepatic, Cholangiocarcinoma, Extrahepatic, Gallbladder Adenocarcinoma",
+      "start_date": "2017-10-02",
+      "completion_date": "2019-11-11",
+      "enrollment": 0,
+      "sponsor": "Halozyme Therapeutics"
+    }
+  ],
+  "summary": {
+    "total_trials": 47,
+    "by_phase": {
+      "PHASE1": 16,
+      "PHASE3": 3,
+      "PHASE2": 11,
+      "PHASE1, PHASE2": 5,
+      "PHASE4": 11,
+      "NA": 1
+    },
+    "by_status": {
+      "TERMINATED": 7,
+      "RECRUITING": 1,
+      "COMPLETED": 35,
+      "ACTIVE_NOT_RECRUITING": 1,
+      "UNKNOWN": 1,
+      "WITHDRAWN": 2
+    },
+    "active_trials": 2,
+    "completed_trials": 35,
+    "conditions": [
+      "Bladder Cancer",
+      "Cholangiocarcinoma Non-resectable, Cholangiocarcinoma, Intrahepatic, Cholangiocarcinoma, Extrahepatic, Gallbladder Adenocarcinoma",
+      "Dehydration",
+      "Dermatitis, Allergic Contact",
+      "Diabetes Mellitus",
+      "Diabetes Mellitus, Type 1",
+      "Diabetes Mellitus, Type 2",
+      "Diabetes Mellitus, Type II",
+      "Gastric Adenocarcinoma or Gastroesophageal Junction Adenocarcinoma or Esophageal Carcinoma",
+      "Healthy",
+      "Healthy Volunteers",
+      "Healthy, Hypercholesterolemia",
+      "Hereditary Angioedema",
+      "Hypogonadism, Male",
+      "Metastatic Breast Cancer",
+      "Metastatic Pancreatic Adenocarcinoma",
+      "Metastatic Pancreatic Cancer",
+      "NSCLC, Gastric Cancer",
+      "Non-small Cell Lung Cancer",
+      "Pain",
+      "Pancreatic Cancer, Advanced Pancreatic Ductal Adenocarcinoma",
+      "Pancreatic Ductal Adenocarcinoma",
+      "Pancreatic Ductal Adenocarcinoma, Pancreatic Cancer, Pancreatic Neoplasms",
+      "Pancreatic Ductal Carcinoma",
+      "Rheumatoid Arthritis",
+      "Risk Factors for or a Diagnosis of Osteoporosis",
+      "Solid Tumor",
+      "Stage IV Pancreatic Cancer",
+      "Superficial Bladder Cancer",
+      "Type 1 Diabetes Mellitus"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:18:47.382082",
+    "search_query": "Halozyme Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Halozyme+Therapeutics,+Inc."
+  }
+}

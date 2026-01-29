@@ -1,0 +1,125 @@
+{
+  "ticker": "NRIX",
+  "company_name": "Nurix Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06691828",
+      "title": "Absolute Bioavailability, Absorption, Metabolism, Excretion, and Mass Balance Study of [14C] NX-5948",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteer",
+      "start_date": "2024-11-01",
+      "completion_date": "2024-12-05",
+      "enrollment": 0,
+      "sponsor": "Nurix Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05131022",
+      "title": "A Study of NX-5948 in Adults With Relapsed/Refractory B-cell Malignancies",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Chronic Lymphocytic Leukemia (CLL), Small Lymphocytic Lymphoma (SLL), Diffuse Large B Cell Lymphoma (DLBCL), Follicular Lymphoma (FL), Mantle Cell Lymphoma (MCL), Marginal Zone Lymphoma (MZL), Waldenstrom Macroglobulinemia (WM), Primary Central Nervous System Lymphoma (PCNSL), Secondary Central Nervous System Lymphoma (SCNSL)",
+      "start_date": "2022-04-13",
+      "completion_date": "2028-01",
+      "enrollment": 0,
+      "sponsor": "Nurix Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05107674",
+      "title": "A Study of NX-1607 in Adults With Advanced Malignancies",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Ovarian Cancer, Epithelial, Gastric Cancer, GastroEsophageal Junction (GEJ) Cancer, Head and Neck Squamous Cell Carcinoma, Metastatic or Unresectable Melanoma, Non-small Cell Lung Cancer (NSCLC), Metastatic Castration-resistant Prostate Cancer (mCRPC), Malignant Pleural Mesothelioma (MPM), Triple Negative Breast Cancer (TNBC), Metastatic Urothelial Carcinoma, Cervical Cancer, Diffuse Large B Cell Lymphoma (DLBCL), Richter Transformation, Microsatellite Stable Colorectal Carcinoma",
+      "start_date": "2021-09-29",
+      "completion_date": "2028-02-28",
+      "enrollment": 0,
+      "sponsor": "Nurix Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04830137",
+      "title": "A Study of NX-2127 in Adults With Relapsed/Refractory B-cell Malignancies",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Chronic Lymphocytic Leukemia (CLL), Small Lymphocytic Lymphoma (SLL), Waldenstrom Macroglobulinemia (WM), Mantle Cell Lymphoma (MCL), Marginal Zone Lymphoma (MZL), Follicular Lymphoma (FL), Diffuse Large B-cell Lymphoma (DLBCL), Primary Central Nervous System Lymphoma (PCNSL)",
+      "start_date": "2021-05-05",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "Nurix Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05107739",
+      "title": "A Study of DeTIL-0255 in Adults With Advanced Malignancies",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Platinum-resistant Ovarian Cancer, Endometrial Cancer, Cervical Cancer",
+      "start_date": "2021-12-22",
+      "completion_date": "2023-05-09",
+      "enrollment": 0,
+      "sponsor": "Nurix Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06593457",
+      "title": "A Food-Effect, Drug-Drug Interaction, and Pharmacokinetics Study of NX-5948 in Healthy Adult Subjects",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2024-08-20",
+      "completion_date": "2024-11-14",
+      "enrollment": 0,
+      "sponsor": "Nurix Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06717269",
+      "title": "Relative Bioavailability of NX-5948 Tablets vs Capsules and the Effect of Covariates on the PK of NX-5948 Tablets",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteer",
+      "start_date": "2024-11-30",
+      "completion_date": "2025-12-31",
+      "enrollment": 0,
+      "sponsor": "Nurix Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT07221500",
+      "title": "A Study of NX-5948 in Adults With CLL/SLL Previously Treated With a Bruton's Tyrosine Kinase Inhibitor and a B-cell Lymphoma-2 Inhibitor (DAYBreak CLL-201)",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Chronic Lymphocytic Leukemia (CLL), Small Lymphocytic Lymphoma (SLL)",
+      "start_date": "2025-10-15",
+      "completion_date": "2030-10",
+      "enrollment": 0,
+      "sponsor": "Nurix Therapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 8,
+    "by_phase": {
+      "PHASE1": 7,
+      "PHASE2": 1
+    },
+    "by_status": {
+      "COMPLETED": 2,
+      "RECRUITING": 5,
+      "TERMINATED": 1
+    },
+    "active_trials": 5,
+    "completed_trials": 2,
+    "conditions": [
+      "Chronic Lymphocytic Leukemia (CLL), Small Lymphocytic Lymphoma (SLL)",
+      "Chronic Lymphocytic Leukemia (CLL), Small Lymphocytic Lymphoma (SLL), Diffuse Large B Cell Lymphoma (DLBCL), Follicular Lymphoma (FL), Mantle Cell Lymphoma (MCL), Marginal Zone Lymphoma (MZL), Waldenstrom Macroglobulinemia (WM), Primary Central Nervous System Lymphoma (PCNSL), Secondary Central Nervous System Lymphoma (SCNSL)",
+      "Chronic Lymphocytic Leukemia (CLL), Small Lymphocytic Lymphoma (SLL), Waldenstrom Macroglobulinemia (WM), Mantle Cell Lymphoma (MCL), Marginal Zone Lymphoma (MZL), Follicular Lymphoma (FL), Diffuse Large B-cell Lymphoma (DLBCL), Primary Central Nervous System Lymphoma (PCNSL)",
+      "Healthy Volunteer",
+      "Healthy Volunteers",
+      "Ovarian Cancer, Epithelial, Gastric Cancer, GastroEsophageal Junction (GEJ) Cancer, Head and Neck Squamous Cell Carcinoma, Metastatic or Unresectable Melanoma, Non-small Cell Lung Cancer (NSCLC), Metastatic Castration-resistant Prostate Cancer (mCRPC), Malignant Pleural Mesothelioma (MPM), Triple Negative Breast Cancer (TNBC), Metastatic Urothelial Carcinoma, Cervical Cancer, Diffuse Large B Cell Lymphoma (DLBCL), Richter Transformation, Microsatellite Stable Colorectal Carcinoma",
+      "Platinum-resistant Ovarian Cancer, Endometrial Cancer, Cervical Cancer"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:20:19.684070",
+    "search_query": "Nurix Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Nurix+Therapeutics,+Inc."
+  }
+}

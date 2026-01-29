@@ -2,36 +2,42 @@
   "ticker": "EXEL",
   "success": true,
   "price": {
-    "current": 42.4,
+    "current": 42.55,
     "currency": "USD",
-    "day_high": 43.46,
-    "day_low": 41.93,
+    "day_high": 43.29,
+    "day_low": 42.28,
     "52_week_high": 49.62,
-    "52_week_low": 31.9
+    "52_week_low": 32.38
   },
   "market_cap": {
-    "value": 11414188032.0,
+    "value": 11454567424.0,
     "currency": "USD"
   },
   "shares_outstanding": 268112157.0,
   "volume": {
-    "last": 2814429,
-    "average_30d": 2600985
+    "last": 415740,
+    "average_30d": 2242183
   },
   "valuation": {
-    "pe_ratio": 17.815126,
-    "forward_pe": 12.870248,
-    "price_to_book": 5.261199
+    "pe_ratio": 17.87815,
+    "forward_pe": 12.667611,
+    "price_to_book": 5.2798114
   },
   "company_info": {
     "name": "Exelixis, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-05T18:05:41.350840",
+    "timestamp": "2026-01-29T10:59:31.959935",
     "url": "https://finance.yahoo.com/quote/EXEL",
-    "data_hash": "e2c2c88fd7d32a0d"
+    "data_hash": "0f5c1cb485ffb77a"
   }
 }

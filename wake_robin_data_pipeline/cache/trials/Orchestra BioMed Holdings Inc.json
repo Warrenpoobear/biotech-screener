@@ -1,0 +1,64 @@
+{
+  "ticker": "OBIO",
+  "company_name": "Orchestra BioMed Holdings, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06059638",
+      "title": "BradycArdia paCemaKer With AV Interval Modulation for Blood prEssure treAtmenT",
+      "status": "RECRUITING",
+      "phase": "NA",
+      "condition": "Hypertension, Hypertension, Systolic, Hypertension, Essential",
+      "start_date": "2023-12-27",
+      "completion_date": "2029-08",
+      "enrollment": 0,
+      "sponsor": "Orchestra BioMed, Inc"
+    },
+    {
+      "nct_id": "NCT07045194",
+      "title": "Virtue\u00ae SAB in the Treatment of Coronary ISR Trial",
+      "status": "RECRUITING",
+      "phase": "NA",
+      "condition": "Coronary Artery Disease",
+      "start_date": "2025-10-20",
+      "completion_date": "2032-10",
+      "enrollment": 0,
+      "sponsor": "Orchestra BioMed, Inc"
+    },
+    {
+      "nct_id": "NCT06402253",
+      "title": "A Music and Visual Arts Digital Intervention in Teenagers to Promote Healthy Engagement With Social Media.",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "NA",
+      "condition": "Healthy Subjects, Mental Health Issue",
+      "start_date": "2024-03-01",
+      "completion_date": "2025-09-01",
+      "enrollment": 0,
+      "sponsor": "New York University"
+    }
+  ],
+  "summary": {
+    "total_trials": 3,
+    "by_phase": {
+      "NA": 3
+    },
+    "by_status": {
+      "RECRUITING": 2,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 3,
+    "completed_trials": 0,
+    "conditions": [
+      "Coronary Artery Disease",
+      "Healthy Subjects, Mental Health Issue",
+      "Hypertension, Hypertension, Systolic, Hypertension, Essential"
+    ],
+    "lead_stage": "preclinical"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:20:32.121227",
+    "search_query": "Orchestra BioMed Holdings, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Orchestra+BioMed+Holdings,+Inc."
+  }
+}

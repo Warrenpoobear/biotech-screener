@@ -1,0 +1,75 @@
+{
+  "ticker": "ORKA",
+  "company_name": "Oruka Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06944379",
+      "title": "ORKA-002-211 A Phase I Study to Evaluate ORKA-002 in Healthy Volunteers Following A Single Dose",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2025-05-19",
+      "completion_date": "2027-01",
+      "enrollment": 0,
+      "sponsor": "Oruka Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06698939",
+      "title": "ORKA-001 in Healthy Volunteers",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2024-12-19",
+      "completion_date": "2026-06",
+      "enrollment": 0,
+      "sponsor": "Oruka Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT07090330",
+      "title": "ORKA-001 Versus Placebo in Patients With Moderate-to-Severe Plaque Psoriasis",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Plaque Psoriasis",
+      "start_date": "2025-07-18",
+      "completion_date": "2027-05",
+      "enrollment": 0,
+      "sponsor": "Oruka Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT07290569",
+      "title": "Dose Ranging Study of ORKA-001 in Patients With Moderate-to-Severe Plaque Psoriasis",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Plaque Psoriasis",
+      "start_date": "2025-12-03",
+      "completion_date": "2028-12",
+      "enrollment": 0,
+      "sponsor": "Oruka Therapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 4,
+    "by_phase": {
+      "PHASE1": 2,
+      "PHASE2": 2
+    },
+    "by_status": {
+      "ACTIVE_NOT_RECRUITING": 2,
+      "RECRUITING": 2
+    },
+    "active_trials": 4,
+    "completed_trials": 0,
+    "conditions": [
+      "Healthy Volunteers",
+      "Plaque Psoriasis"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:20:44.098251",
+    "search_query": "Oruka Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Oruka+Therapeutics,+Inc."
+  }
+}

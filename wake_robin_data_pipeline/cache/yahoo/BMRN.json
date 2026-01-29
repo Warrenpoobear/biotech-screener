@@ -2,36 +2,42 @@
   "ticker": "BMRN",
   "success": true,
   "price": {
-    "current": 58.87,
+    "current": 56.215,
     "currency": "USD",
-    "day_high": 59.6,
-    "day_low": 58.38,
+    "day_high": 56.935,
+    "day_low": 55.8,
     "52_week_high": 73.51,
     "52_week_low": 50.76
   },
   "market_cap": {
-    "value": 11309770752.0,
+    "value": 10799707136.0,
     "currency": "USD"
   },
   "shares_outstanding": 192114344.0,
   "volume": {
-    "last": 2463515,
-    "average_30d": 3013290
+    "last": 327668,
+    "average_30d": 1924089
   },
   "valuation": {
-    "pe_ratio": 21.884758,
-    "forward_pe": 11.088028,
-    "price_to_book": 1.8671699
+    "pe_ratio": 20.89777,
+    "forward_pe": 10.780268,
+    "price_to_book": 1.7829617
   },
   "company_info": {
     "name": "BioMarin Pharmaceutical Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-05T18:05:34.572134",
+    "timestamp": "2026-01-29T10:59:27.778869",
     "url": "https://finance.yahoo.com/quote/BMRN",
-    "data_hash": "cdc4fcc4d311277c"
+    "data_hash": "4153fe8b792f85d5"
   }
 }

@@ -1,0 +1,43 @@
+{
+  "ticker": "NEO",
+  "cik": "0001077183",
+  "success": true,
+  "financials": {
+    "cash": 164117000.0,
+    "debt": 541112000.0,
+    "net_debt": 376995000.0,
+    "revenue_ttm": 131169000.0,
+    "assets": 1374780000.0,
+    "liabilities": 536490000.0,
+    "equity": 838290000.0,
+    "currency": "USD"
+  },
+  "data_dates": {
+    "cash": "2025-09-30",
+    "debt": "2024-12-31",
+    "revenue": "2018-06-30",
+    "assets": "2025-09-30",
+    "liabilities": "2025-09-30"
+  },
+  "data_freshness": {
+    "most_recent_date": "2025-09-30",
+    "oldest_date": "2018-06-30",
+    "staleness_flags": [
+      "critical_staleness:2770d"
+    ]
+  },
+  "coverage": {
+    "has_cash": true,
+    "has_debt": true,
+    "has_revenue": true,
+    "has_balance_sheet": true,
+    "pct_complete": 100.0
+  },
+  "provenance": {
+    "source": "SEC EDGAR Company Facts API",
+    "timestamp": "2026-01-29T12:35:57.300428",
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001077183.json",
+    "cik": "0001077183",
+    "accounting_standard": "us-gaap"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "MNKD",
+  "success": true,
+  "price": {
+    "current": 5.765,
+    "currency": "USD",
+    "day_high": 5.93,
+    "day_low": 5.61,
+    "52_week_high": 6.51,
+    "52_week_low": 3.38
+  },
+  "market_cap": {
+    "value": 1770260096.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 307070281.0,
+  "volume": {
+    "last": 1318500,
+    "average_30d": 3826927
+  },
+  "valuation": {
+    "pe_ratio": 57.649998,
+    "forward_pe": 39.305923,
+    "price_to_book": -39.75862
+  },
+  "company_info": {
+    "name": "MannKind Corporation",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:09.139280",
+    "url": "https://finance.yahoo.com/quote/MNKD",
+    "data_hash": "7021b230656e87cd"
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "ticker": "CAI",
+  "company_name": "Caris Life Sciences, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT02967770",
+      "title": "Molecularly Tailored Therapy to Standard of Care as Second-Line Therapy in Metastatic Pancreatic Cancer",
+      "status": "WITHDRAWN",
+      "phase": "PHASE2",
+      "condition": "Metastatic Pancreatic Cancer",
+      "start_date": "2016-11",
+      "completion_date": "2018-08-30",
+      "enrollment": 0,
+      "sponsor": "Georgetown University"
+    },
+    {
+      "nct_id": "NCT03870620",
+      "title": "Metastatic Breast Cancer in Austria",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Breast Cancer, Breast Carcinoma, Breast Tumor",
+      "start_date": "2015-06-15",
+      "completion_date": "2025-06",
+      "enrollment": 0,
+      "sponsor": "Arbeitsgemeinschaft medikamentoese Tumortherapie"
+    },
+    {
+      "nct_id": "NCT03834220",
+      "title": "Basket Trial in Solid Tumors Harboring a Fusion of FGFR1, FGFR2 or FGFR3- (FUZE Clinical Trial)",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Solid Tumor",
+      "start_date": "2019-03-22",
+      "completion_date": "2022-01-04",
+      "enrollment": 0,
+      "sponsor": "Debiopharm International SA"
+    },
+    {
+      "nct_id": "NCT05692466",
+      "title": "Discovering Novel Cancer Treatment Options Using a Comprehensive NGS-based Molecular Testing Panel in the Community Setting (\"DINOSAur\")",
+      "status": "UNKNOWN",
+      "phase": "",
+      "condition": "Stage III Solid Tumors, Stage IV Solid Tumors",
+      "start_date": "2023-02-01",
+      "completion_date": "2025-11-01",
+      "enrollment": 0,
+      "sponsor": "Glendale Adventist Medical Center d/b/a Adventist Health Glendale"
+    }
+  ],
+  "summary": {
+    "total_trials": 4,
+    "by_phase": {
+      "PHASE2": 2,
+      "": 2
+    },
+    "by_status": {
+      "WITHDRAWN": 1,
+      "RECRUITING": 1,
+      "TERMINATED": 1,
+      "UNKNOWN": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 0,
+    "conditions": [
+      "Breast Cancer, Breast Carcinoma, Breast Tumor",
+      "Metastatic Pancreatic Cancer",
+      "Solid Tumor",
+      "Stage III Solid Tumors, Stage IV Solid Tumors"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:17:18.952377",
+    "search_query": "Caris Life Sciences, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Caris+Life+Sciences,+Inc."
+  }
+}

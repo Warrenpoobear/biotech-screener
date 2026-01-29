@@ -1,0 +1,173 @@
+{
+  "ticker": "ALKS",
+  "company_name": "Alkermes plc",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT00063128",
+      "title": "Safety and Efficacy of Human Insulin Inhalation Powder in Patients With Type 1 Diabetes Mellitus.",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Diabetes Mellitus, Type 1",
+      "start_date": "2003-04",
+      "completion_date": "2004-04",
+      "enrollment": 0,
+      "sponsor": "Eli Lilly and Company"
+    },
+    {
+      "nct_id": "NCT03668314",
+      "title": "Single and Multiple Ascending Dose and Food Effect PK Study in Healthy Adult and Elderly Subjects",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2018-10-10",
+      "completion_date": "2019-04-15",
+      "enrollment": 0,
+      "sponsor": "Alkermes, Inc."
+    },
+    {
+      "nct_id": "NCT02978417",
+      "title": "Feasibility Study of Extended-release Naltrexone (Vivitrol) in Drug Court Settings",
+      "status": "COMPLETED",
+      "phase": "PHASE4",
+      "condition": "Opioid-Related Disorders",
+      "start_date": "2017-09-21",
+      "completion_date": "2019-06-30",
+      "enrollment": 0,
+      "sponsor": "Duke University"
+    },
+    {
+      "nct_id": "NCT00356109",
+      "title": "Evaluate the Efficacy of Insulin Patients With Type 1 Diabetes",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Diabetes Mellitus, Type 1",
+      "start_date": "2006-08",
+      "completion_date": "2008-05",
+      "enrollment": 0,
+      "sponsor": "Eli Lilly and Company"
+    },
+    {
+      "nct_id": "NCT01084161",
+      "title": "Study to Evaluate the Efficacy, Safety and Tolerability of N1539",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Hysterectomy",
+      "start_date": "2010-03",
+      "completion_date": "2011-01",
+      "enrollment": 0,
+      "sponsor": "Alkermes, Inc."
+    },
+    {
+      "nct_id": "NCT02085135",
+      "title": "A Study of Different Titration Schedules of ALKS 5461 in Adults With Major Depressive Disorder (MDD)",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Major Depressive Disorder",
+      "start_date": "2014-02",
+      "completion_date": "2014-09",
+      "enrollment": 0,
+      "sponsor": "Alkermes, Inc."
+    },
+    {
+      "nct_id": "NCT02873208",
+      "title": "A Phase 3, Long-term Safety and Tolerability Study of ALKS 3831 in Adults With Schizophrenia",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Schizophrenia",
+      "start_date": "2016-08-07",
+      "completion_date": "2019-10-17",
+      "enrollment": 0,
+      "sponsor": "Alkermes, Inc."
+    },
+    {
+      "nct_id": "NCT02508506",
+      "title": "Pharmacokinetics and Safety of ALKS 5461 in Subjects With Renal Impairment and Normal Renal Function",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Renal Impairment",
+      "start_date": "2015-07",
+      "completion_date": "2015-12",
+      "enrollment": 0,
+      "sponsor": "Alkermes, Inc."
+    },
+    {
+      "nct_id": "NCT02218008",
+      "title": "A Study of ALKS 5461 for the Treatment of Major Depressive Disorder (MDD) - FORWARD-5 Study",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Major Depressive Disorder",
+      "start_date": "2014-07",
+      "completion_date": "2016-10",
+      "enrollment": 0,
+      "sponsor": "Alkermes, Inc."
+    },
+    {
+      "nct_id": "NCT01563718",
+      "title": "Pre-Release VIVITROL for Opioid Dependent Inmates",
+      "status": "COMPLETED",
+      "phase": "PHASE4",
+      "condition": "Substance-Related Disorders",
+      "start_date": "2012-03",
+      "completion_date": "2015-08",
+      "enrollment": 0,
+      "sponsor": "Rhode Island Hospital"
+    }
+  ],
+  "summary": {
+    "total_trials": 50,
+    "by_phase": {
+      "PHASE2": 12,
+      "PHASE1": 10,
+      "PHASE4": 5,
+      "PHASE3": 18,
+      "PHASE1, PHASE2": 1,
+      "": 1,
+      "PHASE2, PHASE3": 2,
+      "EARLY_PHASE1": 1
+    },
+    "by_status": {
+      "COMPLETED": 46,
+      "ENROLLING_BY_INVITATION": 1,
+      "TERMINATED": 3
+    },
+    "active_trials": 1,
+    "completed_trials": 46,
+    "conditions": [
+      "Alcohol Dependence",
+      "Amphetamine-Related Disorders",
+      "Binge Eating Disorder",
+      "Bipolar I Disorder, Schizophrenia",
+      "Cannabis, Pain, Tolerance, Hyperalgesia",
+      "Dental Pain",
+      "Diabetes Mellitus, Asthma, Pulmonary Disease, Chronic Obstructive",
+      "Diabetes Mellitus, Type 1",
+      "Diabetes Mellitus, Type 2",
+      "Healthy",
+      "Healthy Volunteers",
+      "Healthy, Alzheimer Disease",
+      "Hepatic Impairment",
+      "Hysterectomy",
+      "Laparoscopic Surgery",
+      "Major Depressive Disorder",
+      "OIC",
+      "Opiate Dependence",
+      "Opioid Use Disorder",
+      "Opioid Use Disorders",
+      "Opioid-Related Disorders",
+      "Opioid-induced Constipation",
+      "Relapsing Remitting Multiple Sclerosis",
+      "Renal Impairment",
+      "Schizophrenia",
+      "Schizophrenia, Schizoaffective Disorder, Depressive Type, Schizophreniform Disorder",
+      "Substance-Related Disorders"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:16:09.426459",
+    "search_query": "Alkermes plc",
+    "url": "https://clinicaltrials.gov/search?term=Alkermes+plc"
+  }
+}

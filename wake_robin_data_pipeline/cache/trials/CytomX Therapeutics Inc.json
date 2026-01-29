@@ -1,0 +1,138 @@
+{
+  "ticker": "CTMX",
+  "company_name": "CytomX Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT03993379",
+      "title": "PROCLAIM: CX-072-002: Study of PD-L1 Probody Therapeutic CX-072 in Combination With Other Anticancer Therapy in Adults With Solid Tumors",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Solid Tumor, Unresectable or Metastatic Melanoma",
+      "start_date": "2019-11-20",
+      "completion_date": "2020-05-21",
+      "enrollment": 0,
+      "sponsor": "CytomX Therapeutics"
+    },
+    {
+      "nct_id": "NCT04596150",
+      "title": "Study to Evaluate the Safety and Antitumor Activity of CX-2009 Monotherapy and in Combination With CX-072 in Advanced Breast Cancer",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Neoplasms, Breast Neoplasms, Breast Neoplasms, Triple-Negative, Breast Cancer, Breast Neoplasms, Hormone Receptor Positive/HER2 Negative",
+      "start_date": "2020-12-29",
+      "completion_date": "2023-06-02",
+      "enrollment": 0,
+      "sponsor": "CytomX Therapeutics"
+    },
+    {
+      "nct_id": "NCT03149549",
+      "title": "PROCLAIM-CX-2009: A Trial to Find Safe and Active Doses of an Investigational Drug CX-2009 for Patients With Selected Solid Tumors",
+      "status": "TERMINATED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Solid Tumor, Adult, Breast Cancer, Non Small Cell Lung Cancer, Head and Neck Cancer, Ovarian Cancer",
+      "start_date": "2017-06-01",
+      "completion_date": "2020-09-10",
+      "enrollment": 0,
+      "sponsor": "CytomX Therapeutics"
+    },
+    {
+      "nct_id": "NCT06265688",
+      "title": "First In Human Study of CX-2051 in Advanced Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Solid Tumor, Adult",
+      "start_date": "2024-04-02",
+      "completion_date": "2029-03-31",
+      "enrollment": 0,
+      "sponsor": "CytomX Therapeutics"
+    },
+    {
+      "nct_id": "NCT03706274",
+      "title": "PROCLAIM-CX-188: A Trial to Find Safe and Active Doses of an Investigational Drug CX-188 for Patients With Solid Tumors",
+      "status": "WITHDRAWN",
+      "phase": "PHASE1",
+      "condition": "Solid Tumor, Adult",
+      "start_date": "2020-01",
+      "completion_date": "2022-12",
+      "enrollment": 0,
+      "sponsor": "CytomX Therapeutics"
+    },
+    {
+      "nct_id": "NCT05387265",
+      "title": "A Trial to Find Safe and Active Doses for an Investigational Drug, CX-904, for Patients With Advanced Solid Tumors",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Solid Tumors",
+      "start_date": "2022-05-16",
+      "completion_date": "2025-06-04",
+      "enrollment": 0,
+      "sponsor": "CytomX Therapeutics"
+    },
+    {
+      "nct_id": "NCT06462794",
+      "title": "First In Human Study of CX-801 in Advanced Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Solid Tumor, Adult",
+      "start_date": "2024-08-28",
+      "completion_date": "2029-06-30",
+      "enrollment": 0,
+      "sponsor": "CytomX Therapeutics"
+    },
+    {
+      "nct_id": "NCT03013491",
+      "title": "PROCLAIM-CX-072: A Trial to Find Safe and Active Doses of an Investigational Drug CX-072 for Patients With Solid Tumors or Lymphomas",
+      "status": "TERMINATED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Solid Tumor, Lymphoma",
+      "start_date": "2017-01-19",
+      "completion_date": "2020-10-27",
+      "enrollment": 0,
+      "sponsor": "CytomX Therapeutics"
+    },
+    {
+      "nct_id": "NCT03543813",
+      "title": "PROCLAIM-CX-2029: A Trial to Find Safe and Active Doses of an Investigational Drug CX-2029 for Patients With Solid Tumors or DLBCL",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Solid Tumor, Adult, Head and Neck Cancer, Non Small Cell Lung Cancer, Diffuse Large B Cell Lymphoma, Esophageal Cancer",
+      "start_date": "2018-06-15",
+      "completion_date": "2023-06-01",
+      "enrollment": 0,
+      "sponsor": "CytomX Therapeutics"
+    }
+  ],
+  "summary": {
+    "total_trials": 9,
+    "by_phase": {
+      "PHASE2": 2,
+      "PHASE1, PHASE2": 3,
+      "PHASE1": 4
+    },
+    "by_status": {
+      "TERMINATED": 4,
+      "COMPLETED": 2,
+      "RECRUITING": 2,
+      "WITHDRAWN": 1
+    },
+    "active_trials": 2,
+    "completed_trials": 2,
+    "conditions": [
+      "Neoplasms, Breast Neoplasms, Breast Neoplasms, Triple-Negative, Breast Cancer, Breast Neoplasms, Hormone Receptor Positive/HER2 Negative",
+      "Solid Tumor, Adult",
+      "Solid Tumor, Adult, Breast Cancer, Non Small Cell Lung Cancer, Head and Neck Cancer, Ovarian Cancer",
+      "Solid Tumor, Adult, Head and Neck Cancer, Non Small Cell Lung Cancer, Diffuse Large B Cell Lymphoma, Esophageal Cancer",
+      "Solid Tumor, Lymphoma",
+      "Solid Tumor, Unresectable or Metastatic Melanoma",
+      "Solid Tumors"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:17:49.665895",
+    "search_query": "CytomX Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=CytomX+Therapeutics,+Inc."
+  }
+}

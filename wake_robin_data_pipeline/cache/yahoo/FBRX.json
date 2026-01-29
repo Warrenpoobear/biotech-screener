@@ -1,0 +1,43 @@
+{
+  "ticker": "FBRX",
+  "success": true,
+  "price": {
+    "current": 29.925,
+    "currency": "USD",
+    "day_high": 30.14,
+    "day_low": 27.13,
+    "52_week_high": 35.62,
+    "52_week_low": 4.9
+  },
+  "market_cap": {
+    "value": 374868512.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 12526935.0,
+  "volume": {
+    "last": 74573,
+    "average_30d": 209266
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -7.91248,
+    "price_to_book": 6.3440742
+  },
+  "company_info": {
+    "name": "Forte Biosciences, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T12:46:47.423096",
+    "url": "https://finance.yahoo.com/quote/FBRX",
+    "data_hash": "858231f4a4687026"
+  }
+}

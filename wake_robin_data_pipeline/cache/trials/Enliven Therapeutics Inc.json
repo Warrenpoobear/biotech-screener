@@ -1,0 +1,76 @@
+{
+  "ticker": "ELVN",
+  "company_name": "Enliven Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05650879",
+      "title": "ELVN-002 in HER2 Mutant Non-Small Cell Lung Cancer",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "HER2 Mutant Non-small Cell Lung Cancer, HER2-positive Metastatic Breast Cancer, HER2 Gene Mutation, HER2 Amplification",
+      "start_date": "2023-03-20",
+      "completion_date": "2026-07",
+      "enrollment": 0,
+      "sponsor": "Enliven Therapeutics"
+    },
+    {
+      "nct_id": "NCT06328738",
+      "title": "ELVN-002 With Trastuzumab +/- Chemotherapy in HER2+ Solid Tumors, Colorectal and Breast Cancer",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "HER2-positive Breast Cancer, HER2-positive Gastric Cancer, HER2 Positive Solid Tumors, HER2 Amplification, Colorectal Cancer",
+      "start_date": "2024-05-30",
+      "completion_date": "2028-07",
+      "enrollment": 0,
+      "sponsor": "Enliven Therapeutics"
+    },
+    {
+      "nct_id": "NCT05304377",
+      "title": "A Phase 1a/1b Study of ELVN-001 for the Treatment Chronic Myeloid Leukemia",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Chronic Myeloid Leukemia, Chronic Phase Chronic Myeloid Leukemia, BCR-ABL1 Positive, Cml",
+      "start_date": "2022-05-22",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "Enliven Therapeutics"
+    },
+    {
+      "nct_id": "NCT06787144",
+      "title": "ELVN-001 for the Treatment of Chronic Myeloid Leukemia With and Without T315I Mutation in Japanese Participants",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "CML (Chronic Myelogenous Leukemia), Chronic Phase CML",
+      "start_date": "2025-01-23",
+      "completion_date": "2028-01",
+      "enrollment": 0,
+      "sponsor": "Enliven Therapeutics"
+    }
+  ],
+  "summary": {
+    "total_trials": 4,
+    "by_phase": {
+      "PHASE1": 4
+    },
+    "by_status": {
+      "ACTIVE_NOT_RECRUITING": 2,
+      "RECRUITING": 2
+    },
+    "active_trials": 4,
+    "completed_trials": 0,
+    "conditions": [
+      "CML (Chronic Myelogenous Leukemia), Chronic Phase CML",
+      "Chronic Myeloid Leukemia, Chronic Phase Chronic Myeloid Leukemia, BCR-ABL1 Positive, Cml",
+      "HER2 Mutant Non-small Cell Lung Cancer, HER2-positive Metastatic Breast Cancer, HER2 Gene Mutation, HER2 Amplification",
+      "HER2-positive Breast Cancer, HER2-positive Gastric Cancer, HER2 Positive Solid Tumors, HER2 Amplification, Colorectal Cancer"
+    ],
+    "lead_stage": "phase_1"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:18:08.125029",
+    "search_query": "Enliven Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Enliven+Therapeutics,+Inc."
+  }
+}

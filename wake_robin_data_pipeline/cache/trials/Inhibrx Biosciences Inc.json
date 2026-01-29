@@ -1,0 +1,117 @@
+{
+  "ticker": "INBX",
+  "company_name": "Inhibrx Biosciences, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04198766",
+      "title": "Study of INBRX-106 and INBRX-106 in Combination With Pembrolizumab (Keytruda\u00ae) in Subjects With Locally Advanced or Metastatic Solid Tumors (Hexavalent OX40 Agonist)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Solid Tumor, Non-Small Cell Lung Cancer, Head and Neck Cancer, Melanoma, Gastric Cancer, Renal Cell Carcinoma, Urothelial Carcinoma",
+      "start_date": "2019-12-10",
+      "completion_date": "2027-05-12",
+      "enrollment": 0,
+      "sponsor": "Inhibrx Biosciences, Inc"
+    },
+    {
+      "nct_id": "NCT03715933",
+      "title": "Phase 1 Study of INBRX-109 in Subjects With Locally Advanced or Metastatic Solid Tumors Including Sarcomas",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Ewing Sarcoma",
+      "start_date": "2018-10-08",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "Inhibrx Biosciences, Inc"
+    },
+    {
+      "nct_id": "NCT03815396",
+      "title": "Phase 1 Study to Assess the Safety, PK and PD of INBRX-101 in Adults With Alpha-1 Antitrypsin Deficiency",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Alpha-1 Antitrypsin Deficiency, AATD",
+      "start_date": "2019-07-19",
+      "completion_date": "2022-08-18",
+      "enrollment": 0,
+      "sponsor": "Inhibrx Biosciences, Inc"
+    },
+    {
+      "nct_id": "NCT06353997",
+      "title": "Neoadjuvant INBRX-106 in Combination With Pembrolizumab for Stage II/III TNBC Patients",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Triple Negative Breast Cancer",
+      "start_date": "2024-09-05",
+      "completion_date": "2029-06",
+      "enrollment": 0,
+      "sponsor": "Providence Health & Services"
+    },
+    {
+      "nct_id": "NCT06295731",
+      "title": "INBRX-106 in Combination With Pembrolizumab in First-line PD-L1 CPS\u226520 HNSCC",
+      "status": "RECRUITING",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Head and Neck Squamous Cell Carcinoma (HNSCC)",
+      "start_date": "2024-05-14",
+      "completion_date": "2029-05",
+      "enrollment": 0,
+      "sponsor": "Inhibrx Biosciences, Inc"
+    },
+    {
+      "nct_id": "NCT04950075",
+      "title": "Study of INBRX-109 in Conventional Chondrosarcoma",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Conventional Chondrosarcoma",
+      "start_date": "2021-09-23",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "Inhibrx Biosciences, Inc"
+    },
+    {
+      "nct_id": "NCT03809624",
+      "title": "Study of INBRX-105 and INBRX-105 With Pembrolizumab in Patients With Solid Tumors Including Head and Neck Cancer",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Metastatic Solid Tumors, Non-small Cell Lung Cancer, Melanoma, Head and Neck Squamous Cell Carcinoma, Gastric Adenocarcinoma, Renal Cell Carcinoma, Esophageal Adenocarcinoma, Nasopharyngeal Carcinoma, Oropharyngeal Carcinoma",
+      "start_date": "2019-01-30",
+      "completion_date": "2024-10-03",
+      "enrollment": 0,
+      "sponsor": "Inhibrx Biosciences, Inc"
+    }
+  ],
+  "summary": {
+    "total_trials": 7,
+    "by_phase": {
+      "PHASE1, PHASE2": 1,
+      "PHASE1": 3,
+      "PHASE2": 2,
+      "PHASE2, PHASE3": 1
+    },
+    "by_status": {
+      "ACTIVE_NOT_RECRUITING": 2,
+      "RECRUITING": 3,
+      "COMPLETED": 1,
+      "TERMINATED": 1
+    },
+    "active_trials": 5,
+    "completed_trials": 1,
+    "conditions": [
+      "Alpha-1 Antitrypsin Deficiency, AATD",
+      "Conventional Chondrosarcoma",
+      "Ewing Sarcoma",
+      "Head and Neck Squamous Cell Carcinoma (HNSCC)",
+      "Metastatic Solid Tumors, Non-small Cell Lung Cancer, Melanoma, Head and Neck Squamous Cell Carcinoma, Gastric Adenocarcinoma, Renal Cell Carcinoma, Esophageal Adenocarcinoma, Nasopharyngeal Carcinoma, Oropharyngeal Carcinoma",
+      "Solid Tumor, Non-Small Cell Lung Cancer, Head and Neck Cancer, Melanoma, Gastric Cancer, Renal Cell Carcinoma, Urothelial Carcinoma",
+      "Triple Negative Breast Cancer"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:19:04.059583",
+    "search_query": "Inhibrx Biosciences, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Inhibrx+Biosciences,+Inc."
+  }
+}

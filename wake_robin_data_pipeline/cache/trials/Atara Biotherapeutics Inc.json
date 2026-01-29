@@ -1,0 +1,155 @@
+{
+  "ticker": "ATRA",
+  "company_name": "Atara Biotherapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06429800",
+      "title": "A Study to Evaluate the Safety and Preliminary Efficacy of ATA3219 in Participants With Systemic Lupus Erythematosus",
+      "status": "WITHDRAWN",
+      "phase": "PHASE1",
+      "condition": "Lupus Nephritis, Systemic Lupus Erythematosus",
+      "start_date": "2025-04-16",
+      "completion_date": "2025-04-16",
+      "enrollment": 0,
+      "sponsor": "Atara Biotherapeutics"
+    },
+    {
+      "nct_id": "NCT00620633",
+      "title": "Dose Escalation Trial of WT1-Sensitized T Cells for Residual or Relapsed Leukemia After Allogeneic Hematopoietic Progenitor Cell Transplantation",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Leukemia, Myelodysplastic Syndrome",
+      "start_date": "2008-02-08",
+      "completion_date": "2021-02-26",
+      "enrollment": 0,
+      "sponsor": "Memorial Sloan Kettering Cancer Center"
+    },
+    {
+      "nct_id": "NCT03283826",
+      "title": "Phase 1/2 Study to Evaluate the Safety and Efficacy of ATA188 in Subjects With Progressive Multiple Sclerosis",
+      "status": "TERMINATED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Primary Progressive Multiple Sclerosis, Secondary Progressive Multiple Sclerosis",
+      "start_date": "2017-10-19",
+      "completion_date": "2024-01-17",
+      "enrollment": 0,
+      "sponsor": "Atara Biotherapeutics"
+    },
+    {
+      "nct_id": "NCT02822495",
+      "title": "Expanded Access Protocol for Tabelecleucel for Patients With Epstein-Barr Virus-Associated Viremia or Malignancies",
+      "status": "NO_LONGER_AVAILABLE",
+      "phase": "",
+      "condition": "Epstein-Barr Virus (EBV) Infections, Lymphoproliferative Disorders, EBV+ Associated Lymphoma, EBV+ Associated Post-transplant Lymphoproliferative Disease (EBV+ PTLD), Epstein-Barr Viremia, Lymphoma, AIDS-related, Epstein-Barr Virus-associated Lymphoproliferative Disease (EBV+ LPD) With Primary Immunodeficiency (PID), Leiomyosarcoma (LMS), Nasopharyngeal Carcinoma (NPC), Epstein-Barr Virus-associated Lymphoproliferative Disease (EBV+ LPD) With Acquired Immunodeficiency (AID), Solid Organ Transplant Complications, Stem Cell Transplant Complications",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Atara Biotherapeutics"
+    },
+    {
+      "nct_id": "NCT01646645",
+      "title": "Primary Transplant Donor Derived CMVpp65 Specific T-cells for The Treatment of CMV Infection or Persistent CMV Viremia After Allogeneic Hematopoietic Stem Cell Transplantation",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Cytomegalovirus",
+      "start_date": "2012-07-13",
+      "completion_date": "2019-12-11",
+      "enrollment": 0,
+      "sponsor": "Memorial Sloan Kettering Cancer Center"
+    },
+    {
+      "nct_id": "NCT04577326",
+      "title": "Mesothelin-targeted CAR T-cell Therapy in Patients With Mesothelioma",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Malignant Pleural Mesothelioma (MPM)",
+      "start_date": "2020-09-30",
+      "completion_date": "2026-09-30",
+      "enrollment": 0,
+      "sponsor": "Memorial Sloan Kettering Cancer Center"
+    },
+    {
+      "nct_id": "NCT00002663",
+      "title": "Biological Therapy in Treating Patients at High-Risk or With Lymphoma, Lymphoproliferative Disease, or Malignancies",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "EBV-induced Lymphomas, EBV-associated Malignancies, Transplant Patients With EBV Viremia at High Risk of Developing a Recurrent EBV Lymphoma",
+      "start_date": "1995-03",
+      "completion_date": "2019-07",
+      "enrollment": 0,
+      "sponsor": "Atara Biotherapeutics"
+    },
+    {
+      "nct_id": "NCT01498484",
+      "title": "Therapeutic Effects of Epstein-Barr Virus Immune T-Lymphocytes Derived From a Normal HLA-Compatible Or Partially-Matched Third-Party Donor in the Treatment of EBV Lymphoproliferative Disorders and EBV-Associated Malignancies",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "EBV-induced Lymphomas, EBV-associated Malignancies, Transplant Patients With EBV Viremia at High Risk for Developing a Recurrent EBV Lymphoma",
+      "start_date": "2011-12",
+      "completion_date": "2019-07",
+      "enrollment": 0,
+      "sponsor": "Atara Biotherapeutics"
+    },
+    {
+      "nct_id": "NCT03769467",
+      "title": "Tabelecleucel in Combination With Pembrolizumab in Subjects With Epstein-Barr Virus-associated Nasopharyngeal Carcinoma (EBV+ NPC)",
+      "status": "TERMINATED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Nasopharyngeal Carcinoma, Nasopharyngeal Neoplasms, Epstein-Barr Virus Infections, Epstein-Barr Viraemia, Epstein-Barr Virus-associated Nasopharyngeal Carcinoma (EBV+ NPC)",
+      "start_date": "2019-02-19",
+      "completion_date": "2021-08-19",
+      "enrollment": 0,
+      "sponsor": "Atara Biotherapeutics"
+    },
+    {
+      "nct_id": "NCT03010332",
+      "title": "Expanded Access Protocol of ATA230 (Third-Party Donor-Derived CMV-CTLs) for the Treatment of CMV Viremia or Disease",
+      "status": "NO_LONGER_AVAILABLE",
+      "phase": "",
+      "condition": "CMV Viremia, CMV Disease",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Atara Biotherapeutics"
+    }
+  ],
+  "summary": {
+    "total_trials": 11,
+    "by_phase": {
+      "PHASE1": 4,
+      "PHASE1, PHASE2": 3,
+      "": 2,
+      "PHASE2": 2
+    },
+    "by_status": {
+      "WITHDRAWN": 1,
+      "COMPLETED": 4,
+      "TERMINATED": 3,
+      "NO_LONGER_AVAILABLE": 2,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 4,
+    "conditions": [
+      "CMV Viremia, CMV Disease",
+      "Cytomegalovirus",
+      "EBV-induced Lymphomas, EBV-associated Malignancies, Transplant Patients With EBV Viremia at High Risk for Developing a Recurrent EBV Lymphoma",
+      "EBV-induced Lymphomas, EBV-associated Malignancies, Transplant Patients With EBV Viremia at High Risk of Developing a Recurrent EBV Lymphoma",
+      "Epstein-Barr Virus (EBV) Infections, Lymphoproliferative Disorders, EBV+ Associated Lymphoma, EBV+ Associated Post-transplant Lymphoproliferative Disease (EBV+ PTLD), Epstein-Barr Viremia, Lymphoma, AIDS-related, Epstein-Barr Virus-associated Lymphoproliferative Disease (EBV+ LPD) With Primary Immunodeficiency (PID), Leiomyosarcoma (LMS), Nasopharyngeal Carcinoma (NPC), Epstein-Barr Virus-associated Lymphoproliferative Disease (EBV+ LPD) With Acquired Immunodeficiency (AID), Solid Organ Transplant Complications, Stem Cell Transplant Complications",
+      "Leukemia, Myelodysplastic Syndrome",
+      "Lupus Nephritis, Systemic Lupus Erythematosus",
+      "Malignant Pleural Mesothelioma (MPM)",
+      "Nasopharyngeal Carcinoma, Nasopharyngeal Neoplasms, Epstein-Barr Virus Infections, Epstein-Barr Viraemia, Epstein-Barr Virus-associated Nasopharyngeal Carcinoma (EBV+ NPC)",
+      "Primary Progressive Multiple Sclerosis, Secondary Progressive Multiple Sclerosis",
+      "Relapsed/Refractory B-cell Non-Hodgkin Lymphoma"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T13:12:10.178209",
+    "search_query": "Atara Biotherapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Atara+Biotherapeutics,+Inc."
+  }
+}

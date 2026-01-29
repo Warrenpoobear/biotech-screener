@@ -1,0 +1,162 @@
+{
+  "ticker": "ESPR",
+  "company_name": "Esperion Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT02044627",
+      "title": "Single Radiolabeled Dose Study to Investigate the Absorption, Metabolism and Excretion of [14C]-ETC-1002",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Hyperlipidemia",
+      "start_date": "2013-12",
+      "completion_date": "2014-01",
+      "enrollment": 0,
+      "sponsor": "Esperion Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT01262638",
+      "title": "A Study to Assess the Efficacy and Safety of ETC-1002 in Subjects With Elevated Blood Cholesterol and Either Normal or Elevated Triglycerides",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Dyslipidemia",
+      "start_date": "2010-12",
+      "completion_date": "2011-08-23",
+      "enrollment": 0,
+      "sponsor": "Esperion Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06021951",
+      "title": "Milk-Only Lactation Study to Evaluate the Concentration of Bempedoic Acid and Bempedoic Acid/Ezetimibe Fixed Combination Drug Product (FCDP) in the Breast Milk of Healthy Lactating Women",
+      "status": "COMPLETED",
+      "phase": "PHASE4",
+      "condition": "Healthy Lactating Women",
+      "start_date": "2023-08-04",
+      "completion_date": "2024-03-22",
+      "enrollment": 0,
+      "sponsor": "Esperion Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT01751984",
+      "title": "A Study of the Efficacy and Safety of ETC-1002 in Participants With Statin Intolerance",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Hypercholesterolemia",
+      "start_date": "2012-10-04",
+      "completion_date": "2013-05-01",
+      "enrollment": 0,
+      "sponsor": "Esperion Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05103254",
+      "title": "Bempedoic Acid Pregnancy Surveillance Program",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Pregnancy, Hyperlipidemias",
+      "start_date": "2021-09-01",
+      "completion_date": "2032-05",
+      "enrollment": 0,
+      "sponsor": "Esperion Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT03001076",
+      "title": "Evaluation of the Efficacy and Safety of Bempedoic Acid (ETC-1002) as Add-on to Ezetimibe Therapy in Patients With Elevated LDL-C (CLEAR Tranquility)",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Hypercholesterolemia, Atherosclerosis, Statin Adverse Reaction",
+      "start_date": "2016-11-29",
+      "completion_date": "2018-02-12",
+      "enrollment": 0,
+      "sponsor": "Esperion Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT03337308",
+      "title": "A Study Evaluating the Safety and Efficacy of Bempedoic Acid Plus Ezetimibe Fixed-Dose Combination Compared to Bempedoic Acid, Ezetimibe, and Placebo in Patients Treated With Maximally Tolerated Statin Therapy",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Hyperlipidemias",
+      "start_date": "2017-10-23",
+      "completion_date": "2018-07-18",
+      "enrollment": 0,
+      "sponsor": "Esperion Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT03531905",
+      "title": "Bempedoic Acid + Ezetimibe Fixed-Dose Combination (FDC) Study in Patients With Type 2 Diabetes and Elevated LDL-C",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Diabetes, Diabetes Mellitus, Type 2, Cholesterolemia",
+      "start_date": "2018-05-09",
+      "completion_date": "2019-06-18",
+      "enrollment": 0,
+      "sponsor": "Esperion Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT03067441",
+      "title": "Assessment of the Long-Term Safety and Efficacy of Bempedoic Acid (CLEAR Harmony OLE)",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Hypercholesterolemia, Atherosclerotic Cardiovascular Disease",
+      "start_date": "2017-02-03",
+      "completion_date": "2019-11-05",
+      "enrollment": 0,
+      "sponsor": "Esperion Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT02178098",
+      "title": "Evaluation of ETC-1002 in Participants With Hypercholesterolemia and Hypertension",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Hypercholesterolemia, Hypertension",
+      "start_date": "2014-06-16",
+      "completion_date": "2015-05-22",
+      "enrollment": 0,
+      "sponsor": "Esperion Therapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 26,
+    "by_phase": {
+      "PHASE1": 3,
+      "PHASE2": 12,
+      "PHASE4": 2,
+      "": 1,
+      "PHASE3": 7,
+      "NA": 1
+    },
+    "by_status": {
+      "COMPLETED": 23,
+      "RECRUITING": 2,
+      "UNKNOWN": 1
+    },
+    "active_trials": 2,
+    "completed_trials": 23,
+    "conditions": [
+      "Cardiovascular Diseases, NSTEMI, STEMI",
+      "Cardiovascular Diseases, Statin Adverse Reaction",
+      "Diabetes, Diabetes Mellitus, Type 2, Cholesterolemia",
+      "Dyslipidemia",
+      "Healthy Lactating Women",
+      "Hypercholesterolemia",
+      "Hypercholesterolemia, Atherosclerosis, Statin Adverse Reaction",
+      "Hypercholesterolemia, Atherosclerotic Cardiovascular Disease",
+      "Hypercholesterolemia, Atherosclerotic Cardiovascular Disease, Statin Adverse Reaction",
+      "Hypercholesterolemia, Atherosclerotic Cardiovascular Diseases",
+      "Hypercholesterolemia, Hypertension",
+      "Hyperlipidemia",
+      "Hyperlipidemia, Type 2 Diabetes",
+      "Hyperlipidemias",
+      "Mild Dyslipidemia",
+      "Peripheral Artery Disease, Peripheral Vascular Diseases, Dyslipidemias",
+      "Pregnancy, Hyperlipidemias",
+      "Safety Evaluation of Escalating Doses"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:18:15.438493",
+    "search_query": "Esperion Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Esperion+Therapeutics,+Inc."
+  }
+}

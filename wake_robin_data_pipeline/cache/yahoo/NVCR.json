@@ -1,0 +1,43 @@
+{
+  "ticker": "NVCR",
+  "success": true,
+  "price": {
+    "current": 12.51,
+    "currency": "USD",
+    "day_high": 12.78,
+    "day_low": 12.45,
+    "52_week_high": 26.465,
+    "52_week_low": 10.7
+  },
+  "market_cap": {
+    "value": 1400894592.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 111981981.0,
+  "volume": {
+    "last": 190994,
+    "average_30d": 1111008
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -8.404039,
+    "price_to_book": 4.1043305
+  },
+  "company_info": {
+    "name": "NovoCure Limited",
+    "sector": "Healthcare",
+    "industry": "Medical Devices"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:32.912714",
+    "url": "https://finance.yahoo.com/quote/NVCR",
+    "data_hash": "e118d79d1824a809"
+  }
+}

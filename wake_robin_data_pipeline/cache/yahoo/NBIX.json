@@ -1,0 +1,43 @@
+{
+  "ticker": "NBIX",
+  "success": true,
+  "price": {
+    "current": 135.52,
+    "currency": "USD",
+    "day_high": 136.99,
+    "day_low": 133.405,
+    "52_week_high": 160.18,
+    "52_week_low": 84.23
+  },
+  "market_cap": {
+    "value": 13512116224.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 99705698.0,
+  "volume": {
+    "last": 139943,
+    "average_30d": 1051047
+  },
+  "valuation": {
+    "pe_ratio": 32.343678,
+    "forward_pe": 14.73814,
+    "price_to_book": 4.4984403
+  },
+  "company_info": {
+    "name": "Neurocrine Biosciences, Inc.",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:20.215089",
+    "url": "https://finance.yahoo.com/quote/NBIX",
+    "data_hash": "dc16c1f110702b73"
+  }
+}

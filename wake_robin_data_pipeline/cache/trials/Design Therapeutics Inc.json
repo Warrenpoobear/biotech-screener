@@ -1,0 +1,88 @@
+{
+  "ticker": "DSGN",
+  "company_name": "Design Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06772870",
+      "title": "A Single Ascending Dose Study of DT-216P2 in Normal Healthy Participants",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Friedreich Ataxia",
+      "start_date": "2025-02",
+      "completion_date": "2025-12",
+      "enrollment": 0,
+      "sponsor": "Design Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06874010",
+      "title": "A Multiple Ascending Dose Study of DT-216P2 in Patients With Friedreich's Ataxia",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Friedreich Ataxia",
+      "start_date": "2025-06",
+      "completion_date": "2027-03",
+      "enrollment": 0,
+      "sponsor": "Design Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT07024693",
+      "title": "DT-168 in Keratoplasty Patients With Fuchs Endothelial Corneal Dystrophy",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Fuchs Endothelial Corneal Dystrophy, Fuchs",
+      "start_date": "2025-07-30",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "Design Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05285540",
+      "title": "Study to Evaluate DT-216 in Adult Patients With Friedreich Ataxia",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Friedreich Ataxia",
+      "start_date": "2022-03-11",
+      "completion_date": "2022-12-19",
+      "enrollment": 0,
+      "sponsor": "Design Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05573698",
+      "title": "Study to Evaluate Multiple Ascending Dose and Multi-Dose of DT-216 in Adult Patients With Friedreich Ataxia",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Friedreich Ataxia",
+      "start_date": "2022-09-27",
+      "completion_date": "2023-08-25",
+      "enrollment": 0,
+      "sponsor": "Design Therapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 5,
+    "by_phase": {
+      "PHASE1": 3,
+      "PHASE1, PHASE2": 1,
+      "PHASE2": 1
+    },
+    "by_status": {
+      "NOT_YET_RECRUITING": 1,
+      "RECRUITING": 2,
+      "COMPLETED": 2
+    },
+    "active_trials": 2,
+    "completed_trials": 2,
+    "conditions": [
+      "Friedreich Ataxia",
+      "Fuchs Endothelial Corneal Dystrophy, Fuchs"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:18:01.734709",
+    "search_query": "Design Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Design+Therapeutics,+Inc."
+  }
+}

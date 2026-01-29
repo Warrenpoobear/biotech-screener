@@ -1,0 +1,43 @@
+{
+  "ticker": "NTRA",
+  "success": true,
+  "price": {
+    "current": 230.91,
+    "currency": "USD",
+    "day_high": 235.01,
+    "day_low": 229.44,
+    "52_week_high": 256.36,
+    "52_week_low": 125.38
+  },
+  "market_cap": {
+    "value": 32200196096.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 139449120.0,
+  "volume": {
+    "last": 189896,
+    "average_30d": 1037390
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -116.246056,
+    "price_to_book": 25.360792
+  },
+  "company_info": {
+    "name": "Natera, Inc.",
+    "sector": "Healthcare",
+    "industry": "Diagnostics & Research"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:27.364416",
+    "url": "https://finance.yahoo.com/quote/NTRA",
+    "data_hash": "1d94a30eeeb18c6d"
+  }
+}

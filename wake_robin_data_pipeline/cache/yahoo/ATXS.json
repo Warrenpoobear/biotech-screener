@@ -1,0 +1,43 @@
+{
+  "ticker": "ATXS",
+  "success": true,
+  "price": {
+    "current": 12.58,
+    "currency": "USD",
+    "day_high": 12.59,
+    "day_low": 12.45,
+    "52_week_high": 13.29,
+    "52_week_low": 3.555
+  },
+  "market_cap": {
+    "value": 718127296.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 57084838.0,
+  "volume": {
+    "last": 0,
+    "average_30d": 823387
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -5.285714,
+    "price_to_book": 5.1472993
+  },
+  "company_info": {
+    "name": "Astria Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:04:54.318248",
+    "url": "https://finance.yahoo.com/quote/ATXS",
+    "data_hash": "f64a89fd1861a9e5"
+  }
+}

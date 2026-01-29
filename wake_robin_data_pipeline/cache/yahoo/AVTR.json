@@ -1,0 +1,43 @@
+{
+  "ticker": "AVTR",
+  "success": true,
+  "price": {
+    "current": 10.745,
+    "currency": "USD",
+    "day_high": 11.005,
+    "day_low": 10.72,
+    "52_week_high": 22.73,
+    "52_week_low": 10.62
+  },
+  "market_cap": {
+    "value": 7326100480.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 681814859.0,
+  "volume": {
+    "last": 4496439,
+    "average_30d": 10718719
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": 11.807302,
+    "price_to_book": 1.3153385
+  },
+  "company_info": {
+    "name": "Avantor, Inc.",
+    "sector": "Healthcare",
+    "industry": "Medical Instruments & Supplies"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:05:00.291630",
+    "url": "https://finance.yahoo.com/quote/AVTR",
+    "data_hash": "cca90312c307db3a"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "ELDN",
+  "success": true,
+  "price": {
+    "current": 2.08,
+    "currency": "USD",
+    "day_high": 2.14,
+    "day_low": 2.0702,
+    "52_week_high": 4.965,
+    "52_week_low": 1.35
+  },
+  "market_cap": {
+    "value": 165631008.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 79630297.0,
+  "volume": {
+    "last": 69651,
+    "average_30d": 747184
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -2.183727,
+    "price_to_book": 1.3702239
+  },
+  "company_info": {
+    "name": "Eledon Pharmaceuticals, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:06:18.297269",
+    "url": "https://finance.yahoo.com/quote/ELDN",
+    "data_hash": "2c171531e5dcd3dc"
+  }
+}

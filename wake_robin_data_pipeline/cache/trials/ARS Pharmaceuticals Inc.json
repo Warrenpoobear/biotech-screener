@@ -1,0 +1,90 @@
+{
+  "ticker": "SPRY",
+  "company_name": "ARS Pharmaceuticals, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06834165",
+      "title": "Study Evaluating the Safety and Efficacy of Neffy or Intramuscular Adrenalin in Patients With Allergic Reactions After Oral Food Challenge or Allergen Immunotherapy",
+      "status": "RECRUITING",
+      "phase": "PHASE4",
+      "condition": "Allergic Reactions",
+      "start_date": "2025-05-20",
+      "completion_date": "2026-06",
+      "enrollment": 0,
+      "sponsor": "ARS Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT06927999",
+      "title": "An Outpatient Study of the Efficacy of ARS-2 in Patients With Chronic Spontaneous Urticaria",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Urticaria Chronic",
+      "start_date": "2025-07-09",
+      "completion_date": "2026-06",
+      "enrollment": 0,
+      "sponsor": "ARS Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT05363670",
+      "title": "Administration of ARS-1 or Albuterol in Subjects With Persistent Asthma",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Asthma",
+      "start_date": "2022-07-28",
+      "completion_date": "2024-02-02",
+      "enrollment": 0,
+      "sponsor": "ARS Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT04930900",
+      "title": "Pharmacokinetics of Adrenaline After Administration of ARS -1 in Subjects With Upper Respiratory Tract Infection",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Upper Respiratory Tract Infection",
+      "start_date": "2021-08-09",
+      "completion_date": "2022-07-25",
+      "enrollment": 0,
+      "sponsor": "ARS Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT05496465",
+      "title": "Safety and Efficacy of Intranasal Epinephrine After Administration of ARS -1 in Subjects With Frequent Urticaria Flares",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Urticaria",
+      "start_date": "2022-07-28",
+      "completion_date": "2024-02-29",
+      "enrollment": 0,
+      "sponsor": "ARS Pharmaceuticals, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 5,
+    "by_phase": {
+      "PHASE4": 1,
+      "PHASE2": 3,
+      "PHASE1": 1
+    },
+    "by_status": {
+      "RECRUITING": 2,
+      "COMPLETED": 3
+    },
+    "active_trials": 2,
+    "completed_trials": 3,
+    "conditions": [
+      "Allergic Reactions",
+      "Asthma",
+      "Upper Respiratory Tract Infection",
+      "Urticaria",
+      "Urticaria Chronic"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:22:01.425852",
+    "search_query": "ARS Pharmaceuticals, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=ARS+Pharmaceuticals,+Inc."
+  }
+}

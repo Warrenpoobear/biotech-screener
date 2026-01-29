@@ -1,0 +1,43 @@
+{
+  "ticker": "VYNE",
+  "success": true,
+  "price": {
+    "current": 0.567,
+    "currency": "USD",
+    "day_high": 0.573,
+    "day_low": 0.56,
+    "52_week_high": 2.94,
+    "52_week_low": 0.281
+  },
+  "market_cap": {
+    "value": 18873400.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 33286422.0,
+  "volume": {
+    "last": 640008,
+    "average_30d": 582404
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -0.51545453,
+    "price_to_book": 0.5613861
+  },
+  "company_info": {
+    "name": "VYNE Therapeutics Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T13:11:31.148033",
+    "url": "https://finance.yahoo.com/quote/VYNE",
+    "data_hash": "1e703d902f9263ce"
+  }
+}

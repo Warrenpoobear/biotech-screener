@@ -1,0 +1,151 @@
+{
+  "ticker": "ARVN",
+  "company_name": "Arvinas, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05732428",
+      "title": "A Study to Learn About the Study Medicine Called Vepdegestrant (ARV-471, PF-07850327) in People With ER+/HER2- Advanced Breast Cancer in China",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Breast Cancer",
+      "start_date": "2023-02-20",
+      "completion_date": "2024-11-01",
+      "enrollment": 0,
+      "sponsor": "Pfizer"
+    },
+    {
+      "nct_id": "NCT05573555",
+      "title": "TACTIVE-U: A Study to Learn About the Study Medicine (Vepdegestrant) When Given With Other Medicines in People With Advanced or Metastatic Breast Cancer (Sub-Study B)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Breast Cancer",
+      "start_date": "2023-03-01",
+      "completion_date": "2026-12-30",
+      "enrollment": 0,
+      "sponsor": "Pfizer"
+    },
+    {
+      "nct_id": "NCT05673889",
+      "title": "A Study to Understand the Effect of a Study Medicine Called ARV-471 on Dabigatran Etexilate in Healthy Adults",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2023-01-27",
+      "completion_date": "2023-04-19",
+      "enrollment": 0,
+      "sponsor": "Pfizer"
+    },
+    {
+      "nct_id": "NCT05177042",
+      "title": "Trial of ARV-110 and Abiraterone in Patients With Metastatic Castration Resistant Prostate Cancer (mCRPC)",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Prostate Cancer Metastatic",
+      "start_date": "2022-02-01",
+      "completion_date": "2025-04-10",
+      "enrollment": 0,
+      "sponsor": "Arvinas Androgen Receptor, Inc."
+    },
+    {
+      "nct_id": "NCT04072952",
+      "title": "A Phase 1/2 Trial of ARV-471 Alone and in Combination With Palbociclib (IBRANCE\u00ae) in Patients With ER+/HER2- Locally Advanced or Metastatic Breast Cancer",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Breast Cancer",
+      "start_date": "2019-08-05",
+      "completion_date": "2025-11-30",
+      "enrollment": 0,
+      "sponsor": "Arvinas Estrogen Receptor, Inc."
+    },
+    {
+      "nct_id": "NCT06256510",
+      "title": "A Study to Learn If the Study Medicine Called Vepdegestrant Changes How the Body Processes the Other Study Medicine Called Midazolam",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Participants",
+      "start_date": "2024-02-08",
+      "completion_date": "2024-05-13",
+      "enrollment": 0,
+      "sponsor": "Pfizer"
+    },
+    {
+      "nct_id": "NCT05652660",
+      "title": "A Study to Understand the Effect of a Study Medicine Called ARV-471 on Rosuvastatin in Healthy Adults",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2022-12-09",
+      "completion_date": "2023-03-06",
+      "enrollment": 0,
+      "sponsor": "Pfizer"
+    },
+    {
+      "nct_id": "NCT05549505",
+      "title": "A Trial Using ARV-471 or Anastrozole in Post-Menopausal Women With Breast Cancer Prior to Surgery",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Breast Cancer",
+      "start_date": "2023-02-15",
+      "completion_date": "2024-07-25",
+      "enrollment": 0,
+      "sponsor": "Arvinas Inc."
+    },
+    {
+      "nct_id": "NCT03888612",
+      "title": "Trial of ARV-110 in Patients With Metastatic Castration Resistant Prostate Cancer",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Prostate Cancer Metastatic",
+      "start_date": "2019-03-01",
+      "completion_date": "2025-01-27",
+      "enrollment": 0,
+      "sponsor": "Arvinas Inc."
+    },
+    {
+      "nct_id": "NCT05538312",
+      "title": "A Study to Understand the Effect of Itraconazole on the Levels of a Study Medicine Called ARV-471 in Healthy Adults",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2023-02-23",
+      "completion_date": "2023-05-22",
+      "enrollment": 0,
+      "sponsor": "Pfizer"
+    }
+  ],
+  "summary": {
+    "total_trials": 26,
+    "by_phase": {
+      "PHASE1": 16,
+      "PHASE1, PHASE2": 7,
+      "PHASE2": 1,
+      "PHASE3": 2
+    },
+    "by_status": {
+      "COMPLETED": 15,
+      "ACTIVE_NOT_RECRUITING": 8,
+      "NOT_YET_RECRUITING": 1,
+      "RECRUITING": 2
+    },
+    "active_trials": 10,
+    "completed_trials": 15,
+    "conditions": [
+      "Advanced Breast Cancer",
+      "Breast Cancer",
+      "Breast Neoplasms",
+      "Healthy",
+      "Healthy Participants",
+      "KRAS G12D Mutation, Advanced Solid Cancer",
+      "Prostate Cancer Metastatic",
+      "Relapsed/Refractory (R/R) Mature B Cell Non Hodgkin Lymphoma (NHL), Relapsed/Refractory (R/R) Angioimmunoblastic T-cell Lymphoma (AITL)"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:16:36.874716",
+    "search_query": "Arvinas, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Arvinas,+Inc."
+  }
+}

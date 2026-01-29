@@ -1,0 +1,42 @@
+{
+  "ticker": "RAPP",
+  "cik": "0002012593",
+  "success": true,
+  "financials": {
+    "cash": 251359000.0,
+    "debt": 0.0,
+    "net_debt": -251359000.0,
+    "revenue_ttm": null,
+    "assets": 535323000.0,
+    "liabilities": 23706000.0,
+    "equity": 511617000.0,
+    "currency": "USD"
+  },
+  "data_dates": {
+    "cash": "2025-09-30",
+    "assets": "2025-09-30",
+    "liabilities": "2025-09-30",
+    "debt": "2025-09-30"
+  },
+  "data_freshness": {
+    "most_recent_date": "2025-09-30",
+    "oldest_date": "2025-09-30",
+    "staleness_flags": [
+      "stale_data:121d"
+    ]
+  },
+  "coverage": {
+    "has_cash": true,
+    "has_debt": true,
+    "has_revenue": false,
+    "has_balance_sheet": true,
+    "pct_complete": 75.0
+  },
+  "provenance": {
+    "source": "SEC EDGAR Company Facts API",
+    "timestamp": "2026-01-29T11:17:52.146764",
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0002012593.json",
+    "cik": "0002012593",
+    "accounting_standard": "us-gaap"
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "ticker": "LQDA",
+  "company_name": "Liquidia Corporation",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT02982889",
+      "title": "Single Ascending Dose Study of Two Liquidia Bupivacaine Formulations",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Acute Pain",
+      "start_date": "2016-12-05",
+      "completion_date": "2017-04-26",
+      "enrollment": 0,
+      "sponsor": "Liquidia Technologies, Inc."
+    },
+    {
+      "nct_id": "NCT04691154",
+      "title": "A Phase 3 Study to Evaluate the Safety and Tolerability of L606 in Subjects With PAH or PH-ILD",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Pulmonary Arterial Hypertension, Pulmonary Hypertension Due to Lung Diseases",
+      "start_date": "2021-08-01",
+      "completion_date": "2031-03-31",
+      "enrollment": 0,
+      "sponsor": "Liquidia Technologies, Inc."
+    },
+    {
+      "nct_id": "NCT01224262",
+      "title": "A Study Evaluating the Safety and Tolerability of a Seasonal Influenza Vaccine Containing LIQ001",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Influenza",
+      "start_date": "2010-09",
+      "completion_date": "2011-12",
+      "enrollment": 0,
+      "sponsor": "Liquidia Technologies, Inc."
+    },
+    {
+      "nct_id": "NCT06129240",
+      "title": "An Open-Label ProSpective MultiCENTer Study to Evaluate Safety and Tolerability of Dry Powder Inhaled Treprostinil in PH",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Pulmonary Hypertension, Interstitial Lung Disease",
+      "start_date": "2023-12-28",
+      "completion_date": "2026-10-31",
+      "enrollment": 0,
+      "sponsor": "Liquidia Technologies, Inc."
+    },
+    {
+      "nct_id": "NCT07285655",
+      "title": "A Phase 3 Study to Evaluate the Safety and Efficacy L606 in Participants With PH-ILD",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Pulmonary Hypertension Due to Lung Disease (Disorder)",
+      "start_date": "2026-04",
+      "completion_date": "2031-12",
+      "enrollment": 0,
+      "sponsor": "Liquidia Technologies, Inc."
+    },
+    {
+      "nct_id": "NCT03884465",
+      "title": "Hemodynamic Evaluation of Dose-response and Safety of Dry Powder Inhalation of Treprostinil",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Pulmonary Arterial Hypertension",
+      "start_date": "2019-11-11",
+      "completion_date": "2020-12-23",
+      "enrollment": 0,
+      "sponsor": "Liquidia Technologies, Inc."
+    },
+    {
+      "nct_id": "NCT03399604",
+      "title": "Investigation of the Safety and Pharmacology of Dry Powder Inhalation of Treprostinil",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Primary Pulmonary Hypertension",
+      "start_date": "2018-01-02",
+      "completion_date": "2019-11-25",
+      "enrollment": 0,
+      "sponsor": "Liquidia Technologies, Inc."
+    },
+    {
+      "nct_id": "NCT03992755",
+      "title": "Extension Study for Participants in LIQ861 Trials to Evaluate the Long-term Safety of Dry Powder Inhalation of Treprostinil",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Primary Pulmonary Hypertension",
+      "start_date": "2019-07-18",
+      "completion_date": "2025-05-31",
+      "enrollment": 0,
+      "sponsor": "Liquidia Technologies, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 8,
+    "by_phase": {
+      "PHASE1": 1,
+      "PHASE3": 4,
+      "PHASE1, PHASE2": 1,
+      "": 1,
+      "PHASE2": 1
+    },
+    "by_status": {
+      "COMPLETED": 3,
+      "ACTIVE_NOT_RECRUITING": 2,
+      "RECRUITING": 1,
+      "NOT_YET_RECRUITING": 1,
+      "TERMINATED": 1
+    },
+    "active_trials": 3,
+    "completed_trials": 3,
+    "conditions": [
+      "Acute Pain",
+      "Influenza",
+      "Primary Pulmonary Hypertension",
+      "Pulmonary Arterial Hypertension",
+      "Pulmonary Arterial Hypertension, Pulmonary Hypertension Due to Lung Diseases",
+      "Pulmonary Hypertension Due to Lung Disease (Disorder)",
+      "Pulmonary Hypertension, Interstitial Lung Disease"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:19:43.934071",
+    "search_query": "Liquidia Corporation",
+    "url": "https://clinicaltrials.gov/search?term=Liquidia+Corporation"
+  }
+}

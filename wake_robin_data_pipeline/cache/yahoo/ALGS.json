@@ -1,0 +1,43 @@
+{
+  "ticker": "ALGS",
+  "success": true,
+  "price": {
+    "current": 7.7499,
+    "currency": "USD",
+    "day_high": 8.13,
+    "day_low": 7.7,
+    "52_week_high": 29.54,
+    "52_week_low": 3.76
+  },
+  "market_cap": {
+    "value": 47689644.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 5353582.0,
+  "volume": {
+    "last": 28042,
+    "average_30d": 77670
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -1.0904111,
+    "price_to_book": 0.66385984
+  },
+  "company_info": {
+    "name": "Aligos Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:04:21.161958",
+    "url": "https://finance.yahoo.com/quote/ALGS",
+    "data_hash": "6f0c6c92b5324233"
+  }
+}

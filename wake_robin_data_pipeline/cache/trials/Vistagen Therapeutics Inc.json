@@ -1,0 +1,152 @@
+{
+  "ticker": "VTGN",
+  "company_name": "Vistagen Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04754802",
+      "title": "PH94B Nasal Spray for Anxiety Induced by a Public Speaking Challenge",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Social Anxiety Disorder",
+      "start_date": "2021-05-24",
+      "completion_date": "2022-06-22",
+      "enrollment": 0,
+      "sponsor": "VistaGen Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05030350",
+      "title": "Open-label Safety Trial of PH94B in Social Anxiety Disorder (SAD)",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Social Anxiety Disorder",
+      "start_date": "2021-10-01",
+      "completion_date": "2022-09-23",
+      "enrollment": 0,
+      "sponsor": "VistaGen Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT03078322",
+      "title": "AV-101 as Adjunct Antidepressant Therapy in Patients With Major Depression",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Major Depressive Disorder",
+      "start_date": "2018-03-05",
+      "completion_date": "2019-10-01",
+      "enrollment": 0,
+      "sponsor": "VistaGen Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06809179",
+      "title": "A Clinical Trial to Assess the Efficacy, Safety, and Tolerability of a Repeat Dose of Fasedienol Nasal Spray for the Acute Treatment of Anxiety in Adults With Social Anxiety Disorder",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Social Anxiety Disorder",
+      "start_date": "2025-01-09",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "VistaGen Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT01483846",
+      "title": "Safety, Tolerability and Pharmacokinetics of Multiple Doses of AV-101 in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Neuropathic Pain",
+      "start_date": "2011-12",
+      "completion_date": "2012-09",
+      "enrollment": 0,
+      "sponsor": "VistaGen Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT03583554",
+      "title": "Electrophysiological Biomarkers of AV-101",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Healthy",
+      "start_date": "2018-09-01",
+      "completion_date": "2019-10-19",
+      "enrollment": 0,
+      "sponsor": "Marijn Lijffijt, PhD"
+    },
+    {
+      "nct_id": "NCT06358651",
+      "title": "Fasedienol Nasal Spray for the Acute Treatment of Anxiety in Adults With Social Anxiety Disorder (PALISADE-3)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Social Anxiety Disorder",
+      "start_date": "2024-03-28",
+      "completion_date": "2026-10",
+      "enrollment": 0,
+      "sponsor": "VistaGen Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05011396",
+      "title": "PH94B Nasal Spray for Anxiety Induced by a Public Speaking Challenge - 2",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Social Anxiety Disorder",
+      "start_date": "2021-08-30",
+      "completion_date": "2022-08-16",
+      "enrollment": 0,
+      "sponsor": "VistaGen Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06615557",
+      "title": "Fasedienol Nasal Spray for the Acute Treatment of Anxiety in Adults With Social Anxiety Disorder (PALISADE-4)",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Social Anxiety Disorder (SAD)",
+      "start_date": "2024-09-16",
+      "completion_date": "2027-04",
+      "enrollment": 0,
+      "sponsor": "VistaGen Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04147949",
+      "title": "AV-101 (L-4-chlorokynurenine) in Parkinson's Disease Subjects With Levodopa-Induced Dyskinesia",
+      "status": "UNKNOWN",
+      "phase": "PHASE2",
+      "condition": "Parkinson Disease, Dyskinesia, Medication-Induced, L-Dopa Causing Adverse Effects in Therapeutic Use",
+      "start_date": "2022-08",
+      "completion_date": "2024-04",
+      "enrollment": 0,
+      "sponsor": "VistaGen Therapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 12,
+    "by_phase": {
+      "PHASE3": 5,
+      "PHASE2": 4,
+      "PHASE1": 2,
+      "PHASE1, PHASE2": 1
+    },
+    "by_status": {
+      "COMPLETED": 5,
+      "TERMINATED": 2,
+      "RECRUITING": 2,
+      "ACTIVE_NOT_RECRUITING": 1,
+      "UNKNOWN": 2
+    },
+    "active_trials": 3,
+    "completed_trials": 5,
+    "conditions": [
+      "Adjustment Disorder With Anxious Mood",
+      "Drug Drug Interaction",
+      "Healthy",
+      "Major Depressive Disorder",
+      "Neuropathic Pain",
+      "Parkinson Disease, Dyskinesia, Medication-Induced, L-Dopa Causing Adverse Effects in Therapeutic Use",
+      "Social Anxiety Disorder",
+      "Social Anxiety Disorder (SAD)"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T13:12:16.779056",
+    "search_query": "Vistagen Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Vistagen+Therapeutics,+Inc."
+  }
+}

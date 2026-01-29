@@ -1,0 +1,39 @@
+{
+  "ticker": "ABSI",
+  "company_name": "Absci Corporation",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT07317544",
+      "title": "Study of ABS-201 Evaluating Single and Multiple Ascending Doses in Healthy Adults With and Without Androgenetic Alopecia",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Androgenetic Alopecia (AGA), Healthy Volunteers - Male and Female",
+      "start_date": "2025-12-03",
+      "completion_date": "2028-07",
+      "enrollment": 0,
+      "sponsor": "Absci Pty Ltd."
+    }
+  ],
+  "summary": {
+    "total_trials": 1,
+    "by_phase": {
+      "PHASE1, PHASE2": 1
+    },
+    "by_status": {
+      "RECRUITING": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 0,
+    "conditions": [
+      "Androgenetic Alopecia (AGA), Healthy Volunteers - Male and Female"
+    ],
+    "lead_stage": "unknown"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:15:51.754345",
+    "search_query": "Absci Corporation",
+    "url": "https://clinicaltrials.gov/search?term=Absci+Corporation"
+  }
+}

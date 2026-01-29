@@ -1,0 +1,43 @@
+{
+  "ticker": "LYRA",
+  "success": true,
+  "price": {
+    "current": 1.91,
+    "currency": "USD",
+    "day_high": 2.05,
+    "day_low": 1.86,
+    "52_week_high": 37.5,
+    "52_week_low": 1.6
+  },
+  "market_cap": {
+    "value": 3390024.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 1774882.0,
+  "volume": {
+    "last": 26630,
+    "average_30d": 129792
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -1.9292929,
+    "price_to_book": -0.72568387
+  },
+  "company_info": {
+    "name": "Lyra Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:07:54.938637",
+    "url": "https://finance.yahoo.com/quote/LYRA",
+    "data_hash": "c02c1efec5da9840"
+  }
+}

@@ -1,0 +1,153 @@
+{
+  "ticker": "IRON",
+  "company_name": "Disc Medicine, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05745883",
+      "title": "Study of DISC-0974 to Assess the Safety, Tolerability, PK and PD of DISC-0974 in Participants With CKD and Anemia",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Chronic Kidney Diseases, Anemia of Chronic Kidney Disease",
+      "start_date": "2023-04-04",
+      "completion_date": "2026-05",
+      "enrollment": 0,
+      "sponsor": "Disc Medicine, Inc"
+    },
+    {
+      "nct_id": "NCT05320198",
+      "title": "Study of DISC-0974 (RALLY-MF) in Participants With Myelofibrosis or Myelodysplastic Syndrome and Anemia",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Myelofibrosis; Anemia, Anemia, Myelofibrosis, Myelofibrosis Due to and Following Polycythemia Vera, Primary Myelofibrosis, Post-essential Thrombocythemia Myelofibrosis, Myelodysplastic Syndromes",
+      "start_date": "2022-06-06",
+      "completion_date": "2026-09",
+      "enrollment": 0,
+      "sponsor": "Disc Medicine, Inc"
+    },
+    {
+      "nct_id": "NCT06050915",
+      "title": "A Study of DISC-3405 in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteer",
+      "start_date": "2023-10-03",
+      "completion_date": "2024-07-09",
+      "enrollment": 0,
+      "sponsor": "Disc Medicine, Inc"
+    },
+    {
+      "nct_id": "NCT04999527",
+      "title": "Study to Evaluate the Safety, Tolerability, PK and PD of DISC-0974 in Healthy Subjects",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteer",
+      "start_date": "2021-08-10",
+      "completion_date": "2022-06-30",
+      "enrollment": 0,
+      "sponsor": "Disc Medicine, Inc"
+    },
+    {
+      "nct_id": "NCT07368972",
+      "title": "Study of DISC-0974-201 in Participants With IBD and Anemia",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Inflammatory Bowel Disease (IBD), Anemia, Inflammatory Bowel Disease (IBD); Anemia",
+      "start_date": "2026-01",
+      "completion_date": "2027-03",
+      "enrollment": 0,
+      "sponsor": "Disc Medicine, Inc"
+    },
+    {
+      "nct_id": "NCT05308472",
+      "title": "Study of Bitopertin to Evaluate the Safety, Tolerability, Efficacy, and PPIX Concentrations in Participants With EPP",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Erythropoietic Protoporphyria",
+      "start_date": "2022-10-31",
+      "completion_date": "2024-08-23",
+      "enrollment": 0,
+      "sponsor": "Disc Medicine, Inc"
+    },
+    {
+      "nct_id": "NCT05883748",
+      "title": "HELIOS: Open-Label, Long-Term Extension Study to Investigate the Safety, Tolerability, and Efficacy of DISC-1459 (Bitopertin) in Participants With EPP or XLP",
+      "status": "ENROLLING_BY_INVITATION",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Erythropoietic Protoporphyria",
+      "start_date": "2023-08-31",
+      "completion_date": "2028-06",
+      "enrollment": 0,
+      "sponsor": "Disc Medicine, Inc"
+    },
+    {
+      "nct_id": "NCT06985147",
+      "title": "A Phase 2, Open-Label Study of DISC-3405 in Participants With Polycythemia Vera (PV)",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Polycythemia Vera (PV)",
+      "start_date": "2025-08-12",
+      "completion_date": "2029-02",
+      "enrollment": 0,
+      "sponsor": "Disc Medicine, Inc"
+    },
+    {
+      "nct_id": "NCT07187973",
+      "title": "A Phase 1b, Open-Label Study of DISC-3405 in Participants With Sickle Cell Disease (SCD)",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Sickle Cell Disease",
+      "start_date": "2025-12",
+      "completion_date": "2027-10",
+      "enrollment": 0,
+      "sponsor": "Disc Medicine, Inc"
+    },
+    {
+      "nct_id": "NCT06910358",
+      "title": "Study of Bitopertin in Participants With EPP or XLP (APOLLO)",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Erythropoietic Protoporphyria (EPP), X-Linked Protoporphyria (XLP)",
+      "start_date": "2025-04-04",
+      "completion_date": "2026-11",
+      "enrollment": 0,
+      "sponsor": "Disc Medicine, Inc"
+    }
+  ],
+  "summary": {
+    "total_trials": 10,
+    "by_phase": {
+      "PHASE1": 4,
+      "PHASE1, PHASE2": 1,
+      "PHASE2": 3,
+      "PHASE2, PHASE3": 1,
+      "PHASE3": 1
+    },
+    "by_status": {
+      "ACTIVE_NOT_RECRUITING": 1,
+      "RECRUITING": 4,
+      "COMPLETED": 3,
+      "NOT_YET_RECRUITING": 1,
+      "ENROLLING_BY_INVITATION": 1
+    },
+    "active_trials": 6,
+    "completed_trials": 3,
+    "conditions": [
+      "Chronic Kidney Diseases, Anemia of Chronic Kidney Disease",
+      "Erythropoietic Protoporphyria",
+      "Erythropoietic Protoporphyria (EPP), X-Linked Protoporphyria (XLP)",
+      "Healthy Volunteer",
+      "Inflammatory Bowel Disease (IBD), Anemia, Inflammatory Bowel Disease (IBD); Anemia",
+      "Myelofibrosis; Anemia, Anemia, Myelofibrosis, Myelofibrosis Due to and Following Polycythemia Vera, Primary Myelofibrosis, Post-essential Thrombocythemia Myelofibrosis, Myelodysplastic Syndromes",
+      "Polycythemia Vera (PV)",
+      "Sickle Cell Disease"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:19:13.369231",
+    "search_query": "Disc Medicine, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Disc+Medicine,+Inc."
+  }
+}

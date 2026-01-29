@@ -1,0 +1,150 @@
+{
+  "ticker": "KALA",
+  "company_name": "KALA BIO, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT03596723",
+      "title": "KPI-121 1% Versus Prednisolone for the Treatment of Inflammation Following Cataract Surgery in Children",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Ocular Inflammation",
+      "start_date": "2018-07-03",
+      "completion_date": "2018-10-18",
+      "enrollment": 0,
+      "sponsor": "Kala Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT03616899",
+      "title": "Safety and Efficacy of KPI-121 in Subjects With DED",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Kerato Conjunctivitis Sicca",
+      "start_date": "2018-07-10",
+      "completion_date": "2020-02-05",
+      "enrollment": 0,
+      "sponsor": "Kala Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT02188160",
+      "title": "Safety and Efficacy of KPI-121 in Subjects With Dry Eye Disease",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Dry Eye Syndromes, Keratoconjunctivitis Sicca",
+      "start_date": "2014-06",
+      "completion_date": "2015-03",
+      "enrollment": 0,
+      "sponsor": "Kala Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT02793817",
+      "title": "Safety and Efficacy of KPI-121 in Subjects With Postsurgical Inflammation and Pain",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Post Surgical Ocular Inflammation and Pain",
+      "start_date": "2016-06",
+      "completion_date": "2017-03",
+      "enrollment": 0,
+      "sponsor": "Kala Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT02163824",
+      "title": "Safety and Efficacy of KPI-121 in Subjects With Postsurgical Inflammation",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Ocular Infections, Irritations and Inflammations",
+      "start_date": "2014-05",
+      "completion_date": "2014-12",
+      "enrollment": 0,
+      "sponsor": "Kala Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT02813265",
+      "title": "Safety and Efficacy of KPI-121 in Subjects With Dry Eye Disease",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Dry Eye Syndromes, Keratoconjunctivitis Sicca",
+      "start_date": "2016-06",
+      "completion_date": "2017-10",
+      "enrollment": 0,
+      "sponsor": "Kala Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT05136443",
+      "title": "Loteprednol Etabonate 0.25% for Prevention of Cornea Transplant Rejection",
+      "status": "COMPLETED",
+      "phase": "PHASE4",
+      "condition": "Corneal Endothelial Dystrophy, Corneal Edema",
+      "start_date": "2021-11-23",
+      "completion_date": "2023-09-05",
+      "enrollment": 0,
+      "sponsor": "Price Vision Group"
+    },
+    {
+      "nct_id": "NCT02819284",
+      "title": "Safety and Efficacy of KPI-121 Compared to Placebo in Subjects With Dry Eye Disease",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Dry Eye Syndromes, Keratoconjunctivitis Sicca",
+      "start_date": "2016-06",
+      "completion_date": "2017-09",
+      "enrollment": 0,
+      "sponsor": "Kala Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT02218489",
+      "title": "Safety and Efficacy of KPI-121 in Subjects With Inflammatory Meibomian Gland Disease",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Blepharitis",
+      "start_date": "2014-07",
+      "completion_date": "2016-06",
+      "enrollment": 0,
+      "sponsor": "Kala Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT05727878",
+      "title": "Trial to Evaluate Safety and Efficacy of KPI-012 Ophthalmic Solution in Participants With PCED",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Persistent Corneal Epithelial Defect",
+      "start_date": "2023-02-07",
+      "completion_date": "2025-10-19",
+      "enrollment": 0,
+      "sponsor": "Combangio, Inc"
+    }
+  ],
+  "summary": {
+    "total_trials": 11,
+    "by_phase": {
+      "PHASE3": 6,
+      "PHASE2": 3,
+      "PHASE4": 1,
+      "NA": 1
+    },
+    "by_status": {
+      "TERMINATED": 2,
+      "COMPLETED": 9
+    },
+    "active_trials": 0,
+    "completed_trials": 9,
+    "conditions": [
+      "Blepharitis",
+      "Corneal Endothelial Dystrophy, Corneal Edema",
+      "Dry Eye Syndromes, Keratoconjunctivitis Sicca",
+      "Kerato Conjunctivitis Sicca",
+      "Ocular Infections, Irritations and Inflammations",
+      "Ocular Inflammation",
+      "Persistent Corneal Epithelial Defect",
+      "Post Surgical Ocular Inflammation and Pain",
+      "Retinal Vein Occlusion, Diabetic Macular Edema"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:19:21.310958",
+    "search_query": "KALA BIO, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=KALA+BIO,+Inc."
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "ticker": "PMVP",
+  "company_name": "PMV Pharmaceuticals, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT07372625",
+      "title": "A Study to Investigate the Effects of Multiple Doses of Rezatapopt on the Pharmacokinetics of Metformin, Rosuvastatin, Repaglinide, and Midazolam in Patients With Advanced Solid Tumors Harboring a TP53 Y220C Mutation.",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "TP53 Y220C Mutation, Advanced Solid Tumors",
+      "start_date": "2026-01-19",
+      "completion_date": "2028-01",
+      "enrollment": 0,
+      "sponsor": "PMV Pharmaceuticals, Inc"
+    },
+    {
+      "nct_id": "NCT04585750",
+      "title": "The Evaluation of PC14586 in Patients With Advanced Solid Tumors Harboring a TP53 Y220C Mutation (PYNNACLE)",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Advanced Solid Tumor, Advanced Malignant Neoplasm, Metastatic Cancer, Metastatic Solid Tumor, Lung Cancer, Ovarian Cancer, Endometrial Cancer, Prostate Cancer, Colorectal Cancer, Breast Cancer, Other Cancer, Locally Advanced, Head and Neck Cancer, Gall Bladder Cancer, Small Cell Lung Cancer, Small Cell Lung Cancer ( SCLC ), Small Cell Lung Carcinoma, NSCLC, NSCLC (Non-small Cell Lung Cancer), SCLC, Non-Small Cell Lung Carcinoma, Triple Negative Breast Cancer, TNBC, HER2+ Breast Cancer, Non-Small Cell Lung Cancer, ER/PR Positive Breast Cancer, HER2- Breast Cancer, HER2-positive Breast Cancer, HER2-negative Breast Cancer, ER/PR(+), Her2(-) Breast Cancer",
+      "start_date": "2020-10-29",
+      "completion_date": "2027-12-31",
+      "enrollment": 0,
+      "sponsor": "PMV Pharmaceuticals, Inc"
+    },
+    {
+      "nct_id": "NCT06362642",
+      "title": "A Study to Investigate the Effects of Itraconazole on the Pharmacokinetics of PC14586 in Healthy Participants",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2024-03-28",
+      "completion_date": "2024-10-22",
+      "enrollment": 0,
+      "sponsor": "PMV Pharmaceuticals, Inc"
+    },
+    {
+      "nct_id": "NCT05249348",
+      "title": "Effect of Food on PC14586 in Healthy Volunteers and the PK of PC14586 in Healthy Japanese Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2021-12-20",
+      "completion_date": "2022-06-09",
+      "enrollment": 0,
+      "sponsor": "PMV Pharmaceuticals, Inc"
+    },
+    {
+      "nct_id": "NCT06616636",
+      "title": "A Phase Ib Study of Rezatapopt in Combination With Azacitidine in Patients With TP53Y220C Mutant Myeloid Malignancies (Acute Myeloid Leukemia or Myelodysplastic Syndrome)",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Myelodysplastic Syndrome, Acute Myeloid Leukemia",
+      "start_date": "2025-01-30",
+      "completion_date": "2029-08-27",
+      "enrollment": 0,
+      "sponsor": "M.D. Anderson Cancer Center"
+    },
+    {
+      "nct_id": "NCT06054464",
+      "title": "A Study to Investigate the Effects of Acid Reducing Agents on Pharmacokinetics of PC14586 in Healthy Participants",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2023-09-19",
+      "completion_date": "2024-02-06",
+      "enrollment": 0,
+      "sponsor": "PMV Pharmaceuticals, Inc"
+    },
+    {
+      "nct_id": "NCT05523687",
+      "title": "AME Study of [14C]-PC14586 in Healthy Male Participants",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Male Volunteers",
+      "start_date": "2022-09-06",
+      "completion_date": "2022-11-30",
+      "enrollment": 0,
+      "sponsor": "PMV Pharmaceuticals, Inc"
+    }
+  ],
+  "summary": {
+    "total_trials": 7,
+    "by_phase": {
+      "PHASE1": 6,
+      "PHASE1, PHASE2": 1
+    },
+    "by_status": {
+      "NOT_YET_RECRUITING": 1,
+      "RECRUITING": 2,
+      "COMPLETED": 4
+    },
+    "active_trials": 2,
+    "completed_trials": 4,
+    "conditions": [
+      "Advanced Solid Tumor, Advanced Malignant Neoplasm, Metastatic Cancer, Metastatic Solid Tumor, Lung Cancer, Ovarian Cancer, Endometrial Cancer, Prostate Cancer, Colorectal Cancer, Breast Cancer, Other Cancer, Locally Advanced, Head and Neck Cancer, Gall Bladder Cancer, Small Cell Lung Cancer, Small Cell Lung Cancer ( SCLC ), Small Cell Lung Carcinoma, NSCLC, NSCLC (Non-small Cell Lung Cancer), SCLC, Non-Small Cell Lung Carcinoma, Triple Negative Breast Cancer, TNBC, HER2+ Breast Cancer, Non-Small Cell Lung Cancer, ER/PR Positive Breast Cancer, HER2- Breast Cancer, HER2-positive Breast Cancer, HER2-negative Breast Cancer, ER/PR(+), Her2(-) Breast Cancer",
+      "Healthy Male Volunteers",
+      "Healthy Volunteers",
+      "Myelodysplastic Syndrome, Acute Myeloid Leukemia",
+      "TP53 Y220C Mutation, Advanced Solid Tumors"
+    ],
+    "lead_stage": "phase_1"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T13:12:08.913039",
+    "search_query": "PMV Pharmaceuticals, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=PMV+Pharmaceuticals,+Inc."
+  }
+}

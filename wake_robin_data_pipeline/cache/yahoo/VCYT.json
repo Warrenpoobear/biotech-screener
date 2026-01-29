@@ -1,0 +1,43 @@
+{
+  "ticker": "VCYT",
+  "success": true,
+  "price": {
+    "current": 38.06,
+    "currency": "USD",
+    "day_high": 38.705,
+    "day_low": 37.81,
+    "52_week_high": 50.71,
+    "52_week_low": 22.61
+  },
+  "market_cap": {
+    "value": 3008611840.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 79049173.0,
+  "volume": {
+    "last": 100909,
+    "average_30d": 712886
+  },
+  "valuation": {
+    "pe_ratio": 100.1579,
+    "forward_pe": 24.851942,
+    "price_to_book": 2.3917553
+  },
+  "company_info": {
+    "name": "Veracyte, Inc.",
+    "sector": "Healthcare",
+    "industry": "Diagnostics & Research"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:10:36.617708",
+    "url": "https://finance.yahoo.com/quote/VCYT",
+    "data_hash": "46ea8d520f1c583b"
+  }
+}

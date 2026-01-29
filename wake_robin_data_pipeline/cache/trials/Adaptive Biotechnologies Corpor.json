@@ -1,0 +1,180 @@
+{
+  "ticker": "ADPT",
+  "company_name": "Adaptive Biotechnologies Corpor",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05271630",
+      "title": "Multiple Myeloma Outcomes Based on Maintenance Therapy Post Autologous Stem Cell Transplant",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "",
+      "condition": "Multiple Myeloma",
+      "start_date": "2022-04-20",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "H. Lee Moffitt Cancer Center and Research Institute"
+    },
+    {
+      "nct_id": "NCT02553642",
+      "title": "Relationship Between Tumor Mutation Burden and Predicted Neo-antigen Burden in Patients With Advanced Melanoma or Bladder Cancer Treated With Nivolumab or Nivolumab Plus Ipilimumab (CA209-260)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Bladder Cancer, Melanoma",
+      "start_date": "2015-09-14",
+      "completion_date": "2024-04-29",
+      "enrollment": 0,
+      "sponsor": "Memorial Sloan Kettering Cancer Center"
+    },
+    {
+      "nct_id": "NCT04545333",
+      "title": "The clonoSEQ\u00ae Watch Registry",
+      "status": "TERMINATED",
+      "phase": "",
+      "condition": "Acute Lymphoblastic Leukemia, Adult B-Cell, Chronic Lymphocytic Leukemia, Multiple Myeloma, Non-hodgkin Lymphoma",
+      "start_date": "2020-10-13",
+      "completion_date": "2023-10-01",
+      "enrollment": 0,
+      "sponsor": "Adaptive Biotechnologies"
+    },
+    {
+      "nct_id": "NCT04494893",
+      "title": "ImmuneRACE - Immune Response Action to COVID-19 Events",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Covid19",
+      "start_date": "2020-04-24",
+      "completion_date": "2021-04-23",
+      "enrollment": 0,
+      "sponsor": "Adaptive Biotechnologies"
+    },
+    {
+      "nct_id": "NCT04422314",
+      "title": "ImmuneSense Lyme Study",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Lyme Disease",
+      "start_date": "2020-07-09",
+      "completion_date": "2021-10-30",
+      "enrollment": 0,
+      "sponsor": "Adaptive Biotechnologies"
+    },
+    {
+      "nct_id": "NCT05054088",
+      "title": "ImmuneSense COVID-19 Variant Study",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Covid19",
+      "start_date": "2021-10-12",
+      "completion_date": "2022-07-28",
+      "enrollment": 0,
+      "sponsor": "Adaptive Biotechnologies"
+    },
+    {
+      "nct_id": "NCT05769829",
+      "title": "ImmuneSense\u2122 IBD Study",
+      "status": "TERMINATED",
+      "phase": "",
+      "condition": "Inflammatory Bowel Diseases",
+      "start_date": "2022-10-31",
+      "completion_date": "2023-08-14",
+      "enrollment": 0,
+      "sponsor": "Adaptive Biotechnologies"
+    },
+    {
+      "nct_id": "NCT06252675",
+      "title": "Glofitamab With Pirtobrutinib for Relapsed or Refractory Mantle Cell Lymphoma",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Mantle Cell Lymphoma",
+      "start_date": "2024-06-11",
+      "completion_date": "2028-07-31",
+      "enrollment": 0,
+      "sponsor": "University of California, San Francisco"
+    },
+    {
+      "nct_id": "NCT04419519",
+      "title": "Assessing Minimal Residual Disease by Next- Generation Sequencing to Minimize Exposure in People With CLL or SLL Who Have Been Treated With Venetoclax",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Chronic Lymphocytic Leukemia (CLL), Small Lymphocytic Lymphoma (SLL)",
+      "start_date": "2020-05-13",
+      "completion_date": "2027-05",
+      "enrollment": 0,
+      "sponsor": "Memorial Sloan Kettering Cancer Center"
+    },
+    {
+      "nct_id": "NCT04583982",
+      "title": "ImmuneSense\u2122 COVID-19 Study",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Coronavirus Disease (COVID-19), SARS-CoV-2 Infection",
+      "start_date": "2020-10-09",
+      "completion_date": "2020-12-04",
+      "enrollment": 0,
+      "sponsor": "Adaptive Biotechnologies"
+    }
+  ],
+  "summary": {
+    "total_trials": 37,
+    "by_phase": {
+      "": 12,
+      "PHASE2": 12,
+      "PHASE1, PHASE2": 4,
+      "NA": 6,
+      "PHASE2, PHASE3": 1,
+      "PHASE3": 1,
+      "PHASE4": 1
+    },
+    "by_status": {
+      "ACTIVE_NOT_RECRUITING": 3,
+      "COMPLETED": 13,
+      "TERMINATED": 5,
+      "RECRUITING": 8,
+      "NOT_YET_RECRUITING": 3,
+      "WITHDRAWN": 4,
+      "NO_LONGER_AVAILABLE": 1
+    },
+    "active_trials": 11,
+    "completed_trials": 13,
+    "conditions": [
+      "Acute Lymphoblastic Leukemia, Adult B-Cell, Chronic Lymphocytic Leukemia, Multiple Myeloma, Non-hodgkin Lymphoma",
+      "Autism Spectrum Disorders",
+      "Autism, Communication Disorders",
+      "Bladder Cancer, Melanoma",
+      "Chronic Lymphocytic Leukemia (CLL), Small Lymphocytic Lymphoma (SLL)",
+      "Chronic Tonal Tinnitus",
+      "Community-acquired Pneumonia, Influenza, COVID-19",
+      "Coronavirus Disease (COVID-19), SARS-CoV-2 Infection",
+      "Coronavirus Disease, SARS-CoV-2 Infection",
+      "Covid19",
+      "Covid19, Bacteremia, Septicemia, Acinetobacter Baumannii Infection, Pseudomonas Aeruginosa Infection, Staph Aureus Infection",
+      "Depression",
+      "Depression, Anxiety",
+      "Diffuse Large B-Cell Lymphoma (DLBCL)",
+      "Follicular Lymphoma, Diffuse Large B Cell Lymphoma, Mantle Cell Lymphoma",
+      "Glioblastoma",
+      "Healthy",
+      "Inflammatory Bowel Diseases",
+      "Lyme Disease",
+      "Lymphoma, Indolent Non-hodgkin Lymphoma",
+      "Mantle Cell Lymphoma",
+      "Multiple Myeloma",
+      "Osteomyelitis, Diabetic Foot Osteomyelitis",
+      "Post Traumatic Stress Disorder",
+      "Problems With Access to Health Care",
+      "Prosthetic Joint Infection",
+      "Prosthetic Joint Infection, Bacterial Infections",
+      "Rectal Cancer",
+      "Tinnitus",
+      "Upper Extremity Impairments, Cerebral Palsy (CP), ALS - Amyotrophic Lateral Sclerosis, Rett Syndrome",
+      "Urinary Tract Infection Bacterial"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:16:05.937558",
+    "search_query": "Adaptive Biotechnologies Corpor",
+    "url": "https://clinicaltrials.gov/search?term=Adaptive+Biotechnologies+Corpor"
+  }
+}

@@ -1,0 +1,164 @@
+{
+  "ticker": "CMPS",
+  "company_name": "COMPASS Pathways Plc - American",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04739865",
+      "title": "The Safety and Efficacy Of Psilocybin as an Adjunctive Therapy in Participants With Treatment Resistant Depression",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Treatment Resistant Depression",
+      "start_date": "2020-08-10",
+      "completion_date": "2021-10-14",
+      "enrollment": 0,
+      "sponsor": "COMPASS Pathways"
+    },
+    {
+      "nct_id": "NCT04433858",
+      "title": "An Open Label Study of the Safety and Efficacy of Psilocybin in Participants With Treatment-Resistant Depression (P-TRD)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Treatment Resistant Depression",
+      "start_date": "2021-03-01",
+      "completion_date": "2026-05-01",
+      "enrollment": 0,
+      "sponsor": "Sheppard Pratt Health System"
+    },
+    {
+      "nct_id": "NCT04661514",
+      "title": "Evaluation of Psilocybin in Anorexia Nervosa: Safety and Efficacy",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Anorexia Nervosa",
+      "start_date": "2021-05-01",
+      "completion_date": "2022-06-10",
+      "enrollment": 0,
+      "sponsor": "University of California, San Diego"
+    },
+    {
+      "nct_id": "NCT04656301",
+      "title": "Safety and Efficacy of Psilocybin for Body Dysmorphic Disorder",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Body Dysmorphic Disorders",
+      "start_date": "2021-02-26",
+      "completion_date": "2022-11-02",
+      "enrollment": 0,
+      "sponsor": "New York State Psychiatric Institute"
+    },
+    {
+      "nct_id": "NCT05481736",
+      "title": "Efficacy and Safety of COMP360 Psilocybin Therapy in Anorexia Nervosa: a Proof-of-concept Study",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Anorexia Nervosa",
+      "start_date": "2022-10-12",
+      "completion_date": "2024-11-18",
+      "enrollment": 0,
+      "sponsor": "COMPASS Pathways"
+    },
+    {
+      "nct_id": "NCT05624268",
+      "title": "Efficacy, Safety, and Tolerability of COMP360 in Participants With TRD",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Treatment Resistant Depression",
+      "start_date": "2023-01-19",
+      "completion_date": "2026-04",
+      "enrollment": 0,
+      "sponsor": "COMPASS Pathways"
+    },
+    {
+      "nct_id": "NCT03775200",
+      "title": "The Safety and Efficacy of Psilocybin in Participants With Treatment Resistant Depression",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Treatment Resistant Depression",
+      "start_date": "2019-03-01",
+      "completion_date": "2021-09-27",
+      "enrollment": 0,
+      "sponsor": "COMPASS Pathways"
+    },
+    {
+      "nct_id": "NCT05220410",
+      "title": "The Safety and Efficacy of Psilocybin in Patients With Treatment-resistant Depression and Chronic Suicidal Ideation",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Treatment Resistant Depression, Suicidal Ideation",
+      "start_date": "2022-03-28",
+      "completion_date": "2025-05-12",
+      "enrollment": 0,
+      "sponsor": "Sheppard Pratt Health System"
+    },
+    {
+      "nct_id": "NCT06247839",
+      "title": "The Effects of Psilocybin on Self-Focus and Self-Related Processing in Major Depressive Disorder",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Major Depressive Disorder",
+      "start_date": "2024-09-10",
+      "completion_date": "2026-06-30",
+      "enrollment": 0,
+      "sponsor": "Sharmin Ghaznavi"
+    },
+    {
+      "nct_id": "NCT05711940",
+      "title": "Efficacy, Safety, and Tolerability of Two Administrations of COMP360 in Participants With TRD",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Treatment Resistant Depression",
+      "start_date": "2023-02-14",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "COMPASS Pathways"
+    }
+  ],
+  "summary": {
+    "total_trials": 24,
+    "by_phase": {
+      "PHASE2": 12,
+      "PHASE3": 3,
+      "": 1,
+      "NA": 3,
+      "PHASE1, PHASE2": 2,
+      "PHASE1": 2,
+      "PHASE2, PHASE3": 1
+    },
+    "by_status": {
+      "COMPLETED": 12,
+      "ACTIVE_NOT_RECRUITING": 5,
+      "RECRUITING": 3,
+      "WITHDRAWN": 1,
+      "UNKNOWN": 2,
+      "TERMINATED": 1
+    },
+    "active_trials": 8,
+    "completed_trials": 12,
+    "conditions": [
+      "Anorexia Nervosa",
+      "Back Pain",
+      "Biliary Tract Cancer, Cholangiocarcinoma, Gall Bladder Cancer, Ampullary Cancer",
+      "Body Dysmorphic Disorders",
+      "Doping in Sport, Performance Enhancing Product Use",
+      "Locally Advanced Solid Tumor, Metastatic Cancer, Non-small Cell Lung Cancer, Small Cell Lung Cancer, Mesothelioma, Melanoma, Head and Neck Cancer",
+      "Major Depressive Disorder",
+      "Metastatic Biliary Tract Cancer",
+      "Metastatic Colorectal Cancer, Colon Cancer, Rectal Cancer",
+      "Non Small Cell Lung Cancer, Triple Negative Breast Cancer, Hodgkin Lymphoma, Head and Neck Squamous Cell Carcinoma, Malignant Melanoma",
+      "P1b: Advanced Solid Tumors, P2: Biliary Tract Cancer",
+      "Post Traumatic Stress Disorder",
+      "Suicidality",
+      "Treatment Resistant Depression",
+      "Treatment Resistant Depression, Suicidal Ideation",
+      "Treatment-Resistant Major Depressive Disorder"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:17:32.600768",
+    "search_query": "COMPASS Pathways Plc - American",
+    "url": "https://clinicaltrials.gov/search?term=COMPASS+Pathways+Plc+-+American"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "TECH",
+  "success": true,
+  "price": {
+    "current": 63.32,
+    "currency": "USD",
+    "day_high": 65.0,
+    "day_low": 63.155,
+    "52_week_high": 79.28,
+    "52_week_low": 46.01
+  },
+  "market_cap": {
+    "value": 9866060800.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 155812701.0,
+  "volume": {
+    "last": 575559,
+    "average_30d": 2056234
+  },
+  "valuation": {
+    "pe_ratio": 129.22449,
+    "forward_pe": 29.233477,
+    "price_to_book": 5.016638
+  },
+  "company_info": {
+    "name": "Bio-Techne Corporation",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:10:13.053992",
+    "url": "https://finance.yahoo.com/quote/TECH",
+    "data_hash": "5ae7fedb097e8a27"
+  }
+}

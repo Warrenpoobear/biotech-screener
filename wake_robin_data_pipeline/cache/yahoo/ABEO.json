@@ -1,0 +1,43 @@
+{
+  "ticker": "ABEO",
+  "success": true,
+  "price": {
+    "current": 4.92,
+    "currency": "USD",
+    "day_high": 4.97,
+    "day_low": 4.7855,
+    "52_week_high": 7.54,
+    "52_week_low": 3.93
+  },
+  "market_cap": {
+    "value": 266621488.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 54191361.0,
+  "volume": {
+    "last": 769577,
+    "average_30d": 1220076
+  },
+  "valuation": {
+    "pe_ratio": 4.066116,
+    "forward_pe": -70.28571,
+    "price_to_book": 1.5055081
+  },
+  "company_info": {
+    "name": "Abeona Therapeutics Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:04:00.750254",
+    "url": "https://finance.yahoo.com/quote/ABEO",
+    "data_hash": "c36b6039f70f770e"
+  }
+}

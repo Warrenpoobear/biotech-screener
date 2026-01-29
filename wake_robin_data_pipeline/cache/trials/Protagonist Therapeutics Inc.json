@@ -1,0 +1,152 @@
+{
+  "ticker": "PTGX",
+  "company_name": "Protagonist Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT07153146",
+      "title": "Safety, Tolerability, Pharmacokinetics, and Pharmacodynamics of PN-881 in Healthy Subjects.",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteer",
+      "start_date": "2025-10-07",
+      "completion_date": "2026-06-15",
+      "enrollment": 0,
+      "sponsor": "Protagonist Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04202965",
+      "title": "PTG-300 in Subjects With Hereditary Hemochromatosis",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Hereditary Hemochromatosis",
+      "start_date": "2020-03-19",
+      "completion_date": "2022-02-15",
+      "enrollment": 0,
+      "sponsor": "Protagonist Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04819620",
+      "title": "Pharmacokinetics of PN-232 in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Subjects",
+      "start_date": "2021-05-13",
+      "completion_date": "2022-06-16",
+      "enrollment": 0,
+      "sponsor": "Protagonist Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04516382",
+      "title": "Pharmacokinetics and Pharmacodynamics of Different PTG-300 Regimens in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2020-09-14",
+      "completion_date": "2021-06-30",
+      "enrollment": 0,
+      "sponsor": "Protagonist Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04504383",
+      "title": "PN-943 in Adults With Moderate to Severe Active Ulcerative Colitis (UC)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Ulcerative Colitis Chronic Moderate, Ulcerative Colitis Chronic Severe",
+      "start_date": "2020-08-05",
+      "completion_date": "2023-02-16",
+      "enrollment": 0,
+      "sponsor": "Protagonist Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT02895100",
+      "title": "Safety and Efficacy Study of PTG-100 in the Treatment of Moderate to Severe Ulcerative Colitis",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Ulcerative Colitis",
+      "start_date": "2016-12",
+      "completion_date": "2018-03-26",
+      "enrollment": 0,
+      "sponsor": "Protagonist Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06033586",
+      "title": "Study to Evaluate the Long-term Safety of Rusfertide (PTG-300) in Subjects With Polycythemia Vera",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Polycythemia Vera",
+      "start_date": "2024-01-22",
+      "completion_date": "2027-04-01",
+      "enrollment": 0,
+      "sponsor": "Protagonist Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04054921",
+      "title": "Safety Study for Beta Thalassemia Subjects on PTG-300",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "\u03b2-thalassemia, Ineffective Erythropoiesis",
+      "start_date": "2019-05-10",
+      "completion_date": "2020-07-31",
+      "enrollment": 0,
+      "sponsor": "Protagonist Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04057040",
+      "title": "Hepcidin Mimetic in Patients With Polycythemia Vera (REVIVE)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Polycythemia Vera",
+      "start_date": "2019-10-01",
+      "completion_date": "2024-06-17",
+      "enrollment": 0,
+      "sponsor": "Protagonist Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT03802201",
+      "title": "Study of PTG-300 in Non-Transfusion Dependent and Transfusion-Dependent Beta-Thalassemia Subjects With Chronic Anemia",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "\u03b2-thalassemia, Ineffective Erythropoiesis, Chronic Anemia",
+      "start_date": "2018-12-19",
+      "completion_date": "2020-07-31",
+      "enrollment": 0,
+      "sponsor": "Protagonist Therapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 14,
+    "by_phase": {
+      "PHASE1": 5,
+      "PHASE2": 7,
+      "PHASE3": 2
+    },
+    "by_status": {
+      "RECRUITING": 1,
+      "COMPLETED": 10,
+      "TERMINATED": 1,
+      "ACTIVE_NOT_RECRUITING": 2
+    },
+    "active_trials": 3,
+    "completed_trials": 10,
+    "conditions": [
+      "Celiac Disease",
+      "Healthy Subjects",
+      "Healthy Volunteer",
+      "Healthy Volunteers",
+      "Hereditary Hemochromatosis",
+      "Polycythemia Vera",
+      "Ulcerative Colitis",
+      "Ulcerative Colitis Chronic Moderate, Ulcerative Colitis Chronic Severe",
+      "\u03b2-thalassemia, Ineffective Erythropoiesis",
+      "\u03b2-thalassemia, Ineffective Erythropoiesis, Chronic Anemia"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:21:08.453775",
+    "search_query": "Protagonist Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Protagonist+Therapeutics,+Inc."
+  }
+}

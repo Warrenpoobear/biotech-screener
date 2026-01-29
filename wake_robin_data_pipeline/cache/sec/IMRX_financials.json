@@ -1,0 +1,43 @@
+{
+  "ticker": "IMRX",
+  "cik": "0001790340",
+  "success": true,
+  "financials": {
+    "cash": 227563077.0,
+    "debt": 0.0,
+    "net_debt": -227563077.0,
+    "revenue_ttm": 0.0,
+    "assets": 241056266.0,
+    "liabilities": 13079834.0,
+    "equity": 227976432.0,
+    "currency": "USD"
+  },
+  "data_dates": {
+    "cash": "2025-09-30",
+    "revenue": "2023-12-31",
+    "assets": "2025-09-30",
+    "liabilities": "2025-09-30",
+    "debt": "2025-09-30"
+  },
+  "data_freshness": {
+    "most_recent_date": "2025-09-30",
+    "oldest_date": "2023-12-31",
+    "staleness_flags": [
+      "critical_staleness:760d"
+    ]
+  },
+  "coverage": {
+    "has_cash": true,
+    "has_debt": true,
+    "has_revenue": true,
+    "has_balance_sheet": true,
+    "pct_complete": 100.0
+  },
+  "provenance": {
+    "source": "SEC EDGAR Company Facts API",
+    "timestamp": "2026-01-29T11:15:08.565864",
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001790340.json",
+    "cik": "0001790340",
+    "accounting_standard": "us-gaap"
+  }
+}

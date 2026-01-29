@@ -1,0 +1,155 @@
+{
+  "ticker": "ARQT",
+  "company_name": "Arcutis Biotherapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04091646",
+      "title": "Safety and Efficacy of ARQ-154 Foam in Subjects With Seborrheic Dermatitis",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Seborrheic Dermatitis",
+      "start_date": "2019-12-04",
+      "completion_date": "2020-08-21",
+      "enrollment": 0,
+      "sponsor": "Arcutis Biotherapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04211389",
+      "title": "Twin Trial of PDE4 Inhibition With Roflumilast for the Management of Plaque Psoriasis",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Chronic Plaque Psoriasis",
+      "start_date": "2019-12-17",
+      "completion_date": "2020-11-23",
+      "enrollment": 0,
+      "sponsor": "Arcutis Biotherapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04128007",
+      "title": "Safety and Efficacy of ARQ-154 Foam in Adolescent and Adult Subjects With Scalp and Body Psoriasis",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Plaque Psoriasis",
+      "start_date": "2020-01-13",
+      "completion_date": "2020-09-25",
+      "enrollment": 0,
+      "sponsor": "Arcutis Biotherapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04811131",
+      "title": "Safety and Efficacy of ARQ-252 Cream 0.3% in Subjects With Non-Segmental Facial Vitiligo",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Vitiligo",
+      "start_date": "2021-03-04",
+      "completion_date": "2021-08-09",
+      "enrollment": 0,
+      "sponsor": "Arcutis Biotherapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04156191",
+      "title": "Pharmacokinetics (PK), Safety, Efficacy and Maximal Use PK of ARQ-151 in Adolescents/Children With Mild/Moderate Eczema",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Atopic Dermatitis (Eczema)",
+      "start_date": "2019-12-23",
+      "completion_date": "2023-05-02",
+      "enrollment": 0,
+      "sponsor": "Arcutis Biotherapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04773587",
+      "title": "Trial of PDE4 Inhibition With Roflumilast for the Management of Atopic Dermatitis",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Atopic Dermatitis Eczema",
+      "start_date": "2021-01-27",
+      "completion_date": "2022-08-30",
+      "enrollment": 0,
+      "sponsor": "Arcutis Biotherapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06998056",
+      "title": "Safety Study of Roflumilast Cream 0.05% in Infants Aged 3 Months to Less Than 2 Years With Atopic Dermatitis",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Atopic Dermatitis (Eczema)",
+      "start_date": "2025-06-09",
+      "completion_date": "2025-12-04",
+      "enrollment": 0,
+      "sponsor": "Arcutis Biotherapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT03392168",
+      "title": "Safety, Pharmacokinetics and Efficacy of ARQ-151 Cream in Adults With Mild to Moderate Chronic Plaque Psoriasis",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Psoriasis",
+      "start_date": "2017-12-11",
+      "completion_date": "2018-05-02",
+      "enrollment": 0,
+      "sponsor": "Arcutis Biotherapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04973228",
+      "title": "Trial of PDE4 Inhibition With Roflumilast (ARQ-154) Foam 0.3% for the Management of Seborrheic Dermatitis (STRATUM)",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Seborrheic Dermatitis",
+      "start_date": "2021-07-08",
+      "completion_date": "2022-04-06",
+      "enrollment": 0,
+      "sponsor": "Arcutis Biotherapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04211363",
+      "title": "Trial of PDE4 Inhibition With Roflumilast for the Management of Plaque Psoriasis",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Chronic Plaque Psoriasis",
+      "start_date": "2019-12-20",
+      "completion_date": "2020-11-16",
+      "enrollment": 0,
+      "sponsor": "Arcutis Biotherapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 26,
+    "by_phase": {
+      "PHASE2": 12,
+      "PHASE3": 9,
+      "PHASE1": 3,
+      "PHASE1, PHASE2": 2
+    },
+    "by_status": {
+      "COMPLETED": 22,
+      "TERMINATED": 1,
+      "RECRUITING": 3
+    },
+    "active_trials": 3,
+    "completed_trials": 22,
+    "conditions": [
+      "Atopic Dermatitis",
+      "Atopic Dermatitis (Eczema)",
+      "Atopic Dermatitis Eczema",
+      "Chronic Hand Eczema",
+      "Chronic Plaque Psoriasis",
+      "Hidradenitis Suppurativa",
+      "Non-segmental Vitiligo",
+      "Plaque Psoriasis",
+      "Psoriasis",
+      "Psoriasis, Plaque Psoriasis",
+      "Scalp Psoriasis",
+      "Seborrheic Dermatitis",
+      "Vitiligo"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:16:35.578636",
+    "search_query": "Arcutis Biotherapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Arcutis+Biotherapeutics,+Inc."
+  }
+}

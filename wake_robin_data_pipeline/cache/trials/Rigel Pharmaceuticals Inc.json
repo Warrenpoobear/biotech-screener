@@ -1,0 +1,177 @@
+{
+  "ticker": "RIGL",
+  "company_name": "Rigel Pharmaceuticals, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06566742",
+      "title": "A Phase 2 Study Evaluating Olutasidenib in Patients With IDH1-mutated Clonal Cytopenia of Undetermined Significance and Lower-risk Myelodysplastic/Syndromes/Chronic Myelomonocytic Leukemia.",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Myelodysplastic Syndromes, Chronic Myelomonocytic Leukemia, Clonal Cytopenia of Undetermined Significance",
+      "start_date": "2024-12-10",
+      "completion_date": "2029-08-31",
+      "enrollment": 0,
+      "sponsor": "M.D. Anderson Cancer Center"
+    },
+    {
+      "nct_id": "NCT06639724",
+      "title": "Perioperative Fostamatinib With Gemcitabine and Nab-paclitaxel in Resectable Pancreatic Cancer",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Pancreatic Ductal Adenocarcinoma (PDAC)",
+      "start_date": "2024-12-05",
+      "completion_date": "2028-12",
+      "enrollment": 0,
+      "sponsor": "University of California, San Diego"
+    },
+    {
+      "nct_id": "NCT06782542",
+      "title": "Olutasidenib, Venetoclax, and Azacitidine in IDH1 Mutated Newly Diagnosed Acute Myeloid Leukemia Patients Eligible for Intensive Induction Chemotherapy",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Acute Myeloid Leukemia, IDH1 Mutation",
+      "start_date": "2026-02-01",
+      "completion_date": "2029-02-01",
+      "enrollment": 0,
+      "sponsor": "Justin Watts, MD"
+    },
+    {
+      "nct_id": "NCT04543279",
+      "title": "Fostamatinib as a Single Agent or in Combination With Ruxolitinib for Treatment of Patients With Myelofibrosis With Severe Thrombocytopenia",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Myelofibrosis, Thrombocytopenia",
+      "start_date": "2021-05-03",
+      "completion_date": "2022-07-30",
+      "enrollment": 0,
+      "sponsor": "Washington University School of Medicine"
+    },
+    {
+      "nct_id": "NCT04629703",
+      "title": "Double-Blind, Randomized, Placebo-Controlled, Multi-Center Phase 3 Study to Evaluate the Efficacy and Safety of Fostamatinib in COVID-19 Subjects",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Covid19, SARS (Severe Acute Respiratory Syndrome), SARS Pneumonia, SARS-Associated Coronavirus as Cause of Disease Classified Elsewhere, Pneumonia, Pneumonia, Viral",
+      "start_date": "2021-03-25",
+      "completion_date": "2022-09-05",
+      "enrollment": 0,
+      "sponsor": "Rigel Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT07032727",
+      "title": "Olutasidenib Combined With Co-targeted Therapy in Relapsed or Refractory IDH1-mutated Myeloid Malignancies Harboring Activated Signaling Pathway Mutations",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Targeted Therapy, IDH1-Mutated Malignancies, Mutations",
+      "start_date": "2025-09-12",
+      "completion_date": "2029-06-01",
+      "enrollment": 0,
+      "sponsor": "M.D. Anderson Cancer Center"
+    },
+    {
+      "nct_id": "NCT00115089",
+      "title": "7 Day Study of Mast Cell Inhibitor, R926112, in Patients With Symptomatic Seasonal Allergic Rhinitis",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Rhinitis, Allergic, Seasonal",
+      "start_date": "2005-07",
+      "completion_date": "2005-09",
+      "enrollment": 0,
+      "sponsor": "Rigel Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT00665925",
+      "title": "Efficacy and Safety Study of R935788 Tablets to Treat Rheumatoid Arthritis",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Rheumatoid Arthritis",
+      "start_date": "2008-05",
+      "completion_date": "2009-06",
+      "enrollment": 0,
+      "sponsor": "Rigel Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT05040698",
+      "title": "Study of the Effect of Fostamatinib Upon Cutaneous Inflammation in the Setting of Hidradenitis Suppurativa",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Hidradenitis Suppurativa",
+      "start_date": "2021-10-01",
+      "completion_date": "2023-01-27",
+      "enrollment": 0,
+      "sponsor": "Holdsworth House Medical Practice"
+    },
+    {
+      "nct_id": "NCT04138927",
+      "title": "A Phase 3 Open Label Extension Study of Fostamatinib Disodium in the Treatment of Warm Antibody Autoimmune Hemolytic Anemia",
+      "status": "ENROLLING_BY_INVITATION",
+      "phase": "PHASE3",
+      "condition": "Warm Antibody Autoimmune Hemolytic Anemia",
+      "start_date": "2019-10-30",
+      "completion_date": "2024-04",
+      "enrollment": 0,
+      "sponsor": "Rigel Pharmaceuticals"
+    }
+  ],
+  "summary": {
+    "total_trials": 40,
+    "by_phase": {
+      "PHASE2": 23,
+      "PHASE1": 5,
+      "PHASE3": 6,
+      "PHASE1, PHASE2": 4,
+      "": 2
+    },
+    "by_status": {
+      "RECRUITING": 10,
+      "TERMINATED": 2,
+      "COMPLETED": 22,
+      "ENROLLING_BY_INVITATION": 1,
+      "NOT_YET_RECRUITING": 2,
+      "NO_LONGER_AVAILABLE": 1,
+      "WITHDRAWN": 2
+    },
+    "active_trials": 11,
+    "completed_trials": 22,
+    "conditions": [
+      "Acute Myeloid Leukemia",
+      "Acute Myeloid Leukemia, IDH1 Mutation",
+      "Acute Respiratory Distress Syndrome, ARDS",
+      "Asthma",
+      "Chronic Graft Versus Host Disease",
+      "Chronic Graft-versus-host Disease",
+      "Chronic Myelomonocytic Leukemia, Advanced Myeloproliferative Neoplasms, IDH1-mutated Higher-Risk Myelodysplastic Syndromes",
+      "Coronavirus, Covid19, Pneumonia",
+      "Covid19, SARS (Severe Acute Respiratory Syndrome), SARS Pneumonia, SARS-Associated Coronavirus as Cause of Disease Classified Elsewhere, Pneumonia, Pneumonia, Viral",
+      "Hidradenitis Suppurativa",
+      "High Grade Glioma, Astrocytoma, Astrocytoma, Grade III, Astrocytoma, Grade IV, Diffuse Intrinsic Pontine Glioma, WHO Grade III Glioma, WHO Grade IV Glioma, Metastatic Brain Tumor, Diffuse Midline Glioma, H3 K27M-Mutant, Thalamus Tumor, Spinal Tumor, IDH1 Mutation, IDH1 R132, IDH1 R132C, IDH1 R132H, IDH1 R132S, IDH1 R132G, IDH1 R132L, Oligodendroglioma",
+      "IGA Nephropathy",
+      "ITP, Immune Thrombocytopenia",
+      "Immune Thrombocytopenic Purpura",
+      "Keratoconjunctivitis Sicca",
+      "Low Risk Myelodysplastic Syndromes",
+      "Lupus Erythematosus, Discoid, Lupus Erythematosus, Systemic",
+      "Lymphoma",
+      "Mutant IDH1 Inhibitor Olutasidenib",
+      "Myelodysplastic Syndromes, Chronic Myelomonocytic Leukemia, Clonal Cytopenia of Undetermined Significance",
+      "Myelofibrosis, Thrombocytopenia",
+      "Ovarian Cancer",
+      "Pancreatic Ductal Adenocarcinoma (PDAC)",
+      "Purpura, Thrombocytopenic, Idiopathic",
+      "Rheumatoid Arthritis",
+      "Rhinitis, Allergic, Seasonal",
+      "Systemic Lupus Erythematosus",
+      "T Cell Lymphoma",
+      "Targeted Therapy, IDH1-Mutated Malignancies, Mutations",
+      "Warm Antibody Autoimmune Hemolytic Anemia"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:21:31.692162",
+    "search_query": "Rigel Pharmaceuticals, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Rigel+Pharmaceuticals,+Inc."
+  }
+}

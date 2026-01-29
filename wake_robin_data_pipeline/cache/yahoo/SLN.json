@@ -1,0 +1,43 @@
+{
+  "ticker": "SLN",
+  "success": true,
+  "price": {
+    "current": 5.1,
+    "currency": "USD",
+    "day_high": 5.13,
+    "day_low": 4.94,
+    "52_week_high": 7.775,
+    "52_week_low": 1.97
+  },
+  "market_cap": {
+    "value": 240893136.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 47233949.0,
+  "volume": {
+    "last": 36023,
+    "average_30d": 341396
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -5.6666665,
+    "price_to_book": 3.252551
+  },
+  "company_info": {
+    "name": "Silence Therapeutics plc",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:09:52.340396",
+    "url": "https://finance.yahoo.com/quote/SLN",
+    "data_hash": "2686d4ef011e3b78"
+  }
+}

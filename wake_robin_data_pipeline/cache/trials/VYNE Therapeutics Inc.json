@@ -1,0 +1,168 @@
+{
+  "ticker": "VYNE",
+  "company_name": "VYNE Therapeutics Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT03836001",
+      "title": "A Neurokinin-1 Receptor Antagonist for the Treatment of Pruritus in Patients With Epidermolysis Bullosa",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Epidermolysis Bullosa",
+      "start_date": "2019-04-18",
+      "completion_date": "2022-06-24",
+      "enrollment": 0,
+      "sponsor": "Stanford University"
+    },
+    {
+      "nct_id": "NCT04052711",
+      "title": "A Randomized, Controlled Study to Evaluate the Sensitizing Potential of FMX-101 in Healthy Volunteers Using a Repeat Insult Patch Test Design",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2016-09-08",
+      "completion_date": "2016-12-19",
+      "enrollment": 0,
+      "sponsor": "Vyne Therapeutics Inc."
+    },
+    {
+      "nct_id": "NCT01494285",
+      "title": "Clinical Study to Evaluate Tolerability and Safety of ARK-E021 Foam and to Monitor Clinical Effect in Acne Vulgaris Patients",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Acne Vulgaris",
+      "start_date": "2012-06",
+      "completion_date": "2013-10",
+      "enrollment": 0,
+      "sponsor": "M. Arkin 1999 Ltd."
+    },
+    {
+      "nct_id": "NCT02250859",
+      "title": "A Pharmacokinetic Study of Minocycline in Male and Female Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Acne",
+      "start_date": "2014-09",
+      "completion_date": "2015-01",
+      "enrollment": 0,
+      "sponsor": "Vyne Therapeutics Inc."
+    },
+    {
+      "nct_id": "NCT03282591",
+      "title": "Study of the Efficacy, Safety, and Tolerability of Serlopitant for the Treatment of Refractory Chronic Cough",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Refractory Chronic Cough",
+      "start_date": "2017-10-03",
+      "completion_date": "2018-09-06",
+      "enrollment": 0,
+      "sponsor": "Vyne Therapeutics Inc."
+    },
+    {
+      "nct_id": "NCT04064125",
+      "title": "Dermal Cumulative Irritant Patch Study",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2016-09-01",
+      "completion_date": "2016-10-28",
+      "enrollment": 0,
+      "sponsor": "Vyne Therapeutics Inc."
+    },
+    {
+      "nct_id": "NCT03271021",
+      "title": "A Study to Evaluate the Efficacy and Safety of Topical Administration of FMX101 in the Treatment of Moderate-to-Severe Acne Vulgaris",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Acne Vulgaris",
+      "start_date": "2017-07-17",
+      "completion_date": "2018-09-04",
+      "enrollment": 0,
+      "sponsor": "Vyne Therapeutics Inc."
+    },
+    {
+      "nct_id": "NCT02239731",
+      "title": "Safety, Tolerability and Efficacy Study of Doxycycline Foam for the Prevention of EGFRI Skin Toxicity in Cancer Patients",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Rash Due to Epidermal Growth Factor Receptor Inhibitors",
+      "start_date": "2014-10",
+      "completion_date": "2015-10",
+      "enrollment": 0,
+      "sponsor": "Vyne Therapeutics Inc."
+    },
+    {
+      "nct_id": "NCT01171326",
+      "title": "Study to Evaluate the Safety and Efficacy of Topical Minocycline FXFM244 in Impetigo Patients",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Impetigo",
+      "start_date": "2010-08",
+      "completion_date": "2012-04",
+      "enrollment": 0,
+      "sponsor": "Vyne Therapeutics Inc."
+    },
+    {
+      "nct_id": "NCT04070742",
+      "title": "Dermal Phototoxicity Study",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2016-08-17",
+      "completion_date": "2016-10-01",
+      "enrollment": 0,
+      "sponsor": "Vyne Therapeutics Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 37,
+    "by_phase": {
+      "PHASE2": 19,
+      "PHASE1": 6,
+      "PHASE1, PHASE2": 2,
+      "PHASE3": 9,
+      "PHASE4": 1
+    },
+    "by_status": {
+      "COMPLETED": 32,
+      "ACTIVE_NOT_RECRUITING": 1,
+      "TERMINATED": 4
+    },
+    "active_trials": 1,
+    "completed_trials": 32,
+    "conditions": [
+      "Acne",
+      "Acne Vulgaris",
+      "Alcohol Dependence",
+      "Atopic Dermatitis",
+      "Chronic Pruritus",
+      "Epidermolysis Bullosa",
+      "Epidermolysis Bullosa, Pruritus",
+      "Facial Papulopustular Rosacea",
+      "Healthy",
+      "Impetigo",
+      "Non-segmental Vitiligo",
+      "Papulopustular Rosacea",
+      "Prurigo Nodularis",
+      "Pruritus",
+      "Pruritus, Atopic Dermatitis",
+      "Pruritus, Burns",
+      "Pruritus, Prurigo Nodularis",
+      "Pruritus, Prurigo Nodularis, Atopic Dermatitis, Psoriasis",
+      "Pruritus, Psoriasis",
+      "Rash Due to Epidermal Growth Factor Receptor Inhibitors",
+      "Refractory Chronic Cough",
+      "Rosacea",
+      "Rosacea, Papulopustular Rosacea",
+      "Scabies",
+      "Urinary Incontinence, Overactive Bladder"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T13:12:18.111354",
+    "search_query": "VYNE Therapeutics Inc.",
+    "url": "https://clinicaltrials.gov/search?term=VYNE+Therapeutics+Inc."
+  }
+}

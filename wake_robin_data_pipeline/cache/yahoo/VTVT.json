@@ -1,0 +1,43 @@
+{
+  "ticker": "VTVT",
+  "success": true,
+  "price": {
+    "current": 34.14,
+    "currency": "USD",
+    "day_high": 34.22,
+    "day_low": 33.0,
+    "52_week_high": 44.0,
+    "52_week_low": 14.0
+  },
+  "market_cap": {
+    "value": 134443936.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 3938018.0,
+  "volume": {
+    "last": 2589,
+    "average_30d": 20017
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -7.9211135,
+    "price_to_book": 6.005277
+  },
+  "company_info": {
+    "name": "vTv Therapeutics Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T12:35:38.370528",
+    "url": "https://finance.yahoo.com/quote/VTVT",
+    "data_hash": "561bab263487d07e"
+  }
+}

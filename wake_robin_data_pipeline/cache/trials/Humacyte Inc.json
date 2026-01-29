@@ -1,0 +1,156 @@
+{
+  "ticker": "HUMA",
+  "company_name": "Humacyte, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT03631056",
+      "title": "Individual Patient Expanded Access for Acellular Tissue Engineered Vessel (ATEV) for Vascular System Injuries",
+      "status": "APPROVED_FOR_MARKETING",
+      "phase": "",
+      "condition": "Vascular System Injuries",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Humacyte, Inc."
+    },
+    {
+      "nct_id": "NCT01744418",
+      "title": "Evaluation of the Safety and Efficacy of a Vascular Prosthesis for Hemodialysis Access in Patients With ESRD",
+      "status": "COMPLETED",
+      "phase": "NA",
+      "condition": "End-stage Renal Disease, Kidney Failure, Chronic",
+      "start_date": "2012-11-22",
+      "completion_date": "2024-03-26",
+      "enrollment": 0,
+      "sponsor": "Humacyte, Inc."
+    },
+    {
+      "nct_id": "NCT02887859",
+      "title": "Humacyte's HAV for Femoro-Popliteal Bypass in Patients With PAD",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Peripheral Artery Disease",
+      "start_date": "2016-12-20",
+      "completion_date": "2023-12",
+      "enrollment": 0,
+      "sponsor": "Humacyte, Inc."
+    },
+    {
+      "nct_id": "NCT02644941",
+      "title": "Comparison of the Human Acellular Vessel (HAV) With ePTFE Grafts as Conduits for Hemodialysis",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Renal Failure, End Stage Renal Disease, Hemodialysis, Vascular Access",
+      "start_date": "2016-05-24",
+      "completion_date": "2023-09",
+      "enrollment": 0,
+      "sponsor": "Humacyte, Inc."
+    },
+    {
+      "nct_id": "NCT04135417",
+      "title": "Safety and Efficacy Assessment of HAV in Patients Needing Vascular Access for Dialysis",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Renal Failure, End Stage Renal Disease, Vascular Access, Hemodialysis",
+      "start_date": "2019-11-12",
+      "completion_date": "2022-03-02",
+      "enrollment": 0,
+      "sponsor": "Humacyte, Inc."
+    },
+    {
+      "nct_id": "NCT07141641",
+      "title": "Individual Patient Expanded Access for Acellular Tissue Engineered Vessel (ATEV) for Vascular Disease and Dialysis Access",
+      "status": "TEMPORARILY_NOT_AVAILABLE",
+      "phase": "",
+      "condition": "Vascular Diseases, End Stage Renal Disease on Dialysis",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Humacyte, Inc."
+    },
+    {
+      "nct_id": "NCT03005418",
+      "title": "Humacyte Human Acellular Vessel (HAV) in Patients With Vascular Trauma",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Trauma, Vascular System Injury",
+      "start_date": "2018-09-01",
+      "completion_date": "2027-09-01",
+      "enrollment": 0,
+      "sponsor": "Humacyte, Inc."
+    },
+    {
+      "nct_id": "NCT05873959",
+      "title": "An Observational Study to Evaluate the Safety and Efficacy of Humacyte's HAV for Arterial Replacement or Reconstruction in Ukrainian Patients With Life or Limb-threatening Vascular Trauma",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Trauma, Trauma Injury, Trauma, Multiple, Trauma Blunt",
+      "start_date": "2023-05-01",
+      "completion_date": "2024-01-15",
+      "enrollment": 0,
+      "sponsor": "Humacyte, Inc."
+    },
+    {
+      "nct_id": "NCT01840956",
+      "title": "Safety and Efficacy of a Vascular Prosthesis for Hemodialysis Access in Patients With End-Stage Renal Disease",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "End-stage Renal Disease, Kidney Failure, Chronic",
+      "start_date": "2013-05-23",
+      "completion_date": "2016-04-28",
+      "enrollment": 0,
+      "sponsor": "Humacyte, Inc."
+    },
+    {
+      "nct_id": "NCT03183245",
+      "title": "Comparison of the Human Acellular Vessel (HAV) With Fistulas as Conduits for Hemodialysis",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Renal Failure, End Stage Renal Disease, Hemodialysis, Vascular Access",
+      "start_date": "2017-09-29",
+      "completion_date": "2025-06-19",
+      "enrollment": 0,
+      "sponsor": "Humacyte, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 12,
+    "by_phase": {
+      "": 3,
+      "NA": 2,
+      "PHASE2": 2,
+      "PHASE3": 3,
+      "PHASE2, PHASE3": 1,
+      "PHASE1": 1
+    },
+    "by_status": {
+      "APPROVED_FOR_MARKETING": 1,
+      "COMPLETED": 8,
+      "TEMPORARILY_NOT_AVAILABLE": 1,
+      "ACTIVE_NOT_RECRUITING": 1,
+      "RECRUITING": 1
+    },
+    "active_trials": 2,
+    "completed_trials": 8,
+    "conditions": [
+      "End Stage Renal Disease (ESRD)",
+      "End-stage Renal Disease, Kidney Failure, Chronic",
+      "Peripheral Arterial Disease, Peripheral Vascular Disease",
+      "Peripheral Artery Disease",
+      "Renal Failure, End Stage Renal Disease, Hemodialysis, Vascular Access",
+      "Renal Failure, End Stage Renal Disease, Vascular Access, Hemodialysis",
+      "Trauma, Trauma Injury, Trauma, Multiple, Trauma Blunt",
+      "Trauma, Vascular System Injury",
+      "Vascular Diseases, End Stage Renal Disease on Dialysis",
+      "Vascular System Injuries"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:18:53.101973",
+    "search_query": "Humacyte, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Humacyte,+Inc."
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "IBRX",
+  "success": true,
+  "price": {
+    "current": 5.855,
+    "currency": "USD",
+    "day_high": 6.35,
+    "day_low": 5.8201,
+    "52_week_high": 8.28,
+    "52_week_low": 1.83
+  },
+  "market_cap": {
+    "value": 5766971392.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 984965179.0,
+  "volume": {
+    "last": 9501548,
+    "average_30d": 46878824
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -22.811392,
+    "price_to_book": -11.005639
+  },
+  "company_info": {
+    "name": "ImmunityBio, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:07:02.640826",
+    "url": "https://finance.yahoo.com/quote/IBRX",
+    "data_hash": "bf0260e2fc9c67d0"
+  }
+}

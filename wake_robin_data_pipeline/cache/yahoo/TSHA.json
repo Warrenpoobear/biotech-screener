@@ -1,0 +1,43 @@
+{
+  "ticker": "TSHA",
+  "success": true,
+  "price": {
+    "current": 4.54,
+    "currency": "USD",
+    "day_high": 4.605,
+    "day_low": 4.49,
+    "52_week_high": 6.02,
+    "52_week_low": 1.05
+  },
+  "market_cap": {
+    "value": 1243593856.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 273919373.0,
+  "volume": {
+    "last": 420030,
+    "average_30d": 2646901
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -10.365297,
+    "price_to_book": 5.682102
+  },
+  "company_info": {
+    "name": "Taysha Gene Therapies, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:10:25.548687",
+    "url": "https://finance.yahoo.com/quote/TSHA",
+    "data_hash": "a62cffddd5396d2a"
+  }
+}

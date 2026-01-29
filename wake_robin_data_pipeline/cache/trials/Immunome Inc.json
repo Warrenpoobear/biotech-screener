@@ -1,0 +1,113 @@
+{
+  "ticker": "IMNM",
+  "company_name": "Immunome, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06823167",
+      "title": "A Phase 1 Study of IM-1021 in Participants With Advanced Cancer",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Solid Malignancies, Hematologic Malignancies",
+      "start_date": "2025-02-26",
+      "completion_date": "2029-02",
+      "enrollment": 0,
+      "sponsor": "Immunome, Inc."
+    },
+    {
+      "nct_id": "NCT06855264",
+      "title": "A Cardiac Liability Study of Varegacestat in Healthy Participants",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteer",
+      "start_date": "2025-02-24",
+      "completion_date": "2025-05-06",
+      "enrollment": 0,
+      "sponsor": "Immunome, Inc."
+    },
+    {
+      "nct_id": "NCT06845852",
+      "title": "A Phase 1 Mass Balance Study of Varegacestat",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteer",
+      "start_date": "2025-02-25",
+      "completion_date": "2025-03-26",
+      "enrollment": 0,
+      "sponsor": "Immunome, Inc."
+    },
+    {
+      "nct_id": "NCT04871282",
+      "title": "A Study of AL102 in Patients With Progressing Desmoid Tumors",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Desmoid, Desmoid Tumor",
+      "start_date": "2021-03-30",
+      "completion_date": "2026-10",
+      "enrollment": 0,
+      "sponsor": "Immunome, Inc."
+    },
+    {
+      "nct_id": "NCT06677996",
+      "title": "A Phase 1 Study to Examine the Effects of Itraconazole After Single Dose Administration of Varegacestat (AL102) to Healthy Participants",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteer",
+      "start_date": "2024-11-11",
+      "completion_date": "2025-05-07",
+      "enrollment": 0,
+      "sponsor": "Immunome, Inc."
+    },
+    {
+      "nct_id": "NCT06841315",
+      "title": "A Varegacestat Hepatic Impairment Study",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteer, Hepatic Impairment (HI)",
+      "start_date": "2025-03-07",
+      "completion_date": "2026-02",
+      "enrollment": 0,
+      "sponsor": "Immunome, Inc."
+    },
+    {
+      "nct_id": "NCT05429021",
+      "title": "IMM-BCP-01 in Mild to Moderate COVID-19",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "SARS-CoV2 Infection, COVID-19",
+      "start_date": "2022-06-03",
+      "completion_date": "2023-01-06",
+      "enrollment": 0,
+      "sponsor": "Immunome, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 7,
+    "by_phase": {
+      "PHASE1": 6,
+      "PHASE2, PHASE3": 1
+    },
+    "by_status": {
+      "RECRUITING": 1,
+      "COMPLETED": 3,
+      "ACTIVE_NOT_RECRUITING": 2,
+      "TERMINATED": 1
+    },
+    "active_trials": 3,
+    "completed_trials": 3,
+    "conditions": [
+      "Desmoid, Desmoid Tumor",
+      "Healthy Volunteer",
+      "Healthy Volunteer, Hepatic Impairment (HI)",
+      "SARS-CoV2 Infection, COVID-19",
+      "Solid Malignancies, Hematologic Malignancies"
+    ],
+    "lead_stage": "phase_1"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:36:07.535028",
+    "search_query": "Immunome, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Immunome,+Inc."
+  }
+}

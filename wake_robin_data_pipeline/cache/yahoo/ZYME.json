@@ -1,0 +1,43 @@
+{
+  "ticker": "ZYME",
+  "success": true,
+  "price": {
+    "current": 22.32,
+    "currency": "USD",
+    "day_high": 22.69,
+    "day_low": 22.08,
+    "52_week_high": 28.49,
+    "52_week_low": 9.03
+  },
+  "market_cap": {
+    "value": 1699676544.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 74836534.0,
+  "volume": {
+    "last": 108839,
+    "average_30d": 905679
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": 68.344666,
+    "price_to_book": 5.239436
+  },
+  "company_info": {
+    "name": "Zymeworks Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:10:57.117794",
+    "url": "https://finance.yahoo.com/quote/ZYME",
+    "data_hash": "59d15a12305621e7"
+  }
+}

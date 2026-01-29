@@ -1,0 +1,43 @@
+{
+  "ticker": "PRME",
+  "success": true,
+  "price": {
+    "current": 4.05,
+    "currency": "USD",
+    "day_high": 4.1765,
+    "day_low": 3.99,
+    "52_week_high": 6.94,
+    "52_week_low": 1.11
+  },
+  "market_cap": {
+    "value": 731068160.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 180510658.0,
+  "volume": {
+    "last": 950057,
+    "average_30d": 3171120
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -4.4971523,
+    "price_to_book": 4.4262295
+  },
+  "company_info": {
+    "name": "Prime Medicine, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:09:03.607978",
+    "url": "https://finance.yahoo.com/quote/PRME",
+    "data_hash": "9230d7e26a3ec778"
+  }
+}

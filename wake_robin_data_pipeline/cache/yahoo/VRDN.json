@@ -1,0 +1,43 @@
+{
+  "ticker": "VRDN",
+  "success": true,
+  "price": {
+    "current": 33.07,
+    "currency": "USD",
+    "day_high": 34.18,
+    "day_low": 33.0,
+    "52_week_high": 34.29,
+    "52_week_low": 9.9
+  },
+  "market_cap": {
+    "value": 3156267264.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 95367908.0,
+  "volume": {
+    "last": 215376,
+    "average_30d": 1388248
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -9.2618265,
+    "price_to_book": 8.657068
+  },
+  "company_info": {
+    "name": "Viridian Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:10:44.654803",
+    "url": "https://finance.yahoo.com/quote/VRDN",
+    "data_hash": "52a6727077a7cbb4"
+  }
+}

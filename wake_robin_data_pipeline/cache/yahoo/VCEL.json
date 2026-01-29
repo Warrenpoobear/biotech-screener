@@ -1,0 +1,43 @@
+{
+  "ticker": "VCEL",
+  "success": true,
+  "price": {
+    "current": 35.58,
+    "currency": "USD",
+    "day_high": 36.3,
+    "day_low": 35.57,
+    "52_week_high": 63.0,
+    "52_week_low": 29.24
+  },
+  "market_cap": {
+    "value": 1799423872.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 50574026.0,
+  "volume": {
+    "last": 52353,
+    "average_30d": 507170
+  },
+  "valuation": {
+    "pe_ratio": 136.84616,
+    "forward_pe": 61.344833,
+    "price_to_book": 5.588189
+  },
+  "company_info": {
+    "name": "Vericel Corporation",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:10:35.213377",
+    "url": "https://finance.yahoo.com/quote/VCEL",
+    "data_hash": "f74996ed051d6f2a"
+  }
+}

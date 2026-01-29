@@ -1,0 +1,163 @@
+{
+  "ticker": "URGN",
+  "company_name": "UroGen Pharma Ltd.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT02891460",
+      "title": "Pilot Study to Evaluate the Clinical Response to Mitomycin-C in Hydrogel (TC-3) Administered Intravesically in NMIBC Patients",
+      "status": "COMPLETED",
+      "phase": "NA",
+      "condition": "Urinary Bladder Neoplasms, Urologic Neoplasms, Neoplasms, Urinary Bladder Diseases, Urologic Diseases",
+      "start_date": "2013-01",
+      "completion_date": "2015-03",
+      "enrollment": 0,
+      "sponsor": "UroGen Pharma Ltd."
+    },
+    {
+      "nct_id": "NCT04688931",
+      "title": "A Phase 3 Study of UGN-102 for Low-Grade Intermediate-Risk Non-Muscle Invasive Bladder Cancer",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Bladder Cancer, Urothelial Carcinoma, Urothelial Carcinoma Bladder",
+      "start_date": "2021-02-19",
+      "completion_date": "2023-03-17",
+      "enrollment": 0,
+      "sponsor": "UroGen Pharma Ltd."
+    },
+    {
+      "nct_id": "NCT05243550",
+      "title": "A Phase 3 Single-Arm Study of UGN-102 for Treatment of Low-Grade Intermediate-Risk Non-Muscle Invasive Bladder Cancer",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Bladder Cancer, Urothelial Carcinoma, Urothelial Carcinoma Bladder",
+      "start_date": "2022-03-01",
+      "completion_date": "2028-02",
+      "enrollment": 0,
+      "sponsor": "UroGen Pharma Ltd."
+    },
+    {
+      "nct_id": "NCT02674269",
+      "title": "Safety and Efficacy Study of Intravesical Instillations of BotuGelTM, Slow Release RTGel Based Botox\u00ae Formulations, in Idiopathic OAB Patients With Urinary Incontinence (\"INTIMO2\")",
+      "status": "WITHDRAWN",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Overactive Bladder",
+      "start_date": "2016-10",
+      "completion_date": "2016-10",
+      "enrollment": 0,
+      "sponsor": "UroGen Pharma Ltd."
+    },
+    {
+      "nct_id": "NCT06774131",
+      "title": "A Phase 3 Single-arm Study of UGN-104 for the Treatment of Low-grade Upper Tract Urothelial Cancer",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Upper Urinary Tract Urothelial Carcinoma, Urothelial Carcinoma",
+      "start_date": "2025-08-06",
+      "completion_date": "2027-10",
+      "enrollment": 0,
+      "sponsor": "UroGen Pharma Ltd."
+    },
+    {
+      "nct_id": "NCT01799499",
+      "title": "A Prospective Open Label Comparative Dose Ranging Study Evaluating the Effect of Pre-TURBT Intravesical Instillation of Mitomycin C (MMC) Mixed With TC-3 Gel in Patients With Non Muscle Invasive Bladder Cancer (NMIBC)",
+      "status": "WITHDRAWN",
+      "phase": "NA",
+      "condition": "Non Muscle Invasive Bladder Cancer",
+      "start_date": "2013-03",
+      "completion_date": "2013-03",
+      "enrollment": 0,
+      "sponsor": "UroGen Pharma Ltd."
+    },
+    {
+      "nct_id": "NCT01997983",
+      "title": "Efficacy and Safety of Intravesical Instillations of Botulinum Toxin in TC-3 Gel in IC Patients",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Interstitial Cystitis, IC",
+      "start_date": "2013-11",
+      "completion_date": "2015-08",
+      "enrollment": 0,
+      "sponsor": "UroGen Pharma Ltd."
+    },
+    {
+      "nct_id": "NCT01803295",
+      "title": "Pre-TURBT TC-3 Gel Intravesical Instillation in NMIBC",
+      "status": "COMPLETED",
+      "phase": "NA",
+      "condition": "Carcinoma of Urinary Bladder, Superficial",
+      "start_date": "2013-06",
+      "completion_date": "2017-06",
+      "enrollment": 0,
+      "sponsor": "UroGen Pharma Ltd."
+    },
+    {
+      "nct_id": "NCT05136898",
+      "title": "Feasibility of Home Instillation of UGN-102 for Treatment of Low-Grade (LG) Non-Muscle Invasive Bladder Cancer (NMIBC)",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Bladder Cancer, Urothelial Carcinoma, Urothelial Carcinoma Bladder",
+      "start_date": "2021-11-30",
+      "completion_date": "2023-02-02",
+      "enrollment": 0,
+      "sponsor": "UroGen Pharma Ltd."
+    },
+    {
+      "nct_id": "NCT05375903",
+      "title": "A Phase 1 Dose-escalation Study of UGN-301 in Patients With Recurrent Non-muscle Invasive Bladder Cancer (NMIBC)",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Non-muscle Invasive Bladder Cancer, NMIBC, Carcinoma in Situ of Bladder, Bladder Cancer, Urothelial Carcinoma Bladder, Urothelial Carcinoma Recurrent",
+      "start_date": "2022-06-01",
+      "completion_date": "2026-01-09",
+      "enrollment": 0,
+      "sponsor": "UroGen Pharma Ltd."
+    }
+  ],
+  "summary": {
+    "total_trials": 20,
+    "by_phase": {
+      "NA": 4,
+      "PHASE3": 7,
+      "PHASE1, PHASE2": 3,
+      "PHASE1": 1,
+      "PHASE2": 2,
+      "": 3
+    },
+    "by_status": {
+      "COMPLETED": 9,
+      "TERMINATED": 2,
+      "ACTIVE_NOT_RECRUITING": 2,
+      "WITHDRAWN": 3,
+      "RECRUITING": 2,
+      "NO_LONGER_AVAILABLE": 1,
+      "AVAILABLE": 1
+    },
+    "active_trials": 4,
+    "completed_trials": 9,
+    "conditions": [
+      "Bladder Cancer, Neoplasms, Urinary Bladder Diseases, Urologic Diseases",
+      "Bladder Cancer, Urothelial Carcinoma, Urothelial Carcinoma Bladder",
+      "Carcinoma of Urinary Bladder, Invasive",
+      "Carcinoma of Urinary Bladder, Superficial",
+      "Carcinoma, Transitional Cell Carcinoma, Transitional Cell Cancer of the Renal Pelvis and Ureter",
+      "Carcinoma, Transitional Cell, Transitional Cell Carcinoma of Renal Pelvis",
+      "Interstitial Cystitis, IC",
+      "Non Muscle Invasive Bladder Cancer",
+      "Non-muscle Invasive Bladder Cancer, NMIBC, Carcinoma in Situ of Bladder, Bladder Cancer, Urothelial Carcinoma Bladder, Urothelial Carcinoma Recurrent",
+      "Overactive Bladder",
+      "Upper Urinary Tract Urothelial Carcinoma, Urothelial Carcinoma",
+      "Urinary Bladder Neoplasms, Urologic Neoplasms, Neoplasms, Urinary Bladder Diseases, Urologic Diseases",
+      "Urothelial Cancer of Renal Pelvis, Urothelial Carcinoma of the Renal Pelvis and Ureter, Urothelial Carcinoma Ureter, Urothelial Carcinoma Ureter Recurrent, Urothelial Carcinoma, Urothelial Carcinoma Recurrent",
+      "Urothelial Carcinoma Ureteral Location",
+      "Urothelial Carcinoma, Urothelial Carcinoma Recurrent, Urothelial Carcinoma Ureter, Urothelial Carcinoma Ureter Recurrent, Urothelial Cancer of Renal Pelvis, Urothelial Carcinoma of the Renal Pelvis and Ureter, Carcinoma, Transitional Cell, Transitional Cell Carcinoma of Renal Pelvis"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:22:40.949488",
+    "search_query": "UroGen Pharma Ltd.",
+    "url": "https://clinicaltrials.gov/search?term=UroGen+Pharma+Ltd."
+  }
+}

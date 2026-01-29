@@ -1,0 +1,65 @@
+{
+  "ticker": "STOK",
+  "company_name": "Stoke Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04740476",
+      "title": "An Open-Label Extension Study of STK-001 for Patients With Dravet Syndrome",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Dravet Syndrome",
+      "start_date": "2021-01-20",
+      "completion_date": "2029-03-31",
+      "enrollment": 0,
+      "sponsor": "Stoke Therapeutics, Inc"
+    },
+    {
+      "nct_id": "NCT04442295",
+      "title": "An Open-Label Study to Investigate the Safety of Single and Multiple Ascending Doses in Children and Adolescents With Dravet Syndrome",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Dravet Syndrome",
+      "start_date": "2020-06-29",
+      "completion_date": "2023-11-14",
+      "enrollment": 0,
+      "sponsor": "Stoke Therapeutics, Inc"
+    },
+    {
+      "nct_id": "NCT06872125",
+      "title": "A Double-blind Study Evaluating the Efficacy, Safety, and Tolerability of Zorevunersen in Patients With Dravet Syndrome",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Dravet Syndrome",
+      "start_date": "2025-06-04",
+      "completion_date": "2027-08",
+      "enrollment": 0,
+      "sponsor": "Stoke Therapeutics, Inc"
+    }
+  ],
+  "summary": {
+    "total_trials": 3,
+    "by_phase": {
+      "PHASE2": 1,
+      "PHASE1, PHASE2": 1,
+      "PHASE3": 1
+    },
+    "by_status": {
+      "ACTIVE_NOT_RECRUITING": 1,
+      "COMPLETED": 1,
+      "RECRUITING": 1
+    },
+    "active_trials": 2,
+    "completed_trials": 1,
+    "conditions": [
+      "Dravet Syndrome"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:22:06.302701",
+    "search_query": "Stoke Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Stoke+Therapeutics,+Inc."
+  }
+}

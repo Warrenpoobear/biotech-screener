@@ -1,0 +1,150 @@
+{
+  "ticker": "AVXL",
+  "company_name": "Anavex Life Sciences Corp.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04025502",
+      "title": "Event-Related Potential (ERP) Biomarkers in Subjects With Schizophrenia and Healthy Volunteer Subjects",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Schizophrenia",
+      "start_date": "2019-10-07",
+      "completion_date": "2021-01-31",
+      "enrollment": 0,
+      "sponsor": "ERP Biomarker Qualification Consortium"
+    },
+    {
+      "nct_id": "NCT02244541",
+      "title": "Phase 2a Dose Finding, PK/PD and 12 Month Exploratory Efficacy Study of ANAVEX2-73 in Patients With Alzheimer's Disease",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Alzheimer's Disease",
+      "start_date": "2014-12",
+      "completion_date": "2016-11",
+      "enrollment": 0,
+      "sponsor": "Anavex Life Sciences Corp."
+    },
+    {
+      "nct_id": "NCT03758924",
+      "title": "Study of ANAVEX2-73 in Patients With Rett Syndrome",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Rett Syndrome",
+      "start_date": "2019-02-28",
+      "completion_date": "2020-10-30",
+      "enrollment": 0,
+      "sponsor": "Anavex Life Sciences Corp."
+    },
+    {
+      "nct_id": "NCT03774459",
+      "title": "ANAVEX2-73 Study in Parkinson's Disease Dementia",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Parkinsons Disease With Dementia",
+      "start_date": "2018-07-09",
+      "completion_date": "2020-09-30",
+      "enrollment": 0,
+      "sponsor": "Anavex Life Sciences Corp."
+    },
+    {
+      "nct_id": "NCT04442945",
+      "title": "Phase 1 Study of ANAVEX3-71",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2020-07-03",
+      "completion_date": "2021-10-30",
+      "enrollment": 0,
+      "sponsor": "Anavex Life Sciences Corp."
+    },
+    {
+      "nct_id": "NCT03941444",
+      "title": "ANAVEX2-73 Study in Patients With Rett Syndrome",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Rett Syndrome",
+      "start_date": "2019-05-06",
+      "completion_date": "2021-09-30",
+      "enrollment": 0,
+      "sponsor": "Anavex Life Sciences Corp."
+    },
+    {
+      "nct_id": "NCT02756858",
+      "title": "An Extension Study of ANAVEX2-73 in Patients With Mild to Moderate Alzheimer's Disease",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Alzheimer's Disease",
+      "start_date": "2016-03",
+      "completion_date": "2020-11",
+      "enrollment": 0,
+      "sponsor": "Anavex Life Sciences Corp."
+    },
+    {
+      "nct_id": "NCT04575259",
+      "title": "OLE Study for Patients With Parkinson's Disease With Dementia Enrolled in Study ANAVEX2-73-PDD-001",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Parkinson Disease Dementia",
+      "start_date": "2019-10-10",
+      "completion_date": "2022-06-30",
+      "enrollment": 0,
+      "sponsor": "Anavex Life Sciences Corp."
+    },
+    {
+      "nct_id": "NCT04304482",
+      "title": "ANAVEX2-73 Study in Pediatric Patients With Rett Syndrome",
+      "status": "COMPLETED",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Rett Syndrome",
+      "start_date": "2020-07-01",
+      "completion_date": "2023-06-30",
+      "enrollment": 0,
+      "sponsor": "Anavex Life Sciences Corp."
+    },
+    {
+      "nct_id": "NCT06245213",
+      "title": "A Study of ANAVEX3-71 in Adults With Schizophrenia",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Schizophrenia",
+      "start_date": "2024-03-15",
+      "completion_date": "2025-06-30",
+      "enrollment": 0,
+      "sponsor": "Anavex Life Sciences Corp."
+    }
+  ],
+  "summary": {
+    "total_trials": 13,
+    "by_phase": {
+      "": 1,
+      "PHASE2": 6,
+      "PHASE1": 1,
+      "PHASE3": 1,
+      "PHASE2, PHASE3": 3,
+      "EARLY_PHASE1": 1
+    },
+    "by_status": {
+      "COMPLETED": 12,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 12,
+    "conditions": [
+      "Alzheimer Disease",
+      "Alzheimer's Disease",
+      "Healthy",
+      "Parkinson Disease Dementia",
+      "Parkinsons Disease With Dementia",
+      "Rett Syndrome",
+      "Schizophrenia"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:16:53.178211",
+    "search_query": "Anavex Life Sciences Corp.",
+    "url": "https://clinicaltrials.gov/search?term=Anavex+Life+Sciences+Corp."
+  }
+}

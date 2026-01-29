@@ -1,0 +1,43 @@
+{
+  "ticker": "CNTA",
+  "success": true,
+  "price": {
+    "current": 24.6,
+    "currency": "USD",
+    "day_high": 25.515,
+    "day_low": 24.57,
+    "52_week_high": 30.58,
+    "52_week_low": 9.6
+  },
+  "market_cap": {
+    "value": 3593463296.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 146075743.0,
+  "volume": {
+    "last": 111782,
+    "average_30d": 1516499
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -14.677805,
+    "price_to_book": 10.962567
+  },
+  "company_info": {
+    "name": "Centessa Pharmaceuticals plc",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:05:45.542856",
+    "url": "https://finance.yahoo.com/quote/CNTA",
+    "data_hash": "f9bc93326768322e"
+  }
+}

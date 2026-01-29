@@ -1,0 +1,43 @@
+{
+  "ticker": "TERN",
+  "success": true,
+  "price": {
+    "current": 34.32,
+    "currency": "USD",
+    "day_high": 34.88,
+    "day_low": 34.03,
+    "52_week_high": 48.26,
+    "52_week_low": 1.865
+  },
+  "market_cap": {
+    "value": 3732892928.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 108767281.0,
+  "volume": {
+    "last": 288956,
+    "average_30d": 2044929
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -28.33764,
+    "price_to_book": 10.573012
+  },
+  "company_info": {
+    "name": "Terns Pharmaceuticals, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:10:18.491471",
+    "url": "https://finance.yahoo.com/quote/TERN",
+    "data_hash": "15091cac3caf7c26"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "XENE",
+  "success": true,
+  "price": {
+    "current": 41.47,
+    "currency": "USD",
+    "day_high": 42.14,
+    "day_low": 41.155,
+    "52_week_high": 46.6,
+    "52_week_low": 26.74
+  },
+  "market_cap": {
+    "value": 3204594688.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 77275005.0,
+  "volume": {
+    "last": 234748,
+    "average_30d": 1022247
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -9.01857,
+    "price_to_book": 5.716058
+  },
+  "company_info": {
+    "name": "Xenon Pharmaceuticals Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:10:51.521664",
+    "url": "https://finance.yahoo.com/quote/XENE",
+    "data_hash": "620eaa027f362fec"
+  }
+}

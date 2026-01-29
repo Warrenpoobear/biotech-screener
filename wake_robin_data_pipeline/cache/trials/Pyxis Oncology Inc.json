@@ -1,0 +1,90 @@
+{
+  "ticker": "PYXS",
+  "company_name": "Pyxis Oncology, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06795412",
+      "title": "Study of PYX-201 in Combination With Pembrolizumab in Advanced Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Advanced Solid Tumours",
+      "start_date": "2025-04-15",
+      "completion_date": "2027-12-06",
+      "enrollment": 0,
+      "sponsor": "Pyxis Oncology, Inc"
+    },
+    {
+      "nct_id": "NCT05720117",
+      "title": "Study of PYX-201 in Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Solid Tumor, Advanced Solid Tumor",
+      "start_date": "2023-03-14",
+      "completion_date": "2027-05",
+      "enrollment": 0,
+      "sponsor": "Pyxis Oncology, Inc"
+    },
+    {
+      "nct_id": "NCT05718557",
+      "title": "Study of PYX-106 in Solid Tumors",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Solid Tumor",
+      "start_date": "2023-05-23",
+      "completion_date": "2026-05",
+      "enrollment": 0,
+      "sponsor": "Pyxis Oncology, Inc"
+    },
+    {
+      "nct_id": "NCT03389802",
+      "title": "Phase I Study of APX005M in Pediatric Central Nervous System Tumors",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Glioblastoma Multiforme, High-grade Astrocytoma Not Otherwise Specified (NOS), CNS Primary Tumor, Not Otherwise Specified (NOS), Ependymoma, Not Otherwise Specified (NOS), Diffuse Intrinsic Pontine Gliomas (DIPG), Medulloblastoma",
+      "start_date": "2018-03-01",
+      "completion_date": "2025-11-01",
+      "enrollment": 0,
+      "sponsor": "Pediatric Brain Tumor Consortium"
+    },
+    {
+      "nct_id": "NCT02706353",
+      "title": "APX005M in Combination With Systemic Pembrolizumab in Patients With Metastatic Melanoma",
+      "status": "TERMINATED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Melanoma",
+      "start_date": "2017-06-02",
+      "completion_date": "2025-03-10",
+      "enrollment": 0,
+      "sponsor": "M.D. Anderson Cancer Center"
+    }
+  ],
+  "summary": {
+    "total_trials": 5,
+    "by_phase": {
+      "PHASE1, PHASE2": 2,
+      "PHASE1": 3
+    },
+    "by_status": {
+      "RECRUITING": 2,
+      "ACTIVE_NOT_RECRUITING": 2,
+      "TERMINATED": 1
+    },
+    "active_trials": 4,
+    "completed_trials": 0,
+    "conditions": [
+      "Advanced Solid Tumours",
+      "Glioblastoma Multiforme, High-grade Astrocytoma Not Otherwise Specified (NOS), CNS Primary Tumor, Not Otherwise Specified (NOS), Ependymoma, Not Otherwise Specified (NOS), Diffuse Intrinsic Pontine Gliomas (DIPG), Medulloblastoma",
+      "Melanoma",
+      "Solid Tumor",
+      "Solid Tumor, Advanced Solid Tumor"
+    ],
+    "lead_stage": "phase_1"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:21:09.759184",
+    "search_query": "Pyxis Oncology, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Pyxis+Oncology,+Inc."
+  }
+}

@@ -1,0 +1,183 @@
+{
+  "ticker": "BIIB",
+  "company_name": "Biogen Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT00801060",
+      "title": "Evaluation of Safety and Efficacy of Fludarabine, Cyclophosphamide, and Rituximab (FCR) +/- Lumiliximab in Subjects With Previously Untreated Chronic Lymphocytic Leukemia (CLL)",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Chronic Lymphocytic Leukemia",
+      "start_date": "2008-02",
+      "completion_date": "2010-09",
+      "enrollment": 0,
+      "sponsor": "Biogen"
+    },
+    {
+      "nct_id": "NCT02472938",
+      "title": "Study to Explore the Onset of Efficacy on Magnetic Resonance Disease Activity of BG00012 (Dimethyl Fumarate) in Patients With Relapsing remitTing Multiple Sclerosis",
+      "status": "WITHDRAWN",
+      "phase": "PHASE4",
+      "condition": "Relapsing Remitting Multiple Sclerosis",
+      "start_date": "2015-07",
+      "completion_date": "2020-07",
+      "enrollment": 0,
+      "sponsor": "Biogen"
+    },
+    {
+      "nct_id": "NCT05058950",
+      "title": "An Observational Study Using Multimodal Sensors to Measure Cognitive Health in Adults and Distinguish Mild Cognitive Impairment From Normal Aging",
+      "status": "TERMINATED",
+      "phase": "",
+      "condition": "Mild Cognitive Impairment, Normal Aging",
+      "start_date": "2021-09-20",
+      "completion_date": "2023-09-19",
+      "enrollment": 0,
+      "sponsor": "Biogen"
+    },
+    {
+      "nct_id": "NCT01677572",
+      "title": "Multiple Dose Study of Aducanumab (BIIB037) (Recombinant, Fully Human Anti-A\u03b2 IgG1 mAb) in Participants With Prodromal or Mild Alzheimer's Disease",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Alzheimer's Disease",
+      "start_date": "2012-10-05",
+      "completion_date": "2019-07-31",
+      "enrollment": 0,
+      "sponsor": "Biogen"
+    },
+    {
+      "nct_id": "NCT02269930",
+      "title": "Study to Evaluate the Pharmacokinetic Profiles of BIIB017 (Peginterferon Beta-1a) and Rebif\u00ae (Interferon Beta-1a) in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Multiple Sclerosis",
+      "start_date": "2014-10",
+      "completion_date": "2014-12",
+      "enrollment": 0,
+      "sponsor": "Biogen"
+    },
+    {
+      "nct_id": "NCT01767311",
+      "title": "A Study to Evaluate Safety, Tolerability, and Efficacy of Lecanemab in Subjects With Early Alzheimer's Disease",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Alzheimer's Disease",
+      "start_date": "2012-12-20",
+      "completion_date": "2024-12-10",
+      "enrollment": 0,
+      "sponsor": "Eisai Inc."
+    },
+    {
+      "nct_id": "NCT01764594",
+      "title": "Safety Study of CDP7657 in Patients With Systemic Lupus Erythematosus",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Immune System Diseases, Autoimmune Diseases, Lupus Erythematosus, Systemic, Skin and Connective Tissue Diseases, Connective Tissue Disease",
+      "start_date": "2013-01",
+      "completion_date": "2014-08",
+      "enrollment": 0,
+      "sponsor": "UCB Pharma"
+    },
+    {
+      "nct_id": "NCT05265728",
+      "title": "A Study to Evaluate Efficacy, Safety, Pharmacokinetics, and Pharmacodynamics of Multiple Doses of Natalizumab (BG00002) Administered Subcutaneously to Japanese Participants With Relapsing-Remitting Multiple Sclerosis",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Multiple Sclerosis, Relapsing-Remitting",
+      "start_date": "2022-04-26",
+      "completion_date": "2024-05-27",
+      "enrollment": 0,
+      "sponsor": "Biogen"
+    },
+    {
+      "nct_id": "NCT04580381",
+      "title": "Real World Effectiveness of Natalizumab Extended Interval Dosing in a French Cohort",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Multiple Sclerosis, Relapsing-Remitting",
+      "start_date": "2020-09-01",
+      "completion_date": "2021-10-30",
+      "enrollment": 0,
+      "sponsor": "University Hospital, Caen"
+    },
+    {
+      "nct_id": "NCT02698267",
+      "title": "Effect of Itraconazole on the Pharmacokinetics of BIIB074",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Neuropathic Pain",
+      "start_date": "2016-02",
+      "completion_date": "2016-04",
+      "enrollment": 0,
+      "sponsor": "Biogen"
+    }
+  ],
+  "summary": {
+    "total_trials": 50,
+    "by_phase": {
+      "PHASE2": 9,
+      "PHASE4": 2,
+      "": 8,
+      "PHASE1": 18,
+      "PHASE3": 9,
+      "PHASE2, PHASE3": 1,
+      "PHASE1, PHASE2": 2,
+      "NA": 1
+    },
+    "by_status": {
+      "TERMINATED": 11,
+      "WITHDRAWN": 1,
+      "COMPLETED": 35,
+      "UNKNOWN": 1,
+      "RECRUITING": 1,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 2,
+    "completed_trials": 35,
+    "conditions": [
+      "Alzheimer Disease, Progressive Supranuclear Palsy, Frontotemporal Dementia",
+      "Alzheimer's Disease",
+      "Amyotrophic Lateral Sclerosis",
+      "Antibody-mediated Rejection",
+      "Chronic Kidney Diseases, Alport Syndrome, Autosomal Dominant Polycystic Kidney",
+      "Chronic Lymphocytic Leukemia",
+      "Chronic Plaque Psoriasis",
+      "Diabetic Nephropathy",
+      "Healthy",
+      "Healthy Volunteer",
+      "Healthy Volunteers",
+      "Hepatic Impairment, Healthy",
+      "IgA Nephropathy, CKD Associated With Type 1 Diabetes, Focal Segmental Glomerulosclerosis, Autosomal Dominant Polycystic Kidney",
+      "Immune System Diseases, Autoimmune Diseases, Lupus Erythematosus, Systemic, Skin and Connective Tissue Diseases, Connective Tissue Disease",
+      "Immune System Diseases, Autoimmunity",
+      "Inflammation and Pain Following Ocular Surgery",
+      "Major Depression",
+      "Major Depressive Disorder",
+      "Mild Cognitive Impairment, Normal Aging",
+      "Multiple Sclerosis",
+      "Multiple Sclerosis, Multiple Sclerosis, Relapsing-Remitting",
+      "Multiple Sclerosis, Relapsing-Remitting",
+      "Multiple Sclerosis, Relapsing-Remitting, Multiple Sclerosis",
+      "Multiple Sclerosis, Relapsing-Remitting, Relapsing-Remitting Multiple Sclerosis",
+      "Neuropathic Pain",
+      "Non-Hodgkin's Lymphoma",
+      "Ovarian Cancer, Peritoneal Neoplasms",
+      "Parkinson's Disease, Healthy",
+      "Psoriasis",
+      "Relapsing Remitting Multiple Sclerosis",
+      "Relapsing-Remitting Multiple Sclerosis",
+      "Relapsing-Remitting Multiple Sclerosis (RRMS)",
+      "Renal Insufficiency, Chronic, Diabetes Mellitus, Type 2",
+      "Spinal Muscular Atrophy"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:17:09.891508",
+    "search_query": "Biogen Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Biogen+Inc."
+  }
+}

@@ -1,0 +1,169 @@
+{
+  "ticker": "MIRM",
+  "company_name": "Mirum Pharmaceuticals, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04168385",
+      "title": "MRX-800: A Long-Term Safety Study of Maralixibat in the Treatment of Cholestatic Liver Disease in Subjects Who Previously Participated in a Maralixibat Study",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Cholestatic Liver Disease",
+      "start_date": "2020-01-16",
+      "completion_date": "2024-09-04",
+      "enrollment": 0,
+      "sponsor": "Mirum Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT00007020",
+      "title": "Compassionate Treatment of Patients With Inborn Errors of Bile Acid Metabolism With Cholic Acid",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Infantile Refsum's Disease, Zellweger Syndrome, Adrenoleukodystrophy, Peroxisomal Disorders, Cholestasis",
+      "start_date": "1992-01",
+      "completion_date": "2009-12",
+      "enrollment": 0,
+      "sponsor": "Mirum Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT02321306",
+      "title": "An Open-label Study to Evaluate the Long-term Safety and Tolerability of LUM001 in Patients With Primary Biliary Cirrhosis",
+      "status": "WITHDRAWN",
+      "phase": "PHASE2",
+      "condition": "Primary Biliary Cirrhosis",
+      "start_date": "2015-05",
+      "completion_date": "2018-03",
+      "enrollment": 0,
+      "sponsor": "Mirum Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT04729751",
+      "title": "A Study to Evaluate the Safety and Tolerability of Maralixibat in Infant Participants With Cholestatic Liver Diseases Including Progressive Familial Intrahepatic Cholestasis (PFIC) and Alagille Syndrome (ALGS).",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Progressive Familial Intrahepatic Cholestasis, Alagille Syndrome, Cholestatic Liver Disease",
+      "start_date": "2021-09-09",
+      "completion_date": "2024-12-17",
+      "enrollment": 0,
+      "sponsor": "Mirum Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT04524390",
+      "title": "Evaluation of Maralixibat in Biliary Atresia Response Post-Kasai",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Biliary Atresia",
+      "start_date": "2021-07-08",
+      "completion_date": "2024-02-07",
+      "enrollment": 0,
+      "sponsor": "Mirum Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT01115582",
+      "title": "Efficacy of To Be Marketed (TBM) Cholic Acid Capsules Used to Treat Children With Inborn Errors of Bile Acid Synthesis",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Inborn Errors of Bile Acid Synthesis",
+      "start_date": "2010-04",
+      "completion_date": "2010-08",
+      "enrollment": 0,
+      "sponsor": "Mirum Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT02160782",
+      "title": "Safety and Efficacy Study of LUM001 (Maralixibat) With a Drug Withdrawal Period in Participants With Alagille Syndrome (ALGS)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Alagille Syndrome",
+      "start_date": "2014-10-28",
+      "completion_date": "2020-05-28",
+      "enrollment": 0,
+      "sponsor": "Mirum Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT05050136",
+      "title": "A Study to Evaluate Efficacy and Safety of an Investigational Drug Named Volixibat in Patients With Itching Caused by Primary Biliary Cholangitis",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Primary Biliary Cholangitis, PBC",
+      "start_date": "2021-09-22",
+      "completion_date": "2027-07",
+      "enrollment": 0,
+      "sponsor": "Mirum Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT02131623",
+      "title": "Validation of the Itch Reported Outcome (ItchRO) Diaries in Pediatric Cholestatic Liver Disease",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Alagille Syndrome, Progressive Familial Intrahepatic Cholestasis",
+      "start_date": "2014-07",
+      "completion_date": "2015-03",
+      "enrollment": 0,
+      "sponsor": "Mirum Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT02475317",
+      "title": "Study to Assess the Relative Potency of Multiple Oral Doses of LUM001 and SHP626 in Overweight and Obese Adults as Assessed by Fecal Bile Acid Excretion",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2015-06-01",
+      "completion_date": "2015-12-01",
+      "enrollment": 0,
+      "sponsor": "Mirum Pharmaceuticals, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 34,
+    "by_phase": {
+      "PHASE2": 17,
+      "PHASE3": 8,
+      "": 5,
+      "PHASE1": 3,
+      "PHASE4": 1
+    },
+    "by_status": {
+      "COMPLETED": 21,
+      "WITHDRAWN": 2,
+      "RECRUITING": 5,
+      "ENROLLING_BY_INVITATION": 1,
+      "ACTIVE_NOT_RECRUITING": 2,
+      "APPROVED_FOR_MARKETING": 1,
+      "TERMINATED": 2
+    },
+    "active_trials": 8,
+    "completed_trials": 21,
+    "conditions": [
+      "Acid Sphingomyelinase Deficiency, Ceroid Lipofuscinosis, Neuronal, 2, Cerebrotendinous Xanthomatosis, Fabry Disease, GM1 Gangliosidosis, Gaucher Disease, Lysosomal Acid Lipase Deficiency, Metachromatic Leukodystrophy, Mucopolysaccharidosis II, Mucopolysaccharidosis III-B, Mucopolysaccharidosis IV A, Mucopolysaccharidosis VI, Mucopolysaccharidosis VII, Niemann-Pick Disease, Type C",
+      "Alagille Syndrome",
+      "Alagille Syndrome, Progressive Familial Intrahepatic Cholestasis",
+      "Bile Acid Synthesis Defect",
+      "Bile Acid Synthesis Disorders",
+      "Biliary Atresia",
+      "CTX",
+      "Cholestatic Liver Disease",
+      "Cholestatic Liver Disease (Except ALGS, PFIC, PBC and PSC)",
+      "Fragile X Syndrome",
+      "Healthy Volunteers",
+      "Inborn Errors of Bile Acid Synthesis",
+      "Infantile Refsum's Disease, Zellweger Syndrome, Adrenoleukodystrophy, Peroxisomal Disorders, Cholestasis",
+      "Intrahepatic Cholestasis of Pregnancy",
+      "Non-Alcoholic Steatohepatitis",
+      "PBC, Primary Biliary Cirrhosis",
+      "Primary Biliary Cholangitis, PBC",
+      "Primary Biliary Cirrhosis",
+      "Primary Sclerosing Cholangitis",
+      "Primary Sclerosing Cholangitis (PSC)",
+      "Progressive Familial Intrahepatic Cholestasis (PFIC)",
+      "Progressive Familial Intrahepatic Cholestasis, Alagille Syndrome, Cholestatic Liver Disease"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:20:00.264557",
+    "search_query": "Mirum Pharmaceuticals, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Mirum+Pharmaceuticals,+Inc."
+  }
+}

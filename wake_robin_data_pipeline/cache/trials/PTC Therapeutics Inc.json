@@ -1,0 +1,180 @@
+{
+  "ticker": "PTCT",
+  "company_name": "PTC Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05099640",
+      "title": "A Study of PTC923 in Participants With Phenylketonuria",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Phenylketonuria",
+      "start_date": "2021-09-30",
+      "completion_date": "2023-05-03",
+      "enrollment": 0,
+      "sponsor": "PTC Therapeutics"
+    },
+    {
+      "nct_id": "NCT05349721",
+      "title": "Study to Assess the Effects of PTC857 Treatment in Participants With Amyotrophic Lateral Sclerosis ALS",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Amyotrophic Lateral Sclerosis",
+      "start_date": "2022-05-15",
+      "completion_date": "2025-01-30",
+      "enrollment": 0,
+      "sponsor": "PTC Therapeutics"
+    },
+    {
+      "nct_id": "NCT04014530",
+      "title": "Pembrolizumab With Ataluren in Patients With Metastatic pMMR and dMMR Colorectal Carcinoma or Metastatic dMMR Endometrial Carcinoma: the ATAPEMBRO Study",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Colorectal Cancer, Endometrium Cancer",
+      "start_date": "2019-08-01",
+      "completion_date": "2023-08-01",
+      "enrollment": 0,
+      "sponsor": "Academisch Medisch Centrum - Universiteit van Amsterdam (AMC-UvA)"
+    },
+    {
+      "nct_id": "NCT02485431",
+      "title": "Food Effect and Bioavailability of Deflazacort Formulations in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2015-06",
+      "completion_date": "2015-08",
+      "enrollment": 0,
+      "sponsor": "PTC Therapeutics"
+    },
+    {
+      "nct_id": "NCT02409004",
+      "title": "Effects of Rifampin on the Pharmacokinetics of Ataluren",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2015-02",
+      "completion_date": "2015-03",
+      "enrollment": 0,
+      "sponsor": "PTC Therapeutics"
+    },
+    {
+      "nct_id": "NCT00592553",
+      "title": "Phase 2B Study of PTC124 (Ataluren) in Duchenne/Becker Muscular Dystrophy (DMD/BMD)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Duchenne Muscular Dystrophy, Becker Muscular Dystrophy",
+      "start_date": "2008-02-29",
+      "completion_date": "2009-12-31",
+      "enrollment": 0,
+      "sponsor": "PTC Therapeutics"
+    },
+    {
+      "nct_id": "NCT05166161",
+      "title": "A Long-Term Safety Study of PTC923 in Participants With Phenylketonuria",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Phenylketonuria",
+      "start_date": "2022-02-14",
+      "completion_date": "2026-04-30",
+      "enrollment": 0,
+      "sponsor": "PTC Therapeutics"
+    },
+    {
+      "nct_id": "NCT03642145",
+      "title": "A Study of Deflazacort (Emflaza\u00ae) in Participants With Duchenne Muscular Dystrophy (DMD)",
+      "status": "WITHDRAWN",
+      "phase": "PHASE3",
+      "condition": "Duchenne Muscular Dystrophy",
+      "start_date": "2018-10-31",
+      "completion_date": "2021-07-31",
+      "enrollment": 0,
+      "sponsor": "PTC Therapeutics"
+    },
+    {
+      "nct_id": "NCT01728064",
+      "title": "Safety and Efficacy of EPI-743 in Patients With Friedreich's Ataxia",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Friedreich's Ataxia",
+      "start_date": "2012-12-31",
+      "completion_date": "2016-02-29",
+      "enrollment": 0,
+      "sponsor": "PTC Therapeutics"
+    },
+    {
+      "nct_id": "NCT01721733",
+      "title": "Safety and Efficacy Study of EPI-743 in Children With Leigh Syndrome",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Leigh Syndrome",
+      "start_date": "2012-10-31",
+      "completion_date": "2015-05-31",
+      "enrollment": 0,
+      "sponsor": "PTC Therapeutics"
+    }
+  ],
+  "summary": {
+    "total_trials": 50,
+    "by_phase": {
+      "PHASE3": 13,
+      "PHASE2": 17,
+      "PHASE1, PHASE2": 2,
+      "PHASE1": 13,
+      "PHASE2, PHASE3": 3,
+      "": 2
+    },
+    "by_status": {
+      "COMPLETED": 32,
+      "TERMINATED": 11,
+      "RECRUITING": 3,
+      "WITHDRAWN": 1,
+      "ACTIVE_NOT_RECRUITING": 2,
+      "APPROVED_FOR_MARKETING": 1
+    },
+    "active_trials": 5,
+    "completed_trials": 32,
+    "conditions": [
+      "AADC Deficiency",
+      "Advanced Cancer",
+      "Amyotrophic Lateral Sclerosis",
+      "Aniridia",
+      "Brain and Central Nervous System Tumors",
+      "Cancer",
+      "Colorectal Cancer, Endometrium Cancer",
+      "Cystic Fibrosis",
+      "Duchenne Muscular Dystrophy",
+      "Duchenne Muscular Dystrophy, Becker Muscular Dystrophy",
+      "Duchenne Muscular Dystrophy, Becker Muscular Dystrophy, Dystrophinopathy",
+      "Epilepsy",
+      "Friedreich Ataxia",
+      "Friedreich's Ataxia",
+      "Gastroparesis",
+      "Healthy",
+      "Healthy Volunteers",
+      "Hepatic Impairment",
+      "Inherited Mitochondrial Disease",
+      "Kaposi's Sarcoma",
+      "Leigh Syndrome",
+      "Leiomyosarcoma",
+      "Leukemia, Myeloid, Acute, AML",
+      "Limb-Girdle Muscular Dystrophy",
+      "Metastatic Breast Cancer",
+      "Mitochondrial Diseases, Drug Resistant Epilepsy, Leigh Disease, Leigh Syndrome, Mitochondrial Encephalopathy (MELAS), Pontocerebellar Hypoplasia Type 6 (PCH6), Alpers Disease, Alpers Syndrome",
+      "Muscular Dystrophy, Duchenne",
+      "Muscular Dystrophy, Duchenne, Muscular Dystrophies, Muscular Disorders, Atrophic, Muscular Diseases, Musculoskeletal Disease, Neuromuscular Diseases, Nervous System Diseases, Genetic Diseases, X-Linked, Genetic Diseases, Inborn",
+      "Muscular Dystrophy, Duchenne, Muscular Dystrophies, Muscular Disorders, Atrophic, Muscular Diseases, Musculoskeletal Diseases, Neuromuscular Diseases, Nervous System Diseases, Genetic Diseases, X-Linked, Genetic Diseases, Inborn",
+      "Ovarian Cancer",
+      "Phenylketonuria",
+      "Pneumonia, COVID-19, Coronavirus",
+      "Renal Impairment"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:21:07.040997",
+    "search_query": "PTC Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=PTC+Therapeutics,+Inc."
+  }
+}

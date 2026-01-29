@@ -1,0 +1,77 @@
+{
+  "ticker": "BBIO",
+  "company_name": "BridgeBio Pharma, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04528836",
+      "title": "First-in-Human Study of the SHP2 Inhibitor BBP-398 in Patients With Advanced Solid Tumors",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Tumor, Solid",
+      "start_date": "2020-11-12",
+      "completion_date": "2024-07-30",
+      "enrollment": 0,
+      "sponsor": "Navire Pharma Inc., a BridgeBio company"
+    },
+    {
+      "nct_id": "NCT05375084",
+      "title": "SHP2 Inhibitor BBP-398 in Combination With Nivolumab in Patients With Advanced Non-Small Cell Lung Cancer With a KRAS Mutation",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Non Small Cell Lung Cancer, Solid Tumor",
+      "start_date": "2022-10-20",
+      "completion_date": "2024-07-15",
+      "enrollment": 0,
+      "sponsor": "Navire Pharma Inc., a BridgeBio company"
+    },
+    {
+      "nct_id": "NCT07062848",
+      "title": "An Observational Study Using Artificial Intelligence (AI) Algorithms on Electrocardiography (ECG), Point-of-care Ultrasound (POCUS), and Transthoracic Echocardiophy (TTE) to Estimate the Under-diagnosis of Transthyretin Amyloid Cardiomyopathy (ATTR-CM) Across a Diverse Range of US Health Systems.",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "",
+      "condition": "Transthyretin (TTR) Amyloid Cardiomyopathy",
+      "start_date": "2025-01-24",
+      "completion_date": "2027-01",
+      "enrollment": 0,
+      "sponsor": "Yale University"
+    },
+    {
+      "nct_id": "NCT05480865",
+      "title": "SHP2 Inhibitor BBP-398 in Combination With Sotorasib in Patients With Advanced Solid Tumors and a KRAS-G12C Mutation",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Solid Tumor, Adult, Metastatic Solid Tumor, Metastatic NSCLC, Non Small Cell Lung Cancer",
+      "start_date": "2022-07-06",
+      "completion_date": "2024-08-22",
+      "enrollment": 0,
+      "sponsor": "Navire Pharma Inc., a BridgeBio company"
+    }
+  ],
+  "summary": {
+    "total_trials": 4,
+    "by_phase": {
+      "PHASE1": 3,
+      "": 1
+    },
+    "by_status": {
+      "TERMINATED": 3,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 0,
+    "conditions": [
+      "Non Small Cell Lung Cancer, Solid Tumor",
+      "Solid Tumor, Adult, Metastatic Solid Tumor, Metastatic NSCLC, Non Small Cell Lung Cancer",
+      "Transthyretin (TTR) Amyloid Cardiomyopathy",
+      "Tumor, Solid"
+    ],
+    "lead_stage": "phase_1"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:16:57.589597",
+    "search_query": "BridgeBio Pharma, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=BridgeBio+Pharma,+Inc."
+  }
+}

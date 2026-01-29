@@ -1,0 +1,43 @@
+{
+  "ticker": "BIOA",
+  "success": true,
+  "price": {
+    "current": 19.205,
+    "currency": "USD",
+    "day_high": 19.77,
+    "day_low": 19.06,
+    "52_week_high": 24.0,
+    "52_week_low": 2.88
+  },
+  "market_cap": {
+    "value": 801856192.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 41752472.0,
+  "volume": {
+    "last": 58380,
+    "average_30d": 954440
+  },
+  "valuation": {
+    "pe_ratio": 1.4110948,
+    "forward_pe": -6.8239074,
+    "price_to_book": 2.4812663
+  },
+  "company_info": {
+    "name": "BioAge Labs, Inc.",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:05:17.868151",
+    "url": "https://finance.yahoo.com/quote/BIOA",
+    "data_hash": "c7f89d9503d7cc87"
+  }
+}

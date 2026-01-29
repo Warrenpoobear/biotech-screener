@@ -1,0 +1,43 @@
+{
+  "ticker": "QSI",
+  "success": true,
+  "price": {
+    "current": 1.145,
+    "currency": "USD",
+    "day_high": 1.2,
+    "day_low": 1.13,
+    "52_week_high": 3.1,
+    "52_week_low": 0.95
+  },
+  "market_cap": {
+    "value": 246735664.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 195552165.0,
+  "volume": {
+    "last": 2575259,
+    "average_30d": 5189066
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -2.792683,
+    "price_to_book": 1.0494959
+  },
+  "company_info": {
+    "name": "Quantum-Si incorporated",
+    "sector": "Healthcare",
+    "industry": "Medical Devices"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:09:15.846149",
+    "url": "https://finance.yahoo.com/quote/QSI",
+    "data_hash": "743d101c7837281a"
+  }
+}

@@ -1,0 +1,151 @@
+{
+  "ticker": "ZBIO",
+  "company_name": "Zenas BioPharma, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05776121",
+      "title": "Study of ZB001 in Chinese Patients With Thyroid Eye Disease",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Thyroid Eye Disease",
+      "start_date": "2023-05-10",
+      "completion_date": "2024-04-17",
+      "enrollment": 0,
+      "sponsor": "Zenas BioPharma (USA), LLC"
+    },
+    {
+      "nct_id": "NCT07299019",
+      "title": "A Study of Orelabrutinib in Patients With Secondary Progressive Multiple Sclerosis",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Secondary Progressive Multiple Sclerosis",
+      "start_date": "2026-03",
+      "completion_date": "2030-07",
+      "enrollment": 0,
+      "sponsor": "Zenas BioPharma (USA), LLC"
+    },
+    {
+      "nct_id": "NCT06559163",
+      "title": "A Study of Obexelimab in Patients With Systemic Lupus Erythematosus",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Systemic Lupus Erythematosus",
+      "start_date": "2024-09-17",
+      "completion_date": "2026-09",
+      "enrollment": 0,
+      "sponsor": "Zenas BioPharma (USA), LLC"
+    },
+    {
+      "nct_id": "NCT05542303",
+      "title": "A Safety, Tolerability and Pharmacokinetics Study of ZB001 in Healthy Subjects",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2022-10-16",
+      "completion_date": "2023-04-04",
+      "enrollment": 0,
+      "sponsor": "Zenas BioPharma (USA), LLC"
+    },
+    {
+      "nct_id": "NCT05662241",
+      "title": "A Phase 3 Study of Obexelimab in Patients With IgG4-Related Disease",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "IgG4 Related Disease",
+      "start_date": "2022-09-30",
+      "completion_date": "2029-02-15",
+      "enrollment": 0,
+      "sponsor": "Zenas BioPharma (USA), LLC"
+    },
+    {
+      "nct_id": "NCT05794516",
+      "title": "A Safety and Pharmacokinetics Study of ZB004 in Healthy Participants",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2023-06-19",
+      "completion_date": "2024-03-21",
+      "enrollment": 0,
+      "sponsor": "Zenas BioPharma (USA), LLC"
+    },
+    {
+      "nct_id": "NCT05786573",
+      "title": "A Study of Obexelimab in Patients With Warm Autoimmune Hemolytic Anemia (SApHiAre)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Warm Autoimmune Hemolytic Anemia",
+      "start_date": "2023-09-25",
+      "completion_date": "2026-08-31",
+      "enrollment": 0,
+      "sponsor": "Zenas BioPharma (USA), LLC"
+    },
+    {
+      "nct_id": "NCT06564311",
+      "title": "A Study of Obexelimab in Patients With Relapsing Multiple Sclerosis (MoonStone)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Relapsing Multiple Sclerosis",
+      "start_date": "2024-08-26",
+      "completion_date": "2026-02",
+      "enrollment": 0,
+      "sponsor": "Zenas BioPharma (USA), LLC"
+    },
+    {
+      "nct_id": "NCT05638854",
+      "title": "A Study to Evaluate Safety and Pharmacokinetics of ZB002 in Healthy Participants and Participants With Rheumatoid Arthritis",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers, Rheumatoid Arthritis",
+      "start_date": "2022-12-08",
+      "completion_date": "2025-07",
+      "enrollment": 0,
+      "sponsor": "Zenas BioPharma (USA), LLC"
+    },
+    {
+      "nct_id": "NCT07067463",
+      "title": "A Study of Orelabrutinib in Patients With Primary Progressive Multiple Sclerosis",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Multiple Sclerosis (MS) Primary Progressive",
+      "start_date": "2025-12",
+      "completion_date": "2030-07",
+      "enrollment": 0,
+      "sponsor": "Zenas BioPharma (USA), LLC"
+    }
+  ],
+  "summary": {
+    "total_trials": 10,
+    "by_phase": {
+      "PHASE1": 4,
+      "PHASE3": 4,
+      "PHASE2": 2
+    },
+    "by_status": {
+      "COMPLETED": 3,
+      "NOT_YET_RECRUITING": 1,
+      "RECRUITING": 3,
+      "ACTIVE_NOT_RECRUITING": 3
+    },
+    "active_trials": 6,
+    "completed_trials": 3,
+    "conditions": [
+      "Healthy Volunteers",
+      "Healthy Volunteers, Rheumatoid Arthritis",
+      "IgG4 Related Disease",
+      "Multiple Sclerosis (MS) Primary Progressive",
+      "Relapsing Multiple Sclerosis",
+      "Secondary Progressive Multiple Sclerosis",
+      "Systemic Lupus Erythematosus",
+      "Thyroid Eye Disease",
+      "Warm Autoimmune Hemolytic Anemia"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:23:02.814320",
+    "search_query": "Zenas BioPharma, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Zenas+BioPharma,+Inc."
+  }
+}

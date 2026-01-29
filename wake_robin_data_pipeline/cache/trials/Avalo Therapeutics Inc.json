@@ -1,0 +1,158 @@
+{
+  "ticker": "AVTX",
+  "company_name": "Avalo Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT01941043",
+      "title": "A Randomized, Double-Blind, Placebo-Controlled, Sequential Parallel Study of CERC-301 in the Adjunctive Treatment of Subjects With Severe Depression and Recent Active Suicidal Ideation Despite Antidepressant Treatment",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Major Depressive Disorder",
+      "start_date": "2013-11",
+      "completion_date": "2014-10",
+      "enrollment": 0,
+      "sponsor": "Avalo Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04994002",
+      "title": "A Pharmacokinetic, Pharmacodynamic, Safety and Tolerability Study of CERC-006 in Adults With Complex Lymphatic Malformations",
+      "status": "WITHDRAWN",
+      "phase": "PHASE1",
+      "condition": "Lymphatic Malformation",
+      "start_date": "2021-09-03",
+      "completion_date": "2022-06",
+      "enrollment": 0,
+      "sponsor": "Avalo Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05288504",
+      "title": "A Study to Evaluate the Safety and Efficacy of AVTX-002 for the Treatment of Poorly Controlled Non-Eosinophilic Asthma.",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Non-Eosinophilic Asthma",
+      "start_date": "2022-02-24",
+      "completion_date": "2023-05-11",
+      "enrollment": 0,
+      "sponsor": "Avalo Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT01579526",
+      "title": "A Single Dose Study to Determine the Safety and Pharmacokinetics of FP01 Lozenges in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2012-04",
+      "completion_date": "2012-05",
+      "enrollment": 0,
+      "sponsor": "Avalo Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT03233867",
+      "title": "A Non-interventional Study to Identify Children and Adolescents With ADHD and With or Without mGLuR Mutations",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Attention Deficit Hyperactivity Disorder",
+      "start_date": "2017-08-14",
+      "completion_date": "2018-08-03",
+      "enrollment": 0,
+      "sponsor": "Aevi Genomic Medicine, LLC, a Cerecor company"
+    },
+    {
+      "nct_id": "NCT03006367",
+      "title": "Pharmacokinetic and Tolerability Study of NFC-1 in Subjects Aged 6-17 Years With ADHD",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Attention Deficit Disorder With Hyperactivity",
+      "start_date": "2017-01-07",
+      "completion_date": "2017-03-06",
+      "enrollment": 0,
+      "sponsor": "Aevi Genomic Medicine, LLC, a Cerecor company"
+    },
+    {
+      "nct_id": "NCT02286817",
+      "title": "Phase I Single Dose, Open-Label Pharmacokinetic Study and Single-Blind, Placebo-Controlled Dose Escalation Study of NFC-1 in Adolescents With Attention-Deficit Hyperactivity Disorder",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Attention-deficit Hyperactivity Disorder (ADHD)",
+      "start_date": "2015-01",
+      "completion_date": "2016-03",
+      "enrollment": 0,
+      "sponsor": "Aevi Genomic Medicine, LLC, a Cerecor company"
+    },
+    {
+      "nct_id": "NCT02811211",
+      "title": "A Noninterventional Genotype/Phenotype Study of mGluR Mutations in Children and Adolescents With ADHD",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Attention Deficit Disorder With Hyperactivity",
+      "start_date": "2016-02",
+      "completion_date": "2017-01-06",
+      "enrollment": 0,
+      "sponsor": "Aevi Genomic Medicine, LLC, a Cerecor company"
+    },
+    {
+      "nct_id": "NCT01703923",
+      "title": "An Exploratory Study of FP01 Lozenges in Subjects With Chronic Refractory Cough",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Chronic Refractory Cough",
+      "start_date": "2012-11",
+      "completion_date": "2013-09",
+      "enrollment": 0,
+      "sponsor": "Avalo Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT02895906",
+      "title": "Safety and Efficacy Study of NFC-1 in Subjects Aged 12-17 Years With 22q11.2DS & Associated Neuropsychiatric Conditions",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "22q11.2 Deletion Syndrome",
+      "start_date": "2016-11-28",
+      "completion_date": "2017-04-20",
+      "enrollment": 0,
+      "sponsor": "Aevi Genomic Medicine, LLC, a Cerecor company"
+    }
+  ],
+  "summary": {
+    "total_trials": 20,
+    "by_phase": {
+      "PHASE2": 10,
+      "PHASE1": 7,
+      "": 2,
+      "PHASE2, PHASE3": 1
+    },
+    "by_status": {
+      "COMPLETED": 16,
+      "WITHDRAWN": 1,
+      "TERMINATED": 2,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 16,
+    "conditions": [
+      "22q11.2 Deletion Syndrome",
+      "Acute Cough",
+      "Anemia of End Stage Renal Disease",
+      "Attention Deficit Disorder With Hyperactivity",
+      "Attention Deficit Hyperactivity Disorder",
+      "Attention-deficit Hyperactivity Disorder (ADHD)",
+      "COVID-19 Pneumonia, Acute Lung Injury, ARDS",
+      "Chronic Refractory Cough",
+      "Crohn Disease, Ulcerative Colitis",
+      "Healthy",
+      "Hidradenitis Suppurativa",
+      "Lymphatic Malformation",
+      "Major Depressive Disorder",
+      "Multiple Myeloma",
+      "Non-Eosinophilic Asthma"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:47:16.671789",
+    "search_query": "Avalo Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Avalo+Therapeutics,+Inc."
+  }
+}

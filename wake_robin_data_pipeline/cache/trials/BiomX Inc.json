@@ -1,0 +1,79 @@
+{
+  "ticker": "PHGE",
+  "company_name": "BiomX Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05240300",
+      "title": "A Study of Topical BX005-A in Subjects With Moderate to Severe Atopic Dermatitis",
+      "status": "WITHDRAWN",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Atopic Dermatitis",
+      "start_date": "2022-05",
+      "completion_date": "2023-06",
+      "enrollment": 0,
+      "sponsor": "BiomX, Inc."
+    },
+    {
+      "nct_id": "NCT05010577",
+      "title": "Nebulized Bacteriophage Therapy in Cystic Fibrosis Patients With Chronic Pseudomonas Aeruginosa Pulmonary Infection",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Chronic Pseudomonas Aeruginosa Infection, Cystic Fibrosis",
+      "start_date": "2022-06-21",
+      "completion_date": "2024-03-10",
+      "enrollment": 0,
+      "sponsor": "BiomX, Inc."
+    },
+    {
+      "nct_id": "NCT06998043",
+      "title": "Study With Phage for CF Subjects With Pseudomonas Lung Infection",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Chronic Pseudomonas Aeruginosa Infection, Cystic Fibrosis (CF)",
+      "start_date": "2025-07-02",
+      "completion_date": "2026-09",
+      "enrollment": 0,
+      "sponsor": "BiomX Ltd"
+    },
+    {
+      "nct_id": "NCT04737876",
+      "title": "A Study to Evaluate the Safety, Tolerability, and Fecal Pharmacokinetics of BX002-A in Healthy Adults",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2020-10-28",
+      "completion_date": "2020-12-21",
+      "enrollment": 0,
+      "sponsor": "BiomX, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 4,
+    "by_phase": {
+      "PHASE1, PHASE2": 2,
+      "PHASE2": 1,
+      "PHASE1": 1
+    },
+    "by_status": {
+      "WITHDRAWN": 1,
+      "COMPLETED": 2,
+      "RECRUITING": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 2,
+    "conditions": [
+      "Atopic Dermatitis",
+      "Chronic Pseudomonas Aeruginosa Infection, Cystic Fibrosis",
+      "Chronic Pseudomonas Aeruginosa Infection, Cystic Fibrosis (CF)",
+      "Healthy Volunteers"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T13:12:19.439484",
+    "search_query": "BiomX Inc.",
+    "url": "https://clinicaltrials.gov/search?term=BiomX+Inc."
+  }
+}

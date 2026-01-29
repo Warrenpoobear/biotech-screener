@@ -1,0 +1,150 @@
+{
+  "ticker": "CGEM",
+  "company_name": "Cullinan Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06035744",
+      "title": "CLN-617 Alone and in Combination With Pembrolizumab in Patients With Advanced Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Advanced Solid Tumor",
+      "start_date": "2023-12-12",
+      "completion_date": "2028-06",
+      "enrollment": 0,
+      "sponsor": "Cullinan Therapeutics Inc."
+    },
+    {
+      "nct_id": "NCT04036682",
+      "title": "A Phase 1/2 Trial of CLN-081 in Patients With Non-Small Cell Lung Cancer",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Non Small Cell Lung Cancer, EGFR Exon 20 Mutation",
+      "start_date": "2019-10-31",
+      "completion_date": "2026-03-31",
+      "enrollment": 0,
+      "sponsor": "Cullinan Therapeutics Inc."
+    },
+    {
+      "nct_id": "NCT05879744",
+      "title": "A Study of CLN-978 in Patients With Relapsed or Refractory (R/R) B Cell Non-Hodgkin Lymphoma (B-NHL)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "NHL, NHL, Relapsed, Adult",
+      "start_date": "2023-05-31",
+      "completion_date": "2027-04",
+      "enrollment": 0,
+      "sponsor": "Cullinan Therapeutics Inc."
+    },
+    {
+      "nct_id": "NCT06994143",
+      "title": "A Study of CLN-978, a Subcutaneously Administered CD19-directed T Cell Engager, in Subjects With Rheumatoid Arthritis",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Rheumatoid Arthritis (RA",
+      "start_date": "2025-05-19",
+      "completion_date": "2028-12-30",
+      "enrollment": 0,
+      "sponsor": "Cullinan Therapeutics Inc."
+    },
+    {
+      "nct_id": "NCT06381141",
+      "title": "A Study of CLN-619 (Anti-MICA/MICB Antibody) in Patients With Relapsed and Refractory Multiple Myeloma",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Multiple Myeloma",
+      "start_date": "2024-09-03",
+      "completion_date": "2027-03",
+      "enrollment": 0,
+      "sponsor": "Cullinan Therapeutics Inc."
+    },
+    {
+      "nct_id": "NCT07041099",
+      "title": "A Study of CLN-978, a Subcutaneously Administered CD19-directed T Cell Engager, in Subjects With Sjogren's Disease",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Sj\u00f6gren, Sjogren Disease, Sjogren's Syndrome",
+      "start_date": "2025-10-01",
+      "completion_date": "2029-03-15",
+      "enrollment": 0,
+      "sponsor": "Cullinan Therapeutics Inc."
+    },
+    {
+      "nct_id": "NCT05117476",
+      "title": "A Study of CLN-619 Alone and in Combination With Pembrolizumab in Advanced Solid Tumors",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Advanced Solid Tumor, NSCLC",
+      "start_date": "2021-10-29",
+      "completion_date": "2026-06",
+      "enrollment": 0,
+      "sponsor": "Cullinan Therapeutics Inc."
+    },
+    {
+      "nct_id": "NCT03682055",
+      "title": "Phase 1/2a Study of VK-2019 in Patients With Epstein-Barr Virus (EBV)-Positive Nasopharyngeal Carcinoma (NPC)",
+      "status": "TERMINATED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Nasopharyngeal Carcinoma, Nasopharyngeal Cancer",
+      "start_date": "2019-04-04",
+      "completion_date": "2020-08-08",
+      "enrollment": 0,
+      "sponsor": "Cullinan Therapeutics Inc."
+    },
+    {
+      "nct_id": "NCT05143996",
+      "title": "CLN-049 in Patients With Relapsed/Refractory Acute Myeloid Leukemia (AML) or Myelodysplastic Syndrome (MDS)",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Relapsed/Refractory Acute Myeloid Leukemia (AML), Myelodysplastic Syndrome (MDS)",
+      "start_date": "2021-11-18",
+      "completion_date": "2027-06",
+      "enrollment": 0,
+      "sponsor": "Cullinan Therapeutics Inc."
+    },
+    {
+      "nct_id": "NCT06613360",
+      "title": "A Study of CLN-978, a Subcutaneously Administered CD19-directed T Cell Engager, in Subjects With Systemic Lupus Erythematosus",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "SLE, SLE (Systemic Lupus)",
+      "start_date": "2025-01-21",
+      "completion_date": "2027-12",
+      "enrollment": 0,
+      "sponsor": "Cullinan Therapeutics Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 10,
+    "by_phase": {
+      "PHASE1": 8,
+      "PHASE1, PHASE2": 2
+    },
+    "by_status": {
+      "RECRUITING": 5,
+      "ACTIVE_NOT_RECRUITING": 4,
+      "TERMINATED": 1
+    },
+    "active_trials": 9,
+    "completed_trials": 0,
+    "conditions": [
+      "Advanced Solid Tumor",
+      "Advanced Solid Tumor, NSCLC",
+      "Multiple Myeloma",
+      "NHL, NHL, Relapsed, Adult",
+      "Nasopharyngeal Carcinoma, Nasopharyngeal Cancer",
+      "Non Small Cell Lung Cancer, EGFR Exon 20 Mutation",
+      "Relapsed/Refractory Acute Myeloid Leukemia (AML), Myelodysplastic Syndrome (MDS)",
+      "Rheumatoid Arthritis (RA",
+      "SLE, SLE (Systemic Lupus)",
+      "Sj\u00f6gren, Sjogren Disease, Sjogren's Syndrome"
+    ],
+    "lead_stage": "phase_1"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:17:25.398754",
+    "search_query": "Cullinan Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Cullinan+Therapeutics,+Inc."
+  }
+}

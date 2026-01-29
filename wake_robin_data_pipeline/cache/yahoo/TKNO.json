@@ -1,0 +1,43 @@
+{
+  "ticker": "TKNO",
+  "success": true,
+  "price": {
+    "current": 2.825,
+    "currency": "USD",
+    "day_high": 2.935,
+    "day_low": 2.7507,
+    "52_week_high": 10.0,
+    "52_week_low": 2.7507
+  },
+  "market_cap": {
+    "value": 151219920.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 53529174.0,
+  "volume": {
+    "last": 90721,
+    "average_30d": 220141
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -7.2435904,
+    "price_to_book": 2.081798
+  },
+  "company_info": {
+    "name": "Alpha Teknova, Inc.",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:10:21.189631",
+    "url": "https://finance.yahoo.com/quote/TKNO",
+    "data_hash": "bdacf2528ad72396"
+  }
+}

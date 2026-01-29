@@ -1,0 +1,43 @@
+{
+  "ticker": "SRRK",
+  "success": true,
+  "price": {
+    "current": 44.395,
+    "currency": "USD",
+    "day_high": 45.96,
+    "day_low": 43.83,
+    "52_week_high": 48.28,
+    "52_week_low": 22.71
+  },
+  "market_cap": {
+    "value": 4528621056.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 102007457.0,
+  "volume": {
+    "last": 223538,
+    "average_30d": 983165
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -14.574374,
+    "price_to_book": 17.973684
+  },
+  "company_info": {
+    "name": "Scholar Rock Holding Corporation",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:09:57.099558",
+    "url": "https://finance.yahoo.com/quote/SRRK",
+    "data_hash": "5f3bb822b39bfc1a"
+  }
+}

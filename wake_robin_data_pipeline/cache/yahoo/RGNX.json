@@ -1,0 +1,43 @@
+{
+  "ticker": "RGNX",
+  "success": true,
+  "price": {
+    "current": 11.48,
+    "currency": "USD",
+    "day_high": 11.61,
+    "day_low": 10.61,
+    "52_week_high": 16.19,
+    "52_week_low": 5.035
+  },
+  "market_cap": {
+    "value": 581153024.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 50623086.0,
+  "volume": {
+    "last": 493450,
+    "average_30d": 1013875
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -5.5559583,
+    "price_to_book": 3.5987458
+  },
+  "company_info": {
+    "name": "REGENXBIO Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:09:28.584616",
+    "url": "https://finance.yahoo.com/quote/RGNX",
+    "data_hash": "d2eba07c3a9277a8"
+  }
+}

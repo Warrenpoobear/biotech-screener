@@ -1,0 +1,115 @@
+{
+  "ticker": "BCYC",
+  "company_name": "Bicycle Therapeutics plc",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04180371",
+      "title": "Study BT5528-100 in Patients With Advanced Solid Tumors Associated With EphA2 Expression",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Advanced Solid Tumor Historically Known for High EphA2 Expression, Urothelial Cancer, Ovarian Cancer, Non-small Cell Lung Cancer, Head and Neck Cancer, Triple Negative Breast Cancer, Gastric/Upper Gastrointestinal Cancer",
+      "start_date": "2019-11-07",
+      "completion_date": "2027-07-31",
+      "enrollment": 0,
+      "sponsor": "BicycleTx Limited"
+    },
+    {
+      "nct_id": "NCT04561362",
+      "title": "Study BT8009-100 in Subjects With Nectin-4 Expressing Advanced Malignancies",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Urinary Bladder Neoplasm, Triple Negative Breast Neoplasms, Hormone Receptor Positive, HER2-negative Neoplasms, Hormone Receptor Positive, HER2-low Neoplasms, Breast Neoplasms, Non-Small-Cell Lung Neoplasms, Ovarian Neoplasm, Advanced Solid Tumor",
+      "start_date": "2020-07-17",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "BicycleTx Limited"
+    },
+    {
+      "nct_id": "NCT06840483",
+      "title": "Study of Zelenectide Pevedotin in Participants With Advanced Breast Cancer",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Breast Cancer",
+      "start_date": "2025-03-03",
+      "completion_date": "2028-12-30",
+      "enrollment": 0,
+      "sponsor": "BicycleTx Limited"
+    },
+    {
+      "nct_id": "NCT06225596",
+      "title": "Study BT8009-230 in Participants With Locally Advanced or Metastatic Urothelial Cancer (Duravelo-2)",
+      "status": "RECRUITING",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Metastatic Urothelial Cancer",
+      "start_date": "2024-01-24",
+      "completion_date": "2030-12",
+      "enrollment": 0,
+      "sponsor": "BicycleTx Limited"
+    },
+    {
+      "nct_id": "NCT06933329",
+      "title": "Zelenectide Pevedotin in NECTIN4 Amplified Advanced or Metastatic Non-small Cell Lung Cancer",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Non-Small Cell Lung Cancer",
+      "start_date": "2025-07-18",
+      "completion_date": "2029-02-28",
+      "enrollment": 0,
+      "sponsor": "BicycleTx Limited"
+    },
+    {
+      "nct_id": "NCT05163041",
+      "title": "Study BT7480-100 in Patients With Advanced Malignancies Associated With Nectin-4 Expression",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Advanced Solid Tumor",
+      "start_date": "2021-11-02",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "BicycleTx Limited"
+    },
+    {
+      "nct_id": "NCT03486730",
+      "title": "BT1718 in Patients with Advanced Solid Tumours.",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Advanced Solid Tumours, Non-Small Cell Lung Cancer, Non-Small Cell Lung Sarcoma, Oesophageal Cancer",
+      "start_date": "2018-01-24",
+      "completion_date": "2023-11-20",
+      "enrollment": 0,
+      "sponsor": "Cancer Research UK"
+    }
+  ],
+  "summary": {
+    "total_trials": 7,
+    "by_phase": {
+      "PHASE1, PHASE2": 4,
+      "PHASE2": 2,
+      "PHASE2, PHASE3": 1
+    },
+    "by_status": {
+      "ACTIVE_NOT_RECRUITING": 3,
+      "RECRUITING": 3,
+      "COMPLETED": 1
+    },
+    "active_trials": 6,
+    "completed_trials": 1,
+    "conditions": [
+      "Advanced Solid Tumor",
+      "Advanced Solid Tumor Historically Known for High EphA2 Expression, Urothelial Cancer, Ovarian Cancer, Non-small Cell Lung Cancer, Head and Neck Cancer, Triple Negative Breast Cancer, Gastric/Upper Gastrointestinal Cancer",
+      "Advanced Solid Tumours, Non-Small Cell Lung Cancer, Non-Small Cell Lung Sarcoma, Oesophageal Cancer",
+      "Breast Cancer",
+      "Metastatic Urothelial Cancer",
+      "Non-Small Cell Lung Cancer",
+      "Urinary Bladder Neoplasm, Triple Negative Breast Neoplasms, Hormone Receptor Positive, HER2-negative Neoplasms, Hormone Receptor Positive, HER2-low Neoplasms, Breast Neoplasms, Non-Small-Cell Lung Neoplasms, Ovarian Neoplasm, Advanced Solid Tumor"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:17:04.861725",
+    "search_query": "Bicycle Therapeutics plc",
+    "url": "https://clinicaltrials.gov/search?term=Bicycle+Therapeutics+plc"
+  }
+}

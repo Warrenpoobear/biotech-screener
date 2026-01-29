@@ -1,0 +1,180 @@
+{
+  "ticker": "IOVA",
+  "company_name": "Iovance Biotherapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06566092",
+      "title": "Study of Autologous Tumor-Infiltrating Lymphocytes in Pediatric, Adolescent, and Young Adult Participants",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Soft Tissue Sarcoma, Primary Central Nervous System Carcinoma, Melanoma, Rhabdomyosarcoma, Ewing Sarcoma",
+      "start_date": "2024-03-28",
+      "completion_date": "2028-07",
+      "enrollment": 0,
+      "sponsor": "Iovance Biotherapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT03108495",
+      "title": "Study of LN-145, Autologous Tumor Infiltrating Lymphocytes in the Treatment of Patients With Cervical Carcinoma",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Cervical Carcinoma",
+      "start_date": "2017-06-22",
+      "completion_date": "2025-08-22",
+      "enrollment": 0,
+      "sponsor": "Iovance Biotherapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT02652455",
+      "title": "Combining PD-1 Blockade, CD137 Agonism and Adoptive Cell Therapy for Metastatic Melanoma",
+      "status": "COMPLETED",
+      "phase": "EARLY_PHASE1",
+      "condition": "Melanoma (Skin), Skin Cancer",
+      "start_date": "2016-03-08",
+      "completion_date": "2020-08-30",
+      "enrollment": 0,
+      "sponsor": "H. Lee Moffitt Cancer Center and Research Institute"
+    },
+    {
+      "nct_id": "NCT05361174",
+      "title": "A Study to Investigate the Efficacy and Safety of an Infusion of IOV-4001 in Adult Participants With Unresectable or Metastatic Melanoma or Stage III or IV Non-small-cell Lung Cancer",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Unresectable Melanoma, Metastatic Melanoma, Stage III Non-small Cell Lung Cancer, Stage IV Non-small Cell Lung Cancer",
+      "start_date": "2022-07-20",
+      "completion_date": "2027-06",
+      "enrollment": 0,
+      "sponsor": "Iovance Biotherapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05640193",
+      "title": "A Study of LN-144 in People With Metastatic Melanoma to the Brain",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Metastatic Melanoma",
+      "start_date": "2022-11-25",
+      "completion_date": "2026-11",
+      "enrollment": 0,
+      "sponsor": "Memorial Sloan Kettering Cancer Center"
+    },
+    {
+      "nct_id": "NCT07288203",
+      "title": "A Study of Lifileucel (Tumor-infiltrating Lymphocytes) in Adults With Advanced Melanoma",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Melanoma (Skin Cancer), Unresectable Melanoma, Metastatic Melanoma",
+      "start_date": "2025-11-28",
+      "completion_date": "2033-12",
+      "enrollment": 0,
+      "sponsor": "Iovance Biotherapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT07192900",
+      "title": "Fast TILs to Treat Metastatic Cancer Patients With Pleural Disease",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Malignant Pleural Effusion, Malignant Mesothelioma, Pleural Effusion, Malignant, Metastasis to Pleura",
+      "start_date": "2026-03",
+      "completion_date": "2037-12",
+      "enrollment": 0,
+      "sponsor": "David Bartlett, MD"
+    },
+    {
+      "nct_id": "NCT07288073",
+      "title": "TIL Therapy in cSCC and MCC",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Cutaneous Squamous Cell Carcinoma, Merkel Cell Carcinoma, Metastatic Cutaneous Squamous Cell Carcinoma, Skin Cancer",
+      "start_date": "2026-01",
+      "completion_date": "2029-06-29",
+      "enrollment": 0,
+      "sponsor": "Karam Khaddour"
+    },
+    {
+      "nct_id": "NCT05686226",
+      "title": "E7 TCR-T Cell Immunotherapy for Human Papillomavirus (HPV) Associated Cancers",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Cervical Cancer, Throat Cancer, Oropharynx Cancer, Anal Cancer, Vulva Cancer, Vaginal Cancer, Penile Cancer, Metastatic Cancer, HPV-Related Malignancy, HPV-Related Carcinoma, HPV-Related Cervical Carcinoma, HPV-Related Squamous Cell Carcinoma, HPV-Related Adenocarcinoma, HPV Positive Oropharyngeal Squamous Cell Carcinoma, HPV-Associated Vaginal Adenocarcinoma, HPV-Related Adenosquamous Carcinoma, HPV-Related Endocervical Adenocarcinoma, HPV-Related Anal Squamous Cell Carcinoma, HPV-Related Penile Squamous Cell Carcinoma, HPV-Related Vulvar Squamous Cell Carcinoma, HPV Positive Rectal Squamous Cell Carcinoma",
+      "start_date": "2023-03-07",
+      "completion_date": "2027-01-01",
+      "enrollment": 0,
+      "sponsor": "Christian Hinrichs"
+    },
+    {
+      "nct_id": "NCT04052334",
+      "title": "Lymphodepletion Plus Adoptive Cell Therapy With High Dose IL-2 in Adolescent and Young Adult Patients With Soft Tissue Sarcoma",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Sarcoma",
+      "start_date": "2019-09-27",
+      "completion_date": "2023-06-16",
+      "enrollment": 0,
+      "sponsor": "H. Lee Moffitt Cancer Center and Research Institute"
+    }
+  ],
+  "summary": {
+    "total_trials": 33,
+    "by_phase": {
+      "PHASE1": 11,
+      "PHASE2": 15,
+      "EARLY_PHASE1": 1,
+      "PHASE1, PHASE2": 3,
+      "NA": 1,
+      "PHASE3": 1,
+      "": 1
+    },
+    "by_status": {
+      "RECRUITING": 14,
+      "TERMINATED": 2,
+      "COMPLETED": 8,
+      "ACTIVE_NOT_RECRUITING": 4,
+      "NOT_YET_RECRUITING": 1,
+      "AVAILABLE": 1,
+      "WITHDRAWN": 3
+    },
+    "active_trials": 18,
+    "completed_trials": 8,
+    "conditions": [
+      "Bone Sarcoma, Dedifferentiated Chondrosarcoma, Giant Cell Tumor of Bone, Malignancy in Giant Cell Tumor of Bone, Malignant Solid Neoplasm, Ovarian Carcinosarcoma, Platinum-Resistant Ovarian Carcinoma, Poorly Differentiated Thyroid Gland Carcinoma, Recurrent Osteosarcoma, Recurrent Ovarian Carcinoma, Refractory Osteosarcoma, Soft Tissue Sarcoma, Thyroid Gland Anaplastic Carcinoma, Thyroid Gland Squamous Cell Carcinoma, Undifferentiated High Grade Pleomorphic Sarcoma of Bone, Triple Negative Breast Cancer",
+      "Cervical Cancer, Throat Cancer, Oropharynx Cancer, Anal Cancer, Vulva Cancer, Vaginal Cancer, Penile Cancer, Metastatic Cancer, HPV-Related Malignancy, HPV-Related Carcinoma, HPV-Related Cervical Carcinoma, HPV-Related Squamous Cell Carcinoma, HPV-Related Adenocarcinoma, HPV Positive Oropharyngeal Squamous Cell Carcinoma, HPV-Associated Vaginal Adenocarcinoma, HPV-Related Adenosquamous Carcinoma, HPV-Related Endocervical Adenocarcinoma, HPV-Related Anal Squamous Cell Carcinoma, HPV-Related Penile Squamous Cell Carcinoma, HPV-Related Vulvar Squamous Cell Carcinoma, HPV Positive Rectal Squamous Cell Carcinoma",
+      "Cervical Carcinoma",
+      "Chronic Graft Versus Host Disease, Chronic GVHD, Complications of Organ Transplant Stem Cells",
+      "Chronic Lymphocytic Leukemia, Small Lymphocytic Lymphoma",
+      "Clinical Stage IV Cutaneous Melanoma AJCC v8, Metastatic Melanoma, Pathologic Stage IIIC Cutaneous Melanoma AJCC v8, Unresectable Melanoma",
+      "Cutaneous Squamous Cell Carcinoma, Merkel Cell Carcinoma, Metastatic Cutaneous Squamous Cell Carcinoma, Skin Cancer",
+      "Endometrial Cancer",
+      "Gastric Cancer, Breast Cancer, Cervical Cancer, Lung Cancer",
+      "HPV-Associated Cervical Carcinoma, HPV-Related Carcinoma, HPV-Related Malignancy, HPV Positive Oropharyngeal Squamous Cell Carcinoma, HPV-Related Adenocarcinoma, HPV-Related Adenosquamous Carcinoma, HPV-Related Squamous Cell Carcinoma, HPV-Related Anal Squamous Cell Carcinoma, HPV-Related Penile Squamous Cell Carcinoma, HPV-Related Vulvar Squamous Cell Carcinoma, HPV-Related Endocervical Adenocarcinoma, Cervical Cancer, Oropharynx Cancer, Anal Cancer, Vulvar Cancer, Penile Cancer, Vaginal Cancer",
+      "Locally Advanced Melanoma, Pathologic Stage IIIB Cutaneous Melanoma AJCC v8, Pathologic Stage IIIC Cutaneous Melanoma AJCC v8, Pathologic Stage IIID Cutaneous Melanoma AJCC v8, Stage IV Melanoma",
+      "Malignant Pleural Effusion, Malignant Mesothelioma, Pleural Effusion, Malignant, Metastasis to Pleura",
+      "Malignant Solid Neoplasm, Metastatic Colorectal Adenocarcinoma, Metastatic Ovarian Carcinoma, Metastatic Pancreatic Ductal Adenocarcinoma, Platinum-Resistant Ovarian Carcinoma, Recurrent High Grade Ovarian Serous Adenocarcinoma, Recurrent Ovarian Carcinosarcoma, Refractory Colorectal Carcinoma, Stage IV Colorectal Cancer AJCC v8, Stage IVA Colorectal Cancer AJCC v8, Stage IVB Colorectal Cancer AJCC v8, Stage IVC Colorectal Cancer AJCC v8",
+      "Melanoma (Skin Cancer), Unresectable Melanoma, Metastatic Melanoma",
+      "Melanoma (Skin), Skin Cancer",
+      "Metastatic Bladder Urothelial Carcinoma, Metastatic Renal Pelvis Urothelial Carcinoma, Metastatic Ureter Urothelial Carcinoma, Metastatic Urethral Urothelial Carcinoma, Unresectable Renal Pelvis Urothelial Carcinoma, Unresectable Ureter Urothelial Carcinoma",
+      "Metastatic Melanoma",
+      "Metastatic Melanoma, Squamous Cell Carcinoma of the Head and Neck, Non-small Cell Lung Cancer",
+      "Metastatic Melanoma, Unresectable Melanoma, Melanoma",
+      "Metastatic Non Small Cell Lung Cancer",
+      "Metastatic Triple Negative Breast Cancer",
+      "Non Small Cell Lung Cancer",
+      "Non-Small Cell Lung Cancer, Metastatic Non-small Cell Lung Cancer, Squamous Cell Carcinoma, Advanced NSCLC, Adenosquamous Carcinoma, Adenocarcinomas",
+      "Sarcoma",
+      "Soft Tissue Sarcoma, Primary Central Nervous System Carcinoma, Melanoma, Rhabdomyosarcoma, Ewing Sarcoma",
+      "Squamous Cell Carcinoma of the Head and Neck",
+      "Stage IIIB Melanoma, Stage IIIC Melanoma, Stage IIID Melanoma",
+      "Unresectable Melanoma, Metastatic Melanoma",
+      "Unresectable Melanoma, Metastatic Melanoma, Ocular Melanoma",
+      "Unresectable Melanoma, Metastatic Melanoma, Stage III Non-small Cell Lung Cancer, Stage IV Non-small Cell Lung Cancer",
+      "Uveal Melanoma, Melanoma, Metastatic Uveal Melanoma, Metastatic Melanoma"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:19:12.142316",
+    "search_query": "Iovance Biotherapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Iovance+Biotherapeutics,+Inc."
+  }
+}

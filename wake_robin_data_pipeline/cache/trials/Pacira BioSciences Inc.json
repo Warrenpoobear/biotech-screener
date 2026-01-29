@@ -1,0 +1,39 @@
+{
+  "ticker": "PCRX",
+  "company_name": "Pacira BioSciences, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06995352",
+      "title": "Liposomal Bupivacaine Versus Continuous Peripheral Nerve Blocks for Analgesia Following Ankle Surgery",
+      "status": "ENROLLING_BY_INVITATION",
+      "phase": "PHASE4",
+      "condition": "Moderate-to-severely Painful Ankle Surgery",
+      "start_date": "2025-06-23",
+      "completion_date": "2027-06-22",
+      "enrollment": 0,
+      "sponsor": "University of California, San Diego"
+    }
+  ],
+  "summary": {
+    "total_trials": 1,
+    "by_phase": {
+      "PHASE4": 1
+    },
+    "by_status": {
+      "ENROLLING_BY_INVITATION": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 0,
+    "conditions": [
+      "Moderate-to-severely Painful Ankle Surgery"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:20:50.137978",
+    "search_query": "Pacira BioSciences, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Pacira+BioSciences,+Inc."
+  }
+}

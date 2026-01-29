@@ -1,0 +1,20 @@
+{
+  "ticker": "CRBP",
+  "company_name": "Corbus Pharmaceuticals Holdings, Inc.",
+  "success": true,
+  "trials": [],
+  "summary": {
+    "total_trials": 0,
+    "by_phase": {},
+    "by_status": {},
+    "active_trials": 0,
+    "completed_trials": 0,
+    "lead_stage": "unknown"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:47:22.470577",
+    "search_query": "Corbus Pharmaceuticals Holdings, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Corbus+Pharmaceuticals+Holdings,+Inc."
+  }
+}

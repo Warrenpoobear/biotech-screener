@@ -1,0 +1,43 @@
+{
+  "ticker": "TXG",
+  "success": true,
+  "price": {
+    "current": 20.065,
+    "currency": "USD",
+    "day_high": 20.92,
+    "day_low": 19.97,
+    "52_week_high": 23.56,
+    "52_week_low": 6.78
+  },
+  "market_cap": {
+    "value": 2539287040.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 116474179.0,
+  "volume": {
+    "last": 652514,
+    "average_30d": 2408432
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -51.891796,
+    "price_to_book": 3.2336826
+  },
+  "company_info": {
+    "name": "10x Genomics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Health Information Services"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:10:29.723251",
+    "url": "https://finance.yahoo.com/quote/TXG",
+    "data_hash": "f9141667b37811e3"
+  }
+}

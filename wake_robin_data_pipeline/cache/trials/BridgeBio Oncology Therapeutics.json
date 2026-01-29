@@ -1,0 +1,63 @@
+{
+  "ticker": "BBOT",
+  "company_name": "BridgeBio Oncology Therapeutics",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06343402",
+      "title": "Open-label Study of BBO-8520 in Adult Subjects With KRASG12C Non-small Cell Lung Cancer",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Non-small Cell Lung Cancer, Metastatic Non-Small Cell Lung Cancer, NSCLC, KRAS G12C, Metastatic Lung Cancer, Advanced Lung Carcinoma",
+      "start_date": "2024-05-22",
+      "completion_date": "2028-02",
+      "enrollment": 0,
+      "sponsor": "TheRas, Inc., d/b/a BBOT (BridgeBio Oncology Therapeutics)"
+    },
+    {
+      "nct_id": "NCT06625775",
+      "title": "Open-Label Study of BBO-10203 in Subjects With Advanced Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Solid Tumor, Adult, Metastatic Breast Cancer, Advanced Breast Cancer, HER2 Mutation-Related Tumors, HER2-positive Metastatic Breast Cancer, KRAS Mutant Metastatic Colorectal Cancer, Metastatic Lung Cancer, Metastatic Colorectal Cancer, Advanced Lung Cancer, HR-positive, HER2-negative Advanced Breast Cancer, HER2-positive Advanced Breast Cancer",
+      "start_date": "2024-10-29",
+      "completion_date": "2028-11",
+      "enrollment": 0,
+      "sponsor": "TheRas, Inc., d/b/a BBOT (BridgeBio Oncology Therapeutics)"
+    },
+    {
+      "nct_id": "NCT06917079",
+      "title": "BBO-11818 in Adult Subjects With KRAS Mutant Cancer",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Non-Small Cell Lung Cancer, NSCLC, PDAC - Pancreatic Ductal Adenocarcinoma, CRC (Colorectal Cancer), Metastatic Non-Small Lung Cell Cancer, Metastatic Colorectal Cancer (CRC), KRAS G12A, KRAS G12C, KRAS G12D, KRAS G12S, KRAS G12V, Metastatic Pancreatic Ductal Adenocarcinoma, Advanced Lung Carcinoma, Solid Tumor, Adult",
+      "start_date": "2025-03-31",
+      "completion_date": "2029-09",
+      "enrollment": 0,
+      "sponsor": "TheRas, Inc., d/b/a BBOT (BridgeBio Oncology Therapeutics)"
+    }
+  ],
+  "summary": {
+    "total_trials": 3,
+    "by_phase": {
+      "PHASE1": 3
+    },
+    "by_status": {
+      "RECRUITING": 3
+    },
+    "active_trials": 3,
+    "completed_trials": 0,
+    "conditions": [
+      "Non-Small Cell Lung Cancer, NSCLC, PDAC - Pancreatic Ductal Adenocarcinoma, CRC (Colorectal Cancer), Metastatic Non-Small Lung Cell Cancer, Metastatic Colorectal Cancer (CRC), KRAS G12A, KRAS G12C, KRAS G12D, KRAS G12S, KRAS G12V, Metastatic Pancreatic Ductal Adenocarcinoma, Advanced Lung Carcinoma, Solid Tumor, Adult",
+      "Non-small Cell Lung Cancer, Metastatic Non-Small Cell Lung Cancer, NSCLC, KRAS G12C, Metastatic Lung Cancer, Advanced Lung Carcinoma",
+      "Solid Tumor, Adult, Metastatic Breast Cancer, Advanced Breast Cancer, HER2 Mutation-Related Tumors, HER2-positive Metastatic Breast Cancer, KRAS Mutant Metastatic Colorectal Cancer, Metastatic Lung Cancer, Metastatic Colorectal Cancer, Advanced Lung Cancer, HR-positive, HER2-negative Advanced Breast Cancer, HER2-positive Advanced Breast Cancer"
+    ],
+    "lead_stage": "phase_1"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:17:00.063974",
+    "search_query": "BridgeBio Oncology Therapeutics",
+    "url": "https://clinicaltrials.gov/search?term=BridgeBio+Oncology+Therapeutics"
+  }
+}

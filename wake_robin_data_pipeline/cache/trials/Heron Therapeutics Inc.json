@@ -1,0 +1,156 @@
+{
+  "ticker": "HRTX",
+  "company_name": "Heron Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04398329",
+      "title": "Dose-Escalation Study of HTX-034 Following Bunionectomy",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Bunions",
+      "start_date": "2020-05-18",
+      "completion_date": "2021-08-03",
+      "enrollment": 0,
+      "sponsor": "Heron Therapeutics"
+    },
+    {
+      "nct_id": "NCT04911062",
+      "title": "HTX-011 in Spinal Surgery",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Post-Operative Pain, Lumbar Laminectomy",
+      "start_date": "2022-04-07",
+      "completion_date": "2022-08-26",
+      "enrollment": 0,
+      "sponsor": "Heron Therapeutics"
+    },
+    {
+      "nct_id": "NCT03718039",
+      "title": "Phase 2 Bunionectomy HTX-011 Administration Study",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Postoperative Pain",
+      "start_date": "2018-10-24",
+      "completion_date": "2019-03-11",
+      "enrollment": 0,
+      "sponsor": "Heron Therapeutics"
+    },
+    {
+      "nct_id": "NCT02689258",
+      "title": "Evaluation of the Efficacy and Safety of HTX-011 for Postoperative Analgesia Following Abdominoplasty Surgery",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Postoperative Pain",
+      "start_date": "2016-02-23",
+      "completion_date": "2017-04",
+      "enrollment": 0,
+      "sponsor": "Heron Therapeutics"
+    },
+    {
+      "nct_id": "NCT03907176",
+      "title": "Herniorrhaphy Study for Opioid Elimination",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Analgesia",
+      "start_date": "2019-04-05",
+      "completion_date": "2021-11-22",
+      "enrollment": 0,
+      "sponsor": "Heron Therapeutics"
+    },
+    {
+      "nct_id": "NCT05434663",
+      "title": "Safety Study of Repeat Doses of SUSTOL in Adults",
+      "status": "UNKNOWN",
+      "phase": "PHASE4",
+      "condition": "Chemotherapy-Induced Nausea and Vomiting (CINV)",
+      "start_date": "2022-07-06",
+      "completion_date": "2025-10",
+      "enrollment": 0,
+      "sponsor": "Heron Therapeutics"
+    },
+    {
+      "nct_id": "NCT04102267",
+      "title": "Extended Delivery of Bupivacaine Study in Herniorrhaphy",
+      "status": "COMPLETED",
+      "phase": "PHASE4",
+      "condition": "Analgesia",
+      "start_date": "2018-07-02",
+      "completion_date": "2018-10-26",
+      "enrollment": 0,
+      "sponsor": "Heron Therapeutics"
+    },
+    {
+      "nct_id": "NCT04470622",
+      "title": "Aprepitant Injectable Emulsion in Patients With COVID-19 (GUARDS-1)",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "COVID-19",
+      "start_date": "2020-07-20",
+      "completion_date": "2021-06-03",
+      "enrollment": 0,
+      "sponsor": "Heron Therapeutics"
+    },
+    {
+      "nct_id": "NCT02106494",
+      "title": "A Prospective, Multicenter, Study of APF530 (Granisetron) SC for Prevention of CINV in Patients Receiving HEC",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Chemotherapy-induced Nausea and Vomiting",
+      "start_date": "2014-03",
+      "completion_date": "2015-05",
+      "enrollment": 0,
+      "sponsor": "Heron Therapeutics"
+    },
+    {
+      "nct_id": "NCT04085393",
+      "title": "Granisetron Extended Release Injection (GERSC) for the Prevention of Chemotherapy-induced Nausea and Vomiting",
+      "status": "WITHDRAWN",
+      "phase": "PHASE2",
+      "condition": "Chemotherapy-induced Nausea and Vomiting",
+      "start_date": "2020-08-15",
+      "completion_date": "2022-12-01",
+      "enrollment": 0,
+      "sponsor": "University of Alabama at Birmingham"
+    }
+  ],
+  "summary": {
+    "total_trials": 28,
+    "by_phase": {
+      "PHASE1, PHASE2": 1,
+      "PHASE2": 13,
+      "PHASE3": 6,
+      "PHASE4": 7,
+      "": 1
+    },
+    "by_status": {
+      "COMPLETED": 22,
+      "UNKNOWN": 3,
+      "TERMINATED": 1,
+      "WITHDRAWN": 2
+    },
+    "active_trials": 0,
+    "completed_trials": 22,
+    "conditions": [
+      "Analgesia",
+      "Bunions",
+      "COVID-19",
+      "Chemotherapy-Induced Nausea and Vomiting (CINV)",
+      "Chemotherapy-induced Nausea and Vomiting",
+      "Healthy",
+      "Nausea and Vomiting, Unspecified Adult Solid Tumor, Protocol Specific",
+      "Post Operative Pain, Acute, Bariatric Surgery Candidate, Postoperative Pain",
+      "Post-Operative Pain, Lumbar Laminectomy",
+      "Postoperative Pain",
+      "Postoperative Pain, Bunions",
+      "Postoperative Pain, Total Shoulder Arthroplasty, Multimodal Analgesia"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:18:51.859144",
+    "search_query": "Heron Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Heron+Therapeutics,+Inc."
+  }
+}

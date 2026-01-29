@@ -1,0 +1,101 @@
+{
+  "ticker": "UPB",
+  "company_name": "Upstream Bio, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06196879",
+      "title": "A Study to Investigate the Efficacy and Safety of Verekitug (UPB-101) in Adult Participants With Severe Asthma (VALIANT)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Severe Asthma",
+      "start_date": "2024-02-27",
+      "completion_date": "2026-06-11",
+      "enrollment": 0,
+      "sponsor": "Upstream Bio Inc."
+    },
+    {
+      "nct_id": "NCT06981078",
+      "title": "A Study to Assess the Efficacy and Safety of Verekitug in Participants With COPD",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Chronic Obstructive Pulmonary Disease",
+      "start_date": "2025-07-02",
+      "completion_date": "2028-07",
+      "enrollment": 0,
+      "sponsor": "Upstream Bio Inc."
+    },
+    {
+      "nct_id": "NCT05653479",
+      "title": "Safety and Blood Levels After a Single Injection of UPB-101 in Healthy Japanese and Non-Japanese Non-East Asian Adults",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2022-12-05",
+      "completion_date": "2023-05-13",
+      "enrollment": 0,
+      "sponsor": "Upstream Bio Inc."
+    },
+    {
+      "nct_id": "NCT05448651",
+      "title": "Safety and Biologic Impact (Pharmacodynamics) of Repeated Injections and Increasing Amounts of UPB-101 in Asthmatics",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Asthma",
+      "start_date": "2022-07-08",
+      "completion_date": "2023-10-05",
+      "enrollment": 0,
+      "sponsor": "Upstream Bio Inc."
+    },
+    {
+      "nct_id": "NCT06966479",
+      "title": "A Long-Term Safety and Efficacy Study of Verekitug (UPB-101) in Adult Participants With Severe Asthma (VALOUR)",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Severe Asthma",
+      "start_date": "2025-05-21",
+      "completion_date": "2027-09",
+      "enrollment": 0,
+      "sponsor": "Upstream Bio Inc."
+    },
+    {
+      "nct_id": "NCT06164704",
+      "title": "A Study to Investigate the Efficacy and Safety of Verekitug (UPB-101) in Participants With Chronic Rhinosinusitis With Nasal Polyps",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Chronic Rhinosinusitis With Nasal Polyps",
+      "start_date": "2023-12-18",
+      "completion_date": "2025-07-22",
+      "enrollment": 0,
+      "sponsor": "Upstream Bio Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 6,
+    "by_phase": {
+      "PHASE2": 4,
+      "PHASE1": 2
+    },
+    "by_status": {
+      "ACTIVE_NOT_RECRUITING": 1,
+      "RECRUITING": 2,
+      "COMPLETED": 3
+    },
+    "active_trials": 3,
+    "completed_trials": 3,
+    "conditions": [
+      "Asthma",
+      "Chronic Obstructive Pulmonary Disease",
+      "Chronic Rhinosinusitis With Nasal Polyps",
+      "Healthy",
+      "Severe Asthma"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:22:38.876404",
+    "search_query": "Upstream Bio, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Upstream+Bio,+Inc."
+  }
+}

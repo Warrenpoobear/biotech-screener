@@ -1,0 +1,101 @@
+{
+  "ticker": "NUVL",
+  "company_name": "Nuvalent, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05384626",
+      "title": "A Study of Neladalkib (NVL-655) in Patients With Advanced NSCLC and Other Solid Tumors Harboring ALK Rearrangement or Activating ALK Mutation (ALKOVE-1)",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Locally Advanced Solid Tumor, Metastatic Solid Tumor",
+      "start_date": "2022-06-09",
+      "completion_date": "2028-01",
+      "enrollment": 0,
+      "sponsor": "Nuvalent Inc."
+    },
+    {
+      "nct_id": "NCT06765109",
+      "title": "Neladalkib (NVL-655) for TKI-naive Patients With Advanced ALK-Positive NSCLC",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Non-small Cell Lung Cancer, Anaplastic Lymphoma Kinase-positive",
+      "start_date": "2025-07-17",
+      "completion_date": "2029-12",
+      "enrollment": 0,
+      "sponsor": "Nuvalent Inc."
+    },
+    {
+      "nct_id": "NCT06834074",
+      "title": "Expanded Access Program of Neladalkib (NVL-655) for Patients With Advanced ALK+ NSCLC or Other ALK+ Solid Tumors",
+      "status": "AVAILABLE",
+      "phase": "",
+      "condition": "Non Small Cell Lung Cancer, ALK-positive Non-small Cell Lung Cancer (NSCLC)",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Nuvalent Inc."
+    },
+    {
+      "nct_id": "NCT06521554",
+      "title": "A Study of NVL-330 in Patients With Advanced or Metastatic HER2-altered NSCLC (HEROEX-1)",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Locally Advanced Solid Tumor, Metastatic Solid Tumor",
+      "start_date": "2024-07-18",
+      "completion_date": "2026-03",
+      "enrollment": 0,
+      "sponsor": "Nuvalent Inc."
+    },
+    {
+      "nct_id": "NCT05118789",
+      "title": "A Study of Zidesamtinib (NVL-520) in Patients With Advanced NSCLC and Other Solid Tumors Harboring ROS1 Rearrangement (ARROS-1)",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Locally Advanced Solid Tumor, Metastatic Solid Tumor",
+      "start_date": "2022-01-04",
+      "completion_date": "2028-12-31",
+      "enrollment": 0,
+      "sponsor": "Nuvalent Inc."
+    },
+    {
+      "nct_id": "NCT06797362",
+      "title": "Expanded Access Program of Zidesamtinib (NVL-520) for Patients With Advanced ROS1+ NSCLC or Other ROS1+ Solid Tumors",
+      "status": "AVAILABLE",
+      "phase": "",
+      "condition": "Non Small Cell Lung Cancer, ROS1-positive Non-Small Cell Lung Cancer (NSCLC)",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Nuvalent Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 6,
+    "by_phase": {
+      "PHASE1, PHASE2": 2,
+      "PHASE3": 1,
+      "": 2,
+      "PHASE1": 1
+    },
+    "by_status": {
+      "RECRUITING": 4,
+      "AVAILABLE": 2
+    },
+    "active_trials": 4,
+    "completed_trials": 0,
+    "conditions": [
+      "Locally Advanced Solid Tumor, Metastatic Solid Tumor",
+      "Non Small Cell Lung Cancer, ALK-positive Non-small Cell Lung Cancer (NSCLC)",
+      "Non Small Cell Lung Cancer, ROS1-positive Non-Small Cell Lung Cancer (NSCLC)",
+      "Non-small Cell Lung Cancer, Anaplastic Lymphoma Kinase-positive"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:20:24.993837",
+    "search_query": "Nuvalent, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Nuvalent,+Inc."
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "ticker": "ACLX",
+  "company_name": "Arcellx, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05396885",
+      "title": "Study of Anitocabtagene-autoleucel in Relapsed or Refractory Multiple Myeloma (iMMagine-1)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Multiple Myeloma",
+      "start_date": "2022-07-15",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "Kite, A Gilead Company"
+    },
+    {
+      "nct_id": "NCT05457010",
+      "title": "Phase I Study of Cell Therapies for the Treatment of Patients With Relapsed or Refractory AML or High-risk MDS",
+      "status": "UNKNOWN",
+      "phase": "PHASE1",
+      "condition": "Acute Myeloid Leukemia, Myelodysplastic Syndromes",
+      "start_date": "2022-11-28",
+      "completion_date": "2025-11-17",
+      "enrollment": 0,
+      "sponsor": "Arcellx, Inc."
+    },
+    {
+      "nct_id": "NCT06413498",
+      "title": "A Study Comparing Anitocabtagene Autoleucel to Standard of Care Therapy in Participants With Relapsed/ Refractory Multiple Myeloma",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Multiple Myeloma",
+      "start_date": "2024-08-23",
+      "completion_date": "2031-07",
+      "enrollment": 0,
+      "sponsor": "Kite, A Gilead Company"
+    },
+    {
+      "nct_id": "NCT06626919",
+      "title": "A Phase 1 Study of Anitocabtagene Autoleucel for the Treatment of Subjects With Non-oncology Plasma Cell-related Diseases",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Muscular Diseases, Neuromuscular Manifestations, Autoimmune, Autoimmune Diseases, Autoimmune Diseases of the Nervous System, Myasthenia Gravis, Muscle Weakness",
+      "start_date": "2025-04-30",
+      "completion_date": "2028-04",
+      "enrollment": 0,
+      "sponsor": "Arcellx, Inc."
+    },
+    {
+      "nct_id": "NCT04155749",
+      "title": "Study of Anitocabtagene-autoleucel in Participants With Relapsed Refractory Multiple Myeloma",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Relapsed and Refractory Multiple Myeloma",
+      "start_date": "2019-12-23",
+      "completion_date": "2026-06",
+      "enrollment": 0,
+      "sponsor": "Kite, A Gilead Company"
+    }
+  ],
+  "summary": {
+    "total_trials": 5,
+    "by_phase": {
+      "PHASE2": 1,
+      "PHASE1": 3,
+      "PHASE3": 1
+    },
+    "by_status": {
+      "ACTIVE_NOT_RECRUITING": 2,
+      "UNKNOWN": 1,
+      "RECRUITING": 2
+    },
+    "active_trials": 4,
+    "completed_trials": 0,
+    "conditions": [
+      "Acute Myeloid Leukemia, Myelodysplastic Syndromes",
+      "Multiple Myeloma",
+      "Muscular Diseases, Neuromuscular Manifestations, Autoimmune, Autoimmune Diseases, Autoimmune Diseases of the Nervous System, Myasthenia Gravis, Muscle Weakness",
+      "Relapsed and Refractory Multiple Myeloma"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:15:58.364508",
+    "search_query": "Arcellx, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Arcellx,+Inc."
+  }
+}

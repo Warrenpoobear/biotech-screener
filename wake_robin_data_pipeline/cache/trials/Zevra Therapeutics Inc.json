@@ -1,0 +1,90 @@
+{
+  "ticker": "ZVRA",
+  "company_name": "Zevra Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT03460652",
+      "title": "KP415 Open-Label Safety Study in Children (6-12 Years of Age) With ADHD",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "ADHD",
+      "start_date": "2018-03-13",
+      "completion_date": "2019-07-09",
+      "enrollment": 0,
+      "sponsor": "Zevra Therapeutics"
+    },
+    {
+      "nct_id": "NCT06773026",
+      "title": "Study of Sodium Phenylbutyrate (ACER-001) for the Treatment of Pediatric and Adults Patients With Medium Chain Acyl-CoA Dehydrogenase Deficiency (MCADD)",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Medium-chain Acyl-CoA Dehydrogenase Deficiency",
+      "start_date": "2025-06-30",
+      "completion_date": "2027-07",
+      "enrollment": 0,
+      "sponsor": "Jerry Vockley, MD, PhD"
+    },
+    {
+      "nct_id": "NCT03292952",
+      "title": "KP415 Classroom Study in Children (6-12 Years of Age) With ADHD",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "ADHD",
+      "start_date": "2017-12-20",
+      "completion_date": "2018-05-16",
+      "enrollment": 0,
+      "sponsor": "Zevra Therapeutics"
+    },
+    {
+      "nct_id": "NCT07125066",
+      "title": "An Individual Patient, Open Label Study to Use ACER-001 to Treat Combined D,L-2 Hydroxyglutaric Aciduria (C-2HGA)",
+      "status": "ENROLLING_BY_INVITATION",
+      "phase": "PHASE1",
+      "condition": "Combined D,L-2-hydroxyglutaric Aciduria",
+      "start_date": "2025-07-30",
+      "completion_date": "2027-12",
+      "enrollment": 0,
+      "sponsor": "Jerry Vockley, MD, PhD"
+    },
+    {
+      "nct_id": "NCT05668754",
+      "title": "Placebo-Controlled, Double-Blind, Study to Determine the Safety and Efficacy of SDX in Patients With IH",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Idiopathic Hypersomnia",
+      "start_date": "2022-12-28",
+      "completion_date": "2024-03-21",
+      "enrollment": 0,
+      "sponsor": "Zevra Therapeutics"
+    }
+  ],
+  "summary": {
+    "total_trials": 5,
+    "by_phase": {
+      "PHASE3": 2,
+      "PHASE2": 2,
+      "PHASE1": 1
+    },
+    "by_status": {
+      "COMPLETED": 3,
+      "RECRUITING": 1,
+      "ENROLLING_BY_INVITATION": 1
+    },
+    "active_trials": 2,
+    "completed_trials": 3,
+    "conditions": [
+      "ADHD",
+      "Combined D,L-2-hydroxyglutaric Aciduria",
+      "Idiopathic Hypersomnia",
+      "Medium-chain Acyl-CoA Dehydrogenase Deficiency"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:23:06.212983",
+    "search_query": "Zevra Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Zevra+Therapeutics,+Inc."
+  }
+}

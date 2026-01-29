@@ -1,0 +1,43 @@
+{
+  "ticker": "TARA",
+  "success": true,
+  "price": {
+    "current": 7.025,
+    "currency": "USD",
+    "day_high": 7.15,
+    "day_low": 6.96,
+    "52_week_high": 7.82,
+    "52_week_low": 2.77
+  },
+  "market_cap": {
+    "value": 376450496.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 53587260.0,
+  "volume": {
+    "last": 255654,
+    "average_30d": 1102579
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -4.824863,
+    "price_to_book": 2.0493
+  },
+  "company_info": {
+    "name": "Protara Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:10:07.423274",
+    "url": "https://finance.yahoo.com/quote/TARA",
+    "data_hash": "75008fc74dc693f7"
+  }
+}

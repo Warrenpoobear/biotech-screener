@@ -1,0 +1,43 @@
+{
+  "ticker": "PRQR",
+  "success": true,
+  "price": {
+    "current": 1.61,
+    "currency": "USD",
+    "day_high": 1.63,
+    "day_low": 1.6,
+    "52_week_high": 3.1,
+    "52_week_low": 1.07
+  },
+  "market_cap": {
+    "value": 169605760.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 105345192.0,
+  "volume": {
+    "last": 134022,
+    "average_30d": 527341
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -3.4255319,
+    "price_to_book": 2.4720213
+  },
+  "company_info": {
+    "name": "ProQR Therapeutics N.V.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:09:04.972727",
+    "url": "https://finance.yahoo.com/quote/PRQR",
+    "data_hash": "a975f150384c9665"
+  }
+}

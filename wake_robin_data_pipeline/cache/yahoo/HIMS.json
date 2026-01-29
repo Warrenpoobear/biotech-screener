@@ -1,0 +1,43 @@
+{
+  "ticker": "HIMS",
+  "success": true,
+  "price": {
+    "current": 29.665,
+    "currency": "USD",
+    "day_high": 30.7,
+    "day_low": 28.465,
+    "52_week_high": 72.98,
+    "52_week_low": 23.97
+  },
+  "market_cap": {
+    "value": 6753193472.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 219270891.0,
+  "volume": {
+    "last": 14618194,
+    "average_30d": 15686645
+  },
+  "valuation": {
+    "pe_ratio": 55.971703,
+    "forward_pe": 26.599895,
+    "price_to_book": 11.615114
+  },
+  "company_info": {
+    "name": "Hims & Hers Health, Inc.",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T13:11:20.254426",
+    "url": "https://finance.yahoo.com/quote/HIMS",
+    "data_hash": "e1e77c5f2f601ca8"
+  }
+}

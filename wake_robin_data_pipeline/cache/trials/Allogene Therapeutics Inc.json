@@ -1,0 +1,141 @@
+{
+  "ticker": "ALLO",
+  "company_name": "Allogene Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04093596",
+      "title": "Safety and Efficacy of ALLO-715 BCMA Allogenic CAR T Cells in in Adults With Relapsed or Refractory Multiple Myeloma (UNIVERSAL)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Relapsed/Refractory Multiple Myeloma",
+      "start_date": "2019-09-23",
+      "completion_date": "2027-09",
+      "enrollment": 0,
+      "sponsor": "Allogene Therapeutics"
+    },
+    {
+      "nct_id": "NCT05714345",
+      "title": "Evaluation of Lymphodepletion With ALLO-647 in Adults With R/R Large B Cell Lymphoma Receiving ALLO-501A Allogeneic CAR T Cell Therapy",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Relapsed/Refractory Large B Cell Lymphoma",
+      "start_date": "2023-11-01",
+      "completion_date": "2024-10-28",
+      "enrollment": 0,
+      "sponsor": "Allogene Therapeutics"
+    },
+    {
+      "nct_id": "NCT06925685",
+      "title": "Follow-Up for Study Participants Treated With an Allogeneic CAR T-Cell Product",
+      "status": "ENROLLING_BY_INVITATION",
+      "phase": "",
+      "condition": "Hematologic Malignancies, Solid Tumors",
+      "start_date": "2025-01-31",
+      "completion_date": "2039-01",
+      "enrollment": 0,
+      "sponsor": "Allogene Therapeutics"
+    },
+    {
+      "nct_id": "NCT06500273",
+      "title": "Consolidation of First-Line MRD+ Remission With Cema-cel in Patients With LBCL",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Large B-cell Lymphoma",
+      "start_date": "2024-06-18",
+      "completion_date": "2031-08-24",
+      "enrollment": 0,
+      "sponsor": "Allogene Therapeutics"
+    },
+    {
+      "nct_id": "NCT07085104",
+      "title": "A Study to Investigate the Safety and Preliminary Efficacy of ALLO-329, an Allogeneic CAR T-cell Therapy, in Adults With Autoimmune Disease",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Systemic Lupus Erythematosus (With and Without Nephritis), Idiopathic Inflammatory Myopathy, Systemic Sclerosis, Lupus Nephritis",
+      "start_date": "2025-09",
+      "completion_date": "2032-10",
+      "enrollment": 0,
+      "sponsor": "Allogene Therapeutics"
+    },
+    {
+      "nct_id": "NCT03939026",
+      "title": "Safety and Efficacy of ALLO-501 Anti-CD19 Allogeneic CAR T Cells in Adults With Relapsed/Refractory Large B Cell or Follicular Lymphoma",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Relapsed/Refractory Large B Cell Lymphoma, Relapsed/Refractory Follicular Lymphoma",
+      "start_date": "2019-05-01",
+      "completion_date": "2025-01-28",
+      "enrollment": 0,
+      "sponsor": "Allogene Therapeutics"
+    },
+    {
+      "nct_id": "NCT05000450",
+      "title": "Safety and Efficacy of ALLO-605 an Anti-BCMA Allogeneic CAR T Cell Therapy in Patients With Relapsed/Refractory Multiple Myeloma",
+      "status": "TERMINATED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Relapsed/Refractory Multiple Myeloma",
+      "start_date": "2021-06-06",
+      "completion_date": "2023-10-11",
+      "enrollment": 0,
+      "sponsor": "Allogene Therapeutics"
+    },
+    {
+      "nct_id": "NCT04696731",
+      "title": "Safety and Efficacy of ALLO-316 in Subjects With Advanced or Metastatic Clear Cell Renal Cell Carcinoma",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Advanced/Metastatic Clear Cell Renal Cell Carcinoma",
+      "start_date": "2021-02-24",
+      "completion_date": "2025-12",
+      "enrollment": 0,
+      "sponsor": "Allogene Therapeutics"
+    },
+    {
+      "nct_id": "NCT04416984",
+      "title": "Safety and Efficacy of ALLO-501A Anti-CD19 Allogeneic CAR T Cells in Adults with Relapsed/Refractory Large B Cell Lymphoma, Chronic Lymphocytic Leukemia and Small Lymphocytic Lymphoma (ALPHA2)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Relapsed or Refractory Large B Cell Lymphoma, Relapsed or Refractory Chronic Lymphocytic Leukemia, Relapsed or Refractory Small Lymphocytic Lymphoma",
+      "start_date": "2020-05-21",
+      "completion_date": "2029-05",
+      "enrollment": 0,
+      "sponsor": "Allogene Therapeutics"
+    }
+  ],
+  "summary": {
+    "total_trials": 9,
+    "by_phase": {
+      "PHASE1": 4,
+      "PHASE2": 2,
+      "": 1,
+      "PHASE1, PHASE2": 2
+    },
+    "by_status": {
+      "ACTIVE_NOT_RECRUITING": 3,
+      "TERMINATED": 2,
+      "ENROLLING_BY_INVITATION": 1,
+      "RECRUITING": 2,
+      "COMPLETED": 1
+    },
+    "active_trials": 6,
+    "completed_trials": 1,
+    "conditions": [
+      "Advanced/Metastatic Clear Cell Renal Cell Carcinoma",
+      "Hematologic Malignancies, Solid Tumors",
+      "Large B-cell Lymphoma",
+      "Relapsed or Refractory Large B Cell Lymphoma, Relapsed or Refractory Chronic Lymphocytic Leukemia, Relapsed or Refractory Small Lymphocytic Lymphoma",
+      "Relapsed/Refractory Large B Cell Lymphoma",
+      "Relapsed/Refractory Large B Cell Lymphoma, Relapsed/Refractory Follicular Lymphoma",
+      "Relapsed/Refractory Multiple Myeloma",
+      "Systemic Lupus Erythematosus (With and Without Nephritis), Idiopathic Inflammatory Myopathy, Systemic Sclerosis, Lupus Nephritis"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:16:10.724956",
+    "search_query": "Allogene Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Allogene+Therapeutics,+Inc."
+  }
+}

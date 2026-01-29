@@ -1,0 +1,171 @@
+{
+  "ticker": "HRMY",
+  "company_name": "Harmony Biosciences Holdings, I",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT03433131",
+      "title": "Expanded Access Program to Provide Treatment With Pitolisant to Adult Patients in the U.S. With Excessive Daytime Sleepiness Associated With Narcolepsy With or Without Cataplexy",
+      "status": "NO_LONGER_AVAILABLE",
+      "phase": "",
+      "condition": "Narcolepsy Without Cataplexy, Narcolepsy With Cataplexy",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Harmony Biosciences Management, Inc."
+    },
+    {
+      "nct_id": "NCT07051252",
+      "title": "A Study of HBS-201 (Pitolisant Delayed-release)",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Narcolepsy",
+      "start_date": "2025-05-21",
+      "completion_date": "2025-10-13",
+      "enrollment": 0,
+      "sponsor": "Harmony Biosciences Management, Inc."
+    },
+    {
+      "nct_id": "NCT05536011",
+      "title": "WAKIX\u00ae (Pitolisant) Pregnancy Registry",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Pregnancy Related, Narcolepsy",
+      "start_date": "2021-08-24",
+      "completion_date": "2030-06-30",
+      "enrollment": 0,
+      "sponsor": "Harmony Biosciences Management, Inc."
+    },
+    {
+      "nct_id": "NCT07219485",
+      "title": "A Study of Pitolisant in Participants With Prader-Willi Syndrome",
+      "status": "ENROLLING_BY_INVITATION",
+      "phase": "PHASE3",
+      "condition": "Prader-Willi Syndrome",
+      "start_date": "2025-08-20",
+      "completion_date": "2030-08",
+      "enrollment": 0,
+      "sponsor": "Harmony Biosciences Management, Inc."
+    },
+    {
+      "nct_id": "NCT05156047",
+      "title": "A Phase 3 Study to Assess the Safety and Efficacy of Pitolisant in Adult Patients With Idiopathic Hypersomnia",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Idiopathic Hypersomnia",
+      "start_date": "2022-05-25",
+      "completion_date": "2023-09-08",
+      "enrollment": 0,
+      "sponsor": "Harmony Biosciences Management, Inc."
+    },
+    {
+      "nct_id": "NCT06930872",
+      "title": "Drug Interaction Study of ZYN002 Transdermal Gel and Probe Substrates",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Drug Interaction",
+      "start_date": "2025-06-06",
+      "completion_date": "2025-11",
+      "enrollment": 0,
+      "sponsor": "Harmony Biosciences Management, Inc."
+    },
+    {
+      "nct_id": "NCT04257929",
+      "title": "A Phase 2 Study to Evaluate the Safety and Efficacy of Pitolisant in Patients With Prader-Willi Syndrome, Followed by an Open Label Extension",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Prader-Willi Syndrome",
+      "start_date": "2020-12-09",
+      "completion_date": "2028-09-07",
+      "enrollment": 0,
+      "sponsor": "Harmony Biosciences Management, Inc."
+    },
+    {
+      "nct_id": "NCT04886518",
+      "title": "Safety and Efficacy of Pitolisant on Excessive Daytime Sleepiness and Other Non-Muscular Symptoms in Patients With Myotonic Dystrophy Type 1",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Myotonic Dystrophy 1, Excessive Daytime Sleepiness",
+      "start_date": "2021-06-28",
+      "completion_date": "2024-10-31",
+      "enrollment": 0,
+      "sponsor": "Harmony Biosciences Management, Inc."
+    },
+    {
+      "nct_id": "NCT06366464",
+      "title": "A Study of Pitolisant in Patients With Prader-Willi Syndrome",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Prader-Willi Syndrome",
+      "start_date": "2024-05-28",
+      "completion_date": "2027-07",
+      "enrollment": 0,
+      "sponsor": "Harmony Biosciences Management, Inc."
+    },
+    {
+      "nct_id": "NCT05581576",
+      "title": "Pitolisant in Refractory Restless Legs Syndrome",
+      "status": "UNKNOWN",
+      "phase": "PHASE4",
+      "condition": "Restless Legs Syndrome",
+      "start_date": "2022-09-20",
+      "completion_date": "2023-05-01",
+      "enrollment": 0,
+      "sponsor": "William Ondo, MD"
+    }
+  ],
+  "summary": {
+    "total_trials": 26,
+    "by_phase": {
+      "": 3,
+      "PHASE1": 3,
+      "PHASE3": 6,
+      "PHASE2": 4,
+      "PHASE4": 1,
+      "NA": 9
+    },
+    "by_status": {
+      "NO_LONGER_AVAILABLE": 1,
+      "COMPLETED": 11,
+      "RECRUITING": 6,
+      "ENROLLING_BY_INVITATION": 1,
+      "ACTIVE_NOT_RECRUITING": 4,
+      "UNKNOWN": 1,
+      "NOT_YET_RECRUITING": 2
+    },
+    "active_trials": 11,
+    "completed_trials": 11,
+    "conditions": [
+      "Child Abuse, Parental Burnout",
+      "Dementia, Mild Cognitive Impairment",
+      "Dementia, Nursing Homes Residents",
+      "Dravet Syndrome",
+      "Drug Interaction",
+      "Hair Thinning",
+      "Healthy",
+      "Healthy, Well-Being, Psychological",
+      "Idiopathic Hypersomnia",
+      "Idiopathic Hypersomnia, Excessive Daytime Sleepiness",
+      "Influenza",
+      "Lassa Virus Infection",
+      "Lennox Gastaut Syndrome",
+      "Myotonic Dystrophy 1, Excessive Daytime Sleepiness",
+      "Narcolepsy",
+      "Narcolepsy Without Cataplexy, Narcolepsy With Cataplexy",
+      "Normal, Sensitive Skin",
+      "Palliative Care",
+      "Parkinson Disease",
+      "Prader-Willi Syndrome",
+      "Pregnancy Related, Narcolepsy",
+      "Restless Legs Syndrome",
+      "Vaccine-Preventable Diseases, Influenza"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:18:49.298007",
+    "search_query": "Harmony Biosciences Holdings, I",
+    "url": "https://clinicaltrials.gov/search?term=Harmony+Biosciences+Holdings,+I"
+  }
+}

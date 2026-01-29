@@ -1,0 +1,43 @@
+{
+  "ticker": "OPCH",
+  "success": true,
+  "price": {
+    "current": 33.935,
+    "currency": "USD",
+    "day_high": 35.23,
+    "day_low": 33.86,
+    "52_week_high": 36.8,
+    "52_week_low": 24.24
+  },
+  "market_cap": {
+    "value": 5507483136.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 158732706.0,
+  "volume": {
+    "last": 366820,
+    "average_30d": 1774123
+  },
+  "valuation": {
+    "pe_ratio": 26.93254,
+    "forward_pe": 18.105524,
+    "price_to_book": 3.9989395
+  },
+  "company_info": {
+    "name": "Option Care Health, Inc.",
+    "sector": "Healthcare",
+    "industry": "Medical Care Facilities"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:45.311337",
+    "url": "https://finance.yahoo.com/quote/OPCH",
+    "data_hash": "2853cf3dc46db8c0"
+  }
+}

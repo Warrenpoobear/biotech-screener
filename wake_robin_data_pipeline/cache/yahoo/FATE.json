@@ -1,0 +1,43 @@
+{
+  "ticker": "FATE",
+  "success": true,
+  "price": {
+    "current": 1.185,
+    "currency": "USD",
+    "day_high": 1.21,
+    "day_low": 1.17,
+    "52_week_high": 1.94,
+    "52_week_low": 0.66
+  },
+  "market_cap": {
+    "value": 136692448.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 115352289.0,
+  "volume": {
+    "last": 285019,
+    "average_30d": 1686073
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -1.0244927,
+    "price_to_book": 0.5840315
+  },
+  "company_info": {
+    "name": "Fate Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:06:30.359728",
+    "url": "https://finance.yahoo.com/quote/FATE",
+    "data_hash": "42afb97ee378f794"
+  }
+}

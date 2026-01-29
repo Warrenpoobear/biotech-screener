@@ -1,0 +1,154 @@
+{
+  "ticker": "ALVO",
+  "company_name": "Alvotech",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT03983876",
+      "title": "PK, Safety and Tolerability Study of AVT02 (Adalimumab) Pre-filled Syringe (PFS) vs, AVT02 Autoinjector (AI)",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Phase 1",
+      "start_date": "2019-07-01",
+      "completion_date": "2019-12-03",
+      "enrollment": 0,
+      "sponsor": "Alvotech Swiss AG"
+    },
+    {
+      "nct_id": "NCT06570772",
+      "title": "Study to Investigate Comparative Efficacy, Safety and Immunogenicity Between AVT16 and Entyvio",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Ulcerative Colitis",
+      "start_date": "2024-09-23",
+      "completion_date": "2025-11-25",
+      "enrollment": 0,
+      "sponsor": "Alvotech Swiss AG"
+    },
+    {
+      "nct_id": "NCT06400719",
+      "title": "Pilot Study of AVT16 in Healthy Adult Subjects",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2024-05-29",
+      "completion_date": "2024-11-06",
+      "enrollment": 0,
+      "sponsor": "Alvotech Swiss AG"
+    },
+    {
+      "nct_id": "NCT03579823",
+      "title": "Comparative Safety, Tolerability, Pharmacokinetic Study of AVT02 (100MG/ML) and Humira (100MG/ML) in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2018-05-21",
+      "completion_date": "2018-08-24",
+      "enrollment": 0,
+      "sponsor": "Alvotech Swiss AG"
+    },
+    {
+      "nct_id": "NCT05986786",
+      "title": "Clinical Study to Evaluate the Handling and Safety of AVT06 PFS in Subjects With Chorioretinal Vascular Disease",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Chorioretinal Vascular Disease",
+      "start_date": "2024-02-28",
+      "completion_date": "2025-03-21",
+      "enrollment": 0,
+      "sponsor": "Alvotech Swiss AG"
+    },
+    {
+      "nct_id": "NCT04930042",
+      "title": "Efficacy, Safety, and Immunogenicity of AVT04 With Moderate-to-Severe Chronic Plaque Psoriasis",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Psoriasis",
+      "start_date": "2021-06-03",
+      "completion_date": "2022-10-11",
+      "enrollment": 0,
+      "sponsor": "Alvotech Swiss AG"
+    },
+    {
+      "nct_id": "NCT03849404",
+      "title": "Efficacy, Safety, and Immunogenicity of AVT02 With Moderate-to-Severe Chronic Plaque Psoriasis",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Plaque Psoriasis",
+      "start_date": "2019-02-20",
+      "completion_date": "2020-07-20",
+      "enrollment": 0,
+      "sponsor": "Alvotech Swiss AG"
+    },
+    {
+      "nct_id": "NCT04224194",
+      "title": "Auto-injector Real Life Handling in Patients",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "RA",
+      "start_date": "2019-11-04",
+      "completion_date": "2021-02-26",
+      "enrollment": 0,
+      "sponsor": "Alvotech Swiss AG"
+    },
+    {
+      "nct_id": "NCT05632211",
+      "title": "A Study to Investigate the PK, Safety, and Tolerability Between AVT05, US and EU Simponi\u00ae in Healthy Adult Participants",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Adult Subjects",
+      "start_date": "2022-12-16",
+      "completion_date": "2023-10-03",
+      "enrollment": 0,
+      "sponsor": "Alvotech Swiss AG"
+    },
+    {
+      "nct_id": "NCT06732804",
+      "title": "Study to Investigate Comparative Pharmacokinetics, Safety, Immunogenicity and Tolerability Between AVT80 and Entyvio",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Male and Female Subjects",
+      "start_date": "2025-02-11",
+      "completion_date": "2026-01-08",
+      "enrollment": 0,
+      "sponsor": "Alvotech Swiss AG"
+    }
+  ],
+  "summary": {
+    "total_trials": 18,
+    "by_phase": {
+      "PHASE1": 9,
+      "PHASE3": 9
+    },
+    "by_status": {
+      "COMPLETED": 17,
+      "TERMINATED": 1
+    },
+    "active_trials": 0,
+    "completed_trials": 17,
+    "conditions": [
+      "Chorioretinal Vascular Disease",
+      "Healthy",
+      "Healthy Adult Subjects",
+      "Healthy Male Subjects",
+      "Healthy Male and Female Subjects",
+      "Healthy Volunteers",
+      "Neovascular (Wet) AMD",
+      "Osteoporosis, Postmenopausal",
+      "Phase 1",
+      "Plaque Psoriasis",
+      "Psoriasis",
+      "RA",
+      "Rheumatoid Arthritis",
+      "This is a Phase I Study Conducted in Healthy Volunteers",
+      "Ulcerative Colitis"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:16:16.115121",
+    "search_query": "Alvotech",
+    "url": "https://clinicaltrials.gov/search?term=Alvotech"
+  }
+}

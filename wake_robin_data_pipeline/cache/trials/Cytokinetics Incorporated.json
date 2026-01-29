@@ -1,0 +1,174 @@
+{
+  "ticker": "CYTK",
+  "company_name": "Cytokinetics, Incorporated",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT03767855",
+      "title": "A Single and Multiple Ascending Dose Study of CK-3773274 in Healthy Adult Subjects",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Symptomatic Obstructive Hypertrophic Cardiomyopathy, Healthy Subjects",
+      "start_date": "2018-12-04",
+      "completion_date": "2020-01-03",
+      "enrollment": 0,
+      "sponsor": "Cytokinetics"
+    },
+    {
+      "nct_id": "NCT01486849",
+      "title": "Dose Titration Study to Test Safety and Effects of CK-2017357 in Patients With Amyotrophic Lateral Sclerosis (ALS)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Amyotrophic Lateral Sclerosis",
+      "start_date": "2011-11",
+      "completion_date": "2012-03",
+      "enrollment": 0,
+      "sponsor": "Cytokinetics"
+    },
+    {
+      "nct_id": "NCT00748579",
+      "title": "Phase II Study of the Effect of CK-1827452 Injection on Myocardial Efficiency",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Heart Failure",
+      "start_date": "2008-09",
+      "completion_date": "2009-07",
+      "enrollment": 0,
+      "sponsor": "Cytokinetics"
+    },
+    {
+      "nct_id": "NCT01077167",
+      "title": "Pharmacokinetic Study of Omecamtiv Mecarbil in Heart Failure Patients",
+      "status": "WITHDRAWN",
+      "phase": "PHASE2",
+      "condition": "Heart Failure",
+      "start_date": "2010-07",
+      "completion_date": "2011-05",
+      "enrollment": 0,
+      "sponsor": "Cytokinetics"
+    },
+    {
+      "nct_id": "NCT04464525",
+      "title": "Omecamtiv Mecarbil Post-trial Access Study",
+      "status": "WITHDRAWN",
+      "phase": "PHASE3",
+      "condition": "Chronic Heart Failure With Reduced Ejection Fraction",
+      "start_date": "2020-12-18",
+      "completion_date": "2026-11-27",
+      "enrollment": 0,
+      "sponsor": "Cytokinetics"
+    },
+    {
+      "nct_id": "NCT01380223",
+      "title": "A Pharmacokinetic and Pharmacodynamic Study of Omecamtiv Mecarbil in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Heart Failure",
+      "start_date": "2005-08",
+      "completion_date": "2006-04",
+      "enrollment": 0,
+      "sponsor": "Cytokinetics"
+    },
+    {
+      "nct_id": "NCT04944784",
+      "title": "A Study to Evaluate the Efficacy and Safety of Reldesemtiv in Patients With Amyotrophic Lateral Sclerosis (ALS)",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Amyotrophic Lateral Sclerosis",
+      "start_date": "2021-08-16",
+      "completion_date": "2023-07-18",
+      "enrollment": 0,
+      "sponsor": "Cytokinetics"
+    },
+    {
+      "nct_id": "NCT04848506",
+      "title": "Open-label Extension Study to Evaluate the Long-term Safety and Tolerability of Aficamten in Adults With HCM",
+      "status": "ENROLLING_BY_INVITATION",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Symptomatic Hypertrophic Cardiomyopathy (HCM)",
+      "start_date": "2021-05-06",
+      "completion_date": "2028-03",
+      "enrollment": 0,
+      "sponsor": "Cytokinetics"
+    },
+    {
+      "nct_id": "NCT03759392",
+      "title": "Study to Assess the Effect of Omecamtiv Mecarbil on Exercise Capacity in Subjects With Heart Failure",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Heart Failure With Reduced Ejection Fraction",
+      "start_date": "2019-04-09",
+      "completion_date": "2022-01-06",
+      "enrollment": 0,
+      "sponsor": "Cytokinetics"
+    },
+    {
+      "nct_id": "NCT04175808",
+      "title": "Study to Assess the Effect of Omecamtiv Mecarbil (OM) on QT/QTc Intervals in Healthy Adults",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "QT Intervals Changes, QTc Intervals Changes",
+      "start_date": "2019-11-14",
+      "completion_date": "2020-03-04",
+      "enrollment": 0,
+      "sponsor": "Cytokinetics"
+    }
+  ],
+  "summary": {
+    "total_trials": 45,
+    "by_phase": {
+      "PHASE1": 11,
+      "PHASE2": 19,
+      "PHASE3": 11,
+      "PHASE2, PHASE3": 2,
+      "": 1,
+      "PHASE1, PHASE2": 1
+    },
+    "by_status": {
+      "COMPLETED": 30,
+      "TERMINATED": 7,
+      "WITHDRAWN": 2,
+      "ENROLLING_BY_INVITATION": 1,
+      "NOT_YET_RECRUITING": 1,
+      "RECRUITING": 3,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 5,
+    "completed_trials": 30,
+    "conditions": [
+      "Amyotrophic Lateral Sclerosis",
+      "Amyotrophic Lateral Sclerosis (ALS)",
+      "Breast Neoplasms",
+      "Chronic Heart Failure With Reduced Ejection Fraction",
+      "Chronic Obstructive Pulmonary Disease (COPD)",
+      "Healthy Participants",
+      "Healthy Volunteer",
+      "Heart Failure",
+      "Heart Failure With Reduced Ejection Fraction",
+      "Heart Failure, Heart Failure With Reduced Ejection Fraction",
+      "Heart Failure, Myocardial Ischemia, Angina Pectoris",
+      "Hypertrophic Cardiomyopathy (HCM)",
+      "Intermittent Claudication, Peripheral Artery Disease",
+      "Mobility Limitation",
+      "Modified Release Oral Formulation, Left Ventricular Systolic Dysfunction, Chronic Heart Failure, History of Chronic Heart Failure, Left Ventricular Ejection Fraction, Pharmacokinetics, Echocardiogram",
+      "Myasthenia Gravis",
+      "Non-Hodgkin's Lymphoma, Hodgkin's Disease",
+      "Obstructive Hypertrophic Cardiomyopathy (oHCM)",
+      "Obstructive Hypertrophic Cardiomyopathy, Healthy Adult Subjects",
+      "Pediatric, Symptomatic Obstructive Hypertrophic Cardiomyopathy",
+      "QT Intervals Changes, QTc Intervals Changes",
+      "Spinal Muscular Atrophy",
+      "Symptomatic Heart Failure With Preserved Ejection Fraction (HFpEF)",
+      "Symptomatic Hypertrophic Cardiomyopathy (HCM)",
+      "Symptomatic Non-Obstructive Hypertrophic Cardiomyopathy",
+      "Symptomatic Obstructive Hypertrophic Cardiomyopathy, Healthy Subjects"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:17:54.975344",
+    "search_query": "Cytokinetics, Incorporated",
+    "url": "https://clinicaltrials.gov/search?term=Cytokinetics,+Incorporated"
+  }
+}

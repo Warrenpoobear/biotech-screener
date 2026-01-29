@@ -1,0 +1,43 @@
+{
+  "ticker": "PACB",
+  "success": true,
+  "price": {
+    "current": 2.345,
+    "currency": "USD",
+    "day_high": 2.39,
+    "day_low": 2.3,
+    "52_week_high": 2.73,
+    "52_week_low": 0.85
+  },
+  "market_cap": {
+    "value": 707972928.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 301907431.0,
+  "volume": {
+    "last": 2317695,
+    "average_30d": 8018795
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -4.6399813,
+    "price_to_book": 19.541668
+  },
+  "company_info": {
+    "name": "Pacific Biosciences of California, Inc.",
+    "sector": "Healthcare",
+    "industry": "Medical Devices"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:50.992947",
+    "url": "https://finance.yahoo.com/quote/PACB",
+    "data_hash": "7814da1dad267ba7"
+  }
+}

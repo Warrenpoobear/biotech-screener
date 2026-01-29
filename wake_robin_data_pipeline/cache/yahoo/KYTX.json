@@ -1,0 +1,43 @@
+{
+  "ticker": "KYTX",
+  "success": true,
+  "price": {
+    "current": 8.08,
+    "currency": "USD",
+    "day_high": 8.446,
+    "day_low": 8.03,
+    "52_week_high": 13.67,
+    "52_week_low": 1.78
+  },
+  "market_cap": {
+    "value": 481621344.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 59606603.0,
+  "volume": {
+    "last": 305389,
+    "average_30d": 940308
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -2.371595,
+    "price_to_book": 2.3285303
+  },
+  "company_info": {
+    "name": "Kyverna Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:07:38.265878",
+    "url": "https://finance.yahoo.com/quote/KYTX",
+    "data_hash": "d8c9a01be1d7003c"
+  }
+}

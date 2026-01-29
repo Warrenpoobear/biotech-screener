@@ -1,0 +1,137 @@
+{
+  "ticker": "MCRB",
+  "company_name": "Seres Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT02437500",
+      "title": "Expanded Access Program of SER-109 in the Treatment of Adults With Recurrent Clostridioides Difficile Infection (RCDI)",
+      "status": "APPROVED_FOR_MARKETING",
+      "phase": "",
+      "condition": "Clostridioides Difficile Infection",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Seres Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT02830542",
+      "title": "SER-262 Versus Placebo in Adults With Primary Clostridium Difficile Infection to Prevent Recurrence",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Clostridium Difficile Infection",
+      "start_date": "2016-08",
+      "completion_date": "2018-08",
+      "enrollment": 0,
+      "sponsor": "Seres Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT03759041",
+      "title": "A Study to Assess Efficacy and Safety of SER-287 in Adults With Active Mild-to-Moderate Ulcerative Colitis",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Ulcerative Colitis",
+      "start_date": "2018-12-19",
+      "completion_date": "2021-10-13",
+      "enrollment": 0,
+      "sponsor": "Seres Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT03183141",
+      "title": "ECOSPOR IV: An Open-Label Study Evaluating SER-109 in Recurrent Clostridioides Difficile Infection",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Clostridioides Difficile Infection",
+      "start_date": "2017-10-23",
+      "completion_date": "2022-04-29",
+      "enrollment": 0,
+      "sponsor": "Seres Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04995653",
+      "title": "A Multiple Dose Study to Evaluate Safety, Tolerability, PK, and Efficacy of SER-155 in Adults Undergoing HSCT",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Allogeneic Hematopoietic Stem Cell Transplantation",
+      "start_date": "2021-11-24",
+      "completion_date": "2024-07-23",
+      "enrollment": 0,
+      "sponsor": "Seres Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT03817125",
+      "title": "Melanoma Checkpoint and Gut Microbiome Alteration With Microbiome Intervention",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Metastatic Melanoma",
+      "start_date": "2019-01-28",
+      "completion_date": "2022-03-04",
+      "enrollment": 0,
+      "sponsor": "Parker Institute for Cancer Immunotherapy"
+    },
+    {
+      "nct_id": "NCT02437487",
+      "title": "SER-109 Versus Placebo to Prevent Recurrent Clostridium Difficile Infection (RCDI)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Clostridium Difficile",
+      "start_date": "2015-05",
+      "completion_date": "2016-10",
+      "enrollment": 0,
+      "sponsor": "Seres Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT02618187",
+      "title": "A Study to Evaluate the Safety, Tolerability and Microbiome Dynamics of SER-287 in Subjects With Mild-to-Moderate Ulcerative Colitis",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Ulcerative Colitis",
+      "start_date": "2016-01-13",
+      "completion_date": "2018-01-26",
+      "enrollment": 0,
+      "sponsor": "Seres Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT03183128",
+      "title": "ECOSPOR III - SER-109 Versus Placebo in the Treatment of Adults With Recurrent Clostridium Difficile Infection",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Clostridium Difficile Infection",
+      "start_date": "2017-07-10",
+      "completion_date": "2020-09-29",
+      "enrollment": 0,
+      "sponsor": "Seres Therapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 9,
+    "by_phase": {
+      "": 1,
+      "PHASE1": 4,
+      "PHASE2": 2,
+      "PHASE3": 2
+    },
+    "by_status": {
+      "APPROVED_FOR_MARKETING": 1,
+      "COMPLETED": 7,
+      "TERMINATED": 1
+    },
+    "active_trials": 0,
+    "completed_trials": 7,
+    "conditions": [
+      "Allogeneic Hematopoietic Stem Cell Transplantation",
+      "Clostridioides Difficile Infection",
+      "Clostridium Difficile",
+      "Clostridium Difficile Infection",
+      "Metastatic Melanoma",
+      "Ulcerative Colitis"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:19:51.465601",
+    "search_query": "Seres Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Seres+Therapeutics,+Inc."
+  }
+}

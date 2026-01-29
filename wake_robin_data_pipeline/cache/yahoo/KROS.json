@@ -1,0 +1,43 @@
+{
+  "ticker": "KROS",
+  "success": true,
+  "price": {
+    "current": 17.88,
+    "currency": "USD",
+    "day_high": 18.1873,
+    "day_low": 17.81,
+    "52_week_high": 22.55,
+    "52_week_low": 9.12
+  },
+  "market_cap": {
+    "value": 544733248.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 30466069.0,
+  "volume": {
+    "last": 37717,
+    "average_30d": 337655
+  },
+  "valuation": {
+    "pe_ratio": 11.461538,
+    "forward_pe": -6.0786757,
+    "price_to_book": 1.032571
+  },
+  "company_info": {
+    "name": "Keros Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:07:34.167440",
+    "url": "https://finance.yahoo.com/quote/KROS",
+    "data_hash": "23cd55001d747ca5"
+  }
+}

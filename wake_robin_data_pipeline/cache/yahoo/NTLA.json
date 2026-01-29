@@ -1,0 +1,43 @@
+{
+  "ticker": "NTLA",
+  "success": true,
+  "price": {
+    "current": 13.91,
+    "currency": "USD",
+    "day_high": 14.67,
+    "day_low": 13.67,
+    "52_week_high": 28.25,
+    "52_week_low": 5.9
+  },
+  "market_cap": {
+    "value": 1611194240.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 115829926.0,
+  "volume": {
+    "last": 2236086,
+    "average_30d": 6336135
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -3.85929,
+    "price_to_book": 2.1519182
+  },
+  "company_info": {
+    "name": "Intellia Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:25.980780",
+    "url": "https://finance.yahoo.com/quote/NTLA",
+    "data_hash": "73ac17a195c1a65d"
+  }
+}

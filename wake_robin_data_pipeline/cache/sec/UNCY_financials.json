@@ -1,0 +1,43 @@
+{
+  "ticker": "UNCY",
+  "cik": "0001766140",
+  "success": true,
+  "financials": {
+    "cash": 42695000.0,
+    "debt": 0.0,
+    "net_debt": -42695000.0,
+    "revenue_ttm": 675000.0,
+    "assets": 50611000.0,
+    "liabilities": 13131000.0,
+    "equity": 37480000.0,
+    "currency": "USD"
+  },
+  "data_dates": {
+    "cash": "2025-09-30",
+    "revenue": "2023-12-31",
+    "assets": "2025-09-30",
+    "liabilities": "2025-09-30",
+    "debt": "2025-09-30"
+  },
+  "data_freshness": {
+    "most_recent_date": "2025-09-30",
+    "oldest_date": "2023-12-31",
+    "staleness_flags": [
+      "critical_staleness:760d"
+    ]
+  },
+  "coverage": {
+    "has_cash": true,
+    "has_debt": true,
+    "has_revenue": true,
+    "has_balance_sheet": true,
+    "pct_complete": 100.0
+  },
+  "provenance": {
+    "source": "SEC EDGAR Company Facts API",
+    "timestamp": "2026-01-29T13:11:35.136436",
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001766140.json",
+    "cik": "0001766140",
+    "accounting_standard": "us-gaap"
+  }
+}

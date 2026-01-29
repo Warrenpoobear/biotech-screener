@@ -1,0 +1,139 @@
+{
+  "ticker": "ANAB",
+  "company_name": "AnaptysBio, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT03533751",
+      "title": "Efficacy, Safety, and Pharmacokinetic Profile of Etokimab (ANB020) in Adult Participants With Moderate-to-Severe Atopic Dermatitis",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Atopic Dermatitis",
+      "start_date": "2018-06-19",
+      "completion_date": "2019-12-03",
+      "enrollment": 0,
+      "sponsor": "AnaptysBio, Inc."
+    },
+    {
+      "nct_id": "NCT06041269",
+      "title": "A Study of Efficacy and Safety of Rosnilimab in Subjects with Moderate to Severe Rheumatoid Arthritis (RENOIR)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Rheumatoid Arthritis",
+      "start_date": "2023-08-31",
+      "completion_date": "2025-05-30",
+      "enrollment": 0,
+      "sponsor": "AnaptysBio, Inc."
+    },
+    {
+      "nct_id": "NCT05935085",
+      "title": "This Study Will Evaluate the Safety, Tolerability, and Efficacy of ANB032 in Subjects with Moderate to Severe Atopic Dermatitis (AD).",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Atopic Dermatitis Eczema",
+      "start_date": "2023-06-13",
+      "completion_date": "2025-01-07",
+      "enrollment": 0,
+      "sponsor": "AnaptysBio, Inc."
+    },
+    {
+      "nct_id": "NCT03469934",
+      "title": "Proof of Concept Study to Investigate Etokimab (ANB020) Activity in Adult Participants With Severe Eosinophilic Asthma",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Eosinophilic Asthma",
+      "start_date": "2017-11-14",
+      "completion_date": "2018-10-30",
+      "enrollment": 0,
+      "sponsor": "AnaptysBio, Inc."
+    },
+    {
+      "nct_id": "NCT04256044",
+      "title": "Analysis of Peripheral Blood ILC2s and Th2 Cells in Response to ANB020",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Asthma",
+      "start_date": "2017-11-23",
+      "completion_date": "2018-07-31",
+      "enrollment": 0,
+      "sponsor": "University of Leicester"
+    },
+    {
+      "nct_id": "NCT03614923",
+      "title": "Etokimab in Adults With Chronic Rhinosinusitis With Nasal Polyps (CRSwNP)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Chronic Rhinosinusitis",
+      "start_date": "2018-11-29",
+      "completion_date": "2020-10-26",
+      "enrollment": 0,
+      "sponsor": "AnaptysBio, Inc."
+    },
+    {
+      "nct_id": "NCT05205070",
+      "title": "A Study to Evaluate the Efficacy and Safety of Rosnilimab (ANB030) in Treatment of Subjects With Moderate-to-Severe Alopecia Areata",
+      "status": "UNKNOWN",
+      "phase": "PHASE2",
+      "condition": "Alopecia Areata",
+      "start_date": "2021-12-22",
+      "completion_date": "2023-03-19",
+      "enrollment": 0,
+      "sponsor": "AnaptysBio, Inc."
+    },
+    {
+      "nct_id": "NCT06127043",
+      "title": "A Study of Efficacy and Safety of Rosnilimab in Subjects With Moderate to Severe Ulcerative Colitis (ROSETTA)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Ulcerative Colitis",
+      "start_date": "2023-12-04",
+      "completion_date": "2026-05",
+      "enrollment": 0,
+      "sponsor": "AnaptysBio, Inc."
+    },
+    {
+      "nct_id": "NCT02920021",
+      "title": "Study to Investigate Etokimab (ANB020) Activity in Adult Participants With Peanut Allergy",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Peanut Allergy",
+      "start_date": "2017-01-26",
+      "completion_date": "2018-03-30",
+      "enrollment": 0,
+      "sponsor": "AnaptysBio, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 9,
+    "by_phase": {
+      "PHASE2": 8,
+      "": 1
+    },
+    "by_status": {
+      "COMPLETED": 5,
+      "ACTIVE_NOT_RECRUITING": 2,
+      "TERMINATED": 1,
+      "UNKNOWN": 1
+    },
+    "active_trials": 2,
+    "completed_trials": 5,
+    "conditions": [
+      "Alopecia Areata",
+      "Asthma",
+      "Atopic Dermatitis",
+      "Atopic Dermatitis Eczema",
+      "Chronic Rhinosinusitis",
+      "Eosinophilic Asthma",
+      "Peanut Allergy",
+      "Rheumatoid Arthritis",
+      "Ulcerative Colitis"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:16:22.751226",
+    "search_query": "AnaptysBio, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=AnaptysBio,+Inc."
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "MYGN",
+  "success": true,
+  "price": {
+    "current": 5.6,
+    "currency": "USD",
+    "day_high": 5.75,
+    "day_low": 5.58,
+    "52_week_high": 15.47,
+    "52_week_low": 3.76
+  },
+  "market_cap": {
+    "value": 521996832.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 93213722.0,
+  "volume": {
+    "last": 105084,
+    "average_30d": 851653
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": 82.47422,
+    "price_to_book": 1.3986013
+  },
+  "company_info": {
+    "name": "Myriad Genetics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Diagnostics & Research"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:16.276544",
+    "url": "https://finance.yahoo.com/quote/MYGN",
+    "data_hash": "6efee46ca3c1f033"
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "ticker": "MTSR",
+  "company_name": "MTSR",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06924320",
+      "title": "A Study of MET233 in Combination With MET097 in Individuals With Obesity or Overweight With or Without Diabetes",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Obesity and Obesity-related Medical Conditions",
+      "start_date": "2025-03-03",
+      "completion_date": "2027-03-15",
+      "enrollment": 0,
+      "sponsor": "Metsera"
+    },
+    {
+      "nct_id": "NCT07022977",
+      "title": "A Study of MET233 in Individuals With Obesity or Overweight",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Obesity and Overweight",
+      "start_date": "2024-11-20",
+      "completion_date": "2026-04-15",
+      "enrollment": 0,
+      "sponsor": "Metsera"
+    },
+    {
+      "nct_id": "NCT06973720",
+      "title": "A Phase 2b Study to Evaluate the Efficacy and Safety of Once-Monthly MET097 in Adults With Obesity or Overweight",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Obesity, Overweight or Obesity",
+      "start_date": "2025-04-01",
+      "completion_date": "2026-10",
+      "enrollment": 0,
+      "sponsor": "Metsera"
+    },
+    {
+      "nct_id": "NCT06857617",
+      "title": "This Study Will Investigate the Safety, Tolerability, Pharmacokinetics, and Efficacy of MET097 in Adult Participants With Overweight or Obesity",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Obesity and Overweight",
+      "start_date": "2024-04-01",
+      "completion_date": "2025-03-15",
+      "enrollment": 0,
+      "sponsor": "Metsera"
+    },
+    {
+      "nct_id": "NCT06712836",
+      "title": "A Phase 2b Study to Examine the Safety and Efficacy of Once-Weekly MET097 in Adults With Obesity or Overweight",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Obesity, Overweight or Obesity",
+      "start_date": "2024-10-24",
+      "completion_date": "2026-05",
+      "enrollment": 0,
+      "sponsor": "Metsera"
+    },
+    {
+      "nct_id": "NCT07311850",
+      "title": "Efficacy and Safety of MET097 Once-Weekly in People With Overweight or Obesity",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Obesity and Overweight",
+      "start_date": "2025-12-29",
+      "completion_date": "2028-05",
+      "enrollment": 0,
+      "sponsor": "Metsera"
+    },
+    {
+      "nct_id": "NCT06897202",
+      "title": "A Study to Evaluate the Efficacy and Safety of Once-Weekly MET097 in Adults With Obesity or Overweight and T2DM",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Obesity in Diabetes, Type 2 Diabetes Mellitus (T2DM)",
+      "start_date": "2025-03-14",
+      "completion_date": "2026-03",
+      "enrollment": 0,
+      "sponsor": "Metsera"
+    }
+  ],
+  "summary": {
+    "total_trials": 7,
+    "by_phase": {
+      "PHASE1, PHASE2": 3,
+      "PHASE2": 3,
+      "PHASE3": 1
+    },
+    "by_status": {
+      "RECRUITING": 2,
+      "ACTIVE_NOT_RECRUITING": 4,
+      "COMPLETED": 1
+    },
+    "active_trials": 6,
+    "completed_trials": 1,
+    "conditions": [
+      "Obesity and Obesity-related Medical Conditions",
+      "Obesity and Overweight",
+      "Obesity in Diabetes, Type 2 Diabetes Mellitus (T2DM)",
+      "Obesity, Overweight or Obesity"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:23:09.795253",
+    "search_query": "MTSR",
+    "url": "https://clinicaltrials.gov/search?term=MTSR"
+  }
+}

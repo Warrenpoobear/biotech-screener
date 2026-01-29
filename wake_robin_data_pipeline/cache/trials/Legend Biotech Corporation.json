@@ -1,0 +1,177 @@
+{
+  "ticker": "LEGN",
+  "company_name": "Legend Biotech Corporation",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT03674463",
+      "title": "LCAR-B4822M-02 Cells in Treating Relapsed/Refractory (R/R) Multiple Myeloma",
+      "status": "UNKNOWN",
+      "phase": "PHASE1",
+      "condition": "Refractory or Relapsed Multiple Myeloma",
+      "start_date": "2018-07-26",
+      "completion_date": "2020-12-31",
+      "enrollment": 0,
+      "sponsor": "Second Affiliated Hospital of Xi'an Jiaotong University"
+    },
+    {
+      "nct_id": "NCT04712864",
+      "title": "Study of CD4-Targeted Chimeric Antigen Receptor T-Cells (CD4- CAR-T) in Subjects With Relapsed or Refractory T-Cell Lymphoma",
+      "status": "UNKNOWN",
+      "phase": "PHASE1",
+      "condition": "T-Cell Lymphoma, Peripheral T-Cell Lymphoma Refractory, Cutaneous T-Cell Lymphoma Refractory, Cutaneous T-Cell Lymphoma Recurrent, Peripheral T-Cell Lymphoma Recurrent",
+      "start_date": "2021-09-13",
+      "completion_date": "2025-12",
+      "enrollment": 0,
+      "sponsor": "Legend Biotech USA Inc"
+    },
+    {
+      "nct_id": "NCT06472479",
+      "title": "LCAR-M61S and LCAR-M61D in Treatment of Relapsed/Refractory Multiple Myeloma",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "NA",
+      "condition": "Relapsed/Refractory Multiple Myeloma",
+      "start_date": "2024-07-01",
+      "completion_date": "2029-10-12",
+      "enrollment": 0,
+      "sponsor": "The First Affiliated Hospital with Nanjing Medical University"
+    },
+    {
+      "nct_id": "NCT03758417",
+      "title": "A Study of LCAR-B38M CAR-T Cells, a Chimeric Antigen Receptor T-cell (CAR-T) Therapy Directed Against B-cell Maturation Antigen (BCMA) in Chinese Participants With Relapsed or Refractory Multiple Myeloma",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Multiple Myeloma",
+      "start_date": "2019-01-23",
+      "completion_date": "2025-10-20",
+      "enrollment": 0,
+      "sponsor": "Nanjing Legend Biotech Co."
+    },
+    {
+      "nct_id": "NCT05498545",
+      "title": "Universal BCMA-targeted LUCAR-B68 Cells in Patients With Relapsed/Refractory Multiple Myeloma",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Relapsed/Refractory Multiple Myeloma",
+      "start_date": "2022-09",
+      "completion_date": "2027-03",
+      "enrollment": 0,
+      "sponsor": "Second Affiliated Hospital of Xi'an Jiaotong University"
+    },
+    {
+      "nct_id": "NCT03672253",
+      "title": "CAR-T Re-treatment for Refractory/Relapsed Multiple Myeloma",
+      "status": "UNKNOWN",
+      "phase": "PHASE1",
+      "condition": "Multiple Myeloma, Multiple Myeloma in Relapse, Multiple Myeloma Progression",
+      "start_date": "2018-07-26",
+      "completion_date": "2020-12-31",
+      "enrollment": 0,
+      "sponsor": "Second Affiliated Hospital of Xi'an Jiaotong University"
+    },
+    {
+      "nct_id": "NCT03090659",
+      "title": "LCAR-B38M Cells in Treating Relapsed/Refractory (R/R) Multiple Myeloma",
+      "status": "UNKNOWN",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Refractory or Relapsed Multiple Myeloma",
+      "start_date": "2015-10-02",
+      "completion_date": "2023-12-31",
+      "enrollment": 0,
+      "sponsor": "Nanjing Legend Biotech Co."
+    },
+    {
+      "nct_id": "NCT07095075",
+      "title": "A Study of LUCAR-DKS1 in Subjects With Relapsed/Refractory Autoimmune Diseases",
+      "status": "RECRUITING",
+      "phase": "EARLY_PHASE1",
+      "condition": "Relapsed/Refractory Autoimmune Diseases",
+      "start_date": "2025-10-14",
+      "completion_date": "2029-12-31",
+      "enrollment": 0,
+      "sponsor": "Nanjing Legend Biotech Co."
+    },
+    {
+      "nct_id": "NCT05539430",
+      "title": "Claudin 18.2-Targeted Chimeric Antigen Receptor T-cells in Subjects With Unresectable, Locally Advanced, or Metastatic Gastric, Gastroesophageal Junction (GEJ), Esophageal, or Pancreatic Adenocarcinoma",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Gastric Cancer, Gastroesophageal-junction Cancer, Esophageal Cancer, Pancreatic Cancer",
+      "start_date": "2023-04-18",
+      "completion_date": "2027-12",
+      "enrollment": 0,
+      "sponsor": "Legend Biotech USA Inc"
+    },
+    {
+      "nct_id": "NCT07002112",
+      "title": "The LVIVO-TaVec100 Product in the Treatment of Relapsed/Refractory B-cell Malignancies",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Relapsed/Refractory B-cell Malignancies",
+      "start_date": "2025-05-23",
+      "completion_date": "2029-06-30",
+      "enrollment": 0,
+      "sponsor": "The First Affiliated Hospital with Nanjing Medical University"
+    }
+  ],
+  "summary": {
+    "total_trials": 37,
+    "by_phase": {
+      "PHASE1": 26,
+      "NA": 3,
+      "PHASE2": 1,
+      "PHASE1, PHASE2": 1,
+      "EARLY_PHASE1": 5,
+      "": 1
+    },
+    "by_status": {
+      "UNKNOWN": 6,
+      "NOT_YET_RECRUITING": 3,
+      "TERMINATED": 12,
+      "RECRUITING": 12,
+      "ACTIVE_NOT_RECRUITING": 1,
+      "COMPLETED": 1,
+      "WITHDRAWN": 2
+    },
+    "active_trials": 13,
+    "completed_trials": 1,
+    "conditions": [
+      "Acute Leukemia, Acute Leukemia in Relapse, Acute Myeloid Leukemia, Relapsed or Refractory Acute Leukemia",
+      "Acute Lymphocytic Leukemia",
+      "Acute Myeloid Leukemia",
+      "Advanced Gastrointestinal Tumors",
+      "B-Cell Non-Hodgkin Lymphoma-Recurrent, B-Cell Non-Hodgkin Lymphoma-Refractory",
+      "B-cell Lymphoma Recurrent, B-cell Lymphoma Refractory",
+      "Epithelial Ovarian Cancer",
+      "Gastric Cancer, Gastroesophageal-junction Cancer, Esophageal Cancer, Pancreatic Cancer",
+      "Gastric Cancer, Pancreatic Ductal Adenocarcinoma",
+      "Healthy Subject",
+      "Hodgkin's Lymphoma, Anaplastic Large Cell Lymphoma",
+      "Lymphoma, B-Cell",
+      "Multiple Myeloma",
+      "Multiple Myeloma, Multiple Myeloma in Relapse, Multiple Myeloma Progression",
+      "Multiple Sclerosis (MS), Neuromyelitis Optica Spectrum Disease (NMOSD), Anti-Myelin Oligodendrocyte Glycoprotein-IgG Associated Disorders (MOGAD), Myasthenia Gravis",
+      "Refractory B Acute Lymphoblastic Leukemia, Relapse B Acute Lymphoblastic Leukemia",
+      "Refractory or Relapsed Multiple Myeloma",
+      "Relapsed B-cell Non-Hodgkin Lymphoma, Refractory B-cell Non-Hodgkin Lymphoma",
+      "Relapsed and Refractory B-cell Non-Hodgkin Lymphoma",
+      "Relapsed/Refractory Autoimmune Diseases",
+      "Relapsed/Refractory B-cell Malignancies",
+      "Relapsed/Refractory Multiple Myeloma",
+      "Relapsed/Refractory Multiple Myeloma(MM)",
+      "Small Cell Lung Cancer Extensive Stage, Large Cell Neuroendocrine Carcinoma of the Lung",
+      "Solid Tumors, Adult",
+      "Systemic Lupus Erythematosus (SLE)",
+      "Systemic Lupus Erythematosus (SLE), Idiopathic Inflammatory Myopathies(IIM)",
+      "T Cell Lymphoma, T-cell Leukemia",
+      "T-Cell Lymphoma, Peripheral T-Cell Lymphoma Refractory, Cutaneous T-Cell Lymphoma Refractory, Cutaneous T-Cell Lymphoma Recurrent, Peripheral T-Cell Lymphoma Recurrent"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:19:37.815728",
+    "search_query": "Legend Biotech Corporation",
+    "url": "https://clinicaltrials.gov/search?term=Legend+Biotech+Corporation"
+  }
+}

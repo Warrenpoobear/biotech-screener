@@ -1,0 +1,43 @@
+{
+  "ticker": "NKTX",
+  "success": true,
+  "price": {
+    "current": 2.395,
+    "currency": "USD",
+    "day_high": 2.47,
+    "day_low": 2.385,
+    "52_week_high": 2.74,
+    "52_week_low": 1.31
+  },
+  "market_cap": {
+    "value": 170115680.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 71029512.0,
+  "volume": {
+    "last": 170059,
+    "average_30d": 817889
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -1.8236086,
+    "price_to_book": 0.5033628
+  },
+  "company_info": {
+    "name": "Nkarta, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:24.370157",
+    "url": "https://finance.yahoo.com/quote/NKTX",
+    "data_hash": "d91a26044b588dbb"
+  }
+}

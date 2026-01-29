@@ -1,0 +1,156 @@
+{
+  "ticker": "EWTX",
+  "company_name": "Edgewise Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT07034768",
+      "title": "A Study to Evaluate EDG-7500 in People With Renal Impairment",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Renal Impairments",
+      "start_date": "2025-07-22",
+      "completion_date": "2025-12-31",
+      "enrollment": 0,
+      "sponsor": "Edgewise Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06916897",
+      "title": "A Study to Evaluate Effect of Verapamil and Food of Sevasemten in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Subjects",
+      "start_date": "2025-01-08",
+      "completion_date": "2025-02-22",
+      "enrollment": 0,
+      "sponsor": "Edgewise Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04349566",
+      "title": "Fast Troponin as a Biomarker to Assess Exercise-induced Muscle Damage in Muscle Diseases",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Becker Muscular Dystrophy, McArdle Disease, Limb-Girdle Muscular Dystrophy Type 2",
+      "start_date": "2020-06-01",
+      "completion_date": "2021-12-20",
+      "enrollment": 0,
+      "sponsor": "Mads Peter Godtfeldt Stemmerik"
+    },
+    {
+      "nct_id": "NCT05730842",
+      "title": "Absorption, Metabolism, Excretion and Absolute Bioavailability of EDG-5506 in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteer, Muscular Dystrophies, Muscular Disorders, Atrophic, Muscular Diseases, Musculoskeletal Diseases, Neuromuscular Diseases, Nervous System Diseases, Genetic Diseases, Inborn",
+      "start_date": "2023-01-12",
+      "completion_date": "2023-04-06",
+      "enrollment": 0,
+      "sponsor": "Edgewise Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05540860",
+      "title": "A Study of EDG-5506 in Children With Duchenne Muscular Dystrophy (LYNX)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Duchenne Muscular Dystrophy",
+      "start_date": "2022-10-24",
+      "completion_date": "2027-01",
+      "enrollment": 0,
+      "sponsor": "Edgewise Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06738836",
+      "title": "A Study to Evaluate the Absorption, Metabolism, And Excretion Of Orally Administered [14C]-EDG-7500",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteer",
+      "start_date": "2024-12-03",
+      "completion_date": "2025-01-17",
+      "enrollment": 0,
+      "sponsor": "Edgewise Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT07324616",
+      "title": "A Study to Evaluate EDG-7500 in Adults With Hepatic Impairment",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Hepatic Impairment (HI)",
+      "start_date": "2026-01",
+      "completion_date": "2026-05",
+      "enrollment": 0,
+      "sponsor": "Edgewise Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05257473",
+      "title": "Defining Endpoints in Becker Muscular Dystrophy",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "",
+      "condition": "Becker Muscular Dystrophy, Muscular Dystrophies, Muscular Dystrophy in Children, Muscular Dystrophy, Becker",
+      "start_date": "2022-04-13",
+      "completion_date": "2026-05",
+      "enrollment": 0,
+      "sponsor": "Virginia Commonwealth University"
+    },
+    {
+      "nct_id": "NCT07177066",
+      "title": "A Study of EDG-15400 in Healthy Adults",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Healthy Adults",
+      "start_date": "2025-08-20",
+      "completion_date": "2026-05",
+      "enrollment": 0,
+      "sponsor": "Edgewise Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04585464",
+      "title": "A Study to Assess Safety, Tolerability, and PK of EDG-5506 in Healthy Volunteers and Becker Muscular Dystrophy Adults",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteer, Becker Muscular Dystrophy",
+      "start_date": "2020-10-12",
+      "completion_date": "2021-12-27",
+      "enrollment": 0,
+      "sponsor": "Edgewise Therapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 17,
+    "by_phase": {
+      "PHASE1": 10,
+      "": 2,
+      "PHASE2": 5
+    },
+    "by_status": {
+      "RECRUITING": 3,
+      "COMPLETED": 8,
+      "ACTIVE_NOT_RECRUITING": 4,
+      "NOT_YET_RECRUITING": 1,
+      "ENROLLING_BY_INVITATION": 1
+    },
+    "active_trials": 8,
+    "completed_trials": 8,
+    "conditions": [
+      "Becker Muscular Dystrophy",
+      "Becker Muscular Dystrophy, McArdle Disease, Limb-Girdle Muscular Dystrophy Type 2",
+      "Becker Muscular Dystrophy, Muscular Dystrophies, Muscular Dystrophy in Children, Muscular Dystrophy, Becker",
+      "Duchenne Muscular Dystrophy",
+      "Healthy Adults",
+      "Healthy Subjects",
+      "Healthy Volunteer",
+      "Healthy Volunteer, Becker Muscular Dystrophy",
+      "Healthy Volunteer, Muscular Dystrophies, Muscular Disorders, Atrophic, Muscular Diseases, Musculoskeletal Diseases, Neuromuscular Diseases, Nervous System Diseases, Genetic Diseases, Inborn",
+      "Hepatic Impairment (HI)",
+      "Hypertrophic Cardiomyopathy",
+      "Muscular Dystrophies",
+      "Renal Impairments"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:18:18.259887",
+    "search_query": "Edgewise Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Edgewise+Therapeutics,+Inc."
+  }
+}

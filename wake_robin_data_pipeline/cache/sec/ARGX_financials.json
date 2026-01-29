@@ -3,26 +3,41 @@
   "cik": "0001697862",
   "success": true,
   "financials": {
-    "cash": null,
-    "debt": null,
-    "net_debt": null,
-    "revenue_ttm": null,
-    "assets": null,
-    "liabilities": null,
-    "equity": null,
+    "cash": 2085976000.0,
+    "debt": 37936000.0,
+    "net_debt": -2048040000.0,
+    "revenue_ttm": 1738644000.0,
+    "assets": 7175592000.0,
+    "liabilities": 1079840000.0,
+    "equity": 6095752000.0,
     "currency": "USD"
   },
+  "data_dates": {
+    "cash": "2025-06-30",
+    "debt": "2025-06-30",
+    "revenue": "2025-06-30",
+    "assets": "2025-06-30",
+    "liabilities": "2025-06-30"
+  },
+  "data_freshness": {
+    "most_recent_date": "2025-06-30",
+    "oldest_date": "2025-06-30",
+    "staleness_flags": [
+      "critical_staleness:213d"
+    ]
+  },
   "coverage": {
-    "has_cash": false,
-    "has_debt": false,
-    "has_revenue": false,
-    "has_balance_sheet": false,
-    "pct_complete": 0.0
+    "has_cash": true,
+    "has_debt": true,
+    "has_revenue": true,
+    "has_balance_sheet": true,
+    "pct_complete": 100.0
   },
   "provenance": {
     "source": "SEC EDGAR Company Facts API",
-    "timestamp": "2026-01-05T17:57:21.347219",
+    "timestamp": "2026-01-29T10:59:35.703341",
     "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001697862.json",
-    "cik": "0001697862"
+    "cik": "0001697862",
+    "accounting_standard": "ifrs-full"
   }
 }

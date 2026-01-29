@@ -1,0 +1,43 @@
+{
+  "ticker": "ALDX",
+  "success": true,
+  "price": {
+    "current": 5.295,
+    "currency": "USD",
+    "day_high": 5.42,
+    "day_low": 5.225,
+    "52_week_high": 7.2,
+    "52_week_low": 1.14
+  },
+  "market_cap": {
+    "value": 318561888.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 60162773.0,
+  "volume": {
+    "last": 154031,
+    "average_30d": 812560
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": 13.576923,
+    "price_to_book": 6.4652014
+  },
+  "company_info": {
+    "name": "Aldeyra Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:04:19.790076",
+    "url": "https://finance.yahoo.com/quote/ALDX",
+    "data_hash": "97327b146e7633b0"
+  }
+}

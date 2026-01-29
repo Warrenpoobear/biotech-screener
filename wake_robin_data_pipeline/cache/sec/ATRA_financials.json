@@ -1,0 +1,43 @@
+{
+  "ticker": "ATRA",
+  "cik": "0001604464",
+  "success": true,
+  "financials": {
+    "cash": 5742000.0,
+    "debt": 0.0,
+    "net_debt": -5742000.0,
+    "revenue_ttm": 119177000.0,
+    "assets": 30167000.0,
+    "liabilities": 66801000.0,
+    "equity": -36634000.0,
+    "currency": "USD"
+  },
+  "data_dates": {
+    "cash": "2025-09-30",
+    "revenue": "2025-09-30",
+    "assets": "2025-09-30",
+    "liabilities": "2025-09-30",
+    "debt": "2025-09-30"
+  },
+  "data_freshness": {
+    "most_recent_date": "2025-09-30",
+    "oldest_date": "2025-09-30",
+    "staleness_flags": [
+      "stale_data:121d"
+    ]
+  },
+  "coverage": {
+    "has_cash": true,
+    "has_debt": true,
+    "has_revenue": true,
+    "has_balance_sheet": true,
+    "pct_complete": 100.0
+  },
+  "provenance": {
+    "source": "SEC EDGAR Company Facts API",
+    "timestamp": "2026-01-29T13:11:47.244731",
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001604464.json",
+    "cik": "0001604464",
+    "accounting_standard": "us-gaap"
+  }
+}

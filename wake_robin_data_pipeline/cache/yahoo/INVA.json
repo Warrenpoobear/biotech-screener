@@ -1,0 +1,43 @@
+{
+  "ticker": "INVA",
+  "success": true,
+  "price": {
+    "current": 19.905,
+    "currency": "USD",
+    "day_high": 19.92,
+    "day_low": 19.62,
+    "52_week_high": 22.76,
+    "52_week_low": 16.52
+  },
+  "market_cap": {
+    "value": 1488278272.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 74769062.0,
+  "volume": {
+    "last": 78347,
+    "average_30d": 604188
+  },
+  "valuation": {
+    "pe_ratio": 11.990965,
+    "forward_pe": 9.781326,
+    "price_to_book": 1.4735712
+  },
+  "company_info": {
+    "name": "Innoviva, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:07:19.744870",
+    "url": "https://finance.yahoo.com/quote/INVA",
+    "data_hash": "2028cfc18dce962b"
+  }
+}

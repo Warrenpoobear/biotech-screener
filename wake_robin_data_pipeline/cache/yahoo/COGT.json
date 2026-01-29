@@ -1,0 +1,43 @@
+{
+  "ticker": "COGT",
+  "success": true,
+  "price": {
+    "current": 37.53,
+    "currency": "USD",
+    "day_high": 38.505,
+    "day_low": 37.3,
+    "52_week_high": 43.73,
+    "52_week_low": 3.72
+  },
+  "market_cap": {
+    "value": 5761063936.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 153505562.0,
+  "volume": {
+    "last": 185337,
+    "average_30d": 2419547
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -21.077637,
+    "price_to_book": 26.980589
+  },
+  "company_info": {
+    "name": "Cogent Biosciences, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:05:46.997645",
+    "url": "https://finance.yahoo.com/quote/COGT",
+    "data_hash": "9c121354c2d04f45"
+  }
+}

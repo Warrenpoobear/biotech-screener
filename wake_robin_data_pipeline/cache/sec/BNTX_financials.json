@@ -1,0 +1,43 @@
+{
+  "ticker": "BNTX",
+  "cik": "0001776985",
+  "success": true,
+  "financials": {
+    "cash": 9761900000.0,
+    "debt": 595400000.0,
+    "net_debt": -9166500000.0,
+    "revenue_ttm": 2751100000.0,
+    "assets": 22529700000.0,
+    "liabilities": 3118600000.0,
+    "equity": 19411100000.0,
+    "currency": "USD"
+  },
+  "data_dates": {
+    "cash": "2024-12-31",
+    "debt": "2024-12-31",
+    "revenue": "2024-12-31",
+    "assets": "2024-12-31",
+    "liabilities": "2024-12-31"
+  },
+  "data_freshness": {
+    "most_recent_date": "2024-12-31",
+    "oldest_date": "2024-12-31",
+    "staleness_flags": [
+      "critical_staleness:394d"
+    ]
+  },
+  "coverage": {
+    "has_cash": true,
+    "has_debt": true,
+    "has_revenue": true,
+    "has_balance_sheet": true,
+    "pct_complete": 100.0
+  },
+  "provenance": {
+    "source": "SEC EDGAR Company Facts API",
+    "timestamp": "2026-01-29T11:12:51.543245",
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001776985.json",
+    "cik": "0001776985",
+    "accounting_standard": "ifrs-full"
+  }
+}

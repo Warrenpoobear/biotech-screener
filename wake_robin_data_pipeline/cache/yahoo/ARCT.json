@@ -1,0 +1,43 @@
+{
+  "ticker": "ARCT",
+  "success": true,
+  "price": {
+    "current": 7.32,
+    "currency": "USD",
+    "day_high": 7.435,
+    "day_low": 7.24,
+    "52_week_high": 24.17,
+    "52_week_low": 5.85
+  },
+  "market_cap": {
+    "value": 207992528.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 28414279.0,
+  "volume": {
+    "last": 79083,
+    "average_30d": 489258
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -2.752335,
+    "price_to_book": 0.8878108
+  },
+  "company_info": {
+    "name": "Arcturus Therapeutics Holdings Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:04:41.808226",
+    "url": "https://finance.yahoo.com/quote/ARCT",
+    "data_hash": "a26812dd5ec602d2"
+  }
+}

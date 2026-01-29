@@ -1,0 +1,102 @@
+{
+  "ticker": "ATXS",
+  "company_name": "Astria Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT07204938",
+      "title": "A Long-Term Study of Navenibart in Participants With Hereditary Angioedema",
+      "status": "ENROLLING_BY_INVITATION",
+      "phase": "PHASE3",
+      "condition": "Hereditary Angioedema (HAE)",
+      "start_date": "2025-10-01",
+      "completion_date": "2031-12",
+      "enrollment": 0,
+      "sponsor": "Astria Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05477160",
+      "title": "A Study of STAR-0215 in Healthy Adult Participants",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Hereditary Angioedema",
+      "start_date": "2022-07-27",
+      "completion_date": "2023-11-17",
+      "enrollment": 0,
+      "sponsor": "Astria Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05695248",
+      "title": "A Study of STAR-0215 in Participants With Hereditary Angioedema",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Hereditary Angioedema",
+      "start_date": "2023-02-21",
+      "completion_date": "2025-03-13",
+      "enrollment": 0,
+      "sponsor": "Astria Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06007677",
+      "title": "A Long-term Study of STAR-0215 in Participants With Hereditary Angioedema",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Hereditary Angioedema",
+      "start_date": "2023-09-26",
+      "completion_date": "2031-03",
+      "enrollment": 0,
+      "sponsor": "Astria Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06782477",
+      "title": "A Study of STAR-0310 in Healthy Adult Participants",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Healthy Participants",
+      "start_date": "2025-01-07",
+      "completion_date": "2026-01",
+      "enrollment": 0,
+      "sponsor": "Astria Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06842823",
+      "title": "A Study of Navenibart in Participants With Hereditary Angioedema",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Hereditary Angioedema (HAE)",
+      "start_date": "2025-03-20",
+      "completion_date": "2027-09",
+      "enrollment": 0,
+      "sponsor": "Astria Therapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 6,
+    "by_phase": {
+      "PHASE3": 2,
+      "PHASE1": 2,
+      "PHASE1, PHASE2": 1,
+      "PHASE2": 1
+    },
+    "by_status": {
+      "ENROLLING_BY_INVITATION": 1,
+      "COMPLETED": 2,
+      "ACTIVE_NOT_RECRUITING": 2,
+      "RECRUITING": 1
+    },
+    "active_trials": 4,
+    "completed_trials": 2,
+    "conditions": [
+      "Healthy Participants",
+      "Hereditary Angioedema",
+      "Hereditary Angioedema (HAE)"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:16:42.884047",
+    "search_query": "Astria Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Astria+Therapeutics,+Inc."
+  }
+}

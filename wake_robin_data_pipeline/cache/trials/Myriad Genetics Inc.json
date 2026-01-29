@@ -1,0 +1,163 @@
+{
+  "ticker": "MYGN",
+  "company_name": "Myriad Genetics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT01891344",
+      "title": "A Study of Rucaparib in Patients With Platinum-Sensitive, Relapsed, High-Grade Epithelial Ovarian, Fallopian Tube, or Primary Peritoneal Cancer (ARIEL2)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Ovarian Cancer, Epithelial Ovarian Cancer, Fallopian Tube Cancer, Peritoneal Cancer",
+      "start_date": "2013-10-30",
+      "completion_date": "2021-09-28",
+      "enrollment": 0,
+      "sponsor": "pharmaand GmbH"
+    },
+    {
+      "nct_id": "NCT04150042",
+      "title": "SHARON: A Clinical Trial for Metastatic Cancer Using Chemotherapy and Patients' Own Stem Cells",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Pancreatic Adenocarcinoma Metastatic, BRCA1 Mutation, BRCA2 Mutation, Pancreatic Acinar Cell Carcinoma, Pancreatic Ductal Adenocarcinoma, Pancreatic Cancer, Metastatic Pancreatic Cancer, Metastatic Pancreatic Ductal Adenocarcinoma, Breast Cancer Metastatic, Breast Cancer Stage IV, Pancreatic Cancer Stage IV, HER2-negative Breast Cancer, HER2 Negative Breast Carcinoma, Adenocarcinoma of the Breast, PALB2 Gene Mutation, Pancreas Cancer, Metastatic, Pancreas Cancer, Recurrent, Pancreas Cancer, Stage IV Pancreatic Cancer, Stage 4 Pancreatic Cancer",
+      "start_date": "2021-01-13",
+      "completion_date": "2028-12",
+      "enrollment": 0,
+      "sponsor": "General Oncology, Inc."
+    },
+    {
+      "nct_id": "NCT02987543",
+      "title": "Study of Olaparib (Lynparza\u2122) Versus Enzalutamide or Abiraterone Acetate in Men With Metastatic Castration-Resistant Prostate Cancer (PROfound Study)",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Metastatic Castration-resistant Prostate Cancer",
+      "start_date": "2017-02-06",
+      "completion_date": "2023-02-15",
+      "enrollment": 0,
+      "sponsor": "AstraZeneca"
+    },
+    {
+      "nct_id": "NCT03081455",
+      "title": "Impact of a Process Intervention on Screening and Testing Outcomes for Common Hereditary Cancer Syndromes",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Hereditary Cancer",
+      "start_date": "2017-02-13",
+      "completion_date": "2017-08-04",
+      "enrollment": 0,
+      "sponsor": "Myriad Genetic Laboratories, Inc."
+    },
+    {
+      "nct_id": "NCT03150810",
+      "title": "Study to Assess Safety, Tolerability and Clinical Activity of BGB-290 in Combination With Temozolomide (TMZ) in Participants With Locally Advanced or Metastatic Solid Tumors",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Locally Advanced or Metastatic Solid Tumors",
+      "start_date": "2017-06-28",
+      "completion_date": "2023-05-04",
+      "enrollment": 0,
+      "sponsor": "BeiGene"
+    },
+    {
+      "nct_id": "NCT07052266",
+      "title": "Trial of Combined Obstetric Carrier Screening and Hereditary Cancer Screening",
+      "status": "RECRUITING",
+      "phase": "NA",
+      "condition": "Hereditary Cancer Syndromes",
+      "start_date": "2025-09-02",
+      "completion_date": "2028-12",
+      "enrollment": 0,
+      "sponsor": "Weill Medical College of Cornell University"
+    },
+    {
+      "nct_id": "NCT02354586",
+      "title": "A Study of Niraparib in Patients With Ovarian Cancer Who Have Received Three or Four Previous Chemotherapy Regimens",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Ovarian Neoplasms, Ovarian Cancer",
+      "start_date": "2015-03-23",
+      "completion_date": "2021-08-23",
+      "enrollment": 0,
+      "sponsor": "Tesaro, Inc."
+    },
+    {
+      "nct_id": "NCT01968213",
+      "title": "Phase 3 Study of Rucaparib as Switch Maintenance After Platinum in Relapsed High Grade Serous or Endometrioid Ovarian Cancer (ARIEL3)",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Ovarian Cancer, Fallopian Tube Cancer, Peritoneal Cancer",
+      "start_date": "2014-04-07",
+      "completion_date": "2022-07-07",
+      "enrollment": 0,
+      "sponsor": "pharmaand GmbH"
+    },
+    {
+      "nct_id": "NCT02773004",
+      "title": "Prospective Study Assessing EndoPredict\u00ae Genomic Test Impact on Shared Decision of Adjuvant Chemotherapy in Patients With ER-positive, Her2-negative Early Breast Cancer",
+      "status": "COMPLETED",
+      "phase": "NA",
+      "condition": "Breast Cancer",
+      "start_date": "2016-09",
+      "completion_date": "2017-12",
+      "enrollment": 0,
+      "sponsor": "UNICANCER"
+    },
+    {
+      "nct_id": "NCT01982448",
+      "title": "Cisplatin vs Paclitaxel for Triple Negative Breast Cancer",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Triple Negative Breast Cancer",
+      "start_date": "2014-04",
+      "completion_date": "2020-08",
+      "enrollment": 0,
+      "sponsor": "Dana-Farber Cancer Institute"
+    }
+  ],
+  "summary": {
+    "total_trials": 18,
+    "by_phase": {
+      "PHASE2": 4,
+      "PHASE1": 2,
+      "PHASE3": 5,
+      "": 2,
+      "NA": 3,
+      "PHASE1, PHASE2": 1,
+      "PHASE4": 1
+    },
+    "by_status": {
+      "COMPLETED": 12,
+      "RECRUITING": 2,
+      "ACTIVE_NOT_RECRUITING": 3,
+      "TERMINATED": 1
+    },
+    "active_trials": 5,
+    "completed_trials": 12,
+    "conditions": [
+      "Breast Cancer",
+      "Breast Cancer, Invasive Breast Cancer, In Situ Breast Cancer, Genetic Testing",
+      "Hereditary Cancer",
+      "Hereditary Cancer Syndromes",
+      "Locally Advanced or Metastatic Solid Tumors",
+      "Metastatic Castration-resistant Prostate Cancer",
+      "Non-Germline BRCA Mutated Ovarian Cancer",
+      "Ovarian Cancer",
+      "Ovarian Cancer, Epithelial Ovarian Cancer, Fallopian Tube Cancer, Peritoneal Cancer",
+      "Ovarian Cancer, Fallopian Tube Cancer, Peritoneal Cancer",
+      "Ovarian Neoplasms",
+      "Ovarian Neoplasms, Ovarian Cancer",
+      "Ovarian Neoplasms, Platinum Sensitive Ovarian Cancer",
+      "Pancreatic Adenocarcinoma Metastatic, BRCA1 Mutation, BRCA2 Mutation, Pancreatic Acinar Cell Carcinoma, Pancreatic Ductal Adenocarcinoma, Pancreatic Cancer, Metastatic Pancreatic Cancer, Metastatic Pancreatic Ductal Adenocarcinoma, Breast Cancer Metastatic, Breast Cancer Stage IV, Pancreatic Cancer Stage IV, HER2-negative Breast Cancer, HER2 Negative Breast Carcinoma, Adenocarcinoma of the Breast, PALB2 Gene Mutation, Pancreas Cancer, Metastatic, Pancreas Cancer, Recurrent, Pancreas Cancer, Stage IV Pancreatic Cancer, Stage 4 Pancreatic Cancer",
+      "Prostate Cancer",
+      "Solid Tumor",
+      "Triple Negative Breast Cancer"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:20:10.702877",
+    "search_query": "Myriad Genetics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Myriad+Genetics,+Inc."
+  }
+}

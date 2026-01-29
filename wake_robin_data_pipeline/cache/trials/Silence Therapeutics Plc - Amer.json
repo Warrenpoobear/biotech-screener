@@ -1,0 +1,128 @@
+{
+  "ticker": "SLN",
+  "company_name": "Silence Therapeutics Plc - Amer",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04718844",
+      "title": "A Study Investigate the Safety, Tolerability, Pharmacokinetic, and Pharmacodynamic Response of SLN124 in Adults With Alpha/Beta-thalassaemia and Very Low- and Low-risk Myelodysplastic Syndrome",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Non-transfusion-dependent Thalassemia, Low Risk Myelodysplastic Syndrome, Very-Low Risk Myelodysplastic Syndrome",
+      "start_date": "2021-04-14",
+      "completion_date": "2023-05-23",
+      "enrollment": 0,
+      "sponsor": "Silence Therapeutics plc"
+    },
+    {
+      "nct_id": "NCT04606602",
+      "title": "Study to Investigate Safety, Tolerability, PK and PD Response of SLN360 in Subjects With Elevated Lipoprotein(a)",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Hyperlipidemias, Dyslipidemias, Elevated Lp(a)",
+      "start_date": "2020-11-18",
+      "completion_date": "2023-08-23",
+      "enrollment": 0,
+      "sponsor": "Silence Therapeutics plc"
+    },
+    {
+      "nct_id": "NCT04559971",
+      "title": "A Phase 1 Study to Evaluate the Safety, Tolerability, PK and PD of SLN124 in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "EARLY_PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2020-09-03",
+      "completion_date": "2021-03-23",
+      "enrollment": 0,
+      "sponsor": "Silence Therapeutics plc"
+    },
+    {
+      "nct_id": "NCT05537571",
+      "title": "Evaluate SLN360 in Participants With Elevated Lipoprotein(a) at High Risk of Atherosclerotic Cardiovascular Disease Events",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Cardiovascular Diseases, Atherosclerosis, Lipoprotein(a)",
+      "start_date": "2022-12-13",
+      "completion_date": "2024-07-01",
+      "enrollment": 0,
+      "sponsor": "Silence Therapeutics plc"
+    },
+    {
+      "nct_id": "NCT05499013",
+      "title": "Study to Assess SLN124 in Patients With Polycythemia Vera",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Polycythemia Vera",
+      "start_date": "2023-01-26",
+      "completion_date": "2030-03",
+      "enrollment": 0,
+      "sponsor": "Silence Therapeutics plc"
+    },
+    {
+      "nct_id": "NCT04176653",
+      "title": "Study in Beta-thalassaemia or Myelodysplastic Syndrome Patients to Investigate the Safety and Tolerability of SLN124",
+      "status": "WITHDRAWN",
+      "phase": "PHASE1",
+      "condition": "Non-transfusion-dependent Thalassemia, Low Risk Myelodysplastic Syndrome",
+      "start_date": "2019-08-20",
+      "completion_date": "2021-10-14",
+      "enrollment": 0,
+      "sponsor": "Silence Therapeutics plc"
+    },
+    {
+      "nct_id": "NCT00938574",
+      "title": "Study With Atu027 in Patients With Advanced Solid Cancer",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Advanced Solid Tumors",
+      "start_date": "2009-06",
+      "completion_date": "2012-09",
+      "enrollment": 0,
+      "sponsor": "Silence Therapeutics GmbH"
+    },
+    {
+      "nct_id": "NCT01808638",
+      "title": "Atu027 Plus Gemcitabine in Advanced or Metastatic Pancreatic Cancer (Atu027-I-02)",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Carcinoma, Pancreatic Ductal",
+      "start_date": "2013-03",
+      "completion_date": "2016-01",
+      "enrollment": 0,
+      "sponsor": "Silence Therapeutics GmbH"
+    }
+  ],
+  "summary": {
+    "total_trials": 8,
+    "by_phase": {
+      "PHASE1": 4,
+      "EARLY_PHASE1": 1,
+      "PHASE2": 1,
+      "PHASE1, PHASE2": 2
+    },
+    "by_status": {
+      "COMPLETED": 6,
+      "ACTIVE_NOT_RECRUITING": 1,
+      "WITHDRAWN": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 6,
+    "conditions": [
+      "Advanced Solid Tumors",
+      "Carcinoma, Pancreatic Ductal",
+      "Cardiovascular Diseases, Atherosclerosis, Lipoprotein(a)",
+      "Healthy Volunteers",
+      "Hyperlipidemias, Dyslipidemias, Elevated Lp(a)",
+      "Non-transfusion-dependent Thalassemia, Low Risk Myelodysplastic Syndrome",
+      "Non-transfusion-dependent Thalassemia, Low Risk Myelodysplastic Syndrome, Very-Low Risk Myelodysplastic Syndrome",
+      "Polycythemia Vera"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:21:56.096388",
+    "search_query": "Silence Therapeutics Plc - Amer",
+    "url": "https://clinicaltrials.gov/search?term=Silence+Therapeutics+Plc+-+Amer"
+  }
+}

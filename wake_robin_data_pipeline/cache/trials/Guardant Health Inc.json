@@ -1,0 +1,167 @@
+{
+  "ticker": "GH",
+  "company_name": "Guardant Health, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT03477474",
+      "title": "Registry of Guardant360\u00ae Use and Outcomes In People With Advanced Cancer",
+      "status": "TERMINATED",
+      "phase": "",
+      "condition": "Non-small Cell Lung Cancer Metastatic",
+      "start_date": "2018-04-06",
+      "completion_date": "2019-09-01",
+      "enrollment": 0,
+      "sponsor": "Guardant Health, Inc."
+    },
+    {
+      "nct_id": "NCT05117840",
+      "title": "Screening for High Frequency Malignant Disease",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "",
+      "condition": "Lung Cancer",
+      "start_date": "2022-01-13",
+      "completion_date": "2026-04-30",
+      "enrollment": 0,
+      "sponsor": "Guardant Health, Inc."
+    },
+    {
+      "nct_id": "NCT02967770",
+      "title": "Molecularly Tailored Therapy to Standard of Care as Second-Line Therapy in Metastatic Pancreatic Cancer",
+      "status": "WITHDRAWN",
+      "phase": "PHASE2",
+      "condition": "Metastatic Pancreatic Cancer",
+      "start_date": "2016-11",
+      "completion_date": "2018-08-30",
+      "enrollment": 0,
+      "sponsor": "Georgetown University"
+    },
+    {
+      "nct_id": "NCT04259944",
+      "title": "Post-surgical Liquid Biopsy-guided Treatment of Stage III and High-risk Stage II Colon Cancer Patients: the PEGASUS Trial",
+      "status": "UNKNOWN",
+      "phase": "PHASE2",
+      "condition": "Colon Cancer",
+      "start_date": "2020-06-16",
+      "completion_date": "2024-10-15",
+      "enrollment": 0,
+      "sponsor": "IFOM ETS - The AIRC Institute of Molecular Oncology"
+    },
+    {
+      "nct_id": "NCT05885009",
+      "title": "Feasibility and Impact of Liquid Biopsy Genomic Profiling on Treatment Patients With Metastatic Prostate Cancer in Spain (SOLTI-2102)",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Metastatic Prostate Cancer",
+      "start_date": "2023-03-28",
+      "completion_date": "2028-03-28",
+      "enrollment": 0,
+      "sponsor": "SOLTI Breast Cancer Research Group"
+    },
+    {
+      "nct_id": "NCT04410796",
+      "title": "Osimertinib Alone or With Chemotherapy for EGFR-Mutant Lung Cancers",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Metastatic Non-small Cell Lung Cancer",
+      "start_date": "2020-05-28",
+      "completion_date": "2026-05",
+      "enrollment": 0,
+      "sponsor": "Memorial Sloan Kettering Cancer Center"
+    },
+    {
+      "nct_id": "NCT05059444",
+      "title": "ORACLE: Observation of ResiduAl Cancer With Liquid Biopsy Evaluation",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Bladder Carcinoma, Ureter Carcinoma, Renal Pelvis Carcinoma, Non-small Cell Lung Cancer, Invasive Breast Carcinoma, Cutaneous Melanoma, Esophageal Carcinoma, Gastroesophageal Junction Carcinoma, Gastric Adenocarcinoma, Pancreatic Adenocarcinoma, Squamous Cell Carcinoma of the Head and Neck, Epithelial Ovarian Carcinoma, Fallopian Tube Carcinoma, Endometrial Carcinoma, Renal Cell Carcinoma, Rectal Adenocarcinoma",
+      "start_date": "2021-09-07",
+      "completion_date": "2029-08",
+      "enrollment": 0,
+      "sponsor": "Guardant Health, Inc."
+    },
+    {
+      "nct_id": "NCT04436393",
+      "title": "Guardant360\u00ae Related Clinical Outcomes in Patients Who Share Medical Records-Breast Cancer",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Advanced Breast Cancer",
+      "start_date": "2020-07-02",
+      "completion_date": "2022-03-17",
+      "enrollment": 0,
+      "sponsor": "Guardant Health, Inc."
+    },
+    {
+      "nct_id": "NCT06444542",
+      "title": "Understanding Patient Preference on Colorectal Cancer Screening Options-PSU",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Colo-rectal Cancer",
+      "start_date": "2024-09-16",
+      "completion_date": "2025-12-31",
+      "enrollment": 0,
+      "sponsor": "Milton S. Hershey Medical Center"
+    },
+    {
+      "nct_id": "NCT06880055",
+      "title": "Shield Post-Approval Study Protocol",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Colo-rectal Cancer",
+      "start_date": "2025-07-14",
+      "completion_date": "2030-12-01",
+      "enrollment": 0,
+      "sponsor": "Guardant Health, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 24,
+    "by_phase": {
+      "": 20,
+      "PHASE2": 3,
+      "PHASE3": 1
+    },
+    "by_status": {
+      "TERMINATED": 1,
+      "ACTIVE_NOT_RECRUITING": 2,
+      "WITHDRAWN": 1,
+      "UNKNOWN": 3,
+      "RECRUITING": 9,
+      "COMPLETED": 7,
+      "NOT_YET_RECRUITING": 1
+    },
+    "active_trials": 11,
+    "completed_trials": 7,
+    "conditions": [
+      "Advanced Breast Cancer",
+      "Bladder Carcinoma, Ureter Carcinoma, Renal Pelvis Carcinoma, Non-small Cell Lung Cancer, Invasive Breast Carcinoma, Cutaneous Melanoma, Esophageal Carcinoma, Gastroesophageal Junction Carcinoma, Gastric Adenocarcinoma, Pancreatic Adenocarcinoma, Squamous Cell Carcinoma of the Head and Neck, Epithelial Ovarian Carcinoma, Fallopian Tube Carcinoma, Endometrial Carcinoma, Renal Cell Carcinoma, Rectal Adenocarcinoma",
+      "Colo-rectal Cancer",
+      "Colon Cancer",
+      "Colorectal Cancer",
+      "Colorectal Cancer Metastatic",
+      "Colorectal Carcinoma",
+      "Lung Cancer",
+      "Lung Cancer, Stage III Lung Cancer, Unresectable Lung Carcinoma",
+      "Metastatic Breast Cancer",
+      "Metastatic Non-small Cell Lung Cancer",
+      "Metastatic Pancreatic Cancer",
+      "Metastatic Prostate Cancer",
+      "Nodule Solitary Pulmonary, Non-small Cell Lung Cancer",
+      "Non Small Cell Lung Cancer",
+      "Non-Hematologic Malignancy",
+      "Non-Small Cell Lung Cancer",
+      "Non-small Cell Lung Cancer",
+      "Non-small Cell Lung Cancer Metastatic",
+      "Non-small Cell Lung Cancer, ALK-Positive Lung Cancer",
+      "Non-small Cell Lung Cancer, Colorectal Cancer, Breast Cancer",
+      "Stage III Solid Tumors, Stage IV Solid Tumors"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:18:33.708129",
+    "search_query": "Guardant Health, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Guardant+Health,+Inc."
+  }
+}

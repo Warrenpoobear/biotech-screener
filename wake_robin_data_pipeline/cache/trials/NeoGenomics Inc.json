@@ -1,0 +1,52 @@
+{
+  "ticker": "NEO",
+  "company_name": "NeoGenomics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05077709",
+      "title": "IO102-IO103 in Combination With Pembrolizumab as First-line Treatment for Patients With Metastatic NSCLC, SCCHN, or mUBC",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Lung Cancer Non Small Cell, Head and Neck Squamous Cell Carcinoma, Urothelial Carcinoma Bladder",
+      "start_date": "2022-02-14",
+      "completion_date": "2024-11-30",
+      "enrollment": 0,
+      "sponsor": "IO Biotech"
+    },
+    {
+      "nct_id": "NCT05414032",
+      "title": "Molecular Residual Disease Interception in Locoregionally-Advanced High Risk HPV+ and HPV- HNSCC",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Locoregionally Advanced Head and Neck Squamous Cell Carcinoma (LA-HNSCC)",
+      "start_date": "2023-07-12",
+      "completion_date": "2026-07",
+      "enrollment": 0,
+      "sponsor": "University Health Network, Toronto"
+    }
+  ],
+  "summary": {
+    "total_trials": 2,
+    "by_phase": {
+      "PHASE2": 2
+    },
+    "by_status": {
+      "ACTIVE_NOT_RECRUITING": 1,
+      "RECRUITING": 1
+    },
+    "active_trials": 2,
+    "completed_trials": 0,
+    "conditions": [
+      "Locoregionally Advanced Head and Neck Squamous Cell Carcinoma (LA-HNSCC)",
+      "Lung Cancer Non Small Cell, Head and Neck Squamous Cell Carcinoma, Urothelial Carcinoma Bladder"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:36:11.908008",
+    "search_query": "NeoGenomics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=NeoGenomics,+Inc."
+  }
+}

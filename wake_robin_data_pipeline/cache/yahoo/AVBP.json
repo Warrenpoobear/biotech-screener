@@ -1,0 +1,43 @@
+{
+  "ticker": "AVBP",
+  "success": true,
+  "price": {
+    "current": 22.665,
+    "currency": "USD",
+    "day_high": 24.27,
+    "day_low": 22.24,
+    "52_week_high": 29.71,
+    "52_week_low": 15.47
+  },
+  "market_cap": {
+    "value": 935642048.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 41281361.0,
+  "volume": {
+    "last": 47897,
+    "average_30d": 420536
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -5.79386,
+    "price_to_book": 3.0357623
+  },
+  "company_info": {
+    "name": "ArriVent BioPharma, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:04:57.511150",
+    "url": "https://finance.yahoo.com/quote/AVBP",
+    "data_hash": "f5a5e84609fc6f4d"
+  }
+}

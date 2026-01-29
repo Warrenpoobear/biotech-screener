@@ -1,0 +1,43 @@
+{
+  "ticker": "ALVO",
+  "success": true,
+  "price": {
+    "current": 5.405,
+    "currency": "USD",
+    "day_high": 5.57,
+    "day_low": 5.3501,
+    "52_week_high": 13.08,
+    "52_week_low": 4.32
+  },
+  "market_cap": {
+    "value": 1684204288.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 311601154.0,
+  "volume": {
+    "last": 172169,
+    "average_30d": 347439
+  },
+  "valuation": {
+    "pe_ratio": 23.5,
+    "forward_pe": 15.741496,
+    "price_to_book": -9.176571
+  },
+  "company_info": {
+    "name": "Alvotech",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:04:27.655252",
+    "url": "https://finance.yahoo.com/quote/ALVO",
+    "data_hash": "88a6f41353e80f4c"
+  }
+}

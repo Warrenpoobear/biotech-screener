@@ -1,0 +1,43 @@
+{
+  "ticker": "VOR",
+  "success": true,
+  "price": {
+    "current": 13.43,
+    "currency": "USD",
+    "day_high": 14.105,
+    "day_low": 13.3,
+    "52_week_high": 65.8,
+    "52_week_low": 2.62
+  },
+  "market_cap": {
+    "value": 520012256.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 38720196.0,
+  "volume": {
+    "last": 229841,
+    "average_30d": 1047329
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -2.9143193,
+    "price_to_book": -0.05447414
+  },
+  "company_info": {
+    "name": "Vor Biopharma Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:10:43.341325",
+    "url": "https://finance.yahoo.com/quote/VOR",
+    "data_hash": "70d6c7cc5e3bea55"
+  }
+}

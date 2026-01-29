@@ -1,0 +1,43 @@
+{
+  "ticker": "IVVD",
+  "success": true,
+  "price": {
+    "current": 1.855,
+    "currency": "USD",
+    "day_high": 1.942,
+    "day_low": 1.8502,
+    "52_week_high": 3.07,
+    "52_week_low": 0.355
+  },
+  "market_cap": {
+    "value": 523085952.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 281987033.0,
+  "volume": {
+    "last": 860086,
+    "average_30d": 3142726
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -13.740741,
+    "price_to_book": 4.274194
+  },
+  "company_info": {
+    "name": "Invivyd, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:07:25.318051",
+    "url": "https://finance.yahoo.com/quote/IVVD",
+    "data_hash": "f5c157e2faca33ae"
+  }
+}

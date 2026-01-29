@@ -1,0 +1,101 @@
+{
+  "ticker": "AARD",
+  "company_name": "Aardvark Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05153434",
+      "title": "A Study of Oral ARD-101 in Patients With Prader-Willi Syndrome",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Prader-Willi Syndrome",
+      "start_date": "2022-05-27",
+      "completion_date": "2024-09-24",
+      "enrollment": 0,
+      "sponsor": "Aardvark Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06126653",
+      "title": "A Study to Evaluate ARD-501 in Patients With Autism Spectrum Disorder",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Autism Spectrum Disorder",
+      "start_date": "2024-08-01",
+      "completion_date": "2025-01-13",
+      "enrollment": 0,
+      "sponsor": "Aardvark Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT07197034",
+      "title": "The Hunger Elimination or Reduction Objective (HERO ) Open -Label Extension (OLE) Trial",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Hyperphagia, Prader-Willi Syndrome, Hyperphagia in Prader-Willi Syndrome",
+      "start_date": "2024-07-23",
+      "completion_date": "2027-04",
+      "enrollment": 0,
+      "sponsor": "Aardvark Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06828861",
+      "title": "ARD-101 for Treatment of PWS: The Hunger Elimination or Reduction Objective Trial",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Hyperphagia, Prader-Willi Syndrome",
+      "start_date": "2024-12-20",
+      "completion_date": "2026-04",
+      "enrollment": 0,
+      "sponsor": "Aardvark Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05215847",
+      "title": "Study to Evaluate ARD-101 in Adults Receiving Bariatric Surgery",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Bariatric Surgery, Obesity, Weight Gain",
+      "start_date": "2022-03-01",
+      "completion_date": "2023-02-03",
+      "enrollment": 0,
+      "sponsor": "Aardvark Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05121441",
+      "title": "Study to Evaluate ARD-101 in Adults With Obesity",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Obesity",
+      "start_date": "2021-11-15",
+      "completion_date": "2022-11-09",
+      "enrollment": 0,
+      "sponsor": "Aardvark Therapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 6,
+    "by_phase": {
+      "PHASE2": 4,
+      "PHASE3": 2
+    },
+    "by_status": {
+      "COMPLETED": 4,
+      "RECRUITING": 2
+    },
+    "active_trials": 2,
+    "completed_trials": 4,
+    "conditions": [
+      "Autism Spectrum Disorder",
+      "Bariatric Surgery, Obesity, Weight Gain",
+      "Hyperphagia, Prader-Willi Syndrome",
+      "Hyperphagia, Prader-Willi Syndrome, Hyperphagia in Prader-Willi Syndrome",
+      "Obesity",
+      "Prader-Willi Syndrome"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:15:47.558974",
+    "search_query": "Aardvark Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Aardvark+Therapeutics,+Inc."
+  }
+}

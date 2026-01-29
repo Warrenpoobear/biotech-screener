@@ -1,0 +1,89 @@
+{
+  "ticker": "AVBP",
+  "company_name": "ArriVent BioPharma, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT07010419",
+      "title": "A Study to Assess the Efficacy and Safety of Firmonertinib Versus Placebo for Adjuvant Treatment in Participants With Stage IB - IIIB NSCLC With Uncommon Epidermal Growth Factor Receptor (EGFR) Mutations, Following Complete Surgical Resection With or Without Adjuvant Chemotherapy\uff08FIRMOST\uff09",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "NSCLC, Adjuvant Treatment",
+      "start_date": "2025-05-28",
+      "completion_date": "2032-04-30",
+      "enrollment": 0,
+      "sponsor": "Allist Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT05364073",
+      "title": "Study of Furmonertinib in Patients With Advanced or Metastatic Non-Small Cell Lung Cancer (NSCLC) With Activating, Including Uncommon, Epidermal Growth Factor Receptor (EGFR) or Human Epidermal Growth Factor Receptor 2 (HER2) Mutations",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Non-Small Cell Lung Cancer (NSCLC), Metastatic Non-Small Cell Lung Cancer, Advanced Non-Small Cell Lung Cancer, HER2 Exon 20 Mutations, EGFR Exon 20 Mutations, EGFR Uncommon Mutations, Including G719X and S768I",
+      "start_date": "2022-06-30",
+      "completion_date": "2025-12",
+      "enrollment": 0,
+      "sponsor": "ArriVent BioPharma, Inc."
+    },
+    {
+      "nct_id": "NCT05607550",
+      "title": "Study to Compare Furmonertinib to Platinum-Based Chemotherapy for Patients With Locally Advanced or Metastatic Non-Small Cell Lung Cancer (NSCLC) With Epidermal Growth Factor Receptor (EGFR) Exon 20 Insertion Mutations (FURVENT)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Metastatic Non-Small Cell Lung Cancer, Advanced Non-Small Cell Lung Cancer, EGFR Exon 20 Mutations",
+      "start_date": "2023-06-01",
+      "completion_date": "2028-02-15",
+      "enrollment": 0,
+      "sponsor": "ArriVent BioPharma, Inc."
+    },
+    {
+      "nct_id": "NCT07185997",
+      "title": "Study to Evaluate Efficacy and Safety of Firmonertinib Compared With Investigator's Choice of EGFR Inhibitor as First-Line Treatment in Participants Who Have Locally Advanced or Metastatic NSCLC With EGFR P-Loop and Alpha C-Helix Compressing (PACC) Uncommon Mutations",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Non-Small-Cell Lung Cancer, Metastatic Non-Small-Cell Lung Cancer, Advanced Non-Small-Cell Lung Cancer, EGFR P-Loop and Alpha C-Helix Compressing, EGFR PACC, EGFR Uncommon Mutations",
+      "start_date": "2025-12",
+      "completion_date": "2030-12",
+      "enrollment": 0,
+      "sponsor": "ArriVent BioPharma, Inc."
+    },
+    {
+      "nct_id": "NCT07066657",
+      "title": "A Study of MRG007 (ARR-217) in Patients With Advanced Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Locally Advanced or Metastatic Solid Tumors, Colorectal Cancer, Gastric Cancer, Pancreatic Cancer",
+      "start_date": "2025-07-25",
+      "completion_date": "2030-12",
+      "enrollment": 0,
+      "sponsor": "Lepu Biopharma Co., Ltd."
+    }
+  ],
+  "summary": {
+    "total_trials": 5,
+    "by_phase": {
+      "PHASE3": 3,
+      "PHASE1": 2
+    },
+    "by_status": {
+      "RECRUITING": 3,
+      "ACTIVE_NOT_RECRUITING": 2
+    },
+    "active_trials": 5,
+    "completed_trials": 0,
+    "conditions": [
+      "Locally Advanced or Metastatic Solid Tumors, Colorectal Cancer, Gastric Cancer, Pancreatic Cancer",
+      "Metastatic Non-Small Cell Lung Cancer, Advanced Non-Small Cell Lung Cancer, EGFR Exon 20 Mutations",
+      "NSCLC, Adjuvant Treatment",
+      "Non-Small Cell Lung Cancer (NSCLC), Metastatic Non-Small Cell Lung Cancer, Advanced Non-Small Cell Lung Cancer, HER2 Exon 20 Mutations, EGFR Exon 20 Mutations, EGFR Uncommon Mutations, Including G719X and S768I",
+      "Non-Small-Cell Lung Cancer, Metastatic Non-Small-Cell Lung Cancer, Advanced Non-Small-Cell Lung Cancer, EGFR P-Loop and Alpha C-Helix Compressing, EGFR PACC, EGFR Uncommon Mutations"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:16:48.981869",
+    "search_query": "ArriVent BioPharma, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=ArriVent+BioPharma,+Inc."
+  }
+}

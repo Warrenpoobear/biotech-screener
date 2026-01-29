@@ -1,0 +1,43 @@
+{
+  "ticker": "OMER",
+  "success": true,
+  "price": {
+    "current": 11.78,
+    "currency": "USD",
+    "day_high": 11.91,
+    "day_low": 11.66,
+    "52_week_high": 17.65,
+    "52_week_low": 2.95
+  },
+  "market_cap": {
+    "value": 835207360.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 70900459.0,
+  "volume": {
+    "last": 238407,
+    "average_30d": 2876573
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": 24.205315,
+    "price_to_book": -3.7444375
+  },
+  "company_info": {
+    "name": "Omeros Corporation",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:42.641516",
+    "url": "https://finance.yahoo.com/quote/OMER",
+    "data_hash": "a3da6c9327189177"
+  }
+}

@@ -1,0 +1,166 @@
+{
+  "ticker": "CVAC",
+  "company_name": "CureVac N.V.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05960097",
+      "title": "A Study on the Safety and Immune Response of Investigational COVID-19 mRNA Vaccines in Healthy Adults",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "SARS-CoV-2, COVID-19",
+      "start_date": "2023-08-01",
+      "completion_date": "2024-08-30",
+      "enrollment": 0,
+      "sponsor": "GlaxoSmithKline"
+    },
+    {
+      "nct_id": "NCT03291002",
+      "title": "Study of Intratumoral CV8102 in cMEL, cSCC, hnSCC, and ACC",
+      "status": "UNKNOWN",
+      "phase": "PHASE1",
+      "condition": "Melanoma (Skin), Squamous Cell Carcinoma of the Skin, Carcinoma, Squamous Cell of Head and Neck, Carcinoma, Adenoid Cystic",
+      "start_date": "2017-09-25",
+      "completion_date": "2023-02",
+      "enrollment": 0,
+      "sponsor": "CureVac"
+    },
+    {
+      "nct_id": "NCT02241135",
+      "title": "RNActive\u00ae Rabies Vaccine (CV7201) in Healthy Adults",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Rabies",
+      "start_date": "2013-10",
+      "completion_date": "2018-02-08",
+      "enrollment": 0,
+      "sponsor": "CureVac"
+    },
+    {
+      "nct_id": "NCT04674189",
+      "title": "A Study to Evaluate the Safety and Immunogenicity of Vaccine CVnCoV in Healthy Adults in Germany for COVID-19",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Coronavirus, Covid19, SARS-CoV-2, Severe Acute Respiratory Syndrome",
+      "start_date": "2020-12-23",
+      "completion_date": "2022-06-08",
+      "enrollment": 0,
+      "sponsor": "CureVac"
+    },
+    {
+      "nct_id": "NCT05252338",
+      "title": "A Study to Evaluate the Safety, Reactogenicity and Immunogenicity of Vaccine CVSQIV in Healthy Adults",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Influenza",
+      "start_date": "2022-02-07",
+      "completion_date": "2022-09-27",
+      "enrollment": 0,
+      "sponsor": "CureVac"
+    },
+    {
+      "nct_id": "NCT03203005",
+      "title": "IMA970A Plus CV8102 in Very Early, Early and Intermediate Stage Hepatocellular Carcinoma Patients",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Hepatocellular Carcinoma",
+      "start_date": "2017-09-18",
+      "completion_date": "2019-12-20",
+      "enrollment": 0,
+      "sponsor": "National Cancer Institute, Naples"
+    },
+    {
+      "nct_id": "NCT05938387",
+      "title": "Safety and Tolerability of CVGBM in Adults with Newly Diagnosed MGMT-Unmethylated Glioblastoma or Astrocytoma",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Glioblastoma",
+      "start_date": "2023-06-01",
+      "completion_date": "2026-02-04",
+      "enrollment": 0,
+      "sponsor": "CureVac"
+    },
+    {
+      "nct_id": "NCT01915524",
+      "title": "Trial of RNActive\u00ae-Derived Cancer Vaccine and Local Radiation in in Stage IV Non Small Cell Lung Cancer (NSCLC)",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Non-Small Cell Lung Carcinoma",
+      "start_date": "2013-04",
+      "completion_date": "2016-07",
+      "enrollment": 0,
+      "sponsor": "CureVac"
+    },
+    {
+      "nct_id": "NCT03164772",
+      "title": "Phase 1/2 Study of Combination Immunotherapy and Messenger Ribonucleic Acid (mRNA) Vaccine in Subjects With NSCLC",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Metastatic Non-small Cell Lung Cancer, NSCLC",
+      "start_date": "2017-12-20",
+      "completion_date": "2021-10-29",
+      "enrollment": 0,
+      "sponsor": "Ludwig Institute for Cancer Research"
+    },
+    {
+      "nct_id": "NCT02238756",
+      "title": "Safety and Tolerability of CV8102 Alone and in Combination With a Rabies Virus Vaccine in Healthy Adults",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Rabies",
+      "start_date": "2014-09",
+      "completion_date": "2016-11",
+      "enrollment": 0,
+      "sponsor": "CureVac"
+    }
+  ],
+  "summary": {
+    "total_trials": 26,
+    "by_phase": {
+      "PHASE2": 3,
+      "PHASE1": 11,
+      "PHASE3": 4,
+      "PHASE1, PHASE2": 7,
+      "PHASE2, PHASE3": 1
+    },
+    "by_status": {
+      "COMPLETED": 16,
+      "UNKNOWN": 1,
+      "ACTIVE_NOT_RECRUITING": 1,
+      "TERMINATED": 5,
+      "WITHDRAWN": 2,
+      "NOT_YET_RECRUITING": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 16,
+    "conditions": [
+      "COVID-19, SARS-CoV-2",
+      "Coronavirus, Covid19, SARS-CoV-2, Severe Acute Respiratory Syndrome",
+      "Covid19, SARS-CoV-2",
+      "Glioblastoma",
+      "Hepatocellular Carcinoma",
+      "Hormonal Refractory Prostate Cancer",
+      "Hormone Refractory Prostate Cancer",
+      "Influenza",
+      "Influenza, Human",
+      "Melanoma (Skin), Squamous Cell Carcinoma of the Skin, Carcinoma, Squamous Cell of Head and Neck, Carcinoma, Adenoid Cystic",
+      "Metastatic Non-small Cell Lung Cancer, NSCLC",
+      "Non Small Cell Lung Cancer",
+      "Non-Small Cell Lung Carcinoma",
+      "Prostate Cancer",
+      "Prostate Carcinoma",
+      "Rabies",
+      "SARS-CoV-2 Infection, Coronavirus Disease 2019 (COVID-19)",
+      "SARS-CoV-2, COVID-19",
+      "Severe Acute Respiratory Syndrome, Coronavirus, SARS-CoV-2, COVID-19",
+      "Squamous NSCLC"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:17:53.186285",
+    "search_query": "CureVac N.V.",
+    "url": "https://clinicaltrials.gov/search?term=CureVac+N.V."
+  }
+}

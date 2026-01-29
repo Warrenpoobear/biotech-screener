@@ -1,0 +1,43 @@
+{
+  "ticker": "DRUG",
+  "success": true,
+  "price": {
+    "current": 80.9,
+    "currency": "USD",
+    "day_high": 81.5,
+    "day_low": 79.7499,
+    "52_week_high": 123.75,
+    "52_week_low": 23.175
+  },
+  "market_cap": {
+    "value": 803210944.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 9732161.0,
+  "volume": {
+    "last": 26920,
+    "average_30d": 247628
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -9.319557,
+    "price_to_book": 10.2346
+  },
+  "company_info": {
+    "name": "Bright Minds Biosciences Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:06:09.763007",
+    "url": "https://finance.yahoo.com/quote/DRUG",
+    "data_hash": "63ce6dc800a83469"
+  }
+}

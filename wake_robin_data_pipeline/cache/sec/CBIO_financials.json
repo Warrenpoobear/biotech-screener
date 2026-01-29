@@ -1,0 +1,43 @@
+{
+  "ticker": "CBIO",
+  "cik": "0001253689",
+  "success": true,
+  "financials": {
+    "cash": 133265000.0,
+    "debt": 0.0,
+    "net_debt": -133265000.0,
+    "revenue_ttm": 18500.0,
+    "assets": 138269000.0,
+    "liabilities": 21628000.0,
+    "equity": 116641000.0,
+    "currency": "USD"
+  },
+  "data_dates": {
+    "cash": "2025-09-30",
+    "revenue": "2016-12-31",
+    "assets": "2025-09-30",
+    "liabilities": "2025-09-30",
+    "debt": "2025-09-30"
+  },
+  "data_freshness": {
+    "most_recent_date": "2025-09-30",
+    "oldest_date": "2016-12-31",
+    "staleness_flags": [
+      "critical_staleness:3316d"
+    ]
+  },
+  "coverage": {
+    "has_cash": true,
+    "has_debt": true,
+    "has_revenue": true,
+    "has_balance_sheet": true,
+    "pct_complete": 100.0
+  },
+  "provenance": {
+    "source": "SEC EDGAR Company Facts API",
+    "timestamp": "2026-01-29T12:46:55.988291",
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001253689.json",
+    "cik": "0001253689",
+    "accounting_standard": "us-gaap"
+  }
+}

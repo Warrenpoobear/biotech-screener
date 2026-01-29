@@ -1,0 +1,90 @@
+{
+  "ticker": "BIOA",
+  "company_name": "BioAge Labs, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04705597",
+      "title": "Study to Evaluate the Safety, Tolerability, and Efficacy of BGE-175 in Hospitalized Adults With Coronavirus Disease 2019 (COVID-19) That Are Not in Respiratory Failure",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Covid19",
+      "start_date": "2021-03-18",
+      "completion_date": "2022-05-19",
+      "enrollment": 0,
+      "sponsor": "BioAge Labs, Inc."
+    },
+    {
+      "nct_id": "NCT06141889",
+      "title": "Pharmacokinetics Study of Azelaprag (BGE-105) in Older Adult Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteer Study",
+      "start_date": "2023-11-17",
+      "completion_date": "2024-02-02",
+      "enrollment": 0,
+      "sponsor": "BioAge Labs, Inc."
+    },
+    {
+      "nct_id": "NCT05152641",
+      "title": "Study to Evaluate Efficacy and Safety of BGE-117 in Moderately to Severely Anemic Older Individuals After Major Hip Surgery",
+      "status": "WITHDRAWN",
+      "phase": "PHASE2",
+      "condition": "Acute Posthemorrhagic Anemia",
+      "start_date": "2022-04",
+      "completion_date": "2024-07",
+      "enrollment": 0,
+      "sponsor": "BioAge Labs, Inc."
+    },
+    {
+      "nct_id": "NCT04815603",
+      "title": "Study to Evaluate Efficacy and Safety of BGE-117 in the Treatment of Anemia of Aging",
+      "status": "WITHDRAWN",
+      "phase": "PHASE2",
+      "condition": "Anemia",
+      "start_date": "2021-03-22",
+      "completion_date": "2022-04",
+      "enrollment": 0,
+      "sponsor": "BioAge Labs, Inc."
+    },
+    {
+      "nct_id": "NCT06515418",
+      "title": "Efficacy and Safety of Oral Azelaprag Plus Once Weekly Tirzepatide Compared with Tirzepatide Alone in Participants with Obesity Aged 55 Years and Over",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Obesity",
+      "start_date": "2024-06-27",
+      "completion_date": "2025-02-12",
+      "enrollment": 0,
+      "sponsor": "BioAge Labs, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 5,
+    "by_phase": {
+      "PHASE2": 4,
+      "PHASE1": 1
+    },
+    "by_status": {
+      "TERMINATED": 2,
+      "COMPLETED": 1,
+      "WITHDRAWN": 2
+    },
+    "active_trials": 0,
+    "completed_trials": 1,
+    "conditions": [
+      "Acute Posthemorrhagic Anemia",
+      "Anemia",
+      "Covid19",
+      "Healthy Volunteer Study",
+      "Obesity"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:17:11.203361",
+    "search_query": "BioAge Labs, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=BioAge+Labs,+Inc."
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "TRVI",
+  "success": true,
+  "price": {
+    "current": 10.445,
+    "currency": "USD",
+    "day_high": 10.895,
+    "day_low": 10.35,
+    "52_week_high": 14.39,
+    "52_week_low": 3.771
+  },
+  "market_cap": {
+    "value": 1339363712.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 128230134.0,
+  "volume": {
+    "last": 436445,
+    "average_30d": 1435356
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -22.223404,
+    "price_to_book": 7.057432
+  },
+  "company_info": {
+    "name": "Trevi Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:10:24.265621",
+    "url": "https://finance.yahoo.com/quote/TRVI",
+    "data_hash": "4f8c3ba09f3a3f2d"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "PRVA",
+  "success": true,
+  "price": {
+    "current": 22.6,
+    "currency": "USD",
+    "day_high": 22.715,
+    "day_low": 22.4,
+    "52_week_high": 26.51,
+    "52_week_low": 18.77
+  },
+  "market_cap": {
+    "value": 2779834624.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 123001529.0,
+  "volume": {
+    "last": 131691,
+    "average_30d": 642149
+  },
+  "valuation": {
+    "pe_ratio": 161.42857,
+    "forward_pe": 21.605705,
+    "price_to_book": 3.9161325
+  },
+  "company_info": {
+    "name": "Privia Health Group, Inc.",
+    "sector": "Healthcare",
+    "industry": "Health Information Services"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:09:07.687100",
+    "url": "https://finance.yahoo.com/quote/PRVA",
+    "data_hash": "eaa3c6c1d589dde4"
+  }
+}

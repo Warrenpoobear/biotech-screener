@@ -1,0 +1,154 @@
+{
+  "ticker": "BEAM",
+  "company_name": "Beam Therapeutics Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05456880",
+      "title": "BEACON: A Study Evaluating the Safety and Efficacy of BEAM-101 in Patients With Severe Sickle Cell Disease",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Sickle Cell Disease",
+      "start_date": "2022-08-30",
+      "completion_date": "2028-02",
+      "enrollment": 0,
+      "sponsor": "Beam Therapeutics Inc."
+    },
+    {
+      "nct_id": "NCT06071377",
+      "title": "Achieving Understanding of the Natural History of Sickle Cell Trait (AUNT)",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Sickle Cell Trait",
+      "start_date": "2023-04-01",
+      "completion_date": "2027-02",
+      "enrollment": 0,
+      "sponsor": "National Alliance for Sickle Cell Centers"
+    },
+    {
+      "nct_id": "NCT07137195",
+      "title": "Clinical Trial of the Safety and Efficacy of IBA Proton Therapy System PROTEUS\u00ae PLUS (Hebei)",
+      "status": "RECRUITING",
+      "phase": "NA",
+      "condition": "Solid Tumor, Adult",
+      "start_date": "2025-04-29",
+      "completion_date": "2031-07-31",
+      "enrollment": 0,
+      "sponsor": "Ion Beam Applications"
+    },
+    {
+      "nct_id": "NCT06735755",
+      "title": "A Phase 1/2, Dose-Exploration Study to Evaluate the Safety and Efficacy of BEAM-301 in Patients With Glycogen Storage Disease Type Ia (GSDIa)",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Glycogen Storage Disease Type Ia",
+      "start_date": "2024-12-06",
+      "completion_date": "2027-12-30",
+      "enrollment": 0,
+      "sponsor": "Beam Therapeutics Inc."
+    },
+    {
+      "nct_id": "NCT05885464",
+      "title": "A Study Evaluating the Safety and Efficacy of BEAM-201 in Relapsed/Refractory T-Cell Acute Lymphoblastic Leukemia (T-ALL) or T-Cell Lymphoblastic Lymphoma (T-LL)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Lymphoblastic Lymphoma, T-Cell Lymphoblastic Leukemia/Lymphoma, Lymphoblastic Leukemia",
+      "start_date": "2023-05-25",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "Beam Therapeutics Inc."
+    },
+    {
+      "nct_id": "NCT05521243",
+      "title": "An Exploratory Investigation of a Supplement to Enhance Sleep Quality and Quantity",
+      "status": "COMPLETED",
+      "phase": "NA",
+      "condition": "Sleep, Sleep Disturbance, Sleep Hygiene",
+      "start_date": "2022-05-09",
+      "completion_date": "2022-09-30",
+      "enrollment": 0,
+      "sponsor": "Beam"
+    },
+    {
+      "nct_id": "NCT07153094",
+      "title": "Clinical Trial of the Safety and Efficacy of IBA Proton Therapy System PROTEUS\u00ae PLUS (Shenzhen)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "NA",
+      "condition": "Solid Tumor, Adult",
+      "start_date": "2025-08-04",
+      "completion_date": "2031-07",
+      "enrollment": 0,
+      "sponsor": "Ion Beam Applications"
+    },
+    {
+      "nct_id": "NCT07183735",
+      "title": "A Crossover Trial to Examine the Efficacy of a Powder to Improve Sleep Quality and Performance",
+      "status": "COMPLETED",
+      "phase": "NA",
+      "condition": "Sleep, Sleep Disorder",
+      "start_date": "2024-07-02",
+      "completion_date": "2024-10-17",
+      "enrollment": 0,
+      "sponsor": "Beam"
+    },
+    {
+      "nct_id": "NCT06934382",
+      "title": "Anti-CD7 CAR-T Cells in Relapsed/Refractory T-Cell Acute Lymphoblastic Leukemia or Lymphoma",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "T-Cell Acute Lymphoblastic Leukemia/Lymphoma",
+      "start_date": "2025-04-29",
+      "completion_date": "2031-05-30",
+      "enrollment": 0,
+      "sponsor": "Stephan Grupp MD PhD"
+    },
+    {
+      "nct_id": "NCT07304791",
+      "title": "This is a Phase 1, Randomized, Single-blind, Placebo-controlled Study to Assess the Safety, Pharmacokinetics (PK), and Pharmacodynamics (PD) of BEAM-103 in Healthy Subjects",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Healthy Subjects, Healthy Participant Study",
+      "start_date": "2025-10-27",
+      "completion_date": "2026-05-29",
+      "enrollment": 0,
+      "sponsor": "Beam Therapeutics Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 14,
+    "by_phase": {
+      "PHASE1, PHASE2": 4,
+      "": 2,
+      "NA": 6,
+      "PHASE1": 2
+    },
+    "by_status": {
+      "ACTIVE_NOT_RECRUITING": 4,
+      "RECRUITING": 8,
+      "COMPLETED": 2
+    },
+    "active_trials": 12,
+    "completed_trials": 2,
+    "conditions": [
+      "Alpha 1-Antitrypsin Deficiency",
+      "Glioma, Glioma, Malignant, Recurrent Glioma",
+      "Glycogen Storage Disease Type Ia",
+      "Healthy Subjects, Healthy Participant Study",
+      "Hemoglobinopathy, Sickle Cell Disease",
+      "Lymphoblastic Lymphoma, T-Cell Lymphoblastic Leukemia/Lymphoma, Lymphoblastic Leukemia",
+      "Sickle Cell Disease",
+      "Sickle Cell Trait",
+      "Sleep, Sleep Disorder",
+      "Sleep, Sleep Disturbance, Sleep Hygiene",
+      "Solid Tumor, Adult",
+      "T-Cell Acute Lymphoblastic Leukemia/Lymphoma"
+    ],
+    "lead_stage": "phase_1"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:17:07.359981",
+    "search_query": "Beam Therapeutics Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Beam+Therapeutics+Inc."
+  }
+}

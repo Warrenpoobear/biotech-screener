@@ -1,0 +1,182 @@
+{
+  "ticker": "VTRS",
+  "company_name": "Viatris Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT00137020",
+      "title": "Clinical Effect Of Cross Titration Of Antipsychotics With Ziprasidone In Schizophrenia Or Schizoaffective Disorder",
+      "status": "COMPLETED",
+      "phase": "PHASE4",
+      "condition": "Schizophrenia, Psychotic Disorders",
+      "start_date": "2004-11",
+      "completion_date": "2006-04",
+      "enrollment": 0,
+      "sponsor": "Pfizer's Upjohn has merged with Mylan to form Viatris Inc."
+    },
+    {
+      "nct_id": "NCT00645320",
+      "title": "A Study of Ziprasidone for the Treatment of Psychosis in Patients Who Had Already Had Benefits From Ziprasidone Treatment in a Previous Study",
+      "status": "COMPLETED",
+      "phase": "PHASE4",
+      "condition": "Pyschotic Disorders",
+      "start_date": "2003-08",
+      "completion_date": "2004-08",
+      "enrollment": 0,
+      "sponsor": "Pfizer's Upjohn has merged with Mylan to form Viatris Inc."
+    },
+    {
+      "nct_id": "NCT00749775",
+      "title": "Selara Drug Use Investigation (Regulatory Post Marketing Commitment Plan)",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Hypertension",
+      "start_date": "2008-06",
+      "completion_date": "2012-12",
+      "enrollment": 0,
+      "sponsor": "Pfizer's Upjohn has merged with Mylan to form Viatris Inc."
+    },
+    {
+      "nct_id": "NCT07365904",
+      "title": "Investigating Ovulation Inhibition for Use as a Contraceptive",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Contraception",
+      "start_date": "2025-12-22",
+      "completion_date": "2026-11-30",
+      "enrollment": 0,
+      "sponsor": "Mylan Pharmaceuticals Inc"
+    },
+    {
+      "nct_id": "NCT00159913",
+      "title": "A Randomized, Double-Blind, Placebo-Controlled Study of Sildenafil in Children With Pulmonary Arterial Hypertension.",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Pulmonary Arterial Hypertension, Children",
+      "start_date": "2003-08",
+      "completion_date": "2008-06",
+      "enrollment": 0,
+      "sponsor": "Pfizer's Upjohn has merged with Mylan to form Viatris Inc."
+    },
+    {
+      "nct_id": "NCT00313820",
+      "title": "Efficacy Of Pregabalin In Subjects With Post-Stroke Central Neuropathic Pain",
+      "status": "COMPLETED",
+      "phase": "PHASE4",
+      "condition": "Central Neuropathic Pain",
+      "start_date": "2006-08",
+      "completion_date": "2008-09",
+      "enrollment": 0,
+      "sponsor": "Pfizer's Upjohn has merged with Mylan to form Viatris Inc."
+    },
+    {
+      "nct_id": "NCT00990223",
+      "title": "Effects Of Eplerenone On Serum Aldesterone And Plasma Renin Activity",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2009-10",
+      "completion_date": "2009-11",
+      "enrollment": 0,
+      "sponsor": "Pfizer's Upjohn has merged with Mylan to form Viatris Inc."
+    },
+    {
+      "nct_id": "NCT00645268",
+      "title": "A Multicenter, Double-blind Study to Evaluate the Effect of Pretreatment With a Daily Dose of Sildenafil on the As-Needed Efficacy of Viagra in Men With Erectile Dysfunction and Type 2 Diabetes",
+      "status": "COMPLETED",
+      "phase": "PHASE4",
+      "condition": "Erectile Dysfunction, Diabetes Mellitus, Type 2",
+      "start_date": "2002-12",
+      "completion_date": "2004-01",
+      "enrollment": 0,
+      "sponsor": "Pfizer's Upjohn has merged with Mylan to form Viatris Inc."
+    },
+    {
+      "nct_id": "NCT01720524",
+      "title": "A Study To Evaluate Safety And Efficacy Of IV Sildenafil In The Treatment Of Neonates With Persistent Pulmonary Hypertension Of The Newborn",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Pulmonary Hypertension, Familial Persistent, of the Newborn",
+      "start_date": "2013-08-05",
+      "completion_date": "2020-09-28",
+      "enrollment": 0,
+      "sponsor": "Pfizer's Upjohn has merged with Mylan to form Viatris Inc."
+    },
+    {
+      "nct_id": "NCT02245672",
+      "title": "MGR001 / Advair Diskus Local Equivalence Study in Asthma",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Asthma",
+      "start_date": "2014-10",
+      "completion_date": "2015-07",
+      "enrollment": 0,
+      "sponsor": "Mylan Pharma UK Ltd."
+    }
+  ],
+  "summary": {
+    "total_trials": 50,
+    "by_phase": {
+      "PHASE4": 14,
+      "": 4,
+      "PHASE2": 1,
+      "PHASE3": 17,
+      "PHASE1": 12,
+      "NA": 1,
+      "EARLY_PHASE1": 1
+    },
+    "by_status": {
+      "COMPLETED": 44,
+      "RECRUITING": 1,
+      "TERMINATED": 4,
+      "NO_LONGER_AVAILABLE": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 44,
+    "conditions": [
+      "Abuse Potential",
+      "Acute Pain, Post Operative Pain, Pain",
+      "Arthritis, Gouty",
+      "Arthritis, Juvenile Rheumatoid",
+      "Asthma",
+      "Atrophic Vaginitis",
+      "Bipolar Disorder",
+      "Cardiovascular Diseases",
+      "Central Neuropathic Pain",
+      "Contraception",
+      "Coronary Arteriosclerosis, Diabetes Mellitus, Type 2, Cerebrovascular Accident, Dyslipidemia, Peripheral Vascular Disease",
+      "Diabetic Peripheral Neuropathy",
+      "Erectile Dysfunction, Diabetes Mellitus, Type 2",
+      "Fibromyalgia",
+      "Glaucoma",
+      "Glaucoma, Ocular Hypertension",
+      "Healthy",
+      "Healthy Subjects",
+      "Healthy Subjects, Hepatic Impairment",
+      "Healthy Volunteers",
+      "Hypercholesterolemia",
+      "Hypertension",
+      "Hypertension, Hypercholesterolemia, Angina Pectoris",
+      "Migraine",
+      "Panic Disorder",
+      "Pulmonary Arterial Hypertension",
+      "Pulmonary Arterial Hypertension, Children",
+      "Pulmonary Hypertension, Familial Persistent, of the Newborn",
+      "Pyschotic Disorders",
+      "Renal Impairment",
+      "Schizophrenia, Mania, Delusional Disorder, Acute Exacerbation of Psychosis",
+      "Schizophrenia, Psychotic Disorders",
+      "Spinal Cord Diseases, Spinal Cord Injuries, Neuralgia, Pain",
+      "Surgical Acute Wounds",
+      "Transient Insomnia",
+      "Type 1 Diabetes"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:22:52.839631",
+    "search_query": "Viatris Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Viatris+Inc."
+  }
+}

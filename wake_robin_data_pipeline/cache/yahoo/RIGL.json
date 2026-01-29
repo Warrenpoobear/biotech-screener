@@ -1,0 +1,43 @@
+{
+  "ticker": "RIGL",
+  "success": true,
+  "price": {
+    "current": 35.58,
+    "currency": "USD",
+    "day_high": 35.9423,
+    "day_low": 34.72,
+    "52_week_high": 52.24,
+    "52_week_low": 15.5
+  },
+  "market_cap": {
+    "value": 645824832.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 18151344.0,
+  "volume": {
+    "last": 94751,
+    "average_30d": 494361
+  },
+  "valuation": {
+    "pe_ratio": 5.747981,
+    "forward_pe": 9.570356,
+    "price_to_book": 5.489047
+  },
+  "company_info": {
+    "name": "Rigel Pharmaceuticals, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:09:30.451950",
+    "url": "https://finance.yahoo.com/quote/RIGL",
+    "data_hash": "673fa3ccd01c24f6"
+  }
+}

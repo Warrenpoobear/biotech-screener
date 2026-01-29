@@ -1,0 +1,163 @@
+{
+  "ticker": "MNMD",
+  "company_name": "Mind Medicine (MindMed) Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05753605",
+      "title": "My Experiences: Leveraging Digital Technologies to Better Understand Mental Health",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Mental Health Symptoms, Wearables",
+      "start_date": "2023-06-26",
+      "completion_date": "2025-05-31",
+      "enrollment": 0,
+      "sponsor": "4YouandMe"
+    },
+    {
+      "nct_id": "NCT05200936",
+      "title": "Safety and Efficacy of Low Dose MM-120 for ADHD Proof of Concept Trial",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "ADHD, Attention Deficit Disorder",
+      "start_date": "2021-12-17",
+      "completion_date": "2023-12-04",
+      "enrollment": 0,
+      "sponsor": "Definium Therapeutics"
+    },
+    {
+      "nct_id": "NCT05407064",
+      "title": "A Dose-Finding Study of MM-120 (LSD D-Tartrate) for the Treatment of Anxiety Symptoms",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Anxiety Generalized",
+      "start_date": "2022-08-24",
+      "completion_date": "2023-11-27",
+      "enrollment": 0,
+      "sponsor": "Definium Therapeutics"
+    },
+    {
+      "nct_id": "NCT06941844",
+      "title": "A Phase 3 Trial of MM120 for Major Depressive Disorder (Emerge)",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Major Depressive Disorder",
+      "start_date": "2025-04-14",
+      "completion_date": "2027-05",
+      "enrollment": 0,
+      "sponsor": "Definium Therapeutics"
+    },
+    {
+      "nct_id": "NCT06741228",
+      "title": "A Phase 3 Trial of MM120 for Generalized Anxiety Disorder (Voyage)",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Generalized Anxiety Disorder",
+      "start_date": "2024-12-11",
+      "completion_date": "2026-11",
+      "enrollment": 0,
+      "sponsor": "Definium Therapeutics"
+    },
+    {
+      "nct_id": "NCT07303907",
+      "title": "A Phase 2A Trial of MM402 for Autism Spectrum Disorder",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Autism Spectrum Disorder, ASD",
+      "start_date": "2025-12-03",
+      "completion_date": "2027-08",
+      "enrollment": 0,
+      "sponsor": "Definium Therapeutics"
+    },
+    {
+      "nct_id": "NCT04292197",
+      "title": "A Study to Assess 18-Methoxycoronaridine (18-MC HCl) in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Addiction",
+      "start_date": "2020-04-14",
+      "completion_date": "2021-12-31",
+      "enrollment": 0,
+      "sponsor": "Definium Therapeutics"
+    },
+    {
+      "nct_id": "NCT06809595",
+      "title": "A Phase 3 Trial of MM120 for Generalized Anxiety Disorder (Panorama)",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Generalized Anxiety Disorder",
+      "start_date": "2025-01-29",
+      "completion_date": "2027-05",
+      "enrollment": 0,
+      "sponsor": "Definium Therapeutics"
+    },
+    {
+      "nct_id": "NCT05948917",
+      "title": "Mind-Body Skills Groups for Incarcerated Men and Women",
+      "status": "COMPLETED",
+      "phase": "NA",
+      "condition": "Resilience",
+      "start_date": "2023-09-05",
+      "completion_date": "2025-06-19",
+      "enrollment": 0,
+      "sponsor": "The Center for Mind-Body Medicine"
+    },
+    {
+      "nct_id": "NCT02671487",
+      "title": "Mind-Body Skills Groups for Behavioral and Emotional Problems in War-Traumatized Male Adolescents in Gaza",
+      "status": "COMPLETED",
+      "phase": "NA",
+      "condition": "Problem Behavior, Aggression, Posttraumatic Stress Disorder",
+      "start_date": "2016-01",
+      "completion_date": "2017-03",
+      "enrollment": 0,
+      "sponsor": "The Center for Mind-Body Medicine"
+    }
+  ],
+  "summary": {
+    "total_trials": 23,
+    "by_phase": {
+      "": 3,
+      "PHASE2": 3,
+      "PHASE3": 3,
+      "PHASE1": 1,
+      "NA": 13
+    },
+    "by_status": {
+      "COMPLETED": 16,
+      "RECRUITING": 5,
+      "ENROLLING_BY_INVITATION": 1,
+      "TERMINATED": 1
+    },
+    "active_trials": 6,
+    "completed_trials": 16,
+    "conditions": [
+      "ADHD, Attention Deficit Disorder",
+      "Addiction",
+      "Anxiety",
+      "Anxiety Generalized",
+      "Atrial Fibrillation, Stress, Quality of Life, Anxiety, Depression, Hostility",
+      "Autism Spectrum Disorder, ASD",
+      "Depression, Depressive Disorder",
+      "Generalized Anxiety Disorder",
+      "Healthy",
+      "Major Depression",
+      "Major Depressive Disorder",
+      "Mental Health Symptoms, Wearables",
+      "Parkinson's Disease, Depression",
+      "Post Traumatic Stress Disorder PTSD",
+      "Posttraumatic Stress Disorder",
+      "Problem Behavior, Aggression, Posttraumatic Stress Disorder",
+      "Resilience",
+      "Stress Disorders, Post Traumatic, Brain Injuries, Depressive Disorder, Anxiety Disorders, Anger",
+      "Stress Disorders, Post-traumatic"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:20:04.893525",
+    "search_query": "Mind Medicine (MindMed) Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Mind+Medicine+(MindMed)+Inc."
+  }
+}

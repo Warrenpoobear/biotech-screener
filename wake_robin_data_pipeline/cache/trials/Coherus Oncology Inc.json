@@ -1,0 +1,170 @@
+{
+  "ticker": "CHRS",
+  "company_name": "Coherus Oncology, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT07277322",
+      "title": "Neoadjuvant Dupilumab and Toripalimab in MSS CRC Subjects With Resectable Liver Metastases",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Metastatic Colorectal Cancer, Liver Metastases",
+      "start_date": "2025-12-15",
+      "completion_date": "2030-12-16",
+      "enrollment": 0,
+      "sponsor": "Dan Feng"
+    },
+    {
+      "nct_id": "NCT07209189",
+      "title": "Neoadjuvant Chemotherapy and Programmed Cell Death Protein 1(PD-1) Inhibition for Head and Neck Cancer Treatment De-escalation (NeoScorch HN)",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Head and Neck Cancer, Squamous Cell Carcinoma, Oral Cavity Cancer, Oropharyngeal Cancer, Laryngeal Cancer, Sinonasal Squamous Cell Carcinoma, HPV (Human Papillomavirus)-Associated Carcinoma, Skull Base Tumors, HPV 16 Positive Oropharyngeal Tumors (OPC)",
+      "start_date": "2026-01-15",
+      "completion_date": "2030-12-01",
+      "enrollment": 0,
+      "sponsor": "Sidney Kimmel Comprehensive Cancer Center at Johns Hopkins"
+    },
+    {
+      "nct_id": "NCT06657144",
+      "title": "A Study of CHS-114 in Combination With Toripalimab and/or Other Treatments in Participants With Advanced Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Metastatic Solid Tumor, Advanced Solid Tumor",
+      "start_date": "2025-04-01",
+      "completion_date": "2027-05",
+      "enrollment": 0,
+      "sponsor": "Coherus Oncology, Inc."
+    },
+    {
+      "nct_id": "NCT06389526",
+      "title": "A Study of CHS-1000 in Participants With Advanced or Metastatic Solid Tumors",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Advanced or Metastatic Solid Tumors",
+      "start_date": "2025-02-15",
+      "completion_date": "2028-05-30",
+      "enrollment": 0,
+      "sponsor": "Coherus Oncology, Inc."
+    },
+    {
+      "nct_id": "NCT02489227",
+      "title": "Comparison of CHS-1420 Versus Humira in Subjects With Chronic Plaque Psoriasis",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Plaque Psoriasis",
+      "start_date": "2015-08",
+      "completion_date": "2017-03",
+      "enrollment": 0,
+      "sponsor": "Coherus Oncology, Inc."
+    },
+    {
+      "nct_id": "NCT02650973",
+      "title": "Study to Assess the Pharmacokinetic and Pharmacodynamic Bioequivalence of CHS-1701 With Neulasta",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2016-02",
+      "completion_date": "2016-06",
+      "enrollment": 0,
+      "sponsor": "Coherus Oncology, Inc."
+    },
+    {
+      "nct_id": "NCT02418104",
+      "title": "Assessing the Immunogenicity of 2 Subcutaneous Doses of CHS-1701 (Coherus Pegfilgrastim) With 2 Subcutaneous Doses Neulasta\u00ae",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Immunity, Humoral",
+      "start_date": "2015-05",
+      "completion_date": "2015-12",
+      "enrollment": 0,
+      "sponsor": "Coherus Oncology, Inc."
+    },
+    {
+      "nct_id": "NCT07281716",
+      "title": "Combination Immunotherapy for the Treatment of Chemotherapy-refractory Metastatic MSS CRC",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Metastatic Microsatellite Stable Colorectal Carcinoma",
+      "start_date": "2025-12",
+      "completion_date": "2028-12-15",
+      "enrollment": 0,
+      "sponsor": "Dan Feng"
+    },
+    {
+      "nct_id": "NCT04662892",
+      "title": "An Analysis to Estimate Febrile Neutropenia (FN) in Patients Receiving Udenyca",
+      "status": "UNKNOWN",
+      "phase": "",
+      "condition": "Febrile Neutropenia, Non-myeloid Malignancy",
+      "start_date": "2020-08-01",
+      "completion_date": "2022-12-15",
+      "enrollment": 0,
+      "sponsor": "Coherus Oncology, Inc."
+    },
+    {
+      "nct_id": "NCT06940180",
+      "title": "Toripalimab With Chemotherapy for Sinus Cancer",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Sinonasal Cancer, Paranasal Sinus Neoplasms, Squamous Cell Carcinoma, Sinonasal Undifferentiated Carcinoma, Locally Advanced Head and Neck Cancer",
+      "start_date": "2025-06-17",
+      "completion_date": "2029-02-01",
+      "enrollment": 0,
+      "sponsor": "Glenn J. Hanna"
+    }
+  ],
+  "summary": {
+    "total_trials": 26,
+    "by_phase": {
+      "PHASE1, PHASE2": 3,
+      "PHASE2": 8,
+      "PHASE1": 9,
+      "PHASE3": 4,
+      "": 1,
+      "PHASE4": 1
+    },
+    "by_status": {
+      "NOT_YET_RECRUITING": 6,
+      "RECRUITING": 7,
+      "COMPLETED": 10,
+      "UNKNOWN": 1,
+      "TERMINATED": 2
+    },
+    "active_trials": 7,
+    "completed_trials": 10,
+    "conditions": [
+      "Advanced Solid Tumor",
+      "Advanced Solid Tumor, Clear Cell Renal Cell Carcinoma, Hepatocellular Carcinoma, Non-small Cell Lung Cancer",
+      "Advanced Solid Tumor, Head and Neck Squamous Cell Carcinoma",
+      "Advanced Solid Tumor, Non-Small Cell Lung Cancer, Hepatocellular Carcinoma",
+      "Advanced or Metastatic Solid Tumors",
+      "Bioequivalence",
+      "Febrile Neutropenia, Non-myeloid Malignancy",
+      "Head and Neck Cancer, Squamous Cell Carcinoma, Oral Cavity Cancer, Oropharyngeal Cancer, Laryngeal Cancer, Sinonasal Squamous Cell Carcinoma, HPV (Human Papillomavirus)-Associated Carcinoma, Skull Base Tumors, HPV 16 Positive Oropharyngeal Tumors (OPC)",
+      "Healthy",
+      "Hepatocellular Carcinoma",
+      "Immunity, Humoral",
+      "Localized Colon Carcinoma, Stage IIB Colon Cancer AJCC v8, Stage IIC Colon Cancer AJCC v8, Stage III Colon Cancer AJCC v8",
+      "Metastatic Castration-resistant Prostate Cancer, Prostate Cancer",
+      "Metastatic Colorectal Cancer, Liver Metastases",
+      "Metastatic Microsatellite Stable Colorectal Carcinoma",
+      "Metastatic Non-small Cell Lung Cancer, Metastatic Melanoma, Metastatic Endometrial Cancer, Metastatic Head-and-neck Squamous-cell Carcinoma, Solid Tumor",
+      "Metastatic Solid Tumor, Advanced Solid Tumor",
+      "Nasopharyngeal Cancer Recurrent",
+      "Ovarian Cancer Stage IV, Ovarian Cancer Stage III, Ovarian Cancer Stage 3",
+      "Plaque Psoriasis",
+      "Rheumatoid Arthritis",
+      "Rheumatoid Arthritis, Plaque Psoriasis",
+      "Sinonasal Cancer, Paranasal Sinus Neoplasms, Squamous Cell Carcinoma, Sinonasal Undifferentiated Carcinoma, Locally Advanced Head and Neck Cancer",
+      "Squamous Cell Carcinoma, Head and Neck Cancer Squamous Cell Carcinoma, Head and Neck Cancer"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:17:28.037911",
+    "search_query": "Coherus Oncology, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Coherus+Oncology,+Inc."
+  }
+}

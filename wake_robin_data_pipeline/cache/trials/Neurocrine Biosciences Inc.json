@@ -1,0 +1,174 @@
+{
+  "ticker": "NBIX",
+  "company_name": "Neurocrine Biosciences, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06911112",
+      "title": "NBI-1065845-MDD3025: Study to Assess the Efficacy and Safety of NBI-1065845 as an Adjunctive Treatment in Participants With Major Depressive Disorder (MDD)",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Major Depressive Disorder",
+      "start_date": "2025-03-31",
+      "completion_date": "2027-07",
+      "enrollment": 0,
+      "sponsor": "Neurocrine Biosciences"
+    },
+    {
+      "nct_id": "NCT07105111",
+      "title": "A Study to Evaluate the Effectiveness of Valbenazine in Adult Participants With Tardive Dyskinesia (TD) Who Remain Symptomatic While Receiving or After Stopping a Vesicular Monoamine Transporter 2 (VMAT2) Inhibitor",
+      "status": "RECRUITING",
+      "phase": "PHASE4",
+      "condition": "Schizophrenia, Schizoaffective Disorder, Bipolar Disorder, Major Depressive Disorder, Tardive Dyskinesia",
+      "start_date": "2025-08-29",
+      "completion_date": "2027-04",
+      "enrollment": 0,
+      "sponsor": "Neurocrine Biosciences"
+    },
+    {
+      "nct_id": "NCT03065192",
+      "title": "Safety and Efficacy Study of VY-AADC01 for Advanced Parkinson's Disease",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Idiopathic Parkinson's Disease, Parkinson's Disease, Basal Ganglia Disease, Brain Diseases, Central Nervous System Diseases, Movement Disorders, Nervous System Diseases, Neurodegenerative Diseases, Parkinsonian Disorders",
+      "start_date": "2017-05-11",
+      "completion_date": "2021-08-10",
+      "enrollment": 0,
+      "sponsor": "Neurocrine Biosciences"
+    },
+    {
+      "nct_id": "NCT05859698",
+      "title": "Study of the Effectiveness of Valbenazine on Patient- and Clinician-Reported Outcomes in Participants With Tardive Dyskinesia",
+      "status": "COMPLETED",
+      "phase": "PHASE4",
+      "condition": "Schizophrenia, Schizoaffective Disorder, Bipolar Disorder, Major Depressive Disorder, Tardive Dyskinesia",
+      "start_date": "2023-05-09",
+      "completion_date": "2024-12-27",
+      "enrollment": 0,
+      "sponsor": "Neurocrine Biosciences"
+    },
+    {
+      "nct_id": "NCT02405091",
+      "title": "Safety and Tolerability Study of NBI-98854 for the Treatment of Tardive Dyskinesia",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Tardive Dyskinesia",
+      "start_date": "2015-03",
+      "completion_date": "2017-03",
+      "enrollment": 0,
+      "sponsor": "Neurocrine Biosciences"
+    },
+    {
+      "nct_id": "NCT06786624",
+      "title": "Study to Assess the Efficacy and Safety of NBI-1065845 as an Adjunctive Treatment in Participants With Major Depressive Disorder (MDD)",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Major Depressive Disorder",
+      "start_date": "2025-01-22",
+      "completion_date": "2027-07",
+      "enrollment": 0,
+      "sponsor": "Neurocrine Biosciences"
+    },
+    {
+      "nct_id": "NCT06966401",
+      "title": "Long-Term Study to Assess the Safety and Tolerability of NBI-1065845 as an Adjunctive Treatment in Participants With Major Depressive Disorder (MDD)",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Major Depressive Disorder",
+      "start_date": "2025-04-16",
+      "completion_date": "2030-05",
+      "enrollment": 0,
+      "sponsor": "Neurocrine Biosciences"
+    },
+    {
+      "nct_id": "NCT01393600",
+      "title": "NBI-98854 for the Treatment of Tardive Dyskinesia in Subjects With Schizophrenia or Schizoaffective Disorder",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Tardive Dyskinesia",
+      "start_date": "2011-08",
+      "completion_date": "2012-02",
+      "enrollment": 0,
+      "sponsor": "Neurocrine Biosciences"
+    },
+    {
+      "nct_id": "NCT03792672",
+      "title": "A Study to Evaluate Central Nervous System (CNS) Pharmacodynamic Activity of TAK-653 in Healthy Participants Using Transcranial Magnetic Stimulation (TMS)",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2019-02-11",
+      "completion_date": "2019-06-18",
+      "enrollment": 0,
+      "sponsor": "Neurocrine Biosciences"
+    },
+    {
+      "nct_id": "NCT00232167",
+      "title": "Study Of Indiplon/Placebo With Sertraline In Insomnia Co-Existing With Depression",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Insomnia, Depression",
+      "start_date": "2005-11",
+      "completion_date": "2006-04",
+      "enrollment": 0,
+      "sponsor": "Neurocrine Biosciences"
+    }
+  ],
+  "summary": {
+    "total_trials": 50,
+    "by_phase": {
+      "PHASE3": 16,
+      "PHASE4": 3,
+      "PHASE1": 12,
+      "PHASE2": 17,
+      "NA": 1,
+      "": 1
+    },
+    "by_status": {
+      "RECRUITING": 8,
+      "COMPLETED": 26,
+      "TERMINATED": 7,
+      "ENROLLING_BY_INVITATION": 1,
+      "ACTIVE_NOT_RECRUITING": 2,
+      "WITHDRAWN": 1,
+      "UNKNOWN": 1,
+      "NOT_YET_RECRUITING": 4
+    },
+    "active_trials": 11,
+    "completed_trials": 26,
+    "conditions": [
+      "Bipolar I Disorder, Mania",
+      "Chorea, Huntington",
+      "Congenital Adrenal Hyperplasia",
+      "Drug-Induced Movement Disorder",
+      "Dyskinesia, Cerebral Palsy",
+      "Effect of Ketoconazole on the PK of NBI-98854 in Healthy Subjects",
+      "Focal Onset Seizure, Focal Onset Epilepsy",
+      "Folliculogenesis",
+      "Healthy",
+      "Healthy Volunteers",
+      "Healthy Volunteers, Schizophrenia",
+      "Idiopathic Parkinson's Disease, Parkinson's Disease, Basal Ganglia Disease, Brain Diseases, Central Nervous System Diseases, Movement Disorders, Nervous System Diseases, Neurodegenerative Diseases, Parkinsonian Disorders",
+      "Insomnia",
+      "Insomnia, Depression",
+      "Major Depressive Disorder",
+      "Parkinson Disease",
+      "Parkinson's Disease",
+      "SCN8A Developmental and Epileptic Encephalopathy Syndrome",
+      "Schizophrenia",
+      "Schizophrenia, Cerebellar Ataxia",
+      "Schizophrenia, Schizoaffective Disorder, Bipolar Disorder, Major Depressive Disorder, Tardive Dyskinesia",
+      "Tardive Dyskinesia",
+      "Tardive Dyskinesia (TD)",
+      "Tourette Syndrome",
+      "Type 1 Diabetes Mellitus"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:20:14.151610",
+    "search_query": "Neurocrine Biosciences, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Neurocrine+Biosciences,+Inc."
+  }
+}

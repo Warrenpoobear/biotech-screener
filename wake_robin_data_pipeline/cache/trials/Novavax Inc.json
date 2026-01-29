@@ -1,0 +1,173 @@
+{
+  "ticker": "NVAX",
+  "company_name": "Novavax, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT07079670",
+      "title": "Safety and Immunogenicity of NVX-CoV2705",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "COVID-19, SARS-CoV-2 Infection",
+      "start_date": "2025-10-16",
+      "completion_date": "2026-06-16",
+      "enrollment": 0,
+      "sponsor": "Novavax"
+    },
+    {
+      "nct_id": "NCT06065176",
+      "title": "The Efficacy of the 2023-2024 Updated COVID-19 Vaccines Against COVID-19 Infection",
+      "status": "COMPLETED",
+      "phase": "PHASE4",
+      "condition": "COVID-19, Vaccine-Preventable Diseases, SARS CoV 2 Infection, Upper Respiratory Tract Infection, Upper Respiratory Disease",
+      "start_date": "2023-11-22",
+      "completion_date": "2024-09-09",
+      "enrollment": 0,
+      "sponsor": "Sarang K. Yoon, DO, MOH"
+    },
+    {
+      "nct_id": "NCT05135273",
+      "title": "Study of the Transmission-Blocking Vaccine Pfs230D1-EPA/Matrix-M Against Malaria in Adults in Mali",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Malaria,Falciparum",
+      "start_date": "2021-10-22",
+      "completion_date": "2023-06-21",
+      "enrollment": 0,
+      "sponsor": "National Institute of Allergy and Infectious Diseases (NIAID)"
+    },
+    {
+      "nct_id": "NCT04583995",
+      "title": "A Study Looking at the Effectiveness, Immune Response, and Safety of a COVID-19 Vaccine in Adults in the United Kingdom",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "SARS-CoV-2 Infection, COVID-19",
+      "start_date": "2020-09-28",
+      "completion_date": "2022-03-29",
+      "enrollment": 0,
+      "sponsor": "Novavax"
+    },
+    {
+      "nct_id": "NCT01561768",
+      "title": "A Study to Evaluate the Immune Response and Safety of a Seasonal Virus-Like Particle Influenza Vaccine in Healthy Young Adults",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Influenza",
+      "start_date": "2012-03",
+      "completion_date": "2013-01",
+      "enrollment": 0,
+      "sponsor": "Novavax"
+    },
+    {
+      "nct_id": "NCT06409663",
+      "title": "A Strain Change Study for SARS-CoV-2 rS Vaccines",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Severe Acute Respiratory Syndrome Coronavirus 2 Infection",
+      "start_date": "2024-10-14",
+      "completion_date": "2025-04-17",
+      "enrollment": 0,
+      "sponsor": "Novavax"
+    },
+    {
+      "nct_id": "NCT02247726",
+      "title": "RSV F Vaccine Maternal Immunization Study in Healthy Third-trimester Pregnant Women.",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Respiratory Syncytial Virus Infections",
+      "start_date": "2014-09",
+      "completion_date": "2016-07",
+      "enrollment": 0,
+      "sponsor": "Novavax"
+    },
+    {
+      "nct_id": "NCT05463068",
+      "title": "Study to Compare the Immunogenicity and Safety of 3 Lots of NVX-CoV2373 in Adults",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "COVID-19, SARS-CoV-2 Infection",
+      "start_date": "2022-07-11",
+      "completion_date": "2022-09-01",
+      "enrollment": 0,
+      "sponsor": "Novavax"
+    },
+    {
+      "nct_id": "NCT06482359",
+      "title": "Lot Consistency Study of COVID-19 and Influenza Combination Vaccine",
+      "status": "WITHDRAWN",
+      "phase": "PHASE2, PHASE3",
+      "condition": "COVID-19, Influenza",
+      "start_date": "2025-02-01",
+      "completion_date": "2026-05-17",
+      "enrollment": 0,
+      "sponsor": "Novavax"
+    },
+    {
+      "nct_id": "NCT01960686",
+      "title": "RSV F Dose-Ranging Study in Women",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Respiratory Syncytial Virus Infections",
+      "start_date": "2013-10",
+      "completion_date": "2014-04",
+      "enrollment": 0,
+      "sponsor": "Novavax"
+    }
+  ],
+  "summary": {
+    "total_trials": 50,
+    "by_phase": {
+      "PHASE3": 12,
+      "PHASE4": 3,
+      "PHASE1": 9,
+      "PHASE2": 16,
+      "PHASE2, PHASE3": 5,
+      "PHASE1, PHASE2": 5
+    },
+    "by_status": {
+      "NOT_YET_RECRUITING": 2,
+      "COMPLETED": 41,
+      "WITHDRAWN": 3,
+      "ACTIVE_NOT_RECRUITING": 3,
+      "TERMINATED": 1
+    },
+    "active_trials": 3,
+    "completed_trials": 41,
+    "conditions": [
+      "Avian Influenza",
+      "COVID-19",
+      "COVID-19, Influenza",
+      "COVID-19, SARS CoV 2 Infection",
+      "COVID-19, SARS-CoV-2 Infection",
+      "COVID-19, Sars-CoV-2 Infection",
+      "COVID-19, Vaccine-Preventable Diseases, SARS CoV 2 Infection",
+      "COVID-19, Vaccine-Preventable Diseases, SARS CoV 2 Infection, Upper Respiratory Tract Infection, Upper Respiratory Disease",
+      "Covid19",
+      "Ebola",
+      "Immunosuppression, COVID-19",
+      "Influenza",
+      "Influenza (Pandemic)",
+      "Influenza, Human",
+      "Malaria, Malaria,Falciparum",
+      "Malaria,Falciparum",
+      "Pandemic Influenza",
+      "Respiratory Synctial Virus",
+      "Respiratory Syncytial Virus (RSV)",
+      "Respiratory Syncytial Virus Infections",
+      "Respiratory Syncytial Viruses",
+      "SARS-CoV Infection, Covid19",
+      "SARS-CoV-2 Infection",
+      "SARS-CoV-2 Infection, COVID-19",
+      "Seasonal Influenza",
+      "Severe Acute Respiratory Syndrome Coronavirus 2 (SARS-CoV-2)",
+      "Severe Acute Respiratory Syndrome Coronavirus 2 Infection"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:20:26.360882",
+    "search_query": "Novavax, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Novavax,+Inc."
+  }
+}

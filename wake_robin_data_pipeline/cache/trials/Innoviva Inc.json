@@ -1,0 +1,78 @@
+{
+  "ticker": "INVA",
+  "company_name": "Innoviva, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06746883",
+      "title": "A Study to Assess the Safety and Risk of Hypersensitivity Reactions of Sulbactam-durlobactam in Adults With Acinetobacter Baumannii-calcoaceticus (ABC) Complex Infection",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Acinetobacter Baumannii-calcoaceticus Complex Infection (ABC)",
+      "start_date": "2025-04-28",
+      "completion_date": "2029-01-31",
+      "enrollment": 0,
+      "sponsor": "Innoviva Specialty Therapeutics"
+    },
+    {
+      "nct_id": "NCT07212686",
+      "title": "Synthetic Angiotensin II/Giapreza in Pediatric Patients With Refractory Hypotension",
+      "status": "ENROLLING_BY_INVITATION",
+      "phase": "PHASE4",
+      "condition": "Vasodilatory Shock",
+      "start_date": "2025-09-09",
+      "completion_date": "2030-06",
+      "enrollment": 0,
+      "sponsor": "Todd Sweberg"
+    },
+    {
+      "nct_id": "NCT06801223",
+      "title": "A Study to Assess Sulbactam-durlobactam in Pediatric Patients With Acinetobacter Baumannii-calcoaceticus Complex Infection",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Acinetobacter Baumannii-calcoaceticus Complex Infection (ABC)",
+      "start_date": "2026-02-28",
+      "completion_date": "2028-05-20",
+      "enrollment": 0,
+      "sponsor": "Innoviva Specialty Therapeutics"
+    },
+    {
+      "nct_id": "NCT06794541",
+      "title": "A Study to Evaluate the Safety and Tolerability of Eravacycline in Pediatric Patients Aged 8 to 17 With Complicated Intra-abdominal Infections (cIAI)",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Complicated Intra-abdominal Infections (cIAI)",
+      "start_date": "2025-05-22",
+      "completion_date": "2029-03-19",
+      "enrollment": 0,
+      "sponsor": "Tetraphase Pharmaceuticals, Inc"
+    }
+  ],
+  "summary": {
+    "total_trials": 4,
+    "by_phase": {
+      "": 1,
+      "PHASE4": 1,
+      "PHASE1": 1,
+      "PHASE2": 1
+    },
+    "by_status": {
+      "RECRUITING": 3,
+      "ENROLLING_BY_INVITATION": 1
+    },
+    "active_trials": 4,
+    "completed_trials": 0,
+    "conditions": [
+      "Acinetobacter Baumannii-calcoaceticus Complex Infection (ABC)",
+      "Complicated Intra-abdominal Infections (cIAI)",
+      "Vasodilatory Shock"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:19:09.612569",
+    "search_query": "Innoviva, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Innoviva,+Inc."
+  }
+}

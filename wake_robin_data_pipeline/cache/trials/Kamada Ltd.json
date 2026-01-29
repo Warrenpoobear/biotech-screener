@@ -1,0 +1,160 @@
+{
+  "ticker": "KMDA",
+  "company_name": "Kamada Ltd.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT07009548",
+      "title": "CytoGam for CMV Infection or Disease in Solid Organ Transplant Recipients",
+      "status": "ENROLLING_BY_INVITATION",
+      "phase": "PHASE4",
+      "condition": "Cytomegalovirus (CMV) Infection",
+      "start_date": "2025-06-26",
+      "completion_date": "2027-12",
+      "enrollment": 0,
+      "sponsor": "Fernanda P Silveira, MD, MS"
+    },
+    {
+      "nct_id": "NCT02040090",
+      "title": "Phase II/III Study of the Safety and Effectiveness of HRIG With Active Rabies Vaccine in Healthy Subjects",
+      "status": "COMPLETED",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Rabies",
+      "start_date": "2013-04",
+      "completion_date": "2014-08",
+      "enrollment": 0,
+      "sponsor": "Kamada, Ltd."
+    },
+    {
+      "nct_id": "NCT01661192",
+      "title": "Long Term Treatment Effect of the Safety, Tolerability and Efficacy of AAT in Type 1 Diabetes",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Type 1 Diabetes, Beta Cell Preservation",
+      "start_date": "2013-01",
+      "completion_date": "2017-01",
+      "enrollment": 0,
+      "sponsor": "Rabin Medical Center"
+    },
+    {
+      "nct_id": "NCT01217671",
+      "title": "International Study Evaluating the Safety and Efficacy of Inhaled, Human, Alpha-1 Antitrypsin (AAT) in Alpha-1 Antitrypsin Deficient Patients With Emphysema",
+      "status": "COMPLETED",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Emphysema",
+      "start_date": "2009-12",
+      "completion_date": "2015-06",
+      "enrollment": 0,
+      "sponsor": "Kamada, Ltd."
+    },
+    {
+      "nct_id": "NCT02005848",
+      "title": "Phase II Study to Evaluate the Efficacy and Safety of Glassia\u00ae in Type-1 Diabetes",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "New Onset Type-1 Diabetes",
+      "start_date": "2014-04",
+      "completion_date": "2017-02",
+      "enrollment": 0,
+      "sponsor": "Kamada, Ltd."
+    },
+    {
+      "nct_id": "NCT00460096",
+      "title": "Phase II/III Study of an Alpha-1 Proteinase Inhibitor (Kamada-API) in Individuals With Alpha-1 Antitrypsin Deficiency",
+      "status": "COMPLETED",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Alpha 1-Antitrypsin Deficiency",
+      "start_date": "2007-03",
+      "completion_date": "2007-09",
+      "enrollment": 0,
+      "sponsor": "Kamada, Ltd."
+    },
+    {
+      "nct_id": "NCT02001688",
+      "title": "Phase II, Safety and Efficacy Study of Kamada-alpha-1-antitrypsin (AAT) for Inhalation\"",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Alpha-1 Antitrypsin Deficiency",
+      "start_date": "2014-04",
+      "completion_date": "2016-05",
+      "enrollment": 0,
+      "sponsor": "Kamada, Ltd."
+    },
+    {
+      "nct_id": "NCT02956122",
+      "title": "A Phase 2/3 Study of GLASSIA for the Treatment of Acute GvHD",
+      "status": "TERMINATED",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Graft Versus Host Disease",
+      "start_date": "2017-04-26",
+      "completion_date": "2018-05-03",
+      "enrollment": 0,
+      "sponsor": "Baxalta now part of Shire"
+    },
+    {
+      "nct_id": "NCT00499837",
+      "title": "Phase II Study of the Safety and Efficacy of Inhaled Alpha-1 Antitrypsin (AAT ) in Cystic Fibrosis Patients",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Cystic Fibrosis",
+      "start_date": "2007-09",
+      "completion_date": "2008-07",
+      "enrollment": 0,
+      "sponsor": "Kamada, Ltd."
+    },
+    {
+      "nct_id": "NCT01304537",
+      "title": "Study of the Safety and Efficacy of Intravenous Alpha-1 Antitrypsin in Type 1 Diabetes Mellitus",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Type 1 Diabetes Mellitus",
+      "start_date": "2011-06",
+      "completion_date": "2012-11",
+      "enrollment": 0,
+      "sponsor": "Kamada, Ltd."
+    }
+  ],
+  "summary": {
+    "total_trials": 16,
+    "by_phase": {
+      "PHASE4": 2,
+      "PHASE2, PHASE3": 4,
+      "PHASE2": 5,
+      "PHASE1, PHASE2": 2,
+      "": 1,
+      "PHASE3": 2
+    },
+    "by_status": {
+      "ENROLLING_BY_INVITATION": 1,
+      "COMPLETED": 11,
+      "TERMINATED": 1,
+      "RECRUITING": 2,
+      "NO_LONGER_AVAILABLE": 1
+    },
+    "active_trials": 3,
+    "completed_trials": 11,
+    "conditions": [
+      "Acute-graft-versus-host Disease, Steroid Refractory Acute Graft Versus Host Disease, Graft-versus-host-disease, Graft Vs Host Disease, Alpha 1-Antitrypsin Deficiency, Alpha-1 Proteinase Inhibitor, Alpha-1 Protease Inhibitor Deficiency, Acute Graft-Versus-Host Reaction Following Bone Marrow Transplant",
+      "Alpha 1-Antitrypsin Deficiency",
+      "Alpha-1 Antitrypsin Deficiency",
+      "Covid19, Pneumonia, Viral",
+      "Cystic Fibrosis",
+      "Cytomegalovirus (CMV) Infection",
+      "Cytomegalovirus, Organ Transplant, Kidney Transplant; Complications, Liver Transplant Complications, Simultaneous Liver-Kidney Transplantation; Complications",
+      "Emphysema",
+      "Graft Versus Host Disease",
+      "New Onset Type-1 Diabetes",
+      "Rabies",
+      "Transplantation, Lung Rejection",
+      "Type 1 Diabetes Mellitus",
+      "Type 1 Diabetes, Beta Cell Preservation"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:19:23.974695",
+    "search_query": "Kamada Ltd.",
+    "url": "https://clinicaltrials.gov/search?term=Kamada+Ltd."
+  }
+}

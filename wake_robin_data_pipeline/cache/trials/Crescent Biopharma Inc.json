@@ -1,0 +1,39 @@
+{
+  "ticker": "CBIO",
+  "company_name": "Crescent Biopharma, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT07335497",
+      "title": "CR-001 in Adult Participants With Locally Advanced or Metastatic Solid Tumors",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Locally Advanced / Metastatic Solid Tumors",
+      "start_date": "2026-02",
+      "completion_date": "2029-02",
+      "enrollment": 0,
+      "sponsor": "Crescent Biopharma, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 1,
+    "by_phase": {
+      "PHASE1, PHASE2": 1
+    },
+    "by_status": {
+      "NOT_YET_RECRUITING": 1
+    },
+    "active_trials": 0,
+    "completed_trials": 0,
+    "conditions": [
+      "Locally Advanced / Metastatic Solid Tumors"
+    ],
+    "lead_stage": "unknown"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:47:18.161507",
+    "search_query": "Crescent Biopharma, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Crescent+Biopharma,+Inc."
+  }
+}

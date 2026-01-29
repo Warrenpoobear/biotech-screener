@@ -1,0 +1,43 @@
+{
+  "ticker": "GBIO",
+  "success": true,
+  "price": {
+    "current": 5.57,
+    "currency": "USD",
+    "day_high": 5.6,
+    "day_low": 5.53,
+    "52_week_high": 8.66,
+    "52_week_low": 3.0
+  },
+  "market_cap": {
+    "value": 37533696.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 6738545.0,
+  "volume": {
+    "last": 12757,
+    "average_30d": 88811
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -4.1567163,
+    "price_to_book": 0.742073
+  },
+  "company_info": {
+    "name": "Generation Bio Co.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:06:40.236588",
+    "url": "https://finance.yahoo.com/quote/GBIO",
+    "data_hash": "39cac91dafa2fc9f"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "GMAB",
+  "success": true,
+  "price": {
+    "current": 33.0198,
+    "currency": "USD",
+    "day_high": 33.33,
+    "day_low": 32.79,
+    "52_week_high": 35.43,
+    "52_week_low": 17.235
+  },
+  "market_cap": {
+    "value": 20470106112.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 615993070.0,
+  "volume": {
+    "last": 398858,
+    "average_30d": 1983020
+  },
+  "valuation": {
+    "pe_ratio": 14.4191265,
+    "forward_pe": 22.193857,
+    "price_to_book": 0.35349318
+  },
+  "company_info": {
+    "name": "Genmab A/S",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:06:50.429324",
+    "url": "https://finance.yahoo.com/quote/GMAB",
+    "data_hash": "026d64478eaa9b1c"
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "ticker": "FTRE",
+  "company_name": "Fortrea Holdings Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04817670",
+      "title": "Study to Assess Efficacy and Safety of VIT-2763 (Vamifeport) in Subjects With Sickle Cell Disease",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Sickle Cell Disease",
+      "start_date": "2021-11-18",
+      "completion_date": "2024-03-07",
+      "enrollment": 0,
+      "sponsor": "Vifor (International) Inc."
+    },
+    {
+      "nct_id": "NCT05693129",
+      "title": "Pediatric Patients Aged 1 to 6 Years With APDS",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "APDS",
+      "start_date": "2023-08-30",
+      "completion_date": "2026-10-28",
+      "enrollment": 0,
+      "sponsor": "Pharming Technologies B.V."
+    },
+    {
+      "nct_id": "NCT06769633",
+      "title": "Pharmacokinetics and Safety of Givinostat in DMD Patients Ages From at Least 2 Years to Less Then 6 Years Old",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Duchenne Muscular Dystrophy",
+      "start_date": "2025-01-02",
+      "completion_date": "2029-12",
+      "enrollment": 0,
+      "sponsor": "Italfarmaco"
+    },
+    {
+      "nct_id": "NCT06713369",
+      "title": "AZD5305 hADME in Patients With Advanced Solid Malignancies",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Locally Advanced or Metastatic Solid Tumor",
+      "start_date": "2025-04-02",
+      "completion_date": "2026-10-02",
+      "enrollment": 0,
+      "sponsor": "AstraZeneca"
+    },
+    {
+      "nct_id": "NCT06398743",
+      "title": "First CORRECT Study of Minimal Residual Disease (MRD) Detection in Colorectal Cancer",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "",
+      "condition": "Colorectal Cancer",
+      "start_date": "2023-06-20",
+      "completion_date": "2027-12",
+      "enrollment": 0,
+      "sponsor": "Exact Sciences Corporation"
+    },
+    {
+      "nct_id": "NCT05438407",
+      "title": "Pediatric Patients Aged 4 to 11 Years With APDS",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "APDS",
+      "start_date": "2023-02-01",
+      "completion_date": "2025-12-30",
+      "enrollment": 0,
+      "sponsor": "Pharming Technologies B.V."
+    },
+    {
+      "nct_id": "NCT06473779",
+      "title": "Open-label Study to Assess Reduction of Background Asthma Medication While Sustaining Asthma Control and Clinical Remission With Tezepelumab in Patients 12-80yrs With Severe Asthma.",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Severe Asthma",
+      "start_date": "2024-09-30",
+      "completion_date": "2027-06-30",
+      "enrollment": 0,
+      "sponsor": "AstraZeneca"
+    },
+    {
+      "nct_id": "NCT06933472",
+      "title": "A Study of a Novel Iron-based Phosphate Binder AP301 in Patients With Hyperphosphatemia in the U.S. and China",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Hyperphosphatemia, Chronic Kidney Disease, Receiving Dialysis, ESRD (End-Stage Renal Disease), Dialysis",
+      "start_date": "2025-06-13",
+      "completion_date": "2027-01-10",
+      "enrollment": 0,
+      "sponsor": "Alebund Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT07109219",
+      "title": "Study of AZD4512 Monotherapy or in Combination With Anticancer Agents in Participants With Acute Lymphoblastic Leukemia",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "B-cell Acute Lymphoblastic Leukemia (B-ALL)",
+      "start_date": "2025-11-12",
+      "completion_date": "2028-07-03",
+      "enrollment": 0,
+      "sponsor": "AstraZeneca"
+    },
+    {
+      "nct_id": "NCT07219238",
+      "title": "Study to Evaluate the Diagnostic Performance of GEH300079 (68Ga) Injection PET/CT for Detection of PC in Patients With Colorectal, Gastric, Ovarian, or Pancreatic Cancers (PERISCOPE)",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Colorectal Cancer, Gastric Cancers, Ovarian Cancers, Pancreatic Ductal Adenocarcinoma",
+      "start_date": "2026-03",
+      "completion_date": "2029-08",
+      "enrollment": 0,
+      "sponsor": "GE Healthcare"
+    }
+  ],
+  "summary": {
+    "total_trials": 29,
+    "by_phase": {
+      "PHASE2": 4,
+      "PHASE3": 9,
+      "PHASE1": 6,
+      "": 3,
+      "PHASE1, PHASE2": 2,
+      "PHASE2, PHASE3": 1,
+      "PHASE4": 2,
+      "NA": 2
+    },
+    "by_status": {
+      "COMPLETED": 6,
+      "ACTIVE_NOT_RECRUITING": 8,
+      "RECRUITING": 11,
+      "NOT_YET_RECRUITING": 1,
+      "TERMINATED": 1,
+      "UNKNOWN": 1,
+      "ENROLLING_BY_INVITATION": 1
+    },
+    "active_trials": 20,
+    "completed_trials": 6,
+    "conditions": [
+      "APDS",
+      "Atherosclerotic Cardiovascular Disease",
+      "Atrial Fibrillation",
+      "Atrial Fibrillation, Atrial Arrhythmia, Arrhythmias, Cardiac",
+      "B-cell Acute Lymphoblastic Leukemia (B-ALL)",
+      "Chronic Lymphocytic Leukaemia, Heart Failure",
+      "Chronic Rhinosinusitis With Nasal Polyps",
+      "Colorectal Cancer",
+      "Colorectal Cancer (Diagnosis), Colorectal Cancer Metastatic, Colorectal Cancer (CRC), Immunotherapy",
+      "Colorectal Cancer, Gastric Cancers, Ovarian Cancers, Pancreatic Ductal Adenocarcinoma",
+      "Duchenne Muscular Dystrophy",
+      "Esophageal Squamous Cell Carcinoma",
+      "Healthy Adult Volunteers",
+      "Healthy Volunteers",
+      "Hepatic Impairment",
+      "Hyperphosphatemia, Chronic Kidney Disease, Receiving Dialysis, ESRD (End-Stage Renal Disease), Dialysis",
+      "Locally Advanced or Metastatic Solid Tumor",
+      "Mild Asthma",
+      "Neovascular Age-Related Macular Degeneration",
+      "Neovascular Age-related Macular Degeneration",
+      "Parkinson Disease, Movement Disorders",
+      "Severe Asthma",
+      "Sickle Cell Disease",
+      "Spinal Duraplasty",
+      "Systemic Lupus Erythematosus, Idiopathic Inflammatory Myopathies, Rheumatoid Arthritis",
+      "Tuberculosis, Pulmonary, Tuberculosis, Extrapulmonary, Tuberculosis Active"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:18:29.973711",
+    "search_query": "Fortrea Holdings Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Fortrea+Holdings+Inc."
+  }
+}

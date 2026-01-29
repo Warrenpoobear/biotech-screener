@@ -1,0 +1,43 @@
+{
+  "ticker": "OCUL",
+  "success": true,
+  "price": {
+    "current": 10.07,
+    "currency": "USD",
+    "day_high": 10.64,
+    "day_low": 10.0,
+    "52_week_high": 16.44,
+    "52_week_low": 5.785
+  },
+  "market_cap": {
+    "value": 2145388032.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 213047472.0,
+  "volume": {
+    "last": 1696344,
+    "average_30d": 4595974
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -6.804054,
+    "price_to_book": 6.822493
+  },
+  "company_info": {
+    "name": "Ocular Therapeutix, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:39.789123",
+    "url": "https://finance.yahoo.com/quote/OCUL",
+    "data_hash": "581b63f6417b0aec"
+  }
+}

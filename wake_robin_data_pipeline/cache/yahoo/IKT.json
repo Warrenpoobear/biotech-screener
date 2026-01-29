@@ -1,0 +1,43 @@
+{
+  "ticker": "IKT",
+  "success": true,
+  "price": {
+    "current": 1.575,
+    "currency": "USD",
+    "day_high": 1.6,
+    "day_low": 1.55,
+    "52_week_high": 3.32,
+    "52_week_low": 1.33
+  },
+  "market_cap": {
+    "value": 190995600.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 121267045.0,
+  "volume": {
+    "last": 107450,
+    "average_30d": 506661
+  },
+  "valuation": {
+    "pe_ratio": 3.351064,
+    "forward_pe": -6.3,
+    "price_to_book": 1.9516729
+  },
+  "company_info": {
+    "name": "Inhibikase Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:07:05.455000",
+    "url": "https://finance.yahoo.com/quote/IKT",
+    "data_hash": "0cab3941a3016d07"
+  }
+}

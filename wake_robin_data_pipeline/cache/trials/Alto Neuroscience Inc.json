@@ -1,0 +1,145 @@
+{
+  "ticker": "ANRO",
+  "company_name": "Alto Neuroscience, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05419869",
+      "title": "Pilot Decentralized Trial",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Major Depressive Disorder",
+      "start_date": "2022-06-01",
+      "completion_date": "2023-01-26",
+      "enrollment": 0,
+      "sponsor": "Alto Neuroscience"
+    },
+    {
+      "nct_id": "NCT05157945",
+      "title": "ALTO-300 in Depression (ALTO-300-004)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Major Depressive Disorder",
+      "start_date": "2022-02-03",
+      "completion_date": "2023-05-05",
+      "enrollment": 0,
+      "sponsor": "Alto Neuroscience"
+    },
+    {
+      "nct_id": "NCT05922878",
+      "title": "Study of ALTO-300 in MDD",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Major Depressive Disorder",
+      "start_date": "2023-06-08",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "Alto Neuroscience"
+    },
+    {
+      "nct_id": "NCT06502964",
+      "title": "Study of ALTO-101 in Patients With Schizophrenia",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Schizophrenia, Cognitive Impairment",
+      "start_date": "2024-06-11",
+      "completion_date": "2026-03",
+      "enrollment": 0,
+      "sponsor": "Alto Neuroscience"
+    },
+    {
+      "nct_id": "NCT06656416",
+      "title": "ALTO-100 in Bipolar Disorder With Depression (BD-D)",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Bipolar Disorder I or II With a Major Depressive Episode",
+      "start_date": "2024-10-02",
+      "completion_date": "2026-10",
+      "enrollment": 0,
+      "sponsor": "Alto Neuroscience"
+    },
+    {
+      "nct_id": "NCT04388189",
+      "title": "Leveraging EEG for Antidepressant Prediction With Duloxetine and Bupropion",
+      "status": "WITHDRAWN",
+      "phase": "PHASE4",
+      "condition": "Major Depressive Disorder",
+      "start_date": "2020-10-15",
+      "completion_date": "2023-05-30",
+      "enrollment": 0,
+      "sponsor": "Alto Neuroscience"
+    },
+    {
+      "nct_id": "NCT05118750",
+      "title": "ALTO-300 in Depression",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Major Depressive Disorder",
+      "start_date": "2021-12-13",
+      "completion_date": "2023-05-09",
+      "enrollment": 0,
+      "sponsor": "Alto Neuroscience"
+    },
+    {
+      "nct_id": "NCT05117632",
+      "title": "ALTO-100 in MDD and/or PTSD",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Major Depressive Disorder, Post Traumatic Stress Disorder",
+      "start_date": "2021-12-20",
+      "completion_date": "2022-12-09",
+      "enrollment": 0,
+      "sponsor": "Alto Neuroscience"
+    },
+    {
+      "nct_id": "NCT06391593",
+      "title": "PD, PK, and Safety of ALTO-203 in Patients With MDD",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Major Depressive Disorder, Anhedonia",
+      "start_date": "2024-03-25",
+      "completion_date": "2025-04-21",
+      "enrollment": 0,
+      "sponsor": "Alto Neuroscience"
+    },
+    {
+      "nct_id": "NCT04388202",
+      "title": "Leveraging EEG for Antidepressant Prediction With Sertraline and Escitalopram",
+      "status": "WITHDRAWN",
+      "phase": "PHASE4",
+      "condition": "Major Depressive Disorder",
+      "start_date": "2020-10-15",
+      "completion_date": "2023-05-30",
+      "enrollment": 0,
+      "sponsor": "Alto Neuroscience"
+    }
+  ],
+  "summary": {
+    "total_trials": 11,
+    "by_phase": {
+      "PHASE2": 9,
+      "PHASE4": 2
+    },
+    "by_status": {
+      "COMPLETED": 6,
+      "RECRUITING": 3,
+      "WITHDRAWN": 2
+    },
+    "active_trials": 3,
+    "completed_trials": 6,
+    "conditions": [
+      "Bipolar Disorder I or II With a Major Depressive Episode",
+      "Major Depressive Disorder",
+      "Major Depressive Disorder, Anhedonia",
+      "Major Depressive Disorder, Post Traumatic Stress Disorder",
+      "Schizophrenia, Cognitive Impairment"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:16:26.551356",
+    "search_query": "Alto Neuroscience, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Alto+Neuroscience,+Inc."
+  }
+}

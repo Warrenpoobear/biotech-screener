@@ -1,0 +1,43 @@
+{
+  "ticker": "MCRB",
+  "success": true,
+  "price": {
+    "current": 15.0,
+    "currency": "USD",
+    "day_high": 15.245,
+    "day_low": 15.0,
+    "52_week_high": 29.98,
+    "52_week_low": 6.53
+  },
+  "market_cap": {
+    "value": 135697792.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 9046519.0,
+  "volume": {
+    "last": 6504,
+    "average_30d": 45168
+  },
+  "valuation": {
+    "pe_ratio": 17.045454,
+    "forward_pe": -1.4381591,
+    "price_to_book": 3.0084236
+  },
+  "company_info": {
+    "name": "Seres Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:07:56.768232",
+    "url": "https://finance.yahoo.com/quote/MCRB",
+    "data_hash": "9bbc8050a5722783"
+  }
+}

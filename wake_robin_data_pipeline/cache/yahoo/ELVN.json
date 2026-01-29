@@ -1,0 +1,43 @@
+{
+  "ticker": "ELVN",
+  "success": true,
+  "price": {
+    "current": 25.49,
+    "currency": "USD",
+    "day_high": 25.75,
+    "day_low": 25.0,
+    "52_week_high": 29.98,
+    "52_week_low": 13.3
+  },
+  "market_cap": {
+    "value": 1512763008.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 59347317.0,
+  "volume": {
+    "last": 88842,
+    "average_30d": 1407965
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -10.755275,
+    "price_to_book": 3.1727655
+  },
+  "company_info": {
+    "name": "Enliven Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:06:19.734810",
+    "url": "https://finance.yahoo.com/quote/ELVN",
+    "data_hash": "36f3199dbd0f0102"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "VTGN",
+  "success": true,
+  "price": {
+    "current": 0.5485,
+    "currency": "USD",
+    "day_high": 0.5799,
+    "day_low": 0.5392,
+    "52_week_high": 5.14,
+    "52_week_low": 0.5392
+  },
+  "market_cap": {
+    "value": 21663256.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 39495451.0,
+  "volume": {
+    "last": 936408,
+    "average_30d": 1471923
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -0.44593495,
+    "price_to_book": 0.3215123
+  },
+  "company_info": {
+    "name": "Vistagen Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T13:11:29.809459",
+    "url": "https://finance.yahoo.com/quote/VTGN",
+    "data_hash": "11a29045b1cc4817"
+  }
+}

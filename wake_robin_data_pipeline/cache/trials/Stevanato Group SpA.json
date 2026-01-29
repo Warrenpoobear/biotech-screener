@@ -1,0 +1,20 @@
+{
+  "ticker": "STVN",
+  "company_name": "Stevanato Group S.p.A.",
+  "success": true,
+  "trials": [],
+  "summary": {
+    "total_trials": 0,
+    "by_phase": {},
+    "by_status": {},
+    "active_trials": 0,
+    "completed_trials": 0,
+    "lead_stage": "unknown"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:22:09.271054",
+    "search_query": "Stevanato Group S.p.A.",
+    "url": "https://clinicaltrials.gov/search?term=Stevanato+Group+S.p.A."
+  }
+}

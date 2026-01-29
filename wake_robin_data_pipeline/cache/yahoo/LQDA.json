@@ -1,0 +1,43 @@
+{
+  "ticker": "LQDA",
+  "success": true,
+  "price": {
+    "current": 41.97,
+    "currency": "USD",
+    "day_high": 43.145,
+    "day_low": 41.55,
+    "52_week_high": 43.42,
+    "52_week_low": 11.26
+  },
+  "market_cap": {
+    "value": 3651200512.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 86995483.0,
+  "volume": {
+    "last": 714373,
+    "average_30d": 2096594
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": 15.579065,
+    "price_to_book": 165.23622
+  },
+  "company_info": {
+    "name": "Liquidia Corporation",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:07:49.433374",
+    "url": "https://finance.yahoo.com/quote/LQDA",
+    "data_hash": "28871e3fe3d50378"
+  }
+}

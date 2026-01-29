@@ -1,0 +1,43 @@
+{
+  "ticker": "TENX",
+  "success": true,
+  "price": {
+    "current": 13.85,
+    "currency": "USD",
+    "day_high": 14.28,
+    "day_low": 13.66,
+    "52_week_high": 18.38,
+    "52_week_low": 4.63
+  },
+  "market_cap": {
+    "value": 86473520.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 6243575.0,
+  "volume": {
+    "last": 55602,
+    "average_30d": 318368
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -8.835726,
+    "price_to_book": 5.7925553
+  },
+  "company_info": {
+    "name": "Tenax Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:10:17.195041",
+    "url": "https://finance.yahoo.com/quote/TENX",
+    "data_hash": "e05038ed54473731"
+  }
+}

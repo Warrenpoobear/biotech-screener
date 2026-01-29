@@ -5,7 +5,7 @@
     "module_version": "3A.2.0",
     "prior_snapshot_date": null,
     "severe_negatives": 0,
-    "tickers_analyzed": 352
+    "tickers_analyzed": 347
   },
   "summaries": [
     {
@@ -634,18 +634,6 @@
     },
     {
       "as_of_date": "2026-01-28",
-      "audit_hash": "dc87f61baa6fb9cd",
-      "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 0.0,
-      "catalyst_score_pos": 0.0,
-      "events": [],
-      "nearest_negative_days": null,
-      "nearest_positive_days": null,
-      "severe_negative_flag": false,
-      "ticker": "AVLO"
-    },
-    {
-      "as_of_date": "2026-01-28",
       "audit_hash": "fd2149c40ab7fe2c",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
@@ -943,18 +931,6 @@
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "CDNA"
-    },
-    {
-      "as_of_date": "2026-01-28",
-      "audit_hash": "560aeb51c52b8ddf",
-      "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 0.0,
-      "catalyst_score_pos": 0.0,
-      "events": [],
-      "nearest_negative_days": null,
-      "nearest_positive_days": null,
-      "severe_negative_flag": false,
-      "ticker": "CDTX"
     },
     {
       "as_of_date": "2026-01-28",
@@ -1483,18 +1459,6 @@
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "ESPR"
-    },
-    {
-      "as_of_date": "2026-01-28",
-      "audit_hash": "d01d5c53d44c0c66",
-      "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 0.0,
-      "catalyst_score_pos": 0.0,
-      "events": [],
-      "nearest_negative_days": null,
-      "nearest_positive_days": null,
-      "severe_negative_flag": false,
-      "ticker": "ETNB"
     },
     {
       "as_of_date": "2026-01-28",
@@ -2566,18 +2530,6 @@
     },
     {
       "as_of_date": "2026-01-28",
-      "audit_hash": "aa0ef0b0b5bff555",
-      "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 0.0,
-      "catalyst_score_pos": 0.0,
-      "events": [],
-      "nearest_negative_days": null,
-      "nearest_positive_days": null,
-      "severe_negative_flag": false,
-      "ticker": "MRUS"
-    },
-    {
-      "as_of_date": "2026-01-28",
       "audit_hash": "f571ebf54ea8a37b",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
@@ -3439,18 +3391,6 @@
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "SANA"
-    },
-    {
-      "as_of_date": "2026-01-28",
-      "audit_hash": "77207b31b5f7b13b",
-      "catalyst_score_neg": 0.0,
-      "catalyst_score_net": 0.0,
-      "catalyst_score_pos": 0.0,
-      "events": [],
-      "nearest_negative_days": null,
-      "nearest_positive_days": null,
-      "severe_negative_flag": false,
-      "ticker": "SCPH"
     },
     {
       "as_of_date": "2026-01-28",

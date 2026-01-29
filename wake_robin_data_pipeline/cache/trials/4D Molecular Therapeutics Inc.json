@@ -1,0 +1,151 @@
+{
+  "ticker": "FDMT",
+  "company_name": "4D Molecular Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT02994368",
+      "title": "\"Natural History\" Study of Choroideremia",
+      "status": "TERMINATED",
+      "phase": "",
+      "condition": "Choroideremia",
+      "start_date": "2016-12",
+      "completion_date": "2021-10",
+      "enrollment": 0,
+      "sponsor": "4D Molecular Therapeutics"
+    },
+    {
+      "nct_id": "NCT04517149",
+      "title": "4D-125 in Patients With X-Linked Retinitis Pigmentosa (XLRP)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "X-Linked Retinitis Pigmentosa",
+      "start_date": "2020-06-09",
+      "completion_date": "2029-05",
+      "enrollment": 0,
+      "sponsor": "4D Molecular Therapeutics"
+    },
+    {
+      "nct_id": "NCT07064759",
+      "title": "Single Intravitreal (IVT) Injection of 4D-150 in Patients With Macular Neovascularization Secondary to Age-Related Macular Degeneration",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Neovascular Age-Related Macular Degeneration (nAMD)",
+      "start_date": "2025-07-22",
+      "completion_date": "2029-02",
+      "enrollment": 0,
+      "sponsor": "4D Molecular Therapeutics"
+    },
+    {
+      "nct_id": "NCT06864988",
+      "title": "4D-150 in Patients With Macular Neovascularization Secondary to Age-Related Macular Degeneration",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Macular Neovascularization Secondary to Age-Related Macular Degeneration",
+      "start_date": "2025-03-03",
+      "completion_date": "2028-06",
+      "enrollment": 0,
+      "sponsor": "4D Molecular Therapeutics"
+    },
+    {
+      "nct_id": "NCT05629559",
+      "title": "4D-310 in Adults With Fabry Disease and Cardiac Involvement",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Fabry Disease",
+      "start_date": "2022-10-16",
+      "completion_date": "2030-06",
+      "enrollment": 0,
+      "sponsor": "4D Molecular Therapeutics"
+    },
+    {
+      "nct_id": "NCT04483440",
+      "title": "Dose Escalation Study of Intravitreal 4D-110 in Patients With Choroideremia",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Choroideremia",
+      "start_date": "2020-06-02",
+      "completion_date": "2027-08-31",
+      "enrollment": 0,
+      "sponsor": "4D Molecular Therapeutics"
+    },
+    {
+      "nct_id": "NCT05248230",
+      "title": "4D-710 in Adult Patients With Cystic Fibrosis",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Cystic Fibrosis Lung",
+      "start_date": "2022-03-29",
+      "completion_date": "2030-01",
+      "enrollment": 0,
+      "sponsor": "4D Molecular Therapeutics"
+    },
+    {
+      "nct_id": "NCT05930561",
+      "title": "4D-150 in Patients With Diabetic Macular Edema",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Diabetic Macular Edema, Diabetic Retinopathy",
+      "start_date": "2023-08-09",
+      "completion_date": "2029-02-28",
+      "enrollment": 0,
+      "sponsor": "4D Molecular Therapeutics"
+    },
+    {
+      "nct_id": "NCT04519749",
+      "title": "An Open-label, Phase 1/2 Trial of Gene Therapy 4D-310 in Adults With Fabry Disease",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Fabry Disease",
+      "start_date": "2020-09-01",
+      "completion_date": "2030-06",
+      "enrollment": 0,
+      "sponsor": "4D Molecular Therapeutics"
+    },
+    {
+      "nct_id": "NCT05197270",
+      "title": "4D-150 in Patients With Neovascular (Wet) Age-Related Macular Degeneration",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Neovascular (Wet) Age-Related Macular Degeneration",
+      "start_date": "2021-12-09",
+      "completion_date": "2031-01",
+      "enrollment": 0,
+      "sponsor": "4D Molecular Therapeutics"
+    }
+  ],
+  "summary": {
+    "total_trials": 10,
+    "by_phase": {
+      "": 1,
+      "PHASE1, PHASE2": 4,
+      "PHASE3": 2,
+      "PHASE1": 1,
+      "PHASE2": 2
+    },
+    "by_status": {
+      "TERMINATED": 1,
+      "ACTIVE_NOT_RECRUITING": 4,
+      "RECRUITING": 5
+    },
+    "active_trials": 9,
+    "completed_trials": 0,
+    "conditions": [
+      "Choroideremia",
+      "Cystic Fibrosis Lung",
+      "Diabetic Macular Edema, Diabetic Retinopathy",
+      "Fabry Disease",
+      "Macular Neovascularization Secondary to Age-Related Macular Degeneration",
+      "Neovascular (Wet) Age-Related Macular Degeneration",
+      "Neovascular Age-Related Macular Degeneration (nAMD)",
+      "X-Linked Retinitis Pigmentosa"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:18:23.419994",
+    "search_query": "4D Molecular Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=4D+Molecular+Therapeutics,+Inc."
+  }
+}

@@ -1,0 +1,168 @@
+{
+  "ticker": "TEM",
+  "company_name": "Tempus AI, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06051695",
+      "title": "A Study to Evaluate the Safety and Efficacy of Mesothelin-Targeting Logic-gated CAR T, in Participants With Solid Tumors That Express MSLN and Have Lost HLA-A*02 Expression",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Solid Tumor, Adult, Colorectal Cancer, NSCLC, Non Small Cell Lung Cancer, NSCLC, Recurrent, Non-Small Cell Squamous Lung Cancer, Pancreas Cancer, Pancreatic Neoplasm, Colorectal Adenocarcinoma, CRC, Colon Cancer, Rectal Cancer, Cancer, Ovarian Cancer, Ovarian Neoplasms, Mesothelioma, Mesothelioma, Malignant, Ovary Cancer, Lung Cancer, MESOM",
+      "start_date": "2024-04-03",
+      "completion_date": "2029-06",
+      "enrollment": 0,
+      "sponsor": "A2 Biotherapeutics Inc."
+    },
+    {
+      "nct_id": "NCT06911632",
+      "title": "Multi-site Study of the Clinical Impact of an AI-assisted Approach to Referring Patients With Interstitial Lung Disease for Diagnostic Evaluation of Pulmonary Hypertension",
+      "status": "RECRUITING",
+      "phase": "NA",
+      "condition": "Pulmonary Hypertension, Interstitial Lung Disease (ILD)",
+      "start_date": "2025-07-23",
+      "completion_date": "2028-07",
+      "enrollment": 0,
+      "sponsor": "Tempus AI"
+    },
+    {
+      "nct_id": "NCT06099665",
+      "title": "Addressing Under-treatment and Health Equity in AS and MR Using an Integrated EHR Platform",
+      "status": "RECRUITING",
+      "phase": "NA",
+      "condition": "Aortic Valve Stenosis, Mitral Regurgitation",
+      "start_date": "2024-08-27",
+      "completion_date": "2025-12",
+      "enrollment": 0,
+      "sponsor": "Tempus AI"
+    },
+    {
+      "nct_id": "NCT05234177",
+      "title": "Tempus CRC Surveillance Study: A ctDNA Biomarker Profiling Study of Patients With CRC Using NGS Assays",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Colorectal Cancer",
+      "start_date": "2022-06-21",
+      "completion_date": "2029-02",
+      "enrollment": 0,
+      "sponsor": "Tempus AI"
+    },
+    {
+      "nct_id": "NCT05236114",
+      "title": "GEMINI-NSCLC: NSCLC Biomarker Study",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Non-Small Cell Lung Cancer",
+      "start_date": "2022-06-22",
+      "completion_date": "2029-06",
+      "enrollment": 0,
+      "sponsor": "Tempus AI"
+    },
+    {
+      "nct_id": "NCT06163534",
+      "title": "A Longitudinal Multi-Omic Biomarker Profiling Study of Patients With Head & Neck Squamous Cell Carcinoma (HNSCC)",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Head and Neck Squamous Cell Carcinoma",
+      "start_date": "2024-08-01",
+      "completion_date": "2028-03-01",
+      "enrollment": 0,
+      "sponsor": "Tempus AI"
+    },
+    {
+      "nct_id": "NCT05257551",
+      "title": "Tempus Sculptor Study: Small Cell Lung Cancer (SCLC) Observational Study",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Small Cell Lung Cancer",
+      "start_date": "2022-07-13",
+      "completion_date": "2026-03",
+      "enrollment": 0,
+      "sponsor": "Tempus AI"
+    },
+    {
+      "nct_id": "NCT06018753",
+      "title": "Umbrella Study for Analysis of Data Related to Patients With Cancer",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Cancer",
+      "start_date": "2023-12-06",
+      "completion_date": "2028-12-01",
+      "enrollment": 0,
+      "sponsor": "Tempus AI"
+    },
+    {
+      "nct_id": "NCT07211178",
+      "title": "Evaluating Minimal Residual Disease (MRD) Through Longitudinal Circulating Tumor DNA (ctDNA) Profiling in Breast Malignancies",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Breast Cancer, TNBC - Triple-Negative Breast Cancer, HR Positive/HER-2 Negative Breast Cancer, HER2 + Breast Cancer, Early Stage Breast Cancer",
+      "start_date": "2025-10-27",
+      "completion_date": "2033-12",
+      "enrollment": 0,
+      "sponsor": "Tempus AI"
+    },
+    {
+      "nct_id": "NCT06997458",
+      "title": "Liquid BiOpsy, Lung and Colon Cancer in AndaluciA",
+      "status": "ENROLLING_BY_INVITATION",
+      "phase": "",
+      "condition": "Non Small Cell Lung Cancer (NSCLC), Colorectal Cancer (CRC)",
+      "start_date": "2024-08-01",
+      "completion_date": "2026-07-30",
+      "enrollment": 0,
+      "sponsor": "Fundaci\u00f3n P\u00fablica Andaluza para la Investigaci\u00f3n Biom\u00e9dica Andaluc\u00eda Oriental"
+    }
+  ],
+  "summary": {
+    "total_trials": 23,
+    "by_phase": {
+      "PHASE1, PHASE2": 2,
+      "NA": 3,
+      "": 13,
+      "PHASE2": 2,
+      "PHASE4": 2,
+      "PHASE1": 1
+    },
+    "by_status": {
+      "RECRUITING": 11,
+      "ENROLLING_BY_INVITATION": 1,
+      "ACTIVE_NOT_RECRUITING": 5,
+      "TERMINATED": 2,
+      "COMPLETED": 2,
+      "NOT_YET_RECRUITING": 2
+    },
+    "active_trials": 17,
+    "completed_trials": 2,
+    "conditions": [
+      "Acute Myeloid Leukaemia (AML), Follicular Lymphoma ( FL)",
+      "Aortic Valve Stenosis, Mitral Regurgitation",
+      "Atrial Fibrillation, Structural Heart Disease",
+      "Breast Cancer",
+      "Breast Cancer, Prostate Cancer, Bladder Cancer, Lung Cancer, Brain Cancer, Pancreatic Cancer, Ovarian Cancer, Fallopian Tube Cancer, Peritoneal Cancer, Cancer of Liver, Cancer of Colon, Cancer of Head and Neck, Cancer of Stomach, Cancer of Gastrointestinal Tract, Cancer of Rectum, Cancer of Esophagus, Cancer of Skin, Cancer of Cervix, Cancer of Kidney, Cancer of Larynx, Cancer of Endometrium, Cancer of the Bile Duct, Cancer of Vulva, Cancer of Bone and Connective Tissue, Leukemia, Lymphoma, Spinal Cord Cancer",
+      "Breast Cancer, TNBC - Triple-Negative Breast Cancer, HR Positive/HER-2 Negative Breast Cancer, HER2 + Breast Cancer, Early Stage Breast Cancer",
+      "Cancer",
+      "Colorectal Cancer",
+      "Glycemic Response",
+      "Head and Neck Squamous Cell Carcinoma",
+      "Hepatitis C",
+      "Metastatic Malignant Neoplasm, Recurrent Malignant Neoplasm",
+      "Non Small Cell Lung Cancer (NSCLC), Colorectal Cancer (CRC)",
+      "Non-Small Cell Lung Cancer",
+      "Pulmonary Hypertension, Interstitial Lung Disease (ILD)",
+      "Secondary AML, Myelofibrosis",
+      "Small Cell Lung Cancer",
+      "Solid Tumor, Adult, Colorectal Cancer, NSCLC, Non Small Cell Lung Cancer, NSCLC, Recurrent, Non-Small Cell Squamous Lung Cancer, Pancreas Cancer, Pancreatic Neoplasm, Colorectal Adenocarcinoma, CRC, Colon Cancer, Rectal Cancer, Cancer, Ovarian Cancer, Ovarian Neoplasms, Mesothelioma, Mesothelioma, Malignant, Ovary Cancer, Lung Cancer, MESOM",
+      "Solid Tumor, Adult, Colorectal Cancer, Non Small Cell Lung Cancer, Pancreatic Cancer, CRC, NSCLC, Pancreas Cancer, Mesothelioma, Ovarian Cancer, Ovarian Neoplasms, Ovarian Carcinoma, Mesothelioma, Malignant, Mesothelioma; Lung, Cancer, Triple Negative Breast Cancer (TNBC), Renal Cell Carcinoma (Kidney Cancer), Head and Neck Squamous Cell Carcinoma HNSCC",
+      "Solid Tumor, Adult, Solid Tumor, Pancreatic Cancer, Pancreatic Neoplasms, Pancreas Cancer, Non Small Cell Lung Cancer, Non Small Cell Lung Cancer Recurrent, Non-Small Cell Squamous Lung Cancer, NSCLC, NSCLC, Recurrent, Colorectal Cancer, Colorectal Neoplasms, Colorectal Adenocarcinoma, CRC, Colorectal Cancer Metastatic, Cancer",
+      "Solid Tumor, Breast Tumor, Colon Tumor, Malignant, Lung Tumor, Urologic Cancer, Pancreatic Cancer, Melanoma, Metastatic Cancer, Locally Advanced Solid Tumor, Esophageal Cancer, Endometrial Cancer, Head and Neck Cancer"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:22:19.864409",
+    "search_query": "Tempus AI, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Tempus+AI,+Inc."
+  }
+}

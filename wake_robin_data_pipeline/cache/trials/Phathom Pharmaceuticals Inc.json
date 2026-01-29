@@ -1,0 +1,155 @@
+{
+  "ticker": "PHAT",
+  "company_name": "Phathom Pharmaceuticals, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04799158",
+      "title": "A Study to Evaluate the Efficacy and Safety of Vonoprazan Compared to Placebo in Participants With Symptomatic Non-Erosive Gastroesophageal Reflux Disease",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Non-Erosive Gastro-Esophageal Reflux Disease, Heartburn",
+      "start_date": "2021-03-25",
+      "completion_date": "2022-01-17",
+      "enrollment": 0,
+      "sponsor": "Phathom Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT05366738",
+      "title": "A Study to Determine the Bioavailability of Vonoprazan Sprinkle Capsules on Pudding or on Applesauce Relative to a Vonoprazan Tablet in Healthy Participants",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2022-05-18",
+      "completion_date": "2022-07-26",
+      "enrollment": 0,
+      "sponsor": "Phathom Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT06851559",
+      "title": "A Study in Adult Participants With EoE to Evaluate Vonoprazan 20 mg Compared to Placebo After 12 Weeks and to Evaluate Vonoprazan 20 mg Up to 24 Weeks",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Eosinophilic Esophagitis",
+      "start_date": "2025-10-30",
+      "completion_date": "2027-03",
+      "enrollment": 0,
+      "sponsor": "Phathom Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT04124926",
+      "title": "Efficacy and Safety of Vonoprazan Compared to Lansoprazole in Participants With Erosive Esophagitis",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Erosive Esophagitis",
+      "start_date": "2019-10-28",
+      "completion_date": "2021-08-24",
+      "enrollment": 0,
+      "sponsor": "Phathom Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT06660342",
+      "title": "A Study of the Safety of Vonoprazan Exposure in Pregnant Women and Their Offspring",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Erosive Esophagitis, Heartburn, Symptomatic Non-erosive Gastroesophageal Reflux Disease, Helicobacter Pylori Infection",
+      "start_date": "2025-05-15",
+      "completion_date": "2034-09",
+      "enrollment": 0,
+      "sponsor": "Phathom Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT06831344",
+      "title": "A Study to Evaluate Two Vonoprazan Orally Disintegrating Tablet Formulations Administered Without Water or Mixed With Water and Administered Via a Syringe Relative to the Vonoprazan Tablet in Healthy Participants",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2025-02-14",
+      "completion_date": "2025-04-10",
+      "enrollment": 0,
+      "sponsor": "Phathom Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT07224035",
+      "title": "Helicobacter Pylori Screening and Treatment in the At-risk South Florida Community- AIM 1",
+      "status": "RECRUITING",
+      "phase": "PHASE4",
+      "condition": "H Pylori Infection, H Pylori Gastritis, Gastric Cancer",
+      "start_date": "2022-10-15",
+      "completion_date": "2027-11-06",
+      "enrollment": 0,
+      "sponsor": "University of Miami"
+    },
+    {
+      "nct_id": "NCT06106022",
+      "title": "A Study to Evaluate Vonoprazan in Children Who Have Symptomatic Gastroesophageal Reflux Disease",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Gastroesophageal Reflux Disease",
+      "start_date": "2023-11-01",
+      "completion_date": "2024-04-29",
+      "enrollment": 0,
+      "sponsor": "Phathom Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT04167670",
+      "title": "Efficacy and Safety of Vonoprazan Compared to Lansoprazole in Participants With Helicobacter Pylori Infection",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Helicobacter Pylori Infection",
+      "start_date": "2019-12-10",
+      "completion_date": "2021-03-18",
+      "enrollment": 0,
+      "sponsor": "Phathom Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT04729101",
+      "title": "Study to Evaluate the Pharmacokinetics, Pharmacodynamics, and Safety of Vonoprazan and Lansoprazole in Healthy Participants",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Participants",
+      "start_date": "2021-01-28",
+      "completion_date": "2021-06-26",
+      "enrollment": 0,
+      "sponsor": "Phathom Pharmaceuticals, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 16,
+    "by_phase": {
+      "PHASE2": 2,
+      "PHASE1": 8,
+      "PHASE3": 3,
+      "": 1,
+      "PHASE4": 2
+    },
+    "by_status": {
+      "COMPLETED": 11,
+      "RECRUITING": 4,
+      "WITHDRAWN": 1
+    },
+    "active_trials": 4,
+    "completed_trials": 11,
+    "conditions": [
+      "Eosinophilic Esophagitis",
+      "Erosive Esophagitis",
+      "Erosive Esophagitis, Heartburn, Symptomatic Non-erosive Gastroesophageal Reflux Disease, Helicobacter Pylori Infection",
+      "Erosive Esophagitis, Heartburn, Symptomatic Nonerosive Gasroesophageal Reflux Disease, Helicobacter Pylori Infection",
+      "Gastroesophageal Reflux",
+      "Gastroesophageal Reflux Disease",
+      "H Pylori Infection, H Pylori Gastritis, Gastric Cancer",
+      "H. Pylori Infection, Gastric Cancer, Gastritis H Pylori",
+      "Healthy Participants",
+      "Healthy Volunteers",
+      "Helicobacter Pylori Infection",
+      "Non-Erosive Gastro-Esophageal Reflux Disease, Heartburn"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:20:55.382767",
+    "search_query": "Phathom Pharmaceuticals, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Phathom+Pharmaceuticals,+Inc."
+  }
+}

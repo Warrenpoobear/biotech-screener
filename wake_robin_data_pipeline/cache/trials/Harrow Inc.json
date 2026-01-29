@@ -1,0 +1,89 @@
+{
+  "ticker": "HROW",
+  "company_name": "Harrow, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT02372552",
+      "title": "Microwave Coagulation Using CROMA Electrosurgical System",
+      "status": "COMPLETED",
+      "phase": "NA",
+      "condition": "Polyp of Large Intestine",
+      "start_date": "2015-08",
+      "completion_date": "2016-06",
+      "enrollment": 0,
+      "sponsor": "Creo Medical Limited"
+    },
+    {
+      "nct_id": "NCT07224529",
+      "title": "Efficacy of Vevye Ophthalmic Solution for the Treatment of Meibomian Gland Dysfunction",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE4",
+      "condition": "Meibomian Gland Dysfunction (MGD)",
+      "start_date": "2026-02-01",
+      "completion_date": "2027-02-01",
+      "enrollment": 0,
+      "sponsor": "University of Alabama at Birmingham"
+    },
+    {
+      "nct_id": "NCT00157066",
+      "title": "Effects of Vitamin D Supplementation on Antimycobacterial Immunity",
+      "status": "COMPLETED",
+      "phase": "NA",
+      "condition": "Tuberculosis",
+      "start_date": "2002-12",
+      "completion_date": "2006-09",
+      "enrollment": 0,
+      "sponsor": "Barts & The London NHS Trust"
+    },
+    {
+      "nct_id": "NCT07368595",
+      "title": "Comparison of Conjunctival Goblet Cell Density in Dry Eye Patients Treated With Cyclosporine 0.1% Dissolved in Perfluorobutylpentane (Vevye\u00ae) or Generic 0.05% Cyclosporine Emulsion for 8 Weeks",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE4",
+      "condition": "Dry Eye Disease (DED)",
+      "start_date": "2026-04-01",
+      "completion_date": "2027-06",
+      "enrollment": 0,
+      "sponsor": "Baylor College of Medicine"
+    },
+    {
+      "nct_id": "NCT05934253",
+      "title": "The Effects of Low Viscosity Chloroprocaine Ophthalmic Gel 3% on the Bactericidal Action of Povidone-Iodine",
+      "status": "COMPLETED",
+      "phase": "PHASE4",
+      "condition": "Antiseptic, Anesthesia, Local",
+      "start_date": "2023-07-15",
+      "completion_date": "2024-02-15",
+      "enrollment": 0,
+      "sponsor": "Harrow Inc"
+    }
+  ],
+  "summary": {
+    "total_trials": 5,
+    "by_phase": {
+      "NA": 2,
+      "PHASE4": 3
+    },
+    "by_status": {
+      "COMPLETED": 3,
+      "NOT_YET_RECRUITING": 2
+    },
+    "active_trials": 0,
+    "completed_trials": 3,
+    "conditions": [
+      "Antiseptic, Anesthesia, Local",
+      "Dry Eye Disease (DED)",
+      "Meibomian Gland Dysfunction (MGD)",
+      "Polyp of Large Intestine",
+      "Tuberculosis"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:18:50.561976",
+    "search_query": "Harrow, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Harrow,+Inc."
+  }
+}

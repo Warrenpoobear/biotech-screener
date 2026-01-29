@@ -1,0 +1,43 @@
+{
+  "ticker": "AUTL",
+  "success": true,
+  "price": {
+    "current": 1.4314,
+    "currency": "USD",
+    "day_high": 1.47,
+    "day_low": 1.4301,
+    "52_week_high": 2.7,
+    "52_week_low": 1.105
+  },
+  "market_cap": {
+    "value": 380957472.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 266143286.0,
+  "volume": {
+    "last": 240300,
+    "average_30d": 2553577
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -1.8854057,
+    "price_to_book": 1.4357071
+  },
+  "company_info": {
+    "name": "Autolus Therapeutics plc",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:04:56.152331",
+    "url": "https://finance.yahoo.com/quote/AUTL",
+    "data_hash": "5b89326f04c56a40"
+  }
+}

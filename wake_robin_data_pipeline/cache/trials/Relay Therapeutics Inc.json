@@ -1,0 +1,91 @@
+{
+  "ticker": "RLAY",
+  "company_name": "Relay Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05216432",
+      "title": "First-in-Human Study of Mutant-selective PI3K\u03b1 Inhibitor, RLY-2608, as a Single Agent in Patients With Advanced Solid Tumors and in Combination With Endocrine Therapy +/- a CDK4/6 or CDK4 Inhibitor in Patients With Advanced Solid Tumors or Advanced Breast Cancer",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "PIK3CA Mutation, Solid Tumor, Adult, HER2-negative Breast Cancer, Breast Cancer, Metastatic Breast Cancer, Advanced Breast Cancer, Unresectable Solid Tumor",
+      "start_date": "2021-12-08",
+      "completion_date": "2027-04-30",
+      "enrollment": 0,
+      "sponsor": "Relay Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06789913",
+      "title": "A Phase 2 Study of Mutant-selective PI3K\u03b1 Inhibitor, RLY-2608, in Adults and Children With PIK3CA Related Overgrowth Spectrum and Malformations Driven by PIK3CA Mutation",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "PIK3CA-Related Overgrowth Spectrum (PROS), Lymphatic Malformations, Vascular Malformations, PIK3CA Mutation, CLOVES Syndrome, Klippel Trenaunay Syndrome, Megalencephaly-capillary Malformation Polymicrogyria Syndrome (MCAP)",
+      "start_date": "2025-06-13",
+      "completion_date": "2031-10",
+      "enrollment": 0,
+      "sponsor": "Relay Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05759949",
+      "title": "First-in-Human Study of RLY-5836 in Advanced Breast Cancer and Other Solid Tumors",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "PIK3CA Mutation, Solid Tumor, Adult, HER2-negative Breast Cancer, Breast Cancer, Metastatic Breast Cancer, Advanced Breast Cancer, Unresectable Solid Tumor, Hormone Receptor Positive Tumor",
+      "start_date": "2023-03-29",
+      "completion_date": "2025-04-11",
+      "enrollment": 0,
+      "sponsor": "Relay Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06982521",
+      "title": "Phase 3 Study of RLY-2608 + Fulvestrant vs Capivasertib + Fulvestrant as Treatment for Locally Advanced or Metastatic PIK3CA-mutant HR+/HER2- Breast Cancer",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "PIK3CA Mutation, HER2- Negative Breast Cancer, Hormone Receptor Positive Tumor, Breast Cancer, Metastatic Breast Cancer, Advanced Breast Cancer",
+      "start_date": "2025-08-26",
+      "completion_date": "2031-12-31",
+      "enrollment": 0,
+      "sponsor": "Relay Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04622527",
+      "title": "A Study to Assess Virtual Reality by Healthcare Providers: A Pilot Study",
+      "status": "COMPLETED",
+      "phase": "NA",
+      "condition": "Anxiety, Burn Out",
+      "start_date": "2021-01-01",
+      "completion_date": "2022-12-01",
+      "enrollment": 0,
+      "sponsor": "Mayo Clinic"
+    }
+  ],
+  "summary": {
+    "total_trials": 5,
+    "by_phase": {
+      "PHASE1": 2,
+      "PHASE2": 1,
+      "PHASE3": 1,
+      "NA": 1
+    },
+    "by_status": {
+      "RECRUITING": 3,
+      "COMPLETED": 2
+    },
+    "active_trials": 3,
+    "completed_trials": 2,
+    "conditions": [
+      "Anxiety, Burn Out",
+      "PIK3CA Mutation, HER2- Negative Breast Cancer, Hormone Receptor Positive Tumor, Breast Cancer, Metastatic Breast Cancer, Advanced Breast Cancer",
+      "PIK3CA Mutation, Solid Tumor, Adult, HER2-negative Breast Cancer, Breast Cancer, Metastatic Breast Cancer, Advanced Breast Cancer, Unresectable Solid Tumor",
+      "PIK3CA Mutation, Solid Tumor, Adult, HER2-negative Breast Cancer, Breast Cancer, Metastatic Breast Cancer, Advanced Breast Cancer, Unresectable Solid Tumor, Hormone Receptor Positive Tumor",
+      "PIK3CA-Related Overgrowth Spectrum (PROS), Lymphatic Malformations, Vascular Malformations, PIK3CA Mutation, CLOVES Syndrome, Klippel Trenaunay Syndrome, Megalencephaly-capillary Malformation Polymicrogyria Syndrome (MCAP)"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:21:32.984985",
+    "search_query": "Relay Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Relay+Therapeutics,+Inc."
+  }
+}

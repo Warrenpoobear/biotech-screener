@@ -1,0 +1,157 @@
+{
+  "ticker": "RCKT",
+  "company_name": "Rocket Pharmaceuticals, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06644742",
+      "title": "PKP2-ACM Natural History Study",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Cardiomyopathies, Heart Diseases, Cardiovascular Diseases, Genetic Diseases",
+      "start_date": "2025-09",
+      "completion_date": "2028-12",
+      "enrollment": 0,
+      "sponsor": "Rocket Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT04437771",
+      "title": "Long-Term Follow-up of Subjects With Fanconi Anaemia Subtype A Treated With ex Vivo Gene Therapy",
+      "status": "ENROLLING_BY_INVITATION",
+      "phase": "",
+      "condition": "Fanconi Anemia Complementation Group A, Fanconi Anemia",
+      "start_date": "2020-06-01",
+      "completion_date": "2035-01-30",
+      "enrollment": 0,
+      "sponsor": "Rocket Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT04069533",
+      "title": "Lentiviral-mediated Gene Therapy for Pediatric Patients With Fanconi Anemia Subtype A",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Fanconi Anemia Complementation Group A",
+      "start_date": "2019-11-28",
+      "completion_date": "2025-02",
+      "enrollment": 0,
+      "sponsor": "Rocket Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT03814408",
+      "title": "A Clinical Trial to Evaluate the Safety of RP-L102 in Pediatric Subjects With Fanconi Anemia Subtype A",
+      "status": "UNKNOWN",
+      "phase": "PHASE1",
+      "condition": "Fanconi Anemia Complementation Group A",
+      "start_date": "2019-01-11",
+      "completion_date": "2022-03",
+      "enrollment": 0,
+      "sponsor": "Rocket Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT06214507",
+      "title": "Danon Disease Natural History Study",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Danon Disease",
+      "start_date": "2023-12-20",
+      "completion_date": "2030-03",
+      "enrollment": 0,
+      "sponsor": "Rocket Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT06422351",
+      "title": "Clinical Trial to Evaluate the Efficacy of Gene Therapy for Pyruvate Kinase Deficiency",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Pyruvate Kinase Deficiency",
+      "start_date": "2024-08",
+      "completion_date": "2029-01",
+      "enrollment": 0,
+      "sponsor": "Rocket Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT03812263",
+      "title": "A Clinical Trial to Evaluate the Safety and Efficacy of RP-L201 in Subjects With Leukocyte Adhesion Deficiency-I",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Leukocyte Adhesion Defect - Type I",
+      "start_date": "2019-08-30",
+      "completion_date": "2023-09-12",
+      "enrollment": 0,
+      "sponsor": "Rocket Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT04525352",
+      "title": "A Trial to Evaluate Safety and Efficacy of RP-L401-0120 in Subjects With Infantile Malignant Osteopetrosis",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Infantile Malignant Osteopetrosis",
+      "start_date": "2020-11-19",
+      "completion_date": "2021-05-21",
+      "enrollment": 0,
+      "sponsor": "Rocket Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT06282432",
+      "title": "Long-Term Follow-Up (LTFU) for Gene Therapy of Leukocyte Adhesion Deficiency-I (LAD-I)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "",
+      "condition": "Leukocyte Adhesion Deficiency",
+      "start_date": "2022-03-09",
+      "completion_date": "2036-10-04",
+      "enrollment": 0,
+      "sponsor": "Rocket Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT05548855",
+      "title": "Natural History of Danon Disease",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Danon Disease",
+      "start_date": "2022-09-26",
+      "completion_date": "2023-10-31",
+      "enrollment": 0,
+      "sponsor": "Rocket Pharmaceuticals Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 18,
+    "by_phase": {
+      "": 6,
+      "PHASE2": 4,
+      "PHASE1": 7,
+      "PHASE1, PHASE2": 1
+    },
+    "by_status": {
+      "RECRUITING": 4,
+      "ENROLLING_BY_INVITATION": 1,
+      "ACTIVE_NOT_RECRUITING": 3,
+      "UNKNOWN": 3,
+      "NOT_YET_RECRUITING": 2,
+      "COMPLETED": 3,
+      "TERMINATED": 1,
+      "WITHDRAWN": 1
+    },
+    "active_trials": 8,
+    "completed_trials": 3,
+    "conditions": [
+      "Cardiomyopathies, Heart Diseases, Cardiovascular Diseases, Genetic Diseases",
+      "Danon Disease",
+      "Dilated Cardiomyopathy (DCM)",
+      "Fanconi Anemia Complementation Group A",
+      "Fanconi Anemia Complementation Group A, Fanconi Anemia",
+      "Infantile Malignant Osteopetrosis",
+      "Leukocyte Adhesion Defect - Type I",
+      "Leukocyte Adhesion Deficiency",
+      "PKP2 Arrhythmogenic Cardiomyopathy (PKP2-ACM)",
+      "Pyruvate Kinase Deficiency"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:21:22.782229",
+    "search_query": "Rocket Pharmaceuticals, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Rocket+Pharmaceuticals,+Inc."
+  }
+}

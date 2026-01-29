@@ -1,0 +1,43 @@
+{
+  "ticker": "FULC",
+  "success": true,
+  "price": {
+    "current": 10.655,
+    "currency": "USD",
+    "day_high": 10.96,
+    "day_low": 10.385,
+    "52_week_high": 15.74,
+    "52_week_low": 2.315
+  },
+  "market_cap": {
+    "value": 702913472.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 65970291.0,
+  "volume": {
+    "last": 94581,
+    "average_30d": 801521
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -8.742707,
+    "price_to_book": 2.9064376
+  },
+  "company_info": {
+    "name": "Fulcrum Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:06:38.894100",
+    "url": "https://finance.yahoo.com/quote/FULC",
+    "data_hash": "1434447de500f59e"
+  }
+}

@@ -1,0 +1,153 @@
+{
+  "ticker": "QURE",
+  "company_name": "uniQure N.V.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06063850",
+      "title": "AMT-260 Gene Therapy Study in Adults With Unilateral Refractory Mesial Temporal Lobe Epilepsy",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Mesial Temporal Lobe Epilepsy",
+      "start_date": "2024-06-12",
+      "completion_date": "2031-12",
+      "enrollment": 0,
+      "sponsor": "UniQure Biopharma B.V."
+    },
+    {
+      "nct_id": "NCT04120493",
+      "title": "Safety and Proof-of-Concept (POC) Study With AMT-130 in Adults With Early Manifest Huntington's Disease",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Huntington's Disease",
+      "start_date": "2019-09-06",
+      "completion_date": "2029-12",
+      "enrollment": 0,
+      "sponsor": "UniQure Biopharma B.V."
+    },
+    {
+      "nct_id": "NCT03300453",
+      "title": "Intracerebral Gene Therapy in Children With Sanfilippo Type B Syndrome",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Sanfilippo Syndrome B",
+      "start_date": "2013-09-17",
+      "completion_date": "2019-11-27",
+      "enrollment": 0,
+      "sponsor": "UniQure Biopharma B.V."
+    },
+    {
+      "nct_id": "NCT06270316",
+      "title": "Safety, PK/PD, and Exploratory Efficacy Study of AMT-191 in Classic Fabry Disease",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Fabry Disease",
+      "start_date": "2024-06-05",
+      "completion_date": "2031-04-30",
+      "enrollment": 0,
+      "sponsor": "UniQure Biopharma B.V."
+    },
+    {
+      "nct_id": "NCT06100276",
+      "title": "Safety, Tolerability, and Exploratory Efficacy Study of Intrathecally Administered Gene Therapy AMT-162 in Adult Participants With SOD1 Amyotrophic Lateral Sclerosis (SOD1-ALS)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Amyotrophic Lateral Sclerosis",
+      "start_date": "2024-08-01",
+      "completion_date": "2031-06-30",
+      "enrollment": 0,
+      "sponsor": "UniQure Biopharma B.V."
+    },
+    {
+      "nct_id": "NCT04723680",
+      "title": "An Exploration of the Impact of Gene Therapy on the Lives of People With Haemophilia and Their Families",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Hemophilia",
+      "start_date": "2020-08-13",
+      "completion_date": "2023-02-28",
+      "enrollment": 0,
+      "sponsor": "Haemnet"
+    },
+    {
+      "nct_id": "NCT02904772",
+      "title": "Alipogene Tiparvovec for the Treatment of LPLD Patients",
+      "status": "WITHDRAWN",
+      "phase": "PHASE2",
+      "condition": "LPL Deficiency",
+      "start_date": "2016-10",
+      "completion_date": "2020-09",
+      "enrollment": 0,
+      "sponsor": "UniQure Biopharma B.V."
+    },
+    {
+      "nct_id": "NCT03293810",
+      "title": "Glybera Registry, Lipoprotein Lipase Deficient (LPLD) Patients",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Lipoprotein Lipase Deficiency, Familial Hyperlipoproteinemia Type 1, Familial Hyperchylomicronemia",
+      "start_date": "2014-06-27",
+      "completion_date": "2023-06",
+      "enrollment": 0,
+      "sponsor": "UniQure Biopharma B.V."
+    },
+    {
+      "nct_id": "NCT05243017",
+      "title": "Safety and Efficacy of AMT-130 in European Adults With Early Manifest Huntington's Disease",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Huntington Disease",
+      "start_date": "2021-10-07",
+      "completion_date": "2029-10-07",
+      "enrollment": 0,
+      "sponsor": "UniQure Biopharma B.V."
+    },
+    {
+      "nct_id": "NCT02076763",
+      "title": "Observational Study of Acute Intermittent Porphyria Patients",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Acute Intermittent Porphyria",
+      "start_date": "2011-08",
+      "completion_date": "2014-02",
+      "enrollment": 0,
+      "sponsor": "Digna Biotech S.L."
+    }
+  ],
+  "summary": {
+    "total_trials": 11,
+    "by_phase": {
+      "PHASE1, PHASE2": 6,
+      "": 3,
+      "PHASE2": 1,
+      "PHASE1": 1
+    },
+    "by_status": {
+      "RECRUITING": 2,
+      "ACTIVE_NOT_RECRUITING": 3,
+      "COMPLETED": 5,
+      "WITHDRAWN": 1
+    },
+    "active_trials": 5,
+    "completed_trials": 5,
+    "conditions": [
+      "Acute Intermittent Porphyria",
+      "Amyotrophic Lateral Sclerosis",
+      "Fabry Disease",
+      "Hemophilia",
+      "Huntington Disease",
+      "Huntington's Disease",
+      "LPL Deficiency",
+      "Lipoprotein Lipase Deficiency, Familial Hyperlipoproteinemia Type 1, Familial Hyperchylomicronemia",
+      "Mesial Temporal Lobe Epilepsy",
+      "Sanfilippo Syndrome B"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:21:15.193318",
+    "search_query": "uniQure N.V.",
+    "url": "https://clinicaltrials.gov/search?term=uniQure+N.V."
+  }
+}

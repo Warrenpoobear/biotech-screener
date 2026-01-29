@@ -1,0 +1,51 @@
+{
+  "ticker": "SION",
+  "company_name": "Sionna Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT07035990",
+      "title": "Safety, Tolerability, and Pharmacokinetics of Multiple Dose Combinations of SION-451 and Complementary Modulators SION-2222 and SION-109 in Healthy Participants.",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Cystic Fibrosis (CF)",
+      "start_date": "2025-07-23",
+      "completion_date": "2026-06",
+      "enrollment": 0,
+      "sponsor": "Sionna Therapeutics Inc."
+    },
+    {
+      "nct_id": "NCT07108153",
+      "title": "Proof-of-concept Study to Evaluate the Safety, Tolerability, Pharmacodynamics, and Pharmacokinetics of SION-719 When Added to Trikafta",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Cystic Fibrosis (CF)",
+      "start_date": "2025-11-03",
+      "completion_date": "2026-07",
+      "enrollment": 0,
+      "sponsor": "Sionna Therapeutics Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 2,
+    "by_phase": {
+      "PHASE1": 1,
+      "PHASE2": 1
+    },
+    "by_status": {
+      "RECRUITING": 2
+    },
+    "active_trials": 2,
+    "completed_trials": 0,
+    "conditions": [
+      "Cystic Fibrosis (CF)"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:21:52.584547",
+    "search_query": "Sionna Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Sionna+Therapeutics,+Inc."
+  }
+}

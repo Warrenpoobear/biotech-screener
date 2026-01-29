@@ -1,0 +1,148 @@
+{
+  "ticker": "GRAL",
+  "company_name": "GRAIL, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06603259",
+      "title": "The Galleri\u00ae Community Research Program",
+      "status": "ENROLLING_BY_INVITATION",
+      "phase": "",
+      "condition": "Data Collection",
+      "start_date": "2024-08-19",
+      "completion_date": "2025-12",
+      "enrollment": 0,
+      "sponsor": "GRAIL, Inc."
+    },
+    {
+      "nct_id": "NCT04241796",
+      "title": "Assessment of the Implementation of an Investigational Multi-Cancer Early Detection Test Into Clinical Practice",
+      "status": "COMPLETED",
+      "phase": "NA",
+      "condition": "Cancer",
+      "start_date": "2019-12-12",
+      "completion_date": "2022-01-05",
+      "enrollment": 0,
+      "sponsor": "GRAIL, Inc."
+    },
+    {
+      "nct_id": "NCT03934866",
+      "title": "The SUMMIT Study: A Cancer Screening Study",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "",
+      "condition": "Cancer, Lung Cancer",
+      "start_date": "2019-04-08",
+      "completion_date": "2030-08",
+      "enrollment": 0,
+      "sponsor": "University College, London"
+    },
+    {
+      "nct_id": "NCT05205967",
+      "title": "REFLECTION: A Clinical Practice Learning Program for Galleri\u00ae",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "",
+      "condition": "Early Detection of Cancer, Cancer",
+      "start_date": "2021-08-23",
+      "completion_date": "2026-10-30",
+      "enrollment": 0,
+      "sponsor": "GRAIL, Inc."
+    },
+    {
+      "nct_id": "NCT03372902",
+      "title": "Development Of A Blood Test To Improve The Performance Of Breast Cancer Screening",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Breast Cancer, Breast Benign",
+      "start_date": "2017-12-07",
+      "completion_date": "2025-03-12",
+      "enrollment": 0,
+      "sponsor": "Memorial Sloan Kettering Cancer Center"
+    },
+    {
+      "nct_id": "NCT03085888",
+      "title": "The STRIVE Study: Development of a Blood Test for Early Detection of Multiple Cancer Types",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Neoplasms, Cancer",
+      "start_date": "2017-02-28",
+      "completion_date": "2024-04-01",
+      "enrollment": 0,
+      "sponsor": "GRAIL, Inc."
+    },
+    {
+      "nct_id": "NCT02889978",
+      "title": "The Circulating Cell-free Genome Atlas Study",
+      "status": "UNKNOWN",
+      "phase": "",
+      "condition": "Neoplasms, Cancer",
+      "start_date": "2016-08-04",
+      "completion_date": "2024-03",
+      "enrollment": 0,
+      "sponsor": "GRAIL, Inc."
+    },
+    {
+      "nct_id": "NCT05611632",
+      "title": "Does Screening With the Galleri Test in the NHS Reduce the Likelihood of a Late-stage Cancer Diagnosis in an Asymptomatic Population? A Randomised Clinical Trial",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "NA",
+      "condition": "Cancer",
+      "start_date": "2021-08-31",
+      "completion_date": "2030-07",
+      "enrollment": 0,
+      "sponsor": "GRAIL, Inc."
+    },
+    {
+      "nct_id": "NCT05155605",
+      "title": "PATHFINDER 2: a Multi-Cancer Early Detection Study",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "NA",
+      "condition": "Early Detection of Cancer, Cancer",
+      "start_date": "2021-12-08",
+      "completion_date": "2028-04-30",
+      "enrollment": 0,
+      "sponsor": "GRAIL, Inc."
+    },
+    {
+      "nct_id": "NCT05673018",
+      "title": "Galleri\u00ae in the Medicare Population.",
+      "status": "RECRUITING",
+      "phase": "NA",
+      "condition": "Cancer",
+      "start_date": "2024-07-12",
+      "completion_date": "2030-09",
+      "enrollment": 0,
+      "sponsor": "GRAIL, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 10,
+    "by_phase": {
+      "": 6,
+      "NA": 4
+    },
+    "by_status": {
+      "ENROLLING_BY_INVITATION": 1,
+      "COMPLETED": 3,
+      "ACTIVE_NOT_RECRUITING": 4,
+      "UNKNOWN": 1,
+      "RECRUITING": 1
+    },
+    "active_trials": 6,
+    "completed_trials": 3,
+    "conditions": [
+      "Breast Cancer, Breast Benign",
+      "Cancer",
+      "Cancer, Lung Cancer",
+      "Data Collection",
+      "Early Detection of Cancer, Cancer",
+      "Neoplasms, Cancer"
+    ],
+    "lead_stage": "preclinical"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:18:44.767244",
+    "search_query": "GRAIL, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=GRAIL,+Inc."
+  }
+}

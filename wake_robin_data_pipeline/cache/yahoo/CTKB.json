@@ -1,0 +1,43 @@
+{
+  "ticker": "CTKB",
+  "success": true,
+  "price": {
+    "current": 4.995,
+    "currency": "USD",
+    "day_high": 5.11,
+    "day_low": 4.91,
+    "52_week_high": 6.18,
+    "52_week_low": 2.37
+  },
+  "market_cap": {
+    "value": 638684800.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 127864830.0,
+  "volume": {
+    "last": 252906,
+    "average_30d": 778254
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -333.0,
+    "price_to_book": 1.6869301
+  },
+  "company_info": {
+    "name": "Cytek Biosciences, Inc.",
+    "sector": "Healthcare",
+    "industry": "Medical Devices"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:05:55.567855",
+    "url": "https://finance.yahoo.com/quote/CTKB",
+    "data_hash": "1162666c3faa1d3f"
+  }
+}

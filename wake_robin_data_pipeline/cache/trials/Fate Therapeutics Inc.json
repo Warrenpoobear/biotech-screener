@@ -1,0 +1,165 @@
+{
+  "ticker": "FATE",
+  "company_name": "Fate Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT00890500",
+      "title": "Safety and Efficacy of ProHema Modulated Umbilical Cord Blood Units in Subjects With Hematologic Malignancies.",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Hematologic Malignancies, Allogeneic Stem Cell Transplantation",
+      "start_date": "2011-01",
+      "completion_date": "2013-10",
+      "enrollment": 0,
+      "sponsor": "Fate Therapeutics"
+    },
+    {
+      "nct_id": "NCT02354443",
+      "title": "A Trial of a Single ProHema-CB Product Transplant in Pediatric Patients With Inherited Metabolic Disorders",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Metabolic Disorders",
+      "start_date": "2015-06",
+      "completion_date": "2017-02",
+      "enrollment": 0,
+      "sponsor": "Fate Therapeutics"
+    },
+    {
+      "nct_id": "NCT06308978",
+      "title": "A Phase 1 Study of FT819 in B-cell Mediated Autoimmune Disease",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Antineutrophilic Cytoplasmic Antibody (ANCA)- Associated Vasculitis (AAV), Idiopathic Inflammatory Myositis (IIM), Systemic Sclerosis (SSc), Systemic Lupus Erythematosus (SLE)",
+      "start_date": "2024-03-28",
+      "completion_date": "2042-09-30",
+      "enrollment": 0,
+      "sponsor": "Fate Therapeutics"
+    },
+    {
+      "nct_id": "NCT04106167",
+      "title": "Long-term, Non-interventional, Observational Study Following Treatment With Fate Therapeutics FT500 Cellular Immunotherapy",
+      "status": "TERMINATED",
+      "phase": "",
+      "condition": "Advanced Solid Tumor, Lymphoma, Gastric Cancer, Colorectal Cancer, Head and Neck Cancer, Squamous Cell Carcinoma, EGFR Positive Solid Tumor, HER2-positive Breast Cancer, Hepatocellular Carcinoma, Small-cell Lung Cancer, Renal Cell Carcinoma, Pancreas Cancer, Melanoma, NSCLC, Urothelial Carcinoma, Cervical Cancer, Microsatellite Instability, Merkel Cell Carcinoma",
+      "start_date": "2019-06-11",
+      "completion_date": "2023-08-11",
+      "enrollment": 0,
+      "sponsor": "Fate Therapeutics"
+    },
+    {
+      "nct_id": "NCT05934097",
+      "title": "FT596 in Combination With R-CHOP in Subjects With B-Cell Lymphoma",
+      "status": "WITHDRAWN",
+      "phase": "PHASE1",
+      "condition": "Diffuse Large B Cell Lymphoma, Transformed Indolent Non-Hodgkin's Lymphoma, Follicular Lymphoma, Mantle Cell Lymphoma, Marginal Zone Lymphoma",
+      "start_date": "2022-12",
+      "completion_date": "2039-05",
+      "enrollment": 0,
+      "sponsor": "Fate Therapeutics"
+    },
+    {
+      "nct_id": "NCT05950334",
+      "title": "FT522 With Rituximab in Relapsed/Refractory B-Cell Lymphoma (FT522-101)",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Relapsed/Refractory B-Cell Lymphoma",
+      "start_date": "2023-11-16",
+      "completion_date": "2025-06-30",
+      "enrollment": 0,
+      "sponsor": "Fate Therapeutics"
+    },
+    {
+      "nct_id": "NCT04614636",
+      "title": "FT538 in Subjects With Advanced Hematologic Malignancies",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Acute Myeloid Leukemia, AML, Adult, Multiple Myeloma, Myeloma",
+      "start_date": "2020-10-17",
+      "completion_date": "2023-08-08",
+      "enrollment": 0,
+      "sponsor": "Fate Therapeutics"
+    },
+    {
+      "nct_id": "NCT04245722",
+      "title": "FT596 as a Monotherapy and in Combination With Anti-CD20 Monoclonal Antibodies",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Lymphoma, B-Cell, Chronic Lymphocytic Leukemia",
+      "start_date": "2020-03-19",
+      "completion_date": "2023-09-27",
+      "enrollment": 0,
+      "sponsor": "Fate Therapeutics"
+    },
+    {
+      "nct_id": "NCT05182073",
+      "title": "FT576 in Subjects With Multiple Myeloma",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Multiple Myeloma, Myeloma",
+      "start_date": "2021-11-10",
+      "completion_date": "2024-10-18",
+      "enrollment": 0,
+      "sponsor": "Fate Therapeutics"
+    },
+    {
+      "nct_id": "NCT05395052",
+      "title": "FT536 Monotherapy and in Combination With Monoclonal Antibodies in Advanced Solid Tumors",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Non Small Cell Lung Cancer, Colorectal Cancer, Breast Cancer, Ovarian Cancer, Pancreatic Cancer, Head and Neck Cancer, GastroEsophageal Cancer",
+      "start_date": "2022-05-31",
+      "completion_date": "2023-08-11",
+      "enrollment": 0,
+      "sponsor": "Fate Therapeutics"
+    }
+  ],
+  "summary": {
+    "total_trials": 23,
+    "by_phase": {
+      "PHASE1": 19,
+      "": 2,
+      "PHASE1, PHASE2": 1,
+      "PHASE2": 1
+    },
+    "by_status": {
+      "COMPLETED": 7,
+      "TERMINATED": 11,
+      "RECRUITING": 3,
+      "WITHDRAWN": 1,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 4,
+    "completed_trials": 7,
+    "conditions": [
+      "Acute Myelogenous Leukemia, B-cell Lymphoma",
+      "Acute Myeloid Leukemia, AML, Adult, Multiple Myeloma, Myeloma",
+      "Advanced Solid Tumor",
+      "Advanced Solid Tumor, Lymphoma, Gastric Cancer, Colorectal Cancer, Head and Neck Cancer, Squamous Cell Carcinoma, EGFR Positive Solid Tumor, HER2-positive Breast Cancer, Hepatocellular Carcinoma, Small-cell Lung Cancer, Renal Cell Carcinoma, Pancreas Cancer, Melanoma, NSCLC, Urothelial Carcinoma, Cervical Cancer, Microsatellite Instability, Merkel Cell Carcinoma",
+      "Advanced Solid Tumors, Lymphoma, Gastric Cancer, Colorectal Cancer, Head and Neck Cancer, Squamous Cell Carcinoma, EGFR Positive Solid Tumor, HER2-positive Breast Cancer, Hepatocellular Carcinoma, Small Cell Lung Cancer, Renal Cell Carcinoma, Pancreas Cancer, Melanoma, NSCLC, Urothelial Carcinoma, Cervical Cancer, Microsatellite Instability, Merkel Cell Carcinoma",
+      "Antineutrophilic Cytoplasmic Antibody (ANCA)- Associated Vasculitis (AAV), Idiopathic Inflammatory Myositis (IIM), Systemic Sclerosis (SSc), Systemic Lupus Erythematosus (SLE)",
+      "Diffuse Large B Cell Lymphoma, Transformed Indolent Non-Hodgkin's Lymphoma, Follicular Lymphoma, Mantle Cell Lymphoma, Marginal Zone Lymphoma",
+      "HER2 Positive Gastric Cancer, Colorectal Cancer, Head and Neck Squamous Cell Carcinoma, EGFR Positive Solid Tumor, Advanced Solid Tumors, HER2-positive Breast Cancer, Hepatocellular Carcinoma, Non Small Cell Lung Cancer, Renal Cell Carcinoma, Pancreatic Cancer, Melanoma",
+      "Hematologic Malignancies",
+      "Hematologic Malignancies, Acute Myeloid Leukemia, Acute Lymphoblastic Leukemia, Myelodysplastic Syndromes, Chronic Myelogenous Leukemia, Acute Graft-versus-host Disease",
+      "Hematologic Malignancies, Allogeneic Stem Cell Transplantation",
+      "Hematological Malignancy",
+      "Lymphoma, B-Cell, Chronic Lymphocytic Leukemia",
+      "Lymphoma, B-Cell, Chronic Lymphocytic Leukemia, Precursor B-Cell Acute Lymphoblastic Leukemia",
+      "Metabolic Disorders",
+      "Multiple Myeloma, Myeloma",
+      "Non Small Cell Lung Cancer, Colorectal Cancer, Breast Cancer, Ovarian Cancer, Pancreatic Cancer, Head and Neck Cancer, GastroEsophageal Cancer",
+      "Non-Hodgkin's Lymphoma (NHL), Hodgkin's Disease, Chronic Lymphocytic Leukemia (CLL), Acute Myelogenous Leukemia (AML), Acute Lymphoblastic Leukemia (ALL)",
+      "Non-Small Cell Lung Cancer, Colorectal Cancer, Breast Cancer, Ovarian Cancer, Endometrial Carcinoma, Head and Neck Squamous Cell Carcinoma",
+      "Relapsed/Refractory B-Cell Lymphoma",
+      "Solid Tumor, Adult"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:18:22.114934",
+    "search_query": "Fate Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Fate+Therapeutics,+Inc."
+  }
+}

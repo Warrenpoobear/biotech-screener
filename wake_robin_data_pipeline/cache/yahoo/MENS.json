@@ -1,0 +1,43 @@
+{
+  "ticker": "MENS",
+  "success": true,
+  "price": {
+    "current": 2.545,
+    "currency": "USD",
+    "day_high": 2.6599,
+    "day_low": 2.51,
+    "52_week_high": 67.0,
+    "52_week_low": 2.51
+  },
+  "market_cap": {
+    "value": 193490416.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 74233667.0,
+  "volume": {
+    "last": 115353,
+    "average_30d": 628597
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": null,
+    "price_to_book": -8.130991
+  },
+  "company_info": {
+    "name": "Jyong Biotech Ltd.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:00.941445",
+    "url": "https://finance.yahoo.com/quote/MENS",
+    "data_hash": "5d4f6ca6c22c223c"
+  }
+}

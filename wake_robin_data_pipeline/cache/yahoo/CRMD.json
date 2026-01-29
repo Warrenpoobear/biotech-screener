@@ -1,0 +1,43 @@
+{
+  "ticker": "CRMD",
+  "success": true,
+  "price": {
+    "current": 7.895,
+    "currency": "USD",
+    "day_high": 8.07,
+    "day_low": 7.81,
+    "52_week_high": 17.43,
+    "52_week_low": 5.6
+  },
+  "market_cap": {
+    "value": 622039552.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 78789045.0,
+  "volume": {
+    "last": 1060196,
+    "average_30d": 3988518
+  },
+  "valuation": {
+    "pe_ratio": 3.5723982,
+    "forward_pe": 6.436124,
+    "price_to_book": 1.6534032
+  },
+  "company_info": {
+    "name": "CorMedix Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:05:52.377210",
+    "url": "https://finance.yahoo.com/quote/CRMD",
+    "data_hash": "1238e3b8ad1b74d4"
+  }
+}

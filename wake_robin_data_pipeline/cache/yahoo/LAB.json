@@ -1,0 +1,43 @@
+{
+  "ticker": "LAB",
+  "success": true,
+  "price": {
+    "current": 1.365,
+    "currency": "USD",
+    "day_high": 1.44,
+    "day_low": 1.36,
+    "52_week_high": 1.72,
+    "52_week_low": 0.92
+  },
+  "market_cap": {
+    "value": 524931776.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 384565414.0,
+  "volume": {
+    "last": 208506,
+    "average_30d": 1477754
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -34.125,
+    "price_to_book": 1.1061589
+  },
+  "company_info": {
+    "name": "Standard BioTools Inc.",
+    "sector": "Healthcare",
+    "industry": "Medical Devices"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:07:39.614250",
+    "url": "https://finance.yahoo.com/quote/LAB",
+    "data_hash": "8c5550383b32c236"
+  }
+}

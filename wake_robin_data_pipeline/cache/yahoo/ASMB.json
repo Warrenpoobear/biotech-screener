@@ -1,0 +1,43 @@
+{
+  "ticker": "ASMB",
+  "success": true,
+  "price": {
+    "current": 25.62,
+    "currency": "USD",
+    "day_high": 26.45,
+    "day_low": 25.4,
+    "52_week_high": 39.71,
+    "52_week_low": 7.75
+  },
+  "market_cap": {
+    "value": 405235136.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 15817140.0,
+  "volume": {
+    "last": 15766,
+    "average_30d": 106766
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -7.3130426,
+    "price_to_book": 2.21799
+  },
+  "company_info": {
+    "name": "Assembly Biosciences, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:04:49.999250",
+    "url": "https://finance.yahoo.com/quote/ASMB",
+    "data_hash": "e26cd3930a90fe30"
+  }
+}

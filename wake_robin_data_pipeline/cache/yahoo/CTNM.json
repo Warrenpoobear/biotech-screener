@@ -1,0 +1,43 @@
+{
+  "ticker": "CTNM",
+  "success": true,
+  "price": {
+    "current": 14.06,
+    "currency": "USD",
+    "day_high": 14.86,
+    "day_low": 14.09,
+    "52_week_high": 14.86,
+    "52_week_low": 3.35
+  },
+  "market_cap": {
+    "value": 513604064.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 30446111.0,
+  "volume": {
+    "last": 69419,
+    "average_30d": 245214
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -6.3950663,
+    "price_to_book": 2.2736094
+  },
+  "company_info": {
+    "name": "Contineum Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:05:58.280059",
+    "url": "https://finance.yahoo.com/quote/CTNM",
+    "data_hash": "49e706a4fc26efaf"
+  }
+}

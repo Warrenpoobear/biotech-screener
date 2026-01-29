@@ -1,0 +1,43 @@
+{
+  "ticker": "ABUS",
+  "success": true,
+  "price": {
+    "current": 4.105,
+    "currency": "USD",
+    "day_high": 4.19,
+    "day_low": 4.085,
+    "52_week_high": 5.1,
+    "52_week_low": 2.71
+  },
+  "market_cap": {
+    "value": 789490112.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 192324017.0,
+  "volume": {
+    "last": 227263,
+    "average_30d": 1478443
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -24.314157,
+    "price_to_book": 10.186105
+  },
+  "company_info": {
+    "name": "Arbutus Biopharma Corporation",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:04:04.845312",
+    "url": "https://finance.yahoo.com/quote/ABUS",
+    "data_hash": "bb437276b32735e0"
+  }
+}

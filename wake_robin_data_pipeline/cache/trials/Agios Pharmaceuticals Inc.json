@@ -1,0 +1,177 @@
+{
+  "ticker": "AGIO",
+  "company_name": "Agios Pharmaceuticals, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT07075640",
+      "title": "A Study to Determine the Safety and Tolerability of AG-236 and How it is Absorbed, Broken Down, and Eliminated From the Body in Healthy Participants",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Healthy Participants",
+      "start_date": "2025-07-07",
+      "completion_date": "2026-01-13",
+      "enrollment": 0,
+      "sponsor": "Agios Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT06745271",
+      "title": "A Study to Determine How Tebapivat is Absorbed, Broken Down, and Removed From the Body and the Extent to Which Tebapivat is Made Available in the Body in Healthy Participants",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Participants",
+      "start_date": "2024-12-20",
+      "completion_date": "2025-02-21",
+      "enrollment": 0,
+      "sponsor": "Agios Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT04995315",
+      "title": "Pyruvate Kinase Deficiency Global Longitudinal Registry Substudy of Protocol AG348-C-008",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Pyruvate Kinase Deficiency",
+      "start_date": "2021-07-02",
+      "completion_date": "2023-09-22",
+      "enrollment": 0,
+      "sponsor": "Agios Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT03991312",
+      "title": "Study to Evaluate the Effect of Multiple Doses of Itraconazole and Rifampin on the Single-Dose Pharmacokinetics of Mitapivat Sulfate (AG-348) in Healthy Adult Participants",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2019-06-20",
+      "completion_date": "2019-09-10",
+      "enrollment": 0,
+      "sponsor": "Agios Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT04902833",
+      "title": "Acquired Pyruvate Kinase Deficiency In Clonal Myeloid Neoplasms",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "",
+      "condition": "Pyruvate Kinase Deficiency, Pyruvate Kinase Deficiency Anemia, Hereditary Hemolytic Anemia, Myelodysplastic Syndromes, Myelodysplastic/Myeloproliferative Neoplasm, Clonal Myeloid Neoplasm, Myeloproliferative Neoplasm, Acute Myeloid Leukemia, Clonal Cytopenia of Undetermined Significance, Other Clonal Myeloid Neoplasm, Unexplained Coombs-negative Non-immune Hemolytic Anemia",
+      "start_date": "2022-02-01",
+      "completion_date": "2026-12-31",
+      "enrollment": 0,
+      "sponsor": "Massachusetts General Hospital"
+    },
+    {
+      "nct_id": "NCT03960502",
+      "title": "A Safety and Pharmacokinetic Study of AG-881 in Healthy Male Participants Following Administration of a Single Oral Dose of [14C] AG-881 and Concomitant Intravenous Microdose of [13C315N3] AG-881",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Male Participants",
+      "start_date": "2019-05-16",
+      "completion_date": "2019-09-07",
+      "enrollment": 0,
+      "sponsor": "Agios Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT05490446",
+      "title": "A Study of Tebapivat (AG-946) in Participants With Anemia Due to Lower-Risk Myelodysplastic Syndromes (LR-MDS)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Myelodysplastic Syndromes",
+      "start_date": "2022-11-07",
+      "completion_date": "2029-03",
+      "enrollment": 0,
+      "sponsor": "Agios Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT03250598",
+      "title": "Study to Evaluate the Pharmacokinetics, Safety, and QTc Effect of AG-348 in Healthy Subjects of Japanese Origin and Non-Asian Origin",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy, Japanese, Non-Asian",
+      "start_date": "2017-08-09",
+      "completion_date": "2017-10-09",
+      "enrollment": 0,
+      "sponsor": "Agios Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT03071770",
+      "title": "Japanese Bridging Study of Ivosidenib (AG-120) in Healthy Subjects",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2017-03-31",
+      "completion_date": "2017-09-06",
+      "enrollment": 0,
+      "sponsor": "Agios Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT03282513",
+      "title": "A Study of AG-120 (Ivosidenib) in Subjects With Mild or Moderate Hepatic Impairment or Normal Hepatic Function",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Hepatic Impairment",
+      "start_date": "2017-09-26",
+      "completion_date": "2018-03-31",
+      "enrollment": 0,
+      "sponsor": "Agios Pharmaceuticals, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 50,
+    "by_phase": {
+      "PHASE1": 26,
+      "": 5,
+      "PHASE2": 8,
+      "PHASE4": 1,
+      "PHASE3": 7,
+      "EARLY_PHASE1": 1,
+      "PHASE1, PHASE2": 1,
+      "PHASE2, PHASE3": 1
+    },
+    "by_status": {
+      "RECRUITING": 3,
+      "COMPLETED": 32,
+      "ACTIVE_NOT_RECRUITING": 10,
+      "ENROLLING_BY_INVITATION": 1,
+      "TERMINATED": 3,
+      "NOT_YET_RECRUITING": 1
+    },
+    "active_trials": 14,
+    "completed_trials": 32,
+    "conditions": [
+      "Acute Myeloid Leukemia (AML), Myelodysplastic Syndrome, Hematologic Malignancies",
+      "Advanced Solid Tumor, IDH1 Mutation, Glioma",
+      "Anemia",
+      "Chondrosarcoma, Chondrosarcoma, Grade 2, Chondrosarcoma, Grade 3, IDH1 Gene Mutation",
+      "Healthy",
+      "Healthy Male Participants",
+      "Healthy Participants",
+      "Healthy Volunteer",
+      "Healthy Volunteers",
+      "Healthy Volunteers, Anemia, Sickle Cell",
+      "Healthy, Japanese, Non-Asian",
+      "Hematologic Neoplasms",
+      "Hepatic Impairment",
+      "IDH1 Mutation Myeloid Neoplasms",
+      "Lymphoma",
+      "Moderate Hepatic Impairment",
+      "Myelodysplastic Syndromes",
+      "Non-Transfusion-dependent Alpha-Thalassemia, Non-Transfusion-dependent Beta-Thalassemia",
+      "Pediatric Pyruvate Kinase Deficiency, Pediatric Hemolytic Anemia",
+      "Pyruvate Kinase Deficiency",
+      "Pyruvate Kinase Deficiency, Anemia, Hemolytic",
+      "Pyruvate Kinase Deficiency, Congenital Non-Spherocytic Hemolytic Anemia",
+      "Pyruvate Kinase Deficiency, Pyruvate Kinase Deficiency Anemia, Anemia, Anemia, Hemolytic",
+      "Pyruvate Kinase Deficiency, Pyruvate Kinase Deficiency Anemia, Hereditary Hemolytic Anemia, Myelodysplastic Syndromes, Myelodysplastic/Myeloproliferative Neoplasm, Clonal Myeloid Neoplasm, Myeloproliferative Neoplasm, Acute Myeloid Leukemia, Clonal Cytopenia of Undetermined Significance, Other Clonal Myeloid Neoplasm, Unexplained Coombs-negative Non-immune Hemolytic Anemia",
+      "Sickle Cell Disease",
+      "Sickle Cell Disease, Nephropathy",
+      "Thalassemia",
+      "Transfusion-dependent Alpha-Thalassemia, Transfusion-dependent Beta-Thalassemia"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:16:07.283811",
+    "search_query": "Agios Pharmaceuticals, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Agios+Pharmaceuticals,+Inc."
+  }
+}

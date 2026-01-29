@@ -1,0 +1,53 @@
+{
+  "ticker": "MAZE",
+  "company_name": "Maze Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06830629",
+      "title": "A Phase 2 Study of MZE829 in Adults With APOL1 Kidney Disease",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Proteinuric Kidney Disease",
+      "start_date": "2025-02-05",
+      "completion_date": "2026-09",
+      "enrollment": 0,
+      "sponsor": "Maze Therapeutics"
+    },
+    {
+      "nct_id": "NCT05249621",
+      "title": "A Randomized Phase 1 of of MZE001 in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2022-02-07",
+      "completion_date": "2022-12-21",
+      "enrollment": 0,
+      "sponsor": "Maze Therapeutics"
+    }
+  ],
+  "summary": {
+    "total_trials": 2,
+    "by_phase": {
+      "PHASE2": 1,
+      "PHASE1": 1
+    },
+    "by_status": {
+      "RECRUITING": 1,
+      "COMPLETED": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 1,
+    "conditions": [
+      "Healthy",
+      "Proteinuric Kidney Disease"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:19:48.990084",
+    "search_query": "Maze Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Maze+Therapeutics,+Inc."
+  }
+}

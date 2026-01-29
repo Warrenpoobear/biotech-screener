@@ -1,0 +1,43 @@
+{
+  "ticker": "ENGN",
+  "success": true,
+  "price": {
+    "current": 10.1,
+    "currency": "USD",
+    "day_high": 10.4,
+    "day_low": 10.0725,
+    "52_week_high": 12.25,
+    "52_week_low": 2.65
+  },
+  "market_cap": {
+    "value": 676545088.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 66984661.0,
+  "volume": {
+    "last": 9040,
+    "average_30d": 400556
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -4.997551,
+    "price_to_book": 3.1327546
+  },
+  "company_info": {
+    "name": "enGene Holdings Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:06:21.154565",
+    "url": "https://finance.yahoo.com/quote/ENGN",
+    "data_hash": "de703007d17b9332"
+  }
+}

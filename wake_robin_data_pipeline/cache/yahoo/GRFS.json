@@ -1,0 +1,43 @@
+{
+  "ticker": "GRFS",
+  "success": true,
+  "price": {
+    "current": 9.2089,
+    "currency": "USD",
+    "day_high": 9.27,
+    "day_low": 9.17,
+    "52_week_high": 11.14,
+    "52_week_low": 6.19
+  },
+  "market_cap": {
+    "value": 7597735936.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 258223736.0,
+  "volume": {
+    "last": 42872,
+    "average_30d": 459953
+  },
+  "valuation": {
+    "pe_ratio": 13.952879,
+    "forward_pe": 7.7024546,
+    "price_to_book": 1.0070447
+  },
+  "company_info": {
+    "name": "Grifols, S.A.",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - General"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:06:55.470886",
+    "url": "https://finance.yahoo.com/quote/GRFS",
+    "data_hash": "c755292d2f2a18c0"
+  }
+}

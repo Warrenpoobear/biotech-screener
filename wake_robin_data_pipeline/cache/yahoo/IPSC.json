@@ -1,0 +1,43 @@
+{
+  "ticker": "IPSC",
+  "success": true,
+  "price": {
+    "current": 2.075,
+    "currency": "USD",
+    "day_high": 2.37,
+    "day_low": 2.02,
+    "52_week_high": 2.71,
+    "52_week_low": 0.342
+  },
+  "market_cap": {
+    "value": 181366032.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 87405311.0,
+  "volume": {
+    "last": 1080153,
+    "average_30d": 2717243
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -2.1391752,
+    "price_to_book": 1.018155
+  },
+  "company_info": {
+    "name": "Century Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T13:11:18.872364",
+    "url": "https://finance.yahoo.com/quote/IPSC",
+    "data_hash": "dd95174631c2240d"
+  }
+}

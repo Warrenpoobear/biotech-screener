@@ -1,0 +1,43 @@
+{
+  "ticker": "CHRS",
+  "success": true,
+  "price": {
+    "current": 2.235,
+    "currency": "USD",
+    "day_high": 2.2488,
+    "day_low": 2.08,
+    "52_week_high": 2.616,
+    "52_week_low": 0.71
+  },
+  "market_cap": {
+    "value": 270146720.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 120871013.0,
+  "volume": {
+    "last": 1032913,
+    "average_30d": 3099541
+  },
+  "valuation": {
+    "pe_ratio": 4.0636363,
+    "forward_pe": -4.561224,
+    "price_to_book": 2.9602647
+  },
+  "company_info": {
+    "name": "Coherus Oncology, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:05:38.436840",
+    "url": "https://finance.yahoo.com/quote/CHRS",
+    "data_hash": "cbbbfb8d67d8ebbc"
+  }
+}

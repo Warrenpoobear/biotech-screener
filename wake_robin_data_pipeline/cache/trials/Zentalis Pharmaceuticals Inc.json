@@ -1,0 +1,158 @@
+{
+  "ticker": "ZNTL",
+  "company_name": "Zentalis Pharmaceuticals, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05682170",
+      "title": "Study of the ZN-d5 and ZN-c3 in Subjects With Acute Myeloid Leukemia (AML)",
+      "status": "TERMINATED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Acute Myeloid Leukemia (AML)",
+      "start_date": "2022-12-01",
+      "completion_date": "2024-07-26",
+      "enrollment": 0,
+      "sponsor": "K-Group Alpha, Inc., a wholly owned subsidiary of Zentalis Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT05199337",
+      "title": "Phase 1/2 Study of ZN-d5 for the Treatment of Relapsed or Refractory Light Chain (AL) Amyloidosis",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Amyloidosis, AL Amyloidosis",
+      "start_date": "2021-11-30",
+      "completion_date": "2024-02-14",
+      "enrollment": 0,
+      "sponsor": "K-Group Alpha, Inc., a wholly owned subsidiary of Zentalis Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT04833582",
+      "title": "A Study of ZN-c3 in Combination With Gemcitabine in Subjects With Osteosarcoma",
+      "status": "UNKNOWN",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Osteosarcoma",
+      "start_date": "2021-08-01",
+      "completion_date": "2023-12-30",
+      "enrollment": 0,
+      "sponsor": "K-Group, Beta, Inc., a wholly owned subsidiary of Zentalis Pharmaceuticals, Inc"
+    },
+    {
+      "nct_id": "NCT05128825",
+      "title": "A Study of Azenosertib (ZN-c3) in Subjects With Platinum-Resistant High-Grade Serous Ovarian, Fallopian Tube or Primary Peritoneal Cancer",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "High-Grade Serous Ovarian, Fallopian Tube or Primary Peritoneal Cancer",
+      "start_date": "2022-02-17",
+      "completion_date": "2027-06-30",
+      "enrollment": 0,
+      "sponsor": "K-Group, Beta, Inc., a wholly owned subsidiary of Zentalis Pharmaceuticals, Inc"
+    },
+    {
+      "nct_id": "NCT04158336",
+      "title": "A Study of ZN-c3 in Participants With Solid Tumors",
+      "status": "UNKNOWN",
+      "phase": "PHASE1",
+      "condition": "Solid Tumor",
+      "start_date": "2019-11-01",
+      "completion_date": "2023-08",
+      "enrollment": 0,
+      "sponsor": "K-Group, Beta, Inc., a wholly owned subsidiary of Zentalis Pharmaceuticals, Inc"
+    },
+    {
+      "nct_id": "NCT05743036",
+      "title": "ZN-c3 in Adult Participants With Metastatic Colorectal Cancer",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Metastatic Colorectal Cancer",
+      "start_date": "2023-02-27",
+      "completion_date": "2025-07-09",
+      "enrollment": 0,
+      "sponsor": "K-Group, Beta, Inc., a wholly owned subsidiary of Zentalis Pharmaceuticals, Inc"
+    },
+    {
+      "nct_id": "NCT04814108",
+      "title": "A Study of ZN-c3 in Women With Recurrent or Persistent Uterine Serous Carcinoma",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Uterine Serous Carcinoma",
+      "start_date": "2021-07-28",
+      "completion_date": "2025-05-31",
+      "enrollment": 0,
+      "sponsor": "K-Group, Beta, Inc., a wholly owned subsidiary of Zentalis Pharmaceuticals, Inc"
+    },
+    {
+      "nct_id": "NCT04854174",
+      "title": "A Food Effect Study of ZN-d5 in Healthy Female Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2021-06-13",
+      "completion_date": "2021-07-05",
+      "enrollment": 0,
+      "sponsor": "K-Group Alpha, Inc., a wholly owned subsidiary of Zentalis Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT05431582",
+      "title": "Phase I Study of ZN-c3 and Bevacizumab \u00b1 Pembrolizumab in Metastatic CCNE1 Amplified and TP53 Mutant Solid Tumors",
+      "status": "WITHDRAWN",
+      "phase": "PHASE1",
+      "condition": "Tumors, Ovarian Cancer, Breast Cancer, Lung Cancer, Pancreatic Cancer",
+      "start_date": "2022-12-14",
+      "completion_date": "2022-12-14",
+      "enrollment": 0,
+      "sponsor": "M.D. Anderson Cancer Center"
+    },
+    {
+      "nct_id": "NCT04516447",
+      "title": "A Study of ZN-c3 in Patients With Ovarian Cancer",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Solid Tumor, Epithelial Ovarian Cancer, Fallopian Tube Cancer, Peritoneal Cancer",
+      "start_date": "2020-10-26",
+      "completion_date": "2027-02-28",
+      "enrollment": 0,
+      "sponsor": "K-Group, Beta, Inc., a wholly owned subsidiary of Zentalis Pharmaceuticals, Inc"
+    }
+  ],
+  "summary": {
+    "total_trials": 14,
+    "by_phase": {
+      "PHASE1, PHASE2": 5,
+      "PHASE2": 3,
+      "PHASE1": 6
+    },
+    "by_status": {
+      "TERMINATED": 2,
+      "COMPLETED": 3,
+      "UNKNOWN": 2,
+      "RECRUITING": 4,
+      "WITHDRAWN": 1,
+      "ACTIVE_NOT_RECRUITING": 2
+    },
+    "active_trials": 6,
+    "completed_trials": 3,
+    "conditions": [
+      "Acute Myeloid Leukemia (AML)",
+      "Acute Myeloid Leukemia, Non Hodgkin Lymphoma",
+      "Advanced Pancreatic Adenocarcinoma, Pancreatic Cancer, Pancreatic Ductal Adenocarcinoma",
+      "Amyloidosis, AL Amyloidosis",
+      "Breast Cancer, Breast Cancer Female, Triple Negative Breast Cancer, Hormone Receptor Negative Malignant Tumor Breast Triple, HER2-negative Breast Cancer",
+      "Healthy Volunteers",
+      "High-Grade Serous Ovarian, Fallopian Tube or Primary Peritoneal Cancer",
+      "Metastatic Colorectal Cancer",
+      "Osteosarcoma",
+      "Ovarian Cancer, Platinum-resistant Ovarian Cancer, Primary Peritoneal Carcinoma, Fallopian Tube Cancer",
+      "Solid Tumor",
+      "Solid Tumor, Epithelial Ovarian Cancer, Fallopian Tube Cancer, Peritoneal Cancer",
+      "Tumors, Ovarian Cancer, Breast Cancer, Lung Cancer, Pancreatic Cancer",
+      "Uterine Serous Carcinoma"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T13:12:04.666132",
+    "search_query": "Zentalis Pharmaceuticals, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Zentalis+Pharmaceuticals,+Inc."
+  }
+}

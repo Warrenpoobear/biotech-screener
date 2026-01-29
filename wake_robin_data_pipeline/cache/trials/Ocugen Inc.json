@@ -1,0 +1,157 @@
+{
+  "ticker": "OCGN",
+  "company_name": "Ocugen, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05258669",
+      "title": "Immuno-bridging and Broadening Study of a Whole, Inactivated COVID-19 Vaccine BBV152 in Healthy Adults",
+      "status": "UNKNOWN",
+      "phase": "PHASE2, PHASE3",
+      "condition": "COVID-19",
+      "start_date": "2022-02-20",
+      "completion_date": "2023-10-31",
+      "enrollment": 0,
+      "sponsor": "Ocugen"
+    },
+    {
+      "nct_id": "NCT05541289",
+      "title": "Expanded Access Program of Whole, Inactivated COVID-19 Vaccine COVAXIN\u2122 (BBV152) in Adults Aged 18 Years and Older",
+      "status": "NO_LONGER_AVAILABLE",
+      "phase": "",
+      "condition": "COVID-19",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Ocugen"
+    },
+    {
+      "nct_id": "NCT06018558",
+      "title": "Study to Assess the Safety and Efficacy of OCU410 for Geographic Atrophy",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Geographic Atrophy",
+      "start_date": "2023-02-23",
+      "completion_date": "2026-05-29",
+      "enrollment": 0,
+      "sponsor": "Ocugen"
+    },
+    {
+      "nct_id": "NCT05802329",
+      "title": "Phase I Study to Assess the Safety and Efficacy of OCU200 for Center-Involved Diabetic Macular Edema (DME)",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Center Involved Diabetic Macular Edema, Diabetic Macular Edema",
+      "start_date": "2024-01-13",
+      "completion_date": "2026-07-31",
+      "enrollment": 0,
+      "sponsor": "Ocugen"
+    },
+    {
+      "nct_id": "NCT03785340",
+      "title": "Study of Brimonidine Tartrate Nanoemulsion Eye Drop Solution in the Treatment of Dry Eye Disease (DED)",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Dry Eye",
+      "start_date": "2018-12-03",
+      "completion_date": "2019-02-25",
+      "enrollment": 0,
+      "sponsor": "Ocugen"
+    },
+    {
+      "nct_id": "NCT03418727",
+      "title": "Dry Eye Disease Study With Brimonidine",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Dry Eye",
+      "start_date": "2017-09-06",
+      "completion_date": "2018-03-29",
+      "enrollment": 0,
+      "sponsor": "Ocugen"
+    },
+    {
+      "nct_id": "NCT03591874",
+      "title": "Study of Brimonidine Tartrate Nanoemulsion Eye Drops in Patients With Ocular Graft-vs-Host Disease",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Graft Versus Host Disease, Ocular Surface Disease, oGVHD, Ocular Graft vs Host Disease, Brimonidine Tartrate, Lubricant Eye Drops, Ophthalmic Solutions, Graft vs Host Disease",
+      "start_date": "2018-12-23",
+      "completion_date": "2020-04-30",
+      "enrollment": 0,
+      "sponsor": "Ocugen"
+    },
+    {
+      "nct_id": "NCT06574997",
+      "title": "Expanded Access Program for RP in Adults",
+      "status": "AVAILABLE",
+      "phase": "",
+      "condition": "Retinitis Pigmentosa",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Ocugen"
+    },
+    {
+      "nct_id": "NCT06388200",
+      "title": "A Phase 3 Study Of OCU400 Gene Therapy for the Treatment Of Retinitis Pigmentosa",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Retinitis Pigmentosa",
+      "start_date": "2024-06-18",
+      "completion_date": "2026-12-31",
+      "enrollment": 0,
+      "sponsor": "Ocugen"
+    },
+    {
+      "nct_id": "NCT05203939",
+      "title": "Study to Assess the Safety and Efficacy of OCU400 for Retinitis Pigmentosa and Leber Congenital Amaurosis",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Retinitis Pigmentosa, Leber Congenital Amaurosis",
+      "start_date": "2022-01-24",
+      "completion_date": "2027-03",
+      "enrollment": 0,
+      "sponsor": "Ocugen"
+    }
+  ],
+  "summary": {
+    "total_trials": 12,
+    "by_phase": {
+      "PHASE2, PHASE3": 2,
+      "": 2,
+      "PHASE1, PHASE2": 3,
+      "PHASE1": 1,
+      "PHASE3": 3,
+      "PHASE2": 1
+    },
+    "by_status": {
+      "UNKNOWN": 1,
+      "NO_LONGER_AVAILABLE": 1,
+      "ACTIVE_NOT_RECRUITING": 2,
+      "RECRUITING": 3,
+      "COMPLETED": 2,
+      "TERMINATED": 2,
+      "AVAILABLE": 1
+    },
+    "active_trials": 5,
+    "completed_trials": 2,
+    "conditions": [
+      "COVID-19",
+      "Center Involved Diabetic Macular Edema, Diabetic Macular Edema",
+      "Dry Eye",
+      "Dry Eye, Ocular Graft vs Host Disease, Meibomian Gland Dysfunction",
+      "Geographic Atrophy",
+      "Graft Versus Host Disease, Ocular Surface Disease, oGVHD, Ocular Graft vs Host Disease, Brimonidine Tartrate, Lubricant Eye Drops, Ophthalmic Solutions, Graft vs Host Disease",
+      "Retinitis Pigmentosa",
+      "Retinitis Pigmentosa, Leber Congenital Amaurosis",
+      "Stargardt Disease"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:20:33.417560",
+    "search_query": "Ocugen, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Ocugen,+Inc."
+  }
+}

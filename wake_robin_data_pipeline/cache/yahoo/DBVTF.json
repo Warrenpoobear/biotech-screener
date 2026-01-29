@@ -1,0 +1,43 @@
+{
+  "ticker": "DBVTF",
+  "success": true,
+  "price": {
+    "current": 4.7996,
+    "currency": "USD",
+    "day_high": 2.8,
+    "day_low": 2.8,
+    "52_week_high": 4.7996,
+    "52_week_low": 0.0001
+  },
+  "market_cap": {
+    "value": 1302910336.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 271462285.0,
+  "volume": {
+    "last": 100,
+    "average_30d": 28
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": null,
+    "price_to_book": 12.434197
+  },
+  "company_info": {
+    "name": "DBV TECHNOLOGIES",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T13:11:16.063320",
+    "url": "https://finance.yahoo.com/quote/DBVTF",
+    "data_hash": "3f3a59aeb9da821f"
+  }
+}

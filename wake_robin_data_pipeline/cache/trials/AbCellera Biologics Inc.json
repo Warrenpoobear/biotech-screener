@@ -1,0 +1,127 @@
+{
+  "ticker": "ABCL",
+  "company_name": "AbCellera Biologics Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT07118891",
+      "title": "Study Evaluating ABCL635 for Vasomotor Symptoms of Menopause",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Vasomotor Symptoms Associated With Menopause, Healthy Volunteers",
+      "start_date": "2025-06-23",
+      "completion_date": "2027-02",
+      "enrollment": 0,
+      "sponsor": "AbCellera Biologics Inc."
+    },
+    {
+      "nct_id": "NCT04603651",
+      "title": "Expanded Access Program to Provide Bamlanivimab (LY3819253) for the Treatment of COVID-19",
+      "status": "NO_LONGER_AVAILABLE",
+      "phase": "",
+      "condition": "COVID-19",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Eli Lilly and Company"
+    },
+    {
+      "nct_id": "NCT04634409",
+      "title": "A Study of Immune System Proteins in Participants With Mild to Moderate COVID-19 Illness",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "COVID-19",
+      "start_date": "2020-10-29",
+      "completion_date": "2021-10-18",
+      "enrollment": 0,
+      "sponsor": "Eli Lilly and Company"
+    },
+    {
+      "nct_id": "NCT04411628",
+      "title": "A Study of LY3819253 (LY-CoV555) in Participants Hospitalized for COVID-19",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "COVID-19",
+      "start_date": "2020-05-28",
+      "completion_date": "2020-08-26",
+      "enrollment": 0,
+      "sponsor": "Eli Lilly and Company"
+    },
+    {
+      "nct_id": "NCT07108894",
+      "title": "A First-in-Human Phase 1 Single-Ascending Dose Study of ABCL575 in Healthy Participants",
+      "status": "RECRUITING",
+      "phase": "EARLY_PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2025-07-25",
+      "completion_date": "2026-11",
+      "enrollment": 0,
+      "sponsor": "AbCellera Biologics Inc."
+    },
+    {
+      "nct_id": "NCT04427501",
+      "title": "A Study of LY3819253 (LY-CoV555) and LY3832479 (LY-CoV016) in Participants With Mild to Moderate COVID-19 Illness",
+      "status": "COMPLETED",
+      "phase": "PHASE2, PHASE3",
+      "condition": "COVID-19",
+      "start_date": "2020-06-17",
+      "completion_date": "2023-02-21",
+      "enrollment": 0,
+      "sponsor": "Eli Lilly and Company"
+    },
+    {
+      "nct_id": "NCT04497987",
+      "title": "A Study of LY3819253 (LY-CoV555) and LY3832479 (LY-CoV016) in Preventing SARS-CoV-2 Infection and COVID-19 in Nursing Home Residents and Staff",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "COVID-19, SARS-CoV2",
+      "start_date": "2020-08-02",
+      "completion_date": "2021-05-20",
+      "enrollment": 0,
+      "sponsor": "Eli Lilly and Company"
+    },
+    {
+      "nct_id": "NCT04701658",
+      "title": "A Real World Study of Bamlanivimab in Participants With Mild-to-Moderate Coronavirus Disease 2019 (COVID-19)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "COVID-19",
+      "start_date": "2021-02-01",
+      "completion_date": "2021-06-22",
+      "enrollment": 0,
+      "sponsor": "Eli Lilly and Company"
+    }
+  ],
+  "summary": {
+    "total_trials": 8,
+    "by_phase": {
+      "PHASE1, PHASE2": 1,
+      "": 1,
+      "PHASE2": 2,
+      "PHASE1": 1,
+      "EARLY_PHASE1": 1,
+      "PHASE2, PHASE3": 1,
+      "PHASE3": 1
+    },
+    "by_status": {
+      "RECRUITING": 2,
+      "NO_LONGER_AVAILABLE": 1,
+      "COMPLETED": 5
+    },
+    "active_trials": 2,
+    "completed_trials": 5,
+    "conditions": [
+      "COVID-19",
+      "COVID-19, SARS-CoV2",
+      "Healthy Volunteers",
+      "Vasomotor Symptoms Associated With Menopause, Healthy Volunteers"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:15:48.927788",
+    "search_query": "AbCellera Biologics Inc.",
+    "url": "https://clinicaltrials.gov/search?term=AbCellera+Biologics+Inc."
+  }
+}

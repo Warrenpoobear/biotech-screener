@@ -1,0 +1,43 @@
+{
+  "ticker": "NGNE",
+  "success": true,
+  "price": {
+    "current": 18.605,
+    "currency": "USD",
+    "day_high": 19.675,
+    "day_low": 18.605,
+    "52_week_high": 37.266,
+    "52_week_low": 6.875
+  },
+  "market_cap": {
+    "value": 288187712.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 15489800.0,
+  "volume": {
+    "last": 17494,
+    "average_30d": 150513
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -4.0622272,
+    "price_to_book": 1.0352215
+  },
+  "company_info": {
+    "name": "Neurogene Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:23.024264",
+    "url": "https://finance.yahoo.com/quote/NGNE",
+    "data_hash": "640233166f3d34b7"
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "ticker": "MNPR",
+  "company_name": "Monopar Therapeutics Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06337084",
+      "title": "Diagnostic Efficacy and Dosimetry of MNPR-101-DFO*-89Zr in Patients With Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Solid Tumor, Adult, Bladder Cancer, Urothelial Carcinoma, Triple-negative Breast Cancer, Lung Cancer, Colorectal Cancer, Gastric Cancer, Ovarian Cancer, Pancreatic Cancer",
+      "start_date": "2024-05-30",
+      "completion_date": "2026-04",
+      "enrollment": 0,
+      "sponsor": "Monopar Therapeutics"
+    },
+    {
+      "nct_id": "NCT06617169",
+      "title": "Dose-Escalation of MNPR-101-PCTA-177Lu in Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Solid Tumor, Adult, Bladder Cancer, Urothelial Carcinoma, Triple-negative Breast Cancer, Lung Cancer, Colorectal Cancer, Gastric Cancer, Ovarian Cancer, Pancreatic Cancer",
+      "start_date": "2024-10-08",
+      "completion_date": "2027-01",
+      "enrollment": 0,
+      "sponsor": "Monopar Therapeutics"
+    },
+    {
+      "nct_id": "NCT05043649",
+      "title": "Camsirubicin + Pegfilgrastim to Determine MTD in ASTS",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Advanced Soft-tissue Sarcoma",
+      "start_date": "2021-09-22",
+      "completion_date": "2024-05-13",
+      "enrollment": 0,
+      "sponsor": "Monopar Therapeutics"
+    },
+    {
+      "nct_id": "NCT06980519",
+      "title": "MNPR-101-PCTA-177Lu Expanded Access Program (EAP) for Patients With Solid Tumor Cancer",
+      "status": "AVAILABLE",
+      "phase": "",
+      "condition": "Cancer, Solid Tumor, Solid Tumor Cancer, Oncology, uPAR-positive Solid Tumor, Urokinase Plasminogen Activator Receptor-positive Solid Tumor",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Monopar Therapeutics"
+    },
+    {
+      "nct_id": "NCT04648020",
+      "title": "Clonidine HCl MBT vs. Placebo to Prevent Chemoradiotherapy-Induced Severe Oral Mucositis in Oropharyngeal Cancer.",
+      "status": "TERMINATED",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Chemoradiotherapy-Induced Severe Oral Mucositis",
+      "start_date": "2021-02-11",
+      "completion_date": "2023-05-14",
+      "enrollment": 0,
+      "sponsor": "Monopar Therapeutics"
+    },
+    {
+      "nct_id": "NCT06980506",
+      "title": "MNPR-101-DFO*-89Zr Expanded Access Program (EAP) for Patients With Solid Tumor Cancer",
+      "status": "AVAILABLE",
+      "phase": "",
+      "condition": "Cancer, Solid Tumor, Solid Tumor, Adult",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Monopar Therapeutics"
+    }
+  ],
+  "summary": {
+    "total_trials": 6,
+    "by_phase": {
+      "PHASE1": 3,
+      "": 2,
+      "PHASE2, PHASE3": 1
+    },
+    "by_status": {
+      "RECRUITING": 2,
+      "TERMINATED": 2,
+      "AVAILABLE": 2
+    },
+    "active_trials": 2,
+    "completed_trials": 0,
+    "conditions": [
+      "Advanced Soft-tissue Sarcoma",
+      "Cancer, Solid Tumor, Solid Tumor Cancer, Oncology, uPAR-positive Solid Tumor, Urokinase Plasminogen Activator Receptor-positive Solid Tumor",
+      "Cancer, Solid Tumor, Solid Tumor, Adult",
+      "Chemoradiotherapy-Induced Severe Oral Mucositis",
+      "Solid Tumor, Adult, Bladder Cancer, Urothelial Carcinoma, Triple-negative Breast Cancer, Lung Cancer, Colorectal Cancer, Gastric Cancer, Ovarian Cancer, Pancreatic Cancer"
+    ],
+    "lead_stage": "phase_1"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:36:10.565969",
+    "search_query": "Monopar Therapeutics Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Monopar+Therapeutics+Inc."
+  }
+}

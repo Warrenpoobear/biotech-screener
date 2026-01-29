@@ -1,0 +1,167 @@
+{
+  "ticker": "SGMO",
+  "company_name": "Sangamo Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT03041324",
+      "title": "Ascending Dose Study of Genome Editing by the Zinc Finger Nuclease (ZFN) Therapeutic SB-913 in Subjects With MPS II",
+      "status": "TERMINATED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Mucopolysaccharidosis II, MPS II",
+      "start_date": "2017-05-11",
+      "completion_date": "2021-05-07",
+      "enrollment": 0,
+      "sponsor": "Sangamo Therapeutics"
+    },
+    {
+      "nct_id": "NCT02500849",
+      "title": "Safety Study of Zinc Finger Nuclease CCR5-modified Hematopoietic Stem/Progenitor Cells in HIV-1 Infected Patients",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "HIV",
+      "start_date": "2016-03-10",
+      "completion_date": "2026-08-24",
+      "enrollment": 0,
+      "sponsor": "City of Hope Medical Center"
+    },
+    {
+      "nct_id": "NCT00087789",
+      "title": "CERE-110 in Subjects With Mild to Moderate Alzheimer's Disease",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Alzheimer's Disease",
+      "start_date": "2004-06",
+      "completion_date": "2010-05",
+      "enrollment": 0,
+      "sponsor": "Sangamo Therapeutics"
+    },
+    {
+      "nct_id": "NCT00476931",
+      "title": "Clinical Trial of SB-509 in Subjects With Diabetic Neuropathy",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Diabetes Mellitus, Type 1, Diabetes Mellitus, Type 2, Diabetic Polyneuropathy",
+      "start_date": "2007-05",
+      "completion_date": "2010-12",
+      "enrollment": 0,
+      "sponsor": "Sangamo Therapeutics"
+    },
+    {
+      "nct_id": "NCT00252850",
+      "title": "Safety of CERE-120 (AAV2-NTN) in Subjects With Idiopathic Parkinson's Disease",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Parkinson's Disease",
+      "start_date": "2005-06",
+      "completion_date": "2007-03",
+      "enrollment": 0,
+      "sponsor": "Sangamo Therapeutics"
+    },
+    {
+      "nct_id": "NCT02225665",
+      "title": "Repeat Doses of SB-728mR-T After Cyclophosphamide Conditioning in HIV-Infected Subjects on HAART",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Human Immunodeficiency Virus (HIV)",
+      "start_date": "2014-08",
+      "completion_date": "2018-06",
+      "enrollment": 0,
+      "sponsor": "Sangamo Therapeutics"
+    },
+    {
+      "nct_id": "NCT04817774",
+      "title": "Safety & Tolerability Study of Chimeric Antigen Receptor T-Reg Cell Therapy in Living Donor Renal Transplant Recipients",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Kidney Transplant Rejection, End Stage Renal Disease",
+      "start_date": "2021-03-17",
+      "completion_date": "2025-10-29",
+      "enrollment": 0,
+      "sponsor": "Sangamo Therapeutics"
+    },
+    {
+      "nct_id": "NCT00985517",
+      "title": "Safety and Efficacy of CERE-120 in Subjects With Parkinson's Disease",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Idiopathic Parkinson's Disease",
+      "start_date": "2009-10-29",
+      "completion_date": "2017-11-16",
+      "enrollment": 0,
+      "sponsor": "Sangamo Therapeutics"
+    },
+    {
+      "nct_id": "NCT05145062",
+      "title": "Long - Term Follow Up of Sickle Cell Disease and Beta-thalassemia Subjects Previously Exposed to BIVV003 or ST-400.",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "",
+      "condition": "Blood and Lymphatic Diseases",
+      "start_date": "2021-12-21",
+      "completion_date": "2038-07-14",
+      "enrollment": 0,
+      "sponsor": "Sangamo Therapeutics"
+    },
+    {
+      "nct_id": "NCT00406458",
+      "title": "Clinical Trial of SB-509 in Subjects With Diabetic Neuropathy",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Diabetes Mellitus, Type 1, Diabetes Mellitus, Type 2, Diabetic Polyneuropathy",
+      "start_date": "2006-11",
+      "completion_date": "2009-05",
+      "enrollment": 0,
+      "sponsor": "Sangamo Therapeutics"
+    }
+  ],
+  "summary": {
+    "total_trials": 30,
+    "by_phase": {
+      "PHASE1, PHASE2": 11,
+      "PHASE1": 7,
+      "PHASE2": 7,
+      "": 5
+    },
+    "by_status": {
+      "TERMINATED": 4,
+      "ACTIVE_NOT_RECRUITING": 5,
+      "COMPLETED": 19,
+      "RECRUITING": 1,
+      "ENROLLING_BY_INVITATION": 1
+    },
+    "active_trials": 7,
+    "completed_trials": 19,
+    "conditions": [
+      "Alzheimer's Disease",
+      "Amyotrophic Lateral Sclerosis",
+      "Blood and Lymphatic Diseases",
+      "Chronic Neuropathic Pain",
+      "Diabetes Mellitus, Type 1, Diabetes Mellitus, Type 2, Diabetic Polyneuropathy",
+      "Diabetic Neuropathy",
+      "Fabry Disease",
+      "Fabry Disease, Fabry Disease, Cardiac Variant",
+      "HIV",
+      "HIV Infection, HIV Infections",
+      "HIV, HIV Infection",
+      "HIV, HIV Infections",
+      "HIV-1-infection",
+      "Hemophilia B",
+      "Hemophilia B, Mucopolysaccharidosis I, Mucopolysaccharidosis II",
+      "Human Immunodeficiency Virus (HIV)",
+      "Idiopathic Parkinson's Disease",
+      "Kidney Transplant Rejection, End Stage Renal Disease",
+      "MPS I",
+      "Mucopolysaccharidosis II, MPS II",
+      "Parkinson's Disease",
+      "Sickle Cell Disease",
+      "Transfusion Dependent Beta-thalassemia"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:21:47.677807",
+    "search_query": "Sangamo Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Sangamo+Therapeutics,+Inc."
+  }
+}

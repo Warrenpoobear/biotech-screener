@@ -1,0 +1,179 @@
+{
+  "ticker": "PBYI",
+  "company_name": "Puma Biotechnology Inc",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT03377387",
+      "title": "Capecitabine 7/7 Schedule With Neratinib in Patients With Metastatic HER2-Positive Breast Cancer",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Breast Cancer",
+      "start_date": "2017-12-13",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "Memorial Sloan Kettering Cancer Center"
+    },
+    {
+      "nct_id": "NCT00838539",
+      "title": "Study Evaluating Neratinib In Combination With Temsirolimus In Subjects With Solid Tumors",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Neoplasms, Malignant Carcinoma",
+      "start_date": "2009-04",
+      "completion_date": "2013-12",
+      "enrollment": 0,
+      "sponsor": "Puma Biotechnology, Inc."
+    },
+    {
+      "nct_id": "NCT00958724",
+      "title": "Study Evaluating Neratinib In Combination With Vinorelbine In Subjects With Advanced Or Metastatic Solid Tumors",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Advanced Malignant Solid Tumors",
+      "start_date": "2009-07",
+      "completion_date": "2010-04",
+      "enrollment": 0,
+      "sponsor": "Puma Biotechnology, Inc."
+    },
+    {
+      "nct_id": "NCT00550212",
+      "title": "Study Evaluating Oral Administrations of HKI-272 in Healthy Male Subjects",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2008-03",
+      "completion_date": "2008-04",
+      "enrollment": 0,
+      "sponsor": "Puma Biotechnology, Inc."
+    },
+    {
+      "nct_id": "NCT00860223",
+      "title": "Study Evaluating The Potential Effect Of Multiple Doses Of Neratinib On The Pharmacokinetics Of A Single Dose Of Digoxin",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2009-04",
+      "completion_date": "2009-04",
+      "enrollment": 0,
+      "sponsor": "Puma Biotechnology, Inc."
+    },
+    {
+      "nct_id": "NCT00915018",
+      "title": "Study Evaluating Neratinib Plus Paclitaxel VS Trastuzumab Plus Paclitaxel In ErbB-2 Positive Advanced Breast Cancer",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Breast Cancer",
+      "start_date": "2009-08-21",
+      "completion_date": "2018-06-28",
+      "enrollment": 0,
+      "sponsor": "Puma Biotechnology, Inc."
+    },
+    {
+      "nct_id": "NCT01953926",
+      "title": "Basket Study of Neratinib in Participants With Solid Tumors Harboring Somatic HER2 or EGFR Exon 18 Mutations",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Solid Tumors Harboring Somatic HER2 or EGFR Exon 18 Mutations",
+      "start_date": "2013-09-30",
+      "completion_date": "2023-01-02",
+      "enrollment": 0,
+      "sponsor": "Puma Biotechnology, Inc."
+    },
+    {
+      "nct_id": "NCT03094052",
+      "title": "Incidence and Severity of Diarrhea in Patients With HER2 Positive Breast Cancer Treated With Trastuzumab and Neratinib",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "HER2-positive Breast Cancer, Breast Adenocarcinoma, Stage II Breast Cancer AJCC v6 and v7, Stage IIA Breast Cancer AJCC v6 and v7, Stage IIB Breast Cancer AJCC v6 and v7, Stage III Breast Cancer AJCC v7, Stage IIIA Breast Cancer AJCC v7, Stage IIIB Breast Cancer AJCC v7, Stage IIIC Breast Cancer AJCC v7",
+      "start_date": "2018-10-09",
+      "completion_date": "2022-10-31",
+      "enrollment": 0,
+      "sponsor": "University of California, San Francisco"
+    },
+    {
+      "nct_id": "NCT01670877",
+      "title": "Neratinib +/- Fulvestrant in Metastatic HER2 Non-amplified But HER2 Mutant Breast Cancer",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Breast Neoplasms",
+      "start_date": "2012-12-11",
+      "completion_date": "2021-03-11",
+      "enrollment": 0,
+      "sponsor": "Washington University School of Medicine"
+    },
+    {
+      "nct_id": "NCT00397046",
+      "title": "A Study Of The Safety And Tolerability Of HKI-272 Administered Orally To Japanese Subjects With Advanced Solid Tumors",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Tumors",
+      "start_date": "2006-11",
+      "completion_date": "2009-03",
+      "enrollment": 0,
+      "sponsor": "Puma Biotechnology, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 50,
+    "by_phase": {
+      "PHASE1, PHASE2": 9,
+      "PHASE1": 17,
+      "PHASE2": 21,
+      "PHASE3": 1,
+      "": 2
+    },
+    "by_status": {
+      "ACTIVE_NOT_RECRUITING": 2,
+      "COMPLETED": 32,
+      "TERMINATED": 4,
+      "RECRUITING": 8,
+      "WITHDRAWN": 2,
+      "UNKNOWN": 2
+    },
+    "active_trials": 10,
+    "completed_trials": 32,
+    "conditions": [
+      "Advanced Breast Cancer",
+      "Advanced Breast Cancer, Advanced Malignant Solid Tumors, Breast Neoplasms",
+      "Advanced Breast Cancer, Breast Cancer",
+      "Advanced Malignant Solid Tumors",
+      "Advanced Solid Tumor, Ovarian Cancer",
+      "Anatomic Stage I Breast Cancer, Anatomic Stage II Breast Cancer, Anatomic Stage III Breast Cancer, Invasive Breast Lobular Carcinoma",
+      "Breast Cancer",
+      "Breast Cancer, Advanced Malignant Solid Tumors",
+      "Breast Cancer, HER2-positive Breast Cancer, ER Positive Breast Cancer, PR-Positive Breast Cancer",
+      "Breast Neoplasms",
+      "Breast Neoplasms, Neoplasms",
+      "Carcinoma, Non-Small-Cell Lung, Lung Neoplasms",
+      "Early Stage HER2+ Breast Cancer",
+      "Gastric Cancer, Gastrointestinal Cancer, HER2 Gene Mutation",
+      "GastroEsophageal Cancer, Gastric Cancer",
+      "Glioblastoma",
+      "HER2-mutant Non-Small Cell Lung Cancer",
+      "HER2-positive Breast Cancer, Breast Adenocarcinoma, Stage II Breast Cancer AJCC v6 and v7, Stage IIA Breast Cancer AJCC v6 and v7, Stage IIB Breast Cancer AJCC v6 and v7, Stage III Breast Cancer AJCC v7, Stage IIIA Breast Cancer AJCC v7, Stage IIIB Breast Cancer AJCC v7, Stage IIIC Breast Cancer AJCC v7",
+      "Healthy",
+      "Healthy Subjects",
+      "Hepatic Insufficiency",
+      "Hormone Receptor-Positive, HER2-Negative Metastatic Breast Cancer, Metastatic Cervical Cancer",
+      "Lung Cancer Metastatic, EGFR Gene Mutation",
+      "Metastatic Breast Cancer, Breast Cancer",
+      "Metastatic Colorectal Cancer",
+      "Metastatic Prostate Adenocarcinoma, Castration-resistant Prostate Cancer, Prostate Cancer, Prostate Cancer Metastatic",
+      "Neoplasms, Malignant Carcinoma",
+      "Small Cell Lung Cancer",
+      "Solid Tumor, Adult",
+      "Solid Tumors Harboring Somatic HER2 or EGFR Exon 18 Mutations",
+      "Stage IV (Metastatic) Breast Cancer, Metastatic Breast Cancer, ER Positive Breast Cancer, PR-Positive Breast Cancer, HER2-negative Breast Cancer, Invasive Breast Cancer",
+      "Triple Negative Breast Cancer, Early-stage Breast Cancer, HER2-positive Breast Cancer",
+      "Tumors"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:20:48.743574",
+    "search_query": "Puma Biotechnology Inc",
+    "url": "https://clinicaltrials.gov/search?term=Puma+Biotechnology+Inc"
+  }
+}

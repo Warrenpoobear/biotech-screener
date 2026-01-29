@@ -1,0 +1,178 @@
+{
+  "ticker": "BCRX",
+  "company_name": "BioCryst Pharmaceuticals, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT00035022",
+      "title": "Study of Intravenous BCX-1777 in Relapsed or Refractory Aggressive T-Cell Leukemias or Lymphomas",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Leukemia, Lymphocytic, Lymphoma",
+      "start_date": "2001-08",
+      "completion_date": "2004-03",
+      "enrollment": 0,
+      "sponsor": "BioCryst Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT00486980",
+      "title": "Intramuscular Peramivir for the Treatment of Uncomplicated Influenza",
+      "status": "WITHDRAWN",
+      "phase": "PHASE3",
+      "condition": "Influenza",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "BioCryst Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT00289549",
+      "title": "Study of Forodesine Hydrochloride in Patients With Advanced, Fludarabine-refractory Chronic Lymphocytic Leukemia (CLL)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Leukemia, Lymphocytic, Chronic",
+      "start_date": "2005-06",
+      "completion_date": "2009-01",
+      "enrollment": 0,
+      "sponsor": "BioCryst Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT00419263",
+      "title": "Evaluation of the Efficacy and Safety of Peramivir in Subjects With Uncomplicated Acute Influenza.",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Influenza",
+      "start_date": "2007-01",
+      "completion_date": "2007-09",
+      "enrollment": 0,
+      "sponsor": "BioCryst Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT05741346",
+      "title": "Long-term Safety of BCX9930 in Participants With Paroxysmal Nocturnal Hemoglobinuria",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Paroxysmal Nocturnal Hemoglobinuria",
+      "start_date": "2023-01-18",
+      "completion_date": "2025-01-31",
+      "enrollment": 0,
+      "sponsor": "BioCryst Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT00002237",
+      "title": "A Study of Peldesine (BCX-34) in HIV-Infected Patients",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "HIV Infections",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "BioCryst Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT06100900",
+      "title": "Dose Escalation of BCX10013 in Participants with Paroxysmal Nocturnal Hemoglobinuria (PNH)",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Paroxysmal Nocturnal Hemoglobinuria",
+      "start_date": "2023-10-24",
+      "completion_date": "2024-12-11",
+      "enrollment": 0,
+      "sponsor": "BioCryst Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT01224795",
+      "title": "A Study to Evaluate the Efficacy and Safety of Intravenous Peramivir in Subjects With Uncomplicated Influenza.",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Influenza",
+      "start_date": "2010-10",
+      "completion_date": "2010-11",
+      "enrollment": 0,
+      "sponsor": "BioCryst Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT01265264",
+      "title": "Study to Evaluate sUA Lowering Activity, Safety and Efficacy of Oral Ulodesine Added to Allopurinol",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Gout, Hyperuricemia, Arthritis, Joint Disease",
+      "start_date": "2010-12",
+      "completion_date": "2013-02",
+      "enrollment": 0,
+      "sponsor": "BioCryst Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT02125162",
+      "title": "A Study of the Relative Bioavailability of a New Formulation of BCX4161 and the Effect of Food on BCX4161",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Hereditary Angioedema",
+      "start_date": "2014-04",
+      "completion_date": "2014-07",
+      "enrollment": 0,
+      "sponsor": "BioCryst Pharmaceuticals"
+    }
+  ],
+  "summary": {
+    "total_trials": 50,
+    "by_phase": {
+      "PHASE1, PHASE2": 2,
+      "PHASE3": 10,
+      "PHASE2": 19,
+      "PHASE1": 15,
+      "": 2,
+      "PHASE2, PHASE3": 2
+    },
+    "by_status": {
+      "COMPLETED": 35,
+      "WITHDRAWN": 2,
+      "TERMINATED": 9,
+      "APPROVED_FOR_MARKETING": 1,
+      "ACTIVE_NOT_RECRUITING": 1,
+      "RECRUITING": 2
+    },
+    "active_trials": 3,
+    "completed_trials": 35,
+    "conditions": [
+      "Acute, Uncomplicated Human Influenza",
+      "COVID-19, Yellow Fever",
+      "Cancer",
+      "Chronic Lymphocytic Leukemia (CLL)",
+      "Complement 3 Glomerulopathy, Immunoglobulin A Nephropathy, Membranous Nephropathy",
+      "Cough, Sore Throat, Nasal Congestion, Headache, Fever, Seasonal Influenza",
+      "Cutaneous T-cell Lymphoma (CTCL),",
+      "Diabetic Macular Edema (DME)",
+      "Filovirus Infections, Ebola Virus Infection",
+      "Gout",
+      "Gout, Hyperuricemia, Arthritis, Joint Disease",
+      "Gout, Hyperuricemia, Arthritis, Joint Disease, Renal Insufficiency",
+      "HIV Infections",
+      "Hereditary Angioedema",
+      "Hereditary Angioedema (HAE)",
+      "Hereditary Angioedema, HAE",
+      "Hereditary Angioedema, HAE, Prophylaxis",
+      "Hereditary Angioedema, Pediatric",
+      "Influenza",
+      "Influenza, Renal Failure",
+      "Leukemia, Lymphocytic, Chronic",
+      "Leukemia, Lymphocytic, Lymphoma",
+      "Leukemia, Lymphoma",
+      "Leukemia, T-Cell",
+      "Lymphoma",
+      "Marburg Virus Disease",
+      "Netherton Syndrome",
+      "Paroxysmal Nocturnal Hemoglobinuria",
+      "Paroxysmal Nocturnal Hemoglobinuria (PNH)",
+      "Paroxysmal Nocturnal Hemoglobinuria, PNH",
+      "Seasonal Influenza, Cough, Sore Throat, Nasal Congestion, Myalgia, Headache, Fatigue"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:17:02.932263",
+    "search_query": "BioCryst Pharmaceuticals, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=BioCryst+Pharmaceuticals,+Inc."
+  }
+}

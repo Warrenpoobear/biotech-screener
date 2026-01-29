@@ -1,0 +1,163 @@
+{
+  "ticker": "VIR",
+  "company_name": "Vir Biotechnology, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04423393",
+      "title": "Study of VIR-3434 in Healthy Volunteers and Patients With Chronic Hepatitis B Virus Infection",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Chronic Hepatitis B",
+      "start_date": "2020-05-26",
+      "completion_date": "2022-11-25",
+      "enrollment": 0,
+      "sponsor": "Vir Biotechnology, Inc."
+    },
+    {
+      "nct_id": "NCT06491563",
+      "title": "Study to Investigate the Efficacy and Safety of Regimens Containing BRII-179, BRII-835, and PEG-IFN\u03b1 Treating Chronic Hepatitis B Virus (HBV) Infection (ENRICH)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "For Treatment of Chronic Hepatitis B Virus Infection",
+      "start_date": "2024-08-06",
+      "completion_date": "2027-06",
+      "enrollment": 0,
+      "sponsor": "Brii Biosciences Limited"
+    },
+    {
+      "nct_id": "NCT04913675",
+      "title": "Intramuscular and Intravenous VIR-7831 (Sotrovimab) for Mild/Moderate COVID-19.",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Covid19",
+      "start_date": "2021-06-10",
+      "completion_date": "2023-03-24",
+      "enrollment": 0,
+      "sponsor": "Vir Biotechnology, Inc."
+    },
+    {
+      "nct_id": "NCT05612581",
+      "title": "A Platform Study to Evaluate Investigational Therapies in Chronic Hepatitis B Infection",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Hepatitis B, Chronic",
+      "start_date": "2023-05-10",
+      "completion_date": "2025-08-19",
+      "enrollment": 0,
+      "sponsor": "Vir Biotechnology, Inc."
+    },
+    {
+      "nct_id": "NCT04891770",
+      "title": "Study to Evaluate the Safety and Efficacy of Selgantolimod (SLGN)-Containing Combination Therapies for the Treatment of Chronic Hepatitis B (CHB)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Chronic Hepatitis B",
+      "start_date": "2021-08-14",
+      "completion_date": "2024-07-19",
+      "enrollment": 0,
+      "sponsor": "Gilead Sciences"
+    },
+    {
+      "nct_id": "NCT04501978",
+      "title": "ACTIV-3: Therapeutics for Inpatients With COVID-19",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Covid19",
+      "start_date": "2020-08-04",
+      "completion_date": "2023-07-14",
+      "enrollment": 0,
+      "sponsor": "National Institute of Allergy and Infectious Diseases (NIAID)"
+    },
+    {
+      "nct_id": "NCT06960395",
+      "title": "Safety and Preliminary Efficacy of VIR-5525 and VIR-5525 + Pembrolizumab in Participants With Locally Advanced or Metastatic Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Solid Tumor Malignancies, EGFR Positive Solid Tumors, EGFR",
+      "start_date": "2025-07-22",
+      "completion_date": "2029-08",
+      "enrollment": 0,
+      "sponsor": "Vir Biotechnology, Inc."
+    },
+    {
+      "nct_id": "NCT07142811",
+      "title": "A Study to Evaluate Tobevibart+Elebsiran Versus Bulevirtide in Chronic HDV Infection",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Viral Hepatitis",
+      "start_date": "2025-08-05",
+      "completion_date": "2030-07",
+      "enrollment": 0,
+      "sponsor": "Vir Biotechnology, Inc."
+    },
+    {
+      "nct_id": "NCT04634409",
+      "title": "A Study of Immune System Proteins in Participants With Mild to Moderate COVID-19 Illness",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "COVID-19",
+      "start_date": "2020-10-29",
+      "completion_date": "2021-10-18",
+      "enrollment": 0,
+      "sponsor": "Eli Lilly and Company"
+    },
+    {
+      "nct_id": "NCT04749368",
+      "title": "Study to Investigate the Safety and Efficacy of BRII-835 and BRII-179 Combination Therapy Treating Chronic Hepatitis B Virus (HBV) Infection",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Hepatitis B, Chronic",
+      "start_date": "2021-04-12",
+      "completion_date": "2023-07-04",
+      "enrollment": 0,
+      "sponsor": "Brii Biosciences Limited"
+    }
+  ],
+  "summary": {
+    "total_trials": 35,
+    "by_phase": {
+      "PHASE1": 11,
+      "PHASE2": 13,
+      "PHASE3": 5,
+      "PHASE1, PHASE2": 3,
+      "": 2,
+      "PHASE2, PHASE3": 1
+    },
+    "by_status": {
+      "COMPLETED": 17,
+      "ACTIVE_NOT_RECRUITING": 7,
+      "TERMINATED": 5,
+      "RECRUITING": 5,
+      "NO_LONGER_AVAILABLE": 1
+    },
+    "active_trials": 12,
+    "completed_trials": 17,
+    "conditions": [
+      "COVID-19",
+      "COVID-19 Infection, Hematopoietic and Lymphoid Cell Neoplasm, Malignant Solid Neoplasm",
+      "Chronic Hepatitis B",
+      "Chronic Hepatitis B Virus Infection",
+      "Covid19",
+      "Covid19, SARS-CoV Infection",
+      "For Treatment of Chronic Hepatitis B Virus Infection",
+      "HIV I Infection",
+      "Hepatic Impairment, Cirrhosis",
+      "Hepatitis B, Chronic",
+      "Hepatitis D, Chronic",
+      "Hormone-refractory Prostate Cancer",
+      "Influenza A",
+      "Locally Advanced or Metastatic HER2-Expressing Cancers",
+      "Renal Impairment",
+      "Solid Tumor Malignancies, EGFR Positive Solid Tumors, EGFR",
+      "Viral Hepatitis"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:22:47.460727",
+    "search_query": "Vir Biotechnology, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Vir+Biotechnology,+Inc."
+  }
+}

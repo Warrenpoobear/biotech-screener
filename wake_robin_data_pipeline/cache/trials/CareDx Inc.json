@@ -1,0 +1,168 @@
+{
+  "ticker": "CDNA",
+  "company_name": "CareDx, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05747053",
+      "title": "Personalization of Immunosuppressive Treatment for Organ Transplant Recipients",
+      "status": "TERMINATED",
+      "phase": "",
+      "condition": "Kidney Injury, Kidney Failure, Kidney Failure, Chronic, Kidney Failure, Acute, Kidney Diseases, Kidney Transplant Rejection, Kidney Transplant Infection, Kidney Transplant; Complications, Kidney Disease, Chronic, Kidney Ischemia",
+      "start_date": "2020-10-01",
+      "completion_date": "2022-12-08",
+      "enrollment": 0,
+      "sponsor": "George Washington University"
+    },
+    {
+      "nct_id": "NCT03695601",
+      "title": "Surveillance HeartCare\u00ae Outcomes Registry",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "",
+      "condition": "Heart Transplant Rejection",
+      "start_date": "2018-12-28",
+      "completion_date": "2026-11",
+      "enrollment": 0,
+      "sponsor": "CareDx"
+    },
+    {
+      "nct_id": "NCT04177095",
+      "title": "Immune Monitoring to Facilitate Belatacept Monotherapy",
+      "status": "COMPLETED",
+      "phase": "PHASE4",
+      "condition": "Kidney Transplant Rejection, Immunosuppression",
+      "start_date": "2020-02-11",
+      "completion_date": "2023-06-01",
+      "enrollment": 0,
+      "sponsor": "Massachusetts General Hospital"
+    },
+    {
+      "nct_id": "NCT04130685",
+      "title": "Donor-Derived Cell-Free DNA for Surveillance in Simultaneous Pancreas and Kidney Transplant Recipients",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Pancreas Transplant Rejection, Kidney Transplant Rejection",
+      "start_date": "2020-01-15",
+      "completion_date": "2022-12-01",
+      "enrollment": 0,
+      "sponsor": "Rush University Medical Center"
+    },
+    {
+      "nct_id": "NCT04271267",
+      "title": "Cell-free DNA as a Biomarker After Lung Transplantation",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Lung Transplant Rejection",
+      "start_date": "2015-12-20",
+      "completion_date": "2019-11-30",
+      "enrollment": 0,
+      "sponsor": "Duke University"
+    },
+    {
+      "nct_id": "NCT05033548",
+      "title": "Technology Enabled And Molecular Monitoring of the Allograft and Transplant rEcipient",
+      "status": "TERMINATED",
+      "phase": "",
+      "condition": "Transplant",
+      "start_date": "2021-10-26",
+      "completion_date": "2023-07-31",
+      "enrollment": 0,
+      "sponsor": "CareDx"
+    },
+    {
+      "nct_id": "NCT05060991",
+      "title": "Impact of Immunosuppression Adjustment on COVID-19 Vaccination Response in Kidney Transplant Recipients",
+      "status": "RECRUITING",
+      "phase": "PHASE4",
+      "condition": "COVID-19, Immunosuppression, Vaccine Response Impaired",
+      "start_date": "2021-09-24",
+      "completion_date": "2025-12-24",
+      "enrollment": 0,
+      "sponsor": "University of California, Davis"
+    },
+    {
+      "nct_id": "NCT02178943",
+      "title": "Utility of Donor-Derived Cell Free DNA in Association With Gene Expression Profiling",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Cardiac Transplant Failure, Cardiac Transplant Rejection, Heart Diseases",
+      "start_date": "2014-06",
+      "completion_date": "2020-02",
+      "enrollment": 0,
+      "sponsor": "CareDx"
+    },
+    {
+      "nct_id": "NCT04793360",
+      "title": "Molecular Assessment and Profiling of Liver Transplant Recipients",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "",
+      "condition": "Liver Transplantation, Biomarkers",
+      "start_date": "2021-05-26",
+      "completion_date": "2028-03-31",
+      "enrollment": 0,
+      "sponsor": "CareDx"
+    },
+    {
+      "nct_id": "NCT04601155",
+      "title": "Transition of Renal Patients Using AlloSure Into Community Kidney Care",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Kidney Transplant Rejection",
+      "start_date": "2020-11-19",
+      "completion_date": "2023-10-06",
+      "enrollment": 0,
+      "sponsor": "CareDx"
+    }
+  ],
+  "summary": {
+    "total_trials": 27,
+    "by_phase": {
+      "": 19,
+      "PHASE4": 3,
+      "NA": 5
+    },
+    "by_status": {
+      "TERMINATED": 4,
+      "ACTIVE_NOT_RECRUITING": 4,
+      "COMPLETED": 9,
+      "RECRUITING": 2,
+      "UNKNOWN": 5,
+      "NOT_YET_RECRUITING": 2,
+      "WITHDRAWN": 1
+    },
+    "active_trials": 6,
+    "completed_trials": 9,
+    "conditions": [
+      "Acute Myeloid Leukemia, Acute Lymphoblastic Leukemia, Myelodysplastic Syndrome",
+      "COVID-19, Immunosuppression, Vaccine Response Impaired",
+      "Cardiac Transplant Failure, Cardiac Transplant Rejection, Heart Diseases",
+      "Heart Transplant Rejection",
+      "Heart Transplant, Immunosuppression, Allograft",
+      "Kidney Injury, Kidney Failure, Kidney Failure, Chronic, Kidney Failure, Acute, Kidney Diseases, Kidney Transplant Rejection, Kidney Transplant Infection, Kidney Transplant; Complications, Kidney Disease, Chronic, Kidney Ischemia",
+      "Kidney Pancreas Transplant",
+      "Kidney Transplant Failure and Rejection",
+      "Kidney Transplant Immunosuppression",
+      "Kidney Transplant Recipients",
+      "Kidney Transplant Rejection",
+      "Kidney Transplant Rejection, Immunosuppression",
+      "Kidney Transplant, Immunosuppression, Allograft",
+      "Liver Transplantation, Biomarkers",
+      "Lung Transplant Failure and Rejection",
+      "Lung Transplant Infection, Lung Transplant; Complications, Lung Transplant Failure and Rejection",
+      "Lung Transplant Rejection",
+      "Medication Compliance",
+      "Pancreas Transplant Rejection, Kidney Transplant Rejection",
+      "Primary Graft Dysfunction",
+      "Solid Organ Transplant Rejection, COVID-19",
+      "Transplant",
+      "Transplant; Complication, Rejection"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:17:22.805274",
+    "search_query": "CareDx, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=CareDx,+Inc."
+  }
+}

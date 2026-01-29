@@ -1,0 +1,43 @@
+{
+  "ticker": "GPCR",
+  "success": true,
+  "price": {
+    "current": 86.905,
+    "currency": "USD",
+    "day_high": 89.39,
+    "day_low": 86.1,
+    "52_week_high": 94.9,
+    "52_week_low": 13.22
+  },
+  "market_cap": {
+    "value": 6138897408.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 70639178.0,
+  "volume": {
+    "last": 313696,
+    "average_30d": 1124364
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -68.780075,
+    "price_to_book": 6.8483057
+  },
+  "company_info": {
+    "name": "Structure Therapeutics Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:06:52.284295",
+    "url": "https://finance.yahoo.com/quote/GPCR",
+    "data_hash": "255b627839e250b5"
+  }
+}

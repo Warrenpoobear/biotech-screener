@@ -1,0 +1,63 @@
+{
+  "ticker": "VTYX",
+  "company_name": "Ventyx Biosciences, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05655299",
+      "title": "VTX958 Versus Placebo for the Treatment of Moderate to Severe Psoriasis",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Psoriasis",
+      "start_date": "2022-11-17",
+      "completion_date": "2023-12-20",
+      "enrollment": 0,
+      "sponsor": "Ventyx Biosciences, Inc"
+    },
+    {
+      "nct_id": "NCT05715125",
+      "title": "VTX958 Versus Placebo for the Treatment of Active Psoriatic Arthritis (Tranquility-PsA)",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Psoriatic Arthritis",
+      "start_date": "2023-01-31",
+      "completion_date": "2024-01-02",
+      "enrollment": 0,
+      "sponsor": "Ventyx Biosciences, Inc"
+    },
+    {
+      "nct_id": "NCT05688852",
+      "title": "VTX958 for the Treatment of Moderately to Severely Active Crohn's Disease",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Crohn Disease",
+      "start_date": "2023-01-25",
+      "completion_date": "2024-12-20",
+      "enrollment": 0,
+      "sponsor": "Ventyx Biosciences, Inc"
+    }
+  ],
+  "summary": {
+    "total_trials": 3,
+    "by_phase": {
+      "PHASE2": 3
+    },
+    "by_status": {
+      "TERMINATED": 3
+    },
+    "active_trials": 0,
+    "completed_trials": 0,
+    "conditions": [
+      "Crohn Disease",
+      "Psoriasis",
+      "Psoriatic Arthritis"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:22:54.134691",
+    "search_query": "Ventyx Biosciences, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Ventyx+Biosciences,+Inc."
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "SION",
+  "success": true,
+  "price": {
+    "current": 42.19,
+    "currency": "USD",
+    "day_high": 43.745,
+    "day_low": 42.1,
+    "52_week_high": 45.0,
+    "52_week_low": 7.255
+  },
+  "market_cap": {
+    "value": 1882888448.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 44628788.0,
+  "volume": {
+    "last": 55827,
+    "average_30d": 265733
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -19.566376,
+    "price_to_book": 5.832181
+  },
+  "company_info": {
+    "name": "Sionna Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:09:48.338097",
+    "url": "https://finance.yahoo.com/quote/SION",
+    "data_hash": "e1d66277521545ee"
+  }
+}

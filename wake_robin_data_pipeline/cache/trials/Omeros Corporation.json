@@ -1,0 +1,172 @@
+{
+  "ticker": "OMER",
+  "company_name": "Omeros Corporation",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT00599664",
+      "title": "Pharmacokinetic and Safety Study of OMS201 in Subjects Undergoing Ureteroscopic Treatment for Removal of Urinary Tract-Located Stones",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Urinary Calculi, Urinary Stones, Urinary Tract Stones",
+      "start_date": "2007-12",
+      "completion_date": "2008-09",
+      "enrollment": 0,
+      "sponsor": "Omeros Corporation"
+    },
+    {
+      "nct_id": "NCT01579565",
+      "title": "Safety, Efficacy and Pharmacokinetics of OMS302 in Subjects Undergoing Intraocular Lens Replacement With Phacoemulsification",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Intraocular Lens Replacement",
+      "start_date": "2012-04",
+      "completion_date": "2013-01",
+      "enrollment": 0,
+      "sponsor": "Omeros Corporation"
+    },
+    {
+      "nct_id": "NCT05889299",
+      "title": "Study of the Safety and Efficacy of OMS906 in Patients With Paroxysmal Nocturnal Hemoglobinuria",
+      "status": "UNKNOWN",
+      "phase": "PHASE1",
+      "condition": "Paroxysmal Nocturnal Hemoglobinuria",
+      "start_date": "2022-12-09",
+      "completion_date": "2024-06-30",
+      "enrollment": 0,
+      "sponsor": "Omeros Corporation"
+    },
+    {
+      "nct_id": "NCT00226772",
+      "title": "Efficacy and Safety of OMS103HP in Patients Undergoing Autograft Anterior Cruciate Ligament (ACL) Reconstruction",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Knee Injuries",
+      "start_date": "2005-06",
+      "completion_date": "2011-03",
+      "enrollment": 0,
+      "sponsor": "Omeros Corporation"
+    },
+    {
+      "nct_id": "NCT06298955",
+      "title": "Long-Term Safety, Tolerability and Efficacy of OMS906 in Paroxysmal Nocturnal Hemoglobinuria",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Paroxysmal Nocturnal Hemoglobinuria",
+      "start_date": "2024-02-19",
+      "completion_date": "2027-04",
+      "enrollment": 0,
+      "sponsor": "Omeros Corporation"
+    },
+    {
+      "nct_id": "NCT02132312",
+      "title": "A Randomized Study in Children Ages Birth Through Three Years Undergoing Unilateral Cataract Extraction With or Without Lens Replacement",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Unilateral Cataract Extraction, Congenital Cataract",
+      "start_date": "2014-07",
+      "completion_date": "2016-09-12",
+      "enrollment": 0,
+      "sponsor": "Omeros Corporation"
+    },
+    {
+      "nct_id": "NCT02682407",
+      "title": "Safety Study of IgAN, LN, MN, & C3 Glomerulopathy Including Dense Deposit Disease Treated With OMS721",
+      "status": "UNKNOWN",
+      "phase": "PHASE2",
+      "condition": "IgAN, Lupus Nephritis, MN, C3 Glomerulopathy",
+      "start_date": "2016-02",
+      "completion_date": "2020-12",
+      "enrollment": 0,
+      "sponsor": "Omeros Corporation"
+    },
+    {
+      "nct_id": "NCT04829799",
+      "title": "Effect of Intracameral Phenylephrine/Ketorolac on Intraoperative Pain",
+      "status": "WITHDRAWN",
+      "phase": "PHASE4",
+      "condition": "Pain Reduction",
+      "start_date": "2022-02",
+      "completion_date": "2023-08",
+      "enrollment": 0,
+      "sponsor": "University of Florida"
+    },
+    {
+      "nct_id": "NCT05972967",
+      "title": "Safety and Efficacy of OMS906 in Paroxysmal Nocturnal Hemoglobinuria Patients With a Sub-optimal Response to Ravulizumab",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Paroxysmal Nocturnal Hemoglobinuria",
+      "start_date": "2023-03-27",
+      "completion_date": "2024-10-10",
+      "enrollment": 0,
+      "sponsor": "Omeros Corporation"
+    },
+    {
+      "nct_id": "NCT05855083",
+      "title": "Efficacy and Safety Study of Narsoplimab in Pediatric Patients With High-Risk Hematopoietic Stem Cell Transplant TMA",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Thrombotic Microangiopathies, Hematopoietic Stem Cell Transplantation",
+      "start_date": "2023-05-01",
+      "completion_date": "2025-12",
+      "enrollment": 0,
+      "sponsor": "Omeros Corporation"
+    }
+  ],
+  "summary": {
+    "total_trials": 29,
+    "by_phase": {
+      "PHASE1": 2,
+      "PHASE3": 10,
+      "PHASE2": 10,
+      "PHASE4": 2,
+      "PHASE1, PHASE2": 3,
+      "": 1,
+      "PHASE2, PHASE3": 1
+    },
+    "by_status": {
+      "COMPLETED": 17,
+      "UNKNOWN": 2,
+      "RECRUITING": 3,
+      "WITHDRAWN": 1,
+      "TERMINATED": 5,
+      "AVAILABLE": 1
+    },
+    "active_trials": 3,
+    "completed_trials": 17,
+    "conditions": [
+      "Anterior Cruciate Ligament Reconstruction",
+      "C3 Glomerulopathy, Idiopathic Immune Complex-Mediated Glomerulonephritis",
+      "Cataract",
+      "Cataract Extraction",
+      "Hematopoietic Stem Cell Transplant Associated Thrombotic Microangiopathy (HSCT-TMA)",
+      "Heroin Dependence, Nicotine Dependence",
+      "Huntington's Disease",
+      "IgA Nephropathy",
+      "IgAN, Lupus Nephritis, MN, C3 Glomerulopathy",
+      "Intraocular Lens Replacement",
+      "Intraocular Lens Replacement, Intraoperative Floppy Iris Syndrome",
+      "Knee Injuries",
+      "Meniscal Tear",
+      "Opioid Abuse",
+      "Pain Reduction",
+      "Paroxysmal Nocturnal Hemoglobinuria",
+      "Postoperative Pain",
+      "Schizophrenia",
+      "Thrombotic Microangiopathies",
+      "Thrombotic Microangiopathies, Atypical Hemolytic Uremic Syndrome",
+      "Thrombotic Microangiopathies, Hematopoietic Stem Cell Transplantation",
+      "Unilateral Cataract Extraction, Congenital Cataract",
+      "Urinary Calculi, Urinary Stones, Urinary Tract Stones",
+      "Urinary Calculi, Urinary Stones, Urinary Tract Stones, Renal Calculi, Kidney Stones"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:20:37.369933",
+    "search_query": "Omeros Corporation",
+    "url": "https://clinicaltrials.gov/search?term=Omeros+Corporation"
+  }
+}

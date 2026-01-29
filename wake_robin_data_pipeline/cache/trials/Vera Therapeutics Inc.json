@@ -1,0 +1,104 @@
+{
+  "ticker": "VERA",
+  "company_name": "Vera Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06983028",
+      "title": "Atacicept in Multiple Glomerular Diseases",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "pMN, IgAN, Nephrotic Syndrome, MCD, FSGS",
+      "start_date": "2025-07-07",
+      "completion_date": "2027-11",
+      "enrollment": 0,
+      "sponsor": "Vera Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06674577",
+      "title": "A Rollover Study to Evaluate the Long-Term Safety and Efficacy of Atacicept",
+      "status": "ENROLLING_BY_INVITATION",
+      "phase": "PHASE2",
+      "condition": "IgA Nephropathy (IgAN), Renal and Urinary Disorders, Berger Disease",
+      "start_date": "2024-12-01",
+      "completion_date": "2028-05-31",
+      "enrollment": 0,
+      "sponsor": "Vera Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04294472",
+      "title": "A Safety, Pharmacokinetics and Efficacy Study of MAU868 for the Treatment of BK Viremia in Kidney Transplant Recipients",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "BK Virus Infection",
+      "start_date": "2020-08-05",
+      "completion_date": "2022-02-10",
+      "enrollment": 0,
+      "sponsor": "Vera Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT07020923",
+      "title": "Monthly Dosing of Atacicept in IgAN",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "IgA Nephropathy (IgAN), Berger Disease",
+      "start_date": "2025-05-29",
+      "completion_date": "2027-09",
+      "enrollment": 0,
+      "sponsor": "Vera Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04716231",
+      "title": "Atacicept in Subjects With IgA Nephropathy",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "IgA Nephropathy, Berger Disease",
+      "start_date": "2023-06-29",
+      "completion_date": "2028-07",
+      "enrollment": 0,
+      "sponsor": "Vera Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05609812",
+      "title": "Atacicept in Subjects With Active Lupus Nephritis (COMPASS)",
+      "status": "WITHDRAWN",
+      "phase": "PHASE3",
+      "condition": "Lupus Nephritis (LN)",
+      "start_date": "2022-11-02",
+      "completion_date": "2028-12-15",
+      "enrollment": 0,
+      "sponsor": "Vera Therapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 6,
+    "by_phase": {
+      "PHASE2": 4,
+      "PHASE3": 2
+    },
+    "by_status": {
+      "RECRUITING": 2,
+      "ENROLLING_BY_INVITATION": 1,
+      "COMPLETED": 1,
+      "ACTIVE_NOT_RECRUITING": 1,
+      "WITHDRAWN": 1
+    },
+    "active_trials": 4,
+    "completed_trials": 1,
+    "conditions": [
+      "BK Virus Infection",
+      "IgA Nephropathy (IgAN), Berger Disease",
+      "IgA Nephropathy (IgAN), Renal and Urinary Disorders, Berger Disease",
+      "IgA Nephropathy, Berger Disease",
+      "Lupus Nephritis (LN)",
+      "pMN, IgAN, Nephrotic Syndrome, MCD, FSGS"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:22:46.060752",
+    "search_query": "Vera Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Vera+Therapeutics,+Inc."
+  }
+}

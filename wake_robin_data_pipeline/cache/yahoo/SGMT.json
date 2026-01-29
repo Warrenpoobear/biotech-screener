@@ -1,0 +1,43 @@
+{
+  "ticker": "SGMT",
+  "success": true,
+  "price": {
+    "current": 5.125,
+    "currency": "USD",
+    "day_high": 5.79,
+    "day_low": 5.05,
+    "52_week_high": 11.41,
+    "52_week_low": 1.73
+  },
+  "market_cap": {
+    "value": 166673200.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 31001109.0,
+  "volume": {
+    "last": 2851823,
+    "average_30d": 624619
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -2.6814911,
+    "price_to_book": 1.3976002
+  },
+  "company_info": {
+    "name": "Sagimet Biosciences Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:09:45.600941",
+    "url": "https://finance.yahoo.com/quote/SGMT",
+    "data_hash": "15a3a50360eee946"
+  }
+}

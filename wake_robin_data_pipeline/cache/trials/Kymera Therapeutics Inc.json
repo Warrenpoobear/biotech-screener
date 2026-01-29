@@ -1,0 +1,150 @@
+{
+  "ticker": "KYMR",
+  "company_name": "Kymera Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06673667",
+      "title": "First-in-human Study of Orally Administered KT-621 in Healthy Adult Participants",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Participants Study",
+      "start_date": "2024-10-22",
+      "completion_date": "2025-04-23",
+      "enrollment": 0,
+      "sponsor": "Kymera Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06945458",
+      "title": "Safety, PK, PD, and Clinical Activity of Orally Administered KT-621 in Adult Patients With Atopic Dermatitis (AD)",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Atopic Dermatitis",
+      "start_date": "2025-04-17",
+      "completion_date": "2025-11-10",
+      "enrollment": 0,
+      "sponsor": "Kymera Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04440410",
+      "title": "Evaluation of Cutaneous and Circulating Inflammatory Biomarkers in Hidradenitis Suppurativa and Atopic Dermatitis",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Hidradenitis Suppurativa, Dermatitis, Atopic",
+      "start_date": "2020-05-28",
+      "completion_date": "2021-03-24",
+      "enrollment": 0,
+      "sponsor": "Kymera Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06028230",
+      "title": "A Phase 2 Study to Evaluate the Efficacy and Safety of SAR444656 Compared With Placebo in Adult Participants With Moderate to Severe Hidradenitis Suppurativa",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Hidradenitis Suppurativa",
+      "start_date": "2023-09-29",
+      "completion_date": "2025-11-12",
+      "enrollment": 0,
+      "sponsor": "Sanofi"
+    },
+    {
+      "nct_id": "NCT05225584",
+      "title": "Safety, PK, PD, Clinical Activity of KT-333 in Adult Patients With Refractory Lymphoma, Large Granular Lymphocytic Leukemia, Solid Tumors",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Non Hodgkin Lymphoma (NHL), Peripheral T-cell Lymphoma (PTCL), Cutaneous T-Cell Lymphoma (CTCL), Large Granular Lymphocytic Leukemia (LGL-L), T-cell Prolymphocytic Leukemia (T-PLL), Solid Tumors",
+      "start_date": "2022-05-19",
+      "completion_date": "2025-03-03",
+      "enrollment": 0,
+      "sponsor": "Kymera Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06058156",
+      "title": "Phase 2 Study of SAR444656 in Adult Participants With Moderate to Severe Atopic Dermatitis",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Atopic Dermatitis",
+      "start_date": "2023-11-09",
+      "completion_date": "2025-11-20",
+      "enrollment": 0,
+      "sponsor": "Sanofi"
+    },
+    {
+      "nct_id": "NCT07217015",
+      "title": "A Study of KT-621 Administered Orally to Participants With Moderate to Severe Atopic Dermatitis",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Atopic Dermatitis",
+      "start_date": "2025-11-24",
+      "completion_date": "2028-06",
+      "enrollment": 0,
+      "sponsor": "Kymera Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05233033",
+      "title": "Safety, PK/PD, and Clinical Activity of KT-413 in Adult Patients with Relapsed or Refractory B-cell NHL",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Non Hodgkin Lymphoma, Diffuse Large B Cell Lymphoma, DLBCL, MYD88 Gene Mutation",
+      "start_date": "2022-06-13",
+      "completion_date": "2023-07-28",
+      "enrollment": 0,
+      "sponsor": "Kymera Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05775406",
+      "title": "Safety and Clinical Activity of KT-253 in Adult Patients with High Grade Myeloid Malignancies, Acute Lymphocytic Leukemia, Lymphoma, Solid Tumors",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Myeloid Malignancies, Acute Lymphocytic Leukemia, Lymphomas, Advanced Solid Tumors",
+      "start_date": "2023-05-15",
+      "completion_date": "2024-12-18",
+      "enrollment": 0,
+      "sponsor": "Kymera Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT07323654",
+      "title": "A Study of KT-621 Administered Orally to Adult Participants With Moderate to Severe Eosinophilic Asthma",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Eosinophilic Asthma",
+      "start_date": "2026-03",
+      "completion_date": "2027-12",
+      "enrollment": 0,
+      "sponsor": "Kymera Therapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 11,
+    "by_phase": {
+      "PHASE1": 6,
+      "": 1,
+      "PHASE2": 4
+    },
+    "by_status": {
+      "COMPLETED": 7,
+      "TERMINATED": 2,
+      "RECRUITING": 2
+    },
+    "active_trials": 2,
+    "completed_trials": 7,
+    "conditions": [
+      "Atopic Dermatitis",
+      "Eosinophilic Asthma",
+      "Healthy Participants Study",
+      "Healthy Volunteer, Atopic Dermatitis, Hidradenitis Suppurativa",
+      "Hidradenitis Suppurativa",
+      "Hidradenitis Suppurativa, Dermatitis, Atopic",
+      "Myeloid Malignancies, Acute Lymphocytic Leukemia, Lymphomas, Advanced Solid Tumors",
+      "Non Hodgkin Lymphoma (NHL), Peripheral T-cell Lymphoma (PTCL), Cutaneous T-Cell Lymphoma (CTCL), Large Granular Lymphocytic Leukemia (LGL-L), T-cell Prolymphocytic Leukemia (T-PLL), Solid Tumors",
+      "Non Hodgkin Lymphoma, Diffuse Large B Cell Lymphoma, DLBCL, MYD88 Gene Mutation"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:19:32.479198",
+    "search_query": "Kymera Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Kymera+Therapeutics,+Inc."
+  }
+}

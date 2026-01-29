@@ -1,0 +1,43 @@
+{
+  "ticker": "MNMD",
+  "success": true,
+  "price": {
+    "current": 15.02,
+    "currency": "USD",
+    "day_high": 15.16,
+    "day_low": 14.31,
+    "52_week_high": 18.12,
+    "52_week_low": 4.7
+  },
+  "market_cap": {
+    "value": 1460232320.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 97219193.0,
+  "volume": {
+    "last": 2042821,
+    "average_30d": 2203667
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -8.471518,
+    "price_to_book": 8.8301
+  },
+  "company_info": {
+    "name": "Mind Medicine (MindMed) Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:10.827067",
+    "url": "https://finance.yahoo.com/quote/MNMD",
+    "data_hash": "10856caac2629c69"
+  }
+}

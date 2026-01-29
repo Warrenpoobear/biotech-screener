@@ -1,0 +1,43 @@
+{
+  "ticker": "IDYA",
+  "success": true,
+  "price": {
+    "current": 33.07,
+    "currency": "USD",
+    "day_high": 34.02,
+    "day_low": 32.97,
+    "52_week_high": 39.28,
+    "52_week_low": 13.45
+  },
+  "market_cap": {
+    "value": 2899128064.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 87666408.0,
+  "volume": {
+    "last": 100855,
+    "average_30d": 860493
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -9.285622,
+    "price_to_book": 2.6547322
+  },
+  "company_info": {
+    "name": "IDEAYA Biosciences, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:07:04.105506",
+    "url": "https://finance.yahoo.com/quote/IDYA",
+    "data_hash": "31e69aaf2f39a38c"
+  }
+}

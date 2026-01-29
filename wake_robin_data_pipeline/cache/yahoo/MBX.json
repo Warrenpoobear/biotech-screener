@@ -1,0 +1,43 @@
+{
+  "ticker": "MBX",
+  "success": true,
+  "price": {
+    "current": 35.745,
+    "currency": "USD",
+    "day_high": 36.885,
+    "day_low": 35.0,
+    "52_week_high": 44.89,
+    "52_week_low": 4.807
+  },
+  "market_cap": {
+    "value": 1605032832.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 44902302.0,
+  "volume": {
+    "last": 31208,
+    "average_30d": 653809
+  },
+  "valuation": {
+    "pe_ratio": 4.660365,
+    "forward_pe": -12.103738,
+    "price_to_book": 4.1242642
+  },
+  "company_info": {
+    "name": "MBX Biosciences, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:07:55.352460",
+    "url": "https://finance.yahoo.com/quote/MBX",
+    "data_hash": "3470b15b312b10d6"
+  }
+}

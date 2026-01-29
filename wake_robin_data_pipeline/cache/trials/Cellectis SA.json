@@ -1,0 +1,103 @@
+{
+  "ticker": "CLLS",
+  "company_name": "Cellectis S.A.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04106076",
+      "title": "Phase I Study of UCART123 in Patient With Adverse Genetic Risk Acute Myeloid Leukemia",
+      "status": "WITHDRAWN",
+      "phase": "PHASE1",
+      "condition": "Acute Myeloid Leukaemia",
+      "start_date": "2019-07-11",
+      "completion_date": "2019-12-05",
+      "enrollment": 0,
+      "sponsor": "Cellectis S.A."
+    },
+    {
+      "nct_id": "NCT04150497",
+      "title": "Phase 1/2 Study of UCART22 in Patients With Relapsed or Refractory CD22+ B-cell Acute Lymphoblastic Leukemia (BALLI-01)",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "B-cell Acute Lymphoblastic Leukemia",
+      "start_date": "2019-10-14",
+      "completion_date": "2026-06-30",
+      "enrollment": 0,
+      "sponsor": "Cellectis S.A."
+    },
+    {
+      "nct_id": "NCT03203369",
+      "title": "Study to Evaluate the Safety and Clinical Activity of UCART123 in Patients With BPDCN",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Blastic Plasmacytoid Dendritic Cell Neoplasm (BPDCN)",
+      "start_date": "2017-06-28",
+      "completion_date": "2019-06-27",
+      "enrollment": 0,
+      "sponsor": "Cellectis S.A."
+    },
+    {
+      "nct_id": "NCT04142619",
+      "title": "Study Evaluating Safety and Efficacy of UCART Targeting CS1 in Patients With Relapsed/Refractory Multiple Myeloma (MELANI-01)",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Relapsed/Refractory Multiple Myeloma",
+      "start_date": "2019-11-21",
+      "completion_date": "2023-06-18",
+      "enrollment": 0,
+      "sponsor": "Cellectis S.A."
+    },
+    {
+      "nct_id": "NCT05607420",
+      "title": "Study Evaluating UCART20x22 in B-Cell Non-Hodgkin Lymphoma",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "B-cell Non-Hodgkin Lymphoma (B-NHL)",
+      "start_date": "2022-11-01",
+      "completion_date": "2027-08",
+      "enrollment": 0,
+      "sponsor": "Cellectis S.A."
+    },
+    {
+      "nct_id": "NCT03190278",
+      "title": "Study Evaluating Safety and Efficacy of UCART123v1.2 in Patients With Relapsed/Refractory Acute Myeloid Leukemia",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Relapsed/Refractory Acute Myeloid Leukemia",
+      "start_date": "2017-06-19",
+      "completion_date": "2025-12",
+      "enrollment": 0,
+      "sponsor": "Cellectis S.A."
+    }
+  ],
+  "summary": {
+    "total_trials": 6,
+    "by_phase": {
+      "PHASE1": 4,
+      "PHASE1, PHASE2": 2
+    },
+    "by_status": {
+      "WITHDRAWN": 1,
+      "RECRUITING": 2,
+      "TERMINATED": 2,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 3,
+    "completed_trials": 0,
+    "conditions": [
+      "Acute Myeloid Leukaemia",
+      "B-cell Acute Lymphoblastic Leukemia",
+      "B-cell Non-Hodgkin Lymphoma (B-NHL)",
+      "Blastic Plasmacytoid Dendritic Cell Neoplasm (BPDCN)",
+      "Relapsed/Refractory Acute Myeloid Leukemia",
+      "Relapsed/Refractory Multiple Myeloma"
+    ],
+    "lead_stage": "phase_1"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:17:30.626996",
+    "search_query": "Cellectis S.A.",
+    "url": "https://clinicaltrials.gov/search?term=Cellectis+S.A."
+  }
+}

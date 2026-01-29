@@ -1,0 +1,43 @@
+{
+  "ticker": "IFRX",
+  "success": true,
+  "price": {
+    "current": 0.8998,
+    "currency": "USD",
+    "day_high": 0.9611,
+    "day_low": 0.8812,
+    "52_week_high": 2.77,
+    "52_week_low": 0.711
+  },
+  "market_cap": {
+    "value": 60958864.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 67747130.0,
+  "volume": {
+    "last": 337185,
+    "average_30d": 679862
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -1.0915598,
+    "price_to_book": 1.1176269
+  },
+  "company_info": {
+    "name": "InflaRx N.V.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T13:11:25.706248",
+    "url": "https://finance.yahoo.com/quote/IFRX",
+    "data_hash": "e7d9ce0ba6bd3cc2"
+  }
+}

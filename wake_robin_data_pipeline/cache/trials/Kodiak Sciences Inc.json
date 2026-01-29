@@ -1,0 +1,150 @@
+{
+  "ticker": "KOD",
+  "company_name": "Kodiak Sciences Inc",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05066230",
+      "title": "A Study to Evaluate the Efficacy and Safety of Intravitreal KSI-301 in Non-proliferative Diabetic Retinopathy (NPDR)",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Non-proliferative Diabetic Retinopathy",
+      "start_date": "2021-09-07",
+      "completion_date": "2023-08-31",
+      "enrollment": 0,
+      "sponsor": "Kodiak Sciences Inc"
+    },
+    {
+      "nct_id": "NCT06996080",
+      "title": "A Phase 3 Study to Evaluate the Efficacy and Safety of Intravitreal KSI-101 in Participants With Macular Edema Secondary to Inflammation (MESI) - PINNACLE",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Macular Edema Secondary to Inflammation",
+      "start_date": "2025-07-16",
+      "completion_date": "2027-07",
+      "enrollment": 0,
+      "sponsor": "Kodiak Sciences Inc"
+    },
+    {
+      "nct_id": "NCT04049266",
+      "title": "A Study to Evaluate the Efficacy and Safety of KSI-301, an Anti-VEGF Antibody Biopolymer Conjugate, Versus Aflibercept in Patients With Neovascular (Wet) Age-Related Macular Degeneration.",
+      "status": "TERMINATED",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Wet Macular Degeneration",
+      "start_date": "2019-10-08",
+      "completion_date": "2022-04-26",
+      "enrollment": 0,
+      "sponsor": "Kodiak Sciences Inc"
+    },
+    {
+      "nct_id": "NCT04592419",
+      "title": "A Study to Evaluate the Efficacy, Durability, and Safety of KSI-301 Compared to Aflibercept in Patients With Macular Edema Due to Retinal Vein Occlusion (RVO)",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Macular Edema, Retinal Vein Occlusion",
+      "start_date": "2020-09-25",
+      "completion_date": "2023-01-19",
+      "enrollment": 0,
+      "sponsor": "Kodiak Sciences Inc"
+    },
+    {
+      "nct_id": "NCT04603937",
+      "title": "A Study to Evaluate the Efficacy, Durability, and Safety of KSI-301 Compared to Aflibercept in Participants With Diabetic Macular Edema (DME)",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Diabetic Macular Edema",
+      "start_date": "2020-09-30",
+      "completion_date": "2023-08-31",
+      "enrollment": 0,
+      "sponsor": "Kodiak Sciences Inc"
+    },
+    {
+      "nct_id": "NCT04964089",
+      "title": "A Study to Evaluate the Efficacy and Safety of Intravitreal KSI-301 Compared With Intravitreal Aflibercept in Participants With Neovascular (Wet) Age-related Macular Degeneration (wAMD)",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Wet Age-related Macular Degeneration",
+      "start_date": "2021-06-23",
+      "completion_date": "2023-04-06",
+      "enrollment": 0,
+      "sponsor": "Kodiak Sciences Inc"
+    },
+    {
+      "nct_id": "NCT03790852",
+      "title": "Exploratory Study to Investigate the Bioactivity, Ocular and Systemic Safety, Tolerability, and Pharmacokinetics Following Single and Multiple Intravitreal Administrations of KSI-301 in Subjects With wAMD, DME and RVO",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Wet Age-related Macular Degeneration, Retinal Vein Occlusion, Diabetic Macular Edema",
+      "start_date": "2018-12-26",
+      "completion_date": "2022-06-09",
+      "enrollment": 0,
+      "sponsor": "Kodiak Sciences Inc"
+    },
+    {
+      "nct_id": "NCT06556368",
+      "title": "A Study to Evaluate the Efficacy and Safety of Tarcocimab Tedromer and Tabirafusp Tedromer Compared to Aflibercept in Participants With Neovascular (Wet) Age-related Macular Degeneration (wAMD) - DAYBREAK",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Wet Age-related Macular Degeneration",
+      "start_date": "2024-08-23",
+      "completion_date": "2027-08",
+      "enrollment": 0,
+      "sponsor": "Kodiak Sciences Inc"
+    },
+    {
+      "nct_id": "NCT04611152",
+      "title": "A Trial to Evaluate the Efficacy, Durability, and Safety of KSI-301 Compared to Aflibercept in Participants With Diabetic Macular Edema (DME)",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Diabetic Macular Edema",
+      "start_date": "2020-09-30",
+      "completion_date": "2023-08-31",
+      "enrollment": 0,
+      "sponsor": "Kodiak Sciences Inc"
+    },
+    {
+      "nct_id": "NCT06990399",
+      "title": "A Phase 3 Study to Evaluate the Efficacy and Safety of Intravitreal KSI-101 in Participants With Macular Edema Secondary to Inflammation (MESI) - PEAK",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Macular Edema Secondary to Inflammation",
+      "start_date": "2025-07-30",
+      "completion_date": "2027-07",
+      "enrollment": 0,
+      "sponsor": "Kodiak Sciences Inc"
+    }
+  ],
+  "summary": {
+    "total_trials": 11,
+    "by_phase": {
+      "PHASE3": 9,
+      "PHASE2, PHASE3": 1,
+      "PHASE1": 1
+    },
+    "by_status": {
+      "TERMINATED": 5,
+      "RECRUITING": 2,
+      "COMPLETED": 2,
+      "ACTIVE_NOT_RECRUITING": 2
+    },
+    "active_trials": 4,
+    "completed_trials": 2,
+    "conditions": [
+      "Diabetic Macular Edema",
+      "Diabetic Retinopathy",
+      "Macular Edema Secondary to Inflammation",
+      "Macular Edema, Retinal Vein Occlusion",
+      "Non-proliferative Diabetic Retinopathy",
+      "Wet Age-related Macular Degeneration",
+      "Wet Age-related Macular Degeneration, Retinal Vein Occlusion, Diabetic Macular Edema",
+      "Wet Macular Degeneration"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:19:27.482525",
+    "search_query": "Kodiak Sciences Inc",
+    "url": "https://clinicaltrials.gov/search?term=Kodiak+Sciences+Inc"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "DSGN",
+  "success": true,
+  "price": {
+    "current": 10.26,
+    "currency": "USD",
+    "day_high": 10.58,
+    "day_low": 10.1,
+    "52_week_high": 10.97,
+    "52_week_low": 2.6
+  },
+  "market_cap": {
+    "value": 584448128.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 56963757.0,
+  "volume": {
+    "last": 52204,
+    "average_30d": 324727
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -7.916667,
+    "price_to_book": 2.9264119
+  },
+  "company_info": {
+    "name": "Design Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:06:11.248469",
+    "url": "https://finance.yahoo.com/quote/DSGN",
+    "data_hash": "93209137b226824b"
+  }
+}

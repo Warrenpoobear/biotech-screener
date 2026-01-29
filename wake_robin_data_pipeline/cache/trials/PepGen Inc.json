@@ -1,0 +1,89 @@
+{
+  "ticker": "PEPG",
+  "company_name": "PepGen Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06079736",
+      "title": "A Study Of PGN-EDO51 In Participants With Duchenne Muscular Dystrophy Amenable To Exon 51-Skipping Treatment",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Duchenne Muscular Dystrophy",
+      "start_date": "2024-01-03",
+      "completion_date": "2025-08-28",
+      "enrollment": 0,
+      "sponsor": "PepGen Inc"
+    },
+    {
+      "nct_id": "NCT07220603",
+      "title": "An Open-Label Extension Study of PGN-EDODM1 in People With Myotonic Dystrophy Type 1 (FREEDOM-OLE)",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Myotonic Dystrophy 1",
+      "start_date": "2025-12-23",
+      "completion_date": "2029-01",
+      "enrollment": 0,
+      "sponsor": "PepGen Inc"
+    },
+    {
+      "nct_id": "NCT06667453",
+      "title": "A Clinical Study of PGN-EDODM1 in People With Myotonic Dystrophy Type 1",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Myotonic Dystrophy 1",
+      "start_date": "2024-12-10",
+      "completion_date": "2026-08",
+      "enrollment": 0,
+      "sponsor": "PepGen Inc"
+    },
+    {
+      "nct_id": "NCT06204809",
+      "title": "Safety, Tolerability, PK, and PD Study of PGN-EDODM1 in Participants With Myotonic Dystrophy Type 1",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Myotonic Dystrophy 1",
+      "start_date": "2023-12-12",
+      "completion_date": "2025-10",
+      "enrollment": 0,
+      "sponsor": "PepGen Inc"
+    },
+    {
+      "nct_id": "NCT06833931",
+      "title": "A Study of PGN-EDO51 or Placebo in People With Duchenne Muscular Dystrophy Amenable to Exon 51-Skipping Treatment",
+      "status": "WITHDRAWN",
+      "phase": "PHASE2",
+      "condition": "Duchenne Muscular Dystrophy (DMD)",
+      "start_date": "2024-12-17",
+      "completion_date": "2025-05-28",
+      "enrollment": 0,
+      "sponsor": "PepGen Inc"
+    }
+  ],
+  "summary": {
+    "total_trials": 5,
+    "by_phase": {
+      "PHASE2": 4,
+      "PHASE1": 1
+    },
+    "by_status": {
+      "TERMINATED": 1,
+      "RECRUITING": 2,
+      "ACTIVE_NOT_RECRUITING": 1,
+      "WITHDRAWN": 1
+    },
+    "active_trials": 3,
+    "completed_trials": 0,
+    "conditions": [
+      "Duchenne Muscular Dystrophy",
+      "Duchenne Muscular Dystrophy (DMD)",
+      "Myotonic Dystrophy 1"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:20:52.851979",
+    "search_query": "PepGen Inc.",
+    "url": "https://clinicaltrials.gov/search?term=PepGen+Inc."
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "IMCR",
+  "success": true,
+  "price": {
+    "current": 32.77,
+    "currency": "USD",
+    "day_high": 33.39,
+    "day_low": 32.705,
+    "52_week_high": 40.715,
+    "52_week_low": 23.15
+  },
+  "market_cap": {
+    "value": 1655881856.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 50530419.0,
+  "volume": {
+    "last": 112853,
+    "average_30d": 469688
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -39.043976,
+    "price_to_book": 4.1702724
+  },
+  "company_info": {
+    "name": "Immunocore Holdings plc",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:07:08.301684",
+    "url": "https://finance.yahoo.com/quote/IMCR",
+    "data_hash": "1b7dff5a898252ca"
+  }
+}

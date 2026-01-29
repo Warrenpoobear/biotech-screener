@@ -1,0 +1,43 @@
+{
+  "ticker": "APGE",
+  "success": true,
+  "price": {
+    "current": 67.49,
+    "currency": "USD",
+    "day_high": 70.8163,
+    "day_low": 67.22,
+    "52_week_high": 84.56,
+    "52_week_low": 26.2
+  },
+  "market_cap": {
+    "value": 4610932224.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 54833587.0,
+  "volume": {
+    "last": 219011,
+    "average_30d": 1031459
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -13.895865,
+    "price_to_book": 6.827516
+  },
+  "company_info": {
+    "name": "Apogee Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:04:37.706277",
+    "url": "https://finance.yahoo.com/quote/APGE",
+    "data_hash": "6a03fadbaf27640c"
+  }
+}

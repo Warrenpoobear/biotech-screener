@@ -1,0 +1,43 @@
+{
+  "ticker": "CRBU",
+  "success": true,
+  "price": {
+    "current": 1.4721,
+    "currency": "USD",
+    "day_high": 1.53,
+    "day_low": 1.47,
+    "52_week_high": 3.535,
+    "52_week_low": 0.66
+  },
+  "market_cap": {
+    "value": 137594304.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 93468038.0,
+  "volume": {
+    "last": 231119,
+    "average_30d": 1057878
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -0.7397488,
+    "price_to_book": 0.96976286
+  },
+  "company_info": {
+    "name": "Caribou Biosciences, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:05:49.671523",
+    "url": "https://finance.yahoo.com/quote/CRBU",
+    "data_hash": "2be27f83ebe8ab61"
+  }
+}

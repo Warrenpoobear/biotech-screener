@@ -1,0 +1,43 @@
+{
+  "ticker": "DNTH",
+  "cik": "0001690585",
+  "success": true,
+  "financials": {
+    "cash": 55984000.0,
+    "debt": 0.0,
+    "net_debt": -55984000.0,
+    "revenue_ttm": 1752000.0,
+    "assets": 577445000.0,
+    "liabilities": 30991000.0,
+    "equity": 546454000.0,
+    "currency": "USD"
+  },
+  "data_dates": {
+    "cash": "2025-09-30",
+    "revenue": "2025-09-30",
+    "assets": "2025-09-30",
+    "liabilities": "2025-09-30",
+    "debt": "2025-09-30"
+  },
+  "data_freshness": {
+    "most_recent_date": "2025-09-30",
+    "oldest_date": "2025-09-30",
+    "staleness_flags": [
+      "stale_data:121d"
+    ]
+  },
+  "coverage": {
+    "has_cash": true,
+    "has_debt": true,
+    "has_revenue": true,
+    "has_balance_sheet": true,
+    "pct_complete": 100.0
+  },
+  "provenance": {
+    "source": "SEC EDGAR Company Facts API",
+    "timestamp": "2026-01-29T11:13:49.992801",
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001690585.json",
+    "cik": "0001690585",
+    "accounting_standard": "us-gaap"
+  }
+}

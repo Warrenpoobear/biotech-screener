@@ -1,0 +1,43 @@
+{
+  "ticker": "MLYS",
+  "success": true,
+  "price": {
+    "current": 31.68,
+    "currency": "USD",
+    "day_high": 32.555,
+    "day_low": 31.575,
+    "52_week_high": 47.65,
+    "52_week_low": 8.241
+  },
+  "market_cap": {
+    "value": 2507153664.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 79139956.0,
+  "volume": {
+    "last": 146384,
+    "average_30d": 1159385
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -13.734085,
+    "price_to_book": 4.3403206
+  },
+  "company_info": {
+    "name": "Mineralys Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:07.813832",
+    "url": "https://finance.yahoo.com/quote/MLYS",
+    "data_hash": "3b3ef3658c655eda"
+  }
+}

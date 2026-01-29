@@ -1,0 +1,43 @@
+{
+  "ticker": "CGON",
+  "success": true,
+  "price": {
+    "current": 54.14,
+    "currency": "USD",
+    "day_high": 54.5999,
+    "day_low": 53.0,
+    "52_week_high": 57.88,
+    "52_week_low": 14.8
+  },
+  "market_cap": {
+    "value": 4473278976.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 82624285.0,
+  "volume": {
+    "last": 113828,
+    "average_30d": 1413933
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -21.4158,
+    "price_to_book": 6.1627774
+  },
+  "company_info": {
+    "name": "CG Oncology, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:05:37.020428",
+    "url": "https://finance.yahoo.com/quote/CGON",
+    "data_hash": "ffa238f80833b1cd"
+  }
+}

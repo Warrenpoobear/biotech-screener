@@ -1,0 +1,78 @@
+{
+  "ticker": "QTTB",
+  "company_name": "Q32 Bio Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06018428",
+      "title": "A Phase 2a Proof-of-Concept Trial of Bempikibart (ADX-914) for the Treatment of Severe Alopecia Areata (SIGNAL-AA)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Alopecia Areata",
+      "start_date": "2023-09-12",
+      "completion_date": "2026-09",
+      "enrollment": 0,
+      "sponsor": "Q32 Bio Inc."
+    },
+    {
+      "nct_id": "NCT05509023",
+      "title": "Evaluating Safety and Efficacy of ADX-914 in Patients With Moderate to Severe Atopic Dermatitis (SIGNAL-AD)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Atopic Dermatitis",
+      "start_date": "2022-09-30",
+      "completion_date": "2024-12",
+      "enrollment": 0,
+      "sponsor": "Q32 Bio Inc."
+    },
+    {
+      "nct_id": "NCT04485481",
+      "title": "Single and Multiple Ascending Dose Study of ADX-914 in Healthy Adult Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Safety Issues",
+      "start_date": "2020-09-08",
+      "completion_date": "2022-01-12",
+      "enrollment": 0,
+      "sponsor": "Q32 Bio Inc."
+    },
+    {
+      "nct_id": "NCT06419205",
+      "title": "A Phase 2 Study to Evaluate the Safety, PD, PK, and Clinical Activity of ADX-097 in Participants With IgAN, LN or C3G",
+      "status": "WITHDRAWN",
+      "phase": "PHASE2",
+      "condition": "IgA Nephropathy, Lupus Nephritis (LN), C3 (Complement Component 3) Glomerulopathy",
+      "start_date": "2024-06-27",
+      "completion_date": "2026-06",
+      "enrollment": 0,
+      "sponsor": "Q32 Bio Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 4,
+    "by_phase": {
+      "PHASE2": 3,
+      "PHASE1": 1
+    },
+    "by_status": {
+      "ACTIVE_NOT_RECRUITING": 2,
+      "COMPLETED": 1,
+      "WITHDRAWN": 1
+    },
+    "active_trials": 2,
+    "completed_trials": 1,
+    "conditions": [
+      "Alopecia Areata",
+      "Atopic Dermatitis",
+      "IgA Nephropathy, Lupus Nephritis (LN), C3 (Complement Component 3) Glomerulopathy",
+      "Safety Issues"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T13:12:14.161222",
+    "search_query": "Q32 Bio Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Q32+Bio+Inc."
+  }
+}

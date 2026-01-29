@@ -1,0 +1,64 @@
+{
+  "ticker": "TRDA",
+  "company_name": "Entrada Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT07038824",
+      "title": "A Study in Participants With Duchenne Muscular Dystrophy Amenable to Exon 45 Skipping to Evaluate the Safety and Efficacy of ENTR-601-45",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Duchenne Muscular Dystrophy (DMD)",
+      "start_date": "2025-08-30",
+      "completion_date": "2029-03-01",
+      "enrollment": 0,
+      "sponsor": "Entrada Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04245917",
+      "title": "Natural History Study of MNGIE",
+      "status": "SUSPENDED",
+      "phase": "",
+      "condition": "Mitochondrial Neurogastrointestinal Encephalomyopathy",
+      "start_date": "2020-08-06",
+      "completion_date": "2026-02",
+      "enrollment": 0,
+      "sponsor": "Entrada Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT07037862",
+      "title": "A Study in Participants With Duchenne Muscular Dystrophy Amenable to Exon 44 Skipping to Evaluate the Safety and Efficacy of ENTR-601-44",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Duchenne Muscular Dystrophy (DMD)",
+      "start_date": "2025-06-30",
+      "completion_date": "2029-03-28",
+      "enrollment": 0,
+      "sponsor": "Entrada Therapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 3,
+    "by_phase": {
+      "PHASE1, PHASE2": 2,
+      "": 1
+    },
+    "by_status": {
+      "RECRUITING": 2,
+      "SUSPENDED": 1
+    },
+    "active_trials": 2,
+    "completed_trials": 0,
+    "conditions": [
+      "Duchenne Muscular Dystrophy (DMD)",
+      "Mitochondrial Neurogastrointestinal Encephalomyopathy"
+    ],
+    "lead_stage": "unknown"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:22:28.955994",
+    "search_query": "Entrada Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Entrada+Therapeutics,+Inc."
+  }
+}

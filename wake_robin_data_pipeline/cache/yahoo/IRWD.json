@@ -1,0 +1,43 @@
+{
+  "ticker": "IRWD",
+  "success": true,
+  "price": {
+    "current": 4.8296,
+    "currency": "USD",
+    "day_high": 4.9313,
+    "day_low": 4.72,
+    "52_week_high": 5.78,
+    "52_week_low": 0.53
+  },
+  "market_cap": {
+    "value": 785672768.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 162678647.0,
+  "volume": {
+    "last": 362950,
+    "average_30d": 7063288
+  },
+  "valuation": {
+    "pe_ratio": 26.83111,
+    "forward_pe": 5.6597095,
+    "price_to_book": -2.9738917
+  },
+  "company_info": {
+    "name": "Ironwood Pharmaceuticals, Inc.",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:07:23.894445",
+    "url": "https://finance.yahoo.com/quote/IRWD",
+    "data_hash": "f8a5c0a97148b4b2"
+  }
+}

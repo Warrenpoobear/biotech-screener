@@ -1,0 +1,110 @@
+{
+  "ticker": "LRMR",
+  "company_name": "Larimar Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04255680",
+      "title": "A Study to Assess Variation in Potential Biomarkers in Friedreich Ataxia",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Friedreich Ataxia",
+      "start_date": "2020-01-14",
+      "completion_date": "2020-06-30",
+      "enrollment": 0,
+      "sponsor": "Larimar Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04519567",
+      "title": "Multiple Ascending Dose Study of CTI-1601 Versus Placebo in Subjects With Friedreich's Ataxia",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Friedreich Ataxia",
+      "start_date": "2020-07-31",
+      "completion_date": "2021-03-16",
+      "enrollment": 0,
+      "sponsor": "Larimar Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05028764",
+      "title": "Determine Range of Tissue Frataxin Concentrations and Other Potential Biomarkers",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Friedreich Ataxia, Healthy Volunteers",
+      "start_date": "2021-08-04",
+      "completion_date": "2022-02-04",
+      "enrollment": 0,
+      "sponsor": "Larimar Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05579691",
+      "title": "A Double-Blind, Placebo-Controlled, Dose Exploration Study of CTI-1601 in Adult Subjects With Friedreich's Ataxia",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Friedreich Ataxia",
+      "start_date": "2022-09-21",
+      "completion_date": "2023-12-04",
+      "enrollment": 0,
+      "sponsor": "Larimar Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06681766",
+      "title": "A Study to Assess Nomlabofusp in Adolescents and Children With Friedreich's Ataxia",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Friedreich Ataxia",
+      "start_date": "2024-12-06",
+      "completion_date": "2025-04-28",
+      "enrollment": 0,
+      "sponsor": "Larimar Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04176991",
+      "title": "Single Ascending Dose Study of CTI-1601 Versus Placebo in Subjects With Friedreich's Ataxia",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Friedreich Ataxia",
+      "start_date": "2019-12-11",
+      "completion_date": "2020-10-31",
+      "enrollment": 0,
+      "sponsor": "Larimar Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06447025",
+      "title": "An Open Label Extension Study of CTI-1601 in Subjects With Friedreich's Ataxia",
+      "status": "ENROLLING_BY_INVITATION",
+      "phase": "PHASE2",
+      "condition": "Friedreich Ataxia",
+      "start_date": "2024-01-25",
+      "completion_date": "2027-01",
+      "enrollment": 0,
+      "sponsor": "Larimar Therapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 7,
+    "by_phase": {
+      "": 2,
+      "PHASE1": 3,
+      "PHASE2": 2
+    },
+    "by_status": {
+      "COMPLETED": 5,
+      "TERMINATED": 1,
+      "ENROLLING_BY_INVITATION": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 5,
+    "conditions": [
+      "Friedreich Ataxia",
+      "Friedreich Ataxia, Healthy Volunteers"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:19:45.165026",
+    "search_query": "Larimar Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Larimar+Therapeutics,+Inc."
+  }
+}

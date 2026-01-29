@@ -1,0 +1,43 @@
+{
+  "ticker": "PCVX",
+  "success": true,
+  "price": {
+    "current": 52.01,
+    "currency": "USD",
+    "day_high": 52.33,
+    "day_low": 51.2,
+    "52_week_high": 92.585,
+    "52_week_low": 27.66
+  },
+  "market_cap": {
+    "value": 6808434688.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 130906263.0,
+  "volume": {
+    "last": 103610,
+    "average_30d": 1035255
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -8.363982,
+    "price_to_book": 2.3377383
+  },
+  "company_info": {
+    "name": "Vaxcyte, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:54.043631",
+    "url": "https://finance.yahoo.com/quote/PCVX",
+    "data_hash": "05cb4a738397fea6"
+  }
+}

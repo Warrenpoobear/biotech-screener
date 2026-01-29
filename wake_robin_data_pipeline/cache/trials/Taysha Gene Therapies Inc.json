@@ -1,0 +1,78 @@
+{
+  "ticker": "TSHA",
+  "company_name": "Taysha Gene Therapies, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04798235",
+      "title": "First-in-Human Study of TSHA-101 Gene Therapy for Treatment of Infantile Onset GM2 Gangliosidosis",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Infantile GM2 Gangliosidosis (Disorder)",
+      "start_date": "2021-03-12",
+      "completion_date": "2027-03-12",
+      "enrollment": 0,
+      "sponsor": "Dr. Anupam Sehgal"
+    },
+    {
+      "nct_id": "NCT05277363",
+      "title": "A Study of the Natural Course of SURF1 Deficiency",
+      "status": "WITHDRAWN",
+      "phase": "",
+      "condition": "Leigh Syndrome",
+      "start_date": "2022-05-04",
+      "completion_date": "2022-05-04",
+      "enrollment": 0,
+      "sponsor": "Taysha Gene Therapies, Inc."
+    },
+    {
+      "nct_id": "NCT05606614",
+      "title": "A Phase 1/2/3 Study of TSHA-102 Gene Therapy in Females With Rett Syndrome (REVEAL Pivotal Study)",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Rett Syndrome",
+      "start_date": "2023-03-06",
+      "completion_date": "2031-06",
+      "enrollment": 0,
+      "sponsor": "Taysha Gene Therapies, Inc."
+    },
+    {
+      "nct_id": "NCT06152237",
+      "title": "Safety and Efficacy of TSHA-102 in Pediatric Females With Rett Syndrome (REVEAL Pediatric Study)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Rett Syndrome",
+      "start_date": "2023-12-12",
+      "completion_date": "2031-11-02",
+      "enrollment": 0,
+      "sponsor": "Taysha Gene Therapies, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 4,
+    "by_phase": {
+      "PHASE1, PHASE2": 2,
+      "": 1,
+      "PHASE3": 1
+    },
+    "by_status": {
+      "ACTIVE_NOT_RECRUITING": 2,
+      "WITHDRAWN": 1,
+      "RECRUITING": 1
+    },
+    "active_trials": 3,
+    "completed_trials": 0,
+    "conditions": [
+      "Infantile GM2 Gangliosidosis (Disorder)",
+      "Leigh Syndrome",
+      "Rett Syndrome"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:22:31.532801",
+    "search_query": "Taysha Gene Therapies, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Taysha+Gene+Therapies,+Inc."
+  }
+}

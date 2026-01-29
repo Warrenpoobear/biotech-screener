@@ -1,0 +1,43 @@
+{
+  "ticker": "PCRX",
+  "success": true,
+  "price": {
+    "current": 20.16,
+    "currency": "USD",
+    "day_high": 20.7,
+    "day_low": 20.15,
+    "52_week_high": 27.64,
+    "52_week_low": 18.8
+  },
+  "market_cap": {
+    "value": 867308928.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 41100000.0,
+  "volume": {
+    "last": 78451,
+    "average_30d": 992106
+  },
+  "valuation": {
+    "pe_ratio": 42.893616,
+    "forward_pe": 5.917229,
+    "price_to_book": 1.1911374
+  },
+  "company_info": {
+    "name": "Pacira BioSciences, Inc.",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:55.157546",
+    "url": "https://finance.yahoo.com/quote/PCRX",
+    "data_hash": "5f90ff3eb742fb3a"
+  }
+}

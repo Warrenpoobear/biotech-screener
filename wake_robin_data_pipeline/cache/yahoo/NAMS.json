@@ -1,0 +1,43 @@
+{
+  "ticker": "NAMS",
+  "success": true,
+  "price": {
+    "current": 31.525,
+    "currency": "USD",
+    "day_high": 32.275,
+    "day_low": 31.37,
+    "52_week_high": 42.0,
+    "52_week_low": 14.06
+  },
+  "market_cap": {
+    "value": 3574644992.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 113390804.0,
+  "volume": {
+    "last": 48715,
+    "average_30d": 705023
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -18.1567,
+    "price_to_book": 4.9005127
+  },
+  "company_info": {
+    "name": "NewAmsterdam Pharma Company N.V.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:17.551788",
+    "url": "https://finance.yahoo.com/quote/NAMS",
+    "data_hash": "cc74edc35481327a"
+  }
+}

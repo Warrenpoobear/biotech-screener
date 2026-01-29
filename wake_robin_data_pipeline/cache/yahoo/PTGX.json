@@ -1,0 +1,43 @@
+{
+  "ticker": "PTGX",
+  "success": true,
+  "price": {
+    "current": 79.8,
+    "currency": "USD",
+    "day_high": 82.49,
+    "day_low": 79.69,
+    "52_week_high": 96.54,
+    "52_week_low": 33.7
+  },
+  "market_cap": {
+    "value": 4988750336.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 62515666.0,
+  "volume": {
+    "last": 75782,
+    "average_30d": 758462
+  },
+  "valuation": {
+    "pe_ratio": 120.90909,
+    "forward_pe": 75.173096,
+    "price_to_book": 7.720588
+  },
+  "company_info": {
+    "name": "Protagonist Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:09:11.652982",
+    "url": "https://finance.yahoo.com/quote/PTGX",
+    "data_hash": "4cccaac48c669e7e"
+  }
+}

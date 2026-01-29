@@ -1,0 +1,163 @@
+{
+  "ticker": "TVTX",
+  "company_name": "Travere Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04663204",
+      "title": "A Study of the Safety and Activity of Sparsentan for the Treatment of Incident Patients With Immunoglobulin A Nephropathy",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Immunoglobulin A Nephropathy, Kidney Diseases, Glomerulonephritis, IGA, Glomerulonephritis, Autoimmune Diseases, Immune System Diseases",
+      "start_date": "2020-12-10",
+      "completion_date": "2025-03-31",
+      "enrollment": 0,
+      "sponsor": "University of Leicester"
+    },
+    {
+      "nct_id": "NCT05562362",
+      "title": "Study to Evaluate the Pharmacokinetics of Oral Sparsentan Suspension",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Subjects",
+      "start_date": "2020-06-18",
+      "completion_date": "2020-11-12",
+      "enrollment": 0,
+      "sponsor": "Travere Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT01613118",
+      "title": "Randomized, Double-Blind, Safety and Efficacy Study of RE-021 (Sparsentan) in Focal Segmental Glomerulosclerosis",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Focal Segmental Glomerulosclerosis",
+      "start_date": "2014-03",
+      "completion_date": "2024-03-25",
+      "enrollment": 0,
+      "sponsor": "Travere Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05856760",
+      "title": "A Study to Investigate Safety and Effect of Sparsentan in Combination With SGLT2 Inhibition in Participants With IgAN",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Immunoglobulin A Nephropathy",
+      "start_date": "2023-05-19",
+      "completion_date": "2024-10-25",
+      "enrollment": 0,
+      "sponsor": "Travere Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05630612",
+      "title": "ETA and AT1 Antagonism in ANCA-vasculitis (SPARVASC)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "ANCA Associated Vasculitis, Cardiovascular Diseases, Kidney Diseases",
+      "start_date": "2022-12-08",
+      "completion_date": "2027-09-01",
+      "enrollment": 0,
+      "sponsor": "University of Edinburgh"
+    },
+    {
+      "nct_id": "NCT03493685",
+      "title": "Study of Sparsentan in Patients With Primary Focal Segmental Glomerulosclerosis (FSGS)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Focal Segmental Glomerulosclerosis",
+      "start_date": "2018-04-17",
+      "completion_date": "2026-02",
+      "enrollment": 0,
+      "sponsor": "Travere Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT03406611",
+      "title": "Pegtibatinase As an Enzyme Therapy for Patients with Homocystinuria Caused by Cystathionine Beta-Synthase Deficiency (COMPOSE)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Homocystinuria",
+      "start_date": "2019-01-22",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "Travere Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06247085",
+      "title": "A Study to Investigate Efficacy and Safety of Pegtibatinase Compared With Placebo in Participants \u226512 to \u226465 Years of Age With Classical Homocystinuria (HCU) Due to Cystathionine Beta Synthase Deficiency Receiving Standard of Care Treatment",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Homocystinuria",
+      "start_date": "2023-12-28",
+      "completion_date": "2026-01",
+      "enrollment": 0,
+      "sponsor": "Travere Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT03041116",
+      "title": "Efficacy and Safety Study of Fosmetpantotenate (RE-024) in PKAN Participants",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Pantothenate Kinase-Associated Neurodegeneration",
+      "start_date": "2017-07-17",
+      "completion_date": "2019-12-30",
+      "enrollment": 0,
+      "sponsor": "Travere Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT03762850",
+      "title": "A Study of the Effect and Safety of Sparsentan in the Treatment of Patients With IgA Nephropathy",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Immunoglobulin A Nephropathy",
+      "start_date": "2018-12-11",
+      "completion_date": "2026-07",
+      "enrollment": 0,
+      "sponsor": "Travere Therapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 19,
+    "by_phase": {
+      "PHASE2": 5,
+      "PHASE1": 2,
+      "PHASE3": 5,
+      "PHASE1, PHASE2": 1,
+      "": 4,
+      "NA": 1,
+      "PHASE4": 1
+    },
+    "by_status": {
+      "ACTIVE_NOT_RECRUITING": 7,
+      "COMPLETED": 5,
+      "TERMINATED": 1,
+      "ENROLLING_BY_INVITATION": 2,
+      "NOT_YET_RECRUITING": 1,
+      "RECRUITING": 3
+    },
+    "active_trials": 12,
+    "completed_trials": 5,
+    "conditions": [
+      "ANCA Associated Vasculitis, Cardiovascular Diseases, Kidney Diseases",
+      "Acid Sphingomyelinase Deficiency, Ceroid Lipofuscinosis, Neuronal, 2, Cerebrotendinous Xanthomatosis, Fabry Disease, GM1 Gangliosidosis, Gaucher Disease, Lysosomal Acid Lipase Deficiency, Metachromatic Leukodystrophy, Mucopolysaccharidosis II, Mucopolysaccharidosis III-B, Mucopolysaccharidosis IV A, Mucopolysaccharidosis VI, Mucopolysaccharidosis VII, Niemann-Pick Disease, Type C",
+      "Anxiety, Depressive Symptoms, Post-traumatic Stress Disorder, Problems Psychosocial",
+      "Cerebrotendinous Xanthomatosis (CTX)",
+      "Focal Segmental Glomerulosclerosis",
+      "Focal Segmental Glomerulosclerosis, Immunoglobulin A Nephropathy",
+      "Focal Segmental Glomerulosclerosis, Minimal Change Disease, Immunoglobulin A Nephropathy, IgA Vasculitis, Alport Syndrome",
+      "Healthy Subjects",
+      "Homocystinuria",
+      "Homocystinuria Due to CBS Deficiency",
+      "Immunoglobulin A Nephropathy",
+      "Immunoglobulin A Nephropathy, Kidney Diseases, Glomerulonephritis, IGA, Glomerulonephritis, Autoimmune Diseases, Immune System Diseases",
+      "Pantothenate Kinase-Associated Neurodegeneration",
+      "Proteinuria, Immunoglobulin A (IgA) Nephropathy, Focal Segmental Glomerulosclerosis, Kidney Transplant",
+      "Proteinuric Renal Disease, Proteinuric Kidney Disease, Proteinuria, Proteinuria in Nephrotic Range"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:22:32.813019",
+    "search_query": "Travere Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Travere+Therapeutics,+Inc."
+  }
+}

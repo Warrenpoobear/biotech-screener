@@ -1,0 +1,43 @@
+{
+  "ticker": "HOWL",
+  "success": true,
+  "price": {
+    "current": 0.699,
+    "currency": "USD",
+    "day_high": 0.7456,
+    "day_low": 0.6787,
+    "52_week_high": 2.38,
+    "52_week_low": 0.53
+  },
+  "market_cap": {
+    "value": 33929600.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 48540200.0,
+  "volume": {
+    "last": 97066,
+    "average_30d": 558834
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -0.5592,
+    "price_to_book": 1.1166134
+  },
+  "company_info": {
+    "name": "Werewolf Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:06:55.795591",
+    "url": "https://finance.yahoo.com/quote/HOWL",
+    "data_hash": "f05382572013efac"
+  }
+}

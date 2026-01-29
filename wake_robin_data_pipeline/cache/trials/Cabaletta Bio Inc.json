@@ -1,0 +1,114 @@
+{
+  "ticker": "CABA",
+  "company_name": "Cabaletta Bio, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04422912",
+      "title": "A Phase 1/2, Open-label, Safety and Dosing Study of Autologous CART Cells (Desmoglein 3 Chimeric Autoantibody Receptor T Cells [DSG3-CAART] or CD19-specific Chimeric Antigen Receptor T Cells [CABA-201]) in Subjects With Active, Pemphigus Vulgaris (RESET-PV)",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Pemphigus Vulgaris",
+      "start_date": "2020-09-29",
+      "completion_date": "2029-01",
+      "enrollment": 0,
+      "sponsor": "Cabaletta Bio"
+    },
+    {
+      "nct_id": "NCT07006805",
+      "title": "RESET-MS: A Study to Evaluate the Safety and Efficacy of CABA-201 in Participants With Multiple Sclerosis",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Relapsing Multiple Sclerosis (RMS), Progressive Multiple Sclerosis (PMS), Multiple Sclerosis - Relapsing Remitting, Multiple Sclerosis, Multiple Sclerosis (Relapsing Remitting), Multiple Sclerosis (MS) - Relapsing-remitting, Progressive Multiple Sclerosis",
+      "start_date": "2026-06",
+      "completion_date": "2029-10",
+      "enrollment": 0,
+      "sponsor": "Cabaletta Bio"
+    },
+    {
+      "nct_id": "NCT06359041",
+      "title": "RESET-MG: A Study to Evaluate the Safety and Efficacy of CABA-201 in Participants With Generalized Myasthenia Gravis",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Generalized Myasthenia Gravis (gMG)",
+      "start_date": "2024-12-17",
+      "completion_date": "2029-09",
+      "enrollment": 0,
+      "sponsor": "Cabaletta Bio"
+    },
+    {
+      "nct_id": "NCT06328777",
+      "title": "RESET-SSc: An Open-Label Study to Evaluate the Safety and Efficacy of CABA-201, a CD19-CAR T Cell Therapy, in Subjects With Systemic Sclerosis",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Systemic Sclerosis, Scleroderma",
+      "start_date": "2024-07-02",
+      "completion_date": "2029-07",
+      "enrollment": 0,
+      "sponsor": "Cabaletta Bio"
+    },
+    {
+      "nct_id": "NCT06154252",
+      "title": "RESET-Myositis: An Open-Label Study to Evaluate the Safety and Efficacy of CABA-201 in Subjects With Active Idiopathic Inflammatory Myopathy or Juvenile Idiopathic Inflammatory Myopathy",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Idiopathic Inflammatory Myopathy, Dermatomyositis, Anti-Synthetase Syndrome, Immune-Mediated Necrotizing Myopathy, Juvenile Dermatomyositis, Juvenile Polymyositis, Juvenile Idiopathic Inflammatory Myopathy (JIIM), Juvenile Myositis",
+      "start_date": "2023-12-20",
+      "completion_date": "2028-07",
+      "enrollment": 0,
+      "sponsor": "Cabaletta Bio"
+    },
+    {
+      "nct_id": "NCT06121297",
+      "title": "RESET-SLE: A Phase 1/2 Open-Label Study to Evaluate the Safety and Efficacy of CABA-201 in Subjects With Active Systemic Lupus Erythematosus",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Systemic Lupus Erythematosus, Lupus Nephritis",
+      "start_date": "2024-02-16",
+      "completion_date": "2029-12",
+      "enrollment": 0,
+      "sponsor": "Cabaletta Bio"
+    },
+    {
+      "nct_id": "NCT05451212",
+      "title": "Open-label Study to Evaluate the Safety of Various Dosing Regimens of MuSK-CAART for MuSK Myasthenia Gravis",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "MuSK Myasthenia Gravis",
+      "start_date": "2022-11-23",
+      "completion_date": "2025-07-24",
+      "enrollment": 0,
+      "sponsor": "Cabaletta Bio"
+    }
+  ],
+  "summary": {
+    "total_trials": 7,
+    "by_phase": {
+      "PHASE1, PHASE2": 6,
+      "PHASE1": 1
+    },
+    "by_status": {
+      "RECRUITING": 5,
+      "NOT_YET_RECRUITING": 1,
+      "COMPLETED": 1
+    },
+    "active_trials": 5,
+    "completed_trials": 1,
+    "conditions": [
+      "Generalized Myasthenia Gravis (gMG)",
+      "Idiopathic Inflammatory Myopathy, Dermatomyositis, Anti-Synthetase Syndrome, Immune-Mediated Necrotizing Myopathy, Juvenile Dermatomyositis, Juvenile Polymyositis, Juvenile Idiopathic Inflammatory Myopathy (JIIM), Juvenile Myositis",
+      "MuSK Myasthenia Gravis",
+      "Pemphigus Vulgaris",
+      "Relapsing Multiple Sclerosis (RMS), Progressive Multiple Sclerosis (PMS), Multiple Sclerosis - Relapsing Remitting, Multiple Sclerosis, Multiple Sclerosis (Relapsing Remitting), Multiple Sclerosis (MS) - Relapsing-remitting, Progressive Multiple Sclerosis",
+      "Systemic Lupus Erythematosus, Lupus Nephritis",
+      "Systemic Sclerosis, Scleroderma"
+    ],
+    "lead_stage": "phase_1"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:17:16.422713",
+    "search_query": "Cabaletta Bio, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Cabaletta+Bio,+Inc."
+  }
+}

@@ -1,0 +1,179 @@
+{
+  "ticker": "ARWR",
+  "company_name": "Arrowhead Pharmaceuticals, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06822790",
+      "title": "Long-Term Safety and Efficacy of Plozasiran in Adults With Hypertriglyceridemia",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Hypertriglyceridemia",
+      "start_date": "2025-04-09",
+      "completion_date": "2028-07",
+      "enrollment": 0,
+      "sponsor": "Arrowhead Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT04998201",
+      "title": "Study of ARO-APOC3 in Adults With Mixed Dyslipidemia",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Mixed Dyslipidemia",
+      "start_date": "2021-09-28",
+      "completion_date": "2023-08-14",
+      "enrollment": 0,
+      "sponsor": "Arrowhead Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT04375514",
+      "title": "Study of ARO-ENaC in Healthy Volunteers and in Patients With Cystic Fibrosis",
+      "status": "TERMINATED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Cystic Fibrosis, Pulmonary",
+      "start_date": "2020-07-30",
+      "completion_date": "2022-05-13",
+      "enrollment": 0,
+      "sponsor": "Arrowhead Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT05533294",
+      "title": "Study of ARO-RAGE in Healthy Subjects",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Asthma",
+      "start_date": "2022-11-29",
+      "completion_date": "2024-02-08",
+      "enrollment": 0,
+      "sponsor": "Arrowhead Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT06347003",
+      "title": "Study of Plozasiran (ARO-APOC3) in Adults With Severe Hypertriglyceridemia",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Severe Hypertriglyceridemia",
+      "start_date": "2024-07-22",
+      "completion_date": "2026-09",
+      "enrollment": 0,
+      "sponsor": "Arrowhead Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT06209177",
+      "title": "Study of ARO-CFB in Adult Healthy Volunteers and Patients With Complement-Mediated Kidney Disease",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "IgA Nephropathy",
+      "start_date": "2024-04-05",
+      "completion_date": "2026-03",
+      "enrollment": 0,
+      "sponsor": "Arrowhead Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT06138743",
+      "title": "Study of ARO-DM1 in Subjects With Type 1 Myotonic Dystrophy",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Myotonic Dystrophy 1",
+      "start_date": "2024-03-04",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "Arrowhead Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT02738008",
+      "title": "Extension Study of the Safety and Efficacy of Multi-dose Intravenous ARC-520 in Patients With Chronic Hepatitis B (HBV) Infection",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Hepatitis B",
+      "start_date": "2016-03",
+      "completion_date": "2016-12",
+      "enrollment": 0,
+      "sponsor": "Arrowhead Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT06796426",
+      "title": "Treatment Protocol of Plozasiran in Adults and Adolescents With FCS",
+      "status": "AVAILABLE",
+      "phase": "",
+      "condition": "Familial Chylomicronemia",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Arrowhead Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT07241546",
+      "title": "Study of Inhaled ARO-RAGE in Allergen-induced Mild Asthma",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Asthma",
+      "start_date": "2025-12",
+      "completion_date": "2028-04",
+      "enrollment": 0,
+      "sponsor": "Arrowhead Pharmaceuticals"
+    }
+  ],
+  "summary": {
+    "total_trials": 50,
+    "by_phase": {
+      "PHASE3": 7,
+      "PHASE2": 16,
+      "PHASE1, PHASE2": 14,
+      "PHASE1": 12,
+      "": 1
+    },
+    "by_status": {
+      "RECRUITING": 10,
+      "COMPLETED": 19,
+      "TERMINATED": 10,
+      "ACTIVE_NOT_RECRUITING": 6,
+      "AVAILABLE": 1,
+      "NOT_YET_RECRUITING": 1,
+      "WITHDRAWN": 3
+    },
+    "active_trials": 16,
+    "completed_trials": 19,
+    "conditions": [
+      "Alpha 1-Antitrypsin Deficiency",
+      "Alpha-1 Antitrypsin Deficiency",
+      "Alzheimer Disease, Alzheimer Disease, Early Onset",
+      "Amyotrophic Lateral Sclerosis",
+      "Asthma",
+      "Asthma, Chronic Obstructive Pulmonary Disease",
+      "C3 Glomerulopathy, IgA Nephropathy",
+      "Chronic Hepatitis B",
+      "Clear Cell Renal Cell Carcinoma",
+      "Cystic Fibrosis, Pulmonary",
+      "Dyslipidemias",
+      "Dyslipidemias, Familial Hypercholesterolemia, Hypertriglyceridemia",
+      "Facio-Scapulo-Humeral Dystrophy",
+      "Familial Chylomicronemia",
+      "Healthy",
+      "Healthy Adult Volunteers",
+      "Hepatitis B",
+      "Hepatitis B, Chronic",
+      "Hepatitis B, Hepatitis D",
+      "Homozygous Familial Hypercholesterolemia",
+      "Hyperlipidemia; Mixed",
+      "Hypertriglyceridemia",
+      "Hypertriglyceridemia, Familial Chylomicronemia",
+      "Idiopathic Pulmonary Fibrosis",
+      "IgA Nephropathy",
+      "Mixed Dyslipidemia",
+      "Myotonic Dystrophy 1",
+      "Non-alcoholic Steatohepatitis",
+      "Obesity",
+      "Obesity, Diabetes Mellitus, Type 2",
+      "Severe Hypertriglyceridemia",
+      "Spinocerebellar Ataxia Type 2"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:16:38.152315",
+    "search_query": "Arrowhead Pharmaceuticals, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Arrowhead+Pharmaceuticals,+Inc."
+  }
+}

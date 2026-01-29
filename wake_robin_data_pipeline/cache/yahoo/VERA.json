@@ -1,0 +1,43 @@
+{
+  "ticker": "VERA",
+  "success": true,
+  "price": {
+    "current": 44.74,
+    "currency": "USD",
+    "day_high": 45.745,
+    "day_low": 44.4901,
+    "52_week_high": 56.05,
+    "52_week_low": 18.53
+  },
+  "market_cap": {
+    "value": 3175953408.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 70986890.0,
+  "volume": {
+    "last": 123807,
+    "average_30d": 1082563
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -9.897288,
+    "price_to_book": 7.1664267
+  },
+  "company_info": {
+    "name": "Vera Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:10:37.942238",
+    "url": "https://finance.yahoo.com/quote/VERA",
+    "data_hash": "34b76ddfba16c715"
+  }
+}

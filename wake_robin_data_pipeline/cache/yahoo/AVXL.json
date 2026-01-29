@@ -1,0 +1,43 @@
+{
+  "ticker": "AVXL",
+  "success": true,
+  "price": {
+    "current": 4.95,
+    "currency": "USD",
+    "day_high": 4.985,
+    "day_low": 4.78,
+    "52_week_high": 13.99,
+    "52_week_low": 2.86
+  },
+  "market_cap": {
+    "value": 442273088.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 89348107.0,
+  "volume": {
+    "last": 198677,
+    "average_30d": 1569798
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": 3.8976376,
+    "price_to_book": 4.520548
+  },
+  "company_info": {
+    "name": "Anavex Life Sciences Corp.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:05:01.648718",
+    "url": "https://finance.yahoo.com/quote/AVXL",
+    "data_hash": "97f33d7ba0338261"
+  }
+}

@@ -1,0 +1,114 @@
+{
+  "ticker": "TYRA",
+  "company_name": "Tyra Biosciences, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06006702",
+      "title": "A Relative Bioavailability and Food Effect Study of TYRA-300-B01 Capsule and Tablet Formulations in Healthy Adult Participants",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2023-10-16",
+      "completion_date": "2025-07",
+      "enrollment": 0,
+      "sponsor": "Tyra Biosciences, Inc"
+    },
+    {
+      "nct_id": "NCT06995677",
+      "title": "Efficacy and Safety of TYRA-300 in Participants With FGFR3 Altered Low Grade, Intermediate Risk Non-Muscle Invasive Bladder Cancer",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Low-grade NMIBC, FGFR Gene Amplification, FGFR Gene Alterations, FGFR3 Gene Alteration, FGFR3 Gene Mutation, FGFR3 Gene Fusions",
+      "start_date": "2025-06-27",
+      "completion_date": "2028-09",
+      "enrollment": 0,
+      "sponsor": "Tyra Biosciences, Inc"
+    },
+    {
+      "nct_id": "NCT06915753",
+      "title": "Safety and Preliminary Anti-Tumor Activity of TYRA-430 in Advanced Hepatocellular Carcinoma and Other Solid Tumors With Activating FGF/FGFR Pathway Aberrations",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Metastatic Hepatocellular Carcinoma, Solid Tumors, Solid Tumor, Adult, FGFR Gene Amplification, FGFR Gene Alterations, FGFR3 Gene Alteration, FGFR3 Gene Mutation, Advanced Solid Tumors, FGFR4 Gene Mutation, FGFR4 Gene Fusions, FGF19 Gene Amplification, FGF19 Gene Overexpression, FGFR3 Gene Fusions, Locally Advanced Unresectable Hepatocellular Carcinoma",
+      "start_date": "2025-04-24",
+      "completion_date": "2028-09",
+      "enrollment": 0,
+      "sponsor": "Tyra Biosciences, Inc"
+    },
+    {
+      "nct_id": "NCT06160752",
+      "title": "Safety and Anti-Tumor Activity of TYRA-200 in Advanced Cholangiocarcinoma With Activating FGFR2 Gene Alterations",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Locally Advanced Cholangiocarcinoma, Intrahepatic Cholangiocarcinoma, Solid Tumor, Metastatic Cholangiocarcinoma",
+      "start_date": "2023-11-22",
+      "completion_date": "2027-09",
+      "enrollment": 0,
+      "sponsor": "Tyra Biosciences, Inc"
+    },
+    {
+      "nct_id": "NCT06842355",
+      "title": "A Study of TYRA-300 in Children With Achondroplasia: BEACH301",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Achondroplasia",
+      "start_date": "2025-03-04",
+      "completion_date": "2030-06",
+      "enrollment": 0,
+      "sponsor": "Tyra Biosciences, Inc"
+    },
+    {
+      "nct_id": "NCT07265947",
+      "title": "Phase 2A/B Efficacy and Safety of Dabogratinib in Participants With Low Grade Upper Tract Urothelial Carcinoma",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Low Grade Upper Tract Urothelial Carcinoma",
+      "start_date": "2025-12-22",
+      "completion_date": "2030-11",
+      "enrollment": 0,
+      "sponsor": "Tyra Biosciences, Inc"
+    },
+    {
+      "nct_id": "NCT05544552",
+      "title": "Safety and Preliminary Anti-Tumor Activity of TYRA-300 in Advanced Urothelial Carcinoma and Other Solid Tumors With FGFR3 Gene Alterations",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Locally Advanced Urothelial Carcinoma, Metastatic Urothelial Carcinoma, Solid Tumor, Urothelial Carcinoma, Solid Tumor, Adult, Bladder Cancer, Non-muscle-invasive Bladder Cancer, FGFR3 Gene Mutation, FGFR3 Gene Alteration, Advanced Solid Tumor, Advanced Urothelial Carcinoma, Urinary Tract Cancer, Urinary Tract Tumor, Urinary Tract Carcinoma",
+      "start_date": "2022-11-22",
+      "completion_date": "2027-06",
+      "enrollment": 0,
+      "sponsor": "Tyra Biosciences, Inc"
+    }
+  ],
+  "summary": {
+    "total_trials": 7,
+    "by_phase": {
+      "PHASE1": 3,
+      "PHASE2": 3,
+      "PHASE1, PHASE2": 1
+    },
+    "by_status": {
+      "ACTIVE_NOT_RECRUITING": 2,
+      "RECRUITING": 5
+    },
+    "active_trials": 7,
+    "completed_trials": 0,
+    "conditions": [
+      "Achondroplasia",
+      "Healthy",
+      "Locally Advanced Cholangiocarcinoma, Intrahepatic Cholangiocarcinoma, Solid Tumor, Metastatic Cholangiocarcinoma",
+      "Locally Advanced Urothelial Carcinoma, Metastatic Urothelial Carcinoma, Solid Tumor, Urothelial Carcinoma, Solid Tumor, Adult, Bladder Cancer, Non-muscle-invasive Bladder Cancer, FGFR3 Gene Mutation, FGFR3 Gene Alteration, Advanced Solid Tumor, Advanced Urothelial Carcinoma, Urinary Tract Cancer, Urinary Tract Tumor, Urinary Tract Carcinoma",
+      "Low Grade Upper Tract Urothelial Carcinoma",
+      "Low-grade NMIBC, FGFR Gene Amplification, FGFR Gene Alterations, FGFR3 Gene Alteration, FGFR3 Gene Mutation, FGFR3 Gene Fusions",
+      "Metastatic Hepatocellular Carcinoma, Solid Tumors, Solid Tumor, Adult, FGFR Gene Amplification, FGFR Gene Alterations, FGFR3 Gene Alteration, FGFR3 Gene Mutation, Advanced Solid Tumors, FGFR4 Gene Mutation, FGFR4 Gene Fusions, FGF19 Gene Amplification, FGF19 Gene Overexpression, FGFR3 Gene Fusions, Locally Advanced Unresectable Hepatocellular Carcinoma"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:22:37.615411",
+    "search_query": "Tyra Biosciences, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Tyra+Biosciences,+Inc."
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "ERAS",
+  "success": true,
+  "price": {
+    "current": 10.215,
+    "currency": "USD",
+    "day_high": 10.58,
+    "day_low": 10.14,
+    "52_week_high": 10.708,
+    "52_week_low": 1.01
+  },
+  "market_cap": {
+    "value": 3162429440.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 309586805.0,
+  "volume": {
+    "last": 804963,
+    "average_30d": 8811371
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -22.06359,
+    "price_to_book": 8.331974
+  },
+  "company_info": {
+    "name": "Erasca, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:06:25.635604",
+    "url": "https://finance.yahoo.com/quote/ERAS",
+    "data_hash": "c59d5bc286c37b6a"
+  }
+}

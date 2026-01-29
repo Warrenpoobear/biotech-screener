@@ -1,0 +1,179 @@
+{
+  "ticker": "ADCT",
+  "company_name": "ADC Therapeutics SA",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05160064",
+      "title": "Long-term Registry of Patients Treated With Loncastuximab Tesirine",
+      "status": "WITHDRAWN",
+      "phase": "",
+      "condition": "B-Cell Lymphomas",
+      "start_date": "2022-06-30",
+      "completion_date": "2025-01",
+      "enrollment": 0,
+      "sponsor": "ADC Therapeutics S.A."
+    },
+    {
+      "nct_id": "NCT02669264",
+      "title": "Study of ADCT-402 in Patients With Relapsed or Refractory B-cell Lineage Acute Lymphoblastic Leukemia (B-ALL)",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Acute Lymphoblastic Leukemia",
+      "start_date": "2016-03",
+      "completion_date": "2018-07-03",
+      "enrollment": 0,
+      "sponsor": "ADC Therapeutics S.A."
+    },
+    {
+      "nct_id": "NCT04052997",
+      "title": "Study to Evaluate the Efficacy and Safety of Camidanlumab Tesirine (ADCT-301) in Patients With Relapsed or Refractory Hodgkin Lymphoma",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Relapsed Hodgkin Lymphoma, Refractory Hodgkin Lymphoma",
+      "start_date": "2019-09-13",
+      "completion_date": "2023-01-19",
+      "enrollment": 0,
+      "sponsor": "ADC Therapeutics S.A."
+    },
+    {
+      "nct_id": "NCT06919939",
+      "title": "Epcoritamab in Combination With Loncastuximab Tesirine in Relapsed/Refractory Large B-cell Lymphoma",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Large B-cell Lymphoma, Relapse",
+      "start_date": "2026-02-01",
+      "completion_date": "2031-02-01",
+      "enrollment": 0,
+      "sponsor": "University of Miami"
+    },
+    {
+      "nct_id": "NCT02588092",
+      "title": "Study of ADCT-301 in Patients With Relapsed/Refractory CD25-positive Acute Myeloid Leukemia (AML) or CD25-positive Acute Lymphoblastic Leukemia (ALL)",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Acute Myeloid Leukemia, Acute Lymphoblastic Leukemia",
+      "start_date": "2016-02-01",
+      "completion_date": "2018-08-29",
+      "enrollment": 0,
+      "sponsor": "ADC Therapeutics S.A."
+    },
+    {
+      "nct_id": "NCT03621982",
+      "title": "Study of ADCT-301 in Patients With Selected Advanced Solid Tumors",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Head and Neck Cancer Squamous Cell Carcinoma, Non-small Cell Lung Cancer, Gastric Cancer, Esophageal Cancer, Pancreas Cancer, Bladder Cancer, Renal Cell Carcinoma, Melanoma, Triple-negative Breast Cancer, Ovarian Cancer, Colo-rectal Cancer, Fallopian Tube Cancer",
+      "start_date": "2018-11-09",
+      "completion_date": "2022-12-14",
+      "enrollment": 0,
+      "sponsor": "ADC Therapeutics S.A."
+    },
+    {
+      "nct_id": "NCT05600686",
+      "title": "Loncastuximab Tesirine and Rituximab Followed by DA-EPOCH-R for Treating Patients With High-Risk Diffuse Large B-cell Lymphoma",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Double-Expressor Lymphoma, High Grade B-Cell Lymphoma With MYC and BCL2 and/or BCL6 Rearrangements, High Grade B-Cell Lymphoma With MYC and BCL2 or BCL6 Rearrangements, High Grade B-Cell Lymphoma With MYC, BCL2, and BCL6 Rearrangements",
+      "start_date": "2023-05-24",
+      "completion_date": "2028-02-01",
+      "enrollment": 0,
+      "sponsor": "Joseph Tuscano"
+    },
+    {
+      "nct_id": "NCT06788964",
+      "title": "Loncastuximab Tesirine and Rituximab as Bridging Therapy Before Standard-of-care CAR-T Therapy in Patients With Large B-cell Lymphoma (CORAL)",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Relapsed or Refractory Large B-cell Lymphoma",
+      "start_date": "2025-08-25",
+      "completion_date": "2030-03",
+      "enrollment": 0,
+      "sponsor": "University of Utah"
+    },
+    {
+      "nct_id": "NCT05144009",
+      "title": "A Study of Loncastuximab Tesirine and Rituximab (Lonca-R) in Previously Untreated Unfit/Frail Participants With Diffuse Large B-cell Lymphoma (DLBCL)",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Diffuse Large B-cell Lymphoma",
+      "start_date": "2022-06-21",
+      "completion_date": "2024-01-22",
+      "enrollment": 0,
+      "sponsor": "ADC Therapeutics S.A."
+    },
+    {
+      "nct_id": "NCT03698552",
+      "title": "ADCT-602 in Treating Patients With Recurrent or Refractory B-cell Acute Lymphoblastic Leukemia",
+      "status": "TERMINATED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Blasts 5 Percent or More of Bone Marrow Nucleated Cells, CD22 Positive, Philadelphia Chromosome Positive, Recurrent B Acute Lymphoblastic Leukemia, Refractory B Acute Lymphoblastic Leukemia",
+      "start_date": "2018-08-24",
+      "completion_date": "2025-11-06",
+      "enrollment": 0,
+      "sponsor": "M.D. Anderson Cancer Center"
+    }
+  ],
+  "summary": {
+    "total_trials": 34,
+    "by_phase": {
+      "": 2,
+      "PHASE1": 16,
+      "PHASE2": 11,
+      "PHASE1, PHASE2": 3,
+      "PHASE2, PHASE3": 1,
+      "PHASE3": 1
+    },
+    "by_status": {
+      "WITHDRAWN": 3,
+      "TERMINATED": 13,
+      "COMPLETED": 5,
+      "RECRUITING": 10,
+      "ACTIVE_NOT_RECRUITING": 2,
+      "NO_LONGER_AVAILABLE": 1
+    },
+    "active_trials": 12,
+    "completed_trials": 5,
+    "conditions": [
+      "Acute Lymphoblastic Leukemia",
+      "Acute Myeloid Leukemia (AML), Myelodysplastic Syndrome (MDS), Myeloproliferative Neoplasm (MDS/MPN)",
+      "Acute Myeloid Leukemia, Acute Lymphoblastic Leukemia",
+      "Advanced Solid Tumors",
+      "B-Cell Lymphomas",
+      "B-Cell Non-Hodgkin Lymphoma, Relapsed B-Cell Non-Hodgkin Lymphoma, Refractory B-Cell Non-Hodgkin Lymphoma",
+      "B-cell Non Hodgkin Lymphoma",
+      "Blasts 5 Percent or More of Bone Marrow Nucleated Cells, CD22 Positive, Philadelphia Chromosome Positive, Recurrent B Acute Lymphoblastic Leukemia, Refractory B Acute Lymphoblastic Leukemia",
+      "Breast Cancer, Non Small Cell Lung Cancer, GastroEsophageal Cancer, Bladder Cancer",
+      "Central Nervous System Lymphoma",
+      "Chronic Lymphocytic Leukemia",
+      "Diffuse Large B-Cell Lymphoma",
+      "Diffuse Large B-Cell Lymphoma Refractory, Diffuse Large B-cell Lymphoma Recurrent",
+      "Diffuse Large B-Cell Lymphoma, High-grade B-cell Lymphoma",
+      "Diffuse Large B-Cell Lymphoma, Mantle Cell Lymphoma",
+      "Diffuse Large B-Cell Lymphoma, Mantle Cell Lymphoma, Follicular Lymphoma",
+      "Diffuse Large B-cell Lymphoma",
+      "Double-Expressor Lymphoma, High Grade B-Cell Lymphoma With MYC and BCL2 and/or BCL6 Rearrangements, High Grade B-Cell Lymphoma With MYC and BCL2 or BCL6 Rearrangements, High Grade B-Cell Lymphoma With MYC, BCL2, and BCL6 Rearrangements",
+      "Follicular Lymphoma",
+      "Head and Neck Cancer Squamous Cell Carcinoma, Non-small Cell Lung Cancer, Gastric Cancer, Esophageal Cancer, Pancreas Cancer, Bladder Cancer, Renal Cell Carcinoma, Melanoma, Triple-negative Breast Cancer, Ovarian Cancer, Colo-rectal Cancer, Fallopian Tube Cancer",
+      "Hodgkin Lymphoma, Non-Hodgkin Lymphoma",
+      "Large B-cell Lymphoma, Relapse",
+      "Marginal Zone Lymphoma",
+      "Non-Hodgkin Lymphoma, Burkitt's Lymphoma, Chronic Lymphocytic Leukemia, Lymphoma, Large B-Cell, Diffuse, Lymphoma, Follicular, Lymphoma, Mantle-Cell, Lymphoma, Marginal Zone, Waldenstrom Macroglobulinemia, Primary Mediastinal B-cell Lymphoma",
+      "Non-Hodgkin Lymphoma, Follicular Lymphoma, DLBCL, Mantle Cell Lymphoma, Marginal Zone Lymphoma",
+      "Recurrent Diffuse Large B-Cell Lymphoma, Recurrent Diffuse Large B-Cell Lymphoma, Not Otherwise Specified, Recurrent High Grade B-Cell Lymphoma With MYC and BCL2 or BCL6 Rearrangements, Recurrent Primary Mediastinal (Thymic) Large B-Cell Lymphoma, Recurrent Transformed Follicular Lymphoma to Diffuse Large B-Cell Lymphoma, Refractory Diffuse Large B-Cell Lymphoma, Refractory Diffuse Large B-Cell Lymphoma, Not Otherwise Specified, Refractory High Grade B-Cell Lymphoma With MYC and BCL2 or BCL6 Rearrangements, Refractory Primary Mediastinal (Thymic) Large B-Cell Lymphoma, Refractory Transformed Follicular Lymphoma to Diffuse Large B-Cell Lymphoma",
+      "Relapsed Diffuse Large B-Cell Lymphoma, Refractory Diffuse Large B-Cell Lymphoma",
+      "Relapsed Follicular Lymphoma, Refractory Follicular Lymphoma",
+      "Relapsed Hodgkin Lymphoma, Refractory Hodgkin Lymphoma",
+      "Relapsed or Refractory Diffuse Large B-Cell Lymphoma (R/R DLBCL)",
+      "Relapsed or Refractory Large B-cell Lymphoma",
+      "Waldenstrom Macroglobulinemia"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:16:02.266239",
+    "search_query": "ADC Therapeutics SA",
+    "url": "https://clinicaltrials.gov/search?term=ADC+Therapeutics+SA"
+  }
+}

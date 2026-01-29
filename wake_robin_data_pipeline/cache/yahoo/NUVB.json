@@ -1,0 +1,43 @@
+{
+  "ticker": "NUVB",
+  "success": true,
+  "price": {
+    "current": 5.255,
+    "currency": "USD",
+    "day_high": 5.3978,
+    "day_low": 5.23,
+    "52_week_high": 9.75,
+    "52_week_low": 1.54
+  },
+  "market_cap": {
+    "value": 1801589760.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 341833433.0,
+  "volume": {
+    "last": 849327,
+    "average_30d": 6094642
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": 9.554545,
+    "price_to_book": 5.5257626
+  },
+  "company_info": {
+    "name": "Nuvation Bio Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:28.755034",
+    "url": "https://finance.yahoo.com/quote/NUVB",
+    "data_hash": "d3c643ef9642f9f4"
+  }
+}

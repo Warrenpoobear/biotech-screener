@@ -1,0 +1,43 @@
+{
+  "ticker": "MLTX",
+  "success": true,
+  "price": {
+    "current": 15.77,
+    "currency": "USD",
+    "day_high": 16.56,
+    "day_low": 15.62,
+    "52_week_high": 62.75,
+    "52_week_low": 5.95
+  },
+  "market_cap": {
+    "value": 1117263488.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 70847401.0,
+  "volume": {
+    "last": 262858,
+    "average_30d": 3353616
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -4.1979117,
+    "price_to_book": 3.4773982
+  },
+  "company_info": {
+    "name": "MoonLake Immunotherapeutics",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:06.384209",
+    "url": "https://finance.yahoo.com/quote/MLTX",
+    "data_hash": "7fdaa370e9990027"
+  }
+}

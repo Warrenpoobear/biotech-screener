@@ -1,0 +1,164 @@
+{
+  "ticker": "FOLD",
+  "company_name": "Amicus Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT00433147",
+      "title": "A Study of AT2101 (Afegostat Tartrate) in Adult Patients With Type 1 Gaucher Disease Currently Receiving Enzyme Replacement Therapy",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Gaucher Disease, Type 1, Type 1 Gaucher Disease, Gaucher Disease",
+      "start_date": "2007-03-23",
+      "completion_date": "2008-02-19",
+      "enrollment": 0,
+      "sponsor": "Amicus Therapeutics"
+    },
+    {
+      "nct_id": "NCT02670330",
+      "title": "Open Label Extension Study to Evaluate the Long-term Safety of Zorblisa (SD-101-6.0) in Patients With Epidermolysis Bullosa",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Epidermolysis Bullosa",
+      "start_date": "2015-06-09",
+      "completion_date": "2018-09-03",
+      "enrollment": 0,
+      "sponsor": "Scioderm, Inc."
+    },
+    {
+      "nct_id": "NCT01853852",
+      "title": "A Phase I, Randomized, Single-Blind, Four-Period Cross-Over, Placebo-Controlled, Dose-Escalation Study to Evaluate the Safety and Pharmacokinetics of Single Oral Doses of GR181413A/AT1001 in Healthy Japanese Subjects",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Fabry Disease",
+      "start_date": "2011-09",
+      "completion_date": "2011-12",
+      "enrollment": 0,
+      "sponsor": "Amicus Therapeutics"
+    },
+    {
+      "nct_id": "NCT00351156",
+      "title": "Study to Evaluate Blood Cell Lines From Patients With Gaucher Disease",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Gaucher Disease",
+      "start_date": "2006-07",
+      "completion_date": "2007-03",
+      "enrollment": 0,
+      "sponsor": "Amicus Therapeutics"
+    },
+    {
+      "nct_id": "NCT00875160",
+      "title": "A Study in Type 1 Gaucher Patients to Evaluate the Pharmacokinetics, Safety and Pharmacodynamics of AT2101",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Type 1 Gaucher Disease",
+      "start_date": "2009-04",
+      "completion_date": "2009-07",
+      "enrollment": 0,
+      "sponsor": "Amicus Therapeutics"
+    },
+    {
+      "nct_id": "NCT01730469",
+      "title": "Safety and Pharmacokinetics of AT1001 (Migalastat HCl) in Healthy Subjects and Subjects With Impaired Renal Function",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Fabry Disease",
+      "start_date": "2011-08",
+      "completion_date": "2012-04",
+      "enrollment": 0,
+      "sponsor": "Amicus Therapeutics"
+    },
+    {
+      "nct_id": "NCT03838237",
+      "title": "Effect of Migalastat on Cardiac Involvement in Fabry Disease",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Fabry Disease, Heart Diseases",
+      "start_date": "2018-01-10",
+      "completion_date": "2021-01-22",
+      "enrollment": 0,
+      "sponsor": "Ospedale San Donato"
+    },
+    {
+      "nct_id": "NCT03729362",
+      "title": "A Study Comparing ATB200/AT2221 With Alglucosidase Alfa/Placebo in Adult Subjects With Late-onset Pompe Disease",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Pompe Disease (Late-onset)",
+      "start_date": "2018-12-04",
+      "completion_date": "2021-01-15",
+      "enrollment": 0,
+      "sponsor": "Amicus Therapeutics"
+    },
+    {
+      "nct_id": "NCT02675465",
+      "title": "First-In-Human Study to Evaluate Safety, Tolerability, and PK of Intravenous ATB200 Alone and When Co-Administered With Oral AT2221",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Pompe Disease",
+      "start_date": "2016-04",
+      "completion_date": "2024-08-22",
+      "enrollment": 0,
+      "sponsor": "Amicus Therapeutics"
+    },
+    {
+      "nct_id": "NCT04252066",
+      "title": "A Global Prospective Observational Study of Women With Fabry Disease and Their Infants During Pregnancy and Breastfeeding",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Fabry Disease",
+      "start_date": "2025-03-18",
+      "completion_date": "2030-02",
+      "enrollment": 0,
+      "sponsor": "Amicus Therapeutics"
+    }
+  ],
+  "summary": {
+    "total_trials": 50,
+    "by_phase": {
+      "PHASE2": 12,
+      "PHASE3": 12,
+      "PHASE1": 6,
+      "": 17,
+      "PHASE1, PHASE2": 1,
+      "NA": 2
+    },
+    "by_status": {
+      "COMPLETED": 32,
+      "TERMINATED": 7,
+      "RECRUITING": 5,
+      "ACTIVE_NOT_RECRUITING": 3,
+      "AVAILABLE": 2,
+      "UNKNOWN": 1
+    },
+    "active_trials": 8,
+    "completed_trials": 32,
+    "conditions": [
+      "Epidermolysis Bullosa",
+      "Fabry Disease",
+      "Fabry Disease, Anderson Fabry Disease",
+      "Fabry Disease, Heart Diseases",
+      "Gaucher Disease",
+      "Gaucher Disease, Type 1 Gaucher Disease, Gaucher Disease, Type 1",
+      "Gaucher Disease, Type 1, Type 1 Gaucher Disease, Gaucher Disease",
+      "Glycogen Storage Disease Type II Infantile Onset",
+      "Hypertrophic Cardiomyopathy, Endothelial Dysfunction",
+      "Late-onset Pompe Disease",
+      "Pompe Disease",
+      "Pompe Disease (Late-onset)",
+      "Pompe Disease Infantile-Onset",
+      "Pompe Disease, Glycogen Storage Disease Type II",
+      "Pompe Disease, Glycogen Storage Disease Type II, Lysosomal Storage Diseases",
+      "Pompe Disease, Hypersensitivity Reaction",
+      "Type 1 Gaucher Disease"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:18:28.680202",
+    "search_query": "Amicus Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Amicus+Therapeutics,+Inc."
+  }
+}

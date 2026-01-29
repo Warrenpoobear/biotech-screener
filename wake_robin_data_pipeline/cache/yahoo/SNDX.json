@@ -1,0 +1,43 @@
+{
+  "ticker": "SNDX",
+  "success": true,
+  "price": {
+    "current": 20.68,
+    "currency": "USD",
+    "day_high": 21.05,
+    "day_low": 20.23,
+    "52_week_high": 22.73,
+    "52_week_low": 8.58
+  },
+  "market_cap": {
+    "value": 1797398912.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 86914838.0,
+  "volume": {
+    "last": 143706,
+    "average_30d": 1208713
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -12.917654,
+    "price_to_book": 15.57229
+  },
+  "company_info": {
+    "name": "Syndax Pharmaceuticals, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:09:55.061217",
+    "url": "https://finance.yahoo.com/quote/SNDX",
+    "data_hash": "94b4860ede33815f"
+  }
+}

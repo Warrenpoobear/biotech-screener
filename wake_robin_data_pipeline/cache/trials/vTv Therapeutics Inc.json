@@ -1,0 +1,152 @@
+{
+  "ticker": "VTVT",
+  "company_name": "vTv Therapeutics Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT02405260",
+      "title": "Add Glucokinase Activator to Target A1c",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Diabetes Mellitus, Type 2",
+      "start_date": "2015-03",
+      "completion_date": "2016-09",
+      "enrollment": 0,
+      "sponsor": "vTv Therapeutics"
+    },
+    {
+      "nct_id": "NCT02080364",
+      "title": "Evaluation of the Efficacy and Safety of Azeliragon (TTP488) in Patients With Mild Alzheimer's Disease",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Alzheimer's Disease",
+      "start_date": "2015-04",
+      "completion_date": "2018-06-01",
+      "enrollment": 0,
+      "sponsor": "vTv Therapeutics"
+    },
+    {
+      "nct_id": "NCT03980730",
+      "title": "Study of Azeliragon in Patients With Mild Alzheimer's Disease and Impaired Glucose Tolerance",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Alzheimer Disease",
+      "start_date": "2019-06-27",
+      "completion_date": "2021-01-29",
+      "enrollment": 0,
+      "sponsor": "vTv Therapeutics"
+    },
+    {
+      "nct_id": "NCT00909298",
+      "title": "Left Ventricular Assist Device (LVAD) Specialized Centers of Clinically Orientated Research (SCCOR) Coagulation - Acute Intrinsic Pathway Antagonist (IPA)",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Coagulation",
+      "start_date": "2009-06",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "vTv Therapeutics"
+    },
+    {
+      "nct_id": "NCT01665352",
+      "title": "A Study to Evaluate Safety and Efficacy of TTP054 for 12 Weeks in Subjects With Type 2 Diabetes",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Type 2 Diabetes Mellitus",
+      "start_date": "2012-08",
+      "completion_date": "2013-05",
+      "enrollment": 0,
+      "sponsor": "vTv Therapeutics"
+    },
+    {
+      "nct_id": "NCT02916056",
+      "title": "2-Year Extension Study of Azeliragon in Subjects With Alzheimer's Disease (STEADFAST Extension)",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Alzheimer's Disease",
+      "start_date": "2016-12",
+      "completion_date": "2018-06-01",
+      "enrollment": 0,
+      "sponsor": "vTv Therapeutics"
+    },
+    {
+      "nct_id": "NCT01474083",
+      "title": "A 6 Week Pharmacokinetics, Pharmacodynamics, Safety and Tolerability of GK1-399 in Type 2 Diabetes",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Type 2 Diabetes Mellitus",
+      "start_date": "2011-11",
+      "completion_date": "2012-09",
+      "enrollment": 0,
+      "sponsor": "vTv Therapeutics"
+    },
+    {
+      "nct_id": "NCT00119457",
+      "title": "Factor IX Inhibition in Thrombosis Prevention (The FIXIT Trial)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Venous Thromboembolism, Embolism and Thrombosis, Hip Fractures",
+      "start_date": "2005-01",
+      "completion_date": "2006-04",
+      "enrollment": 0,
+      "sponsor": "vTv Therapeutics"
+    },
+    {
+      "nct_id": "NCT00779519",
+      "title": "Safety Study of the Inhibition of Agouti-related Protein (AgRP) for the Management of Obesity and Weight Loss",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Obesity",
+      "start_date": "2009-02",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "vTv Therapeutics"
+    },
+    {
+      "nct_id": "NCT00939172",
+      "title": "TTP607 in Refractory Solid Malignancies",
+      "status": "WITHDRAWN",
+      "phase": "PHASE1",
+      "condition": "Advanced Cancers, Lymphoma",
+      "start_date": "2010-03",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "M.D. Anderson Cancer Center"
+    }
+  ],
+  "summary": {
+    "total_trials": 14,
+    "by_phase": {
+      "PHASE2": 7,
+      "PHASE3": 3,
+      "PHASE1, PHASE2": 2,
+      "PHASE1": 2
+    },
+    "by_status": {
+      "COMPLETED": 8,
+      "TERMINATED": 4,
+      "WITHDRAWN": 1,
+      "RECRUITING": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 8,
+    "conditions": [
+      "Advanced Cancers, Lymphoma",
+      "Alzheimer Disease",
+      "Alzheimer's Disease",
+      "Coagulation",
+      "Diabetes Mellitus, Type 1",
+      "Diabetes Mellitus, Type 2",
+      "Obesity",
+      "Type 2 Diabetes Mellitus",
+      "Venous Thromboembolism, Embolism and Thrombosis, Hip Fractures"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:36:15.814980",
+    "search_query": "vTv Therapeutics Inc.",
+    "url": "https://clinicaltrials.gov/search?term=vTv+Therapeutics+Inc."
+  }
+}

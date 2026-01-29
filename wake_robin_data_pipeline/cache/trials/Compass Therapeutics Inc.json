@@ -1,0 +1,105 @@
+{
+  "ticker": "CMPX",
+  "company_name": "Compass Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05513742",
+      "title": "A Study of CTX-009 in Adult Patients With Metastatic Colorectal Cancer",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Metastatic Colorectal Cancer, Colon Cancer, Rectal Cancer",
+      "start_date": "2022-12-08",
+      "completion_date": "2025-05-15",
+      "enrollment": 0,
+      "sponsor": "Compass Therapeutics"
+    },
+    {
+      "nct_id": "NCT06548412",
+      "title": "CTX-009 With Gemcitabine, Cisplatin, and Durvalumab as First-line Therapy in Patients With Unresectable or Metastatic Biliary Tract Cancers",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Metastatic Biliary Tract Cancer",
+      "start_date": "2025-01-22",
+      "completion_date": "2029-05-01",
+      "enrollment": 0,
+      "sponsor": "M.D. Anderson Cancer Center"
+    },
+    {
+      "nct_id": "NCT04492033",
+      "title": "A Study of CTX-009 (ABL001) in Combination With Irinotecan or Paclitaxel in Advanced or Metastatic Solid Tumor Patients",
+      "status": "TERMINATED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "P1b: Advanced Solid Tumors, P2: Biliary Tract Cancer",
+      "start_date": "2020-06-22",
+      "completion_date": "2025-01-09",
+      "enrollment": 0,
+      "sponsor": "Handok Inc."
+    },
+    {
+      "nct_id": "NCT03881488",
+      "title": "Study of CTX-471 as a Monotherapy or in Combination With Pembrolizumab in Patients Post PD-1/PD-L1 Inhibitors in Metastatic or Locally Advanced Malignancies",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Locally Advanced Solid Tumor, Metastatic Cancer, Non-small Cell Lung Cancer, Small Cell Lung Cancer, Mesothelioma, Melanoma, Head and Neck Cancer",
+      "start_date": "2019-05-17",
+      "completion_date": "2025-05-21",
+      "enrollment": 0,
+      "sponsor": "Compass Therapeutics"
+    },
+    {
+      "nct_id": "NCT06150664",
+      "title": "A Phase 1 of CTX-8371 in Patients With Advanced Malignancies",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Non Small Cell Lung Cancer, Triple Negative Breast Cancer, Hodgkin Lymphoma, Head and Neck Squamous Cell Carcinoma, Malignant Melanoma",
+      "start_date": "2024-03-19",
+      "completion_date": "2027-05",
+      "enrollment": 0,
+      "sponsor": "Compass Therapeutics"
+    },
+    {
+      "nct_id": "NCT05506943",
+      "title": "A Study of CTX-009 in Combination With Paclitaxel in Adult Patients With Unresectable Advanced, Metastatic or Recurrent Biliary Tract Cancers (COMPANION-002)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Biliary Tract Cancer, Cholangiocarcinoma, Gall Bladder Cancer, Ampullary Cancer",
+      "start_date": "2023-01-09",
+      "completion_date": "2025-12",
+      "enrollment": 0,
+      "sponsor": "Compass Therapeutics"
+    }
+  ],
+  "summary": {
+    "total_trials": 6,
+    "by_phase": {
+      "PHASE2": 1,
+      "PHASE1, PHASE2": 2,
+      "PHASE1": 2,
+      "PHASE2, PHASE3": 1
+    },
+    "by_status": {
+      "COMPLETED": 2,
+      "RECRUITING": 2,
+      "TERMINATED": 1,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 3,
+    "completed_trials": 2,
+    "conditions": [
+      "Biliary Tract Cancer, Cholangiocarcinoma, Gall Bladder Cancer, Ampullary Cancer",
+      "Locally Advanced Solid Tumor, Metastatic Cancer, Non-small Cell Lung Cancer, Small Cell Lung Cancer, Mesothelioma, Melanoma, Head and Neck Cancer",
+      "Metastatic Biliary Tract Cancer",
+      "Metastatic Colorectal Cancer, Colon Cancer, Rectal Cancer",
+      "Non Small Cell Lung Cancer, Triple Negative Breast Cancer, Hodgkin Lymphoma, Head and Neck Squamous Cell Carcinoma, Malignant Melanoma",
+      "P1b: Advanced Solid Tumors, P2: Biliary Tract Cancer"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:47:19.610812",
+    "search_query": "Compass Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Compass+Therapeutics,+Inc."
+  }
+}

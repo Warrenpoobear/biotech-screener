@@ -1,0 +1,43 @@
+{
+  "ticker": "VKTX",
+  "success": true,
+  "price": {
+    "current": 30.0917,
+    "currency": "USD",
+    "day_high": 30.81,
+    "day_low": 29.9175,
+    "52_week_high": 43.15,
+    "52_week_low": 18.92
+  },
+  "market_cap": {
+    "value": 3401455616.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 113036344.0,
+  "volume": {
+    "last": 623305,
+    "average_30d": 3190132
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -8.092822,
+    "price_to_book": 4.7455764
+  },
+  "company_info": {
+    "name": "Viking Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:10:40.619776",
+    "url": "https://finance.yahoo.com/quote/VKTX",
+    "data_hash": "9494ea6f136a09f0"
+  }
+}

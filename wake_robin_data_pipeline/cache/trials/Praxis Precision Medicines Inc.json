@@ -1,0 +1,159 @@
+{
+  "ticker": "PRAX",
+  "company_name": "Praxis Precision Medicines, Inc",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT07287163",
+      "title": "Clinical Trial of Vormatrigine in Adult Patients With Epilepsy",
+      "status": "ENROLLING_BY_INVITATION",
+      "phase": "PHASE3",
+      "condition": "Epilepsy, Tonic-Clonic, Focal Seizure, Primary Generalized Seizure",
+      "start_date": "2025-10-27",
+      "completion_date": "2028-12-31",
+      "enrollment": 0,
+      "sponsor": "Praxis Precision Medicines"
+    },
+    {
+      "nct_id": "NCT05021991",
+      "title": "A Clinical Trial of 2 Doses of PRAX-944 in Participants With Essential Tremor",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Essential Tremor",
+      "start_date": "2021-10-14",
+      "completion_date": "2024-02-29",
+      "enrollment": 0,
+      "sponsor": "Praxis Precision Medicines"
+    },
+    {
+      "nct_id": "NCT05407727",
+      "title": "A Prospective, Remote Observational Study in Pediatric Participants With Early-Onset SCN2A-Developmental and Epileptic Encephalopathy",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "SCN2A-DEE, Epilepsy",
+      "start_date": "2022-04-15",
+      "completion_date": "2023-03-31",
+      "enrollment": 0,
+      "sponsor": "Praxis Precision Medicines"
+    },
+    {
+      "nct_id": "NCT06999902",
+      "title": "Double-blind, Randomized Trial of PRAX-628 in Adults With Focal Seizures to Evaluate Efficacy and Safety (POWER1)",
+      "status": "RECRUITING",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Focal Seizure",
+      "start_date": "2024-12-11",
+      "completion_date": "2025-12-08",
+      "enrollment": 0,
+      "sponsor": "Praxis Precision Medicines"
+    },
+    {
+      "nct_id": "NCT06087276",
+      "title": "Essential 3 - Decentralized, Phase 3 Study Evaluating the Safety and Efficacy of Ulixacaltamide in Essential Tremor (ET)",
+      "status": "ENROLLING_BY_INVITATION",
+      "phase": "PHASE3",
+      "condition": "Essential Tremor",
+      "start_date": "2023-11-02",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "Praxis Precision Medicines"
+    },
+    {
+      "nct_id": "NCT07010471",
+      "title": "A Clinical Trial for Participants With DEE to Assess Efficacy, Safety, Tolerability, and PK of Relutrigine",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Developmental and Epileptic Encephalopathy 1",
+      "start_date": "2025-07-09",
+      "completion_date": "2027-07",
+      "enrollment": 0,
+      "sponsor": "Praxis Precision Medicines"
+    },
+    {
+      "nct_id": "NCT05818553",
+      "title": "A Clinical Trial of PRAX-562 in Subjects With Developmental and Epileptic Encephalopathies (DEE)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2, PHASE3",
+      "condition": "SCN2A Encephalopathy, SCN8A Encephalopathy",
+      "start_date": "2023-08-02",
+      "completion_date": "2027-03-01",
+      "enrollment": 0,
+      "sponsor": "Praxis Precision Medicines"
+    },
+    {
+      "nct_id": "NCT04969510",
+      "title": "A Clinical Trial of Adjunctive and Monotherapy PRAX-114 in Participants With Major Depressive Disorder",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Major Depressive Disorder",
+      "start_date": "2021-06-24",
+      "completion_date": "2022-08-02",
+      "enrollment": 0,
+      "sponsor": "Praxis Precision Medicines"
+    },
+    {
+      "nct_id": "NCT05737784",
+      "title": "A Clinical Trial of PRAX-222 in Pediatric Participants With Early Onset SCN2A Developmental and Epileptic Encephalopathy",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "SCN2A-DEE, Epilepsy",
+      "start_date": "2023-04-13",
+      "completion_date": "2027-09",
+      "enrollment": 0,
+      "sponsor": "Praxis Precision Medicines"
+    },
+    {
+      "nct_id": "NCT06840925",
+      "title": "A Clinical Trial to Evaluate the Relative Bioavailability of PRAX-628",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2025-03-24",
+      "completion_date": "2025-06-30",
+      "enrollment": 0,
+      "sponsor": "Praxis Precision Medicines"
+    }
+  ],
+  "summary": {
+    "total_trials": 16,
+    "by_phase": {
+      "PHASE3": 4,
+      "PHASE2": 6,
+      "": 1,
+      "PHASE2, PHASE3": 3,
+      "PHASE1, PHASE2": 1,
+      "PHASE1": 1
+    },
+    "by_status": {
+      "ENROLLING_BY_INVITATION": 2,
+      "COMPLETED": 5,
+      "RECRUITING": 5,
+      "ACTIVE_NOT_RECRUITING": 1,
+      "NOT_YET_RECRUITING": 1,
+      "TERMINATED": 1,
+      "WITHDRAWN": 1
+    },
+    "active_trials": 8,
+    "completed_trials": 5,
+    "conditions": [
+      "Developmental and Epileptic Encephalopathy 1",
+      "Epilepsy, Tonic-Clonic, Focal Seizure, Primary Generalized Seizure",
+      "Epileptic Encephalopathy, SCN2A Encephalopathy",
+      "Essential Tremor",
+      "Focal Onset Seizure, Primary Generalized Epilepsy",
+      "Focal Seizure",
+      "Healthy",
+      "Major Depressive Disorder",
+      "Post-traumatic Stress Disorder, Post Traumatic Stress Disorder, Stress Disorder, Stress Disorders, Post-Traumatic, Trauma and Stressor Related Disorders, Mental Disorder",
+      "SCN2A Encephalopathy, SCN8A Encephalopathy",
+      "SCN2A-DEE, Epilepsy"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:20:58.959937",
+    "search_query": "Praxis Precision Medicines, Inc",
+    "url": "https://clinicaltrials.gov/search?term=Praxis+Precision+Medicines,+Inc"
+  }
+}

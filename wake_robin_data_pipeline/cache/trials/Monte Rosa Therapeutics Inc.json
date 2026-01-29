@@ -1,0 +1,65 @@
+{
+  "ticker": "GLUE",
+  "company_name": "Monte Rosa Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05546268",
+      "title": "Study of Oral MRT-2359 in Selected Cancer Patients",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "NSCLC, SCLC, High Grade Neuroendocrine Cancer, DLBCL, L-MYC and N-MYC Amplified Solid Tumors, NSCLC With High or Low L-MYC or N-MYC Expression, HR-positive, HER2-negative Breast Cancer, Prostate Cancer",
+      "start_date": "2022-10-12",
+      "completion_date": "2027-11",
+      "enrollment": 0,
+      "sponsor": "Monte Rosa Therapeutics, Inc"
+    },
+    {
+      "nct_id": "NCT07119125",
+      "title": "A First-in-human, 3-part Study of MRT-8102 in Healthy Participants and Participants at Cardiovascular Risk With Elevated CRP",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers, Elevated CRP",
+      "start_date": "2025-06-27",
+      "completion_date": "2026-03",
+      "enrollment": 0,
+      "sponsor": "Monte Rosa Therapeutics, Inc"
+    },
+    {
+      "nct_id": "NCT06597799",
+      "title": "First-in-human Study of MRT-6160 in Healthy Subjects",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2024-08-07",
+      "completion_date": "2025-04-10",
+      "enrollment": 0,
+      "sponsor": "Monte Rosa Therapeutics, Inc"
+    }
+  ],
+  "summary": {
+    "total_trials": 3,
+    "by_phase": {
+      "PHASE1, PHASE2": 1,
+      "PHASE1": 2
+    },
+    "by_status": {
+      "RECRUITING": 2,
+      "COMPLETED": 1
+    },
+    "active_trials": 2,
+    "completed_trials": 1,
+    "conditions": [
+      "Healthy Volunteers",
+      "Healthy Volunteers, Elevated CRP",
+      "NSCLC, SCLC, High Grade Neuroendocrine Cancer, DLBCL, L-MYC and N-MYC Amplified Solid Tumors, NSCLC With High or Low L-MYC or N-MYC Expression, HR-positive, HER2-negative Breast Cancer, Prostate Cancer"
+    ],
+    "lead_stage": "phase_1"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:18:39.600797",
+    "search_query": "Monte Rosa Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Monte+Rosa+Therapeutics,+Inc."
+  }
+}

@@ -1,0 +1,171 @@
+{
+  "ticker": "IRWD",
+  "company_name": "Ironwood Pharmaceuticals, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT02837783",
+      "title": "A Study of the Effect of Linaclotide on Abdominal Girth in Participants With Irritable Bowel Syndrome With Constipation (IBS-C)",
+      "status": "TERMINATED",
+      "phase": "PHASE4",
+      "condition": "Irritable Bowel Syndrome Characterized by Constipation",
+      "start_date": "2016-12-21",
+      "completion_date": "2018-10-31",
+      "enrollment": 0,
+      "sponsor": "Ironwood Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT05362695",
+      "title": "A Study of Multiple-ascending Doses of IW-3300 in Healthy Subjects",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2022-05-17",
+      "completion_date": "2022-07-13",
+      "enrollment": 0,
+      "sponsor": "Ironwood Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT02289846",
+      "title": "Trial of IW-9179 in Patients With Diabetic Gastroparesis (DGP)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Diabetic Gastroparesis",
+      "start_date": "2014-10",
+      "completion_date": "2015-12",
+      "enrollment": 0,
+      "sponsor": "Ironwood Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT03931785",
+      "title": "A Study of MD-7246 to Treat Abdominal Pain in Patients With Diarrhea-predominant Irritable Bowel Syndrome",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Irritable Bowel Syndrome With Diarrhea (IBS-D)",
+      "start_date": "2019-05-01",
+      "completion_date": "2020-03-11",
+      "enrollment": 0,
+      "sponsor": "Ironwood Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT00948818",
+      "title": "Trial of Linaclotide Administered to Patients With Irritable Bowel Syndrome With Constipation",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Irritable Bowel Syndrome Characterized by Constipation",
+      "start_date": "2009-07",
+      "completion_date": "2010-08",
+      "enrollment": 0,
+      "sponsor": "Forest Laboratories"
+    },
+    {
+      "nct_id": "NCT03226899",
+      "title": "A Phase 4 Safety and Efficacy Study to Evaluate Lesinurad 200 mg in Participants With Gout and Renal Impairment",
+      "status": "TERMINATED",
+      "phase": "PHASE4",
+      "condition": "Gout, Chronic Kidney Disease (CKD)",
+      "start_date": "2017-07-19",
+      "completion_date": "2019-02-25",
+      "enrollment": 0,
+      "sponsor": "Ironwood Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT02559570",
+      "title": "A Safety and Efficacy Study of a Range of Linaclotide Doses Administered Orally to Children Ages 6-17 Years Who Fulfill Modified Rome III Criteria for Child/Adolescent Functional Constipation (FC)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Functional Constipation in Children Ages 6-17 Years",
+      "start_date": "2015-11-03",
+      "completion_date": "2018-05-29",
+      "enrollment": 0,
+      "sponsor": "Forest Laboratories"
+    },
+    {
+      "nct_id": "NCT01642914",
+      "title": "Safety and Efficacy of Linaclotide in Patients With Chronic Constipation and Prominent Abdominal Bloating",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Chronic Constipation, Constipation",
+      "start_date": "2012-08",
+      "completion_date": "2013-08",
+      "enrollment": 0,
+      "sponsor": "Forest Laboratories"
+    },
+    {
+      "nct_id": "NCT05796388",
+      "title": "A Study of Virtual Reality and Linaclotide for IBS-C",
+      "status": "RECRUITING",
+      "phase": "NA",
+      "condition": "Irritable Bowel Syndrome With Constipation",
+      "start_date": "2024-05-31",
+      "completion_date": "2026-06",
+      "enrollment": 0,
+      "sponsor": "Mayo Clinic"
+    },
+    {
+      "nct_id": "NCT00258193",
+      "title": "Phase 2 Study of MD-1100 Acetate on Gastrointestinal Transit in Patients With C-IBS",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Irritable Bowel Syndrome",
+      "start_date": "2006-01",
+      "completion_date": "2006-09",
+      "enrollment": 0,
+      "sponsor": "Ironwood Pharmaceuticals, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 42,
+    "by_phase": {
+      "PHASE4": 3,
+      "PHASE1": 3,
+      "PHASE2": 18,
+      "PHASE3": 15,
+      "NA": 3
+    },
+    "by_status": {
+      "TERMINATED": 6,
+      "COMPLETED": 35,
+      "RECRUITING": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 35,
+    "conditions": [
+      "Chronic Constipation",
+      "Chronic Constipation, Constipation",
+      "Chronic Constipation, Irritable Bowel Syndrome With Constipation",
+      "Chronic Idiopathic Constipation",
+      "Constipation",
+      "Diabetic Gastroparesis",
+      "Dyspepsia, Functional Gastrointestinal Disorders",
+      "Functional Constipation",
+      "Functional Constipation (FC), Chronic Idiopathic Constipation (CIC)",
+      "Functional Constipation in Children Ages 6-17 Years",
+      "Functional Constipation, Irritable Bowel Syndrome With Constipation",
+      "Gastroesophageal Reflux",
+      "Gastroesophageal Reflux Disease",
+      "Gastroesophageal Reflux Disease (GERD)",
+      "Gout, Chronic Kidney Disease (CKD)",
+      "Healthy",
+      "Healthy Volunteers",
+      "Hypercholesterolemia",
+      "Interstitial Cystitis, Bladder Pain Syndrome",
+      "Irritable Bowel Syndrome",
+      "Irritable Bowel Syndrome Characterized by Constipation",
+      "Irritable Bowel Syndrome With Constipation",
+      "Irritable Bowel Syndrome With Constipation (IBS-C)",
+      "Irritable Bowel Syndrome With Constipation, Chronic Constipation",
+      "Irritable Bowel Syndrome With Constipation, Chronic Idiopathic Constipation",
+      "Irritable Bowel Syndrome With Constipation, Functional Constipation",
+      "Irritable Bowel Syndrome With Diarrhea (IBS-D)",
+      "Opioid-Induced Constipation"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:19:14.676810",
+    "search_query": "Ironwood Pharmaceuticals, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Ironwood+Pharmaceuticals,+Inc."
+  }
+}

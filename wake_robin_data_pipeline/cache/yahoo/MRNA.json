@@ -1,0 +1,43 @@
+{
+  "ticker": "MRNA",
+  "success": true,
+  "price": {
+    "current": 46.71,
+    "currency": "USD",
+    "day_high": 47.8452,
+    "day_low": 45.76,
+    "52_week_high": 55.2,
+    "52_week_low": 22.28
+  },
+  "market_cap": {
+    "value": 18251167744.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 390733636.0,
+  "volume": {
+    "last": 4317712,
+    "average_30d": 13549646
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -6.747601,
+    "price_to_book": 1.9575057
+  },
+  "company_info": {
+    "name": "Moderna, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:12.167863",
+    "url": "https://finance.yahoo.com/quote/MRNA",
+    "data_hash": "2185b0b2e5e08d63"
+  }
+}

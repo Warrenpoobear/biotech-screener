@@ -1,0 +1,103 @@
+{
+  "ticker": "OLMA",
+  "company_name": "Olema Pharmaceuticals, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05508906",
+      "title": "Phase 1b Study of OP-1250 (Palazestrant) in Combination With Ribociclib, Alpelisib, Everolimus, or Atirmociclib in ER+, HER2- Breast Cancer",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Metastatic Breast Cancer, ER-positive Breast Cancer, HER2-negative Breast Cancer, Breast Cancer, Locally Advanced Breast Cancer",
+      "start_date": "2022-08-31",
+      "completion_date": "2028-01-31",
+      "enrollment": 0,
+      "sponsor": "Olema Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT05266105",
+      "title": "A Phase 1 Study of Oral OP-1250 in Combination With Palbociclib in HR+/HER2- Breast Cancer Patients",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Breast Cancer",
+      "start_date": "2021-12-10",
+      "completion_date": "2026-03",
+      "enrollment": 0,
+      "sponsor": "Olema Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT06016738",
+      "title": "OP-1250 (Palazestrant) vs. Standard of Care for the Treatment of ER+/HER2- Advanced Breast Cancer",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Breast Cancer, Advanced Breast Cancer, Metastatic Breast Cancer, ER Positive Breast Cancer, HER2 Negative Breast Carcinoma",
+      "start_date": "2023-11-16",
+      "completion_date": "2027-09-30",
+      "enrollment": 0,
+      "sponsor": "Olema Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT07085767",
+      "title": "Palazestrant in Combination With Ribociclib for the First-line Treatment of ER+/HER2- Advanced Breast Cancer",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Breast Cancer, Locally Advanced Breast Cancer, Metastatic Breast Cancer, ER Positive Breast Cancer, HER2 Negative Breast Carcinoma",
+      "start_date": "2025-11-03",
+      "completion_date": "2032-01",
+      "enrollment": 0,
+      "sponsor": "Olema Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT04505826",
+      "title": "A Dose Escalation/Expansion Study of Oral OP-1250 in Subjects With Advanced and/or Metastatic HR+, HER2- Breast Cancer",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Hormone Receptor Positive Breast Carcinoma, HER2-negative Breast Cancer",
+      "start_date": "2020-08-13",
+      "completion_date": "2024-07-30",
+      "enrollment": 0,
+      "sponsor": "Olema Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT06784193",
+      "title": "Phase 1 Study of OP-3136 in Advanced or Metastatic Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Advanced or Metastatic ER+ HER2- Breast Cancer (mBC), Advanced or Metastatic Non-Small Cell Lung Cancer (NSCLC), Advanced or Metastatic Castration-Resistant Prostate Cancer (mCRPC), Metastatic Breast Cancer, Fulvestrant, Palazestrant",
+      "start_date": "2024-12-16",
+      "completion_date": "2027-08-30",
+      "enrollment": 0,
+      "sponsor": "Olema Pharmaceuticals, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 6,
+    "by_phase": {
+      "PHASE1": 3,
+      "PHASE3": 2,
+      "PHASE1, PHASE2": 1
+    },
+    "by_status": {
+      "RECRUITING": 4,
+      "ACTIVE_NOT_RECRUITING": 1,
+      "COMPLETED": 1
+    },
+    "active_trials": 5,
+    "completed_trials": 1,
+    "conditions": [
+      "Advanced or Metastatic ER+ HER2- Breast Cancer (mBC), Advanced or Metastatic Non-Small Cell Lung Cancer (NSCLC), Advanced or Metastatic Castration-Resistant Prostate Cancer (mCRPC), Metastatic Breast Cancer, Fulvestrant, Palazestrant",
+      "Breast Cancer",
+      "Breast Cancer, Advanced Breast Cancer, Metastatic Breast Cancer, ER Positive Breast Cancer, HER2 Negative Breast Carcinoma",
+      "Breast Cancer, Locally Advanced Breast Cancer, Metastatic Breast Cancer, ER Positive Breast Cancer, HER2 Negative Breast Carcinoma",
+      "Hormone Receptor Positive Breast Carcinoma, HER2-negative Breast Cancer",
+      "Metastatic Breast Cancer, ER-positive Breast Cancer, HER2-negative Breast Cancer, Breast Cancer, Locally Advanced Breast Cancer"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:20:36.002498",
+    "search_query": "Olema Pharmaceuticals, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Olema+Pharmaceuticals,+Inc."
+  }
+}

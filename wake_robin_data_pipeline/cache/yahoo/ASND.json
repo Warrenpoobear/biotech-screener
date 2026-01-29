@@ -1,0 +1,43 @@
+{
+  "ticker": "ASND",
+  "success": true,
+  "price": {
+    "current": 223.61,
+    "currency": "USD",
+    "day_high": 227.34,
+    "day_low": 220.53,
+    "52_week_high": 242.0,
+    "52_week_low": 118.03
+  },
+  "market_cap": {
+    "value": 13662158848.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 61098156.0,
+  "volume": {
+    "last": 156639,
+    "average_30d": 631169
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": 46.738823,
+    "price_to_book": -65.31673
+  },
+  "company_info": {
+    "name": "Ascendis Pharma A/S",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:04:51.457362",
+    "url": "https://finance.yahoo.com/quote/ASND",
+    "data_hash": "4c9a10afb6d79965"
+  }
+}

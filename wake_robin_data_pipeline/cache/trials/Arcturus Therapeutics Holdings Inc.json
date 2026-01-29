@@ -1,0 +1,155 @@
+{
+  "ticker": "ARCT",
+  "company_name": "Arcturus Therapeutics Holdings Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05712538",
+      "title": "Safety, Tolerability, and Pharmacokinetics of ARCT-032 in Healthy Adult Subjects and Adults With Cystic Fibrosis.",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Cystic Fibrosis",
+      "start_date": "2023-02-15",
+      "completion_date": "2024-07-29",
+      "enrollment": 0,
+      "sponsor": "Arcturus Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04668339",
+      "title": "A Trial Evaluating the Safety and Effects of an RNA Vaccine ARCT-021 in Healthy Adults",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Covid19, SARS-CoV Infection, Corona Virus Infection",
+      "start_date": "2021-01-07",
+      "completion_date": "2022-03-01",
+      "enrollment": 0,
+      "sponsor": "Arcturus Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04480957",
+      "title": "Ascending Dose Study of Investigational SARS-CoV-2 Vaccine ARCT-021 in Healthy Adult Subjects",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "SARS-CoV-2",
+      "start_date": "2020-08-04",
+      "completion_date": "2021-01-29",
+      "enrollment": 0,
+      "sponsor": "Arcturus Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05037097",
+      "title": "A Trial Evaluating the Safety and Immunogenicity of 3 COVID-19 SARS-CoV-2 RNA Vaccines in Healthy Adults",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "COVID-19, SARS-CoV-2 Infection, Corona Virus Infection",
+      "start_date": "2021-08-30",
+      "completion_date": "2023-12-19",
+      "enrollment": 0,
+      "sponsor": "Arcturus Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05012943",
+      "title": "The ARCT-154 Self-Amplifying RNA Vaccine Efficacy Study (ARCT-154-01)",
+      "status": "COMPLETED",
+      "phase": "PHASE2, PHASE3",
+      "condition": "COVID-19 Vaccines",
+      "start_date": "2021-08-15",
+      "completion_date": "2023-01-18",
+      "enrollment": 0,
+      "sponsor": "Vinbiocare Biotechnology Joint Stock Company"
+    },
+    {
+      "nct_id": "NCT04728347",
+      "title": "Open Label Extension Study to Assess the Safety and Long-Term Immunogenicity of ARCT-021",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "SARS-CoV-2",
+      "start_date": "2021-01-04",
+      "completion_date": "2021-12-28",
+      "enrollment": 0,
+      "sponsor": "Arcturus Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06279871",
+      "title": "Immunogenicity and Safety Study of Self-amplifying mRNA COVID-19 Vaccine Administered With Influenza Vaccines in Adults",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "COVID-19",
+      "start_date": "2024-03-27",
+      "completion_date": "2024-11-21",
+      "enrollment": 0,
+      "sponsor": "Arcturus Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04416126",
+      "title": "Safety, Tolerability and Pharmacokinetics of ARCT-810 in Healthy Adult Subjects",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Ornithine Transcarbamylase Deficiency",
+      "start_date": "2020-06-01",
+      "completion_date": "2020-12-09",
+      "enrollment": 0,
+      "sponsor": "Arcturus Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06747858",
+      "title": "Safety, Tolerability and Efficacy Study of ARCT-032 in People With Cystic Fibrosis",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Cystic Fibrosis, CFTR Gene Mutation",
+      "start_date": "2024-12-12",
+      "completion_date": "2025-12",
+      "enrollment": 0,
+      "sponsor": "Arcturus Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06488313",
+      "title": "A Study to Evaluate the Pharmacodynamics and Safety of ARCT-810 in Participants With OTCD",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "OTC Deficiency, Ornithine Transcarbamylase Deficiency, OTCD",
+      "start_date": "2024-11-04",
+      "completion_date": "2026-09-01",
+      "enrollment": 0,
+      "sponsor": "Arcturus Therapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 14,
+    "by_phase": {
+      "PHASE1": 5,
+      "PHASE2": 5,
+      "PHASE1, PHASE2": 2,
+      "PHASE2, PHASE3": 1,
+      "PHASE3": 1
+    },
+    "by_status": {
+      "COMPLETED": 8,
+      "TERMINATED": 3,
+      "RECRUITING": 2,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 3,
+    "completed_trials": 8,
+    "conditions": [
+      "COVID-19",
+      "COVID-19 Vaccines",
+      "COVID-19, SARS-CoV-2 Infection, Corona Virus Infection",
+      "Covid19, SARS-CoV Infection, Corona Virus Infection",
+      "Cystic Fibrosis",
+      "Cystic Fibrosis, CFTR Gene Mutation",
+      "Influenza, Human",
+      "OTC Deficiency, Ornithine Transcarbamylase Deficiency, OTCD",
+      "Ornithine Transcarbamylase Deficiency",
+      "Ornithine Transcarbamylase Deficiency, OTC Deficiency, OTCD",
+      "SARS-CoV-2"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:16:31.590243",
+    "search_query": "Arcturus Therapeutics Holdings Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Arcturus+Therapeutics+Holdings+Inc."
+  }
+}

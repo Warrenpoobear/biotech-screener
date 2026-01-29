@@ -1,0 +1,43 @@
+{
+  "ticker": "CERS",
+  "success": true,
+  "price": {
+    "current": 2.355,
+    "currency": "USD",
+    "day_high": 2.365,
+    "day_low": 2.29,
+    "52_week_high": 2.96,
+    "52_week_low": 1.12
+  },
+  "market_cap": {
+    "value": 452366080.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 192087501.0,
+  "volume": {
+    "last": 376524,
+    "average_30d": 1516087
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -94.2,
+    "price_to_book": 7.359375
+  },
+  "company_info": {
+    "name": "Cerus Corporation",
+    "sector": "Healthcare",
+    "industry": "Medical Devices"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:05:34.115016",
+    "url": "https://finance.yahoo.com/quote/CERS",
+    "data_hash": "dc64ab539712e8f7"
+  }
+}

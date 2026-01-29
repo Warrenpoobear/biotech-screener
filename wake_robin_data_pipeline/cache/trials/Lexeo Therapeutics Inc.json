@@ -1,0 +1,114 @@
+{
+  "ticker": "LXEO",
+  "company_name": "Lexeo Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06109181",
+      "title": "Gene Therapy for ACM Due to a PKP2 Pathogenic Variant",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Arrhythmogenic Cardiomyopathy, PKP2-ACM, PKP2-ARVC",
+      "start_date": "2024-02-29",
+      "completion_date": "2027-03",
+      "enrollment": 0,
+      "sponsor": "Lexeo Therapeutics"
+    },
+    {
+      "nct_id": "NCT05445323",
+      "title": "Gene Therapy for Cardiomyopathy Associated With Friedreich's Ataxia",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Friedreich Ataxia, Cardiomyopathy, Secondary",
+      "start_date": "2022-08-24",
+      "completion_date": "2029-09",
+      "enrollment": 0,
+      "sponsor": "Lexeo Therapeutics"
+    },
+    {
+      "nct_id": "NCT07050160",
+      "title": "Long-term Follow-up Study of Gene Therapy for Arrhythmogenic Cardiomyopathy Due to a Plakophilin-2 Pathogenic Variant",
+      "status": "ENROLLING_BY_INVITATION",
+      "phase": "",
+      "condition": "Arrhythmogenic Cardiomyopathy, PKP2-ACM, PKP2-ARVC",
+      "start_date": "2025-08-29",
+      "completion_date": "2030-08",
+      "enrollment": 0,
+      "sponsor": "Lexeo Therapeutics"
+    },
+    {
+      "nct_id": "NCT06976606",
+      "title": "A Study to Assess Real-world Patient Characteristics and Clinical Course for Symptomatic Patients With PKP2-ACM",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Arrhythmogenic Cardiomyopathy, PKP2-ACM, PKP2-ARVC",
+      "start_date": "2024-01-23",
+      "completion_date": "2027-09",
+      "enrollment": 0,
+      "sponsor": "Lexeo Therapeutics"
+    },
+    {
+      "nct_id": "NCT05400330",
+      "title": "Long-Term Follow-up of Gene Therapy for APOE4 Homozygote Alzheimer's Disease",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Alzheimer Disease",
+      "start_date": "2023-05-08",
+      "completion_date": "2028-11",
+      "enrollment": 0,
+      "sponsor": "Lexeo Therapeutics"
+    },
+    {
+      "nct_id": "NCT06865482",
+      "title": "Clinical Course Of Disease In Participants With FA-CM",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Friedreich Ataxia, Cardiomyopathy",
+      "start_date": "2025-09-30",
+      "completion_date": "2027-09",
+      "enrollment": 0,
+      "sponsor": "Lexeo Therapeutics"
+    },
+    {
+      "nct_id": "NCT03634007",
+      "title": "Gene Therapy for APOE4 Homozygote of Alzheimer's Disease",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Alzheimer Disease, Early Onset Alzheimer Disease",
+      "start_date": "2019-11-06",
+      "completion_date": "2024-11-07",
+      "enrollment": 0,
+      "sponsor": "Lexeo Therapeutics"
+    }
+  ],
+  "summary": {
+    "total_trials": 7,
+    "by_phase": {
+      "PHASE1, PHASE2": 3,
+      "": 3,
+      "PHASE1": 1
+    },
+    "by_status": {
+      "ACTIVE_NOT_RECRUITING": 3,
+      "ENROLLING_BY_INVITATION": 1,
+      "RECRUITING": 2,
+      "COMPLETED": 1
+    },
+    "active_trials": 6,
+    "completed_trials": 1,
+    "conditions": [
+      "Alzheimer Disease",
+      "Alzheimer Disease, Early Onset Alzheimer Disease",
+      "Arrhythmogenic Cardiomyopathy, PKP2-ACM, PKP2-ARVC",
+      "Friedreich Ataxia, Cardiomyopathy",
+      "Friedreich Ataxia, Cardiomyopathy, Secondary"
+    ],
+    "lead_stage": "phase_1"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:19:46.463984",
+    "search_query": "Lexeo Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Lexeo+Therapeutics,+Inc."
+  }
+}

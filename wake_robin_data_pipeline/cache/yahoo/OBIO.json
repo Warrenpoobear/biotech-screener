@@ -1,0 +1,43 @@
+{
+  "ticker": "OBIO",
+  "success": true,
+  "price": {
+    "current": 3.815,
+    "currency": "USD",
+    "day_high": 3.985,
+    "day_low": 3.8,
+    "52_week_high": 6.16,
+    "52_week_low": 2.2
+  },
+  "market_cap": {
+    "value": 215412960.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 56464731.0,
+  "volume": {
+    "last": 36499,
+    "average_30d": 179327
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -2.389707,
+    "price_to_book": 4.9225807
+  },
+  "company_info": {
+    "name": "Orchestra BioMed Holdings, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:35.619568",
+    "url": "https://finance.yahoo.com/quote/OBIO",
+    "data_hash": "b27d25342ee9f4a8"
+  }
+}

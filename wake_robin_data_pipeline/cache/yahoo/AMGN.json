@@ -1,0 +1,43 @@
+{
+  "ticker": "AMGN",
+  "success": true,
+  "price": {
+    "current": 345.835,
+    "currency": "USD",
+    "day_high": 346.38,
+    "day_low": 338.75,
+    "52_week_high": 353.25,
+    "52_week_low": 261.43
+  },
+  "market_cap": {
+    "value": 186225442816.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 538480671.0,
+  "volume": {
+    "last": 553476,
+    "average_30d": 2486344
+  },
+  "valuation": {
+    "pe_ratio": 26.726044,
+    "forward_pe": 15.635829,
+    "price_to_book": 19.360409
+  },
+  "company_info": {
+    "name": "Amgen Inc.",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - General"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:04:26.485525",
+    "url": "https://finance.yahoo.com/quote/AMGN",
+    "data_hash": "5b27289cfbe140d1"
+  }
+}

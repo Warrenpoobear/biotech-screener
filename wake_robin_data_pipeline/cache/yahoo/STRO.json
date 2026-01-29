@@ -1,0 +1,43 @@
+{
+  "ticker": "STRO",
+  "success": true,
+  "price": {
+    "current": 15.0034,
+    "currency": "USD",
+    "day_high": 15.75,
+    "day_low": 15.0,
+    "52_week_high": 21.3,
+    "52_week_low": 5.2
+  },
+  "market_cap": {
+    "value": 127819848.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 8519392.0,
+  "volume": {
+    "last": 16915,
+    "average_30d": 123477
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -1.3879185,
+    "price_to_book": -1.4630326
+  },
+  "company_info": {
+    "name": "Sutro Biopharma, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:09:59.836634",
+    "url": "https://finance.yahoo.com/quote/STRO",
+    "data_hash": "e0e2f9238b439fbe"
+  }
+}

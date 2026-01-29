@@ -1,0 +1,43 @@
+{
+  "ticker": "RCUS",
+  "success": true,
+  "price": {
+    "current": 21.8,
+    "currency": "USD",
+    "day_high": 22.17,
+    "day_low": 21.36,
+    "52_week_high": 26.4,
+    "52_week_low": 6.5
+  },
+  "market_cap": {
+    "value": 2697282048.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 123728536.0,
+  "volume": {
+    "last": 129998,
+    "average_30d": 1363445
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -5.6586633,
+    "price_to_book": 5.3549495
+  },
+  "company_info": {
+    "name": "Arcus Biosciences, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:09:25.664062",
+    "url": "https://finance.yahoo.com/quote/RCUS",
+    "data_hash": "09dadd56da8b241b"
+  }
+}

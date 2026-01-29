@@ -1,0 +1,181 @@
+{
+  "ticker": "BMRN",
+  "company_name": "BioMarin Pharmaceutical Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT01016392",
+      "title": "Observational Study on the Long Term Safety of Kuvan\u00ae Treatment in Patients With Hyperphenylalaninemia (HPA) Due to Phenylketonuria (PKU) or BH4 Deficiency",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Hyperphenylalaninemia (HPA) Due to Phenylketonuria (PKU) or Tetrahydrobiopterin (BH4) Deficiency",
+      "start_date": "2009-12",
+      "completion_date": "2021-05-31",
+      "enrollment": 0,
+      "sponsor": "BioMarin Pharmaceutical"
+    },
+    {
+      "nct_id": "NCT05580692",
+      "title": "A Prospective Study Evaluating Seroprevalence and Seroconversion of Antibodies Against Adeno-associated Virus (AAV)",
+      "status": "TERMINATED",
+      "phase": "NA",
+      "condition": "Hemophilia A",
+      "start_date": "2023-03-14",
+      "completion_date": "2024-07-31",
+      "enrollment": 0,
+      "sponsor": "BioMarin Pharmaceutical"
+    },
+    {
+      "nct_id": "NCT02597881",
+      "title": "Achondroplasia Natural History Multicenter Clinical Study",
+      "status": "SUSPENDED",
+      "phase": "",
+      "condition": "Achondroplasia",
+      "start_date": "2016-04",
+      "completion_date": "2030-12-31",
+      "enrollment": 0,
+      "sponsor": "Johns Hopkins University"
+    },
+    {
+      "nct_id": "NCT03424018",
+      "title": "An Extension Study to Evaluate the Efficacy and Safety of BMN 111 in Children With Achondroplasia",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Achondroplasia",
+      "start_date": "2017-12-12",
+      "completion_date": "2031-06",
+      "enrollment": 0,
+      "sponsor": "BioMarin Pharmaceutical"
+    },
+    {
+      "nct_id": "NCT06212947",
+      "title": "A Multicenter Multinational Observational Study of Children With Hypochondroplasia",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Hypochondroplasia",
+      "start_date": "2023-11-27",
+      "completion_date": "2043-12-31",
+      "enrollment": 0,
+      "sponsor": "BioMarin Pharmaceutical"
+    },
+    {
+      "nct_id": "NCT00225615",
+      "title": "A Phase 3, Multicenter, Open-Label Extension Study of Phenoptin in Subjects With PKU Who Have Elevated Phenylalanine Levels",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Phenylketonurias",
+      "start_date": "2005-11",
+      "completion_date": "2006-06",
+      "enrollment": 0,
+      "sponsor": "BioMarin Pharmaceutical"
+    },
+    {
+      "nct_id": "NCT02156674",
+      "title": "Naglazyme After Allo Transplant for Maroteaux-Lamy Syndrome",
+      "status": "TERMINATED",
+      "phase": "NA",
+      "condition": "Maroteaux-Lamy Syndrome",
+      "start_date": "2016-01-26",
+      "completion_date": "2019-12-01",
+      "enrollment": 0,
+      "sponsor": "Masonic Cancer Center, University of Minnesota"
+    },
+    {
+      "nct_id": "NCT01415427",
+      "title": "Long-Term Efficacy and Safety Extension Study of BMN 110 in Patients With Mucopolysaccharidosis IVA (Morquio A Syndrome)",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Mucopolysaccharidosis IV A, Morquio A Syndrome, MPS IVA",
+      "start_date": "2011-07",
+      "completion_date": "2016-06-16",
+      "enrollment": 0,
+      "sponsor": "BioMarin Pharmaceutical"
+    },
+    {
+      "nct_id": "NCT05270837",
+      "title": "Study to Evaluate the Safety and Efficacy of Pegvaliase in Adolescents (Ages 12-17) With Phenylketonuria",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Phenylketonuria (PKU)",
+      "start_date": "2022-06-17",
+      "completion_date": "2027-10",
+      "enrollment": 0,
+      "sponsor": "BioMarin Pharmaceutical"
+    },
+    {
+      "nct_id": "NCT03505125",
+      "title": "A Non-Interventional Interview Study of Phenylketonuria (PKU) Adults",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Phenylketonuria (PKU)",
+      "start_date": "2018-03-31",
+      "completion_date": "2019-07-31",
+      "enrollment": 0,
+      "sponsor": "BioMarin Pharmaceutical"
+    }
+  ],
+  "summary": {
+    "total_trials": 50,
+    "by_phase": {
+      "": 22,
+      "NA": 3,
+      "PHASE3": 9,
+      "PHASE1, PHASE2": 2,
+      "PHASE4": 2,
+      "PHASE2": 9,
+      "PHASE1": 3
+    },
+    "by_status": {
+      "COMPLETED": 23,
+      "TERMINATED": 7,
+      "SUSPENDED": 1,
+      "ACTIVE_NOT_RECRUITING": 6,
+      "RECRUITING": 6,
+      "ENROLLING_BY_INVITATION": 2,
+      "UNKNOWN": 1,
+      "APPROVED_FOR_MARKETING": 1,
+      "WITHDRAWN": 3
+    },
+    "active_trials": 14,
+    "completed_trials": 23,
+    "conditions": [
+      "Achondroplasia",
+      "Alpha 1-Antitrypsin Deficiency",
+      "Classical Phenylketonuria(PKU)",
+      "Duchenne Muscular Dystrophy",
+      "Heart Failure, Cardiovascular Disease",
+      "Hemophilia A",
+      "Hyperphenylalaninemia (HPA) Due to Phenylketonuria (PKU) or Tetrahydrobiopterin (BH4) Deficiency",
+      "Hypochondroplasia",
+      "Idiopathic Short Stature",
+      "Isolated Systolic Hypertension, Endothelial Dysfunction",
+      "Kidney Disease, Albuminuria",
+      "Late-Infantile Neuronal Ceroid Lipofuscinosis Type 2",
+      "Late-onset Pompe Patients Untreated or Treated With rhGAA",
+      "MPS IV A",
+      "MPS IVA, Morquio Syndrome",
+      "Maroteaux-Lamy Syndrome",
+      "Morquio Disease, MPS - Mucopolysaccharidosis",
+      "Morquio Disease, Mucopolysaccharidosis IV",
+      "Mucopolysaccharidoses",
+      "Mucopolysaccharidosis I, Hurler's Syndrome, Hurler-Scheie Syndrome, Scheie Syndrome",
+      "Mucopolysaccharidosis IV A, Morquio A Syndrome, MPS IVA",
+      "Mucopolysaccharidosis IV, Morquio A Disease",
+      "Mucopolysaccharidosis IVA (Morquio A Syndrome)",
+      "Mucopolysaccharidosis VI (MPS VI, Maroteaux-Lamy Syndrome)",
+      "Phenylketonuria",
+      "Phenylketonuria (PKU)",
+      "Phenylketonuria, Maternal",
+      "Phenylketonurias",
+      "Short Stature Homeobox- Containing Gene SHOX Deficiency, Noonan Syndrome, Turner Syndrome",
+      "Solid Tumors, Carcinoma, Non-Small Cell Lung, Non-Small Cell Lung Cancer, Non-Small-Cell Lung Carcinoma, Nonsmall Cell Lung Cancer"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:17:12.490466",
+    "search_query": "BioMarin Pharmaceutical Inc.",
+    "url": "https://clinicaltrials.gov/search?term=BioMarin+Pharmaceutical+Inc."
+  }
+}

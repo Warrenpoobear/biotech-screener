@@ -1,0 +1,161 @@
+{
+  "ticker": "ARDX",
+  "company_name": "Ardelyx, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT03824587",
+      "title": "Study to Evaluate the Efficacy of Tenapanor as Adjunctive Therapy to Phosphate Binder Therapy",
+      "status": "COMPLETED",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Hyperphosphatemia",
+      "start_date": "2019-02-28",
+      "completion_date": "2019-07-17",
+      "enrollment": 0,
+      "sponsor": "Ardelyx"
+    },
+    {
+      "nct_id": "NCT02226783",
+      "title": "D5611C00003 - Food Interaction Study With AZD1722 Tablet in Healthy Subjects",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers Food Interaction Study",
+      "start_date": "2013-03",
+      "completion_date": "2013-10",
+      "enrollment": 0,
+      "sponsor": "Ardelyx"
+    },
+    {
+      "nct_id": "NCT01764854",
+      "title": "Pharmacodynamic Study of AZD1722 in End-stage Renal Disease Patients on Hemodialysis",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "End Stage Renal Disease, Chronic Kidney Disease Stage 5, ESRD",
+      "start_date": "2013-01",
+      "completion_date": "2013-10",
+      "enrollment": 0,
+      "sponsor": "Ardelyx"
+    },
+    {
+      "nct_id": "NCT02621892",
+      "title": "A 12-Week Study With a 4-Week Randomized Withdrawal Period to Evaluate the Efficacy and Safety of Tenapanor for the Treatment of IBS-C",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Constipation Predominant Irritable Bowel Syndrome",
+      "start_date": "2015-10",
+      "completion_date": "2017-04",
+      "enrollment": 0,
+      "sponsor": "Ardelyx"
+    },
+    {
+      "nct_id": "NCT03427125",
+      "title": "A Phase 3 Study of Tenapanor to Treat Hyperphosphatemia in ESRD Patients on Dialysis",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Hyperphosphatemia",
+      "start_date": "2018-01-08",
+      "completion_date": "2020-02-27",
+      "enrollment": 0,
+      "sponsor": "Ardelyx"
+    },
+    {
+      "nct_id": "NCT06553547",
+      "title": "4-Week, Multi-center Dose-Ranging Study for the IBS-C in Pts. 6 to <12 Yrs",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Irritable Bowel Syndrome With Constipation (IBS-C)",
+      "start_date": "2024-07-24",
+      "completion_date": "2026-06",
+      "enrollment": 0,
+      "sponsor": "Ardelyx"
+    },
+    {
+      "nct_id": "NCT02796131",
+      "title": "Safety, Tolerability, and Pharmacodynamics of RDX5791 in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2011-07",
+      "completion_date": "2012-04",
+      "enrollment": 0,
+      "sponsor": "Ardelyx"
+    },
+    {
+      "nct_id": "NCT05905926",
+      "title": "Safety Study of Tenapanor for the Treatment of Pediatric Patients (6 to Less Than 18 Years Old) With IBS-C",
+      "status": "ENROLLING_BY_INVITATION",
+      "phase": "PHASE3",
+      "condition": "Irritable Bowel Syndrome With Constipation (IBS-C)",
+      "start_date": "2023-02-17",
+      "completion_date": "2031-10",
+      "enrollment": 0,
+      "sponsor": "Ardelyx"
+    },
+    {
+      "nct_id": "NCT03018067",
+      "title": "A Study Evaluating the Onset-of-Action, Safety, and Efficacy of RDX227675 for the Treatment of Hyperkalemia",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Hyperkalemia",
+      "start_date": "2017-01",
+      "completion_date": "2017-05",
+      "enrollment": 0,
+      "sponsor": "Ardelyx"
+    },
+    {
+      "nct_id": "NCT02727751",
+      "title": "A Long-Term Safety Study of Tenapanor for the Treatment of IBS-C",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Constipation Predominant Irritable Bowel Syndrome",
+      "start_date": "2016-03",
+      "completion_date": "2017-10",
+      "enrollment": 0,
+      "sponsor": "Ardelyx"
+    }
+  ],
+  "summary": {
+    "total_trials": 31,
+    "by_phase": {
+      "PHASE2, PHASE3": 2,
+      "PHASE1": 10,
+      "PHASE2": 8,
+      "PHASE3": 8,
+      "PHASE4": 3
+    },
+    "by_status": {
+      "COMPLETED": 24,
+      "RECRUITING": 4,
+      "ENROLLING_BY_INVITATION": 1,
+      "TERMINATED": 1,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 6,
+    "completed_trials": 24,
+    "conditions": [
+      "Chronic Kidney Disease Requiring Chronic Dialysis, Hyperphosphatemia",
+      "Chronic Kidney Disease, Type 2 Diabetes Mellitus",
+      "Constipation Predominant Irritable Bowel Syndrome",
+      "Cystic Fibrosis, Constipation",
+      "End Stage Renal Disease, Chronic Kidney Disease Stage 5, ESRD",
+      "Healthy",
+      "Healthy Volunteer",
+      "Healthy Volunteers",
+      "Healthy Volunteers Food Interaction Study",
+      "Hyperkalemia",
+      "Hyperphosphatemia",
+      "Hyperphosphatemia, End Stage Renal Disease",
+      "IBS, IBS - Irritable Bowel Syndrome",
+      "Irritable Bowel Syndrome With Constipation (IBS-C)",
+      "Lactation",
+      "Synucleinopathy, Parkinson's Disease"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:16:32.926906",
+    "search_query": "Ardelyx, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Ardelyx,+Inc."
+  }
+}

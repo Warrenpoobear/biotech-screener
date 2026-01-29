@@ -1,0 +1,149 @@
+{
+  "ticker": "AQST",
+  "company_name": "Aquestive Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT03428360",
+      "title": "Safety and Tolerability Study of Diazepam Buccal Film (DBF) in Subjects With Epilepsy",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Epilepsy",
+      "start_date": "2018-01-23",
+      "completion_date": "2020-06-25",
+      "enrollment": 0,
+      "sponsor": "Aquestive Therapeutics"
+    },
+    {
+      "nct_id": "NCT03953820",
+      "title": "Diazepam Buccal Film (DBF) - Diastat Rectal Gel (DRG) Crossover Study",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Epilepsy",
+      "start_date": "2019-04-13",
+      "completion_date": "2019-07-31",
+      "enrollment": 0,
+      "sponsor": "Aquestive Therapeutics"
+    },
+    {
+      "nct_id": "NCT01217190",
+      "title": "Crossover Study Comparing Ondansetron Orally Dissolving Film Strip (ODFS) With Zofran Orally Disintegrating Tablets",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Nausea and Vomiting, Postoperative, Nausea With Vomiting Chemotherapy-Induced",
+      "start_date": "2008-09-16",
+      "completion_date": "2008-10-06",
+      "enrollment": 0,
+      "sponsor": "MonoSol Rx"
+    },
+    {
+      "nct_id": "NCT03179891",
+      "title": "Study of Diazepam Buccal Film Administered in the Interictal and in the Ictal-Periictal States to Adults With Epilepsy",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Epilepsy",
+      "start_date": "2017-05-25",
+      "completion_date": "2018-12-21",
+      "enrollment": 0,
+      "sponsor": "Aquestive Therapeutics"
+    },
+    {
+      "nct_id": "NCT01217801",
+      "title": "Two Way Bioequivalence Study Under Fed Conditions",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2008-10",
+      "completion_date": "2008-10",
+      "enrollment": 0,
+      "sponsor": "MonoSol Rx"
+    },
+    {
+      "nct_id": "NCT03679975",
+      "title": "Riluzole Oral Soluble Film (ROSF) Swallowing Safety in Amyotrophic Lateral Sclerosis (ALS)",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Amyotrophic Lateral Sclerosis",
+      "start_date": "2018-04-04",
+      "completion_date": "2018-12-21",
+      "enrollment": 0,
+      "sponsor": "Aquestive Therapeutics"
+    },
+    {
+      "nct_id": "NCT03457753",
+      "title": "Riluzole Oral Soluble Film Safety and Tolerability in Amyotrophic Lateral Sclerosis",
+      "status": "WITHDRAWN",
+      "phase": "PHASE2",
+      "condition": "ALS",
+      "start_date": "2018-03-01",
+      "completion_date": "2018-03-27",
+      "enrollment": 0,
+      "sponsor": "Aquestive Therapeutics"
+    },
+    {
+      "nct_id": "NCT06527937",
+      "title": "Pharmacokinetics Study of DESF in Adults With Oral Allergy Syndrome",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Allergic Reaction",
+      "start_date": "2024-07-17",
+      "completion_date": "2024-10-13",
+      "enrollment": 0,
+      "sponsor": "Aquestive Therapeutics"
+    },
+    {
+      "nct_id": "NCT03222349",
+      "title": "Pharmacokinetics and Safety Study of Diazepam Buccal Film (DBF) in Pediatric Subjects With Epilepsy",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Epilepsy",
+      "start_date": "2017-08-31",
+      "completion_date": "2020-03-11",
+      "enrollment": 0,
+      "sponsor": "Aquestive Therapeutics"
+    },
+    {
+      "nct_id": "NCT01220167",
+      "title": "Three-way Crossover Study Comparing Ondansetron ODFS Administered With and Without Water to Zofran ODT Without Water",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Participants",
+      "start_date": "2008-08",
+      "completion_date": "2008-08",
+      "enrollment": 0,
+      "sponsor": "Aquestive Therapeutics"
+    }
+  ],
+  "summary": {
+    "total_trials": 10,
+    "by_phase": {
+      "PHASE3": 1,
+      "PHASE1, PHASE2": 2,
+      "PHASE2": 5,
+      "PHASE1": 2
+    },
+    "by_status": {
+      "COMPLETED": 8,
+      "TERMINATED": 1,
+      "WITHDRAWN": 1
+    },
+    "active_trials": 0,
+    "completed_trials": 8,
+    "conditions": [
+      "ALS",
+      "Allergic Reaction",
+      "Amyotrophic Lateral Sclerosis",
+      "Epilepsy",
+      "Healthy",
+      "Healthy Participants",
+      "Nausea and Vomiting, Postoperative, Nausea With Vomiting Chemotherapy-Induced"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:16:30.343468",
+    "search_query": "Aquestive Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Aquestive+Therapeutics,+Inc."
+  }
+}

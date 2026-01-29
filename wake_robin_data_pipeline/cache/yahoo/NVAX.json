@@ -1,0 +1,43 @@
+{
+  "ticker": "NVAX",
+  "success": true,
+  "price": {
+    "current": 9.34,
+    "currency": "USD",
+    "day_high": 9.6,
+    "day_low": 9.23,
+    "52_week_high": 10.64,
+    "52_week_low": 5.01
+  },
+  "market_cap": {
+    "value": 1517740672.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 162498995.0,
+  "volume": {
+    "last": 2329481,
+    "average_30d": 5921199
+  },
+  "valuation": {
+    "pe_ratio": 4.646766,
+    "forward_pe": -25.732862,
+    "price_to_book": -9.688797
+  },
+  "company_info": {
+    "name": "Novavax, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:31.540784",
+    "url": "https://finance.yahoo.com/quote/NVAX",
+    "data_hash": "3b04f86b3fd15eeb"
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "ticker": "AKRO",
+  "company_name": "Akero Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06215716",
+      "title": "A Study Evaluating Efruxifermin in Subjects With Non-Cirrhotic Nonalcoholic Steatohepatitis (NASH)/Metabolic Dysfunction-Associated Steatohepatitis (MASH) and Fibrosis",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "NASH With Fibrosis, MASH With Fibrosis",
+      "start_date": "2023-12-01",
+      "completion_date": "2032-11",
+      "enrollment": 0,
+      "sponsor": "Akero Therapeutics, Inc"
+    },
+    {
+      "nct_id": "NCT03976401",
+      "title": "A Study of Efruxifermin in Subjects With Histologically Confirmed Nonalcoholic Steatohepatitis (NASH)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "NASH - Nonalcoholic Steatohepatitis",
+      "start_date": "2019-05-28",
+      "completion_date": "2022-01-10",
+      "enrollment": 0,
+      "sponsor": "Akero Therapeutics, Inc"
+    },
+    {
+      "nct_id": "NCT04767529",
+      "title": "A Study of Efruxifermin in Non-Cirrhotic Subjects With Histologically Confirmed Nonalcoholic Steatohepatitis (NASH)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "NASH - Nonalcoholic Steatohepatitis",
+      "start_date": "2021-02-16",
+      "completion_date": "2024-05-02",
+      "enrollment": 0,
+      "sponsor": "Akero Therapeutics, Inc"
+    },
+    {
+      "nct_id": "NCT05039450",
+      "title": "A Study of Efruxifermin in Subjects With Compensated Cirrhosis Due to Nonalcoholic Steatohepatitis (NASH) (Symmetry)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "NASH - Nonalcoholic Steatohepatitis",
+      "start_date": "2021-07-30",
+      "completion_date": "2025-05",
+      "enrollment": 0,
+      "sponsor": "Akero Therapeutics, Inc"
+    },
+    {
+      "nct_id": "NCT06528314",
+      "title": "A Study Evaluating Efruxifermin in Subjects With Compensated Cirrhosis Due to NASH/MASH",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "NASH - Nonalcoholic Steatohepatitis, MASH - Metabolic Dysfunction-Associated Steatohepatitis",
+      "start_date": "2024-09-04",
+      "completion_date": "2029-10",
+      "enrollment": 0,
+      "sponsor": "Akero Therapeutics, Inc"
+    },
+    {
+      "nct_id": "NCT06161571",
+      "title": "A Study Evaluating Efruxifermin in Subjects With Non-invasively Diagnosed Nonalcoholic Steatohepatitis (NASH)/Metabolic Dysfunction-Associated Steatohepatitis (MASH) and Nonalcoholic Fatty Liver Disease (NAFLD)/Metabolic Dysfunction-Associated Steatotic Liver Disease (MASLD)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "NASH/MASH, NAFLD/MASLD",
+      "start_date": "2023-11-10",
+      "completion_date": "2026-10",
+      "enrollment": 0,
+      "sponsor": "Akero Therapeutics, Inc"
+    }
+  ],
+  "summary": {
+    "total_trials": 6,
+    "by_phase": {
+      "PHASE3": 3,
+      "PHASE2": 3
+    },
+    "by_status": {
+      "RECRUITING": 2,
+      "COMPLETED": 2,
+      "ACTIVE_NOT_RECRUITING": 2
+    },
+    "active_trials": 4,
+    "completed_trials": 2,
+    "conditions": [
+      "NASH - Nonalcoholic Steatohepatitis",
+      "NASH - Nonalcoholic Steatohepatitis, MASH - Metabolic Dysfunction-Associated Steatohepatitis",
+      "NASH With Fibrosis, MASH With Fibrosis",
+      "NASH/MASH, NAFLD/MASLD"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T14:00:05.676621",
+    "search_query": "Akero Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Akero+Therapeutics,+Inc."
+  }
+}

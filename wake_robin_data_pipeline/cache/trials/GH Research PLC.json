@@ -1,0 +1,124 @@
+{
+  "ticker": "GHRS",
+  "company_name": "GH Research PLC",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05804708",
+      "title": "Phase 2 Clinical Trial of GH001 in Postpartum Depression",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Postpartum Depression, Postnatal Depression",
+      "start_date": "2023-03-02",
+      "completion_date": "2024-11-15",
+      "enrollment": 0,
+      "sponsor": "GH Research Ireland Limited"
+    },
+    {
+      "nct_id": "NCT05839509",
+      "title": "Phase 2 Clinical Trial of GH001 in Bipolar II Disorder",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Bipolar II Disorder",
+      "start_date": "2023-04-06",
+      "completion_date": "2024-12-05",
+      "enrollment": 0,
+      "sponsor": "GH Research Ireland Limited"
+    },
+    {
+      "nct_id": "NCT06511947",
+      "title": "Pharmacokinetics of GH001 Delivered Via a Proprietary Aerosol Delivery Device in Healthy Subjects",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2024-08-01",
+      "completion_date": "2025-02",
+      "enrollment": 0,
+      "sponsor": "GH Research Ireland Limited"
+    },
+    {
+      "nct_id": "NCT04698603",
+      "title": "Clinical Study of GH001 in Depression",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Treatment Resistant Depression, Major Depressive Disorder, Depression",
+      "start_date": "2019-11-12",
+      "completion_date": "2021-11-06",
+      "enrollment": 0,
+      "sponsor": "GH Research Ireland Limited"
+    },
+    {
+      "nct_id": "NCT05800860",
+      "title": "A Trial of GH001 in Patients With Treatment-resistant Depression",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Treatment-resistant Depression",
+      "start_date": "2023-05-24",
+      "completion_date": "2025-03-11",
+      "enrollment": 0,
+      "sponsor": "GH Research Ireland Limited"
+    },
+    {
+      "nct_id": "NCT04640831",
+      "title": "Safety of GH001 in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2019-03-13",
+      "completion_date": "2019-10-04",
+      "enrollment": 0,
+      "sponsor": "GH Research Ireland Limited"
+    },
+    {
+      "nct_id": "NCT05753956",
+      "title": "Safety and Pharmacokinetics of GH002 in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2022-12-22",
+      "completion_date": "2023-11-29",
+      "enrollment": 0,
+      "sponsor": "GH Research Ireland Limited"
+    },
+    {
+      "nct_id": "NCT05163691",
+      "title": "Pharmacokinetics of GH001 in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2021-06-21",
+      "completion_date": "2021-11-22",
+      "enrollment": 0,
+      "sponsor": "GH Research Ireland Limited"
+    }
+  ],
+  "summary": {
+    "total_trials": 8,
+    "by_phase": {
+      "PHASE2": 3,
+      "PHASE1": 4,
+      "PHASE1, PHASE2": 1
+    },
+    "by_status": {
+      "TERMINATED": 2,
+      "RECRUITING": 1,
+      "COMPLETED": 5
+    },
+    "active_trials": 1,
+    "completed_trials": 5,
+    "conditions": [
+      "Bipolar II Disorder",
+      "Healthy Volunteers",
+      "Postpartum Depression, Postnatal Depression",
+      "Treatment Resistant Depression, Major Depressive Disorder, Depression",
+      "Treatment-resistant Depression"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:18:35.765821",
+    "search_query": "GH Research PLC",
+    "url": "https://clinicaltrials.gov/search?term=GH+Research+PLC"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "ticker": "BNTC",
+  "company_name": "Benitec Biopharma Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06185673",
+      "title": "A Study to Evaluate the Safety and Clinical Activity of Intramuscular Doses of BB-301 Administered to Subjects With Oculopharyngeal Muscular Dystrophy With Dysphagia",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Oculopharyngeal Muscular Dystrophy",
+      "start_date": "2023-11-28",
+      "completion_date": "2040-11",
+      "enrollment": 0,
+      "sponsor": "Benitec Biopharma, Inc."
+    },
+    {
+      "nct_id": "NCT03433027",
+      "title": "A Study of BB-401 in Recurrent or Metastatic Head and Neck Squamous Cell Carcinoma",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Head and Neck Squamous Cell Carcinoma",
+      "start_date": "2018-03-15",
+      "completion_date": "2020-04-06",
+      "enrollment": 0,
+      "sponsor": "Benitec Biopharma, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 2,
+    "by_phase": {
+      "PHASE1, PHASE2": 1,
+      "PHASE2": 1
+    },
+    "by_status": {
+      "RECRUITING": 1,
+      "COMPLETED": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 1,
+    "conditions": [
+      "Head and Neck Squamous Cell Carcinoma",
+      "Oculopharyngeal Muscular Dystrophy"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T14:00:07.859089",
+    "search_query": "Benitec Biopharma Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Benitec+Biopharma+Inc."
+  }
+}

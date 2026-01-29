@@ -1,0 +1,66 @@
+{
+  "ticker": "IPSC",
+  "company_name": "Century Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05336409",
+      "title": "A Study of CNTY-101 in Participants With CD19-Positive B-Cell Malignancies",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "R/R CD19-Positive B-Cell Malignancies, Indolent Non-Hodgkin Lymphoma, Aggressive Non-Hodgkin Lymphoma",
+      "start_date": "2023-01-24",
+      "completion_date": "2025-07-01",
+      "enrollment": 0,
+      "sponsor": "Century Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06255028",
+      "title": "A Study of CNTY-101 in Participants With Refractory B Cell-mediated Autoimmune Diseases",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Systemic Lupus Erythematosus, Lupus Nephritis, Idiopathic Inflammatory Myopathies, Diffuse Cutaneous Systemic Sclerosis",
+      "start_date": "2025-02-06",
+      "completion_date": "2028-08",
+      "enrollment": 0,
+      "sponsor": "Century Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05768269",
+      "title": "A Study for Participants Previously Treated With Century Therapeutics Cellular Therapy Product",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Hematological Malignancy, Solid Tumor Malignancy",
+      "start_date": "2024-04-29",
+      "completion_date": "2040-03",
+      "enrollment": 0,
+      "sponsor": "Century Therapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 3,
+    "by_phase": {
+      "PHASE1": 2,
+      "": 1
+    },
+    "by_status": {
+      "TERMINATED": 1,
+      "ACTIVE_NOT_RECRUITING": 1,
+      "RECRUITING": 1
+    },
+    "active_trials": 2,
+    "completed_trials": 0,
+    "conditions": [
+      "Hematological Malignancy, Solid Tumor Malignancy",
+      "R/R CD19-Positive B-Cell Malignancies, Indolent Non-Hodgkin Lymphoma, Aggressive Non-Hodgkin Lymphoma",
+      "Systemic Lupus Erythematosus, Lupus Nephritis, Idiopathic Inflammatory Myopathies, Diffuse Cutaneous Systemic Sclerosis"
+    ],
+    "lead_stage": "phase_1"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T13:12:05.937045",
+    "search_query": "Century Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Century+Therapeutics,+Inc."
+  }
+}

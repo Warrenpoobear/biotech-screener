@@ -2,36 +2,42 @@
   "ticker": "RARE",
   "success": true,
   "price": {
-    "current": 23.11,
+    "current": 24.38,
     "currency": "USD",
-    "day_high": 23.75,
-    "day_low": 22.65,
+    "day_high": 24.69,
+    "day_low": 24.2801,
     "52_week_high": 46.5,
     "52_week_low": 18.41
   },
   "market_cap": {
-    "value": 2229596672.0,
+    "value": 2352123136.0,
     "currency": "USD"
   },
   "shares_outstanding": 96477569.0,
   "volume": {
-    "last": 3955711,
-    "average_30d": 3483332
+    "last": 315014,
+    "average_30d": 4031637
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -5.5519524,
-    "price_to_book": 243.26317
+    "forward_pe": -5.7083855,
+    "price_to_book": 256.63156
   },
   "company_info": {
     "name": "Ultragenyx Pharmaceutical Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-05T18:05:42.846368",
+    "timestamp": "2026-01-29T10:59:33.266051",
     "url": "https://finance.yahoo.com/quote/RARE",
-    "data_hash": "c2efdf1512b11ca2"
+    "data_hash": "3067ccae876b0988"
   }
 }

@@ -1,0 +1,43 @@
+{
+  "ticker": "CTMX",
+  "success": true,
+  "price": {
+    "current": 5.755,
+    "currency": "USD",
+    "day_high": 6.14,
+    "day_low": 5.65,
+    "52_week_high": 6.15,
+    "52_week_low": 0.4
+  },
+  "market_cap": {
+    "value": 975100672.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 169435395.0,
+  "volume": {
+    "last": 709153,
+    "average_30d": 3080356
+  },
+  "valuation": {
+    "pe_ratio": 19.183332,
+    "forward_pe": -15.765828,
+    "price_to_book": 8.840245
+  },
+  "company_info": {
+    "name": "CytomX Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:05:56.900369",
+    "url": "https://finance.yahoo.com/quote/CTMX",
+    "data_hash": "9c294a5e289af214"
+  }
+}

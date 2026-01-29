@@ -1,0 +1,43 @@
+{
+  "ticker": "ALLO",
+  "success": true,
+  "price": {
+    "current": 1.47,
+    "currency": "USD",
+    "day_high": 1.49,
+    "day_low": 1.45,
+    "52_week_high": 3.78,
+    "52_week_low": 0.86
+  },
+  "market_cap": {
+    "value": 330353312.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 224730144.0,
+  "volume": {
+    "last": 1515908,
+    "average_30d": 5110886
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -1.6597792,
+    "price_to_book": 1.0403397
+  },
+  "company_info": {
+    "name": "Allogene Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:04:23.692932",
+    "url": "https://finance.yahoo.com/quote/ALLO",
+    "data_hash": "e72a40a20a91136c"
+  }
+}

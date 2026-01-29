@@ -1,0 +1,43 @@
+{
+  "ticker": "IMRX",
+  "success": true,
+  "price": {
+    "current": 4.854,
+    "currency": "USD",
+    "day_high": 5.15,
+    "day_low": 4.85,
+    "52_week_high": 10.08,
+    "52_week_low": 1.1
+  },
+  "market_cap": {
+    "value": 313422624.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 64569967.0,
+  "volume": {
+    "last": 305514,
+    "average_30d": 2832187
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -3.320859,
+    "price_to_book": 1.3517126
+  },
+  "company_info": {
+    "name": "Immuneering Corporation",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:07:11.123457",
+    "url": "https://finance.yahoo.com/quote/IMRX",
+    "data_hash": "1b9863ad67055d05"
+  }
+}

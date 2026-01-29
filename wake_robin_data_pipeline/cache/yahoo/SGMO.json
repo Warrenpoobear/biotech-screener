@@ -1,0 +1,43 @@
+{
+  "ticker": "SGMO",
+  "success": true,
+  "price": {
+    "current": 0.468,
+    "currency": "USD",
+    "day_high": 0.47,
+    "day_low": 0.4,
+    "52_week_high": 1.4,
+    "52_week_low": 0.36
+  },
+  "market_cap": {
+    "value": 157479424.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 336494489.0,
+  "volume": {
+    "last": 16442490,
+    "average_30d": 4909057
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -2.0347826,
+    "price_to_book": 24.63158
+  },
+  "company_info": {
+    "name": "Sangamo Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:09:44.251883",
+    "url": "https://finance.yahoo.com/quote/SGMO",
+    "data_hash": "b6d13bdf23ad998c"
+  }
+}

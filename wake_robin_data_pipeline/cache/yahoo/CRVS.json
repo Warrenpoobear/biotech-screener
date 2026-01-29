@@ -1,0 +1,43 @@
+{
+  "ticker": "CRVS",
+  "success": true,
+  "price": {
+    "current": 20.9,
+    "currency": "USD",
+    "day_high": 22.1,
+    "day_low": 20.5,
+    "52_week_high": 26.95,
+    "52_week_low": 2.54
+  },
+  "market_cap": {
+    "value": 1750743808.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 83767650.0,
+  "volume": {
+    "last": 602662,
+    "average_30d": 7001940
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -33.983738,
+    "price_to_book": 21.748178
+  },
+  "company_info": {
+    "name": "Corvus Pharmaceuticals, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:05:55.242505",
+    "url": "https://finance.yahoo.com/quote/CRVS",
+    "data_hash": "949e2c52fc31fea8"
+  }
+}

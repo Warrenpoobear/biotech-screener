@@ -12,6 +12,20 @@
     "equity": -1922729000.0,
     "currency": "USD"
   },
+  "data_dates": {
+    "cash": "2025-09-30",
+    "debt": "2025-09-30",
+    "revenue": "2025-09-30",
+    "assets": "2025-09-30",
+    "liabilities": "2025-09-30"
+  },
+  "data_freshness": {
+    "most_recent_date": "2025-09-30",
+    "oldest_date": "2025-09-30",
+    "staleness_flags": [
+      "stale_data:121d"
+    ]
+  },
   "coverage": {
     "has_cash": true,
     "has_debt": true,
@@ -21,8 +35,9 @@
   },
   "provenance": {
     "source": "SEC EDGAR Company Facts API",
-    "timestamp": "2026-01-05T17:57:30.977326",
+    "timestamp": "2026-01-29T10:59:43.225813",
     "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001743881.json",
-    "cik": "0001743881"
+    "cik": "0001743881",
+    "accounting_standard": "us-gaap"
   }
 }

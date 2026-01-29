@@ -1,0 +1,158 @@
+{
+  "ticker": "COGT",
+  "company_name": "Cogent Biosciences, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05186753",
+      "title": "(Summit) A Study to Evaluate the Efficacy and Safety of CGT9486 Versus Placebo in Patients With Indolent or Smoldering Systemic Mastocytosis",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "SSM, Mastocytosis, Indolent, Mastocytosis, Systemic, Mastocytosis, ISM, BMM, Smoldering Systemic Mastocytosis, Bone Marrow Mastocytosis",
+      "start_date": "2022-06-27",
+      "completion_date": "2030-04",
+      "enrollment": 0,
+      "sponsor": "Cogent Biosciences, Inc."
+    },
+    {
+      "nct_id": "NCT07361562",
+      "title": "A Study of a Selective ERBB2 Inhibitor (CGT4255), in Patients With Advanced Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Advanced Solid Tumor, Adult, ERBB2 Altered Breast Cancer, ERBB2 Gene Amplification, HER2 Overexpression, Non-Small Cell Lung Cancer, HER2",
+      "start_date": "2025-12-30",
+      "completion_date": "2028-11",
+      "enrollment": 0,
+      "sponsor": "Cogent Biosciences, Inc."
+    },
+    {
+      "nct_id": "NCT06948955",
+      "title": "Expanded Access to Bezuclastinib to be Coadministered With Sunitinib for Patients With Gastrointestinal Stromal Tumors",
+      "status": "AVAILABLE",
+      "phase": "",
+      "condition": "Gastrointestinal Neoplasms, Gastrointestinal Stromal Tumors",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Cogent Biosciences, Inc."
+    },
+    {
+      "nct_id": "NCT05208047",
+      "title": "(Peak) A Phase 3 Randomized Trial of CGT9486+Sunitinib vs. Sunitinib in Subjects With Gastrointestinal Stromal Tumors",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Advanced Gastrointestinal Stromal Tumors, Metastatic Cancer",
+      "start_date": "2022-04-14",
+      "completion_date": "2026-09",
+      "enrollment": 0,
+      "sponsor": "Cogent Biosciences, Inc."
+    },
+    {
+      "nct_id": "NCT06208748",
+      "title": "SARC044: A Phase II Trial of Bezuclastinib in Combination With Sunitinib in Patients With GIST",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Gastrointestinal Stromal Tumors, GIST",
+      "start_date": "2024-08-01",
+      "completion_date": "2027-06",
+      "enrollment": 0,
+      "sponsor": "Sarcoma Alliance for Research through Collaboration"
+    },
+    {
+      "nct_id": "NCT06915766",
+      "title": "Expanded Access to Bezuclastinib for Patients With NonAdvanced Systemic Mastocytosis or Advanced Systemic Mastocytosis",
+      "status": "AVAILABLE",
+      "phase": "",
+      "condition": "Systemic Mastocytoses, Indolent, Systemic Mastocytoses, Aggressive",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Cogent Biosciences, Inc."
+    },
+    {
+      "nct_id": "NCT03680560",
+      "title": "Study of ACTR T Cell Product in Combination With Trastuzumab in Subjects With HER2-Positive Advanced Solid Tumor Cancers",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Solid Tumor, HER-2 Protein Overexpression",
+      "start_date": "2019-03-13",
+      "completion_date": "2020-03-12",
+      "enrollment": 0,
+      "sponsor": "Cogent Biosciences, Inc."
+    },
+    {
+      "nct_id": "NCT06777316",
+      "title": "A Study of an FGFR2/3 Inhibitor (CGT4859) in Patients With Cholangiocarcinoma and Other Advanced Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Intrahepatic Cholangiocarcinoma (Icc), Cholangiocarcinoma, Other Solid Tumors, Adult, FGFR2 Gene Fusion/Rearrangement, FGFR2 Gene Amplification, FGFR2 Gene Short Variants, FGFR3 Gene Fusion/Rearrangement, FGFR3 Gene Amplification, FGFR3 Gene Short Variants, FGFR2 Genetic Alterations, FGFR3 Genetic Alterations, Advanced Solid Tumors",
+      "start_date": "2025-01-22",
+      "completion_date": "2027-06",
+      "enrollment": 0,
+      "sponsor": "Cogent Biosciences, Inc."
+    },
+    {
+      "nct_id": "NCT03266692",
+      "title": "Study of ACTR087 in Combination With SEA-BCMA in Subjects With Relapsed or Refractory Multiple Myeloma",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Multiple Myeloma, Multiple Myeloma in Relapse, Refractory Multiple Myeloma",
+      "start_date": "2018-02-22",
+      "completion_date": "2019-10-01",
+      "enrollment": 0,
+      "sponsor": "Cogent Biosciences, Inc."
+    },
+    {
+      "nct_id": "NCT04996875",
+      "title": "(Apex) Bezuclastinib in Patients With Advanced Systemic Mastocytosis",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Advanced Systemic Mastocytosis (AdvSM), SM With an Associated Hematologic Neoplasm (SM-AHN), Mast Cell Leukemia (MCL), Aggressive Systemic Mastocytosis (ASM)",
+      "start_date": "2021-11-09",
+      "completion_date": "2026-07",
+      "enrollment": 0,
+      "sponsor": "Cogent Biosciences, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 14,
+    "by_phase": {
+      "PHASE2": 3,
+      "PHASE1": 5,
+      "": 3,
+      "PHASE3": 1,
+      "PHASE1, PHASE2": 2
+    },
+    "by_status": {
+      "ACTIVE_NOT_RECRUITING": 3,
+      "RECRUITING": 3,
+      "AVAILABLE": 2,
+      "TERMINATED": 4,
+      "COMPLETED": 2
+    },
+    "active_trials": 6,
+    "completed_trials": 2,
+    "conditions": [
+      "Advanced Gastrointestinal Stromal Tumors, Metastatic Cancer",
+      "Advanced Solid Tumor, Adult, ERBB2 Altered Breast Cancer, ERBB2 Gene Amplification, HER2 Overexpression, Non-Small Cell Lung Cancer, HER2",
+      "Advanced Systemic Mastocytosis (AdvSM), SM With an Associated Hematologic Neoplasm (SM-AHN), Mast Cell Leukemia (MCL), Aggressive Systemic Mastocytosis (ASM)",
+      "B Cell Lymphomas, Multiple Myeloma, Solid Tumor, HER-2 Protein Overexpression",
+      "Gastrointestinal Neoplasms, Gastrointestinal Stromal Tumors",
+      "Gastrointestinal Stromal Tumors",
+      "Gastrointestinal Stromal Tumors, GIST",
+      "Intrahepatic Cholangiocarcinoma (Icc), Cholangiocarcinoma, Other Solid Tumors, Adult, FGFR2 Gene Fusion/Rearrangement, FGFR2 Gene Amplification, FGFR2 Gene Short Variants, FGFR3 Gene Fusion/Rearrangement, FGFR3 Gene Amplification, FGFR3 Gene Short Variants, FGFR2 Genetic Alterations, FGFR3 Genetic Alterations, Advanced Solid Tumors",
+      "Lymphoma",
+      "Multiple Myeloma, Multiple Myeloma in Relapse, Refractory Multiple Myeloma",
+      "SSM, Mastocytosis, Indolent, Mastocytosis, Systemic, Mastocytosis, ISM, BMM, Smoldering Systemic Mastocytosis, Bone Marrow Mastocytosis",
+      "Solid Tumor, HER-2 Protein Overexpression",
+      "Systemic Mastocytoses, Indolent, Systemic Mastocytoses, Aggressive"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:17:36.166644",
+    "search_query": "Cogent Biosciences, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Cogent+Biosciences,+Inc."
+  }
+}

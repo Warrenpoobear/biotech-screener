@@ -1,0 +1,43 @@
+{
+  "ticker": "ZLAB",
+  "cik": "0001704292",
+  "success": true,
+  "financials": {
+    "cash": 717155000.0,
+    "debt": 0.0,
+    "net_debt": -717155000.0,
+    "revenue_ttm": 332559000.0,
+    "assets": 1158940000.0,
+    "liabilities": 398995000.0,
+    "equity": 759945000.0,
+    "currency": "USD"
+  },
+  "data_dates": {
+    "cash": "2025-09-30",
+    "revenue": "2025-09-30",
+    "assets": "2025-09-30",
+    "liabilities": "2025-09-30",
+    "debt": "2025-09-30"
+  },
+  "data_freshness": {
+    "most_recent_date": "2025-09-30",
+    "oldest_date": "2025-09-30",
+    "staleness_flags": [
+      "stale_data:121d"
+    ]
+  },
+  "coverage": {
+    "has_cash": true,
+    "has_debt": true,
+    "has_revenue": true,
+    "has_balance_sheet": true,
+    "pct_complete": 100.0
+  },
+  "provenance": {
+    "source": "SEC EDGAR Company Facts API",
+    "timestamp": "2026-01-29T11:19:56.830852",
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001704292.json",
+    "cik": "0001704292",
+    "accounting_standard": "us-gaap"
+  }
+}

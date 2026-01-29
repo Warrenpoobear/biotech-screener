@@ -1,0 +1,159 @@
+{
+  "ticker": "RVMD",
+  "company_name": "Revolution Medicines, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06162221",
+      "title": "Study of RAS(ON) Inhibitors in Patients With Advanced RAS-mutated NSCLC",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Non-Small Cell Lung Cancer, NSCLC, KRAS, NRAS, HRAS-mutated NSCLC, KRAS G12C-mutated Solid Tumors, Lung Cancer, Lung Cancer Stage IV, Advanced Solid Tumor, Cancer, RAS G12D-mutated NSCLC",
+      "start_date": "2024-01-18",
+      "completion_date": "2028-12",
+      "enrollment": 0,
+      "sponsor": "Revolution Medicines, Inc."
+    },
+    {
+      "nct_id": "NCT05054725",
+      "title": "Combination Study of RMC-4630 and Sotorasib for NSCLC Subjects With KRASG12C Mutation After Failure of Prior Standard Therapies",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Non-Small Cell Lung Cancer",
+      "start_date": "2021-12-30",
+      "completion_date": "2024-08-29",
+      "enrollment": 0,
+      "sponsor": "Revolution Medicines, Inc."
+    },
+    {
+      "nct_id": "NCT04418661",
+      "title": "Safety and Efficacy Study of Vociprotafib (SAR442720) in Combination With Other Agents in Advanced Malignancies",
+      "status": "TERMINATED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Metastatic Neoplasm",
+      "start_date": "2020-06-09",
+      "completion_date": "2024-04-04",
+      "enrollment": 0,
+      "sponsor": "Sanofi"
+    },
+    {
+      "nct_id": "NCT06128551",
+      "title": "Study of RMC-6291 in Combination with RMC-6236 in Participants with Advanced KRAS G12C Mutant Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Non-Small Cell Lung Cancer (NSCLC), Colorectal Cancer, Pancreatic Ductal Adenocarcinoma",
+      "start_date": "2023-11-14",
+      "completion_date": "2026-11-30",
+      "enrollment": 0,
+      "sponsor": "Revolution Medicines, Inc."
+    },
+    {
+      "nct_id": "NCT04774952",
+      "title": "Dose Escalation of RMC-5552 Monotherapy in Relapsed/Refractory Solid Tumors",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Solid Tumors",
+      "start_date": "2021-04-07",
+      "completion_date": "2024-06-28",
+      "enrollment": 0,
+      "sponsor": "Revolution Medicines, Inc."
+    },
+    {
+      "nct_id": "NCT03634982",
+      "title": "Dose Escalation of RMC-4630 Monotherapy in Relapsed/Refractory Solid Tumors",
+      "status": "UNKNOWN",
+      "phase": "PHASE1",
+      "condition": "Solid Tumors",
+      "start_date": "2018-09-28",
+      "completion_date": "2023-05-31",
+      "enrollment": 0,
+      "sponsor": "Revolution Medicines, Inc."
+    },
+    {
+      "nct_id": "NCT06922591",
+      "title": "Study to Evaluate the Safety, Tolerability & Efficacy of TNG462 in Combination in PDAC & NSCLC Patients",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "PDAC, PDAC - Pancreatic Ductal Adenocarcinoma, NSCLC, RAS Mutation, MTAP Deletion, Lung Cancer, Pancreatic Cancer Metastatic, Thoracic Cancer",
+      "start_date": "2025-05-31",
+      "completion_date": "2027-12",
+      "enrollment": 0,
+      "sponsor": "Tango Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06881784",
+      "title": "Study of Daraxonrasib (RMC-6236) in Patients With RAS Mutated NSCLC (RASolve 301)",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "NSCLC (Non-small Cell Lung Cancer), Non-Small Cell Lung Cancer, NSCLC, NSCLC (Non-small Cell Lung Carcinoma), NSCLC (Advanced Non-small Cell Lung Cancer)",
+      "start_date": "2025-05-06",
+      "completion_date": "2030-12-01",
+      "enrollment": 0,
+      "sponsor": "Revolution Medicines, Inc."
+    },
+    {
+      "nct_id": "NCT07252232",
+      "title": "Study of Daraxonrasib (RMC-6236) in Patients With Resected Pancreatic Ductal Adenocarcinoma (PDAC)",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Pancreatic Cancer, PDAC, PDAC - Pancreatic Ductal Adenocarcinoma, Resectable Pancreatic Ductal Adenocarcinoma (PDAC), Resected Pancreatic Adenocarcinoma",
+      "start_date": "2025-12-15",
+      "completion_date": "2030-07-10",
+      "enrollment": 0,
+      "sponsor": "Revolution Medicines, Inc."
+    },
+    {
+      "nct_id": "NCT03989115",
+      "title": "Dose-Esc/Exp RMC4630 & Cobi in Relapsed/Refractory Solid Tumors & RMC4630& Osi in EGFR+ Locally Adv/Meta NSCLC",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Solid Tumor",
+      "start_date": "2019-07-02",
+      "completion_date": "2022-02-08",
+      "enrollment": 0,
+      "sponsor": "Revolution Medicines, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 17,
+    "by_phase": {
+      "PHASE1, PHASE2": 6,
+      "PHASE2": 1,
+      "PHASE1": 7,
+      "PHASE3": 3
+    },
+    "by_status": {
+      "RECRUITING": 10,
+      "COMPLETED": 3,
+      "TERMINATED": 1,
+      "UNKNOWN": 1,
+      "ACTIVE_NOT_RECRUITING": 2
+    },
+    "active_trials": 12,
+    "completed_trials": 3,
+    "conditions": [
+      "Colorectal Cancer, CRC, Pancreatic Ductal Adenocarcinoma, PDAC, Gastrointestinal Cancer, Metastatic Pancreatic Ductal Adenocarcinoma",
+      "Glioblastoma, Recurrent Glioblastoma",
+      "Metastatic Neoplasm",
+      "NSCLC (Non-small Cell Lung Cancer), Non-Small Cell Lung Cancer, NSCLC, NSCLC (Non-small Cell Lung Carcinoma), NSCLC (Advanced Non-small Cell Lung Cancer)",
+      "Non-Small Cell Lung Cancer",
+      "Non-Small Cell Lung Cancer (NSCLC), Colorectal Cancer (CRC), Pancreatic Ductal Adenocarcinoma, Advanced Solid Tumor",
+      "Non-Small Cell Lung Cancer (NSCLC), Colorectal Cancer, Pancreatic Ductal Adenocarcinoma",
+      "Non-Small Cell Lung Cancer, NSCLC, KRAS, NRAS, HRAS-mutated NSCLC, KRAS G12C-mutated Solid Tumors, Lung Cancer, Lung Cancer Stage IV, Advanced Solid Tumor, Cancer, RAS G12D-mutated NSCLC",
+      "Non-small Cell Lung Cancer (NSCLC), Colorectal Cancer (CRC), Pancreatic Adenocarcinoma, Pancreatic Ductal Adenocarcinoma (PDAC), PDAC, CRC, NSCLC, Pancreatic Cancer, Lung Cancer (NSCLC), Advanced Solid Tumors",
+      "Non-small Cell Lung Cancer (NSCLC), Colorectal Cancer (CRC), Pancreatic Ductal Adenocarcinoma (PDAC), Advanced Solid Tumors",
+      "PDAC, PDAC - Pancreatic Ductal Adenocarcinoma, NSCLC, RAS Mutation, MTAP Deletion, Lung Cancer, Pancreatic Cancer Metastatic, Thoracic Cancer",
+      "Pancreatic Cancer, PDAC, PDAC - Pancreatic Ductal Adenocarcinoma",
+      "Pancreatic Cancer, PDAC, PDAC - Pancreatic Ductal Adenocarcinoma, Resectable Pancreatic Ductal Adenocarcinoma (PDAC), Resected Pancreatic Adenocarcinoma",
+      "Solid Tumor",
+      "Solid Tumors"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:21:41.044827",
+    "search_query": "Revolution Medicines, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Revolution+Medicines,+Inc."
+  }
+}

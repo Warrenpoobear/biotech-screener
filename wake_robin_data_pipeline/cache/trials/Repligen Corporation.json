@@ -1,0 +1,151 @@
+{
+  "ticker": "RGEN",
+  "company_name": "Repligen Corporation",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT00060515",
+      "title": "RG2133 (2',3',5'-Tri-O-Acetyluridine) in Mitochondrial Disease",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Mitochondrial Diseases",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Repligen Corporation"
+    },
+    {
+      "nct_id": "NCT00812058",
+      "title": "A Study to Assess the Safety, Tolerability and Efficacy of RG2417 in Bipolar I Depression",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Bipolar I Depression",
+      "start_date": "2008-11",
+      "completion_date": "2010-12",
+      "enrollment": 0,
+      "sponsor": "Repligen Corporation"
+    },
+    {
+      "nct_id": "NCT00076934",
+      "title": "Safety of RG2077 in Patients With Multiple Sclerosis",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Multiple Sclerosis, Multiple Sclerosis, Relapsing-Remitting",
+      "start_date": "2003-01",
+      "completion_date": "2006-02",
+      "enrollment": 0,
+      "sponsor": "National Institute of Allergy and Infectious Diseases (NIAID)"
+    },
+    {
+      "nct_id": "NCT00322764",
+      "title": "Phase II Study to Assess RG2417 in the Treatment of Bipolar I Depression",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Bipolar Depression",
+      "start_date": "2006-03",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Repligen Corporation"
+    },
+    {
+      "nct_id": "NCT00036244",
+      "title": "Synthetic Human Secretin in Children With Autism",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Autism",
+      "start_date": "2002-04",
+      "completion_date": "2004-01",
+      "enrollment": 0,
+      "sponsor": "Repligen Corporation"
+    },
+    {
+      "nct_id": "NCT00036231",
+      "title": "Synthetic Human Secretin in Children With Autism and Gastrointestinal Dysfunction",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Autism",
+      "start_date": "2002-04",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Repligen Corporation"
+    },
+    {
+      "nct_id": "NCT01371240",
+      "title": "Secretin-Assisted Computed Tomography Scan and Magnetic Resonance Imaging in Improving Pancreatic Tumor Conspicuity",
+      "status": "WITHDRAWN",
+      "phase": "EARLY_PHASE1",
+      "condition": "Pancreas Cancer",
+      "start_date": "2011-06",
+      "completion_date": "2012-06",
+      "enrollment": 0,
+      "sponsor": "University Hospitals Cleveland Medical Center"
+    },
+    {
+      "nct_id": "NCT00235274",
+      "title": "Effects of RG1068 (Secretin) on Information Processing in Schizophrenia",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Schizophrenia",
+      "start_date": "2005-11",
+      "completion_date": "2006-08",
+      "enrollment": 0,
+      "sponsor": "Indiana University School of Medicine"
+    },
+    {
+      "nct_id": "NCT00216294",
+      "title": "Safety Study of the Drug RG1068 in Patients With Obsessive Compulsive Disorder",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Obsessive Compulsive Disorder (OCD)",
+      "start_date": "2005-02",
+      "completion_date": "2006-04",
+      "enrollment": 0,
+      "sponsor": "Indiana University School of Medicine"
+    },
+    {
+      "nct_id": "NCT00660335",
+      "title": "Safety and Efficacy of Synthetic Human Secretin-Enhanced MRCP in Subjects With Abnormalities of the Pancreas",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Pancreatitis",
+      "start_date": "2008-03",
+      "completion_date": "2009-10",
+      "enrollment": 0,
+      "sponsor": "Repligen Corporation"
+    }
+  ],
+  "summary": {
+    "total_trials": 10,
+    "by_phase": {
+      "PHASE1": 2,
+      "PHASE2": 4,
+      "PHASE3": 3,
+      "EARLY_PHASE1": 1
+    },
+    "by_status": {
+      "TERMINATED": 2,
+      "COMPLETED": 7,
+      "WITHDRAWN": 1
+    },
+    "active_trials": 0,
+    "completed_trials": 7,
+    "conditions": [
+      "Autism",
+      "Bipolar Depression",
+      "Bipolar I Depression",
+      "Mitochondrial Diseases",
+      "Multiple Sclerosis, Multiple Sclerosis, Relapsing-Remitting",
+      "Obsessive Compulsive Disorder (OCD)",
+      "Pancreas Cancer",
+      "Pancreatitis",
+      "Schizophrenia"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:21:29.072748",
+    "search_query": "Repligen Corporation",
+    "url": "https://clinicaltrials.gov/search?term=Repligen+Corporation"
+  }
+}

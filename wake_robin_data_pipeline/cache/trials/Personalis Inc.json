@@ -1,0 +1,78 @@
+{
+  "ticker": "PSNL",
+  "company_name": "Personalis, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06225505",
+      "title": "Early Detection of Triple Negative Breast Cancer Relapse (CUPCAKE)",
+      "status": "RECRUITING",
+      "phase": "NA",
+      "condition": "Triple Negative Breast Cancer",
+      "start_date": "2026-01-05",
+      "completion_date": "2031-08-03",
+      "enrollment": 0,
+      "sponsor": "Institut Curie"
+    },
+    {
+      "nct_id": "NCT05695976",
+      "title": "GRETeL: Tumor Response to Standard Radiotherapy and TMZ Patients With GBM",
+      "status": "SUSPENDED",
+      "phase": "",
+      "condition": "Glioblastoma, Glioma, Malignant",
+      "start_date": "2023-04-18",
+      "completion_date": "2029-01",
+      "enrollment": 0,
+      "sponsor": "Duke University"
+    },
+    {
+      "nct_id": "NCT06230185",
+      "title": "CtDNA Based MRD Testing for NAC Monitoring in TNBC",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "TNBC - Triple-Negative Breast Cancer, Minimal Residual Disease",
+      "start_date": "2023-11-09",
+      "completion_date": "2025-12-31",
+      "enrollment": 0,
+      "sponsor": "Personalis Inc."
+    },
+    {
+      "nct_id": "NCT06705361",
+      "title": "Ice Bag, TR Band, and Air Compression Effects on Radial Line Removal Outcomes in Open Heart Surgery: A Clinical Trial",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "NA",
+      "condition": "Cardiac Disease",
+      "start_date": "2024-11-25",
+      "completion_date": "2025-03-25",
+      "enrollment": 0,
+      "sponsor": "University of Baghdad"
+    }
+  ],
+  "summary": {
+    "total_trials": 4,
+    "by_phase": {
+      "NA": 2,
+      "": 2
+    },
+    "by_status": {
+      "RECRUITING": 2,
+      "SUSPENDED": 1,
+      "NOT_YET_RECRUITING": 1
+    },
+    "active_trials": 2,
+    "completed_trials": 0,
+    "conditions": [
+      "Cardiac Disease",
+      "Glioblastoma, Glioma, Malignant",
+      "TNBC - Triple-Negative Breast Cancer, Minimal Residual Disease",
+      "Triple Negative Breast Cancer"
+    ],
+    "lead_stage": "preclinical"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:21:05.698079",
+    "search_query": "Personalis, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Personalis,+Inc."
+  }
+}

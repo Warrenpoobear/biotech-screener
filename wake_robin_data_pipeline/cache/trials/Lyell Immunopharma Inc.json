@@ -1,0 +1,104 @@
+{
+  "ticker": "LYEL",
+  "company_name": "Lyell Immunopharma, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05826535",
+      "title": "Study of LYL314 in Aggressive Large B-Cell Lymphoma",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Relapsed Non-Hodgkin Lymphoma, Refractory Non-Hodgkin Lymphoma, Non-Hodgkin Lymphoma, Large B-cell Lymphoma",
+      "start_date": "2023-05-09",
+      "completion_date": "2031-06-30",
+      "enrollment": 0,
+      "sponsor": "Lyell Immunopharma, Inc."
+    },
+    {
+      "nct_id": "NCT05274451",
+      "title": "A Study to Investigate LYL797 in Adults With Solid Tumors",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Triple Negative Breast Cancer, TNBC - Triple-Negative Breast Cancer, Non-small Cell Lung Cancer, Non Small Cell Lung Cancer, Non Small Cell Lung Cancer Metastatic, Non-Small Cell Carcinoma of Lung, TNM Stage 4, Advanced Breast Cancer, Advanced Lung Carcinoma, NSCLC, NSCLC, Recurrent, NSCLC Stage IV, Relapsed Cancer, Relapse/Recurrence, Recurrent Breast Cancer, Recurrent NSCLC, Platinum-resistant Ovarian Cancer, Ovarian Cancer, Primary Peritoneal Carcinoma, Fallopian Tube Cancer, Endometrial Cancer, Endometrioid Tumor, High Grade Serous Carcinoma, Ovarian Epithelial Cancer",
+      "start_date": "2022-03-29",
+      "completion_date": "2024-11-27",
+      "enrollment": 0,
+      "sponsor": "Lyell Immunopharma, Inc."
+    },
+    {
+      "nct_id": "NCT05573035",
+      "title": "A Study to Investigate LYL845 in Adults With Solid Tumors",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Melanoma, Non-small Cell Lung Cancer, Colorectal Cancer",
+      "start_date": "2022-12-19",
+      "completion_date": "2025-01-09",
+      "enrollment": 0,
+      "sponsor": "Lyell Immunopharma, Inc."
+    },
+    {
+      "nct_id": "NCT05891197",
+      "title": "A Biomarker Screening Protocol for Participants With Solid Tumors",
+      "status": "TERMINATED",
+      "phase": "",
+      "condition": "Triple Negative Breast Cancer, Non-small Cell Lung Cancer, Non Small Cell Lung Cancer, Non Small Cell Lung Cancer Metastatic, Non-Small Cell Carcinoma of Lung, TNM Stage 4, Advanced Breast Cancer, Advanced Lung Carcinoma, NSCLC, NSCLC, Recurrent, NSCLC Stage IV, Relapsed Cancer, Relapse/Recurrence, Recurrent Breast Cancer, Recurrent NSCLC, Platinum-resistant Ovarian Cancer, Ovarian Cancer, Primary Peritoneal Carcinoma, Fallopian Tube Cancer, Endometrial Cancer, Endometrioid Tumor, High Grade Serous Carcinoma, Ovarian Epithelial Cancer",
+      "start_date": "2023-05-19",
+      "completion_date": "2025-02-05",
+      "enrollment": 0,
+      "sponsor": "Lyell Immunopharma, Inc."
+    },
+    {
+      "nct_id": "NCT06153095",
+      "title": "A Study of IMPT-514 in Active Refractory Lupus Nephritis (LN) and Systemic Lupus Erythematosus (SLE)",
+      "status": "WITHDRAWN",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Systemic Lupus Erythematosus, Lupus Nephritis",
+      "start_date": "2024-02-15",
+      "completion_date": "2025-01-09",
+      "enrollment": 0,
+      "sponsor": "Lyell Immunopharma, Inc."
+    },
+    {
+      "nct_id": "NCT07188558",
+      "title": "A Study to Investigate Ronde-cel Versus Investigator's Choice CD19 CAR T-Cell Therapy",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Large B-cell Lymphoma, Lymphoma, B-Cell, Relapsed Non-Hodgkin Lymphoma, Refractory Non-Hodgkin Lymphoma, Non-Hodgkin Lymphoma, Non-Hodgkin Lymphoma Refractory/ Relapsed, Diffuse Large B Cell Lymphoma (DLBCL), Diffuse Large B Cell Lymphoma Refractory, Diffuse Large B Cell Lymphoma Relapsed",
+      "start_date": "2026-01",
+      "completion_date": "2032-01",
+      "enrollment": 0,
+      "sponsor": "Lyell Immunopharma, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 6,
+    "by_phase": {
+      "PHASE1, PHASE2": 2,
+      "PHASE1": 2,
+      "": 1,
+      "PHASE3": 1
+    },
+    "by_status": {
+      "RECRUITING": 2,
+      "TERMINATED": 3,
+      "WITHDRAWN": 1
+    },
+    "active_trials": 2,
+    "completed_trials": 0,
+    "conditions": [
+      "Large B-cell Lymphoma, Lymphoma, B-Cell, Relapsed Non-Hodgkin Lymphoma, Refractory Non-Hodgkin Lymphoma, Non-Hodgkin Lymphoma, Non-Hodgkin Lymphoma Refractory/ Relapsed, Diffuse Large B Cell Lymphoma (DLBCL), Diffuse Large B Cell Lymphoma Refractory, Diffuse Large B Cell Lymphoma Relapsed",
+      "Melanoma, Non-small Cell Lung Cancer, Colorectal Cancer",
+      "Relapsed Non-Hodgkin Lymphoma, Refractory Non-Hodgkin Lymphoma, Non-Hodgkin Lymphoma, Large B-cell Lymphoma",
+      "Systemic Lupus Erythematosus, Lupus Nephritis",
+      "Triple Negative Breast Cancer, Non-small Cell Lung Cancer, Non Small Cell Lung Cancer, Non Small Cell Lung Cancer Metastatic, Non-Small Cell Carcinoma of Lung, TNM Stage 4, Advanced Breast Cancer, Advanced Lung Carcinoma, NSCLC, NSCLC, Recurrent, NSCLC Stage IV, Relapsed Cancer, Relapse/Recurrence, Recurrent Breast Cancer, Recurrent NSCLC, Platinum-resistant Ovarian Cancer, Ovarian Cancer, Primary Peritoneal Carcinoma, Fallopian Tube Cancer, Endometrial Cancer, Endometrioid Tumor, High Grade Serous Carcinoma, Ovarian Epithelial Cancer",
+      "Triple Negative Breast Cancer, TNBC - Triple-Negative Breast Cancer, Non-small Cell Lung Cancer, Non Small Cell Lung Cancer, Non Small Cell Lung Cancer Metastatic, Non-Small Cell Carcinoma of Lung, TNM Stage 4, Advanced Breast Cancer, Advanced Lung Carcinoma, NSCLC, NSCLC, Recurrent, NSCLC Stage IV, Relapsed Cancer, Relapse/Recurrence, Recurrent Breast Cancer, Recurrent NSCLC, Platinum-resistant Ovarian Cancer, Ovarian Cancer, Primary Peritoneal Carcinoma, Fallopian Tube Cancer, Endometrial Cancer, Endometrioid Tumor, High Grade Serous Carcinoma, Ovarian Epithelial Cancer"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:19:47.703914",
+    "search_query": "Lyell Immunopharma, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Lyell+Immunopharma,+Inc."
+  }
+}

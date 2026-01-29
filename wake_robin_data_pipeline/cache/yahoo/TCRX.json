@@ -1,0 +1,43 @@
+{
+  "ticker": "TCRX",
+  "success": true,
+  "price": {
+    "current": 1.04,
+    "currency": "USD",
+    "day_high": 1.0998,
+    "day_low": 1.03,
+    "52_week_high": 2.67,
+    "52_week_low": 0.882
+  },
+  "market_cap": {
+    "value": 59017908.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 52471405.0,
+  "volume": {
+    "last": 309686,
+    "average_30d": 506999
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -1.0374064,
+    "price_to_book": 0.40977144
+  },
+  "company_info": {
+    "name": "TScan Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:10:11.663996",
+    "url": "https://finance.yahoo.com/quote/TCRX",
+    "data_hash": "06c164aa5504568e"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "EBS",
+  "success": true,
+  "price": {
+    "current": 11.785,
+    "currency": "USD",
+    "day_high": 11.9558,
+    "day_low": 11.62,
+    "52_week_high": 14.06,
+    "52_week_low": 4.02
+  },
+  "market_cap": {
+    "value": 628742720.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 52519964.0,
+  "volume": {
+    "last": 105516,
+    "average_30d": 907537
+  },
+  "valuation": {
+    "pe_ratio": 8.92803,
+    "forward_pe": 3.9414716,
+    "price_to_book": 1.0662264
+  },
+  "company_info": {
+    "name": "Emergent BioSolutions Inc.",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:06:15.451501",
+    "url": "https://finance.yahoo.com/quote/EBS",
+    "data_hash": "7b6706ab0dca692a"
+  }
+}

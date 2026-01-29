@@ -1,0 +1,151 @@
+{
+  "ticker": "NTLA",
+  "company_name": "Intellia Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06634420",
+      "title": "HAELO: A Phase 3 Study to Evaluate NTLA-2002 in Participants With Hereditary Angioedema (HAE)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Hereditary Angioedema",
+      "start_date": "2025-01-15",
+      "completion_date": "2027-09",
+      "enrollment": 0,
+      "sponsor": "Intellia Therapeutics"
+    },
+    {
+      "nct_id": "NCT06672237",
+      "title": "A Phase 3 Study of NTLA-2001 in ATTRv-PN",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Neuromuscular Disease, Neuromuscular Diseases (NMD), Neurodegenerative Disease, Neurodegenerative Disease, Hereditary, Neurodegenerative Diseases, Neuromuscular Diseases, Nerve Disorders, Nervous System Disease, Nervous System Diseases, Genetic Disease, Inborn, Amyloidosis, Familial, Amyloidosis, Hereditary, Amyloidosis, Polyneuropathies, Amyloid Neuropathies, Amyloid Neuropathies, Familial, Peripheral Nervous System Disease, Peripheral Nervous System Diseases, Metabolism, Inborn Errors, Metabolic Diseases",
+      "start_date": "2024-11-22",
+      "completion_date": "2028-08",
+      "enrollment": 0,
+      "sponsor": "Intellia Therapeutics"
+    },
+    {
+      "nct_id": "NCT06128629",
+      "title": "MAGNITUDE: A Phase 3 Study of NTLA-2001 in Participants With Transthyretin Amyloidosis With Cardiomyopathy (ATTR-CM)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Transthyretin Amyloidosis (ATTR) With Cardiomyopathy",
+      "start_date": "2023-12-13",
+      "completion_date": "2028-04",
+      "enrollment": 0,
+      "sponsor": "Intellia Therapeutics"
+    },
+    {
+      "nct_id": "NCT05120830",
+      "title": "NTLA-2002 in Adults With Hereditary Angioedema (HAE)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Hereditary Angioedema",
+      "start_date": "2021-12-10",
+      "completion_date": "2026-03-31",
+      "enrollment": 0,
+      "sponsor": "Intellia Therapeutics"
+    },
+    {
+      "nct_id": "NCT06262399",
+      "title": "Long-Term Follow-Up (LTFU) of Subjects Treated With NTLA 2002",
+      "status": "ENROLLING_BY_INVITATION",
+      "phase": "",
+      "condition": "Hereditary Angioedema",
+      "start_date": "2024-04-12",
+      "completion_date": "2040-04",
+      "enrollment": 0,
+      "sponsor": "Intellia Therapeutics"
+    },
+    {
+      "nct_id": "NCT05697861",
+      "title": "Long-Term Follow-Up (LTFU) of Subjects Dosed With NTLA-2001",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Transthyretin-Related (ATTR) Familial Amyloid Polyneuropathy, Transthyretin-Related (ATTR) Familial Amyloid Cardiomyopathy, Wild-Type Transthyretin Cardiac Amyloidosis",
+      "start_date": "2023-07-10",
+      "completion_date": "2038-03",
+      "enrollment": 0,
+      "sponsor": "Intellia Therapeutics"
+    },
+    {
+      "nct_id": "NCT06379789",
+      "title": "A Study to Investigate the Safety and Effectiveness of a Coagulation Factor IX Gene Insertion Therapy (REGV131-LNP1265) in Pediatric, Adolescent and Adult Participants With Hemophilia B",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Hemophilia B",
+      "start_date": "2024-09-11",
+      "completion_date": "2032-12-17",
+      "enrollment": 0,
+      "sponsor": "Regeneron Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT05066165",
+      "title": "Study Investigating NTLA-5001 in Subjects With Acute Myeloid Leukemia",
+      "status": "TERMINATED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Acute Myeloid Leukemia",
+      "start_date": "2021-12-17",
+      "completion_date": "2022-08-31",
+      "enrollment": 0,
+      "sponsor": "Intellia Therapeutics"
+    },
+    {
+      "nct_id": "NCT04601051",
+      "title": "Study to Evaluate Safety, Tolerability, Pharmacokinetics, and Pharmacodynamics of NTLA-2001 in Patients With Hereditary Transthyretin Amyloidosis With Polyneuropathy (ATTRv-PN) and Patients With Transthyretin Amyloidosis-Related Cardiomyopathy (ATTR-CM)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Transthyretin-Related (ATTR) Familial Amyloid Polyneuropathy, Transthyretin-Related (ATTR) Familial Amyloid Cardiomyopathy, Wild-Type Transthyretin Cardiac Amyloidosis",
+      "start_date": "2020-11-05",
+      "completion_date": "2026-08",
+      "enrollment": 0,
+      "sponsor": "Intellia Therapeutics"
+    },
+    {
+      "nct_id": "NCT06622668",
+      "title": "NTLA-3001 in Adults with Alpha-1 Antitrypsin Deficiency-Associated Lung Disease",
+      "status": "WITHDRAWN",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Lung Disease, Pulmonary Disease, AATD, Alpha-1 Antitrypsin Deficiency, Alpha-1 Antitrypsin Deficiency-associated Lung Disease",
+      "start_date": "2024-11-20",
+      "completion_date": "2025-01-09",
+      "enrollment": 0,
+      "sponsor": "Intellia Therapeutics"
+    }
+  ],
+  "summary": {
+    "total_trials": 10,
+    "by_phase": {
+      "PHASE3": 3,
+      "PHASE1, PHASE2": 4,
+      "": 2,
+      "PHASE1": 1
+    },
+    "by_status": {
+      "ACTIVE_NOT_RECRUITING": 5,
+      "ENROLLING_BY_INVITATION": 1,
+      "RECRUITING": 2,
+      "TERMINATED": 1,
+      "WITHDRAWN": 1
+    },
+    "active_trials": 8,
+    "completed_trials": 0,
+    "conditions": [
+      "Acute Myeloid Leukemia",
+      "Hemophilia B",
+      "Hereditary Angioedema",
+      "Lung Disease, Pulmonary Disease, AATD, Alpha-1 Antitrypsin Deficiency, Alpha-1 Antitrypsin Deficiency-associated Lung Disease",
+      "Neuromuscular Disease, Neuromuscular Diseases (NMD), Neurodegenerative Disease, Neurodegenerative Disease, Hereditary, Neurodegenerative Diseases, Neuromuscular Diseases, Nerve Disorders, Nervous System Disease, Nervous System Diseases, Genetic Disease, Inborn, Amyloidosis, Familial, Amyloidosis, Hereditary, Amyloidosis, Polyneuropathies, Amyloid Neuropathies, Amyloid Neuropathies, Familial, Peripheral Nervous System Disease, Peripheral Nervous System Diseases, Metabolism, Inborn Errors, Metabolic Diseases",
+      "Transthyretin Amyloidosis (ATTR) With Cardiomyopathy",
+      "Transthyretin-Related (ATTR) Familial Amyloid Polyneuropathy, Transthyretin-Related (ATTR) Familial Amyloid Cardiomyopathy, Wild-Type Transthyretin Cardiac Amyloidosis"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:20:21.010191",
+    "search_query": "Intellia Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Intellia+Therapeutics,+Inc."
+  }
+}

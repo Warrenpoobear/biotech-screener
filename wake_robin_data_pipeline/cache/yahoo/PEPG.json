@@ -1,0 +1,43 @@
+{
+  "ticker": "PEPG",
+  "success": true,
+  "price": {
+    "current": 5.0514,
+    "currency": "USD",
+    "day_high": 5.33,
+    "day_low": 4.975,
+    "52_week_high": 7.8,
+    "52_week_low": 0.88
+  },
+  "market_cap": {
+    "value": 347274784.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 68748224.0,
+  "volume": {
+    "last": 147339,
+    "average_30d": 693497
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -3.9541292,
+    "price_to_book": 2.128698
+  },
+  "company_info": {
+    "name": "PepGen Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:55.416980",
+    "url": "https://finance.yahoo.com/quote/PEPG",
+    "data_hash": "1c939d93f13ff878"
+  }
+}

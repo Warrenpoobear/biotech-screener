@@ -10,6 +10,60 @@ from datetime import datetime, timedelta
 from typing import Optional, List
 import hashlib
 
+# Sponsor alias mapping: ticker -> list of CT.gov sponsor name variations
+# Many companies sponsor trials under subsidiary names or different legal entities
+SPONSOR_ALIASES = {
+    # Companies using different legal entities
+    'MRNA': ['ModernaTX, Inc.', 'Moderna TX', 'Moderna'],
+    'QURE': ['UniQure Biopharma B.V.', 'uniQure', 'Uniqure'],
+    'PRTA': ['Prothena Biosciences Ltd.', 'Prothena Biosciences', 'Prothena'],
+    'AUTL': ['Autolus Limited', 'Autolus Therapeutics', 'Autolus'],
+    'MGTX': ['MeiraGTx UK II Ltd', 'MeiraGTx', 'Meiragtx'],
+    'IMCR': ['Immunocore Ltd', 'Immunocore', 'Immunocore Holdings'],
+    'BCYC': ['BicycleTx Limited', 'BicycleTx', 'Bicycle Therapeutics'],
+    'PHVS': ['Pharvaris Netherlands B.V.', 'Pharvaris', 'Pharvaris N.V.'],
+    'CNTA': ['Centessa Pharmaceuticals (UK) Limited', 'Centessa Pharmaceuticals', 'Centessa'],
+    'SLN': ['Silence Therapeutics plc', 'Silence Therapeutics', 'Silence'],
+    'ADCT': ['ADC Therapeutics S.A.', 'ADC Therapeutics', 'ADCT'],
+    'ALKS': ['Alkermes, Inc.', 'Alkermes plc', 'Alkermes'],
+    'INDV': ['Indivior Inc.', 'Indivior PLC', 'Indivior'],
+    'JAZZ': ['Jazz Pharmaceuticals', 'Jazz Pharmaceuticals plc', 'Jazz'],
+    'NVCR': ['NovoCure Ltd.', 'NovoCure Limited', 'Novocure', 'NovoCure'],
+    'XERS': ['Xeris Pharmaceuticals', 'Xeris Biopharma', 'Xeris'],
+    'ZLAB': ['Zai Lab (Shanghai) Co., Ltd.', 'Zai Lab Limited', 'Zai Lab'],
+    'TERN': ['Terns, Inc.', 'Terns Pharmaceuticals', 'Terns'],
+    'SRRK': ['Scholar Rock, Inc.', 'Scholar Rock Holding', 'Scholar Rock'],
+    'GHRS': ['GH Research Ireland Limited', 'GH Research PLC', 'GH Research'],
+    'CMPS': ['COMPASS Pathways', 'COMPASS Pathways Plc', 'COMPASS'],
+    'ATAI': ['atai Therapeutics, Inc.', 'ATAI Life Sciences', 'atai'],
+    'MNMD': ['Definium Therapeutics', 'Mind Medicine', 'MindMed'],  # MindMed uses Definium subsidiary
+    'REPL': ['Replimune Inc.', 'Replimune Group', 'Replimune'],
+    'GMAB': ['Genmab', 'Genmab A/S'],
+    'CYTK': ['Cytokinetics', 'Cytokinetics, Incorporated'],
+    'AZN': ['AstraZeneca', 'AstraZeneca PLC', 'Astrazeneca'],
+    # Roivant subsidiaries (holding company structure)
+    'ROIV': ['Roivant Sciences', 'Immunovant Sciences GmbH', 'Immunovant',
+             'Myovant Sciences GmbH', 'Myovant', 'Kinevant Sciences GmbH',
+             'Dermavant Sciences', 'Aruvant Sciences'],
+    # More companies with known variations
+    'CVAC': ['CureVac', 'CureVac N.V.', 'CureVac AG'],
+    'RPRX': ['Royalty Pharma', 'Royalty Pharma plc'],  # May not sponsor trials directly
+    'TWST': ['Twist Bioscience', 'Twist Bioscience Corporation'],
+    # Additional aliases discovered through search
+    'HRMY': ['Harmony Biosciences Management, Inc.', 'Harmony Biosciences', 'Harmony'],
+    'SGMT': ['Sagimet Biosciences Inc.', 'Sagimet Biosciences', 'Sagimet'],
+    'NAMS': ['NewAmsterdam Pharma', 'NewAmsterdam Pharma Company', 'NewAmsterdam'],
+    'RANI': ['RANI Therapeutics', 'Rani Therapeutics Holdings', 'Rani'],
+    'EOLS': ['Evolus, Inc.', 'Evolus Inc', 'Evolus'],
+    'KALA': ['Kala Pharmaceuticals, Inc.', 'Kala Pharmaceuticals', 'KALA BIO', 'Kala'],
+    'ADPT': ['Adaptive Biotechnologies', 'Adaptive Biotechnologies Corporation', 'Adaptive'],
+    # More companies with different sponsor names
+    'MTSR': ['Metsera', 'Metsera Inc', 'Metsera, Inc.'],
+    'LGND': ['Ligand Pharmaceuticals', 'Ligand Pharmaceuticals Incorporated', 'Ligand'],
+    'OBIO': ['Orchestra BioMed, Inc', 'Orchestra BioMed', 'Orchestra'],
+}
+
+
 def get_cache_path(company_name: str) -> Path:
     """Get cache file path for company."""
     cache_dir = Path(__file__).parent.parent / "cache" / "trials"
@@ -26,61 +80,133 @@ def is_cache_valid(cache_path: Path, max_age_hours: int = 24) -> bool:
     age = datetime.now() - datetime.fromtimestamp(cache_path.stat().st_mtime)
     return age < timedelta(hours=max_age_hours)
 
-def search_company_trials(company_name: str, max_results: int = 50) -> List[dict]:
+def _clean_company_name(company_name: str) -> str:
+    """Clean company name by removing common suffixes."""
+    clean_name = company_name
+    for suffix in [' SE', ' BV', ' N.V.', ' Inc', ' Inc.', ' Corporation', ' Corp', ' Corp.',
+                   ' Pharmaceuticals', ' Therapeutics', ' Biosciences', ' Pharmaceutical',
+                   ' plc', ' PLC', ' Ltd', ' Ltd.', ' Limited', ' S.A.', ' SA', ' A/S',
+                   ' Holdings', ' Group', ' - American']:
+        if clean_name.endswith(suffix):
+            clean_name = clean_name[:-len(suffix)].strip()
+    return clean_name
+
+
+def _search_single_sponsor(sponsor_name: str, max_results: int = 50) -> List[dict]:
+    """
+    Search ClinicalTrials.gov for a single sponsor name.
+
+    Returns:
+        List of trial summary dicts
+    """
+    url = "https://clinicaltrials.gov/api/v2/studies"
+
+    # Use query.spons for broader matching (includes partial matches)
+    params = {
+        'query.spons': sponsor_name,
+        'pageSize': min(max_results, 100),
+        'format': 'json',
+        'fields': 'NCTId,BriefTitle,OverallStatus,Phase,Condition,StartDate,CompletionDate,EnrollmentCount,LeadSponsorName'
+    }
+
+    response = requests.get(url, params=params, timeout=30)
+    response.raise_for_status()
+
+    data = response.json()
+    studies = data.get('studies', [])
+
+    trials = []
+    for study in studies:
+        protocol = study.get('protocolSection', {})
+
+        id_module = protocol.get('identificationModule', {})
+        status_module = protocol.get('statusModule', {})
+        design_module = protocol.get('designModule', {})
+        conditions_module = protocol.get('conditionsModule', {})
+        sponsor_module = protocol.get('sponsorCollaboratorsModule', {})
+
+        trial = {
+            'nct_id': id_module.get('nctId', ''),
+            'title': id_module.get('briefTitle', ''),
+            'status': status_module.get('overallStatus', ''),
+            'phase': ', '.join(design_module.get('phases', [])),
+            'condition': ', '.join(conditions_module.get('conditions', [])),
+            'start_date': status_module.get('startDateStruct', {}).get('date', ''),
+            'completion_date': status_module.get('completionDateStruct', {}).get('date', ''),
+            'enrollment': status_module.get('enrollmentInfo', {}).get('count', 0),
+            'sponsor': sponsor_module.get('leadSponsor', {}).get('name', '')
+        }
+
+        trials.append(trial)
+
+    return trials
+
+
+def search_company_trials(company_name: str, ticker: str = None, max_results: int = 50) -> List[dict]:
     """
     Search ClinicalTrials.gov for trials by company/sponsor name.
-    
+
+    Uses a multi-step search strategy:
+    1. Check SPONSOR_ALIASES for known alternative names (by ticker)
+    2. Try the cleaned company name
+    3. Deduplicate results by NCT ID
+
     Args:
         company_name: Company or sponsor name to search
+        ticker: Stock ticker (for alias lookup)
         max_results: Maximum number of trials to return
-        
+
     Returns:
         List of trial summary dicts
     """
     try:
-        # ClinicalTrials.gov v2 API search endpoint
-        url = "https://clinicaltrials.gov/api/v2/studies"
-        
-        params = {
-            'query.spons': company_name,  # Search sponsor field
-            'pageSize': min(max_results, 100),  # API max is 100
-            'format': 'json',
-            'fields': 'NCTId,BriefTitle,OverallStatus,Phase,Condition,StartDate,CompletionDate,EnrollmentCount,LeadSponsorName'
-        }
-        
-        response = requests.get(url, params=params, timeout=30)
-        response.raise_for_status()
-        
-        data = response.json()
-        studies = data.get('studies', [])
-        
-        trials = []
-        for study in studies:
-            protocol = study.get('protocolSection', {})
-            
-            # Extract key fields
-            id_module = protocol.get('identificationModule', {})
-            status_module = protocol.get('statusModule', {})
-            design_module = protocol.get('designModule', {})
-            conditions_module = protocol.get('conditionsModule', {})
-            sponsor_module = protocol.get('sponsorCollaboratorsModule', {})
-            
-            trial = {
-                'nct_id': id_module.get('nctId', ''),
-                'title': id_module.get('briefTitle', ''),
-                'status': status_module.get('overallStatus', ''),
-                'phase': ', '.join(design_module.get('phases', [])),
-                'condition': ', '.join(conditions_module.get('conditions', [])),
-                'start_date': status_module.get('startDateStruct', {}).get('date', ''),
-                'completion_date': status_module.get('completionDateStruct', {}).get('date', ''),
-                'enrollment': status_module.get('enrollmentInfo', {}).get('count', 0),
-                'sponsor': sponsor_module.get('leadSponsor', {}).get('name', '')
-            }
-            
-            trials.append(trial)
-        
-        return trials
-        
+        all_trials = {}  # Use dict to dedupe by NCT ID
+        search_terms_used = []
+
+        # Step 1: Check for known aliases by ticker
+        if ticker and ticker in SPONSOR_ALIASES:
+            aliases = SPONSOR_ALIASES[ticker]
+            for alias in aliases:
+                try:
+                    trials = _search_single_sponsor(alias, max_results)
+                    for trial in trials:
+                        nct_id = trial.get('nct_id')
+                        if nct_id and nct_id not in all_trials:
+                            all_trials[nct_id] = trial
+                    if trials:
+                        search_terms_used.append(alias)
+                except Exception:
+                    continue
+
+        # Step 2: Try cleaned company name if we haven't found enough trials
+        if len(all_trials) < max_results:
+            clean_name = _clean_company_name(company_name)
+            try:
+                trials = _search_single_sponsor(clean_name, max_results)
+                for trial in trials:
+                    nct_id = trial.get('nct_id')
+                    if nct_id and nct_id not in all_trials:
+                        all_trials[nct_id] = trial
+                if trials:
+                    search_terms_used.append(clean_name)
+            except Exception:
+                pass
+
+        # Step 3: Try original company name if still nothing
+        if not all_trials:
+            try:
+                trials = _search_single_sponsor(company_name, max_results)
+                for trial in trials:
+                    nct_id = trial.get('nct_id')
+                    if nct_id and nct_id not in all_trials:
+                        all_trials[nct_id] = trial
+                if trials:
+                    search_terms_used.append(company_name)
+            except Exception:
+                pass
+
+        return list(all_trials.values())[:max_results]
+
     except Exception as e:
         print(f"  Warning: ClinicalTrials.gov search failed: {e}")
         return []
@@ -138,17 +264,17 @@ def aggregate_trial_stats(trials: List[dict]) -> dict:
 def fetch_trials_data(ticker: str, company_name: str) -> dict:
     """
     Fetch clinical trial data for a company.
-    
+
     Args:
-        ticker: Stock ticker (for reference)
+        ticker: Stock ticker (for alias lookup and reference)
         company_name: Full company name to search
-        
+
     Returns:
         dict with trial data and provenance
     """
     try:
-        # Search for company trials
-        trials = search_company_trials(company_name)
+        # Search for company trials (pass ticker for alias lookup)
+        trials = search_company_trials(company_name, ticker=ticker)
         
         # Aggregate statistics
         stats = aggregate_trial_stats(trials)

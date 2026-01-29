@@ -1,0 +1,115 @@
+{
+  "ticker": "ZYME",
+  "company_name": "Zymeworks Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06523803",
+      "title": "A Study of ZW171 in Participants With Advanced or Metastatic Mesothelin-expressing Cancers",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Mesothelin-expressing Advanced Cancers",
+      "start_date": "2024-09-30",
+      "completion_date": "2025-10-01",
+      "enrollment": 0,
+      "sponsor": "Zymeworks BC Inc."
+    },
+    {
+      "nct_id": "NCT04513665",
+      "title": "ZW25 in Women With Endometrial Cancers",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Endometrial Cancer, Carcinosarcoma",
+      "start_date": "2020-08-12",
+      "completion_date": "2024-03-08",
+      "enrollment": 0,
+      "sponsor": "Memorial Sloan Kettering Cancer Center"
+    },
+    {
+      "nct_id": "NCT06555744",
+      "title": "A Study of ZW191 in Participants With Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Advanced Solid Tumors",
+      "start_date": "2024-10-30",
+      "completion_date": "2027-01",
+      "enrollment": 0,
+      "sponsor": "Zymeworks BC Inc."
+    },
+    {
+      "nct_id": "NCT05615818",
+      "title": "Personalized Medicine for Advanced Biliary Cancer Patients",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Biliary Tract Neoplasms",
+      "start_date": "2024-07-18",
+      "completion_date": "2028-06",
+      "enrollment": 0,
+      "sponsor": "UNICANCER"
+    },
+    {
+      "nct_id": "NCT03821233",
+      "title": "A Dose Finding Study of ZW49 in Patients With HER2-Positive Cancers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "HER2-expressing Cancers",
+      "start_date": "2019-04-15",
+      "completion_date": "2024-10-08",
+      "enrollment": 0,
+      "sponsor": "Zymeworks BC Inc."
+    },
+    {
+      "nct_id": "NCT07164313",
+      "title": "A Study of ZW251 in Participants With Advanced Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Hepatocellular Carcinoma",
+      "start_date": "2025-10-21",
+      "completion_date": "2028-05",
+      "enrollment": 0,
+      "sponsor": "Zymeworks BC Inc."
+    },
+    {
+      "nct_id": "NCT05035836",
+      "title": "A Phase 2 Single-Arm Open-Label Pilot Trial Evaluating Zanidatamab (ZW25) in Patients With Early Stage HER2/Neu Positive (HER2+) Breast Cancer (BC)",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Breast Cancer, HER2-positive",
+      "start_date": "2021-11-16",
+      "completion_date": "2028-12-29",
+      "enrollment": 0,
+      "sponsor": "M.D. Anderson Cancer Center"
+    }
+  ],
+  "summary": {
+    "total_trials": 7,
+    "by_phase": {
+      "PHASE1": 4,
+      "PHASE2": 2,
+      "PHASE3": 1
+    },
+    "by_status": {
+      "TERMINATED": 1,
+      "COMPLETED": 2,
+      "RECRUITING": 4
+    },
+    "active_trials": 4,
+    "completed_trials": 2,
+    "conditions": [
+      "Advanced Solid Tumors",
+      "Biliary Tract Neoplasms",
+      "Breast Cancer, HER2-positive",
+      "Endometrial Cancer, Carcinosarcoma",
+      "HER2-expressing Cancers",
+      "Hepatocellular Carcinoma",
+      "Mesothelin-expressing Advanced Cancers"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:23:07.524755",
+    "search_query": "Zymeworks Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Zymeworks+Inc."
+  }
+}

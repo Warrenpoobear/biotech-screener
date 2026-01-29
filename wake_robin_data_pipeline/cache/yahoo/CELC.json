@@ -1,0 +1,43 @@
+{
+  "ticker": "CELC",
+  "success": true,
+  "price": {
+    "current": 111.94,
+    "currency": "USD",
+    "day_high": 114.74,
+    "day_low": 111.625,
+    "52_week_high": 120.315,
+    "52_week_low": 7.575
+  },
+  "market_cap": {
+    "value": 5179604992.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 46271259.0,
+  "volume": {
+    "last": 177021,
+    "average_30d": 727760
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -24.783745,
+    "price_to_book": 41.413246
+  },
+  "company_info": {
+    "name": "Celcuity Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:05:32.595552",
+    "url": "https://finance.yahoo.com/quote/CELC",
+    "data_hash": "43b7f301195e3014"
+  }
+}

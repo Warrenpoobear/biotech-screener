@@ -1,0 +1,43 @@
+{
+  "ticker": "MNPR",
+  "success": true,
+  "price": {
+    "current": 68.58,
+    "currency": "USD",
+    "day_high": 69.2,
+    "day_low": 67.0,
+    "52_week_high": 105.0,
+    "52_week_low": 26.055
+  },
+  "market_cap": {
+    "value": 458291616.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 6682584.0,
+  "volume": {
+    "last": 189899,
+    "average_30d": 338999
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -19.69145,
+    "price_to_book": 3.2279017
+  },
+  "company_info": {
+    "name": "Monopar Therapeutics Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T12:35:33.009485",
+    "url": "https://finance.yahoo.com/quote/MNPR",
+    "data_hash": "6cc9ad24c28ff1b5"
+  }
+}

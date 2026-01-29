@@ -1,0 +1,161 @@
+{
+  "ticker": "AVIR",
+  "company_name": "Atea Pharmaceuticals, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05629962",
+      "title": "SUNRISE-3: Efficacy and Safety of Bemnifosbuvir in High-Risk Outpatients With COVID-19",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Severe Acute Respiratory Syndrome Coronavirus 2 (SARS CoV 2 Infection), COVID-19",
+      "start_date": "2022-11-25",
+      "completion_date": "2024-05-30",
+      "enrollment": 0,
+      "sponsor": "Atea Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT05724693",
+      "title": "Study of Bemnifosbuvir in Subjects With Normal and Impaired Hepatic Function",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteer, Hepatic Impairment",
+      "start_date": "2023-01-30",
+      "completion_date": "2024-04-23",
+      "enrollment": 0,
+      "sponsor": "Atea Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT07272889",
+      "title": "Drug-drug Interaction Study of Bemnifosbuvir/Ruzasvir (BEM/RZR) and Ethinyl Estradiol/Levonorgestrel (EE/LNG)",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteer Study",
+      "start_date": "2025-12",
+      "completion_date": "2025-12",
+      "enrollment": 0,
+      "sponsor": "Atea Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT04019717",
+      "title": "Study of AT-527 in Combination With Daclatasvir in Subjects With Hepatitis C Virus (HCV) Infection",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Hepatitis C, Hepatitis C, Chronic, Chronic Hepatitis C, Hepatitis C Virus Infection, HCV Infection",
+      "start_date": "2019-06-20",
+      "completion_date": "2020-03-23",
+      "enrollment": 0,
+      "sponsor": "Atea Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT04784000",
+      "title": "Effect of Carbamazepine on the Pharmacokinetics (PK) of AT-527",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteer Study",
+      "start_date": "2021-03-01",
+      "completion_date": "2021-04-10",
+      "enrollment": 0,
+      "sponsor": "Atea Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT05904470",
+      "title": "A Phase 2, Safety and Efficacy of Bemnifosbuvir (BEM) and Ruzasvir (RZR) in Subjects With Chronic HCV",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Chronic Hepatitis C Virus, Hepatitis C, Chronic, Hepatitis C, Hepatic Cirrhosis, HCV",
+      "start_date": "2023-05-30",
+      "completion_date": "2025-01-28",
+      "enrollment": 0,
+      "sponsor": "Atea Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT04709835",
+      "title": "Study to Evaluate the Effects of AT-527 in Non-Hospitalized Adult Patients With Mild or Moderate COVID-19",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "COVID-19",
+      "start_date": "2021-02-03",
+      "completion_date": "2021-10-13",
+      "enrollment": 0,
+      "sponsor": "Hoffmann-La Roche"
+    },
+    {
+      "nct_id": "NCT05154123",
+      "title": "Drug-drug Interaction Study of Rosuvastatin and AT-527 (R07496998)",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteer Study",
+      "start_date": "2021-11-16",
+      "completion_date": "2021-12-23",
+      "enrollment": 0,
+      "sponsor": "Atea Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT06921941",
+      "title": "Drug-drug Interaction Study of Bemnifosbuvir/Ruzasvir (BEM/RZR) and Digoxin and Rosuvastatin",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteer Study",
+      "start_date": "2025-04-08",
+      "completion_date": "2025-07-02",
+      "enrollment": 0,
+      "sponsor": "Atea Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT06868264",
+      "title": "C-BEYOND: Efficacy and Safety of BEM/RZR vs. SOF/VEL in Subjects With Chronic HCV",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "HEPATITIS C VIRUS CHRONIC INFECTION",
+      "start_date": "2025-04-07",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "Atea Pharmaceuticals, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 35,
+    "by_phase": {
+      "PHASE3": 4,
+      "PHASE1": 24,
+      "PHASE2": 5,
+      "": 1,
+      "PHASE1, PHASE2": 1
+    },
+    "by_status": {
+      "COMPLETED": 24,
+      "NOT_YET_RECRUITING": 2,
+      "ACTIVE_NOT_RECRUITING": 1,
+      "RECRUITING": 2,
+      "TERMINATED": 5,
+      "WITHDRAWN": 1
+    },
+    "active_trials": 3,
+    "completed_trials": 24,
+    "conditions": [
+      "COVID-19",
+      "COVID-19, Long COVID",
+      "Chronic Hepatitis C Virus, Hepatitis C, Chronic, Hepatitis C, Hepatic Cirrhosis, HCV",
+      "Chronic Hepatitis C, Hepatitis C, Hepatitis C, Chronic",
+      "Dengue",
+      "Dengue Fever",
+      "HEPATITIS C VIRUS CHRONIC INFECTION",
+      "HEPATITIS C VIRUS CHRONIC INFECTION, Hepatitis C, Chronic, Hepatitis C Virus Infection, Hepatitis C",
+      "Healthy Volunteer Study",
+      "Healthy Volunteer Study, Hepatic Impairment, Renal Impairment",
+      "Healthy Volunteer, Hepatic Impairment",
+      "Healthy Volunteer, Renal Impairment",
+      "Healthy Volunteers Study",
+      "Hepatitis C, Hepatitis C, Chronic, Chronic Hepatitis C, Hepatitis C Virus Infection, HCV Infection",
+      "Severe Acute Respiratory Syndrome Coronavirus 2 (SARS CoV 2 Infection), COVID-19"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:16:50.322596",
+    "search_query": "Atea Pharmaceuticals, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Atea+Pharmaceuticals,+Inc."
+  }
+}

@@ -2,36 +2,42 @@
   "ticker": "FOLD",
   "success": true,
   "price": {
-    "current": 14.25,
+    "current": 14.29,
     "currency": "USD",
-    "day_high": 14.26,
-    "day_low": 14.205,
-    "52_week_high": 14.36,
+    "day_high": 14.29,
+    "day_low": 14.28,
+    "52_week_high": 14.38,
     "52_week_low": 5.51
   },
   "market_cap": {
-    "value": 4407553024.0,
+    "value": 4482829824.0,
     "currency": "USD"
   },
-  "shares_outstanding": 309301959.0,
+  "shares_outstanding": 313703980.0,
   "volume": {
-    "last": 37667987,
-    "average_30d": 20103278
+    "last": 1632325,
+    "average_30d": 9748305
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": 22.012821,
-    "price_to_book": 19.076305
+    "forward_pe": 22.074612,
+    "price_to_book": 19.129852
   },
   "company_info": {
     "name": "Amicus Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-05T18:05:44.249050",
+    "timestamp": "2026-01-29T10:59:34.631334",
     "url": "https://finance.yahoo.com/quote/FOLD",
-    "data_hash": "3b59349476dd7559"
+    "data_hash": "b95192a513c01b18"
   }
 }

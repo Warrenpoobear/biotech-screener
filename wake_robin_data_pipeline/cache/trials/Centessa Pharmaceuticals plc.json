@@ -1,0 +1,156 @@
+{
+  "ticker": "CNTA",
+  "company_name": "Centessa Pharmaceuticals plc",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT07082829",
+      "title": "A Study of ORX142 in Healthy Adult Subjects, Including Subjects 18 to 80 Years of Age",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Excessive Daytime Sleepiness",
+      "start_date": "2025-06-30",
+      "completion_date": "2026-06-15",
+      "enrollment": 0,
+      "sponsor": "Centessa Pharmaceuticals (UK) Limited"
+    },
+    {
+      "nct_id": "NCT05821777",
+      "title": "A Study to Evaluate Safety, Tolerability and Preliminary Activity of LB101 in Participants With Advanced Solid Tumors",
+      "status": "TERMINATED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Advanced Solid Tumor",
+      "start_date": "2023-03-28",
+      "completion_date": "2025-09-09",
+      "enrollment": 0,
+      "sponsor": "Centessa Pharmaceuticals (UK) Limited"
+    },
+    {
+      "nct_id": "NCT07096674",
+      "title": "A Long-term Extension Study of ORX750 in Participants With Narcolepsy and Idiopathic Hypersomnia",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Narcolepsy Type 1, Narcolepsy Type 2, Idiopathic Hypersomnia",
+      "start_date": "2025-08-12",
+      "completion_date": "2026-04-30",
+      "enrollment": 0,
+      "sponsor": "Centessa Pharmaceuticals (UK) Limited"
+    },
+    {
+      "nct_id": "NCT06752668",
+      "title": "A Study of ORX750 in Participants With Narcolepsy and Idiopathic Hypersomnia",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Narcolepsy Type 1, Narcolepsy Type 2, Idiopathic Hypersomnia",
+      "start_date": "2024-12-23",
+      "completion_date": "2025-12",
+      "enrollment": 0,
+      "sponsor": "Centessa Pharmaceuticals (UK) Limited"
+    },
+    {
+      "nct_id": "NCT05208866",
+      "title": "Roll-over Study to Assess Safety of Lixivaptan in Participants With ADPKD Who Completed Study PA-ADPKD-303",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Polycystic Kidney Disease, Adult",
+      "start_date": "2022-02-10",
+      "completion_date": "2022-07-29",
+      "enrollment": 0,
+      "sponsor": "Palladio Biosciences"
+    },
+    {
+      "nct_id": "NCT06568302",
+      "title": "The Long-term Safety and Efficacy of SerpinPC in Subjects with Hemophilia Who Completed a Sponsored SerpinPC Clinical Trial",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Hemophilia a, Hemophilia B, Hemophilia a with Inhibitor, Hemophilia B with Inhibitor",
+      "start_date": "2024-07-11",
+      "completion_date": "2025-01-29",
+      "enrollment": 0,
+      "sponsor": "ApcinteX Ltd"
+    },
+    {
+      "nct_id": "NCT04443192",
+      "title": "A Single Ascending and Repeated Dose Study of Oral ZF874 in Healthy Volunteers and PiXZ Subjects",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Alpha1 Anti-Trypsin Deficiency",
+      "start_date": "2020-08-03",
+      "completion_date": "2022-09-12",
+      "enrollment": 0,
+      "sponsor": "Z Factor Limited"
+    },
+    {
+      "nct_id": "NCT05789537",
+      "title": "A Study of SerpinPC in Participants with Hemophilia B (HemB) with Inhibitors",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Hemophilia B with Inhibitor, Hemophilia B",
+      "start_date": "2023-07-28",
+      "completion_date": "2025-02-24",
+      "enrollment": 0,
+      "sponsor": "ApcinteX Ltd"
+    },
+    {
+      "nct_id": "NCT04985825",
+      "title": "Imgatuzumab in Patients With Advanced Cutaneous Squamous Cell Carcinoma",
+      "status": "WITHDRAWN",
+      "phase": "PHASE2",
+      "condition": "Cutaneous Squamous Cell Carcinoma",
+      "start_date": "2021-12-16",
+      "completion_date": "2022-08-17",
+      "enrollment": 0,
+      "sponsor": "Pega-One S.A.S."
+    },
+    {
+      "nct_id": "NCT05789524",
+      "title": "The Efficacy and Safety of SerpinPC in Participants with Severe Hemophilia a or Moderately Severe to Severe Hemophilia B",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Hemophilia a, Hemophilia B",
+      "start_date": "2023-07-06",
+      "completion_date": "2025-02-28",
+      "enrollment": 0,
+      "sponsor": "ApcinteX Ltd"
+    }
+  ],
+  "summary": {
+    "total_trials": 15,
+    "by_phase": {
+      "PHASE1": 3,
+      "PHASE1, PHASE2": 2,
+      "PHASE2": 5,
+      "PHASE3": 4,
+      "": 1
+    },
+    "by_status": {
+      "RECRUITING": 3,
+      "TERMINATED": 10,
+      "WITHDRAWN": 1,
+      "COMPLETED": 1
+    },
+    "active_trials": 3,
+    "completed_trials": 1,
+    "conditions": [
+      "Advanced Solid Tumor",
+      "Alpha1 Anti-Trypsin Deficiency",
+      "Autosomal Dominant Polycystic Kidney, ADPKD",
+      "Chronic Inflammatory Disease",
+      "Cutaneous Squamous Cell Carcinoma",
+      "Excessive Daytime Sleepiness",
+      "Hemophilia B with Inhibitor, Hemophilia B",
+      "Hemophilia a, Hemophilia B",
+      "Hemophilia a, Hemophilia B, Hemophilia a with Inhibitor, Hemophilia B with Inhibitor",
+      "Narcolepsy Type 1, Narcolepsy Type 2, Idiopathic Hypersomnia",
+      "Polycystic Kidney Disease, Adult",
+      "Polycystic Kidney Disease, Adult, ADPKD"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:17:34.825419",
+    "search_query": "Centessa Pharmaceuticals plc",
+    "url": "https://clinicaltrials.gov/search?term=Centessa+Pharmaceuticals+plc"
+  }
+}

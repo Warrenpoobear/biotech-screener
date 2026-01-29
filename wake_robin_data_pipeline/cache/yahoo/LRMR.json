@@ -1,0 +1,43 @@
+{
+  "ticker": "LRMR",
+  "success": true,
+  "price": {
+    "current": 3.5401,
+    "currency": "USD",
+    "day_high": 3.66,
+    "day_low": 3.5401,
+    "52_week_high": 5.37,
+    "52_week_low": 1.61
+  },
+  "market_cap": {
+    "value": 302998560.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 83090392.0,
+  "volume": {
+    "last": 270449,
+    "average_30d": 1188434
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -1.9464253,
+    "price_to_book": 2.1798646
+  },
+  "company_info": {
+    "name": "Larimar Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:07:50.852770",
+    "url": "https://finance.yahoo.com/quote/LRMR",
+    "data_hash": "847276ffdadea6b8"
+  }
+}

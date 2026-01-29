@@ -1,0 +1,100 @@
+{
+  "ticker": "SLNO",
+  "company_name": "Soleno Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04086810",
+      "title": "An Open-Label Study of DCCR Tablet in Patients With PWS",
+      "status": "WITHDRAWN",
+      "phase": "PHASE3",
+      "condition": "Prader-Willi Syndrome",
+      "start_date": "2019-10",
+      "completion_date": "2019-10",
+      "enrollment": 0,
+      "sponsor": "Soleno Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT03714373",
+      "title": "Open-Label Extension Study of DCCR in PWS Followed by Double-Blind, Placebo-Controlled, Randomized Withdrawal Period",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Prader-Willi Syndrome",
+      "start_date": "2018-10-01",
+      "completion_date": "2023-08-17",
+      "enrollment": 0,
+      "sponsor": "Soleno Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT03440814",
+      "title": "A Study of Diazoxide Choline in Patients With Prader-Willi Syndrome",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Prader-Willi Syndrome",
+      "start_date": "2018-05-09",
+      "completion_date": "2020-05-01",
+      "enrollment": 0,
+      "sponsor": "Soleno Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05701774",
+      "title": "Open-Label Extension Study of DCCR in Patients With Prader-Willi Syndrome",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Prader-Willi Syndrome",
+      "start_date": "2023-01-31",
+      "completion_date": "2028-06",
+      "enrollment": 0,
+      "sponsor": "Soleno Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05532020",
+      "title": "An Open-Label Study of Diazoxide Choline in Patients With Genetic Obesities",
+      "status": "UNKNOWN",
+      "phase": "PHASE2",
+      "condition": "SH2B1 Deficiency Obesity, Obesity Associated With PCSK1 Mutation (rs6232 Variant), SIM1 Deficiency Obesity",
+      "start_date": "2023-01",
+      "completion_date": "2024-03",
+      "enrollment": 0,
+      "sponsor": "Soleno Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04102839",
+      "title": "PWS Outcomes Assessment Study",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Prader-Willi Syndrome",
+      "start_date": "2019-07-15",
+      "completion_date": "2021-06-08",
+      "enrollment": 0,
+      "sponsor": "Soleno Therapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 6,
+    "by_phase": {
+      "PHASE3": 4,
+      "PHASE2": 1,
+      "": 1
+    },
+    "by_status": {
+      "WITHDRAWN": 1,
+      "COMPLETED": 3,
+      "ACTIVE_NOT_RECRUITING": 1,
+      "UNKNOWN": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 3,
+    "conditions": [
+      "Prader-Willi Syndrome",
+      "SH2B1 Deficiency Obesity, Obesity Associated With PCSK1 Mutation (rs6232 Variant), SIM1 Deficiency Obesity"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T13:11:59.418152",
+    "search_query": "Soleno Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Soleno+Therapeutics,+Inc."
+  }
+}

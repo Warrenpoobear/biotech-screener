@@ -1,0 +1,151 @@
+{
+  "ticker": "WVE",
+  "company_name": "Wave Life Sciences Ltd.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05683860",
+      "title": "Open-label Extension (OLE) Study of WVE-004 in Patients With C9orf72-associated Amyotrophic Lateral Sclerosis (ALS) and/or Frontotemporal Dementia (FTD)",
+      "status": "TERMINATED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "ALS, FTD",
+      "start_date": "2022-12-14",
+      "completion_date": "2023-06-30",
+      "enrollment": 0,
+      "sponsor": "Wave Life Sciences Ltd."
+    },
+    {
+      "nct_id": "NCT07209332",
+      "title": "Open-Label Extension Study of WVE-N531 in Patients With Duchenne Muscular Dystrophy",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Duchenne Muscular Dystrophy",
+      "start_date": "2025-11",
+      "completion_date": "2029-03",
+      "enrollment": 0,
+      "sponsor": "Wave Life Sciences Ltd."
+    },
+    {
+      "nct_id": "NCT06186492",
+      "title": "A Phase 1 Research Study to Evaluate Safety, Tolerability, and Pharmacokinetics of WVE-006 in Healthy Participants With Wild-type AAT Expression (RestorAATion-1)",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Alpha-1 Antitrypsin Deficiency",
+      "start_date": "2023-11-14",
+      "completion_date": "2025-02-13",
+      "enrollment": 0,
+      "sponsor": "Wave Life Sciences Ltd."
+    },
+    {
+      "nct_id": "NCT04617860",
+      "title": "Open-label Extension Study to Evaluate the Safety and Tolerability of WVE-120102 in Patients With Huntington's Disease",
+      "status": "TERMINATED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Huntington Disease",
+      "start_date": "2019-09-24",
+      "completion_date": "2021-04-29",
+      "enrollment": 0,
+      "sponsor": "Wave Life Sciences Ltd."
+    },
+    {
+      "nct_id": "NCT06842186",
+      "title": "A Phase 1 Study of WVE-007 in Adults Living With Overweight or Obesity",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Obesity and Overweight",
+      "start_date": "2025-01-31",
+      "completion_date": "2026-10",
+      "enrollment": 0,
+      "sponsor": "Wave Life Sciences Ltd."
+    },
+    {
+      "nct_id": "NCT03907072",
+      "title": "Efficacy and Safety Study of WVE-210201 (Suvodirsen) With Open-label Extension in Ambulatory Patients With Duchenne Muscular Dystrophy",
+      "status": "TERMINATED",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Duchenne Muscular Dystrophy",
+      "start_date": "2019-09-04",
+      "completion_date": "2020-01-09",
+      "enrollment": 0,
+      "sponsor": "Wave Life Sciences Ltd."
+    },
+    {
+      "nct_id": "NCT04617847",
+      "title": "Open-label Extension Study to Evaluate the Safety and Tolerability of WVE-120101 in Patients With Huntington's Disease",
+      "status": "TERMINATED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Huntington Disease",
+      "start_date": "2020-04-13",
+      "completion_date": "2021-05-03",
+      "enrollment": 0,
+      "sponsor": "Wave Life Sciences Ltd."
+    },
+    {
+      "nct_id": "NCT06405633",
+      "title": "A Phase 1b/2a, Open-label Single Ascending Doses and Multiple Ascending Doses Study in Participants With Pi*ZZ AATD",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Alpha-1 Antitrypsin Deficiency",
+      "start_date": "2024-07-19",
+      "completion_date": "2026-09",
+      "enrollment": 0,
+      "sponsor": "Wave Life Sciences Ltd."
+    },
+    {
+      "nct_id": "NCT03508947",
+      "title": "Safety and Tolerability of WVE-210201 in Patients With Duchenne Muscular Dystrophy",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Duchenne Muscular Dystrophy",
+      "start_date": "2018-01-24",
+      "completion_date": "2019-03-06",
+      "enrollment": 0,
+      "sponsor": "Wave Life Sciences Ltd."
+    },
+    {
+      "nct_id": "NCT04906460",
+      "title": "Open-label Study of WVE-N531 in Patients With Duchenne Muscular Dystrophy (FORWARD-53)",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Duchenne Muscular Dystrophy",
+      "start_date": "2021-09-28",
+      "completion_date": "2027-04-24",
+      "enrollment": 0,
+      "sponsor": "Wave Life Sciences Ltd."
+    }
+  ],
+  "summary": {
+    "total_trials": 15,
+    "by_phase": {
+      "PHASE1, PHASE2": 9,
+      "PHASE2": 1,
+      "PHASE1": 3,
+      "PHASE2, PHASE3": 1,
+      "": 1
+    },
+    "by_status": {
+      "TERMINATED": 7,
+      "NOT_YET_RECRUITING": 1,
+      "COMPLETED": 4,
+      "RECRUITING": 3
+    },
+    "active_trials": 3,
+    "completed_trials": 4,
+    "conditions": [
+      "ALS, FTD",
+      "Alpha-1 Antitrypsin Deficiency",
+      "Duchenne Muscular Dystrophy",
+      "Duchenne Muscular Dystrophy, Burden, Dependency, Disability Physical, Disease Management, Impairment, Rare Diseases",
+      "Huntington Disease",
+      "Huntington's Disease",
+      "Obesity and Overweight"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:22:56.664992",
+    "search_query": "Wave Life Sciences Ltd.",
+    "url": "https://clinicaltrials.gov/search?term=Wave+Life+Sciences+Ltd."
+  }
+}

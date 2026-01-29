@@ -1,0 +1,157 @@
+{
+  "ticker": "NAMS",
+  "company_name": "NewAmsterdam Pharma Company N.V",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06048302",
+      "title": "PK and Safety in Participants Taking Obicetrapib With Moderate Hepatic Impairment Relative to Normal Hepatic Function",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Hepatic Impairment, Healthy",
+      "start_date": "2023-11-30",
+      "completion_date": "2024-03-19",
+      "enrollment": 0,
+      "sponsor": "NewAmsterdam Pharma"
+    },
+    {
+      "nct_id": "NCT04770389",
+      "title": "Randomized Study of Obicetrapib in Combination With Ezetimibe",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Dyslipidemias, High Cholesterol, Hypercholesterolemia",
+      "start_date": "2021-02-23",
+      "completion_date": "2021-06-30",
+      "enrollment": 0,
+      "sponsor": "NewAmsterdam Pharma"
+    },
+    {
+      "nct_id": "NCT06496243",
+      "title": "Impact of Obicetrapib and Obicetrapib Plus Repatha on Lp(a) Levels",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Dyslipidemias",
+      "start_date": "2024-12-02",
+      "completion_date": "2026-02",
+      "enrollment": 0,
+      "sponsor": "NewAmsterdam Pharma"
+    },
+    {
+      "nct_id": "NCT06250205",
+      "title": "Evaluate the Pharmacokinetics of a Combined Oral Contraceptive (COC) With and Without Obicetrapib",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2024-02-05",
+      "completion_date": "2024-04-26",
+      "enrollment": 0,
+      "sponsor": "NewAmsterdam Pharma"
+    },
+    {
+      "nct_id": "NCT05202509",
+      "title": "Cardiovascular Outcome Study to Evaluate the Effect of Obicetrapib in Patients With Cardiovascular Disease",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Atherosclerotic Cardiovascular Disease",
+      "start_date": "2022-02-07",
+      "completion_date": "2026-11",
+      "enrollment": 0,
+      "sponsor": "NewAmsterdam Pharma"
+    },
+    {
+      "nct_id": "NCT05161715",
+      "title": "Proof-of-concept, Open-label Study in Patients With Early Alzheimer's Disease",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Early Alzheimer's Disease",
+      "start_date": "2022-01-12",
+      "completion_date": "2023-06-01",
+      "enrollment": 0,
+      "sponsor": "NewAmsterdam Pharma"
+    },
+    {
+      "nct_id": "NCT07219602",
+      "title": "A Study to Evaluate the Effect of Obicetrapib/Ezetimibe 10 mg Fixed-Dose Combination or Obicetrapib 10 mg Daily on Top of Guideline-Recommended Lipid-Lowering Therapy in Participants With Type 2 Diabetes and/or Metabolic Syndrome",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Lipidemia, Type 2 Diabetes (T2DM), Metabolic Syndrome (MetS)",
+      "start_date": "2025-12",
+      "completion_date": "2028-06",
+      "enrollment": 0,
+      "sponsor": "NewAmsterdam Pharma"
+    },
+    {
+      "nct_id": "NCT05142722",
+      "title": "Randomized Study to Evaluate the Effect of Obicetrapib on Top of Maximum Tolerated Lipid-Modifying Therapies",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Dyslipidemias, High Cholesterol, Hypercholesterolemia, Familial Hypercholesterolemia, Atherosclerotic Cardiovascular Disease",
+      "start_date": "2021-12-15",
+      "completion_date": "2024-09-26",
+      "enrollment": 0,
+      "sponsor": "NewAmsterdam Pharma"
+    },
+    {
+      "nct_id": "NCT06305559",
+      "title": "A CCTA Imaging Trial to Evaluate the Effect of Obicetrapib/Ezetimibe on Coronary Plaque",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Lipidemia, Coronary Artery Disease, Plaque, Atherosclerotic",
+      "start_date": "2024-05-16",
+      "completion_date": "2027-03",
+      "enrollment": 0,
+      "sponsor": "NewAmsterdam Pharma"
+    },
+    {
+      "nct_id": "NCT06982508",
+      "title": "Evaluation of Obicetrapib on Antioxidant Levels in Plasma and HDL Particles of Healthy Volunteers",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Antioxidant Absorption",
+      "start_date": "2025-09-09",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "NewAmsterdam Pharma"
+    }
+  ],
+  "summary": {
+    "total_trials": 19,
+    "by_phase": {
+      "PHASE1": 6,
+      "PHASE2": 7,
+      "PHASE3": 6
+    },
+    "by_status": {
+      "COMPLETED": 13,
+      "RECRUITING": 3,
+      "ACTIVE_NOT_RECRUITING": 2,
+      "NOT_YET_RECRUITING": 1
+    },
+    "active_trials": 5,
+    "completed_trials": 13,
+    "conditions": [
+      "Antioxidant Absorption",
+      "Atherosclerotic Cardiovascular Disease",
+      "Dyslipidemia, Hypercholesterolemia, High Cholesterol",
+      "Dyslipidemias",
+      "Dyslipidemias, High Cholesterol, Hypercholesterolemia",
+      "Dyslipidemias, High Cholesterol, Hypercholesterolemia, Familial Hypercholesterolemia, Atherosclerotic Cardiovascular Disease",
+      "Dyslipidemias, High Cholesterol, Hypercholesterolemia, Familial Hypercholesterolemia, Lipid Metabolism Disorder, Metabolic Disease, Lipid Metabolism, Inborn Errors, Genetic Disease, Inborn, Hyperlipoproteinemias",
+      "Dyslipidemias, Hypercholesterolemia, Familial Hypercholesterolemia, ASCVD, High Cholesterol",
+      "Early Alzheimer's Disease",
+      "Healthy Volunteer Study",
+      "Healthy Volunteers",
+      "Hepatic Impairment, Healthy",
+      "Lipid Metabolism",
+      "Lipidemia, Coronary Artery Disease, Plaque, Atherosclerotic",
+      "Lipidemia, Type 2 Diabetes (T2DM), Metabolic Syndrome (MetS)"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:20:12.888798",
+    "search_query": "NewAmsterdam Pharma Company N.V",
+    "url": "https://clinicaltrials.gov/search?term=NewAmsterdam+Pharma+Company+N.V"
+  }
+}

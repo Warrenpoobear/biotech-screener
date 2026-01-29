@@ -1,0 +1,43 @@
+{
+  "ticker": "VYNE",
+  "cik": "0001566044",
+  "success": true,
+  "financials": {
+    "cash": 22047000.0,
+    "debt": 0.0,
+    "net_debt": -22047000.0,
+    "revenue_ttm": 4286000.0,
+    "assets": 44718000.0,
+    "liabilities": 5836000.0,
+    "equity": 38882000.0,
+    "currency": "USD"
+  },
+  "data_dates": {
+    "cash": "2025-06-30",
+    "debt": "2025-06-30",
+    "revenue": "2020-12-31",
+    "assets": "2025-06-30",
+    "liabilities": "2025-06-30"
+  },
+  "data_freshness": {
+    "most_recent_date": "2025-06-30",
+    "oldest_date": "2020-12-31",
+    "staleness_flags": [
+      "critical_staleness:1855d"
+    ]
+  },
+  "coverage": {
+    "has_cash": true,
+    "has_debt": true,
+    "has_revenue": true,
+    "has_balance_sheet": true,
+    "pct_complete": 100.0
+  },
+  "provenance": {
+    "source": "SEC EDGAR Company Facts API",
+    "timestamp": "2026-01-29T13:11:57.403721",
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001566044.json",
+    "cik": "0001566044",
+    "accounting_standard": "us-gaap"
+  }
+}

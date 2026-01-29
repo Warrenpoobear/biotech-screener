@@ -1,0 +1,39 @@
+{
+  "ticker": "SEPN",
+  "company_name": "Septerna, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT07069036",
+      "title": "A Study to Evaluate Single and Multiple Doses of SEP-631 in Healthy Adult Volunteers",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2025-07",
+      "completion_date": "2026-04",
+      "enrollment": 0,
+      "sponsor": "Septerna, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 1,
+    "by_phase": {
+      "PHASE1": 1
+    },
+    "by_status": {
+      "NOT_YET_RECRUITING": 1
+    },
+    "active_trials": 0,
+    "completed_trials": 0,
+    "conditions": [
+      "Healthy Volunteers"
+    ],
+    "lead_stage": "phase_1"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:21:46.229578",
+    "search_query": "Septerna, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Septerna,+Inc."
+  }
+}

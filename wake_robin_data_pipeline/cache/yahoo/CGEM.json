@@ -1,0 +1,43 @@
+{
+  "ticker": "CGEM",
+  "success": true,
+  "price": {
+    "current": 11.77,
+    "currency": "USD",
+    "day_high": 12.17,
+    "day_low": 11.7,
+    "52_week_high": 13.33,
+    "52_week_low": 5.68
+  },
+  "market_cap": {
+    "value": 695327616.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 59076259.0,
+  "volume": {
+    "last": 79782,
+    "average_30d": 671635
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -3.547307,
+    "price_to_book": 1.540576
+  },
+  "company_info": {
+    "name": "Cullinan Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:05:35.585647",
+    "url": "https://finance.yahoo.com/quote/CGEM",
+    "data_hash": "85d31d239b8cfaa8"
+  }
+}

@@ -1,0 +1,153 @@
+{
+  "ticker": "IFRX",
+  "company_name": "InflaRx N.V.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT03895801",
+      "title": "Study of IFX-1 to Replace Steroids in Patients With Granulomatosis With Polyangiitis and Microscopic Polyangiitis.",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Granulomatosis With Polyangiitis (GPA), Microscopic Polyangiitis (MPA)",
+      "start_date": "2019-04-03",
+      "completion_date": "2021-06-08",
+      "enrollment": 0,
+      "sponsor": "InflaRx GmbH"
+    },
+    {
+      "nct_id": "NCT05964413",
+      "title": "Phase III Trial to Investigate Efficacy and Safety of Vilobelimab in Ulcerative Pyoderma Gangrenosum",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Pyoderma Gangrenosum",
+      "start_date": "2023-11-01",
+      "completion_date": "2025-07-11",
+      "enrollment": 0,
+      "sponsor": "InflaRx GmbH"
+    },
+    {
+      "nct_id": "NCT04333420",
+      "title": "Randomized, Controlled Study of IFX-1 in Patients With Severe COVID-19 Pneumonia",
+      "status": "COMPLETED",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Severe COVID-19 Pneumonia",
+      "start_date": "2020-03-31",
+      "completion_date": "2021-12-01",
+      "enrollment": 0,
+      "sponsor": "InflaRx GmbH"
+    },
+    {
+      "nct_id": "NCT03001622",
+      "title": "Studying Complement Inhibition in Patients With Moderate to Severe Hidradenitis Suppurativa",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Hidradenitis Suppurativa",
+      "start_date": "2016-12",
+      "completion_date": "2017-07",
+      "enrollment": 0,
+      "sponsor": "InflaRx GmbH"
+    },
+    {
+      "nct_id": "NCT03712345",
+      "title": "Safety and Efficacy Study of IFX-1 in add-on to Standard of Care in GPA and MPA",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Granulomatosis With Polyangiitis (GPA), Microscopic Polyangiitis (MPA)",
+      "start_date": "2018-10-15",
+      "completion_date": "2021-05-03",
+      "enrollment": 0,
+      "sponsor": "InflaRx GmbH"
+    },
+    {
+      "nct_id": "NCT06703073",
+      "title": "JUST BREATHE, Breathing Life Into Innovative Therapies for ARDS (Master Record)",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Acute Respiratory Distress Syndrome (ARDS), ARDS, ARDS (Acute Respiratory Distress Syndrome), Acute Respiratory Distress Syndrome",
+      "start_date": "2025-06-10",
+      "completion_date": "2028-09",
+      "enrollment": 0,
+      "sponsor": "PPD Development, LP"
+    },
+    {
+      "nct_id": "NCT03487276",
+      "title": "Efficacy and Safety Study of IFX-1 in Patients With Moderate to Severe Hidradenitis Suppurativa (HS)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Hidradenitis Suppurativa (HS)",
+      "start_date": "2018-02-26",
+      "completion_date": "2020-01-27",
+      "enrollment": 0,
+      "sponsor": "InflaRx GmbH"
+    },
+    {
+      "nct_id": "NCT03971643",
+      "title": "Exploratory Study of IFX-1 in Patients With Pyoderma Gangrenosum",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Pyoderma Gangrenosum",
+      "start_date": "2019-05-16",
+      "completion_date": "2022-01-03",
+      "enrollment": 0,
+      "sponsor": "InflaRx GmbH"
+    },
+    {
+      "nct_id": "NCT02246595",
+      "title": "Studying Complement Inhibition in Early, Newly Developing Septic Organ Dysfunction",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Severe Sepsis, Septic Shock",
+      "start_date": "2014-04",
+      "completion_date": "2015-12",
+      "enrollment": 0,
+      "sponsor": "InflaRx GmbH"
+    },
+    {
+      "nct_id": "NCT02866825",
+      "title": "Studying Complement Inhibition in Complex Cardiac Surgery",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Systemic Inflammatory Response Syndrome, C.Surgical Procedure; Cardiac",
+      "start_date": "2016-05",
+      "completion_date": "2017-01",
+      "enrollment": 0,
+      "sponsor": "InflaRx GmbH"
+    }
+  ],
+  "summary": {
+    "total_trials": 16,
+    "by_phase": {
+      "PHASE2": 13,
+      "PHASE3": 1,
+      "PHASE2, PHASE3": 1,
+      "PHASE1": 1
+    },
+    "by_status": {
+      "COMPLETED": 8,
+      "TERMINATED": 3,
+      "RECRUITING": 5
+    },
+    "active_trials": 5,
+    "completed_trials": 8,
+    "conditions": [
+      "Acute Respiratory Distress Syndrome (ARDS), ARDS, ARDS (Acute Respiratory Distress Syndrome), Acute Respiratory Distress Syndrome",
+      "Chronic Urticaria, Idiopathic, Hidradenitis, Hidradenitis Suppurativa",
+      "Drug Safety",
+      "Granulomatosis With Polyangiitis (GPA), Microscopic Polyangiitis (MPA)",
+      "Hidradenitis Suppurativa",
+      "Hidradenitis Suppurativa (HS)",
+      "Pyoderma Gangrenosum",
+      "SCC - Squamous Cell Carcinoma of Skin",
+      "Severe COVID-19 Pneumonia",
+      "Severe Sepsis, Septic Shock",
+      "Systemic Inflammatory Response Syndrome, C.Surgical Procedure; Cardiac"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T13:12:12.823851",
+    "search_query": "InflaRx N.V.",
+    "url": "https://clinicaltrials.gov/search?term=InflaRx+N.V."
+  }
+}

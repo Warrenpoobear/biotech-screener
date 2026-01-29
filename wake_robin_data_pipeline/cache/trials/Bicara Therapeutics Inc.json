@@ -1,0 +1,52 @@
+{
+  "ticker": "BCAX",
+  "company_name": "Bicara Therapeutics Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04429542",
+      "title": "Study of Safety and Tolerability of BCA101 Monotherapy and in Combination Therapy in Patients With EGFR-driven Advanced Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Head and Neck Squamous Cell Carcinoma, Squamous Cell Carcinoma of Anal Canal, Colorectal Cancer, Squamous Cell Carcinoma of the Lung, EGFR Amplification, Epithelial Ovarian Cancer, Pancreas Cancer, Cutaneous Squamous Cell Carcinoma, Head and Neck Neoplasms, Carcinoma, Squamous Cell, Squamous Cell Carcinoma of Head and Neck",
+      "start_date": "2020-06-01",
+      "completion_date": "2027-06-01",
+      "enrollment": 0,
+      "sponsor": "Bicara Therapeutics"
+    },
+    {
+      "nct_id": "NCT06788990",
+      "title": "FORTIFI-HN01: A Study of Ficerafusp Alfa (BCA101) or Placebo in Combination With Pembrolizumab in First-Line PD-L1-pos, R or M HNSCC",
+      "status": "RECRUITING",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Metastatic Head and Neck Squamous Cell Carcinoma, Recurrent Head and Neck Squamous Cell Carcinoma",
+      "start_date": "2025-01-28",
+      "completion_date": "2029-07",
+      "enrollment": 0,
+      "sponsor": "Bicara Therapeutics"
+    }
+  ],
+  "summary": {
+    "total_trials": 2,
+    "by_phase": {
+      "PHASE1": 1,
+      "PHASE2, PHASE3": 1
+    },
+    "by_status": {
+      "RECRUITING": 2
+    },
+    "active_trials": 2,
+    "completed_trials": 0,
+    "conditions": [
+      "Head and Neck Squamous Cell Carcinoma, Squamous Cell Carcinoma of Anal Canal, Colorectal Cancer, Squamous Cell Carcinoma of the Lung, EGFR Amplification, Epithelial Ovarian Cancer, Pancreas Cancer, Cutaneous Squamous Cell Carcinoma, Head and Neck Neoplasms, Carcinoma, Squamous Cell, Squamous Cell Carcinoma of Head and Neck",
+      "Metastatic Head and Neck Squamous Cell Carcinoma, Recurrent Head and Neck Squamous Cell Carcinoma"
+    ],
+    "lead_stage": "phase_1"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:17:01.705437",
+    "search_query": "Bicara Therapeutics Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Bicara+Therapeutics+Inc."
+  }
+}

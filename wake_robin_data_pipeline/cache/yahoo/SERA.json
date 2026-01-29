@@ -1,0 +1,43 @@
+{
+  "ticker": "SERA",
+  "success": true,
+  "price": {
+    "current": 2.8801,
+    "currency": "USD",
+    "day_high": 2.9048,
+    "day_low": 2.86,
+    "52_week_high": 6.918,
+    "52_week_low": 1.37
+  },
+  "market_cap": {
+    "value": 111156864.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 37627034.0,
+  "volume": {
+    "last": 6267,
+    "average_30d": 62812
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -4.1144285,
+    "price_to_book": 1.3515251
+  },
+  "company_info": {
+    "name": "Sera Prognostics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Medical Devices"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:09:42.892386",
+    "url": "https://finance.yahoo.com/quote/SERA",
+    "data_hash": "836bfb532b7c75ee"
+  }
+}

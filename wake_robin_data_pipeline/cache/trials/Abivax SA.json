@@ -1,0 +1,157 @@
+{
+  "ticker": "ABVX",
+  "company_name": "Abivax SA",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT02249988",
+      "title": "Clinical Efficacy of ABX203 Therapeutic Vaccine in HBeAg Negative Patients With Chronic Hepatitis B",
+      "status": "COMPLETED",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Chronic Hepatitis B",
+      "start_date": "2014-12",
+      "completion_date": "2016-12",
+      "enrollment": 0,
+      "sponsor": "Abivax S.A."
+    },
+    {
+      "nct_id": "NCT02990325",
+      "title": "A Safety, Pharmacokinetics, and Pharmacodynamics Study of ABX464 in HIV-1 Seronegative and Seropositive Adults",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "HIV Infections, Health Volunteers",
+      "start_date": "2017-03-27",
+      "completion_date": "2019-10-21",
+      "enrollment": 0,
+      "sponsor": "Abivax S.A."
+    },
+    {
+      "nct_id": "NCT05507203",
+      "title": "ABTECT-1 - ABX464 Treatment Evaluation for Ulcerative Colitis Therapy -1",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Ulcerative Colitis",
+      "start_date": "2022-10-10",
+      "completion_date": "2025-06-25",
+      "enrollment": 0,
+      "sponsor": "Abivax S.A."
+    },
+    {
+      "nct_id": "NCT05121714",
+      "title": "Evaluation of the Potential CYP1A2-mediated Drug Drug Interaction Safety, and Tolerability of ABX464",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2020-12-17",
+      "completion_date": "2021-05-18",
+      "enrollment": 0,
+      "sponsor": "Abivax S.A."
+    },
+    {
+      "nct_id": "NCT03368118",
+      "title": "Study Evaluating the Long-term Safety and Efficacy of ABX464 in Active Ulcerative Colitis",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Ulcerative Colitis",
+      "start_date": "2018-01-20",
+      "completion_date": "2022-08-15",
+      "enrollment": 0,
+      "sponsor": "Abivax S.A."
+    },
+    {
+      "nct_id": "NCT03905109",
+      "title": "Phase 2b/3 Study of ABX464 in Moderate to Severe Active Crohn's Disease Patients",
+      "status": "WITHDRAWN",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Crohn Disease",
+      "start_date": "2022-09-19",
+      "completion_date": "2022-09-19",
+      "enrollment": 0,
+      "sponsor": "Abivax S.A."
+    },
+    {
+      "nct_id": "NCT02731885",
+      "title": "Food Effect on Pharmacokinetic Parameters of ABX464",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2014-09",
+      "completion_date": "2015-06",
+      "enrollment": 0,
+      "sponsor": "Abivax S.A."
+    },
+    {
+      "nct_id": "NCT03813199",
+      "title": "Study of Two Doses of ABX464 in Participants With Moderate to Severe Rheumatoid Arthritis",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Rheumatoid Arthritis",
+      "start_date": "2019-07-04",
+      "completion_date": "2021-04-27",
+      "enrollment": 0,
+      "sponsor": "Abivax S.A."
+    },
+    {
+      "nct_id": "NCT04023396",
+      "title": "Efficacy and Safety Study of ABX464 as Maintenance Therapy in Patients With Moderate to Severe Ulcerative Colitis",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Ulcerative Colitis",
+      "start_date": "2020-01-13",
+      "completion_date": "2024-03-15",
+      "enrollment": 0,
+      "sponsor": "Abivax S.A."
+    },
+    {
+      "nct_id": "NCT03897543",
+      "title": "ABX196 in Combination With Nivolumab in Patients With Hepatocellular Carcinoma",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Carcinoma, Hepatocellular",
+      "start_date": "2019-08-30",
+      "completion_date": "2023-06-30",
+      "enrollment": 0,
+      "sponsor": "Abivax S.A."
+    }
+  ],
+  "summary": {
+    "total_trials": 22,
+    "by_phase": {
+      "PHASE2, PHASE3": 3,
+      "PHASE1, PHASE2": 2,
+      "PHASE3": 3,
+      "PHASE1": 4,
+      "PHASE2": 10
+    },
+    "by_status": {
+      "COMPLETED": 16,
+      "WITHDRAWN": 1,
+      "RECRUITING": 2,
+      "ACTIVE_NOT_RECRUITING": 2,
+      "TERMINATED": 1
+    },
+    "active_trials": 4,
+    "completed_trials": 16,
+    "conditions": [
+      "COVID-19",
+      "Carcinoma, Hepatocellular",
+      "Chronic Hepatitis B",
+      "Crohn Disease",
+      "HIV Infection",
+      "HIV Infections, Health Volunteers",
+      "Healthy",
+      "Healthy Volunteers",
+      "Human Immunodeficiency Virus Infections",
+      "Moderately to Severely Active Crohn Disease",
+      "Rheumatoid Arthritis",
+      "Ulcerative Colitis"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:15:54.519321",
+    "search_query": "Abivax SA",
+    "url": "https://clinicaltrials.gov/search?term=Abivax+SA"
+  }
+}

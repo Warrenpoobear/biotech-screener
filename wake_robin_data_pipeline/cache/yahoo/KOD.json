@@ -1,0 +1,43 @@
+{
+  "ticker": "KOD",
+  "success": true,
+  "price": {
+    "current": 25.12,
+    "currency": "USD",
+    "day_high": 26.4999,
+    "day_low": 25.0,
+    "52_week_high": 31.18,
+    "52_week_low": 1.92
+  },
+  "market_cap": {
+    "value": 1533536512.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 61048428.0,
+  "volume": {
+    "last": 85632,
+    "average_30d": 808065
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -6.7409463,
+    "price_to_book": 56.07143
+  },
+  "company_info": {
+    "name": "Kodiak Sciences Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:07:32.831288",
+    "url": "https://finance.yahoo.com/quote/KOD",
+    "data_hash": "9d5c9fc602a5565d"
+  }
+}

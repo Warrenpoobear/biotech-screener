@@ -1,0 +1,129 @@
+{
+  "ticker": "STRO",
+  "company_name": "Sutro Biopharma, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT07227168",
+      "title": "A Study of STRO-004 in Adults With Refractory/Recurrent Metastatic Cancer",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Head and Neck Squamous Cell Carcinoma HNSCC, Non-Small Cell Lung Cancer NSCLC, Esophageal Cancer, Gastric Cancer, Colorectal Cancer, Pancreatic Ductal Adenocarcinoma (PDAC), Cervical Cancer, Endometrial Cancer, Urothelial Cancer",
+      "start_date": "2025-11-07",
+      "completion_date": "2028-04",
+      "enrollment": 0,
+      "sponsor": "Sutro Biopharma, Inc."
+    },
+    {
+      "nct_id": "NCT03748186",
+      "title": "Study of STRO-002, an Anti-Folate Receptor Alpha (FolR\u03b1) Antibody Drug Conjugate in Ovarian & Endometrial Cancers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Ovarian Cancer, Ovarian Carcinoma, Ovary Cancer, Endometrial Cancer, Endometrioid Adenocarcinoma, Fallopian Tube Cancer, Primary Peritoneal Carcinoma",
+      "start_date": "2019-02-01",
+      "completion_date": "2024-06-04",
+      "enrollment": 0,
+      "sponsor": "Sutro Biopharma, Inc."
+    },
+    {
+      "nct_id": "NCT06555263",
+      "title": "Study to Investigate Luveltamab Tazevibulin in Adults With Advanced or Metastatic Non-small Cell Lung Cancer",
+      "status": "WITHDRAWN",
+      "phase": "PHASE2",
+      "condition": "Lung Cancer, Lung Cancer Metastatic, Lung Cancer, Nonsmall Cell, Lung Cancer Non-Small Cell Stage IIIB, Lung Cancer Non-small Cell Stage IV, Lung Cancer, Non-small Cell",
+      "start_date": "2024-08-21",
+      "completion_date": "2025-05-01",
+      "enrollment": 0,
+      "sponsor": "Sutro Biopharma, Inc."
+    },
+    {
+      "nct_id": "NCT05200364",
+      "title": "A Study of STRO-002, an Anti-Folate Receptor Alpha Antibody Drug Conjugate, in Combination With Bevacizumab in Epithelial Ovarian Cancer",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Ovarian Cancer, Ovarian Carcinoma, Ovary Cancer, Fallopian Tube Cancer, Primary Peritoneal Carcinoma",
+      "start_date": "2022-03-22",
+      "completion_date": "2025-06-01",
+      "enrollment": 0,
+      "sponsor": "Sutro Biopharma, Inc."
+    },
+    {
+      "nct_id": "NCT05870748",
+      "title": "REFRaME-O1: A Study to Investigate the Efficacy and Safety of Luveltamab Tazevibulin Versus Investigator's Choice (IC) Chemotherapy in Women With Ovarian Cancer (Including Fallopian Tube or Primary Peritoneal Cancers) Expressing FOLR1",
+      "status": "TERMINATED",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Ovarian Cancer, Epithelial Ovarian Cancer, Fallopian Tube Cancer, Primary Peritoneal Cancer, Platinum-resistant Ovarian Cancer",
+      "start_date": "2023-07-12",
+      "completion_date": "2025-08-26",
+      "enrollment": 0,
+      "sponsor": "Sutro Biopharma, Inc."
+    },
+    {
+      "nct_id": "NCT03424603",
+      "title": "Study of STRO-001, an Anti-CD74 Antibody Drug Conjugate, in Patients With Advanced B-Cell Malignancies",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "B-cell Lymphoma, Non Hodgkin Lymphoma, Multiple Myeloma, Follicular Lymphoma, Mantle Cell Lymphoma, Diffuse Large B Cell Lymphoma, Indolent Lymphoma, B Cells--Tumors",
+      "start_date": "2018-02-22",
+      "completion_date": "2024-03-15",
+      "enrollment": 0,
+      "sponsor": "Sutro Biopharma, Inc."
+    },
+    {
+      "nct_id": "NCT06679582",
+      "title": "Luveltamab Tazevibulin (STRO-002) in Infants and Children < 12 Years of Age With Relapsed/Refractory CBFA2T3::GLIS2 AML",
+      "status": "TERMINATED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Acute Myeloid Leukemia (AML)",
+      "start_date": "2024-12-04",
+      "completion_date": "2025-06-01",
+      "enrollment": 0,
+      "sponsor": "Sutro Biopharma, Inc."
+    },
+    {
+      "nct_id": "NCT06238687",
+      "title": "A Study of STRO-002 in Chinese Adults With Epithelial Ovarian Cancer and Other Advanced Malignant Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Neoplasm Malignant",
+      "start_date": "2023-11-08",
+      "completion_date": "2027-12-30",
+      "enrollment": 0,
+      "sponsor": "Tasly Pharmaceutical Group Co., Ltd"
+    }
+  ],
+  "summary": {
+    "total_trials": 8,
+    "by_phase": {
+      "PHASE1": 4,
+      "PHASE2": 1,
+      "PHASE2, PHASE3": 1,
+      "PHASE1, PHASE2": 2
+    },
+    "by_status": {
+      "RECRUITING": 2,
+      "COMPLETED": 2,
+      "WITHDRAWN": 1,
+      "TERMINATED": 3
+    },
+    "active_trials": 2,
+    "completed_trials": 2,
+    "conditions": [
+      "Acute Myeloid Leukemia (AML)",
+      "B-cell Lymphoma, Non Hodgkin Lymphoma, Multiple Myeloma, Follicular Lymphoma, Mantle Cell Lymphoma, Diffuse Large B Cell Lymphoma, Indolent Lymphoma, B Cells--Tumors",
+      "Head and Neck Squamous Cell Carcinoma HNSCC, Non-Small Cell Lung Cancer NSCLC, Esophageal Cancer, Gastric Cancer, Colorectal Cancer, Pancreatic Ductal Adenocarcinoma (PDAC), Cervical Cancer, Endometrial Cancer, Urothelial Cancer",
+      "Lung Cancer, Lung Cancer Metastatic, Lung Cancer, Nonsmall Cell, Lung Cancer Non-Small Cell Stage IIIB, Lung Cancer Non-small Cell Stage IV, Lung Cancer, Non-small Cell",
+      "Neoplasm Malignant",
+      "Ovarian Cancer, Epithelial Ovarian Cancer, Fallopian Tube Cancer, Primary Peritoneal Cancer, Platinum-resistant Ovarian Cancer",
+      "Ovarian Cancer, Ovarian Carcinoma, Ovary Cancer, Endometrial Cancer, Endometrioid Adenocarcinoma, Fallopian Tube Cancer, Primary Peritoneal Carcinoma",
+      "Ovarian Cancer, Ovarian Carcinoma, Ovary Cancer, Fallopian Tube Cancer, Primary Peritoneal Carcinoma"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:22:07.698425",
+    "search_query": "Sutro Biopharma, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Sutro+Biopharma,+Inc."
+  }
+}

@@ -1,0 +1,149 @@
+{
+  "ticker": "TARS",
+  "company_name": "Tarsus Pharmaceuticals, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05138861",
+      "title": "A Six Week Pharmacokinetic Study of TP-03 in Healthy Subjects",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2021-02-09",
+      "completion_date": "2021-09-03",
+      "enrollment": 0,
+      "sponsor": "Tarsus Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT05454956",
+      "title": "Pilot Study Comparing the Safety and Efficacy of Two Dosing Regimens of TP-03 for the Treatment of MGD",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Meibomian Gland Dysfunction, Blepharitis, Demodex Infestation",
+      "start_date": "2022-08-03",
+      "completion_date": "2023-05-18",
+      "enrollment": 0,
+      "sponsor": "Tarsus Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT04784091",
+      "title": "Trial to Evaluate the Safety and Efficacy of TP-03 for the Treatment of Demodex Blepharitis",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Blepharitis",
+      "start_date": "2021-04-29",
+      "completion_date": "2022-05-09",
+      "enrollment": 0,
+      "sponsor": "Tarsus Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT05138796",
+      "title": "A Pharmacokinetic Study of TP-05 in Healthy Subjects",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2021-05-06",
+      "completion_date": "2022-07-25",
+      "enrollment": 0,
+      "sponsor": "Tarsus Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT04475432",
+      "title": "Safety and Efficacy of TP-03 for the Treatment of Demodex Blepharitis",
+      "status": "COMPLETED",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Blepharitis",
+      "start_date": "2020-09-09",
+      "completion_date": "2021-05-04",
+      "enrollment": 0,
+      "sponsor": "Tarsus Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT06054217",
+      "title": "Effect of an Exploratory Vehicle on Meibomian Gland Dysfunction in Patients With Demodex",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Meibomian Gland Dysfunction, Demodex Infestation of Eyelid, Blepharitis, Demodectic Blepharitis",
+      "start_date": "2023-08-01",
+      "completion_date": "2024-06-15",
+      "enrollment": 0,
+      "sponsor": "Tarsus Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT05387083",
+      "title": "A Human Tick Kill Study to Investigate the Safety, Tolerability, and Whole Blood Concentration of TP-05",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Healthy Volunteer",
+      "start_date": "2022-12-12",
+      "completion_date": "2024-06-26",
+      "enrollment": 0,
+      "sponsor": "Tarsus Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT06182358",
+      "title": "Impact of XDEMVY\u00ae on Demodex Blepharitis in Soft Contact Lens Wearers",
+      "status": "COMPLETED",
+      "phase": "PHASE4",
+      "condition": "Demodex Blepharitis",
+      "start_date": "2023-12-27",
+      "completion_date": "2025-01-27",
+      "enrollment": 0,
+      "sponsor": "Tarsus Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT05720364",
+      "title": "Study to Evaluate the Food Effect of TP-05 in Healthy Participants",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2023-01-19",
+      "completion_date": "2023-05-30",
+      "enrollment": 0,
+      "sponsor": "Tarsus Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT05838170",
+      "title": "Study of TP-04 in Participants With Papulopustular Rosacea",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Papulopustular Rosacea",
+      "start_date": "2023-03-01",
+      "completion_date": "2023-11-13",
+      "enrollment": 0,
+      "sponsor": "Tarsus Pharmaceuticals, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 10,
+    "by_phase": {
+      "PHASE1": 3,
+      "PHASE2": 4,
+      "PHASE3": 1,
+      "PHASE2, PHASE3": 1,
+      "PHASE4": 1
+    },
+    "by_status": {
+      "COMPLETED": 9,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 9,
+    "conditions": [
+      "Blepharitis",
+      "Demodex Blepharitis",
+      "Healthy",
+      "Healthy Volunteer",
+      "Meibomian Gland Dysfunction, Blepharitis, Demodex Infestation",
+      "Meibomian Gland Dysfunction, Demodex Infestation of Eyelid, Blepharitis, Demodectic Blepharitis",
+      "Papulopustular Rosacea"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:22:14.594526",
+    "search_query": "Tarsus Pharmaceuticals, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Tarsus+Pharmaceuticals,+Inc."
+  }
+}

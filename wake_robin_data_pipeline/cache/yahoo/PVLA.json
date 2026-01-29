@@ -1,0 +1,43 @@
+{
+  "ticker": "PVLA",
+  "success": true,
+  "price": {
+    "current": 80.52,
+    "currency": "USD",
+    "day_high": 80.595,
+    "day_low": 76.82,
+    "52_week_high": 114.69,
+    "52_week_low": 12.6
+  },
+  "market_cap": {
+    "value": 953074112.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 11836490.0,
+  "volume": {
+    "last": 41382,
+    "average_30d": 208035
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -19.911716,
+    "price_to_book": 23.078245
+  },
+  "company_info": {
+    "name": "Palvella Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:09:13.106905",
+    "url": "https://finance.yahoo.com/quote/PVLA",
+    "data_hash": "a20d26b4fc536d12"
+  }
+}

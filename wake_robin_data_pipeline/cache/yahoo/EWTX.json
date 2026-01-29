@@ -1,0 +1,43 @@
+{
+  "ticker": "EWTX",
+  "success": true,
+  "price": {
+    "current": 28.99,
+    "currency": "USD",
+    "day_high": 29.1318,
+    "day_low": 28.395,
+    "52_week_high": 30.48,
+    "52_week_low": 10.6
+  },
+  "market_cap": {
+    "value": 3069125888.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 105868434.0,
+  "volume": {
+    "last": 90187,
+    "average_30d": 1162899
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -14.645482,
+    "price_to_book": 5.488451
+  },
+  "company_info": {
+    "name": "Edgewise Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:06:27.512100",
+    "url": "https://finance.yahoo.com/quote/EWTX",
+    "data_hash": "171654bc37b4d8da"
+  }
+}

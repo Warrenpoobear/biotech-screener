@@ -1,0 +1,43 @@
+{
+  "ticker": "ANNX",
+  "success": true,
+  "price": {
+    "current": 6.36,
+    "currency": "USD",
+    "day_high": 6.53,
+    "day_low": 6.3,
+    "52_week_high": 7.18,
+    "52_week_low": 1.285
+  },
+  "market_cap": {
+    "value": 947995392.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 149055879.0,
+  "volume": {
+    "last": 352924,
+    "average_30d": 2532660
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -5.349843,
+    "price_to_book": 4.536377
+  },
+  "company_info": {
+    "name": "Annexon, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:04:34.878430",
+    "url": "https://finance.yahoo.com/quote/ANNX",
+    "data_hash": "b4c5f87695c40a64"
+  }
+}

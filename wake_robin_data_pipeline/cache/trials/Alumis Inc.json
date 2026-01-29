@@ -1,0 +1,150 @@
+{
+  "ticker": "ALMS",
+  "company_name": "Alumis Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05953688",
+      "title": "POC Study to Evaluate the Efficacy and Safety of ESK-001 in Patients With Active Intermediate, Posterior, or Pan NIU",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Uveitis Posterior Non-Infectious, Uveitis, Intermediate, Noninfectious Panuveitis",
+      "start_date": "2023-06-14",
+      "completion_date": "2024-08-13",
+      "enrollment": 0,
+      "sponsor": "Alumis Inc"
+    },
+    {
+      "nct_id": "NCT05431634",
+      "title": "Multiple Dose Study to Determine Safety and Tolerability of ESK-001 in Healthy Participants",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Safety and Tolerability",
+      "start_date": "2022-05-12",
+      "completion_date": "2022-12-31",
+      "enrollment": 0,
+      "sponsor": "Alumis Inc"
+    },
+    {
+      "nct_id": "NCT05330858",
+      "title": "Relative Bioavailability of ESK-001 Tablet Versus Liquid in Healthy Participants",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Pharmacokinetics",
+      "start_date": "2022-03-17",
+      "completion_date": "2022-09-20",
+      "enrollment": 0,
+      "sponsor": "Alumis Inc"
+    },
+    {
+      "nct_id": "NCT06962774",
+      "title": "An Investigational Study of ESK-001 in Participants With Normal Renal Function and Participants With Mild, Moderate, and Severe Impaired Renal Function",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Renal Impairment",
+      "start_date": "2025-04-23",
+      "completion_date": "2025-08-01",
+      "enrollment": 0,
+      "sponsor": "Alumis Inc"
+    },
+    {
+      "nct_id": "NCT05739435",
+      "title": "Open-Label Extension Study to Evaluate the Long Term Safety and Efficacy of ESK-001 in Plaque Psoriasis",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Plaque Psoriasis",
+      "start_date": "2023-01-17",
+      "completion_date": "2026-12-30",
+      "enrollment": 0,
+      "sponsor": "Alumis Inc"
+    },
+    {
+      "nct_id": "NCT06952634",
+      "title": "An Investigational Study of ESK-001 in Participants With Normal Liver Function and Participants With Mild, Moderate, and Severe Liver Damage",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Hepatic Impairment",
+      "start_date": "2025-04-29",
+      "completion_date": "2025-12",
+      "enrollment": 0,
+      "sponsor": "Alumis Inc"
+    },
+    {
+      "nct_id": "NCT05600036",
+      "title": "A Study to Evaluate the Efficacy and Safety of ESK-001 in Patients With Plaque Psoriasis",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Plaque Psoriasis",
+      "start_date": "2022-09-27",
+      "completion_date": "2023-07-25",
+      "enrollment": 0,
+      "sponsor": "Alumis Inc"
+    },
+    {
+      "nct_id": "NCT06588738",
+      "title": "A Study in Patients With Moderate to Severe Plaque Psoriasis to Evaluate the Efficacy and Safety of ESK-001",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Plaque Psoriasis",
+      "start_date": "2024-08-20",
+      "completion_date": "2025-12",
+      "enrollment": 0,
+      "sponsor": "Alumis Inc"
+    },
+    {
+      "nct_id": "NCT05966480",
+      "title": "Phase 2 Placebo-Controlled Study to Assess the Safety and Efficacy of ESK-001 in Active Systemic Lupus Erythematosus",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "SLE",
+      "start_date": "2023-06-26",
+      "completion_date": "2027-09-01",
+      "enrollment": 0,
+      "sponsor": "Alumis Inc"
+    },
+    {
+      "nct_id": "NCT06846541",
+      "title": "Long-term Safety and Efficacy of ESK-001 in Moderate to Severe Plaque Psoriasis",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Plaque Psoriasis, Psoriasis (PsO), Psoriasis, Moderate Psoriasis, Severe Psoriasis",
+      "start_date": "2025-01-08",
+      "completion_date": "2028-11",
+      "enrollment": 0,
+      "sponsor": "Alumis Inc"
+    }
+  ],
+  "summary": {
+    "total_trials": 11,
+    "by_phase": {
+      "PHASE2": 4,
+      "PHASE1": 4,
+      "PHASE3": 3
+    },
+    "by_status": {
+      "TERMINATED": 1,
+      "COMPLETED": 4,
+      "ACTIVE_NOT_RECRUITING": 4,
+      "RECRUITING": 2
+    },
+    "active_trials": 6,
+    "completed_trials": 4,
+    "conditions": [
+      "Hepatic Impairment",
+      "Pharmacokinetics",
+      "Plaque Psoriasis",
+      "Plaque Psoriasis, Psoriasis (PsO), Psoriasis, Moderate Psoriasis, Severe Psoriasis",
+      "Renal Impairment",
+      "SLE",
+      "Safety and Tolerability",
+      "Uveitis Posterior Non-Infectious, Uveitis, Intermediate, Noninfectious Panuveitis"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:16:12.096041",
+    "search_query": "Alumis Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Alumis+Inc."
+  }
+}

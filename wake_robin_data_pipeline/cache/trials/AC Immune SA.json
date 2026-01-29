@@ -1,0 +1,141 @@
+{
+  "ticker": "ACIU",
+  "company_name": "AC Immune SA",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06891716",
+      "title": "[18F]ACI-19626 PET in TDP-43 Proteinopathies",
+      "status": "RECRUITING",
+      "phase": "EARLY_PHASE1",
+      "condition": "Frontotemporal Dementia (FTD), Amyotrophic Lateral Sclerosis (ALS), TDP-43 Proteinopathies, Suspected Limbic Predominant Age-related TDP-43 Encephalopathy (LATE), Alzheimer's Disease (AD)",
+      "start_date": "2025-01-21",
+      "completion_date": "2026-11",
+      "enrollment": 0,
+      "sponsor": "AC Immune SA"
+    },
+    {
+      "nct_id": "NCT04445831",
+      "title": "A Study to Evaluate the Safety, Tolerability and Immunogenicity of Tau Targeted Vaccines in Participants With Early Alzheimer's Disease",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Alzheimer's Disease, Cognitive Impairment, Tauopathies, Mild Cognitive Impairment, Dementia, Brain Diseases, Central Nervous System Diseases",
+      "start_date": "2019-07-31",
+      "completion_date": "2023-09-05",
+      "enrollment": 0,
+      "sponsor": "AC Immune SA"
+    },
+    {
+      "nct_id": "NCT02738450",
+      "title": "Safety, Tolerability and Immunogenicity of ACI-24 Vaccine in Adults With Down Syndrome",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Down Syndrome",
+      "start_date": "2016-03",
+      "completion_date": "2020-06",
+      "enrollment": 0,
+      "sponsor": "AC Immune SA"
+    },
+    {
+      "nct_id": "NCT04373616",
+      "title": "A Study of ACI-24 in Adults With Down Syndrome",
+      "status": "WITHDRAWN",
+      "phase": "PHASE2",
+      "condition": "Down Syndrome",
+      "start_date": "2021-10",
+      "completion_date": "2024-10",
+      "enrollment": 0,
+      "sponsor": "AC Immune SA"
+    },
+    {
+      "nct_id": "NCT05067192",
+      "title": "Optimization of Morphomer-based Alpha-synuclein PET Tracers",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Parkinson Disease, Dementia With Lewy Bodies, Multiple System Atrophy, Corticobasal Degeneration, Progressive Supranuclear Palsy",
+      "start_date": "2021-07-15",
+      "completion_date": "2021-09-01",
+      "enrollment": 0,
+      "sponsor": "Skane University Hospital"
+    },
+    {
+      "nct_id": "NCT06445465",
+      "title": "Study to Evaluate a Potential PET Radioligand for Imaging Alpha-synuclein Deposits in the Brain",
+      "status": "COMPLETED",
+      "phase": "EARLY_PHASE1",
+      "condition": "Alpha-Synucleinopathy, Parkinson's Disease, Dementia With Lewy Bodies, Multisystem Atrophy",
+      "start_date": "2020-12-24",
+      "completion_date": "2024-11-26",
+      "enrollment": 0,
+      "sponsor": "Invicro"
+    },
+    {
+      "nct_id": "NCT05462106",
+      "title": "A Study to Assess the Effects of ACI-24.060 in Alzheimer's Disease and in Down Syndrome (ABATE Study)",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Amyloid Plaque, Beta-Amyloid, DSAD, Prodromal Alzheimer's Disease, Alzheimer's Disease",
+      "start_date": "2022-06-21",
+      "completion_date": "2026-06",
+      "enrollment": 0,
+      "sponsor": "AC Immune SA"
+    },
+    {
+      "nct_id": "NCT06891703",
+      "title": "[18F]ACI-15916 PET in \u03b1-synucleinopathies",
+      "status": "RECRUITING",
+      "phase": "EARLY_PHASE1",
+      "condition": "Parkinson's Disease (PD), Multiple System Atrophy (MSA), Dementia With Lewy Bodies (DLB)",
+      "start_date": "2025-03-20",
+      "completion_date": "2026-03",
+      "enrollment": 0,
+      "sponsor": "AC Immune SA"
+    },
+    {
+      "nct_id": "NCT06015841",
+      "title": "A Study to Evaluate the Effects of ACI-7104.056 in Patients With Early Stages of Parkinson's Disease",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Parkinson Disease, Parkinson Disease 6, Early-Onset",
+      "start_date": "2023-07-24",
+      "completion_date": "2028-01",
+      "enrollment": 0,
+      "sponsor": "AC Immune SA"
+    }
+  ],
+  "summary": {
+    "total_trials": 9,
+    "by_phase": {
+      "EARLY_PHASE1": 3,
+      "PHASE1, PHASE2": 2,
+      "PHASE1": 1,
+      "PHASE2": 2,
+      "": 1
+    },
+    "by_status": {
+      "RECRUITING": 3,
+      "COMPLETED": 4,
+      "WITHDRAWN": 1,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 4,
+    "completed_trials": 4,
+    "conditions": [
+      "Alpha-Synucleinopathy, Parkinson's Disease, Dementia With Lewy Bodies, Multisystem Atrophy",
+      "Alzheimer's Disease, Cognitive Impairment, Tauopathies, Mild Cognitive Impairment, Dementia, Brain Diseases, Central Nervous System Diseases",
+      "Amyloid Plaque, Beta-Amyloid, DSAD, Prodromal Alzheimer's Disease, Alzheimer's Disease",
+      "Down Syndrome",
+      "Frontotemporal Dementia (FTD), Amyotrophic Lateral Sclerosis (ALS), TDP-43 Proteinopathies, Suspected Limbic Predominant Age-related TDP-43 Encephalopathy (LATE), Alzheimer's Disease (AD)",
+      "Parkinson Disease, Dementia With Lewy Bodies, Multiple System Atrophy, Corticobasal Degeneration, Progressive Supranuclear Palsy",
+      "Parkinson Disease, Parkinson Disease 6, Early-Onset",
+      "Parkinson's Disease (PD), Multiple System Atrophy (MSA), Dementia With Lewy Bodies (DLB)"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:15:57.098908",
+    "search_query": "AC Immune SA",
+    "url": "https://clinicaltrials.gov/search?term=AC+Immune+SA"
+  }
+}

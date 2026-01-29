@@ -1,0 +1,43 @@
+{
+  "ticker": "WHWK",
+  "success": true,
+  "price": {
+    "current": 2.68,
+    "currency": "USD",
+    "day_high": 2.81,
+    "day_low": 2.6325,
+    "52_week_high": 3.77,
+    "52_week_low": 1.39
+  },
+  "market_cap": {
+    "value": 126304008.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 47128362.0,
+  "volume": {
+    "last": 36598,
+    "average_30d": 112954
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -2.310345,
+    "price_to_book": 0.8035982
+  },
+  "company_info": {
+    "name": "Whitehawk Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T12:46:52.054216",
+    "url": "https://finance.yahoo.com/quote/WHWK",
+    "data_hash": "59f1cc7b0ebab0a2"
+  }
+}

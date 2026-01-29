@@ -1,0 +1,153 @@
+{
+  "ticker": "SVRA",
+  "company_name": "Savara, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT01746095",
+      "title": "Efficacy and Safety Study of AeroVanc for the Treatment of Persistent MRSA Lung Infection in Cystic Fibrosis Patients",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Cystic Fibrosis",
+      "start_date": "2013-03",
+      "completion_date": "2014-11",
+      "enrollment": 0,
+      "sponsor": "Savara Inc."
+    },
+    {
+      "nct_id": "NCT01515007",
+      "title": "Phase 3 Study With Ciprofloxacin Dispersion for Inhalation in Non-CF Bronchiectasis (ORBIT-3)",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Non Cystic Fibrosis Bronchiectasis",
+      "start_date": "2014-03-31",
+      "completion_date": "2016-10",
+      "enrollment": 0,
+      "sponsor": "Aradigm Corporation"
+    },
+    {
+      "nct_id": "NCT03482752",
+      "title": "Safety Extension Trial of Inhaled Molgramostim in Autoimmune Pulmonary Alveolar Proteinosis",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Autoimmune Pulmonary Alveolar Proteinosis",
+      "start_date": "2018-04-16",
+      "completion_date": "2021-01-14",
+      "enrollment": 0,
+      "sponsor": "Savara Inc."
+    },
+    {
+      "nct_id": "NCT02468908",
+      "title": "Inhaled Molgramostim (rhGM-CSF) in Healthy Adult Subjects",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Pulmonary Alveolar Proteinosis, Bronchiectasis, Cystic Fibrosis, Acute Respiratory Distress Syndrome",
+      "start_date": "2015-05",
+      "completion_date": "2015-10",
+      "enrollment": 0,
+      "sponsor": "Savara Inc."
+    },
+    {
+      "nct_id": "NCT06546098",
+      "title": "Molgramostim Nebulizer Solution Expanded Access Program Protocol",
+      "status": "AVAILABLE",
+      "phase": "",
+      "condition": "Autoimmune Pulmonary Alveolar Proteinosis",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Savara Inc."
+    },
+    {
+      "nct_id": "NCT03421743",
+      "title": "Pilot Trial of Inhaled Molgramostim in Non-tuberculous Mycobacterial (NTM) Infection",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Mycobacterium Infections, Nontuberculous",
+      "start_date": "2018-03-01",
+      "completion_date": "2020-01-13",
+      "enrollment": 0,
+      "sponsor": "Savara Inc."
+    },
+    {
+      "nct_id": "NCT02104245",
+      "title": "Phase 3 Study With Ciprofloxacin Dispersion for Inhalation in Non-CF Bronchiectasis (ORBIT-4)",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Non Cystic Fibrosis Bronchiectasis",
+      "start_date": "2014-05-28",
+      "completion_date": "2016-10",
+      "enrollment": 0,
+      "sponsor": "Aradigm Corporation"
+    },
+    {
+      "nct_id": "NCT06431776",
+      "title": "Inhaled Molgramostim in Pediatric Participants With Autoimmune Pulmonary Alveolar Proteinosis (aPAP).",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Autoimmune Pulmonary Alveolar Proteinosis",
+      "start_date": "2024-08",
+      "completion_date": "2027-08",
+      "enrollment": 0,
+      "sponsor": "Savara Inc."
+    },
+    {
+      "nct_id": "NCT01090908",
+      "title": "Evaluation of Ciprofloxacin for Inhalation to Cystic Fibrosis Patients With P. Aeruginosa",
+      "status": "WITHDRAWN",
+      "phase": "",
+      "condition": "Cystic Fibrosis",
+      "start_date": "2010-09",
+      "completion_date": "2011-06",
+      "enrollment": 0,
+      "sponsor": "Aradigm Corporation"
+    },
+    {
+      "nct_id": "NCT03181932",
+      "title": "AeroVanc in the Treatment of Methicillin-resistant Staphylococcus Aureus Infection in Patients With Cystic Fibrosis",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "MRSA, Cystic Fibrosis",
+      "start_date": "2017-09-20",
+      "completion_date": "2021-01-15",
+      "enrollment": 0,
+      "sponsor": "Savara Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 14,
+    "by_phase": {
+      "PHASE2": 4,
+      "PHASE3": 6,
+      "PHASE1": 2,
+      "": 2
+    },
+    "by_status": {
+      "COMPLETED": 8,
+      "TERMINATED": 2,
+      "AVAILABLE": 1,
+      "NOT_YET_RECRUITING": 1,
+      "WITHDRAWN": 1,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 8,
+    "conditions": [
+      "Autoimmune Pulmonary Alveolar Proteinosis",
+      "Cystic Fibrosis",
+      "Healthy, Cystic Fibrosis",
+      "MRSA, Cystic Fibrosis",
+      "Mycobacterium Infections, Nontuberculous",
+      "Mycobacterium Infections, Nontuberculous, Cystic Fibrosis (CF)",
+      "Non Cystic Fibrosis Bronchiectasis",
+      "Pulmonary Alveolar Proteinosis, Bronchiectasis, Cystic Fibrosis, Acute Respiratory Distress Syndrome"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:22:11.932067",
+    "search_query": "Savara, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Savara,+Inc."
+  }
+}

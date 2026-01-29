@@ -1,0 +1,159 @@
+{
+  "ticker": "AMRX",
+  "company_name": "Amneal Pharmaceuticals, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT01064024",
+      "title": "Evaluate the Safety and Efficacy of Phenazopyridine Hydrochloride Tablets, USP 200 mg vs. Placebo",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Pain, Urinary Tract Infections",
+      "start_date": "2009-12",
+      "completion_date": "2010-12",
+      "enrollment": 0,
+      "sponsor": "Amneal Pharmaceuticals, LLC"
+    },
+    {
+      "nct_id": "NCT06267274",
+      "title": "A Randomized, Double-blind, Parallel-group, Two-arm, Multiple Dose, Multicenter, Bioequivalence Study With Clinical Endpoint in the Treatment of Subjects With Chronic Open-angle Glaucoma or Ocular Hypertension in Both Eyes",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Open-angle Glaucoma, Ocular Hypertension",
+      "start_date": "2024-04-01",
+      "completion_date": "2025-05-01",
+      "enrollment": 0,
+      "sponsor": "Amneal Pharmaceuticals, LLC"
+    },
+    {
+      "nct_id": "NCT01779947",
+      "title": "Study to Evaluate the Safety and Bioequivalence of Estradiol Vaginal Inserts, 10 mcg and Vagifem\u00ae 10 mcg and Compare to Placebo",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Atrophic Vaginitis Due to Menopause",
+      "start_date": "2012-03",
+      "completion_date": "2012-12",
+      "enrollment": 0,
+      "sponsor": "Amneal Pharmaceuticals, LLC"
+    },
+    {
+      "nct_id": "NCT01733082",
+      "title": "The Mycophenolate Pregnancy Registry",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Heart Transplantation, Kidney Transplantation, Liver Transplantation, Autoimmune Diseases",
+      "start_date": "2012-11-20",
+      "completion_date": "2026-12-31",
+      "enrollment": 0,
+      "sponsor": "Genentech, Inc."
+    },
+    {
+      "nct_id": "NCT02940561",
+      "title": "BE Study in Patients - Methotrexate Tablets",
+      "status": "UNKNOWN",
+      "phase": "PHASE1",
+      "condition": "Psoriasis, Rheumatoid Arthritis",
+      "start_date": "2016-08",
+      "completion_date": "2016-10",
+      "enrollment": 0,
+      "sponsor": "Amneal Pharmaceuticals, LLC"
+    },
+    {
+      "nct_id": "NCT06467201",
+      "title": "SAD Study to Evaluate Safety, Tolerability, and Pharmacokinetic Profile of AMN1126 in Healthy Post-Menopausal Females",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Postmenopausal Women",
+      "start_date": "2024-06-03",
+      "completion_date": "2025-03-12",
+      "enrollment": 0,
+      "sponsor": "Shivanka Research, LLC"
+    },
+    {
+      "nct_id": "NCT02121002",
+      "title": "Study Comparing a Generic Diclofenac Sodium Topical Gel, 1% to Voltaren in the Treatment of Subjects With Osteoarthritis of the Knee",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Osteoarthritis",
+      "start_date": "2014-04",
+      "completion_date": "2014-12",
+      "enrollment": 0,
+      "sponsor": "Amneal Pharmaceuticals, LLC"
+    },
+    {
+      "nct_id": "NCT02103322",
+      "title": "Comparative Bioequivalence Study in Adult Patients Suffering From Chronic Myeloid Leukemia & Gastrointestinal Stromal Tumor Under Fed Conditions",
+      "status": "COMPLETED",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Chronic Myeloid Leukemia, Gastrointestinal Stromal Tumor",
+      "start_date": "2014-02",
+      "completion_date": "2014-06",
+      "enrollment": 0,
+      "sponsor": "Amneal Pharmaceuticals, LLC"
+    },
+    {
+      "nct_id": "NCT02125253",
+      "title": "Study to Compare the Therapeutic Equivalence of Mometasone Furoate Nasal Spray, 50 mcg With Nasonex Nasal Spray in the Relief of the Signs and Symptoms of Seasonal Allergic Rhinitis",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Seasonal Allergic Rhinitis",
+      "start_date": "2014-01",
+      "completion_date": "2014-06",
+      "enrollment": 0,
+      "sponsor": "Amneal Pharmaceuticals, LLC"
+    },
+    {
+      "nct_id": "NCT00404989",
+      "title": "Antiretroviral Pregnancy Registry (APR): Multi-sponsor Registry to Detect Any Major Teratogenic Effect Involving Any of the Registry Drugs When Administered to Pregnant People.",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "HIV Infections, Hepatitis B",
+      "start_date": "1989-01",
+      "completion_date": "2099-01",
+      "enrollment": 0,
+      "sponsor": "Syneos Health"
+    }
+  ],
+  "summary": {
+    "total_trials": 17,
+    "by_phase": {
+      "PHASE3": 7,
+      "PHASE1": 3,
+      "": 3,
+      "PHASE2, PHASE3": 2,
+      "PHASE4": 2
+    },
+    "by_status": {
+      "COMPLETED": 10,
+      "RECRUITING": 6,
+      "UNKNOWN": 1
+    },
+    "active_trials": 6,
+    "completed_trials": 10,
+    "conditions": [
+      "Atrophic Vaginitis Due to Menopause",
+      "Chronic Myeloid Leukemia, Gastrointestinal Stromal Tumor",
+      "Fasting",
+      "Glaucoma, Open-Angle, Ocular Hypertension",
+      "HIV Infections, Hepatitis B",
+      "Healthy Postmenopausal Women",
+      "Heart Transplantation, Kidney Transplantation, Liver Transplantation, Autoimmune Diseases",
+      "Open-angle Glaucoma, Ocular Hypertension",
+      "Osteoarthritis",
+      "Pain, Urinary Tract Infections",
+      "Parkinson Disease",
+      "Primary Hypogonadism, Hypogonadotropic Hypogonadism",
+      "Psoriasis, Rheumatoid Arthritis",
+      "Schizophrenia",
+      "Seasonal Allergic Rhinitis",
+      "Uncomplicated Urinary Tract Infections"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:16:21.475230",
+    "search_query": "Amneal Pharmaceuticals, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Amneal+Pharmaceuticals,+Inc."
+  }
+}

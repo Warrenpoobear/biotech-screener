@@ -1,0 +1,148 @@
+{
+  "ticker": "EOLS",
+  "company_name": "Evolus, Inc. Common Stock",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05320393",
+      "title": "Study to Demonstrate Safety and Duration of Effect of 40 Units of PrabotulinumtoxinA-xvfs to Treat Glabellar Lines",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Glabellar Frown Lines",
+      "start_date": "2022-03-30",
+      "completion_date": "2023-05-22",
+      "enrollment": 0,
+      "sponsor": "Evolus, Inc."
+    },
+    {
+      "nct_id": "NCT02428608",
+      "title": "Safety Study of DWP-450 (Botulinum Toxin, Type a) to Treat Glabellar Lines - EV-006",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Glabellar Frown Lines",
+      "start_date": "2015-05",
+      "completion_date": "2016-11",
+      "enrollment": 0,
+      "sponsor": "Evolus, Inc."
+    },
+    {
+      "nct_id": "NCT06903975",
+      "title": "BoTox Into the Sternocleidomastoid Muscles (SCM)",
+      "status": "RECRUITING",
+      "phase": "PHASE4",
+      "condition": "Neck Muscle Issue",
+      "start_date": "2025-05-14",
+      "completion_date": "2026-03",
+      "enrollment": 0,
+      "sponsor": "Boston Medical Center"
+    },
+    {
+      "nct_id": "NCT02334436",
+      "title": "A Phase III Study to Demonstrate the Safety and Efficacy of DWP-450 to Treat Glabellar Lines - EV-002",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Glabellar Frown Lines",
+      "start_date": "2015-01",
+      "completion_date": "2015-12",
+      "enrollment": 0,
+      "sponsor": "Evolus, Inc."
+    },
+    {
+      "nct_id": "NCT05129319",
+      "title": "Jeuveau Treatment of Glabellar Lines Using OLD Versus COLD",
+      "status": "COMPLETED",
+      "phase": "EARLY_PHASE1",
+      "condition": "Glabellar Frown Lines",
+      "start_date": "2021-12-16",
+      "completion_date": "2023-06-15",
+      "enrollment": 0,
+      "sponsor": "Clinical Testing of Beverly Hills"
+    },
+    {
+      "nct_id": "NCT02184988",
+      "title": "Safety Study of DWP-450 (Botulinum Purified Neurotoxin, Type A) Injection to Treat Glabellar Lines",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Glabellar Frown Lines",
+      "start_date": "2014-08",
+      "completion_date": "2015-12",
+      "enrollment": 0,
+      "sponsor": "Evolus, Inc."
+    },
+    {
+      "nct_id": "NCT05807412",
+      "title": "Spread of PrabotulinumtoxinA-xvfs Versus OnabotulinumtoxinA in the Treatment of Forehead Rhytides",
+      "status": "COMPLETED",
+      "phase": "EARLY_PHASE1",
+      "condition": "Rhytides",
+      "start_date": "2023-05-01",
+      "completion_date": "2024-02-26",
+      "enrollment": 0,
+      "sponsor": "Lupo Center for Aesthetic and General Dermatology"
+    },
+    {
+      "nct_id": "NCT05481931",
+      "title": "Non Interventional Safety Study of NUCEIVA for the Treatment of Moderate-to-Severe Glabellar Lines",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "",
+      "condition": "Glabellar Frown Lines",
+      "start_date": "2023-03-15",
+      "completion_date": "2026-01",
+      "enrollment": 0,
+      "sponsor": "Evolus, Inc."
+    },
+    {
+      "nct_id": "NCT02334423",
+      "title": "A Phase III Study to Demonstrate the Safety and Efficacy of DWP-450 to Treat Glabellar Lines - EV001",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Glabellar Frown Lines",
+      "start_date": "2015-01",
+      "completion_date": "2015-12",
+      "enrollment": 0,
+      "sponsor": "Evolus, Inc."
+    },
+    {
+      "nct_id": "NCT06604832",
+      "title": "Effects of Microtox on Facial Skin Quality, Fine Wrinkles, and Texture",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Skin Aging, Skin Wrinkling",
+      "start_date": "2024-09-03",
+      "completion_date": "2025-09-16",
+      "enrollment": 0,
+      "sponsor": "Kalpna Kay Durairaj, MD, FACS"
+    }
+  ],
+  "summary": {
+    "total_trials": 10,
+    "by_phase": {
+      "PHASE2": 3,
+      "PHASE4": 1,
+      "PHASE3": 2,
+      "EARLY_PHASE1": 2,
+      "": 1,
+      "PHASE1": 1
+    },
+    "by_status": {
+      "COMPLETED": 8,
+      "RECRUITING": 1,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 2,
+    "completed_trials": 8,
+    "conditions": [
+      "Glabellar Frown Lines",
+      "Neck Muscle Issue",
+      "Rhytides",
+      "Skin Aging, Skin Wrinkling"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:18:11.502264",
+    "search_query": "Evolus, Inc. Common Stock",
+    "url": "https://clinicaltrials.gov/search?term=Evolus,+Inc.+Common+Stock"
+  }
+}

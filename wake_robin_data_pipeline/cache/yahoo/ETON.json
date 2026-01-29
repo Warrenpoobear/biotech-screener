@@ -1,0 +1,43 @@
+{
+  "ticker": "ETON",
+  "success": true,
+  "price": {
+    "current": 15.17,
+    "currency": "USD",
+    "day_high": 15.405,
+    "day_low": 14.81,
+    "52_week_high": 23.0,
+    "52_week_low": 11.09
+  },
+  "market_cap": {
+    "value": 406822016.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 26817535.0,
+  "volume": {
+    "last": 57978,
+    "average_30d": 206999
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": 15.019802,
+    "price_to_book": 17.598608
+  },
+  "company_info": {
+    "name": "Eton Pharmaceuticals, Inc.",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:06:26.043199",
+    "url": "https://finance.yahoo.com/quote/ETON",
+    "data_hash": "e3be476a35d0fac4"
+  }
+}

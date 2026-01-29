@@ -1,0 +1,174 @@
+{
+  "ticker": "LGND",
+  "company_name": "Ligand Pharmaceuticals Incorporated",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT00938613",
+      "title": "Compare CE-Budesonide Nasal Solution & Rhinocort Aqua in an EEC Study of AR",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Seasonal Allergic Rhinitis",
+      "start_date": "2007-02",
+      "completion_date": "2007-04",
+      "enrollment": 0,
+      "sponsor": "Ligand Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT00238628",
+      "title": "A Phase I/II Study of Bexarotene in Combination With ZD1839 (IRESSA\u00ae) in the Treatment of Non-Small Cell Lung Cancer",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Lung Cancer",
+      "start_date": "2004-04",
+      "completion_date": "2005-12",
+      "enrollment": 0,
+      "sponsor": "Stanford University"
+    },
+    {
+      "nct_id": "NCT04627831",
+      "title": "Comparison of Captisol-Enabled\u2122 Iohexol and Omnipaque\u2122 in Patients With Impaired Renal Function Undergoing Coronary Angiography",
+      "status": "WITHDRAWN",
+      "phase": "PHASE2",
+      "condition": "Contrast-induced Nephropathy",
+      "start_date": "2022-01",
+      "completion_date": "2023-04",
+      "enrollment": 0,
+      "sponsor": "Ligand Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT02851849",
+      "title": "A Study of LGD-6972 in Patients With Type 2 Diabetes Mellitus",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Type 2 Diabetes Mellitus",
+      "start_date": "2016-09",
+      "completion_date": "2017-06",
+      "enrollment": 0,
+      "sponsor": "Ligand Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT02250222",
+      "title": "Safety and Tolerability Study of Oral LGD-6972 for Type 2 Diabetes Mellitus",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Type 2 Diabetes Mellitus",
+      "start_date": "2014-10",
+      "completion_date": "2015-06",
+      "enrollment": 0,
+      "sponsor": "Ligand Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT00002439",
+      "title": "A Study of ALRT 1057 Topical Gel in Patients With AIDS-Related Kaposi's Sarcoma",
+      "status": "COMPLETED",
+      "phase": "NA",
+      "condition": "Sarcoma, Kaposi, HIV Infections",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Anderson Clinical Research"
+    },
+    {
+      "nct_id": "NCT01128959",
+      "title": "Study to Assess the Safety and Tolerability of Intravenous Carbamazepine in Adults With Epilepsy",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Epilepsy",
+      "start_date": "2010-06",
+      "completion_date": "2013-01",
+      "enrollment": 0,
+      "sponsor": "Lundbeck LLC"
+    },
+    {
+      "nct_id": "NCT00626418",
+      "title": "The Effects of Aplindore on the Treatment of Signs and Symptoms of Restless Legs Syndrome",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Restless Legs Syndrome",
+      "start_date": "2008-02",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Ligand Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT00063076",
+      "title": "Phase II Randomized Bilateral Comparison of Topical Targretin Gel 1% in Alopecia Areata",
+      "status": "COMPLETED",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Alopecia Areata",
+      "start_date": "2003-05",
+      "completion_date": "2007-05",
+      "enrollment": 0,
+      "sponsor": "M.D. Anderson Cancer Center"
+    },
+    {
+      "nct_id": "NCT02672839",
+      "title": "A Comparison Study of the Bioavailability of a Capsule Formulation of LGD-6972 to an Oral Solution Formulation",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Type 2 Diabetes Mellitus (T2DM)",
+      "start_date": "2016-02",
+      "completion_date": "2016-05",
+      "enrollment": 0,
+      "sponsor": "Ligand Pharmaceuticals"
+    }
+  ],
+  "summary": {
+    "total_trials": 41,
+    "by_phase": {
+      "PHASE2": 19,
+      "PHASE1, PHASE2": 4,
+      "PHASE1": 8,
+      "NA": 5,
+      "PHASE3": 3,
+      "PHASE2, PHASE3": 1,
+      "PHASE4": 1
+    },
+    "by_status": {
+      "COMPLETED": 37,
+      "WITHDRAWN": 2,
+      "TERMINATED": 2
+    },
+    "active_trials": 0,
+    "completed_trials": 37,
+    "conditions": [
+      "Advanced, Malignant Aerodigestive Tract Tumor (Lung, Head and Neck and Esophagus)",
+      "Alopecia Areata",
+      "Bioequivalence",
+      "Bone Loss",
+      "Breast Cancer",
+      "Carcinoma, Non-small-cell Lung",
+      "Chronic Hepatitis B",
+      "Contrast-induced Nephropathy",
+      "Contrast-induced Nephropathy, Coronary Angiography",
+      "Cutaneous T-Cell Lymphoma",
+      "Drug/Agent Toxicity by Tissue/Organ, Lymphoma",
+      "Early Stage Parkinson's Disease",
+      "Epilepsy",
+      "Hepatitis B",
+      "Hepatocellular Carcinoma",
+      "Hypercholesterolemia",
+      "Hypertension",
+      "Lung Cancer",
+      "Lymphoma, T-Cell, Cutaneous",
+      "Osteoporosis",
+      "Parapsoriasis",
+      "Psoriasis",
+      "Restless Legs Syndrome",
+      "Sarcoma, Kaposi, HIV Infections",
+      "Seasonal Allergic Rhinitis",
+      "Sepsis, Septic Shock",
+      "Septic Shock",
+      "Type 2 Diabetes Mellitus",
+      "Type 2 Diabetes Mellitus (T2DM)"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:19:42.730962",
+    "search_query": "Ligand Pharmaceuticals Incorporated",
+    "url": "https://clinicaltrials.gov/search?term=Ligand+Pharmaceuticals+Incorporated"
+  }
+}

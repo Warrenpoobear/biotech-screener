@@ -1,0 +1,164 @@
+{
+  "ticker": "GLPG",
+  "company_name": "Galapagos NV",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT02562859",
+      "title": "Oral Bioavailability of Solid Formulation of GLPG1837 With and Without Food",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2015-09",
+      "completion_date": "2015-10",
+      "enrollment": 0,
+      "sponsor": "Galapagos NV"
+    },
+    {
+      "nct_id": "NCT03711162",
+      "title": "A Clinical Study to Test How Effective and Safe GLPG1690 is for Subjects With Idiopathic Pulmonary Fibrosis (IPF) When Used Together With Standard of Care",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Idiopathic Pulmonary Fibrosis",
+      "start_date": "2018-11-28",
+      "completion_date": "2021-03-30",
+      "enrollment": 0,
+      "sponsor": "Galapagos NV"
+    },
+    {
+      "nct_id": "NCT03540524",
+      "title": "A Study Looking at the Safety, Tolerability and Efficacy of the Combination of the Study Drugs GLPG2451 and GLPG2222 With or Without GLPG2737 in Patients With Cystic Fibrosis.",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Cystic Fibrosis",
+      "start_date": "2018-05-31",
+      "completion_date": "2019-03-11",
+      "enrollment": 0,
+      "sponsor": "Galapagos NV"
+    },
+    {
+      "nct_id": "NCT01894516",
+      "title": "Dose-finding Study of GLPG0634 as Monotherapy in Active Rheumatoid Arthritis (RA) Participants (DARWIN2)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Rheumatoid Arthritis",
+      "start_date": "2013-10-08",
+      "completion_date": "2015-05-29",
+      "enrollment": 0,
+      "sponsor": "Galapagos NV"
+    },
+    {
+      "nct_id": "NCT02690519",
+      "title": "Study of GLPG1837 in Subjects With Cystic Fibrosis (S1251N Mutation)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Cystic Fibrosis",
+      "start_date": "2016-01",
+      "completion_date": "2016-09",
+      "enrollment": 0,
+      "sponsor": "Galapagos NV"
+    },
+    {
+      "nct_id": "NCT04985435",
+      "title": "Better After CHoosing. Randomly Allocated or Patient Preference Based Treatment With Filgotinib or TNFi in RA (BACH)",
+      "status": "RECRUITING",
+      "phase": "PHASE4",
+      "condition": "Rheumatoid Arthritis",
+      "start_date": "2021-05-12",
+      "completion_date": "2025-09-30",
+      "enrollment": 0,
+      "sponsor": "R.Bos"
+    },
+    {
+      "nct_id": "NCT02612246",
+      "title": "First-in-Human Single and Multiple Dose of GLPG1972",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2015-11",
+      "completion_date": "2016-07",
+      "enrollment": 0,
+      "sponsor": "Galapagos NV"
+    },
+    {
+      "nct_id": "NCT01336244",
+      "title": "GLPG0778: Multiple Ascending Oral Doses, Pharmacokinetic, Safety, and Pharmacodynamic Study",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2011-04",
+      "completion_date": "2011-09",
+      "enrollment": 0,
+      "sponsor": "Galapagos NV"
+    },
+    {
+      "nct_id": "NCT01721980",
+      "title": "Multiple Ascending Dose Study of GLPG0974 in Healthy Subjects",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2012-10",
+      "completion_date": "2013-02",
+      "enrollment": 0,
+      "sponsor": "Galapagos NV"
+    },
+    {
+      "nct_id": "NCT01915667",
+      "title": "Oral Bioavailability of Two Solid Formulations of GLPG0634",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2013-07",
+      "completion_date": "2013-09",
+      "enrollment": 0,
+      "sponsor": "Galapagos NV"
+    }
+  ],
+  "summary": {
+    "total_trials": 50,
+    "by_phase": {
+      "PHASE1": 31,
+      "PHASE3": 3,
+      "PHASE2": 13,
+      "PHASE4": 1,
+      "NA": 1,
+      "": 1
+    },
+    "by_status": {
+      "COMPLETED": 40,
+      "TERMINATED": 5,
+      "RECRUITING": 2,
+      "ACTIVE_NOT_RECRUITING": 1,
+      "WITHDRAWN": 1,
+      "UNKNOWN": 1
+    },
+    "active_trials": 3,
+    "completed_trials": 40,
+    "conditions": [
+      "Acute Exacerbation of Remitting Relapsing Multiple Sclerosis, Clinically Isolated Syndrome",
+      "Ankylosing Spondylitis",
+      "Autosomal Dominant Polycystic Kidney Disease",
+      "Bioavailability",
+      "Colitis, Ulcerative",
+      "Cutaneous Lupus Erythematosus",
+      "Cystic Fibrosis",
+      "Fistulizing Crohn's Disease",
+      "Healthy",
+      "Healthy, Dermatitis, Atopic",
+      "Healthy, Psoriasis",
+      "Idiopathic Pulmonary Fibrosis",
+      "Osteoarthritis",
+      "Psoriatic Arthritis",
+      "Rheumatoid Arthritis",
+      "Systemic Lupus Erythematosus",
+      "Ulcerative Colitis"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:18:38.351057",
+    "search_query": "Galapagos NV",
+    "url": "https://clinicaltrials.gov/search?term=Galapagos+NV"
+  }
+}

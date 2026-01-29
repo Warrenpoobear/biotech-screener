@@ -1,0 +1,98 @@
+{
+  "ticker": "DRMA",
+  "company_name": "Dermata Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT03003104",
+      "title": "DMT210 Topical Gel in the Treatment of Acne Rosacea",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Acne Rosacea",
+      "start_date": "2017-01",
+      "completion_date": "2017-08-30",
+      "enrollment": 0,
+      "sponsor": "Dermata Therapeutics"
+    },
+    {
+      "nct_id": "NCT02949960",
+      "title": "DMT210 Topical Gel in the Treatment of Atopic Dermatitis",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Atopic Dermatitis",
+      "start_date": "2016-10",
+      "completion_date": "2017-07-14",
+      "enrollment": 0,
+      "sponsor": "Dermata Therapeutics"
+    },
+    {
+      "nct_id": "NCT03536637",
+      "title": "DMT310-001 Topical in the Treatment of Acne Vulgaris",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Acne Vulgaris",
+      "start_date": "2018-05-22",
+      "completion_date": "2019-01-28",
+      "enrollment": 0,
+      "sponsor": "Dermata Therapeutics"
+    },
+    {
+      "nct_id": "NCT05108025",
+      "title": "DMT310-005 Topical in the Treatment of Acne Rosacea",
+      "status": "UNKNOWN",
+      "phase": "PHASE2",
+      "condition": "Acne Rosacea",
+      "start_date": "2021-11-15",
+      "completion_date": "2022-12",
+      "enrollment": 0,
+      "sponsor": "Dermata Therapeutics"
+    },
+    {
+      "nct_id": "NCT04106778",
+      "title": "DMT310-003 Topical in the Treatment of Acne Vulgaris",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Acne Vulgaris",
+      "start_date": "2019-10-10",
+      "completion_date": "2020-05-04",
+      "enrollment": 0,
+      "sponsor": "Dermata Therapeutics"
+    },
+    {
+      "nct_id": "NCT06090721",
+      "title": "DMT310-009 Topical in the Treatment of Acne Vulgaris",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Acne Vulgaris",
+      "start_date": "2023-12-08",
+      "completion_date": "2025-04-30",
+      "enrollment": 0,
+      "sponsor": "Dermata Therapeutics"
+    }
+  ],
+  "summary": {
+    "total_trials": 6,
+    "by_phase": {
+      "PHASE2": 5,
+      "PHASE3": 1
+    },
+    "by_status": {
+      "COMPLETED": 5,
+      "UNKNOWN": 1
+    },
+    "active_trials": 0,
+    "completed_trials": 5,
+    "conditions": [
+      "Acne Rosacea",
+      "Acne Vulgaris",
+      "Atopic Dermatitis"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:18:00.362411",
+    "search_query": "Dermata Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Dermata+Therapeutics,+Inc."
+  }
+}

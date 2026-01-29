@@ -1,0 +1,77 @@
+{
+  "ticker": "FHTX",
+  "company_name": "Foghorn Therapeutics Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04879017",
+      "title": "FHD-286 in Subjects With Metastatic Uveal Melanoma",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Metastatic Uveal Melanoma",
+      "start_date": "2021-05-11",
+      "completion_date": "2023-11-30",
+      "enrollment": 0,
+      "sponsor": "Foghorn Therapeutics Inc."
+    },
+    {
+      "nct_id": "NCT07283094",
+      "title": "FHD-286 With Low-Dose Weekly Decitabine/Venetoclax in Patients With Acute Myeloid Leukemia",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Acute Myeloid Leukemia, Myelodysplastic Syndrome",
+      "start_date": "2026-01",
+      "completion_date": "2030-01",
+      "enrollment": 0,
+      "sponsor": "Montefiore Medical Center"
+    },
+    {
+      "nct_id": "NCT04965753",
+      "title": "FHD-609 in Subjects With Advanced Synovial Sarcoma or Advanced SMARCB1-Loss Tumors",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Advanced Synovial Sarcoma",
+      "start_date": "2021-08-17",
+      "completion_date": "2023-12-04",
+      "enrollment": 0,
+      "sponsor": "Foghorn Therapeutics Inc."
+    },
+    {
+      "nct_id": "NCT04891757",
+      "title": "FHD-286 as Monotherapy or Combination Therapy in Subjects With Advanced Hematologic Malignancies",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Advanced Hematologic Malignancy, Relapsed Acute Myeloid Leukemia, Refractory Acute Myeloid Leukemia, Relapsed Myelodysplastic Syndromes, Refractory Myelodysplastic Syndromes, Relapsed Chronic Myelomonocytic Leukemia, Refractory Chronic Myelomonocytic Leukemia",
+      "start_date": "2021-06-14",
+      "completion_date": "2027-06",
+      "enrollment": 0,
+      "sponsor": "Foghorn Therapeutics Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 4,
+    "by_phase": {
+      "PHASE1": 4
+    },
+    "by_status": {
+      "TERMINATED": 2,
+      "NOT_YET_RECRUITING": 1,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 0,
+    "conditions": [
+      "Acute Myeloid Leukemia, Myelodysplastic Syndrome",
+      "Advanced Hematologic Malignancy, Relapsed Acute Myeloid Leukemia, Refractory Acute Myeloid Leukemia, Relapsed Myelodysplastic Syndromes, Refractory Myelodysplastic Syndromes, Relapsed Chronic Myelomonocytic Leukemia, Refractory Chronic Myelomonocytic Leukemia",
+      "Advanced Synovial Sarcoma",
+      "Metastatic Uveal Melanoma"
+    ],
+    "lead_stage": "phase_1"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:18:26.192640",
+    "search_query": "Foghorn Therapeutics Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Foghorn+Therapeutics+Inc."
+  }
+}

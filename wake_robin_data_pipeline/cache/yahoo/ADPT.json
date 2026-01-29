@@ -1,0 +1,43 @@
+{
+  "ticker": "ADPT",
+  "success": true,
+  "price": {
+    "current": 18.185,
+    "currency": "USD",
+    "day_high": 18.48,
+    "day_low": 17.65,
+    "52_week_high": 20.76,
+    "52_week_low": 6.255
+  },
+  "market_cap": {
+    "value": 2776216320.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 152665188.0,
+  "volume": {
+    "last": 391206,
+    "average_30d": 1906118
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -31.199602,
+    "price_to_book": 13.570895
+  },
+  "company_info": {
+    "name": "Adaptive Biotechnologies Corporation",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:04:15.793452",
+    "url": "https://finance.yahoo.com/quote/ADPT",
+    "data_hash": "3ada9fc470796df1"
+  }
+}

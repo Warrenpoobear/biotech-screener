@@ -1,0 +1,181 @@
+{
+  "ticker": "TGTX",
+  "company_name": "TG Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT02612311",
+      "title": "Ublituximab + TGR-1202 Compared to Obinutuzumab + Chlorambucil in Participants With Untreated and Previously Treated Chronic Lymphocytic Leukemia",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Chronic Lymphocytic Leukemia",
+      "start_date": "2015-11-19",
+      "completion_date": "2023-02-22",
+      "enrollment": 0,
+      "sponsor": "TG Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT07211633",
+      "title": "A Study to Evaluate the Pharmacokinetics, Pharmacodynamics, Safety, Radiological and Clinical Effects of Subcutaneous Ublituximab in Participants With Relapsing Multiple Sclerosis (RMS)",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Relapsing Multiple Sclerosis",
+      "start_date": "2025-07-09",
+      "completion_date": "2028-12-31",
+      "enrollment": 0,
+      "sponsor": "TG Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06433752",
+      "title": "A Study Evaluating the Real World Experience of Participants Treated With BRIUMVI\u00ae (Ublituximab-xiiy) for Relapsing Multiple Sclerosis (RMS)",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Relapsing Multiple Sclerosis, Multiple Sclerosis",
+      "start_date": "2024-07-22",
+      "completion_date": "2027-07-01",
+      "enrollment": 0,
+      "sponsor": "TG Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT02301156",
+      "title": "Ublituximab in Combination With Ibrutinib Versus Ibrutinib Alone in Participants With Previously Treated High-Risk Chronic Lymphocytic Leukemia (CLL)",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Chronic Lymphocytic Leukemia",
+      "start_date": "2015-01-27",
+      "completion_date": "2020-04-01",
+      "enrollment": 0,
+      "sponsor": "TG Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT07225361",
+      "title": "Ublituximab (Briumvi) for Early Forms of Relapsing Multiple Sclerosis",
+      "status": "RECRUITING",
+      "phase": "PHASE4",
+      "condition": "Multiple Sclerosis, Multiple Sclerosis (MS) - Relapsing-remitting",
+      "start_date": "2025-11-28",
+      "completion_date": "2029-08-01",
+      "enrollment": 0,
+      "sponsor": "Northwestern University"
+    },
+    {
+      "nct_id": "NCT03207256",
+      "title": "Extension Trial of Ublituximab and TGR-1202 in Combination or as Single Agents in Subjects Currently Receiving Treatment on Ublituximab and/or TGR-1202 Trials",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Chronic Lymphocytic Leukemia, Non Hodgkin Lymphoma",
+      "start_date": "2017-08-09",
+      "completion_date": "2022-06-24",
+      "enrollment": 0,
+      "sponsor": "TG Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT03381170",
+      "title": "An Extension of the TG1101-RMS201 Trial",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Relapsing Remitting Multiple Sclerosis",
+      "start_date": "2017-06-01",
+      "completion_date": "2022-11-11",
+      "enrollment": 0,
+      "sponsor": "TG Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT02268851",
+      "title": "A Phase I/Ib Safety and Efficacy Study of the PI3K-delta Inhibitor TGR-1202 and Ibrutinib in Patients With CLL or MCL",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Chronic Lymphocytic Leukemia/Small Lymphocytic Lymphoma, Mantle Cell Lymphoma",
+      "start_date": "2014-11",
+      "completion_date": "2022-10",
+      "enrollment": 0,
+      "sponsor": "Dana-Farber Cancer Institute"
+    },
+    {
+      "nct_id": "NCT06433765",
+      "title": "A Study Evaluating the Effect of BRIUMVI\u00ae (Ublituximab) on Pregnancy and Infant Outcomes in Participants With Multiple Sclerosis (MS)",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Multiple Sclerosis",
+      "start_date": "2024-06-01",
+      "completion_date": "2035-03-31",
+      "enrollment": 0,
+      "sponsor": "TG Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT02738775",
+      "title": "Phase IIa Study of Ublituximab in Participants With Relapsing Forms of Multiple Sclerosis",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Multiple Sclerosis",
+      "start_date": "2016-05-27",
+      "completion_date": "2018-08-13",
+      "enrollment": 0,
+      "sponsor": "TG Therapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 46,
+    "by_phase": {
+      "PHASE3": 7,
+      "": 3,
+      "PHASE4": 1,
+      "PHASE2": 15,
+      "PHASE1": 13,
+      "PHASE1, PHASE2": 3,
+      "NA": 1,
+      "PHASE2, PHASE3": 3
+    },
+    "by_status": {
+      "TERMINATED": 18,
+      "RECRUITING": 7,
+      "COMPLETED": 16,
+      "NOT_YET_RECRUITING": 3,
+      "ACTIVE_NOT_RECRUITING": 2
+    },
+    "active_trials": 9,
+    "completed_trials": 16,
+    "conditions": [
+      "Autoimmune Disorders",
+      "B-Cell Lymphoma",
+      "B-cell Mediated Autoimmune Disorders",
+      "B-cell Non Hodgkin Lymphoma, Richter's Transformation",
+      "CLL, SLL, Richter's Transformation, Indolent Lymphoma, Follicular Lymphoma, Marginal Zone Lymphoma, Aggressive Lymphoma, DLBCL, Mediastinal Large B-cell Lymphoma, MCL",
+      "Chronic Lymphocytic Leukemia",
+      "Chronic Lymphocytic Leukemia, CLL Progression, CLL/SLL",
+      "Chronic Lymphocytic Leukemia, Mantle Cell Lymphoma",
+      "Chronic Lymphocytic Leukemia, Non Hodgkin Lymphoma",
+      "Chronic Lymphocytic Leukemia, Non-Hodgkin Lymphoma",
+      "Chronic Lymphocytic Leukemia, Non-Hodgkin's Lymphoma",
+      "Chronic Lymphocytic Leukemia, Richter Syndrome",
+      "Chronic Lymphocytic Leukemia, Small Lymphocytic Lymphoma",
+      "Chronic Lymphocytic Leukemia, Small Lymphocytic Lymphoma, Relapsed Chronic Lymphocytic Leukemia, Refractory Chronic Lymphocytic Leukemia",
+      "Chronic Lymphocytic Leukemia/Small Lymphocytic Lymphoma, Mantle Cell Lymphoma",
+      "Diffuse Large B-Cell Lymphoma, Follicular Lymphoma, Marginal Zone Lymphoma, Mantle Cell Lymphoma, Small Lymphocytic Lymphoma",
+      "Follicular Lymphoma",
+      "Follicular Lymphoma, Small Lymphocytic Lymphoma",
+      "Hodgkin's Lymphoma",
+      "Lymphoma, Follicular Lymphoma, Follicular Lymphoma, Grade 1, Follicular Lymphoma Grade 2, Follicular Lymphoma Grade IIIa, Marginal Zone Lymphoma, Marginal Zone B Cell Lymphoma",
+      "Marginal Zone Lymphoma, Waldenstrom Macroglobulinemia, Non Follicular Indolent Non-Hodgkin Lymphoma",
+      "Multiple Sclerosis",
+      "Multiple Sclerosis (MS) - Relapsing-remitting",
+      "Multiple Sclerosis, Multiple Sclerosis (MS) - Relapsing-remitting",
+      "Non Hodgkin Lymphoma, Chronic Lymphocytic Leukemia",
+      "Non-Hodgkin's Lymphoma, Chronic Lymphocytic Leukemia, Peripheral T-Cell Lymphoma, Hodgkin's Lymphoma",
+      "Non-Hodgkins Lymphoma, B-cell Lymphoma, Waldenstrom's Macroglobulinemia, Marginal Zone Lymphoma, Chronic Lymphocytic Leukemia (CLL), Small Lymphocytic Lymphoma (SLL), Primary Central Nervous System Lymphoma",
+      "Non-Hodgkins Lymphoma, Chronic Lymphocytic Leukemia, Small Lymphocytic Lymphoma, B-cell Lymphomas, Marginal Zone Lymphoma, Mantle Cell Lymphoma, Waldenstrom's Macroglobulinemia",
+      "Pancreatic Cancer, Colorectal Cancer, Rectal Cancer, Gastric Cancer, Esophageal Cancer, Gastrointestinal Stromal Tumor (GIST)",
+      "Relapsing Multiple Sclerosis",
+      "Relapsing Multiple Sclerosis (RMS)",
+      "Relapsing Multiple Sclerosis, Multiple Sclerosis",
+      "Relapsing Remitting Multiple Sclerosis"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:22:23.544702",
+    "search_query": "TG Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=TG+Therapeutics,+Inc."
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "OLMA",
+  "success": true,
+  "price": {
+    "current": 26.3858,
+    "currency": "USD",
+    "day_high": 26.45,
+    "day_low": 24.45,
+    "52_week_high": 36.259,
+    "52_week_low": 2.86
+  },
+  "market_cap": {
+    "value": 2115083520.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 80159923.0,
+  "volume": {
+    "last": 472821,
+    "average_30d": 1128128
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -11.419656,
+    "price_to_book": 5.891002
+  },
+  "company_info": {
+    "name": "Olema Pharmaceuticals, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:41.214551",
+    "url": "https://finance.yahoo.com/quote/OLMA",
+    "data_hash": "b5b5378cfb0b1e39"
+  }
+}

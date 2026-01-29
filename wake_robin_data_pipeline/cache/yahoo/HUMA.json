@@ -1,0 +1,43 @@
+{
+  "ticker": "HUMA",
+  "success": true,
+  "price": {
+    "current": 1.0,
+    "currency": "USD",
+    "day_high": 1.02,
+    "day_low": 0.975,
+    "52_week_high": 4.85,
+    "52_week_low": 0.91
+  },
+  "market_cap": {
+    "value": 192996512.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 192996511.0,
+  "volume": {
+    "last": 1032961,
+    "average_30d": 5212589
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -1.9011406,
+    "price_to_book": -33.333336
+  },
+  "company_info": {
+    "name": "Humacyte, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:07:01.265629",
+    "url": "https://finance.yahoo.com/quote/HUMA",
+    "data_hash": "4de56c9bf5cafaeb"
+  }
+}

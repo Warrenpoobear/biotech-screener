@@ -1,0 +1,43 @@
+{
+  "ticker": "NRIX",
+  "success": true,
+  "price": {
+    "current": 17.72,
+    "currency": "USD",
+    "day_high": 19.315,
+    "day_low": 17.52,
+    "52_week_high": 22.5,
+    "52_week_low": 8.18
+  },
+  "market_cap": {
+    "value": 1796262784.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 101369235.0,
+  "volume": {
+    "last": 542531,
+    "average_30d": 1232092
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -5.3121324,
+    "price_to_book": 3.6596446
+  },
+  "company_info": {
+    "name": "Nurix Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:24.636964",
+    "url": "https://finance.yahoo.com/quote/NRIX",
+    "data_hash": "653e6f61d9e39864"
+  }
+}

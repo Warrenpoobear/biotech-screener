@@ -1,0 +1,43 @@
+{
+  "ticker": "TBPH",
+  "success": true,
+  "price": {
+    "current": 19.35,
+    "currency": "USD",
+    "day_high": 19.609,
+    "day_low": 18.96,
+    "52_week_high": 21.03,
+    "52_week_low": 7.9
+  },
+  "market_cap": {
+    "value": 980511552.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 50672431.0,
+  "volume": {
+    "last": 59856,
+    "average_30d": 378629
+  },
+  "valuation": {
+    "pe_ratio": 33.94737,
+    "forward_pe": 11.449704,
+    "price_to_book": 4.21385
+  },
+  "company_info": {
+    "name": "Theravance Biopharma, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:10:10.351381",
+    "url": "https://finance.yahoo.com/quote/TBPH",
+    "data_hash": "23c0e02947bfe9c0"
+  }
+}

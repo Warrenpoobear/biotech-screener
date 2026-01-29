@@ -1,0 +1,43 @@
+{
+  "ticker": "NUVL",
+  "success": true,
+  "price": {
+    "current": 101.95,
+    "currency": "USD",
+    "day_high": 103.44,
+    "day_low": 100.25,
+    "52_week_high": 113.015,
+    "52_week_low": 55.535
+  },
+  "market_cap": {
+    "value": 7412449280.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 67271461.0,
+  "volume": {
+    "last": 134692,
+    "average_30d": 547226
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -18.195383,
+    "price_to_book": 8.71591
+  },
+  "company_info": {
+    "name": "Nuvalent, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:30.105284",
+    "url": "https://finance.yahoo.com/quote/NUVL",
+    "data_hash": "babcdbb158498baf"
+  }
+}

@@ -1,0 +1,155 @@
+{
+  "ticker": "EYPT",
+  "company_name": "EyePoint, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06683742",
+      "title": "A 2-year Study of EYP-1901 in Subjects With Wet Age Related Macular Degeneration (wAMD) (LUCIA) Primary Efficacy Will be Determined at Week 56",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Wet Age Related Macular Degeneration, wAMD",
+      "start_date": "2024-11-27",
+      "completion_date": "2027-10",
+      "enrollment": 0,
+      "sponsor": "EyePoint Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT05191706",
+      "title": "Evaluate the Safety of DEXYCU for the Treatment of Inflammation Following Ocular Surgery for Childhood Cataract",
+      "status": "RECRUITING",
+      "phase": "PHASE4",
+      "condition": "Cataract",
+      "start_date": "2022-01-04",
+      "completion_date": "2026-02",
+      "enrollment": 0,
+      "sponsor": "EyePoint Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT04747197",
+      "title": "First in Human Study to Evaluate the Safety and Tolerability of EYP-1901 in Patients With Wet Age Related Macular Degeneration (wAMD)",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Wet Age-related Macular Degeneration",
+      "start_date": "2021-01-20",
+      "completion_date": "2022-05-11",
+      "enrollment": 0,
+      "sponsor": "EyePoint Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT02746991",
+      "title": "Safety and Efficacy Study of a FAI Insert in Subjects With Chronic Non-infectious Posterior Uveitis",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Posterior Uveitis, Intermediate Uveitis, Panuveitis",
+      "start_date": "2015-06-02",
+      "completion_date": "2019-10-04",
+      "enrollment": 0,
+      "sponsor": "EyePoint Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT04511650",
+      "title": "Evaluation of the Safety and Efficacy of Razuprotafib in Hospitalized Subjects With Coronavirus Disease 2019",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "COVID-19, Acute Respiratory Distress Syndrome (ARDS)",
+      "start_date": "2020-10-21",
+      "completion_date": "2021-02-26",
+      "enrollment": 0,
+      "sponsor": "EyePoint Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT04781335",
+      "title": "\"A Prospective Study of the Efficacy of Intracameral Dexamethasone (Dexycu\u2122) Compared to Standard of Care Treatment for Post-Cataract Surgical Pain and Anterior Chamber Inflammation\"",
+      "status": "COMPLETED",
+      "phase": "PHASE4",
+      "condition": "Cataract",
+      "start_date": "2020-02-20",
+      "completion_date": "2022-12-22",
+      "enrollment": 0,
+      "sponsor": "The Eye Institute of West Florida"
+    },
+    {
+      "nct_id": "NCT05550350",
+      "title": "A Study to Evaluate the Efficacy and Safety of DEXYCU\u00ae for the Treatment of Ocular Pain Associated With Cataract Surgery",
+      "status": "WITHDRAWN",
+      "phase": "PHASE3",
+      "condition": "Cataract",
+      "start_date": "2022-09",
+      "completion_date": "2023-09",
+      "enrollment": 0,
+      "sponsor": "EyePoint Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT05070728",
+      "title": "Safety and Efficacy of an Injectable Fluocinolone Acetonide Intravitreal (FAI) Insert",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Uveitis, Uveitis, Posterior, Uveitis, Intermediate",
+      "start_date": "2021-10-13",
+      "completion_date": "2023-04-12",
+      "enrollment": 0,
+      "sponsor": "EyePoint Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT04405245",
+      "title": "Study to Assess the Efficacy, Safety and Tolerability of AKB-9778 Ophthalmic Solution as and Adjunct to Latanoprost in Patients With Ocular Hypertension or Open Angle Glaucoma",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Ocular Hypertension, Primary Open Angle Glaucoma",
+      "start_date": "2020-06-06",
+      "completion_date": "2020-11-05",
+      "enrollment": 0,
+      "sponsor": "EyePoint Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT06099184",
+      "title": "Study of EYP-1901 in Patients With Diabetic Macular Edema (DME)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Diabetic Macular Edema",
+      "start_date": "2024-01-15",
+      "completion_date": "2024-10-24",
+      "enrollment": 0,
+      "sponsor": "EyePoint Pharmaceuticals, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 18,
+    "by_phase": {
+      "PHASE3": 8,
+      "PHASE4": 2,
+      "PHASE1": 1,
+      "PHASE2": 6,
+      "": 1
+    },
+    "by_status": {
+      "ACTIVE_NOT_RECRUITING": 2,
+      "RECRUITING": 1,
+      "COMPLETED": 11,
+      "TERMINATED": 2,
+      "WITHDRAWN": 2
+    },
+    "active_trials": 3,
+    "completed_trials": 11,
+    "conditions": [
+      "COVID-19, Acute Respiratory Distress Syndrome (ARDS)",
+      "Cataract",
+      "Diabetic Macular Edema",
+      "Non-Infectious Uveitis",
+      "Nonproliferative Diabetic Retinopathy",
+      "Ocular Hypertension, Primary Open Angle Glaucoma",
+      "Posterior Uveitis, Intermediate Uveitis, Panuveitis",
+      "Uveitis, Uveitis, Posterior, Uveitis, Intermediate",
+      "Wet Age Related Macular Degeneration, wAMD",
+      "Wet Age-related Macular Degeneration"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:18:20.842868",
+    "search_query": "EyePoint, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=EyePoint,+Inc."
+  }
+}

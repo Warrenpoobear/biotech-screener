@@ -1,0 +1,113 @@
+{
+  "ticker": "VCYT",
+  "company_name": "Veracyte, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT02609269",
+      "title": "Decipher Genomics Resource for Intelligent Discovery",
+      "status": "ENROLLING_BY_INVITATION",
+      "phase": "",
+      "condition": "Prostate Cancer, Bladder Cancer, Renal Cancer",
+      "start_date": "2015-10",
+      "completion_date": "2040-12",
+      "enrollment": 0,
+      "sponsor": "GenomeDx Biosciences Corp"
+    },
+    {
+      "nct_id": "NCT06426628",
+      "title": "Clinical Utility of Management of Patients With Pulmonary Nodules Using the Percepta Nasal Swab Classifier",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Pulmonary Nodule, Solitary, Lung Cancer",
+      "start_date": "2022-07-18",
+      "completion_date": "2027-03-31",
+      "enrollment": 0,
+      "sponsor": "Veracyte, Inc."
+    },
+    {
+      "nct_id": "NCT07282808",
+      "title": "Focal or Radical Therapy: a Lesion-based Molecular Evaluation in Prostate Cancer",
+      "status": "RECRUITING",
+      "phase": "NA",
+      "condition": "Prostate Cancer",
+      "start_date": "2026-01",
+      "completion_date": "2048-09",
+      "enrollment": 0,
+      "sponsor": "Singapore General Hospital"
+    },
+    {
+      "nct_id": "NCT04396808",
+      "title": "Genomics in Michigan to AdJust Outcomes in Prostate canceR (G-MAJOR) for Men With Newly Diagnosed Favorable Risk Prostate Cancer",
+      "status": "RECRUITING",
+      "phase": "NA",
+      "condition": "Prostate Cancer",
+      "start_date": "2020-11-05",
+      "completion_date": "2031-04-30",
+      "enrollment": 0,
+      "sponsor": "University of Michigan Rogel Cancer Center"
+    },
+    {
+      "nct_id": "NCT03769415",
+      "title": "Harnessing Analysis RNA Expression and Molecular Subtype to Optimize Novel TherapY MBCA",
+      "status": "RECRUITING",
+      "phase": "NA",
+      "condition": "Breast Cancer",
+      "start_date": "2018-11-06",
+      "completion_date": "2030-12-15",
+      "enrollment": 0,
+      "sponsor": "UNC Lineberger Comprehensive Cancer Center"
+    },
+    {
+      "nct_id": "NCT06332274",
+      "title": "tislelizUMaB in canceR Patients With molEcuLar residuaL Disease",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Cancer, Lung Cancer, Colo-rectal Cancer, Pancreas Cancer, Soft Tissue Sarcoma",
+      "start_date": "2025-04-16",
+      "completion_date": "2030-04",
+      "enrollment": 0,
+      "sponsor": "Gustave Roussy, Cancer Campus, Grand Paris"
+    },
+    {
+      "nct_id": "NCT06282588",
+      "title": "Treatment of High-Risk Prostate Cancer Guided by Novel Diagnostic Radio- and Molecular Tracers",
+      "status": "RECRUITING",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Prostate Cancer",
+      "start_date": "2023-12-13",
+      "completion_date": "2030-12-31",
+      "enrollment": 0,
+      "sponsor": "Cancer Research Antwerp"
+    }
+  ],
+  "summary": {
+    "total_trials": 7,
+    "by_phase": {
+      "": 2,
+      "NA": 3,
+      "PHASE3": 1,
+      "PHASE2, PHASE3": 1
+    },
+    "by_status": {
+      "ENROLLING_BY_INVITATION": 1,
+      "RECRUITING": 6
+    },
+    "active_trials": 7,
+    "completed_trials": 0,
+    "conditions": [
+      "Breast Cancer",
+      "Cancer, Lung Cancer, Colo-rectal Cancer, Pancreas Cancer, Soft Tissue Sarcoma",
+      "Prostate Cancer",
+      "Prostate Cancer, Bladder Cancer, Renal Cancer",
+      "Pulmonary Nodule, Solitary, Lung Cancer"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:22:44.774071",
+    "search_query": "Veracyte, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Veracyte,+Inc."
+  }
+}

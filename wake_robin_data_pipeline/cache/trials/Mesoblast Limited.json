@@ -1,0 +1,175 @@
+{
+  "ticker": "MESO",
+  "company_name": "Mesoblast Limited",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT00810212",
+      "title": "Safety and Efficacy Study of NeoFuse in Subjects Requiring Posterolateral Lumbar Fusion",
+      "status": "WITHDRAWN",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Degenerative Disc Disease, Degenerative Spondylolisthesis, Spinal Stenosis",
+      "start_date": "2008-11",
+      "completion_date": "2011-11",
+      "enrollment": 0,
+      "sponsor": "Mesoblast, Ltd."
+    },
+    {
+      "nct_id": "NCT00690066",
+      "title": "PROCHYMAL\u00ae (Human Adult Stem Cells) for the Treatment of Recently Diagnosed Type 1 Diabetes Mellitus (T1DM)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Type 1 Diabetes Mellitus, Type 1 Diabetes, Diabetes Mellitus, Insulin-Dependent, Juvenile Diabetes",
+      "start_date": "2008-06-11",
+      "completion_date": "2011-12-19",
+      "enrollment": 0,
+      "sponsor": "Mesoblast, Inc."
+    },
+    {
+      "nct_id": "NCT00826046",
+      "title": "Prochymal\u00ae Expanded Access for Adults Who Have Failed Steroid Treatment for Acute Graft Versus Host Disease (GVHD)",
+      "status": "NO_LONGER_AVAILABLE",
+      "phase": "",
+      "condition": "Graft-Versus-Host Disease",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Mesoblast, Inc."
+    },
+    {
+      "nct_id": "NCT01854567",
+      "title": "P3 Study of Umbilical Cord Blood Cells Expanded With MPCs for Transplantation in Patients With Hematologic Malignancies",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Acute Myelogenous Leukemia, Acute Lymphoblastic Leukemia, Non-Hodgkin's Lymphoma, Hodgkin's Disease",
+      "start_date": "2013-08",
+      "completion_date": "2017-05-05",
+      "enrollment": 0,
+      "sponsor": "Mesoblast, Ltd."
+    },
+    {
+      "nct_id": "NCT02412735",
+      "title": "Placebo-controlled Study to Evaluate Rexlemestrocel-L Alone or Combined With Hyaluronic Acid in Participants With Chronic Low Back Pain",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Degenerative Disc Disease",
+      "start_date": "2015-03-06",
+      "completion_date": "2021-06-15",
+      "enrollment": 0,
+      "sponsor": "Mesoblast, Ltd."
+    },
+    {
+      "nct_id": "NCT00996073",
+      "title": "Safety and Preliminary Efficacy Study of NeoFuse in Subjects Requiring Lumbar Interbody Fusion",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Degenerative Disc Disease, Degenerative Spondylolisthesis, Spinal Stenosis",
+      "start_date": "2009-09",
+      "completion_date": "2014-07",
+      "enrollment": 0,
+      "sponsor": "Mesoblast, Ltd."
+    },
+    {
+      "nct_id": "NCT00366145",
+      "title": "Efficacy and Safety of Adult Human Mesenchymal Stem Cells to Treat Steroid Refractory Acute Graft Versus Host Disease (GVHD)",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Graft Versus Host Disease",
+      "start_date": "2006-08-17",
+      "completion_date": "2009-05-28",
+      "enrollment": 0,
+      "sponsor": "Mesoblast, Inc."
+    },
+    {
+      "nct_id": "NCT01843387",
+      "title": "Safety and Efficacy of Mesenchymal Precursor Cells in Diabetic Nephropathy",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Diabetic Nephropathy, Type 2 Diabetes",
+      "start_date": "2013-07",
+      "completion_date": "2015-09",
+      "enrollment": 0,
+      "sponsor": "Mesoblast, Ltd."
+    },
+    {
+      "nct_id": "NCT01097486",
+      "title": "Safety and Preliminary Efficacy Study of NeoFuse in Subjects Undergoing Multi-Level Anterior Cervical Discectomy",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Cervical Degenerative Disc Disease, Degenerative Spondylolisthesis, Spinal Stenosis",
+      "start_date": "2010-06",
+      "completion_date": "2014-07",
+      "enrollment": 0,
+      "sponsor": "Mesoblast, Ltd."
+    },
+    {
+      "nct_id": "NCT01510431",
+      "title": "Safety and Treatment Outcome Study of PROCHYMAL\u00ae (Remestemcel-L) Intravenous Infusion in Subjects With Treatment-resistant Crohn's Disease",
+      "status": "NO_LONGER_AVAILABLE",
+      "phase": "",
+      "condition": "Crohn's Disease",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Mesoblast, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 41,
+    "by_phase": {
+      "PHASE1, PHASE2": 10,
+      "PHASE2": 13,
+      "": 5,
+      "PHASE3": 12,
+      "PHASE1": 1
+    },
+    "by_status": {
+      "WITHDRAWN": 2,
+      "COMPLETED": 30,
+      "NO_LONGER_AVAILABLE": 5,
+      "UNKNOWN": 2,
+      "RECRUITING": 1,
+      "TERMINATED": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 30,
+    "conditions": [
+      "Acute Myelogenous Leukemia, Acute Lymphoblastic Leukemia, Non-Hodgkin's Lymphoma, Hodgkin's Disease",
+      "Acute Myocardial Infarction",
+      "Anterior Cruciate Ligament Injury, Osteoarthritis",
+      "Cervical Degenerative Disc Disease, Degenerative Spondylolisthesis, Spinal Stenosis",
+      "Chronic Heart Failure",
+      "Crohn Colitis",
+      "Crohn's Disease",
+      "Degenerative Disc Disease",
+      "Degenerative Disc Disease, Degenerative Spondylolisthesis, Spinal Stenosis",
+      "Degenerative Disc Disease, Spondylolisthesis, Spinal Stenosis",
+      "Diabetic Nephropathy, Type 2 Diabetes",
+      "Grade B Acute Graft Versus Host Disease, Grade C Acute Graft Versus Host Disease, Grade D Acute Graft Versus Host Disease",
+      "Grade B aGVHD, Grade C aGVHD, Grade D aGVHD",
+      "Graft Versus Host Disease",
+      "Graft Versus Host Disease, Leukemia, Myelodysplastic Syndromes",
+      "Graft Vs Host Disease",
+      "Graft vs Host Disease, Graft-Versus-Host Disease",
+      "Graft-Versus-Host Disease",
+      "Heart Failure",
+      "Mesenchymal Stromal Cells, Remestemcel-L, Acute Respiratory Distress Syndrome, COVID",
+      "Moderate to Severe Acute Respiratory Distress Syndrome Associated With COVID-19",
+      "Multisystem Inflammatory Syndrome in Children (MIS-C) Associated With Coronavirus Disease (COVID-19)",
+      "Myocardial Infarction",
+      "Pulmonary Disease, Chronic Obstructive, Pulmonary Emphysema, Chronic Bronchitis",
+      "Recovery Following Partial Medial Meniscectomy",
+      "Rheumatoid Arthritis",
+      "Type 1 Diabetes Mellitus, Type 1 Diabetes, Diabetes Mellitus, Insulin-Dependent, Juvenile Diabetes",
+      "Type 2 Diabetes",
+      "Ulcerative Colitis"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:19:56.980035",
+    "search_query": "Mesoblast Limited",
+    "url": "https://clinicaltrials.gov/search?term=Mesoblast+Limited"
+  }
+}

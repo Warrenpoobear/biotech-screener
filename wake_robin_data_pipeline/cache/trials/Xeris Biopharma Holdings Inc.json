@@ -1,0 +1,153 @@
+{
+  "ticker": "XERS",
+  "company_name": "Xeris Biopharma Holdings, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04074317",
+      "title": "Phase 2, Randomized, Open-Label, Crossover, PD/PK Study of a Novel Pram-Insulin Co-Formulation in Adults With T1D",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Diabetes Mellitus, Type 1, Insulin-dependent Diabetes Mellitus",
+      "start_date": "2019-08-22",
+      "completion_date": "2020-04-02",
+      "enrollment": 0,
+      "sponsor": "Xeris Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT02411578",
+      "title": "Mini-Dose Glucagon to Treat Non-Severe Hypoglycemia",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Diabetes Mellitus, Type 1",
+      "start_date": "2015-09",
+      "completion_date": "2016-05",
+      "enrollment": 0,
+      "sponsor": "Jaeb Center for Health Research"
+    },
+    {
+      "nct_id": "NCT03255629",
+      "title": "Closed-Loop Glucagon Pump for Treatment of Post-Bariatric Hypoglycemia",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Post-bariatric Hypoglycemia",
+      "start_date": "2017-09-19",
+      "completion_date": "2018-08-22",
+      "enrollment": 0,
+      "sponsor": "Joslin Diabetes Center"
+    },
+    {
+      "nct_id": "NCT02937558",
+      "title": "CSI-Glucagon for Prevention of Hypoglycemia in Children With Congenital Hyperinsulinism",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Congenital Hyperinsulinism",
+      "start_date": "2016-10",
+      "completion_date": "2018-10",
+      "enrollment": 0,
+      "sponsor": "Xeris Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT03738865",
+      "title": "G-Pen Compared to Glucagen Hypokit for Severe Hypoglycemia Rescue in Adults With Type 1 Diabetes",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Insulin Hypoglycemia, Type 1 Diabetes Mellitus, Severe Hypoglycemia",
+      "start_date": "2018-09-27",
+      "completion_date": "2019-04-02",
+      "enrollment": 0,
+      "sponsor": "Xeris Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT02660242",
+      "title": "The Use of Mini-dose Glucagon to Prevent Exercise-induced Hypoglycemia in Type 1 Diabetes",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Diabetes Mellitus, Type 1",
+      "start_date": "2016-01",
+      "completion_date": "2017-02-15",
+      "enrollment": 0,
+      "sponsor": "Jaeb Center for Health Research"
+    },
+    {
+      "nct_id": "NCT02423980",
+      "title": "G-Pen\u2122 for Hypoglycemia Rescue in T1D Patients",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Hypoglycemia",
+      "start_date": "2015-04",
+      "completion_date": "2015-06",
+      "enrollment": 0,
+      "sponsor": "Xeris Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT02656069",
+      "title": "Safety and Efficacy of G-Pen Compared to Lilly Glucagon for Hypoglycemia Rescue in Adult Type 1 Diabetics",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Hypoglycemia, Diabetes Mellitus, Type 1",
+      "start_date": "2017-03-15",
+      "completion_date": "2017-09-25",
+      "enrollment": 0,
+      "sponsor": "Xeris Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT01972152",
+      "title": "Safety, Tolerability, Pharmacokinetic (PK) and Pharmacodynamic (PD) Study of G-Pen(TM) (Glucagon Injection) to Treat Severe Hypoglycemia",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Hypoglycemia",
+      "start_date": "2013-10",
+      "completion_date": "2014-02",
+      "enrollment": 0,
+      "sponsor": "Xeris Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT03091673",
+      "title": "Glucose Response of G-Pen (Glucagon Injection) in Pediatric T1D Patients",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Diabetes Mellitus, Type 1",
+      "start_date": "2017-03-27",
+      "completion_date": "2017-09-27",
+      "enrollment": 0,
+      "sponsor": "Xeris Pharmaceuticals"
+    }
+  ],
+  "summary": {
+    "total_trials": 19,
+    "by_phase": {
+      "PHASE2": 13,
+      "PHASE1, PHASE2": 1,
+      "PHASE3": 4,
+      "PHASE1": 1
+    },
+    "by_status": {
+      "COMPLETED": 18,
+      "TERMINATED": 1
+    },
+    "active_trials": 0,
+    "completed_trials": 18,
+    "conditions": [
+      "Congenital Hyperinsulinism",
+      "Diabetes Mellitus, Type 1",
+      "Diabetes Mellitus, Type 1, Insulin-dependent Diabetes Mellitus",
+      "Hyperinsulinemic Hypoglycemia",
+      "Hypoglycemia",
+      "Hypoglycemia Unawareness, Diabetes Mellitus, Type 1",
+      "Hypoglycemia, Complications of Bariatric Procedures",
+      "Hypoglycemia, Diabetes Mellitus, Type 1",
+      "Hypothyroidism",
+      "Insulin Hypoglycemia, Type 1 Diabetes Mellitus, Severe Hypoglycemia",
+      "Post-bariatric Hypoglycemia",
+      "Type1diabetes"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:23:00.058805",
+    "search_query": "Xeris Biopharma Holdings, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Xeris+Biopharma+Holdings,+Inc."
+  }
+}

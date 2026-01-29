@@ -1,0 +1,43 @@
+{
+  "ticker": "AARD",
+  "success": true,
+  "price": {
+    "current": 13.18,
+    "currency": "USD",
+    "day_high": 13.95,
+    "day_low": 13.12,
+    "52_week_high": 19.58,
+    "52_week_low": 4.88
+  },
+  "market_cap": {
+    "value": 286971744.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 21773272.0,
+  "volume": {
+    "last": 34114,
+    "average_30d": 173114
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -3.6724446,
+    "price_to_book": 2.3418622
+  },
+  "company_info": {
+    "name": "Aardvark Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:03:57.890746",
+    "url": "https://finance.yahoo.com/quote/AARD",
+    "data_hash": "c1f5faa00564fe46"
+  }
+}

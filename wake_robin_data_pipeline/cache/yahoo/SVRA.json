@@ -1,0 +1,43 @@
+{
+  "ticker": "SVRA",
+  "success": true,
+  "price": {
+    "current": 5.575,
+    "currency": "USD",
+    "day_high": 5.72,
+    "day_low": 5.575,
+    "52_week_high": 7.005,
+    "52_week_low": 1.89
+  },
+  "market_cap": {
+    "value": 1134333184.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 203467845.0,
+  "volume": {
+    "last": 196805,
+    "average_30d": 1473041
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -13.937499,
+    "price_to_book": 12.444196
+  },
+  "company_info": {
+    "name": "Savara Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:10:04.259214",
+    "url": "https://finance.yahoo.com/quote/SVRA",
+    "data_hash": "c1018da064716a80"
+  }
+}

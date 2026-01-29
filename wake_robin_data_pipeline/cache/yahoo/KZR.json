@@ -1,0 +1,43 @@
+{
+  "ticker": "KZR",
+  "success": true,
+  "price": {
+    "current": 6.2,
+    "currency": "USD",
+    "day_high": 6.23,
+    "day_low": 6.11,
+    "52_week_high": 6.65,
+    "52_week_low": 3.53
+  },
+  "market_cap": {
+    "value": 45403564.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 7323156.0,
+  "volume": {
+    "last": 7843,
+    "average_30d": 34742
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -1.8960245,
+    "price_to_book": 0.5471715
+  },
+  "company_info": {
+    "name": "Kezar Life Sciences, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T13:11:28.476959",
+    "url": "https://finance.yahoo.com/quote/KZR",
+    "data_hash": "7318525a65e095bc"
+  }
+}

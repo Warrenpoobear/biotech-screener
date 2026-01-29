@@ -1,0 +1,43 @@
+{
+  "ticker": "ILMN",
+  "success": true,
+  "price": {
+    "current": 146.625,
+    "currency": "USD",
+    "day_high": 149.83,
+    "day_low": 145.68,
+    "52_week_high": 155.53,
+    "52_week_low": 68.7
+  },
+  "market_cap": {
+    "value": 22536261632.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 152800000.0,
+  "volume": {
+    "last": 714893,
+    "average_30d": 1787449
+  },
+  "valuation": {
+    "pe_ratio": 32.802013,
+    "forward_pe": 28.926565,
+    "price_to_book": 9.421989
+  },
+  "company_info": {
+    "name": "Illumina, Inc.",
+    "sector": "Healthcare",
+    "industry": "Diagnostics & Research"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:07:06.857657",
+    "url": "https://finance.yahoo.com/quote/ILMN",
+    "data_hash": "8bd5b2f400a15520"
+  }
+}

@@ -1,0 +1,159 @@
+{
+  "ticker": "CSTL",
+  "company_name": "Castle Biosciences, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT01858753",
+      "title": "Pilot Study of Azficel-T for the Treatment of Restrictive Burn Scars",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Restrictive Burn Scars",
+      "start_date": "2013-05",
+      "completion_date": "2016-07",
+      "enrollment": 0,
+      "sponsor": "Castle Creek Biosciences, LLC."
+    },
+    {
+      "nct_id": "NCT00620737",
+      "title": "Pilot Safety and Efficacy Study of Isolagen Therapy in Treatment of Restrictive Burn Scars",
+      "status": "WITHDRAWN",
+      "phase": "PHASE2",
+      "condition": "Restrictive Burn Scars of Joint Area",
+      "start_date": "2008-02",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Castle Creek Biosciences, LLC."
+    },
+    {
+      "nct_id": "NCT02355587",
+      "title": "Five Year Study to Track Use of DecisionDX-Melanoma Test in Patients With Cutaneous Melanoma and Associated Patient Outcomes",
+      "status": "TERMINATED",
+      "phase": "",
+      "condition": "Cutaneous Melanoma",
+      "start_date": "2014-03",
+      "completion_date": "2021-07-31",
+      "enrollment": 0,
+      "sponsor": "Castle Biosciences Incorporated"
+    },
+    {
+      "nct_id": "NCT06892639",
+      "title": "Evaluation of D-Fi for the Treatment of Wounds Due to DEB",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Dystrophic Epidermolysis Bullosa",
+      "start_date": "2025-03-27",
+      "completion_date": "2042-02",
+      "enrollment": 0,
+      "sponsor": "Castle Creek Biosciences, LLC."
+    },
+    {
+      "nct_id": "NCT00642642",
+      "title": "Safety and Efficacy Study of Autologous Fibroblasts in the Treatment of Severe Facial Acne Scarring",
+      "status": "COMPLETED",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Acne Scarring of the Face",
+      "start_date": "2007-11",
+      "completion_date": "2009-03",
+      "enrollment": 0,
+      "sponsor": "Castle Creek Biosciences, LLC."
+    },
+    {
+      "nct_id": "NCT02407561",
+      "title": "Prospective Validation Study for the Proprietary Rectal and Anal Cancer Protein Expression Assays",
+      "status": "TERMINATED",
+      "phase": "",
+      "condition": "Rectal Adenocarcinoma, Anal Adenocarcinoma, Anal Squamous Cell Carcinoma",
+      "start_date": "2015-02",
+      "completion_date": "2016-07",
+      "enrollment": 0,
+      "sponsor": "Castle Biosciences Incorporated"
+    },
+    {
+      "nct_id": "NCT04213261",
+      "title": "A Study of FCX-007 for Recessive Dystrophic Epidermolysis Bullosa",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Recessive Dystrophic Epidermolysis Bullosa",
+      "start_date": "2020-06-09",
+      "completion_date": "2037-07",
+      "enrollment": 0,
+      "sponsor": "Castle Creek Biosciences, LLC."
+    },
+    {
+      "nct_id": "NCT02376920",
+      "title": "5 Year Registry Study to Track Clinical Application of DecisionDx-UM Assay Results and Associated Patient Outcomes",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Uveal Melanoma",
+      "start_date": "2010-03",
+      "completion_date": "2022-04",
+      "enrollment": 0,
+      "sponsor": "Castle Biosciences Incorporated"
+    },
+    {
+      "nct_id": "NCT00654654",
+      "title": "Safety and Efficacy Study of Isolagen TherapyTM in Treatment of Facial Wrinkles and Creases",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Facial Wrinkles and Creases",
+      "start_date": "2007-03",
+      "completion_date": "2008-06",
+      "enrollment": 0,
+      "sponsor": "Castle Creek Biosciences, LLC."
+    },
+    {
+      "nct_id": "NCT00655356",
+      "title": "Safety and Efficacy Study of Isolagen Therapy in the Treatment of Nasolabial Fold Wrinkles",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Bilateral Nasolabial Fold Wrinkles",
+      "start_date": "2006-11",
+      "completion_date": "2009-05",
+      "enrollment": 0,
+      "sponsor": "Castle Creek Biosciences, LLC."
+    }
+  ],
+  "summary": {
+    "total_trials": 16,
+    "by_phase": {
+      "PHASE2": 5,
+      "": 4,
+      "PHASE3": 4,
+      "PHASE2, PHASE3": 1,
+      "PHASE1, PHASE2": 2
+    },
+    "by_status": {
+      "TERMINATED": 6,
+      "WITHDRAWN": 1,
+      "RECRUITING": 1,
+      "COMPLETED": 7,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 2,
+    "completed_trials": 7,
+    "conditions": [
+      "Acne Scarring of the Face",
+      "Bilateral Nasolabial Fold Wrinkles",
+      "Cutaneous Melanoma",
+      "Dysphonia Resulting From Vocal Fold Scarring, Age-related Dysphonia",
+      "Dystrophic Epidermolysis Bullosa",
+      "Epidermolysis Bullosa Dystrophica, Recessive",
+      "Facial Wrinkles and Creases",
+      "Interdental Papillary Insufficiency",
+      "Morphea, Scleroderma, Localized, Scleroderma",
+      "Recessive Dystrophic Epidermolysis Bullosa",
+      "Rectal Adenocarcinoma, Anal Adenocarcinoma, Anal Squamous Cell Carcinoma",
+      "Restrictive Burn Scars",
+      "Restrictive Burn Scars of Joint Area",
+      "Uveal Melanoma"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:17:46.692130",
+    "search_query": "Castle Biosciences, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Castle+Biosciences,+Inc."
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "UPB",
+  "success": true,
+  "price": {
+    "current": 30.0,
+    "currency": "USD",
+    "day_high": 31.1,
+    "day_low": 29.76,
+    "52_week_high": 33.68,
+    "52_week_low": 5.14
+  },
+  "market_cap": {
+    "value": 1621157760.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 54038591.0,
+  "volume": {
+    "last": 124742,
+    "average_30d": 593474
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -9.686356,
+    "price_to_book": 4.2789903
+  },
+  "company_info": {
+    "name": "Upstream Bio, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:10:32.533074",
+    "url": "https://finance.yahoo.com/quote/UPB",
+    "data_hash": "07d96e3a153e18bc"
+  }
+}

@@ -1,0 +1,153 @@
+{
+  "ticker": "CADL",
+  "company_name": "Candel Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT03576612",
+      "title": "GMCI, Nivolumab, and Radiation Therapy in Treating Patients With Newly Diagnosed High-Grade Gliomas",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Glioma, Malignant",
+      "start_date": "2018-02-27",
+      "completion_date": "2023-06-30",
+      "enrollment": 0,
+      "sponsor": "Candel Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT00589875",
+      "title": "Phase 2a Study of CAN-2409 With Standard Radiation Therapy for Malignant Glioma",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Malignant Glioma, Glioblastoma Multiforme, Anaplastic Astrocytoma, High Grade Glioma",
+      "start_date": "2007-03",
+      "completion_date": "2016-08",
+      "enrollment": 0,
+      "sponsor": "Candel Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT03131037",
+      "title": "Intratumoral Gene Mediated Cytotoxic Immunotherapy in Patients With Resectable Non-Small Cell Lung Cancer",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Lung Cancer",
+      "start_date": "2017-05-04",
+      "completion_date": "2023-09-20",
+      "enrollment": 0,
+      "sponsor": "Candel Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT00751270",
+      "title": "Phase 1b Study of AdV-tk + Valacyclovir Combined With Radiation Therapy for Malignant Gliomas",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Malignant Glioma, Glioblastoma Multiforme, Anaplastic Astrocytoma",
+      "start_date": "2005-11",
+      "completion_date": "2011-01",
+      "enrollment": 0,
+      "sponsor": "Candel Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT01997190",
+      "title": "Intrapleural AdV-tk Therapy in Patients With Malignant Pleural Effusion",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Malignant Pleural Effusion, Lung Cancer, Mesothelioma, Breast Cancer, Ovarian Cancer",
+      "start_date": "2013-10",
+      "completion_date": "2018-02",
+      "enrollment": 0,
+      "sponsor": "Candel Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT00634231",
+      "title": "A Phase I Study of AdV-tk + Prodrug Therapy in Combination With Radiation Therapy for Pediatric Brain Tumors",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Malignant Glioma, Recurrent Ependymoma",
+      "start_date": "2010-10",
+      "completion_date": "2021-06",
+      "enrollment": 0,
+      "sponsor": "Candel Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT07332000",
+      "title": "A Biomarker Study in Men With Localized Prostate Cancer Treated With Aglatimagene Besadenovec",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Prostate Cancer Patients Treated by Radiotherapy",
+      "start_date": "2026-01",
+      "completion_date": "2026-06",
+      "enrollment": 0,
+      "sponsor": "Candel Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT02768363",
+      "title": "Randomized Controlled Trial of CAN-2409 Immunotherapy During Active Surveillance for Prostate Cancer (ULYSSES)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Prostate Cancer",
+      "start_date": "2016-05",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "Candel Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04495153",
+      "title": "CAN-2409 Plus Prodrug With Standard of Care Immune Checkpoint Inhibitor for Stage III/IV NSCLC",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Non Small Cell Lung Cancer",
+      "start_date": "2020-10-13",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "Candel Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT02446093",
+      "title": "Neoadjuvant CAN-2409 in Combination With Chemoradiation or SBRT for Borderline Resectable Pancreatic Adenocarcinoma",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Borderline Resectable Pancreatic Adenocarcinoma",
+      "start_date": "2015-10",
+      "completion_date": "2026-07",
+      "enrollment": 0,
+      "sponsor": "Candel Therapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 13,
+    "by_phase": {
+      "PHASE1": 7,
+      "PHASE2": 5,
+      "PHASE3": 1
+    },
+    "by_status": {
+      "COMPLETED": 7,
+      "RECRUITING": 2,
+      "ACTIVE_NOT_RECRUITING": 4
+    },
+    "active_trials": 6,
+    "completed_trials": 7,
+    "conditions": [
+      "Borderline Resectable Pancreatic Adenocarcinoma",
+      "Glioma, Malignant",
+      "Lung Cancer",
+      "Malignant Glioma of Brain, Astrocytoma, Malignant Astrocytoma, Oligodendroglioma, Anaplastic Oligodendroglioma of Brain (Diagnosis), Mixed Oligo-Astrocytoma, Ependymoma, Ganglioglioma, Pylocytic/Pylomyxoid Astrocytoma, Brain Tumor, Glioma, Brain Cancer, Glioblastoma, Glioblastoma Multiforme",
+      "Malignant Glioma, Glioblastoma Multiforme, Anaplastic Astrocytoma",
+      "Malignant Glioma, Glioblastoma Multiforme, Anaplastic Astrocytoma, High Grade Glioma",
+      "Malignant Glioma, Recurrent Ependymoma",
+      "Malignant Pleural Effusion, Lung Cancer, Mesothelioma, Breast Cancer, Ovarian Cancer",
+      "Non Small Cell Lung Cancer",
+      "Pancreatic Adenocarcinoma, Pancreatic Cancer",
+      "Prostate Cancer",
+      "Prostate Cancer Patients Treated by Radiotherapy"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:17:17.744846",
+    "search_query": "Candel Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Candel+Therapeutics,+Inc."
+  }
+}

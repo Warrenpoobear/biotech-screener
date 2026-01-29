@@ -1,0 +1,43 @@
+{
+  "ticker": "CMPX",
+  "success": true,
+  "price": {
+    "current": 6.33,
+    "currency": "USD",
+    "day_high": 6.39,
+    "day_low": 6.06,
+    "52_week_high": 6.488,
+    "52_week_low": 1.33
+  },
+  "market_cap": {
+    "value": 1125867008.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 177862102.0,
+  "volume": {
+    "last": 548784,
+    "average_30d": 2342549
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -15.407833,
+    "price_to_book": 5.364407
+  },
+  "company_info": {
+    "name": "Compass Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T12:46:42.786228",
+    "url": "https://finance.yahoo.com/quote/CMPX",
+    "data_hash": "578b4d14f2815132"
+  }
+}

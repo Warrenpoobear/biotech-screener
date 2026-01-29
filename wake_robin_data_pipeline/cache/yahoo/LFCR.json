@@ -1,0 +1,43 @@
+{
+  "ticker": "LFCR",
+  "success": true,
+  "price": {
+    "current": 8.565,
+    "currency": "USD",
+    "day_high": 8.68,
+    "day_low": 8.46,
+    "52_week_high": 8.98,
+    "52_week_low": 4.76
+  },
+  "market_cap": {
+    "value": 320899296.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 37466352.0,
+  "volume": {
+    "last": 17557,
+    "average_30d": 131193
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -9.959302,
+    "price_to_book": 237.91667
+  },
+  "company_info": {
+    "name": "Lifecore Biomedical, Inc.",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:07:46.450879",
+    "url": "https://finance.yahoo.com/quote/LFCR",
+    "data_hash": "74fe31d180ffeb5c"
+  }
+}

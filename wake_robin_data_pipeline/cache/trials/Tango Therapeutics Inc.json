@@ -1,0 +1,112 @@
+{
+  "ticker": "TNGX",
+  "company_name": "Tango Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05887492",
+      "title": "Study of TNG260 and an Anti-PD Antibody in STK11 Mutated Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Non Small Cell Lung Cancer, Solid Tumors, Adult, Lung Cancer, Lung Adenocarcinoma",
+      "start_date": "2023-06-12",
+      "completion_date": "2026-06",
+      "enrollment": 0,
+      "sponsor": "Tango Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05275478",
+      "title": "Safety and Tolerability of TNG908 in Patients With MTAP-deleted Solid Tumors",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Locally Advanced Solid Tumor",
+      "start_date": "2022-03-23",
+      "completion_date": "2025-12",
+      "enrollment": 0,
+      "sponsor": "Tango Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05732831",
+      "title": "Safety and Tolerability of TNG462 in Patients With MTAP-deleted Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Locally Advanced Solid Tumor",
+      "start_date": "2023-05-26",
+      "completion_date": "2026-09",
+      "enrollment": 0,
+      "sponsor": "Tango Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06922591",
+      "title": "Study to Evaluate the Safety, Tolerability & Efficacy of TNG462 in Combination in PDAC & NSCLC Patients",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "PDAC, PDAC - Pancreatic Ductal Adenocarcinoma, NSCLC, RAS Mutation, MTAP Deletion, Lung Cancer, Pancreatic Cancer Metastatic, Thoracic Cancer",
+      "start_date": "2025-05-31",
+      "completion_date": "2027-12",
+      "enrollment": 0,
+      "sponsor": "Tango Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06065059",
+      "title": "Study to Evaluate TNG348 Alone and With a PARP Inhibitor in Patients With BRCA 1/2 Mutant or HRD+ Solid Tumors",
+      "status": "TERMINATED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Breast Cancer, Ovarian Cancer, Pancreas Cancer, Prostate Cancer, BRCA1 Mutation, BRCA-Mutated Ovarian Carcinoma, BRCA-Associated Breast Carcinoma, HRD Positive Advanced Ovarian Cancer",
+      "start_date": "2023-12-08",
+      "completion_date": "2024-05-22",
+      "enrollment": 0,
+      "sponsor": "Tango Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06188702",
+      "title": "S095035 as a Single Agent and in Combination in Adult Participants With Advanced or Metastatic Solid Tumors With Deletion of MTAP",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "MTAP-deleted Solid Tumors",
+      "start_date": "2024-04-29",
+      "completion_date": "2031-10-31",
+      "enrollment": 0,
+      "sponsor": "Servier Bio-Innovation LLC"
+    },
+    {
+      "nct_id": "NCT06810544",
+      "title": "Safety and Tolerability of TNG456 Alone and in Combination With Abemaciclib in Patients With Solid Tumors With MTAP Loss",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Non Small Cell Lung Cancer, Glioma Glioblastoma Multiforme, Glioma, Malignant, Solid Tumor, Non-Small Cell Adenocarcinoma, Lung Cancer, Brain Tumor",
+      "start_date": "2025-03-24",
+      "completion_date": "2027-09-30",
+      "enrollment": 0,
+      "sponsor": "Tango Therapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 7,
+    "by_phase": {
+      "PHASE1, PHASE2": 7
+    },
+    "by_status": {
+      "RECRUITING": 5,
+      "ACTIVE_NOT_RECRUITING": 1,
+      "TERMINATED": 1
+    },
+    "active_trials": 6,
+    "completed_trials": 0,
+    "conditions": [
+      "Breast Cancer, Ovarian Cancer, Pancreas Cancer, Prostate Cancer, BRCA1 Mutation, BRCA-Mutated Ovarian Carcinoma, BRCA-Associated Breast Carcinoma, HRD Positive Advanced Ovarian Cancer",
+      "Locally Advanced Solid Tumor",
+      "MTAP-deleted Solid Tumors",
+      "Non Small Cell Lung Cancer, Glioma Glioblastoma Multiforme, Glioma, Malignant, Solid Tumor, Non-Small Cell Adenocarcinoma, Lung Cancer, Brain Tumor",
+      "Non Small Cell Lung Cancer, Solid Tumors, Adult, Lung Cancer, Lung Adenocarcinoma",
+      "PDAC, PDAC - Pancreatic Ductal Adenocarcinoma, NSCLC, RAS Mutation, MTAP Deletion, Lung Cancer, Pancreatic Cancer Metastatic, Thoracic Cancer"
+    ],
+    "lead_stage": "unknown"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:22:26.370535",
+    "search_query": "Tango Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Tango+Therapeutics,+Inc."
+  }
+}

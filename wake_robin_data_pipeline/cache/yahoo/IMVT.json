@@ -1,0 +1,43 @@
+{
+  "ticker": "IMVT",
+  "success": true,
+  "price": {
+    "current": 26.04,
+    "currency": "USD",
+    "day_high": 26.3857,
+    "day_low": 25.79,
+    "52_week_high": 27.8,
+    "52_week_low": 12.72
+  },
+  "market_cap": {
+    "value": 5246449152.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 201476526.0,
+  "volume": {
+    "last": 171726,
+    "average_30d": 1441433
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -8.684197,
+    "price_to_book": 8.744124
+  },
+  "company_info": {
+    "name": "Immunovant, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:07:14.078804",
+    "url": "https://finance.yahoo.com/quote/IMVT",
+    "data_hash": "71b05b4d3cd79006"
+  }
+}

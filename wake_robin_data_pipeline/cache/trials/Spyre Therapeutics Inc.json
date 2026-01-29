@@ -1,0 +1,98 @@
+{
+  "ticker": "SYRE",
+  "company_name": "Spyre Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06448247",
+      "title": "A Study of SPY001-001 in Healthy Volunteers",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2024-06-06",
+      "completion_date": "2026-05-05",
+      "enrollment": 0,
+      "sponsor": "Spyre Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT07012395",
+      "title": "A Study of Long-acting Antibodies Alone and in Combinations for Moderate to Severe Ulcerative Colitis",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Ulcerative Colitis, Inflammatory Bowel Diseases, Colitis, Colitis, Ulcerative",
+      "start_date": "2025-05-27",
+      "completion_date": "2028-03",
+      "enrollment": 0,
+      "sponsor": "Spyre Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06873724",
+      "title": "SPY003-207 in Healthy Volunteers",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2025-03-10",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "Spyre Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT07148414",
+      "title": "A Study of SPY072 in Rheumatic Disease",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Rheumatoid Arthritis, Psoriatic Arthritis, Axial Spondyloarthritis, Rheumatic Diseases, Rheumatic Joint Disease, PsA (Psoriatic Arthritis), AxSpA, Rheumatologic Disease",
+      "start_date": "2025-08-21",
+      "completion_date": "2028-03-31",
+      "enrollment": 0,
+      "sponsor": "Spyre Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06622070",
+      "title": "A Study of SPY002-072 in Healthy Volunteers",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2024-11-18",
+      "completion_date": "2026-08-08",
+      "enrollment": 0,
+      "sponsor": "Spyre Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06672718",
+      "title": "A Study of SPY002-091 in Healthy Volunteers",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2024-11-26",
+      "completion_date": "2026-06-22",
+      "enrollment": 0,
+      "sponsor": "Spyre Therapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 6,
+    "by_phase": {
+      "PHASE1": 4,
+      "PHASE2": 2
+    },
+    "by_status": {
+      "ACTIVE_NOT_RECRUITING": 1,
+      "RECRUITING": 5
+    },
+    "active_trials": 6,
+    "completed_trials": 0,
+    "conditions": [
+      "Healthy",
+      "Rheumatoid Arthritis, Psoriatic Arthritis, Axial Spondyloarthritis, Rheumatic Diseases, Rheumatic Joint Disease, PsA (Psoriatic Arthritis), AxSpA, Rheumatologic Disease",
+      "Ulcerative Colitis, Inflammatory Bowel Diseases, Colitis, Colitis, Ulcerative"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:22:13.254221",
+    "search_query": "Spyre Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Spyre+Therapeutics,+Inc."
+  }
+}

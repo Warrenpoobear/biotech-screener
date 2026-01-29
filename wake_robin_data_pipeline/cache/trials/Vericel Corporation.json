@@ -1,0 +1,157 @@
+{
+  "ticker": "VCEL",
+  "company_name": "Vericel Corporation",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT01670981",
+      "title": "An Efficacy, Safety and Tolerability Study of Ixmyelocel-T Administered Via Transendocardial Catheter-based Injections to Subjects With Heart Failure Due to Ischemic Dilated Cardiomyopathy (IDCM)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Ischemic Dilated Cardiomyopathy (IDCM)",
+      "start_date": "2013-02-20",
+      "completion_date": "2018-03-07",
+      "enrollment": 0,
+      "sponsor": "Vericel Corporation"
+    },
+    {
+      "nct_id": "NCT00719576",
+      "title": "Superiority of MACI\u00ae Versus Microfracture Treatment in Patients With Symptomatic Articular Cartilage Defects in the Knee",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Articular Cartilage Defect",
+      "start_date": "2008-07",
+      "completion_date": "2012-03",
+      "enrollment": 0,
+      "sponsor": "Vericel Corporation"
+    },
+    {
+      "nct_id": "NCT00158613",
+      "title": "Study of the Treatment of Articular Repair (STAR)",
+      "status": "COMPLETED",
+      "phase": "PHASE4",
+      "condition": "Articular Cartilage",
+      "start_date": "2000-03",
+      "completion_date": "2005-11",
+      "enrollment": 0,
+      "sponsor": "Vericel Corporation"
+    },
+    {
+      "nct_id": "NCT00755911",
+      "title": "Treatment of Alveolar Bone Defects Using Aastrom Biosciences Autologous Tissue Repair Cell Therapy",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Alveolar Bone Loss",
+      "start_date": "2008-06",
+      "completion_date": "2012-05",
+      "enrollment": 0,
+      "sponsor": "University of Michigan"
+    },
+    {
+      "nct_id": "NCT00505219",
+      "title": "Ixmyelocel-T Treatment of Patients With Osteonecrosis of the Femoral Head",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Osteonecrosis",
+      "start_date": "2007-09",
+      "completion_date": "2010-12",
+      "enrollment": 0,
+      "sponsor": "Vericel Corporation"
+    },
+    {
+      "nct_id": "NCT01483898",
+      "title": "An Efficacy and Safety Study of Ixmyelocel-T in Patients With Critical Limb Ischemia (CLI)",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Critical Limb Ischemia",
+      "start_date": "2012-02",
+      "completion_date": "2014-03-25",
+      "enrollment": 0,
+      "sponsor": "Vericel Corporation"
+    },
+    {
+      "nct_id": "NCT00424567",
+      "title": "Feasibility Study of Aastrom Tissue Repair Cells to Treat Non-Union Fractures.",
+      "status": "TERMINATED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Fracture, Ununited, Pseudarthrosis",
+      "start_date": "2003-10",
+      "completion_date": "2007-06",
+      "enrollment": 0,
+      "sponsor": "Vericel Corporation"
+    },
+    {
+      "nct_id": "NCT01251588",
+      "title": "Extension Study for Participants of MACI00206 Study of MACI\u00ae for the Treatment of Symptomatic Articular Cartilage Defects of the Knee",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Articular Cartilage Defects",
+      "start_date": "2010-12",
+      "completion_date": "2015-03",
+      "enrollment": 0,
+      "sponsor": "Vericel Corporation"
+    },
+    {
+      "nct_id": "NCT00797550",
+      "title": "Use of TRC Autologous Bone Marrow Cells in Posterolateral Lumbar Spine Fusion",
+      "status": "TERMINATED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Single Level Posterolateral Spinal Fusion",
+      "start_date": "2006-04",
+      "completion_date": "2008-10",
+      "enrollment": 0,
+      "sponsor": "Vericel Corporation"
+    },
+    {
+      "nct_id": "NCT06915233",
+      "title": "A Study of MACI in Patients Aged 17 to 65 Years With Symptomatic Chondral or Osteochondral Defects of the Ankle",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Chondral Defect, Articular Cartilage Defect",
+      "start_date": "2025-12",
+      "completion_date": "2030-07",
+      "enrollment": 0,
+      "sponsor": "Vericel Corporation"
+    }
+  ],
+  "summary": {
+    "total_trials": 15,
+    "by_phase": {
+      "PHASE2": 4,
+      "PHASE3": 5,
+      "PHASE4": 1,
+      "PHASE1, PHASE2": 3,
+      "": 2
+    },
+    "by_status": {
+      "COMPLETED": 11,
+      "TERMINATED": 2,
+      "RECRUITING": 2
+    },
+    "active_trials": 2,
+    "completed_trials": 11,
+    "conditions": [
+      "Alveolar Bone Loss",
+      "Articular Cartilage",
+      "Articular Cartilage Defect",
+      "Articular Cartilage Defects",
+      "Articular Cartilage, Cartilage Diseases",
+      "Chondral Defect, Articular Cartilage Defect",
+      "Chondral Defect, Osteochondritis Dissecans (OCD), Articular Cartilage Defect, Articular Cartilage Disorder of Knee",
+      "Critical Limb Ischemia",
+      "Dilated Cardiomyopathy",
+      "Fracture, Ununited, Pseudarthrosis",
+      "Ischemic Dilated Cardiomyopathy (IDCM)",
+      "Osteonecrosis",
+      "Peripheral Arterial Disease",
+      "Single Level Posterolateral Spinal Fusion"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:22:43.537348",
+    "search_query": "Vericel Corporation",
+    "url": "https://clinicaltrials.gov/search?term=Vericel+Corporation"
+  }
+}

@@ -117,10 +117,34 @@
     "Revenue": 30275000
   },
   {
-    "ticker": "ABEO"
+    "ticker": "ABEO",
+    "market_data": {
+      "price": 4.83,
+      "market_cap": 261744272,
+      "shares_outstanding": 54191361,
+      "volume_avg_30d": 1768178,
+      "52_week_high": 7.54,
+      "52_week_low": 3.93,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
-    "ticker": "ABOS"
+    "ticker": "ABOS",
+    "market_data": {
+      "price": 2.81,
+      "market_cap": 170211312,
+      "shares_outstanding": 60573425,
+      "volume_avg_30d": 489846,
+      "52_week_high": 3.0499,
+      "52_week_low": 0.855,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
     "ticker": "ABSI",
@@ -1519,7 +1543,19 @@
     "NetIncome": -45128000
   },
   {
-    "ticker": "ACRV"
+    "ticker": "ACRV",
+    "market_data": {
+      "price": 1.89,
+      "market_cap": 59639188,
+      "shares_outstanding": 31555126,
+      "volume_avg_30d": 1786185,
+      "52_week_high": 8.0,
+      "52_week_low": 1.05,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
     "ticker": "ADCT",
@@ -1811,13 +1847,49 @@
     "NetIncome": -304742000
   },
   {
-    "ticker": "AKTX"
+    "ticker": "AKTX",
+    "market_data": {
+      "price": 0.254,
+      "market_cap": 9077892,
+      "shares_outstanding": 35739731,
+      "volume_avg_30d": 1185825,
+      "52_week_high": 1.73,
+      "52_week_low": 0.218,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
-    "ticker": "ALDX"
+    "ticker": "ALDX",
+    "market_data": {
+      "price": 5.42,
+      "market_cap": 326082240,
+      "shares_outstanding": 60162773,
+      "volume_avg_30d": 1065293,
+      "52_week_high": 7.2,
+      "52_week_low": 1.14,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
-    "ticker": "ALGS"
+    "ticker": "ALGS",
+    "market_data": {
+      "price": 8.06,
+      "market_cap": 49597872,
+      "shares_outstanding": 5353582,
+      "volume_avg_30d": 78370,
+      "52_week_high": 29.54,
+      "52_week_low": 3.76,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
     "ticker": "ALKS",
@@ -5107,7 +5179,19 @@
     "NetIncome": -33536000
   },
   {
-    "ticker": "ARTV"
+    "ticker": "ARTV",
+    "market_data": {
+      "price": 4.47,
+      "market_cap": 109715712,
+      "shares_outstanding": 24544904,
+      "volume_avg_30d": 1061856,
+      "52_week_high": 7.36,
+      "52_week_low": 1.47,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
     "ticker": "ARVN",
@@ -5329,7 +5413,19 @@
     "NetIncome": -1631000
   },
   {
-    "ticker": "ASMB"
+    "ticker": "ASMB",
+    "market_data": {
+      "price": 26.42,
+      "market_cap": 417888832,
+      "shares_outstanding": 15817140,
+      "volume_avg_30d": 129381,
+      "52_week_high": 39.71,
+      "52_week_low": 7.75,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
     "ticker": "ASND",
@@ -5786,9 +5882,6 @@
     "R&D": 100206000,
     "NetIncome": -113482000,
     "Revenue": 351367000
-  },
-  {
-    "ticker": "AVLO"
   },
   {
     "ticker": "AVTR",
@@ -7813,10 +7906,34 @@
     "Revenue": 5917000
   },
   {
-    "ticker": "BLTE"
+    "ticker": "BLTE",
+    "market_data": {
+      "price": 165.64,
+      "market_cap": 6213923840,
+      "shares_outstanding": 37514630,
+      "volume_avg_30d": 227373,
+      "52_week_high": 174.78,
+      "52_week_low": 49.0,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
-    "ticker": "BMEA"
+    "ticker": "BMEA",
+    "market_data": {
+      "price": 1.26,
+      "market_cap": 89086584,
+      "shares_outstanding": 70703639,
+      "volume_avg_30d": 1318616,
+      "52_week_high": 4.43,
+      "52_week_low": 0.872,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
     "ticker": "BMRN",
@@ -9469,9 +9586,6 @@
     "NetIncome": -17246000
   },
   {
-    "ticker": "CDTX"
-  },
-  {
     "ticker": "CDXS",
     "name": "CDXS",
     "exchange": "NASDAQ",
@@ -9531,10 +9645,34 @@
     "NetIncome": -53575000
   },
   {
-    "ticker": "CELC"
+    "ticker": "CELC",
+    "market_data": {
+      "price": 114.53,
+      "market_cap": 5299447296,
+      "shares_outstanding": 46271259,
+      "volume_avg_30d": 834923,
+      "52_week_high": 120.315,
+      "52_week_low": 7.575,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
-    "ticker": "CERS"
+    "ticker": "CERS",
+    "market_data": {
+      "price": 2.36,
+      "market_cap": 453326496,
+      "shares_outstanding": 192087501,
+      "volume_avg_30d": 1511276,
+      "52_week_high": 2.96,
+      "52_week_low": 1.12,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Medical Devices"
+    }
   },
   {
     "ticker": "CGEM",
@@ -9867,7 +10005,19 @@
     }
   },
   {
-    "ticker": "CLYM"
+    "ticker": "CLYM",
+    "market_data": {
+      "price": 5.16,
+      "market_cap": 351831648,
+      "shares_outstanding": 47744435,
+      "volume_avg_30d": 1262741,
+      "52_week_high": 5.3,
+      "52_week_low": 1.05,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
     "ticker": "CMPS",
@@ -12318,7 +12468,19 @@
     "NetIncome": -383991000
   },
   {
-    "ticker": "DNTH"
+    "ticker": "DNTH",
+    "market_data": {
+      "price": 50.5,
+      "market_cap": 2165238784,
+      "shares_outstanding": 42876015,
+      "volume_avg_30d": 734585,
+      "52_week_high": 54.0,
+      "52_week_low": 13.37,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
     "ticker": "DRMA",
@@ -12430,7 +12592,19 @@
     "NetIncome": -5696669
   },
   {
-    "ticker": "DRUG"
+    "ticker": "DRUG",
+    "market_data": {
+      "price": 80.24,
+      "market_cap": 796658176,
+      "shares_outstanding": 9732161,
+      "volume_avg_30d": 200463,
+      "52_week_high": 123.75,
+      "52_week_low": 23.175,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
     "ticker": "DSGN",
@@ -12829,7 +13003,19 @@
     "NetIncome": -154440000
   },
   {
-    "ticker": "ELDN"
+    "ticker": "ELDN",
+    "market_data": {
+      "price": 2.13,
+      "market_cap": 169612544,
+      "shares_outstanding": 79630297,
+      "volume_avg_30d": 1958321,
+      "52_week_high": 4.965,
+      "52_week_low": 1.35,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
     "ticker": "ELVN",
@@ -12890,7 +13076,19 @@
     "NetIncome": -74027000
   },
   {
-    "ticker": "ENGN"
+    "ticker": "ENGN",
+    "market_data": {
+      "price": 10.2,
+      "market_cap": 683243520,
+      "shares_outstanding": 66984661,
+      "volume_avg_30d": 1328755,
+      "52_week_high": 12.25,
+      "52_week_low": 2.65,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
     "ticker": "ENTA",
@@ -14099,9 +14297,6 @@
     "ShareholdersEquity": -451361000,
     "NetIncome": -84513000,
     "Revenue": 234689000
-  },
-  {
-    "ticker": "ETNB"
   },
   {
     "ticker": "ETON",
@@ -17015,7 +17210,19 @@
     "Revenue": 7800000
   },
   {
-    "ticker": "GBIO"
+    "ticker": "GBIO",
+    "market_data": {
+      "price": 5.58,
+      "market_cap": 37601080,
+      "shares_outstanding": 6738545,
+      "volume_avg_30d": 77646,
+      "52_week_high": 8.66,
+      "52_week_low": 3.0,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
     "ticker": "GERN",
@@ -18786,7 +18993,19 @@
     "NetIncome": 458480000
   },
   {
-    "ticker": "HOWL"
+    "ticker": "HOWL",
+    "market_data": {
+      "price": 0.7135,
+      "market_cap": 34633432,
+      "shares_outstanding": 48540200,
+      "volume_avg_30d": 695558,
+      "52_week_high": 2.38,
+      "52_week_low": 0.53,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
     "ticker": "HRMY",
@@ -19194,7 +19413,19 @@
     "Revenue": 207834000
   },
   {
-    "ticker": "IKT"
+    "ticker": "IKT",
+    "market_data": {
+      "price": 1.59,
+      "market_cap": 192814608,
+      "shares_outstanding": 121267045,
+      "volume_avg_30d": 478960,
+      "52_week_high": 3.32,
+      "52_week_low": 1.33,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
     "ticker": "ILMN",
@@ -19522,7 +19753,19 @@
     "NetIncome": -44444888
   },
   {
-    "ticker": "IMTX"
+    "ticker": "IMTX",
+    "market_data": {
+      "price": 9.7,
+      "market_cap": 1300419200,
+      "shares_outstanding": 134063829,
+      "volume_avg_30d": 526191,
+      "52_week_high": 12.41,
+      "52_week_low": 3.3,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
     "ticker": "IMVT",
@@ -23532,7 +23775,19 @@
     "NetIncome": -559599000
   },
   {
-    "ticker": "JBIO"
+    "ticker": "JBIO",
+    "market_data": {
+      "price": 15.64,
+      "market_cap": 771276224,
+      "shares_outstanding": 49314337,
+      "volume_avg_30d": 311706,
+      "52_week_high": 100.1,
+      "52_week_low": 6.565,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
     "ticker": "KALA",
@@ -25302,7 +25557,19 @@
     "NetIncome": -94179000
   },
   {
-    "ticker": "LBRX"
+    "ticker": "LBRX",
+    "market_data": {
+      "price": 21.24,
+      "market_cap": 537352896,
+      "shares_outstanding": 25299102,
+      "volume_avg_30d": 285626,
+      "52_week_high": 24.458,
+      "52_week_low": 13.36,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
     "ticker": "LCTX",
@@ -25975,7 +26242,19 @@
     "NetIncome": -133725000
   },
   {
-    "ticker": "LYRA"
+    "ticker": "LYRA",
+    "market_data": {
+      "price": 2.05,
+      "market_cap": 3638508,
+      "shares_outstanding": 1774882,
+      "volume_avg_30d": 85250,
+      "52_week_high": 37.5,
+      "52_week_low": 1.6,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
     "ticker": "MAZE",
@@ -26578,7 +26857,19 @@
     "NetIncome": -17633000
   },
   {
-    "ticker": "MLTX"
+    "ticker": "MLTX",
+    "market_data": {
+      "price": 16.25,
+      "market_cap": 1151270272,
+      "shares_outstanding": 70847401,
+      "volume_avg_30d": 2549285,
+      "52_week_high": 62.75,
+      "52_week_low": 5.95,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
     "ticker": "MLYS",
@@ -26976,9 +27267,6 @@
     "NetIncome": -55964000
   },
   {
-    "ticker": "MRUS"
-  },
-  {
     "ticker": "MRVI",
     "name": "Maravai LifeSciences Holdings, Inc.",
     "status": "active",
@@ -27057,9 +27345,6 @@
     "R&D": 13614000,
     "NetIncome": -95092000,
     "Revenue": 135877000
-  },
-  {
-    "ticker": "MTSR"
   },
   {
     "ticker": "MYGN",
@@ -27181,7 +27466,19 @@
     "Revenue": 22471000
   },
   {
-    "ticker": "NAUT"
+    "ticker": "NAUT",
+    "market_data": {
+      "price": 2.06,
+      "market_cap": 260188544,
+      "shares_outstanding": 126305122,
+      "volume_avg_30d": 333005,
+      "52_week_high": 2.54,
+      "52_week_low": 0.62,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
     "ticker": "NBIX",
@@ -27362,7 +27659,19 @@
     "Revenue": 0
   },
   {
-    "ticker": "NKTX"
+    "ticker": "NKTX",
+    "market_data": {
+      "price": 2.47,
+      "market_cap": 175442896,
+      "shares_outstanding": 71029512,
+      "volume_avg_30d": 745270,
+      "52_week_high": 2.74,
+      "52_week_low": 1.31,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
     "ticker": "NMRA",
@@ -28270,7 +28579,19 @@
     "NetIncome": -50140000
   },
   {
-    "ticker": "OCS"
+    "ticker": "OCS",
+    "market_data": {
+      "price": 28.38,
+      "market_cap": 1640560000,
+      "shares_outstanding": 57806909,
+      "volume_avg_30d": 165883,
+      "52_week_high": 28.9894,
+      "52_week_low": 14.0,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
     "ticker": "OCUL",
@@ -29522,7 +29843,19 @@
     "NetIncome": -214357000
   },
   {
-    "ticker": "PRLD"
+    "ticker": "PRLD",
+    "market_data": {
+      "price": 1.97,
+      "market_cap": 123844584,
+      "shares_outstanding": 43765011,
+      "volume_avg_30d": 1557716,
+      "52_week_high": 4.22,
+      "52_week_low": 0.61,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
     "ticker": "PRME",
@@ -29584,7 +29917,19 @@
     "Revenue": 3794000
   },
   {
-    "ticker": "PRQR"
+    "ticker": "PRQR",
+    "market_data": {
+      "price": 1.62,
+      "market_cap": 170659216,
+      "shares_outstanding": 105345192,
+      "volume_avg_30d": 508695,
+      "52_week_high": 3.1,
+      "52_week_low": 1.07,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
     "ticker": "PRTA",
@@ -30085,7 +30430,19 @@
     "NetIncome": -85765000
   },
   {
-    "ticker": "PVLA"
+    "ticker": "PVLA",
+    "market_data": {
+      "price": 78.71,
+      "market_cap": 931650112,
+      "shares_outstanding": 11836490,
+      "volume_avg_30d": 255426,
+      "52_week_high": 114.69,
+      "52_week_low": 12.6,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
     "ticker": "PYXS",
@@ -34655,7 +35012,19 @@
     "NetIncome": -149034000
   },
   {
-    "ticker": "SABS"
+    "ticker": "SABS",
+    "market_data": {
+      "price": 4.41,
+      "market_cap": 209946208,
+      "shares_outstanding": 47606851,
+      "volume_avg_30d": 313860,
+      "52_week_high": 6.6,
+      "52_week_low": 1.0,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
     "ticker": "SANA",
@@ -34767,9 +35136,6 @@
     "NetIncome": -185341000
   },
   {
-    "ticker": "SCPH"
-  },
-  {
     "ticker": "SEPN",
     "name": "SEPN",
     "exchange": "NASDAQ",
@@ -34829,7 +35195,19 @@
     "Revenue": 21833000
   },
   {
-    "ticker": "SERA"
+    "ticker": "SERA",
+    "market_data": {
+      "price": 2.88,
+      "market_cap": 111153008,
+      "shares_outstanding": 37627034,
+      "volume_avg_30d": 52448,
+      "52_week_high": 6.918,
+      "52_week_low": 1.37,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Medical Devices"
+    }
   },
   {
     "ticker": "SGMO",
@@ -35119,7 +35497,19 @@
     "NetIncome": -54828000
   },
   {
-    "ticker": "SKYE"
+    "ticker": "SKYE",
+    "market_data": {
+      "price": 1.01,
+      "market_cap": 32378034,
+      "shares_outstanding": 32057461,
+      "volume_avg_30d": 387901,
+      "52_week_high": 5.75,
+      "52_week_low": 0.684,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
     "ticker": "SLDB",
@@ -37025,7 +37415,19 @@
     "Revenue": 0
   },
   {
-    "ticker": "TARA"
+    "ticker": "TARA",
+    "market_data": {
+      "price": 7.17,
+      "market_cap": 384220672,
+      "shares_outstanding": 53587260,
+      "volume_avg_30d": 969741,
+      "52_week_high": 7.82,
+      "52_week_low": 2.77,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
     "ticker": "TARS",
@@ -37247,7 +37649,19 @@
     "NetIncome": 44871000
   },
   {
-    "ticker": "TCRX"
+    "ticker": "TCRX",
+    "market_data": {
+      "price": 1.06,
+      "market_cap": 60152868,
+      "shares_outstanding": 52471405,
+      "volume_avg_30d": 787328,
+      "52_week_high": 2.67,
+      "52_week_low": 0.882,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
     "ticker": "TECH",
@@ -37475,7 +37889,19 @@
     "Revenue": 904578000
   },
   {
-    "ticker": "TENX"
+    "ticker": "TENX",
+    "market_data": {
+      "price": 14.01,
+      "market_cap": 87472488,
+      "shares_outstanding": 6243575,
+      "volume_avg_30d": 210276,
+      "52_week_high": 18.38,
+      "52_week_low": 4.63,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
     "ticker": "TERN",
@@ -39736,7 +40162,19 @@
     "NetIncome": -395064000
   },
   {
-    "ticker": "VKTX"
+    "ticker": "VKTX",
+    "market_data": {
+      "price": 30.41,
+      "market_cap": 3437435136,
+      "shares_outstanding": 113036344,
+      "volume_avg_30d": 3311166,
+      "52_week_high": 43.15,
+      "52_week_low": 18.92,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
     "ticker": "VNDA",
@@ -39852,7 +40290,19 @@
     "NetIncome": -2418839000
   },
   {
-    "ticker": "VRDN"
+    "ticker": "VRDN",
+    "market_data": {
+      "price": 33.62,
+      "market_cap": 3208760320,
+      "shares_outstanding": 95367908,
+      "volume_avg_30d": 1632831,
+      "52_week_high": 34.29,
+      "52_week_low": 9.9,
+      "pe_ratio": null,
+      "company_name": "Healthcare",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    }
   },
   {
     "ticker": "VRTX",
@@ -42351,6 +42801,14 @@
       "by_phase": {},
       "conditions": [],
       "top_trials": []
+    }
+  },
+  {
+    "ticker": "MTSR",
+    "market_data": {
+      "price": 70.5,
+      "market_cap": 3525000000.0,
+      "shares_outstanding": 50000000
     }
   }
 ]

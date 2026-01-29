@@ -1,0 +1,43 @@
+{
+  "ticker": "AQST",
+  "success": true,
+  "price": {
+    "current": 3.145,
+    "currency": "USD",
+    "day_high": 3.245,
+    "day_low": 3.13,
+    "52_week_high": 7.55,
+    "52_week_low": 2.12
+  },
+  "market_cap": {
+    "value": 383699776.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 122003113.0,
+  "volume": {
+    "last": 1650282,
+    "average_30d": 6034271
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -7.0674157,
+    "price_to_book": -92.49999
+  },
+  "company_info": {
+    "name": "Aquestive Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:04:40.404355",
+    "url": "https://finance.yahoo.com/quote/AQST",
+    "data_hash": "4b28d1721e3f40f7"
+  }
+}

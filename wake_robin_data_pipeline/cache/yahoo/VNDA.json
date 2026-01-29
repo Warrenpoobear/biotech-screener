@@ -1,0 +1,43 @@
+{
+  "ticker": "VNDA",
+  "success": true,
+  "price": {
+    "current": 7.775,
+    "currency": "USD",
+    "day_high": 7.91,
+    "day_low": 7.65,
+    "52_week_high": 9.6,
+    "52_week_low": 3.81
+  },
+  "market_cap": {
+    "value": 459476320.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 59096630.0,
+  "volume": {
+    "last": 245451,
+    "average_30d": 2580256
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": 38.875,
+    "price_to_book": 0.9859244
+  },
+  "company_info": {
+    "name": "Vanda Pharmaceuticals Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:10:41.979125",
+    "url": "https://finance.yahoo.com/quote/VNDA",
+    "data_hash": "d73ba53241ec02ba"
+  }
+}

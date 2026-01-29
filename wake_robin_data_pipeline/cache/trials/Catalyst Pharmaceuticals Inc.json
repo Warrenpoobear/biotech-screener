@@ -1,0 +1,159 @@
+{
+  "ticker": "CPRX",
+  "company_name": "Catalyst Pharmaceuticals, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT03579966",
+      "title": "Long Term Safety Study of Amifampridine Phosphate in MuSK-MG (Muscle Specific Tyrosine Kinase Myasthenia Gravis)",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Myasthenia Gravis, MuSK, AChR Myasthenia Gravis",
+      "start_date": "2018-06-11",
+      "completion_date": "2022-08-05",
+      "enrollment": 0,
+      "sponsor": "Catalyst Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT01281202",
+      "title": "Vigabatrin for the Treatment of Cocaine Dependency",
+      "status": "COMPLETED",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Cocaine Addiction, Cocaine Dependence",
+      "start_date": "2011-01",
+      "completion_date": "2012-12",
+      "enrollment": 0,
+      "sponsor": "Catalyst Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT03304054",
+      "title": "Study to Evaluate Amifampridine Phosphate in Patients With MuSK-MG",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Myasthenia Gravis, Generalized",
+      "start_date": "2018-04-18",
+      "completion_date": "2020-03-15",
+      "enrollment": 0,
+      "sponsor": "Catalyst Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT00527683",
+      "title": "Double Blind Study of Vigabatrin for the Treatment of Cocaine Dependence",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Cocaine Dependence",
+      "start_date": "2007-04",
+      "completion_date": "2007-11",
+      "enrollment": 0,
+      "sponsor": "NYU Langone Health"
+    },
+    {
+      "nct_id": "NCT06564974",
+      "title": "Registry Study to Observe Long-term Safety of Vamorolone (AGAMREE\u00ae) in Patients With Duchenne Muscular Dystrophy.",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Duchenne Muscular Dystrophy",
+      "start_date": "2024-07-31",
+      "completion_date": "2030-11",
+      "enrollment": 0,
+      "sponsor": "Catalyst Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT01493596",
+      "title": "A Safety, Tolerability and Pharmacokinetic Study of CPP-115",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Cocaine Dependency",
+      "start_date": "2011-12",
+      "completion_date": "2012-08",
+      "enrollment": 0,
+      "sponsor": "Catalyst Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT00611130",
+      "title": "Vigabatrin for Treatment of Cocaine Dependence",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Cocaine Dependence",
+      "start_date": "2008-01",
+      "completion_date": "2012-10",
+      "enrollment": 0,
+      "sponsor": "Catalyst Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT01377922",
+      "title": "A Phase 3 Study of Amifampridine Phosphate in Patients With Lambert Eaton Myasthenic Syndrome (LEMS)",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Lambert Eaton Myasthenic Syndrome",
+      "start_date": "2011-06",
+      "completion_date": "2016-07",
+      "enrollment": 0,
+      "sponsor": "Catalyst Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT03819660",
+      "title": "Long Term Safety of Amifampridine Phosphate in Spinal Muscular Atrophy 3",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Spinal Muscular Atrophy Type 3",
+      "start_date": "2019-03-07",
+      "completion_date": "2021-09-13",
+      "enrollment": 0,
+      "sponsor": "Catalyst Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT02189720",
+      "title": "Expanded Access Study Amifampridine Phosphate in Lambert-Eaton Myasthenic Syndrome (LEMS),Congenital Myasthenic Syndrome",
+      "status": "APPROVED_FOR_MARKETING",
+      "phase": "",
+      "condition": "Congenital Myasthenic Syndrome, Lambert-Eaton Myasthenic Syndrome, Nystagmus, Acquired",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Catalyst Pharmaceuticals, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 15,
+    "by_phase": {
+      "PHASE3": 5,
+      "PHASE2, PHASE3": 1,
+      "PHASE2": 5,
+      "": 3,
+      "PHASE1": 1
+    },
+    "by_status": {
+      "TERMINATED": 3,
+      "COMPLETED": 9,
+      "RECRUITING": 1,
+      "APPROVED_FOR_MARKETING": 1,
+      "NO_LONGER_AVAILABLE": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 9,
+    "conditions": [
+      "Cocaine Addiction, Cocaine Dependence",
+      "Cocaine Dependence",
+      "Cocaine Dependency",
+      "Congenital Myasthenic Syndrome",
+      "Congenital Myasthenic Syndrome, Lambert-Eaton Myasthenic Syndrome, Nystagmus, Acquired",
+      "Duchenne Muscular Dystrophy",
+      "Lambert Eaton Myasthenic Syndrome",
+      "Lambert-Eaton Myasthenic Syndrome",
+      "Methamphetamine Dependence",
+      "Muscular Atrophy, Spinal",
+      "Myasthenia Gravis, Generalized",
+      "Myasthenia Gravis, MuSK, AChR Myasthenia Gravis",
+      "Myasthenic Syndromes, Congenital",
+      "Spinal Muscular Atrophy Type 3"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:47:20.911528",
+    "search_query": "Catalyst Pharmaceuticals, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Catalyst+Pharmaceuticals,+Inc."
+  }
+}

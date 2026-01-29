@@ -1,0 +1,103 @@
+{
+  "ticker": "CATX",
+  "company_name": "Perspective Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05111509",
+      "title": "A First-in-human Clinical Trial to Evaluate an Alpha-radiation Imaging Agent",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "EARLY_PHASE1",
+      "condition": "Neuroendocrine Tumor Grade 2, Neuroendocrine Tumor Grade 1",
+      "start_date": "2022-08-22",
+      "completion_date": "2026-06-30",
+      "enrollment": 0,
+      "sponsor": "Yusuf Menda"
+    },
+    {
+      "nct_id": "NCT04904120",
+      "title": "Targeted Imaging of Melanoma for Alpha-Particle Radiotherapy",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Melanoma (Skin), Melanoma Stage IV, Melanoma, Uveal, Melanoma, Mucosal",
+      "start_date": "2021-03-05",
+      "completion_date": "2022-09-20",
+      "enrollment": 0,
+      "sponsor": "Perspective Therapeutics"
+    },
+    {
+      "nct_id": "NCT05636618",
+      "title": "Targeted Alpha-Particle Therapy for Advanced Somatostatin Receptor Type 2 (SSTR2) Positive Neuroendocrine Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Neuroendocrine Tumors Unresectable, Neuroendocrine Tumor Metastatic, Gastroenteropancreatic Neuroendocrine Tumor, Bronchial Neuroendocrine Tumor, Paraganglioma, Pheochromocytoma",
+      "start_date": "2023-09-27",
+      "completion_date": "2029-12-26",
+      "enrollment": 0,
+      "sponsor": "Perspective Therapeutics"
+    },
+    {
+      "nct_id": "NCT06148636",
+      "title": "A Safety Study of 212Pb-VMT-alpha-NET in Patients With Neuroendocrine Tumors",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "EARLY_PHASE1",
+      "condition": "Neuroendocrine Tumors, Neuroendocrine Tumor of the Lung, Neuroendocrine Tumor Grade 1, Neuroendocrine Tumor Grade 2, Neuroendocrine Tumor of Pancreas",
+      "start_date": "2023-11-10",
+      "completion_date": "2027-12-31",
+      "enrollment": 0,
+      "sponsor": "David Bushnell"
+    },
+    {
+      "nct_id": "NCT06710756",
+      "title": "Lead-212 PSV359 Therapy for Patients With Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Pancreatic Ductal Adenocarcinoma, Gastric Cancer, Esophageal Cancer, Colorectal Cancer, Ovarian Cancer, Head and Neck Cancer, Sarcoma, Mesothelioma",
+      "start_date": "2025-04-28",
+      "completion_date": "2032-05-28",
+      "enrollment": 0,
+      "sponsor": "Perspective Therapeutics"
+    },
+    {
+      "nct_id": "NCT05655312",
+      "title": "MC1R-targeted Alpha-particle Monotherapy and Combination Therapy Trial With Nivolumab in Adults With Advanced Melanoma",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Recurrent Melanoma (Skin), Metastatic Melanoma, Melanoma Stage IV, Melanoma Stage III",
+      "start_date": "2023-06-01",
+      "completion_date": "2029-12-31",
+      "enrollment": 0,
+      "sponsor": "Perspective Therapeutics"
+    }
+  ],
+  "summary": {
+    "total_trials": 6,
+    "by_phase": {
+      "EARLY_PHASE1": 2,
+      "PHASE1": 1,
+      "PHASE1, PHASE2": 3
+    },
+    "by_status": {
+      "ACTIVE_NOT_RECRUITING": 2,
+      "COMPLETED": 1,
+      "RECRUITING": 3
+    },
+    "active_trials": 5,
+    "completed_trials": 1,
+    "conditions": [
+      "Melanoma (Skin), Melanoma Stage IV, Melanoma, Uveal, Melanoma, Mucosal",
+      "Neuroendocrine Tumor Grade 2, Neuroendocrine Tumor Grade 1",
+      "Neuroendocrine Tumors Unresectable, Neuroendocrine Tumor Metastatic, Gastroenteropancreatic Neuroendocrine Tumor, Bronchial Neuroendocrine Tumor, Paraganglioma, Pheochromocytoma",
+      "Neuroendocrine Tumors, Neuroendocrine Tumor of the Lung, Neuroendocrine Tumor Grade 1, Neuroendocrine Tumor Grade 2, Neuroendocrine Tumor of Pancreas",
+      "Pancreatic Ductal Adenocarcinoma, Gastric Cancer, Esophageal Cancer, Colorectal Cancer, Ovarian Cancer, Head and Neck Cancer, Sarcoma, Mesothelioma",
+      "Recurrent Melanoma (Skin), Metastatic Melanoma, Melanoma Stage IV, Melanoma Stage III"
+    ],
+    "lead_stage": "phase_1"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:17:20.194580",
+    "search_query": "Perspective Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Perspective+Therapeutics,+Inc."
+  }
+}

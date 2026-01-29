@@ -1,0 +1,182 @@
+{
+  "ticker": "BHVN",
+  "company_name": "Biohaven Ltd.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04616456",
+      "title": "Effect of Verdiperstat on Microglial Activation in Well-characterized MSA Patients",
+      "status": "COMPLETED",
+      "phase": "EARLY_PHASE1",
+      "condition": "Multiple System Atrophy, Multiple System Atrophy, Cerebellar Variant, Multiple System Atrophy, Parkinson Variant (Disorder), Multiple System Atrophy (MSA) With Orthostatic Hypotension",
+      "start_date": "2020-12-30",
+      "completion_date": "2022-01-30",
+      "enrollment": 0,
+      "sponsor": "Brigham and Women's Hospital"
+    },
+    {
+      "nct_id": "NCT06443463",
+      "title": "Long-term Safety and Tolerability of BHV-7000",
+      "status": "ENROLLING_BY_INVITATION",
+      "phase": "PHASE2",
+      "condition": "Focal Epilepsy",
+      "start_date": "2024-07-30",
+      "completion_date": "2027-01",
+      "enrollment": 0,
+      "sponsor": "Biohaven Therapeutics Ltd."
+    },
+    {
+      "nct_id": "NCT06423794",
+      "title": "BHV-7000 Open-Label Extension Bipolar Mania Study",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Bipolar Disorder",
+      "start_date": "2024-06-24",
+      "completion_date": "2025-04-25",
+      "enrollment": 0,
+      "sponsor": "Biohaven Therapeutics Ltd."
+    },
+    {
+      "nct_id": "NCT06529146",
+      "title": "Real-World Data Study of Troriluzole-Treated Patients With Spinocerebellar Ataxia (SCA) Compared to a Matched Natural History Control",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "",
+      "condition": "Spinocerebellar Ataxias",
+      "start_date": "2019-03-18",
+      "completion_date": "2026-06",
+      "enrollment": 0,
+      "sponsor": "Biohaven Therapeutics Ltd."
+    },
+    {
+      "nct_id": "NCT06309966",
+      "title": "Study to Determine if BHV-7000 is Effective and Safe in Adults With Refractory Focal Onset Epilepsy",
+      "status": "RECRUITING",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Focal Epilepsy",
+      "start_date": "2024-05-13",
+      "completion_date": "2026-05",
+      "enrollment": 0,
+      "sponsor": "Biohaven Therapeutics Ltd."
+    },
+    {
+      "nct_id": "NCT04693351",
+      "title": "Efficacy and Safety Study of Adjunctive Troriluzule in Obsessive Compulsive Disorder",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Obsessive-Compulsive Disorder",
+      "start_date": "2021-01-29",
+      "completion_date": "2025-04-29",
+      "enrollment": 0,
+      "sponsor": "Biohaven Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT06132893",
+      "title": "A Study to Determine if BHV-7000 is Effective and Safe in Adults With Refractory Focal Onset Epilepsy",
+      "status": "RECRUITING",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Focal Epilepsy",
+      "start_date": "2024-03-14",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "Biohaven Therapeutics Ltd."
+    },
+    {
+      "nct_id": "NCT04641143",
+      "title": "Efficacy and Safety Study of Adjunctive Troriluzole in Obsessive Compulsive Disorder",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Obsessive-Compulsive Disorder",
+      "start_date": "2020-12-22",
+      "completion_date": "2025-10-27",
+      "enrollment": 0,
+      "sponsor": "Biohaven Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT03299166",
+      "title": "Troriluzole (BHV-4157) in Adult Participants With Obsessive Compulsive Disorder",
+      "status": "COMPLETED",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Obsessive-Compulsive Disorder",
+      "start_date": "2017-12-19",
+      "completion_date": "2025-12-08",
+      "enrollment": 0,
+      "sponsor": "Biohaven Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT07125261",
+      "title": "BHV-7000 Responsive Neurostimulation System (RNS) Study",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Epilepsy, Seizures",
+      "start_date": "2025-10-07",
+      "completion_date": "2026-09",
+      "enrollment": 0,
+      "sponsor": "Yale University"
+    }
+  ],
+  "summary": {
+    "total_trials": 40,
+    "by_phase": {
+      "EARLY_PHASE1": 2,
+      "PHASE2": 8,
+      "": 4,
+      "PHASE2, PHASE3": 10,
+      "PHASE3": 7,
+      "PHASE1": 7,
+      "PHASE1, PHASE2": 1,
+      "NA": 1
+    },
+    "by_status": {
+      "COMPLETED": 15,
+      "ENROLLING_BY_INVITATION": 4,
+      "TERMINATED": 2,
+      "ACTIVE_NOT_RECRUITING": 5,
+      "RECRUITING": 11,
+      "NO_LONGER_AVAILABLE": 2,
+      "AVAILABLE": 1
+    },
+    "active_trials": 20,
+    "completed_trials": 15,
+    "conditions": [
+      "Alzheimer Disease",
+      "Amyotrophic Lateral Sclerosis",
+      "Amyotrophic Lateral Sclerosis, ALS, Lou Gehrig Disease, Lou Gehrig's Disease, Lou-Gehrigs Disease, Motor Neuron Disease, Amyotrophic Lateral Sclerosis",
+      "Bipolar Disorder",
+      "Epilepsy, Seizures",
+      "Familial Erythromelalgia",
+      "Focal Epilepsy",
+      "Generalized Anxiety Disorder",
+      "Generalized Epilepsy",
+      "Glioblastoma",
+      "Glioblastoma, Recurrent Glioblastoma, Brain Tumor",
+      "Graves Disease",
+      "IgA Nephropathy",
+      "Major Depressive Disorder",
+      "Melanoma, Metastatic Melanoma",
+      "Migraine",
+      "Multiple Myeloma",
+      "Multiple System Atrophy",
+      "Multiple System Atrophy (MSA)",
+      "Multiple System Atrophy, Multiple System Atrophy, Cerebellar Variant, Multiple System Atrophy, Parkinson Variant (Disorder), Multiple System Atrophy (MSA) With Orthostatic Hypotension",
+      "Obesity, Overweight",
+      "Obsessive Compulsive Disorder",
+      "Obsessive-Compulsive Disorder",
+      "Parkinson Disease",
+      "SCA, Spinocerebellar Ataxias",
+      "Social Anxiety Disorder, Performance Anxiety",
+      "Solid Tumor",
+      "Spinal Muscular Atrophy",
+      "Spinal Muscular Atrophy, Neuromuscular Diseases, SMA",
+      "Spinocerebellar Ataxias",
+      "Spinocerebellar Ataxias, Spinocerebellar Ataxia Genotype Type 1, Spinocerebellar Ataxia Genotype Type 2, Spinocerebellar Ataxia Genotype Type 3, Spinocerebellar Ataxia Genotype Type 6, Spinocerebellar Ataxia Genotype Type 7, Spinocerebellar Ataxia Genotype Type 8, Spinocerebellar Ataxia Genotype Type 10",
+      "Spinocerebellar Ataxias, Spinocerebellar Ataxia Type 1, Spinocerebellar Ataxia Type 2, Spinocerebellar Ataxia Type 3, Spinocerebellar Ataxia Type 6, Spinocerebellar Ataxia Type 7, Spinocerebellar Ataxia Type 8, Spinocerebellar Ataxia Type 10"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:17:08.593658",
+    "search_query": "Biohaven Ltd.",
+    "url": "https://clinicaltrials.gov/search?term=Biohaven+Ltd."
+  }
+}

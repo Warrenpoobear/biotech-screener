@@ -1,0 +1,43 @@
+{
+  "ticker": "ZVRA",
+  "cik": "0001434647",
+  "success": true,
+  "financials": {
+    "cash": 54439000.0,
+    "debt": 61310000.0,
+    "net_debt": 6871000.0,
+    "revenue_ttm": 0.0,
+    "assets": 270116000.0,
+    "liabilities": 136951000.0,
+    "equity": 133165000.0,
+    "currency": "USD"
+  },
+  "data_dates": {
+    "cash": "2025-09-30",
+    "debt": "2025-09-30",
+    "revenue": "2016-03-31",
+    "assets": "2025-09-30",
+    "liabilities": "2025-09-30"
+  },
+  "data_freshness": {
+    "most_recent_date": "2025-09-30",
+    "oldest_date": "2016-03-31",
+    "staleness_flags": [
+      "critical_staleness:3591d"
+    ]
+  },
+  "coverage": {
+    "has_cash": true,
+    "has_debt": true,
+    "has_revenue": true,
+    "has_balance_sheet": true,
+    "pct_complete": 100.0
+  },
+  "provenance": {
+    "source": "SEC EDGAR Company Facts API",
+    "timestamp": "2026-01-29T11:19:58.844049",
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001434647.json",
+    "cik": "0001434647",
+    "accounting_standard": "us-gaap"
+  }
+}

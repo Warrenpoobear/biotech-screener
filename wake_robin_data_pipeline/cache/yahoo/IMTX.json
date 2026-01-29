@@ -1,0 +1,43 @@
+{
+  "ticker": "IMTX",
+  "success": true,
+  "price": {
+    "current": 9.6,
+    "currency": "USD",
+    "day_high": 9.815,
+    "day_low": 9.57,
+    "52_week_high": 12.41,
+    "52_week_low": 3.3
+  },
+  "market_cap": {
+    "value": 1287012864.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 134063829.0,
+  "volume": {
+    "last": 38369,
+    "average_30d": 352098
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -5.2273345,
+    "price_to_book": 2.3305376
+  },
+  "company_info": {
+    "name": "Immatics N.V.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:07:12.546861",
+    "url": "https://finance.yahoo.com/quote/IMTX",
+    "data_hash": "027d5f3c19afaef0"
+  }
+}

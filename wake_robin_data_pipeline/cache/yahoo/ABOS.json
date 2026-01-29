@@ -1,0 +1,43 @@
+{
+  "ticker": "ABOS",
+  "success": true,
+  "price": {
+    "current": 2.74,
+    "currency": "USD",
+    "day_high": 3.0,
+    "day_low": 2.69,
+    "52_week_high": 3.05,
+    "52_week_low": 0.855
+  },
+  "market_cap": {
+    "value": 165971184.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 60573425.0,
+  "volume": {
+    "last": 451468,
+    "average_30d": 1148675
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -1.5789049,
+    "price_to_book": 1.7815344
+  },
+  "company_info": {
+    "name": "Acumen Pharmaceuticals, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:04:02.166498",
+    "url": "https://finance.yahoo.com/quote/ABOS",
+    "data_hash": "8839c77ffaa90c1b"
+  }
+}

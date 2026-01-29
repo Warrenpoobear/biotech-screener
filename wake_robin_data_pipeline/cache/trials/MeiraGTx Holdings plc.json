@@ -1,0 +1,154 @@
+{
+  "ticker": "MGTX",
+  "company_name": "MeiraGTx Holdings plc",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT03758404",
+      "title": "Gene Therapy for Achromatopsia (CNGA3)",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Achromatopsia",
+      "start_date": "2019-08-12",
+      "completion_date": "2021-06-10",
+      "enrollment": 0,
+      "sponsor": "MeiraGTx UK II Ltd"
+    },
+    {
+      "nct_id": "NCT02781480",
+      "title": "Clinical Trial of Gene Therapy for the Treatment of Leber Congenital Amaurosis (LCA)",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Leber Congenital Amaurosis",
+      "start_date": "2016-04",
+      "completion_date": "2018-12",
+      "enrollment": 0,
+      "sponsor": "MeiraGTx UK II Ltd"
+    },
+    {
+      "nct_id": "NCT03278873",
+      "title": "Long-Term Follow-Up Gene Therapy Study for Achromatopsia CNGB3 and CNGA3",
+      "status": "TERMINATED",
+      "phase": "",
+      "condition": "Achromatopsia",
+      "start_date": "2017-06-29",
+      "completion_date": "2024-04-04",
+      "enrollment": 0,
+      "sponsor": "MeiraGTx UK II Ltd"
+    },
+    {
+      "nct_id": "NCT05060341",
+      "title": "Long-Term Follow-Up Study of AAV2hAQP1 for Radiation Induced Xerostomia",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "",
+      "condition": "Radiation-induced Xerostomia",
+      "start_date": "2020-11-12",
+      "completion_date": "2027-03",
+      "enrollment": 0,
+      "sponsor": "MeiraGTx, LLC"
+    },
+    {
+      "nct_id": "NCT06544798",
+      "title": "Long-term Follow-up of Gene Therapy for Radiation-Induced Xerostomia",
+      "status": "ENROLLING_BY_INVITATION",
+      "phase": "PHASE2",
+      "condition": "Grade 2 and 3 Late Xerostomia Caused by Radiotherapy for Cancers of the Upper Aerodigestive Tract, Excluding the Parotid Glands",
+      "start_date": "2024-08-02",
+      "completion_date": "2032-02",
+      "enrollment": 0,
+      "sponsor": "MeiraGTx, LLC"
+    },
+    {
+      "nct_id": "NCT02946879",
+      "title": "Long-Term Follow-Up Gene Therapy Study for Leber Congenital Amaurosis OPTIRPE65 (Retinal Dystrophy Associated With Defects in RPE65)",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Leber Congenital Amaurosis (LCA), Eye Diseases, Eye Diseases, Hereditary, Retinal Diseases",
+      "start_date": "2016-11",
+      "completion_date": "2023-07",
+      "enrollment": 0,
+      "sponsor": "MeiraGTx UK II Ltd"
+    },
+    {
+      "nct_id": "NCT03349242",
+      "title": "Natural History Study of Patients With X-linked Retinal Dystrophy Associated With Mutations in Retinitis Pigmentosa GTPase Regulator (RPGR)",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Retinitis Pigmentosa",
+      "start_date": "2017-12-19",
+      "completion_date": "2024-04-19",
+      "enrollment": 0,
+      "sponsor": "MeiraGTx UK II Ltd"
+    },
+    {
+      "nct_id": "NCT03001310",
+      "title": "Gene Therapy for Achromatopsia (CNGB3)",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Achromatopsia",
+      "start_date": "2017-01-16",
+      "completion_date": "2019-10-25",
+      "enrollment": 0,
+      "sponsor": "MeiraGTx UK II Ltd"
+    },
+    {
+      "nct_id": "NCT04043104",
+      "title": "A Phase 1 Open-Label, Dose Escalation Study to Determine the Optimal Dose, Safety, and Activity of AAV2hAQP1 in Subjects With Radiation-Induced Parotid Gland Hypofunction and Xerostomia",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Radiation-Induced Parotid Gland Hypofunction, Xerostomia Due to Radiotherapy, Head and Neck Cancer",
+      "start_date": "2019-06-30",
+      "completion_date": "2023-03-28",
+      "enrollment": 0,
+      "sponsor": "MeiraGTx UK II Ltd"
+    },
+    {
+      "nct_id": "NCT05926765",
+      "title": "A Study of AAV2-hAQP1 Gene Therapy in Participants With Radiation-Induced Late Xerostomia",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Grade 2 and 3 Late Xerostomia Caused by Radiotherapy for Cancers of the Upper Aerodigestive Tract, Excluding the Parotid Glands",
+      "start_date": "2023-06-13",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "MeiraGTx, LLC"
+    }
+  ],
+  "summary": {
+    "total_trials": 16,
+    "by_phase": {
+      "PHASE1, PHASE2": 6,
+      "": 6,
+      "PHASE2": 2,
+      "PHASE1": 2
+    },
+    "by_status": {
+      "COMPLETED": 10,
+      "TERMINATED": 1,
+      "ACTIVE_NOT_RECRUITING": 3,
+      "ENROLLING_BY_INVITATION": 1,
+      "RECRUITING": 1
+    },
+    "active_trials": 5,
+    "completed_trials": 10,
+    "conditions": [
+      "Achromatopsia",
+      "Grade 2 and 3 Late Xerostomia Caused by Radiotherapy for Cancers of the Upper Aerodigestive Tract, Excluding the Parotid Glands",
+      "Leber Congenital Amaurosis",
+      "Leber Congenital Amaurosis (LCA), Eye Diseases, Eye Diseases, Hereditary, Retinal Diseases",
+      "Parkinson's Disease",
+      "Radiation-Induced Parotid Gland Hypofunction, Xerostomia Due to Radiotherapy, Head and Neck Cancer",
+      "Radiation-induced Xerostomia",
+      "Retinitis Pigmentosa",
+      "Squamous Cell Head and Neck Cancer, Radiation Induced Xerostomia, Salivary Hypofunction",
+      "X-Linked Retinitis Pigmentosa"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:19:58.916753",
+    "search_query": "MeiraGTx Holdings plc",
+    "url": "https://clinicaltrials.gov/search?term=MeiraGTx+Holdings+plc"
+  }
+}

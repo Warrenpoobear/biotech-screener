@@ -1,0 +1,175 @@
+{
+  "ticker": "MRNA",
+  "company_name": "Moderna, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05894590",
+      "title": "Post-Marketing Non-Acute Safety Study in Japan After Severe Acute Respiratory Syndrome Coronavirus 2 (SARS-CoV-2) mRNA-1273 COVID-19 Vaccine in Persons at High Risk of Severe COVID-19",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "SARS-CoV-2",
+      "start_date": "2022-11-15",
+      "completion_date": "2023-12-20",
+      "enrollment": 0,
+      "sponsor": "ModernaTX, Inc."
+    },
+    {
+      "nct_id": "NCT03382405",
+      "title": "Safety, Reactogenicity, and Immunogenicity of Cytomegalovirus Vaccines mRNA-1647 and mRNA-1443 in Healthy Adults",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Cytomegalovirus Infection",
+      "start_date": "2017-11-13",
+      "completion_date": "2020-10-28",
+      "enrollment": 0,
+      "sponsor": "ModernaTX, Inc."
+    },
+    {
+      "nct_id": "NCT05330975",
+      "title": "A Study of mRNA-1345 Vaccine Targeting Respiratory Syncytial Virus (RSV) in Adults \u226550 Years of Age",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Respiratory Syncytial Virus",
+      "start_date": "2022-04-01",
+      "completion_date": "2024-11-08",
+      "enrollment": 0,
+      "sponsor": "ModernaTX, Inc."
+    },
+    {
+      "nct_id": "NCT05333289",
+      "title": "A Study of mRNA-1020 and mRNA-1030 Seasonal Influenza Vaccines in Healthy Adults",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Seasonal Influenza",
+      "start_date": "2022-04-06",
+      "completion_date": "2022-11-22",
+      "enrollment": 0,
+      "sponsor": "ModernaTX, Inc."
+    },
+    {
+      "nct_id": "NCT05659264",
+      "title": "A Study to Evaluate the Safety of mRNA-0184 in Participants With Heart Failure",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Chronic Heart Failure",
+      "start_date": "2022-12-05",
+      "completion_date": "2024-12-17",
+      "enrollment": 0,
+      "sponsor": "ModernaTX, Inc."
+    },
+    {
+      "nct_id": "NCT05398796",
+      "title": "Dose Escalation, Open-Label Clinical Trial to Evaluate Safety, Tolerability and Immunogenicity of a Nipah Virus (NiV) mRNA Vaccine, mRNA-1215, in Healthy Adults",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Nipah Virus Infection",
+      "start_date": "2022-07-11",
+      "completion_date": "2024-09-17",
+      "enrollment": 0,
+      "sponsor": "National Institute of Allergy and Infectious Diseases (NIAID)"
+    },
+    {
+      "nct_id": "NCT06147856",
+      "title": "A Dose-finding Study to Evaluate mRNA-3210 in Participants With Phenylketonuria",
+      "status": "WITHDRAWN",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Phenylketonuria",
+      "start_date": "2024-03-29",
+      "completion_date": "2027-08-05",
+      "enrollment": 0,
+      "sponsor": "ModernaTX, Inc."
+    },
+    {
+      "nct_id": "NCT06602024",
+      "title": "A Study of mRNA-1010 Compared With a Licensed Influenza Vaccine in Adults \u226550 Years of Age",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Seasonal Influenza",
+      "start_date": "2024-09-16",
+      "completion_date": "2025-08-21",
+      "enrollment": 0,
+      "sponsor": "ModernaTX, Inc."
+    },
+    {
+      "nct_id": "NCT04144348",
+      "title": "Safety and Immunogenicity of mRNA-1653, a Combined Human Metapneumovirus (hMPV) and Parainfluenza Virus Type 3 (PIV3) Vaccine, in Healthy Adults, and Children 12 to 59 Months of Age With Serologic Evidence of Prior Exposure",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Human Metapneumovirus and Human Parainfluenza Infection",
+      "start_date": "2019-11-04",
+      "completion_date": "2022-12-20",
+      "enrollment": 0,
+      "sponsor": "ModernaTX, Inc."
+    },
+    {
+      "nct_id": "NCT05933304",
+      "title": "A Study of the Effectiveness of Moderna COVID-19 Vaccine",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "SARS-CoV-2, COVID-19",
+      "start_date": "2020-12-18",
+      "completion_date": "2023-11-17",
+      "enrollment": 0,
+      "sponsor": "ModernaTX, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 50,
+    "by_phase": {
+      "": 8,
+      "PHASE1": 15,
+      "PHASE3": 12,
+      "PHASE1, PHASE2": 7,
+      "PHASE4": 3,
+      "PHASE2, PHASE3": 1,
+      "PHASE2": 4
+    },
+    "by_status": {
+      "COMPLETED": 30,
+      "WITHDRAWN": 2,
+      "RECRUITING": 6,
+      "ACTIVE_NOT_RECRUITING": 7,
+      "TERMINATED": 4,
+      "ENROLLING_BY_INVITATION": 1
+    },
+    "active_trials": 14,
+    "completed_trials": 30,
+    "conditions": [
+      "Acute Gastroenteritis, Norovirus Acute Gastroenteritis",
+      "Chronic Heart Failure",
+      "Cutaneous Melanoma, Synovial Sarcoma",
+      "Cytomegalovirus Infection",
+      "Glycogen Storage Disease",
+      "HIV Infections",
+      "Healthy Participants",
+      "Healthy Volunteers",
+      "Human Metapneumovirus and Human Parainfluenza Infection",
+      "Immunocompromised Patients",
+      "Influenza",
+      "Melanoma",
+      "Methylmalonic Acidemia, Propionic Acidemia",
+      "Multiple Myeloma",
+      "Myocarditis",
+      "Neoplasms, Carcinoma, Non-Small-Cell Lung, Pancreatic Neoplasms, Colorectal Neoplasms",
+      "Nipah Virus Infection",
+      "Norovirus Acute Gastroenteritis",
+      "Phenylketonuria",
+      "Relapsed or Refractory Multiple Myeloma",
+      "Relapsed/Refractory Solid Tumor Malignancies or Lymphoma, Ovarian Cancer",
+      "Respiratory Syncytial Virus",
+      "SARS-CoV-2",
+      "SARS-CoV-2, COVID-19",
+      "SARS-CoV-2, Influenza",
+      "Seasonal Influenza",
+      "Zika Virus"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:20:06.648150",
+    "search_query": "Moderna, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Moderna,+Inc."
+  }
+}

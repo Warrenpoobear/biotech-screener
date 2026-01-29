@@ -1,0 +1,43 @@
+{
+  "ticker": "KLRS",
+  "success": true,
+  "price": {
+    "current": 9.475,
+    "currency": "USD",
+    "day_high": 9.61,
+    "day_low": 9.35,
+    "52_week_high": 12.9,
+    "52_week_low": 2.14
+  },
+  "market_cap": {
+    "value": 177205424.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 18702418.0,
+  "volume": {
+    "last": 2429,
+    "average_30d": 81492
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -3.8179939,
+    "price_to_book": 4.233691
+  },
+  "company_info": {
+    "name": "Kalaris Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T12:46:49.318504",
+    "url": "https://finance.yahoo.com/quote/KLRS",
+    "data_hash": "59d3a73866557542"
+  }
+}

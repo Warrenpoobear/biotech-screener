@@ -1,0 +1,43 @@
+{
+  "ticker": "TVTX",
+  "success": true,
+  "price": {
+    "current": 30.77,
+    "currency": "USD",
+    "day_high": 31.64,
+    "day_low": 30.08,
+    "52_week_high": 42.13,
+    "52_week_low": 12.91
+  },
+  "market_cap": {
+    "value": 2753063680.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 89472327.0,
+  "volume": {
+    "last": 480606,
+    "average_30d": 2857377
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": 16.21915,
+    "price_to_book": 37.43309
+  },
+  "company_info": {
+    "name": "Travere Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:10:26.908606",
+    "url": "https://finance.yahoo.com/quote/TVTX",
+    "data_hash": "6d326c120b6d28a8"
+  }
+}

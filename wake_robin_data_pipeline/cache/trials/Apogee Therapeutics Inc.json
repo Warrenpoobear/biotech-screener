@@ -1,0 +1,75 @@
+{
+  "ticker": "APGE",
+  "company_name": "Apogee Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06395948",
+      "title": "A Study Evaluating APG777 in Atopic Dermatitis",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Atopic Dermatitis",
+      "start_date": "2024-04-29",
+      "completion_date": "2028-06",
+      "enrollment": 0,
+      "sponsor": "Apogee Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT07027527",
+      "title": "An Active Comparator Safety Study Evaluating the Combination of APG777 + APG990 in Moderate-to-Severe Atopic Dermatitis",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Atopic Dermatitis",
+      "start_date": "2025-06-04",
+      "completion_date": "2027-12",
+      "enrollment": 0,
+      "sponsor": "Apogee Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT07003425",
+      "title": "A Long-term Safety and Efficacy Study Evaluating APG777 in Atopic Dermatitis",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Atopic Dermatitis",
+      "start_date": "2025-05-14",
+      "completion_date": "2029-12",
+      "enrollment": 0,
+      "sponsor": "Apogee Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06920901",
+      "title": "A Study to Evaluate the Safety, Tolerability, Pharmacokinetics (PK), and Immunogenicity of APG777 in Adults With Asthma",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Asthma",
+      "start_date": "2025-03-27",
+      "completion_date": "2027-03",
+      "enrollment": 0,
+      "sponsor": "Apogee Therapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 4,
+    "by_phase": {
+      "PHASE2": 2,
+      "PHASE1": 2
+    },
+    "by_status": {
+      "ACTIVE_NOT_RECRUITING": 2,
+      "RECRUITING": 2
+    },
+    "active_trials": 4,
+    "completed_trials": 0,
+    "conditions": [
+      "Asthma",
+      "Atopic Dermatitis"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:16:27.828770",
+    "search_query": "Apogee Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Apogee+Therapeutics,+Inc."
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "CRBP",
+  "success": true,
+  "price": {
+    "current": 8.62,
+    "currency": "USD",
+    "day_high": 8.74,
+    "day_low": 8.3436,
+    "52_week_high": 20.56,
+    "52_week_low": 4.64
+  },
+  "market_cap": {
+    "value": 151307168.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 17553037.0,
+  "volume": {
+    "last": 78164,
+    "average_30d": 176248
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -1.6538057,
+    "price_to_book": 1.1726296
+  },
+  "company_info": {
+    "name": "Corbus Pharmaceuticals Holdings, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T12:46:45.758372",
+    "url": "https://finance.yahoo.com/quote/CRBP",
+    "data_hash": "ef8f460cde4c32e1"
+  }
+}

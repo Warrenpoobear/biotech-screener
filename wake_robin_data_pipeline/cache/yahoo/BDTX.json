@@ -1,0 +1,43 @@
+{
+  "ticker": "BDTX",
+  "success": true,
+  "price": {
+    "current": 2.635,
+    "currency": "USD",
+    "day_high": 2.7,
+    "day_low": 2.565,
+    "52_week_high": 4.94,
+    "52_week_low": 1.195
+  },
+  "market_cap": {
+    "value": 150128896.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 56974913.0,
+  "volume": {
+    "last": 274147,
+    "average_30d": 902811
+  },
+  "valuation": {
+    "pe_ratio": 7.1216216,
+    "forward_pe": -4.3916664,
+    "price_to_book": 1.1896163
+  },
+  "company_info": {
+    "name": "Black Diamond Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:05:12.229556",
+    "url": "https://finance.yahoo.com/quote/BDTX",
+    "data_hash": "1b8ab99e69e6f5d8"
+  }
+}

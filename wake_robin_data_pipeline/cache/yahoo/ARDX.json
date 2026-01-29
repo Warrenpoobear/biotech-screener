@@ -1,0 +1,43 @@
+{
+  "ticker": "ARDX",
+  "success": true,
+  "price": {
+    "current": 7.765,
+    "currency": "USD",
+    "day_high": 7.9899,
+    "day_low": 7.7301,
+    "52_week_high": 8.4,
+    "52_week_low": 3.21
+  },
+  "market_cap": {
+    "value": 1886695424.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 242974306.0,
+  "volume": {
+    "last": 642935,
+    "average_30d": 6215433
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": 42.54328,
+    "price_to_book": 12.228347
+  },
+  "company_info": {
+    "name": "Ardelyx, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:04:43.207853",
+    "url": "https://finance.yahoo.com/quote/ARDX",
+    "data_hash": "76c0c27e95512775"
+  }
+}

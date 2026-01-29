@@ -1,0 +1,43 @@
+{
+  "ticker": "XNCR",
+  "success": true,
+  "price": {
+    "current": 12.43,
+    "currency": "USD",
+    "day_high": 12.795,
+    "day_low": 12.33,
+    "52_week_high": 19.24,
+    "52_week_low": 6.92
+  },
+  "market_cap": {
+    "value": 887632192.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 71410469.0,
+  "volume": {
+    "last": 65139,
+    "average_30d": 702606
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -4.742175,
+    "price_to_book": 1.4181403
+  },
+  "company_info": {
+    "name": "Xencor, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:10:54.151117",
+    "url": "https://finance.yahoo.com/quote/XNCR",
+    "data_hash": "1979e96cbb27741a"
+  }
+}

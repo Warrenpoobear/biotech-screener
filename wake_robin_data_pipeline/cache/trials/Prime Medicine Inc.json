@@ -1,0 +1,53 @@
+{
+  "ticker": "PRME",
+  "company_name": "Prime Medicine, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT07226622",
+      "title": "Prescreening Study to Identify Potential Wilson Disease Participants for Gene-Editing Clinical Trial",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Wilson Disease",
+      "start_date": "2025-12",
+      "completion_date": "2027-12",
+      "enrollment": 0,
+      "sponsor": "Prime Medicine, Inc."
+    },
+    {
+      "nct_id": "NCT06559176",
+      "title": "A Study of the Safety and Efficacy of Prime Editing (PM359) in Participants With p47phox Autosomal Recessive Chronic Granulomatous Disease (CGD )",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Chronic Granulomatous Disease, Granulomatous Disease, Chronic",
+      "start_date": "2024-10-17",
+      "completion_date": "2030-02",
+      "enrollment": 0,
+      "sponsor": "Prime Medicine, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 2,
+    "by_phase": {
+      "": 1,
+      "PHASE1, PHASE2": 1
+    },
+    "by_status": {
+      "RECRUITING": 1,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 2,
+    "completed_trials": 0,
+    "conditions": [
+      "Chronic Granulomatous Disease, Granulomatous Disease, Chronic",
+      "Wilson Disease"
+    ],
+    "lead_stage": "unknown"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:21:00.229936",
+    "search_query": "Prime Medicine, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Prime+Medicine,+Inc."
+  }
+}

@@ -1,0 +1,167 @@
+{
+  "ticker": "ASND",
+  "company_name": "Ascendis Pharma A/S",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05598320",
+      "title": "A Clinical Trial to Evaluate Efficacy and Safety of TransCon CNP Compared With Placebo in Children With Achondroplasia",
+      "status": "COMPLETED",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Achondroplasia",
+      "start_date": "2023-03-03",
+      "completion_date": "2025-08-13",
+      "enrollment": 0,
+      "sponsor": "Ascendis Pharma Growth Disorders A/S"
+    },
+    {
+      "nct_id": "NCT06433557",
+      "title": "A Phase 2 Clinical Trial to Evaluate Efficacy, Safety, and Tolerability of Navepegritide in Combination With Lonapegsomatropin in Children With Achondroplasia",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Achondroplasia",
+      "start_date": "2024-07-26",
+      "completion_date": "2027-09",
+      "enrollment": 0,
+      "sponsor": "Ascendis Pharma Growth Disorders A/S"
+    },
+    {
+      "nct_id": "NCT07345494",
+      "title": "A Global Pregnancy Registry to Assess Maternal, Fetal, and Infant Outcomes Following Exposure to YORVIPATH\u00ae (Palopegteriparatide) During Pregnancy and Breastfeeding",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "",
+      "condition": "Hypoparathyroidism",
+      "start_date": "2026-01",
+      "completion_date": "2036-01",
+      "enrollment": 0,
+      "sponsor": "Ascendis Pharma A/S"
+    },
+    {
+      "nct_id": "NCT07221851",
+      "title": "Trial Investigating the Efficacy and Safety of Weekly Lonapegsomatropin Compared to Daily Somatropin in Children and Adolescents With Short Stature or Growth Failure Due to Growth Hormone Sufficient Disorders",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Turner Syndrome, Short Stature Homeobox Gene Mutation, Idiopathic Short Stature, Small for Gestational Age at Delivery",
+      "start_date": "2025-12-12",
+      "completion_date": "2029-03",
+      "enrollment": 0,
+      "sponsor": "Ascendis Pharma A/S"
+    },
+    {
+      "nct_id": "NCT04799054",
+      "title": "A Study of TransCon TLR7/8 Agonist With or Without Pembrolizumab in Patients With Advanced or Metastatic Solid Tumors",
+      "status": "TERMINATED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Advanced Solid Tumor, Locally Advanced Solid Tumor, Metastatic Solid Tumor, Head and Neck Squamous Cell Carcinoma HNSCC, HPV-associated Cancers, Neoadjuvant Melanoma, Neoadjuvant Cutaneous Squamous Cell Carcinoma (cSCC)",
+      "start_date": "2021-03-18",
+      "completion_date": "2025-12-02",
+      "enrollment": 0,
+      "sponsor": "Ascendis Pharma Oncology Division A/S"
+    },
+    {
+      "nct_id": "NCT04009291",
+      "title": "A Trial Investigating the Safety, Tolerability and Efficacy of TransCon PTH in Adults With Hypoparathyroidism",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Hypoparathyroidism, Endocrine System Diseases, Parathyroid Diseases",
+      "start_date": "2019-08-27",
+      "completion_date": "2025-04-17",
+      "enrollment": 0,
+      "sponsor": "Ascendis Pharma A/S"
+    },
+    {
+      "nct_id": "NCT05654701",
+      "title": "Expanded Access Program of Palopegteriparatide in Patients With Hypoparathyroidism",
+      "status": "APPROVED_FOR_MARKETING",
+      "phase": "",
+      "condition": "Hypoparathyroidism",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Ascendis Pharma Bone Diseases A/S"
+    },
+    {
+      "nct_id": "NCT07264634",
+      "title": "A Study to Assess the Amount of Palopegteriparatide in Breast Milk of Lactating Females Requiring YORVIPATH\u00ae (Palopegteriparatide)",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "",
+      "condition": "Hypoparathyroidism",
+      "start_date": "2026-01",
+      "completion_date": "2028-01",
+      "enrollment": 0,
+      "sponsor": "Ascendis Pharma A/S"
+    },
+    {
+      "nct_id": "NCT05690386",
+      "title": "A Trial to Investigate Different Doses of Lonapegsomatropin Compared to Somatropin in Individuals With Turner Syndrome",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Turner Syndrome",
+      "start_date": "2023-02-15",
+      "completion_date": "2027-12",
+      "enrollment": 0,
+      "sponsor": "Ascendis Pharma Endocrinology Division A/S"
+    },
+    {
+      "nct_id": "NCT04701203",
+      "title": "A Trial Investigating the Safety, Tolerability and Efficacy of TransCon PTH Administered Daily in Adults With Hypoparathyroidism",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Hypoparathyroidism, Endocrine System Diseases, Parathyroid Diseases",
+      "start_date": "2021-02-16",
+      "completion_date": "2025-01-21",
+      "enrollment": 0,
+      "sponsor": "Ascendis Pharma Bone Diseases A/S"
+    }
+  ],
+  "summary": {
+    "total_trials": 31,
+    "by_phase": {
+      "PHASE2, PHASE3": 2,
+      "PHASE2": 10,
+      "": 6,
+      "PHASE3": 9,
+      "PHASE1, PHASE2": 2,
+      "PHASE1": 2
+    },
+    "by_status": {
+      "COMPLETED": 13,
+      "ACTIVE_NOT_RECRUITING": 2,
+      "NOT_YET_RECRUITING": 3,
+      "RECRUITING": 6,
+      "TERMINATED": 3,
+      "APPROVED_FOR_MARKETING": 1,
+      "UNKNOWN": 2,
+      "ENROLLING_BY_INVITATION": 1
+    },
+    "active_trials": 9,
+    "completed_trials": 13,
+    "conditions": [
+      "Achondroplasia",
+      "Adult Growth Hormone Deficiency",
+      "Adult Growth Hormone Deficiency, Endocrine System Diseases, Hormone Deficiency",
+      "Advanced Solid Tumor, Locally Advanced Solid Tumor, Metastatic Solid Tumor, Head and Neck Squamous Cell Carcinoma HNSCC, HPV-associated Cancers, Neoadjuvant Melanoma, Neoadjuvant Cutaneous Squamous Cell Carcinoma (cSCC)",
+      "Advanced Solid Tumor, Locally Advanced Solid Tumor, Metastatic Solid Tumor, Platinum-resistant Ovarian Cancer, Post Anti-PD-1 Melanoma, 2L+ Cervical Cancer, Neoadjuvant Melanoma, Neoadjuvant Non-Small Cell Lung Cancer, Post Anti-PD-(L)1 Non-Small Cell Lung Cancer, Post Anti-PD-(L)1 Small Cell Lung Cancer, Third Line or Later (3L+) HER2+ Breast Cancer, Second or Third Line (2L/3L) Cervical Cancer, Third-line or Later (3L+) Platinum-resistant Ovarian Cancer (PROC)",
+      "Growth Hormone Deficiency",
+      "Growth Hormone Deficiency (GHD)",
+      "Growth Hormone Deficiency, Endocrine System Diseases, Hormone Deficiency",
+      "Growth Hormone Deficiency, Endocrine System Diseases, Hormones, Pituitary Diseases, Pituitary Disease, Anterior",
+      "Growth Hormone Deficiency, Pediatric, Endocrine System Diseases, Hormone Deficiency, Pituitary Diseases",
+      "Growth Hormone Deficiency, Pediatric, hGH (Human Growth Hormone), Endocrine System Diseases, Hormones, Pituitary Diseases",
+      "Head and Neck Neoplasms",
+      "Healthy",
+      "Healthy Volunteers",
+      "Hypoparathyroidism",
+      "Hypoparathyroidism, Endocrine System Diseases, Parathyroid Diseases",
+      "Turner Syndrome",
+      "Turner Syndrome, Short Stature Homeobox Gene Mutation, Idiopathic Short Stature, Small for Gestational Age at Delivery"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:16:39.458818",
+    "search_query": "Ascendis Pharma A/S",
+    "url": "https://clinicaltrials.gov/search?term=Ascendis+Pharma+A/S"
+  }
+}

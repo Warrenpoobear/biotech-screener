@@ -1,0 +1,43 @@
+{
+  "ticker": "ABSI",
+  "success": true,
+  "price": {
+    "current": 2.915,
+    "currency": "USD",
+    "day_high": 3.0,
+    "day_low": 2.88,
+    "52_week_high": 6.33,
+    "52_week_low": 2.01
+  },
+  "market_cap": {
+    "value": 438333024.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 150371531.0,
+  "volume": {
+    "last": 1198833,
+    "average_30d": 3424838
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -4.1351037,
+    "price_to_book": 2.074733
+  },
+  "company_info": {
+    "name": "Absci Corporation",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:04:03.545939",
+    "url": "https://finance.yahoo.com/quote/ABSI",
+    "data_hash": "24cfec391759bf0b"
+  }
+}

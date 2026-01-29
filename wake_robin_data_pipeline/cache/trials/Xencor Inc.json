@@ -1,0 +1,177 @@
+{
+  "ticker": "XNCR",
+  "company_name": "Xencor, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05032040",
+      "title": "A Study of XmAb20717 (Vudalimab)in Patients With Selected Advanced Gynecologic and Genitourinary Malignancies",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Ovarian Cancer, Clear Cell Carcinoma, Endometrial Cancer, Cervical Carcinoma, Metastatic Castration-Resistant Prostate Cancer (mCRPC)",
+      "start_date": "2022-07-21",
+      "completion_date": "2025-12-30",
+      "enrollment": 0,
+      "sponsor": "Xencor, Inc."
+    },
+    {
+      "nct_id": "NCT02867098",
+      "title": "XmAb5871 Bioavailability Study",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2016-07",
+      "completion_date": "2016-10-21",
+      "enrollment": 0,
+      "sponsor": "Xencor, Inc."
+    },
+    {
+      "nct_id": "NCT02148744",
+      "title": "Safety and Tolerability of XmAb\u00ae7195 in Adult Healthy Volunteers and Adult Subjects With a History of Allergic Rhinitis and/or Allergic Conjunctivitis and/or Atopic Dermatitis",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Allergic Rhinitis, Allergic Conjunctivitis, Atopic Dermatitis",
+      "start_date": "2014-05",
+      "completion_date": "2015-09-21",
+      "enrollment": 0,
+      "sponsor": "Xencor, Inc."
+    },
+    {
+      "nct_id": "NCT05328102",
+      "title": "Phase 2 Study of Plamotamab Combined With Tafasitamab Plus Lenalidomide Versus Tafasitamab Plus Lenalidomide in Relapsed or Refractory (R/R) Diffuse Large-cell B-cell Lymphoma (DLBCL)",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Diffuse Large-cell B-cell Lymphoma",
+      "start_date": "2022-04-15",
+      "completion_date": "2023-02-21",
+      "enrollment": 0,
+      "sponsor": "Xencor, Inc."
+    },
+    {
+      "nct_id": "NCT01161511",
+      "title": "Safety and Tolerability of XmAb\u00ae5574 in Chronic Lymphocytic Leukemia",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Chronic Lymphocytic Leukemia, Small Lymphocytic Lymphoma",
+      "start_date": "2010-09",
+      "completion_date": "2013-01",
+      "enrollment": 0,
+      "sponsor": "Xencor, Inc."
+    },
+    {
+      "nct_id": "NCT05996445",
+      "title": "A Study of XmAb\u00ae662 as Monotherapy or in Combination With Pembrolizumab in Advanced Solid Tumors",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Solid Tumors",
+      "start_date": "2023-07-28",
+      "completion_date": "2024-05-21",
+      "enrollment": 0,
+      "sponsor": "Xencor, Inc."
+    },
+    {
+      "nct_id": "NCT05900648",
+      "title": "Regorafenib and XmAb20717 in Treatment of High-risk Patients With Colorectal Cancer With Radiographic Occult Molecular Residual Disease After End of Established Definitive Therapy (RX-CROME)",
+      "status": "WITHDRAWN",
+      "phase": "PHASE2",
+      "condition": "Colorectal Cancer, Colon Cancer, Rectum Cancer",
+      "start_date": "2023-05-17",
+      "completion_date": "2024-02-09",
+      "enrollment": 0,
+      "sponsor": "M.D. Anderson Cancer Center"
+    },
+    {
+      "nct_id": "NCT06619990",
+      "title": "Study of XmAb942 in Healthy Participants and Participants With Ulcerative Colitis",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Ulcerative Colitis (UC)",
+      "start_date": "2024-10-10",
+      "completion_date": "2029-01",
+      "enrollment": 0,
+      "sponsor": "Xencor, Inc."
+    },
+    {
+      "nct_id": "NCT03752398",
+      "title": "A Study of XmAb\u00ae23104 in Subjects With Selected Advanced Solid Tumors (DUET-3)",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Melanoma (Excluding Uveal Melanoma), Cervical Carcinoma, Pancreatic Carcinoma, Breast Carcinoma That is Estrogen Receptor, Progesterone Receptor, and Her2 Negative, Hepatocellular Carcinoma, Urothelial Carcinoma, Squamous Cell Carcinoma of the Head and Neck, Nasopharyngeal Carcinoma, Renal Cell Carcinoma, Colorectal Carcinoma, Endometrial Carcinoma, Non-small Cell Lung Carcinoma, Small Cell Lung Cancer, Gastric or Gastroesophageal Junction Adenocarcinoma, Advanced Solid Tumors, Undifferentiated Pleomorphic Sarcoma",
+      "start_date": "2019-05-01",
+      "completion_date": "2024-02-15",
+      "enrollment": 0,
+      "sponsor": "Xencor, Inc."
+    },
+    {
+      "nct_id": "NCT05433142",
+      "title": "Study of XmAb\u00ae819 in Subjects With Advanced Clear Cell Renal Cell Carcinoma",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Clear Cell Renal Cell Carcinoma",
+      "start_date": "2022-06-13",
+      "completion_date": "2027-11",
+      "enrollment": 0,
+      "sponsor": "Xencor, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 33,
+    "by_phase": {
+      "PHASE2": 8,
+      "PHASE1": 22,
+      "PHASE1, PHASE2": 3
+    },
+    "by_status": {
+      "ACTIVE_NOT_RECRUITING": 2,
+      "COMPLETED": 16,
+      "TERMINATED": 8,
+      "WITHDRAWN": 1,
+      "RECRUITING": 5,
+      "NOT_YET_RECRUITING": 1
+    },
+    "active_trials": 7,
+    "completed_trials": 16,
+    "conditions": [
+      "Acute Myelogenous Leukemia, B-cell Acute Lymphoblastic Leukemia, Blastic Plasmacytoid Dendritic Cell Neoplasm, Chronic Myeloid Leukemia, Blast Crisis",
+      "Allergic Rhinitis, Allergic Conjunctivitis, Atopic Dermatitis",
+      "B-cell Non-Hodgkins Lymphoma, Chronic Lymphocytic Leukemia",
+      "Biliary Tract Cancer",
+      "Castration-Sensitive Prostate Carcinoma, Metastatic Prostate Adenocarcinoma, Stage IVB Prostate Cancer AJCC v8",
+      "Chronic Lymphocytic Leukemia, Small Lymphocytic Lymphoma",
+      "Clear Cell Renal Cell Carcinoma",
+      "Colorectal Cancer, Colon Cancer, Rectum Cancer",
+      "Diffuse Large-cell B-cell Lymphoma",
+      "Head and Neck Squamous Cell Carcinoma, Melanoma Excluding Uveal Melanoma, Non-small Cell Lung Cancer, Squamous or Non-squamous, Urothelial Carcinoma, Renal Cell Carcinoma, Clear Cell, Castration-resistant Prostate Cancer, Ovarian Cancer, Epithelial, TNBC - Triple-Negative Breast Cancer, Colorectal Cancer",
+      "Healthy Volunteers",
+      "Healthy Volunteers, Atopic Disease",
+      "Healthy, Idiopathic Inflammatory Myopathies",
+      "Hodgkin Lymphoma, Anaplastic Large Cell Lymphoma",
+      "IgG4-RD",
+      "Melanoma (Excluding Uveal Melanoma), Cervical Carcinoma, Pancreatic Carcinoma, Breast Carcinoma That is Estrogen Receptor, Progesterone Receptor, and Her2 Negative, Hepatocellular Carcinoma, Urothelial Carcinoma, Squamous Cell Carcinoma of the Head and Neck, Nasopharyngeal Carcinoma, Renal Cell Carcinoma, Colorectal Carcinoma, Endometrial Carcinoma, Non-small Cell Lung Carcinoma, Small Cell Lung Cancer, Gastric or Gastroesophageal Junction Adenocarcinoma, Advanced Solid Tumors, Undifferentiated Pleomorphic Sarcoma",
+      "Melanoma, Breast Carcinoma, Hepatocellular Carcinoma, Urothelial Carcinoma, Squamous Cell Carcinoma of the Head and Neck, Renal Cell Carcinoma, Colorectal Carcinoma, Non-small Cell Lung Carcinoma, Gastric or Gastroesophageal Junction Adenocarcinoma, Endometrial Carcinoma, Mesothelioma, Neuroendocrine Carcinoma, Cervical Cancer, Small Cell Lung Carcinoma, Squamous Cell Carcinoma of the Anus, Castration-Resistant Prostate Carcinoma, Nasopharyngeal Carcinoma, Cholangiocarcinoma, Basal Cell Carcinoma, Ovarian Carcinoma, Fallopian Tube Carcinoma, Thymoma, Thymic Carcinoma, Squamous Cell Carcinoma of the Penis, Vulvar Carcinoma, Solid Tumors With Published Evidence of Anti-tumor Activity With Anti-PD1/PDL1 and/or Anti-CTLA4-directed Therapy, Malignant Adnexal Neoplasms, Non-squamous Cell Salivary Gland Carcinoma",
+      "Melanoma, Cervical Carcinoma, Pancreatic Carcinoma, Triple Negative Breast Cancer, Hepatocellular Carcinoma, Urothelial Carcinoma, Squamous Cell Carcinoma of the Head and Neck, Nasopharyngeal Carcinoma, Renal Cell Carcinoma, Non-small Cell Lung Carcinoma, Small Cell Lung Carcinoma, Gastric or Gastroesophageal Junction Adenocarcinoma, Advanced or Metastatic Solid Tumors, Prostate Carcinoma, Epithelial Ovarian Cancer, Fallopian Tube Cancer, Primary Peritoneal Carcinoma, Intrahepatic Cholangiocarcinoma, Squamous Cell Anal Cancer, Squamous Cell Penile Carcinoma, Squamous Cell Vulvar Carcinoma, Colorectal Carcinoma, Endometrial Carcinoma",
+      "Merkel Cell Carcinoma, Small Cell Lung Cancer",
+      "Metastatic Castration-Resistant Prostate Cancer",
+      "Metastatic Melanoma, Advanced Melanoma",
+      "Neuroendocrine Tumor, Gastrointestinal Neoplasm",
+      "Nonsquamous Non-small Cell Lung Cancer",
+      "Ovarian Cancer, Clear Cell Carcinoma, Endometrial Cancer, Cervical Carcinoma, Metastatic Castration-Resistant Prostate Cancer (mCRPC)",
+      "Ovarian Cancer, Endometrial Cancer, Germ Cell Tumor, Testicular Germ Cell Tumor, Ovarian Germ Cell Tumor",
+      "Psoriasis, Atopic Dermatitis",
+      "Relapsed/ Refractory Multiple Myeloma",
+      "Rheumatoid Arthritis",
+      "Safety in Healthy Volunteers",
+      "Sarcoma",
+      "Solid Tumors",
+      "Systemic Lupus Erythematosus",
+      "Ulcerative Colitis (UC)"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:23:01.313456",
+    "search_query": "Xencor, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Xencor,+Inc."
+  }
+}

@@ -1,0 +1,154 @@
+{
+  "ticker": "ANIP",
+  "company_name": "ANI Pharmaceuticals, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT02080091",
+      "title": "Observational Study to Assess the Effect of Iluvien\u00ae in DME Patients Insufficiently Responsive to Available Therapies",
+      "status": "TERMINATED",
+      "phase": "",
+      "condition": "Diabetic Macular Edema (DME)",
+      "start_date": "2013-12",
+      "completion_date": "2015-04",
+      "enrollment": 0,
+      "sponsor": "Alimera Sciences"
+    },
+    {
+      "nct_id": "NCT00490815",
+      "title": "Pharmacokinetic and Efficacy Study of Fluocinolone Acetonide Inserts in Patients With Diabetic Macular Edema",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Diabetic Macular Edema",
+      "start_date": "2007-08",
+      "completion_date": "2011-04",
+      "enrollment": 0,
+      "sponsor": "Alimera Sciences"
+    },
+    {
+      "nct_id": "NCT02472366",
+      "title": "A Non-Randomized, Open-Label, Single Center Phase 4 Study of the Effect and Safety of ILUVIEN\u00ae in Chronic Diabetic Macular Edema Patients Considered Insufficiently Responsive to Available Therapies (Laser, Anti-VEGF) With or Without Intravitreal Corticosteroid Therapy",
+      "status": "COMPLETED",
+      "phase": "PHASE4",
+      "condition": "Chronic Diabetic Macular Edema",
+      "start_date": "2014-01",
+      "completion_date": "2015-05",
+      "enrollment": 0,
+      "sponsor": "Alimera Sciences"
+    },
+    {
+      "nct_id": "NCT00770770",
+      "title": "Fluocinolone Acetonide Intravitreal Inserts for Vein Occlusion in Retina",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Macular Edema, Retinal Vein Occlusion",
+      "start_date": "2009-05",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Alimera Sciences"
+    },
+    {
+      "nct_id": "NCT07346079",
+      "title": "Purified Cortrophin\u00ae Gel Efficacy and Safety Study of 2 Dose Levels in Patients With Acute Gout Flares",
+      "status": "RECRUITING",
+      "phase": "PHASE4",
+      "condition": "Gout Arthritis, Gout Flare, Gout",
+      "start_date": "2025-12-20",
+      "completion_date": "2027-08-31",
+      "enrollment": 0,
+      "sponsor": "Massachusetts General Hospital"
+    },
+    {
+      "nct_id": "NCT02424019",
+      "title": "Phase 4 IOP Signals Associated With ILUVIEN\u00ae",
+      "status": "COMPLETED",
+      "phase": "PHASE4",
+      "condition": "Diabetic Macular Edema (DME)",
+      "start_date": "2015-05-06",
+      "completion_date": "2020-07-31",
+      "enrollment": 0,
+      "sponsor": "Alimera Sciences"
+    },
+    {
+      "nct_id": "NCT00344968",
+      "title": "Fluocinolone Acetonide Implant Compared to Sham Injection in Patients With Diabetic Macular Edema",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Diabetic Macular Edema",
+      "start_date": "2007-09",
+      "completion_date": "2010-12",
+      "enrollment": 0,
+      "sponsor": "Alimera Sciences"
+    },
+    {
+      "nct_id": "NCT00695318",
+      "title": "Fluocinolone Acetonide Intravitreal Inserts in Geographic Atrophy",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Age-Related Macular Degeneration",
+      "start_date": "2008-12",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Alimera Sciences"
+    },
+    {
+      "nct_id": "NCT06539481",
+      "title": "Open Label Trial Studying the Safety and Effectiveness of ILUVIEN\u00ae (190\u03bcg) in Children and Adolescents, Who Have Recurrent Non-infectious Uveitis Affecting the Posterior Segment of the Eye.",
+      "status": "RECRUITING",
+      "phase": "PHASE4",
+      "condition": "Non-infectious Uveitis Affecting the Posterior Segment of the Eye",
+      "start_date": "2024-08-31",
+      "completion_date": "2028-10-31",
+      "enrollment": 0,
+      "sponsor": "Alimera Sciences"
+    },
+    {
+      "nct_id": "NCT04469595",
+      "title": "A Study of Intravitreal ILUVIEN\u00ae Implant as Baseline Therapy in Patients With Early Diabetic Macular Edema (DME)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE4",
+      "condition": "Diabetic Macular Edema",
+      "start_date": "2020-08-31",
+      "completion_date": "2024-12-31",
+      "enrollment": 0,
+      "sponsor": "Alimera Sciences"
+    }
+  ],
+  "summary": {
+    "total_trials": 14,
+    "by_phase": {
+      "": 2,
+      "PHASE3": 4,
+      "PHASE4": 6,
+      "PHASE2": 2
+    },
+    "by_status": {
+      "TERMINATED": 3,
+      "COMPLETED": 5,
+      "RECRUITING": 3,
+      "ACTIVE_NOT_RECRUITING": 2,
+      "UNKNOWN": 1
+    },
+    "active_trials": 5,
+    "completed_trials": 5,
+    "conditions": [
+      "Age-Related Macular Degeneration",
+      "Chronic Diabetic Macular Edema",
+      "Chronic Diabetic Macular Oedema Considered Insufficiently Responsive to Available Therapies",
+      "Diabetic Macular Edema",
+      "Diabetic Macular Edema (DME)",
+      "Gout Arthritis, Gout Flare, Gout",
+      "Macular Edema, Retinal Vein Occlusion",
+      "Non-infectious Uveitis Affecting the Posterior Segment of the Eye",
+      "Uveitis, Posterior",
+      "Uveitis, Uveitis, Posterior, Uveitis, Anterior, Uveitis, Intermediate"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:16:24.009883",
+    "search_query": "ANI Pharmaceuticals, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=ANI+Pharmaceuticals,+Inc."
+  }
+}

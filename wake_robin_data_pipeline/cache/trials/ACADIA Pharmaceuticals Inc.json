@@ -1,0 +1,180 @@
+{
+  "ticker": "ACAD",
+  "company_name": "ACADIA Pharmaceuticals Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT03121586",
+      "title": "Extension Study of Pimavanserin for the Adjunctive Treatment of Schizophrenia",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Schizophrenia",
+      "start_date": "2017-01",
+      "completion_date": "2024-05-30",
+      "enrollment": 0,
+      "sponsor": "ACADIA Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT00361166",
+      "title": "Antipsychotic and Motor Effects of ACP-103 When Administered in Combination With Haloperidol and Risperidone",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Schizophrenia",
+      "start_date": "2005-08",
+      "completion_date": "2007-03",
+      "enrollment": 0,
+      "sponsor": "ACADIA Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT04181723",
+      "title": "Study of Trofinetide for the Treatment of Girls and Women With Rett Syndrome (LAVENDER\u2122)",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Rett Syndrome",
+      "start_date": "2019-11-06",
+      "completion_date": "2021-10-28",
+      "enrollment": 0,
+      "sponsor": "ACADIA Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT03482882",
+      "title": "Safety and Efficacy of Pimavanserin in Adults With Parkinson's Disease and Depression",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Treatment of Depression in Adults With Parkinson's Disease (PD)",
+      "start_date": "2018-03-09",
+      "completion_date": "2019-07-24",
+      "enrollment": 0,
+      "sponsor": "ACADIA Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT03575052",
+      "title": "A Safety Study of Pimavanserin in Adult and Elderly Subjects Experiencing Neuropsychiatric Symptoms Related to Neurodegenerative Disease",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Neuropsychiatric Symptoms Related to Neurodegenerative Disease",
+      "start_date": "2018-05-21",
+      "completion_date": "2022-05-06",
+      "enrollment": 0,
+      "sponsor": "ACADIA Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT03968159",
+      "title": "Adjunctive Pimavanserin in Subjects With Major Depressive Disorder and Inadequate Response to Antidepressant Treatment",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Adjunctive Treatment of Major Depressive Disorder",
+      "start_date": "2019-04-25",
+      "completion_date": "2020-05-29",
+      "enrollment": 0,
+      "sponsor": "ACADIA Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT07095465",
+      "title": "Phase 3, Open Label Extension Study of ACP-204 in Lewy Body Dementia Psychosis",
+      "status": "ENROLLING_BY_INVITATION",
+      "phase": "PHASE3",
+      "condition": "Lewy Body Dementia Psychosis",
+      "start_date": "2025-11-14",
+      "completion_date": "2029-03",
+      "enrollment": 0,
+      "sponsor": "ACADIA Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT03994965",
+      "title": "The Sub-Sero Study",
+      "status": "WITHDRAWN",
+      "phase": "PHASE2",
+      "condition": "Schizophrenia, Psychosis",
+      "start_date": "2024-12-01",
+      "completion_date": "2024-12-04",
+      "enrollment": 0,
+      "sponsor": "Bjorn H. Ebdrup"
+    },
+    {
+      "nct_id": "NCT03325556",
+      "title": "Relapse Prevention Study of Pimavanserin in Dementia-related Psychosis",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Dementia-related Psychosis",
+      "start_date": "2017-09-27",
+      "completion_date": "2019-10-30",
+      "enrollment": 0,
+      "sponsor": "ACADIA Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT04855240",
+      "title": "Evaluate the Efficacy and Safety of ACP-044 for the Treatment of Acute Postoperative Pain Following Bunionectomy",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Acute Postoperative Pain, Bunionectomy",
+      "start_date": "2021-03-29",
+      "completion_date": "2022-03-14",
+      "enrollment": 0,
+      "sponsor": "ACADIA Pharmaceuticals Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 50,
+    "by_phase": {
+      "PHASE3": 18,
+      "PHASE2": 20,
+      "EARLY_PHASE1": 1,
+      "NA": 2,
+      "PHASE4": 3,
+      "PHASE1": 1,
+      "": 2,
+      "PHASE2, PHASE3": 3
+    },
+    "by_status": {
+      "TERMINATED": 8,
+      "COMPLETED": 24,
+      "ENROLLING_BY_INVITATION": 3,
+      "WITHDRAWN": 3,
+      "UNKNOWN": 2,
+      "RECRUITING": 6,
+      "NOT_YET_RECRUITING": 2,
+      "ACTIVE_NOT_RECRUITING": 1,
+      "APPROVED_FOR_MARKETING": 1
+    },
+    "active_trials": 10,
+    "completed_trials": 24,
+    "conditions": [
+      "Acute Postoperative Pain, Bunionectomy",
+      "Adjunctive Treatment of Major Depressive Disorder",
+      "Agitation and Aggression in Alzheimer's Disease",
+      "Alzheimer's Disease Psychosis",
+      "Anxiety, Depression",
+      "Attention Deficit Hyperactivity Disorder, Anxiety",
+      "Autism Spectrum Disorder",
+      "Dementia-related Psychosis",
+      "Hallucinations, Psychoses, Parkinson's Disease",
+      "Hyperphagia in Prader-Willi Syndrome",
+      "Insomnia Chronic, Posttraumatic Stress Disorder",
+      "Intermittent Explosive Disorder",
+      "Irritability Associated With Autism Spectrum Disorder",
+      "Knee Arthropathy, Hip Arthropathy",
+      "Lewy Body Dementia Psychosis",
+      "Major Depressive Disorder (MDD), Depressive Disorder, Treatment-Resistant",
+      "Neurodegenerative Diseases, Parkinson Disease, Parkinson Disease Psychosis",
+      "Neuropsychiatric Symptoms Related to Neurodegenerative Disease",
+      "Osteoarthritis Pain",
+      "Parkinson Disease",
+      "Parkinson Disease Psychosis",
+      "Parkinson's Disease",
+      "Parkinson's Disease Psychosis",
+      "Rett Syndrome",
+      "Schizophrenia",
+      "Schizophrenia, Psychosis",
+      "Stroke Acute",
+      "Treatment of Depression in Adults With Parkinson's Disease (PD)"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:15:55.815764",
+    "search_query": "ACADIA Pharmaceuticals Inc.",
+    "url": "https://clinicaltrials.gov/search?term=ACADIA+Pharmaceuticals+Inc."
+  }
+}

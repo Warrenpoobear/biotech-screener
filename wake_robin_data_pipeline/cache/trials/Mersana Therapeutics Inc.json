@@ -1,0 +1,152 @@
+{
+  "ticker": "MRSN",
+  "company_name": "Mersana Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05377996",
+      "title": "A Study of XMT-1660 in Participants With Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Triple Negative Breast Cancer, Breast Cancer, Endometrial Cancer, Ovarian Cancer, Fallopian Tube Cancer, Primary Peritoneal Cavity Cancer, Adenoid Cystic Carcinoma",
+      "start_date": "2022-08-15",
+      "completion_date": "2027-05",
+      "enrollment": 0,
+      "sponsor": "Mersana Therapeutics"
+    },
+    {
+      "nct_id": "NCT05514717",
+      "title": "A Study of XMT-2056 in Advanced/Recurrent Solid Tumors That Express HER2",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "HER2-positive Breast Cancer, HER2-positive Gastric Cancer, HER2-positive Non-Small Cell Lung Cancer, HER2-positive Colorectal Cancer, HER2-positive Tumors, HER2 Low Breast Cancer",
+      "start_date": "2023-01-24",
+      "completion_date": "2027-04",
+      "enrollment": 0,
+      "sponsor": "Mersana Therapeutics"
+    },
+    {
+      "nct_id": "NCT02952729",
+      "title": "Study of Antibody Drug Conjugate in Patients With Advanced Breast Cancer Expressing HER2",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Advanced Breast Cancer, Advanced Nonsmall Cell Lung Cancer, Advanced Gastric Cancer",
+      "start_date": "2016-11-21",
+      "completion_date": "2019-01-28",
+      "enrollment": 0,
+      "sponsor": "Mersana Therapeutics"
+    },
+    {
+      "nct_id": "NCT04907968",
+      "title": "Study of Upifitamab Rilsodotin in Combination With Carboplatin in Participants With High-grade Serous Ovarian Cancer",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Platinum-sensitive Ovarian Cancer (UPGRADE-A)",
+      "start_date": "2021-06-11",
+      "completion_date": "2023-10-03",
+      "enrollment": 0,
+      "sponsor": "Mersana Therapeutics"
+    },
+    {
+      "nct_id": "NCT00455052",
+      "title": "A Study of Intravenous XMT-1001 in Patients With Advanced Solid Tumors",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Small Cell Lung Cancer, Non-small Cell Lung Cancer",
+      "start_date": "2011-03",
+      "completion_date": "2011-12",
+      "enrollment": 0,
+      "sponsor": "Mersana Therapeutics"
+    },
+    {
+      "nct_id": "NCT01011972",
+      "title": "A Study of Intravenous XMT-1107 in Patients With Advanced Solid Tumors",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Neoplasm Metastasis",
+      "start_date": "2010-03",
+      "completion_date": "2013-09",
+      "enrollment": 0,
+      "sponsor": "Mersana Therapeutics"
+    },
+    {
+      "nct_id": "NCT06517433",
+      "title": "First-in-Human Dose Escalation Study of XMT-1536 in Cancers Likely to Express NaPi2b",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Platinum Resistant Ovarian Cancer, Non Small Cell Lung Cancer Metastatic",
+      "start_date": "2017-12-12",
+      "completion_date": "2021-07-09",
+      "enrollment": 0,
+      "sponsor": "Mersana Therapeutics"
+    },
+    {
+      "nct_id": "NCT05329545",
+      "title": "Upifitamab Rilsodotin Maintenance in Platinum-Sensitive Recurrent Ovarian Cancer (UP-NEXT)",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "High Grade Serous Ovarian Cancer, Fallopian Tube Cancer, Primary Peritoneal Cancer",
+      "start_date": "2022-06-23",
+      "completion_date": "2023-09-29",
+      "enrollment": 0,
+      "sponsor": "Mersana Therapeutics"
+    },
+    {
+      "nct_id": "NCT04396340",
+      "title": "First-in-Human Study of XMT-1592 in Patients With Ovarian Cancer and NSCLC Likely to Express NaPi2b",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Ovarian Cancer, Nonsmall Cell Lung Cancer",
+      "start_date": "2020-05-11",
+      "completion_date": "2022-09-30",
+      "enrollment": 0,
+      "sponsor": "Mersana Therapeutics"
+    },
+    {
+      "nct_id": "NCT03319628",
+      "title": "First-in-Human Study of XMT-1536 in Cancers Likely to Express NaPi2b",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Platinum Resistant Ovarian Cancer, Non Small Cell Lung Cancer Metastatic",
+      "start_date": "2017-12-12",
+      "completion_date": "2024-10-31",
+      "enrollment": 0,
+      "sponsor": "Mersana Therapeutics"
+    }
+  ],
+  "summary": {
+    "total_trials": 11,
+    "by_phase": {
+      "PHASE1": 9,
+      "PHASE3": 1,
+      "PHASE1, PHASE2": 1
+    },
+    "by_status": {
+      "RECRUITING": 2,
+      "COMPLETED": 5,
+      "TERMINATED": 3,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 3,
+    "completed_trials": 5,
+    "conditions": [
+      "Advanced Breast Cancer, Advanced Nonsmall Cell Lung Cancer, Advanced Gastric Cancer",
+      "HER2-positive Breast Cancer, HER2-positive Gastric Cancer, HER2-positive Non-Small Cell Lung Cancer, HER2-positive Colorectal Cancer, HER2-positive Tumors, HER2 Low Breast Cancer",
+      "High Grade Serous Ovarian Cancer, Fallopian Tube Cancer, Primary Peritoneal Cancer",
+      "Neoplasm Metastasis",
+      "Ovarian Cancer, Nonsmall Cell Lung Cancer",
+      "Platinum Resistant Ovarian Cancer, Non Small Cell Lung Cancer Metastatic",
+      "Platinum Resistant Ovarian Cancer, Non-Small Cell Adenocarcinoma",
+      "Platinum-sensitive Ovarian Cancer (UPGRADE-A)",
+      "Small Cell Lung Cancer, Non-small Cell Lung Cancer",
+      "Triple Negative Breast Cancer, Breast Cancer, Endometrial Cancer, Ovarian Cancer, Fallopian Tube Cancer, Primary Peritoneal Cavity Cancer, Adenoid Cystic Carcinoma"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:20:07.935334",
+    "search_query": "Mersana Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Mersana+Therapeutics,+Inc."
+  }
+}

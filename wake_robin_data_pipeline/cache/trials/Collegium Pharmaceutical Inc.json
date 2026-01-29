@@ -1,0 +1,65 @@
+{
+  "ticker": "COLL",
+  "company_name": "Collegium Pharmaceutical, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06431256",
+      "title": "Efficacy, Safety & Pharmacokinetic (PK) Study of HLD200 in Children Aged 4-5 Years With ADHD",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Attention Deficit Hyperactivity Disorder",
+      "start_date": "2024-09-13",
+      "completion_date": "2025-07-11",
+      "enrollment": 0,
+      "sponsor": "Ironshore Pharmaceuticals and Development, Inc"
+    },
+    {
+      "nct_id": "NCT01685684",
+      "title": "Oxycodone DETERx\u2122 Versus Placebo in Chronic Low Back Pain (CLBP)",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Chronic Low Back Pain",
+      "start_date": "2012-08",
+      "completion_date": "2014-07",
+      "enrollment": 0,
+      "sponsor": "Collegium Pharmaceutical, Inc."
+    },
+    {
+      "nct_id": "NCT03588806",
+      "title": "Use of Xtampza ER to Overcome Difficulties in Swallowing Opioid Pills",
+      "status": "TERMINATED",
+      "phase": "PHASE4",
+      "condition": "Chronic Pain, Opioid Use, Deglutition",
+      "start_date": "2018-05-01",
+      "completion_date": "2019-10-31",
+      "enrollment": 0,
+      "sponsor": "Ajay Wasan, MD, Msc"
+    }
+  ],
+  "summary": {
+    "total_trials": 3,
+    "by_phase": {
+      "PHASE3": 2,
+      "PHASE4": 1
+    },
+    "by_status": {
+      "TERMINATED": 2,
+      "COMPLETED": 1
+    },
+    "active_trials": 0,
+    "completed_trials": 1,
+    "conditions": [
+      "Attention Deficit Hyperactivity Disorder",
+      "Chronic Low Back Pain",
+      "Chronic Pain, Opioid Use, Deglutition"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:17:37.513847",
+    "search_query": "Collegium Pharmaceutical, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Collegium+Pharmaceutical,+Inc."
+  }
+}

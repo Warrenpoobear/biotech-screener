@@ -1,0 +1,64 @@
+{
+  "ticker": "RAPP",
+  "company_name": "Rapport Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT07046494",
+      "title": "Study Evaluating the Efficacy and Safety of RAP-219 in Adult Participants With Bipolar I Disorder",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Bipolar 1 Disorder",
+      "start_date": "2025-07-25",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "Rapport Therapeutics Inc."
+    },
+    {
+      "nct_id": "NCT06377930",
+      "title": "Study Evaluating the Safety and Efficacy of RAP-219 in Adult Participants With Refractory Focal Epilepsy",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Focal Onset Seizures",
+      "start_date": "2024-10-10",
+      "completion_date": "2025-09-22",
+      "enrollment": 0,
+      "sponsor": "Rapport Therapeutics Inc."
+    },
+    {
+      "nct_id": "NCT07219407",
+      "title": "A Long-term Study of the Safety and Effectiveness of RAP-219 in Adults With Focal Onset Seizures",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Focal Epilepsy, Epilepsy, Refractory Focal Epilepsy, Seizure, Focal Seizure, Focal Onset Seizure",
+      "start_date": "2025-12-15",
+      "completion_date": "2028-02-03",
+      "enrollment": 0,
+      "sponsor": "Rapport Therapeutics Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 3,
+    "by_phase": {
+      "PHASE2": 3
+    },
+    "by_status": {
+      "RECRUITING": 2,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 3,
+    "completed_trials": 0,
+    "conditions": [
+      "Bipolar 1 Disorder",
+      "Focal Epilepsy, Epilepsy, Refractory Focal Epilepsy, Seizure, Focal Seizure, Focal Onset Seizure",
+      "Focal Onset Seizures"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:21:18.744025",
+    "search_query": "Rapport Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Rapport+Therapeutics,+Inc."
+  }
+}

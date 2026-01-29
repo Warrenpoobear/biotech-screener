@@ -1,0 +1,43 @@
+{
+  "ticker": "BMEA",
+  "success": true,
+  "price": {
+    "current": 1.18,
+    "currency": "USD",
+    "day_high": 1.27,
+    "day_low": 1.16,
+    "52_week_high": 4.43,
+    "52_week_low": 0.872
+  },
+  "market_cap": {
+    "value": 83430288.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 70703639.0,
+  "volume": {
+    "last": 885672,
+    "average_30d": 1208203
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -1.124045,
+    "price_to_book": 4.5038166
+  },
+  "company_info": {
+    "name": "Biomea Fusion, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:05:20.939529",
+    "url": "https://finance.yahoo.com/quote/BMEA",
+    "data_hash": "1b02136382401217"
+  }
+}

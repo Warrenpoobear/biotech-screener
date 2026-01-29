@@ -1,0 +1,39 @@
+{
+  "ticker": "TECX",
+  "company_name": "Tectonic Therapeutic, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06616974",
+      "title": "A Study of TX000045 in Patients With Pulmonary Hypertension Secondary to Heart Failure With Preserved Ejection Fraction (the APEX Study)",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Pulmonary Hypertension, Heart Failure With Preserved Ejection Fraction",
+      "start_date": "2024-09-04",
+      "completion_date": "2026-11-20",
+      "enrollment": 0,
+      "sponsor": "Tectonic Therapeutic"
+    }
+  ],
+  "summary": {
+    "total_trials": 1,
+    "by_phase": {
+      "PHASE2": 1
+    },
+    "by_status": {
+      "RECRUITING": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 0,
+    "conditions": [
+      "Pulmonary Hypertension, Heart Failure With Preserved Ejection Fraction"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:22:18.527880",
+    "search_query": "Tectonic Therapeutic, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Tectonic+Therapeutic,+Inc."
+  }
+}

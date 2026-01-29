@@ -1,0 +1,52 @@
+{
+  "ticker": "KROS",
+  "company_name": "Keros Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05927012",
+      "title": "A Study to Evaluate the Safety and Preliminary Efficacy of a Response-guided Dose Titration of KER-047 in the Treatment of Functional IDA (Iron Deficiency Anemia).",
+      "status": "WITHDRAWN",
+      "phase": "PHASE2",
+      "condition": "Iron Deficiency Anemia",
+      "start_date": "2023-11-30",
+      "completion_date": "2026-01-04",
+      "enrollment": 0,
+      "sponsor": "Keros Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05975905",
+      "title": "A Study to Investigate the Safety and Efficacy of KER-012 in Combination With Background Therapy in Adult Participants With Pulmonary Arterial Hypertension (PAH) (TROPOS Study).",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Pulmonary Arterial Hypertension",
+      "start_date": "2023-10-17",
+      "completion_date": "2025-03-11",
+      "enrollment": 0,
+      "sponsor": "Keros Therapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 2,
+    "by_phase": {
+      "PHASE2": 2
+    },
+    "by_status": {
+      "WITHDRAWN": 1,
+      "COMPLETED": 1
+    },
+    "active_trials": 0,
+    "completed_trials": 1,
+    "conditions": [
+      "Iron Deficiency Anemia",
+      "Pulmonary Arterial Hypertension"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:19:28.738936",
+    "search_query": "Keros Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Keros+Therapeutics,+Inc."
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "HROW",
+  "success": true,
+  "price": {
+    "current": 41.9,
+    "currency": "USD",
+    "day_high": 43.185,
+    "day_low": 41.62,
+    "52_week_high": 54.85,
+    "52_week_low": 20.85
+  },
+  "market_cap": {
+    "value": 1551869312.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 37037453.0,
+  "volume": {
+    "last": 107974,
+    "average_30d": 561235
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": 19.161556,
+    "price_to_book": 32.992126
+  },
+  "company_info": {
+    "name": "Harrow, Inc.",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:06:58.457171",
+    "url": "https://finance.yahoo.com/quote/HROW",
+    "data_hash": "004e65b276732fc5"
+  }
+}

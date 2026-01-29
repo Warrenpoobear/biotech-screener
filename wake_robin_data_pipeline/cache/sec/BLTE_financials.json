@@ -1,0 +1,42 @@
+{
+  "ticker": "BLTE",
+  "cik": "0001889109",
+  "success": true,
+  "financials": {
+    "cash": 88157000.0,
+    "debt": 0.0,
+    "net_debt": -88157000.0,
+    "revenue_ttm": null,
+    "assets": 94642000.0,
+    "liabilities": 4211000.0,
+    "equity": 90431000.0,
+    "currency": "USD"
+  },
+  "data_dates": {
+    "cash": "2023-12-31",
+    "assets": "2023-12-31",
+    "liabilities": "2023-12-31",
+    "debt": "2023-12-31"
+  },
+  "data_freshness": {
+    "most_recent_date": "2023-12-31",
+    "oldest_date": "2023-12-31",
+    "staleness_flags": [
+      "critical_staleness:760d"
+    ]
+  },
+  "coverage": {
+    "has_cash": true,
+    "has_debt": true,
+    "has_revenue": false,
+    "has_balance_sheet": true,
+    "pct_complete": 75.0
+  },
+  "provenance": {
+    "source": "SEC EDGAR Company Facts API",
+    "timestamp": "2026-01-29T11:12:47.956435",
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001889109.json",
+    "cik": "0001889109",
+    "accounting_standard": "us-gaap"
+  }
+}

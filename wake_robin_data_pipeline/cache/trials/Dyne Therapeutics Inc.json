@@ -1,0 +1,77 @@
+{
+  "ticker": "DYN",
+  "company_name": "Dyne Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04635891",
+      "title": "Motor Outcomes to Validate Evaluations in FSHD (MOVE FSHD)",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "FSHD",
+      "start_date": "2020-12-15",
+      "completion_date": "2028-01",
+      "enrollment": 0,
+      "sponsor": "University of Kansas Medical Center"
+    },
+    {
+      "nct_id": "NCT03458832",
+      "title": "Clinical Trial Readiness to Solve Barriers to Drug Development in FSHD",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Facioscapulohumeral Muscular Dystrophy",
+      "start_date": "2018-03-05",
+      "completion_date": "2027-12",
+      "enrollment": 0,
+      "sponsor": "University of Kansas Medical Center"
+    },
+    {
+      "nct_id": "NCT05524883",
+      "title": "Safety, Tolerability, Pharmacodynamic, Efficacy, and Pharmacokinetic Study of DYNE-251 in Participants With Duchenne Muscular Dystrophy Amenable to Exon 51 Skipping",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Duchenne Muscular Dystrophy (DMD)",
+      "start_date": "2022-08-12",
+      "completion_date": "2029-11",
+      "enrollment": 0,
+      "sponsor": "Dyne Therapeutics"
+    },
+    {
+      "nct_id": "NCT05481879",
+      "title": "Safety, Tolerability, Pharmacodynamic, Efficacy, and Pharmacokinetic Study of DYNE-101 in Participants With Myotonic Dystrophy Type 1",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Myotonic Dystrophy Type 1 (DM1)",
+      "start_date": "2022-09-05",
+      "completion_date": "2029-07",
+      "enrollment": 0,
+      "sponsor": "Dyne Therapeutics"
+    }
+  ],
+  "summary": {
+    "total_trials": 4,
+    "by_phase": {
+      "": 2,
+      "PHASE1, PHASE2": 2
+    },
+    "by_status": {
+      "RECRUITING": 3,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 4,
+    "completed_trials": 0,
+    "conditions": [
+      "Duchenne Muscular Dystrophy (DMD)",
+      "FSHD",
+      "Facioscapulohumeral Muscular Dystrophy",
+      "Myotonic Dystrophy Type 1 (DM1)"
+    ],
+    "lead_stage": "unknown"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:18:04.361450",
+    "search_query": "Dyne Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Dyne+Therapeutics,+Inc."
+  }
+}

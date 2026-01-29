@@ -2042,7 +2042,9 @@ def run_screening_pipeline(
                         # Extract pipeline metrics for commercial-stage differentiation
                         pipeline_trial_count = clinical_score.get("n_trials_unique", 0)
                         # Estimate phase diversity from phase_progress (0-5 scale maps to phases)
-                        phase_progress = int(clinical_score.get("phase_progress", 0) or 0)
+                        # Note: phase_progress may be a string like "3.5", convert via float first
+                        phase_progress_raw = clinical_score.get("phase_progress", 0) or 0
+                        phase_progress = int(float(phase_progress_raw))
                         # Phase diversity: if progress >= 3, likely have trials in multiple phases
                         pipeline_phase_diversity = min(phase_progress, 5) if phase_progress else 1
 

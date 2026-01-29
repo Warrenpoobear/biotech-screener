@@ -1,0 +1,88 @@
+{
+  "ticker": "TERN",
+  "company_name": "Terns Pharmaceuticals, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05415722",
+      "title": "DUET Study: A Clinical Study to Evaluate the Safety, Efficacy, Pharmacokinetics and Pharmacodynamics of Orally Administered TERN-501 as Monotherapy and in Combination With TERN-101 in Noncirrhotic Adults With Presumed Non-Alcoholic Steatohepatitis",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "NASH - Nonalcoholic Steatohepatitis",
+      "start_date": "2022-06-28",
+      "completion_date": "2023-07-10",
+      "enrollment": 0,
+      "sponsor": "Terns, Inc."
+    },
+    {
+      "nct_id": "NCT06854952",
+      "title": "A Clinical Study to Evaluate the Efficacy, Safety, and Tolerability of TERN-601 in Adults With Overweight or Obesity",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Overweight or Obesity",
+      "start_date": "2025-03-07",
+      "completion_date": "2025-09-19",
+      "enrollment": 0,
+      "sponsor": "Terns, Inc."
+    },
+    {
+      "nct_id": "NCT04897594",
+      "title": "AVIATION Study: A Safety, Pharmacokinetics, Pharmacodynamics and Preliminary Efficacy Study of TERN-201 in Patients With Non-Cirrhotic Non-Alcoholic Steatohepatitis",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "NASH - Nonalcoholic Steatohepatitis",
+      "start_date": "2021-05-20",
+      "completion_date": "2022-09-02",
+      "enrollment": 0,
+      "sponsor": "Terns, Inc."
+    },
+    {
+      "nct_id": "NCT06163430",
+      "title": "A Phase 1/2 Clinical Study to Evaluate the Safety, Tolerability, Pharmacokinetics, and Efficacy of TERN-701 in Participants With Chronic Myeloid Leukemia (CARDINAL)",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Chronic Myeloid Leukemia, Chronic Phase, Chronic Myeloid Leukemia",
+      "start_date": "2024-03-26",
+      "completion_date": "2030-05-31",
+      "enrollment": 0,
+      "sponsor": "Terns, Inc."
+    },
+    {
+      "nct_id": "NCT04328077",
+      "title": "LIFT Study: A Safety, Tolerability, Efficacy, and Pharmacokinetics Study of TERN-101 in Subjects With Non-Cirrhotic Non-Alcoholic Steatohepatitis (NASH)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "NASH - Nonalcoholic Steatohepatitis",
+      "start_date": "2020-06-18",
+      "completion_date": "2021-05-19",
+      "enrollment": 0,
+      "sponsor": "Terns, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 5,
+    "by_phase": {
+      "PHASE2": 3,
+      "PHASE1": 1,
+      "PHASE1, PHASE2": 1
+    },
+    "by_status": {
+      "COMPLETED": 4,
+      "RECRUITING": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 4,
+    "conditions": [
+      "Chronic Myeloid Leukemia, Chronic Phase, Chronic Myeloid Leukemia",
+      "NASH - Nonalcoholic Steatohepatitis",
+      "Overweight or Obesity"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:22:22.248012",
+    "search_query": "Terns Pharmaceuticals, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Terns+Pharmaceuticals,+Inc."
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ticker": "RVMD",
+  "success": true,
+  "price": {
+    "current": 98.625,
+    "currency": "USD",
+    "day_high": 100.18,
+    "day_low": 96.78,
+    "52_week_high": 124.49,
+    "52_week_low": 29.17
+  },
+  "market_cap": {
+    "value": 19066165248.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 193319805.0,
+  "volume": {
+    "last": 722937,
+    "average_30d": 5195974
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -15.108969,
+    "price_to_book": 11.715965
+  },
+  "company_info": {
+    "name": "Revolution Medicines, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:09:35.780634",
+    "url": "https://finance.yahoo.com/quote/RVMD",
+    "data_hash": "228972dbc5736fc8"
+  }
+}

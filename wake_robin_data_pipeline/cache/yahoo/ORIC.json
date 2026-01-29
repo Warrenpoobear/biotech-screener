@@ -1,0 +1,43 @@
+{
+  "ticker": "ORIC",
+  "success": true,
+  "price": {
+    "current": 10.77,
+    "currency": "USD",
+    "day_high": 11.2,
+    "day_low": 10.77,
+    "52_week_high": 14.93,
+    "52_week_low": 3.895
+  },
+  "market_cap": {
+    "value": 1048882560.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 97389279.0,
+  "volume": {
+    "last": 270592,
+    "average_30d": 1692895
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -6.7790856,
+    "price_to_book": 2.5747073
+  },
+  "company_info": {
+    "name": "ORIC Pharmaceuticals, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:48.087329",
+    "url": "https://finance.yahoo.com/quote/ORIC",
+    "data_hash": "3e683c0c33b73b0c"
+  }
+}

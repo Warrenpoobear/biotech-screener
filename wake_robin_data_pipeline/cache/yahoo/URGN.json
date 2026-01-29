@@ -1,0 +1,43 @@
+{
+  "ticker": "URGN",
+  "success": true,
+  "price": {
+    "current": 20.86,
+    "currency": "USD",
+    "day_high": 21.6362,
+    "day_low": 20.37,
+    "52_week_high": 30.0,
+    "52_week_low": 3.42
+  },
+  "market_cap": {
+    "value": 976433536.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 46808892.0,
+  "volume": {
+    "last": 74956,
+    "average_30d": 703529
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -21.536905,
+    "price_to_book": -8.455614
+  },
+  "company_info": {
+    "name": "UroGen Pharma Ltd.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:10:33.924027",
+    "url": "https://finance.yahoo.com/quote/URGN",
+    "data_hash": "26213c132544d3fd"
+  }
+}

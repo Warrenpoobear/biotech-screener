@@ -1,0 +1,128 @@
+{
+  "ticker": "AURA",
+  "company_name": "Aura Biosciences, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06643884",
+      "title": "Suprachoroidal Administration in Subjects With Metastases to the Choroid",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Eye Cancer, Primary Cancer",
+      "start_date": "2024-12-16",
+      "completion_date": "2027-10-31",
+      "enrollment": 0,
+      "sponsor": "Aura Biosciences"
+    },
+    {
+      "nct_id": "NCT03941379",
+      "title": "A Registry of Subjects With Primary Indeterminate Lesions or Choroidal Melanoma",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Choroidal Melanoma, Indeterminate Lesions of Eye",
+      "start_date": "2019-03-27",
+      "completion_date": "2029-12",
+      "enrollment": 0,
+      "sponsor": "Aura Biosciences"
+    },
+    {
+      "nct_id": "NCT05483868",
+      "title": "A Phase 1, Open-label Trial of Belzupacap Sarotalocan (AU-011) in Bladder Cancer",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Non-muscle-invasive Bladder Cancer, Non-Muscle Invasive Bladder Cancer (&Amp;#34;NMIBC&Amp;#34;) Unresponsive/Intolerant to BCG, NMIBC, Non-Muscle Invasive Bladder Carcinoma, Non-Muscle Invasive Bladder Neoplasms, Non-Muscle Invasive Bladder Urothelial Carcinoma, Urothelial Carcinoma Bladder",
+      "start_date": "2022-09-26",
+      "completion_date": "2027-03",
+      "enrollment": 0,
+      "sponsor": "Aura Biosciences"
+    },
+    {
+      "nct_id": "NCT06007690",
+      "title": "A Phase 3 Randomized, Masked, Controlled Trial to Evaluate Efficacy and Safety of Belzupacap Sarotalocan (AU-011) Treatment Compared to Sham Control in Subjects With Primary Indeterminate Lesions or Small Choroidal Melanoma",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Choroidal Melanoma, Indeterminate Lesions, Uveal Melanoma, Ocular Melanoma",
+      "start_date": "2023-12-06",
+      "completion_date": "2028-08-15",
+      "enrollment": 0,
+      "sponsor": "Aura Biosciences"
+    },
+    {
+      "nct_id": "NCT05266430",
+      "title": "Prospective Group-Matched Study With Belzupacap Sarotalocan (Bel-sar; AU-011) or Plaque Radiotherapy for Primary Indeterminate Lesions or Choroidal Melanoma (IL/ CM)",
+      "status": "TERMINATED",
+      "phase": "",
+      "condition": "Choroidal Melanoma, Indeterminate Lesions",
+      "start_date": "2022-04-14",
+      "completion_date": "2023-04-20",
+      "enrollment": 0,
+      "sponsor": "Aura Biosciences"
+    },
+    {
+      "nct_id": "NCT07338968",
+      "title": "A Long-Term Follow-Up Study of Subjects Completing the AU-011-301(CoMpass) for Early Choroidal Melanoma",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "",
+      "condition": "Choroidal Melanoma, Indeterminate Lesions",
+      "start_date": "2026-02-01",
+      "completion_date": "2033-08-15",
+      "enrollment": 0,
+      "sponsor": "Aura Biosciences"
+    },
+    {
+      "nct_id": "NCT04417530",
+      "title": "Phase 2 Trial to Evaluate Belzupacap Sarotalocan (AU-011) Via Suprachoroidal Administration in Subjects With Primary Indeterminate Lesions and Small Choroidal Melanoma",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Uveal Melanoma, Ocular Melanoma, Choroidal Melanoma",
+      "start_date": "2020-08-05",
+      "completion_date": "2024-04-22",
+      "enrollment": 0,
+      "sponsor": "Aura Biosciences"
+    },
+    {
+      "nct_id": "NCT03052127",
+      "title": "Study in Subjects With Small Primary Choroidal Melanoma",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Uveal Melanoma, Ocular Melanoma, Choroidal Melanoma",
+      "start_date": "2017-02-27",
+      "completion_date": "2021-01-26",
+      "enrollment": 0,
+      "sponsor": "Aura Biosciences"
+    }
+  ],
+  "summary": {
+    "total_trials": 8,
+    "by_phase": {
+      "PHASE2": 2,
+      "": 3,
+      "PHASE1": 1,
+      "PHASE3": 1,
+      "PHASE1, PHASE2": 1
+    },
+    "by_status": {
+      "RECRUITING": 4,
+      "TERMINATED": 1,
+      "NOT_YET_RECRUITING": 1,
+      "COMPLETED": 2
+    },
+    "active_trials": 4,
+    "completed_trials": 2,
+    "conditions": [
+      "Choroidal Melanoma, Indeterminate Lesions",
+      "Choroidal Melanoma, Indeterminate Lesions of Eye",
+      "Choroidal Melanoma, Indeterminate Lesions, Uveal Melanoma, Ocular Melanoma",
+      "Eye Cancer, Primary Cancer",
+      "Non-muscle-invasive Bladder Cancer, Non-Muscle Invasive Bladder Cancer (&Amp;#34;NMIBC&Amp;#34;) Unresponsive/Intolerant to BCG, NMIBC, Non-Muscle Invasive Bladder Carcinoma, Non-Muscle Invasive Bladder Neoplasms, Non-Muscle Invasive Bladder Urothelial Carcinoma, Urothelial Carcinoma Bladder",
+      "Uveal Melanoma, Ocular Melanoma, Choroidal Melanoma"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:16:45.561314",
+    "search_query": "Aura Biosciences, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Aura+Biosciences,+Inc."
+  }
+}

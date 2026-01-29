@@ -10,7 +10,12 @@ Orchestrates collection from:
 5. Defensive Overlays (volatility, correlation, gates, position sizing)
 
 Outputs unified snapshot with data quality metrics.
+
+Usage:
+    python collect_universe_data.py                          # Use full universe (346 tickers)
+    python collect_universe_data.py --universe path/to/file  # Use custom universe file
 """
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -31,7 +36,7 @@ try:
 except ImportError:
     HAS_TICKER_VALIDATION = False
 
-def load_universe(universe_file: str = "universe/pilot_universe.json") -> Dict:
+def load_universe(universe_file: str = "universe/full_universe.json") -> Dict:
     """Load universe configuration."""
     universe_path = Path(__file__).parent / universe_file
 
@@ -276,16 +281,17 @@ def print_summary(quality_report: dict):
 
     print("\n" + "="*60)
 
-def main():
+def main(universe_file: str = "universe/full_universe.json"):
     """Main execution flow."""
     print("\n🚀 Wake Robin Data Pipeline - Universe Collection")
     print("="*60)
 
     # Load universe
     print("\n1. Loading universe configuration...")
-    universe = load_universe()
+    universe = load_universe(universe_file)
     tickers = [t['ticker'] for t in universe['tickers']]
-    print(f"   ✓ Loaded {len(tickers)} tickers from pilot universe")
+    universe_name = "full" if "full" in universe_file else "pilot"
+    print(f"   ✓ Loaded {len(tickers)} tickers from {universe_name} universe")
 
     # Validate tickers (fail-loud on contaminated data)
     if HAS_TICKER_VALIDATION:
@@ -373,8 +379,22 @@ def main():
     return records, quality_report
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Wake Robin Data Pipeline - Universe Collection")
+    parser.add_argument(
+        "--universe", "-u",
+        default="full",
+        help="Universe to use: 'full' (346 tickers) or path to custom JSON file"
+    )
+    args = parser.parse_args()
+
+    # Resolve universe file path
+    if args.universe == "full":
+        universe_file = "universe/full_universe.json"
+    else:
+        universe_file = args.universe
+
     try:
-        records, quality_report = main()
+        records, quality_report = main(universe_file=universe_file)
     except KeyboardInterrupt:
         print("\n\n⚠️  Collection interrupted by user")
         sys.exit(1)

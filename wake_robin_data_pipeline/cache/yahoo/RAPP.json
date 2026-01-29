@@ -1,0 +1,43 @@
+{
+  "ticker": "RAPP",
+  "success": true,
+  "price": {
+    "current": 26.66,
+    "currency": "USD",
+    "day_high": 27.19,
+    "day_low": 26.345,
+    "52_week_high": 42.269,
+    "52_week_low": 6.43
+  },
+  "market_cap": {
+    "value": 1270645888.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 47661138.0,
+  "volume": {
+    "last": 29680,
+    "average_30d": 339167
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -7.780148,
+    "price_to_book": 2.4830027
+  },
+  "company_info": {
+    "name": "Rapport Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:09:21.437972",
+    "url": "https://finance.yahoo.com/quote/RAPP",
+    "data_hash": "2ba436788ebca44a"
+  }
+}

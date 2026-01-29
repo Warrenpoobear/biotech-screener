@@ -1,0 +1,89 @@
+{
+  "ticker": "FBRX",
+  "company_name": "Forte Biosciences, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04504279",
+      "title": "Evaluation of FB-401 in Children, Adolescents and Adults (2 Years and Older) With Mild to Moderate Atopic Dermatitis",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Atopic Dermatitis",
+      "start_date": "2020-10-13",
+      "completion_date": "2021-08-19",
+      "enrollment": 0,
+      "sponsor": "Forte Biosciences, Inc."
+    },
+    {
+      "nct_id": "NCT04936113",
+      "title": "Continued Safety Evaluation of FB-401 in Children, Adolescents and Adults (2 Years and Older) With Mild to Moderate Atopic Dermatitis Previously Enrolled in the FB401-01 Study",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Atopic Dermatitis",
+      "start_date": "2021-06-02",
+      "completion_date": "2021-09-30",
+      "enrollment": 0,
+      "sponsor": "Forte Biosciences, Inc."
+    },
+    {
+      "nct_id": "NCT06982963",
+      "title": "Randomized, Double Blind, Placebo-controlled Phase 2 Study in Adults With Celiac Disease",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Celiac Disease",
+      "start_date": "2025-08-04",
+      "completion_date": "2027-02-28",
+      "enrollment": 0,
+      "sponsor": "Forte Biosciences, Inc."
+    },
+    {
+      "nct_id": "NCT06905873",
+      "title": "A Study to Evaluate the Safety and Efficacy of FB102 in Patients With Non-segmental Vitiligo",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Vitiligo",
+      "start_date": "2025-03-25",
+      "completion_date": "2026-12-31",
+      "enrollment": 0,
+      "sponsor": "Forte Biosciences, Inc."
+    },
+    {
+      "nct_id": "NCT07205159",
+      "title": "A Study to Evaluate the Safety and Efficacy of FB102 in Patients With Severe to Very Severe Alopecia Areata.",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Alopecia Areata",
+      "start_date": "2025-10-23",
+      "completion_date": "2027-03-10",
+      "enrollment": 0,
+      "sponsor": "Forte Biosciences, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 5,
+    "by_phase": {
+      "PHASE2": 3,
+      "PHASE1": 2
+    },
+    "by_status": {
+      "COMPLETED": 1,
+      "TERMINATED": 1,
+      "RECRUITING": 3
+    },
+    "active_trials": 3,
+    "completed_trials": 1,
+    "conditions": [
+      "Alopecia Areata",
+      "Atopic Dermatitis",
+      "Celiac Disease",
+      "Vitiligo"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:47:24.048933",
+    "search_query": "Forte Biosciences, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Forte+Biosciences,+Inc."
+  }
+}

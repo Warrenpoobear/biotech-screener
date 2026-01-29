@@ -1,0 +1,43 @@
+{
+  "ticker": "TWST",
+  "success": true,
+  "price": {
+    "current": 40.7775,
+    "currency": "USD",
+    "day_high": 41.9199,
+    "day_low": 40.4,
+    "52_week_high": 54.74,
+    "52_week_low": 23.3
+  },
+  "market_cap": {
+    "value": 2498586368.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 61273653.0,
+  "volume": {
+    "last": 197958,
+    "average_30d": 1218616
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -19.891464,
+    "price_to_book": 5.2278843
+  },
+  "company_info": {
+    "name": "Twist Bioscience Corporation",
+    "sector": "Healthcare",
+    "industry": "Diagnostics & Research"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:10:28.294453",
+    "url": "https://finance.yahoo.com/quote/TWST",
+    "data_hash": "fb65bda7752f6ebe"
+  }
+}

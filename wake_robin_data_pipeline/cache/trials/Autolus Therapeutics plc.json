@@ -1,0 +1,158 @@
+{
+  "ticker": "AUTL",
+  "company_name": "Autolus Therapeutics plc",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT03590574",
+      "title": "Phase I/II Study Evaluating AUTO4 in Patients With TRBC1 Positive T Cell Lymphoma",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "T Cell Non-Hodgkin Lymphoma, Peripheral T-Cell Lymphoma, Not Otherwise Specified, Angioimmunoblastic T-cell Lymphoma, Anaplastic Large Cell Lymphoma",
+      "start_date": "2018-08-30",
+      "completion_date": "2024-12-12",
+      "enrollment": 0,
+      "sponsor": "Autolus Limited"
+    },
+    {
+      "nct_id": "NCT06799221",
+      "title": "Expanded Access Program for OOS Obe-cel",
+      "status": "AVAILABLE",
+      "phase": "",
+      "condition": "Lymphoblastic Leukemia, Acute, Adult, B Cell ALL",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Autolus Limited"
+    },
+    {
+      "nct_id": "NCT03289455",
+      "title": "CD19 /22 CAR T Cells (AUTO3) for the Treatment of B Cell Acute Lymphoblastic Leukemia (ALL)",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "B Acute Lymphoblastic Leukemia, Recurrent Childhood Acute Lymphoblastic Leukemia, Refractory Childhood Acute Lymphoblastic Leukemia, B-cell Acute Lymphoblastic Leukemia",
+      "start_date": "2017-06-26",
+      "completion_date": "2020-05-18",
+      "enrollment": 0,
+      "sponsor": "Autolus Limited"
+    },
+    {
+      "nct_id": "NCT03287817",
+      "title": "Cluster of Differentiation Antigen 19/22(CD19/22) CAR T Cells (AUTO3) for the Treatment of Diffuse Large B Cell Lymphoma",
+      "status": "TERMINATED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Relapsed/Refractory Diffuse Large B-Cell Lymphoma (DLBCL)",
+      "start_date": "2017-09-05",
+      "completion_date": "2023-10-19",
+      "enrollment": 0,
+      "sponsor": "Autolus Limited"
+    },
+    {
+      "nct_id": "NCT03628612",
+      "title": "Long-term Follow-up of Patients Treated With Genetically Modified Autologous T Cells",
+      "status": "ENROLLING_BY_INVITATION",
+      "phase": "PHASE2",
+      "condition": "Patients Followed for up to 15 Years Following Their First Dose of AUTO CAR T Cell Therapy, Multiple Myeloma, DLBCL, ALL, Adult and Pediatric, T Cell Lymphoma",
+      "start_date": "2018-08-02",
+      "completion_date": "2043-12",
+      "enrollment": 0,
+      "sponsor": "Autolus Limited"
+    },
+    {
+      "nct_id": "NCT07053800",
+      "title": "Obe-cel in Severe, Refractory Systemic Lupus Erythematosus With Active Lupus Nephritis",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Lupus Nephritis",
+      "start_date": "2025-09",
+      "completion_date": "2030-02",
+      "enrollment": 0,
+      "sponsor": "Autolus Limited"
+    },
+    {
+      "nct_id": "NCT07139743",
+      "title": "Obe-cel in Refractory Progressive Forms of Multiple Sclerosis",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Progressive Multiple Sclerosis",
+      "start_date": "2025-08-04",
+      "completion_date": "2029-08-15",
+      "enrollment": 0,
+      "sponsor": "Autolus Limited"
+    },
+    {
+      "nct_id": "NCT06333483",
+      "title": "Obe-cel in Adolescent [Applicable in UK Only] and Adult Severe, Refractory Systemic Lupus Erythematosus",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Systemic Lupus Erythematosus",
+      "start_date": "2024-02-02",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "Autolus Limited"
+    },
+    {
+      "nct_id": "NCT04404660",
+      "title": "A Study of CD19 Targeted CAR T Cell Therapy in Adult Patients With Relapsed or Refractory B Cell Acute Lymphoblastic Leukaemia (ALL)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Relapsed or Refractory B Cell Acute Lymphoblastic Leukemia",
+      "start_date": "2020-06-03",
+      "completion_date": "2029-06-30",
+      "enrollment": 0,
+      "sponsor": "Autolus Limited"
+    },
+    {
+      "nct_id": "NCT06173518",
+      "title": "A Study of CD19 Targeted CAR T Cell Therapy in Pediatric Patients With Relapsed or Refractory B Cell Acute Lymphoblastic Leukemia (B ALL) and Aggressive Mature B-cell Non-Hodgkin Lymphoma (B NHL)",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Relapsed or Refractory B Cell Acute Lymphoblastic Leukemia, Relapsed or Refractory B Cell Non-Hodgkin Lymphoma",
+      "start_date": "2023-11-16",
+      "completion_date": "2027-11",
+      "enrollment": 0,
+      "sponsor": "Autolus Limited"
+    }
+  ],
+  "summary": {
+    "total_trials": 12,
+    "by_phase": {
+      "PHASE1, PHASE2": 5,
+      "": 1,
+      "PHASE2": 3,
+      "PHASE1": 3
+    },
+    "by_status": {
+      "COMPLETED": 2,
+      "AVAILABLE": 1,
+      "TERMINATED": 2,
+      "ENROLLING_BY_INVITATION": 1,
+      "NOT_YET_RECRUITING": 1,
+      "RECRUITING": 4,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 6,
+    "completed_trials": 2,
+    "conditions": [
+      "Acute Lymphocytic Leukemia (ALL)",
+      "B Acute Lymphoblastic Leukemia, Recurrent Childhood Acute Lymphoblastic Leukemia, Refractory Childhood Acute Lymphoblastic Leukemia, B-cell Acute Lymphoblastic Leukemia",
+      "Lupus Nephritis",
+      "Lymphoblastic Leukemia, Acute, Adult, B Cell ALL",
+      "Multiple Myeloma",
+      "Patients Followed for up to 15 Years Following Their First Dose of AUTO CAR T Cell Therapy, Multiple Myeloma, DLBCL, ALL, Adult and Pediatric, T Cell Lymphoma",
+      "Progressive Multiple Sclerosis",
+      "Relapsed or Refractory B Cell Acute Lymphoblastic Leukemia",
+      "Relapsed or Refractory B Cell Acute Lymphoblastic Leukemia, Relapsed or Refractory B Cell Non-Hodgkin Lymphoma",
+      "Relapsed/Refractory Diffuse Large B-Cell Lymphoma (DLBCL)",
+      "Systemic Lupus Erythematosus",
+      "T Cell Non-Hodgkin Lymphoma, Peripheral T-Cell Lymphoma, Not Otherwise Specified, Angioimmunoblastic T-cell Lymphoma, Anaplastic Large Cell Lymphoma"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:16:47.687531",
+    "search_query": "Autolus Therapeutics plc",
+    "url": "https://clinicaltrials.gov/search?term=Autolus+Therapeutics+plc"
+  }
+}

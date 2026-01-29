@@ -111,14 +111,15 @@ def ticker_to_cik(ticker: str) -> Optional[str]:
         print(f"  Warning: CIK resolution failed: {e}")
         return None
 
-def extract_latest_metric(facts_data: dict, metric_name: str, unit: str = 'USD') -> tuple[Optional[float], Optional[str]]:
+def extract_latest_metric(facts_data: dict, metric_name: str, unit: str = 'USD', namespace: str = 'us-gaap') -> tuple[Optional[float], Optional[str]]:
     """
-    Extract latest value for a GAAP metric from SEC company facts.
+    Extract latest value for a GAAP/IFRS metric from SEC company facts.
 
     Args:
         facts_data: Full company facts JSON from SEC
-        metric_name: GAAP metric name (e.g., 'Assets', 'Cash')
+        metric_name: Metric name (e.g., 'Assets', 'Cash')
         unit: Unit type (default 'USD', also can be 'shares', 'USD/shares')
+        namespace: Accounting standard namespace ('us-gaap' or 'ifrs-full')
 
     Returns:
         Tuple of (value, end_date) where:
@@ -126,14 +127,14 @@ def extract_latest_metric(facts_data: dict, metric_name: str, unit: str = 'USD')
         - end_date: Date of the data point (YYYY-MM-DD), or None
     """
     try:
-        # Navigate to us-gaap facts
-        us_gaap = facts_data.get('facts', {}).get('us-gaap', {})
+        # Navigate to specified namespace facts
+        ns_data = facts_data.get('facts', {}).get(namespace, {})
 
-        if metric_name not in us_gaap:
+        if metric_name not in ns_data:
             return None, None
 
         # Get units data
-        metric_data = us_gaap[metric_name]
+        metric_data = ns_data[metric_name]
         units_data = metric_data.get('units', {})
 
         # Try to find the right unit
@@ -160,6 +161,23 @@ def extract_latest_metric(facts_data: dict, metric_name: str, unit: str = 'USD')
     except Exception as e:
         logger.debug(f"Error extracting {metric_name}: {e}")
         return None, None
+
+
+def detect_accounting_standard(facts_data: dict) -> str:
+    """
+    Detect whether company uses US-GAAP or IFRS based on available data.
+
+    Returns:
+        'us-gaap' or 'ifrs-full'
+    """
+    facts = facts_data.get('facts', {})
+    us_gaap = facts.get('us-gaap', {})
+    ifrs = facts.get('ifrs-full', {})
+
+    # If IFRS has more metrics or US-GAAP is empty, use IFRS
+    if len(ifrs) > len(us_gaap) or (len(ifrs) > 0 and len(us_gaap) == 0):
+        return 'ifrs-full'
+    return 'us-gaap'
 
 def fetch_sec_financials(ticker: str, cik: Optional[str] = None) -> dict:
     """
@@ -193,42 +211,73 @@ def fetch_sec_financials(ticker: str, cik: Optional[str] = None) -> dict:
         
         facts_data = response.json()
 
-        # Extract key metrics (try common variations)
-        cash_metrics = ['CashAndCashEquivalentsAtCarryingValue', 'Cash', 'CashAndCashEquivalents']
-        debt_metrics = ['LongTermDebt', 'LongTermDebtNoncurrent', 'DebtCurrent']
-        revenue_metrics = ['Revenues', 'RevenueFromContractWithCustomerExcludingAssessedTax', 'SalesRevenueNet']
+        # Detect accounting standard (US-GAAP vs IFRS)
+        namespace = detect_accounting_standard(facts_data)
+
+        # Define metrics for each standard
+        if namespace == 'ifrs-full':
+            # IFRS metric names
+            cash_metrics = ['CashAndCashEquivalents', 'Cash']
+            debt_metrics = ['NoncurrentLiabilities', 'LongTermBorrowings', 'BorrowingsNoncurrent']
+            revenue_metrics = ['RevenueFromSaleOfGoods', 'Revenue', 'RevenueFromContractsWithCustomers']
+            assets_metric = 'Assets'
+            liabilities_metric = 'Liabilities'
+        else:
+            # US-GAAP metric names
+            cash_metrics = ['CashAndCashEquivalentsAtCarryingValue', 'Cash', 'CashAndCashEquivalents']
+            # Comprehensive debt metrics - try most common first, then alternatives
+            debt_metrics = [
+                'LongTermDebt', 'LongTermDebtNoncurrent', 'DebtCurrent',
+                'ConvertibleDebt', 'ConvertibleDebtNoncurrent',
+                'DebtInstrumentCarryingAmount',
+                'ConvertibleLongTermNotesPayable', 'NotesPayable',
+                'SeniorNotes', 'SecuredDebt', 'UnsecuredDebt'
+            ]
+            revenue_metrics = ['Revenues', 'RevenueFromContractWithCustomerExcludingAssessedTax', 'SalesRevenueNet']
+            assets_metric = 'Assets'
+            liabilities_metric = 'Liabilities'
 
         # Track dates for staleness validation
         data_dates = {}
 
         cash, cash_date = None, None
         for metric in cash_metrics:
-            cash, cash_date = extract_latest_metric(facts_data, metric)
+            cash, cash_date = extract_latest_metric(facts_data, metric, namespace=namespace)
             if cash is not None:
                 data_dates['cash'] = cash_date
                 break
 
         debt, debt_date = None, None
         for metric in debt_metrics:
-            debt, debt_date = extract_latest_metric(facts_data, metric)
+            debt, debt_date = extract_latest_metric(facts_data, metric, namespace=namespace)
             if debt is not None:
                 data_dates['debt'] = debt_date
                 break
 
+        # If no debt found but we have balance sheet data, company is likely debt-free
+        # Set debt to 0 rather than None for accurate coverage calculation
+
         revenue, revenue_date = None, None
         for metric in revenue_metrics:
-            revenue, revenue_date = extract_latest_metric(facts_data, metric)
+            revenue, revenue_date = extract_latest_metric(facts_data, metric, namespace=namespace)
             if revenue is not None:
                 data_dates['revenue'] = revenue_date
                 break
 
-        assets, assets_date = extract_latest_metric(facts_data, 'Assets')
-        liabilities, liabilities_date = extract_latest_metric(facts_data, 'Liabilities')
+        assets, assets_date = extract_latest_metric(facts_data, assets_metric, namespace=namespace)
+        liabilities, liabilities_date = extract_latest_metric(facts_data, liabilities_metric, namespace=namespace)
 
         if assets is not None:
             data_dates['assets'] = assets_date
         if liabilities is not None:
             data_dates['liabilities'] = liabilities_date
+
+        # If company has balance sheet data but no debt found, they're debt-free
+        # Set debt to 0 for accurate coverage (vs null which means "unknown")
+        if debt is None and assets is not None and liabilities is not None:
+            debt = 0.0
+            # Use the assets date as proxy for debt date since balance sheet is complete
+            data_dates['debt'] = assets_date
 
         # Calculate derived metrics
         net_debt = None
@@ -297,7 +346,8 @@ def fetch_sec_financials(ticker: str, cik: Optional[str] = None) -> dict:
                 "source": "SEC EDGAR Company Facts API",
                 "timestamp": datetime.now().isoformat(),
                 "url": f"https://data.sec.gov/api/xbrl/companyfacts/CIK{cik}.json",
-                "cik": cik
+                "cik": cik,
+                "accounting_standard": namespace
             }
         }
 

@@ -1,0 +1,43 @@
+{
+  "ticker": "SUPN",
+  "success": true,
+  "price": {
+    "current": 48.41,
+    "currency": "USD",
+    "day_high": 49.355,
+    "day_low": 48.41,
+    "52_week_high": 57.65,
+    "52_week_low": 29.16
+  },
+  "market_cap": {
+    "value": 2775798016.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 57339350.0,
+  "volume": {
+    "last": 94835,
+    "average_30d": 599983
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": 17.015818,
+    "price_to_book": 2.634271
+  },
+  "company_info": {
+    "name": "Supernus Pharmaceuticals, Inc.",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:10:02.732652",
+    "url": "https://finance.yahoo.com/quote/SUPN",
+    "data_hash": "d71ffdec0735d06a"
+  }
+}

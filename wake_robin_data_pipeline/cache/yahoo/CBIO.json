@@ -1,0 +1,43 @@
+{
+  "ticker": "CBIO",
+  "success": true,
+  "price": {
+    "current": 10.27,
+    "currency": "USD",
+    "day_high": 11.21,
+    "day_low": 10.27,
+    "52_week_high": 37.0,
+    "52_week_low": 9.81
+  },
+  "market_cap": {
+    "value": 312688320.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 27556767.0,
+  "volume": {
+    "last": 99548,
+    "average_30d": 145161
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -3.3782897,
+    "price_to_book": 1.7823672
+  },
+  "company_info": {
+    "name": "Crescent Biopharma, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T12:46:41.297046",
+    "url": "https://finance.yahoo.com/quote/CBIO",
+    "data_hash": "1512347657252e42"
+  }
+}

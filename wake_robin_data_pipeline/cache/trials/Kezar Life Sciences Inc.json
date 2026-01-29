@@ -1,0 +1,114 @@
+{
+  "ticker": "KZR",
+  "company_name": "Kezar Life Sciences, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05047536",
+      "title": "KZR-261 in Subjects With Advanced Solid Malignancies",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Advanced/Metastatic Solid Tumor",
+      "start_date": "2021-09-30",
+      "completion_date": "2025-01-17",
+      "enrollment": 0,
+      "sponsor": "Kezar Life Sciences, Inc."
+    },
+    {
+      "nct_id": "NCT05569759",
+      "title": "A Study of Zetomipzomib (KZR-616) in Patients With Autoimmune Hepatitis (PORTOLA)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Autoimmune Hepatitis",
+      "start_date": "2023-05-23",
+      "completion_date": "2025-04-30",
+      "enrollment": 0,
+      "sponsor": "Kezar Life Sciences, Inc."
+    },
+    {
+      "nct_id": "NCT04033926",
+      "title": "A Phase 2 Study of KZR-616 to Evaluate Safety and Efficacy in Patients With Active Polymyositis or Dermatomyositis",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Polymyositis, Dermatomyositis",
+      "start_date": "2020-01-14",
+      "completion_date": "2022-04-06",
+      "enrollment": 0,
+      "sponsor": "Kezar Life Sciences, Inc."
+    },
+    {
+      "nct_id": "NCT04039477",
+      "title": "A Phase 2 Study to Evaluate the Safety and Efficacy of KZR-616 in Patients With AIHA and ITP",
+      "status": "WITHDRAWN",
+      "phase": "PHASE2",
+      "condition": "Autoimmune Hemolytic Anemia, Immune Thrombocytopenia",
+      "start_date": "2020-07",
+      "completion_date": "2020-08-05",
+      "enrollment": 0,
+      "sponsor": "Kezar Life Sciences, Inc."
+    },
+    {
+      "nct_id": "NCT03393013",
+      "title": "A Study of KZR-616 in Patients With SLE With and Without Lupus Nephritis",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Lupus Nephritis, Systemic Lupus Erythematosus",
+      "start_date": "2018-02-20",
+      "completion_date": "2022-08-04",
+      "enrollment": 0,
+      "sponsor": "Kezar Life Sciences, Inc."
+    },
+    {
+      "nct_id": "NCT05781750",
+      "title": "A Study of Zetomipzomib (KZR-616) in Patients With Active Lupus Nephritis (PALIZADE)",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Lupus Nephritis",
+      "start_date": "2023-11-03",
+      "completion_date": "2024-11-08",
+      "enrollment": 0,
+      "sponsor": "Kezar Life Sciences, Inc."
+    },
+    {
+      "nct_id": "NCT04628936",
+      "title": "Open-label Extension to the Phase 2 Crossover Study (PRESIDIO) Evaluating KZR-616 in Patients With PM and DM.",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Polymyositis, Dermatomyositis",
+      "start_date": "2020-11-04",
+      "completion_date": "2023-06-12",
+      "enrollment": 0,
+      "sponsor": "Kezar Life Sciences, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 7,
+    "by_phase": {
+      "PHASE1": 1,
+      "PHASE2": 5,
+      "PHASE1, PHASE2": 1
+    },
+    "by_status": {
+      "TERMINATED": 2,
+      "COMPLETED": 4,
+      "WITHDRAWN": 1
+    },
+    "active_trials": 0,
+    "completed_trials": 4,
+    "conditions": [
+      "Advanced/Metastatic Solid Tumor",
+      "Autoimmune Hemolytic Anemia, Immune Thrombocytopenia",
+      "Autoimmune Hepatitis",
+      "Lupus Nephritis",
+      "Lupus Nephritis, Systemic Lupus Erythematosus",
+      "Polymyositis, Dermatomyositis"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T13:12:15.508137",
+    "search_query": "Kezar Life Sciences, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Kezar+Life+Sciences,+Inc."
+  }
+}

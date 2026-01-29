@@ -1,0 +1,163 @@
+{
+  "ticker": "GERN",
+  "company_name": "Geron Corporation",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT07320235",
+      "title": "Imetelstat Combinations in Relapsed AML",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Relapsed Acute Myeloid Leukemia",
+      "start_date": "2026-01",
+      "completion_date": "2035-06-15",
+      "enrollment": 0,
+      "sponsor": "Douglas Tremblay"
+    },
+    {
+      "nct_id": "NCT00594126",
+      "title": "Safety and Dose Study of GRN163L Administered to Treat Patients With Refractory or Relapsed Multiple Myeloma",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Multiple Myeloma",
+      "start_date": "2007-11",
+      "completion_date": "2011-07",
+      "enrollment": 0,
+      "sponsor": "Geron Corporation"
+    },
+    {
+      "nct_id": "NCT01243073",
+      "title": "Open Label Study to Evaluate the Activity of Imetelstat in Patients With Essential Thrombocythemia or Polycythemia Vera",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Essential Thrombocythemia, Polycythemia Vera",
+      "start_date": "2010-12",
+      "completion_date": "2015-04",
+      "enrollment": 0,
+      "sponsor": "Geron Corporation"
+    },
+    {
+      "nct_id": "NCT00732056",
+      "title": "A Study of GRN163L With Paclitaxel and Bevacizumab to Treat Patients With Locally Recurrent Or Metastatic Breast Cancer",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Breast Cancer",
+      "start_date": "2008-07",
+      "completion_date": "2012-03",
+      "enrollment": 0,
+      "sponsor": "Geron Corporation"
+    },
+    {
+      "nct_id": "NCT00718601",
+      "title": "Safety and Dose Study of GRN163L and Velcade to Treat Patients With Refractory or Relapsed Myeloma",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Multiple Myeloma",
+      "start_date": "2008-07",
+      "completion_date": "2011-10",
+      "enrollment": 0,
+      "sponsor": "Geron Corporation"
+    },
+    {
+      "nct_id": "NCT05371964",
+      "title": "A Study to Evaluate the Safety, Pharmacokinetics, Pharmacodynamics and Clinical Activity of Imetelstat in Combination With Ruxolitinib in Participants With Myelofibrosis",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Myelofibrosis",
+      "start_date": "2022-05-04",
+      "completion_date": "2028-08",
+      "enrollment": 0,
+      "sponsor": "Geron Corporation"
+    },
+    {
+      "nct_id": "NCT00510445",
+      "title": "Study of GRN163L With Paclitaxel and Carboplatin in Patients With Advanced or Metastatic Non Small Cell Lung Cancer",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Lung Cancer",
+      "start_date": "2007-07",
+      "completion_date": "2011-04",
+      "enrollment": 0,
+      "sponsor": "Geron Corporation"
+    },
+    {
+      "nct_id": "NCT00124189",
+      "title": "Safety and Dose Study of GRN163L to Treat Patients With Chronic Lymphoproliferative Disease(CLD)",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Chronic Lymphoproliferative Diseases",
+      "start_date": "2005-07",
+      "completion_date": "2013-03",
+      "enrollment": 0,
+      "sponsor": "Geron Corporation"
+    },
+    {
+      "nct_id": "NCT02598661",
+      "title": "Study to Evaluate Imetelstat (GRN163L) in Participants With International Prognostic Scoring System (IPSS) Low or Intermediate-1 Risk Myelodysplastic Syndrome (MDS)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Myelodysplastic Syndromes",
+      "start_date": "2016-01-12",
+      "completion_date": "2026-10-13",
+      "enrollment": 0,
+      "sponsor": "Geron Corporation"
+    },
+    {
+      "nct_id": "NCT01265927",
+      "title": "A Study Inhibiting Telomerase to Reverse Trastuzumab Resistance in HER2+ Breast Cancer",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Breast Neoplasms",
+      "start_date": "2011-01",
+      "completion_date": "2015-10",
+      "enrollment": 0,
+      "sponsor": "Indiana University"
+    }
+  ],
+  "summary": {
+    "total_trials": 22,
+    "by_phase": {
+      "PHASE1": 11,
+      "PHASE2": 7,
+      "PHASE2, PHASE3": 1,
+      "PHASE3": 1,
+      "": 1,
+      "NA": 1
+    },
+    "by_status": {
+      "RECRUITING": 3,
+      "COMPLETED": 14,
+      "ACTIVE_NOT_RECRUITING": 3,
+      "APPROVED_FOR_MARKETING": 1,
+      "WITHDRAWN": 1
+    },
+    "active_trials": 6,
+    "completed_trials": 14,
+    "conditions": [
+      "Acute Respiratory Tract Infections, Diarrhea, Malaria, Neonatal Sepsis, Birth Asphyxia",
+      "Breast Cancer",
+      "Breast Neoplasms",
+      "Chronic Lymphoproliferative Diseases",
+      "Essential Thrombocythemia, Polycythemia Vera",
+      "Locally Recurrent or Metastatic Breast Cancer",
+      "Lung Cancer",
+      "Multiple Myeloma",
+      "Myelodysplastic Syndromes",
+      "Myelodysplastic Syndromes, Acute Myeloid Leukemia",
+      "Myelofibrosis",
+      "Neuroblastoma",
+      "Non-small Cell Lung Cancer",
+      "Primary Myelofibrosis, Secondary Myelofibrosis, Myeloid Malignancies",
+      "Recurrent Childhood Acute Myeloid Leukemia, Recurrent Childhood Myelodysplastic Syndrome, Recurrent Juvenile Myelomonocytic Leukemia, Refractory Childhood Acute Myeloid Leukemia, Refractory Childhood Myelodysplastic Syndrome, Refractory Juvenile Myelomonocytic Leukemia",
+      "Relapsed Acute Myeloid Leukemia",
+      "Solid Tumor Malignancies"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:18:32.422152",
+    "search_query": "Geron Corporation",
+    "url": "https://clinicaltrials.gov/search?term=Geron+Corporation"
+  }
+}

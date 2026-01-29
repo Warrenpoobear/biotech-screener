@@ -1,0 +1,65 @@
+{
+  "ticker": "JANX",
+  "company_name": "Janux Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT07291323",
+      "title": "Study of JANX011 in Healthy Adult Volunteers to Assess Safety and Tolerability.",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "EARLY_PHASE1",
+      "condition": "Autoimmune",
+      "start_date": "2026-02",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "Janux Therapeutics"
+    },
+    {
+      "nct_id": "NCT05519449",
+      "title": "Study of JANX007 in Subjects With Metastatic Castration-Resistant Prostate Cancer (ENGAGER-PSMA-01)",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Prostate Cancer, Metastatic Castration-resistant Prostate Cancer, Castration Resistant Prostatic Cancer",
+      "start_date": "2022-09-15",
+      "completion_date": "2028-12",
+      "enrollment": 0,
+      "sponsor": "Janux Therapeutics"
+    },
+    {
+      "nct_id": "NCT05783622",
+      "title": "Study of JANX008 in Subjects With Advanced or Metastatic Solid Tumor Malignancies",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Non-Small Cell Lung Cancer, Renal Cell Carcinoma, Squamous Cell Carcinoma of the Head and Neck, Colorectal Carcinoma, Small Cell Lung Cancer, Pancreatic Ductal Adenocarcinoma, Triple-negative Breast Cancer",
+      "start_date": "2023-04-19",
+      "completion_date": "2027-10",
+      "enrollment": 0,
+      "sponsor": "Janux Therapeutics"
+    }
+  ],
+  "summary": {
+    "total_trials": 3,
+    "by_phase": {
+      "EARLY_PHASE1": 1,
+      "PHASE1": 2
+    },
+    "by_status": {
+      "NOT_YET_RECRUITING": 1,
+      "RECRUITING": 2
+    },
+    "active_trials": 2,
+    "completed_trials": 0,
+    "conditions": [
+      "Autoimmune",
+      "Non-Small Cell Lung Cancer, Renal Cell Carcinoma, Squamous Cell Carcinoma of the Head and Neck, Colorectal Carcinoma, Small Cell Lung Cancer, Pancreatic Ductal Adenocarcinoma, Triple-negative Breast Cancer",
+      "Prostate Cancer, Metastatic Castration-resistant Prostate Cancer, Castration Resistant Prostatic Cancer"
+    ],
+    "lead_stage": "phase_1"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:19:17.248001",
+    "search_query": "Janux Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Janux+Therapeutics,+Inc."
+  }
+}

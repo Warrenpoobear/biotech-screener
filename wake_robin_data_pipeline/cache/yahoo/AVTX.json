@@ -1,0 +1,43 @@
+{
+  "ticker": "AVTX",
+  "success": true,
+  "price": {
+    "current": 15.04,
+    "currency": "USD",
+    "day_high": 15.33,
+    "day_low": 14.82,
+    "52_week_high": 20.72,
+    "52_week_low": 3.39
+  },
+  "market_cap": {
+    "value": 278431840.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 18512757.0,
+  "volume": {
+    "last": 59371,
+    "average_30d": 298857
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -3.3044558,
+    "price_to_book": 2.928919
+  },
+  "company_info": {
+    "name": "Avalo Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T12:46:39.705716",
+    "url": "https://finance.yahoo.com/quote/AVTX",
+    "data_hash": "3801adbbae786b92"
+  }
+}

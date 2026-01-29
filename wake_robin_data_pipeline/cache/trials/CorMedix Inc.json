@@ -1,0 +1,105 @@
+{
+  "ticker": "CRMD",
+  "company_name": "CorMedix Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06714864",
+      "title": "Open-Label Study to Assess Safety and Time to Catheter-related Bloodstream Infections (CRBSI) in Subjects From Birth to < 18 Years of Age",
+      "status": "RECRUITING",
+      "phase": "PHASE4",
+      "condition": "Catheter-Related Infections",
+      "start_date": "2025-07-08",
+      "completion_date": "2026-03",
+      "enrollment": 0,
+      "sponsor": "CorMedix"
+    },
+    {
+      "nct_id": "NCT02651428",
+      "title": "Study Assessing Safety & Effectiveness of a Catheter Lock Solution in Dialysis Patients to Prevent Bloodstream Infection",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Kidney Failure, Chronic, Catheter-Related Infections",
+      "start_date": "2015-12",
+      "completion_date": "2018-10",
+      "enrollment": 0,
+      "sponsor": "CorMedix"
+    },
+    {
+      "nct_id": "NCT01391520",
+      "title": "Efficacy and Safety of Deferiprone in Patients With Chronic Kidney Disease Undergoing a Cardiac Catheterization and Receiving Contrast Agent",
+      "status": "WITHDRAWN",
+      "phase": "PHASE3",
+      "condition": "Acute Kidney Injury",
+      "start_date": "2012-01",
+      "completion_date": "2013-06",
+      "enrollment": 0,
+      "sponsor": "CorMedix"
+    },
+    {
+      "nct_id": "NCT06707480",
+      "title": "Expanded Access Program for Patients At Risk for Catheter-related Infections Who Are Not Eligible for DefenCath\u00ae Clinical Trials",
+      "status": "AVAILABLE",
+      "phase": "",
+      "condition": "Catheter-related Bloodstream Infection",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "CorMedix"
+    },
+    {
+      "nct_id": "NCT01146925",
+      "title": "Deferiprone for the Prevention of Contrast-Induced Acute Kidney Injury",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Contrast-Induced Acute Kidney Injury",
+      "start_date": "2010-06",
+      "completion_date": "2011-06",
+      "enrollment": 0,
+      "sponsor": "CorMedix"
+    },
+    {
+      "nct_id": "NCT06822426",
+      "title": "Comparing The Safety And Efficacy Of DEFENCATH\u00ae In Reducing Central-Line Bloodstream Infections (CLABSIs) In Adults Receiving Total Parenteral Nutrition Through A Central Venous Catheter (CVC)",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Central Line Associated Blood Stream Infections (CLABSI)",
+      "start_date": "2025-05-14",
+      "completion_date": "2027-01",
+      "enrollment": 0,
+      "sponsor": "CorMedix"
+    }
+  ],
+  "summary": {
+    "total_trials": 6,
+    "by_phase": {
+      "PHASE4": 1,
+      "PHASE3": 3,
+      "": 1,
+      "PHASE2": 1
+    },
+    "by_status": {
+      "RECRUITING": 2,
+      "COMPLETED": 2,
+      "WITHDRAWN": 1,
+      "AVAILABLE": 1
+    },
+    "active_trials": 2,
+    "completed_trials": 2,
+    "conditions": [
+      "Acute Kidney Injury",
+      "Catheter-Related Infections",
+      "Catheter-related Bloodstream Infection",
+      "Central Line Associated Blood Stream Infections (CLABSI)",
+      "Contrast-Induced Acute Kidney Injury",
+      "Kidney Failure, Chronic, Catheter-Related Infections"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:17:41.452898",
+    "search_query": "CorMedix Inc.",
+    "url": "https://clinicaltrials.gov/search?term=CorMedix+Inc."
+  }
+}

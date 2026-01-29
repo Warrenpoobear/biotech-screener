@@ -1,0 +1,154 @@
+{
+  "ticker": "MIST",
+  "company_name": "Milestone Pharmaceuticals Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT02378727",
+      "title": "CompuFlo\u00ae Assessment Study for the Epidural Space Verification",
+      "status": "UNKNOWN",
+      "phase": "NA",
+      "condition": "Verification of Needle Tip Placement in the Lumbar Epidural Space",
+      "start_date": "2015-01",
+      "completion_date": "2016-07",
+      "enrollment": 0,
+      "sponsor": "Milestone Scientific, Inc"
+    },
+    {
+      "nct_id": "NCT03920345",
+      "title": "Endoscopic Electrothermic Procedure of the Sacroiliac Joint",
+      "status": "TERMINATED",
+      "phase": "NA",
+      "condition": "Chronic Lower Back Pain (CLBP), SIJ Arthropathy",
+      "start_date": "2018-06-08",
+      "completion_date": "2019-05-16",
+      "enrollment": 0,
+      "sponsor": "joimax, Inc."
+    },
+    {
+      "nct_id": "NCT05763953",
+      "title": "The NODE-202 Study (Study of Etripamil Nasal Spray in Pediatric Patients)",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Paroxysmal Supraventricular Tachycardia",
+      "start_date": "2023-12-11",
+      "completion_date": "2027-06-30",
+      "enrollment": 0,
+      "sponsor": "Milestone Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT04072835",
+      "title": "Safety Study of Etripamil Nasal Spray for Patients With Paroxysmal Supraventricular Tachycardia. NODE-303",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Paroxysmal Supraventricular Tachycardia",
+      "start_date": "2019-09-23",
+      "completion_date": "2023-01-26",
+      "enrollment": 0,
+      "sponsor": "Milestone Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT02982226",
+      "title": "ReNu\u2122 vs. Corticosteroids for the Treatment of Plantar Fasciitis",
+      "status": "UNKNOWN",
+      "phase": "NA",
+      "condition": "Fasciitis, Plantar",
+      "start_date": "2016-09",
+      "completion_date": "2021-04",
+      "enrollment": 0,
+      "sponsor": "NuTech Medical, Inc"
+    },
+    {
+      "nct_id": "NCT03353610",
+      "title": "The PSVT Place Registry.Paroxysmal Supraventricular Tachycardia (PSVT) Registry.",
+      "status": "TERMINATED",
+      "phase": "",
+      "condition": "Paroxysmal Supraventricular Tachycardia (PSVT)",
+      "start_date": "2017-10-16",
+      "completion_date": "2020-03-16",
+      "enrollment": 0,
+      "sponsor": "Milestone Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT03635996",
+      "title": "Safety Study of Intranasal Etripamil for the Termination of Spontaneous Episodes of Paroxysmal Supraventricular Tachycardia (PSVT). NODE-302",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Paroxysmal Supraventricular Tachycardia",
+      "start_date": "2018-12-10",
+      "completion_date": "2020-11-13",
+      "enrollment": 0,
+      "sponsor": "Milestone Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT04467905",
+      "title": "ReVeRA-201: Etripamil in Atrial Fibrillation, Phase 2",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Atrial Fibrillation",
+      "start_date": "2020-11-19",
+      "completion_date": "2023-08-10",
+      "enrollment": 0,
+      "sponsor": "Milestone Pharmaceuticals Inc."
+    },
+    {
+      "nct_id": "NCT05410860",
+      "title": "Efficacy and Safety Study of Etripamil Nasal Spray Self-Administration for the Termination of Spontaneous Episodes of Paroxysmal Supraventricular Tachycardia",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Tachycardia, Supraventricular, Paroxysmal Supraventricular Tachycardia",
+      "start_date": "2022-06-30",
+      "completion_date": "2024-12-10",
+      "enrollment": 0,
+      "sponsor": "Corxel Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT03464019",
+      "title": "Efficacy and Safety of Etripamil for the Termination of Spontaneous Paroxysmal Supraventricular Tachycardia (PSVT).",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Paroxysmal Supraventricular Tachycardia",
+      "start_date": "2018-06-18",
+      "completion_date": "2023-01-20",
+      "enrollment": 0,
+      "sponsor": "Milestone Pharmaceuticals Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 14,
+    "by_phase": {
+      "NA": 3,
+      "PHASE2": 3,
+      "PHASE3": 6,
+      "": 1,
+      "PHASE1": 1
+    },
+    "by_status": {
+      "UNKNOWN": 2,
+      "TERMINATED": 4,
+      "RECRUITING": 1,
+      "COMPLETED": 5,
+      "ENROLLING_BY_INVITATION": 1,
+      "NOT_YET_RECRUITING": 1
+    },
+    "active_trials": 2,
+    "completed_trials": 5,
+    "conditions": [
+      "Atrial Fibrillation",
+      "Chronic Lower Back Pain (CLBP), SIJ Arthropathy",
+      "Fasciitis, Plantar",
+      "Healthy Chinese Subjects",
+      "Paroxysmal Supraventricular Tachycardia",
+      "Paroxysmal Supraventricular Tachycardia (PSVT)",
+      "Tachycardia, Supraventricular, Paroxysmal Supraventricular Tachycardia",
+      "Verification of Needle Tip Placement in the Lumbar Epidural Space"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:36:09.167884",
+    "search_query": "Milestone Pharmaceuticals Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Milestone+Pharmaceuticals+Inc."
+  }
+}

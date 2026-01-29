@@ -1,0 +1,43 @@
+{
+  "ticker": "ONC",
+  "success": true,
+  "price": {
+    "current": 350.08,
+    "currency": "USD",
+    "day_high": 353.0,
+    "day_low": 345.5418,
+    "52_week_high": 385.22,
+    "52_week_low": 196.45
+  },
+  "market_cap": {
+    "value": 38739132416.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 101807539.0,
+  "volume": {
+    "last": 83342,
+    "average_30d": 283206
+  },
+  "valuation": {
+    "pe_ratio": 660.5283,
+    "forward_pe": 55.20617,
+    "price_to_book": 9.378483
+  },
+  "company_info": {
+    "name": "BeOne Medicines AG",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:43.938230",
+    "url": "https://finance.yahoo.com/quote/ONC",
+    "data_hash": "4b9d4b0f4a27b320"
+  }
+}

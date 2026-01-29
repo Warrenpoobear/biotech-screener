@@ -1,0 +1,43 @@
+{
+  "ticker": "DYN",
+  "success": true,
+  "price": {
+    "current": 17.58,
+    "currency": "USD",
+    "day_high": 18.06,
+    "day_low": 17.305,
+    "52_week_high": 25.0,
+    "52_week_low": 6.36
+  },
+  "market_cap": {
+    "value": 2894586368.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 164652236.0,
+  "volume": {
+    "last": 724868,
+    "average_30d": 2108971
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -5.29542,
+    "price_to_book": 3.623995
+  },
+  "company_info": {
+    "name": "Dyne Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:06:14.097117",
+    "url": "https://finance.yahoo.com/quote/DYN",
+    "data_hash": "eb59df5c5403cdb5"
+  }
+}

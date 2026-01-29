@@ -1,0 +1,125 @@
+{
+  "ticker": "CTNM",
+  "company_name": "Contineum Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06810245",
+      "title": "Study of PIPE-791 for Subjects With Chronic Osteoarthritis Pain or Chronic Low Back Pain",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Chronic Osteoarthritis Pain, Chronic Low Back Pain",
+      "start_date": "2025-02-04",
+      "completion_date": "2026-02-15",
+      "enrollment": 0,
+      "sponsor": "Contineum Therapeutics"
+    },
+    {
+      "nct_id": "NCT05983939",
+      "title": "Study Evaluating Safety and Tolerability of Escalating Single and Multiple Doses of PIPE-791 and Food Effect in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Multiple Sclerosis",
+      "start_date": "2023-06-26",
+      "completion_date": "2024-02-01",
+      "enrollment": 0,
+      "sponsor": "Contineum Therapeutics"
+    },
+    {
+      "nct_id": "NCT07284459",
+      "title": "Study to Evaluate the Efficacy, Safety, and Tolerability of PIPE 791 in Subjects With Idiopathic Pulmonary Fibrosis",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Idiopathic Pulmonary Fibrosis",
+      "start_date": "2025-12",
+      "completion_date": "2028-06",
+      "enrollment": 0,
+      "sponsor": "Contineum Therapeutics"
+    },
+    {
+      "nct_id": "NCT06083753",
+      "title": "Study to Evaluate the Safety and Efficacy of PIPE-307 in Subjects With Relapsing-Remitting Multiple Sclerosis",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Relapsing Remitting Multiple Sclerosis",
+      "start_date": "2023-11-06",
+      "completion_date": "2025-08-04",
+      "enrollment": 0,
+      "sponsor": "Contineum Therapeutics"
+    },
+    {
+      "nct_id": "NCT04462198",
+      "title": "Phase I/IIa Study Evaluating Safety and Efficacy of an Intratympanic Dose of PIPE-505 in Subjects With Hearing Loss",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Sensorineural Hearing Loss",
+      "start_date": "2020-10-15",
+      "completion_date": "2021-06-17",
+      "enrollment": 0,
+      "sponsor": "Contineum Therapeutics"
+    },
+    {
+      "nct_id": "NCT04941781",
+      "title": "PET Study to Determine the Relationship Between Plasma Concentrations and Muscarinic Type 1 Receptor (M1AChR) Occupancy of PIPE-307 in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Multiple Sclerosis",
+      "start_date": "2021-09-01",
+      "completion_date": "2021-11-10",
+      "enrollment": 0,
+      "sponsor": "Contineum Therapeutics"
+    },
+    {
+      "nct_id": "NCT06683612",
+      "title": "PET Study of PIPE-791 in Healthy Volunteers and Volunteers With PrMS and IPF",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Idiopathic Pulmonary Fibrosis (IPF), Idiopathic Pulmonary Fibrosis, Multiple Sclerosis, Multiple Sclerosis, MS, Multiple Sclerosis, Primary Progressive, Multiple Sclerosis, Progressive, Multiple Sclerosis, Secondary Progressive, Healthy, Healthy Volunteers",
+      "start_date": "2024-12-09",
+      "completion_date": "2025-06-12",
+      "enrollment": 0,
+      "sponsor": "Contineum Therapeutics"
+    },
+    {
+      "nct_id": "NCT04725175",
+      "title": "Phase I Study Evaluating Safety and Tolerability of Escalating Single and Multiple Doses of of PIPE-307 and Food Effect in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Multiple Sclerosis",
+      "start_date": "2021-02-26",
+      "completion_date": "2021-09-01",
+      "enrollment": 0,
+      "sponsor": "Contineum Therapeutics"
+    }
+  ],
+  "summary": {
+    "total_trials": 8,
+    "by_phase": {
+      "PHASE1": 5,
+      "PHASE2": 2,
+      "PHASE1, PHASE2": 1
+    },
+    "by_status": {
+      "ACTIVE_NOT_RECRUITING": 1,
+      "COMPLETED": 6,
+      "RECRUITING": 1
+    },
+    "active_trials": 2,
+    "completed_trials": 6,
+    "conditions": [
+      "Chronic Osteoarthritis Pain, Chronic Low Back Pain",
+      "Idiopathic Pulmonary Fibrosis",
+      "Idiopathic Pulmonary Fibrosis (IPF), Idiopathic Pulmonary Fibrosis, Multiple Sclerosis, Multiple Sclerosis, MS, Multiple Sclerosis, Primary Progressive, Multiple Sclerosis, Progressive, Multiple Sclerosis, Secondary Progressive, Healthy, Healthy Volunteers",
+      "Multiple Sclerosis",
+      "Relapsing Remitting Multiple Sclerosis",
+      "Sensorineural Hearing Loss"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:17:50.920892",
+    "search_query": "Contineum Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Contineum+Therapeutics,+Inc."
+  }
+}

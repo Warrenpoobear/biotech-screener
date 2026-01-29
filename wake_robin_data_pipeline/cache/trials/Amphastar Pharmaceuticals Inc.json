@@ -1,0 +1,149 @@
+{
+  "ticker": "AMPH",
+  "company_name": "Amphastar Pharmaceuticals, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT01174732",
+      "title": "Dose-Ranging Study of A006 DPI, in Adult Asthma Patients",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Asthma, Bronchospasm",
+      "start_date": "2010-07",
+      "completion_date": "2011-01",
+      "enrollment": 0,
+      "sponsor": "Amphastar Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT01025648",
+      "title": "Randomized, Placebo/Active Crossover Dose-ranging Study for Safety and Efficacy in Asthma Patients.",
+      "status": "TERMINATED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Asthma",
+      "start_date": "2009-12",
+      "completion_date": "2009-12",
+      "enrollment": 0,
+      "sponsor": "Amphastar Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT02271334",
+      "title": "Evaluation of Pharmacokinetics and Safety of A006 in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Asthma",
+      "start_date": "2014-08",
+      "completion_date": "2015-03",
+      "enrollment": 0,
+      "sponsor": "Amphastar Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT00634517",
+      "title": "4-Week Study of Efficacy, Safety and PK of Albuterol-HFA Versus Proventil-HFA in Pediatric Asthma",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Asthma",
+      "start_date": "2008-03",
+      "completion_date": "2008-12",
+      "enrollment": 0,
+      "sponsor": "Amphastar Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT01255709",
+      "title": "Epinephrine Inhalation Aerosol USP, CLINICAL STUDY-B3 FOR ASSESSMENT OF PHARMACOKINETICS",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Asthma",
+      "start_date": "2010-12",
+      "completion_date": "2011-01",
+      "enrollment": 0,
+      "sponsor": "Amphastar Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT00634829",
+      "title": "Single-Dose Cross-Over Study of the Effects of Albuterol-HFA in Exercise Induced Bronchoconstriction",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Asthma, Bronchospasm",
+      "start_date": "2008-02",
+      "completion_date": "2008-10",
+      "enrollment": 0,
+      "sponsor": "Amphastar Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT01737892",
+      "title": "Assessment and Evaluation of Pharmacokinetic Profile of E004 in Healthy Adults",
+      "status": "TERMINATED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Asthma",
+      "start_date": "2012-11",
+      "completion_date": "2012-11",
+      "enrollment": 0,
+      "sponsor": "Amphastar Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT02210806",
+      "title": "Albuterol DPI (A006) Clinical Study-B3:Efficacy, Dose-ranging and Safety Evaluation",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Asthma",
+      "start_date": "2014-07",
+      "completion_date": "2014-10",
+      "enrollment": 0,
+      "sponsor": "Amphastar Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT00635505",
+      "title": "Controlled, 12-Week Study of Albuterol HFA Versus the Active Control, Proventil(R)-HFA in Asthmatic Patients",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Asthma",
+      "start_date": "2007-09",
+      "completion_date": "2008-08",
+      "enrollment": 0,
+      "sponsor": "Amphastar Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT01581177",
+      "title": "Albuterol DPI (A006) Clinical Study-B2: Efficacy, Dose-Ranging and Initial Safety Evaluation",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Asthma",
+      "start_date": "2012-04",
+      "completion_date": "2012-08",
+      "enrollment": 0,
+      "sponsor": "Amphastar Pharmaceuticals, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 20,
+    "by_phase": {
+      "PHASE2": 7,
+      "PHASE1, PHASE2": 4,
+      "PHASE3": 7,
+      "PHASE4": 1,
+      "PHASE2, PHASE3": 1
+    },
+    "by_status": {
+      "COMPLETED": 15,
+      "TERMINATED": 5
+    },
+    "active_trials": 0,
+    "completed_trials": 15,
+    "conditions": [
+      "Allergic Skin Reaction",
+      "Asthma",
+      "Asthma, Bronchospasm",
+      "Asthma, Bronchospasm, Chronic Obstructive Pulmonary Disease (COPD)",
+      "Asthma, Bronchospasm, Wheezing, Shortness of Breath",
+      "Pharmacokinetics, Epinephrine, Albuterol, Asthma, Anaphylaxis",
+      "Pharmacokinetics, Pharmacodynamics"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:16:20.066692",
+    "search_query": "Amphastar Pharmaceuticals, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Amphastar+Pharmaceuticals,+Inc."
+  }
+}

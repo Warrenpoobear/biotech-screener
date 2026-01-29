@@ -1,0 +1,129 @@
+{
+  "ticker": "SRRK",
+  "company_name": "Scholar Rock Holding Corporatio",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04291079",
+      "title": "SRK-181 Alone or in Combination With Anti-PD-(L)1 Antibody Therapy in Patients With Locally Advanced or Metastatic Solid Tumors (DRAGON)",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Cancer",
+      "start_date": "2020-04-23",
+      "completion_date": "2025-04-14",
+      "enrollment": 0,
+      "sponsor": "Scholar Rock, Inc."
+    },
+    {
+      "nct_id": "NCT06877689",
+      "title": "EAP of Apitegromab for Patients With Spinal Muscular Atrophy",
+      "status": "AVAILABLE",
+      "phase": "",
+      "condition": "SMA",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Scholar Rock, Inc."
+    },
+    {
+      "nct_id": "NCT07047144",
+      "title": "A Study to Evaluate How Apitegromab Works in Subjects Who Are Less Than 2 Years Old and Have Spinal Muscular Atrophy",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Spinal Muscular Atrophy, SMA, Spinal Muscular Atrophy Type 2, Spinal Muscular Atrophy Type 3, Neuromuscular Manifestations, Anti-myostatin",
+      "start_date": "2025-09-15",
+      "completion_date": "2029-03",
+      "enrollment": 0,
+      "sponsor": "Scholar Rock, Inc."
+    },
+    {
+      "nct_id": "NCT06445075",
+      "title": "Efficacy and Safety of Apitegromab for the Treatment of Adults Who Are Overweight or Obese",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Overweight and Obesity",
+      "start_date": "2024-05-21",
+      "completion_date": "2025-06-17",
+      "enrollment": 0,
+      "sponsor": "Scholar Rock, Inc."
+    },
+    {
+      "nct_id": "NCT06419322",
+      "title": "Acceptability, Feasibility, Safety and Efficacy of a Optimized Rehabilitation Program for Treated Patients With Spinal Muscular Atrophy (SMA).",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "NA",
+      "condition": "Spinal Muscular Atrophy",
+      "start_date": "2024-06-01",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "University of Oxford"
+    },
+    {
+      "nct_id": "NCT03921528",
+      "title": "An Active Treatment Study of SRK-015 in Patients With Type 2 or Type 3 Spinal Muscular Atrophy",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Spinal Muscular Atrophy, Spinal Muscular Atrophy Type 3, Spinal Muscular Atrophy Type 2, SMA, Neuromuscular Diseases, Muscular Atrophy, Atrophy, Muscular Atrophy, Spinal, Neuromuscular Manifestations",
+      "start_date": "2019-04-22",
+      "completion_date": "2024-02-28",
+      "enrollment": 0,
+      "sponsor": "Scholar Rock, Inc."
+    },
+    {
+      "nct_id": "NCT05156320",
+      "title": "Efficacy and Safety of Apitegromab in Patients With Later-Onset Spinal Muscular Atrophy Treated With Nusinersen or Risdiplam",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Spinal Muscular Atrophy, Spinal Muscular Atrophy Type 3, Spinal Muscular Atrophy Type 2, SMA, Neuromuscular Diseases, Muscular Atrophy, Atrophy, Muscular Atrophy, Spinal, Neuromuscular Manifestations, Anti-myostatin",
+      "start_date": "2022-04-14",
+      "completion_date": "2024-12-18",
+      "enrollment": 0,
+      "sponsor": "Scholar Rock, Inc."
+    },
+    {
+      "nct_id": "NCT05626855",
+      "title": "Long-Term Safety & Efficacy of Apitegromab in Patients With SMA Who Completed Previous Trials of Apitegromab",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Spinal Muscular Atrophy, Spinal Muscular Atrophy Type 3, Spinal Muscular Atrophy Type 2, SMA, Neuromuscular Diseases, Muscular Atrophy, Atrophy, Muscular Atrophy, Spinal, Neuromuscular Manifestations, Anti-myostatin",
+      "start_date": "2023-04-17",
+      "completion_date": "2029-05-02",
+      "enrollment": 0,
+      "sponsor": "Scholar Rock, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 8,
+    "by_phase": {
+      "PHASE1": 1,
+      "": 1,
+      "PHASE2": 3,
+      "NA": 1,
+      "PHASE3": 2
+    },
+    "by_status": {
+      "COMPLETED": 4,
+      "AVAILABLE": 1,
+      "RECRUITING": 1,
+      "ACTIVE_NOT_RECRUITING": 2
+    },
+    "active_trials": 3,
+    "completed_trials": 4,
+    "conditions": [
+      "Cancer",
+      "Overweight and Obesity",
+      "SMA",
+      "Spinal Muscular Atrophy",
+      "Spinal Muscular Atrophy, SMA, Spinal Muscular Atrophy Type 2, Spinal Muscular Atrophy Type 3, Neuromuscular Manifestations, Anti-myostatin",
+      "Spinal Muscular Atrophy, Spinal Muscular Atrophy Type 3, Spinal Muscular Atrophy Type 2, SMA, Neuromuscular Diseases, Muscular Atrophy, Atrophy, Muscular Atrophy, Spinal, Neuromuscular Manifestations",
+      "Spinal Muscular Atrophy, Spinal Muscular Atrophy Type 3, Spinal Muscular Atrophy Type 2, SMA, Neuromuscular Diseases, Muscular Atrophy, Atrophy, Muscular Atrophy, Spinal, Neuromuscular Manifestations, Anti-myostatin"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:22:05.017243",
+    "search_query": "Scholar Rock Holding Corporatio",
+    "url": "https://clinicaltrials.gov/search?term=Scholar+Rock+Holding+Corporatio"
+  }
+}

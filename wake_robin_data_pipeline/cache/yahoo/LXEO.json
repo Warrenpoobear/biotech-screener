@@ -1,0 +1,43 @@
+{
+  "ticker": "LXEO",
+  "success": true,
+  "price": {
+    "current": 7.43,
+    "currency": "USD",
+    "day_high": 7.55,
+    "day_low": 7.2601,
+    "52_week_high": 10.99,
+    "52_week_low": 1.45
+  },
+  "market_cap": {
+    "value": 542295808.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 72987327.0,
+  "volume": {
+    "last": 79188,
+    "average_30d": 1199540
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -5.3234553,
+    "price_to_book": 3.3772726
+  },
+  "company_info": {
+    "name": "Lexeo Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:07:52.241042",
+    "url": "https://finance.yahoo.com/quote/LXEO",
+    "data_hash": "282a2f7e1b0e7dfc"
+  }
+}

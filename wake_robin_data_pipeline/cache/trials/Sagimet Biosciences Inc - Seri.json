@@ -1,0 +1,155 @@
+{
+  "ticker": "SGMT",
+  "company_name": "Sagimet Biosciences Inc. - Seri",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04906421",
+      "title": "Study of TVB-2640 in Subjects With Nonalcoholic Steatohepatitis (NASH)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Metabolic Dysfunction-assocated Steatohepatitis/ Nonalcoholic Fatty Liver Disease",
+      "start_date": "2021-08-12",
+      "completion_date": "2023-10-02",
+      "enrollment": 0,
+      "sponsor": "Sagimet Biosciences Inc."
+    },
+    {
+      "nct_id": "NCT07216313",
+      "title": "A Drug-Drug Interaction Study of Denifanstat and Resmetirom in Healthy Adult Participants",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2025-09-30",
+      "completion_date": "2025-10-20",
+      "enrollment": 0,
+      "sponsor": "Sagimet Biosciences Inc."
+    },
+    {
+      "nct_id": "NCT06594523",
+      "title": "A Phase 3 Study Evaluating the Safety and Efficacy of Denifanstat in Patients With MASH and F2/F3 Fibrosis",
+      "status": "WITHDRAWN",
+      "phase": "PHASE3",
+      "condition": "MASH, NASH, Metabolic Dysfunction-associated Steatohepatitis, Noncirrhotic Metabolic Dysfunction-associated Steatohepatitis, Nonalcoholic Steatohepatitis, Nonalcoholic Fatty Liver",
+      "start_date": "2025-03",
+      "completion_date": "2030-12",
+      "enrollment": 0,
+      "sponsor": "Sagimet Biosciences Inc."
+    },
+    {
+      "nct_id": "NCT06692283",
+      "title": "A Phase 3 Study Evaluating the Safety and Efficacy of Denifanstat in Patients With MASLD and MASH",
+      "status": "WITHDRAWN",
+      "phase": "PHASE3",
+      "condition": "MASLD, MASH, NASH, Metabolic Dysfunction-Associated Steatotic Liver Disease, Metabolic Dysfunction-Associated Steatohepatitis, Nonalcoholic Steatohepatitis, Nonalcoholic Fatty Liver",
+      "start_date": "2025-03",
+      "completion_date": "2027-06",
+      "enrollment": 0,
+      "sponsor": "Sagimet Biosciences Inc."
+    },
+    {
+      "nct_id": "NCT05657834",
+      "title": "Open-label Study of the Absorption, Metabolism, and Excretion of [14C]TVB-2640 Following a Single Oral Dose in Healthy Male Subjects",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2022-11-21",
+      "completion_date": "2022-12-21",
+      "enrollment": 0,
+      "sponsor": "Sagimet Biosciences Inc."
+    },
+    {
+      "nct_id": "NCT03938246",
+      "title": "Study of TVB-2640 in Subjects With Non-Alcoholic Steatohepatitis (NASH)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "MASLD/MASH (Metabolic Dysfunction-Associated Steatotic Liver Disease / Metabolic Dysfunction-Associated Steatohepatitis)",
+      "start_date": "2019-03-22",
+      "completion_date": "2021-10-02",
+      "enrollment": 0,
+      "sponsor": "Sagimet Biosciences Inc."
+    },
+    {
+      "nct_id": "NCT05835180",
+      "title": "A Phase I Pharmacokinetic Study of TVB-2640 (Denifanstat) in Subjects With Mild, Moderate, or Severe Hepatic Impairment Compared to Subjects With Normal Hepatic Function",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Non-alcoholic Steatohepatitis, Hepatic Impairment, Cirrhosis",
+      "start_date": "2023-05-01",
+      "completion_date": "2023-12-18",
+      "enrollment": 0,
+      "sponsor": "Sagimet Biosciences Inc."
+    },
+    {
+      "nct_id": "NCT05743621",
+      "title": "Study of TVB-2640 in Men With Metastatic Castration-Resistant Prostate Cancer",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Prostatic Neoplasms, Castration-Resistant",
+      "start_date": "2023-11-20",
+      "completion_date": "2029-01-25",
+      "enrollment": 0,
+      "sponsor": "Weill Medical College of Cornell University"
+    },
+    {
+      "nct_id": "NCT02223247",
+      "title": "A Phase 1, First-In-Human Study of Escalating Doses of Oral TVB-2640 in Patients With Solid Tumors",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Solid Malignant Tumor",
+      "start_date": "2013-11",
+      "completion_date": "2017-06",
+      "enrollment": 0,
+      "sponsor": "Sagimet Biosciences Inc."
+    },
+    {
+      "nct_id": "NCT06989840",
+      "title": "Phase 1 Study to Evaluate the Safety, Tolerability, PK, and PD of TVB-3567 in Healthy Participants With or Without Acne",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Acne",
+      "start_date": "2025-05-19",
+      "completion_date": "2026-01-01",
+      "enrollment": 0,
+      "sponsor": "Sagimet Biosciences Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 12,
+    "by_phase": {
+      "PHASE2": 3,
+      "PHASE1": 6,
+      "PHASE3": 2,
+      "PHASE1, PHASE2": 1
+    },
+    "by_status": {
+      "COMPLETED": 7,
+      "WITHDRAWN": 2,
+      "RECRUITING": 2,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 3,
+    "completed_trials": 7,
+    "conditions": [
+      "Acne",
+      "Healthy",
+      "Healthy Volunteers",
+      "KRAS Gene Mutation",
+      "MASH, NASH, Metabolic Dysfunction-associated Steatohepatitis, Noncirrhotic Metabolic Dysfunction-associated Steatohepatitis, Nonalcoholic Steatohepatitis, Nonalcoholic Fatty Liver",
+      "MASLD, MASH, NASH, Metabolic Dysfunction-Associated Steatotic Liver Disease, Metabolic Dysfunction-Associated Steatohepatitis, Nonalcoholic Steatohepatitis, Nonalcoholic Fatty Liver",
+      "MASLD/MASH (Metabolic Dysfunction-Associated Steatotic Liver Disease / Metabolic Dysfunction-Associated Steatohepatitis)",
+      "Metabolic Dysfunction-assocated Steatohepatitis/ Nonalcoholic Fatty Liver Disease",
+      "Metabolic Syndrome",
+      "Non-alcoholic Steatohepatitis, Hepatic Impairment, Cirrhosis",
+      "Prostatic Neoplasms, Castration-Resistant",
+      "Solid Malignant Tumor"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:21:49.868317",
+    "search_query": "Sagimet Biosciences Inc. - Seri",
+    "url": "https://clinicaltrials.gov/search?term=Sagimet+Biosciences+Inc.+-+Seri"
+  }
+}

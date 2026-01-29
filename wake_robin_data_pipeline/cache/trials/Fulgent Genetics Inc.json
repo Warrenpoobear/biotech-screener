@@ -1,0 +1,39 @@
+{
+  "ticker": "FLGT",
+  "company_name": "Fulgent Genetics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04994015",
+      "title": "Parkinson's Foundation PD GENEration Genetic Registry",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Parkinson's Disease",
+      "start_date": "2020-12-20",
+      "completion_date": "2026-07-01",
+      "enrollment": 0,
+      "sponsor": "Parkinson's Foundation"
+    }
+  ],
+  "summary": {
+    "total_trials": 1,
+    "by_phase": {
+      "": 1
+    },
+    "by_status": {
+      "RECRUITING": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 0,
+    "conditions": [
+      "Parkinson's Disease"
+    ],
+    "lead_stage": "unknown"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:18:27.407188",
+    "search_query": "Fulgent Genetics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Fulgent+Genetics,+Inc."
+  }
+}

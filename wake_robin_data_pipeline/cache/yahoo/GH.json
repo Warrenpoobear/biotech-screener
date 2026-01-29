@@ -1,0 +1,43 @@
+{
+  "ticker": "GH",
+  "success": true,
+  "price": {
+    "current": 107.38,
+    "currency": "USD",
+    "day_high": 109.61,
+    "day_low": 105.78,
+    "52_week_high": 120.74,
+    "52_week_low": 34.88
+  },
+  "market_cap": {
+    "value": 13945915392.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 129874421.0,
+  "volume": {
+    "last": 368107,
+    "average_30d": 1831909
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -74.589645,
+    "price_to_book": -37.863186
+  },
+  "company_info": {
+    "name": "Guardant Health, Inc.",
+    "sector": "Healthcare",
+    "industry": "Diagnostics & Research"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:06:43.231585",
+    "url": "https://finance.yahoo.com/quote/GH",
+    "data_hash": "d4ee59595dba0d74"
+  }
+}

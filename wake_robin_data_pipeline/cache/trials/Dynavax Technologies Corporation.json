@@ -1,0 +1,167 @@
+{
+  "ticker": "DVAX",
+  "company_name": "Dynavax Technologies Corporation",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05506969",
+      "title": "Trial of the Immunogenicity, Safety, and Tolerability of rF1V Vaccine With CpG 1018\u00ae Adjuvant Compared With rF1V Vaccine in Adults 18 to 55 Years of Age",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Plague, Pneumonic, Plague, Vaccine-Preventable Diseases",
+      "start_date": "2022-08-09",
+      "completion_date": "2024-04-26",
+      "enrollment": 0,
+      "sponsor": "Dynavax Technologies Corporation"
+    },
+    {
+      "nct_id": "NCT03664648",
+      "title": "DV2-HBV-27: Observational Pregnancy Registry",
+      "status": "UNKNOWN",
+      "phase": "",
+      "condition": "Pregnant",
+      "start_date": "2021-02-21",
+      "completion_date": "2024-12",
+      "enrollment": 0,
+      "sponsor": "Dynavax Technologies Corporation"
+    },
+    {
+      "nct_id": "NCT04193189",
+      "title": "B-Enhancement of HBV Vaccination in Persons Living With HIV (BEe-HIVe): Evaluation of HEPLISAV-B",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "HIV Infection, Hepatitis B",
+      "start_date": "2020-12-14",
+      "completion_date": "2024-08-13",
+      "enrollment": 0,
+      "sponsor": "National Institute of Allergy and Infectious Diseases (NIAID)"
+    },
+    {
+      "nct_id": "NCT01282762",
+      "title": "Long-Term Study on Safety and Immunogenicity of HEPLISAV\u2122 and Engerix-B\u00ae in Adults With Chronic Kidney Disease",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Chronic Kidney Disease",
+      "start_date": "2010-12",
+      "completion_date": "2013-08",
+      "enrollment": 0,
+      "sponsor": "Dynavax Technologies Corporation"
+    },
+    {
+      "nct_id": "NCT01005407",
+      "title": "Safety and Immunogenicity Study of the Hepatitis B Virus (HBV) Vaccine, HEPLISAV Compared to Engerix-B Vaccine",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Healthy",
+      "start_date": "2010-02",
+      "completion_date": "2011-05",
+      "enrollment": 0,
+      "sponsor": "Dynavax Technologies Corporation"
+    },
+    {
+      "nct_id": "NCT00387738",
+      "title": "Efficacy and Safety Study of TOLAMBA\u2122 in Ragweed-Allergic Adults",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Rhinitis, Allergic, Seasonal",
+      "start_date": "2006-04",
+      "completion_date": "2008-03",
+      "enrollment": 0,
+      "sponsor": "Dynavax Technologies Corporation"
+    },
+    {
+      "nct_id": "NCT04385524",
+      "title": "Use of Dynavax Heplisav B in Healthcare Workers Previously Vaccinated With 3-dose Vaccine Who Failed to Demonstrate Seroprotection",
+      "status": "WITHDRAWN",
+      "phase": "NA",
+      "condition": "Hepatitis B Virus",
+      "start_date": "2020-06-01",
+      "completion_date": "2021-02-28",
+      "enrollment": 0,
+      "sponsor": "University of Louisville"
+    },
+    {
+      "nct_id": "NCT00985426",
+      "title": "Comparing Safety and Immunogenicity of HEPLISAV-B\u00ae to Engerix-B\u00ae in Chronic Kidney Disease (CKD) Patients",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Chronic Kidney Disease",
+      "start_date": "2009-09",
+      "completion_date": "2012-01",
+      "enrollment": 0,
+      "sponsor": "Dynavax Technologies Corporation"
+    },
+    {
+      "nct_id": "NCT03326752",
+      "title": "Phase 1b DV281 With an Anti-PD-1 Inhibitor in NSCLC",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Advanced Non Small Cell Lung Cancer",
+      "start_date": "2017-09-20",
+      "completion_date": "2019-09-19",
+      "enrollment": 0,
+      "sponsor": "Dynavax Technologies Corporation"
+    },
+    {
+      "nct_id": "NCT00537355",
+      "title": "An Evaluation of the Efficacy and Safety of TOLAMBA\u2122 for Ragweed-Allergic Rhinitis in an Environmental Exposure Chamber",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Rhinitis, Allergic, Seasonal",
+      "start_date": "2007-09",
+      "completion_date": "2008-05",
+      "enrollment": 0,
+      "sponsor": "Dynavax Technologies Corporation"
+    }
+  ],
+  "summary": {
+    "total_trials": 30,
+    "by_phase": {
+      "PHASE2": 7,
+      "": 2,
+      "PHASE3": 6,
+      "NA": 1,
+      "PHASE1": 11,
+      "PHASE1, PHASE2": 3
+    },
+    "by_status": {
+      "COMPLETED": 21,
+      "UNKNOWN": 1,
+      "TERMINATED": 5,
+      "WITHDRAWN": 1,
+      "RECRUITING": 2
+    },
+    "active_trials": 2,
+    "completed_trials": 21,
+    "conditions": [
+      "Advanced Non Small Cell Lung Cancer",
+      "B-cell Lymphoma",
+      "Chronic Hepatitis C",
+      "Chronic Kidney Disease",
+      "Colorectal Neoplasms",
+      "End Stage Renal Disease",
+      "End Stage Renal Disease on Hemodialysis (Diagnosis)",
+      "HIV Infection, Hepatitis B",
+      "HIV Infections",
+      "Healthy",
+      "Hepatitis B",
+      "Hepatitis B Virus",
+      "Hepatitis B, Chronic",
+      "Metastatic Melanoma, Head Neck Cancer",
+      "Metastatic Pancreatic Adenocarcinoma, Refractory Pancreatic Adenocarcinoma, Stage IV Pancreatic Cancer AJCC v8",
+      "Non-Hodgkin's Lymphoma",
+      "Plague, Pneumonic, Plague, Vaccine-Preventable Diseases",
+      "Pregnant",
+      "Prevention of Pneumonic Plague Resulting From Aerosol Exposure to Yersenia Pestis",
+      "Rhinitis, Allergic, Seasonal",
+      "Shingles, Herpes Zoster, Vaccine-Preventable Diseases"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:18:03.117971",
+    "search_query": "Dynavax Technologies Corporation",
+    "url": "https://clinicaltrials.gov/search?term=Dynavax+Technologies+Corporation"
+  }
+}

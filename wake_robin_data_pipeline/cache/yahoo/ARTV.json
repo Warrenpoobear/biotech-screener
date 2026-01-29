@@ -1,0 +1,43 @@
+{
+  "ticker": "ARTV",
+  "success": true,
+  "price": {
+    "current": 4.3,
+    "currency": "USD",
+    "day_high": 4.51,
+    "day_low": 4.2072,
+    "52_week_high": 7.36,
+    "52_week_low": 1.47
+  },
+  "market_cap": {
+    "value": 105543088.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 24544904.0,
+  "volume": {
+    "last": 61768,
+    "average_30d": 198146
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -1.6731519,
+    "price_to_book": 0.8167142
+  },
+  "company_info": {
+    "name": "Artiva Biotherapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:04:45.868870",
+    "url": "https://finance.yahoo.com/quote/ARTV",
+    "data_hash": "9db2ae07e01d4f95"
+  }
+}

@@ -1,0 +1,181 @@
+{
+  "ticker": "MNKD",
+  "company_name": "MannKind Corporation",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT02527265",
+      "title": "Afrezza Safety and Pharmacokinetics Study in Pediatric Patients",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Type 1 Diabetes Mellitus",
+      "start_date": "2017-09-28",
+      "completion_date": "2020-06-25",
+      "enrollment": 0,
+      "sponsor": "Mannkind Corporation"
+    },
+    {
+      "nct_id": "NCT01798914",
+      "title": "Patient Transitioning From Exubera\u00ae Inhalation Powder to Technosphere\u00ae Insulin Inhalation Powder",
+      "status": "NO_LONGER_AVAILABLE",
+      "phase": "",
+      "condition": "Type 1 Diabetes, Type 2 Diabetes",
+      "start_date": "2008-10",
+      "completion_date": "2015-05",
+      "enrollment": 0,
+      "sponsor": "Mannkind Corporation"
+    },
+    {
+      "nct_id": "NCT00419302",
+      "title": "To Compare the Effect of Inhaled Insulin With Subcutaneously Injected Insulin in Subjects With Type 2 Diabetes Mellitus.",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Diabetes Mellitus, Type 2",
+      "start_date": "2003-10",
+      "completion_date": "2004-04",
+      "enrollment": 0,
+      "sponsor": "Mannkind Corporation"
+    },
+    {
+      "nct_id": "NCT00308308",
+      "title": "Efficacy & Safety of Inhaled Insulin in Type 1 Diabetes",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Diabetes, Type I",
+      "start_date": "2006-02",
+      "completion_date": "2008-08",
+      "enrollment": 0,
+      "sponsor": "Mannkind Corporation"
+    },
+    {
+      "nct_id": "NCT00539890",
+      "title": "Comparison Between Technosphere/Insulin Inhalation Powder Versus Rapid Acting Insulin in Subjects With Type 2 Diabetes Mellitus",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Diabetes Type 2",
+      "start_date": "2005-11",
+      "completion_date": "2006-07",
+      "enrollment": 0,
+      "sponsor": "Mannkind Corporation"
+    },
+    {
+      "nct_id": "NCT01196104",
+      "title": "Clinical Trial Evaluating the Efficacy and Safety of Technosphere\u00ae Inhalation Insulin (TI) Inhalation Powder Using the Gen2 Inhaler",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "Type 2 Diabetes",
+      "start_date": "2010-09",
+      "completion_date": "2012-03",
+      "enrollment": 0,
+      "sponsor": "Mannkind Corporation"
+    },
+    {
+      "nct_id": "NCT00934414",
+      "title": "Clamp Study Comparing Inhalation of Technosphere\u00ae/Insulin in Smokers and Non-Smokers With Type 2 Diabetes",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Diabetes Type 2",
+      "start_date": "2004-08",
+      "completion_date": "2006-09",
+      "enrollment": 0,
+      "sponsor": "Mannkind Corporation"
+    },
+    {
+      "nct_id": "NCT00570687",
+      "title": "A Study Comparing Subcutaneous Rapid Acting Insulin and One Formulation of Inhaled Insulin in Subjects With Type 2 Diabetes",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Diabetes Mellitus, Type 2",
+      "start_date": "2007-09",
+      "completion_date": "2009-01",
+      "enrollment": 0,
+      "sponsor": "Mannkind Corporation"
+    },
+    {
+      "nct_id": "NCT06418711",
+      "title": "ICoN-1 Phase 3 Study of the Efficacy and Safety of Treatment With MNKD-101, Clofazimine Inhalation Suspension",
+      "status": "TERMINATED",
+      "phase": "PHASE3",
+      "condition": "MAC Lung Disease, Treatment Refractory MAC Lung Disease, Mycobacterium Infections, Nontuberculous",
+      "start_date": "2024-09-11",
+      "completion_date": "2025-11-10",
+      "enrollment": 0,
+      "sponsor": "Mannkind Corporation"
+    },
+    {
+      "nct_id": "NCT01544881",
+      "title": "Comparison of Technosphere Insulin Inhalation Powder & Subcutaneous Rapid-Acting Analog in Subjects With Type 1 Diabetes",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Type 1 Diabetes Mellitus",
+      "start_date": "2012-03",
+      "completion_date": "2013-01",
+      "enrollment": 0,
+      "sponsor": "Mannkind Corporation"
+    }
+  ],
+  "summary": {
+    "total_trials": 50,
+    "by_phase": {
+      "PHASE2": 11,
+      "": 4,
+      "PHASE3": 11,
+      "PHASE1": 15,
+      "NA": 1,
+      "PHASE4": 6,
+      "PHASE1, PHASE2": 1,
+      "PHASE2, PHASE3": 1
+    },
+    "by_status": {
+      "COMPLETED": 36,
+      "NO_LONGER_AVAILABLE": 1,
+      "TERMINATED": 7,
+      "WITHDRAWN": 1,
+      "RECRUITING": 3,
+      "UNKNOWN": 2
+    },
+    "active_trials": 3,
+    "completed_trials": 36,
+    "conditions": [
+      "Advanced Melanoma, Stage III and IV Melanoma",
+      "Chronic Obstructive Pulmonary Disease (COPD)",
+      "Diabetes",
+      "Diabetes Mellitus, Type 1",
+      "Diabetes Mellitus, Type 1, Diabetes Mellitus, Type 2",
+      "Diabetes Mellitus, Type 1, Diabetes Mellitus, Type 2, Asthma",
+      "Diabetes Mellitus, Type 2",
+      "Diabetes Mellitus, Type 2, Diabetes Mellitus, Type 1",
+      "Diabetes Mellitus, Upper Respiratory Infection",
+      "Diabetes Mellitus: Type 1",
+      "Diabetes Type 2",
+      "Diabetes, Gestational, Pregnancy Complications, Glucose Metabolism Disorders, Glucose Intolerance During Pregnancy",
+      "Diabetes, Type 1, Diabetes, Type 2",
+      "Diabetes, Type I",
+      "Healthy Subjects",
+      "Healthy Volunteers",
+      "Idiopathic Pulmonary Fibrosis (IPF)",
+      "MAC Lung Disease, Treatment Refractory MAC Lung Disease, Mycobacterium Infections, Nontuberculous",
+      "Melanoma (Skin)",
+      "Mild Nephropathy, Moderate Nephropathy, Diabetes Mellitus",
+      "Ovarian, Melanoma, Renal, Prostate, Colorectal, Endometrial Carcinoma, Cervical Carcinoma, Testicular Cancer, Thyroid Cancer, Small Cell Lung Carcinoma, Mesothelioma, Breast Carcinoma, Esophageal Carcinoma, Gastric Cancer, Pancreatic Carcinoma, Neuroendocrine Cancer, Liver Cancer, Gallbladder Cancer, Biliary Tract Cancer, Anal Carcinoma, Bone Sarcomas, Soft Tissue Sarcomas, Carcinoma of Unknown Origin, Primary",
+      "Pulmonary Arterial Hypertension",
+      "Stage III Melanoma, Stage IV Melanoma",
+      "Type 1 Diabetes",
+      "Type 1 Diabetes Mellitus",
+      "Type 1 Diabetes Mellitus, Type 2 Diabetes Mellitus",
+      "Type 1 Diabetes Mellitus, Type 2 Diabetes Mellitus, Moderate Chronic Obstructive Pulmonary Disease, Asthma",
+      "Type 1 Diabetes, Type 2 Diabetes",
+      "Type 2 Diabetes",
+      "Type 2 Diabetes Mellitus",
+      "Type 2 Diabetes Treated With Insulin",
+      "Type2 Diabetes"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:20:02.890862",
+    "search_query": "MannKind Corporation",
+    "url": "https://clinicaltrials.gov/search?term=MannKind+Corporation"
+  }
+}

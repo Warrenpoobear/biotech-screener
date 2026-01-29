@@ -1,0 +1,43 @@
+{
+  "ticker": "KRYS",
+  "success": true,
+  "price": {
+    "current": 277.0,
+    "currency": "USD",
+    "day_high": 283.61,
+    "day_low": 273.03,
+    "52_week_high": 295.98,
+    "52_week_low": 122.8
+  },
+  "market_cap": {
+    "value": 8032312832.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 28997519.0,
+  "volume": {
+    "last": 35216,
+    "average_30d": 292664
+  },
+  "valuation": {
+    "pe_ratio": 41.467068,
+    "forward_pe": 32.9919,
+    "price_to_book": 7.055707
+  },
+  "company_info": {
+    "name": "Krystal Biotech, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:07:35.589690",
+    "url": "https://finance.yahoo.com/quote/KRYS",
+    "data_hash": "d66f09bd8d1958fe"
+  }
+}

@@ -1,0 +1,150 @@
+{
+  "ticker": "MDGL",
+  "company_name": "Madrigal Pharmaceuticals, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT03413124",
+      "title": "Bioavailability Study of MGL-3196 Tablets Compared to Capsules",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2018-02-05",
+      "completion_date": "2018-03-13",
+      "enrollment": 0,
+      "sponsor": "Madrigal Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT03900429",
+      "title": "A Phase 3 Study to Evaluate the Efficacy and Safety of MGL-3196 (Resmetirom) in Patients With NASH and Fibrosis",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "NASH - Nonalcoholic Steatohepatitis",
+      "start_date": "2019-03-28",
+      "completion_date": "2028-01",
+      "enrollment": 0,
+      "sponsor": "Madrigal Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT07335601",
+      "title": "Study to Evaluate Resmetirom in Post-Liver Transplant Patients With MASH",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "MASH - Metabolic Dysfunction-Associated Steatohepatitis",
+      "start_date": "2025-12-29",
+      "completion_date": "2027-12",
+      "enrollment": 0,
+      "sponsor": "Madrigal Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT04197479",
+      "title": "A Phase 3 Study to Evaluate Safety and Biomarkers of Resmetirom (MGL-3196) in Non Alcoholic Fatty Liver Disease Patients",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Non-Alcoholic Fatty Liver Disease",
+      "start_date": "2019-12-16",
+      "completion_date": "2023-01-06",
+      "enrollment": 0,
+      "sponsor": "Madrigal Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT02542969",
+      "title": "Drug Interaction Study of MGL-3196 With Rosuvastatin and Simvastatin",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2015-09",
+      "completion_date": "2015-10",
+      "enrollment": 0,
+      "sponsor": "Madrigal Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT05500222",
+      "title": "A Phase 3 Study to Evaluate the Effect of Resmetirom on Clinical Outcomes in Patients With Well-compensated NASH Cirrhosis (MAESTRO-NASH-OUTCOMES)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "NASH, Cirrhosis, Liver",
+      "start_date": "2022-08-26",
+      "completion_date": "2027-01",
+      "enrollment": 0,
+      "sponsor": "Madrigal Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT04671069",
+      "title": "Drug Interaction Study of MGL-3196 With Clopidogrel",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2019-07-26",
+      "completion_date": "2019-09-14",
+      "enrollment": 0,
+      "sponsor": "Madrigal Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT04951219",
+      "title": "A Phase 3 Study to Evaluate Safety and Biomarkers of Resmetirom (MGL-3196) in Patients With Non-alcoholic Fatty Liver Disease (NAFLD), MAESTRO-NAFLD-Open-Label-Extension (MAESTRO-NAFLD-OLE)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Non-Alcoholic Fatty Liver Disease",
+      "start_date": "2021-07-09",
+      "completion_date": "2026-04",
+      "enrollment": 0,
+      "sponsor": "Madrigal Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT02912260",
+      "title": "Phase 2 Study of MGL-3196 in Patients With Non-Alcoholic Steatohepatitis (NASH)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Non-alcoholic Steatohepatitis",
+      "start_date": "2016-10-18",
+      "completion_date": "2021-11-23",
+      "enrollment": 0,
+      "sponsor": "Madrigal Pharmaceuticals, Inc."
+    },
+    {
+      "nct_id": "NCT02749578",
+      "title": "Drug Interaction Study of MGL-3196 With Atorvastatin",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy",
+      "start_date": "2016-04",
+      "completion_date": "2016-05",
+      "enrollment": 0,
+      "sponsor": "Madrigal Pharmaceuticals, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 17,
+    "by_phase": {
+      "PHASE1": 10,
+      "PHASE3": 4,
+      "PHASE2": 3
+    },
+    "by_status": {
+      "COMPLETED": 13,
+      "ACTIVE_NOT_RECRUITING": 4
+    },
+    "active_trials": 4,
+    "completed_trials": 13,
+    "conditions": [
+      "Drug Safety",
+      "Healthy",
+      "Hepatic Impairment, NASH - Nonalcoholic Steatohepatitis, Cirrhosis, Liver",
+      "Heterozygous Familial Hypercholesterolemia",
+      "MASH - Metabolic Dysfunction-Associated Steatohepatitis",
+      "NASH - Nonalcoholic Steatohepatitis",
+      "NASH, Cirrhosis, Liver",
+      "Non-Alcoholic Fatty Liver Disease",
+      "Non-alcoholic Steatohepatitis",
+      "Renal Impairment"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:19:52.699789",
+    "search_query": "Madrigal Pharmaceuticals, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Madrigal+Pharmaceuticals,+Inc."
+  }
+}

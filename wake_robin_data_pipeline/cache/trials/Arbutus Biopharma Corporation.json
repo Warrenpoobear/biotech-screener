@@ -1,0 +1,153 @@
+{
+  "ticker": "ABUS",
+  "company_name": "Arbutus Biopharma Corporation",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT00927459",
+      "title": "Study to Evaluate the Safety, Tolerability, Pharmacokinetics (PK), and Pharmacodynamics (PD) of Liposomal siRNA in Subjects With High Cholesterol",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Hypercholesterolemia",
+      "start_date": "2009-06",
+      "completion_date": "2010-01",
+      "enrollment": 0,
+      "sponsor": "Arbutus Biopharma Corporation"
+    },
+    {
+      "nct_id": "NCT04775797",
+      "title": "Safety, Tolerability, and Pharmacokinetics of AB-836 in Healthy Subjects and Subjects With Chronic HBV Infection",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Chronic Hepatitis",
+      "start_date": "2021-06-25",
+      "completion_date": "2022-11-17",
+      "enrollment": 0,
+      "sponsor": "Arbutus Biopharma Corporation"
+    },
+    {
+      "nct_id": "NCT01262235",
+      "title": "A Dose Finding Study of TKM-080301 Infusion in Neuroendocrine Tumors (NET) and Adrenocortical Carcinoma (ACC) Patients",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Cancer, Neuroendocrine Tumors, NET, Adrenocortical Carcinoma, ACC",
+      "start_date": "2010-12",
+      "completion_date": "2015-08",
+      "enrollment": 0,
+      "sponsor": "Arbutus Biopharma Corporation"
+    },
+    {
+      "nct_id": "NCT02041715",
+      "title": "Safety, Tolerability and Pharmacokinetic First in Human (FIH) Study for Intravenous (IV) TKM-100802",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Ebola Virus Infection",
+      "start_date": "2014-01",
+      "completion_date": "2015-07",
+      "enrollment": 0,
+      "sponsor": "Arbutus Biopharma Corporation"
+    },
+    {
+      "nct_id": "NCT02631096",
+      "title": "Study of ARB-001467 in Subjects With Chronic HBV Infection Receiving Nucleos(t)Ide Analogue Therapy",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Hepatitis B, Chronic",
+      "start_date": "2015-12",
+      "completion_date": "2018-05-18",
+      "enrollment": 0,
+      "sponsor": "Arbutus Biopharma Corporation"
+    },
+    {
+      "nct_id": "NCT04980482",
+      "title": "Open-Label Study of AB-729, Nucleos(t)Ide Analogue and Pegylated Interferon Alfa-2a in Subjects With Chronic Hepatitis B Infection",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Chronic Hepatitis b",
+      "start_date": "2021-10-29",
+      "completion_date": "2025-05-21",
+      "enrollment": 0,
+      "sponsor": "Arbutus Biopharma Corporation"
+    },
+    {
+      "nct_id": "NCT06277037",
+      "title": "Long-Term Follow-up Study for Subjects With CHB Previously Treated With Imdusiran (AB729)",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Long Term Follow-up",
+      "start_date": "2024-07-11",
+      "completion_date": "2029-10-30",
+      "enrollment": 0,
+      "sponsor": "Arbutus Biopharma Corporation"
+    },
+    {
+      "nct_id": "NCT01518881",
+      "title": "Safety, Tolerability and Pharmacokinetic First in Human (FIH) Study of Intravenous (IV) TKM-100201 Infusion",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Ebola Virus Infection",
+      "start_date": "2012-01",
+      "completion_date": "2012-07",
+      "enrollment": 0,
+      "sponsor": "Arbutus Biopharma Corporation"
+    },
+    {
+      "nct_id": "NCT05960240",
+      "title": "Safety, Tolerability, PK & PD of AB-101 Following Oral Administration in Healthy and CHB Subjects.",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Chronic Hepatitis b",
+      "start_date": "2023-08-30",
+      "completion_date": "2026-04",
+      "enrollment": 0,
+      "sponsor": "Arbutus Biopharma Corporation"
+    },
+    {
+      "nct_id": "NCT02191878",
+      "title": "Safety, Pharmacokinetics and Preliminary Anti-Tumor Activity of Intravenous TKM-080301 in Subjects With Advanced Hepatocellular Carcinoma",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Hepatocellular Carcinoma, Hepatoma, Liver Cancer, Adult, Liver Cell Carcinoma, Adult",
+      "start_date": "2014-06",
+      "completion_date": "2016-07",
+      "enrollment": 0,
+      "sponsor": "Arbutus Biopharma Corporation"
+    }
+  ],
+  "summary": {
+    "total_trials": 13,
+    "by_phase": {
+      "PHASE1": 5,
+      "PHASE1, PHASE2": 2,
+      "PHASE2": 5,
+      "": 1
+    },
+    "by_status": {
+      "TERMINATED": 5,
+      "COMPLETED": 4,
+      "RECRUITING": 2,
+      "ACTIVE_NOT_RECRUITING": 1,
+      "WITHDRAWN": 1
+    },
+    "active_trials": 3,
+    "completed_trials": 4,
+    "conditions": [
+      "Cancer, Neuroendocrine Tumors, NET, Adrenocortical Carcinoma, ACC",
+      "Chronic Hepatitis",
+      "Chronic Hepatitis B",
+      "Chronic Hepatitis b",
+      "Ebola Virus Infection",
+      "Hepatitis B, Chronic",
+      "Hepatocellular Carcinoma, Hepatoma, Liver Cancer, Adult, Liver Cell Carcinoma, Adult",
+      "Hypercholesterolemia",
+      "Long Term Follow-up"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:15:53.126276",
+    "search_query": "Arbutus Biopharma Corporation",
+    "url": "https://clinicaltrials.gov/search?term=Arbutus+Biopharma+Corporation"
+  }
+}

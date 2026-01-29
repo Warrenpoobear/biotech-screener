@@ -1,0 +1,43 @@
+{
+  "ticker": "JANX",
+  "success": true,
+  "price": {
+    "current": 13.81,
+    "currency": "USD",
+    "day_high": 14.15,
+    "day_low": 13.7686,
+    "52_week_high": 46.095,
+    "52_week_low": 12.8
+  },
+  "market_cap": {
+    "value": 830641280.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 60147807.0,
+  "volume": {
+    "last": 201334,
+    "average_30d": 1703437
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -4.6444683,
+    "price_to_book": 0.8502647
+  },
+  "company_info": {
+    "name": "Janux Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:07:26.737880",
+    "url": "https://finance.yahoo.com/quote/JANX",
+    "data_hash": "0b084af54345a6af"
+  }
+}

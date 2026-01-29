@@ -1,0 +1,43 @@
+{
+  "ticker": "MRVI",
+  "success": true,
+  "price": {
+    "current": 3.43,
+    "currency": "USD",
+    "day_high": 3.45,
+    "day_low": 3.3518,
+    "52_week_high": 5.22,
+    "52_week_low": 1.665
+  },
+  "market_cap": {
+    "value": 1256720896.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 145022751.0,
+  "volume": {
+    "last": 297904,
+    "average_30d": 1092250
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -16.333334,
+    "price_to_book": 2.0224056
+  },
+  "company_info": {
+    "name": "Maravai LifeSciences Holdings, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:14.903281",
+    "url": "https://finance.yahoo.com/quote/MRVI",
+    "data_hash": "e0d7af2fd0277c1f"
+  }
+}

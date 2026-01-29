@@ -1,0 +1,154 @@
+{
+  "ticker": "ALXO",
+  "company_name": "ALX Oncology Holdings Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04417517",
+      "title": "A Study of Evorpacept (ALX148) With Azacitidine for Higher Risk Myelodysplastic Syndrome (ASPEN-02)",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Higher Risk Myelodysplastic Syndromes",
+      "start_date": "2020-10-02",
+      "completion_date": "2025-06-10",
+      "enrollment": 0,
+      "sponsor": "ALX Oncology Inc."
+    },
+    {
+      "nct_id": "NCT04675333",
+      "title": "Evorpacept (ALX148) in Combination With Pembrolizumab and Chemotherapy in Patients With Advanced Head and Neck Squamous Cell Carcinoma (ASPEN-04)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Head and Neck Cancer, Head and Neck Squamous Cell Carcinoma",
+      "start_date": "2021-05-10",
+      "completion_date": "2026-06-30",
+      "enrollment": 0,
+      "sponsor": "ALX Oncology Inc."
+    },
+    {
+      "nct_id": "NCT07007559",
+      "title": "ASPEN-09: A Study of Evorpacept in Combination With Anti-cancer Therapies in Advanced / Metastatic Malignancies",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Breast Cancer, Metastatic",
+      "start_date": "2025-04-28",
+      "completion_date": "2027-12",
+      "enrollment": 0,
+      "sponsor": "ALX Oncology Inc."
+    },
+    {
+      "nct_id": "NCT05167409",
+      "title": "A Study of Evorpacept (ALX148) With Cetuximab and Pembrolizumab for Refractory Microsatellite Stable Metastatic Colorectal Cancer",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Microsatellite Stable Metastatic Colorectal Cancer",
+      "start_date": "2022-07-28",
+      "completion_date": "2026-03-01",
+      "enrollment": 0,
+      "sponsor": "University of Colorado, Denver"
+    },
+    {
+      "nct_id": "NCT05524545",
+      "title": "A Study of Evorpacept (ALX148) With Enfortumab Vedotin for Subjects With Urothelial Carcinoma (ASPEN-07)",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Bladder Cancer, Urothelial Carcinoma",
+      "start_date": "2022-11-02",
+      "completion_date": "2025-06-27",
+      "enrollment": 0,
+      "sponsor": "ALX Oncology Inc."
+    },
+    {
+      "nct_id": "NCT04675294",
+      "title": "Evorpacept (ALX148) in Combination With Pembrolizumab in Patients With Advanced Head and Neck Squamous Cell Carcinoma (ASPEN-03)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Head and Neck Cancer, Head and Neck Squamous Cell Carcinoma",
+      "start_date": "2021-04-02",
+      "completion_date": "2026-06-30",
+      "enrollment": 0,
+      "sponsor": "ALX Oncology Inc."
+    },
+    {
+      "nct_id": "NCT07085091",
+      "title": "A First in Human Study of ALX2004 With Advanced or Metastatic Selected Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "NSCLC (Advanced Non-small Cell Lung Cancer), HNSCC, CRC (Colorectal Cancer), ESCC, Colo-rectal Cancer, Head and Neck Cancer, Esophageal Squamous Cell Carcinoma (ESCC)",
+      "start_date": "2025-08-18",
+      "completion_date": "2027-12",
+      "enrollment": 0,
+      "sponsor": "ALX Oncology Inc."
+    },
+    {
+      "nct_id": "NCT05027139",
+      "title": "A Study of Zanidatamab (ZW25) With Evorpacept (ALX148) in Patients With Advanced HER2-expressing Cancer",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "HER2-expressing Cancers",
+      "start_date": "2021-09-15",
+      "completion_date": "2025-09-30",
+      "enrollment": 0,
+      "sponsor": "Jazz Pharmaceuticals"
+    },
+    {
+      "nct_id": "NCT05002127",
+      "title": "A Study of Evorpacept (ALX148) in Patients With Advanced HER2+ Gastric Cancer (ASPEN-06)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Gastric Cancer, Gastroesophageal Junction Adenocarcinoma, Gastric Adenocarcinoma",
+      "start_date": "2022-01-15",
+      "completion_date": "2026-06",
+      "enrollment": 0,
+      "sponsor": "ALX Oncology Inc."
+    },
+    {
+      "nct_id": "NCT05467670",
+      "title": "Safety and Efficacy of Anti-CD47, ALX148 in Combination with Liposomal Doxorubicin and Pembrolizumab in Recurrent Platinum-resistant Ovarian Cancer",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Ovarian Cancer",
+      "start_date": "2023-03-30",
+      "completion_date": "2031-12-31",
+      "enrollment": 0,
+      "sponsor": "Alexander B Olawaiye, MD"
+    }
+  ],
+  "summary": {
+    "total_trials": 12,
+    "by_phase": {
+      "PHASE1": 5,
+      "PHASE2": 4,
+      "PHASE1, PHASE2": 2,
+      "PHASE2, PHASE3": 1
+    },
+    "by_status": {
+      "TERMINATED": 2,
+      "ACTIVE_NOT_RECRUITING": 4,
+      "RECRUITING": 3,
+      "COMPLETED": 3
+    },
+    "active_trials": 7,
+    "completed_trials": 3,
+    "conditions": [
+      "Acute Myeloid Leukemia, AML, Adult",
+      "Bladder Cancer, Urothelial Carcinoma",
+      "Breast Cancer, Metastatic",
+      "Gastric Cancer, Gastroesophageal Junction Adenocarcinoma, Gastric Adenocarcinoma",
+      "HER2-expressing Cancers",
+      "Head and Neck Cancer, Head and Neck Squamous Cell Carcinoma",
+      "Higher Risk Myelodysplastic Syndromes",
+      "Metastatic Cancer, Solid Tumor, Advanced Cancer, NonHodgkin Lymphoma",
+      "Microsatellite Stable Metastatic Colorectal Cancer",
+      "NSCLC (Advanced Non-small Cell Lung Cancer), HNSCC, CRC (Colorectal Cancer), ESCC, Colo-rectal Cancer, Head and Neck Cancer, Esophageal Squamous Cell Carcinoma (ESCC)",
+      "Ovarian Cancer"
+    ],
+    "lead_stage": "phase_2"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T14:00:09.094593",
+    "search_query": "ALX Oncology Holdings Inc.",
+    "url": "https://clinicaltrials.gov/search?term=ALX+Oncology+Holdings+Inc."
+  }
+}

@@ -1,0 +1,157 @@
+{
+  "ticker": "ALT",
+  "company_name": "Altimmune, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05134662",
+      "title": "ALT-801 in Overweight and Obese Subjects With Type 2 Diabetes Mellitus (T2DM)",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Type 2 Diabetes",
+      "start_date": "2022-02-01",
+      "completion_date": "2023-03-09",
+      "enrollment": 0,
+      "sponsor": "Altimmune, Inc."
+    },
+    {
+      "nct_id": "NCT04972396",
+      "title": "Pemvidutide (ALT-801) DDI Study in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "NASH - Nonalcoholic Steatohepatitis",
+      "start_date": "2021-09-15",
+      "completion_date": "2022-05-15",
+      "enrollment": 0,
+      "sponsor": "Altimmune, Inc."
+    },
+    {
+      "nct_id": "NCT05295875",
+      "title": "Efficacy and Safety of ALT-801 in the Treatment of Obesity",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Obesity/Overweight",
+      "start_date": "2022-03-31",
+      "completion_date": "2023-09-28",
+      "enrollment": 0,
+      "sponsor": "Altimmune, Inc."
+    },
+    {
+      "nct_id": "NCT02496897",
+      "title": "Phase I Safety and Immunogenicity of FP-02.2 in Chronic Hepatitis B",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Hepatitis B",
+      "start_date": "2015-07",
+      "completion_date": "2018-06-05",
+      "enrollment": 0,
+      "sponsor": "Altimmune, Inc."
+    },
+    {
+      "nct_id": "NCT04561245",
+      "title": "ALT-801 (Pemvidutide) in Healthy Overweight and Obese Volunteers to Study Safety and Tolerability",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Obesity, Nonalcoholic Steatohepatitis",
+      "start_date": "2020-11-10",
+      "completion_date": "2021-10-29",
+      "enrollment": 0,
+      "sponsor": "Altimmune, Inc."
+    },
+    {
+      "nct_id": "NCT03232567",
+      "title": "Single-ascending-dose Study of the Safety and Immunogenicity of NasoVAX",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Influenza",
+      "start_date": "2017-09-18",
+      "completion_date": "2018-06-15",
+      "enrollment": 0,
+      "sponsor": "Altimmune, Inc."
+    },
+    {
+      "nct_id": "NCT04679909",
+      "title": "Safety and Immunogenicity of AdCOVID in Healthy Adults (COVID-19 Vaccine Study)",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteers",
+      "start_date": "2021-02-25",
+      "completion_date": "2022-12-21",
+      "enrollment": 0,
+      "sponsor": "Altimmune, Inc."
+    },
+    {
+      "nct_id": "NCT00755703",
+      "title": "Safety and Immunogenicity Study of Adenovirus-vectored, Intranasal Pandemic Influenza Vaccine.",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Influenza A Subtype H5N1 Infection",
+      "start_date": "2008-10",
+      "completion_date": "2011-12",
+      "enrollment": 0,
+      "sponsor": "Altimmune, Inc."
+    },
+    {
+      "nct_id": "NCT07009860",
+      "title": "RESTORE TRIAL: A Phase 2 Study Evaluating the Efficacy and Safety of Pemvidutide in the Treatment of Alcohol-Associated Liver Disease (ALD)",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Alcohol Liver Disease",
+      "start_date": "2025-06-16",
+      "completion_date": "2027-08-31",
+      "enrollment": 0,
+      "sponsor": "Altimmune, Inc."
+    },
+    {
+      "nct_id": "NCT06987513",
+      "title": "RECLAIM STUDY: A Phase 2 Evaluating the Efficacy and Safety of Pemvidutide in the Treatment of Alcohol Use Disorder (AUD) in Subjects With Obesity or Overweight",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Alcohol Use Disorder (AUD)",
+      "start_date": "2025-05-15",
+      "completion_date": "2026-06",
+      "enrollment": 0,
+      "sponsor": "Altimmune, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 19,
+    "by_phase": {
+      "PHASE1": 10,
+      "PHASE2": 7,
+      "PHASE4": 1,
+      "": 1
+    },
+    "by_status": {
+      "COMPLETED": 15,
+      "RECRUITING": 1,
+      "ACTIVE_NOT_RECRUITING": 1,
+      "TERMINATED": 2
+    },
+    "active_trials": 2,
+    "completed_trials": 15,
+    "conditions": [
+      "Alcohol Liver Disease",
+      "Alcohol Use Disorder (AUD)",
+      "Coronavirus Infection",
+      "Healthy Volunteers",
+      "Hepatitis B",
+      "Hepatitis B, Chronic",
+      "Influenza",
+      "Influenza A Subtype H5N1 Infection",
+      "NASH - Nonalcoholic Steatohepatitis",
+      "Non-Alcoholic Fatty Liver Disease",
+      "Non-Alcoholic Steatohepatitis (NASH)",
+      "Obesity, Nonalcoholic Steatohepatitis",
+      "Obesity/Overweight",
+      "Type 2 Diabetes"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:16:14.764454",
+    "search_query": "Altimmune, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Altimmune,+Inc."
+  }
+}

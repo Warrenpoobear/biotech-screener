@@ -1,0 +1,43 @@
+{
+  "ticker": "IMMP",
+  "cik": "0001506184",
+  "success": true,
+  "financials": {
+    "cash": 67408215.0,
+    "debt": 589227.0,
+    "net_debt": -66818988.0,
+    "revenue_ttm": 10331373.0,
+    "assets": 156983434.0,
+    "liabilities": 13348071.0,
+    "equity": 143635363.0,
+    "currency": "USD"
+  },
+  "data_dates": {
+    "cash": "2025-06-30",
+    "debt": "2025-06-30",
+    "revenue": "2025-06-30",
+    "assets": "2025-06-30",
+    "liabilities": "2025-06-30"
+  },
+  "data_freshness": {
+    "most_recent_date": "2025-06-30",
+    "oldest_date": "2025-06-30",
+    "staleness_flags": [
+      "critical_staleness:213d"
+    ]
+  },
+  "coverage": {
+    "has_cash": true,
+    "has_debt": true,
+    "has_revenue": true,
+    "has_balance_sheet": true,
+    "pct_complete": 100.0
+  },
+  "provenance": {
+    "source": "SEC EDGAR Company Facts API",
+    "timestamp": "2026-01-29T11:15:06.887346",
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001506184.json",
+    "cik": "0001506184",
+    "accounting_standard": "ifrs-full"
+  }
+}

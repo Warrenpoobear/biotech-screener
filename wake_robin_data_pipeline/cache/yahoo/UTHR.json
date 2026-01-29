@@ -2,36 +2,42 @@
   "ticker": "UTHR",
   "success": true,
   "price": {
-    "current": 489.69,
+    "current": 467.96,
     "currency": "USD",
-    "day_high": 498.77,
-    "day_low": 479.59,
+    "day_high": 472.4099,
+    "day_low": 466.78,
     "52_week_high": 519.99,
     "52_week_low": 266.98
   },
   "market_cap": {
-    "value": 22146848768.0,
+    "value": 21164081152.0,
     "currency": "USD"
   },
   "shares_outstanding": 43056599.0,
   "volume": {
-    "last": 601857,
-    "average_30d": 484108
+    "last": 26160,
+    "average_30d": 332066
   },
   "valuation": {
-    "pe_ratio": 18.562927,
-    "forward_pe": 16.801853,
-    "price_to_book": 3.1879199
+    "pe_ratio": 17.725758,
+    "forward_pe": 16.084555,
+    "price_to_book": 3.0464559
   },
   "company_info": {
     "name": "United Therapeutics Corporation",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic"
   },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-05T18:05:40.073760",
+    "timestamp": "2026-01-29T10:59:30.652882",
     "url": "https://finance.yahoo.com/quote/UTHR",
-    "data_hash": "265d0a64832898ce"
+    "data_hash": "86ef484fc3e03200"
   }
 }

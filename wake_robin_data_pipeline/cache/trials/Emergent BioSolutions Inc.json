@@ -1,0 +1,180 @@
+{
+  "ticker": "EBS",
+  "company_name": "Emergent BioSolutions Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT07268612",
+      "title": "Evaluation of Clinical Benefit and Safety Following CYFENDUS Administration for Post-Exposure Prophylaxis of Anthrax Disease.",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "",
+      "condition": "Anthrax",
+      "start_date": "2035-11",
+      "completion_date": "2037-11",
+      "enrollment": 0,
+      "sponsor": "Emergent BioSolutions"
+    },
+    {
+      "nct_id": "NCT05349617",
+      "title": "Safety and Immunogenicity of CHIKV VLP Vaccine PXVX0317 in Adults \u226565 Years",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Chikungunya Virus",
+      "start_date": "2022-05-12",
+      "completion_date": "2023-08-08",
+      "enrollment": 0,
+      "sponsor": "Bavarian Nordic"
+    },
+    {
+      "nct_id": "NCT01979406",
+      "title": "A Phase 1 Ascending Dose Study to Assess the Safety and Immunogenicity of Adenovirus Anthrax Vector Candidate Vaccines",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Anthrax Infection",
+      "start_date": "2013-11",
+      "completion_date": "2015-09",
+      "enrollment": 0,
+      "sponsor": "Emergent BioSolutions"
+    },
+    {
+      "nct_id": "NCT02100631",
+      "title": "A Study of Live Oral Cholera Vaccine, PXVX200 in Healthy Older Adults",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Cholera",
+      "start_date": "2014-05",
+      "completion_date": "2015-06",
+      "enrollment": 0,
+      "sponsor": "Bavarian Nordic"
+    },
+    {
+      "nct_id": "NCT00053482",
+      "title": "Dose Study of ACAM2000 Smallpox Vaccine in Previously Vaccinated Adults",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Smallpox",
+      "start_date": "2003-01",
+      "completion_date": "2003-10",
+      "enrollment": 0,
+      "sponsor": "Emergent BioSolutions"
+    },
+    {
+      "nct_id": "NCT03483961",
+      "title": "Trial of a Chikungunya Vaccine, PXVX0317 CHIKV-VLP, in Healthy Adults",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Chikungunya Virus Infection",
+      "start_date": "2018-04-18",
+      "completion_date": "2020-09-21",
+      "enrollment": 0,
+      "sponsor": "Bavarian Nordic"
+    },
+    {
+      "nct_id": "NCT00679172",
+      "title": "Immunogenicity, Safety and Tolerability of the Typhoid Fever Vaccine Candidate M01ZH09 in Healthy Adults",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Typhoid",
+      "start_date": "2008-05",
+      "completion_date": "2008-12",
+      "enrollment": 0,
+      "sponsor": "Emergent BioSolutions"
+    },
+    {
+      "nct_id": "NCT02771730",
+      "title": "Study to Evaluate the Safety and Immunogenicity of an Oral HIV Vaccine in Healthy, HIV-uninfected Adults",
+      "status": "TERMINATED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteer, HIV Vaccine",
+      "start_date": "2015-03",
+      "completion_date": "2017-02",
+      "enrollment": 0,
+      "sponsor": "Emergent BioSolutions"
+    },
+    {
+      "nct_id": "NCT03315104",
+      "title": "Exploring Safety & Clinical Benefit of Anti-Influenza Immunoglobulin Intravenous in Hospitalized Adults With Influenza A",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Influenza A H3N2, Influenza A H1N1",
+      "start_date": "2017-11-17",
+      "completion_date": "2019-06-17",
+      "enrollment": 0,
+      "sponsor": "Emergent BioSolutions"
+    },
+    {
+      "nct_id": "NCT03220737",
+      "title": "VAXCHORA Pediatric Study to Assess Safety and Immunogenicity",
+      "status": "COMPLETED",
+      "phase": "PHASE4",
+      "condition": "Cholera (Disorder)",
+      "start_date": "2017-07-21",
+      "completion_date": "2020-03-06",
+      "enrollment": 0,
+      "sponsor": "Bavarian Nordic"
+    }
+  ],
+  "summary": {
+    "total_trials": 50,
+    "by_phase": {
+      "": 7,
+      "PHASE3": 8,
+      "PHASE1": 16,
+      "PHASE2": 12,
+      "PHASE4": 5,
+      "PHASE1, PHASE2": 1,
+      "PHASE2, PHASE3": 1
+    },
+    "by_status": {
+      "NOT_YET_RECRUITING": 3,
+      "COMPLETED": 40,
+      "TERMINATED": 6,
+      "ENROLLING_BY_INVITATION": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 40,
+    "conditions": [
+      "Adenoviral Infection",
+      "Anthrax",
+      "Anthrax Infection",
+      "Arthritis, Rheumatoid",
+      "Bacillus Anthracis (Anthrax) Infection",
+      "Bird Flu, Influenza",
+      "Botulism",
+      "Chikungunya",
+      "Chikungunya Virus",
+      "Chikungunya Virus Infection",
+      "Cholera",
+      "Cholera (Disorder)",
+      "Healthy",
+      "Healthy Volunteer, HIV Vaccine",
+      "Healthy Volunteers",
+      "Human Influenza",
+      "Infections, Bacterial",
+      "Influenza A H3N2, Influenza A H1N1",
+      "Inhalational Anthrax",
+      "Myocarditis, Pericarditis",
+      "Opioid Overdose",
+      "Pregnancy Complications, Pregnancy Outcome, Congenital Abnormalities",
+      "SARS-CoV-2 Infection",
+      "Smallpox",
+      "Smallpox Vaccine Adverse Reaction",
+      "Symptoms of Inhalational Anthrax",
+      "T Cell Lymphoma",
+      "T-cell Lymphoma",
+      "Tuberculosis",
+      "Typhoid",
+      "Typhoid Fever",
+      "Vaccine Response",
+      "Viral Infection",
+      "Zika Virus Infection, Zika Virus Disease"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:18:05.634325",
+    "search_query": "Emergent BioSolutions Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Emergent+BioSolutions+Inc."
+  }
+}

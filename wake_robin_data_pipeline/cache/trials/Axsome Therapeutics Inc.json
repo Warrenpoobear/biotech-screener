@@ -1,0 +1,170 @@
+{
+  "ticker": "AXSM",
+  "company_name": "Axsome Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06568367",
+      "title": "Studying Solriamfetol Modulation of TAAR-1, Dopamine, and Norepinephrine in Shift Work Disorder (SUSTAIN)",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Excessive Sleepiness, Shift-work Disorder",
+      "start_date": "2024-08-01",
+      "completion_date": "2026-12",
+      "enrollment": 0,
+      "sponsor": "Axsome Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04634669",
+      "title": "Open-Label Safety Study of AXS-05 in Subjects With TRD (EVOLVE)",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Treatment Resistant Depression, Major Depressive Disorder",
+      "start_date": "2020-09-23",
+      "completion_date": "2022-03-04",
+      "enrollment": 0,
+      "sponsor": "Axsome Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05113745",
+      "title": "A Study to Assess the Long-term Efficacy and Safety of AXS-12 (Reboxetine) in Subjects With Narcolepsy (ENCORE)",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Narcolepsy, Cataplexy, Excessive Daytime Sleepiness",
+      "start_date": "2021-10-20",
+      "completion_date": "2024-11-15",
+      "enrollment": 0,
+      "sponsor": "Axsome Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04068051",
+      "title": "Multimechanistic Treatment Over Time of Migraine Symptoms (MOVEMENT)",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Migraine",
+      "start_date": "2019-07-06",
+      "completion_date": "2020-09-22",
+      "enrollment": 0,
+      "sponsor": "Axsome Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04039022",
+      "title": "Open-Label Safety Study of AXS-05 in Subjects With Depression",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Major Depressive Disorder, Treatment Resistant Depression, Depression",
+      "start_date": "2019-07-08",
+      "completion_date": "2020-10-23",
+      "enrollment": 0,
+      "sponsor": "Axsome Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05059223",
+      "title": "A Study to Assess the Efficacy and Safety of AXS-12 (Reboxetine) in Patients With Narcolepsy",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Narcolepsy, Cataplexy, Excessive Daytime Sleepiness",
+      "start_date": "2021-09-15",
+      "completion_date": "2024-03-15",
+      "enrollment": 0,
+      "sponsor": "Axsome Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05008341",
+      "title": "Evaluate Sunosi\u00ae PK in Breast Milk and Plasma of Healthy Postpartum Women Following Single Dose Oral Administration",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Narcolepsy, Obstructive Sleep Apnea, Excessive Daytime Somnolence, Excessive Sleepiness, Postpartum",
+      "start_date": "2021-08-27",
+      "completion_date": "2022-04-15",
+      "enrollment": 0,
+      "sponsor": "Axsome Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06170970",
+      "title": "Solriamfetol for the Treatment of Multiple Sclerosis Fatigue",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Multiple Sclerosis, Multiple Sclerosis Fatigue",
+      "start_date": "2024-06-01",
+      "completion_date": "2027-03-01",
+      "enrollment": 0,
+      "sponsor": "Johns Hopkins University"
+    },
+    {
+      "nct_id": "NCT05550207",
+      "title": "Open-Label Study of AXS-07 for the Acute Treatment of Migraine in Adults With a Prior Inadequate Response to an Oral CGRP Inhibitor (EMERGE)",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Migraine",
+      "start_date": "2022-08-31",
+      "completion_date": "2024-11-27",
+      "enrollment": 0,
+      "sponsor": "Axsome Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04971291",
+      "title": "An Evaluation of AXS-05 for the Treatment of TRD in Treatment-Adherent Patients",
+      "status": "UNKNOWN",
+      "phase": "PHASE2",
+      "condition": "Major Depressive Disorder, Treatment Resistant Depression",
+      "start_date": "2021-04-14",
+      "completion_date": "2021-07",
+      "enrollment": 0,
+      "sponsor": "Axsome Therapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 34,
+    "by_phase": {
+      "PHASE3": 20,
+      "PHASE2": 7,
+      "PHASE1": 1,
+      "PHASE4": 4,
+      "PHASE2, PHASE3": 1,
+      "": 1
+    },
+    "by_status": {
+      "RECRUITING": 5,
+      "TERMINATED": 3,
+      "COMPLETED": 21,
+      "UNKNOWN": 3,
+      "ENROLLING_BY_INVITATION": 1,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 7,
+    "completed_trials": 21,
+    "conditions": [
+      "ADHD",
+      "Agitation in Patients With Dementia of the Alzheimer's Type, Alzheimer Disease, Agitation",
+      "Agitation in Patients With Dementia of the Alzheimer's Type, Alzheimer Disease, Agitation, Psychomotor",
+      "Agitation in Patients With Dementia of the Alzheimer's Type, Alzheimer Disease, Agitation,Psychomotor",
+      "Binge-Eating Disorder",
+      "Complex Regional Pain Syndrome, Reflex Sympathetic Dystrophy",
+      "Depression, Major Depressive Disorder",
+      "Excessive Daytime Sleepiness, Obstructive Sleep Apnea, Impaired Cognitive Function",
+      "Excessive Sleepiness, Shift-work Disorder",
+      "Insomnia",
+      "Major Depressive Disorder",
+      "Major Depressive Disorder, Treatment Resistant Depression",
+      "Major Depressive Disorder, Treatment Resistant Depression, Depression",
+      "Migraine",
+      "Multiple Sclerosis, Multiple Sclerosis Fatigue",
+      "Narcolepsy, Cataplexy Narcolepsy, Excessive Sleepiness",
+      "Narcolepsy, Cataplexy, Excessive Daytime Sleepiness",
+      "Narcolepsy, Obstructive Sleep Apnea, Excessive Daytime Somnolence, Excessive Sleepiness, Postpartum",
+      "Narcolepsy, Obstructive Sleep Apnea, Pregnant Women and Their Offspring",
+      "Osteoarthritis, Knee",
+      "Smoking Cessation, Smoking, Cigarette, Nicotine Dependence",
+      "Treatment Resistant Depression, Major Depressive Disorder",
+      "Treatment Resistant Major Depressive Disorder"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:16:54.434159",
+    "search_query": "Axsome Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Axsome+Therapeutics,+Inc."
+  }
+}

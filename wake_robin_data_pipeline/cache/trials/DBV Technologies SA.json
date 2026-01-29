@@ -1,0 +1,153 @@
+{
+  "ticker": "DBVTF",
+  "company_name": "DBV Technologies S.A.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT01675882",
+      "title": "Efficacy and Safety of Several Doses of Viaskin Peanut in Adults and Children With Peanut Allergy",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Peanut Allergy",
+      "start_date": "2012-08",
+      "completion_date": "2014-07",
+      "enrollment": 0,
+      "sponsor": "DBV Technologies"
+    },
+    {
+      "nct_id": "NCT01170286",
+      "title": "Safety of Epicutaneous Immunotherapy for the Treatment of Peanut Allergy",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Peanut Allergy",
+      "start_date": "2010-07",
+      "completion_date": "2012-02",
+      "enrollment": 0,
+      "sponsor": "DBV Technologies"
+    },
+    {
+      "nct_id": "NCT02579876",
+      "title": "Milk Patch for Eosinophilic Esophagitis",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Eosinophilic Esophagitis, Milk Allergy",
+      "start_date": "2015-10",
+      "completion_date": "2018-11-20",
+      "enrollment": 0,
+      "sponsor": "Children's Hospital of Philadelphia"
+    },
+    {
+      "nct_id": "NCT02223182",
+      "title": "Efficacy and Safety of Viaskin Milk in Children With IgE-Mediated Cow's Milk Allergy",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Food Allergy",
+      "start_date": "2014-11",
+      "completion_date": "2020-12-22",
+      "enrollment": 0,
+      "sponsor": "DBV Technologies"
+    },
+    {
+      "nct_id": "NCT04371627",
+      "title": "Viaskin\u00ae Peanut (DBV712) Expanded Access Protocol",
+      "status": "NO_LONGER_AVAILABLE",
+      "phase": "",
+      "condition": "Peanut Allergy",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "DBV Technologies"
+    },
+    {
+      "nct_id": "NCT02916446",
+      "title": "Safety Study of Viaskin Peanut to Treat Peanut Allergy",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Peanut Allergy",
+      "start_date": "2016-10",
+      "completion_date": "2020-10-07",
+      "enrollment": 0,
+      "sponsor": "DBV Technologies"
+    },
+    {
+      "nct_id": "NCT03013517",
+      "title": "Follow-up of the PEPITES Study to Evaluate Long-term Efficacy and Safety of Viaskin Peanut in Children",
+      "status": "UNKNOWN",
+      "phase": "PHASE3",
+      "condition": "Peanut Allergy",
+      "start_date": "2017-01-23",
+      "completion_date": "2023-03",
+      "enrollment": 0,
+      "sponsor": "DBV Technologies"
+    },
+    {
+      "nct_id": "NCT02636699",
+      "title": "Efficacy and Safety of Viaskin Peanut in Children With Immunoglobulin E (IgE)-Mediated Peanut Allergy",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Peanut Allergy",
+      "start_date": "2015-12",
+      "completion_date": "2017-08-18",
+      "enrollment": 0,
+      "sponsor": "DBV Technologies"
+    },
+    {
+      "nct_id": "NCT01197053",
+      "title": "Epicutaneous Immunotherapy in Peanut Allergy in Children",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Peanut Allergy",
+      "start_date": "2010-08",
+      "completion_date": "2015-04",
+      "enrollment": 0,
+      "sponsor": "Assistance Publique - H\u00f4pitaux de Paris"
+    },
+    {
+      "nct_id": "NCT03035370",
+      "title": "Viaskin Pertussis Vaccine Trial",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Whooping Cough",
+      "start_date": "2016-09-05",
+      "completion_date": "2018-04-25",
+      "enrollment": 0,
+      "sponsor": "DBV Technologies"
+    }
+  ],
+  "summary": {
+    "total_trials": 18,
+    "by_phase": {
+      "PHASE2": 5,
+      "PHASE1": 3,
+      "PHASE1, PHASE2": 1,
+      "": 2,
+      "PHASE3": 7
+    },
+    "by_status": {
+      "COMPLETED": 12,
+      "NO_LONGER_AVAILABLE": 1,
+      "UNKNOWN": 2,
+      "RECRUITING": 1,
+      "AVAILABLE": 1,
+      "ACTIVE_NOT_RECRUITING": 1
+    },
+    "active_trials": 2,
+    "completed_trials": 12,
+    "conditions": [
+      "Allergy, Peanut",
+      "Allergy, Peanut Allergy",
+      "Cow's Milk Allergy",
+      "Eosinophilic Esophagitis, Milk Allergy",
+      "Food Allergy",
+      "Peanut Allergy",
+      "Whooping Cough"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T13:12:03.415422",
+    "search_query": "DBV Technologies S.A.",
+    "url": "https://clinicaltrials.gov/search?term=DBV+Technologies+S.A."
+  }
+}

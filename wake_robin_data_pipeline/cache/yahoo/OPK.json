@@ -1,0 +1,43 @@
+{
+  "ticker": "OPK",
+  "success": true,
+  "price": {
+    "current": 1.265,
+    "currency": "USD",
+    "day_high": 1.29,
+    "day_low": 1.2601,
+    "52_week_high": 2.04,
+    "52_week_low": 1.11
+  },
+  "market_cap": {
+    "value": 1004135232.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 767701280.0,
+  "volume": {
+    "last": 493243,
+    "average_30d": 3575611
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -4.080645,
+    "price_to_book": 0.7449941
+  },
+  "company_info": {
+    "name": "OPKO Health, Inc.",
+    "sector": "Healthcare",
+    "industry": "Diagnostics & Research"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:08:46.731683",
+    "url": "https://finance.yahoo.com/quote/OPK",
+    "data_hash": "68a481aba2c7d1b0"
+  }
+}

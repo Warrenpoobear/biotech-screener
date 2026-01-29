@@ -1,0 +1,43 @@
+{
+  "ticker": "AXSM",
+  "success": true,
+  "price": {
+    "current": 185.645,
+    "currency": "USD",
+    "day_high": 187.1,
+    "day_low": 181.13,
+    "52_week_high": 191.5,
+    "52_week_low": 86.99
+  },
+  "market_cap": {
+    "value": 9358855168.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 50412640.0,
+  "volume": {
+    "last": 74158,
+    "average_30d": 831663
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": 489.99655,
+    "price_to_book": 126.633705
+  },
+  "company_info": {
+    "name": "Axsome Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:05:03.038607",
+    "url": "https://finance.yahoo.com/quote/AXSM",
+    "data_hash": "e8873d4ca9a93144"
+  }
+}

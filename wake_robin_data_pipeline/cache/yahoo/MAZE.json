@@ -1,0 +1,43 @@
+{
+  "ticker": "MAZE",
+  "success": true,
+  "price": {
+    "current": 43.27,
+    "currency": "USD",
+    "day_high": 44.45,
+    "day_low": 42.22,
+    "52_week_high": 47.36,
+    "52_week_low": 6.71
+  },
+  "market_cap": {
+    "value": 2082128384.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 48119444.0,
+  "volume": {
+    "last": 102948,
+    "average_30d": 362584
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -13.7537985,
+    "price_to_book": 5.482767
+  },
+  "company_info": {
+    "name": "Maze Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:07:56.362433",
+    "url": "https://finance.yahoo.com/quote/MAZE",
+    "data_hash": "86bbfe07feec8ded"
+  }
+}

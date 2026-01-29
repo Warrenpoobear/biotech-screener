@@ -1,0 +1,90 @@
+{
+  "ticker": "LCTX",
+  "company_name": "Lineage Cell Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06841770",
+      "title": "A Study to Evaluate the Safety of a Delivery Device for Administering LCTOPC1 in Participants With Spinal Cord Injury",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Spinal Cord Injury Cervical, Spinal Cord Injury Thoracic, Spinal Cord Injury, Acute, Spinal Cord Injury, Spinal Cord Injury, Chronic",
+      "start_date": "2025-06-30",
+      "completion_date": "2037-06-30",
+      "enrollment": 0,
+      "sponsor": "Lineage Cell Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT01217008",
+      "title": "Safety Study of GRNOPC1 in Spinal Cord Injury",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Spinal Cord Injury",
+      "start_date": "2010-10",
+      "completion_date": "2013-07",
+      "enrollment": 0,
+      "sponsor": "Lineage Cell Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT02302157",
+      "title": "Dose Escalation Study of AST-OPC1 in Spinal Cord Injury",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Cervical Spinal Cord Injury, Spine Injury, Spinal Cord Trauma",
+      "start_date": "2015-03",
+      "completion_date": "2018-12",
+      "enrollment": 0,
+      "sponsor": "Lineage Cell Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05919563",
+      "title": "LTFU Study of Subjects Who Received GRNOPC1",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "",
+      "condition": "Spinal Cord Injuries",
+      "start_date": "2011-10-06",
+      "completion_date": "2026-12-12",
+      "enrollment": 0,
+      "sponsor": "Lineage Cell Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT05975424",
+      "title": "LTFU Study of Subjects With Cervical SCI Who Received AST-OPC1",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "",
+      "condition": "Spinal Cord Injuries",
+      "start_date": "2018-06-13",
+      "completion_date": "2033-01-14",
+      "enrollment": 0,
+      "sponsor": "Lineage Cell Therapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 5,
+    "by_phase": {
+      "PHASE1": 2,
+      "PHASE1, PHASE2": 1,
+      "": 2
+    },
+    "by_status": {
+      "RECRUITING": 1,
+      "COMPLETED": 2,
+      "ACTIVE_NOT_RECRUITING": 2
+    },
+    "active_trials": 3,
+    "completed_trials": 2,
+    "conditions": [
+      "Cervical Spinal Cord Injury, Spine Injury, Spinal Cord Trauma",
+      "Spinal Cord Injuries",
+      "Spinal Cord Injury",
+      "Spinal Cord Injury Cervical, Spinal Cord Injury Thoracic, Spinal Cord Injury, Acute, Spinal Cord Injury, Spinal Cord Injury, Chronic"
+    ],
+    "lead_stage": "phase_1"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:19:36.491890",
+    "search_query": "Lineage Cell Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Lineage+Cell+Therapeutics,+Inc."
+  }
+}

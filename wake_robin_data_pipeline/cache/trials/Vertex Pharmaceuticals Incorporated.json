@@ -1,0 +1,172 @@
+{
+  "ticker": "VRTX",
+  "company_name": "Vertex Pharmaceuticals Incorporated",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT02797132",
+      "title": "Safety and Pharmacokinetic Study of Lumacaftor/Ivacaftor in Subjects Aged 2 Through 5 Years With Cystic Fibrosis, Homozygous for F508del",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Cystic Fibrosis",
+      "start_date": "2016-05",
+      "completion_date": "2017-09",
+      "enrollment": 0,
+      "sponsor": "Vertex Pharmaceuticals Incorporated"
+    },
+    {
+      "nct_id": "NCT06887959",
+      "title": "A Single-arm Study Evaluating the Effectiveness and Safety of Suzetrigine (SUZ) for Acute Pain After Selected Surgeries",
+      "status": "COMPLETED",
+      "phase": "PHASE4",
+      "condition": "Acute Pain",
+      "start_date": "2025-03-27",
+      "completion_date": "2025-11-10",
+      "enrollment": 0,
+      "sponsor": "Vertex Pharmaceuticals Incorporated"
+    },
+    {
+      "nct_id": "NCT05791201",
+      "title": "A Safety, Tolerability, and Efficacy Study of VX-264 in Participants With Type 1 Diabetes",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Type 1 Diabetes",
+      "start_date": "2023-05-16",
+      "completion_date": "2026-05-29",
+      "enrollment": 0,
+      "sponsor": "Vertex Pharmaceuticals Incorporated"
+    },
+    {
+      "nct_id": "NCT01790100",
+      "title": "A Phase 2a, Dose-Ranging Study to Evaluate the Safety, Pharmacokinetics and Efficacy of VX-135 With Ribavirin in Treatment-Na\u00efve Subjects With Chronic Hepatitis C",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Chronic Hepatitis C",
+      "start_date": "2013-02-28",
+      "completion_date": "2014-06-30",
+      "enrollment": 0,
+      "sponsor": "Alios Biopharma Inc."
+    },
+    {
+      "nct_id": "NCT02412111",
+      "title": "A Phase 3 Study of Tezacaftor (VX-661) in Combination With Ivacaftor (VX-770) in Subjects Aged 12 Years and Older With Cystic Fibrosis (CF), Who Have One F508del-CFTR Mutation and a Second Mutation That Has Been Demonstrated to be Clinically Responsive to Ivacaftor",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Cystic Fibrosis",
+      "start_date": "2015-06",
+      "completion_date": "2017-09",
+      "enrollment": 0,
+      "sponsor": "Vertex Pharmaceuticals Incorporated"
+    },
+    {
+      "nct_id": "NCT03304028",
+      "title": "MUCOviscidose EXacerbation Outils Connect\u00e9s Education Th\u00e9rapeutique",
+      "status": "TERMINATED",
+      "phase": "NA",
+      "condition": "Cystic Fibrosis",
+      "start_date": "2017-10-20",
+      "completion_date": "2020-06-18",
+      "enrollment": 0,
+      "sponsor": "Institut National de la Sant\u00e9 Et de la Recherche M\u00e9dicale, France"
+    },
+    {
+      "nct_id": "NCT05535959",
+      "title": "A Study to Evaluate the Relative Bioavailability of a Fixed-dose Combination Tablet of VX-121/Tezacaftor/Deutivacaftor",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Cystic Fibrosis",
+      "start_date": "2022-09-15",
+      "completion_date": "2022-11-09",
+      "enrollment": 0,
+      "sponsor": "Vertex Pharmaceuticals Incorporated"
+    },
+    {
+      "nct_id": "NCT05541471",
+      "title": "A Study to Evaluate the Pharmacokinetic Drug-drug Interactions Between VX-548, Midazolam, and Digoxin",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Pain",
+      "start_date": "2022-09-22",
+      "completion_date": "2023-04-28",
+      "enrollment": 0,
+      "sponsor": "Vertex Pharmaceuticals Incorporated"
+    },
+    {
+      "nct_id": "NCT05579431",
+      "title": "A Phase 1, First-in-human Study of VX-634",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Alpha 1-Antitrypsin Deficiency",
+      "start_date": "2022-10-13",
+      "completion_date": "2023-11-13",
+      "enrollment": 0,
+      "sponsor": "Vertex Pharmaceuticals Incorporated"
+    },
+    {
+      "nct_id": "NCT05951205",
+      "title": "Evaluation of Efficacy and Safety of a Single Dose of Exa-cel in Participants With Severe Sickle Cell Disease, \u03b2S/\u03b2C Genotype",
+      "status": "NOT_YET_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Sickle Cell Disease",
+      "start_date": "2027-07-31",
+      "completion_date": "2033-12-31",
+      "enrollment": 0,
+      "sponsor": "Vertex Pharmaceuticals Incorporated"
+    }
+  ],
+  "summary": {
+    "total_trials": 50,
+    "by_phase": {
+      "PHASE3": 18,
+      "PHASE4": 1,
+      "PHASE1, PHASE2": 1,
+      "PHASE2": 11,
+      "NA": 1,
+      "PHASE1": 13,
+      "": 3,
+      "PHASE2, PHASE3": 2
+    },
+    "by_status": {
+      "COMPLETED": 36,
+      "ACTIVE_NOT_RECRUITING": 2,
+      "TERMINATED": 5,
+      "NOT_YET_RECRUITING": 1,
+      "RECRUITING": 3,
+      "UNKNOWN": 1,
+      "WITHDRAWN": 1,
+      "ENROLLING_BY_INVITATION": 1
+    },
+    "active_trials": 6,
+    "completed_trials": 36,
+    "conditions": [
+      "Acute Leukemia, Chronic Leukemia, Multiple Myeloma, Hodgkin's Lymphoma, Non-Hodgkin's Lymphoma, Waldenstrom's Macroglobulinemia",
+      "Acute Pain",
+      "Alpha 1-Antitrypsin Deficiency",
+      "Alpha-1 Antitrypsin Deficiency",
+      "Beta-Thalassemia, Thalassemia, Genetic Diseases, Inborn, Hematologic Diseases, Hemoglobinopathies",
+      "Beta-Thalassemia, Thalassemia, Hematologic Diseases, Genetic Diseases, Inborn, Hemoglobinopathies, Sickle Cell Disease, Sickle Cell Anemia",
+      "Chronic Hepatitis C",
+      "Cystic Fibrosis",
+      "Diabetes Mellitus, Type 1, Impaired Hypoglycemic Awareness, Severe Hypoglycemia",
+      "Diabetic Peripheral Neuropathic Pain",
+      "Diabetic Peripheral Neuropathy",
+      "Drug Interactions",
+      "Epilepsy",
+      "HCV Infection",
+      "Hepatitis C",
+      "Infection",
+      "Myotonic Dystrophy Type 1 (DM1)",
+      "Pain",
+      "Sickle Cell Disease",
+      "Sickle Cell Disease, Hydroxyurea Failure, Hydroxyurea Intolerance, Hemoglobinopathies, Hematological Diseases",
+      "Type 1 Diabetes"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:22:51.530160",
+    "search_query": "Vertex Pharmaceuticals Incorporated",
+    "url": "https://clinicaltrials.gov/search?term=Vertex+Pharmaceuticals+Incorporated"
+  }
+}

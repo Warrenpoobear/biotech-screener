@@ -1,0 +1,164 @@
+{
+  "ticker": "REPL",
+  "company_name": "Replimune Group, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06898970",
+      "title": "Intratumoral Vusolimogene Oderparepvec (VO) in Combination With Pembrolizumab for Angiosarcoma",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Angiosarcoma, Angiosarcoma, Adult",
+      "start_date": "2026-01-30",
+      "completion_date": "2029-10-31",
+      "enrollment": 0,
+      "sponsor": "Varun Monga, MBBS"
+    },
+    {
+      "nct_id": "NCT04336241",
+      "title": "Study of RP2 Monotherapy and RP2 in Combination With Nivolumab in Patients With Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Cancer",
+      "start_date": "2019-10-17",
+      "completion_date": "2028-04-30",
+      "enrollment": 0,
+      "sponsor": "Replimune Inc."
+    },
+    {
+      "nct_id": "NCT03767348",
+      "title": "Study of RP1 Monotherapy and RP1 in Combination With Nivolumab (IGNYTE)",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Non-Small Cell Lung Cancer (NSCLC), Microsatellite Instability-High (MSI-H), Non-melanoma Skin Cancer (NMSC), Cutaneous Melanoma",
+      "start_date": "2017-09-20",
+      "completion_date": "2028-12",
+      "enrollment": 0,
+      "sponsor": "Replimune Inc."
+    },
+    {
+      "nct_id": "NCT05733611",
+      "title": "RP2/RP3 in Combination With Atezolizumab and Bevacizumab for the Treatment of Patients With CRC",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Refractory Metastatic Colorectal Cancer, pMMR, MSS",
+      "start_date": "2023-06-29",
+      "completion_date": "2027-03-01",
+      "enrollment": 0,
+      "sponsor": "Replimune Inc."
+    },
+    {
+      "nct_id": "NCT04050436",
+      "title": "Study Evaluating Cemiplimab Alone and Combined With RP1 in Treating Advanced Squamous Skin Cancer",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Cutaneous Squamous Cell Carcinoma, Advanced Cutaneous Squamous Cell Carcinoma, Metastatic Cutaneous Squamous Cell Carcinoma",
+      "start_date": "2019-10-08",
+      "completion_date": "2025-09",
+      "enrollment": 0,
+      "sponsor": "Replimune Inc."
+    },
+    {
+      "nct_id": "NCT06887348",
+      "title": "A Study to Assess the Long-term Safety Outcomes in Patients Previously Treated With RP1, RP2, or RP3",
+      "status": "RECRUITING",
+      "phase": "",
+      "condition": "Melanoma, Metastatic Melanoma, Advanced Solid Tumor, Hepatocellular Carcinoma",
+      "start_date": "2025-12-12",
+      "completion_date": "2035-12",
+      "enrollment": 0,
+      "sponsor": "Replimune Inc."
+    },
+    {
+      "nct_id": "NCT06623110",
+      "title": "Phase II Study of RP2 as Immunoprevention in High-Risk Oral Precancerous Disease",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "High-Risk Oral Precancerous Disease",
+      "start_date": "2025-01-01",
+      "completion_date": "2029-01-01",
+      "enrollment": 0,
+      "sponsor": "Glenn J. Hanna"
+    },
+    {
+      "nct_id": "NCT05733598",
+      "title": "Study of RP2 in Combination With Second-line Therapy in Patients With Locally Advanced or Metastatic HCC",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Hepatocellular Carcinoma, Biliary Tract Cancer",
+      "start_date": "2024-08-01",
+      "completion_date": "2028-07-01",
+      "enrollment": 0,
+      "sponsor": "Replimune Inc."
+    },
+    {
+      "nct_id": "NCT06590480",
+      "title": "An Expanded Access Program for VO (RP1) in Combination With Nivolumab in Patients With Advanced Melanoma",
+      "status": "NO_LONGER_AVAILABLE",
+      "phase": "",
+      "condition": "Advanced Melanoma",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Replimune Inc."
+    },
+    {
+      "nct_id": "NCT06216938",
+      "title": "RP1 in Primary Melanoma to Reduce the Risk of Sentinel Lymph Node Metastasis",
+      "status": "RECRUITING",
+      "phase": "EARLY_PHASE1",
+      "condition": "Melanoma",
+      "start_date": "2024-03-07",
+      "completion_date": "2027-03-31",
+      "enrollment": 0,
+      "sponsor": "Yana Najjar"
+    }
+  ],
+  "summary": {
+    "total_trials": 17,
+    "by_phase": {
+      "PHASE2": 8,
+      "PHASE1": 2,
+      "": 2,
+      "EARLY_PHASE1": 1,
+      "PHASE1, PHASE2": 2,
+      "PHASE3": 1,
+      "PHASE2, PHASE3": 1
+    },
+    "by_status": {
+      "RECRUITING": 9,
+      "ACTIVE_NOT_RECRUITING": 4,
+      "NO_LONGER_AVAILABLE": 1,
+      "NOT_YET_RECRUITING": 1,
+      "WITHDRAWN": 1,
+      "TERMINATED": 1
+    },
+    "active_trials": 13,
+    "completed_trials": 0,
+    "conditions": [
+      "Advanced Melanoma",
+      "Advanced Solid Tumor",
+      "Angiosarcoma, Angiosarcoma, Adult",
+      "Cancer",
+      "Cutaneous Squamous Cell Carcinoma, Advanced Cutaneous Squamous Cell Carcinoma, Metastatic Cutaneous Squamous Cell Carcinoma",
+      "Cutaneous Squamous Cell Carcinoma, Merkel Cell Carcinoma, Basal Cell Carcinoma, Melanoma",
+      "Gastric Adenocarcinoma, Esophageal Adenocarcinoma, Gastroesophageal Junction Adenocarcinoma",
+      "Hepatocellular Carcinoma, Biliary Tract Cancer",
+      "High-Risk Oral Precancerous Disease",
+      "Melanoma",
+      "Melanoma, Metastatic Melanoma, Advanced Solid Tumor, Hepatocellular Carcinoma",
+      "Metastatic Uveal Melanoma",
+      "Non-Small Cell Lung Cancer (NSCLC), Microsatellite Instability-High (MSI-H), Non-melanoma Skin Cancer (NMSC), Cutaneous Melanoma",
+      "Refractory Metastatic Colorectal Cancer, pMMR, MSS",
+      "Squamous Cell Carcinoma of Head and Neck, Locally Advanced Head and Neck Squamous Cell Carcinoma, Recurrent Head and Neck Squamous Cell Carcinoma",
+      "Triple Negative Breast Neoplasms"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:21:27.812281",
+    "search_query": "Replimune Group, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Replimune+Group,+Inc."
+  }
+}

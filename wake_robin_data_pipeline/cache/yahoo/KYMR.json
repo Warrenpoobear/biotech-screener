@@ -2,36 +2,42 @@
   "ticker": "KYMR",
   "success": true,
   "price": {
-    "current": 72.41,
+    "current": 71.98,
     "currency": "USD",
-    "day_high": 73.53,
-    "day_low": 70.35,
+    "day_high": 72.2,
+    "day_low": 70.0,
     "52_week_high": 103.0,
     "52_week_low": 19.445
   },
   "market_cap": {
-    "value": 5792729600.0,
+    "value": 5758329856.0,
     "currency": "USD"
   },
   "shares_outstanding": 79999027.0,
   "volume": {
-    "last": 995255,
-    "average_30d": 1546597
+    "last": 104594,
+    "average_30d": 712213
   },
   "valuation": {
     "pe_ratio": null,
-    "forward_pe": -19.532473,
-    "price_to_book": 5.4897656
+    "forward_pe": -19.292572,
+    "price_to_book": 5.457165
   },
   "company_info": {
     "name": "Kymera Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
   },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
   "provenance": {
     "source": "Yahoo Finance via yfinance",
-    "timestamp": "2026-01-05T18:05:27.358518",
+    "timestamp": "2026-01-29T10:59:21.040001",
     "url": "https://finance.yahoo.com/quote/KYMR",
-    "data_hash": "a812f895c9be4245"
+    "data_hash": "afac8b7463f283fa"
   }
 }

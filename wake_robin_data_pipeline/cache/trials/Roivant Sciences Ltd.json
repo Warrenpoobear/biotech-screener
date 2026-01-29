@@ -1,0 +1,180 @@
+{
+  "ticker": "ROIV",
+  "company_name": "Roivant Sciences Ltd.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT04351243",
+      "title": "A Study to Assess the Efficacy and Safety of Gimsilumab in Subjects With Lung Injury or Acute Respiratory Distress Syndrome Secondary to COVID-19 (BREATHE)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "COVID-19",
+      "start_date": "2020-04-15",
+      "completion_date": "2021-04-01",
+      "enrollment": 0,
+      "sponsor": "Kinevant Sciences GmbH"
+    },
+    {
+      "nct_id": "NCT02611921",
+      "title": "Study of Intranasal Ketamine for Social Impairment in Autism Spectrum Disorder",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Autism Spectrum Disorder",
+      "start_date": "2015-12-22",
+      "completion_date": "2018-05-07",
+      "enrollment": 0,
+      "sponsor": "Children's Hospital Medical Center, Cincinnati"
+    },
+    {
+      "nct_id": "NCT07188844",
+      "title": "An Open-Label Extension Study of Batoclimab in Adult Participants With Chronic Inflammatory Demyelinating Polyneuropathy (CIDP)",
+      "status": "ENROLLING_BY_INVITATION",
+      "phase": "PHASE2",
+      "condition": "Chronic Inflammatory Demyelinating Polyneuropathy",
+      "start_date": "2025-08-28",
+      "completion_date": "2028-11",
+      "enrollment": 0,
+      "sponsor": "Immunovant Sciences GmbH"
+    },
+    {
+      "nct_id": "NCT07018323",
+      "title": "A Study to Assess the Efficacy, Safety, and Tolerability of IMVT-1402 as Treatment for Adult Participants With Graves' Disease",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Graves' Disease",
+      "start_date": "2025-06-19",
+      "completion_date": "2027-05",
+      "enrollment": 0,
+      "sponsor": "Immunovant Sciences GmbH"
+    },
+    {
+      "nct_id": "NCT05403541",
+      "title": "Phase 3 Study to Assess the Efficacy and Safety of Batoclimab as Induction and Maintenance Therapy in Adult Participants With Generalized Myasthenia Gravis",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Generalized Myasthenia Gravis",
+      "start_date": "2022-06-27",
+      "completion_date": "2025-04",
+      "enrollment": 0,
+      "sponsor": "Immunovant Sciences GmbH"
+    },
+    {
+      "nct_id": "NCT05907668",
+      "title": "A Proof-of-Concept Study to Assess Batoclimab in Participants With Graves' Disease",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Graves Disease",
+      "start_date": "2023-05-15",
+      "completion_date": "2025-07",
+      "enrollment": 0,
+      "sponsor": "Immunovant Sciences GmbH"
+    },
+    {
+      "nct_id": "NCT06727604",
+      "title": "A Study to Assess the Efficacy, Safety, and Tolerability of IMVT-1402 as Treatment for Adult Participants With Graves' Disease",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Graves' Disease",
+      "start_date": "2024-12-17",
+      "completion_date": "2028-06",
+      "enrollment": 0,
+      "sponsor": "Immunovant Sciences GmbH"
+    },
+    {
+      "nct_id": "NCT06754462",
+      "title": "A Study to Evaluate the Efficacy, Safety, and Tolerability of IMVT-1402 in Adult Participants With Active, Difficult to Treat Rheumatoid Arthritis",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Rheumatoid Arthritis",
+      "start_date": "2025-01-10",
+      "completion_date": "2027-09",
+      "enrollment": 0,
+      "sponsor": "Immunovant Sciences GmbH"
+    },
+    {
+      "nct_id": "NCT03938545",
+      "title": "ASCEND GO-2: Study of RVT-1401 for the Treatment of Participants With Active, Moderate to Severe Graves' Ophthalmopathy ( GO )",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Graves' Ophthalmopathy (GO)",
+      "start_date": "2019-07-23",
+      "completion_date": "2021-04-15",
+      "enrollment": 0,
+      "sponsor": "Immunovant Sciences GmbH"
+    },
+    {
+      "nct_id": "NCT05581199",
+      "title": "To Assess Efficacy and Safety of Batoclimab in Adult Participants With Active CIDP",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Chronic Inflammatory Demyelinating Polyneuropathy",
+      "start_date": "2022-12-15",
+      "completion_date": "2027-01",
+      "enrollment": 0,
+      "sponsor": "Immunovant Sciences GmbH"
+    }
+  ],
+  "summary": {
+    "total_trials": 44,
+    "by_phase": {
+      "PHASE2": 22,
+      "PHASE1": 5,
+      "PHASE3": 13,
+      "": 1,
+      "NA": 1,
+      "PHASE4": 1,
+      "PHASE2, PHASE3": 1
+    },
+    "by_status": {
+      "COMPLETED": 21,
+      "ENROLLING_BY_INVITATION": 2,
+      "RECRUITING": 9,
+      "ACTIVE_NOT_RECRUITING": 5,
+      "TERMINATED": 4,
+      "NOT_YET_RECRUITING": 1,
+      "WITHDRAWN": 1,
+      "UNKNOWN": 1
+    },
+    "active_trials": 16,
+    "completed_trials": 21,
+    "conditions": [
+      "Atopic Dermatitis",
+      "Autism Spectrum Disorder",
+      "COVID-19",
+      "Chronic Inflammatory Demyelinating Polyneuropathy",
+      "Endometriosis",
+      "Endometriosis Related Pain",
+      "Generalized Myasthenia Gravis",
+      "Graves Disease",
+      "Graves' Disease",
+      "Graves' Ophthalmopathy",
+      "Graves' Ophthalmopathy (GO)",
+      "Healthy",
+      "Heavy Menstrual Bleeding, Uterine Fibroid",
+      "ICD10 Code L40.9 for Psoriasis",
+      "Inflammation, Rheumatic Diseases",
+      "Metrorrhagia, Pelvic Pain, Menorrhagia, Leiomyoma",
+      "Myasthenia Gravis",
+      "Primary Sj\u00f6gren's Syndrome",
+      "Prostate Adenocarcinoma, Stage IIB Prostate Cancer AJCC v8, Stage IIC Prostate Cancer AJCC v8",
+      "Prostate Cancer",
+      "Prostate Cancer, Prostatic Neoplasms",
+      "Rheumatoid Arthritis",
+      "Sarcoidosis, Cardiac",
+      "Sarcoidosis, Pulmonary",
+      "Subacute Cutaneous Lupus Erythematosus, Chronic Cutaneous Lupus Erythematosus",
+      "Thyroid Eye Disease",
+      "Uterine Fibroid, Endometriosis",
+      "Uterine Leiomyoma, Uterine Fibroids",
+      "Vitiligo",
+      "Warm Autoimmune Hemolytic Anemia"
+    ],
+    "lead_stage": "commercial"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:21:37.544173",
+    "search_query": "Roivant Sciences Ltd.",
+    "url": "https://clinicaltrials.gov/search?term=Roivant+Sciences+Ltd."
+  }
+}

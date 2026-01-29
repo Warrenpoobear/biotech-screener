@@ -1,0 +1,101 @@
+{
+  "ticker": "VYGR",
+  "company_name": "Voyager Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT03065192",
+      "title": "Safety and Efficacy Study of VY-AADC01 for Advanced Parkinson's Disease",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Idiopathic Parkinson's Disease, Parkinson's Disease, Basal Ganglia Disease, Brain Diseases, Central Nervous System Diseases, Movement Disorders, Nervous System Diseases, Neurodegenerative Diseases, Parkinsonian Disorders",
+      "start_date": "2017-05-11",
+      "completion_date": "2021-08-10",
+      "enrollment": 0,
+      "sponsor": "Neurocrine Biosciences"
+    },
+    {
+      "nct_id": "NCT03562494",
+      "title": "VY-AADC02 for Parkinson's Disease With Motor Fluctuations (RESTORE-1)",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Parkinson's Disease",
+      "start_date": "2018-10-17",
+      "completion_date": "2024-10-30",
+      "enrollment": 0,
+      "sponsor": "Neurocrine Biosciences"
+    },
+    {
+      "nct_id": "NCT06874621",
+      "title": "VY7523-102: Randomized, Placebo-Controlled, Double-Blind, Multiple Ascending Dose Study in Participants With Early Alzheimer's Disease",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Alzheimer&#39;s Disease (AD)",
+      "start_date": "2025-03-03",
+      "completion_date": "2027-05",
+      "enrollment": 0,
+      "sponsor": "Voyager Therapeutics"
+    },
+    {
+      "nct_id": "NCT03733496",
+      "title": "Observational, Long-term Extension Study for Participants of Prior VY-AADC01 Studies",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Parkinson's Disease",
+      "start_date": "2018-08-24",
+      "completion_date": "2023-07-18",
+      "enrollment": 0,
+      "sponsor": "Neurocrine Biosciences"
+    },
+    {
+      "nct_id": "NCT04885114",
+      "title": "Safety and Tolerability Study With VY-HTT01, in Adults With Early Manifesting Huntington's Disease",
+      "status": "WITHDRAWN",
+      "phase": "PHASE1",
+      "condition": "Huntington Disease",
+      "start_date": "2021-07-30",
+      "completion_date": "2024-12-30",
+      "enrollment": 0,
+      "sponsor": "Voyager Therapeutics"
+    },
+    {
+      "nct_id": "NCT01973543",
+      "title": "Safety Study of AADC Gene Therapy (VY-AADC01) for Parkinson's Disease",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Parkinson's Disease",
+      "start_date": "2013-10",
+      "completion_date": "2020-01-24",
+      "enrollment": 0,
+      "sponsor": "Neurocrine Biosciences"
+    }
+  ],
+  "summary": {
+    "total_trials": 6,
+    "by_phase": {
+      "PHASE1": 4,
+      "PHASE1, PHASE2": 1,
+      "": 1
+    },
+    "by_status": {
+      "COMPLETED": 4,
+      "ACTIVE_NOT_RECRUITING": 1,
+      "WITHDRAWN": 1
+    },
+    "active_trials": 1,
+    "completed_trials": 4,
+    "conditions": [
+      "Alzheimer&#39;s Disease (AD)",
+      "Huntington Disease",
+      "Idiopathic Parkinson's Disease, Parkinson's Disease, Basal Ganglia Disease, Brain Diseases, Central Nervous System Diseases, Movement Disorders, Nervous System Diseases, Neurodegenerative Diseases, Parkinsonian Disorders",
+      "Parkinson's Disease"
+    ],
+    "lead_stage": "phase_1"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:22:55.411421",
+    "search_query": "Voyager Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Voyager+Therapeutics,+Inc."
+  }
+}

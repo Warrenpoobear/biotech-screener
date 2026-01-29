@@ -1,0 +1,63 @@
+{
+  "ticker": "BRKR",
+  "company_name": "Bruker Corporation",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT02098226",
+      "title": "Evaluation of MALDI Biotyper CA System for Detection of Gram- and Gram+ Bacteria and Yeasts",
+      "status": "UNKNOWN",
+      "phase": "",
+      "condition": "Infection",
+      "start_date": "2013-09",
+      "completion_date": "2015-03",
+      "enrollment": 0,
+      "sponsor": "Bruker Daltonics"
+    },
+    {
+      "nct_id": "NCT03050099",
+      "title": "SpecTRA; An Observational Study of the Verification of Protein Biomarkers in Transient Ischemic Attack.",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "TIA",
+      "start_date": "2013-12-01",
+      "completion_date": "2016-12-31",
+      "enrollment": 0,
+      "sponsor": "Andrew Penn"
+    },
+    {
+      "nct_id": "NCT03070067",
+      "title": "SpecTRA; A Study of the Validation of Protein Biomarkers in Transient Ischemic Attack",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "TIA",
+      "start_date": "2015-04-01",
+      "completion_date": "2017-03-31",
+      "enrollment": 0,
+      "sponsor": "Andrew Penn"
+    }
+  ],
+  "summary": {
+    "total_trials": 3,
+    "by_phase": {
+      "": 3
+    },
+    "by_status": {
+      "UNKNOWN": 1,
+      "COMPLETED": 2
+    },
+    "active_trials": 0,
+    "completed_trials": 2,
+    "conditions": [
+      "Infection",
+      "TIA"
+    ],
+    "lead_stage": "unknown"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:17:15.133002",
+    "search_query": "Bruker Corporation",
+    "url": "https://clinicaltrials.gov/search?term=Bruker+Corporation"
+  }
+}

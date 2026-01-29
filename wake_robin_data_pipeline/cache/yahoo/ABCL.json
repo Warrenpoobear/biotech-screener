@@ -1,0 +1,43 @@
+{
+  "ticker": "ABCL",
+  "success": true,
+  "price": {
+    "current": 3.77,
+    "currency": "USD",
+    "day_high": 3.91,
+    "day_low": 3.75,
+    "52_week_high": 6.515,
+    "52_week_low": 1.891
+  },
+  "market_cap": {
+    "value": 1128493056.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 299335048.0,
+  "volume": {
+    "last": 1148903,
+    "average_30d": 4721627
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -5.463768,
+    "price_to_book": 1.1693548
+  },
+  "company_info": {
+    "name": "AbCellera Biologics Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:03:59.405750",
+    "url": "https://finance.yahoo.com/quote/ABCL",
+    "data_hash": "177887cf473ea354"
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "ticker": "NMRA",
+  "company_name": "Neumora Therapeutics, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT06546995",
+      "title": "Study to Evaluate the Effects of NMRA-323511 Among Healthy Elderly and Adults With Agitation Associated With Dementia Due to Alzheimer's Disease",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Alzheimer's Disease, Healthy Elderly",
+      "start_date": "2024-07-09",
+      "completion_date": "2025-11-19",
+      "enrollment": 0,
+      "sponsor": "Neumora Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06029426",
+      "title": "Study to Evaluate the Effects of Oral NMRA-335140 Versus Placebo in Participants With Major Depressive Disorder",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Major Depressive Disorder",
+      "start_date": "2023-09-20",
+      "completion_date": "2025-01-15",
+      "enrollment": 0,
+      "sponsor": "Neumora Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06029439",
+      "title": "Study to Assess the Safety and Effectiveness of NMRA-335140-501",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Major Depressive Disorder",
+      "start_date": "2023-11-10",
+      "completion_date": "2027-06",
+      "enrollment": 0,
+      "sponsor": "Neumora Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06429722",
+      "title": "To Evaluate the Effects of NMRA-335140 on Symptoms of Major Depression in Participants With Bipolar II Disorder.",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Major Depressive Episode Associated With Bipolar II Disorder",
+      "start_date": "2024-05-13",
+      "completion_date": "2025-05-30",
+      "enrollment": 0,
+      "sponsor": "Neumora Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06058013",
+      "title": "Study to Assess the Effects of Oral NMRA-335140 Versus Placebo in Participants With Major Depressive Disorder",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Major Depressive Disorder",
+      "start_date": "2023-12-20",
+      "completion_date": "2026-06",
+      "enrollment": 0,
+      "sponsor": "Neumora Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT04221230",
+      "title": "Study in Major Depressive Disorder With NMRA-335140 (BTRX-335140) vs Placebo",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Major Depressive Disorder",
+      "start_date": "2020-01-03",
+      "completion_date": "2022-06-23",
+      "enrollment": 0,
+      "sponsor": "Neumora Therapeutics, Inc."
+    },
+    {
+      "nct_id": "NCT06058039",
+      "title": "Study to Assess the Effects of Oral NMRA-335140 in Participants With Major Depressive Disorder",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Major Depressive Disorder",
+      "start_date": "2023-12-21",
+      "completion_date": "2026-03",
+      "enrollment": 0,
+      "sponsor": "Neumora Therapeutics, Inc."
+    }
+  ],
+  "summary": {
+    "total_trials": 7,
+    "by_phase": {
+      "PHASE1": 1,
+      "PHASE3": 4,
+      "PHASE2": 2
+    },
+    "by_status": {
+      "COMPLETED": 4,
+      "RECRUITING": 3
+    },
+    "active_trials": 3,
+    "completed_trials": 4,
+    "conditions": [
+      "Alzheimer's Disease, Healthy Elderly",
+      "Major Depressive Disorder",
+      "Major Depressive Episode Associated With Bipolar II Disorder"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:20:18.383579",
+    "search_query": "Neumora Therapeutics, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=Neumora+Therapeutics,+Inc."
+  }
+}

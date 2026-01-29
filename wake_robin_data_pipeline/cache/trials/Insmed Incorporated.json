@@ -1,0 +1,176 @@
+{
+  "ticker": "INSM",
+  "company_name": "Insmed Incorporated",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT03218917",
+      "title": "Assessment of INS1007 in Participants With Non-Cystic Fibrosis Bronchiectasis",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Non-Cystic Fibrosis Bronchiectasis",
+      "start_date": "2017-10-31",
+      "completion_date": "2019-12-12",
+      "enrollment": 0,
+      "sponsor": "Insmed Incorporated"
+    },
+    {
+      "nct_id": "NCT00678015",
+      "title": "Pharmacokinetic and Efficacy Study of Nordihydroguaiaretic Acid (NDGA) in Non Metastatic Recurrent Prostate Cancer",
+      "status": "TERMINATED",
+      "phase": "PHASE2",
+      "condition": "Prostate Cancer",
+      "start_date": "2008-05",
+      "completion_date": "2011-06",
+      "enrollment": 0,
+      "sponsor": "University of California, San Francisco"
+    },
+    {
+      "nct_id": "NCT00777296",
+      "title": "Multidose Safety and Tolerability Study of Dose Escalation of Liposomal Amikacin for Inhalation (ARIKACE\u2122)",
+      "status": "COMPLETED",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Cystic Fibrosis",
+      "start_date": "2007-02-22",
+      "completion_date": "2008-02-27",
+      "enrollment": 0,
+      "sponsor": "Insmed Incorporated"
+    },
+    {
+      "nct_id": "NCT05344508",
+      "title": "An Expanded Access Study to Assess Brensocatib for Participants With Non-Cystic Fibrosis Bronchiectasis",
+      "status": "APPROVED_FOR_MARKETING",
+      "phase": "",
+      "condition": "Non-Cystic Fibrosis Bronchiectasis",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Insmed Incorporated"
+    },
+    {
+      "nct_id": "NCT05355935",
+      "title": "A Study to Investigate the Effects of Brensocatib on QT Interval in Healthy Participants",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Healthy Volunteer",
+      "start_date": "2022-04-27",
+      "completion_date": "2022-10-07",
+      "enrollment": 0,
+      "sponsor": "Insmed Incorporated"
+    },
+    {
+      "nct_id": "NCT04677543",
+      "title": "Validation of Patient Reported Outcome Measures in Participants With Nontuberculous Mycobacterial Lung Infection Caused by Mycobacterium Avium Complex",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Mycobacterium Infections, Nontuberculous",
+      "start_date": "2020-12-22",
+      "completion_date": "2023-05-09",
+      "enrollment": 0,
+      "sponsor": "Insmed Incorporated"
+    },
+    {
+      "nct_id": "NCT01315678",
+      "title": "Study to Evaluate Arikayce\u2122 in CF Patients With Chronic Pseudomonas Aeruginosa Infections",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Pseudomonas Aeruginosa Infection",
+      "start_date": "2012-02-29",
+      "completion_date": "2013-09-18",
+      "enrollment": 0,
+      "sponsor": "Insmed Incorporated"
+    },
+    {
+      "nct_id": "NCT04594369",
+      "title": "A Study to Assess the Efficacy, Safety, and Tolerability of Brensocatib in Participants With Non-Cystic Fibrosis Bronchiectasis",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Non-Cystic Fibrosis Bronchiectasis",
+      "start_date": "2020-12-01",
+      "completion_date": "2024-10-28",
+      "enrollment": 0,
+      "sponsor": "Insmed Incorporated"
+    },
+    {
+      "nct_id": "NCT00368173",
+      "title": "IGF-I/IGFBP-3 Therapy in Children and Adolescents With Growth Hormone Insenitivity Syndrome (GHIS) Such as Laron Syndrome",
+      "status": "COMPLETED",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Growth Hormone Insensitivity Syndrome (GHIS), Laron Syndrome",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "Insmed Incorporated"
+    },
+    {
+      "nct_id": "NCT04817332",
+      "title": "STOP-COVID19: Superiority Trial Of Protease Inhibition in COVID-19",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Covid19",
+      "start_date": "2020-06-05",
+      "completion_date": "2021-02-28",
+      "enrollment": 0,
+      "sponsor": "University of Dundee"
+    }
+  ],
+  "summary": {
+    "total_trials": 50,
+    "by_phase": {
+      "PHASE2": 14,
+      "PHASE1, PHASE2": 3,
+      "": 3,
+      "PHASE1": 16,
+      "PHASE3": 11,
+      "PHASE2, PHASE3": 3
+    },
+    "by_status": {
+      "COMPLETED": 35,
+      "TERMINATED": 3,
+      "APPROVED_FOR_MARKETING": 1,
+      "NOT_YET_RECRUITING": 2,
+      "RECRUITING": 3,
+      "WITHDRAWN": 1,
+      "ACTIVE_NOT_RECRUITING": 4,
+      "AVAILABLE": 1
+    },
+    "active_trials": 7,
+    "completed_trials": 35,
+    "conditions": [
+      "Amyotrophic Lateral Sclerosis",
+      "Bronchiectasis",
+      "Bronchiectasis, Non-Tuberculous Mycobacterial Pneumonia",
+      "Chronic Rhinosinusitis Without Nasal Polyps",
+      "Covid19",
+      "Cystic Fibrosis",
+      "Duchenne Muscular Dystrophy",
+      "Growth Hormone Insensitivity Syndrome (GHIS), Laron Syndrome",
+      "Healthy Participants",
+      "Healthy Volunteer",
+      "Healthy Volunteers",
+      "Hepatic Impairment",
+      "Hidradenitis Suppurativa",
+      "Mycobacterium Infections, Nontuberculous",
+      "Mycobacterium Infections, Nontuberculous, Mycobacteria, Atypical",
+      "Myotonic Dystrophy Type 1",
+      "NTM Lung Infection Due to MAC",
+      "Non-Cystic Fibrosis Bronchiectasis",
+      "Noonan Syndrome",
+      "Osteosarcoma Metastatic",
+      "Prostate Cancer",
+      "Pseudomonas Aeruginosa Infection",
+      "Pulmonary Arterial Hypertension",
+      "Pulmonary Arterial Hypertension, Pulmonary Hypertension, Interstitial Lung Disease",
+      "Pulmonary Hypertension",
+      "Pulmonary Hypertension, Interstitial Lung Disease",
+      "Renal Impairment"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:19:08.407197",
+    "search_query": "Insmed Incorporated",
+    "url": "https://clinicaltrials.gov/search?term=Insmed+Incorporated"
+  }
+}

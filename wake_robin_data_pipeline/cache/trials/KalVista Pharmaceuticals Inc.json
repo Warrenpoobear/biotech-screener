@@ -1,0 +1,147 @@
+{
+  "ticker": "KALV",
+  "company_name": "KalVista Pharmaceuticals, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT05118958",
+      "title": "Phase 1 Crossover Study in Healthy Subjects to Evaluate the PK Profile of KVD824 Following Single and Multiple Doses of Modified Release (MR) Formulations",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Hereditary Angioedema",
+      "start_date": "2020-05-19",
+      "completion_date": "2020-12-01",
+      "enrollment": 0,
+      "sponsor": "KalVista Pharmaceuticals, Ltd."
+    },
+    {
+      "nct_id": "NCT04349800",
+      "title": "A Single Dose Safety, Tolerability, Pharmacokinetic and Food Effect Study of KVD900 (Sebetralstat) in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Hereditary Angioedema",
+      "start_date": "2018-01-04",
+      "completion_date": "2018-09-10",
+      "enrollment": 0,
+      "sponsor": "KalVista Pharmaceuticals, Ltd."
+    },
+    {
+      "nct_id": "NCT04208412",
+      "title": "A Phase II, Cross-over Clinical Trial Evaluating the Efficacy and Safety of KVD900 (Sebetralstat) in the On-demand Treatment of Angioedema Attacks in Adult Subjects With Hereditary Angioedema Type I or II",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Hereditary Angioedema",
+      "start_date": "2019-07-02",
+      "completion_date": "2020-12-08",
+      "enrollment": 0,
+      "sponsor": "KalVista Pharmaceuticals, Ltd."
+    },
+    {
+      "nct_id": "NCT05511922",
+      "title": "PK Subtrial in Adolescent Patients With HAE Type I or II Participating in the KVD900-302 Trial",
+      "status": "ACTIVE_NOT_RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Hereditary Angioedema",
+      "start_date": "2022-10-24",
+      "completion_date": "2026-06-30",
+      "enrollment": 0,
+      "sponsor": "KalVista Pharmaceuticals, Ltd."
+    },
+    {
+      "nct_id": "NCT05178355",
+      "title": "A Single and Multiple Doses Safety, Tolerability, Pharmacokinetics and Food Effect Study of KVD824 in Healthy Volunteers",
+      "status": "COMPLETED",
+      "phase": "PHASE1",
+      "condition": "Hereditary Angioedema",
+      "start_date": "2019-02-12",
+      "completion_date": "2019-06-21",
+      "enrollment": 0,
+      "sponsor": "KalVista Pharmaceuticals, Ltd."
+    },
+    {
+      "nct_id": "NCT05259917",
+      "title": "A Phase III, Crossover Trial Evaluating the Efficacy and Safety of KVD900 (Sebetralstat) for On-Demand Treatment of Angioedema Attacks in Adolescent and Adult Patients With Hereditary Angioedema (HAE)",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Hereditary Angioedema",
+      "start_date": "2022-02-22",
+      "completion_date": "2023-12-31",
+      "enrollment": 0,
+      "sponsor": "KalVista Pharmaceuticals, Ltd."
+    },
+    {
+      "nct_id": "NCT06628713",
+      "title": "Treatment of Angioedema Attacks in Adolescent and Adult Patients 12 Years and Older With HAE Type I or II With Sebetralstat",
+      "status": "APPROVED_FOR_MARKETING",
+      "phase": "",
+      "condition": "Hereditary Angioedema",
+      "start_date": "",
+      "completion_date": "",
+      "enrollment": 0,
+      "sponsor": "KalVista Pharmaceuticals, Ltd."
+    },
+    {
+      "nct_id": "NCT07009262",
+      "title": "A Study Observing US Patients With HAE Type I or II Who Take Icatibant to Treat HAE Attacks",
+      "status": "COMPLETED",
+      "phase": "",
+      "condition": "Hereditary Angioedema",
+      "start_date": "2025-04-21",
+      "completion_date": "2025-11-25",
+      "enrollment": 0,
+      "sponsor": "KalVista Pharmaceuticals, Ltd."
+    },
+    {
+      "nct_id": "NCT06467084",
+      "title": "Open-Label Safety, PK, and Efficacy Trial of Sebetralstat (KVD900) in Pediatric Patients (Ages 2-11) With HAE Type I or II",
+      "status": "COMPLETED",
+      "phase": "PHASE3",
+      "condition": "Hereditary Angioedema",
+      "start_date": "2024-06-24",
+      "completion_date": "2026-01-15",
+      "enrollment": 0,
+      "sponsor": "KalVista Pharmaceuticals, Ltd."
+    },
+    {
+      "nct_id": "NCT03466099",
+      "title": "Study of the Intravitreal Plasma Kallikrein Inhibitor, KVD001, in Subjects With Center-involving Diabetic Macular Edema (ciDME)",
+      "status": "COMPLETED",
+      "phase": "PHASE2",
+      "condition": "Diabetic Macular Edema",
+      "start_date": "2018-02-16",
+      "completion_date": "2019-10-10",
+      "enrollment": 0,
+      "sponsor": "KalVista Pharmaceuticals, Ltd."
+    }
+  ],
+  "summary": {
+    "total_trials": 14,
+    "by_phase": {
+      "PHASE1": 4,
+      "PHASE2": 3,
+      "PHASE3": 4,
+      "": 3
+    },
+    "by_status": {
+      "COMPLETED": 9,
+      "ACTIVE_NOT_RECRUITING": 2,
+      "APPROVED_FOR_MARKETING": 1,
+      "TERMINATED": 1,
+      "AVAILABLE": 1
+    },
+    "active_trials": 2,
+    "completed_trials": 9,
+    "conditions": [
+      "Angioedema, Hereditary, Types I and II",
+      "Diabetic Macular Edema",
+      "Hereditary Angioedema"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:19:22.567953",
+    "search_query": "KalVista Pharmaceuticals, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=KalVista+Pharmaceuticals,+Inc."
+  }
+}

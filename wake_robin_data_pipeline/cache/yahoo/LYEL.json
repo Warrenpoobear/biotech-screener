@@ -1,0 +1,43 @@
+{
+  "ticker": "LYEL",
+  "success": true,
+  "price": {
+    "current": 24.24,
+    "currency": "USD",
+    "day_high": 24.72,
+    "day_low": 24.03,
+    "52_week_high": 45.0,
+    "52_week_low": 7.65
+  },
+  "market_cap": {
+    "value": 514953440.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 21243954.0,
+  "volume": {
+    "last": 12120,
+    "average_30d": 102891
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -28.857143,
+    "price_to_book": 1.4210341
+  },
+  "company_info": {
+    "name": "Lyell Immunopharma, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:07:53.570361",
+    "url": "https://finance.yahoo.com/quote/LYEL",
+    "data_hash": "8d200bd62760b1b7"
+  }
+}

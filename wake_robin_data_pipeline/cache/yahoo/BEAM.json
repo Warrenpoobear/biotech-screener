@@ -1,0 +1,43 @@
+{
+  "ticker": "BEAM",
+  "success": true,
+  "price": {
+    "current": 29.04,
+    "currency": "USD",
+    "day_high": 29.93,
+    "day_low": 28.64,
+    "52_week_high": 36.44,
+    "52_week_low": 13.525
+  },
+  "market_cap": {
+    "value": 2946832384.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 101474944.0,
+  "volume": {
+    "last": 598234,
+    "average_30d": 1992237
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": -6.310862,
+    "price_to_book": 2.963568
+  },
+  "company_info": {
+    "name": "Beam Therapeutics Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:05:13.763227",
+    "url": "https://finance.yahoo.com/quote/BEAM",
+    "data_hash": "c3c2d6064472c412"
+  }
+}

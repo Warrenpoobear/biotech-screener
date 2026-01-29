@@ -1,0 +1,43 @@
+{
+  "ticker": "REGN",
+  "success": true,
+  "price": {
+    "current": 748.515,
+    "currency": "USD",
+    "day_high": 755.73,
+    "day_low": 746.25,
+    "52_week_high": 821.11,
+    "52_week_low": 476.49
+  },
+  "market_cap": {
+    "value": 79333187584.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 103282318.0,
+  "volume": {
+    "last": 174368,
+    "average_30d": 803398
+  },
+  "valuation": {
+    "pe_ratio": 17.954306,
+    "forward_pe": 16.5818,
+    "price_to_book": 2.4855552
+  },
+  "company_info": {
+    "name": "Regeneron Pharmaceuticals, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:09:24.545191",
+    "url": "https://finance.yahoo.com/quote/REGN",
+    "data_hash": "d1f1c16cd9cb6a69"
+  }
+}

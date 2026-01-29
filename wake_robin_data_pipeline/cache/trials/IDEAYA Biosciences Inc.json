@@ -1,0 +1,138 @@
+{
+  "ticker": "IDYA",
+  "company_name": "IDEAYA Biosciences, Inc.",
+  "success": true,
+  "trials": [
+    {
+      "nct_id": "NCT07015190",
+      "title": "Neoadjuvant Darovasertib in Primary Uveal Melanoma",
+      "status": "RECRUITING",
+      "phase": "PHASE3",
+      "condition": "Uveal Melanoma",
+      "start_date": "2025-10",
+      "completion_date": "2031-03",
+      "enrollment": 0,
+      "sponsor": "IDEAYA Biosciences"
+    },
+    {
+      "nct_id": "NCT06710847",
+      "title": "A Study to Investigate the Safety, Pharmacokinetics, and Preliminary Effectiveness of GSK4418959 Alone or in Combination With Other Anti-cancer Agents in Participants With Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Neoplasms, Colorectal, Solid Tumor, Colon Cancer, Rectal Cancer, Endometrial Cancer",
+      "start_date": "2024-12-13",
+      "completion_date": "2028-06-16",
+      "enrollment": 0,
+      "sponsor": "GlaxoSmithKline"
+    },
+    {
+      "nct_id": "NCT03947385",
+      "title": "Study of IDE196 in Patients With Solid Tumors Harboring GNAQ/11 Mutations or PRKC Fusions",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Metastatic Uveal Melanoma, Cutaneous Melanoma, Colorectal Cancer, Other Solid Tumors",
+      "start_date": "2019-06-28",
+      "completion_date": "2027-06-15",
+      "enrollment": 0,
+      "sponsor": "IDEAYA Biosciences"
+    },
+    {
+      "nct_id": "NCT07174583",
+      "title": "A Study of IDE849 in Patients With DLL3 Expressing Tumors Including Small Cell Lung Cancer",
+      "status": "RECRUITING",
+      "phase": "PHASE1, PHASE2",
+      "condition": "Small-cell Lung Cancer, Neuroendocrine Carcinomas, Solid Tumor Show to Express DLL3",
+      "start_date": "2025-10-14",
+      "completion_date": "2029-05",
+      "enrollment": 0,
+      "sponsor": "IDEAYA Biosciences"
+    },
+    {
+      "nct_id": "NCT05787587",
+      "title": "A Study of PARG Inhibitor IDE161 in Participants With Advanced Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Advanced or Metastatic Solid Tumors, Breast Cancer, Ovarian Cancer, Prostate Cancer, Endometrial Cancer, Colorectal Cancer, Head and Neck Cancers, Extensive Stage Small Cell Lung Cancer (ES-SCLC), NSCLC",
+      "start_date": "2023-04-05",
+      "completion_date": "2027-05",
+      "enrollment": 0,
+      "sponsor": "IDEAYA Biosciences"
+    },
+    {
+      "nct_id": "NCT07277413",
+      "title": "A Study of IDE892 as Monotherapy and Combination in MTAP-deleted Advanced Solid Tumors",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "NSCLC Adenocarcinoma, Gastroesophageal Cancer (GC), Gastric Adenocarcinoma, Adenocarcinoma of Esophagus, Squamous Cell Car. - Esophagus, Urothelial Carcinoma (UC), Bladder Cancer, Mesothelioma, Pleural Mesothelioma, Peritoneal Mesothelioma, Non-Small Cell Lung Cancer NSCLC",
+      "start_date": "2026-02-28",
+      "completion_date": "2028-04-30",
+      "enrollment": 0,
+      "sponsor": "IDEAYA Biosciences"
+    },
+    {
+      "nct_id": "NCT05907954",
+      "title": "(Neo)Adjuvant IDE196 (Darovasertib) in Patients With Localized Ocular Melanoma",
+      "status": "RECRUITING",
+      "phase": "PHASE2",
+      "condition": "Uveal Melanoma",
+      "start_date": "2023-07-03",
+      "completion_date": "2030-04-30",
+      "enrollment": 0,
+      "sponsor": "IDEAYA Biosciences"
+    },
+    {
+      "nct_id": "NCT05987332",
+      "title": "IDE196 (Darovasertib) in Combination With Crizotinib as First-line Therapy in Metastatic Uveal Melanoma",
+      "status": "RECRUITING",
+      "phase": "PHASE2, PHASE3",
+      "condition": "Metastatic Uveal Melanoma",
+      "start_date": "2023-10-31",
+      "completion_date": "2028-01-15",
+      "enrollment": 0,
+      "sponsor": "IDEAYA Biosciences"
+    },
+    {
+      "nct_id": "NCT04794699",
+      "title": "Study of IDE397 in Participants With Solid Tumors Harboring MTAP Deletion",
+      "status": "RECRUITING",
+      "phase": "PHASE1",
+      "condition": "Solid Tumor",
+      "start_date": "2021-04-14",
+      "completion_date": "2027-03-30",
+      "enrollment": 0,
+      "sponsor": "IDEAYA Biosciences"
+    }
+  ],
+  "summary": {
+    "total_trials": 9,
+    "by_phase": {
+      "PHASE3": 1,
+      "PHASE1, PHASE2": 3,
+      "PHASE1": 3,
+      "PHASE2": 1,
+      "PHASE2, PHASE3": 1
+    },
+    "by_status": {
+      "RECRUITING": 9
+    },
+    "active_trials": 9,
+    "completed_trials": 0,
+    "conditions": [
+      "Advanced or Metastatic Solid Tumors, Breast Cancer, Ovarian Cancer, Prostate Cancer, Endometrial Cancer, Colorectal Cancer, Head and Neck Cancers, Extensive Stage Small Cell Lung Cancer (ES-SCLC), NSCLC",
+      "Metastatic Uveal Melanoma",
+      "Metastatic Uveal Melanoma, Cutaneous Melanoma, Colorectal Cancer, Other Solid Tumors",
+      "NSCLC Adenocarcinoma, Gastroesophageal Cancer (GC), Gastric Adenocarcinoma, Adenocarcinoma of Esophagus, Squamous Cell Car. - Esophagus, Urothelial Carcinoma (UC), Bladder Cancer, Mesothelioma, Pleural Mesothelioma, Peritoneal Mesothelioma, Non-Small Cell Lung Cancer NSCLC",
+      "Neoplasms, Colorectal, Solid Tumor, Colon Cancer, Rectal Cancer, Endometrial Cancer",
+      "Small-cell Lung Cancer, Neuroendocrine Carcinomas, Solid Tumor Show to Express DLL3",
+      "Solid Tumor",
+      "Uveal Melanoma"
+    ],
+    "lead_stage": "phase_3"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:18:55.832422",
+    "search_query": "IDEAYA Biosciences, Inc.",
+    "url": "https://clinicaltrials.gov/search?term=IDEAYA+Biosciences,+Inc."
+  }
+}

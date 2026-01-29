@@ -1,0 +1,43 @@
+{
+  "ticker": "LEGN",
+  "success": true,
+  "price": {
+    "current": 17.87,
+    "currency": "USD",
+    "day_high": 18.0,
+    "day_low": 17.56,
+    "52_week_high": 45.297,
+    "52_week_low": 17.56
+  },
+  "market_cap": {
+    "value": 3300402688.0,
+    "currency": "USD"
+  },
+  "shares_outstanding": 184689565.0,
+  "volume": {
+    "last": 622795,
+    "average_30d": 2867028
+  },
+  "valuation": {
+    "pe_ratio": null,
+    "forward_pe": 28.578283,
+    "price_to_book": 3.2639272
+  },
+  "company_info": {
+    "name": "Legend Biotech Corporation",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "data_quality": {
+    "flags": [],
+    "has_price": true,
+    "has_market_cap": true,
+    "has_volume": true
+  },
+  "provenance": {
+    "source": "Yahoo Finance via yfinance",
+    "timestamp": "2026-01-29T11:07:43.731268",
+    "url": "https://finance.yahoo.com/quote/LEGN",
+    "data_hash": "e4d9027e778147ca"
+  }
+}

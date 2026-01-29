@@ -1,0 +1,20 @@
+{
+  "ticker": "TWST",
+  "company_name": "Twist Bioscience Corporation",
+  "success": true,
+  "trials": [],
+  "summary": {
+    "total_trials": 0,
+    "by_phase": {},
+    "by_status": {},
+    "active_trials": 0,
+    "completed_trials": 0,
+    "lead_stage": "unknown"
+  },
+  "provenance": {
+    "source": "ClinicalTrials.gov API v2",
+    "timestamp": "2026-01-29T12:22:34.767001",
+    "search_query": "Twist Bioscience Corporation",
+    "url": "https://clinicaltrials.gov/search?term=Twist+Bioscience+Corporation"
+  }
+}
