@@ -81,6 +81,8 @@ ablation_report.json
 data/13f_cache/
 data/cache/
 production_data/defensive_features_*.json
+wake_robin_data_pipeline/cache/fred/
+wake_robin_data_pipeline/cache/fund_flows/
 
 # Test output files
 output.json
