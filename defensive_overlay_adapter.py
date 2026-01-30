@@ -736,6 +736,9 @@ def enrich_with_defensive_overlays(
 
     # Add config provenance for audit trail
     provenance = cfg.to_provenance()
+    provenance["defensive_overlay_applied"] = apply_multiplier
+    provenance["portfolio_weights_computed"] = apply_position_sizing
+    # Legacy alias for backwards compatibility
     provenance["position_sizing_enabled"] = apply_position_sizing
     output["defensive_overlay_config"] = provenance
 
