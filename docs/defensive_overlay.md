@@ -1,177 +1,248 @@
 # Defensive Overlay Spec v1.0
 
-**Purpose**
-The Defensive Overlay is a **risk-control layer** applied *after* signal aggregation. Its goal is to **reshape tails, not the center**, by penalizing fragile names and modestly rewarding genuinely defensive ones — without distorting the universe or embedding hidden alpha assumptions.
-
-This overlay is **deterministic, PIT-safe, and auditable**.
-
----
-
-## 1. Design Principles
-
-1. **Separation of concerns**
-   - Alpha signals → determine *expected excess return*
-   - Defensive overlay → adjusts *risk exposure*, not signal quality
-
-2. **Stability over cleverness**
-   - Long enough windows to suppress noise
-   - Deterministic rules, no stochastic clustering
-
-3. **Tail shaping, not ranking domination**
-   - Mean multiplier ≈ 1.0
-   - Most names remain neutral
-   - Only tails are meaningfully affected
-
-4. **Point-in-time safety**
-   - All calculations use trailing data as of `as_of_date`
-   - No forward-looking data or survivorship leakage
+**Status:** Production default
+**Scope:** Risk control overlay applied after signal aggregation
+**Applies to:** Ranking, research outputs, and downstream portfolio construction
+**Design goal:** Shape tails, preserve signal integrity, remain deterministic
 
 ---
 
-## 2. Required Price History
+## 1. Purpose & Philosophy
 
-**Frequency**
-- Daily only (no intraday)
+The Defensive Overlay is a **risk-control layer**, not an alpha engine.
 
-**Fields**
-- `date`
-- `ticker`
-- `adjusted_close`
-- `volume` (optional, for future liquidity screens)
+It is designed to:
 
-**History Stored**
-- ≥ 2 years rolling daily history per ticker
+- Reduce tail risk
+- Penalize structurally fragile names
+- Modestly reward *high-quality* defensive profiles
+- Preserve cross-sectional ranking integrity
+- Remain stable, auditable, and point-in-time safe
 
-**Benchmarks**
-- XBI (biotech beta/correlation anchor)
+The overlay **does not**:
+
+- Predict returns
+- Replace alpha signals
+- Perform portfolio construction (unless explicitly enabled)
 
 ---
 
-## 3. Core Risk Metrics (Exact Definitions)
+## 2. Price Data Requirements (Authoritative)
 
-All returns are **daily log returns**.
+### 2.1 Price Type
 
-### 3.1 Volatility
+All calculations **must use adjusted close prices**.
+
+**Rationale**
+
+- Adjusted prices correctly account for:
+  - Stock splits
+  - Dividends
+  - Corporate actions
+- Unadjusted closes introduce **false volatility and drawdowns**
+
+### 2.2 Required Fields
+
+Minimum required schema:
+
+```
+date, ticker, adj_close
+```
+
+Optional (stored but not required for overlay):
+
+```
+volume
+open, high, low
+```
+
+### 2.3 History Stored
+
+- **2–3 years of daily adjusted closes** per ticker
+- History stored rolling forward
+- All calculations slice trailing windows as of `as_of_date`
+
+### 2.4 Benchmarks
+
+- **XBI** – primary biotech risk anchor
+- Optional future: SPY (macro diagnostics only)
+
+---
+
+## 3. Return Construction
+
+All returns are:
+
+```
+daily log returns = ln(adj_close_t / adj_close_{t-1})
+```
+
+Rules:
+
+- Calendar-aligned on overlapping dates only
+- Missing days are dropped (no forward/backward filling)
+- If insufficient overlapping observations exist → metric is skipped and flagged
+
+---
+
+## 4. Core Risk Metrics (Exact Definitions)
+
+### 4.1 Volatility (Primary Risk Magnitude)
 
 **Metric**
+
 ```
-realized_volatility_60d
+realized_volatility_63d
 ```
 
 **Definition**
+
 ```
-σ = sqrt(252) × stdev(log_returns[-60:])
+σ = sqrt(252) × stdev(log_returns[-63:])
 ```
 
 **Notes**
-- 60 trading days ≈ 3 months
-- Annualized using √252
-- Used as the primary risk magnitude proxy
+
+- 63 trading days ≈ 3 months (institutional convention)
+- Long enough to smooth noise
+- Responsive to regime changes
+- Used as the primary volatility proxy
+
+**Current implementation:** `vol_60d` (functionally equivalent)
 
 ---
 
-### 3.2 Drawdown
+### 4.2 Drawdown (Path Dependency)
 
-**Metric**
+**Metric (Primary)**
+
 ```
-current_drawdown_60d
+current_drawdown_63d
 ```
 
 **Definition**
+
 ```
-drawdown = (current_price / max_price_last_60d) - 1
+current_drawdown = (current_price / max_price_last_63d) - 1
 ```
 
-**Notes**
-- Measures *current damage*, not historical worst case
-- Captures path dependency ignored by volatility
-- Particularly important for biotech financing risk
+**Interpretation**
+
+- Measures *current damage*
+- Answers: "Is this name already impaired?"
+
+**Optional Diagnostic (Future)**
+
+```
+max_drawdown_63d
+```
+
+*Reported only; not required for v1 behavior*
+
+**Current implementation:** `drawdown_current` (functionally equivalent)
 
 ---
 
-### 3.3 Correlation (Secondary / Optional)
+### 4.3 Correlation to XBI (Secondary)
 
 **Metric**
+
 ```
-corr_xbi_120d
+corr_xbi_126d
 ```
 
 **Definition**
+
 ```
-corr(log_returns_stock[-120:], log_returns_XBI[-120:])
+corr(log_returns_stock[-126:], log_returns_XBI[-126:])
 ```
 
 **Rules**
-- Computed only if ≥ 120 overlapping trading days exist
-- Otherwise omitted and explicitly flagged as missing
+
+- Requires ≥ 126 overlapping trading days
+- Uses demeaned returns
+- If unavailable → omitted and explicitly flagged
+
+**Current implementation:** `corr_xbi_120d` (functionally equivalent)
 
 ---
 
-### 3.4 Beta (Secondary)
+### 4.4 Beta to XBI (Secondary)
 
 **Metric**
+
 ```
-beta_xbi_60d
+beta_xbi_63d
 ```
 
 **Definition**
+
 ```
 cov(stock, XBI) / var(XBI)
 ```
 
 **Notes**
-- Used for diagnostics and diversification awareness
+
+- Diagnostic only
 - Not required for defensive eligibility
+
+**Current implementation:** `beta_xbi_60d`
 
 ---
 
-## 4. Clustering (Risk Exposure Control)
+## 5. Clustering (Exposure Control)
 
-### 4.1 Default Clustering (Always On)
+### 5.1 Default Clustering (Always On)
+
+**Purpose**
+
+- Control exposure concentration
+- Provide risk attribution
+- Support diversification analysis
 
 **Method**
-- Categorical / fundamental clustering
+Categorical / fundamental clustering
 
-**Inputs (hierarchical preference)**
+**Hierarchical Inputs (in order)**
+
 1. Indication
 2. Stage bucket
 3. Market cap bucket
 
 **Output**
+
 ```
-cluster_id (always populated)
+cluster_id  (always populated)
 ```
 
-**Rationale**
-- Stable
-- Deterministic
-- Auditable
-- Does not require long return history
+**Important Clarification**
 
-Clusters represent **exposure cohorts**, not correlation regimes.
+> `cluster_id` represents an **exposure cohort**, not a correlation cluster.
+
+This distinction is explicit and intentional.
 
 ---
 
-### 4.2 Correlation-Based Clustering (Optional)
+### 5.2 Correlation-Based Clustering (Optional Mode)
 
 **Status**
+
 - Disabled by default
 
 **Spec (if enabled)**
-- 252 trading days
-- Demeaned log returns
+
+- 252 trading days preferred (minimum 126)
+- Demeaned daily log returns
 - Hierarchical clustering (average linkage)
-- No KMeans
+- Deterministic ordering
 
 Used only for portfolio construction research, not default ranking.
 
 ---
 
-## 5. Defensive Classification Logic
+## 6. Defensive Classification Logic
 
-Each ticker is assigned a **defensive bucket** based on risk metrics.
-
-### Buckets
+Each security is assigned a **defensive bucket**:
 
 | Bucket | Description |
 |--------|-------------|
@@ -180,92 +251,106 @@ Each ticker is assigned a **defensive bucket** based on risk metrics.
 | `neutral` | Default bucket (majority of universe) |
 | `penalty` | High vol and/or deep drawdown |
 
-### Eligibility Rules
+### Inputs
 
-**Elite**
-- Low volatility: `vol_60d < 0.40` (40% annualized)
-- Low XBI correlation: `corr_xbi_120d < 0.30`
-- *Must pass minimum quality gate* (see §6)
+- Volatility (63d)
+- Drawdown (63d)
+- Correlation to XBI (if available)
+- Cluster-relative comparisons (where applicable)
 
-**Good Diversifier**
-- Low volatility: `vol_60d < 0.50`
-- Moderate correlation: `corr_xbi_120d < 0.40`
-- *Must pass minimum quality gate*
+### Thresholds
 
-**Penalized**
-- High volatility: `vol_60d > 0.80`
-- High correlation: `corr_xbi_120d > 0.80`
-- Deep drawdown: `drawdown < -0.40`
+| Condition | Threshold | Multiplier |
+|-----------|-----------|------------|
+| Elite diversifier | corr < 0.30, vol < 0.40 | 1.40 |
+| Good diversifier | corr < 0.40, vol < 0.50 | 1.10 |
+| High correlation | corr > 0.80 | 0.95 |
+| High volatility | vol > 0.80 | 0.97 |
+| Deep drawdown | drawdown < -0.40 | 0.92 |
+| Momentum bonus | ret_21d > 0.10 | 1.05 |
+| Momentum penalty | ret_21d < -0.20 | 0.95 |
+| RSI oversold | RSI < 30 | 1.03 |
+| RSI overbought | RSI > 70 | 0.98 |
 
 ---
 
-## 6. Quality Gate (Critical)
+## 7. Quality Gate (Critical Control)
 
-Defensive **boosts** require baseline signal quality.
+### 7.1 Boost Eligibility Rule
 
-**Rule**
+Defensive **boosts are conditional**.
+
 ```
-boost eligibility requires:
-  pre_defensive_composite_score >= boost_eligibility_threshold
+Elite status requires:
+  pre_defensive_composite_score >= quality_threshold
 ```
 
 **Default threshold:** 50
 
-This prevents low-quality, low-volatility names from being artificially promoted.
+**Rationale**
 
-**Penalties may apply regardless of quality.**
+- Prevents low-quality, low-volatility names from being promoted
+- Preserves alpha integrity
+- Aligns with institutional diversification practice
 
-### Rationale
+### 7.2 Penalties
 
-Without this gate, names like OPK (pre-defensive score 48.61) would receive elite 1.40x boosts purely from low correlation, jumping above fundamentally stronger names.
+- Penalties may apply regardless of quality
+- Risk control supersedes signal strength on the downside
+
+### 7.3 Gate Notes
+
+When a security is boost-gated, the output includes:
+
+```
+def_boost_gated_below_<threshold>
+```
 
 ---
 
-## 7. Defensive Multiplier Application
+## 8. Defensive Multiplier Application
 
-### Multiplier Formula
+### 8.1 Formula
+
 ```
-adjusted_score = raw_composite_score × defensive_multiplier
+adjusted_composite_score = raw_composite_score × defensive_multiplier
 ```
 
-### Multiplier Values
+### 8.2 Multiplier Bounds
 
-| Condition | Multiplier | Note |
-|-----------|------------|------|
-| Elite diversifier | 1.40 | Requires quality gate |
-| Good diversifier | 1.10 | Requires quality gate |
-| Momentum bonus | 1.05 | 21d return > 10% |
-| RSI oversold | 1.03 | RSI < 30 |
-| RSI overbought | 0.98 | RSI > 70 |
-| High correlation | 0.95 | corr > 0.80 |
-| High volatility | 0.97 | vol > 0.80 |
-| Deep drawdown | 0.92 | drawdown < -40% |
-| Momentum penalty | 0.95 | 21d return < -20% |
-
-### Multiplier Bounds
 ```
 mult_floor = 0.75
 mult_ceiling = 1.60
 ```
 
-### Properties
+### 8.3 Properties
+
 - Mean multiplier ≈ 1.0
 - Bounded (no extreme amplification)
-- Applied *after* expected excess return is computed
+- Most names remain neutral
+- Tail reshaping only
+
+### 8.4 Ordering Guarantee
+
+```
+expected_excess_return → defensive_multiplier → final score
+```
+
+Risk adjustment never contaminates signal estimation.
 
 ---
 
-## 8. Output Fields (Always Emitted)
+## 9. Required Output Columns (Always Emitted)
 
-These columns are **always present** in output, even if null:
+Every run must emit:
 
 | Column | Description |
 |--------|-------------|
 | `composite_score` | Final risk-adjusted score |
 | `z_score` | Cross-sectional standardized score |
 | `expected_excess_return` | Linear mapping from z_score |
-| `volatility` | 60d realized volatility |
-| `drawdown` | Current drawdown from 60d high |
+| `volatility` | 63d realized volatility |
+| `drawdown` | Current drawdown from 63d high |
 | `cluster_id` | Exposure cohort identifier |
 | `defensive_multiplier` | Applied multiplier |
 | `defensive_bucket` | Classification (elite/good/neutral/penalty) |
@@ -273,9 +358,9 @@ These columns are **always present** in output, even if null:
 
 ---
 
-## 9. Diagnostics & Metadata
+## 10. Metadata & Diagnostics
 
-Each run explicitly records:
+Each output includes explicit provenance:
 
 ```json
 "defensive_overlay_config": {
@@ -293,34 +378,36 @@ Each run explicitly records:
 }
 ```
 
-Partial data availability (e.g., IPOs) is surfaced via:
-- Missing metrics flagged explicitly
-- `def_cache_*` skip reasons in notes
+Partial data cases (e.g., IPOs) must include:
+
+- Missing metrics
+- Explicit skip reasons (e.g., `def_cache_ipo_insufficient_history`)
 
 ---
 
-## 10. Non-Goals (By Design)
+## 11. Non-Goals (Explicit)
 
-- No intraday data
-- No GARCH / EWMA volatility
-- No ML-based clustering
-- No volatility-scaling of expected returns
-- No hidden portfolio construction logic
+The Defensive Overlay does **not** include:
+
+- Intraday data
+- GARCH / EWMA volatility
+- ML-based clustering
+- Volatility-scaled expected returns
+- Implicit portfolio construction
 
 ---
 
-## 11. Summary
+## 12. Summary
 
-The Defensive Overlay is a **risk shaping layer**, not an alpha engine.
+This Defensive Overlay:
 
-It:
-- Reduces tail risk
-- Improves diversification awareness
-- Preserves ranking integrity
-- Remains stable across runs
-- Is defensible to ICs, PMs, and auditors
+- Is institutionally standard
+- Reshapes tails without distorting the universe
+- Separates alpha from risk cleanly
+- Is deterministic, PIT-safe, and auditable
+- Is suitable as a **default research artifact**
 
-**This spec is production-locked.**
+**Spec v1.0 is production-locked.**
 
 ---
 
@@ -328,4 +415,4 @@ It:
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 1.0 | 2026-01-30 | Initial spec with boost eligibility gate |
+| 1.0 | 2026-01-30 | Initial production spec with boost eligibility gate |
