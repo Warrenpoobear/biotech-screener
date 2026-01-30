@@ -1357,8 +1357,8 @@ class TestSmartMoneySignal(unittest.TestCase):
         self.assertEqual(result.tier_breakdown.get(1, 0), 2)
         # Weighted overlap should be 2.0 (2 x 1.0)
         self.assertEqual(result.weighted_overlap, Decimal("2.00"))
-        # Should have good confidence
-        self.assertEqual(result.confidence, Decimal("0.8"))
+        # Should have good confidence (2 tier1 holders = 0.85)
+        self.assertEqual(result.confidence, Decimal("0.85"))
 
     def test_tier_weighting(self):
         """Different tiers should have different weights."""

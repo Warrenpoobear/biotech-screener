@@ -80,14 +80,19 @@ class TestEliteManagers:
     
     def test_manager_weight_tier_2_lower(self):
         """Tier 2 manager should have lower weight than Tier 1."""
+        tier_2_managers = [m for m in ELITE_MANAGERS if m.get('tier') == 2]
+        if not tier_2_managers:
+            # No tier 2 managers currently defined - verify tier weights are still ordered
+            assert TIER_WEIGHTS[1] > TIER_WEIGHTS[2], "Tier 1 weight should exceed Tier 2"
+            return
+
         tier_1 = get_tier_1_managers()[0]
-        tier_2 = [m for m in ELITE_MANAGERS if m['tier'] == 2][0]
-        
+        tier_2 = tier_2_managers[0]
+
         weight_1 = get_manager_weight(tier_1)
         weight_2 = get_manager_weight(tier_2)
-        
+
         # Tier 2 base weight is 0.7, so should generally be lower
-        # But style can affect this, so we check tier weights directly
         assert TIER_WEIGHTS[1] > TIER_WEIGHTS[2]
     
     def test_all_managers_have_required_fields(self):

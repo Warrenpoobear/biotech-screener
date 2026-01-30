@@ -319,19 +319,21 @@ class TestSmartMoneyPositionChanges:
         assert "GAMA" in result
 
         # ACME: Baker Bros +50% = INCREASE, RA Capital +11% = INCREASE
-        # FIX: position_changes now keyed by holder name, not CIK
+        # FIX: position_changes keyed by full holder name from elite_managers registry
         acme_changes = result["ACME"]["position_changes"]
-        assert acme_changes.get("Baker Bros") == "INCREASE"
-        assert acme_changes.get("RA Capital") == "INCREASE"
+        assert acme_changes.get("Baker Bros Advisors") == "INCREASE"
+        assert acme_changes.get("RA Capital Management") == "INCREASE"
 
-        # BETA: Perceptive -40% = DECREASE, Deerfield exited = EXIT
+        # BETA: 0000909661 (Farallon) -40% = DECREASE, 0001167483 (unregistered) exited = EXIT
         beta_changes = result["BETA"]["position_changes"]
-        assert beta_changes.get("Perceptive") == "DECREASE"
-        assert beta_changes.get("Deerfield") == "EXIT"
+        assert beta_changes.get("Farallon Capital") == "DECREASE"
+        # Unregistered CIK 0001167483 becomes "Manager_7483" (last 4 digits)
+        assert beta_changes.get("Manager_7483") == "EXIT"
 
-        # GAMA: RTW new position = NEW
+        # GAMA: 0001390295 (unregistered) new position = NEW
         gama_changes = result["GAMA"]["position_changes"]
-        assert gama_changes.get("RTW Investments") == "NEW"
+        # Unregistered CIK becomes "Manager_0295"
+        assert gama_changes.get("Manager_0295") == "NEW"
 
     def test_holder_tier_identification(self, sample_holdings_snapshots: Dict):
         """Test that holder tiers are correctly identified."""
@@ -340,10 +342,10 @@ class TestSmartMoneyPositionChanges:
         result = _convert_holdings_to_coinvest(sample_holdings_snapshots)
 
         # Verify tier 1 managers are identified
-        # FIX: holder_tiers now Dict[name -> tier_int], not Dict[cik -> dict]
+        # FIX: holder_tiers keyed by full name from elite_managers registry
         acme_tiers = result["ACME"]["holder_tiers"]
-        assert acme_tiers["Baker Bros"] == 1
-        assert acme_tiers["RA Capital"] == 1
+        assert acme_tiers["Baker Bros Advisors"] == 1
+        assert acme_tiers["RA Capital Management"] == 1
 
     def test_coinvest_overlap_count(self, sample_holdings_snapshots: Dict):
         """Test coinvest overlap count is correct."""

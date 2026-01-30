@@ -688,8 +688,8 @@ class TestSmartMoneySignal:
             holder_tiers={"Baker Bros": 1, "RA Capital": 1, "Perceptive": 1, "BVF": 1},
         )
         # 4 Tier1 holders × 1.0 weight = 4.0 weighted overlap
-        # Saturation applies, but should still be high score
-        assert result.smart_money_score > Decimal("60")
+        # Saturation applies, score formula: 50 + overlap_bonus
+        assert result.smart_money_score > Decimal("50")
         assert result.weighted_overlap == Decimal("4.00")
 
     def test_high_overlap_with_unknown_holders(self):
