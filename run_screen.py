@@ -1535,6 +1535,7 @@ def run_screening_pipeline(
     # Defensive overlay parameters
     apply_defensive_multiplier: bool = False,
     defensive_config: str = "default",
+    defensive_cache: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
     Execute full screening pipeline with deterministic guarantees.
@@ -2588,6 +2589,7 @@ def run_screening_pipeline(
             # Defensive overlay parameters
             apply_defensive_multiplier=apply_defensive_multiplier,
             defensive_config=defensive_config,
+            defensive_cache_path=defensive_cache,
         )
         if checkpoint_dir:
             save_checkpoint(checkpoint_dir, "module_5", as_of_date, m5_result)
@@ -3068,6 +3070,13 @@ Module 3 Catalyst Detection:
         default="default",
         help="Defensive overlay config when multiplier is applied. (default: default)",
     )
+    parser.add_argument(
+        "--defensive-cache",
+        type=str,
+        default=None,
+        help="Optional PIT defensive features cache file (defensive_features_<AS_OF>.json). "
+             "If provided, fills missing defensive_features only (no recompute).",
+    )
 
     # Snapshot sanity checks
     parser.add_argument(
@@ -3240,6 +3249,7 @@ Module 3 Catalyst Detection:
             # Defensive overlay parameters
             apply_defensive_multiplier=args.apply_defensive_multiplier,
             defensive_config=args.defensive_config,
+            defensive_cache=args.defensive_cache,
         )
 
         # Add bootstrap analysis if requested

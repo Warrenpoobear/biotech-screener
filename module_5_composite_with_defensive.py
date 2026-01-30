@@ -34,6 +34,8 @@ from module_5_composite_v3 import compute_module_5_composite_v3
 from defensive_overlay_adapter import (
     enrich_with_defensive_overlays,
     validate_defensive_integration,
+    load_defensive_cache,
+    merge_cache_into_scores,
     attach_output_schema_columns,
     OUTPUT_SCHEMA_VERSION,
     DEFAULT_DEFENSIVE_CONFIG,
@@ -198,6 +200,7 @@ def compute_module_5_composite_with_defensive(
     cluster_method: str = "indication",
     cluster_threshold: float = 0.70,
     defensive_config: str = "default",
+    defensive_cache_path: Optional[str] = None,
 ) -> dict:
     """
     Rank securities with defensive overlays integrated.
@@ -348,8 +351,11 @@ def compute_module_5_composite_with_defensive(
 
         for sec in securities:
             ticker = sec.get("ticker")
-            if ticker and "defensive_features" in sec:
-                defensive_by_ticker[ticker] = {"defensive_features": sec["defensive_features"]}
+            if not ticker:
+                continue
+            defensive_by_ticker.setdefault(ticker, {"defensive_features": {}})
+            if "defensive_features" in sec and isinstance(sec["defensive_features"], dict):
+                defensive_by_ticker[ticker]["defensive_features"] = sec["defensive_features"]
 
         logger.info(f"Extracted defensive_features for {len(defensive_by_ticker)} tickers")
     else:
@@ -357,6 +363,12 @@ def compute_module_5_composite_with_defensive(
             "Could not find raw universe file for defensive features. "
             f"Searched: {universe_search_paths or DEFAULT_UNIVERSE_PATHS}"
         )
+
+    # Merge offline cache if provided (fill gaps only)
+    if defensive_cache_path:
+        cache_features = load_defensive_cache(defensive_cache_path)
+        merged = merge_cache_into_scores(defensive_by_ticker, cache_features, overwrite=False)
+        logger.info(f"Defensive cache merge (fill gaps): merged_fields={merged} cache_tickers={len(cache_features)}")
 
     # Add defensive overlays
     # Select config object based on string parameter
