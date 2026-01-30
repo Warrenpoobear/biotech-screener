@@ -735,7 +735,9 @@ def enrich_with_defensive_overlays(
     }
 
     # Add config provenance for audit trail
-    output["defensive_overlay_config"] = cfg.to_provenance()
+    provenance = cfg.to_provenance()
+    provenance["position_sizing_enabled"] = apply_position_sizing
+    output["defensive_overlay_config"] = provenance
 
     # Step 1: Calculate raw weights for position sizing (needed for Step 3)
     # This must run BEFORE multiplier application if position sizing is enabled
@@ -843,15 +845,20 @@ def validate_defensive_integration(output: Dict) -> None:
     print("DEFENSIVE OVERLAY VALIDATION")
     print("="*60)
 
-    # 1. Check weights sum
-    total_weight = sum(Decimal(r.get("position_weight", "0")) for r in ranked)
-    expected = Decimal("1.0000")  # Fully invested (no cash reserve)
-    tolerance = Decimal("0.0001")
+    # 1. Check weights sum (only if position sizing is enabled)
+    def_config = output.get("defensive_overlay_config", {})
+    position_sizing = def_config.get("position_sizing_enabled", False)
 
-    if abs(total_weight - expected) >= tolerance:
-        print(f"[WARN] Weights sum: {total_weight} (expected {expected}, diff: {abs(total_weight - expected)})")
+    if position_sizing:
+        total_weight = sum(Decimal(r.get("position_weight", "0")) for r in ranked)
+        expected = Decimal("1.0000")
+        tolerance = Decimal("0.0001")
+        if abs(total_weight - expected) >= tolerance:
+            print(f"[WARN] Weights sum: {total_weight} (expected {expected}, diff: {abs(total_weight - expected)})")
+        else:
+            print(f"[OK] Weights sum: {total_weight} (target: {expected})")
     else:
-        print(f"[OK] Weights sum: {total_weight} (target: {expected})")
+        print("[OK] Position sizing disabled (weights not computed)")
 
     # 2. Check excluded have zero weight
     excluded_with_weight = [
@@ -942,44 +949,62 @@ def validate_defensive_integration(output: Dict) -> None:
 # OUTPUT SCHEMA EXTENSION
 # =============================================================================
 
-OUTPUT_SCHEMA_VERSION = "2.0.0"  # Bumped for new columns
+OUTPUT_SCHEMA_VERSION = "2.1.0"  # Guaranteed columns: composite_score, z_score, expected_excess_return, volatility, drawdown, cluster_id
+
+# Required output columns (always present, null if unavailable)
+REQUIRED_OUTPUT_COLUMNS = ["composite_score", "z_score", "expected_excess_return", "volatility", "drawdown", "cluster_id"]
 
 
 def attach_output_schema_columns(output: Dict) -> Dict[str, int]:
     """
     Attach standardized output schema columns to each record.
 
-    Extracts and normalizes key columns for downstream consumption:
+    GUARANTEED columns (always present, null if unavailable):
+    - composite_score: from existing composite_score field
+    - z_score: alias for score_z (standardized score)
+    - expected_excess_return: alias for expected_excess_return_annual
     - volatility: from defensive_features.vol_60d
     - drawdown: from defensive_features.drawdown_current
-    - expected_excess_return: alias for expected_excess_return_annual
-    - module_scores: from component_scores (if present)
+    - cluster_id: from clustering (null if clustering disabled)
 
-    Does NOT recompute score_z or ER - uses canonical values from Module 5.
+    Does NOT recompute values - uses canonical values from Module 5.
+    Adds def_note diagnostic tags when values are unavailable.
 
     Returns:
-        field_coverage dict with counts for each new column
+        field_coverage dict with counts for each column
     """
     ranked = output.get("ranked_securities", [])
-    coverage = {
-        "score_z": 0,
-        "expected_excess_return": 0,
-        "volatility": 0,
-        "drawdown": 0,
-        "cluster_id": 0,
-        "module_scores": 0,
-    }
+    coverage = {col: 0 for col in REQUIRED_OUTPUT_COLUMNS}
+    coverage["module_scores"] = 0
 
     for rec in ranked:
-        # score_z: already present from compute_expected_returns
-        if rec.get("score_z") is not None:
-            coverage["score_z"] += 1
+        notes = rec.setdefault("defensive_notes", [])
+
+        # composite_score: guaranteed from Module 5
+        if rec.get("composite_score") is not None:
+            coverage["composite_score"] += 1
+        else:
+            rec["composite_score"] = None
+
+        # z_score: alias for score_z
+        sz = rec.get("score_z")
+        if sz is not None:
+            rec["z_score"] = sz
+            coverage["z_score"] += 1
+        else:
+            rec["z_score"] = None
+            if "def_missing_z_score" not in notes:
+                notes.append("def_missing_z_score")
 
         # expected_excess_return: alias for expected_excess_return_annual
         er_annual = rec.get("expected_excess_return_annual")
         if er_annual is not None:
             rec["expected_excess_return"] = er_annual
             coverage["expected_excess_return"] += 1
+        else:
+            rec["expected_excess_return"] = None
+            if "def_missing_expected_return" not in notes:
+                notes.append("def_missing_expected_return")
 
         # volatility: from defensive_features.vol_60d
         def_feats = rec.get("defensive_features") or {}
@@ -987,36 +1012,37 @@ def attach_output_schema_columns(output: Dict) -> Dict[str, int]:
         if vol is not None:
             rec["volatility"] = vol
             coverage["volatility"] += 1
+        else:
+            rec["volatility"] = None
+            if "def_missing_volatility" not in notes:
+                notes.append("def_missing_volatility")
 
-        # drawdown: canonical alias chain (drawdown_current → drawdown_60d → drawdown)
-        dd = (
-            def_feats.get("drawdown_current")
-            or def_feats.get("drawdown_60d")
-            or def_feats.get("drawdown")
-        )
+        # drawdown: canonical alias chain
+        dd = def_feats.get("drawdown_current") or def_feats.get("drawdown_60d") or def_feats.get("drawdown")
         if dd is not None:
             rec["drawdown"] = dd
             coverage["drawdown"] += 1
+        else:
+            rec["drawdown"] = None
+            if "def_missing_drawdown" not in notes:
+                notes.append("def_missing_drawdown")
 
-        # cluster_id: already present if clustering enabled
+        # cluster_id: null if clustering disabled
         if rec.get("cluster_id") is not None:
             coverage["cluster_id"] += 1
+        else:
+            rec["cluster_id"] = None  # Explicitly null if clustering disabled
 
         # module_scores: from component_scores if present (scalars only)
         comp_scores = rec.get("component_scores")
         if comp_scores and isinstance(comp_scores, dict):
-            # Filter to scalar values only (str/int/float/Decimal/None)
-            lean_scores = {
-                k: v for k, v in comp_scores.items()
-                if v is None or isinstance(v, (str, int, float, Decimal))
-            }
+            lean_scores = {k: v for k, v in comp_scores.items()
+                          if v is None or isinstance(v, (str, int, float, Decimal))}
             if lean_scores:
                 rec["module_scores"] = lean_scores
                 coverage["module_scores"] += 1
 
-    # Add schema version to output
     output["output_schema_version"] = OUTPUT_SCHEMA_VERSION
-
     return coverage
 
 
@@ -1076,6 +1102,7 @@ __all__ = [
     # Output schema extension
     "attach_output_schema_columns",
     "OUTPUT_SCHEMA_VERSION",
+    "REQUIRED_OUTPUT_COLUMNS",
     # Cache helpers
     "load_defensive_cache",
     "merge_cache_into_scores",

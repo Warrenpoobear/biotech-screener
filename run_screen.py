@@ -2660,6 +2660,8 @@ def run_screening_pipeline(
             "smart_money_source": smart_money_source,
             "min_component_coverage": min_component_coverage,
             "min_component_coverage_mode": min_component_coverage_mode,
+            "defensive_multiplier_enabled": apply_defensive_multiplier,
+            "defensive_config": defensive_config if apply_defensive_multiplier else None,
         },
         "module_1_universe": m1_result,
         "module_2_financial": m2_result,
@@ -3056,12 +3058,17 @@ Module 3 Catalyst Detection:
         help="Correlation threshold for returns-based clustering. (default: 0.70)",
     )
 
-    # Defensive overlay controls (OFF by default)
+    # Defensive overlay controls (ON by default)
+    parser.add_argument(
+        "--no-defensive-multiplier",
+        action="store_true",
+        dest="no_defensive_multiplier",
+        help="Disable defensive multiplier (enabled by default).",
+    )
     parser.add_argument(
         "--apply-defensive-multiplier",
         action="store_true",
-        help="Apply defensive multiplier to composite scores (OFF by default). "
-             "Uses correlation, volatility, momentum, RSI, and drawdown factors.",
+        help="(Deprecated, now default) Apply defensive multiplier to composite scores.",
     )
     parser.add_argument(
         "--defensive-config",
@@ -3246,8 +3253,8 @@ Module 3 Catalyst Detection:
             enable_clustering=args.enable_clustering,
             cluster_method=args.cluster_method,
             cluster_threshold=args.cluster_threshold,
-            # Defensive overlay parameters
-            apply_defensive_multiplier=args.apply_defensive_multiplier,
+            # Defensive overlay parameters (ON by default unless --no-defensive-multiplier)
+            apply_defensive_multiplier=not getattr(args, 'no_defensive_multiplier', False),
             defensive_config=args.defensive_config,
             defensive_cache=args.defensive_cache,
         )

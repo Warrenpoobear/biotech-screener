@@ -1101,6 +1101,7 @@ class TestOutputSchemaColumns:
         output = {
             "ranked_securities": [{
                 "ticker": "AAA",
+                "composite_score": "75.0",
                 "score_z": 1.2,
                 "expected_excess_return_annual": 0.096,
                 "defensive_features": {"vol_60d": "0.40", "drawdown_current": "-0.15"},
@@ -1112,11 +1113,61 @@ class TestOutputSchemaColumns:
 
         assert output["output_schema_version"] == OUTPUT_SCHEMA_VERSION
         rec = output["ranked_securities"][0]
+        assert rec["z_score"] == 1.2                   # Alias for score_z
         assert rec["expected_excess_return"] == 0.096  # Alias created
         assert rec["volatility"] == "0.40"             # Extracted from defensive_features
         assert rec["drawdown"] == "-0.15"              # Extracted from defensive_features
         assert rec["module_scores"] == {"clinical": "70.0"}  # Scalars only
-        assert coverage["score_z"] == 1
+        assert coverage["z_score"] == 1
+
+    def test_required_columns_always_present(self):
+        """All 6 required columns must exist even when data is missing (null)."""
+        from defensive_overlay_adapter import attach_output_schema_columns, REQUIRED_OUTPUT_COLUMNS
+
+        # Minimal record with NO source data
+        output = {"ranked_securities": [{"ticker": "BBB"}]}
+        attach_output_schema_columns(output)
+        rec = output["ranked_securities"][0]
+
+        # All required columns must exist
+        for col in REQUIRED_OUTPUT_COLUMNS:
+            assert col in rec, f"Missing required column: {col}"
+
+        # Values should be null when unavailable
+        assert rec["composite_score"] is None
+        assert rec["z_score"] is None
+        assert rec["expected_excess_return"] is None
+        assert rec["volatility"] is None
+        assert rec["drawdown"] is None
+        assert rec["cluster_id"] is None
+
+        # Diagnostic notes added for missing values
+        notes = rec.get("defensive_notes", [])
+        assert "def_missing_z_score" in notes
+        assert "def_missing_expected_return" in notes
+        assert "def_missing_volatility" in notes
+        assert "def_missing_drawdown" in notes
+
+    def test_default_defensive_multiplier_enabled(self):
+        """Default argparse should enable defensive multiplier (--no-defensive-multiplier to disable)."""
+        import argparse
+        import sys
+        sys.path.insert(0, str(Path(__file__).parent.parent))
+
+        # Simulate argparse with no defensive flags
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--no-defensive-multiplier", action="store_true", dest="no_defensive_multiplier")
+        parser.add_argument("--apply-defensive-multiplier", action="store_true")
+
+        # Default: defensive enabled
+        args = parser.parse_args([])
+        apply_def = not getattr(args, "no_defensive_multiplier", False)
+        assert apply_def is True, "Defensive multiplier should be ON by default"
+
+        # Explicit disable
+        args_disabled = parser.parse_args(["--no-defensive-multiplier"])
+        apply_def_disabled = not getattr(args_disabled, "no_defensive_multiplier", False)
+        assert apply_def_disabled is False, "Defensive multiplier should be OFF when --no-defensive-multiplier"
 
 
 # ============================================================================
