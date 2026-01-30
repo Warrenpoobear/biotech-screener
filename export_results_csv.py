@@ -11,6 +11,7 @@ from typing import Any, Dict, List
 CORE_COLUMNS = [
     "ticker", "composite_rank", "composite_score", "z_score",
     "expected_excess_return", "volatility", "drawdown", "cluster_id",
+    "corr_xbi", "beta_xbi",  # Diversification proof columns
     "defensive_multiplier", "defensive_bucket", "defensive_notes",
     "severity", "stage_bucket", "market_cap_bucket", "rankable",
 ]
@@ -46,6 +47,11 @@ def flatten_record(rec: Dict[str, Any]) -> Dict[str, Any]:
             flat[col] = "; ".join(val) if val else ""
         else:
             flat[col] = val
+
+    # Defensive features (corr/beta for diversification proof)
+    def_feat = rec.get("defensive_features") or {}
+    flat["corr_xbi"] = def_feat.get("corr_xbi")
+    flat["beta_xbi"] = def_feat.get("beta_xbi_60d")
 
     # Momentum signal
     mom = rec.get("momentum_signal") or {}
