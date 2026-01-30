@@ -1,20 +1,105 @@
 """
-defensive_overlay_adapter.py - PROPERLY FIXED VERSION
+defensive_overlay_adapter.py - Production Defensive Overlay System
 
-Key fixes:
-1. Corrected field names (corr_xbi, drawdown_60d)
-2. DYNAMIC position floor that scales with universe size
-3. More aggressive inverse-volatility weighting
+Features:
+1. Configurable thresholds via DefensiveConfig
+2. Multi-factor multiplier: correlation, volatility, momentum, RSI, drawdown
+3. Dynamic position floor that scales with universe size
+4. Aggressive inverse-volatility weighting
 
-For 44 stocks: min=1.0%, works well
-For 100 stocks: min=0.5%, allows proper differentiation
-For 200 stocks: min=0.3%, maximum diversification
+v2.0.0 (2026-01-29): Configuration-driven, utilizes all 9 defensive features
+v1.0.0: Original version with hardcoded thresholds
 """
 
+from dataclasses import dataclass, field
 from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
 from typing import Dict, List, Optional, Tuple
 
 WQ = Decimal("0.0001")  # Weight quantization
+
+# =============================================================================
+# CONFIGURATION
+# =============================================================================
+
+@dataclass
+class DefensiveConfig:
+    """
+    Configuration for defensive overlay calculations.
+
+    All thresholds are configurable for backtesting and regime adaptation.
+    Default values are conservative starting points for biotech universe.
+    """
+    # Correlation thresholds
+    corr_elite_threshold: Decimal = Decimal("0.30")      # Below = elite diversifier
+    corr_good_threshold: Decimal = Decimal("0.40")       # Below = good diversifier
+    corr_high_threshold: Decimal = Decimal("0.80")       # Above = penalty
+
+    # Volatility thresholds
+    vol_elite_threshold: Decimal = Decimal("0.40")       # Below = elite (40% ann)
+    vol_good_threshold: Decimal = Decimal("0.50")        # Below = good (50% ann)
+    vol_high_threshold: Decimal = Decimal("0.80")        # Above = high vol penalty
+
+    # Multiplier values
+    mult_elite: Decimal = Decimal("1.40")                # Elite diversifier bonus
+    mult_good: Decimal = Decimal("1.10")                 # Good diversifier bonus
+    mult_high_corr_penalty: Decimal = Decimal("0.95")    # High correlation penalty
+    mult_high_vol_penalty: Decimal = Decimal("0.97")     # High volatility penalty
+
+    # Momentum thresholds (ret_21d)
+    momentum_bonus_threshold: Decimal = Decimal("0.10")  # >10% 21d return = bonus
+    momentum_penalty_threshold: Decimal = Decimal("-0.20")  # <-20% = penalty
+    mult_momentum_bonus: Decimal = Decimal("1.05")       # Momentum bonus
+    mult_momentum_penalty: Decimal = Decimal("0.95")     # Momentum penalty
+    enable_momentum: bool = True                         # Feature flag
+
+    # RSI thresholds (regime detection)
+    rsi_oversold_threshold: Decimal = Decimal("30")      # RSI < 30 = oversold
+    rsi_overbought_threshold: Decimal = Decimal("70")    # RSI > 70 = overbought
+    mult_rsi_oversold_bonus: Decimal = Decimal("1.03")   # Mean reversion opportunity
+    mult_rsi_overbought_penalty: Decimal = Decimal("0.98")  # Crowded trade
+    enable_rsi: bool = True                              # Feature flag
+
+    # Drawdown thresholds
+    drawdown_warning_threshold: Decimal = Decimal("-0.30")  # -30% = warning
+    drawdown_penalty_threshold: Decimal = Decimal("-0.40")  # -40% = penalty
+    mult_drawdown_penalty: Decimal = Decimal("0.92")     # Deep drawdown penalty
+    enable_drawdown_penalty: bool = True                 # Feature flag
+
+    # Vol ratio (regime indicator: vol_20d / vol_60d)
+    vol_ratio_expanding_threshold: Decimal = Decimal("1.30")  # >1.3 = expanding vol
+    mult_vol_expanding_penalty: Decimal = Decimal("0.97")  # Expanding vol penalty
+    enable_vol_ratio: bool = False                       # Disabled by default (experimental)
+
+    # Position sizing
+    max_position: Decimal = Decimal("0.07")              # 7% max position
+    inv_vol_power: Decimal = Decimal("2.0")              # Inverse vol exponent
+
+
+# Default configuration (conservative)
+DEFAULT_DEFENSIVE_CONFIG = DefensiveConfig()
+
+# Aggressive configuration (larger bonuses/penalties)
+AGGRESSIVE_DEFENSIVE_CONFIG = DefensiveConfig(
+    mult_elite=Decimal("1.50"),
+    mult_good=Decimal("1.15"),
+    mult_high_corr_penalty=Decimal("0.90"),
+    mult_momentum_bonus=Decimal("1.08"),
+    mult_momentum_penalty=Decimal("0.90"),
+    enable_vol_ratio=True,
+)
+
+
+def _safe_decimal(value: Optional[str], default: Optional[Decimal] = None) -> Optional[Decimal]:
+    """Safely convert string to Decimal, returning default on failure."""
+    if value is None:
+        return default
+    try:
+        d = Decimal(str(value))
+        if not d.is_finite():
+            return default
+        return d
+    except (ValueError, TypeError, InvalidOperation):
+        return default
 
 def _q(x: Decimal) -> Decimal:
     """Quantize weight to 4 decimal places."""
@@ -67,66 +152,126 @@ def sanitize_corr(defensive_features: Dict[str, str]) -> Tuple[Optional[Decimal]
     return corr, flags
 
 
-def defensive_multiplier(defensive_features: Dict[str, str]) -> Tuple[Decimal, List[str]]:
+def defensive_multiplier(
+    defensive_features: Dict[str, str],
+    config: Optional[DefensiveConfig] = None,
+) -> Tuple[Decimal, List[str]]:
     """
-    Calculate defensive multiplier (0.95-1.20 range).
-    Rewards only ELITE diversifiers with verified correlation data.
-    
-    ENHANCED: 
-    - Handles correlation placeholders (treats 0.50 as missing)
-    - Bigger bonus (1.20x) for truly elite diversifiers
-    - Only awards bonus when correlation is verified real
+    Calculate defensive multiplier using all available features.
+
+    Multi-factor approach utilizing:
+    - Correlation (corr_xbi_120d): diversification benefit/penalty
+    - Volatility (vol_60d): risk-adjusted sizing
+    - Momentum (ret_21d): trend confirmation
+    - RSI (rsi_14d): regime detection
+    - Drawdown (drawdown_current): distress penalty
+    - Vol ratio (vol_ratio): volatility regime
+
+    Args:
+        defensive_features: Dict with feature values as strings
+        config: DefensiveConfig with thresholds (uses DEFAULT if None)
+
+    Returns:
+        (multiplier, notes) where multiplier is in ~[0.80, 1.50] range
     """
+    cfg = config or DEFAULT_DEFENSIVE_CONFIG
     m = Decimal("1.00")
     notes: List[str] = []
 
-    # Get volatility first (needed for correlation logic)
-    vol_s = defensive_features.get("vol_60d")
-    vol = None
-    if vol_s:
-        try:
-            vol = Decimal(vol_s)
-        except (ValueError, TypeError, InvalidOperation):
-            pass  # Invalid volatility value - treat as missing
+    # Extract features safely
+    vol = _safe_decimal(defensive_features.get("vol_60d"))
+    momentum = _safe_decimal(defensive_features.get("ret_21d"))
+    rsi = _safe_decimal(defensive_features.get("rsi_14d"))
+    drawdown = _safe_decimal(
+        defensive_features.get("drawdown_current") or
+        defensive_features.get("drawdown_60d")
+    )
+    vol_ratio = _safe_decimal(defensive_features.get("vol_ratio"))
 
     # Sanitize correlation (handle placeholders)
     corr, corr_flags = sanitize_corr(defensive_features or {})
     notes.extend(corr_flags)
-    
-    # Correlation multiplier (only if correlation is real)
+
+    # -------------------------------------------------------------------------
+    # FACTOR 1: Correlation (diversification)
+    # -------------------------------------------------------------------------
     if corr is not None:
         # High correlation penalty (always applies)
-        if corr > Decimal("0.80"):
-            m *= Decimal("0.95")
-            notes.append("def_mult_high_corr_0.95")
-        
+        if corr > cfg.corr_high_threshold:
+            m *= cfg.mult_high_corr_penalty
+            notes.append(f"def_mult_high_corr_{cfg.mult_high_corr_penalty}")
+
         # Elite diversifier bonus (VERY selective)
-        # Requires: corr < 0.30 AND vol < 0.40 AND real correlation data
-        elif corr < Decimal("0.30"):
-            if vol and vol < Decimal("0.40"):
-                m *= Decimal("1.40")  # Maximum bonus to overcome normalization
-                notes.append("def_mult_elite_1.40")
+        # Requires: low corr AND low vol AND real correlation data
+        elif corr < cfg.corr_elite_threshold:
+            if vol and vol < cfg.vol_elite_threshold:
+                m *= cfg.mult_elite
+                notes.append(f"def_mult_elite_{cfg.mult_elite}")
             else:
                 notes.append("def_skip_not_elite_vol")
-        
+
         # Good diversifier bonus (less selective)
-        elif corr < Decimal("0.40"):
-            if vol and vol < Decimal("0.50"):
-                m *= Decimal("1.10")
-                notes.append("def_mult_good_diversifier_1.10")
+        elif corr < cfg.corr_good_threshold:
+            if vol and vol < cfg.vol_good_threshold:
+                m *= cfg.mult_good
+                notes.append(f"def_mult_good_{cfg.mult_good}")
             else:
                 notes.append("def_skip_vol_too_high")
 
-    # Drawdown warning
-    dd_s = defensive_features.get("drawdown_60d") or defensive_features.get("drawdown_current")
-    if dd_s:
-        try:
-            if Decimal(dd_s) < Decimal("-0.30"):
-                notes.append("def_warn_drawdown_gt_30pct")
-        except (ValueError, TypeError, InvalidOperation):
-            pass  # Invalid drawdown value - skip warning
+    # -------------------------------------------------------------------------
+    # FACTOR 2: High volatility penalty (independent of correlation)
+    # -------------------------------------------------------------------------
+    if vol is not None and vol > cfg.vol_high_threshold:
+        m *= cfg.mult_high_vol_penalty
+        notes.append(f"def_mult_high_vol_{cfg.mult_high_vol_penalty}")
+
+    # -------------------------------------------------------------------------
+    # FACTOR 3: Momentum (trend confirmation)
+    # -------------------------------------------------------------------------
+    if cfg.enable_momentum and momentum is not None:
+        if momentum > cfg.momentum_bonus_threshold:
+            m *= cfg.mult_momentum_bonus
+            notes.append(f"def_mult_momentum_bonus_{cfg.mult_momentum_bonus}")
+        elif momentum < cfg.momentum_penalty_threshold:
+            m *= cfg.mult_momentum_penalty
+            notes.append(f"def_mult_momentum_penalty_{cfg.mult_momentum_penalty}")
+
+    # -------------------------------------------------------------------------
+    # FACTOR 4: RSI (regime detection)
+    # -------------------------------------------------------------------------
+    if cfg.enable_rsi and rsi is not None:
+        if rsi < cfg.rsi_oversold_threshold:
+            m *= cfg.mult_rsi_oversold_bonus
+            notes.append(f"def_mult_rsi_oversold_{cfg.mult_rsi_oversold_bonus}")
+        elif rsi > cfg.rsi_overbought_threshold:
+            m *= cfg.mult_rsi_overbought_penalty
+            notes.append(f"def_mult_rsi_overbought_{cfg.mult_rsi_overbought_penalty}")
+
+    # -------------------------------------------------------------------------
+    # FACTOR 5: Drawdown (distress detection)
+    # -------------------------------------------------------------------------
+    if drawdown is not None:
+        if cfg.enable_drawdown_penalty and drawdown < cfg.drawdown_penalty_threshold:
+            m *= cfg.mult_drawdown_penalty
+            notes.append(f"def_mult_drawdown_penalty_{cfg.mult_drawdown_penalty}")
+        elif drawdown < cfg.drawdown_warning_threshold:
+            notes.append("def_warn_drawdown_gt_30pct")
+
+    # -------------------------------------------------------------------------
+    # FACTOR 6: Vol ratio (volatility regime - experimental)
+    # -------------------------------------------------------------------------
+    if cfg.enable_vol_ratio and vol_ratio is not None:
+        if vol_ratio > cfg.vol_ratio_expanding_threshold:
+            m *= cfg.mult_vol_expanding_penalty
+            notes.append(f"def_mult_vol_expanding_{cfg.mult_vol_expanding_penalty}")
 
     return m, notes
+
+
+# Backward-compatible wrapper (no config argument)
+def defensive_multiplier_legacy(defensive_features: Dict[str, str]) -> Tuple[Decimal, List[str]]:
+    """Legacy wrapper for backward compatibility. Uses default config."""
+    return defensive_multiplier(defensive_features, config=None)
 
 
 def raw_inv_vol_weight(defensive_features: Dict[str, str], power: Decimal = Decimal("2.0")) -> Optional[Decimal]:
@@ -321,14 +466,22 @@ def enrich_with_defensive_overlays(
     apply_position_sizing: bool = False,  # Deprecated: position sizing separate from scoring
     top_n: Optional[int] = None,  # Top-N selection for conviction portfolios
     include_position_weight: bool = False,  # Output position_weight (risk-budget, not alpha)
+    defensive_config: Optional[DefensiveConfig] = None,  # Configurable thresholds
 ) -> Dict:
     """
     Enrich Module 5 output with defensive overlays.
 
     This function:
-    1. Applies defensive multiplier to existing composite scores
+    1. Applies multi-factor defensive multiplier to composite scores
     2. Optionally calculates position weights using inverse-volatility (deprecated)
     3. Adds defensive_notes field to each security
+
+    Multi-factor multiplier utilizes:
+    - Correlation (corr_xbi_120d): diversification benefit/penalty
+    - Volatility (vol_60d): risk-adjusted sizing
+    - Momentum (ret_21d): trend confirmation
+    - RSI (rsi_14d): regime detection
+    - Drawdown (drawdown_current): distress penalty
 
     NOTE: Position sizing (risk-budget weights) is now separate from alpha research.
     Expected Returns (score_z * lambda) are computed in module_5_composite_v3.py.
@@ -336,14 +489,16 @@ def enrich_with_defensive_overlays(
     Args:
         output: Output dict from rank_securities()
         scores_by_ticker: Dict with defensive_features per ticker
-        apply_multiplier: If True, apply correlation-based score multiplier
+        apply_multiplier: If True, apply multi-factor score multiplier
         apply_position_sizing: If True, calculate position weights (deprecated)
         top_n: If provided, only invest in top N names (deprecated)
         include_position_weight: If True, include position_weight in output (deprecated)
+        defensive_config: DefensiveConfig with thresholds (uses DEFAULT if None)
 
     Returns:
         Modified output dict (mutated in-place, also returned for convenience)
     """
+    cfg = defensive_config or DEFAULT_DEFENSIVE_CONFIG
     ranked = output.get("ranked_securities", [])
 
     if not ranked:
@@ -353,11 +508,20 @@ def enrich_with_defensive_overlays(
     if "diagnostic_counts" not in output:
         output["diagnostic_counts"] = {}
 
-    # Track defensive feature coverage
+    # Track defensive feature coverage (all 9 features)
     total_securities = len(ranked)
     with_def_features = 0
-    with_correlation = 0
-    with_volatility = 0
+    feature_coverage = {
+        "vol_60d": 0,
+        "vol_20d": 0,
+        "corr_xbi_120d": 0,
+        "beta_xbi_60d": 0,
+        "drawdown_current": 0,
+        "rsi_14d": 0,
+        "ret_21d": 0,
+        "skew_60d": 0,
+        "vol_ratio": 0,
+    }
 
     for rec in ranked:
         ticker = rec["ticker"]
@@ -366,19 +530,31 @@ def enrich_with_defensive_overlays(
 
         if def_features:
             with_def_features += 1
-            # Check for correlation (either field name)
-            if def_features.get("corr_xbi") or def_features.get("corr_xbi_120d"):
-                with_correlation += 1
-            if def_features.get("vol_60d"):
-                with_volatility += 1
+            # Track each feature
+            for feature in feature_coverage:
+                if def_features.get(feature) or (feature == "corr_xbi_120d" and def_features.get("corr_xbi")):
+                    feature_coverage[feature] += 1
 
-    # Add coverage diagnostics
+    # Add coverage diagnostics with per-feature breakdown
+    coverage_pct = round(100 * with_def_features / total_securities, 1) if total_securities > 0 else 0
     output["diagnostic_counts"]["defensive_features_coverage"] = {
         "total_securities": total_securities,
         "with_defensive_features": with_def_features,
-        "with_correlation": with_correlation,
-        "with_volatility": with_volatility,
-        "coverage_pct": round(100 * with_def_features / total_securities, 1) if total_securities > 0 else 0,
+        "coverage_pct": coverage_pct,
+        "by_feature": {
+            k: {
+                "count": v,
+                "pct": round(100 * v / total_securities, 1) if total_securities > 0 else 0,
+            }
+            for k, v in feature_coverage.items()
+        },
+        # Enabled features in current config
+        "enabled_features": {
+            "momentum": cfg.enable_momentum,
+            "rsi": cfg.enable_rsi,
+            "drawdown_penalty": cfg.enable_drawdown_penalty,
+            "vol_ratio": cfg.enable_vol_ratio,
+        },
     }
 
     # Step 1: Calculate raw weights for position sizing (needed for Step 3)
@@ -390,7 +566,8 @@ def enrich_with_defensive_overlays(
             defensive_features = ticker_data.get("defensive_features", {})
             rec["_position_weight_raw"] = raw_inv_vol_weight(defensive_features or {})
 
-    # Step 2: Apply defensive multiplier to composite scores (optional)
+    # Step 2: Apply multi-factor defensive multiplier to composite scores (optional)
+    multiplier_stats = {"elite": 0, "good": 0, "penalty": 0, "neutral": 0}
     if apply_multiplier:
         for rec in ranked:
             ticker = rec["ticker"]
@@ -400,18 +577,31 @@ def enrich_with_defensive_overlays(
             # Get current composite score
             current_score = Decimal(rec["composite_score"])
 
-            # Apply multiplier
-            mult, notes = defensive_multiplier(defensive_features or {})
+            # Apply multi-factor multiplier with config
+            mult, notes = defensive_multiplier(defensive_features or {}, config=cfg)
             adjusted_score = current_score * mult
 
             # Cap at 100
             adjusted_score = min(Decimal("100"), max(Decimal("0"), adjusted_score))
+
+            # Track multiplier distribution
+            if mult > Decimal("1.20"):
+                multiplier_stats["elite"] += 1
+            elif mult > Decimal("1.05"):
+                multiplier_stats["good"] += 1
+            elif mult < Decimal("0.98"):
+                multiplier_stats["penalty"] += 1
+            else:
+                multiplier_stats["neutral"] += 1
 
             # Update score
             rec["composite_score_before_defensive"] = str(current_score)
             rec["composite_score"] = str(adjusted_score.quantize(Decimal("0.01")))
             rec["defensive_multiplier"] = str(mult)
             rec["defensive_notes"] = notes
+
+        # Add multiplier distribution to diagnostics
+        output["diagnostic_counts"]["multiplier_distribution"] = multiplier_stats
 
     # Step 3: Re-rank after multiplier application
     if apply_multiplier:
@@ -556,15 +746,62 @@ def validate_defensive_integration(output: Dict) -> None:
     print("="*60)
 
 
+__all__ = [
+    # Configuration
+    "DefensiveConfig",
+    "DEFAULT_DEFENSIVE_CONFIG",
+    "AGGRESSIVE_DEFENSIVE_CONFIG",
+    # Core functions
+    "defensive_multiplier",
+    "defensive_multiplier_legacy",
+    "sanitize_corr",
+    "raw_inv_vol_weight",
+    "calculate_dynamic_floor",
+    "apply_caps_and_renormalize",
+    # Integration
+    "enrich_with_defensive_overlays",
+    "validate_defensive_integration",
+    # Utilities
+    "_safe_decimal",
+]
+
+
 if __name__ == "__main__":
-    print("Testing defensive_overlay_adapter with dynamic floor...")
-    
+    print("Testing defensive_overlay_adapter v2.0...")
+    print()
+
+    # Test multi-factor defensive multiplier
+    print("=== Multi-Factor Multiplier Test ===")
+    test_cases = [
+        # (description, features)
+        ("Elite diversifier", {"corr_xbi_120d": "0.25", "vol_60d": "0.35", "ret_21d": "0.15", "rsi_14d": "45"}),
+        ("Good diversifier", {"corr_xbi_120d": "0.38", "vol_60d": "0.48", "ret_21d": "0.05", "rsi_14d": "55"}),
+        ("High correlation penalty", {"corr_xbi_120d": "0.85", "vol_60d": "0.60", "ret_21d": "0.02", "rsi_14d": "50"}),
+        ("Momentum penalty", {"corr_xbi_120d": "0.50", "vol_60d": "0.50", "ret_21d": "-0.25", "rsi_14d": "30"}),
+        ("RSI overbought", {"corr_xbi_120d": "0.50", "vol_60d": "0.50", "ret_21d": "0.05", "rsi_14d": "75"}),
+        ("Deep drawdown", {"corr_xbi_120d": "0.50", "vol_60d": "0.50", "drawdown_current": "-0.45", "rsi_14d": "25"}),
+        ("Stacking factors", {"corr_xbi_120d": "0.25", "vol_60d": "0.35", "ret_21d": "0.15", "rsi_14d": "28"}),
+    ]
+
+    for desc, features in test_cases:
+        mult, notes = defensive_multiplier(features)
+        print(f"\n{desc}:")
+        print(f"  Multiplier: {mult}")
+        print(f"  Notes: {notes}")
+
     # Test dynamic floor calculation
-    print("\nDynamic floor calculation:")
+    print("\n\n=== Dynamic Floor Test ===")
     for n in [20, 44, 50, 80, 100, 150, 200, 300]:
         floor = calculate_dynamic_floor(n)
-        avg = Decimal("1.00") / Decimal(str(n))  # Fully invested
+        avg = Decimal("1.00") / Decimal(str(n))
         ratio = floor / avg
         print(f"  {n:3} securities: floor={floor:.4f} ({floor*100:.2f}%), avg={avg:.4f}, floor/avg={ratio:.2f}x")
-    
+
+    # Show config
+    print("\n\n=== Default Config ===")
+    cfg = DEFAULT_DEFENSIVE_CONFIG
+    print(f"  Enabled features: momentum={cfg.enable_momentum}, rsi={cfg.enable_rsi}, drawdown={cfg.enable_drawdown_penalty}, vol_ratio={cfg.enable_vol_ratio}")
+    print(f"  Elite thresholds: corr<{cfg.corr_elite_threshold}, vol<{cfg.vol_elite_threshold} → {cfg.mult_elite}x")
+    print(f"  Momentum: >{cfg.momentum_bonus_threshold} → {cfg.mult_momentum_bonus}x, <{cfg.momentum_penalty_threshold} → {cfg.mult_momentum_penalty}x")
+
     print("\n[OK] Test complete!")

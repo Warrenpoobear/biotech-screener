@@ -129,7 +129,7 @@ class TestDefensiveMultiplier:
         mult, notes = defensive_multiplier(features)
 
         assert mult == Decimal("1.10")
-        assert "def_mult_good_diversifier_1.10" in notes
+        assert "def_mult_good_1.10" in notes
 
     def test_high_correlation_penalty(self, defensive_features_high_corr):
         """High correlation (>0.80) should get 0.95x penalty."""
@@ -169,6 +169,122 @@ class TestDefensiveMultiplier:
         features2 = {"vol_60d": "0.30"}  # No corr
         mult2, notes2 = defensive_multiplier(features2)
         assert mult2 == Decimal("1.00")
+
+
+# ============================================================================
+# MULTI-FACTOR FEATURE TESTS (v2.0)
+# ============================================================================
+
+class TestMultiFactorFeatures:
+    """Tests for multi-factor defensive multiplier (momentum, RSI, drawdown)."""
+
+    def test_momentum_bonus(self):
+        """Strong positive momentum (>10% 21d return) should get bonus."""
+        features = {
+            "corr_xbi": "0.50",  # Neutral correlation
+            "vol_60d": "0.50",
+            "ret_21d": "0.15",  # 15% 21-day return
+        }
+        mult, notes = defensive_multiplier(features)
+
+        assert Decimal("1.05") in [Decimal(str(mult))]  # Momentum bonus applied
+        assert "def_mult_momentum_bonus_1.05" in notes
+
+    def test_momentum_penalty(self):
+        """Large negative momentum (<-20%) should get penalty."""
+        features = {
+            "corr_xbi": "0.50",
+            "vol_60d": "0.50",
+            "ret_21d": "-0.25",  # -25% 21-day return
+        }
+        mult, notes = defensive_multiplier(features)
+
+        assert mult == Decimal("0.95")
+        assert "def_mult_momentum_penalty_0.95" in notes
+
+    def test_rsi_oversold_bonus(self):
+        """RSI < 30 (oversold) should get small bonus."""
+        features = {
+            "corr_xbi": "0.50",
+            "vol_60d": "0.50",
+            "rsi_14d": "25",  # Oversold
+        }
+        mult, notes = defensive_multiplier(features)
+
+        assert mult == Decimal("1.03")
+        assert "def_mult_rsi_oversold_1.03" in notes
+
+    def test_rsi_overbought_penalty(self):
+        """RSI > 70 (overbought) should get small penalty."""
+        features = {
+            "corr_xbi": "0.50",
+            "vol_60d": "0.50",
+            "rsi_14d": "75",  # Overbought
+        }
+        mult, notes = defensive_multiplier(features)
+
+        assert mult == Decimal("0.98")
+        assert "def_mult_rsi_overbought_0.98" in notes
+
+    def test_drawdown_penalty(self):
+        """Deep drawdown (<-40%) should get penalty (not just warning)."""
+        features = {
+            "corr_xbi": "0.50",
+            "vol_60d": "0.50",
+            "drawdown_current": "-0.45",  # -45% drawdown
+        }
+        mult, notes = defensive_multiplier(features)
+
+        assert mult == Decimal("0.92")
+        assert "def_mult_drawdown_penalty_0.92" in notes
+
+    def test_stacking_multiple_factors(self):
+        """Multiple factors should stack multiplicatively."""
+        features = {
+            "corr_xbi": "0.25",  # Elite corr
+            "vol_60d": "0.35",   # Elite vol
+            "ret_21d": "0.15",   # Momentum bonus
+            "rsi_14d": "28",     # Oversold bonus
+        }
+        mult, notes = defensive_multiplier(features)
+
+        # 1.40 * 1.05 * 1.03 = 1.5141
+        expected = Decimal("1.40") * Decimal("1.05") * Decimal("1.03")
+        assert mult == expected
+        assert "def_mult_elite_1.40" in notes
+        assert "def_mult_momentum_bonus_1.05" in notes
+        assert "def_mult_rsi_oversold_1.03" in notes
+
+    def test_high_vol_penalty(self):
+        """High volatility (>80% ann) should get penalty regardless of correlation."""
+        features = {
+            "corr_xbi": "0.50",
+            "vol_60d": "0.90",  # Very high vol
+        }
+        mult, notes = defensive_multiplier(features)
+
+        assert mult == Decimal("0.97")
+        assert "def_mult_high_vol_0.97" in notes
+
+    def test_config_can_disable_factors(self):
+        """Config flags should disable specific factors."""
+        from defensive_overlay_adapter import DefensiveConfig
+
+        # Create config with momentum disabled
+        config = DefensiveConfig(enable_momentum=False, enable_rsi=False)
+
+        features = {
+            "corr_xbi": "0.50",
+            "vol_60d": "0.50",
+            "ret_21d": "0.20",  # Would trigger momentum bonus
+            "rsi_14d": "25",    # Would trigger RSI bonus
+        }
+        mult, notes = defensive_multiplier(features, config=config)
+
+        # No momentum or RSI bonuses should apply
+        assert mult == Decimal("1.00")
+        assert "def_mult_momentum" not in str(notes)
+        assert "def_mult_rsi" not in str(notes)
 
 
 # ============================================================================
@@ -442,8 +558,10 @@ class TestCoverageDiagnostics:
         coverage = result.get("diagnostic_counts", {}).get("defensive_features_coverage", {})
         assert coverage.get("total_securities") == 2
         assert coverage.get("with_defensive_features") == 1
-        assert coverage.get("with_correlation") == 1
-        assert coverage.get("with_volatility") == 1
+        # New format: by_feature breakdown
+        by_feature = coverage.get("by_feature", {})
+        assert by_feature.get("corr_xbi_120d", {}).get("count") == 1
+        assert by_feature.get("vol_60d", {}).get("count") == 1
         assert coverage.get("coverage_pct") == 50.0
 
     def test_coverage_with_alternate_field_names(self):
@@ -467,8 +585,10 @@ class TestCoverageDiagnostics:
         )
 
         coverage = result.get("diagnostic_counts", {}).get("defensive_features_coverage", {})
-        assert coverage.get("with_correlation") == 2
-        assert coverage.get("with_volatility") == 2
+        # New format: by_feature breakdown (corr_xbi aliased to corr_xbi_120d)
+        by_feature = coverage.get("by_feature", {})
+        assert by_feature.get("corr_xbi_120d", {}).get("count") == 2
+        assert by_feature.get("vol_60d", {}).get("count") == 2
         assert coverage.get("coverage_pct") == 100.0
 
     def test_coverage_with_empty_defensive_features(self):
