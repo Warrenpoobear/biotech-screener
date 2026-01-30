@@ -3,6 +3,12 @@ module_5_composite_with_defensive.py
 
 Production wrapper that adds defensive overlays to Module 5.
 
+v1.3.0 (2026-01-29): Extended output schema:
+  - New columns: score_z, expected_excess_return, volatility, drawdown, module_scores
+  - output_schema_version field (2.0.0) for downstream consumers
+  - field_coverage diagnostics for new columns
+  - cluster_id/cluster_size always present when clustering enabled
+
 v1.2.0 (2026-01-18): Promoted v3 to default production scorer:
   - All v2 features retained (monotonic caps, confidence weighting, etc.)
   - V3 IC enhancements: momentum, valuation, catalyst decay, smart money
@@ -28,6 +34,8 @@ from module_5_composite_v3 import compute_module_5_composite_v3
 from defensive_overlay_adapter import (
     enrich_with_defensive_overlays,
     validate_defensive_integration,
+    attach_output_schema_columns,
+    OUTPUT_SCHEMA_VERSION,
     DEFAULT_DEFENSIVE_CONFIG,
     AGGRESSIVE_DEFENSIVE_CONFIG,
 )
@@ -407,6 +415,14 @@ def compute_module_5_composite_with_defensive(
         # Add provenance to output
         output["cluster_model"] = cluster_provenance
 
+    # Attach output schema columns (score_z, expected_excess_return, volatility, etc.)
+    field_coverage = attach_output_schema_columns(output)
+
+    # Add field coverage to diagnostics
+    if "diagnostic_counts" not in output:
+        output["diagnostic_counts"] = {}
+    output["diagnostic_counts"]["field_coverage"] = field_coverage
+
     # Optionally validate
     if validate:
         validate_defensive_integration(output)
@@ -414,13 +430,15 @@ def compute_module_5_composite_with_defensive(
     return output
 
 
-__version__ = "1.2.0"
+__version__ = "1.3.0"
 
 # Convenience exports
 __all__ = [
     "compute_module_5_composite_with_defensive",
     "enrich_with_defensive_overlays",
     "validate_defensive_integration",
+    "attach_output_schema_columns",
+    "OUTPUT_SCHEMA_VERSION",
     "compute_module_5_composite_v3",  # Direct access to v3 scorer
     "compute_module_5_composite_v2",  # Direct access to v2 scorer
     "V3_PRODUCTION_DEFAULTS",         # V3 configuration
@@ -439,6 +457,12 @@ if __name__ == "__main__":
     print("  - Smart money signal (13F tier-weighted overlap)")
     print("  - Shrinkage normalization (Bayesian cohort)")
     print("  - Sanity override (fallback for pathological rankings)")
+    print()
+    print("Output Schema (v1.3.0):")
+    print("  - score_z, expected_excess_return (from canonical ER)")
+    print("  - volatility, drawdown (from defensive_features)")
+    print("  - module_scores (from component_scores)")
+    print("  - output_schema_version: 2.0.0")
     print()
     print("Feature Flags:")
     print("  STABLE (on):    catalyst_decay, momentum, valuation, smart_money")

@@ -1089,3 +1089,31 @@ class TestAliasCoverage:
         coverage = result["diagnostic_counts"]["defensive_features_coverage"]
         # AAA and BBB have sufficient, CCC does not
         assert coverage["n_with_sufficient_features_for_multiplier"] == 2
+
+
+class TestOutputSchemaColumns:
+    """Tests for attach_output_schema_columns() - extended output schema."""
+
+    def test_output_schema_extension(self):
+        """Output schema extension should add all required columns."""
+        from defensive_overlay_adapter import attach_output_schema_columns, OUTPUT_SCHEMA_VERSION
+
+        output = {
+            "ranked_securities": [{
+                "ticker": "AAA",
+                "score_z": 1.2,
+                "expected_excess_return_annual": 0.096,
+                "defensive_features": {"vol_60d": "0.40", "drawdown_current": "-0.15"},
+                "cluster_id": 2,
+                "component_scores": {"clinical": "70.0", "nested": {"skip": "me"}},
+            }]
+        }
+        coverage = attach_output_schema_columns(output)
+
+        assert output["output_schema_version"] == OUTPUT_SCHEMA_VERSION
+        rec = output["ranked_securities"][0]
+        assert rec["expected_excess_return"] == 0.096  # Alias created
+        assert rec["volatility"] == "0.40"             # Extracted from defensive_features
+        assert rec["drawdown"] == "-0.15"              # Extracted from defensive_features
+        assert rec["module_scores"] == {"clinical": "70.0"}  # Scalars only
+        assert coverage["score_z"] == 1

@@ -933,6 +933,88 @@ def validate_defensive_integration(output: Dict) -> None:
     print("="*60)
 
 
+# =============================================================================
+# OUTPUT SCHEMA EXTENSION
+# =============================================================================
+
+OUTPUT_SCHEMA_VERSION = "2.0.0"  # Bumped for new columns
+
+
+def attach_output_schema_columns(output: Dict) -> Dict[str, int]:
+    """
+    Attach standardized output schema columns to each record.
+
+    Extracts and normalizes key columns for downstream consumption:
+    - volatility: from defensive_features.vol_60d
+    - drawdown: from defensive_features.drawdown_current
+    - expected_excess_return: alias for expected_excess_return_annual
+    - module_scores: from component_scores (if present)
+
+    Does NOT recompute score_z or ER - uses canonical values from Module 5.
+
+    Returns:
+        field_coverage dict with counts for each new column
+    """
+    ranked = output.get("ranked_securities", [])
+    coverage = {
+        "score_z": 0,
+        "expected_excess_return": 0,
+        "volatility": 0,
+        "drawdown": 0,
+        "cluster_id": 0,
+        "module_scores": 0,
+    }
+
+    for rec in ranked:
+        # score_z: already present from compute_expected_returns
+        if rec.get("score_z") is not None:
+            coverage["score_z"] += 1
+
+        # expected_excess_return: alias for expected_excess_return_annual
+        er_annual = rec.get("expected_excess_return_annual")
+        if er_annual is not None:
+            rec["expected_excess_return"] = er_annual
+            coverage["expected_excess_return"] += 1
+
+        # volatility: from defensive_features.vol_60d
+        def_feats = rec.get("defensive_features") or {}
+        vol = def_feats.get("vol_60d")
+        if vol is not None:
+            rec["volatility"] = vol
+            coverage["volatility"] += 1
+
+        # drawdown: canonical alias chain (drawdown_current → drawdown_60d → drawdown)
+        dd = (
+            def_feats.get("drawdown_current")
+            or def_feats.get("drawdown_60d")
+            or def_feats.get("drawdown")
+        )
+        if dd is not None:
+            rec["drawdown"] = dd
+            coverage["drawdown"] += 1
+
+        # cluster_id: already present if clustering enabled
+        if rec.get("cluster_id") is not None:
+            coverage["cluster_id"] += 1
+
+        # module_scores: from component_scores if present (scalars only)
+        comp_scores = rec.get("component_scores")
+        if comp_scores and isinstance(comp_scores, dict):
+            # Filter to scalar values only (str/int/float/Decimal/None)
+            lean_scores = {
+                k: v for k, v in comp_scores.items()
+                if v is None or isinstance(v, (str, int, float, Decimal))
+            }
+            if lean_scores:
+                rec["module_scores"] = lean_scores
+                coverage["module_scores"] += 1
+
+    # Add schema version to output
+    output["output_schema_version"] = OUTPUT_SCHEMA_VERSION
+
+    return coverage
+
+
 __all__ = [
     # Configuration
     "DefensiveConfig",
@@ -948,6 +1030,9 @@ __all__ = [
     # Integration
     "enrich_with_defensive_overlays",
     "validate_defensive_integration",
+    # Output schema extension
+    "attach_output_schema_columns",
+    "OUTPUT_SCHEMA_VERSION",
     # Utilities
     "_safe_decimal",
     "_is_valid_value",
