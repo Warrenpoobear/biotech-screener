@@ -134,12 +134,29 @@ AGGRESSIVE_DEFENSIVE_CONFIG = DefensiveConfig(
 )
 
 
-def _safe_decimal(value: Optional[str], default: Optional[Decimal] = None) -> Optional[Decimal]:
+# Null-equivalent values that should be treated as missing data
+_NULL_EQUIVALENTS = frozenset({"", "N/A", "Unknown", "NaN", "-", "None", "null", "nan"})
+
+
+def _is_valid_value(value) -> bool:
+    """Check if value is non-null and non-placeholder for coverage counting."""
+    if value is None:
+        return False
+    s = str(value).strip()
+    if not s or s in _NULL_EQUIVALENTS:
+        return False
+    return True
+
+
+def _safe_decimal(value, default: Optional[Decimal] = None) -> Optional[Decimal]:
     """Safely convert string to Decimal, returning default on failure."""
     if value is None:
         return default
+    s = str(value).strip()
+    if not s or s in _NULL_EQUIVALENTS:
+        return default
     try:
-        d = Decimal(str(value))
+        d = Decimal(s)
         if not d.is_finite():
             return default
         return d
@@ -211,6 +228,7 @@ def _extract_defensive_tags(notes: List[str]) -> List[str]:
 
     # Tag mappings: note substring -> semantic tag
     tag_patterns = [
+        ("def_not_applied", "multiplier_disabled"),
         ("def_mult_elite_", "elite"),
         ("def_mult_good_", "good_diversifier"),
         ("def_mult_high_corr_penalty", "high_corr_penalty"),
@@ -235,6 +253,17 @@ def _extract_defensive_tags(notes: List[str]) -> List[str]:
                 break  # Only one tag per note
 
     return tags
+
+
+def _derive_defensive_bucket(mult: Decimal) -> str:
+    """Derive defensive bucket from multiplier value for easy filtering."""
+    if mult > Decimal("1.20"):
+        return "elite"
+    elif mult > Decimal("1.05"):
+        return "good"
+    elif mult < Decimal("0.98"):
+        return "penalty"
+    return "neutral"
 
 
 def _extract_audit_features(defensive_features: Dict[str, str]) -> Dict[str, Optional[str]]:
@@ -627,9 +656,10 @@ def enrich_with_defensive_overlays(
     if "diagnostic_counts" not in output:
         output["diagnostic_counts"] = {}
 
-    # Track defensive feature coverage (all 9 features)
+    # Track defensive feature coverage (all 9 features + aliases)
     total_securities = len(ranked)
     with_def_features = 0
+    n_with_sufficient = 0  # Has corr+vol OR any enabled factor
     feature_coverage = {
         "vol_60d": 0,
         "vol_20d": 0,
@@ -641,6 +671,11 @@ def enrich_with_defensive_overlays(
         "skew_60d": 0,
         "vol_ratio": 0,
     }
+    # Track alias fields separately for diagnostics
+    alias_coverage = {
+        "corr_xbi": 0,       # Alias for corr_xbi_120d
+        "drawdown_60d": 0,   # Alias for drawdown_current
+    }
 
     for rec in ranked:
         ticker = rec["ticker"]
@@ -649,23 +684,39 @@ def enrich_with_defensive_overlays(
 
         if def_features:
             with_def_features += 1
-            # Track each feature using _safe_decimal for consistent null detection
+
+            # Track each feature using _is_valid_value for consistent null detection
             for feature in feature_coverage:
                 raw_val = def_features.get(feature)
                 # Handle field aliases (must match defensive_multiplier logic)
-                if feature == "corr_xbi_120d" and raw_val is None:
+                if feature == "corr_xbi_120d" and not _is_valid_value(raw_val):
                     raw_val = def_features.get("corr_xbi")
-                if feature == "drawdown_current" and raw_val is None:
+                if feature == "drawdown_current" and not _is_valid_value(raw_val):
                     raw_val = def_features.get("drawdown_60d")
-                # Only count if _safe_decimal succeeds (not None, not NaN, parseable)
-                if _safe_decimal(raw_val) is not None:
+                if _is_valid_value(raw_val) and _safe_decimal(raw_val) is not None:
                     feature_coverage[feature] += 1
+
+            # Track alias fields separately
+            for alias in alias_coverage:
+                if _is_valid_value(def_features.get(alias)) and _safe_decimal(def_features.get(alias)) is not None:
+                    alias_coverage[alias] += 1
+
+            # Check if sufficient for multiplier (corr+vol present OR any factor)
+            has_corr = _safe_decimal(def_features.get("corr_xbi") or def_features.get("corr_xbi_120d")) is not None
+            has_vol = _safe_decimal(def_features.get("vol_60d")) is not None
+            has_any_factor = has_corr or has_vol or any(
+                _safe_decimal(def_features.get(f)) is not None
+                for f in ["ret_21d", "rsi_14d", "drawdown_current", "drawdown_60d"]
+            )
+            if has_any_factor:
+                n_with_sufficient += 1
 
     # Add coverage diagnostics with per-feature breakdown
     coverage_pct = round(100 * with_def_features / total_securities, 1) if total_securities > 0 else 0
     output["diagnostic_counts"]["defensive_features_coverage"] = {
         "total_securities": total_securities,
         "with_defensive_features": with_def_features,
+        "n_with_sufficient_features_for_multiplier": n_with_sufficient,
         "coverage_pct": coverage_pct,
         "by_feature": {
             k: {
@@ -673,6 +724,13 @@ def enrich_with_defensive_overlays(
                 "pct": round(100 * v / total_securities, 1) if total_securities > 0 else 0,
             }
             for k, v in feature_coverage.items()
+        },
+        "alias_coverage": {
+            k: {
+                "count": v,
+                "pct": round(100 * v / total_securities, 1) if total_securities > 0 else 0,
+            }
+            for k, v in alias_coverage.items()
         },
     }
 
@@ -688,48 +746,49 @@ def enrich_with_defensive_overlays(
             defensive_features = ticker_data.get("defensive_features", {})
             rec["_position_weight_raw"] = raw_inv_vol_weight(defensive_features or {})
 
-    # Step 2: Apply multi-factor defensive multiplier to composite scores (optional)
+    # Step 2: Compute defensive multiplier for all securities
+    # Always add fields; only modify composite_score and re-rank when apply_multiplier=True
     multiplier_stats = {"elite": 0, "good": 0, "penalty": 0, "neutral": 0}
-    if apply_multiplier:
-        for rec in ranked:
-            ticker = rec["ticker"]
-            ticker_data = scores_by_ticker.get(ticker, {})
-            defensive_features = ticker_data.get("defensive_features", {})
 
-            # Get current composite score
-            current_score = Decimal(rec["composite_score"])
+    for rec in ranked:
+        ticker = rec["ticker"]
+        ticker_data = scores_by_ticker.get(ticker, {})
+        defensive_features = ticker_data.get("defensive_features", {})
 
-            # Apply multi-factor multiplier with config
-            mult, notes = defensive_multiplier(defensive_features or {}, config=cfg)
-            adjusted_score = current_score * mult
+        # Get current composite score
+        current_score = Decimal(rec["composite_score"])
 
-            # Cap at 100
-            adjusted_score = min(Decimal("100"), max(Decimal("0"), adjusted_score))
+        # Always compute multiplier (for risk_adjusted_score and diagnostics)
+        mult, notes = defensive_multiplier(defensive_features or {}, config=cfg)
 
-            # Track multiplier distribution
-            if mult > Decimal("1.20"):
-                multiplier_stats["elite"] += 1
-            elif mult > Decimal("1.05"):
-                multiplier_stats["good"] += 1
-            elif mult < Decimal("0.98"):
-                multiplier_stats["penalty"] += 1
-            else:
-                multiplier_stats["neutral"] += 1
+        # Track multiplier distribution
+        bucket = _derive_defensive_bucket(mult)
+        multiplier_stats[bucket] += 1
 
-            # Update score
+        # Compute risk-adjusted score (always, for downstream use)
+        risk_adjusted = current_score * mult
+        risk_adjusted = min(Decimal("100"), max(Decimal("0"), risk_adjusted))
+
+        if apply_multiplier:
+            # Score modification: update composite_score, track before value
             rec["composite_score_before_defensive"] = str(current_score)
-            rec["composite_score"] = str(adjusted_score.quantize(Decimal("0.01")))
+            rec["composite_score"] = str(risk_adjusted.quantize(Decimal("0.01")))
             rec["defensive_multiplier"] = str(mult)
             rec["defensive_notes"] = notes
+        else:
+            # No score modification: multiplier=1.00, note that it's not applied
+            rec["defensive_multiplier"] = "1.00"
+            rec["defensive_notes"] = ["def_not_applied"] + notes
 
-            # Add machine-safe tags (set membership, no substring matching needed)
-            rec["defensive_tags"] = _extract_defensive_tags(notes)
+        # Always add these fields for audit/analysis
+        rec["risk_adjusted_score"] = str(risk_adjusted.quantize(Decimal("0.01")))
+        rec["defensive_bucket"] = bucket
+        rec["defensive_tags"] = _extract_defensive_tags(rec["defensive_notes"])  # Use final notes
+        rec["defensive_features"] = _extract_audit_features(defensive_features or {})
 
-            # Add raw features for audit (why did this move?)
-            rec["defensive_features"] = _extract_audit_features(defensive_features or {})
-
-        # Add multiplier distribution to diagnostics
-        output["diagnostic_counts"]["multiplier_distribution"] = multiplier_stats
+    # Add multiplier distribution to diagnostics
+    output["diagnostic_counts"]["multiplier_distribution"] = multiplier_stats
+    output["diagnostic_counts"]["apply_multiplier_enabled"] = apply_multiplier
 
     # Step 3: Re-rank after multiplier application
     if apply_multiplier:
@@ -891,6 +950,8 @@ __all__ = [
     "validate_defensive_integration",
     # Utilities
     "_safe_decimal",
+    "_is_valid_value",
+    "_derive_defensive_bucket",
 ]
 
 

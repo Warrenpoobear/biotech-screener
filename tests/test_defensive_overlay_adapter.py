@@ -831,3 +831,261 @@ class TestEnrichOutputFields:
         assert rec["defensive_features"]["corr_xbi"] == "0.28"
         assert rec["defensive_features"]["vol_60d"] == "0.32"
         assert rec["defensive_features"]["ret_21d"] == "0.05"
+
+
+# ============================================================================
+# NEW: FIELDS ALWAYS PRESENT TESTS
+# ============================================================================
+
+class TestFieldsAlwaysPresent:
+    """Tests for fields present even when apply_multiplier=False."""
+
+    def test_fields_present_when_multiplier_disabled(self):
+        """All defensive fields should be present even when multiplier disabled."""
+        from defensive_overlay_adapter import enrich_with_defensive_overlays
+
+        output = {
+            "ranked_securities": [
+                {"ticker": "AAA", "composite_score": "50.00", "composite_rank": 1, "rankable": True},
+            ]
+        }
+
+        scores_by_ticker = {
+            "AAA": {"defensive_features": {"corr_xbi": "0.25", "vol_60d": "0.35"}},
+        }
+
+        result = enrich_with_defensive_overlays(
+            output, scores_by_ticker, apply_multiplier=False
+        )
+
+        rec = result["ranked_securities"][0]
+        # All fields present
+        assert "defensive_multiplier" in rec
+        assert "defensive_notes" in rec
+        assert "defensive_tags" in rec
+        assert "defensive_features" in rec
+        assert "defensive_bucket" in rec
+        assert "risk_adjusted_score" in rec
+        # Multiplier is 1.00 (not applied)
+        assert rec["defensive_multiplier"] == "1.00"
+        # Note indicates not applied
+        assert "def_not_applied" in rec["defensive_notes"]
+        # Tag indicates disabled
+        assert "multiplier_disabled" in rec["defensive_tags"]
+
+    def test_ranks_unchanged_when_multiplier_disabled(self):
+        """Ranks should not change when apply_multiplier=False."""
+        from defensive_overlay_adapter import enrich_with_defensive_overlays
+
+        output = {
+            "ranked_securities": [
+                {"ticker": "AAA", "composite_score": "50.00", "composite_rank": 1, "rankable": True},
+                {"ticker": "BBB", "composite_score": "60.00", "composite_rank": 2, "rankable": True},
+            ]
+        }
+
+        scores_by_ticker = {
+            "AAA": {"defensive_features": {"corr_xbi": "0.25", "vol_60d": "0.35"}},  # Would be elite
+            "BBB": {"defensive_features": {"corr_xbi": "0.85", "vol_60d": "0.90"}},  # Would be penalty
+        }
+
+        result = enrich_with_defensive_overlays(
+            output, scores_by_ticker, apply_multiplier=False
+        )
+
+        # Ranks unchanged
+        assert result["ranked_securities"][0]["composite_rank"] == 1
+        assert result["ranked_securities"][1]["composite_rank"] == 2
+        # Scores unchanged
+        assert result["ranked_securities"][0]["composite_score"] == "50.00"
+        assert result["ranked_securities"][1]["composite_score"] == "60.00"
+
+    def test_risk_adjusted_score_computed_when_disabled(self):
+        """risk_adjusted_score should be computed even when multiplier disabled."""
+        from defensive_overlay_adapter import enrich_with_defensive_overlays
+        from decimal import Decimal
+
+        output = {
+            "ranked_securities": [
+                {"ticker": "AAA", "composite_score": "50.00", "rankable": True},
+            ]
+        }
+
+        scores_by_ticker = {
+            "AAA": {"defensive_features": {"corr_xbi": "0.25", "vol_60d": "0.35"}},  # Elite = 1.40x
+        }
+
+        result = enrich_with_defensive_overlays(
+            output, scores_by_ticker, apply_multiplier=False
+        )
+
+        rec = result["ranked_securities"][0]
+        # risk_adjusted_score = 50 * 1.40 = 70
+        assert Decimal(rec["risk_adjusted_score"]) == Decimal("70.00")
+        # But composite_score unchanged
+        assert rec["composite_score"] == "50.00"
+
+
+class TestDefensiveBucket:
+    """Tests for defensive_bucket derivation."""
+
+    def test_elite_bucket(self):
+        """Multiplier > 1.20 should be 'elite' bucket."""
+        from defensive_overlay_adapter import _derive_defensive_bucket
+        from decimal import Decimal
+
+        assert _derive_defensive_bucket(Decimal("1.40")) == "elite"
+        assert _derive_defensive_bucket(Decimal("1.21")) == "elite"
+
+    def test_good_bucket(self):
+        """Multiplier 1.05 < m <= 1.20 should be 'good' bucket."""
+        from defensive_overlay_adapter import _derive_defensive_bucket
+        from decimal import Decimal
+
+        assert _derive_defensive_bucket(Decimal("1.10")) == "good"
+        assert _derive_defensive_bucket(Decimal("1.20")) == "good"
+        assert _derive_defensive_bucket(Decimal("1.06")) == "good"
+
+    def test_penalty_bucket(self):
+        """Multiplier < 0.98 should be 'penalty' bucket."""
+        from defensive_overlay_adapter import _derive_defensive_bucket
+        from decimal import Decimal
+
+        assert _derive_defensive_bucket(Decimal("0.95")) == "penalty"
+        assert _derive_defensive_bucket(Decimal("0.75")) == "penalty"
+        assert _derive_defensive_bucket(Decimal("0.97")) == "penalty"
+
+    def test_neutral_bucket(self):
+        """Multiplier 0.98 <= m <= 1.05 should be 'neutral' bucket."""
+        from defensive_overlay_adapter import _derive_defensive_bucket
+        from decimal import Decimal
+
+        assert _derive_defensive_bucket(Decimal("1.00")) == "neutral"
+        assert _derive_defensive_bucket(Decimal("0.98")) == "neutral"
+        assert _derive_defensive_bucket(Decimal("1.05")) == "neutral"
+
+
+class TestNullEquivalentDetection:
+    """Tests for consistent null/placeholder detection in coverage."""
+
+    def test_empty_string_not_counted_as_valid(self):
+        """Empty string should not be counted as valid coverage."""
+        from defensive_overlay_adapter import _is_valid_value
+
+        assert _is_valid_value("") is False
+        assert _is_valid_value("  ") is False
+
+    def test_na_variants_not_counted(self):
+        """N/A, Unknown, NaN, etc. should not count as valid."""
+        from defensive_overlay_adapter import _is_valid_value
+
+        assert _is_valid_value("N/A") is False
+        assert _is_valid_value("Unknown") is False
+        assert _is_valid_value("NaN") is False
+        assert _is_valid_value("-") is False
+        assert _is_valid_value("None") is False
+        assert _is_valid_value("null") is False
+
+    def test_zero_is_valid(self):
+        """Zero should be counted as valid (it's a real value)."""
+        from defensive_overlay_adapter import _is_valid_value
+
+        assert _is_valid_value("0") is True
+        assert _is_valid_value("0.0") is True
+        assert _is_valid_value(0) is True
+
+    def test_numeric_strings_valid(self):
+        """Numeric strings should be valid."""
+        from defensive_overlay_adapter import _is_valid_value
+
+        assert _is_valid_value("0.50") is True
+        assert _is_valid_value("-0.25") is True
+        assert _is_valid_value("1.5") is True
+
+    def test_coverage_excludes_null_equivalents(self):
+        """Coverage counts should exclude null-equivalent values."""
+        from defensive_overlay_adapter import enrich_with_defensive_overlays
+
+        output = {
+            "ranked_securities": [
+                {"ticker": "AAA", "composite_score": "50.00", "rankable": True},
+                {"ticker": "BBB", "composite_score": "40.00", "rankable": True},
+            ]
+        }
+
+        scores_by_ticker = {
+            "AAA": {"defensive_features": {"vol_60d": "0.30", "corr_xbi": "N/A"}},  # corr is null-eq
+            "BBB": {"defensive_features": {"vol_60d": "", "corr_xbi": "0.40"}},     # vol is null-eq
+        }
+
+        result = enrich_with_defensive_overlays(
+            output, scores_by_ticker, apply_multiplier=False
+        )
+
+        coverage = result["diagnostic_counts"]["defensive_features_coverage"]
+        by_feature = coverage["by_feature"]
+        # corr_xbi_120d: only BBB has valid (AAA has "N/A")
+        assert by_feature["corr_xbi_120d"]["count"] == 1
+        # vol_60d: only AAA has valid (BBB has "")
+        assert by_feature["vol_60d"]["count"] == 1
+
+
+class TestAliasCoverage:
+    """Tests for alias field coverage diagnostics."""
+
+    def test_alias_coverage_tracked_separately(self):
+        """Alias fields should be tracked in separate alias_coverage dict."""
+        from defensive_overlay_adapter import enrich_with_defensive_overlays
+
+        output = {
+            "ranked_securities": [
+                {"ticker": "AAA", "composite_score": "50.00", "rankable": True},
+                {"ticker": "BBB", "composite_score": "40.00", "rankable": True},
+            ]
+        }
+
+        scores_by_ticker = {
+            "AAA": {"defensive_features": {"corr_xbi": "0.30", "drawdown_60d": "-0.10"}},
+            "BBB": {"defensive_features": {"corr_xbi_120d": "0.40", "drawdown_current": "-0.15"}},
+        }
+
+        result = enrich_with_defensive_overlays(
+            output, scores_by_ticker, apply_multiplier=False
+        )
+
+        coverage = result["diagnostic_counts"]["defensive_features_coverage"]
+
+        # Alias coverage tracked separately
+        assert "alias_coverage" in coverage
+        assert coverage["alias_coverage"]["corr_xbi"]["count"] == 1  # AAA
+        assert coverage["alias_coverage"]["drawdown_60d"]["count"] == 1  # AAA
+
+        # Canonical includes aliased values
+        assert coverage["by_feature"]["corr_xbi_120d"]["count"] == 2  # Both via alias
+        assert coverage["by_feature"]["drawdown_current"]["count"] == 2  # Both via alias
+
+    def test_n_with_sufficient_features(self):
+        """n_with_sufficient_features_for_multiplier should count correctly."""
+        from defensive_overlay_adapter import enrich_with_defensive_overlays
+
+        output = {
+            "ranked_securities": [
+                {"ticker": "AAA", "composite_score": "50.00", "rankable": True},
+                {"ticker": "BBB", "composite_score": "40.00", "rankable": True},
+                {"ticker": "CCC", "composite_score": "30.00", "rankable": True},
+            ]
+        }
+
+        scores_by_ticker = {
+            "AAA": {"defensive_features": {"corr_xbi": "0.30", "vol_60d": "0.40"}},  # Has corr+vol
+            "BBB": {"defensive_features": {"ret_21d": "0.10"}},  # Has momentum only
+            "CCC": {"defensive_features": {}},  # No features
+        }
+
+        result = enrich_with_defensive_overlays(
+            output, scores_by_ticker, apply_multiplier=False
+        )
+
+        coverage = result["diagnostic_counts"]["defensive_features_coverage"]
+        # AAA and BBB have sufficient, CCC does not
+        assert coverage["n_with_sufficient_features_for_multiplier"] == 2
