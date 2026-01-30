@@ -449,6 +449,9 @@ def fetch_sec_financials(ticker: str, cik: Optional[str] = None, as_of_date: str
                 "most_recent_date": most_recent_date,
                 "oldest_date": oldest_date,
                 "staleness_flags": staleness_flags,
+                "stale_fields_filtered": stale_fields if stale_fields else None,
+                "staleness_cutoff_days": MAX_DATA_AGE_DAYS if as_of_dt else None,
+                "as_of_date_used": as_of_date if as_of_dt else None,
             },
             "coverage": {
                 "has_cash": cash is not None,
