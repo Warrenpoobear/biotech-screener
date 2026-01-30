@@ -389,10 +389,10 @@ def compute_module_5_composite_with_defensive(
         defensive_config=cfg,
     )
 
-    # Add clustering if enabled (does not affect ranks/scores)
-    if enable_clustering:
-        ranked_securities = output.get("ranked_securities", [])
+    # Add clustering (always populate cluster_id for risk management)
+    ranked_securities = output.get("ranked_securities", [])
 
+    if enable_clustering:
         # Select best clustering key based on coverage (not sampling)
         cluster_key, key_coverage, unique_values = select_best_cluster_key(ranked_securities)
 
@@ -407,7 +407,6 @@ def compute_module_5_composite_with_defensive(
             cluster_provenance["cluster_method_requested"] = "returns"
             cluster_provenance["cluster_method_effective"] = "key_based"
             cluster_provenance["fallback_reason"] = "returns_clustering_not_wired"
-            # Don't include threshold since it wasn't used
 
         else:  # "indication" or "auto"
             # Key-based clustering (fast, reliable)
@@ -417,14 +416,25 @@ def compute_module_5_composite_with_defensive(
             )
             cluster_provenance["cluster_method_requested"] = cluster_method
             cluster_provenance["cluster_method_effective"] = "key_based"
-            # Don't include threshold since it wasn't used
 
         logger.info(
             f"Clustering: {cluster_key}-based, {cluster_provenance.get('n_clusters', 0)} clusters "
             f"(coverage: {key_coverage:.1%}, {unique_values} unique values)"
         )
+        output["cluster_model"] = cluster_provenance
 
-        # Add provenance to output
+    else:
+        # Fallback: always populate cluster_id using cohort_key (stage + market_cap)
+        # This ensures cluster_id is never empty for risk management
+        cluster_provenance = attach_indication_clusters(
+            ranked_securities,
+            indication_key="cohort_key",
+        )
+        cluster_provenance["cluster_method_requested"] = "none"
+        cluster_provenance["cluster_method_effective"] = "cohort_fallback"
+        logger.info(
+            f"Clustering fallback: cohort_key-based, {cluster_provenance.get('n_clusters', 0)} clusters"
+        )
         output["cluster_model"] = cluster_provenance
 
     # Attach output schema columns (score_z, expected_excess_return, volatility, etc.)
