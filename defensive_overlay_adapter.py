@@ -1015,6 +1015,44 @@ def attach_output_schema_columns(output: Dict) -> Dict[str, int]:
     return coverage
 
 
+# =============================================================================
+# CACHE MERGE HELPERS
+# =============================================================================
+
+def load_defensive_cache(cache_path: str) -> Dict[str, Dict[str, str]]:
+    """Load defensive features from cache file. Returns ticker -> features dict."""
+    import json
+    from pathlib import Path
+    path = Path(cache_path)
+    if not path.exists():
+        raise FileNotFoundError(f"Cache file not found: {cache_path}")
+    with open(path) as f:
+        cache_data = json.load(f)
+    data = cache_data.get("data", cache_data)  # Handle wrapped or raw format
+    return data.get("features_by_ticker", {})
+
+
+def merge_cache_into_scores(
+    scores_by_ticker: Dict[str, Dict],
+    cache_features: Dict[str, Dict[str, str]],
+    overwrite: bool = False,
+) -> int:
+    """Merge cached features into scores_by_ticker. Returns count of merged fields."""
+    merged = 0
+    for ticker, features in cache_features.items():
+        if ticker not in scores_by_ticker:
+            continue
+        ticker_data = scores_by_ticker[ticker]
+        if "defensive_features" not in ticker_data:
+            ticker_data["defensive_features"] = {}
+        existing = ticker_data["defensive_features"]
+        for key, value in features.items():
+            if overwrite or not existing.get(key):
+                existing[key] = value
+                merged += 1
+    return merged
+
+
 __all__ = [
     # Configuration
     "DefensiveConfig",
@@ -1033,6 +1071,9 @@ __all__ = [
     # Output schema extension
     "attach_output_schema_columns",
     "OUTPUT_SCHEMA_VERSION",
+    # Cache helpers
+    "load_defensive_cache",
+    "merge_cache_into_scores",
     # Utilities
     "_safe_decimal",
     "_is_valid_value",

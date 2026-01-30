@@ -1117,3 +1117,39 @@ class TestOutputSchemaColumns:
         assert rec["drawdown"] == "-0.15"              # Extracted from defensive_features
         assert rec["module_scores"] == {"clinical": "70.0"}  # Scalars only
         assert coverage["score_z"] == 1
+
+
+# ============================================================================
+# CACHE MERGE HELPERS TESTS
+# ============================================================================
+
+class TestCacheMergeHelpers:
+    """Tests for load_defensive_cache() and merge_cache_into_scores()."""
+
+    def test_load_and_merge_fills_gaps(self, tmp_path):
+        """Load cache file and merge should fill missing features."""
+        import json
+        from defensive_overlay_adapter import load_defensive_cache, merge_cache_into_scores
+
+        # Create cache file
+        cache_file = tmp_path / "cache.json"
+        with open(cache_file, "w") as f:
+            json.dump({"data": {"features_by_ticker": {
+                "AMGN": {"vol_60d": "0.35", "corr_xbi_120d": "0.25"},
+            }}}, f)
+
+        # Load and merge
+        cache = load_defensive_cache(str(cache_file))
+        scores = {"AMGN": {"defensive_features": {"vol_60d": "0.99"}}}  # Has vol_60d
+        merged = merge_cache_into_scores(scores, cache, overwrite=False)
+
+        # vol_60d NOT overwritten, corr filled
+        assert scores["AMGN"]["defensive_features"]["vol_60d"] == "0.99"
+        assert scores["AMGN"]["defensive_features"]["corr_xbi_120d"] == "0.25"
+        assert merged == 1  # Only corr was merged
+
+    def test_load_missing_file_raises(self, tmp_path):
+        """Should raise FileNotFoundError for missing file."""
+        from defensive_overlay_adapter import load_defensive_cache
+        with pytest.raises(FileNotFoundError):
+            load_defensive_cache(str(tmp_path / "nonexistent.json"))
