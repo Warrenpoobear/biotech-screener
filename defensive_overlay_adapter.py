@@ -197,6 +197,72 @@ def sanitize_corr(defensive_features: Dict[str, str]) -> Tuple[Optional[Decimal]
     return corr, flags
 
 
+def _extract_defensive_tags(notes: List[str]) -> List[str]:
+    """
+    Extract machine-safe tags from defensive notes.
+
+    Converts string notes like 'def_mult_elite_1.40' to semantic tags like 'elite'.
+    This enables set-membership checks instead of error-prone substring matching.
+
+    Returns:
+        List of semantic tags (e.g., ['elite', 'momentum_bonus'])
+    """
+    tags = []
+
+    # Tag mappings: note substring -> semantic tag
+    tag_patterns = [
+        ("def_mult_elite_", "elite"),
+        ("def_mult_good_", "good_diversifier"),
+        ("def_mult_high_corr_penalty", "high_corr_penalty"),
+        ("def_mult_high_vol_", "high_vol_penalty"),
+        ("def_mult_momentum_bonus", "momentum_bonus"),
+        ("def_mult_momentum_penalty", "momentum_penalty"),
+        ("def_mult_rsi_oversold", "rsi_oversold"),
+        ("def_mult_rsi_overbought", "rsi_overbought"),
+        ("def_mult_drawdown_penalty", "drawdown_penalty"),
+        ("def_mult_vol_expanding", "vol_expanding_penalty"),
+        ("def_warn_drawdown", "drawdown_warning"),
+        ("def_corr_missing", "corr_missing"),
+        ("def_corr_placeholder", "corr_placeholder"),
+        ("def_skip_not_elite", "not_elite"),
+        ("def_skip_vol_too_high", "vol_too_high"),
+    ]
+
+    for note in notes:
+        for pattern, tag in tag_patterns:
+            if pattern in note and tag not in tags:
+                tags.append(tag)
+                break  # Only one tag per note
+
+    return tags
+
+
+def _extract_audit_features(defensive_features: Dict[str, str]) -> Dict[str, Optional[str]]:
+    """
+    Extract key defensive features for audit output.
+
+    Returns a subset of features used in multiplier calculation,
+    making "why did this move?" questions trivial without re-joining to source.
+
+    Returns:
+        Dict with corr, vol, rsi, momentum, drawdown (string values or None)
+    """
+    # Get values with alias handling (same as defensive_multiplier)
+    corr = defensive_features.get("corr_xbi") or defensive_features.get("corr_xbi_120d")
+    vol = defensive_features.get("vol_60d")
+    rsi = defensive_features.get("rsi_14d")
+    momentum = defensive_features.get("ret_21d")
+    drawdown = defensive_features.get("drawdown_current") or defensive_features.get("drawdown_60d")
+
+    return {
+        "corr_xbi": corr,
+        "vol_60d": vol,
+        "rsi_14d": rsi,
+        "ret_21d": momentum,
+        "drawdown": drawdown,
+    }
+
+
 def defensive_multiplier(
     defensive_features: Dict[str, str],
     config: Optional[DefensiveConfig] = None,
@@ -655,6 +721,12 @@ def enrich_with_defensive_overlays(
             rec["composite_score"] = str(adjusted_score.quantize(Decimal("0.01")))
             rec["defensive_multiplier"] = str(mult)
             rec["defensive_notes"] = notes
+
+            # Add machine-safe tags (set membership, no substring matching needed)
+            rec["defensive_tags"] = _extract_defensive_tags(notes)
+
+            # Add raw features for audit (why did this move?)
+            rec["defensive_features"] = _extract_audit_features(defensive_features or {})
 
         # Add multiplier distribution to diagnostics
         output["diagnostic_counts"]["multiplier_distribution"] = multiplier_stats

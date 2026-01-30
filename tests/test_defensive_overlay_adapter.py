@@ -662,3 +662,172 @@ class TestCoverageDiagnostics:
         coverage = result.get("diagnostic_counts", {}).get("defensive_features_coverage", {})
         assert coverage.get("with_defensive_features") == 0
         assert coverage.get("coverage_pct") == 0
+
+
+# ============================================================================
+# STRUCTURED TAGS AND AUDIT FEATURES TESTS
+# ============================================================================
+
+class TestStructuredTags:
+    """Tests for machine-safe defensive tags extraction."""
+
+    def test_elite_tag_extracted(self):
+        """Elite multiplier note should produce 'elite' tag."""
+        from defensive_overlay_adapter import _extract_defensive_tags
+
+        notes = ["def_mult_elite_1.40"]
+        tags = _extract_defensive_tags(notes)
+
+        assert "elite" in tags
+        assert len(tags) == 1
+
+    def test_multiple_tags_extracted(self):
+        """Multiple notes should produce multiple tags."""
+        from defensive_overlay_adapter import _extract_defensive_tags
+
+        notes = ["def_skip_not_elite_vol", "def_mult_high_vol_0.97", "def_mult_momentum_bonus_1.05"]
+        tags = _extract_defensive_tags(notes)
+
+        assert "not_elite" in tags
+        assert "high_vol_penalty" in tags
+        assert "momentum_bonus" in tags
+        assert len(tags) == 3
+
+    def test_warning_tag_extracted(self):
+        """Warning notes should produce warning tags."""
+        from defensive_overlay_adapter import _extract_defensive_tags
+
+        notes = ["def_warn_drawdown_gt_30pct"]
+        tags = _extract_defensive_tags(notes)
+
+        assert "drawdown_warning" in tags
+
+    def test_empty_notes_produce_empty_tags(self):
+        """Empty notes list should produce empty tags list."""
+        from defensive_overlay_adapter import _extract_defensive_tags
+
+        tags = _extract_defensive_tags([])
+
+        assert tags == []
+
+    def test_unknown_notes_ignored(self):
+        """Unknown note patterns should be ignored."""
+        from defensive_overlay_adapter import _extract_defensive_tags
+
+        notes = ["some_unknown_note", "another_random_note"]
+        tags = _extract_defensive_tags(notes)
+
+        assert tags == []
+
+
+class TestAuditFeatures:
+    """Tests for defensive features audit extraction."""
+
+    def test_all_features_extracted(self):
+        """All key features should be extracted when present."""
+        from defensive_overlay_adapter import _extract_audit_features
+
+        features = {
+            "corr_xbi": "0.25",
+            "vol_60d": "0.35",
+            "rsi_14d": "45",
+            "ret_21d": "0.10",
+            "drawdown_current": "-0.15",
+        }
+
+        audit = _extract_audit_features(features)
+
+        assert audit["corr_xbi"] == "0.25"
+        assert audit["vol_60d"] == "0.35"
+        assert audit["rsi_14d"] == "45"
+        assert audit["ret_21d"] == "0.10"
+        assert audit["drawdown"] == "-0.15"
+
+    def test_alias_corr_xbi_120d_works(self):
+        """corr_xbi_120d alias should be extracted as corr_xbi."""
+        from defensive_overlay_adapter import _extract_audit_features
+
+        features = {"corr_xbi_120d": "0.30"}
+        audit = _extract_audit_features(features)
+
+        assert audit["corr_xbi"] == "0.30"
+
+    def test_alias_drawdown_60d_works(self):
+        """drawdown_60d alias should be extracted as drawdown."""
+        from defensive_overlay_adapter import _extract_audit_features
+
+        features = {"drawdown_60d": "-0.25"}
+        audit = _extract_audit_features(features)
+
+        assert audit["drawdown"] == "-0.25"
+
+    def test_missing_features_return_none(self):
+        """Missing features should return None values."""
+        from defensive_overlay_adapter import _extract_audit_features
+
+        features = {"vol_60d": "0.40"}
+        audit = _extract_audit_features(features)
+
+        assert audit["corr_xbi"] is None
+        assert audit["vol_60d"] == "0.40"
+        assert audit["rsi_14d"] is None
+        assert audit["ret_21d"] is None
+        assert audit["drawdown"] is None
+
+    def test_empty_features_all_none(self):
+        """Empty features dict should produce all None values."""
+        from defensive_overlay_adapter import _extract_audit_features
+
+        audit = _extract_audit_features({})
+
+        assert all(v is None for v in audit.values())
+
+
+class TestEnrichOutputFields:
+    """Tests for new fields added to enriched output."""
+
+    def test_tags_added_to_output(self):
+        """defensive_tags should be added to each record."""
+        from defensive_overlay_adapter import enrich_with_defensive_overlays
+
+        output = {
+            "ranked_securities": [
+                {"ticker": "AAA", "composite_score": "50.00", "rankable": True},
+            ]
+        }
+
+        scores_by_ticker = {
+            "AAA": {"defensive_features": {"corr_xbi": "0.25", "vol_60d": "0.35"}},
+        }
+
+        result = enrich_with_defensive_overlays(
+            output, scores_by_ticker, apply_multiplier=True
+        )
+
+        rec = result["ranked_securities"][0]
+        assert "defensive_tags" in rec
+        assert "elite" in rec["defensive_tags"]
+
+    def test_features_added_to_output(self):
+        """defensive_features should be added to each record."""
+        from defensive_overlay_adapter import enrich_with_defensive_overlays
+
+        output = {
+            "ranked_securities": [
+                {"ticker": "AAA", "composite_score": "50.00", "rankable": True},
+            ]
+        }
+
+        scores_by_ticker = {
+            "AAA": {"defensive_features": {"corr_xbi": "0.28", "vol_60d": "0.32", "ret_21d": "0.05"}},
+        }
+
+        result = enrich_with_defensive_overlays(
+            output, scores_by_ticker, apply_multiplier=True
+        )
+
+        rec = result["ranked_securities"][0]
+        assert "defensive_features" in rec
+        assert rec["defensive_features"]["corr_xbi"] == "0.28"
+        assert rec["defensive_features"]["vol_60d"] == "0.32"
+        assert rec["defensive_features"]["ret_21d"] == "0.05"
