@@ -1204,3 +1204,137 @@ class TestCacheMergeHelpers:
         from defensive_overlay_adapter import load_defensive_cache
         with pytest.raises(FileNotFoundError):
             load_defensive_cache(str(tmp_path / "nonexistent.json"))
+
+
+# ============================================================================
+# BOOST ELIGIBILITY GATE TESTS
+# ============================================================================
+
+class TestBoostEligibilityGate:
+    """Tests for the boost eligibility gate that prevents weak names from getting boosts."""
+
+    def test_low_score_cannot_get_elite_boost(self):
+        """OPK-like low base score should not get elite boost above 1.0."""
+        from defensive_overlay_adapter import enrich_with_defensive_overlays, DefensiveConfig
+
+        # OPK-like scenario: low correlation (would trigger elite), but weak base score
+        output = {
+            "ranked_securities": [{
+                "ticker": "WEAK",
+                "composite_score": "48.61",  # Below threshold
+                "composite_rank": 1,
+            }],
+            "diagnostic_counts": {},
+        }
+
+        scores_by_ticker = {
+            "WEAK": {
+                "defensive_features": {
+                    "corr_xbi": "0.25",  # Low corr -> would normally get elite 1.40x
+                    "vol_60d": "0.35",   # Low vol -> also qualifies for elite
+                }
+            }
+        }
+
+        cfg = DefensiveConfig(
+            boost_eligibility_threshold=Decimal("50"),
+            enable_boost_eligibility_gate=True,
+        )
+
+        enrich_with_defensive_overlays(
+            output,
+            scores_by_ticker,
+            apply_multiplier=True,
+            defensive_config=cfg,
+        )
+
+        rec = output["ranked_securities"][0]
+        mult = Decimal(rec["defensive_multiplier"])
+
+        # Multiplier should be capped at 1.0 (no boost)
+        assert mult == Decimal("1.0"), f"Expected 1.0, got {mult}"
+        assert "def_boost_gated_below_50" in rec["defensive_notes"]
+
+    def test_high_score_still_gets_elite_boost(self):
+        """Above-threshold score should still receive elite boost."""
+        from defensive_overlay_adapter import enrich_with_defensive_overlays, DefensiveConfig
+
+        output = {
+            "ranked_securities": [{
+                "ticker": "STRONG",
+                "composite_score": "65.00",  # Above threshold
+                "composite_rank": 1,
+            }],
+            "diagnostic_counts": {},
+        }
+
+        scores_by_ticker = {
+            "STRONG": {
+                "defensive_features": {
+                    "corr_xbi": "0.25",  # Low corr -> elite
+                    "vol_60d": "0.35",   # Low vol -> elite
+                }
+            }
+        }
+
+        cfg = DefensiveConfig(
+            boost_eligibility_threshold=Decimal("50"),
+            enable_boost_eligibility_gate=True,
+        )
+
+        enrich_with_defensive_overlays(
+            output,
+            scores_by_ticker,
+            apply_multiplier=True,
+            defensive_config=cfg,
+        )
+
+        rec = output["ranked_securities"][0]
+        mult = Decimal(rec["defensive_multiplier"])
+
+        # Should get elite boost (1.40)
+        assert mult == Decimal("1.40"), f"Expected 1.40, got {mult}"
+        assert "def_boost_gated" not in str(rec["defensive_notes"])
+
+    def test_penalties_still_apply_to_low_score(self):
+        """Penalties (<1.0) should still apply even to low base scores."""
+        from defensive_overlay_adapter import enrich_with_defensive_overlays, DefensiveConfig
+
+        output = {
+            "ranked_securities": [{
+                "ticker": "WEAK_RISKY",
+                "composite_score": "40.00",  # Below threshold
+                "composite_rank": 1,
+            }],
+            "diagnostic_counts": {},
+        }
+
+        scores_by_ticker = {
+            "WEAK_RISKY": {
+                "defensive_features": {
+                    "corr_xbi": "0.85",       # High corr -> penalty
+                    "vol_60d": "0.90",        # High vol -> penalty
+                    "drawdown_current": "-0.45",  # Deep drawdown -> penalty
+                }
+            }
+        }
+
+        cfg = DefensiveConfig(
+            boost_eligibility_threshold=Decimal("50"),
+            enable_boost_eligibility_gate=True,
+        )
+
+        enrich_with_defensive_overlays(
+            output,
+            scores_by_ticker,
+            apply_multiplier=True,
+            defensive_config=cfg,
+        )
+
+        rec = output["ranked_securities"][0]
+        mult = Decimal(rec["defensive_multiplier"])
+
+        # Penalties should still apply (mult < 1.0)
+        assert mult < Decimal("1.0"), f"Expected penalty (<1.0), got {mult}"
+        # No boost gate note (wasn't trying to boost)
+        assert "def_boost_gated" not in str(rec["defensive_notes"])

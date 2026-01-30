@@ -78,6 +78,11 @@ class DefensiveConfig:
     mult_vol_expanding_penalty: Decimal = Decimal("0.97")  # Expanding vol penalty
     enable_vol_ratio: bool = False                       # Disabled by default (experimental)
 
+    # Boost eligibility gate (prevents weak names from getting elite boosts)
+    # If pre-defensive score < threshold, cap multiplier at 1.0 (penalties still apply)
+    boost_eligibility_threshold: Decimal = Decimal("50")  # Min score to receive boost
+    enable_boost_eligibility_gate: bool = True            # Feature flag
+
     # Position sizing
     max_position: Decimal = Decimal("0.07")              # 7% max position
     inv_vol_power: Decimal = Decimal("2.0")              # Inverse vol exponent
@@ -114,7 +119,9 @@ class DefensiveConfig:
                 "rsi": self.enable_rsi,
                 "drawdown": self.enable_drawdown_penalty,
                 "vol_ratio": self.enable_vol_ratio,
+                "boost_eligibility_gate": self.enable_boost_eligibility_gate,
             },
+            "boost_eligibility_threshold": str(self.boost_eligibility_threshold),
         }
 
 
@@ -766,9 +773,21 @@ def enrich_with_defensive_overlays(
         # Always compute multiplier (for risk_adjusted_score and diagnostics)
         mult, notes = defensive_multiplier(defensive_features or {}, config=cfg)
 
-        # Track multiplier distribution
+        # Boost eligibility gate: prevent weak names from getting elite boosts
+        # Penalties (mult < 1.0) always apply; boosts only if score >= threshold
+        boost_gated = False
+        if cfg.enable_boost_eligibility_gate and mult > Decimal("1.0"):
+            if current_score < cfg.boost_eligibility_threshold:
+                # Cap at 1.0 - no boost for low-quality names
+                mult = Decimal("1.0")
+                notes.append(f"def_boost_gated_below_{cfg.boost_eligibility_threshold}")
+                boost_gated = True
+
+        # Track multiplier distribution (after gate applied)
         bucket = _derive_defensive_bucket(mult)
         multiplier_stats[bucket] += 1
+        if boost_gated:
+            multiplier_stats["boost_gated"] = multiplier_stats.get("boost_gated", 0) + 1
 
         # Compute risk-adjusted score (always, for downstream use)
         risk_adjusted = current_score * mult
