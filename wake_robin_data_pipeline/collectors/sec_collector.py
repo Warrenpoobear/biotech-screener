@@ -111,7 +111,11 @@ def ticker_to_cik(ticker: str) -> Optional[str]:
         print(f"  Warning: CIK resolution failed: {e}")
         return None
 
-def extract_latest_metric(facts_data: dict, metric_name: str, unit: str = 'USD', namespace: str = 'us-gaap') -> tuple[Optional[float], Optional[str]]:
+# Maximum age in days for financial data to be considered valid
+MAX_DATA_AGE_DAYS = 365  # Filter out data older than 1 year
+
+
+def extract_latest_metric(facts_data: dict, metric_name: str, unit: str = 'USD', namespace: str = 'us-gaap', max_age_days: int = None, as_of_dt: datetime = None) -> tuple[Optional[float], Optional[str]]:
     """
     Extract latest value for a GAAP/IFRS metric from SEC company facts.
 
@@ -120,10 +124,12 @@ def extract_latest_metric(facts_data: dict, metric_name: str, unit: str = 'USD',
         metric_name: Metric name (e.g., 'Assets', 'Cash')
         unit: Unit type (default 'USD', also can be 'shares', 'USD/shares')
         namespace: Accounting standard namespace ('us-gaap' or 'ifrs-full')
+        max_age_days: Maximum age in days for data to be valid (None = no filter)
+        as_of_dt: Reference date for staleness check (PIT-safe); defaults to now()
 
     Returns:
         Tuple of (value, end_date) where:
-        - value: Latest value as float, or None if not found
+        - value: Latest value as float, or None if not found/too stale
         - end_date: Date of the data point (YYYY-MM-DD), or None
     """
     try:
@@ -154,7 +160,25 @@ def extract_latest_metric(facts_data: dict, metric_name: str, unit: str = 'USD',
 
         if sorted_values:
             latest = sorted_values[0]
-            return float(latest.get('val', 0)), latest.get('end')
+            end_date = latest.get('end')
+
+            # Filter out stale data if max_age_days is specified (PIT-safe)
+            if max_age_days is not None and end_date:
+                try:
+                    data_dt = datetime.fromisoformat(end_date)
+                    ref_dt = as_of_dt if as_of_dt is not None else datetime.now()
+                    # Normalize to naive datetimes for comparison
+                    if hasattr(ref_dt, 'tzinfo') and ref_dt.tzinfo is not None:
+                        ref_dt = ref_dt.replace(tzinfo=None)
+                    if hasattr(data_dt, 'tzinfo') and data_dt.tzinfo is not None:
+                        data_dt = data_dt.replace(tzinfo=None)
+                    age_days = (ref_dt - data_dt).days
+                    if age_days > max_age_days:
+                        return None, None  # Data too stale
+                except ValueError:
+                    pass
+
+            return float(latest.get('val', 0)), end_date
 
         return None, None
 
@@ -179,17 +203,27 @@ def detect_accounting_standard(facts_data: dict) -> str:
         return 'ifrs-full'
     return 'us-gaap'
 
-def fetch_sec_financials(ticker: str, cik: Optional[str] = None) -> dict:
+def fetch_sec_financials(ticker: str, cik: Optional[str] = None, as_of_date: str = None) -> dict:
     """
     Fetch financial data from SEC EDGAR company facts API.
-    
+
     Args:
         ticker: Stock ticker
         cik: 10-digit CIK (will auto-resolve if None)
-        
+        as_of_date: Reference date for staleness check (YYYY-MM-DD); defaults to today
+
     Returns:
         dict with financial data and provenance
     """
+    # Parse as_of_date for PIT-safe staleness checks
+    as_of_dt = None
+    if as_of_date:
+        try:
+            as_of_dt = datetime.fromisoformat(as_of_date)
+        except ValueError:
+            pass
+    if as_of_dt is None:
+        as_of_dt = datetime.now()
     # Resolve CIK if not provided
     if not cik:
         cik = ticker_to_cik(ticker)
@@ -256,18 +290,27 @@ def fetch_sec_financials(ticker: str, cik: Optional[str] = None) -> dict:
 
         # Track dates for staleness validation
         data_dates = {}
+        stale_fields = []  # Track which fields were filtered due to staleness
 
+        # Cash - critical field, filter stale data
         cash, cash_date = None, None
         for metric in cash_metrics:
-            cash, cash_date = extract_latest_metric(facts_data, metric, namespace=namespace)
+            cash, cash_date = extract_latest_metric(facts_data, metric, namespace=namespace, max_age_days=MAX_DATA_AGE_DAYS, as_of_dt=as_of_dt)
             if cash is not None:
                 data_dates['cash'] = cash_date
                 break
+        # If filtered due to staleness, try again without filter to note staleness
+        if cash is None:
+            for metric in cash_metrics:
+                _, stale_date = extract_latest_metric(facts_data, metric, namespace=namespace)
+                if stale_date:
+                    stale_fields.append(f"cash:{stale_date}")
+                    break
 
-        # Extract marketable securities / short-term investments
+        # Extract marketable securities / short-term investments - filter stale
         marketable_securities, ms_date = None, None
         for metric in marketable_securities_metrics:
-            marketable_securities, ms_date = extract_latest_metric(facts_data, metric, namespace=namespace)
+            marketable_securities, ms_date = extract_latest_metric(facts_data, metric, namespace=namespace, max_age_days=MAX_DATA_AGE_DAYS, as_of_dt=as_of_dt)
             if marketable_securities is not None:
                 data_dates['marketable_securities'] = ms_date
                 break
@@ -279,25 +322,58 @@ def fetch_sec_financials(ticker: str, cik: Optional[str] = None) -> dict:
             if marketable_securities is not None:
                 total_liquidity += marketable_securities
 
+        # Debt - filter stale data
         debt, debt_date = None, None
         for metric in debt_metrics:
-            debt, debt_date = extract_latest_metric(facts_data, metric, namespace=namespace)
+            debt, debt_date = extract_latest_metric(facts_data, metric, namespace=namespace, max_age_days=MAX_DATA_AGE_DAYS, as_of_dt=as_of_dt)
             if debt is not None:
                 data_dates['debt'] = debt_date
                 break
 
-        # If no debt found but we have balance sheet data, company is likely debt-free
-        # Set debt to 0 rather than None for accurate coverage calculation
-
+        # Revenue - filter stale data (pre-revenue biotechs may have old/no data)
         revenue, revenue_date = None, None
         for metric in revenue_metrics:
-            revenue, revenue_date = extract_latest_metric(facts_data, metric, namespace=namespace)
+            revenue, revenue_date = extract_latest_metric(facts_data, metric, namespace=namespace, max_age_days=MAX_DATA_AGE_DAYS, as_of_dt=as_of_dt)
             if revenue is not None:
                 data_dates['revenue'] = revenue_date
                 break
 
-        assets, assets_date = extract_latest_metric(facts_data, assets_metric, namespace=namespace)
-        liabilities, liabilities_date = extract_latest_metric(facts_data, liabilities_metric, namespace=namespace)
+        # Assets - critical, filter stale
+        assets, assets_date = extract_latest_metric(facts_data, assets_metric, namespace=namespace, max_age_days=MAX_DATA_AGE_DAYS, as_of_dt=as_of_dt)
+
+        # Try multiple approaches for liabilities (priority order for most complete total)
+        # All methods filter for staleness
+        liabilities, liabilities_date = extract_latest_metric(facts_data, liabilities_metric, namespace=namespace, max_age_days=MAX_DATA_AGE_DAYS, as_of_dt=as_of_dt)
+        liabilities_method = 'direct' if liabilities is not None else None
+
+        # Method 2: Try LiabilitiesCurrent + LiabilitiesNoncurrent
+        if liabilities is None:
+            liab_current, liab_current_date = extract_latest_metric(facts_data, 'LiabilitiesCurrent', namespace=namespace, max_age_days=MAX_DATA_AGE_DAYS, as_of_dt=as_of_dt)
+            liab_noncurrent, liab_nc_date = extract_latest_metric(facts_data, 'LiabilitiesNoncurrent', namespace=namespace, max_age_days=MAX_DATA_AGE_DAYS, as_of_dt=as_of_dt)
+
+            if liab_current is not None and liab_noncurrent is not None:
+                liabilities = liab_current + liab_noncurrent
+                liabilities_date = liab_current_date or liab_nc_date
+                liabilities_method = 'current+noncurrent'
+
+        # Method 3: Derive from LiabilitiesAndStockholdersEquity - StockholdersEquity
+        # This gives total liabilities even when components aren't separately reported
+        if liabilities is None:
+            total_liab_eq, total_date = extract_latest_metric(facts_data, 'LiabilitiesAndStockholdersEquity', namespace=namespace, max_age_days=MAX_DATA_AGE_DAYS, as_of_dt=as_of_dt)
+            stockholders_eq, eq_date = extract_latest_metric(facts_data, 'StockholdersEquity', namespace=namespace, max_age_days=MAX_DATA_AGE_DAYS, as_of_dt=as_of_dt)
+
+            if total_liab_eq is not None and stockholders_eq is not None:
+                liabilities = total_liab_eq - stockholders_eq
+                liabilities_date = total_date or eq_date
+                liabilities_method = 'derived_from_equity'
+
+        # Method 4: Fall back to current liabilities only (incomplete but better than nothing)
+        if liabilities is None:
+            liab_current, liab_current_date = extract_latest_metric(facts_data, 'LiabilitiesCurrent', namespace=namespace, max_age_days=MAX_DATA_AGE_DAYS, as_of_dt=as_of_dt)
+            if liab_current is not None:
+                liabilities = liab_current
+                liabilities_date = liab_current_date
+                liabilities_method = 'current_only'
 
         if assets is not None:
             data_dates['assets'] = assets_date
@@ -321,21 +397,33 @@ def fetch_sec_financials(ticker: str, cik: Optional[str] = None) -> dict:
         elif debt is not None:
             net_debt = debt
 
+        # Calculate equity - try StockholdersEquity first, then derive from assets - liabilities
         equity = None
-        if assets is not None and liabilities is not None:
+        equity_method = None
+
+        # Try direct StockholdersEquity first (with staleness filter)
+        stockholders_equity, se_date = extract_latest_metric(facts_data, 'StockholdersEquity', namespace=namespace, max_age_days=MAX_DATA_AGE_DAYS, as_of_dt=as_of_dt)
+        if stockholders_equity is not None:
+            equity = stockholders_equity
+            equity_method = 'direct'
+        elif assets is not None and liabilities is not None:
             equity = assets - liabilities
+            equity_method = 'derived'
 
         # Determine most recent and oldest data dates for staleness check
         valid_dates = [d for d in data_dates.values() if d]
         most_recent_date = max(valid_dates) if valid_dates else None
         oldest_date = min(valid_dates) if valid_dates else None
 
-        # Check for stale data
+        # Check for stale data (PIT-safe: use as_of_dt)
         staleness_flags = []
         if oldest_date:
             try:
                 oldest_dt = datetime.fromisoformat(oldest_date)
-                age_days = (datetime.now() - oldest_dt).days
+                ref_dt = as_of_dt.replace(tzinfo=None) if as_of_dt.tzinfo else as_of_dt
+                if oldest_dt.tzinfo:
+                    oldest_dt = oldest_dt.replace(tzinfo=None)
+                age_days = (ref_dt - oldest_dt).days
                 if age_days > STALENESS_CRITICAL_DAYS:
                     staleness_flags.append(f"critical_staleness:{age_days}d")
                     logger.warning(f"{ticker}: Financial data is {age_days} days old (critical)")
@@ -386,7 +474,9 @@ def fetch_sec_financials(ticker: str, cik: Optional[str] = None) -> dict:
                 "timestamp": datetime.now().isoformat(),
                 "url": f"https://data.sec.gov/api/xbrl/companyfacts/CIK{cik}.json",
                 "cik": cik,
-                "accounting_standard": namespace
+                "accounting_standard": namespace,
+                "liabilities_method": liabilities_method,
+                "equity_method": equity_method
             }
         }
 
