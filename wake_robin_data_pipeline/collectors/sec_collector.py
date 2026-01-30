@@ -162,15 +162,12 @@ def extract_latest_metric(facts_data: dict, metric_name: str, unit: str = 'USD',
             latest = sorted_values[0]
             end_date = latest.get('end')
 
-            # Filter out stale data if max_age_days is specified (PIT-safe)
-            if max_age_days is not None and end_date:
+            # Filter out stale data if max_age_days AND as_of_dt provided (PIT-safe)
+            if max_age_days is not None and end_date and as_of_dt is not None:
                 try:
                     data_dt = datetime.fromisoformat(end_date)
-                    ref_dt = as_of_dt if as_of_dt is not None else datetime.now()
-                    # Normalize to naive datetimes for comparison
-                    if hasattr(ref_dt, 'tzinfo') and ref_dt.tzinfo is not None:
-                        ref_dt = ref_dt.replace(tzinfo=None)
-                    if hasattr(data_dt, 'tzinfo') and data_dt.tzinfo is not None:
+                    ref_dt = as_of_dt.replace(tzinfo=None) if as_of_dt.tzinfo else as_of_dt
+                    if data_dt.tzinfo:
                         data_dt = data_dt.replace(tzinfo=None)
                     age_days = (ref_dt - data_dt).days
                     if age_days > max_age_days:
@@ -215,15 +212,13 @@ def fetch_sec_financials(ticker: str, cik: Optional[str] = None, as_of_date: str
     Returns:
         dict with financial data and provenance
     """
-    # Parse as_of_date for PIT-safe staleness checks
+    # Parse as_of_date for PIT-safe staleness checks (None = no filter)
     as_of_dt = None
     if as_of_date:
         try:
             as_of_dt = datetime.fromisoformat(as_of_date)
         except ValueError:
-            pass
-    if as_of_dt is None:
-        as_of_dt = datetime.now()
+            pass  # Invalid date -> no staleness filtering
     # Resolve CIK if not provided
     if not cik:
         cik = ticker_to_cik(ticker)
@@ -415,9 +410,9 @@ def fetch_sec_financials(ticker: str, cik: Optional[str] = None, as_of_date: str
         most_recent_date = max(valid_dates) if valid_dates else None
         oldest_date = min(valid_dates) if valid_dates else None
 
-        # Check for stale data (PIT-safe: use as_of_dt)
+        # Check for stale data (PIT-safe: only if as_of_dt provided)
         staleness_flags = []
-        if oldest_date:
+        if oldest_date and as_of_dt is not None:
             try:
                 oldest_dt = datetime.fromisoformat(oldest_date)
                 ref_dt = as_of_dt.replace(tzinfo=None) if as_of_dt.tzinfo else as_of_dt
