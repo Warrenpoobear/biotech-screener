@@ -1,16 +1,11 @@
 #!/usr/bin/env python3
 """Offline Defensive Features Cache Builder (PIT-safe)."""
-
-import argparse
-import csv
-import hashlib
-import json
-import math
+import argparse, csv, hashlib, json, math
 from collections import defaultdict
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple
 
-CACHE_VERSION = "1.0.0"
+CACHE_VERSION = "1.1.0"  # Added partial ticker diagnostics
 
 
 def load_prices(filepath: str, as_of: str) -> Dict[str, List[Tuple[str, float]]]:
@@ -32,13 +27,11 @@ def load_prices(filepath: str, as_of: str) -> Dict[str, List[Tuple[str, float]]]
         prices[ticker].sort(key=lambda x: x[0])
     return dict(prices)
 
-
 def compute_returns(closes: List[float]) -> List[float]:
     """Compute log returns from close prices."""
     if len(closes) < 2:
         return []
     return [math.log(closes[i] / closes[i - 1]) for i in range(1, len(closes))]
-
 
 def vol(returns: List[float], window: int) -> Optional[float]:
     """Annualized volatility from last `window` returns."""
@@ -49,13 +42,9 @@ def vol(returns: List[float], window: int) -> Optional[float]:
     var = sum((r - mean) ** 2 for r in recent) / (len(recent) - 1)
     return math.sqrt(var) * math.sqrt(252)
 
-
 def ret_cumulative(returns: List[float], window: int) -> Optional[float]:
     """Cumulative return over last `window` days."""
-    if len(returns) < window:
-        return None
-    return sum(returns[-window:])
-
+    return sum(returns[-window:]) if len(returns) >= window else None
 
 def drawdown_current(closes: List[float], window: int = 60) -> Optional[float]:
     """Current drawdown from rolling high over last `window` days."""
@@ -93,15 +82,17 @@ def beta(r1: List[float], r2: List[float], window: int) -> Optional[float]:
     return cov / vb if vb > 0 else None
 
 
-def compute_features(ticker: str, closes: List[float], xbi_returns: List[float]) -> Dict:
-    """Compute all defensive features for a ticker."""
+def compute_features(ticker: str, closes: List[float], xbi_returns: List[float]) -> Tuple[Dict, List[str]]:
+    """Compute all defensive features for a ticker. Returns (features, skipped_fields)."""
     returns = compute_returns(closes)
     features = {}
+    skipped = []
 
-    v60 = vol(returns, 60)
-    v20 = vol(returns, 20)
+    v60, v20 = vol(returns, 60), vol(returns, 20)
     if v60 is not None:
         features["vol_60d"] = f"{v60:.6f}"
+    else:
+        skipped.append("vol_60d")
     if v20 is not None:
         features["vol_20d"] = f"{v20:.6f}"
     if v60 and v20:
@@ -118,12 +109,14 @@ def compute_features(ticker: str, closes: List[float], xbi_returns: List[float])
     corr = correlation(returns, xbi_returns, 120)
     if corr is not None:
         features["corr_xbi_120d"] = f"{corr:.6f}"
+    else:
+        skipped.append("corr_xbi_120d")
 
     b = beta(returns, xbi_returns, 60)
     if b is not None:
         features["beta_xbi_60d"] = f"{b:.6f}"
 
-    return features
+    return features, skipped
 
 
 def build_cache(price_file: str, as_of: str, tickers: List[str] = None) -> Dict:
@@ -135,6 +128,7 @@ def build_cache(price_file: str, as_of: str, tickers: List[str] = None) -> Dict:
     xbi_returns = compute_returns(xbi_closes)
 
     features_by_ticker = {}
+    partial_tickers = {}
     warnings = []
 
     target_tickers = tickers if tickers else [t for t in prices if t != "XBI"]
@@ -147,19 +141,22 @@ def build_cache(price_file: str, as_of: str, tickers: List[str] = None) -> Dict:
         if len(closes) < 21:
             warnings.append(f"{ticker}: insufficient data ({len(closes)} days)")
             continue
-        features = compute_features(ticker, closes, xbi_returns)
+        features, skipped = compute_features(ticker, closes, xbi_returns)
         if features:
             features_by_ticker[ticker] = features
+            if skipped:
+                partial_tickers[ticker] = {"rows": len(closes), "skipped": skipped}
 
     return {
         "as_of_date": as_of,
         "cache_version": CACHE_VERSION,
         "total_tickers": len(target_tickers),
         "computed_count": len(features_by_ticker),
+        "partial_count": len(partial_tickers),
         "features_by_ticker": features_by_ticker,
-        "warnings": warnings[:20],  # Cap warnings
+        "partial_tickers": partial_tickers,
+        "warnings": warnings[:20],
     }
-
 
 def write_cache(data: Dict, output_path: str) -> str:
     """Write cache file with sha256 integrity. Returns hash."""
@@ -189,6 +186,10 @@ def main():
     integrity = write_cache(data, args.output)
 
     print(f"  Computed: {data['computed_count']}/{data['total_tickers']} tickers")
+    if data["partial_count"]:
+        print(f"  Partial (missing 120d): {data['partial_count']} tickers")
+        for t, d in list(data["partial_tickers"].items())[:5]:
+            print(f"    {t}: {d['rows']} rows, skipped={d['skipped']}")
     print(f"  Output: {args.output}")
     print(f"  Integrity: {integrity[:16]}...")
     if data["warnings"]:
