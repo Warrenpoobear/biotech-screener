@@ -1532,6 +1532,9 @@ def run_screening_pipeline(
     enable_clustering: bool = False,
     cluster_method: str = "indication",
     cluster_threshold: float = 0.70,
+    # Defensive overlay parameters
+    apply_defensive_multiplier: bool = False,
+    defensive_config: str = "default",
 ) -> Dict[str, Any]:
     """
     Execute full screening pipeline with deterministic guarantees.
@@ -2582,6 +2585,9 @@ def run_screening_pipeline(
             enable_clustering=enable_clustering,
             cluster_method=cluster_method,
             cluster_threshold=cluster_threshold,
+            # Defensive overlay parameters
+            apply_defensive_multiplier=apply_defensive_multiplier,
+            defensive_config=defensive_config,
         )
         if checkpoint_dir:
             save_checkpoint(checkpoint_dir, "module_5", as_of_date, m5_result)
@@ -3048,6 +3054,21 @@ Module 3 Catalyst Detection:
         help="Correlation threshold for returns-based clustering. (default: 0.70)",
     )
 
+    # Defensive overlay controls (OFF by default)
+    parser.add_argument(
+        "--apply-defensive-multiplier",
+        action="store_true",
+        help="Apply defensive multiplier to composite scores (OFF by default). "
+             "Uses correlation, volatility, momentum, RSI, and drawdown factors.",
+    )
+    parser.add_argument(
+        "--defensive-config",
+        type=str,
+        choices=["default", "aggressive"],
+        default="default",
+        help="Defensive overlay config when multiplier is applied. (default: default)",
+    )
+
     # Snapshot sanity checks
     parser.add_argument(
         "--compare-snapshots",
@@ -3216,6 +3237,9 @@ Module 3 Catalyst Detection:
             enable_clustering=args.enable_clustering,
             cluster_method=args.cluster_method,
             cluster_threshold=args.cluster_threshold,
+            # Defensive overlay parameters
+            apply_defensive_multiplier=args.apply_defensive_multiplier,
+            defensive_config=args.defensive_config,
         )
 
         # Add bootstrap analysis if requested

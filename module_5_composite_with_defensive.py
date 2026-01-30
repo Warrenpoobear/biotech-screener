@@ -25,7 +25,12 @@ from typing import Optional, List, Dict, Any
 from module_5_composite import compute_module_5_composite
 from module_5_composite_v2 import compute_module_5_composite_v2
 from module_5_composite_v3 import compute_module_5_composite_v3
-from defensive_overlay_adapter import enrich_with_defensive_overlays, validate_defensive_integration
+from defensive_overlay_adapter import (
+    enrich_with_defensive_overlays,
+    validate_defensive_integration,
+    DEFAULT_DEFENSIVE_CONFIG,
+    AGGRESSIVE_DEFENSIVE_CONFIG,
+)
 from common.clustering import (
     attach_cluster_ids,
     attach_indication_clusters,
@@ -184,6 +189,7 @@ def compute_module_5_composite_with_defensive(
     enable_clustering: bool = False,
     cluster_method: str = "indication",
     cluster_threshold: float = 0.70,
+    defensive_config: str = "default",
 ) -> dict:
     """
     Rank securities with defensive overlays integrated.
@@ -345,12 +351,22 @@ def compute_module_5_composite_with_defensive(
         )
 
     # Add defensive overlays
+    # Select config object based on string parameter
+    cfg = AGGRESSIVE_DEFENSIVE_CONFIG if defensive_config == "aggressive" else DEFAULT_DEFENSIVE_CONFIG
+
+    if apply_defensive_multiplier:
+        logger.info(
+            f"Module 5: Defensive multiplier ENABLED "
+            f"(config={cfg.config_id}, hash={cfg.config_hash()})"
+        )
+
     enrich_with_defensive_overlays(
         output,
         defensive_by_ticker,
         apply_multiplier=apply_defensive_multiplier,
         apply_position_sizing=apply_position_sizing,
         top_n=None,  # Show all ranked securities (no limit)
+        defensive_config=cfg,
     )
 
     # Add clustering if enabled (does not affect ranks/scores)
