@@ -27,6 +27,9 @@ from defensive_overlay_adapter import (
     raw_inv_vol_weight,
     calculate_dynamic_floor,
     apply_caps_and_renormalize,
+    compute_cluster_percentile_thresholds,
+    detect_fundamental_red_flags,
+    apply_red_flag_suppression,
     _q,
 )
 
@@ -901,13 +904,17 @@ class TestFieldsAlwaysPresent:
         assert result["ranked_securities"][1]["composite_score"] == "60.00"
 
     def test_risk_adjusted_score_computed_when_disabled(self):
-        """risk_adjusted_score should be computed even when multiplier disabled."""
+        """risk_adjusted_score should be computed even when multiplier disabled.
+
+        V4: boost_eligibility_floor=51, so score must be >= 51 to get elite boost.
+        """
         from defensive_overlay_adapter import enrich_with_defensive_overlays
         from decimal import Decimal
 
         output = {
             "ranked_securities": [
-                {"ticker": "AAA", "composite_score": "50.00", "rankable": True},
+                # V4: Score must be >= 51 to qualify for elite boost
+                {"ticker": "AAA", "composite_score": "55.00", "rankable": True},
             ]
         }
 
@@ -920,10 +927,10 @@ class TestFieldsAlwaysPresent:
         )
 
         rec = result["ranked_securities"][0]
-        # risk_adjusted_score = 50 * 1.40 = 70
-        assert Decimal(rec["risk_adjusted_score"]) == Decimal("70.00")
+        # risk_adjusted_score = 55 * 1.40 = 77
+        assert Decimal(rec["risk_adjusted_score"]) == Decimal("77.00")
         # But composite_score unchanged
-        assert rec["composite_score"] == "50.00"
+        assert rec["composite_score"] == "55.00"
 
 
 class TestDefensiveBucket:
@@ -1207,22 +1214,27 @@ class TestCacheMergeHelpers:
 
 
 # ============================================================================
-# BOOST ELIGIBILITY GATE TESTS
+# BOOST ELIGIBILITY GATE TESTS (Percentile-within-cluster + Floor)
 # ============================================================================
 
 class TestBoostEligibilityGate:
-    """Tests for the boost eligibility gate that prevents weak names from getting boosts."""
+    """Tests for the boost eligibility gate that prevents weak names from getting boosts.
 
-    def test_low_score_cannot_get_elite_boost(self):
-        """OPK-like low base score should not get elite boost above 1.0."""
+    Gate logic: threshold = max(floor, P{percentile} within cluster)
+    Default: floor=40, percentile=60 (top 40% within cluster)
+    """
+
+    def test_low_score_cannot_get_elite_boost_below_floor(self):
+        """Score below absolute floor should not get elite boost."""
         from defensive_overlay_adapter import enrich_with_defensive_overlays, DefensiveConfig
 
-        # OPK-like scenario: low correlation (would trigger elite), but weak base score
+        # Single-member cluster: threshold = max(floor, score) = max(49, 35) = 49
         output = {
             "ranked_securities": [{
                 "ticker": "WEAK",
-                "composite_score": "48.61",  # Below threshold
+                "composite_score": "35.00",  # Below floor of 49
                 "composite_rank": 1,
+                "cluster_id": "oncology_phase2_small",
             }],
             "diagnostic_counts": {},
         }
@@ -1237,7 +1249,8 @@ class TestBoostEligibilityGate:
         }
 
         cfg = DefensiveConfig(
-            boost_eligibility_threshold=Decimal("50"),
+            boost_eligibility_floor=Decimal("49"),
+            boost_eligibility_percentile=60,
             enable_boost_eligibility_gate=True,
         )
 
@@ -1253,7 +1266,7 @@ class TestBoostEligibilityGate:
 
         # Multiplier should be capped at 1.0 (no boost)
         assert mult == Decimal("1.0"), f"Expected 1.0, got {mult}"
-        assert "def_boost_gated_below_50" in rec["defensive_notes"]
+        assert any("def_boost_gated" in note for note in rec["defensive_notes"])
 
     def test_high_score_still_gets_elite_boost(self):
         """Above-threshold score should still receive elite boost."""
@@ -1262,8 +1275,9 @@ class TestBoostEligibilityGate:
         output = {
             "ranked_securities": [{
                 "ticker": "STRONG",
-                "composite_score": "65.00",  # Above threshold
+                "composite_score": "65.00",  # Above floor
                 "composite_rank": 1,
+                "cluster_id": "oncology_phase2_small",
             }],
             "diagnostic_counts": {},
         }
@@ -1278,7 +1292,8 @@ class TestBoostEligibilityGate:
         }
 
         cfg = DefensiveConfig(
-            boost_eligibility_threshold=Decimal("50"),
+            boost_eligibility_floor=Decimal("49"),
+            boost_eligibility_percentile=60,
             enable_boost_eligibility_gate=True,
         )
 
@@ -1303,8 +1318,9 @@ class TestBoostEligibilityGate:
         output = {
             "ranked_securities": [{
                 "ticker": "WEAK_RISKY",
-                "composite_score": "40.00",  # Below threshold
+                "composite_score": "30.00",  # Below floor
                 "composite_rank": 1,
+                "cluster_id": "oncology_phase2_small",
             }],
             "diagnostic_counts": {},
         }
@@ -1320,7 +1336,8 @@ class TestBoostEligibilityGate:
         }
 
         cfg = DefensiveConfig(
-            boost_eligibility_threshold=Decimal("50"),
+            boost_eligibility_floor=Decimal("49"),
+            boost_eligibility_percentile=60,
             enable_boost_eligibility_gate=True,
         )
 
@@ -1338,3 +1355,356 @@ class TestBoostEligibilityGate:
         assert mult < Decimal("1.0"), f"Expected penalty (<1.0), got {mult}"
         # No boost gate note (wasn't trying to boost)
         assert "def_boost_gated" not in str(rec["defensive_notes"])
+
+    def test_percentile_within_cluster_gate(self):
+        """Percentile gate should apply within each cluster."""
+        from defensive_overlay_adapter import enrich_with_defensive_overlays, DefensiveConfig
+
+        # Cluster with 5 members: P60 threshold = 60th percentile
+        # Scores: 30, 40, 50, 60, 70 -> P60 = 54
+        # max(floor=40, P60=54) = 54
+        output = {
+            "ranked_securities": [
+                {"ticker": "A", "composite_score": "70.00", "composite_rank": 1, "cluster_id": "cluster1"},
+                {"ticker": "B", "composite_score": "60.00", "composite_rank": 2, "cluster_id": "cluster1"},
+                {"ticker": "C", "composite_score": "50.00", "composite_rank": 3, "cluster_id": "cluster1"},
+                {"ticker": "D", "composite_score": "40.00", "composite_rank": 4, "cluster_id": "cluster1"},
+                {"ticker": "E", "composite_score": "30.00", "composite_rank": 5, "cluster_id": "cluster1"},
+            ],
+            "diagnostic_counts": {},
+        }
+
+        # All have elite-qualifying defensive features
+        elite_features = {"corr_xbi": "0.25", "vol_60d": "0.35"}
+        scores_by_ticker = {t["ticker"]: {"defensive_features": elite_features.copy()}
+                           for t in output["ranked_securities"]}
+
+        cfg = DefensiveConfig(
+            boost_eligibility_floor=Decimal("49"),
+            boost_eligibility_percentile=60,  # Top 40% of cluster
+            enable_boost_eligibility_gate=True,
+        )
+
+        enrich_with_defensive_overlays(
+            output,
+            scores_by_ticker,
+            apply_multiplier=True,
+            defensive_config=cfg,
+        )
+
+        # A (70) and B (60) should get elite boost (above P60)
+        # C (50), D (40), E (30) should be gated (below P60)
+        results = {r["ticker"]: Decimal(r["defensive_multiplier"]) for r in output["ranked_securities"]}
+
+        assert results["A"] == Decimal("1.40"), f"A should get elite, got {results['A']}"
+        assert results["B"] == Decimal("1.40"), f"B should get elite, got {results['B']}"
+        assert results["C"] == Decimal("1.0"), f"C should be gated, got {results['C']}"
+        assert results["D"] == Decimal("1.0"), f"D should be gated, got {results['D']}"
+        assert results["E"] == Decimal("1.0"), f"E should be gated, got {results['E']}"
+
+    def test_different_clusters_independent_thresholds(self):
+        """Each cluster should have independent threshold calculation."""
+        from defensive_overlay_adapter import enrich_with_defensive_overlays, DefensiveConfig
+
+        output = {
+            "ranked_securities": [
+                # High-scoring cluster
+                {"ticker": "HIGH1", "composite_score": "80.00", "composite_rank": 1, "cluster_id": "high"},
+                {"ticker": "HIGH2", "composite_score": "70.00", "composite_rank": 2, "cluster_id": "high"},
+                # Low-scoring cluster
+                {"ticker": "LOW1", "composite_score": "50.00", "composite_rank": 3, "cluster_id": "low"},
+                {"ticker": "LOW2", "composite_score": "45.00", "composite_rank": 4, "cluster_id": "low"},
+            ],
+            "diagnostic_counts": {},
+        }
+
+        elite_features = {"corr_xbi": "0.25", "vol_60d": "0.35"}
+        scores_by_ticker = {t["ticker"]: {"defensive_features": elite_features.copy()}
+                           for t in output["ranked_securities"]}
+
+        cfg = DefensiveConfig(
+            boost_eligibility_floor=Decimal("49"),
+            boost_eligibility_percentile=60,
+            enable_boost_eligibility_gate=True,
+        )
+
+        enrich_with_defensive_overlays(
+            output,
+            scores_by_ticker,
+            apply_multiplier=True,
+            defensive_config=cfg,
+        )
+
+        results = {r["ticker"]: Decimal(r["defensive_multiplier"]) for r in output["ranked_securities"]}
+
+        # High cluster P60 ≈ 74, so HIGH1(80) passes, HIGH2(70) gated
+        # Low cluster P60 ≈ 47, so LOW1(50) passes, LOW2(45) gated
+        # (Both above floor of 40)
+        assert results["HIGH1"] == Decimal("1.40"), f"HIGH1 should get elite"
+        assert results["LOW1"] == Decimal("1.40"), f"LOW1 should get elite (top of its cluster)"
+
+
+class TestComputeClusterPercentileThresholds:
+    """Tests for compute_cluster_percentile_thresholds() helper."""
+
+    def test_basic_percentile_calculation(self):
+        """Should compute correct percentile for each cluster."""
+        from defensive_overlay_adapter import compute_cluster_percentile_thresholds
+
+        records = [
+            {"cluster_id": "A", "composite_score": "80"},
+            {"cluster_id": "A", "composite_score": "60"},
+            {"cluster_id": "A", "composite_score": "40"},
+            {"cluster_id": "A", "composite_score": "20"},
+            {"cluster_id": "B", "composite_score": "90"},
+            {"cluster_id": "B", "composite_score": "50"},
+        ]
+
+        thresholds, diag = compute_cluster_percentile_thresholds(
+            records,
+            percentile=60,
+            floor=Decimal("30"),
+        )
+
+        # Cluster A: scores [20, 40, 60, 80], P60 = 56
+        # Cluster B: scores [50, 90], P60 = 66
+        assert "A" in thresholds
+        assert "B" in thresholds
+        # P60 of [20,40,60,80] ≈ 56, max(30, 56) = 56
+        assert thresholds["A"] >= Decimal("30")
+        # P60 of [50,90] ≈ 66, max(30, 66) = 66
+        assert thresholds["B"] >= Decimal("30")
+
+    def test_floor_applied_when_percentile_low(self):
+        """Floor should be used when P60 is below floor."""
+        from defensive_overlay_adapter import compute_cluster_percentile_thresholds
+
+        # All low scores: P60 will be below floor
+        records = [
+            {"cluster_id": "low", "composite_score": "25"},
+            {"cluster_id": "low", "composite_score": "30"},
+            {"cluster_id": "low", "composite_score": "35"},
+        ]
+
+        thresholds, diag = compute_cluster_percentile_thresholds(
+            records,
+            percentile=60,
+            floor=Decimal("40"),
+        )
+
+        # P60 of [25, 30, 35] ≈ 31, but floor is 40
+        assert thresholds["low"] == Decimal("40")
+
+    def test_single_member_cluster_uses_score(self):
+        """Single-member cluster should use its score vs floor."""
+        from defensive_overlay_adapter import compute_cluster_percentile_thresholds
+
+        records = [
+            {"cluster_id": "solo", "composite_score": "55"},
+        ]
+
+        thresholds, diag = compute_cluster_percentile_thresholds(
+            records,
+            percentile=60,
+            floor=Decimal("40"),
+        )
+
+        # Single member: threshold = max(40, 55) = 55
+        assert thresholds["solo"] == Decimal("55")
+
+    def test_missing_cluster_id_skipped(self):
+        """Records without cluster_id should be skipped."""
+        from defensive_overlay_adapter import compute_cluster_percentile_thresholds
+
+        records = [
+            {"cluster_id": "A", "composite_score": "60"},
+            {"composite_score": "50"},  # No cluster_id
+            {"cluster_id": None, "composite_score": "40"},  # Explicit None
+        ]
+
+        thresholds, diag = compute_cluster_percentile_thresholds(records, percentile=60, floor=Decimal("30"))
+
+        assert "A" in thresholds
+        assert len(thresholds) == 1  # Only cluster A
+
+    def test_prefers_pre_defensive_score_when_present(self):
+        """P0: Should use composite_score_before_defensive when available."""
+        from defensive_overlay_adapter import compute_cluster_percentile_thresholds
+
+        # After defensive overlay, score might be different from pre-defensive
+        records = [
+            {"cluster_id": "A", "composite_score": "70", "composite_score_before_defensive": "50"},
+            {"cluster_id": "A", "composite_score": "80", "composite_score_before_defensive": "60"},
+            {"cluster_id": "A", "composite_score": "90", "composite_score_before_defensive": "70"},
+        ]
+
+        thresholds, diag = compute_cluster_percentile_thresholds(
+            records, percentile=60, floor=Decimal("30")
+        )
+
+        # P60 of [50, 60, 70] = 62, not P60 of [70, 80, 90] = 82
+        # Should use pre-defensive scores
+        assert thresholds["A"] < Decimal("70")  # Would be 82 if using post-defensive
+
+    def test_all_floor_dominated_warning(self):
+        """P0: Should flag when ALL clusters are floor_dominated."""
+        from defensive_overlay_adapter import compute_cluster_percentile_thresholds
+
+        # All scores below floor - all clusters will be floor_dominated
+        records = [
+            {"cluster_id": "A", "composite_score": "30"},
+            {"cluster_id": "A", "composite_score": "35"},
+            {"cluster_id": "B", "composite_score": "25"},
+            {"cluster_id": "B", "composite_score": "28"},
+        ]
+
+        thresholds, diag = compute_cluster_percentile_thresholds(
+            records, percentile=60, floor=Decimal("50")
+        )
+
+        # Both clusters should be floor_dominated
+        assert diag["threshold_sources"]["A"] == "floor_dominated"
+        assert diag["threshold_sources"]["B"] == "floor_dominated"
+        # P0: Flag that percentile gating is inactive
+        assert diag.get("all_clusters_floor_dominated") == True
+
+    def test_partial_floor_dominated_no_warning(self):
+        """Should NOT flag when only some clusters are floor_dominated."""
+        from defensive_overlay_adapter import compute_cluster_percentile_thresholds
+
+        records = [
+            {"cluster_id": "A", "composite_score": "30"},  # Below floor
+            {"cluster_id": "A", "composite_score": "35"},  # Below floor
+            {"cluster_id": "B", "composite_score": "60"},  # Above floor
+            {"cluster_id": "B", "composite_score": "70"},  # Above floor
+        ]
+
+        thresholds, diag = compute_cluster_percentile_thresholds(
+            records, percentile=60, floor=Decimal("50")
+        )
+
+        # A should be floor_dominated, B should not
+        assert diag["threshold_sources"]["A"] == "floor_dominated"
+        assert diag["threshold_sources"]["B"] == "percentile"
+        # Should NOT flag all_clusters_floor_dominated
+        assert diag.get("all_clusters_floor_dominated") is not True
+
+
+# ============================================================================
+# FUNDAMENTAL RED-FLAG SUPPRESSOR TESTS
+# ============================================================================
+
+class TestFundamentalRedFlagDetection:
+    """Tests for detect_fundamental_red_flags()."""
+
+    def test_no_flags_for_healthy_company(self):
+        """Healthy company should have no red flags."""
+        record = {
+            "ticker": "HEALTHY",
+            "survivability_signal": {
+                "score": "2.0",
+                "metrics": {"effective_runway_months": 24, "debt_to_cash": 0.5}
+            },
+            "stage_bucket": "late",
+            "pipeline_diversity_signal": {"risk_profile": "diversified"},
+        }
+        is_flagged, reasons = detect_fundamental_red_flags(record)
+        assert not is_flagged
+        assert len(reasons) == 0
+
+    def test_cash_runway_flag(self):
+        """Should flag company with < 6 months runway."""
+        record = {
+            "survivability_signal": {
+                "metrics": {"effective_runway_months": 4}
+            },
+        }
+        is_flagged, reasons = detect_fundamental_red_flags(record)
+        assert is_flagged
+        assert "cash_runway_lt_6m" in reasons
+
+    def test_survivability_critical_flag(self):
+        """Should flag company with very negative survivability score."""
+        record = {
+            "survivability_signal": {"score": "-5.0", "metrics": {}},
+        }
+        is_flagged, reasons = detect_fundamental_red_flags(record)
+        assert is_flagged
+        assert "survivability_critical" in reasons
+
+    def test_single_asset_early_stage_flag(self):
+        """Should flag single-asset early-stage company."""
+        record = {
+            "stage_bucket": "early",
+            "pipeline_diversity_signal": {"risk_profile": "single_asset"},
+            "survivability_signal": {"metrics": {}},
+        }
+        is_flagged, reasons = detect_fundamental_red_flags(record)
+        assert is_flagged
+        assert "single_asset_early_stage" in reasons
+
+    def test_single_asset_late_stage_not_flagged(self):
+        """Single-asset late-stage should NOT be flagged for this reason."""
+        record = {
+            "stage_bucket": "late",
+            "pipeline_diversity_signal": {"risk_profile": "single_asset"},
+            "survivability_signal": {"metrics": {}},
+        }
+        is_flagged, reasons = detect_fundamental_red_flags(record)
+        assert "single_asset_early_stage" not in reasons
+
+
+class TestRedFlagSuppression:
+    """Tests for apply_red_flag_suppression()."""
+
+    def test_suppression_caps_at_median(self):
+        """Flagged securities above median should be capped."""
+        records = [
+            {"ticker": "HIGH", "composite_score": "80", "rankable": True,
+             "survivability_signal": {"score": "-5.0", "metrics": {}}},  # Will be flagged
+            {"ticker": "MED", "composite_score": "50", "rankable": True,
+             "survivability_signal": {"score": "1.0", "metrics": {}}},  # Not flagged
+            {"ticker": "LOW", "composite_score": "20", "rankable": True,
+             "survivability_signal": {"score": "1.0", "metrics": {}}},  # Not flagged
+        ]
+
+        provenance = apply_red_flag_suppression(records, enable_suppression=True)
+
+        assert provenance["flagged_count"] == 1
+        assert provenance["suppressed_count"] == 1
+
+        # HIGH should be capped to median (50)
+        high_rec = next(r for r in records if r["ticker"] == "HIGH")
+        assert float(high_rec["composite_score"]) == 50.0
+        assert high_rec["composite_score_pre_suppression"] == "80"
+        assert high_rec["fundamental_red_flag"] == True
+
+    def test_suppression_disabled(self):
+        """When disabled, no suppression should occur."""
+        records = [
+            {"ticker": "BAD", "composite_score": "80", "rankable": True,
+             "survivability_signal": {"score": "-5.0", "metrics": {}}},
+        ]
+
+        provenance = apply_red_flag_suppression(records, enable_suppression=False)
+
+        assert provenance["suppressor_enabled"] == False
+        assert records[0]["composite_score"] == "80"  # Unchanged
+
+    def test_flagged_below_median_not_suppressed(self):
+        """Flagged securities below median should not be suppressed."""
+        records = [
+            {"ticker": "HIGH", "composite_score": "80", "rankable": True,
+             "survivability_signal": {"score": "1.0", "metrics": {}}},
+            {"ticker": "LOW_BAD", "composite_score": "20", "rankable": True,
+             "survivability_signal": {"score": "-5.0", "metrics": {}}},  # Flagged but below median
+        ]
+
+        provenance = apply_red_flag_suppression(records, enable_suppression=True)
+
+        assert provenance["flagged_count"] == 1
+        assert provenance["suppressed_count"] == 0  # Below median, so not suppressed
+
+        low_rec = next(r for r in records if r["ticker"] == "LOW_BAD")
+        assert low_rec["composite_score"] == "20"  # Unchanged
+        assert low_rec["fundamental_red_flag"] == True
