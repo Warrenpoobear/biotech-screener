@@ -503,8 +503,8 @@ class TestDefensiveWrapper:
         assert "ranked_securities" in result
 
     def test_wrapper_version_updated(self):
-        """Wrapper version should reflect v2 merge."""
-        assert wrapper_version == "1.2.0"
+        """Wrapper version should reflect v3 with extended output schema."""
+        assert wrapper_version == "1.3.0"
 
 
 # =============================================================================

@@ -425,23 +425,27 @@ class TestEdgeCases:
             assert reason and reason != "unknown", f"Ticker {sec['ticker']} missing exclusion reason"
 
     def test_weights_sum_to_target(self, tmp_output):
-        """Position weights sum to expected target"""
+        """Position weights: 0 when position sizing disabled (default), 1.0 when enabled"""
         run_pipeline(TEST_AS_OF_DATE, tmp_output)
 
         with open(tmp_output) as f:
             data = json.load(f)
 
+        m5 = data["module_5_composite"]
         total_weight = sum(
             float(sec.get("position_weight", "0"))
-            for sec in data["module_5_composite"]["ranked_securities"]
+            for sec in m5["ranked_securities"]
         )
 
-        # Weights should sum to 1.0 (fully invested, no cash reserve)
-        expected = 1.00
-        tolerance = 0.01
-        assert abs(total_weight - expected) < tolerance, (
-            f"Weights sum to {total_weight}, expected {expected}"
-        )
+        # Position sizing disabled by default → weights should be 0
+        def_config = m5.get("defensive_overlay_config", {})
+        position_sizing = def_config.get("position_sizing_enabled", False)
+
+        if position_sizing:
+            expected, tolerance = 1.0, 0.01
+            assert abs(total_weight - expected) < tolerance, f"Weights sum to {total_weight}, expected {expected}"
+        else:
+            assert total_weight == 0.0, f"Weights should be 0 when position sizing disabled, got {total_weight}"
 
     def test_excluded_have_zero_weight(self, tmp_output):
         """Excluded securities have zero weight"""

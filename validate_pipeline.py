@@ -288,19 +288,27 @@ def validate_module_5_composite(data: Dict[str, Any], result: ValidationResult):
     else:
         result.success("m5_score_range", True)
 
-    # Check weight sum
+    # Check weight sum (only when position sizing is enabled)
+    def_config = m5.get("defensive_overlay_config", {})
+    position_sizing = def_config.get("position_sizing_enabled", False)
     total_weight = sum(float(s.get("position_weight", "0")) for s in ranked)
-    weight_diff = abs(total_weight - EXPECTED_WEIGHT_SUM)
-
     result.metrics["m5_weight_sum"] = total_weight
 
-    if weight_diff > WEIGHT_SUM_TOLERANCE:
-        result.error(
-            f"Module 5: Weight sum ({total_weight:.4f}) differs from target ({EXPECTED_WEIGHT_SUM}) by {weight_diff:.4f}",
-            "m5_weight_sum"
-        )
+    if position_sizing:
+        weight_diff = abs(total_weight - EXPECTED_WEIGHT_SUM)
+        if weight_diff > WEIGHT_SUM_TOLERANCE:
+            result.error(
+                f"Module 5: Weight sum ({total_weight:.4f}) differs from target ({EXPECTED_WEIGHT_SUM}) by {weight_diff:.4f}",
+                "m5_weight_sum"
+            )
+        else:
+            result.success("m5_weight_sum", total_weight)
     else:
-        result.success("m5_weight_sum", total_weight)
+        # Position sizing disabled - weights should be 0
+        if total_weight == 0.0:
+            result.success("m5_weight_sum", "position_sizing_disabled")
+        else:
+            result.error(f"Module 5: Weights should be 0 when position sizing disabled, got {total_weight}", "m5_weight_sum")
 
     # Check excluded have zero weight
     excluded_with_weight = 0
