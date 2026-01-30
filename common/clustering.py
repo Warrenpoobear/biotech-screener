@@ -25,8 +25,11 @@ Version: 1.0.0
 """
 from __future__ import annotations
 
+import logging
 import math
 from typing import Dict, List, Optional, Set, Tuple, Any
+
+logger = logging.getLogger(__name__)
 
 # =============================================================================
 # CONFIGURATION
@@ -41,6 +44,24 @@ DEFAULT_CORR_WINDOW = 60
 # Clustering model identifier for provenance
 CLUSTER_MODEL_ID = "return_corr_connected_components"
 CLUSTER_MODEL_VERSION = "1.0.0"
+
+# Schema version for cluster output (bump when output fields change)
+CLUSTER_SCHEMA_VERSION = "1.1.0"
+
+# Null-equivalent values to exclude when computing coverage/unique counts
+# Case-insensitive matching, whitespace stripped
+NULL_EQUIVALENTS = frozenset([
+    "", "none", "null", "na", "n/a", "unknown", "undefined", "nan", "-",
+])
+
+
+def _is_null_equivalent(val: Any) -> bool:
+    """Check if value is null or a null-equivalent string."""
+    if val is None:
+        return True
+    if not isinstance(val, str):
+        return False
+    return val.strip().lower() in NULL_EQUIVALENTS
 
 
 # =============================================================================
@@ -303,6 +324,7 @@ def attach_cluster_ids(
     return {
         "cluster_model": CLUSTER_MODEL_ID,
         "cluster_model_version": CLUSTER_MODEL_VERSION,
+        "cluster_schema_version": CLUSTER_SCHEMA_VERSION,
         "corr_cluster_threshold": threshold,
         "n_clusters": n_clusters,
         "n_singletons": singletons,
@@ -394,11 +416,11 @@ def select_best_cluster_key(
     best_unique = 0
 
     for key in candidate_keys:
-        # Count non-null, non-"Unknown" values
+        # Count valid (non-null-equivalent) values
         values = []
         for r in ranked_securities:
             val = r.get(key)
-            if val is not None and val != "Unknown" and val != "":
+            if not _is_null_equivalent(val):
                 values.append(val)
 
         coverage = len(values) / n if n > 0 else 0
@@ -415,9 +437,17 @@ def select_best_cluster_key(
     if best_key is None:
         best_key = candidate_keys[-1]
         # Recompute coverage for fallback
-        values = [r.get(best_key) for r in ranked_securities if r.get(best_key)]
+        values = [r.get(best_key) for r in ranked_securities if not _is_null_equivalent(r.get(best_key))]
         best_coverage = len(values) / n if n > 0 else 0
         best_unique = len(set(values))
+
+    # Log fallback when preferred indication keys unavailable
+    preferred_keys = {"primary_indication", "indication"}
+    if best_key not in preferred_keys and any(k in preferred_keys for k in candidate_keys):
+        logger.info(
+            f"Clustering key fallback → {best_key} "
+            f"(no indication coverage, {best_coverage:.0%} coverage, {best_unique} unique)"
+        )
 
     return best_key, round(best_coverage, 4), best_unique
 
@@ -460,15 +490,16 @@ def attach_indication_clusters(
     n_clusters = len(cluster_stats)
     cluster_sizes = [s["size"] for s in cluster_stats.values()]
 
-    # Compute coverage for the key used
+    # Compute coverage for the key used (exclude null-equivalents)
     n = len(ranked_securities)
     values = [r.get(indication_key) for r in ranked_securities
-              if r.get(indication_key) and r.get(indication_key) != "Unknown"]
+              if not _is_null_equivalent(r.get(indication_key))]
     coverage = len(values) / n if n > 0 else 0
 
     return {
         "cluster_model": "key_based",
         "cluster_model_version": "1.0.0",
+        "cluster_schema_version": CLUSTER_SCHEMA_VERSION,
         "cluster_method": "categorical_grouping",
         "cluster_key": indication_key,
         "key_coverage_pct": round(coverage, 4),

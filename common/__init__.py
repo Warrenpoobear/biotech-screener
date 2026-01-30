@@ -41,6 +41,7 @@ from common.clustering import (
     DEFAULT_CORR_WINDOW,
     CLUSTER_MODEL_ID,
     CLUSTER_MODEL_VERSION,
+    CLUSTER_SCHEMA_VERSION,
 )
 
 # Hash utilities
@@ -244,4 +245,5 @@ __all__ = [
     "DEFAULT_CORR_WINDOW",
     "CLUSTER_MODEL_ID",
     "CLUSTER_MODEL_VERSION",
+    "CLUSTER_SCHEMA_VERSION",
 ]
