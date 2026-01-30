@@ -67,6 +67,8 @@ open, high, low
 - **XBI** – primary biotech risk anchor
 - Optional future: SPY (macro diagnostics only)
 
+**Note:** Benchmark series (XBI) is assumed continuous and survivorship-stable.
+
 ---
 
 ## 3. Return Construction
@@ -329,6 +331,8 @@ mult_ceiling = 1.60
 - Bounded (no extreme amplification)
 - Most names remain neutral
 - Tail reshaping only
+
+**Stacking behavior:** When multiple conditions apply, multipliers are combined multiplicatively and then clipped to bounds.
 
 ### 8.4 Ordering Guarantee
 
