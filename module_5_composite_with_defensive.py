@@ -26,6 +26,11 @@ from module_5_composite import compute_module_5_composite
 from module_5_composite_v2 import compute_module_5_composite_v2
 from module_5_composite_v3 import compute_module_5_composite_v3
 from defensive_overlay_adapter import enrich_with_defensive_overlays, validate_defensive_integration
+from common.clustering import (
+    attach_cluster_ids,
+    attach_indication_clusters,
+    DEFAULT_CORR_THRESHOLD,
+)
 
 # V3 production configuration
 from config.v3_production_integration import (
@@ -175,6 +180,9 @@ def compute_module_5_composite_with_defensive(
     historical_scores: Optional[List[Dict]] = None,
     historical_returns: Optional[Dict] = None,
     use_adaptive_weights: bool = False,
+    enable_clustering: bool = False,
+    cluster_method: str = "indication",
+    cluster_threshold: float = 0.70,
 ) -> dict:
     """
     Rank securities with defensive overlays integrated.
@@ -343,11 +351,59 @@ def compute_module_5_composite_with_defensive(
         apply_position_sizing=apply_position_sizing,
         top_n=None,  # Show all ranked securities (no limit)
     )
-    
+
+    # Add clustering if enabled (does not affect ranks/scores)
+    if enable_clustering:
+        ranked_securities = output.get("ranked_securities", [])
+
+        # Determine best available clustering key
+        # Priority: primary_indication > stage_bucket > market_cap_bucket
+        sample = ranked_securities[0] if ranked_securities else {}
+        if "primary_indication" in sample:
+            cluster_key = "primary_indication"
+        elif "stage_bucket" in sample:
+            cluster_key = "stage_bucket"
+        elif "market_cap_bucket" in sample:
+            cluster_key = "market_cap_bucket"
+        else:
+            cluster_key = "cohort_key"  # Fallback
+
+        if cluster_method == "indication":
+            # Stage/indication-based clustering (fast, always available)
+            cluster_provenance = attach_indication_clusters(
+                ranked_securities,
+                indication_key=cluster_key,
+            )
+            cluster_provenance["cluster_key_used"] = cluster_key
+            logger.info(f"Clustering: {cluster_key}-based, {cluster_provenance.get('n_clusters', 0)} clusters")
+
+        elif cluster_method == "returns":
+            # Returns-based clustering requires correlation data
+            # For now, fallback to indication (returns clustering needs price history wiring)
+            logger.warning("Returns-based clustering not yet wired. Falling back to stage-based.")
+            cluster_provenance = attach_indication_clusters(
+                ranked_securities,
+                indication_key=cluster_key,
+            )
+            cluster_provenance["fallback_reason"] = "returns_clustering_not_wired"
+            cluster_provenance["cluster_key_used"] = cluster_key
+
+        else:  # auto
+            # Use stage-based (fast, reliable)
+            cluster_provenance = attach_indication_clusters(
+                ranked_securities,
+                indication_key=cluster_key,
+            )
+            cluster_provenance["cluster_key_used"] = cluster_key
+            logger.info(f"Clustering (auto): {cluster_key}-based, {cluster_provenance.get('n_clusters', 0)} clusters")
+
+        # Add provenance to output
+        output["cluster_model"] = cluster_provenance
+
     # Optionally validate
     if validate:
         validate_defensive_integration(output)
-    
+
     return output
 
 

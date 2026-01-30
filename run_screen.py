@@ -1528,6 +1528,10 @@ def run_screening_pipeline(
     min_trials: int = 5,
     min_phase: str = "phase1",
     no_clinical_filter: bool = False,
+    # Clustering parameters
+    enable_clustering: bool = False,
+    cluster_method: str = "indication",
+    cluster_threshold: float = 0.70,
 ) -> Dict[str, Any]:
     """
     Execute full screening pipeline with deterministic guarantees.
@@ -2575,6 +2579,9 @@ def run_screening_pipeline(
             market_data_by_ticker=market_data_by_ticker,  # Enable volatility/momentum signals
             raw_financial_data=financial_records,  # Raw financial data for survivability scoring
             enable_sanity_override=False,  # Disabled: mixed v2/v3 scores cause rank artifacts
+            enable_clustering=enable_clustering,
+            cluster_method=cluster_method,
+            cluster_threshold=cluster_threshold,
         )
         if checkpoint_dir:
             save_checkpoint(checkpoint_dir, "module_5", as_of_date, m5_result)
@@ -3016,6 +3023,31 @@ Module 3 Catalyst Detection:
              "ticker universe overlap, and gating reason counts.",
     )
 
+    # Clustering controls
+    parser.add_argument(
+        "--enable-clustering",
+        action="store_true",
+        help="Enable correlation/indication clustering. Adds cluster_id and cluster_size "
+             "to output (does not affect ranks/scores).",
+    )
+
+    parser.add_argument(
+        "--cluster-method",
+        type=str,
+        choices=["indication", "returns", "auto"],
+        default="indication",
+        help="Clustering method. 'indication': group by therapeutic indication (fast, safe). "
+             "'returns': correlation-based (O(N^2), requires price history). "
+             "'auto': try returns, fallback to indication. (default: indication)",
+    )
+
+    parser.add_argument(
+        "--cluster-threshold",
+        type=float,
+        default=0.70,
+        help="Correlation threshold for returns-based clustering. (default: 0.70)",
+    )
+
     # Snapshot sanity checks
     parser.add_argument(
         "--compare-snapshots",
@@ -3180,6 +3212,10 @@ Module 3 Catalyst Detection:
             min_trials=args.min_trials,
             min_phase=args.min_phase,
             no_clinical_filter=args.no_clinical_filter,
+            # Clustering parameters
+            enable_clustering=args.enable_clustering,
+            cluster_method=args.cluster_method,
+            cluster_threshold=args.cluster_threshold,
         )
 
         # Add bootstrap analysis if requested
