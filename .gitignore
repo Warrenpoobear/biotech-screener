@@ -80,6 +80,7 @@ ablation_report.json
 # Cache files
 data/13f_cache/
 data/cache/
+production_data/defensive_features_*.json
 
 # Test output files
 output.json
