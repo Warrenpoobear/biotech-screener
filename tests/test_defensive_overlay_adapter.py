@@ -187,7 +187,7 @@ class TestMultiFactorFeatures:
         }
         mult, notes = defensive_multiplier(features)
 
-        assert Decimal("1.05") in [Decimal(str(mult))]  # Momentum bonus applied
+        assert mult == Decimal("1.05")
         assert "def_mult_momentum_bonus_1.05" in notes
 
     def test_momentum_penalty(self):
@@ -285,6 +285,56 @@ class TestMultiFactorFeatures:
         assert mult == Decimal("1.00")
         assert "def_mult_momentum" not in str(notes)
         assert "def_mult_rsi" not in str(notes)
+
+    def test_multiplier_clamping_ceiling(self):
+        """Extreme stacking should be clamped to ceiling."""
+        from defensive_overlay_adapter import DefensiveConfig
+
+        # Config with low ceiling to test clamping
+        config = DefensiveConfig(mult_ceiling=Decimal("1.20"))
+
+        features = {
+            "corr_xbi": "0.25",  # Elite corr
+            "vol_60d": "0.35",   # Elite vol → 1.40x
+            "ret_21d": "0.15",   # Momentum → 1.05x
+        }
+        mult, notes = defensive_multiplier(features, config=config)
+
+        # Would be 1.40 * 1.05 = 1.47, but clamped to 1.20
+        assert mult == Decimal("1.20")
+        assert any("def_mult_clamped" in n for n in notes)
+
+    def test_multiplier_clamping_floor(self):
+        """Extreme penalties should be clamped to floor."""
+        from defensive_overlay_adapter import DefensiveConfig
+
+        # Config with high floor to test clamping
+        config = DefensiveConfig(mult_floor=Decimal("0.90"))
+
+        features = {
+            "corr_xbi": "0.85",       # High corr penalty → 0.95x
+            "ret_21d": "-0.25",       # Momentum penalty → 0.95x
+            "drawdown_current": "-0.45",  # Drawdown penalty → 0.92x
+        }
+        mult, notes = defensive_multiplier(features, config=config)
+
+        # Would be 0.95 * 0.95 * 0.92 = 0.830, but clamped to 0.90
+        assert mult == Decimal("0.90")
+        assert any("def_mult_clamped" in n for n in notes)
+
+    def test_config_provenance(self):
+        """Config should provide provenance for audit trail."""
+        from defensive_overlay_adapter import DefensiveConfig, DEFAULT_DEFENSIVE_CONFIG
+
+        prov = DEFAULT_DEFENSIVE_CONFIG.to_provenance()
+
+        assert prov["config_id"] == "default"
+        assert prov["config_version"] == "2.0.0"
+        assert "config_hash" in prov
+        assert len(prov["config_hash"]) == 8  # 8-char hex hash
+        assert "mult_bounds" in prov
+        assert prov["enabled_factors"]["momentum"] is True
+        assert prov["enabled_factors"]["vol_ratio"] is False
 
 
 # ============================================================================

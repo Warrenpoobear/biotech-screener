@@ -29,6 +29,14 @@ class DefensiveConfig:
     All thresholds are configurable for backtesting and regime adaptation.
     Default values are conservative starting points for biotech universe.
     """
+    # Config identity (for provenance)
+    config_id: str = "default"
+    config_version: str = "2.0.0"
+
+    # Multiplier bounds (clamp to prevent extreme values from stacking)
+    mult_floor: Decimal = Decimal("0.75")                # Minimum multiplier
+    mult_ceiling: Decimal = Decimal("1.60")              # Maximum multiplier
+
     # Correlation thresholds
     corr_elite_threshold: Decimal = Decimal("0.30")      # Below = elite diversifier
     corr_good_threshold: Decimal = Decimal("0.40")       # Below = good diversifier
@@ -74,18 +82,55 @@ class DefensiveConfig:
     max_position: Decimal = Decimal("0.07")              # 7% max position
     inv_vol_power: Decimal = Decimal("2.0")              # Inverse vol exponent
 
+    def config_hash(self) -> str:
+        """Compute short hash of config for provenance tracking."""
+        import hashlib
+        # Hash key threshold values (not metadata like id/version)
+        key_values = (
+            str(self.corr_elite_threshold),
+            str(self.corr_good_threshold),
+            str(self.mult_elite),
+            str(self.mult_good),
+            str(self.mult_floor),
+            str(self.mult_ceiling),
+            str(self.enable_momentum),
+            str(self.enable_rsi),
+            str(self.enable_drawdown_penalty),
+            str(self.enable_vol_ratio),
+        )
+        return hashlib.sha256("|".join(key_values).encode()).hexdigest()[:8]
+
+    def to_provenance(self) -> Dict:
+        """Return config provenance for audit trail."""
+        return {
+            "config_id": self.config_id,
+            "config_version": self.config_version,
+            "config_hash": self.config_hash(),
+            "mult_bounds": [str(self.mult_floor), str(self.mult_ceiling)],
+            "enabled_factors": {
+                "correlation": True,  # Always enabled
+                "volatility": True,   # Always enabled
+                "momentum": self.enable_momentum,
+                "rsi": self.enable_rsi,
+                "drawdown": self.enable_drawdown_penalty,
+                "vol_ratio": self.enable_vol_ratio,
+            },
+        }
+
 
 # Default configuration (conservative)
 DEFAULT_DEFENSIVE_CONFIG = DefensiveConfig()
 
 # Aggressive configuration (larger bonuses/penalties)
 AGGRESSIVE_DEFENSIVE_CONFIG = DefensiveConfig(
+    config_id="aggressive",
     mult_elite=Decimal("1.50"),
     mult_good=Decimal("1.15"),
     mult_high_corr_penalty=Decimal("0.90"),
     mult_momentum_bonus=Decimal("1.08"),
     mult_momentum_penalty=Decimal("0.90"),
     enable_vol_ratio=True,
+    mult_ceiling=Decimal("1.80"),  # Higher ceiling for aggressive config
 )
 
 
@@ -264,6 +309,14 @@ def defensive_multiplier(
         if vol_ratio > cfg.vol_ratio_expanding_threshold:
             m *= cfg.mult_vol_expanding_penalty
             notes.append(f"def_mult_vol_expanding_{cfg.mult_vol_expanding_penalty}")
+
+    # -------------------------------------------------------------------------
+    # CLAMP: Prevent extreme multipliers from factor stacking
+    # -------------------------------------------------------------------------
+    m_unclamped = m
+    m = max(cfg.mult_floor, min(cfg.mult_ceiling, m))
+    if m != m_unclamped:
+        notes.append(f"def_mult_clamped_{m_unclamped:.4f}_to_{m}")
 
     return m, notes
 
@@ -530,9 +583,14 @@ def enrich_with_defensive_overlays(
 
         if def_features:
             with_def_features += 1
-            # Track each feature
+            # Track each feature using _safe_decimal for consistent null detection
             for feature in feature_coverage:
-                if def_features.get(feature) or (feature == "corr_xbi_120d" and def_features.get("corr_xbi")):
+                raw_val = def_features.get(feature)
+                # Handle corr_xbi alias
+                if feature == "corr_xbi_120d" and raw_val is None:
+                    raw_val = def_features.get("corr_xbi")
+                # Only count if _safe_decimal succeeds (not None, not NaN, parseable)
+                if _safe_decimal(raw_val) is not None:
                     feature_coverage[feature] += 1
 
     # Add coverage diagnostics with per-feature breakdown
@@ -548,14 +606,10 @@ def enrich_with_defensive_overlays(
             }
             for k, v in feature_coverage.items()
         },
-        # Enabled features in current config
-        "enabled_features": {
-            "momentum": cfg.enable_momentum,
-            "rsi": cfg.enable_rsi,
-            "drawdown_penalty": cfg.enable_drawdown_penalty,
-            "vol_ratio": cfg.enable_vol_ratio,
-        },
     }
+
+    # Add config provenance for audit trail
+    output["defensive_overlay_config"] = cfg.to_provenance()
 
     # Step 1: Calculate raw weights for position sizing (needed for Step 3)
     # This must run BEFORE multiplier application if position sizing is enabled
