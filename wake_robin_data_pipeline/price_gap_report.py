@@ -66,8 +66,13 @@ def compute_gap_report(
     blocking_120 = []
     blocking_60 = []
     blocking_20 = []
+    synthetic_ignored = []
 
     for ticker in sorted(universe_tickers):
+        # Skip synthetic/internal tickers (start with _)
+        if ticker.startswith("_"):
+            synthetic_ignored.append(ticker)
+            continue
         cov = price_coverage.get(ticker)
         if not cov:
             by_ticker[ticker] = {
@@ -109,9 +114,12 @@ def compute_gap_report(
             "blocking_reason": reason,
         }
 
-    present = len(universe_tickers) - len(missing)
+    real_tickers = len(universe_tickers) - len(synthetic_ignored)
+    present = real_tickers - len(missing)
     summary = {
         "universe_tickers": len(universe_tickers),
+        "real_tickers": real_tickers,
+        "synthetic_ignored": len(synthetic_ignored),
         "present_in_prices": present,
         "ok_20": sum(1 for t in by_ticker.values() if t["ok_20"]),
         "ok_60": sum(1 for t in by_ticker.values() if t["ok_60"]),
@@ -122,7 +130,12 @@ def compute_gap_report(
         "missing": len(missing),
     }
     blocking_tickers = sorted(missing) + sorted(blocking_120) + sorted(blocking_60) + sorted(blocking_20)
-    return {"summary": summary, "by_ticker": by_ticker, "blocking_tickers": blocking_tickers}
+    return {
+        "summary": summary,
+        "by_ticker": by_ticker,
+        "blocking_tickers": blocking_tickers,
+        "synthetic_ignored": sorted(synthetic_ignored),
+    }
 
 
 def build_report(
@@ -169,7 +182,7 @@ def main():
     if not args.quiet:
         s = report["summary"]
         print(f"Gap report for as_of={args.as_of}")
-        print(f"  Universe: {s['universe_tickers']} tickers")
+        print(f"  Universe: {s['universe_tickers']} tickers ({s['real_tickers']} real, {s['synthetic_ignored']} synthetic ignored)")
         print(f"  Present in prices: {s['present_in_prices']}")
         print(f"  OK for 120d: {s['ok_120']} | blocking: {s['blocking_120']}")
         print(f"  OK for 60d: {s['ok_60']} | blocking: {s['blocking_60']}")
@@ -177,6 +190,8 @@ def main():
         print(f"  Missing tickers: {s['missing']}")
         if report["blocking_tickers"]:
             print(f"  Blocking: {report['blocking_tickers'][:10]}{'...' if len(report['blocking_tickers']) > 10 else ''}")
+        if report["synthetic_ignored"]:
+            print(f"  Synthetic ignored: {report['synthetic_ignored']}")
         print(f"  Output: {args.out}")
 
 
