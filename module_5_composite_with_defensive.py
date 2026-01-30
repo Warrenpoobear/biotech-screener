@@ -29,6 +29,7 @@ from defensive_overlay_adapter import enrich_with_defensive_overlays, validate_d
 from common.clustering import (
     attach_cluster_ids,
     attach_indication_clusters,
+    select_best_cluster_key,
     DEFAULT_CORR_THRESHOLD,
 )
 
@@ -356,46 +357,36 @@ def compute_module_5_composite_with_defensive(
     if enable_clustering:
         ranked_securities = output.get("ranked_securities", [])
 
-        # Determine best available clustering key
-        # Priority: primary_indication > stage_bucket > market_cap_bucket
-        sample = ranked_securities[0] if ranked_securities else {}
-        if "primary_indication" in sample:
-            cluster_key = "primary_indication"
-        elif "stage_bucket" in sample:
-            cluster_key = "stage_bucket"
-        elif "market_cap_bucket" in sample:
-            cluster_key = "market_cap_bucket"
-        else:
-            cluster_key = "cohort_key"  # Fallback
+        # Select best clustering key based on coverage (not sampling)
+        cluster_key, key_coverage, unique_values = select_best_cluster_key(ranked_securities)
 
-        if cluster_method == "indication":
-            # Stage/indication-based clustering (fast, always available)
-            cluster_provenance = attach_indication_clusters(
-                ranked_securities,
-                indication_key=cluster_key,
-            )
-            cluster_provenance["cluster_key_used"] = cluster_key
-            logger.info(f"Clustering: {cluster_key}-based, {cluster_provenance.get('n_clusters', 0)} clusters")
-
-        elif cluster_method == "returns":
+        if cluster_method == "returns":
             # Returns-based clustering requires correlation data
-            # For now, fallback to indication (returns clustering needs price history wiring)
-            logger.warning("Returns-based clustering not yet wired. Falling back to stage-based.")
+            # Not yet wired - fallback to key-based
+            logger.warning("Returns-based clustering not yet wired. Falling back to key-based.")
             cluster_provenance = attach_indication_clusters(
                 ranked_securities,
                 indication_key=cluster_key,
             )
+            cluster_provenance["cluster_method_requested"] = "returns"
+            cluster_provenance["cluster_method_effective"] = "key_based"
             cluster_provenance["fallback_reason"] = "returns_clustering_not_wired"
-            cluster_provenance["cluster_key_used"] = cluster_key
+            # Don't include threshold since it wasn't used
 
-        else:  # auto
-            # Use stage-based (fast, reliable)
+        else:  # "indication" or "auto"
+            # Key-based clustering (fast, reliable)
             cluster_provenance = attach_indication_clusters(
                 ranked_securities,
                 indication_key=cluster_key,
             )
-            cluster_provenance["cluster_key_used"] = cluster_key
-            logger.info(f"Clustering (auto): {cluster_key}-based, {cluster_provenance.get('n_clusters', 0)} clusters")
+            cluster_provenance["cluster_method_requested"] = cluster_method
+            cluster_provenance["cluster_method_effective"] = "key_based"
+            # Don't include threshold since it wasn't used
+
+        logger.info(
+            f"Clustering: {cluster_key}-based, {cluster_provenance.get('n_clusters', 0)} clusters "
+            f"(coverage: {key_coverage:.1%}, {unique_values} unique values)"
+        )
 
         # Add provenance to output
         output["cluster_model"] = cluster_provenance

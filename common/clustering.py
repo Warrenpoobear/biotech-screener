@@ -360,13 +360,75 @@ def build_indication_clusters(
     return cluster_map
 
 
+def select_best_cluster_key(
+    ranked_securities: List[Dict[str, Any]],
+    candidate_keys: List[str] = None,
+    min_coverage: float = 0.30,
+) -> Tuple[str, float, int]:
+    """
+    Select the best clustering key based on coverage.
+
+    Args:
+        ranked_securities: List of security dicts
+        candidate_keys: Keys to consider (default: standard list)
+        min_coverage: Minimum coverage threshold (default: 30%)
+
+    Returns:
+        (best_key, coverage_pct, unique_values)
+    """
+    if candidate_keys is None:
+        candidate_keys = [
+            "primary_indication",
+            "indication",
+            "stage_bucket",
+            "market_cap_bucket",
+            "cohort_key",
+        ]
+
+    n = len(ranked_securities)
+    if n == 0:
+        return candidate_keys[-1], 0.0, 0  # Fallback
+
+    best_key = None
+    best_coverage = 0.0
+    best_unique = 0
+
+    for key in candidate_keys:
+        # Count non-null, non-"Unknown" values
+        values = []
+        for r in ranked_securities:
+            val = r.get(key)
+            if val is not None and val != "Unknown" and val != "":
+                values.append(val)
+
+        coverage = len(values) / n if n > 0 else 0
+        unique = len(set(values))
+
+        # Prefer keys with higher coverage AND more than 1 unique value
+        if coverage >= min_coverage and unique > 1:
+            if coverage > best_coverage or (coverage == best_coverage and unique > best_unique):
+                best_key = key
+                best_coverage = coverage
+                best_unique = unique
+
+    # Fallback to last candidate if nothing meets threshold
+    if best_key is None:
+        best_key = candidate_keys[-1]
+        # Recompute coverage for fallback
+        values = [r.get(best_key) for r in ranked_securities if r.get(best_key)]
+        best_coverage = len(values) / n if n > 0 else 0
+        best_unique = len(set(values))
+
+    return best_key, round(best_coverage, 4), best_unique
+
+
 def attach_indication_clusters(
     ranked_securities: List[Dict[str, Any]],
     indication_key: str = "primary_indication",
     ticker_key: str = "ticker",
 ) -> Dict[str, Any]:
     """
-    Attach indication-based cluster IDs (fallback method).
+    Attach key-based cluster IDs (groups by categorical field).
 
     Mutates ranked_securities in-place. Adds:
         - cluster_id: Integer cluster identifier
@@ -398,10 +460,18 @@ def attach_indication_clusters(
     n_clusters = len(cluster_stats)
     cluster_sizes = [s["size"] for s in cluster_stats.values()]
 
+    # Compute coverage for the key used
+    n = len(ranked_securities)
+    values = [r.get(indication_key) for r in ranked_securities
+              if r.get(indication_key) and r.get(indication_key) != "Unknown"]
+    coverage = len(values) / n if n > 0 else 0
+
     return {
-        "cluster_model": "indication_based",
+        "cluster_model": "key_based",
         "cluster_model_version": "1.0.0",
-        "cluster_method": "therapeutic_indication_grouping",
+        "cluster_method": "categorical_grouping",
+        "cluster_key": indication_key,
+        "key_coverage_pct": round(coverage, 4),
         "n_clusters": n_clusters,
         "largest_cluster_size": max(cluster_sizes) if cluster_sizes else 0,
         "avg_cluster_size": round(sum(cluster_sizes) / n_clusters, 2) if n_clusters > 0 else 0,
