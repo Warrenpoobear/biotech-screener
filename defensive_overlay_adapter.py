@@ -786,6 +786,11 @@ def enrich_with_defensive_overlays(
         rec["defensive_tags"] = _extract_defensive_tags(rec["defensive_notes"])  # Use final notes
         rec["defensive_features"] = _extract_audit_features(defensive_features or {})
 
+        # Surface cache skip reason if present (e.g., IPO with <120 rows)
+        cache_skip = (defensive_features or {}).get("cache_skip_reason")
+        if cache_skip and f"def_cache_{cache_skip}" not in rec["defensive_notes"]:
+            rec["defensive_notes"].append(f"def_cache_{cache_skip}")
+
     # Add multiplier distribution to diagnostics
     output["diagnostic_counts"]["multiplier_distribution"] = multiplier_stats
     output["diagnostic_counts"]["apply_multiplier_enabled"] = apply_multiplier
