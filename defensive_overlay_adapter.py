@@ -586,9 +586,11 @@ def enrich_with_defensive_overlays(
             # Track each feature using _safe_decimal for consistent null detection
             for feature in feature_coverage:
                 raw_val = def_features.get(feature)
-                # Handle corr_xbi alias
+                # Handle field aliases (must match defensive_multiplier logic)
                 if feature == "corr_xbi_120d" and raw_val is None:
                     raw_val = def_features.get("corr_xbi")
+                if feature == "drawdown_current" and raw_val is None:
+                    raw_val = def_features.get("drawdown_60d")
                 # Only count if _safe_decimal succeeds (not None, not NaN, parseable)
                 if _safe_decimal(raw_val) is not None:
                     feature_coverage[feature] += 1
