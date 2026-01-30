@@ -54,7 +54,6 @@ def drawdown_current(closes: List[float], window: int = 60) -> Optional[float]:
     high = max(recent)
     return (closes[-1] / high) - 1.0 if high > 0 else None
 
-
 def correlation(r1: List[float], r2: List[float], window: int) -> Optional[float]:
     """Correlation between two return series over last `window` days."""
     n = min(len(r1), len(r2), window)
@@ -143,6 +142,9 @@ def build_cache(price_file: str, as_of: str, tickers: List[str] = None) -> Dict:
             continue
         features, skipped = compute_features(ticker, closes, xbi_returns)
         if features:
+            # Add deterministic skip reason for partial tickers (used downstream for def_notes)
+            if "corr_xbi_120d" in skipped and len(closes) < 120:
+                features["cache_skip_reason"] = "insufficient_rows_120"
             features_by_ticker[ticker] = features
             if skipped:
                 partial_tickers[ticker] = {"rows": len(closes), "skipped": skipped}
@@ -172,7 +174,6 @@ def write_cache(data: Dict, output_path: str) -> str:
         json.dump(output, f, indent=2, sort_keys=True)
     return integrity
 
-
 def main():
     parser = argparse.ArgumentParser(description="Build defensive features cache")
     parser.add_argument("--as-of", required=True, help="As-of date (YYYY-MM-DD)")
@@ -194,7 +195,6 @@ def main():
     print(f"  Integrity: {integrity[:16]}...")
     if data["warnings"]:
         print(f"  Warnings: {len(data['warnings'])}")
-
 
 if __name__ == "__main__":
     main()
