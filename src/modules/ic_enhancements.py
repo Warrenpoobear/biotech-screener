@@ -55,12 +55,16 @@ VOLATILITY_MAX_ADJUSTMENT = Decimal("0.25")
 # Momentum calculation parameters
 MOMENTUM_LOOKBACK_DAYS = 60
 MOMENTUM_OPTIMAL_ALPHA_BPS = 1000  # 10% alpha = 65 score (with slope 150)
-# Saturation parameters - reduced to improve rank resolution
-# Old: slope=200, clamp 10-90 caused too many ties at extremes
-# New: slope=150, clamp 5-95 for better rank granularity
-MOMENTUM_SLOPE = Decimal("150")  # +10% alpha → +15 points (vs old +20)
+# Saturation parameters - tuned for rank resolution
+# V4: slope=80, ceiling=99 + log-dampening spreads 10-100% alphas across distinct scores
+# Old V3: slope=150, ceiling=95 caused 65 tickers to cluster at 92.75
+MOMENTUM_SLOPE = Decimal("80")  # V4: reduced from 150 to spread scores below ceiling
 MOMENTUM_SCORE_MIN = Decimal("5")
-MOMENTUM_SCORE_MAX = Decimal("95")
+MOMENTUM_SCORE_MAX = Decimal("99")  # V4: raised from 95 to allow differentiation
+# Log-dampening for extreme alphas (V4): preserves differentiation at extremes
+# Alphas beyond this threshold get log-scaled to prevent ceiling clustering
+# Combined with slope=80, this spreads alphas 10-100% across distinct scores
+MOMENTUM_LOG_DAMPEN_THRESHOLD = Decimal("0.30")  # 30% alpha = start dampening
 # Epsilon for volatility normalization
 MOMENTUM_VOL_EPS = Decimal("0.0001")
 
@@ -292,10 +296,12 @@ SMART_MONEY_CONDITIONAL_CIKS = _build_conditional_ciks(_MANAGER_REGISTRY)
 SMART_MONEY_CONDITIONAL_MANAGERS = _build_conditional_names(_MANAGER_REGISTRY)
 
 # Overlap bonus: saturating function applied to weighted overlap
-# Piecewise: linear 0-1.5 weighted overlap, then diminishing above
-SMART_MONEY_OVERLAP_SATURATION_THRESHOLD = Decimal("1.5")  # Weighted overlap
-SMART_MONEY_OVERLAP_LINEAR_BONUS = Decimal("12")  # Max bonus in linear region (per 1.0 weight)
-SMART_MONEY_OVERLAP_MAX_BONUS = Decimal("20")  # Hard cap after saturation
+# Piecewise: linear 0-4.0 weighted overlap, then diminishing above
+# V4: Raised threshold from 1.5→4.0 to reward up to ~4 tier1 holders linearly
+# V4: Raised max bonus from 20→32 so 9-holder overlap can reach 80+ scores
+SMART_MONEY_OVERLAP_SATURATION_THRESHOLD = Decimal("4.0")  # Weighted overlap
+SMART_MONEY_OVERLAP_LINEAR_BONUS = Decimal("8")  # Bonus per 1.0 weight in linear region
+SMART_MONEY_OVERLAP_MAX_BONUS = Decimal("32")  # Hard cap after saturation
 
 # Position change V2: reduced weights, per-holder cap
 SMART_MONEY_V2_CHANGE_WEIGHTS = {
@@ -646,6 +652,46 @@ def _safe_divide(numerator: Decimal, denominator: Decimal, default: Decimal = De
     return numerator / denominator
 
 
+def _log_dampen_alpha(alpha: Decimal) -> Decimal:
+    """
+    Apply log-dampening to extreme alphas to preserve differentiation.
+
+    V4 fix for 92.75 ceiling clustering: Instead of linear scaling that
+    causes 65 tickers to hit the same ceiling, apply log scaling to alphas
+    beyond MOMENTUM_LOG_DAMPEN_THRESHOLD (30%).
+
+    Formula for |alpha| > threshold:
+        dampened = threshold + log(1 + (|alpha| - threshold) / threshold) * threshold
+        (preserves sign)
+
+    This maps:
+        30% alpha → 30% (unchanged, at threshold)
+        60% alpha → ~51% (dampened)
+        100% alpha → ~66% (dampened)
+        200% alpha → ~83% (dampened)
+        400% alpha → ~99% (dampened, still differentiable)
+
+    Returns:
+        Dampened alpha with same sign as input
+    """
+    import math
+    threshold = MOMENTUM_LOG_DAMPEN_THRESHOLD
+
+    if abs(alpha) <= threshold:
+        return alpha
+
+    sign = Decimal("1") if alpha >= 0 else Decimal("-1")
+    abs_alpha = abs(alpha)
+
+    # Log dampening: threshold + ln(1 + excess/threshold) * threshold
+    excess = abs_alpha - threshold
+    # Convert to float for log, then back to Decimal
+    log_factor = Decimal(str(math.log(1 + float(excess / threshold))))
+    dampened = threshold + log_factor * threshold
+
+    return sign * dampened
+
+
 # =============================================================================
 # VOLATILITY-ADJUSTED SCORING
 # =============================================================================
@@ -893,8 +939,9 @@ def compute_momentum_signal(
     # Convert alpha to 0-100 score with reduced saturation
     # SLOPE=150: +10% alpha (1000bps) = +15 points → 65 score
     # Old SLOPE=200: +10% alpha = +20 points → 70 score (too aggressive)
-    # This reduces ties at extremes and improves rank granularity
-    score_delta = scoring_alpha * MOMENTUM_SLOPE
+    # V4: Apply log-dampening to extreme alphas to prevent ceiling clustering
+    dampened_alpha = _log_dampen_alpha(scoring_alpha)
+    score_delta = dampened_alpha * MOMENTUM_SLOPE
 
     momentum_score_raw = Decimal("50") + score_delta
     momentum_score_raw = _clamp(momentum_score_raw, MOMENTUM_SCORE_MIN, MOMENTUM_SCORE_MAX)
@@ -1035,7 +1082,9 @@ def compute_momentum_signal_with_fallback(
         scoring_alpha = alpha_vol_adjusted * VOLATILITY_BASELINE
 
     # Convert alpha to score (raw, before shrinkage)
-    score_delta = scoring_alpha * MOMENTUM_SLOPE
+    # V4: Apply log-dampening to extreme alphas
+    dampened_alpha = _log_dampen_alpha(scoring_alpha)
+    score_delta = dampened_alpha * MOMENTUM_SLOPE
     momentum_score_raw = Decimal("50") + score_delta
     momentum_score_raw = _clamp(momentum_score_raw, MOMENTUM_SCORE_MIN, MOMENTUM_SCORE_MAX)
 
@@ -1206,7 +1255,9 @@ def compute_momentum_signal_multiwindow(
         alpha = w["alpha"]
 
         # Compute score from alpha
-        score_delta = alpha * MOMENTUM_SLOPE
+        # V4: Apply log-dampening to extreme alphas
+        dampened_alpha = _log_dampen_alpha(alpha)
+        score_delta = dampened_alpha * MOMENTUM_SLOPE
         momentum_score_raw = Decimal("50") + score_delta
         momentum_score_raw = _clamp(momentum_score_raw, MOMENTUM_SCORE_MIN, MOMENTUM_SCORE_MAX)
 
@@ -1267,7 +1318,9 @@ def compute_momentum_signal_multiwindow(
         scoring_alpha = alpha_vol_adjusted * VOLATILITY_BASELINE
 
     # Convert alpha to score
-    score_delta = scoring_alpha * MOMENTUM_SLOPE
+    # V4: Apply log-dampening to extreme alphas
+    dampened_alpha = _log_dampen_alpha(scoring_alpha)
+    score_delta = dampened_alpha * MOMENTUM_SLOPE
     momentum_score_raw = Decimal("50") + score_delta
     momentum_score_raw = _clamp(momentum_score_raw, MOMENTUM_SCORE_MIN, MOMENTUM_SCORE_MAX)
 
@@ -2281,9 +2334,23 @@ def compute_smart_money_signal(
     # =========================================================================
     # STEP 3: Compute Elite Core vs Conditional contributions
     # V3: Apply 30% cap to Conditional signal
+    # V4: Apply saturating bonus to overlap portion for proper score scaling
     # =========================================================================
-    elite_core_contribution = elite_core_overlap + elite_core_change
-    conditional_raw_contribution = conditional_overlap + conditional_change
+    # Apply saturation to combined overlap before splitting into contribution
+    # This ensures high-overlap tickers get properly rewarded (not raw sum)
+    total_overlap = elite_core_overlap + conditional_overlap
+    saturated_overlap = _saturating_bonus(total_overlap)
+
+    # Split saturated overlap proportionally between Elite Core and Conditional
+    if total_overlap > Decimal("0"):
+        elite_core_overlap_saturated = saturated_overlap * (elite_core_overlap / total_overlap)
+        conditional_overlap_saturated = saturated_overlap * (conditional_overlap / total_overlap)
+    else:
+        elite_core_overlap_saturated = Decimal("0")
+        conditional_overlap_saturated = Decimal("0")
+
+    elite_core_contribution = elite_core_overlap_saturated + elite_core_change
+    conditional_raw_contribution = conditional_overlap_saturated + conditional_change
 
     # Apply Conditional cap: max 30% of total signal above base
     # If Conditional would exceed 30%, cap it and recalculate

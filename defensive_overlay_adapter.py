@@ -11,9 +11,12 @@ v2.0.0 (2026-01-29): Configuration-driven, utilizes all 9 defensive features
 v1.0.0: Original version with hardcoded thresholds
 """
 
+import logging
 from dataclasses import dataclass, field
 from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
+
+logger = logging.getLogger(__name__)
 
 WQ = Decimal("0.0001")  # Weight quantization
 
@@ -79,8 +82,11 @@ class DefensiveConfig:
     enable_vol_ratio: bool = False                       # Disabled by default (experimental)
 
     # Boost eligibility gate (prevents weak names from getting elite boosts)
-    # If pre-defensive score < threshold, cap multiplier at 1.0 (penalties still apply)
-    boost_eligibility_threshold: Decimal = Decimal("50")  # Min score to receive boost
+    # Uses percentile-within-cluster + absolute floor for robust calibration
+    # Gate threshold = max(floor, P{percentile} within cluster)
+    # V4: Raised from 49 to 51 to gate OPK (50.0) after slope reduction
+    boost_eligibility_floor: Decimal = Decimal("51")      # Absolute minimum score for boost
+    boost_eligibility_percentile: int = 60                # Must be in top X% within cluster (P60 = top 40%)
     enable_boost_eligibility_gate: bool = True            # Feature flag
 
     # Position sizing
@@ -121,7 +127,8 @@ class DefensiveConfig:
                 "vol_ratio": self.enable_vol_ratio,
                 "boost_eligibility_gate": self.enable_boost_eligibility_gate,
             },
-            "boost_eligibility_threshold": str(self.boost_eligibility_threshold),
+            "boost_eligibility_floor": str(self.boost_eligibility_floor),
+            "boost_eligibility_percentile": self.boost_eligibility_percentile,
         }
 
 
@@ -273,6 +280,212 @@ def _derive_defensive_bucket(mult: Decimal) -> str:
     return "neutral"
 
 
+# =============================================================================
+# FUNDAMENTAL RED-FLAG SUPPRESSOR (v1.0)
+# =============================================================================
+
+def detect_fundamental_red_flags(record: Dict) -> Tuple[bool, List[str]]:
+    """
+    Detect fundamental red flags that should suppress a security's rank.
+
+    This is a RISK SANITY OVERRIDE, not an alpha engine.
+    Prevents structurally broken companies from ranking above median
+    even when they appear defensive (low-vol, low-corr).
+
+    Returns:
+        Tuple of (is_flagged: bool, reason_codes: List[str])
+    """
+    reasons = []
+
+    # --- Financial Viability ---
+    # Cash runway < 6 months (from survivability_signal)
+    survivability = record.get("survivability_signal") or {}
+    metrics = survivability.get("metrics") or {}
+    runway = metrics.get("effective_runway_months")
+    if runway is not None:
+        try:
+            if float(runway) < 6:
+                reasons.append("cash_runway_lt_6m")
+        except (ValueError, TypeError):
+            pass
+
+    # Survivability score very negative (proxy for financial stress)
+    # Only flag if both debt is high AND runway is short (compound distress)
+    surv_score = survivability.get("score")
+    debt_to_cash = metrics.get("debt_to_cash")
+
+    if surv_score is not None:
+        try:
+            score = float(surv_score)
+            # Critical survivability: very negative score
+            if score <= -4.0:
+                reasons.append("survivability_critical")
+            # Moderate survivability concern + high debt = distress
+            elif score <= -2.0 and debt_to_cash is not None:
+                if float(debt_to_cash) > 3.0:
+                    reasons.append("debt_distress_with_weak_surv")
+        except (ValueError, TypeError):
+            pass
+
+    # --- Capital Structure / Dilution ---
+    # Check dilution risk from enhancement layer
+    score_breakdown = record.get("score_breakdown") or {}
+    enhancements = score_breakdown.get("enhancements") or {}
+
+    # Also check top-level dilution fields
+    dilution = record.get("dilution_risk_signal") or {}
+    if dilution.get("risk_level") == "HIGH":
+        reasons.append("dilution_risk_high")
+
+    # --- Clinical Credibility ---
+    # Single asset risk profile + early stage = high binary risk
+    stage = record.get("stage_bucket") or ""
+    pipeline = record.get("pipeline_diversity_signal") or {}
+    risk_profile = pipeline.get("risk_profile") or ""
+
+    if risk_profile == "single_asset":
+        if stage.lower() in ["early", "preclinical"]:
+            reasons.append("single_asset_early_stage")
+
+    # Check for negative phase momentum from flags
+    flags = record.get("flags") or []
+    if isinstance(flags, list):
+        for flag in flags:
+            if isinstance(flag, str) and "trial_failure" in flag.lower():
+                reasons.append("recent_trial_failure")
+                break
+
+    # Check competitive intensity - if intense competition + weak position
+    comp_signal = record.get("competitive_intensity_signal") or {}
+    crowding = comp_signal.get("crowding_level") or ""
+    position = comp_signal.get("competitive_position") or ""
+    if crowding == "intense" and position in ["weak", "disadvantaged"]:
+        reasons.append("weak_competitive_position")
+
+    return (len(reasons) > 0, reasons)
+
+
+def classify_rank_driver(record: Dict) -> str:
+    """
+    Classify what is driving a security's rank for IC audit.
+
+    Returns one of:
+        - "alpha": Ranking driven by signal strength (no material defensive effect)
+        - "defensive_boost": Ranking materially improved by defensive overlay
+        - "defensive_penalty": Ranking materially hurt by defensive overlay
+        - "suppressed": Ranking capped by fundamental red-flag suppressor
+    """
+    # Check if suppressed
+    if record.get("composite_score_pre_suppression"):
+        return "suppressed"
+
+    # Check defensive effect
+    mult = record.get("defensive_multiplier")
+    if mult:
+        try:
+            m = float(mult)
+            if m >= 1.20:
+                return "defensive_boost"
+            elif m <= 0.90:
+                return "defensive_penalty"
+        except (ValueError, TypeError):
+            pass
+
+    return "alpha"
+
+
+def apply_red_flag_suppression(
+    ranked_securities: List[Dict],
+    enable_suppression: bool = True,
+) -> Dict[str, any]:
+    """
+    Apply fundamental red-flag suppression to ranked securities.
+
+    Red-flagged securities are capped at median score.
+    This ensures no structurally broken company ranks above median.
+
+    Args:
+        ranked_securities: List of ranked security records (modified in place)
+        enable_suppression: Feature flag to enable/disable
+
+    Returns:
+        Provenance dict with suppression statistics
+    """
+    if not enable_suppression or not ranked_securities:
+        return {
+            "suppressor_enabled": False,
+            "suppressor_version": "1.0.0",
+        }
+
+    # Compute median score for cap
+    scores = []
+    for rec in ranked_securities:
+        score = rec.get("composite_score")
+        if score is not None:
+            try:
+                scores.append(float(score))
+            except (ValueError, TypeError):
+                pass
+
+    if not scores:
+        return {
+            "suppressor_enabled": True,
+            "suppressor_version": "1.0.0",
+            "error": "no_valid_scores",
+        }
+
+    median_score = Decimal(str(sorted(scores)[len(scores) // 2]))
+
+    flagged_count = 0
+    suppressed_count = 0
+
+    for rec in ranked_securities:
+        # Detect red flags
+        is_flagged, reasons = detect_fundamental_red_flags(rec)
+
+        rec["fundamental_red_flag"] = is_flagged
+        rec["fundamental_red_flag_reasons"] = reasons
+
+        if is_flagged:
+            flagged_count += 1
+            current_score = rec.get("composite_score")
+
+            if current_score is not None:
+                try:
+                    current = Decimal(str(current_score))
+                    # Store pre-suppression score
+                    rec["composite_score_pre_suppression"] = str(current)
+
+                    # Cap at median
+                    if current > median_score:
+                        rec["composite_score"] = str(median_score)
+                        suppressed_count += 1
+                except (ValueError, TypeError, InvalidOperation):
+                    pass
+
+    # Re-rank after suppression
+    rankable = [r for r in ranked_securities if r.get("rankable", True)]
+    rankable.sort(key=lambda x: float(x.get("composite_score", 0)), reverse=True)
+    for i, rec in enumerate(rankable, 1):
+        rec["composite_rank"] = i
+
+    # Add rank_driver classification for IC audit
+    driver_counts = {"alpha": 0, "defensive_boost": 0, "defensive_penalty": 0, "suppressed": 0}
+    for rec in ranked_securities:
+        driver = classify_rank_driver(rec)
+        rec["rank_driver"] = driver
+        driver_counts[driver] += 1
+
+    return {
+        "suppressor_enabled": True,
+        "suppressor_version": "1.0.0",
+        "median_score_used": str(median_score),
+        "flagged_count": flagged_count,
+        "suppressed_count": suppressed_count,
+        "rank_driver_counts": driver_counts,
+    }
+
+
 def _extract_audit_features(defensive_features: Dict[str, str]) -> Dict[str, Optional[str]]:
     """
     Extract key defensive features for audit output.
@@ -281,11 +494,12 @@ def _extract_audit_features(defensive_features: Dict[str, str]) -> Dict[str, Opt
     making "why did this move?" questions trivial without re-joining to source.
 
     Returns:
-        Dict with corr, vol, rsi, momentum, drawdown (string values or None)
+        Dict with corr, vol, beta, rsi, momentum, drawdown (string values or None)
     """
     # Get values with alias handling (same as defensive_multiplier)
     corr = defensive_features.get("corr_xbi") or defensive_features.get("corr_xbi_120d")
     vol = defensive_features.get("vol_60d")
+    beta = defensive_features.get("beta_xbi_60d")
     rsi = defensive_features.get("rsi_14d")
     momentum = defensive_features.get("ret_21d")
     drawdown = defensive_features.get("drawdown_current") or defensive_features.get("drawdown_60d")
@@ -293,10 +507,125 @@ def _extract_audit_features(defensive_features: Dict[str, str]) -> Dict[str, Opt
     return {
         "corr_xbi": corr,
         "vol_60d": vol,
+        "beta_xbi_60d": beta,
         "rsi_14d": rsi,
         "ret_21d": momentum,
         "drawdown": drawdown,
     }
+
+
+def compute_cluster_percentile_thresholds(
+    ranked_securities: List[Dict],
+    percentile: int = 60,
+    floor: Decimal = Decimal("40"),
+) -> Tuple[Dict[str, Decimal], Dict[str, Any]]:
+    """
+    Compute boost eligibility threshold for each cluster using percentile + floor.
+
+    For each cluster, the threshold is:
+        max(floor, P{percentile} of pre-defensive composite scores within cluster)
+
+    This ensures:
+    - No name below absolute floor gets boosted (floor = 40)
+    - Within each cluster, only top performers get boosted (P60 = top 40%)
+    - Small clusters don't get artificially low thresholds
+
+    Args:
+        ranked_securities: List of securities with composite_score and cluster_id
+        percentile: Percentile threshold (60 = top 40% within cluster)
+        floor: Absolute minimum threshold
+
+    Returns:
+        Tuple of (thresholds dict, diagnostics dict)
+        - thresholds: cluster_id -> threshold (Decimal)
+        - diagnostics: exclusion counts and threshold sources
+    """
+    import numpy as np
+    from collections import defaultdict
+
+    # Diagnostics for audit trail
+    diagnostics = {
+        "total_records": len(ranked_securities),
+        "missing_cluster_id": 0,
+        "missing_score": 0,
+        "valid_records": 0,
+        "clusters_seen": set(),
+        "members_per_cluster": {},
+        "threshold_sources": {},  # cluster_id -> "percentile" or "floor"
+    }
+
+    # Group scores by cluster
+    # P0: Prefer pre-defensive score when present (robust to score-key drift)
+    cluster_scores: Dict[str, List[float]] = defaultdict(list)
+    for rec in ranked_securities:
+        cluster_id = rec.get("cluster_id")
+        # Use pre-defensive score if available (avoids circular dependency)
+        score = rec.get("composite_score_before_defensive") or rec.get("composite_score")
+
+        if cluster_id is None:
+            diagnostics["missing_cluster_id"] += 1
+            continue
+        if score is None:
+            diagnostics["missing_score"] += 1
+            continue
+
+        try:
+            cluster_scores[cluster_id].append(float(score))
+            diagnostics["valid_records"] += 1
+            diagnostics["clusters_seen"].add(cluster_id)
+        except (ValueError, TypeError):
+            pass
+
+    # Convert set to list for JSON serialization
+    diagnostics["clusters_seen"] = sorted(diagnostics["clusters_seen"], key=str)
+    diagnostics["members_per_cluster"] = {
+        str(k): len(v) for k, v in cluster_scores.items()
+    }
+
+    # Compute threshold for each cluster
+    thresholds = {}
+    for cluster_id, scores in cluster_scores.items():
+        if len(scores) >= 2:
+            # P{percentile} = percentile threshold
+            p_threshold = np.percentile(scores, percentile)
+            source = "percentile"
+        else:
+            # Single-member cluster: use their score as threshold
+            p_threshold = scores[0] if scores else float(floor)
+            source = "single_member"
+
+        # Final threshold = max(floor, percentile threshold)
+        final_threshold = max(floor, Decimal(str(round(p_threshold, 2))))
+
+        # Track if floor dominated
+        if final_threshold == floor and Decimal(str(round(p_threshold, 2))) < floor:
+            source = "floor_dominated"
+
+        thresholds[cluster_id] = final_threshold
+        diagnostics["threshold_sources"][str(cluster_id)] = source
+
+    # Log warning if no thresholds computed
+    if not thresholds:
+        logger.warning(
+            f"CLUSTER_THRESHOLD_EMPTY: total={diagnostics['total_records']}, "
+            f"missing_cluster={diagnostics['missing_cluster_id']}, "
+            f"missing_score={diagnostics['missing_score']}, "
+            f"valid={diagnostics['valid_records']}"
+        )
+
+    # P0: Alert when percentile gating is effectively dead (all clusters floor-dominated)
+    if thresholds:
+        sources = diagnostics["threshold_sources"]
+        floor_dominated_count = sum(1 for s in sources.values() if s == "floor_dominated")
+        if floor_dominated_count == len(sources) and floor_dominated_count > 0:
+            logger.warning(
+                f"PERCENTILE_GATE_INACTIVE: All {floor_dominated_count} clusters are floor_dominated "
+                f"(floor={floor}). Percentile gating has no effect. "
+                f"Consider lowering floor or investigating score distribution."
+            )
+            diagnostics["all_clusters_floor_dominated"] = True
+
+    return thresholds, diagnostics
 
 
 def defensive_multiplier(
@@ -758,7 +1087,31 @@ def enrich_with_defensive_overlays(
             defensive_features = ticker_data.get("defensive_features", {})
             rec["_position_weight_raw"] = raw_inv_vol_weight(defensive_features or {})
 
-    # Step 2: Compute defensive multiplier for all securities
+    # Step 2: Compute cluster percentile thresholds for boost eligibility gate
+    # This must happen BEFORE multiplier application so we use pre-defensive scores
+    cluster_thresholds = {}
+    cluster_threshold_diagnostics = {}
+    if cfg.enable_boost_eligibility_gate:
+        cluster_thresholds, cluster_threshold_diagnostics = compute_cluster_percentile_thresholds(
+            ranked,
+            percentile=cfg.boost_eligibility_percentile,
+            floor=cfg.boost_eligibility_floor,
+        )
+        # Add threshold info to provenance (with diagnostics for audit)
+        output["defensive_overlay_config"]["cluster_boost_thresholds"] = {
+            k: str(v) for k, v in cluster_thresholds.items()
+        }
+        output["defensive_overlay_config"]["cluster_threshold_diagnostics"] = cluster_threshold_diagnostics
+
+        # Log warning if thresholds are empty (falling back to floor-only)
+        if not cluster_thresholds:
+            logger.warning(
+                f"BOOST_GATE_FLOOR_ONLY: No cluster thresholds computed, "
+                f"falling back to floor={cfg.boost_eligibility_floor}. "
+                f"Diagnostics: {cluster_threshold_diagnostics}"
+            )
+
+    # Step 3: Compute defensive multiplier for all securities
     # Always add fields; only modify composite_score and re-rank when apply_multiplier=True
     multiplier_stats = {"elite": 0, "good": 0, "penalty": 0, "neutral": 0}
 
@@ -767,20 +1120,24 @@ def enrich_with_defensive_overlays(
         ticker_data = scores_by_ticker.get(ticker, {})
         defensive_features = ticker_data.get("defensive_features", {})
 
-        # Get current composite score
+        # Get current composite score (pre-defensive)
         current_score = Decimal(rec["composite_score"])
+        cluster_id = rec.get("cluster_id")
 
         # Always compute multiplier (for risk_adjusted_score and diagnostics)
         mult, notes = defensive_multiplier(defensive_features or {}, config=cfg)
 
         # Boost eligibility gate: prevent weak names from getting elite boosts
         # Penalties (mult < 1.0) always apply; boosts only if score >= threshold
+        # Threshold = max(floor, P{percentile} within cluster)
         boost_gated = False
         if cfg.enable_boost_eligibility_gate and mult > Decimal("1.0"):
-            if current_score < cfg.boost_eligibility_threshold:
+            # Get cluster-specific threshold (fallback to floor if cluster not found)
+            threshold = cluster_thresholds.get(cluster_id, cfg.boost_eligibility_floor)
+            if current_score < threshold:
                 # Cap at 1.0 - no boost for low-quality names
                 mult = Decimal("1.0")
-                notes.append(f"def_boost_gated_below_{cfg.boost_eligibility_threshold}")
+                notes.append(f"def_boost_gated_below_{threshold}_in_{cluster_id or 'unknown'}")
                 boost_gated = True
 
         # Track multiplier distribution (after gate applied)
@@ -1118,6 +1475,10 @@ __all__ = [
     "raw_inv_vol_weight",
     "calculate_dynamic_floor",
     "apply_caps_and_renormalize",
+    "compute_cluster_percentile_thresholds",
+    # Red-flag suppressor
+    "detect_fundamental_red_flags",
+    "apply_red_flag_suppression",
     # Integration
     "enrich_with_defensive_overlays",
     "validate_defensive_integration",
