@@ -17,15 +17,15 @@ CORE_COLUMNS = [
 
 # Signal columns (flattened from nested dicts)
 SIGNAL_COLUMNS = [
-    "momentum_score", "momentum_window", "momentum_return",
-    "catalyst_score", "catalyst_effective_score", "catalyst_event_count",
+    "momentum_score", "momentum_window", "momentum_alpha",
+    "catalyst_score", "catalyst_effective_score", "catalyst_proximity_score",
     "smart_money_score", "smart_money_overlap", "smart_money_tier1_holders",
-    "short_interest_score", "short_interest_pct", "short_interest_days_to_cover",
-    "pos_score", "pos_confidence",
-    "partnership_score", "partnership_strength",
+    "short_interest_score", "short_interest_crowding", "short_interest_squeeze",
+    "valuation_score", "valuation_method", "valuation_confidence",
+    "partnership_score", "partnership_strength", "partnership_top_partners",
     "fda_designation_score", "fda_designations",
-    "competitive_intensity_score", "competitive_intensity_level",
-    "pipeline_diversity_score", "pipeline_diversity_status",
+    "competitive_intensity_score", "competitive_crowding_level",
+    "pipeline_diversity_score", "pipeline_risk_profile",
 ]
 
 # Confidence columns
@@ -51,52 +51,55 @@ def flatten_record(rec: Dict[str, Any]) -> Dict[str, Any]:
     mom = rec.get("momentum_signal") or {}
     flat["momentum_score"] = mom.get("momentum_score")
     flat["momentum_window"] = mom.get("window_used")
-    flat["momentum_return"] = mom.get("return_value")
+    flat["momentum_alpha"] = mom.get("alpha_60d")
 
     # Catalyst signal
     cat_eff = rec.get("catalyst_effective") or {}
-    flat["catalyst_score"] = cat_eff.get("catalyst_score")
-    flat["catalyst_effective_score"] = cat_eff.get("effective_score")
-    flat["catalyst_event_count"] = cat_eff.get("event_count")
+    flat["catalyst_score"] = cat_eff.get("catalyst_score_window")
+    flat["catalyst_effective_score"] = cat_eff.get("catalyst_score_effective")
+    flat["catalyst_proximity_score"] = cat_eff.get("catalyst_proximity_score")
 
     # Smart money signal
     sm = rec.get("smart_money_signal") or {}
-    flat["smart_money_score"] = sm.get("smart_money_score")
+    flat["smart_money_score"] = sm.get("score")
     flat["smart_money_overlap"] = sm.get("overlap_count")
     tier1 = sm.get("tier1_holders") or []
     flat["smart_money_tier1_holders"] = "; ".join(tier1) if tier1 else ""
 
     # Short interest signal
     si = rec.get("short_interest_signal") or {}
-    flat["short_interest_score"] = si.get("short_interest_score")
-    flat["short_interest_pct"] = si.get("short_pct")
-    flat["short_interest_days_to_cover"] = si.get("days_to_cover")
+    flat["short_interest_score"] = si.get("score")
+    flat["short_interest_crowding"] = si.get("crowding_risk")
+    flat["short_interest_squeeze"] = si.get("squeeze_potential")
 
-    # PoS (from valuation_signal)
+    # Valuation signal (PoS)
     val_sig = rec.get("valuation_signal") or {}
-    flat["pos_score"] = val_sig.get("pos_score")
-    flat["pos_confidence"] = val_sig.get("pos_confidence")
+    flat["valuation_score"] = val_sig.get("valuation_score")
+    flat["valuation_method"] = val_sig.get("method")
+    flat["valuation_confidence"] = val_sig.get("confidence")
 
     # Partnership signal
     part = rec.get("partnership_signal") or {}
     flat["partnership_score"] = part.get("partnership_score")
     flat["partnership_strength"] = part.get("partnership_strength")
+    top_partners = part.get("top_partners") or []
+    flat["partnership_top_partners"] = "; ".join(top_partners) if top_partners else ""
 
     # FDA designation signal
     fda = rec.get("fda_designation_signal") or {}
     flat["fda_designation_score"] = fda.get("designation_score")
-    desigs = fda.get("designations") or []
+    desigs = fda.get("designation_types") or []
     flat["fda_designations"] = "; ".join(desigs) if desigs else ""
 
     # Competitive intensity signal
     ci = rec.get("competitive_intensity_signal") or {}
     flat["competitive_intensity_score"] = ci.get("intensity_score")
-    flat["competitive_intensity_level"] = ci.get("intensity_level")
+    flat["competitive_crowding_level"] = ci.get("crowding_level")
 
     # Pipeline diversity signal
     pd = rec.get("pipeline_diversity_signal") or {}
     flat["pipeline_diversity_score"] = pd.get("diversity_score")
-    flat["pipeline_diversity_status"] = pd.get("diversity_status")
+    flat["pipeline_risk_profile"] = pd.get("risk_profile")
 
     # Confidence columns
     for col in CONFIDENCE_COLUMNS:
