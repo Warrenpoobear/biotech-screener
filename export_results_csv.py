@@ -13,6 +13,8 @@ CORE_COLUMNS = [
     "expected_excess_return", "volatility", "drawdown", "cluster_id",
     "corr_xbi", "beta_xbi",  # Diversification proof columns
     "defensive_multiplier", "defensive_bucket", "defensive_notes",
+    "rank_driver",  # IC audit: alpha | defensive_boost | defensive_penalty | suppressed
+    "fundamental_red_flag", "fundamental_red_flag_reasons",
     "severity", "stage_bucket", "market_cap_bucket", "rankable",
 ]
 
@@ -48,10 +50,18 @@ def flatten_record(rec: Dict[str, Any]) -> Dict[str, Any]:
         else:
             flat[col] = val
 
-    # Defensive features (corr/beta for diversification proof)
+    # Defensive features (corr/beta/vol/drawdown for diversification proof)
     def_feat = rec.get("defensive_features") or {}
     flat["corr_xbi"] = def_feat.get("corr_xbi")
     flat["beta_xbi"] = def_feat.get("beta_xbi_60d")
+    flat["volatility"] = def_feat.get("vol_60d")
+    flat["drawdown"] = def_feat.get("drawdown")
+
+    # Rank driver and red-flag fields
+    flat["rank_driver"] = rec.get("rank_driver")
+    flat["fundamental_red_flag"] = rec.get("fundamental_red_flag")
+    red_flag_reasons = rec.get("fundamental_red_flag_reasons") or []
+    flat["fundamental_red_flag_reasons"] = "; ".join(red_flag_reasons) if red_flag_reasons else ""
 
     # Momentum signal
     mom = rec.get("momentum_signal") or {}

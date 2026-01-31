@@ -516,9 +516,18 @@ def _extract_confidence_catalyst(cat_data: Any) -> Decimal:
 
 
 def _extract_confidence_pos(pos_data: Optional[Dict]) -> Decimal:
-    """Extract confidence for PoS score."""
+    """Extract confidence for PoS score.
+
+    Reads pos_confidence from PoS engine (stage + indication adjusted).
+    Falls back to 0.7 if pos_score exists but confidence missing.
+    """
     if not pos_data:
         return Decimal("0")
+    # Primary: read pos_confidence from PoS engine
+    conf = _to_decimal(pos_data.get("pos_confidence"))
+    if conf is not None:
+        return _clamp(conf, Decimal("0"), Decimal("1"))
+    # Fallback: legacy "confidence" field
     conf = _to_decimal(pos_data.get("confidence"))
     if conf is not None:
         return _clamp(conf, Decimal("0"), Decimal("1"))

@@ -280,18 +280,27 @@ Each security is assigned a **defensive bucket**:
 
 ### 7.1 Boost Eligibility Rule
 
-Defensive **boosts are conditional**.
+Defensive **boosts are conditional** using a percentile-within-cluster + floor gate.
 
 ```
 Elite status requires:
-  pre_defensive_composite_score >= quality_threshold
+  pre_defensive_composite_score >= max(floor, P{percentile} within cluster)
 ```
 
-**Default threshold:** 50
+**Default parameters:**
+- Floor: 49 (absolute minimum score for boost eligibility)
+- Percentile: 60 (top 40% within cluster must exceed P60)
+
+**Formula:**
+```python
+threshold = max(boost_eligibility_floor, np.percentile(cluster_scores, percentile))
+```
 
 **Rationale**
 
 - Prevents low-quality, low-volatility names from being promoted
+- Percentile-within-cluster adapts to universe composition
+- Absolute floor prevents manipulation in weak clusters
 - Preserves alpha integrity
 - Aligns with institutional diversification practice
 
@@ -305,7 +314,18 @@ Elite status requires:
 When a security is boost-gated, the output includes:
 
 ```
-def_boost_gated_below_<threshold>
+def_boost_gated_below_<threshold>_in_<cluster_id>
+```
+
+### 7.4 Cluster Threshold Provenance
+
+Each run outputs the computed threshold for each cluster:
+
+```json
+"cluster_boost_thresholds": {
+  "oncology_phase2_small": "52.0",
+  "cns_phase3_mid": "58.0"
+}
 ```
 
 ---

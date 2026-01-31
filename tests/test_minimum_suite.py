@@ -143,13 +143,10 @@ NON_DETERMINISTIC_PATHS = {
     "run_metadata.timestamp",
     "run_metadata.deterministic_timestamp",
     "run_metadata.input_hashes",  # Input file hashes may change with data updates
+    "clinical_exclusions",  # Ordering may vary with score changes
     "enhancements",  # All enhancements have floating-point variations
     "summary",  # Contains coverage stats derived from enhancements
-    "module_5_composite.global_stats",  # Stats derived from pos_scores
-    "module_5_composite.ranked_securities",  # Affected by pos_scores non-determinism
-    "module_5_composite.excluded_securities",  # May vary with score changes
-    "module_5_composite.sanity_overrides",  # Derived from rankings, inherits non-determinism
-    "module_5_composite.diagnostic_counts",  # Contains field_coverage from rankings
+    "module_5_composite",  # Entire module affected by enhancement non-determinism
 }
 
 

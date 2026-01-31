@@ -5,7 +5,7 @@
     "module_version": "3A.2.0",
     "prior_snapshot_date": null,
     "severe_negatives": 0,
-    "tickers_analyzed": 307
+    "tickers_analyzed": 346
   },
   "summaries": [
     {
@@ -31,6 +31,30 @@
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "ABCL"
+    },
+    {
+      "as_of_date": "2026-01-15",
+      "audit_hash": "f691a8b181814a00",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "ABEO"
+    },
+    {
+      "as_of_date": "2026-01-15",
+      "audit_hash": "257de622ecfdb76f",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "ABOS"
     },
     {
       "as_of_date": "2026-01-15",
@@ -118,6 +142,18 @@
     },
     {
       "as_of_date": "2026-01-15",
+      "audit_hash": "3fb149802215255b",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "ACRV"
+    },
+    {
+      "as_of_date": "2026-01-15",
       "audit_hash": "d6948a785a55dba8",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
@@ -163,6 +199,42 @@
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "AGIO"
+    },
+    {
+      "as_of_date": "2026-01-15",
+      "audit_hash": "6109f80a6b3e2094",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "AKTX"
+    },
+    {
+      "as_of_date": "2026-01-15",
+      "audit_hash": "2f83058caaf3eeff",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "ALDX"
+    },
+    {
+      "as_of_date": "2026-01-15",
+      "audit_hash": "d0c2c51b84e4aace",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "ALGS"
     },
     {
       "as_of_date": "2026-01-15",
@@ -418,6 +490,18 @@
     },
     {
       "as_of_date": "2026-01-15",
+      "audit_hash": "45dbc552df50970a",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "ARTV"
+    },
+    {
+      "as_of_date": "2026-01-15",
       "audit_hash": "6b6ac4213c704f48",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
@@ -439,6 +523,18 @@
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "ARWR"
+    },
+    {
+      "as_of_date": "2026-01-15",
+      "audit_hash": "2485d1d7863e5aa7",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "ASMB"
     },
     {
       "as_of_date": "2026-01-15",
@@ -706,6 +802,30 @@
     },
     {
       "as_of_date": "2026-01-15",
+      "audit_hash": "95e17ce829d6d640",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "BLTE"
+    },
+    {
+      "as_of_date": "2026-01-15",
+      "audit_hash": "2ce6242a8269b9b4",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "BMEA"
+    },
+    {
+      "as_of_date": "2026-01-15",
       "audit_hash": "64df8af48b1e9422",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
@@ -826,6 +946,30 @@
     },
     {
       "as_of_date": "2026-01-15",
+      "audit_hash": "d2b0d635f2f34853",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "CELC"
+    },
+    {
+      "as_of_date": "2026-01-15",
+      "audit_hash": "be48e2e281f8b3c8",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "CERS"
+    },
+    {
+      "as_of_date": "2026-01-15",
       "audit_hash": "b83068983630e71c",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
@@ -883,6 +1027,18 @@
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "CLLS"
+    },
+    {
+      "as_of_date": "2026-01-15",
+      "audit_hash": "cd83350c5d5acef4",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "CLYM"
     },
     {
       "as_of_date": "2026-01-15",
@@ -1114,6 +1270,18 @@
     },
     {
       "as_of_date": "2026-01-15",
+      "audit_hash": "c2b2f94b53c22eb7",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "DNTH"
+    },
+    {
+      "as_of_date": "2026-01-15",
       "audit_hash": "f1ee3676c8f2c7dd",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
@@ -1123,6 +1291,18 @@
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "DRMA"
+    },
+    {
+      "as_of_date": "2026-01-15",
+      "audit_hash": "83c56cdc354a3867",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "DRUG"
     },
     {
       "as_of_date": "2026-01-15",
@@ -1186,6 +1366,18 @@
     },
     {
       "as_of_date": "2026-01-15",
+      "audit_hash": "2e2e5effacf73ef2",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "ELDN"
+    },
+    {
+      "as_of_date": "2026-01-15",
       "audit_hash": "2b239296d1050fa0",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
@@ -1195,6 +1387,18 @@
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "ELVN"
+    },
+    {
+      "as_of_date": "2026-01-15",
+      "audit_hash": "485a805ca7d9f330",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "ENGN"
     },
     {
       "as_of_date": "2026-01-15",
@@ -1402,6 +1606,18 @@
     },
     {
       "as_of_date": "2026-01-15",
+      "audit_hash": "dcb3d922805a03a5",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "GBIO"
+    },
+    {
+      "as_of_date": "2026-01-15",
       "audit_hash": "24bc12960d7a053e",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
@@ -1546,6 +1762,18 @@
     },
     {
       "as_of_date": "2026-01-15",
+      "audit_hash": "fe5f8d3f290ba234",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "HOWL"
+    },
+    {
+      "as_of_date": "2026-01-15",
       "audit_hash": "671d2ffecc30b7e1",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
@@ -1618,6 +1846,18 @@
     },
     {
       "as_of_date": "2026-01-15",
+      "audit_hash": "dbe2c36d6619c295",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "IKT"
+    },
+    {
+      "as_of_date": "2026-01-15",
       "audit_hash": "0a0d69dda66c4e56",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
@@ -1663,6 +1903,18 @@
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "IMRX"
+    },
+    {
+      "as_of_date": "2026-01-15",
+      "audit_hash": "8fce230a5f7eb538",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "IMTX"
     },
     {
       "as_of_date": "2026-01-15",
@@ -1822,6 +2074,18 @@
     },
     {
       "as_of_date": "2026-01-15",
+      "audit_hash": "0f2ed6c8791a8495",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "JBIO"
+    },
+    {
+      "as_of_date": "2026-01-15",
       "audit_hash": "5aad03bfb5c535c3",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
@@ -1954,6 +2218,18 @@
     },
     {
       "as_of_date": "2026-01-15",
+      "audit_hash": "f5dcfcae7b7b315c",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "LBRX"
+    },
+    {
+      "as_of_date": "2026-01-15",
       "audit_hash": "1d557c4aa8d1f1e5",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
@@ -2059,6 +2335,18 @@
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "LYEL"
+    },
+    {
+      "as_of_date": "2026-01-15",
+      "audit_hash": "e68f53e629c4afcb",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "LYRA"
     },
     {
       "as_of_date": "2026-01-15",
@@ -2170,6 +2458,18 @@
     },
     {
       "as_of_date": "2026-01-15",
+      "audit_hash": "4ddf00ca07a155a4",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "MLTX"
+    },
+    {
+      "as_of_date": "2026-01-15",
       "audit_hash": "6c9773c701ff0598",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
@@ -2266,6 +2566,18 @@
     },
     {
       "as_of_date": "2026-01-15",
+      "audit_hash": "81224663c8a43530",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "NAUT"
+    },
+    {
+      "as_of_date": "2026-01-15",
       "audit_hash": "77c7d63a9eb1ad51",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
@@ -2299,6 +2611,18 @@
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "NGNE"
+    },
+    {
+      "as_of_date": "2026-01-15",
+      "audit_hash": "3f7703e0339f7c93",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "NKTX"
     },
     {
       "as_of_date": "2026-01-15",
@@ -2431,6 +2755,18 @@
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "OCGN"
+    },
+    {
+      "as_of_date": "2026-01-15",
+      "audit_hash": "c4c01e6211286d9c",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "OCS"
     },
     {
       "as_of_date": "2026-01-15",
@@ -2650,6 +2986,18 @@
     },
     {
       "as_of_date": "2026-01-15",
+      "audit_hash": "e5055283383e7c74",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "PRLD"
+    },
+    {
+      "as_of_date": "2026-01-15",
       "audit_hash": "f6be6ced02874836",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
@@ -2659,6 +3007,18 @@
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "PRME"
+    },
+    {
+      "as_of_date": "2026-01-15",
+      "audit_hash": "67746de433e3de3d",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "PRQR"
     },
     {
       "as_of_date": "2026-01-15",
@@ -2719,6 +3079,18 @@
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "PTGX"
+    },
+    {
+      "as_of_date": "2026-01-15",
+      "audit_hash": "d9a3679ada3d0038",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "PVLA"
     },
     {
       "as_of_date": "2026-01-15",
@@ -2986,6 +3358,18 @@
     },
     {
       "as_of_date": "2026-01-15",
+      "audit_hash": "a3dff860bf081a26",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "SABS"
+    },
+    {
+      "as_of_date": "2026-01-15",
       "audit_hash": "a85ecd7856ab04ee",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
@@ -3007,6 +3391,18 @@
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "SEPN"
+    },
+    {
+      "as_of_date": "2026-01-15",
+      "audit_hash": "0fc99b56df23d320",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "SERA"
     },
     {
       "as_of_date": "2026-01-15",
@@ -3055,6 +3451,18 @@
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "SION"
+    },
+    {
+      "as_of_date": "2026-01-15",
+      "audit_hash": "08f0dfb9f6fd4666",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "SKYE"
     },
     {
       "as_of_date": "2026-01-15",
@@ -3226,6 +3634,18 @@
     },
     {
       "as_of_date": "2026-01-15",
+      "audit_hash": "7a9eeb3dc5a86f26",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "TARA"
+    },
+    {
+      "as_of_date": "2026-01-15",
       "audit_hash": "04bc6cf12701c78e",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
@@ -3247,6 +3667,18 @@
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "TBPH"
+    },
+    {
+      "as_of_date": "2026-01-15",
+      "audit_hash": "554bee512a87421f",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "TCRX"
     },
     {
       "as_of_date": "2026-01-15",
@@ -3283,6 +3715,18 @@
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "TEM"
+    },
+    {
+      "as_of_date": "2026-01-15",
+      "audit_hash": "527130d74c80f57f",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "TENX"
     },
     {
       "as_of_date": "2026-01-15",
@@ -3514,6 +3958,18 @@
     },
     {
       "as_of_date": "2026-01-15",
+      "audit_hash": "a9b30ee145df462d",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "VKTX"
+    },
+    {
+      "as_of_date": "2026-01-15",
       "audit_hash": "aacf93f28ee56dc5",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
@@ -3535,6 +3991,18 @@
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "VOR"
+    },
+    {
+      "as_of_date": "2026-01-15",
+      "audit_hash": "ee9b26db9d1dd597",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "VRDN"
     },
     {
       "as_of_date": "2026-01-15",

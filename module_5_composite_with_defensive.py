@@ -37,6 +37,7 @@ from defensive_overlay_adapter import (
     load_defensive_cache,
     merge_cache_into_scores,
     attach_output_schema_columns,
+    apply_red_flag_suppression,
     OUTPUT_SCHEMA_VERSION,
     DEFAULT_DEFENSIVE_CONFIG,
     AGGRESSIVE_DEFENSIVE_CONFIG,
@@ -364,11 +365,11 @@ def compute_module_5_composite_with_defensive(
             f"Searched: {universe_search_paths or DEFAULT_UNIVERSE_PATHS}"
         )
 
-    # Merge offline cache if provided (fill gaps only)
+    # Merge offline cache if provided (overwrite with fresh PIT data)
     if defensive_cache_path:
         cache_features = load_defensive_cache(defensive_cache_path)
-        merged = merge_cache_into_scores(defensive_by_ticker, cache_features, overwrite=False)
-        logger.info(f"Defensive cache merge (fill gaps): merged_fields={merged} cache_tickers={len(cache_features)}")
+        merged = merge_cache_into_scores(defensive_by_ticker, cache_features, overwrite=True)
+        logger.info(f"Defensive cache merge (overwrite): merged_fields={merged} cache_tickers={len(cache_features)}")
 
     # Add defensive overlays
     # Select config object based on string parameter
@@ -380,16 +381,8 @@ def compute_module_5_composite_with_defensive(
             f"(config={cfg.config_id}, hash={cfg.config_hash()})"
         )
 
-    enrich_with_defensive_overlays(
-        output,
-        defensive_by_ticker,
-        apply_multiplier=apply_defensive_multiplier,
-        apply_position_sizing=apply_position_sizing,
-        top_n=None,  # Show all ranked securities (no limit)
-        defensive_config=cfg,
-    )
-
-    # Add clustering (always populate cluster_id for risk management)
+    # Add clustering FIRST (must populate cluster_id BEFORE defensive overlay)
+    # The defensive overlay uses cluster_id for percentile-within-cluster gate
     ranked_securities = output.get("ranked_securities", [])
 
     if enable_clustering:
@@ -436,6 +429,29 @@ def compute_module_5_composite_with_defensive(
             f"Clustering fallback: cohort_key-based, {cluster_provenance.get('n_clusters', 0)} clusters"
         )
         output["cluster_model"] = cluster_provenance
+
+    # NOW apply defensive overlay (after cluster_id is populated)
+    enrich_with_defensive_overlays(
+        output,
+        defensive_by_ticker,
+        apply_multiplier=apply_defensive_multiplier,
+        apply_position_sizing=apply_position_sizing,
+        top_n=None,  # Show all ranked securities (no limit)
+        defensive_config=cfg,
+    )
+
+    # Apply fundamental red-flag suppressor (AFTER defensive overlay)
+    # This caps structurally broken companies at median score
+    suppressor_provenance = apply_red_flag_suppression(
+        output.get("ranked_securities", []),
+        enable_suppression=True,  # Always on by default
+    )
+    output["fundamental_red_flag_config"] = suppressor_provenance
+    if suppressor_provenance.get("suppressed_count", 0) > 0:
+        logger.info(
+            f"Red-flag suppressor: {suppressor_provenance['flagged_count']} flagged, "
+            f"{suppressor_provenance['suppressed_count']} suppressed to median"
+        )
 
     # Attach output schema columns (score_z, expected_excess_return, volatility, etc.)
     field_coverage = attach_output_schema_columns(output)

@@ -2,6 +2,32 @@
 
 All notable changes to the biotech screener will be documented in this file.
 
+## [v4.0.2] - 2026-01-30
+
+### Summary
+Fix confidence_pos field extraction to use actual PoS engine confidence values.
+
+### Fixed
+
+#### PoS Confidence Not Flowing Through (P1)
+- **Bug**: `_extract_confidence_pos()` looked for `confidence` field but PoS engine outputs `pos_confidence`
+- **Impact**: All 307 tickers got hardcoded `confidence_pos = 0.70` instead of actual values (0.27-0.95)
+- **Fix**: Read `pos_confidence` field first, fall back to legacy `confidence` field
+- **Result**: 37 unique confidence_pos values now flow through, enabling proper risk-adjustment
+
+### Metrics
+
+| Metric | Before | After |
+|--------|--------|-------|
+| confidence_pos unique values | 1 | 37 |
+| confidence_pos range | 0.70 constant | 0.27-0.95 |
+
+### Files Modified
+- `module_5_scoring_v3.py` - Fixed `_extract_confidence_pos()` field lookup
+- `module_5_composite_v2.py` - Same fix for backwards compatibility
+
+---
+
 ## [v4.0.1] - 2026-01-30
 
 ### Summary
