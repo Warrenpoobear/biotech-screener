@@ -1,7 +1,7 @@
 {
   "metadata": {
     "creation_date": "2026-01-29",
-    "description": "Full biotech universe - 381 tickers from ETF holdings + Tier 1/Conditional manager 13F analysis",
+    "description": "Full biotech universe - 395 tickers from ETF holdings + Tier 1/Conditional manager 13F analysis",
     "source": "Major biotech ETFs and manager_registry.json (29 Elite Core + 6 Conditional managers)",
     "selection_criteria": "All biotech companies from major ETF holdings plus holdings from canonical manager registry",
     "manager_registry": "production_data/manager_registry.json",
@@ -180,6 +180,13 @@
       "ticker": "ALT",
       "company": "Altimmune, Inc.",
       "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "ALUR",
+      "company": "ALUR",
+      "stage": "clinical",
       "primary_indication": "Biotechnology",
       "market_cap_tier": "small"
     },
@@ -394,6 +401,13 @@
       "market_cap_tier": "small"
     },
     {
+      "ticker": "AVLO",
+      "company": "AVLO",
+      "stage": "clinical",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
       "ticker": "AVTR",
       "company": "Avantor, Inc.",
       "stage": "commercial",
@@ -436,6 +450,13 @@
       "market_cap_tier": "large"
     },
     {
+      "ticker": "BBNX",
+      "company": "BBNX",
+      "stage": "clinical",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
       "ticker": "BBOT",
       "company": "BridgeBio Oncology Therapeutics",
       "stage": "commercial",
@@ -476,6 +497,13 @@
       "stage": "commercial",
       "primary_indication": "Biotechnology",
       "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "BEONE",
+      "company": "BEONE",
+      "stage": "clinical",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
     },
     {
       "ticker": "BHVN",
@@ -686,6 +714,13 @@
       "stage": "commercial",
       "primary_indication": "Biotechnology",
       "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "CNTX",
+      "company": "CNTX",
+      "stage": "clinical",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
     },
     {
       "ticker": "COGT",
@@ -940,6 +975,13 @@
       "market_cap_tier": "small"
     },
     {
+      "ticker": "ETNB",
+      "company": "ETNB",
+      "stage": "clinical",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
       "ticker": "ETON",
       "company": "Eton Pharmaceuticals, Inc.",
       "stage": "commercial",
@@ -1122,6 +1164,13 @@
       "market_cap_tier": "mid"
     },
     {
+      "ticker": "GUTS",
+      "company": "GUTS",
+      "stage": "clinical",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
       "ticker": "HALO",
       "company": "Halozyme Therapeutics, Inc.",
       "stage": "commercial",
@@ -1230,6 +1279,13 @@
       "ticker": "IMTX",
       "company": "Healthcare",
       "stage": "commercial",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
+      "ticker": "IMUX",
+      "company": "IMUX",
+      "stage": "clinical",
       "primary_indication": "Biotechnology",
       "market_cap_tier": "small"
     },
@@ -1626,6 +1682,13 @@
       "market_cap_tier": "micro"
     },
     {
+      "ticker": "MRUS",
+      "company": "MRUS",
+      "stage": "clinical",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
       "ticker": "MRVI",
       "company": "Maravai LifeSciences Holdings, Inc.",
       "stage": "commercial",
@@ -1799,6 +1862,13 @@
       "stage": "commercial",
       "primary_indication": "Biotechnology",
       "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "OMDA",
+      "company": "OMDA",
+      "stage": "clinical",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
     },
     {
       "ticker": "OMER",
@@ -2179,6 +2249,13 @@
       "market_cap_tier": "small"
     },
     {
+      "ticker": "SCPH",
+      "company": "SCPH",
+      "stage": "clinical",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
       "ticker": "SEPN",
       "company": "Septerna, Inc.",
       "stage": "commercial",
@@ -2289,6 +2366,13 @@
       "stage": "commercial",
       "primary_indication": "Biotechnology",
       "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "SRZN",
+      "company": "SRZN",
+      "stage": "clinical",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
     },
     {
       "ticker": "STOK",
@@ -2431,6 +2515,13 @@
       "market_cap_tier": "small"
     },
     {
+      "ticker": "TRML",
+      "company": "TRML",
+      "stage": "clinical",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
+    },
+    {
       "ticker": "TRVI",
       "company": "Trevi Therapeutics, Inc.",
       "stage": "commercial",
@@ -2555,6 +2646,13 @@
       "stage": "commercial",
       "primary_indication": "Biotechnology",
       "market_cap_tier": "mid"
+    },
+    {
+      "ticker": "VRNA",
+      "company": "VRNA",
+      "stage": "clinical",
+      "primary_indication": "Biotechnology",
+      "market_cap_tier": "small"
     },
     {
       "ticker": "VRTX",

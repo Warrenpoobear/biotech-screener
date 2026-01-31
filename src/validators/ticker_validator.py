@@ -87,7 +87,6 @@ def is_valid_ticker(ticker: str, allow_internal: bool = True) -> Tuple[bool, str
     delisted_tickers = [
         'ADRO',   # Delisted
         'AKE',    # Delisted
-        'AKRO',   # Delisted (buyout)
         'BGXX',   # Bad data (0% volatility)
         'CRGX',   # Delisted
         'THRD',   # Delisted

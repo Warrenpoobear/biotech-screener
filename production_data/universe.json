@@ -1847,6 +1847,48 @@
     "NetIncome": -304742000
   },
   {
+    "ticker": "AKRO",
+    "name": "AKRO",
+    "exchange": "NASDAQ",
+    "sector": "Biotechnology",
+    "status": "active",
+    "added_from_etf": false,
+    "added_date": "2026-01-31",
+    "etf_sources": [],
+    "market_cap": "4499031040",
+    "description": "Added from tier1 manager overlap analysis (7 elite core managers)",
+    "cik": null,
+    "market_data": {
+      "price": null,
+      "market_cap": "4499031040",
+      "shares_outstanding": null,
+      "volume_avg_30d": null,
+      "52_week_high": null,
+      "52_week_low": null,
+      "pe_ratio": null,
+      "company_name": "AKRO",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "financial_data": {
+      "cash": null,
+      "debt": null,
+      "net_debt": null,
+      "revenue_ttm": null,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "defensive_features": {
+      "vol_60d": null,
+      "vol_20d": null,
+      "ret_21d": null,
+      "corr_xbi": null
+    }
+  },
+  {
     "ticker": "AKTX",
     "market_data": {
       "price": 0.254,
@@ -3282,6 +3324,48 @@
     "Revenue": 15000,
     "R&D": 48023000,
     "NetIncome": -60735000
+  },
+  {
+    "ticker": "ALUR",
+    "name": "ALUR",
+    "exchange": "NASDAQ",
+    "sector": "Biotechnology",
+    "status": "active",
+    "added_from_etf": false,
+    "added_date": "2026-01-31",
+    "etf_sources": [],
+    "market_cap": 0,
+    "description": "Added from tier1 manager overlap analysis (1 elite core managers)",
+    "cik": null,
+    "market_data": {
+      "price": null,
+      "market_cap": 0,
+      "shares_outstanding": null,
+      "volume_avg_30d": null,
+      "52_week_high": null,
+      "52_week_low": null,
+      "pe_ratio": null,
+      "company_name": "ALUR",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "financial_data": {
+      "cash": null,
+      "debt": null,
+      "net_debt": null,
+      "revenue_ttm": null,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "defensive_features": {
+      "vol_60d": null,
+      "vol_20d": null,
+      "ret_21d": null,
+      "corr_xbi": null
+    }
   },
   {
     "ticker": "ALVO",
@@ -5884,6 +5968,48 @@
     "Revenue": 351367000
   },
   {
+    "ticker": "AVLO",
+    "name": "AVLO",
+    "exchange": "NASDAQ",
+    "sector": "Biotechnology",
+    "status": "active",
+    "added_from_etf": false,
+    "added_date": "2026-01-31",
+    "etf_sources": [],
+    "market_cap": 0,
+    "description": "Added from tier1 manager overlap analysis (2 elite core managers)",
+    "cik": null,
+    "market_data": {
+      "price": null,
+      "market_cap": 0,
+      "shares_outstanding": null,
+      "volume_avg_30d": null,
+      "52_week_high": null,
+      "52_week_low": null,
+      "pe_ratio": null,
+      "company_name": "AVLO",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "financial_data": {
+      "cash": null,
+      "debt": null,
+      "net_debt": null,
+      "revenue_ttm": null,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "defensive_features": {
+      "vol_60d": null,
+      "vol_20d": null,
+      "ret_21d": null,
+      "corr_xbi": null
+    }
+  },
+  {
     "ticker": "AVTR",
     "name": "Avantor, Inc.",
     "status": "active",
@@ -7173,6 +7299,48 @@
     "Revenue": 347898000
   },
   {
+    "ticker": "BBNX",
+    "name": "BBNX",
+    "exchange": "NASDAQ",
+    "sector": "Biotechnology",
+    "status": "active",
+    "added_from_etf": false,
+    "added_date": "2026-01-31",
+    "etf_sources": [],
+    "market_cap": 0,
+    "description": "Added from tier1 manager overlap analysis (3 elite core managers)",
+    "cik": null,
+    "market_data": {
+      "price": null,
+      "market_cap": 0,
+      "shares_outstanding": null,
+      "volume_avg_30d": null,
+      "52_week_high": null,
+      "52_week_low": null,
+      "pe_ratio": null,
+      "company_name": "BBNX",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "financial_data": {
+      "cash": null,
+      "debt": null,
+      "net_debt": null,
+      "revenue_ttm": null,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "defensive_features": {
+      "vol_60d": null,
+      "vol_20d": null,
+      "ret_21d": null,
+      "corr_xbi": null
+    }
+  },
+  {
     "ticker": "BBOT",
     "name": "BBOT",
     "exchange": "NASDAQ",
@@ -7676,6 +7844,48 @@
     "Revenue": 25634000,
     "R&D": 310343000,
     "NetIncome": -324289000
+  },
+  {
+    "ticker": "BEONE",
+    "name": "BEONE",
+    "exchange": "NASDAQ",
+    "sector": "Biotechnology",
+    "status": "active",
+    "added_from_etf": false,
+    "added_date": "2026-01-31",
+    "etf_sources": [],
+    "market_cap": 0,
+    "description": "Added from tier1 manager overlap analysis (1 elite core managers)",
+    "cik": null,
+    "market_data": {
+      "price": null,
+      "market_cap": 0,
+      "shares_outstanding": null,
+      "volume_avg_30d": null,
+      "52_week_high": null,
+      "52_week_low": null,
+      "pe_ratio": null,
+      "company_name": "BEONE",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "financial_data": {
+      "cash": null,
+      "debt": null,
+      "net_debt": null,
+      "revenue_ttm": null,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "defensive_features": {
+      "vol_60d": null,
+      "vol_20d": null,
+      "ret_21d": null,
+      "corr_xbi": null
+    }
   },
   {
     "ticker": "BHVN",
@@ -9586,6 +9796,48 @@
     "NetIncome": -17246000
   },
   {
+    "ticker": "CDTX",
+    "name": "CDTX",
+    "exchange": "NASDAQ",
+    "sector": "Biotechnology",
+    "status": "active",
+    "added_from_etf": false,
+    "added_date": "2026-01-31",
+    "etf_sources": [],
+    "market_cap": 0,
+    "description": "Added from tier1 manager overlap analysis (5 elite core managers)",
+    "cik": null,
+    "market_data": {
+      "price": null,
+      "market_cap": 0,
+      "shares_outstanding": null,
+      "volume_avg_30d": null,
+      "52_week_high": null,
+      "52_week_low": null,
+      "pe_ratio": null,
+      "company_name": "CDTX",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "financial_data": {
+      "cash": null,
+      "debt": null,
+      "net_debt": null,
+      "revenue_ttm": null,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "defensive_features": {
+      "vol_60d": null,
+      "vol_20d": null,
+      "ret_21d": null,
+      "corr_xbi": null
+    }
+  },
+  {
     "ticker": "CDXS",
     "name": "CDXS",
     "exchange": "NASDAQ",
@@ -10134,6 +10386,48 @@
     "ShareholdersEquity": 301574000,
     "Revenue": 15000000,
     "NetIncome": -131369000
+  },
+  {
+    "ticker": "CNTX",
+    "name": "CNTX",
+    "exchange": "NASDAQ",
+    "sector": "Biotechnology",
+    "status": "active",
+    "added_from_etf": false,
+    "added_date": "2026-01-31",
+    "etf_sources": [],
+    "market_cap": 0,
+    "description": "Added from tier1 manager overlap analysis (3 elite core managers)",
+    "cik": null,
+    "market_data": {
+      "price": null,
+      "market_cap": 0,
+      "shares_outstanding": null,
+      "volume_avg_30d": null,
+      "52_week_high": null,
+      "52_week_low": null,
+      "pe_ratio": null,
+      "company_name": "CNTX",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "financial_data": {
+      "cash": null,
+      "debt": null,
+      "net_debt": null,
+      "revenue_ttm": null,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "defensive_features": {
+      "vol_60d": null,
+      "vol_20d": null,
+      "ret_21d": null,
+      "corr_xbi": null
+    }
   },
   {
     "ticker": "COGT",
@@ -14297,6 +14591,48 @@
     "ShareholdersEquity": -451361000,
     "NetIncome": -84513000,
     "Revenue": 234689000
+  },
+  {
+    "ticker": "ETNB",
+    "name": "ETNB",
+    "exchange": "NASDAQ",
+    "sector": "Biotechnology",
+    "status": "active",
+    "added_from_etf": false,
+    "added_date": "2026-01-31",
+    "etf_sources": [],
+    "market_cap": 0,
+    "description": "Added from tier1 manager overlap analysis (1 elite core managers)",
+    "cik": null,
+    "market_data": {
+      "price": null,
+      "market_cap": 0,
+      "shares_outstanding": null,
+      "volume_avg_30d": null,
+      "52_week_high": null,
+      "52_week_low": null,
+      "pe_ratio": null,
+      "company_name": "ETNB",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "financial_data": {
+      "cash": null,
+      "debt": null,
+      "net_debt": null,
+      "revenue_ttm": null,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "defensive_features": {
+      "vol_60d": null,
+      "vol_20d": null,
+      "ret_21d": null,
+      "corr_xbi": null
+    }
   },
   {
     "ticker": "ETON",
@@ -18883,6 +19219,48 @@
     }
   },
   {
+    "ticker": "GUTS",
+    "name": "GUTS",
+    "exchange": "NASDAQ",
+    "sector": "Biotechnology",
+    "status": "active",
+    "added_from_etf": false,
+    "added_date": "2026-01-31",
+    "etf_sources": [],
+    "market_cap": 0,
+    "description": "Added from tier1 manager overlap analysis (1 elite core managers)",
+    "cik": null,
+    "market_data": {
+      "price": null,
+      "market_cap": 0,
+      "shares_outstanding": null,
+      "volume_avg_30d": null,
+      "52_week_high": null,
+      "52_week_low": null,
+      "pe_ratio": null,
+      "company_name": "GUTS",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "financial_data": {
+      "cash": null,
+      "debt": null,
+      "net_debt": null,
+      "revenue_ttm": null,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "defensive_features": {
+      "vol_60d": null,
+      "vol_20d": null,
+      "ret_21d": null,
+      "corr_xbi": null
+    }
+  },
+  {
     "ticker": "HALO",
     "name": "Halozyme Therapeutics, Inc.",
     "status": "active",
@@ -19765,6 +20143,48 @@
       "company_name": "Healthcare",
       "sector": "Healthcare",
       "industry": "Biotechnology"
+    }
+  },
+  {
+    "ticker": "IMUX",
+    "name": "IMUX",
+    "exchange": "NASDAQ",
+    "sector": "Biotechnology",
+    "status": "active",
+    "added_from_etf": false,
+    "added_date": "2026-01-31",
+    "etf_sources": [],
+    "market_cap": 0,
+    "description": "Added from tier1 manager overlap analysis (1 elite core managers)",
+    "cik": null,
+    "market_data": {
+      "price": null,
+      "market_cap": 0,
+      "shares_outstanding": null,
+      "volume_avg_30d": null,
+      "52_week_high": null,
+      "52_week_low": null,
+      "pe_ratio": null,
+      "company_name": "IMUX",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "financial_data": {
+      "cash": null,
+      "debt": null,
+      "net_debt": null,
+      "revenue_ttm": null,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "defensive_features": {
+      "vol_60d": null,
+      "vol_20d": null,
+      "ret_21d": null,
+      "corr_xbi": null
     }
   },
   {
@@ -24010,6 +24430,48 @@
     "NetIncome": -158914000
   },
   {
+    "ticker": "KLRS",
+    "name": "KLRS",
+    "exchange": "NASDAQ",
+    "sector": "Biotechnology",
+    "status": "active",
+    "added_from_etf": false,
+    "added_date": "2026-01-31",
+    "etf_sources": [],
+    "market_cap": 0,
+    "description": "Added from tier1 manager overlap analysis (1 elite core managers)",
+    "cik": null,
+    "market_data": {
+      "price": null,
+      "market_cap": 0,
+      "shares_outstanding": null,
+      "volume_avg_30d": null,
+      "52_week_high": null,
+      "52_week_low": null,
+      "pe_ratio": null,
+      "company_name": "KLRS",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "financial_data": {
+      "cash": null,
+      "debt": null,
+      "net_debt": null,
+      "revenue_ttm": null,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "defensive_features": {
+      "vol_60d": null,
+      "vol_20d": null,
+      "ret_21d": null,
+      "corr_xbi": null
+    }
+  },
+  {
     "ticker": "KMDA",
     "name": "KMDA",
     "exchange": "NASDAQ",
@@ -27267,6 +27729,48 @@
     "NetIncome": -55964000
   },
   {
+    "ticker": "MRUS",
+    "name": "MRUS",
+    "exchange": "NASDAQ",
+    "sector": "Biotechnology",
+    "status": "active",
+    "added_from_etf": false,
+    "added_date": "2026-01-31",
+    "etf_sources": [],
+    "market_cap": 0,
+    "description": "Added from tier1 manager overlap analysis (5 elite core managers)",
+    "cik": null,
+    "market_data": {
+      "price": null,
+      "market_cap": 0,
+      "shares_outstanding": null,
+      "volume_avg_30d": null,
+      "52_week_high": null,
+      "52_week_low": null,
+      "pe_ratio": null,
+      "company_name": "MRUS",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "financial_data": {
+      "cash": null,
+      "debt": null,
+      "net_debt": null,
+      "revenue_ttm": null,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "defensive_features": {
+      "vol_60d": null,
+      "vol_20d": null,
+      "ret_21d": null,
+      "corr_xbi": null
+    }
+  },
+  {
     "ticker": "MRVI",
     "name": "Maravai LifeSciences Holdings, Inc.",
     "status": "active",
@@ -27345,6 +27849,48 @@
     "R&D": 13614000,
     "NetIncome": -95092000,
     "Revenue": 135877000
+  },
+  {
+    "ticker": "MTSR",
+    "name": "MTSR",
+    "exchange": "NASDAQ",
+    "sector": "Biotechnology",
+    "status": "active",
+    "added_from_etf": false,
+    "added_date": "2026-01-31",
+    "etf_sources": [],
+    "market_cap": 0,
+    "description": "Added from tier1 manager overlap analysis (3 elite core managers)",
+    "cik": null,
+    "market_data": {
+      "price": null,
+      "market_cap": 0,
+      "shares_outstanding": null,
+      "volume_avg_30d": null,
+      "52_week_high": null,
+      "52_week_low": null,
+      "pe_ratio": null,
+      "company_name": "MTSR",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "financial_data": {
+      "cash": null,
+      "debt": null,
+      "net_debt": null,
+      "revenue_ttm": null,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "defensive_features": {
+      "vol_60d": null,
+      "vol_20d": null,
+      "ret_21d": null,
+      "corr_xbi": null
+    }
   },
   {
     "ticker": "MYGN",
@@ -28709,6 +29255,48 @@
     "ShareholdersEquity": 307488000,
     "R&D": 114477000,
     "NetIncome": -116390000
+  },
+  {
+    "ticker": "OMDA",
+    "name": "OMDA",
+    "exchange": "NASDAQ",
+    "sector": "Biotechnology",
+    "status": "active",
+    "added_from_etf": false,
+    "added_date": "2026-01-31",
+    "etf_sources": [],
+    "market_cap": 0,
+    "description": "Added from tier1 manager overlap analysis (4 elite core managers)",
+    "cik": null,
+    "market_data": {
+      "price": null,
+      "market_cap": 0,
+      "shares_outstanding": null,
+      "volume_avg_30d": null,
+      "52_week_high": null,
+      "52_week_low": null,
+      "pe_ratio": null,
+      "company_name": "OMDA",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "financial_data": {
+      "cash": null,
+      "debt": null,
+      "net_debt": null,
+      "revenue_ttm": null,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "defensive_features": {
+      "vol_60d": null,
+      "vol_20d": null,
+      "ret_21d": null,
+      "corr_xbi": null
+    }
   },
   {
     "ticker": "OMER",
@@ -35136,6 +35724,48 @@
     "NetIncome": -185341000
   },
   {
+    "ticker": "SCPH",
+    "name": "SCPH",
+    "exchange": "NASDAQ",
+    "sector": "Biotechnology",
+    "status": "active",
+    "added_from_etf": false,
+    "added_date": "2026-01-31",
+    "etf_sources": [],
+    "market_cap": 0,
+    "description": "Added from tier1 manager overlap analysis (1 elite core managers)",
+    "cik": null,
+    "market_data": {
+      "price": null,
+      "market_cap": 0,
+      "shares_outstanding": null,
+      "volume_avg_30d": null,
+      "52_week_high": null,
+      "52_week_low": null,
+      "pe_ratio": null,
+      "company_name": "SCPH",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "financial_data": {
+      "cash": null,
+      "debt": null,
+      "net_debt": null,
+      "revenue_ttm": null,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "defensive_features": {
+      "vol_60d": null,
+      "vol_20d": null,
+      "ret_21d": null,
+      "corr_xbi": null
+    }
+  },
+  {
     "ticker": "SEPN",
     "name": "SEPN",
     "exchange": "NASDAQ",
@@ -37079,6 +37709,48 @@
     "NetIncome": -286974000
   },
   {
+    "ticker": "SRZN",
+    "name": "SRZN",
+    "exchange": "NASDAQ",
+    "sector": "Biotechnology",
+    "status": "active",
+    "added_from_etf": false,
+    "added_date": "2026-01-31",
+    "etf_sources": [],
+    "market_cap": 0,
+    "description": "Added from tier1 manager overlap analysis (3 elite core managers)",
+    "cik": null,
+    "market_data": {
+      "price": null,
+      "market_cap": 0,
+      "shares_outstanding": null,
+      "volume_avg_30d": null,
+      "52_week_high": null,
+      "52_week_low": null,
+      "pe_ratio": null,
+      "company_name": "SRZN",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "financial_data": {
+      "cash": null,
+      "debt": null,
+      "net_debt": null,
+      "revenue_ttm": null,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "defensive_features": {
+      "vol_60d": null,
+      "vol_20d": null,
+      "ret_21d": null,
+      "corr_xbi": null
+    }
+  },
+  {
     "ticker": "STOK",
     "name": "STOK",
     "exchange": "NASDAQ",
@@ -38308,6 +38980,48 @@
     "Revenue": 24122000
   },
   {
+    "ticker": "TRML",
+    "name": "TRML",
+    "exchange": "NASDAQ",
+    "sector": "Biotechnology",
+    "status": "active",
+    "added_from_etf": false,
+    "added_date": "2026-01-31",
+    "etf_sources": [],
+    "market_cap": 0,
+    "description": "Added from tier1 manager overlap analysis (1 elite core managers)",
+    "cik": null,
+    "market_data": {
+      "price": null,
+      "market_cap": 0,
+      "shares_outstanding": null,
+      "volume_avg_30d": null,
+      "52_week_high": null,
+      "52_week_low": null,
+      "pe_ratio": null,
+      "company_name": "TRML",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "financial_data": {
+      "cash": null,
+      "debt": null,
+      "net_debt": null,
+      "revenue_ttm": null,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "defensive_features": {
+      "vol_60d": null,
+      "vol_20d": null,
+      "ret_21d": null,
+      "corr_xbi": null
+    }
+  },
+  {
     "ticker": "TRVI",
     "name": "TRVI",
     "exchange": "NASDAQ",
@@ -38658,6 +39372,48 @@
     "ShareholdersEquity": 280509000,
     "R&D": 74742000,
     "NetIncome": -86113000
+  },
+  {
+    "ticker": "UNCY",
+    "name": "UNCY",
+    "exchange": "NASDAQ",
+    "sector": "Biotechnology",
+    "status": "active",
+    "added_from_etf": false,
+    "added_date": "2026-01-31",
+    "etf_sources": [],
+    "market_cap": 0,
+    "description": "Added from tier1 manager overlap analysis (3 elite core managers)",
+    "cik": null,
+    "market_data": {
+      "price": null,
+      "market_cap": 0,
+      "shares_outstanding": null,
+      "volume_avg_30d": null,
+      "52_week_high": null,
+      "52_week_low": null,
+      "pe_ratio": null,
+      "company_name": "UNCY",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "financial_data": {
+      "cash": null,
+      "debt": null,
+      "net_debt": null,
+      "revenue_ttm": null,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "defensive_features": {
+      "vol_60d": null,
+      "vol_20d": null,
+      "ret_21d": null,
+      "corr_xbi": null
+    }
   },
   {
     "ticker": "UPB",
@@ -40305,6 +41061,48 @@
     }
   },
   {
+    "ticker": "VRNA",
+    "name": "VRNA",
+    "exchange": "NASDAQ",
+    "sector": "Biotechnology",
+    "status": "active",
+    "added_from_etf": false,
+    "added_date": "2026-01-31",
+    "etf_sources": [],
+    "market_cap": 0,
+    "description": "Added from tier1 manager overlap analysis (1 elite core managers)",
+    "cik": null,
+    "market_data": {
+      "price": null,
+      "market_cap": 0,
+      "shares_outstanding": null,
+      "volume_avg_30d": null,
+      "52_week_high": null,
+      "52_week_low": null,
+      "pe_ratio": null,
+      "company_name": "VRNA",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "financial_data": {
+      "cash": null,
+      "debt": null,
+      "net_debt": null,
+      "revenue_ttm": null,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "defensive_features": {
+      "vol_60d": null,
+      "vol_20d": null,
+      "ret_21d": null,
+      "corr_xbi": null
+    }
+  },
+  {
     "ticker": "VRTX",
     "as_of_date": "2026-01-06T10:37:08.323498",
     "data_quality": {
@@ -41411,6 +42209,48 @@
     "Revenue": 10559700000,
     "R&D": 691200000,
     "NetIncome": -170000000
+  },
+  {
+    "ticker": "VTVT",
+    "name": "VTVT",
+    "exchange": "NASDAQ",
+    "sector": "Biotechnology",
+    "status": "active",
+    "added_from_etf": false,
+    "added_date": "2026-01-31",
+    "etf_sources": [],
+    "market_cap": 0,
+    "description": "Added from tier1 manager overlap analysis (1 elite core managers)",
+    "cik": null,
+    "market_data": {
+      "price": null,
+      "market_cap": 0,
+      "shares_outstanding": null,
+      "volume_avg_30d": null,
+      "52_week_high": null,
+      "52_week_low": null,
+      "pe_ratio": null,
+      "company_name": "VTVT",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "financial_data": {
+      "cash": null,
+      "debt": null,
+      "net_debt": null,
+      "revenue_ttm": null,
+      "assets": null,
+      "liabilities": null,
+      "equity": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "defensive_features": {
+      "vol_60d": null,
+      "vol_20d": null,
+      "ret_21d": null,
+      "corr_xbi": null
+    }
   },
   {
     "ticker": "VTYX",
