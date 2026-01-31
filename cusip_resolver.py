@@ -492,7 +492,16 @@ KNOWN_CUSIP_MAPPINGS = {
     '454140100': 'IMTX',   # Immatics
     '45826H109': 'INSM',   # Insmed
     '49327M109': 'KITE',   # Kite Pharma (acquired)
-    
+    '28106W103': 'EDIT',   # Editas Medicine
+    '92539P101': 'VERV',   # Verve Therapeutics
+
+    # Biotech screener 20-ticker universe additions
+    'N2451R105': 'CVAC',   # CureVac (Netherlands)
+    '45257L108': 'IMMP',   # Immutep (Australian ADR)
+    '09061G101': 'BMRN',   # BioMarin Pharmaceutical
+    '30161Q104': 'EXEL',   # Exelixis
+    '40637H109': 'HALO',   # Halozyme Therapeutics
+
     # RNA therapeutics
     '043168106': 'ARWR',   # Arrowhead Pharmaceuticals
     '48666K109': 'KRTX',   # Karuna Therapeutics

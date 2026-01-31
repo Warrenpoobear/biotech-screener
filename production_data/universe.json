@@ -1847,6 +1847,47 @@
     "NetIncome": -304742000
   },
   {
+    "ticker": "AKRO",
+    "name": "Akero Therapeutics, Inc.",
+    "exchange": "NASDAQ",
+    "sector": "Biotechnology",
+    "status": "active",
+    "added_date": "2026-01-31",
+    "description": "NASH/metabolic liver disease. 7 Tier 1 managers, +161% 2Y.",
+    "market_cap": null,
+    "cik": null,
+    "market_data": {
+      "price": 54.65,
+      "market_cap": 4499031040,
+      "shares_outstanding": 82324445,
+      "volume_avg_30d": 2745117,
+      "52_week_high": 58.4,
+      "52_week_low": 21.34,
+      "pe_ratio": null,
+      "company_name": "Akero Therapeutics, Inc.",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "financial_data": {
+      "cash": 737825984,
+      "debt": 605000,
+      "net_debt": -737220984,
+      "revenue_ttm": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "defensive_features": {},
+    "clinical_data": {
+      "total_trials": 0,
+      "active_trials": 0,
+      "completed_trials": 0,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": []
+    }
+  },
+  {
     "ticker": "AKTX",
     "market_data": {
       "price": 0.254,
@@ -7921,6 +7962,30 @@
     }
   },
   {
+    "ticker": "BLUE",
+    "name": "bluebird bio, Inc.",
+    "exchange": "NASDAQ",
+    "sector": "Biotechnology",
+    "status": "delisted",
+    "added_date": "2026-01-31",
+    "market_cap": null,
+    "description": "Gene therapy company. Taken private May 2025 by Carlyle/SK Capital.",
+    "cik": null,
+    "market_data": {},
+    "financial_data": {},
+    "defensive_features": {},
+    "clinical_data": {
+      "total_trials": 0,
+      "active_trials": 0,
+      "completed_trials": 0,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": []
+    },
+    "status_reason": "Acquired by Carlyle/SK Capital (May 2025, $3-5/share)"
+  },
+  {
     "ticker": "BMEA",
     "market_data": {
       "price": 1.26,
@@ -9586,6 +9651,47 @@
     "NetIncome": -17246000
   },
   {
+    "ticker": "CDTX",
+    "name": "Cidara Therapeutics, Inc.",
+    "exchange": "NASDAQ",
+    "sector": "Biotechnology",
+    "status": "active",
+    "added_date": "2026-01-31",
+    "description": "Antifungal/antiviral immunotherapies. 5 Tier 1 managers, +1593% 2Y.",
+    "market_cap": null,
+    "cik": null,
+    "market_data": {
+      "price": 221.38,
+      "market_cap": 6961583616,
+      "shares_outstanding": 31446306,
+      "volume_avg_30d": 1427880,
+      "52_week_high": 221.42,
+      "52_week_low": 15.22,
+      "pe_ratio": null,
+      "company_name": "Cidara Therapeutics, Inc.",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "financial_data": {
+      "cash": 420020992,
+      "debt": 1984000,
+      "net_debt": -418036992,
+      "revenue_ttm": 0,
+      "currency": "USD",
+      "cik": null
+    },
+    "defensive_features": {},
+    "clinical_data": {
+      "total_trials": 0,
+      "active_trials": 0,
+      "completed_trials": 0,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": []
+    }
+  },
+  {
     "ticker": "CDXS",
     "name": "CDXS",
     "exchange": "NASDAQ",
@@ -10134,6 +10240,47 @@
     "ShareholdersEquity": 301574000,
     "Revenue": 15000000,
     "NetIncome": -131369000
+  },
+  {
+    "ticker": "CNTX",
+    "name": "Context Therapeutics, Inc.",
+    "exchange": "NASDAQ",
+    "sector": "Biotechnology",
+    "status": "active",
+    "added_date": "2026-01-31",
+    "description": "Oncology (breast cancer). 3 Tier 1 managers, +153% 2Y.",
+    "market_cap": null,
+    "cik": null,
+    "market_data": {
+      "price": 2.61,
+      "market_cap": 239804640,
+      "shares_outstanding": 91879177,
+      "volume_avg_30d": 1225747,
+      "52_week_high": 2.85,
+      "52_week_low": 0.49,
+      "pe_ratio": null,
+      "company_name": "Context Therapeutics Inc.",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "financial_data": {
+      "cash": 76938184,
+      "debt": 140200,
+      "net_debt": -76797984,
+      "revenue_ttm": null,
+      "currency": "USD",
+      "cik": null
+    },
+    "defensive_features": {},
+    "clinical_data": {
+      "total_trials": 0,
+      "active_trials": 0,
+      "completed_trials": 0,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": []
+    }
   },
   {
     "ticker": "COGT",
@@ -27267,6 +27414,47 @@
     "NetIncome": -55964000
   },
   {
+    "ticker": "MRUS",
+    "name": "Merus N.V.",
+    "exchange": "NASDAQ",
+    "sector": "Biotechnology",
+    "status": "active",
+    "added_date": "2026-01-31",
+    "description": "Bispecific antibody oncology (Dutch). 5 Tier 1 managers, +149% 2Y.",
+    "market_cap": null,
+    "cik": null,
+    "market_data": {
+      "price": 90.0,
+      "market_cap": 6826245632,
+      "shares_outstanding": 75847175,
+      "volume_avg_30d": 1253685,
+      "52_week_high": 97.14,
+      "52_week_low": 33.19,
+      "pe_ratio": null,
+      "company_name": "Merus N.V.",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "financial_data": {
+      "cash": 635932032,
+      "debt": 12317000,
+      "net_debt": -623615032,
+      "revenue_ttm": 56606000,
+      "currency": "USD",
+      "cik": null
+    },
+    "defensive_features": {},
+    "clinical_data": {
+      "total_trials": 0,
+      "active_trials": 0,
+      "completed_trials": 0,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": []
+    }
+  },
+  {
     "ticker": "MRVI",
     "name": "Maravai LifeSciences Holdings, Inc.",
     "status": "active",
@@ -37079,6 +37267,47 @@
     "NetIncome": -286974000
   },
   {
+    "ticker": "SRZN",
+    "name": "Surrozen, Inc.",
+    "exchange": "NASDAQ",
+    "sector": "Biotechnology",
+    "status": "active",
+    "added_date": "2026-01-31",
+    "description": "Wnt pathway tissue repair/regeneration. 3 Tier 1 managers, +161% 2Y.",
+    "market_cap": null,
+    "cik": null,
+    "market_data": {
+      "price": 21.545,
+      "market_cap": 184671264,
+      "shares_outstanding": 8571421,
+      "volume_avg_30d": 116259,
+      "52_week_high": 24.94,
+      "52_week_low": 5.9,
+      "pe_ratio": null,
+      "company_name": "Surrozen, Inc.",
+      "sector": "Healthcare",
+      "industry": "Biotechnology"
+    },
+    "financial_data": {
+      "cash": 81335000,
+      "debt": 7082000,
+      "net_debt": -74253000,
+      "revenue_ttm": 3604000,
+      "currency": "USD",
+      "cik": null
+    },
+    "defensive_features": {},
+    "clinical_data": {
+      "total_trials": 0,
+      "active_trials": 0,
+      "completed_trials": 0,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": []
+    }
+  },
+  {
     "ticker": "STOK",
     "name": "STOK",
     "exchange": "NASDAQ",
@@ -40100,6 +40329,30 @@
     "ShareholdersEquity": 398880000,
     "R&D": 155946000,
     "NetIncome": -208518000
+  },
+  {
+    "ticker": "VERV",
+    "name": "Verve Therapeutics, Inc.",
+    "exchange": "NASDAQ",
+    "sector": "Biotechnology",
+    "status": "delisted",
+    "added_date": "2026-01-31",
+    "market_cap": null,
+    "description": "Gene editing for cardiovascular disease. Acquired by Eli Lilly July 2025.",
+    "cik": null,
+    "market_data": {},
+    "financial_data": {},
+    "defensive_features": {},
+    "clinical_data": {
+      "total_trials": 0,
+      "active_trials": 0,
+      "completed_trials": 0,
+      "lead_stage": "unknown",
+      "by_phase": {},
+      "conditions": [],
+      "top_trials": []
+    },
+    "status_reason": "Acquired by Eli Lilly (July 2025, $10.50/share + CVR)"
   },
   {
     "ticker": "VIR",
