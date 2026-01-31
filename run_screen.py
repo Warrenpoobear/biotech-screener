@@ -243,13 +243,16 @@ CATALYST_WINDOW_PRESETS = {
 
 # Phase ordering for minimum phase filter (lower index = earlier phase)
 PHASE_ORDER = {
+    "unknown": 0,
     "preclinical": 0,
     "phase1": 1,
     "phase 1": 1,
     "phase1/phase2": 1,
+    "phase 1/2": 1,
     "phase2": 2,
     "phase 2": 2,
     "phase2/phase3": 2,
+    "phase 2/3": 2,
     "phase3": 3,
     "phase 3": 3,
     "approved": 4,
