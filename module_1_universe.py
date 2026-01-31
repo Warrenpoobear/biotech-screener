@@ -34,16 +34,25 @@ def _extract_market_cap_mm(record: Dict[str, Any]) -> Optional[Decimal]:
     """
     Extract market cap in millions from various data structures.
 
-    Handles:
-    - Direct field: market_cap_mm
-    - Nested field: market_data.market_cap (in raw $, needs conversion)
-    - Flat field: market_cap (in raw $, needs conversion)
+    Handles (in priority order):
+    - Direct field: market_cap_mm (already in millions)
+    - Top-level field: market_cap_usd (raw $, used by 13F extractor / extend scripts)
+    - Nested field: market_data.market_cap (raw $, from yfinance collector)
+    - Flat field: market_cap (raw $)
     """
     # Try direct mm field first
     market_cap_mm = record.get("market_cap_mm")
     if market_cap_mm is not None:
         try:
             return Decimal(str(market_cap_mm))
+        except (ValueError, TypeError, InvalidOperation):
+            pass
+
+    # Try top-level market_cap_usd (raw $, written by extend_universe_yfinance.py etc.)
+    raw_cap = record.get("market_cap_usd")
+    if raw_cap is not None:
+        try:
+            return Decimal(str(raw_cap)) / Decimal("1000000")
         except (ValueError, TypeError, InvalidOperation):
             pass
 
