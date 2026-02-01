@@ -583,9 +583,9 @@ def _apply_cohort_normalization_v2(members: List[Dict], include_pos: bool = Fals
     if not members:
         return NormalizationMethod.NONE
 
-    clin_scores = [m["clinical_raw"] or Decimal("0") for m in members]
-    fin_scores = [m["financial_raw"] or Decimal("0") for m in members]
-    cat_scores = [m["catalyst_raw"] or Decimal("0") for m in members]
+    clin_scores = [m["clinical_raw"] if m["clinical_raw"] is not None else Decimal("0") for m in members]
+    fin_scores = [m["financial_raw"] if m["financial_raw"] is not None else Decimal("0") for m in members]
+    cat_scores = [m["catalyst_raw"] if m["catalyst_raw"] is not None else Decimal("0") for m in members]
 
     clin_norm, clin_w = _rank_normalize_winsorized(clin_scores)
     fin_norm, fin_w = _rank_normalize_winsorized(fin_scores)
@@ -595,7 +595,7 @@ def _apply_cohort_normalization_v2(members: List[Dict], include_pos: bool = Fals
 
     pos_norm = None
     if include_pos:
-        pos_scores = [m.get("pos_raw") or Decimal("0") for m in members]
+        pos_scores = [m.get("pos_raw") if m.get("pos_raw") is not None else Decimal("0") for m in members]
         if any(p > 0 for p in pos_scores):
             pos_norm, pos_w = _rank_normalize_winsorized(pos_scores)
             winsor_applied = winsor_applied or pos_w
@@ -604,7 +604,7 @@ def _apply_cohort_normalization_v2(members: List[Dict], include_pos: bool = Fals
         m["clinical_normalized"] = clin_norm[i]
         m["financial_normalized"] = fin_norm[i]
         m["catalyst_normalized"] = cat_norm[i]
-        m["pos_normalized"] = pos_norm[i] if pos_norm else (m.get("pos_raw") or Decimal("0"))
+        m["pos_normalized"] = pos_norm[i] if pos_norm else (m.get("pos_raw") if m.get("pos_raw") is not None else Decimal("0"))
 
     return NormalizationMethod.COHORT_WINSORIZED if winsor_applied else NormalizationMethod.COHORT
 
@@ -640,23 +640,29 @@ def _score_single_ticker_v2(
 
     if hasattr(cat_data, 'score_blended'):
         cat_raw = _to_decimal(cat_data.score_blended)
-        cat_proximity = _to_decimal(getattr(cat_data, 'catalyst_proximity_score', 0)) or Decimal("0")
-        cat_delta = _to_decimal(getattr(cat_data, 'catalyst_delta_score', 0)) or Decimal("0")
+        cat_proximity = _to_decimal(getattr(cat_data, 'catalyst_proximity_score', 0)) if _to_decimal(getattr(cat_data, 'catalyst_proximity_score', 0)) is not None else Decimal("0")
+        cat_delta = _to_decimal(getattr(cat_data, 'catalyst_delta_score', 0)) if _to_decimal(getattr(cat_data, 'catalyst_delta_score', 0)) is not None else Decimal("0")
     elif isinstance(cat_data, dict):
         scores = cat_data.get("scores", cat_data)
         cat_raw = _to_decimal(scores.get("score_blended", scores.get("catalyst_score_net")))
-        cat_proximity = _to_decimal(scores.get("catalyst_proximity_score", 0)) or Decimal("0")
-        cat_delta = _to_decimal(scores.get("catalyst_delta_score", 0)) or Decimal("0")
+        _prox = _to_decimal(scores.get("catalyst_proximity_score", 0))
+        cat_proximity = _prox if _prox is not None else Decimal("0")
+        _delta = _to_decimal(scores.get("catalyst_delta_score", 0))
+        cat_delta = _delta if _delta is not None else Decimal("0")
     else:
         cat_raw = None
         cat_proximity = Decimal("0")
         cat_delta = Decimal("0")
 
     # Get normalized scores
-    fin_norm = normalized_scores.get("financial") or fin_raw or Decimal("0")
-    clin_norm = normalized_scores.get("clinical") or clin_raw or Decimal("0")
-    cat_norm = normalized_scores.get("catalyst") or cat_raw or Decimal("0")
-    pos_norm = normalized_scores.get("pos") or pos_raw or Decimal("0")
+    _fn = normalized_scores.get("financial")
+    fin_norm = _fn if _fn is not None else (fin_raw if fin_raw is not None else Decimal("0"))
+    _cn = normalized_scores.get("clinical")
+    clin_norm = _cn if _cn is not None else (clin_raw if clin_raw is not None else Decimal("0"))
+    _can = normalized_scores.get("catalyst")
+    cat_norm = _can if _can is not None else (cat_raw if cat_raw is not None else Decimal("0"))
+    _pn = normalized_scores.get("pos")
+    pos_norm = _pn if _pn is not None else (pos_raw if pos_raw is not None else Decimal("0"))
 
     # Extract confidences
     conf_fin = _extract_confidence_financial(fin_data)
@@ -1013,10 +1019,10 @@ def compute_module_5_composite_v2(
                 m["normalization_method"] = method
         else:
             for m in members:
-                m["clinical_normalized"] = m["clinical_raw"] or Decimal("0")
-                m["financial_normalized"] = m["financial_raw"] or Decimal("0")
-                m["catalyst_normalized"] = m["catalyst_raw"] or Decimal("0")
-                m["pos_normalized"] = m.get("pos_raw") or Decimal("0")
+                m["clinical_normalized"] = m["clinical_raw"] if m["clinical_raw"] is not None else Decimal("0")
+                m["financial_normalized"] = m["financial_raw"] if m["financial_raw"] is not None else Decimal("0")
+                m["catalyst_normalized"] = m["catalyst_raw"] if m["catalyst_raw"] is not None else Decimal("0")
+                m["pos_normalized"] = m.get("pos_raw") if m.get("pos_raw") is not None else Decimal("0")
                 m["normalization_method"] = NormalizationMethod.GLOBAL_FALLBACK
         cohort_stats[cohort_key] = {"count": len(members)}
 

@@ -259,9 +259,9 @@ def _apply_cohort_normalization(members: List[Dict], include_pos: bool = False) 
         return
 
     # Extract raw scores
-    clin_scores = [m["clinical_dev_raw"] or Decimal("0") for m in members]
-    fin_scores = [m["financial_raw"] or Decimal("0") for m in members]
-    cat_scores = [m["catalyst_raw"] or Decimal("0") for m in members]
+    clin_scores = [m["clinical_dev_raw"] if m["clinical_dev_raw"] is not None else Decimal("0") for m in members]
+    fin_scores = [m["financial_raw"] if m["financial_raw"] is not None else Decimal("0") for m in members]
+    cat_scores = [m["catalyst_raw"] if m["catalyst_raw"] is not None else Decimal("0") for m in members]
 
     # Normalize
     clin_norm = _rank_normalize(clin_scores)
@@ -271,7 +271,7 @@ def _apply_cohort_normalization(members: List[Dict], include_pos: bool = False) 
     # Optionally normalize PoS scores
     pos_norm = None
     if include_pos:
-        pos_scores = [m.get("pos_raw") or Decimal("0") for m in members]
+        pos_scores = [m.get("pos_raw") if m.get("pos_raw") is not None else Decimal("0") for m in members]
         # Only normalize if any non-zero scores
         if any(p > 0 for p in pos_scores):
             pos_norm = _rank_normalize(pos_scores)
@@ -283,7 +283,7 @@ def _apply_cohort_normalization(members: List[Dict], include_pos: bool = False) 
         if pos_norm:
             m["pos_normalized"] = pos_norm[i]
         else:
-            m["pos_normalized"] = m.get("pos_raw") or Decimal("0")
+            m["pos_normalized"] = m.get("pos_raw") if m.get("pos_raw") is not None else Decimal("0")
         m["normalization_applied"] = "cohort"
 
 
@@ -640,19 +640,19 @@ def compute_module_5_composite(
                 m["normalization_applied"] = f"stage_{stage}"
         elif len(members) > 0:
             for m in members:
-                m["clinical_dev_normalized"] = m["clinical_dev_raw"] or Decimal("0")
-                m["financial_normalized"] = m["financial_raw"] or Decimal("0")
-                m["catalyst_normalized"] = m["catalyst_raw"] or Decimal("0")
-                m["pos_normalized"] = m.get("pos_raw") or Decimal("0")
+                m["clinical_dev_normalized"] = m["clinical_dev_raw"] if m["clinical_dev_raw"] is not None else Decimal("0")
+                m["financial_normalized"] = m["financial_raw"] if m["financial_raw"] is not None else Decimal("0")
+                m["catalyst_normalized"] = m["catalyst_raw"] if m["catalyst_raw"] is not None else Decimal("0")
+                m["pos_normalized"] = m.get("pos_raw") if m.get("pos_raw") is not None else Decimal("0")
                 m["normalization_applied"] = "none"
                 m["flags"].append("cohort_too_small_no_normalization")
     
     # Compute composite scores
     for rec in combined:
-        clin_n = rec["clinical_dev_normalized"] or Decimal("0")
-        fin_n = rec["financial_normalized"] or Decimal("0")
-        cat_n = rec["catalyst_normalized"] or Decimal("0")
-        pos_n = rec.get("pos_normalized") or Decimal("0")
+        clin_n = rec["clinical_dev_normalized"] if rec["clinical_dev_normalized"] is not None else Decimal("0")
+        fin_n = rec["financial_normalized"] if rec["financial_normalized"] is not None else Decimal("0")
+        cat_n = rec["catalyst_normalized"] if rec["catalyst_normalized"] is not None else Decimal("0")
+        pos_n = rec.get("pos_normalized") if rec.get("pos_normalized") is not None else Decimal("0")
 
         # Catalyst proximity bonus (upcoming catalysts boost score)
         # Scale: 0-100 proximity -> 0-5 point bonus

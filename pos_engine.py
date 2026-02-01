@@ -697,7 +697,7 @@ class ProbabilityOfSuccessEngine:
         provenance_parts = ["commercial"]
 
         # 1. Pipeline depth adjustment
-        trial_count = pipeline_trial_count or 0
+        trial_count = pipeline_trial_count if pipeline_trial_count is not None else 0
         pipeline_tier = "minimal"
         pipeline_adjustment = Decimal("-0.15")
 

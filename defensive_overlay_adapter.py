@@ -197,9 +197,11 @@ def sanitize_corr(defensive_features: Dict[str, str]) -> Tuple[Optional[Decimal]
     PLACEHOLDER_CORR = Decimal("0.50")
     
     # Try both field names
-    corr_s = defensive_features.get("corr_xbi") or defensive_features.get("corr_xbi_120d")
-    
-    if not corr_s:
+    corr_s = defensive_features.get("corr_xbi")
+    if corr_s is None:
+        corr_s = defensive_features.get("corr_xbi_120d")
+
+    if corr_s is None:
         flags.append("def_corr_missing")
         return None, flags
     
@@ -498,12 +500,16 @@ def _extract_audit_features(defensive_features: Dict[str, str]) -> Dict[str, Opt
         Dict with corr, vol, beta, rsi, momentum, drawdown (string values or None)
     """
     # Get values with alias handling (same as defensive_multiplier)
-    corr = defensive_features.get("corr_xbi") or defensive_features.get("corr_xbi_120d")
+    corr = defensive_features.get("corr_xbi")
+    if corr is None:
+        corr = defensive_features.get("corr_xbi_120d")
     vol = defensive_features.get("vol_60d")
     beta = defensive_features.get("beta_xbi_60d")
     rsi = defensive_features.get("rsi_14d")
     momentum = defensive_features.get("ret_21d")
-    drawdown = defensive_features.get("drawdown_current") or defensive_features.get("drawdown_60d")
+    drawdown = defensive_features.get("drawdown_current")
+    if drawdown is None:
+        drawdown = defensive_features.get("drawdown_60d")
 
     result = {
         "corr_xbi": corr,
@@ -576,7 +582,9 @@ def compute_cluster_percentile_thresholds(
     for rec in ranked_securities:
         cluster_id = rec.get("cluster_id")
         # Use pre-defensive score if available (avoids circular dependency)
-        score = rec.get("composite_score_before_defensive") or rec.get("composite_score")
+        score = rec.get("composite_score_before_defensive")
+        if score is None:
+            score = rec.get("composite_score")
 
         if cluster_id is None:
             diagnostics["missing_cluster_id"] += 1
@@ -818,7 +826,9 @@ def compute_position_weights_v2(
             continue
 
         # Inverse-vol weight: prefer vol_blended, fallback vol_60d
-        vol_str = def_features.get("vol_blended") or def_features.get("vol_60d")
+        vol_str = def_features.get("vol_blended")
+        if vol_str is None:
+            vol_str = def_features.get("vol_60d")
         if vol_str:
             try:
                 vol_val = Decimal(vol_str)
@@ -1126,7 +1136,10 @@ def enrich_with_defensive_overlays(
                     alias_coverage[alias] += 1
 
             # Check if sufficient for multiplier (corr+vol present OR any factor)
-            has_corr = _safe_decimal(def_features.get("corr_xbi") or def_features.get("corr_xbi_120d")) is not None
+            _corr_val = def_features.get("corr_xbi")
+            if _corr_val is None:
+                _corr_val = def_features.get("corr_xbi_120d")
+            has_corr = _safe_decimal(_corr_val) is not None
             has_vol = _safe_decimal(def_features.get("vol_60d")) is not None
             has_any_factor = has_corr or has_vol or any(
                 _safe_decimal(def_features.get(f)) is not None
@@ -1541,7 +1554,11 @@ def attach_output_schema_columns(output: Dict) -> Dict[str, int]:
                 notes.append("def_missing_volatility")
 
         # drawdown: canonical alias chain
-        dd = def_feats.get("drawdown_current") or def_feats.get("drawdown_60d") or def_feats.get("drawdown")
+        dd = def_feats.get("drawdown_current")
+        if dd is None:
+            dd = def_feats.get("drawdown_60d")
+        if dd is None:
+            dd = def_feats.get("drawdown")
         if dd is not None:
             rec["drawdown"] = dd
             coverage["drawdown"] += 1

@@ -645,15 +645,15 @@ def compute_module_5_composite_v3(
 
         # Extract revenue_mm (convert from raw to millions)
         revenue_raw = fin.get("Revenue")
-        revenue_mm = Decimal(str(revenue_raw)) / Decimal("1000000") if revenue_raw else None
+        revenue_mm = Decimal(str(revenue_raw)) / Decimal("1000000") if revenue_raw is not None else None
 
         # Extract cfo_mm (convert from raw to millions)
         cfo_raw = fin.get("CFO")
-        cfo_mm = Decimal(str(cfo_raw)) / Decimal("1000000") if cfo_raw else None
+        cfo_mm = Decimal(str(cfo_raw)) / Decimal("1000000") if cfo_raw is not None else None
 
         # Extract enterprise_value_mm
         ev_raw = mkt.get("enterprise_value")
-        enterprise_value_mm = Decimal(str(ev_raw)) / Decimal("1000000") if ev_raw else None
+        enterprise_value_mm = Decimal(str(ev_raw)) / Decimal("1000000") if ev_raw is not None else None
 
         peer_valuations.append({
             "ticker": r["ticker"],

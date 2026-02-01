@@ -549,13 +549,13 @@ def build_cache(price_file: str, as_of: str, tickers: List[str] = None) -> Dict:
         "diagnostics": diagnostics,
     }
 
-def write_cache(data: Dict, output_path: str) -> str:
+def write_cache(data: Dict, output_path: str, as_of_date: str = None) -> str:
     """Write cache file with sha256 integrity. Returns hash."""
     stable = json.dumps(data, sort_keys=True, separators=(",", ":"))
     integrity = hashlib.sha256(stable.encode()).hexdigest()
 
     output = {
-        "cached_at": datetime.now().isoformat(),
+        "cached_at": as_of_date if as_of_date else "deterministic",
         "integrity": integrity,
         "data": data,
     }
@@ -573,7 +573,7 @@ def main():
 
     print(f"Building cache for as_of={args.as_of}")
     data = build_cache(args.price_file, args.as_of, args.tickers)
-    integrity = write_cache(data, args.output)
+    integrity = write_cache(data, args.output, as_of_date=args.as_of)
 
     print(f"  Computed: {data['computed_count']}/{data['total_tickers']} tickers")
     if data["partial_count"]:
