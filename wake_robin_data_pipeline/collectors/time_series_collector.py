@@ -31,25 +31,32 @@ def collect_time_series_data(
         Dict with prices, returns, volumes and metadata
     """
     if as_of is None:
+        import logging
+        logging.getLogger(__name__).warning(
+            "collect_time_series_data called without as_of; defaulting to date.today(). "
+            "Pass as_of explicitly for determinism."
+        )
         as_of = date.today()
-    
+
+    as_of_ts = as_of.isoformat() + "T00:00:00"
+
     try:
         provider = PriceDataProvider()
-        
+
         # Get complete data package
         ticker_data = provider.get_ticker_data(ticker, as_of, lookback_days)
-        
+
         if ticker_data["num_days"] == 0:
             return {
                 "ticker": ticker,
                 "success": False,
                 "error": "No historical data available",
-                "timestamp": datetime.now().isoformat()
+                "timestamp": as_of_ts
             }
-        
+
         # Get ADV for liquidity gate
         adv = provider.get_adv(ticker, as_of, window=20)
-        
+
         # Convert to JSON-safe format
         data = {
             "ticker": ticker,
@@ -68,21 +75,21 @@ def collect_time_series_data(
             },
             "provenance": {
                 "source": "Yahoo Finance via yfinance (historical)",
-                "timestamp": datetime.now().isoformat(),
+                "timestamp": as_of_ts,
                 "method": "market_data_provider",
                 "pit_safe": True,
                 "cached": True  # Provider uses 24h cache
             }
         }
-        
+
         return data
-        
+
     except Exception as e:
         return {
             "ticker": ticker,
             "success": False,
             "error": str(e),
-            "timestamp": datetime.now().isoformat()
+            "timestamp": as_of_ts
         }
 
 
@@ -98,8 +105,15 @@ def collect_batch(
     Also fetches XBI benchmark for correlation/beta calculations.
     """
     if as_of is None:
+        import logging
+        logging.getLogger(__name__).warning(
+            "collect_batch called without as_of; defaulting to date.today(). "
+            "Pass as_of explicitly for determinism."
+        )
         as_of = date.today()
-    
+
+    as_of_ts = as_of.isoformat() + "T00:00:00"
+
     results = {}
     total = len(tickers)
     
@@ -145,7 +159,7 @@ def collect_batch(
                     },
                     "provenance": {
                         "source": "Yahoo Finance via yfinance (historical)",
-                        "timestamp": datetime.now().isoformat(),
+                        "timestamp": as_of_ts,
                         "method": "market_data_provider",
                         "pit_safe": True,
                         "cached": True
@@ -160,7 +174,7 @@ def collect_batch(
                     "ticker": ticker,
                     "success": False,
                     "error": "No data available",
-                    "timestamp": datetime.now().isoformat()
+                    "timestamp": as_of_ts
                 }
                 print(f"✗ {ticker}: No data")
         
@@ -180,7 +194,7 @@ def collect_batch(
                 },
                 "provenance": {
                     "source": "Yahoo Finance (XBI ETF)",
-                    "timestamp": datetime.now().isoformat(),
+                    "timestamp": as_of_ts,
                     "purpose": "Benchmark for correlation/beta/regime detection"
                 }
             }

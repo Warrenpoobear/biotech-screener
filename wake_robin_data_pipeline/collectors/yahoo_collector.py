@@ -288,10 +288,11 @@ def get_cache_path(ticker: str) -> Path:
     return cache_dir / f"{ticker}.json"
 
 def is_cache_valid(cache_path: Path, max_age_hours: int = 24) -> bool:
-    if not cache_path.exists():
-        return False
-    age = datetime.now() - datetime.fromtimestamp(cache_path.stat().st_mtime)
-    return age < timedelta(hours=max_age_hours)
+    """Check if cache file exists.
+
+    Deterministic: uses file existence only, not wall-clock age.
+    """
+    return cache_path.exists()
 
 def fetch_yahoo_data(ticker: str) -> dict:
     try:
@@ -302,7 +303,7 @@ def fetch_yahoo_data(ticker: str) -> dict:
             "ticker": ticker,
             "success": False,
             "error": "yfinance not installed",
-            "timestamp": datetime.now().isoformat()
+            "timestamp": "cached"
         }
 
     try:
@@ -429,7 +430,7 @@ def fetch_yahoo_data(ticker: str) -> dict:
             },
             "provenance": {
                 "source": "Yahoo Finance via yfinance",
-                "timestamp": datetime.now().isoformat(),
+                "timestamp": "cached",
                 "url": f"https://finance.yahoo.com/quote/{ticker}",
                 "data_hash": hashlib.sha256(json.dumps({
                     "price": price,
@@ -446,7 +447,7 @@ def fetch_yahoo_data(ticker: str) -> dict:
             "ticker": ticker,
             "success": False,
             "error": str(e),
-            "timestamp": datetime.now().isoformat()
+            "timestamp": "cached"
         }
 
 def collect_yahoo_data(ticker: str, force_refresh: bool = False) -> dict:

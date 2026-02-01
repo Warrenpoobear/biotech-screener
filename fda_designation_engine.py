@@ -210,7 +210,7 @@ class FDADesignationEngine:
 
         # Calculate composite PoS multiplier
         # Use max multiplier approach with diminishing returns for additional designations
-        designation_types = set(r.designation_type for r in active)
+        designation_types = sorted(set(r.designation_type for r in active), key=lambda d: d.value)
 
         # Get base multiplier from strongest designation
         multipliers = [

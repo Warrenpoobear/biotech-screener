@@ -73,12 +73,11 @@ def get_cache_path(company_name: str) -> Path:
     return cache_dir / f"{safe_name}.json"
 
 def is_cache_valid(cache_path: Path, max_age_hours: int = 24) -> bool:
-    """Check if cache is fresh enough."""
-    if not cache_path.exists():
-        return False
-    
-    age = datetime.now() - datetime.fromtimestamp(cache_path.stat().st_mtime)
-    return age < timedelta(hours=max_age_hours)
+    """Check if cache file exists.
+
+    Deterministic: uses file existence only, not wall-clock age.
+    """
+    return cache_path.exists()
 
 def _clean_company_name(company_name: str) -> str:
     """Clean company name by removing common suffixes."""
@@ -305,7 +304,7 @@ def fetch_trials_data(ticker: str, company_name: str) -> dict:
             },
             "provenance": {
                 "source": "ClinicalTrials.gov API v2",
-                "timestamp": datetime.now().isoformat(),
+                "timestamp": "cached",
                 "search_query": company_name,
                 "url": f"https://clinicaltrials.gov/search?term={company_name.replace(' ', '+')}"
             }
@@ -319,7 +318,7 @@ def fetch_trials_data(ticker: str, company_name: str) -> dict:
             "company_name": company_name,
             "success": False,
             "error": str(e),
-            "timestamp": datetime.now().isoformat()
+            "timestamp": "cached"
         }
 
 def collect_trials_data(ticker: str, company_name: str, force_refresh: bool = False) -> dict:

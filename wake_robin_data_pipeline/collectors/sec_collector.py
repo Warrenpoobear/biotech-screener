@@ -49,12 +49,14 @@ def get_cache_path(identifier: str, data_type: str = "financials") -> Path:
     return get_cache_dir() / f"{identifier}_{data_type}.json"
 
 def is_cache_valid(cache_path: Path, max_age_hours: int = 24) -> bool:
-    """Check if cache is fresh enough."""
-    if not cache_path.exists():
-        return False
-    
-    age = datetime.now() - datetime.fromtimestamp(cache_path.stat().st_mtime)
-    return age < timedelta(hours=max_age_hours)
+    """Check if cache file exists.
+
+    Deterministic: uses file existence only, not wall-clock age.
+    Cache files represent collected data for a specific entity; if the
+    file exists, the data is usable for scoring regardless of when it
+    was written.
+    """
+    return cache_path.exists()
 
 def ticker_to_cik(ticker: str) -> Optional[str]:
     """
@@ -91,7 +93,7 @@ def ticker_to_cik(ticker: str) -> Optional[str]:
                         'ticker': ticker,
                         'cik': cik,
                         'company_name': entry.get('title', ''),
-                        'timestamp': datetime.now().isoformat()
+                        'timestamp': 'cached'
                     }, f, indent=2)
                 
                 return cik
@@ -102,7 +104,7 @@ def ticker_to_cik(ticker: str) -> Optional[str]:
                 'ticker': ticker,
                 'cik': None,
                 'error': 'Ticker not found in SEC database',
-                'timestamp': datetime.now().isoformat()
+                'timestamp': 'cached'
             }, f, indent=2)
         
         return None
@@ -227,7 +229,7 @@ def fetch_sec_financials(ticker: str, cik: Optional[str] = None, as_of_date: str
                 "ticker": ticker,
                 "success": False,
                 "error": "Could not resolve ticker to CIK",
-                "timestamp": datetime.now().isoformat()
+                "timestamp": "cached"
             }
     
     try:
@@ -469,7 +471,7 @@ def fetch_sec_financials(ticker: str, cik: Optional[str] = None, as_of_date: str
             },
             "provenance": {
                 "source": "SEC EDGAR Company Facts API",
-                "timestamp": datetime.now().isoformat(),
+                "timestamp": "cached",
                 "url": f"https://data.sec.gov/api/xbrl/companyfacts/CIK{cik}.json",
                 "cik": cik,
                 "accounting_standard": namespace,
@@ -491,7 +493,7 @@ def fetch_sec_financials(ticker: str, cik: Optional[str] = None, as_of_date: str
             "cik": cik,
             "success": False,
             "error": error,
-            "timestamp": datetime.now().isoformat()
+            "timestamp": "cached"
         }
         
     except Exception as e:
@@ -500,7 +502,7 @@ def fetch_sec_financials(ticker: str, cik: Optional[str] = None, as_of_date: str
             "cik": cik,
             "success": False,
             "error": str(e),
-            "timestamp": datetime.now().isoformat()
+            "timestamp": "cached"
         }
 
 def collect_sec_data(ticker: str, force_refresh: bool = False) -> dict:

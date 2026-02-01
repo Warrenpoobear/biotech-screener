@@ -50,12 +50,25 @@ def parse_date(date_str: str) -> Optional[datetime]:
         return None
 
 
-def is_fresh(date_str: str, max_age_days: int = MAX_DATA_AGE_DAYS) -> bool:
-    """Check if a date is within the acceptable age range."""
+def is_fresh(date_str: str, max_age_days: int = MAX_DATA_AGE_DAYS, as_of_date: date = None) -> bool:
+    """Check if a date is within the acceptable age range.
+
+    Uses as_of_date (not wall-clock time) for determinism. If as_of_date
+    is not provided, falls back to datetime.now() with a warning.
+    """
     dt = parse_date(date_str)
     if not dt:
         return False
-    age = datetime.now() - dt
+    if as_of_date is not None:
+        ref = datetime.combine(as_of_date, datetime.min.time()) if isinstance(as_of_date, date) and not isinstance(as_of_date, datetime) else as_of_date
+    else:
+        import logging
+        logging.getLogger(__name__).warning(
+            "is_fresh called without as_of_date; using datetime.now(). "
+            "Pass as_of_date for determinism."
+        )
+        ref = datetime.now()
+    age = ref - dt
     return age.days <= max_age_days
 
 
@@ -78,7 +91,7 @@ def merge_financial_data(ticker: str) -> Dict[str, Any]:
         "data_dates": {},
         "data_sources": {},
         "provenance": {
-            "merged_at": datetime.now().isoformat(),
+            "merged_at": "deterministic",  # No wall-clock timestamp for reproducibility
             "sec_available": sec_data is not None and sec_data.get("success", False),
             "yahoo_available": yahoo_data is not None and yahoo_data.get("success", False)
         }

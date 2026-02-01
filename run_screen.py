@@ -696,7 +696,7 @@ def _convert_holdings_to_coinvest(holdings_snapshots: Dict[str, Any], data_dir: 
         position_changes = {}  # Dict[name -> change_type]
 
         # All CIKs that appear in either current or prior
-        all_ciks = set(current.keys()) | set(prior.keys())
+        all_ciks = sorted(set(current.keys()) | set(prior.keys()))
 
         for cik in all_ciks:
             # Determine tier and resolve holder name from registry

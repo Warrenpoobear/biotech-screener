@@ -408,7 +408,7 @@ class IndicationMapper:
 
         # Return category with highest score
         if category_scores:
-            best_category = max(category_scores, key=category_scores.get)
+            best_category = max(category_scores, key=lambda c: (category_scores[c], c))
             match_info = {
                 "match_count": category_scores[best_category],
                 "category_scores": category_scores,
@@ -452,7 +452,7 @@ class IndicationMapper:
         results = {}
         for ticker in tickers:
             ticker_upper = ticker.upper()
-            conditions = list(ticker_conditions.get(ticker_upper, []))
+            conditions = sorted(ticker_conditions.get(ticker_upper, []))
             results[ticker_upper] = self.map_ticker(
                 ticker=ticker_upper,
                 conditions=conditions,

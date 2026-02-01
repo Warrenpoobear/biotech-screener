@@ -111,11 +111,16 @@ class FREDCollector:
         return self.cache_dir / f"{series_id}_{as_of_date.isoformat()}.json"
 
     def _is_cache_valid(self, cache_path: Path, max_age_hours: int = 24) -> bool:
-        """Check if cache file is still valid."""
-        if not cache_path.exists():
-            return False
-        age = datetime.now() - datetime.fromtimestamp(cache_path.stat().st_mtime)
-        return age < timedelta(hours=max_age_hours)
+        """Check if cache file exists.
+
+        Cache files are keyed by as_of_date (e.g. T10Y2Y_2026-02-01.json),
+        so existence is sufficient for validity — the date in the filename
+        guarantees the data corresponds to the requested date. Wall-clock
+        age checks were removed because they cause non-determinism: two
+        identical runs with the same as_of_date could return different
+        data depending on when the cache file was created.
+        """
+        return cache_path.exists()
 
     def _rate_limit(self) -> None:
         """Enforce rate limiting (120 req/min = 0.5 sec between requests)."""
@@ -238,7 +243,7 @@ class FREDCollector:
                 "series_id": series_id,
                 "date": latest["date"],
                 "value": latest["value"],
-                "retrieved_at": datetime.now().isoformat(),
+                "retrieved_at": as_of_date.isoformat(),
             }
             with open(cache_path, "w") as f:
                 json.dump(cache_data, f, indent=2)
@@ -311,7 +316,7 @@ class FREDCollector:
                 "series_id": series_id,
                 "date": latest["date"],
                 "value": latest["value"],
-                "retrieved_at": datetime.now().isoformat(),
+                "retrieved_at": as_of_date.isoformat(),
             }
             with open(cache_path, "w") as f:
                 json.dump(cache_data, f, indent=2)
@@ -369,11 +374,12 @@ class FundFlowCollector:
         return self.cache_dir / f"{ticker}_{as_of_date.isoformat()}.json"
 
     def _is_cache_valid(self, cache_path: Path, max_age_hours: int = 24) -> bool:
-        """Check if cache is valid."""
-        if not cache_path.exists():
-            return False
-        age = datetime.now() - datetime.fromtimestamp(cache_path.stat().st_mtime)
-        return age < timedelta(hours=max_age_hours)
+        """Check if cache file exists.
+
+        Cache files are keyed by as_of_date, so existence = validity.
+        See FREDCollector._is_cache_valid for rationale.
+        """
+        return cache_path.exists()
 
     def get_weekly_fund_flow(
         self,
@@ -501,7 +507,7 @@ class FundFlowCollector:
                 "price_return": price_return,
                 "dollar_volume": dollar_volume,
                 "current_aum": current_aum,
-                "retrieved_at": datetime.now().isoformat(),
+                "retrieved_at": as_of_date.isoformat(),
             }
             with open(cache_path, "w") as f:
                 json.dump(cache_data, f, indent=2)
@@ -648,7 +654,7 @@ class MacroDataCollector:
             "errors": [],
         }
         provenance = {
-            "collected_at": datetime.now().isoformat(),
+            "collected_at": as_of_date.isoformat(),
             "sources": {},
         }
 
