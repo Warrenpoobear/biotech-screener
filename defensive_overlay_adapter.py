@@ -504,7 +504,7 @@ def _extract_audit_features(defensive_features: Dict[str, str]) -> Dict[str, Opt
     momentum = defensive_features.get("ret_21d")
     drawdown = defensive_features.get("drawdown_current") or defensive_features.get("drawdown_60d")
 
-    return {
+    result = {
         "corr_xbi": corr,
         "vol_60d": vol,
         "beta_xbi_60d": beta,
@@ -512,6 +512,21 @@ def _extract_audit_features(defensive_features: Dict[str, str]) -> Dict[str, Opt
         "ret_21d": momentum,
         "drawdown": drawdown,
     }
+
+    # V2 multi-horizon fields (pass through when present)
+    v2_keys = (
+        "vol_blended", "vol_63d", "vol_252d",
+        "max_drawdown_blended", "max_drawdown_252d", "max_drawdown_2y",
+        "risk_data_state_vol", "risk_data_state_drawdown", "risk_data_state_beta",
+        "beta_xbi_shrunk", "corr_xbi_shrunk",
+        "confidence_risk",
+    )
+    for k in v2_keys:
+        v = defensive_features.get(k)
+        if v is not None:
+            result[k] = v
+
+    return result
 
 
 def compute_cluster_percentile_thresholds(
