@@ -170,16 +170,24 @@ class CrossSectionalICCalculator:
                 if len(momentum_scores) < 20:  # Need minimum universe
                     continue
                 
-                # Calculate forward returns (CORRECT: using trading days)
+                # Calculate forward returns (using trading days)
+                # PIT NOTE: This is valid for historical IC because we are
+                # computing signal(t) vs return(t, t+h] where both are in the
+                # past. The caller must ensure calc_date + forward_horizon is
+                # before the data cutoff to avoid lookahead.
                 forward_date = self.calendar.add_trading_days(
-                    calc_date, 
+                    calc_date,
                     forward_horizon_days
                 )
-                
+
+                # Guard: skip if forward_date exceeds available data
+                if forward_date not in prices_df.index:
+                    continue
+
                 forward_returns = {}
                 for ticker in momentum_scores.keys():
                     try:
-                        ret = (prices_df[ticker].loc[forward_date] / 
+                        ret = (prices_df[ticker].loc[forward_date] /
                               prices_df[ticker].loc[calc_date]) - 1
                         forward_returns[ticker] = ret
                     except (KeyError, ZeroDivisionError):
@@ -346,17 +354,26 @@ class ProductionMomentumValidator:
             universe_df, xbi, spy = self.load_production_data()
             
             # Monthly rebalance dates
+            # PIT SAFETY: Cut off rebalance dates so that forward returns
+            # are fully realized. The last rebalance date must be at least
+            # forward_horizon trading days before end_date, otherwise we'd
+            # need future data to compute the forward return.
+            forward_horizon_days = 21
+            pit_cutoff = end_date - pd.Timedelta(days=forward_horizon_days * 2)  # ~42 calendar days buffer
             rebalance_dates = pd.date_range(
-                start_date, 
-                end_date, 
+                start_date,
+                min(end_date, pit_cutoff),
                 freq='MS'
             )
-            
+
             # Filter to dates in our data
-            rebalance_dates = [d for d in rebalance_dates 
+            rebalance_dates = [d for d in rebalance_dates
                              if d in universe_df.index]
-            
-            print(f"\nAnalyzing {len(rebalance_dates)} rebalance periods")
+
+            n_excluded = len(pd.date_range(start_date, end_date, freq='MS')) - len(rebalance_dates)
+            print(f"\nAnalyzing {len(rebalance_dates)} rebalance periods (PIT-safe)")
+            if n_excluded > 0:
+                print(f"   ({n_excluded} recent periods excluded to avoid lookahead in forward returns)")
             print(f"Universe: {len(universe_df.columns)} tickers")
             
             # Calculate IC series

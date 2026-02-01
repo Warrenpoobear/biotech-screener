@@ -621,8 +621,8 @@ def compute_module_3_catalyst(
             schema_errors.append(f"Record {i}: missing required field 'ticker'")
         elif not isinstance(rec["ticker"], str):
             schema_errors.append(f"Record {i}: 'ticker' must be str, got {type(rec['ticker']).__name__}")
-        if "overall_status" not in rec:
-            schema_errors.append(f"Record {i}: missing required field 'overall_status'")
+        if "status" not in rec and "overall_status" not in rec:
+            schema_errors.append(f"Record {i}: missing required field 'status' (or 'overall_status')")
     if schema_errors:
         error_sample = schema_errors[:10]
         msg = (
