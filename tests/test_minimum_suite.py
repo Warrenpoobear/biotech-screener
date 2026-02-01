@@ -92,23 +92,26 @@ def sample_trial_records():
 def run_pipeline(as_of_date: str, output_path: Path, extra_args: list = None) -> tuple:
     """Run the pipeline and return (success, stdout, stderr)"""
     import sys
-    cmd = [
-        sys.executable, "run_screen.py",
-        "--as-of-date", as_of_date,
-        "--data-dir", str(DATA_DIR),
-        "--output", str(output_path),
-        "--pit-mode", "degrade",
-    ]
-    if extra_args:
-        cmd.extend(extra_args)
+    import tempfile
+    with tempfile.TemporaryDirectory() as tmpdir:
+        cmd = [
+            sys.executable, "run_screen.py",
+            "--as-of-date", as_of_date,
+            "--data-dir", str(DATA_DIR),
+            "--output", str(output_path),
+            "--output-dir", tmpdir,
+            "--pit-mode", "degrade",
+        ]
+        if extra_args:
+            cmd.extend(extra_args)
 
-    result = subprocess.run(
-        cmd,
-        capture_output=True,
-        text=True,
-        cwd=Path(__file__).parent.parent
-    )
-    return result.returncode == 0, result.stdout, result.stderr
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            cwd=Path(__file__).parent.parent,
+        )
+        return result.returncode == 0, result.stdout, result.stderr
 
 
 def compute_hash(data: Any, exclude_paths: set = None) -> str:

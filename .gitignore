@@ -51,6 +51,7 @@ Thumbs.db
 # Project outputs (generated, not source)
 snapshots/
 output/
+outputs/
 
 # Large data files - uncomment if you want to exclude real AACT data
 # data/aact_snapshots/*/studies.csv

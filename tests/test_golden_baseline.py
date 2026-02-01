@@ -95,16 +95,19 @@ def get_nested_value(data: Dict, path: str) -> Any:
 def run_pipeline(as_of_date: str, output_path: Path) -> bool:
     """Run the pipeline and return success status"""
     import sys
-    cmd = [
-        sys.executable, "run_screen.py",
-        "--as-of-date", as_of_date,
-        "--data-dir", "production_data",
-        "--output", str(output_path),
-        "--pit-mode", "degrade",
-    ]
+    import tempfile
+    with tempfile.TemporaryDirectory() as tmpdir:
+        cmd = [
+            sys.executable, "run_screen.py",
+            "--as-of-date", as_of_date,
+            "--data-dir", "production_data",
+            "--output", str(output_path),
+            "--output-dir", tmpdir,
+            "--pit-mode", "degrade",
+        ]
 
-    result = subprocess.run(cmd, capture_output=True, text=True, cwd=Path(__file__).parent.parent)
-    return result.returncode == 0
+        result = subprocess.run(cmd, capture_output=True, text=True, cwd=Path(__file__).parent.parent)
+        return result.returncode == 0
 
 
 @pytest.fixture
