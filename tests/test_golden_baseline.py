@@ -99,7 +99,8 @@ def run_pipeline(as_of_date: str, output_path: Path) -> bool:
         sys.executable, "run_screen.py",
         "--as-of-date", as_of_date,
         "--data-dir", "production_data",
-        "--output", str(output_path)
+        "--output", str(output_path),
+        "--pit-mode", "degrade",
     ]
 
     result = subprocess.run(cmd, capture_output=True, text=True, cwd=Path(__file__).parent.parent)

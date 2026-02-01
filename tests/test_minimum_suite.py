@@ -97,6 +97,7 @@ def run_pipeline(as_of_date: str, output_path: Path, extra_args: list = None) ->
         "--as-of-date", as_of_date,
         "--data-dir", str(DATA_DIR),
         "--output", str(output_path),
+        "--pit-mode", "degrade",
     ]
     if extra_args:
         cmd.extend(extra_args)

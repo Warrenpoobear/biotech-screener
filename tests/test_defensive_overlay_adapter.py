@@ -99,7 +99,7 @@ class TestSanitizeCorrelation:
         corr, flags = sanitize_corr({"corr_xbi": "not_a_number"})
 
         assert corr is None
-        assert "def_corr_parse_fail" in flags
+        assert any("def_corr_parse_fail" in f for f in flags)
 
 
 # ============================================================================

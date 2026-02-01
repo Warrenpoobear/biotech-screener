@@ -173,6 +173,7 @@ def sample_trial_records() -> List[Dict[str, Any]]:
         {
             "nct_id": "NCT12345678",
             "sponsor_ticker": "ACME",
+            "ticker": "ACME",
             "brief_title": "Phase 3 Study of ACM-101 in Solid Tumors",
             "phase": "Phase 3",
             "overall_status": "Active, not recruiting",
@@ -181,10 +182,12 @@ def sample_trial_records() -> List[Dict[str, Any]]:
             "conditions": ["Solid Tumors", "Cancer"],
             "interventions": [{"name": "ACM-101", "type": "Drug"}],
             "start_date": "2024-01-15",
+            "last_update_posted": "2026-01-10",
         },
         {
             "nct_id": "NCT23456789",
             "sponsor_ticker": "ACME",
+            "ticker": "ACME",
             "brief_title": "Phase 2 Study of ACM-102 in Rare Disease",
             "phase": "Phase 2",
             "overall_status": "Recruiting",
@@ -193,10 +196,12 @@ def sample_trial_records() -> List[Dict[str, Any]]:
             "conditions": ["Rare Genetic Disorder"],
             "interventions": [{"name": "ACM-102", "type": "Biological"}],
             "start_date": "2025-06-01",
+            "last_update_posted": "2026-01-08",
         },
         {
             "nct_id": "NCT34567890",
             "sponsor_ticker": "BETA",
+            "ticker": "BETA",
             "brief_title": "Phase 1/2 Study of BET-201",
             "phase": "Phase 1/Phase 2",
             "overall_status": "Recruiting",
@@ -205,6 +210,7 @@ def sample_trial_records() -> List[Dict[str, Any]]:
             "conditions": ["Autoimmune Disease"],
             "interventions": [{"name": "BET-201", "type": "Drug"}],
             "start_date": "2025-03-15",
+            "last_update_posted": "2026-01-05",
         },
     ]
 
