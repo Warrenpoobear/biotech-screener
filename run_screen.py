@@ -1729,6 +1729,77 @@ def verify_input_freshness(previous_screen: Path, data_dir: Path) -> List[str]:
     return warnings
 
 
+def _load_module5_weights(path: Path) -> Optional[Dict[str, "Decimal"]]:
+    """
+    Load calibrated Module 5 weights from JSON.
+
+    Expected format:
+        { "feature_weights": {"valuation_normalized": -0.35, ...}, ... }
+
+    Returns a dict mapping component name -> Decimal weight suitable for
+    passing to compute_module_5_composite_v3(weights=...).
+    Returns None if file missing/invalid (with warning).
+    """
+    from decimal import Decimal
+
+    if not path.exists():
+        logger.warning(f"Module 5 weights file not found: {path} — using defaults")
+        return None
+
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except (json.JSONDecodeError, OSError) as e:
+        logger.warning(f"Failed to load Module 5 weights from {path}: {e} — using defaults")
+        return None
+
+    feature_weights = data.get("feature_weights")
+    if not isinstance(feature_weights, dict):
+        logger.warning(f"Invalid Module 5 weights format in {path} — using defaults")
+        return None
+
+    # Map calibrated feature names to Module 5 component names.
+    # Calibrator outputs "valuation_normalized" → Module 5 expects "valuation".
+    def _priority(name: str) -> int:
+        if name.endswith("_normalized"): return 0
+        if name.endswith("_raw"): return 1
+        if name.endswith("_contribution"): return 2
+        if name.endswith("_confidence"): return 3
+        return 4
+
+    weights: Dict[str, Decimal] = {}
+    for feat_name, w in sorted(feature_weights.items(), key=lambda kv: (_priority(kv[0]), kv[0])):
+        # Validate numeric
+        try:
+            w_f = float(w)
+        except (TypeError, ValueError):
+            logger.warning(f"Invalid weight for {feat_name} in {path}: {w!r} — skipping")
+            continue
+
+        # Strip _normalized/_raw/_contribution suffix to get component name
+        component = feat_name
+        for suffix in ("_normalized", "_raw", "_contribution", "_confidence"):
+            if feat_name.endswith(suffix):
+                component = feat_name[: -len(suffix)]
+                break
+        if abs(w_f) < 1e-10:
+            continue  # Skip zero-weight features (dropped/unused)
+        if component in weights:
+            logger.warning(f"Duplicate component weight for {component} from {feat_name} — keeping first")
+            continue
+        weights[component] = Decimal(str(w_f))
+
+    if not weights:
+        logger.warning(f"All weights are zero in {path} — using defaults")
+        return None
+
+    logger.info(f"Loaded calibrated Module 5 weights from {path}:")
+    for comp in sorted(weights.keys()):
+        logger.info(f"  {comp}: {weights[comp]}")
+
+    return weights
+
+
 def run_screening_pipeline(
     as_of_date: str,
     data_dir: Path,
@@ -1765,6 +1836,9 @@ def run_screening_pipeline(
     defensive_cache: Optional[str] = None,
     enable_position_sizing: bool = False,
     pit_mode: str = "strict",
+    output_dir: Optional[Path] = None,
+    # Module 5 calibrated weights
+    module5_weights_path: Optional[Path] = None,
 ) -> Dict[str, Any]:
     """
     Execute full screening pipeline with deterministic guarantees.
@@ -1802,6 +1876,10 @@ def run_screening_pipeline(
     """
     # CRITICAL: Validate as_of_date FIRST (no implicit defaults)
     validate_as_of_date_param(as_of_date)
+
+    # Default output_dir to data_dir for backwards compatibility
+    if output_dir is None:
+        output_dir = data_dir
 
     # SECURITY: Validate data_dir exists and is a directory
     if not data_dir.exists():
@@ -2095,7 +2173,7 @@ def run_screening_pipeline(
         # Create state directory namespaced by universe hash
         # This prevents churn gate from firing when Module 1 filtering changes
         # because snapshots from different universe populations are kept separate
-        state_dir = data_dir / "ctgov_state" / universe_hash
+        state_dir = output_dir / "ctgov_state" / universe_hash
         state_dir.mkdir(parents=True, exist_ok=True)
         logger.info(f"  Using state directory: {state_dir.name} (universe hash)")
 
@@ -2139,7 +2217,7 @@ def run_screening_pipeline(
             as_of_date=as_of_date_obj,  # Date object
             market_calendar=SimpleMarketCalendar(),  # Market calendar for weekends
             config=Module3Config(),  # Default configuration
-            output_dir=data_dir,  # Output directory for catalyst_events_*.json
+            output_dir=output_dir,  # Output directory for catalyst_events_*.json
             pit_mode=pit_mode,
         )
         if checkpoint_dir:
@@ -2849,12 +2927,18 @@ def run_screening_pipeline(
             m2_filtered = m2_result
             m4_filtered = m4_result
 
+        # Load calibrated weights if provided
+        m5_weights = None
+        if module5_weights_path is not None:
+            m5_weights = _load_module5_weights(module5_weights_path)
+
         m5_result = compute_module_5_composite_with_defensive(
             universe_result=m1_filtered,
             financial_result=m2_filtered,
             catalyst_result=m3_result,
             clinical_result=m4_filtered,
             as_of_date=as_of_date,  # Explicit threading
+            weights=m5_weights,
             normalization="rank",
             cohort_mode="stage_only",
             coinvest_signals=coinvest_signals,
@@ -3123,6 +3207,13 @@ Module 3 Catalyst Detection:
         type=Path,
         default=None,
         help="Output JSON file path (not required for --dry-run)",
+    )
+
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=None,
+        help="Directory for Module 3 side-outputs (catalyst_events, run_log, ctgov_state). Defaults to --data-dir.",
     )
 
     parser.add_argument(
@@ -3419,6 +3510,17 @@ Module 3 Catalyst Detection:
              "degrade: fall back to calendar-only catalysts with confidence downgrade.",
     )
 
+    # Module 5 calibrated weights
+    parser.add_argument(
+        "--module5-weights",
+        type=Path,
+        default=None,
+        metavar="PATH",
+        help="Path to calibrated Module 5 weights JSON (e.g., data/module5_weights_m3.json). "
+             "When provided, overrides default component weights. Allows negative weights. "
+             "If file is missing or invalid, falls back to defaults with a warning.",
+    )
+
     # Snapshot sanity checks
     parser.add_argument(
         "--compare-snapshots",
@@ -3616,6 +3718,8 @@ Module 3 Catalyst Detection:
             defensive_cache=args.defensive_cache,
             enable_position_sizing=getattr(args, 'enable_position_sizing', False),
             pit_mode=args.pit_mode,
+            output_dir=args.output_dir if args.output_dir else args.data_dir,
+            module5_weights_path=(Path(args.module5_weights) if getattr(args, "module5_weights", None) else None),
         )
 
         # Add bootstrap analysis if requested

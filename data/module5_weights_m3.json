@@ -1,0 +1,47 @@
+{
+  "as_of_date": "2026-01-28",
+  "content_hash": "14a663592c6222ee",
+  "date_range_end": "2026-01-28",
+  "date_range_start": "2024-02-02",
+  "disable_negative": false,
+  "dropped_features": {},
+  "estimation_details": {
+    "avg_n_stocks": 294.0,
+    "dropped_dates_sample": [],
+    "n_dropped_dates": 0,
+    "n_observations": 29397,
+    "n_usable_dates": 100
+  },
+  "feature_weights": {
+    "clinical_normalized": -0.10106544,
+    "financial_normalized": -0.17611723,
+    "momentum_normalized": -0.33050938,
+    "valuation_normalized": -0.39230795
+  },
+  "features_requested": [
+    "clinical_normalized",
+    "financial_normalized",
+    "momentum_normalized",
+    "valuation_normalized"
+  ],
+  "features_used": [
+    "clinical_normalized",
+    "financial_normalized",
+    "momentum_normalized",
+    "valuation_normalized"
+  ],
+  "git_hash": "fb15bbf",
+  "max_abs_weight": 0.6,
+  "method": "ridge",
+  "n_weeks": 105,
+  "nw_lags": null,
+  "raw_weights": {
+    "clinical_normalized": -0.00278501,
+    "financial_normalized": -0.00485317,
+    "momentum_normalized": -0.00910767,
+    "valuation_normalized": -0.01081062
+  },
+  "return_col": "fwd_21d",
+  "ridge_lambda": 10.0,
+  "sign_violations": {}
+}
