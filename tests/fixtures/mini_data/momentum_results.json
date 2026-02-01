@@ -1,0 +1,116 @@
+{
+  "as_of_date": "2026-01-25",
+  "schema_version": "1.0",
+  "tickers_analyzed": 8,
+  "summary": {
+    "coordinated_buys": [
+      "MRNA",
+      "RVMD",
+      "ACRS",
+      "ALMS",
+      "IBRX"
+    ],
+    "coordinated_sells": [],
+    "fresh_convictions": [],
+    "crowded_positions": [],
+    "coordinated_buy_count": 70,
+    "coordinated_sell_count": 112
+  },
+  "rankings": [
+    {
+      "ticker": "ALMS",
+      "rank": 1,
+      "excess_return_60d": 3.9507
+    },
+    {
+      "ticker": "IBRX",
+      "rank": 9,
+      "excess_return_60d": 1.353
+    },
+    {
+      "ticker": "RVMD",
+      "rank": 14,
+      "excess_return_60d": 0.8752
+    },
+    {
+      "ticker": "MRNA",
+      "rank": 16,
+      "excess_return_60d": 0.7745
+    },
+    {
+      "ticker": "ACRS",
+      "rank": 19,
+      "excess_return_60d": 0.7358
+    }
+  ],
+  "signals": {
+    "BMRN": {
+      "return_60d": 0.0509,
+      "return_21d": -0.0806,
+      "xbi_return_60d": 0.147,
+      "excess_return_60d": -0.0961,
+      "volatility_60d": 0.4655,
+      "signal": "NEUTRAL"
+    },
+    "GILD": {
+      "return_60d": 0.1607,
+      "return_21d": 0.0858,
+      "xbi_return_60d": 0.147,
+      "excess_return_60d": 0.0137,
+      "volatility_60d": 0.2729,
+      "signal": "NEUTRAL"
+    },
+    "BIIB": {
+      "return_60d": 0.1506,
+      "return_21d": -0.0185,
+      "xbi_return_60d": 0.147,
+      "excess_return_60d": 0.0036,
+      "volatility_60d": 0.3075,
+      "signal": "NEUTRAL"
+    },
+    "MRNA": {
+      "return_60d": 0.9215,
+      "return_21d": 0.5085,
+      "xbi_return_60d": 0.147,
+      "excess_return_60d": 0.7745,
+      "volatility_60d": 0.8497,
+      "signal": "BUY"
+    },
+    "RVMD": {
+      "return_60d": 1.0222,
+      "return_21d": 0.4654,
+      "xbi_return_60d": 0.147,
+      "excess_return_60d": 0.8752,
+      "volatility_60d": 0.6733,
+      "signal": "BUY"
+    },
+    "ACRS": {
+      "return_60d": 0.8828,
+      "return_21d": 0.5517,
+      "xbi_return_60d": 0.147,
+      "excess_return_60d": 0.7358,
+      "volatility_60d": 1.5686,
+      "signal": "BUY"
+    },
+    "ALMS": {
+      "return_60d": 4.0977,
+      "return_21d": 1.1415,
+      "xbi_return_60d": 0.147,
+      "excess_return_60d": 3.9507,
+      "volatility_60d": 2.1586,
+      "signal": "BUY"
+    },
+    "IBRX": {
+      "return_60d": 1.5,
+      "return_21d": 2.0714,
+      "xbi_return_60d": 0.147,
+      "excess_return_60d": 1.353,
+      "volatility_60d": 1.3149,
+      "signal": "BUY"
+    }
+  },
+  "provenance": {
+    "source": "yfinance",
+    "computed_at": "2026-01-25T15:17:23.338753"
+  }
+}
