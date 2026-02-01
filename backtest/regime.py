@@ -35,7 +35,7 @@ VOL_WINDOW = 20
 VOL_PERCENTILE_WINDOW = 252  # rolling window for vol percentile (1 trading year)
 VOL_BULL_THRESHOLD = 60   # percentile; below this = low vol
 VOL_BEAR_THRESHOLD = 40   # percentile; above this = high vol
-WARMUP_DAYS = MA_SLOW_WINDOW  # need 200 days before first regime label
+WARMUP_DAYS = max(MA_SLOW_WINDOW, VOL_PERCENTILE_WINDOW)  # need all indicators stable
 
 BULL = "BULL"
 BEAR = "BEAR"

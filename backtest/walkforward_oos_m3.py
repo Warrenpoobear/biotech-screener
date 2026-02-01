@@ -50,7 +50,8 @@ def walk_forward_evaluate(
     top_n: int = 20,
     date_col: str = "rebalance_date",
     regime_by_date: Optional[Dict[str, str]] = None,
-    min_regime_weeks: int = 20,
+    min_fit_weeks: int = 8,
+    blend_k: int = 20,
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """
     Run rolling walk-forward evaluation.
@@ -59,8 +60,11 @@ def walk_forward_evaluate(
     ----------
     regime_by_date : if provided, adds m3_oos_regime variant that trains
         ridge weights only on training weeks matching the eval week's regime.
-    min_regime_weeks : minimum distinct training dates of the same regime
-        required to use regime-specific weights; else falls back to global.
+    min_fit_weeks : minimum distinct regime training dates to attempt a
+        regime-specific ridge fit (low bar — allows fitting with thin data).
+    blend_k : shrinkage anchor for blending. alpha = n_regime / (n_regime + blend_k).
+        Higher blend_k → more global shrinkage. Separating from min_fit_weeks
+        lets you fit on 8+ weeks but shrink heavily until you have 20+.
 
     Returns:
         (timeseries_df, weights_df)
@@ -132,7 +136,7 @@ def walk_forward_evaluate(
                 if regime_by_date.get(d, "CHOP") == eval_regime
             ]
             n_regime = len(regime_train_dates)
-            if n_regime >= min_regime_weeks:
+            if n_regime >= min_fit_weeks:
                 regime_train_df = panel[
                     panel[date_col].isin(regime_train_dates)
                 ].copy()
@@ -162,7 +166,6 @@ def walk_forward_evaluate(
 
             # Blended shrinkage: w_used = alpha * w_regime + (1-alpha) * w_global
             # alpha = n_regime / (n_regime + blend_k), so more regime data → more tilt
-            blend_k = min_regime_weeks  # shrinkage anchor
             blend_alpha = n_regime / (n_regime + blend_k)
             if weights_regime is not None and fit_scope == "REGIME":
                 weights_regime = _blend_weights(
@@ -418,7 +421,8 @@ def run_walkforward(
     use_regime: bool = False,
     price_csv: Optional[str] = None,
     market_ticker: str = "XBI",
-    min_regime_weeks: int = 20,
+    min_fit_weeks: int = 8,
+    blend_k: int = 20,
 ) -> pd.DataFrame:
     """Full walk-forward evaluation with file output."""
     os.makedirs(output_dir, exist_ok=True)
@@ -456,7 +460,7 @@ def run_walkforward(
         from collections import Counter
         counts = Counter(regime_by_date.values())
         print(f"  Regime distribution: {dict(sorted(counts.items()))}")
-        print(f"  Min regime weeks for training: {min_regime_weeks}")
+        print(f"  Min fit weeks: {min_fit_weeks}, blend_k: {blend_k}")
 
     print("\nRunning walk-forward evaluation ...")
     ts_df, wt_df = walk_forward_evaluate(
@@ -468,7 +472,8 @@ def run_walkforward(
         min_stocks=min_stocks,
         top_n=top_n,
         regime_by_date=regime_by_date,
-        min_regime_weeks=min_regime_weeks,
+        min_fit_weeks=min_fit_weeks,
+        blend_k=blend_k,
     )
 
     if len(ts_df) == 0:
@@ -521,16 +526,24 @@ def run_walkforward(
                 n_total = len(regime_rows)
                 n_fallback = scope_counts.get("GLOBAL_FALLBACK", 0)
                 fallback_pct = n_fallback / n_total * 100 if n_total > 0 else 0
-                print(f"\n  Regime fit_scope distribution: {scope_counts}")
+                n_regime_fit = scope_counts.get("REGIME", 0)
+                print(f"\n  Regime fit_scope: {n_regime_fit}/{n_total} REGIME, "
+                      f"{n_fallback}/{n_total} GLOBAL_FALLBACK ({fallback_pct:.0f}%)")
                 if fallback_pct > 40:
-                    print(f"  WARNING: {fallback_pct:.0f}% of regime weeks used global "
-                          f"fallback; consider lowering --min-regime-weeks or "
+                    print(f"  WARNING: {fallback_pct:.0f}% of weeks used global "
+                          f"fallback; consider lowering --min-fit-weeks or "
                           f"increasing --train-window-weeks")
-                # Print mean blend_alpha
+                # Print blend alpha diagnostics
                 alphas = regime_rows["blend_alpha"].dropna()
                 if len(alphas) > 0:
-                    print(f"  Mean blend alpha: {alphas.mean():.2f} "
+                    print(f"  Mean blend alpha (all weeks): {alphas.mean():.2f} "
                           f"(1.0 = pure regime, 0.0 = pure global)")
+                regime_fit_rows = regime_rows[regime_rows["fit_scope"] == "REGIME"]
+                if len(regime_fit_rows) > 0:
+                    eff_alphas = regime_fit_rows["blend_alpha"].dropna()
+                    if len(eff_alphas) > 0:
+                        print(f"  Mean blend alpha (REGIME-fit weeks only): "
+                              f"{eff_alphas.mean():.2f}")
 
     print(f"\nOutputs written to {output_dir}/")
     return summary_df
@@ -561,8 +574,10 @@ def main():
                         help="Path to price history CSV (default: production_data/price_history.csv)")
     parser.add_argument("--market-ticker", default="XBI",
                         help="Ticker for regime classification (default: XBI)")
-    parser.add_argument("--min-regime-weeks", type=int, default=20,
-                        help="Min training weeks per regime before fallback (default: 20)")
+    parser.add_argument("--min-fit-weeks", type=int, default=8,
+                        help="Min regime training weeks to attempt fit (default: 8)")
+    parser.add_argument("--blend-k", type=int, default=20,
+                        help="Shrinkage anchor for regime/global blending (default: 20)")
     args = parser.parse_args()
 
     run_walkforward(
@@ -578,7 +593,8 @@ def main():
         use_regime=args.use_regime,
         price_csv=args.price_csv,
         market_ticker=args.market_ticker,
-        min_regime_weeks=args.min_regime_weeks,
+        min_fit_weeks=args.min_fit_weeks,
+        blend_k=args.blend_k,
     )
 
 

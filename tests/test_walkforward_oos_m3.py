@@ -318,7 +318,7 @@ def _make_regime_map(dates, pattern="alternating"):
 
 class TestRegimeWalkforward:
     def test_regime_fallback_when_insufficient_weeks(self):
-        """When fewer than min_regime_weeks available, use GLOBAL_FALLBACK."""
+        """When fewer than min_fit_weeks available, use GLOBAL_FALLBACK."""
         panel = _make_panel(n_weeks=58, n_stocks=80, seed=200)
         dates = sorted(panel["rebalance_date"].unique())
 
@@ -331,7 +331,7 @@ class TestRegimeWalkforward:
             train_window_weeks=52,
             min_stocks=10,
             regime_by_date=regime_map,
-            min_regime_weeks=20,
+            min_fit_weeks=20,
         )
 
         regime_rows = ts_df[ts_df["variant"] == "m3_oos_regime"]
@@ -358,7 +358,7 @@ class TestRegimeWalkforward:
             train_window_weeks=52,
             min_stocks=10,
             regime_by_date=regime_map,
-            min_regime_weeks=20,
+            min_fit_weeks=20,
         )
 
         regime_rows = ts_df[ts_df["variant"] == "m3_oos_regime"]
@@ -379,7 +379,7 @@ class TestRegimeWalkforward:
             train_window_weeks=52,
             min_stocks=10,
             regime_by_date=regime_map,
-            min_regime_weeks=5,
+            min_fit_weeks=5,
         )
 
         variants = set(ts_df["variant"].unique())
@@ -400,7 +400,7 @@ class TestRegimeWalkforward:
             train_window_weeks=52,
             min_stocks=10,
             regime_by_date=regime_map,
-            min_regime_weeks=5,
+            min_fit_weeks=5,
         )
 
         assert "regime" in ts_df.columns
@@ -419,7 +419,7 @@ class TestRegimeWalkforward:
             train_window_weeks=52,
             min_stocks=10,
             regime_by_date=regime_map,
-            min_regime_weeks=5,
+            min_fit_weeks=5,
         )
 
         regime_summary = aggregate_by_regime(ts_df)
