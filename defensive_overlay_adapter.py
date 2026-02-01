@@ -205,8 +205,9 @@ def sanitize_corr(defensive_features: Dict[str, str]) -> Tuple[Optional[Decimal]
     
     try:
         corr = Decimal(str(corr_s))
-    except Exception:
-        flags.append("def_corr_parse_fail")
+    except (InvalidOperation, ValueError, TypeError) as e:
+        logger.debug(f"Failed to parse correlation value '{corr_s}': {type(e).__name__}: {e}")
+        flags.append(f"def_corr_parse_fail:{type(e).__name__}")
         return None, flags
     
     # CRITICAL: Check if Decimal is NaN or Inf BEFORE doing comparisons

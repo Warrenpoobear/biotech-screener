@@ -865,9 +865,12 @@ def compute_module_5_composite_v3(
                 f"- issues: {dist_health.issues}"
             )
 
-    except Exception as e:
-        logger.warning(f"Robustness enhancements failed (non-blocking): {e}")
-        robustness_summary = {"error": str(e), "defensive_posture": "none"}
+    except (ValueError, TypeError, KeyError, ArithmeticError, AttributeError) as e:
+        logger.warning(
+            f"Robustness enhancements failed (non-blocking): {type(e).__name__}: {e}. "
+            f"Scores will proceed without robustness adjustments."
+        )
+        robustness_summary = {"error": f"{type(e).__name__}: {e}", "defensive_posture": "none"}
 
     # =========================================================================
     # SORT AND RANK
