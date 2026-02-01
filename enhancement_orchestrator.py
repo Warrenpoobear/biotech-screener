@@ -314,6 +314,11 @@ class EnhancementOrchestrator:
         """
 
         if as_of_date is None:
+            import logging
+            logging.getLogger(__name__).warning(
+                "EnhancementOrchestrator.score called without as_of_date; "
+                "defaulting to date.today(). Pass as_of_date explicitly for determinism."
+            )
             as_of_date = date.today()
 
         # Get regime info

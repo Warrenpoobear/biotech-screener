@@ -68,16 +68,22 @@ def load_cached_market_data(cache_file: Path) -> Tuple[list, str]:
         return [], ""
 
 
-def get_market_data(ticker: str) -> Optional[Dict]:
-    """Get comprehensive market data for a ticker using yfinance"""
+def get_market_data(ticker: str, as_of_date: date = None) -> Optional[Dict]:
+    """Get comprehensive market data for a ticker using yfinance.
+
+    Args:
+        ticker: Stock ticker symbol
+        as_of_date: Explicit date for data collection. Required for determinism.
+    """
     try:
         import yfinance as yf
-        
+
         stock = yf.Ticker(ticker)
         info = stock.info
-        
+
         # Get 90-day history for volatility/returns
-        end_date = datetime.now()
+        # Use explicit as_of_date instead of datetime.now() for determinism
+        end_date = datetime.combine(as_of_date, datetime.min.time()) if as_of_date else datetime.now()
         start_date = end_date - timedelta(days=90)
         hist = stock.history(start=start_date, end=end_date)
         
@@ -127,25 +133,37 @@ def get_market_data(ticker: str) -> Optional[Dict]:
             "exchange": info.get('exchange'),
             "sector": info.get('sector'),
             "industry": info.get('industry'),
-            "collected_at": date.today().isoformat()
+            "collected_at": as_of_date.isoformat() if as_of_date else date.today().isoformat()
         }
     except Exception as e:
         return None
 
 
-def collect_all_market_data(universe_file: Path, output_file: Path, use_cache: bool = False, force_refresh: bool = False):
-    """Collect market data for all tickers with graceful fallback to cached data"""
+def collect_all_market_data(universe_file: Path, output_file: Path, use_cache: bool = False, force_refresh: bool = False, as_of_date: date = None):
+    """Collect market data for all tickers with graceful fallback to cached data.
+
+    Args:
+        as_of_date: Explicit date for collection. If None, falls back to date.today()
+                    with a warning. New callers should always pass this.
+    """
+    if as_of_date is None:
+        import logging
+        logging.getLogger(__name__).warning(
+            "collect_all_market_data called without as_of_date; defaulting to date.today(). "
+            "Pass as_of_date explicitly for determinism."
+        )
+        as_of_date = date.today()
 
     print("="*80)
     print("MARKET DATA COLLECTION (Yahoo Finance)")
     print("="*80)
-    print(f"Date: {date.today()}")
+    print(f"Date: {as_of_date}")
 
     # Check for cached data
     cached_data, cache_date = load_cached_market_data(output_file)
     cache_available = len(cached_data) > 0
     if cache_available:
-        cache_age = (date.today() - date.fromisoformat(cache_date)).days if cache_date and cache_date != "unknown" else -1
+        cache_age = (as_of_date - date.fromisoformat(cache_date)).days if cache_date and cache_date != "unknown" else -1
         print(f"📦 Cached data: {len(cached_data)} records from {cache_date} ({cache_age} days old)")
     else:
         print("📦 No cached data available")
@@ -239,7 +257,7 @@ def collect_all_market_data(universe_file: Path, output_file: Path, use_cache: b
     for i, ticker in enumerate(tickers, 1):
         print(f"[{i:3d}/{len(tickers)}] {ticker:6s}", end=" ", flush=True)
 
-        data = get_market_data(ticker)
+        data = get_market_data(ticker, as_of_date=as_of_date)
 
         if data and data.get('price'):
             all_data.append(data)

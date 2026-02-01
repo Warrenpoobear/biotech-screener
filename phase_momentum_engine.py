@@ -141,6 +141,11 @@ class PhaseTransitionEngine:
         flags = []
 
         if as_of_date is None:
+            import logging
+            logging.getLogger(__name__).warning(
+                "compute_phase_momentum called without as_of_date; "
+                "defaulting to date.today(). Pass as_of_date explicitly for determinism."
+            )
             as_of_date = date.today()
 
         # Filter to PIT-safe trials
@@ -613,6 +618,11 @@ class PhaseTransitionEngine:
             Dictionary with scores and diagnostics
         """
         if as_of_date is None:
+            import logging
+            logging.getLogger(__name__).warning(
+                "score_universe called without as_of_date; "
+                "defaulting to date.today(). Pass as_of_date explicitly for determinism."
+            )
             as_of_date = date.today()
 
         scores_by_ticker = {}

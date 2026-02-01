@@ -127,7 +127,7 @@ def collect_market_data(ticker: str, end_date: datetime) -> Optional[Dict]:
             "corr_xbi": f"{correlation:.4f}",
             "rsi_14d": f"{rsi_current:.1f}",
             "vol_regime": vol_regime,
-            "timestamp": datetime.now().isoformat() + "Z"
+            "timestamp": args.as_of_date + "T00:00:00Z" if hasattr(args, 'as_of_date') else "unknown"
         }
         
         print(f"✓ (vol: {vol_60d:.2%}, corr: {correlation:.2f})")
@@ -210,8 +210,8 @@ def main():
                        help="Your existing universe file (21 stocks)")
     parser.add_argument("--output", default="top50_universe.json",
                        help="Output file for extended universe (50 stocks)")
-    parser.add_argument("--as-of-date", default=datetime.now().strftime("%Y-%m-%d"),
-                       help="As-of date for data collection")
+    parser.add_argument("--as-of-date", required=True,
+                       help="As-of date for data collection (YYYY-MM-DD). Required for determinism.")
     parser.add_argument("--delay", type=float, default=0.5,
                        help="Delay between API calls (seconds)")
     args = parser.parse_args()
