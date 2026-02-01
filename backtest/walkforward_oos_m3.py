@@ -7,6 +7,7 @@ For each rebalance week t after a burn-in window:
   - Compute OOS Spearman IC, top-N returns, quintile spread
 
 Compares: default linear | pipeline composite_score | walk-forward M3
+Optionally adds regime-conditioned M3 (--use-regime).
 
 Deterministic: stable sorting, no randomness, stable CSV output.
 PIT-safe by construction: training uses only weeks < t.
@@ -48,9 +49,18 @@ def walk_forward_evaluate(
     min_stocks: int = 50,
     top_n: int = 20,
     date_col: str = "rebalance_date",
+    regime_by_date: Optional[Dict[str, str]] = None,
+    min_regime_weeks: int = 20,
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """
     Run rolling walk-forward evaluation.
+
+    Parameters
+    ----------
+    regime_by_date : if provided, adds m3_oos_regime variant that trains
+        ridge weights only on training weeks matching the eval week's regime.
+    min_regime_weeks : minimum distinct training dates of the same regime
+        required to use regime-specific weights; else falls back to global.
 
     Returns:
         (timeseries_df, weights_df)
@@ -61,6 +71,8 @@ def walk_forward_evaluate(
         feature_cols = sorted(FEATURE_COLS)
     else:
         feature_cols = sorted(feature_cols)
+
+    use_regime = regime_by_date is not None
 
     # Stable sort
     panel = panel.sort_values([date_col, "ticker"]).reset_index(drop=True)
@@ -88,8 +100,8 @@ def walk_forward_evaluate(
         if n_stocks < min_stocks:
             continue
 
-        # Fit ridge on training window
-        weights, _meta = pooled_ridge(
+        # Fit global ridge on training window
+        weights_global, _meta = pooled_ridge(
             train_df,
             return_col=return_col,
             feature_cols=feature_cols,
@@ -98,54 +110,99 @@ def walk_forward_evaluate(
             min_stocks_per_week=min_stocks,
         )
 
-        # Check weights are finite
-        if all(v == 0.0 for v in weights.values()):
+        # Check global weights are finite
+        if all(v == 0.0 for v in weights_global.values()):
             continue
 
-        # Record weights
-        wt_rec = {"eval_date": eval_date}
-        wt_rec.update(weights)
+        # Record global weights
+        wt_rec = {"eval_date": eval_date, "fit_scope": "GLOBAL"}
+        wt_rec.update(weights_global)
         wt_records.append(wt_rec)
+
+        # Regime-conditioned weights
+        weights_regime = None
+        fit_scope = "N/A"
+        eval_regime = "N/A"
+        if use_regime:
+            eval_regime = regime_by_date.get(eval_date, "CHOP")
+            # Filter training dates to same regime
+            regime_train_dates = [
+                d for d in train_dates
+                if regime_by_date.get(d, "CHOP") == eval_regime
+            ]
+            if len(regime_train_dates) >= min_regime_weeks:
+                regime_train_df = panel[
+                    panel[date_col].isin(regime_train_dates)
+                ].copy()
+                weights_regime, _ = pooled_ridge(
+                    regime_train_df,
+                    return_col=return_col,
+                    feature_cols=feature_cols,
+                    date_col=date_col,
+                    ridge_lambda=ridge_lambda,
+                    min_stocks_per_week=min_stocks,
+                )
+                if all(v == 0.0 for v in weights_regime.values()):
+                    weights_regime = weights_global
+                    fit_scope = "GLOBAL_FALLBACK"
+                else:
+                    fit_scope = "REGIME"
+                    wt_rec_r = {
+                        "eval_date": eval_date,
+                        "fit_scope": f"REGIME_{eval_regime}",
+                    }
+                    wt_rec_r.update(weights_regime)
+                    wt_records.append(wt_rec_r)
+            else:
+                weights_regime = weights_global
+                fit_scope = "GLOBAL_FALLBACK"
 
         # Score eval set
         score_default = compute_linear_score(eval_valid, DEFAULT_V3_WEIGHTS)
         score_pipeline = eval_valid["composite_score"]
-        score_m3_oos = compute_linear_score(eval_valid, weights)
+        score_m3_oos = compute_linear_score(eval_valid, weights_global)
 
-        returns = eval_valid[return_col].values.tolist()
-
-        # IC
-        ic_default = spearman_rank_ic(score_default.tolist(), returns)
-        ic_pipeline = spearman_rank_ic(score_pipeline.tolist(), returns)
-        ic_m3_oos = spearman_rank_ic(score_m3_oos.tolist(), returns)
-
-        # Top-N returns
-        for variant_name, scores_s in [
+        variants = [
             ("default_linear", score_default),
             ("pipeline", score_pipeline),
             ("m3_oos", score_m3_oos),
-        ]:
+        ]
+
+        if use_regime and weights_regime is not None:
+            score_m3_regime = compute_linear_score(eval_valid, weights_regime)
+            variants.append(("m3_oos_regime", score_m3_regime))
+
+        returns = eval_valid[return_col].values.tolist()
+
+        # Compute IC for all variants
+        ic_map = {}
+        for vname, scores_s in variants:
+            ic_map[vname] = spearman_rank_ic(scores_s.tolist(), returns)
+
+        # Top-N returns + quintile spread
+        for variant_name, scores_s in variants:
             eval_scored = eval_valid.copy()
             eval_scored["_score"] = scores_s.values
             eval_scored = eval_scored.dropna(subset=["_score", return_col])
             top = eval_scored.nlargest(min(top_n, len(eval_scored)), "_score")
             topn_ret = top[return_col].mean() if len(top) > 0 else float("nan")
 
-            # Quintile spread
             qspread = _quintile_spread(eval_scored, "_score", return_col)
 
-            ic_val = {"default_linear": ic_default,
-                      "pipeline": ic_pipeline,
-                      "m3_oos": ic_m3_oos}[variant_name]
-
-            ts_records.append({
+            rec = {
                 "eval_date": eval_date,
                 "variant": variant_name,
-                "ic": ic_val,
+                "ic": ic_map[variant_name],
                 "topn_return": topn_ret,
                 "quintile_spread": qspread,
                 "n_stocks": n_stocks,
-            })
+                "regime": eval_regime if use_regime else "N/A",
+            }
+            if variant_name == "m3_oos_regime":
+                rec["fit_scope"] = fit_scope
+            else:
+                rec["fit_scope"] = "N/A"
+            ts_records.append(rec)
 
     ts_df = pd.DataFrame(ts_records)
     wt_df = pd.DataFrame(wt_records)
@@ -187,77 +244,114 @@ def aggregate_results(
     rows = []
     for variant, grp in ts_df.groupby("variant"):
         grp = grp.sort_values("eval_date")
-
-        ic_vals = grp["ic"].dropna().values
-        topn_vals = grp["topn_return"].dropna().values
-        qs_vals = grp["quintile_spread"].dropna().values
-        n_weeks = len(grp)
-
-        # IC stats
-        ic_mean = np.mean(ic_vals) if len(ic_vals) > 0 else np.nan
-        ic_se = newey_west_se(ic_vals, lags=nw_lags)
-        ic_tstat = ic_mean / ic_se if ic_se > 0 and np.isfinite(ic_se) else np.nan
-        ic_hit = np.mean(ic_vals > 0) if len(ic_vals) > 0 else np.nan
-
-        # Top-N stats
-        topn_mean = np.mean(topn_vals) if len(topn_vals) > 0 else np.nan
-        topn_se = newey_west_se(topn_vals, lags=nw_lags)
-        topn_tstat = (topn_mean / topn_se
-                      if topn_se > 0 and np.isfinite(topn_se) else np.nan)
-
-        # Cumulative return (compounded)
-        cum = np.prod(1 + topn_vals) if len(topn_vals) > 0 else np.nan
-        cum_ret = cum - 1.0 if np.isfinite(cum) else np.nan
-
-        # Sharpe (weekly, annualized)
-        if len(topn_vals) > 1:
-            topn_std = np.std(topn_vals, ddof=1)
-            sharpe = (topn_mean / topn_std * np.sqrt(52)
-                      if topn_std > 0 else np.nan)
-        else:
-            sharpe = np.nan
-
-        # Max drawdown
-        if len(topn_vals) > 0:
-            wealth = np.cumprod(1 + topn_vals)
-            running_max = np.maximum.accumulate(wealth)
-            dd = (wealth - running_max) / running_max
-            mdd = float(np.min(dd))
-        else:
-            mdd = np.nan
-
-        # Quintile spread
-        qs_mean = np.mean(qs_vals) if len(qs_vals) > 0 else np.nan
-
-        rows.append({
-            "variant": variant,
-            "IC_mean": ic_mean,
-            "IC_tstat": ic_tstat,
-            "IC_hit": ic_hit,
-            "TopN_mean": topn_mean,
-            "TopN_tstat": topn_tstat,
-            "CumRet": cum_ret,
-            "Sharpe": sharpe,
-            "MDD": mdd,
-            "QSpread_mean": qs_mean,
-            "n_weeks": n_weeks,
-        })
+        rows.append(_summarize_group(variant, grp, nw_lags))
 
     return pd.DataFrame(rows).sort_values("variant").reset_index(drop=True)
 
 
+def aggregate_by_regime(
+    ts_df: pd.DataFrame,
+    nw_lags: int = 4,
+) -> pd.DataFrame:
+    """
+    Aggregate per-date results broken down by variant x regime.
+
+    Returns DataFrame with columns: variant, regime, IC_mean, IC_tstat, ...
+    """
+    if "regime" not in ts_df.columns or ts_df["regime"].eq("N/A").all():
+        return pd.DataFrame()
+
+    rows = []
+    for (variant, regime), grp in ts_df.groupby(["variant", "regime"]):
+        if regime == "N/A":
+            continue
+        grp = grp.sort_values("eval_date")
+        row = _summarize_group(variant, grp, nw_lags)
+        row["regime"] = regime
+        rows.append(row)
+
+    if not rows:
+        return pd.DataFrame()
+    df = pd.DataFrame(rows)
+    cols = ["variant", "regime"] + [c for c in df.columns if c not in ("variant", "regime")]
+    return df[cols].sort_values(["variant", "regime"]).reset_index(drop=True)
+
+
+def _summarize_group(
+    variant: str,
+    grp: pd.DataFrame,
+    nw_lags: int,
+) -> Dict[str, Any]:
+    """Compute summary metrics for a single variant group."""
+    ic_vals = grp["ic"].dropna().values
+    topn_vals = grp["topn_return"].dropna().values
+    qs_vals = grp["quintile_spread"].dropna().values
+    n_weeks = len(grp)
+
+    # IC stats
+    ic_mean = np.mean(ic_vals) if len(ic_vals) > 0 else np.nan
+    ic_se = newey_west_se(ic_vals, lags=nw_lags)
+    ic_tstat = ic_mean / ic_se if ic_se > 0 and np.isfinite(ic_se) else np.nan
+    ic_hit = np.mean(ic_vals > 0) if len(ic_vals) > 0 else np.nan
+
+    # Top-N stats
+    topn_mean = np.mean(topn_vals) if len(topn_vals) > 0 else np.nan
+    topn_se = newey_west_se(topn_vals, lags=nw_lags)
+    topn_tstat = (topn_mean / topn_se
+                  if topn_se > 0 and np.isfinite(topn_se) else np.nan)
+
+    # Cumulative return (compounded)
+    cum = np.prod(1 + topn_vals) if len(topn_vals) > 0 else np.nan
+    cum_ret = cum - 1.0 if np.isfinite(cum) else np.nan
+
+    # Sharpe (weekly, annualized)
+    if len(topn_vals) > 1:
+        topn_std = np.std(topn_vals, ddof=1)
+        sharpe = (topn_mean / topn_std * np.sqrt(52)
+                  if topn_std > 0 else np.nan)
+    else:
+        sharpe = np.nan
+
+    # Max drawdown
+    if len(topn_vals) > 0:
+        wealth = np.cumprod(1 + topn_vals)
+        running_max = np.maximum.accumulate(wealth)
+        dd = (wealth - running_max) / running_max
+        mdd = float(np.min(dd))
+    else:
+        mdd = np.nan
+
+    # Quintile spread
+    qs_mean = np.mean(qs_vals) if len(qs_vals) > 0 else np.nan
+
+    return {
+        "variant": variant,
+        "IC_mean": ic_mean,
+        "IC_tstat": ic_tstat,
+        "IC_hit": ic_hit,
+        "TopN_mean": topn_mean,
+        "TopN_tstat": topn_tstat,
+        "CumRet": cum_ret,
+        "Sharpe": sharpe,
+        "MDD": mdd,
+        "QSpread_mean": qs_mean,
+        "n_weeks": n_weeks,
+    }
+
+
 # ── Console output ────────────────────────────────────────────────────
 
-def print_walkforward_table(summary_df: pd.DataFrame) -> str:
+def print_walkforward_table(summary_df: pd.DataFrame, title: str = "") -> str:
     """Print side-by-side comparison table."""
     lines = []
     lines.append("")
     lines.append("=" * 95)
-    lines.append("WALK-FORWARD OOS EVALUATION — COMPARISON TABLE")
+    label = title or "WALK-FORWARD OOS EVALUATION — COMPARISON TABLE"
+    lines.append(label)
     lines.append("=" * 95)
 
     variants = summary_df["variant"].tolist()
-    metric_cols = [c for c in summary_df.columns if c != "variant"]
+    metric_cols = [c for c in summary_df.columns if c not in ("variant", "regime")]
 
     header = f"{'Metric':<20}" + "".join(f"{v:>25}" for v in variants)
     lines.append(header)
@@ -293,6 +387,10 @@ def run_walkforward(
     ridge_lambda: float = 10.0,
     feature_cols: Optional[List[str]] = None,
     output_dir: str = "output/backtest_walkforward_m3",
+    use_regime: bool = False,
+    price_csv: Optional[str] = None,
+    market_ticker: str = "XBI",
+    min_regime_weeks: int = 20,
 ) -> pd.DataFrame:
     """Full walk-forward evaluation with file output."""
     os.makedirs(output_dir, exist_ok=True)
@@ -309,6 +407,29 @@ def run_walkforward(
           f"lambda: {ridge_lambda}, top-N: {top_n}")
     print(f"  OOS eval dates: {n_dates - train_window_weeks}")
 
+    # Regime setup
+    regime_by_date = None
+    if use_regime:
+        from backtest.regime import (
+            load_price_history,
+            compute_regime_series,
+            assign_regime_to_rebalance_dates,
+        )
+        if price_csv is None:
+            price_csv = str(_PROJECT_ROOT / "production_data" / "price_history.csv")
+        print(f"\nLoading regime from {price_csv} (ticker={market_ticker}) ...")
+        price_df = load_price_history(Path(price_csv))
+        regime_series = compute_regime_series(price_df, market_ticker=market_ticker)
+        rebalance_dates = sorted(df["rebalance_date"].unique())
+        regime_by_date = assign_regime_to_rebalance_dates(
+            regime_series, rebalance_dates,
+        )
+        # Print regime distribution
+        from collections import Counter
+        counts = Counter(regime_by_date.values())
+        print(f"  Regime distribution: {dict(sorted(counts.items()))}")
+        print(f"  Min regime weeks for training: {min_regime_weeks}")
+
     print("\nRunning walk-forward evaluation ...")
     ts_df, wt_df = walk_forward_evaluate(
         df,
@@ -318,6 +439,8 @@ def run_walkforward(
         ridge_lambda=ridge_lambda,
         min_stocks=min_stocks,
         top_n=top_n,
+        regime_by_date=regime_by_date,
+        min_regime_weeks=min_regime_weeks,
     )
 
     if len(ts_df) == 0:
@@ -335,18 +458,40 @@ def run_walkforward(
 
     # Write outputs
     summary_df.to_csv(
-        os.path.join(output_dir, "walkforward_summary.csv"), index=False,
+        os.path.join(output_dir, "oos_summary.csv"), index=False,
     )
     ts_df.to_csv(
-        os.path.join(output_dir, "walkforward_timeseries.csv"), index=False,
+        os.path.join(output_dir, "oos_timeseries.csv"), index=False,
     )
     if len(wt_df) > 0:
         wt_df.to_csv(
-            os.path.join(output_dir, "walkforward_weights_by_date.csv.gz"),
+            os.path.join(output_dir, "oos_weights_by_date.csv.gz"),
             index=False, compression="gzip",
         )
 
     print_walkforward_table(summary_df)
+
+    # Per-regime summary
+    if use_regime:
+        regime_summary = aggregate_by_regime(ts_df, nw_lags=nw_lags)
+        if len(regime_summary) > 0:
+            regime_summary.to_csv(
+                os.path.join(output_dir, "oos_regime_summary.csv"), index=False,
+            )
+            # Print per-regime breakdown for key variants
+            for regime in sorted(regime_summary["regime"].unique()):
+                subset = regime_summary[regime_summary["regime"] == regime]
+                print_walkforward_table(
+                    subset.drop(columns=["regime"]),
+                    title=f"REGIME BREAKDOWN: {regime}",
+                )
+
+            # Print fit_scope distribution for regime variant
+            regime_rows = ts_df[ts_df["variant"] == "m3_oos_regime"]
+            if len(regime_rows) > 0:
+                scope_counts = regime_rows["fit_scope"].value_counts().to_dict()
+                print(f"\n  Regime fit_scope distribution: {scope_counts}")
+
     print(f"\nOutputs written to {output_dir}/")
     return summary_df
 
@@ -369,6 +514,15 @@ def main():
     parser.add_argument(
         "--output-dir", default="output/backtest_walkforward_m3",
     )
+    # Regime options
+    parser.add_argument("--use-regime", action="store_true",
+                        help="Enable regime-conditioned M3 variant")
+    parser.add_argument("--price-csv", default=None,
+                        help="Path to price history CSV (default: production_data/price_history.csv)")
+    parser.add_argument("--market-ticker", default="XBI",
+                        help="Ticker for regime classification (default: XBI)")
+    parser.add_argument("--min-regime-weeks", type=int, default=20,
+                        help="Min training weeks per regime before fallback (default: 20)")
     args = parser.parse_args()
 
     run_walkforward(
@@ -381,6 +535,10 @@ def main():
         ridge_lambda=args.ridge_lambda,
         feature_cols=args.feature_cols,
         output_dir=args.output_dir,
+        use_regime=args.use_regime,
+        price_csv=args.price_csv,
+        market_ticker=args.market_ticker,
+        min_regime_weeks=args.min_regime_weeks,
     )
 
 

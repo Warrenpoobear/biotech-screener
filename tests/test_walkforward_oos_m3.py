@@ -11,6 +11,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from backtest.walkforward_oos_m3 import (
     walk_forward_evaluate,
     aggregate_results,
+    aggregate_by_regime,
     _quintile_spread,
 )
 from backtest.evaluate_m3_weights import DEFAULT_V3_WEIGHTS, FEATURE_COLS
@@ -296,3 +297,133 @@ class TestAggregation:
             "QSpread_mean", "n_weeks",
         }
         assert expected_cols.issubset(set(summary.columns))
+
+
+# ── 10) Regime walk-forward tests ─────────────────────────────────────
+
+def _make_regime_map(dates, pattern="alternating"):
+    """Create a synthetic regime map for testing."""
+    regimes = ["BULL", "BEAR", "CHOP"]
+    result = {}
+    for i, d in enumerate(dates):
+        if pattern == "alternating":
+            result[d] = regimes[i % 3]
+        elif pattern == "all_bull":
+            result[d] = "BULL"
+        elif pattern == "sparse_bear":
+            # Only 5 BEAR weeks, rest BULL
+            result[d] = "BEAR" if i < 5 else "BULL"
+    return result
+
+
+class TestRegimeWalkforward:
+    def test_regime_fallback_when_insufficient_weeks(self):
+        """When fewer than min_regime_weeks available, use GLOBAL_FALLBACK."""
+        panel = _make_panel(n_weeks=58, n_stocks=80, seed=200)
+        dates = sorted(panel["rebalance_date"].unique())
+
+        # Only 5 BEAR weeks in the whole panel → not enough for training
+        regime_map = _make_regime_map(dates, pattern="sparse_bear")
+
+        ts_df, _ = walk_forward_evaluate(
+            panel,
+            return_col="fwd_5d",
+            train_window_weeks=52,
+            min_stocks=10,
+            regime_by_date=regime_map,
+            min_regime_weeks=20,
+        )
+
+        regime_rows = ts_df[ts_df["variant"] == "m3_oos_regime"]
+        assert len(regime_rows) > 0, "No regime variant rows produced"
+
+        # BEAR eval dates should have GLOBAL_FALLBACK since only 5 BEAR weeks
+        bear_rows = regime_rows[regime_rows["regime"] == "BEAR"]
+        if len(bear_rows) > 0:
+            assert (bear_rows["fit_scope"] == "GLOBAL_FALLBACK").all(), (
+                "BEAR weeks with <20 training weeks should use GLOBAL_FALLBACK"
+            )
+
+    def test_regime_training_uses_regime_when_sufficient(self):
+        """With enough training weeks per regime, fit_scope should be REGIME."""
+        panel = _make_panel(n_weeks=58, n_stocks=80, seed=201)
+        dates = sorted(panel["rebalance_date"].unique())
+
+        # All BULL → every training window has 52 BULL weeks
+        regime_map = _make_regime_map(dates, pattern="all_bull")
+
+        ts_df, _ = walk_forward_evaluate(
+            panel,
+            return_col="fwd_5d",
+            train_window_weeks=52,
+            min_stocks=10,
+            regime_by_date=regime_map,
+            min_regime_weeks=20,
+        )
+
+        regime_rows = ts_df[ts_df["variant"] == "m3_oos_regime"]
+        assert len(regime_rows) > 0
+        assert (regime_rows["fit_scope"] == "REGIME").all(), (
+            "All-BULL panel with 52w window should always use REGIME fit"
+        )
+
+    def test_oos_regime_variant_exists(self):
+        """With --use-regime, outputs include m3_oos_regime variant."""
+        panel = _make_panel(n_weeks=58, n_stocks=80, seed=202)
+        dates = sorted(panel["rebalance_date"].unique())
+        regime_map = _make_regime_map(dates, pattern="alternating")
+
+        ts_df, _ = walk_forward_evaluate(
+            panel,
+            return_col="fwd_5d",
+            train_window_weeks=52,
+            min_stocks=10,
+            regime_by_date=regime_map,
+            min_regime_weeks=5,
+        )
+
+        variants = set(ts_df["variant"].unique())
+        assert "m3_oos_regime" in variants, (
+            f"m3_oos_regime not in variants: {variants}"
+        )
+        assert "m3_oos" in variants  # global should still be present
+
+    def test_regime_column_populated(self):
+        """Timeseries output has regime column when regime is used."""
+        panel = _make_panel(n_weeks=58, n_stocks=80, seed=203)
+        dates = sorted(panel["rebalance_date"].unique())
+        regime_map = _make_regime_map(dates, pattern="alternating")
+
+        ts_df, _ = walk_forward_evaluate(
+            panel,
+            return_col="fwd_5d",
+            train_window_weeks=52,
+            min_stocks=10,
+            regime_by_date=regime_map,
+            min_regime_weeks=5,
+        )
+
+        assert "regime" in ts_df.columns
+        # All rows should have a regime label (not N/A since regime is enabled)
+        assert (ts_df["regime"] != "N/A").all()
+
+    def test_aggregate_by_regime_structure(self):
+        """Per-regime aggregation has correct columns and breakdown."""
+        panel = _make_panel(n_weeks=58, n_stocks=80, seed=204)
+        dates = sorted(panel["rebalance_date"].unique())
+        regime_map = _make_regime_map(dates, pattern="alternating")
+
+        ts_df, _ = walk_forward_evaluate(
+            panel,
+            return_col="fwd_5d",
+            train_window_weeks=52,
+            min_stocks=10,
+            regime_by_date=regime_map,
+            min_regime_weeks=5,
+        )
+
+        regime_summary = aggregate_by_regime(ts_df)
+        assert len(regime_summary) > 0
+        assert "regime" in regime_summary.columns
+        assert "variant" in regime_summary.columns
+        assert "IC_mean" in regime_summary.columns
