@@ -828,6 +828,14 @@ def score_financial_health(ticker: str, financial_data: Dict[str, Any], market_d
         "financial_data_state": data_state,
         "missing_fields": missing_fields,
         "inputs_used": inputs_used,
+
+        # Financial confidence for downstream gating (Module 5)
+        "financial_confidence": (
+            "HIGH" if data_state == DATA_STATE_FULL and runway_result['burn_confidence'] in (BURN_CONFIDENCE_HIGH, BURN_CONFIDENCE_MED)
+            else "MED" if data_state == DATA_STATE_PARTIAL or runway_result['burn_confidence'] == BURN_CONFIDENCE_LOW
+            else "LOW" if data_state in (DATA_STATE_MINIMAL, DATA_STATE_NONE) or runway_result['burn_confidence'] == BURN_CONFIDENCE_NONE
+            else "LOW"
+        ),
     }
 
 
@@ -1205,6 +1213,8 @@ def compute_module_2_financial(*args: Any, **kwargs: Any) -> Dict[str, Any]:
     result = run_module_2(filtered_universe, mapped_financial, mapped_market)
 
     # Add placeholder scores for truly missing tickers (edge case handling)
+    # NOTE: These get sev2 (50% penalty) not sev3 (hard exclusion) so newly-added
+    # tickers without financial data yet are ranked with a penalty, not silently dropped.
     for ticker in truly_missing_tickers:
         result.append({
             'ticker': ticker,
@@ -1216,7 +1226,8 @@ def compute_module_2_financial(*args: Any, **kwargs: Any) -> Dict[str, Any]:
             'burn_rate_mm': None,
             'flags': ['missing_financial_data'],
             'data_state': DATA_STATE_NONE,
-            'severity': 'sev3',  # Missing data = hard gate
+            'severity': 'sev2',  # Missing data = penalty, not hard gate
+            'financial_confidence': 'NONE',
         })
 
     # Add legacy field names to existing results for backwards compatibility

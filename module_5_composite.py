@@ -561,6 +561,12 @@ def compute_module_5_composite(
             excluded.append({
                 "ticker": ticker,
                 "reason": "sev3_gate",
+                "worst_severity_source": {
+                    "financial": fin.get("severity", "none"),
+                    "catalyst": cat_severity,
+                    "clinical": clin.get("severity", "none"),
+                },
+                "financial_confidence": fin.get("financial_confidence", "UNKNOWN"),
                 "flags": sorted(set(flags)),
             })
             continue

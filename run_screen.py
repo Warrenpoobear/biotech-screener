@@ -218,7 +218,7 @@ except ImportError as e:
 
 # Ticker validation for fail-loud data quality
 try:
-    from src.validators.ticker_validator import validate_ticker_list
+    from src.validators.ticker_validator import validate_ticker_list, validate_blacklist
     HAS_TICKER_VALIDATION = True
 except ImportError as e:
     HAS_TICKER_VALIDATION = False
@@ -1505,6 +1505,24 @@ def append_audit_log(audit_log_path: Path, record: Dict[str, Any]) -> None:
         f.write(line + '\n')
 
 
+def verify_input_freshness(previous_screen: Path, data_dir: Path) -> List[str]:
+    """Compare current input hashes against a previous screen run."""
+    with open(previous_screen, 'r') as f:
+        prev = json.load(f)
+    prev_hashes = prev.get("run_metadata", {}).get("input_hashes", {})
+    warnings = []
+    for json_file in sorted(data_dir.glob("*.json")):
+        if json_file.name.startswith("run_log") or json_file.name.startswith("screen_"):
+            continue
+        current_hash = hashlib.sha256(json_file.read_bytes()).hexdigest()[:16]
+        prev_hash = prev_hashes.get(json_file.name)
+        if prev_hash and current_hash != prev_hash:
+            warnings.append(f"STALE: {json_file.name} changed since {previous_screen.name}")
+        elif not prev_hash:
+            warnings.append(f"NEW: {json_file.name} not in previous run")
+    return warnings
+
+
 def run_screening_pipeline(
     as_of_date: str,
     data_dir: Path,
@@ -1663,6 +1681,14 @@ def run_screening_pipeline(
                 ticker = record['ticker'].upper()  # Normalize to uppercase for consistent lookups
                 market_data_by_ticker[ticker] = record
         logger.info(f"  Market data indexed for {len(market_data_by_ticker)} tickers")
+
+    # Validate delisted blacklist against live market data (advisory)
+    if HAS_TICKER_VALIDATION and market_records:
+        blacklist_warnings = validate_blacklist(market_records)
+        if blacklist_warnings:
+            logger.warning(f"Blacklist validation: {len(blacklist_warnings)} conflict(s)")
+            for bw in blacklist_warnings:
+                logger.warning(f"  {bw}")
 
     # Compute momentum returns from price history
     # This enriches market_data_by_ticker with return_20d, return_60d, return_120d and XBI benchmarks
@@ -3105,6 +3131,16 @@ Module 3 Catalyst Detection:
              "Default: day before --as-of-date.",
     )
 
+    # Input freshness verification
+    parser.add_argument(
+        "--verify-against",
+        type=Path,
+        default=None,
+        metavar="PREV_SCREEN.json",
+        help="Compare current input file hashes against a previous screen result JSON. "
+             "Emits warnings for any changed or new input files.",
+    )
+
     # Coverage / ranking controls
     parser.add_argument(
         "--min-component-coverage",
@@ -3225,6 +3261,19 @@ Module 3 Catalyst Detection:
             logger.info("=" * 60)
 
             return 0 if validation["valid"] else 1
+
+        # Verify input freshness against previous screen if requested
+        if args.verify_against:
+            if not args.verify_against.exists():
+                logger.error(f"--verify-against file not found: {args.verify_against}")
+                return 1
+            freshness_warnings = verify_input_freshness(args.verify_against, args.data_dir)
+            if freshness_warnings:
+                logger.warning(f"Input freshness check: {len(freshness_warnings)} warning(s)")
+                for w in freshness_warnings:
+                    logger.warning(f"  {w}")
+            else:
+                logger.info("Input freshness check: all hashes match previous run")
 
         # Run pipeline
         results = run_screening_pipeline(
