@@ -8,10 +8,14 @@ Algorithm:
   - ma_fast = 50-day SMA(close)
   - ma_slow = 200-day SMA(close)
   - vol = 20-day rolling std(daily_returns)
-  - vol_pct = expanding percentile of vol (deterministic, no lookahead)
+  - vol_pct = rolling 252-day percentile of vol (time-local, no lookahead)
   - BULL if ma_fast > ma_slow and vol_pct < 60
   - BEAR if ma_fast < ma_slow and vol_pct > 40
   - else CHOP
+
+Uses rolling (not expanding) vol percentile so persistent high-vol regimes
+remain classified as high-vol relative to recent history, rather than
+normalizing away over time.
 
 Thresholds are constants at module level for transparency.
 """
@@ -28,6 +32,7 @@ import pandas as pd
 MA_FAST_WINDOW = 50
 MA_SLOW_WINDOW = 200
 VOL_WINDOW = 20
+VOL_PERCENTILE_WINDOW = 252  # rolling window for vol percentile (1 trading year)
 VOL_BULL_THRESHOLD = 60   # percentile; below this = low vol
 VOL_BEAR_THRESHOLD = 40   # percentile; above this = high vol
 WARMUP_DAYS = MA_SLOW_WINDOW  # need 200 days before first regime label
@@ -93,10 +98,10 @@ def compute_regime_series(
     daily_ret = close.pct_change()
     vol = daily_ret.rolling(window=VOL_WINDOW, min_periods=VOL_WINDOW).std()
 
-    # Expanding percentile of vol (no lookahead: uses only data up to current day)
-    # Use min_periods equal to vol window so percentile is available as soon as
-    # both MAs and vol are available.
-    vol_pct = vol.expanding(min_periods=VOL_WINDOW).apply(
+    # Rolling 252-day percentile of vol (time-local, no lookahead).
+    # Uses rolling window so persistent high-vol regimes stay classified as
+    # high-vol relative to recent history, not normalized away over time.
+    vol_pct = vol.rolling(window=VOL_PERCENTILE_WINDOW, min_periods=VOL_WINDOW).apply(
         _percentile_rank, raw=True,
     )
 

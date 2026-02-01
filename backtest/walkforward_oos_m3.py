@@ -119,10 +119,11 @@ def walk_forward_evaluate(
         wt_rec.update(weights_global)
         wt_records.append(wt_rec)
 
-        # Regime-conditioned weights
+        # Regime-conditioned weights (blended shrinkage)
         weights_regime = None
         fit_scope = "N/A"
         eval_regime = "N/A"
+        blend_alpha = 0.0
         if use_regime:
             eval_regime = regime_by_date.get(eval_date, "CHOP")
             # Filter training dates to same regime
@@ -130,11 +131,12 @@ def walk_forward_evaluate(
                 d for d in train_dates
                 if regime_by_date.get(d, "CHOP") == eval_regime
             ]
-            if len(regime_train_dates) >= min_regime_weeks:
+            n_regime = len(regime_train_dates)
+            if n_regime >= min_regime_weeks:
                 regime_train_df = panel[
                     panel[date_col].isin(regime_train_dates)
                 ].copy()
-                weights_regime, _ = pooled_ridge(
+                weights_regime_raw, _ = pooled_ridge(
                     regime_train_df,
                     return_col=return_col,
                     feature_cols=feature_cols,
@@ -142,7 +144,7 @@ def walk_forward_evaluate(
                     ridge_lambda=ridge_lambda,
                     min_stocks_per_week=min_stocks,
                 )
-                if all(v == 0.0 for v in weights_regime.values()):
+                if all(v == 0.0 for v in weights_regime_raw.values()):
                     weights_regime = weights_global
                     fit_scope = "GLOBAL_FALLBACK"
                 else:
@@ -151,11 +153,22 @@ def walk_forward_evaluate(
                         "eval_date": eval_date,
                         "fit_scope": f"REGIME_{eval_regime}",
                     }
-                    wt_rec_r.update(weights_regime)
+                    wt_rec_r.update(weights_regime_raw)
                     wt_records.append(wt_rec_r)
+                    weights_regime = weights_regime_raw
             else:
                 weights_regime = weights_global
                 fit_scope = "GLOBAL_FALLBACK"
+
+            # Blended shrinkage: w_used = alpha * w_regime + (1-alpha) * w_global
+            # alpha = n_regime / (n_regime + blend_k), so more regime data → more tilt
+            blend_k = min_regime_weeks  # shrinkage anchor
+            blend_alpha = n_regime / (n_regime + blend_k)
+            if weights_regime is not None and fit_scope == "REGIME":
+                weights_regime = _blend_weights(
+                    weights_regime, weights_global, blend_alpha, feature_cols,
+                )
+            # For GLOBAL_FALLBACK, alpha is still computed but weights stay global
 
         # Score eval set
         score_default = compute_linear_score(eval_valid, DEFAULT_V3_WEIGHTS)
@@ -200,13 +213,28 @@ def walk_forward_evaluate(
             }
             if variant_name == "m3_oos_regime":
                 rec["fit_scope"] = fit_scope
+                rec["blend_alpha"] = blend_alpha
             else:
                 rec["fit_scope"] = "N/A"
+                rec["blend_alpha"] = float("nan")
             ts_records.append(rec)
 
     ts_df = pd.DataFrame(ts_records)
     wt_df = pd.DataFrame(wt_records)
     return ts_df, wt_df
+
+
+def _blend_weights(
+    w_regime: Dict[str, float],
+    w_global: Dict[str, float],
+    alpha: float,
+    feature_cols: List[str],
+) -> Dict[str, float]:
+    """Blend regime and global weights: w = alpha * w_regime + (1-alpha) * w_global."""
+    return {
+        c: alpha * w_regime.get(c, 0.0) + (1 - alpha) * w_global.get(c, 0.0)
+        for c in feature_cols
+    }
 
 
 def _quintile_spread(
@@ -490,7 +518,19 @@ def run_walkforward(
             regime_rows = ts_df[ts_df["variant"] == "m3_oos_regime"]
             if len(regime_rows) > 0:
                 scope_counts = regime_rows["fit_scope"].value_counts().to_dict()
+                n_total = len(regime_rows)
+                n_fallback = scope_counts.get("GLOBAL_FALLBACK", 0)
+                fallback_pct = n_fallback / n_total * 100 if n_total > 0 else 0
                 print(f"\n  Regime fit_scope distribution: {scope_counts}")
+                if fallback_pct > 40:
+                    print(f"  WARNING: {fallback_pct:.0f}% of regime weeks used global "
+                          f"fallback; consider lowering --min-regime-weeks or "
+                          f"increasing --train-window-weeks")
+                # Print mean blend_alpha
+                alphas = regime_rows["blend_alpha"].dropna()
+                if len(alphas) > 0:
+                    print(f"  Mean blend alpha: {alphas.mean():.2f} "
+                          f"(1.0 = pure regime, 0.0 = pure global)")
 
     print(f"\nOutputs written to {output_dir}/")
     return summary_df
