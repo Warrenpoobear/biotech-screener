@@ -32,10 +32,11 @@ Architecture:
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 import logging
 import sys
-from datetime import date
+from datetime import date, datetime
 import hashlib
 from decimal import Decimal
 from pathlib import Path
@@ -950,6 +951,133 @@ def write_json_output(filepath: Path, data: Dict[str, Any], secure: bool = True)
     else:
         with open(filepath, 'w', encoding='utf-8') as f:
             f.write(json_content)
+
+
+# =============================================================================
+# VALIDATION SNAPSHOT (for forward-looking backtest)
+# =============================================================================
+
+# Columns saved in the validation snapshot CSV.
+# These are the minimum fields needed for forward IC / decile-lift analysis.
+SNAPSHOT_COLUMNS = [
+    "ticker", "composite_rank", "composite_score",
+    "stage_bucket", "market_cap_bucket", "severity",
+    "archetype",
+    "momentum_score", "catalyst_score", "smart_money_score",
+    "valuation_score", "clinical_score", "financial_score",
+    "confidence_overall",
+]
+
+
+def save_validation_snapshot(
+    snapshot_dir: Path,
+    as_of_date: str,
+    results: Dict[str, Any],
+    version: str,
+) -> Optional[Path]:
+    """
+    Save a lightweight validation snapshot for future forward-looking backtests.
+
+    Writes two files into snapshot_dir/YYYY-MM-DD/:
+      - rankings.csv: one row per ranked ticker with scores and signals
+      - metadata.json: run parameters, version, archetype distribution
+
+    These snapshots capture the model's *point-in-time* rankings so that
+    future price data can measure predictive accuracy (IC, decile lift, etc.)
+    without survivorship bias from using only current-day rankings.
+
+    Args:
+        snapshot_dir: Base directory for snapshots (e.g. data/snapshots)
+        as_of_date: Screen date string (YYYY-MM-DD)
+        results: Full pipeline results dict
+        version: Pipeline version string
+
+    Returns:
+        Path to the snapshot directory, or None if save failed
+    """
+    snap_path = snapshot_dir / as_of_date
+    try:
+        snap_path.mkdir(parents=True, exist_ok=True)
+    except OSError as e:
+        logger.warning(f"Could not create snapshot directory {snap_path}: {e}")
+        return None
+
+    ranked = results.get("module_5_composite", {}).get("ranked_securities", [])
+    if not ranked:
+        logger.warning("No ranked securities to snapshot")
+        return None
+
+    ranked = sorted(ranked, key=lambda x: x.get("composite_rank", 999))
+    archetypes = results.get("company_archetypes", {})
+
+    # --- Write rankings CSV ---
+    csv_path = snap_path / "rankings.csv"
+    try:
+        with open(csv_path, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=SNAPSHOT_COLUMNS, extrasaction="ignore")
+            writer.writeheader()
+            for rec in ranked:
+                ticker = rec.get("ticker", "")
+                # Extract signal scores from nested dicts
+                mom = rec.get("momentum_signal") or {}
+                cat = rec.get("catalyst_effective") or {}
+                sm = rec.get("smart_money_signal") or {}
+                val = rec.get("valuation_signal") or {}
+                row = {
+                    "ticker": ticker,
+                    "composite_rank": rec.get("composite_rank"),
+                    "composite_score": rec.get("composite_score"),
+                    "stage_bucket": rec.get("stage_bucket"),
+                    "market_cap_bucket": rec.get("market_cap_bucket"),
+                    "severity": rec.get("severity"),
+                    "archetype": archetypes.get(ticker, ""),
+                    "momentum_score": mom.get("momentum_score"),
+                    "catalyst_score": cat.get("catalyst_score_effective"),
+                    "smart_money_score": sm.get("score"),
+                    "valuation_score": val.get("valuation_score"),
+                    "clinical_score": rec.get("clinical_score"),
+                    "financial_score": rec.get("financial_score"),
+                    "confidence_overall": rec.get("confidence_overall"),
+                }
+                writer.writerow(row)
+    except OSError as e:
+        logger.warning(f"Could not write snapshot CSV: {e}")
+        return None
+
+    # --- Write metadata JSON ---
+    summary = results.get("summary", {})
+    clinical_filter = summary.get("clinical_activity_filter", {})
+    archetype_counts = {}
+    for a in archetypes.values():
+        archetype_counts[a] = archetype_counts.get(a, 0) + 1
+
+    metadata = {
+        "as_of_date": as_of_date,
+        "saved_at": datetime.utcnow().isoformat() + "Z",
+        "version": version,
+        "ticker_count": len(ranked),
+        "source_type": "live_pipeline_v3",
+        "scoring_model": "module_5_v3_ic_enhanced",
+        "total_evaluated": summary.get("total_evaluated"),
+        "active_universe": summary.get("active_universe"),
+        "clinical_excluded": clinical_filter.get("excluded_count", 0),
+        "clinical_exempted": clinical_filter.get("exempted_count", 0),
+        "archetype_distribution": dict(sorted(archetype_counts.items())),
+        "input_hashes": results.get("run_metadata", {}).get("input_hashes", {}),
+    }
+
+    meta_path = snap_path / "metadata.json"
+    try:
+        with open(meta_path, "w", encoding="utf-8") as f:
+            json.dump(metadata, f, indent=2)
+            f.write("\n")
+    except OSError as e:
+        logger.warning(f"Could not write snapshot metadata: {e}")
+        return None
+
+    logger.info(f"[SNAPSHOT] Saved validation snapshot: {snap_path} "
+                f"({len(ranked)} tickers, v{version})")
+    return snap_path
 
 
 # =============================================================================
@@ -2998,6 +3126,21 @@ Module 3 Catalyst Detection:
     )
 
     parser.add_argument(
+        "--snapshot-dir",
+        type=Path,
+        default=None,
+        help="Directory for saving validation snapshots (rankings + metadata per run). "
+             "Defaults to data-dir/../data/snapshots. Use --no-snapshot to disable.",
+    )
+
+    parser.add_argument(
+        "--no-snapshot",
+        action="store_true",
+        default=False,
+        help="Disable automatic validation snapshot saving.",
+    )
+
+    parser.add_argument(
         "--tickers",
         nargs="+",
         help="Optional: Whitelist specific tickers (default: use all from universe.json)",
@@ -3480,6 +3623,18 @@ Module 3 Catalyst Detection:
         if args.audit_log:
             logger.info(f"Audit log:          {args.audit_log}")
         logger.info("=" * 60)
+
+        # Save validation snapshot for future forward-looking backtests
+        if not args.no_snapshot:
+            snapshot_dir = args.snapshot_dir or (args.data_dir.parent / "data" / "snapshots")
+            snap_result = save_validation_snapshot(
+                snapshot_dir=snapshot_dir,
+                as_of_date=args.as_of_date,
+                results=results,
+                version=VERSION,
+            )
+            if snap_result:
+                logger.info(f"Snapshot dir:       {snap_result}")
 
         return 0
 
