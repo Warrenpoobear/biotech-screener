@@ -581,7 +581,7 @@ def compute_module_3_catalyst(
     event_detector = EventDetector(config.event_detector_config)
     aggregator = CatalystAggregator(market_calendar, config.decay_constant)
 
-    # Load trial records with explicit error handling
+    # Load trial records with explicit error handling and schema validation
     logger.info(f"Loading trial records from {trial_records_path}")
     try:
         with open(trial_records_path) as f:
@@ -601,6 +601,44 @@ def compute_module_3_catalyst(
             f"Permission denied reading trial records: {trial_records_path}. "
             f"Check file permissions."
         )
+
+    # Schema validation: fail fast on malformed data
+    if not isinstance(trial_records_raw, list):
+        raise ValueError(
+            f"Trial records must be a JSON array, got {type(trial_records_raw).__name__}. "
+            f"File: {trial_records_path}"
+        )
+    schema_errors = []
+    for i, rec in enumerate(trial_records_raw):
+        if not isinstance(rec, dict):
+            schema_errors.append(f"Record {i}: expected dict, got {type(rec).__name__}")
+            continue
+        if "nct_id" not in rec:
+            schema_errors.append(f"Record {i}: missing required field 'nct_id'")
+        elif not isinstance(rec["nct_id"], str):
+            schema_errors.append(f"Record {i}: 'nct_id' must be str, got {type(rec['nct_id']).__name__}")
+        if "ticker" not in rec:
+            schema_errors.append(f"Record {i}: missing required field 'ticker'")
+        elif not isinstance(rec["ticker"], str):
+            schema_errors.append(f"Record {i}: 'ticker' must be str, got {type(rec['ticker']).__name__}")
+        if "overall_status" not in rec:
+            schema_errors.append(f"Record {i}: missing required field 'overall_status'")
+    if schema_errors:
+        error_sample = schema_errors[:10]
+        msg = (
+            f"Trial records schema validation failed ({len(schema_errors)} errors). "
+            f"First errors: {error_sample}"
+        )
+        if pit_mode == "strict":
+            raise ValueError(msg)
+        else:
+            logger.error(f"SCHEMA_VALIDATION_DEGRADE: {msg}")
+            logger.error(
+                f"Continuing with {len(trial_records_raw)} records despite schema errors. "
+                f"Fix trial_records.json to remove this warning."
+            )
+    else:
+        logger.info(f"Trial records schema validated: {len(trial_records_raw)} records OK")
 
     # =========================================================================
     # STALENESS GATING: Check if trial_records is stale
