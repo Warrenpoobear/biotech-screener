@@ -238,6 +238,65 @@ CATALYST_WINDOW_PRESETS = {
 }
 
 # =============================================================================
+# COMPANY ARCHETYPE CLASSIFICATION
+# =============================================================================
+
+# Maps Yahoo Finance industry strings to company archetypes.
+# Archetypes other than "drug_developer" are exempt from the clinical trial gate.
+INDUSTRY_TO_ARCHETYPE = {
+    "Biotechnology": "drug_developer",
+    "Drug Manufacturers - Specialty & Generic": "commercial_pharma",
+    "Drug Manufacturers - General": "commercial_pharma",
+    "Diagnostics & Research": "platform_diagnostics",
+    "Medical Devices": "platform_devices",
+    "Medical Instruments & Supplies": "platform_devices",
+    "Health Information Services": "platform_services",
+    "Medical Care Facilities": "platform_services",
+}
+
+# Archetypes exempt from clinical trial gate
+CLINICAL_GATE_EXEMPT_ARCHETYPES = frozenset({
+    "commercial_pharma",
+    "commercial_biotech",
+    "platform_diagnostics",
+    "platform_devices",
+    "platform_services",
+})
+
+
+def classify_company_archetype(
+    ticker: str,
+    industry: str,
+    has_revenue: bool,
+    revenue_scale_bucket: str,
+) -> str:
+    """
+    Classify a company into an archetype based on industry and revenue signals.
+
+    Drug developers get the standard clinical trial gate. All other archetypes
+    (commercial pharma, revenue-generating biotech, platforms/diagnostics/devices)
+    are exempt because their business model doesn't depend on proprietary trials.
+
+    Args:
+        ticker: Ticker symbol (for logging only)
+        industry: Yahoo Finance industry string (e.g. "Biotechnology")
+        has_revenue: Whether the company has meaningful revenue (from Module 2)
+        revenue_scale_bucket: Revenue bucket from Module 2 ('pre_revenue', 'small', 'medium', 'large')
+
+    Returns:
+        Archetype string: one of drug_developer, commercial_pharma, commercial_biotech,
+        platform_diagnostics, platform_devices, platform_services
+    """
+    archetype = INDUSTRY_TO_ARCHETYPE.get(industry, "drug_developer")
+
+    # Override: biotech with meaningful revenue is commercial_biotech
+    if archetype == "drug_developer" and has_revenue and revenue_scale_bucket in ("medium", "large"):
+        archetype = "commercial_biotech"
+
+    return archetype
+
+
+# =============================================================================
 # CLINICAL ACTIVITY FILTER
 # =============================================================================
 
@@ -264,22 +323,30 @@ def apply_clinical_activity_filter(
     m4_scores: List[Dict[str, Any]],
     min_trials: int = 5,
     min_phase: str = "phase1",
-) -> tuple[List[str], List[Dict[str, Any]]]:
+    archetypes: Dict[str, str] = None,
+) -> tuple[List[str], List[Dict[str, Any]], List[Dict[str, Any]]]:
     """
     Filter tickers based on clinical activity thresholds.
+
+    Non-drug-developer archetypes (commercial pharma, platform companies, etc.)
+    are exempt from exclusion since their business model doesn't depend on
+    proprietary clinical trials.
 
     Args:
         m4_scores: Module 4 clinical scores list
         min_trials: Minimum number of trials required
         min_phase: Minimum lead phase required (preclinical, phase1, phase2, phase3, approved)
+        archetypes: Dict mapping ticker -> archetype string. Tickers with archetypes
+                    other than "drug_developer" are exempt from exclusion.
 
     Returns:
-        Tuple of (excluded_tickers, exclusion_details)
+        Tuple of (excluded_tickers, exclusion_details, exemption_details)
     """
     min_phase_order = PHASE_ORDER.get(min_phase.lower(), 1)
 
     excluded = []
     exclusion_details = []
+    exemption_details = []
 
     for score in m4_scores:
         ticker = score.get("ticker", "")
@@ -298,16 +365,27 @@ def apply_clinical_activity_filter(
             reasons.append(f"phase={lead_phase}<{min_phase}")
 
         if reasons:
-            excluded.append(ticker)
-            exclusion_details.append({
-                "ticker": ticker,
-                "reason": "clinical_activity_filter",
-                "details": ", ".join(reasons),
-                "trial_count": trial_count,
-                "lead_phase": lead_phase,
-            })
+            archetype = archetypes.get(ticker, "drug_developer") if archetypes else "drug_developer"
+            if archetype != "drug_developer":
+                # Exempt: non-drug-developer archetype doesn't need clinical trials
+                exemption_details.append({
+                    "ticker": ticker,
+                    "reason": "clinical_gate_exempt",
+                    "archetype": archetype,
+                    "trial_count": trial_count,
+                    "lead_phase": lead_phase,
+                })
+            else:
+                excluded.append(ticker)
+                exclusion_details.append({
+                    "ticker": ticker,
+                    "reason": "clinical_activity_filter",
+                    "details": ", ".join(reasons),
+                    "trial_count": trial_count,
+                    "lead_phase": lead_phase,
+                })
 
-    return excluded, exclusion_details
+    return excluded, exclusion_details, exemption_details
 
 
 def parse_catalyst_window(window_str: str) -> tuple[int, int]:
@@ -1976,19 +2054,49 @@ def run_screening_pipeline(
                 f"PIT filtered: {diag.get('pit_filtered', 'N/A')}")
 
     # ========================================================================
+    # Company Archetype Classification
+    # ========================================================================
+    # Build archetype map from industry (market_data) and revenue (Module 2) signals.
+    # Non-drug-developer archetypes are exempt from the clinical trial gate.
+    m2_scores_by_ticker = {s["ticker"]: s for s in m2_result.get("scores", []) if "ticker" in s}
+    company_archetypes = {}
+    for ticker in active_tickers:
+        md = market_data_by_ticker.get(ticker, {})
+        industry = md.get("industry", "Biotechnology")
+        m2 = m2_scores_by_ticker.get(ticker, {})
+        has_revenue = m2.get("has_revenue", False)
+        revenue_scale_bucket = m2.get("revenue_scale_bucket", "pre_revenue")
+        company_archetypes[ticker] = classify_company_archetype(
+            ticker=ticker,
+            industry=industry,
+            has_revenue=has_revenue,
+            revenue_scale_bucket=revenue_scale_bucket,
+        )
+
+    # Log archetype distribution
+    archetype_counts = {}
+    for arch in company_archetypes.values():
+        archetype_counts[arch] = archetype_counts.get(arch, 0) + 1
+    logger.info(f"  Company archetypes: {dict(sorted(archetype_counts.items()))}")
+
+    # ========================================================================
     # Clinical Activity Filter (excludes low-activity tickers from ranking)
     # ========================================================================
     clinical_exclusions = []
+    clinical_exemptions = []
     if not no_clinical_filter:
-        excluded_tickers, exclusion_details = apply_clinical_activity_filter(
+        excluded_tickers, exclusion_details, exemption_details = apply_clinical_activity_filter(
             m4_scores=m4_result.get("scores", []),
             min_trials=min_trials,
             min_phase=min_phase,
+            archetypes=company_archetypes,
         )
         clinical_exclusions = exclusion_details
+        clinical_exemptions = exemption_details
 
-        if excluded_tickers:
-            logger.info(f"[5.1/7] Clinical activity filter: excluding {len(excluded_tickers)} tickers "
+        if excluded_tickers or exemption_details:
+            logger.info(f"[5.1/7] Clinical activity filter: excluding {len(excluded_tickers)} tickers, "
+                       f"exempting {len(exemption_details)} non-drug-developers "
                        f"(min_trials={min_trials}, min_phase={min_phase})")
 
             # Remove excluded tickers from active_tickers
@@ -1999,6 +2107,12 @@ def run_screening_pipeline(
                 logger.info(f"    Excluded {ex['ticker']}: {ex['details']}")
             if len(exclusion_details) > 5:
                 logger.info(f"    ... and {len(exclusion_details) - 5} more")
+
+            # Log sample exemptions
+            for ex in exemption_details[:5]:
+                logger.info(f"    Exempt {ex['ticker']}: {ex['archetype']} (trials={ex['trial_count']})")
+            if len(exemption_details) > 5:
+                logger.info(f"    ... and {len(exemption_details) - 5} more exemptions")
     else:
         logger.info("[5.1/7] Clinical activity filter: DISABLED (--no-clinical-filter)")
 
@@ -2706,12 +2820,15 @@ def run_screening_pipeline(
                 "min_trials": min_trials,
                 "min_phase": min_phase,
                 "excluded_count": len(clinical_exclusions),
+                "exempted_count": len(clinical_exemptions),
             },
             "final_ranked": len(m5_result.get('ranked_securities', [])),
             "catalyst_events": diag3.get('events_detected_total', 0),
             "severe_negatives": diag3.get('tickers_with_severe_negative', 0),
         },
         "clinical_exclusions": clinical_exclusions,
+        "clinical_exemptions": clinical_exemptions,
+        "company_archetypes": company_archetypes,
     }
 
     # Add enhancement results if enabled
