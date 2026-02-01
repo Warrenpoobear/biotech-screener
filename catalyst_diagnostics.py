@@ -248,6 +248,18 @@ class StalenessResult:
         }
 
 
+class PITViolationError(Exception):
+    """Raised when trial_records contains data from after as_of_date (strict PIT mode)."""
+    def __init__(self, source: str, source_date, as_of_date):
+        self.source = source
+        self.source_date = source_date
+        self.as_of_date = as_of_date
+        super().__init__(
+            f"PIT VIOLATION: {source} dated {source_date} is after as_of_date {as_of_date}. "
+            f"Use --pit-mode degrade to run in corporate-only fallback mode."
+        )
+
+
 def check_trial_records_staleness(
     trial_records: List[Dict[str, Any]],
     as_of_date: date,

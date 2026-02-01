@@ -1764,6 +1764,7 @@ def run_screening_pipeline(
     defensive_config: str = "default",
     defensive_cache: Optional[str] = None,
     enable_position_sizing: bool = False,
+    pit_mode: str = "strict",
 ) -> Dict[str, Any]:
     """
     Execute full screening pipeline with deterministic guarantees.
@@ -2138,7 +2139,8 @@ def run_screening_pipeline(
             as_of_date=as_of_date_obj,  # Date object
             market_calendar=SimpleMarketCalendar(),  # Market calendar for weekends
             config=Module3Config(),  # Default configuration
-            output_dir=data_dir  # Output directory for catalyst_events_*.json
+            output_dir=data_dir,  # Output directory for catalyst_events_*.json
+            pit_mode=pit_mode,
         )
         if checkpoint_dir:
             save_checkpoint(checkpoint_dir, "module_3", as_of_date, m3_result)
@@ -2154,6 +2156,12 @@ def run_screening_pipeline(
     logger.info(f"  Events detected: {diag3.get('events_detected_total', 0)}, "
                 f"Tickers with events: {diag3.get('tickers_with_events', 0)}/{diag3.get('tickers_analyzed', 0)}, "
                 f"Severe negatives: {diag3.get('tickers_with_severe_negative', 0)}")
+
+    # Log PIT violation if detected
+    pit_violation = m3_result.get("pit_violation")
+    if pit_violation:
+        logger.error(f"  PIT VIOLATION: {pit_violation['source']} dated {pit_violation['source_date']} > as_of_date {pit_violation['as_of_date']}")
+        logger.error(f"  Catalyst mode: {m3_result.get('catalyst_mode', 'unknown')}")
 
     # ========================================================================
     # End Module 3
@@ -2950,6 +2958,9 @@ def run_screening_pipeline(
             "defensive_multiplier_enabled": apply_defensive_multiplier,
             "defensive_config": defensive_config if apply_defensive_multiplier else None,
             "position_sizing_enabled": enable_position_sizing,
+            "pit_mode": pit_mode,
+            "pit_violation_sources": [pit_violation] if pit_violation else [],
+            "catalyst_mode": m3_result.get("catalyst_mode", "full"),
         },
         "module_1_universe": m1_result,
         "module_2_financial": m2_result,
@@ -3398,6 +3409,16 @@ Module 3 Catalyst Detection:
              "Requires v2 defensive cache (cache_version 2.0.0).",
     )
 
+    parser.add_argument(
+        "--pit-mode",
+        type=str,
+        choices=["strict", "degrade"],
+        default="strict",
+        help="PIT enforcement mode for trial_records. "
+             "strict (default): fail if data is from the future. "
+             "degrade: fall back to calendar-only catalysts with confidence downgrade.",
+    )
+
     # Snapshot sanity checks
     parser.add_argument(
         "--compare-snapshots",
@@ -3594,6 +3615,7 @@ Module 3 Catalyst Detection:
             defensive_config=args.defensive_config,
             defensive_cache=args.defensive_cache,
             enable_position_sizing=getattr(args, 'enable_position_sizing', False),
+            pit_mode=args.pit_mode,
         )
 
         # Add bootstrap analysis if requested

@@ -20,6 +20,7 @@ Version: See SCHEMA_VERSION and SCORE_VERSION in module_3_schema.py
 
 from pathlib import Path
 from datetime import date, timedelta
+from decimal import Decimal
 from typing import Optional, Dict, List, Set, Tuple, Any, Union
 import json
 import hashlib
@@ -494,6 +495,7 @@ def compute_module_3_catalyst(
     market_calendar: Optional[MarketCalendar] = None,
     config: Optional[Module3Config] = None,
     output_dir: Optional[Path] = None,
+    pit_mode: str = "strict",
 ) -> Dict[str, Any]:
     """
     Main Module 3 Catalyst Detection Entry Point (vNext)
@@ -612,341 +614,407 @@ def compute_module_3_catalyst(
         logger.info(f"Staleness check: {staleness_result.confidence_level} "
                    f"(age={staleness_result.age_days} days)")
 
-    # Filter to active tickers
-    trial_records = [r for r in trial_records_raw if r.get('ticker') in active_tickers]
-    logger.info(f"Processing {len(trial_records)} trials for active tickers")
-
-    # Convert to canonical format
-    logger.info("Converting to canonical format...")
-    canonical_records, adapter_stats = process_trial_records_batch(
-        trial_records,
-        as_of_date,
-        config.adapter_config
+    # =========================================================================
+    # PIT VIOLATION GATE: Reject or degrade when data is from the future
+    # =========================================================================
+    # Direct date comparison — never key off confidence labels.
+    pit_violation = (
+        staleness_result.trial_records_date is not None
+        and staleness_result.trial_records_date > as_of_date
     )
-    logger.info(f"Converted {len(canonical_records)} records successfully")
+    pit_violation_info = None
 
-    # DETERMINISTIC: Sort canonical records
-    canonical_records = sort_canonical_records(canonical_records)
+    if pit_violation:
+        if pit_mode == "strict":
+            from catalyst_diagnostics import PITViolationError
+            raise PITViolationError(
+                source="trial_records",
+                source_date=staleness_result.trial_records_date,
+                as_of_date=as_of_date,
+            )
+        else:  # degrade
+            logger.error(
+                f"PIT_VIOLATION: trial_records dated {staleness_result.trial_records_date} "
+                f"is after as_of_date {as_of_date}. "
+                f"Skipping ALL trial_records-derived logic (diff + calendar + activity proxy). "
+                f"Only corporate catalysts will be used."
+            )
+            pit_violation_info = {
+                "source": "trial_records",
+                "source_date": staleness_result.trial_records_date.isoformat(),
+                "as_of_date": as_of_date.isoformat(),
+                "age_days": staleness_result.age_days,
+                "action": "corporate_only_fallback",
+            }
 
-    # Load prior state - must be strictly before as_of_date for valid delta comparison
-    prior_snapshot = state_store.get_prior_snapshot(as_of_date)
-    prior_snapshot_date = prior_snapshot.snapshot_date if prior_snapshot else None
-
-    if prior_snapshot:
-        logger.info(f"Loaded prior snapshot from {prior_snapshot_date}")
-        logger.info(f"Prior snapshot has {prior_snapshot.key_count} records")
-    else:
-        logger.info("No prior snapshot found - this is initial run")
-
-    # Create current snapshot
-    current_snapshot = StateSnapshot(
-        snapshot_date=as_of_date,
-        records=canonical_records
-    )
-
-    # CRITICAL: Verify snapshot dates for correctness
-    current_snapshot_date = current_snapshot.snapshot_date
-    logger.info(f"Snapshot dates: current={current_snapshot_date}, prior={prior_snapshot_date or 'None'}, as_of={as_of_date}")
-
-    # Assertion 1: Current snapshot date must equal as_of_date
-    if current_snapshot_date != as_of_date:
-        raise ValueError(
-            f"Snapshot date mismatch: current_snapshot_date={current_snapshot_date} != as_of_date={as_of_date}"
+    # =========================================================================
+    # PIT VIOLATION DEGRADE: Skip ALL trial_records-derived logic
+    # =========================================================================
+    # When trial_records is from the future, ALL trial_records-derived signals
+    # are contaminated: diff-based detection, calendar inference from trial dates,
+    # and activity proxy. Only independently-sourced corporate catalysts survive.
+    if pit_violation:
+        logger.warning(
+            "PIT_VIOLATION degrade: skipping ALL trial_records-derived logic "
+            "(filter, canonical conversion, snapshots, diff detection, "
+            "calendar inference, activity proxy). Only corporate catalysts will be used."
         )
 
-    # Assertion 2: Prior snapshot date must be before current (if prior exists)
-    if prior_snapshot_date is not None and prior_snapshot_date >= current_snapshot_date:
-        raise ValueError(
-            f"Snapshot date ordering violation: prior={prior_snapshot_date} >= current={current_snapshot_date}. "
-            f"Prior snapshot should be strictly before current. Check state directory for stale data."
-        )
-
-    # =========================================================================
-    # DELTA DIAGNOSTICS: Analyze what changed between snapshots
-    # =========================================================================
-    delta_diagnostics = compute_delta_diagnostics(current_snapshot, prior_snapshot)
-    delta_diagnostics.log_summary()
-
-    # =========================================================================
-    # DETAILED SAMPLE COMPARISON: Check individual trials for changes
-    # =========================================================================
-    logger.info("=" * 60)
-    logger.info("CATALYST DETECTION DIAGNOSTICS - SAMPLE COMPARISON")
-    logger.info("=" * 60)
-    logger.info(f"Current snapshot: {current_snapshot.key_count} trials")
-    logger.info(f"Prior snapshot: {prior_snapshot.key_count if prior_snapshot else 0} trials")
-
-    if prior_snapshot and current_snapshot.records:
-        # Build key sets for comparison using NCT ID ONLY (stable identifier)
-        # Ticker association can change between CT.gov queries, but NCT ID is globally unique
-        current_nct_ids = {r.nct_id for r in current_snapshot.records}
-        prior_nct_ids = {r.nct_id for r in prior_snapshot.records}
-        common_nct_ids = current_nct_ids & prior_nct_ids
-        added_nct_ids = current_nct_ids - prior_nct_ids
-        removed_nct_ids = prior_nct_ids - current_nct_ids
-
-        # Also track (ticker, nct_id) tuples for detailed comparison
-        current_keys = {(r.ticker, r.nct_id) for r in current_snapshot.records}
-        prior_keys = {(r.ticker, r.nct_id) for r in prior_snapshot.records}
-        common_keys = current_keys & prior_keys
-        added_keys = current_keys - prior_keys
-        removed_keys = prior_keys - current_keys
-
-        logger.info(f"NCT ID overlap: {len(common_nct_ids)} common, {len(added_nct_ids)} added, {len(removed_nct_ids)} removed")
-        logger.info(f"(ticker, nct_id) overlap: {len(common_keys)} common, {len(added_keys)} added, {len(removed_keys)} removed")
-
-        # Calculate churn rate using NCT IDs (stable keys)
-        total_current = len(current_nct_ids) if current_nct_ids else 1
-        nct_churn_rate = (len(added_nct_ids) + len(removed_nct_ids)) / (2 * total_current)
-
-        # Also calculate ticker association churn for diagnostics
-        ticker_churn_rate = (len(added_keys) + len(removed_keys)) / (2 * len(current_keys)) if current_keys else 0
-
-        if nct_churn_rate > 0.10:
-            logger.warning(f"⚠️  HIGH NCT ID CHURN: {len(added_nct_ids)} added, {len(removed_nct_ids)} removed ({nct_churn_rate*100:.1f}% churn)")
-            logger.warning("   This suggests actual trial population changed significantly.")
-
-        if ticker_churn_rate > 0.30 and nct_churn_rate < 0.10:
-            logger.info(f"ℹ️  Ticker association churn: {ticker_churn_rate*100:.1f}% (NCT churn only {nct_churn_rate*100:.1f}%)")
-            logger.info("   Ticker-NCT associations changed but trials are stable - this is expected with CT.gov text search.")
-
-        # HIGH CHURN GATE: Only trigger on NCT ID churn (actual trial changes)
-        # Ticker association churn is expected and should not trigger fresh baseline
-        if nct_churn_rate > 0.30:
-            logger.error(f"CATALYST CHURN GATE TRIGGERED: {nct_churn_rate*100:.1f}% NCT churn exceeds 30% threshold")
-            logger.error("   Forcing fresh baseline mode - all events will be detected as initial ingest")
-            logger.error("   This prevents false negatives from dataset regeneration")
-            # Force fresh baseline by clearing prior snapshot reference
-            prior_snapshot = None
-            prior_snapshot_date = None
-            logger.warning("   Prior snapshot cleared - running in fresh baseline mode")
-
-        # Sample up to 10 COMMON trials and check field changes
-        # Only run if prior_snapshot is still valid (not cleared by churn gate)
-        if prior_snapshot is not None:
-            sample_keys = sorted(list(common_keys))[:10]
-            changes_found = 0
-
-            for ticker, nct_id in sample_keys:
-                current_record = current_snapshot.get_record(ticker, nct_id)
-                prior_record = prior_snapshot.get_record(ticker, nct_id)
-                if not current_record or not prior_record:
-                    continue
-
-                changes = []
-
-                if current_record.overall_status != prior_record.overall_status:
-                    changes.append(f"status: {prior_record.overall_status.name} → {current_record.overall_status.name}")
-
-                if current_record.primary_completion_date != prior_record.primary_completion_date:
-                    changes.append(f"pcd: {prior_record.primary_completion_date} → {current_record.primary_completion_date}")
-
-                if current_record.last_update_posted != prior_record.last_update_posted:
-                    changes.append(f"updated: {prior_record.last_update_posted} → {current_record.last_update_posted}")
-
-                if changes:
-                    changes_found += 1
-                    logger.info(f"  {nct_id}: {', '.join(changes)}")
-
-            if changes_found == 0 and len(common_keys) > 0:
-                logger.warning("⚠️  NO FIELD CHANGES in common records - snapshots may have same underlying data")
-                logger.info(f"   Current snapshot date: {current_snapshot.snapshot_date}")
-                logger.info(f"   Prior snapshot date: {prior_snapshot.snapshot_date}")
-
-    # Check update recency distribution
-    cutoff_date = as_of_date - timedelta(days=7)
-    recent_updates = sum(
-        1 for r in current_snapshot.records
-        if r.last_update_posted and r.last_update_posted >= cutoff_date
-    )
-
-    logger.info(f"Trials updated in past 7 days: {recent_updates} / {current_snapshot.key_count}")
-
-    if recent_updates < 50:  # Expect ~1% weekly update rate for active trials
-        logger.warning(f"⚠️  Very few recent updates ({recent_updates}) - trial_records.json may be stale")
-        logger.warning(f"   This explains why 0 diff-based events are detected")
-
-    logger.info("=" * 60)
-
-    # =========================================================================
-    # CALENDAR-BASED CATALYSTS: Forward-looking events from trial dates
-    # =========================================================================
-    logger.info("Detecting calendar-based catalysts...")
-    calendar_catalysts = detect_calendar_catalysts(current_snapshot, as_of_date)
-    calendar_summary = summarize_calendar_catalysts(calendar_catalysts)
-    logger.info(f"Calendar catalysts: {calendar_summary['total_catalysts']} events "
-               f"across {calendar_summary['tickers_with_catalysts']} tickers")
-    if calendar_summary['by_window']:
-        logger.info(f"  By window: {calendar_summary['by_window']}")
-
-    # =========================================================================
-    # ACTIVITY PROXY: Historical data workaround based on last_update_posted
-    # =========================================================================
-    # This supplements diff-based detection when historical snapshots are limited.
-    # It identifies trials with recent updates (even without knowing what changed).
-    logger.info("Computing activity proxy scores (historical data workaround)...")
+    # Initialize variables that downstream code always expects
+    canonical_records = []
+    adapter_stats = {}
+    current_snapshot = StateSnapshot(snapshot_date=as_of_date, records=[])
+    prior_snapshot = None
+    prior_snapshot_date = None
+    delta_diagnostics = DeltaDiagnostics(prior_snapshot_missing=True)
+    calendar_catalysts = []
+    calendar_summary = {'total_catalysts': 0, 'tickers_with_catalysts': 0, 'by_window': {}}
     activity_proxy_by_ticker: Dict[str, Dict[str, Any]] = {}
-
-    # Group trials by ticker for activity proxy computation
-    trials_by_ticker: Dict[str, List[CanonicalTrialRecord]] = {}
-    for record in canonical_records:
-        ticker = record.ticker
-        if ticker not in trials_by_ticker:
-            trials_by_ticker[ticker] = []
-        trials_by_ticker[ticker].append(record)
-
-    # Compute activity proxy scores per ticker
     total_activity_120d = 0
     total_activity_30d = 0
-    for ticker in active_tickers:
-        ticker_trials = trials_by_ticker.get(ticker, [])
-        if ticker_trials:
-            proxy_result = compute_activity_proxy_score(
-                ticker_trials,
-                as_of_date,
-                lookback_days=120,
-            )
-            activity_proxy_by_ticker[ticker] = proxy_result
-            total_activity_120d += proxy_result['activity_count_120d']
-            total_activity_30d += proxy_result['activity_count_30d']
-
-    logger.info(f"Activity proxy: {total_activity_120d} trials updated in 120d, "
-               f"{total_activity_30d} in 30d across {len(activity_proxy_by_ticker)} tickers")
-
-    # Detect events by comparing states
-    logger.info("Detecting diff-based catalyst events...")
     events_by_ticker_v2: Dict[str, List[CatalystEventV2]] = {}
     events_by_ticker_legacy: Dict[str, List[CatalystEvent]] = {}
     prior_events_by_ticker_v2: Dict[str, List[CatalystEventV2]] = {}
     total_events = 0
     total_deduped = 0
+    historical_proximities = {}
 
-    # Use cached NCT ID lookup for prior snapshot (stable key regardless of ticker association)
-    # This ensures we find prior records even if ticker-NCT association changed between runs
-    # The records_by_nct_id property is lazily computed and cached on first access
+    if not pit_violation:
+        # Filter to active tickers
+        trial_records = [r for r in trial_records_raw if r.get('ticker') in active_tickers]
+        logger.info(f"Processing {len(trial_records)} trials for active tickers")
 
-    for current_record in canonical_records:
-        ticker = current_record.ticker
-        nct_id = current_record.nct_id
-
-        # Get prior record for this trial using NCT ID only (stable lookup via cached dict)
-        prior_record = prior_snapshot.get_record_by_nct_id(nct_id) if prior_snapshot else None
-
-        # Detect events (legacy format)
-        legacy_events = event_detector.detect_events(
-            current_record,
-            prior_record,
-            as_of_date
+        # Convert to canonical format
+        logger.info("Converting to canonical format...")
+        canonical_records, adapter_stats = process_trial_records_batch(
+            trial_records,
+            as_of_date,
+            config.adapter_config
         )
+        logger.info(f"Converted {len(canonical_records)} records successfully")
 
-        if legacy_events:
-            if ticker not in events_by_ticker_legacy:
-                events_by_ticker_legacy[ticker] = []
-            events_by_ticker_legacy[ticker].extend(legacy_events)
+        # DETERMINISTIC: Sort canonical records
+        canonical_records = sort_canonical_records(canonical_records)
 
-            # Convert to V2 format
-            if ticker not in events_by_ticker_v2:
-                events_by_ticker_v2[ticker] = []
+        # Load prior state - must be strictly before as_of_date for valid delta comparison
+        prior_snapshot = state_store.get_prior_snapshot(as_of_date)
+        prior_snapshot_date = prior_snapshot.snapshot_date if prior_snapshot else None
 
-            for le in legacy_events:
-                v2_event = convert_legacy_event_to_v2(ticker, le)
-                events_by_ticker_v2[ticker].append(v2_event)
-
-            total_events += len(legacy_events)
-
-    # DEDUP: Remove duplicate events by event_id
-    for ticker in events_by_ticker_v2:
-        events_by_ticker_v2[ticker], deduped = dedup_events(events_by_ticker_v2[ticker])
-        total_deduped += deduped
-
-    # DETERMINISTIC: Sort events per ticker
-    for ticker in events_by_ticker_v2:
-        events_by_ticker_v2[ticker] = sort_events_v2(events_by_ticker_v2[ticker])
-
-    logger.info(f"Detected {total_events} events across {len(events_by_ticker_v2)} tickers")
-    logger.info(f"Deduped {total_deduped} duplicate events")
-
-    # =========================================================================
-    # ZERO DIFF-BASED EVENTS DIAGNOSTIC: Explain why no diff events detected
-    # =========================================================================
-    # Note: Calendar-based events will still provide coverage for upcoming catalysts
-    if total_events == 0:
-        logger.info("=" * 70)
-        logger.info("ZERO DIFF-BASED EVENTS - DIAGNOSTIC SUMMARY")
-        logger.info("=" * 70)
-
-        # Note calendar coverage as fallback
-        if calendar_summary['total_catalysts'] > 0:
-            logger.info(f"CALENDAR FALLBACK ACTIVE: {calendar_summary['total_catalysts']} calendar events "
-                       f"across {calendar_summary['tickers_with_catalysts']} tickers will provide coverage")
-
-        # Check data freshness
-        if staleness_result.is_stale:
-            logger.warning(f"DATA STALENESS: trial_records is {staleness_result.age_days} days old")
-            logger.warning(f"  trial_records date: {staleness_result.trial_records_date}")
-            logger.warning(f"  as_of_date:         {as_of_date}")
-            logger.warning(f"  Recommendation:     {staleness_result.recommendation}")
-
-        # Check delta diagnostics
-        if delta_diagnostics.no_changes_detected:
-            logger.info(f"SNAPSHOT COMPARISON: No field changes between snapshots")
-            logger.info(f"  Current records: {delta_diagnostics.total_current_records}")
-            logger.info(f"  Prior records:   {delta_diagnostics.total_prior_records}")
-        elif delta_diagnostics.prior_snapshot_missing:
-            logger.info(f"INITIAL RUN: No prior snapshot - diff detection disabled")
-            logger.info(f"  Calendar-based events will provide catalyst coverage")
+        if prior_snapshot:
+            logger.info(f"Loaded prior snapshot from {prior_snapshot_date}")
+            logger.info(f"Prior snapshot has {prior_snapshot.key_count} records")
         else:
-            logger.info(f"Delta shows changes but no events generated:")
-            logger.info(f"  Records changed: {delta_diagnostics.records_changed_count}")
-
-        logger.info("=" * 70)
-
-    # Build prior events for delta scoring (from prior snapshot)
-    if prior_snapshot:
+            logger.info("No prior snapshot found - this is initial run")
+    
+        # Create current snapshot
+        current_snapshot = StateSnapshot(
+            snapshot_date=as_of_date,
+            records=canonical_records
+        )
+    
+        # CRITICAL: Verify snapshot dates for correctness
+        current_snapshot_date = current_snapshot.snapshot_date
+        logger.info(f"Snapshot dates: current={current_snapshot_date}, prior={prior_snapshot_date or 'None'}, as_of={as_of_date}")
+    
+        # Assertion 1: Current snapshot date must equal as_of_date
+        if current_snapshot_date != as_of_date:
+            raise ValueError(
+                f"Snapshot date mismatch: current_snapshot_date={current_snapshot_date} != as_of_date={as_of_date}"
+            )
+    
+        # Assertion 2: Prior snapshot date must be before current (if prior exists)
+        if prior_snapshot_date is not None and prior_snapshot_date >= current_snapshot_date:
+            raise ValueError(
+                f"Snapshot date ordering violation: prior={prior_snapshot_date} >= current={current_snapshot_date}. "
+                f"Prior snapshot should be strictly before current. Check state directory for stale data."
+            )
+    
+        # =========================================================================
+        # DELTA DIAGNOSTICS: Analyze what changed between snapshots
+        # =========================================================================
+        delta_diagnostics = compute_delta_diagnostics(current_snapshot, prior_snapshot)
+        delta_diagnostics.log_summary()
+    
+        # =========================================================================
+        # DETAILED SAMPLE COMPARISON: Check individual trials for changes
+        # =========================================================================
+        logger.info("=" * 60)
+        logger.info("CATALYST DETECTION DIAGNOSTICS - SAMPLE COMPARISON")
+        logger.info("=" * 60)
+        logger.info(f"Current snapshot: {current_snapshot.key_count} trials")
+        logger.info(f"Prior snapshot: {prior_snapshot.key_count if prior_snapshot else 0} trials")
+    
+        if prior_snapshot and current_snapshot.records:
+            # Build key sets for comparison using NCT ID ONLY (stable identifier)
+            # Ticker association can change between CT.gov queries, but NCT ID is globally unique
+            current_nct_ids = {r.nct_id for r in current_snapshot.records}
+            prior_nct_ids = {r.nct_id for r in prior_snapshot.records}
+            common_nct_ids = current_nct_ids & prior_nct_ids
+            added_nct_ids = current_nct_ids - prior_nct_ids
+            removed_nct_ids = prior_nct_ids - current_nct_ids
+    
+            # Also track (ticker, nct_id) tuples for detailed comparison
+            current_keys = {(r.ticker, r.nct_id) for r in current_snapshot.records}
+            prior_keys = {(r.ticker, r.nct_id) for r in prior_snapshot.records}
+            common_keys = current_keys & prior_keys
+            added_keys = current_keys - prior_keys
+            removed_keys = prior_keys - current_keys
+    
+            logger.info(f"NCT ID overlap: {len(common_nct_ids)} common, {len(added_nct_ids)} added, {len(removed_nct_ids)} removed")
+            logger.info(f"(ticker, nct_id) overlap: {len(common_keys)} common, {len(added_keys)} added, {len(removed_keys)} removed")
+    
+            # Calculate churn rate using NCT IDs (stable keys)
+            total_current = len(current_nct_ids) if current_nct_ids else 1
+            nct_churn_rate = (len(added_nct_ids) + len(removed_nct_ids)) / (2 * total_current)
+    
+            # Also calculate ticker association churn for diagnostics
+            ticker_churn_rate = (len(added_keys) + len(removed_keys)) / (2 * len(current_keys)) if current_keys else 0
+    
+            if nct_churn_rate > 0.10:
+                logger.warning(f"⚠️  HIGH NCT ID CHURN: {len(added_nct_ids)} added, {len(removed_nct_ids)} removed ({nct_churn_rate*100:.1f}% churn)")
+                logger.warning("   This suggests actual trial population changed significantly.")
+    
+            if ticker_churn_rate > 0.30 and nct_churn_rate < 0.10:
+                logger.info(f"ℹ️  Ticker association churn: {ticker_churn_rate*100:.1f}% (NCT churn only {nct_churn_rate*100:.1f}%)")
+                logger.info("   Ticker-NCT associations changed but trials are stable - this is expected with CT.gov text search.")
+    
+            # HIGH CHURN GATE: Only trigger on NCT ID churn (actual trial changes)
+            # Ticker association churn is expected and should not trigger fresh baseline
+            if nct_churn_rate > 0.30:
+                logger.error(f"CATALYST CHURN GATE TRIGGERED: {nct_churn_rate*100:.1f}% NCT churn exceeds 30% threshold")
+                logger.error("   Forcing fresh baseline mode - all events will be detected as initial ingest")
+                logger.error("   This prevents false negatives from dataset regeneration")
+                # Force fresh baseline by clearing prior snapshot reference
+                prior_snapshot = None
+                prior_snapshot_date = None
+                logger.warning("   Prior snapshot cleared - running in fresh baseline mode")
+    
+            # Sample up to 10 COMMON trials and check field changes
+            # Only run if prior_snapshot is still valid (not cleared by churn gate)
+            if prior_snapshot is not None:
+                sample_keys = sorted(list(common_keys))[:10]
+                changes_found = 0
+    
+                for ticker, nct_id in sample_keys:
+                    current_record = current_snapshot.get_record(ticker, nct_id)
+                    prior_record = prior_snapshot.get_record(ticker, nct_id)
+                    if not current_record or not prior_record:
+                        continue
+    
+                    changes = []
+    
+                    if current_record.overall_status != prior_record.overall_status:
+                        changes.append(f"status: {prior_record.overall_status.name} → {current_record.overall_status.name}")
+    
+                    if current_record.primary_completion_date != prior_record.primary_completion_date:
+                        changes.append(f"pcd: {prior_record.primary_completion_date} → {current_record.primary_completion_date}")
+    
+                    if current_record.last_update_posted != prior_record.last_update_posted:
+                        changes.append(f"updated: {prior_record.last_update_posted} → {current_record.last_update_posted}")
+    
+                    if changes:
+                        changes_found += 1
+                        logger.info(f"  {nct_id}: {', '.join(changes)}")
+    
+                if changes_found == 0 and len(common_keys) > 0:
+                    logger.warning("⚠️  NO FIELD CHANGES in common records - snapshots may have same underlying data")
+                    logger.info(f"   Current snapshot date: {current_snapshot.snapshot_date}")
+                    logger.info(f"   Prior snapshot date: {prior_snapshot.snapshot_date}")
+    
+        # Check update recency distribution
+        cutoff_date = as_of_date - timedelta(days=7)
+        recent_updates = sum(
+            1 for r in current_snapshot.records
+            if r.last_update_posted and r.last_update_posted >= cutoff_date
+        )
+    
+        logger.info(f"Trials updated in past 7 days: {recent_updates} / {current_snapshot.key_count}")
+    
+        if recent_updates < 50:  # Expect ~1% weekly update rate for active trials
+            logger.warning(f"⚠️  Very few recent updates ({recent_updates}) - trial_records.json may be stale")
+            logger.warning(f"   This explains why 0 diff-based events are detected")
+    
+        logger.info("=" * 60)
+    
+        # =========================================================================
+        # CALENDAR-BASED CATALYSTS: Forward-looking events from trial dates
+        # =========================================================================
+        logger.info("Detecting calendar-based catalysts...")
+        calendar_catalysts = detect_calendar_catalysts(current_snapshot, as_of_date)
+        calendar_summary = summarize_calendar_catalysts(calendar_catalysts)
+        logger.info(f"Calendar catalysts: {calendar_summary['total_catalysts']} events "
+                   f"across {calendar_summary['tickers_with_catalysts']} tickers")
+        if calendar_summary['by_window']:
+            logger.info(f"  By window: {calendar_summary['by_window']}")
+    
+        # =========================================================================
+        # ACTIVITY PROXY: Historical data workaround based on last_update_posted
+        # =========================================================================
+        # This supplements diff-based detection when historical snapshots are limited.
+        # It identifies trials with recent updates (even without knowing what changed).
+        logger.info("Computing activity proxy scores (historical data workaround)...")
+        activity_proxy_by_ticker: Dict[str, Dict[str, Any]] = {}
+    
+        # Group trials by ticker for activity proxy computation
+        trials_by_ticker: Dict[str, List[CanonicalTrialRecord]] = {}
+        for record in canonical_records:
+            ticker = record.ticker
+            if ticker not in trials_by_ticker:
+                trials_by_ticker[ticker] = []
+            trials_by_ticker[ticker].append(record)
+    
+        # Compute activity proxy scores per ticker
+        total_activity_120d = 0
+        total_activity_30d = 0
         for ticker in active_tickers:
-            prior_records = prior_snapshot.get_records_for_ticker(ticker) if hasattr(prior_snapshot, 'get_records_for_ticker') else []
-            if prior_records:
-                prior_events_by_ticker_v2[ticker] = []
-                # Note: Prior events would need to be reconstructed from prior snapshot
-                # For now, we use the detected events from delta comparison
-
-    # Load historical proximity scores from state store
-    historical_proximities = state_store.get_historical_proximities(4) if hasattr(state_store, 'get_historical_proximities') else {}
-
-    # =========================================================================
-    # MERGE CALENDAR CATALYSTS INTO SCORING PIPELINE
-    # =========================================================================
-    # Convert calendar catalysts to CatalystEventV2 and merge with diff-based events
-    # This ensures calendar-based forward-looking events are included in scoring
-    logger.info("Merging calendar catalysts into scoring pipeline...")
-    calendar_events_added = 0
-    calendar_tickers_added = 0
-
-    for calendar_catalyst in calendar_catalysts:
-        ticker = calendar_catalyst.ticker
-        v2_event = convert_calendar_catalyst_to_v2(calendar_catalyst)
-
-        if ticker not in events_by_ticker_v2:
-            events_by_ticker_v2[ticker] = []
-            calendar_tickers_added += 1
-
-        events_by_ticker_v2[ticker].append(v2_event)
-        calendar_events_added += 1
-
-    # Re-dedup and re-sort after merging calendar events
-    if calendar_events_added > 0:
-        calendar_deduped = 0
+            ticker_trials = trials_by_ticker.get(ticker, [])
+            if ticker_trials:
+                proxy_result = compute_activity_proxy_score(
+                    ticker_trials,
+                    as_of_date,
+                    lookback_days=120,
+                )
+                activity_proxy_by_ticker[ticker] = proxy_result
+                total_activity_120d += proxy_result['activity_count_120d']
+                total_activity_30d += proxy_result['activity_count_30d']
+    
+        logger.info(f"Activity proxy: {total_activity_120d} trials updated in 120d, "
+                   f"{total_activity_30d} in 30d across {len(activity_proxy_by_ticker)} tickers")
+    
+        # Detect events by comparing states
+        logger.info("Detecting diff-based catalyst events...")
+        events_by_ticker_v2: Dict[str, List[CatalystEventV2]] = {}
+        events_by_ticker_legacy: Dict[str, List[CatalystEvent]] = {}
+        prior_events_by_ticker_v2: Dict[str, List[CatalystEventV2]] = {}
+        total_events = 0
+        total_deduped = 0
+    
+        # Use cached NCT ID lookup for prior snapshot (stable key regardless of ticker association)
+        # This ensures we find prior records even if ticker-NCT association changed between runs
+        # The records_by_nct_id property is lazily computed and cached on first access
+    
+        for current_record in canonical_records:
+            ticker = current_record.ticker
+            nct_id = current_record.nct_id
+    
+            # Get prior record for this trial using NCT ID only (stable lookup via cached dict)
+            prior_record = prior_snapshot.get_record_by_nct_id(nct_id) if prior_snapshot else None
+    
+            # Detect events (legacy format)
+            legacy_events = event_detector.detect_events(
+                current_record,
+                prior_record,
+                as_of_date
+            )
+    
+            if legacy_events:
+                if ticker not in events_by_ticker_legacy:
+                    events_by_ticker_legacy[ticker] = []
+                events_by_ticker_legacy[ticker].extend(legacy_events)
+    
+                # Convert to V2 format
+                if ticker not in events_by_ticker_v2:
+                    events_by_ticker_v2[ticker] = []
+    
+                for le in legacy_events:
+                    v2_event = convert_legacy_event_to_v2(ticker, le)
+                    events_by_ticker_v2[ticker].append(v2_event)
+    
+                total_events += len(legacy_events)
+    
+        # DEDUP: Remove duplicate events by event_id
         for ticker in events_by_ticker_v2:
             events_by_ticker_v2[ticker], deduped = dedup_events(events_by_ticker_v2[ticker])
-            calendar_deduped += deduped
+            total_deduped += deduped
+    
+        # DETERMINISTIC: Sort events per ticker
+        for ticker in events_by_ticker_v2:
             events_by_ticker_v2[ticker] = sort_events_v2(events_by_ticker_v2[ticker])
-
-        total_deduped += calendar_deduped
-        total_events += calendar_events_added
-
-        logger.info(f"Merged {calendar_events_added} calendar events across "
-                   f"{calendar_summary['tickers_with_catalysts']} tickers "
-                   f"(new tickers: {calendar_tickers_added}, deduped: {calendar_deduped})")
+    
+        logger.info(f"Detected {total_events} events across {len(events_by_ticker_v2)} tickers")
+        logger.info(f"Deduped {total_deduped} duplicate events")
+    
+        # =========================================================================
+        # ZERO DIFF-BASED EVENTS DIAGNOSTIC: Explain why no diff events detected
+        # =========================================================================
+        # Note: Calendar-based events will still provide coverage for upcoming catalysts
+        if total_events == 0:
+            logger.info("=" * 70)
+            logger.info("ZERO DIFF-BASED EVENTS - DIAGNOSTIC SUMMARY")
+            logger.info("=" * 70)
+    
+            # Note calendar coverage as fallback
+            if calendar_summary['total_catalysts'] > 0:
+                logger.info(f"CALENDAR FALLBACK ACTIVE: {calendar_summary['total_catalysts']} calendar events "
+                           f"across {calendar_summary['tickers_with_catalysts']} tickers will provide coverage")
+    
+            # Check data freshness
+            if staleness_result.is_stale:
+                logger.warning(f"DATA STALENESS: trial_records is {staleness_result.age_days} days old")
+                logger.warning(f"  trial_records date: {staleness_result.trial_records_date}")
+                logger.warning(f"  as_of_date:         {as_of_date}")
+                logger.warning(f"  Recommendation:     {staleness_result.recommendation}")
+    
+            # Check delta diagnostics
+            if delta_diagnostics.no_changes_detected:
+                logger.info(f"SNAPSHOT COMPARISON: No field changes between snapshots")
+                logger.info(f"  Current records: {delta_diagnostics.total_current_records}")
+                logger.info(f"  Prior records:   {delta_diagnostics.total_prior_records}")
+            elif delta_diagnostics.prior_snapshot_missing:
+                logger.info(f"INITIAL RUN: No prior snapshot - diff detection disabled")
+                logger.info(f"  Calendar-based events will provide catalyst coverage")
+            else:
+                logger.info(f"Delta shows changes but no events generated:")
+                logger.info(f"  Records changed: {delta_diagnostics.records_changed_count}")
+    
+            logger.info("=" * 70)
+    
+        # Build prior events for delta scoring (from prior snapshot)
+        if prior_snapshot:
+            for ticker in active_tickers:
+                prior_records = prior_snapshot.get_records_for_ticker(ticker) if hasattr(prior_snapshot, 'get_records_for_ticker') else []
+                if prior_records:
+                    prior_events_by_ticker_v2[ticker] = []
+                    # Note: Prior events would need to be reconstructed from prior snapshot
+                    # For now, we use the detected events from delta comparison
+    
+        # Load historical proximity scores from state store
+        historical_proximities = state_store.get_historical_proximities(4) if hasattr(state_store, 'get_historical_proximities') else {}
+    
+        # =========================================================================
+        # MERGE CALENDAR CATALYSTS INTO SCORING PIPELINE
+        # =========================================================================
+        # Convert calendar catalysts to CatalystEventV2 and merge with diff-based events
+        # This ensures calendar-based forward-looking events are included in scoring
+        logger.info("Merging calendar catalysts into scoring pipeline...")
+        calendar_events_added = 0
+        calendar_tickers_added = 0
+    
+        for calendar_catalyst in calendar_catalysts:
+            ticker = calendar_catalyst.ticker
+            v2_event = convert_calendar_catalyst_to_v2(calendar_catalyst)
+    
+            if ticker not in events_by_ticker_v2:
+                events_by_ticker_v2[ticker] = []
+                calendar_tickers_added += 1
+    
+            events_by_ticker_v2[ticker].append(v2_event)
+            calendar_events_added += 1
+    
+        # Re-dedup and re-sort after merging calendar events
+        if calendar_events_added > 0:
+            calendar_deduped = 0
+            for ticker in events_by_ticker_v2:
+                events_by_ticker_v2[ticker], deduped = dedup_events(events_by_ticker_v2[ticker])
+                calendar_deduped += deduped
+                events_by_ticker_v2[ticker] = sort_events_v2(events_by_ticker_v2[ticker])
+    
+            total_deduped += calendar_deduped
+            total_events += calendar_events_added
+    
+            logger.info(f"Merged {calendar_events_added} calendar events across "
+                       f"{calendar_summary['tickers_with_catalysts']} tickers "
+                       f"(new tickers: {calendar_tickers_added}, deduped: {calendar_deduped})")
 
     # =========================================================================
     # MERGE CORPORATE CATALYSTS INTO SCORING PIPELINE
@@ -1022,7 +1090,6 @@ def compute_module_3_catalyst(
     # =========================================================================
     # MERGE ACTIVITY PROXY DATA INTO SUMMARIES
     # =========================================================================
-    from decimal import Decimal
     for ticker in summaries_v2:
         if ticker in activity_proxy_by_ticker:
             proxy_data = activity_proxy_by_ticker[ticker]
@@ -1065,6 +1132,20 @@ def compute_module_3_catalyst(
                    f"tickers with sustained catalyst clusters")
     else:
         logger.info("Time-decay scoring disabled")
+
+    # =========================================================================
+    # PIT VIOLATION DEGRADE: Downgrade scores and confidence
+    # =========================================================================
+    if pit_violation:
+        pit_downgrade_factor = Decimal("0.50")
+        for ticker, summary in summaries_v2.items():
+            summary.score_override *= pit_downgrade_factor
+            summary.score_blended *= pit_downgrade_factor
+            summary.catalyst_confidence = ConfidenceLevel.LOW
+        logger.warning(
+            "PIT_VIOLATION degrade: catalyst scores halved and confidence "
+            "downgraded to LOW (corporate-only mode)"
+        )
 
     # Also generate legacy summaries for backwards compatibility
     logger.info("Generating legacy summaries for backwards compatibility...")
@@ -1173,6 +1254,9 @@ def compute_module_3_catalyst(
         "time_decay_diagnostics": time_decay_diagnostics,
         # New in v2.3: Activity proxy (historical data workaround)
         "activity_proxy_summary": activity_proxy_summary,
+        # New: PIT violation tracking
+        "pit_violation": pit_violation_info,
+        "catalyst_mode": "corporate_only_due_to_pit_violation" if pit_violation else "full",
     }
 
     # Output validation
