@@ -1256,8 +1256,9 @@ def validate_defensive_integration(output: Dict) -> None:
     if coverage:
         total = coverage.get("total_securities", 0)
         with_features = coverage.get("with_defensive_features", 0)
-        with_corr = coverage.get("with_correlation", 0)
-        with_vol = coverage.get("with_volatility", 0)
+        by_feat = coverage.get("by_feature", {})
+        with_corr = by_feat.get("corr_xbi_120d", {}).get("count", 0)
+        with_vol = by_feat.get("vol_60d", {}).get("count", 0)
         pct = coverage.get("coverage_pct", 0)
 
         if with_features == 0:
