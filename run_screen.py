@@ -1763,6 +1763,7 @@ def run_screening_pipeline(
     apply_defensive_multiplier: bool = False,
     defensive_config: str = "default",
     defensive_cache: Optional[str] = None,
+    enable_position_sizing: bool = False,
 ) -> Dict[str, Any]:
     """
     Execute full screening pipeline with deterministic guarantees.
@@ -2859,6 +2860,7 @@ def run_screening_pipeline(
             cluster_threshold=cluster_threshold,
             # Defensive overlay parameters
             apply_defensive_multiplier=apply_defensive_multiplier,
+            apply_position_sizing=enable_position_sizing,
             defensive_config=defensive_config,
             defensive_cache_path=defensive_cache,
         )
@@ -2897,7 +2899,21 @@ def run_screening_pipeline(
 
     # Final defensive overlay and top-N selection
     logger.info("[7/7] Defensive overlay & top-N selection...")
-    # (Assuming this is handled in Module 5 or separately)
+
+    # Log v2 risk diagnostics if present
+    risk_v2 = diag.get('risk_v2_summary')
+    if risk_v2 and risk_v2.get('v2_detected'):
+        logger.info("  V2 risk metrics detected in defensive cache")
+        for metric, counts in risk_v2.get('state_counts', {}).items():
+            logger.info(f"    {metric}: FULL={counts.get('FULL', 0)} PARTIAL={counts.get('PARTIAL', 0)} NONE={counts.get('NONE', 0)}")
+        priors = risk_v2.get('priors_used', {})
+        logger.info(f"    Priors used: vol={priors.get('vol', 0)} dd={priors.get('drawdown', 0)} beta={priors.get('beta', 0)}")
+        lc = risk_v2.get('low_confidence_count', 0)
+        lc_pct = risk_v2.get('low_confidence_pct', 0)
+        if risk_v2.get('low_confidence_warning'):
+            logger.warning(f"    LOW CONFIDENCE WARNING: {lc} tickers ({lc_pct}%) have confidence_risk < 0.65")
+        else:
+            logger.info(f"    Low confidence: {lc} tickers ({lc_pct}%)")
 
     # Serialize module 3 result (contains TickerCatalystSummary dataclasses)
     def _serialize_m3_result(m3):
@@ -2933,6 +2949,7 @@ def run_screening_pipeline(
             "min_component_coverage_mode": min_component_coverage_mode,
             "defensive_multiplier_enabled": apply_defensive_multiplier,
             "defensive_config": defensive_config if apply_defensive_multiplier else None,
+            "position_sizing_enabled": enable_position_sizing,
         },
         "module_1_universe": m1_result,
         "module_2_financial": m2_result,
@@ -3373,6 +3390,13 @@ Module 3 Catalyst Detection:
         help="Optional PIT defensive features cache file (defensive_features_<AS_OF>.json). "
              "If provided, fills missing defensive_features only (no recompute).",
     )
+    parser.add_argument(
+        "--enable-position-sizing",
+        action="store_true",
+        default=False,
+        help="Enable v2 position sizing using multi-horizon blended risk metrics. "
+             "Requires v2 defensive cache (cache_version 2.0.0).",
+    )
 
     # Snapshot sanity checks
     parser.add_argument(
@@ -3569,6 +3593,7 @@ Module 3 Catalyst Detection:
             apply_defensive_multiplier=not getattr(args, 'no_defensive_multiplier', False),
             defensive_config=args.defensive_config,
             defensive_cache=args.defensive_cache,
+            enable_position_sizing=getattr(args, 'enable_position_sizing', False),
         )
 
         # Add bootstrap analysis if requested

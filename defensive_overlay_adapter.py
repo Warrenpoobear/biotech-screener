@@ -758,6 +758,78 @@ def defensive_multiplier_legacy(defensive_features: Dict[str, str]) -> Tuple[Dec
     return defensive_multiplier(defensive_features, config=None)
 
 
+def compute_position_weights_v2(
+    ranked: List[Dict],
+    scores_by_ticker: Dict[str, Dict],
+    config: Optional["DefensiveConfig"] = None,
+) -> None:
+    """
+    V2 position sizing using multi-horizon blended risk metrics.
+
+    Per ticker:
+    - confidence_risk < 0.65 → equal weight (1/N)
+    - else → raw_weight = 1 / vol_blended (or vol_60d fallback)
+    - drawdown penalty: if max_drawdown_blended < -0.40 → weight *= 0.70
+
+    Sets record["_position_weight_raw"] for each record.
+    Then calls apply_caps_and_renormalize().
+    """
+    cfg = config or DEFAULT_DEFENSIVE_CONFIG
+    n_included = sum(1 for r in ranked if r.get("rankable", True))
+    equal_weight = Decimal("1") / Decimal(str(max(1, n_included))) if n_included > 0 else Decimal("0")
+
+    for rec in ranked:
+        if not rec.get("rankable", True):
+            rec["_position_weight_raw"] = Decimal("0")
+            continue
+
+        ticker = rec["ticker"]
+        ticker_data = scores_by_ticker.get(ticker, {})
+        def_features = ticker_data.get("defensive_features", {})
+
+        # Check confidence
+        conf_str = def_features.get("confidence_risk")
+        if conf_str is not None:
+            try:
+                conf = float(conf_str)
+            except (ValueError, TypeError):
+                conf = 0.0
+        else:
+            conf = 0.0
+
+        if conf < 0.65:
+            rec["_position_weight_raw"] = equal_weight
+            continue
+
+        # Inverse-vol weight: prefer vol_blended, fallback vol_60d
+        vol_str = def_features.get("vol_blended") or def_features.get("vol_60d")
+        if vol_str:
+            try:
+                vol_val = Decimal(vol_str)
+                if vol_val > 0:
+                    raw_w = Decimal("1") / vol_val
+                else:
+                    raw_w = equal_weight
+            except (ValueError, TypeError, InvalidOperation):
+                raw_w = equal_weight
+        else:
+            raw_w = equal_weight
+
+        # Drawdown penalty
+        dd_str = def_features.get("max_drawdown_blended")
+        if dd_str:
+            try:
+                dd_val = float(dd_str)
+                if dd_val < -0.40:
+                    raw_w *= Decimal("0.70")
+            except (ValueError, TypeError):
+                pass
+
+        rec["_position_weight_raw"] = raw_w
+
+    apply_caps_and_renormalize(ranked, max_pos=cfg.max_position)
+
+
 def raw_inv_vol_weight(defensive_features: Dict[str, str], power: Decimal = Decimal("2.0")) -> Optional[Decimal]:
     """
     Calculate raw inverse-volatility weight with exponential scaling.
@@ -1070,6 +1142,56 @@ def enrich_with_defensive_overlays(
         },
     }
 
+    # Detect v2 risk features (look for vol_blended in first few tickers)
+    v2_detected = False
+    for ticker_key in list(scores_by_ticker.keys())[:10]:
+        td = scores_by_ticker.get(ticker_key, {})
+        df = td.get("defensive_features", {})
+        if "vol_blended" in df:
+            v2_detected = True
+            break
+
+    # V2 diagnostics: data state summary
+    if v2_detected:
+        v2_state_counts = {
+            "vol": {"FULL": 0, "PARTIAL": 0, "NONE": 0},
+            "drawdown": {"FULL": 0, "PARTIAL": 0, "NONE": 0},
+            "beta": {"FULL": 0, "PARTIAL": 0, "NONE": 0},
+        }
+        v2_priors_used = {"vol": 0, "drawdown": 0, "beta": 0}
+        v2_low_confidence = 0
+
+        for rec in ranked:
+            ticker = rec["ticker"]
+            ticker_data = scores_by_ticker.get(ticker, {})
+            def_feat = ticker_data.get("defensive_features", {})
+
+            for metric in ("vol", "drawdown", "beta"):
+                state = def_feat.get(f"risk_data_state_{metric}")
+                if state in v2_state_counts[metric]:
+                    v2_state_counts[metric][state] += 1
+                    if state == "NONE":
+                        v2_priors_used[metric] += 1
+
+            conf_str = def_feat.get("confidence_risk")
+            if conf_str is not None:
+                try:
+                    if float(conf_str) < 0.65:
+                        v2_low_confidence += 1
+                except (ValueError, TypeError):
+                    pass
+
+        low_confidence_pct = round(100 * v2_low_confidence / total_securities, 1) if total_securities > 0 else 0
+
+        output["diagnostic_counts"]["risk_v2_summary"] = {
+            "v2_detected": True,
+            "state_counts": v2_state_counts,
+            "priors_used": v2_priors_used,
+            "low_confidence_count": v2_low_confidence,
+            "low_confidence_pct": low_confidence_pct,
+            "low_confidence_warning": low_confidence_pct > 10,
+        }
+
     # Add config provenance for audit trail
     provenance = cfg.to_provenance()
     provenance["defensive_overlay_applied"] = apply_multiplier
@@ -1081,11 +1203,15 @@ def enrich_with_defensive_overlays(
     # Step 1: Calculate raw weights for position sizing (needed for Step 3)
     # This must run BEFORE multiplier application if position sizing is enabled
     if apply_position_sizing:
-        for rec in ranked:
-            ticker = rec["ticker"]
-            ticker_data = scores_by_ticker.get(ticker, {})
-            defensive_features = ticker_data.get("defensive_features", {})
-            rec["_position_weight_raw"] = raw_inv_vol_weight(defensive_features or {})
+        if v2_detected:
+            # V2 position sizing: uses blended vol + confidence + drawdown penalty
+            compute_position_weights_v2(ranked, scores_by_ticker, config=cfg)
+        else:
+            for rec in ranked:
+                ticker = rec["ticker"]
+                ticker_data = scores_by_ticker.get(ticker, {})
+                defensive_features = ticker_data.get("defensive_features", {})
+                rec["_position_weight_raw"] = raw_inv_vol_weight(defensive_features or {})
 
     # Step 2: Compute cluster percentile thresholds for boost eligibility gate
     # This must happen BEFORE multiplier application so we use pre-defensive scores
@@ -1185,7 +1311,8 @@ def enrich_with_defensive_overlays(
             rec["composite_rank"] = i + 1
 
     # Step 4: Apply position sizing with dynamic floor and optional top-N selection
-    if apply_position_sizing:
+    if apply_position_sizing and not v2_detected:
+        # V1 path: v2 already called apply_caps_and_renormalize in compute_position_weights_v2
         apply_caps_and_renormalize(ranked, top_n=top_n)  # Pass top_n parameter
         
         # Add position sizing diagnostics
@@ -1470,6 +1597,7 @@ __all__ = [
     "DEFAULT_DEFENSIVE_CONFIG",
     "AGGRESSIVE_DEFENSIVE_CONFIG",
     # Core functions
+    "compute_position_weights_v2",
     "defensive_multiplier",
     "defensive_multiplier_legacy",
     "sanitize_corr",

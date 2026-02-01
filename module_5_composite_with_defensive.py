@@ -371,6 +371,11 @@ def compute_module_5_composite_with_defensive(
         merged = merge_cache_into_scores(defensive_by_ticker, cache_features, overwrite=True)
         logger.info(f"Defensive cache merge (overwrite): merged_fields={merged} cache_tickers={len(cache_features)}")
 
+        # Detect v2 risk metrics in cache
+        sample = next(iter(cache_features.values()), {})
+        if "vol_blended" in sample:
+            logger.info("Detected v2 risk metrics in defensive cache")
+
     # Add defensive overlays
     # Select config object based on string parameter
     cfg = AGGRESSIVE_DEFENSIVE_CONFIG if defensive_config == "aggressive" else DEFAULT_DEFENSIVE_CONFIG

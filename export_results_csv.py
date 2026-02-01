@@ -12,6 +12,10 @@ CORE_COLUMNS = [
     "ticker", "composite_rank", "composite_score", "z_score",
     "expected_excess_return", "volatility", "drawdown", "cluster_id",
     "corr_xbi", "beta_xbi",  # Diversification proof columns
+    "vol_blended", "vol_63d", "vol_252d",
+    "max_drawdown_blended", "max_drawdown_252d", "max_drawdown_2y",
+    "risk_data_state_vol", "risk_data_state_drawdown", "risk_data_state_beta",
+    "confidence_risk",
     "defensive_multiplier", "defensive_bucket", "defensive_notes",
     "rank_driver",  # IC audit: alpha | defensive_boost | defensive_penalty | suppressed
     "fundamental_red_flag", "fundamental_red_flag_reasons",
@@ -56,6 +60,18 @@ def flatten_record(rec: Dict[str, Any]) -> Dict[str, Any]:
     flat["beta_xbi"] = def_feat.get("beta_xbi_60d")
     flat["volatility"] = def_feat.get("vol_60d")
     flat["drawdown"] = def_feat.get("drawdown")
+
+    # V2 multi-horizon risk columns
+    flat["vol_blended"] = def_feat.get("vol_blended")
+    flat["vol_63d"] = def_feat.get("vol_63d")
+    flat["vol_252d"] = def_feat.get("vol_252d")
+    flat["max_drawdown_blended"] = def_feat.get("max_drawdown_blended")
+    flat["max_drawdown_252d"] = def_feat.get("max_drawdown_252d")
+    flat["max_drawdown_2y"] = def_feat.get("max_drawdown_2y")
+    flat["risk_data_state_vol"] = def_feat.get("risk_data_state_vol")
+    flat["risk_data_state_drawdown"] = def_feat.get("risk_data_state_drawdown")
+    flat["risk_data_state_beta"] = def_feat.get("risk_data_state_beta")
+    flat["confidence_risk"] = def_feat.get("confidence_risk")
 
     # Rank driver and red-flag fields
     flat["rank_driver"] = rec.get("rank_driver")
