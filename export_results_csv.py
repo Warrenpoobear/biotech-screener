@@ -29,6 +29,14 @@ SIGNAL_COLUMNS = [
     "smart_money_score", "smart_money_overlap", "smart_money_tier1_holders",
     "short_interest_score", "short_interest_crowding", "short_interest_squeeze",
     "valuation_score", "valuation_method", "valuation_confidence",
+    "valuation_raw_metric", "valuation_mcap_mm",
+    "valuation_denom_trials_total",
+    "valuation_denom_trials_p1", "valuation_denom_trials_p2",
+    "valuation_denom_trials_p3", "valuation_denom_trials_reg",
+    "valuation_phase_weighted_trials", "valuation_metric_pw",
+    "valuation_pct_overall", "valuation_pct_in_size_bucket",
+    "valuation_size_bucket",
+    "valuation_applicable", "valuation_notes",
     "partnership_score", "partnership_strength", "partnership_top_partners",
     "fda_designation_score", "fda_designations",
     "competitive_intensity_score", "competitive_crowding_level",
@@ -40,6 +48,54 @@ CONFIDENCE_COLUMNS = [
     "confidence_overall", "confidence_financial", "confidence_clinical",
     "confidence_catalyst", "confidence_pos",
 ]
+
+
+def _cheapness_percentile(value: float, all_values: List[float]) -> float:
+    """Percentile where 1.0 = cheapest (lowest raw metric), 0.0 = most expensive.
+
+    Uses midpoint method: pct = (count_above + 0.5 * count_equal) / n.
+    Lower raw metric = cheaper = higher percentile.
+    """
+    n = len(all_values)
+    if n == 0:
+        return 0.0
+    above = sum(1 for v in all_values if v > value)
+    equal = sum(1 for v in all_values if v == value)
+    return round((above + 0.5 * equal) / n, 4)
+
+
+def _compute_valuation_percentiles(flat_records: List[Dict[str, Any]]) -> None:
+    """Compute cross-sectional valuation percentiles in-place (ranking-neutral).
+
+    Populates valuation_pct_overall and valuation_pct_in_size_bucket.
+    Only for records with a numeric valuation_raw_metric.
+    """
+    # Collect non-null raw metrics
+    indexed: List[tuple] = []  # (idx, raw_metric, size_bucket)
+    for i, rec in enumerate(flat_records):
+        raw = rec.get("valuation_raw_metric")
+        if raw is not None and raw != "":
+            try:
+                indexed.append((i, float(raw), rec.get("valuation_size_bucket", "")))
+            except (ValueError, TypeError):
+                pass
+
+    if not indexed:
+        return
+
+    all_values = [v for _, v, _ in indexed]
+
+    # Group by size bucket
+    bucket_values: Dict[str, List[float]] = {}
+    for _, v, bucket in indexed:
+        bucket_values.setdefault(bucket, []).append(v)
+
+    # Assign percentiles
+    for i, v, bucket in indexed:
+        flat_records[i]["valuation_pct_overall"] = _cheapness_percentile(v, all_values)
+        bv = bucket_values.get(bucket, [])
+        if len(bv) >= 2:
+            flat_records[i]["valuation_pct_in_size_bucket"] = _cheapness_percentile(v, bv)
 
 
 def flatten_record(rec: Dict[str, Any]) -> Dict[str, Any]:
@@ -87,12 +143,8 @@ def flatten_record(rec: Dict[str, Any]) -> Dict[str, Any]:
         state_fields = [flat["risk_data_state_vol"], flat["risk_data_state_drawdown"],
                         flat["risk_data_state_beta"]]
         live_count = sum(1 for s in state_fields if s == "live")
-        if live_count == 3:
-            flat["confidence_risk"] = 0.90
-        elif live_count >= 2:
-            flat["confidence_risk"] = 0.65
-        else:
-            flat["confidence_risk"] = 0.35
+        # Continuous mapping: 0.35 + (live_count/3) * 0.55
+        flat["confidence_risk"] = round(0.35 + (live_count / 3) * 0.55, 2)
 
     # Rank driver and red-flag fields
     flat["rank_driver"] = rec.get("rank_driver")
@@ -130,6 +182,17 @@ def flatten_record(rec: Dict[str, Any]) -> Dict[str, Any]:
     flat["valuation_score"] = val_sig.get("valuation_score")
     flat["valuation_method"] = val_sig.get("method")
     flat["valuation_confidence"] = val_sig.get("confidence")
+    # Valuation debug columns (percentiles computed cross-sectionally in export_to_csv)
+    for col in [
+        "valuation_raw_metric", "valuation_mcap_mm",
+        "valuation_denom_trials_total",
+        "valuation_denom_trials_p1", "valuation_denom_trials_p2",
+        "valuation_denom_trials_p3", "valuation_denom_trials_reg",
+        "valuation_phase_weighted_trials", "valuation_metric_pw",
+        "valuation_size_bucket",
+        "valuation_applicable", "valuation_notes",
+    ]:
+        flat[col] = val_sig.get(col)
 
     # Partnership signal
     part = rec.get("partnership_signal") or {}
@@ -176,6 +239,10 @@ def export_to_csv(results_path: Path, output_path: Path) -> int:
 
     # Flatten all records
     flat_records = [flatten_record(r) for r in ranked]
+
+    # Cross-sectional valuation percentiles (ranking-neutral, diagnostic only)
+    # Lower raw metric = cheaper = higher percentile (1.0 = cheapest, 0.0 = most expensive)
+    _compute_valuation_percentiles(flat_records)
 
     # Get all columns (core + signal + confidence)
     columns = CORE_COLUMNS + SIGNAL_COLUMNS + CONFIDENCE_COLUMNS

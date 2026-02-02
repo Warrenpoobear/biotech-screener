@@ -519,6 +519,12 @@ class ValuationSignal:
     ev_multiple: Optional[Decimal] = None  # EV/CFO or EV/Revenue for commercial
     peer_median_ev_multiple: Optional[Decimal] = None  # Commercial peer median
     flags: List[str] = field(default_factory=list)  # Diagnostic flags
+    # Debug/audit fields (ranking-neutral)
+    mcap_used_mm: Optional[Decimal] = None          # Exact market cap fed in
+    trial_count_raw: int = 0                         # Raw trial count before winsorization
+    trial_count_winsorized: int = 0                  # After winsorization
+    stage_bucket: str = ""                           # early/mid/late
+    percentile_overall: Optional[Decimal] = None     # Percentile vs ALL dev peers (not just same-stage)
 
 
 @dataclass
@@ -1499,6 +1505,8 @@ def _compute_commercial_valuation(
             ev_multiple=None,
             peer_median_ev_multiple=None,
             flags=flags,
+            mcap_used_mm=market_cap_mm,
+            stage_bucket="commercial",
         )
 
     # Need minimum peers for reliable comparison
@@ -1515,6 +1523,8 @@ def _compute_commercial_valuation(
             ev_multiple=_quantize_score(ev_multiple_clamped),
             peer_median_ev_multiple=None,
             flags=flags,
+            mcap_used_mm=market_cap_mm,
+            stage_bucket="commercial",
         )
 
     n_peers = len(peer_multiples)
@@ -1574,6 +1584,8 @@ def _compute_commercial_valuation(
         ev_multiple=_quantize_score(ev_multiple_clamped),
         peer_median_ev_multiple=_quantize_score(peer_median_mult),
         flags=flags,
+        mcap_used_mm=market_cap_mm,
+        stage_bucket="commercial",
     )
 
 
@@ -1615,6 +1627,10 @@ def _compute_development_valuation(
             ev_multiple=None,
             peer_median_ev_multiple=None,
             flags=flags,
+            mcap_used_mm=market_cap_mm,
+            trial_count_raw=trial_count,
+            trial_count_winsorized=trial_count,
+            stage_bucket=_stage_bucket(lead_phase),
         )
 
     # Winsorize inputs
@@ -1646,6 +1662,10 @@ def _compute_development_valuation(
             ev_multiple=None,
             peer_median_ev_multiple=None,
             flags=flags,
+            mcap_used_mm=market_cap_mm,
+            trial_count_raw=trial_count,
+            trial_count_winsorized=trials_winsorized,
+            stage_bucket=stage,
         )
 
     # Compute peer mcap/asset values
@@ -1671,6 +1691,10 @@ def _compute_development_valuation(
             ev_multiple=None,
             peer_median_ev_multiple=None,
             flags=flags,
+            mcap_used_mm=market_cap_mm,
+            trial_count_raw=trial_count,
+            trial_count_winsorized=trials_winsorized,
+            stage_bucket=stage,
         )
 
     n_peers = len(peer_mcap_per_asset)
@@ -1731,6 +1755,30 @@ def _compute_development_valuation(
 
     flags.append("valuation_mcap_per_trial")
 
+    # Compute percentile vs ALL dev peers (cross-check, ranking-neutral)
+    all_dev_peers = [
+        p for p in peer_valuations
+        if p.get("trial_count", 0) >= VALUATION_DEV_MIN_TRIALS
+    ]
+    all_dev_mcpa: List[Decimal] = []
+    for p in all_dev_peers:
+        p_mcap = _to_decimal(p.get("market_cap_mm"))
+        p_trials = p.get("trial_count", 0)
+        if p_mcap is not None and p_trials >= VALUATION_DEV_MIN_TRIALS:
+            p_mcap_w = _clamp(p_mcap, VALUATION_MCAP_MIN_MM, VALUATION_MCAP_MAX_MM)
+            p_trials_w = max(VALUATION_TRIAL_COUNT_MIN, min(p_trials, VALUATION_TRIAL_COUNT_MAX))
+            all_dev_mcpa.append(p_mcap_w / Decimal(p_trials_w))
+
+    percentile_overall: Optional[Decimal] = None
+    if all_dev_mcpa:
+        lt_all = sum(1 for p in all_dev_mcpa if p < mcap_per_asset)
+        eq_all = sum(1 for p in all_dev_mcpa if p == mcap_per_asset)
+        percentile_overall = _quantize_score(
+            (Decimal(lt_all) + Decimal("0.5") * Decimal(eq_all))
+            / Decimal(len(all_dev_mcpa))
+            * Decimal("100")
+        )
+
     return ValuationSignal(
         valuation_score=_quantize_score(valuation_score),
         mcap_per_asset=_quantize_score(mcap_per_asset),
@@ -1742,6 +1790,11 @@ def _compute_development_valuation(
         ev_multiple=None,
         peer_median_ev_multiple=None,
         flags=flags,
+        mcap_used_mm=market_cap_mm,
+        trial_count_raw=trial_count,
+        trial_count_winsorized=trials_winsorized,
+        stage_bucket=stage,
+        percentile_overall=percentile_overall,
     )
 
 

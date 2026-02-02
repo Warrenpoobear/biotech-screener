@@ -409,6 +409,9 @@ class TickerClinicalSummaryV2:
     flags: List[str]
     severity: str
 
+    # Per-phase trial counts (diagnostic)
+    phase_counts: Dict[str, int] = field(default_factory=dict)
+
     # Schema metadata
     schema_version: str = SCHEMA_VERSION
 
@@ -443,6 +446,7 @@ class TickerClinicalSummaryV2:
             "recency_days": self.recency_days,
             "recency_unknown": self.recency_unknown,
             "recency_stale": self.recency_stale,
+            "phase_counts": self.phase_counts,
             "flags": self.flags,
             "severity": self.severity,
         }
@@ -1380,6 +1384,18 @@ def compute_module_4_clinical_dev_v2(
         if termination_rate > Decimal("0.5"):
             flags.append("high_termination_rate")
 
+        # Per-phase trial counts (diagnostic only, no scoring impact)
+        phase_counts: Dict[str, int] = {
+            "phase_1": 0, "phase_1_2": 0, "phase_2": 0,
+            "phase_2_3": 0, "phase_3": 0, "approved": 0, "other": 0,
+        }
+        for t in trials:
+            p = t.phase.lower().replace(" ", "_").replace("/", "_")
+            if p in phase_counts:
+                phase_counts[p] += 1
+            else:
+                phase_counts["other"] += 1
+
         summary = TickerClinicalSummaryV2(
             ticker=ticker,
             as_of_date=as_of_date,
@@ -1408,6 +1424,7 @@ def compute_module_4_clinical_dev_v2(
             recency_days=recency_days,
             recency_unknown=recency_unknown,
             recency_stale=recency_stale,
+            phase_counts=phase_counts,
             flags=flags,
             severity=severity.value,
         )
@@ -1483,6 +1500,7 @@ def compute_module_4_clinical_dev(
             "n_strong_endpoints": score["n_strong_endpoints"],
             "n_weak_endpoints": score["n_weak_endpoints"],
             "n_neutral_endpoints": score["n_neutral_endpoints"],
+            "phase_counts": score.get("phase_counts", {}),
         })
 
     output = {

@@ -1289,6 +1289,7 @@ def _score_single_ticker_v3(
     lead_phase = clin_data.get("lead_phase")
     stage = _stage_bucket(lead_phase)
     trial_count = clin_data.get("trial_count", 0)
+    phase_counts = clin_data.get("phase_counts", {})
 
     # Extract market data
     annualized_vol = None
@@ -2016,6 +2017,31 @@ def _score_single_ticker_v3(
         },
     )
 
+    # Phase-weighted trial computation (diagnostic only, no scoring impact)
+    _pw_weights = {
+        "phase_1": 0.5, "phase_1_2": 0.75, "phase_2": 1.0,
+        "phase_2_3": 1.5, "phase_3": 2.0, "approved": 3.0, "other": 0.25,
+    }
+    phase_weighted_trials = sum(phase_counts.get(p, 0) * w for p, w in _pw_weights.items())
+    mcap_per_pw_trial = (
+        float(market_cap_mm) / phase_weighted_trials
+        if phase_weighted_trials > 0 and market_cap_mm is not None
+        else None
+    )
+
+    # Valuation applicability and notes (diagnostic only)
+    _val_size_bucket = _market_cap_bucket(market_cap_mm)
+    _val_notes_parts = []
+    if market_cap_mm is None:
+        _val_notes_parts.append("missing_mcap")
+    if trial_count < 2:
+        _val_notes_parts.append(f"denom<2 (trial_count={trial_count})")
+    if not phase_counts:
+        _val_notes_parts.append("missing_phase_breakdown")
+    if valuation.flags:
+        _val_notes_parts.extend(valuation.flags)
+    _val_applicable = trial_count >= 2 and market_cap_mm is not None
+
     return {
         "ticker": ticker,
         "composite_score": final_score,
@@ -2058,6 +2084,23 @@ def _score_single_ticker_v3(
             "mcap_per_asset": str(valuation.mcap_per_asset) if valuation.mcap_per_asset else None,
             "peer_median_mcap_per_asset": str(valuation.peer_median_mcap_per_asset) if valuation.peer_median_mcap_per_asset else None,
             "flags": valuation.flags if valuation.flags else [],
+            # Debug/audit fields (ranking-neutral)
+            "valuation_raw_metric": (
+                str(valuation.mcap_per_asset) if valuation.mcap_per_asset is not None
+                else str(valuation.ev_multiple) if valuation.ev_multiple is not None
+                else None
+            ),
+            "valuation_mcap_mm": str(valuation.mcap_used_mm) if valuation.mcap_used_mm is not None else None,
+            "valuation_denom_trials_total": trial_count,
+            "valuation_denom_trials_p1": phase_counts.get("phase_1", 0) + phase_counts.get("phase_1_2", 0),
+            "valuation_denom_trials_p2": phase_counts.get("phase_2", 0) + phase_counts.get("phase_2_3", 0),
+            "valuation_denom_trials_p3": phase_counts.get("phase_3", 0),
+            "valuation_denom_trials_reg": phase_counts.get("approved", 0),
+            "valuation_phase_weighted_trials": round(phase_weighted_trials, 2) if phase_weighted_trials else None,
+            "valuation_metric_pw": round(mcap_per_pw_trial, 2) if mcap_per_pw_trial else None,
+            "valuation_size_bucket": _val_size_bucket,
+            "valuation_applicable": _val_applicable,
+            "valuation_notes": "; ".join(_val_notes_parts) if _val_notes_parts else "",
         },
         "smart_money_signal": {
             "score": str(smart_money.smart_money_score),
