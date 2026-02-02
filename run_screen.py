@@ -99,6 +99,7 @@ from common.data_integration_contracts import (
     validate_market_data_schema,
     validate_financial_records_schema,
     normalize_ticker_set,
+    normalize_financial_field_alias,
 )
 
 # Module imports
@@ -2176,6 +2177,11 @@ def run_screening_pipeline(
     # Load input data
     logger.info("[1/7] Loading input data...")
     raw_universe = load_json_data(data_dir / "universe.json", "Universe")
+
+    # Normalize legacy field aliases (e.g. 'financials' → 'financial_data')
+    # before any downstream code inspects these keys.
+    for rec in raw_universe:
+        normalize_financial_field_alias(rec)
 
     # Extract full universe tickers BEFORE any filtering (for Module 3 stability)
     # This ensures Module 3 always processes the same population regardless of Module 1 filtering

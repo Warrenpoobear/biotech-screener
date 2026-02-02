@@ -3,6 +3,15 @@
 import json, time, sys
 from datetime import datetime
 
+try:
+    from common.data_integration_contracts import normalize_financial_field_alias
+except ImportError:
+    # Fallback: inline remap when common package is not on sys.path
+    def normalize_financial_field_alias(rec):
+        if not rec.get("financial_data") and rec.get("financials"):
+            rec["financial_data"] = rec["financials"]
+        return rec
+
 def collect_financial_data(ticker):
     try:
         import yfinance as yf
@@ -90,15 +99,19 @@ def collect_clinical_data(ticker, company_name=None):
 def collect_single_stock(security):
     ticker = security.get('ticker', 'UNKNOWN')
     print(f"  [{ticker}]", end=" ")
-    
+
+    # Normalize legacy field aliases (e.g. 'financials' → 'financial_data')
+    # before any existence checks so we don't re-collect data that already exists.
+    normalize_financial_field_alias(security)
+
     if security.get('financial_data') and security.get('clinical_data'):
         print("Already complete")
         return security
-    
+
     company_name = None
     if security.get('market_data'):
         company_name = security['market_data'].get('company_name')
-    
+
     if not security.get('financial_data'):
         fin = collect_financial_data(ticker)
         if fin: security['financial_data'] = fin

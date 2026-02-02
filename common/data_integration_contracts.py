@@ -89,6 +89,8 @@ __all__ = [
     # Numeric safety
     "safe_numeric_check",
     "validate_numeric_field",
+    # Field normalization
+    "normalize_financial_field_alias",
 ]
 
 logger = logging.getLogger(__name__)
@@ -146,6 +148,51 @@ class CoverageGuardrailError(DataIntegrationError):
         self.component = component
         self.actual_pct = actual_pct
         self.threshold_pct = threshold_pct
+
+
+# =============================================================================
+# FIELD ALIAS NORMALIZATION
+# =============================================================================
+
+# Legacy → canonical field aliases for universe records.
+# Keys that upstream providers may use; values are the canonical pipeline keys.
+_UNIVERSE_FIELD_ALIASES: Dict[str, str] = {
+    "financials": "financial_data",
+}
+
+
+def normalize_financial_field_alias(record: Dict[str, Any]) -> Dict[str, Any]:
+    """Normalize legacy field aliases in a universe record **in-place**.
+
+    Rules (applied once per record, order matters):
+      1. If ``financial_data`` already exists, keep it (no-op).
+      2. Else if ``financials`` exists, copy it to ``financial_data``.
+      3. If neither exists the record is returned unchanged — downstream
+         scoring will see ``financial_data`` as *None* and set
+         ``confidence_financial`` / ``financial_data_state`` accordingly.
+
+    This function is **PIT-safe**: it never modifies timestamps, ``source_date``,
+    or ``as_of_date`` fields inside the nested dict.  It only copies the
+    reference so no data is synthesised.
+
+    Args:
+        record: A single universe dict (mutated in place for zero-copy perf).
+
+    Returns:
+        The same dict, for fluent chaining.
+    """
+    for alias, canonical in _UNIVERSE_FIELD_ALIASES.items():
+        if canonical not in record or record[canonical] is None:
+            alt = record.get(alias)
+            if alt is not None:
+                record[canonical] = alt
+                logger.debug(
+                    "normalize_financial_field_alias: ticker=%s mapped '%s' → '%s'",
+                    record.get("ticker", "?"),
+                    alias,
+                    canonical,
+                )
+    return record
 
 
 # =============================================================================
