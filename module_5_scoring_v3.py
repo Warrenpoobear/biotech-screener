@@ -1905,7 +1905,8 @@ def _score_single_ticker_v3(
     SURVIVABILITY_WEIGHT = Decimal("0.06")
     survivability_contribution = (survivability_score * SURVIVABILITY_WEIGHT).quantize(SCORE_PRECISION)
 
-    final_score = _clamp(post_vol + delta_bonus + survivability_contribution, Decimal("0"), Decimal("100"))
+    # Allow negative raw scores (e.g. negative-weight models) without collapsing to 0
+    final_score = _clamp(post_vol + delta_bonus + survivability_contribution, Decimal("-100"), Decimal("100"))
     final_score = _quantize_score(final_score)
 
     # =========================================================================

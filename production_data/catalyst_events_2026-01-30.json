@@ -1,11 +1,11 @@
 {
   "run_metadata": {
     "as_of_date": "2026-01-30",
-    "events_detected": 5,
+    "events_detected": 0,
     "module_version": "3A.2.0",
-    "prior_snapshot_date": "2026-01-29",
+    "prior_snapshot_date": null,
     "severe_negatives": 0,
-    "tickers_analyzed": 346
+    "tickers_analyzed": 353
   },
   "summaries": [
     {
@@ -34,48 +34,11 @@
     },
     {
       "as_of_date": "2026-01-30",
-      "audit_hash": "571258bfc34b9971",
+      "audit_hash": "4fb680dbad89368b",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
       "catalyst_score_pos": 0.0,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 3 days ago (2025-12-17 \u2192 2026-01-27) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-27",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2025-12-17",
-              "2026-01-27"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT02716246",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 3 days ago (2023-07-25 \u2192 2026-01-27) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-27",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2023-07-25",
-              "2026-01-27"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT04088734",
-          "source": "CTGOV"
-        }
-      ],
+      "events": [],
       "nearest_negative_days": null,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
@@ -236,6 +199,18 @@
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "AGIO"
+    },
+    {
+      "as_of_date": "2026-01-30",
+      "audit_hash": "2a1c6bf557161e87",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "AKRO"
     },
     {
       "as_of_date": "2026-01-30",
@@ -563,66 +538,11 @@
     },
     {
       "as_of_date": "2026-01-30",
-      "audit_hash": "0d1269f1fd8a0fdd",
+      "audit_hash": "8badbad789f14503",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
       "catalyst_score_pos": 0.0,
-      "events": [
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 3 days ago (2021-02-17 \u2192 2026-01-27) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-27",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2021-02-17",
-              "2026-01-27"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT03576066",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 3 days ago (2021-01-28 \u2192 2026-01-27) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-27",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2021-01-28",
-              "2026-01-27"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT03577171",
-          "source": "CTGOV"
-        },
-        {
-          "actual_date": null,
-          "confidence": 0.3,
-          "confidence_reason": "Trial record updated 3 days ago (2022-10-20 \u2192 2026-01-27) but no specific status/date change detected. May indicate administrative update, protocol amendment, or enrollment activity.",
-          "direction": "NEUTRAL",
-          "disclosed_at": "2026-01-27",
-          "event_rule_id": "M3_DIFF_CT_ACTIVITY_PROXY",
-          "event_type": "CT_ACTIVITY_PROXY",
-          "fields_changed": {
-            "lastUpdatePosted": [
-              "2022-10-20",
-              "2026-01-27"
-            ]
-          },
-          "impact": 2,
-          "nct_id": "NCT04454567",
-          "source": "CTGOV"
-        }
-      ],
+      "events": [],
       "nearest_negative_days": null,
       "nearest_positive_days": null,
       "severe_negative_flag": false,
@@ -906,6 +826,18 @@
     },
     {
       "as_of_date": "2026-01-30",
+      "audit_hash": "950112cce9a68e5f",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "BLUE"
+    },
+    {
+      "as_of_date": "2026-01-30",
       "audit_hash": "18b716c456820028",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
@@ -1023,6 +955,18 @@
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "CDNA"
+    },
+    {
+      "as_of_date": "2026-01-30",
+      "audit_hash": "930d49e50d263589",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "CDTX"
     },
     {
       "as_of_date": "2026-01-30",
@@ -1155,6 +1099,18 @@
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "CNTA"
+    },
+    {
+      "as_of_date": "2026-01-30",
+      "audit_hash": "767ce5819bf86a27",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "CNTX"
     },
     {
       "as_of_date": "2026-01-30",
@@ -2622,6 +2578,18 @@
     },
     {
       "as_of_date": "2026-01-30",
+      "audit_hash": "828813cacdda6e85",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "MRUS"
+    },
+    {
+      "as_of_date": "2026-01-30",
       "audit_hash": "6c04d46e1e32f7ed",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
@@ -3654,6 +3622,18 @@
     },
     {
       "as_of_date": "2026-01-30",
+      "audit_hash": "9bdc6946a89322a1",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "SRZN"
+    },
+    {
+      "as_of_date": "2026-01-30",
       "audit_hash": "60f34ce9ccd59e88",
       "catalyst_score_neg": 0.0,
       "catalyst_score_net": 0.0,
@@ -4035,6 +4015,18 @@
       "nearest_positive_days": null,
       "severe_negative_flag": false,
       "ticker": "VERA"
+    },
+    {
+      "as_of_date": "2026-01-30",
+      "audit_hash": "7cffc91f89256a7a",
+      "catalyst_score_neg": 0.0,
+      "catalyst_score_net": 0.0,
+      "catalyst_score_pos": 0.0,
+      "events": [],
+      "nearest_negative_days": null,
+      "nearest_positive_days": null,
+      "severe_negative_flag": false,
+      "ticker": "VERV"
     },
     {
       "as_of_date": "2026-01-30",

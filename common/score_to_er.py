@@ -140,6 +140,23 @@ def _safe_float(val: Any, default: float = 0.0) -> float:
         return default
 
 
+def _rank_base(row: Dict[str, Any], score_key: str = "composite_score") -> float:
+    """
+    Extract the best available ranking score from a row.
+
+    Prefers the unclamped post_cap_score from score_breakdown.final (survives
+    negative-weight models where composite_score is clamped to 0).  Falls back
+    to composite_score for rows without a breakdown.
+    """
+    final = (row.get("score_breakdown") or {}).get("final") or {}
+    v = final.get("post_cap_score")
+    if v is None:
+        v = final.get("pre_penalty_score")
+    if v is None:
+        v = row.get(score_key)
+    return _safe_float(v, 0.0)
+
+
 def attach_rank_and_z(
     rows: List[Dict[str, Any]],
     score_key: str = "composite_score",
@@ -221,11 +238,15 @@ def attach_rank_and_z(
             f"Proceeding with valid rows. Invalid: {invalid_tickers[:5]}"
         )
 
-    # Stable sort: highest score first, then alphabetically by ticker for ties
-    # Use _safe_float to handle any edge cases gracefully
+    # Compute rank_score for each row: prefers unclamped post_cap_score from
+    # score_breakdown.final so negative-weight models rank correctly.
+    for r in rows:
+        r["rank_score"] = _rank_base(r, score_key)
+
+    # Stable sort: highest rank_score first, then alphabetically by ticker for ties
     ordered = sorted(
         rows,
-        key=lambda r: (-_safe_float(r.get(score_key), 0.0), str(r.get(ticker_key, ""))),
+        key=lambda r: (-r["rank_score"], str(r.get(ticker_key, ""))),
     )
 
     # Continuity-corrected percentile: p = (N - rank + 0.5) / N
