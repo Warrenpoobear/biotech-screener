@@ -341,6 +341,29 @@ TICKER_TO_SPONSORS = {
 }
 
 
+def _normalize_date(raw: str | None) -> str | None:
+    """Normalize CT.gov partial dates to full ISO dates.
+
+    Handles:
+        None          → None
+        "2024"        → "2024-01-01"
+        "2024-06"     → "2024-06-01"
+        "2024-06-15"  → "2024-06-15"
+    """
+    if not raw:
+        return None
+    raw = raw.strip()
+    try:
+        if len(raw) == 4:      # "2024"
+            return f"{raw}-01-01"
+        elif len(raw) == 7:    # "2024-06"
+            return f"{raw}-01"
+        else:
+            return raw[:10]    # "2024-06-15" or longer
+    except (TypeError, AttributeError):
+        return None
+
+
 def _fetch_trials_page(base_url: str, params: dict, max_retries: int = 3) -> tuple:
     """Fetch a single page of trials. Returns (studies, next_page_token, success)."""
     for attempt in range(max_retries):
@@ -388,10 +411,24 @@ def _parse_study(study: dict, ticker: str) -> dict:
         "study_type": design_module.get('studyType'),
         "conditions": conditions_module.get('conditions', []),
         "interventions": [i.get('name') for i in arms_module.get('interventions', [])],
-        "primary_completion_date": status_module.get('primaryCompletionDateStruct', {}).get('date'),
-        "completion_date": status_module.get('completionDateStruct', {}).get('date'),
-        "results_first_posted": status_module.get('resultsFirstPostDateStruct', {}).get('date'),
-        "last_update_posted": status_module.get('lastUpdatePostDateStruct', {}).get('date'),
+        "first_posted": _normalize_date(
+            status_module.get('studyFirstPostDateStruct', {}).get('date')
+        ),
+        "start_date": _normalize_date(
+            status_module.get('startDateStruct', {}).get('date')
+        ),
+        "primary_completion_date": _normalize_date(
+            status_module.get('primaryCompletionDateStruct', {}).get('date')
+        ),
+        "completion_date": _normalize_date(
+            status_module.get('completionDateStruct', {}).get('date')
+        ),
+        "results_first_posted": _normalize_date(
+            status_module.get('resultsFirstPostDateStruct', {}).get('date')
+        ),
+        "last_update_posted": _normalize_date(
+            status_module.get('lastUpdatePostDateStruct', {}).get('date')
+        ),
         "enrollment": status_module.get('enrollmentInfo', {}).get('count'),
         "sponsor": sponsor_module.get('leadSponsor', {}).get('name'),
         "collected_at": date.today().isoformat()

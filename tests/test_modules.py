@@ -132,7 +132,8 @@ class TestModule4ClinicalDev:
         records = [
             {"ticker": "TEST", "nct_id": "NCT12345", "phase": "phase 3",
              "status": "completed", "randomized": True, "blinded": "double",
-             "primary_endpoint": "overall survival"},
+             "primary_endpoint": "overall survival",
+             "last_update_posted": "2023-12-01"},
         ]
         result = compute_module_4_clinical_dev(records, ["TEST"], "2024-01-01")
         
@@ -144,7 +145,8 @@ class TestModule4ClinicalDev:
     def test_early_stage(self):
         records = [
             {"ticker": "EARLY", "nct_id": "NCT12345", "phase": "phase 1",
-             "primary_endpoint": "safety"},
+             "primary_endpoint": "safety",
+             "last_update_posted": "2023-12-01"},
         ]
         result = compute_module_4_clinical_dev(records, ["EARLY"], "2024-01-01")
         

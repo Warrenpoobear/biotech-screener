@@ -15,7 +15,7 @@ TOTAL: 120 pts (normalized to 0-100)
 vNext changes:
 - Deterministic: no datetime.now(), proper date parsing
 - Deduplication by nct_id per ticker
-- PIT field priority: first_posted > last_update_posted > source_date
+- PIT field priority: first_posted > last_update_posted > results_first_posted > source_date > start_date
 - Condition tokenization for diversity scoring
 - Mutual exclusivity for endpoint scoring (strong wins)
 - Recency flags: recency_unknown, recency_stale
@@ -337,17 +337,23 @@ def _select_pit_date(trial: Dict[str, Any]) -> Tuple[Optional[str], str]:
     """
     Select PIT date field in priority order.
 
-    Priority: first_posted > last_update_posted > source_date
+    Priority: first_posted > last_update_posted > results_first_posted
+              > source_date > start_date
 
     Returns:
         (date_value, field_name)
     """
-    if trial.get("first_posted"):
-        return (trial["first_posted"], "first_posted")
-    if trial.get("last_update_posted"):
-        return (trial["last_update_posted"], "last_update_posted")
-    if trial.get("source_date"):
-        return (trial["source_date"], "source_date")
+    _PIT_PRIORITY = [
+        "first_posted",
+        "last_update_posted",
+        "results_first_posted",
+        "source_date",
+        "start_date",
+    ]
+    for field in _PIT_PRIORITY:
+        value = trial.get(field)
+        if value:
+            return (value, field)
     return (None, "none")
 
 
@@ -380,6 +386,7 @@ def compute_module_4_clinical_dev(
     total_raw = 0
     total_unique = 0
     total_pit_filtered = 0
+    no_date_excluded = 0
     pit_fields_used: Dict[str, int] = {}
 
     # Per-ticker tracking
@@ -401,7 +408,14 @@ def compute_module_4_clinical_dev(
         pit_date, pit_field = _select_pit_date(trial)
         pit_fields_used[pit_field] = pit_fields_used.get(pit_field, 0) + 1
 
-        if pit_date and not is_pit_admissible(pit_date, pit_cutoff):
+        if pit_date is None:
+            # No date fields at all — cannot verify PIT admissibility, exclude
+            no_date_excluded += 1
+            total_pit_filtered += 1
+            ticker_pit_filtered[ticker] = ticker_pit_filtered.get(ticker, 0) + 1
+            continue
+
+        if not is_pit_admissible(pit_date, pit_cutoff):
             total_pit_filtered += 1
             ticker_pit_filtered[ticker] = ticker_pit_filtered.get(ticker, 0) + 1
             continue
@@ -434,6 +448,7 @@ def compute_module_4_clinical_dev(
             "conditions": conditions_normalized,
             "last_update_posted": trial.get("last_update_posted"),
             "pit_date_field": pit_field,
+            "pit_date": pit_date,
         }
 
     # Count unique trials
@@ -577,6 +592,7 @@ def compute_module_4_clinical_dev(
             "total_trials_unique": total_unique,
             "total_trials": total_unique,  # Backwards compat
             "pit_filtered": total_pit_filtered,
+            "no_date_excluded": no_date_excluded,
             "pit_fields_used": pit_fields_used,
         },
         "provenance": create_provenance(RULESET_VERSION, {"tickers": active_tickers}, pit_cutoff),

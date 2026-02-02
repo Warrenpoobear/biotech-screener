@@ -140,11 +140,23 @@ class ClinicalTrialsClient:
                 "sponsor": sponsor_name,
                 "phase": self._normalize_phase(design.get("phases", [])),
                 "status": status_mod.get("overallStatus"),
-                "primary_completion_date": self._parse_date(
-                    status_mod.get("primaryCompletionDateStruct", {})
+                "first_posted": self._parse_date(
+                    status_mod.get("studyFirstPostDateStruct", {})
+                ),
+                "start_date": self._parse_date(
+                    status_mod.get("startDateStruct", {})
                 ),
                 "study_start_date": self._parse_date(
                     status_mod.get("startDateStruct", {})
+                ),
+                "primary_completion_date": self._parse_date(
+                    status_mod.get("primaryCompletionDateStruct", {})
+                ),
+                "last_update_posted": self._parse_date(
+                    status_mod.get("lastUpdatePostDateStruct", {})
+                ),
+                "results_first_posted": self._parse_date(
+                    status_mod.get("resultsFirstPostDateStruct", {})
                 ),
                 "enrollment": design.get("enrollmentInfo", {}).get("count"),
                 "randomized": "RANDOMIZED" in design.get("designInfo", {}).get("allocation", ""),
