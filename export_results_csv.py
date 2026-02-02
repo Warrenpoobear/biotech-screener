@@ -68,34 +68,44 @@ def _compute_valuation_percentiles(flat_records: List[Dict[str, Any]]) -> None:
     """Compute cross-sectional valuation percentiles in-place (ranking-neutral).
 
     Populates valuation_pct_overall and valuation_pct_in_size_bucket.
-    Only for records with a numeric valuation_raw_metric.
+    Percentiles are computed within each valuation_method separately so that
+    mcap_per_trial, ev_cfo, and ev_revenue are not mixed (different scales).
     """
-    # Collect non-null raw metrics
-    indexed: List[tuple] = []  # (idx, raw_metric, size_bucket)
+    # Collect non-null raw metrics: (idx, method, bucket, raw_float)
+    indexed: List[tuple] = []
     for i, rec in enumerate(flat_records):
         raw = rec.get("valuation_raw_metric")
         if raw is not None and raw != "":
             try:
-                indexed.append((i, float(raw), rec.get("valuation_size_bucket", "")))
+                indexed.append((
+                    i, float(raw),
+                    rec.get("valuation_method", ""),
+                    rec.get("valuation_size_bucket", ""),
+                ))
             except (ValueError, TypeError):
                 pass
 
     if not indexed:
         return
 
-    all_values = [v for _, v, _ in indexed]
+    # Group values by method (for pct_overall within method)
+    method_values: Dict[str, List[float]] = {}
+    for _, v, method, _ in indexed:
+        method_values.setdefault(method, []).append(v)
 
-    # Group by size bucket
-    bucket_values: Dict[str, List[float]] = {}
-    for _, v, bucket in indexed:
-        bucket_values.setdefault(bucket, []).append(v)
+    # Group values by (method, bucket) (for pct_in_size_bucket)
+    method_bucket_values: Dict[tuple, List[float]] = {}
+    for _, v, method, bucket in indexed:
+        method_bucket_values.setdefault((method, bucket), []).append(v)
 
     # Assign percentiles
-    for i, v, bucket in indexed:
-        flat_records[i]["valuation_pct_overall"] = _cheapness_percentile(v, all_values)
-        bv = bucket_values.get(bucket, [])
-        if len(bv) >= 2:
-            flat_records[i]["valuation_pct_in_size_bucket"] = _cheapness_percentile(v, bv)
+    for i, v, method, bucket in indexed:
+        mv = method_values.get(method, [])
+        if len(mv) >= 2:
+            flat_records[i]["valuation_pct_overall"] = _cheapness_percentile(v, mv)
+        mbv = method_bucket_values.get((method, bucket), [])
+        if len(mbv) >= 2:
+            flat_records[i]["valuation_pct_in_size_bucket"] = _cheapness_percentile(v, mbv)
 
 
 def flatten_record(rec: Dict[str, Any]) -> Dict[str, Any]:

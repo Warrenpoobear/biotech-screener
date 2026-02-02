@@ -532,6 +532,18 @@ def compute_module_4_clinical_dev(
         if recency_stale:
             flags.append("recency_stale")
 
+        # Per-phase trial counts (diagnostic only, no scoring impact)
+        phase_counts = {
+            "phase_1": 0, "phase_1_2": 0, "phase_2": 0,
+            "phase_2_3": 0, "phase_3": 0, "approved": 0, "other": 0,
+        }
+        for t in trials:
+            p = t["phase"].lower().replace(" ", "_").replace("/", "_")
+            if p in phase_counts:
+                phase_counts[p] += 1
+            else:
+                phase_counts["other"] += 1
+
         scores.append({
             "ticker": ticker,
             "clinical_score": str(normalized_score.quantize(Decimal("0.01"))),
@@ -553,6 +565,7 @@ def compute_module_4_clinical_dev(
             "pit_filtered_count_ticker": pit_filtered_ticker,
             "lead_trial_nct_id": lead_trial_nct_id,
             "recency_days": recency_days,
+            "phase_counts": phase_counts,
         })
 
     return {
