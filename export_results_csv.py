@@ -61,17 +61,38 @@ def flatten_record(rec: Dict[str, Any]) -> Dict[str, Any]:
     flat["volatility"] = def_feat.get("vol_60d")
     flat["drawdown"] = def_feat.get("drawdown")
 
-    # V2 multi-horizon risk columns
-    flat["vol_blended"] = def_feat.get("vol_blended")
+    # V2 multi-horizon risk columns (with fallbacks from legacy fields)
+    flat["vol_blended"] = def_feat.get("vol_blended") or def_feat.get("vol_60d")
     flat["vol_63d"] = def_feat.get("vol_63d")
     flat["vol_252d"] = def_feat.get("vol_252d")
-    flat["max_drawdown_blended"] = def_feat.get("max_drawdown_blended")
+    flat["max_drawdown_blended"] = def_feat.get("max_drawdown_blended") or def_feat.get("drawdown")
     flat["max_drawdown_252d"] = def_feat.get("max_drawdown_252d")
     flat["max_drawdown_2y"] = def_feat.get("max_drawdown_2y")
-    flat["risk_data_state_vol"] = def_feat.get("risk_data_state_vol")
-    flat["risk_data_state_drawdown"] = def_feat.get("risk_data_state_drawdown")
-    flat["risk_data_state_beta"] = def_feat.get("risk_data_state_beta")
-    flat["confidence_risk"] = def_feat.get("confidence_risk")
+
+    # Derive risk_data_state from presence of corresponding metrics when not explicit
+    flat["risk_data_state_vol"] = def_feat.get("risk_data_state_vol") or (
+        "live" if def_feat.get("vol_blended") or def_feat.get("vol_60d") else "missing"
+    )
+    flat["risk_data_state_drawdown"] = def_feat.get("risk_data_state_drawdown") or (
+        "live" if def_feat.get("max_drawdown_blended") or def_feat.get("drawdown") else "missing"
+    )
+    flat["risk_data_state_beta"] = def_feat.get("risk_data_state_beta") or (
+        "live" if def_feat.get("beta_xbi_60d") else "missing"
+    )
+
+    # Derive confidence_risk from coverage when not explicit
+    if def_feat.get("confidence_risk") is not None:
+        flat["confidence_risk"] = def_feat.get("confidence_risk")
+    else:
+        state_fields = [flat["risk_data_state_vol"], flat["risk_data_state_drawdown"],
+                        flat["risk_data_state_beta"]]
+        live_count = sum(1 for s in state_fields if s == "live")
+        if live_count == 3:
+            flat["confidence_risk"] = 0.90
+        elif live_count >= 2:
+            flat["confidence_risk"] = 0.65
+        else:
+            flat["confidence_risk"] = 0.35
 
     # Rank driver and red-flag fields
     flat["rank_driver"] = rec.get("rank_driver")
@@ -158,6 +179,12 @@ def export_to_csv(results_path: Path, output_path: Path) -> int:
 
     # Get all columns (core + signal + confidence)
     columns = CORE_COLUMNS + SIGNAL_COLUMNS + CONFIDENCE_COLUMNS
+
+    # Null safety: convert any remaining None values to "" for clean CSV output
+    for rec in flat_records:
+        for col in columns:
+            if rec.get(col) is None:
+                rec[col] = ""
 
     # Write CSV
     with open(output_path, "w", newline="", encoding="utf-8") as f:
