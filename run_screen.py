@@ -1800,6 +1800,232 @@ def _load_module5_weights(path: Path) -> Optional[Dict[str, "Decimal"]]:
     return weights
 
 
+# ── Schema v2 bundle loading + regime-conditioned weight selection ────
+
+def _parse_feature_weights_to_components(
+    feature_weights: Dict[str, Any],
+) -> Optional[Dict[str, "Decimal"]]:
+    """
+    Convert a feature_weights dict to component name → Decimal mapping.
+
+    Shared logic extracted from _load_module5_weights to reuse for bundle parsing.
+    """
+    from decimal import Decimal
+
+    def _priority(name: str) -> int:
+        if name.endswith("_normalized"): return 0
+        if name.endswith("_raw"): return 1
+        if name.endswith("_contribution"): return 2
+        if name.endswith("_confidence"): return 3
+        return 4
+
+    weights: Dict[str, Decimal] = {}
+    for feat_name, w in sorted(feature_weights.items(), key=lambda kv: (_priority(kv[0]), kv[0])):
+        try:
+            w_f = float(w)
+        except (TypeError, ValueError):
+            continue
+        component = feat_name
+        for suffix in ("_normalized", "_raw", "_contribution", "_confidence"):
+            if feat_name.endswith(suffix):
+                component = feat_name[: -len(suffix)]
+                break
+        if abs(w_f) < 1e-10:
+            continue
+        if component in weights:
+            continue
+        weights[component] = Decimal(str(w_f))
+
+    return weights if weights else None
+
+
+def _load_module5_weights_bundle(path: Path) -> Optional[Dict[str, Any]]:
+    """
+    Load a Module 5 weight bundle from JSON (schema_version 1 or 2).
+
+    Schema v1 (existing format):
+        { "feature_weights": { ... } }
+        → Treated as global-only, no regime weights.
+
+    Schema v2 (bundle format):
+        {
+          "schema_version": 2,
+          "blend": { "k": 25, "min_fit_weeks": 5 },
+          "global": { "feature_weights": { ... } },
+          "by_regime": {
+            "BULL": { "n_weeks": 71, "feature_weights": { ... } },
+            ...
+          }
+        }
+
+    Returns a normalized bundle dict:
+        {
+          "global": Dict[str, Decimal],
+          "by_regime": Dict[str, Dict[str, Decimal]],
+          "n_weeks": Dict[str, int],
+          "blend_k": int,
+          "min_fit_weeks": int,
+        }
+    Returns None if file missing/invalid.
+    """
+    from decimal import Decimal
+
+    if not path.exists():
+        logger.warning(f"Module 5 weights file not found: {path} — using defaults")
+        return None
+
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except (json.JSONDecodeError, OSError) as e:
+        logger.warning(f"Failed to load Module 5 weights from {path}: {e} — using defaults")
+        return None
+
+    schema_version = data.get("schema_version", 1)
+
+    if schema_version == 1:
+        # Legacy format: wrap as global-only bundle
+        feature_weights = data.get("feature_weights")
+        if not isinstance(feature_weights, dict):
+            logger.warning(f"Invalid Module 5 weights format in {path} — using defaults")
+            return None
+        global_weights = _parse_feature_weights_to_components(feature_weights)
+        if global_weights is None:
+            logger.warning(f"All weights are zero in {path} — using defaults")
+            return None
+
+        logger.info(f"Loaded Module 5 weights (schema v1, global only) from {path}:")
+        for comp in sorted(global_weights.keys()):
+            logger.info(f"  {comp}: {global_weights[comp]}")
+
+        return {
+            "global": global_weights,
+            "by_regime": {},
+            "n_weeks": {},
+            "blend_k": 25,
+            "min_fit_weeks": 5,
+        }
+
+    elif schema_version == 2:
+        # Bundle format
+        global_block = data.get("global", {})
+        global_fw = global_block.get("feature_weights")
+        if not isinstance(global_fw, dict):
+            logger.warning(f"Schema v2 bundle missing global.feature_weights in {path} — using defaults")
+            return None
+        global_weights = _parse_feature_weights_to_components(global_fw)
+        if global_weights is None:
+            logger.warning(f"All global weights are zero in {path} — using defaults")
+            return None
+
+        # Parse blend params
+        blend_cfg = data.get("blend", {})
+        blend_k = int(blend_cfg.get("k", 25))
+        min_fit_weeks = int(blend_cfg.get("min_fit_weeks", 5))
+
+        # Parse per-regime weights
+        by_regime: Dict[str, Dict[str, Decimal]] = {}
+        n_weeks: Dict[str, int] = {}
+        for regime_name, regime_block in data.get("by_regime", {}).items():
+            regime_fw = regime_block.get("feature_weights")
+            if not isinstance(regime_fw, dict):
+                continue
+            parsed = _parse_feature_weights_to_components(regime_fw)
+            if parsed is not None:
+                by_regime[regime_name] = parsed
+                n_weeks[regime_name] = int(regime_block.get("n_weeks", 0))
+
+        logger.info(f"Loaded Module 5 weights bundle (schema v2) from {path}:")
+        logger.info(f"  Global weights: {', '.join(f'{k}={v}' for k, v in sorted(global_weights.items()))}")
+        logger.info(f"  Regimes: {sorted(by_regime.keys()) or '(none)'}")
+        logger.info(f"  Blend k={blend_k}, min_fit_weeks={min_fit_weeks}")
+
+        return {
+            "global": global_weights,
+            "by_regime": by_regime,
+            "n_weeks": n_weeks,
+            "blend_k": blend_k,
+            "min_fit_weeks": min_fit_weeks,
+        }
+
+    else:
+        logger.warning(f"Unknown schema_version {schema_version} in {path} — using defaults")
+        return None
+
+
+def _select_module5_weights(
+    bundle: Dict[str, Any],
+    regime: Optional[str],
+    mode: str = "global",
+) -> Dict[str, "Decimal"]:
+    """
+    Select the effective Module 5 weights from a bundle given current regime.
+
+    Parameters
+    ----------
+    bundle : normalized bundle from _load_module5_weights_bundle
+    regime : current market regime label (e.g., "BULL", "BEAR", "CHOP")
+    mode : one of "global", "regime", "blended"
+
+    Returns
+    -------
+    Dict[str, Decimal] mapping component name → weight
+    """
+    from decimal import Decimal
+
+    global_w = bundle["global"]
+
+    if mode == "global":
+        logger.info("  Module 5 weight mode: global (ignoring regime)")
+        return global_w
+
+    by_regime = bundle.get("by_regime", {})
+    n_weeks = bundle.get("n_weeks", {})
+    blend_k = bundle.get("blend_k", 25)
+    min_fit_weeks = bundle.get("min_fit_weeks", 5)
+
+    regime_w = by_regime.get(regime) if regime else None
+
+    if regime_w is None:
+        logger.info(f"  Module 5 weight mode: {mode}, regime={regime} "
+                     f"→ no regime weights available, using global")
+        return global_w
+
+    regime_n = n_weeks.get(regime, 0)
+
+    if mode == "regime":
+        if regime_n < min_fit_weeks:
+            logger.info(f"  Module 5 weight mode: regime, regime={regime}, "
+                         f"n_weeks={regime_n} < min_fit_weeks={min_fit_weeks} → global fallback")
+            return global_w
+        logger.info(f"  Module 5 weight mode: regime, regime={regime}, "
+                     f"n_weeks={regime_n} → using pure regime weights")
+        return regime_w
+
+    # mode == "blended"
+    if regime_n < min_fit_weeks:
+        logger.info(f"  Module 5 weight mode: blended, regime={regime}, "
+                     f"n_weeks={regime_n} < min_fit_weeks={min_fit_weeks} → global fallback")
+        return global_w
+
+    alpha = Decimal(str(regime_n)) / (Decimal(str(regime_n)) + Decimal(str(blend_k)))
+    blended: Dict[str, Decimal] = {}
+    all_components = set(global_w.keys()) | set(regime_w.keys())
+    for comp in sorted(all_components):
+        g = global_w.get(comp, Decimal("0"))
+        r = regime_w.get(comp, Decimal("0"))
+        blended[comp] = alpha * r + (Decimal("1") - alpha) * g
+
+    logger.info(f"  Module 5 weight mode: blended, regime={regime}, "
+                 f"n_weeks={regime_n}, alpha={float(alpha):.3f}")
+    for comp in sorted(blended.keys()):
+        logger.info(f"    {comp}: {blended[comp]:.6f} "
+                     f"(global={global_w.get(comp, Decimal('0')):.6f}, "
+                     f"regime={regime_w.get(comp, Decimal('0')):.6f})")
+
+    return blended
+
+
 def run_screening_pipeline(
     as_of_date: str,
     data_dir: Path,
@@ -1839,6 +2065,7 @@ def run_screening_pipeline(
     output_dir: Optional[Path] = None,
     # Module 5 calibrated weights
     module5_weights_path: Optional[Path] = None,
+    module5_weights_mode: str = "global",
 ) -> Dict[str, Any]:
     """
     Execute full screening pipeline with deterministic guarantees.
@@ -2930,7 +3157,21 @@ def run_screening_pipeline(
         # Load calibrated weights if provided
         m5_weights = None
         if module5_weights_path is not None:
-            m5_weights = _load_module5_weights(module5_weights_path)
+            if module5_weights_mode in ("regime", "blended"):
+                # Use bundle loader for regime/blended modes
+                m5_bundle = _load_module5_weights_bundle(module5_weights_path)
+                if m5_bundle is not None:
+                    # Extract regime from the already-detected regime_result
+                    current_regime = (regime_result or {}).get("regime")
+                    if current_regime == "UNKNOWN":
+                        current_regime = None
+                    m5_weights = _select_module5_weights(
+                        m5_bundle, current_regime, mode=module5_weights_mode,
+                    )
+                # else: m5_weights stays None → defaults
+            else:
+                # mode == "global": use legacy loader (backward compatible)
+                m5_weights = _load_module5_weights(module5_weights_path)
 
         m5_result = compute_module_5_composite_with_defensive(
             universe_result=m1_filtered,
@@ -3520,6 +3761,15 @@ Module 3 Catalyst Detection:
              "When provided, overrides default component weights. Allows negative weights. "
              "If file is missing or invalid, falls back to defaults with a warning.",
     )
+    parser.add_argument(
+        "--module5-weights-mode",
+        choices=["global", "regime", "blended"],
+        default="global",
+        help="Weight selection mode: 'global' uses global weights (default, safe), "
+             "'regime' uses pure regime-specific weights with global fallback, "
+             "'blended' uses alpha-blended regime+global weights. "
+             "Requires schema_version=2 bundle JSON for regime/blended modes.",
+    )
 
     # Snapshot sanity checks
     parser.add_argument(
@@ -3720,6 +3970,7 @@ Module 3 Catalyst Detection:
             pit_mode=args.pit_mode,
             output_dir=args.output_dir if args.output_dir else args.data_dir,
             module5_weights_path=(Path(args.module5_weights) if getattr(args, "module5_weights", None) else None),
+            module5_weights_mode=getattr(args, "module5_weights_mode", "global"),
         )
 
         # Add bootstrap analysis if requested

@@ -40,6 +40,9 @@ WARMUP_DAYS = max(MA_SLOW_WINDOW, VOL_PERCENTILE_WINDOW)  # need all indicators 
 BULL = "BULL"
 BEAR = "BEAR"
 CHOP = "CHOP"
+CHOP_LOWVOL = "CHOP_LOWVOL"
+CHOP_HIGHVOL = "CHOP_HIGHVOL"
+VOL_CHOP_THRESHOLD = 50  # percentile split within CHOP
 
 
 # ── Price loading ─────────────────────────────────────────────────────
@@ -65,6 +68,7 @@ def load_price_history(price_csv: Path) -> pd.DataFrame:
 def compute_regime_series(
     price_df: pd.DataFrame,
     market_ticker: str = "XBI",
+    split_chop: bool = False,
 ) -> pd.DataFrame:
     """
     Compute daily regime labels for the market ticker.
@@ -73,6 +77,8 @@ def compute_regime_series(
     ----------
     price_df : DataFrame with columns date, ticker, close
     market_ticker : ticker to use for regime classification
+    split_chop : if True, split CHOP into CHOP_LOWVOL / CHOP_HIGHVOL
+        at VOL_CHOP_THRESHOLD (50th percentile of rolling vol)
 
     Returns
     -------
@@ -116,6 +122,8 @@ def compute_regime_series(
             regime.iloc[i] = BULL
         elif (not fast_above) and vp > VOL_BEAR_THRESHOLD:
             regime.iloc[i] = BEAR
+        elif split_chop:
+            regime.iloc[i] = CHOP_LOWVOL if vp <= VOL_CHOP_THRESHOLD else CHOP_HIGHVOL
         else:
             regime.iloc[i] = CHOP
 
@@ -155,7 +163,8 @@ def assign_regime_to_rebalance_dates(
 
     Returns
     -------
-    Dict mapping rebalance_date -> regime label (BULL/BEAR/CHOP).
+    Dict mapping rebalance_date -> regime label (BULL/BEAR/CHOP or
+    CHOP_LOWVOL/CHOP_HIGHVOL when split_chop was used).
     Dates before warmup or without data get "CHOP" as fallback.
     """
     # Build sorted list of (date, regime) pairs with valid regime

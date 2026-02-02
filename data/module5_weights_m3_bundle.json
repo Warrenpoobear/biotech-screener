@@ -1,0 +1,45 @@
+{
+  "schema_version": 2,
+  "blend": {
+    "k": 25,
+    "min_fit_weeks": 5
+  },
+  "global": {
+    "feature_weights": {
+      "clinical_normalized": -0.0020392723422889,
+      "financial_normalized": -0.0019217961360261,
+      "momentum_normalized": -0.0034089211057866,
+      "valuation_normalized": -0.0031965474571473
+    },
+    "n_weeks": 51
+  },
+  "by_regime": {
+    "CHOP": {
+      "n_weeks": 18,
+      "feature_weights": {
+        "clinical_normalized": -0.0041599147551234,
+        "financial_normalized": -0.002190391552426,
+        "momentum_normalized": 0.0001974898349331,
+        "valuation_normalized": -0.0018979877938885
+      }
+    },
+    "BEAR": {
+      "n_weeks": 12,
+      "feature_weights": {
+        "clinical_normalized": 0.0001390723970811,
+        "financial_normalized": -0.0037872499039066,
+        "momentum_normalized": -0.0086901856163634,
+        "valuation_normalized": -0.0028455313901589
+      }
+    },
+    "BULL": {
+      "n_weeks": 17,
+      "feature_weights": {
+        "clinical_normalized": -0.0009140830100214,
+        "financial_normalized": -0.000525748821209,
+        "momentum_normalized": -0.0019786765425331,
+        "valuation_normalized": -0.0043470705367487
+      }
+    }
+  }
+}

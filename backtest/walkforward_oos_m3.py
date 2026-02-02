@@ -38,6 +38,52 @@ from backtest.fmb import newey_west_se
 from backtest.metrics_m1 import spearman_rank_ic
 
 
+# ── Regime auto-collapse ─────────────────────────────────────────────
+
+# Mapping from sub-regime to parent for auto-collapse.
+_REGIME_PARENT = {
+    "CHOP_LOWVOL": "CHOP",
+    "CHOP_HIGHVOL": "CHOP",
+}
+
+
+def collapse_thin_regimes(
+    regime_by_date: Dict[str, str],
+    eval_dates: List[str],
+    min_eval_weeks: int = 10,
+) -> Dict[str, str]:
+    """
+    Collapse regime buckets with fewer than min_eval_weeks eval dates
+    back to their parent regime (e.g. CHOP_HIGHVOL → CHOP).
+
+    Only collapses regimes that have an entry in _REGIME_PARENT.
+    Returns a new dict (does not mutate input).
+    """
+    from collections import Counter
+
+    eval_set = set(eval_dates)
+    # Count eval weeks per regime
+    eval_counts: Dict[str, int] = Counter()
+    for d, r in regime_by_date.items():
+        if d in eval_set:
+            eval_counts[r] += 1
+
+    # Identify regimes to collapse
+    collapse_map: Dict[str, str] = {}
+    for regime, count in eval_counts.items():
+        if count < min_eval_weeks and regime in _REGIME_PARENT:
+            collapse_map[regime] = _REGIME_PARENT[regime]
+
+    if not collapse_map:
+        return dict(regime_by_date)
+
+    # Apply collapse to ALL dates (not just eval dates)
+    result = {}
+    for d, r in regime_by_date.items():
+        result[d] = collapse_map.get(r, r)
+    return result
+
+
 # ── Core walk-forward loop ────────────────────────────────────────────
 
 def walk_forward_evaluate(
@@ -423,6 +469,8 @@ def run_walkforward(
     market_ticker: str = "XBI",
     min_fit_weeks: int = 8,
     blend_k: int = 20,
+    split_chop: bool = False,
+    min_eval_weeks: int = 10,
 ) -> pd.DataFrame:
     """Full walk-forward evaluation with file output."""
     os.makedirs(output_dir, exist_ok=True)
@@ -451,7 +499,9 @@ def run_walkforward(
             price_csv = str(_PROJECT_ROOT / "production_data" / "price_history.csv")
         print(f"\nLoading regime from {price_csv} (ticker={market_ticker}) ...")
         price_df = load_price_history(Path(price_csv))
-        regime_series = compute_regime_series(price_df, market_ticker=market_ticker)
+        regime_series = compute_regime_series(
+            price_df, market_ticker=market_ticker, split_chop=split_chop,
+        )
         rebalance_dates = sorted(df["rebalance_date"].unique())
         regime_by_date = assign_regime_to_rebalance_dates(
             regime_series, rebalance_dates,
@@ -459,7 +509,17 @@ def run_walkforward(
         # Print regime distribution
         from collections import Counter
         counts = Counter(regime_by_date.values())
-        print(f"  Regime distribution: {dict(sorted(counts.items()))}")
+        print(f"  Regime distribution (raw): {dict(sorted(counts.items()))}")
+
+        # Auto-collapse thin regime buckets
+        eval_dates = sorted(df["rebalance_date"].unique())[train_window_weeks:]
+        regime_by_date = collapse_thin_regimes(
+            regime_by_date, eval_dates, min_eval_weeks=min_eval_weeks,
+        )
+        counts_after = Counter(regime_by_date.values())
+        if counts_after != counts:
+            print(f"  Regime distribution (after collapse, min_eval={min_eval_weeks}): "
+                  f"{dict(sorted(counts_after.items()))}")
         print(f"  Min fit weeks: {min_fit_weeks}, blend_k: {blend_k}")
 
     print("\nRunning walk-forward evaluation ...")
@@ -578,6 +638,10 @@ def main():
                         help="Min regime training weeks to attempt fit (default: 8)")
     parser.add_argument("--blend-k", type=int, default=20,
                         help="Shrinkage anchor for regime/global blending (default: 20)")
+    parser.add_argument("--split-chop", action="store_true",
+                        help="Split CHOP into CHOP_LOWVOL / CHOP_HIGHVOL")
+    parser.add_argument("--min-eval-weeks", type=int, default=10,
+                        help="Auto-collapse regime buckets with fewer eval weeks (default: 10)")
     args = parser.parse_args()
 
     run_walkforward(
@@ -595,6 +659,8 @@ def main():
         market_ticker=args.market_ticker,
         min_fit_weeks=args.min_fit_weeks,
         blend_k=args.blend_k,
+        split_chop=args.split_chop,
+        min_eval_weeks=args.min_eval_weeks,
     )
 
 

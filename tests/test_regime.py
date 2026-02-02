@@ -14,6 +14,8 @@ from backtest.regime import (
     BULL,
     BEAR,
     CHOP,
+    CHOP_LOWVOL,
+    CHOP_HIGHVOL,
     MA_SLOW_WINDOW,
     WARMUP_DAYS,
 )
@@ -150,3 +152,73 @@ class TestRebalanceDateMapping:
         assert len(result) == len(sample_dates)
         for d in sample_dates:
             assert result[d] in (BULL, BEAR, CHOP)
+
+
+class TestChopSplit:
+    def test_split_chop_produces_two_labels(self):
+        """With split_chop=True, CHOP is replaced by CHOP_LOWVOL / CHOP_HIGHVOL."""
+        prices = _make_price_series(n_days=500, trend=0.0, vol=0.015, seed=30)
+        regime_df = compute_regime_series(
+            prices, market_ticker="XBI", split_chop=True,
+        )
+
+        valid = regime_df.dropna(subset=["regime"])
+        labels = set(valid["regime"].unique())
+        # CHOP should not appear; at least one of the sub-labels should
+        assert CHOP not in labels, f"CHOP should not appear with split_chop=True, got {labels}"
+        assert labels.issubset({BULL, BEAR, CHOP_LOWVOL, CHOP_HIGHVOL}), (
+            f"Unexpected labels: {labels}"
+        )
+        chop_labels = labels & {CHOP_LOWVOL, CHOP_HIGHVOL}
+        assert len(chop_labels) > 0, f"Expected CHOP_LOWVOL or CHOP_HIGHVOL, got {labels}"
+
+    def test_split_chop_no_chop_label(self):
+        """With split_chop=False (default), only BULL/BEAR/CHOP appear."""
+        prices = _make_price_series(n_days=500, trend=0.0, vol=0.015, seed=30)
+        regime_df = compute_regime_series(prices, market_ticker="XBI", split_chop=False)
+
+        valid = regime_df.dropna(subset=["regime"])
+        labels = set(valid["regime"].unique())
+        assert labels.issubset({BULL, BEAR, CHOP}), f"Unexpected labels: {labels}"
+        assert CHOP_LOWVOL not in labels
+        assert CHOP_HIGHVOL not in labels
+
+    def test_split_chop_deterministic(self):
+        """split_chop=True is deterministic."""
+        prices = _make_price_series(n_days=400, seed=55)
+        r1 = compute_regime_series(prices, market_ticker="XBI", split_chop=True)
+        r2 = compute_regime_series(prices, market_ticker="XBI", split_chop=True)
+        pd.testing.assert_frame_equal(r1, r2)
+
+    def test_split_chop_covers_all_former_chop(self):
+        """CHOP_LOWVOL + CHOP_HIGHVOL count equals CHOP count from unsplit run."""
+        prices = _make_price_series(n_days=500, trend=0.0, vol=0.015, seed=30)
+        unsplit = compute_regime_series(prices, market_ticker="XBI", split_chop=False)
+        split = compute_regime_series(prices, market_ticker="XBI", split_chop=True)
+
+        valid_unsplit = unsplit.dropna(subset=["regime"])
+        valid_split = split.dropna(subset=["regime"])
+
+        n_chop = (valid_unsplit["regime"] == CHOP).sum()
+        n_chop_low = (valid_split["regime"] == CHOP_LOWVOL).sum()
+        n_chop_high = (valid_split["regime"] == CHOP_HIGHVOL).sum()
+        assert n_chop_low + n_chop_high == n_chop, (
+            f"CHOP_LOWVOL ({n_chop_low}) + CHOP_HIGHVOL ({n_chop_high}) "
+            f"!= CHOP ({n_chop})"
+        )
+
+    def test_split_chop_bull_bear_unchanged(self):
+        """BULL and BEAR labels are identical whether split_chop is on or off."""
+        prices = _make_price_series(n_days=500, seed=90)
+        unsplit = compute_regime_series(prices, market_ticker="XBI", split_chop=False)
+        split = compute_regime_series(prices, market_ticker="XBI", split_chop=True)
+
+        # BULL/BEAR masks should be identical
+        for label in [BULL, BEAR]:
+            mask_unsplit = unsplit["regime"] == label
+            mask_split = split["regime"] == label
+            pd.testing.assert_series_equal(
+                mask_unsplit.reset_index(drop=True),
+                mask_split.reset_index(drop=True),
+                check_names=False,
+            )

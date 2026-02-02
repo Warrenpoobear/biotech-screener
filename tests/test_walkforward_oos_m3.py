@@ -12,6 +12,7 @@ from backtest.walkforward_oos_m3 import (
     walk_forward_evaluate,
     aggregate_results,
     aggregate_by_regime,
+    collapse_thin_regimes,
     _quintile_spread,
 )
 from backtest.evaluate_m3_weights import DEFAULT_V3_WEIGHTS, FEATURE_COLS
@@ -407,6 +408,32 @@ class TestRegimeWalkforward:
         # All rows should have a regime label (not N/A since regime is enabled)
         assert (ts_df["regime"] != "N/A").all()
 
+    def test_split_chop_produces_subregimes(self):
+        """With split CHOP regime map, walkforward handles CHOP_LOWVOL/CHOP_HIGHVOL."""
+        panel = _make_panel(n_weeks=58, n_stocks=80, seed=205)
+        dates = sorted(panel["rebalance_date"].unique())
+
+        # Create regime map with CHOP_LOWVOL / CHOP_HIGHVOL instead of CHOP
+        regimes = ["BULL", "BEAR", "CHOP_LOWVOL", "CHOP_HIGHVOL"]
+        regime_map = {d: regimes[i % 4] for i, d in enumerate(dates)}
+
+        ts_df, _ = walk_forward_evaluate(
+            panel,
+            return_col="fwd_5d",
+            train_window_weeks=52,
+            min_stocks=10,
+            regime_by_date=regime_map,
+            min_fit_weeks=5,
+        )
+
+        regime_rows = ts_df[ts_df["variant"] == "m3_oos_regime"]
+        assert len(regime_rows) > 0
+        regimes_seen = set(regime_rows["regime"].unique())
+        # Should see at least some of the sub-regimes
+        assert regimes_seen & {"CHOP_LOWVOL", "CHOP_HIGHVOL"}, (
+            f"Expected CHOP sub-regimes, got {regimes_seen}"
+        )
+
     def test_aggregate_by_regime_structure(self):
         """Per-regime aggregation has correct columns and breakdown."""
         panel = _make_panel(n_weeks=58, n_stocks=80, seed=204)
@@ -427,3 +454,64 @@ class TestRegimeWalkforward:
         assert "regime" in regime_summary.columns
         assert "variant" in regime_summary.columns
         assert "IC_mean" in regime_summary.columns
+
+
+# ── 11) Auto-collapse thin regimes ───────────────────────────────────
+
+class TestCollapseRegimes:
+    def test_collapse_tiny_bucket(self):
+        """Regime with < min_eval_weeks eval dates collapses to parent."""
+        regime_map = {
+            "d01": "BULL", "d02": "BULL", "d03": "BULL",
+            "d04": "BEAR", "d05": "BEAR",
+            "d06": "CHOP_HIGHVOL", "d07": "CHOP_HIGHVOL",  # only 2 eval weeks
+            "d08": "CHOP_LOWVOL", "d09": "CHOP_LOWVOL", "d10": "CHOP_LOWVOL",
+        }
+        eval_dates = list(regime_map.keys())
+        result = collapse_thin_regimes(regime_map, eval_dates, min_eval_weeks=3)
+
+        # CHOP_HIGHVOL (2 eval weeks) should collapse to CHOP
+        assert result["d06"] == "CHOP"
+        assert result["d07"] == "CHOP"
+        # CHOP_LOWVOL (3 eval weeks) meets threshold, stays
+        assert result["d08"] == "CHOP_LOWVOL"
+        # BULL/BEAR unchanged
+        assert result["d01"] == "BULL"
+        assert result["d04"] == "BEAR"
+
+    def test_collapse_does_not_mutate_input(self):
+        """collapse_thin_regimes returns a new dict."""
+        regime_map = {"d01": "CHOP_HIGHVOL", "d02": "BULL"}
+        original = dict(regime_map)
+        collapse_thin_regimes(regime_map, ["d01", "d02"], min_eval_weeks=5)
+        assert regime_map == original
+
+    def test_no_collapse_when_all_above_threshold(self):
+        """When all buckets meet min_eval_weeks, nothing changes."""
+        regime_map = {f"d{i:02d}": "BULL" for i in range(15)}
+        eval_dates = list(regime_map.keys())
+        result = collapse_thin_regimes(regime_map, eval_dates, min_eval_weeks=10)
+        assert result == regime_map
+
+    def test_collapse_applies_to_non_eval_dates_too(self):
+        """Collapse remaps training dates (not just eval dates)."""
+        regime_map = {
+            "d01": "CHOP_HIGHVOL",  # training date (not in eval)
+            "d02": "CHOP_HIGHVOL",  # eval date, only 1 → below threshold
+            "d03": "BULL",
+            "d04": "BULL",
+        }
+        eval_dates = ["d02", "d03", "d04"]
+        result = collapse_thin_regimes(regime_map, eval_dates, min_eval_weeks=2)
+        # d01 is not an eval date but should still be remapped
+        assert result["d01"] == "CHOP"
+        assert result["d02"] == "CHOP"
+
+    def test_collapse_ignores_regimes_without_parent(self):
+        """BULL/BEAR with few eval weeks are NOT collapsed (no parent defined)."""
+        regime_map = {"d01": "BULL", "d02": "BEAR", "d03": "BEAR"}
+        eval_dates = ["d01", "d02", "d03"]
+        result = collapse_thin_regimes(regime_map, eval_dates, min_eval_weeks=5)
+        # BULL has 1 eval week but no parent → stays BULL
+        assert result["d01"] == "BULL"
+        assert result["d02"] == "BEAR"
