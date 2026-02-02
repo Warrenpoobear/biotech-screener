@@ -6,39 +6,39 @@
   },
   "global": {
     "feature_weights": {
-      "clinical_normalized": -0.0020392723422889,
-      "financial_normalized": -0.0019217961360261,
-      "momentum_normalized": -0.0034089211057866,
-      "valuation_normalized": -0.0031965474571473
+      "clinical_normalized": -0.10106544,
+      "financial_normalized": -0.17611723,
+      "momentum_normalized": -0.33050938,
+      "valuation_normalized": -0.39230795
     },
-    "n_weeks": 51
+    "n_weeks": 105
   },
   "by_regime": {
-    "CHOP": {
-      "n_weeks": 18,
-      "feature_weights": {
-        "clinical_normalized": -0.0041599147551234,
-        "financial_normalized": -0.002190391552426,
-        "momentum_normalized": 0.0001974898349331,
-        "valuation_normalized": -0.0018979877938885
-      }
-    },
     "BEAR": {
       "n_weeks": 12,
       "feature_weights": {
-        "clinical_normalized": 0.0001390723970811,
-        "financial_normalized": -0.0037872499039066,
-        "momentum_normalized": -0.0086901856163634,
-        "valuation_normalized": -0.0028455313901589
+        "clinical_normalized": 0.008994440792396106,
+        "financial_normalized": -0.24493857689697573,
+        "momentum_normalized": -0.5620336000661005,
+        "valuation_normalized": -0.18403338224452767
       }
     },
     "BULL": {
       "n_weeks": 17,
       "feature_weights": {
-        "clinical_normalized": -0.0009140830100214,
-        "financial_normalized": -0.000525748821209,
-        "momentum_normalized": -0.0019786765425331,
-        "valuation_normalized": -0.0043470705367487
+        "clinical_normalized": -0.1177095771680349,
+        "financial_normalized": -0.0677024633021626,
+        "momentum_normalized": -0.25480090606697486,
+        "valuation_normalized": -0.5597870534628278
+      }
+    },
+    "CHOP": {
+      "n_weeks": 18,
+      "feature_weights": {
+        "clinical_normalized": -0.49254335494057644,
+        "financial_normalized": -0.259347334590609,
+        "momentum_normalized": 0.02338324499193355,
+        "valuation_normalized": -0.22472606547688112
       }
     }
   }

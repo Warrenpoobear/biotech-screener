@@ -20,6 +20,7 @@ if str(_PROJECT_ROOT) not in sys.path:
 from run_screen import (
     _load_module5_weights,
     _load_module5_weights_bundle,
+    _normalize_m3_regime,
     _select_module5_weights,
 )
 
@@ -285,3 +286,38 @@ class TestSelectWeights:
             result = _select_module5_weights(bundle, regime="BULL", mode=mode)
             for v in result.values():
                 assert isinstance(v, Decimal), f"mode={mode}: {type(v)} is not Decimal"
+
+
+class TestNormalizeM3Regime:
+    def test_direct_labels_pass_through(self):
+        assert _normalize_m3_regime("BULL") == "BULL"
+        assert _normalize_m3_regime("BEAR") == "BEAR"
+        assert _normalize_m3_regime("CHOP") == "CHOP"
+
+    def test_chop_sublabels_pass_through(self):
+        assert _normalize_m3_regime("CHOP_LOWVOL") == "CHOP_LOWVOL"
+        assert _normalize_m3_regime("CHOP_HIGHVOL") == "CHOP_HIGHVOL"
+
+    def test_unknown_returns_none(self):
+        assert _normalize_m3_regime("UNKNOWN") is None
+        assert _normalize_m3_regime(None) is None
+        assert _normalize_m3_regime("") is None
+
+    def test_volatility_spike_maps_to_bear(self):
+        assert _normalize_m3_regime("VOLATILITY_SPIKE") == "BEAR"
+
+    def test_recession_risk_maps_to_bear(self):
+        assert _normalize_m3_regime("RECESSION_RISK") == "BEAR"
+
+    def test_credit_crisis_maps_to_bear(self):
+        assert _normalize_m3_regime("CREDIT_CRISIS") == "BEAR"
+
+    def test_sector_rotation_maps_to_chop(self):
+        assert _normalize_m3_regime("SECTOR_ROTATION") == "CHOP"
+
+    def test_sector_dislocation_maps_to_chop(self):
+        assert _normalize_m3_regime("SECTOR_DISLOCATION") == "CHOP"
+
+    def test_case_insensitive(self):
+        assert _normalize_m3_regime("bull") == "BULL"
+        assert _normalize_m3_regime("Bear") == "BEAR"

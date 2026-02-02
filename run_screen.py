@@ -2026,6 +2026,28 @@ def _select_module5_weights(
     return blended
 
 
+def _normalize_m3_regime(regime: Optional[str]) -> Optional[str]:
+    """
+    Map production regime labels to the coarse {BULL, BEAR, CHOP} buckets
+    used by M3 walk-forward weight bundles.
+
+    Production's RegimeDetectionEngine emits richer labels (VOLATILITY_SPIKE,
+    SECTOR_ROTATION, RECESSION_RISK, etc.) that don't exist in the bundle.
+    Without mapping, blended mode would always take global fallback.
+    """
+    if not regime or regime == "UNKNOWN":
+        return None
+    r = str(regime).upper()
+    if r in ("BULL", "BEAR", "CHOP", "CHOP_LOWVOL", "CHOP_HIGHVOL"):
+        return r
+    if "BULL" in r:
+        return "BULL"
+    if any(k in r for k in ("BEAR", "RECESSION", "CRISIS", "VOLATILITY_SPIKE")):
+        return "BEAR"
+    # Everything else (SECTOR_ROTATION, SECTOR_DISLOCATION, unclear) → CHOP
+    return "CHOP"
+
+
 def run_screening_pipeline(
     as_of_date: str,
     data_dir: Path,
@@ -3157,21 +3179,15 @@ def run_screening_pipeline(
         # Load calibrated weights if provided
         m5_weights = None
         if module5_weights_path is not None:
-            if module5_weights_mode in ("regime", "blended"):
-                # Use bundle loader for regime/blended modes
-                m5_bundle = _load_module5_weights_bundle(module5_weights_path)
-                if m5_bundle is not None:
-                    # Extract regime from the already-detected regime_result
-                    current_regime = (regime_result or {}).get("regime")
-                    if current_regime == "UNKNOWN":
-                        current_regime = None
-                    m5_weights = _select_module5_weights(
-                        m5_bundle, current_regime, mode=module5_weights_mode,
-                    )
-                # else: m5_weights stays None → defaults
-            else:
-                # mode == "global": use legacy loader (backward compatible)
-                m5_weights = _load_module5_weights(module5_weights_path)
+            m5_bundle = _load_module5_weights_bundle(module5_weights_path)
+            if m5_bundle is not None:
+                current_regime = _normalize_m3_regime(
+                    (regime_result or {}).get("regime"),
+                )
+                m5_weights = _select_module5_weights(
+                    m5_bundle, current_regime, mode=module5_weights_mode,
+                )
+            # else: m5_weights stays None → defaults
 
         m5_result = compute_module_5_composite_with_defensive(
             universe_result=m1_filtered,
