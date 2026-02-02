@@ -2096,6 +2096,7 @@ def _score_single_ticker_v3(
             "valuation_denom_trials_p2": phase_counts.get("phase_2", 0) + phase_counts.get("phase_2_3", 0),
             "valuation_denom_trials_p3": phase_counts.get("phase_3", 0),
             "valuation_denom_trials_reg": phase_counts.get("approved", 0),
+            "valuation_denom_trials_other": phase_counts.get("other", 0),
             "valuation_phase_weighted_trials": round(phase_weighted_trials, 2) if phase_weighted_trials else None,
             "valuation_metric_pw": round(mcap_per_pw_trial, 2) if mcap_per_pw_trial else None,
             "valuation_size_bucket": _val_size_bucket,
