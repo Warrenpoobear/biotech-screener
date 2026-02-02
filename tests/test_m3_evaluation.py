@@ -97,6 +97,92 @@ class TestScoreComputation:
         assert abs(total - 1.0) < 0.01
 
 
+# ── Perturbation sign contract ───────────────────────────────────────
+
+class TestPerturbationSignContract:
+    """
+    For each feature, bump it by +0.10 and verify the score moves in the
+    direction implied by the weight sign.  This locks the interpretation:
+
+        score = Σ w_i * x_i   (no negation, no inversion)
+
+    so a negative weight means increasing the feature *decreases* the score.
+    """
+
+    @staticmethod
+    def _perturb_score_delta(weights, feature, delta=0.10):
+        """Return score change when `feature` increases by `delta`."""
+        base = pd.DataFrame({c: [0.5] for c in FEATURE_COLS})
+        bumped = base.copy()
+        bumped[feature] = base[feature] + delta
+        s_base = compute_linear_score(base, weights).iloc[0]
+        s_bumped = compute_linear_score(bumped, weights).iloc[0]
+        return s_bumped - s_base
+
+    def test_m3_weights_direction(self):
+        """Each M3 calibrated weight's sign matches the perturbation direction."""
+        m3_weights_path = Path(__file__).resolve().parent.parent / "data" / "module5_weights_m3.json"
+        if not m3_weights_path.exists():
+            pytest.skip("module5_weights_m3.json not found")
+        m3_weights = load_m3_weights(m3_weights_path)
+        for feat in FEATURE_COLS:
+            w = m3_weights.get(feat, 0.0)
+            if abs(w) < 1e-10:
+                continue
+            delta_score = self._perturb_score_delta(m3_weights, feat)
+            if w > 0:
+                assert delta_score > 0, (
+                    f"{feat}: w={w:+.4f} but +0.10 bump moved score by {delta_score:+.6f}"
+                )
+            else:
+                assert delta_score < 0, (
+                    f"{feat}: w={w:+.4f} but +0.10 bump moved score by {delta_score:+.6f}"
+                )
+
+    def test_default_v3_weights_direction(self):
+        """Default V3 weights are all positive → bump always increases score."""
+        for feat in FEATURE_COLS:
+            w = DEFAULT_V3_WEIGHTS.get(feat, 0.0)
+            if abs(w) < 1e-10:
+                continue
+            delta_score = self._perturb_score_delta(DEFAULT_V3_WEIGHTS, feat)
+            assert delta_score > 0, (
+                f"{feat}: default w={w:+.4f} but +0.10 bump moved score by {delta_score:+.6f}"
+            )
+
+    def test_perturbation_magnitude_proportional_to_weight(self):
+        """Larger |weight| → larger |score delta| for the same bump."""
+        m3_weights_path = Path(__file__).resolve().parent.parent / "data" / "module5_weights_m3.json"
+        if not m3_weights_path.exists():
+            pytest.skip("module5_weights_m3.json not found")
+        m3_weights = load_m3_weights(m3_weights_path)
+        deltas = {}
+        for feat in FEATURE_COLS:
+            deltas[feat] = abs(self._perturb_score_delta(m3_weights, feat))
+        # Sort features by |weight|
+        sorted_by_w = sorted(FEATURE_COLS, key=lambda f: abs(m3_weights.get(f, 0.0)))
+        sorted_by_delta = sorted(FEATURE_COLS, key=lambda f: deltas[f])
+        assert sorted_by_w == sorted_by_delta, (
+            f"Weight magnitude order {sorted_by_w} != delta order {sorted_by_delta}"
+        )
+
+    def test_single_feature_perturbation_isolates(self):
+        """Bumping one feature doesn't affect the contribution of others."""
+        weights = {c: -0.25 for c in FEATURE_COLS}
+        target = FEATURE_COLS[0]
+        base = pd.DataFrame({c: [0.5] for c in FEATURE_COLS})
+        bumped = base.copy()
+        bumped[target] = 0.6
+        delta = (
+            compute_linear_score(bumped, weights).iloc[0]
+            - compute_linear_score(base, weights).iloc[0]
+        )
+        expected = -0.25 * 0.1  # w * delta_x
+        assert abs(delta - expected) < 1e-10, (
+            f"Expected delta={expected}, got {delta}"
+        )
+
+
 # ── TestTopN ──────────────────────────────────────────────────────────
 class TestTopN:
     def test_selects_highest_scores(self):
