@@ -38,7 +38,7 @@ for t in removed_tickers:
     print(f'  - {repr(display)}')
 
 # Backup original
-backup_name = f'production_data/universe_backup_{datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\")}.json'
+backup_name = f'production_data/universe_backup_{datetime.datetime.now().strftime("%Y%m%d_%H%M%S")}.json'
 shutil.copy('production_data/universe.json', backup_name)
 print(f'\n✅ Backup saved: {backup_name}')
 
