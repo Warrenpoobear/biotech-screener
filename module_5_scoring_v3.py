@@ -194,6 +194,115 @@ ASYMMETRY_CONFIG = {
 
 SMART_MONEY_COVERAGE_GATED_WEIGHT = Decimal("0.05")  # 5% when coverage exists
 
+# =============================================================================
+# ENHANCEMENT 7: STAGE/SIZE AWARE WEIGHTING
+# =============================================================================
+# Apply multiplicative tilts to base weights based on development stage and
+# market cap. This adjusts component importance based on what matters most
+# at each stage of a company's lifecycle.
+#
+# Order of operations: base → stage/size → regime → vol → confidence → smart_money
+
+STAGE_SIZE_TILT_CONFIG = {
+    "enabled": True,  # Master switch for tilting
+
+    # Stage tilts (multiplicative) - what matters at each development phase
+    "stage_tilts": {
+        "early": {  # Preclinical → Phase 1
+            "clinical": Decimal("1.35"),    # ↑ Science risk dominant
+            "pos": Decimal("1.25"),         # ↑ Binary outcomes
+            "financial": Decimal("1.20"),   # ↑ Survivability critical
+            "short_interest": Decimal("1.10"),  # ↑ Micro-cap positioning
+            "catalyst": Decimal("0.90"),    # → Events far out, low quality
+            "valuation": Decimal("0.75"),   # ↓ No fundamentals
+            "momentum": Decimal("0.90"),    # ↓ No commercial traction
+        },
+        "poc": {  # Phase 2 → Proof-of-concept
+            "catalyst": Decimal("1.50"),    # ↑↑ Readout events price in
+            "clinical": Decimal("1.10"),    # ↑ PoC data matters
+            "short_interest": Decimal("1.15"),  # ↑ Positioning around binary
+            "momentum": Decimal("1.10"),    # ↑ Pre-readout moves
+            "pos": Decimal("1.05"),         # → Refined PoS post-data
+            "financial": Decimal("0.95"),   # → Less critical pre-commercial
+            "valuation": Decimal("0.85"),   # → Still speculative
+        },
+        "pivotal": {  # Phase 3 → Regulatory submission
+            "catalyst": Decimal("1.25"),    # ↑ Pivotal data/regulatory events
+            "financial": Decimal("1.10"),   # ↑ Capital needs for launch
+            "clinical": Decimal("1.00"),    # → Mature dataset
+            "valuation": Decimal("1.10"),   # ↑ Starting to model commercial
+            "pos": Decimal("0.95"),         # ↓ Lower info uncertainty
+            "short_interest": Decimal("1.00"),  # → Neutral
+            "momentum": Decimal("1.00"),    # → Neutral
+        },
+        "regulatory": {  # PDUFA/approval phase
+            "catalyst": Decimal("1.60"),    # ↑↑ Binary regulatory event
+            "valuation": Decimal("1.25"),   # ↑ Commercial value crystallizes
+            "financial": Decimal("1.15"),   # ↑ Launch funding critical
+            "momentum": Decimal("1.10"),    # ↑ Pre-PDUFA positioning
+            "clinical": Decimal("0.85"),    # ↓ Science mostly priced
+            "pos": Decimal("0.90"),         # ↓ Low info uncertainty
+            "short_interest": Decimal("0.95"),  # ↓ Less short interest usually
+        },
+        "commercial": {  # Post-approval, revenue generating
+            "financial": Decimal("1.35"),   # ↑↑ Execution risk dominant
+            "valuation": Decimal("1.30"),   # ↑↑ Fundamentals matter
+            "momentum": Decimal("1.20"),    # ↑ Sales/trajectory drives price
+            "catalyst": Decimal("0.85"),    # → Few binary events
+            "clinical": Decimal("0.80"),    # ↓ Science priced in
+            "pos": Decimal("0.85"),         # ↓ Low clinical uncertainty
+            "short_interest": Decimal("0.90"),  # → Lower short interest
+        },
+        # Neutral fallback (no tilting)
+        "none": {},
+    },
+
+    # Size tilts (multiplicative) - what matters at each market cap tier
+    "size_tilts": {
+        "micro": {  # <$300M
+            "financial": Decimal("1.25"),   # ↑↑ Survivability is everything
+            "catalyst": Decimal("1.15"),    # ↑ Binary events lifeline
+            "short_interest": Decimal("1.15"),  # ↑ High short interest common
+            "clinical": Decimal("1.05"),    # → Binary science risk
+            "pos": Decimal("1.10"),         # → PoS more uncertain
+            "valuation": Decimal("0.80"),   # ↓ No fundamentals
+            "momentum": Decimal("0.85"),    # → Illiquid, noise-driven
+        },
+        "small": {  # $300M-$2B
+            "financial": Decimal("1.10"),   # ↑ Capital discipline key
+            "catalyst": Decimal("1.05"),    # → Events still material
+            "short_interest": Decimal("1.05"),  # → Shorts active
+            "valuation": Decimal("0.95"),   # → Starting to matter
+            "momentum": Decimal("0.95"),    # → Some liquidity
+            "clinical": Decimal("1.00"),    # → Neutral
+            "pos": Decimal("1.00"),         # → Neutral
+        },
+        "mid": {  # $2B-$10B (neutral baseline)
+            "clinical": Decimal("1.00"), "financial": Decimal("1.00"),
+            "catalyst": Decimal("1.00"), "pos": Decimal("1.00"),
+            "momentum": Decimal("1.00"), "valuation": Decimal("1.00"),
+            "short_interest": Decimal("1.00"),
+        },
+        "large": {  # >$10B
+            "valuation": Decimal("1.20"),   # ↑ Fundamental valuation
+            "financial": Decimal("1.15"),   # ↑ Capital allocation key
+            "momentum": Decimal("1.10"),    # ↑ Liquidity, institutional flows
+            "catalyst": Decimal("0.85"),    # → Events less material
+            "short_interest": Decimal("0.85"),  # ↓ Minimal short interest
+            "clinical": Decimal("0.90"),    # → Diversified, priced in
+            "pos": Decimal("0.95"),         # → Lower uncertainty
+        },
+        "unknown": {},  # No tilting if size unknown
+    },
+
+    # Clamping ranges (applied INDIVIDUALLY to stage and size multipliers)
+    "clamp_min": Decimal("0.70"),
+    "clamp_max": Decimal("1.40"),
+    # Final combined multiplier clamp (safety net to prevent extreme combos)
+    "combined_clamp_min": Decimal("0.55"),
+    "combined_clamp_max": Decimal("1.60"),
+}
+
 
 # =============================================================================
 # TYPES
@@ -378,6 +487,186 @@ def _stage_bucket(lead_phase: Optional[str]) -> str:
     elif "2" in phase:
         return "mid"
     return "early"
+
+
+def _determine_stage_bucket_alpha(
+    lead_phase: Optional[str],
+    cat_event_type: Optional[str] = None,
+    days_to_catalyst: Optional[int] = None,
+) -> str:
+    """
+    Determine stage bucket with event-awareness for stage/size tilting.
+
+    Priority: catalyst event type > lead phase > default 'pivotal'.
+
+    Returns: 'early', 'poc', 'pivotal', 'regulatory', 'commercial', or 'none'
+    """
+    # Phase 1: Catalyst event type mapping (Module 3 event types + keywords)
+    if cat_event_type:
+        cat_type_lower = str(cat_event_type).lower()
+
+        # Regulatory events (highest priority)
+        if any(kw in cat_type_lower for kw in [
+            "pdufa", "adcom", "nda", "bla", "fda_pdufa", "fda_adcom",
+            "filing", "approval", "regulatory", "label", "crl",
+        ]):
+            return "regulatory"
+
+        # Pivotal/Phase 3 events
+        if any(kw in cat_type_lower for kw in [
+            "phase 3", "phase_3", "ph3", "pivotal", "registrational",
+            "phase iii", "p3", "primary_completion",
+        ]):
+            return "pivotal"
+
+        # Proof-of-concept/Phase 2 events
+        if any(kw in cat_type_lower for kw in [
+            "phase 2", "phase_2", "ph2", "interim", "readout", "data",
+            "phase ii", "p2", "topline", "results",
+        ]):
+            return "poc"
+
+        # Early stage events
+        if any(kw in cat_type_lower for kw in [
+            "phase 1", "phase_1", "ph1", "preclinical", "ind",
+            "phase i", "p1", "first_patient", "dose_escalation",
+        ]):
+            return "early"
+
+        # Commercial events
+        if any(kw in cat_type_lower for kw in [
+            "launch", "sales", "earnings", "guidance", "partnership",
+            "acquisition", "commercial", "revenue",
+        ]):
+            return "commercial"
+
+    # Phase 2: Lead phase fallback
+    if lead_phase:
+        phase_lower = lead_phase.lower()
+        if any(kw in phase_lower for kw in ["preclinical", "pre-clinical"]):
+            return "early"
+        elif "phase 1" in phase_lower or "phase_1" in phase_lower or "phase i" in phase_lower:
+            return "early"
+        elif "phase 2" in phase_lower or "phase_2" in phase_lower or "phase ii" in phase_lower:
+            return "poc"
+        elif "phase 3" in phase_lower or "phase_3" in phase_lower or "phase iii" in phase_lower:
+            return "pivotal"
+        elif any(kw in phase_lower for kw in ["approved", "commercial", "launched", "marketed"]):
+            return "commercial"
+        elif any(kw in phase_lower for kw in ["nda", "bla", "filing", "regulatory", "pdufa"]):
+            return "regulatory"
+
+    # Phase 3: Days to catalyst heuristic (if no event type but we have timing)
+    if days_to_catalyst is not None:
+        try:
+            days = int(days_to_catalyst)
+            if days < 60:
+                return "regulatory"  # Imminent event likely regulatory
+            elif days < 120:
+                return "pivotal"     # Near-term likely pivotal
+            elif days < 270:
+                return "poc"         # Medium-term likely PoC
+        except (ValueError, TypeError):
+            pass
+
+    # Default: 'pivotal' (most neutral, midpoint of development)
+    return "pivotal"
+
+
+def _apply_stage_size_tilts(
+    base_weights: Dict[str, Decimal],
+    stage_bucket: str,
+    size_bucket: str,
+    enable_tilting: bool = True,
+) -> Tuple[Dict[str, Decimal], Dict[str, Any]]:
+    """
+    Apply stage × size tilts to base weights.
+
+    Tilts are multiplicative and individually clamped to prevent extreme values.
+    Weights are renormalized after tilting to sum to 1.0.
+
+    Args:
+        base_weights: Component weights before tilting
+        stage_bucket: Development stage ('early', 'poc', 'pivotal', 'regulatory', 'commercial')
+        size_bucket: Market cap bucket ('micro', 'small', 'mid', 'large')
+        enable_tilting: Master switch to disable tilting
+
+    Returns:
+        Tuple of (tilted_weights, diagnostics_dict)
+    """
+    config = STAGE_SIZE_TILT_CONFIG
+
+    # Return unchanged weights if tilting disabled
+    if not enable_tilting or not config.get("enabled", True) or stage_bucket == "none":
+        return base_weights.copy(), {
+            "stage": stage_bucket,
+            "size": size_bucket,
+            "tilt_applied": False,
+            "stage_tilts": {},
+            "size_tilts": {},
+            "combined_multipliers": {},
+            "clamp_hits": {"stage": 0, "size": 0, "combined": 0},
+        }
+
+    stage_tilt = config["stage_tilts"].get(stage_bucket, {})
+    size_tilt = config["size_tilts"].get(size_bucket, {})
+
+    clamp_min = config["clamp_min"]
+    clamp_max = config["clamp_max"]
+    combined_min = config["combined_clamp_min"]
+    combined_max = config["combined_clamp_max"]
+
+    tilted = {}
+    diagnostics = {
+        "stage": stage_bucket,
+        "size": size_bucket,
+        "tilt_applied": False,
+        "stage_tilts": {},
+        "size_tilts": {},
+        "combined_multipliers": {},
+        "clamp_hits": {"stage": 0, "size": 0, "combined": 0},
+    }
+
+    # Apply tilts with individual clamping
+    for component, base_w in base_weights.items():
+        # Get stage multiplier (default 1.0)
+        stage_mult_raw = Decimal(str(stage_tilt.get(component, "1.0")))
+        stage_mult = _clamp(stage_mult_raw, clamp_min, clamp_max)
+        if stage_mult != stage_mult_raw:
+            diagnostics["clamp_hits"]["stage"] += 1
+
+        # Get size multiplier (default 1.0)
+        size_mult_raw = Decimal(str(size_tilt.get(component, "1.0")))
+        size_mult = _clamp(size_mult_raw, clamp_min, clamp_max)
+        if size_mult != size_mult_raw:
+            diagnostics["clamp_hits"]["size"] += 1
+
+        # Combined multiplier with safety clamp
+        combined_mult_raw = stage_mult * size_mult
+        combined_mult = _clamp(combined_mult_raw, combined_min, combined_max)
+        if combined_mult != combined_mult_raw:
+            diagnostics["clamp_hits"]["combined"] += 1
+
+        # Apply tilt
+        tilted[component] = base_w * combined_mult
+
+        # Store diagnostics for non-neutral tilts
+        if stage_mult != Decimal("1.0"):
+            diagnostics["stage_tilts"][component] = str(stage_mult)
+        if size_mult != Decimal("1.0"):
+            diagnostics["size_tilts"][component] = str(size_mult)
+        if combined_mult != Decimal("1.0"):
+            diagnostics["combined_multipliers"][component] = str(combined_mult)
+
+    # Renormalize to sum = 1.0 (preserve high precision)
+    total = sum(tilted.values())
+    if total > EPS:
+        tilted = {k: v / total for k, v in tilted.items()}
+
+    # Check if any tilts were applied
+    diagnostics["tilt_applied"] = bool(diagnostics["combined_multipliers"])
+
+    return tilted, diagnostics
 
 
 def _quarter_from_date(d: date) -> str:
@@ -1464,10 +1753,33 @@ def _score_single_ticker_v3(
     conf_cat = _clamp(conf_cat - vol_adj.confidence_penalty, Decimal("0.1"), Decimal("1"))
 
     # =========================================================================
-    # WEIGHT COMPUTATION
+    # WEIGHT COMPUTATION WITH STAGE/SIZE TILTS
     # =========================================================================
 
-    regime_weights = apply_regime_to_weights(base_weights, regime)
+    # 1. Determine stage bucket (event-aware for better tilting)
+    stage_bucket_alpha = _determine_stage_bucket_alpha(
+        lead_phase=lead_phase,
+        cat_event_type=cat_event_type,
+        days_to_catalyst=days_to_cat,
+    )
+
+    # 2. Determine size bucket
+    size_bucket = _market_cap_bucket(market_cap_mm) if market_cap_mm else "mid"
+
+    # 3. Apply stage/size tilts to base weights
+    tilted_weights, tilt_diagnostics = _apply_stage_size_tilts(
+        base_weights=base_weights,
+        stage_bucket=stage_bucket_alpha,
+        size_bucket=size_bucket,
+        enable_tilting=STAGE_SIZE_TILT_CONFIG.get("enabled", True),
+    )
+
+    if tilt_diagnostics["tilt_applied"]:
+        flags.append(f"stage_tilt_{stage_bucket_alpha}")
+        flags.append(f"size_tilt_{size_bucket}")
+
+    # 4. Apply regime adjustments on top of tilted weights
+    regime_weights = apply_regime_to_weights(tilted_weights, regime)
 
     # =========================================================================
     # ENHANCEMENT 1: HARD REGIME GATING
@@ -1939,6 +2251,7 @@ def _score_single_ticker_v3(
         "ceilings_applied": ceilings_applied,
         "existential_flaws": existential_flaws,
         "confidence_factors": {k: str(v) for k, v in confidence_factors.items()},
+        "stage_size_weighting": tilt_diagnostics,
     }
 
     determinism_hash = _compute_determinism_hash(
@@ -1976,6 +2289,7 @@ def _score_single_ticker_v3(
             "volatility": {"bucket": vol_adj.vol_bucket.value, "weight_factor": str(vol_adj.weight_adjustment_factor), "score_factor": str(vol_adj.score_adjustment_factor)},
             "catalyst_decay": {"factor": str(decay.decay_factor), "in_optimal_window": decay.in_optimal_window},
             "confidence_factors": {k: str(v) for k, v in confidence_factors.items()},
+            "stage_size_weighting": tilt_diagnostics,
         },
         penalties_and_gates={
             "uncertainty_penalty_pct": str(_quantize_score(uncertainty_penalty * Decimal("100"))),
