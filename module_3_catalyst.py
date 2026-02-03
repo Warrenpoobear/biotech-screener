@@ -167,6 +167,7 @@ def convert_calendar_catalyst_to_v2(
         'UPCOMING_PCD': EventType.CT_PRIMARY_COMPLETION,
         'UPCOMING_SCD': EventType.CT_STUDY_COMPLETION,
         'RESULTS_DUE': EventType.CT_RESULTS_POSTED,
+        'RESULTS_RECENT': EventType.CT_RESULTS_POSTED,
     }
 
     event_type = CALENDAR_EVENT_TYPE_MAP.get(
@@ -185,6 +186,13 @@ def convert_calendar_catalyst_to_v2(
     else:
         confidence = ConfidenceLevel.LOW
 
+    du = calendar_catalyst.days_until
+    if du is None:
+        rel = None
+    else:
+        du_i = int(du)
+        rel = f"{abs(du_i)}d_ago" if du_i < 0 else f"{du_i}d_ahead"
+
     return CatalystEventV2(
         ticker=calendar_catalyst.ticker,
         nct_id=calendar_catalyst.nct_id,
@@ -193,7 +201,7 @@ def convert_calendar_catalyst_to_v2(
         event_date=calendar_catalyst.target_date.isoformat(),
         field_changed=f"calendar_{calendar_catalyst.event_type.lower()}",
         prior_value=None,
-        new_value=f"{calendar_catalyst.days_until}d_ahead",
+        new_value=rel,
         source="CTGOV_CALENDAR",
         confidence=confidence,
         disclosed_at=calendar_catalyst.target_date.isoformat(),  # Use target date as disclosed_at

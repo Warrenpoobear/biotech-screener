@@ -247,7 +247,16 @@ class ForwardLookingSeparator:
                 confidence = Decimal(str(confidence))
 
             # Base score based on days until event
-            days_until = event.get("days_until", 90)
+            raw_days_until = event.get("days_until", None)
+            try:
+                days_until = int(raw_days_until)
+            except (TypeError, ValueError):
+                continue
+
+            # Forward-looking only: ignore past / same-day events (e.g., RESULTS_RECENT has negative days_until)
+            if days_until <= 0:
+                continue
+
             if days_until <= 30:
                 base_score = Decimal("5.0")
             elif days_until <= 60:

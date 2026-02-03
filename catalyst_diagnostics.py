@@ -387,10 +387,15 @@ class EventRuleID:
     M3_CAL_PCD_30D = "M3_CAL_PCD_30D"
     M3_CAL_PCD_60D = "M3_CAL_PCD_60D"
     M3_CAL_PCD_90D = "M3_CAL_PCD_90D"
+    M3_CAL_PCD_180D = "M3_CAL_PCD_180D"
+    M3_CAL_PCD_270D = "M3_CAL_PCD_270D"
     M3_CAL_SCD_30D = "M3_CAL_SCD_30D"
     M3_CAL_SCD_60D = "M3_CAL_SCD_60D"
     M3_CAL_SCD_90D = "M3_CAL_SCD_90D"
+    M3_CAL_SCD_180D = "M3_CAL_SCD_180D"
+    M3_CAL_SCD_270D = "M3_CAL_SCD_270D"
     M3_CAL_RESULTS_DUE = "M3_CAL_RESULTS_DUE"
+    M3_CAL_RESULTS_RECENT = "M3_CAL_RESULTS_RECENT"
 
 
 @dataclass
@@ -444,7 +449,7 @@ class CalendarCatalyst:
 def detect_calendar_catalysts(
     current_snapshot: StateSnapshot,
     as_of_date: date,
-    windows: Tuple[int, ...] = (30, 60, 90),
+    windows: Tuple[int, ...] = (30, 60, 90, 180, 270),
 ) -> List[CalendarCatalyst]:
     """
     Detect forward-looking calendar-based catalysts.
@@ -481,10 +486,18 @@ def detect_calendar_catalysts(
                     window = '60D'
                     rule_id = EventRuleID.M3_CAL_PCD_60D
                     confidence = 0.75
-                else:
+                elif days_until <= 90:
                     window = '90D'
                     rule_id = EventRuleID.M3_CAL_PCD_90D
                     confidence = 0.65
+                elif days_until <= 180:
+                    window = '180D'
+                    rule_id = EventRuleID.M3_CAL_PCD_180D
+                    confidence = 0.50
+                else:
+                    window = '270D'
+                    rule_id = EventRuleID.M3_CAL_PCD_270D
+                    confidence = 0.40
 
                 # Boost confidence if date is ACTUAL
                 if record.primary_completion_type and record.primary_completion_type.value == 'ACTUAL':
@@ -529,10 +542,18 @@ def detect_calendar_catalysts(
                     window = '60D'
                     rule_id = EventRuleID.M3_CAL_SCD_60D
                     confidence = 0.65
-                else:
+                elif days_until <= 90:
                     window = '90D'
                     rule_id = EventRuleID.M3_CAL_SCD_90D
                     confidence = 0.55
+                elif days_until <= 180:
+                    window = '180D'
+                    rule_id = EventRuleID.M3_CAL_SCD_180D
+                    confidence = 0.50
+                else:
+                    window = '270D'
+                    rule_id = EventRuleID.M3_CAL_SCD_270D
+                    confidence = 0.40
 
                 if record.completion_type and record.completion_type.value == 'ACTUAL':
                     confidence = min(0.90, confidence + 0.10)
@@ -560,6 +581,36 @@ def detect_calendar_catalysts(
                         confidence_reason=confidence_reason,
                     ),
                 ))
+
+        # Recent results detection: results_first_posted within past 60 days
+        if record.results_first_posted:
+            # PIT safety: only consider if last_update_posted <= as_of_date
+            if record.last_update_posted <= as_of_date:
+                days_since_results = (as_of_date - record.results_first_posted).days
+                if 0 <= days_since_results <= 60:
+                    rule_id = EventRuleID.M3_CAL_RESULTS_RECENT
+                    confidence = 0.90
+                    confidence_reason = "Results recently posted on CT.gov"
+
+                    catalysts.append(CalendarCatalyst(
+                        ticker=record.ticker,
+                        nct_id=record.nct_id,
+                        event_type='RESULTS_RECENT',
+                        target_date=record.results_first_posted,
+                        days_until=-days_since_results,  # Negative: event is in the past
+                        window='RECENT',
+                        confidence=confidence,
+                        rule_id=rule_id,
+                        evidence=EventEvidence(
+                            rule_id=rule_id,
+                            fields={
+                                'results_first_posted': record.results_first_posted.isoformat(),
+                                'days_since_results': days_since_results,
+                            },
+                            confidence=confidence,
+                            confidence_reason=confidence_reason,
+                        ),
+                    ))
 
     # Sort by days_until for deterministic output
     catalysts.sort(key=lambda c: (c.days_until, c.ticker, c.nct_id))

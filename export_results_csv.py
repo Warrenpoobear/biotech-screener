@@ -49,6 +49,29 @@ CONFIDENCE_COLUMNS = [
     "confidence_catalyst", "confidence_pos",
 ]
 
+# Clinical PIT observability columns (joined from Module 4 scores)
+CLINICAL_PIT_COLUMNS = [
+    "pit_trials_total",           # n_trials_raw from Module 4
+    "pit_trials_eligible",        # n_trials_unique from Module 4
+    "pit_trials_filtered",        # pit_filtered_count_ticker
+    "pit_trials_no_date",         # derived: max(0, total - eligible - filtered)
+    "clinical_lead_phase",        # lead_phase
+    "clinical_lead_nct_id",       # lead_trial_nct_id
+    "clinical_recency_days",      # recency_days
+    "clinical_score_raw",         # clinical_score (the 0-100 score)
+]
+
+# Catalyst debug columns (joined from Module 3 summaries)
+CATALYST_DEBUG_COLUMNS = [
+    "catalyst_event_count_upcoming",  # n_events_upcoming
+    "catalyst_confidence_m3",         # catalyst_confidence from M3 summary
+    "catalyst_window_days_m3",        # catalyst_window_days
+    "catalyst_window_bucket_m3",      # catalyst_window_bucket
+    "catalyst_next_date",             # next_catalyst_date
+    "catalyst_top_event_type",        # event_type of top event from top_3_events
+    "catalyst_top_event_date",        # event_date of top event
+]
+
 
 def _cheapness_percentile(value: float, all_values: List[float]) -> float:
     """Percentile where 1.0 = cheapest (lowest raw metric), 0.0 = most expensive.
@@ -108,7 +131,11 @@ def _compute_valuation_percentiles(flat_records: List[Dict[str, Any]]) -> None:
             flat_records[i]["valuation_pct_in_size_bucket"] = _cheapness_percentile(v, mbv)
 
 
-def flatten_record(rec: Dict[str, Any]) -> Dict[str, Any]:
+def flatten_record(
+    rec: Dict[str, Any],
+    m4_by_ticker: Dict[str, Dict[str, Any]] = None,
+    m3_by_ticker: Dict[str, Dict[str, Any]] = None,
+) -> Dict[str, Any]:
     """Flatten a ranked security record for CSV export."""
     flat = {}
 
@@ -231,6 +258,39 @@ def flatten_record(rec: Dict[str, Any]) -> Dict[str, Any]:
     for col in CONFIDENCE_COLUMNS:
         flat[col] = rec.get(col)
 
+    # Clinical PIT columns (joined from Module 4 scores)
+    if m4_by_ticker is None:
+        m4_by_ticker = {}
+    m4 = m4_by_ticker.get(rec.get("ticker"), {})
+    flat["pit_trials_total"] = m4.get("n_trials_raw")
+    flat["pit_trials_eligible"] = m4.get("n_trials_unique")
+    flat["pit_trials_filtered"] = m4.get("pit_filtered_count_ticker")
+    total = m4.get("n_trials_raw") or 0
+    eligible = m4.get("n_trials_unique") or 0
+    filtered = m4.get("pit_filtered_count_ticker") or 0
+    flat["pit_trials_no_date"] = max(0, total - eligible - filtered)
+    flat["clinical_lead_phase"] = m4.get("lead_phase")
+    flat["clinical_lead_nct_id"] = m4.get("lead_trial_nct_id")
+    flat["clinical_recency_days"] = m4.get("recency_days")
+    flat["clinical_score_raw"] = m4.get("clinical_score")
+
+    # Catalyst debug columns (joined from Module 3 summaries)
+    if m3_by_ticker is None:
+        m3_by_ticker = {}
+    m3 = m3_by_ticker.get(rec.get("ticker"), {})
+    flat["catalyst_event_count_upcoming"] = m3.get("n_events_upcoming")
+    flat["catalyst_confidence_m3"] = m3.get("catalyst_confidence")
+    flat["catalyst_window_days_m3"] = m3.get("catalyst_window_days")
+    flat["catalyst_window_bucket_m3"] = m3.get("catalyst_window_bucket")
+    flat["catalyst_next_date"] = m3.get("next_catalyst_date")
+    top_3 = m3.get("top_3_events") or []
+    if top_3 and isinstance(top_3[0], dict):
+        flat["catalyst_top_event_type"] = top_3[0].get("event_type")
+        flat["catalyst_top_event_date"] = top_3[0].get("event_date")
+    else:
+        flat["catalyst_top_event_type"] = None
+        flat["catalyst_top_event_date"] = None
+
     return flat
 
 
@@ -244,18 +304,26 @@ def export_to_csv(results_path: Path, output_path: Path) -> int:
         print("Error: No ranked securities found in results", file=sys.stderr)
         return 0
 
+    # Build Module 4 scores lookup for PIT observability columns
+    m4_scores = data.get("module_4_clinical", {}).get("scores", [])
+    m4_by_ticker = {s["ticker"]: s for s in m4_scores if "ticker" in s}
+
+    # Build Module 3 summaries lookup for catalyst debug columns
+    m3_summaries = data.get("module_3_catalyst", {}).get("summaries", {})
+    m3_by_ticker = m3_summaries if isinstance(m3_summaries, dict) else {}
+
     # Sort by rank
     ranked = sorted(ranked, key=lambda x: x.get("composite_rank", 999))
 
     # Flatten all records
-    flat_records = [flatten_record(r) for r in ranked]
+    flat_records = [flatten_record(r, m4_by_ticker, m3_by_ticker) for r in ranked]
 
     # Cross-sectional valuation percentiles (ranking-neutral, diagnostic only)
     # Lower raw metric = cheaper = higher percentile (1.0 = cheapest, 0.0 = most expensive)
     _compute_valuation_percentiles(flat_records)
 
-    # Get all columns (core + signal + confidence)
-    columns = CORE_COLUMNS + SIGNAL_COLUMNS + CONFIDENCE_COLUMNS
+    # Get all columns (core + signal + confidence + clinical PIT + catalyst debug)
+    columns = CORE_COLUMNS + SIGNAL_COLUMNS + CONFIDENCE_COLUMNS + CLINICAL_PIT_COLUMNS + CATALYST_DEBUG_COLUMNS
 
     # Null safety: convert any remaining None values to "" for clean CSV output
     for rec in flat_records:

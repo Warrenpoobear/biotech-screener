@@ -9,7 +9,10 @@ Covers:
 - Regression: Module 4 returns nonzero scores for valid trials with posted dates
 """
 
+import csv
+import json
 import sys
+import tempfile
 from pathlib import Path
 from decimal import Decimal
 
@@ -18,6 +21,7 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from collect_ctgov_data import _normalize_date
+from export_results_csv import export_to_csv, CLINICAL_PIT_COLUMNS
 from module_4_clinical_dev import _select_pit_date, compute_module_4_clinical_dev
 
 
@@ -233,3 +237,124 @@ class TestModule4Regression:
         # Access is indirect — check that unique count matches input
         # (all 3 trials have first_posted, so all admitted)
         assert result["diagnostic_counts"]["total_trials_unique"] == 3
+
+
+# ---------------------------------------------------------------------------
+# CSV export: PIT observability columns present and populated
+# ---------------------------------------------------------------------------
+
+
+class TestCsvPitColumns:
+    """Verify that export_to_csv emits PIT columns from Module 4 scores."""
+
+    def _build_results(self):
+        """Build a minimal results dict with Module 4 scores and Module 5 ranked securities."""
+        return {
+            "module_4_clinical": {
+                "scores": [
+                    {
+                        "ticker": "AAAA",
+                        "clinical_score": "72.50",
+                        "n_trials_raw": 10,
+                        "n_trials_unique": 8,
+                        "pit_filtered_count_ticker": 2,
+                        "lead_phase": "phase 3",
+                        "lead_trial_nct_id": "NCT00000001",
+                        "recency_days": 15,
+                    },
+                    {
+                        "ticker": "BBBB",
+                        "clinical_score": "45.00",
+                        "n_trials_raw": 3,
+                        "n_trials_unique": 3,
+                        "pit_filtered_count_ticker": 0,
+                        "lead_phase": "phase 1",
+                        "lead_trial_nct_id": "NCT00000002",
+                        "recency_days": 60,
+                    },
+                ],
+            },
+            "module_5_composite": {
+                "ranked_securities": [
+                    {"ticker": "AAAA", "composite_rank": 1, "composite_score": 80.0},
+                    {"ticker": "BBBB", "composite_rank": 2, "composite_score": 60.0},
+                ],
+            },
+        }
+
+    def test_pit_columns_present_in_header(self):
+        results = self._build_results()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            json_path = Path(tmpdir) / "results.json"
+            csv_path = Path(tmpdir) / "results.csv"
+            json_path.write_text(json.dumps(results))
+            count = export_to_csv(json_path, csv_path)
+            assert count == 2
+
+            with open(csv_path) as f:
+                reader = csv.DictReader(f)
+                for col in CLINICAL_PIT_COLUMNS:
+                    assert col in reader.fieldnames, f"Missing PIT column: {col}"
+
+    def test_pit_columns_populated(self):
+        results = self._build_results()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            json_path = Path(tmpdir) / "results.json"
+            csv_path = Path(tmpdir) / "results.csv"
+            json_path.write_text(json.dumps(results))
+            export_to_csv(json_path, csv_path)
+
+            with open(csv_path) as f:
+                rows = list(csv.DictReader(f))
+
+            aaaa = rows[0]
+            assert aaaa["ticker"] == "AAAA"
+            assert aaaa["pit_trials_total"] == "10"
+            assert aaaa["pit_trials_eligible"] == "8"
+            assert aaaa["pit_trials_filtered"] == "2"
+            assert aaaa["pit_trials_no_date"] == "0"
+            assert aaaa["clinical_lead_phase"] == "phase 3"
+            assert aaaa["clinical_lead_nct_id"] == "NCT00000001"
+            assert aaaa["clinical_recency_days"] == "15"
+            assert aaaa["clinical_score_raw"] == "72.50"
+
+            bbbb = rows[1]
+            assert bbbb["pit_trials_total"] == "3"
+            assert bbbb["pit_trials_eligible"] == "3"
+            assert bbbb["pit_trials_filtered"] == "0"
+
+    def test_pit_no_date_derived_correctly(self):
+        """pit_trials_no_date = max(0, total - eligible - filtered)."""
+        results = self._build_results()
+        # Simulate: 10 raw, 6 eligible, 2 filtered → 2 no_date
+        results["module_4_clinical"]["scores"][0]["n_trials_unique"] = 6
+        with tempfile.TemporaryDirectory() as tmpdir:
+            json_path = Path(tmpdir) / "results.json"
+            csv_path = Path(tmpdir) / "results.csv"
+            json_path.write_text(json.dumps(results))
+            export_to_csv(json_path, csv_path)
+
+            with open(csv_path) as f:
+                rows = list(csv.DictReader(f))
+
+            assert rows[0]["pit_trials_no_date"] == "2"
+
+    def test_missing_m4_ticker_gets_empty_pit_columns(self):
+        """A ticker in Module 5 but not in Module 4 should get empty PIT columns."""
+        results = self._build_results()
+        results["module_5_composite"]["ranked_securities"].append(
+            {"ticker": "CCCC", "composite_rank": 3, "composite_score": 40.0}
+        )
+        with tempfile.TemporaryDirectory() as tmpdir:
+            json_path = Path(tmpdir) / "results.json"
+            csv_path = Path(tmpdir) / "results.csv"
+            json_path.write_text(json.dumps(results))
+            export_to_csv(json_path, csv_path)
+
+            with open(csv_path) as f:
+                rows = list(csv.DictReader(f))
+
+            cccc = [r for r in rows if r["ticker"] == "CCCC"][0]
+            assert cccc["pit_trials_total"] == ""
+            assert cccc["pit_trials_eligible"] == ""
+            assert cccc["pit_trials_no_date"] == "0"
