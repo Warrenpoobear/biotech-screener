@@ -135,9 +135,15 @@ def flatten_record(
     rec: Dict[str, Any],
     m4_by_ticker: Dict[str, Dict[str, Any]] = None,
     m3_by_ticker: Dict[str, Dict[str, Any]] = None,
+    market_data_by_ticker: Dict[str, Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """Flatten a ranked security record for CSV export."""
     flat = {}
+
+    # Get market data for this ticker (for additional vol/drawdown data)
+    if market_data_by_ticker is None:
+        market_data_by_ticker = {}
+    mkt = market_data_by_ticker.get(rec.get("ticker"), {})
 
     # Core columns
     for col in CORE_COLUMNS:
@@ -155,11 +161,13 @@ def flatten_record(
     flat["drawdown"] = def_feat.get("drawdown")
 
     # V2 multi-horizon risk columns (with fallbacks from legacy fields)
+    # Note: vol_60d is used as proxy for vol_63d when multi-horizon data unavailable
+    # volatility_90d from market_data used as proxy for vol_252d (annualized)
     flat["vol_blended"] = def_feat.get("vol_blended") or def_feat.get("vol_60d")
-    flat["vol_63d"] = def_feat.get("vol_63d")
-    flat["vol_252d"] = def_feat.get("vol_252d")
+    flat["vol_63d"] = def_feat.get("vol_63d") or def_feat.get("vol_60d")
+    flat["vol_252d"] = def_feat.get("vol_252d") or mkt.get("volatility_90d")
     flat["max_drawdown_blended"] = def_feat.get("max_drawdown_blended") or def_feat.get("drawdown")
-    flat["max_drawdown_252d"] = def_feat.get("max_drawdown_252d")
+    flat["max_drawdown_252d"] = def_feat.get("max_drawdown_252d") or def_feat.get("drawdown")
     flat["max_drawdown_2y"] = def_feat.get("max_drawdown_2y")
 
     # Derive risk_data_state from presence of corresponding metrics when not explicit
@@ -315,11 +323,25 @@ def export_to_csv(results_path: Path, output_path: Path) -> int:
     m3_summaries = data.get("module_3_catalyst", {}).get("summaries", {})
     m3_by_ticker = m3_summaries if isinstance(m3_summaries, dict) else {}
 
+    # Load market_data.json for additional vol/drawdown fields
+    market_data_path = results_path.parent / "market_data.json"
+    market_data_by_ticker = {}
+    if market_data_path.exists():
+        try:
+            with open(market_data_path) as f:
+                market_data_list = json.load(f)
+            if isinstance(market_data_list, list):
+                market_data_by_ticker = {m["ticker"]: m for m in market_data_list if "ticker" in m}
+            elif isinstance(market_data_list, dict):
+                market_data_by_ticker = market_data_list
+        except (json.JSONDecodeError, KeyError):
+            pass  # Silently ignore if market_data can't be loaded
+
     # Sort by rank
     ranked = sorted(ranked, key=lambda x: x.get("composite_rank", 999))
 
     # Flatten all records
-    flat_records = [flatten_record(r, m4_by_ticker, m3_by_ticker) for r in ranked]
+    flat_records = [flatten_record(r, m4_by_ticker, m3_by_ticker, market_data_by_ticker) for r in ranked]
 
     # Cross-sectional valuation percentiles (ranking-neutral, diagnostic only)
     # Lower raw metric = cheaper = higher percentile (1.0 = cheapest, 0.0 = most expensive)
