@@ -278,11 +278,14 @@ def flatten_record(
     if m3_by_ticker is None:
         m3_by_ticker = {}
     m3 = m3_by_ticker.get(rec.get("ticker"), {})
-    flat["catalyst_event_count_upcoming"] = m3.get("n_events_upcoming")
-    flat["catalyst_confidence_m3"] = m3.get("catalyst_confidence")
-    flat["catalyst_window_days_m3"] = m3.get("catalyst_window_days")
-    flat["catalyst_window_bucket_m3"] = m3.get("catalyst_window_bucket")
-    flat["catalyst_next_date"] = m3.get("next_catalyst_date")
+    # Module 3 data is nested: event_summary, scores, integration
+    m3_event_summary = m3.get("event_summary") or {}
+    m3_integration = m3.get("integration") or {}
+    flat["catalyst_event_count_upcoming"] = m3_event_summary.get("n_events_upcoming")
+    flat["catalyst_confidence_m3"] = m3_integration.get("catalyst_confidence")
+    flat["catalyst_window_days_m3"] = m3_integration.get("catalyst_window_days")
+    flat["catalyst_window_bucket_m3"] = m3_integration.get("catalyst_window_bucket")
+    flat["catalyst_next_date"] = m3_integration.get("next_catalyst_date")
     top_3 = m3.get("top_3_events") or []
     if top_3 and isinstance(top_3[0], dict):
         flat["catalyst_top_event_type"] = top_3[0].get("event_type")
