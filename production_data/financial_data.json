@@ -1600,7 +1600,9 @@
     ],
     "collected_at": "2026-02-03",
     "CashAndSecurities": 650890000,
-    "CashAndSecurities_date": "2025-09-30"
+    "CashAndSecurities_date": "2025-09-30",
+    "NetIncome": -182743000,
+    "NetIncome_date": "2025-09-30"
   },
   {
     "ticker": "BBOT",
@@ -4567,7 +4569,9 @@
     "InterestExpense_date": "2025-09-30",
     "collected_at": "2026-02-03",
     "CashAndSecurities": 476513000,
-    "CashAndSecurities_date": "2025-09-30"
+    "CashAndSecurities_date": "2025-09-30",
+    "NetIncome": 89908000,
+    "NetIncome_date": "2025-09-30"
   },
   {
     "ticker": "IONS",
@@ -8083,7 +8087,9 @@
     "OperatingExpenses_date": "2025-09-30",
     "collected_at": "2026-02-03",
     "CashAndSecurities": 61364000,
-    "CashAndSecurities_date": "2025-09-30"
+    "CashAndSecurities_date": "2025-09-30",
+    "NetIncome": -45776000,
+    "NetIncome_date": "2025-09-30"
   },
   {
     "ticker": "SLN",
@@ -9462,7 +9468,9 @@
     ],
     "collected_at": "2026-02-03",
     "CashAndSecurities": 975300000,
-    "CashAndSecurities_date": "2025-09-30"
+    "CashAndSecurities_date": "2025-09-30",
+    "NetIncome": -128200000,
+    "NetIncome_date": "2025-09-30"
   },
   {
     "ticker": "VTYX",
@@ -9871,7 +9879,11 @@
     "ShareholdersEquity": 511238000,
     "ShareholdersEquity_date": "2025-09-30",
     "LongTermDebt": 15878000,
-    "LongTermDebt_date": "2025-09-30"
+    "LongTermDebt_date": "2025-09-30",
+    "NetIncome": -153358000,
+    "NetIncome_date": "2025-09-30",
+    "OperatingExpenses": 80712000,
+    "OperatingExpenses_date": "2025-09-30"
   },
   {
     "ticker": "ACIU",
@@ -9896,7 +9908,11 @@
     "CurrentLiabilities": 98286000,
     "CurrentLiabilities_date": "2025-09-30",
     "ShareholdersEquity": 62444000,
-    "ShareholdersEquity_date": "2025-09-30"
+    "ShareholdersEquity_date": "2025-09-30",
+    "NetIncome": -15858000,
+    "NetIncome_date": "2025-09-30",
+    "OperatingExpenses": 16638000,
+    "OperatingExpenses_date": "2025-09-30"
   },
   {
     "ticker": "AKRO",
@@ -9919,7 +9935,11 @@
     "CurrentLiabilities": 47651000,
     "CurrentLiabilities_date": "2025-09-30",
     "ShareholdersEquity": 957637000,
-    "ShareholdersEquity_date": "2025-09-30"
+    "ShareholdersEquity_date": "2025-09-30",
+    "NetIncome": -81566000,
+    "NetIncome_date": "2025-09-30",
+    "OperatingExpenses": 90236000,
+    "OperatingExpenses_date": "2025-09-30"
   },
   {
     "ticker": "ALVO",
@@ -9946,7 +9966,11 @@
     "ShareholdersEquity": -176763000,
     "ShareholdersEquity_date": "2025-09-30",
     "LongTermDebt": 1081626000,
-    "LongTermDebt_date": "2025-09-30"
+    "LongTermDebt_date": "2025-09-30",
+    "NetIncome": -5252000,
+    "NetIncome_date": "2025-09-30",
+    "OperatingExpenses": 77425000,
+    "OperatingExpenses_date": "2025-09-30"
   },
   {
     "ticker": "ARGX",
@@ -9969,7 +9993,13 @@
     "CurrentLiabilities": 1041904000,
     "CurrentLiabilities_date": "2025-06-30",
     "ShareholdersEquity": 6095752000,
-    "ShareholdersEquity_date": "2025-06-30"
+    "ShareholdersEquity_date": "2025-06-30",
+    "NetIncome": 344258000,
+    "NetIncome_date": "2025-09-30",
+    "OperatingExpenses": 667565000,
+    "OperatingExpenses_date": "2025-09-30",
+    "CFO": -82747000,
+    "CFO_date": "2024-12-31"
   },
   {
     "ticker": "ASND",
@@ -9996,7 +10026,11 @@
     "ShareholdersEquity": -174075000,
     "ShareholdersEquity_date": "2025-09-30",
     "LongTermDebt": 331369000,
-    "LongTermDebt_date": "2025-09-30"
+    "LongTermDebt_date": "2025-09-30",
+    "NetIncome": -60989000,
+    "NetIncome_date": "2025-09-30",
+    "OperatingExpenses": 180283000,
+    "OperatingExpenses_date": "2025-09-30"
   },
   {
     "ticker": "AZN",
@@ -10023,7 +10057,11 @@
     "ShareholdersEquity": 45888000000,
     "ShareholdersEquity_date": "2025-09-30",
     "LongTermDebt": 24700000000,
-    "LongTermDebt_date": "2025-09-30"
+    "LongTermDebt_date": "2025-09-30",
+    "NetIncome": 2533000000,
+    "NetIncome_date": "2025-09-30",
+    "OperatingExpenses": 8807000000,
+    "OperatingExpenses_date": "2025-09-30"
   },
   {
     "ticker": "BLTE",
@@ -10046,7 +10084,11 @@
     "CurrentLiabilities": 8066000,
     "CurrentLiabilities_date": "2025-09-30",
     "ShareholdersEquity": 274082000,
-    "ShareholdersEquity_date": "2025-09-30"
+    "ShareholdersEquity_date": "2025-09-30",
+    "NetIncome": -21690000,
+    "NetIncome_date": "2025-09-30",
+    "OperatingExpenses": 23018000,
+    "OperatingExpenses_date": "2025-09-30"
   },
   {
     "ticker": "BNTX",
@@ -10073,7 +10115,11 @@
     "ShareholdersEquity": 18477300000,
     "ShareholdersEquity_date": "2025-09-30",
     "LongTermDebt": 192000000,
-    "LongTermDebt_date": "2025-09-30"
+    "LongTermDebt_date": "2025-09-30",
+    "NetIncome": -28700000,
+    "NetIncome_date": "2025-09-30",
+    "OperatingExpenses": 716700000,
+    "OperatingExpenses_date": "2025-09-30"
   },
   {
     "ticker": "CDTX",
@@ -10096,7 +10142,11 @@
     "CurrentLiabilities": 95839000,
     "CurrentLiabilities_date": "2025-09-30",
     "ShareholdersEquity": 422387000,
-    "ShareholdersEquity_date": "2025-09-30"
+    "ShareholdersEquity_date": "2025-09-30",
+    "NetIncome": -83233000,
+    "NetIncome_date": "2025-09-30",
+    "OperatingExpenses": 88628000,
+    "OperatingExpenses_date": "2025-09-30"
   },
   {
     "ticker": "CLLS",
@@ -10123,7 +10173,11 @@
     "ShareholdersEquity": 100478000,
     "ShareholdersEquity_date": "2025-09-30",
     "LongTermDebt": 49739000,
-    "LongTermDebt_date": "2025-09-30"
+    "LongTermDebt_date": "2025-09-30",
+    "NetIncome": 589000,
+    "NetIncome_date": "2025-09-30",
+    "OperatingExpenses": 24774000,
+    "OperatingExpenses_date": "2025-09-30"
   },
   {
     "ticker": "CVAC",
@@ -10148,7 +10202,11 @@
     "CurrentLiabilities": 236167000,
     "CurrentLiabilities_date": "2025-09-30",
     "ShareholdersEquity": 871230000,
-    "ShareholdersEquity_date": "2025-09-30"
+    "ShareholdersEquity_date": "2025-09-30",
+    "NetIncome": 273229000,
+    "NetIncome_date": "2025-09-30",
+    "OperatingExpenses": -256449000,
+    "OperatingExpenses_date": "2025-09-30"
   },
   {
     "ticker": "DRUG",
@@ -10171,7 +10229,11 @@
     "CurrentLiabilities": 2335367,
     "CurrentLiabilities_date": "2025-09-30",
     "ShareholdersEquity": 82044923,
-    "ShareholdersEquity_date": "2025-09-30"
+    "ShareholdersEquity_date": "2025-09-30",
+    "NetIncome": -4085603,
+    "NetIncome_date": "2025-09-30",
+    "OperatingExpenses": 5664542,
+    "OperatingExpenses_date": "2025-09-30"
   },
   {
     "ticker": "EPRX",
@@ -10194,7 +10256,11 @@
     "CurrentLiabilities": 3811026,
     "CurrentLiabilities_date": "2025-09-30",
     "ShareholdersEquity": 90028821,
-    "ShareholdersEquity_date": "2025-09-30"
+    "ShareholdersEquity_date": "2025-09-30",
+    "NetIncome": -6361367,
+    "NetIncome_date": "2025-09-30",
+    "OperatingExpenses": 6883100,
+    "OperatingExpenses_date": "2025-09-30"
   },
   {
     "ticker": "FGEN",
@@ -10219,7 +10285,11 @@
     "CurrentLiabilities": 35973000,
     "CurrentLiabilities_date": "2025-09-30",
     "ShareholdersEquity": -17028000,
-    "ShareholdersEquity_date": "2025-09-30"
+    "ShareholdersEquity_date": "2025-09-30",
+    "NetIncome": 200636000,
+    "NetIncome_date": "2025-09-30",
+    "OperatingExpenses": 6504000,
+    "OperatingExpenses_date": "2025-09-30"
   },
   {
     "ticker": "GHRS",
@@ -10242,7 +10312,11 @@
     "CurrentLiabilities": 10408000,
     "CurrentLiabilities_date": "2025-09-30",
     "ShareholdersEquity": 291397000,
-    "ShareholdersEquity_date": "2025-09-30"
+    "ShareholdersEquity_date": "2025-09-30",
+    "NetIncome": -14020000,
+    "NetIncome_date": "2025-09-30",
+    "OperatingExpenses": 16535000,
+    "OperatingExpenses_date": "2025-09-30"
   },
   {
     "ticker": "GLPG",
@@ -10267,7 +10341,11 @@
     "CurrentLiabilities": 366563000,
     "CurrentLiabilities_date": "2025-09-30",
     "ShareholdersEquity": 2446963000,
-    "ShareholdersEquity_date": "2025-09-30"
+    "ShareholdersEquity_date": "2025-09-30",
+    "NetIncome": -202111000,
+    "NetIncome_date": "2025-09-30",
+    "OperatingExpenses": 101987000,
+    "OperatingExpenses_date": "2025-09-30"
   },
   {
     "ticker": "GMAB",
@@ -10292,7 +10370,11 @@
     "CurrentLiabilities": 741000000,
     "CurrentLiabilities_date": "2025-09-30",
     "ShareholdersEquity": 5751000000,
-    "ShareholdersEquity_date": "2025-09-30"
+    "ShareholdersEquity_date": "2025-09-30",
+    "NetIncome": 401000000,
+    "NetIncome_date": "2025-09-30",
+    "OperatingExpenses": 505000000,
+    "OperatingExpenses_date": "2025-09-30"
   },
   {
     "ticker": "GRFS",
@@ -10319,7 +10401,11 @@
     "ShareholdersEquity": 5169080000,
     "ShareholdersEquity_date": "2025-06-30",
     "LongTermDebt": 7447823000,
-    "LongTermDebt_date": "2025-06-30"
+    "LongTermDebt_date": "2025-06-30",
+    "NetIncome": 117063000,
+    "NetIncome_date": "2025-06-30",
+    "OperatingExpenses": 394254000,
+    "OperatingExpenses_date": "2025-06-30"
   },
   {
     "ticker": "IMMP",
@@ -10340,7 +10426,11 @@
     "CurrentLiabilities": 9211993,
     "CurrentLiabilities_date": "2024-12-31",
     "ShareholdersEquity": 172472206,
-    "ShareholdersEquity_date": "2024-12-31"
+    "ShareholdersEquity_date": "2024-12-31",
+    "NetIncome": -61434164,
+    "NetIncome_date": "2026-02-03",
+    "CFO": -62049704,
+    "CFO_date": "2026-02-03"
   },
   {
     "ticker": "IMTX",
@@ -10365,7 +10455,11 @@
     "CurrentLiabilities": 62258000,
     "CurrentLiabilities_date": "2025-09-30",
     "ShareholdersEquity": 416679000,
-    "ShareholdersEquity_date": "2025-09-30"
+    "ShareholdersEquity_date": "2025-09-30",
+    "NetIncome": -50545000,
+    "NetIncome_date": "2025-09-30",
+    "OperatingExpenses": 59820000,
+    "OperatingExpenses_date": "2025-09-30"
   },
   {
     "ticker": "KMDA",
@@ -10390,7 +10484,11 @@
     "CurrentLiabilities": 47837000,
     "CurrentLiabilities_date": "2025-09-30",
     "ShareholdersEquity": 265232000,
-    "ShareholdersEquity_date": "2025-09-30"
+    "ShareholdersEquity_date": "2025-09-30",
+    "NetIncome": 5296000,
+    "NetIncome_date": "2025-09-30",
+    "OperatingExpenses": 11946000,
+    "OperatingExpenses_date": "2025-09-30"
   },
   {
     "ticker": "LEGN",
@@ -10417,7 +10515,11 @@
     "ShareholdersEquity": 1011260000,
     "ShareholdersEquity_date": "2025-09-30",
     "LongTermDebt": 171930000,
-    "LongTermDebt_date": "2025-09-30"
+    "LongTermDebt_date": "2025-09-30",
+    "NetIncome": -39689000,
+    "NetIncome_date": "2025-09-30",
+    "OperatingExpenses": 200476000,
+    "OperatingExpenses_date": "2025-09-30"
   },
   {
     "ticker": "MENS",
@@ -10438,7 +10540,13 @@
     "ShareholdersEquity": -36519000,
     "ShareholdersEquity_date": "2024-12-31",
     "LongTermDebt": 10678000,
-    "LongTermDebt_date": "2024-12-31"
+    "LongTermDebt_date": "2024-12-31",
+    "NetIncome": -3019000,
+    "NetIncome_date": "2024-12-31",
+    "R&D": 927000,
+    "R&D_date": "2024-12-31",
+    "CFO": -3624000,
+    "CFO_date": "2024-12-31"
   },
   {
     "ticker": "MESO",
@@ -10461,7 +10569,13 @@
     "ShareholdersEquity": 597442000,
     "ShareholdersEquity_date": "2025-06-30",
     "LongTermDebt": 67739000,
-    "LongTermDebt_date": "2025-06-30"
+    "LongTermDebt_date": "2025-06-30",
+    "NetIncome": -102142000,
+    "NetIncome_date": "2025-06-30",
+    "R&D": 34807000,
+    "R&D_date": "2025-06-30",
+    "CFO": -49954000,
+    "CFO_date": "2025-06-30"
   },
   {
     "ticker": "MNMD",
@@ -10486,7 +10600,11 @@
     "ShareholdersEquity": 130596000,
     "ShareholdersEquity_date": "2025-09-30",
     "LongTermDebt": 40385000,
-    "LongTermDebt_date": "2025-09-30"
+    "LongTermDebt_date": "2025-09-30",
+    "NetIncome": -67265000,
+    "NetIncome_date": "2025-09-30",
+    "OperatingExpenses": 45669000,
+    "OperatingExpenses_date": "2025-09-30"
   },
   {
     "ticker": "MRSN",
@@ -10511,7 +10629,11 @@
     "CurrentLiabilities": 43269000,
     "CurrentLiabilities_date": "2025-09-30",
     "ShareholdersEquity": -59537000,
-    "ShareholdersEquity_date": "2025-09-30"
+    "ShareholdersEquity_date": "2025-09-30",
+    "NetIncome": -7545000,
+    "NetIncome_date": "2025-09-30",
+    "OperatingExpenses": 18485000,
+    "OperatingExpenses_date": "2025-09-30"
   },
   {
     "ticker": "MRUS",
@@ -10536,7 +10658,11 @@
     "CurrentLiabilities": 91579000,
     "CurrentLiabilities_date": "2025-06-30",
     "ShareholdersEquity": 841736000,
-    "ShareholdersEquity_date": "2025-06-30"
+    "ShareholdersEquity_date": "2025-06-30",
+    "NetIncome": -158218000,
+    "NetIncome_date": "2025-06-30",
+    "OperatingExpenses": 120443000,
+    "OperatingExpenses_date": "2025-06-30"
   },
   {
     "ticker": "OCS",
@@ -10561,7 +10687,11 @@
     "CurrentLiabilities": 33727000,
     "CurrentLiabilities_date": "2025-09-30",
     "ShareholdersEquity": 130594000,
-    "ShareholdersEquity_date": "2025-09-30"
+    "ShareholdersEquity_date": "2025-09-30",
+    "NetIncome": -16855000,
+    "NetIncome_date": "2025-09-30",
+    "OperatingExpenses": 20296000,
+    "OperatingExpenses_date": "2025-09-30"
   },
   {
     "ticker": "PHVS",
@@ -10584,7 +10714,11 @@
     "CurrentLiabilities": 26214521,
     "CurrentLiabilities_date": "2025-09-30",
     "ShareholdersEquity": 312240640,
-    "ShareholdersEquity_date": "2025-09-30"
+    "ShareholdersEquity_date": "2025-09-30",
+    "NetIncome": -37137035,
+    "NetIncome_date": "2025-09-30",
+    "OperatingExpenses": 39664499,
+    "OperatingExpenses_date": "2025-09-30"
   },
   {
     "ticker": "PRQR",
@@ -10609,7 +10743,11 @@
     "CurrentLiabilities": 33136000,
     "CurrentLiabilities_date": "2025-09-30",
     "ShareholdersEquity": 57071000,
-    "ShareholdersEquity_date": "2025-09-30"
+    "ShareholdersEquity_date": "2025-09-30",
+    "NetIncome": -11006000,
+    "NetIncome_date": "2025-09-30",
+    "OperatingExpenses": 14166000,
+    "OperatingExpenses_date": "2025-09-30"
   },
   {
     "ticker": "SNY",
@@ -10636,7 +10774,9 @@
     "ShareholdersEquity": 73263000000,
     "ShareholdersEquity_date": "2025-09-30",
     "LongTermDebt": 11700000000,
-    "LongTermDebt_date": "2025-09-30"
+    "LongTermDebt_date": "2025-09-30",
+    "NetIncome": 4938999808,
+    "NetIncome_date": "2026-02-03"
   },
   {
     "ticker": "STVN",
@@ -10663,6 +10803,10 @@
     "ShareholdersEquity": 1437245000,
     "ShareholdersEquity_date": "2025-09-30",
     "LongTermDebt": 358040000,
-    "LongTermDebt_date": "2025-09-30"
+    "LongTermDebt_date": "2025-09-30",
+    "NetIncome": 36064000,
+    "NetIncome_date": "2025-09-30",
+    "OperatingExpenses": 35779000,
+    "OperatingExpenses_date": "2025-09-30"
   }
 ]
