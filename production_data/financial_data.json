@@ -24,7 +24,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 44021000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ABCL",
@@ -51,7 +51,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 218796000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ABEO",
@@ -86,7 +86,12 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 2856000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 28640000,
+    "TotalDebt_components": [
+      "LongTermDebt",
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ABOS",
@@ -115,7 +120,11 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 98633000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 27053000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ABSI",
@@ -142,7 +151,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 91426000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ABUS",
@@ -171,7 +180,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 45902000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ACAD",
@@ -198,7 +207,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 700096000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ACLX",
@@ -227,7 +236,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 210032000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ACRS",
@@ -256,7 +265,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 60172000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ACRV",
@@ -283,7 +292,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 63998000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ADCT",
@@ -312,7 +321,7 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 12230000,
     "InterestExpense_date": "2025-03-31",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ADMA",
@@ -345,7 +354,12 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 75257000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 74772000,
+    "TotalDebt_components": [
+      "LongTermDebt",
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ADPT",
@@ -376,7 +390,11 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 8824000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 2429000,
+    "TotalDebt_components": [
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "AGIO",
@@ -403,7 +421,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 384615000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "AKTX",
@@ -430,7 +448,7 @@
     "OperatingExpenses_date": "2025-03-31",
     "InterestExpense": 100000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ALDX",
@@ -459,7 +477,12 @@
     "LongTermDebtCurrent_date": "2025-09-30",
     "CFO": -28046337,
     "CFO_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 30499265,
+    "TotalDebt_components": [
+      "LongTermDebt",
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ALGS",
@@ -488,7 +511,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 68188000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ALKS",
@@ -515,7 +538,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 895500000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ALLO",
@@ -542,7 +565,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 166911000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ALMS",
@@ -571,7 +594,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 379480000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ALNY",
@@ -598,7 +621,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 2247044000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ALT",
@@ -627,7 +650,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 65611000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "AMGN",
@@ -656,7 +679,12 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 2102000000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 56740000000,
+    "TotalDebt_components": [
+      "LongTermDebt",
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "AMLX",
@@ -685,7 +713,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 116686000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "AMPH",
@@ -714,7 +742,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 165590000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "AMRX",
@@ -741,7 +769,12 @@
     "Revenue_date": "2025-09-30",
     "CFO": 209677000,
     "CFO_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 2580904000,
+    "TotalDebt_components": [
+      "LongTermDebt",
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ANAB",
@@ -766,7 +799,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 145359000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ANIP",
@@ -797,7 +830,11 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 24607000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 15241000,
+    "TotalDebt_components": [
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ANNX",
@@ -822,7 +859,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 166149000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ANRO",
@@ -847,7 +884,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 49309000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "APGE",
@@ -872,7 +909,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 207539000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "APLS",
@@ -899,7 +936,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 697300000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "AQST",
@@ -928,7 +965,11 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 73742000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 45000000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ARCT",
@@ -955,7 +996,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 119788000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ARDX",
@@ -984,7 +1025,11 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 299493000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 202138000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ARQT",
@@ -1015,7 +1060,12 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 277183000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 109498000,
+    "TotalDebt_components": [
+      "LongTermDebt",
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ARTV",
@@ -1042,7 +1092,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 67878000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ARVN",
@@ -1077,7 +1127,12 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 0,
     "InterestExpense_date": "2025-06-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 800000,
+    "TotalDebt_components": [
+      "LongTermDebt",
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ARWR",
@@ -1100,7 +1155,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 731102000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ASMB",
@@ -1125,7 +1180,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 61751000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ATAI",
@@ -1154,7 +1209,11 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 77102000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 11366000,
+    "TotalDebt_components": [
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ATXS",
@@ -1181,7 +1240,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 107625000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "AUPH",
@@ -1210,7 +1269,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 134266000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "AURA",
@@ -1235,7 +1294,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 85554000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "AUTL",
@@ -1262,7 +1321,7 @@
     "CFO_date": "2025-09-30",
     "InterestExpense": 13834000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "AVBP",
@@ -1289,7 +1348,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 138711000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "AVIR",
@@ -1314,7 +1373,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 125953000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "AVTR",
@@ -1343,7 +1402,12 @@
     "CFO_date": "2025-09-30",
     "InterestExpense": 129800000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 4077700000,
+    "TotalDebt_components": [
+      "LongTermDebt",
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "AVXL",
@@ -1364,7 +1428,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 51408000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "AXSM",
@@ -1395,7 +1459,11 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": -12719000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 70000000,
+    "TotalDebt_components": [
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "BBIO",
@@ -1428,7 +1496,11 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 21186000,
     "InterestExpense_date": "2025-06-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 2007337000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "BBOT",
@@ -1455,7 +1527,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 102411000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "BCAX",
@@ -1482,7 +1554,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 114482000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "BCRX",
@@ -1509,7 +1581,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 387678000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "BCYC",
@@ -1536,7 +1608,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 246988000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "BDTX",
@@ -1561,7 +1633,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 39868000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "BEAM",
@@ -1590,7 +1662,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 391882000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "BHVN",
@@ -1617,7 +1689,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 602644000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "BIIB",
@@ -1642,7 +1714,11 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 200000000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 6285100000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "BIOA",
@@ -1675,7 +1751,12 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 70274000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 11182000,
+    "TotalDebt_components": [
+      "LongTermDebt",
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "BMEA",
@@ -1700,7 +1781,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 71793000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "BMRN",
@@ -1729,36 +1810,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 1892600000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
-  },
-  {
-    "ticker": "BRKR",
-    "cik": "0001109354",
-    "Assets": 6434900000,
-    "Assets_date": "2025-09-30",
-    "CurrentAssets": 2350600000,
-    "CurrentAssets_date": "2025-09-30",
-    "CurrentLiabilities": 1268100000,
-    "CurrentLiabilities_date": "2025-09-30",
-    "ShareholdersEquity": 2431900000,
-    "ShareholdersEquity_date": "2025-09-30",
-    "Cash": 293100000,
-    "Cash_date": "2025-09-30",
-    "COGS": 1330800000,
-    "COGS_date": "2025-09-30",
-    "R&D": 295600000,
-    "R&D_date": "2025-09-30",
-    "NetIncome": -34600000,
-    "NetIncome_date": "2025-09-30",
-    "LongTermDebt": 2008500000,
-    "LongTermDebt_date": "2025-09-30",
-    "Revenue": 2459300000,
-    "Revenue_date": "2025-09-30",
-    "CFO": -95700000,
-    "CFO_date": "2025-09-30",
-    "OperatingExpenses": 1136600000,
-    "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "CABA",
@@ -1787,7 +1839,7 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 1449000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "CADL",
@@ -1816,7 +1868,11 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 703000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 4225000,
+    "TotalDebt_components": [
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "CAI",
@@ -1851,7 +1907,12 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 45474000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 376044000,
+    "TotalDebt_components": [
+      "LongTermDebt",
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "CATX",
@@ -1880,7 +1941,11 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 74573000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 1638000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "CCCC",
@@ -1907,7 +1972,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 117008000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "CDNA",
@@ -1936,7 +2001,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 296160000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "CDXS",
@@ -1967,7 +2032,11 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 83770000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 39729000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "CELC",
@@ -1998,7 +2067,12 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 122991000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 267216000,
+    "TotalDebt_components": [
+      "LongTermDebt",
+      "ConvertibleDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "CERS",
@@ -2021,7 +2095,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 111416000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "CGEM",
@@ -2048,7 +2122,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 186389000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "CGON",
@@ -2075,7 +2149,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 143792000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "CHRS",
@@ -2104,7 +2178,7 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 6752000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "CLDX",
@@ -2133,7 +2207,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 201638000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "CLYM",
@@ -2160,7 +2234,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 48587000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "CMPS",
@@ -2191,7 +2265,12 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 3400000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 43938000,
+    "TotalDebt_components": [
+      "LongTermDebt",
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "CNTA",
@@ -2218,7 +2297,32 @@
     "Revenue_date": "2025-09-30",
     "CFO": -138010000,
     "CFO_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 109816000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
+  },
+  {
+    "ticker": "CNTX",
+    "cik": "0001842952",
+    "Assets": 79231160,
+    "Assets_date": "2025-09-30",
+    "CurrentAssets": 79058817,
+    "CurrentAssets_date": "2025-09-30",
+    "Liabilities": 6056994,
+    "Liabilities_date": "2025-09-30",
+    "CurrentLiabilities": 6035774,
+    "CurrentLiabilities_date": "2025-09-30",
+    "ShareholdersEquity": 73174166,
+    "ShareholdersEquity_date": "2025-09-30",
+    "Cash": 76938183,
+    "Cash_date": "2025-09-30",
+    "NetIncome": -23098008,
+    "NetIncome_date": "2025-09-30",
+    "CFO": -17442425,
+    "CFO_date": "2025-09-30",
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "COGT",
@@ -2245,7 +2349,11 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 233870000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 44250000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "COLL",
@@ -2272,7 +2380,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 216000000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "CRBU",
@@ -2299,7 +2407,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 127109000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "CRL",
@@ -2324,7 +2432,11 @@
     "Revenue_date": "2025-09-27",
     "CFO": 590126000,
     "CFO_date": "2025-09-27",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 54000,
+    "TotalDebt_components": [
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "CRMD",
@@ -2357,7 +2469,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 77425206,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "CRNX",
@@ -2386,7 +2498,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 384638000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "CRSP",
@@ -2415,7 +2527,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 512453000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "CRVS",
@@ -2440,7 +2552,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 30754000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "CSTL",
@@ -2475,7 +2587,11 @@
     "CFO_date": "2025-09-30",
     "InterestExpense": 17000,
     "InterestExpense_date": "2025-06-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 10049000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "CTKB",
@@ -2502,7 +2618,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 106365000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "CTMX",
@@ -2529,7 +2645,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 69970000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "CTNM",
@@ -2556,7 +2672,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 50944000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "CYTK",
@@ -2589,7 +2705,12 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 31305000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 1019199000,
+    "TotalDebt_components": [
+      "LongTermDebt",
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "DAWN",
@@ -2618,7 +2739,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 204756000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "DNA",
@@ -2647,7 +2768,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 381285000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "DNLI",
@@ -2674,7 +2795,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 417977000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "DNTH",
@@ -2703,7 +2824,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 110144000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "DRMA",
@@ -2724,7 +2845,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 5873205,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "DSGN",
@@ -2753,7 +2874,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 61298000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "DVAX",
@@ -2784,7 +2905,11 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 4976000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 260507000,
+    "TotalDebt_components": [
+      "ConvertibleDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "DYN",
@@ -2813,7 +2938,11 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 2998000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 99147000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "EBS",
@@ -2842,7 +2971,11 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 466200000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 693100000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "EDIT",
@@ -2875,7 +3008,11 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 6635000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 5000000,
+    "TotalDebt_components": [
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ELDN",
@@ -2902,7 +3039,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 61767000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ELVN",
@@ -2929,7 +3066,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 85373000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ENGN",
@@ -2956,7 +3093,7 @@
     "CFO_date": "2025-10-31",
     "OperatingExpenses": 123165000,
     "OperatingExpenses_date": "2025-10-31",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ENTA",
@@ -2983,7 +3120,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 150673000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "EOLS",
@@ -3010,7 +3147,11 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 174698000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 121807000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ERAS",
@@ -3035,7 +3176,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 108301000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ESPR",
@@ -3060,7 +3201,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 259649000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ETON",
@@ -3091,7 +3232,11 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 1212000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 29992000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "EWTX",
@@ -3116,7 +3261,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 135427000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "EXEL",
@@ -3145,7 +3290,7 @@
     "CFO_date": "2025-10-03",
     "OperatingExpenses": 1084488000,
     "OperatingExpenses_date": "2025-10-03",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "EYPT",
@@ -3174,7 +3319,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 203840000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "FATE",
@@ -3201,7 +3346,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 118260000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "FDMT",
@@ -3228,7 +3373,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 174381000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "FHTX",
@@ -3255,7 +3400,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 84173000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "FLGT",
@@ -3284,7 +3429,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 153151000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "FOLD",
@@ -3313,7 +3458,11 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 385773000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 391985000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "FTRE",
@@ -3340,7 +3489,11 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 2921900000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 74500000,
+    "TotalDebt_components": [
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "FULC",
@@ -3365,7 +3518,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 62076000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "GBIO",
@@ -3394,7 +3547,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 57312000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "GERN",
@@ -3417,7 +3570,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 178911000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "GH",
@@ -3448,7 +3601,11 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 2717000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 1114594000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "GILD",
@@ -3475,7 +3632,12 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 13480000000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 27747000000,
+    "TotalDebt_components": [
+      "LongTermDebt",
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "GLUE",
@@ -3500,7 +3662,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 125384000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "GOSS",
@@ -3527,7 +3689,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 159361000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "GPCR",
@@ -3554,7 +3716,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 200549000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "GRAL",
@@ -3581,7 +3743,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 541327000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "HALO",
@@ -3612,7 +3774,12 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 382947000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 2221442000,
+    "TotalDebt_components": [
+      "LongTermDebt",
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "HOWL",
@@ -3641,7 +3808,11 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 3905000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 32085000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "HRMY",
@@ -3676,7 +3847,12 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 11103000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 188506000,
+    "TotalDebt_components": [
+      "LongTermDebt",
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "HROW",
@@ -3705,7 +3881,11 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 118821000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 347239000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "HRTX",
@@ -3730,7 +3910,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 86664000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "HUMA",
@@ -3757,7 +3937,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 78872000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "IBRX",
@@ -3786,7 +3966,7 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 46043000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "IDYA",
@@ -3815,7 +3995,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 272577000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "IKT",
@@ -3842,7 +4022,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 38198657,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ILMN",
@@ -3869,7 +4049,7 @@
     "CFO_date": "2025-09-28",
     "OperatingExpenses": 1505000000,
     "OperatingExpenses_date": "2025-09-28",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "IMCR",
@@ -3900,7 +4080,7 @@
     "CFO_date": "2025-09-30",
     "InterestExpense": 9113000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "IMRX",
@@ -3925,7 +4105,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 45623250,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "IMVT",
@@ -3948,7 +4128,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 258986000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "INBX",
@@ -3975,7 +4155,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 105402000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "INCY",
@@ -4004,7 +4184,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 2455407000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "INDV",
@@ -4035,7 +4215,11 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 26000000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 18000000,
+    "TotalDebt_components": [
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "INSM",
@@ -4068,7 +4252,11 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 42814000,
     "InterestExpense_date": "2025-06-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 546770000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "INVA",
@@ -4091,7 +4279,7 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 13389000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "IONS",
@@ -4120,7 +4308,7 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 12434000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "IOVA",
@@ -4151,7 +4339,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 506627000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "IRON",
@@ -4180,7 +4368,11 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 169052000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 28948000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "IRWD",
@@ -4207,7 +4399,11 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 156745000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 199506000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "IVVD",
@@ -4234,7 +4430,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 79224000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "JANX",
@@ -4261,7 +4457,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 125266000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "JAZZ",
@@ -4288,7 +4484,12 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 3754435000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 6390340000,
+    "TotalDebt_components": [
+      "LongTermDebt",
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "JBIO",
@@ -4315,7 +4516,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 78563000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "KALA",
@@ -4344,7 +4545,12 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 28936000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 55359000,
+    "TotalDebt_components": [
+      "LongTermDebt",
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "KALV",
@@ -4371,7 +4577,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 168436000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "KNSA",
@@ -4398,7 +4604,7 @@
     "Revenue_date": "2025-09-30",
     "CFO": 84091000,
     "CFO_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "KOD",
@@ -4423,7 +4629,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 176935000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "KROS",
@@ -4450,7 +4656,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 146837000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "KRYS",
@@ -4477,7 +4683,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 165000000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "KURA",
@@ -4506,7 +4712,11 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 267509000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 4337000,
+    "TotalDebt_components": [
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "KYMR",
@@ -4535,34 +4745,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 287844000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
-  },
-  {
-    "ticker": "KYTX",
-    "cik": "0001994702",
-    "Assets": 187156000,
-    "Assets_date": "2025-09-30",
-    "CurrentAssets": 174925000,
-    "CurrentAssets_date": "2025-09-30",
-    "Liabilities": 35210000,
-    "Liabilities_date": "2025-09-30",
-    "CurrentLiabilities": 33871000,
-    "CurrentLiabilities_date": "2025-09-30",
-    "ShareholdersEquity": 151946000,
-    "ShareholdersEquity_date": "2025-09-30",
-    "Cash": 34164000,
-    "Cash_date": "2025-09-30",
-    "MarketableSecurities": 136974000,
-    "MarketableSecurities_date": "2025-09-30",
-    "R&D": 103706000,
-    "R&D_date": "2025-09-30",
-    "NetIncome": -123503000,
-    "NetIncome_date": "2025-09-30",
-    "CFO": -120185000,
-    "CFO_date": "2025-09-30",
-    "OperatingExpenses": 130545000,
-    "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "LAB",
@@ -4589,7 +4772,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 116766000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "LBRX",
@@ -4616,7 +4799,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 16534000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "LCTX",
@@ -4647,32 +4830,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 38019000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
-  },
-  {
-    "ticker": "LENZ",
-    "cik": "0001815776",
-    "Assets": 210704000,
-    "Assets_date": "2025-09-30",
-    "CurrentAssets": 206997000,
-    "CurrentAssets_date": "2025-09-30",
-    "Liabilities": 16777000,
-    "Liabilities_date": "2025-09-30",
-    "CurrentLiabilities": 16316000,
-    "CurrentLiabilities_date": "2025-09-30",
-    "ShareholdersEquity": 193927000,
-    "ShareholdersEquity_date": "2025-09-30",
-    "Cash": 25399000,
-    "Cash_date": "2025-09-30",
-    "R&D": 18670000,
-    "R&D_date": "2025-09-30",
-    "NetIncome": -46231000,
-    "NetIncome_date": "2025-09-30",
-    "CFO": -36145000,
-    "CFO_date": "2025-09-30",
-    "OperatingExpenses": 70175000,
-    "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "LFCR",
@@ -4701,7 +4859,12 @@
     "CFO_date": "2025-09-30",
     "InterestExpense": 6384000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 136898000,
+    "TotalDebt_components": [
+      "LongTermDebt",
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "LGND",
@@ -4730,7 +4893,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 181262000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "LQDA",
@@ -4757,32 +4920,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 137462000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
-  },
-  {
-    "ticker": "LRMR",
-    "cik": "0001374690",
-    "Assets": 187350000,
-    "Assets_date": "2025-09-30",
-    "CurrentAssets": 183223000,
-    "CurrentAssets_date": "2025-09-30",
-    "Liabilities": 48312000,
-    "Liabilities_date": "2025-09-30",
-    "CurrentLiabilities": 45116000,
-    "CurrentLiabilities_date": "2025-09-30",
-    "ShareholdersEquity": 139038000,
-    "ShareholdersEquity_date": "2025-09-30",
-    "Cash": 90140000,
-    "Cash_date": "2025-09-30",
-    "R&D": 94851000,
-    "R&D_date": "2025-09-30",
-    "NetIncome": -103175000,
-    "NetIncome_date": "2025-09-30",
-    "CFO": -45921000,
-    "CFO_date": "2025-06-30",
-    "OperatingExpenses": 108479000,
-    "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "LXEO",
@@ -4809,7 +4947,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 86141000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "LYEL",
@@ -4838,7 +4976,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 141790000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "LYRA",
@@ -4865,7 +5003,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 24295000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "MAZE",
@@ -4894,7 +5032,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 104840000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "MBX",
@@ -4921,7 +5059,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 72260000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "MCRB",
@@ -4950,7 +5088,7 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 0,
     "InterestExpense_date": "2025-06-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "MDGL",
@@ -4979,7 +5117,11 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 3297000,
     "InterestExpense_date": "2025-03-31",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 339753000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "MEDP",
@@ -5004,7 +5146,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 1440118000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "MGTX",
@@ -5033,7 +5175,7 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 9142000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "MIRM",
@@ -5060,7 +5202,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 389949000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "MLTX",
@@ -5087,7 +5229,11 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 179616000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 73741000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "MLYS",
@@ -5110,7 +5256,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 132324000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "MNKD",
@@ -5139,7 +5285,11 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 190523000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 109652000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "MRNA",
@@ -5166,7 +5316,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 3483000000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "MRVI",
@@ -5199,7 +5349,12 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 177619000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 298261000,
+    "TotalDebt_components": [
+      "LongTermDebt",
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "MYGN",
@@ -5230,7 +5385,12 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 811300000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 178900000,
+    "TotalDebt_components": [
+      "LongTermDebt",
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "NAMS",
@@ -5259,7 +5419,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 182174000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "NAUT",
@@ -5284,7 +5444,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 51413000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "NBIX",
@@ -5309,7 +5469,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 1646800000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "NBP",
@@ -5336,7 +5496,7 @@
     "CFO_date": "2025-06-30",
     "OperatingExpenses": 12380000,
     "OperatingExpenses_date": "2025-06-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "NGNE",
@@ -5365,7 +5525,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 75799000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "NKTX",
@@ -5392,7 +5552,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 91036000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "NMRA",
@@ -5423,7 +5583,12 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 182676000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 39563000,
+    "TotalDebt_components": [
+      "LongTermDebt",
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "NRIX",
@@ -5450,7 +5615,7 @@
     "CFO_date": "2025-11-30",
     "OperatingExpenses": 369646000,
     "OperatingExpenses_date": "2025-11-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "NTLA",
@@ -5479,7 +5644,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 386934000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "NTRA",
@@ -5508,7 +5673,7 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 3078000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "NUVB",
@@ -5541,7 +5706,11 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 5121000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 47089000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "NUVL",
@@ -5568,7 +5737,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 312079000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "NVAX",
@@ -5601,7 +5770,7 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 8224000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "NVCR",
@@ -5630,7 +5799,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 469688000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "OABI",
@@ -5657,7 +5826,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 63493000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "OBIO",
@@ -5688,7 +5857,11 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 61126000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 15000000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "OCGN",
@@ -5719,7 +5892,7 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 1300000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "OCUL",
@@ -5746,7 +5919,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 238958000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "OLMA",
@@ -5773,7 +5946,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 128614000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "OMER",
@@ -5800,7 +5973,11 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 93715000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 154939000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ONC",
@@ -5831,7 +6008,11 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 37659000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 808394000,
+    "TotalDebt_components": [
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "OPCH",
@@ -5862,7 +6043,12 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 27678000,
     "InterestExpense_date": "2025-06-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 1168616000,
+    "TotalDebt_components": [
+      "LongTermDebt",
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "OPK",
@@ -5893,7 +6079,12 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 537521000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 345680000,
+    "TotalDebt_components": [
+      "LongTermDebt",
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ORIC",
@@ -5916,7 +6107,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 108453000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ORKA",
@@ -5943,7 +6134,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 87620000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "PACB",
@@ -5974,7 +6165,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 541878000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "PAHC",
@@ -6005,7 +6196,12 @@
     "Revenue_date": "2025-09-30",
     "CFO": 9302000,
     "CFO_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 646406000,
+    "TotalDebt_components": [
+      "LongTermDebt",
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "PBYI",
@@ -6036,7 +6232,12 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 132725000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 67723000,
+    "TotalDebt_components": [
+      "LongTermDebt",
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "PCRX",
@@ -6071,7 +6272,11 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 13554000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 376721000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "PCVX",
@@ -6098,7 +6303,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 649392000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "PEPG",
@@ -6125,7 +6330,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 73907000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "PGEN",
@@ -6150,7 +6355,11 @@
     "LongTermDebt_date": "2025-09-30",
     "CFO": -64371000,
     "CFO_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 92890000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "PHAT",
@@ -6183,7 +6392,11 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 256633000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 207093000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "PRAX",
@@ -6210,7 +6423,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 229154000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "PRLD",
@@ -6239,7 +6452,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 93718000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "PRME",
@@ -6266,7 +6479,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 163536000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "PRTA",
@@ -6293,7 +6506,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 200100000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "PRVA",
@@ -6316,7 +6529,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 1558712000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "PSNL",
@@ -6349,7 +6562,7 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 140000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "PTCT",
@@ -6380,7 +6593,11 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 627694000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 286319000,
+    "TotalDebt_components": [
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "PTGX",
@@ -6407,7 +6624,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 146351000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "PVLA",
@@ -6434,7 +6651,7 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 0,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "PYXS",
@@ -6461,7 +6678,7 @@
     "Revenue_date": "2025-09-30",
     "CFO": -53075000,
     "CFO_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "QSI",
@@ -6490,7 +6707,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 96036000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "QTRX",
@@ -6519,7 +6736,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 145712000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "QURE",
@@ -6544,7 +6761,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 150986000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "RANI",
@@ -6577,7 +6794,12 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 2544000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 27287000,
+    "TotalDebt_components": [
+      "LongTermDebt",
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "RAPP",
@@ -6604,7 +6826,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 86590000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "RAPT",
@@ -6631,7 +6853,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 58171000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "RARE",
@@ -6656,7 +6878,7 @@
     "Revenue_date": "2025-09-30",
     "CFO": -366171000,
     "CFO_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "RCKT",
@@ -6687,7 +6909,7 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 1418000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "RCUS",
@@ -6716,7 +6938,11 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 7000000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 98000000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "REGN",
@@ -6745,36 +6971,36 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 7760600000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "REPL",
     "cik": "0001737953",
-    "Assets": 389450000,
-    "Assets_date": "2025-09-30",
-    "CurrentAssets": 333749000,
-    "CurrentAssets_date": "2025-09-30",
-    "Liabilities": 126114000,
-    "Liabilities_date": "2025-09-30",
-    "CurrentLiabilities": 52900000,
-    "CurrentLiabilities_date": "2025-09-30",
-    "ShareholdersEquity": 263336000,
-    "ShareholdersEquity_date": "2025-09-30",
-    "Cash": 102298000,
-    "Cash_date": "2025-09-30",
-    "ShortTermInvestments": 221346000,
-    "ShortTermInvestments_date": "2025-09-30",
-    "R&D": 115721000,
-    "R&D_date": "2025-09-30",
-    "NetIncome": -169793000,
-    "NetIncome_date": "2025-09-30",
-    "CFO": -158228000,
-    "CFO_date": "2025-09-30",
-    "OperatingExpenses": 174715000,
-    "OperatingExpenses_date": "2025-09-30",
-    "InterestExpense": 2963000,
-    "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "Assets": 333590000,
+    "Assets_date": "2025-12-31",
+    "CurrentAssets": 280354000,
+    "CurrentAssets_date": "2025-12-31",
+    "Liabilities": 123051000,
+    "Liabilities_date": "2025-12-31",
+    "CurrentLiabilities": 50087000,
+    "CurrentLiabilities_date": "2025-12-31",
+    "ShareholdersEquity": 210539000,
+    "ShareholdersEquity_date": "2025-12-31",
+    "Cash": 122951000,
+    "Cash_date": "2025-12-31",
+    "ShortTermInvestments": 146186000,
+    "ShortTermInvestments_date": "2025-12-31",
+    "R&D": 168860000,
+    "R&D_date": "2025-12-31",
+    "NetIncome": -240723000,
+    "NetIncome_date": "2025-12-31",
+    "CFO": -224183000,
+    "CFO_date": "2025-12-31",
+    "OperatingExpenses": 246581000,
+    "OperatingExpenses_date": "2025-12-31",
+    "InterestExpense": 4429000,
+    "InterestExpense_date": "2025-12-31",
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "RGEN",
@@ -6803,7 +7029,11 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 16860000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 537927000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "RGNX",
@@ -6832,7 +7062,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 243666000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "RIGL",
@@ -6863,7 +7093,11 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 5621000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 60000000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "RLAY",
@@ -6888,7 +7122,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 250463000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "RNA",
@@ -6915,7 +7149,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 509360000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ROIV",
@@ -6944,7 +7178,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 594896000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "RPRX",
@@ -6973,7 +7207,12 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 585067000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 9325735000,
+    "TotalDebt_components": [
+      "LongTermDebt",
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "RVMD",
@@ -7000,7 +7239,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 820743000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "RXRX",
@@ -7027,7 +7266,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 578941000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "RYTM",
@@ -7058,7 +7297,11 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 277457000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 5556000,
+    "TotalDebt_components": [
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "SABS",
@@ -7085,7 +7328,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 33183132,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "SANA",
@@ -7112,7 +7355,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 189120000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "SEPN",
@@ -7141,7 +7384,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 74107000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "SERA",
@@ -7174,7 +7417,7 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 8000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "SGMO",
@@ -7201,7 +7444,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 108360000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "SGMT",
@@ -7228,7 +7471,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 46124000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "SIGA",
@@ -7255,7 +7498,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 57578927,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "SION",
@@ -7280,7 +7523,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 65370000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "SKYE",
@@ -7305,7 +7548,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 43268021,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "SLDB",
@@ -7328,7 +7571,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 129803000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "SLN",
@@ -7355,7 +7598,7 @@
     "Revenue_date": "2025-09-30",
     "CFO": -44984000,
     "CFO_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "SMMT",
@@ -7380,7 +7623,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 869499000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "SNDX",
@@ -7411,7 +7654,11 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 314160000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 327075000,
+    "TotalDebt_components": [
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "SPRY",
@@ -7442,7 +7689,11 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 194174000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 96229000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "SRPT",
@@ -7473,7 +7724,11 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 17296000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 1035146000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "SRRK",
@@ -7502,7 +7757,34 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 292749000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
+  },
+  {
+    "ticker": "SRZN",
+    "cik": "0001824893",
+    "Assets": 94046000,
+    "Assets_date": "2025-09-30",
+    "CurrentAssets": 85860000,
+    "CurrentAssets_date": "2025-09-30",
+    "Liabilities": 117561000,
+    "Liabilities_date": "2025-09-30",
+    "CurrentLiabilities": 6528000,
+    "CurrentLiabilities_date": "2025-09-30",
+    "ShareholdersEquity": -23515000,
+    "ShareholdersEquity_date": "2025-09-30",
+    "Cash": 81335000,
+    "Cash_date": "2025-09-30",
+    "R&D": 20374000,
+    "R&D_date": "2025-09-30",
+    "NetIncome": -58867000,
+    "NetIncome_date": "2025-09-30",
+    "Revenue": 2949000,
+    "Revenue_date": "2025-09-30",
+    "CFO": -24432000,
+    "CFO_date": "2025-09-30",
+    "OperatingExpenses": 32402000,
+    "OperatingExpenses_date": "2025-09-30",
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "STOK",
@@ -7531,7 +7813,7 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 6000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "STRO",
@@ -7560,7 +7842,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 211155000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "SUPN",
@@ -7587,7 +7869,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 565726000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "SVRA",
@@ -7616,7 +7898,11 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 90128000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 29781000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "SYRE",
@@ -7639,7 +7925,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 152390000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "TARA",
@@ -7666,7 +7952,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 45470000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "TARS",
@@ -7699,7 +7985,11 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 6721000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 72281000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "TBPH",
@@ -7724,7 +8014,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 85186000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "TCRX",
@@ -7757,7 +8047,11 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 2067000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 32414000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "TECH",
@@ -7782,7 +8076,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 140454000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "TECX",
@@ -7807,7 +8101,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 62520000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "TEM",
@@ -7836,7 +8130,7 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 54981000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "TENX",
@@ -7865,7 +8159,7 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 0,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "TERN",
@@ -7890,7 +8184,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 82526000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "TGTX",
@@ -7919,7 +8213,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 350883000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "TKNO",
@@ -7952,7 +8246,11 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 22564000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 13076000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "TNGX",
@@ -7981,7 +8279,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 131809000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "TNYA",
@@ -8008,7 +8306,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 72556000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "TRDA",
@@ -8035,7 +8333,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 139812000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "TRVI",
@@ -8062,7 +8360,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 39108000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "TSHA",
@@ -8089,7 +8387,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 86486000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "TVTX",
@@ -8114,36 +8412,36 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 391435000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "TWST",
     "cik": "0001581280",
-    "Assets": 641861000,
-    "Assets_date": "2025-09-30",
-    "CurrentAssets": 332966000,
-    "CurrentAssets_date": "2025-09-30",
-    "Liabilities": 168903000,
-    "Liabilities_date": "2025-09-30",
-    "CurrentLiabilities": 91406000,
-    "CurrentLiabilities_date": "2025-09-30",
-    "ShareholdersEquity": 472958000,
-    "ShareholdersEquity_date": "2025-09-30",
-    "Cash": 183049000,
-    "Cash_date": "2025-09-30",
-    "ShortTermInvestments": 49385000,
-    "ShortTermInvestments_date": "2025-09-30",
-    "COGS": 185570000,
-    "COGS_date": "2025-09-30",
-    "R&D": 80285000,
-    "R&D_date": "2025-09-30",
-    "NetIncome": -77670000,
-    "NetIncome_date": "2025-09-30",
-    "CFO": -47628000,
-    "CFO_date": "2025-09-30",
-    "OperatingExpenses": 512831000,
-    "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "Assets": 638085000,
+    "Assets_date": "2025-12-31",
+    "CurrentAssets": 303882000,
+    "CurrentAssets_date": "2025-12-31",
+    "Liabilities": 181990000,
+    "Liabilities_date": "2025-12-31",
+    "CurrentLiabilities": 80441000,
+    "CurrentLiabilities_date": "2025-12-31",
+    "ShareholdersEquity": 456095000,
+    "ShareholdersEquity_date": "2025-12-31",
+    "Cash": 148591000,
+    "Cash_date": "2025-12-31",
+    "ShortTermInvestments": 49358000,
+    "ShortTermInvestments_date": "2025-12-31",
+    "COGS": 49726000,
+    "COGS_date": "2025-12-31",
+    "R&D": 17130000,
+    "R&D_date": "2025-12-31",
+    "NetIncome": -30507000,
+    "NetIncome_date": "2025-12-31",
+    "CFO": -24814000,
+    "CFO_date": "2025-12-31",
+    "OperatingExpenses": 136598000,
+    "OperatingExpenses_date": "2025-12-31",
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "TXG",
@@ -8168,7 +8466,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 372280000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "TYRA",
@@ -8193,7 +8491,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 96246000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "UPB",
@@ -8222,7 +8520,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 116380000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "URGN",
@@ -8251,7 +8549,7 @@
     "Revenue_date": "2025-09-30",
     "CFO": -124119000,
     "CFO_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "UTHR",
@@ -8280,7 +8578,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 1256700000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "VCEL",
@@ -8309,7 +8607,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 143842000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "VCYT",
@@ -8336,7 +8634,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 239977000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "VERA",
@@ -8365,7 +8663,11 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 221267000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 74648000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "VIR",
@@ -8396,7 +8698,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 435893000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "VKTX",
@@ -8423,7 +8725,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 228604000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "VNDA",
@@ -8450,7 +8752,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 269704000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "VOR",
@@ -8477,7 +8779,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 335682000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "VRDN",
@@ -8500,7 +8802,11 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 311363000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 8435000,
+    "TotalDebt_components": [
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "VRTX",
@@ -8527,7 +8833,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 5843900000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "VTRS",
@@ -8554,7 +8860,11 @@
     "OperatingExpenses_date": "2025-09-30",
     "InterestExpense": 351700000,
     "InterestExpense_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 1951900000,
+    "TotalDebt_components": [
+      "LongTermDebtCurrent"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "VTYX",
@@ -8581,7 +8891,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 84304000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "VYGR",
@@ -8610,7 +8920,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 126950000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "WVE",
@@ -8637,7 +8947,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 184398000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "XENE",
@@ -8664,7 +8974,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 270803000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "XERS",
@@ -8695,7 +9005,11 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 197915000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 219469000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "XNCR",
@@ -8722,7 +9036,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 221213000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ZBIO",
@@ -8751,7 +9065,7 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 155073000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ZLAB",
@@ -8778,7 +9092,7 @@
     "Revenue_date": "2025-09-30",
     "CFO": -124767000,
     "CFO_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ZVRA",
@@ -8803,7 +9117,11 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 67385000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "TotalDebt": 61310000,
+    "TotalDebt_components": [
+      "LongTermDebt"
+    ],
+    "collected_at": "2026-02-03"
   },
   {
     "ticker": "ZYME",
@@ -8828,6 +9146,6 @@
     "CFO_date": "2025-09-30",
     "OperatingExpenses": 151847000,
     "OperatingExpenses_date": "2025-09-30",
-    "collected_at": "2026-01-31"
+    "collected_at": "2026-02-03"
   }
 ]
