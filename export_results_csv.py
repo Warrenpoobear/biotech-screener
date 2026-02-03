@@ -156,29 +156,35 @@ def flatten_record(
     # Defensive features (corr/beta/vol/drawdown for diversification proof)
     def_feat = rec.get("defensive_features") or {}
     flat["corr_xbi"] = def_feat.get("corr_xbi")
-    flat["beta_xbi"] = def_feat.get("beta_xbi_60d")
-    flat["volatility"] = def_feat.get("vol_60d")
-    flat["drawdown"] = def_feat.get("drawdown")
+    flat["beta_xbi"] = def_feat.get("beta_xbi_60d") or mkt.get("beta")
+    flat["volatility"] = def_feat.get("vol_60d") or mkt.get("volatility_90d")
+
+    # Compute drawdown from market_data if not in defensive_features
+    # drawdown = (price - 52w_high) / 52w_high
+    drawdown = def_feat.get("drawdown")
+    if drawdown is None and mkt.get("price") and mkt.get("52w_high"):
+        drawdown = (mkt["price"] - mkt["52w_high"]) / mkt["52w_high"]
+    flat["drawdown"] = drawdown
 
     # V2 multi-horizon risk columns (with fallbacks from legacy fields)
     # Note: vol_60d is used as proxy for vol_63d when multi-horizon data unavailable
     # volatility_90d from market_data used as proxy for vol_252d (annualized)
-    flat["vol_blended"] = def_feat.get("vol_blended") or def_feat.get("vol_60d")
-    flat["vol_63d"] = def_feat.get("vol_63d") or def_feat.get("vol_60d")
+    flat["vol_blended"] = def_feat.get("vol_blended") or def_feat.get("vol_60d") or mkt.get("volatility_90d")
+    flat["vol_63d"] = def_feat.get("vol_63d") or def_feat.get("vol_60d") or mkt.get("volatility_90d")
     flat["vol_252d"] = def_feat.get("vol_252d") or mkt.get("volatility_90d")
-    flat["max_drawdown_blended"] = def_feat.get("max_drawdown_blended") or def_feat.get("drawdown")
-    flat["max_drawdown_252d"] = def_feat.get("max_drawdown_252d") or def_feat.get("drawdown")
-    flat["max_drawdown_2y"] = def_feat.get("max_drawdown_2y")
+    flat["max_drawdown_blended"] = def_feat.get("max_drawdown_blended") or drawdown
+    flat["max_drawdown_252d"] = def_feat.get("max_drawdown_252d") or drawdown
+    flat["max_drawdown_2y"] = def_feat.get("max_drawdown_2y") or drawdown
 
     # Derive risk_data_state from presence of corresponding metrics when not explicit
     flat["risk_data_state_vol"] = def_feat.get("risk_data_state_vol") or (
-        "live" if def_feat.get("vol_blended") or def_feat.get("vol_60d") else "missing"
+        "live" if flat.get("vol_blended") else "missing"
     )
     flat["risk_data_state_drawdown"] = def_feat.get("risk_data_state_drawdown") or (
-        "live" if def_feat.get("max_drawdown_blended") or def_feat.get("drawdown") else "missing"
+        "live" if flat.get("drawdown") else "missing"
     )
     flat["risk_data_state_beta"] = def_feat.get("risk_data_state_beta") or (
-        "live" if def_feat.get("beta_xbi_60d") else "missing"
+        "live" if flat.get("beta_xbi") else "missing"
     )
 
     # Derive confidence_risk from coverage when not explicit
