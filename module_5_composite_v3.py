@@ -188,6 +188,8 @@ from module_5_scoring_v3 import (
     _compute_global_stats,
     # Main scoring function
     _score_single_ticker_v3,
+    # Smart money cohort stats
+    compute_smart_money_cohort_stats,
 )
 
 # Import diagnostics module (extracted for maintainability)
@@ -732,6 +734,38 @@ def compute_module_5_composite_v3(
                 rec["accuracy_adjustments_applied"] = acc_adj.get("adjustments_applied", [])
 
     # =========================================================================
+    # COMPUTE SMART MONEY COHORT STATS (for cohort normalization - Option C)
+    # =========================================================================
+    # Build stage_bucket_alpha for each record before computing cohort stats
+    from module_5_scoring_v3 import _determine_stage_bucket_alpha
+
+    for rec in combined:
+        # Determine alpha stage bucket for smart money cohort normalization
+        cat_data = rec.get("cat_data", {})
+        if hasattr(cat_data, 'nearest_catalyst_type'):
+            cat_event_type = getattr(cat_data, 'nearest_catalyst_type', "DEFAULT")
+            days_to_cat = getattr(cat_data, 'catalyst_window_days', None)
+        elif isinstance(cat_data, dict):
+            scores = cat_data.get("scores", cat_data)
+            cat_event_type = scores.get("nearest_catalyst_type", "DEFAULT")
+            days_to_cat = cat_data.get("integration", {}).get("catalyst_window_days") or scores.get("catalyst_window_days")
+        else:
+            cat_event_type = "DEFAULT"
+            days_to_cat = None
+
+        lead_phase = rec.get("clin_data", {}).get("lead_program_phase", "unknown")
+        stage_bucket_alpha = _determine_stage_bucket_alpha(
+            lead_phase=lead_phase,
+            cat_event_type=cat_event_type,
+            days_to_catalyst=days_to_cat,
+        )
+        rec["stage_bucket_alpha"] = stage_bucket_alpha
+
+    cohort_overlap_stats = compute_smart_money_cohort_stats(combined)
+    if cohort_overlap_stats:
+        logger.info(f"  Smart money cohort stats computed for {len(cohort_overlap_stats)} stage×size buckets")
+
+    # =========================================================================
     # SCORE EACH TICKER
     # =========================================================================
 
@@ -766,6 +800,7 @@ def compute_module_5_composite_v3(
             partnership_data=rec.get("partnership_data"),
             cash_burn_data=rec.get("cash_burn_data"),
             phase_momentum_data=rec.get("phase_momentum_data"),
+            cohort_overlap_stats=cohort_overlap_stats,
         )
 
         result["market_cap_bucket"] = rec["market_cap_bucket"]

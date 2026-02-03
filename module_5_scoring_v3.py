@@ -195,6 +195,68 @@ ASYMMETRY_CONFIG = {
 SMART_MONEY_COVERAGE_GATED_WEIGHT = Decimal("0.05")  # 5% when coverage exists
 
 # =============================================================================
+# ENHANCEMENT 8: SMART MONEY SIGNAL ENHANCEMENT (A+B+C+E)
+# =============================================================================
+# A: Stage×size dependent base weights
+# B: Expanded score range with tier-1 boosts
+# C: Cohort-normalized overlap (z-score within stage×size)
+# E: Confidence from overlap count
+
+SMART_MONEY_ENHANCEMENT_CONFIG = {
+    "enabled": True,  # Master switch
+
+    # A: Stage×size dependent base weights
+    "base_weights_by_stage_size": {
+        "early": {
+            "micro": Decimal("0.07"), "small": Decimal("0.07"),
+            "mid": Decimal("0.06"), "large": Decimal("0.05")
+        },
+        "poc": {  # PoC = highest predictive power for smart money
+            "micro": Decimal("0.10"), "small": Decimal("0.09"),
+            "mid": Decimal("0.08"), "large": Decimal("0.07")
+        },
+        "pivotal": {
+            "micro": Decimal("0.08"), "small": Decimal("0.08"),
+            "mid": Decimal("0.07"), "large": Decimal("0.06")
+        },
+        "regulatory": {  # Regulatory = also high predictive power
+            "micro": Decimal("0.09"), "small": Decimal("0.09"),
+            "mid": Decimal("0.08"), "large": Decimal("0.07")
+        },
+        "commercial": {
+            "micro": Decimal("0.06"), "small": Decimal("0.06"),
+            "mid": Decimal("0.05"), "large": Decimal("0.04")
+        },
+    },
+
+    # B: Expanded score range parameters
+    "score_range": {
+        "min": Decimal("20"),
+        "max": Decimal("85"),
+        "neutral": Decimal("50"),
+        "per_tier1_holder_boost": Decimal("2.5"),  # Each Tier-1 adds +2.5 points
+        "per_position_increase_boost": Decimal("3.0"),  # Each "INCREASE" adds +3
+        "max_boost_from_holders": Decimal("15.0"),  # Cap total holder boost
+    },
+
+    # C: Cohort normalization parameters
+    "cohort_normalization": {
+        "enabled": True,
+        "min_cohort_size": 5,
+        "zscore_to_score_factor": Decimal("15.0"),  # 1σ = 15 points
+        "floor_overlap_for_cohort": 2,  # Need ≥2 holders to be in cohort stats
+    },
+
+    # E: Confidence from overlap
+    "confidence_from_overlap": {
+        "base_confidence": Decimal("0.5"),
+        "per_overlap_boost": Decimal("0.08"),  # +0.08 per holder
+        "per_tier1_boost": Decimal("0.12"),    # +0.12 per Tier-1
+        "max_confidence": Decimal("0.95"),
+    },
+}
+
+# =============================================================================
 # ENHANCEMENT 7: STAGE/SIZE AWARE WEIGHTING
 # =============================================================================
 # Apply multiplicative tilts to base weights based on development stage and
@@ -667,6 +729,200 @@ def _apply_stage_size_tilts(
     diagnostics["tilt_applied"] = bool(diagnostics["combined_multipliers"])
 
     return tilted, diagnostics
+
+
+# =============================================================================
+# SMART MONEY ENHANCEMENT FUNCTIONS (A+B+C+E)
+# =============================================================================
+
+def compute_smart_money_cohort_stats(
+    combined_records: List[Dict],
+) -> Dict[Tuple[str, str], Tuple[Decimal, Decimal]]:
+    """
+    Compute mean and std of overlap counts by (stage_bucket, size_bucket).
+    Used for cohort normalization (Option C).
+
+    Returns:
+        Dict mapping (stage, size) tuple to (mean, std) of overlap counts.
+    """
+    config = SMART_MONEY_ENHANCEMENT_CONFIG
+    min_cohort_size = config["cohort_normalization"]["min_cohort_size"]
+
+    cohort_data: Dict[Tuple[str, str], List[Decimal]] = {}
+
+    # Group by cohort
+    for rec in combined_records:
+        # Get stage bucket from enhanced alpha detection
+        stage = rec.get("stage_bucket_alpha", rec.get("stage_bucket", "pivotal"))
+        size = rec.get("market_cap_bucket", "mid")
+        coinvest = rec.get("coinvest", {})
+        overlap = coinvest.get("coinvest_overlap_count", 0)
+
+        key = (stage, size)
+        cohort_data.setdefault(key, []).append(Decimal(str(overlap)))
+
+    # Compute stats for cohorts with enough data
+    cohort_stats: Dict[Tuple[str, str], Tuple[Decimal, Decimal]] = {}
+    for key, overlaps in cohort_data.items():
+        if len(overlaps) >= min_cohort_size:
+            mean = sum(overlaps) / len(overlaps)
+            # Population std
+            variance = sum((x - mean) ** 2 for x in overlaps) / len(overlaps)
+            # sqrt for Decimal
+            if variance > 0:
+                std = variance.sqrt()
+            else:
+                std = Decimal("1.0")
+            cohort_stats[key] = (mean, std)
+
+    return cohort_stats
+
+
+def compute_enhanced_smart_money_signal_v2(
+    coinvest_data: Dict,
+    stage_bucket: str,
+    size_bucket: str,
+    cohort_stats: Optional[Dict[Tuple[str, str], Tuple[Decimal, Decimal]]] = None,
+) -> Dict[str, Any]:
+    """
+    Enhanced smart money signal with:
+    A) Stage×size dependent base weight
+    B) Expanded score range (20-85)
+    C) Cohort-normalized overlap (z-score within stage×size)
+    E) Confidence from overlap count
+
+    Returns enhanced signal dict with score, weight, confidence, and diagnostics.
+    """
+    config = SMART_MONEY_ENHANCEMENT_CONFIG
+
+    # Extract base data
+    overlap_count = coinvest_data.get("coinvest_overlap_count", 0)
+    holders = coinvest_data.get("coinvest_holders", [])
+    position_changes = coinvest_data.get("position_changes", {})
+    holder_tiers = coinvest_data.get("holder_tiers", {})
+    tier1_count_raw = coinvest_data.get("tier1_count", 0)
+
+    # Get Tier-1 holders from holder_tiers dict
+    tier1_holders = [h for h, tier in holder_tiers.items() if tier == 1]
+    tier1_count = len(tier1_holders) if tier1_holders else tier1_count_raw
+
+    # Get position change direction
+    increasing_holders = [h for h, change in position_changes.items()
+                         if change in ("INCREASE", "NEW")]
+    decreasing_holders = [h for h, change in position_changes.items()
+                         if change in ("DECREASE", "EXIT")]
+
+    # =========================================================================
+    # C: COHORT-NORMALIZED OVERLAP (prevents size bias)
+    # =========================================================================
+    cohort_key = (stage_bucket, size_bucket)
+    z_score = Decimal("0")
+
+    if (config["cohort_normalization"]["enabled"] and
+        cohort_stats and cohort_key in cohort_stats):
+        cohort_mean, cohort_std = cohort_stats[cohort_key]
+        if cohort_std > Decimal("0.1"):  # Avoid division by tiny std
+            z_score = (Decimal(str(overlap_count)) - cohort_mean) / cohort_std
+            # Clamp z-score to [-2, 2] to avoid extreme values
+            z_score = _clamp(z_score, Decimal("-2.0"), Decimal("2.0"))
+
+    # Convert z-score to base score component (centered at neutral)
+    cohort_component = (config["score_range"]["neutral"] +
+                        z_score * config["cohort_normalization"]["zscore_to_score_factor"])
+
+    # =========================================================================
+    # B: EXPANDED SCORE RANGE WITH HOLDER-BASED BOOSTS
+    # =========================================================================
+    base_score = cohort_component
+
+    # Tier-1 holder boost
+    tier1_boost = min(
+        Decimal(str(tier1_count)) * config["score_range"]["per_tier1_holder_boost"],
+        config["score_range"]["max_boost_from_holders"]
+    )
+
+    # Position increase boost
+    increase_boost = (Decimal(str(len(increasing_holders))) *
+                      config["score_range"]["per_position_increase_boost"])
+
+    # Position decrease penalty
+    decrease_penalty = (Decimal(str(len(decreasing_holders))) *
+                        config["score_range"]["per_position_increase_boost"] * Decimal("-1"))
+
+    # Calculate raw boosted score
+    raw_boosted = base_score + tier1_boost + increase_boost + decrease_penalty
+
+    # Apply expanded range
+    final_score = _clamp(
+        raw_boosted,
+        config["score_range"]["min"],
+        config["score_range"]["max"]
+    )
+
+    # =========================================================================
+    # E: CONFIDENCE FROM OVERLAP
+    # =========================================================================
+    conf_config = config["confidence_from_overlap"]
+    base_conf = conf_config["base_confidence"]
+
+    overlap_boost = min(
+        Decimal(str(overlap_count)) * conf_config["per_overlap_boost"],
+        Decimal("0.3")
+    )
+    tier1_confidence_boost = min(
+        Decimal(str(tier1_count)) * conf_config["per_tier1_boost"],
+        Decimal("0.4")
+    )
+
+    final_confidence = base_conf + overlap_boost + tier1_confidence_boost
+    final_confidence = _clamp(
+        final_confidence,
+        Decimal("0.3"),
+        conf_config["max_confidence"]
+    )
+
+    # =========================================================================
+    # A: STAGE×SIZE DYNAMIC WEIGHT
+    # =========================================================================
+    stage_weights = config["base_weights_by_stage_size"].get(stage_bucket, {})
+    base_weight = stage_weights.get(size_bucket, Decimal("0.05"))
+
+    # Adjust weight based on signal strength (more Tier-1 → higher weight)
+    weight_multiplier = Decimal("1.0") + (Decimal(str(tier1_count)) * Decimal("0.1"))
+    dynamic_weight = base_weight * weight_multiplier
+
+    # Cap at 15% max weight
+    dynamic_weight = _clamp(dynamic_weight, Decimal("0"), Decimal("0.15"))
+
+    # Build flags
+    flags = []
+    if tier1_count > 0:
+        flags.append(f"tier1_{tier1_count}")
+    if increasing_holders:
+        flags.append(f"sm_increasing_{len(increasing_holders)}")
+    if decreasing_holders:
+        flags.append(f"sm_decreasing_{len(decreasing_holders)}")
+    if z_score != Decimal("0"):
+        flags.append(f"sm_zscore_{float(z_score):.2f}")
+
+    return {
+        "score": final_score,
+        "weight": dynamic_weight,
+        "confidence": final_confidence,
+        "tier1_count": tier1_count,
+        "tier1_holders": tier1_holders,
+        "increasing_holders": increasing_holders,
+        "decreasing_holders": decreasing_holders,
+        "overlap_count": overlap_count,
+        "cohort_z_score": str(z_score) if z_score != Decimal("0") else None,
+        "cohort_key": f"{stage_bucket}_{size_bucket}",
+        "base_score": str(cohort_component),
+        "tier1_boost": str(tier1_boost),
+        "increase_boost": str(increase_boost),
+        "decrease_penalty": str(decrease_penalty),
+        "final_score": str(final_score),
+        "flags": flags,
+    }
 
 
 def _quarter_from_date(d: date) -> str:
@@ -1440,6 +1696,7 @@ def _score_single_ticker_v3(
     partnership_data: Optional[Dict] = None,
     cash_burn_data: Optional[Dict] = None,
     phase_momentum_data: Optional[Dict] = None,
+    cohort_overlap_stats: Optional[Dict[Tuple[str, str], Tuple[Decimal, Decimal]]] = None,
 ) -> Dict[str, Any]:
     """Score a single ticker with all v3 enhancements."""
 
@@ -1778,6 +2035,18 @@ def _score_single_ticker_v3(
         flags.append(f"stage_tilt_{stage_bucket_alpha}")
         flags.append(f"size_tilt_{size_bucket}")
 
+    # 3.5 Enhanced smart money signal (A+B+C+E) - now with stage/size context
+    enhanced_smart_money = None
+    if SMART_MONEY_ENHANCEMENT_CONFIG.get("enabled", True):
+        enhanced_smart_money = compute_enhanced_smart_money_signal_v2(
+            coinvest_data=coinvest_data,
+            stage_bucket=stage_bucket_alpha,
+            size_bucket=size_bucket,
+            cohort_stats=cohort_overlap_stats,
+        )
+        # Add enhanced smart money flags
+        flags.extend(enhanced_smart_money.get("flags", []))
+
     # 4. Apply regime adjustments on top of tilted weights
     regime_weights = apply_regime_to_weights(tilted_weights, regime)
 
@@ -1840,16 +2109,20 @@ def _score_single_ticker_v3(
         effective_weights = {k: _quantize_weight(v / total) for k, v in effective_weights.items()}
 
     # =========================================================================
-    # COVERAGE-GATED SMART MONEY WEIGHTING (OPTION A)
+    # COVERAGE-GATED SMART MONEY WEIGHTING (ENHANCED A+B+C+E)
     # =========================================================================
-    # If security has 13F coverage, include smart_money at 5% and renormalize.
-    # If no coverage, smart_money weight is 0 (no penalty for missing data).
-    # This allows SM signal to influence covered names without taxing uncovered ones.
+    # If security has 13F coverage, include smart_money with dynamic weight
+    # based on stage/size and tier-1 count. Uses enhanced signal if enabled.
 
     has_smart_money_coverage = smart_money.overlap_count > 0
     if has_smart_money_coverage:
-        # Add smart_money at configured weight, then renormalize
-        effective_weights["smart_money"] = SMART_MONEY_COVERAGE_GATED_WEIGHT
+        if enhanced_smart_money and SMART_MONEY_ENHANCEMENT_CONFIG.get("enabled", True):
+            # Use dynamic weight from enhanced signal (A: stage×size dependent)
+            effective_weights["smart_money"] = enhanced_smart_money["weight"]
+            flags.append("smart_money_enhanced")
+        else:
+            # Fallback to static weight
+            effective_weights["smart_money"] = SMART_MONEY_COVERAGE_GATED_WEIGHT
         flags.append("smart_money_coverage_included")
     else:
         effective_weights["smart_money"] = Decimal("0")
@@ -2054,33 +2327,54 @@ def _score_single_ticker_v3(
         flags.append("pos_score_applied")
 
     # =========================================================================
-    # SMART MONEY CONTRIBUTION (Coverage-Gated)
+    # SMART MONEY CONTRIBUTION (Enhanced A+B+C+E)
     # =========================================================================
     # Only add contribution if coverage exists (weight > 0 after gating)
+    # Uses enhanced signal if available for expanded score range and confidence
 
     sm_w_eff = effective_weights.get("smart_money", Decimal("0"))
     if sm_w_eff > EPS and has_smart_money_coverage:
-        # smart_money.smart_money_score is already 20-80 range, use directly
-        sm_norm = smart_money.smart_money_score
+        # Use enhanced smart money signal if available
+        if enhanced_smart_money and SMART_MONEY_ENHANCEMENT_CONFIG.get("enabled", True):
+            # Enhanced signal: expanded range (20-85), cohort-normalized, confidence from overlap
+            sm_norm = enhanced_smart_money["score"]
+            sm_confidence = enhanced_smart_money["confidence"]
+            sm_base_weight = enhanced_smart_money["weight"]
+        else:
+            # Fallback to original signal
+            sm_norm = smart_money.smart_money_score
+            sm_confidence = smart_money.confidence
+            sm_base_weight = SMART_MONEY_COVERAGE_GATED_WEIGHT
+
         sm_contrib = sm_norm * sm_w_eff
         contributions["smart_money"] = sm_contrib
 
         sm_notes = []
-        if smart_money.holders_increasing:
-            sm_notes.append(f"buying:{len(smart_money.holders_increasing)}")
-        if smart_money.holders_decreasing:
-            sm_notes.append(f"selling:{len(smart_money.holders_decreasing)}")
-        if smart_money.tier1_holders:
-            sm_notes.append(f"tier1:{len(smart_money.tier1_holders)}")
-        if smart_money.conditional_capped:
-            sm_notes.append("conditional_capped")
+        if enhanced_smart_money:
+            if enhanced_smart_money.get("tier1_count", 0) > 0:
+                sm_notes.append(f"tier1:{enhanced_smart_money['tier1_count']}")
+            if enhanced_smart_money.get("cohort_z_score"):
+                sm_notes.append(f"z:{enhanced_smart_money['cohort_z_score']}")
+            if enhanced_smart_money.get("increasing_holders"):
+                sm_notes.append(f"buying:{len(enhanced_smart_money['increasing_holders'])}")
+            if enhanced_smart_money.get("decreasing_holders"):
+                sm_notes.append(f"selling:{len(enhanced_smart_money['decreasing_holders'])}")
+        else:
+            if smart_money.holders_increasing:
+                sm_notes.append(f"buying:{len(smart_money.holders_increasing)}")
+            if smart_money.holders_decreasing:
+                sm_notes.append(f"selling:{len(smart_money.holders_decreasing)}")
+            if smart_money.tier1_holders:
+                sm_notes.append(f"tier1:{len(smart_money.tier1_holders)}")
+            if smart_money.conditional_capped:
+                sm_notes.append("conditional_capped")
 
         component_scores.append(ComponentScore(
             name="smart_money",
             raw=Decimal(str(smart_money.overlap_count)),  # Raw overlap count
             normalized=sm_norm,
-            confidence=smart_money.confidence,
-            weight_base=SMART_MONEY_COVERAGE_GATED_WEIGHT,  # Base weight when covered
+            confidence=sm_confidence,
+            weight_base=sm_base_weight,
             weight_effective=sm_w_eff,
             contribution=_quantize_score(sm_contrib),
             notes=sm_notes if sm_notes else [],

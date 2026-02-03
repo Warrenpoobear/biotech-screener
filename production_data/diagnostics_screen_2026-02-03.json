@@ -162,7 +162,7 @@
       "excluded_count": 8,
       "health_errors": [],
       "health_warnings": [
-        "INFO: momentum breakdown - missing:4, low_conf:0, applied[neg:123, pos:102, neutral:90] | windows[20d:0, 60d:315, 120d:0] | coverage=315/319 (98.7%), avg_weight=0.123",
+        "INFO: momentum breakdown - missing:4, low_conf:0, applied[neg:123, pos:102, neutral:90] | windows[20d:0, 60d:315, 120d:0] | coverage=315/319 (98.7%), avg_weight=0.118",
         "INFO: momentum stable metrics - computable:315, meaningful:315, coverage_applied:315/319, strong:281, strong_and_effective:281, sources[prices:315, 13f:0]"
       ],
       "ranked_count": 319,
