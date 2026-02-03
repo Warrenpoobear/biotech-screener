@@ -7,13 +7,24 @@ Queries CT.gov API v2 to backfill:
 - primary_completion_date/type
 - completion_date/type
 - results_first_posted
+
+Usage:
+    # Backfill missing dates
+    python backfill_ctgov_dates.py
+
+    # Verify date coverage without making changes
+    python backfill_ctgov_dates.py --verify
+
+    # Custom input/output paths
+    python backfill_ctgov_dates.py --input data/trials.json --output data/trials_enhanced.json
 """
 
+import argparse
 import json
 import requests
 import time
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Dict, Any
 
 
 def fetch_ctgov_dates(nct_id: str) -> Optional[dict]:
@@ -159,5 +170,213 @@ def backfill_trial_records(
     print()
 
 
+def verify_trial_date_coverage(
+    input_path: Path = Path("production_data/trial_records.json"),
+) -> Dict[str, Any]:
+    """
+    Verify date coverage in trial_records.json without making changes.
+
+    Returns:
+        Dict with coverage statistics and warnings
+    """
+    print("="*80)
+    print("VERIFYING CT.GOV DATE COVERAGE")
+    print("="*80)
+    print()
+
+    # Load records
+    try:
+        with open(input_path) as f:
+            records = json.load(f)
+    except FileNotFoundError:
+        print(f"Error: File not found: {input_path}")
+        return {"error": f"File not found: {input_path}"}
+    except json.JSONDecodeError as e:
+        print(f"Error: Invalid JSON in {input_path}: {e}")
+        return {"error": f"Invalid JSON: {e}"}
+
+    print(f"Loaded {len(records)} trial records from {input_path}")
+    print()
+
+    # Track date field coverage
+    stats = {
+        "total_trials": len(records),
+        "has_last_update_posted": 0,
+        "has_first_posted": 0,
+        "has_primary_completion_date": 0,
+        "has_completion_date": 0,
+        "has_results_first_posted": 0,
+        "has_any_pit_date": 0,  # Has at least one date usable for PIT filtering
+        "missing_all_dates": 0,
+    }
+
+    # PIT date priority fields (matches module_4_clinical_dev.py)
+    pit_priority_fields = [
+        "first_posted",
+        "last_update_posted",
+        "results_first_posted",
+        "source_date",
+        "start_date",
+    ]
+
+    trials_missing_dates = []
+
+    for record in records:
+        nct_id = record.get("nct_id", "UNKNOWN")
+        ticker = record.get("ticker", "UNKNOWN")
+
+        # Check individual fields
+        if record.get("last_update_posted"):
+            stats["has_last_update_posted"] += 1
+        if record.get("first_posted"):
+            stats["has_first_posted"] += 1
+        if record.get("primary_completion_date"):
+            stats["has_primary_completion_date"] += 1
+        if record.get("completion_date"):
+            stats["has_completion_date"] += 1
+        if record.get("results_first_posted"):
+            stats["has_results_first_posted"] += 1
+
+        # Check if any PIT-usable date exists
+        has_pit_date = any(record.get(field) for field in pit_priority_fields)
+        if has_pit_date:
+            stats["has_any_pit_date"] += 1
+        else:
+            stats["missing_all_dates"] += 1
+            trials_missing_dates.append({"nct_id": nct_id, "ticker": ticker})
+
+    # Calculate coverage percentages
+    total = stats["total_trials"]
+    if total == 0:
+        print("No trial records found.")
+        return {"error": "No trial records", **stats}
+
+    coverage = {
+        "last_update_posted_pct": stats["has_last_update_posted"] / total * 100,
+        "first_posted_pct": stats["has_first_posted"] / total * 100,
+        "primary_completion_date_pct": stats["has_primary_completion_date"] / total * 100,
+        "completion_date_pct": stats["has_completion_date"] / total * 100,
+        "results_first_posted_pct": stats["has_results_first_posted"] / total * 100,
+        "any_pit_date_pct": stats["has_any_pit_date"] / total * 100,
+    }
+
+    # Print results
+    print("DATE FIELD COVERAGE")
+    print("-"*40)
+    print(f"last_update_posted:     {stats['has_last_update_posted']:4d}/{total} ({coverage['last_update_posted_pct']:5.1f}%)")
+    print(f"first_posted:           {stats['has_first_posted']:4d}/{total} ({coverage['first_posted_pct']:5.1f}%)")
+    print(f"primary_completion_date:{stats['has_primary_completion_date']:4d}/{total} ({coverage['primary_completion_date_pct']:5.1f}%)")
+    print(f"completion_date:        {stats['has_completion_date']:4d}/{total} ({coverage['completion_date_pct']:5.1f}%)")
+    print(f"results_first_posted:   {stats['has_results_first_posted']:4d}/{total} ({coverage['results_first_posted_pct']:5.1f}%)")
+    print()
+    print(f"Any PIT-usable date:    {stats['has_any_pit_date']:4d}/{total} ({coverage['any_pit_date_pct']:5.1f}%)")
+    print(f"Missing ALL dates:      {stats['missing_all_dates']:4d}/{total}")
+    print()
+
+    # Check thresholds and provide recommendations
+    warnings = []
+
+    if coverage["any_pit_date_pct"] < 90:
+        warnings.append(f"PIT date coverage ({coverage['any_pit_date_pct']:.1f}%) is below 90% threshold")
+
+    if coverage["last_update_posted_pct"] < 80:
+        warnings.append(f"last_update_posted coverage ({coverage['last_update_posted_pct']:.1f}%) is low - run backfill")
+
+    # Print warnings
+    if warnings:
+        print("="*80)
+        print("WARNINGS")
+        print("="*80)
+        for w in warnings:
+            print(f"  WARNING: {w}")
+        print()
+        print("RECOMMENDATION: Run backfill to improve date coverage:")
+        print(f"  python backfill_ctgov_dates.py --input {input_path}")
+        print()
+    else:
+        print("="*80)
+        print("COVERAGE OK")
+        print("="*80)
+        print("Date coverage meets threshold (>=90%). PIT filtering will work correctly.")
+        print()
+
+    # Show sample of trials missing dates
+    if trials_missing_dates and len(trials_missing_dates) <= 20:
+        print("Trials missing all PIT dates:")
+        for t in trials_missing_dates[:20]:
+            print(f"  {t['ticker']:8s} - {t['nct_id']}")
+        if len(trials_missing_dates) > 20:
+            print(f"  ... and {len(trials_missing_dates) - 20} more")
+        print()
+
+    return {
+        "stats": stats,
+        "coverage": coverage,
+        "warnings": warnings,
+        "trials_missing_dates": trials_missing_dates[:100],  # Limit for output
+    }
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Backfill or verify CT.gov date fields in trial_records.json",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  # Verify date coverage (no changes)
+  python backfill_ctgov_dates.py --verify
+
+  # Backfill missing dates
+  python backfill_ctgov_dates.py
+
+  # Custom paths
+  python backfill_ctgov_dates.py --input data/trials.json --output data/trials_enhanced.json
+        """
+    )
+
+    parser.add_argument(
+        "--verify",
+        action="store_true",
+        help="Verify date coverage without backfilling"
+    )
+    parser.add_argument(
+        "--input",
+        type=Path,
+        default=Path("production_data/trial_records.json"),
+        help="Input trial records file (default: production_data/trial_records.json)"
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=Path("production_data/trial_records_with_dates.json"),
+        help="Output file for enhanced records (default: production_data/trial_records_with_dates.json)"
+    )
+    parser.add_argument(
+        "--rate-limit",
+        type=float,
+        default=1.0,
+        help="Seconds between API calls (default: 1.0)"
+    )
+
+    args = parser.parse_args()
+
+    if args.verify:
+        # Verify mode - just check coverage
+        result = verify_trial_date_coverage(args.input)
+        if result.get("error"):
+            return 1
+        if result.get("warnings"):
+            return 2  # Warnings but not errors
+        return 0
+    else:
+        # Backfill mode
+        backfill_trial_records(
+            input_path=args.input,
+            output_path=args.output,
+            rate_limit_seconds=args.rate_limit
+        )
+        return 0
+
+
 if __name__ == "__main__":
-    backfill_trial_records()
+    exit(main())

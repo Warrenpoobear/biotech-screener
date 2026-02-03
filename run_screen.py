@@ -109,6 +109,9 @@ from module_3_catalyst import compute_module_3_catalyst, Module3Config
 from module_4_clinical_dev import compute_module_4_clinical_dev
 from module_5_composite_with_defensive import compute_module_5_composite_with_defensive
 
+# Production validation
+from production_validation import validate_screening_output
+
 # Module 3A specific imports
 from event_detector import SimpleMarketCalendar
 
@@ -4010,6 +4013,30 @@ Module 3 Catalyst Detection:
                 logger.info(f"  Mean score: {ba['mean']}")
                 logger.info(f"  95% CI: [{ba['ci_lower']}, {ba['ci_upper']}]")
                 logger.info(f"  Bootstrap samples: {ba['bootstrap_samples']}")
+
+        # Production validation (non-blocking, warnings only)
+        try:
+            validation_config = {
+                'cash_target': str(getattr(args, 'cash_target', '0.10')),
+                'top_n': getattr(args, 'top_n', None),
+            }
+            validation_passed = validate_screening_output(
+                results,
+                args.as_of_date,
+                validation_config
+            )
+            results['production_validation'] = {
+                'passed': validation_passed,
+                'config': validation_config,
+            }
+            if not validation_passed:
+                logger.warning("[VALIDATION] Some production validation checks failed - see output above")
+        except Exception as e:
+            logger.warning(f"[VALIDATION] Production validation error (non-blocking): {e}")
+            results['production_validation'] = {
+                'passed': None,
+                'error': str(e),
+            }
 
         # Write output
         logger.info(f"[OUTPUT] Writing results to {args.output}")

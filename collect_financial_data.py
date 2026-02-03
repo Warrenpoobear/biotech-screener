@@ -154,11 +154,30 @@ def get_company_facts(cik: str, ticker: str) -> Optional[Dict]:
                     financial_data[friendly_name] = best_val
                     financial_data[f"{friendly_name}_date"] = best_date
             
+            # Aggregate TotalDebt from components if not already present
+            if financial_data.get('LongTermDebt') or financial_data.get('LongTermDebtCurrent') or financial_data.get('ConvertibleDebt'):
+                total_debt = 0
+                debt_components = []
+
+                if financial_data.get('LongTermDebt'):
+                    total_debt += financial_data['LongTermDebt']
+                    debt_components.append('LongTermDebt')
+                if financial_data.get('LongTermDebtCurrent'):
+                    total_debt += financial_data['LongTermDebtCurrent']
+                    debt_components.append('LongTermDebtCurrent')
+                if financial_data.get('ConvertibleDebt'):
+                    total_debt += financial_data['ConvertibleDebt']
+                    debt_components.append('ConvertibleDebt')
+
+                if total_debt > 0:
+                    financial_data['TotalDebt'] = total_debt
+                    financial_data['TotalDebt_components'] = debt_components
+
             financial_data['collected_at'] = date.today().isoformat()
             return financial_data
-        
+
         return None
-    
+
     except Exception as e:
         return None
 
@@ -244,6 +263,35 @@ def collect_all_financial_data(universe_file: Path, output_file: Path):
     print(f"No filings: {stats['no_data']}")
     print(f"Coverage: {stats['successful'] / stats['total'] * 100:.1f}%")
     print(f"✅ Saved to: {output_file}")
+
+    # Data quality summary
+    print(f"\n{'='*80}")
+    print("DATA QUALITY SUMMARY")
+    print(f"{'='*80}")
+
+    # Count key field coverage
+    has_cash = sum(1 for d in all_data if d.get('Cash'))
+    has_revenue = sum(1 for d in all_data if d.get('Revenue'))
+    has_rd = sum(1 for d in all_data if d.get('R&D'))
+    has_assets = sum(1 for d in all_data if d.get('Assets'))
+    has_cfo = sum(1 for d in all_data if d.get('CFO'))
+    has_total_debt = sum(1 for d in all_data if d.get('TotalDebt'))
+    has_long_term_debt = sum(1 for d in all_data if d.get('LongTermDebt'))
+
+    collected = len(all_data)
+    if collected > 0:
+        print(f"Cash:           {has_cash:4d}/{collected} ({has_cash/collected*100:5.1f}%)")
+        print(f"Revenue:        {has_revenue:4d}/{collected} ({has_revenue/collected*100:5.1f}%)")
+        print(f"R&D:            {has_rd:4d}/{collected} ({has_rd/collected*100:5.1f}%)")
+        print(f"Assets:         {has_assets:4d}/{collected} ({has_assets/collected*100:5.1f}%)")
+        print(f"CFO:            {has_cfo:4d}/{collected} ({has_cfo/collected*100:5.1f}%)")
+        print(f"LongTermDebt:   {has_long_term_debt:4d}/{collected} ({has_long_term_debt/collected*100:5.1f}%)")
+        print(f"TotalDebt:      {has_total_debt:4d}/{collected} ({has_total_debt/collected*100:5.1f}%)")
+
+        # Data freshness check
+        fresh_count = sum(1 for d in all_data if d.get('Cash_date') and is_data_fresh(d['Cash_date'], 180))
+        print(f"\nCash data <6mo: {fresh_count:4d}/{collected} ({fresh_count/collected*100:5.1f}%)")
+
     print(f"{'='*80}\n")
 
 

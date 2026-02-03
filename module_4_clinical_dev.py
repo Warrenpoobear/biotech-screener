@@ -455,6 +455,13 @@ def compute_module_4_clinical_dev(
     for ticker_dict in ticker_trials.values():
         total_unique += len(ticker_dict)
 
+    # Calculate date coverage for diagnostics
+    trials_with_dates = total_raw - no_date_excluded
+    date_coverage_pct = (trials_with_dates / total_raw * 100) if total_raw > 0 else 0.0
+    date_coverage_warning = None
+    if date_coverage_pct < 90.0 and total_raw > 0:
+        date_coverage_warning = f"Low date coverage ({date_coverage_pct:.1f}%) - {no_date_excluded} trials excluded due to missing PIT dates"
+
     scores = []
 
     for ticker in active_tickers:
@@ -594,6 +601,10 @@ def compute_module_4_clinical_dev(
             "pit_filtered": total_pit_filtered,
             "no_date_excluded": no_date_excluded,
             "pit_fields_used": pit_fields_used,
+            # Date coverage diagnostics
+            "trials_with_dates": trials_with_dates,
+            "date_coverage_pct": round(date_coverage_pct, 2),
+            "date_coverage_warning": date_coverage_warning,
         },
         "provenance": create_provenance(RULESET_VERSION, {"tickers": active_tickers}, pit_cutoff),
     }
