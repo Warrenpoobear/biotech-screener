@@ -2863,7 +2863,7 @@ def run_screening_pipeline(
 
                     dilution_universe.append({
                         "ticker": ticker,
-                        "quarterly_cash": Decimal(str(fin_data.get("Cash"))) if fin_data.get("Cash") else None,
+                        "quarterly_cash": Decimal(str(fin_data.get("CashAndSecurities") or fin_data.get("Cash"))) if (fin_data.get("CashAndSecurities") or fin_data.get("Cash")) else None,
                         "quarterly_burn": quarterly_burn,
                         "next_catalyst_date": next_catalyst_date,
                         "market_cap": Decimal(str(mkt_data.get("market_cap"))) if mkt_data.get("market_cap") else None,

@@ -173,6 +173,21 @@ def get_company_facts(cik: str, ticker: str) -> Optional[Dict]:
                     financial_data['TotalDebt'] = total_debt
                     financial_data['TotalDebt_components'] = debt_components
 
+            # Aggregate CashAndSecurities (Cash + MarketableSecurities + ShortTermInvestments)
+            cash = financial_data.get('Cash', 0) or 0
+            mkt_sec = financial_data.get('MarketableSecurities', 0) or 0
+            st_inv = financial_data.get('ShortTermInvestments', 0) or 0
+            avail = financial_data.get('AvailableForSaleSecurities', 0) or 0
+            total_liquid = cash + mkt_sec + st_inv + avail
+            if total_liquid > 0:
+                financial_data['CashAndSecurities'] = total_liquid
+                # Use most recent date from components
+                dates = [financial_data.get('Cash_date'), financial_data.get('MarketableSecurities_date'),
+                         financial_data.get('ShortTermInvestments_date')]
+                dates = [d for d in dates if d]
+                if dates:
+                    financial_data['CashAndSecurities_date'] = max(dates)
+
             financial_data['collected_at'] = date.today().isoformat()
             return financial_data
 
