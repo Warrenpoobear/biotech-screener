@@ -1427,9 +1427,10 @@ def validate_defensive_integration(output: Dict) -> None:
             print(f"     Correlation data: {with_corr}, Volatility data: {with_vol}")
 
     # 4. Check defensive multiplier status (score adjustment)
-    has_multiplier_field = any(r.get("defensive_multiplier") for r in ranked)
+    # Use diagnostic flag (field is always present but value differs based on enabled status)
+    multiplier_enabled = diag.get("apply_multiplier_enabled", False)
 
-    if has_multiplier_field:
+    if multiplier_enabled:
         # Multiplier was applied - count meaningful adjustments
         with_def_notes = sum(1 for r in ranked if r.get("defensive_notes"))
         non_neutral = sum(

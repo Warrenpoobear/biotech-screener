@@ -3732,17 +3732,17 @@ Module 3 Catalyst Detection:
         help="Correlation threshold for returns-based clustering. (default: 0.70)",
     )
 
-    # Defensive overlay controls (ON by default)
+    # Defensive overlay controls (OFF by default)
     parser.add_argument(
         "--no-defensive-multiplier",
         action="store_true",
         dest="no_defensive_multiplier",
-        help="Disable defensive multiplier (enabled by default).",
+        help="(Deprecated, now default) Disable defensive multiplier.",
     )
     parser.add_argument(
         "--apply-defensive-multiplier",
         action="store_true",
-        help="(Deprecated, now default) Apply defensive multiplier to composite scores.",
+        help="Enable defensive multiplier (disabled by default).",
     )
     parser.add_argument(
         "--defensive-config",
@@ -3987,8 +3987,8 @@ Module 3 Catalyst Detection:
             enable_clustering=args.enable_clustering,
             cluster_method=args.cluster_method,
             cluster_threshold=args.cluster_threshold,
-            # Defensive overlay parameters (ON by default unless --no-defensive-multiplier)
-            apply_defensive_multiplier=not getattr(args, 'no_defensive_multiplier', False),
+            # Defensive overlay parameters (OFF by default unless --apply-defensive-multiplier)
+            apply_defensive_multiplier=getattr(args, 'apply_defensive_multiplier', False),
             defensive_config=args.defensive_config,
             defensive_cache=args.defensive_cache,
             enable_position_sizing=getattr(args, 'enable_position_sizing', False),
