@@ -1854,7 +1854,7 @@
     "status": "active",
     "added_date": "2026-01-31",
     "description": "NASH/metabolic liver disease. 7 Tier 1 managers, +161% 2Y.",
-    "market_cap": null,
+    "market_cap": 4499031040,
     "cik": null,
     "market_data": {
       "price": 54.65,
@@ -1885,7 +1885,8 @@
       "by_phase": {},
       "conditions": [],
       "top_trials": []
-    }
+    },
+    "market_cap_mm": 4499.03104
   },
   {
     "ticker": "AKTX",
@@ -9658,7 +9659,7 @@
     "status": "active",
     "added_date": "2026-01-31",
     "description": "Antifungal/antiviral immunotherapies. 5 Tier 1 managers, +1593% 2Y.",
-    "market_cap": null,
+    "market_cap": 6961583616,
     "cik": null,
     "market_data": {
       "price": 221.38,
@@ -9689,7 +9690,8 @@
       "by_phase": {},
       "conditions": [],
       "top_trials": []
-    }
+    },
+    "market_cap_mm": 6961.583616
   },
   {
     "ticker": "CDXS",
@@ -10249,7 +10251,7 @@
     "status": "active",
     "added_date": "2026-01-31",
     "description": "Oncology (breast cancer). 3 Tier 1 managers, +153% 2Y.",
-    "market_cap": null,
+    "market_cap": 225563376,
     "cik": null,
     "market_data": {
       "price": 2.61,
@@ -10280,7 +10282,8 @@
       "by_phase": {},
       "conditions": [],
       "top_trials": []
-    }
+    },
+    "market_cap_mm": 225.563376
   },
   {
     "ticker": "COGT",
@@ -18996,7 +18999,7 @@
     "etf_sources": [
       "IBB"
     ],
-    "market_cap": null,
+    "market_cap": 7767776768,
     "description": "Added from ETF holdings (IBB)",
     "cik": "0001438569",
     "market_data": {
@@ -19027,7 +19030,8 @@
       "vol_20d": 0.362,
       "ret_21d": 0.0121,
       "corr_xbi": "0.2877"
-    }
+    },
+    "market_cap_mm": 7767.776768
   },
   {
     "ticker": "HALO",
@@ -27421,7 +27425,7 @@
     "status": "active",
     "added_date": "2026-01-31",
     "description": "Bispecific antibody oncology (Dutch). 5 Tier 1 managers, +149% 2Y.",
-    "market_cap": null,
+    "market_cap": 6826245632,
     "cik": null,
     "market_data": {
       "price": 90.0,
@@ -27452,7 +27456,8 @@
       "by_phase": {},
       "conditions": [],
       "top_trials": []
-    }
+    },
+    "market_cap_mm": 6826.245632
   },
   {
     "ticker": "MRVI",
@@ -37274,7 +37279,7 @@
     "status": "active",
     "added_date": "2026-01-31",
     "description": "Wnt pathway tissue repair/regeneration. 3 Tier 1 managers, +161% 2Y.",
-    "market_cap": null,
+    "market_cap": 187199840,
     "cik": null,
     "market_data": {
       "price": 21.545,
@@ -37305,7 +37310,8 @@
       "by_phase": {},
       "conditions": [],
       "top_trials": []
-    }
+    },
+    "market_cap_mm": 187.19984
   },
   {
     "ticker": "STOK",

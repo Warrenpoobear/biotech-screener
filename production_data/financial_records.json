@@ -14874,5 +14874,65 @@
     "Revenue": 19889000000.0,
     "Revenue_date": "2025-06-30",
     "Revenue_source": "SEC"
+  },
+  {
+    "ticker": "GRFS",
+    "market_cap": 7767776768,
+    "market_cap_mm": 7767.776768,
+    "source_date": "2026-02-03",
+    "data_source": "yfinance_backfill",
+    "cash": null,
+    "quarterly_burn": null,
+    "runway_months": null
+  },
+  {
+    "ticker": "CDTX",
+    "market_cap": 6961583616,
+    "market_cap_mm": 6961.583616,
+    "source_date": "2026-02-03",
+    "data_source": "yfinance_backfill",
+    "cash": null,
+    "quarterly_burn": null,
+    "runway_months": null
+  },
+  {
+    "ticker": "AKRO",
+    "market_cap": 4499031040,
+    "market_cap_mm": 4499.03104,
+    "source_date": "2026-02-03",
+    "data_source": "yfinance_backfill",
+    "cash": null,
+    "quarterly_burn": null,
+    "runway_months": null
+  },
+  {
+    "ticker": "CNTX",
+    "market_cap": 225563376,
+    "market_cap_mm": 225.563376,
+    "source_date": "2026-02-03",
+    "data_source": "yfinance_backfill",
+    "cash": null,
+    "quarterly_burn": null,
+    "runway_months": null
+  },
+  {
+    "ticker": "MRUS",
+    "market_cap": 6826245632,
+    "market_cap_mm": 6826.245632,
+    "source_date": "2026-02-03",
+    "data_source": "yfinance_backfill",
+    "cash": null,
+    "quarterly_burn": null,
+    "runway_months": null
+  },
+  {
+    "ticker": "SRZN",
+    "market_cap": 187199840,
+    "market_cap_mm": 187.19984,
+    "source_date": "2026-02-03",
+    "data_source": "yfinance_backfill",
+    "cash": null,
+    "quarterly_burn": null,
+    "runway_months": null
   }
 ]

@@ -9,21 +9,26 @@
 ## Table of Contents
 
 1. [Overview](#overview)
-2. [System Architecture](#system-architecture)
-3. [Data Architecture](#data-architecture)
-4. [Module Descriptions](#module-descriptions)
-5. [Output Format: JSON](#output-format-json)
-6. [Output Format: CSV](#output-format-csv)
-7. [Field Definitions](#field-definitions)
-8. [Scoring Methodology](#scoring-methodology)
-9. [PIT (Point-in-Time) Compliance](#pit-point-in-time-compliance)
-10. [Configuration](#configuration)
+2. [Investment Committee Guide](#investment-committee-guide)
+3. [System Architecture](#system-architecture)
+4. [Data Architecture](#data-architecture)
+5. [Module Descriptions](#module-descriptions)
+6. [Output Format: JSON](#output-format-json)
+7. [Output Format: CSV](#output-format-csv)
+8. [Field Definitions](#field-definitions)
+9. [Scoring Methodology](#scoring-methodology)
+10. [PIT (Point-in-Time) Compliance](#pit-point-in-time-compliance)
+11. [Monitoring & Reporting](#monitoring--reporting)
+12. [Configuration](#configuration)
+13. [Appendix: File Locations](#appendix-file-locations)
+14. [Changelog](#changelog)
 
 ---
 
+
 ## Overview
 
-The Biotech Screener is a deterministic, production-grade screening system that ranks biotech investment opportunities. It processes clinical trial data, financial filings, market data, and catalyst events to produce weekly ranked portfolios.
+The Biotech Screener is a deterministic, production-grade screening system that ranks biotech investment opportunities. It processes clinical trial data, financial filings, market data, and catalyst events to produce a ranked universe plus audit-friendly diagnostics (portfolio construction, position counts, and sizing are downstream policy layers).
 
 ### Key Principles
 
@@ -43,6 +48,37 @@ python run_screen.py \
     --enable-enhancements \
     --enable-clustering
 ```
+
+
+## Investment Committee Guide
+
+### What this model is (and is not)
+
+**Designed for**
+- Systematic *ranking* of biotech tickers using point‑in‑time (PIT) clinical, financial, market, and catalyst data.
+- Repeatable, audit-friendly screening with deterministic outputs and diagnostics.
+
+**Not designed for**
+- Automatic security selection counts, position sizing, or risk budgeting (those are *downstream policy layers* on top of the ranked universe).
+
+### Recommended IC workflow
+
+1. **Screen**: Start with `module_5_composite.ranked_securities` and filter to `rankable=true`.
+2. **Risk gates**: Review `severity`, `severe_negative_flag`, and `fundamental_red_flag` before any investment decision.
+3. **Thesis build**: Use Module 3 (catalysts) + Module 4 (pipeline quality) as the thesis backbone; use Modules 2/5 components as constraints and timing.
+4. **Implementation**: Apply portfolio constraints (cash target, max weight, sector/cluster caps) outside the scorer; document any overrides.
+5. **Monitoring**: Track coverage, confidence, and drift metrics each run (see Monitoring & Reporting).
+
+### What to show the IC each run (one page)
+
+- **Run metadata**: `as_of_date`, version, and validation status.
+- **Coverage**: % of universe with non‑zero catalyst proximity, PIT date coverage, and data_state distribution.
+- **Top drivers**: distributions of z-scores and the primary `rank_driver` buckets.
+- **Risk posture**: defensive bucket mix and cluster concentration diagnostics.
+- **Exceptions**: list of `rankable=false` names and *why*.
+
+---
+
 
 ---
 
@@ -345,6 +381,35 @@ catalyst_score_net = sum(positive_events) - sum(negative_events)
 | Valuation | 10% | Market cap per trial |
 | PoS (Probability of Success) | 5% | Indication-based success rate |
 | Short Interest | 5% | Crowding/squeeze potential |
+
+#### Component signal definitions (Module 5 inputs)
+
+Module 5 aggregates *normalized* sub-scores (generally 0–100) and then applies the defensive multiplier. The weights below are a policy choice; the key IC question is whether each sub-score is behaving as intended.
+
+- **Financial Health (Module 2)**  
+  Normalized 0–100 score based on cash runway, dilution risk, liquidity, and revenue presence. Includes **severity** levels that act as hard/soft gates.  
+
+- **Clinical Development (Module 4)**  
+  Normalized 0–100 score from phase advancement/progress, trial count & diversity, recency, and design/execution quality. Provides PIT observability fields to audit what was included vs excluded.
+
+- **Catalyst (Module 3)**  
+  Uses net catalyst score plus time-decayed effective score and a proximity bonus (`catalyst_proximity_score`) driven by forward-looking windows and confidence. Includes kill switches via `severe_negative_flag`.
+
+- **Momentum**  
+  `momentum_alpha` is excess return vs a benchmark over `momentum_window`; mapped to `momentum_score` (0–100). Treat as a *timing* input, not a thesis anchor.
+
+- **Smart Money**  
+  Institutional signal (0–100) derived from overlap counts and holder quality; `smart_money_overlap` and `smart_money_tier1_holders` provide the audit trail.
+
+- **Valuation**  
+  Cheapness score (0–100) computed from a raw metric (`valuation_raw_metric`) under a stated method (`valuation_method`). Percentiles are reported both overall and within size buckets.
+
+- **PoS (Probability of Success)**  
+  A prior probability (phase × indication) mapped into a 0–100 contribution; `confidence_pos` indicates mapping quality.
+
+- **Short Interest**  
+  Crowding/squeeze signal (0–100) with explicit crowding bucket and squeeze potential diagnostic fields.
+
 
 **Defensive Overlay:**
 The defensive multiplier adjusts scores based on risk characteristics:
@@ -650,6 +715,22 @@ diagnostic_counts = {
 
 ---
 
+## Monitoring & Reporting
+
+Track these metrics each run to detect data issues, model drift, and unintended behavior changes:
+
+- **Universe health**: `summary.total_evaluated`, `summary.active_universe`, `summary.final_ranked`, exclusions with reasons.
+- **PIT health**: Module 4 `date_coverage_pct` distribution; count of PIT-filtered trials.
+- **Catalyst coverage**: % tickers with `catalyst_proximity_score > 0`, plus `catalyst_window_bucket_m3` distribution.
+- **Risk & overlay**: distribution of `defensive_bucket`, `volatility`, `drawdown`, and `confidence_risk` states.
+- **Red flags / kill switches**: counts of `severe_negative_flag`, `severity=SEV3`, and `fundamental_red_flag`.
+
+Suggested artifacts:
+- A small “run-to-run diff” report (top movers by rank and by catalyst window).
+- A weekly chart of coverage and confidence metrics (should be stable absent upstream data changes).
+
+---
+
 ## Configuration
 
 ### Command-Line Arguments
@@ -661,7 +742,6 @@ python run_screen.py \
     --output results.json \           # Output file
     --enable-enhancements \           # Enable momentum, SI, smart money
     --enable-clustering \             # Enable correlation clustering
-    --top-n 60 \                      # Limit to top N positions
     --cash-target 0.10 \              # 10% cash allocation
     --defensive-config aggressive     # Elite boost configuration
 ```
