@@ -1,2851 +1,2714 @@
 [
   {
+    "ticker": "AARD",
+    "manager_count": 2,
+    "tier1_count": 1,
+    "tier2_count": 1,
+    "total_value": 15066345000,
+    "total_shares": 1119812
+  },
+  {
     "ticker": "ABCL",
-    "manager_count": 6,
+    "manager_count": 7,
     "tier1_count": 3,
+    "tier2_count": 4,
+    "total_value": 194548742000,
+    "total_shares": 39741561
+  },
+  {
+    "ticker": "ABEO",
+    "manager_count": 5,
+    "tier1_count": 2,
     "tier2_count": 3,
-    "managers": [
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Orbimed Advisors",
-      "Renaissance Technologies",
-      "Tang Capital Partners"
-    ]
+    "total_value": 22699827000,
+    "total_shares": 4088235
   },
   {
     "ticker": "ABOS",
-    "manager_count": 2,
+    "manager_count": 3,
     "tier1_count": 1,
-    "tier2_count": 1,
-    "managers": [
-      "RA Capital Management",
-      "Renaissance Technologies"
-    ]
+    "tier2_count": 2,
+    "total_value": 28795106000,
+    "total_shares": 17466475
   },
   {
     "ticker": "ABSI",
-    "manager_count": 5,
+    "manager_count": 6,
     "tier1_count": 4,
-    "tier2_count": 1,
-    "managers": [
-      "Casdin Capital",
-      "D.E. Shaw",
-      "Ghost Tree Capital",
-      "Great Point Partners",
-      "Redmile Group"
-    ]
+    "tier2_count": 2,
+    "total_value": 34164104000,
+    "total_shares": 11099842
   },
   {
     "ticker": "ABUS",
-    "manager_count": 2,
+    "manager_count": 3,
     "tier1_count": 0,
-    "tier2_count": 2,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw"
-    ]
+    "tier2_count": 3,
+    "total_value": 3574601000,
+    "total_shares": 787357
+  },
+  {
+    "ticker": "ABVX",
+    "manager_count": 13,
+    "tier1_count": 9,
+    "tier2_count": 4,
+    "total_value": 593554143000,
+    "total_shares": 10157777
   },
   {
     "ticker": "ACAD",
-    "manager_count": 7,
-    "tier1_count": 5,
-    "tier2_count": 2,
-    "managers": [
-      "Baker Bros Advisors",
-      "D.E. Shaw",
-      "Ghost Tree Capital",
-      "RTW Investments",
-      "Renaissance Technologies",
-      "Sofinnova Investments",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "ACLX",
-    "manager_count": 8,
-    "tier1_count": 6,
-    "tier2_count": 2,
-    "managers": [
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "Farallon Capital",
-      "Great Point Partners",
-      "Logos Global Management",
-      "RA Capital Management",
-      "Rock Springs Capital Management",
-      "Samsara BioCapital"
-    ]
-  },
-  {
-    "ticker": "ACRV",
-    "manager_count": 3,
-    "tier1_count": 2,
-    "tier2_count": 1,
-    "managers": [
-      "Baker Bros Advisors",
-      "RA Capital Management",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "ADMA",
-    "manager_count": 4,
-    "tier1_count": 1,
-    "tier2_count": 3,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Renaissance Technologies",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "ADPT",
-    "manager_count": 3,
-    "tier1_count": 1,
-    "tier2_count": 2,
-    "managers": [
-      "D.E. Shaw",
-      "Deerfield Management",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "AKRO",
-    "manager_count": 16,
-    "tier1_count": 12,
-    "tier2_count": 4,
-    "managers": [
-      "Acuta Capital Partners",
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "Boxer Capital",
-      "D.E. Shaw",
-      "EcoR1 Capital",
-      "Farallon Capital",
-      "Great Point Partners",
-      "Logos Global Management",
-      "Orbimed Advisors",
-      "RTW Investments",
-      "Redmile Group",
-      "Renaissance Technologies",
-      "Rock Springs Capital Management",
-      "Sofinnova Investments",
-      "Venbio Partners"
-    ]
-  },
-  {
-    "ticker": "ALDX",
-    "manager_count": 2,
-    "tier1_count": 0,
-    "tier2_count": 2,
-    "managers": [
-      "D.E. Shaw",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "ALGS",
-    "manager_count": 3,
-    "tier1_count": 2,
-    "tier2_count": 1,
-    "managers": [
-      "Baker Bros Advisors",
-      "Renaissance Technologies",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "ALKS",
-    "manager_count": 8,
-    "tier1_count": 5,
-    "tier2_count": 3,
-    "managers": [
-      "Baker Bros Advisors",
-      "D.E. Shaw",
-      "EcoR1 Capital",
-      "Farallon Capital",
-      "Opaleye Management",
-      "RTW Investments",
-      "Renaissance Technologies",
-      "Rock Springs Capital Management"
-    ]
-  },
-  {
-    "ticker": "ALLO",
-    "manager_count": 2,
-    "tier1_count": 0,
-    "tier2_count": 2,
-    "managers": [
-      "D.E. Shaw",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "ALMS",
-    "manager_count": 8,
-    "tier1_count": 6,
-    "tier2_count": 2,
-    "managers": [
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "Opaleye Management",
-      "Orbimed Advisors",
-      "Renaissance Technologies",
-      "Samsara BioCapital",
-      "Tang Capital Partners",
-      "Venbio Partners"
-    ]
-  },
-  {
-    "ticker": "ALNY",
-    "manager_count": 9,
-    "tier1_count": 6,
-    "tier2_count": 3,
-    "managers": [
-      "Balyasny Asset Management",
-      "Casdin Capital",
-      "D.E. Shaw",
-      "Deerfield Management",
-      "Farallon Capital",
-      "Ghost Tree Capital",
-      "Orbimed Advisors",
-      "Rock Springs Capital Management",
-      "Sectoral Asset Management"
-    ]
-  },
-  {
-    "ticker": "ALVO",
-    "manager_count": 3,
-    "tier1_count": 0,
-    "tier2_count": 3,
-    "managers": [
-      "Balyasny Asset Management",
-      "Farallon Capital",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "AMGN",
-    "manager_count": 4,
-    "tier1_count": 1,
-    "tier2_count": 3,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Renaissance Technologies",
-      "Sectoral Asset Management"
-    ]
-  },
-  {
-    "ticker": "AMLX",
     "manager_count": 11,
     "tier1_count": 8,
     "tier2_count": 3,
-    "managers": [
-      "Acuta Capital Partners",
-      "Ally Bridge Group",
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Ghost Tree Capital",
-      "Great Point Partners",
-      "Logos Global Management",
-      "Orbimed Advisors",
-      "Renaissance Technologies",
-      "Rock Springs Capital Management",
-      "Tang Capital Partners"
-    ]
+    "total_value": 1313416386000,
+    "total_shares": 60965136
   },
   {
-    "ticker": "AMPH",
-    "manager_count": 4,
-    "tier1_count": 1,
-    "tier2_count": 3,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Deerfield Management",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "AMRX",
-    "manager_count": 3,
+    "ticker": "ACIU",
+    "manager_count": 1,
     "tier1_count": 0,
-    "tier2_count": 3,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "ANRO",
-    "manager_count": 2,
-    "tier1_count": 1,
     "tier2_count": 1,
-    "managers": [
-      "Orbimed Advisors",
-      "Renaissance Technologies"
-    ]
+    "total_value": 44839000,
+    "total_shares": 87781
   },
   {
-    "ticker": "APGE",
-    "manager_count": 9,
-    "tier1_count": 6,
+    "ticker": "ACLX",
+    "manager_count": 11,
+    "tier1_count": 8,
     "tier2_count": 3,
-    "managers": [
-      "Balyasny Asset Management",
-      "Boxer Capital",
-      "D.E. Shaw",
-      "Great Point Partners",
-      "Opaleye Management",
-      "RTW Investments",
-      "Renaissance Technologies",
-      "Sofinnova Investments",
-      "Tang Capital Partners"
-    ]
+    "total_value": 581334185000,
+    "total_shares": 7139397
   },
   {
-    "ticker": "ARCT",
-    "manager_count": 2,
-    "tier1_count": 0,
-    "tier2_count": 2,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw"
-    ]
+    "ticker": "ACRS",
+    "manager_count": 6,
+    "tier1_count": 3,
+    "tier2_count": 3,
+    "total_value": 27581281000,
+    "total_shares": 15485907
   },
   {
-    "ticker": "ARGX",
-    "manager_count": 9,
-    "tier1_count": 7,
-    "tier2_count": 2,
-    "managers": [
-      "Acuta Capital Partners",
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "Boxer Capital",
-      "D.E. Shaw",
-      "Orbimed Advisors",
-      "RTW Investments",
-      "Rock Springs Capital Management",
-      "Sectoral Asset Management"
-    ]
-  },
-  {
-    "ticker": "ARQT",
+    "ticker": "ACRV",
     "manager_count": 4,
     "tier1_count": 2,
     "tier2_count": 2,
-    "managers": [
-      "Ally Bridge Group",
-      "D.E. Shaw",
-      "Farallon Capital",
-      "Suvretta Capital Management"
-    ]
+    "total_value": 16618481000,
+    "total_shares": 9282956
   },
   {
-    "ticker": "ARTV",
-    "manager_count": 5,
-    "tier1_count": 4,
-    "tier2_count": 1,
-    "managers": [
-      "Acuta Capital Partners",
-      "RA Capital Management",
-      "Renaissance Technologies",
-      "Samsara BioCapital",
-      "Venbio Partners"
-    ]
-  },
-  {
-    "ticker": "ARVN",
-    "manager_count": 8,
-    "tier1_count": 5,
-    "tier2_count": 3,
-    "managers": [
-      "Balyasny Asset Management",
-      "Boxer Capital",
-      "D.E. Shaw",
-      "Ghost Tree Capital",
-      "Logos Global Management",
-      "Opaleye Management",
-      "Renaissance Technologies",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "ASMB",
-    "manager_count": 3,
-    "tier1_count": 1,
-    "tier2_count": 2,
-    "managers": [
-      "Farallon Capital",
-      "RA Capital Management",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "ATAI",
+    "ticker": "ADCT",
     "manager_count": 4,
-    "tier1_count": 2,
-    "tier2_count": 2,
-    "managers": [
-      "Ally Bridge Group",
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Orbimed Advisors"
-    ]
-  },
-  {
-    "ticker": "ATXS",
-    "manager_count": 4,
-    "tier1_count": 2,
-    "tier2_count": 2,
-    "managers": [
-      "D.E. Shaw",
-      "Logos Global Management",
-      "Renaissance Technologies",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "AUPH",
-    "manager_count": 4,
-    "tier1_count": 1,
-    "tier2_count": 3,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Renaissance Technologies",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "AURA",
-    "manager_count": 3,
-    "tier1_count": 2,
+    "tier1_count": 3,
     "tier2_count": 1,
-    "managers": [
-      "Renaissance Technologies",
-      "Samsara BioCapital",
-      "Suvretta Capital Management"
-    ]
+    "total_value": 91832920000,
+    "total_shares": 22958230
   },
   {
-    "ticker": "AVBP",
-    "manager_count": 5,
-    "tier1_count": 4,
-    "tier2_count": 1,
-    "managers": [
-      "Balyasny Asset Management",
-      "Orbimed Advisors",
-      "Sectoral Asset Management",
-      "Sofinnova Investments",
-      "Suvretta Capital Management"
-    ]
+    "ticker": "ADMA",
+    "manager_count": 6,
+    "tier1_count": 2,
+    "tier2_count": 4,
+    "total_value": 153678815000,
+    "total_shares": 8439254
   },
   {
-    "ticker": "AVIR",
-    "manager_count": 3,
-    "tier1_count": 1,
-    "tier2_count": 2,
-    "managers": [
-      "D.E. Shaw",
-      "Renaissance Technologies",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "AVTR",
+    "ticker": "ADPT",
     "manager_count": 5,
     "tier1_count": 1,
     "tier2_count": 4,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Farallon Capital",
-      "Renaissance Technologies",
-      "Suvretta Capital Management"
-    ]
+    "total_value": 476656383000,
+    "total_shares": 32086554
+  },
+  {
+    "ticker": "AGIO",
+    "manager_count": 9,
+    "tier1_count": 5,
+    "tier2_count": 4,
+    "total_value": 358065624000,
+    "total_shares": 9174842
+  },
+  {
+    "ticker": "AKRO",
+    "manager_count": 20,
+    "tier1_count": 15,
+    "tier2_count": 5,
+    "total_value": 863288806000,
+    "total_shares": 19762103
+  },
+  {
+    "ticker": "ALDX",
+    "manager_count": 5,
+    "tier1_count": 2,
+    "tier2_count": 3,
+    "total_value": 37370485000,
+    "total_shares": 7159097
+  },
+  {
+    "ticker": "ALGS",
+    "manager_count": 5,
+    "tier1_count": 3,
+    "tier2_count": 2,
+    "total_value": 6811749000,
+    "total_shares": 735630
+  },
+  {
+    "ticker": "ALKS",
+    "manager_count": 11,
+    "tier1_count": 7,
+    "tier2_count": 4,
+    "total_value": 645076213000,
+    "total_shares": 21997505
+  },
+  {
+    "ticker": "ALLO",
+    "manager_count": 3,
+    "tier1_count": 0,
+    "tier2_count": 3,
+    "total_value": 8367193000,
+    "total_shares": 6747736
+  },
+  {
+    "ticker": "ALMS",
+    "manager_count": 11,
+    "tier1_count": 8,
+    "tier2_count": 3,
+    "total_value": 72390559000,
+    "total_shares": 18941764
+  },
+  {
+    "ticker": "ALNY",
+    "manager_count": 11,
+    "tier1_count": 7,
+    "tier2_count": 4,
+    "total_value": 675963186000,
+    "total_shares": 1633213
+  },
+  {
+    "ticker": "ALT",
+    "manager_count": 6,
+    "tier1_count": 2,
+    "tier2_count": 4,
+    "total_value": 14287135000,
+    "total_shares": 3710577
+  },
+  {
+    "ticker": "ALVO",
+    "manager_count": 4,
+    "tier1_count": 0,
+    "tier2_count": 4,
+    "total_value": 2684964000,
+    "total_shares": 297684
+  },
+  {
+    "ticker": "AMGN",
+    "manager_count": 5,
+    "tier1_count": 1,
+    "tier2_count": 4,
+    "total_value": 324573432000,
+    "total_shares": 1158880
+  },
+  {
+    "ticker": "AMLX",
+    "manager_count": 14,
+    "tier1_count": 10,
+    "tier2_count": 4,
+    "total_value": 234374623000,
+    "total_shares": 18501815
+  },
+  {
+    "ticker": "AMPH",
+    "manager_count": 5,
+    "tier1_count": 1,
+    "tier2_count": 4,
+    "total_value": 53915256000,
+    "total_shares": 2061286
+  },
+  {
+    "ticker": "AMRX",
+    "manager_count": 4,
+    "tier1_count": 0,
+    "tier2_count": 4,
+    "total_value": 66176632000,
+    "total_shares": 7660440
+  },
+  {
+    "ticker": "ANAB",
+    "manager_count": 10,
+    "tier1_count": 6,
+    "tier2_count": 4,
+    "total_value": 436103058000,
+    "total_shares": 14501912
+  },
+  {
+    "ticker": "ANIP",
+    "manager_count": 6,
+    "tier1_count": 2,
+    "tier2_count": 4,
+    "total_value": 210981330000,
+    "total_shares": 2793433
+  },
+  {
+    "ticker": "ANNX",
+    "manager_count": 9,
+    "tier1_count": 5,
+    "tier2_count": 4,
+    "total_value": 53425058000,
+    "total_shares": 17548219
+  },
+  {
+    "ticker": "ANRO",
+    "manager_count": 4,
+    "tier1_count": 2,
+    "tier2_count": 2,
+    "total_value": 3203521000,
+    "total_shares": 796896
+  },
+  {
+    "ticker": "APGE",
+    "manager_count": 12,
+    "tier1_count": 8,
+    "tier2_count": 4,
+    "total_value": 276723581000,
+    "total_shares": 6565486
+  },
+  {
+    "ticker": "APLS",
+    "manager_count": 12,
+    "tier1_count": 8,
+    "tier2_count": 4,
+    "total_value": 639764016000,
+    "total_shares": 30976235
+  },
+  {
+    "ticker": "AQST",
+    "manager_count": 8,
+    "tier1_count": 4,
+    "tier2_count": 4,
+    "total_value": 97892348000,
+    "total_shares": 18727439
+  },
+  {
+    "ticker": "ARCT",
+    "manager_count": 3,
+    "tier1_count": 0,
+    "tier2_count": 3,
+    "total_value": 25095154000,
+    "total_shares": 1361647
+  },
+  {
+    "ticker": "ARDX",
+    "manager_count": 6,
+    "tier1_count": 1,
+    "tier2_count": 5,
+    "total_value": 81971375000,
+    "total_shares": 18551176
+  },
+  {
+    "ticker": "ARGX",
+    "manager_count": 10,
+    "tier1_count": 7,
+    "tier2_count": 3,
+    "total_value": 1248950403000,
+    "total_shares": 1742418
+  },
+  {
+    "ticker": "ARQT",
+    "manager_count": 7,
+    "tier1_count": 4,
+    "tier2_count": 3,
+    "total_value": 261895229000,
+    "total_shares": 14127034
+  },
+  {
+    "ticker": "ARTV",
+    "manager_count": 6,
+    "tier1_count": 4,
+    "tier2_count": 2,
+    "total_value": 33065141000,
+    "total_shares": 11680706
+  },
+  {
+    "ticker": "ARVN",
+    "manager_count": 10,
+    "tier1_count": 6,
+    "tier2_count": 4,
+    "total_value": 157853445000,
+    "total_shares": 17267767
+  },
+  {
+    "ticker": "ARWR",
+    "manager_count": 7,
+    "tier1_count": 3,
+    "tier2_count": 4,
+    "total_value": 125388683000,
+    "total_shares": 3675835
+  },
+  {
+    "ticker": "ASMB",
+    "manager_count": 4,
+    "tier1_count": 1,
+    "tier2_count": 3,
+    "total_value": 62034407000,
+    "total_shares": 2423219
+  },
+  {
+    "ticker": "ASND",
+    "manager_count": 13,
+    "tier1_count": 10,
+    "tier2_count": 3,
+    "total_value": 2421886195000,
+    "total_shares": 12213069
+  },
+  {
+    "ticker": "ATAI",
+    "manager_count": 5,
+    "tier1_count": 2,
+    "tier2_count": 3,
+    "total_value": 24138756000,
+    "total_shares": 4563092
+  },
+  {
+    "ticker": "ATXS",
+    "manager_count": 6,
+    "tier1_count": 3,
+    "tier2_count": 3,
+    "total_value": 77266408000,
+    "total_shares": 10798133
+  },
+  {
+    "ticker": "AUPH",
+    "manager_count": 5,
+    "tier1_count": 1,
+    "tier2_count": 4,
+    "total_value": 153466069000,
+    "total_shares": 13926742
+  },
+  {
+    "ticker": "AURA",
+    "manager_count": 4,
+    "tier1_count": 2,
+    "tier2_count": 2,
+    "total_value": 35602410000,
+    "total_shares": 5689653
+  },
+  {
+    "ticker": "AUTL",
+    "manager_count": 3,
+    "tier1_count": 1,
+    "tier2_count": 2,
+    "total_value": 47018219000,
+    "total_shares": 22125352
+  },
+  {
+    "ticker": "AVBP",
+    "manager_count": 6,
+    "tier1_count": 4,
+    "tier2_count": 2,
+    "total_value": 183503950000,
+    "total_shares": 8472844
+  },
+  {
+    "ticker": "AVIR",
+    "manager_count": 4,
+    "tier1_count": 1,
+    "tier2_count": 3,
+    "total_value": 24456480000,
+    "total_shares": 6955231
+  },
+  {
+    "ticker": "AVTR",
+    "manager_count": 6,
+    "tier1_count": 1,
+    "tier2_count": 5,
+    "total_value": 115569290000,
+    "total_shares": 14270905
   },
   {
     "ticker": "AVXL",
     "manager_count": 1,
     "tier1_count": 0,
     "tier2_count": 1,
-    "managers": [
-      "Balyasny Asset Management"
-    ]
+    "total_value": 3595800000,
+    "total_shares": 390000
   },
   {
     "ticker": "AXSM",
-    "manager_count": 10,
-    "tier1_count": 6,
-    "tier2_count": 4,
-    "managers": [
-      "Balyasny Asset Management",
-      "Boxer Capital",
-      "D.E. Shaw",
-      "Farallon Capital",
-      "Ghost Tree Capital",
-      "Orbimed Advisors",
-      "RTW Investments",
-      "Renaissance Technologies",
-      "Sectoral Asset Management",
-      "Sofinnova Investments"
-    ]
+    "manager_count": 15,
+    "tier1_count": 10,
+    "tier2_count": 5,
+    "total_value": 527014800000,
+    "total_shares": 4737011
   },
   {
     "ticker": "AZN",
-    "manager_count": 8,
+    "manager_count": 9,
     "tier1_count": 4,
-    "tier2_count": 4,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Farallon Capital",
-      "Orbimed Advisors",
-      "Renaissance Technologies",
-      "Sectoral Asset Management",
-      "Sofinnova Investments",
-      "Tang Capital Partners"
-    ]
+    "tier2_count": 5,
+    "total_value": 506221861000,
+    "total_shares": 12428689
+  },
+  {
+    "ticker": "BBIO",
+    "manager_count": 13,
+    "tier1_count": 7,
+    "tier2_count": 6,
+    "total_value": 1671922965000,
+    "total_shares": 32683850
   },
   {
     "ticker": "BBOT",
-    "manager_count": 8,
+    "manager_count": 5,
     "tier1_count": 4,
-    "tier2_count": 4,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Farallon Capital",
-      "Ghost Tree Capital",
-      "Renaissance Technologies",
-      "Rock Springs Capital Management",
-      "Sectoral Asset Management",
-      "Sofinnova Investments"
-    ]
+    "tier2_count": 1,
+    "total_value": 303624844000,
+    "total_shares": 26239041
   },
   {
     "ticker": "BCAX",
-    "manager_count": 5,
-    "tier1_count": 5,
-    "tier2_count": 0,
-    "managers": [
-      "Boxer Capital",
-      "Logos Global Management",
-      "RA Capital Management",
-      "Rock Springs Capital Management",
-      "Sectoral Asset Management"
-    ]
+    "manager_count": 7,
+    "tier1_count": 6,
+    "tier2_count": 1,
+    "total_value": 181392410000,
+    "total_shares": 11569703
   },
   {
     "ticker": "BCRX",
-    "manager_count": 7,
+    "manager_count": 8,
     "tier1_count": 3,
-    "tier2_count": 4,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Deerfield Management",
-      "Farallon Capital",
-      "Orbimed Advisors",
-      "Renaissance Technologies",
-      "Tang Capital Partners"
-    ]
+    "tier2_count": 5,
+    "total_value": 176182895000,
+    "total_shares": 21665442
+  },
+  {
+    "ticker": "BCYC",
+    "manager_count": 5,
+    "tier1_count": 3,
+    "tier2_count": 2,
+    "total_value": 108393190000,
+    "total_shares": 14299854
   },
   {
     "ticker": "BDTX",
-    "manager_count": 4,
+    "manager_count": 5,
     "tier1_count": 2,
-    "tier2_count": 2,
-    "managers": [
-      "Boxer Capital",
-      "D.E. Shaw",
-      "Renaissance Technologies",
-      "Tang Capital Partners"
-    ]
+    "tier2_count": 3,
+    "total_value": 16086079000,
+    "total_shares": 4169583
   },
   {
-    "ticker": "BIIB",
-    "manager_count": 8,
+    "ticker": "BEAM",
+    "manager_count": 7,
     "tier1_count": 4,
-    "tier2_count": 4,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Farallon Capital",
-      "Logos Global Management",
-      "Renaissance Technologies",
-      "Sectoral Asset Management",
-      "Suvretta Capital Management",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "BIOA",
-    "manager_count": 5,
-    "tier1_count": 3,
-    "tier2_count": 2,
-    "managers": [
-      "D.E. Shaw",
-      "Orbimed Advisors",
-      "Renaissance Technologies",
-      "Sofinnova Investments",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "BMEA",
-    "manager_count": 1,
-    "tier1_count": 0,
-    "tier2_count": 1,
-    "managers": [
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "BMRN",
-    "manager_count": 4,
-    "tier1_count": 1,
     "tier2_count": 3,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Renaissance Technologies",
-      "Sectoral Asset Management"
-    ]
+    "total_value": 332239248000,
+    "total_shares": 13829174
   },
   {
-    "ticker": "BNTX",
-    "manager_count": 4,
-    "tier1_count": 3,
-    "tier2_count": 1,
-    "managers": [
-      "Baker Bros Advisors",
-      "D.E. Shaw",
-      "Sectoral Asset Management",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "BRKR",
-    "manager_count": 4,
-    "tier1_count": 0,
-    "tier2_count": 4,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Farallon Capital",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "CATX",
-    "manager_count": 2,
-    "tier1_count": 2,
-    "tier2_count": 0,
-    "managers": [
-      "Ghost Tree Capital",
-      "Rock Springs Capital Management"
-    ]
-  },
-  {
-    "ticker": "CCCC",
-    "manager_count": 5,
-    "tier1_count": 2,
-    "tier2_count": 3,
-    "managers": [
-      "D.E. Shaw",
-      "Farallon Capital",
-      "Orbimed Advisors",
-      "Renaissance Technologies",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "CDTX",
+    "ticker": "BHVN",
     "manager_count": 10,
     "tier1_count": 6,
     "tier2_count": 4,
-    "managers": [
-      "Acuta Capital Partners",
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Farallon Capital",
-      "Logos Global Management",
-      "RA Capital Management",
-      "Renaissance Technologies",
-      "Rock Springs Capital Management",
-      "Sofinnova Investments"
-    ]
+    "total_value": 168344869000,
+    "total_shares": 10990612
   },
   {
-    "ticker": "CELC",
-    "manager_count": 8,
-    "tier1_count": 5,
+    "ticker": "BIIB",
+    "manager_count": 11,
+    "tier1_count": 6,
+    "tier2_count": 5,
+    "total_value": 681129923000,
+    "total_shares": 5311278
+  },
+  {
+    "ticker": "BIOA",
+    "manager_count": 7,
+    "tier1_count": 4,
     "tier2_count": 3,
-    "managers": [
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Deerfield Management",
-      "Orbimed Advisors",
-      "Renaissance Technologies",
-      "Sofinnova Investments",
-      "Tang Capital Partners"
-    ]
+    "total_value": 43389266000,
+    "total_shares": 7379127
   },
   {
-    "ticker": "CERS",
+    "ticker": "BLTE",
+    "manager_count": 5,
+    "tier1_count": 3,
+    "tier2_count": 2,
+    "total_value": 93342256000,
+    "total_shares": 1262329
+  },
+  {
+    "ticker": "BMEA",
     "manager_count": 3,
     "tier1_count": 1,
     "tier2_count": 2,
-    "managers": [
-      "Baker Bros Advisors",
-      "D.E. Shaw",
-      "Renaissance Technologies"
-    ]
+    "total_value": 9255603000,
+    "total_shares": 4632730
   },
   {
-    "ticker": "CGON",
-    "manager_count": 8,
-    "tier1_count": 5,
-    "tier2_count": 3,
-    "managers": [
-      "D.E. Shaw",
-      "Farallon Capital",
-      "Ghost Tree Capital",
-      "Opaleye Management",
-      "Orbimed Advisors",
-      "RTW Investments",
-      "Renaissance Technologies",
-      "Tang Capital Partners"
-    ]
+    "ticker": "BMRN",
+    "manager_count": 9,
+    "tier1_count": 4,
+    "tier2_count": 5,
+    "total_value": 1067784171000,
+    "total_shares": 19858541
   },
   {
-    "ticker": "CHRS",
-    "manager_count": 2,
-    "tier1_count": 1,
-    "tier2_count": 1,
-    "managers": [
-      "Renaissance Technologies",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "CLYM",
-    "manager_count": 4,
-    "tier1_count": 3,
-    "tier2_count": 1,
-    "managers": [
-      "Boxer Capital",
-      "RA Capital Management",
-      "Renaissance Technologies",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "COLL",
-    "manager_count": 2,
-    "tier1_count": 0,
-    "tier2_count": 2,
-    "managers": [
-      "D.E. Shaw",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "CRBU",
-    "manager_count": 2,
-    "tier1_count": 0,
-    "tier2_count": 2,
-    "managers": [
-      "Farallon Capital",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "CRNX",
+    "ticker": "BNTX",
     "manager_count": 7,
     "tier1_count": 5,
     "tier2_count": 2,
-    "managers": [
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "EcoR1 Capital",
-      "Farallon Capital",
-      "Ghost Tree Capital",
-      "Orbimed Advisors",
-      "RTW Investments"
-    ]
+    "total_value": 100691430000,
+    "total_shares": 1044482
   },
   {
-    "ticker": "CRSP",
+    "ticker": "BRKR",
+    "manager_count": 5,
+    "tier1_count": 0,
+    "tier2_count": 5,
+    "total_value": 38585806000,
+    "total_shares": 1139149
+  },
+  {
+    "ticker": "CABA",
     "manager_count": 5,
     "tier1_count": 3,
     "tier2_count": 2,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "EcoR1 Capital",
-      "Sectoral Asset Management",
-      "Tang Capital Partners"
-    ]
+    "total_value": 21108501000,
+    "total_shares": 8206017
   },
   {
-    "ticker": "CSTL",
-    "manager_count": 2,
-    "tier1_count": 0,
-    "tier2_count": 2,
-    "managers": [
-      "D.E. Shaw",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "CTKB",
-    "manager_count": 2,
-    "tier1_count": 0,
-    "tier2_count": 2,
-    "managers": [
-      "D.E. Shaw",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "CTNM",
+    "ticker": "CAI",
     "manager_count": 8,
-    "tier1_count": 6,
-    "tier2_count": 2,
-    "managers": [
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "Casdin Capital",
-      "RA Capital Management",
-      "Renaissance Technologies",
-      "Samsara BioCapital",
-      "Sectoral Asset Management",
-      "Suvretta Capital Management"
-    ]
-  },
-  {
-    "ticker": "CVAC",
-    "manager_count": 1,
-    "tier1_count": 0,
-    "tier2_count": 1,
-    "managers": [
-      "D.E. Shaw"
-    ]
-  },
-  {
-    "ticker": "DAWN",
-    "manager_count": 6,
-    "tier1_count": 3,
-    "tier2_count": 3,
-    "managers": [
-      "Balyasny Asset Management",
-      "Boxer Capital",
-      "D.E. Shaw",
-      "Deerfield Management",
-      "EcoR1 Capital",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "DNLI",
-    "manager_count": 3,
-    "tier1_count": 2,
-    "tier2_count": 1,
-    "managers": [
-      "Baker Bros Advisors",
-      "Casdin Capital",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "DNTH",
-    "manager_count": 8,
-    "tier1_count": 6,
-    "tier2_count": 2,
-    "managers": [
-      "Acuta Capital Partners",
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Great Point Partners",
-      "Logos Global Management",
-      "RA Capital Management",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "DSGN",
-    "manager_count": 6,
     "tier1_count": 4,
-    "tier2_count": 2,
-    "managers": [
-      "Baker Bros Advisors",
-      "D.E. Shaw",
-      "Logos Global Management",
-      "RA Capital Management",
-      "Renaissance Technologies",
-      "Tang Capital Partners"
-    ]
+    "tier2_count": 4,
+    "total_value": 278042775000,
+    "total_shares": 9198349
   },
   {
-    "ticker": "DYN",
+    "ticker": "CATX",
+    "manager_count": 4,
+    "tier1_count": 3,
+    "tier2_count": 1,
+    "total_value": 30732692000,
+    "total_shares": 6782015
+  },
+  {
+    "ticker": "CCCC",
+    "manager_count": 6,
+    "tier1_count": 2,
+    "tier2_count": 4,
+    "total_value": 20135558000,
+    "total_shares": 9089821
+  },
+  {
+    "ticker": "CDNA",
+    "manager_count": 7,
+    "tier1_count": 3,
+    "tier2_count": 4,
+    "total_value": 78265813000,
+    "total_shares": 4752829
+  },
+  {
+    "ticker": "CDTX",
+    "manager_count": 12,
+    "tier1_count": 7,
+    "tier2_count": 5,
+    "total_value": 557644314000,
+    "total_shares": 5946693
+  },
+  {
+    "ticker": "CDXS",
+    "manager_count": 6,
+    "tier1_count": 2,
+    "tier2_count": 4,
+    "total_value": 62192284000,
+    "total_shares": 25488641
+  },
+  {
+    "ticker": "CELC",
+    "manager_count": 10,
+    "tier1_count": 6,
+    "tier2_count": 4,
+    "total_value": 704005292000,
+    "total_shares": 14425899
+  },
+  {
+    "ticker": "CERS",
+    "manager_count": 4,
+    "tier1_count": 1,
+    "tier2_count": 3,
+    "total_value": 28291598000,
+    "total_shares": 19252006
+  },
+  {
+    "ticker": "CGEM",
+    "manager_count": 9,
+    "tier1_count": 6,
+    "tier2_count": 3,
+    "total_value": 92213590000,
+    "total_shares": 11248198
+  },
+  {
+    "ticker": "CGON",
     "manager_count": 11,
     "tier1_count": 7,
     "tier2_count": 4,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Farallon Capital",
-      "Ghost Tree Capital",
-      "Logos Global Management",
-      "Orbimed Advisors",
-      "RA Capital Management",
-      "RTW Investments",
-      "Renaissance Technologies",
-      "Rock Springs Capital Management",
-      "Sofinnova Investments"
-    ]
+    "total_value": 284305774000,
+    "total_shares": 7430733
   },
   {
-    "ticker": "EBS",
+    "ticker": "CHRS",
     "manager_count": 3,
     "tier1_count": 1,
     "tier2_count": 2,
-    "managers": [
-      "D.E. Shaw",
-      "Deerfield Management",
-      "Renaissance Technologies"
-    ]
+    "total_value": 9752857000,
+    "total_shares": 7002440
   },
   {
-    "ticker": "EDIT",
+    "ticker": "CLDX",
+    "manager_count": 9,
+    "tier1_count": 5,
+    "tier2_count": 4,
+    "total_value": 148189303000,
+    "total_shares": 5954156
+  },
+  {
+    "ticker": "CLLS",
+    "manager_count": 1,
+    "tier1_count": 0,
+    "tier2_count": 1,
+    "total_value": 164559000,
+    "total_shares": 57740
+  },
+  {
+    "ticker": "CLYM",
+    "manager_count": 6,
+    "tier1_count": 4,
+    "tier2_count": 2,
+    "total_value": 76745860000,
+    "total_shares": 34591504
+  },
+  {
+    "ticker": "CMPS",
+    "manager_count": 9,
+    "tier1_count": 5,
+    "tier2_count": 4,
+    "total_value": 142914577000,
+    "total_shares": 25378579
+  },
+  {
+    "ticker": "CNTA",
+    "manager_count": 15,
+    "tier1_count": 10,
+    "tier2_count": 5,
+    "total_value": 376509832000,
+    "total_shares": 16169361
+  },
+  {
+    "ticker": "COGT",
+    "manager_count": 12,
+    "tier1_count": 7,
+    "tier2_count": 5,
+    "total_value": 335763918000,
+    "total_shares": 23866875
+  },
+  {
+    "ticker": "COLL",
+    "manager_count": 3,
+    "tier1_count": 0,
+    "tier2_count": 3,
+    "total_value": 75881568000,
+    "total_shares": 2203358
+  },
+  {
+    "ticker": "CRBU",
+    "manager_count": 3,
+    "tier1_count": 0,
+    "tier2_count": 3,
+    "total_value": 9324875000,
+    "total_shares": 6200851
+  },
+  {
+    "ticker": "CRMD",
+    "manager_count": 6,
+    "tier1_count": 2,
+    "tier2_count": 4,
+    "total_value": 55502916000,
+    "total_shares": 4750321
+  },
+  {
+    "ticker": "CRNX",
+    "manager_count": 9,
+    "tier1_count": 6,
+    "tier2_count": 3,
+    "total_value": 550976414000,
+    "total_shares": 13321327
+  },
+  {
+    "ticker": "CRSP",
+    "manager_count": 7,
+    "tier1_count": 4,
+    "tier2_count": 3,
+    "total_value": 131440531000,
+    "total_shares": 2028724
+  },
+  {
+    "ticker": "CRVS",
+    "manager_count": 8,
+    "tier1_count": 4,
+    "tier2_count": 4,
+    "total_value": 87434005000,
+    "total_shares": 12149415
+  },
+  {
+    "ticker": "CSTL",
+    "manager_count": 3,
+    "tier1_count": 0,
+    "tier2_count": 3,
+    "total_value": 29812427000,
+    "total_shares": 1393779
+  },
+  {
+    "ticker": "CTKB",
+    "manager_count": 3,
+    "tier1_count": 0,
+    "tier2_count": 3,
+    "total_value": 15896405000,
+    "total_shares": 4602543
+  },
+  {
+    "ticker": "CTMX",
+    "manager_count": 10,
+    "tier1_count": 7,
+    "tier2_count": 3,
+    "total_value": 151655603000,
+    "total_shares": 47726208
+  },
+  {
+    "ticker": "CTNM",
+    "manager_count": 10,
+    "tier1_count": 7,
+    "tier2_count": 3,
+    "total_value": 91896528000,
+    "total_shares": 8027896
+  },
+  {
+    "ticker": "CVAC",
     "manager_count": 2,
     "tier1_count": 0,
     "tier2_count": 2,
-    "managers": [
-      "D.E. Shaw",
-      "Renaissance Technologies"
-    ]
+    "total_value": 1575569000,
+    "total_shares": 290160
+  },
+  {
+    "ticker": "CYTK",
+    "manager_count": 13,
+    "tier1_count": 8,
+    "tier2_count": 5,
+    "total_value": 607112132000,
+    "total_shares": 13802419
+  },
+  {
+    "ticker": "DAWN",
+    "manager_count": 7,
+    "tier1_count": 3,
+    "tier2_count": 4,
+    "total_value": 79856794000,
+    "total_shares": 10405491
+  },
+  {
+    "ticker": "DNA",
+    "manager_count": 5,
+    "tier1_count": 1,
+    "tier2_count": 4,
+    "total_value": 71740425000,
+    "total_shares": 5229856
+  },
+  {
+    "ticker": "DNLI",
+    "manager_count": 5,
+    "tier1_count": 3,
+    "tier2_count": 2,
+    "total_value": 94749224000,
+    "total_shares": 6532572
+  },
+  {
+    "ticker": "DNTH",
+    "manager_count": 11,
+    "tier1_count": 8,
+    "tier2_count": 3,
+    "total_value": 365755233000,
+    "total_shares": 10470802
+  },
+  {
+    "ticker": "DRUG",
+    "manager_count": 6,
+    "tier1_count": 3,
+    "tier2_count": 3,
+    "total_value": 112863935000,
+    "total_shares": 1860599
+  },
+  {
+    "ticker": "DSGN",
+    "manager_count": 7,
+    "tier1_count": 4,
+    "tier2_count": 3,
+    "total_value": 62466936000,
+    "total_shares": 8295742
+  },
+  {
+    "ticker": "DVAX",
+    "manager_count": 6,
+    "tier1_count": 3,
+    "tier2_count": 3,
+    "total_value": 280871018000,
+    "total_shares": 36751278
+  },
+  {
+    "ticker": "DYN",
+    "manager_count": 15,
+    "tier1_count": 10,
+    "tier2_count": 5,
+    "total_value": 297065214000,
+    "total_shares": 26505974
+  },
+  {
+    "ticker": "EBS",
+    "manager_count": 4,
+    "tier1_count": 1,
+    "tier2_count": 3,
+    "total_value": 11042957000,
+    "total_shares": 1531954
+  },
+  {
+    "ticker": "EDIT",
+    "manager_count": 3,
+    "tier1_count": 0,
+    "tier2_count": 3,
+    "total_value": 8963887000,
+    "total_shares": 3270019
+  },
+  {
+    "ticker": "ELDN",
+    "manager_count": 3,
+    "tier1_count": 1,
+    "tier2_count": 2,
+    "total_value": 11034427000,
+    "total_shares": 4087207
   },
   {
     "ticker": "ELVN",
-    "manager_count": 8,
-    "tier1_count": 7,
-    "tier2_count": 1,
-    "managers": [
-      "Ally Bridge Group",
-      "Baker Bros Advisors",
-      "Boxer Capital",
-      "Logos Global Management",
-      "Orbimed Advisors",
-      "RA Capital Management",
-      "Renaissance Technologies",
-      "Rock Springs Capital Management"
-    ]
+    "manager_count": 11,
+    "tier1_count": 9,
+    "tier2_count": 2,
+    "total_value": 242176556000,
+    "total_shares": 11708222
+  },
+  {
+    "ticker": "ENGN",
+    "manager_count": 2,
+    "tier1_count": 0,
+    "tier2_count": 2,
+    "total_value": 131908000,
+    "total_shares": 173622
+  },
+  {
+    "ticker": "ENTA",
+    "manager_count": 6,
+    "tier1_count": 2,
+    "tier2_count": 4,
+    "total_value": 46736379000,
+    "total_shares": 6016789
   },
   {
     "ticker": "EOLS",
+    "manager_count": 7,
+    "tier1_count": 4,
+    "tier2_count": 3,
+    "total_value": 100724870000,
+    "total_shares": 11245068
+  },
+  {
+    "ticker": "EPRX",
     "manager_count": 4,
-    "tier1_count": 2,
-    "tier2_count": 2,
-    "managers": [
-      "D.E. Shaw",
-      "Great Point Partners",
-      "Renaissance Technologies",
-      "Tang Capital Partners"
-    ]
+    "tier1_count": 3,
+    "tier2_count": 1,
+    "total_value": 25753500000,
+    "total_shares": 4365000
   },
   {
     "ticker": "ERAS",
-    "manager_count": 5,
+    "manager_count": 6,
     "tier1_count": 3,
-    "tier2_count": 2,
-    "managers": [
-      "Balyasny Asset Management",
-      "Logos Global Management",
-      "Renaissance Technologies",
-      "Suvretta Capital Management",
-      "Tang Capital Partners"
-    ]
+    "tier2_count": 3,
+    "total_value": 76703741000,
+    "total_shares": 35185202
   },
   {
-    "ticker": "EWTX",
-    "manager_count": 9,
-    "tier1_count": 8,
-    "tier2_count": 1,
-    "managers": [
-      "Baker Bros Advisors",
-      "D.E. Shaw",
-      "Deerfield Management",
-      "Ghost Tree Capital",
-      "Opaleye Management",
-      "Orbimed Advisors",
-      "RA Capital Management",
-      "Sofinnova Investments",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "EXEL",
-    "manager_count": 4,
-    "tier1_count": 0,
+    "ticker": "ESPR",
+    "manager_count": 5,
+    "tier1_count": 1,
     "tier2_count": 4,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Farallon Capital",
-      "Renaissance Technologies"
-    ]
+    "total_value": 7480984000,
+    "total_shares": 2823013
   },
   {
-    "ticker": "EYPT",
-    "manager_count": 5,
-    "tier1_count": 3,
-    "tier2_count": 2,
-    "managers": [
-      "Balyasny Asset Management",
-      "Orbimed Advisors",
-      "Renaissance Technologies",
-      "Rock Springs Capital Management",
-      "Suvretta Capital Management"
-    ]
-  },
-  {
-    "ticker": "FATE",
-    "manager_count": 5,
-    "tier1_count": 4,
-    "tier2_count": 1,
-    "managers": [
-      "Baker Bros Advisors",
-      "Boxer Capital",
-      "Redmile Group",
-      "Renaissance Technologies",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "FDMT",
+    "ticker": "ETON",
     "manager_count": 4,
     "tier1_count": 2,
     "tier2_count": 2,
-    "managers": [
-      "D.E. Shaw",
-      "RA Capital Management",
-      "Redmile Group",
-      "Renaissance Technologies"
-    ]
+    "total_value": 113670216000,
+    "total_shares": 5231027
+  },
+  {
+    "ticker": "EWTX",
+    "manager_count": 12,
+    "tier1_count": 10,
+    "tier2_count": 2,
+    "total_value": 745861142000,
+    "total_shares": 46568782
+  },
+  {
+    "ticker": "EXEL",
+    "manager_count": 6,
+    "tier1_count": 1,
+    "tier2_count": 5,
+    "total_value": 1567325730000,
+    "total_shares": 37352042
+  },
+  {
+    "ticker": "EYPT",
+    "manager_count": 7,
+    "tier1_count": 4,
+    "tier2_count": 3,
+    "total_value": 250751607000,
+    "total_shares": 17621511
+  },
+  {
+    "ticker": "FATE",
+    "manager_count": 6,
+    "tier1_count": 4,
+    "tier2_count": 2,
+    "total_value": 41524957000,
+    "total_shares": 24413033
+  },
+  {
+    "ticker": "FDMT",
+    "manager_count": 5,
+    "tier1_count": 2,
+    "tier2_count": 3,
+    "total_value": 52868097000,
+    "total_shares": 6148066
   },
   {
     "ticker": "FGEN",
     "manager_count": 1,
     "tier1_count": 0,
     "tier2_count": 1,
-    "managers": [
-      "Renaissance Technologies"
-    ]
+    "total_value": 358692000,
+    "total_shares": 29281
   },
   {
     "ticker": "FHTX",
-    "manager_count": 2,
+    "manager_count": 3,
     "tier1_count": 1,
-    "tier2_count": 1,
-    "managers": [
-      "Deerfield Management",
-      "Renaissance Technologies"
-    ]
+    "tier2_count": 2,
+    "total_value": 17371925000,
+    "total_shares": 3552541
   },
   {
     "ticker": "FLGT",
-    "manager_count": 2,
-    "tier1_count": 0,
-    "tier2_count": 2,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw"
-    ]
-  },
-  {
-    "ticker": "FTRE",
-    "manager_count": 4,
-    "tier1_count": 1,
-    "tier2_count": 3,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Renaissance Technologies",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "FULC",
-    "manager_count": 6,
-    "tier1_count": 3,
-    "tier2_count": 3,
-    "managers": [
-      "Acuta Capital Partners",
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "RA Capital Management",
-      "Renaissance Technologies",
-      "Suvretta Capital Management"
-    ]
-  },
-  {
-    "ticker": "GILD",
-    "manager_count": 5,
-    "tier1_count": 2,
-    "tier2_count": 3,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Renaissance Technologies",
-      "Sectoral Asset Management",
-      "Sofinnova Investments"
-    ]
-  },
-  {
-    "ticker": "GLUE",
-    "manager_count": 6,
-    "tier1_count": 3,
-    "tier2_count": 3,
-    "managers": [
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "Casdin Capital",
-      "D.E. Shaw",
-      "Renaissance Technologies",
-      "Suvretta Capital Management"
-    ]
-  },
-  {
-    "ticker": "GRFS",
-    "manager_count": 1,
-    "tier1_count": 0,
-    "tier2_count": 1,
-    "managers": [
-      "Farallon Capital"
-    ]
-  },
-  {
-    "ticker": "HALO",
-    "manager_count": 2,
-    "tier1_count": 0,
-    "tier2_count": 2,
-    "managers": [
-      "D.E. Shaw",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "HOWL",
-    "manager_count": 2,
-    "tier1_count": 1,
-    "tier2_count": 1,
-    "managers": [
-      "RA Capital Management",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "IDYA",
-    "manager_count": 9,
-    "tier1_count": 7,
-    "tier2_count": 2,
-    "managers": [
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "Boxer Capital",
-      "D.E. Shaw",
-      "Deerfield Management",
-      "Logos Global Management",
-      "Redmile Group",
-      "Sofinnova Investments",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "ILMN",
-    "manager_count": 5,
-    "tier1_count": 2,
-    "tier2_count": 3,
-    "managers": [
-      "Balyasny Asset Management",
-      "Casdin Capital",
-      "D.E. Shaw",
-      "Renaissance Technologies",
-      "Sectoral Asset Management"
-    ]
-  },
-  {
-    "ticker": "IMVT",
-    "manager_count": 10,
-    "tier1_count": 6,
-    "tier2_count": 4,
-    "managers": [
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "Boxer Capital",
-      "D.E. Shaw",
-      "Farallon Capital",
-      "Ghost Tree Capital",
-      "Great Point Partners",
-      "Logos Global Management",
-      "Renaissance Technologies",
-      "Rock Springs Capital Management"
-    ]
-  },
-  {
-    "ticker": "INBX",
-    "manager_count": 4,
-    "tier1_count": 2,
-    "tier2_count": 2,
-    "managers": [
-      "Acuta Capital Partners",
-      "D.E. Shaw",
-      "Renaissance Technologies",
-      "Sofinnova Investments"
-    ]
-  },
-  {
-    "ticker": "INCY",
-    "manager_count": 6,
-    "tier1_count": 3,
-    "tier2_count": 3,
-    "managers": [
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "Casdin Capital",
-      "D.E. Shaw",
-      "Renaissance Technologies",
-      "Sectoral Asset Management"
-    ]
-  },
-  {
-    "ticker": "INDV",
-    "manager_count": 2,
-    "tier1_count": 1,
-    "tier2_count": 1,
-    "managers": [
-      "D.E. Shaw",
-      "Deerfield Management"
-    ]
-  },
-  {
-    "ticker": "INSM",
-    "manager_count": 16,
-    "tier1_count": 12,
-    "tier2_count": 4,
-    "managers": [
-      "Acuta Capital Partners",
-      "Ally Bridge Group",
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Deerfield Management",
-      "Farallon Capital",
-      "Ghost Tree Capital",
-      "Orbimed Advisors",
-      "RTW Investments",
-      "Renaissance Technologies",
-      "Rock Springs Capital Management",
-      "Sectoral Asset Management",
-      "Sofinnova Investments",
-      "Suvretta Capital Management",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "IONS",
-    "manager_count": 1,
-    "tier1_count": 0,
-    "tier2_count": 1,
-    "managers": [
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "IOVA",
-    "manager_count": 6,
-    "tier1_count": 2,
-    "tier2_count": 4,
-    "managers": [
-      "Balyasny Asset Management",
-      "Boxer Capital",
-      "D.E. Shaw",
-      "Farallon Capital",
-      "Renaissance Technologies",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "IRON",
-    "manager_count": 10,
-    "tier1_count": 7,
-    "tier2_count": 3,
-    "managers": [
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Deerfield Management",
-      "Logos Global Management",
-      "Opaleye Management",
-      "Orbimed Advisors",
-      "RA Capital Management",
-      "Renaissance Technologies",
-      "Sofinnova Investments"
-    ]
-  },
-  {
-    "ticker": "IRWD",
-    "manager_count": 4,
-    "tier1_count": 0,
-    "tier2_count": 4,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Farallon Capital",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "JANX",
-    "manager_count": 9,
-    "tier1_count": 7,
-    "tier2_count": 2,
-    "managers": [
-      "Balyasny Asset Management",
-      "EcoR1 Capital",
-      "Farallon Capital",
-      "Ghost Tree Capital",
-      "Logos Global Management",
-      "Orbimed Advisors",
-      "RA Capital Management",
-      "Rock Springs Capital Management",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "JAZZ",
-    "manager_count": 10,
-    "tier1_count": 6,
-    "tier2_count": 4,
-    "managers": [
-      "Acuta Capital Partners",
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "EcoR1 Capital",
-      "Farallon Capital",
-      "Logos Global Management",
-      "Renaissance Technologies",
-      "Sectoral Asset Management",
-      "Sofinnova Investments",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "KALA",
-    "manager_count": 2,
-    "tier1_count": 1,
-    "tier2_count": 1,
-    "managers": [
-      "Baker Bros Advisors",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "KALV",
-    "manager_count": 5,
-    "tier1_count": 4,
-    "tier2_count": 1,
-    "managers": [
-      "Boxer Capital",
-      "D.E. Shaw",
-      "Great Point Partners",
-      "Suvretta Capital Management",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "KMDA",
-    "manager_count": 1,
-    "tier1_count": 0,
-    "tier2_count": 1,
-    "managers": [
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "KOD",
-    "manager_count": 5,
-    "tier1_count": 2,
-    "tier2_count": 3,
-    "managers": [
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Renaissance Technologies",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "KROS",
-    "manager_count": 6,
-    "tier1_count": 4,
-    "tier2_count": 2,
-    "managers": [
-      "D.E. Shaw",
-      "Logos Global Management",
-      "Orbimed Advisors",
-      "Redmile Group",
-      "Renaissance Technologies",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "KRYS",
-    "manager_count": 8,
-    "tier1_count": 5,
-    "tier2_count": 3,
-    "managers": [
-      "Acuta Capital Partners",
-      "D.E. Shaw",
-      "Farallon Capital",
-      "Ghost Tree Capital",
-      "Logos Global Management",
-      "Orbimed Advisors",
-      "Redmile Group",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "KYMR",
-    "manager_count": 7,
-    "tier1_count": 7,
-    "tier2_count": 0,
-    "managers": [
-      "Baker Bros Advisors",
-      "Boxer Capital",
-      "Deerfield Management",
-      "Logos Global Management",
-      "Redmile Group",
-      "Rock Springs Capital Management",
-      "Suvretta Capital Management"
-    ]
-  },
-  {
-    "ticker": "KYTX",
-    "manager_count": 1,
-    "tier1_count": 0,
-    "tier2_count": 1,
-    "managers": [
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "LCTX",
     "manager_count": 3,
     "tier1_count": 0,
     "tier2_count": 3,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Renaissance Technologies"
-    ]
+    "total_value": 46347484000,
+    "total_shares": 2052711
   },
   {
-    "ticker": "LEGN",
+    "ticker": "FOLD",
+    "manager_count": 11,
+    "tier1_count": 6,
+    "tier2_count": 5,
+    "total_value": 275375870000,
+    "total_shares": 37195616
+  },
+  {
+    "ticker": "FTRE",
+    "manager_count": 5,
+    "tier1_count": 1,
+    "tier2_count": 4,
+    "total_value": 33003924000,
+    "total_shares": 3919706
+  },
+  {
+    "ticker": "FULC",
+    "manager_count": 7,
+    "tier1_count": 3,
+    "tier2_count": 4,
+    "total_value": 168840424000,
+    "total_shares": 18352220
+  },
+  {
+    "ticker": "GBIO",
+    "manager_count": 5,
+    "tier1_count": 2,
+    "tier2_count": 3,
+    "total_value": 1899599000,
+    "total_shares": 8499678
+  },
+  {
+    "ticker": "GERN",
+    "manager_count": 8,
+    "tier1_count": 4,
+    "tier2_count": 4,
+    "total_value": 202465329000,
+    "total_shares": 130595779
+  },
+  {
+    "ticker": "GH",
+    "manager_count": 8,
+    "tier1_count": 3,
+    "tier2_count": 5,
+    "total_value": 651665024000,
+    "total_shares": 95327577
+  },
+  {
+    "ticker": "GHRS",
+    "manager_count": 6,
+    "tier1_count": 5,
+    "tier2_count": 1,
+    "total_value": 253899748000,
+    "total_shares": 18050332
+  },
+  {
+    "ticker": "GILD",
+    "manager_count": 6,
+    "tier1_count": 2,
+    "tier2_count": 4,
+    "total_value": 973016894000,
+    "total_shares": 8774728
+  },
+  {
+    "ticker": "GLPG",
+    "manager_count": 6,
+    "tier1_count": 3,
+    "tier2_count": 3,
+    "total_value": 228145279000,
+    "total_shares": 6712002
+  },
+  {
+    "ticker": "GLUE",
+    "manager_count": 7,
+    "tier1_count": 3,
+    "tier2_count": 4,
+    "total_value": 71591967000,
+    "total_shares": 9661534
+  },
+  {
+    "ticker": "GMAB",
+    "manager_count": 5,
+    "tier1_count": 3,
+    "tier2_count": 2,
+    "total_value": 128841058000,
+    "total_shares": 4539106
+  },
+  {
+    "ticker": "GOSS",
+    "manager_count": 10,
+    "tier1_count": 6,
+    "tier2_count": 4,
+    "total_value": 78422084000,
+    "total_shares": 29818283
+  },
+  {
+    "ticker": "GPCR",
+    "manager_count": 15,
+    "tier1_count": 11,
+    "tier2_count": 4,
+    "total_value": 427309045000,
+    "total_shares": 15693432
+  },
+  {
+    "ticker": "GRAL",
+    "manager_count": 5,
+    "tier1_count": 1,
+    "tier2_count": 4,
+    "total_value": 197086105000,
+    "total_shares": 3369950
+  },
+  {
+    "ticker": "GRFS",
+    "manager_count": 2,
+    "tier1_count": 0,
+    "tier2_count": 2,
+    "total_value": 87673541000,
+    "total_shares": 9695551
+  },
+  {
+    "ticker": "HALO",
+    "manager_count": 3,
+    "tier1_count": 0,
+    "tier2_count": 3,
+    "total_value": 340073547000,
+    "total_shares": 4636945
+  },
+  {
+    "ticker": "HOWL",
+    "manager_count": 3,
+    "tier1_count": 1,
+    "tier2_count": 2,
+    "total_value": 14819893000,
+    "total_shares": 7834002
+  },
+  {
+    "ticker": "HRMY",
+    "manager_count": 6,
+    "tier1_count": 3,
+    "tier2_count": 3,
+    "total_value": 70387051000,
+    "total_shares": 2409824
+  },
+  {
+    "ticker": "HROW",
+    "manager_count": 4,
+    "tier1_count": 1,
+    "tier2_count": 3,
+    "total_value": 201334462000,
+    "total_shares": 4268719
+  },
+  {
+    "ticker": "HRTX",
+    "manager_count": 5,
+    "tier1_count": 2,
+    "tier2_count": 3,
+    "total_value": 22334013000,
+    "total_shares": 12453185
+  },
+  {
+    "ticker": "HUMA",
+    "manager_count": 1,
+    "tier1_count": 0,
+    "tier2_count": 1,
+    "total_value": 5335659000,
+    "total_shares": 2552947
+  },
+  {
+    "ticker": "IBRX",
+    "manager_count": 5,
+    "tier1_count": 1,
+    "tier2_count": 4,
+    "total_value": 17892907000,
+    "total_shares": 6848111
+  },
+  {
+    "ticker": "IDYA",
     "manager_count": 10,
     "tier1_count": 7,
     "tier2_count": 3,
-    "managers": [
-      "Balyasny Asset Management",
-      "Boxer Capital",
-      "Deerfield Management",
-      "Farallon Capital",
-      "Great Point Partners",
-      "Logos Global Management",
-      "Renaissance Technologies",
-      "Sectoral Asset Management",
-      "Suvretta Capital Management",
-      "Tang Capital Partners"
-    ]
+    "total_value": 403897712000,
+    "total_shares": 16644428
+  },
+  {
+    "ticker": "IKT",
+    "manager_count": 1,
+    "tier1_count": 1,
+    "tier2_count": 0,
+    "total_value": 10592971000,
+    "total_shares": 5432293
+  },
+  {
+    "ticker": "ILMN",
+    "manager_count": 6,
+    "tier1_count": 2,
+    "tier2_count": 4,
+    "total_value": 214964354000,
+    "total_shares": 2260141
+  },
+  {
+    "ticker": "IMCR",
+    "manager_count": 8,
+    "tier1_count": 6,
+    "tier2_count": 2,
+    "total_value": 521340422000,
+    "total_shares": 43636079
+  },
+  {
+    "ticker": "IMMP",
+    "manager_count": 1,
+    "tier1_count": 0,
+    "tier2_count": 1,
+    "total_value": 86270000,
+    "total_shares": 49297
+  },
+  {
+    "ticker": "IMRX",
+    "manager_count": 4,
+    "tier1_count": 2,
+    "tier2_count": 2,
+    "total_value": 9188767000,
+    "total_shares": 1312681
+  },
+  {
+    "ticker": "IMTX",
+    "manager_count": 1,
+    "tier1_count": 0,
+    "tier2_count": 1,
+    "total_value": 475000,
+    "total_shares": 792353
+  },
+  {
+    "ticker": "IMVT",
+    "manager_count": 13,
+    "tier1_count": 8,
+    "tier2_count": 5,
+    "total_value": 340580403000,
+    "total_shares": 20349065
+  },
+  {
+    "ticker": "INBX",
+    "manager_count": 7,
+    "tier1_count": 3,
+    "tier2_count": 4,
+    "total_value": 131003546000,
+    "total_shares": 3889654
+  },
+  {
+    "ticker": "INCY",
+    "manager_count": 7,
+    "tier1_count": 3,
+    "tier2_count": 4,
+    "total_value": 3032409357000,
+    "total_shares": 35848365
+  },
+  {
+    "ticker": "INDV",
+    "manager_count": 4,
+    "tier1_count": 2,
+    "tier2_count": 2,
+    "total_value": 227150647000,
+    "total_shares": 10395307
+  },
+  {
+    "ticker": "INSM",
+    "manager_count": 22,
+    "tier1_count": 17,
+    "tier2_count": 5,
+    "total_value": 3190916179000,
+    "total_shares": 23434993
+  },
+  {
+    "ticker": "INVA",
+    "manager_count": 4,
+    "tier1_count": 0,
+    "tier2_count": 4,
+    "total_value": 161092188000,
+    "total_shares": 8018526
+  },
+  {
+    "ticker": "IONS",
+    "manager_count": 2,
+    "tier1_count": 0,
+    "tier2_count": 2,
+    "total_value": 8465225000,
+    "total_shares": 23655
+  },
+  {
+    "ticker": "IOVA",
+    "manager_count": 8,
+    "tier1_count": 3,
+    "tier2_count": 5,
+    "total_value": 53938993000,
+    "total_shares": 25995546
+  },
+  {
+    "ticker": "IRON",
+    "manager_count": 12,
+    "tier1_count": 8,
+    "tier2_count": 4,
+    "total_value": 386072335000,
+    "total_shares": 6000626
+  },
+  {
+    "ticker": "IRWD",
+    "manager_count": 5,
+    "tier1_count": 0,
+    "tier2_count": 5,
+    "total_value": 12224896000,
+    "total_shares": 9924359
+  },
+  {
+    "ticker": "IVVD",
+    "manager_count": 5,
+    "tier1_count": 4,
+    "tier2_count": 1,
+    "total_value": 29515110000,
+    "total_shares": 29837011
+  },
+  {
+    "ticker": "JANX",
+    "manager_count": 12,
+    "tier1_count": 9,
+    "tier2_count": 3,
+    "total_value": 452669477000,
+    "total_shares": 18591079
+  },
+  {
+    "ticker": "JAZZ",
+    "manager_count": 12,
+    "tier1_count": 7,
+    "tier2_count": 5,
+    "total_value": 644460369000,
+    "total_shares": 6192947
+  },
+  {
+    "ticker": "JBIO",
+    "manager_count": 10,
+    "tier1_count": 10,
+    "tier2_count": 0,
+    "total_value": 90114248000,
+    "total_shares": 9106565
+  },
+  {
+    "ticker": "KALA",
+    "manager_count": 4,
+    "tier1_count": 3,
+    "tier2_count": 1,
+    "total_value": 8937129000,
+    "total_shares": 1877548
+  },
+  {
+    "ticker": "KALV",
+    "manager_count": 6,
+    "tier1_count": 4,
+    "tier2_count": 2,
+    "total_value": 167380410000,
+    "total_shares": 13845623
+  },
+  {
+    "ticker": "KMDA",
+    "manager_count": 2,
+    "tier1_count": 0,
+    "tier2_count": 2,
+    "total_value": 8231306000,
+    "total_shares": 1062104
+  },
+  {
+    "ticker": "KNSA",
+    "manager_count": 4,
+    "tier1_count": 2,
+    "tier2_count": 2,
+    "total_value": 276747545000,
+    "total_shares": 7127158
+  },
+  {
+    "ticker": "KOD",
+    "manager_count": 7,
+    "tier1_count": 3,
+    "tier2_count": 4,
+    "total_value": 310147427000,
+    "total_shares": 18946086
+  },
+  {
+    "ticker": "KROS",
+    "manager_count": 7,
+    "tier1_count": 4,
+    "tier2_count": 3,
+    "total_value": 98359776000,
+    "total_shares": 6529695
+  },
+  {
+    "ticker": "KRYS",
+    "manager_count": 10,
+    "tier1_count": 6,
+    "tier2_count": 4,
+    "total_value": 198805608000,
+    "total_shares": 1170446
+  },
+  {
+    "ticker": "KURA",
+    "manager_count": 9,
+    "tier1_count": 5,
+    "tier2_count": 4,
+    "total_value": 152895056000,
+    "total_shares": 17572595
+  },
+  {
+    "ticker": "KYMR",
+    "manager_count": 9,
+    "tier1_count": 8,
+    "tier2_count": 1,
+    "total_value": 531842131000,
+    "total_shares": 9717107
+  },
+  {
+    "ticker": "KYTX",
+    "manager_count": 2,
+    "tier1_count": 0,
+    "tier2_count": 2,
+    "total_value": 4297494000,
+    "total_shares": 716249
+  },
+  {
+    "ticker": "LAB",
+    "manager_count": 3,
+    "tier1_count": 1,
+    "tier2_count": 2,
+    "total_value": 38869591000,
+    "total_shares": 136911
+  },
+  {
+    "ticker": "LCTX",
+    "manager_count": 4,
+    "tier1_count": 0,
+    "tier2_count": 4,
+    "total_value": 19407244000,
+    "total_shares": 482861
+  },
+  {
+    "ticker": "LEGN",
+    "manager_count": 11,
+    "tier1_count": 7,
+    "tier2_count": 4,
+    "total_value": 407188823000,
+    "total_shares": 11555368
   },
   {
     "ticker": "LENZ",
     "manager_count": 7,
     "tier1_count": 7,
     "tier2_count": 0,
-    "managers": [
-      "Ally Bridge Group",
-      "RA Capital Management",
-      "RTW Investments",
-      "Rock Springs Capital Management",
-      "Samsara BioCapital",
-      "Sectoral Asset Management",
-      "Tang Capital Partners"
-    ]
+    "total_value": 342363960000,
+    "total_shares": 7839634
   },
   {
     "ticker": "LFCR",
-    "manager_count": 1,
+    "manager_count": 2,
     "tier1_count": 0,
-    "tier2_count": 1,
-    "managers": [
-      "Balyasny Asset Management"
-    ]
+    "tier2_count": 2,
+    "total_value": 1095934000,
+    "total_shares": 148904
   },
   {
     "ticker": "LGND",
     "manager_count": 1,
     "tier1_count": 0,
     "tier2_count": 1,
-    "managers": [
-      "D.E. Shaw"
-    ]
+    "total_value": 3102430000,
+    "total_shares": 17514
+  },
+  {
+    "ticker": "LQDA",
+    "manager_count": 10,
+    "tier1_count": 5,
+    "tier2_count": 5,
+    "total_value": 372633740000,
+    "total_shares": 17185535
   },
   {
     "ticker": "LRMR",
-    "manager_count": 8,
+    "manager_count": 9,
     "tier1_count": 6,
-    "tier2_count": 2,
-    "managers": [
-      "Balyasny Asset Management",
-      "Deerfield Management",
-      "Ghost Tree Capital",
-      "Logos Global Management",
-      "Opaleye Management",
-      "RA Capital Management",
-      "RTW Investments",
-      "Renaissance Technologies"
-    ]
+    "tier2_count": 3,
+    "total_value": 167946340000,
+    "total_shares": 52240198
   },
   {
     "ticker": "LXEO",
-    "manager_count": 4,
-    "tier1_count": 1,
-    "tier2_count": 3,
-    "managers": [
-      "Ally Bridge Group",
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Renaissance Technologies"
-    ]
+    "manager_count": 6,
+    "tier1_count": 2,
+    "tier2_count": 4,
+    "total_value": 46841657000,
+    "total_shares": 7396685
   },
   {
     "ticker": "LYEL",
-    "manager_count": 3,
+    "manager_count": 4,
     "tier1_count": 2,
-    "tier2_count": 1,
-    "managers": [
-      "Orbimed Advisors",
-      "Renaissance Technologies",
-      "Venbio Partners"
-    ]
+    "tier2_count": 2,
+    "total_value": 11604406000,
+    "total_shares": 714557
+  },
+  {
+    "ticker": "MAZE",
+    "manager_count": 5,
+    "tier1_count": 3,
+    "tier2_count": 2,
+    "total_value": 167375349000,
+    "total_shares": 6454892
   },
   {
     "ticker": "MBX",
-    "manager_count": 8,
-    "tier1_count": 7,
-    "tier2_count": 1,
-    "managers": [
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "EcoR1 Capital",
-      "Opaleye Management",
-      "Orbimed Advisors",
-      "RA Capital Management",
-      "Rock Springs Capital Management",
-      "Sectoral Asset Management"
-    ]
+    "manager_count": 11,
+    "tier1_count": 9,
+    "tier2_count": 2,
+    "total_value": 217650990000,
+    "total_shares": 12568688
   },
   {
     "ticker": "MCRB",
     "manager_count": 1,
     "tier1_count": 1,
     "tier2_count": 0,
-    "managers": [
-      "Tang Capital Partners"
-    ]
+    "total_value": 154662000,
+    "total_shares": 13921
   },
   {
     "ticker": "MDGL",
-    "manager_count": 11,
-    "tier1_count": 7,
-    "tier2_count": 4,
-    "managers": [
-      "Ally Bridge Group",
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "EcoR1 Capital",
-      "Farallon Capital",
-      "Logos Global Management",
-      "RTW Investments",
-      "Renaissance Technologies",
-      "Rock Springs Capital Management",
-      "Sectoral Asset Management"
-    ]
+    "manager_count": 13,
+    "tier1_count": 8,
+    "tier2_count": 5,
+    "total_value": 2172299961000,
+    "total_shares": 4763345
+  },
+  {
+    "ticker": "MEDP",
+    "manager_count": 5,
+    "tier1_count": 2,
+    "tier2_count": 3,
+    "total_value": 622414804000,
+    "total_shares": 1345414
+  },
+  {
+    "ticker": "MESO",
+    "manager_count": 1,
+    "tier1_count": 0,
+    "tier2_count": 1,
+    "total_value": 351562000,
+    "total_shares": 32283
+  },
+  {
+    "ticker": "MGTX",
+    "manager_count": 4,
+    "tier1_count": 1,
+    "tier2_count": 3,
+    "total_value": 126967132000,
+    "total_shares": 15471247
   },
   {
     "ticker": "MIRM",
-    "manager_count": 6,
-    "tier1_count": 2,
-    "tier2_count": 4,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Farallon Capital",
-      "Renaissance Technologies",
-      "Rock Springs Capital Management",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "MLYS",
-    "manager_count": 11,
-    "tier1_count": 7,
-    "tier2_count": 4,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Farallon Capital",
-      "Orbimed Advisors",
-      "RA Capital Management",
-      "Renaissance Technologies",
-      "Rock Springs Capital Management",
-      "Samsara BioCapital",
-      "Sectoral Asset Management",
-      "Suvretta Capital Management",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "MNKD",
-    "manager_count": 3,
-    "tier1_count": 0,
-    "tier2_count": 3,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "MNMD",
-    "manager_count": 5,
-    "tier1_count": 3,
-    "tier2_count": 2,
-    "managers": [
-      "Ally Bridge Group",
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Orbimed Advisors",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "MRNA",
-    "manager_count": 7,
-    "tier1_count": 4,
-    "tier2_count": 3,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Deerfield Management",
-      "Renaissance Technologies",
-      "Sectoral Asset Management",
-      "Suvretta Capital Management",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "MRSN",
-    "manager_count": 3,
-    "tier1_count": 2,
-    "tier2_count": 1,
-    "managers": [
-      "Boxer Capital",
-      "Renaissance Technologies",
-      "Rock Springs Capital Management"
-    ]
-  },
-  {
-    "ticker": "MRUS",
-    "manager_count": 12,
-    "tier1_count": 9,
-    "tier2_count": 3,
-    "managers": [
-      "Ally Bridge Group",
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "Boxer Capital",
-      "D.E. Shaw",
-      "Deerfield Management",
-      "Farallon Capital",
-      "RTW Investments",
-      "Rock Springs Capital Management",
-      "Sectoral Asset Management",
-      "Sofinnova Investments",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "MRVI",
-    "manager_count": 2,
-    "tier1_count": 0,
-    "tier2_count": 2,
-    "managers": [
-      "Balyasny Asset Management",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "MYGN",
-    "manager_count": 4,
-    "tier1_count": 1,
-    "tier2_count": 3,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Deerfield Management",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "NAUT",
-    "manager_count": 1,
-    "tier1_count": 0,
-    "tier2_count": 1,
-    "managers": [
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "NBIX",
-    "manager_count": 9,
-    "tier1_count": 7,
-    "tier2_count": 2,
-    "managers": [
-      "Balyasny Asset Management",
-      "Deerfield Management",
-      "Logos Global Management",
-      "Orbimed Advisors",
-      "RTW Investments",
-      "Renaissance Technologies",
-      "Rock Springs Capital Management",
-      "Sectoral Asset Management",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "NGNE",
-    "manager_count": 10,
-    "tier1_count": 9,
-    "tier2_count": 1,
-    "managers": [
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "Casdin Capital",
-      "EcoR1 Capital",
-      "Ghost Tree Capital",
-      "Great Point Partners",
-      "RTW Investments",
-      "Redmile Group",
-      "Rock Springs Capital Management",
-      "Samsara BioCapital"
-    ]
-  },
-  {
-    "ticker": "NKTX",
-    "manager_count": 5,
-    "tier1_count": 4,
-    "tier2_count": 1,
-    "managers": [
-      "Boxer Capital",
-      "RA Capital Management",
-      "Renaissance Technologies",
-      "Samsara BioCapital",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "NMRA",
-    "manager_count": 3,
-    "tier1_count": 2,
-    "tier2_count": 1,
-    "managers": [
-      "Baker Bros Advisors",
-      "Renaissance Technologies",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "NRIX",
-    "manager_count": 5,
-    "tier1_count": 3,
-    "tier2_count": 2,
-    "managers": [
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "Boxer Capital",
-      "Redmile Group",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "NTLA",
-    "manager_count": 6,
-    "tier1_count": 2,
-    "tier2_count": 4,
-    "managers": [
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Farallon Capital",
-      "Ghost Tree Capital",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "NTRA",
     "manager_count": 8,
-    "tier1_count": 4,
-    "tier2_count": 4,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Farallon Capital",
-      "Orbimed Advisors",
-      "RTW Investments",
-      "Renaissance Technologies",
-      "Sofinnova Investments",
-      "Suvretta Capital Management"
-    ]
-  },
-  {
-    "ticker": "NUVL",
-    "manager_count": 9,
-    "tier1_count": 6,
-    "tier2_count": 3,
-    "managers": [
-      "Baker Bros Advisors",
-      "Boxer Capital",
-      "D.E. Shaw",
-      "Deerfield Management",
-      "Farallon Capital",
-      "RA Capital Management",
-      "Renaissance Technologies",
-      "Rock Springs Capital Management",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "OBIO",
-    "manager_count": 3,
-    "tier1_count": 2,
-    "tier2_count": 1,
-    "managers": [
-      "Boxer Capital",
-      "RTW Investments",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "OCGN",
-    "manager_count": 1,
-    "tier1_count": 0,
-    "tier2_count": 1,
-    "managers": [
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "OCUL",
-    "manager_count": 7,
-    "tier1_count": 4,
-    "tier2_count": 3,
-    "managers": [
-      "Acuta Capital Partners",
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Logos Global Management",
-      "Opaleye Management",
-      "Renaissance Technologies",
-      "Rock Springs Capital Management"
-    ]
-  },
-  {
-    "ticker": "OMER",
-    "manager_count": 2,
-    "tier1_count": 0,
-    "tier2_count": 2,
-    "managers": [
-      "D.E. Shaw",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "ONC",
-    "manager_count": 5,
     "tier1_count": 3,
-    "tier2_count": 2,
-    "managers": [
-      "Baker Bros Advisors",
-      "Boxer Capital",
-      "D.E. Shaw",
-      "Farallon Capital",
-      "Sectoral Asset Management"
-    ]
+    "tier2_count": 5,
+    "total_value": 281456591000,
+    "total_shares": 3839266
   },
   {
-    "ticker": "OPCH",
-    "manager_count": 2,
-    "tier1_count": 0,
-    "tier2_count": 2,
-    "managers": [
-      "D.E. Shaw",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "OPK",
-    "manager_count": 1,
-    "tier1_count": 0,
-    "tier2_count": 1,
-    "managers": [
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "ORKA",
-    "manager_count": 4,
-    "tier1_count": 2,
-    "tier2_count": 2,
-    "managers": [
-      "D.E. Shaw",
-      "Great Point Partners",
-      "RTW Investments",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "PAHC",
-    "manager_count": 3,
-    "tier1_count": 0,
-    "tier2_count": 3,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "PBYI",
-    "manager_count": 3,
-    "tier1_count": 1,
-    "tier2_count": 2,
-    "managers": [
-      "D.E. Shaw",
-      "Renaissance Technologies",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "PCVX",
+    "ticker": "MLTX",
     "manager_count": 11,
     "tier1_count": 8,
     "tier2_count": 3,
-    "managers": [
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Deerfield Management",
-      "Ghost Tree Capital",
-      "Logos Global Management",
-      "RA Capital Management",
-      "Renaissance Technologies",
-      "Rock Springs Capital Management",
-      "Sectoral Asset Management",
-      "Tang Capital Partners"
-    ]
+    "total_value": 483059975000,
+    "total_shares": 10491191
   },
   {
-    "ticker": "PEPG",
-    "manager_count": 8,
-    "tier1_count": 6,
-    "tier2_count": 2,
-    "managers": [
-      "Balyasny Asset Management",
-      "EcoR1 Capital",
-      "Logos Global Management",
-      "Opaleye Management",
-      "RA Capital Management",
-      "RTW Investments",
-      "Renaissance Technologies",
-      "Suvretta Capital Management"
-    ]
+    "ticker": "MLYS",
+    "manager_count": 12,
+    "tier1_count": 7,
+    "tier2_count": 5,
+    "total_value": 787157911000,
+    "total_shares": 21250470
   },
   {
-    "ticker": "PHAT",
-    "manager_count": 2,
-    "tier1_count": 1,
-    "tier2_count": 1,
-    "managers": [
-      "Balyasny Asset Management",
-      "Ghost Tree Capital"
-    ]
-  },
-  {
-    "ticker": "PRAX",
-    "manager_count": 8,
-    "tier1_count": 6,
-    "tier2_count": 2,
-    "managers": [
-      "Acuta Capital Partners",
-      "Ally Bridge Group",
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Deerfield Management",
-      "Logos Global Management",
-      "Sofinnova Investments"
-    ]
-  },
-  {
-    "ticker": "PRLD",
+    "ticker": "MNKD",
     "manager_count": 4,
-    "tier1_count": 3,
-    "tier2_count": 1,
-    "managers": [
-      "Baker Bros Advisors",
-      "Boxer Capital",
-      "Orbimed Advisors",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "PRME",
-    "manager_count": 8,
-    "tier1_count": 4,
-    "tier2_count": 4,
-    "managers": [
-      "Balyasny Asset Management",
-      "Casdin Capital",
-      "D.E. Shaw",
-      "EcoR1 Capital",
-      "Farallon Capital",
-      "RA Capital Management",
-      "Redmile Group",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "PRVA",
-    "manager_count": 4,
-    "tier1_count": 1,
-    "tier2_count": 3,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Renaissance Technologies",
-      "Sectoral Asset Management"
-    ]
-  },
-  {
-    "ticker": "PSNL",
-    "manager_count": 1,
     "tier1_count": 0,
-    "tier2_count": 1,
-    "managers": [
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "PTGX",
-    "manager_count": 5,
-    "tier1_count": 3,
-    "tier2_count": 2,
-    "managers": [
-      "Farallon Capital",
-      "Logos Global Management",
-      "Opaleye Management",
-      "RTW Investments",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "PYXS",
-    "manager_count": 2,
-    "tier1_count": 1,
-    "tier2_count": 1,
-    "managers": [
-      "Renaissance Technologies",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "QTRX",
-    "manager_count": 3,
-    "tier1_count": 0,
-    "tier2_count": 3,
-    "managers": [
-      "Balyasny Asset Management",
-      "Farallon Capital",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "RAPP",
-    "manager_count": 6,
-    "tier1_count": 5,
-    "tier2_count": 1,
-    "managers": [
-      "Acuta Capital Partners",
-      "Baker Bros Advisors",
-      "Logos Global Management",
-      "Renaissance Technologies",
-      "Sectoral Asset Management",
-      "Sofinnova Investments"
-    ]
-  },
-  {
-    "ticker": "RARE",
-    "manager_count": 9,
-    "tier1_count": 5,
     "tier2_count": 4,
-    "managers": [
-      "Acuta Capital Partners",
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Farallon Capital",
-      "RTW Investments",
-      "Renaissance Technologies",
-      "Rock Springs Capital Management",
-      "Suvretta Capital Management"
-    ]
+    "total_value": 32372190000,
+    "total_shares": 8655666
   },
   {
-    "ticker": "RCKT",
-    "manager_count": 8,
-    "tier1_count": 5,
-    "tier2_count": 3,
-    "managers": [
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "Boxer Capital",
-      "D.E. Shaw",
-      "RTW Investments",
-      "Renaissance Technologies",
-      "Suvretta Capital Management",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "REGN",
+    "ticker": "MNMD",
     "manager_count": 7,
     "tier1_count": 4,
     "tier2_count": 3,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Renaissance Technologies",
-      "Rock Springs Capital Management",
-      "Sectoral Asset Management",
-      "Suvretta Capital Management",
-      "Tang Capital Partners"
-    ]
+    "total_value": 39585371000,
+    "total_shares": 3701480
   },
   {
-    "ticker": "REPL",
-    "manager_count": 14,
-    "tier1_count": 11,
-    "tier2_count": 3,
-    "managers": [
-      "Ally Bridge Group",
-      "Bain Capital Life Sciences",
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "Boxer Capital",
-      "D.E. Shaw",
-      "EcoR1 Capital",
-      "Ghost Tree Capital",
-      "RTW Investments",
-      "Redmile Group",
-      "Renaissance Technologies",
-      "Sectoral Asset Management",
-      "Sofinnova Investments",
-      "Tang Capital Partners"
-    ]
+    "ticker": "MRNA",
+    "manager_count": 8,
+    "tier1_count": 4,
+    "tier2_count": 4,
+    "total_value": 236462590000,
+    "total_shares": 8961608
   },
   {
-    "ticker": "RGNX",
+    "ticker": "MRSN",
     "manager_count": 4,
     "tier1_count": 2,
     "tier2_count": 2,
-    "managers": [
-      "Balyasny Asset Management",
-      "Ghost Tree Capital",
-      "Redmile Group",
-      "Renaissance Technologies"
-    ]
+    "total_value": 6025643000,
+    "total_shares": 10572113
   },
   {
-    "ticker": "RLAY",
+    "ticker": "MRUS",
+    "manager_count": 16,
+    "tier1_count": 12,
+    "tier2_count": 4,
+    "total_value": 1124047665000,
+    "total_shares": 15517519
+  },
+  {
+    "ticker": "MRVI",
+    "manager_count": 3,
+    "tier1_count": 0,
+    "tier2_count": 3,
+    "total_value": 13757669000,
+    "total_shares": 4793613
+  },
+  {
+    "ticker": "MYGN",
+    "manager_count": 5,
+    "tier1_count": 1,
+    "tier2_count": 4,
+    "total_value": 62043360000,
+    "total_shares": 8700448
+  },
+  {
+    "ticker": "NAMS",
     "manager_count": 6,
     "tier1_count": 4,
     "tier2_count": 2,
-    "managers": [
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "Boxer Capital",
-      "Casdin Capital",
-      "Renaissance Technologies",
-      "Tang Capital Partners"
-    ]
+    "total_value": 673160772000,
+    "total_shares": 23679439
   },
   {
-    "ticker": "RNA",
-    "manager_count": 12,
-    "tier1_count": 11,
-    "tier2_count": 1,
-    "managers": [
-      "Ally Bridge Group",
-      "Baker Bros Advisors",
-      "Boxer Capital",
-      "Casdin Capital",
-      "D.E. Shaw",
-      "EcoR1 Capital",
-      "Logos Global Management",
-      "Orbimed Advisors",
-      "RA Capital Management",
-      "RTW Investments",
-      "Sofinnova Investments",
-      "Suvretta Capital Management"
-    ]
-  },
-  {
-    "ticker": "RPRX",
+    "ticker": "NAUT",
     "manager_count": 3,
     "tier1_count": 1,
     "tier2_count": 2,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Sectoral Asset Management"
-    ]
+    "total_value": 12310963000,
+    "total_shares": 14569421
   },
   {
-    "ticker": "RVMD",
-    "manager_count": 14,
-    "tier1_count": 10,
-    "tier2_count": 4,
-    "managers": [
-      "Acuta Capital Partners",
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "Boxer Capital",
-      "Casdin Capital",
-      "D.E. Shaw",
-      "Deerfield Management",
-      "Farallon Capital",
-      "Logos Global Management",
-      "Opaleye Management",
-      "Renaissance Technologies",
-      "Rock Springs Capital Management",
-      "Sectoral Asset Management",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "RXRX",
-    "manager_count": 4,
-    "tier1_count": 2,
-    "tier2_count": 2,
-    "managers": [
-      "Balyasny Asset Management",
-      "Casdin Capital",
-      "D.E. Shaw",
-      "Sectoral Asset Management"
-    ]
-  },
-  {
-    "ticker": "RYTM",
+    "ticker": "NBIX",
     "manager_count": 12,
     "tier1_count": 9,
     "tier2_count": 3,
-    "managers": [
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Ghost Tree Capital",
-      "Logos Global Management",
-      "Opaleye Management",
-      "Orbimed Advisors",
-      "RA Capital Management",
-      "Renaissance Technologies",
-      "Rock Springs Capital Management",
-      "Samsara BioCapital",
-      "Sofinnova Investments"
-    ]
+    "total_value": 1007254718000,
+    "total_shares": 7361757
   },
   {
-    "ticker": "SANA",
-    "manager_count": 5,
-    "tier1_count": 3,
+    "ticker": "NGNE",
+    "manager_count": 11,
+    "tier1_count": 9,
     "tier2_count": 2,
-    "managers": [
-      "Baker Bros Advisors",
-      "Boxer Capital",
-      "D.E. Shaw",
-      "Great Point Partners",
-      "Renaissance Technologies"
-    ]
+    "total_value": 166362367000,
+    "total_shares": 9564959
   },
   {
-    "ticker": "SERA",
-    "manager_count": 1,
-    "tier1_count": 1,
-    "tier2_count": 0,
-    "managers": [
-      "Baker Bros Advisors"
-    ]
-  },
-  {
-    "ticker": "SGMO",
-    "manager_count": 1,
-    "tier1_count": 0,
-    "tier2_count": 1,
-    "managers": [
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "SGMT",
-    "manager_count": 4,
-    "tier1_count": 2,
-    "tier2_count": 2,
-    "managers": [
-      "Baker Bros Advisors",
-      "D.E. Shaw",
-      "Ghost Tree Capital",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "SIGA",
-    "manager_count": 2,
-    "tier1_count": 0,
-    "tier2_count": 2,
-    "managers": [
-      "D.E. Shaw",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "SKYE",
-    "manager_count": 1,
-    "tier1_count": 1,
-    "tier2_count": 0,
-    "managers": [
-      "Baker Bros Advisors"
-    ]
-  },
-  {
-    "ticker": "SLDB",
+    "ticker": "NKTX",
     "manager_count": 6,
     "tier1_count": 4,
     "tier2_count": 2,
-    "managers": [
-      "Ally Bridge Group",
-      "Balyasny Asset Management",
-      "RA Capital Management",
-      "Redmile Group",
-      "Renaissance Technologies",
-      "Sectoral Asset Management"
-    ]
+    "total_value": 66905002000,
+    "total_shares": 27551917
   },
   {
-    "ticker": "SLN",
-    "manager_count": 1,
-    "tier1_count": 1,
-    "tier2_count": 0,
-    "managers": [
-      "Redmile Group"
-    ]
-  },
-  {
-    "ticker": "SMMT",
-    "manager_count": 9,
-    "tier1_count": 7,
+    "ticker": "NMRA",
+    "manager_count": 4,
+    "tier1_count": 2,
     "tier2_count": 2,
-    "managers": [
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "Boxer Capital",
-      "D.E. Shaw",
-      "Ghost Tree Capital",
-      "Rock Springs Capital Management",
-      "Sectoral Asset Management",
-      "Sofinnova Investments",
-      "Tang Capital Partners"
-    ]
+    "total_value": 9080119000,
+    "total_shares": 5606824
   },
   {
-    "ticker": "SNY",
-    "manager_count": 2,
-    "tier1_count": 1,
-    "tier2_count": 1,
-    "managers": [
-      "Balyasny Asset Management",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "SPRY",
-    "manager_count": 7,
+    "ticker": "NRIX",
+    "manager_count": 8,
     "tier1_count": 5,
-    "tier2_count": 2,
-    "managers": [
-      "Balyasny Asset Management",
-      "Casdin Capital",
-      "D.E. Shaw",
-      "Deerfield Management",
-      "Orbimed Advisors",
-      "RA Capital Management",
-      "Sectoral Asset Management"
-    ]
+    "tier2_count": 3,
+    "total_value": 198464015000,
+    "total_shares": 17489481
   },
   {
-    "ticker": "SRPT",
-    "manager_count": 11,
+    "ticker": "NTLA",
+    "manager_count": 8,
+    "tier1_count": 3,
+    "tier2_count": 5,
+    "total_value": 133178597000,
+    "total_shares": 8409317
+  },
+  {
+    "ticker": "NTRA",
+    "manager_count": 10,
+    "tier1_count": 5,
+    "tier2_count": 5,
+    "total_value": 1904083281000,
+    "total_shares": 11312521
+  },
+  {
+    "ticker": "NUVB",
+    "manager_count": 7,
     "tier1_count": 7,
-    "tier2_count": 4,
-    "managers": [
-      "Balyasny Asset Management",
-      "Boxer Capital",
-      "Casdin Capital",
-      "D.E. Shaw",
-      "Farallon Capital",
-      "Ghost Tree Capital",
-      "Opaleye Management",
-      "Renaissance Technologies",
-      "Rock Springs Capital Management",
-      "Suvretta Capital Management",
-      "Tang Capital Partners"
-    ]
+    "tier2_count": 0,
+    "total_value": 3750092000,
+    "total_shares": 1821524
   },
   {
-    "ticker": "SRRK",
-    "manager_count": 14,
-    "tier1_count": 10,
-    "tier2_count": 4,
-    "managers": [
-      "Balyasny Asset Management",
-      "Boxer Capital",
-      "D.E. Shaw",
-      "Farallon Capital",
-      "Great Point Partners",
-      "Logos Global Management",
-      "Orbimed Advisors",
-      "RA Capital Management",
-      "Redmile Group",
-      "Renaissance Technologies",
-      "Rock Springs Capital Management",
-      "Samsara BioCapital",
-      "Sectoral Asset Management",
-      "Sofinnova Investments"
-    ]
+    "ticker": "NUVL",
+    "manager_count": 10,
+    "tier1_count": 7,
+    "tier2_count": 3,
+    "total_value": 1962892212000,
+    "total_shares": 22543261
   },
   {
-    "ticker": "SRZN",
+    "ticker": "NVAX",
+    "manager_count": 8,
+    "tier1_count": 3,
+    "tier2_count": 5,
+    "total_value": 89274803000,
+    "total_shares": 10733950
+  },
+  {
+    "ticker": "NVCR",
+    "manager_count": 6,
+    "tier1_count": 2,
+    "tier2_count": 4,
+    "total_value": 118905921000,
+    "total_shares": 7179614
+  },
+  {
+    "ticker": "OBIO",
     "manager_count": 5,
     "tier1_count": 3,
     "tier2_count": 2,
-    "managers": [
-      "Acuta Capital Partners",
-      "Balyasny Asset Management",
-      "RA Capital Management",
-      "Renaissance Technologies",
-      "Samsara BioCapital"
-    ]
+    "total_value": 38651683000,
+    "total_shares": 14626993
+  },
+  {
+    "ticker": "OCGN",
+    "manager_count": 2,
+    "tier1_count": 0,
+    "tier2_count": 2,
+    "total_value": 7257329000,
+    "total_shares": 4452349
+  },
+  {
+    "ticker": "OCS",
+    "manager_count": 2,
+    "tier1_count": 0,
+    "tier2_count": 2,
+    "total_value": 1508702000,
+    "total_shares": 175616
+  },
+  {
+    "ticker": "OCUL",
+    "manager_count": 9,
+    "tier1_count": 5,
+    "tier2_count": 4,
+    "total_value": 289048306000,
+    "total_shares": 24810652
+  },
+  {
+    "ticker": "OLMA",
+    "manager_count": 7,
+    "tier1_count": 4,
+    "tier2_count": 3,
+    "total_value": 92619914000,
+    "total_shares": 9918416
+  },
+  {
+    "ticker": "OMER",
+    "manager_count": 3,
+    "tier1_count": 0,
+    "tier2_count": 3,
+    "total_value": 8002165000,
+    "total_shares": 2393740
+  },
+  {
+    "ticker": "ONC",
+    "manager_count": 6,
+    "tier1_count": 3,
+    "tier2_count": 3,
+    "total_value": 3199957987000,
+    "total_shares": 9666909
+  },
+  {
+    "ticker": "OPCH",
+    "manager_count": 3,
+    "tier1_count": 0,
+    "tier2_count": 3,
+    "total_value": 124726008000,
+    "total_shares": 4040162
+  },
+  {
+    "ticker": "OPK",
+    "manager_count": 2,
+    "tier1_count": 0,
+    "tier2_count": 2,
+    "total_value": 1010965000,
+    "total_shares": 755480
+  },
+  {
+    "ticker": "ORIC",
+    "manager_count": 9,
+    "tier1_count": 5,
+    "tier2_count": 4,
+    "total_value": 251906409000,
+    "total_shares": 21373776
+  },
+  {
+    "ticker": "ORKA",
+    "manager_count": 11,
+    "tier1_count": 7,
+    "tier2_count": 4,
+    "total_value": 193532451000,
+    "total_shares": 10093863
+  },
+  {
+    "ticker": "PACB",
+    "manager_count": 5,
+    "tier1_count": 2,
+    "tier2_count": 3,
+    "total_value": 7464491000,
+    "total_shares": 5832635
+  },
+  {
+    "ticker": "PAHC",
+    "manager_count": 4,
+    "tier1_count": 0,
+    "tier2_count": 4,
+    "total_value": 34027333000,
+    "total_shares": 952672
+  },
+  {
+    "ticker": "PBYI",
+    "manager_count": 4,
+    "tier1_count": 1,
+    "tier2_count": 3,
+    "total_value": 16280205000,
+    "total_shares": 3184420
+  },
+  {
+    "ticker": "PCRX",
+    "manager_count": 5,
+    "tier1_count": 1,
+    "tier2_count": 4,
+    "total_value": 182699177000,
+    "total_shares": 7644317
+  },
+  {
+    "ticker": "PCVX",
+    "manager_count": 14,
+    "tier1_count": 10,
+    "tier2_count": 4,
+    "total_value": 828154175000,
+    "total_shares": 22982867
+  },
+  {
+    "ticker": "PEPG",
+    "manager_count": 12,
+    "tier1_count": 8,
+    "tier2_count": 4,
+    "total_value": 141757658000,
+    "total_shares": 30911398
+  },
+  {
+    "ticker": "PGEN",
+    "manager_count": 4,
+    "tier1_count": 1,
+    "tier2_count": 3,
+    "total_value": 43944393000,
+    "total_shares": 13520315
+  },
+  {
+    "ticker": "PHAT",
+    "manager_count": 4,
+    "tier1_count": 2,
+    "tier2_count": 2,
+    "total_value": 80271278000,
+    "total_shares": 6816112
+  },
+  {
+    "ticker": "PHVS",
+    "manager_count": 12,
+    "tier1_count": 8,
+    "tier2_count": 4,
+    "total_value": 371676484000,
+    "total_shares": 14896853
+  },
+  {
+    "ticker": "PRAX",
+    "manager_count": 11,
+    "tier1_count": 8,
+    "tier2_count": 3,
+    "total_value": 276019606000,
+    "total_shares": 5681730
+  },
+  {
+    "ticker": "PRLD",
+    "manager_count": 5,
+    "tier1_count": 3,
+    "tier2_count": 2,
+    "total_value": 36258686000,
+    "total_shares": 24432311
+  },
+  {
+    "ticker": "PRME",
+    "manager_count": 9,
+    "tier1_count": 4,
+    "tier2_count": 5,
+    "total_value": 100840214000,
+    "total_shares": 19351709
+  },
+  {
+    "ticker": "PRQR",
+    "manager_count": 3,
+    "tier1_count": 2,
+    "tier2_count": 1,
+    "total_value": 4685140000,
+    "total_shares": 2384040
+  },
+  {
+    "ticker": "PRTA",
+    "manager_count": 7,
+    "tier1_count": 3,
+    "tier2_count": 4,
+    "total_value": 53475652000,
+    "total_shares": 5390238
+  },
+  {
+    "ticker": "PRVA",
+    "manager_count": 5,
+    "tier1_count": 1,
+    "tier2_count": 4,
+    "total_value": 36042058000,
+    "total_shares": 1514633
+  },
+  {
+    "ticker": "PSNL",
+    "manager_count": 2,
+    "tier1_count": 0,
+    "tier2_count": 2,
+    "total_value": 11588990000,
+    "total_shares": 1773997
+  },
+  {
+    "ticker": "PTCT",
+    "manager_count": 10,
+    "tier1_count": 6,
+    "tier2_count": 4,
+    "total_value": 855191245000,
+    "total_shares": 14387928
+  },
+  {
+    "ticker": "PTGX",
+    "manager_count": 8,
+    "tier1_count": 5,
+    "tier2_count": 3,
+    "total_value": 1086769877000,
+    "total_shares": 16934010
+  },
+  {
+    "ticker": "PVLA",
+    "manager_count": 7,
+    "tier1_count": 4,
+    "tier2_count": 3,
+    "total_value": 115708646000,
+    "total_shares": 2047463
+  },
+  {
+    "ticker": "PYXS",
+    "manager_count": 5,
+    "tier1_count": 3,
+    "tier2_count": 2,
+    "total_value": 15642229000,
+    "total_shares": 8831924
+  },
+  {
+    "ticker": "QTRX",
+    "manager_count": 4,
+    "tier1_count": 0,
+    "tier2_count": 4,
+    "total_value": 12362317000,
+    "total_shares": 2340200
+  },
+  {
+    "ticker": "QURE",
+    "manager_count": 15,
+    "tier1_count": 11,
+    "tier2_count": 4,
+    "total_value": 693124381000,
+    "total_shares": 14069306
+  },
+  {
+    "ticker": "RANI",
+    "manager_count": 1,
+    "tier1_count": 0,
+    "tier2_count": 1,
+    "total_value": 12449000,
+    "total_shares": 24908
+  },
+  {
+    "ticker": "RAPP",
+    "manager_count": 10,
+    "tier1_count": 8,
+    "tier2_count": 2,
+    "total_value": 221998104000,
+    "total_shares": 7787594
+  },
+  {
+    "ticker": "RAPT",
+    "manager_count": 8,
+    "tier1_count": 5,
+    "tier2_count": 3,
+    "total_value": 107517478000,
+    "total_shares": 4168960
+  },
+  {
+    "ticker": "RARE",
+    "manager_count": 14,
+    "tier1_count": 9,
+    "tier2_count": 5,
+    "total_value": 494207463000,
+    "total_shares": 14272190
+  },
+  {
+    "ticker": "RCKT",
+    "manager_count": 9,
+    "tier1_count": 5,
+    "tier2_count": 4,
+    "total_value": 125388682000,
+    "total_shares": 31874522
+  },
+  {
+    "ticker": "RCUS",
+    "manager_count": 9,
+    "tier1_count": 5,
+    "tier2_count": 4,
+    "total_value": 147904535000,
+    "total_shares": 10844623
+  },
+  {
+    "ticker": "REGN",
+    "manager_count": 9,
+    "tier1_count": 5,
+    "tier2_count": 4,
+    "total_value": 849735863000,
+    "total_shares": 1547885
+  },
+  {
+    "ticker": "REPL",
+    "manager_count": 15,
+    "tier1_count": 11,
+    "tier2_count": 4,
+    "total_value": 282955658000,
+    "total_shares": 38905090
+  },
+  {
+    "ticker": "RGEN",
+    "manager_count": 7,
+    "tier1_count": 3,
+    "tier2_count": 4,
+    "total_value": 310925016000,
+    "total_shares": 2333466
+  },
+  {
+    "ticker": "RGNX",
+    "manager_count": 5,
+    "tier1_count": 2,
+    "tier2_count": 3,
+    "total_value": 61570338000,
+    "total_shares": 6602638
+  },
+  {
+    "ticker": "RIGL",
+    "manager_count": 4,
+    "tier1_count": 1,
+    "tier2_count": 3,
+    "total_value": 25117406000,
+    "total_shares": 886601
+  },
+  {
+    "ticker": "RLAY",
+    "manager_count": 7,
+    "tier1_count": 4,
+    "tier2_count": 3,
+    "total_value": 138197974000,
+    "total_shares": 26457131
+  },
+  {
+    "ticker": "RNA",
+    "manager_count": 15,
+    "tier1_count": 13,
+    "tier2_count": 2,
+    "total_value": 1293786413000,
+    "total_shares": 30143022
+  },
+  {
+    "ticker": "ROIV",
+    "manager_count": 11,
+    "tier1_count": 6,
+    "tier2_count": 5,
+    "total_value": 710174689000,
+    "total_shares": 56221853
+  },
+  {
+    "ticker": "RPRX",
+    "manager_count": 5,
+    "tier1_count": 1,
+    "tier2_count": 4,
+    "total_value": 177765702000,
+    "total_shares": 4983295
+  },
+  {
+    "ticker": "RVMD",
+    "manager_count": 16,
+    "tier1_count": 11,
+    "tier2_count": 5,
+    "total_value": 1881376453000,
+    "total_shares": 40764819
+  },
+  {
+    "ticker": "RXRX",
+    "manager_count": 5,
+    "tier1_count": 2,
+    "tier2_count": 3,
+    "total_value": 10585893000,
+    "total_shares": 2112082
+  },
+  {
+    "ticker": "RYTM",
+    "manager_count": 14,
+    "tier1_count": 10,
+    "tier2_count": 4,
+    "total_value": 1697169607000,
+    "total_shares": 17119688
+  },
+  {
+    "ticker": "SABS",
+    "manager_count": 2,
+    "tier1_count": 1,
+    "tier2_count": 1,
+    "total_value": 9009503000,
+    "total_shares": 4482340
+  },
+  {
+    "ticker": "SANA",
+    "manager_count": 6,
+    "tier1_count": 3,
+    "tier2_count": 3,
+    "total_value": 29003206000,
+    "total_shares": 7909241
+  },
+  {
+    "ticker": "SEPN",
+    "manager_count": 7,
+    "tier1_count": 6,
+    "tier2_count": 1,
+    "total_value": 221503711000,
+    "total_shares": 11829168
+  },
+  {
+    "ticker": "SERA",
+    "manager_count": 2,
+    "tier1_count": 1,
+    "tier2_count": 1,
+    "total_value": 17335642000,
+    "total_shares": 5682734
+  },
+  {
+    "ticker": "SGMO",
+    "manager_count": 2,
+    "tier1_count": 0,
+    "tier2_count": 2,
+    "total_value": 7113420000,
+    "total_shares": 10563439
+  },
+  {
+    "ticker": "SGMT",
+    "manager_count": 5,
+    "tier1_count": 2,
+    "tier2_count": 3,
+    "total_value": 19274993000,
+    "total_shares": 2817014
+  },
+  {
+    "ticker": "SIGA",
+    "manager_count": 3,
+    "tier1_count": 0,
+    "tier2_count": 3,
+    "total_value": 9787487000,
+    "total_shares": 1241817
+  },
+  {
+    "ticker": "SION",
+    "manager_count": 9,
+    "tier1_count": 6,
+    "tier2_count": 3,
+    "total_value": 594787908000,
+    "total_shares": 20234664
+  },
+  {
+    "ticker": "SKYE",
+    "manager_count": 2,
+    "tier1_count": 1,
+    "tier2_count": 1,
+    "total_value": 8031314000,
+    "total_shares": 1921367
+  },
+  {
+    "ticker": "SLDB",
+    "manager_count": 8,
+    "tier1_count": 5,
+    "tier2_count": 3,
+    "total_value": 141014242000,
+    "total_shares": 23007365
+  },
+  {
+    "ticker": "SLN",
+    "manager_count": 2,
+    "tier1_count": 1,
+    "tier2_count": 1,
+    "total_value": 14104984000,
+    "total_shares": 2463289
+  },
+  {
+    "ticker": "SMMT",
+    "manager_count": 10,
+    "tier1_count": 7,
+    "tier2_count": 3,
+    "total_value": 789782025000,
+    "total_shares": 37157476
+  },
+  {
+    "ticker": "SNDX",
+    "manager_count": 12,
+    "tier1_count": 7,
+    "tier2_count": 5,
+    "total_value": 93748290000,
+    "total_shares": 6964525
+  },
+  {
+    "ticker": "SNY",
+    "manager_count": 4,
+    "tier1_count": 2,
+    "tier2_count": 2,
+    "total_value": 100205143000,
+    "total_shares": 2441909
+  },
+  {
+    "ticker": "SPRY",
+    "manager_count": 11,
+    "tier1_count": 8,
+    "tier2_count": 3,
+    "total_value": 566566850000,
+    "total_shares": 33231338
+  },
+  {
+    "ticker": "SRPT",
+    "manager_count": 13,
+    "tier1_count": 8,
+    "tier2_count": 5,
+    "total_value": 284285823000,
+    "total_shares": 12462100
+  },
+  {
+    "ticker": "SRRK",
+    "manager_count": 15,
+    "tier1_count": 10,
+    "tier2_count": 5,
+    "total_value": 496213207000,
+    "total_shares": 13983903
+  },
+  {
+    "ticker": "SRZN",
+    "manager_count": 6,
+    "tier1_count": 3,
+    "tier2_count": 3,
+    "total_value": 15689655000,
+    "total_shares": 1217668
   },
   {
     "ticker": "STOK",
-    "manager_count": 6,
-    "tier1_count": 5,
-    "tier2_count": 1,
-    "managers": [
-      "Baker Bros Advisors",
-      "D.E. Shaw",
-      "Opaleye Management",
-      "RTW Investments",
-      "Redmile Group",
-      "Tang Capital Partners"
-    ]
+    "manager_count": 9,
+    "tier1_count": 7,
+    "tier2_count": 2,
+    "total_value": 362664982000,
+    "total_shares": 15563959
   },
   {
     "ticker": "STRO",
-    "manager_count": 4,
+    "manager_count": 5,
     "tier1_count": 3,
-    "tier2_count": 1,
-    "managers": [
-      "Renaissance Technologies",
-      "Samsara BioCapital",
-      "Suvretta Capital Management",
-      "Tang Capital Partners"
-    ]
+    "tier2_count": 2,
+    "total_value": 15164872000,
+    "total_shares": 17463002
   },
   {
     "ticker": "STVN",
     "manager_count": 2,
     "tier1_count": 0,
     "tier2_count": 2,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw"
-    ]
+    "total_value": 4982230000,
+    "total_shares": 203939
   },
   {
     "ticker": "SUPN",
-    "manager_count": 4,
-    "tier1_count": 2,
-    "tier2_count": 2,
-    "managers": [
-      "D.E. Shaw",
-      "Deerfield Management",
-      "Renaissance Technologies",
-      "Sofinnova Investments"
-    ]
-  },
-  {
-    "ticker": "SYRE",
-    "manager_count": 8,
-    "tier1_count": 7,
-    "tier2_count": 1,
-    "managers": [
-      "Baker Bros Advisors",
-      "Boxer Capital",
-      "Deerfield Management",
-      "Ghost Tree Capital",
-      "Opaleye Management",
-      "RTW Investments",
-      "Renaissance Technologies",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "TARA",
-    "manager_count": 4,
-    "tier1_count": 3,
-    "tier2_count": 1,
-    "managers": [
-      "Baker Bros Advisors",
-      "Boxer Capital",
-      "RA Capital Management",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "TARS",
-    "manager_count": 10,
-    "tier1_count": 7,
-    "tier2_count": 3,
-    "managers": [
-      "Ally Bridge Group",
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Ghost Tree Capital",
-      "Orbimed Advisors",
-      "RTW Investments",
-      "Renaissance Technologies",
-      "Rock Springs Capital Management",
-      "Sectoral Asset Management",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "TBPH",
-    "manager_count": 3,
-    "tier1_count": 1,
-    "tier2_count": 2,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "TCRX",
-    "manager_count": 3,
-    "tier1_count": 2,
-    "tier2_count": 1,
-    "managers": [
-      "Baker Bros Advisors",
-      "Renaissance Technologies",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "TECH",
-    "manager_count": 4,
-    "tier1_count": 1,
-    "tier2_count": 3,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Deerfield Management",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "TNGX",
-    "manager_count": 9,
-    "tier1_count": 5,
-    "tier2_count": 4,
-    "managers": [
-      "Balyasny Asset Management",
-      "Boxer Capital",
-      "D.E. Shaw",
-      "EcoR1 Capital",
-      "Farallon Capital",
-      "Logos Global Management",
-      "RA Capital Management",
-      "Renaissance Technologies",
-      "Samsara BioCapital"
-    ]
-  },
-  {
-    "ticker": "TNYA",
-    "manager_count": 3,
-    "tier1_count": 2,
-    "tier2_count": 1,
-    "managers": [
-      "Casdin Capital",
-      "Ghost Tree Capital",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "TRDA",
-    "manager_count": 3,
-    "tier1_count": 1,
-    "tier2_count": 2,
-    "managers": [
-      "Baker Bros Advisors",
-      "D.E. Shaw",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "TSHA",
-    "manager_count": 12,
-    "tier1_count": 10,
-    "tier2_count": 2,
-    "managers": [
-      "Acuta Capital Partners",
-      "Ally Bridge Group",
-      "Baker Bros Advisors",
-      "D.E. Shaw",
-      "Deerfield Management",
-      "Ghost Tree Capital",
-      "Great Point Partners",
-      "RA Capital Management",
-      "RTW Investments",
-      "Renaissance Technologies",
-      "Suvretta Capital Management",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "TWST",
-    "manager_count": 4,
-    "tier1_count": 1,
-    "tier2_count": 3,
-    "managers": [
-      "Balyasny Asset Management",
-      "Deerfield Management",
-      "Farallon Capital",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "TYRA",
-    "manager_count": 7,
-    "tier1_count": 4,
-    "tier2_count": 3,
-    "managers": [
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "Boxer Capital",
-      "Farallon Capital",
-      "Orbimed Advisors",
-      "RA Capital Management",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "UTHR",
-    "manager_count": 11,
-    "tier1_count": 7,
-    "tier2_count": 4,
-    "managers": [
-      "Acuta Capital Partners",
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Deerfield Management",
-      "Farallon Capital",
-      "Logos Global Management",
-      "Orbimed Advisors",
-      "Renaissance Technologies",
-      "Sectoral Asset Management",
-      "Sofinnova Investments",
-      "Suvretta Capital Management"
-    ]
-  },
-  {
-    "ticker": "VCEL",
-    "manager_count": 2,
-    "tier1_count": 0,
-    "tier2_count": 2,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw"
-    ]
-  },
-  {
-    "ticker": "VERV",
-    "manager_count": 7,
-    "tier1_count": 3,
-    "tier2_count": 4,
-    "managers": [
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "Casdin Capital",
-      "D.E. Shaw",
-      "Farallon Capital",
-      "Redmile Group",
-      "Renaissance Technologies"
-    ]
-  },
-  {
-    "ticker": "VKTX",
     "manager_count": 6,
     "tier1_count": 3,
     "tier2_count": 3,
-    "managers": [
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Ghost Tree Capital",
-      "Renaissance Technologies",
-      "Tang Capital Partners"
-    ]
+    "total_value": 171429495000,
+    "total_shares": 4222361
   },
   {
-    "ticker": "VRDN",
-    "manager_count": 4,
-    "tier1_count": 3,
-    "tier2_count": 1,
-    "managers": [
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "Ghost Tree Capital",
-      "Tang Capital Partners"
-    ]
-  },
-  {
-    "ticker": "VRTX",
-    "manager_count": 7,
+    "ticker": "SVRA",
+    "manager_count": 8,
     "tier1_count": 4,
-    "tier2_count": 3,
-    "managers": [
-      "Balyasny Asset Management",
-      "D.E. Shaw",
-      "Orbimed Advisors",
-      "Renaissance Technologies",
-      "Sectoral Asset Management",
-      "Sofinnova Investments",
-      "Tang Capital Partners"
-    ]
+    "tier2_count": 4,
+    "total_value": 62154732000,
+    "total_shares": 24866829
   },
   {
-    "ticker": "VTRS",
-    "manager_count": 4,
+    "ticker": "SYRE",
+    "manager_count": 11,
+    "tier1_count": 9,
+    "tier2_count": 2,
+    "total_value": 202316601000,
+    "total_shares": 11634973
+  },
+  {
+    "ticker": "TARA",
+    "manager_count": 5,
     "tier1_count": 3,
-    "tier2_count": 1,
-    "managers": [
-      "D.E. Shaw",
-      "Deerfield Management",
-      "Sectoral Asset Management",
-      "Tang Capital Partners"
-    ]
+    "tier2_count": 2,
+    "total_value": 11330679000,
+    "total_shares": 3390310
   },
   {
-    "ticker": "XENE",
+    "ticker": "TARS",
+    "manager_count": 13,
+    "tier1_count": 9,
+    "tier2_count": 4,
+    "total_value": 621976838000,
+    "total_shares": 10704525
+  },
+  {
+    "ticker": "TBPH",
+    "manager_count": 4,
+    "tier1_count": 1,
+    "tier2_count": 3,
+    "total_value": 20410819000,
+    "total_shares": 1408713
+  },
+  {
+    "ticker": "TCRX",
+    "manager_count": 4,
+    "tier1_count": 2,
+    "tier2_count": 2,
+    "total_value": 8584474000,
+    "total_shares": 4844849
+  },
+  {
+    "ticker": "TECH",
+    "manager_count": 5,
+    "tier1_count": 1,
+    "tier2_count": 4,
+    "total_value": 163092275000,
+    "total_shares": 3102745
+  },
+  {
+    "ticker": "TECX",
     "manager_count": 9,
     "tier1_count": 6,
     "tier2_count": 3,
-    "managers": [
-      "Baker Bros Advisors",
-      "Balyasny Asset Management",
-      "Boxer Capital",
-      "D.E. Shaw",
-      "Deerfield Management",
-      "Great Point Partners",
-      "Orbimed Advisors",
-      "Renaissance Technologies",
-      "Rock Springs Capital Management"
-    ]
+    "total_value": 80676755000,
+    "total_shares": 4150885
+  },
+  {
+    "ticker": "TEM",
+    "manager_count": 8,
+    "tier1_count": 4,
+    "tier2_count": 4,
+    "total_value": 325704577000,
+    "total_shares": 4120587
+  },
+  {
+    "ticker": "TENX",
+    "manager_count": 3,
+    "tier1_count": 1,
+    "tier2_count": 2,
+    "total_value": 5697287000,
+    "total_shares": 748658
+  },
+  {
+    "ticker": "TERN",
+    "manager_count": 7,
+    "tier1_count": 5,
+    "tier2_count": 2,
+    "total_value": 136305519000,
+    "total_shares": 18066759
+  },
+  {
+    "ticker": "TGTX",
+    "manager_count": 7,
+    "tier1_count": 4,
+    "tier2_count": 3,
+    "total_value": 87274097000,
+    "total_shares": 2674566
+  },
+  {
+    "ticker": "TNGX",
+    "manager_count": 11,
+    "tier1_count": 6,
+    "tier2_count": 5,
+    "total_value": 324987657000,
+    "total_shares": 39454227
+  },
+  {
+    "ticker": "TNYA",
+    "manager_count": 4,
+    "tier1_count": 2,
+    "tier2_count": 2,
+    "total_value": 14787516000,
+    "total_shares": 7894763
+  },
+  {
+    "ticker": "TRDA",
+    "manager_count": 4,
+    "tier1_count": 1,
+    "tier2_count": 3,
+    "total_value": 41412554000,
+    "total_shares": 6368276
+  },
+  {
+    "ticker": "TRVI",
+    "manager_count": 9,
+    "tier1_count": 5,
+    "tier2_count": 4,
+    "total_value": 126789516000,
+    "total_shares": 15002258
+  },
+  {
+    "ticker": "TSHA",
+    "manager_count": 14,
+    "tier1_count": 11,
+    "tier2_count": 3,
+    "total_value": 240885995000,
+    "total_shares": 75454572
+  },
+  {
+    "ticker": "TVTX",
+    "manager_count": 10,
+    "tier1_count": 5,
+    "tier2_count": 5,
+    "total_value": 245167826000,
+    "total_shares": 10258068
+  },
+  {
+    "ticker": "TWST",
+    "manager_count": 5,
+    "tier1_count": 1,
+    "tier2_count": 4,
+    "total_value": 75257666000,
+    "total_shares": 2467368
+  },
+  {
+    "ticker": "TXG",
+    "manager_count": 5,
+    "tier1_count": 2,
+    "tier2_count": 3,
+    "total_value": 95649204000,
+    "total_shares": 8205725
+  },
+  {
+    "ticker": "TYRA",
+    "manager_count": 8,
+    "tier1_count": 4,
+    "tier2_count": 4,
+    "total_value": 364232994000,
+    "total_shares": 22030161
+  },
+  {
+    "ticker": "UPB",
+    "manager_count": 6,
+    "tier1_count": 4,
+    "tier2_count": 2,
+    "total_value": 148809228000,
+    "total_shares": 8511754
+  },
+  {
+    "ticker": "URGN",
+    "manager_count": 8,
+    "tier1_count": 4,
+    "tier2_count": 4,
+    "total_value": 177578241000,
+    "total_shares": 8901165
+  },
+  {
+    "ticker": "UTHR",
+    "manager_count": 14,
+    "tier1_count": 9,
+    "tier2_count": 5,
+    "total_value": 1471491477000,
+    "total_shares": 3664786
+  },
+  {
+    "ticker": "VCEL",
+    "manager_count": 3,
+    "tier1_count": 0,
+    "tier2_count": 3,
+    "total_value": 10512451000,
+    "total_shares": 326778
+  },
+  {
+    "ticker": "VCYT",
+    "manager_count": 7,
+    "tier1_count": 2,
+    "tier2_count": 5,
+    "total_value": 62578777000,
+    "total_shares": 2042576
+  },
+  {
+    "ticker": "VERA",
+    "manager_count": 7,
+    "tier1_count": 5,
+    "tier2_count": 2,
+    "total_value": 262901721000,
+    "total_shares": 9057566
+  },
+  {
+    "ticker": "VERV",
+    "manager_count": 8,
+    "tier1_count": 3,
+    "tier2_count": 5,
+    "total_value": 128597785000,
+    "total_shares": 11451272
+  },
+  {
+    "ticker": "VIR",
+    "manager_count": 5,
+    "tier1_count": 2,
+    "tier2_count": 3,
+    "total_value": 31521382000,
+    "total_shares": 5520382
+  },
+  {
+    "ticker": "VKTX",
+    "manager_count": 8,
+    "tier1_count": 4,
+    "tier2_count": 4,
+    "total_value": 145063175000,
+    "total_shares": 5289876
+  },
+  {
+    "ticker": "VNDA",
+    "manager_count": 5,
+    "tier1_count": 2,
+    "tier2_count": 3,
+    "total_value": 45791948000,
+    "total_shares": 10361356
+  },
+  {
+    "ticker": "VOR",
+    "manager_count": 3,
+    "tier1_count": 1,
+    "tier2_count": 2,
+    "total_value": 65163124000,
+    "total_shares": 40224151
+  },
+  {
+    "ticker": "VRDN",
+    "manager_count": 7,
+    "tier1_count": 5,
+    "tier2_count": 2,
+    "total_value": 261627164000,
+    "total_shares": 12356989
+  },
+  {
+    "ticker": "VRTX",
+    "manager_count": 8,
+    "tier1_count": 4,
+    "tier2_count": 4,
+    "total_value": 688989197000,
+    "total_shares": 1591395
+  },
+  {
+    "ticker": "VTRS",
+    "manager_count": 5,
+    "tier1_count": 3,
+    "tier2_count": 2,
+    "total_value": 368392563000,
+    "total_shares": 37965114
+  },
+  {
+    "ticker": "VTYX",
+    "manager_count": 9,
+    "tier1_count": 5,
+    "tier2_count": 4,
+    "total_value": 27240348000,
+    "total_shares": 14641224
+  },
+  {
+    "ticker": "VYGR",
+    "manager_count": 4,
+    "tier1_count": 1,
+    "tier2_count": 3,
+    "total_value": 26339783000,
+    "total_shares": 7187699
+  },
+  {
+    "ticker": "WVE",
+    "manager_count": 9,
+    "tier1_count": 6,
+    "tier2_count": 3,
+    "total_value": 153172415000,
+    "total_shares": 21096831
+  },
+  {
+    "ticker": "XENE",
+    "manager_count": 13,
+    "tier1_count": 9,
+    "tier2_count": 4,
+    "total_value": 264984250000,
+    "total_shares": 6877377
+  },
+  {
+    "ticker": "XERS",
+    "manager_count": 6,
+    "tier1_count": 3,
+    "tier2_count": 3,
+    "total_value": 79455293000,
+    "total_shares": 11011665
   },
   {
     "ticker": "XNCR",
-    "manager_count": 5,
-    "tier1_count": 4,
-    "tier2_count": 1,
-    "managers": [
-      "Baker Bros Advisors",
-      "EcoR1 Capital",
-      "Logos Global Management",
-      "RTW Investments",
-      "Renaissance Technologies"
-    ]
+    "manager_count": 7,
+    "tier1_count": 5,
+    "tier2_count": 2,
+    "total_value": 184723158000,
+    "total_shares": 16160329
   },
   {
     "ticker": "ZBIO",
-    "manager_count": 3,
+    "manager_count": 4,
     "tier1_count": 3,
-    "tier2_count": 0,
-    "managers": [
-      "Deerfield Management",
-      "Rock Springs Capital Management",
-      "Sectoral Asset Management"
-    ]
+    "tier2_count": 1,
+    "total_value": 52558366000,
+    "total_shares": 2367494
+  },
+  {
+    "ticker": "ZLAB",
+    "manager_count": 7,
+    "tier1_count": 4,
+    "tier2_count": 3,
+    "total_value": 254189773000,
+    "total_shares": 7272018
+  },
+  {
+    "ticker": "ZVRA",
+    "manager_count": 3,
+    "tier1_count": 0,
+    "tier2_count": 3,
+    "total_value": 13972007000,
+    "total_shares": 1469191
   },
   {
     "ticker": "ZYME",
-    "manager_count": 8,
-    "tier1_count": 6,
-    "tier2_count": 2,
-    "managers": [
-      "Acuta Capital Partners",
-      "D.E. Shaw",
-      "EcoR1 Capital",
-      "Opaleye Management",
-      "Redmile Group",
-      "Renaissance Technologies",
-      "Samsara BioCapital",
-      "Tang Capital Partners"
-    ]
+    "manager_count": 10,
+    "tier1_count": 7,
+    "tier2_count": 3,
+    "total_value": 546379822000,
+    "total_shares": 32135997
   }
 ]
