@@ -1,9 +1,19 @@
 {
-  "vix": 18.5,
-  "xbi_vs_spy_30d": -1.2,
+  "yield_curve_slope_bps": 72.0,
+  "hy_credit_spread_bps": 281.0,
+  "biotech_fund_flows_mm": -129.01,
+  "vix": 19.100000381469727,
+  "xbi_vs_spy_30d": 4.053205557056128,
   "fed_rate_change_3m": -0.25,
   "provenance": {
-    "as_of_date": "2026-01-26",
-    "source": "manual_update"
+    "as_of_date": "2026-02-03",
+    "source": "macro_data_collector + yfinance",
+    "data_quality": {
+      "has_yield_curve": true,
+      "has_hy_spread": true,
+      "has_fund_flows": true,
+      "errors": [],
+      "completeness": "3/3"
+    }
   }
 }
