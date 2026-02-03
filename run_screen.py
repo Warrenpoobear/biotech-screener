@@ -2261,13 +2261,51 @@ def run_screening_pipeline(
             holdings_file = data_dir / "holdings_snapshots.json"
             if holdings_file.exists():
                 logger.info("  Loading holdings_snapshots.json for smart money signals...")
-                # Holdings snapshots is a dict keyed by ticker, not an array
                 with open(holdings_file, 'r', encoding='utf-8') as f:
                     holdings_snapshots = json.load(f)
+
                 if holdings_snapshots and isinstance(holdings_snapshots, dict):
-                    # Convert holdings format to coinvest_signals format
+                    # Dict format: {"TICKER": {"holdings": {...}}} - use full conversion
                     coinvest_signals = _convert_holdings_to_coinvest(holdings_snapshots, data_dir)
-                    logger.info(f"  Converted holdings to coinvest signals for {len(coinvest_signals)} tickers")
+                    logger.info(f"  Converted holdings (dict format) to coinvest signals for {len(coinvest_signals)} tickers")
+                elif holdings_snapshots and isinstance(holdings_snapshots, list):
+                    # List format: [{"ticker": "X", "tier1_count": N, ...}] - direct mapping
+                    coinvest_signals = {}
+                    for entry in holdings_snapshots:
+                        ticker = entry.get("ticker", "").upper()
+                        if not ticker:
+                            continue
+                        tier1_count = entry.get("tier1_count", 0)
+                        tier2_count = entry.get("tier2_count", 0)
+                        manager_count = entry.get("manager_count", 0)
+
+                        # Build holder_tiers dict: tier1 holders get tier=1, rest get tier=2
+                        # Since we don't have individual holder names, use placeholder names
+                        holder_tiers = {}
+                        holders = []
+                        for i in range(tier1_count):
+                            name = f"Tier1_Holder_{i+1}"
+                            holder_tiers[name] = 1
+                            holders.append(name)
+                        for i in range(tier2_count):
+                            name = f"Tier2_Holder_{i+1}"
+                            holder_tiers[name] = 2
+                            holders.append(name)
+
+                        coinvest_signals[ticker] = {
+                            "coinvest_overlap_count": tier1_count,  # tier1 = overlap
+                            "coinvest_holders": holders,
+                            "holder_tiers": holder_tiers,
+                            "position_changes": {},  # No change data in list format
+                            "tier1_count": tier1_count,
+                            "tier2_count": tier2_count,
+                            "manager_count": manager_count,
+                            "total_value": entry.get("total_value", 0),
+                            "total_shares": entry.get("total_shares", 0),
+                        }
+                    logger.info(f"  Converted holdings (list format) to coinvest signals for {len(coinvest_signals)} tickers")
+                    tier1_tickers = sum(1 for v in coinvest_signals.values() if v.get("tier1_count", 0) > 0)
+                    logger.info(f"  Tier-1 coverage: {tier1_tickers}/{len(coinvest_signals)} tickers have tier-1 holders")
             else:
                 logger.warning(f"  --enable-coinvest specified but neither coinvest_signals.json nor holdings_snapshots.json found")
 
