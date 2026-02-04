@@ -2035,13 +2035,21 @@ def compute_smart_money_reinforcement(
             # Peak at ~90 days, drops off outside 30-180 range
             timing = math.exp(-((days_to_catalyst - 90) / 90) ** 2)
         else:
-            # No catalyst data: no timing-based reinforcement
-            timing = 0.0
+            # No catalyst data: no timing-based reinforcement (and do not mark as applied)
             diagnostics["timing_reason"] = "no_catalyst_data"
+            diagnostics["skip_reason"] = "no_catalyst_data"
+            diagnostics["reinforcement_applied"] = False
+            return catalyst_mult, momentum_mult, flags, diagnostics
 
         # Combined reinforcement factor (0..1)
         reinforce = strength * timing
         reinforce = max(0.0, min(1.0, reinforce))
+
+        # If reinforce is effectively zero, treat as not applied (avoids flag-only noise)
+        if reinforce <= 0.0:
+            diagnostics["skip_reason"] = "reinforce_zero"
+            diagnostics["reinforcement_applied"] = False
+            return catalyst_mult, momentum_mult, flags, diagnostics
 
         # Apply to multipliers
         # Max boost: +10% catalyst, +6% momentum when reinforce=1.0
