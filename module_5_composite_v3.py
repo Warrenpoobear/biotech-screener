@@ -611,6 +611,14 @@ def compute_module_5_composite_v3(
 
         pos_score = _to_decimal(pos.get("pos_score")) if pos else None
 
+        # Apply FDA designation multiplier to PoS BEFORE cohort normalization
+        # This ensures the FDA-boosted value is used in winsorized ranking
+        if pos_score is not None and fda:
+            fda_multiplier = _to_decimal(fda.get("pos_multiplier"))
+            if fda_multiplier and fda_multiplier > Decimal("1.0"):
+                pos_score = (pos_score * fda_multiplier).quantize(Decimal("0.01"))
+                pos_score = min(pos_score, Decimal("95"))  # Cap at 95
+
         # Get severities
         severities = [
             fin.get("severity", "none"),
