@@ -2839,7 +2839,11 @@ def _score_single_ticker_v3(
     if mode == ScoringMode.BAKER_STYLE and THESIS_GATE_CONFIG["enabled"]:
         if clin_norm is not None and pos_norm is not None:
             thesis_score_pre = (clin_norm + pos_norm) / Decimal("2")
-            display_stage = _stage_bucket(lead_phase)
+            # Prefer already-computed display stage when present; fall back to lead_phase
+            display_stage = (
+                stage if stage in {"early", "mid", "late"}
+                else _stage_bucket(lead_phase)
+            )
             threshold_pre = THESIS_GATE_CONFIG["thresholds_by_stage"].get(
                 display_stage, THESIS_GATE_CONFIG["thresholds_by_stage"]["none"]
             )
@@ -3204,7 +3208,11 @@ def _score_single_ticker_v3(
             # Use display stage bucket for threshold (not alpha stage)
             # This allows late-stage companies to use the "late" threshold (45)
             # instead of being forced into "poc" threshold (55) by catalyst type
-            display_stage_bucket = _stage_bucket(lead_phase)
+            # Prefer already-computed display stage when present; fall back to lead_phase
+            display_stage_bucket = (
+                stage if stage in {"early", "mid", "late"}
+                else _stage_bucket(lead_phase)
+            )
             threshold = THESIS_GATE_CONFIG["thresholds_by_stage"].get(
                 display_stage_bucket, THESIS_GATE_CONFIG["thresholds_by_stage"]["none"]
             )
@@ -3238,7 +3246,11 @@ def _score_single_ticker_v3(
         )
     )
     # Add thesis gate diagnostic details (display stage + bypass reason)
-    reinforcement_diagnostics["thesis_display_stage"] = _stage_bucket(lead_phase)
+    # Prefer already-computed display stage when present; fall back to lead_phase
+    reinforcement_diagnostics["thesis_display_stage"] = (
+        stage if stage in {"early", "mid", "late"}
+        else _stage_bucket(lead_phase)
+    )
     if thesis_gate_bypass_reason:
         reinforcement_diagnostics["thesis_gate_bypass"] = thesis_gate_bypass_reason
     flags.extend(reinforcement_flags)
