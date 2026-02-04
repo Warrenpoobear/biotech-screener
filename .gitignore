@@ -101,7 +101,6 @@ production_data/*verification*.json
 aact/
 
 # --- Run artifacts ---
-production_data/screen_*.json
 production_data/sanity_*.json
 production_data/*_output*.json
 production_data/holdings_detailed.json
