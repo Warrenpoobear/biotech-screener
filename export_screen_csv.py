@@ -47,6 +47,18 @@ def export_screen_to_csv(json_path: Path, csv_path: Path = None) -> Path:
         surv = r.get("survivability_signal", {}) or {}
         enh = (sb.get("enhancements", {}) or {}).get("smart_money_reinforcement", {}) or {}
 
+        # Extract component scores from nested structure
+        components = sb.get("components", []) or []
+        comp_scores = {}
+        for c in components:
+            name = c.get("name")
+            if name:
+                comp_scores[name] = {
+                    "raw": c.get("raw"),
+                    "normalized": c.get("normalized"),
+                    "contribution": c.get("contribution"),
+                }
+
         rows.append({
             # Core ranking
             "rank": r.get("composite_rank"),
@@ -61,14 +73,14 @@ def export_screen_to_csv(json_path: Path, csv_path: Path = None) -> Path:
             "market_cap_bucket": r.get("market_cap_bucket"),
             "severity": r.get("severity"),
 
-            # Component scores (from breakdown)
-            "clinical_score": sb.get("clinical"),
-            "financial_score": sb.get("financial"),
-            "catalyst_score": sb.get("catalyst"),
-            "pos_score": sb.get("pos"),
-            "momentum_score": sb.get("momentum"),
-            "valuation_score": sb.get("valuation"),
-            "smart_money_score": sb.get("smart_money"),
+            # Component scores (raw and normalized from breakdown.components)
+            "clinical_score": comp_scores.get("clinical", {}).get("normalized"),
+            "financial_score": comp_scores.get("financial", {}).get("normalized"),
+            "catalyst_score": comp_scores.get("catalyst", {}).get("normalized"),
+            "pos_score": comp_scores.get("pos", {}).get("normalized"),
+            "momentum_score": comp_scores.get("momentum", {}).get("normalized"),
+            "valuation_score": comp_scores.get("valuation", {}).get("normalized"),
+            "smart_money_score": comp_scores.get("smart_money", {}).get("normalized"),
 
             # Confidence
             "confidence_overall": r.get("confidence_overall"),
