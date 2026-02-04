@@ -1845,10 +1845,19 @@ def apply_asymmetric_transform(
 
     This transformation creates:
     - Concave upside: Positive deviations from neutral are dampened (+10 → +6)
-    - Convex downside: Negative deviations from neutral are amplified (-10 → -12)
+    - Convex downside: Negative deviations are amplified using a quadratic curve
+      that is anchored at both the floor (5) and neutral (50), preventing the
+      "effective floor lift" bug where linear amplification would push scores
+      below 12.5 to the floor.
+
+    The quadratic downside ensures:
+    - f(50) = 50 (neutral maps to neutral)
+    - f(5) = 5 (floor maps to floor - preserves P5 resolution)
+    - slope at 50 = downside_amplification (1.2x emphasis near center)
 
     This reflects the asymmetric nature of biotech investing where downside risks
-    are often more severe than upside surprises.
+    are often more severe than upside surprises, while preserving resolution in
+    the lower tail of the distribution.
 
     Args:
         normalized_score: Normalized component score (0-100)
@@ -1859,22 +1868,29 @@ def apply_asymmetric_transform(
     """
     config = ASYMMETRY_CONFIG
     neutral = config["neutral_threshold"]
+    floor = Decimal("5")
+    ceiling = Decimal("95")
 
     delta = normalized_score - neutral
 
     if delta > 0:
-        # Concave upside: dampen positive deviations
-        transformed_delta = delta * config["upside_dampening"]
+        # Concave upside: dampen positive deviations (linear)
+        transformed_score = neutral + delta * config["upside_dampening"]
     elif delta < 0:
-        # Convex downside: amplify negative deviations
-        transformed_delta = delta * config["downside_amplification"]
+        # Convex downside: quadratic anchored at floor and neutral
+        # f(x) = center + b*d + a*d^2, where d = x - center
+        # b = downside_amplification (slope at center)
+        # a = (b - 1) / span, where span = center - floor
+        # This ensures f(floor) = floor and f(center) = center
+        span = neutral - floor  # 45
+        b = config["downside_amplification"]  # 1.2
+        a = (b - Decimal("1")) / span  # (1.2 - 1) / 45 = 0.00444...
+        transformed_score = neutral + (b * delta) + (a * delta * delta)
     else:
-        transformed_delta = Decimal("0")
-
-    transformed_score = neutral + transformed_delta
+        transformed_score = neutral
 
     # Clamp to valid range - use [5, 95] floor/ceiling to match winsorization output
-    return _clamp(_quantize_score(transformed_score), Decimal("5"), Decimal("95"))
+    return _clamp(_quantize_score(transformed_score), floor, ceiling)
 
 
 def apply_asymmetric_transform_to_contribution(
