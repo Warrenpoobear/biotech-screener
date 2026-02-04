@@ -157103,7 +157103,7 @@
       "alpha_abs_p90": "0.5726",
       "apply_multiplier_enabled": false,
       "cohort_count": 3,
-      "conviction_horizon_overlay_applied": 7,
+      "conviction_horizon_overlay_applied": 10,
       "defensive_features_coverage": {
         "alias_coverage": {
           "corr_xbi": {
@@ -157394,29 +157394,29 @@
         "component_scores": [
           {
             "confidence": "0.95",
-            "contribution": "26.57",
+            "contribution": "26.56",
             "decay_factor": null,
             "name": "clinical",
             "normalized": "70.69",
             "notes": [],
             "raw": "60.68",
             "weight_base": "0.35",
-            "weight_effective": "0.3895"
+            "weight_effective": "0.3893"
           },
           {
             "confidence": "0.95",
-            "contribution": "12.32",
+            "contribution": "12.31",
             "decay_factor": null,
             "name": "financial",
             "normalized": "68.45",
             "notes": [],
             "raw": "88.95939954617508",
             "weight_base": "0.22",
-            "weight_effective": "0.1865"
+            "weight_effective": "0.1864"
           },
           {
             "confidence": "0.30",
-            "contribution": "1.02",
+            "contribution": "1.03",
             "decay_factor": "0.2500",
             "name": "catalyst",
             "normalized": "42.95",
@@ -157426,7 +157426,7 @@
             ],
             "raw": "35.91",
             "weight_base": "0.07",
-            "weight_effective": "0.0464"
+            "weight_effective": "0.0469"
           },
           {
             "confidence": "0.63",
@@ -157439,7 +157439,7 @@
             ],
             "raw": "26.97",
             "weight_base": "0.18",
-            "weight_effective": "0.1602"
+            "weight_effective": "0.1601"
           },
           {
             "confidence": "0.95",
@@ -157459,7 +157459,7 @@
           }
         ],
         "composite_rank": 1,
-        "composite_score": "61.10",
+        "composite_score": "61.09",
         "confidence_catalyst": "0.30",
         "confidence_clinical": "0.95",
         "confidence_financial": "0.95",
@@ -157486,14 +157486,14 @@
           "not_elite",
           "high_vol_penalty"
         ],
-        "determinism_hash": "cb3b99d3551ebaa1",
+        "determinism_hash": "c9a9b410d4cb6b03",
         "drawdown": null,
         "effective_weights": {
-          "catalyst": "0.0464",
-          "clinical": "0.3895",
-          "financial": "0.1865",
+          "catalyst": "0.0469",
+          "clinical": "0.3893",
+          "financial": "0.1864",
           "momentum": "0.0135",
-          "pos": "0.1602",
+          "pos": "0.1601",
           "short_interest": "0.0051",
           "smart_money": "0.1304",
           "valuation": "0.0683"
@@ -157518,6 +157518,7 @@
           "catalyst_proximity_blended",
           "clinical_asymmetric_upside_dampened",
           "clinical_financial_synergy",
+          "conviction_horizon_overlay_applied",
           "financial_asymmetric_upside_dampened",
           "momentum_window_60d",
           "pos_delta_capped",
@@ -157578,9 +157579,9 @@
           "risk_profile": "diversified"
         },
         "rank_driver": "alpha",
-        "rank_score": 60.86,
+        "rank_score": 60.85,
         "rankable": true,
-        "risk_adjusted_score": "59.27",
+        "risk_adjusted_score": "59.26",
         "schema_version": "v3.0",
         "score_breakdown": {
           "base_weights": {
@@ -157598,29 +157599,29 @@
           "components": [
             {
               "confidence": "0.95",
-              "contribution": "26.57",
+              "contribution": "26.56",
               "decay_factor": null,
               "name": "clinical",
               "normalized": "70.69",
               "notes": [],
               "raw": "60.68",
               "weight_base": "0.35",
-              "weight_effective": "0.3895"
+              "weight_effective": "0.3893"
             },
             {
               "confidence": "0.95",
-              "contribution": "12.32",
+              "contribution": "12.31",
               "decay_factor": null,
               "name": "financial",
               "normalized": "68.45",
               "notes": [],
               "raw": "88.95939954617508",
               "weight_base": "0.22",
-              "weight_effective": "0.1865"
+              "weight_effective": "0.1864"
             },
             {
               "confidence": "0.30",
-              "contribution": "1.02",
+              "contribution": "1.03",
               "decay_factor": "0.2500",
               "name": "catalyst",
               "normalized": "42.95",
@@ -157630,7 +157631,7 @@
               ],
               "raw": "35.91",
               "weight_base": "0.07",
-              "weight_effective": "0.0464"
+              "weight_effective": "0.0469"
             },
             {
               "confidence": "0.63",
@@ -157643,7 +157644,7 @@
               ],
               "raw": "26.97",
               "weight_base": "0.18",
-              "weight_effective": "0.1602"
+              "weight_effective": "0.1601"
             },
             {
               "confidence": "0.95",
@@ -157663,11 +157664,11 @@
             }
           ],
           "effective_weights": {
-            "catalyst": "0.0464",
-            "clinical": "0.3895",
-            "financial": "0.1865",
+            "catalyst": "0.0469",
+            "clinical": "0.3893",
+            "financial": "0.1864",
             "momentum": "0.0135",
-            "pos": "0.1602",
+            "pos": "0.1601",
             "short_interest": "0.0051",
             "smart_money": "0.1304",
             "valuation": "0.0683"
@@ -157683,7 +157684,7 @@
               "financial": "0.965"
             },
             "conviction_horizon_overlay": {
-              "applied": false,
+              "applied": true,
               "boost_diagnostics": {
                 "horizon": "0.02",
                 "skip_reason": null,
@@ -157691,7 +157692,11 @@
                 "tol": "1.00",
                 "z_score": "2.62"
               },
-              "skip_reason": null
+              "days_to_catalyst": 238,
+              "tier1_count": 9,
+              "weight_after": "0.0479337500",
+              "weight_before": "0.0474337500",
+              "weight_boost": "0.0005"
             },
             "momentum": {
               "alpha_60d": "-0.3084",
@@ -157704,8 +157709,8 @@
             },
             "smart_money_reinforcement": {
               "catalyst_mult": "1.0062",
-              "catalyst_original": "1.02",
-              "catalyst_reinforced": "1.026324",
+              "catalyst_original": "1.03",
+              "catalyst_reinforced": "1.036386",
               "conviction_method": "conviction_x_timing",
               "conviction_overlap": 11.9664,
               "days_to_catalyst": 238,
@@ -157779,21 +157784,21 @@
             }
           },
           "final": {
-            "composite_score": "61.10",
+            "composite_score": "61.09",
             "delta_bonus": "0.00",
-            "post_cap_score": "60.86",
-            "post_ceiling_score": "60.86",
-            "post_contradiction_score": "60.86",
-            "post_existential_score": "60.86",
-            "post_severity_score": "60.86",
-            "post_uncertainty_score": "60.86",
-            "post_vol_score": "60.86",
-            "pre_penalty_score": "60.86"
+            "post_cap_score": "60.85",
+            "post_ceiling_score": "60.85",
+            "post_contradiction_score": "60.85",
+            "post_existential_score": "60.85",
+            "post_severity_score": "60.85",
+            "post_uncertainty_score": "60.85",
+            "post_vol_score": "60.85",
+            "pre_penalty_score": "60.85"
           },
           "hybrid_aggregation": {
             "alpha": "0.85",
-            "min_critical": "66.06",
-            "weighted_sum": "57.00"
+            "min_critical": "66.04",
+            "weighted_sum": "56.99"
           },
           "interaction_terms": {
             "catalyst_volatility_dampening": "0.00",
@@ -171378,18 +171383,18 @@
             "notes": [],
             "raw": "45.83",
             "weight_base": "0.35",
-            "weight_effective": "0.3885"
+            "weight_effective": "0.3884"
           },
           {
             "confidence": "0.95",
-            "contribution": "12.94",
+            "contribution": "12.93",
             "decay_factor": null,
             "name": "financial",
             "normalized": "68.32",
             "notes": [],
             "raw": "89.2",
             "weight_base": "0.22",
-            "weight_effective": "0.1962"
+            "weight_effective": "0.1961"
           },
           {
             "confidence": "0.30",
@@ -171403,7 +171408,7 @@
             ],
             "raw": "35.91",
             "weight_base": "0.07",
-            "weight_effective": "0.0489"
+            "weight_effective": "0.0490"
           },
           {
             "confidence": "0.40",
@@ -171461,12 +171466,12 @@
           "multiplier_disabled",
           "high_vol_penalty"
         ],
-        "determinism_hash": "31c1c43afb8ac992",
+        "determinism_hash": "fda0997e02ef6cfd",
         "drawdown": null,
         "effective_weights": {
-          "catalyst": "0.0489",
-          "clinical": "0.3885",
-          "financial": "0.1962",
+          "catalyst": "0.0490",
+          "clinical": "0.3884",
+          "financial": "0.1961",
           "momentum": "0.0142",
           "pos": "0.1446",
           "short_interest": "0.0054",
@@ -171493,6 +171498,7 @@
           "catalyst_proximity_blended",
           "clinical_asymmetric_upside_dampened",
           "clinical_financial_synergy",
+          "conviction_horizon_overlay_applied",
           "financial_asymmetric_upside_dampened",
           "momentum_window_60d",
           "overvalued_vs_peers",
@@ -171583,18 +171589,18 @@
               "notes": [],
               "raw": "45.83",
               "weight_base": "0.35",
-              "weight_effective": "0.3885"
+              "weight_effective": "0.3884"
             },
             {
               "confidence": "0.95",
-              "contribution": "12.94",
+              "contribution": "12.93",
               "decay_factor": null,
               "name": "financial",
               "normalized": "68.32",
               "notes": [],
               "raw": "89.2",
               "weight_base": "0.22",
-              "weight_effective": "0.1962"
+              "weight_effective": "0.1961"
             },
             {
               "confidence": "0.30",
@@ -171608,7 +171614,7 @@
               ],
               "raw": "35.91",
               "weight_base": "0.07",
-              "weight_effective": "0.0489"
+              "weight_effective": "0.0490"
             },
             {
               "confidence": "0.40",
@@ -171641,9 +171647,9 @@
             }
           ],
           "effective_weights": {
-            "catalyst": "0.0489",
-            "clinical": "0.3885",
-            "financial": "0.1962",
+            "catalyst": "0.0490",
+            "clinical": "0.3884",
+            "financial": "0.1961",
             "momentum": "0.0142",
             "pos": "0.1446",
             "short_interest": "0.0054",
@@ -171661,7 +171667,7 @@
               "financial": "0.965"
             },
             "conviction_horizon_overlay": {
-              "applied": false,
+              "applied": true,
               "boost_diagnostics": {
                 "horizon": "0.01",
                 "skip_reason": null,
@@ -171669,7 +171675,11 @@
                 "tol": "0.75",
                 "z_score": "1.03"
               },
-              "skip_reason": null
+              "days_to_catalyst": 239,
+              "tier1_count": 7,
+              "weight_after": "0.0476337500",
+              "weight_before": "0.0474337500",
+              "weight_boost": "0.0002"
             },
             "momentum": {
               "alpha_60d": "-0.5851",
@@ -171770,8 +171780,8 @@
           },
           "hybrid_aggregation": {
             "alpha": "0.85",
-            "min_critical": "56.53",
-            "weighted_sum": "53.09"
+            "min_critical": "56.54",
+            "weighted_sum": "53.08"
           },
           "interaction_terms": {
             "catalyst_volatility_dampening": "0.00",
@@ -204233,7 +204243,7 @@
             "notes": [],
             "raw": "40.58",
             "weight_base": "0.35",
-            "weight_effective": "0.4101"
+            "weight_effective": "0.4100"
           },
           {
             "confidence": "0.95",
@@ -204258,7 +204268,7 @@
             ],
             "raw": "35.91",
             "weight_base": "0.07",
-            "weight_effective": "0.0516"
+            "weight_effective": "0.0517"
           },
           {
             "confidence": "0.42",
@@ -204271,7 +204281,7 @@
             ],
             "raw": "7.81",
             "weight_base": "0.18",
-            "weight_effective": "0.1549"
+            "weight_effective": "0.1548"
           },
           {
             "confidence": "0.95",
@@ -204291,7 +204301,7 @@
         ],
         "composite_rank": 158,
         "composite_score": "29.41",
-        "composite_score_pre_suppression": "42.65",
+        "composite_score_pre_suppression": "42.66",
         "confidence_catalyst": "0.30",
         "confidence_clinical": "0.85",
         "confidence_financial": "0.95",
@@ -204317,14 +204327,14 @@
           "multiplier_disabled",
           "corr_missing"
         ],
-        "determinism_hash": "4bf1d319d3698eee",
+        "determinism_hash": "86c78aa5bbc0a48b",
         "drawdown": null,
         "effective_weights": {
-          "catalyst": "0.0516",
-          "clinical": "0.4101",
+          "catalyst": "0.0517",
+          "clinical": "0.4100",
           "financial": "0.2070",
           "momentum": "0.0150",
-          "pos": "0.1549",
+          "pos": "0.1548",
           "short_interest": "0.0057",
           "smart_money": "0.1304",
           "valuation": "0.0253"
@@ -204346,6 +204356,7 @@
           "catalyst_asymmetric_upside_dampened",
           "catalyst_confidence_soft_gated",
           "catalyst_proximity_blended",
+          "conviction_horizon_overlay_applied",
           "existential_binary_clinical_risk",
           "financial_asymmetric_upside_dampened",
           "momentum_window_60d",
@@ -204409,9 +204420,9 @@
           "risk_profile": "single_asset"
         },
         "rank_driver": "suppressed",
-        "rank_score": 42.35,
+        "rank_score": 42.36,
         "rankable": true,
-        "risk_adjusted_score": "42.65",
+        "risk_adjusted_score": "42.66",
         "schema_version": "v3.0",
         "score_breakdown": {
           "base_weights": {
@@ -204436,7 +204447,7 @@
               "notes": [],
               "raw": "40.58",
               "weight_base": "0.35",
-              "weight_effective": "0.4101"
+              "weight_effective": "0.4100"
             },
             {
               "confidence": "0.95",
@@ -204461,7 +204472,7 @@
               ],
               "raw": "35.91",
               "weight_base": "0.07",
-              "weight_effective": "0.0516"
+              "weight_effective": "0.0517"
             },
             {
               "confidence": "0.42",
@@ -204474,7 +204485,7 @@
               ],
               "raw": "7.81",
               "weight_base": "0.18",
-              "weight_effective": "0.1549"
+              "weight_effective": "0.1548"
             },
             {
               "confidence": "0.95",
@@ -204493,11 +204504,11 @@
             }
           ],
           "effective_weights": {
-            "catalyst": "0.0516",
-            "clinical": "0.4101",
+            "catalyst": "0.0517",
+            "clinical": "0.4100",
             "financial": "0.2070",
             "momentum": "0.0150",
-            "pos": "0.1549",
+            "pos": "0.1548",
             "short_interest": "0.0057",
             "smart_money": "0.1304",
             "valuation": "0.0253"
@@ -204513,7 +204524,7 @@
               "financial": "0.965"
             },
             "conviction_horizon_overlay": {
-              "applied": false,
+              "applied": true,
               "boost_diagnostics": {
                 "horizon": "0.01",
                 "skip_reason": null,
@@ -204521,7 +204532,11 @@
                 "tol": "0.75",
                 "z_score": "0.79"
               },
-              "skip_reason": null
+              "days_to_catalyst": 239,
+              "tier1_count": 10,
+              "weight_after": "0.0476337500",
+              "weight_before": "0.0474337500",
+              "weight_boost": "0.0002"
             },
             "momentum": {
               "alpha_60d": "0.4461",
@@ -204609,20 +204624,20 @@
             }
           },
           "final": {
-            "composite_score": "42.65",
+            "composite_score": "42.66",
             "delta_bonus": "0.00",
-            "post_cap_score": "42.35",
-            "post_ceiling_score": "42.35",
-            "post_contradiction_score": "42.35",
-            "post_existential_score": "42.35",
-            "post_severity_score": "42.35",
-            "post_uncertainty_score": "42.35",
-            "post_vol_score": "42.35",
-            "pre_penalty_score": "42.35"
+            "post_cap_score": "42.36",
+            "post_ceiling_score": "42.36",
+            "post_contradiction_score": "42.36",
+            "post_existential_score": "42.36",
+            "post_severity_score": "42.36",
+            "post_uncertainty_score": "42.36",
+            "post_vol_score": "42.36",
+            "pre_penalty_score": "42.36"
           },
           "hybrid_aggregation": {
             "alpha": "0.85",
-            "min_critical": "41.94",
+            "min_critical": "41.95",
             "weighted_sum": "44.19"
           },
           "interaction_terms": {
@@ -332133,7 +332148,7 @@
       "future_filing_skips": 0,
       "missing_total_value": 0
     },
-    "conviction_horizon_overlay_applied": 7,
+    "conviction_horizon_overlay_applied": 10,
     "defensive_config": null,
     "defensive_multiplier_enabled": false,
     "deterministic_timestamp": "2026-02-04T00:00:00Z",
@@ -332423,7 +332438,7 @@
       "pos_coverage_validation.json": "1b59d24430d261d5",
       "production_market_caps.json": "303de21c05bf2d9c",
       "quarterly_burn_history.json": "d9278df762e11e6e",
-      "results.json": "f3dfcf73f996e4df",
+      "results.json": "56cc7fcf0f4fedb2",
       "results_2026-01-30.json": "94c755ac19669737",
       "results_2026-01-30_v4.1.json": "5ad7a3280f40c83c",
       "results_2026-01-30_v4.json": "3c7671e9446d6f61",
@@ -332432,7 +332447,7 @@
       "screen_2026-01-26.json": "9d3980df1567ea07",
       "screen_2026-01-31.json": "393b48e96afc3e9e",
       "screen_2026-02-01.json": "f0220d5b01ebf236",
-      "screen_2026-02-04.json": "f3dfcf73f996e4df",
+      "screen_2026-02-04.json": "b265420f487708fc",
       "screen_output.json": "616abb1857da3403",
       "screen_results.json": "190890fdc67d8608",
       "screen_with_clusters.json": "27a651887988e246",

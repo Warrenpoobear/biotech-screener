@@ -784,6 +784,72 @@ def _conviction_horizon_weight_boost(
     return boost, diagnostics
 
 
+def _apply_conviction_horizon_overlay(
+    *,
+    weight_base: Decimal,
+    weight_effective: Decimal,
+    confidence_low: bool,
+    thesis_gate_blocked: bool,
+    conviction_overlap: Optional[float],
+    tier1_count: int,
+    days_to_catalyst: Optional[int],
+    cohort_conviction_stats: Optional[Dict[str, float]],
+) -> Tuple[Decimal, Dict[str, Any]]:
+    """
+    Apply conviction horizon overlay with all pre-conditions checked.
+
+    This wrapper enforces:
+    - Thesis gate is a HARD BLOCK (cannot bypass)
+    - Confidence must be low (the root issue we're solving)
+    - Delegates to _conviction_horizon_weight_boost for actual calculation
+
+    Args:
+        weight_base: Base catalyst weight before gating
+        weight_effective: Current effective weight (after continuous gate)
+        confidence_low: Whether catalyst confidence is below threshold
+        thesis_gate_blocked: Whether thesis gate would block (hard block)
+        conviction_overlap: Conviction-weighted overlap score
+        tier1_count: Number of tier-1 holders
+        days_to_catalyst: Days to nearest catalyst event
+        cohort_conviction_stats: Mean/std conviction for stage×size cohort
+
+    Returns:
+        Tuple of (new_weight, diagnostics dict)
+    """
+    # Thesis gate is a HARD BLOCK - cannot be bypassed by conviction
+    if thesis_gate_blocked:
+        return weight_effective, {"applied": False, "skip_reason": "thesis_gate_blocked"}
+
+    # Only apply when confidence is low (the root issue)
+    if not confidence_low:
+        return weight_effective, {"applied": False, "skip_reason": "confidence_not_low"}
+
+    # Delegate to boost calculator
+    boost, boost_diag = _conviction_horizon_weight_boost(
+        weight_base=weight_base,
+        weight_effective=weight_effective,
+        conviction_overlap=conviction_overlap,
+        tier1_count=tier1_count,
+        days_to_catalyst=days_to_catalyst,
+        cohort_conviction_stats=cohort_conviction_stats,
+    )
+
+    if boost <= Decimal("0"):
+        skip_reason = boost_diag.get("skip_reason", "no_boost")
+        return weight_effective, {"applied": False, "skip_reason": skip_reason, "boost_diagnostics": boost_diag}
+
+    new_w = weight_effective + boost
+    return new_w, {
+        "applied": True,
+        "weight_boost": str(boost),
+        "weight_before": str(weight_effective),
+        "weight_after": str(new_w),
+        "days_to_catalyst": days_to_catalyst,
+        "tier1_count": tier1_count,
+        "boost_diagnostics": boost_diag,
+    }
+
+
 def _compute_catalyst_effective(
     catalyst_score_window: Optional[Decimal],
     catalyst_proximity_score: Optional[Decimal],
@@ -2827,10 +2893,7 @@ def _score_single_ticker_v3(
     # This gives meaningful catalyst exposure for legitimate long-dated events.
     #
     # CRITICAL: thesis_gate remains a HARD BLOCK for this overlay.
-    # We pre-compute the thesis gate check here to avoid smart money
-    # reintroducing weak-thesis names that the gate is designed to prevent.
 
-    conviction_horizon_overlay = None
     cat_base_w = vol_adjusted_weights.get("catalyst", Decimal("0"))
     cat_eff_w = effective_weights.get("catalyst", Decimal("0"))
 
@@ -2849,49 +2912,20 @@ def _score_single_ticker_v3(
             )
             overlay_thesis_blocked = thesis_score_pre < threshold_pre
 
-    # Trigger conditions (all must be true):
-    # 1. Catalyst confidence is low (below gate threshold) - semantic tie to gating issue
-    # 2. Thesis gate NOT triggered - hard block remains
-    # 3. Base weight exists
-    overlay_should_trigger = (
-        conf_cat < CONFIDENCE_GATE_THRESHOLD  # Low confidence is the root issue
-        and not overlay_thesis_blocked         # Thesis gate remains hard block
-        and cat_base_w > EPS                   # Has catalyst weight
+    # Apply overlay via wrapper (handles all pre-conditions and diagnostics)
+    new_cat_w, conviction_horizon_overlay = _apply_conviction_horizon_overlay(
+        weight_base=cat_base_w,
+        weight_effective=cat_eff_w,
+        confidence_low=(conf_cat < CONFIDENCE_GATE_THRESHOLD),
+        thesis_gate_blocked=overlay_thesis_blocked,
+        conviction_overlap=coinvest_data.get("conviction_overlap") if coinvest_data else None,
+        tier1_count=int(coinvest_data.get("tier1_count", 0) or 0) if coinvest_data else 0,
+        days_to_catalyst=int(days_to_cat) if days_to_cat is not None else None,
+        cohort_conviction_stats=cohort_conviction_stats,
     )
-
-    if overlay_should_trigger:
-        boost_w, boost_diag = _conviction_horizon_weight_boost(
-            weight_base=cat_base_w,
-            weight_effective=cat_eff_w,
-            conviction_overlap=coinvest_data.get("conviction_overlap") if coinvest_data else None,
-            tier1_count=int(coinvest_data.get("tier1_count", 0) or 0) if coinvest_data else 0,
-            days_to_catalyst=int(days_to_cat) if days_to_cat is not None else None,
-            cohort_conviction_stats=cohort_conviction_stats,
-        )
-        if boost_w > Decimal("0.001"):  # Meaningful boost threshold
-            new_eff_w = cat_eff_w + boost_w
-            effective_weights["catalyst"] = new_eff_w
-            conviction_horizon_overlay = {
-                "applied": True,
-                "weight_boost": str(boost_w),
-                "weight_before": str(cat_eff_w),
-                "weight_after": str(new_eff_w),
-                "days_to_catalyst": int(days_to_cat) if days_to_cat is not None else None,
-                "tier1_count": int(coinvest_data.get("tier1_count", 0) or 0) if coinvest_data else 0,
-                "boost_diagnostics": boost_diag,
-            }
-            flags.append("conviction_horizon_overlay_applied")
-        else:
-            # Overlay computed but boost was zero or below threshold
-            conviction_horizon_overlay = {
-                "applied": False,
-                "skip_reason": boost_diag.get("skip_reason", "boost_below_threshold"),
-                "boost_diagnostics": boost_diag,
-            }
-    elif overlay_thesis_blocked:
-        conviction_horizon_overlay = {"applied": False, "skip_reason": "thesis_gate_blocked"}
-    elif conf_cat >= CONFIDENCE_GATE_THRESHOLD:
-        conviction_horizon_overlay = {"applied": False, "skip_reason": "confidence_not_low"}
+    effective_weights["catalyst"] = new_cat_w
+    if conviction_horizon_overlay.get("applied"):
+        flags.append("conviction_horizon_overlay_applied")
 
     total = sum(effective_weights.values())
     if total > EPS:
