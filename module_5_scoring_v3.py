@@ -2271,6 +2271,14 @@ def _score_single_ticker_v3(
     fda_timeline_acceleration = fda_data.get("timeline_acceleration_months", 0) if fda_data else 0
     fda_designation_types = fda_data.get("designation_types", []) if fda_data else []
 
+    # Apply FDA designation multiplier to PoS score
+    # BTD (+25%), Fast Track (+12%), etc. boost approval probability
+    pos_raw_unadjusted = pos_raw
+    if pos_raw is not None and fda_pos_multiplier and fda_pos_multiplier > Decimal("1.0"):
+        pos_raw = (pos_raw * fda_pos_multiplier).quantize(Decimal("0.01"))
+        # Cap at 95 to avoid overconfidence
+        pos_raw = min(pos_raw, Decimal("95"))
+
     # Extract pipeline diversity data
     diversity_score = _to_decimal(diversity_data.get("diversity_score")) if diversity_data else None
     diversity_risk_profile = diversity_data.get("risk_profile", "unknown") if diversity_data else "unknown"
@@ -2337,6 +2345,20 @@ def _score_single_ticker_v3(
     cat_raw = cat_effective
     if cat_proximity_blended:
         flags.append("catalyst_proximity_blended")
+
+    # PDUFA date presence signals FILED stage (NDA submitted)
+    # FILED stage has 85% base rate vs Phase 3's 50% - apply adjustment
+    # This captures companies that CT.gov still shows as Phase 3 but have filed NDA
+    pdufa_pos_boost_applied = False
+    if cat_event_type == "FDA_PDUFA_DATE" and pos_raw is not None:
+        # If lead_phase is Phase 3 but PDUFA exists, apply FILED stage adjustment
+        # FILED base rate (85%) vs Phase 3 (42-50%) = ~1.7x multiplier
+        if lead_phase and "3" in lead_phase.lower() and pos_raw < Decimal("70"):
+            pdufa_multiplier = Decimal("1.70")  # Adjust Phase 3 → FILED equivalent
+            pos_raw = (pos_raw * pdufa_multiplier).quantize(Decimal("0.01"))
+            pos_raw = min(pos_raw, Decimal("95"))  # Cap at 95
+            pdufa_pos_boost_applied = True
+            flags.append("pdufa_filed_stage_boost")
 
     # Get normalized scores
     clin_norm = _coalesce(normalized_scores.get("clinical"), clin_raw, default=Decimal("50"))
@@ -3399,6 +3421,9 @@ def _score_single_ticker_v3(
         "fda_designation_signal": {
             "designation_score": str(fda_designation_score) if fda_designation_score else None,
             "pos_multiplier": str(fda_pos_multiplier),
+            "pos_unadjusted": str(pos_raw_unadjusted) if pos_raw_unadjusted else None,
+            "pos_adjusted": str(pos_raw) if pos_raw else None,
+            "pdufa_filed_stage_boost": pdufa_pos_boost_applied,
             "timeline_acceleration_months": fda_timeline_acceleration,
             "designation_types": fda_designation_types,
             "has_designations": len(fda_designation_types) > 0,
