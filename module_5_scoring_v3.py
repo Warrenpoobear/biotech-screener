@@ -2350,10 +2350,11 @@ def _score_single_ticker_v3(
     # FILED stage has 85% base rate vs Phase 3's 50% - apply adjustment
     # This captures companies that CT.gov still shows as Phase 3 but have filed NDA
     pdufa_pos_boost_applied = False
+    pdufa_lead_phase = clin_data.get("lead_phase") if clin_data else None
     if cat_event_type == "FDA_PDUFA_DATE" and pos_raw is not None:
         # If lead_phase is Phase 3 but PDUFA exists, apply FILED stage adjustment
         # FILED base rate (85%) vs Phase 3 (42-50%) = ~1.7x multiplier
-        if lead_phase and "3" in lead_phase.lower() and pos_raw < Decimal("70"):
+        if pdufa_lead_phase and "3" in pdufa_lead_phase.lower() and pos_raw < Decimal("70"):
             pdufa_multiplier = Decimal("1.70")  # Adjust Phase 3 → FILED equivalent
             pos_raw = (pos_raw * pdufa_multiplier).quantize(Decimal("0.01"))
             pos_raw = min(pos_raw, Decimal("95"))  # Cap at 95
