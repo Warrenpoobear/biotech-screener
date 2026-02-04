@@ -692,6 +692,78 @@ def _coalesce(*vals: Any, default: Optional[Any] = None) -> Any:
     return default
 
 
+def _conviction_horizon_weight_boost(
+    weight_base: Decimal,
+    weight_effective: Decimal,
+    conviction_overlap: Optional[float],
+    tier1_count: int,
+    days_to_catalyst: Optional[int],
+    cohort_conviction_stats: Optional[Dict[str, float]],
+) -> Decimal:
+    """
+    Compute an ADDITIVE boost to catalyst weight for high-conviction names.
+
+    This overlay provides additional catalyst weight for high-conviction names
+    with real catalysts in the 90-240 day window, on top of what the continuous
+    confidence gate already provides.
+
+    Args:
+        weight_base: Base catalyst weight before gating
+        weight_effective: Current effective weight (after continuous gate)
+        conviction_overlap: Conviction-weighted overlap score
+        tier1_count: Number of tier-1 holders
+        days_to_catalyst: Days to nearest catalyst event
+        cohort_conviction_stats: Mean/std conviction for stage×size cohort
+
+    Returns:
+        Additional weight boost (0 if overlay doesn't apply)
+    """
+    # Only extend horizon for real catalysts in a bounded window
+    if days_to_catalyst is None or days_to_catalyst <= 90 or days_to_catalyst > 240:
+        return Decimal("0")
+
+    # Require minimum conviction signal (tier1 >= 6 OR positive conviction z-score)
+    if (tier1_count or 0) < 6:
+        # Check conviction z-score
+        mean = float((cohort_conviction_stats or {}).get("mean", 0.0))
+        std = float((cohort_conviction_stats or {}).get("std", 1.0))
+        if std < 1e-6:
+            std = 1.0
+        z = 0.0 if not conviction_overlap else (float(conviction_overlap) - mean) / std
+        if z < 1.0:  # Require z >= 1.0 if tier1 < 6
+            return Decimal("0")
+
+    # Compute conviction tolerance from cohort z-score
+    mean = float((cohort_conviction_stats or {}).get("mean", 0.0))
+    std = float((cohort_conviction_stats or {}).get("std", 1.0))
+    if std < 1e-6:
+        std = 1.0
+
+    z = 0.0 if not conviction_overlap else (float(conviction_overlap) - mean) / std
+
+    # tol: z≈0.5→0, z≈1.5→1 (linear ramp)
+    tol = max(0.0, min(1.0, (z - 0.5) / 1.0))
+
+    # Tier1 count provides a floor for tolerance
+    if tier1_count >= 6:
+        tol = max(tol, 0.75)
+
+    # Horizon factor: peaks around 150d, fades to 0 by 60d or 240d
+    horizon = 1.0 - abs(float(days_to_catalyst) - 150.0) / 90.0
+    horizon = max(0.0, min(1.0, horizon))
+
+    # Additive boost: up to 25% of base weight for high-conviction names
+    # This stacks with the continuous gate to give meaningful catalyst exposure
+    BOOST_FRAC = 0.25
+    boost = float(weight_base) * BOOST_FRAC * tol * horizon
+
+    # Cap total effective weight at 90% of base (don't over-boost)
+    max_boost = float(weight_base) * 0.90 - float(weight_effective)
+    boost = min(boost, max(0.0, max_boost))
+
+    return Decimal(str(round(boost, 6)))
+
+
 def _compute_catalyst_effective(
     catalyst_score_window: Optional[Decimal],
     catalyst_proximity_score: Optional[Decimal],
@@ -2727,6 +2799,40 @@ def _score_single_ticker_v3(
 
         effective_weights[comp] = eff_w
 
+    # =========================================================================
+    # CONVICTION HORIZON TOLERANCE OVERLAY
+    # =========================================================================
+    # For high-conviction names with real catalysts in 90-240 day window,
+    # provide an ADDITIVE boost to catalyst weight on top of the continuous gate.
+    # This gives meaningful catalyst exposure for legitimate long-dated events.
+
+    conviction_horizon_overlay = None
+    cat_base_w = vol_adjusted_weights.get("catalyst", Decimal("0"))
+    cat_eff_w = effective_weights.get("catalyst", Decimal("0"))
+
+    # Apply if catalyst weight is gated below 70% of base (room for boost)
+    if cat_base_w > EPS and cat_eff_w < cat_base_w * Decimal("0.70"):
+        boost_w = _conviction_horizon_weight_boost(
+            weight_base=cat_base_w,
+            weight_effective=cat_eff_w,
+            conviction_overlap=coinvest_data.get("conviction_overlap") if coinvest_data else None,
+            tier1_count=int(coinvest_data.get("tier1_count", 0) or 0) if coinvest_data else 0,
+            days_to_catalyst=int(days_to_cat) if days_to_cat is not None else None,
+            cohort_conviction_stats=cohort_conviction_stats,
+        )
+        if boost_w > Decimal("0.001"):  # Meaningful boost threshold
+            new_eff_w = cat_eff_w + boost_w
+            effective_weights["catalyst"] = new_eff_w
+            conviction_horizon_overlay = {
+                "applied": True,
+                "weight_boost": str(boost_w),
+                "weight_before": str(cat_eff_w),
+                "weight_after": str(new_eff_w),
+                "days_to_catalyst": int(days_to_cat) if days_to_cat is not None else None,
+                "tier1_count": int(coinvest_data.get("tier1_count", 0) or 0) if coinvest_data else 0,
+            }
+            flags.append("conviction_horizon_overlay_applied")
+
     total = sum(effective_weights.values())
     if total > EPS:
         effective_weights = {k: _quantize_weight(v / total) for k, v in effective_weights.items()}
@@ -3278,6 +3384,8 @@ def _score_single_ticker_v3(
         "thesis_gate": thesis_gate_diagnostics,
         # Enhancement 11: Smart money reinforcement (Option D)
         "smart_money_reinforcement": reinforcement_diagnostics,
+        # Enhancement 12: Conviction horizon tolerance overlay
+        "conviction_horizon_overlay": conviction_horizon_overlay,
     }
 
     determinism_hash = _compute_determinism_hash(
@@ -3319,6 +3427,8 @@ def _score_single_ticker_v3(
             # Baker-style enhancements (Enhancement 10 & 11)
             "thesis_gate": thesis_gate_diagnostics,
             "smart_money_reinforcement": reinforcement_diagnostics,
+            # Enhancement 12: Conviction horizon tolerance overlay
+            "conviction_horizon_overlay": conviction_horizon_overlay,
         },
         penalties_and_gates={
             "uncertainty_penalty_pct": str(_quantize_score(uncertainty_penalty * Decimal("100"))),

@@ -3591,6 +3591,11 @@ def run_screening_pipeline(
             # PIT audit + holdings schema for reproducibility
             "coinvest_audit": coinvest_audit_data if coinvest_audit_data else None,
             "holdings_detailed_schema": holdings_schema_data,
+            # Conviction horizon overlay audit (Enhancement 12)
+            "conviction_horizon_overlay_applied": (
+                m5_result.get("diagnostic_counts", {}).get("conviction_horizon_overlay_applied", 0)
+                if m5_result else 0
+            ),
         },
         "module_1_universe": m1_result,
         "module_2_financial": m2_result,

@@ -1422,6 +1422,14 @@ def compute_module_5_composite_v3(
             1 for r in ranked_securities
             if r.get("catalyst_effective", {}).get("catalyst_proximity_blended", False)
         ),
+
+        # Conviction horizon overlay: high-conviction names with long-dated catalysts
+        # that received a catalyst weight floor
+        "conviction_horizon_overlay_applied": sum(
+            1 for r in ranked_securities
+            if (r.get("score_breakdown", {}).get("enhancements", {})
+                .get("conviction_horizon_overlay", {}) or {}).get("applied", False)
+        ),
     }
 
     # =========================================================================
