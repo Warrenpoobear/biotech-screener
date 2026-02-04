@@ -622,7 +622,7 @@ def test_determinism_hash_length():
 # ============================================================================
 
 def test_winsorization_clips_outliers():
-    """Extreme values should be clipped to p5-p95 range."""
+    """Extreme values should be clipped to p5-p95 range, output mapped to [5, 95]."""
     # Create cohort with one extreme outlier
     values = [Decimal(str(x)) for x in [10, 20, 30, 40, 50, 60, 70, 80, 90, 1000]]
 
@@ -630,27 +630,27 @@ def test_winsorization_clips_outliers():
 
     assert winsor_applied, "Winsorization should be applied with outlier"
 
-    # Check that no normalized value exceeds 100
-    assert all(0 <= v <= 100 for v in normalized), \
-        f"Normalized values should be in [0, 100]: {normalized}"
+    # Check that normalized values are in [5, 95] (output floor eliminates zero cliff)
+    assert all(5 <= v <= 95 for v in normalized), \
+        f"Normalized values should be in [5, 95]: {normalized}"
 
-    # The extreme value (1000) should be normalized to 100 (max after rescale)
-    assert normalized[-1] == Decimal("100"), \
-        f"Highest value should normalize to 100, got {normalized[-1]}"
+    # The extreme value (1000) should be normalized to 95 (max after rescale)
+    assert normalized[-1] == Decimal("95"), \
+        f"Highest value should normalize to 95, got {normalized[-1]}"
 
     print("✓ test_winsorization_clips_outliers passed")
 
 
 def test_winsorization_rescales_range():
-    """After winsorization, p5-p95 values should map to 0-100."""
+    """After winsorization, p5-p95 values should map to [5, 95]."""
     # All values within normal range
     values = [Decimal(str(x)) for x in range(0, 101, 10)]  # 0, 10, ..., 100
 
     normalized, winsor_applied = _rank_normalize_winsorized(values)
 
-    # Min should be close to 0, max close to 100
-    assert normalized[0] >= Decimal("0")
-    assert normalized[-1] <= Decimal("100")
+    # Min should be 5 (output floor), max should be 95 (output ceiling)
+    assert normalized[0] >= Decimal("5"), f"Min should be >= 5, got {normalized[0]}"
+    assert normalized[-1] <= Decimal("95"), f"Max should be <= 95, got {normalized[-1]}"
 
     print("✓ test_winsorization_rescales_range passed")
 

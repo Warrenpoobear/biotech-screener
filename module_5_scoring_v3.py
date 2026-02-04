@@ -1189,7 +1189,8 @@ def _rank_normalize_winsorized(values: List[Decimal]) -> Tuple[List[Decimal], bo
         if pct < WINSOR_LOW or pct > WINSOR_HIGH:
             winsorization_applied = True
         clipped = _clamp(pct, WINSOR_LOW, WINSOR_HIGH)
-        rescaled = ((clipped - WINSOR_LOW) / (WINSOR_HIGH - WINSOR_LOW)) * Decimal("100")
+        # Map [P5, P95] to [5, 95] instead of [0, 100] to eliminate zero cliff
+        rescaled = Decimal("5") + ((clipped - WINSOR_LOW) / (WINSOR_HIGH - WINSOR_LOW)) * Decimal("90")
         result.append(_quantize_score(rescaled))
 
     return result, winsorization_applied
