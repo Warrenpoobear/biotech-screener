@@ -589,6 +589,67 @@ def load_json_data(
     return data
 
 
+# =============================================================================
+# HOLDINGS SCHEMA VALIDATION (fail-loud, forward compatible)
+# =============================================================================
+HOLDINGS_DETAILED_SCHEMA_NAMES = {"holdings_detailed", "holdings_history"}
+HOLDINGS_DETAILED_SCHEMA_MIN_MAJOR = 1
+# Legacy schema versions from extract_13f_history.py (version field only, no name)
+HOLDINGS_LEGACY_VERSIONS = {"13f_holdings_snapshot_v1"}
+
+
+def _schema_major(version_val) -> int:
+    """Extract major version number from version string (e.g., '1.2.3' -> 1)."""
+    if version_val is None:
+        return 0
+    s = str(version_val).strip()
+    try:
+        return int(s.split(".", 1)[0])
+    except Exception:
+        return 0
+
+
+def _validate_holdings_detailed_payload(schema: dict, tickers: dict) -> None:
+    """
+    Validate holdings_detailed.json payload shape and schema version.
+
+    Accepts:
+    - New format: {"name": "holdings_detailed", "version": "1.x"}
+    - Legacy format: {"version": "13f_holdings_snapshot_v1"} (from extract_13f_history.py)
+
+    Raises RuntimeError if validation fails (fail-loud to prevent silent fallback).
+    """
+    name = (schema or {}).get("name")
+    version = (schema or {}).get("version")
+
+    # Accept legacy format from extract_13f_history.py
+    if name is None and version in HOLDINGS_LEGACY_VERSIONS:
+        # Legacy schema is valid
+        pass
+    else:
+        # New format: require name in allowlist and major version >= 1
+        major = _schema_major(version)
+        if name not in HOLDINGS_DETAILED_SCHEMA_NAMES or major < HOLDINGS_DETAILED_SCHEMA_MIN_MAJOR:
+            raise RuntimeError(
+                f"holdings_detailed.json schema mismatch: name={name!r}, version={version!r}. "
+                f"Expected name in {sorted(HOLDINGS_DETAILED_SCHEMA_NAMES)} and major>={HOLDINGS_DETAILED_SCHEMA_MIN_MAJOR}, "
+                f"or legacy version in {sorted(HOLDINGS_LEGACY_VERSIONS)}."
+            )
+    if not isinstance(tickers, dict) or not tickers:
+        raise RuntimeError("holdings_detailed.json invalid: expected non-empty dict under top-level 'tickers'.")
+    # Shallow shape check on first non-private ticker
+    sample_key = next((k for k in tickers.keys() if not str(k).startswith("_")), None)
+    if not sample_key:
+        raise RuntimeError("holdings_detailed.json invalid: no ticker keys found.")
+    sample = tickers.get(sample_key, {})
+    h = (sample or {}).get("holdings", {})
+    if not (isinstance(h, dict) and "current" in h and "prior" in h and "filings_metadata" in (sample or {})):
+        raise RuntimeError(
+            f"holdings_detailed.json invalid ticker shape for {sample_key!r}: "
+            "expected holdings.current/prior and filings_metadata."
+        )
+
+
 def _load_manager_registry(data_dir: Path = None) -> Dict[str, Dict]:
     """
     Load manager registry and build CIK to manager info mapping.
@@ -635,6 +696,7 @@ def _convert_holdings_to_coinvest(
     holdings_snapshots: Dict[str, Any],
     data_dir: Path = None,
     as_of_date: str = None,
+    audit_out: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Dict]:
     """
     Convert holdings_snapshots.json format to coinvest_signals format for Module 5.
@@ -717,9 +779,10 @@ def _convert_holdings_to_coinvest(
 
     coinvest_signals = {}
 
-    # PIT audit counters
+    # PIT audit counters (persisted into run_metadata via audit_out)
     skipped_future_filings = 0
     missing_total_value = 0
+    filed_at_parse_failures = 0
 
     for ticker, ticker_data in holdings_snapshots.items():
         if not isinstance(ticker_data, dict):
@@ -813,6 +876,7 @@ def _convert_holdings_to_coinvest(
                     filed_at = filed_at.replace(tzinfo=None)
                 except (ValueError, TypeError):
                     filed_at = None
+                    filed_at_parse_failures += 1
 
             # PIT SAFETY: Skip holders with future filing dates
             if ref_date is not None and filed_at is not None:
@@ -879,8 +943,18 @@ def _convert_holdings_to_coinvest(
         }
 
     # Log PIT audit summary
-    if skipped_future_filings > 0 or missing_total_value > 0:
-        logger.info(f"  Conviction PIT audit: future_filing_skips={skipped_future_filings}, missing_total_value={missing_total_value}")
+    if skipped_future_filings > 0 or missing_total_value > 0 or filed_at_parse_failures > 0:
+        logger.info(f"  Conviction PIT audit: future_filing_skips={skipped_future_filings}, "
+                    f"missing_total_value={missing_total_value}, filed_at_parse_failures={filed_at_parse_failures}")
+
+    # Persist audit counters for run_metadata
+    if audit_out is not None:
+        audit_out.update({
+            "as_of_date": as_of_date,
+            "future_filing_skips": int(skipped_future_filings),
+            "missing_total_value": int(missing_total_value),
+            "filed_at_parse_failures": int(filed_at_parse_failures),
+        })
 
     return coinvest_signals
 
@@ -2382,6 +2456,8 @@ def run_screening_pipeline(
             logger.info("  Price history not found, skipping momentum computation")
 
     coinvest_signals = None
+    coinvest_audit_data = {}  # PIT audit counters for run_metadata
+    holdings_schema_data = None  # Schema info for run_metadata
     if enable_coinvest:
         # Try loading coinvest_signals.json first
         coinvest_file = data_dir / "coinvest_signals.json"
@@ -2397,39 +2473,38 @@ def run_screening_pipeline(
             if holdings_file.exists():
                 logger.info(f"  Loading {holdings_file.name} for smart money signals...")
                 with open(holdings_file, 'r', encoding='utf-8') as f:
-                    holdings_snapshots = json.load(f)
+                    holdings_payload = json.load(f)
 
-                # Handle nested "tickers" key from extract_13f_history.py output
-                if isinstance(holdings_snapshots, dict) and "tickers" in holdings_snapshots:
+                coinvest_audit = {}
+                holdings_schema = None
+                holdings_snapshots = holdings_payload
+
+                # holdings_detailed.json is expected to be a wrapper: {"_schema":..., "tickers": {...}}
+                if holdings_file.name == "holdings_detailed.json":
+                    if not (isinstance(holdings_payload, dict) and "tickers" in holdings_payload):
+                        raise RuntimeError("holdings_detailed.json present but wrong shape: expected top-level 'tickers'.")
+                    holdings_schema = holdings_payload.get("_schema", {})
+                    holdings_snapshots = holdings_payload["tickers"]
+                    _validate_holdings_detailed_payload(holdings_schema, holdings_snapshots)
+                    logger.info(f"  Detected nested 'tickers' key - extracting {len(holdings_snapshots)} tickers")
+                # Legacy extractor format: allow nested tickers for non-detailed files (non-fatal)
+                elif isinstance(holdings_snapshots, dict) and "tickers" in holdings_snapshots:
                     logger.info(f"  Detected nested 'tickers' key - extracting {len(holdings_snapshots['tickers'])} tickers")
                     holdings_snapshots = holdings_snapshots["tickers"]
 
-                # Schema guardrail: if detailed file exists but isn't detailed-shape, fall back (or fail loud)
-                if holdings_file.name == "holdings_detailed.json" and isinstance(holdings_snapshots, dict) and holdings_snapshots:
-                    _sample = next(iter(holdings_snapshots.values()), {})
-                    _has_detailed_schema = (
-                        isinstance(_sample, dict) and
-                        "holdings" in _sample and
-                        "filings_metadata" in _sample and
-                        "current" in _sample.get("holdings", {}) and
-                        "prior" in _sample.get("holdings", {})
-                    )
-                    if not _has_detailed_schema:
-                        fallback_file = data_dir / "holdings_snapshots.json"
-                        if fallback_file.exists():
-                            logger.warning("  holdings_detailed.json schema mismatch; falling back to holdings_snapshots.json")
-                            with open(fallback_file, 'r', encoding='utf-8') as fb:
-                                holdings_snapshots = json.load(fb)
-                        else:
-                            raise ValueError("holdings_detailed.json present but missing required keys: holdings.current/prior + filings_metadata")
-
                 if holdings_snapshots and isinstance(holdings_snapshots, dict):
                     # Dict format: {"TICKER": {"holdings": {...}}} - use full conversion with conviction
-                    coinvest_signals = _convert_holdings_to_coinvest(holdings_snapshots, data_dir, as_of_date)
+                    coinvest_signals = _convert_holdings_to_coinvest(
+                        holdings_snapshots, data_dir, as_of_date, audit_out=coinvest_audit
+                    )
                     logger.info(f"  Converted holdings (dict format) to coinvest signals for {len(coinvest_signals)} tickers")
                     # Log conviction stats
                     conviction_tickers = sum(1 for v in coinvest_signals.values() if v.get("conviction_overlap", 0) > 0)
                     logger.info(f"  Conviction overlap computed for {conviction_tickers} tickers")
+                    # Store audit + schema for later persistence to run_metadata
+                    coinvest_audit_data.update(coinvest_audit)
+                    if holdings_schema is not None:
+                        holdings_schema_data = holdings_schema
                 elif holdings_snapshots and isinstance(holdings_snapshots, list):
                     # List format: [{"ticker": "X", "tier1_count": N, ...}] - direct mapping
                     coinvest_signals = {}
@@ -3513,6 +3588,9 @@ def run_screening_pipeline(
             "pit_mode": pit_mode,
             "pit_violation_sources": [pit_violation] if pit_violation else [],
             "catalyst_mode": m3_result.get("catalyst_mode", "full"),
+            # PIT audit + holdings schema for reproducibility
+            "coinvest_audit": coinvest_audit_data if coinvest_audit_data else None,
+            "holdings_detailed_schema": holdings_schema_data,
         },
         "module_1_universe": m1_result,
         "module_2_financial": m2_result,

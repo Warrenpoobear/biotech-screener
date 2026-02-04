@@ -44,6 +44,7 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
+from collections import Counter
 from dataclasses import dataclass, field
 from datetime import datetime, date
 from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
@@ -831,7 +832,14 @@ def compute_module_5_composite_v3(
     # Guard against near-zero std so sigmoid doesn't explode on tiny dispersions
     if global_conviction_stats.get("std", 0.0) < 1e-6:
         global_conviction_stats["std"] = 1.0
-    cohort_conviction_stats = {k: (_mean_std(v) or global_conviction_stats) for k, v in cohort_conviction_data.items()}
+
+    # Build cohort stats with deterministic key ordering and std floor
+    cohort_conviction_stats = {}
+    for k in sorted(cohort_conviction_data.keys(), key=lambda x: (x[0], x[1])):
+        s = _mean_std(cohort_conviction_data[k]) or dict(global_conviction_stats)
+        if s.get("std", 0.0) < 1e-6:
+            s["std"] = 1.0
+        cohort_conviction_stats[k] = s
 
     conviction_coverage = sum(1 for rec in combined if (rec.get("coinvest", {}).get("conviction_overlap") or 0) > 0)
     conviction_active = conviction_coverage > 0
@@ -1113,6 +1121,58 @@ def compute_module_5_composite_v3(
     # This separates signal research from portfolio engineering
     # λ = 0.08 (8% per 1σ per year) - conservative biotech-appropriate default
     er_provenance = compute_expected_returns(ranked_securities)
+
+    # =========================================================================
+    # SMART MONEY REINFORCEMENT SUMMARY (skip reasons, methods, blocks)
+    # =========================================================================
+    sm_skip = Counter()
+    sm_method = Counter()
+    sm_blocked = 0
+    sm_applied = 0
+    for r in ranked_securities:
+        diag = (
+            (r.get("score_breakdown", {}) or {})
+            .get("enhancements", {})
+            .get("smart_money_reinforcement", {})
+            or {}
+        )
+        if diag.get("thesis_gate_blocked"):
+            sm_blocked += 1
+        if diag.get("reinforcement_applied") is True:
+            sm_applied += 1
+        if diag.get("skip_reason"):
+            sm_skip[str(diag["skip_reason"])] += 1
+        if diag.get("conviction_method"):
+            sm_method[str(diag["conviction_method"])] += 1
+
+    smart_money_reinforcement_summary = {
+        "applied_count": int(sm_applied),
+        "thesis_gate_blocked_count": int(sm_blocked),
+        "skip_reason_counts": {k: sm_skip[k] for k in sorted(sm_skip.keys())},
+        "method_counts": {k: sm_method[k] for k in sorted(sm_method.keys())},
+    }
+
+    # =========================================================================
+    # CONVICTION COHORT STATS (JSON-stable representation for reproducibility)
+    # =========================================================================
+    def _ck(stage: str, size: str) -> str:
+        return f"{stage}::{size}"
+
+    conviction_cohort_stats_output = {
+        "global": {
+            "mean": round(float(global_conviction_stats["mean"]), 6),
+            "std": round(float(global_conviction_stats["std"]), 6),
+            "n": int(global_conviction_stats.get("n", 0)),
+        },
+        "cohorts": {
+            _ck(k[0], k[1]): {
+                "mean": round(float(v["mean"]), 6),
+                "std": round(float(v["std"]), 6),
+                "n": int(v.get("n", 0)),
+            }
+            for k, v in cohort_conviction_stats.items()
+        },
+    }
 
     # =========================================================================
     # BUILD DIAGNOSTIC COUNTS
@@ -1435,6 +1495,8 @@ def compute_module_5_composite_v3(
         "robustness_diagnostics": robustness_summary,  # V3.3: Robustness enhancements
         "pit_gate_diagnostics": pit_gate_diagnostics,
         "expected_return_model": er_provenance,  # V3.4: ER provenance for audit
+        "smart_money_reinforcement_summary": smart_money_reinforcement_summary,  # V3.5: Skip reasons + methods
+        "conviction_cohort_stats": conviction_cohort_stats_output,  # V3.5: JSON-stable cohort stats
         "schema_version": SCHEMA_VERSION,
         "provenance": create_provenance(
             RULESET_VERSION,
