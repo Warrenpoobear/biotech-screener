@@ -4324,21 +4324,23 @@ Module 3 Catalyst Detection:
                 'cash_target': str(getattr(args, 'cash_target', '0.10')),
                 'top_n': getattr(args, 'top_n', None),
             }
-            validation_passed = validate_screening_output(
+            validation_result = validate_screening_output(
                 results,
                 args.as_of_date,
                 validation_config
             )
             results['production_validation'] = {
-                'passed': validation_passed,
+                'passed': validation_result['passed'],
+                'failure_reasons': validation_result.get('failure_reasons', []),
                 'config': validation_config,
             }
-            if not validation_passed:
-                logger.warning("[VALIDATION] Some production validation checks failed - see output above")
+            if not validation_result['passed']:
+                logger.warning(f"[VALIDATION] Some production validation checks failed: {validation_result.get('failure_reasons', [])}")
         except Exception as e:
             logger.warning(f"[VALIDATION] Production validation error (non-blocking): {e}")
             results['production_validation'] = {
                 'passed': None,
+                'failure_reasons': [],
                 'error': str(e),
             }
 

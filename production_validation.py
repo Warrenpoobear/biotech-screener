@@ -15,13 +15,16 @@ def validate_screening_output(
     result: Dict[str, Any],
     as_of_date: str,
     config: Dict[str, Any]
-) -> bool:
+) -> Dict[str, Any]:
     """
     Validate screening output against production invariants.
-    
+
     Returns:
-        True if all checks pass, False otherwise
-    
+        Dict with:
+            - passed: bool (True if all checks pass)
+            - failure_reasons: List[str] (names of failed checks)
+            - checks: List[Tuple[str, bool]] (all check results)
+
     Invariants checked:
         1. Weight sum == 1 - cash_target
         2. Excluded weights == 0
@@ -42,7 +45,7 @@ def validate_screening_output(
 
     if not ranked:
         print("❌ CRITICAL: No securities ranked!")
-        return False
+        return {"passed": False, "failure_reasons": ["no_securities_ranked"], "checks": []}
 
     # Check if position sizing was enabled (position_weight present)
     has_weights = ranked and 'position_weight' in ranked[0]
@@ -226,19 +229,20 @@ def validate_screening_output(
     total = len(checks)
     pass_rate = passed / total * 100 if total > 0 else 0
     
+    failure_reasons = [name for name, check in checks if not check]
+
     if passed == total:
         print(f"✅ PASS: All {total} validation checks passed")
         print("="*80)
-        return True
+        return {"passed": True, "failure_reasons": [], "checks": checks}
     else:
         print(f"⚠️  PARTIAL: {passed}/{total} checks passed ({pass_rate:.0f}%)")
         print()
         print("Failed checks:")
-        for name, check in checks:
-            if not check:
-                print(f"  ❌ {name}")
+        for name in failure_reasons:
+            print(f"  ❌ {name}")
         print("="*80)
-        return False
+        return {"passed": False, "failure_reasons": failure_reasons, "checks": checks}
 
 
 def add_validation_to_pipeline():
@@ -298,6 +302,6 @@ if __name__ == "__main__":
         'top_n': None,  # Set if using top-N
     }
     
-    success = validate_screening_output(result, as_of_date, config)
-    
-    sys.exit(0 if success else 1)
+    validation_result = validate_screening_output(result, as_of_date, config)
+
+    sys.exit(0 if validation_result['passed'] else 1)

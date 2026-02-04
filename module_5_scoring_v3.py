@@ -3607,7 +3607,7 @@ def _score_single_ticker_v3(
         "confidence_clinical": conf_clin,
         "confidence_financial": conf_fin,
         "confidence_catalyst": conf_cat,
-        "confidence_pos": conf_pos if mode == ScoringMode.ENHANCED else None,
+        "confidence_pos": conf_pos if mode in (ScoringMode.ENHANCED, ScoringMode.BAKER_STYLE, ScoringMode.ADAPTIVE) else None,
         "confidence_short_interest": conf_si if si_raw is not None else None,
         "confidence_overall": confidence_overall,
         "effective_weights": effective_weights,
