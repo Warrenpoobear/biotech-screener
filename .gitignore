@@ -99,3 +99,12 @@ production_data/*_test*.json
 production_data/*debug*.json
 production_data/*verification*.json
 aact/
+
+# --- Run artifacts ---
+production_data/screen_*.json
+production_data/sanity_*.json
+production_data/*_output*.json
+production_data/holdings_detailed.json
+production_data/holdings_history/
+production_data/run_log_*.json
+production_data/partnerships.json
