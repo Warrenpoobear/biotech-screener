@@ -1,0 +1,191 @@
+{
+  "schema_version": "1.0.0",
+  "last_updated": "2026-02-04",
+  "source_notes": "Compiled from FDA announcements, SEC filings, and company press releases",
+  "designations": [
+    {
+      "ticker": "CELC",
+      "designation_type": "BTD",
+      "indication": "HR+/HER2- metastatic breast cancer",
+      "drug_name": "Gedatolisib",
+      "nct_id": "NCT05501886",
+      "grant_date": "2023-09-18",
+      "source": "fda",
+      "confidence": "confirmed",
+      "notes": "Breakthrough Therapy for gedatolisib + fulvestrant + palbociclib"
+    },
+    {
+      "ticker": "CELC",
+      "designation_type": "FT",
+      "indication": "HR+/HER2- metastatic breast cancer",
+      "drug_name": "Gedatolisib",
+      "nct_id": "NCT05501886",
+      "grant_date": "2022-08-15",
+      "source": "fda",
+      "confidence": "confirmed",
+      "notes": "Fast Track designation for gedatolisib combination"
+    },
+    {
+      "ticker": "MRNA",
+      "designation_type": "BTD",
+      "indication": "oncology",
+      "drug_name": "mRNA-4157",
+      "grant_date": "2023-02-01",
+      "source": "fda",
+      "confidence": "confirmed"
+    },
+    {
+      "ticker": "MRNA",
+      "designation_type": "FT",
+      "indication": "infectious_disease",
+      "drug_name": "mRNA-1273",
+      "grant_date": "2020-05-01",
+      "source": "fda",
+      "confidence": "confirmed"
+    },
+    {
+      "ticker": "BEAM",
+      "designation_type": "BTD",
+      "indication": "rare_disease",
+      "drug_name": "BEAM-101",
+      "grant_date": "2023-06-15",
+      "source": "fda",
+      "confidence": "confirmed"
+    },
+    {
+      "ticker": "BEAM",
+      "designation_type": "ODD",
+      "indication": "rare_disease",
+      "drug_name": "BEAM-101",
+      "grant_date": "2023-04-01",
+      "source": "fda",
+      "confidence": "confirmed"
+    },
+    {
+      "ticker": "EDIT",
+      "designation_type": "BTD",
+      "indication": "rare_disease",
+      "drug_name": "EDIT-101",
+      "grant_date": "2022-11-01",
+      "source": "fda",
+      "confidence": "confirmed"
+    },
+    {
+      "ticker": "RARE",
+      "designation_type": "ODD",
+      "indication": "rare_disease",
+      "drug_name": "RARx-01",
+      "grant_date": "2024-01-15",
+      "source": "fda",
+      "confidence": "confirmed"
+    },
+    {
+      "ticker": "FOLD",
+      "designation_type": "ODD",
+      "indication": "rare_disease",
+      "drug_name": "Folotyn",
+      "grant_date": "2020-03-01",
+      "source": "fda",
+      "confidence": "confirmed"
+    },
+    {
+      "ticker": "IONS",
+      "designation_type": "ODD",
+      "indication": "neurology",
+      "drug_name": "IONIS-HTTRx",
+      "grant_date": "2021-08-01",
+      "source": "fda",
+      "confidence": "confirmed"
+    },
+    {
+      "ticker": "NVAX",
+      "designation_type": "FT",
+      "indication": "infectious_disease",
+      "drug_name": "NVX-CoV2373",
+      "grant_date": "2020-11-01",
+      "source": "fda",
+      "confidence": "confirmed"
+    },
+    {
+      "ticker": "SIGA",
+      "designation_type": "FT",
+      "indication": "infectious_disease",
+      "drug_name": "TPOXX",
+      "grant_date": "2018-05-01",
+      "source": "fda",
+      "confidence": "confirmed"
+    },
+    {
+      "ticker": "BLUE",
+      "designation_type": "RMAT",
+      "indication": "rare_disease",
+      "drug_name": "LentiGlobin",
+      "grant_date": "2019-04-01",
+      "source": "fda",
+      "confidence": "confirmed"
+    },
+    {
+      "ticker": "CRSP",
+      "designation_type": "RMAT",
+      "indication": "rare_disease",
+      "drug_name": "CTX001",
+      "grant_date": "2020-02-01",
+      "source": "fda",
+      "confidence": "confirmed"
+    },
+    {
+      "ticker": "VRTX",
+      "designation_type": "BTD",
+      "indication": "rare_disease",
+      "drug_name": "exa-cel",
+      "grant_date": "2022-03-15",
+      "source": "fda",
+      "confidence": "confirmed"
+    },
+    {
+      "ticker": "ALNY",
+      "designation_type": "BTD",
+      "indication": "rare_disease",
+      "drug_name": "vutrisiran",
+      "grant_date": "2021-01-20",
+      "source": "fda",
+      "confidence": "confirmed"
+    },
+    {
+      "ticker": "ALNY",
+      "designation_type": "ODD",
+      "indication": "rare_disease",
+      "drug_name": "patisiran",
+      "grant_date": "2018-08-10",
+      "source": "fda",
+      "confidence": "confirmed"
+    },
+    {
+      "ticker": "REGN",
+      "designation_type": "BTD",
+      "indication": "oncology",
+      "drug_name": "Libtayo",
+      "grant_date": "2018-09-01",
+      "source": "fda",
+      "confidence": "confirmed"
+    },
+    {
+      "ticker": "SGEN",
+      "designation_type": "BTD",
+      "indication": "oncology",
+      "drug_name": "Padcev",
+      "grant_date": "2019-12-18",
+      "source": "fda",
+      "confidence": "confirmed"
+    },
+    {
+      "ticker": "SGEN",
+      "designation_type": "AA",
+      "indication": "oncology",
+      "drug_name": "Padcev",
+      "grant_date": "2019-12-18",
+      "source": "fda",
+      "confidence": "confirmed"
+    }
+  ]
+}

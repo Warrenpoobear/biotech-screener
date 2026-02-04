@@ -1873,8 +1873,8 @@ def apply_asymmetric_transform(
 
     transformed_score = neutral + transformed_delta
 
-    # Clamp to valid range
-    return _clamp(_quantize_score(transformed_score), Decimal("0"), Decimal("100"))
+    # Clamp to valid range - use [5, 95] floor/ceiling to match winsorization output
+    return _clamp(_quantize_score(transformed_score), Decimal("5"), Decimal("95"))
 
 
 def apply_asymmetric_transform_to_contribution(
