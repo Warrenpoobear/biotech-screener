@@ -699,13 +699,15 @@ def _conviction_horizon_weight_boost(
     tier1_count: int,
     days_to_catalyst: Optional[int],
     cohort_conviction_stats: Optional[Dict[str, float]],
-) -> Decimal:
+) -> Tuple[Decimal, Dict[str, Any]]:
     """
     Compute an ADDITIVE boost to catalyst weight for high-conviction names.
 
     This overlay provides additional catalyst weight for high-conviction names
     with real catalysts in the 90-240 day window, on top of what the continuous
     confidence gate already provides.
+
+    All math is done in Decimal to ensure determinism across platforms.
 
     Args:
         weight_base: Base catalyst weight before gating
@@ -716,52 +718,70 @@ def _conviction_horizon_weight_boost(
         cohort_conviction_stats: Mean/std conviction for stage×size cohort
 
     Returns:
-        Additional weight boost (0 if overlay doesn't apply)
+        Tuple of (boost amount, diagnostics dict)
     """
-    # Only extend horizon for real catalysts in a bounded window
-    if days_to_catalyst is None or days_to_catalyst <= 90 or days_to_catalyst > 240:
-        return Decimal("0")
+    ZERO = Decimal("0")
+    diagnostics: Dict[str, Any] = {"skip_reason": None}
 
-    # Require minimum conviction signal (tier1 >= 6 OR positive conviction z-score)
-    if (tier1_count or 0) < 6:
-        # Check conviction z-score
-        mean = float((cohort_conviction_stats or {}).get("mean", 0.0))
-        std = float((cohort_conviction_stats or {}).get("std", 1.0))
-        if std < 1e-6:
-            std = 1.0
-        z = 0.0 if not conviction_overlap else (float(conviction_overlap) - mean) / std
-        if z < 1.0:  # Require z >= 1.0 if tier1 < 6
-            return Decimal("0")
+    # Only extend horizon for real catalysts in a bounded window [91, 240]
+    if days_to_catalyst is None:
+        diagnostics["skip_reason"] = "no_catalyst_date"
+        return ZERO, diagnostics
+    if days_to_catalyst <= 90:
+        diagnostics["skip_reason"] = "catalyst_too_soon"
+        return ZERO, diagnostics
+    if days_to_catalyst > 240:
+        diagnostics["skip_reason"] = "catalyst_too_far"
+        return ZERO, diagnostics
 
-    # Compute conviction tolerance from cohort z-score
-    mean = float((cohort_conviction_stats or {}).get("mean", 0.0))
-    std = float((cohort_conviction_stats or {}).get("std", 1.0))
-    if std < 1e-6:
-        std = 1.0
+    # Extract cohort stats as Decimal
+    mean = _to_decimal((cohort_conviction_stats or {}).get("mean", 0)) or ZERO
+    std = _to_decimal((cohort_conviction_stats or {}).get("std", 1)) or Decimal("1")
+    if std < Decimal("0.000001"):
+        std = Decimal("1")
 
-    z = 0.0 if not conviction_overlap else (float(conviction_overlap) - mean) / std
+    # Compute conviction z-score (all Decimal)
+    conv = _to_decimal(conviction_overlap) or ZERO
+    z = (conv - mean) / std if std > ZERO else ZERO
+
+    # Require minimum conviction signal (tier1 >= 6 OR z-score >= 1.0)
+    tier1 = tier1_count or 0
+    if tier1 < 6 and z < Decimal("1"):
+        diagnostics["skip_reason"] = "insufficient_conviction"
+        diagnostics["tier1"] = tier1
+        diagnostics["z_score"] = str(_quantize_score(z))
+        return ZERO, diagnostics
 
     # tol: z≈0.5→0, z≈1.5→1 (linear ramp)
-    tol = max(0.0, min(1.0, (z - 0.5) / 1.0))
+    tol = _clamp((z - Decimal("0.5")) / Decimal("1"), ZERO, Decimal("1"))
 
     # Tier1 count provides a floor for tolerance
-    if tier1_count >= 6:
-        tol = max(tol, 0.75)
+    if tier1 >= 6:
+        tol = max(tol, Decimal("0.75"))
 
     # Horizon factor: peaks around 150d, fades to 0 by 60d or 240d
-    horizon = 1.0 - abs(float(days_to_catalyst) - 150.0) / 90.0
-    horizon = max(0.0, min(1.0, horizon))
+    days_dec = Decimal(str(days_to_catalyst))
+    horizon = Decimal("1") - abs(days_dec - Decimal("150")) / Decimal("90")
+    horizon = _clamp(horizon, ZERO, Decimal("1"))
 
     # Additive boost: up to 25% of base weight for high-conviction names
-    # This stacks with the continuous gate to give meaningful catalyst exposure
-    BOOST_FRAC = 0.25
-    boost = float(weight_base) * BOOST_FRAC * tol * horizon
+    BOOST_FRAC = Decimal("0.25")
+    boost = weight_base * BOOST_FRAC * tol * horizon
 
     # Cap total effective weight at 90% of base (don't over-boost)
-    max_boost = float(weight_base) * 0.90 - float(weight_effective)
-    boost = min(boost, max(0.0, max_boost))
+    max_total = weight_base * Decimal("0.90")
+    max_boost = max(ZERO, max_total - weight_effective)
+    boost = min(boost, max_boost)
 
-    return Decimal(str(round(boost, 6)))
+    # Quantize for determinism
+    boost = _quantize_weight(boost)
+
+    diagnostics["tol"] = str(_quantize_score(tol))
+    diagnostics["horizon"] = str(_quantize_score(horizon))
+    diagnostics["z_score"] = str(_quantize_score(z))
+    diagnostics["tier1"] = tier1
+
+    return boost, diagnostics
 
 
 def _compute_catalyst_effective(
@@ -2805,14 +2825,38 @@ def _score_single_ticker_v3(
     # For high-conviction names with real catalysts in 90-240 day window,
     # provide an ADDITIVE boost to catalyst weight on top of the continuous gate.
     # This gives meaningful catalyst exposure for legitimate long-dated events.
+    #
+    # CRITICAL: thesis_gate remains a HARD BLOCK for this overlay.
+    # We pre-compute the thesis gate check here to avoid smart money
+    # reintroducing weak-thesis names that the gate is designed to prevent.
 
     conviction_horizon_overlay = None
     cat_base_w = vol_adjusted_weights.get("catalyst", Decimal("0"))
     cat_eff_w = effective_weights.get("catalyst", Decimal("0"))
 
-    # Apply if catalyst weight is gated below 70% of base (room for boost)
-    if cat_base_w > EPS and cat_eff_w < cat_base_w * Decimal("0.70"):
-        boost_w = _conviction_horizon_weight_boost(
+    # Pre-compute thesis gate check for overlay (matches later full check)
+    overlay_thesis_blocked = False
+    if mode == ScoringMode.BAKER_STYLE and THESIS_GATE_CONFIG["enabled"]:
+        if clin_norm is not None and pos_norm is not None:
+            thesis_score_pre = (clin_norm + pos_norm) / Decimal("2")
+            display_stage = _stage_bucket(lead_phase)
+            threshold_pre = THESIS_GATE_CONFIG["thresholds_by_stage"].get(
+                display_stage, THESIS_GATE_CONFIG["thresholds_by_stage"]["none"]
+            )
+            overlay_thesis_blocked = thesis_score_pre < threshold_pre
+
+    # Trigger conditions (all must be true):
+    # 1. Catalyst confidence is low (below gate threshold) - semantic tie to gating issue
+    # 2. Thesis gate NOT triggered - hard block remains
+    # 3. Base weight exists
+    overlay_should_trigger = (
+        conf_cat < CONFIDENCE_GATE_THRESHOLD  # Low confidence is the root issue
+        and not overlay_thesis_blocked         # Thesis gate remains hard block
+        and cat_base_w > EPS                   # Has catalyst weight
+    )
+
+    if overlay_should_trigger:
+        boost_w, boost_diag = _conviction_horizon_weight_boost(
             weight_base=cat_base_w,
             weight_effective=cat_eff_w,
             conviction_overlap=coinvest_data.get("conviction_overlap") if coinvest_data else None,
@@ -2830,8 +2874,20 @@ def _score_single_ticker_v3(
                 "weight_after": str(new_eff_w),
                 "days_to_catalyst": int(days_to_cat) if days_to_cat is not None else None,
                 "tier1_count": int(coinvest_data.get("tier1_count", 0) or 0) if coinvest_data else 0,
+                "boost_diagnostics": boost_diag,
             }
             flags.append("conviction_horizon_overlay_applied")
+        else:
+            # Overlay computed but boost was zero or below threshold
+            conviction_horizon_overlay = {
+                "applied": False,
+                "skip_reason": boost_diag.get("skip_reason", "boost_below_threshold"),
+                "boost_diagnostics": boost_diag,
+            }
+    elif overlay_thesis_blocked:
+        conviction_horizon_overlay = {"applied": False, "skip_reason": "thesis_gate_blocked"}
+    elif conf_cat >= CONFIDENCE_GATE_THRESHOLD:
+        conviction_horizon_overlay = {"applied": False, "skip_reason": "confidence_not_low"}
 
     total = sum(effective_weights.values())
     if total > EPS:
