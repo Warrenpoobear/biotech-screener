@@ -1244,6 +1244,12 @@ def _extract_confidence_catalyst(cat_data: Any) -> Decimal:
             return CONFIDENCE_MAP[conf_str]
 
     if isinstance(cat_data, dict):
+        # Check for direct override confidence first (from catalyst_overrides.json)
+        scores = cat_data.get("scores", {})
+        override_conf = scores.get("override_confidence")
+        if override_conf:
+            return _clamp(_to_decimal(override_conf), Decimal("0"), Decimal("1"))
+
         integration = cat_data.get("integration", {})
         conf_str = integration.get("catalyst_confidence")
         if conf_str and conf_str in CONFIDENCE_MAP:
@@ -2693,13 +2699,23 @@ def _score_single_ticker_v3(
     for comp, base_w in vol_adjusted_weights.items():
         conf = confidences.get(comp, Decimal("0.5"))
 
-        if conf < CONFIDENCE_GATE_THRESHOLD:
-            effective_weights[comp] = Decimal("0")
+        # Continuous confidence gate: smooth transition instead of hard cutoff
+        # - At conf=0: gate_factor=0
+        # - At conf=THRESHOLD: gate_factor=1
+        # - Above threshold: gate_factor=1
+        # This prevents high-quality but distant events from being zeroed out
+        gate_factor = min(conf / CONFIDENCE_GATE_THRESHOLD, Decimal("1"))
+
+        if gate_factor < Decimal("1"):
+            # Partial gating: weight is reduced but not zeroed
+            eff_w = base_w * gate_factor * (Decimal("0.5") + conf * Decimal("0.5"))
             gated_components.append(comp)
-            flags.append(f"{comp}_confidence_gated")
+            flags.append(f"{comp}_confidence_soft_gated")
         else:
+            # Full confidence: standard weight calculation
             eff_w = base_w * (Decimal("0.5") + conf * Decimal("0.5"))
-            effective_weights[comp] = eff_w
+
+        effective_weights[comp] = eff_w
 
     total = sum(effective_weights.values())
     if total > EPS:

@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0.0",
+  "description": "Manual catalyst overrides for events not captured by ClinicalTrials.gov or PDUFA files",
+  "pit_rules": "Only include entries where source_filed_at <= as_of_date",
+  "overrides": [
+    {
+      "ticker": "CELC",
+      "event_date": "2026-06-30",
+      "event_type": "TRIAL_READOUT",
+      "event_description": "VIKTORIA-1 Phase 3 primary analysis (gedatolisib + palbociclib + fulvestrant)",
+      "confidence": 0.75,
+      "source_filed_at": "2024-11-07",
+      "source": "Q3 2024 earnings call transcript - management guidance 'mid-2026 data readout'",
+      "nct_id": "NCT05501886",
+      "notes": "BTD + Fast Track designated; expect SABCS or ASCO presentation"
+    }
+  ]
+}
