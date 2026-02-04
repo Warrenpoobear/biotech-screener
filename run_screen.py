@@ -631,22 +631,34 @@ def _load_manager_registry(data_dir: Path = None) -> Dict[str, Dict]:
     return {}
 
 
-def _convert_holdings_to_coinvest(holdings_snapshots: Dict[str, Any], data_dir: Path = None) -> Dict[str, Dict]:
+def _convert_holdings_to_coinvest(
+    holdings_snapshots: Dict[str, Any],
+    data_dir: Path = None,
+    as_of_date: str = None,
+) -> Dict[str, Dict]:
     """
     Convert holdings_snapshots.json format to coinvest_signals format for Module 5.
 
-    holdings_snapshots format:
+    Supports both detailed dict format and simplified list format.
+
+    CONVICTION-WEIGHTED OVERLAP (Baker-style):
+    For each Tier-1 holder, compute:
+      - pos_w = clamp(sqrt(position_pct / 0.01), 0.5, 2.0)  # 1% ≈ 1.0x
+      - chg_w = 1.25 (new/add), 1.0 (hold), 0.75 (trim), 0.5 (exit)
+      - recency_w = clamp(1.5 - days_since_filing/180, 0.7, 1.5)
+      - tier_w = 1.0 (T1), 0.6 (T2), 0.2 (unknown)
+
+    conviction_overlap = Σ tier_w * pos_w * chg_w * recency_w
+
+    holdings_snapshots format (detailed dict):
     {
         "TICKER": {
             "holdings": {
-                "current": {
-                    "MANAGER_CIK": {"value_kusd": 123456},
-                    ...
-                },
-                "prior": {
-                    "MANAGER_CIK": {"value_kusd": 100000},
-                    ...
-                }
+                "current": {"CIK": {"value_kusd": 123456, "shares": 50000}},
+                "prior": {"CIK": {"value_kusd": 100000, "shares": 40000}}
+            },
+            "filings_metadata": {
+                "CIK": {"total_value_kusd": 13800000, "filed_at": "2024-11-14T00:00:00"}
             }
         }
     }
@@ -656,8 +668,14 @@ def _convert_holdings_to_coinvest(holdings_snapshots: Dict[str, Any], data_dir: 
         "TICKER": {
             "coinvest_overlap_count": int,
             "coinvest_holders": [str, ...],
-            "position_changes": {"CIK": "NEW"|"INCREASE"|"DECREASE"|"EXIT"|"HOLD"},
-            "holder_tiers": {...}
+            "position_changes": {"name": "NEW"|"INCREASE"|"DECREASE"|"EXIT"|"HOLD"},
+            "holder_tiers": {"name": tier_int},
+            # NEW conviction fields (Baker-style):
+            "conviction_overlap": float,
+            "tier1_conviction_overlap": float,
+            "max_tier1_position_pct": float,
+            "days_since_latest_filing": int,
+            "tier1_count": int,
         }
     }
 
@@ -668,6 +686,9 @@ def _convert_holdings_to_coinvest(holdings_snapshots: Dict[str, Any], data_dir: 
     - EXIT: Manager in prior but not in current (position closed)
     - HOLD: Position relatively unchanged (±10%)
     """
+    import math
+    from datetime import datetime
+
     # Load manager registry for name resolution
     MANAGER_REGISTRY = _load_manager_registry(data_dir)
     if MANAGER_REGISTRY:
@@ -676,13 +697,36 @@ def _convert_holdings_to_coinvest(holdings_snapshots: Dict[str, Any], data_dir: 
     # Threshold for detecting meaningful position changes (10%)
     CHANGE_THRESHOLD = 0.10
 
+    # Conviction weight constants (Baker-style)
+    TIER_WEIGHTS = {1: 1.0, 2: 0.6, 3: 0.2, 0: 0.2}  # T1 > T2 > unknown
+    CHANGE_WEIGHTS = {
+        "NEW": 1.25,
+        "INCREASE": 1.25,
+        "HOLD": 1.0,
+        "DECREASE": 0.75,
+        "EXIT": 0.5,
+    }
+
+    # Parse as_of_date for recency calculation (PIT-safe: no datetime.now() fallback)
+    ref_date = None
+    if as_of_date:
+        try:
+            ref_date = datetime.strptime(as_of_date, "%Y-%m-%d")
+        except (ValueError, TypeError):
+            logger.warning(f"  Invalid as_of_date '{as_of_date}' - recency_w will default to 1.0")
+
     coinvest_signals = {}
+
+    # PIT audit counters
+    skipped_future_filings = 0
+    missing_total_value = 0
 
     for ticker, ticker_data in holdings_snapshots.items():
         if not isinstance(ticker_data, dict):
             continue
 
         holdings = ticker_data.get("holdings", {})
+        filings_metadata = ticker_data.get("filings_metadata", {})
         current = holdings.get("current", {})
         prior = holdings.get("prior", {})
 
@@ -693,11 +737,16 @@ def _convert_holdings_to_coinvest(holdings_snapshots: Dict[str, Any], data_dir: 
             continue
 
         # Count managers and identify tiers
-        # FIX: Use holder names (not CIKs) and proper Dict[name -> int] format
-        # for compatibility with compute_smart_money_signal()
         holder_names = []  # Current holders by name
-        holder_tiers = {}  # Dict[name -> tier_int] (not Dict[cik -> dict])
+        holder_tiers = {}  # Dict[name -> tier_int]
         position_changes = {}  # Dict[name -> change_type]
+
+        # Conviction tracking
+        conviction_overlap = 0.0
+        tier1_conviction_overlap = 0.0
+        max_tier1_position_pct = 0.0
+        min_days_since_filing = 999
+        tier1_count = 0
 
         # All CIKs that appear in either current or prior
         all_ciks = sorted(set(current.keys()) | set(prior.keys()))
@@ -714,6 +763,8 @@ def _convert_holdings_to_coinvest(holdings_snapshots: Dict[str, Any], data_dir: 
             # Track current holders by name (not CIK)
             if cik in current:
                 holder_names.append(holder_name)
+                if tier == 1:
+                    tier1_count += 1
 
             # Store tier by holder name (int, not dict)
             holder_tiers[holder_name] = tier
@@ -723,34 +774,113 @@ def _convert_holdings_to_coinvest(holdings_snapshots: Dict[str, Any], data_dir: 
             prior_val = prior.get(cik, {}).get("value_kusd", 0) or 0
 
             if cik in current and cik not in prior:
-                # New position
-                position_changes[holder_name] = "NEW"
+                change_type = "NEW"
             elif cik not in current and cik in prior:
-                # Exited position
-                position_changes[holder_name] = "EXIT"
+                change_type = "EXIT"
             elif prior_val > 0:
-                # Calculate percentage change
                 change_pct = (current_val - prior_val) / prior_val
-
                 if change_pct > CHANGE_THRESHOLD:
-                    position_changes[holder_name] = "INCREASE"
+                    change_type = "INCREASE"
                 elif change_pct < -CHANGE_THRESHOLD:
-                    position_changes[holder_name] = "DECREASE"
+                    change_type = "DECREASE"
                 else:
-                    position_changes[holder_name] = "HOLD"
+                    change_type = "HOLD"
             else:
-                # Prior was zero but current exists (edge case)
-                if current_val > 0:
-                    position_changes[holder_name] = "NEW"
-                else:
-                    position_changes[holder_name] = "HOLD"
+                change_type = "NEW" if current_val > 0 else "HOLD"
 
+            position_changes[holder_name] = change_type
+
+            # =========================================================
+            # CONVICTION CALCULATION (only for current holders)
+            # PIT-safe: exclude future filings, no datetime.now()
+            # =========================================================
+            if cik not in current:
+                continue  # Skip exited positions for conviction
+
+            # Get manager's filing metadata
+            manager_meta = filings_metadata.get(cik, {})
+
+            # PIT CHECK: Parse filing date and exclude future filings
+            filed_at_str = (manager_meta.get("filed_at", "") or "").strip()
+            filed_at = None
+            if filed_at_str:
+                try:
+                    # Normalize ISO format: handle "Z" suffix and timezone offsets
+                    if filed_at_str.endswith("Z"):
+                        filed_at_str = filed_at_str[:-1]
+                    filed_at = datetime.fromisoformat(filed_at_str)
+                    # Strip timezone to avoid aware/naive comparison errors
+                    filed_at = filed_at.replace(tzinfo=None)
+                except (ValueError, TypeError):
+                    filed_at = None
+
+            # PIT SAFETY: Skip holders with future filing dates
+            if ref_date is not None and filed_at is not None:
+                if filed_at > ref_date:
+                    # Future filing - exclude from conviction (PIT violation)
+                    skipped_future_filings += 1
+                    continue
+
+            # Get manager's total 13F value for position % calculation
+            manager_total_kusd = manager_meta.get("total_value_kusd", 0) or 0
+            if manager_total_kusd <= 0:
+                missing_total_value += 1
+
+            # pos_w: position size weight (sqrt scaling, 1% ≈ 1.0x)
+            # position_pct is in PERCENT (e.g., 3.5 means 3.5% of manager's 13F)
+            if manager_total_kusd > 0:
+                position_pct = (current_val / manager_total_kusd) * 100  # In percent
+                pos_w = max(0.5, min(2.0, math.sqrt(position_pct / 1.0)))
+            else:
+                position_pct = 0.0
+                pos_w = 0.5  # Minimum weight if no total available
+
+            # Track max Tier-1 position % (in percent, e.g., 5.2 means 5.2%)
+            if tier == 1 and position_pct > max_tier1_position_pct:
+                max_tier1_position_pct = position_pct
+
+            # chg_w: change direction weight
+            chg_w = CHANGE_WEIGHTS.get(change_type, 1.0)
+
+            # recency_w: filing freshness weight (PIT-safe)
+            if ref_date is not None and filed_at is not None:
+                days_since = (ref_date - filed_at).days
+                if days_since < min_days_since_filing:
+                    min_days_since_filing = days_since
+                recency_w = max(0.7, min(1.5, 1.5 - days_since / 180))
+            else:
+                # No ref_date or filing date: use neutral recency
+                recency_w = 1.0
+
+            # tier_w: tier weight
+            tier_w = TIER_WEIGHTS.get(tier, 0.2)
+
+            # Compute holder's conviction contribution
+            holder_conviction = tier_w * pos_w * chg_w * recency_w
+            conviction_overlap += holder_conviction
+
+            # Track Tier-1 conviction separately
+            if tier == 1:
+                tier1_conviction_overlap += holder_conviction
+
+        # Build signal dict with conviction fields
         coinvest_signals[ticker] = {
+            # Existing fields (backward compatible)
             "coinvest_overlap_count": len(holder_names),
             "coinvest_holders": holder_names,
             "position_changes": position_changes,
             "holder_tiers": holder_tiers,
+            # NEW: Conviction fields (Baker-style)
+            "conviction_overlap": round(conviction_overlap, 4),
+            "tier1_conviction_overlap": round(tier1_conviction_overlap, 4),
+            "tier1_count": tier1_count,
+            "max_tier1_position_pct": round(max_tier1_position_pct, 2),
+            "days_since_latest_filing": min_days_since_filing if min_days_since_filing < 999 else None,
         }
+
+    # Log PIT audit summary
+    if skipped_future_filings > 0 or missing_total_value > 0:
+        logger.info(f"  Conviction PIT audit: future_filing_skips={skipped_future_filings}, missing_total_value={missing_total_value}")
 
     return coinvest_signals
 
@@ -2092,6 +2222,8 @@ def run_screening_pipeline(
     # Module 5 calibrated weights
     module5_weights_path: Optional[Path] = None,
     module5_weights_mode: str = "global",
+    # Scoring mode (Baker-style or default)
+    scoring_mode: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
     Execute full screening pipeline with deterministic guarantees.
@@ -2257,17 +2389,47 @@ def run_screening_pipeline(
             logger.info("  Loading co-invest signals...")
             coinvest_signals = load_json_data(coinvest_file, "Co-invest signals")
         else:
-            # Fallback: try loading holdings_snapshots.json and convert to coinvest format
-            holdings_file = data_dir / "holdings_snapshots.json"
+            # Fallback: try loading holdings file and convert to coinvest format
+            # Prefer holdings_detailed.json (dict format with conviction data) over holdings_snapshots.json (list format)
+            holdings_file = data_dir / "holdings_detailed.json"
+            if not holdings_file.exists():
+                holdings_file = data_dir / "holdings_snapshots.json"
             if holdings_file.exists():
-                logger.info("  Loading holdings_snapshots.json for smart money signals...")
+                logger.info(f"  Loading {holdings_file.name} for smart money signals...")
                 with open(holdings_file, 'r', encoding='utf-8') as f:
                     holdings_snapshots = json.load(f)
 
+                # Handle nested "tickers" key from extract_13f_history.py output
+                if isinstance(holdings_snapshots, dict) and "tickers" in holdings_snapshots:
+                    logger.info(f"  Detected nested 'tickers' key - extracting {len(holdings_snapshots['tickers'])} tickers")
+                    holdings_snapshots = holdings_snapshots["tickers"]
+
+                # Schema guardrail: if detailed file exists but isn't detailed-shape, fall back (or fail loud)
+                if holdings_file.name == "holdings_detailed.json" and isinstance(holdings_snapshots, dict) and holdings_snapshots:
+                    _sample = next(iter(holdings_snapshots.values()), {})
+                    _has_detailed_schema = (
+                        isinstance(_sample, dict) and
+                        "holdings" in _sample and
+                        "filings_metadata" in _sample and
+                        "current" in _sample.get("holdings", {}) and
+                        "prior" in _sample.get("holdings", {})
+                    )
+                    if not _has_detailed_schema:
+                        fallback_file = data_dir / "holdings_snapshots.json"
+                        if fallback_file.exists():
+                            logger.warning("  holdings_detailed.json schema mismatch; falling back to holdings_snapshots.json")
+                            with open(fallback_file, 'r', encoding='utf-8') as fb:
+                                holdings_snapshots = json.load(fb)
+                        else:
+                            raise ValueError("holdings_detailed.json present but missing required keys: holdings.current/prior + filings_metadata")
+
                 if holdings_snapshots and isinstance(holdings_snapshots, dict):
-                    # Dict format: {"TICKER": {"holdings": {...}}} - use full conversion
-                    coinvest_signals = _convert_holdings_to_coinvest(holdings_snapshots, data_dir)
+                    # Dict format: {"TICKER": {"holdings": {...}}} - use full conversion with conviction
+                    coinvest_signals = _convert_holdings_to_coinvest(holdings_snapshots, data_dir, as_of_date)
                     logger.info(f"  Converted holdings (dict format) to coinvest signals for {len(coinvest_signals)} tickers")
+                    # Log conviction stats
+                    conviction_tickers = sum(1 for v in coinvest_signals.values() if v.get("conviction_overlap", 0) > 0)
+                    logger.info(f"  Conviction overlap computed for {conviction_tickers} tickers")
                 elif holdings_snapshots and isinstance(holdings_snapshots, list):
                     # List format: [{"ticker": "X", "tier1_count": N, ...}] - direct mapping
                     coinvest_signals = {}
@@ -3259,6 +3421,8 @@ def run_screening_pipeline(
             apply_position_sizing=enable_position_sizing,
             defensive_config=defensive_config,
             defensive_cache_path=defensive_cache,
+            # Scoring mode (Baker-style or default)
+            scoring_mode=scoring_mode,
         )
         if checkpoint_dir:
             save_checkpoint(checkpoint_dir, "module_5", as_of_date, m5_result)
@@ -3745,6 +3909,17 @@ Module 3 Catalyst Detection:
              "ticker universe overlap, and gating reason counts.",
     )
 
+    # Scoring mode
+    parser.add_argument(
+        "--scoring-mode",
+        type=str,
+        choices=["default", "baker_style"],
+        default=None,
+        help="Scoring mode. 'baker_style': fundamental-concentrated mode with thesis-first weighting "
+             "(clinical+pos=53%%, survivability=22%%, valuation=15%%) and thesis gating. "
+             "'default': auto-select based on data availability. (default: auto-select)",
+    )
+
     # Clustering controls
     parser.add_argument(
         "--enable-clustering",
@@ -4034,6 +4209,7 @@ Module 3 Catalyst Detection:
             output_dir=args.output_dir if args.output_dir else args.data_dir,
             module5_weights_path=(Path(args.module5_weights) if getattr(args, "module5_weights", None) else None),
             module5_weights_mode=getattr(args, "module5_weights_mode", "global"),
+            scoring_mode=getattr(args, "scoring_mode", None),
         )
 
         # Add bootstrap analysis if requested

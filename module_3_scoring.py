@@ -723,7 +723,7 @@ def calculate_ticker_catalyst_score(
     )
 
     # Compute integration hooks
-    next_catalyst_date, catalyst_window_days = _compute_next_catalyst(sorted_events, as_of_date)
+    next_catalyst_date, catalyst_window_days, nearest_catalyst_type = _compute_next_catalyst(sorted_events, as_of_date)
     catalyst_window_bucket = compute_catalyst_window_bucket(catalyst_window_days)
     catalyst_confidence = _compute_catalyst_confidence(sorted_events, next_catalyst_date)
 
@@ -738,6 +738,9 @@ def calculate_ticker_catalyst_score(
 
     # Top 3 events (highest severity, most recent, highest confidence)
     top_3 = _select_top_3_events(sorted_events, as_of_date)
+
+    # nearest_catalyst_type is now derived from _compute_next_catalyst (calendar nearest)
+    # to maintain semantic consistency with catalyst_window_days
 
     return TickerCatalystSummaryV2(
         ticker=ticker,
@@ -766,37 +769,41 @@ def calculate_ticker_catalyst_score(
         max_slip_days=max_slip,
         # NEW: Velocity
         catalyst_velocity_4w=velocity,
+        # NEW: Nearest catalyst type (for stage bucket in Module 5)
+        nearest_catalyst_type=nearest_catalyst_type,
     )
 
 
 def _compute_next_catalyst(
     events: List[CatalystEventV2],
     as_of_date: date,
-) -> Tuple[Optional[str], Optional[int]]:
+) -> Tuple[Optional[str], Optional[int], Optional[str]]:
     """
     Compute next catalyst date from events.
 
     Returns:
-        (next_date_iso, days_until)
+        (next_date_iso, days_until, event_type)
     """
-    future_dates = []
+    future_events = []
 
     for event in events:
         if event.event_date:
             try:
                 event_d = date.fromisoformat(event.event_date)
                 if event_d > as_of_date:
-                    future_dates.append(event_d)
+                    future_events.append((event_d, event))
             except (ValueError, TypeError):
                 continue
 
-    if not future_dates:
-        return (None, None)
+    if not future_events:
+        return (None, None, None)
 
-    next_date = min(future_dates)
+    # Find the calendrically nearest event
+    next_date, nearest_event = min(future_events, key=lambda x: x[0])
     days_until = (next_date - as_of_date).days
+    event_type = nearest_event.event_type.value if nearest_event.event_type else None
 
-    return (next_date.isoformat(), days_until)
+    return (next_date.isoformat(), days_until, event_type)
 
 
 def _compute_catalyst_confidence(

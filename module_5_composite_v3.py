@@ -169,6 +169,9 @@ from module_5_scoring_v3 import (
     CATALYST_DEFAULT_BASE,
     CATALYST_DEFAULT_SCORE,
     CONFIDENCE_GATE_THRESHOLD,
+    # Baker-style mode configs
+    BAKER_STYLE_TILT_CONFIG,
+    THESIS_GATE_CONFIG,
     # Helper functions
     _coalesce,
     _compute_catalyst_effective,
@@ -239,6 +242,19 @@ V3_PARTIAL_WEIGHTS = {
     "short_interest": Decimal("0.07"),
 }
 
+# Baker-style fundamental-concentrated weights
+# Thesis-first: clinical+pos = 53%, survivability = 22%, mispricing = 15%
+# Timing (catalyst) = 7%, overlays (momentum+short_interest) = 3%
+BAKER_STYLE_WEIGHTS = {
+    "clinical": Decimal("0.35"),      # Core thesis - biology quality
+    "pos": Decimal("0.18"),           # Core thesis - probability of success
+    "financial": Decimal("0.22"),     # Survivability - execution risk
+    "valuation": Decimal("0.15"),     # Mispricing - risk/reward
+    "catalyst": Decimal("0.07"),      # Timing (not thesis)
+    "momentum": Decimal("0.02"),      # Overlay only
+    "short_interest": Decimal("0.01"), # Risk context only
+}
+
 # Pipeline health thresholds (fraction of universe)
 # NOTE: Biotech-adjusted thresholds - sparse coverage is normal for optional enhancement components
 HEALTH_GATE_THRESHOLDS = {
@@ -306,6 +322,7 @@ def compute_module_5_composite_v3(
     embargo_months: int = 1,
     shrinkage_lambda: Decimal = Decimal("0.70"),
     smooth_gamma: Decimal = Decimal("0.80"),
+    scoring_mode: Optional[str] = None,  # "baker_style" for fundamental-concentrated
 ) -> Dict[str, Any]:
     """
     Compute composite scores with all v3 IC enhancements.
@@ -478,7 +495,12 @@ def compute_module_5_composite_v3(
     has_market_data = bool(market_data_dict)
     has_pos_data = bool(pos_by_ticker)
 
-    if has_pos_data:
+    # Check for explicit Baker-style mode request
+    if scoring_mode == "baker_style":
+        mode = ScoringMode.BAKER_STYLE
+        base_weights = BAKER_STYLE_WEIGHTS.copy() if weights is None else weights
+        logger.info("Using BAKER_STYLE mode (fundamental-concentrated, thesis-gated)")
+    elif has_pos_data:
         mode = ScoringMode.ENHANCED
         base_weights = V3_ENHANCED_WEIGHTS.copy() if weights is None else weights
     elif has_market_data:
@@ -766,6 +788,45 @@ def compute_module_5_composite_v3(
         logger.info(f"  Smart money cohort stats computed for {len(cohort_overlap_stats)} stage×size buckets")
 
     # =========================================================================
+    # COMPUTE CONVICTION COHORT STATS (for Baker-style z-scoring)
+    # =========================================================================
+    # Build stage×size cohort stats for conviction_overlap (used in reinforcement)
+    MIN_COHORT_N = 15  # Require minimum cohort size for stable z-scoring; otherwise use global
+
+    def _mean_std(xs):
+        """Compute mean and sample std for a list of values. Returns None if n < MIN_COHORT_N."""
+        n = len(xs)
+        if n < MIN_COHORT_N:
+            return None
+        m = sum(xs) / n
+        v = sum((x - m) ** 2 for x in xs) / (n - 1)  # Sample variance
+        return {"mean": m, "std": (v ** 0.5), "n": n}
+
+    cohort_conviction_data = {}
+    global_conviction_vals = []
+    for rec in combined:
+        stage = rec.get("stage_bucket_alpha", rec.get("stage_bucket", "pivotal"))
+        size = rec.get("market_cap_bucket", "mid")
+        coinvest = rec.get("coinvest", {})
+        cv = coinvest.get("conviction_overlap") or coinvest.get("tier1_conviction_overlap") or 0.0
+        if cv > 0:
+            key = (stage, size)
+            cohort_conviction_data.setdefault(key, []).append(float(cv))
+            global_conviction_vals.append(float(cv))
+
+    global_conviction_stats = _mean_std(global_conviction_vals) or {"mean": 0.0, "std": 1.0, "n": 0}
+    # Guard against near-zero std so sigmoid doesn't explode on tiny dispersions
+    if global_conviction_stats.get("std", 0.0) < 1e-6:
+        global_conviction_stats["std"] = 1.0
+    cohort_conviction_stats = {k: (_mean_std(v) or global_conviction_stats) for k, v in cohort_conviction_data.items()}
+
+    conviction_coverage = sum(1 for rec in combined if (rec.get("coinvest", {}).get("conviction_overlap") or 0) > 0)
+    if cohort_conviction_stats:
+        logger.info(f"  Conviction cohort stats: {len(cohort_conviction_stats)} cohorts, "
+                    f"{conviction_coverage}/{len(combined)} tickers with conviction data, "
+                    f"global mean={global_conviction_stats['mean']:.2f}")
+
+    # =========================================================================
     # SCORE EACH TICKER
     # =========================================================================
 
@@ -777,6 +838,13 @@ def compute_module_5_composite_v3(
             "catalyst": rec.get("catalyst_normalized"),
             "pos": rec.get("pos_normalized"),
         }
+
+        # Get cohort conviction stats for this ticker's stage×size bucket
+        rec_stage = rec.get("stage_bucket_alpha", rec.get("stage_bucket", "pivotal"))
+        rec_size = rec.get("market_cap_bucket", "mid")
+        rec_cohort_conviction = cohort_conviction_stats.get(
+            (rec_stage, rec_size), global_conviction_stats
+        )
 
         result = _score_single_ticker_v3(
             ticker=rec["ticker"],
@@ -801,6 +869,7 @@ def compute_module_5_composite_v3(
             cash_burn_data=rec.get("cash_burn_data"),
             phase_momentum_data=rec.get("phase_momentum_data"),
             cohort_overlap_stats=cohort_overlap_stats,
+            cohort_conviction_stats=rec_cohort_conviction,
         )
 
         result["market_cap_bucket"] = rec["market_cap_bucket"]
@@ -985,6 +1054,14 @@ def compute_module_5_composite_v3(
             "coinvest_overlap_count": coinvest.get("coinvest_overlap_count", 0),
             "coinvest_holders": coinvest.get("coinvest_holders", []),
             "coinvest_usable": coinvest.get("coinvest_usable", False),
+            # Conviction fields (Baker-style)
+            "coinvest": {
+                "conviction_overlap": coinvest.get("conviction_overlap"),
+                "tier1_conviction_overlap": coinvest.get("tier1_conviction_overlap"),
+                "tier1_count": coinvest.get("tier1_count", 0),
+                "max_tier1_position_pct": coinvest.get("max_tier1_position_pct"),
+                "days_since_latest_filing": coinvest.get("days_since_latest_filing"),
+            },
 
             # V3 Enhancement signals
             "momentum_signal": rec.get("momentum_signal"),

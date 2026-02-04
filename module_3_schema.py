@@ -499,6 +499,9 @@ class TickerCatalystSummaryV2:
     activity_proxy_count_120d: int = 0  # Trials updated in past 120 days
     activity_proxy_count_30d: int = 0  # Trials updated in past 30 days
 
+    # NEW: Nearest catalyst type (for stage bucket determination in Module 5)
+    nearest_catalyst_type: Optional[str] = None  # e.g., "FDA_PDUFA_DATE", "CT_RESULTS_POSTED"
+
     # Schema metadata
     schema_version: str = SCHEMA_VERSION
     score_version: str = SCORE_VERSION
@@ -520,6 +523,7 @@ class TickerCatalystSummaryV2:
                 "catalyst_delta_score": str(self.catalyst_delta_score),
                 "catalyst_velocity_4w": str(self.catalyst_velocity_4w) if self.catalyst_velocity_4w is not None else None,
                 "activity_proxy_score": str(self.activity_proxy_score),
+                "nearest_catalyst_type": self.nearest_catalyst_type,
             },
             "flags": {
                 "severe_negative_flag": self.severe_negative_flag,

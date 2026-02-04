@@ -365,6 +365,199 @@ STAGE_SIZE_TILT_CONFIG = {
     "combined_clamp_max": Decimal("1.60"),
 }
 
+# =============================================================================
+# ENHANCEMENT 9: BAKER-STYLE FUNDAMENTAL-CONCENTRATED MODE
+# =============================================================================
+# Emulates Baker Bros' thesis-first, concentrated investment approach:
+# 1. Core thesis (clinical+pos) is dominant and gating
+# 2. Survivability (financial) is critical for execution
+# 3. Valuation matters for risk/reward (not "cheapness")
+# 4. Catalysts are timing, not thesis
+# 5. Momentum/short_interest are overlays, not drivers
+
+BAKER_STYLE_TILT_CONFIG = {
+    "enabled": True,
+
+    # Stage tilts - thesis dominates early, execution/valuation rise later
+    "stage_tilts": {
+        "early": {  # Preclinical → Phase 1: thesis is everything
+            "clinical": Decimal("1.30"),    # ↑↑ Biology quality dominant
+            "pos": Decimal("1.25"),         # ↑↑ Binary outcomes
+            "financial": Decimal("1.25"),   # ↑ Survivability critical
+            "valuation": Decimal("0.65"),   # ↓↓ No fundamentals yet
+            "catalyst": Decimal("0.70"),    # ↓ Events far out, low quality
+            "momentum": Decimal("0.50"),    # ↓↓ Noise, not signal
+            "short_interest": Decimal("0.50"),  # ↓↓ Overlay only
+        },
+        "poc": {  # Phase 2 → Proof-of-concept: thesis still key, catalysts rise
+            "clinical": Decimal("1.15"),    # ↑ PoC data critical
+            "pos": Decimal("1.10"),         # ↑ Refined probability
+            "financial": Decimal("1.00"),   # → Neutral
+            "valuation": Decimal("0.85"),   # → Still speculative
+            "catalyst": Decimal("1.20"),    # ↑ Readout events matter
+            "momentum": Decimal("0.70"),    # ↓ Pre-readout noise
+            "short_interest": Decimal("0.80"),  # ↓ Context only
+        },
+        "pivotal": {  # Phase 3 → Regulatory submission
+            "clinical": Decimal("1.00"),    # → Mature dataset
+            "pos": Decimal("0.95"),         # → Lower uncertainty
+            "financial": Decimal("1.10"),   # ↑ Capital for launch
+            "valuation": Decimal("1.10"),   # ↑ Starting to model commercial
+            "catalyst": Decimal("1.00"),    # → Pivotal events
+            "momentum": Decimal("0.80"),    # ↓ Context
+            "short_interest": Decimal("0.90"),  # → Context
+        },
+        "regulatory": {  # PDUFA/approval phase: binary event
+            "clinical": Decimal("0.85"),    # ↓ Science priced
+            "pos": Decimal("0.85"),         # ↓ Binary now
+            "financial": Decimal("1.15"),   # ↑ Launch funding
+            "valuation": Decimal("1.25"),   # ↑ Commercial value crystallizes
+            "catalyst": Decimal("1.40"),    # ↑↑ Binary regulatory event
+            "momentum": Decimal("1.00"),    # → Pre-PDUFA positioning
+            "short_interest": Decimal("0.95"),  # → Context
+        },
+        "commercial": {  # Post-approval: execution + fundamentals
+            "clinical": Decimal("0.75"),    # ↓↓ Science priced in
+            "pos": Decimal("0.70"),         # ↓↓ No clinical uncertainty
+            "financial": Decimal("1.30"),   # ↑↑ Execution risk dominant
+            "valuation": Decimal("1.40"),   # ↑↑ Fundamentals matter
+            "catalyst": Decimal("0.60"),    # ↓↓ Few binary events
+            "momentum": Decimal("1.20"),    # ↑ Sales trajectory drives price
+            "short_interest": Decimal("0.80"),  # ↓ Context
+        },
+        "none": {},
+    },
+
+    # Size tilts - same structure as STAGE_SIZE_TILT_CONFIG
+    "size_tilts": {
+        "micro": {
+            "financial": Decimal("1.30"),   # ↑↑ Survivability is everything
+            "clinical": Decimal("1.10"),    # ↑ Binary science risk
+            "pos": Decimal("1.10"),         # ↑ More uncertain
+            "catalyst": Decimal("1.10"),    # ↑ Binary events lifeline
+            "valuation": Decimal("0.70"),   # ↓↓ No fundamentals
+            "momentum": Decimal("0.60"),    # ↓↓ Illiquid, noise
+            "short_interest": Decimal("0.80"),  # ↓ Context
+        },
+        "small": {
+            "financial": Decimal("1.15"),   # ↑ Capital discipline
+            "clinical": Decimal("1.05"),    # → Neutral+
+            "pos": Decimal("1.05"),         # → Neutral+
+            "catalyst": Decimal("1.00"),    # → Neutral
+            "valuation": Decimal("0.90"),   # → Starting to matter
+            "momentum": Decimal("0.80"),    # ↓ Context
+            "short_interest": Decimal("0.90"),  # → Context
+        },
+        "mid": {
+            "clinical": Decimal("1.00"), "financial": Decimal("1.00"),
+            "catalyst": Decimal("1.00"), "pos": Decimal("1.00"),
+            "momentum": Decimal("1.00"), "valuation": Decimal("1.00"),
+            "short_interest": Decimal("1.00"),
+        },
+        "large": {
+            "valuation": Decimal("1.25"),   # ↑ Fundamental valuation
+            "financial": Decimal("1.15"),   # ↑ Capital allocation
+            "momentum": Decimal("1.15"),    # ↑ Institutional flows
+            "clinical": Decimal("0.85"),    # ↓ Diversified, priced
+            "pos": Decimal("0.90"),         # ↓ Lower uncertainty
+            "catalyst": Decimal("0.80"),    # ↓ Events less material
+            "short_interest": Decimal("0.85"),  # ↓ Minimal short interest
+        },
+        "unknown": {},
+    },
+
+    "clamp_min": Decimal("0.50"),
+    "clamp_max": Decimal("1.50"),
+    "combined_clamp_min": Decimal("0.40"),
+    "combined_clamp_max": Decimal("1.80"),
+}
+
+# =============================================================================
+# ENHANCEMENT 10: THESIS GATE (CLINICAL+POS ELIGIBILITY)
+# =============================================================================
+# "You can't rank top without a real thesis" - prevents momentum/value traps
+# from floating to top ranks when clinical quality is weak.
+#
+# Implementation: Eligibility gate for top ranks
+# - If (clinical + pos) / 2 < threshold → cap final score at ceiling
+# - Stage-aware: stricter for early/poc, looser for commercial
+
+THESIS_GATE_CONFIG = {
+    "enabled": True,
+
+    # Threshold: average of clinical + pos normalized scores
+    # Below this = weak thesis, cap the final score
+    "thresholds_by_stage": {
+        "early": Decimal("58"),      # Strict: thesis must be strong
+        "poc": Decimal("55"),        # Strict: thesis still dominant
+        "pivotal": Decimal("50"),    # Moderate: execution matters too
+        "regulatory": Decimal("48"), # Looser: binary event dominates
+        "commercial": Decimal("45"), # Loosest: execution/valuation matter
+        "none": Decimal("50"),       # Default fallback
+    },
+
+    # Score ceiling when thesis gate triggers
+    # This prevents weak-thesis names from ranking in top decile
+    "ceiling_by_stage": {
+        "early": Decimal("62"),      # Can't exceed ~60th percentile
+        "poc": Decimal("65"),        # Can't exceed ~65th percentile
+        "pivotal": Decimal("68"),    # Slightly more permissive
+        "regulatory": Decimal("70"), # Even more permissive
+        "commercial": Decimal("72"), # Most permissive
+        "none": Decimal("65"),       # Default fallback
+    },
+
+    # Soft penalty (enabled) - applies smooth penalty instead of hard ceiling
+    # Works regardless of score compression (ceiling approach fails with compressed scores)
+    "use_soft_penalty": True,
+    "soft_penalty_base": Decimal("0.92"),  # Multiply score by this at threshold
+    "soft_penalty_floor": Decimal("0.80"), # Minimum multiplier (at 20pt gap below threshold)
+}
+
+# =============================================================================
+# ENHANCEMENT 11: SMART MONEY REINFORCEMENT (OPTION D)
+# =============================================================================
+# Use Tier-1 overlap as an interaction coefficient that amplifies catalyst
+# (and optionally momentum) contributions in PoC/Regulatory stages.
+#
+# Guardrails:
+# - Only apply when smart-money confidence is high (≥0.65 or overlap ≥2 Tier-1s)
+# - Only in PoC + Regulatory (event-alpha regimes)
+# - Cap reinforcement tightly: ±5-10% max effect
+# - Apply to component contributions, not final score (keeps attribution clean)
+
+SMART_MONEY_REINFORCEMENT_CONFIG = {
+    "enabled": True,  # Master switch (only active in BAKER_STYLE mode)
+
+    # Stages where reinforcement applies (event-alpha regimes)
+    "active_stages": ["poc", "regulatory"],
+
+    # Minimum confidence/overlap to apply reinforcement
+    "min_smart_money_confidence": Decimal("0.65"),
+    "min_tier1_overlap": 2,
+
+    # Reinforcement multipliers for component contributions
+    # Positive overlap (Tier-1s holding) → amplify catalyst contribution
+    "catalyst_reinforcement": {
+        "strong_overlap_mult": Decimal("1.10"),   # 3+ Tier-1s → +10% catalyst contribution
+        "moderate_overlap_mult": Decimal("1.05"), # 2 Tier-1s → +5% catalyst contribution
+        "weak_overlap_mult": Decimal("1.00"),     # <2 Tier-1s → no change
+        "negative_signal_mult": Decimal("0.93"),  # Selling signal → -7% catalyst contribution
+    },
+
+    # Momentum reinforcement (half the size of catalyst)
+    "momentum_reinforcement": {
+        "strong_overlap_mult": Decimal("1.05"),   # 3+ Tier-1s → +5% momentum contribution
+        "moderate_overlap_mult": Decimal("1.02"), # 2 Tier-1s → +2% momentum contribution
+        "weak_overlap_mult": Decimal("1.00"),     # <2 Tier-1s → no change
+        "negative_signal_mult": Decimal("0.97"),  # Selling signal → -3% momentum contribution
+    },
+
+    # Tier-1 overlap thresholds
+    "strong_overlap_threshold": 3,  # ≥3 Tier-1s = strong
+    "moderate_overlap_threshold": 2, # ≥2 Tier-1s = moderate
+}
+
 
 # =============================================================================
 # TYPES
@@ -385,6 +578,7 @@ class ScoringMode(str, Enum):
     PARTIAL = "partial"
     ENHANCED = "enhanced"
     ADAPTIVE = "adaptive"
+    BAKER_STYLE = "baker_style"  # Fundamental-concentrated (thesis-first)
 
 
 class RunStatus(str, Enum):
@@ -565,9 +759,24 @@ def _determine_stage_bucket_alpha(
     """
     # Phase 1: Catalyst event type mapping (Module 3 event types + keywords)
     if cat_event_type:
+        cat_type_upper = str(cat_event_type).upper()
         cat_type_lower = str(cat_event_type).lower()
 
-        # Regulatory events (highest priority)
+        # Explicit M3 event type mapping (CT_* and FDA_* types)
+        # FDA_PDUFA_DATE → regulatory (binary regulatory event)
+        if cat_type_upper == "FDA_PDUFA_DATE":
+            return "regulatory"
+        # CT_RESULTS_POSTED → poc (actual data posted = repricing catalyst)
+        if cat_type_upper == "CT_RESULTS_POSTED":
+            return "poc"
+        # CT_PRIMARY_COMPLETION → poc (readout imminent / analysis window)
+        if cat_type_upper == "CT_PRIMARY_COMPLETION":
+            return "poc"
+        # CT_STUDY_COMPLETION → pivotal (later-stage completion more common)
+        if cat_type_upper == "CT_STUDY_COMPLETION":
+            return "pivotal"
+
+        # Regulatory events (keyword matching)
         if any(kw in cat_type_lower for kw in [
             "pdufa", "adcom", "nda", "bla", "fda_pdufa", "fda_adcom",
             "filing", "approval", "regulatory", "label", "crl",
@@ -640,6 +849,7 @@ def _apply_stage_size_tilts(
     stage_bucket: str,
     size_bucket: str,
     enable_tilting: bool = True,
+    tilt_config: Optional[Dict[str, Any]] = None,
 ) -> Tuple[Dict[str, Decimal], Dict[str, Any]]:
     """
     Apply stage × size tilts to base weights.
@@ -652,11 +862,12 @@ def _apply_stage_size_tilts(
         stage_bucket: Development stage ('early', 'poc', 'pivotal', 'regulatory', 'commercial')
         size_bucket: Market cap bucket ('micro', 'small', 'mid', 'large')
         enable_tilting: Master switch to disable tilting
+        tilt_config: Optional tilt configuration (defaults to STAGE_SIZE_TILT_CONFIG)
 
     Returns:
         Tuple of (tilted_weights, diagnostics_dict)
     """
-    config = STAGE_SIZE_TILT_CONFIG
+    config = tilt_config if tilt_config is not None else STAGE_SIZE_TILT_CONFIG
 
     # Return unchanged weights if tilting disabled
     if not enable_tilting or not config.get("enabled", True) or stage_bucket == "none":
@@ -1189,6 +1400,12 @@ def _enrich_with_coinvest(ticker: str, coinvest_signals: dict, as_of_date: date)
             "coinvest_usable": False,
             "position_changes": {},
             "holder_tiers": {},
+            # Conviction fields (Baker-style) - defaults
+            "conviction_overlap": None,
+            "tier1_conviction_overlap": None,
+            "tier1_count": 0,
+            "max_tier1_position_pct": None,
+            "days_since_latest_filing": None,
         }
 
     if isinstance(signal, dict) and "coinvest_overlap_count" in signal:
@@ -1208,6 +1425,12 @@ def _enrich_with_coinvest(ticker: str, coinvest_signals: dict, as_of_date: date)
             "coinvest_usable": signal.get("coinvest_overlap_count", 0) > 0,
             "position_changes": signal.get("position_changes", {}),
             "holder_tiers": normalized_tiers,
+            # NEW: Conviction fields (Baker-style)
+            "conviction_overlap": signal.get("conviction_overlap"),
+            "tier1_conviction_overlap": signal.get("tier1_conviction_overlap"),
+            "tier1_count": signal.get("tier1_count", 0),
+            "max_tier1_position_pct": signal.get("max_tier1_position_pct"),
+            "days_since_latest_filing": signal.get("days_since_latest_filing"),
         }
 
     if not hasattr(signal, 'positions'):
@@ -1217,6 +1440,11 @@ def _enrich_with_coinvest(ticker: str, coinvest_signals: dict, as_of_date: date)
             "coinvest_usable": False,
             "position_changes": {},
             "holder_tiers": {},
+            "conviction_overlap": None,
+            "tier1_conviction_overlap": None,
+            "tier1_count": 0,
+            "max_tier1_position_pct": None,
+            "days_since_latest_filing": None,
         }
 
     pit_positions = [p for p in signal.positions if p.filing_date < as_of_date]
@@ -1227,6 +1455,11 @@ def _enrich_with_coinvest(ticker: str, coinvest_signals: dict, as_of_date: date)
             "coinvest_usable": False,
             "position_changes": {},
             "holder_tiers": {},
+            "conviction_overlap": None,
+            "tier1_conviction_overlap": None,
+            "tier1_count": 0,
+            "max_tier1_position_pct": None,
+            "days_since_latest_filing": None,
         }
 
     holders = sorted(set(p.manager_name for p in pit_positions))
@@ -1252,6 +1485,12 @@ def _enrich_with_coinvest(ticker: str, coinvest_signals: dict, as_of_date: date)
         "coinvest_usable": True,
         "position_changes": position_changes,
         "holder_tiers": holder_tiers,
+        # Conviction fields (Baker-style) - not available in position-based format
+        "conviction_overlap": None,
+        "tier1_conviction_overlap": None,
+        "tier1_count": sum(1 for t in holder_tiers.values() if t == 1),
+        "max_tier1_position_pct": None,
+        "days_since_latest_filing": None,
     }
 
 
@@ -1671,6 +1910,308 @@ def apply_asymmetric_transform_to_contribution(
 
 
 # =============================================================================
+# ENHANCEMENT 11: SMART MONEY REINFORCEMENT (OPTION D) - BAKER-STYLE
+# =============================================================================
+
+def compute_smart_money_reinforcement(
+    stage_bucket: str,
+    tier1_overlap: int,
+    smart_money_confidence: Decimal,
+    smart_money_trend: Optional[str],  # "increasing", "decreasing", "stable", None
+    mode: "ScoringMode",
+    conviction_overlap: Optional[float] = None,  # NEW: conviction-weighted overlap
+    tier1_conviction_overlap: Optional[float] = None,  # NEW: T1-only conviction
+    days_to_catalyst: Optional[int] = None,  # NEW: for timing calculation
+    cohort_conviction_stats: Optional[Dict[str, float]] = None,  # NEW: for z-scoring
+    thesis_gate_triggered: bool = False,  # NEW: block reinforcement if thesis gate fired
+) -> Tuple[Decimal, Decimal, List[str], Dict[str, Any]]:
+    """
+    Compute smart-money reinforcement multipliers for catalyst and momentum.
+
+    BAKER-STYLE CONVICTION × TIMING:
+    In PoC/Regulatory stages, conviction-weighted overlap acts as an interaction
+    coefficient scaled by catalyst proximity:
+
+      strength = sigmoid(z_conviction)  # 0..1 based on cohort z-score
+      timing = exp(-((days_to_cat - 90)/90)^2)  # peaks ~90d, relevant 30-180d
+      reinforce = strength * timing  # 0..1
+
+      catalyst_mult = 1 + 0.10 * reinforce
+      momentum_mult = 1 + 0.06 * reinforce
+
+    Falls back to tier1_overlap-based logic if conviction data unavailable.
+
+    Args:
+        stage_bucket: Development stage ('early', 'poc', 'pivotal', 'regulatory', 'commercial')
+        tier1_overlap: Number of Tier-1 funds holding the position (fallback)
+        smart_money_confidence: Confidence in smart money signal (0-1)
+        smart_money_trend: Direction of position changes
+        mode: Scoring mode
+        conviction_overlap: Baker-style conviction-weighted overlap (preferred)
+        tier1_conviction_overlap: Tier-1 only conviction overlap
+        days_to_catalyst: Days until nearest catalyst (for timing)
+        cohort_conviction_stats: {"mean": float, "std": float} for z-scoring
+
+    Returns:
+        Tuple of (catalyst_mult, momentum_mult, flags, diagnostics)
+    """
+    import math
+
+    config = SMART_MONEY_REINFORCEMENT_CONFIG
+    flags = []
+    diagnostics = {
+        "reinforcement_enabled": config["enabled"],
+        "reinforcement_applied": False,
+        "stage_bucket": stage_bucket,
+        "tier1_overlap": tier1_overlap,
+        "smart_money_confidence": str(smart_money_confidence),
+        "conviction_overlap": conviction_overlap,
+        "tier1_conviction_overlap": tier1_conviction_overlap,
+        "days_to_catalyst": days_to_catalyst,
+    }
+
+    # Default: no reinforcement
+    catalyst_mult = Decimal("1.00")
+    momentum_mult = Decimal("1.00")
+
+    # Only apply in BAKER_STYLE mode
+    if mode != ScoringMode.BAKER_STYLE:
+        diagnostics["skip_reason"] = "not_baker_style"
+        return catalyst_mult, momentum_mult, flags, diagnostics
+
+    if not config["enabled"]:
+        diagnostics["skip_reason"] = "disabled"
+        return catalyst_mult, momentum_mult, flags, diagnostics
+
+    # THESIS GATE COUPLING: Don't reinforce weak-thesis names
+    # This prevents smart money + timing from undoing Baker-style premise
+    if thesis_gate_triggered:
+        diagnostics["skip_reason"] = "thesis_gate_triggered"
+        diagnostics["thesis_gate_blocked"] = True
+        flags.append("sm_reinforcement_blocked_by_thesis_gate")
+        return catalyst_mult, momentum_mult, flags, diagnostics
+
+    # Only apply in event-alpha regimes (PoC/Regulatory)
+    if stage_bucket not in config["active_stages"]:
+        diagnostics["skip_reason"] = f"stage_{stage_bucket}_not_active"
+        return catalyst_mult, momentum_mult, flags, diagnostics
+
+    # Check for negative signal (selling) - always applies
+    is_negative = smart_money_trend == "decreasing"
+    if is_negative:
+        cat_config = config["catalyst_reinforcement"]
+        mom_config = config["momentum_reinforcement"]
+        catalyst_mult = cat_config["negative_signal_mult"]
+        momentum_mult = mom_config["negative_signal_mult"]
+        flags.append("sm_reinforcement_negative")
+        diagnostics["reinforcement_type"] = "negative"
+        diagnostics["reinforcement_applied"] = True
+        diagnostics["catalyst_mult"] = str(catalyst_mult)
+        diagnostics["momentum_mult"] = str(momentum_mult)
+        return catalyst_mult, momentum_mult, flags, diagnostics
+
+    # =========================================================================
+    # CONVICTION × TIMING REINFORCEMENT (Baker-style)
+    # =========================================================================
+    use_conviction = conviction_overlap is not None and conviction_overlap > 0
+
+    if use_conviction:
+        # Compute conviction strength via z-score + sigmoid
+        if cohort_conviction_stats and cohort_conviction_stats.get("std", 0) > 0.01:
+            mean = cohort_conviction_stats["mean"]
+            std = cohort_conviction_stats["std"]
+            z_conviction = (conviction_overlap - mean) / std
+        else:
+            # Fallback: use raw conviction scaled to reasonable range
+            # Assume conviction_overlap of ~3.0 is "average"
+            z_conviction = (conviction_overlap - 3.0) / 1.5
+
+        # Sigmoid transform: z=0 → 0.5, z=2 → 0.88, z=-2 → 0.12
+        strength = 1.0 / (1.0 + math.exp(-z_conviction))
+
+        # Timing: bell-shaped around 90 days to catalyst
+        # NO CATALYST = NO TIMING BOOST (PIT-safe, prevents "general momentum" reinforcement)
+        if days_to_catalyst is not None and days_to_catalyst > 0:
+            # Peak at ~90 days, drops off outside 30-180 range
+            timing = math.exp(-((days_to_catalyst - 90) / 90) ** 2)
+        else:
+            # No catalyst data: no timing-based reinforcement
+            timing = 0.0
+            diagnostics["timing_reason"] = "no_catalyst_data"
+
+        # Combined reinforcement factor (0..1)
+        reinforce = strength * timing
+        reinforce = max(0.0, min(1.0, reinforce))
+
+        # Apply to multipliers
+        # Max boost: +10% catalyst, +6% momentum when reinforce=1.0
+        catalyst_mult = Decimal("1.00") + Decimal(str(round(0.10 * reinforce, 4)))
+        momentum_mult = Decimal("1.00") + Decimal(str(round(0.06 * reinforce, 4)))
+
+        diagnostics["conviction_method"] = "conviction_x_timing"
+        diagnostics["z_conviction"] = round(z_conviction, 3)
+        diagnostics["strength"] = round(strength, 3)
+        diagnostics["timing"] = round(timing, 3)
+        diagnostics["reinforce"] = round(reinforce, 3)
+
+        if reinforce > 0.5:
+            flags.append("sm_reinforcement_strong")
+            diagnostics["reinforcement_type"] = "strong"
+        elif reinforce > 0.25:
+            flags.append("sm_reinforcement_moderate")
+            diagnostics["reinforcement_type"] = "moderate"
+        else:
+            flags.append("sm_reinforcement_weak")
+            diagnostics["reinforcement_type"] = "weak"
+
+    else:
+        # =====================================================================
+        # FALLBACK: Tier-1 overlap-based (original logic)
+        # Also requires a catalyst (consistent with conviction path)
+        # =====================================================================
+
+        # NO CATALYST = NO REINFORCEMENT (even in fallback)
+        if days_to_catalyst is None or days_to_catalyst <= 0:
+            diagnostics["skip_reason"] = "no_catalyst_for_fallback"
+            return catalyst_mult, momentum_mult, flags, diagnostics
+
+        min_conf = config["min_smart_money_confidence"]
+        min_overlap = config["min_tier1_overlap"]
+
+        if smart_money_confidence < min_conf and tier1_overlap < min_overlap:
+            diagnostics["skip_reason"] = "below_threshold"
+            return catalyst_mult, momentum_mult, flags, diagnostics
+
+        cat_config = config["catalyst_reinforcement"]
+        mom_config = config["momentum_reinforcement"]
+
+        if tier1_overlap >= config["strong_overlap_threshold"]:
+            catalyst_mult = cat_config["strong_overlap_mult"]
+            momentum_mult = mom_config["strong_overlap_mult"]
+            flags.append("sm_reinforcement_strong")
+            diagnostics["reinforcement_type"] = "strong"
+        elif tier1_overlap >= config["moderate_overlap_threshold"]:
+            catalyst_mult = cat_config["moderate_overlap_mult"]
+            momentum_mult = mom_config["moderate_overlap_mult"]
+            flags.append("sm_reinforcement_moderate")
+            diagnostics["reinforcement_type"] = "moderate"
+        else:
+            diagnostics["skip_reason"] = "overlap_too_low"
+            return catalyst_mult, momentum_mult, flags, diagnostics
+
+        diagnostics["conviction_method"] = "tier1_overlap_fallback"
+
+    diagnostics["reinforcement_applied"] = True
+    diagnostics["catalyst_mult"] = str(catalyst_mult)
+    diagnostics["momentum_mult"] = str(momentum_mult)
+
+    return catalyst_mult, momentum_mult, flags, diagnostics
+
+
+# =============================================================================
+# ENHANCEMENT 10: THESIS GATE (CLINICAL+POS ELIGIBILITY)
+# =============================================================================
+
+def apply_thesis_gate(
+    score: Decimal,
+    clinical_normalized: Optional[Decimal],
+    pos_normalized: Optional[Decimal],
+    stage_bucket: str,
+    mode: "ScoringMode",
+) -> Tuple[Decimal, List[str], Dict[str, Any]]:
+    """
+    Apply thesis gate to prevent weak-thesis names from ranking top.
+
+    "You can't rank top without a real thesis" - Baker Bros style.
+    If (clinical + pos) / 2 < stage threshold, cap the final score.
+
+    Args:
+        score: Pre-gate final score
+        clinical_normalized: Normalized clinical score (0-100)
+        pos_normalized: Normalized PoS score (0-100)
+        stage_bucket: Development stage bucket
+        mode: Scoring mode
+
+    Returns:
+        Tuple of (gated_score, flags, diagnostics)
+    """
+    config = THESIS_GATE_CONFIG
+    flags = []
+    diagnostics = {
+        "thesis_gate_enabled": config["enabled"],
+        "thesis_gate_triggered": False,
+        "thesis_score": None,
+        "thesis_threshold": None,
+        "thesis_ceiling": None,
+        "mode_is_baker": mode == ScoringMode.BAKER_STYLE,
+    }
+
+    # Only apply thesis gate in BAKER_STYLE mode
+    if mode != ScoringMode.BAKER_STYLE:
+        return score, flags, diagnostics
+
+    if not config["enabled"]:
+        return score, flags, diagnostics
+
+    # Need both clinical and pos to compute thesis score
+    if clinical_normalized is None or pos_normalized is None:
+        flags.append("thesis_gate_skipped_missing_data")
+        diagnostics["thesis_gate_skipped"] = "missing_data"
+        return score, flags, diagnostics
+
+    # Compute thesis score: average of clinical + pos
+    thesis_score = (clinical_normalized + pos_normalized) / Decimal("2")
+    thesis_score = _quantize_score(thesis_score)
+
+    # Get threshold and ceiling for this stage
+    threshold = config["thresholds_by_stage"].get(
+        stage_bucket, config["thresholds_by_stage"]["none"]
+    )
+    ceiling = config["ceiling_by_stage"].get(
+        stage_bucket, config["ceiling_by_stage"]["none"]
+    )
+
+    diagnostics["thesis_score"] = str(thesis_score)
+    diagnostics["thesis_threshold"] = str(threshold)
+    diagnostics["thesis_ceiling"] = str(ceiling)
+    diagnostics["stage_bucket"] = stage_bucket
+
+    # Check if thesis is weak
+    if thesis_score < threshold:
+        diagnostics["thesis_gate_triggered"] = True
+
+        if config["use_soft_penalty"]:
+            # Soft penalty: multiplicative reduction
+            penalty_base = config["soft_penalty_base"]
+            penalty_floor = config["soft_penalty_floor"]
+            # Penalty scales with how far below threshold
+            gap = threshold - thesis_score
+            gap_factor = min(gap / Decimal("20"), Decimal("1"))  # Max at 20pt gap
+            penalty = max(
+                penalty_floor,
+                penalty_base - gap_factor * (penalty_base - penalty_floor)
+            )
+            gated_score = score * penalty
+            flags.append(f"thesis_gate_penalty_{penalty:.2f}")
+            diagnostics["penalty_factor"] = str(penalty)
+        else:
+            # Hard ceiling: cap the score
+            if score > ceiling:
+                gated_score = ceiling
+                flags.append(f"thesis_gate_ceiling_{stage_bucket}")
+                diagnostics["score_capped_from"] = str(score)
+            else:
+                gated_score = score
+                flags.append("thesis_gate_below_ceiling")
+
+        return _quantize_score(gated_score), flags, diagnostics
+
+    # Thesis is strong enough, no gating
+    flags.append("thesis_gate_passed")
+    return score, flags, diagnostics
+
+
+# =============================================================================
 # MAIN SCORING FUNCTION
 # =============================================================================
 
@@ -1697,6 +2238,7 @@ def _score_single_ticker_v3(
     cash_burn_data: Optional[Dict] = None,
     phase_momentum_data: Optional[Dict] = None,
     cohort_overlap_stats: Optional[Dict[Tuple[str, str], Tuple[Decimal, Decimal]]] = None,
+    cohort_conviction_stats: Optional[Dict[str, float]] = None,
 ) -> Dict[str, Any]:
     """Score a single ticker with all v3 enhancements."""
 
@@ -2024,11 +2566,18 @@ def _score_single_ticker_v3(
     size_bucket = _market_cap_bucket(market_cap_mm) if market_cap_mm else "mid"
 
     # 3. Apply stage/size tilts to base weights
+    # Use Baker-style tilts for BAKER_STYLE mode, standard tilts otherwise
+    if mode == ScoringMode.BAKER_STYLE:
+        tilt_config = BAKER_STYLE_TILT_CONFIG
+    else:
+        tilt_config = STAGE_SIZE_TILT_CONFIG
+
     tilted_weights, tilt_diagnostics = _apply_stage_size_tilts(
         base_weights=base_weights,
         stage_bucket=stage_bucket_alpha,
         size_bucket=size_bucket,
-        enable_tilting=STAGE_SIZE_TILT_CONFIG.get("enabled", True),
+        enable_tilting=tilt_config.get("enabled", True),
+        tilt_config=tilt_config,
     )
 
     if tilt_diagnostics["tilt_applied"]:
@@ -2302,7 +2851,7 @@ def _score_single_ticker_v3(
     pos_contrib_capped = Decimal("0")
     pos_delta_was_capped = False
 
-    if mode == ScoringMode.ENHANCED and pos_raw is not None:
+    if mode in (ScoringMode.ENHANCED, ScoringMode.BAKER_STYLE) and pos_raw is not None:
         w_eff = effective_weights.get("pos", Decimal("0"))
         pos_contrib_raw = pos_norm * w_eff
 
@@ -2380,6 +2929,73 @@ def _score_single_ticker_v3(
             notes=sm_notes if sm_notes else [],
         ))
         flags.append("smart_money_applied")
+
+    # =========================================================================
+    # ENHANCEMENT 11: SMART MONEY REINFORCEMENT (OPTION D) - BAKER-STYLE
+    # Apply conviction × timing reinforcement in PoC/Regulatory stages
+    # =========================================================================
+
+    # Extract tier1 overlap and trend from coinvest data
+    tier1_overlap = coinvest_data.get("coinvest_overlap_count", 0)
+    if not tier1_overlap:
+        # Try alternate key from enhanced smart money signal
+        tier1_overlap = enhanced_smart_money.get("tier1_count", 0) if enhanced_smart_money else 0
+
+    sm_trend = coinvest_data.get("position_trend")  # "increasing", "decreasing", "stable"
+
+    # NEW: Extract conviction overlap (Baker-style) if available
+    conviction_overlap = coinvest_data.get("conviction_overlap")
+    tier1_conviction_overlap = coinvest_data.get("tier1_conviction_overlap")
+
+    # Get sm_confidence (may not be defined if smart money wasn't applied)
+    sm_confidence_for_reinforcement = Decimal("0.5")  # Default
+    if sm_w_eff > EPS and has_smart_money_coverage:
+        if enhanced_smart_money and SMART_MONEY_ENHANCEMENT_CONFIG.get("enabled", True):
+            sm_confidence_for_reinforcement = enhanced_smart_money.get("confidence", Decimal("0.5"))
+        else:
+            sm_confidence_for_reinforcement = smart_money.confidence
+
+    # Pre-check thesis gate for reinforcement coupling (Baker-style)
+    # Don't allow reinforcement to boost weak-thesis names
+    thesis_gate_would_trigger = False
+    if mode == ScoringMode.BAKER_STYLE and THESIS_GATE_CONFIG["enabled"]:
+        if clin_norm is not None and pos_norm is not None:
+            thesis_score = (clin_norm + pos_norm) / Decimal("2")
+            threshold = THESIS_GATE_CONFIG["thresholds_by_stage"].get(
+                stage_bucket_alpha, THESIS_GATE_CONFIG["thresholds_by_stage"]["none"]
+            )
+            thesis_gate_would_trigger = thesis_score < threshold
+
+    reinforcement_catalyst_mult, reinforcement_momentum_mult, reinforcement_flags, reinforcement_diagnostics = (
+        compute_smart_money_reinforcement(
+            stage_bucket=stage_bucket_alpha,
+            tier1_overlap=tier1_overlap,
+            smart_money_confidence=sm_confidence_for_reinforcement,
+            smart_money_trend=sm_trend,
+            mode=mode,
+            # NEW: Conviction × timing parameters
+            conviction_overlap=conviction_overlap,
+            tier1_conviction_overlap=tier1_conviction_overlap,
+            days_to_catalyst=days_to_cat,  # Already computed earlier in function
+            cohort_conviction_stats=cohort_conviction_stats,  # Stage×size cohort stats for z-scoring
+            thesis_gate_triggered=thesis_gate_would_trigger,  # Block reinforcement if thesis weak
+        )
+    )
+    flags.extend(reinforcement_flags)
+
+    # Apply reinforcement to contributions (not scores - keeps attribution clean)
+    if reinforcement_diagnostics.get("reinforcement_applied"):
+        if "catalyst" in contributions:
+            original_cat = contributions["catalyst"]
+            contributions["catalyst"] = original_cat * reinforcement_catalyst_mult
+            reinforcement_diagnostics["catalyst_original"] = str(original_cat)
+            reinforcement_diagnostics["catalyst_reinforced"] = str(contributions["catalyst"])
+
+        if "momentum" in contributions:
+            original_mom = contributions["momentum"]
+            contributions["momentum"] = original_mom * reinforcement_momentum_mult
+            reinforcement_diagnostics["momentum_original"] = str(original_mom)
+            reinforcement_diagnostics["momentum_reinforced"] = str(contributions["momentum"])
 
     # =========================================================================
     # AGGREGATION
@@ -2517,6 +3133,20 @@ def _score_single_ticker_v3(
     final_score = _quantize_score(final_score)
 
     # =========================================================================
+    # ENHANCEMENT 10: THESIS GATE (BAKER_STYLE mode only)
+    # Prevent weak-thesis names from ranking top
+    # =========================================================================
+
+    final_score, thesis_gate_flags, thesis_gate_diagnostics = apply_thesis_gate(
+        score=final_score,
+        clinical_normalized=clin_norm,
+        pos_normalized=pos_norm,
+        stage_bucket=stage_bucket_alpha,
+        mode=mode,
+    )
+    flags.extend(thesis_gate_flags)
+
+    # =========================================================================
     # BUILD OUTPUT
     # =========================================================================
 
@@ -2546,6 +3176,10 @@ def _score_single_ticker_v3(
         "existential_flaws": existential_flaws,
         "confidence_factors": {k: str(v) for k, v in confidence_factors.items()},
         "stage_size_weighting": tilt_diagnostics,
+        # Enhancement 10: Thesis gate (Baker-style)
+        "thesis_gate": thesis_gate_diagnostics,
+        # Enhancement 11: Smart money reinforcement (Option D)
+        "smart_money_reinforcement": reinforcement_diagnostics,
     }
 
     determinism_hash = _compute_determinism_hash(
@@ -2584,6 +3218,9 @@ def _score_single_ticker_v3(
             "catalyst_decay": {"factor": str(decay.decay_factor), "in_optimal_window": decay.in_optimal_window},
             "confidence_factors": {k: str(v) for k, v in confidence_factors.items()},
             "stage_size_weighting": tilt_diagnostics,
+            # Baker-style enhancements (Enhancement 10 & 11)
+            "thesis_gate": thesis_gate_diagnostics,
+            "smart_money_reinforcement": reinforcement_diagnostics,
         },
         penalties_and_gates={
             "uncertainty_penalty_pct": str(_quantize_score(uncertainty_penalty * Decimal("100"))),
