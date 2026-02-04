@@ -493,7 +493,16 @@ THESIS_GATE_CONFIG = {
         "pivotal": Decimal("50"),    # Moderate: execution matters too
         "regulatory": Decimal("48"), # Looser: binary event dominates
         "commercial": Decimal("45"), # Loosest: execution/valuation matter
+        "late": Decimal("45"),       # Late-stage companies (Phase 3+/approved) - same as commercial
         "none": Decimal("50"),       # Default fallback
+    },
+
+    # Conviction override: bypass thesis gate if institutional signal is very strong
+    # This allows high-conviction late-stage names to receive reinforcement
+    "conviction_override": {
+        "enabled": True,
+        "min_tier1": 10,            # Require at least 10 tier-1 holders
+        "min_conviction": Decimal("15"),  # Require conviction overlap >= 15
     },
 
     # Score ceiling when thesis gate triggers
@@ -504,6 +513,7 @@ THESIS_GATE_CONFIG = {
         "pivotal": Decimal("68"),    # Slightly more permissive
         "regulatory": Decimal("70"), # Even more permissive
         "commercial": Decimal("72"), # Most permissive
+        "late": Decimal("72"),       # Late-stage - same as commercial
         "none": Decimal("65"),       # Default fallback
     },
 
@@ -3021,14 +3031,34 @@ def _score_single_ticker_v3(
 
     # Pre-check thesis gate for reinforcement coupling (Baker-style)
     # Don't allow reinforcement to boost weak-thesis names
+    # FIX: Use display stage (early/mid/late) instead of alpha stage (poc/pivotal/etc)
+    # This prevents late-stage companies with trial readouts from being treated as PoC
     thesis_gate_would_trigger = False
+    thesis_gate_bypass_reason = None
     if mode == ScoringMode.BAKER_STYLE and THESIS_GATE_CONFIG["enabled"]:
         if clin_norm is not None and pos_norm is not None:
             thesis_score = (clin_norm + pos_norm) / Decimal("2")
+
+            # Use display stage bucket for threshold (not alpha stage)
+            # This allows late-stage companies to use the "late" threshold (45)
+            # instead of being forced into "poc" threshold (55) by catalyst type
+            display_stage_bucket = _stage_bucket(lead_phase)
             threshold = THESIS_GATE_CONFIG["thresholds_by_stage"].get(
-                stage_bucket_alpha, THESIS_GATE_CONFIG["thresholds_by_stage"]["none"]
+                display_stage_bucket, THESIS_GATE_CONFIG["thresholds_by_stage"]["none"]
             )
+
             thesis_gate_would_trigger = thesis_score < threshold
+
+            # Conviction override: very high institutional signal can bypass thesis gate
+            # This allows names like INSM (14 tier-1, conviction 23) to receive reinforcement
+            conv_override = THESIS_GATE_CONFIG.get("conviction_override", {})
+            if thesis_gate_would_trigger and conv_override.get("enabled", False):
+                min_tier1 = conv_override.get("min_tier1", 10)
+                min_conviction = conv_override.get("min_conviction", Decimal("15"))
+                if (tier1_overlap or 0) >= min_tier1 and _to_decimal(conviction_overlap or 0) >= min_conviction:
+                    thesis_gate_would_trigger = False
+                    thesis_gate_bypass_reason = "conviction_override"
+                    flags.append("thesis_gate_conviction_override")
 
     reinforcement_catalyst_mult, reinforcement_momentum_mult, reinforcement_flags, reinforcement_diagnostics = (
         compute_smart_money_reinforcement(
@@ -3045,6 +3075,10 @@ def _score_single_ticker_v3(
             thesis_gate_triggered=thesis_gate_would_trigger,  # Block reinforcement if thesis weak
         )
     )
+    # Add thesis gate diagnostic details (display stage + bypass reason)
+    reinforcement_diagnostics["thesis_display_stage"] = _stage_bucket(lead_phase)
+    if thesis_gate_bypass_reason:
+        reinforcement_diagnostics["thesis_gate_bypass"] = thesis_gate_bypass_reason
     flags.extend(reinforcement_flags)
 
     # Apply reinforcement to contributions (not scores - keeps attribution clean)
