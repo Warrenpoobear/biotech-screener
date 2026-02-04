@@ -3913,11 +3913,11 @@ Module 3 Catalyst Detection:
     parser.add_argument(
         "--scoring-mode",
         type=str,
-        choices=["baker_style", "enhanced", "default"],
+        choices=["baker_style", "legacy", "enhanced", "default"],
         default="baker_style",
         help="Scoring mode. 'baker_style' (DEFAULT): fundamental-concentrated mode with thesis-first "
              "weighting, conviction×timing reinforcement, and thesis gating. "
-             "'enhanced': legacy mode with PoS but no thesis gating. "
+             "'legacy': pre-baker mode with PoS but no thesis gating (alias: 'enhanced'). "
              "'default': auto-select based on data availability.",
     )
 
@@ -4057,6 +4057,12 @@ Module 3 Catalyst Detection:
     )
 
     args = parser.parse_args()
+
+    # =========================================================================
+    # Normalize aliases (canonicalize for logs + downstream logic)
+    # =========================================================================
+    if getattr(args, "scoring_mode", None) == "enhanced":
+        args.scoring_mode = "legacy"
 
     # =========================================================================
     # Configure logging level FIRST (before any logging calls)

@@ -202,6 +202,7 @@ def compute_module_5_composite_with_defensive(
     cluster_threshold: float = 0.70,
     defensive_config: str = "default",
     defensive_cache_path: Optional[str] = None,
+    scoring_mode: Optional[str] = None,  # "baker_style" for fundamental-concentrated
 ) -> dict:
     """
     Rank securities with defensive overlays integrated.
@@ -266,6 +267,7 @@ def compute_module_5_composite_with_defensive(
             historical_returns=historical_returns,
             use_adaptive_weights=use_adaptive_weights,
             validate_inputs=validate,
+            scoring_mode=scoring_mode,
         )
 
         # If sanity override enabled, also run v2 for comparison

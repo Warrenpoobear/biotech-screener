@@ -502,11 +502,11 @@ def compute_module_5_composite_v3(
         logger.info("=" * 60)
         logger.info("SCORING_MODE=baker_style (conviction×timing, thesis-gated)")
         logger.info("=" * 60)
-    elif scoring_mode == "enhanced":
-        # Legacy mode: explicit request for enhanced without thesis gating
+    elif scoring_mode == "legacy":
+        # Legacy mode: pre-baker enhanced without thesis gating (alias: "enhanced")
         mode = ScoringMode.ENHANCED
         base_weights = V3_ENHANCED_WEIGHTS.copy() if weights is None else weights
-        logger.info("Using ENHANCED mode (legacy, no thesis gating)")
+        logger.info("Using LEGACY mode (pre-baker, no thesis gating)")
     elif scoring_mode == "default" or scoring_mode is None:
         # Auto-select based on data availability
         if has_pos_data:
