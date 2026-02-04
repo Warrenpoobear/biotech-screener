@@ -495,18 +495,31 @@ def compute_module_5_composite_v3(
     has_market_data = bool(market_data_dict)
     has_pos_data = bool(pos_by_ticker)
 
-    # Check for explicit Baker-style mode request
+    # Check for explicit scoring mode request
     if scoring_mode == "baker_style":
         mode = ScoringMode.BAKER_STYLE
         base_weights = BAKER_STYLE_WEIGHTS.copy() if weights is None else weights
-        logger.info("Using BAKER_STYLE mode (fundamental-concentrated, thesis-gated)")
-    elif has_pos_data:
+        logger.info("=" * 60)
+        logger.info("SCORING_MODE=baker_style (conviction×timing, thesis-gated)")
+        logger.info("=" * 60)
+    elif scoring_mode == "enhanced":
+        # Legacy mode: explicit request for enhanced without thesis gating
         mode = ScoringMode.ENHANCED
         base_weights = V3_ENHANCED_WEIGHTS.copy() if weights is None else weights
-    elif has_market_data:
-        mode = ScoringMode.PARTIAL
-        base_weights = V3_PARTIAL_WEIGHTS.copy() if weights is None else weights
+        logger.info("Using ENHANCED mode (legacy, no thesis gating)")
+    elif scoring_mode == "default" or scoring_mode is None:
+        # Auto-select based on data availability
+        if has_pos_data:
+            mode = ScoringMode.ENHANCED
+            base_weights = V3_ENHANCED_WEIGHTS.copy() if weights is None else weights
+        elif has_market_data:
+            mode = ScoringMode.PARTIAL
+            base_weights = V3_PARTIAL_WEIGHTS.copy() if weights is None else weights
+        else:
+            mode = ScoringMode.DEFAULT
+            base_weights = V3_DEFAULT_WEIGHTS.copy() if weights is None else weights
     else:
+        # Fallback
         mode = ScoringMode.DEFAULT
         base_weights = V3_DEFAULT_WEIGHTS.copy() if weights is None else weights
 
@@ -821,7 +834,19 @@ def compute_module_5_composite_v3(
     cohort_conviction_stats = {k: (_mean_std(v) or global_conviction_stats) for k, v in cohort_conviction_data.items()}
 
     conviction_coverage = sum(1 for rec in combined if (rec.get("coinvest", {}).get("conviction_overlap") or 0) > 0)
-    if cohort_conviction_stats:
+    conviction_active = conviction_coverage > 0
+    conviction_pct = 100 * conviction_coverage / len(combined) if combined else 0
+
+    # Log conviction status prominently (for operational monitoring)
+    if mode == ScoringMode.BAKER_STYLE:
+        if conviction_active:
+            logger.info(f"  Conviction: ACTIVE ({conviction_coverage}/{len(combined)} = {conviction_pct:.1f}%)")
+            logger.info(f"  Conviction cohort stats: {len(cohort_conviction_stats)} cohorts, "
+                        f"global mean={global_conviction_stats['mean']:.2f}")
+        else:
+            logger.warning("  Conviction: INACTIVE (fallback to tier1_overlap count)")
+            logger.warning("  [!] holdings_detailed.json missing or empty - conviction×timing disabled")
+    elif cohort_conviction_stats:
         logger.info(f"  Conviction cohort stats: {len(cohort_conviction_stats)} cohorts, "
                     f"{conviction_coverage}/{len(combined)} tickers with conviction data, "
                     f"global mean={global_conviction_stats['mean']:.2f}")

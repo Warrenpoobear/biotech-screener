@@ -3913,11 +3913,12 @@ Module 3 Catalyst Detection:
     parser.add_argument(
         "--scoring-mode",
         type=str,
-        choices=["default", "baker_style"],
-        default=None,
-        help="Scoring mode. 'baker_style': fundamental-concentrated mode with thesis-first weighting "
-             "(clinical+pos=53%%, survivability=22%%, valuation=15%%) and thesis gating. "
-             "'default': auto-select based on data availability. (default: auto-select)",
+        choices=["baker_style", "enhanced", "default"],
+        default="baker_style",
+        help="Scoring mode. 'baker_style' (DEFAULT): fundamental-concentrated mode with thesis-first "
+             "weighting, conviction×timing reinforcement, and thesis gating. "
+             "'enhanced': legacy mode with PoS but no thesis gating. "
+             "'default': auto-select based on data availability.",
     )
 
     # Clustering controls
