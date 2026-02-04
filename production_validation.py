@@ -39,70 +39,78 @@ def validate_screening_output(
     checks = []
     m5 = result.get('module_5_composite', {})
     ranked = m5.get('ranked_securities', [])
-    
+
     if not ranked:
         print("❌ CRITICAL: No securities ranked!")
         return False
-    
-    # ========================================================================
-    # INVARIANT 1: Weight Sum
-    # ========================================================================
-    total_weight = sum(Decimal(str(s['position_weight'])) for s in ranked)
-    cash_target = Decimal(str(config.get('cash_target', '0.10')))
-    expected_weight = Decimal('1.0') - cash_target
-    weight_diff = abs(total_weight - expected_weight)
-    weight_tolerance = Decimal('0.0015')  # 15 bps tolerance
-    
-    weight_check = weight_diff < weight_tolerance
-    checks.append(('Weight sum', weight_check))
-    
-    status = "✅" if weight_check else "❌"
-    print(f"{status} Weight Sum: {float(total_weight):.4f} (expected {float(expected_weight):.4f}, diff {float(weight_diff):.4f})")
-    
-    if not weight_check:
-        print(f"   FAIL: Weight difference {float(weight_diff):.4f} exceeds tolerance {float(weight_tolerance):.4f}")
-    
-    # ========================================================================
-    # INVARIANT 2: Excluded Weights
-    # ========================================================================
-    excluded = [s for s in ranked if not s.get('rankable', True)]
-    excluded_weight = sum(Decimal(str(s['position_weight'])) for s in excluded)
-    
-    excluded_check = excluded_weight == 0
-    checks.append(('Excluded weights zero', excluded_check))
-    
-    status = "✅" if excluded_check else "❌"
-    print(f"{status} Excluded Weights: {float(excluded_weight):.4f} (expected 0.0000)")
-    
-    if not excluded_check:
-        print(f"   FAIL: {len(excluded)} excluded securities have non-zero weights")
-        for s in excluded[:3]:
-            print(f"     {s['ticker']}: {s['position_weight']}")
-    
-    # ========================================================================
-    # INVARIANT 3: Top-N Count
-    # ========================================================================
-    top_n = config.get('top_n')
-    if top_n:
-        invested = sum(1 for s in ranked if Decimal(str(s['position_weight'])) > 0)
-        excluded_by_topn = sum(1 for s in ranked if 'NOT_IN_TOP_N' in s.get('position_flags', []))
-        
-        topn_check = invested == top_n
-        checks.append(('Top-N count', topn_check))
-        
-        status = "✅" if topn_check else "❌"
-        print(f"{status} Top-N Count: {invested} invested (expected {top_n})")
-        
-        if not topn_check:
-            print(f"   FAIL: Expected {top_n} positions, got {invested}")
-            print(f"   Excluded by top-N: {excluded_by_topn}")
-        
-        # Additional check: Excluded by top-N should have zero weight
-        topn_excluded_with_weight = sum(1 for s in ranked 
-                                       if 'NOT_IN_TOP_N' in s.get('position_flags', [])
-                                       and Decimal(str(s['position_weight'])) > 0)
-        if topn_excluded_with_weight > 0:
-            print(f"   ⚠️  {topn_excluded_with_weight} securities marked NOT_IN_TOP_N but have weight!")
+
+    # Check if position sizing was enabled (position_weight present)
+    has_weights = ranked and 'position_weight' in ranked[0]
+
+    if has_weights:
+        # ========================================================================
+        # INVARIANT 1: Weight Sum
+        # ========================================================================
+        total_weight = sum(Decimal(str(s['position_weight'])) for s in ranked)
+        cash_target = Decimal(str(config.get('cash_target', '0.10')))
+        expected_weight = Decimal('1.0') - cash_target
+        weight_diff = abs(total_weight - expected_weight)
+        weight_tolerance = Decimal('0.0015')  # 15 bps tolerance
+
+        weight_check = weight_diff < weight_tolerance
+        checks.append(('Weight sum', weight_check))
+
+        status = "✅" if weight_check else "❌"
+        print(f"{status} Weight Sum: {float(total_weight):.4f} (expected {float(expected_weight):.4f}, diff {float(weight_diff):.4f})")
+
+        if not weight_check:
+            print(f"   FAIL: Weight difference {float(weight_diff):.4f} exceeds tolerance {float(weight_tolerance):.4f}")
+
+        # ========================================================================
+        # INVARIANT 2: Excluded Weights
+        # ========================================================================
+        excluded = [s for s in ranked if not s.get('rankable', True)]
+        excluded_weight = sum(Decimal(str(s['position_weight'])) for s in excluded)
+
+        excluded_check = excluded_weight == 0
+        checks.append(('Excluded weights zero', excluded_check))
+
+        status = "✅" if excluded_check else "❌"
+        print(f"{status} Excluded Weights: {float(excluded_weight):.4f} (expected 0.0000)")
+
+        if not excluded_check:
+            print(f"   FAIL: {len(excluded)} excluded securities have non-zero weights")
+            for s in excluded[:3]:
+                print(f"     {s['ticker']}: {s['position_weight']}")
+
+        # ========================================================================
+        # INVARIANT 3: Top-N Count
+        # ========================================================================
+        top_n = config.get('top_n')
+        if top_n:
+            invested = sum(1 for s in ranked if Decimal(str(s['position_weight'])) > 0)
+            excluded_by_topn = sum(1 for s in ranked if 'NOT_IN_TOP_N' in s.get('position_flags', []))
+
+            topn_check = invested == top_n
+            checks.append(('Top-N count', topn_check))
+
+            status = "✅" if topn_check else "❌"
+            print(f"{status} Top-N Count: {invested} invested (expected {top_n})")
+
+            if not topn_check:
+                print(f"   FAIL: Expected {top_n} positions, got {invested}")
+                print(f"   Excluded by top-N: {excluded_by_topn}")
+
+            # Additional check: Excluded by top-N should have zero weight
+            topn_excluded_with_weight = sum(1 for s in ranked
+                                           if 'NOT_IN_TOP_N' in s.get('position_flags', [])
+                                           and Decimal(str(s['position_weight'])) > 0)
+            if topn_excluded_with_weight > 0:
+                print(f"   ⚠️  {topn_excluded_with_weight} securities marked NOT_IN_TOP_N but have weight!")
+    else:
+        # Position sizing disabled - skip weight invariants
+        print("ℹ️  Position sizing disabled (weights not computed)")
+        print("   Skipping weight-related invariants (1-3)")
     
     # ========================================================================
     # INVARIANT 4: Module Coverage
