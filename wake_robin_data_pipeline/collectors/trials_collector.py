@@ -73,11 +73,21 @@ def get_cache_path(company_name: str) -> Path:
     return cache_dir / f"{safe_name}.json"
 
 def is_cache_valid(cache_path: Path, max_age_hours: int = 24) -> bool:
-    """Check if cache file exists.
+    """Check if cache file exists and is not older than max_age_hours.
 
-    Deterministic: uses file existence only, not wall-clock age.
+    Args:
+        cache_path: Path to the cache file
+        max_age_hours: Maximum age in hours before cache is considered stale (default: 24)
+
+    Returns:
+        True if cache exists and is fresh, False otherwise
     """
-    return cache_path.exists()
+    if not cache_path.exists():
+        return False
+    # Check file modification time
+    mtime = datetime.fromtimestamp(cache_path.stat().st_mtime)
+    age = datetime.now() - mtime
+    return age < timedelta(hours=max_age_hours)
 
 def _clean_company_name(company_name: str) -> str:
     """Clean company name by removing common suffixes."""
