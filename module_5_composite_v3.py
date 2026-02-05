@@ -805,17 +805,33 @@ def compute_module_5_composite_v3(
         })
 
     # =========================================================================
-    # COHORT GROUPING AND NORMALIZATION
+    # COHORT GROUPING AND NORMALIZATION (Hybrid: stage + financial stage×size)
     # =========================================================================
+    # Clinical/catalyst/pos: normalize within stage (original behavior)
+    # Financial: normalize within stage×size to fix structural cohort-mixing
+    #
+    # The cohort-mixing problem is specific to financials where late×large
+    # companies (INSM) compete against mega-cap pharma (AMGN, GILD) which have
+    # structurally stronger financials. For clinical/catalyst/pos, stage-only
+    # normalization is fine because those scores don't correlate with company size.
 
-    cohorts: Dict[str, List[Dict]] = {}
+    MIN_STAGE_SIZE_COHORT = 25  # Minimum for stage×size financial normalization
+
+    # Build cohort groupings
+    cohorts_stage: Dict[str, List[Dict]] = {}
+    cohorts_stage_size: Dict[Tuple[str, str], List[Dict]] = {}
+
     for rec in combined:
-        key = rec["stage_bucket"]
-        rec["cohort_key"] = key
-        cohorts.setdefault(key, []).append(rec)
+        stage = rec.get("stage_bucket") or "none"
+        size = rec.get("market_cap_bucket") or rec.get("size_bucket") or "none"
+        rec["cohort_key"] = stage  # Primary cohort is stage (for clinical/catalyst/pos)
+        rec["_size_bucket"] = size
+        cohorts_stage.setdefault(stage, []).append(rec)
+        cohorts_stage_size.setdefault((stage, size), []).append(rec)
 
+    # STEP 1: Normalize clinical/catalyst/pos within STAGE (original behavior)
     cohort_stats = {}
-    for cohort_key, members in cohorts.items():
+    for cohort_key, members in cohorts_stage.items():
         method = _apply_cohort_normalization_v3(
             members,
             global_stats,
@@ -826,6 +842,33 @@ def compute_module_5_composite_v3(
             "count": len(members),
             "normalization_method": method.value,
         }
+
+    # STEP 2: Re-normalize FINANCIAL within STAGE×SIZE (fixes cohort-mixing)
+    # This overwrites the financial_normalized computed above with size-aware values
+    for (stage, size), members in cohorts_stage_size.items():
+        if len(members) >= MIN_STAGE_SIZE_COHORT:
+            # Extract financial scores for this stage×size cohort
+            fin_scores = [m.get("financial_raw") or Decimal("0") for m in members]
+
+            # Apply rank normalization within stage×size
+            fin_norm, _ = _rank_normalize_winsorized(fin_scores)
+
+            # Update financial_normalized for each member
+            for i, rec in enumerate(members):
+                rec["financial_normalized"] = fin_norm[i]
+                rec.setdefault("cohort_info", {})
+                rec["cohort_info"]["financial_cohort"] = f"{stage}×{size}"
+                rec["cohort_info"]["financial_cohort_n"] = len(members)
+        else:
+            # Small cohort: keep stage-only normalization (already computed)
+            for rec in members:
+                rec.setdefault("cohort_info", {})
+                rec["cohort_info"]["financial_cohort"] = stage
+                rec["cohort_info"]["financial_cohort_n"] = len(cohorts_stage.get(stage, []))
+
+    # Clean up temporary keys
+    for rec in combined:
+        rec.pop("_size_bucket", None)
 
     # =========================================================================
     # ENRICH WITH CO-INVEST
@@ -1282,7 +1325,7 @@ def compute_module_5_composite_v3(
         "total_input": len(active_tickers),
         "rankable": len(ranked_securities),
         "excluded": len(excluded),
-        "cohort_count": len(cohorts),
+        "cohort_count": len(cohort_stats),
 
         # Enhancement coverage
         "with_pos_scores": sum(1 for r in ranked_securities if r.get("confidence_pos")),
