@@ -27,10 +27,10 @@ pytest tests/ -v
 pytest tests/ --cov=. --cov-report=html
 
 # Run the full screening pipeline (enhancements enabled by default)
-python run_screen.py --as-of-date 2026-01-25 --data-dir production_data --output results.json
+python run_screen.py --as-of-date 2026-02-04 --data-dir production_data --output results.json
 
 # Run without enhancements (if needed)
-python run_screen.py --as-of-date 2026-01-25 --data-dir production_data --output results.json --no-enhancements
+python run_screen.py --as-of-date 2026-02-04 --data-dir production_data --output results.json --no-enhancements
 ```
 
 ## Project Structure
@@ -48,22 +48,25 @@ biotech-screener/
 │   ├── module_4_clinical_dev_v2.py    # Enhanced clinical scoring
 │   ├── module_5_composite_v3.py       # Composite ranking (current)
 │   ├── module_5_composite_with_defensive.py  # With defensive overlays
-│   ├── module_5_scoring_v3.py         # Scoring types & utilities
+│   ├── module_5_scoring_v3.py         # Scoring types, utilities & conviction horizon overlay
 │   └── module_5_diagnostics_v3.py     # V3 diagnostics & observability
 │
 ├── Enhancement Engines
 │   ├── pos_engine.py                  # Probability of Success (indication-specific)
 │   ├── pos_prior_engine.py            # Prior PoS engine
+│   ├── pos_model_v2.py                # PoS model v2 implementation
 │   ├── short_interest_engine.py       # Squeeze potential & crowding
 │   ├── regime_engine.py               # Market regime classification
 │   ├── dilution_risk_engine.py        # Forced-raise probability scoring
 │   ├── competitive_pressure_engine.py # Competitive landscape analysis
+│   ├── competitive_intensity_engine.py # Competitive intensity scoring
 │   ├── time_decay_scoring.py          # Time-based signal decay
 │   ├── timeline_slippage_engine.py    # Trial timeline delay detection
 │   ├── liquidity_scoring.py           # Trading liquidity assessment
 │   ├── momentum_health_monitor.py     # IC-based momentum signal health
 │   ├── indication_mapper.py           # Trial condition → indication mapping
-│   └── manager_momentum_v1.py         # Institutional manager momentum
+│   ├── manager_momentum_v1.py         # Institutional manager momentum
+│   └── cash_burn_engine.py            # Cash burn rate analysis
 │
 ├── Data Adapters & Providers
 │   ├── ctgov_adapter.py               # ClinicalTrials.gov format conversion
@@ -72,48 +75,62 @@ biotech-screener/
 │   ├── edgar_13f_extractor.py         # SEC 13F filing parsing
 │   ├── finra_short_interest_feed.py   # FINRA short interest data
 │   ├── cusip_mapper.py                # CUSIP ↔ ticker mapping
-│   └── cusip_resolver.py              # CUSIP ↔ ticker resolution
+│   ├── cusip_resolver.py              # CUSIP ↔ ticker resolution
+│   └── threshold_list_feed.py         # Threshold list data feed
 │
-├── common/                            # Core utilities (~450KB)
+├── common/                            # Core utilities (~500KB)
 │   ├── __init__.py                    # Centralized exports (~200 items)
-│   ├── accuracy_improvements.py       # Accuracy enhancement utilities
+│   ├── accuracy_improvements.py       # Accuracy enhancement utilities (~52KB)
+│   ├── clustering.py                  # Clustering utilities (~18KB)
 │   ├── constants.py                   # Global constants & thresholds
 │   ├── data_consistency.py            # Cross-module data consistency
-│   ├── data_integration_contracts.py  # Data integration schemas
-│   ├── data_quality.py                # Data quality gates
+│   ├── data_integration_contracts.py  # Data integration schemas (~42KB)
+│   ├── data_quality.py                # Data quality gates (~20KB)
 │   ├── date_utils.py                  # ISO date handling & validation
 │   ├── forward_looking_separation.py  # Forward-looking data isolation
 │   ├── hash_utils.py                  # Deterministic SHA256 hashing
-│   ├── input_validation.py            # Pipeline input validation
-│   ├── integration_contracts.py       # Module boundary types & validation
+│   ├── input_validation.py            # Pipeline input validation (~24KB)
+│   ├── integration_contracts.py       # Module boundary types & validation (~45KB)
 │   ├── logging_config.py              # Structured logging configuration
-│   ├── null_safety.py                 # Defensive null handling
+│   ├── null_safety.py                 # Defensive null handling (~16KB)
 │   ├── pit_enforcement.py             # PIT cutoff computation
-│   ├── production_hardening.py        # Production stability utilities
+│   ├── production_hardening.py        # Production stability utilities (~52KB)
 │   ├── provenance.py                  # Audit trails & hashing
 │   ├── random_state.py                # Determinism enforcement
-│   ├── robustness.py                  # Data staleness, consistency checks
-│   ├── robustness_extended.py         # Extended robustness utilities
+│   ├── robustness.py                  # Data staleness, consistency checks (~21KB)
+│   ├── robustness_extended.py         # Extended robustness utilities (~36KB)
 │   ├── run_manifest.py                # Run metadata tracking
 │   ├── run_summary.py                 # Run summary utilities
-│   ├── schema_validation.py           # JSON schema validation
-│   ├── score_utils.py                 # Score clamping & normalization
-│   ├── staleness_gates.py             # Data staleness thresholds
+│   ├── schema_validation.py           # JSON schema validation (~15KB)
+│   ├── score_to_er.py                 # Score to expected return conversion (~16KB)
+│   ├── score_utils.py                 # Score clamping & normalization (~15KB)
+│   ├── staleness_gates.py             # Data staleness thresholds (~15KB)
 │   └── types.py                       # Severity, StatusGate enums
 │
 ├── src/                               # Package infrastructure
 │   ├── common/hash_utils.py           # Re-exported hashing
 │   ├── modules/
-│   │   ├── ic_enhancements.py         # IC optimization layer (V1.1.0)
-│   │   ├── ic_pit_validation.py       # PIT safety for IC lookback
-│   │   └── intelligent_governance.py  # Smart governance
+│   │   ├── ic_enhancements.py         # IC optimization layer (~149KB)
+│   │   ├── ic_pit_validation.py       # PIT safety for IC lookback (~25KB)
+│   │   ├── intelligent_governance.py  # Smart governance (~70KB)
+│   │   └── scoring_robustness.py      # Scoring robustness utilities (~42KB)
 │   ├── providers/
 │   │   ├── protocols.py               # Provider interfaces
-│   │   ├── aact_provider.py           # AACT clinical trials provider
+│   │   ├── aact_provider.py           # AACT clinical trials provider (~20KB)
 │   │   └── stub_provider.py           # Test stub provider
 │   ├── validators/ticker_validator.py # Ticker validation
 │   ├── history/snapshots.py           # 13F holdings snapshots
 │   └── snapshot_generator.py          # Universe snapshot generation
+│
+├── sec_13f/                           # SEC 13F filing infrastructure
+│   ├── aggregator.py                  # Manager holdings aggregation (~18KB)
+│   ├── cusip_resolver.py              # CUSIP resolution (~33KB)
+│   ├── edgar_13f.py                   # EDGAR 13F parsing (~18KB)
+│   ├── elite_managers.py              # Elite manager definitions
+│   └── fetch_missing_managers.py      # Manager data fetching
+│
+├── data_sources/                      # External data source clients
+│   └── ctgov_client.py                # ClinicalTrials.gov API client (~11KB)
 │
 ├── governance/                        # Audit & compliance
 │   ├── audit_log.py                   # JSONL audit trail writer
@@ -126,24 +143,59 @@ biotech-screener/
 │   ├── run_id.py                      # Run ID generation
 │   └── schema_registry.py             # Schema registration
 │
+├── sanity_checks/                     # Production sanity check framework
+│   ├── __init__.py                    # Module exports
+│   ├── benchmark_checks.py            # Benchmark comparison checks (~18KB)
+│   ├── cross_validation.py            # Cross-validation checks (~19KB)
+│   ├── domain_expert_checks.py        # Domain expert validations (~20KB)
+│   ├── executive_dashboard.py         # Executive summary dashboard (~20KB)
+│   ├── market_microstructure_checks.py # Market microstructure checks (~18KB)
+│   ├── portfolio_construction_checks.py # Portfolio construction checks (~22KB)
+│   ├── regression_tests.py            # Regression test framework (~17KB)
+│   ├── review_triggers.py             # Automated review triggers (~17KB)
+│   ├── runner.py                      # Sanity check runner (~18KB)
+│   ├── time_series_checks.py          # Time series validations (~21KB)
+│   └── types.py                       # Sanity check types (~13KB)
+│
+├── extensions/                        # Scoring extensions
+│   ├── bootstrap_scoring.py           # Bootstrap-based scoring
+│   ├── coverage_gates.py              # Data coverage gating (~9KB)
+│   ├── coverage_gates_adapted.py      # Adapted coverage gates
+│   └── market_cap_normalization.py    # Market cap normalization (~8KB)
+│
 ├── backtest/                          # Backtesting framework
 │   ├── __init__.py                    # Module exports
-│   ├── compare_module5_versions.py    # Version comparison
-│   ├── data_readiness.py              # Data readiness checks
-│   ├── factor_attribution.py          # Factor-level attribution analysis
-│   ├── ic_measurement.py              # Information Coefficient measurement
-│   ├── metrics.py                     # Backtest metrics (IC, returns)
-│   ├── portfolio_metrics.py           # Portfolio-level metrics
+│   ├── calibrate_m3_weights.py        # Module 3 weight calibration (~19KB)
+│   ├── compare_module5_versions.py    # Version comparison (~41KB)
+│   ├── data_readiness.py              # Data readiness checks (~18KB)
+│   ├── diagnostics_pre_m3.py          # Pre-M3 diagnostics (~15KB)
+│   ├── evaluate_m3_weights.py         # M3 weight evaluation (~17KB)
+│   ├── factor_attribution.py          # Factor-level attribution analysis (~22KB)
+│   ├── fmb.py                         # Fama-MacBeth regression (~12KB)
+│   ├── generate_weight_bundle.py      # Weight bundle generation
+│   ├── ic_measurement.py              # Information Coefficient measurement (~65KB)
+│   ├── manager_scoring.py             # Manager scoring backtest (~13KB)
+│   ├── metrics.py                     # Backtest metrics (IC, returns) (~21KB)
+│   ├── metrics_m1.py                  # Module 1 metrics
+│   ├── panel_builder_m1.py            # Panel data builder (~16KB)
+│   ├── portfolio_metrics.py           # Portfolio-level metrics (~23KB)
+│   ├── regime.py                      # Regime analysis
 │   ├── returns_provider.py            # Historical returns
-│   ├── sanity_metrics.py              # Sanity check metrics
-│   ├── sharadar_provider.py           # Sharadar data provider
-│   └── stability_attribution.py       # Attribution analysis
+│   ├── run_analysis_m2.py             # Module 2 analysis (~14KB)
+│   ├── run_weekly_backtest_m1.py      # Weekly backtest runner
+│   ├── sanity_metrics.py              # Sanity check metrics (~22KB)
+│   ├── sharadar_provider.py           # Sharadar data provider (~20KB)
+│   ├── stability_attribution.py       # Attribution analysis (~16KB)
+│   └── walkforward_oos_m3.py          # Walk-forward OOS testing (~25KB)
 │
 ├── validation/                        # Validation framework
+│   ├── adaptive_validator.py          # Adaptive validation rules
+│   ├── validate_data_integration.py   # Data integration validation
 │   ├── validate_momentum_signal.py    # Momentum IC validation
-│   └── validate_production_momentum.py # Production momentum check
+│   ├── validate_production_momentum.py # Production momentum check
+│   └── validation_config.py           # Validation configuration
 │
-├── tests/                             # Test suite (101 files, 55k+ lines)
+├── tests/                             # Test suite (156 files, 70k+ lines)
 │   ├── conftest.py                    # Shared fixtures (~500 lines)
 │   ├── integration/                   # End-to-end pipeline tests
 │   │   ├── test_data_enrichment_integration.py
@@ -151,7 +203,7 @@ biotech-screener/
 │   │   ├── test_run_screen.py
 │   │   └── test_snapshot_integration.py
 │   ├── providers/                     # Data provider tests
-│   └── test_*.py                      # Module-specific tests (97 files)
+│   └── test_*.py                      # Module-specific tests (150+ files)
 │
 ├── data/                              # Reference data & caches
 │   ├── 13f_cache/                     # 13F filing cache
@@ -177,15 +229,23 @@ biotech-screener/
 │   ├── catalyst_events_*.json         # Catalyst events per date
 │   ├── run_log_*.json                 # Run logs per date
 │   ├── screening_results_*.json       # Screening outputs
+│   ├── screen_*.json                  # Daily screen results
 │   ├── ctgov_state/                   # State management
 │   └── params_archive/                # Parameter snapshots
 │
+├── deprecated/                        # Deprecated module versions
+│   ├── module_2_financial_*.py        # Historical M2 versions
+│   ├── module_3_catalyst*.py          # Historical M3 versions
+│   ├── module_4_clinical_dev_*.py     # Historical M4 versions
+│   └── module_5_composite*.py         # Historical M5 versions
+│
 ├── Pipeline Orchestration
-│   ├── run_screen.py                  # Main pipeline orchestrator
-│   ├── run_backtest.py                # Backtest orchestrator
+│   ├── run_screen.py                  # Main pipeline orchestrator (~110KB)
+│   ├── run_backtest.py                # Backtest orchestrator (~52KB)
 │   ├── event_detector.py              # Catalyst event classification
 │   ├── catalyst_summary.py            # Event aggregation & scoring
-│   └── state_management.py            # JSONL state snapshots
+│   ├── state_management.py            # JSONL state snapshots
+│   └── automate_pipeline.py           # Pipeline automation
 │
 ├── patches/                           # Hotfix patches
 │   ├── patch_001_pit_safe_ic_validation.py
@@ -220,12 +280,30 @@ Strategic scoring components that augment the core pipeline:
 | **Market Regime** | `regime_engine.py` | BULL/BEAR/VOLATILITY classification | 1.0.0 |
 | **Dilution Risk** | `dilution_risk_engine.py` | Forced-raise probability before catalyst | 1.0.0 |
 | **Competitive Pressure** | `competitive_pressure_engine.py` | Competitive landscape analysis | - |
+| **Competitive Intensity** | `competitive_intensity_engine.py` | Competitive intensity scoring | - |
 | **Timeline Slippage** | `timeline_slippage_engine.py` | Trial timeline delay detection | - |
 | **Time Decay** | `time_decay_scoring.py` | Signal aging & decay modeling | - |
 | **Liquidity Scoring** | `liquidity_scoring.py` | Trading liquidity assessment | - |
 | **Momentum Health** | `momentum_health_monitor.py` | IC monitoring & signal health checks | - |
 | **Indication Mapper** | `indication_mapper.py` | Trial conditions → indication categories | 2.0.0 |
 | **Manager Momentum** | `manager_momentum_v1.py` | Institutional 13F position tracking | 1.0.0 |
+| **Cash Burn** | `cash_burn_engine.py` | Cash burn rate analysis | - |
+
+### Conviction Horizon Overlay
+
+The conviction horizon overlay (`module_5_scoring_v3.py`) extends catalyst weight for high-conviction names with catalysts in the 90-240 day window:
+
+```python
+# Conviction horizon provides additive boost for high-conviction names
+# Requires: tier1 >= 6 OR conviction z-score >= 1.0
+# Window: 91-240 days to catalyst (peaks at 150 days)
+# Max boost: 25% of base catalyst weight
+
+# Key thresholds:
+# - tier1 >= 6: Floor tolerance at 0.75
+# - z-score ramp: 0.5 → 0 tolerance, 1.5 → 1.0 tolerance
+# - Total effective weight capped at 90% of base
+```
 
 ### Dilution Risk Engine
 
@@ -261,7 +339,7 @@ regime = engine.classify_regime(
 
 ## IC-Based Enhancements
 
-The `src/modules/ic_enhancements.py` module (~98KB) provides advanced signal processing for improved Information Coefficient (IC):
+The `src/modules/ic_enhancements.py` module (~149KB) provides advanced signal processing for improved Information Coefficient (IC):
 
 **Features:**
 - Adaptive weight learning (historical IC optimization)
@@ -446,6 +524,40 @@ The following are deprecated and will be removed in v2.0:
 - `diagnostic_counts_legacy` in Module 3 output
 - `financial_normalized` field name - use `financial_score` instead
 
+## Sanity Check Framework
+
+The `sanity_checks/` directory provides comprehensive production validation:
+
+### Running Sanity Checks
+
+```python
+from sanity_checks.runner import SanityCheckRunner
+from sanity_checks.types import SanityCheckConfig
+
+config = SanityCheckConfig(
+    enable_benchmark_checks=True,
+    enable_domain_expert_checks=True,
+    enable_time_series_checks=True
+)
+
+runner = SanityCheckRunner(config)
+results = runner.run_all_checks(screening_results, historical_data)
+```
+
+### Check Categories
+
+| Module | Purpose |
+|--------|---------|
+| `benchmark_checks.py` | Compare against historical benchmarks |
+| `cross_validation.py` | Cross-validate across data sources |
+| `domain_expert_checks.py` | Domain-specific validation rules |
+| `executive_dashboard.py` | Executive summary generation |
+| `market_microstructure_checks.py` | Market microstructure validation |
+| `portfolio_construction_checks.py` | Portfolio construction sanity |
+| `regression_tests.py` | Regression testing framework |
+| `review_triggers.py` | Automated review triggering |
+| `time_series_checks.py` | Time series consistency |
+
 ## Governance Framework
 
 The `governance/` directory provides audit trail and compliance infrastructure:
@@ -485,6 +597,25 @@ from governance.canonical_json import canonical_dumps
 
 # Deterministic JSON output (sorted keys, consistent formatting)
 json_str = canonical_dumps(data)
+```
+
+## SEC 13F Infrastructure
+
+The `sec_13f/` directory handles institutional holdings analysis:
+
+```python
+from sec_13f.aggregator import SmartMoneyAggregator
+from sec_13f.cusip_resolver import resolve_cusip_to_ticker
+
+# Resolve CUSIP to ticker
+ticker = resolve_cusip_to_ticker("88023B103")  # Returns "TEM"
+
+# Aggregate elite manager holdings
+aggregator = SmartMoneyAggregator()
+conviction_score = aggregator.get_elite_conviction_score(
+    ticker="ACME",
+    as_of_date=date(2026, 2, 1)
+)
 ```
 
 ## Robustness Utilities
@@ -579,6 +710,9 @@ The `backtest/` directory provides tools for historical validation:
 | `returns_provider.py` | Historical price returns |
 | `sharadar_provider.py` | Sharadar fundamentals data provider |
 | `compare_module5_versions.py` | A/B comparison between Module 5 versions |
+| `calibrate_m3_weights.py` | Module 3 weight calibration |
+| `walkforward_oos_m3.py` | Walk-forward out-of-sample testing |
+| `fmb.py` | Fama-MacBeth regression analysis |
 
 ### Running Backtests
 
@@ -732,16 +866,17 @@ assert_score_bounded(score, min_val=Decimal("0"), max_val=Decimal("100"))
 
 | Category | Test Files | Coverage |
 |----------|------------|----------|
-| Module Tests | 20 files | Core pipeline modules (M1-M5) |
-| Enhancement Engine Tests | 15 files | All scoring engines |
-| Integration Tests | 5 files | End-to-end pipeline tests |
-| Utility Tests | 25 files | Common utilities |
-| Provider Tests | 5 files | Data providers |
-| Governance Tests | 4 files | Audit framework |
-| Regression Tests | 15+ files | Golden baseline comparisons |
-| Robustness Tests | 12 files | Error handling, edge cases |
+| Module Tests | 25 files | Core pipeline modules (M1-M5) |
+| Enhancement Engine Tests | 20 files | All scoring engines |
+| Integration Tests | 8 files | End-to-end pipeline tests |
+| Utility Tests | 35 files | Common utilities |
+| Provider Tests | 10 files | Data providers |
+| Governance Tests | 8 files | Audit framework |
+| Regression Tests | 20+ files | Golden baseline comparisons |
+| Robustness Tests | 15 files | Error handling, edge cases |
+| Sanity Check Tests | 15 files | Sanity check framework |
 
-**Total: 101 test files (~55,000 lines of test code)**
+**Total: 156 test files (~70,000 lines of test code)**
 
 ## Running the Pipeline
 
@@ -749,7 +884,7 @@ assert_score_bounded(score, min_val=Decimal("0"), max_val=Decimal("100"))
 
 ```bash
 python module_3_catalyst.py \
-  --as-of-date 2026-01-15 \
+  --as-of-date 2026-02-04 \
   --trial-records production_data/trial_records.json \
   --state-dir production_data/ctgov_state \
   --universe production_data/universe.json \
@@ -760,7 +895,7 @@ python module_3_catalyst.py \
 
 ```bash
 python run_screen.py \
-  --as-of-date 2026-01-15 \
+  --as-of-date 2026-02-04 \
   --data-dir production_data \
   --output screening_results.json
 ```
@@ -769,13 +904,13 @@ python run_screen.py \
 
 ```bash
 python run_screen.py \
-  --as-of-date 2026-01-25 \
+  --as-of-date 2026-02-04 \
   --data-dir production_data \
   --enable-defensive-overlay \
   --output screening_results.json
 ```
 
-### Current Data Coverage (as of 2026-01-28)
+### Current Data Coverage (as of 2026-02-04)
 
 | Component | Coverage | Notes |
 |-----------|----------|-------|
@@ -880,6 +1015,7 @@ State management uses content hashing for snapshot identification, enabling effi
 11. **Use retry with backoff for API calls** - Use `retry_with_backoff()` from `common/robustness.py`
 12. **Validate data freshness** - Use `validate_data_freshness()` before processing
 13. **Check schema versions** - Use `check_schema_version()` for backwards compatibility
+14. **Quantize Decimal results** - Use `_quantize_score()` and `_quantize_weight()` for determinism
 
 ## File Naming Conventions
 
@@ -939,27 +1075,56 @@ Default weighting for final ranking (v1.4.0):
 |------|---------|
 | `pyproject.toml` | Package configuration, dependencies |
 | `config.yml` | Pipeline configuration (v1.4.0) |
-| `run_screen.py` | Main pipeline orchestrator (~108KB, 2800+ lines) |
+| `run_screen.py` | Main pipeline orchestrator (~110KB, 2800+ lines) |
 | `run_backtest.py` | Backtest orchestrator (~52KB) |
 | `tests/conftest.py` | Shared test fixtures (~500 lines) |
 | `common/pit_enforcement.py` | PIT cutoff utilities |
 | `common/provenance.py` | Audit trail and hashing |
 | `common/integration_contracts.py` | Module boundary types and schema validation (~45KB) |
-| `common/robustness.py` | Data staleness, consistency checks, retry logic |
-| `common/data_quality.py` | Data quality gates |
+| `common/robustness.py` | Data staleness, consistency checks, retry logic (~21KB) |
+| `common/data_quality.py` | Data quality gates (~20KB) |
 | `common/production_hardening.py` | Production stability utilities (~52KB) |
-| `common/staleness_gates.py` | Data freshness thresholds |
-| `common/schema_validation.py` | JSON schema validation |
+| `common/staleness_gates.py` | Data freshness thresholds (~15KB) |
+| `common/schema_validation.py` | JSON schema validation (~15KB) |
 | `governance/audit_log.py` | JSONL audit trail writer |
 | `state_management.py` | Trial state snapshot management |
-| `src/modules/ic_enhancements.py` | IC optimization layer (~98KB) |
+| `src/modules/ic_enhancements.py` | IC optimization layer (~149KB) |
+| `src/modules/scoring_robustness.py` | Scoring robustness utilities (~42KB) |
 | `dilution_risk_engine.py` | Forced-raise probability scoring (~30KB) |
-| `backtest/metrics.py` | IC and backtest metrics |
+| `backtest/metrics.py` | IC and backtest metrics (~21KB) |
 | `backtest/ic_measurement.py` | Comprehensive IC measurement framework (~65KB) |
+| `module_5_scoring_v3.py` | Scoring types & conviction horizon overlay |
+| `sanity_checks/runner.py` | Sanity check orchestration (~18KB) |
 
 ## Recent Changes
 
-### v1.5.1 (January 2026 - Latest)
+### v1.5.2 (February 2026 - Latest)
+
+- **Conviction Horizon Overlay**:
+  - Extends catalyst weight for high-conviction names with catalysts in 90-240 day window
+  - Requires tier1 >= 6 OR conviction z-score >= 1.0
+  - Peak boost at 150 days, fades to 0 at 60d or 240d
+  - Max additive boost: 25% of base catalyst weight
+  - Hardened for IC safety with Decimal-only math
+- **Production Diagnostics Fixes**:
+  - Use pre-computed stage bucket for display stage consistency
+  - Fixed thesis gate to use display stage
+  - Added conviction override infrastructure
+- **Continuous Confidence Gate**:
+  - Smooth catalyst weight reduction based on confidence
+  - Catalyst override for specific high-conviction scenarios
+- **Asymmetric Transforms**:
+  - Quadratic anchored downside transform to preserve P5 floor
+  - Output floor for winsorization to eliminate zero cliff
+- **FDA Designation Multiplier**:
+  - Applied BEFORE cohort normalization
+  - Breakthrough/Fast Track/Priority Review designations
+- **CSV Export Improvements**:
+  - Complete field mapping for all component scores
+  - Extract scores from nested structures
+- **Test Suite Expansion**: 101 → 156 test files
+
+### v1.5.1 (January 2026)
 
 - **CUSIP Resolution Fixes**:
   - Added TEM (Tempus AI) CUSIP mapping `88023B103`
