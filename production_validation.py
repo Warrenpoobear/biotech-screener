@@ -124,7 +124,7 @@ def validate_screening_output(
     m1_diag = result.get('module_1_universe', {}).get('diagnostic_counts', {})
     m2_diag = result.get('module_2_financial', {}).get('diagnostic_counts', {})
     m3_diag = result.get('module_3_catalyst', {}).get('diagnostic_counts', {})
-    m4_diag = result.get('module_4_clinical_dev', {}).get('diagnostic_counts', {})
+    m4_diag = result.get('module_4_clinical', {}).get('diagnostic_counts', {})
     
     universe_count = len(ranked)
     
@@ -171,18 +171,24 @@ def validate_screening_output(
     # ========================================================================
     print()
     print("🗓️  Point-in-Time Discipline:")
-    
+
     pit_filtered = m4_diag.get('pit_filtered', 0)
     trials_evaluated = m4_diag.get('total_trials', 0)
-    
+    date_coverage_pct = m4_diag.get('date_coverage_pct', 0)
+
     # If we have lots of trials but filtered exactly 0, that's suspicious
-    pit_check = not (trials_evaluated > 100 and pit_filtered == 0)
+    # UNLESS date coverage is 100% (meaning all trials have dates and none are future-dated)
+    if date_coverage_pct == 100.0:
+        pit_check = True  # All trials have dates, 0 filtered is fine
+    else:
+        pit_check = not (trials_evaluated > 100 and pit_filtered == 0)
     checks.append(('PIT filtering plausible', pit_check))
-    
+
     status = "✅" if pit_check else "⚠️"
     print(f"  {status} Trials evaluated: {trials_evaluated}")
     print(f"  {status} PIT filtered: {pit_filtered}")
-    
+    print(f"  {status} Date coverage: {date_coverage_pct:.1f}%")
+
     if not pit_check:
         print(f"     ⚠️  WARNING: {trials_evaluated} trials but 0 filtered suggests missing date fields")
         print(f"     This may allow lookahead bias. Add date collection to trials.")
@@ -196,7 +202,7 @@ def validate_screening_output(
     m1_date = result.get('module_1_universe', {}).get('as_of_date')
     m2_date = result.get('module_2_financial', {}).get('as_of_date')
     m3_date = result.get('module_3_catalyst', {}).get('as_of_date')
-    m4_date = result.get('module_4_clinical_dev', {}).get('as_of_date')
+    m4_date = result.get('module_4_clinical', {}).get('as_of_date')
     m5_date = result.get('module_5_composite', {}).get('as_of_date')
     
     all_dates = [m1_date, m2_date, m3_date, m4_date, m5_date]
@@ -262,7 +268,7 @@ def run_screening_pipeline(...):
         'module_1_universe': m1_result,
         'module_2_financial': m2_result,
         'module_3_catalyst': m3_result,
-        'module_4_clinical_dev': m4_result,
+        'module_4_clinical': m4_result,
         'module_5_composite': m5_result,
         # ... other fields ...
     }
