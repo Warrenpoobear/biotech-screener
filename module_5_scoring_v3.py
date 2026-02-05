@@ -3457,6 +3457,12 @@ def _score_single_ticker_v3(
     )
     flags.extend(thesis_gate_flags)
 
+    # Persist both stage classifications for auditability:
+    # - display_stage: company stage (early/mid/late) used for thesis gate threshold
+    # - event_stage: catalyst-derived stage (poc/pivotal/regulatory) used for timing/decay
+    thesis_gate_diagnostics["display_stage"] = stage
+    thesis_gate_diagnostics["event_stage"] = stage_bucket_alpha
+
     # =========================================================================
     # BUILD OUTPUT
     # =========================================================================

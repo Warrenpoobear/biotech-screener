@@ -164,6 +164,76 @@ def _apply_sanity_overrides(output_v3: dict, output_v2: dict) -> dict:
     return output_v3
 
 
+def _aggregate_thesis_gate_stats(ranked_securities: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """
+    Aggregate thesis gate statistics across all scored securities.
+
+    This enables run-level monitoring to detect silent behavior changes
+    from gating logic updates (e.g., stage classification changes).
+
+    Returns:
+        Dict with:
+            - total: Total securities evaluated
+            - triggered: Count where thesis gate triggered
+            - passed: Count where thesis gate passed
+            - skipped: Count where gate was skipped (missing data or non-BAKER_STYLE)
+            - pct_triggered: Percentage triggered (of those evaluated)
+            - by_display_stage: Breakdown by company stage (early/mid/late)
+            - by_event_stage: Breakdown by event stage (poc/pivotal/regulatory/etc)
+    """
+    total = len(ranked_securities)
+    triggered = 0
+    passed = 0
+    skipped = 0
+    by_display_stage = {}  # early/mid/late -> {triggered, passed}
+    by_event_stage = {}    # poc/pivotal/regulatory -> {triggered, passed}
+
+    for sec in ranked_securities:
+        # Thesis gate info is in score_breakdown.enhancements.thesis_gate
+        score_breakdown = sec.get("score_breakdown", {})
+        enhancements = score_breakdown.get("enhancements", {})
+        thesis_gate = enhancements.get("thesis_gate", {})
+
+        if not thesis_gate.get("thesis_gate_enabled", False):
+            skipped += 1
+            continue
+
+        if thesis_gate.get("thesis_gate_skipped"):
+            skipped += 1
+            continue
+
+        display_stage = thesis_gate.get("display_stage", "unknown")
+        event_stage = thesis_gate.get("event_stage", "unknown")
+
+        if display_stage not in by_display_stage:
+            by_display_stage[display_stage] = {"triggered": 0, "passed": 0}
+        if event_stage not in by_event_stage:
+            by_event_stage[event_stage] = {"triggered": 0, "passed": 0}
+
+        if thesis_gate.get("thesis_gate_triggered", False):
+            triggered += 1
+            by_display_stage[display_stage]["triggered"] += 1
+            by_event_stage[event_stage]["triggered"] += 1
+        else:
+            passed += 1
+            by_display_stage[display_stage]["passed"] += 1
+            by_event_stage[event_stage]["passed"] += 1
+
+    evaluated = triggered + passed
+    pct_triggered = (triggered / evaluated * 100) if evaluated > 0 else 0.0
+
+    return {
+        "total": total,
+        "evaluated": evaluated,
+        "triggered": triggered,
+        "passed": passed,
+        "skipped": skipped,
+        "pct_triggered": round(pct_triggered, 1),
+        "by_display_stage": by_display_stage,
+        "by_event_stage": by_event_stage,
+    }
+
+
 # Default search paths for universe file with defensive features
 DEFAULT_UNIVERSE_PATHS = [
     "production_data/universe.json",
@@ -467,6 +537,11 @@ def compute_module_5_composite_with_defensive(
     if "diagnostic_counts" not in output:
         output["diagnostic_counts"] = {}
     output["diagnostic_counts"]["field_coverage"] = field_coverage
+
+    # Aggregate thesis gate statistics for run-level monitoring
+    # This enables detection of silent behavior changes from gating logic updates
+    thesis_gate_stats = _aggregate_thesis_gate_stats(output.get("ranked_securities", []))
+    output["diagnostic_counts"]["thesis_gate"] = thesis_gate_stats
 
     # Optionally validate
     if validate:
