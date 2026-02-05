@@ -3443,11 +3443,16 @@ def _score_single_ticker_v3(
     # Prevent weak-thesis names from ranking top
     # =========================================================================
 
+    # Use the display stage bucket (early/mid/late) for thesis gate threshold lookup,
+    # NOT stage_bucket_alpha. This allows late-stage companies (Phase 3+) to use the
+    # "late" threshold (45) instead of being forced into "poc" threshold (55) by
+    # their catalyst event type. See lines 3242-3244 for the same logic in the
+    # smart money reinforcement pre-check.
     final_score, thesis_gate_flags, thesis_gate_diagnostics = apply_thesis_gate(
         score=final_score,
         clinical_normalized=clin_norm,
         pos_normalized=pos_norm,
-        stage_bucket=stage_bucket_alpha,
+        stage_bucket=stage,  # Use display stage (early/mid/late), not alpha stage
         mode=mode,
     )
     flags.extend(thesis_gate_flags)
