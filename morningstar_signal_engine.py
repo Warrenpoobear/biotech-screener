@@ -9,10 +9,12 @@ valuation accuracy and cross-validate financial health. Blends into existing
 weight allocations (valuation 5%, financial 35%) rather than adding new weight.
 
 Signal Components (internal composite 0-100):
-- Fair Value Discount (40%): QV009 (Quantitative FV) vs current price
-- Capital Efficiency (25%): STA4Z (ROIC), HS08F (ROE)
-- Leverage Health (20%): ST389 (D/E), HS06U (D/Capital)
+- Fair Value Discount (35%): QV009 (Quantitative FV) blended with ST202 (Analyst FV),
+  confidence-gated by ST201 (Fair Value Uncertainty)
+- Capital Efficiency (22%): STA4Z (ROIC), HS08F (ROE)
+- Leverage Health (18%): ST389 (D/E), HS06U (D/Capital)
 - Growth Quality (15%): HS035 (Sales Growth), HS08D (Net Margin)
+- Moat Quality (10%): LT181 (Economic Moat), regime-gated to commercial-stage
 
 Design Philosophy:
 - Confidence-gated: missing sub-signals redistribute weight to available ones
@@ -34,7 +36,7 @@ from typing import Dict, List, Optional, Any, Tuple
 
 logger = logging.getLogger(__name__)
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 __author__ = "Wake Robin Capital Management"
 
 
@@ -75,22 +77,48 @@ class MorningstarSignalEngine:
             result = engine.score_universe(universe, market_data, as_of_date)
     """
 
-    VERSION = "1.0.0"
+    VERSION = "1.1.0"
 
     # Sub-signal weights (must sum to 1.0)
     SUB_SIGNAL_WEIGHTS: Dict[str, Decimal] = {
-        "fair_value_discount": Decimal("0.40"),
-        "capital_efficiency": Decimal("0.25"),
-        "leverage_health": Decimal("0.20"),
+        "fair_value_discount": Decimal("0.35"),
+        "capital_efficiency": Decimal("0.22"),
+        "leverage_health": Decimal("0.18"),
         "growth_quality": Decimal("0.15"),
+        "moat_quality": Decimal("0.10"),
     }
 
     # Datapoint IDs used per sub-signal
     DATAPOINTS = {
-        "fair_value_discount": ["QV009"],          # Quantitative Fair Value
-        "capital_efficiency": ["STA4Z", "HS08F"],  # ROIC, ROE
-        "leverage_health": ["ST389", "HS06U"],     # D/E, D/Capital
-        "growth_quality": ["HS035", "HS08D"],      # Sales Growth, Net Margin
+        "fair_value_discount": ["QV009", "ST202"],  # Quant FV + Analyst FV
+        "capital_efficiency": ["STA4Z", "HS08F"],    # ROIC, ROE
+        "leverage_health": ["ST389", "HS06U"],       # D/E, D/Capital
+        "growth_quality": ["HS035", "HS08D"],        # Sales Growth, Net Margin
+        "moat_quality": ["LT181"],                   # Economic Moat
+    }
+
+    # ST201 Fair Value Uncertainty → confidence multiplier for FV sub-signal
+    # Lower uncertainty = higher conviction in the FV estimate
+    FV_UNCERTAINTY_MULTIPLIERS: Dict[str, Decimal] = {
+        "Low": Decimal("1.20"),
+        "Medium": Decimal("1.00"),
+        "High": Decimal("0.70"),
+        "Very High": Decimal("0.40"),
+    }
+
+    # Analyst FV (ST202) blend weight when both ST202 and QV009 are present
+    # Analyst FV carries higher conviction (human-assigned) for covered names
+    ANALYST_FV_BLEND_WEIGHT = Decimal("0.60")
+    QUANT_FV_BLEND_WEIGHT = Decimal("0.40")
+
+    # Flag if analyst FV and quant FV disagree by more than this %
+    FV_DIVERGENCE_THRESHOLD_PCT = Decimal("30")
+
+    # Economic Moat scoring (LT181)
+    MOAT_SCORES: Dict[str, Decimal] = {
+        "Wide": Decimal("85"),
+        "Narrow": Decimal("65"),
+        "None": Decimal("50"),
     }
 
     # Thresholds for fair value discount scoring
@@ -168,7 +196,7 @@ class MorningstarSignalEngine:
     ]
 
     # Dev-stage regime: metrics that require commercial operations
-    COMMERCIAL_ONLY_SIGNALS = {"capital_efficiency", "growth_quality"}
+    COMMERCIAL_ONLY_SIGNALS = {"capital_efficiency", "growth_quality", "moat_quality"}
 
     def __init__(self):
         """Initialize the Morningstar signal engine."""
@@ -300,8 +328,20 @@ class MorningstarSignalEngine:
         sub_details["growth_quality"] = gq_result
         flags.extend(gq_result.get("flags", []))
 
+        # 5. Moat Quality
+        mq_result = self._score_moat_quality(record, regime)
+        sub_scores["moat_quality"] = mq_result["score"]
+        sub_details["moat_quality"] = mq_result
+        flags.extend(mq_result.get("flags", []))
+
         # Confidence-gated composite: redistribute weight from missing sub-signals
-        composite, confidence, available_count = self._compute_composite(sub_scores)
+        # Pass FV uncertainty multiplier to adjust FV sub-signal confidence
+        fv_uncertainty_mult = _to_decimal(
+            fv_result.get("uncertainty_multiplier", "1.00")
+        ) or Decimal("1.00")
+        composite, confidence, available_count = self._compute_composite(
+            sub_scores, fv_uncertainty_multiplier=fv_uncertainty_mult,
+        )
 
         # Data coverage
         total_datapoints = sum(
@@ -337,6 +377,7 @@ class MorningstarSignalEngine:
             "capital_efficiency_score": sub_scores.get("capital_efficiency"),
             "leverage_health_score": sub_scores.get("leverage_health"),
             "growth_quality_score": sub_scores.get("growth_quality"),
+            "moat_quality_score": sub_scores.get("moat_quality"),
             "sub_details": sub_details,
             "confidence": confidence,
             "regime": regime,
@@ -428,24 +469,55 @@ class MorningstarSignalEngine:
         record: Dict[str, str],
         current_price: Optional[Decimal],
     ) -> Dict[str, Any]:
-        """Score fair value discount: (QV - price) / QV."""
+        """Score fair value discount with analyst FV blending and uncertainty gating.
+
+        Fair value resolution:
+        1. If both ST202 (analyst FV) and QV009 (quant FV) exist, blend them
+           (60% analyst / 40% quant) and flag divergence > 30%.
+        2. If only QV009 exists (majority of tickers), use it alone.
+        3. Fallback to OS603 (Price/FV ratio) if no price available.
+
+        Confidence gating:
+        - ST201 (Fair Value Uncertainty) scales the sub-signal confidence.
+          Low → 1.2x, Medium → 1.0x, High → 0.7x, Very High → 0.4x.
+        """
         qv_raw = _to_decimal(record.get("QV009"))
+        analyst_fv = _to_decimal(record.get("ST202"))
+        uncertainty = record.get("ST201")  # Text: Low/Medium/High/Very High
         flags: List[str] = []
 
         if qv_raw is None or qv_raw <= Decimal("0"):
             return {"score": None, "flags": ["ms_fv_missing_qv"]}
 
+        # Blend analyst FV with quant FV when both are available
+        effective_fv = qv_raw
+        fv_source = "quant_only"
+        fv_divergence_pct = None
+
+        if analyst_fv is not None and analyst_fv > Decimal("0"):
+            effective_fv = (
+                self.ANALYST_FV_BLEND_WEIGHT * analyst_fv
+                + self.QUANT_FV_BLEND_WEIGHT * qv_raw
+            )
+            fv_source = "analyst_quant_blend"
+            flags.append("ms_fv_analyst_blend")
+
+            # Detect FV divergence
+            fv_divergence_pct = abs(analyst_fv - qv_raw) / qv_raw * Decimal("100")
+            if fv_divergence_pct > self.FV_DIVERGENCE_THRESHOLD_PCT:
+                flags.append("ms_fv_divergence")
+
+        # Compute discount
         if current_price is None or current_price <= Decimal("0"):
-            # Use Morningstar's market cap to infer a relative score from P/FV
+            # Fallback to OS603 (Price/Fair Value ratio)
             pf_raw = _to_decimal(record.get("OS603"))
             if pf_raw is not None and pf_raw > Decimal("0"):
-                # OS603 = Price/Fair Value. discount = (1 - P/FV) * 100
                 discount_pct = (Decimal("1") - pf_raw) * Decimal("100")
                 flags.append("ms_fv_from_pfv_ratio")
             else:
                 return {"score": None, "flags": ["ms_fv_missing_price"]}
         else:
-            discount_pct = (qv_raw - current_price) / qv_raw * Decimal("100")
+            discount_pct = (effective_fv - current_price) / effective_fv * Decimal("100")
 
         score = self._interpolate_breakpoints(discount_pct, self.FV_DISCOUNT_BREAKPOINTS)
         score = _clamp(score, Decimal("5"), Decimal("95"))
@@ -455,10 +527,25 @@ class MorningstarSignalEngine:
         elif discount_pct <= Decimal("-30"):
             flags.append("ms_deeply_overvalued")
 
+        # Uncertainty gating: adjust confidence via multiplier
+        uncertainty_multiplier = Decimal("1.00")
+        if uncertainty is not None:
+            uncertainty_multiplier = self.FV_UNCERTAINTY_MULTIPLIERS.get(
+                uncertainty, Decimal("1.00")
+            )
+            if uncertainty in self.FV_UNCERTAINTY_MULTIPLIERS:
+                flags.append(f"ms_fv_uncertainty_{uncertainty.lower().replace(' ', '_')}")
+
         return {
             "score": _quantize(score),
             "discount_pct": _quantize(discount_pct),
+            "effective_fv": str(effective_fv),
             "quantitative_fv": str(qv_raw),
+            "analyst_fv": str(analyst_fv) if analyst_fv else None,
+            "fv_source": fv_source,
+            "fv_divergence_pct": str(_quantize(fv_divergence_pct)) if fv_divergence_pct is not None else None,
+            "uncertainty": uncertainty,
+            "uncertainty_multiplier": str(uncertainty_multiplier),
             "current_price": str(current_price) if current_price else None,
             "flags": flags,
         }
@@ -591,6 +678,44 @@ class MorningstarSignalEngine:
             "flags": flags,
         }
 
+    def _score_moat_quality(
+        self,
+        record: Dict[str, str],
+        regime: str,
+    ) -> Dict[str, Any]:
+        """Score economic moat quality from LT181. Regime-gated to commercial."""
+        flags: List[str] = []
+
+        # Dev-stage: return neutral (moat is meaningless for pre-revenue)
+        if regime == "development":
+            return {
+                "score": Decimal("50"),
+                "flags": ["ms_moat_neutral_dev_stage"],
+                "moat": None,
+            }
+
+        moat_raw = record.get("LT181")
+
+        if moat_raw is None:
+            return {"score": None, "flags": ["ms_moat_no_data"], "moat": None}
+
+        score = self.MOAT_SCORES.get(moat_raw)
+        if score is None:
+            # Unknown moat value — treat as neutral
+            flags.append("ms_moat_unknown_value")
+            return {"score": Decimal("50"), "flags": flags, "moat": moat_raw}
+
+        if moat_raw == "Wide":
+            flags.append("ms_wide_moat")
+        elif moat_raw == "None":
+            flags.append("ms_no_moat")
+
+        return {
+            "score": _quantize(score),
+            "moat": moat_raw,
+            "flags": flags,
+        }
+
     # =========================================================================
     # COMPOSITE COMPUTATION
     # =========================================================================
@@ -598,12 +723,17 @@ class MorningstarSignalEngine:
     def _compute_composite(
         self,
         sub_scores: Dict[str, Optional[Decimal]],
+        fv_uncertainty_multiplier: Decimal = Decimal("1.00"),
     ) -> Tuple[Decimal, Decimal, int]:
         """
         Compute confidence-gated weighted composite from sub-scores.
 
         Missing sub-signals have their weight redistributed proportionally
         to the available sub-signals.
+
+        The fv_uncertainty_multiplier (from ST201) scales the effective weight
+        of fair_value_discount: Low uncertainty → 1.2x weight, High → 0.7x, etc.
+        The multiplier is applied before weight normalization so total still sums to 1.
 
         Returns:
             (composite_score, confidence, available_count)
@@ -616,17 +746,23 @@ class MorningstarSignalEngine:
         if not available:
             return Decimal("50"), Decimal("0.1"), 0
 
-        # Redistribute weights to available signals only
-        total_available_weight = sum(
-            self.SUB_SIGNAL_WEIGHTS[name] for name in available
-        )
+        # Build effective weights: apply uncertainty multiplier to FV weight
+        effective_weights: Dict[str, Decimal] = {}
+        for name in available:
+            base_w = self.SUB_SIGNAL_WEIGHTS[name]
+            if name == "fair_value_discount":
+                effective_weights[name] = base_w * fv_uncertainty_multiplier
+            else:
+                effective_weights[name] = base_w
+
+        total_available_weight = sum(effective_weights.values())
 
         if total_available_weight <= Decimal("0"):
             return Decimal("50"), Decimal("0.1"), 0
 
         composite = Decimal("0")
         for name, score in available.items():
-            w = self.SUB_SIGNAL_WEIGHTS[name] / total_available_weight
+            w = effective_weights[name] / total_available_weight
             composite += w * score
 
         composite = _clamp(_quantize(composite), Decimal("5"), Decimal("95"))
@@ -897,6 +1033,7 @@ class MorningstarSignalEngine:
             "capital_efficiency_score": None,
             "leverage_health_score": None,
             "growth_quality_score": None,
+            "moat_quality_score": None,
             "sub_details": {},
             "confidence": Decimal("0"),
             "regime": "unknown",
@@ -951,7 +1088,8 @@ def demonstration() -> None:
                   f"FV={result['fair_value_discount_score']}  "
                   f"CE={result['capital_efficiency_score']}  "
                   f"LH={result['leverage_health_score']}  "
-                  f"GQ={result['growth_quality_score']}")
+                  f"GQ={result['growth_quality_score']}  "
+                  f"MQ={result['moat_quality_score']}")
         else:
             print(f"{ticker}: {result['status']}")
 

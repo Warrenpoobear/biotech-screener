@@ -247,3 +247,233 @@ class TestIDCollisionResolution:
         ts = engine._price_history["IKT"]["HS377"]["time_series"]
         assert len(ts) == 2
         assert ts[0]["value"] == "22.00"
+
+
+# =============================================================================
+# FV UNCERTAINTY GATING (ST201)
+# =============================================================================
+
+class TestFVUncertaintyGating:
+    """Tests for ST201 Fair Value Uncertainty → confidence multiplier."""
+
+    @pytest.fixture
+    def commercial_engine(self):
+        """Engine with a commercial-stage ticker that has full analyst coverage."""
+        e = MorningstarSignalEngine()
+        e._data = {
+            "COVERED": {
+                "QV009": "100.00",
+                "ST202": "110.00",
+                "ST201": "Medium",
+                "LT181": "Narrow",
+                "STA4Z": "12.5",
+                "HS08F": "8.0",
+                "ST389": "0.5",
+                "HS06U": "25.0",
+                "HS035": "15.0",
+                "HS08D": "5.0",
+            },
+        }
+        e._snapshot_date = "2026-02-06"
+        return e
+
+    def test_low_uncertainty_boosts_fv_weight(self, commercial_engine):
+        """Low uncertainty should multiply FV weight by 1.2x."""
+        commercial_engine._data["COVERED"]["ST201"] = "Low"
+        result = commercial_engine.score_ticker("COVERED", current_price=Decimal("90"), as_of_date=date(2026, 2, 6))
+        assert result["status"] == "SUCCESS"
+        fv_details = result["sub_details"]["fair_value_discount"]
+        assert fv_details["uncertainty_multiplier"] == "1.20"
+        assert "ms_fv_uncertainty_low" in result["flags"]
+
+    def test_high_uncertainty_reduces_fv_weight(self, commercial_engine):
+        """High uncertainty should multiply FV weight by 0.7x."""
+        commercial_engine._data["COVERED"]["ST201"] = "High"
+        result = commercial_engine.score_ticker("COVERED", current_price=Decimal("90"), as_of_date=date(2026, 2, 6))
+        fv_details = result["sub_details"]["fair_value_discount"]
+        assert fv_details["uncertainty_multiplier"] == "0.70"
+        assert "ms_fv_uncertainty_high" in result["flags"]
+
+    def test_very_high_uncertainty_strongly_reduces(self, commercial_engine):
+        """Very High uncertainty should multiply FV weight by 0.4x."""
+        commercial_engine._data["COVERED"]["ST201"] = "Very High"
+        result = commercial_engine.score_ticker("COVERED", current_price=Decimal("90"), as_of_date=date(2026, 2, 6))
+        fv_details = result["sub_details"]["fair_value_discount"]
+        assert fv_details["uncertainty_multiplier"] == "0.40"
+        assert "ms_fv_uncertainty_very_high" in result["flags"]
+
+    def test_no_uncertainty_defaults_to_1x(self, commercial_engine):
+        """Missing ST201 should default to 1.0x multiplier."""
+        del commercial_engine._data["COVERED"]["ST201"]
+        result = commercial_engine.score_ticker("COVERED", current_price=Decimal("90"), as_of_date=date(2026, 2, 6))
+        fv_details = result["sub_details"]["fair_value_discount"]
+        assert fv_details["uncertainty_multiplier"] == "1.00"
+
+    def test_low_vs_high_changes_composite(self, commercial_engine):
+        """Low uncertainty should produce a different composite than High."""
+        commercial_engine._data["COVERED"]["ST201"] = "Low"
+        r_low = commercial_engine.score_ticker("COVERED", current_price=Decimal("90"), as_of_date=date(2026, 2, 6))
+
+        commercial_engine._data["COVERED"]["ST201"] = "High"
+        r_high = commercial_engine.score_ticker("COVERED", current_price=Decimal("90"), as_of_date=date(2026, 2, 6))
+
+        # With a discount (price < FV), Low uncertainty boosts FV weight,
+        # giving the (high) FV score more influence → higher composite
+        assert r_low["morningstar_score"] != r_high["morningstar_score"]
+
+
+# =============================================================================
+# ANALYST FV BLENDING (ST202 + QV009)
+# =============================================================================
+
+class TestAnalystFVBlending:
+    """Tests for ST202 (analyst FV) blending with QV009 (quant FV)."""
+
+    @pytest.fixture
+    def blend_engine(self):
+        """Engine with a ticker that has both analyst and quant FV."""
+        e = MorningstarSignalEngine()
+        e._data = {
+            "BLEND": {
+                "QV009": "100.00",
+                "ST202": "120.00",
+            },
+        }
+        e._snapshot_date = "2026-02-06"
+        return e
+
+    def test_blend_formula(self, blend_engine):
+        """Effective FV should be 0.6*analyst + 0.4*quant."""
+        result = blend_engine.score_ticker("BLEND", current_price=Decimal("100"), as_of_date=date(2026, 2, 6))
+        fv = result["sub_details"]["fair_value_discount"]
+        # 0.6 * 120 + 0.4 * 100 = 72 + 40 = 112
+        assert Decimal(fv["effective_fv"]) == Decimal("112")
+        assert fv["fv_source"] == "analyst_quant_blend"
+        assert "ms_fv_analyst_blend" in result["flags"]
+
+    def test_quant_only_when_no_analyst(self, blend_engine):
+        """Without ST202, should use QV009 alone."""
+        del blend_engine._data["BLEND"]["ST202"]
+        result = blend_engine.score_ticker("BLEND", current_price=Decimal("100"), as_of_date=date(2026, 2, 6))
+        fv = result["sub_details"]["fair_value_discount"]
+        assert fv["effective_fv"] == "100.00"
+        assert fv["fv_source"] == "quant_only"
+        assert "ms_fv_analyst_blend" not in result["flags"]
+
+    def test_divergence_flag_over_30pct(self, blend_engine):
+        """Divergence > 30% between analyst and quant should flag."""
+        blend_engine._data["BLEND"]["ST202"] = "140.00"  # 40% above QV009
+        result = blend_engine.score_ticker("BLEND", current_price=Decimal("100"), as_of_date=date(2026, 2, 6))
+        assert "ms_fv_divergence" in result["flags"]
+        fv = result["sub_details"]["fair_value_discount"]
+        assert Decimal(fv["fv_divergence_pct"]) > Decimal("30")
+
+    def test_no_divergence_flag_under_30pct(self, blend_engine):
+        """Divergence < 30% should not flag."""
+        blend_engine._data["BLEND"]["ST202"] = "110.00"  # 10% above QV009
+        result = blend_engine.score_ticker("BLEND", current_price=Decimal("100"), as_of_date=date(2026, 2, 6))
+        assert "ms_fv_divergence" not in result["flags"]
+
+    def test_analyst_fv_zero_falls_back_to_quant(self, blend_engine):
+        """Analyst FV of 0 should be ignored (fall back to quant only)."""
+        blend_engine._data["BLEND"]["ST202"] = "0"
+        result = blend_engine.score_ticker("BLEND", current_price=Decimal("100"), as_of_date=date(2026, 2, 6))
+        fv = result["sub_details"]["fair_value_discount"]
+        assert fv["fv_source"] == "quant_only"
+
+
+# =============================================================================
+# ECONOMIC MOAT SCORING (LT181)
+# =============================================================================
+
+class TestMoatQuality:
+    """Tests for LT181 (Economic Moat) quality signal."""
+
+    @pytest.fixture
+    def moat_engine(self):
+        """Engine with tickers in different moat/regime configurations."""
+        e = MorningstarSignalEngine()
+        e._data = {
+            "WIDE_MOAT": {
+                "QV009": "100.00",
+                "LT181": "Wide",
+                "STA4Z": "12.5",
+                "HS08F": "8.0",
+                "ST389": "0.5",
+                "HS06U": "25.0",
+                "HS035": "15.0",
+                "HS08D": "5.0",
+            },
+            "NARROW_MOAT": {
+                "QV009": "50.00",
+                "LT181": "Narrow",
+                "STA4Z": "12.5",
+                "HS08F": "8.0",
+                "ST389": "0.5",
+                "HS06U": "25.0",
+                "HS035": "15.0",
+                "HS08D": "5.0",
+            },
+            "NO_MOAT": {
+                "QV009": "30.00",
+                "LT181": "None",
+                "STA4Z": "12.5",
+                "HS08F": "8.0",
+                "ST389": "0.5",
+                "HS06U": "25.0",
+                "HS035": "15.0",
+                "HS08D": "5.0",
+            },
+            "DEV_STAGE": {
+                "QV009": "10.00",
+                "LT181": "Wide",
+                "HS08D": "-500.0",  # Deeply negative margin → dev regime
+            },
+            "NO_MOAT_DATA": {
+                "QV009": "20.00",
+                "STA4Z": "12.5",
+                "HS08F": "8.0",
+                "ST389": "0.5",
+                "HS06U": "25.0",
+                "HS035": "15.0",
+                "HS08D": "5.0",
+            },
+        }
+        e._snapshot_date = "2026-02-06"
+        return e
+
+    def test_wide_moat_scores_85(self, moat_engine):
+        """Wide moat should score 85."""
+        result = moat_engine.score_ticker("WIDE_MOAT", current_price=Decimal("100"), as_of_date=date(2026, 2, 6))
+        assert result["sub_details"]["moat_quality"]["score"] == Decimal("85.00")
+        assert result["sub_details"]["moat_quality"]["moat"] == "Wide"
+        assert "ms_wide_moat" in result["flags"]
+
+    def test_narrow_moat_scores_65(self, moat_engine):
+        """Narrow moat should score 65."""
+        result = moat_engine.score_ticker("NARROW_MOAT", current_price=Decimal("50"), as_of_date=date(2026, 2, 6))
+        assert result["sub_details"]["moat_quality"]["score"] == Decimal("65.00")
+
+    def test_no_moat_scores_50(self, moat_engine):
+        """None moat should score 50 (neutral)."""
+        result = moat_engine.score_ticker("NO_MOAT", current_price=Decimal("30"), as_of_date=date(2026, 2, 6))
+        assert result["sub_details"]["moat_quality"]["score"] == Decimal("50.00")
+        assert "ms_no_moat" in result["flags"]
+
+    def test_dev_stage_gets_neutral_moat(self, moat_engine):
+        """Dev-stage ticker should get neutral moat score regardless of LT181."""
+        result = moat_engine.score_ticker("DEV_STAGE", current_price=Decimal("10"), as_of_date=date(2026, 2, 6))
+        assert result["sub_details"]["moat_quality"]["score"] == Decimal("50")
+        assert "ms_moat_neutral_dev_stage" in result["flags"]
+
+    def test_missing_moat_returns_none(self, moat_engine):
+        """Ticker without LT181 in commercial regime should return None (redistributed)."""
+        result = moat_engine.score_ticker("NO_MOAT_DATA", current_price=Decimal("20"), as_of_date=date(2026, 2, 6))
+        assert result["sub_details"]["moat_quality"]["score"] is None
+        assert "ms_moat_no_data" in result["flags"]
+
+    def test_moat_quality_in_return_dict(self, moat_engine):
+        """moat_quality_score should appear in the result dict."""
+        result = moat_engine.score_ticker("WIDE_MOAT", current_price=Decimal("100"), as_of_date=date(2026, 2, 6))
+        assert "moat_quality_score" in result
+        assert result["moat_quality_score"] == Decimal("85.00")
