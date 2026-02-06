@@ -121,3 +121,6 @@ production_data/screen_*.json
 production_data/morningstar_mcp_data.json
 production_data/morningstar_price_history.json
 production_data/morningstar_returns_history.json
+
+# --- Cache directories (regenerated at runtime) ---
+cache/
