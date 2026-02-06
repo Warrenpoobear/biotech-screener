@@ -147,12 +147,13 @@ class TestPITSafety:
             "Expected catalyst to appear in gated_component_counts"
         )
 
-        # Every ranked security should have catalyst effective weight of 0
+        # Every ranked security should have catalyst effective weight soft-gated
+        # (significantly reduced from base weight of ~0.25 due to low confidence)
         for entry in composite["ranked_securities"]:
-            ew_catalyst = entry["effective_weights"].get("catalyst", "")
-            assert Decimal(ew_catalyst) == Decimal("0"), (
-                f"{entry['ticker']}: expected catalyst effective_weight 0, "
-                f"got {ew_catalyst!r}"
+            ew_catalyst = Decimal(entry["effective_weights"].get("catalyst", "0"))
+            assert ew_catalyst < Decimal("0.15"), (
+                f"{entry['ticker']}: expected catalyst effective_weight to be "
+                f"soft-gated (< 0.15), got {ew_catalyst!r}"
             )
 
 

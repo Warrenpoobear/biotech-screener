@@ -1510,8 +1510,8 @@ def compute_module_5_composite_v3(
     gated_component_counts = {}
     for sec in ranked_securities:
         for flag in sec.get("flags", []):
-            if flag.endswith("_confidence_gated"):
-                comp = flag.replace("_confidence_gated", "")
+            if flag.endswith("_confidence_soft_gated"):
+                comp = flag.replace("_confidence_soft_gated", "")
                 gated_component_counts[comp] = gated_component_counts.get(comp, 0) + 1
 
     # Determine run status

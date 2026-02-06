@@ -16,7 +16,7 @@ import logging
 import os
 import sys
 from contextvars import ContextVar
-from datetime import datetime
+from datetime import datetime, timezone
 from logging.handlers import RotatingFileHandler, TimedRotatingFileHandler
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
@@ -131,7 +131,7 @@ class StructuredFormatter(logging.Formatter):
         log_data: Dict[str, Any] = {}
 
         if self.include_timestamp:
-            log_data["timestamp"] = datetime.utcnow().isoformat() + "Z"
+            log_data["timestamp"] = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
         if self.include_level:
             log_data["level"] = record.levelname

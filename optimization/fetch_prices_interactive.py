@@ -203,9 +203,6 @@ for i, ticker in enumerate(all_tickers, 1):
             failed_tickers.append(ticker)
             continue
 
-<<<<<<< HEAD
-        # Extract close prices (auto_adjust=True is now default in yfinance)
-=======
         # Determine which column to use for adjusted close price
         # - yfinance < 1.0 or auto_adjust=False: 'Adj Close'
         # - yfinance >= 1.0 with auto_adjust=True: 'Close' (already adjusted)
@@ -219,21 +216,11 @@ for i, ticker in enumerate(all_tickers, 1):
             continue
 
         # Extract adjusted close prices
->>>>>>> 67027e11f0d9e4ee7aae6a9b3b1ac759eb7010ac
         for date, row in df.iterrows():
-            # Handle both old ('Adj Close') and new ('Close') column names
-            if 'Adj Close' in row:
-                close_price = row['Adj Close']
-            else:
-                close_price = row['Close']
             price_data.append({
                 'date': date.strftime('%Y-%m-%d'),
                 'ticker': ticker,
-<<<<<<< HEAD
-                'close': float(close_price)
-=======
                 'close': float(row[close_col])
->>>>>>> 67027e11f0d9e4ee7aae6a9b3b1ac759eb7010ac
             })
 
         success_count += 1

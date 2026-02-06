@@ -37,7 +37,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from decimal import Decimal
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
@@ -238,7 +238,7 @@ class RunManifest:
         # Create entry
         entry = ManifestEntry(
             run_id=run_id,
-            timestamp=datetime.utcnow().isoformat() + "Z",
+            timestamp=datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             config_hash=config_hash,
             data_hashes=data_hashes,
             results_hash=results_hash,
