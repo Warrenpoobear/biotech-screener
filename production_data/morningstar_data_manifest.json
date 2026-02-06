@@ -1,0 +1,9 @@
+{
+  "description": "Manifest for Morningstar data files (not committed to git)",
+  "files": {
+    "morningstar_mcp_data.json": "Fundamental datapoints for ~344 tickers",
+    "morningstar_price_history.json": "1yr daily closing prices (HS377) for ~344 tickers",
+    "morningstar_returns_history.json": "5yr daily return index (HS793) + monthly returns (HP010) for ~344 tickers"
+  },
+  "note": "morningstar_id_map.json IS committed (small, ticker-to-ID mappings only)"
+}

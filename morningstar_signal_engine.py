@@ -220,6 +220,11 @@ class MorningstarSignalEngine:
             except (json.JSONDecodeError, OSError) as e:
                 logger.warning("Failed to load Morningstar price history: %s", e)
 
+        # Resolve ID collisions (e.g. INBX/IKT share same Morningstar ID)
+        id_map_file = data_dir / "morningstar_id_map.json"
+        if id_map_file.exists():
+            self._resolve_id_collisions(id_map_file)
+
         return count
 
     def score_ticker(
@@ -636,6 +641,72 @@ class MorningstarSignalEngine:
         )
 
         return composite, confidence, len(available)
+
+    # =========================================================================
+    # ID COLLISION RESOLUTION
+    # =========================================================================
+
+    def _resolve_id_collisions(self, id_map_file: Path) -> None:
+        """
+        Resolve Morningstar ID collisions by broadcasting data from donor tickers.
+
+        When multiple tickers map to the same Morningstar security ID (e.g. INBX
+        and IKT both map to 0P0001SXEI), one ticker typically has data while the
+        other does not. This method broadcasts the donor's fundamentals and price
+        history to any recipients that lack data.
+
+        Does NOT overwrite existing data — if both tickers already have data,
+        no action is taken.
+
+        Args:
+            id_map_file: Path to morningstar_id_map.json
+        """
+        try:
+            with open(id_map_file) as f:
+                id_map = json.load(f)
+        except (json.JSONDecodeError, OSError) as e:
+            logger.warning("Failed to load Morningstar ID map: %s", e)
+            return
+
+        ticker_to_id = id_map.get("ticker_to_id", {})
+
+        # Build reverse map: ms_id → [ticker, ...]
+        id_to_tickers: Dict[str, List[str]] = {}
+        for ticker, ms_id in ticker_to_id.items():
+            id_to_tickers.setdefault(ms_id, []).append(ticker.upper())
+
+        broadcasts = 0
+        for ms_id, tickers in id_to_tickers.items():
+            if len(tickers) < 2:
+                continue
+
+            # Find tickers with/without fundamental data
+            with_data = [t for t in tickers if t in self._data]
+            without_data = [t for t in tickers if t not in self._data]
+
+            if not with_data or not without_data:
+                continue
+
+            donor = with_data[0]
+            for recipient in without_data:
+                # Broadcast fundamentals
+                self._data[recipient] = self._data[donor].copy()
+                logger.info(
+                    "ID collision broadcast: %s → %s (ms_id=%s, fundamentals)",
+                    donor, recipient, ms_id,
+                )
+                broadcasts += 1
+
+                # Broadcast price history
+                if donor in self._price_history and recipient not in self._price_history:
+                    self._price_history[recipient] = self._price_history[donor].copy()
+                    logger.info(
+                        "ID collision broadcast: %s → %s (ms_id=%s, price_history)",
+                        donor, recipient, ms_id,
+                    )
+
+        if broadcasts > 0:
+            logger.info("ID collision resolution: %d broadcasts completed", broadcasts)
 
     # =========================================================================
     # PRICE HISTORY LOOKUP

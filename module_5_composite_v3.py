@@ -1350,6 +1350,9 @@ def compute_module_5_composite_v3(
         "with_competitive_intensity": sum(1 for r in ranked_securities if r.get("competitive_intensity_signal", {}).get("intensity_score")),
         "with_partnerships": sum(1 for r in ranked_securities if r.get("partnership_signal", {}).get("partnership_count", 0) > 0),
         "with_morningstar": sum(1 for r in ranked_securities if r.get("morningstar_signal") and r["morningstar_signal"].get("status") == "SUCCESS"),
+        "fv_blended_count": sum(1 for r in ranked_securities
+            if any(f.startswith("morningstar_fv_blended_w=") for f in r.get("flags", []))),
+        "fv_blended_pct": f"{sum(1 for r in ranked_securities if any(f.startswith('morningstar_fv_blended_w=') for f in r.get('flags', []))) / max(1, len(ranked_securities)) * 100:.1f}%",
 
         # Momentum state breakdown (for debugging/attribution)
         # Categories are MUTUALLY EXCLUSIVE and sum to total_rankable:
@@ -1750,7 +1753,8 @@ def _empty_result(as_of_date: str) -> Dict[str, Any]:
             "with_pos_scores": 0, "with_market_data": 0, "with_momentum_signal": 0,
             "with_valuation_signal": 0, "with_smart_money": 0, "with_caps_applied": 0,
             "with_interaction_flags": 0, "high_volatility_count": 0, "low_volatility_count": 0,
-            "in_catalyst_window": 0,
+            "in_catalyst_window": 0, "with_morningstar": 0,
+            "fv_blended_count": 0, "fv_blended_pct": "0.0%",
         },
         "enhancement_applied": False,
         "enhancement_diagnostics": None,
