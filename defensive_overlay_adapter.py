@@ -1331,7 +1331,14 @@ def enrich_with_defensive_overlays(
     output["diagnostic_counts"]["multiplier_distribution"] = multiplier_stats
     output["diagnostic_counts"]["apply_multiplier_enabled"] = apply_multiplier
 
-    # Step 3: Re-rank after multiplier application
+    # Step 3: Compute risk_adjusted_rank (always, for audit clarity)
+    # This ranking is by risk_adjusted_score, independent of whether multiplier is applied
+    risk_sorted = sorted(ranked, key=lambda x: (-Decimal(x.get("risk_adjusted_score", x["composite_score"])), x["ticker"]))
+    risk_rank_map = {r["ticker"]: i + 1 for i, r in enumerate(risk_sorted)}
+    for rec in ranked:
+        rec["risk_adjusted_rank"] = risk_rank_map.get(rec["ticker"])
+
+    # Step 3b: Re-rank composite_rank after multiplier application (if enabled)
     if apply_multiplier:
         # Re-sort by adjusted composite score
         ranked.sort(key=lambda x: (-Decimal(x["composite_score"]), x["ticker"]))

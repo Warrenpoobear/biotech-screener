@@ -206,6 +206,14 @@ except ImportError as e:
     HAS_PHASE_MOMENTUM_ENGINE = False
     logger.info(f"Phase momentum engine not available: {e}")
 
+# Morningstar quantitative signal engine (optional)
+try:
+    from morningstar_signal_engine import MorningstarSignalEngine
+    HAS_MORNINGSTAR = True
+except ImportError as e:
+    HAS_MORNINGSTAR = False
+    logger.info(f"Morningstar signal engine not available: {e}")
+
 # Optional: Risk gates for audit trail
 try:
     from risk_gates import get_parameters_snapshot as get_risk_params, compute_parameters_hash as risk_params_hash
@@ -3384,6 +3392,20 @@ def run_screening_pipeline(
                            f"neg={momentum_dist.get('negative', 0)}, "
                            f"strong_neg={momentum_dist.get('strong_negative', 0)}")
 
+            # Step 13: Calculate Morningstar quantitative signal scores (if available)
+            morningstar_result = None
+            if HAS_MORNINGSTAR:
+                ms_engine = MorningstarSignalEngine()
+                ms_loaded = ms_engine.load_data(Path(data_dir))
+                if ms_loaded > 0:
+                    ms_universe = [{"ticker": t.upper()} for t in active_tickers]
+                    morningstar_result = ms_engine.score_universe(
+                        ms_universe, market_data_by_ticker, as_of_date_obj
+                    )
+                    ms_diag = morningstar_result.get("diagnostic_counts", {})
+                    logger.info(f"  Morningstar signals: {ms_diag.get('total_scored', 0)} scored, "
+                               f"FV coverage: {ms_diag.get('fair_value_coverage_pct', 'N/A')}")
+
             # Assemble enhancement result (use empty dicts for None values to avoid downstream .get() errors)
             enhancement_result = {
                 "regime": regime_result or {"regime": "UNKNOWN", "signal_adjustments": {}},
@@ -3399,9 +3421,10 @@ def run_screening_pipeline(
                 "partnership_scores": partnership_result,
                 "cash_burn_scores": cash_burn_result,
                 "phase_momentum_scores": phase_momentum_result,
+                "morningstar_scores": morningstar_result,
                 "provenance": {
                     "module": "enhancements",
-                    "version": "1.8.0",  # Bumped for phase transition momentum
+                    "version": "1.9.0",  # Bumped for Morningstar signal integration
                     "as_of_date": as_of_date,
                     "pos_engine_version": pos_engine.VERSION if pos_engine else None,
                     "regime_engine_version": regime_engine.VERSION if regime_engine else None,
@@ -3415,6 +3438,7 @@ def run_screening_pipeline(
                     "partnership_engine_version": PartnershipEngine.VERSION if HAS_PARTNERSHIP_ENGINE else None,
                     "cash_burn_engine_version": CashBurnEngine.VERSION if HAS_CASH_BURN_ENGINE else None,
                     "phase_momentum_engine_version": PhaseTransitionEngine.VERSION if HAS_PHASE_MOMENTUM_ENGINE else None,
+                    "morningstar_engine_version": MorningstarSignalEngine.VERSION if HAS_MORNINGSTAR else None,
                 }
             }
 
@@ -3637,7 +3661,11 @@ def run_screening_pipeline(
         if enhancement_result.get("short_interest_scores"):
             si_diag = enhancement_result["short_interest_scores"].get("diagnostic_counts", {})
             results["summary"]["short_interest_coverage"] = si_diag.get("data_coverage_pct", "N/A")
-    
+        if enhancement_result.get("morningstar_scores"):
+            ms_diag = enhancement_result["morningstar_scores"].get("diagnostic_counts", {})
+            results["summary"]["morningstar_coverage"] = ms_diag.get("total_scored", 0)
+            results["summary"]["morningstar_fv_coverage"] = ms_diag.get("fair_value_coverage_pct", "N/A")
+
     # Force deterministic timestamps for byte-identical outputs
     deterministic_ts = as_of_date + DETERMINISTIC_TIMESTAMP_SUFFIX
     _force_deterministic_generated_at(results, deterministic_ts)

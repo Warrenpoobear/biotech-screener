@@ -433,6 +433,7 @@ def compute_module_5_composite_v3(
     accuracy_by_ticker = {}
     cash_burn_by_ticker = {}
     phase_momentum_by_ticker = {}
+    morningstar_by_ticker = {}
 
     if enhancement_result:
         # Extract PoS scores
@@ -488,6 +489,13 @@ def compute_module_5_composite_v3(
         phase_momentum_data = enhancement_result.get("phase_momentum_scores") or {}
         for ticker, pm in phase_momentum_data.get("scores_by_ticker", {}).items():
             phase_momentum_by_ticker[ticker.upper()] = pm
+
+        # Extract Morningstar quantitative signal data (uses scores_by_ticker format)
+        morningstar_data = enhancement_result.get("morningstar_scores") or {}
+        for ticker, ms in morningstar_data.get("scores_by_ticker", {}).items():
+            morningstar_by_ticker[ticker.upper()] = ms
+        if morningstar_by_ticker:
+            logger.info(f"  Morningstar data: {len(morningstar_by_ticker)} tickers extracted")
 
     # =========================================================================
     # DETERMINE SCORING MODE AND WEIGHTS
@@ -760,6 +768,7 @@ def compute_module_5_composite_v3(
             "partnership_data": partnership,
             "cash_burn_data": cash_burn,
             "phase_momentum_data": phase_momentum,
+            "morningstar_data": morningstar_by_ticker.get(ticker.upper()),
         })
 
     # =========================================================================
@@ -1044,6 +1053,7 @@ def compute_module_5_composite_v3(
             partnership_data=rec.get("partnership_data"),
             cash_burn_data=rec.get("cash_burn_data"),
             phase_momentum_data=rec.get("phase_momentum_data"),
+            morningstar_data=rec.get("morningstar_data"),
             cohort_overlap_stats=cohort_overlap_stats,
             cohort_conviction_stats=rec_cohort_conviction,
         )
@@ -1253,6 +1263,8 @@ def compute_module_5_composite_v3(
             "competitive_intensity_signal": rec.get("competitive_intensity_signal"),
             "partnership_signal": rec.get("partnership_signal"),
             "survivability_signal": rec.get("survivability_signal"),
+            "morningstar_signal": rec.get("morningstar_data"),
+            "morningstar_cross_validation": rec.get("morningstar_cross_validation"),
         }
 
         ranked_securities.append(security_data)
@@ -1337,6 +1349,7 @@ def compute_module_5_composite_v3(
         "with_pipeline_diversity": sum(1 for r in ranked_securities if r.get("pipeline_diversity_signal", {}).get("diversity_score")),
         "with_competitive_intensity": sum(1 for r in ranked_securities if r.get("competitive_intensity_signal", {}).get("intensity_score")),
         "with_partnerships": sum(1 for r in ranked_securities if r.get("partnership_signal", {}).get("partnership_count", 0) > 0),
+        "with_morningstar": sum(1 for r in ranked_securities if r.get("morningstar_signal") and r["morningstar_signal"].get("status") == "SUCCESS"),
 
         # Momentum state breakdown (for debugging/attribution)
         # Categories are MUTUALLY EXCLUSIVE and sum to total_rankable:

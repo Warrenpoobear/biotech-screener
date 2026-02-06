@@ -108,3 +108,8 @@ production_data/holdings_detailed.json
 production_data/holdings_history/
 production_data/run_log_*.json
 production_data/partnerships.json
+
+# --- Large screen output files (multi-MB, cause gigantic diffs) ---
+production_data/results.json
+production_data/results_*.json
+production_data/screen_*.json

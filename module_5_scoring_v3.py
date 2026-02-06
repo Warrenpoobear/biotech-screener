@@ -2436,6 +2436,7 @@ def _score_single_ticker_v3(
     partnership_data: Optional[Dict] = None,
     cash_burn_data: Optional[Dict] = None,
     phase_momentum_data: Optional[Dict] = None,
+    morningstar_data: Optional[Dict] = None,
     cohort_overlap_stats: Optional[Dict[Tuple[str, str], Tuple[Decimal, Decimal]]] = None,
     cohort_conviction_stats: Optional[Dict[str, float]] = None,
 ) -> Dict[str, Any]:
@@ -2498,6 +2499,13 @@ def _score_single_ticker_v3(
     phase_momentum_value = phase_momentum_data.get("momentum", "unknown") if phase_momentum_data else "unknown"
     phase_momentum_confidence = _to_decimal(phase_momentum_data.get("confidence", 0)) if phase_momentum_data else Decimal("0")
     phase_momentum_lead_phase = phase_momentum_data.get("current_lead_phase", "unknown") if phase_momentum_data else "unknown"
+
+    # Extract Morningstar quantitative signal data
+    ms_fv_score = _to_decimal(morningstar_data.get("fair_value_discount_score")) if morningstar_data else None
+    ms_fv_confidence = _to_decimal(morningstar_data.get("confidence")) if morningstar_data else None
+    ms_composite_score = _to_decimal(morningstar_data.get("morningstar_score")) if morningstar_data else None
+    ms_leverage_score = _to_decimal(morningstar_data.get("leverage_health_score")) if morningstar_data else None
+    ms_efficiency_score = _to_decimal(morningstar_data.get("capital_efficiency_score")) if morningstar_data else None
 
     # Extract catalyst scores and metadata
     if hasattr(cat_data, 'score_blended'):
@@ -2674,6 +2682,8 @@ def _score_single_ticker_v3(
         cfo_mm=cfo_mm,
         enterprise_value_mm=enterprise_value_mm,
         has_revenue=has_revenue,
+        morningstar_fv_score=ms_fv_score,
+        morningstar_fv_confidence=ms_fv_confidence,
     )
     valuation_norm = valuation.valuation_score
     if valuation.valuation_score >= Decimal("70"):
@@ -2758,6 +2768,32 @@ def _score_single_ticker_v3(
         flags.append("survivability_missing_cash")
     if "missing_burn_data" in survivability_coverage:
         flags.append("survivability_missing_burn")
+
+    # 7b. Morningstar Financial Cross-Validation
+    # Compare Morningstar leverage+efficiency vs Module 2 financial_normalized
+    # Bounded adjustment of +/-3 composite points, scaled by confidence
+    ms_cross_validation_adj = Decimal("0")
+    if ms_composite_score is not None and ms_fv_confidence is not None and fin_norm is not None:
+        # Average of leverage + efficiency sub-scores (if available)
+        ms_financial_parts = [s for s in (ms_leverage_score, ms_efficiency_score) if s is not None]
+        if ms_financial_parts:
+            ms_financial_avg = sum(ms_financial_parts) / Decimal(str(len(ms_financial_parts)))
+            disagreement = ms_financial_avg - fin_norm
+            DISAGREEMENT_THRESHOLD = Decimal("15")
+            MAX_ADJUSTMENT = Decimal("3")
+
+            if abs(disagreement) > DISAGREEMENT_THRESHOLD:
+                # Scale adjustment by confidence and disagreement magnitude
+                raw_adj = (disagreement / Decimal("100")) * MAX_ADJUSTMENT * Decimal("2")
+                ms_cross_validation_adj = max(-MAX_ADJUSTMENT, min(MAX_ADJUSTMENT, raw_adj))
+                ms_cross_validation_adj = ms_cross_validation_adj * ms_fv_confidence
+                ms_cross_validation_adj = ms_cross_validation_adj.quantize(Decimal("0.01"))
+
+                if ms_cross_validation_adj > Decimal("0"):
+                    flags.append("ms_financial_cross_val_positive")
+                elif ms_cross_validation_adj < Decimal("0"):
+                    flags.append("ms_financial_cross_val_negative")
+                flags.append(f"ms_cross_val_adj={ms_cross_validation_adj}")
 
     # =========================================================================
     # CONFIDENCE EXTRACTION
@@ -3435,7 +3471,7 @@ def _score_single_ticker_v3(
     survivability_contribution = (survivability_score * SURVIVABILITY_WEIGHT).quantize(SCORE_PRECISION)
 
     # Allow negative raw scores (e.g. negative-weight models) without collapsing to 0
-    final_score = _clamp(post_vol + delta_bonus + survivability_contribution, Decimal("-100"), Decimal("100"))
+    final_score = _clamp(post_vol + delta_bonus + survivability_contribution + ms_cross_validation_adj, Decimal("-100"), Decimal("100"))
     final_score = _quantize_score(final_score)
 
     # =========================================================================
@@ -3485,6 +3521,7 @@ def _score_single_ticker_v3(
         "interaction_adjustment": interactions.total_interaction_adjustment,
         "survivability_score": survivability_score,
         "survivability_contribution": survivability_contribution,
+        "ms_cross_validation_adj": ms_cross_validation_adj,
         # New enhancement tracking
         "regime_gates_applied": bool(regime_gate_flags),
         "contradiction_penalty": contradictions.score_penalty,
@@ -3746,6 +3783,16 @@ def _score_single_ticker_v3(
             "coverage": survivability_coverage,
             "metrics": survivability_result.get("metrics", {}),
         },
+        "morningstar_cross_validation": {
+            "adjustment": str(ms_cross_validation_adj),
+            "ms_composite_score": str(ms_composite_score) if ms_composite_score is not None else None,
+            "ms_leverage_score": str(ms_leverage_score) if ms_leverage_score is not None else None,
+            "ms_efficiency_score": str(ms_efficiency_score) if ms_efficiency_score is not None else None,
+            "ms_fv_score": str(ms_fv_score) if ms_fv_score is not None else None,
+            "ms_confidence": str(ms_fv_confidence) if ms_fv_confidence is not None else None,
+            "applied": ms_cross_validation_adj != Decimal("0"),
+        },
+        "morningstar_data": morningstar_data,
         "interaction_terms": {
             "total_adjustment": str(interactions.total_interaction_adjustment),
             "flags": interactions.interaction_flags,

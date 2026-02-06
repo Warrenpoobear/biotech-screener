@@ -1808,6 +1808,9 @@ def compute_valuation_signal(
     cfo_mm: Optional[Decimal] = None,
     enterprise_value_mm: Optional[Decimal] = None,
     has_revenue: bool = False,
+    # V3: Morningstar fair value blending (optional)
+    morningstar_fv_score: Optional[Decimal] = None,
+    morningstar_fv_confidence: Optional[Decimal] = None,
 ) -> ValuationSignal:
     """
     Compute peer-relative valuation signal with regime-aware routing.
@@ -1861,7 +1864,6 @@ def compute_valuation_signal(
         )
         # Add regime classification flags
         result.flags = regime_flags + result.flags
-        return result
 
     else:
         # DEVELOPMENT or UNKNOWN -> use development model
@@ -1870,7 +1872,28 @@ def compute_valuation_signal(
         )
         # Add regime classification flags
         result.flags = regime_flags + result.flags
-        return result
+
+    # Step 3: Morningstar Fair Value blending (V3)
+    # Confidence-weighted blend of peer-relative score and Morningstar FV score
+    if morningstar_fv_score is not None and morningstar_fv_confidence is not None:
+        ms_conf = _to_decimal(morningstar_fv_confidence) or Decimal("0")
+        ms_score = _to_decimal(morningstar_fv_score) or Decimal("50")
+        peer_conf = result.confidence
+
+        # Weight proportional to confidence of each signal
+        total_conf = ms_conf + peer_conf
+        if total_conf > Decimal("0"):
+            ms_weight = ms_conf / total_conf
+            peer_weight = peer_conf / total_conf
+            blended = ms_weight * ms_score + peer_weight * result.valuation_score
+            # Quantize to avoid floating precision drift
+            blended = blended.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+            result.valuation_score = blended
+            result.flags.append(f"morningstar_fv_blended_w={ms_weight.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)}")
+        else:
+            result.flags.append("morningstar_fv_skipped_zero_conf")
+
+    return result
 
 
 def _decimal_sqrt_approx(value: Decimal, iterations: int = 10) -> Decimal:

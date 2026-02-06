@@ -177,6 +177,15 @@ enhancements:
     enabled: false
     squeeze_threshold: 20  # % short interest
 
+  # Morningstar Quantitative Signals
+  morningstar:
+    enabled: true
+    data_file: "morningstar_mcp_data.json"
+    financial_cross_validation:
+      enabled: true
+      disagreement_threshold: 15
+      max_adjustment: 3
+
 # ----------------------------------------------------------------------------
 # VALIDATION & OBSERVABILITY
 # ----------------------------------------------------------------------------

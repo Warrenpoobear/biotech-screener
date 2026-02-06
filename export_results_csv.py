@@ -9,7 +9,7 @@ from typing import Any, Dict, List
 
 # Core columns (always first, in order)
 CORE_COLUMNS = [
-    "ticker", "composite_rank", "composite_score", "z_score",
+    "ticker", "composite_rank", "risk_adjusted_rank", "composite_score", "risk_adjusted_score", "z_score",
     "expected_excess_return", "volatility", "drawdown", "cluster_id",
     "corr_xbi", "beta_xbi",  # Diversification proof columns
     "vol_blended", "vol_63d", "vol_252d",
