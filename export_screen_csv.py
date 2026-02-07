@@ -60,6 +60,8 @@ def export_screen_to_csv(json_path: Path, csv_path: Path = None) -> Path:
                     "contribution": c.get("contribution"),
                 }
 
+        surv_metrics = surv.get("metrics", {}) or {}
+
         rows.append({
             # Core ranking
             "rank": r.get("composite_rank"),
@@ -74,13 +76,11 @@ def export_screen_to_csv(json_path: Path, csv_path: Path = None) -> Path:
             "market_cap_bucket": r.get("market_cap_bucket"),
             "severity": r.get("severity"),
 
-            # Component scores (raw and normalized from breakdown.components)
+            # Component scores (from score_breakdown.components)
             "clinical_score": comp_scores.get("clinical", {}).get("normalized"),
             "financial_score": comp_scores.get("financial", {}).get("normalized"),
             "catalyst_score": comp_scores.get("catalyst", {}).get("normalized"),
             "pos_score": comp_scores.get("pos", {}).get("normalized"),
-            "momentum_score": comp_scores.get("momentum", {}).get("normalized"),
-            "valuation_score": comp_scores.get("valuation", {}).get("normalized"),
             "smart_money_score": comp_scores.get("smart_money", {}).get("normalized"),
 
             # Confidence
@@ -101,21 +101,25 @@ def export_screen_to_csv(json_path: Path, csv_path: Path = None) -> Path:
             "skip_reason": enh.get("skip_reason"),
 
             # Catalyst
-            "catalyst_window_days": cat_eff.get("days_to_nearest"),
-            "nearest_catalyst_type": cat_eff.get("nearest_event_type"),
+            "days_to_catalyst": cat_decay.get("days_to_catalyst"),
             "in_optimal_window": cat_decay.get("in_optimal_window"),
+            "catalyst_score_effective": cat_eff.get("catalyst_score_effective"),
 
-            # Momentum
+            # Momentum (price-based)
             "alpha_60d": mom.get("alpha_60d"),
-            "momentum_bucket": mom.get("bucket"),
+            "momentum_score": mom.get("momentum_score"),
+            "momentum_window": mom.get("window_used"),
 
             # Valuation
-            "ev_trial_ratio": val.get("ev_trial_ratio"),
+            "valuation_method": val.get("method"),
+            "mcap_per_asset": val.get("mcap_per_asset"),
+            "ev_multiple": val.get("ev_multiple"),
             "peer_count": val.get("peer_count"),
 
             # Short interest
-            "si_pct": si.get("si_pct"),
             "si_score": si.get("score"),
+            "si_crowding_risk": si.get("crowding_risk"),
+            "si_squeeze_potential": si.get("squeeze_potential"),
 
             # Volatility
             "annualized_vol_pct": vol_adj.get("annualized_vol_pct"),
@@ -123,23 +127,26 @@ def export_screen_to_csv(json_path: Path, csv_path: Path = None) -> Path:
 
             # Partnership
             "partnership_count": part.get("partnership_count"),
-            "partnership_strength": part.get("strength"),
-            "has_top_tier_partner": part.get("has_top_tier"),
+            "partnership_strength": part.get("partnership_strength"),
+            "top_tier_partners": part.get("top_tier_partners"),
 
             # FDA designations
             "has_fda_designations": fda.get("has_designations"),
-            "designation_count": fda.get("designation_count"),
+            "designation_types": ", ".join(fda.get("designation_types", [])) or None,
 
             # Pipeline
             "pipeline_diversity_score": pipe.get("diversity_score"),
-            "is_single_asset": pipe.get("is_single_asset"),
+            "pipeline_risk_profile": pipe.get("risk_profile"),
+            "program_count": pipe.get("program_count"),
 
             # Competitive
-            "competitive_intensity": comp.get("intensity_bucket"),
+            "competitive_position": comp.get("competitive_position"),
+            "crowding_level": comp.get("crowding_level"),
+            "competitor_count": comp.get("competitor_count"),
 
             # Survivability
-            "cash_runway_months": surv.get("cash_runway_months"),
-            "burn_trajectory": surv.get("burn_trajectory"),
+            "cash_runway_months": surv_metrics.get("effective_runway_months"),
+            "survivability_score": surv.get("score"),
 
             # Morningstar signal
             "ms_composite": ms.get("morningstar_score"),
