@@ -28,6 +28,7 @@ def export_screen_to_csv(json_path: Path, csv_path: Path = None) -> Path:
         data = json.load(f)
 
     ranked = data["module_5_composite"]["ranked_securities"]
+    ranked.sort(key=lambda x: x.get("composite_rank", 999))
 
     rows = []
     for r in ranked:
