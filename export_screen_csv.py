@@ -45,6 +45,7 @@ def export_screen_to_csv(json_path: Path, csv_path: Path = None) -> Path:
         pipe = r.get("pipeline_diversity_signal", {}) or {}
         comp = r.get("competitive_intensity_signal", {}) or {}
         surv = r.get("survivability_signal", {}) or {}
+        ms = r.get("morningstar_signal", {}) or {}
         enh = (sb.get("enhancements", {}) or {}).get("smart_money_reinforcement", {}) or {}
 
         # Extract component scores from nested structure
@@ -139,6 +140,17 @@ def export_screen_to_csv(json_path: Path, csv_path: Path = None) -> Path:
             # Survivability
             "cash_runway_months": surv.get("cash_runway_months"),
             "burn_trajectory": surv.get("burn_trajectory"),
+
+            # Morningstar signal
+            "ms_composite": ms.get("morningstar_score"),
+            "ms_fv_discount": ms.get("fair_value_discount_score"),
+            "ms_capital_efficiency": ms.get("capital_efficiency_score"),
+            "ms_leverage_health": ms.get("leverage_health_score"),
+            "ms_growth_quality": ms.get("growth_quality_score"),
+            "ms_momentum": ms.get("momentum_score"),
+            "ms_moat_quality": ms.get("moat_quality_score"),
+            "ms_regime": ms.get("regime"),
+            "ms_confidence": ms.get("confidence"),
         })
 
     if csv_path is None:
