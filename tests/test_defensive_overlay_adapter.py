@@ -1658,7 +1658,7 @@ class TestRedFlagSuppression:
     """Tests for apply_red_flag_suppression()."""
 
     def test_suppression_caps_at_median(self):
-        """Flagged securities above median should be capped."""
+        """Flagged securities above median should be penalized (continuous multiplier)."""
         records = [
             {"ticker": "HIGH", "composite_score": "80", "rankable": True,
              "survivability_signal": {"score": "-5.0", "metrics": {}}},  # Will be flagged
@@ -1673,11 +1673,12 @@ class TestRedFlagSuppression:
         assert provenance["flagged_count"] == 1
         assert provenance["suppressed_count"] == 1
 
-        # HIGH should be capped to median (50)
+        # HIGH should be penalized below original (continuous multiplier, not hard clamp)
         high_rec = next(r for r in records if r["ticker"] == "HIGH")
-        assert float(high_rec["composite_score"]) == 50.0
+        assert float(high_rec["composite_score"]) < 80.0, "Flagged should be penalized"
         assert high_rec["composite_score_pre_suppression"] == "80"
         assert high_rec["fundamental_red_flag"] == True
+        assert provenance["suppression_mode"] == "continuous_multiplier"
 
     def test_suppression_disabled(self):
         """When disabled, no suppression should occur."""

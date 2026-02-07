@@ -145,7 +145,7 @@ def validate_screening_output(
         print(f"     ❌ ZERO coverage! Check field mapping & data source")
     
     # Module 3
-    m3_with_catalyst = m3_diag.get('with_catalyst', 0)
+    m3_with_catalyst = m3_diag.get('tickers_with_events', 0)
     m3_pct = m3_with_catalyst / universe_count * 100 if universe_count > 0 else 0
     # Don't require 80% for catalysts (they're rarer)
     m3_check = True  # Informational only

@@ -237,6 +237,14 @@ except ImportError as e:
     HAS_TICKER_VALIDATION = False
     logger.warning(f"Ticker validation module not available - skipping validation: {e}")
 
+# Baker overlay (optional)
+try:
+    from baker_overlay import compute_baker_overlay
+    HAS_BAKER_OVERLAY = True
+except ImportError as e:
+    HAS_BAKER_OVERLAY = False
+    logger.info(f"Baker overlay not available: {e}")
+
 VERSION = "1.6.0"  # Bumped for governance-friendly CLI enhancements
 DETERMINISTIC_TIMESTAMP_SUFFIX = "T00:00:00Z"
 
@@ -2465,6 +2473,7 @@ def run_screening_pipeline(
 
     coinvest_signals = None
     coinvest_audit_data = {}  # PIT audit counters for run_metadata
+    raw_holdings_for_baker = None  # Preserved for Baker overlay post-processing
     holdings_schema_data = None  # Schema info for run_metadata
     if enable_coinvest:
         # Try loading coinvest_signals.json first
@@ -2499,6 +2508,10 @@ def run_screening_pipeline(
                 elif isinstance(holdings_snapshots, dict) and "tickers" in holdings_snapshots:
                     logger.info(f"  Detected nested 'tickers' key - extracting {len(holdings_snapshots['tickers'])} tickers")
                     holdings_snapshots = holdings_snapshots["tickers"]
+
+                # Preserve raw holdings for Baker overlay (before coinvest conversion)
+                if holdings_snapshots and isinstance(holdings_snapshots, dict):
+                    raw_holdings_for_baker = holdings_snapshots
 
                 if holdings_snapshots and isinstance(holdings_snapshots, dict):
                     # Dict format: {"TICKER": {"holdings": {...}}} - use full conversion with conviction
@@ -3666,10 +3679,56 @@ def run_screening_pipeline(
             results["summary"]["morningstar_coverage"] = ms_diag.get("total_scored", 0)
             results["summary"]["morningstar_fv_coverage"] = ms_diag.get("fair_value_coverage_pct", "N/A")
 
+    # =========================================================================
+    # BAKER OVERLAY (post-processing: CIK attribution, IC review queues)
+    # =========================================================================
+    if HAS_BAKER_OVERLAY and raw_holdings_for_baker and enable_smart_money:
+        try:
+            logger.info("[Baker] Computing Baker overlay...")
+            # Get catalyst summaries for Queue 2 (may be serialized dicts or dataclasses)
+            m3_summaries = m3_result.get("summaries", {}) if m3_result else {}
+            # Serialize if needed (dataclass → dict)
+            if m3_summaries:
+                sample = next(iter(m3_summaries.values()), None)
+                if sample and hasattr(sample, "to_dict"):
+                    m3_summaries = {k: v.to_dict() for k, v in m3_summaries.items()}
+
+            baker_result = compute_baker_overlay(
+                ranked_securities=m5_result.get("ranked_securities", []),
+                holdings_snapshots=raw_holdings_for_baker,
+                catalyst_summaries=m3_summaries,
+            )
+
+            # Enrich each ranked security with baker signals
+            for sec, baker_data in zip(
+                m5_result.get("ranked_securities", []),
+                baker_result.get("securities", []),
+            ):
+                sec["baker"] = baker_data
+
+            # Add baker overlay to results
+            results["baker_overlay"] = {
+                "queue_1_core_divergence": baker_result["queue_1_core_divergence"],
+                "queue_2_near_term_catalyst": baker_result["queue_2_near_term_catalyst"],
+                "metrics": baker_result["metrics"],
+                "diagnostics": baker_result["diagnostics"],
+            }
+
+            q1_count = len(baker_result["queue_1_core_divergence"])
+            q2_count = len(baker_result["queue_2_near_term_catalyst"])
+            held = baker_result["metrics"].get("baker_held_count", 0)
+            logger.info(
+                f"  Baker overlay: {held} held, Queue 1: {q1_count} divergences, "
+                f"Queue 2: {q2_count} near-term catalysts"
+            )
+        except Exception as e:
+            logger.warning(f"  Baker overlay failed (non-blocking): {type(e).__name__}: {e}")
+            results["baker_overlay"] = {"error": f"{type(e).__name__}: {e}"}
+
     # Force deterministic timestamps for byte-identical outputs
     deterministic_ts = as_of_date + DETERMINISTIC_TIMESTAMP_SUFFIX
     _force_deterministic_generated_at(results, deterministic_ts)
-    
+
     return results
 
 

@@ -2115,6 +2115,7 @@ def compute_smart_money_reinforcement(
     days_to_catalyst: Optional[int] = None,  # NEW: for timing calculation
     cohort_conviction_stats: Optional[Dict[str, float]] = None,  # NEW: for z-scoring
     thesis_gate_triggered: bool = False,  # NEW: block reinforcement if thesis gate fired
+    thesis_gate_attenuation: Optional[Decimal] = None,  # NEW: partial reinforcement when thesis-gated
 ) -> Tuple[Decimal, Decimal, List[str], Dict[str, Any]]:
     """
     Compute smart-money reinforcement multipliers for catalyst and momentum.
@@ -2176,11 +2177,20 @@ def compute_smart_money_reinforcement(
 
     # THESIS GATE COUPLING: Don't reinforce weak-thesis names
     # This prevents smart money + timing from undoing Baker-style premise
+    # Allow partial reinforcement when smart money attenuation is active
     if thesis_gate_triggered:
-        diagnostics["skip_reason"] = "thesis_gate_triggered"
-        diagnostics["thesis_gate_blocked"] = True
-        flags.append("sm_reinforcement_blocked_by_thesis_gate")
-        return catalyst_mult, momentum_mult, flags, diagnostics
+        if thesis_gate_attenuation and thesis_gate_attenuation > Decimal("0"):
+            # Partial reinforcement - continue computation but scale results later
+            diagnostics["thesis_gate_partial_reinforcement"] = True
+            diagnostics["thesis_gate_attenuation"] = str(thesis_gate_attenuation)
+            flags.append("sm_reinforcement_partial_thesis_gate")
+            # Don't return - fall through to compute reinforcement, then scale
+        else:
+            # Full block (existing behavior for zero smart money)
+            diagnostics["skip_reason"] = "thesis_gate_triggered"
+            diagnostics["thesis_gate_blocked"] = True
+            flags.append("sm_reinforcement_blocked_by_thesis_gate")
+            return catalyst_mult, momentum_mult, flags, diagnostics
 
     # Only apply in event-alpha regimes (PoC/Regulatory)
     if stage_bucket not in config["active_stages"]:
@@ -2300,6 +2310,14 @@ def compute_smart_money_reinforcement(
 
         diagnostics["conviction_method"] = "tier1_overlap_fallback"
 
+    # Scale reinforcement by thesis gate attenuation when partially reinforcing
+    if thesis_gate_triggered and thesis_gate_attenuation and thesis_gate_attenuation > Decimal("0"):
+        # (catalyst_mult - 1) * attenuation + 1
+        catalyst_mult = Decimal("1") + (catalyst_mult - Decimal("1")) * thesis_gate_attenuation
+        momentum_mult = Decimal("1") + (momentum_mult - Decimal("1")) * thesis_gate_attenuation
+        diagnostics["catalyst_mult_pre_thesis_scale"] = diagnostics.get("catalyst_mult_raw", str(catalyst_mult))
+        diagnostics["momentum_mult_pre_thesis_scale"] = diagnostics.get("momentum_mult_raw", str(momentum_mult))
+
     diagnostics["reinforcement_applied"] = True
     diagnostics["catalyst_mult"] = str(catalyst_mult)
     diagnostics["momentum_mult"] = str(momentum_mult)
@@ -2317,6 +2335,7 @@ def apply_thesis_gate(
     pos_normalized: Optional[Decimal],
     stage_bucket: str,
     mode: "ScoringMode",
+    smart_money_strength: Optional[Decimal] = None,
 ) -> Tuple[Decimal, List[str], Dict[str, Any]]:
     """
     Apply thesis gate to prevent weak-thesis names from ranking top.
@@ -2330,6 +2349,7 @@ def apply_thesis_gate(
         pos_normalized: Normalized PoS score (0-100)
         stage_bucket: Development stage bucket
         mode: Scoring mode
+        smart_money_strength: 0..1 smart money signal strength for penalty attenuation (max 30%)
 
     Returns:
         Tuple of (gated_score, flags, diagnostics)
@@ -2390,6 +2410,16 @@ def apply_thesis_gate(
                 penalty_floor,
                 penalty_base - gap_factor * (penalty_base - penalty_floor)
             )
+
+            # Smart money attenuation: lerp penalty toward 1.0
+            # smart_money_strength is 0..1 (from conviction/z-score), capped at 0.30
+            if smart_money_strength is not None and smart_money_strength > Decimal("0"):
+                max_attenuation = Decimal("0.30")
+                attenuation = min(smart_money_strength, max_attenuation)
+                diagnostics["thesis_gate_penalty_pre_attenuation"] = str(penalty)
+                penalty = penalty + attenuation * (Decimal("1") - penalty)
+                diagnostics["thesis_gate_sm_attenuation"] = str(attenuation)
+
             gated_score = score * penalty
             flags.append(f"thesis_gate_penalty_{penalty:.2f}")
             diagnostics["penalty_factor"] = str(penalty)
@@ -3300,6 +3330,68 @@ def _score_single_ticker_v3(
                     thesis_gate_bypass_reason = "conviction_override"
                     flags.append("thesis_gate_conviction_override")
 
+    # Compute smart money strength for thesis gate attenuation + partial reinforcement
+    import math as _math_reinf
+    if conviction_overlap is not None and cohort_conviction_stats and cohort_conviction_stats.get("std", 0) > 0.01:
+        _z_reinf = (conviction_overlap - cohort_conviction_stats["mean"]) / max(cohort_conviction_stats["std"], 0.01)
+        _sm_strength_reinf = Decimal(str(1 / (1 + _math_reinf.exp(-_z_reinf))))  # sigmoid -> 0..1
+    else:
+        _sm_strength_reinf = min(Decimal(str((tier1_overlap or 0) / 20)), Decimal("1"))
+
+    # ─── GUARDRAIL A: Hard-risk override for SM attenuation ───
+    # Don't let smart money rescue names with fundamental structural risk.
+    # Factor ordering: risk penalties dominate → attenuation can only act within safe bounds.
+    _guardrail_a_reason = None
+    _hard_risk_severities = [fin_data.get("severity", "none"), clin_data.get("severity", "none")]
+    _hard_risk_sev = _get_worst_severity(_hard_risk_severities)
+
+    # A1: Hard stop — sev2+, survivability_critical, or cash runway < 6m
+    if _hard_risk_sev in (Severity.SEV2, Severity.SEV3):
+        _sm_strength_reinf = Decimal("0")
+        _guardrail_a_reason = f"sev_{_hard_risk_sev.value}"
+    elif survivability_score < Decimal("-3"):
+        _sm_strength_reinf = Decimal("0")
+        _guardrail_a_reason = "survivability_critical"
+    elif runway_months is not None and runway_months < Decimal("6"):
+        _sm_strength_reinf = Decimal("0")
+        _guardrail_a_reason = "cash_runway_lt_6m"
+    # A3: sev1 — reduced cap (0.10 instead of 0.30)
+    elif _hard_risk_sev == Severity.SEV1:
+        _sm_strength_reinf = min(_sm_strength_reinf, Decimal("0.10"))
+        _guardrail_a_reason = "sev1_reduced_cap"
+
+    # A2: Red-flag-eligible conditions (not caught by severity alone)
+    # Pre-compute red-flag eligibility using the same conditions as
+    # detect_fundamental_red_flags() in defensive_overlay_adapter.py.
+    # This prevents thesis attenuation from inflating the pre-suppression score.
+    if _guardrail_a_reason is None:
+        _red_flag_reasons = []
+        # Debt distress: survivability weak + high leverage
+        _debt_to_cash = _to_decimal((survivability_result.get("subscores") or {}).get("debt_to_cash") or 0)
+        if survivability_score <= Decimal("-2") and _debt_to_cash > Decimal("3"):
+            _red_flag_reasons.append("debt_distress")
+        # High dilution risk
+        if dilution_bucket == "HIGH":
+            _red_flag_reasons.append("dilution_high")
+        # Single asset + early stage (binary risk)
+        if diversity_risk_profile == "single_asset" and stage.lower() in ("early", "preclinical"):
+            _red_flag_reasons.append("single_asset_early")
+        # Weak competitive position under intense crowding
+        if intensity_crowding == "intense" and intensity_position in ("weak", "disadvantaged"):
+            _red_flag_reasons.append("weak_competitive")
+
+        if _red_flag_reasons:
+            _sm_strength_reinf = min(_sm_strength_reinf, Decimal("0.05"))
+            _guardrail_a_reason = f"red_flag_eligible:{'+'.join(_red_flag_reasons)}"
+
+    # Thesis gate attenuation for partial reinforcement
+    _attenuation_cap = Decimal("0.30")
+    if _guardrail_a_reason == "sev1_reduced_cap":
+        _attenuation_cap = Decimal("0.10")
+    elif _guardrail_a_reason and _guardrail_a_reason.startswith("red_flag_eligible"):
+        _attenuation_cap = Decimal("0.05")
+    _thesis_gate_attenuation = min(_sm_strength_reinf, _attenuation_cap) if thesis_gate_would_trigger else None
+
     reinforcement_catalyst_mult, reinforcement_momentum_mult, reinforcement_flags, reinforcement_diagnostics = (
         compute_smart_money_reinforcement(
             stage_bucket=stage_bucket_alpha,
@@ -3313,6 +3405,7 @@ def _score_single_ticker_v3(
             days_to_catalyst=days_to_cat,  # Already computed earlier in function
             cohort_conviction_stats=cohort_conviction_stats,  # Stage×size cohort stats for z-scoring
             thesis_gate_triggered=thesis_gate_would_trigger,  # Block reinforcement if thesis weak
+            thesis_gate_attenuation=_thesis_gate_attenuation,  # Partial reinforcement scaling
         )
     )
     # Add thesis gate diagnostic details (display stage + bypass reason)
@@ -3323,6 +3416,9 @@ def _score_single_ticker_v3(
     )
     if thesis_gate_bypass_reason:
         reinforcement_diagnostics["thesis_gate_bypass"] = thesis_gate_bypass_reason
+    if _guardrail_a_reason:
+        reinforcement_diagnostics["guardrail_a"] = _guardrail_a_reason
+        flags.append(f"guardrail_a_{_guardrail_a_reason}")
     flags.extend(reinforcement_flags)
 
     # Apply reinforcement to contributions (not scores - keeps attribution clean)
@@ -3484,12 +3580,14 @@ def _score_single_ticker_v3(
     # "late" threshold (45) instead of being forced into "poc" threshold (55) by
     # their catalyst event type. See lines 3242-3244 for the same logic in the
     # smart money reinforcement pre-check.
+
     final_score, thesis_gate_flags, thesis_gate_diagnostics = apply_thesis_gate(
         score=final_score,
         clinical_normalized=clin_norm,
         pos_normalized=pos_norm,
         stage_bucket=stage,  # Use display stage (early/mid/late), not alpha stage
         mode=mode,
+        smart_money_strength=_sm_strength_reinf,  # Computed earlier (line ~3333)
     )
     flags.extend(thesis_gate_flags)
 

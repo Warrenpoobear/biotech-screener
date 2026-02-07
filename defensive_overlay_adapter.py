@@ -437,10 +437,16 @@ def apply_red_flag_suppression(
             "error": "no_valid_scores",
         }
 
-    median_score = Decimal(str(sorted(scores)[len(scores) // 2]))
+    sorted_scores = sorted(scores)
+    median_score = Decimal(str(sorted_scores[len(sorted_scores) // 2]))
+    max_score = Decimal(str(sorted_scores[-1])) if sorted_scores else median_score + Decimal("1")
+    # Guard against median == max (all identical scores)
+    if max_score <= median_score:
+        max_score = median_score + Decimal("1")
 
     flagged_count = 0
     suppressed_count = 0
+    attenuation_applied_count = 0
 
     for rec in ranked_securities:
         # Detect red flags
@@ -459,9 +465,26 @@ def apply_red_flag_suppression(
                     # Store pre-suppression score
                     rec["composite_score_pre_suppression"] = str(current)
 
-                    # Cap at median
                     if current > median_score:
-                        rec["composite_score"] = str(median_score)
+                        # Distance-based penalty multiplier (continuous, not binary)
+                        excess_ratio = (current - median_score) / (max_score - median_score)  # 0..1
+                        base_penalty = Decimal("1") - excess_ratio * Decimal("0.5")  # 0.50..1.00
+
+                        # Smart money attenuation: reduce penalty by up to 40% based on tier1 count
+                        sm_signal = rec.get("smart_money_signal", {}) or {}
+                        tier1_count = (sm_signal.get("tier_breakdown") or {}).get("tier1", 0)
+                        # sigmoid-ish ramp: 0 at 0 holders, ~0.4 at 8+ holders
+                        sm_attenuation = min(Decimal(str(tier1_count)) / Decimal("20"), Decimal("0.40"))
+
+                        if sm_attenuation > Decimal("0"):
+                            attenuation_applied_count += 1
+
+                        # Attenuated penalty: lerp toward 1.0 (no penalty) by sm_attenuation
+                        effective_penalty = base_penalty + sm_attenuation * (Decimal("1") - base_penalty)
+                        # Floor: never exceed the original score, and never go below base_penalty
+                        effective_penalty = max(base_penalty, min(effective_penalty, Decimal("1")))
+
+                        rec["composite_score"] = str((current * effective_penalty).quantize(Decimal("0.01")))
                         suppressed_count += 1
                 except (ValueError, TypeError, InvalidOperation):
                     pass
@@ -481,10 +504,12 @@ def apply_red_flag_suppression(
 
     return {
         "suppressor_enabled": True,
-        "suppressor_version": "1.0.0",
+        "suppressor_version": "1.1.0",
+        "suppression_mode": "continuous_multiplier",
         "median_score_used": str(median_score),
         "flagged_count": flagged_count,
         "suppressed_count": suppressed_count,
+        "attenuation_applied_count": attenuation_applied_count,
         "rank_driver_counts": driver_counts,
     }
 

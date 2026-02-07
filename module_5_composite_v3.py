@@ -1177,6 +1177,20 @@ def compute_module_5_composite_v3(
         rec["composite_rank"] = i + 1
 
     # =========================================================================
+    # SMART MONEY RANK & DIVERGENCE FLAG
+    # =========================================================================
+    # Sort by smart money effective contribution (desc), then conviction_overlap (desc), then ticker (asc)
+    n_scored = len(scored)
+    sm_sorted = sorted(scored, key=lambda x: (
+        -(x["effective_weights"].get("smart_money", Decimal("0")) * Decimal(str(x.get("smart_money_signal", {}).get("score", 0) if x.get("smart_money_signal") else 0))),
+        -((x.get("coinvest") or {}).get("conviction_overlap") or 0),
+        x["ticker"],
+    ))
+    for i, rec in enumerate(sm_sorted):
+        rec["smart_money_rank"] = i + 1
+        rec["divergence_flag"] = abs(rec["composite_rank"] - rec["smart_money_rank"]) > 0.25 * n_scored
+
+    # =========================================================================
     # FORMAT OUTPUT
     # =========================================================================
 
@@ -1189,6 +1203,8 @@ def compute_module_5_composite_v3(
             "ticker": rec["ticker"],
             "composite_score": str(rec["composite_score"]),
             "composite_rank": rec["composite_rank"],
+            "smart_money_rank": rec["smart_money_rank"],
+            "divergence_flag": rec["divergence_flag"],
             "severity": rec["severity"].value,
             "flags": rec["flags"],
             "rankable": True,
