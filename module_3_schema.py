@@ -27,7 +27,7 @@ from typing import Optional, List, Dict, Any, Tuple
 # VERSION CONSTANTS
 # =============================================================================
 
-SCHEMA_VERSION = "m3catalyst_vnext_20260207"
+SCHEMA_VERSION = "m3catalyst_vnext_20260207b"
 SCORE_VERSION = "m3score_vnext_20260111"
 
 # =============================================================================
@@ -74,6 +74,15 @@ class EventType(str, Enum):
     CT_ENROLLMENT_COMPLETE = "CT_ENROLLMENT_COMPLETE"
     CT_ENROLLMENT_PAUSED = "CT_ENROLLMENT_PAUSED"
     CT_ENROLLMENT_RESUMED = "CT_ENROLLMENT_RESUMED"
+
+    # Granular terminal statuses (split from CT_STATUS_SEVERE_NEG)
+    CT_TRIAL_TERMINATED = "CT_TRIAL_TERMINATED"
+    CT_TRIAL_WITHDRAWN = "CT_TRIAL_WITHDRAWN"
+    CT_TRIAL_SUSPENDED = "CT_TRIAL_SUSPENDED"
+
+    # Safety / clinical hold signals
+    CLINICAL_HOLD = "CLINICAL_HOLD"
+    SAFETY_SIGNAL = "SAFETY_SIGNAL"
 
     # Activity proxy (historical data workaround)
     # Detected when last_update_posted changed but no status/date changes detected
@@ -210,6 +219,15 @@ EVENT_SEVERITY_MAP: Dict[EventType, EventSeverity] = {
 
     # Severe negative
     EventType.CT_STATUS_SEVERE_NEG: EventSeverity.SEVERE_NEGATIVE,
+
+    # Granular terminal statuses
+    EventType.CT_TRIAL_TERMINATED: EventSeverity.SEVERE_NEGATIVE,
+    EventType.CT_TRIAL_WITHDRAWN: EventSeverity.SEVERE_NEGATIVE,
+    EventType.CT_TRIAL_SUSPENDED: EventSeverity.NEGATIVE,  # May resume
+
+    # Safety / clinical hold signals
+    EventType.CLINICAL_HOLD: EventSeverity.SEVERE_NEGATIVE,
+    EventType.SAFETY_SIGNAL: EventSeverity.NEGATIVE,
 }
 
 
@@ -237,6 +255,11 @@ EVENT_DEFAULT_CONFIDENCE: Dict[EventType, ConfidenceLevel] = {
     EventType.CT_ENROLLMENT_PAUSED: ConfidenceLevel.HIGH,
     EventType.CT_ENROLLMENT_RESUMED: ConfidenceLevel.HIGH,
     EventType.CT_ACTIVITY_PROXY: ConfidenceLevel.LOW,  # Unknown change type
+    EventType.CT_TRIAL_TERMINATED: ConfidenceLevel.HIGH,
+    EventType.CT_TRIAL_WITHDRAWN: ConfidenceLevel.HIGH,
+    EventType.CT_TRIAL_SUSPENDED: ConfidenceLevel.HIGH,
+    EventType.CLINICAL_HOLD: ConfidenceLevel.HIGH,
+    EventType.SAFETY_SIGNAL: ConfidenceLevel.MED,
 
     # Regulatory/FDA events - HIGH confidence (official dates)
     EventType.FDA_PDUFA_DATE: ConfidenceLevel.HIGH,
@@ -346,6 +369,11 @@ EVENT_TYPE_WEIGHT: Dict[EventType, Decimal] = {
     EventType.CT_ARM_REMOVED: Decimal("0.0"),
     EventType.CT_ENROLLMENT_PAUSED: Decimal("0.0"),
     EventType.FDA_CRL: Decimal("0.0"),              # Complete Response Letter (negative)
+    EventType.CT_TRIAL_TERMINATED: Decimal("0.0"),
+    EventType.CT_TRIAL_WITHDRAWN: Decimal("0.0"),
+    EventType.CT_TRIAL_SUSPENDED: Decimal("0.0"),
+    EventType.CLINICAL_HOLD: Decimal("0.0"),
+    EventType.SAFETY_SIGNAL: Decimal("0.0"),
     EventType.UNKNOWN: Decimal("0.0"),
 }
 
@@ -695,6 +723,8 @@ class DiagnosticCounts:
     coverage_any_event: int = 0
     coverage_actionable_180d: int = 0
     coverage_high_conf_actionable: int = 0
+    coverage_downside_actionable: int = 0
+    events_downside_total: int = 0
 
     def to_dict(self) -> Dict[str, Any]:
         """Serialize with sorted keys for determinism."""
@@ -711,6 +741,8 @@ class DiagnosticCounts:
             "coverage_any_event": self.coverage_any_event,
             "coverage_actionable_180d": self.coverage_actionable_180d,
             "coverage_high_conf_actionable": self.coverage_high_conf_actionable,
+            "coverage_downside_actionable": self.coverage_downside_actionable,
+            "events_downside_total": self.events_downside_total,
         }
 
 

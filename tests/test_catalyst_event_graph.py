@@ -26,6 +26,8 @@ from module_3_schema import (
     ConfidenceLevel,
     DiagnosticCounts,
     SCHEMA_VERSION,
+    EVENT_SEVERITY_MAP,
+    EVENT_DEFAULT_CONFIDENCE,
     effective_days_until,
     effective_event_date,
 )
@@ -325,7 +327,7 @@ class TestSchemaEnhancements:
 
     def test_schema_version_bumped(self):
         """Schema version is updated"""
-        assert SCHEMA_VERSION == "m3catalyst_vnext_20260207"
+        assert SCHEMA_VERSION == "m3catalyst_vnext_20260207b"
 
     def test_diagnostic_counts_has_coverage_fields(self):
         """DiagnosticCounts has the new coverage and fuzzy merge fields"""
@@ -1046,3 +1048,386 @@ class TestDisclosedAtClipping:
         v2 = convert_calendar_catalyst_to_v2(catalyst, as_of_date=as_of)
         assert v2.disclosed_at == "2025-12-01"  # PCD, not clipped
         assert "disclosed_at_clipped" not in v2.tags
+
+
+# ============================================================================
+# DOWNSIDE CATALYSTS: SCHEMA ROUNDTRIP
+# ============================================================================
+
+class TestDownsideSchemaRoundtrip:
+    """Tests for new downside EventTypes roundtrip through schema"""
+
+    def test_ct_trial_terminated_roundtrip(self):
+        """CT_TRIAL_TERMINATED round-trips through to_dict/from_dict"""
+        event = _make_v2_event(
+            event_type=EventType.CT_TRIAL_TERMINATED,
+            event_date="2026-01-20",
+        )
+        # Override severity to match the type
+        event = CatalystEventV2(
+            **{**event.__dict__, "event_severity": EventSeverity.SEVERE_NEGATIVE}
+        )
+        d = event.to_dict()
+        restored = CatalystEventV2.from_dict(d)
+        assert restored.event_type == EventType.CT_TRIAL_TERMINATED
+        assert restored.event_severity == EventSeverity.SEVERE_NEGATIVE
+
+    def test_ct_trial_withdrawn_roundtrip(self):
+        """CT_TRIAL_WITHDRAWN round-trips through to_dict/from_dict"""
+        event = CatalystEventV2(
+            ticker="ACAD", nct_id="NCT00000001",
+            event_type=EventType.CT_TRIAL_WITHDRAWN,
+            event_severity=EventSeverity.SEVERE_NEGATIVE,
+            event_date="2026-01-20", field_changed="overallStatus",
+            prior_value="RECRUITING", new_value="WITHDRAWN",
+            source="CTGOV", confidence=ConfidenceLevel.HIGH,
+            disclosed_at="2026-01-20",
+        )
+        d = event.to_dict()
+        restored = CatalystEventV2.from_dict(d)
+        assert restored.event_type == EventType.CT_TRIAL_WITHDRAWN
+
+    def test_clinical_hold_roundtrip(self):
+        """CLINICAL_HOLD round-trips through to_dict/from_dict"""
+        event = CatalystEventV2(
+            ticker="ACAD", nct_id="SEC8K_CLINICAL_HOLD_ACAD_2026-01-20",
+            event_type=EventType.CLINICAL_HOLD,
+            event_severity=EventSeverity.SEVERE_NEGATIVE,
+            event_date="2026-01-20", field_changed="sec_8k_clinical_hold",
+            prior_value=None, new_value="8-K: FDA placed on clinical hold",
+            source="SEC_8K_FILING", confidence=ConfidenceLevel.HIGH,
+            disclosed_at="2026-01-20", tags=("sec_8k", "downside"),
+        )
+        d = event.to_dict()
+        restored = CatalystEventV2.from_dict(d)
+        assert restored.event_type == EventType.CLINICAL_HOLD
+        assert restored.event_severity == EventSeverity.SEVERE_NEGATIVE
+        assert "downside" in restored.tags
+
+    def test_safety_signal_roundtrip(self):
+        """SAFETY_SIGNAL round-trips through to_dict/from_dict"""
+        event = CatalystEventV2(
+            ticker="AXSM", nct_id="SEC8K_SAFETY_SIGNAL_AXSM_2026-01-15",
+            event_type=EventType.SAFETY_SIGNAL,
+            event_severity=EventSeverity.NEGATIVE,
+            event_date="2026-01-15", field_changed="sec_8k_safety_signal",
+            prior_value=None, new_value="8-K: serious adverse event",
+            source="SEC_8K_FILING", confidence=ConfidenceLevel.MED,
+            disclosed_at="2026-01-15",
+        )
+        d = event.to_dict()
+        restored = CatalystEventV2.from_dict(d)
+        assert restored.event_type == EventType.SAFETY_SIGNAL
+        assert restored.event_severity == EventSeverity.NEGATIVE
+
+
+# ============================================================================
+# DOWNSIDE CATALYSTS: SEVERITY & CONFIDENCE MAPS
+# ============================================================================
+
+class TestDownsideSeverityConfidence:
+    """Tests that new types have correct severity and confidence mappings"""
+
+    def test_severity_map_terminal_statuses(self):
+        """Terminated/Withdrawn→SEVERE_NEGATIVE, Suspended→NEGATIVE"""
+        assert EVENT_SEVERITY_MAP[EventType.CT_TRIAL_TERMINATED] == EventSeverity.SEVERE_NEGATIVE
+        assert EVENT_SEVERITY_MAP[EventType.CT_TRIAL_WITHDRAWN] == EventSeverity.SEVERE_NEGATIVE
+        assert EVENT_SEVERITY_MAP[EventType.CT_TRIAL_SUSPENDED] == EventSeverity.NEGATIVE
+
+    def test_severity_map_safety_signals(self):
+        """CLINICAL_HOLD→SEVERE_NEGATIVE, SAFETY_SIGNAL→NEGATIVE"""
+        assert EVENT_SEVERITY_MAP[EventType.CLINICAL_HOLD] == EventSeverity.SEVERE_NEGATIVE
+        assert EVENT_SEVERITY_MAP[EventType.SAFETY_SIGNAL] == EventSeverity.NEGATIVE
+
+    def test_confidence_map_terminal_statuses(self):
+        """All terminal statuses → HIGH confidence"""
+        assert EVENT_DEFAULT_CONFIDENCE[EventType.CT_TRIAL_TERMINATED] == ConfidenceLevel.HIGH
+        assert EVENT_DEFAULT_CONFIDENCE[EventType.CT_TRIAL_WITHDRAWN] == ConfidenceLevel.HIGH
+        assert EVENT_DEFAULT_CONFIDENCE[EventType.CT_TRIAL_SUSPENDED] == ConfidenceLevel.HIGH
+
+    def test_confidence_map_safety_signals(self):
+        """CLINICAL_HOLD→HIGH, SAFETY_SIGNAL→MED"""
+        assert EVENT_DEFAULT_CONFIDENCE[EventType.CLINICAL_HOLD] == ConfidenceLevel.HIGH
+        assert EVENT_DEFAULT_CONFIDENCE[EventType.SAFETY_SIGNAL] == ConfidenceLevel.MED
+
+
+# ============================================================================
+# DOWNSIDE CATALYSTS: CTGOV TERMINAL STATUS SPLITTING
+# ============================================================================
+
+class TestCTGOVTerminalStatusSplitting:
+    """Tests that classify_status_change() emits granular terminal types"""
+
+    def test_terminated_emits_ct_trial_terminated(self):
+        """RECRUITING → TERMINATED emits CT_TRIAL_TERMINATED"""
+        from event_detector import classify_status_change, EventType as EDEventType
+        from ctgov_adapter import CTGovStatus
+
+        event_type, impact, direction = classify_status_change(
+            CTGovStatus.RECRUITING, CTGovStatus.TERMINATED
+        )
+        assert event_type == EDEventType.CT_TRIAL_TERMINATED
+        assert impact == 3
+        assert direction == "NEG"
+
+    def test_withdrawn_emits_ct_trial_withdrawn(self):
+        """RECRUITING → WITHDRAWN emits CT_TRIAL_WITHDRAWN"""
+        from event_detector import classify_status_change, EventType as EDEventType
+        from ctgov_adapter import CTGovStatus
+
+        event_type, impact, direction = classify_status_change(
+            CTGovStatus.RECRUITING, CTGovStatus.WITHDRAWN
+        )
+        assert event_type == EDEventType.CT_TRIAL_WITHDRAWN
+        assert impact == 3
+        assert direction == "NEG"
+
+    def test_suspended_emits_ct_trial_suspended(self):
+        """RECRUITING → SUSPENDED emits CT_TRIAL_SUSPENDED with impact 2"""
+        from event_detector import classify_status_change, EventType as EDEventType
+        from ctgov_adapter import CTGovStatus
+
+        event_type, impact, direction = classify_status_change(
+            CTGovStatus.RECRUITING, CTGovStatus.SUSPENDED
+        )
+        assert event_type == EDEventType.CT_TRIAL_SUSPENDED
+        assert impact == 2  # Lower than terminated/withdrawn
+        assert direction == "NEG"
+
+    def test_upgrade_still_works(self):
+        """Non-terminal status changes still work correctly"""
+        from event_detector import classify_status_change, EventType as EDEventType
+        from ctgov_adapter import CTGovStatus
+
+        event_type, impact, direction = classify_status_change(
+            CTGovStatus.NOT_YET_RECRUITING, CTGovStatus.RECRUITING
+        )
+        assert event_type == EDEventType.CT_STATUS_UPGRADE
+        assert direction == "POS"
+
+
+# ============================================================================
+# DOWNSIDE CATALYSTS: SEC 8-K DOWNSIDE PATTERNS
+# ============================================================================
+
+class TestSEC8KDownsidePatterns:
+
+    def test_crl_detection(self):
+        """'received a Complete Response Letter' → FDA_CRL"""
+        from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import _extract_downside_events
+
+        text = "The Company announced that it received a Complete Response Letter from the FDA regarding its NDA for Drug X."
+        events = _extract_downside_events(text, "ACAD", "2026-01-15")
+
+        assert len(events) == 1
+        assert events[0]["event_type"] == "FDA_CRL"
+        assert events[0]["confidence"] == "HIGH"
+        assert "downside" in events[0]["tags"]
+
+    def test_crl_from_fda_pattern(self):
+        """'CRL from FDA' → FDA_CRL"""
+        from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import _extract_downside_events
+
+        text = "The company disclosed receipt of a CRL from FDA for its lead candidate."
+        events = _extract_downside_events(text, "KRYS", "2026-02-01")
+
+        assert len(events) == 1
+        assert events[0]["event_type"] == "FDA_CRL"
+
+    def test_clinical_hold_detection(self):
+        """'FDA placed ... on clinical hold' → CLINICAL_HOLD"""
+        from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import _extract_downside_events
+
+        text = "The Company announced that the FDA placed its Phase 3 trial on clinical hold."
+        events = _extract_downside_events(text, "AXSM", "2026-01-20")
+
+        assert len(events) == 1
+        assert events[0]["event_type"] == "CLINICAL_HOLD"
+        assert events[0]["confidence"] == "HIGH"
+
+    def test_safety_signal_sae_detection(self):
+        """'serious adverse event' → SAFETY_SIGNAL, MED confidence"""
+        from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import _extract_downside_events
+
+        text = "The Company reported a serious adverse event in its Phase 2 trial of Drug Y."
+        events = _extract_downside_events(text, "CYTK", "2026-01-10")
+
+        assert len(events) == 1
+        assert events[0]["event_type"] == "SAFETY_SIGNAL"
+        assert events[0]["confidence"] == "MED"
+
+    def test_dsmb_halt_detection(self):
+        """'DSMB recommended halt' → SAFETY_SIGNAL, HIGH confidence"""
+        from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import _extract_downside_events
+
+        text = "After review of interim data, the DSMB recommended halt of the study."
+        events = _extract_downside_events(text, "ROIV", "2026-01-25")
+
+        assert len(events) == 1
+        assert events[0]["event_type"] == "SAFETY_SIGNAL"
+        assert events[0]["confidence"] == "HIGH"
+
+    def test_boilerplate_filter_strips_disclaimer(self):
+        """Boilerplate filter prevents matching in forward-looking statements section"""
+        from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import (
+            _extract_downside_events, _strip_boilerplate,
+        )
+
+        text = (
+            "The Company reported positive results. "
+            "Forward-Looking Statements This press release contains forward-looking statements "
+            "that involve risks including serious adverse event occurrences and clinical holds."
+        )
+        # Without boilerplate filter, "serious adverse event" would match
+        # With filter, it should be stripped away
+        clean = _strip_boilerplate(text)
+        assert "serious adverse event" not in clean
+
+        events = _extract_downside_events(text, "TEST", "2026-01-15")
+        assert len(events) == 0
+
+    def test_one_event_per_type_per_filing(self):
+        """Cap at 1 event per type per filing (no double-counting)"""
+        from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import _extract_downside_events
+
+        text = (
+            "The Company reported a serious adverse event in the Phase 2 trial. "
+            "Additionally, another serious adverse event was observed in a separate cohort."
+        )
+        events = _extract_downside_events(text, "ACAD", "2026-01-15")
+
+        # Should only get 1 SAFETY_SIGNAL, not 2
+        safety_events = [e for e in events if e["event_type"] == "SAFETY_SIGNAL"]
+        assert len(safety_events) == 1
+
+    def test_multiple_different_types_detected(self):
+        """Multiple different downside types in same filing are all captured"""
+        from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import _extract_downside_events
+
+        text = (
+            "The Company received a Complete Response Letter from the FDA. "
+            "In addition, the FDA placed the Phase 2 program on clinical hold."
+        )
+        events = _extract_downside_events(text, "ACAD", "2026-01-15")
+
+        event_types = {e["event_type"] for e in events}
+        assert "FDA_CRL" in event_types
+        assert "CLINICAL_HOLD" in event_types
+
+
+# ============================================================================
+# DOWNSIDE CATALYSTS: SCORING
+# ============================================================================
+
+class TestDownsideScoring:
+    """Tests that downside events score correctly"""
+
+    def test_terminated_scores_severe_negative(self):
+        """CT_TRIAL_TERMINATED gets SEVERE_NEGATIVE scoring (-20 contribution)"""
+        from module_3_scoring import score_catalyst_events
+        from module_3_schema import SEVERITY_SCORE_CONTRIBUTION
+
+        events = {
+            "ACAD": [CatalystEventV2(
+                ticker="ACAD", nct_id="NCT00000001",
+                event_type=EventType.CT_TRIAL_TERMINATED,
+                event_severity=EventSeverity.SEVERE_NEGATIVE,
+                event_date="2026-01-20", field_changed="overallStatus",
+                prior_value="RECRUITING", new_value="TERMINATED",
+                source="CTGOV", confidence=ConfidenceLevel.HIGH,
+                disclosed_at="2026-01-20",
+            )],
+        }
+        summaries, diag = score_catalyst_events(events, ["ACAD"], date(2026, 2, 7))
+
+        assert summaries["ACAD"].severe_negative_flag is True
+        assert SEVERITY_SCORE_CONTRIBUTION[EventSeverity.SEVERE_NEGATIVE] == Decimal("-20.0")
+
+    def test_safety_signal_scores_negative(self):
+        """SAFETY_SIGNAL gets NEGATIVE scoring (-5 contribution)"""
+        from module_3_scoring import score_catalyst_events
+        from module_3_schema import SEVERITY_SCORE_CONTRIBUTION
+
+        events = {
+            "ACAD": [CatalystEventV2(
+                ticker="ACAD", nct_id="SEC8K_SAFETY_SIGNAL_ACAD",
+                event_type=EventType.SAFETY_SIGNAL,
+                event_severity=EventSeverity.NEGATIVE,
+                event_date="2026-01-15", field_changed="sec_8k_safety_signal",
+                prior_value=None, new_value="serious adverse event",
+                source="SEC_8K_FILING", confidence=ConfidenceLevel.MED,
+                disclosed_at="2026-01-15",
+            )],
+        }
+        summaries, diag = score_catalyst_events(events, ["ACAD"], date(2026, 2, 7))
+
+        # NEGATIVE with MED confidence → blended score < 50 (neutral baseline)
+        assert summaries["ACAD"].score_blended < Decimal("50")
+        assert SEVERITY_SCORE_CONTRIBUTION[EventSeverity.NEGATIVE] == Decimal("-5.0")
+
+    def test_sec_8k_converter_handles_downside_types(self):
+        """convert_sec_8k_to_v2 correctly handles downside event types"""
+        event = {
+            "ticker": "ACAD",
+            "event_type": "FDA_CRL",
+            "event_date": "2026-01-15",
+            "event_name": "8-K: received a Complete Response Letter",
+            "confidence": "HIGH",
+            "disclosed_at": "2026-01-15",
+            "tags": ["sec_8k", "downside"],
+        }
+        v2 = convert_sec_8k_to_v2(event, date(2026, 2, 7))
+
+        assert v2 is not None
+        assert v2.event_type == EventType.FDA_CRL
+        assert v2.event_severity == EventSeverity.SEVERE_NEGATIVE
+        assert "downside" in v2.tags
+
+
+# ============================================================================
+# DOWNSIDE CATALYSTS: COVERAGE KPI
+# ============================================================================
+
+class TestDownsideCoverageKPI:
+    """Tests for downside coverage KPI in diagnostics"""
+
+    def test_downside_coverage_kpi_computed(self):
+        """Downside KPIs counted correctly in diagnostics"""
+        from module_3_scoring import score_catalyst_events
+
+        events = {
+            "ACAD": [CatalystEventV2(
+                ticker="ACAD", nct_id="NCT00000001",
+                event_type=EventType.CT_TRIAL_TERMINATED,
+                event_severity=EventSeverity.SEVERE_NEGATIVE,
+                event_date="2026-01-20", field_changed="overallStatus",
+                prior_value="RECRUITING", new_value="TERMINATED",
+                source="CTGOV", confidence=ConfidenceLevel.HIGH,
+                disclosed_at="2026-01-20",
+            )],
+            "AXSM": [CatalystEventV2(
+                ticker="AXSM", nct_id="SEC8K_SAFETY_AXSM",
+                event_type=EventType.SAFETY_SIGNAL,
+                event_severity=EventSeverity.NEGATIVE,
+                event_date="2026-01-15", field_changed="sec_8k_safety_signal",
+                prior_value=None, new_value="SAE reported",
+                source="SEC_8K_FILING", confidence=ConfidenceLevel.MED,
+                disclosed_at="2026-01-15",
+            )],
+            "CYTK": [_make_v2_event(
+                ticker="CYTK",
+                event_date="2026-04-01",
+                confidence=ConfidenceLevel.HIGH,
+            )],  # Positive event only
+        }
+
+        summaries, diag = score_catalyst_events(
+            events, ["ACAD", "AXSM", "CYTK"], date(2026, 2, 7)
+        )
+
+        assert diag.coverage_downside_actionable == 2  # ACAD + AXSM
+        assert diag.events_downside_total == 2  # 1 each
+        # CYTK has only positive events, not counted
+        d = diag.to_dict()
+        assert "coverage_downside_actionable" in d
+        assert "events_downside_total" in d

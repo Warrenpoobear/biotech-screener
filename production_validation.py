@@ -156,9 +156,12 @@ def validate_screening_output(
 
     status = "✅" if m3_pct > 20 else "⚠️"
     print(f"  {status} Module 3 (Catalyst):")
+    m3_downside = m3_diag.get('coverage_downside_actionable', 0)
+    m3_ds_pct = m3_downside / universe_count * 100 if universe_count > 0 else 0
     print(f"       Any-event:           {m3_with_catalyst}/{universe_count} ({m3_pct:.0f}%)")
     print(f"       Actionable (≤180d):  {m3_actionable}/{universe_count} ({m3_act_pct:.0f}%)")
     print(f"       High-conf actable:   {m3_high_conf}/{universe_count} ({m3_hc_pct:.0f}%)")
+    print(f"       Downside active:     {m3_downside}/{universe_count} ({m3_ds_pct:.0f}%)")
     
     # Module 4
     m4_scored = m4_diag.get('scored', 0)

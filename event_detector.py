@@ -50,6 +50,10 @@ class EventType(Enum):
     CT_TIMELINE_PULLIN = "CT_TIMELINE_PULLIN"
     CT_DATE_CONFIRMED_ACTUAL = "CT_DATE_CONFIRMED_ACTUAL"
     CT_RESULTS_POSTED = "CT_RESULTS_POSTED"
+    # Granular terminal statuses (split from CT_STATUS_SEVERE_NEG)
+    CT_TRIAL_TERMINATED = "CT_TRIAL_TERMINATED"
+    CT_TRIAL_WITHDRAWN = "CT_TRIAL_WITHDRAWN"
+    CT_TRIAL_SUSPENDED = "CT_TRIAL_SUSPENDED"
     # Activity proxy: trial was updated but no specific status/date change detected
     # Used as historical data workaround when CT.gov API only shows current state
     CT_ACTIVITY_PROXY = "CT_ACTIVITY_PROXY"
@@ -133,9 +137,13 @@ def classify_status_change(
     
     Returns: (event_type, impact, direction)
     """
-    # Severe negative: trial stopped
-    if new_status in {CTGovStatus.SUSPENDED, CTGovStatus.TERMINATED, CTGovStatus.WITHDRAWN}:
-        return (EventType.CT_STATUS_SEVERE_NEG, 3, 'NEG')
+    # Granular terminal statuses
+    if new_status == CTGovStatus.TERMINATED:
+        return (EventType.CT_TRIAL_TERMINATED, 3, 'NEG')
+    if new_status == CTGovStatus.WITHDRAWN:
+        return (EventType.CT_TRIAL_WITHDRAWN, 3, 'NEG')
+    if new_status == CTGovStatus.SUSPENDED:
+        return (EventType.CT_TRIAL_SUSPENDED, 2, 'NEG')  # May resume
     
     # Directional change based on status ordering
     if new_status.value < old_status.value:
@@ -248,6 +256,9 @@ class EventDetectorConfig:
                 EventType.CT_TIMELINE_PULLIN: 0.70,
                 EventType.CT_DATE_CONFIRMED_ACTUAL: 0.85,
                 EventType.CT_RESULTS_POSTED: 0.90,
+                EventType.CT_TRIAL_TERMINATED: 0.95,
+                EventType.CT_TRIAL_WITHDRAWN: 0.95,
+                EventType.CT_TRIAL_SUSPENDED: 0.90,
                 EventType.CT_ACTIVITY_PROXY: 0.30,  # Low confidence - unknown change type
             }
 

@@ -82,6 +82,123 @@ TIMING_PATTERNS = [
     ),
 ]
 
+# Downside patterns: (regex, event_type, confidence)
+# These detect negative catalyst language in 8-K filing text.
+DOWNSIDE_PATTERNS = [
+    # Complete Response Letter (CRL)
+    (
+        r"received\s+a\s+Complete\s+Response\s+Letter",
+        "FDA_CRL",
+        "HIGH",
+    ),
+    (
+        r"CRL\s+from\s+(?:the\s+)?FDA",
+        "FDA_CRL",
+        "HIGH",
+    ),
+    # Clinical hold
+    (
+        r"FDA\s+(?:has\s+)?placed\s+.*?\s+on\s+clinical\s+hold",
+        "CLINICAL_HOLD",
+        "HIGH",
+    ),
+    (
+        r"clinical\s+hold\s+(?:on|for)\s+",
+        "CLINICAL_HOLD",
+        "HIGH",
+    ),
+    # Safety signals
+    (
+        r"serious\s+adverse\s+event",
+        "SAFETY_SIGNAL",
+        "MED",
+    ),
+    (
+        r"\bSAE\b",
+        "SAFETY_SIGNAL",
+        "MED",
+    ),
+    (
+        r"patient\s+death",
+        "SAFETY_SIGNAL",
+        "HIGH",
+    ),
+    (
+        r"DSMB\s+recommended\s+(?:halt|stop|discontinu)",
+        "SAFETY_SIGNAL",
+        "HIGH",
+    ),
+]
+
+# Boilerplate markers: text after these is forward-looking disclaimer, not substance
+_BOILERPLATE_MARKERS = [
+    "forward-looking statements",
+    "safe harbor",
+    "Private Securities Litigation Reform Act",
+]
+
+
+def _strip_boilerplate(text: str) -> str:
+    """
+    Truncate filing text at the first forward-looking statements / safe harbor marker.
+
+    This prevents matching boilerplate disclaimer language that often mentions
+    risks, adverse events, etc. as generic risk factors rather than actual events.
+    """
+    text_lower = text.lower()
+    earliest = len(text)
+    for marker in _BOILERPLATE_MARKERS:
+        idx = text_lower.find(marker.lower())
+        if idx != -1 and idx < earliest:
+            earliest = idx
+    return text[:earliest]
+
+
+def _extract_downside_events(
+    text: str,
+    ticker: str,
+    filing_date: str,
+) -> List[Dict[str, Any]]:
+    """
+    Extract downside events from 8-K filing text.
+
+    Applies boilerplate filtering, then matches DOWNSIDE_PATTERNS.
+    Caps at 1 event per type per filing to avoid over-counting.
+
+    Args:
+        text: Filing text content
+        ticker: Associated ticker symbol
+        filing_date: ISO date string of the 8-K filing
+
+    Returns:
+        List of event dicts
+    """
+    clean_text = _strip_boilerplate(text)
+    events = []
+    seen_types: Set[str] = set()
+
+    for pattern, event_type, confidence in DOWNSIDE_PATTERNS:
+        if event_type in seen_types:
+            continue
+        match = re.search(pattern, clean_text, re.IGNORECASE)
+        if match:
+            seen_types.add(event_type)
+            events.append({
+                "ticker": ticker,
+                "event_type": event_type,
+                "event_date": filing_date,
+                "event_date_end": None,
+                "date_precision": "DAY",
+                "event_name": f"8-K: {match.group(0)[:80]}",
+                "confidence": confidence,
+                "source": "SEC_8K_FILING",
+                "disclosed_at": filing_date,
+                "tags": ["sec_8k", "downside"],
+            })
+
+    return events
+
+
 # Regex to extract ticker from EDGAR display_names.
 # Handles both single-ticker and comma-separated formats:
 #   "AGIOS PHARMACEUTICALS, INC.  (AGIO)  (CIK 0001439222)"
@@ -573,11 +690,14 @@ def collect_8k_timing_events(
                 continue
 
             extracted = _extract_timing_events(text, ticker, file_date, as_of_date)
-            if extracted:
+            downside = _extract_downside_events(text, ticker, file_date)
+            total_extracted = len(extracted) + len(downside)
+            if total_extracted:
                 logger.info(
-                    f"  {ticker} ({adsh}, {file_date}): {len(extracted)} timing events"
+                    f"  {ticker} ({adsh}, {file_date}): {len(extracted)} timing + {len(downside)} downside events"
                 )
             all_events.extend(extracted)
+            all_events.extend(downside)
 
         except Exception as e:
             logger.warning(f"Error processing {ticker} {adsh}: {e}")

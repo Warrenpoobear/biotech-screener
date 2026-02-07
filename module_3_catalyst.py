@@ -515,7 +515,7 @@ def convert_sec_8k_to_v2(
     except ValueError:
         return None
 
-    severity = EVENT_SEVERITY_MAP.get(event_type, EventSeverity.POSITIVE)
+    severity = EVENT_SEVERITY_MAP.get(event_type, EventSeverity.NEUTRAL)
 
     # Map confidence string to ConfidenceLevel
     conf_str = event.get('confidence', 'MED').upper()

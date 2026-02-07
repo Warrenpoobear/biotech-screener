@@ -951,6 +951,15 @@ def score_catalyst_events(
         if has_high_conf_actionable:
             diagnostics.coverage_high_conf_actionable += 1
 
+        # Downside KPIs: count tickers with any NEGATIVE/SEVERE_NEGATIVE event
+        has_downside = False
+        for e in events:
+            if e.event_severity in (EventSeverity.NEGATIVE, EventSeverity.SEVERE_NEGATIVE):
+                has_downside = True
+                diagnostics.events_downside_total += 1
+        if has_downside:
+            diagnostics.coverage_downside_actionable += 1
+
     logger.info(f"Scoring complete. Generated {len(summaries)} summaries")
     logger.info(f"Diagnostics: {diagnostics.to_dict()}")
 

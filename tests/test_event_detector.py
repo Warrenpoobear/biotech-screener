@@ -99,6 +99,9 @@ class TestEventType:
             "CT_TIMELINE_PULLIN",
             "CT_DATE_CONFIRMED_ACTUAL",
             "CT_RESULTS_POSTED",
+            "CT_TRIAL_TERMINATED",
+            "CT_TRIAL_WITHDRAWN",
+            "CT_TRIAL_SUSPENDED",
             "CT_ACTIVITY_PROXY",
         ]
         for et in expected:
@@ -222,34 +225,34 @@ class TestClassifyStatusChange:
     """Tests for classify_status_change function."""
 
     def test_severe_neg_suspended(self):
-        """Suspended status should be severe negative."""
+        """Suspended status should be CT_TRIAL_SUSPENDED (granular)."""
         event_type, impact, direction = classify_status_change(
             CTGovStatus.RECRUITING,
             CTGovStatus.SUSPENDED,
         )
 
-        assert event_type == EventType.CT_STATUS_SEVERE_NEG
-        assert impact == 3
+        assert event_type == EventType.CT_TRIAL_SUSPENDED
+        assert impact == 2  # Lower impact (may resume)
         assert direction == "NEG"
 
     def test_severe_neg_terminated(self):
-        """Terminated status should be severe negative."""
+        """Terminated status should be CT_TRIAL_TERMINATED (granular)."""
         event_type, impact, direction = classify_status_change(
             CTGovStatus.RECRUITING,
             CTGovStatus.TERMINATED,
         )
 
-        assert event_type == EventType.CT_STATUS_SEVERE_NEG
+        assert event_type == EventType.CT_TRIAL_TERMINATED
         assert direction == "NEG"
 
     def test_severe_neg_withdrawn(self):
-        """Withdrawn status should be severe negative."""
+        """Withdrawn status should be CT_TRIAL_WITHDRAWN (granular)."""
         event_type, impact, direction = classify_status_change(
             CTGovStatus.NOT_YET_RECRUITING,
             CTGovStatus.WITHDRAWN,
         )
 
-        assert event_type == EventType.CT_STATUS_SEVERE_NEG
+        assert event_type == EventType.CT_TRIAL_WITHDRAWN
 
     def test_upgrade(self):
         """Status improvement should be upgrade."""
@@ -548,7 +551,7 @@ class TestEventDetector:
         events = detector.detect_events(current, prior, as_of_date)
 
         assert len(events) == 1
-        assert events[0].event_type == EventType.CT_STATUS_SEVERE_NEG
+        assert events[0].event_type == EventType.CT_TRIAL_SUSPENDED
 
     def test_detects_timeline_change(self, detector, as_of_date):
         """Should detect timeline change events."""
@@ -638,7 +641,7 @@ class TestEventDetector:
 
         assert len(events) >= 2
         event_types = {e.event_type for e in events}
-        assert EventType.CT_STATUS_SEVERE_NEG in event_types
+        assert EventType.CT_TRIAL_SUSPENDED in event_types
 
     def test_activity_proxy_when_no_other_events(self, detector, as_of_date):
         """Should detect activity proxy when no other events detected."""
