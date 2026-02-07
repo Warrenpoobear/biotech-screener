@@ -1,0 +1,221 @@
+{
+  "component_coverage": {
+    "catalyst": "0.5548589341692789968652037618",
+    "catalyst_raw": "0.7836990595611285266457680251",
+    "market_data": "0",
+    "momentum": "0.9874608150470219435736677116",
+    "pos": "1",
+    "smart_money": "0.8244514106583072100313479624",
+    "valuation": "0.9529780564263322884012539185"
+  },
+  "enhancement_diagnostics": {
+    "dilution_risk": {
+      "data_quality_distribution": {
+        "FULL": 103,
+        "MINIMAL": 0,
+        "NONE": 224,
+        "PARTIAL": 0
+      },
+      "error_count": 224,
+      "high_risk_tickers": [
+        "ABOS",
+        "NAUT",
+        "PCVX",
+        "PYXS",
+        "RAPT",
+        "SGMO"
+      ],
+      "risk_distribution": {
+        "HIGH_RISK": 6,
+        "LOW_RISK": 1,
+        "MEDIUM_RISK": 5,
+        "NO_RISK": 91,
+        "UNKNOWN": 224
+      },
+      "success_count": 103,
+      "total_scored": 327
+    },
+    "pos": {
+      "confidence_distribution": {
+        "high": 195,
+        "low": 95,
+        "medium": 37
+      },
+      "data_quality_distribution": {
+        "FULL": 0,
+        "MINIMAL": 0,
+        "NONE": 0,
+        "PARTIAL": 327
+      },
+      "effective_coverage": 300,
+      "effective_coverage_pct": "91.7%",
+      "indication_coverage": 319,
+      "indication_coverage_pct": "97.6%",
+      "stage_defaulted_count": 0,
+      "stage_distribution": {
+        "commercial": 80,
+        "phase_1": 30,
+        "phase_2": 60,
+        "phase_3": 126,
+        "preclinical": 31
+      },
+      "total_scored": 327
+    },
+    "regime": {
+      "confidence": "0.70",
+      "regime": "BULL",
+      "staleness": {
+        "action": "HAIRCUT_APPLIED",
+        "adjusted_confidence": "0.70",
+        "age_days": 4,
+        "data_as_of_date": "2026-02-03",
+        "haircut_multiplier": "0.85",
+        "is_stale": false,
+        "raw_confidence": "0.82",
+        "run_as_of_date": "2026-02-07"
+      }
+    },
+    "short_interest": {
+      "data_coverage": 323,
+      "data_coverage_pct": "98.8%",
+      "signal_distribution": {
+        "BEARISH": 4,
+        "BULLISH": 198,
+        "NEUTRAL": 121
+      },
+      "squeeze_distribution": {
+        "EXTREME": 1,
+        "HIGH": 46,
+        "LOW": 169,
+        "MODERATE": 107,
+        "UNKNOWN": 4
+      },
+      "total_scored": 327
+    }
+  },
+  "gating_analysis": {
+    "confidence_gated_tickers": {},
+    "gated_component_counts": {
+      "catalyst": 69,
+      "financial": 5,
+      "momentum": 4,
+      "pos": 26,
+      "valuation": 15
+    }
+  },
+  "generated_by": "run_screen.py",
+  "module_diagnostics": {
+    "module_1": {
+      "active_count": 341,
+      "diagnostic_counts": {
+        "active": 341,
+        "excluded": 12,
+        "excluded_by_reason": {
+          "excluded_delisted": 2,
+          "excluded_missing_data": 1,
+          "excluded_small_cap": 9
+        },
+        "total_input": 353
+      },
+      "excluded_count": 12
+    },
+    "module_2": {
+      "diagnostic_counts": {
+        "missing": 0,
+        "scored": 341
+      },
+      "scored_count": 341
+    },
+    "module_3": {
+      "events_by_severity": {
+        "CRITICAL_POSITIVE": 945,
+        "NEUTRAL": 55,
+        "POSITIVE": 268
+      },
+      "events_by_type": {
+        "CT_PRIMARY_COMPLETION": 532,
+        "CT_RESULTS_POSTED": 55,
+        "CT_STUDY_COMPLETION": 268,
+        "DATA_READOUT": 392,
+        "FDA_PDUFA_DATE": 21
+      },
+      "events_total": 1268,
+      "tickers_with_events": 259
+    },
+    "module_4": {
+      "diagnostic_counts": {
+        "date_coverage_pct": 100.0,
+        "date_coverage_warning": null,
+        "no_date_excluded": 0,
+        "pit_fields_used": {
+          "first_posted": 18580
+        },
+        "pit_filtered": 0,
+        "scored": 341,
+        "total_trials": 18580,
+        "total_trials_raw": 18580,
+        "total_trials_unique": 18580,
+        "trials_with_dates": 18580
+      },
+      "scored_count": 341
+    },
+    "module_5": {
+      "degraded_components": [],
+      "excluded_count": 8,
+      "health_errors": [],
+      "health_warnings": [
+        "INFO: momentum breakdown - missing:4, low_conf:0, applied[neg:123, pos:102, neutral:90] | windows[20d:0, 60d:315, 120d:0] | coverage=315/319 (98.7%), avg_weight=0.015",
+        "INFO: momentum stable metrics - computable:315, meaningful:315, coverage_applied:315/319, strong:281, strong_and_effective:281, sources[prices:315, 13f:0]"
+      ],
+      "ranked_count": 319,
+      "run_status": "OK"
+    }
+  },
+  "pipeline_summary": {
+    "active_universe": 327,
+    "catalyst_events": 1268,
+    "clinical_activity_filter": {
+      "enabled": true,
+      "excluded_count": 14,
+      "exempted_count": 25,
+      "min_phase": "preclinical",
+      "min_trials": 1
+    },
+    "excluded": 12,
+    "final_ranked": 319,
+    "morningstar_coverage": 321,
+    "morningstar_fv_coverage": "97.9%",
+    "pos_confidence_distribution": {
+      "high": 195,
+      "low": 95,
+      "medium": 37
+    },
+    "pos_effective_coverage": "91.7%",
+    "pos_indication_coverage": "97.6%",
+    "regime": "BULL",
+    "regime_confidence": "0.70",
+    "severe_negatives": 0,
+    "short_interest_coverage": "98.8%",
+    "total_evaluated": 353
+  },
+  "run_metadata": {
+    "as_of_date": "2026-02-07",
+    "cli_arguments": {
+      "catalyst_decay": "step",
+      "catalyst_half_life_days": 30,
+      "catalyst_window": "15-45",
+      "catalyst_window_preset": "standard",
+      "diagnostics": "full",
+      "enable_coinvest": true,
+      "enable_enhancements": true,
+      "enable_short_interest": true,
+      "enable_smart_money": false,
+      "log_level": "INFO",
+      "min_component_coverage": null,
+      "min_component_coverage_mode": "applied",
+      "smart_money_source": "auto"
+    },
+    "orchestrator_version": "1.6.0"
+  },
+  "schema_version": "1.0.0"
+}
