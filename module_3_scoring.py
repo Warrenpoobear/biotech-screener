@@ -772,6 +772,13 @@ def _compute_next_catalyst(
     """
     Compute next catalyst date from events.
 
+    For range events (event_date_end set) where as_of_date is inside the range,
+    effective_days_until returns 0.  However, days_until=0 downstream is treated
+    as "catalyst today" which inflates the decay/window signal for broad date
+    ranges (e.g. "H1 2026 data readout").  To fix this, when the nearest event
+    is a range event with eff_days=0, we use the remaining days to range end
+    instead, giving a meaningful distance to the latest possible catalyst date.
+
     Returns:
         (next_date_iso, days_until, event_type)
     """
@@ -782,6 +789,20 @@ def _compute_next_catalyst(
         if eff_days is not None and eff_days >= 0:
             eff_d = effective_event_date(event, as_of_date)
             if eff_d is not None:
+                # For range events where we're inside the window (eff_days=0),
+                # use remaining days to range end instead of 0.
+                # This prevents broad date ranges from being treated as
+                # "catalyst today" and ensures concrete future events win
+                # the min() selection when they are closer.
+                if eff_days == 0 and event.event_date_end:
+                    try:
+                        end_d = date.fromisoformat(event.event_date_end)
+                        remaining = (end_d - as_of_date).days
+                        if remaining > 0:
+                            eff_days = remaining
+                            eff_d = end_d
+                    except (ValueError, TypeError):
+                        pass
                 future_events.append((eff_days, eff_d, event))
 
     if not future_events:
@@ -790,6 +811,7 @@ def _compute_next_catalyst(
     # Find the nearest event (by effective days)
     _, next_date, nearest_event = min(future_events, key=lambda x: x[0])
     days_until = (next_date - as_of_date).days
+
     event_type = nearest_event.event_type.value if nearest_event.event_type else None
 
     return (next_date.isoformat(), days_until, event_type)

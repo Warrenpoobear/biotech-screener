@@ -1,7 +1,7 @@
 {
   "component_coverage": {
-    "catalyst": "0.5548589341692789968652037618",
-    "catalyst_raw": "0.7836990595611285266457680251",
+    "catalyst": "0.4827586206896551724137931034",
+    "catalyst_raw": "0.7460815047021943573667711599",
     "market_data": "0",
     "momentum": "0.9874608150470219435736677116",
     "pos": "1",
@@ -11,12 +11,12 @@
   "enhancement_diagnostics": {
     "dilution_risk": {
       "data_quality_distribution": {
-        "FULL": 103,
+        "FULL": 218,
         "MINIMAL": 0,
-        "NONE": 224,
+        "NONE": 109,
         "PARTIAL": 0
       },
-      "error_count": 224,
+      "error_count": 109,
       "high_risk_tickers": [
         "ABOS",
         "NAUT",
@@ -28,11 +28,11 @@
       "risk_distribution": {
         "HIGH_RISK": 6,
         "LOW_RISK": 1,
-        "MEDIUM_RISK": 5,
-        "NO_RISK": 91,
-        "UNKNOWN": 224
+        "MEDIUM_RISK": 7,
+        "NO_RISK": 204,
+        "UNKNOWN": 109
       },
-      "success_count": 103,
+      "success_count": 218,
       "total_scored": 327
     },
     "pos": {
@@ -96,7 +96,7 @@
   "gating_analysis": {
     "confidence_gated_tickers": {},
     "gated_component_counts": {
-      "catalyst": 69,
+      "catalyst": 81,
       "financial": 5,
       "momentum": 4,
       "pos": 26,

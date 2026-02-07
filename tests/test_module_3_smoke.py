@@ -115,11 +115,11 @@ class TestStatusChangeDetection:
         events = event_detector.detect_events(current, sample_prior_record, as_of_date)
 
         assert len(events) == 1
-        assert events[0].event_type == EventType.CT_STATUS_SEVERE_NEG
+        assert events[0].event_type == EventType.CT_TRIAL_TERMINATED
         assert events[0].direction == 'NEG'
         assert events[0].impact == 3
-        assert 'terminal negative' in events[0].confidence_reason.lower()
-        assert events[0].event_rule_id == "M3_DIFF_CT_STATUS_SEVERE_NEG"
+        assert 'terminated' in events[0].confidence_reason.lower()
+        assert events[0].event_rule_id == "M3_DIFF_CT_TRIAL_TERMINATED"
 
     def test_status_upgrade(self, event_detector, as_of_date):
         """Status upgrade should trigger positive event"""
@@ -180,9 +180,9 @@ class TestStatusChangeDetection:
 
         events = event_detector.detect_events(current, prior, as_of_date)
 
-        # SUSPENDED triggers CT_STATUS_SEVERE_NEG, not just DOWNGRADE
+        # SUSPENDED triggers CT_TRIAL_SUSPENDED (specific severe negative type)
         assert len(events) == 1
-        assert events[0].event_type == EventType.CT_STATUS_SEVERE_NEG
+        assert events[0].event_type == EventType.CT_TRIAL_SUSPENDED
         assert events[0].direction == 'NEG'
 
 
