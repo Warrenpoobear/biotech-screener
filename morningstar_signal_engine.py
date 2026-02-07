@@ -928,6 +928,7 @@ class MorningstarSignalEngine:
         roic = _to_decimal(record.get("STA4Z"))
         ps_ratio = _to_decimal(record.get("HS05U"))
         pe_ratio = _to_decimal(record.get("HS05X"))
+        eps_ttm = _to_decimal(record.get("ST263"))  # EPS TTM (high coverage)
 
         # Strong commercial signals
         commercial_signals = 0
@@ -942,6 +943,10 @@ class MorningstarSignalEngine:
             commercial_signals += 1
         if pe_ratio is not None and pe_ratio > Decimal("0"):
             commercial_signals += 1  # Profitable enough for P/E
+
+        # Positive earnings strongly indicate commercial-stage (replaces low-coverage P/E reliance)
+        if eps_ttm is not None and eps_ttm > Decimal("0"):
+            commercial_signals += 1
 
         # Deeply negative margins are a strong dev-stage signal
         if net_margin is not None and net_margin < Decimal("-200"):
