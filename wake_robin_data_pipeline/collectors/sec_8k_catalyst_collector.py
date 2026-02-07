@@ -15,6 +15,7 @@ Rate limiting: 10 req/sec per SEC EDGAR fair access guidelines
 Cache: results cached per as_of_date
 """
 
+import hashlib
 import json
 import logging
 import os
@@ -129,6 +130,16 @@ DOWNSIDE_PATTERNS = [
         "HIGH",
     ),
 ]
+
+# Pattern version: hash of all extraction patterns so cache auto-invalidates when patterns change.
+_PATTERN_HASH_INPUT = repr(TIMING_PATTERNS) + repr(DOWNSIDE_PATTERNS)
+PATTERN_VERSION = hashlib.sha256(_PATTERN_HASH_INPUT.encode()).hexdigest()[:8]
+
+
+def _versioned_cache_path(cache_dir: Path, as_of_date: date) -> Path:
+    """Cache path that includes pattern version to invalidate on pattern changes."""
+    return cache_dir / f"8k_catalysts_{as_of_date.isoformat()}_{PATTERN_VERSION}.json"
+
 
 # Boilerplate markers: text after these is forward-looking disclaimer, not substance
 _BOILERPLATE_MARKERS = [
@@ -505,7 +516,7 @@ def collect_8k_timing_events(
     """
     cache_dir = Path(cache_dir)
     cache_dir.mkdir(parents=True, exist_ok=True)
-    cache_path = cache_dir / f"8k_catalysts_{as_of_date.isoformat()}.json"
+    cache_path = _versioned_cache_path(cache_dir, as_of_date)
 
     # Check cache
     if cache_path.exists():

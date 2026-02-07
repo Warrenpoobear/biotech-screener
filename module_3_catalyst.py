@@ -513,6 +513,10 @@ def convert_sec_8k_to_v2(
     try:
         event_type = EventType(event_type_str)
     except ValueError:
+        logger.warning(
+            "SEC 8-K: unknown event_type '%s' for %s, dropping event",
+            event_type_str, ticker,
+        )
         return None
 
     severity = EVENT_SEVERITY_MAP.get(event_type, EventSeverity.NEUTRAL)
@@ -1458,7 +1462,15 @@ def compute_module_3_catalyst(
         logger.debug("SEC 8-K source off (set enable_sec_8k_catalysts='cache_only' or 'live')")
     else:
         sec_8k_events = []
-        sec_cache_path = Path(config.sec_8k_cache_dir) / f"8k_catalysts_{as_of_date.isoformat()}.json"
+        # Use versioned cache path so pattern changes auto-invalidate
+        try:
+            from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import (
+                _versioned_cache_path as _sec_versioned_path,
+            )
+            sec_cache_path = _sec_versioned_path(Path(config.sec_8k_cache_dir), as_of_date)
+        except ImportError:
+            # Fallback if collector not available (cache_only mode without collector installed)
+            sec_cache_path = Path(config.sec_8k_cache_dir) / f"8k_catalysts_{as_of_date.isoformat()}.json"
 
         if _sec_mode == "cache_only":
             if sec_cache_path.exists():
