@@ -198,6 +198,9 @@ class MorningstarSignalEngine:
     # Dev-stage regime: metrics that require commercial operations
     COMMERCIAL_ONLY_SIGNALS = {"capital_efficiency", "growth_quality", "moat_quality"}
 
+    # Liquidity flag threshold (avg daily volume, 1-year, from ST150)
+    LOW_LIQUIDITY_THRESHOLD = 100_000
+
     def __init__(self):
         """Initialize the Morningstar signal engine."""
         self._data: Dict[str, Dict[str, str]] = {}
@@ -289,6 +292,11 @@ class MorningstarSignalEngine:
             flags.append("ms_regime_development")
         else:
             flags.append("ms_regime_commercial")
+
+        # Liquidity flag (ST150 = Avg Daily Volume 1 Yr, 100% coverage)
+        avg_volume = _to_decimal(record.get("ST150"))
+        if avg_volume is not None and avg_volume < Decimal(str(self.LOW_LIQUIDITY_THRESHOLD)):
+            flags.append("ms_low_liquidity")
 
         # Resolve current_price: caller-provided > MS price history > None
         effective_price = current_price
@@ -383,6 +391,7 @@ class MorningstarSignalEngine:
             "regime": regime,
             "flags": flags,
             "data_coverage_pct": data_coverage,
+            "avg_daily_volume": str(avg_volume) if avg_volume is not None else None,
             "snapshot_date": self._snapshot_date,
         }
 
