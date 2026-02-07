@@ -975,6 +975,100 @@ def _convert_holdings_to_coinvest(
     return coinvest_signals
 
 
+def enrich_volatility_from_morningstar_prices(
+    price_history_path: Path,
+    market_data_by_ticker: Dict[str, Dict],
+    min_trading_days: int = 60,
+) -> int:
+    """
+    Compute annualized volatility from Morningstar daily close prices (HS377).
+
+    Uses std(daily_log_returns) * sqrt(252) for each ticker with sufficient
+    price history.  Injects ``volatility_252d`` into market_data_by_ticker
+    so that Module 5's ``compute_volatility_adjustment`` receives real data.
+
+    Args:
+        price_history_path: Path to morningstar_price_history.json
+        market_data_by_ticker: Dict to enrich (modified in place)
+        min_trading_days: Minimum observations required (default 60)
+
+    Returns:
+        Number of tickers enriched
+    """
+    import json as _json
+    import math
+
+    try:
+        with open(price_history_path, "r", encoding="utf-8") as fh:
+            raw = _json.load(fh)
+    except (OSError, ValueError):
+        return 0
+
+    records = raw.get("records", {})
+    enriched = 0
+
+    for ticker_key, ticker_data in records.items():
+        if ticker_key == "metadata":
+            continue
+
+        ticker_upper = ticker_key.upper()
+        if ticker_upper not in market_data_by_ticker:
+            continue
+
+        # Already has volatility_252d (e.g. from enrichment script)
+        if market_data_by_ticker[ticker_upper].get("volatility_252d") is not None:
+            enriched += 1
+            continue
+
+        # Extract HS377 daily close time-series
+        hs377 = ticker_data.get("HS377")
+        if not hs377:
+            continue
+        if isinstance(hs377, dict):
+            ts = hs377.get("time_series", [])
+        elif isinstance(hs377, list) and len(hs377) == 1 and isinstance(hs377[0], tuple):
+            # Legacy tuple format: [("time_series", [...])]
+            ts = hs377[0][1] if hs377[0][0] == "time_series" else []
+        else:
+            ts = []
+
+        if len(ts) < min_trading_days + 1:
+            continue
+
+        # Parse close prices (sorted by date ascending in source)
+        closes = []
+        for point in ts:
+            val = point.get("value") if isinstance(point, dict) else None
+            if val is not None:
+                try:
+                    closes.append(float(val))
+                except (ValueError, TypeError):
+                    continue
+
+        if len(closes) < min_trading_days + 1:
+            continue
+
+        # Daily log-returns
+        returns = []
+        for i in range(1, len(closes)):
+            if closes[i - 1] > 0 and closes[i] > 0:
+                returns.append(math.log(closes[i] / closes[i - 1]))
+
+        if len(returns) < min_trading_days:
+            continue
+
+        # Annualize: std(daily_returns) * sqrt(252)
+        mean_r = sum(returns) / len(returns)
+        variance = sum((r - mean_r) ** 2 for r in returns) / len(returns)
+        std_dev = math.sqrt(variance)
+        annualized_vol = std_dev * math.sqrt(252)
+
+        market_data_by_ticker[ticker_upper]["volatility_252d"] = round(annualized_vol, 6)
+        enriched += 1
+
+    return enriched
+
+
 def compute_momentum_from_price_history(
     price_history_path: Path,
     as_of_date: str,
@@ -2464,6 +2558,20 @@ def run_screening_pipeline(
             logger.warning(f"Blacklist validation: {len(blacklist_warnings)} conflict(s)")
             for bw in blacklist_warnings:
                 logger.warning(f"  {bw}")
+
+    # Compute annualized volatility from Morningstar daily prices (HS377)
+    # This enriches market_data_by_ticker with volatility_252d for Module 5's vol adjustment
+    ms_price_path = data_dir / "morningstar_price_history.json"
+    if ms_price_path.exists() and market_data_by_ticker:
+        vol_enriched = enrich_volatility_from_morningstar_prices(
+            price_history_path=ms_price_path,
+            market_data_by_ticker=market_data_by_ticker,
+        )
+        if vol_enriched > 0:
+            logger.info(f"  Volatility (252d) computed for {vol_enriched} tickers")
+    else:
+        if not ms_price_path.exists():
+            logger.info("  Morningstar price history not found, skipping volatility computation")
 
     # Compute momentum returns from price history
     # This enriches market_data_by_ticker with return_20d, return_60d, return_120d and XBI benchmarks

@@ -1,8 +1,8 @@
 {
   "component_coverage": {
     "catalyst": "0.4827586206896551724137931034",
-    "catalyst_raw": "0.7460815047021943573667711599",
-    "market_data": "0",
+    "catalyst_raw": "0.8087774294670846394984326019",
+    "market_data": "0.9811912225705329153605015674",
     "momentum": "0.9874608150470219435736677116",
     "pos": "1",
     "smart_money": "0.8244514106583072100313479624",
@@ -96,7 +96,7 @@
   "gating_analysis": {
     "confidence_gated_tickers": {},
     "gated_component_counts": {
-      "catalyst": 81,
+      "catalyst": 159,
       "financial": 5,
       "momentum": 4,
       "pos": 26,
@@ -168,7 +168,7 @@
       "excluded_count": 8,
       "health_errors": [],
       "health_warnings": [
-        "INFO: momentum breakdown - missing:4, low_conf:0, applied[neg:123, pos:102, neutral:90] | windows[20d:0, 60d:315, 120d:0] | coverage=315/319 (98.7%), avg_weight=0.015",
+        "INFO: momentum breakdown - missing:4, low_conf:0, applied[neg:123, pos:102, neutral:90] | windows[20d:0, 60d:315, 120d:0] | coverage=315/319 (98.7%), avg_weight=0.016",
         "INFO: momentum stable metrics - computable:315, meaningful:315, coverage_applied:315/319, strong:281, strong_and_effective:281, sources[prices:315, 13f:0]"
       ],
       "ranked_count": 319,
