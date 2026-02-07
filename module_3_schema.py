@@ -230,6 +230,14 @@ EVENT_SEVERITY_MAP: Dict[EventType, EventSeverity] = {
     EventType.SAFETY_SIGNAL: EventSeverity.NEGATIVE,
 }
 
+_missing_sev = [t for t in EventType if t not in EVENT_SEVERITY_MAP]
+if _missing_sev:
+    raise RuntimeError(
+        f"EVENT_SEVERITY_MAP is missing entries for: "
+        f"{[t.value for t in _missing_sev]}. "
+        f"Add them to EVENT_SEVERITY_MAP in module_3_schema.py."
+    )
+
 
 # =============================================================================
 # EVENT TYPE → DEFAULT CONFIDENCE
@@ -286,6 +294,14 @@ EVENT_DEFAULT_CONFIDENCE: Dict[EventType, ConfidenceLevel] = {
 
     EventType.UNKNOWN: ConfidenceLevel.LOW,
 }
+
+_missing_conf = [t for t in EventType if t not in EVENT_DEFAULT_CONFIDENCE]
+if _missing_conf:
+    raise RuntimeError(
+        f"EVENT_DEFAULT_CONFIDENCE is missing entries for: "
+        f"{[t.value for t in _missing_conf]}. "
+        f"Add them to EVENT_DEFAULT_CONFIDENCE in module_3_schema.py."
+    )
 
 
 # =============================================================================
@@ -376,6 +392,17 @@ EVENT_TYPE_WEIGHT: Dict[EventType, Decimal] = {
     EventType.SAFETY_SIGNAL: Decimal("0.0"),
     EventType.UNKNOWN: Decimal("0.0"),
 }
+
+# Startup assertion: every EventType must have a weight mapping.
+# Prevents silent scoring distortion when new event types are added to the enum
+# but forgotten in EVENT_TYPE_WEIGHT (which would default to Decimal("1.0")).
+_missing_weights = [t for t in EventType if t not in EVENT_TYPE_WEIGHT]
+if _missing_weights:
+    raise RuntimeError(
+        f"EVENT_TYPE_WEIGHT is missing entries for: "
+        f"{[t.value for t in _missing_weights]}. "
+        f"Add them to EVENT_TYPE_WEIGHT in module_3_schema.py."
+    )
 
 
 # =============================================================================
