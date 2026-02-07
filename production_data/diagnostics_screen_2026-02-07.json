@@ -129,18 +129,22 @@
     "module_3": {
       "events_by_severity": {
         "CRITICAL_POSITIVE": 945,
+        "NEGATIVE": 52,
         "NEUTRAL": 55,
-        "POSITIVE": 268
+        "POSITIVE": 268,
+        "SEVERE_NEGATIVE": 5
       },
       "events_by_type": {
+        "CLINICAL_HOLD": 5,
         "CT_PRIMARY_COMPLETION": 532,
         "CT_RESULTS_POSTED": 55,
         "CT_STUDY_COMPLETION": 268,
         "DATA_READOUT": 392,
-        "FDA_PDUFA_DATE": 21
+        "FDA_PDUFA_DATE": 21,
+        "SAFETY_SIGNAL": 52
       },
-      "events_total": 1268,
-      "tickers_with_events": 259
+      "events_total": 1325,
+      "tickers_with_events": 264
     },
     "module_4": {
       "diagnostic_counts": {
@@ -173,7 +177,7 @@
   },
   "pipeline_summary": {
     "active_universe": 327,
-    "catalyst_events": 1268,
+    "catalyst_events": 1325,
     "clinical_activity_filter": {
       "enabled": true,
       "excluded_count": 14,
@@ -194,7 +198,7 @@
     "pos_indication_coverage": "97.6%",
     "regime": "BULL",
     "regime_confidence": "0.70",
-    "severe_negatives": 0,
+    "severe_negatives": 5,
     "short_interest_coverage": "98.8%",
     "total_evaluated": 353
   },
