@@ -63,6 +63,7 @@ from catalyst_diagnostics import (
     compute_delta_diagnostics,
     check_trial_records_staleness,
     detect_calendar_catalysts,
+    detect_readout_window_catalysts,
     summarize_calendar_catalysts,
     DeltaDiagnostics,
     StalenessResult,
@@ -119,6 +120,17 @@ class Module3Config:
         self.enable_corporate_catalysts = True
         self.corporate_catalysts_file = "corporate_catalysts.json"
 
+        # FDA ADCOM config
+        # Modes: "cache_only" (default) = load from cache if present, no network
+        #        "live"       = fetch from web, write cache, merge
+        #        "off"        = skip entirely
+        self.enable_fda_adcom: str = "cache_only"
+        self.fda_adcom_cache_dir = Path("cache/fda")
+
+        # SEC 8-K catalyst config (same modes as above)
+        self.enable_sec_8k_catalysts: str = "cache_only"
+        self.sec_8k_cache_dir = Path("cache/sec/8k_catalysts")
+
     @classmethod
     def from_dict(cls, config_dict: Dict[str, Any]) -> 'Module3Config':
         """Create config from dict"""
@@ -146,6 +158,30 @@ class Module3Config:
         if 'corporate_catalysts_file' in config_dict:
             config.corporate_catalysts_file = config_dict['corporate_catalysts_file']
 
+        # FDA ADCOM settings (accept bool for backwards compat: True→"live", False→"off")
+        if 'enable_fda_adcom' in config_dict:
+            val = config_dict['enable_fda_adcom']
+            if val is True:
+                config.enable_fda_adcom = "live"
+            elif val is False:
+                config.enable_fda_adcom = "off"
+            else:
+                config.enable_fda_adcom = str(val)
+        if 'fda_adcom_cache_dir' in config_dict:
+            config.fda_adcom_cache_dir = Path(config_dict['fda_adcom_cache_dir'])
+
+        # SEC 8-K settings (same bool compat)
+        if 'enable_sec_8k_catalysts' in config_dict:
+            val = config_dict['enable_sec_8k_catalysts']
+            if val is True:
+                config.enable_sec_8k_catalysts = "live"
+            elif val is False:
+                config.enable_sec_8k_catalysts = "off"
+            else:
+                config.enable_sec_8k_catalysts = str(val)
+        if 'sec_8k_cache_dir' in config_dict:
+            config.sec_8k_cache_dir = Path(config_dict['sec_8k_cache_dir'])
+
         return config
 
 
@@ -155,12 +191,17 @@ class Module3Config:
 
 def convert_calendar_catalyst_to_v2(
     calendar_catalyst: CalendarCatalyst,
+    as_of_date: Optional[date] = None,
 ) -> CatalystEventV2:
     """
     Convert CalendarCatalyst (forward-looking) to CatalystEventV2.
 
     Maps calendar event types to appropriate EventType enum values.
     Calendar catalysts represent upcoming events detected from trial date fields.
+
+    PIT safety: disclosed_at is clipped to as_of_date when the event date is
+    in the future (the event is "known" from the current snapshot, not from
+    the future date itself).
     """
     # Map calendar event types to EventType enum
     CALENDAR_EVENT_TYPE_MAP = {
@@ -168,6 +209,7 @@ def convert_calendar_catalyst_to_v2(
         'UPCOMING_SCD': EventType.CT_STUDY_COMPLETION,
         'RESULTS_DUE': EventType.CT_RESULTS_POSTED,
         'RESULTS_RECENT': EventType.CT_RESULTS_POSTED,
+        'READOUT_WINDOW': EventType.DATA_READOUT,
     }
 
     event_type = CALENDAR_EVENT_TYPE_MAP.get(
@@ -193,18 +235,48 @@ def convert_calendar_catalyst_to_v2(
         du_i = int(du)
         rel = f"{abs(du_i)}d_ago" if du_i < 0 else f"{du_i}d_ahead"
 
+    # Determine date range and precision for readout window events
+    event_date_end = None
+    date_precision = "DAY"
+    tags = ()
+    disclosed_at = calendar_catalyst.target_date.isoformat()
+
+    if calendar_catalyst.event_type == 'READOUT_WINDOW':
+        evidence_fields = calendar_catalyst.evidence.fields
+        event_date_val = evidence_fields.get('window_start', calendar_catalyst.target_date.isoformat())
+        event_date_end = evidence_fields.get('window_end')
+        date_precision = "RANGE"
+        tags = ("readout_window",)
+        # PIT safety: disclosed_at = PCD (when it became known), not as_of_date
+        disclosed_at = evidence_fields.get(
+            'primary_completion_date', calendar_catalyst.target_date.isoformat()
+        )
+    else:
+        event_date_val = calendar_catalyst.target_date.isoformat()
+
+    # PIT safety: clip disclosed_at to as_of_date — a future event date is
+    # "known" from the current snapshot, not from the future date itself.
+    if as_of_date is not None:
+        as_of_str = as_of_date.isoformat()
+        if disclosed_at > as_of_str:
+            disclosed_at = as_of_str
+            tags = tuple(sorted(set(tags) | {"disclosed_at_clipped"}))
+
     return CatalystEventV2(
         ticker=calendar_catalyst.ticker,
         nct_id=calendar_catalyst.nct_id,
         event_type=event_type,
         event_severity=severity,
-        event_date=calendar_catalyst.target_date.isoformat(),
+        event_date=event_date_val,
         field_changed=f"calendar_{calendar_catalyst.event_type.lower()}",
         prior_value=None,
         new_value=rel,
         source="CTGOV_CALENDAR",
         confidence=confidence,
-        disclosed_at=calendar_catalyst.target_date.isoformat(),  # Use target date as disclosed_at
+        disclosed_at=disclosed_at,
+        event_date_end=event_date_end,
+        date_precision=date_precision,
+        tags=tags,
     )
 
 
@@ -382,6 +454,102 @@ def summarize_corporate_catalysts(events: List[Dict[str, Any]]) -> Dict[str, Any
     }
 
 
+def convert_fda_adcom_to_v2(
+    event: Dict[str, Any],
+    as_of_date: date,
+) -> Optional[CatalystEventV2]:
+    """
+    Convert FDA ADCOM event dict to CatalystEventV2.
+
+    ADCOM dates are official → HIGH confidence.
+    """
+    ticker = event.get('ticker')
+    event_date_str = event.get('event_date')
+    if not ticker or not event_date_str:
+        return None
+
+    drug_name = event.get('drug_name', '')
+    event_name = event.get('event_name', f"FDA_ADCOM: {drug_name}")
+
+    try:
+        event_date = date.fromisoformat(event_date_str)
+        days_until = (event_date - as_of_date).days
+    except ValueError:
+        days_until = 0
+
+    new_value = f"{days_until}d_ahead: {event_name}" if drug_name else f"{days_until}d_ahead"
+
+    return CatalystEventV2(
+        ticker=ticker,
+        nct_id=f"FDA_ADCOM_{ticker}_{event_date_str}",
+        event_type=EventType.FDA_ADCOM,
+        event_severity=EVENT_SEVERITY_MAP.get(EventType.FDA_ADCOM, EventSeverity.CRITICAL_POSITIVE),
+        event_date=event_date_str,
+        field_changed="fda_adcom",
+        prior_value=None,
+        new_value=new_value,
+        source="FDA_ADCOM_CALENDAR",
+        confidence=ConfidenceLevel.HIGH,
+        disclosed_at=event.get('disclosed_at', as_of_date.isoformat()),
+        tags=tuple(event.get('tags', [])),
+    )
+
+
+def convert_sec_8k_to_v2(
+    event: Dict[str, Any],
+    as_of_date: date,
+) -> Optional[CatalystEventV2]:
+    """
+    Convert SEC 8-K timing event dict to CatalystEventV2.
+
+    Preserves date_precision, event_date_end, and uses filing date as disclosed_at.
+    """
+    ticker = event.get('ticker')
+    event_type_str = event.get('event_type')
+    event_date_str = event.get('event_date')
+    if not ticker or not event_type_str or not event_date_str:
+        return None
+
+    try:
+        event_type = EventType(event_type_str)
+    except ValueError:
+        return None
+
+    severity = EVENT_SEVERITY_MAP.get(event_type, EventSeverity.POSITIVE)
+
+    # Map confidence string to ConfidenceLevel
+    conf_str = event.get('confidence', 'MED').upper()
+    confidence = {'HIGH': ConfidenceLevel.HIGH, 'LOW': ConfidenceLevel.LOW}.get(
+        conf_str, ConfidenceLevel.MED
+    )
+
+    try:
+        event_date = date.fromisoformat(event_date_str)
+        days_until = (event_date - as_of_date).days
+    except ValueError:
+        days_until = 0
+
+    event_name = event.get('event_name', event_type_str)
+    new_value = f"{days_until}d_ahead: {event_name}"
+
+    return CatalystEventV2(
+        ticker=ticker,
+        nct_id=f"SEC8K_{event_type_str}_{ticker}_{event_date_str}",
+        event_type=event_type,
+        event_severity=severity,
+        event_date=event_date_str,
+        field_changed=f"sec_8k_{event_type_str.lower()}",
+        prior_value=None,
+        new_value=new_value,
+        source="SEC_8K_FILING",
+        confidence=confidence,
+        disclosed_at=event.get('disclosed_at', as_of_date.isoformat()),
+        event_date_end=event.get('event_date_end'),
+        date_precision=event.get('date_precision', 'DAY'),
+        tags=tuple(event.get('tags', [])),
+    )
+
+
 def convert_legacy_event_to_v2(
     ticker: str,
     legacy_event: CatalystEvent,
@@ -469,6 +637,97 @@ def dedup_events(events: List[CatalystEventV2]) -> Tuple[List[CatalystEventV2], 
             deduped.append(event)
 
     return (deduped, len(events) - len(deduped))
+
+
+def fuzzy_dedup_events(
+    events: List[CatalystEventV2],
+    date_tolerance_days: int = 14,
+) -> Tuple[List[CatalystEventV2], int]:
+    """
+    Fuzzy deduplication: merge events with same (ticker, event_type) and
+    event_date within ±date_tolerance_days.
+
+    When merging, keeps the higher-confidence event and unions tags.
+
+    Returns:
+        (deduped_events, count_merged)
+    """
+    if not events:
+        return (events, 0)
+
+    # Confidence ordering for comparison
+    CONF_RANK = {ConfidenceLevel.HIGH: 3, ConfidenceLevel.MED: 2, ConfidenceLevel.LOW: 1}
+
+    # Group by (ticker, event_type)
+    from collections import defaultdict
+    groups: Dict[Tuple[str, str], List[CatalystEventV2]] = defaultdict(list)
+    for event in events:
+        key = (event.ticker, event.event_type.value)
+        groups[key].append(event)
+
+    result = []
+    total_merged = 0
+
+    for key, group in groups.items():
+        # Sort by event_date within group
+        group.sort(key=lambda e: e.event_date or "9999-99-99")
+
+        merged_group: List[CatalystEventV2] = []
+        for event in group:
+            if not event.event_date:
+                merged_group.append(event)
+                continue
+
+            # Check if this event should merge with the last in merged_group
+            if merged_group and merged_group[-1].event_date:
+                try:
+                    last_date = date.fromisoformat(merged_group[-1].event_date)
+                    curr_date = date.fromisoformat(event.event_date)
+                    delta = abs((curr_date - last_date).days)
+                except ValueError:
+                    delta = date_tolerance_days + 1  # Don't merge on parse failure
+
+                if delta <= date_tolerance_days:
+                    # Merge: keep higher confidence, union tags
+                    existing = merged_group[-1]
+                    existing_rank = CONF_RANK.get(existing.confidence, 0)
+                    new_rank = CONF_RANK.get(event.confidence, 0)
+
+                    if new_rank > existing_rank:
+                        winner = event
+                        loser = existing
+                    else:
+                        winner = existing
+                        loser = event
+
+                    # Union tags
+                    merged_tags = tuple(sorted(set(winner.tags) | set(loser.tags)))
+
+                    # Replace last event with merged version
+                    merged_group[-1] = CatalystEventV2(
+                        ticker=winner.ticker,
+                        nct_id=winner.nct_id,
+                        event_type=winner.event_type,
+                        event_severity=winner.event_severity,
+                        event_date=winner.event_date,
+                        field_changed=winner.field_changed,
+                        prior_value=winner.prior_value,
+                        new_value=winner.new_value,
+                        source=winner.source,
+                        confidence=winner.confidence,
+                        disclosed_at=winner.disclosed_at,
+                        event_date_end=winner.event_date_end,
+                        date_precision=winner.date_precision,
+                        tags=merged_tags,
+                    )
+                    total_merged += 1
+                    continue
+
+            merged_group.append(event)
+
+        result.extend(merged_group)
+
+    return (result, total_merged)
 
 
 # ============================================================================
@@ -887,6 +1146,13 @@ def compute_module_3_catalyst(
         # =========================================================================
         logger.info("Detecting calendar-based catalysts...")
         calendar_catalysts = detect_calendar_catalysts(current_snapshot, as_of_date)
+
+        # Readout window inference: PCD passed + no results → imminent readout
+        readout_catalysts = detect_readout_window_catalysts(current_snapshot, as_of_date)
+        calendar_catalysts.extend(readout_catalysts)
+        if readout_catalysts:
+            logger.info(f"Readout window catalysts: {len(readout_catalysts)} inferred events")
+
         calendar_summary = summarize_calendar_catalysts(calendar_catalysts)
         logger.info(f"Calendar catalysts: {calendar_summary['total_catalysts']} events "
                    f"across {calendar_summary['tickers_with_catalysts']} tickers")
@@ -1038,7 +1304,7 @@ def compute_module_3_catalyst(
     
         for calendar_catalyst in calendar_catalysts:
             ticker = calendar_catalyst.ticker
-            v2_event = convert_calendar_catalyst_to_v2(calendar_catalyst)
+            v2_event = convert_calendar_catalyst_to_v2(calendar_catalyst, as_of_date=as_of_date)
     
             if ticker not in events_by_ticker_v2:
                 events_by_ticker_v2[ticker] = []
@@ -1116,9 +1382,158 @@ def compute_module_3_catalyst(
         else:
             logger.debug("No corporate catalysts to merge (file not found or empty)")
 
+    # =========================================================================
+    # MERGE FDA ADCOM EVENTS INTO SCORING PIPELINE
+    # =========================================================================
+    _adcom_mode = config.enable_fda_adcom
+    if _adcom_mode == "off":
+        logger.debug("FDA ADCOM source off (set enable_fda_adcom='cache_only' or 'live')")
+    else:
+        adcom_events = []
+        adcom_cache_path = Path(config.fda_adcom_cache_dir) / f"adcom_calendar_{as_of_date.isoformat()}.json"
+
+        if _adcom_mode == "cache_only":
+            # Load from cache only — no network
+            if adcom_cache_path.exists():
+                try:
+                    with open(adcom_cache_path, 'r', encoding='utf-8') as f:
+                        adcom_events = json.load(f)
+                    logger.info(f"FDA ADCOM: loaded {len(adcom_events)} events from cache")
+                except Exception as e:
+                    logger.warning(f"FDA ADCOM cache read error: {e}")
+            else:
+                logger.debug(f"FDA ADCOM: no cache for {as_of_date} (run warm_caches.py to populate)")
+        elif _adcom_mode == "live":
+            try:
+                from wake_robin_data_pipeline.collectors.fda_adcom_collector import (
+                    collect_fda_adcom_events,
+                    build_product_ticker_map,
+                )
+                product_map = build_product_ticker_map(data_dir)
+                adcom_events = collect_fda_adcom_events(
+                    drug_to_ticker=product_map,
+                    as_of_date=as_of_date,
+                    cache_dir=config.fda_adcom_cache_dir,
+                )
+            except ImportError:
+                logger.debug("FDA ADCOM collector not available")
+            except Exception as e:
+                logger.warning(f"FDA ADCOM live collection error: {e}")
+
+        if adcom_events:
+            adcom_added = 0
+            adcom_tickers_added = 0
+            adcom_touched: Set[str] = set()
+            for adcom_event in adcom_events:
+                ticker = adcom_event.get('ticker')
+                if not ticker or ticker not in active_tickers:
+                    continue
+                v2_event = convert_fda_adcom_to_v2(adcom_event, as_of_date)
+                if v2_event is None:
+                    continue
+                if ticker not in events_by_ticker_v2:
+                    events_by_ticker_v2[ticker] = []
+                    adcom_tickers_added += 1
+                events_by_ticker_v2[ticker].append(v2_event)
+                adcom_touched.add(ticker)
+                adcom_added += 1
+
+            if adcom_added > 0:
+                adcom_deduped = 0
+                for ticker in sorted(adcom_touched):
+                    events_by_ticker_v2[ticker], deduped = dedup_events(events_by_ticker_v2[ticker])
+                    adcom_deduped += deduped
+                    events_by_ticker_v2[ticker] = sort_events_v2(events_by_ticker_v2[ticker])
+                total_deduped += adcom_deduped
+                total_events += adcom_added
+                logger.info(f"Merged {adcom_added} FDA ADCOM events "
+                           f"(new tickers: {adcom_tickers_added}, deduped: {adcom_deduped})")
+
+    # =========================================================================
+    # MERGE SEC 8-K CATALYST EVENTS INTO SCORING PIPELINE
+    # =========================================================================
+    _sec_mode = config.enable_sec_8k_catalysts
+    if _sec_mode == "off":
+        logger.debug("SEC 8-K source off (set enable_sec_8k_catalysts='cache_only' or 'live')")
+    else:
+        sec_8k_events = []
+        sec_cache_path = Path(config.sec_8k_cache_dir) / f"8k_catalysts_{as_of_date.isoformat()}.json"
+
+        if _sec_mode == "cache_only":
+            if sec_cache_path.exists():
+                try:
+                    with open(sec_cache_path, 'r', encoding='utf-8') as f:
+                        sec_8k_events = json.load(f)
+                    logger.info(f"SEC 8-K: loaded {len(sec_8k_events)} events from cache")
+                except Exception as e:
+                    logger.warning(f"SEC 8-K cache read error: {e}")
+            else:
+                logger.debug(f"SEC 8-K: no cache for {as_of_date} (run warm_caches.py to populate)")
+        elif _sec_mode == "live":
+            try:
+                from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import (
+                    collect_8k_timing_events,
+                )
+                universe_path = data_dir / "universe.json"
+                if universe_path.exists():
+                    with open(universe_path, 'r', encoding='utf-8') as f:
+                        universe_data = json.load(f)
+                    universe_entries = universe_data if isinstance(universe_data, list) else universe_data.get('tickers', [])
+                else:
+                    universe_entries = []
+
+                sec_8k_events = collect_8k_timing_events(
+                    universe=universe_entries,
+                    as_of_date=as_of_date,
+                    cache_dir=config.sec_8k_cache_dir,
+                )
+            except ImportError:
+                logger.debug("SEC 8-K catalyst collector not available")
+            except Exception as e:
+                logger.warning(f"SEC 8-K live collection error: {e}")
+
+        if sec_8k_events:
+            sec_added = 0
+            sec_tickers_added = 0
+            sec_touched: Set[str] = set()
+            for sec_event in sec_8k_events:
+                ticker = sec_event.get('ticker')
+                if not ticker or ticker not in active_tickers:
+                    continue
+                v2_event = convert_sec_8k_to_v2(sec_event, as_of_date)
+                if v2_event is None:
+                    continue
+                if ticker not in events_by_ticker_v2:
+                    events_by_ticker_v2[ticker] = []
+                    sec_tickers_added += 1
+                events_by_ticker_v2[ticker].append(v2_event)
+                sec_touched.add(ticker)
+                sec_added += 1
+
+            if sec_added > 0:
+                sec_deduped = 0
+                for ticker in sorted(sec_touched):
+                    events_by_ticker_v2[ticker], deduped = dedup_events(events_by_ticker_v2[ticker])
+                    sec_deduped += deduped
+                    events_by_ticker_v2[ticker] = sort_events_v2(events_by_ticker_v2[ticker])
+                total_deduped += sec_deduped
+                total_events += sec_added
+                logger.info(f"Merged {sec_added} SEC 8-K catalyst events "
+                           f"(new tickers: {sec_tickers_added}, deduped: {sec_deduped})")
+
     # Update total event count for combined diff + calendar + corporate events
     combined_tickers_with_events = len([t for t in events_by_ticker_v2 if events_by_ticker_v2[t]])
     logger.info(f"Total events for scoring: {total_events} across {combined_tickers_with_events} tickers")
+
+    # =========================================================================
+    # FUZZY DEDUP: Cross-source deduplication before scoring
+    # =========================================================================
+    total_fuzzy_merged = 0
+    for ticker in events_by_ticker_v2:
+        events_by_ticker_v2[ticker], merged = fuzzy_dedup_events(events_by_ticker_v2[ticker])
+        total_fuzzy_merged += merged
+    if total_fuzzy_merged > 0:
+        logger.info(f"Fuzzy dedup merged {total_fuzzy_merged} near-duplicate events")
 
     # Score events using new scoring system
     logger.info("Scoring events with vNext scorer...")
@@ -1132,6 +1547,7 @@ def compute_module_3_catalyst(
 
     # Update diagnostics with dedup count
     diagnostics.events_deduped = total_deduped
+    diagnostics.events_fuzzy_merged = total_fuzzy_merged
 
     # =========================================================================
     # MERGE ACTIVITY PROXY DATA INTO SUMMARIES

@@ -396,6 +396,7 @@ class EventRuleID:
     M3_CAL_SCD_270D = "M3_CAL_SCD_270D"
     M3_CAL_RESULTS_DUE = "M3_CAL_RESULTS_DUE"
     M3_CAL_RESULTS_RECENT = "M3_CAL_RESULTS_RECENT"
+    M3_CAL_READOUT_WINDOW = "M3_CAL_READOUT_WINDOW"
 
 
 @dataclass
@@ -613,6 +614,107 @@ def detect_calendar_catalysts(
                     ))
 
     # Sort by days_until for deterministic output
+    catalysts.sort(key=lambda c: (c.days_until, c.ticker, c.nct_id))
+
+    return catalysts
+
+
+def detect_readout_window_catalysts(
+    current_snapshot: StateSnapshot,
+    as_of_date: date,
+    min_days_after_pcd: int = 30,
+    max_days_after_pcd: int = 120,
+) -> List[CalendarCatalyst]:
+    """
+    Detect inferred data readout windows for trials where PCD has passed
+    but no results have been posted yet.
+
+    When a trial's primary_completion_date has passed but results_first_posted
+    is absent, a data readout is likely imminent (typically +30 to +120 days
+    after PCD). This provides coverage at zero API cost.
+
+    Args:
+        current_snapshot: Current trial state
+        as_of_date: Analysis date
+        min_days_after_pcd: Start of readout window (days after PCD)
+        max_days_after_pcd: End of readout window (days after PCD)
+
+    Returns:
+        List of readout window calendar catalysts
+    """
+    catalysts = []
+
+    for record in current_snapshot.records:
+        # Skip terminal negative trials
+        if record.overall_status.is_terminal_negative:
+            continue
+
+        # Skip if results already posted (no window to infer)
+        if record.results_first_posted:
+            continue
+
+        # Skip if no primary completion date
+        if record.primary_completion_date is None:
+            continue
+
+        days_since_pcd = (as_of_date - record.primary_completion_date).days
+
+        # PCD must have passed or be today
+        if days_since_pcd < 0:
+            continue
+
+        # Compute window boundaries
+        window_start = record.primary_completion_date + timedelta(days=min_days_after_pcd)
+        window_end = record.primary_completion_date + timedelta(days=max_days_after_pcd)
+
+        # Still within or before the readout window
+        if as_of_date > window_end:
+            continue
+
+        # Target date = midpoint of window
+        target_date = record.primary_completion_date + timedelta(
+            days=(min_days_after_pcd + max_days_after_pcd) // 2
+        )
+        days_until = (target_date - as_of_date).days
+
+        # Base confidence 0.50, boosted to 0.65 if PCD type is ACTUAL
+        if (record.primary_completion_type
+                and record.primary_completion_type.value == 'ACTUAL'):
+            confidence = 0.65
+            confidence_reason = "PCD confirmed ACTUAL, readout window inferred"
+        else:
+            confidence = 0.50
+            confidence_reason = "PCD estimated, readout window inferred"
+
+        rule_id = EventRuleID.M3_CAL_READOUT_WINDOW
+
+        catalysts.append(CalendarCatalyst(
+            ticker=record.ticker,
+            nct_id=record.nct_id,
+            event_type='READOUT_WINDOW',
+            target_date=target_date,
+            days_until=days_until,
+            window='READOUT',
+            confidence=confidence,
+            rule_id=rule_id,
+            evidence=EventEvidence(
+                rule_id=rule_id,
+                fields={
+                    'primary_completion_date': record.primary_completion_date.isoformat(),
+                    'primary_completion_type': (
+                        record.primary_completion_type.value
+                        if record.primary_completion_type else None
+                    ),
+                    'days_since_pcd': days_since_pcd,
+                    'window_start': window_start.isoformat(),
+                    'window_end': window_end.isoformat(),
+                },
+                confidence=confidence,
+                confidence_reason=confidence_reason,
+            ),
+        ))
+
+    # Sort for deterministic output
     catalysts.sort(key=lambda c: (c.days_until, c.ticker, c.nct_id))
 
     return catalysts

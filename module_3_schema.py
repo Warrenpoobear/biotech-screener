@@ -27,7 +27,7 @@ from typing import Optional, List, Dict, Any, Tuple
 # VERSION CONSTANTS
 # =============================================================================
 
-SCHEMA_VERSION = "m3catalyst_vnext_20260111"
+SCHEMA_VERSION = "m3catalyst_vnext_20260207"
 SCORE_VERSION = "m3score_vnext_20260111"
 
 # =============================================================================
@@ -372,6 +372,9 @@ class CatalystEventV2:
     source: str
     confidence: ConfidenceLevel
     disclosed_at: str  # ISO date string
+    event_date_end: Optional[str] = None   # ISO date, end of range (None = single date)
+    date_precision: str = "DAY"            # DAY | RANGE | QUARTER | HALF_YEAR
+    tags: tuple = ()                       # immutable tuple for frozen dataclass
 
     @property
     def event_id(self) -> str:
@@ -386,6 +389,7 @@ class CatalystEventV2:
             self.nct_id,
             self.event_type.value,
             self.event_date or "",
+            self.event_date_end or "",
             self.field_changed,
             self.prior_value or "",
             self.new_value or "",
@@ -414,6 +418,9 @@ class CatalystEventV2:
             "event_type": self.event_type.value,
             "event_severity": self.event_severity.value,
             "event_date": self.event_date,
+            "event_date_end": self.event_date_end,
+            "date_precision": self.date_precision,
+            "tags": list(self.tags),
             "field_changed": self.field_changed,
             "prior_value": self.prior_value,
             "new_value": self.new_value,
@@ -437,6 +444,9 @@ class CatalystEventV2:
             source=data["source"],
             confidence=ConfidenceLevel(data["confidence"]),
             disclosed_at=data["disclosed_at"],
+            event_date_end=data.get("event_date_end"),
+            date_precision=data.get("date_precision", "DAY"),
+            tags=tuple(data.get("tags", [])),
         )
 
 
@@ -675,24 +685,32 @@ class DiagnosticCounts:
     """Deterministic diagnostic counters."""
     events_detected_total: int = 0
     events_deduped: int = 0
+    events_fuzzy_merged: int = 0
     events_by_type: Dict[str, int] = field(default_factory=dict)
     events_by_confidence: Dict[str, int] = field(default_factory=dict)
     events_by_severity: Dict[str, int] = field(default_factory=dict)
     tickers_with_severe_negative: int = 0
     tickers_analyzed: int = 0
     tickers_with_events: int = 0
+    coverage_any_event: int = 0
+    coverage_actionable_180d: int = 0
+    coverage_high_conf_actionable: int = 0
 
     def to_dict(self) -> Dict[str, Any]:
         """Serialize with sorted keys for determinism."""
         return {
             "events_detected_total": self.events_detected_total,
             "events_deduped": self.events_deduped,
+            "events_fuzzy_merged": self.events_fuzzy_merged,
             "events_by_type": dict(sorted(self.events_by_type.items())),
             "events_by_confidence": dict(sorted(self.events_by_confidence.items())),
             "events_by_severity": dict(sorted(self.events_by_severity.items())),
             "tickers_with_severe_negative": self.tickers_with_severe_negative,
             "tickers_analyzed": self.tickers_analyzed,
             "tickers_with_events": self.tickers_with_events,
+            "coverage_any_event": self.coverage_any_event,
+            "coverage_actionable_180d": self.coverage_actionable_180d,
+            "coverage_high_conf_actionable": self.coverage_high_conf_actionable,
         }
 
 
@@ -704,6 +722,82 @@ def decimal_to_str(d: Decimal, places: int = 4) -> str:
     """Convert Decimal to string with fixed precision."""
     quantizer = Decimal(10) ** -places
     return str(d.quantize(quantizer, rounding=ROUND_HALF_UP))
+
+
+def effective_days_until(event: "CatalystEventV2", as_of_date: date) -> Optional[int]:
+    """
+    Compute effective days-until for an event, aware of date ranges.
+
+    For DAY precision: normal (event_date - as_of_date).days
+    For RANGE events (event_date_end set):
+      - before range start → start - as_of (positive, upcoming)
+      - inside range       → 0 (actionable now)
+      - after range end    → end - as_of (negative, past)
+
+    Returns:
+        Integer days (positive=future, 0=current, negative=past), or None
+        if event_date is missing/unparseable.
+    """
+    if not event.event_date:
+        return None
+
+    try:
+        start_d = date.fromisoformat(event.event_date)
+    except (ValueError, TypeError):
+        return None
+
+    # Simple single-date event
+    if not event.event_date_end or event.date_precision == "DAY":
+        return (start_d - as_of_date).days
+
+    # Range event
+    try:
+        end_d = date.fromisoformat(event.event_date_end)
+    except (ValueError, TypeError):
+        # Fallback to start date only
+        return (start_d - as_of_date).days
+
+    if as_of_date < start_d:
+        # Before range → days until start
+        return (start_d - as_of_date).days
+    elif as_of_date <= end_d:
+        # Inside range → actionable now
+        return 0
+    else:
+        # After range → negative (past)
+        return (end_d - as_of_date).days
+
+
+def effective_event_date(event: "CatalystEventV2", as_of_date: date) -> Optional[date]:
+    """
+    Return the most relevant date for an event, range-aware.
+
+    For RANGE events inside the window, returns as_of_date (current).
+    For RANGE events before the window, returns event_date (start).
+    For DAY events, returns event_date.
+    """
+    if not event.event_date:
+        return None
+
+    try:
+        start_d = date.fromisoformat(event.event_date)
+    except (ValueError, TypeError):
+        return None
+
+    if not event.event_date_end or event.date_precision == "DAY":
+        return start_d
+
+    try:
+        end_d = date.fromisoformat(event.event_date_end)
+    except (ValueError, TypeError):
+        return start_d
+
+    if as_of_date < start_d:
+        return start_d
+    elif as_of_date <= end_d:
+        return as_of_date  # Currently inside the range
+    else:
+        return end_d
 
 
 def compute_catalyst_window_bucket(days: Optional[int]) -> CatalystWindowBucket:

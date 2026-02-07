@@ -35,6 +35,8 @@ from module_3_schema import (
     EVENT_TYPE_WEIGHT,
     compute_catalyst_window_bucket,
     decimal_to_str,
+    effective_days_until,
+    effective_event_date,
 )
 
 # Configure logging
@@ -210,23 +212,18 @@ def compute_bucket_proximity_score(
     if not events:
         return (PROXIMITY_NEUTRAL_BASE, 0)
 
-    # Find upcoming events and their days-to-event
+    # Find upcoming events and their days-to-event (range-aware)
     upcoming_events: List[Tuple[CatalystEventV2, int]] = []
 
     for event in events:
-        if not event.event_date:
+        eff_days = effective_days_until(event, as_of_date)
+        if eff_days is None:
             continue
 
-        try:
-            event_d = date.fromisoformat(event.event_date)
-        except (ValueError, TypeError):
-            continue
-
-        days_to_event = (event_d - as_of_date).days
-
-        # Only consider future events within 90-day horizon for bucket scoring
-        if days_to_event > 0 and days_to_event <= 90:
-            upcoming_events.append((event, days_to_event))
+        # Include events that are upcoming (>0) or currently actionable (==0)
+        # Within 90-day horizon for bucket scoring
+        if eff_days >= 0 and eff_days <= 90:
+            upcoming_events.append((event, max(eff_days, 1)))  # min 1 for bucket math
 
     if not upcoming_events:
         return (PROXIMITY_NEUTRAL_BASE, 0)
@@ -322,18 +319,12 @@ def compute_proximity_score(
     n_upcoming = 0
 
     for event in events:
-        if not event.event_date:
+        eff_days = effective_days_until(event, as_of_date)
+        if eff_days is None:
             continue
 
-        try:
-            event_d = date.fromisoformat(event.event_date)
-        except (ValueError, TypeError):
-            continue
-
-        days_to_event = (event_d - as_of_date).days
-
-        # Only consider future events within horizon
-        if days_to_event <= 0 or days_to_event > horizon_days:
+        # Include upcoming (>0) and currently-actionable (==0) events within horizon
+        if eff_days < 0 or eff_days > horizon_days:
             continue
 
         n_upcoming += 1
@@ -345,8 +336,9 @@ def compute_proximity_score(
         confidence_weight = CONFIDENCE_WEIGHTS.get(event.confidence, Decimal("0.5"))
 
         # Exponential decay: closer events score higher
-        # weight = exp(-days / half_life) ≈ 0.5^(days / half_life)
-        decay_factor = Decimal(days_to_event) / Decimal(half_life_days)
+        # For in-range events (eff_days==0), use 1 day for max proximity
+        days_for_decay = max(eff_days, 1)
+        decay_factor = Decimal(days_for_decay) / Decimal(half_life_days)
         time_weight = Decimal("0.5") ** decay_factor
 
         # Combined contribution
@@ -571,23 +563,22 @@ def calculate_score_blended(
     n_future_events = 0
 
     for event in events:
-        # Check if event is in the future (skip for delta scoring but track for proximity)
-        if event.event_date:
-            try:
-                event_d = date.fromisoformat(event.event_date)
-                if event_d > as_of_date:
-                    n_future_events += 1
-                    continue
-            except (ValueError, TypeError):
-                pass
+        # Range-aware future/past classification
+        eff_days = effective_days_until(event, as_of_date)
+        if eff_days is not None and eff_days > 0:
+            n_future_events += 1
+            continue
 
         n_past_events += 1
         severity = event.event_severity
         confidence = event.confidence
 
-        # Weights
+        # Weights — use effective event date for range-aware recency
         confidence_weight = CONFIDENCE_WEIGHTS.get(confidence, Decimal("0.5"))
-        recency_weight = compute_recency_weight(event.event_date, as_of_date)
+        eff_date = effective_event_date(event, as_of_date)
+        recency_weight = compute_recency_weight(
+            eff_date.isoformat() if eff_date else event.event_date, as_of_date
+        )
 
         # Severity contribution (can be negative for negative events)
         severity_contrib = SEVERITY_SCORE_CONTRIBUTION.get(severity, Decimal("0"))
@@ -787,19 +778,17 @@ def _compute_next_catalyst(
     future_events = []
 
     for event in events:
-        if event.event_date:
-            try:
-                event_d = date.fromisoformat(event.event_date)
-                if event_d > as_of_date:
-                    future_events.append((event_d, event))
-            except (ValueError, TypeError):
-                continue
+        eff_days = effective_days_until(event, as_of_date)
+        if eff_days is not None and eff_days >= 0:
+            eff_d = effective_event_date(event, as_of_date)
+            if eff_d is not None:
+                future_events.append((eff_days, eff_d, event))
 
     if not future_events:
         return (None, None, None)
 
-    # Find the calendrically nearest event
-    next_date, nearest_event = min(future_events, key=lambda x: x[0])
+    # Find the nearest event (by effective days)
+    _, next_date, nearest_event = min(future_events, key=lambda x: x[0])
     days_until = (next_date - as_of_date).days
     event_type = nearest_event.event_type.value if nearest_event.event_type else None
 
@@ -930,6 +919,7 @@ def score_catalyst_events(
 
         if summary.events_total > 0:
             diagnostics.tickers_with_events += 1
+            diagnostics.coverage_any_event += 1
 
         if summary.severe_negative_flag:
             diagnostics.tickers_with_severe_negative += 1
@@ -945,6 +935,21 @@ def score_catalyst_events(
             if count > 0:
                 key = conf_level.value
                 diagnostics.events_by_confidence[key] = diagnostics.events_by_confidence.get(key, 0) + count
+
+        # Coverage KPIs: actionable (≤180d) and high-confidence actionable
+        # Uses range-aware effective_days_until so in-range events count
+        has_actionable = False
+        has_high_conf_actionable = False
+        for e in events:
+            eff_days = effective_days_until(e, as_of_date)
+            if eff_days is not None and 0 <= eff_days <= 180:
+                has_actionable = True
+                if e.confidence == ConfidenceLevel.HIGH:
+                    has_high_conf_actionable = True
+        if has_actionable:
+            diagnostics.coverage_actionable_180d += 1
+        if has_high_conf_actionable:
+            diagnostics.coverage_high_conf_actionable += 1
 
     logger.info(f"Scoring complete. Generated {len(summaries)} summaries")
     logger.info(f"Diagnostics: {diagnostics.to_dict()}")

@@ -144,14 +144,21 @@ def validate_screening_output(
     if not m2_check and m2_scored == 0:
         print(f"     ❌ ZERO coverage! Check field mapping & data source")
     
-    # Module 3
+    # Module 3 — 3-tier coverage
     m3_with_catalyst = m3_diag.get('tickers_with_events', 0)
+    m3_actionable = m3_diag.get('coverage_actionable_180d', 0)
+    m3_high_conf = m3_diag.get('coverage_high_conf_actionable', 0)
     m3_pct = m3_with_catalyst / universe_count * 100 if universe_count > 0 else 0
+    m3_act_pct = m3_actionable / universe_count * 100 if universe_count > 0 else 0
+    m3_hc_pct = m3_high_conf / universe_count * 100 if universe_count > 0 else 0
     # Don't require 80% for catalysts (they're rarer)
     m3_check = True  # Informational only
-    
+
     status = "✅" if m3_pct > 20 else "⚠️"
-    print(f"  {status} Module 3 (Catalyst):  {m3_with_catalyst}/{universe_count} ({m3_pct:.0f}%)")
+    print(f"  {status} Module 3 (Catalyst):")
+    print(f"       Any-event:           {m3_with_catalyst}/{universe_count} ({m3_pct:.0f}%)")
+    print(f"       Actionable (≤180d):  {m3_actionable}/{universe_count} ({m3_act_pct:.0f}%)")
+    print(f"       High-conf actable:   {m3_high_conf}/{universe_count} ({m3_hc_pct:.0f}%)")
     
     # Module 4
     m4_scored = m4_diag.get('scored', 0)
