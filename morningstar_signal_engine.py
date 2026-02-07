@@ -14,7 +14,8 @@ Signal Components (internal composite 0-100):
 - Capital Efficiency (22%): STA4Z (ROIC), HS08F (ROE)
 - Leverage Health (18%): ST389 (D/E), HS06U (D/Capital)
 - Growth Quality (15%): HS035 (Sales Growth), HS08D (Net Margin)
-- Moat Quality (10%): LT181 (Economic Moat), regime-gated to commercial-stage
+- Momentum (5%): ST569 (Below 52wk High %), PM006/PM008/PD00D (Total Returns)
+- Moat Quality (5%): LT181 (Economic Moat), regime-gated to commercial-stage
 
 Design Philosophy:
 - Confidence-gated: missing sub-signals redistribute weight to available ones
@@ -85,7 +86,8 @@ class MorningstarSignalEngine:
         "capital_efficiency": Decimal("0.22"),
         "leverage_health": Decimal("0.18"),
         "growth_quality": Decimal("0.15"),
-        "moat_quality": Decimal("0.10"),
+        "momentum": Decimal("0.05"),
+        "moat_quality": Decimal("0.05"),
     }
 
     # Datapoint IDs used per sub-signal
@@ -94,6 +96,7 @@ class MorningstarSignalEngine:
         "capital_efficiency": ["STA4Z", "HS08F"],    # ROIC, ROE
         "leverage_health": ["ST389", "HS06U"],       # D/E, D/Capital
         "growth_quality": ["HS035", "HS08D"],        # Sales Growth, Net Margin
+        "momentum": ["ST569", "PM006", "PM008", "PD00D"],  # 52wk High %, Returns
         "moat_quality": ["LT181"],                   # Economic Moat
     }
 
@@ -194,6 +197,53 @@ class MorningstarSignalEngine:
         (Decimal("-50"), Decimal("30")),
         (Decimal("-100"), Decimal("20")),
     ]
+
+    # Momentum: ST569 — Below 52 Wk High % (lower % from high = better, ascending=False)
+    PROXIMITY_BREAKPOINTS: List[Tuple[Decimal, Decimal]] = [
+        (Decimal("5"), Decimal("90")),
+        (Decimal("15"), Decimal("70")),
+        (Decimal("30"), Decimal("50")),
+        (Decimal("50"), Decimal("35")),
+        (Decimal("70"), Decimal("20")),
+    ]
+
+    # Momentum: PM006 — Total Return 3 Mo (higher = better)
+    RETURN_3M_BREAKPOINTS: List[Tuple[Decimal, Decimal]] = [
+        (Decimal("50"), Decimal("90")),
+        (Decimal("20"), Decimal("75")),
+        (Decimal("10"), Decimal("60")),
+        (Decimal("0"), Decimal("50")),
+        (Decimal("-10"), Decimal("40")),
+        (Decimal("-30"), Decimal("25")),
+    ]
+
+    # Momentum: PM008 — Total Return 6 Mo (higher = better, same scale as 3M)
+    RETURN_6M_BREAKPOINTS: List[Tuple[Decimal, Decimal]] = [
+        (Decimal("50"), Decimal("90")),
+        (Decimal("20"), Decimal("75")),
+        (Decimal("10"), Decimal("60")),
+        (Decimal("0"), Decimal("50")),
+        (Decimal("-10"), Decimal("40")),
+        (Decimal("-30"), Decimal("25")),
+    ]
+
+    # Momentum: PD00D — Total Return 1 Yr (higher = better, capped)
+    RETURN_1Y_BREAKPOINTS: List[Tuple[Decimal, Decimal]] = [
+        (Decimal("100"), Decimal("85")),
+        (Decimal("50"), Decimal("75")),
+        (Decimal("20"), Decimal("65")),
+        (Decimal("0"), Decimal("50")),
+        (Decimal("-20"), Decimal("40")),
+        (Decimal("-50"), Decimal("25")),
+    ]
+
+    # Internal component weights within the momentum sub-signal
+    MOMENTUM_COMPONENT_WEIGHTS: Dict[str, Decimal] = {
+        "proximity": Decimal("0.30"),    # ST569 — stability
+        "return_3m": Decimal("0.35"),    # PM006 — most actionable
+        "return_6m": Decimal("0.20"),    # PM008 — confirmation
+        "return_1y": Decimal("0.15"),    # PD00D — long-term trend
+    }
 
     # Dev-stage regime: metrics that require commercial operations
     COMMERCIAL_ONLY_SIGNALS = {"capital_efficiency", "growth_quality", "moat_quality"}
@@ -328,7 +378,13 @@ class MorningstarSignalEngine:
         sub_details["growth_quality"] = gq_result
         flags.extend(gq_result.get("flags", []))
 
-        # 5. Moat Quality
+        # 5. Momentum
+        mom_result = self._score_momentum(record)
+        sub_scores["momentum"] = mom_result["score"]
+        sub_details["momentum"] = mom_result
+        flags.extend(mom_result.get("flags", []))
+
+        # 6. Moat Quality
         mq_result = self._score_moat_quality(record, regime)
         sub_scores["moat_quality"] = mq_result["score"]
         sub_details["moat_quality"] = mq_result
@@ -377,6 +433,7 @@ class MorningstarSignalEngine:
             "capital_efficiency_score": sub_scores.get("capital_efficiency"),
             "leverage_health_score": sub_scores.get("leverage_health"),
             "growth_quality_score": sub_scores.get("growth_quality"),
+            "momentum_score": sub_scores.get("momentum"),
             "moat_quality_score": sub_scores.get("moat_quality"),
             "sub_details": sub_details,
             "confidence": confidence,
@@ -716,6 +773,108 @@ class MorningstarSignalEngine:
             "flags": flags,
         }
 
+    def _score_momentum(
+        self,
+        record: Dict[str, str],
+    ) -> Dict[str, Any]:
+        """Score momentum from proximity to 52wk high and total returns.
+
+        NOT regime-gated — momentum applies to all development stages.
+
+        Components (weighted):
+        - proximity (30%): ST569 — Below 52 Wk High % (lower = closer to high = better)
+        - return_3m (35%): PM006 — Total Return 3 Mo (higher = better)
+        - return_6m (20%): PM008 — Total Return 6 Mo (higher = better)
+        - return_1y (15%): PD00D — Total Return 1 Yr (higher = better)
+        """
+        flags: List[str] = []
+
+        component_scores: Dict[str, Optional[Decimal]] = {}
+        component_raw: Dict[str, Optional[str]] = {}
+
+        # ST569: Below 52 Wk High % (lower = better, ascending=False)
+        proximity_raw = _to_decimal(record.get("ST569"))
+        component_raw["proximity_pct"] = str(proximity_raw) if proximity_raw is not None else None
+        if proximity_raw is not None:
+            component_scores["proximity"] = _clamp(
+                self._interpolate_breakpoints(proximity_raw, self.PROXIMITY_BREAKPOINTS, ascending=False),
+                Decimal("5"), Decimal("95"),
+            )
+        else:
+            component_scores["proximity"] = None
+
+        # PM006: Total Return 3 Mo (higher = better)
+        ret_3m = _to_decimal(record.get("PM006"))
+        component_raw["return_3m"] = str(ret_3m) if ret_3m is not None else None
+        if ret_3m is not None:
+            component_scores["return_3m"] = _clamp(
+                self._interpolate_breakpoints(ret_3m, self.RETURN_3M_BREAKPOINTS),
+                Decimal("5"), Decimal("95"),
+            )
+        else:
+            component_scores["return_3m"] = None
+
+        # PM008: Total Return 6 Mo (higher = better)
+        ret_6m = _to_decimal(record.get("PM008"))
+        component_raw["return_6m"] = str(ret_6m) if ret_6m is not None else None
+        if ret_6m is not None:
+            component_scores["return_6m"] = _clamp(
+                self._interpolate_breakpoints(ret_6m, self.RETURN_6M_BREAKPOINTS),
+                Decimal("5"), Decimal("95"),
+            )
+        else:
+            component_scores["return_6m"] = None
+
+        # PD00D: Total Return 1 Yr (higher = better)
+        ret_1y = _to_decimal(record.get("PD00D"))
+        component_raw["return_1y"] = str(ret_1y) if ret_1y is not None else None
+        if ret_1y is not None:
+            component_scores["return_1y"] = _clamp(
+                self._interpolate_breakpoints(ret_1y, self.RETURN_1Y_BREAKPOINTS),
+                Decimal("5"), Decimal("95"),
+            )
+        else:
+            component_scores["return_1y"] = None
+
+        # Weighted average of available components (redistribute missing weight)
+        available: Dict[str, Decimal] = {
+            k: v for k, v in component_scores.items() if v is not None
+        }
+
+        if not available:
+            return {
+                "score": None,
+                "proximity_pct": component_raw["proximity_pct"],
+                "return_3m": component_raw["return_3m"],
+                "return_6m": component_raw["return_6m"],
+                "return_1y": component_raw["return_1y"],
+                "flags": ["ms_momentum_no_data"],
+            }
+
+        total_weight = sum(
+            self.MOMENTUM_COMPONENT_WEIGHTS[k] for k in available
+        )
+        score = Decimal("0")
+        for k, s in available.items():
+            w = self.MOMENTUM_COMPONENT_WEIGHTS[k] / total_weight
+            score += w * s
+
+        score = _clamp(_quantize(score), Decimal("5"), Decimal("95"))
+
+        if score >= Decimal("70"):
+            flags.append("ms_momentum_bullish")
+        elif score <= Decimal("30"):
+            flags.append("ms_momentum_bearish")
+
+        return {
+            "score": score,
+            "proximity_pct": component_raw["proximity_pct"],
+            "return_3m": component_raw["return_3m"],
+            "return_6m": component_raw["return_6m"],
+            "return_1y": component_raw["return_1y"],
+            "flags": flags,
+        }
+
     # =========================================================================
     # COMPOSITE COMPUTATION
     # =========================================================================
@@ -1038,6 +1197,7 @@ class MorningstarSignalEngine:
             "capital_efficiency_score": None,
             "leverage_health_score": None,
             "growth_quality_score": None,
+            "momentum_score": None,
             "moat_quality_score": None,
             "sub_details": {},
             "confidence": Decimal("0"),
@@ -1094,6 +1254,7 @@ def demonstration() -> None:
                   f"CE={result['capital_efficiency_score']}  "
                   f"LH={result['leverage_health_score']}  "
                   f"GQ={result['growth_quality_score']}  "
+                  f"MOM={result['momentum_score']}  "
                   f"MQ={result['moat_quality_score']}")
         else:
             print(f"{ticker}: {result['status']}")
