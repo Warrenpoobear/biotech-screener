@@ -2272,6 +2272,13 @@ def _normalize_m3_regime(regime: Optional[str]) -> Optional[str]:
     return "CHOP"
 
 
+def _build_m3_config(sec_8k_mode: str = "cache_only") -> 'Module3Config':
+    """Build Module3Config, optionally overriding SEC 8-K mode."""
+    cfg = Module3Config()
+    cfg.enable_sec_8k_catalysts = sec_8k_mode
+    return cfg
+
+
 def run_screening_pipeline(
     as_of_date: str,
     data_dir: Path,
@@ -2309,6 +2316,8 @@ def run_screening_pipeline(
     enable_position_sizing: bool = False,
     pit_mode: str = "strict",
     output_dir: Optional[Path] = None,
+    # SEC 8-K live mode
+    sec_8k_mode: str = "cache_only",
     # Module 5 calibrated weights
     module5_weights_path: Optional[Path] = None,
     module5_weights_mode: str = "global",
@@ -2770,7 +2779,7 @@ def run_screening_pipeline(
             active_tickers=full_universe_tickers,  # FULL universe, not filtered active_tickers
             as_of_date=as_of_date_obj,  # Date object
             market_calendar=SimpleMarketCalendar(),  # Market calendar for weekends
-            config=Module3Config(),  # Default configuration
+            config=_build_m3_config(sec_8k_mode),
             output_dir=output_dir,  # Output directory for catalyst_events_*.json
             pit_mode=pit_mode,
         )
@@ -4091,6 +4100,14 @@ Module 3 Catalyst Detection:
              "'default': auto-select based on data availability.",
     )
 
+    # SEC 8-K live fetch
+    parser.add_argument(
+        "--sec-8k-live",
+        action="store_true",
+        help="Run SEC 8-K catalyst collector in live mode (fetches from EDGAR). "
+             "Only allowed when --as-of-date equals today (PIT safety).",
+    )
+
     # Clustering controls
     parser.add_argument(
         "--enable-clustering",
@@ -4282,6 +4299,16 @@ Module 3 Catalyst Detection:
         except ValueError as e:
             parser.error(f"Invalid --snapshot-date-prior: {e}")
 
+    # Validate --sec-8k-live PIT safety: only allowed when as_of_date == today
+    if args.sec_8k_live:
+        from datetime import date as _date
+        if args.as_of_date != _date.today().isoformat():
+            parser.error(
+                f"--sec-8k-live is only allowed when --as-of-date equals today "
+                f"({_date.today().isoformat()}), got {args.as_of_date}. "
+                f"Fetching live EDGAR data for a historical date would violate PIT discipline."
+            )
+
     # Set diagnostics output path default if full diagnostics enabled
     diagnostics_out = args.diagnostics_out
     if args.diagnostics == "full" and diagnostics_out is None:
@@ -4384,6 +4411,7 @@ Module 3 Catalyst Detection:
             enable_position_sizing=getattr(args, 'enable_position_sizing', False),
             pit_mode=args.pit_mode,
             output_dir=args.output_dir if args.output_dir else args.data_dir,
+            sec_8k_mode=("live" if args.sec_8k_live else "cache_only"),
             module5_weights_path=(Path(args.module5_weights) if getattr(args, "module5_weights", None) else None),
             module5_weights_mode=getattr(args, "module5_weights_mode", "global"),
             scoring_mode=getattr(args, "scoring_mode", None),
