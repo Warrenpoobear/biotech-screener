@@ -3,19 +3,16 @@ fda_adcom_collector.py - FDA Advisory Committee Calendar Collector
 
 Extracts FDA Advisory Committee (ADCOM) meeting dates from two sources:
 
-  1. FDA.gov calendar page (HTML scraping)
-     - The page uses JavaScript DataTables; static HTML has empty <tbody>
-     - Works when the FDA page renders data server-side (intermittent)
-     - Fallback: if no meetings parsed, tries alternative sources
+  1. Federal Register API (primary, free, structured JSON)
+     - FDA is legally required to publish ADCOM notices ≥15 days before meetings
+     - Returns meeting date, committee name, drug/product, NDA/BLA numbers
+     - Endpoint: https://www.federalregister.gov/api/v1/documents.json
 
-  2. SEC EDGAR 8-K filings mentioning "advisory committee" for universe tickers
-     - Searches EDGAR for 8-K filings containing ADCOM-related keywords
-     - Extracts meeting dates from press release text
-     - More reliable than scraping since it uses structured SEC API
+  2. SEC EDGAR 8-K filings mentioning "advisory committee" (supplementary)
+     - Catches ADCOM announcements from company press releases
+     - Lower yield: filings rarely state the meeting date explicitly
 
-Source: https://www.fda.gov/advisory-committees/advisory-committee-calendar
-        https://efts.sec.gov/LATEST/search-index (fallback)
-Rate limiting: 1 req/sec for FDA, 10 req/sec for SEC EDGAR
+Rate limiting: Federal Register has no documented rate limit; we add 0.2s courtesy delay
 Cache: results cached per as_of_date to avoid repeated fetches
 """
 
@@ -26,16 +23,14 @@ import re
 import time
 from datetime import date, datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Set
 
 logger = logging.getLogger(__name__)
 
-# FDA Advisory Committee Calendar URL
-FDA_ADCOM_CALENDAR_URL = (
-    "https://www.fda.gov/advisory-committees/advisory-committee-calendar"
-)
+# Federal Register API
+FEDERAL_REGISTER_API = "https://www.federalregister.gov/api/v1/documents.json"
 
-# SEC EDGAR search for ADCOM-related 8-K filings
+# SEC EDGAR search for ADCOM-related 8-K filings (supplementary)
 SEC_SEARCH_URL = "https://efts.sec.gov/LATEST/search-index"
 SEC_ARCHIVES_BASE = "https://www.sec.gov/Archives/edgar/data"
 
@@ -45,19 +40,37 @@ USER_AGENT = os.environ.get(
     "Wake Robin Research contact@wakerobincapital.com"
 )
 
-# Default cache directory
-DEFAULT_CACHE_DIR = Path(__file__).parent.parent / "cache" / "fda"
+# Default cache directory — matches Module3Config's default path (relative to project root)
+DEFAULT_CACHE_DIR = Path("cache") / "fda"
 
-# Regex to extract ticker from EDGAR display_names
-_TICKER_FROM_DISPLAY = re.compile(r"\(([A-Z]{2,5})\)")
+# Regex to extract ticker from EDGAR display_names (handles comma-separated warrants)
+_TICKER_FROM_DISPLAY = re.compile(r"\(([A-Z]{2,5})(?:\)|[,\s])")
 
-# ADCOM date patterns in SEC filings
+# Extract meeting date from Federal Register `dates` field
+# e.g. "The meeting will be held on July 17, 2025, from 8 a.m. ..."
+# Also handles: "held virtually on ...", "held on virtually on ...", "take place on ..."
+_FR_MEETING_DATE = re.compile(
+    r"(?:held|scheduled|take\s+place)\s+(?:(?:on\s+)?virtually\s+(?:on\s+)?|on\s+)?(\w+\s+\d{1,2},?\s+\d{4})"
+)
+
+# Extract drug/product names from Federal Register title
+# Pattern 1: "...NDA/BLA 761440 for Belantamab Mafodotin" or "...for REXULTI (brexpiprazole) Tablets"
+_FR_DRUG_AFTER_NDA = re.compile(
+    r"(?:NDA|BLA|sNDA|sBLA)\s*\)?\s*[\d/S-]+,?\s+for\s+([A-Z][A-Za-z]+(?:\s+[A-Za-z]+)*)"
+)
+# Pattern 2: "BRANDNAME (generic)" e.g. "COLUMVI (glofitamab)"
+_FR_BRAND_GENERIC = re.compile(
+    r"([A-Z]{3,})\s+\(([a-z][a-z\s]+)\)"
+)
+# Pattern 3: "Comments-Midomafetamine Capsules" (drug name right after Comments-)
+_FR_DRUG_AFTER_COMMENTS = re.compile(
+    r"Comments-([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*(?:\s+(?:Capsules?|Tablets?|Injection|Solution))?)"
+)
+
+# ADCOM date patterns in SEC 8-K filings
 _ADCOM_DATE_PATTERNS = [
-    # "Advisory Committee meeting scheduled for March 15, 2026"
     r"[Aa]dvisory\s+[Cc]ommittee\s+(?:meeting\s+)?(?:scheduled\s+for|on|date[:\s]+|is\s+)\s*(\w+\s+\d{1,2},?\s+\d{4})",
-    # "ADCOM meeting on March 15, 2026"
     r"ADCOM\s+(?:meeting\s+)?(?:scheduled\s+for|on|date[:\s]+)\s*(\w+\s+\d{1,2},?\s+\d{4})",
-    # "the FDA has scheduled an advisory committee meeting for March 15, 2026"
     r"FDA\s+(?:has\s+)?scheduled\s+an?\s+[Aa]dvisory\s+[Cc]ommittee\s+(?:meeting\s+)?(?:for\s+)?(\w+\s+\d{1,2},?\s+\d{4})",
 ]
 
@@ -83,7 +96,6 @@ def build_product_ticker_map(data_dir: Path) -> Dict[str, str]:
         try:
             with open(pdufa_path, "r", encoding="utf-8") as f:
                 pdufa_data = json.load(f)
-            # pdufa_dates.json is a list of dicts
             entries = pdufa_data if isinstance(pdufa_data, list) else pdufa_data.get("events", [])
             for entry in entries:
                 drug = entry.get("drug_name", "").strip()
@@ -112,94 +124,6 @@ def build_product_ticker_map(data_dir: Path) -> Dict[str, str]:
     return product_map
 
 
-def _parse_adcom_html(html_content: str) -> List[Dict[str, Any]]:
-    """
-    Parse FDA advisory committee calendar HTML to extract meeting entries.
-
-    Note: The FDA page uses JavaScript DataTables for rendering. Static HTML
-    may have empty <tbody>. This parser handles both cases:
-    - Server-rendered rows (within <tr> tags)
-    - Embedded JSON data (if available)
-
-    Returns:
-        List of raw meeting dicts with keys: date_str, committee, topic
-    """
-    meetings = []
-
-    # Pattern to match meeting date entries in the FDA calendar page
-    date_patterns = [
-        r"(\w+ \d{1,2},? \d{4})",      # "March 15, 2026"
-        r"(\d{1,2}/\d{1,2}/\d{4})",    # "03/15/2026"
-    ]
-
-    # Look for table rows or structured content blocks with ADCOM info
-    row_pattern = re.compile(
-        r'(?:<tr[^>]*>|<div[^>]*class="[^"]*views-row[^"]*"[^>]*>)'
-        r'(.*?)'
-        r'(?:</tr>|</div>)',
-        re.DOTALL | re.IGNORECASE,
-    )
-
-    rows = row_pattern.findall(html_content)
-    if not rows:
-        # Fallback: try splitting on common separators
-        rows = re.split(r'<(?:tr|article|div\s+class="[^"]*row)[^>]*>', html_content)
-
-    for row in rows:
-        # Extract date
-        found_date = None
-        for dp in date_patterns:
-            m = re.search(dp, row)
-            if m:
-                found_date = m.group(1)
-                break
-
-        if not found_date:
-            continue
-
-        # Parse to actual date
-        parsed_date = None
-        for fmt in ("%B %d, %Y", "%B %d %Y", "%m/%d/%Y"):
-            try:
-                parsed_date = datetime.strptime(found_date, fmt).date()
-                break
-            except ValueError:
-                continue
-
-        if not parsed_date:
-            continue
-
-        # Extract text content (strip HTML tags)
-        text = re.sub(r'<[^>]+>', ' ', row)
-        text = re.sub(r'\s+', ' ', text).strip()
-
-        # Try to identify committee and topic
-        committee = ""
-        topic = text
-
-        # Common committee name patterns
-        committee_match = re.search(
-            r'((?:Oncologic|Cardiovascular|Psychopharmacologic|Anti[- ]?Infective|'
-            r'Endocrinologic|Dermatologic|Gastrointestinal|Pulmonary|'
-            r'Peripheral and Central Nervous System|Arthritis|'
-            r'Drug Safety|Pediatric|Bone|Reproductive|'
-            r'Medical Imaging|Anesthetic|Cellular)[^,;]*(?:Drugs?|Advisory)?\s*'
-            r'(?:Advisory\s+)?(?:Committee)?)',
-            text,
-            re.IGNORECASE,
-        )
-        if committee_match:
-            committee = committee_match.group(1).strip()
-
-        meetings.append({
-            "date": parsed_date.isoformat(),
-            "committee": committee,
-            "topic": topic,
-        })
-
-    return meetings
-
-
 def _match_product_to_ticker(
     topic: str,
     product_map: Dict[str, str],
@@ -213,7 +137,6 @@ def _match_product_to_ticker(
     topic_lower = topic.lower()
 
     for drug_name, ticker in product_map.items():
-        # Check if drug name appears in the topic text
         if drug_name in topic_lower:
             return {"ticker": ticker, "drug_name": drug_name}
 
@@ -235,8 +158,158 @@ def _parse_date_str(date_str: str) -> Optional[date]:
     return None
 
 
+def _collect_adcom_from_federal_register(
+    product_map: Dict[str, str],
+    as_of_date: date,
+    lookback_days: int = 365,
+) -> List[Dict[str, Any]]:
+    """
+    Query the Federal Register API for FDA drug advisory committee meeting notices.
+
+    FDA is legally required to publish meeting notices at least 15 days before
+    the meeting date. The Federal Register API is free, requires no API key,
+    and returns structured JSON with meeting dates, committee names, and
+    drug/product details.
+
+    Args:
+        product_map: {drug_name_lower: ticker} for matching
+        as_of_date: Current analysis date
+        lookback_days: How far back to search for notices
+
+    Returns:
+        List of ADCOM event dicts
+    """
+    try:
+        import requests
+    except ImportError:
+        logger.warning("requests library not available")
+        return []
+
+    start_date = (as_of_date - timedelta(days=lookback_days)).isoformat()
+    end_date = as_of_date.isoformat()
+
+    events = []
+    page = 1
+
+    while True:
+        params = {
+            "conditions[agencies][]": "food-and-drug-administration",
+            "conditions[term]": '"advisory committee" "notice of meeting"',
+            "conditions[publication_date][gte]": start_date,
+            "conditions[publication_date][lte]": end_date,
+            "fields[]": ["title", "dates", "abstract", "publication_date", "html_url"],
+            "per_page": 100,
+            "page": page,
+        }
+
+        try:
+            time.sleep(0.2)
+            resp = requests.get(FEDERAL_REGISTER_API, params=params, timeout=30)
+            if resp.status_code != 200:
+                logger.warning(f"Federal Register API returned {resp.status_code}")
+                break
+
+            data = resp.json()
+            results = data.get("results", [])
+            total = data.get("total_pages", 1)
+
+            if page == 1:
+                count = data.get("count", 0)
+                logger.info(f"Federal Register: {count} ADCOM notices found")
+
+            if not results:
+                break
+
+        except Exception as e:
+            logger.warning(f"Federal Register API error: {e}")
+            break
+
+        for doc in results:
+            title = doc.get("title", "")
+            dates_str = doc.get("dates", "")
+            pub_date = doc.get("publication_date", "")
+
+            # Skip non-drug committees (tobacco, devices, veterinary, food)
+            title_lower = title.lower()
+            skip_keywords = ["tobacco", "device", "veterinary", "food safety", "blood products"]
+            if any(kw in title_lower for kw in skip_keywords):
+                continue
+
+            # Extract meeting date from `dates` field
+            meeting_date = None
+            date_match = _FR_MEETING_DATE.search(dates_str)
+            if date_match:
+                meeting_date = _parse_date_str(date_match.group(1))
+
+            if not meeting_date:
+                continue
+
+            # PIT safety: skip meetings announced after as_of_date
+            if pub_date > end_date:
+                continue
+
+            # Extract committee name (before first semicolon)
+            committee = title.split(";")[0].strip() if ";" in title else ""
+
+            # Match drug name against product map using full title (substring)
+            match = _match_product_to_ticker(title, product_map)
+
+            # Extract drug names from title via multiple regex patterns
+            extracted_drugs = []
+            for m in _FR_DRUG_AFTER_NDA.finditer(title):
+                extracted_drugs.append(m.group(1).strip())
+            for m in _FR_BRAND_GENERIC.finditer(title):
+                extracted_drugs.append(m.group(1).strip())  # brand
+                extracted_drugs.append(m.group(2).strip())  # generic
+            for m in _FR_DRUG_AFTER_COMMENTS.finditer(title):
+                extracted_drugs.append(m.group(1).strip())
+
+            drug_name = ""
+            ticker = ""
+            if match:
+                drug_name = match["drug_name"]
+                ticker = match["ticker"]
+            else:
+                # Try each extracted drug name against product map
+                for candidate in extracted_drugs:
+                    match2 = _match_product_to_ticker(candidate, product_map)
+                    if match2:
+                        ticker = match2["ticker"]
+                        drug_name = match2["drug_name"]
+                        break
+
+                if not ticker:
+                    # Log extracted drugs for debugging
+                    if extracted_drugs:
+                        logger.debug(
+                            f"Federal Register ADCOM: unmatched drugs {extracted_drugs} "
+                            f"in '{title[:80]}'"
+                        )
+                    continue
+
+            events.append({
+                "ticker": ticker,
+                "event_type": "FDA_ADCOM",
+                "event_date": meeting_date.isoformat(),
+                "event_name": f"ADCOM: {drug_name} ({committee})",
+                "drug_name": drug_name,
+                "confidence": "HIGH",
+                "source": "FEDERAL_REGISTER",
+                "disclosed_at": pub_date,
+                "committee": committee,
+                "tags": ["adcom", "federal_register"],
+            })
+
+        if page >= total:
+            break
+        page += 1
+
+    return events
+
+
 def _collect_adcom_from_edgar(
     ticker_set: set,
+    cik_to_ticker: Dict[str, str],
     as_of_date: date,
     lookback_days: int = 365,
 ) -> List[Dict[str, Any]]:
@@ -244,8 +317,11 @@ def _collect_adcom_from_edgar(
     Search SEC EDGAR for 8-K filings mentioning advisory committee meetings
     and extract ADCOM dates for tickers in our universe.
 
+    Supplementary source — most filings mention ADCOM without stating dates.
+
     Args:
         ticker_set: Set of uppercase ticker symbols
+        cik_to_ticker: CIK-to-ticker reverse map for fallback matching
         as_of_date: Current analysis date
         lookback_days: How far back to search
 
@@ -266,10 +342,14 @@ def _collect_adcom_from_edgar(
 
     events = []
 
-    # Search EDGAR for 8-K filings mentioning advisory committee
+    # EDGAR uses implicit AND (space-separated); explicit AND keyword doesn't work
     queries = [
-        '"advisory committee" AND ("FDA" OR "ADCOM")',
+        '"advisory committee" "FDA"',
+        '"ADCOM" OR "FDA advisory committee"',
     ]
+
+    # Collect unique filings keyed by accession number
+    filings_to_fetch: Dict[str, Dict[str, str]] = {}
 
     for query in queries:
         try:
@@ -289,8 +369,9 @@ def _collect_adcom_from_edgar(
                 continue
 
             results = response.json()
+            total = results.get("hits", {}).get("total", {}).get("value", 0)
             hits = results.get("hits", {}).get("hits", [])
-            logger.info(f"EDGAR ADCOM search: {len(hits)} hits")
+            logger.info(f"EDGAR ADCOM search '{query[:40]}': {total} total, {len(hits)} returned")
 
             for hit in hits:
                 source = hit.get("_source", {})
@@ -302,7 +383,7 @@ def _collect_adcom_from_edgar(
                 if not adsh or not file_date or file_date > end_date:
                     continue
 
-                # Extract ticker from display_names
+                # Extract ticker: try display_names first, then CIK fallback
                 ticker = None
                 for name in display_names:
                     for m in _TICKER_FROM_DISPLAY.finditer(name):
@@ -314,69 +395,93 @@ def _collect_adcom_from_edgar(
                         break
 
                 if not ticker:
+                    for cik_val in ciks:
+                        cik_stripped = str(cik_val).lstrip("0")
+                        if cik_stripped in cik_to_ticker:
+                            ticker = cik_to_ticker[cik_stripped]
+                            break
+
+                if not ticker:
                     continue
 
-                # Fetch the actual filing text to extract ADCOM dates
                 cik = ciks[0] if ciks else ""
-                adsh_nodash = adsh.replace("-", "")
-                cik_stripped = cik.lstrip("0")
-
-                time.sleep(0.1)
-                index_url = f"{SEC_ARCHIVES_BASE}/{cik_stripped}/{adsh_nodash}/"
-                try:
-                    idx_resp = session.get(index_url, timeout=30)
-                    if idx_resp.status_code != 200:
-                        continue
-                except Exception:
-                    continue
-
-                # Find exhibit documents
-                doc_links = re.findall(
-                    rf'href="(/Archives/edgar/data/{cik_stripped}/{adsh_nodash}/[^"]+\.htm)"',
-                    idx_resp.text,
-                )
-                exhibit_links = [
-                    link for link in doc_links
-                    if any(kw in link.split("/")[-1].lower() for kw in ("ex99", "ex-99", "pr"))
-                ][:3]
-
-                # Fetch and search exhibit text
-                for doc_link in exhibit_links:
-                    time.sleep(0.1)
-                    try:
-                        doc_resp = session.get(f"https://www.sec.gov{doc_link}", timeout=30)
-                        if doc_resp.status_code != 200:
-                            continue
-                    except Exception:
-                        continue
-
-                    text = re.sub(r"<[^>]+>", " ", doc_resp.text)
-                    text = re.sub(r"&nbsp;|&#\d+;|&\w+;", " ", text)
-                    text = re.sub(r"\s+", " ", text).strip()
-
-                    # Search for ADCOM date patterns
-                    for pattern in _ADCOM_DATE_PATTERNS:
-                        for m in re.finditer(pattern, text):
-                            adcom_date = _parse_date_str(m.group(1))
-                            if adcom_date and adcom_date >= as_of_date - timedelta(days=30):
-                                events.append({
-                                    "ticker": ticker,
-                                    "event_type": "FDA_ADCOM",
-                                    "event_date": adcom_date.isoformat(),
-                                    "event_name": f"ADCOM: {m.group(0)[:60]}",
-                                    "drug_name": "",
-                                    "confidence": "HIGH",
-                                    "source": "SEC_8K_ADCOM",
-                                    "disclosed_at": file_date,
-                                    "committee": "",
-                                    "tags": ["adcom", "sec_8k"],
-                                })
+                if adsh not in filings_to_fetch:
+                    filings_to_fetch[adsh] = {
+                        "ticker": ticker,
+                        "cik": str(cik).lstrip("0"),
+                        "file_date": file_date,
+                    }
 
         except Exception as e:
             logger.warning(f"EDGAR ADCOM search error: {e}")
 
+    logger.info(f"EDGAR ADCOM: {len(filings_to_fetch)} universe filings to fetch")
+
+    # Phase 2: Fetch filing text and extract ADCOM dates
+    for adsh, meta in filings_to_fetch.items():
+        ticker = meta["ticker"]
+        cik_stripped = meta["cik"]
+        file_date = meta["file_date"]
+        adsh_nodash = adsh.replace("-", "")
+
+        base_url = f"{SEC_ARCHIVES_BASE}/{cik_stripped}/{adsh_nodash}"
+
+        try:
+            time.sleep(0.1)
+            idx_resp = session.get(f"{base_url}/index.json", timeout=30)
+            if idx_resp.status_code != 200:
+                continue
+            items = idx_resp.json().get("directory", {}).get("item", [])
+        except Exception:
+            continue
+
+        exhibit_files = []
+        main_files = []
+        for item in items:
+            name = item.get("name", "")
+            name_lower = name.lower()
+            if not name_lower.endswith(".htm"):
+                continue
+            if "ex99" in name_lower or "ex-99" in name_lower or "pr" in name_lower:
+                exhibit_files.append(name)
+            elif "index" not in name_lower and "R1" not in name:
+                main_files.append(name)
+
+        docs_to_fetch = exhibit_files[:3] + main_files[:1]
+
+        for filename in docs_to_fetch:
+            doc_url = f"{base_url}/{filename}"
+            try:
+                time.sleep(0.1)
+                doc_resp = session.get(doc_url, timeout=30)
+                if doc_resp.status_code != 200:
+                    continue
+            except Exception:
+                continue
+
+            text = re.sub(r"<[^>]+>", " ", doc_resp.text)
+            text = re.sub(r"&nbsp;|&#\d+;|&\w+;", " ", text)
+            text = re.sub(r"\s+", " ", text).strip()
+
+            for pattern in _ADCOM_DATE_PATTERNS:
+                for m in re.finditer(pattern, text):
+                    adcom_date = _parse_date_str(m.group(1))
+                    if adcom_date and adcom_date >= as_of_date - timedelta(days=30):
+                        events.append({
+                            "ticker": ticker,
+                            "event_type": "FDA_ADCOM",
+                            "event_date": adcom_date.isoformat(),
+                            "event_name": f"ADCOM: {m.group(0)[:60]}",
+                            "drug_name": "",
+                            "confidence": "HIGH",
+                            "source": "SEC_8K_ADCOM",
+                            "disclosed_at": file_date,
+                            "committee": "",
+                            "tags": ["adcom", "sec_8k"],
+                        })
+
     # Dedup by (ticker, event_date)
-    seen = set()
+    seen: Set[tuple] = set()
     deduped = []
     for event in events:
         key = (event["ticker"], event["event_date"])
@@ -392,13 +497,14 @@ def collect_fda_adcom_events(
     as_of_date: date,
     cache_dir: Path = DEFAULT_CACHE_DIR,
     lookback_days: int = 365,
+    universe_tickers: Optional[set] = None,
 ) -> List[Dict[str, Any]]:
     """
     Collect FDA Advisory Committee calendar events and match to universe tickers.
 
     Strategy:
-      1. Try scraping the FDA ADCOM calendar page (may return 0 if JS-rendered)
-      2. Always also search SEC EDGAR for 8-K filings mentioning ADCOM meetings
+      1. Federal Register API (primary) — structured, free, legally mandated
+      2. SEC EDGAR 8-K filings (supplementary) — catches company-announced ADCOM
       3. Merge and deduplicate
 
     Args:
@@ -406,6 +512,8 @@ def collect_fda_adcom_events(
         as_of_date: Current analysis date
         cache_dir: Directory for caching fetched data
         lookback_days: How far back to look for events
+        universe_tickers: Full set of universe tickers for EDGAR matching
+                          (defaults to drug_to_ticker values if not provided)
 
     Returns:
         List of event dicts matching corporate catalyst schema
@@ -425,59 +533,43 @@ def collect_fda_adcom_events(
             logger.warning(f"Cache read error: {e}")
 
     try:
-        import requests
+        import requests  # noqa: F401 — verify requests is available
     except ImportError:
         logger.warning("requests library not available; skipping FDA ADCOM collection")
         return []
 
-    events = []
+    # ── Source 1: Federal Register API ──
+    fr_events = _collect_adcom_from_federal_register(drug_to_ticker, as_of_date, lookback_days)
+    logger.info(f"Federal Register: {len(fr_events)} matched ADCOM events")
 
-    # ── Source 1: FDA calendar page ──
+    events = list(fr_events)
+    fr_count = len(events)
+
+    # ── Source 2: EDGAR 8-K filings mentioning ADCOM (supplementary) ──
+    ticker_set = universe_tickers if universe_tickers else set(drug_to_ticker.values())
+
+    # Build CIK-to-ticker reverse map for fallback matching
+    cik_to_ticker: Dict[str, str] = {}
     try:
-        headers = {"User-Agent": USER_AGENT}
-        response = requests.get(FDA_ADCOM_CALENDAR_URL, headers=headers, timeout=30)
-        response.raise_for_status()
-
-        meetings = _parse_adcom_html(response.text)
-        logger.info(f"Parsed {len(meetings)} meetings from FDA ADCOM calendar page")
-
-        cutoff_date = as_of_date - timedelta(days=lookback_days)
-
-        for meeting in meetings:
-            meeting_date = date.fromisoformat(meeting["date"])
-
-            if meeting_date < cutoff_date:
-                continue
-
-            match = _match_product_to_ticker(meeting["topic"], drug_to_ticker)
-            if not match:
-                continue
-
-            events.append({
-                "ticker": match["ticker"],
-                "event_type": "FDA_ADCOM",
-                "event_date": meeting["date"],
-                "event_name": f"ADCOM: {match['drug_name']}",
-                "drug_name": match["drug_name"],
-                "confidence": "HIGH",
-                "source": "FDA_ADCOM_CALENDAR",
-                "disclosed_at": as_of_date.isoformat(),
-                "committee": meeting.get("committee", ""),
-                "tags": ["adcom"],
-            })
-
+        import requests as _req
+        _session = _req.Session()
+        _session.headers.update({"User-Agent": USER_AGENT})
+        ct_resp = _session.get("https://www.sec.gov/files/company_tickers.json", timeout=30)
+        if ct_resp.status_code == 200:
+            for _k, entry in ct_resp.json().items():
+                t = entry.get("ticker", "").upper()
+                c = str(entry.get("cik_str", "")).lstrip("0")
+                if t in ticker_set and c:
+                    cik_to_ticker[c] = t
+            logger.info(f"Built CIK-to-ticker map: {len(cik_to_ticker)} entries")
     except Exception as e:
-        logger.warning(f"FDA ADCOM calendar scrape: {e}")
+        logger.warning(f"Could not build CIK map: {e}")
 
-    fda_count = len(events)
+    edgar_events = _collect_adcom_from_edgar(ticker_set, cik_to_ticker, as_of_date, lookback_days)
+    logger.info(f"EDGAR ADCOM: {len(edgar_events)} events from 8-K filings")
 
-    # ── Source 2: EDGAR 8-K filings mentioning ADCOM ──
-    ticker_set = set(drug_to_ticker.values())
-    edgar_events = _collect_adcom_from_edgar(ticker_set, as_of_date, lookback_days)
-    logger.info(f"EDGAR ADCOM search: {len(edgar_events)} events from 8-K filings")
-
-    # Merge, dedup by (ticker, event_date) keeping FDA source over EDGAR
-    seen = set()
+    # Merge, dedup by (ticker, event_date) keeping Federal Register over EDGAR
+    seen: Set[tuple] = set()
     for event in events:
         seen.add((event["ticker"], event["event_date"]))
 
@@ -489,7 +581,7 @@ def collect_fda_adcom_events(
 
     logger.info(
         f"FDA ADCOM total: {len(events)} events "
-        f"({fda_count} from FDA page, {len(events) - fda_count} from EDGAR)"
+        f"({fr_count} from Federal Register, {len(events) - fr_count} from EDGAR)"
     )
 
     # Cache results

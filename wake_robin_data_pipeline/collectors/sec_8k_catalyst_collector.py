@@ -36,14 +36,14 @@ USER_AGENT = os.environ.get(
     "Wake Robin Research contact@wakerobincapital.com"
 )
 
-# Default cache directory
-DEFAULT_CACHE_DIR = Path(__file__).parent.parent / "cache" / "sec" / "8k_catalysts"
+# Default cache directory — matches Module3Config's default path (relative to project root)
+DEFAULT_CACHE_DIR = Path("cache") / "sec" / "8k_catalysts"
 
 # Rate limit: 10 req/sec for SEC EDGAR
 _SEC_MIN_INTERVAL = 0.1
 
 # Hard cap on filings to fetch per run (safety against runaway costs)
-_MAX_FILINGS_PER_RUN = 200
+_MAX_FILINGS_PER_RUN = 500
 
 # SEC official ticker-to-CIK mapping
 SEC_COMPANY_TICKERS_URL = "https://www.sec.gov/files/company_tickers.json"
@@ -82,8 +82,11 @@ TIMING_PATTERNS = [
     ),
 ]
 
-# Regex to extract ticker from EDGAR display_names like "AGIOS PHARMACEUTICALS, INC.  (AGIO)  (CIK 0001439222)"
-_TICKER_FROM_DISPLAY = re.compile(r"\(([A-Z]{2,5})\)")
+# Regex to extract ticker from EDGAR display_names.
+# Handles both single-ticker and comma-separated formats:
+#   "AGIOS PHARMACEUTICALS, INC.  (AGIO)  (CIK 0001439222)"
+#   "Revolution Medicines, Inc.  (RVMD, RVMDW)  (CIK 0001628171)"
+_TICKER_FROM_DISPLAY = re.compile(r"\(([A-Z]{2,5})(?:\)|[,\s])")
 
 
 def _quarter_to_date_range(quarter_str: str) -> Tuple[str, str]:
@@ -403,26 +406,35 @@ def collect_8k_timing_events(
         logger.warning("requests library not available; skipping SEC 8-K collection")
         return []
 
-    # Build universe ticker set and ticker→CIK mapping
+    session = requests.Session()
+    session.headers.update({"User-Agent": USER_AGENT})
+
+    # Build universe ticker set and bidirectional CIK mappings
     ticker_set: Set[str] = set()
     ticker_to_cik: Dict[str, str] = {}
+    cik_to_ticker: Dict[str, str] = {}
     for entry in universe:
         ticker = entry.get("ticker", "")
         cik = entry.get("cik", "")
         if ticker:
             ticker_set.add(ticker.upper())
         if ticker and cik:
-            ticker_to_cik[ticker.upper()] = str(cik)
+            cik_stripped = str(cik).lstrip("0")
+            ticker_to_cik[ticker.upper()] = cik_stripped
+            cik_to_ticker[cik_stripped] = ticker.upper()
 
     # Supplement with SEC's official company_tickers.json for reliable CIK mapping
     try:
-        _rate_limit()
-        ct_resp = session.get(SEC_COMPANY_TICKERS_URL, timeout=15)
+        ct_resp = _sec_get(session, SEC_COMPANY_TICKERS_URL)
         if ct_resp.status_code == 200:
             for _k, entry in ct_resp.json().items():
                 t = entry.get("ticker", "").upper()
-                if t in ticker_set and t not in ticker_to_cik:
-                    ticker_to_cik[t] = str(entry.get("cik_str", ""))
+                c = str(entry.get("cik_str", "")).lstrip("0")
+                if t in ticker_set and c:
+                    if t not in ticker_to_cik:
+                        ticker_to_cik[t] = c
+                    if c not in cik_to_ticker:
+                        cik_to_ticker[c] = t
             logger.info(f"Loaded SEC company_tickers.json: {len(ticker_to_cik)} CIK mappings for universe")
     except Exception as e:
         logger.warning(f"Could not load company_tickers.json: {e}")
@@ -431,11 +443,19 @@ def collect_8k_timing_events(
     end_date = as_of_date.isoformat()
 
     # ── Phase 1: Search EDGAR for 8-K filings with timing keywords ──
+    # Each query targets a distinct class of catalyst timing language.
+    # EDGAR search-index returns max 100 hits per request, so we paginate.
     search_queries = [
         '"topline data" OR "top-line data"',
+        '"topline results" OR "top-line results"',
         '"PDUFA date" OR "PDUFA action date"',
-        '"expects results" OR "anticipates data"',
+        '"data readout" OR "interim data"',
+        '"pivotal trial" AND ("first half" OR "second half")',
+        '"Phase 3" AND ("expects" OR "anticipates") AND ("results" OR "data")',
     ]
+
+    # Max pages per query to avoid runaway requests
+    _MAX_PAGES_PER_QUERY = 10  # 10 × 100 = 1000 hits max per query
 
     # Collect unique filings keyed by accession number
     # {adsh: {ticker, cik, file_date}}
@@ -443,67 +463,99 @@ def collect_8k_timing_events(
 
     for query in search_queries:
         try:
-            params = {
-                "q": query,
-                "dateRange": "custom",
-                "startdt": start_date,
-                "enddt": end_date,
-                "forms": "8-K",
-            }
+            offset = 0
+            query_total = None
 
-            resp = _sec_get(session, SEC_SEARCH_URL, params=params)
+            while True:
+                params = {
+                    "q": query,
+                    "dateRange": "custom",
+                    "startdt": start_date,
+                    "enddt": end_date,
+                    "forms": "8-K",
+                    "from": offset,
+                }
 
-            if resp.status_code != 200:
-                logger.warning(f"SEC search returned {resp.status_code} for: {query[:40]}")
-                continue
+                resp = _sec_get(session, SEC_SEARCH_URL, params=params)
 
-            results = resp.json()
-            hits = results.get("hits", {}).get("hits", [])
-            logger.info(f"EDGAR search '{query[:30]}...': {len(hits)} hits")
+                if resp.status_code != 200:
+                    logger.warning(f"SEC search returned {resp.status_code} for: {query[:40]}")
+                    break
 
-            for hit in hits:
-                source = hit.get("_source", {})
-                display_names = source.get("display_names", [])
-                file_date = source.get("file_date", "")
-                adsh = source.get("adsh", "")
-                ciks = source.get("ciks", [])
+                results = resp.json()
+                hits = results.get("hits", {}).get("hits", [])
 
-                if not adsh or not file_date:
-                    continue
+                if query_total is None:
+                    query_total = results.get("hits", {}).get("total", {}).get("value", 0)
+                    logger.info(f"EDGAR search '{query[:40]}': {query_total} total hits")
 
-                # PIT safety: skip filings after as_of_date
-                if file_date > end_date:
-                    continue
+                if not hits:
+                    break
 
-                # Extract ticker from display_names
-                ticker = _extract_ticker_from_display_names(display_names)
-                if not ticker or ticker.upper() not in ticker_set:
-                    continue
+                for hit in hits:
+                    source = hit.get("_source", {})
+                    display_names = source.get("display_names", [])
+                    file_date = source.get("file_date", "")
+                    adsh = source.get("adsh", "")
+                    ciks = source.get("ciks", [])
 
-                # Use our ticker→CIK mapping (more reliable than search-index ciks)
-                ticker_upper = ticker.upper()
-                cik = ticker_to_cik.get(ticker_upper) or (ciks[0] if ciks else "")
+                    if not adsh or not file_date:
+                        continue
 
-                # Deduplicate by accession number
-                if adsh not in filings_to_fetch:
-                    filings_to_fetch[adsh] = {
-                        "ticker": ticker_upper,
-                        "cik": cik,
-                        "file_date": file_date,
-                    }
+                    # PIT safety: skip filings after as_of_date
+                    if file_date > end_date:
+                        continue
+
+                    # Extract ticker: try display_names first, then CIK fallback
+                    ticker = _extract_ticker_from_display_names(display_names)
+                    ticker_upper = ticker.upper() if ticker else ""
+
+                    if not ticker_upper or ticker_upper not in ticker_set:
+                        # Fallback: match via CIK from search result
+                        ticker_upper = ""
+                        for cik_val in ciks:
+                            cik_stripped = str(cik_val).lstrip("0")
+                            if cik_stripped in cik_to_ticker:
+                                ticker_upper = cik_to_ticker[cik_stripped]
+                                break
+                        if not ticker_upper:
+                            continue
+
+                    # Use our ticker→CIK mapping (more reliable than search-index ciks)
+                    cik = ticker_to_cik.get(ticker_upper) or (ciks[0] if ciks else "")
+
+                    # Deduplicate by accession number
+                    if adsh not in filings_to_fetch:
+                        filings_to_fetch[adsh] = {
+                            "ticker": ticker_upper,
+                            "cik": cik,
+                            "file_date": file_date,
+                        }
+
+                offset += len(hits)
+                page = offset // 100
+                if offset >= query_total or page >= _MAX_PAGES_PER_QUERY:
+                    break
 
         except Exception as e:
             logger.warning(f"SEC 8-K search error for '{query[:40]}': {e}")
 
     logger.info(f"Phase 1: {len(filings_to_fetch)} unique filings from universe to fetch")
 
-    # Hard cap: don't fetch more than _MAX_FILINGS_PER_RUN filings
+    # Hard cap: don't fetch more than _MAX_FILINGS_PER_RUN filings.
+    # Sort by file_date descending (most recent first) so the cap keeps
+    # the freshest filings rather than whichever query ran first.
     if len(filings_to_fetch) > _MAX_FILINGS_PER_RUN:
         logger.warning(
             f"Capping filing fetches at {_MAX_FILINGS_PER_RUN} "
             f"(found {len(filings_to_fetch)})"
         )
-        filings_to_fetch = dict(list(filings_to_fetch.items())[:_MAX_FILINGS_PER_RUN])
+        sorted_items = sorted(
+            filings_to_fetch.items(),
+            key=lambda x: x[1]["file_date"],
+            reverse=True,
+        )
+        filings_to_fetch = dict(sorted_items[:_MAX_FILINGS_PER_RUN])
 
     # ── Phase 2: Fetch filing text and extract timing phrases ──
     all_events = []

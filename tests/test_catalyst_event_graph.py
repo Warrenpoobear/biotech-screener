@@ -466,23 +466,70 @@ class TestCoverageKPIs:
 
 class TestFDAAdcomCollector:
 
-    def test_parse_adcom_html_extracts_events(self):
-        """Parse sample calendar HTML → correct meeting entries"""
-        from wake_robin_data_pipeline.collectors.fda_adcom_collector import _parse_adcom_html
+    def test_federal_register_date_and_drug_extraction(self):
+        """Federal Register meeting date and drug name regex extraction"""
+        from wake_robin_data_pipeline.collectors.fda_adcom_collector import (
+            _FR_MEETING_DATE, _FR_DRUG_AFTER_NDA, _FR_BRAND_GENERIC,
+            _FR_DRUG_AFTER_COMMENTS, _parse_date_str, _match_product_to_ticker,
+        )
 
-        html = """
-        <table>
-        <tr><td>March 15, 2026</td><td>Psychopharmacologic Drugs Advisory Committee</td>
-        <td>Discussion of KarXT for treatment of schizophrenia</td></tr>
-        <tr><td>April 20, 2026</td><td>Oncologic Drugs Advisory Committee</td>
-        <td>Review of pembrolizumab for new indication</td></tr>
-        </table>
-        """
-        meetings = _parse_adcom_html(html)
+        # Meeting date extraction from `dates` field
+        dates_field = "The meeting will be held on March 15, 2026, from 8 a.m. to 5 p.m."
+        m = _FR_MEETING_DATE.search(dates_field)
+        assert m is not None
+        parsed = _parse_date_str(m.group(1))
+        assert parsed is not None
+        assert parsed.isoformat() == "2026-03-15"
 
-        assert len(meetings) >= 1
-        dates_found = [m["date"] for m in meetings]
-        assert "2026-03-15" in dates_found
+        # Also handles "scheduled on" format
+        dates_field2 = "The meeting is scheduled on July 17, 2025."
+        m2 = _FR_MEETING_DATE.search(dates_field2)
+        assert m2 is not None
+        parsed2 = _parse_date_str(m2.group(1))
+        assert parsed2 is not None
+        assert parsed2.isoformat() == "2025-07-17"
+
+        # Handles "held virtually on" (common in Federal Register)
+        dates_field3 = "The meeting will be held virtually on May 22, 2025, from 8:30 a.m."
+        m3 = _FR_MEETING_DATE.search(dates_field3)
+        assert m3 is not None
+        parsed3 = _parse_date_str(m3.group(1))
+        assert parsed3 is not None
+        assert parsed3.isoformat() == "2025-05-22"
+
+        # Handles "held on virtually on" (typo found in real FR data)
+        dates_field4 = "The meeting will be held on virtually on November 13, 2025, from 10:00 a.m."
+        m4 = _FR_MEETING_DATE.search(dates_field4)
+        assert m4 is not None
+        parsed4 = _parse_date_str(m4.group(1))
+        assert parsed4 is not None
+        assert parsed4.isoformat() == "2025-11-13"
+
+        # Product matching against known map (primary mechanism — substring match)
+        title = "Psychopharmacologic Drugs Advisory Committee; Notice of Meeting; Belantamab Mafodotin"
+        product_map = {"karxt": "KRYS", "belantamab mafodotin": "GSK"}
+        result = _match_product_to_ticker(title, product_map)
+        assert result is not None
+        assert result["ticker"] == "GSK"
+
+        # Pattern 1: NDA/BLA number followed by drug name
+        title_nda = "Comments-Biologic License Application (BLA) 761440 for Belantamab Mafodotin"
+        m_nda = _FR_DRUG_AFTER_NDA.search(title_nda)
+        assert m_nda is not None
+        assert "Belantamab" in m_nda.group(1)
+
+        # Pattern 2: BRANDNAME (generic) extraction
+        title_brand = "for REXULTI (brexpiprazole) Tablets"
+        m_brand = _FR_BRAND_GENERIC.search(title_brand)
+        assert m_brand is not None
+        assert m_brand.group(1) == "REXULTI"
+        assert m_brand.group(2) == "brexpiprazole"
+
+        # Pattern 3: "Comments-<Drug>" (no NDA/BLA prefix)
+        title_comments = "Comments-Midomafetamine Capsules"
+        m_comments = _FR_DRUG_AFTER_COMMENTS.search(title_comments)
+        assert m_comments is not None
+        assert "Midomafetamine" in m_comments.group(1)
 
     def test_product_ticker_mapping(self, tmp_path):
         """Product-to-ticker mapping works from PDUFA dates"""

@@ -1414,6 +1414,7 @@ def compute_module_3_catalyst(
                     drug_to_ticker=product_map,
                     as_of_date=as_of_date,
                     cache_dir=config.fda_adcom_cache_dir,
+                    universe_tickers=active_tickers,
                 )
             except ImportError:
                 logger.debug("FDA ADCOM collector not available")
