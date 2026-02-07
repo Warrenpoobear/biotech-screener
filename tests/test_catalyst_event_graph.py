@@ -603,6 +603,58 @@ class TestSEC8KCollector:
         assert start == "2026-07-01"
         assert end == "2026-12-31"
 
+    def test_year_guard_rejects_far_future(self):
+        """Year guard: 'second half of 2040' rejected when as_of_date is 2026"""
+        from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import _extract_timing_events
+
+        text = "The Company expects results from the trial in the second half of 2040."
+        events = _extract_timing_events(text, "ROIV", "2026-01-15", as_of_date=date(2026, 2, 7))
+        assert len(events) == 0
+
+    def test_year_guard_rejects_far_past(self):
+        """Year guard: 'Q1 2020' rejected when as_of_date is 2026"""
+        from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import _extract_timing_events
+
+        text = "The company expects topline data in Q1 2020 from the Phase 2 trial."
+        events = _extract_timing_events(text, "TEST", "2026-01-15", as_of_date=date(2026, 2, 7))
+        assert len(events) == 0
+
+    def test_year_guard_allows_nearby_years(self):
+        """Year guard: years within [as_of - 1, as_of + 3] are allowed"""
+        from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import _extract_timing_events
+
+        # as_of = 2026 → allows 2025-2029
+        text = "The Company expects results from the trial in the second half of 2028."
+        events = _extract_timing_events(text, "TEST", "2026-01-15", as_of_date=date(2026, 2, 7))
+        assert len(events) == 1
+        assert events[0]["event_date"][:4] == "2028"
+
+    def test_staleness_filter_rejects_old_events(self):
+        """Staleness filter: events ending >180d before as_of_date are rejected"""
+        from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import _extract_timing_events
+
+        # Q1 2024 ends 2024-03-31, as_of is 2026-02-07 → >180d stale
+        text = "The company expects topline data in Q1 2024 from the Phase 2 trial."
+        events = _extract_timing_events(text, "MIRM", "2023-12-01", as_of_date=date(2026, 2, 7))
+        assert len(events) == 0
+
+    def test_staleness_filter_allows_recent_events(self):
+        """Staleness filter: events ending within 180d of as_of_date are kept"""
+        from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import _extract_timing_events
+
+        # Q4 2025 ends 2025-12-31, as_of is 2026-02-07 → within 180d
+        text = "The company expects topline data in Q4 2025 from the Phase 2 trial."
+        events = _extract_timing_events(text, "TEST", "2025-09-01", as_of_date=date(2026, 2, 7))
+        assert len(events) >= 1
+
+    def test_no_as_of_date_skips_filters(self):
+        """Without as_of_date, year guard and staleness filters are bypassed"""
+        from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import _extract_timing_events
+
+        text = "The Company expects results from the trial in the second half of 2040."
+        events = _extract_timing_events(text, "ROIV", "2026-01-15", as_of_date=None)
+        assert len(events) == 1  # No filter applied
+
 
 # ============================================================================
 # RANGE-AWARE DAYS_UNTIL

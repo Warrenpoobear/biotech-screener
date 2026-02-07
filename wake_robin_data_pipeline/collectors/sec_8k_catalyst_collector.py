@@ -158,6 +158,7 @@ def _extract_timing_events(
     text: str,
     ticker: str,
     filing_date: str,
+    as_of_date: Optional[date] = None,
 ) -> List[Dict[str, Any]]:
     """
     Extract timing events from 8-K filing text.
@@ -166,11 +167,23 @@ def _extract_timing_events(
         text: Filing text content
         ticker: Associated ticker symbol
         filing_date: ISO date string of the 8-K filing
+        as_of_date: Current analysis date (used for year guard + staleness filter)
 
     Returns:
         List of event dicts
     """
     events = []
+
+    # Year guard: reject extracted dates outside [as_of_year - 1, as_of_year + 3]
+    if as_of_date is not None:
+        min_year = as_of_date.year - 1
+        max_year = as_of_date.year + 3
+    else:
+        min_year = 0
+        max_year = 9999
+
+    # Staleness cutoff: reject events whose end date is >180d before as_of_date
+    staleness_cutoff = (as_of_date - timedelta(days=180)).isoformat() if as_of_date else None
 
     for pattern, event_type, precision in TIMING_PATTERNS:
         for match in re.finditer(pattern, text, re.IGNORECASE):
@@ -202,6 +215,27 @@ def _extract_timing_events(
                 confidence = "LOW"
 
             else:
+                continue
+
+            # Year guard: reject dates outside plausible range
+            try:
+                event_year = int(event_date[:4])
+            except (ValueError, TypeError):
+                continue
+            if event_year < min_year or event_year > max_year:
+                logger.debug(
+                    f"Year guard: skipping {ticker} {event_type} {event_date} "
+                    f"(year {event_year} outside [{min_year}, {max_year}])"
+                )
+                continue
+
+            # Staleness filter: reject events whose end date is >180d before as_of_date
+            end_for_staleness = event_date_end or event_date
+            if staleness_cutoff and end_for_staleness < staleness_cutoff:
+                logger.debug(
+                    f"Staleness filter: skipping {ticker} {event_type} {end_for_staleness} "
+                    f"(older than {staleness_cutoff})"
+                )
                 continue
 
             events.append({
@@ -486,7 +520,7 @@ def collect_8k_timing_events(
                 fetch_errors += 1
                 continue
 
-            extracted = _extract_timing_events(text, ticker, file_date)
+            extracted = _extract_timing_events(text, ticker, file_date, as_of_date)
             if extracted:
                 logger.info(
                     f"  {ticker} ({adsh}, {file_date}): {len(extracted)} timing events"
