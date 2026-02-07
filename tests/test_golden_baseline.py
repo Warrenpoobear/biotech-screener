@@ -7,7 +7,7 @@ Allows explicitly-defined tolerated changes (e.g., timestamps).
 
 Usage:
     # Create baseline
-    pytest tests/test_golden_baseline.py::test_create_baseline -v
+    pytest tests/test_golden_baseline.py::TestGoldenBaseline::test_create_baseline -v
 
     # Run regression tests
     pytest tests/test_golden_baseline.py -v
@@ -116,20 +116,28 @@ def ensure_golden_dir():
     GOLDEN_DIR.mkdir(parents=True, exist_ok=True)
 
 
+@pytest.fixture(scope="module")
+def pipeline_output(tmp_path_factory):
+    """Run pipeline once and share the result across all tests in this module.
+
+    Before: each test called run_pipeline() independently (~14s each, 9 tests = ~166s).
+    After: one shared run (~14s) reused by all read-only tests.
+    """
+    tmpdir = tmp_path_factory.mktemp("golden_baseline")
+    output_path = tmpdir / "golden_output.json"
+    success = run_pipeline(GOLDEN_AS_OF_DATE, output_path)
+    assert success, "Pipeline setup failed"
+    with open(output_path) as f:
+        data = json.load(f)
+    return {"success": success, "output_path": output_path, "data": data}
+
+
 class TestGoldenBaseline:
     """Golden baseline regression tests"""
 
-    def test_create_baseline(self, ensure_golden_dir, tmp_path):
+    def test_create_baseline(self, ensure_golden_dir, pipeline_output):
         """Create or update the golden baseline"""
-        output_path = tmp_path / "baseline_run.json"
-
-        # Run pipeline
-        success = run_pipeline(GOLDEN_AS_OF_DATE, output_path)
-        assert success, "Pipeline failed to run"
-
-        # Load output
-        with open(output_path) as f:
-            output = json.load(f)
+        output = pipeline_output["data"]
 
         # Save baseline
         with open(BASELINE_FILE, "w") as f:
@@ -156,17 +164,9 @@ class TestGoldenBaseline:
         print(f"  Final ranked: {metadata['final_ranked']}")
 
     @pytest.mark.skipif(not BASELINE_FILE.exists(), reason="No baseline exists. Run test_create_baseline first.")
-    def test_output_matches_baseline(self, tmp_path):
+    def test_output_matches_baseline(self, pipeline_output):
         """Test that current output matches the golden baseline"""
-        output_path = tmp_path / "current_run.json"
-
-        # Run pipeline
-        success = run_pipeline(GOLDEN_AS_OF_DATE, output_path)
-        assert success, "Pipeline failed to run"
-
-        # Load outputs
-        with open(output_path) as f:
-            current = json.load(f)
+        current = pipeline_output["data"]
 
         with open(BASELINE_FILE) as f:
             baseline = json.load(f)
@@ -187,15 +187,9 @@ class TestGoldenBaseline:
             )
 
     @pytest.mark.skipif(not BASELINE_FILE.exists(), reason="No baseline exists")
-    def test_critical_fields_stable(self, tmp_path):
+    def test_critical_fields_stable(self, pipeline_output):
         """Test that critical fields haven't changed"""
-        output_path = tmp_path / "current_run.json"
-
-        success = run_pipeline(GOLDEN_AS_OF_DATE, output_path)
-        assert success
-
-        with open(output_path) as f:
-            current = json.load(f)
+        current = pipeline_output["data"]
 
         with open(BASELINE_FILE) as f:
             baseline = json.load(f)
@@ -209,18 +203,15 @@ class TestGoldenBaseline:
             )
 
     @pytest.mark.skipif(not BASELINE_FILE.exists(), reason="No baseline exists")
-    def test_determinism_multiple_runs(self, tmp_path):
+    def test_determinism_multiple_runs(self, pipeline_output, tmp_path):
         """Test that running twice produces identical output"""
-        output1 = tmp_path / "run1.json"
+        # Reuse the shared pipeline run as run 1
+        data1 = pipeline_output["data"]
+
+        # Only need one additional run
         output2 = tmp_path / "run2.json"
+        assert run_pipeline(GOLDEN_AS_OF_DATE, output2), "Second run failed"
 
-        # Run twice
-        assert run_pipeline(GOLDEN_AS_OF_DATE, output1)
-        assert run_pipeline(GOLDEN_AS_OF_DATE, output2)
-
-        # Load and compare
-        with open(output1) as f:
-            data1 = json.load(f)
         with open(output2) as f:
             data2 = json.load(f)
 
@@ -259,19 +250,13 @@ class TestGoldenBaseline:
 class TestSmokeTest:
     """Quick smoke tests that don't require baseline"""
 
-    def test_pipeline_runs_without_crash(self, tmp_path):
+    def test_pipeline_runs_without_crash(self, pipeline_output):
         """Test that the pipeline runs without crashing"""
-        output_path = tmp_path / "smoke_test.json"
-        success = run_pipeline(GOLDEN_AS_OF_DATE, output_path)
-        assert success, "Pipeline crashed"
+        assert pipeline_output["success"], "Pipeline crashed"
 
-    def test_output_has_required_sections(self, tmp_path):
+    def test_output_has_required_sections(self, pipeline_output):
         """Test output has all required sections"""
-        output_path = tmp_path / "smoke_test.json"
-        run_pipeline(GOLDEN_AS_OF_DATE, output_path)
-
-        with open(output_path) as f:
-            data = json.load(f)
+        data = pipeline_output["data"]
 
         required = [
             "run_metadata",
@@ -286,13 +271,9 @@ class TestSmokeTest:
         for section in required:
             assert section in data, f"Missing required section: {section}"
 
-    def test_no_all_zero_scores(self, tmp_path):
+    def test_no_all_zero_scores(self, pipeline_output):
         """Test that no module returns all-zero scores"""
-        output_path = tmp_path / "smoke_test.json"
-        run_pipeline(GOLDEN_AS_OF_DATE, output_path)
-
-        with open(output_path) as f:
-            data = json.load(f)
+        data = pipeline_output["data"]
 
         # Module 2
         m2_scores = data.get("module_2_financial", {}).get("scores", [])
@@ -340,28 +321,18 @@ class TestPITDiscipline:
 class TestEdgeCases:
     """Edge case tests"""
 
-    def test_empty_catalyst_handling(self, tmp_path):
+    def test_empty_catalyst_handling(self, pipeline_output):
         """Test that zero catalysts doesn't crash the pipeline"""
-        output_path = tmp_path / "edge_test.json"
-        success = run_pipeline(GOLDEN_AS_OF_DATE, output_path)
-        assert success
-
-        with open(output_path) as f:
-            data = json.load(f)
+        data = pipeline_output["data"]
 
         # Catalyst module should have diagnostic counts even with 0 events
         m3 = data.get("module_3_catalyst", {})
         diag = m3.get("diagnostic_counts", {})
         assert "tickers_analyzed" in diag
 
-    def test_missing_financial_data_handled(self, tmp_path):
+    def test_missing_financial_data_handled(self, pipeline_output):
         """Test that missing financial data is handled gracefully"""
-        output_path = tmp_path / "edge_test.json"
-        success = run_pipeline(GOLDEN_AS_OF_DATE, output_path)
-        assert success
-
-        with open(output_path) as f:
-            data = json.load(f)
+        data = pipeline_output["data"]
 
         # Check that tickers with missing data are properly flagged
         m2 = data.get("module_2_financial", {})

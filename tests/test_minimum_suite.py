@@ -40,12 +40,6 @@ def as_of_date():
 
 
 @pytest.fixture
-def tmp_output(tmp_path):
-    """Temporary output file path"""
-    return tmp_path / "test_output.json"
-
-
-@pytest.fixture
 def sample_financial_records():
     """Sample financial records for unit tests"""
     return [
@@ -114,6 +108,28 @@ def run_pipeline(as_of_date: str, output_path: Path, extra_args: list = None) ->
         return result.returncode == 0, result.stdout, result.stderr
 
 
+@pytest.fixture(scope="module")
+def pipeline_output(tmp_path_factory):
+    """Run pipeline once and share the result across all tests in this module.
+
+    Before: each test called run_pipeline() independently (~17s each, 17 tests = ~280s).
+    After: one shared run (~17s) reused by all read-only tests.
+    """
+    tmpdir = tmp_path_factory.mktemp("minimum_suite")
+    output_path = tmpdir / "test_output.json"
+    success, stdout, stderr = run_pipeline(TEST_AS_OF_DATE, output_path)
+    assert success, f"Pipeline setup failed:\n{stderr}"
+    with open(output_path) as f:
+        data = json.load(f)
+    return {
+        "success": success,
+        "stdout": stdout,
+        "stderr": stderr,
+        "output_path": output_path,
+        "data": data,
+    }
+
+
 def compute_hash(data: Any, exclude_paths: set = None) -> str:
     """Compute deterministic content hash, optionally excluding paths"""
     if exclude_paths:
@@ -162,27 +178,18 @@ NON_DETERMINISTIC_PATHS = {
 class TestSmoke:
     """Smoke tests - pipeline runs without crashing"""
 
-    def test_pipeline_completes_without_error(self, tmp_output):
+    def test_pipeline_completes_without_error(self, pipeline_output):
         """The most basic test: pipeline runs to completion"""
-        success, stdout, stderr = run_pipeline(TEST_AS_OF_DATE, tmp_output)
-        assert success, f"Pipeline failed:\n{stderr}"
-        assert tmp_output.exists(), "Output file not created"
+        assert pipeline_output["success"], "Pipeline failed"
+        assert pipeline_output["output_path"].exists(), "Output file not created"
 
-    def test_output_is_valid_json(self, tmp_output):
+    def test_output_is_valid_json(self, pipeline_output):
         """Output file is valid JSON"""
-        run_pipeline(TEST_AS_OF_DATE, tmp_output)
+        assert isinstance(pipeline_output["data"], dict)
 
-        with open(tmp_output) as f:
-            data = json.load(f)
-
-        assert isinstance(data, dict)
-
-    def test_output_has_required_sections(self, tmp_output):
+    def test_output_has_required_sections(self, pipeline_output):
         """Output has all required top-level sections"""
-        run_pipeline(TEST_AS_OF_DATE, tmp_output)
-
-        with open(tmp_output) as f:
-            data = json.load(f)
+        data = pipeline_output["data"]
 
         required_sections = [
             "run_metadata",
@@ -197,14 +204,9 @@ class TestSmoke:
         for section in required_sections:
             assert section in data, f"Missing section: {section}"
 
-    def test_summary_has_key_metrics(self, tmp_output):
+    def test_summary_has_key_metrics(self, pipeline_output):
         """Summary section has key metrics"""
-        run_pipeline(TEST_AS_OF_DATE, tmp_output)
-
-        with open(tmp_output) as f:
-            data = json.load(f)
-
-        summary = data["summary"]
+        summary = pipeline_output["data"]["summary"]
         assert "total_evaluated" in summary
         assert "active_universe" in summary
         assert "final_ranked" in summary
@@ -219,18 +221,16 @@ class TestSmoke:
 class TestRegression:
     """Regression tests - same inputs produce identical outputs"""
 
-    def test_determinism_two_runs(self, tmp_path):
+    def test_determinism_two_runs(self, pipeline_output, tmp_path):
         """Two runs with same inputs produce identical outputs"""
-        output1 = tmp_path / "run1.json"
+        # Reuse the shared pipeline run as run 1
+        data1 = pipeline_output["data"]
+
+        # Only need one additional run
         output2 = tmp_path / "run2.json"
+        success2, _, stderr2 = run_pipeline(TEST_AS_OF_DATE, output2)
+        assert success2, f"Second run failed:\n{stderr2}"
 
-        success1, _, _ = run_pipeline(TEST_AS_OF_DATE, output1)
-        success2, _, _ = run_pipeline(TEST_AS_OF_DATE, output2)
-
-        assert success1 and success2, "One or both runs failed"
-
-        with open(output1) as f:
-            data1 = json.load(f)
         with open(output2) as f:
             data2 = json.load(f)
 
@@ -262,14 +262,9 @@ class TestRegression:
 class TestSchema:
     """Schema validation tests"""
 
-    def test_module_2_output_schema(self, tmp_output):
+    def test_module_2_output_schema(self, pipeline_output):
         """Module 2 output has correct schema"""
-        run_pipeline(TEST_AS_OF_DATE, tmp_output)
-
-        with open(tmp_output) as f:
-            data = json.load(f)
-
-        m2 = data["module_2_financial"]
+        m2 = pipeline_output["data"]["module_2_financial"]
 
         # Required fields
         assert "scores" in m2
@@ -281,14 +276,9 @@ class TestSchema:
             assert "financial_score" in score
             assert "severity" in score
 
-    def test_module_5_output_schema(self, tmp_output):
+    def test_module_5_output_schema(self, pipeline_output):
         """Module 5 output has correct schema"""
-        run_pipeline(TEST_AS_OF_DATE, tmp_output)
-
-        with open(tmp_output) as f:
-            data = json.load(f)
-
-        m5 = data["module_5_composite"]
+        m5 = pipeline_output["data"]["module_5_composite"]
 
         # Required fields
         assert "ranked_securities" in m5
@@ -301,12 +291,9 @@ class TestSchema:
             assert "composite_score" in sec
             assert "composite_rank" in sec
 
-    def test_scores_in_valid_range(self, tmp_output):
+    def test_scores_in_valid_range(self, pipeline_output):
         """All scores are in [0, 100] range"""
-        run_pipeline(TEST_AS_OF_DATE, tmp_output)
-
-        with open(tmp_output) as f:
-            data = json.load(f)
+        data = pipeline_output["data"]
 
         # Module 2
         for score in data["module_2_financial"]["scores"]:
@@ -327,14 +314,9 @@ class TestSchema:
 class TestPITDiscipline:
     """Point-in-time discipline tests"""
 
-    def test_as_of_date_in_output(self, tmp_output):
+    def test_as_of_date_in_output(self, pipeline_output):
         """Output contains correct as_of_date"""
-        run_pipeline(TEST_AS_OF_DATE, tmp_output)
-
-        with open(tmp_output) as f:
-            data = json.load(f)
-
-        assert data["run_metadata"]["as_of_date"] == TEST_AS_OF_DATE
+        assert pipeline_output["data"]["run_metadata"]["as_of_date"] == TEST_AS_OF_DATE
 
     def test_historical_date_filters_future_data(self, tmp_path):
         """Running with historical date filters future data"""
@@ -381,12 +363,9 @@ class TestPITDiscipline:
 class TestEdgeCases:
     """Edge case handling tests"""
 
-    def test_missing_financial_data_flagged(self, tmp_output):
+    def test_missing_financial_data_flagged(self, pipeline_output):
         """Tickers with missing financial data are properly flagged"""
-        run_pipeline(TEST_AS_OF_DATE, tmp_output)
-
-        with open(tmp_output) as f:
-            data = json.load(f)
+        data = pipeline_output["data"]
 
         # Some tickers should have missing data flags
         missing_count = 0
@@ -397,12 +376,9 @@ class TestEdgeCases:
         # Just informational - not necessarily a failure
         print(f"Tickers with missing financial data: {missing_count}")
 
-    def test_sev3_tickers_excluded(self, tmp_output):
+    def test_sev3_tickers_excluded(self, pipeline_output):
         """SEV3 (critical) tickers are excluded from ranking"""
-        run_pipeline(TEST_AS_OF_DATE, tmp_output)
-
-        with open(tmp_output) as f:
-            data = json.load(f)
+        data = pipeline_output["data"]
 
         # Count SEV3 in Module 2
         sev3_count = sum(
@@ -416,23 +392,17 @@ class TestEdgeCases:
         # Most excluded should be SEV3
         assert excluded_count >= sev3_count * 0.8, "SEV3 tickers not being excluded"
 
-    def test_excluded_have_exclusion_reason(self, tmp_output):
+    def test_excluded_have_exclusion_reason(self, pipeline_output):
         """Excluded securities have exclusion reasons"""
-        run_pipeline(TEST_AS_OF_DATE, tmp_output)
-
-        with open(tmp_output) as f:
-            data = json.load(f)
+        data = pipeline_output["data"]
 
         for sec in data["module_5_composite"]["excluded_securities"]:
             reason = sec.get("reason")
             assert reason and reason != "unknown", f"Ticker {sec['ticker']} missing exclusion reason"
 
-    def test_weights_sum_to_target(self, tmp_output):
+    def test_weights_sum_to_target(self, pipeline_output):
         """Position weights: 0 when position sizing disabled (default), 1.0 when enabled"""
-        run_pipeline(TEST_AS_OF_DATE, tmp_output)
-
-        with open(tmp_output) as f:
-            data = json.load(f)
+        data = pipeline_output["data"]
 
         m5 = data["module_5_composite"]
         total_weight = sum(
@@ -440,7 +410,7 @@ class TestEdgeCases:
             for sec in m5["ranked_securities"]
         )
 
-        # Position sizing disabled by default → weights should be 0
+        # Position sizing disabled by default -> weights should be 0
         def_config = m5.get("defensive_overlay_config", {})
         position_sizing = def_config.get("position_sizing_enabled", False)
 
@@ -450,37 +420,24 @@ class TestEdgeCases:
         else:
             assert total_weight == 0.0, f"Weights should be 0 when position sizing disabled, got {total_weight}"
 
-    def test_excluded_have_zero_weight(self, tmp_output):
+    def test_excluded_have_zero_weight(self, pipeline_output):
         """Excluded securities have zero weight"""
-        run_pipeline(TEST_AS_OF_DATE, tmp_output)
-
-        with open(tmp_output) as f:
-            data = json.load(f)
+        data = pipeline_output["data"]
 
         for sec in data["module_5_composite"]["excluded_securities"]:
             weight = float(sec.get("position_weight", "0"))
             assert weight == 0, f"Excluded ticker {sec['ticker']} has non-zero weight: {weight}"
 
-    def test_no_all_zero_module_2(self, tmp_output):
+    def test_no_all_zero_module_2(self, pipeline_output):
         """Module 2 doesn't return all zeros"""
-        run_pipeline(TEST_AS_OF_DATE, tmp_output)
-
-        with open(tmp_output) as f:
-            data = json.load(f)
-
-        scores = data["module_2_financial"]["scores"]
+        scores = pipeline_output["data"]["module_2_financial"]["scores"]
         non_zero = sum(1 for s in scores if s.get("financial_score", 0) != 0)
 
         assert non_zero > 0, "All Module 2 scores are zero"
 
-    def test_no_all_zero_module_4(self, tmp_output):
+    def test_no_all_zero_module_4(self, pipeline_output):
         """Module 4 doesn't return all zeros"""
-        run_pipeline(TEST_AS_OF_DATE, tmp_output)
-
-        with open(tmp_output) as f:
-            data = json.load(f)
-
-        scores = data["module_4_clinical"]["scores"]
+        scores = pipeline_output["data"]["module_4_clinical"]["scores"]
         non_zero = sum(1 for s in scores if float(s.get("clinical_score", "0")) != 0)
 
         assert non_zero > 0, "All Module 4 scores are zero"
@@ -505,13 +462,11 @@ class TestValidation:
         )
         assert result.returncode == 0, f"Doctor check failed:\n{result.stdout}\n{result.stderr}"
 
-    def test_validate_pipeline_passes(self, tmp_output):
+    def test_validate_pipeline_passes(self, pipeline_output):
         """Pipeline validation passes on output"""
         import sys
-        run_pipeline(TEST_AS_OF_DATE, tmp_output)
-
         result = subprocess.run(
-            [sys.executable, "validate_pipeline.py", "--output", str(tmp_output)],
+            [sys.executable, "validate_pipeline.py", "--output", str(pipeline_output["output_path"])],
             capture_output=True,
             text=True,
             cwd=Path(__file__).parent.parent
