@@ -1343,10 +1343,10 @@ def save_validation_snapshot(
             writer.writeheader()
             for rec in ranked:
                 ticker = rec.get("ticker", "")
-                # Extract signal scores from nested dicts
+                # Extract signal scores from nested dicts (momentum/valuation
+                # are not in component_scores; catalyst/smart_money/clinical/
+                # financial use component_scores.normalized as single source)
                 mom = rec.get("momentum_signal") or {}
-                cat = rec.get("catalyst_effective") or {}
-                sm = rec.get("smart_money_signal") or {}
                 val = rec.get("valuation_signal") or {}
                 row = {
                     "ticker": ticker,
@@ -1357,8 +1357,8 @@ def save_validation_snapshot(
                     "severity": rec.get("severity"),
                     "archetype": archetypes.get(ticker, ""),
                     "momentum_score": mom.get("momentum_score"),
-                    "catalyst_score": cat.get("catalyst_score_effective"),
-                    "smart_money_score": sm.get("score"),
+                    "catalyst_score": _component_score(rec, "catalyst"),
+                    "smart_money_score": _component_score(rec, "smart_money"),
                     "valuation_score": val.get("valuation_score"),
                     "clinical_score": _component_score(rec, "clinical"),
                     "financial_score": _component_score(rec, "financial"),
@@ -1382,9 +1382,9 @@ def save_validation_snapshot(
             if col == "momentum_score":
                 v = (rec.get("momentum_signal") or {}).get("momentum_score")
             elif col == "catalyst_score":
-                v = (rec.get("catalyst_effective") or {}).get("catalyst_score_effective")
+                v = _component_score(rec, "catalyst")
             elif col == "smart_money_score":
-                v = (rec.get("smart_money_signal") or {}).get("score")
+                v = _component_score(rec, "smart_money")
             elif col == "valuation_score":
                 v = (rec.get("valuation_signal") or {}).get("valuation_score")
             elif col == "clinical_score":
