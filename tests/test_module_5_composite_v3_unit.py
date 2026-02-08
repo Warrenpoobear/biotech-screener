@@ -1234,3 +1234,162 @@ class TestEdgeCases:
 
         assert len(result["ranked_securities"]) == 1
         assert result["ranked_securities"][0]["composite_rank"] == 1
+
+
+# ============================================================================
+# CONFIDENCE OVERALL — weighted component confidence blend
+# ============================================================================
+
+from module_5_scoring_v3 import ComponentScore
+from src.modules.ic_enhancements import _clamp
+
+
+def _compute_confidence_overall(component_scores: list) -> Decimal:
+    """Mirror the inline confidence_overall computation from _score_single_ticker_v3."""
+    _conf_total_w = Decimal("0")
+    _conf_total_wc = Decimal("0")
+    for _cs in component_scores:
+        _cw = _cs.weight_effective
+        _cc = _cs.confidence
+        if _cw > 0 and _cc is not None and _cc > 0:
+            _conf_total_w += _cw
+            _conf_total_wc += _cw * _cc
+    confidence_overall = (
+        (_conf_total_wc / _conf_total_w) if _conf_total_w > 0 else Decimal("0.5")
+    )
+    confidence_overall = _clamp(confidence_overall, Decimal("0.1"), Decimal("0.9"))
+    return confidence_overall
+
+
+def _make_cs(name: str, weight: str, confidence: str) -> ComponentScore:
+    """Helper to build a ComponentScore with only weight_effective and confidence set."""
+    return ComponentScore(
+        name=name,
+        raw=Decimal("50"),
+        normalized=Decimal("50"),
+        confidence=Decimal(confidence),
+        weight_base=Decimal(weight),
+        weight_effective=Decimal(weight),
+        contribution=Decimal("0"),
+    )
+
+
+class TestConfidenceOverallWeighted:
+    """Tests for the component-scores-weighted confidence_overall computation."""
+
+    def test_uniform_confidence_returns_that_confidence(self):
+        """When all components have the same confidence, result equals that value."""
+        cs = [
+            _make_cs("clinical", "0.35", "0.7"),
+            _make_cs("financial", "0.25", "0.7"),
+            _make_cs("catalyst", "0.20", "0.7"),
+        ]
+        result = _compute_confidence_overall(cs)
+        assert result == Decimal("0.7")
+
+    def test_weighted_average_is_correct(self):
+        """Weighted average: (0.35*0.9 + 0.25*0.3 + 0.20*0.6) / (0.35+0.25+0.20)."""
+        cs = [
+            _make_cs("clinical", "0.35", "0.9"),
+            _make_cs("financial", "0.25", "0.3"),
+            _make_cs("catalyst", "0.20", "0.6"),
+        ]
+        result = _compute_confidence_overall(cs)
+        expected = (Decimal("0.35") * Decimal("0.9")
+                    + Decimal("0.25") * Decimal("0.3")
+                    + Decimal("0.20") * Decimal("0.6")) / Decimal("0.80")
+        assert result == expected
+
+    def test_clamped_above_at_0_9(self):
+        """Confidence is clamped to 0.9 maximum."""
+        cs = [
+            _make_cs("clinical", "0.50", "0.99"),
+            _make_cs("financial", "0.50", "0.95"),
+        ]
+        result = _compute_confidence_overall(cs)
+        assert result == Decimal("0.9")
+
+    def test_clamped_below_at_0_1(self):
+        """Confidence is clamped to 0.1 minimum when very low."""
+        cs = [
+            _make_cs("clinical", "0.50", "0.05"),
+            _make_cs("financial", "0.50", "0.08"),
+        ]
+        result = _compute_confidence_overall(cs)
+        assert result == Decimal("0.1")
+
+    def test_empty_components_returns_0_5(self):
+        """With no components, fallback to 0.5."""
+        result = _compute_confidence_overall([])
+        assert result == Decimal("0.5")
+
+    def test_zero_weight_components_excluded(self):
+        """Components with weight_effective=0 are ignored."""
+        cs = [
+            _make_cs("clinical", "0.50", "0.8"),
+            _make_cs("financial", "0.00", "0.2"),  # zero weight
+        ]
+        result = _compute_confidence_overall(cs)
+        # Only clinical contributes
+        assert result == Decimal("0.8")
+
+    def test_zero_confidence_components_excluded(self):
+        """Components with confidence=0 are excluded from the blend."""
+        cs = [
+            _make_cs("clinical", "0.50", "0.7"),
+            _make_cs("catalyst", "0.30", "0"),  # zero confidence
+        ]
+        result = _compute_confidence_overall(cs)
+        assert result == Decimal("0.7")
+
+    def test_monotonicity_higher_confidence_wins(self):
+        """Increasing any component's confidence should not decrease the overall."""
+        base = [
+            _make_cs("clinical", "0.35", "0.5"),
+            _make_cs("financial", "0.25", "0.5"),
+            _make_cs("catalyst", "0.20", "0.5"),
+        ]
+        higher = [
+            _make_cs("clinical", "0.35", "0.8"),  # raised
+            _make_cs("financial", "0.25", "0.5"),
+            _make_cs("catalyst", "0.20", "0.5"),
+        ]
+        assert _compute_confidence_overall(higher) > _compute_confidence_overall(base)
+
+    def test_determinism(self):
+        """Same inputs always produce the same output."""
+        cs = [
+            _make_cs("clinical", "0.35", "0.72"),
+            _make_cs("financial", "0.25", "0.44"),
+            _make_cs("catalyst", "0.20", "0.61"),
+            _make_cs("smart_money", "0.10", "0.55"),
+            _make_cs("pos", "0.10", "0.38"),
+        ]
+        results = {_compute_confidence_overall(cs) for _ in range(50)}
+        assert len(results) == 1
+
+    def test_heavier_component_dominates(self):
+        """A component with larger weight has more influence on the result."""
+        # clinical (heavy, high conf) vs catalyst (light, low conf)
+        cs = [
+            _make_cs("clinical", "0.60", "0.9"),
+            _make_cs("catalyst", "0.10", "0.2"),
+        ]
+        result = _compute_confidence_overall(cs)
+        # Should be closer to 0.9 than to 0.2
+        assert result > Decimal("0.7")
+
+    def test_result_in_valid_range(self):
+        """Result is always in [0.1, 0.9] regardless of inputs."""
+        import random
+        random.seed(42)
+        for _ in range(100):
+            n = random.randint(1, 6)
+            cs = [
+                _make_cs(f"c{i}",
+                         str(round(random.uniform(0.0, 1.0), 4)),
+                         str(round(random.uniform(0.0, 1.0), 4)))
+                for i in range(n)
+            ]
+            result = _compute_confidence_overall(cs)
+            assert Decimal("0.1") <= result <= Decimal("0.9")

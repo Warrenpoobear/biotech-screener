@@ -3684,12 +3684,18 @@ def _score_single_ticker_v3(
         component_scores, enhancements_dict, final_score
     )
 
+    # Confidence: weight-proportional blend of component confidences
+    # Uses only components that actually contribute to the composite score
+    _conf_total_w = Decimal("0")
+    _conf_total_wc = Decimal("0")
+    for _cs in component_scores:
+        _cw = _cs.weight_effective
+        _cc = _cs.confidence
+        if _cw > 0 and _cc is not None and _cc > 0:
+            _conf_total_w += _cw
+            _conf_total_wc += _cw * _cc
     confidence_overall = (
-        conf_clin * Decimal("0.3") +
-        conf_fin * Decimal("0.3") +
-        conf_cat * Decimal("0.2") +
-        momentum.confidence * Decimal("0.1") +
-        valuation.confidence * Decimal("0.1")
+        (_conf_total_wc / _conf_total_w) if _conf_total_w > 0 else Decimal("0.5")
     )
     confidence_overall = _clamp(confidence_overall, Decimal("0.1"), Decimal("0.9"))
 
