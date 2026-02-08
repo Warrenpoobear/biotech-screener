@@ -42,6 +42,8 @@ from backtest.ic_measurement import (
     IC_EXCELLENT, IC_GOOD, IC_WEAK,
     MIN_OBS_IC,
     calculate_ic,
+    calculate_kendall,
+    compute_quintile_spread,
     _classify_ic,
     _quantize,
     add_trading_days,
@@ -1766,6 +1768,15 @@ def run_backtest(
             snapshot_result[f"tstat_{horizon_label}"] = float(ic_result.t_statistic) if ic_result.t_statistic else None
             snapshot_result[f"sig95_{horizon_label}"] = ic_result.is_significant_95
 
+            # Kendall tau-b (more robust with ties)
+            kendall_val = calculate_kendall(ic_rankings, fwd_returns)
+            snapshot_result[f"kendall_{horizon_label}"] = float(kendall_val) if kendall_val is not None else None
+
+            # Quintile spread
+            qs = compute_quintile_spread(ic_rankings, fwd_returns)
+            if qs is not None:
+                snapshot_result[f"quintile_spread_{horizon_label}"] = qs
+
             # Stratified IC: by stage
             stage_ic = compute_stratified_ic(ic_rankings, fwd_returns, inv_stage)
             snapshot_result[f"stage_ic_{horizon_label}"] = stage_ic
@@ -1900,6 +1911,37 @@ def _aggregate(per_snapshot: List[Dict[str, Any]]) -> Dict[str, Any]:
         hit_rate = sum(1 for x in ic_values if x > 0) / len(ic_values)
         quality = _classify_ic(Decimal(str(abs(mean_ic)))).value
 
+        # Kendall tau-b aggregate
+        kendall_key = f"kendall_{horizon_label}"
+        kendall_values = [s[kendall_key] for s in per_snapshot
+                          if kendall_key in s and s[kendall_key] is not None]
+        if kendall_values:
+            mean_kendall = mean(kendall_values)
+            std_kendall = stdev(kendall_values) if len(kendall_values) > 1 else 0.0
+            t_kendall = mean_kendall / (std_kendall / math.sqrt(len(kendall_values))) if std_kendall > 0 else float("inf")
+        else:
+            mean_kendall = None
+            std_kendall = None
+            t_kendall = None
+
+        # Quintile spread aggregate
+        qs_key = f"quintile_spread_{horizon_label}"
+        qs_spreads = [s[qs_key]["spread_pct"] for s in per_snapshot
+                      if qs_key in s and s[qs_key] is not None]
+        if qs_spreads:
+            mean_qs = mean(qs_spreads)
+            std_qs = stdev(qs_spreads) if len(qs_spreads) > 1 else 0.0
+            t_qs = mean_qs / (std_qs / math.sqrt(len(qs_spreads))) if std_qs > 0 else float("inf")
+            qs_hit = sum(1 for s in qs_spreads if s > 0) / len(qs_spreads)
+            worst_idx = min(range(len(qs_spreads)), key=lambda i: qs_spreads[i])
+            worst_snap = [s for s in per_snapshot if qs_key in s and s[qs_key] is not None][worst_idx]
+        else:
+            mean_qs = None
+            std_qs = None
+            t_qs = None
+            qs_hit = None
+            worst_snap = None
+
         result[f"aggregate_{horizon_label}"] = {
             "mean_ic": round(mean_ic, 6),
             "std_ic": round(std_ic, 6),
@@ -1907,6 +1949,18 @@ def _aggregate(per_snapshot: List[Dict[str, Any]]) -> Dict[str, Any]:
             "hit_rate": round(hit_rate * 100, 1),
             "quality": quality,
             "n_periods": len(ic_values),
+            "mean_kendall": round(mean_kendall, 6) if mean_kendall is not None else None,
+            "std_kendall": round(std_kendall, 6) if std_kendall is not None else None,
+            "t_stat_kendall": round(t_kendall, 2) if t_kendall is not None else None,
+            "quintile_spread": {
+                "mean_spread_pct": round(mean_qs, 4) if mean_qs is not None else None,
+                "std_spread_pct": round(std_qs, 4) if std_qs is not None else None,
+                "t_stat": round(t_qs, 2) if t_qs is not None else None,
+                "hit_rate": round(qs_hit * 100, 1) if qs_hit is not None else None,
+                "n_periods": len(qs_spreads),
+                "worst_spread_pct": round(min(qs_spreads), 4) if qs_spreads else None,
+                "worst_date": worst_snap["date"] if worst_snap else None,
+            } if qs_spreads else None,
         }
 
     # Top/bottom decile spread (60d)
@@ -2224,16 +2278,20 @@ def print_report(results: Dict[str, Any]) -> None:
 
     # Per-snapshot detail
     for horizon_label in HORIZONS:
-        print(f"Per-Snapshot IC ({horizon_label} forward):")
+        print(f"Per-Snapshot ({horizon_label} forward):")
+        print(f"  {'Date':>12s}  {'Spearman':>9s}  {'Kendall':>9s}  {'Q spread':>9s}  {'n':>5s}  {'drop':>5s}  {'Quality'}")
+        print(f"  {'─' * 12}  {'─' * 9}  {'─' * 9}  {'─' * 9}  {'─' * 5}  {'─' * 5}  {'─' * 12}")
         for snap in results.get("per_snapshot", []):
             ic = snap.get(f"ic_{horizon_label}", 0)
+            kendall = snap.get(f"kendall_{horizon_label}")
+            qs = snap.get(f"quintile_spread_{horizon_label}", {})
+            qs_spread = qs.get("spread_pct") if qs else None
             n = snap.get(f"n_{horizon_label}", 0)
             quality = snap.get(f"quality_{horizon_label}", "?")
-            cov = snap.get(f"coverage_{horizon_label}", 0)
-            tstat = snap.get(f"tstat_{horizon_label}")
             dropped = snap.get("n_dropped", 0)
-            tstat_str = f"  t={tstat:+.2f}" if tstat is not None else ""
-            print(f"  {snap['date']}: IC={ic:+.4f} (n={n}, dropped={dropped}){tstat_str}  {quality}")
+            k_str = f"{kendall:+.4f}" if kendall is not None else "    n/a"
+            qs_str = f"{qs_spread:+.2f}%" if qs_spread is not None else "     n/a"
+            print(f"  {snap['date']:>12s}  {ic:+9.4f}  {k_str:>9s}  {qs_str:>9s}  {n:>5d}  {dropped:>5d}  {quality}")
         print()
 
     # Aggregate
@@ -2241,15 +2299,33 @@ def print_report(results: Dict[str, Any]) -> None:
     for horizon_label in HORIZONS:
         agg = results.get(f"aggregate_{horizon_label}")
         if agg:
+            # Spearman
             print(
-                f"  Mean IC ({horizon_label}): {agg['mean_ic']:+.4f}  "
-                f"t-stat={agg['t_stat']:.2f}  "
-                f"Hit Rate={agg['hit_rate']:.0f}%  "
+                f"  Spearman ({horizon_label}):  mean={agg['mean_ic']:+.4f}  "
+                f"t={agg['t_stat']:.2f}  "
+                f"hit={agg['hit_rate']:.0f}%  "
                 f"-> {agg['quality']}"
             )
+            # Kendall
+            mk = agg.get("mean_kendall")
+            tk = agg.get("t_stat_kendall")
+            if mk is not None:
+                line = f"  Kendall  ({horizon_label}):  mean={mk:+.4f}"
+                if tk is not None:
+                    line += f"  t={tk:.2f}"
+                print(line)
+            # Quintile spread
+            qs = agg.get("quintile_spread")
+            if qs and qs.get("mean_spread_pct") is not None:
+                print(
+                    f"  Q spread ({horizon_label}):  mean={qs['mean_spread_pct']:+.2f}%  "
+                    f"t={qs['t_stat']:.2f}  "
+                    f"hit={qs['hit_rate']:.0f}%  "
+                    f"worst={qs['worst_spread_pct']:+.2f}% ({qs['worst_date']})"
+                )
     print()
 
-    # Decile spread
+    # Decile spread (legacy 60d)
     spread = results.get("decile_spread_60d")
     if spread:
         print("Top/Bottom Decile Spread (60d):")

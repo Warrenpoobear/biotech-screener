@@ -391,6 +391,65 @@ def _compute_ranks(values: List[Decimal]) -> List[float]:
     return ranks
 
 
+def compute_kendall_tau(
+    rankings: List[int],
+    forward_returns: List[Decimal],
+    negate: bool = True
+) -> Optional[Decimal]:
+    """
+    Calculate Kendall tau-b rank correlation between rankings and forward returns.
+
+    Tau-b handles ties correctly (using the tie-adjusted denominator).
+    O(n^2) but fine for typical universe sizes (< 400 tickers).
+
+    Args:
+        rankings: Security rankings (1 = best, higher = worse)
+        forward_returns: Forward returns for each security
+        negate: If True, negate so lower rank → higher return = positive tau
+
+    Returns:
+        Kendall tau-b, or None if insufficient data.
+    """
+    n = len(rankings)
+    if n < MIN_OBS_IC or len(forward_returns) != n:
+        return None
+
+    concordant = 0
+    discordant = 0
+    tied_x = 0  # ties in rankings only
+    tied_y = 0  # ties in returns only
+
+    for i in range(n):
+        for j in range(i + 1, n):
+            dx = rankings[i] - rankings[j]
+            dy = float(forward_returns[i]) - float(forward_returns[j])
+
+            if dx == 0 and dy == 0:
+                # tie in both — doesn't count
+                tied_x += 1
+                tied_y += 1
+            elif dx == 0:
+                tied_x += 1
+            elif dy == 0:
+                tied_y += 1
+            elif (dx > 0 and dy > 0) or (dx < 0 and dy < 0):
+                concordant += 1
+            else:
+                discordant += 1
+
+    n_pairs = n * (n - 1) // 2
+    denom = math.sqrt((n_pairs - tied_x) * (n_pairs - tied_y))
+    if denom == 0:
+        return Decimal("0")
+
+    tau = (concordant - discordant) / denom
+
+    if negate:
+        tau = -tau
+
+    return _quantize(Decimal(str(tau)))
+
+
 def compute_spearman_ic(
     rankings: List[int],
     forward_returns: List[Decimal],
@@ -481,6 +540,74 @@ def calculate_ic(
     return_list = [_decimal(forward_returns[t]) for t in common_tickers]
 
     return compute_spearman_ic(rank_list, return_list, negate=True)
+
+
+def calculate_kendall(
+    rankings: Dict[str, int],
+    forward_returns: Dict[str, float],
+) -> Optional[Decimal]:
+    """
+    Calculate Kendall tau-b from ranking and return dictionaries.
+
+    Same interface as calculate_ic but uses Kendall tau-b
+    (more robust with ties than Spearman).
+
+    Returns:
+        Kendall tau-b where positive = signal working as intended, or None.
+    """
+    common_tickers = sorted(set(rankings.keys()) & set(forward_returns.keys()))
+
+    if len(common_tickers) < MIN_OBS_IC:
+        return None
+
+    rank_list = [rankings[t] for t in common_tickers]
+    return_list = [_decimal(forward_returns[t]) for t in common_tickers]
+
+    return compute_kendall_tau(rank_list, return_list, negate=True)
+
+
+def compute_quintile_spread(
+    rankings: Dict[str, int],
+    forward_returns: Dict[str, float],
+) -> Optional[Dict[str, Any]]:
+    """
+    Compute quintile-level performance spread from rankings and forward returns.
+
+    Returns dict with:
+        quintile_returns: [Q1_mean, ..., Q5_mean]  (Q1 = best-ranked)
+        spread: Q1 - Q5 mean return
+        monotonic: bool (Q1 >= Q2 >= ... >= Q5)
+        n_per_quintile: int
+    """
+    common = sorted(
+        [t for t in rankings if t in forward_returns],
+        key=lambda t: rankings[t]
+    )
+    n = len(common)
+    if n < 20:
+        return None
+
+    q_size = n // 5
+    if q_size < 2:
+        return None
+
+    quintile_returns: List[float] = []
+    for q in range(5):
+        start = q * q_size
+        end = start + q_size if q < 4 else n  # last quintile absorbs remainder
+        q_tickers = common[start:end]
+        q_ret = mean([forward_returns[t] for t in q_tickers])
+        quintile_returns.append(round(q_ret * 100, 4))  # in pct
+
+    spread = quintile_returns[0] - quintile_returns[4]
+    monotonic = all(quintile_returns[i] >= quintile_returns[i + 1] for i in range(4))
+
+    return {
+        "quintile_returns_pct": quintile_returns,
+        "spread_pct": round(spread, 4),
+        "monotonic": monotonic,
+        "n_per_quintile": q_size,
+    }
 
 
 # =============================================================================
