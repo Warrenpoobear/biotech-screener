@@ -173,6 +173,30 @@ COMMERCIAL_CEILING_CONFIG = {
 }
 
 # =============================================================================
+# DEV-STAGE CATALYST GUARDRAIL
+# =============================================================================
+# Caps catalyst influence for dev-stage names when catalyst timing confidence
+# is low (QUARTER/YEAR date specificity) and no corroborating signal exists.
+# Rule 1: share cap on catalyst contribution
+# Rule 2: composite ceiling for catalyst-dominant + low-confidence dev-stage
+
+DEV_CATALYST_GUARDRAIL_CONFIG = {
+    "enabled": True,
+    "rule1_enabled": True,   # share cap — independently toggleable
+    "rule2_enabled": True,   # composite ceiling — independently toggleable
+    "apply_to_stages": ("early", "poc"),
+    # Rule 1: share cap when date specificity is low + no corroboration
+    "catalyst_share_cap": Decimal("0.35"),
+    "low_specificity_triggers": ("QUARTER", "YEAR", "UNKNOWN"),
+    "corroboration_threshold": Decimal("45"),
+    "corroborating_components": ("smart_money", "financial"),
+    # Rule 2: composite ceiling when catalyst-dominant + low confidence
+    "catalyst_dominant_threshold": Decimal("0.40"),
+    "low_confidence_threshold": Decimal("0.45"),
+    "composite_ceiling": Decimal("62"),
+}
+
+# =============================================================================
 # ENHANCEMENT 5: ASYMMETRIC TRANSFORM CONFIGURATION
 # =============================================================================
 
@@ -1487,6 +1511,243 @@ def _extract_confidence_catalyst(cat_data: Any) -> Decimal:
             return _clamp(Decimal("0.4") + high_ratio * Decimal("0.5"), Decimal("0"), Decimal("1"))
 
     return Decimal("0.3")
+
+
+def _extract_lead_date_specificity(cat_data: Any) -> str:
+    """Extract the date_specificity of the nearest upcoming catalyst event.
+
+    Checks TickerCatalystSummaryV2 .events list for the event closest to
+    next_catalyst_date, returning its date_specificity value string.
+    For dict-format cat_data, looks in events list or top_3_events.
+    Falls back to "UNKNOWN" when not determinable.
+
+    Production data may serialise the field as ``date_precision`` with values
+    DAY / QUARTER / HALF_YEAR / RANGE.  We normalise those to the canonical
+    set used by the guardrail config: EXACT / MONTH / QUARTER / YEAR / UNKNOWN.
+    """
+    # Map serialised date_precision values → canonical DateSpecificity names
+    _PRECISION_TO_SPECIFICITY = {
+        "DAY": "EXACT",
+        "MONTH": "MONTH",
+        "QUARTER": "QUARTER",
+        "HALF_YEAR": "YEAR",
+        "RANGE": "QUARTER",     # conservative: treat range as imprecise
+        "EXACT": "EXACT",
+        "YEAR": "YEAR",
+        "UNKNOWN": "UNKNOWN",
+    }
+
+    def _normalise(raw: str) -> str:
+        return _PRECISION_TO_SPECIFICITY.get(raw, raw)
+
+    def _extract_from_event_obj(ev: Any) -> Optional[str]:
+        """Try date_specificity (dataclass attr), then date_precision (dict key)."""
+        ds = getattr(ev, "date_specificity", None)
+        if ds is not None:
+            return _normalise(ds.value if hasattr(ds, "value") else str(ds))
+        dp = getattr(ev, "date_precision", None)
+        if dp is not None:
+            return _normalise(dp.value if hasattr(dp, "value") else str(dp))
+        return None
+
+    def _extract_from_event_dict(ev_dict: dict) -> Optional[str]:
+        """Try date_specificity key, then date_precision key."""
+        ds = ev_dict.get("date_specificity")
+        if ds:
+            return _normalise(str(ds))
+        dp = ev_dict.get("date_precision")
+        if dp:
+            return _normalise(str(dp))
+        return None
+
+    if not cat_data:
+        return "UNKNOWN"
+
+    # --- Object path (TickerCatalystSummaryV2) ---
+    if hasattr(cat_data, "events") and hasattr(cat_data, "next_catalyst_date"):
+        next_date = getattr(cat_data, "next_catalyst_date", None)
+        events = getattr(cat_data, "events", [])
+        if events:
+            # Try to match the event closest to next_catalyst_date
+            if next_date:
+                for ev in events:
+                    ev_date = getattr(ev, "event_date", None)
+                    if ev_date and ev_date == next_date:
+                        result = _extract_from_event_obj(ev)
+                        if result is not None:
+                            return result
+            # Fallback: first upcoming event
+            for ev in events:
+                result = _extract_from_event_obj(ev)
+                if result is not None:
+                    return result
+
+    # --- Dict path ---
+    if isinstance(cat_data, dict):
+        next_date = cat_data.get("integration", {}).get("next_catalyst_date") or cat_data.get("scores", {}).get("next_catalyst_date")
+        events = cat_data.get("events", [])
+        if events:
+            if next_date:
+                for ev in events:
+                    ev_dict = ev if isinstance(ev, dict) else (ev.to_dict() if hasattr(ev, "to_dict") else {})
+                    if ev_dict.get("event_date") == next_date:
+                        result = _extract_from_event_dict(ev_dict)
+                        if result is not None:
+                            return result
+            for ev in events:
+                ev_dict = ev if isinstance(ev, dict) else (ev.to_dict() if hasattr(ev, "to_dict") else {})
+                result = _extract_from_event_dict(ev_dict)
+                if result is not None:
+                    return result
+        # Check top_3_events fallback
+        top_events = cat_data.get("top_3_events", [])
+        for ev in top_events:
+            if isinstance(ev, dict):
+                result = _extract_from_event_dict(ev)
+                if result is not None:
+                    return result
+
+    return "UNKNOWN"
+
+
+def apply_dev_catalyst_guardrail(
+    contributions: Dict[str, Decimal],
+    stage_bucket_alpha: str,
+    conf_cat: Decimal,
+    lead_date_specificity: str,
+    component_norms: Dict[str, Decimal],
+) -> Tuple[Dict[str, Decimal], List[str], Dict[str, Any]]:
+    """Dev-stage catalyst guardrail: cap catalyst influence when timing is uncertain.
+
+    Rule 1 (share cap): If dev-stage + low date specificity + no corroborating
+    second signal, clamp catalyst contribution to at most 35% of total.
+
+    Rule 2 (ceiling): If dev-stage + catalyst share > 40% + conf_cat < 0.45,
+    return a composite ceiling of 62 (applied later in dynamic ceilings section).
+
+    Returns (modified_contributions, flags, diagnostics).
+    """
+    cfg = DEV_CATALYST_GUARDRAIL_CONFIG
+    flags: List[str] = []
+    diag: Dict[str, Any] = {"applied": False, "rule1": False, "rule2": False}
+
+    if not cfg.get("enabled", True):
+        return contributions, flags, diag
+
+    if stage_bucket_alpha not in cfg["apply_to_stages"]:
+        return contributions, flags, diag
+
+    if "catalyst" not in contributions or contributions["catalyst"] <= 0:
+        return contributions, flags, diag
+
+    total = sum(contributions.values())
+    if total <= 0:
+        return contributions, flags, diag
+
+    cat_share = contributions["catalyst"] / total
+    diag["stage"] = stage_bucket_alpha
+    diag["lead_date_specificity"] = lead_date_specificity
+    diag["catalyst_share_before"] = str(cat_share)
+
+    # --- Rule 1: Share cap ---
+    if cfg.get("rule1_enabled", True) and lead_date_specificity in cfg["low_specificity_triggers"]:
+        # Check for corroboration: any corroborating component norm > threshold
+        has_corroboration = False
+        for comp in cfg["corroborating_components"]:
+            norm_val = component_norms.get(comp)
+            if norm_val is not None and norm_val > cfg["corroboration_threshold"]:
+                has_corroboration = True
+                diag["corroborated_by"] = comp
+                diag["corroboration_score"] = str(norm_val)
+                break
+
+        if not has_corroboration:
+            cap = cfg["catalyst_share_cap"]
+            if cat_share > cap:
+                # Scale catalyst contribution down so share == cap
+                # new_cat / (total - old_cat + new_cat) = cap
+                # new_cat = cap * (total - old_cat) / (1 - cap)
+                non_cat_total = total - contributions["catalyst"]
+                if non_cat_total > 0:
+                    new_cat = (cap * non_cat_total) / (Decimal("1") - cap)
+                    diag["catalyst_contribution_before"] = str(contributions["catalyst"])
+                    contributions["catalyst"] = _quantize_score(new_cat)
+                    diag["catalyst_contribution_after"] = str(contributions["catalyst"])
+                    diag["rule1"] = True
+                    diag["applied"] = True
+                    flags.append("dev_catalyst_guardrail_share_cap")
+
+    # --- Rule 2: Composite ceiling ---
+    # Recompute share after potential Rule 1 adjustment
+    total_after = sum(contributions.values())
+    if total_after > 0:
+        cat_share_after = contributions["catalyst"] / total_after
+    else:
+        cat_share_after = Decimal("0")
+    diag["catalyst_share_after"] = str(cat_share_after)
+
+    if (
+        cfg.get("rule2_enabled", True)
+        and cat_share_after > cfg["catalyst_dominant_threshold"]
+        and conf_cat < cfg["low_confidence_threshold"]
+    ):
+        diag["ceiling"] = str(cfg["composite_ceiling"])
+        diag["rule2"] = True
+        diag["applied"] = True
+        diag["conf_cat"] = str(conf_cat)
+        flags.append("dev_catalyst_guardrail_ceiling")
+
+    return contributions, flags, diag
+
+
+def summarize_dev_catalyst_guardrail(ranked_securities: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """Aggregate guardrail activation stats from scored securities.
+
+    Returns a summary dict suitable for logging / backtest output:
+      - total_evaluated, total_impacted, pct_impacted
+      - rule1_count, rule2_count
+      - dev_stage_impacted (how many of impacted are dev-stage)
+      - top_5_impacted: list of (ticker, rank, flags) sorted by rank ascending
+    """
+    total = len(ranked_securities)
+    rule1_hits = []
+    rule2_hits = []
+    impacted = []
+
+    for sec in ranked_securities:
+        flags = sec.get("flags", [])
+        ticker = sec.get("ticker", "?")
+        rank = sec.get("composite_rank", 9999)
+
+        hit_r1 = "dev_catalyst_guardrail_share_cap" in flags
+        hit_r2 = "dev_catalyst_guardrail_ceiling" in flags
+
+        if hit_r1:
+            rule1_hits.append(ticker)
+        if hit_r2:
+            rule2_hits.append(ticker)
+        if hit_r1 or hit_r2:
+            impacted.append({
+                "ticker": ticker,
+                "rank": rank,
+                "rule1": hit_r1,
+                "rule2": hit_r2,
+                "flags": [f for f in flags if "dev_catalyst_guardrail" in f],
+            })
+
+    impacted.sort(key=lambda x: x["rank"])
+    n_impacted = len(impacted)
+
+    return {
+        "total_evaluated": total,
+        "total_impacted": n_impacted,
+        "pct_impacted": round(100 * n_impacted / total, 1) if total > 0 else 0,
+        "rule1_count": len(rule1_hits),
+        "rule2_count": len(rule2_hits),
+        "rule1_tickers": rule1_hits,
+        "rule2_tickers": rule2_hits,
+        "top_5_impacted": impacted[:5],
+    }
 
 
 def _extract_confidence_pos(pos_data: Optional[Dict]) -> Decimal:
@@ -2875,6 +3136,7 @@ def _score_single_ticker_v3(
     conf_clin = _extract_confidence_clinical(clin_data)
     conf_fin = _extract_confidence_financial(fin_data)
     conf_cat = _extract_confidence_catalyst(cat_data)
+    lead_date_spec = _extract_lead_date_specificity(cat_data)
     conf_pos = _extract_confidence_pos(pos_data)
     conf_si = _extract_confidence_short_interest(si_data)
 
@@ -3264,6 +3526,7 @@ def _score_single_ticker_v3(
     # Only add contribution if coverage exists (weight > 0 after gating)
     # Uses enhanced signal if available for expanded score range and confidence
 
+    sm_norm = Decimal("0")  # default; overwritten below if coverage exists
     sm_w_eff = effective_weights.get("smart_money", Decimal("0"))
     if sm_w_eff > EPS and has_smart_money_coverage:
         # Use enhanced smart money signal if available
@@ -3479,6 +3742,16 @@ def _score_single_ticker_v3(
             reinforcement_diagnostics["momentum_reinforced"] = str(contributions["momentum"])
 
     # =========================================================================
+    # DEV-STAGE CATALYST GUARDRAIL (Rule 1: contribution share cap)
+    # =========================================================================
+
+    contributions, guardrail_flags, guardrail_diag = apply_dev_catalyst_guardrail(
+        contributions, stage_bucket_alpha, conf_cat, lead_date_spec,
+        {"smart_money": sm_norm, "financial": fin_norm},
+    )
+    flags.extend(guardrail_flags)
+
+    # =========================================================================
     # AGGREGATION
     # =========================================================================
 
@@ -3584,6 +3857,17 @@ def _score_single_ticker_v3(
         caps_applied.extend([{"reason": c, "cap": str(post_ceiling)} for c in ceilings_applied])
 
     # =========================================================================
+    # DEV-STAGE CATALYST GUARDRAIL (Rule 2: composite ceiling)
+    # =========================================================================
+
+    if guardrail_diag.get("ceiling"):
+        _gr_cap = Decimal(guardrail_diag["ceiling"])
+        if post_ceiling > _gr_cap:
+            post_ceiling = _quantize_score(_gr_cap)
+            ceilings_applied.append("dev_catalyst_guardrail_ceiling")
+            caps_applied.append({"reason": "dev_catalyst_guardrail_ceiling", "cap": str(post_ceiling)})
+
+    # =========================================================================
     # ENHANCEMENT 2: EXISTENTIAL FLAW CAPS
     # Detect and cap for existential risks (runway, binary clinical, debt)
     # =========================================================================
@@ -3677,6 +3961,8 @@ def _score_single_ticker_v3(
         "smart_money_reinforcement": reinforcement_diagnostics,
         # Enhancement 12: Conviction horizon tolerance overlay
         "conviction_horizon_overlay": conviction_horizon_overlay,
+        # Dev-stage catalyst guardrail
+        "dev_catalyst_guardrail": guardrail_diag,
     }
 
     determinism_hash = _compute_determinism_hash(
@@ -3726,6 +4012,8 @@ def _score_single_ticker_v3(
             "smart_money_reinforcement": reinforcement_diagnostics,
             # Enhancement 12: Conviction horizon tolerance overlay
             "conviction_horizon_overlay": conviction_horizon_overlay,
+            # Dev-stage catalyst guardrail
+            "dev_catalyst_guardrail": guardrail_diag,
         },
         penalties_and_gates={
             "uncertainty_penalty_pct": str(_quantize_score(uncertainty_penalty * Decimal("100"))),
@@ -3977,4 +4265,5 @@ def _score_single_ticker_v3(
             "downside_amplification": str(ASYMMETRY_CONFIG["downside_amplification"]),
             "flags_triggered": [f for f in flags if "asymmetric" in f],
         },
+        "dev_catalyst_guardrail": guardrail_diag,
     }

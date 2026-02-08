@@ -108,6 +108,7 @@ from module_2_financial import compute_module_2_financial
 from module_3_catalyst import compute_module_3_catalyst, Module3Config
 from module_4_clinical_dev import compute_module_4_clinical_dev
 from module_5_composite_with_defensive import compute_module_5_composite_with_defensive
+from module_5_scoring_v3 import summarize_dev_catalyst_guardrail
 
 # Production validation
 from production_validation import validate_screening_output
@@ -3790,6 +3791,19 @@ def run_screening_pipeline(
                 f"momentum={coverage.get('momentum', '?')}, smart_money={coverage.get('smart_money', '?')}")
     if gated:
         logger.warning(f"  Confidence-gated components: {gated}")
+
+    # Dev-catalyst guardrail activation summary
+    _gr_summary = summarize_dev_catalyst_guardrail(m5_result.get("ranked_securities", []))
+    if _gr_summary["total_impacted"] > 0:
+        logger.info(f"  Dev-catalyst guardrail: {_gr_summary['total_impacted']}/{_gr_summary['total_evaluated']} "
+                     f"({_gr_summary['pct_impacted']}%) impacted  "
+                     f"[Rule1={_gr_summary['rule1_count']} Rule2={_gr_summary['rule2_count']}]")
+        for _gi in _gr_summary["top_5_impacted"]:
+            logger.info(f"    #{_gi['rank']:>3d}  {_gi['ticker']:<6s}  {' '.join(_gi['flags'])}")
+    else:
+        logger.info("  Dev-catalyst guardrail: 0 tickers impacted")
+    # Stash for downstream / JSON output
+    m5_result.setdefault("diagnostic_counts", {})["dev_catalyst_guardrail"] = _gr_summary
 
     # Final defensive overlay and top-N selection
     logger.info("[7/7] Defensive overlay & top-N selection...")

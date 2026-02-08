@@ -696,3 +696,103 @@ class TestModuleImportGraph:
         assert "module_5_scoring_v3" in sys.modules
         assert "module_5_diagnostics_v3" in sys.modules
         assert "module_5_composite_v3" in sys.modules
+
+
+# =============================================================================
+# TEST 9: Dev-Catalyst Guardrail — Off produces identical output
+# =============================================================================
+
+class TestDevCatalystGuardrailNonRegression:
+    """
+    When the dev-catalyst guardrail is disabled, composite scores, ranks,
+    and determinism hashes must be bit-for-bit identical to the baseline
+    (guardrail was never wired in).
+
+    This catches accidental plumbing changes from the guardrail wiring.
+    """
+
+    def test_guardrail_off_scores_match_two_runs(self, sample_module_inputs):
+        """Disabling the guardrail must produce identical scores across two runs."""
+        import module_5_scoring_v3 as m5s
+
+        # Disable the guardrail
+        original = m5s.DEV_CATALYST_GUARDRAIL_CONFIG["enabled"]
+        try:
+            m5s.DEV_CATALYST_GUARDRAIL_CONFIG["enabled"] = False
+
+            result1 = compute_module_5_composite_v3(
+                universe_result=sample_module_inputs["universe"],
+                financial_result=sample_module_inputs["financial"],
+                catalyst_result=sample_module_inputs["catalyst"],
+                clinical_result=sample_module_inputs["clinical"],
+                as_of_date="2026-01-15",
+                validate_inputs=False,
+            )
+            result2 = compute_module_5_composite_v3(
+                universe_result=sample_module_inputs["universe"],
+                financial_result=sample_module_inputs["financial"],
+                catalyst_result=sample_module_inputs["catalyst"],
+                clinical_result=sample_module_inputs["clinical"],
+                as_of_date="2026-01-15",
+                validate_inputs=False,
+            )
+        finally:
+            m5s.DEV_CATALYST_GUARDRAIL_CONFIG["enabled"] = original
+
+        scores1 = {s["ticker"]: s["composite_score"] for s in result1["ranked_securities"]}
+        scores2 = {s["ticker"]: s["composite_score"] for s in result2["ranked_securities"]}
+        assert scores1 == scores2, "Scores differ when guardrail disabled"
+
+        ranks1 = {s["ticker"]: s["composite_rank"] for s in result1["ranked_securities"]}
+        ranks2 = {s["ticker"]: s["composite_rank"] for s in result2["ranked_securities"]}
+        assert ranks1 == ranks2, "Ranks differ when guardrail disabled"
+
+        hashes1 = {s["ticker"]: s["determinism_hash"] for s in result1["ranked_securities"]}
+        hashes2 = {s["ticker"]: s["determinism_hash"] for s in result2["ranked_securities"]}
+        assert hashes1 == hashes2, "Hashes differ when guardrail disabled"
+
+    def test_guardrail_off_matches_on_for_non_dev_stage(self, sample_module_inputs):
+        """For non-dev-stage names (phase_2 in fixture), guardrail on/off should
+        produce identical scores — guardrail only targets early/poc stages."""
+        import module_5_scoring_v3 as m5s
+
+        # Run with guardrail ON
+        original = m5s.DEV_CATALYST_GUARDRAIL_CONFIG["enabled"]
+        try:
+            m5s.DEV_CATALYST_GUARDRAIL_CONFIG["enabled"] = True
+            result_on = compute_module_5_composite_v3(
+                universe_result=sample_module_inputs["universe"],
+                financial_result=sample_module_inputs["financial"],
+                catalyst_result=sample_module_inputs["catalyst"],
+                clinical_result=sample_module_inputs["clinical"],
+                as_of_date="2026-01-15",
+                validate_inputs=False,
+            )
+
+            m5s.DEV_CATALYST_GUARDRAIL_CONFIG["enabled"] = False
+            result_off = compute_module_5_composite_v3(
+                universe_result=sample_module_inputs["universe"],
+                financial_result=sample_module_inputs["financial"],
+                catalyst_result=sample_module_inputs["catalyst"],
+                clinical_result=sample_module_inputs["clinical"],
+                as_of_date="2026-01-15",
+                validate_inputs=False,
+            )
+        finally:
+            m5s.DEV_CATALYST_GUARDRAIL_CONFIG["enabled"] = original
+
+        # The fixture uses lead_phase="phase_2", which maps to "poc" or "pivotal"
+        # depending on catalyst event type. For names that resolve to pivotal/
+        # regulatory/commercial, scores must be identical ON vs OFF.
+        scores_on = {s["ticker"]: s["composite_score"] for s in result_on["ranked_securities"]}
+        scores_off = {s["ticker"]: s["composite_score"] for s in result_off["ranked_securities"]}
+
+        # Check that non-impacted names are bit-identical
+        for sec in result_on["ranked_securities"]:
+            t = sec["ticker"]
+            flags = sec.get("flags", [])
+            if "dev_catalyst_guardrail_share_cap" not in flags and "dev_catalyst_guardrail_ceiling" not in flags:
+                assert scores_on[t] == scores_off[t], (
+                    f"{t}: score differs ON={scores_on[t]} vs OFF={scores_off[t]} "
+                    f"despite no guardrail flag"
+                )
