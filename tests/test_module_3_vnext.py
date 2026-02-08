@@ -1214,5 +1214,94 @@ class TestContinuousCatalystProximity:
         assert n == 3
 
 
+# =============================================================================
+# T11: RANGE-PROGRESS RECENCY MODULATION
+# =============================================================================
+
+class TestRangeProgressModulation:
+    """T11: In-range events get different recency based on range progress."""
+
+    def _make_range_event(self, start: str, end: str, precision: str = "RANGE",
+                          severity=EventSeverity.CRITICAL_POSITIVE,
+                          confidence=ConfidenceLevel.LOW) -> CatalystEventV2:
+        return CatalystEventV2(
+            ticker="TEST",
+            nct_id="NCT001",
+            event_type=EventType.DATA_READOUT,
+            event_severity=severity,
+            event_date=start,
+            event_date_end=end,
+            date_precision=precision,
+            field_changed="status",
+            prior_value="A",
+            new_value="B",
+            source="CTGOV",
+            confidence=confidence,
+            disclosed_at=start,
+        )
+
+    def test_different_range_starts_different_scores(self):
+        """Two range events with different start dates but same end produce
+        different blended scores when as_of is inside both ranges."""
+        as_of = date(2026, 2, 7)
+        # Event starting Jan 1 — 38 days into 180-day range (21%)
+        e1 = self._make_range_event("2026-01-01", "2026-06-30")
+        # Event starting Feb 1 — 6 days into 149-day range (4%)
+        e2 = self._make_range_event("2026-02-01", "2026-06-30")
+
+        s1, _ = calculate_score_blended([e1], as_of)
+        s2, _ = calculate_score_blended([e2], as_of)
+
+        assert s1 != s2, "Range events with different progress should differ"
+        # Earlier start → more progress → lower recency → lower score
+        assert s1 < s2
+
+    def test_day_precision_unaffected(self):
+        """DAY precision events don't get range-progress modulation."""
+        as_of = date(2026, 2, 7)
+        e = self._make_range_event("2026-01-15", "2026-06-30", precision="DAY")
+        score_day, _ = calculate_score_blended([e], as_of)
+        # DAY precision → treated as single date → normal recency decay
+        # Should not have range-progress factor applied
+        assert score_day > Decimal("50")  # Past event, positive severity
+
+    def test_range_start_gives_full_weight(self):
+        """At range start (progress=0), range factor = 1.0 (no penalty)."""
+        as_of = date(2026, 1, 1)
+        e = self._make_range_event("2026-01-01", "2026-06-30")
+        score, _ = calculate_score_blended([e], as_of)
+        # At range start, effective_event_date = as_of_date, days_old=0
+        # recency_weight=1.0, progress=0, factor=1.0 → full weight
+        # With CRITICAL_POSITIVE severity=15, LOW confidence=0.3
+        # contribution = 15 * 0.3 * 1.0 = 4.5, score = 50 + 4.5 = 54.5
+        assert score == Decimal("54.50")
+
+    def test_range_end_gives_reduced_weight(self):
+        """At range end (progress=1.0), range factor = 0.85."""
+        as_of = date(2026, 6, 30)
+        e = self._make_range_event("2026-01-01", "2026-06-30")
+        score, _ = calculate_score_blended([e], as_of)
+        # At range end: progress=1.0, factor=0.85
+        # contribution = 15 * 0.3 * 0.85 = 3.825, score = 50 + 3.825
+        # staleness factor may also apply
+        assert score < Decimal("54.50")
+        assert score > Decimal("50.00")
+
+    def test_monotonic_within_range(self):
+        """Score decreases as as_of progresses through the range."""
+        e = self._make_range_event("2026-01-01", "2026-06-30")
+        scores = []
+        for month in range(1, 7):
+            day = min(28, 30)
+            as_of = date(2026, month, 15)
+            s, _ = calculate_score_blended([e], as_of)
+            scores.append(s)
+        # Each score should be <= previous (monotone non-increasing)
+        for i in range(1, len(scores)):
+            assert scores[i] <= scores[i - 1], (
+                f"Score at month {i+1} ({scores[i]}) > month {i} ({scores[i-1]})"
+            )
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

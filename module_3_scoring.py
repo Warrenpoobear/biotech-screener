@@ -557,7 +557,21 @@ def calculate_score_blended(
             eff_date.isoformat() if eff_date else event.event_date, as_of_date
         )
 
-        # Severity contribution (can be negative for negative events)
+        # For range events currently in-window, modulate recency by range
+        # progress to differentiate events at different stages.  Decays from
+        # 1.0 at range start to 0.85 at range end.
+        if (event.event_date_end and event.date_precision != "DAY"
+                and recency_weight == Decimal("1.0")):
+            try:
+                start_d = date.fromisoformat(event.event_date)
+                end_d = date.fromisoformat(event.event_date_end)
+                range_days = (end_d - start_d).days
+                if range_days > 0 and start_d <= as_of_date <= end_d:
+                    progress = Decimal((as_of_date - start_d).days) / Decimal(range_days)
+                    recency_weight = Decimal("1.0") - progress * Decimal("0.15")
+            except (ValueError, TypeError):
+                pass
+
         severity_contrib = SEVERITY_SCORE_CONTRIBUTION.get(severity, Decimal("0"))
 
         # Combined contribution

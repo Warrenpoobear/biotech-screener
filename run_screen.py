@@ -1403,22 +1403,23 @@ def save_validation_snapshot(
             "tie_pct": round(1.0 - n_unique / n_total, 4) if n_total > 0 else None,
         }
 
-    # Catalyst neutral breakdown: separate "no signal" from real ties
+    # Catalyst zero-signal breakdown: separate neutral-base tickers from real ties
     cat_diag = score_diagnostics.get("catalyst_score", {})
-    cat_vals = []
+    cat_raw_vals = []
     for rec in ranked:
-        v = _component_score(rec, "catalyst")
-        if v is not None:
-            cat_vals.append(float(v))
-    neutral_count = sum(1 for v in cat_vals if abs(v - 50.0) < 0.05)
-    non_neutral = [v for v in cat_vals if abs(v - 50.0) >= 0.05]
-    nn_unique = len(set(str(round(v, 6)) for v in non_neutral))
-    cat_diag["neutral_count"] = neutral_count
-    cat_diag["non_neutral_n"] = len(non_neutral)
-    cat_diag["non_neutral_unique"] = nn_unique
-    cat_diag["non_neutral_tie_pct"] = (
-        round(1.0 - nn_unique / len(non_neutral), 4) if non_neutral else None
-    )
+        for cs in rec.get("component_scores", []):
+            if cs.get("name") == "catalyst" and cs.get("raw") is not None:
+                cat_raw_vals.append(float(str(cs["raw"])))
+    if cat_raw_vals:
+        neutral_count = sum(1 for v in cat_raw_vals if abs(v - 50.0) < 0.01)
+        cat_diag["zero_signal_count"] = neutral_count
+        non_neutral = [v for v in cat_raw_vals if abs(v - 50.0) >= 0.01]
+        nn_unique = len(set(str(round(v, 6)) for v in non_neutral))
+        cat_diag["signal_n"] = len(non_neutral)
+        cat_diag["signal_unique"] = nn_unique
+        cat_diag["signal_tie_pct"] = (
+            round(1.0 - nn_unique / len(non_neutral), 4) if non_neutral else None
+        )
 
     # Clinical zero-signal breakdown: tickers with no trials
     clin_diag = score_diagnostics.get("clinical_score", {})
