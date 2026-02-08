@@ -1118,35 +1118,43 @@ def compute_smart_money_cohort_stats(
     combined_records: List[Dict],
 ) -> Dict[Tuple[str, str], Tuple[Decimal, Decimal]]:
     """
-    Compute mean and std of overlap counts by (stage_bucket, size_bucket).
+    Compute mean and std of conviction_overlap by (stage_bucket, size_bucket).
     Used for cohort normalization (Option C).
 
+    Uses the continuous Baker-weighted conviction_overlap metric instead of
+    integer overlap_count to produce continuous z-scores (de-bucketing fix).
+
     Returns:
-        Dict mapping (stage, size) tuple to (mean, std) of overlap counts.
+        Dict mapping (stage, size) tuple to (mean, std) of conviction_overlap.
     """
     config = SMART_MONEY_ENHANCEMENT_CONFIG
     min_cohort_size = config["cohort_normalization"]["min_cohort_size"]
 
     cohort_data: Dict[Tuple[str, str], List[Decimal]] = {}
 
-    # Group by cohort
+    # Group by cohort — use continuous conviction_overlap instead of integer count
     for rec in combined_records:
         # Get stage bucket from enhanced alpha detection
         stage = rec.get("stage_bucket_alpha", rec.get("stage_bucket", "pivotal"))
         size = rec.get("market_cap_bucket", "mid")
         coinvest = rec.get("coinvest", {})
-        overlap = coinvest.get("coinvest_overlap_count", 0)
+        # Prefer continuous conviction_overlap; fall back to integer overlap_count
+        conviction = coinvest.get("conviction_overlap")
+        if conviction is not None:
+            metric = Decimal(str(conviction))
+        else:
+            metric = Decimal(str(coinvest.get("coinvest_overlap_count", 0)))
 
         key = (stage, size)
-        cohort_data.setdefault(key, []).append(Decimal(str(overlap)))
+        cohort_data.setdefault(key, []).append(metric)
 
     # Compute stats for cohorts with enough data
     cohort_stats: Dict[Tuple[str, str], Tuple[Decimal, Decimal]] = {}
-    for key, overlaps in cohort_data.items():
-        if len(overlaps) >= min_cohort_size:
-            mean = sum(overlaps) / len(overlaps)
+    for key, values in cohort_data.items():
+        if len(values) >= min_cohort_size:
+            mean = sum(values) / len(values)
             # Population std
-            variance = sum((x - mean) ** 2 for x in overlaps) / len(overlaps)
+            variance = sum((x - mean) ** 2 for x in values) / len(values)
             # sqrt for Decimal
             if variance > 0:
                 std = variance.sqrt()
@@ -1181,6 +1189,10 @@ def compute_enhanced_smart_money_signal_v2(
     holder_tiers = coinvest_data.get("holder_tiers", {})
     tier1_count_raw = coinvest_data.get("tier1_count", 0)
 
+    # Continuous metrics for de-bucketed scoring
+    conviction_overlap = coinvest_data.get("conviction_overlap")
+    max_tier1_pct = coinvest_data.get("max_tier1_position_pct")
+
     # Get Tier-1 holders from holder_tiers dict
     tier1_holders = [h for h, tier in holder_tiers.items() if tier == 1]
     tier1_count = len(tier1_holders) if tier1_holders else tier1_count_raw
@@ -1192,16 +1204,23 @@ def compute_enhanced_smart_money_signal_v2(
                          if change in ("DECREASE", "EXIT")]
 
     # =========================================================================
-    # C: COHORT-NORMALIZED OVERLAP (prevents size bias)
+    # C: COHORT-NORMALIZED CONVICTION (prevents size bias)
+    # Uses continuous conviction_overlap instead of integer overlap_count
+    # to produce continuous z-scores (de-bucketing fix).
     # =========================================================================
     cohort_key = (stage_bucket, size_bucket)
     z_score = Decimal("0")
+
+    # Use continuous conviction_overlap for z-score; fall back to integer count
+    conviction_metric = (Decimal(str(conviction_overlap))
+                         if conviction_overlap is not None
+                         else Decimal(str(overlap_count)))
 
     if (config["cohort_normalization"]["enabled"] and
         cohort_stats and cohort_key in cohort_stats):
         cohort_mean, cohort_std = cohort_stats[cohort_key]
         if cohort_std > Decimal("0.1"):  # Avoid division by tiny std
-            z_score = (Decimal(str(overlap_count)) - cohort_mean) / cohort_std
+            z_score = (conviction_metric - cohort_mean) / cohort_std
             # Clamp z-score to [-2, 2] to avoid extreme values
             z_score = _clamp(z_score, Decimal("-2.0"), Decimal("2.0"))
 
@@ -1210,15 +1229,37 @@ def compute_enhanced_smart_money_signal_v2(
                         z_score * config["cohort_normalization"]["zscore_to_score_factor"])
 
     # =========================================================================
-    # B: EXPANDED SCORE RANGE WITH HOLDER-BASED BOOSTS
+    # B: EXPANDED SCORE RANGE WITH CONTINUOUS BOOSTS
     # =========================================================================
     base_score = cohort_component
 
-    # Tier-1 holder boost
-    tier1_boost = min(
-        Decimal(str(tier1_count)) * config["score_range"]["per_tier1_holder_boost"],
-        config["score_range"]["max_boost_from_holders"]
-    )
+    # Tier-1 boost: use continuous max_tier1_position_pct when available,
+    # piecewise-linear mapping: 0%→0, 1%→2.5, 3%→7.5, 5%+→15 (capped)
+    if max_tier1_pct is not None and max_tier1_pct > 0:
+        pct = Decimal(str(max_tier1_pct))
+        _T1_BP = [
+            (Decimal("0"), Decimal("0")),
+            (Decimal("1"), Decimal("2.5")),
+            (Decimal("3"), Decimal("7.5")),
+            (Decimal("5"), Decimal("15")),
+        ]
+        if pct >= _T1_BP[-1][0]:
+            tier1_boost = _T1_BP[-1][1]
+        else:
+            tier1_boost = Decimal("0")
+            for i in range(len(_T1_BP) - 1):
+                x0, y0 = _T1_BP[i]
+                x1, y1 = _T1_BP[i + 1]
+                if pct <= x1:
+                    t = (pct - x0) / (x1 - x0)
+                    tier1_boost = y0 + t * (y1 - y0)
+                    break
+    else:
+        # Fall back to integer tier1_count when position_pct not available
+        tier1_boost = min(
+            Decimal(str(tier1_count)) * config["score_range"]["per_tier1_holder_boost"],
+            config["score_range"]["max_boost_from_holders"]
+        )
 
     # Position increase boost
     increase_boost = (Decimal(str(len(increasing_holders))) *
@@ -1239,13 +1280,15 @@ def compute_enhanced_smart_money_signal_v2(
     )
 
     # =========================================================================
-    # E: CONFIDENCE FROM OVERLAP
+    # E: CONFIDENCE FROM OVERLAP (continuous)
     # =========================================================================
     conf_config = config["confidence_from_overlap"]
     base_conf = conf_config["base_confidence"]
 
+    # Use continuous conviction_metric for confidence boost (instead of integer count)
+    # conviction_overlap ≈ 1.0 per typical holder → maps similarly to overlap_count
     overlap_boost = min(
-        Decimal(str(overlap_count)) * conf_config["per_overlap_boost"],
+        conviction_metric * conf_config["per_overlap_boost"],
         Decimal("0.3")
     )
     tier1_confidence_boost = min(
@@ -1293,6 +1336,7 @@ def compute_enhanced_smart_money_signal_v2(
         "increasing_holders": increasing_holders,
         "decreasing_holders": decreasing_holders,
         "overlap_count": overlap_count,
+        "conviction_metric": str(conviction_metric),
         "cohort_z_score": str(z_score) if z_score != Decimal("0") else None,
         "cohort_key": f"{stage_bucket}_{size_bucket}",
         "base_score": str(cohort_component),

@@ -2001,6 +2001,145 @@ class TestSmartMoneyV4Fixes(unittest.TestCase):
         )
 
 
+class TestEnhancedSmartMoneySignalContinuity(unittest.TestCase):
+    """Tests that compute_enhanced_smart_money_signal_v2 produces continuous scores."""
+
+    def _make_coinvest(self, conviction=0.0, overlap=0, tier1_count=0,
+                       max_tier1_pct=None, increasing=0, decreasing=0):
+        """Helper to build coinvest_data dict."""
+        holders = [f"Fund_{i}" for i in range(overlap)]
+        changes = {}
+        for i in range(increasing):
+            changes[f"Fund_{i}"] = "INCREASE"
+        for i in range(increasing, increasing + decreasing):
+            changes[f"Fund_{i}"] = "DECREASE"
+        tiers = {}
+        for i in range(min(tier1_count, overlap)):
+            tiers[f"Fund_{i}"] = 1
+        return {
+            "coinvest_overlap_count": overlap,
+            "coinvest_holders": holders,
+            "position_changes": changes,
+            "holder_tiers": tiers,
+            "conviction_overlap": conviction,
+            "tier1_conviction_overlap": conviction * 0.5,
+            "tier1_count": tier1_count,
+            "max_tier1_position_pct": max_tier1_pct,
+            "days_since_latest_filing": 30,
+        }
+
+    def test_monotonicity_in_conviction(self):
+        """Higher conviction_overlap should produce non-decreasing scores."""
+        from module_5_scoring_v3 import compute_enhanced_smart_money_signal_v2
+
+        scores = []
+        for conv in [0.0, 0.5, 1.0, 2.0, 4.0, 8.0]:
+            data = self._make_coinvest(conviction=conv, overlap=max(1, int(conv)))
+            result = compute_enhanced_smart_money_signal_v2(
+                data, "pivotal", "small", cohort_stats=None)
+            scores.append((conv, float(result["score"])))
+
+        for i in range(len(scores) - 1):
+            c1, s1 = scores[i]
+            c2, s2 = scores[i + 1]
+            self.assertLessEqual(
+                s1, s2,
+                f"Score should not decrease: conviction {c1} ({s1}) vs {c2} ({s2})")
+
+    def test_uniqueness_with_varied_conviction(self):
+        """200 evenly spaced conviction values should produce >100 unique scores."""
+        from module_5_scoring_v3 import compute_enhanced_smart_money_signal_v2
+        from decimal import Decimal
+
+        # Build cohort stats so z-score actually differentiates
+        cohort_stats = {("pivotal", "small"): (Decimal("2.0"), Decimal("1.5"))}
+
+        scores = []
+        for i in range(200):
+            conv = i * 0.05  # 0.0 to 10.0
+            data = self._make_coinvest(
+                conviction=conv, overlap=max(1, int(conv)),
+                max_tier1_pct=conv * 0.3 if conv > 0 else None)
+            result = compute_enhanced_smart_money_signal_v2(
+                data, "pivotal", "small", cohort_stats=cohort_stats)
+            scores.append(float(result["score"]))
+
+        n_unique = len(set(scores))
+        self.assertGreater(
+            n_unique, 100,
+            f"Expected >100 unique scores from 200 inputs, got {n_unique}")
+
+    def test_tier1_pct_continuous_boost(self):
+        """max_tier1_position_pct piecewise-linear mapping correctness."""
+        from module_5_scoring_v3 import compute_enhanced_smart_money_signal_v2
+
+        def _boost(pct):
+            data = self._make_coinvest(
+                conviction=2.0, overlap=2, tier1_count=1,
+                max_tier1_pct=pct)
+            result = compute_enhanced_smart_money_signal_v2(
+                data, "pivotal", "small", cohort_stats=None)
+            return Decimal(result["tier1_boost"])
+
+        # Breakpoint correctness
+        self.assertEqual(_boost(1.0), Decimal("2.5"))   # Pct=1.0 → exactly 2.5
+        self.assertEqual(_boost(3.0), Decimal("7.5"))   # Pct=3.0 → exactly 7.5
+        self.assertEqual(_boost(5.0), Decimal("15"))    # Pct=5.0 → capped at 15
+        self.assertEqual(_boost(7.0), Decimal("15"))    # Pct=7.0 → still capped
+
+        # Midpoint interpolation
+        mid = _boost(2.0)  # midpoint of [1,3] segment: 2.5 + 0.5*(7.5-2.5) = 5.0
+        self.assertEqual(mid, Decimal("5"))
+
+        # Monotonicity within continuous path
+        boosts = [_boost(pct) for pct in [0.5, 1.0, 2.0, 3.0, 4.0, 5.0]]
+        for i in range(len(boosts) - 1):
+            self.assertLessEqual(
+                boosts[i], boosts[i + 1],
+                f"Boost should be monotonically non-decreasing")
+
+    def test_tier1_pct_fallback(self):
+        """When max_tier1_position_pct is None, falls back to count-based boost."""
+        from module_5_scoring_v3 import compute_enhanced_smart_money_signal_v2
+
+        data = self._make_coinvest(conviction=2.0, overlap=2, tier1_count=2,
+                                   max_tier1_pct=None)
+        result = compute_enhanced_smart_money_signal_v2(
+            data, "pivotal", "small", cohort_stats=None)
+        # Fallback: 2 * 2.5 = 5.0
+        self.assertEqual(Decimal(result["tier1_boost"]), Decimal("5"))
+
+    def test_zero_data_produces_neutral(self):
+        """Ticker with no holders should get neutral score ~50."""
+        from module_5_scoring_v3 import compute_enhanced_smart_money_signal_v2
+
+        data = self._make_coinvest(conviction=0.0, overlap=0)
+        result = compute_enhanced_smart_money_signal_v2(
+            data, "pivotal", "small", cohort_stats=None)
+        score = float(result["score"])
+        self.assertAlmostEqual(score, 50.0, delta=5.0,
+                               msg=f"Zero-data score should be near 50, got {score}")
+
+    def test_schema_preserved(self):
+        """Output dict must contain all expected keys."""
+        from module_5_scoring_v3 import compute_enhanced_smart_money_signal_v2
+
+        data = self._make_coinvest(conviction=3.0, overlap=3, tier1_count=1,
+                                   max_tier1_pct=2.0)
+        result = compute_enhanced_smart_money_signal_v2(
+            data, "poc", "small", cohort_stats=None)
+        required_keys = {
+            "score", "weight", "confidence", "tier1_count", "tier1_holders",
+            "increasing_holders", "decreasing_holders", "overlap_count",
+            "conviction_metric", "cohort_z_score", "cohort_key", "base_score",
+            "tier1_boost", "increase_boost", "decrease_penalty", "final_score",
+            "flags",
+        }
+        self.assertTrue(
+            required_keys.issubset(set(result.keys())),
+            f"Missing keys: {required_keys - set(result.keys())}")
+
+
 class TestMomentumV4Fixes(unittest.TestCase):
     """Tests for V4 momentum scoring fixes."""
 
