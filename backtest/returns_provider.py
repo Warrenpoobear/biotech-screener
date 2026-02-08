@@ -87,6 +87,16 @@ class CSVReturnsProvider(BaseReturnsProvider):
     def get_available_tickers(self) -> List[str]:
         return sorted(self._prices.keys())
 
+    def get_last_date(self) -> Optional[date]:
+        """Return the latest date with data across all tickers."""
+        last = None
+        for prices in self._prices.values():
+            if prices:
+                ticker_max = max(prices.keys())
+                if last is None or ticker_max > last:
+                    last = ticker_max
+        return last
+
 
 class NullReturnsProvider(BaseReturnsProvider):
     """Returns None for all tickers. For baseline testing."""

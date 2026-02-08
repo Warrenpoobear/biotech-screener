@@ -22,9 +22,12 @@ Usage:
 from __future__ import annotations
 
 import csv
+import io
 import json
 import math
+import re
 import sys
+import tarfile
 from datetime import date, timedelta
 from decimal import Decimal
 from pathlib import Path
@@ -45,6 +48,7 @@ from backtest.ic_measurement import (
     ICCalculationEngine,
 )
 from backtest.returns_provider import BaseReturnsProvider, CSVReturnsProvider
+from archive_snapshot import verify_archive
 
 
 # =============================================================================
@@ -52,6 +56,7 @@ from backtest.returns_provider import BaseReturnsProvider, CSVReturnsProvider
 # =============================================================================
 
 SNAPSHOT_DIR = PROJECT_ROOT / "data" / "snapshots"
+ARCHIVE_DIR = PROJECT_ROOT / "data" / "archives"
 RETURNS_JSON = PROJECT_ROOT / "production_data" / "morningstar_returns_history.json"
 PRICE_CSV = PROJECT_ROOT / "production_data" / "price_history.csv"
 OUTPUT_DIR = PROJECT_ROOT / "output"
@@ -763,6 +768,16 @@ class MorningstarReturnsProvider(BaseReturnsProvider):
     def get_available_tickers(self) -> List[str]:
         return sorted(self._index.keys())
 
+    def get_last_date(self) -> Optional[date]:
+        """Return the latest date with data across all tickers."""
+        last = None
+        for prices in self._index.values():
+            if prices:
+                ticker_max = max(prices.keys())
+                if last is None or ticker_max > last:
+                    last = ticker_max
+        return last
+
 
 # =============================================================================
 # CHAINED RETURNS PROVIDER (HS793 primary + price CSV fallback)
@@ -796,6 +811,16 @@ class ChainedReturnsProvider(BaseReturnsProvider):
         return sorted(set(self.primary.get_available_tickers()) |
                        set(self.fallback.get_available_tickers()))
 
+    def get_last_date(self) -> Optional[date]:
+        """Return the latest date with data across both providers."""
+        d1 = self.primary.get_last_date()
+        d2 = self.fallback.get_last_date()
+        if d1 is None:
+            return d2
+        if d2 is None:
+            return d1
+        return max(d1, d2)
+
     def get_fallback_stats(self) -> Dict[str, Any]:
         return {
             "n_tickers_used_fallback": len(self._fallback_hits),
@@ -808,7 +833,15 @@ class ChainedReturnsProvider(BaseReturnsProvider):
 # SNAPSHOT LOADER
 # =============================================================================
 
-SnapshotData = Tuple[Dict[str, int], Dict[str, float], Dict[str, Dict[str, float]], Dict[str, str], Dict[str, Dict[str, float]], bool]
+SnapshotData = Tuple[
+    Dict[str, int],                  # rankings
+    Dict[str, float],                # scores (composite_score)
+    Dict[str, Dict[str, float]],     # component_scores
+    Dict[str, str],                  # stage_map
+    Dict[str, Dict[str, float]],     # extra_controls
+    bool,                            # higher_is_better
+    Dict[str, Dict[str, float]],     # signal_scores: {"score_rank_pct": {...}, "score_z": {...}}
+]
 
 
 def load_snapshot_rankings(snapshot_dir: Path) -> SnapshotData:
@@ -826,13 +859,14 @@ def load_snapshot_rankings(snapshot_dir: Path) -> SnapshotData:
     """
     csv_path = snapshot_dir / "rankings.csv"
     if not csv_path.exists():
-        return {}, {}, {}, {}, {}, False
+        return {}, {}, {}, {}, {}, False, {}
 
     rankings: Dict[str, int] = {}
     scores: Dict[str, float] = {}
     component_scores: Dict[str, Dict[str, float]] = {}
     stage_map: Dict[str, str] = {}
     extra_controls: Dict[str, Dict[str, float]] = {"log_cash": {}}
+    signal_scores: Dict[str, Dict[str, float]] = {"score_rank_pct": {}, "score_z": {}}
 
     with open(csv_path, "r", newline="", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
@@ -892,6 +926,15 @@ def load_snapshot_rankings(snapshot_dir: Path) -> SnapshotData:
                     except ValueError:
                         pass
 
+            # Extract signal scores (new format only)
+            for sig_field in ("score_rank_pct", "score_z"):
+                sig_str = row.get(sig_field, "").strip()
+                if sig_str:
+                    try:
+                        signal_scores[sig_field][ticker] = float(sig_str)
+                    except ValueError:
+                        pass
+
             # Extract Cash for log_cash control (old format: "Cash" column)
             # Cash==0 is missing data for large-cap names (AZN, BNTX, etc.)
             cash_str = row.get("Cash", "").strip()
@@ -905,8 +948,322 @@ def load_snapshot_rankings(snapshot_dir: Path) -> SnapshotData:
 
     # Drop empty control dicts
     extra_controls = {k: v for k, v in extra_controls.items() if v}
+    # Drop empty signal dicts
+    signal_scores = {k: v for k, v in signal_scores.items() if v}
 
-    return rankings, scores, component_scores, stage_map, extra_controls, higher_is_better
+    return rankings, scores, component_scores, stage_map, extra_controls, higher_is_better, signal_scores
+
+
+# =============================================================================
+# ARCHIVE READER
+# =============================================================================
+
+def read_rankings_from_archive(tar_path: Path) -> SnapshotData:
+    """
+    Read rankings.csv from a .tar.gz archive without extracting to disk.
+
+    Returns the same SnapshotData tuple as load_snapshot_rankings.
+    """
+    rankings: Dict[str, int] = {}
+    scores: Dict[str, float] = {}
+    component_scores: Dict[str, Dict[str, float]] = {}
+    stage_map: Dict[str, str] = {}
+    extra_controls: Dict[str, Dict[str, float]] = {"log_cash": {}}
+    signal_scores: Dict[str, Dict[str, float]] = {"score_rank_pct": {}, "score_z": {}}
+
+    with tarfile.open(tar_path, "r:gz") as tar:
+        # Find rankings.csv member
+        csv_member = None
+        for member in tar.getmembers():
+            if member.name.endswith("/rankings.csv") or member.name == "rankings.csv":
+                csv_member = member
+                break
+
+        if csv_member is None:
+            return {}, {}, {}, {}, {}, False, {}
+
+        f = io.TextIOWrapper(tar.extractfile(csv_member), encoding="utf-8")
+        reader = csv.DictReader(f)
+        headers = reader.fieldnames or []
+
+        is_new_format = "composite_rank" in headers
+        higher_is_better = is_new_format
+        component_cols = [h for h in headers if h.endswith("_score") and h != "composite_score"]
+        stage_col = "stage_bucket" if is_new_format else "Stage_Bucket"
+
+        for col in component_cols:
+            component_scores[col] = {}
+
+        for row in reader:
+            if is_new_format:
+                ticker = row.get("ticker", "").strip().upper()
+                rank_str = row.get("composite_rank", "").strip()
+                score_str = row.get("composite_score", "").strip()
+            else:
+                ticker = row.get("Ticker", "").strip().upper()
+                rank_str = row.get("Rank", "").strip()
+                score_str = row.get("Composite_Score", "").strip()
+
+            if not ticker or not rank_str:
+                continue
+
+            try:
+                rankings[ticker] = int(rank_str)
+            except ValueError:
+                continue
+
+            if score_str:
+                try:
+                    scores[ticker] = float(score_str)
+                except ValueError:
+                    pass
+
+            raw_stage = row.get(stage_col, "").strip().lower()
+            stage_map[ticker] = "commercial" if raw_stage == "commercial" else "dev"
+
+            for col in component_cols:
+                val_str = row.get(col, "").strip()
+                if val_str:
+                    try:
+                        component_scores[col][ticker] = float(val_str)
+                    except ValueError:
+                        pass
+
+            for sig_field in ("score_rank_pct", "score_z"):
+                sig_str = row.get(sig_field, "").strip()
+                if sig_str:
+                    try:
+                        signal_scores[sig_field][ticker] = float(sig_str)
+                    except ValueError:
+                        pass
+
+            cash_str = row.get("Cash", "").strip()
+            if cash_str:
+                try:
+                    cash_val = float(cash_str)
+                    if cash_val > 0:
+                        extra_controls["log_cash"][ticker] = math.log(cash_val)
+                except ValueError:
+                    pass
+
+    extra_controls = {k: v for k, v in extra_controls.items() if v}
+    signal_scores = {k: v for k, v in signal_scores.items() if v}
+
+    return rankings, scores, component_scores, stage_map, extra_controls, higher_is_better, signal_scores
+
+
+def discover_archives(
+    archive_dir: Path,
+    start: Optional[str] = None,
+    end: Optional[str] = None,
+    max_n: Optional[int] = None,
+) -> List[Tuple[str, Path]]:
+    """
+    Discover archive tarballs in archive_dir, parse dates from filenames,
+    filter by [start, end] inclusive, sort ascending.
+
+    Returns list of (date_str, tar_path) tuples.
+    """
+    pattern = re.compile(r"(\d{4}-\d{2}-\d{2})\.tar\.gz$")
+    results: List[Tuple[str, Path]] = []
+
+    for p in sorted(archive_dir.glob("*.tar.gz")):
+        m = pattern.search(p.name)
+        if not m:
+            continue
+        d = m.group(1)
+        if start and d < start:
+            continue
+        if end and d > end:
+            continue
+        results.append((d, p))
+
+    results.sort(key=lambda x: x[0])
+    if max_n is not None:
+        results = results[:max_n]
+    return results
+
+
+# =============================================================================
+# ARCHIVE VERIFICATION
+# =============================================================================
+
+def verify_archive_for_backtest(tar_path: Path) -> Dict[str, Any]:
+    """
+    Verify archive integrity before using it in backtest.
+
+    Checks:
+      1. archive_snapshot.verify_archive() — SHA-256 of input files vs manifest
+      2. rankings.csv exists and is non-empty inside the tarball
+
+    Returns dict with:
+      - verified: bool
+      - input_files_ok: bool
+      - rankings_ok: bool
+      - error: str or None
+    """
+    result: Dict[str, Any] = {
+        "archive": str(tar_path),
+        "verified": False,
+        "input_files_ok": False,
+        "rankings_ok": False,
+        "error": None,
+    }
+
+    # 1. Input file hash verification (reuses archive_snapshot logic)
+    try:
+        # Suppress stdout from verify_archive (it prints OK/FAIL)
+        import io as _io
+        import contextlib
+        buf = _io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            input_ok = verify_archive(tar_path)
+        result["input_files_ok"] = input_ok
+    except Exception as e:
+        result["error"] = f"verify_archive failed: {e}"
+        return result
+
+    # 2. Check rankings.csv exists and has content
+    try:
+        with tarfile.open(tar_path, "r:gz") as tar:
+            csv_member = None
+            for member in tar.getmembers():
+                if member.name.endswith("/rankings.csv") or member.name == "rankings.csv":
+                    csv_member = member
+                    break
+            if csv_member is None:
+                result["error"] = "rankings.csv not found in archive"
+                return result
+            if csv_member.size == 0:
+                result["error"] = "rankings.csv is empty"
+                return result
+            result["rankings_ok"] = True
+    except Exception as e:
+        result["error"] = f"rankings.csv check failed: {e}"
+        return result
+
+    result["verified"] = result["input_files_ok"] and result["rankings_ok"]
+    return result
+
+
+# =============================================================================
+# AS-OF FENCE
+# =============================================================================
+
+def compute_as_of_fence(
+    snapshot_dates: List[str],
+    last_return_date: Optional[date],
+    max_horizon_days: int,
+) -> Tuple[List[str], List[Dict[str, Any]]]:
+    """
+    Determine which snapshots have sufficient forward return data
+    and which must be skipped.
+
+    Returns:
+        (usable_dates, skipped_records)
+
+    Each skipped record has:
+        snapshot_date, skipped_reason, needed_end_date, last_return_date
+    """
+    if last_return_date is None:
+        return [], [
+            {
+                "snapshot_date": d,
+                "skipped_reason": "no_return_data_loaded",
+                "needed_end_date": None,
+                "last_return_date": None,
+            }
+            for d in snapshot_dates
+        ]
+
+    usable: List[str] = []
+    skipped: List[Dict[str, Any]] = []
+
+    for snap_date in snapshot_dates:
+        needed_end = add_trading_days(snap_date, max_horizon_days)
+        needed_end_dt = date.fromisoformat(needed_end)
+
+        if needed_end_dt > last_return_date:
+            skipped.append({
+                "snapshot_date": snap_date,
+                "skipped_reason": "insufficient_forward_window",
+                "needed_end_date": needed_end,
+                "last_return_date": last_return_date.isoformat(),
+                "shortfall_calendar_days": (needed_end_dt - last_return_date).days,
+            })
+        else:
+            usable.append(snap_date)
+
+    return usable, skipped
+
+
+# =============================================================================
+# RANK UNIQUENESS & SIGNAL CONVERSION
+# =============================================================================
+
+def assert_rank_unique(
+    rankings: Dict[str, int],
+    date_str: str,
+    signal_scores: Dict[str, Dict[str, float]],
+    allow_ties: bool = False,
+) -> bool:
+    """
+    Assert composite_rank values are strictly unique per snapshot.
+    Also warn if score_rank_pct is not monotonic with composite_rank.
+
+    Returns True if ranks are unique (or ties allowed), False otherwise.
+    """
+    vals = list(rankings.values())
+    unique_vals = set(vals)
+    if len(vals) != len(unique_vals):
+        dup_counts = {}
+        for v in vals:
+            dup_counts[v] = dup_counts.get(v, 0) + 1
+        dups = {k: v for k, v in dup_counts.items() if v > 1}
+        n_dup = sum(v - 1 for v in dups.values())
+        sample = dict(list(dups.items())[:5])
+        msg = f"  WARNING {date_str}: {n_dup} duplicate rank values (sample: {sample})"
+        if allow_ties:
+            print(msg + " [--allow-rank-ties: continuing]")
+        else:
+            print(msg)
+            raise ValueError(f"Rank ties in {date_str}. Use --allow-rank-ties to proceed.")
+
+    # Check score_rank_pct monotonicity with composite_rank
+    rank_pct = signal_scores.get("score_rank_pct", {})
+    if rank_pct:
+        sorted_by_rank = sorted(rankings.items(), key=lambda x: x[1])
+        prev_pct = None
+        violations = 0
+        for ticker, _rank in sorted_by_rank:
+            pct = rank_pct.get(ticker)
+            if pct is not None and prev_pct is not None:
+                if pct > prev_pct:  # higher rank_pct should mean worse rank (lower is better)
+                    violations += 1
+            prev_pct = pct
+        if violations > 0:
+            print(f"  WARNING {date_str}: score_rank_pct non-monotonic with composite_rank "
+                  f"({violations} violations out of {len(sorted_by_rank) - 1} pairs)")
+
+    return True
+
+
+def signal_to_rankings(
+    signal_scores: Dict[str, float],
+    higher_is_better: bool = True,
+) -> Dict[str, int]:
+    """
+    Convert float signal values to dense integer ranks (1 = best).
+
+    For score_rank_pct: lower value = better (higher_is_better=False)
+    For score_z: higher value = better (higher_is_better=True)
+    """
+    sorted_tickers = sorted(
+        signal_scores.keys(),
+        key=lambda t: signal_scores[t],
+        reverse=higher_is_better,
+    )
+    return {t: i + 1 for i, t in enumerate(sorted_tickers)}
 
 
 # =============================================================================
@@ -1220,9 +1577,13 @@ def run_backtest(
     ms_provider: MorningstarReturnsProvider,
     csv_provider: CSVReturnsProvider,
     snapshot_dir: Optional[Path] = None,
+    archives: Optional[List[Tuple[str, Path]]] = None,
+    signal_field: str = "score_rank_pct",
+    allow_rank_ties: bool = False,
+    verify_archives: bool = True,
 ) -> Tuple[Dict[str, Any], List[Dict[str, Any]], List[Dict[str, Any]]]:
     """
-    Run the full rank-IC backtest across quarterly snapshots.
+    Run the full rank-IC backtest across snapshots or archives.
 
     Returns:
         (ic_results, hygiene_before, hygiene_after)
@@ -1230,23 +1591,108 @@ def run_backtest(
     snap_base = snapshot_dir or SNAPSHOT_DIR
     ic_engine = ICCalculationEngine()
 
-    # Pre-compute regime for each snapshot
-    regimes = compute_xbi_regime(csv_provider, QUARTERLY_DATES)
+    # Determine iteration source
+    if archives is not None:
+        snapshot_dates = [d for d, _ in archives]
+    else:
+        snapshot_dates = list(QUARTERLY_DATES)
+
+    # ------------------------------------------------------------------
+    # AS-OF FENCE: pre-filter snapshots with insufficient forward data
+    # ------------------------------------------------------------------
+    max_horizon = max(HORIZONS.values())
+    last_return_date = provider.get_last_date()
+
+    print(f"  Returns data ends: {last_return_date.isoformat() if last_return_date else 'NONE'}")
+    print(f"  Max forward horizon: {max_horizon} trading days")
+
+    usable_dates, fence_skipped = compute_as_of_fence(
+        snapshot_dates, last_return_date, max_horizon
+    )
+
+    if fence_skipped:
+        print(f"  As-of fence: {len(usable_dates)} usable, {len(fence_skipped)} skipped")
+        for sk in fence_skipped:
+            print(f"    SKIP {sk['snapshot_date']}: {sk['skipped_reason']} "
+                  f"(need {sk.get('needed_end_date', '?')}, "
+                  f"have {sk.get('last_return_date', '?')}, "
+                  f"shortfall {sk.get('shortfall_calendar_days', '?')}d)")
+    else:
+        print(f"  As-of fence: all {len(usable_dates)} snapshots usable")
+    print()
+
+    # Build lookup for archive paths (if applicable)
+    archive_by_date: Dict[str, Path] = {}
+    if archives is not None:
+        archive_by_date = {d: p for d, p in archives}
+
+    # ------------------------------------------------------------------
+    # ARCHIVE VERIFICATION (optional, default on)
+    # ------------------------------------------------------------------
+    verification_results: List[Dict[str, Any]] = []
+    verify_skipped: List[Dict[str, Any]] = []
+
+    if verify_archives and archives is not None:
+        print("Verifying archive integrity...")
+        for snap_date in usable_dates:
+            tar_path = archive_by_date[snap_date]
+            v = verify_archive_for_backtest(tar_path)
+            verification_results.append(v)
+            if not v["verified"]:
+                verify_skipped.append({
+                    "snapshot_date": snap_date,
+                    "skipped_reason": "archive_integrity_failed",
+                    "error": v.get("error"),
+                    "input_files_ok": v["input_files_ok"],
+                    "rankings_ok": v["rankings_ok"],
+                })
+                print(f"    FAIL {snap_date}: {v.get('error', 'hash mismatch')}")
+            else:
+                print(f"    OK   {snap_date}")
+        # Remove failed archives from usable set
+        failed_dates = {sk["snapshot_date"] for sk in verify_skipped}
+        usable_dates = [d for d in usable_dates if d not in failed_dates]
+        print()
+
+    # Combine all skip records
+    all_skipped = fence_skipped + verify_skipped
+
+    # Pre-compute regime for usable snapshots only
+    regimes = compute_xbi_regime(csv_provider, usable_dates)
 
     per_snapshot: List[Dict[str, Any]] = []
     hygiene_before: List[Dict[str, Any]] = []
     hygiene_after: List[Dict[str, Any]] = []
 
-    for snapshot_date in QUARTERLY_DATES:
-        snap_dir = snap_base / snapshot_date
-        if not snap_dir.exists():
-            print(f"  SKIP {snapshot_date}: directory not found")
-            continue
+    for snapshot_date in usable_dates:
+        # Load rankings from archive or legacy snapshot dir
+        if archives is not None:
+            tar_path = archive_by_date[snapshot_date]
+            rankings, scores, component_scores, stage_map, extra_controls, higher_is_better, signal_scores_data = read_rankings_from_archive(tar_path)
+            archive_path_str = str(tar_path)
+        else:
+            snap_dir = snap_base / snapshot_date
+            if not snap_dir.exists():
+                all_skipped.append({
+                    "snapshot_date": snapshot_date,
+                    "skipped_reason": "directory_not_found",
+                    "path": str(snap_dir),
+                })
+                print(f"  SKIP {snapshot_date}: directory not found")
+                continue
+            rankings, scores, component_scores, stage_map, extra_controls, higher_is_better, signal_scores_data = load_snapshot_rankings(snap_dir)
+            archive_path_str = None
 
-        rankings, scores, component_scores, stage_map, extra_controls, higher_is_better = load_snapshot_rankings(snap_dir)
         if not rankings:
+            all_skipped.append({
+                "snapshot_date": snapshot_date,
+                "skipped_reason": "no_rankings_loaded",
+            })
             print(f"  SKIP {snapshot_date}: no rankings loaded")
             continue
+
+        # Rank uniqueness check
+        assert_rank_unique(rankings, snapshot_date, signal_scores_data, allow_ties=allow_rank_ties)
 
         tickers = list(rankings.keys())
         n_original = len(rankings)
@@ -1282,20 +1728,36 @@ def run_backtest(
 
         # --- Compute IC on investable universe ---
         inv_tickers = list(inv_rankings.keys())
+
+        # Determine which rankings to use for IC: signal field or composite_rank
+        if signal_field in ("score_rank_pct", "score_z") and signal_scores_data.get(signal_field):
+            # Filter signal to investable tickers only
+            inv_signal = {t: signal_scores_data[signal_field][t]
+                          for t in inv_tickers if t in signal_scores_data[signal_field]}
+            sig_higher_is_better = (signal_field == "score_z")
+            ic_rankings = signal_to_rankings(inv_signal, higher_is_better=sig_higher_is_better)
+        else:
+            ic_rankings = inv_rankings
+
         snapshot_result: Dict[str, Any] = {
             "date": snapshot_date,
             "n_original": n_original,
             "n_investable": n_investable,
             "n_dropped": n_original - n_investable,
+            "n_rows": n_original,
             "regime": regime,
+            "signal_field": signal_field,
+            "rank_unique": len(set(rankings.values())) == len(rankings),
         }
+        if archive_path_str:
+            snapshot_result["archive_path"] = archive_path_str
 
         for horizon_label, horizon_days in HORIZONS.items():
             fwd_returns = compute_forward_returns(provider, inv_tickers, snapshot_date, horizon_days)
             n_with_returns = len(fwd_returns)
             coverage = n_with_returns / len(inv_tickers) if inv_tickers else 0
 
-            ic_result = ic_engine.calculate_ic_with_significance(inv_rankings, fwd_returns)
+            ic_result = ic_engine.calculate_ic_with_significance(ic_rankings, fwd_returns)
 
             snapshot_result[f"ic_{horizon_label}"] = float(ic_result.ic_value)
             snapshot_result[f"n_{horizon_label}"] = ic_result.n_observations
@@ -1305,13 +1767,13 @@ def run_backtest(
             snapshot_result[f"sig95_{horizon_label}"] = ic_result.is_significant_95
 
             # Stratified IC: by stage
-            stage_ic = compute_stratified_ic(inv_rankings, fwd_returns, inv_stage)
+            stage_ic = compute_stratified_ic(ic_rankings, fwd_returns, inv_stage)
             snapshot_result[f"stage_ic_{horizon_label}"] = stage_ic
 
             # Store for decile spread + pooled regression
             snapshot_result[f"_fwd_returns_{horizon_label}"] = fwd_returns
             if horizon_label == "60d":
-                snapshot_result["_rankings"] = inv_rankings
+                snapshot_result["_rankings"] = ic_rankings
                 snapshot_result["_returns_60d"] = fwd_returns
 
         # Store internal data for pooled regression
@@ -1383,6 +1845,20 @@ def run_backtest(
     agg = _aggregate(per_snapshot)
     if pooled_reg:
         agg["pooled_interaction_regression"] = pooled_reg
+
+    # Attach as-of fence + verification metadata
+    agg["returns_coverage"] = {
+        "last_return_date": last_return_date.isoformat() if last_return_date else None,
+        "max_forward_horizon_days": max_horizon,
+    }
+    agg["skipped_snapshots"] = all_skipped
+    if verification_results:
+        agg["archive_verification"] = {
+            "enabled": True,
+            "n_verified": sum(1 for v in verification_results if v["verified"]),
+            "n_failed": sum(1 for v in verification_results if not v["verified"]),
+            "details": verification_results,
+        }
 
     return agg, hygiene_before, hygiene_after
 
@@ -1724,10 +2200,24 @@ def print_report(results: Dict[str, Any]) -> None:
     print("=" * 60)
     print("RANK-IC BACKTEST RESULTS")
     print("=" * 60)
+
+    # Handle zero-snapshot case
+    if "error" in results:
+        print(f"  {results['error']}")
+        skipped = results.get("skipped_snapshots", [])
+        if skipped:
+            print(f"  ({len(skipped)} snapshot(s) skipped — see skipped_snapshots in output JSON)")
+        rc = results.get("returns_coverage", {})
+        if rc:
+            print(f"  Returns data ends: {rc.get('last_return_date', '?')}")
+        print("=" * 60)
+        return
+
     print(f"Snapshots:  {results['n_snapshots']} ({results['date_range'][0]} to {results['date_range'][1]})")
     print(f"Method:     {results.get('methodology', 'N/A')}")
 
-    avg_n = mean([s.get("n_20d", 0) for s in results.get("per_snapshot", [])])
+    per_snap = results.get("per_snapshot", [])
+    avg_n = mean([s.get("n_20d", 0) for s in per_snap]) if per_snap else 0
     print(f"Universe:   ~{int(avg_n)} investable tickers per snapshot")
     print(f"Return src: {results['return_source']}")
     print()
@@ -2012,13 +2502,38 @@ def print_report(results: Dict[str, Any]) -> None:
 
 def main() -> None:
     import argparse
-    parser = argparse.ArgumentParser(description="Rank-IC backtest across quarterly snapshots")
+    parser = argparse.ArgumentParser(description="Rank-IC backtest from archives or legacy snapshots")
+    # Archive mode (default)
+    parser.add_argument("--archive-dir", type=Path, default=ARCHIVE_DIR,
+                        help=f"Archive directory (default: {ARCHIVE_DIR})")
+    parser.add_argument("--archive", type=Path, default=None,
+                        help="Single archive tarball to use")
+    parser.add_argument("--start", type=str, default=None,
+                        help="Start date filter for archives (YYYY-MM-DD, inclusive)")
+    parser.add_argument("--end", type=str, default=None,
+                        help="End date filter for archives (YYYY-MM-DD, inclusive)")
+    parser.add_argument("--max-archives", type=int, default=None,
+                        help="Maximum number of archives to use")
+    parser.add_argument("--signal", type=str, default="score_rank_pct",
+                        choices=["score_rank_pct", "score_z", "composite_score"],
+                        help="Signal field for IC computation (default: score_rank_pct)")
+    parser.add_argument("--allow-rank-ties", action="store_true",
+                        help="Allow duplicate composite_rank values instead of failing")
+    # Archive verification
+    parser.add_argument("--verify-archives", action="store_true", default=True,
+                        dest="verify_archives",
+                        help="Verify archive integrity before reading (default: on)")
+    parser.add_argument("--no-verify-archives", action="store_false",
+                        dest="verify_archives",
+                        help="Skip archive integrity verification")
+    # Legacy mode
+    parser.add_argument("--use-live-snapshots", action="store_true",
+                        help="Use legacy snapshot directories instead of archives")
     parser.add_argument("--snapshot-dir", type=Path, default=SNAPSHOT_DIR,
-                        help=f"Snapshot directory (default: {SNAPSHOT_DIR})")
+                        help=f"Snapshot directory for legacy mode (default: {SNAPSHOT_DIR})")
     parser.add_argument("--output", type=Path, default=OUTPUT_JSON,
                         help=f"Output JSON path (default: {OUTPUT_JSON})")
     args = parser.parse_args()
-    snapshot_dir = args.snapshot_dir
     output_json = args.output
 
     print("Loading HS793 total return index...")
@@ -2033,9 +2548,68 @@ def main() -> None:
     print(f"  Combined: {len(provider.get_available_tickers())} tickers")
     print()
 
-    print(f"Computing rank-IC across quarterly snapshots (investable-universe filtered)...")
-    print(f"  Snapshot dir: {snapshot_dir}")
-    results, hygiene_before, hygiene_after = run_backtest(provider, ms_provider, csv_provider, snapshot_dir=snapshot_dir)
+    # Determine source: archives (default) or legacy snapshots
+    archives_list = None
+    source_label = "snapshots"
+
+    if args.use_live_snapshots:
+        print(f"Computing rank-IC across quarterly snapshots (legacy mode)...")
+        print(f"  Snapshot dir: {args.snapshot_dir}")
+    elif args.archive:
+        # Single archive mode
+        if not args.archive.exists():
+            print(f"ERROR: Archive not found: {args.archive}")
+            sys.exit(1)
+        m = re.search(r"(\d{4}-\d{2}-\d{2})\.tar\.gz$", args.archive.name)
+        if not m:
+            print(f"ERROR: Cannot parse date from archive filename: {args.archive.name}")
+            sys.exit(1)
+        archives_list = [(m.group(1), args.archive)]
+        source_label = "archives"
+        print(f"Computing rank-IC from single archive: {args.archive}")
+    else:
+        # Default: discover archives
+        if not args.archive_dir.exists():
+            print(f"ERROR: Archive directory not found: {args.archive_dir}")
+            sys.exit(1)
+        archives_list = discover_archives(
+            args.archive_dir, start=args.start, end=args.end, max_n=args.max_archives
+        )
+        if not archives_list:
+            print(f"ERROR: No archives found in {args.archive_dir}"
+                  + (f" (start={args.start}, end={args.end})" if args.start or args.end else ""))
+            sys.exit(1)
+        source_label = "archives"
+        print(f"Computing rank-IC from {len(archives_list)} archives in {args.archive_dir}")
+        if args.start or args.end:
+            print(f"  Date filter: {args.start or '*'} to {args.end or '*'}")
+        print(f"  Archives: {archives_list[0][0]} to {archives_list[-1][0]}")
+
+    signal_field = args.signal
+    signal_defaulted = (signal_field == "score_rank_pct" and "--signal" not in sys.argv)
+    print(f"  Signal field: {signal_field}" + (" (default)" if signal_defaulted else ""))
+    print()
+
+    results, hygiene_before, hygiene_after = run_backtest(
+        provider, ms_provider, csv_provider,
+        snapshot_dir=args.snapshot_dir if args.use_live_snapshots else None,
+        archives=archives_list,
+        signal_field=signal_field,
+        allow_rank_ties=args.allow_rank_ties,
+        verify_archives=args.verify_archives,
+    )
+
+    # Add provenance to results
+    results["source"] = source_label
+    results["signal_field"] = signal_field
+    results["signal_field_defaulted"] = signal_defaulted
+    results["verify_archives"] = args.verify_archives
+    if archives_list:
+        results["archive_dir"] = str(args.archive_dir if not args.archive else args.archive.parent)
+        results["archives_discovered"] = [d for d, _ in archives_list]
+        # archives_used = discovered minus skipped
+        skipped_dates = {sk["snapshot_date"] for sk in results.get("skipped_snapshots", [])}
+        results["archives_used"] = [d for d, _ in archives_list if d not in skipped_dates]
 
     # Print hygiene report (before/after comparison)
     print_hygiene_report(hygiene_before, hygiene_after, provider.get_fallback_stats())
