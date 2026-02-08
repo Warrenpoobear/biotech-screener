@@ -1403,6 +1403,13 @@ def save_validation_snapshot(
             "tie_pct": round(1.0 - n_unique / n_total, 4) if n_total > 0 else None,
         }
 
+    # Top offenders: components sorted by tie_pct descending (for quick triage)
+    score_diagnostics["_top_tied"] = sorted(
+        [k for k in score_diagnostics],
+        key=lambda k: score_diagnostics[k].get("tie_pct") or 0,
+        reverse=True,
+    )
+
     # --- Write metadata JSON ---
     summary = results.get("summary", {})
     clinical_filter = summary.get("clinical_activity_filter", {})
