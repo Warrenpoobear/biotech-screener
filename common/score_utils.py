@@ -535,3 +535,42 @@ def validate_score_bounds(
         return False, f"{score_name} {score} is above maximum {max_val}"
 
     return True, None
+
+
+# ============================================================================
+# Piecewise-linear interpolation
+# ============================================================================
+
+# Type alias for knot tables: list of (x, y) pairs, sorted ascending by x.
+Knots = List[Tuple[Union[int, float, Decimal], Decimal]]
+
+
+def piecewise_lerp(x: Union[int, float, Decimal], knots: Knots) -> Decimal:
+    """Piecewise-linear interpolation through sorted (x, y) knot pairs.
+
+    Knots must be sorted ascending by x.  Values below the first knot
+    clamp to the first y; values above the last knot clamp to the last y.
+
+    Works for both ascending and descending y sequences — the only
+    requirement is ascending x.
+
+    Args:
+        x: Input value (int, float, or Decimal — converted to Decimal).
+        knots: List of ``(x, y)`` tuples sorted ascending by x.  Must
+            have at least two entries.
+
+    Returns:
+        Interpolated Decimal score.
+    """
+    xd = Decimal(str(x))
+    if xd <= knots[0][0]:
+        return knots[0][1]
+    if xd >= knots[-1][0]:
+        return knots[-1][1]
+    for i in range(len(knots) - 1):
+        x0, y0 = knots[i]
+        x1, y1 = knots[i + 1]
+        if xd <= x1:
+            frac = (xd - Decimal(str(x0))) / (Decimal(str(x1)) - Decimal(str(x0)))
+            return y0 + frac * (y1 - y0)
+    return knots[-1][1]  # unreachable

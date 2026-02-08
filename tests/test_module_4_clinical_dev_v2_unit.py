@@ -775,10 +775,10 @@ class TestScoreRecency:
         assert 30 <= days < 90
 
     def test_stale_update(self):
-        """Stale update (> 2 years) should score near 1.0-2.0 and be marked stale."""
+        """Stale update (>= 2 years) should score 1.0 and be marked stale."""
         old_date = (date(2026, 1, 15) - timedelta(days=RECENCY_STALE_THRESHOLD + 10)).isoformat()
         score, days, unknown, stale = _score_recency(old_date, "2026-01-15")
-        assert Decimal("1.0") <= score <= Decimal("2.0")
+        assert score == Decimal("1.0")
         assert stale is True
 
     def test_unknown_recency(self):
@@ -1607,8 +1607,7 @@ class TestContinuousRecency:
         assert _rec(90) == Decimal("4.5")
         assert _rec(180) == Decimal("4.0")
         assert _rec(365) == Decimal("3.0")
-        assert _rec(730) == Decimal("2.0")   # RECENCY_STALE_THRESHOLD
-        assert _rec(1460) == Decimal("1.0")  # 4 years
+        assert _rec(730) == Decimal("1.0")   # RECENCY_STALE_THRESHOLD = floor
 
     def test_monotonicity(self):
         """More recent always scores >= older."""

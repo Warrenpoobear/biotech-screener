@@ -1420,6 +1420,28 @@ def save_validation_snapshot(
         round(1.0 - nn_unique / len(non_neutral), 4) if non_neutral else None
     )
 
+    # Clinical zero-signal breakdown: tickers with no trials
+    clin_diag = score_diagnostics.get("clinical_score", {})
+    clin_raw_vals = []
+    for rec in ranked:
+        for cs in rec.get("component_scores", []):
+            if cs.get("name") == "clinical" and cs.get("raw") is not None:
+                clin_raw_vals.append(float(str(cs["raw"])))
+    if clin_raw_vals:
+        from collections import Counter
+        raw_counter = Counter(clin_raw_vals)
+        floor_val, floor_count = raw_counter.most_common(1)[0]
+        if floor_count >= 5:
+            clin_diag["zero_signal_count"] = floor_count
+            clin_diag["zero_signal_raw"] = round(floor_val, 4)
+            non_floor = [v for v in clin_raw_vals if abs(v - floor_val) > 0.01]
+            nf_unique = len(set(str(round(v, 6)) for v in non_floor))
+            clin_diag["signal_n"] = len(non_floor)
+            clin_diag["signal_unique"] = nf_unique
+            clin_diag["signal_tie_pct"] = (
+                round(1.0 - nf_unique / len(non_floor), 4) if non_floor else None
+            )
+
     # Top offenders: components sorted by tie_pct descending (for quick triage)
     score_diagnostics["_top_tied"] = sorted(
         [k for k in score_diagnostics],

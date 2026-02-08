@@ -38,6 +38,8 @@ from common.score_utils import (
     DEFAULT_MIN_SCORE,
     DEFAULT_MAX_SCORE,
     SCORE_PRECISION,
+    # Piecewise-linear interpolation
+    piecewise_lerp,
 )
 
 
@@ -550,3 +552,63 @@ class TestConstants:
     def test_precision(self):
         """Score precision should be 2 decimal places."""
         assert SCORE_PRECISION == Decimal("0.01")
+
+
+class TestPiecewiseLerp:
+    """Tests for the shared piecewise_lerp helper."""
+
+    KNOTS = [
+        (0, Decimal("0")),
+        (10, Decimal("50")),
+        (20, Decimal("100")),
+    ]
+
+    def test_at_breakpoints(self):
+        """Values at breakpoints return exact breakpoint scores."""
+        assert piecewise_lerp(0, self.KNOTS) == Decimal("0")
+        assert piecewise_lerp(10, self.KNOTS) == Decimal("50")
+        assert piecewise_lerp(20, self.KNOTS) == Decimal("100")
+
+    def test_midpoint_interpolation(self):
+        """Midpoint between breakpoints produces exact midpoint score."""
+        assert piecewise_lerp(5, self.KNOTS) == Decimal("25")
+        assert piecewise_lerp(15, self.KNOTS) == Decimal("75")
+
+    def test_clamp_below(self):
+        """Values below first knot clamp to first score."""
+        assert piecewise_lerp(-5, self.KNOTS) == Decimal("0")
+
+    def test_clamp_above(self):
+        """Values above last knot clamp to last score."""
+        assert piecewise_lerp(100, self.KNOTS) == Decimal("100")
+
+    def test_descending_y(self):
+        """Works with descending scores (higher x = lower y)."""
+        desc = [(0, Decimal("5")), (30, Decimal("5")), (90, Decimal("1"))]
+        assert piecewise_lerp(0, desc) == Decimal("5")
+        assert piecewise_lerp(30, desc) == Decimal("5")
+        assert piecewise_lerp(60, desc) == Decimal("3")
+        assert piecewise_lerp(90, desc) == Decimal("1")
+
+    def test_int_float_decimal_inputs(self):
+        """Accepts int, float, and Decimal x values."""
+        assert piecewise_lerp(5, self.KNOTS) == Decimal("25")
+        assert piecewise_lerp(5.0, self.KNOTS) == Decimal("25")
+        assert piecewise_lerp(Decimal("5"), self.KNOTS) == Decimal("25")
+
+    def test_monotonicity_ascending(self):
+        """Ascending knots produce monotonically increasing output."""
+        prev = Decimal("-1")
+        for x in range(0, 25):
+            y = piecewise_lerp(x, self.KNOTS)
+            assert y >= prev
+            prev = y
+
+    def test_monotonicity_descending(self):
+        """Descending knots produce monotonically decreasing output."""
+        desc = [(0, Decimal("100")), (10, Decimal("50")), (20, Decimal("0"))]
+        prev = Decimal("200")
+        for x in range(0, 25):
+            y = piecewise_lerp(x, desc)
+            assert y <= prev
+            prev = y

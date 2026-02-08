@@ -62,7 +62,7 @@ from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple
 
 from common.types import Severity
-from common.score_utils import clamp_score, to_decimal as score_to_decimal
+from common.score_utils import clamp_score, piecewise_lerp, to_decimal as score_to_decimal
 
 __version__ = "2.0.0"
 RULESET_VERSION = "2.0.0-V2"
@@ -623,7 +623,6 @@ def _score_runway(runway_months: Decimal) -> Decimal:
     monotonically increasing, concave curve (diminishing marginal return
     to additional runway — economically sensible).
     """
-    # Breakpoints: (runway_months, score)
     _BP = [
         (Decimal("0"), Decimal("5")),
         (Decimal("6"), Decimal("40")),
@@ -631,20 +630,7 @@ def _score_runway(runway_months: Decimal) -> Decimal:
         (Decimal("18"), Decimal("90")),
         (Decimal("24"), Decimal("100")),
     ]
-
-    if runway_months <= _BP[0][0]:
-        return _BP[0][1]
-    if runway_months >= _BP[-1][0]:
-        return _BP[-1][1]
-
-    for i in range(len(_BP) - 1):
-        x0, y0 = _BP[i]
-        x1, y1 = _BP[i + 1]
-        if runway_months <= x1:
-            t = (runway_months - x0) / (x1 - x0)
-            return y0 + t * (y1 - y0)
-
-    return _BP[-1][1]  # unreachable
+    return piecewise_lerp(runway_months, _BP)
 
 
 @dataclass

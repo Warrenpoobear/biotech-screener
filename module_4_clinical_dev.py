@@ -28,6 +28,7 @@ from datetime import datetime, date
 
 from common.provenance import create_provenance
 from common.pit_enforcement import compute_pit_cutoff, is_pit_admissible
+from common.score_utils import piecewise_lerp
 from common.types import Severity
 
 RULESET_VERSION = "1.0.2-VNEXT"
@@ -82,33 +83,44 @@ def _parse_phase(phase_str: Optional[str]) -> str:
     return "unknown"
 
 
+_TRIAL_KNOTS = [
+    (0, Decimal("0")),
+    (1, Decimal("0.5")),
+    (2, Decimal("1.0")),
+    (5, Decimal("2.0")),
+    (10, Decimal("3.5")),
+    (20, Decimal("4.5")),
+    (100, Decimal("5.0")),
+]
+
+_DIV_KNOTS = [
+    (0, Decimal("0")),
+    (2, Decimal("0.7")),
+    (5, Decimal("1.5")),
+    (10, Decimal("3.0")),
+    (20, Decimal("4.0")),
+    (30, Decimal("5.0")),
+]
+
+# Recency: score decreases as days since last update increases.
+# Flat plateau 0-30 days (very recent), then linear decay.
+# At RECENCY_STALE_THRESHOLD the score drops to the floor.
+_REC_KNOTS = [
+    (0, Decimal("5.0")),
+    (30, Decimal("5.0")),
+    (90, Decimal("4.5")),
+    (180, Decimal("4.0")),
+    (365, Decimal("3.0")),
+    (RECENCY_STALE_THRESHOLD, Decimal("1.0")),
+]
+
+
 def _score_trial_count(num_trials: int) -> Decimal:
     """
     Score based on number of trials (0-5 pts).
     More trials = more diversified pipeline.
     """
-    # Piecewise-linear interpolation through breakpoints.
-    # Preserves breakpoint semantics while differentiating within buckets.
-    _TRIAL_KNOTS = [
-        (0, Decimal("0")),
-        (1, Decimal("0.5")),
-        (2, Decimal("1.0")),
-        (5, Decimal("2.0")),
-        (10, Decimal("3.5")),
-        (20, Decimal("4.5")),
-        (100, Decimal("5.0")),
-    ]
-    if num_trials <= 0:
-        return Decimal("0")
-    if num_trials >= _TRIAL_KNOTS[-1][0]:
-        return _TRIAL_KNOTS[-1][1]
-    for i in range(len(_TRIAL_KNOTS) - 1):
-        x0, y0 = _TRIAL_KNOTS[i]
-        x1, y1 = _TRIAL_KNOTS[i + 1]
-        if num_trials <= x1:
-            frac = Decimal(num_trials - x0) / Decimal(x1 - x0)
-            return y0 + frac * (y1 - y0)
-    return _TRIAL_KNOTS[-1][1]
+    return piecewise_lerp(max(0, int(num_trials)), _TRIAL_KNOTS)
 
 
 def _normalize_conditions(conditions_raw: Any) -> List[str]:
@@ -168,28 +180,7 @@ def _score_indication_diversity(all_conditions: List[List[str]]) -> Decimal:
 
     # Tokenize for diversity count
     unique_tokens = _tokenize_conditions(list(union_conditions))
-    token_count = len(unique_tokens)
-
-    # Piecewise-linear interpolation through breakpoints.
-    _DIV_KNOTS = [
-        (0, Decimal("0")),
-        (2, Decimal("0.7")),
-        (5, Decimal("1.5")),
-        (10, Decimal("3.0")),
-        (20, Decimal("4.0")),
-        (30, Decimal("5.0")),
-    ]
-    if token_count <= 0:
-        return Decimal("0")
-    if token_count >= _DIV_KNOTS[-1][0]:
-        return _DIV_KNOTS[-1][1]
-    for i in range(len(_DIV_KNOTS) - 1):
-        x0, y0 = _DIV_KNOTS[i]
-        x1, y1 = _DIV_KNOTS[i + 1]
-        if token_count <= x1:
-            frac = Decimal(token_count - x0) / Decimal(x1 - x0)
-            return y0 + frac * (y1 - y0)
-    return _DIV_KNOTS[-1][1]
+    return piecewise_lerp(len(unique_tokens), _DIV_KNOTS)
 
 def _parse_date_safe(date_str: Optional[str]) -> Optional[date]:
     """Parse ISO date string to date object, return None on failure."""
@@ -239,29 +230,7 @@ def _score_recency(
     # Check stale threshold
     is_stale = days_since_update >= RECENCY_STALE_THRESHOLD
 
-    # Piecewise-linear interpolation through breakpoints.
-    _REC_KNOTS = [
-        (0, Decimal("5.0")),
-        (30, Decimal("5.0")),
-        (90, Decimal("4.5")),
-        (180, Decimal("4.0")),
-        (365, Decimal("3.0")),
-        (RECENCY_STALE_THRESHOLD, Decimal("2.0")),
-        (1460, Decimal("1.0")),
-    ]
-    if days_since_update <= _REC_KNOTS[0][0]:
-        score = _REC_KNOTS[0][1]
-    elif days_since_update >= _REC_KNOTS[-1][0]:
-        score = _REC_KNOTS[-1][1]
-    else:
-        score = _REC_KNOTS[-1][1]
-        for i in range(len(_REC_KNOTS) - 1):
-            x0, y0 = _REC_KNOTS[i]
-            x1, y1 = _REC_KNOTS[i + 1]
-            if days_since_update <= x1:
-                frac = Decimal(days_since_update - x0) / Decimal(x1 - x0)
-                score = y0 + frac * (y1 - y0)
-                break
+    score = piecewise_lerp(days_since_update, _REC_KNOTS)
 
     return (score, days_since_update, False, is_stale)
 
