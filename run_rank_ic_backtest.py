@@ -1143,6 +1143,164 @@ def read_rankings_from_archive(tar_path: Path) -> SnapshotData:
     return rankings, scores, component_scores, stage_map, extra_controls, higher_is_better, signal_scores
 
 
+# Metadata fields to extract for failure attribution (new-format archives)
+METADATA_FIELDS_NEW = [
+    "confidence_overall", "catalyst_score", "smart_money_score",
+    "archetype", "severity", "market_cap_bucket",
+]
+# Legacy format
+METADATA_FIELDS_LEGACY = ["Momentum_Bucket"]
+
+
+def extract_ticker_metadata_from_archive(tar_path: Path) -> Dict[str, Dict[str, Any]]:
+    """
+    Extract per-ticker metadata from an archive's rankings.csv.
+
+    Returns {ticker: {field: value, ...}} for failure attribution.
+    Numeric fields are cast to float; string fields kept as-is.
+    """
+    metadata: Dict[str, Dict[str, Any]] = {}
+
+    with tarfile.open(tar_path, "r:gz") as tar:
+        csv_member = None
+        for member in tar.getmembers():
+            if member.name.endswith("/rankings.csv") or member.name == "rankings.csv":
+                csv_member = member
+                break
+        if csv_member is None:
+            return {}
+
+        f = io.TextIOWrapper(tar.extractfile(csv_member), encoding="utf-8")
+        reader = csv.DictReader(f)
+        headers = reader.fieldnames or []
+        is_new = "composite_rank" in headers
+        fields = METADATA_FIELDS_NEW if is_new else METADATA_FIELDS_LEGACY
+
+        for row in reader:
+            ticker = row.get("ticker" if is_new else "Ticker", "").strip().upper()
+            if not ticker:
+                continue
+            meta: Dict[str, Any] = {}
+            for field in fields:
+                val = row.get(field, "").strip()
+                if not val:
+                    continue
+                try:
+                    meta[field] = float(val)
+                except ValueError:
+                    meta[field] = val
+            metadata[ticker] = meta
+
+    return metadata
+
+
+def extract_ticker_metadata_from_snapshot(snapshot_dir: Path) -> Dict[str, Dict[str, Any]]:
+    """Extract per-ticker metadata from a legacy snapshot's rankings.csv."""
+    metadata: Dict[str, Dict[str, Any]] = {}
+    csv_path = snapshot_dir / "rankings.csv"
+    if not csv_path.exists():
+        return {}
+
+    with open(csv_path, newline="", encoding="utf-8-sig") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            ticker = row.get("Ticker", "").strip().upper()
+            if not ticker:
+                continue
+            meta: Dict[str, Any] = {}
+            for field in METADATA_FIELDS_LEGACY:
+                val = row.get(field, "").strip()
+                if val:
+                    try:
+                        meta[field] = float(val)
+                    except ValueError:
+                        meta[field] = val
+            metadata[ticker] = meta
+
+    return metadata
+
+
+def build_failure_attribution(
+    ic_rankings: Dict[str, int],
+    fwd_returns: Dict[str, float],
+    stage_map: Dict[str, str],
+    component_scores: Dict[str, Dict[str, float]],
+    ticker_metadata: Dict[str, Dict[str, Any]],
+    n_show: int = 10,
+) -> Optional[Dict[str, Any]]:
+    """
+    Build failure attribution: identify top and bottom quintile tickers
+    with their metadata to explain where signal works / breaks.
+
+    Returns dict with top_quintile and bottom_quintile lists, each entry
+    containing ticker, rank, return, stage, component scores, and metadata.
+    """
+    common = sorted(
+        [t for t in ic_rankings if t in fwd_returns],
+        key=lambda t: ic_rankings[t]
+    )
+    n = len(common)
+    if n < 20:
+        return None
+
+    q_size = n // 5
+
+    def _build_entries(tickers: List[str]) -> List[Dict[str, Any]]:
+        entries = []
+        for t in tickers:
+            entry: Dict[str, Any] = {
+                "ticker": t,
+                "rank": ic_rankings[t],
+                "return_pct": round(fwd_returns[t] * 100, 4),
+                "stage": stage_map.get(t, "?"),
+            }
+            # Component scores
+            for comp_name, comp_vals in component_scores.items():
+                if t in comp_vals and comp_vals[t] is not None:
+                    short_name = comp_name.replace("_Score", "").replace("_score", "")
+                    entry[short_name] = round(comp_vals[t], 2)
+            # Extra metadata
+            meta = ticker_metadata.get(t, {})
+            for k, v in meta.items():
+                entry[k] = round(v, 4) if isinstance(v, float) else v
+            entries.append(entry)
+        return entries
+
+    # Sort each quintile by return (worst first for bottom, best first for top)
+    top_q = common[:q_size]
+    bottom_q = common[-q_size:]
+
+    top_sorted = sorted(top_q, key=lambda t: fwd_returns[t], reverse=True)[:n_show]
+    bottom_sorted = sorted(bottom_q, key=lambda t: fwd_returns[t])[:n_show]
+
+    top_entries = _build_entries(top_sorted)
+    bottom_entries = _build_entries(bottom_sorted)
+
+    # Stage distribution
+    top_stages = {"dev": 0, "commercial": 0}
+    bottom_stages = {"dev": 0, "commercial": 0}
+    for t in common[:q_size]:
+        s = stage_map.get(t, "dev")
+        top_stages[s] = top_stages.get(s, 0) + 1
+    for t in common[-q_size:]:
+        s = stage_map.get(t, "dev")
+        bottom_stages[s] = bottom_stages.get(s, 0) + 1
+
+    return {
+        "n_per_quintile": q_size,
+        "top_quintile": {
+            "stage_mix": top_stages,
+            "mean_return_pct": round(mean([fwd_returns[t] for t in common[:q_size]]) * 100, 4),
+            "tickers": top_entries,
+        },
+        "bottom_quintile": {
+            "stage_mix": bottom_stages,
+            "mean_return_pct": round(mean([fwd_returns[t] for t in common[-q_size:]]) * 100, 4),
+            "tickers": bottom_entries,
+        },
+    }
+
+
 def discover_archives(
     archive_dir: Path,
     start: Optional[str] = None,
@@ -1782,6 +1940,12 @@ def run_backtest(
             print(f"  SKIP {snapshot_date}: no rankings loaded")
             continue
 
+        # Extract per-ticker metadata for failure attribution
+        if archives is not None:
+            ticker_metadata = extract_ticker_metadata_from_archive(archive_by_date[snapshot_date])
+        else:
+            ticker_metadata = extract_ticker_metadata_from_snapshot(snap_base / snapshot_date)
+
         # Rank uniqueness check
         assert_rank_unique(rankings, snapshot_date, signal_scores_data, allow_ties=allow_rank_ties)
 
@@ -1887,6 +2051,17 @@ def run_backtest(
                 if resid_qs is not None:
                     snapshot_result[f"resid_quintile_spread_{horizon_label}"] = resid_qs
                 snapshot_result[f"xbi_return_{horizon_label}"] = round(xbi_fwd * 100, 4) if xbi_fwd is not None else None
+
+                # Residual stage-split IC
+                resid_stage_ic = compute_stratified_ic(ic_rankings, resid_returns, inv_stage)
+                snapshot_result[f"resid_stage_ic_{horizon_label}"] = resid_stage_ic
+
+            # Failure attribution: top/bottom quintile with metadata
+            attrib = build_failure_attribution(
+                ic_rankings, fwd_returns, inv_stage, inv_components, ticker_metadata,
+            )
+            if attrib is not None:
+                snapshot_result[f"_failure_attrib_{horizon_label}"] = attrib
 
             # Stratified IC: by stage
             stage_ic = compute_stratified_ic(ic_rankings, fwd_returns, inv_stage)
@@ -2229,6 +2404,70 @@ def _aggregate(per_snapshot: List[Dict[str, Any]]) -> Dict[str, Any]:
                     "hit_rate": round(sum(1 for x in stage_ics if x > 0) / len(stage_ics) * 100, 1),
                     "per_period": [round(x, 4) for x in stage_ics],
                 }
+
+    # --- Aggregate RESIDUAL IC by stage (dev vs commercial) ---
+    for horizon_label in HORIZONS:
+        resid_stage_key = f"resid_stage_ic_{horizon_label}"
+        for stage_label in ["commercial", "dev"]:
+            stage_ics = []
+            stage_ns = []
+            for s in per_snapshot:
+                stage_data = s.get(resid_stage_key, {}).get(stage_label, {})
+                ic_val = stage_data.get("ic")
+                if ic_val is not None:
+                    stage_ics.append(ic_val)
+                    stage_ns.append(stage_data.get("n", 0))
+            if stage_ics:
+                m = mean(stage_ics)
+                result.setdefault("resid_stage_ic", {})[f"{stage_label}_{horizon_label}"] = {
+                    "mean_ic": round(m, 6),
+                    "quality": _classify_ic(Decimal(str(abs(m)))).value,
+                    "n_periods": len(stage_ics),
+                    "avg_n_per_period": round(mean(stage_ns)),
+                    "hit_rate": round(sum(1 for x in stage_ics if x > 0) / len(stage_ics) * 100, 1),
+                    "per_period": [round(x, 4) for x in stage_ics],
+                }
+
+    # --- Failure attribution (top/bottom quintile analysis) ---
+    for horizon_label in HORIZONS:
+        attrib_key = f"_failure_attrib_{horizon_label}"
+        attribs = [s[attrib_key] for s in per_snapshot if attrib_key in s]
+        if not attribs:
+            continue
+
+        # Aggregate stage mix across snapshots
+        agg_top_dev = sum(a["top_quintile"]["stage_mix"].get("dev", 0) for a in attribs)
+        agg_top_com = sum(a["top_quintile"]["stage_mix"].get("commercial", 0) for a in attribs)
+        agg_bot_dev = sum(a["bottom_quintile"]["stage_mix"].get("dev", 0) for a in attribs)
+        agg_bot_com = sum(a["bottom_quintile"]["stage_mix"].get("commercial", 0) for a in attribs)
+
+        top_rets = [a["top_quintile"]["mean_return_pct"] for a in attribs]
+        bot_rets = [a["bottom_quintile"]["mean_return_pct"] for a in attribs]
+
+        result.setdefault("failure_attribution", {})[horizon_label] = {
+            "n_snapshots": len(attribs),
+            "top_quintile": {
+                "mean_return_pct": round(mean(top_rets), 4),
+                "stage_mix_total": {"dev": agg_top_dev, "commercial": agg_top_com},
+                "dev_pct": round(agg_top_dev / (agg_top_dev + agg_top_com) * 100, 1) if (agg_top_dev + agg_top_com) > 0 else 0,
+            },
+            "bottom_quintile": {
+                "mean_return_pct": round(mean(bot_rets), 4),
+                "stage_mix_total": {"dev": agg_bot_dev, "commercial": agg_bot_com},
+                "dev_pct": round(agg_bot_dev / (agg_bot_dev + agg_bot_com) * 100, 1) if (agg_bot_dev + agg_bot_com) > 0 else 0,
+            },
+        }
+
+        # Include per-snapshot detail in output (moved from internal _fields)
+        per_snap_attribs = []
+        for s in per_snapshot:
+            a = s.get(attrib_key)
+            if a is not None:
+                per_snap_attribs.append({
+                    "date": s["date"],
+                    **a,
+                })
+        result.setdefault("failure_attribution_detail", {})[horizon_label] = per_snap_attribs
 
     # --- Aggregate regression results ---
     for horizon_label in HORIZONS:
@@ -2576,6 +2815,53 @@ def print_report(results: Dict[str, Any]) -> None:
                   f"hit={data['hit_rate']:.0f}%  {data['quality']}  "
                   f"(n={data['n_periods']}, ~{data['avg_n_per_period']}/period)  [{per}]")
         print()
+
+    # Residual stage-stratified IC
+    resid_stage_ic = results.get("resid_stage_ic")
+    if resid_stage_ic:
+        print("Residual IC by Stage (XBI-hedged, re-ranked within group):")
+        for key in sorted(resid_stage_ic.keys()):
+            data = resid_stage_ic[key]
+            stage_label, horizon = key.rsplit("_", 1)
+            per = ", ".join(f"{x:+.4f}" for x in data.get("per_period", []))
+            print(f"  {stage_label:12s} {horizon:>3s}: mean={data['mean_ic']:+.4f}  "
+                  f"hit={data['hit_rate']:.0f}%  {data['quality']}  "
+                  f"(n={data['n_periods']}, ~{data['avg_n_per_period']}/period)  [{per}]")
+        print()
+
+    # Failure attribution summary
+    fa = results.get("failure_attribution")
+    if fa:
+        print("Failure Attribution (top vs bottom quintile):")
+        for horizon_label, data in sorted(fa.items()):
+            top = data["top_quintile"]
+            bot = data["bottom_quintile"]
+            print(f"  {horizon_label}:  top Q1 mean={top['mean_return_pct']:+.2f}%  "
+                  f"(dev {top['dev_pct']:.0f}%)   "
+                  f"bottom Q5 mean={bot['mean_return_pct']:+.2f}%  "
+                  f"(dev {bot['dev_pct']:.0f}%)")
+        print()
+
+        # Per-snapshot detail for 20d (the most actionable)
+        fa_detail = results.get("failure_attribution_detail", {}).get("20d", [])
+        if fa_detail:
+            print("Bottom Quintile Detail (20d, worst performers per snapshot):")
+            for snap_attrib in fa_detail:
+                snap_date = snap_attrib["date"]
+                bot = snap_attrib["bottom_quintile"]
+                print(f"  --- {snap_date} (Q5 mean={bot['mean_return_pct']:+.2f}%, "
+                      f"dev={bot['stage_mix'].get('dev', 0)}, "
+                      f"com={bot['stage_mix'].get('commercial', 0)}) ---")
+                for t in bot["tickers"][:5]:
+                    meta_parts = []
+                    for mk in ["catalyst_score", "smart_money_score", "confidence_overall"]:
+                        if mk in t:
+                            short = mk.replace("_score", "").replace("_overall", "")
+                            meta_parts.append(f"{short}={t[mk]:.2f}")
+                    meta_str = "  " + ", ".join(meta_parts) if meta_parts else ""
+                    print(f"    {t['ticker']:6s}  rank={t['rank']:>3d}  "
+                          f"ret={t['return_pct']:+7.2f}%  {t['stage']:>4s}{meta_str}")
+            print()
 
     # Cross-sectional regression
     for horizon_label in HORIZONS:
