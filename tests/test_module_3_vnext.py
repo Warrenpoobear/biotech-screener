@@ -50,9 +50,16 @@ from module_3_scoring import (
     calculate_ticker_catalyst_score,
     compute_recency_weight,
     compute_staleness_factor,
+    compute_bucket_proximity_score,
+    _proximity_time_weight,
     SCORE_OVERRIDE_SEVERE_NEGATIVE,
     SCORE_OVERRIDE_CRITICAL_POSITIVE,
     SCORE_DEFAULT,
+    PROXIMITY_NEUTRAL_BASE,
+    _PROXIMITY_RAMP_END,
+    _PROXIMITY_PLATEAU_END,
+    _PROXIMITY_HORIZON,
+    _PROXIMITY_SATURATION_K,
 )
 
 
@@ -964,6 +971,247 @@ class TestCalendarCatalystIntegration:
         assert summary.next_catalyst_date == "2024-03-01"
         # Days until Mar 1 from Jan 15 (inclusive/exclusive handling may vary)
         assert 45 <= summary.catalyst_window_days <= 46
+
+
+class TestContinuousCatalystProximity:
+    """Tests for continuous piecewise-linear catalyst proximity scoring."""
+
+    # -----------------------------------------------------------------
+    # Helper: make a single catalyst event at a given days-from-now offset
+    # -----------------------------------------------------------------
+    @staticmethod
+    def _event(days_ahead: int, as_of: date,
+               event_type: EventType = EventType.FDA_PDUFA_DATE,
+               confidence: ConfidenceLevel = ConfidenceLevel.HIGH,
+               severity: EventSeverity = EventSeverity.CRITICAL_POSITIVE,
+               ) -> CatalystEventV2:
+        from datetime import timedelta
+        event_date = (as_of + timedelta(days=days_ahead)).isoformat()
+        return CatalystEventV2(
+            ticker="TEST",
+            nct_id="NCT99999999",
+            event_type=event_type,
+            event_severity=severity,
+            event_date=event_date,
+            field_changed="phase",
+            prior_value="Phase 2",
+            new_value="Phase 3",
+            source="CTGOV",
+            confidence=confidence,
+            disclosed_at=as_of.isoformat(),
+        )
+
+    # -----------------------------------------------------------------
+    # T1: Time kernel breakpoints
+    # -----------------------------------------------------------------
+    def test_time_kernel_past_event_zero(self):
+        """Events at d<=0 get zero weight."""
+        assert _proximity_time_weight(0) == Decimal("0")
+        assert _proximity_time_weight(-5) == Decimal("0")
+
+    def test_time_kernel_ramp_midpoint(self):
+        """Events in the ramp region get proportional weight."""
+        w = _proximity_time_weight(8)
+        expected = Decimal("8") / Decimal("15")
+        assert abs(w - expected) < Decimal("0.001")
+
+    def test_time_kernel_ramp_end(self):
+        """Event at ramp end (d=15) reaches peak."""
+        assert _proximity_time_weight(_PROXIMITY_RAMP_END) == Decimal("1")
+
+    def test_time_kernel_plateau(self):
+        """Events in plateau region get weight 1.0."""
+        for d in [16, 20, 30, 44, _PROXIMITY_PLATEAU_END]:
+            assert _proximity_time_weight(d) == Decimal("1"), f"d={d}"
+
+    def test_time_kernel_decay_midpoint(self):
+        """Events in decay region linearly approach 0."""
+        # d=67 is midpoint of [45, 90) decay
+        mid = (_PROXIMITY_PLATEAU_END + _PROXIMITY_HORIZON) // 2  # 67
+        w = _proximity_time_weight(mid)
+        expected = Decimal(_PROXIMITY_HORIZON - mid) / Decimal(
+            _PROXIMITY_HORIZON - _PROXIMITY_PLATEAU_END)
+        assert abs(w - expected) < Decimal("0.001")
+
+    def test_time_kernel_horizon_zero(self):
+        """Events at/beyond horizon get zero weight."""
+        assert _proximity_time_weight(_PROXIMITY_HORIZON) == Decimal("0")
+        assert _proximity_time_weight(120) == Decimal("0")
+
+    # -----------------------------------------------------------------
+    # T2: Monotonicity — score increases as event moves from horizon to plateau
+    # -----------------------------------------------------------------
+    def test_monotonicity_approaching_plateau(self):
+        """Scores increase monotonically as event approaches from horizon toward plateau."""
+        as_of = date(2026, 1, 1)
+        scores = []
+        for days_ahead in [80, 70, 60, 50, 45, 30, 20, 15]:
+            ev = self._event(days_ahead, as_of)
+            score, _ = compute_bucket_proximity_score([ev], as_of)
+            scores.append((days_ahead, score))
+
+        for i in range(len(scores) - 1):
+            d_far, s_far = scores[i]
+            d_near, s_near = scores[i + 1]
+            assert s_near >= s_far, (
+                f"Score should increase as event approaches: "
+                f"d={d_far}→{s_far} vs d={d_near}→{s_near}"
+            )
+
+    # -----------------------------------------------------------------
+    # T3: No-event neutral
+    # -----------------------------------------------------------------
+    def test_no_events_returns_neutral(self):
+        """Empty event list returns exactly neutral (50)."""
+        score, n = compute_bucket_proximity_score([], date(2026, 1, 1))
+        assert score == PROXIMITY_NEUTRAL_BASE
+        assert n == 0
+
+    def test_past_only_events_returns_neutral(self):
+        """Events entirely in the past return neutral."""
+        as_of = date(2026, 1, 1)
+        ev = self._event(-10, as_of)  # 10 days ago
+        score, n = compute_bucket_proximity_score([ev], as_of)
+        assert score == PROXIMITY_NEUTRAL_BASE
+        assert n == 0
+
+    def test_beyond_horizon_returns_neutral(self):
+        """Events beyond 90-day horizon return neutral."""
+        as_of = date(2026, 1, 1)
+        ev = self._event(100, as_of)  # 100 days ahead, beyond horizon
+        score, n = compute_bucket_proximity_score([ev], as_of)
+        assert score == PROXIMITY_NEUTRAL_BASE
+        assert n == 0
+
+    # -----------------------------------------------------------------
+    # T4: Saturation — multiple events raise score but with diminishing returns
+    # -----------------------------------------------------------------
+    def test_saturation_diminishing_returns(self):
+        """Adding more events increases score but with diminishing returns."""
+        as_of = date(2026, 1, 1)
+        # All events at plateau (d=30, peak time weight)
+        events_1 = [self._event(30, as_of)]
+        events_2 = [self._event(30, as_of), self._event(25, as_of)]
+        events_3 = [self._event(30, as_of), self._event(25, as_of),
+                     self._event(20, as_of)]
+
+        s1, _ = compute_bucket_proximity_score(events_1, as_of)
+        s2, _ = compute_bucket_proximity_score(events_2, as_of)
+        s3, _ = compute_bucket_proximity_score(events_3, as_of)
+
+        # Increasing
+        assert s2 > s1 > PROXIMITY_NEUTRAL_BASE
+        assert s3 > s2
+
+        # Diminishing returns: marginal gain decreases
+        gain_1_to_2 = s2 - s1
+        gain_2_to_3 = s3 - s2
+        assert gain_2_to_3 < gain_1_to_2, (
+            f"Diminishing returns: 1→2 gain={gain_1_to_2}, 2→3 gain={gain_2_to_3}"
+        )
+
+    # -----------------------------------------------------------------
+    # T5: Score always > 50 when events exist
+    # -----------------------------------------------------------------
+    def test_positive_events_always_above_neutral(self):
+        """Any positive/critical event within horizon produces score > 50."""
+        as_of = date(2026, 1, 1)
+        for days in [1, 5, 15, 30, 45, 60, 80, 89]:
+            ev = self._event(days, as_of)
+            score, n = compute_bucket_proximity_score([ev], as_of)
+            if n > 0:  # d=0 same-day event gets 0 time weight → excluded
+                assert score > PROXIMITY_NEUTRAL_BASE, (
+                    f"d={days}: score={score}, expected > {PROXIMITY_NEUTRAL_BASE}"
+                )
+
+    # -----------------------------------------------------------------
+    # T6: Determinism — same inputs produce identical outputs
+    # -----------------------------------------------------------------
+    def test_determinism(self):
+        """Same inputs produce byte-identical scores across repeated calls."""
+        as_of = date(2026, 1, 1)
+        events = [
+            self._event(20, as_of, EventType.FDA_PDUFA_DATE, ConfidenceLevel.HIGH),
+            self._event(50, as_of, EventType.DATA_READOUT, ConfidenceLevel.MED),
+            self._event(10, as_of, EventType.CT_PRIMARY_COMPLETION, ConfidenceLevel.LOW),
+        ]
+        results = set()
+        for _ in range(10):
+            score, n = compute_bucket_proximity_score(events, as_of)
+            results.add((str(score), n))
+        assert len(results) == 1, f"Non-deterministic: {results}"
+
+    # -----------------------------------------------------------------
+    # T7: Confidence ordering
+    # -----------------------------------------------------------------
+    def test_confidence_ordering(self):
+        """HIGH confidence produces higher score than MED, which beats LOW."""
+        as_of = date(2026, 1, 1)
+        scores = {}
+        for conf in [ConfidenceLevel.HIGH, ConfidenceLevel.MED, ConfidenceLevel.LOW]:
+            ev = self._event(30, as_of, confidence=conf)
+            s, _ = compute_bucket_proximity_score([ev], as_of)
+            scores[conf] = s
+
+        assert scores[ConfidenceLevel.HIGH] > scores[ConfidenceLevel.MED]
+        assert scores[ConfidenceLevel.MED] > scores[ConfidenceLevel.LOW]
+
+    # -----------------------------------------------------------------
+    # T8: Event type ordering — higher-weight types produce higher scores
+    # -----------------------------------------------------------------
+    def test_event_type_ordering(self):
+        """FDA_PDUFA_DATE (weight 25) beats ENROLLMENT_STARTED (weight 6)."""
+        as_of = date(2026, 1, 1)
+        ev_high = self._event(30, as_of, event_type=EventType.FDA_PDUFA_DATE)
+        ev_low = self._event(30, as_of, event_type=EventType.CT_ENROLLMENT_STARTED)
+
+        s_high, _ = compute_bucket_proximity_score([ev_high], as_of)
+        s_low, _ = compute_bucket_proximity_score([ev_low], as_of)
+
+        assert s_high > s_low
+
+    # -----------------------------------------------------------------
+    # T9: Uniqueness — varied inputs produce varied scores
+    # -----------------------------------------------------------------
+    def test_uniqueness_across_varied_inputs(self):
+        """Different event configurations produce different scores (no bucketing collapse)."""
+        as_of = date(2026, 1, 1)
+        unique_scores = set()
+
+        event_types = [EventType.FDA_PDUFA_DATE, EventType.DATA_READOUT,
+                       EventType.CT_PRIMARY_COMPLETION, EventType.CT_ENROLLMENT_STARTED]
+        confidences = [ConfidenceLevel.HIGH, ConfidenceLevel.MED, ConfidenceLevel.LOW]
+
+        for days in range(5, 85, 5):
+            for et in event_types:
+                for conf in confidences:
+                    ev = self._event(days, as_of, event_type=et, confidence=conf)
+                    score, _ = compute_bucket_proximity_score([ev], as_of)
+                    unique_scores.add(str(score))
+
+        # 16 day values × 4 types × 3 confidences = 192 combos
+        # Old bucketed version: ~15-20 unique scores
+        # Continuous version: should have 50+ unique values (some collapse
+        # from 0.01 quantization and the saturation function)
+        assert len(unique_scores) > 50, (
+            f"Expected >50 unique scores from 192 combos, got {len(unique_scores)}"
+        )
+
+    # -----------------------------------------------------------------
+    # T10: n_upcoming count accuracy
+    # -----------------------------------------------------------------
+    def test_n_upcoming_count(self):
+        """n_upcoming reflects events within horizon with nonzero time weight."""
+        as_of = date(2026, 1, 1)
+        events = [
+            self._event(10, as_of),   # in ramp → counted
+            self._event(30, as_of),   # in plateau → counted
+            self._event(80, as_of),   # in decay → counted
+            self._event(100, as_of),  # beyond horizon → NOT counted
+            self._event(-5, as_of),   # past → NOT counted
+        ]
+        _, n = compute_bucket_proximity_score(events, as_of)
+        assert n == 3
 
 
 if __name__ == "__main__":

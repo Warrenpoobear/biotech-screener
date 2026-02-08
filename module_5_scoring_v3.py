@@ -882,7 +882,6 @@ def _compute_catalyst_effective(
         blend_mode = "default"
 
     effective = _clamp(effective, Decimal("0"), Decimal("100"))
-    effective = _quantize_score(effective)
 
     return (effective, proximity_blended, blend_mode)
 

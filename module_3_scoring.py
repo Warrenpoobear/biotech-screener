@@ -79,9 +79,15 @@ PROXIMITY_BUCKET_SCORING = {
     60: (Decimal("65"), Decimal("80")),    # ≤60d → 65-80
     90: (Decimal("55"), Decimal("70")),    # ≤90d → 55-70
 }
-PROXIMITY_NEUTRAL_BASE = Decimal("50")  # >90d → neutral baseline
+PROXIMITY_NEUTRAL_BASE = Decimal("50")  # No upcoming events → neutral baseline
 
-# Severity weights for proximity bonus calculation
+# Continuous proximity kernel parameters
+_PROXIMITY_RAMP_END = 15     # days: anticipation ramp reaches peak
+_PROXIMITY_PLATEAU_END = 45  # days: peak plateau ends
+_PROXIMITY_HORIZON = 90      # days: beyond this → 0 weight
+_PROXIMITY_SATURATION_K = Decimal("25")  # half-saturation constant
+
+# Severity weights for proximity bonus calculation (legacy, kept for reference)
 PROXIMITY_SEVERITY_WEIGHT = {
     EventSeverity.CRITICAL_POSITIVE: Decimal("1.0"),
     EventSeverity.POSITIVE: Decimal("0.6"),
@@ -180,114 +186,85 @@ def compute_staleness_factor(
 # PROXIMITY SCORING (UPCOMING EVENTS)
 # =============================================================================
 
+def _proximity_time_weight(days_to_event: int) -> Decimal:
+    """Piecewise-linear time kernel for catalyst proximity.
+
+    d <= 0:       0   (past / same-day — scored elsewhere)
+    0 < d <= 15:  d/15  (anticipation ramp-up)
+    15 < d <= 45: 1.0   (peak anticipation plateau)
+    45 < d < 90:  (90-d)/45  (decay toward horizon)
+    d >= 90:      0   (beyond horizon)
+    """
+    if days_to_event <= 0:
+        return Decimal("0")
+    if days_to_event <= _PROXIMITY_RAMP_END:
+        return Decimal(days_to_event) / Decimal(_PROXIMITY_RAMP_END)
+    if days_to_event <= _PROXIMITY_PLATEAU_END:
+        return Decimal("1")
+    if days_to_event < _PROXIMITY_HORIZON:
+        return (Decimal(_PROXIMITY_HORIZON - days_to_event)
+                / Decimal(_PROXIMITY_HORIZON - _PROXIMITY_PLATEAU_END))
+    return Decimal("0")
+
+
 def compute_bucket_proximity_score(
     events: List[CatalystEventV2],
     as_of_date: date,
 ) -> Tuple[Decimal, int]:
     """
-    Compute deterministic bucket-based proximity score for upcoming calendar events.
+    Compute continuous proximity score for upcoming calendar events.
 
-    Used when no delta events exist but upcoming events do. Provides non-neutral
-    scores based on days-to-event and event severity.
+    Replaces the former 3-bucket discrete scoring with a piecewise-linear
+    time kernel and saturating multi-event aggregation.
 
-    Bucket mapping:
-        ≤30d → 80-100 (high catalyst proximity)
-        ≤60d → 65-80
-        ≤90d → 55-70
-        >90d → 50 (neutral baseline)
+    Per-event impact:  type_weight × time_weight × confidence_weight
+    Aggregation:       score = 50 + 50 × total / (total + K)
 
-    Within each bucket, the score is interpolated based on:
-    - Days within bucket (closer = higher)
-    - Event severity weight (CRITICAL_POSITIVE > POSITIVE > NEUTRAL)
-    - Confidence level
+    The result is on the 0-100 scale with 50 = neutral (no upcoming events).
 
     Args:
         events: List of catalyst events
         as_of_date: Point-in-time date
 
     Returns:
-        (bucket_proximity_score, n_upcoming)
+        (proximity_score, n_upcoming)
         Score is clamped to [0, 100]
     """
     if not events:
         return (PROXIMITY_NEUTRAL_BASE, 0)
 
-    # Find upcoming events and their days-to-event (range-aware)
-    upcoming_events: List[Tuple[CatalystEventV2, int]] = []
+    total_impact = Decimal("0")
+    n_upcoming = 0
 
     for event in events:
         eff_days = effective_days_until(event, as_of_date)
         if eff_days is None:
             continue
+        if eff_days < 0 or eff_days >= _PROXIMITY_HORIZON:
+            continue
 
-        # Include events that are upcoming (>0) or currently actionable (==0)
-        # Within 90-day horizon for bucket scoring
-        if eff_days >= 0 and eff_days <= 90:
-            upcoming_events.append((event, max(eff_days, 1)))  # min 1 for bucket math
+        tw = _proximity_time_weight(eff_days)
+        if tw <= 0:
+            continue
 
-    if not upcoming_events:
+        n_upcoming += 1
+
+        type_w = EVENT_TYPE_WEIGHT.get(event.event_type, Decimal("1.0"))
+        conf_w = CONFIDENCE_WEIGHTS.get(event.confidence, Decimal("0.5"))
+
+        total_impact += type_w * tw * conf_w
+
+    if n_upcoming == 0:
         return (PROXIMITY_NEUTRAL_BASE, 0)
 
-    # Sort by days_to_event (closest first), then by severity (best first)
-    severity_order = {
-        EventSeverity.CRITICAL_POSITIVE: 0,
-        EventSeverity.POSITIVE: 1,
-        EventSeverity.NEUTRAL: 2,
-        EventSeverity.NEGATIVE: 3,
-        EventSeverity.SEVERE_NEGATIVE: 4,
-    }
-    upcoming_events.sort(key=lambda x: (x[1], severity_order.get(x[0].event_severity, 2)))
+    # Saturating aggregation: Michaelis-Menten style
+    # score = 50 + 50 * total / (total + K)
+    # K = 25 → one max-impact event (FDA_PDUFA 25×1.0×1.0) reaches 75
+    score = (PROXIMITY_NEUTRAL_BASE
+             + Decimal("50") * total_impact / (total_impact + _PROXIMITY_SATURATION_K))
+    score = max(SCORE_MIN, min(SCORE_MAX, score))
 
-    # Use closest event for base score, with contributions from all events
-    closest_event, closest_days = upcoming_events[0]
-
-    # Determine base bucket
-    base_score = PROXIMITY_NEUTRAL_BASE
-    max_score = PROXIMITY_NEUTRAL_BASE
-    for threshold in sorted(PROXIMITY_BUCKET_SCORING.keys()):
-        if closest_days <= threshold:
-            base_score, max_score = PROXIMITY_BUCKET_SCORING[threshold]
-            break
-
-    # Calculate weighted bonus from all upcoming events
-    total_bonus = Decimal("0")
-    max_bonus = max_score - base_score
-
-    for event, days in upcoming_events:
-        # Severity weight
-        severity_weight = PROXIMITY_SEVERITY_WEIGHT.get(
-            event.event_severity, Decimal("0.3")
-        )
-
-        # Confidence weight
-        confidence_weight = CONFIDENCE_WEIGHTS.get(
-            event.confidence, Decimal("0.5")
-        )
-
-        # Days factor: closer events contribute more (linear within bucket)
-        if closest_days <= 30:
-            days_factor = Decimal(30 - days) / Decimal("30")
-        elif closest_days <= 60:
-            days_factor = Decimal(60 - days) / Decimal("30")
-        else:
-            days_factor = Decimal(90 - days) / Decimal("30")
-
-        # Combined contribution
-        contrib = severity_weight * confidence_weight * days_factor
-        total_bonus += contrib
-
-    # Scale bonus (cap at max_bonus, diminishing returns for multiple events)
-    # Use sqrt for diminishing returns: bonus = max_bonus * min(1, sqrt(total_bonus))
-    if total_bonus > Decimal("0"):
-        # Simple approach: cap at max_bonus with diminishing returns
-        scaled_bonus = max_bonus * min(Decimal("1"), total_bonus)
-    else:
-        scaled_bonus = Decimal("0")
-
-    final_score = base_score + scaled_bonus
-    final_score = max(SCORE_MIN, min(SCORE_MAX, final_score))
-
-    return (final_score.quantize(Decimal("0.01")), len(upcoming_events))
+    return (score.quantize(Decimal("0.01")), n_upcoming)
 
 
 def compute_proximity_score(
