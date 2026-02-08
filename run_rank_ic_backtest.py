@@ -31,7 +31,7 @@ import tarfile
 from datetime import date, timedelta
 from decimal import Decimal
 from pathlib import Path
-from statistics import mean, stdev
+from statistics import mean, median, stdev
 from typing import Any, Dict, List, Optional, Tuple
 
 # Add project root to path
@@ -1301,6 +1301,145 @@ def build_failure_attribution(
     }
 
 
+def build_miss_signature(
+    ic_rankings: Dict[str, int],
+    fwd_returns: Dict[str, float],
+    stage_map: Dict[str, str],
+    component_scores: Dict[str, Dict[str, float]],
+    ticker_metadata: Dict[str, Dict[str, Any]],
+    n_show: int = 10,
+) -> Optional[Dict[str, Any]]:
+    """Identify top-quintile tickers that underperformed (''misses'').
+
+    A *miss* is a ticker ranked in the top quintile whose forward return
+    falls below the cross-sectional median.  A *severe miss* additionally
+    requires the return to land in the bottom quintile.
+
+    Returns a dict characterising miss rate, magnitude, stage mix,
+    average component scores for misses vs non-misses, and the signed
+    delta between the two groups.
+    """
+    common = sorted(
+        [t for t in ic_rankings if t in fwd_returns],
+        key=lambda t: ic_rankings[t],
+    )
+    n = len(common)
+    if n < 20:
+        return None
+
+    q_size = n // 5
+    all_returns = [fwd_returns[t] for t in common]
+    median_ret = median(all_returns)
+
+    top_q = common[:q_size]
+    # Bottom quintile by RETURN (worst returns), for severe-miss detection
+    by_return = sorted(common, key=lambda t: fwd_returns[t])
+    bottom_ret_set = set(by_return[:q_size])
+
+    misses: List[str] = []
+    severe: List[str] = []
+    non_misses: List[str] = []
+
+    for t in top_q:
+        ret = fwd_returns[t]
+        if ret < median_ret:
+            misses.append(t)
+            if t in bottom_ret_set:
+                severe.append(t)
+        else:
+            non_misses.append(t)
+
+    miss_rate = len(misses) / len(top_q) if top_q else 0.0
+    severe_rate = len(severe) / len(top_q) if top_q else 0.0
+
+    # --- helper: mean return for a group ---
+    def _mean_ret(tickers: List[str]) -> Optional[float]:
+        if not tickers:
+            return None
+        return round(mean([fwd_returns[t] for t in tickers]) * 100, 4)
+
+    # --- helper: average scores for a group ---
+    SCORE_KEYS = ["catalyst_score", "confidence_overall", "smart_money_score"]
+
+    def _avg_scores(tickers: List[str]) -> Dict[str, Optional[float]]:
+        if not tickers:
+            return {}
+        out: Dict[str, Optional[float]] = {}
+        # Component scores
+        for comp_name, comp_vals in component_scores.items():
+            vals = [comp_vals[t] for t in tickers if t in comp_vals and comp_vals[t] is not None]
+            if vals:
+                out[comp_name] = round(mean(vals), 4)
+        # Metadata scores
+        for mk in SCORE_KEYS:
+            vals = [
+                ticker_metadata[t][mk]
+                for t in tickers
+                if t in ticker_metadata and mk in ticker_metadata[t]
+                and isinstance(ticker_metadata[t][mk], (int, float))
+            ]
+            if vals:
+                out[mk] = round(mean(vals), 4)
+        return out
+
+    # --- helper: stage mix ---
+    def _stage_mix(tickers: List[str]) -> Dict[str, int]:
+        mix: Dict[str, int] = {"dev": 0, "commercial": 0}
+        for t in tickers:
+            s = stage_map.get(t, "dev")
+            mix[s] = mix.get(s, 0) + 1
+        return mix
+
+    miss_scores = _avg_scores(misses)
+    non_miss_scores = _avg_scores(non_misses)
+
+    # Score delta: miss_avg - non_miss_avg (positive = misses scored HIGHER)
+    all_keys = set(miss_scores) | set(non_miss_scores)
+    score_delta: Dict[str, Optional[float]] = {}
+    for k in sorted(all_keys):
+        m = miss_scores.get(k)
+        nm = non_miss_scores.get(k)
+        if m is not None and nm is not None:
+            score_delta[k] = round(m - nm, 4)
+
+    # Build detail entries for misses (worst first)
+    miss_sorted = sorted(misses, key=lambda t: fwd_returns[t])[:n_show]
+    miss_entries: List[Dict[str, Any]] = []
+    for t in miss_sorted:
+        entry: Dict[str, Any] = {
+            "ticker": t,
+            "rank": ic_rankings[t],
+            "return_pct": round(fwd_returns[t] * 100, 4),
+            "stage": stage_map.get(t, "?"),
+            "severe": t in bottom_ret_set,
+        }
+        for comp_name, comp_vals in component_scores.items():
+            if t in comp_vals and comp_vals[t] is not None:
+                short = comp_name.replace("_Score", "").replace("_score", "")
+                entry[short] = round(comp_vals[t], 2)
+        meta = ticker_metadata.get(t, {})
+        for k, v in meta.items():
+            entry[k] = round(v, 4) if isinstance(v, float) else v
+        miss_entries.append(entry)
+
+    return {
+        "n_top": len(top_q),
+        "n_misses": len(misses),
+        "n_severe": len(severe),
+        "miss_rate_pct": round(miss_rate * 100, 1),
+        "severe_rate_pct": round(severe_rate * 100, 1),
+        "miss_return_mean_pct": _mean_ret(misses),
+        "non_miss_return_mean_pct": _mean_ret(non_misses),
+        "median_return_pct": round(median_ret * 100, 4),
+        "miss_stage_mix": _stage_mix(misses),
+        "non_miss_stage_mix": _stage_mix(non_misses),
+        "miss_avg_scores": miss_scores,
+        "non_miss_avg_scores": non_miss_scores,
+        "score_delta": score_delta,
+        "miss_tickers": miss_entries,
+    }
+
+
 def discover_archives(
     archive_dir: Path,
     start: Optional[str] = None,
@@ -2063,6 +2202,13 @@ def run_backtest(
             if attrib is not None:
                 snapshot_result[f"_failure_attrib_{horizon_label}"] = attrib
 
+            # Miss signature: top-quintile tickers that underperformed
+            miss_sig = build_miss_signature(
+                ic_rankings, fwd_returns, inv_stage, inv_components, ticker_metadata,
+            )
+            if miss_sig is not None:
+                snapshot_result[f"_miss_sig_{horizon_label}"] = miss_sig
+
             # Stratified IC: by stage
             stage_ic = compute_stratified_ic(ic_rankings, fwd_returns, inv_stage)
             snapshot_result[f"stage_ic_{horizon_label}"] = stage_ic
@@ -2469,6 +2615,64 @@ def _aggregate(per_snapshot: List[Dict[str, Any]]) -> Dict[str, Any]:
                 })
         result.setdefault("failure_attribution_detail", {})[horizon_label] = per_snap_attribs
 
+    # --- Miss signature (top-quintile underperformance analysis) ---
+    for horizon_label in HORIZONS:
+        ms_key = f"_miss_sig_{horizon_label}"
+        ms_list = [s[ms_key] for s in per_snapshot if ms_key in s]
+        if not ms_list:
+            continue
+
+        miss_rates = [m["miss_rate_pct"] for m in ms_list]
+        severe_rates = [m["severe_rate_pct"] for m in ms_list]
+        miss_rets = [m["miss_return_mean_pct"] for m in ms_list if m["miss_return_mean_pct"] is not None]
+        non_miss_rets = [m["non_miss_return_mean_pct"] for m in ms_list if m["non_miss_return_mean_pct"] is not None]
+
+        # Aggregate stage mix
+        agg_miss_dev = sum(m["miss_stage_mix"].get("dev", 0) for m in ms_list)
+        agg_miss_com = sum(m["miss_stage_mix"].get("commercial", 0) for m in ms_list)
+        agg_nonmiss_dev = sum(m["non_miss_stage_mix"].get("dev", 0) for m in ms_list)
+        agg_nonmiss_com = sum(m["non_miss_stage_mix"].get("commercial", 0) for m in ms_list)
+
+        # Aggregate score deltas
+        all_delta_keys: set = set()
+        for m in ms_list:
+            all_delta_keys.update(m.get("score_delta", {}).keys())
+        agg_deltas: Dict[str, float] = {}
+        for k in sorted(all_delta_keys):
+            vals = [m["score_delta"][k] for m in ms_list if k in m.get("score_delta", {})]
+            if vals:
+                agg_deltas[k] = round(mean(vals), 4)
+
+        # Worst snapshot by miss rate
+        worst_idx = max(range(len(ms_list)), key=lambda i: ms_list[i]["miss_rate_pct"])
+        worst_date = per_snapshot[
+            [i for i, s in enumerate(per_snapshot) if ms_key in s][worst_idx]
+        ]["date"]
+
+        miss_total = agg_miss_dev + agg_miss_com
+        nonmiss_total = agg_nonmiss_dev + agg_nonmiss_com
+
+        result.setdefault("miss_signature", {})[horizon_label] = {
+            "n_snapshots": len(ms_list),
+            "mean_miss_rate_pct": round(mean(miss_rates), 1),
+            "mean_severe_rate_pct": round(mean(severe_rates), 1),
+            "worst_miss_rate_pct": round(max(miss_rates), 1),
+            "worst_miss_date": worst_date,
+            "miss_return_mean_pct": round(mean(miss_rets), 4) if miss_rets else None,
+            "non_miss_return_mean_pct": round(mean(non_miss_rets), 4) if non_miss_rets else None,
+            "miss_stage_dev_pct": round(agg_miss_dev / miss_total * 100, 1) if miss_total > 0 else 0,
+            "non_miss_stage_dev_pct": round(agg_nonmiss_dev / nonmiss_total * 100, 1) if nonmiss_total > 0 else 0,
+            "score_delta": agg_deltas,
+        }
+
+        # Per-snapshot detail
+        per_snap_miss = []
+        for s in per_snapshot:
+            m = s.get(ms_key)
+            if m is not None:
+                per_snap_miss.append({"date": s["date"], **m})
+        result.setdefault("miss_signature_detail", {})[horizon_label] = per_snap_miss
+
     # --- Aggregate regression results ---
     for horizon_label in HORIZONS:
         reg_key = f"regression_{horizon_label}"
@@ -2861,6 +3065,58 @@ def print_report(results: Dict[str, Any]) -> None:
                     meta_str = "  " + ", ".join(meta_parts) if meta_parts else ""
                     print(f"    {t['ticker']:6s}  rank={t['rank']:>3d}  "
                           f"ret={t['return_pct']:+7.2f}%  {t['stage']:>4s}{meta_str}")
+            print()
+
+    # Miss signature summary
+    ms = results.get("miss_signature")
+    if ms:
+        print("Miss Signature (top-quintile tickers that underperformed median):")
+        for horizon_label, data in sorted(ms.items()):
+            mr = data["miss_return_mean_pct"]
+            nmr = data["non_miss_return_mean_pct"]
+            mr_str = f"{mr:+.2f}%" if mr is not None else "n/a"
+            nmr_str = f"{nmr:+.2f}%" if nmr is not None else "n/a"
+            print(f"  {horizon_label}:  miss_rate={data['mean_miss_rate_pct']:.0f}%  "
+                  f"severe={data['mean_severe_rate_pct']:.0f}%  "
+                  f"miss_ret={mr_str}  non_miss_ret={nmr_str}  "
+                  f"(worst: {data['worst_miss_rate_pct']:.0f}% on {data['worst_miss_date']})")
+            # Stage comparison
+            print(f"       misses: {data['miss_stage_dev_pct']:.0f}% dev   "
+                  f"non-misses: {data['non_miss_stage_dev_pct']:.0f}% dev")
+            # Score deltas (miss - non-miss; positive = misses scored higher)
+            deltas = data.get("score_delta", {})
+            if deltas:
+                delta_parts = []
+                for k, v in deltas.items():
+                    short = k.replace("_Score", "").replace("_score", "").replace("_overall", "")
+                    delta_parts.append(f"{short}={v:+.2f}")
+                print(f"       score delta (miss-nonmiss): {', '.join(delta_parts)}")
+        print()
+
+        # Per-snapshot miss detail (20d)
+        ms_detail = results.get("miss_signature_detail", {}).get("20d", [])
+        if ms_detail:
+            print("Miss Detail (20d, top-quintile misses per snapshot):")
+            for snap in ms_detail:
+                snap_date = snap["date"]
+                n_m = snap["n_misses"]
+                n_s = snap["n_severe"]
+                mr_pct = snap["miss_rate_pct"]
+                dev = snap["miss_stage_mix"].get("dev", 0)
+                com = snap["miss_stage_mix"].get("commercial", 0)
+                print(f"  --- {snap_date} (misses={n_m}/{snap['n_top']}, "
+                      f"rate={mr_pct:.0f}%, severe={n_s}, dev={dev}, com={com}) ---")
+                for t in snap["miss_tickers"][:5]:
+                    sev_tag = " [SEVERE]" if t.get("severe") else ""
+                    meta_parts = []
+                    for mk in ["catalyst_score", "smart_money_score", "confidence_overall"]:
+                        if mk in t:
+                            short = mk.replace("_score", "").replace("_overall", "")
+                            meta_parts.append(f"{short}={t[mk]:.2f}")
+                    meta_str = "  " + ", ".join(meta_parts) if meta_parts else ""
+                    print(f"    {t['ticker']:6s}  rank={t['rank']:>3d}  "
+                          f"ret={t['return_pct']:+7.2f}%  {t['stage']:>4s}"
+                          f"{meta_str}{sev_tag}")
             print()
 
     # Cross-sectional regression
