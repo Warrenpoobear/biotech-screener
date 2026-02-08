@@ -105,6 +105,95 @@ def compute_xbi_regime(csv_provider: CSVReturnsProvider, snapshot_dates: List[st
 
 
 # =============================================================================
+# XBI BETA ESTIMATION & RESIDUAL RETURNS
+# =============================================================================
+
+# Trailing window for beta estimation (trading days ~ 1 year)
+BETA_LOOKBACK_TRADING_DAYS = 252
+
+
+def estimate_xbi_betas(
+    csv_provider: CSVReturnsProvider,
+    tickers: List[str],
+    as_of_date: str,
+    lookback_days: int = BETA_LOOKBACK_TRADING_DAYS,
+) -> Dict[str, float]:
+    """
+    Estimate OLS beta of each ticker vs XBI using trailing daily returns.
+
+    Uses simple OLS: stock_ret = alpha + beta * xbi_ret + epsilon.
+    Only tickers with >= 60 overlapping daily observations get a beta.
+
+    Returns {ticker: beta}.
+    """
+    MIN_OBS_BETA = 60
+
+    end_dt = date.fromisoformat(as_of_date)
+    # Approximate calendar days for lookback (trading days * 365/252)
+    start_dt = end_dt - timedelta(days=int(lookback_days * 365 / 252) + 30)
+
+    # Get XBI daily returns
+    xbi_daily = csv_provider.get_daily_returns("XBI", start_dt, end_dt)
+    if len(xbi_daily) < MIN_OBS_BETA:
+        return {}
+
+    xbi_by_date: Dict[date, float] = {d: r for d, r in xbi_daily}
+
+    betas: Dict[str, float] = {}
+    for ticker in tickers:
+        stock_daily = csv_provider.get_daily_returns(ticker, start_dt, end_dt)
+        if not stock_daily:
+            continue
+
+        # Align dates
+        stock_by_date = {d: r for d, r in stock_daily}
+        common_dates = sorted(set(stock_by_date.keys()) & set(xbi_by_date.keys()))
+
+        if len(common_dates) < MIN_OBS_BETA:
+            continue
+
+        x = [xbi_by_date[d] for d in common_dates]
+        y = [stock_by_date[d] for d in common_dates]
+
+        # OLS: beta = cov(x,y) / var(x)
+        n = len(x)
+        mean_x = sum(x) / n
+        mean_y = sum(y) / n
+        cov_xy = sum((xi - mean_x) * (yi - mean_y) for xi, yi in zip(x, y)) / n
+        var_x = sum((xi - mean_x) ** 2 for xi in x) / n
+
+        if var_x < 1e-12:
+            continue
+
+        beta = cov_xy / var_x
+        betas[ticker.upper()] = round(beta, 6)
+
+    return betas
+
+
+def compute_residual_returns(
+    raw_returns: Dict[str, float],
+    xbi_return: Optional[float],
+    betas: Dict[str, float],
+) -> Dict[str, float]:
+    """
+    Compute XBI-residual returns: resid = raw - beta * xbi_return.
+
+    Tickers without a beta estimate keep their raw return (beta=0 assumption).
+    If XBI return is unavailable, returns empty dict.
+    """
+    if xbi_return is None:
+        return {}
+
+    residuals: Dict[str, float] = {}
+    for ticker, raw_ret in raw_returns.items():
+        beta = betas.get(ticker, 0.0)
+        residuals[ticker] = raw_ret - beta * xbi_return
+
+    return residuals
+
+
+# =============================================================================
 # STRATIFIED IC
 # =============================================================================
 
@@ -1754,6 +1843,10 @@ def run_backtest(
         if archive_path_str:
             snapshot_result["archive_path"] = archive_path_str
 
+        # --- Estimate XBI betas for residual returns ---
+        xbi_betas = estimate_xbi_betas(csv_provider, inv_tickers, snapshot_date)
+        snapshot_result["n_with_beta"] = len(xbi_betas)
+
         for horizon_label, horizon_days in HORIZONS.items():
             fwd_returns = compute_forward_returns(provider, inv_tickers, snapshot_date, horizon_days)
             n_with_returns = len(fwd_returns)
@@ -1776,6 +1869,24 @@ def run_backtest(
             qs = compute_quintile_spread(ic_rankings, fwd_returns)
             if qs is not None:
                 snapshot_result[f"quintile_spread_{horizon_label}"] = qs
+
+            # --- XBI-residual returns ---
+            xbi_fwd_start = add_trading_days(snapshot_date, 1)
+            xbi_fwd_end = add_trading_days(snapshot_date, horizon_days)
+            xbi_ret_str = csv_provider.get_forward_total_return("XBI", xbi_fwd_start, xbi_fwd_end)
+            xbi_fwd = float(xbi_ret_str) if xbi_ret_str is not None else None
+
+            resid_returns = compute_residual_returns(fwd_returns, xbi_fwd, xbi_betas)
+            if resid_returns:
+                resid_ic = calculate_ic(ic_rankings, resid_returns)
+                resid_kendall = calculate_kendall(ic_rankings, resid_returns)
+                resid_qs = compute_quintile_spread(ic_rankings, resid_returns)
+
+                snapshot_result[f"resid_ic_{horizon_label}"] = float(resid_ic) if resid_ic is not None else None
+                snapshot_result[f"resid_kendall_{horizon_label}"] = float(resid_kendall) if resid_kendall is not None else None
+                if resid_qs is not None:
+                    snapshot_result[f"resid_quintile_spread_{horizon_label}"] = resid_qs
+                snapshot_result[f"xbi_return_{horizon_label}"] = round(xbi_fwd * 100, 4) if xbi_fwd is not None else None
 
             # Stratified IC: by stage
             stage_ic = compute_stratified_ic(ic_rankings, fwd_returns, inv_stage)
@@ -1961,6 +2072,64 @@ def _aggregate(per_snapshot: List[Dict[str, Any]]) -> Dict[str, Any]:
                 "worst_spread_pct": round(min(qs_spreads), 4) if qs_spreads else None,
                 "worst_date": worst_snap["date"] if worst_snap else None,
             } if qs_spreads else None,
+        }
+
+    # --- Residual (XBI-hedged) aggregate stats ---
+    for horizon_label in HORIZONS:
+        resid_ic_key = f"resid_ic_{horizon_label}"
+        resid_ics = [s[resid_ic_key] for s in per_snapshot
+                     if resid_ic_key in s and s[resid_ic_key] is not None]
+        if not resid_ics:
+            continue
+
+        resid_mean = mean(resid_ics)
+        resid_std = stdev(resid_ics) if len(resid_ics) > 1 else 0.0
+        resid_t = resid_mean / (resid_std / math.sqrt(len(resid_ics))) if resid_std > 0 else float("inf")
+        resid_hit = sum(1 for x in resid_ics if x > 0) / len(resid_ics)
+
+        resid_kendall_key = f"resid_kendall_{horizon_label}"
+        resid_kendalls = [s[resid_kendall_key] for s in per_snapshot
+                          if resid_kendall_key in s and s[resid_kendall_key] is not None]
+        rk_mean = mean(resid_kendalls) if resid_kendalls else None
+        rk_t = None
+        if resid_kendalls and len(resid_kendalls) > 1:
+            rk_std = stdev(resid_kendalls)
+            rk_t = rk_mean / (rk_std / math.sqrt(len(resid_kendalls))) if rk_std > 0 else float("inf")
+
+        resid_qs_key = f"resid_quintile_spread_{horizon_label}"
+        resid_qs_vals = [s[resid_qs_key]["spread_pct"] for s in per_snapshot
+                         if resid_qs_key in s and s[resid_qs_key] is not None]
+        rqs_mean = mean(resid_qs_vals) if resid_qs_vals else None
+        rqs_t = None
+        rqs_hit = None
+        rqs_worst = None
+        rqs_worst_date = None
+        if resid_qs_vals:
+            rqs_hit = sum(1 for s in resid_qs_vals if s > 0) / len(resid_qs_vals)
+            if len(resid_qs_vals) > 1:
+                rqs_std = stdev(resid_qs_vals)
+                rqs_t = rqs_mean / (rqs_std / math.sqrt(len(resid_qs_vals))) if rqs_std > 0 else float("inf")
+            worst_idx = min(range(len(resid_qs_vals)), key=lambda i: resid_qs_vals[i])
+            rqs_worst = resid_qs_vals[worst_idx]
+            rqs_worst_date = [s for s in per_snapshot if resid_qs_key in s and s[resid_qs_key] is not None][worst_idx]["date"]
+
+        result[f"residual_aggregate_{horizon_label}"] = {
+            "mean_ic": round(resid_mean, 6),
+            "std_ic": round(resid_std, 6),
+            "t_stat": round(resid_t, 2),
+            "hit_rate": round(resid_hit * 100, 1),
+            "quality": _classify_ic(Decimal(str(abs(resid_mean)))).value,
+            "n_periods": len(resid_ics),
+            "mean_kendall": round(rk_mean, 6) if rk_mean is not None else None,
+            "t_stat_kendall": round(rk_t, 2) if rk_t is not None else None,
+            "quintile_spread": {
+                "mean_spread_pct": round(rqs_mean, 4) if rqs_mean is not None else None,
+                "t_stat": round(rqs_t, 2) if rqs_t is not None else None,
+                "hit_rate": round(rqs_hit * 100, 1) if rqs_hit is not None else None,
+                "n_periods": len(resid_qs_vals),
+                "worst_spread_pct": round(rqs_worst, 4) if rqs_worst is not None else None,
+                "worst_date": rqs_worst_date,
+            } if resid_qs_vals else None,
         }
 
     # Top/bottom decile spread (60d)
@@ -2278,9 +2447,14 @@ def print_report(results: Dict[str, Any]) -> None:
 
     # Per-snapshot detail
     for horizon_label in HORIZONS:
+        # Check if any snapshot has residual data
+        has_resid = any(f"resid_ic_{horizon_label}" in s for s in results.get("per_snapshot", []))
+        resid_hdr = f"  {'Resid IC':>9s}  {'Resid Qs':>9s}" if has_resid else ""
+        resid_bar = f"  {'─' * 9}  {'─' * 9}" if has_resid else ""
+
         print(f"Per-Snapshot ({horizon_label} forward):")
-        print(f"  {'Date':>12s}  {'Spearman':>9s}  {'Kendall':>9s}  {'Q spread':>9s}  {'n':>5s}  {'drop':>5s}  {'Quality'}")
-        print(f"  {'─' * 12}  {'─' * 9}  {'─' * 9}  {'─' * 9}  {'─' * 5}  {'─' * 5}  {'─' * 12}")
+        print(f"  {'Date':>12s}  {'Spearman':>9s}  {'Kendall':>9s}  {'Q spread':>9s}{resid_hdr}  {'n':>5s}  {'drop':>5s}  {'Quality'}")
+        print(f"  {'─' * 12}  {'─' * 9}  {'─' * 9}  {'─' * 9}{resid_bar}  {'─' * 5}  {'─' * 5}  {'─' * 12}")
         for snap in results.get("per_snapshot", []):
             ic = snap.get(f"ic_{horizon_label}", 0)
             kendall = snap.get(f"kendall_{horizon_label}")
@@ -2291,7 +2465,17 @@ def print_report(results: Dict[str, Any]) -> None:
             dropped = snap.get("n_dropped", 0)
             k_str = f"{kendall:+.4f}" if kendall is not None else "    n/a"
             qs_str = f"{qs_spread:+.2f}%" if qs_spread is not None else "     n/a"
-            print(f"  {snap['date']:>12s}  {ic:+9.4f}  {k_str:>9s}  {qs_str:>9s}  {n:>5d}  {dropped:>5d}  {quality}")
+
+            resid_cols = ""
+            if has_resid:
+                ric = snap.get(f"resid_ic_{horizon_label}")
+                rqs = snap.get(f"resid_quintile_spread_{horizon_label}", {})
+                rqs_spread = rqs.get("spread_pct") if rqs else None
+                ric_str = f"{ric:+.4f}" if ric is not None else "    n/a"
+                rqs_str = f"{rqs_spread:+.2f}%" if rqs_spread is not None else "     n/a"
+                resid_cols = f"  {ric_str:>9s}  {rqs_str:>9s}"
+
+            print(f"  {snap['date']:>12s}  {ic:+9.4f}  {k_str:>9s}  {qs_str:>9s}{resid_cols}  {n:>5d}  {dropped:>5d}  {quality}")
         print()
 
     # Aggregate
@@ -2322,6 +2506,31 @@ def print_report(results: Dict[str, Any]) -> None:
                     f"t={qs['t_stat']:.2f}  "
                     f"hit={qs['hit_rate']:.0f}%  "
                     f"worst={qs['worst_spread_pct']:+.2f}% ({qs['worst_date']})"
+                )
+
+        # Residual aggregate
+        ragg = results.get(f"residual_aggregate_{horizon_label}")
+        if ragg:
+            print(
+                f"  Resid IC ({horizon_label}):  mean={ragg['mean_ic']:+.4f}  "
+                f"t={ragg['t_stat']:.2f}  "
+                f"hit={ragg['hit_rate']:.0f}%  "
+                f"-> {ragg['quality']}"
+            )
+            rmk = ragg.get("mean_kendall")
+            if rmk is not None:
+                line = f"  Resid τ  ({horizon_label}):  mean={rmk:+.4f}"
+                rtk = ragg.get("t_stat_kendall")
+                if rtk is not None:
+                    line += f"  t={rtk:.2f}"
+                print(line)
+            rqs = ragg.get("quintile_spread")
+            if rqs and rqs.get("mean_spread_pct") is not None:
+                print(
+                    f"  Resid Qs ({horizon_label}):  mean={rqs['mean_spread_pct']:+.2f}%  "
+                    f"t={rqs['t_stat']:.2f}  "
+                    f"hit={rqs['hit_rate']:.0f}%  "
+                    f"worst={rqs['worst_spread_pct']:+.2f}% ({rqs['worst_date']})"
                 )
     print()
 

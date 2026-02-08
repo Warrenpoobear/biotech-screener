@@ -97,6 +97,33 @@ class CSVReturnsProvider(BaseReturnsProvider):
                     last = ticker_max
         return last
 
+    def get_daily_returns(
+        self, ticker: str, start: date, end: date,
+    ) -> List[Tuple[date, float]]:
+        """
+        Get daily simple returns for a ticker between start and end (inclusive).
+
+        Returns list of (date, return) sorted by date.
+        Skips days where the prior close is missing or zero.
+        """
+        ticker = ticker.upper()
+        prices = self._prices.get(ticker)
+        if not prices:
+            return []
+
+        sorted_dates = sorted(d for d in prices if start <= d <= end)
+        if len(sorted_dates) < 2:
+            return []
+
+        result: List[Tuple[date, float]] = []
+        for i in range(1, len(sorted_dates)):
+            prev = prices[sorted_dates[i - 1]]
+            curr = prices[sorted_dates[i]]
+            if prev and prev != 0:
+                ret = float((curr / prev) - Decimal("1"))
+                result.append((sorted_dates[i], ret))
+        return result
+
 
 class NullReturnsProvider(BaseReturnsProvider):
     """Returns None for all tickers. For baseline testing."""
