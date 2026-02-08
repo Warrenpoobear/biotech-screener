@@ -1279,6 +1279,7 @@ def write_json_output(filepath: Path, data: Dict[str, Any], secure: bool = True)
 # These are the minimum fields needed for forward IC / decile-lift analysis.
 SNAPSHOT_COLUMNS = [
     "ticker", "composite_rank", "composite_score",
+    "score_rank_pct", "score_z",
     "stage_bucket", "market_cap_bucket", "severity",
     "archetype",
     "momentum_score", "catalyst_score", "smart_money_score",
@@ -1352,6 +1353,8 @@ def save_validation_snapshot(
                     "ticker": ticker,
                     "composite_rank": rec.get("composite_rank"),
                     "composite_score": rec.get("composite_score"),
+                    "score_rank_pct": rec.get("score_rank_pct"),
+                    "score_z": rec.get("score_z"),
                     "stage_bucket": rec.get("stage_bucket"),
                     "market_cap_bucket": rec.get("market_cap_bucket"),
                     "severity": rec.get("severity"),
@@ -1450,6 +1453,18 @@ def save_validation_snapshot(
         reverse=True,
     )
 
+    # --- Ranking diagnostics: uniqueness of the actual rank-driving fields ---
+    ranking_diagnostics = {}
+    for field in ["composite_rank", "score_rank_pct", "score_z", "composite_score"]:
+        vals = [rec.get(field) for rec in ranked if rec.get(field) is not None]
+        n_total = len(vals)
+        n_unique = len(set(str(v) for v in vals))
+        ranking_diagnostics[field] = {
+            "n_total": n_total,
+            "n_unique": n_unique,
+            "tie_pct": round(1.0 - n_unique / n_total, 4) if n_total > 0 else None,
+        }
+
     # --- Write metadata JSON ---
     summary = results.get("summary", {})
     clinical_filter = summary.get("clinical_activity_filter", {})
@@ -1469,6 +1484,7 @@ def save_validation_snapshot(
         "clinical_excluded": clinical_filter.get("excluded_count", 0),
         "clinical_exempted": clinical_filter.get("exempted_count", 0),
         "archetype_distribution": dict(sorted(archetype_counts.items())),
+        "ranking_diagnostics": ranking_diagnostics,
         "score_diagnostics": score_diagnostics,
         "input_hashes": results.get("run_metadata", {}).get("input_hashes", {}),
     }
