@@ -18,7 +18,7 @@ PIT Safety:
 
 from dataclasses import dataclass
 from datetime import date, timedelta
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -255,7 +255,14 @@ class CashBurnEngine:
         """Compute percentage change in burn rate."""
         if prior == 0:
             return None
-        return ((current - prior) / prior).quantize(Decimal("0.0001"))
+        try:
+            result = ((current - prior) / prior).quantize(Decimal("0.0001"))
+            # Guard against NaN/Infinity from malformed input data
+            if not result.is_finite():
+                return None
+            return result
+        except InvalidOperation:
+            return None
 
     def _classify_trajectory(
         self,
@@ -264,6 +271,10 @@ class CashBurnEngine:
     ) -> BurnTrajectory:
         """Classify burn trajectory based on change percentage."""
         if change_pct is None:
+            return BurnTrajectory.UNKNOWN
+
+        # Guard against NaN/Infinity Decimals that would raise on comparison
+        if not change_pct.is_finite():
             return BurnTrajectory.UNKNOWN
 
         if change_pct <= self.DECEL_THRESHOLD:
