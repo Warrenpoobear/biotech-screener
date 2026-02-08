@@ -271,9 +271,9 @@ STAGE_SIZE_TILT_CONFIG = {
     # Stage tilts (multiplicative) - what matters at each development phase
     "stage_tilts": {
         "early": {  # Preclinical → Phase 1
-            "clinical": Decimal("1.35"),    # ↑ Science risk dominant
+            "clinical": Decimal("1.00"),    # → Regression: clin(dev) ≈ 0; neutralize
             "pos": Decimal("1.25"),         # ↑ Binary outcomes
-            "financial": Decimal("1.20"),   # ↑ Survivability critical
+            "financial": Decimal("1.40"),   # ↑↑ Regression: fin(dev) significant alpha
             "short_interest": Decimal("1.10"),  # ↑ Micro-cap positioning
             "catalyst": Decimal("0.90"),    # → Events far out, low quality
             "valuation": Decimal("0.75"),   # ↓ No fundamentals
@@ -307,12 +307,12 @@ STAGE_SIZE_TILT_CONFIG = {
             "short_interest": Decimal("0.95"),  # ↓ Less short interest usually
         },
         "commercial": {  # Post-approval, revenue generating
-            "financial": Decimal("1.35"),   # ↑↑ Execution risk dominant
+            "clinical": Decimal("1.40"),    # ↑↑ Regression: clin(commercial) = +0.057
             "valuation": Decimal("1.30"),   # ↑↑ Fundamentals matter
             "momentum": Decimal("1.20"),    # ↑ Sales/trajectory drives price
             "catalyst": Decimal("0.85"),    # → Few binary events
-            "clinical": Decimal("0.80"),    # ↓ Science priced in
-            "pos": Decimal("0.85"),         # ↓ Low clinical uncertainty
+            "financial": Decimal("0.85"),   # ↓ Regression: fin(commercial) ≈ 0
+            "pos": Decimal("0.75"),         # ↓↓ Low clinical uncertainty
             "short_interest": Decimal("0.90"),  # → Lower short interest
         },
         # Neutral fallback (no tilting)
