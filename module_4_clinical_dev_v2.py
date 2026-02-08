@@ -803,23 +803,28 @@ def _score_trial_count(num_trials: int) -> Decimal:
     # Cap at reasonable maximum to prevent pathological behavior
     num_trials = min(num_trials, MAX_TRIALS_PER_TICKER)
 
-    if num_trials == 0:
+    # Piecewise-linear interpolation through breakpoints.
+    # Preserves breakpoint semantics while differentiating within buckets.
+    _TRIAL_KNOTS = [
+        (0, Decimal("0")),
+        (1, Decimal("0.5")),
+        (2, Decimal("1.0")),
+        (5, Decimal("2.0")),
+        (10, Decimal("3.5")),
+        (20, Decimal("4.5")),
+        (100, Decimal("5.0")),
+    ]
+    if num_trials <= 0:
         return Decimal("0")
-    elif num_trials == 1:
-        return Decimal("0.5")
-    elif num_trials == 2:
-        return Decimal("1.0")
-    elif num_trials <= 5:
-        return Decimal("2.0")
-    elif num_trials <= 10:
-        return Decimal("3.5")
-    elif num_trials <= 20:
-        return Decimal("4.5")
-    elif num_trials <= 100:
-        return Decimal("5.0")
-    else:
-        # Very large trial counts (>100) - log diagnostic but still score max
-        return Decimal("5.0")
+    if num_trials >= _TRIAL_KNOTS[-1][0]:
+        return _TRIAL_KNOTS[-1][1]
+    for i in range(len(_TRIAL_KNOTS) - 1):
+        x0, y0 = _TRIAL_KNOTS[i]
+        x1, y1 = _TRIAL_KNOTS[i + 1]
+        if num_trials <= x1:
+            frac = Decimal(num_trials - x0) / Decimal(x1 - x0)
+            return y0 + frac * (y1 - y0)
+    return _TRIAL_KNOTS[-1][1]
 
 
 def _score_indication_diversity(all_conditions: List[List[str]]) -> Decimal:
@@ -833,18 +838,26 @@ def _score_indication_diversity(all_conditions: List[List[str]]) -> Decimal:
     unique_tokens = _tokenize_conditions(list(union_conditions))
     token_count = len(unique_tokens)
 
-    if token_count == 0:
+    # Piecewise-linear interpolation through breakpoints.
+    _DIV_KNOTS = [
+        (0, Decimal("0")),
+        (2, Decimal("0.7")),
+        (5, Decimal("1.5")),
+        (10, Decimal("3.0")),
+        (20, Decimal("4.0")),
+        (30, Decimal("5.0")),
+    ]
+    if token_count <= 0:
         return Decimal("0")
-    elif token_count <= 2:
-        return Decimal("0.7")
-    elif token_count <= 5:
-        return Decimal("1.5")
-    elif token_count <= 10:
-        return Decimal("3.0")
-    elif token_count <= 20:
-        return Decimal("4.0")
-    else:
-        return Decimal("5.0")
+    if token_count >= _DIV_KNOTS[-1][0]:
+        return _DIV_KNOTS[-1][1]
+    for i in range(len(_DIV_KNOTS) - 1):
+        x0, y0 = _DIV_KNOTS[i]
+        x1, y1 = _DIV_KNOTS[i + 1]
+        if token_count <= x1:
+            frac = Decimal(token_count - x0) / Decimal(x1 - x0)
+            return y0 + frac * (y1 - y0)
+    return _DIV_KNOTS[-1][1]
 
 
 def _score_recency(
@@ -874,19 +887,29 @@ def _score_recency(
 
     is_stale = days_since_update >= RECENCY_STALE_THRESHOLD
 
-    # Scoring ladder
-    if days_since_update < 30:
-        score = Decimal("5.0")
-    elif days_since_update < 90:
-        score = Decimal("4.5")
-    elif days_since_update < 180:
-        score = Decimal("4.0")
-    elif days_since_update < 365:
-        score = Decimal("3.0")
-    elif days_since_update < RECENCY_STALE_THRESHOLD:
-        score = Decimal("2.0")
+    # Piecewise-linear interpolation through breakpoints.
+    _REC_KNOTS = [
+        (0, Decimal("5.0")),
+        (30, Decimal("5.0")),
+        (90, Decimal("4.5")),
+        (180, Decimal("4.0")),
+        (365, Decimal("3.0")),
+        (RECENCY_STALE_THRESHOLD, Decimal("2.0")),
+        (1460, Decimal("1.0")),
+    ]
+    if days_since_update <= _REC_KNOTS[0][0]:
+        score = _REC_KNOTS[0][1]
+    elif days_since_update >= _REC_KNOTS[-1][0]:
+        score = _REC_KNOTS[-1][1]
     else:
-        score = Decimal("1.0")
+        score = _REC_KNOTS[-1][1]
+        for i in range(len(_REC_KNOTS) - 1):
+            x0, y0 = _REC_KNOTS[i]
+            x1, y1 = _REC_KNOTS[i + 1]
+            if days_since_update <= x1:
+                frac = Decimal(days_since_update - x0) / Decimal(x1 - x0)
+                score = y0 + frac * (y1 - y0)
+                break
 
     return (score, days_since_update, False, is_stale)
 

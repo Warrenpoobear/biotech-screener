@@ -317,8 +317,10 @@ class TestTrialCountScoring:
         assert _score_trial_count(-5) == Decimal("0")
 
     def test_float_converted(self):
-        """Float should be converted to int."""
-        assert _score_trial_count(3.7) == Decimal("2.0")  # 3 trials
+        """Float should be converted to int and interpolated."""
+        # int(3.7) = 3, interpolated on (2,1.0)→(5,2.0)
+        result = _score_trial_count(3.7)
+        assert Decimal("1.0") < result < Decimal("2.0")
 
     def test_invalid_type_returns_zero(self):
         """Invalid type should return 0."""

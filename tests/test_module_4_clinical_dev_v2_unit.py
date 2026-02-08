@@ -746,14 +746,15 @@ class TestScoreIndicationDiversity:
         assert result > Decimal("0")
 
     def test_diverse_conditions(self):
-        """Diverse conditions should score higher."""
+        """Diverse conditions should score higher than single condition."""
         diverse = [
             ["breast cancer", "ovarian cancer"],
             ["lung cancer", "melanoma"],
             ["lymphoma", "leukemia"],
         ]
         result = _score_indication_diversity(diverse)
-        assert result >= Decimal("3.0")
+        single = _score_indication_diversity([["breast cancer"]])
+        assert result > single
 
 
 class TestScoreRecency:
@@ -768,16 +769,16 @@ class TestScoreRecency:
         assert stale is False
 
     def test_30_90_days(self):
-        """30-90 days should score 4.5."""
+        """30-90 days should interpolate between 5.0 and 4.5."""
         score, days, unknown, stale = _score_recency("2025-11-15", "2026-01-15")
-        assert score == Decimal("4.5")
+        assert Decimal("4.5") <= score <= Decimal("5.0")
         assert 30 <= days < 90
 
     def test_stale_update(self):
-        """Stale update (> 2 years) should score 1.0 and be marked stale."""
+        """Stale update (> 2 years) should score near 1.0-2.0 and be marked stale."""
         old_date = (date(2026, 1, 15) - timedelta(days=RECENCY_STALE_THRESHOLD + 10)).isoformat()
         score, days, unknown, stale = _score_recency(old_date, "2026-01-15")
-        assert score == Decimal("1.0")
+        assert Decimal("1.0") <= score <= Decimal("2.0")
         assert stale is True
 
     def test_unknown_recency(self):
@@ -1496,3 +1497,157 @@ class TestTickerClinicalSummaryV2:
         assert d["ticker"] == "ACME"
         assert d["clinical_score"] == "75.50"  # Decimal as string
         assert d["_schema"]["schema_version"] is not None
+
+
+# ============================================================================
+# CONTINUOUS CLINICAL SUB-SCORES — piecewise-linear interpolation tests
+# ============================================================================
+
+class TestContinuousTrialCount:
+    """Tests for piecewise-linear trial count scoring."""
+
+    def test_breakpoints_preserved(self):
+        """Original breakpoint values are exact."""
+        assert _score_trial_count(0) == Decimal("0")
+        assert _score_trial_count(1) == Decimal("0.5")
+        assert _score_trial_count(2) == Decimal("1.0")
+        assert _score_trial_count(5) == Decimal("2.0")
+        assert _score_trial_count(10) == Decimal("3.5")
+        assert _score_trial_count(20) == Decimal("4.5")
+        assert _score_trial_count(100) == Decimal("5.0")
+
+    def test_monotonicity(self):
+        """Score never decreases as trial count increases."""
+        prev = Decimal("-1")
+        for n in range(0, 105):
+            score = _score_trial_count(n)
+            assert score >= prev, f"Non-monotonic at n={n}: {score} < {prev}"
+            prev = score
+
+    def test_interpolation_between_breakpoints(self):
+        """Values between breakpoints are strictly between neighbors."""
+        assert Decimal("1.0") < _score_trial_count(3) < Decimal("2.0")
+        assert Decimal("2.0") < _score_trial_count(7) < Decimal("3.5")
+        assert Decimal("3.5") < _score_trial_count(15) < Decimal("4.5")
+
+    def test_uniqueness(self):
+        """All integer trial counts 0-25 produce distinct scores."""
+        scores = [_score_trial_count(n) for n in range(26)]
+        assert len(set(scores)) == 26
+
+    def test_bounds(self):
+        """Score stays in [0, 5]."""
+        for n in [-1, 0, 50, 100, 500]:
+            score = _score_trial_count(max(0, n))
+            assert Decimal("0") <= score <= Decimal("5")
+
+
+class TestContinuousDiversity:
+    """Tests for piecewise-linear indication diversity scoring."""
+
+    def test_breakpoints_preserved(self):
+        """Original breakpoint values are exact."""
+        from module_4_clinical_dev_v2 import _score_indication_diversity
+
+        # Build synthetic condition lists with known token counts.
+        # _tokenize_conditions splits on whitespace and lowercases,
+        # so single-word conditions give 1 token each.
+        def _make_conds(n: int):
+            """Return condition list that produces exactly n unique tokens."""
+            return [[f"cond{i}"] for i in range(n)]
+
+        assert _score_indication_diversity([]) == Decimal("0")
+        assert _score_indication_diversity(_make_conds(2)) == Decimal("0.7")
+        assert _score_indication_diversity(_make_conds(5)) == Decimal("1.5")
+        assert _score_indication_diversity(_make_conds(10)) == Decimal("3.0")
+        assert _score_indication_diversity(_make_conds(20)) == Decimal("4.0")
+        assert _score_indication_diversity(_make_conds(30)) == Decimal("5.0")
+
+    def test_monotonicity(self):
+        """More tokens always scores >= fewer tokens."""
+        def _make_conds(n):
+            return [[f"cond{i}"] for i in range(n)]
+
+        prev = Decimal("-1")
+        for n in range(0, 35):
+            score = _score_indication_diversity(_make_conds(n))
+            assert score >= prev, f"Non-monotonic at n={n}: {score} < {prev}"
+            prev = score
+
+    def test_interpolation(self):
+        """Mid-range token counts produce interpolated values."""
+        def _make_conds(n):
+            return [[f"cond{i}"] for i in range(n)]
+
+        score_3 = _score_indication_diversity(_make_conds(3))
+        assert Decimal("0.7") < score_3 < Decimal("1.5")
+
+    def test_uniqueness(self):
+        """All token counts 0-25 produce distinct scores."""
+        def _make_conds(n):
+            return [[f"cond{i}"] for i in range(n)]
+
+        scores = [_score_indication_diversity(_make_conds(n)) for n in range(26)]
+        assert len(set(scores)) == 26
+
+
+class TestContinuousRecency:
+    """Tests for piecewise-linear recency scoring."""
+
+    def test_breakpoints_preserved(self):
+        """Original breakpoint day values produce the expected scores."""
+        base = date(2026, 1, 15)
+        def _rec(days_ago):
+            d = (base - timedelta(days=days_ago)).isoformat()
+            score, _, _, _ = _score_recency(d, base.isoformat())
+            return score
+
+        assert _rec(0) == Decimal("5.0")     # day 0
+        assert _rec(30) == Decimal("5.0")    # plateau end
+        assert _rec(90) == Decimal("4.5")
+        assert _rec(180) == Decimal("4.0")
+        assert _rec(365) == Decimal("3.0")
+        assert _rec(730) == Decimal("2.0")   # RECENCY_STALE_THRESHOLD
+        assert _rec(1460) == Decimal("1.0")  # 4 years
+
+    def test_monotonicity(self):
+        """More recent always scores >= older."""
+        base = date(2026, 1, 15)
+        prev = Decimal("6")  # above max
+        for d in range(0, 1500, 5):
+            dt = (base - timedelta(days=d)).isoformat()
+            score, _, _, _ = _score_recency(dt, base.isoformat())
+            assert score <= prev, f"Non-monotonic at day {d}: {score} > {prev}"
+            prev = score
+
+    def test_interpolation_between_breakpoints(self):
+        """Mid-range day values are interpolated."""
+        base = date(2026, 1, 15)
+        def _rec(days_ago):
+            d = (base - timedelta(days=days_ago)).isoformat()
+            score, _, _, _ = _score_recency(d, base.isoformat())
+            return score
+
+        # 60 days: between (30, 5.0) and (90, 4.5)
+        assert Decimal("4.5") < _rec(60) < Decimal("5.0")
+        # 270 days: between (180, 4.0) and (365, 3.0)
+        assert Decimal("3.0") < _rec(270) < Decimal("4.0")
+
+    def test_uniqueness(self):
+        """Day values 0, 1, 2, ..., 50 produce many distinct scores."""
+        base = date(2026, 1, 15)
+        scores = set()
+        for d in range(51):
+            dt = (base - timedelta(days=d)).isoformat()
+            score, _, _, _ = _score_recency(dt, base.isoformat())
+            scores.add(score)
+        # 0-30 is a plateau (all 5.0), but 31-50 should each be unique
+        assert len(scores) >= 20
+
+    def test_bounds(self):
+        """Score always in [1.0, 5.0] for valid dates."""
+        base = date(2026, 1, 15)
+        for d in [0, 15, 60, 200, 500, 1000, 2000]:
+            dt = (base - timedelta(days=d)).isoformat()
+            score, _, _, _ = _score_recency(dt, base.isoformat())
+            assert Decimal("1.0") <= score <= Decimal("5.0")
