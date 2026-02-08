@@ -124,3 +124,4 @@ production_data/morningstar_returns_history.json
 
 # --- Cache directories (regenerated at runtime) ---
 cache/
+.mcp.json
