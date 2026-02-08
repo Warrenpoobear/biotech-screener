@@ -206,10 +206,19 @@ DEV_CATALYST_GUARDRAIL_CONFIG = {
 DEV_CATALYST_ATTENUATION_CONFIG = {
     "enabled": True,
     "apply_to_stages": ("early", "poc"),
-    "catalyst_weight_share_cap": Decimal("0.30"),
-    "low_specificity_triggers": ("QUARTER", "YEAR", "UNKNOWN"),
+    # Graduated shrink parameters
+    "specificity_risk": {
+        "EXACT": Decimal("0.0"),
+        "MONTH": Decimal("0.0"),
+        "QUARTER": Decimal("0.3"),
+        "YEAR": Decimal("0.6"),
+        "UNKNOWN": Decimal("0.8"),
+    },
+    "corroboration_discount": Decimal("0.5"),  # halve risk if corroborated
     "corroboration_threshold": Decimal("45"),
     "corroborating_components": ("smart_money", "financial"),
+    "max_shrink": Decimal("0.40"),  # maximum catalyst weight reduction (40%)
+    "shrink_curve": "linear",       # "linear" or "logistic"
 }
 
 # =============================================================================
@@ -1772,12 +1781,11 @@ def apply_dev_catalyst_weight_attenuation(
     lead_date_specificity: str,
     component_norms: Dict[str, Decimal],
 ) -> Tuple[Dict[str, Decimal], List[str], Dict[str, Any]]:
-    """Cap catalyst *weight share* for the attenuated A/B signal variant.
+    """Graduated catalyst weight shrink for the attenuated A/B signal.
 
-    Unlike the guardrail (which caps contribution share post-multiply),
-    this operates on the weight vector before the weighted-sum step.
-    Excess weight is redistributed pro-rata to the other components so
-    that total weight is preserved.
+    Computes a risk score from date specificity and corroboration,
+    then proportionally shrinks catalyst weight and redistributes
+    excess to other components pro-rata.
 
     Returns (new_weights, flags, diagnostics).  Pure function — input dict
     is never mutated.
@@ -1789,52 +1797,59 @@ def apply_dev_catalyst_weight_attenuation(
     if not cfg.get("enabled", True):
         return dict(effective_weights), flags, diag
 
+    # Only apply to dev-stage
     if stage_bucket_alpha not in cfg["apply_to_stages"]:
         return dict(effective_weights), flags, diag
 
-    if lead_date_specificity not in cfg["low_specificity_triggers"]:
+    # Compute specificity risk (0.0 = no risk, 0.8 = high risk)
+    spec_risk = cfg["specificity_risk"].get(lead_date_specificity, Decimal("0.5"))
+    if spec_risk <= 0:
         return dict(effective_weights), flags, diag
 
-    # Check corroboration
+    # Corroboration discount (halve risk, don't zero it)
+    corroborated = False
     for comp in cfg["corroborating_components"]:
         norm_val = component_norms.get(comp)
         if norm_val is not None and norm_val > cfg["corroboration_threshold"]:
-            diag["corroborated_by"] = comp
-            diag["corroboration_score"] = str(norm_val)
-            return dict(effective_weights), flags, diag
+            corroborated = True
+            break
+    if corroborated:
+        spec_risk = spec_risk * cfg["corroboration_discount"]
+        diag["corroborated"] = True
 
-    ew = dict(effective_weights)  # shallow copy — never mutate caller's dict
+    # Compute shrink factor: 0.0 (no change) to max_shrink (e.g. 0.40)
+    shrink = spec_risk * cfg["max_shrink"]  # linear
+    shrink = min(shrink, cfg["max_shrink"])
+
+    if shrink <= Decimal("0.001"):
+        return dict(effective_weights), flags, diag
+
+    # Apply shrink to catalyst weight
+    ew = dict(effective_weights)
     cat_w = ew.get("catalyst", Decimal("0"))
-    total_w = sum(abs(v) for v in ew.values())
-    if total_w <= 0 or cat_w == 0:
+    if cat_w == 0:
         return ew, flags, diag
 
+    reduction = abs(cat_w) * shrink
     cat_sign = Decimal("1") if cat_w >= 0 else Decimal("-1")
-    cat_share = abs(cat_w) / total_w
-    cap = cfg["catalyst_weight_share_cap"]
+    new_cat_w = cat_w - cat_sign * reduction
 
-    diag["original_cat_share"] = str(cat_share)
-
-    if cat_share <= cap:
-        return ew, flags, diag
-
-    # Attenuate: cap catalyst weight, redistribute excess pro-rata
-    target_cat_w = cap * total_w * cat_sign
-    excess = abs(cat_w) - abs(target_cat_w)
-
+    # Redistribute reduction pro-rata to other components
     other_abs_total = sum(abs(v) for k, v in ew.items() if k != "catalyst")
     if other_abs_total > 0:
         for k in ew:
             if k != "catalyst":
-                share_of_excess = (abs(ew[k]) / other_abs_total) * excess
+                share = (abs(ew[k]) / other_abs_total) * reduction
                 sign_k = Decimal("1") if ew[k] >= 0 else Decimal("-1")
-                ew[k] = _quantize_weight(ew[k] + sign_k * share_of_excess)
+                ew[k] = _quantize_weight(ew[k] + sign_k * share)
 
-    ew["catalyst"] = _quantize_weight(target_cat_w)
+    ew["catalyst"] = _quantize_weight(new_cat_w)
 
-    new_cat_share = abs(ew["catalyst"]) / sum(abs(v) for v in ew.values()) if sum(abs(v) for v in ew.values()) > 0 else Decimal("0")
     diag["attenuated"] = True
-    diag["new_cat_share"] = str(new_cat_share)
+    diag["spec_risk"] = str(spec_risk)
+    diag["shrink"] = str(shrink)
+    diag["original_cat_w"] = str(cat_w)
+    diag["new_cat_w"] = str(new_cat_w)
     flags.append("dev_catalyst_weight_attenuated")
 
     return ew, flags, diag

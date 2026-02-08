@@ -592,12 +592,32 @@ def compute_quintile_spread(
         return None
 
     quintile_returns: List[float] = []
+    quintile_returns_median: List[float] = []
+    quintile_returns_trimmed: List[float] = []
+    quintile_returns_winsorized: List[float] = []
+
     for q in range(5):
         start = q * q_size
         end = start + q_size if q < 4 else n  # last quintile absorbs remainder
         q_tickers = common[start:end]
-        q_ret = mean([forward_returns[t] for t in q_tickers])
-        quintile_returns.append(round(q_ret * 100, 4))  # in pct
+        rets = sorted([forward_returns[t] for t in q_tickers])
+
+        # Mean (existing)
+        quintile_returns.append(round(mean(rets) * 100, 4))  # in pct
+
+        # Median
+        quintile_returns_median.append(round(median(rets) * 100, 4))
+
+        # 10% trimmed mean (drop top/bottom 10%)
+        trim_n = max(1, len(rets) // 10)
+        trimmed = rets[trim_n:-trim_n] if len(rets) > 2 * trim_n else rets
+        quintile_returns_trimmed.append(round(mean(trimmed) * 100, 4))
+
+        # Winsorized mean (cap at 5th/95th percentile)
+        lo = rets[max(0, len(rets) // 20)]
+        hi = rets[min(len(rets) - 1, len(rets) - 1 - len(rets) // 20)]
+        winsorized = [max(lo, min(hi, r)) for r in rets]
+        quintile_returns_winsorized.append(round(mean(winsorized) * 100, 4))
 
     spread = quintile_returns[0] - quintile_returns[4]
     monotonic = all(quintile_returns[i] >= quintile_returns[i + 1] for i in range(4))
@@ -605,6 +625,9 @@ def compute_quintile_spread(
     return {
         "quintile_returns_pct": quintile_returns,
         "spread_pct": round(spread, 4),
+        "spread_median_pct": round(quintile_returns_median[0] - quintile_returns_median[4], 4),
+        "spread_trimmed_pct": round(quintile_returns_trimmed[0] - quintile_returns_trimmed[4], 4),
+        "spread_winsorized_pct": round(quintile_returns_winsorized[0] - quintile_returns_winsorized[4], 4),
         "monotonic": monotonic,
         "n_per_quintile": q_size,
     }

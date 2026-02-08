@@ -1402,44 +1402,97 @@ class TestConfidenceOverallWeighted:
 # ============================================================================
 
 class TestDevCatalystWeightAttenuation:
-    """Tests for apply_dev_catalyst_weight_attenuation()."""
+    """Tests for apply_dev_catalyst_weight_attenuation() — graduated shrink."""
 
     def _base_weights(self) -> Dict[str, Decimal]:
-        """Weights where catalyst has >30% share (triggers attenuation)."""
+        """Standard weights for testing graduated attenuation."""
         return {
             "clinical": Decimal("0.20"),
             "financial": Decimal("0.15"),
-            "catalyst": Decimal("0.40"),  # 40% share > 30% cap
+            "catalyst": Decimal("0.40"),
             "momentum": Decimal("0.10"),
             "valuation": Decimal("0.05"),
             "pos": Decimal("0.10"),
         }
 
-    def test_cap_enforcement(self):
-        """Catalyst weight share is capped at configured threshold."""
+    def test_graduated_by_specificity(self):
+        """Shrink increases with decreasing date specificity."""
         ew = self._base_weights()
-        new_w, flags, diag = apply_dev_catalyst_weight_attenuation(
-            ew, "early", "QUARTER",
-            {"smart_money": Decimal("30"), "financial": Decimal("30")},
+        norms = {"smart_money": Decimal("30"), "financial": Decimal("30")}
+
+        # EXACT and MONTH: zero risk → no attenuation
+        for spec in ("EXACT", "MONTH"):
+            new_w, flags, diag = apply_dev_catalyst_weight_attenuation(
+                ew, "early", spec, norms,
+            )
+            assert diag.get("attenuated") is not True, f"Wrongly triggered for {spec}"
+            assert new_w["catalyst"] == ew["catalyst"]
+
+        # QUARTER → mild shrink (risk=0.3, shrink=0.12)
+        new_q, flags_q, diag_q = apply_dev_catalyst_weight_attenuation(
+            ew, "early", "QUARTER", norms,
         )
-        total = sum(abs(v) for v in new_w.values())
-        cat_share = abs(new_w["catalyst"]) / total if total > 0 else Decimal("0")
-        assert cat_share <= Decimal("0.31"), f"Cat share {cat_share} exceeds cap"
-        assert "dev_catalyst_weight_attenuated" in flags
-        assert diag["attenuated"] is True
+        assert diag_q["attenuated"] is True
+        assert new_q["catalyst"] < ew["catalyst"]
+        shrink_q = (ew["catalyst"] - new_q["catalyst"]) / ew["catalyst"]
+
+        # YEAR → moderate shrink (risk=0.6, shrink=0.24)
+        new_y, flags_y, diag_y = apply_dev_catalyst_weight_attenuation(
+            ew, "early", "YEAR", norms,
+        )
+        assert diag_y["attenuated"] is True
+        shrink_y = (ew["catalyst"] - new_y["catalyst"]) / ew["catalyst"]
+
+        # UNKNOWN → strong shrink (risk=0.8, shrink=0.32)
+        new_u, flags_u, diag_u = apply_dev_catalyst_weight_attenuation(
+            ew, "early", "UNKNOWN", norms,
+        )
+        assert diag_u["attenuated"] is True
+        shrink_u = (ew["catalyst"] - new_u["catalyst"]) / ew["catalyst"]
+
+        # Gradient: QUARTER < YEAR < UNKNOWN
+        assert shrink_q < shrink_y < shrink_u, \
+            f"Non-monotonic shrink: Q={shrink_q}, Y={shrink_y}, U={shrink_u}"
+
+    def test_corroboration_discount_halves_not_zeroes(self):
+        """With corroboration, shrink is halved — attenuation still occurs."""
+        ew = self._base_weights()
+        norms_low = {"smart_money": Decimal("30"), "financial": Decimal("30")}
+        norms_high = {"smart_money": Decimal("50"), "financial": Decimal("30")}
+
+        # Without corroboration
+        new_no, _, diag_no = apply_dev_catalyst_weight_attenuation(
+            ew, "early", "UNKNOWN", norms_low,
+        )
+        assert diag_no["attenuated"] is True
+        shrink_no = ew["catalyst"] - new_no["catalyst"]
+
+        # With corroboration (smart_money > 45)
+        new_co, _, diag_co = apply_dev_catalyst_weight_attenuation(
+            ew, "early", "UNKNOWN", norms_high,
+        )
+        assert diag_co["attenuated"] is True  # still attenuated, not bypassed
+        assert diag_co.get("corroborated") is True
+        shrink_co = ew["catalyst"] - new_co["catalyst"]
+
+        # Corroborated shrink should be roughly half of non-corroborated
+        assert shrink_co < shrink_no, "Corroboration did not reduce shrink"
+        ratio = shrink_co / shrink_no if shrink_no > 0 else Decimal("0")
+        assert Decimal("0.4") < ratio < Decimal("0.6"), \
+            f"Corroboration ratio {ratio} not ~0.5"
 
     def test_weight_sum_preserved(self):
-        """Total weight sum is preserved after attenuation."""
+        """Total absolute weight sum is preserved after attenuation."""
         ew = self._base_weights()
-        orig_total = sum(ew.values())
+        orig_abs_total = sum(abs(v) for v in ew.values())
         new_w, _, diag = apply_dev_catalyst_weight_attenuation(
             ew, "poc", "UNKNOWN",
             {"smart_money": Decimal("30"), "financial": Decimal("30")},
         )
         if diag["attenuated"]:
-            new_total = sum(new_w.values())
-            assert abs(new_total - orig_total) < Decimal("0.02"), \
-                f"Total changed: {orig_total} -> {new_total}"
+            new_abs_total = sum(abs(v) for v in new_w.values())
+            assert abs(new_abs_total - orig_abs_total) < Decimal("0.02"), \
+                f"Abs total changed: {orig_abs_total} -> {new_abs_total}"
 
     def test_pro_rata_redistribution(self):
         """Excess weight goes to other components proportionally."""
@@ -1449,44 +1502,20 @@ class TestDevCatalystWeightAttenuation:
             {"smart_money": Decimal("30"), "financial": Decimal("30")},
         )
         if diag["attenuated"]:
-            # All non-catalyst weights should increase
             for k in ew:
                 if k != "catalyst":
                     assert new_w[k] >= ew[k], f"{k} decreased: {ew[k]} -> {new_w[k]}"
-            # Catalyst should decrease
             assert new_w["catalyst"] < ew["catalyst"]
-
-    def test_bypass_on_corroboration(self):
-        """Attenuation is skipped when a corroborating component exceeds threshold."""
-        ew = self._base_weights()
-        new_w, flags, diag = apply_dev_catalyst_weight_attenuation(
-            ew, "early", "QUARTER",
-            {"smart_money": Decimal("50"), "financial": Decimal("30")},  # SM > 45 threshold
-        )
-        assert diag.get("attenuated") is not True
-        assert "dev_catalyst_weight_attenuated" not in flags
-        assert new_w["catalyst"] == ew["catalyst"]
 
     def test_bypass_on_non_dev_stages(self):
         """Attenuation is skipped for stages not in apply_to_stages."""
         ew = self._base_weights()
         for stage in ("pivotal", "regulatory", "commercial"):
             new_w, flags, diag = apply_dev_catalyst_weight_attenuation(
-                ew, stage, "QUARTER",
+                ew, stage, "UNKNOWN",
                 {"smart_money": Decimal("30"), "financial": Decimal("30")},
             )
             assert diag.get("attenuated") is not True, f"Wrongly triggered for {stage}"
-            assert new_w["catalyst"] == ew["catalyst"]
-
-    def test_bypass_on_exact_specificity(self):
-        """Attenuation is skipped when lead_date_specificity is high (EXACT/MONTH)."""
-        ew = self._base_weights()
-        for spec in ("EXACT", "MONTH"):
-            new_w, flags, diag = apply_dev_catalyst_weight_attenuation(
-                ew, "early", spec,
-                {"smart_money": Decimal("30"), "financial": Decimal("30")},
-            )
-            assert diag.get("attenuated") is not True, f"Wrongly triggered for {spec}"
             assert new_w["catalyst"] == ew["catalyst"]
 
     def test_no_mutation_of_input(self):
@@ -1494,26 +1523,10 @@ class TestDevCatalystWeightAttenuation:
         ew = self._base_weights()
         original = dict(ew)
         apply_dev_catalyst_weight_attenuation(
-            ew, "early", "QUARTER",
+            ew, "early", "UNKNOWN",
             {"smart_money": Decimal("30"), "financial": Decimal("30")},
         )
         assert ew == original, "Input weights were mutated"
-
-    def test_below_cap_no_change(self):
-        """If catalyst share is already below cap, no attenuation occurs."""
-        ew = {
-            "clinical": Decimal("0.30"),
-            "financial": Decimal("0.25"),
-            "catalyst": Decimal("0.20"),  # 20% < 30% cap
-            "momentum": Decimal("0.15"),
-            "valuation": Decimal("0.10"),
-        }
-        new_w, flags, diag = apply_dev_catalyst_weight_attenuation(
-            ew, "early", "QUARTER",
-            {"smart_money": Decimal("30"), "financial": Decimal("30")},
-        )
-        assert diag.get("attenuated") is not True
-        assert "dev_catalyst_weight_attenuated" not in flags
 
     def test_determinism(self):
         """Two identical calls produce identical results."""
@@ -1524,3 +1537,15 @@ class TestDevCatalystWeightAttenuation:
         assert r1[0] == r2[0]  # weights
         assert r1[1] == r2[1]  # flags
         assert r1[2] == r2[2]  # diag
+
+    def test_max_shrink_cap(self):
+        """Shrink never exceeds max_shrink (40%)."""
+        ew = self._base_weights()
+        norms = {"smart_money": Decimal("30"), "financial": Decimal("30")}
+        new_w, _, diag = apply_dev_catalyst_weight_attenuation(
+            ew, "early", "UNKNOWN", norms,
+        )
+        if diag["attenuated"]:
+            shrink_pct = (ew["catalyst"] - new_w["catalyst"]) / ew["catalyst"]
+            assert shrink_pct <= Decimal("0.41"), \
+                f"Shrink {shrink_pct} exceeds max_shrink"

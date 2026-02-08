@@ -2380,6 +2380,18 @@ def _aggregate(per_snapshot: List[Dict[str, Any]]) -> Dict[str, Any]:
             qs_hit = None
             worst_snap = None
 
+        # Robust quintile spread variants
+        robust_spreads = {}
+        for variant in ("median", "trimmed", "winsorized"):
+            spread_key = f"spread_{variant}_pct"
+            vals = [s[qs_key][spread_key] for s in per_snapshot
+                    if qs_key in s and s[qs_key] is not None and spread_key in s[qs_key]]
+            if vals:
+                robust_spreads[variant] = {
+                    "mean_spread_pct": round(mean(vals), 4),
+                    "hit_rate": round(sum(1 for v in vals if v > 0) / len(vals) * 100, 1),
+                }
+
         result[f"aggregate_{horizon_label}"] = {
             "mean_ic": round(mean_ic, 6),
             "std_ic": round(std_ic, 6),
@@ -2398,6 +2410,7 @@ def _aggregate(per_snapshot: List[Dict[str, Any]]) -> Dict[str, Any]:
                 "n_periods": len(qs_spreads),
                 "worst_spread_pct": round(min(qs_spreads), 4) if qs_spreads else None,
                 "worst_date": worst_snap["date"] if worst_snap else None,
+                "robust_spreads": robust_spreads if robust_spreads else None,
             } if qs_spreads else None,
         }
 
@@ -2440,6 +2453,18 @@ def _aggregate(per_snapshot: List[Dict[str, Any]]) -> Dict[str, Any]:
             rqs_worst = resid_qs_vals[worst_idx]
             rqs_worst_date = [s for s in per_snapshot if resid_qs_key in s and s[resid_qs_key] is not None][worst_idx]["date"]
 
+        # Robust residual quintile spread variants
+        resid_robust_spreads = {}
+        for variant in ("median", "trimmed", "winsorized"):
+            spread_key = f"spread_{variant}_pct"
+            vals = [s[resid_qs_key][spread_key] for s in per_snapshot
+                    if resid_qs_key in s and s[resid_qs_key] is not None and spread_key in s[resid_qs_key]]
+            if vals:
+                resid_robust_spreads[variant] = {
+                    "mean_spread_pct": round(mean(vals), 4),
+                    "hit_rate": round(sum(1 for v in vals if v > 0) / len(vals) * 100, 1),
+                }
+
         result[f"residual_aggregate_{horizon_label}"] = {
             "mean_ic": round(resid_mean, 6),
             "std_ic": round(resid_std, 6),
@@ -2456,6 +2481,7 @@ def _aggregate(per_snapshot: List[Dict[str, Any]]) -> Dict[str, Any]:
                 "n_periods": len(resid_qs_vals),
                 "worst_spread_pct": round(rqs_worst, 4) if rqs_worst is not None else None,
                 "worst_date": rqs_worst_date,
+                "robust_spreads": resid_robust_spreads if resid_robust_spreads else None,
             } if resid_qs_vals else None,
         }
 
@@ -2956,6 +2982,15 @@ def print_report(results: Dict[str, Any]) -> None:
                     f"hit={qs['hit_rate']:.0f}%  "
                     f"worst={qs['worst_spread_pct']:+.2f}% ({qs['worst_date']})"
                 )
+                # Robust spread variants
+                rb = qs.get("robust_spreads")
+                if rb:
+                    parts = [f"QS(mean)={qs['mean_spread_pct']:+.2f}%"]
+                    for vname, vkey in [("median", "median"), ("trimmed", "trimmed"), ("winsor", "winsorized")]:
+                        vdata = rb.get(vkey)
+                        if vdata:
+                            parts.append(f"QS({vname})={vdata['mean_spread_pct']:+.2f}%")
+                    print(f"  {'':>{len(f'Q spread ({horizon_label})')}}  {  '  '.join(parts)}")
 
         # Residual aggregate
         ragg = results.get(f"residual_aggregate_{horizon_label}")
@@ -2981,6 +3016,15 @@ def print_report(results: Dict[str, Any]) -> None:
                     f"hit={rqs['hit_rate']:.0f}%  "
                     f"worst={rqs['worst_spread_pct']:+.2f}% ({rqs['worst_date']})"
                 )
+                # Robust residual spread variants
+                rrb = rqs.get("robust_spreads")
+                if rrb:
+                    parts = [f"QS(mean)={rqs['mean_spread_pct']:+.2f}%"]
+                    for vname, vkey in [("median", "median"), ("trimmed", "trimmed"), ("winsor", "winsorized")]:
+                        vdata = rrb.get(vkey)
+                        if vdata:
+                            parts.append(f"QS({vname})={vdata['mean_spread_pct']:+.2f}%")
+                    print(f"  {'':>{len(f'Resid Qs ({horizon_label})')}}  {'  '.join(parts)}")
     print()
 
     # Decile spread (legacy 60d)
