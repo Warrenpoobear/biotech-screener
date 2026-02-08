@@ -275,12 +275,12 @@ STAGE_SIZE_TILT_CONFIG = {
             "pos": Decimal("1.25"),         # ↑ Binary outcomes
             "financial": Decimal("1.40"),   # ↑↑ Regression: fin(dev) significant alpha
             "short_interest": Decimal("1.10"),  # ↑ Micro-cap positioning
-            "catalyst": Decimal("0.90"),    # → Events far out, low quality
+            "catalyst": Decimal("0.65"),    # ↓↓ Events far out + high timing uncertainty
             "valuation": Decimal("0.75"),   # ↓ No fundamentals
             "momentum": Decimal("0.90"),    # ↓ No commercial traction
         },
         "poc": {  # Phase 2 → Proof-of-concept
-            "catalyst": Decimal("1.50"),    # ↑↑ Readout events price in
+            "catalyst": Decimal("1.10"),    # ↑ Readout events matter, but timing uncertain
             "clinical": Decimal("1.10"),    # ↑ PoC data matters
             "short_interest": Decimal("1.15"),  # ↑ Positioning around binary
             "momentum": Decimal("1.10"),    # ↑ Pre-readout moves
