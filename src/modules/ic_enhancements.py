@@ -2943,7 +2943,7 @@ def shrinkage_normalize(
         # Convert z-score to 0-100 scale (z=0 -> 50, z=±2 -> ~10/90)
         percentile = Decimal("50") + z * Decimal("15")
         percentile = _clamp(percentile, Decimal("5"), Decimal("95"))
-        result.append(_quantize_score(percentile))
+        result.append(percentile)
 
     return result, _quantize_weight(shrinkage_factor)
 

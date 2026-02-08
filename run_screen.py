@@ -1403,6 +1403,23 @@ def save_validation_snapshot(
             "tie_pct": round(1.0 - n_unique / n_total, 4) if n_total > 0 else None,
         }
 
+    # Catalyst neutral breakdown: separate "no signal" from real ties
+    cat_diag = score_diagnostics.get("catalyst_score", {})
+    cat_vals = []
+    for rec in ranked:
+        v = _component_score(rec, "catalyst")
+        if v is not None:
+            cat_vals.append(float(v))
+    neutral_count = sum(1 for v in cat_vals if abs(v - 50.0) < 0.05)
+    non_neutral = [v for v in cat_vals if abs(v - 50.0) >= 0.05]
+    nn_unique = len(set(str(round(v, 6)) for v in non_neutral))
+    cat_diag["neutral_count"] = neutral_count
+    cat_diag["non_neutral_n"] = len(non_neutral)
+    cat_diag["non_neutral_unique"] = nn_unique
+    cat_diag["non_neutral_tie_pct"] = (
+        round(1.0 - nn_unique / len(non_neutral), 4) if non_neutral else None
+    )
+
     # Top offenders: components sorted by tie_pct descending (for quick triage)
     score_diagnostics["_top_tied"] = sorted(
         [k for k in score_diagnostics],

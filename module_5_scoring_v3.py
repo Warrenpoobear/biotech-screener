@@ -1402,7 +1402,7 @@ def _rank_normalize_winsorized(values: List[Decimal]) -> Tuple[List[Decimal], bo
         clipped = _clamp(pct, WINSOR_LOW, WINSOR_HIGH)
         # Map [P5, P95] to [5, 95] instead of [0, 100] to eliminate zero cliff
         rescaled = Decimal("5") + ((clipped - WINSOR_LOW) / (WINSOR_HIGH - WINSOR_LOW)) * Decimal("90")
-        result.append(_quantize_score(rescaled))
+        result.append(rescaled)
 
     return result, winsorization_applied
 
@@ -2107,7 +2107,7 @@ def apply_asymmetric_transform(
         transformed_score = neutral
 
     # Clamp to valid range - use [5, 95] floor/ceiling to match winsorization output
-    return _clamp(_quantize_score(transformed_score), floor, ceiling)
+    return _clamp(transformed_score, floor, ceiling)
 
 
 def apply_asymmetric_transform_to_contribution(
