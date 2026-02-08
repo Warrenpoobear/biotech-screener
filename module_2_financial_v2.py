@@ -612,17 +612,39 @@ def calculate_liquid_assets(financial_data: Dict) -> LiquidAssetsResult:
 # ============================================================================
 
 def _score_runway(runway_months: Decimal) -> Decimal:
-    """Score based on runway months (0-100)."""
-    if runway_months >= Decimal("24"):
-        return Decimal("100")  # 2+ years
-    elif runway_months >= Decimal("18"):
-        return Decimal("90")   # 18-24 months
-    elif runway_months >= Decimal("12"):
-        return Decimal("70")   # 12-18 months
-    elif runway_months >= Decimal("6"):
-        return Decimal("40")   # 6-12 months
-    else:
-        return Decimal("10")   # < 6 months
+    """Score based on runway months (0-100), piecewise-linear continuous mapping.
+
+    Breakpoints preserve the original threshold semantics while eliminating
+    discrete jumps that created ~5 unique values across the universe:
+
+        0 mo →  5  |  6 mo → 40  |  12 mo → 70  |  18 mo → 90  |  24+ mo → 100
+
+    Between breakpoints the score is linearly interpolated, producing a
+    monotonically increasing, concave curve (diminishing marginal return
+    to additional runway — economically sensible).
+    """
+    # Breakpoints: (runway_months, score)
+    _BP = [
+        (Decimal("0"), Decimal("5")),
+        (Decimal("6"), Decimal("40")),
+        (Decimal("12"), Decimal("70")),
+        (Decimal("18"), Decimal("90")),
+        (Decimal("24"), Decimal("100")),
+    ]
+
+    if runway_months <= _BP[0][0]:
+        return _BP[0][1]
+    if runway_months >= _BP[-1][0]:
+        return _BP[-1][1]
+
+    for i in range(len(_BP) - 1):
+        x0, y0 = _BP[i]
+        x1, y1 = _BP[i + 1]
+        if runway_months <= x1:
+            t = (runway_months - x0) / (x1 - x0)
+            return y0 + t * (y1 - y0)
+
+    return _BP[-1][1]  # unreachable
 
 
 @dataclass

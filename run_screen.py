@@ -1328,6 +1328,13 @@ def save_validation_snapshot(
     ranked = sorted(ranked, key=lambda x: x.get("composite_rank", 999))
     archetypes = results.get("company_archetypes", {})
 
+    # --- Helper: extract a named component's normalized score from component_scores ---
+    def _component_score(rec, name):
+        for c in rec.get("component_scores") or []:
+            if c.get("name") == name:
+                return c.get("normalized")
+        return None
+
     # --- Write rankings CSV ---
     csv_path = snap_path / "rankings.csv"
     try:
@@ -1353,14 +1360,48 @@ def save_validation_snapshot(
                     "catalyst_score": cat.get("catalyst_score_effective"),
                     "smart_money_score": sm.get("score"),
                     "valuation_score": val.get("valuation_score"),
-                    "clinical_score": rec.get("clinical_score"),
-                    "financial_score": rec.get("financial_score"),
+                    "clinical_score": _component_score(rec, "clinical"),
+                    "financial_score": _component_score(rec, "financial"),
                     "confidence_overall": rec.get("confidence_overall"),
                 }
                 writer.writerow(row)
     except OSError as e:
         logger.warning(f"Could not write snapshot CSV: {e}")
         return None
+
+    # --- Compute per-component score diagnostics ---
+    score_columns = [
+        "composite_score", "momentum_score", "catalyst_score",
+        "smart_money_score", "valuation_score", "clinical_score",
+        "financial_score", "confidence_overall",
+    ]
+    score_diagnostics = {}
+    for col in score_columns:
+        vals = []
+        for rec in ranked:
+            if col == "momentum_score":
+                v = (rec.get("momentum_signal") or {}).get("momentum_score")
+            elif col == "catalyst_score":
+                v = (rec.get("catalyst_effective") or {}).get("catalyst_score_effective")
+            elif col == "smart_money_score":
+                v = (rec.get("smart_money_signal") or {}).get("score")
+            elif col == "valuation_score":
+                v = (rec.get("valuation_signal") or {}).get("valuation_score")
+            elif col == "clinical_score":
+                v = _component_score(rec, "clinical")
+            elif col == "financial_score":
+                v = _component_score(rec, "financial")
+            else:
+                v = rec.get(col)
+            if v is not None:
+                vals.append(v)
+        n_total = len(vals)
+        n_unique = len(set(vals))
+        score_diagnostics[col] = {
+            "n_total": n_total,
+            "n_unique": n_unique,
+            "tie_pct": round(1.0 - n_unique / n_total, 4) if n_total > 0 else None,
+        }
 
     # --- Write metadata JSON ---
     summary = results.get("summary", {})
@@ -1381,6 +1422,7 @@ def save_validation_snapshot(
         "clinical_excluded": clinical_filter.get("excluded_count", 0),
         "clinical_exempted": clinical_filter.get("exempted_count", 0),
         "archetype_distribution": dict(sorted(archetype_counts.items())),
+        "score_diagnostics": score_diagnostics,
         "input_hashes": results.get("run_metadata", {}).get("input_hashes", {}),
     }
 

@@ -380,13 +380,23 @@ class TestScoreRunway:
     """Tests for _score_runway function."""
 
     def test_runway_tiers(self):
-        """Test runway score thresholds."""
-        assert _score_runway(Decimal("30")) == Decimal("100")  # 2+ years
+        """Test runway score breakpoints and interpolation (piecewise-linear)."""
+        # Breakpoints are exact
+        assert _score_runway(Decimal("0")) == Decimal("5")
+        assert _score_runway(Decimal("6")) == Decimal("40")
+        assert _score_runway(Decimal("12")) == Decimal("70")
+        assert _score_runway(Decimal("18")) == Decimal("90")
         assert _score_runway(Decimal("24")) == Decimal("100")
-        assert _score_runway(Decimal("20")) == Decimal("90")   # 18-24 months
-        assert _score_runway(Decimal("15")) == Decimal("70")   # 12-18 months
-        assert _score_runway(Decimal("9")) == Decimal("40")    # 6-12 months
-        assert _score_runway(Decimal("3")) == Decimal("10")    # < 6 months
+        assert _score_runway(Decimal("30")) == Decimal("100")  # capped
+
+        # Midpoints are linearly interpolated
+        assert _score_runway(Decimal("3")) == Decimal("22.5")   # midpoint 0-6
+        assert _score_runway(Decimal("9")) == Decimal("55")     # midpoint 6-12
+        assert _score_runway(Decimal("15")) == Decimal("80")    # midpoint 12-18
+        assert _score_runway(Decimal("21")) == Decimal("95")    # midpoint 18-24
+
+        # Below zero clamped to floor
+        assert _score_runway(Decimal("-1")) == Decimal("5")
 
 
 class TestCalculateRunway:
