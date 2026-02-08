@@ -1018,7 +1018,8 @@ def load_snapshot_rankings(snapshot_dir: Path) -> SnapshotData:
                         pass
 
             # Extract signal scores (new format only)
-            for sig_field in ("score_rank_pct", "score_z"):
+            for sig_field in ("score_rank_pct", "score_z",
+                              "score_rank_pct_attn", "score_z_attn", "composite_score_attn"):
                 sig_str = row.get(sig_field, "").strip()
                 if sig_str:
                     try:
@@ -1060,7 +1061,11 @@ def read_rankings_from_archive(tar_path: Path) -> SnapshotData:
     component_scores: Dict[str, Dict[str, float]] = {}
     stage_map: Dict[str, str] = {}
     extra_controls: Dict[str, Dict[str, float]] = {"log_cash": {}}
-    signal_scores: Dict[str, Dict[str, float]] = {"score_rank_pct": {}, "score_z": {}}
+    signal_scores: Dict[str, Dict[str, float]] = {
+        "score_rank_pct": {}, "score_z": {},
+        "score_rank_pct_attn": {}, "score_z_attn": {},
+        "composite_score_attn": {},
+    }
 
     with tarfile.open(tar_path, "r:gz") as tar:
         # Find rankings.csv member
@@ -1120,7 +1125,8 @@ def read_rankings_from_archive(tar_path: Path) -> SnapshotData:
                     except ValueError:
                         pass
 
-            for sig_field in ("score_rank_pct", "score_z"):
+            for sig_field in ("score_rank_pct", "score_z",
+                              "score_rank_pct_attn", "score_z_attn", "composite_score_attn"):
                 sig_str = row.get(sig_field, "").strip()
                 if sig_str:
                     try:
@@ -3342,8 +3348,12 @@ def main() -> None:
     parser.add_argument("--max-archives", type=int, default=None,
                         help="Maximum number of archives to use")
     parser.add_argument("--signal", type=str, default="score_rank_pct",
-                        choices=["score_rank_pct", "score_z", "composite_score"],
+                        choices=["score_rank_pct", "score_z", "composite_score",
+                                 "score_rank_pct_attn", "score_z_attn", "composite_score_attn"],
                         help="Signal field for IC computation (default: score_rank_pct)")
+    parser.add_argument("--compare-signals", type=str, default=None,
+                        help="Comma pair of signals for A/B comparison, e.g. "
+                             "\"score_rank_pct,score_rank_pct_attn\"")
     parser.add_argument("--allow-rank-ties", action="store_true",
                         help="Allow duplicate composite_rank values instead of failing")
     # Archive verification
@@ -3416,6 +3426,84 @@ def main() -> None:
     signal_defaulted = (signal_field == "score_rank_pct" and "--signal" not in sys.argv)
     print(f"  Signal field: {signal_field}" + (" (default)" if signal_defaulted else ""))
     print()
+
+    # ------------------------------------------------------------------
+    # A/B SIGNAL COMPARISON MODE
+    # ------------------------------------------------------------------
+    if args.compare_signals:
+        parts = [s.strip() for s in args.compare_signals.split(",")]
+        if len(parts) != 2:
+            print("ERROR: --compare-signals requires exactly two comma-separated signal names")
+            sys.exit(1)
+        signal_a, signal_b = parts
+        print(f"=== A/B Signal Comparison: {signal_a} vs {signal_b} ===")
+        print()
+
+        results_a, hyg_before_a, hyg_after_a = run_backtest(
+            provider, ms_provider, csv_provider,
+            snapshot_dir=args.snapshot_dir if args.use_live_snapshots else None,
+            archives=archives_list,
+            signal_field=signal_a,
+            allow_rank_ties=args.allow_rank_ties,
+            verify_archives=args.verify_archives,
+        )
+        results_b, hyg_before_b, hyg_after_b = run_backtest(
+            provider, ms_provider, csv_provider,
+            snapshot_dir=args.snapshot_dir if args.use_live_snapshots else None,
+            archives=archives_list,
+            signal_field=signal_b,
+            allow_rank_ties=args.allow_rank_ties,
+            verify_archives=False,  # already verified in run A
+        )
+
+        # Print A/B delta summary
+        print()
+        print("=" * 72)
+        print("A/B SIGNAL COMPARISON RESULTS")
+        print("=" * 72)
+
+        for hlabel in HORIZONS:
+            agg_a = results_a.get(f"aggregate_{hlabel}", {})
+            agg_b = results_b.get(f"aggregate_{hlabel}", {})
+            if not agg_a or not agg_b:
+                continue
+
+            ic_a = agg_a.get("mean_ic", 0)
+            ic_b = agg_b.get("mean_ic", 0)
+            qs_a = agg_a.get("mean_quintile_spread", 0) or 0
+            qs_b = agg_b.get("mean_quintile_spread", 0) or 0
+
+            # Dev-severe: count per-snapshot quality == "dev_severe" (or look at quality)
+            snaps_a = results_a.get("per_snapshot", [])
+            snaps_b = results_b.get("per_snapshot", [])
+            sev_a = sum(1 for s in snaps_a if s.get(f"quality_{hlabel}", "") in ("POOR", "dev_severe"))
+            sev_b = sum(1 for s in snaps_b if s.get(f"quality_{hlabel}", "") in ("POOR", "dev_severe"))
+            n_snaps = max(len(snaps_a), 1)
+            sev_pct_a = 100 * sev_a / n_snaps
+            sev_pct_b = 100 * sev_b / n_snaps
+
+            print(f"\n  Horizon: {hlabel}")
+            print(f"  {'Signal':30s} | {'mean IC':>9s} | {'mean QS':>9s} | {'poor %':>8s}")
+            print(f"  {'-' * 30}-+-{'-' * 9}-+-{'-' * 9}-+-{'-' * 8}")
+            print(f"  {'A: ' + signal_a:30s} | {ic_a:+9.4f} | {qs_a:+9.2f}% | {sev_pct_a:7.1f}%")
+            print(f"  {'B: ' + signal_b:30s} | {ic_b:+9.4f} | {qs_b:+9.2f}% | {sev_pct_b:7.1f}%")
+            d_ic = ic_b - ic_a
+            d_qs = qs_b - qs_a
+            d_sev = sev_pct_b - sev_pct_a
+            print(f"  {'Delta (B-A)':30s} | {d_ic:+9.4f} | {d_qs:+9.2f}% | {d_sev:+7.1f}%")
+
+        print()
+        print("=" * 72)
+
+        # Save combined results
+        combined = {"signal_a": signal_a, "signal_b": signal_b,
+                    "results_a": results_a, "results_b": results_b}
+        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+        output_json.parent.mkdir(parents=True, exist_ok=True)
+        with open(output_json, "w") as f:
+            json.dump(combined, f, indent=2, default=str)
+        print(f"Results saved to {output_json}")
+        return
 
     results, hygiene_before, hygiene_after = run_backtest(
         provider, ms_provider, csv_provider,

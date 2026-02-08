@@ -197,6 +197,22 @@ DEV_CATALYST_GUARDRAIL_CONFIG = {
 }
 
 # =============================================================================
+# DEV CATALYST WEIGHT ATTENUATION (A/B signal variant)
+# =============================================================================
+# Produces a parallel composite signal by capping catalyst *weight share*
+# (not contribution) before the weighted-sum step.  This lets the backtest
+# compare the baseline signal against an attenuated variant side-by-side.
+
+DEV_CATALYST_ATTENUATION_CONFIG = {
+    "enabled": True,
+    "apply_to_stages": ("early", "poc"),
+    "catalyst_weight_share_cap": Decimal("0.30"),
+    "low_specificity_triggers": ("QUARTER", "YEAR", "UNKNOWN"),
+    "corroboration_threshold": Decimal("45"),
+    "corroborating_components": ("smart_money", "financial"),
+}
+
+# =============================================================================
 # ENHANCEMENT 5: ASYMMETRIC TRANSFORM CONFIGURATION
 # =============================================================================
 
@@ -1748,6 +1764,80 @@ def summarize_dev_catalyst_guardrail(ranked_securities: List[Dict[str, Any]]) ->
         "rule2_tickers": rule2_hits,
         "top_5_impacted": impacted[:5],
     }
+
+
+def apply_dev_catalyst_weight_attenuation(
+    effective_weights: Dict[str, Decimal],
+    stage_bucket_alpha: str,
+    lead_date_specificity: str,
+    component_norms: Dict[str, Decimal],
+) -> Tuple[Dict[str, Decimal], List[str], Dict[str, Any]]:
+    """Cap catalyst *weight share* for the attenuated A/B signal variant.
+
+    Unlike the guardrail (which caps contribution share post-multiply),
+    this operates on the weight vector before the weighted-sum step.
+    Excess weight is redistributed pro-rata to the other components so
+    that total weight is preserved.
+
+    Returns (new_weights, flags, diagnostics).  Pure function — input dict
+    is never mutated.
+    """
+    cfg = DEV_CATALYST_ATTENUATION_CONFIG
+    flags: List[str] = []
+    diag: Dict[str, Any] = {"attenuated": False}
+
+    if not cfg.get("enabled", True):
+        return dict(effective_weights), flags, diag
+
+    if stage_bucket_alpha not in cfg["apply_to_stages"]:
+        return dict(effective_weights), flags, diag
+
+    if lead_date_specificity not in cfg["low_specificity_triggers"]:
+        return dict(effective_weights), flags, diag
+
+    # Check corroboration
+    for comp in cfg["corroborating_components"]:
+        norm_val = component_norms.get(comp)
+        if norm_val is not None and norm_val > cfg["corroboration_threshold"]:
+            diag["corroborated_by"] = comp
+            diag["corroboration_score"] = str(norm_val)
+            return dict(effective_weights), flags, diag
+
+    ew = dict(effective_weights)  # shallow copy — never mutate caller's dict
+    cat_w = ew.get("catalyst", Decimal("0"))
+    total_w = sum(abs(v) for v in ew.values())
+    if total_w <= 0 or cat_w == 0:
+        return ew, flags, diag
+
+    cat_sign = Decimal("1") if cat_w >= 0 else Decimal("-1")
+    cat_share = abs(cat_w) / total_w
+    cap = cfg["catalyst_weight_share_cap"]
+
+    diag["original_cat_share"] = str(cat_share)
+
+    if cat_share <= cap:
+        return ew, flags, diag
+
+    # Attenuate: cap catalyst weight, redistribute excess pro-rata
+    target_cat_w = cap * total_w * cat_sign
+    excess = abs(cat_w) - abs(target_cat_w)
+
+    other_abs_total = sum(abs(v) for k, v in ew.items() if k != "catalyst")
+    if other_abs_total > 0:
+        for k in ew:
+            if k != "catalyst":
+                share_of_excess = (abs(ew[k]) / other_abs_total) * excess
+                sign_k = Decimal("1") if ew[k] >= 0 else Decimal("-1")
+                ew[k] = _quantize_weight(ew[k] + sign_k * share_of_excess)
+
+    ew["catalyst"] = _quantize_weight(target_cat_w)
+
+    new_cat_share = abs(ew["catalyst"]) / sum(abs(v) for v in ew.values()) if sum(abs(v) for v in ew.values()) > 0 else Decimal("0")
+    diag["attenuated"] = True
+    diag["new_cat_share"] = str(new_cat_share)
+    flags.append("dev_catalyst_weight_attenuated")
+
+    return ew, flags, diag
 
 
 def _extract_confidence_pos(pos_data: Optional[Dict]) -> Decimal:
@@ -3335,6 +3425,7 @@ def _score_single_ticker_v3(
     contributions = {}
     confidence_factors = {}  # Track confidence factors for each component
     asymmetric_flags = []  # Track asymmetric transform flags
+    transformed_norms = {}  # comp_name -> transformed norm (before weight multiply) — for attn signal
 
     core_scores = {
         "clinical": (clin_norm, clin_raw, conf_clin),
@@ -3360,6 +3451,7 @@ def _score_single_ticker_v3(
         )
         contributions[name] = contrib
         confidence_factors[name] = conf_factor
+        transformed_norms[name] = transformed_norm
 
         notes = []
         if raw is None:
@@ -3403,6 +3495,7 @@ def _score_single_ticker_v3(
             )
             contributions["momentum"] = contrib
             confidence_factors["momentum"] = conf_factor
+            transformed_norms["momentum"] = transformed_momentum
 
             mom_notes = [] if momentum.alpha_60d is not None else ["missing_price_data"]
             if conf_factor < Decimal("0.7"):
@@ -3437,6 +3530,7 @@ def _score_single_ticker_v3(
             )
             contributions["valuation"] = contrib
             confidence_factors["valuation"] = conf_factor
+            transformed_norms["valuation"] = transformed_valuation
 
             val_notes = [] if valuation.peer_count >= 5 else ["insufficient_peers"]
             if conf_factor < Decimal("0.7"):
@@ -3460,6 +3554,7 @@ def _score_single_ticker_v3(
             si_norm = si_raw
             contrib = si_norm * w_eff
             contributions["short_interest"] = contrib
+            transformed_norms["short_interest"] = si_norm
 
             si_notes = []
             if si_squeeze_potential == "EXTREME":
@@ -3507,6 +3602,7 @@ def _score_single_ticker_v3(
             flags.append("pos_delta_capped")
 
         contributions["pos"] = pos_contrib_capped
+        transformed_norms["pos"] = pos_norm
 
         component_scores.append(ComponentScore(
             name="pos",
@@ -3543,6 +3639,7 @@ def _score_single_ticker_v3(
 
         sm_contrib = sm_norm * sm_w_eff
         contributions["smart_money"] = sm_contrib
+        transformed_norms["smart_money"] = sm_norm
 
         sm_notes = []
         if enhanced_smart_money:
@@ -3925,6 +4022,94 @@ def _score_single_ticker_v3(
     thesis_gate_diagnostics["event_stage"] = stage_bucket_alpha
 
     # =========================================================================
+    # ATTENUATED SIGNAL (A/B variant with capped catalyst weight)
+    # =========================================================================
+
+    attn_cfg = DEV_CATALYST_ATTENUATION_CONFIG
+    attn_flags: List[str] = []
+    attn_diag: Dict[str, Any] = {"attenuated": False}
+    attn_final_score = final_score  # default: identical to baseline
+
+    if attn_cfg.get("enabled", True):
+        attn_weights, attn_flags, attn_diag = apply_dev_catalyst_weight_attenuation(
+            effective_weights, stage_bucket_alpha, lead_date_spec,
+            {"smart_money": sm_norm, "financial": fin_norm},
+        )
+        if attn_diag.get("attenuated"):
+            # Recompute contributions from same transformed_norms with attenuated weights
+            attn_contributions = {}
+            for comp, tn in transformed_norms.items():
+                aw = attn_weights.get(comp, Decimal("0"))
+                if comp == "pos":
+                    # Mirror pos delta cap
+                    raw_c = tn * aw
+                    attn_contributions[comp] = _clamp(raw_c, -POS_DELTA_CAP, POS_DELTA_CAP)
+                elif comp in ("clinical", "financial", "catalyst"):
+                    # Mirror confidence-weighted contribution
+                    conf_map = {"clinical": conf_clin, "financial": conf_fin, "catalyst": conf_cat}
+                    c, _ = compute_confidence_weighted_contribution(tn, aw, conf_map[comp])
+                    attn_contributions[comp] = c
+                elif comp == "momentum":
+                    c, _ = compute_confidence_weighted_contribution(tn, aw, momentum.confidence)
+                    attn_contributions[comp] = c
+                elif comp == "valuation":
+                    c, _ = compute_confidence_weighted_contribution(tn, aw, valuation.confidence)
+                    attn_contributions[comp] = c
+                else:
+                    # short_interest, smart_money — simple product
+                    attn_contributions[comp] = tn * aw
+
+            # Mirror reinforcement on attenuated contributions
+            if reinforcement_diagnostics.get("reinforcement_applied"):
+                if "catalyst" in attn_contributions:
+                    attn_contributions["catalyst"] = attn_contributions["catalyst"] * reinforcement_catalyst_mult
+                if "momentum" in attn_contributions:
+                    attn_contributions["momentum"] = attn_contributions["momentum"] * reinforcement_momentum_mult
+
+            # Mirror hybrid aggregation
+            attn_weighted_sum = sum(attn_contributions.values())
+            attn_critical_scores = []
+            for c in CRITICAL_COMPONENTS:
+                if c in attn_contributions and c in attn_weights and attn_weights[c] > EPS:
+                    attn_critical_scores.append(attn_contributions[c] / attn_weights[c])
+            attn_min_critical = min(attn_critical_scores) if attn_critical_scores else attn_weighted_sum
+            attn_pre_penalty = HYBRID_ALPHA * attn_weighted_sum + (Decimal("1") - HYBRID_ALPHA) * attn_min_critical
+            attn_pre_penalty = attn_pre_penalty + interactions.total_interaction_adjustment
+            attn_pre_penalty = _quantize_score(attn_pre_penalty)
+
+            # Mirror contradiction penalty
+            if contradictions.contradictions:
+                attn_pre_penalty = attn_pre_penalty - contradictions.score_penalty
+                attn_pre_penalty = _quantize_score(max(attn_pre_penalty, Decimal("0")))
+
+            # Mirror penalties pipeline: uncertainty → severity → caps → ceilings → existential → vol → additive
+            attn_post_unc = attn_pre_penalty * (Decimal("1") - uncertainty_penalty)
+            attn_post_sev = _quantize_score(attn_post_unc * severity_multiplier)
+            attn_post_cap, _ = _apply_monotonic_caps(attn_post_sev, liquidity_status, runway_months, dilution_bucket)
+            attn_post_ceil, _ = apply_dynamic_ceilings(attn_post_cap, lead_phase, days_to_cat, revenue_growth, is_commercial)
+            if guardrail_diag.get("ceiling"):
+                _gr_cap_attn = Decimal(guardrail_diag["ceiling"])
+                if attn_post_ceil > _gr_cap_attn:
+                    attn_post_ceil = _quantize_score(_gr_cap_attn)
+            attn_post_exist, _ = apply_existential_cap(attn_post_ceil, existential_flaws)
+            attn_post_vol = apply_volatility_to_score(attn_post_exist, vol_adj)
+            attn_final_score = _clamp(
+                attn_post_vol + delta_bonus + survivability_contribution + ms_cross_validation_adj,
+                Decimal("-100"), Decimal("100"),
+            )
+            attn_final_score = _quantize_score(attn_final_score)
+
+            # Mirror thesis gate
+            attn_final_score, _, _ = apply_thesis_gate(
+                score=attn_final_score,
+                clinical_normalized=clin_norm,
+                pos_normalized=pos_norm,
+                stage_bucket=stage,
+                mode=mode,
+                smart_money_strength=_sm_strength_reinf,
+            )
+
+    # =========================================================================
     # BUILD OUTPUT
     # =========================================================================
 
@@ -4083,6 +4268,9 @@ def _score_single_ticker_v3(
     return {
         "ticker": ticker,
         "composite_score": final_score,
+        "composite_score_attn": attn_final_score,
+        "attn_flags": attn_flags,
+        "attn_diag": attn_diag,
         "severity": worst_severity,
         "flags": sorted(set(flags)),
         "determinism_hash": determinism_hash,

@@ -1281,6 +1281,7 @@ def write_json_output(filepath: Path, data: Dict[str, Any], secure: bool = True)
 SNAPSHOT_COLUMNS = [
     "ticker", "composite_rank", "composite_score",
     "score_rank_pct", "score_z",
+    "composite_score_attn", "score_rank_pct_attn", "score_z_attn",
     "stage_bucket", "market_cap_bucket", "severity",
     "archetype",
     "momentum_score", "catalyst_score", "smart_money_score",
@@ -1356,6 +1357,9 @@ def save_validation_snapshot(
                     "composite_score": rec.get("composite_score"),
                     "score_rank_pct": rec.get("score_rank_pct"),
                     "score_z": rec.get("score_z"),
+                    "composite_score_attn": rec.get("composite_score_attn"),
+                    "score_rank_pct_attn": rec.get("score_rank_pct_attn"),
+                    "score_z_attn": rec.get("score_z_attn"),
                     "stage_bucket": rec.get("stage_bucket"),
                     "market_cap_bucket": rec.get("market_cap_bucket"),
                     "severity": rec.get("severity"),

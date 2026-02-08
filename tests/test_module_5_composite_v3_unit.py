@@ -44,6 +44,8 @@ from module_5_scoring_v3 import (
     _market_cap_bucket,
     _stage_bucket,
     _get_worst_severity,
+    apply_dev_catalyst_weight_attenuation,
+    DEV_CATALYST_ATTENUATION_CONFIG,
 )
 
 from common.types import Severity
@@ -1393,3 +1395,132 @@ class TestConfidenceOverallWeighted:
             ]
             result = _compute_confidence_overall(cs)
             assert Decimal("0.1") <= result <= Decimal("0.9")
+
+
+# ============================================================================
+# CATALYST WEIGHT ATTENUATION TESTS
+# ============================================================================
+
+class TestDevCatalystWeightAttenuation:
+    """Tests for apply_dev_catalyst_weight_attenuation()."""
+
+    def _base_weights(self) -> Dict[str, Decimal]:
+        """Weights where catalyst has >30% share (triggers attenuation)."""
+        return {
+            "clinical": Decimal("0.20"),
+            "financial": Decimal("0.15"),
+            "catalyst": Decimal("0.40"),  # 40% share > 30% cap
+            "momentum": Decimal("0.10"),
+            "valuation": Decimal("0.05"),
+            "pos": Decimal("0.10"),
+        }
+
+    def test_cap_enforcement(self):
+        """Catalyst weight share is capped at configured threshold."""
+        ew = self._base_weights()
+        new_w, flags, diag = apply_dev_catalyst_weight_attenuation(
+            ew, "early", "QUARTER",
+            {"smart_money": Decimal("30"), "financial": Decimal("30")},
+        )
+        total = sum(abs(v) for v in new_w.values())
+        cat_share = abs(new_w["catalyst"]) / total if total > 0 else Decimal("0")
+        assert cat_share <= Decimal("0.31"), f"Cat share {cat_share} exceeds cap"
+        assert "dev_catalyst_weight_attenuated" in flags
+        assert diag["attenuated"] is True
+
+    def test_weight_sum_preserved(self):
+        """Total weight sum is preserved after attenuation."""
+        ew = self._base_weights()
+        orig_total = sum(ew.values())
+        new_w, _, diag = apply_dev_catalyst_weight_attenuation(
+            ew, "poc", "UNKNOWN",
+            {"smart_money": Decimal("30"), "financial": Decimal("30")},
+        )
+        if diag["attenuated"]:
+            new_total = sum(new_w.values())
+            assert abs(new_total - orig_total) < Decimal("0.02"), \
+                f"Total changed: {orig_total} -> {new_total}"
+
+    def test_pro_rata_redistribution(self):
+        """Excess weight goes to other components proportionally."""
+        ew = self._base_weights()
+        new_w, _, diag = apply_dev_catalyst_weight_attenuation(
+            ew, "early", "YEAR",
+            {"smart_money": Decimal("30"), "financial": Decimal("30")},
+        )
+        if diag["attenuated"]:
+            # All non-catalyst weights should increase
+            for k in ew:
+                if k != "catalyst":
+                    assert new_w[k] >= ew[k], f"{k} decreased: {ew[k]} -> {new_w[k]}"
+            # Catalyst should decrease
+            assert new_w["catalyst"] < ew["catalyst"]
+
+    def test_bypass_on_corroboration(self):
+        """Attenuation is skipped when a corroborating component exceeds threshold."""
+        ew = self._base_weights()
+        new_w, flags, diag = apply_dev_catalyst_weight_attenuation(
+            ew, "early", "QUARTER",
+            {"smart_money": Decimal("50"), "financial": Decimal("30")},  # SM > 45 threshold
+        )
+        assert diag.get("attenuated") is not True
+        assert "dev_catalyst_weight_attenuated" not in flags
+        assert new_w["catalyst"] == ew["catalyst"]
+
+    def test_bypass_on_non_dev_stages(self):
+        """Attenuation is skipped for stages not in apply_to_stages."""
+        ew = self._base_weights()
+        for stage in ("pivotal", "regulatory", "commercial"):
+            new_w, flags, diag = apply_dev_catalyst_weight_attenuation(
+                ew, stage, "QUARTER",
+                {"smart_money": Decimal("30"), "financial": Decimal("30")},
+            )
+            assert diag.get("attenuated") is not True, f"Wrongly triggered for {stage}"
+            assert new_w["catalyst"] == ew["catalyst"]
+
+    def test_bypass_on_exact_specificity(self):
+        """Attenuation is skipped when lead_date_specificity is high (EXACT/MONTH)."""
+        ew = self._base_weights()
+        for spec in ("EXACT", "MONTH"):
+            new_w, flags, diag = apply_dev_catalyst_weight_attenuation(
+                ew, "early", spec,
+                {"smart_money": Decimal("30"), "financial": Decimal("30")},
+            )
+            assert diag.get("attenuated") is not True, f"Wrongly triggered for {spec}"
+            assert new_w["catalyst"] == ew["catalyst"]
+
+    def test_no_mutation_of_input(self):
+        """Input dict is never mutated."""
+        ew = self._base_weights()
+        original = dict(ew)
+        apply_dev_catalyst_weight_attenuation(
+            ew, "early", "QUARTER",
+            {"smart_money": Decimal("30"), "financial": Decimal("30")},
+        )
+        assert ew == original, "Input weights were mutated"
+
+    def test_below_cap_no_change(self):
+        """If catalyst share is already below cap, no attenuation occurs."""
+        ew = {
+            "clinical": Decimal("0.30"),
+            "financial": Decimal("0.25"),
+            "catalyst": Decimal("0.20"),  # 20% < 30% cap
+            "momentum": Decimal("0.15"),
+            "valuation": Decimal("0.10"),
+        }
+        new_w, flags, diag = apply_dev_catalyst_weight_attenuation(
+            ew, "early", "QUARTER",
+            {"smart_money": Decimal("30"), "financial": Decimal("30")},
+        )
+        assert diag.get("attenuated") is not True
+        assert "dev_catalyst_weight_attenuated" not in flags
+
+    def test_determinism(self):
+        """Two identical calls produce identical results."""
+        ew = self._base_weights()
+        norms = {"smart_money": Decimal("30"), "financial": Decimal("30")}
+        r1 = apply_dev_catalyst_weight_attenuation(ew, "early", "QUARTER", norms)
+        r2 = apply_dev_catalyst_weight_attenuation(ew, "early", "QUARTER", norms)
+        assert r1[0] == r2[0]  # weights
+        assert r1[1] == r2[1]  # flags
+        assert r1[2] == r2[2]  # diag

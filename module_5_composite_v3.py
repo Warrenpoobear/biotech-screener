@@ -282,6 +282,7 @@ from common.score_to_er import (
     DEFAULT_LAMBDA_ANNUAL,
     ER_MODEL_ID,
     ER_MODEL_VERSION,
+    _norm_ppf,
 )
 
 # Re-export for backward compatibility
@@ -1281,6 +1282,11 @@ def compute_module_5_composite_v3(
             "survivability_signal": rec.get("survivability_signal"),
             "morningstar_signal": rec.get("morningstar_data"),
             "morningstar_cross_validation": rec.get("morningstar_cross_validation"),
+
+            # Attenuated signal variant (A/B testing)
+            "composite_score_attn": str(rec.get("composite_score_attn", rec["composite_score"])),
+            "attn_flags": rec.get("attn_flags", []),
+            "attn_diag": rec.get("attn_diag", {}),
         }
 
         ranked_securities.append(security_data)
@@ -1292,6 +1298,27 @@ def compute_module_5_composite_v3(
     # This separates signal research from portfolio engineering
     # λ = 0.08 (8% per 1σ per year) - conservative biotech-appropriate default
     er_provenance = compute_expected_returns(ranked_securities)
+
+    # =========================================================================
+    # ATTENUATED SIGNAL: RANK + PERCENTILE + Z-SCORE
+    # =========================================================================
+    # Same continuity-corrected Blom percentile → z as baseline, but on
+    # composite_score_attn.  Writes score_rank_pct_attn / score_z_attn.
+
+    _attn_scores = []
+    for sec in ranked_securities:
+        raw = sec.get("composite_score_attn")
+        try:
+            _attn_scores.append((float(raw), sec.get("ticker", ""), sec))
+        except (TypeError, ValueError):
+            _attn_scores.append((0.0, sec.get("ticker", ""), sec))
+
+    _attn_scores.sort(key=lambda t: (-t[0], t[1]))  # desc score, asc ticker
+    _n_attn = len(_attn_scores)
+    for i, (_score, _ticker, sec) in enumerate(_attn_scores, start=1):
+        p = max(0.001, min(0.999, (_n_attn - i + 0.5) / _n_attn)) if _n_attn > 0 else 0.5
+        sec["score_rank_pct_attn"] = round(p, 6)
+        sec["score_z_attn"] = round(_norm_ppf(p), 4)
 
     # =========================================================================
     # SMART MONEY REINFORCEMENT SUMMARY (skip reasons, methods, blocks)
