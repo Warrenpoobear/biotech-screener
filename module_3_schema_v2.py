@@ -229,6 +229,34 @@ DATE_SPECIFICITY_WEIGHTS: Dict[DateSpecificity, Decimal] = {
     DateSpecificity.UNKNOWN: Decimal("0.2"),
 }
 
+# Uncertainty span in calendar days per DateSpecificity level.
+# Used by compute_date_uncertainty_factor() to attenuate
+# time-kernel contributions for imprecise event dates.
+DATE_SPECIFICITY_UNCERTAINTY_DAYS: Dict[DateSpecificity, int] = {
+    DateSpecificity.EXACT: 0,
+    DateSpecificity.MONTH: 30,
+    DateSpecificity.QUARTER: 90,
+    DateSpecificity.YEAR: 365,
+    DateSpecificity.UNKNOWN: 365,
+}
+
+
+def compute_date_uncertainty_factor(date_specificity: DateSpecificity) -> Decimal:
+    """Return a [0.5, 1.0] multiplier penalising imprecise event dates.
+
+    Formula: 1.0 - min(uncertainty_days / 365, 0.5)
+
+    Results:
+        EXACT   → 1.000
+        MONTH   → 0.918
+        QUARTER → 0.753
+        YEAR    → 0.500
+        UNKNOWN → 0.500
+    """
+    days = DATE_SPECIFICITY_UNCERTAINTY_DAYS.get(date_specificity, 365)
+    penalty = min(Decimal(days) / Decimal(365), Decimal("0.5"))
+    return (Decimal("1.0") - penalty).quantize(Decimal("0.001"))
+
 
 # =============================================================================
 # SEVERITY → SCORE CONTRIBUTION

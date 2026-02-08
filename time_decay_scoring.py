@@ -30,6 +30,7 @@ from module_3_schema_v2 import (
     ConfidenceLevel,
     SEVERITY_SCORE_CONTRIBUTION,
     CONFIDENCE_WEIGHTS,
+    compute_date_uncertainty_factor,
 )
 
 
@@ -198,8 +199,13 @@ def compute_event_score(
         # Fallback: use confidence weight as certainty proxy
         certainty = confidence_weight
 
+    # Date-uncertainty penalty (defensive: older event objects may lack field)
+    from module_3_schema_v2 import DateSpecificity as _DS
+    ds = getattr(event, 'date_specificity', _DS.UNKNOWN)
+    uncertainty_factor = compute_date_uncertainty_factor(ds)
+
     # Combined score
-    score = severity_contrib * confidence_weight * certainty
+    score = severity_contrib * confidence_weight * certainty * uncertainty_factor
 
     return score.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
 

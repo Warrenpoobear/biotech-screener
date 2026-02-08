@@ -46,6 +46,7 @@ from module_3_schema_v2 import (
     EVENT_TYPE_WEIGHT,
     EVENT_DEFAULT_CONFIDENCE,
     compute_catalyst_window_bucket,
+    compute_date_uncertainty_factor,
     decimal_to_str,
 )
 
@@ -199,8 +200,13 @@ def compute_proximity_score(
         decay_factor = Decimal(days_to_event) / Decimal(half_life_days)
         time_weight = Decimal("0.5") ** decay_factor
 
+        # Date-uncertainty penalty: attenuate imprecise event dates
+        uncertainty_factor = compute_date_uncertainty_factor(
+            getattr(event, 'date_specificity', DateSpecificity.UNKNOWN)
+        )
+
         # Combined contribution
-        contrib = type_weight * certainty * time_weight
+        contrib = type_weight * certainty * time_weight * uncertainty_factor
         total_contrib += contrib
 
     # Scale and clamp
@@ -430,8 +436,13 @@ def compute_negative_catalyst_score(
         # Recency weight (more recent = higher impact)
         recency = compute_recency_weight(event.event_date, as_of_date)
 
+        # Date-uncertainty penalty
+        uncertainty_factor = compute_date_uncertainty_factor(
+            getattr(event, 'date_specificity', DateSpecificity.UNKNOWN)
+        )
+
         # Combined contribution (type_weight is already negative)
-        contrib = type_weight * certainty * recency
+        contrib = type_weight * certainty * recency * uncertainty_factor
         score += contrib
 
     # Scale (make negative score a positive number representing risk)
@@ -586,9 +597,12 @@ def calculate_score_blended(
 
         confidence_weight = CONFIDENCE_WEIGHTS.get(confidence, Decimal("0.5"))
         recency_weight = compute_recency_weight(event.event_date, as_of_date)
+        uncertainty_factor = compute_date_uncertainty_factor(
+            getattr(event, 'date_specificity', DateSpecificity.UNKNOWN)
+        )
 
         severity_contrib = SEVERITY_SCORE_CONTRIBUTION.get(severity, Decimal("0"))
-        contribution = severity_contrib * confidence_weight * recency_weight
+        contribution = severity_contrib * confidence_weight * recency_weight * uncertainty_factor
 
         total_contribution += contribution
         weighted_sums[severity] += confidence_weight * recency_weight
