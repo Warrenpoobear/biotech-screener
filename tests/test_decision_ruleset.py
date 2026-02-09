@@ -85,6 +85,9 @@ class TestDefaults:
         assert rs.tier_b_optionality_floor == 0.30
         assert rs.catalyst_near_days == 90
         assert rs.sponsor_confirm_threshold == 2
+        assert rs.drawdown_gate_mode == "hard"
+        assert rs.drawdown_size_penalty == -1
+        assert rs.drawdown_hard_floor == -0.75
 
     def test_sizing_weights_match_v1(self):
         """Default sizing_weights produce the v1 dict."""
@@ -101,8 +104,8 @@ class TestDefaults:
         assert RULESET_ID == DEFAULT_RULESET.ruleset_id
 
     def test_version_bumped(self):
-        """VERSION is v1.1.0 after parameterization."""
-        assert VERSION == "v1.1.0"
+        """VERSION is v1.2.0 after soft drawdown gate."""
+        assert VERSION == "v1.2.0"
 
 
 # =============================================================================
@@ -280,7 +283,7 @@ class TestRulesetDriftGuardrails:
     regenerate production_data/decision_rulesets/v1.json.
     """
 
-    EXPECTED_DEFAULT_RULESET_ID = "a70b515b"
+    EXPECTED_DEFAULT_RULESET_ID = "d4f1f8a8"
 
     def test_default_ruleset_id_pinned(self):
         """DEFAULT_RULESET.ruleset_id must match the committed expected value.
@@ -311,3 +314,65 @@ class TestRulesetDriftGuardrails:
         """RULESET_ID and SIZING_WEIGHTS aliases must match DEFAULT_RULESET."""
         assert RULESET_ID == DEFAULT_RULESET.ruleset_id
         assert SIZING_WEIGHTS == DEFAULT_RULESET.sizing_weights_dict
+
+
+# =============================================================================
+# Tests: Soft drawdown mode
+# =============================================================================
+
+class TestSoftDrawdownMode:
+    """Tests for drawdown_gate_mode='soft' behavior."""
+
+    SOFT_RULESET = DecisionRuleset(drawdown_gate_mode="soft")
+
+    def test_soft_mode_drawdown_breach_stays_eligible(self):
+        """Soft mode + drawdown breach above hard_floor → eligible."""
+        rec = _base_rec(
+            defensive_features={"drawdown": -0.50, "vol_60d": 0.5,
+                                "beta_xbi_60d": 1.0, "rsi_14d": 40},
+        )
+        result = compute_decision_fields(rec, "drug_developer", 0.75,
+                                         ruleset=self.SOFT_RULESET)
+        assert result["eligible"] == "1"
+        assert "deep_drawdown" not in result["ineligible_reasons"]
+
+    def test_soft_mode_drawdown_breach_reduces_size(self):
+        """Soft mode + drawdown breach → size_band one step lower, drawdown_penalty in reasons."""
+        rec = _base_rec(
+            defensive_features={"drawdown": -0.50, "vol_60d": 0.5,
+                                "beta_xbi_60d": 1.0, "rsi_14d": 40},
+        )
+        # Hard mode baseline: ineligible → XS
+        hard_result = compute_decision_fields(rec, "drug_developer", 0.75)
+        assert hard_result["eligible"] == "0"
+
+        # Soft mode: eligible, but drawdown_penalty applied
+        soft_result = compute_decision_fields(rec, "drug_developer", 0.75,
+                                              ruleset=self.SOFT_RULESET)
+        assert soft_result["eligible"] == "1"
+        assert "drawdown_penalty" in soft_result["size_reasons"]
+
+    def test_soft_mode_catastrophic_drawdown_still_ineligible(self):
+        """Soft mode + catastrophic drawdown (< hard_floor) → ineligible."""
+        rec = _base_rec(
+            defensive_features={"drawdown": -0.80, "vol_60d": 0.5,
+                                "beta_xbi_60d": 1.0, "rsi_14d": 40},
+        )
+        result = compute_decision_fields(rec, "drug_developer", 0.75,
+                                         ruleset=self.SOFT_RULESET)
+        assert result["eligible"] == "0"
+        assert "deep_drawdown" in result["ineligible_reasons"]
+
+    def test_hard_mode_drawdown_breach_still_ineligible(self):
+        """Hard mode + drawdown breach → ineligible (unchanged v1 behavior)."""
+        rec = _base_rec(
+            defensive_features={"drawdown": -0.50, "vol_60d": 0.5,
+                                "beta_xbi_60d": 1.0, "rsi_14d": 40},
+        )
+        result = compute_decision_fields(rec, "drug_developer", 0.75)
+        assert result["eligible"] == "0"
+        assert "deep_drawdown" in result["ineligible_reasons"]
+
+    def test_drawdown_gate_mode_changes_ruleset_id(self):
+        """Flipping drawdown_gate_mode changes ruleset_id."""
+        assert self.SOFT_RULESET.ruleset_id != DEFAULT_RULESET.ruleset_id

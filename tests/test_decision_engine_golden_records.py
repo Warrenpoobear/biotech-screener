@@ -28,6 +28,7 @@ from decision_engine import (
     VERSION,
     RULESET_ID,
     DECISION_COLUMNS,
+    DecisionRuleset,
     compute_decision_fields,
 )
 
@@ -134,6 +135,25 @@ REC_INELIGIBLE = _base_rec(
 )
 
 
+# --- Fixture 6: soft drawdown breach -> stays eligible, size reduced ---
+REC_DRAWDOWN_SOFT = _base_rec(
+    "SYNTH_DDSOFT",
+    defensive_features={
+        "vol_60d": 0.65,
+        "beta_xbi_60d": 1.1,
+        "drawdown": -0.50,
+        "rsi_14d": 48.0,
+    },
+    catalyst_decay={
+        "days_to_catalyst": 45,
+        "factor": "0.85",
+        "in_optimal_window": True,
+    },
+)
+
+SOFT_DRAWDOWN_RULESET = DecisionRuleset(drawdown_gate_mode="soft")
+
+
 # =============================================================================
 # TESTS
 # =============================================================================
@@ -206,6 +226,24 @@ def test_ineligible_tier_d():
     assert result["tier_reason"] == "ineligible"
     assert result["size_band"] == "XS"
     assert result["runway_bucket"] == "critical"
+
+
+def test_soft_drawdown_stays_eligible():
+    """Soft mode: drawdown=-0.50 breaches -0.40 gate but stays eligible, tier A/B, size reduced."""
+    # Under hard mode (default): ineligible
+    hard_result = compute_decision_fields(REC_DRAWDOWN_SOFT, "drug_developer", 0.75)
+    assert hard_result["eligible"] == "0"
+    assert "deep_drawdown" in hard_result["ineligible_reasons"]
+
+    # Under soft mode: eligible, good tier, but sizing penalized
+    soft_result = compute_decision_fields(
+        REC_DRAWDOWN_SOFT, "drug_developer", 0.75, ruleset=SOFT_DRAWDOWN_RULESET,
+    )
+    assert soft_result["eligible"] == "1"
+    assert soft_result["tier_dev"] in ("A", "B")
+    assert "drawdown_penalty" in soft_result["size_reasons"]
+    # Deep drawdown risk flag should still fire (overlay layer independent)
+    assert "deep_drawdown" in soft_result["risk_flags"]
 
 
 def test_non_dev_archetype():

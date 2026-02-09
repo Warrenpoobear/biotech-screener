@@ -38,6 +38,9 @@ class DecisionRuleset:
     """
     # Layer 0 — Eligibility
     drawdown_gate: float = -0.40
+    drawdown_gate_mode: str = "hard"      # "hard" (v1 behavior) or "soft" (sizing penalty)
+    drawdown_size_penalty: int = -1       # band steps to subtract when soft + breached
+    drawdown_hard_floor: float = -0.75    # hard-exclude even in soft mode if below this
 
     # Layer 2 — Risk flag thresholds
     vol_high_threshold: float = 1.20
@@ -112,7 +115,7 @@ class DecisionRuleset:
 # VERSIONING
 # =============================================================================
 
-VERSION = "v1.1.0"
+VERSION = "v1.2.0"
 
 DEFAULT_RULESET = DecisionRuleset()
 
@@ -166,7 +169,11 @@ def _compute_eligibility(rec: Dict, ruleset: DecisionRuleset) -> Tuple[bool, Lis
     df = rec.get("defensive_features") or {}
     dd = _safe_float(df.get("drawdown"))
     if dd is not None and dd < ruleset.drawdown_gate:
-        reasons.append("deep_drawdown")
+        if ruleset.drawdown_gate_mode == "hard":
+            reasons.append("deep_drawdown")
+        elif dd < ruleset.drawdown_hard_floor:
+            reasons.append("deep_drawdown")
+        # soft mode above hard_floor: don't fail eligibility (handled in sizing)
 
     # Gate: check attn_flags for liquidity/ADV issues
     attn = rec.get("attn_flags") or []
@@ -323,6 +330,7 @@ def _compute_size_band(
     optionality: Optional[float],
     overlays: Dict[str, Any],
     ruleset: DecisionRuleset,
+    rec: Optional[Dict] = None,
 ) -> Tuple[str, List[str]]:
     """Rule-based sizing band. Returns (band, list_of_reasons)."""
     if not eligible:
@@ -362,6 +370,14 @@ def _compute_size_band(
     if "high_vol" in risk or "high_beta" in risk:
         idx -= 1
         reasons.append("high_risk")
+
+    # Soft drawdown penalty
+    if rec is not None and ruleset.drawdown_gate_mode == "soft":
+        _df = rec.get("defensive_features") or {}
+        _dd = _safe_float(_df.get("drawdown"))
+        if _dd is not None and _dd < ruleset.drawdown_gate:
+            idx += ruleset.drawdown_size_penalty  # negative → band downgrade
+            reasons.append("drawdown_penalty")
 
     # Clamp
     idx = max(0, min(len(_BAND_ORDER) - 1, idx))
@@ -587,6 +603,7 @@ def compute_decision_fields(
         optionality=optionality_pct_dev,
         overlays=overlays,
         ruleset=rs,
+        rec=rec,
     )
 
     # Assemble output
