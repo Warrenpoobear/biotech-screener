@@ -22,11 +22,15 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 
 def build_command(args: argparse.Namespace, extra: list[str]) -> list[str]:
     """Assemble the run_screen.py command."""
+    # --output is required by run_screen.py; put it next to the snapshot
+    output_path = args.snapshot_dir / args.as_of_date / "screen_output.json"
+    output_path.parent.mkdir(parents=True, exist_ok=True)
     cmd = [
         sys.executable,
         str(SCRIPT_DIR / "run_screen.py"),
         "--as-of-date", args.as_of_date,
         "--data-dir", str(args.data_dir),
+        "--output", str(output_path),
         "--decision-mode", "phase2",
         "--strict",
         "--snapshot-dir", str(args.snapshot_dir),
