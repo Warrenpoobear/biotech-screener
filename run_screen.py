@@ -71,6 +71,7 @@ from common.production_hardening import (
     load_with_integrity_check,
     IntegrityError,
     compute_content_hash,
+    json_serializer,
     # Timeouts
     operation_timeout,
     OperationTimeoutError,
@@ -112,6 +113,7 @@ from module_5_scoring_v3 import summarize_dev_catalyst_guardrail
 
 # Production validation
 from production_validation import validate_screening_output
+from decision_engine import compute_decision_fields
 
 # Module 3A specific imports
 from event_detector import SimpleMarketCalendar
@@ -1287,6 +1289,15 @@ SNAPSHOT_COLUMNS = [
     "momentum_score", "catalyst_score", "smart_money_score",
     "valuation_score", "clinical_score", "financial_score",
     "confidence_overall",
+    "clinical_rank_pct_dev", "clinical_optionality_pct_dev",
+    # Decision Engine v1 columns
+    "decision_engine_version", "decision_engine_ruleset_id",
+    "eligible", "ineligible_reasons",
+    "sponsor_tier1_count", "sponsor_overlap_count", "sponsor_net_buying",
+    "catalyst_days", "catalyst_in_window", "catalyst_mode",
+    "runway_bucket", "mom_state", "risk_flags",
+    "size_band", "size_reasons",
+    "tier_dev", "tier_reason",
 ]
 
 
@@ -1338,40 +1349,78 @@ def save_validation_snapshot(
                 return c.get("normalized")
         return None
 
+    # --- Build ranking rows ---
+    csv_rows = []
+    for rec in ranked:
+        ticker = rec.get("ticker", "")
+        # Extract signal scores from nested dicts (momentum/valuation
+        # are not in component_scores; catalyst/smart_money/clinical/
+        # financial use component_scores.normalized as single source)
+        mom = rec.get("momentum_signal") or {}
+        val = rec.get("valuation_signal") or {}
+        row = {
+            "ticker": ticker,
+            "composite_rank": rec.get("composite_rank"),
+            "composite_score": rec.get("composite_score"),
+            "score_rank_pct": rec.get("score_rank_pct"),
+            "score_z": rec.get("score_z"),
+            "composite_score_attn": rec.get("composite_score_attn"),
+            "score_rank_pct_attn": rec.get("score_rank_pct_attn"),
+            "score_z_attn": rec.get("score_z_attn"),
+            "stage_bucket": rec.get("stage_bucket"),
+            "market_cap_bucket": rec.get("market_cap_bucket"),
+            "severity": rec.get("severity"),
+            "archetype": archetypes.get(ticker, ""),
+            "momentum_score": mom.get("momentum_score"),
+            "catalyst_score": _component_score(rec, "catalyst"),
+            "smart_money_score": _component_score(rec, "smart_money"),
+            "valuation_score": val.get("valuation_score"),
+            "clinical_score": _component_score(rec, "clinical"),
+            "financial_score": _component_score(rec, "financial"),
+            "confidence_overall": rec.get("confidence_overall"),
+        }
+        csv_rows.append(row)
+
+    # --- Compute clinical_optionality_pct_dev (inverted percentile within dev cohort) ---
+    # Empirical finding: in dev-stage (drug_developer), lower clinical_score →
+    # higher forward returns.  clinical_optionality_pct_dev inverts the ranking so
+    # higher = more optionality = empirically better forward performance.
+    dev_rows = [(i, r) for i, r in enumerate(csv_rows)
+                if r.get("archetype") == "drug_developer"
+                and r.get("clinical_score") is not None]
+    if dev_rows:
+        # Sort dev tickers by clinical_score DESC then ticker ASC (deterministic)
+        dev_sorted = sorted(dev_rows,
+                            key=lambda x: (-float(x[1]["clinical_score"]),
+                                           x[1].get("ticker", "")))
+        n_dev = len(dev_sorted)
+        for rank_i, (row_idx, _) in enumerate(dev_sorted, start=1):
+            # Continuity-corrected percentile: highest clinical_score → highest pct
+            p = (n_dev - rank_i + 0.5) / n_dev
+            p = max(0.001, min(0.999, p))
+            csv_rows[row_idx]["clinical_rank_pct_dev"] = round(p, 6)
+            csv_rows[row_idx]["clinical_optionality_pct_dev"] = round(1.0 - p, 6)
+
+    # --- Decision Engine v1: compute eligibility, overlays, sizing, tiering ---
+    rec_by_ticker = {rec["ticker"]: rec for rec in ranked}
+    for row in csv_rows:
+        ticker = row.get("ticker", "")
+        rec = rec_by_ticker.get(ticker)
+        if rec is None:
+            continue
+        arch = archetypes.get(ticker, "")
+        opt = row.get("clinical_optionality_pct_dev")
+        opt_float = float(opt) if opt is not None else None
+        decision = compute_decision_fields(rec, arch, opt_float)
+        row.update(decision)
+
     # --- Write rankings CSV ---
     csv_path = snap_path / "rankings.csv"
     try:
         with open(csv_path, "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=SNAPSHOT_COLUMNS, extrasaction="ignore")
             writer.writeheader()
-            for rec in ranked:
-                ticker = rec.get("ticker", "")
-                # Extract signal scores from nested dicts (momentum/valuation
-                # are not in component_scores; catalyst/smart_money/clinical/
-                # financial use component_scores.normalized as single source)
-                mom = rec.get("momentum_signal") or {}
-                val = rec.get("valuation_signal") or {}
-                row = {
-                    "ticker": ticker,
-                    "composite_rank": rec.get("composite_rank"),
-                    "composite_score": rec.get("composite_score"),
-                    "score_rank_pct": rec.get("score_rank_pct"),
-                    "score_z": rec.get("score_z"),
-                    "composite_score_attn": rec.get("composite_score_attn"),
-                    "score_rank_pct_attn": rec.get("score_rank_pct_attn"),
-                    "score_z_attn": rec.get("score_z_attn"),
-                    "stage_bucket": rec.get("stage_bucket"),
-                    "market_cap_bucket": rec.get("market_cap_bucket"),
-                    "severity": rec.get("severity"),
-                    "archetype": archetypes.get(ticker, ""),
-                    "momentum_score": mom.get("momentum_score"),
-                    "catalyst_score": _component_score(rec, "catalyst"),
-                    "smart_money_score": _component_score(rec, "smart_money"),
-                    "valuation_score": val.get("valuation_score"),
-                    "clinical_score": _component_score(rec, "clinical"),
-                    "financial_score": _component_score(rec, "financial"),
-                    "confidence_overall": rec.get("confidence_overall"),
-                }
+            for row in csv_rows:
                 writer.writerow(row)
     except OSError as e:
         logger.warning(f"Could not write snapshot CSV: {e}")
@@ -1491,6 +1540,12 @@ def save_validation_snapshot(
         "archetype_distribution": dict(sorted(archetype_counts.items())),
         "ranking_diagnostics": ranking_diagnostics,
         "score_diagnostics": score_diagnostics,
+        "dev_optionality_stats": {
+            "n_dev": len(dev_rows),
+            "n_dev_with_clinical": len(dev_rows),
+            "min_clinical": round(min(float(r["clinical_score"]) for _, r in dev_rows), 4) if dev_rows else None,
+            "max_clinical": round(max(float(r["clinical_score"]) for _, r in dev_rows), 4) if dev_rows else None,
+        } if dev_rows else {"n_dev": 0},
         "input_hashes": results.get("run_metadata", {}).get("input_hashes", {}),
     }
 
@@ -1894,7 +1949,8 @@ def save_checkpoint(
     }
 
     # INTEGRITY: Add content hash for verification on load
-    data_json = json.dumps(data, sort_keys=True, default=str)
+    # Use json_serializer (not str) to match safe_write_json serialization path
+    data_json = json.dumps(data, sort_keys=True, default=json_serializer)
     checkpoint_data["_content_hash"] = compute_content_hash(data_json)
 
     # Write atomically with secure permissions
@@ -1962,7 +2018,7 @@ def load_checkpoint(
     # INTEGRITY: Verify content hash if present
     if verify_integrity and "_content_hash" in checkpoint_data:
         data = checkpoint_data.get("data", {})
-        data_json = json.dumps(data, sort_keys=True, default=str)
+        data_json = json.dumps(data, sort_keys=True, default=json_serializer)
         computed_hash = compute_content_hash(data_json)
         stored_hash = checkpoint_data["_content_hash"]
 

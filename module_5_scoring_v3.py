@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from dataclasses import dataclass, field
 from datetime import date
 from decimal import Decimal
@@ -220,6 +221,28 @@ DEV_CATALYST_ATTENUATION_CONFIG = {
     "max_shrink": Decimal("0.40"),  # maximum catalyst weight reduction (40%)
     "shrink_curve": "linear",       # "linear" or "logistic"
 }
+
+# Runtime override via env var (for grid search tuning):
+#   DEV_CATALYST_ATTEN_JSON='{"max_shrink":"0.30","risk_quarter":"0.20",...}'
+# Supported keys: max_shrink, risk_exact, risk_month, risk_quarter, risk_year,
+#   risk_unknown, corroboration_mult, corroboration_threshold
+_atten_env = os.environ.get("DEV_CATALYST_ATTEN_JSON")
+if _atten_env:
+    _overrides = json.loads(_atten_env)
+    _risk_map = DEV_CATALYST_ATTENUATION_CONFIG["specificity_risk"]
+    for _k, _spec_key in [
+        ("risk_exact", "EXACT"), ("risk_month", "MONTH"),
+        ("risk_quarter", "QUARTER"), ("risk_year", "YEAR"),
+        ("risk_unknown", "UNKNOWN"),
+    ]:
+        if _k in _overrides:
+            _risk_map[_spec_key] = Decimal(str(_overrides[_k]))
+    if "max_shrink" in _overrides:
+        DEV_CATALYST_ATTENUATION_CONFIG["max_shrink"] = Decimal(str(_overrides["max_shrink"]))
+    if "corroboration_mult" in _overrides:
+        DEV_CATALYST_ATTENUATION_CONFIG["corroboration_discount"] = Decimal(str(_overrides["corroboration_mult"]))
+    if "corroboration_threshold" in _overrides:
+        DEV_CATALYST_ATTENUATION_CONFIG["corroboration_threshold"] = Decimal(str(_overrides["corroboration_threshold"]))
 
 # =============================================================================
 # ENHANCEMENT 5: ASYMMETRIC TRANSFORM CONFIGURATION

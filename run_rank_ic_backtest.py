@@ -957,7 +957,11 @@ def load_snapshot_rankings(snapshot_dir: Path) -> SnapshotData:
     component_scores: Dict[str, Dict[str, float]] = {}
     stage_map: Dict[str, str] = {}
     extra_controls: Dict[str, Dict[str, float]] = {"log_cash": {}}
-    signal_scores: Dict[str, Dict[str, float]] = {"score_rank_pct": {}, "score_z": {}}
+    signal_scores: Dict[str, Dict[str, float]] = {
+        "score_rank_pct": {}, "score_z": {},
+        "clinical_score": {}, "clinical_optionality_pct_dev": {},
+        "eligible": {}, "tier_dev": {}, "size_band": {},
+    }
 
     with open(csv_path, "r", newline="", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
@@ -1019,13 +1023,29 @@ def load_snapshot_rankings(snapshot_dir: Path) -> SnapshotData:
 
             # Extract signal scores (new format only)
             for sig_field in ("score_rank_pct", "score_z",
-                              "score_rank_pct_attn", "score_z_attn", "composite_score_attn"):
+                              "score_rank_pct_attn", "score_z_attn", "composite_score_attn",
+                              "clinical_score", "clinical_optionality_pct_dev"):
                 sig_str = row.get(sig_field, "").strip()
                 if sig_str:
                     try:
                         signal_scores[sig_field][ticker] = float(sig_str)
                     except ValueError:
                         pass
+
+            # Decision engine categorical signals → numeric encoding
+            _elig = row.get("eligible", "").strip()
+            if _elig in ("0", "1"):
+                signal_scores.setdefault("eligible", {})[ticker] = float(_elig)
+            _tier = row.get("tier_dev", "").strip()
+            if _tier:
+                _TIER_MAP = {"A": 4.0, "B": 3.0, "C": 2.0, "D": 1.0}
+                if _tier in _TIER_MAP:
+                    signal_scores.setdefault("tier_dev", {})[ticker] = _TIER_MAP[_tier]
+            _sband = row.get("size_band", "").strip()
+            if _sband:
+                _BAND_MAP = {"L": 4.0, "M": 3.0, "S": 2.0, "XS": 1.0}
+                if _sband in _BAND_MAP:
+                    signal_scores.setdefault("size_band", {})[ticker] = _BAND_MAP[_sband]
 
             # Extract Cash for log_cash control (old format: "Cash" column)
             # Cash==0 is missing data for large-cap names (AZN, BNTX, etc.)
@@ -1064,7 +1084,9 @@ def read_rankings_from_archive(tar_path: Path) -> SnapshotData:
     signal_scores: Dict[str, Dict[str, float]] = {
         "score_rank_pct": {}, "score_z": {},
         "score_rank_pct_attn": {}, "score_z_attn": {},
-        "composite_score_attn": {},
+        "composite_score_attn": {}, "clinical_score": {},
+        "clinical_optionality_pct_dev": {},
+        "eligible": {}, "tier_dev": {}, "size_band": {},
     }
 
     with tarfile.open(tar_path, "r:gz") as tar:
@@ -1126,13 +1148,29 @@ def read_rankings_from_archive(tar_path: Path) -> SnapshotData:
                         pass
 
             for sig_field in ("score_rank_pct", "score_z",
-                              "score_rank_pct_attn", "score_z_attn", "composite_score_attn"):
+                              "score_rank_pct_attn", "score_z_attn", "composite_score_attn",
+                              "clinical_score", "clinical_optionality_pct_dev"):
                 sig_str = row.get(sig_field, "").strip()
                 if sig_str:
                     try:
                         signal_scores[sig_field][ticker] = float(sig_str)
                     except ValueError:
                         pass
+
+            # Decision engine categorical signals → numeric encoding
+            _elig = row.get("eligible", "").strip()
+            if _elig in ("0", "1"):
+                signal_scores.setdefault("eligible", {})[ticker] = float(_elig)
+            _tier = row.get("tier_dev", "").strip()
+            if _tier:
+                _TIER_MAP = {"A": 4.0, "B": 3.0, "C": 2.0, "D": 1.0}
+                if _tier in _TIER_MAP:
+                    signal_scores.setdefault("tier_dev", {})[ticker] = _TIER_MAP[_tier]
+            _sband = row.get("size_band", "").strip()
+            if _sband:
+                _BAND_MAP = {"L": 4.0, "M": 3.0, "S": 2.0, "XS": 1.0}
+                if _sband in _BAND_MAP:
+                    signal_scores.setdefault("size_band", {})[ticker] = _BAND_MAP[_sband]
 
             cash_str = row.get("Cash", "").strip()
             if cash_str:
@@ -1153,6 +1191,8 @@ def read_rankings_from_archive(tar_path: Path) -> SnapshotData:
 METADATA_FIELDS_NEW = [
     "confidence_overall", "catalyst_score", "smart_money_score",
     "archetype", "severity", "market_cap_bucket",
+    "eligible", "tier_dev", "tier_reason", "size_band", "mom_state",
+    "catalyst_mode", "decision_engine_version", "decision_engine_ruleset_id",
 ]
 # Legacy format
 METADATA_FIELDS_LEGACY = ["Momentum_Bucket"]
@@ -1975,9 +2015,16 @@ def run_backtest(
     signal_field: str = "score_rank_pct",
     allow_rank_ties: bool = False,
     verify_archives: bool = True,
+    subset: str = "all",
+    flip_signal: bool = False,
 ) -> Tuple[Dict[str, Any], List[Dict[str, Any]], List[Dict[str, Any]]]:
     """
     Run the full rank-IC backtest across snapshots or archives.
+
+    Args:
+        subset: Universe subset filter. "all" = full universe, "dev" = dev-stage only,
+                "commercial" = commercial-stage only. Uses archetype from rankings.csv.
+        flip_signal: If True, invert signal direction (lower-is-better).
 
     Returns:
         (ic_results, hygiene_before, hygiene_after)
@@ -2085,11 +2132,39 @@ def run_backtest(
             print(f"  SKIP {snapshot_date}: no rankings loaded")
             continue
 
-        # Extract per-ticker metadata for failure attribution
+        # Extract per-ticker metadata for failure attribution (also used for subset filter)
         if archives is not None:
             ticker_metadata = extract_ticker_metadata_from_archive(archive_by_date[snapshot_date])
         else:
             ticker_metadata = extract_ticker_metadata_from_snapshot(snap_base / snapshot_date)
+
+        # --- Apply universe subset filter (dev / commercial) using archetype ---
+        if subset != "all":
+            n_before_subset = len(rankings)
+            if subset == "dev":
+                keep = {t for t in rankings if ticker_metadata.get(t, {}).get("archetype") == "drug_developer"}
+            elif subset == "commercial":
+                keep = {t for t in rankings
+                        if str(ticker_metadata.get(t, {}).get("archetype", "")).startswith("commercial_")}
+            else:
+                keep = set(rankings.keys())
+            if not keep:
+                all_skipped.append({
+                    "snapshot_date": snapshot_date,
+                    "skipped_reason": f"no_tickers_in_subset_{subset}",
+                })
+                print(f"  SKIP {snapshot_date}: no tickers in subset '{subset}'")
+                continue
+            rankings = {t: r for t, r in rankings.items() if t in keep}
+            scores = {t: s for t, s in scores.items() if t in keep}
+            component_scores = {c: {t: v for t, v in tv.items() if t in keep}
+                                for c, tv in component_scores.items()}
+            stage_map = {t: s for t, s in stage_map.items() if t in keep}
+            extra_controls = {c: {t: v for t, v in tv.items() if t in keep}
+                              for c, tv in extra_controls.items()}
+            signal_scores_data = {s: {t: v for t, v in tv.items() if t in keep}
+                                  for s, tv in signal_scores_data.items()}
+            print(f"  Subset '{subset}': {len(rankings)}/{n_before_subset} tickers retained")
 
         # Rank uniqueness check
         assert_rank_unique(rankings, snapshot_date, signal_scores_data, allow_ties=allow_rank_ties)
@@ -2130,11 +2205,21 @@ def run_backtest(
         inv_tickers = list(inv_rankings.keys())
 
         # Determine which rankings to use for IC: signal field or composite_rank
-        if signal_field in ("score_rank_pct", "score_z") and signal_scores_data.get(signal_field):
+        _KNOWN_SIGNALS = ("score_rank_pct", "score_z",
+                          "score_rank_pct_attn", "score_z_attn",
+                          "composite_score_attn", "clinical_score",
+                          "clinical_optionality_pct_dev",
+                          "eligible", "tier_dev", "size_band")
+        if signal_field in _KNOWN_SIGNALS and signal_scores_data.get(signal_field):
             # Filter signal to investable tickers only
             inv_signal = {t: signal_scores_data[signal_field][t]
                           for t in inv_tickers if t in signal_scores_data[signal_field]}
-            sig_higher_is_better = (signal_field == "score_z")
+            sig_higher_is_better = signal_field in ("score_z", "score_z_attn",
+                                                     "composite_score_attn", "clinical_score",
+                                                     "clinical_optionality_pct_dev",
+                                                     "eligible", "tier_dev", "size_band")
+            if flip_signal:
+                sig_higher_is_better = not sig_higher_is_better
             ic_rankings = signal_to_rankings(inv_signal, higher_is_better=sig_higher_is_better)
         else:
             ic_rankings = inv_rankings
@@ -3374,6 +3459,171 @@ def print_report(results: Dict[str, Any]) -> None:
 
 
 # =============================================================================
+# GROUP-BY EVALUATION
+# =============================================================================
+
+def _winsorize(vals: List[float], pct: float = 0.05) -> List[float]:
+    """Winsorize a list at the given percentile on both tails."""
+    if len(vals) < 4:
+        return vals[:]
+    s = sorted(vals)
+    lo = s[max(0, int(len(s) * pct))]
+    hi = s[min(len(s) - 1, int(len(s) * (1 - pct)))]
+    return [max(lo, min(hi, v)) for v in vals]
+
+
+def run_group_evaluation(
+    provider: "ChainedReturnsProvider",
+    ms_provider: "MorningstarReturnsProvider",
+    csv_provider: "CSVReturnsProvider",
+    archives: List[Tuple[str, Path]],
+    group_col: str,
+    subset: str = "all",
+    verify_archives: bool = True,
+) -> Dict[str, Any]:
+    """Evaluate forward returns by group (e.g. tier_dev, size_band, mom_state).
+
+    For each snapshot, reads the group column from ticker metadata, computes
+    forward returns, and aggregates per-group return stats across all snapshots.
+
+    Returns dict with per-group summary statistics.
+    """
+    max_horizon = max(HORIZONS.values())
+    last_return_date = provider.get_last_date()
+
+    snapshot_dates = [d for d, _ in archives]
+    archive_by_date = {d: p for d, p in archives}
+
+    usable_dates, fence_skipped = compute_as_of_fence(
+        snapshot_dates, last_return_date, max_horizon
+    )
+
+    print(f"  Returns data ends: {last_return_date.isoformat() if last_return_date else 'NONE'}")
+    print(f"  Usable snapshots: {len(usable_dates)} (skipped {len(fence_skipped)})")
+    print()
+
+    # Collect per-group returns across all snapshots
+    # {horizon: {group_value: [list of returns across all snapshots]}}
+    pooled: Dict[str, Dict[str, List[float]]] = {h: {} for h in HORIZONS}
+    pooled_resid: Dict[str, Dict[str, List[float]]] = {h: {} for h in HORIZONS}
+    group_counts: Dict[str, int] = {}  # total ticker-observations per group
+
+    for snapshot_date in usable_dates:
+        tar_path = archive_by_date[snapshot_date]
+        if verify_archives:
+            v = verify_archive(tar_path)
+            if not v.get("verified"):
+                print(f"  SKIP {snapshot_date}: archive verification failed")
+                continue
+
+        rankings, scores, component_scores, stage_map, extra_controls, \
+            higher_is_better, signal_scores_data = read_rankings_from_archive(tar_path)
+        if not rankings:
+            print(f"  SKIP {snapshot_date}: no rankings")
+            continue
+
+        ticker_metadata = extract_ticker_metadata_from_archive(tar_path)
+
+        # Apply subset filter
+        tickers = set(rankings.keys())
+        if subset == "dev":
+            tickers = {t for t in tickers if ticker_metadata.get(t, {}).get("archetype") == "drug_developer"}
+        elif subset == "commercial":
+            tickers = {t for t in tickers
+                       if str(ticker_metadata.get(t, {}).get("archetype", "")).startswith("commercial_")}
+        if not tickers:
+            print(f"  SKIP {snapshot_date}: no tickers in subset")
+            continue
+
+        # Group tickers by the requested column
+        groups: Dict[str, List[str]] = {}
+        for t in tickers:
+            val = str(ticker_metadata.get(t, {}).get(group_col, "")).strip()
+            if not val:
+                val = "_missing"
+            groups.setdefault(val, []).append(t)
+
+        # XBI betas for residual returns
+        xbi_betas = estimate_xbi_betas(csv_provider, list(tickers), snapshot_date)
+
+        n_groups = len(groups)
+        n_tickers = sum(len(v) for v in groups.values())
+        print(f"  {snapshot_date}: {n_tickers} tickers, {n_groups} groups "
+              f"({', '.join(f'{k}={len(v)}' for k, v in sorted(groups.items()))})")
+
+        for horizon_label, horizon_days in HORIZONS.items():
+            fwd_returns = compute_forward_returns(provider, list(tickers), snapshot_date, horizon_days)
+
+            # XBI residual
+            xbi_fwd_start = add_trading_days(snapshot_date, 1)
+            xbi_fwd_end = add_trading_days(snapshot_date, horizon_days)
+            xbi_ret_str = csv_provider.get_forward_total_return("XBI", xbi_fwd_start, xbi_fwd_end)
+            xbi_fwd = float(xbi_ret_str) if xbi_ret_str is not None else None
+            resid_returns = compute_residual_returns(fwd_returns, xbi_fwd, xbi_betas)
+
+            for gval, gtickers in groups.items():
+                raw_rets = [fwd_returns[t] for t in gtickers if t in fwd_returns]
+                if raw_rets:
+                    pooled[horizon_label].setdefault(gval, []).extend(raw_rets)
+                    if horizon_label == list(HORIZONS.keys())[0]:
+                        group_counts[gval] = group_counts.get(gval, 0) + len(raw_rets)
+
+                resid_rets = [resid_returns[t] for t in gtickers if t in resid_returns]
+                if resid_rets:
+                    pooled_resid[horizon_label].setdefault(gval, []).extend(resid_rets)
+
+    # --- Aggregate and print ---
+    print()
+    print("=" * 80)
+    print(f"GROUP-BY EVALUATION: {group_col}")
+    print("=" * 80)
+
+    output: Dict[str, Any] = {"group_col": group_col, "horizons": {}}
+
+    for horizon_label in HORIZONS:
+        print(f"\n  Horizon: {horizon_label}")
+        header = (f"  {'Group':>12s} | {'N':>5s} | {'Mean%':>8s} | {'Median%':>8s} "
+                  f"| {'Winsor%':>8s} | {'Hit%':>6s} | {'Resid%':>8s} | {'ResHit%':>7s}")
+        print(header)
+        print(f"  {'-' * 12}-+-{'-' * 5}-+-{'-' * 8}-+-{'-' * 8}-+-{'-' * 8}-+-{'-' * 6}-+-{'-' * 8}-+-{'-' * 7}")
+
+        horizon_groups: Dict[str, Dict[str, Any]] = {}
+
+        for gval in sorted(pooled[horizon_label].keys()):
+            rets = pooled[horizon_label][gval]
+            resid_rets = pooled_resid[horizon_label].get(gval, [])
+
+            n = len(rets)
+            mean_r = mean(rets) * 100 if rets else 0
+            median_r = median(rets) * 100 if rets else 0
+            winsor_r = mean(_winsorize(rets)) * 100 if rets else 0
+            hit_pct = sum(1 for r in rets if r > 0) / n * 100 if n else 0
+
+            resid_mean = mean(resid_rets) * 100 if resid_rets else 0
+            resid_hit = sum(1 for r in resid_rets if r > 0) / len(resid_rets) * 100 if resid_rets else 0
+
+            print(f"  {gval:>12s} | {n:5d} | {mean_r:+8.2f} | {median_r:+8.2f} "
+                  f"| {winsor_r:+8.2f} | {hit_pct:5.1f}% | {resid_mean:+8.2f} | {resid_hit:6.1f}%")
+
+            horizon_groups[gval] = {
+                "n": n,
+                "mean_pct": round(mean_r, 4),
+                "median_pct": round(median_r, 4),
+                "winsor_pct": round(winsor_r, 4),
+                "hit_pct": round(hit_pct, 2),
+                "resid_mean_pct": round(resid_mean, 4),
+                "resid_hit_pct": round(resid_hit, 2),
+            }
+
+        output["horizons"][horizon_label] = horizon_groups
+
+    print()
+    print("=" * 80)
+
+    return output
+
+
+# =============================================================================
 # MAIN
 # =============================================================================
 
@@ -3393,13 +3643,26 @@ def main() -> None:
                         help="Maximum number of archives to use")
     parser.add_argument("--signal", type=str, default="score_rank_pct",
                         choices=["score_rank_pct", "score_z", "composite_score",
-                                 "score_rank_pct_attn", "score_z_attn", "composite_score_attn"],
+                                 "score_rank_pct_attn", "score_z_attn", "composite_score_attn",
+                                 "clinical_score", "clinical_optionality_pct_dev",
+                                 "eligible", "tier_dev", "size_band"],
                         help="Signal field for IC computation (default: score_rank_pct)")
     parser.add_argument("--compare-signals", type=str, default=None,
                         help="Comma pair of signals for A/B comparison, e.g. "
                              "\"score_rank_pct,score_rank_pct_attn\"")
     parser.add_argument("--allow-rank-ties", action="store_true",
                         help="Allow duplicate composite_rank values instead of failing")
+    parser.add_argument("--subset", type=str, default="all",
+                        choices=["all", "dev", "commercial"],
+                        help="Universe subset: 'dev' = early/mid/late stage, "
+                             "'commercial' = commercial stage (default: all)")
+    parser.add_argument("--flip-signal", action="store_true",
+                        help="Invert signal direction (lower-is-better). "
+                             "Use to test if a signal is directionally reversed.")
+    parser.add_argument("--group-by", type=str, default=None,
+                        choices=["tier_dev", "size_band", "mom_state", "eligible",
+                                 "tier_reason", "catalyst_mode", "archetype", "severity"],
+                        help="Evaluate forward returns grouped by a decision column")
     # Archive verification
     parser.add_argument("--verify-archives", action="store_true", default=True,
                         dest="verify_archives",
@@ -3469,7 +3732,34 @@ def main() -> None:
     signal_field = args.signal
     signal_defaulted = (signal_field == "score_rank_pct" and "--signal" not in sys.argv)
     print(f"  Signal field: {signal_field}" + (" (default)" if signal_defaulted else ""))
+    if args.subset != "all":
+        print(f"  Subset filter: {args.subset}")
+    if args.flip_signal:
+        print(f"  Signal FLIPPED (lower-is-better)")
     print()
+
+    # ------------------------------------------------------------------
+    # GROUP-BY EVALUATION MODE
+    # ------------------------------------------------------------------
+    if args.group_by:
+        if archives_list is None:
+            print("ERROR: --group-by requires archive mode (not --use-live-snapshots)")
+            sys.exit(1)
+        print(f"=== Group-by evaluation: {args.group_by} ===")
+        print()
+        group_results = run_group_evaluation(
+            provider, ms_provider, csv_provider,
+            archives=archives_list,
+            group_col=args.group_by,
+            subset=args.subset,
+            verify_archives=args.verify_archives,
+        )
+        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+        output_json.parent.mkdir(parents=True, exist_ok=True)
+        with open(output_json, "w") as f:
+            json.dump(group_results, f, indent=2, default=str)
+        print(f"Results saved to {output_json}")
+        return
 
     # ------------------------------------------------------------------
     # A/B SIGNAL COMPARISON MODE
@@ -3490,6 +3780,8 @@ def main() -> None:
             signal_field=signal_a,
             allow_rank_ties=args.allow_rank_ties,
             verify_archives=args.verify_archives,
+            subset=args.subset,
+            flip_signal=args.flip_signal,
         )
         results_b, hyg_before_b, hyg_after_b = run_backtest(
             provider, ms_provider, csv_provider,
@@ -3498,6 +3790,8 @@ def main() -> None:
             signal_field=signal_b,
             allow_rank_ties=args.allow_rank_ties,
             verify_archives=False,  # already verified in run A
+            subset=args.subset,
+            flip_signal=args.flip_signal,
         )
 
         # Print A/B delta summary
@@ -3556,12 +3850,15 @@ def main() -> None:
         signal_field=signal_field,
         allow_rank_ties=args.allow_rank_ties,
         verify_archives=args.verify_archives,
+        subset=args.subset,
+        flip_signal=args.flip_signal,
     )
 
     # Add provenance to results
     results["source"] = source_label
     results["signal_field"] = signal_field
     results["signal_field_defaulted"] = signal_defaulted
+    results["subset"] = args.subset
     results["verify_archives"] = args.verify_archives
     if archives_list:
         results["archive_dir"] = str(args.archive_dir if not args.archive else args.archive.parent)
