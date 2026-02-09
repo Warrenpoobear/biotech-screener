@@ -40,7 +40,12 @@ from typing import Any, Dict, List, Optional
 PROJECT_ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from decision_engine import DECISION_COLUMNS, compute_decision_fields
+from decision_engine import (
+    DECISION_COLUMNS,
+    DecisionRuleset,
+    DEFAULT_RULESET,
+    compute_decision_fields,
+)
 
 
 ARCHIVE_DIR = PROJECT_ROOT / "data" / "archives"
@@ -234,7 +239,11 @@ def build_rec(
 # CORE: Process a single archive
 # =============================================================================
 
-def process_archive(tar_path: Path, dry_run: bool = False) -> Dict[str, Any]:
+def process_archive(
+    tar_path: Path,
+    dry_run: bool = False,
+    ruleset: Optional[DecisionRuleset] = None,
+) -> Dict[str, Any]:
     """Backfill decision columns into one archive.
 
     Returns summary dict with counts and any errors.
@@ -308,7 +317,7 @@ def process_archive(tar_path: Path, dry_run: bool = False) -> Dict[str, Any]:
             rec = build_rec(row, catalyst_map, holdings_map, defensive_map, enriched)
 
             # Call decision engine
-            fields = compute_decision_fields(rec, archetype, optionality)
+            fields = compute_decision_fields(rec, archetype, optionality, ruleset=ruleset)
 
             # Merge decision fields into row
             out_row = dict(row)
@@ -334,6 +343,10 @@ def process_archive(tar_path: Path, dry_run: bool = False) -> Dict[str, Any]:
             writer = csv.DictWriter(f, fieldnames=output_headers)
             writer.writeheader()
             writer.writerows(enriched_rows)
+
+        # Write decision ruleset sidecar for archive self-containment
+        rs = ruleset or DEFAULT_RULESET
+        rs.to_json(str(archive_root / "decision_ruleset.json"))
 
         # Repack tar.gz
         new_tar_path = tar_path.with_suffix(".tar.gz.tmp")
@@ -364,7 +377,15 @@ def main():
                         help="Parse and compute but don't modify archives")
     parser.add_argument("--archive", type=str, default=None,
                         help="Process a single archive date (e.g. 2026-02-07)")
+    parser.add_argument("--ruleset", type=str, default=None,
+                        help="Path to decision engine ruleset JSON (default: built-in defaults)")
     args = parser.parse_args()
+
+    ruleset = (
+        DecisionRuleset.from_json(args.ruleset)
+        if args.ruleset
+        else DEFAULT_RULESET
+    )
 
     if not ARCHIVE_DIR.exists():
         print(f"ERROR: Archive directory not found: {ARCHIVE_DIR}")
@@ -378,6 +399,7 @@ def main():
             sys.exit(1)
 
     print(f"Backfill Decision Engine v1 into {len(archives)} archives")
+    print(f"  Ruleset: {ruleset.ruleset_id}" + (" (custom)" if args.ruleset else " (default)"))
     if args.dry_run:
         print("  (dry run — no files will be modified)")
     print()
@@ -385,7 +407,7 @@ def main():
     results: List[Dict[str, Any]] = []
     for tar_path in archives:
         print(f"  Processing {tar_path.name} ...", end=" ", flush=True)
-        r = process_archive(tar_path, dry_run=args.dry_run)
+        r = process_archive(tar_path, dry_run=args.dry_run, ruleset=ruleset)
         results.append(r)
 
         tier_str = ", ".join(f"{k}={v}" for k, v in sorted(r.get("tier_counts", {}).items()))

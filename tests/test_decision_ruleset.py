@@ -267,3 +267,47 @@ class TestFrozenImmutability:
     def test_cannot_mutate(self):
         with pytest.raises(AttributeError):
             DEFAULT_RULESET.drawdown_gate = -0.50  # type: ignore[misc]
+
+
+# =============================================================================
+# CI guardrails: prevent silent ruleset drift
+# =============================================================================
+
+class TestRulesetDriftGuardrails:
+    """These tests fail loudly when defaults change without an intentional bump.
+
+    If a default threshold changes, update both the expected_id here AND
+    regenerate production_data/decision_rulesets/v1.json.
+    """
+
+    EXPECTED_DEFAULT_RULESET_ID = "a70b515b"
+
+    def test_default_ruleset_id_pinned(self):
+        """DEFAULT_RULESET.ruleset_id must match the committed expected value.
+
+        If this fails, a default threshold was changed. Update EXPECTED_DEFAULT_RULESET_ID
+        and regenerate the production JSON: DEFAULT_RULESET.to_json('production_data/decision_rulesets/v1.json')
+        """
+        assert DEFAULT_RULESET.ruleset_id == self.EXPECTED_DEFAULT_RULESET_ID, (
+            f"DEFAULT_RULESET.ruleset_id changed from {self.EXPECTED_DEFAULT_RULESET_ID} "
+            f"to {DEFAULT_RULESET.ruleset_id}. If intentional, update "
+            f"EXPECTED_DEFAULT_RULESET_ID and regenerate v1.json."
+        )
+
+    def test_production_json_matches_defaults(self):
+        """production_data/decision_rulesets/v1.json must equal DEFAULT_RULESET."""
+        prod_path = (
+            Path(__file__).resolve().parent.parent
+            / "production_data" / "decision_rulesets" / "v1.json"
+        )
+        assert prod_path.exists(), f"Production ruleset JSON not found: {prod_path}"
+        loaded = DecisionRuleset.from_json(str(prod_path))
+        assert loaded == DEFAULT_RULESET, (
+            f"v1.json ruleset_id={loaded.ruleset_id} != DEFAULT_RULESET "
+            f"ruleset_id={DEFAULT_RULESET.ruleset_id}. Regenerate v1.json."
+        )
+
+    def test_module_level_aliases_consistent(self):
+        """RULESET_ID and SIZING_WEIGHTS aliases must match DEFAULT_RULESET."""
+        assert RULESET_ID == DEFAULT_RULESET.ruleset_id
+        assert SIZING_WEIGHTS == DEFAULT_RULESET.sizing_weights_dict

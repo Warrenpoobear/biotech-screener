@@ -42,7 +42,9 @@ save_validation_snapshot()          ← run_screen.py
     └─ Write rankings.csv with all columns
 ```
 
-- **File**: `decision_engine.py` (~270 lines, pure functions, no side effects)
+- **File**: `decision_engine.py` (pure functions, no side effects)
+- **Ruleset config**: `DecisionRuleset` frozen dataclass — all 13 tunable thresholds
+- **Default ruleset JSON**: `production_data/decision_rulesets/v1.json`
 - **Integration**: called from `run_screen.py` → `save_validation_snapshot()`
 - **No upstream changes**: Modules 1-5 are untouched
 
@@ -64,8 +66,8 @@ save_validation_snapshot()          ← run_screen.py
 
 | Column | Values | Notes |
 |--------|--------|-------|
-| `decision_engine_version` | `"v1.0.0"` | Bump on any logic change |
-| `decision_engine_ruleset_id` | `"36c17dca"` (sha256[:8] of all params) | Auto-recomputes on any threshold change |
+| `decision_engine_version` | `"v1.1.0"` | Bump on any logic change |
+| `decision_engine_ruleset_id` | sha256[:8] of canonical ruleset JSON | Derived from active `DecisionRuleset` instance |
 
 ### Layer 0 — Eligibility
 
@@ -124,10 +126,10 @@ blender embeds the wrong direction.
 
 ### 5.2 Hard Gates Are Intentionally Narrow
 
-Hard gates: `fundamental_red_flag`, `SEV3`, drawdown < -40%, ADV/liquidity flags.
+Hard gates: `fundamental_red_flag`, `SEV3`, drawdown < `drawdown_gate` (default: -40%), ADV/liquidity flags.
 
 **Confidence is NOT a hard gate.** It is a risk flag only (`low_confidence` in
-`risk_flags` when confidence_overall < 0.30). Rationale: sparse dev-stage data
+`risk_flags` when confidence_overall < `confidence_low_threshold`, default: 0.30). Rationale: sparse dev-stage data
 coverage means a confidence gate would exclude the exact optionality names that
 drive the validated signal.
 
@@ -137,7 +139,7 @@ This is the most non-obvious behavior in the engine.
 
 **Mode 1 — Specific days:**
 `days_to_catalyst > 0`. The pipeline found an upcoming event with a real date.
-"Near" = days <= 90.
+"Near" = days <= `catalyst_near_days` (default: 90).
 
 **Mode 2 — Blended window:**
 `days_to_catalyst == 0` AND `in_optimal_window == True`. The pipeline could not
@@ -154,9 +156,9 @@ The tier logic routes each mode differently:
 
 | Catalyst state | Tier A eligible? | `tier_reason` suffix |
 |---|---|---|
-| Specific days <= 90 | Yes | `catalyst_near` |
+| Specific days <= `catalyst_near_days` | Yes | `catalyst_near` |
 | Blended window (days=0, window=True) | Yes | `catalyst_window` |
-| Specific days > 90 | No (caps at B) | `catalyst_far` |
+| Specific days > `catalyst_near_days` | No (caps at B) | `catalyst_far` |
 | No data | No (caps at B) | `no_catalyst_data` |
 
 On the 2026-02-07 production run: 119 dev tickers have specific_days mode,
@@ -216,8 +218,8 @@ Only applies when `archetype == "drug_developer"`.
 | Tier | Condition | `tier_reason` examples |
 |------|-----------|----------------------|
 | **D** | Ineligible (any hard gate failed) | `ineligible` |
-| **A** | Eligible + optionality >= 0.60 + catalyst near/window | `high_opt+catalyst_near`, `high_opt+catalyst_window` |
-| **B** | Eligible + high opt without near catalyst, OR moderate opt (>= 0.30) with near/window catalyst | `high_opt+catalyst_far`, `high_opt+no_catalyst_data`, `mod_opt+catalyst_near`, `mod_opt+catalyst_window` |
+| **A** | Eligible + optionality >= `tier_a_optionality_floor` + catalyst near/window | `high_opt+catalyst_near`, `high_opt+catalyst_window` |
+| **B** | Eligible + high opt without near catalyst, OR moderate opt (>= `tier_b_optionality_floor`) with near/window catalyst | `high_opt+catalyst_far`, `high_opt+no_catalyst_data`, `mod_opt+catalyst_near`, `mod_opt+catalyst_window` |
 | **C** | Eligible but lower optionality or no catalyst confirmation | `low_opt`, `mod_opt+no_catalyst_data`, `low_opt+no_catalyst_data`, `no_optionality_data` |
 
 Non-dev archetypes: `tier_dev` and `tier_reason` are blank.
@@ -252,8 +254,8 @@ Start at **M** (index 2 in [XS, S, M, L]), then apply adjustments:
 
 | Condition | Adjustment | Reason tag |
 |-----------|-----------|------------|
-| Tier A dev + optionality >= 0.60 | +1 | `tier_a_dev` |
-| `sponsor_tier1_count` >= 2 | +1 | `sponsor_confirmed` |
+| Tier A dev + optionality >= `tier_a_optionality_floor` | +1 | `tier_a_dev` |
+| `sponsor_tier1_count` >= `sponsor_confirm_threshold` | +1 | `sponsor_confirmed` |
 | `mom_state` == tailwind | +1 | `momentum_tailwind` |
 | `mom_state` == headwind | -1 | `momentum_headwind` |
 | `runway_bucket` in (short, critical) | -1 | `runway_short` / `runway_critical` |
@@ -268,10 +270,10 @@ signals independent of optionality. If this creates optics issues ("why is C
 sized Large?"), add a tier cap (e.g., C max M, D forced XS) in a future
 version — but only after group-by evaluation confirms the interaction.
 
-**Calibration knob**: The `sponsor_confirmed` threshold (tier1_count >= 2) may
-be too permissive given broad 13F coverage. On 2026-02-07, 103 of 124 L-band
-tickers hit this condition. Adjust threshold based on `--group-by size_band`
-evaluation results.
+**Calibration knob**: The `sponsor_confirm_threshold` (default: tier1_count >= 2)
+may be too permissive given broad 13F coverage. On 2026-02-07, 103 of 124
+L-band tickers hit this condition. Adjust via `DecisionRuleset(sponsor_confirm_threshold=N)`
+or `--ruleset` JSON, then evaluate with `--group-by size_band`.
 
 ---
 
@@ -355,10 +357,32 @@ These are **different from** `score_breakdown.enhancements`:
 | Defensive | `rec["defensive_features"]` | (no alternative path) |
 | Red flags | `rec["fundamental_red_flag"]` + `rec["fundamental_red_flag_reasons"]` | (no alternative path) |
 
-### 9.4 Change Control
+### 9.4 Change Control & Ruleset Governance
 
-Any change to thresholds, gate logic, or tier rules **must** bump `VERSION`
-and will auto-update `RULESET_ID` (sha256 of all tunable parameters).
+All tunable thresholds live in the `DecisionRuleset` frozen dataclass
+(`decision_engine.py`). The canonical defaults are also serialized as
+`production_data/decision_rulesets/v1.json`. Changing any parameter produces
+a new `ruleset_id` (sha256[:8] of canonical JSON).
+
+**How to propose a threshold change:**
+
+1. Create a new JSON file (e.g., `v2.json`) with modified parameters.
+2. Run with `--ruleset production_data/decision_rulesets/v2.json` to test.
+3. Once approved, update `DecisionRuleset` defaults and regenerate `v2.json`.
+4. Bump `VERSION` in `decision_engine.py`.
+5. Update the CI guardrail test (`test_decision_ruleset.py::test_from_json_production_file`)
+   to point at the new JSON.
+
+**Running with a custom ruleset:**
+
+```bash
+python run_screen.py --as-of-date 2026-02-07 --data-dir ./data \
+    --ruleset production_data/decision_rulesets/custom.json
+```
+
+Each snapshot directory gets a `decision_ruleset.json` sidecar with the exact
+parameters used, so any snapshot is fully reproducible.
+
 Backfilled archives retain the ruleset ID they were generated with, so
 comparing `decision_engine_ruleset_id` across snapshots reveals exactly which
 rule regime produced each row. Never silently change a threshold without a
@@ -422,12 +446,16 @@ Once Phase 1 confirms tier separation:
 
 ### Calibration
 
-Two knobs to tune using group-by tables:
+All thresholds are externalized in `DecisionRuleset` and can be swept
+programmatically via JSON files + `--ruleset` flag.
 
-| Knob | Current | Tuning signal |
+| Knob | Default | Tuning signal |
 |------|---------|---------------|
-| `sponsor_confirmed` threshold | tier1_count >= 2 | If L-band doesn't outperform M-band, raise threshold |
-| Optionality cutoffs | A >= 0.60, B >= 0.30 | Adjust if A/B separation is weak or A is too small/large |
+| `sponsor_confirm_threshold` | 2 | If L-band doesn't outperform M-band, raise threshold |
+| `tier_a_optionality_floor` | 0.60 | Adjust if A/B separation is weak or A is too small/large |
+| `tier_b_optionality_floor` | 0.30 | Adjust if B/C separation is weak |
+| `catalyst_near_days` | 90 | Widen if many near-catalyst tickers land in B instead of A |
+| `sizing_weights` | L=1.0, M=0.6, S=0.3, XS=0.15 | Adjust if weight proportionality doesn't match risk budget |
 
 ### Future Layers
 
