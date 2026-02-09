@@ -97,6 +97,7 @@ def _dev_row(**overrides) -> dict:
         "actionable_rank": "10",
         "decision_engine_version": "v1.2.0",
         "decision_engine_ruleset_id": "test1234",
+        "de_drawdown": "-0.20",
     }
     row.update(overrides)
     return row
@@ -167,15 +168,14 @@ class TestSectionStatusLogic:
 
     # -- Eligibility --
     def test_eligibility_ok(self):
-        rows = [_dev_row(ticker=f"T{i}", eligible="1") for i in range(100)]
-        # Add some with eligible=0 to bring dev_eligible_pct between 15-50
+        # 80/100 = 80% dev eligible → within [50, 95] → OK
+        rows = [_dev_row(ticker=f"T{i}", eligible="1") for i in range(80)]
         rows += [_dev_row(ticker=f"I{i}", eligible="0",
-                          ineligible_reasons="deep_drawdown") for i in range(200)]
+                          ineligible_reasons="deep_drawdown") for i in range(20)]
         snap = _make_snap(rows)
         status, metrics = _section_eligibility(snap)
-        # 100/(100+200) = 33.3% dev eligible
         assert status == "OK"
-        assert metrics["dev_eligible_pct"] == pytest.approx(33.3, abs=0.1)
+        assert metrics["dev_eligible_pct"] == 80.0
 
     def test_eligibility_fail_none(self):
         rows = [_dev_row(ticker=f"T{i}", eligible="0",
@@ -185,6 +185,7 @@ class TestSectionStatusLogic:
         assert status == "FAIL"
 
     def test_eligibility_warn_low_dev_pct(self):
+        # 10/100 = 10% < 50% → WARN
         eligible = [_dev_row(ticker=f"E{i}", eligible="1") for i in range(10)]
         ineligible = [_dev_row(ticker=f"I{i}", eligible="0",
                                ineligible_reasons="x") for i in range(90)]
@@ -194,13 +195,83 @@ class TestSectionStatusLogic:
         assert metrics["dev_eligible_pct"] == 10.0
 
     def test_eligibility_warn_high_dev_pct(self):
-        eligible = [_dev_row(ticker=f"E{i}", eligible="1") for i in range(60)]
+        # 98/100 = 98% > 95% → WARN
+        eligible = [_dev_row(ticker=f"E{i}", eligible="1") for i in range(98)]
         ineligible = [_dev_row(ticker=f"I{i}", eligible="0",
-                               ineligible_reasons="x") for i in range(10)]
+                               ineligible_reasons="x") for i in range(2)]
         snap = _make_snap(eligible + ineligible)
         status, metrics = _section_eligibility(snap)
-        # 60/70 = 85.7% > 50%
         assert status == "WARN"
+        assert metrics["dev_eligible_pct"] == 98.0
+
+    def test_eligibility_gate_pass_rates(self):
+        """Per-gate pass rates and drawdown data coverage are present."""
+        rows = [_dev_row(ticker=f"E{i}", eligible="1",
+                         de_drawdown="-0.20") for i in range(70)]
+        rows += [_dev_row(ticker=f"F{i}", eligible="0",
+                          ineligible_reasons="fundamental_red_flag",
+                          de_drawdown="-0.10") for i in range(10)]
+        rows += [_dev_row(ticker=f"D{i}", eligible="0",
+                          ineligible_reasons="deep_drawdown",
+                          de_drawdown="-0.50") for i in range(10)]
+        # 10 rows with missing drawdown data (blank)
+        rows += [_dev_row(ticker=f"M{i}", eligible="1",
+                          de_drawdown="") for i in range(10)]
+        snap = _make_snap(rows)
+        status, metrics = _section_eligibility(snap)
+        # 90/100 = 90% → OK
+        assert status == "OK"
+        assert "gate_pass_rates" in metrics
+        assert "drawdown_data_coverage_pct" in metrics
+
+        gpr = metrics["gate_pass_rates"]
+        assert set(gpr.keys()) == {"fundamental_red_flag", "deep_drawdown", "sev3", "adv_fail"}
+
+        # fundamental_red_flag: 10 failed out of 100 tested
+        assert gpr["fundamental_red_flag"]["tested"] == 100
+        assert gpr["fundamental_red_flag"]["failed"] == 10
+
+        # deep_drawdown: 10 failed, tested = 90 (those with data), 10 missing
+        assert gpr["deep_drawdown"]["tested"] == 90
+        assert gpr["deep_drawdown"]["failed"] == 10
+        assert gpr["deep_drawdown"]["data_missing"] == 10
+
+        # sev3/adv_fail: none failed
+        assert gpr["sev3"]["failed"] == 0
+        assert gpr["adv_fail"]["failed"] == 0
+
+        # Drawdown data coverage: 90/100 = 90%
+        assert metrics["drawdown_data_coverage_pct"] == 90.0
+
+    def test_eligibility_warn_low_drawdown_coverage(self):
+        """drawdown_data_coverage_pct < 60% triggers WARN even if dev_eligible_pct is OK."""
+        # 80/100 eligible → 80% → normally OK
+        # But only 50/100 have drawdown data → 50% < 60% → WARN
+        rows = [_dev_row(ticker=f"E{i}", eligible="1",
+                         de_drawdown="-0.15") for i in range(50)]
+        rows += [_dev_row(ticker=f"N{i}", eligible="1",
+                          de_drawdown="") for i in range(30)]
+        rows += [_dev_row(ticker=f"I{i}", eligible="0",
+                          ineligible_reasons="sev3",
+                          de_drawdown="") for i in range(20)]
+        snap = _make_snap(rows)
+        status, metrics = _section_eligibility(snap)
+        assert status == "WARN"
+        assert metrics["drawdown_data_coverage_pct"] == 50.0
+
+    def test_eligibility_ok_with_good_drawdown_coverage(self):
+        """drawdown_data_coverage_pct >= 60% does not trigger WARN by itself."""
+        rows = [_dev_row(ticker=f"E{i}", eligible="1",
+                         de_drawdown="-0.15") for i in range(70)]
+        rows += [_dev_row(ticker=f"N{i}", eligible="1",
+                          de_drawdown="") for i in range(10)]
+        rows += [_dev_row(ticker=f"I{i}", eligible="0",
+                          ineligible_reasons="sev3",
+                          de_drawdown="-0.10") for i in range(20)]
+        snap = _make_snap(rows)
+        status, metrics = _section_eligibility(snap)
+        assert status == "OK"
+        assert metrics["drawdown_data_coverage_pct"] == 90.0
 
     # -- Tier Distribution --
     def test_tier_ok(self):

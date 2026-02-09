@@ -94,10 +94,52 @@ def _section_eligibility(snap: SnapshotData) -> SectionResult:
             if reason:
                 reason_counts[reason] = reason_counts.get(reason, 0) + 1
 
+    # Per-gate pass rates (computed from ineligible_reasons + de_drawdown)
+    gate_names = ["fundamental_red_flag", "deep_drawdown", "sev3", "adv_fail"]
+    gate_fail_counts: Dict[str, int] = {g: 0 for g in gate_names}
+    for val in dev["ineligible_reasons"]:
+        if pd.isna(val) or str(val).strip() == "":
+            continue
+        for reason in str(val).split("|"):
+            reason = reason.strip()
+            if reason in gate_fail_counts:
+                gate_fail_counts[reason] += 1
+
+    n_dev = len(dev)
+    # Drawdown data coverage: non-blank de_drawdown among dev
+    dd_present = 0
+    if "de_drawdown" in dev.columns:
+        for val in dev["de_drawdown"]:
+            if not pd.isna(val) and str(val).strip() != "":
+                dd_present += 1
+    dd_missing = n_dev - dd_present
+    drawdown_data_coverage_pct = round(dd_present / n_dev * 100, 1) if n_dev else 0.0
+
+    gate_pass_rates: Dict[str, Dict[str, Any]] = {}
+    for g in gate_names:
+        failed = gate_fail_counts[g]
+        if g == "deep_drawdown":
+            # Only tickers with drawdown data can actually be tested
+            tested = dd_present
+            gate_pass_rates[g] = {
+                "tested": tested,
+                "failed": failed,
+                "data_missing": dd_missing,
+                "pass_pct": round((tested - failed) / tested * 100, 1) if tested else 100.0,
+            }
+        else:
+            gate_pass_rates[g] = {
+                "tested": n_dev,
+                "failed": failed,
+                "pass_pct": round((n_dev - failed) / n_dev * 100, 1) if n_dev else 100.0,
+            }
+
     status = "OK"
     if eligible_count == 0:
         status = "FAIL"
-    elif dev_eligible_pct < 15 or dev_eligible_pct > 50:
+    elif dev_eligible_pct < 50 or dev_eligible_pct > 95:
+        status = "WARN"
+    elif drawdown_data_coverage_pct < 60:
         status = "WARN"
 
     return status, {
@@ -105,6 +147,8 @@ def _section_eligibility(snap: SnapshotData) -> SectionResult:
         "eligible_pct": eligible_pct,
         "dev_eligible_pct": dev_eligible_pct,
         "ineligible_reason_breakdown": reason_counts,
+        "gate_pass_rates": gate_pass_rates,
+        "drawdown_data_coverage_pct": drawdown_data_coverage_pct,
     }
 
 
@@ -423,6 +467,25 @@ def format_markdown(report: Dict[str, Any]) -> str:
                                    key=lambda x: -x[1]):
             lines.append(f"| {reason} | {cnt} |")
     lines.append("")
+
+    # Gate pass rates sub-table
+    if m.get("gate_pass_rates"):
+        lines.append(f"### Gate Pass Rates")
+        lines.append("")
+        lines.append(f"| Gate | Tested | Failed | Pass % |")
+        lines.append(f"|---|---|---|---|")
+        for gate, info in m["gate_pass_rates"].items():
+            extra = ""
+            if "data_missing" in info:
+                extra = f" ({info['data_missing']} missing)"
+            lines.append(
+                f"| {gate} | {info['tested']}{extra} | {info['failed']}"
+                f" | {info['pass_pct']}% |"
+            )
+        dd_cov = m.get("drawdown_data_coverage_pct", "N/A")
+        lines.append("")
+        lines.append(f"Drawdown data coverage: {dd_cov}%")
+        lines.append("")
 
     # Tier Distribution
     sec = sections["tier_distribution"]

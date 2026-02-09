@@ -304,7 +304,9 @@ def _compute_overlays(rec: Dict, ruleset: DecisionRuleset) -> Dict[str, Any]:
     if beta is not None and beta > ruleset.beta_high_threshold:
         risk_flags.append("high_beta")
     dd = _safe_float(df.get("drawdown"))
-    if dd is not None and dd < ruleset.drawdown_flag_threshold:
+    if dd is None:
+        risk_flags.append("drawdown_data_missing")
+    elif dd < ruleset.drawdown_flag_threshold:
         risk_flags.append("deep_drawdown")
     rsi = _safe_float(df.get("rsi_14d"))
     if rsi is not None and rsi > ruleset.rsi_overbought:

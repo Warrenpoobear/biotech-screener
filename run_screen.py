@@ -1340,6 +1340,105 @@ PHASE2_DEFAULT_HEALTH_THRESHOLDS_PATH = (
 PHASE2_PINNED_THRESHOLDS_ID = "26f0d3d2"
 
 
+def _hydrate_drawdown(
+    rec_by_ticker: Dict[str, Dict[str, Any]],
+    price_history_path: Optional[Path],
+    as_of_date: str,
+) -> int:
+    """Ensure ``defensive_features["drawdown"]`` is populated for every record.
+
+    **Step A — Normalize existing keys**: If ``drawdown`` is absent but
+    ``drawdown_current`` or ``drawdown_60d`` exists in ``defensive_features``,
+    copy the first available value to ``drawdown``.
+
+    **Step B — Compute from price_history.csv**: For records still missing
+    ``drawdown``, load daily closes (date <= as_of_date, PIT-safe), compute
+    252-day drawdown ``(current / peak) - 1.0`` and write into
+    ``defensive_features["drawdown"]``.
+
+    Returns the number of records hydrated (either normalized or computed).
+    """
+    import csv as _csv
+    from datetime import datetime as _dt
+
+    hydrated = 0
+
+    # --- Step A: key normalization ---
+    for rec in rec_by_ticker.values():
+        df = rec.get("defensive_features")
+        if df is None:
+            df = {}
+            rec["defensive_features"] = df
+        if df.get("drawdown") is not None:
+            continue
+        for alt_key in ("drawdown_current", "drawdown_60d"):
+            val = df.get(alt_key)
+            if val is not None:
+                df["drawdown"] = val
+                hydrated += 1
+                break
+
+    # --- Step B: compute from price_history.csv ---
+    still_missing = [t for t, r in rec_by_ticker.items()
+                     if (r.get("defensive_features") or {}).get("drawdown") is None]
+    if not still_missing or price_history_path is None or not price_history_path.exists():
+        return hydrated
+
+    try:
+        ref_date = _dt.strptime(as_of_date, "%Y-%m-%d").date()
+    except ValueError:
+        logger.warning(f"_hydrate_drawdown: invalid as_of_date {as_of_date}")
+        return hydrated
+
+    missing_set = set(still_missing)
+    prices_by_ticker: Dict[str, List[float]] = {}
+    with open(price_history_path, "r", encoding="utf-8") as fh:
+        reader = _csv.DictReader(fh)
+        for row in reader:
+            ticker = (row.get("ticker") or "").upper()
+            if ticker not in missing_set:
+                continue
+            date_str = row.get("date", "")
+            close_str = row.get("close", "")
+            if not date_str or not close_str:
+                continue
+            try:
+                row_date = _dt.strptime(date_str, "%Y-%m-%d").date()
+            except ValueError:
+                continue
+            if row_date > ref_date:
+                continue
+            try:
+                close = float(close_str)
+            except (ValueError, TypeError):
+                continue
+            if close <= 0:
+                continue
+            prices_by_ticker.setdefault(ticker, []).append((row_date, close))
+
+    WINDOW = 252
+    for ticker in still_missing:
+        series = prices_by_ticker.get(ticker)
+        if not series or len(series) < 2:
+            continue
+        series.sort(key=lambda x: x[0])
+        closes = [p for _, p in series]
+        look = closes[-WINDOW:] if len(closes) >= WINDOW else closes
+        peak = max(look)
+        if peak == 0:
+            continue
+        dd = (closes[-1] / peak) - 1.0
+        rec = rec_by_ticker[ticker]
+        df = rec.get("defensive_features")
+        if df is None:
+            df = {}
+            rec["defensive_features"] = df
+        df["drawdown"] = round(dd, 6)
+        hydrated += 1
+
+    return hydrated
+
+
 def save_validation_snapshot(
     snapshot_dir: Path,
     as_of_date: str,
@@ -1347,6 +1446,7 @@ def save_validation_snapshot(
     version: str,
     decision_mode: str = "observe",
     ruleset: Optional[DecisionRuleset] = None,
+    price_history_path: Optional[Path] = None,
 ) -> Optional[Path]:
     """
     Save a lightweight validation snapshot for future forward-looking backtests.
@@ -1368,6 +1468,7 @@ def save_validation_snapshot(
                        (sort by tier-based deterministic ordering), or "phase2"
                        (observe + emit decision_portfolio.csv/json with A+B filter)
         ruleset: DecisionRuleset config (defaults to DEFAULT_RULESET)
+        price_history_path: Path to price_history.csv for drawdown hydration
 
     Returns:
         Path to the snapshot directory, or None if save failed
@@ -1448,6 +1549,13 @@ def save_validation_snapshot(
 
     # --- Decision Engine v1: compute eligibility, overlays, sizing, tiering ---
     rec_by_ticker = {rec["ticker"]: rec for rec in ranked}
+
+    # Hydrate missing drawdown data (key normalization + price-history fallback)
+    if price_history_path is not None:
+        n_hydrated = _hydrate_drawdown(rec_by_ticker, price_history_path, as_of_date)
+        if n_hydrated:
+            logger.info(f"Hydrated drawdown for {n_hydrated} tickers")
+
     for row in csv_rows:
         ticker = row.get("ticker", "")
         rec = rec_by_ticker.get(ticker)
@@ -5233,6 +5341,7 @@ Module 3 Catalyst Detection:
                 version=VERSION,
                 decision_mode=args.decision_mode,
                 ruleset=de_ruleset,
+                price_history_path=args.data_dir / "price_history.csv",
             )
             if snap_result:
                 logger.info(f"Snapshot dir:       {snap_result}")

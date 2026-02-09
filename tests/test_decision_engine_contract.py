@@ -381,7 +381,8 @@ class TestSchemaContract:
         assert isinstance(rf, str), f"risk_flags must be str, got {type(rf).__name__}"
         if rf:
             valid = {"high_vol", "high_beta", "deep_drawdown",
-                     "overbought_rsi", "low_confidence"}
+                     "overbought_rsi", "low_confidence",
+                     "drawdown_data_missing"}
             for flag in rf.split("|"):
                 assert flag in valid, f"Unknown risk flag: {flag!r}"
 
@@ -808,3 +809,41 @@ class TestDeterminism:
         r2 = compute_target_weights(_make_rows())
         for a, b in zip(r1, r2):
             assert a["target_weight_pct"] == b["target_weight_pct"]
+
+
+# =============================================================================
+# 8. DRAWDOWN DATA MISSING — risk flag behaviour
+# =============================================================================
+
+class TestDrawdownDataMissing:
+    """drawdown_data_missing flag when defensive_features lacks drawdown."""
+
+    def test_missing_drawdown_produces_flag(self):
+        """When drawdown is None, drawdown_data_missing is in risk_flags."""
+        rec = _rec("DD_MISS", drawdown=None)
+        fields = compute_decision_fields(rec, "drug_developer", 0.65)
+        assert "drawdown_data_missing" in fields["risk_flags"]
+
+    def test_present_drawdown_no_missing_flag(self):
+        """When drawdown is present, drawdown_data_missing is NOT in risk_flags."""
+        rec = _rec("DD_PRESENT", drawdown=-0.15)
+        fields = compute_decision_fields(rec, "drug_developer", 0.65)
+        assert "drawdown_data_missing" not in fields["risk_flags"]
+
+    def test_deep_drawdown_still_fires(self):
+        """deep_drawdown flag still fires when value is below threshold."""
+        rec = _rec("DD_DEEP", drawdown=-0.55)
+        fields = compute_decision_fields(rec, "drug_developer", 0.65)
+        assert "deep_drawdown" in fields["risk_flags"]
+        assert "drawdown_data_missing" not in fields["risk_flags"]
+
+    def test_missing_and_deep_mutually_exclusive(self):
+        """drawdown_data_missing and deep_drawdown never co-occur."""
+        # Missing
+        f1 = compute_decision_fields(_rec("A", drawdown=None), "drug_developer", 0.5)
+        flags1 = f1["risk_flags"].split("|") if f1["risk_flags"] else []
+        assert not ("drawdown_data_missing" in flags1 and "deep_drawdown" in flags1)
+        # Deep
+        f2 = compute_decision_fields(_rec("B", drawdown=-0.55), "drug_developer", 0.5)
+        flags2 = f2["risk_flags"].split("|") if f2["risk_flags"] else []
+        assert not ("drawdown_data_missing" in flags2 and "deep_drawdown" in flags2)
