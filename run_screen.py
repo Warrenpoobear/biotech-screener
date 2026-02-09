@@ -4295,6 +4295,94 @@ def add_bootstrap_analysis(
     return results
 
 
+def _run_phase2_delta(snap_path, snapshot_dir, args, logger):
+    """Run Phase-2 delta report as a post-snapshot hook.
+
+    Writes delta artifacts into the snapshot directory. Warns on operational
+    issues but only hard-fails on ruleset mismatch (already caught upstream).
+    """
+    from run_phase2_snapshot_delta import (
+        find_snapshots,
+        load_snapshot,
+        compute_delta,
+        compute_single_snapshot_summary,
+        generate_report,
+        generate_details_json,
+        generate_delta_csv,
+        PHASE2_PINNED_RULESET_ID as DELTA_PINNED_ID,
+    )
+
+    logger.info("--- Phase-2 Delta Report ---")
+    current_date = snap_path.name
+    delta_prior = getattr(args, "delta_prior", "auto")
+
+    # Resolve prior
+    if delta_prior == "auto":
+        _, prior_path = find_snapshots(snapshot_dir, current_date, None)
+    elif delta_prior.lower() == "none":
+        prior_path = None
+    else:
+        _, prior_path = find_snapshots(snapshot_dir, current_date, delta_prior)
+
+    current = load_snapshot(snap_path)
+    if current is None:
+        logger.warning("Delta: could not load current snapshot, skipping")
+        return
+
+    prior = None
+    if prior_path is not None:
+        prior = load_snapshot(prior_path)
+        if prior is None:
+            logger.warning(
+                f"Delta: prior {prior_path.name} incompatible, running single-snapshot mode"
+            )
+
+    if prior is not None:
+        logger.info(f"Delta: {current_date} vs {prior.date}")
+        result = compute_delta(current, prior)
+    else:
+        logger.info(f"Delta: {current_date} (no comparable prior)")
+        result = compute_single_snapshot_summary(current)
+
+    # Write artifacts into snapshot dir
+    output_dir = snap_path
+    report_txt = generate_report(current, prior, result)
+    details = generate_details_json(current, prior, result)
+
+    report_path = output_dir / "phase2_run_delta_report.txt"
+    details_path = output_dir / "phase2_run_delta_details.json"
+    csv_path = output_dir / "phase2_run_delta.csv"
+
+    try:
+        with open(report_path, "w") as f:
+            f.write(report_txt)
+        with open(details_path, "w") as f:
+            json.dump(details, f, indent=2)
+        generate_delta_csv(current, prior, csv_path)
+        logger.info(f"Delta artifacts: {report_path.name}, {details_path.name}, {csv_path.name}")
+    except OSError as e:
+        logger.warning(f"Delta: could not write artifacts: {e}")
+        return
+
+    # Surface warnings
+    warnings = result.warnings if hasattr(result, "warnings") else []
+    if warnings:
+        for w in warnings:
+            logger.warning(f"Delta: {w}")
+
+    # Print headline summary
+    is_delta = hasattr(result, "entrants")
+    if is_delta:
+        n_ent = len(result.entrants)
+        n_exit = len(result.exits)
+        logger.info(
+            f"Delta headline: +{n_ent}/-{n_exit} names, "
+            f"turnover={result.name_turnover_pct}%, "
+            f"L1={result.weight_l1_delta}%"
+        )
+    logger.info("--- End Delta Report ---")
+
+
 def main() -> int:
     """CLI entrypoint."""
     parser = argparse.ArgumentParser(
@@ -4429,6 +4517,21 @@ Module 3 Catalyst Detection:
         default=None,
         help="Path to a decision engine ruleset JSON file. "
              "If omitted, built-in defaults are used.",
+    )
+
+    parser.add_argument(
+        "--no-delta",
+        action="store_true",
+        default=False,
+        help="Skip Phase-2 delta report generation after snapshot.",
+    )
+
+    parser.add_argument(
+        "--delta-prior",
+        type=str,
+        default="auto",
+        help="Prior snapshot for delta report: 'auto' (default, find most recent "
+             "compatible), 'none' (single-snapshot mode), or YYYY-MM-DD.",
     )
 
     parser.add_argument(
@@ -5065,6 +5168,13 @@ Module 3 Catalyst Detection:
             )
             if snap_result:
                 logger.info(f"Snapshot dir:       {snap_result}")
+
+                # Phase-2 delta report hook
+                if (
+                    args.decision_mode == "phase2"
+                    and not getattr(args, "no_delta", False)
+                ):
+                    _run_phase2_delta(snap_result, snapshot_dir, args, logger)
 
         return 0
 
