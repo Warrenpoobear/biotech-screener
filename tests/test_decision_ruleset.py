@@ -526,18 +526,26 @@ def _candidate_ids_from_manifest_text(manifest_text: str) -> list[str]:
     return [e["id"] for e in obj.get("rulesets", []) if e.get("status") == "candidate"]
 
 
+_CHANGELOG_HEADING_RE = re.compile(
+    r"^##\s+\[v\d+\.\d+\.\d+\]\s+[0-9a-f]{8}\b",
+)
+
+
 def _changelog_has_final_entry(changelog_text: str, ruleset_id: str) -> bool:
-    """Check that a non-DRAFT heading references this ruleset ID.
+    """Check that a non-DRAFT versioned heading references this ruleset ID.
 
     Matches our changelog format: ``## [vX.Y.Z] {id} — date — desc``
-    and DRAFT format: ``## [DRAFT] [vX.Y.Z] {id} — date — desc``
+    Rejects DRAFT format: ``## [DRAFT] [vX.Y.Z] {id} — date — desc``
+    Requires semantic version marker to prevent incidental ID mentions.
     """
     for line in changelog_text.splitlines():
         if not line.startswith("## "):
             continue
+        if "[DRAFT]" in line:
+            continue
         if ruleset_id not in line:
             continue
-        if "[DRAFT]" in line:
+        if not _CHANGELOG_HEADING_RE.match(line):
             continue
         return True
     return False
@@ -556,23 +564,31 @@ class TestRulesetIntentGuardrail:
     """
 
     def test_fingerprint_change_requires_ruleset_intent_and_changelog(self):
-        # Read origin/main baselines — skip if unavailable
-        prev_contract = _git_show(
-            "origin/main", "tests/test_decision_engine_contract.py",
-        )
-        prev_manifest = _git_show(
-            "origin/main", "production_data/decision_rulesets/manifest.json",
-        )
+        # Read baselines: try origin/main first, fall back to HEAD~1,
+        # skip if neither available (e.g. initial commit or detached HEAD).
+        prev_contract = None
+        prev_manifest = None
+        for ref in ("origin/main", "HEAD~1"):
+            prev_contract = _git_show(
+                ref, "tests/test_decision_engine_contract.py",
+            )
+            prev_manifest = _git_show(
+                ref, "production_data/decision_rulesets/manifest.json",
+            )
+            if prev_contract and prev_manifest:
+                break
         if not prev_contract or not prev_manifest:
-            pytest.skip("origin/main baseline not available (need fetch in CI)")
+            pytest.skip("No baseline available (origin/main or HEAD~1)")
 
         prev_fp = _extract_expected_fingerprint(prev_contract)
-        assert prev_fp, "Could not extract EXPECTED_FINGERPRINT from origin/main"
+        assert prev_fp, "Could not extract EXPECTED_FINGERPRINT from baseline"
 
-        # Read current branch fingerprint from the committed test file
-        from tests.test_decision_engine_contract import (
-            EXPECTED_FINGERPRINT as cur_fp,
+        # Read current branch fingerprint from the working-tree file
+        cur_contract_path = _ROOT / "tests" / "test_decision_engine_contract.py"
+        cur_fp = _extract_expected_fingerprint(
+            cur_contract_path.read_text(encoding="utf-8"),
         )
+        assert cur_fp, "Could not extract EXPECTED_FINGERPRINT from working tree"
 
         if cur_fp == prev_fp:
             return  # no drift — nothing to enforce
