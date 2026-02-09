@@ -98,6 +98,9 @@ jobs:
       - name: Decision engine contract tests
         run: python -m pytest tests/test_decision_engine_contract.py -v --tb=short
 
+      - name: Decision engine replay regression
+        run: python -m pytest tests/test_decision_engine_replay_regression.py -v --tb=short
+
       # ── Artifacts ───────────────────────────────────────────────
       - name: Upload artifacts
         if: always()
