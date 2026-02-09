@@ -1332,6 +1332,7 @@ PHASE2_DEFAULT_RULESET_PATH = (
 )
 PHASE2_DEFAULT_TIER_FILTER = ["A", "B"]
 PHASE2_DEFAULT_TOP_K = 20
+PHASE2_PINNED_RULESET_ID = "d3cdf5c8"
 
 
 def save_validation_snapshot(
@@ -1619,6 +1620,30 @@ def save_validation_snapshot(
         except OSError as e:
             logger.warning(f"Could not write decision_portfolio.json: {e}")
 
+    # --- Catalyst coverage diagnostics ---
+    dev_csv_rows = [r for r in csv_rows if r.get("archetype") == "drug_developer"]
+    cat_modes = {}
+    for r in dev_csv_rows:
+        m = r.get("catalyst_mode", "") or "_blank"
+        cat_modes[m] = cat_modes.get(m, 0) + 1
+    n_dev = len(dev_csv_rows)
+    n_specific = cat_modes.get("specific_days", 0)
+    if n_dev:
+        logger.info(f"[CATALYST] Dev coverage: {n_specific}/{n_dev} specific_days "
+                    f"({100*n_specific/n_dev:.1f}%)")
+    else:
+        logger.info("[CATALYST] No dev rows")
+    for mode, cnt in sorted(cat_modes.items(), key=lambda x: -x[1]):
+        logger.info(f"[CATALYST]   {mode}: {cnt}")
+    if n_specific > 0:
+        specific_rows = sorted(
+            [r for r in dev_csv_rows if r.get("catalyst_mode") == "specific_days"],
+            key=lambda r: float(r.get("catalyst_days") or 9999),
+        )
+        for r in specific_rows[:10]:
+            logger.info(f"[CATALYST]   {r['ticker']:6s} days={str(r.get('catalyst_days','?')):>4s} "
+                        f"tier={r.get('tier_dev','?')}")
+
     # --- Compute per-component score diagnostics ---
     score_columns = [
         "composite_score", "momentum_score", "catalyst_score",
@@ -1722,6 +1747,7 @@ def save_validation_snapshot(
     metadata = {
         "as_of_date": as_of_date,
         "saved_at": datetime.utcnow().isoformat() + "Z",
+        "decision_mode": decision_mode,
         "version": version,
         "ticker_count": len(ranked),
         "source_type": "live_pipeline_v3",
@@ -4996,11 +5022,35 @@ Module 3 Catalyst Detection:
         logger.info("=" * 60)
 
         # Load decision engine ruleset (custom JSON or built-in defaults)
-        de_ruleset = (
-            DecisionRuleset.from_json(str(args.ruleset))
-            if args.ruleset
-            else DEFAULT_RULESET
-        )
+        if args.ruleset:
+            de_ruleset = DecisionRuleset.from_json(str(args.ruleset))
+        elif args.decision_mode == "phase2":
+            if not PHASE2_DEFAULT_RULESET_PATH.exists():
+                logger.error(f"Phase-2 pinned ruleset not found: {PHASE2_DEFAULT_RULESET_PATH}")
+                return 1
+            de_ruleset = DecisionRuleset.from_json(str(PHASE2_DEFAULT_RULESET_PATH))
+            logger.info(f"Phase-2 mode: loaded pinned ruleset {de_ruleset.ruleset_id} "
+                        f"from {PHASE2_DEFAULT_RULESET_PATH.name}")
+        else:
+            de_ruleset = DEFAULT_RULESET
+
+        # Fail-closed guardrail: verify Phase-2 ruleset identity
+        if args.decision_mode == "phase2":
+            if de_ruleset.ruleset_id != PHASE2_PINNED_RULESET_ID:
+                if not args.ruleset:
+                    # Fail-closed: refuse to proceed with wrong default
+                    logger.error(
+                        f"PHASE2 GUARDRAIL: loaded ruleset {de_ruleset.ruleset_id} != "
+                        f"pinned {PHASE2_PINNED_RULESET_ID}. "
+                        f"File may be corrupted: {PHASE2_DEFAULT_RULESET_PATH}"
+                    )
+                    return 1
+                else:
+                    # User explicitly overrode — warn but allow
+                    logger.warning(
+                        f"Phase-2 ruleset override: {de_ruleset.ruleset_id} != "
+                        f"pinned {PHASE2_PINNED_RULESET_ID} (explicit --ruleset)"
+                    )
 
         # Save validation snapshot for future forward-looking backtests
         if not args.no_snapshot:
