@@ -3511,7 +3511,7 @@ def run_group_evaluation(
     for snapshot_date in usable_dates:
         tar_path = archive_by_date[snapshot_date]
         if verify_archives:
-            v = verify_archive(tar_path)
+            v = verify_archive_for_backtest(tar_path)
             if not v.get("verified"):
                 print(f"  SKIP {snapshot_date}: archive verification failed")
                 continue
