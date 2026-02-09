@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "data_dir": "/mnt/c/Projects/biotech_screener/biotech-screener/production_data",
+  "files": {
+    "universe.json": "9ddb31669c16c0126cea71d2c677931311c712e27af1c89d041f36a6e571fc0f",
+    "financial_records.json": "b4dd40943f156dbbe19db525af1fa223c5bfd50979b1bf503e6d0d491a1bbe37",
+    "trial_records.json": "caac4fe793dc7bdf616faf7ac71762446a0544e86a138555577fdd27c4578321",
+    "market_data.json": "1d3279e1388e0cd9bd20d420048b54d2ca08d7f63750851f246013e093b4dc68",
+    "decision_rulesets/v2_phase2_default.json": "ac179cef7a147596a8bf0f85601674eaf99ea986b7add4c7885888cc8de9a307",
+    "phase2_health_thresholds/v1.json": "f20afe6a208d01efc5403eb7c2f6de0daf9c4d9411e0a0c2d1e626cc8435a9d7"
+  }
+}

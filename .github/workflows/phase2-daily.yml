@@ -1,0 +1,130 @@
+name: phase2-daily
+
+on:
+  schedule:
+    # Weekdays at 2pm UTC
+    - cron: "0 14 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      as_of_date:
+        description: "Screen date (YYYY-MM-DD), defaults to today"
+        required: false
+        type: string
+
+concurrency:
+  group: phase2-daily
+  cancel-in-progress: true
+
+jobs:
+  phase2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e .
+
+      # ── Data hydrate ────────────────────────────────────────────
+      # Download a date-stamped inputs bundle from GitHub Releases.
+      # To publish a bundle:
+      #   tar -czf phase2-inputs-2026-02-09.tar.gz -C production_data .
+      #   gh release create inputs-2026-02-09 phase2-inputs-2026-02-09.tar.gz
+      #
+      # If no release exists for the date, falls back to the "latest"
+      # tag. If neither exists, the step is skipped and the workflow
+      # runs against whatever production_data is committed in the repo.
+      - name: Hydrate inputs
+        run: |
+          DATE="${{ inputs.as_of_date }}"
+          if [ -z "$DATE" ]; then
+            DATE=$(date +%Y-%m-%d)
+          fi
+          BUNDLE="phase2-inputs-${DATE}.tar.gz"
+          TAG="inputs-${DATE}"
+
+          echo "Attempting to download bundle: ${BUNDLE} (tag: ${TAG})"
+
+          if gh release download "$TAG" --pattern "$BUNDLE" --dir /tmp 2>/dev/null; then
+            echo "Downloaded date-specific bundle"
+          elif gh release download "inputs-latest" --pattern "phase2-inputs-latest.tar.gz" --dir /tmp 2>/dev/null; then
+            BUNDLE="phase2-inputs-latest.tar.gz"
+            echo "Downloaded latest bundle"
+          else
+            echo "::notice::No inputs bundle found — using committed production_data"
+            exit 0
+          fi
+
+          echo "Extracting ${BUNDLE} → production_data/"
+          tar -xzf "/tmp/${BUNDLE}" -C production_data/
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify inputs
+        run: python verify_inputs.py
+
+      # ── Screen ──────────────────────────────────────────────────
+      - name: Run Phase-2 screen
+        id: screen
+        run: |
+          set +e
+          DATE_ARG=""
+          if [ -n "${{ inputs.as_of_date }}" ]; then
+            DATE_ARG="--as-of-date ${{ inputs.as_of_date }}"
+          fi
+          python run_phase2_daily.py $DATE_ARG
+          RC=$?
+          echo "exit_code=$RC" >> "$GITHUB_OUTPUT"
+          # Don't fail yet — evaluate step handles routing
+          exit 0
+
+      # ── Artifacts ───────────────────────────────────────────────
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase2-output
+          path: |
+            output/phase2_daily.log
+            data/snapshots/
+          retention-days: 30
+
+      # ── Evaluate ────────────────────────────────────────────────
+      - name: Evaluate outcome
+        if: always()
+        run: |
+          RC=${{ steps.screen.outputs.exit_code }}
+
+          DATE="${{ inputs.as_of_date }}"
+          if [ -z "$DATE" ]; then
+            DATE=$(date +%Y-%m-%d)
+          fi
+
+          HEALTH_FILE="data/snapshots/${DATE}/phase2_health.json"
+          if [ -f "$HEALTH_FILE" ]; then
+            STATUS=$(python -c "import json,sys; h=json.load(open(sys.argv[1])); print(h['status'])" "$HEALTH_FILE")
+            REASONS=$(python -c "import json,sys; h=json.load(open(sys.argv[1])); print(', '.join(h.get('reasons',[])))" "$HEALTH_FILE")
+          else
+            STATUS="UNKNOWN"
+            REASONS="health JSON not found"
+          fi
+
+          if [ "$RC" = "0" ]; then
+            echo "Health gate: OK"
+            exit 0
+          elif [ "$RC" = "2" ]; then
+            echo "::warning::Phase-2 health WARN: ${REASONS}"
+            exit 0
+          else
+            echo "::error::Phase-2 health ${STATUS}: ${REASONS}"
+            exit 1
+          fi
