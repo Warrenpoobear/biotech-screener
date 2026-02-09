@@ -1,6 +1,7 @@
 {
   "fail_a_count_min": 1,
   "fail_catalyst_coverage_min": 20.0,
+  "fail_optionality_coverage_min": 80.0,
   "warn_a_count_low": 2,
   "warn_catalyst_drop_pp": 5.0,
   "warn_turnover_pct": 50.0,

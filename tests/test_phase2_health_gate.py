@@ -16,6 +16,8 @@ from run_phase2_snapshot_delta import (
     generate_report,
     FAIL_A_COUNT_MIN,
     FAIL_CATALYST_COVERAGE_MIN,
+    FAIL_OPTIONALITY_COVERAGE_MIN,
+    PHASE2_A_FLOOR,
     PHASE2_PINNED_RULESET_ID,
     WARN_A_COUNT_LOW,
     WARN_CATALYST_DROP_PP,
@@ -136,23 +138,51 @@ class TestFailRulesetMismatch:
 
 
 # ---------------------------------------------------------------------------
-# 2. FAIL: no A-tier
+# 2. FAIL/WARN: no A-tier (split by optionality coverage)
 # ---------------------------------------------------------------------------
 
-class TestFailNoATier:
-    def test_zero_a_tier(self):
+class TestNoATierSplit:
+    def test_zero_a_low_optionality_coverage(self):
+        """Zero A-tier + low optionality coverage → FAIL optionality_broken."""
+        # All optionality values are blank/NaN → coverage = 0%
         rankings = _make_rankings_df(
             ["T1", "T2", "T3"],
             tiers=["C", "C", "D"],
             catalyst_modes=["specific_days", "specific_days", "specific_days"],
         )
+        rankings["clinical_optionality_pct_dev"] = ""  # blank = no data
         portfolio = _make_portfolio_df(["T1", "T2"])
         snap = _make_snapshot("2026-02-09", rankings, portfolio)
         from run_phase2_snapshot_delta import compute_single_snapshot_summary
         result = compute_single_snapshot_summary(snap)
         health = compute_health_gate(snap, None, result)
         assert health.status == "FAIL"
-        assert "no_a_tier" in health.reasons
+        assert "optionality_broken" in health.reasons
+        assert "no_a_tier" not in health.reasons
+        # Metrics should include diagnostic
+        assert "dev_optionality_coverage_pct" in health.metrics
+        assert health.metrics["dev_optionality_coverage_pct"] == 0.0
+
+    def test_zero_a_good_optionality_coverage(self):
+        """Zero A-tier + good optionality coverage → WARN no_a_tier_regime."""
+        # Full optionality data (all 0.6), zero A-tier because no near catalyst
+        rankings = _make_rankings_df(
+            ["T1", "T2", "T3"],
+            tiers=["C", "C", "D"],
+            catalyst_modes=["specific_days", "specific_days", "specific_days"],
+        )
+        # clinical_optionality_pct_dev defaults to 0.6 in _make_rankings_df
+        portfolio = _make_portfolio_df(["T1", "T2"])
+        snap = _make_snapshot("2026-02-09", rankings, portfolio)
+        from run_phase2_snapshot_delta import compute_single_snapshot_summary
+        result = compute_single_snapshot_summary(snap)
+        health = compute_health_gate(snap, None, result)
+        assert health.status == "WARN"
+        assert "no_a_tier_regime" in health.reasons
+        assert "optionality_broken" not in health.reasons
+        # Metrics should include diagnostic
+        assert health.metrics["dev_optionality_coverage_pct"] == 100.0
+        assert health.metrics["dev_above_a_floor_count"] == 3  # all 0.6 >= 0.55
 
 
 # ---------------------------------------------------------------------------
@@ -344,6 +374,7 @@ class TestHealthJsonStructure:
         # Thresholds should contain all gate constants
         assert "fail_catalyst_coverage_min" in hj["thresholds"]
         assert "fail_a_count_min" in hj["thresholds"]
+        assert "fail_optionality_coverage_min" in hj["thresholds"]
         assert "warn_a_count_low" in hj["thresholds"]
         assert "warn_turnover_pct" in hj["thresholds"]
         assert "warn_weight_l1_pct" in hj["thresholds"]
@@ -386,7 +417,7 @@ class TestPinnedThresholds:
     def test_default_thresholds_id_pinned(self):
         """Default thresholds must produce the pinned ID."""
         from run_phase2_snapshot_delta import DEFAULT_HEALTH_THRESHOLDS
-        assert DEFAULT_HEALTH_THRESHOLDS.thresholds_id == "8d6e02d4"
+        assert DEFAULT_HEALTH_THRESHOLDS.thresholds_id == "26f0d3d2"
 
     def test_production_json_matches_defaults(self):
         """Production v1.json must round-trip to the same thresholds as defaults."""

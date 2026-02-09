@@ -29,6 +29,7 @@ from typing import Dict, List, Optional, Tuple
 # Guardrail thresholds
 # ---------------------------------------------------------------------------
 PHASE2_PINNED_RULESET_ID = "d3cdf5c8"
+PHASE2_A_FLOOR = 0.55  # Phase-2 ruleset a_floor; used by optionality diagnostic
 WARN_NAME_TURNOVER_PCT = 40.0
 WARN_A_COUNT_MIN = 1
 WARN_CATALYST_COVERAGE_MIN = 50.0  # specific_days % among dev-stage
@@ -47,6 +48,7 @@ class Phase2HealthThresholds:
     # FAIL gates — data feed is broken
     fail_catalyst_coverage_min: float = 20.0   # below this = catalyst feed broken
     fail_a_count_min: int = 1                  # Phase-2 requires tier separation
+    fail_optionality_coverage_min: float = 80.0  # below this = optionality feed broken
 
     # WARN gates — operational concern
     warn_a_count_low: int = 2                  # too concentrated (calibrated: P50=2, P90=5)
@@ -84,6 +86,7 @@ DEFAULT_HEALTH_THRESHOLDS = Phase2HealthThresholds()
 # Backward-compat module-level aliases (used by tests and calibration harness)
 FAIL_CATALYST_COVERAGE_MIN = DEFAULT_HEALTH_THRESHOLDS.fail_catalyst_coverage_min
 FAIL_A_COUNT_MIN = DEFAULT_HEALTH_THRESHOLDS.fail_a_count_min
+FAIL_OPTIONALITY_COVERAGE_MIN = DEFAULT_HEALTH_THRESHOLDS.fail_optionality_coverage_min
 WARN_A_COUNT_LOW = DEFAULT_HEALTH_THRESHOLDS.warn_a_count_low
 WARN_TURNOVER_PCT = DEFAULT_HEALTH_THRESHOLDS.warn_turnover_pct
 WARN_WEIGHT_L1_PCT = DEFAULT_HEALTH_THRESHOLDS.warn_weight_l1_pct
@@ -525,6 +528,42 @@ def compute_single_snapshot_summary(snap: SnapshotData) -> SingleResult:
 
 
 # ---------------------------------------------------------------------------
+# Optionality diagnostic
+# ---------------------------------------------------------------------------
+
+def _optionality_diagnostic(rankings: pd.DataFrame, a_floor: float) -> dict:
+    """Compute optionality coverage and A-candidate stats for dev-stage names."""
+    dev = rankings[rankings["archetype"] == "drug_developer"]
+    n_dev = len(dev)
+    if n_dev == 0:
+        return {
+            "n_dev": 0,
+            "n_with_optionality": 0,
+            "dev_optionality_coverage_pct": 0.0,
+            "dev_above_a_floor_count": 0,
+            "a_floor": a_floor,
+            "quantiles": {},
+        }
+    opts = pd.to_numeric(dev["clinical_optionality_pct_dev"], errors="coerce")
+    n_with_opt = int(opts.notna().sum())
+    coverage_pct = round(n_with_opt / n_dev * 100, 1)
+    above_floor = int((opts >= a_floor).sum())
+    quantiles = {} if opts.dropna().empty else {
+        "p50": round(float(opts.quantile(0.5)), 4),
+        "p75": round(float(opts.quantile(0.75)), 4),
+        "p90": round(float(opts.quantile(0.9)), 4),
+    }
+    return {
+        "n_dev": n_dev,
+        "n_with_optionality": n_with_opt,
+        "dev_optionality_coverage_pct": coverage_pct,
+        "dev_above_a_floor_count": above_floor,
+        "a_floor": a_floor,
+        "quantiles": quantiles,
+    }
+
+
+# ---------------------------------------------------------------------------
 # Health gate
 # ---------------------------------------------------------------------------
 
@@ -539,6 +578,7 @@ def compute_health_gate(
     is_delta = isinstance(result, DeltaResult)
     fail_reasons: List[str] = []
     warn_reasons: List[str] = []
+    opt_diag = None  # populated lazily when A-count is below threshold
 
     tier_counts = result.tier_counts_current if is_delta else result.tier_counts
     cat_cov = result.catalyst_coverage_current if is_delta else result.catalyst_coverage
@@ -551,7 +591,12 @@ def compute_health_gate(
         fail_reasons.append("no_portfolio")
 
     if tier_counts.get("A", 0) < th.fail_a_count_min:
-        fail_reasons.append("no_a_tier")
+        opt_diag = _optionality_diagnostic(current.rankings, a_floor=PHASE2_A_FLOOR)
+        if opt_diag["dev_optionality_coverage_pct"] < th.fail_optionality_coverage_min:
+            fail_reasons.append("optionality_broken")
+        else:
+            # Coverage is fine but nothing clears all A requirements — legit regime
+            warn_reasons.append("no_a_tier_regime")
 
     if cat_cov.pct < th.fail_catalyst_coverage_min:
         fail_reasons.append("catalyst_broken")
@@ -570,9 +615,10 @@ def compute_health_gate(
             if cat_drop > th.warn_catalyst_drop_pp:
                 warn_reasons.append("catalyst_drop")
 
-    # low_a_tier: above FAIL threshold but below WARN threshold
+    # low_a_tier: above zero but below WARN threshold
+    # (when a_count == 0 with good coverage, no_a_tier_regime already fires)
     a_count = tier_counts.get("A", 0)
-    if a_count >= th.fail_a_count_min and a_count < th.warn_a_count_low:
+    if a_count > 0 and a_count < th.warn_a_count_low:
         warn_reasons.append("low_a_tier")
 
     # --- Resolve status ---
@@ -597,6 +643,12 @@ def compute_health_gate(
         metrics["name_turnover_pct"] = result.name_turnover_pct
         metrics["weight_l1_delta"] = result.weight_l1_delta
 
+    # Attach optionality diagnostic when computed (A-count below threshold)
+    if opt_diag is not None:
+        metrics["dev_optionality_coverage_pct"] = opt_diag["dev_optionality_coverage_pct"]
+        metrics["dev_above_a_floor_count"] = opt_diag["dev_above_a_floor_count"]
+        metrics["optionality_diagnostic"] = opt_diag
+
     return HealthResult(status=status, reasons=reasons, metrics=metrics)
 
 
@@ -614,6 +666,7 @@ def generate_health_json(
         "thresholds": {
             "fail_catalyst_coverage_min": th.fail_catalyst_coverage_min,
             "fail_a_count_min": th.fail_a_count_min,
+            "fail_optionality_coverage_min": th.fail_optionality_coverage_min,
             "warn_a_count_low": th.warn_a_count_low,
             "warn_turnover_pct": th.warn_turnover_pct,
             "warn_weight_l1_pct": th.warn_weight_l1_pct,
@@ -727,6 +780,23 @@ def generate_report(
             pct_c = (c / n_c * 100) if n_c else 0
             lines.append(f"    {tier}: {c} ({pct_c:.0f}%)")
     lines.append("")
+
+    # --- Optionality diagnostic (when A-count is low) ---
+    if health is not None and health.metrics.get("optionality_diagnostic"):
+        od = health.metrics["optionality_diagnostic"]
+        lines.append("OPTIONALITY DIAGNOSTIC")
+        lines.append("-" * W)
+        lines.append(f"  Dev-stage names:       {od['n_dev']}")
+        lines.append(
+            f"  With optionality data: {od['n_with_optionality']}  ({od['dev_optionality_coverage_pct']}%)"
+        )
+        lines.append(f"  Above a_floor ({od['a_floor']}):   {od['dev_above_a_floor_count']}")
+        if od.get("quantiles"):
+            q = od["quantiles"]
+            lines.append(
+                f"  Quantiles: P50={q.get('p50', 'N/A')}  P75={q.get('p75', 'N/A')}  P90={q.get('p90', 'N/A')}"
+            )
+        lines.append("")
 
     # --- Section 3: Sizing ---
     lines.append("3. SIZING (portfolio)")

@@ -319,6 +319,8 @@ def run_calibration(
                 "catalyst_drop_pp": None,
                 "n_entrants": None,
                 "n_exits": None,
+                "dev_optionality_coverage_pct": health.metrics.get("dev_optionality_coverage_pct"),
+                "dev_above_a_floor_count": health.metrics.get("dev_above_a_floor_count"),
             })
         else:
             prior = snapshots[idx - 1]
@@ -342,6 +344,8 @@ def run_calibration(
                 "catalyst_drop_pp": round(cat_drop, 1),
                 "n_entrants": len(result.entrants),
                 "n_exits": len(result.exits),
+                "dev_optionality_coverage_pct": health.metrics.get("dev_optionality_coverage_pct"),
+                "dev_above_a_floor_count": health.metrics.get("dev_above_a_floor_count"),
             })
 
     # --- Phase 3: Compute summary statistics ---
@@ -399,6 +403,7 @@ def run_calibration(
         "thresholds_tested": {
             "fail_catalyst_coverage_min": ht.fail_catalyst_coverage_min,
             "fail_a_count_min": ht.fail_a_count_min,
+            "fail_optionality_coverage_min": ht.fail_optionality_coverage_min,
             "warn_a_count_low": ht.warn_a_count_low,
             "warn_turnover_pct": ht.warn_turnover_pct,
             "warn_weight_l1_pct": ht.warn_weight_l1_pct,
@@ -418,6 +423,8 @@ def run_calibration(
                 "catalyst_drop_pp": r["catalyst_drop_pp"],
                 "n_entrants": r["n_entrants"],
                 "n_exits": r["n_exits"],
+                "dev_optionality_coverage_pct": r.get("dev_optionality_coverage_pct"),
+                "dev_above_a_floor_count": r.get("dev_above_a_floor_count"),
             }
             for r in per_date_records
         ],

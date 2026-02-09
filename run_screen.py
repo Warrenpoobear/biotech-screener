@@ -1337,7 +1337,7 @@ PHASE2_DEFAULT_HEALTH_THRESHOLDS_PATH = (
     Path(__file__).resolve().parent
     / "production_data" / "phase2_health_thresholds" / "v1.json"
 )
-PHASE2_PINNED_THRESHOLDS_ID = "8d6e02d4"
+PHASE2_PINNED_THRESHOLDS_ID = "26f0d3d2"
 
 
 def save_validation_snapshot(
