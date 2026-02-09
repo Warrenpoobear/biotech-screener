@@ -14,14 +14,14 @@ Fields available from archive inputs:
   - defensive_features (vol_60d)             → universe.json
 
 Fields NOT available (set to None / missing):
-  - coinvest tier1_count                     → blank
-  - drawdown, rsi_14d, beta_xbi_60d         → blank (only vol_60d available)
   - fundamental_red_flag                     → False (SEV3 gate still works)
-  - momentum alpha_60d                       → not directly stored; set neutral
 
-Net result: Tier differentiation (A/B/C/D) works because it depends on
-optionality + catalyst — both available. Sizing/risk overlays are partially
-degraded (missing drawdown, rsi, beta_xbi, tier1_count).
+When decision_inputs.json sidecar is present (from enrich_archive_inputs.py),
+the following fields are enriched from price history + trials + holdings:
+  - coinvest tier1_count                     → from holdings + elite_managers
+  - drawdown, rsi_14d, beta_xbi_60d         → from price history
+  - momentum alpha_60d                       → from price history
+  - catalyst days_to_catalyst                → from trial_records + pdufa_dates
 """
 from __future__ import annotations
 
@@ -145,15 +145,37 @@ def _load_defensive_map(inputs_dir: Path) -> Dict[str, Dict[str, Any]]:
     return defensive_map
 
 
+def _load_decision_inputs(inputs_dir: Path) -> Dict[str, Dict[str, Any]]:
+    """Load enriched decision_inputs.json sidecar if present.
+
+    Returns {ticker: {beta_xbi_60d, drawdown, rsi_14d, return_60d,
+                      alpha_60d, days_to_catalyst, in_optimal_window,
+                      catalyst_source, catalyst_event_type, tier1_count}}.
+    """
+    sidecar_path = inputs_dir / "decision_inputs.json"
+    if not sidecar_path.exists():
+        return {}
+    with open(sidecar_path, "r") as f:
+        return json.load(f)
+
+
+
 def build_rec(
     row: Dict[str, str],
     catalyst_map: Dict[str, Dict[str, Any]],
     holdings_map: Dict[str, Dict[str, Any]],
     defensive_map: Dict[str, Dict[str, Any]],
+    enriched: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
-    """Reconstruct a minimal rec dict from CSV row + enrichment maps."""
+    """Reconstruct a minimal rec dict from CSV row + enrichment maps.
+
+    When `enriched` is provided (from decision_inputs.json sidecar),
+    it overrides catalyst, defensive, coinvest, and momentum fields
+    with price-history-derived values.
+    """
     ticker = row.get("ticker", "").strip().upper()
     rec: Dict[str, Any] = {}
+    enriched = enriched or {}
 
     # Severity and confidence from CSV
     rec["severity"] = row.get("severity", "").strip()
@@ -164,8 +186,13 @@ def build_rec(
     # (SEV3 gate in eligibility still works via severity field)
     rec["fundamental_red_flag"] = False
 
-    # Catalyst from archive input
-    if ticker in catalyst_map:
+    # Catalyst: prefer enriched (trials+PDUFA) over archive catalyst_events JSON
+    if "days_to_catalyst" in enriched:
+        rec["catalyst_decay"] = {
+            "days_to_catalyst": enriched["days_to_catalyst"],
+            "in_optimal_window": enriched.get("in_optimal_window", False),
+        }
+    elif ticker in catalyst_map:
         rec["catalyst_decay"] = catalyst_map[ticker]
     else:
         rec["catalyst_decay"] = {}
@@ -176,18 +203,28 @@ def build_rec(
     else:
         rec["smart_money_signal"] = {}
 
-    # coinvest: not available in archive → leave empty so tier1_count = blank
-    rec["coinvest"] = {}
-
-    # Defensive features from universe.json
-    if ticker in defensive_map:
-        rec["defensive_features"] = defensive_map[ticker]
+    # Coinvest: prefer enriched tier1_count
+    if "tier1_count" in enriched:
+        rec["coinvest"] = {"tier1_count": enriched["tier1_count"]}
     else:
-        rec["defensive_features"] = {}
+        rec["coinvest"] = {}
 
-    # Momentum: not directly available from archive inputs.
-    # alpha_60d not stored. Set empty so mom_state = "neutral".
-    rec["score_breakdown"] = {}
+    # Defensive features: merge archive vol_60d with enriched beta/dd/rsi
+    base_def = dict(defensive_map.get(ticker, {}))
+    for key in ("beta_xbi_60d", "drawdown", "rsi_14d"):
+        if key in enriched:
+            base_def[key] = enriched[key]
+    rec["defensive_features"] = base_def
+
+    # Momentum: use enriched alpha_60d if available
+    if "alpha_60d" in enriched:
+        rec["score_breakdown"] = {
+            "enhancements": {
+                "momentum": {"alpha_60d": enriched["alpha_60d"]}
+            }
+        }
+    else:
+        rec["score_breakdown"] = {}
     rec["momentum_signal"] = {}
 
     return rec
@@ -234,6 +271,7 @@ def process_archive(tar_path: Path, dry_run: bool = False) -> Dict[str, Any]:
         catalyst_map = _load_catalyst_map(inputs_dir) if inputs_dir.exists() else {}
         holdings_map = _load_holdings_map(inputs_dir) if inputs_dir.exists() else {}
         defensive_map = _load_defensive_map(inputs_dir) if inputs_dir.exists() else {}
+        decision_inputs = _load_decision_inputs(inputs_dir) if inputs_dir.exists() else {}
 
         # Read existing CSV
         with open(csv_path, "r", newline="", encoding="utf-8-sig") as f:
@@ -265,8 +303,9 @@ def process_archive(tar_path: Path, dry_run: bool = False) -> Dict[str, Any]:
                 except ValueError:
                     pass
 
-            # Build minimal rec dict
-            rec = build_rec(row, catalyst_map, holdings_map, defensive_map)
+            # Build minimal rec dict (with enriched sidecar if available)
+            enriched = decision_inputs.get(ticker, {})
+            rec = build_rec(row, catalyst_map, holdings_map, defensive_map, enriched)
 
             # Call decision engine
             fields = compute_decision_fields(rec, archetype, optionality)

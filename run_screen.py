@@ -1298,6 +1298,11 @@ SNAPSHOT_COLUMNS = [
     "runway_bucket", "mom_state", "risk_flags",
     "size_band", "size_reasons",
     "tier_dev", "tier_reason",
+    # Decision Engine input columns (for archive self-containment)
+    "de_catalyst_days", "de_catalyst_in_window", "de_catalyst_mode",
+    "de_alpha_60d",
+    "de_tier1_count",
+    "de_beta_xbi_60d", "de_drawdown", "de_rsi_14d",
 ]
 
 
@@ -1413,6 +1418,26 @@ def save_validation_snapshot(
         opt_float = float(opt) if opt is not None else None
         decision = compute_decision_fields(rec, arch, opt_float)
         row.update(decision)
+
+        # Persist decision engine INPUT fields for archive self-containment.
+        # These de_-prefixed columns capture the raw inputs the engine read,
+        # so future archives don't need enrichment scripts.
+        cd = rec.get("catalyst_decay") or {}
+        df = rec.get("defensive_features") or {}
+        coinv = rec.get("coinvest") or {}
+        mom_enh = (rec.get("score_breakdown") or {}).get("enhancements", {}).get("momentum") or {}
+        row["de_catalyst_days"] = cd.get("days_to_catalyst", "")
+        row["de_catalyst_in_window"] = cd.get("in_optimal_window", "")
+        row["de_catalyst_mode"] = decision.get("catalyst_mode", "")
+        row["de_alpha_60d"] = mom_enh.get("alpha_60d", "")
+        if row["de_alpha_60d"] == "":
+            mom_top = rec.get("momentum_signal") or {}
+            row["de_alpha_60d"] = mom_top.get("alpha_60d", "")
+        t1 = coinv.get("tier1_count")
+        row["de_tier1_count"] = t1 if t1 is not None else ""
+        row["de_beta_xbi_60d"] = df.get("beta_xbi_60d", "")
+        row["de_drawdown"] = df.get("drawdown", "")
+        row["de_rsi_14d"] = df.get("rsi_14d", "")
 
     # --- Write rankings CSV ---
     csv_path = snap_path / "rankings.csv"
