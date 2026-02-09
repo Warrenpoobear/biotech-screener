@@ -26,10 +26,10 @@ pytest-timeout==2.2.0
 # ----------------------------------------------------------------------------
 # Data Analysis (Optional - for extended features)
 # ----------------------------------------------------------------------------
-# Uncomment if using data collection scripts
-# pandas==2.1.4
-# numpy==1.26.3
-# requests==2.31.0
+# pandas/numpy are required by the screening pipeline (Module 5 defensive overlay)
+pandas==2.1.4
+numpy==1.26.3
+requests==2.31.0
 
 # ----------------------------------------------------------------------------
 # Development Tools (Optional)
