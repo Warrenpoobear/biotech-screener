@@ -127,3 +127,11 @@ production_data/morningstar_returns_history.json
 cache/
 .mcp.json
 data/snapshots_v3_tiltfix/
+data/grid_search/
+
+# --- Backfill / enrichment logs ---
+backfill_logs/
+backfill_results/
+
+# --- One-off scripts (not part of core pipeline) ---
+run_attn_grid_search.py
