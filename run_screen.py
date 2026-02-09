@@ -116,6 +116,7 @@ from production_validation import validate_screening_output
 from decision_engine import (
     DecisionRuleset,
     DEFAULT_RULESET,
+    VERSION as DE_VERSION,
     compute_decision_fields,
     compute_actionable_sort_key,
     compute_target_weights,
@@ -1314,6 +1315,24 @@ SNAPSHOT_COLUMNS = [
     "de_beta_xbi_60d", "de_drawdown", "de_rsi_14d",
 ]
 
+# Phase-2 decision portfolio output columns
+PHASE2_PORTFOLIO_COLUMNS = [
+    "ticker", "tier_dev", "actionable_rank", "size_band",
+    "target_weight_pct", "tier_reason", "size_reasons",
+    "catalyst_mode", "catalyst_days", "mom_state", "risk_flags",
+    "composite_rank", "composite_score", "archetype",
+    "clinical_optionality_pct_dev",
+    "decision_engine_version", "decision_engine_ruleset_id",
+]
+
+# Phase-2 operational defaults
+PHASE2_DEFAULT_RULESET_PATH = (
+    Path(__file__).resolve().parent
+    / "production_data" / "decision_rulesets" / "v2_phase2_default.json"
+)
+PHASE2_DEFAULT_TIER_FILTER = ["A", "B"]
+PHASE2_DEFAULT_TOP_K = 20
+
 
 def save_validation_snapshot(
     snapshot_dir: Path,
@@ -1339,8 +1358,9 @@ def save_validation_snapshot(
         as_of_date: Screen date string (YYYY-MM-DD)
         results: Full pipeline results dict
         version: Pipeline version string
-        decision_mode: "observe" (sort by composite_rank) or "actionable"
-                       (sort by tier-based deterministic ordering)
+        decision_mode: "observe" (sort by composite_rank), "actionable"
+                       (sort by tier-based deterministic ordering), or "phase2"
+                       (observe + emit decision_portfolio.csv/json with A+B filter)
         ruleset: DecisionRuleset config (defaults to DEFAULT_RULESET)
 
     Returns:
@@ -1477,8 +1497,8 @@ def save_validation_snapshot(
     # Compute target weights for eligible rows
     compute_target_weights(eligible_rows, ruleset=ruleset)
 
-    # In observe mode, re-sort by composite_rank (original behavior)
-    if decision_mode == "observe":
+    # In observe/phase2 mode, re-sort rankings.csv by composite_rank
+    if decision_mode in ("observe", "phase2"):
         csv_rows.sort(key=lambda r: (
             int(r["composite_rank"]) if r.get("composite_rank") not in (None, "") else 9999,
             r.get("ticker", ""),
@@ -1502,6 +1522,102 @@ def save_validation_snapshot(
         rs.to_json(str(snap_path / "decision_ruleset.json"))
     except OSError as e:
         logger.warning(f"Could not write decision_ruleset.json: {e}")
+
+    # --- Phase-2 portfolio output (filtered A+B, top-K, sized) ---
+    if decision_mode == "phase2":
+        tier_filter = PHASE2_DEFAULT_TIER_FILTER
+        top_k = PHASE2_DEFAULT_TOP_K
+
+        # Filter to eligible dev-stage A+B, already have actionable_rank from above
+        portfolio_rows = [
+            r for r in eligible_rows
+            if r.get("archetype") == "drug_developer"
+            and r.get("tier_dev") in tier_filter
+        ]
+        # Sort by actionable sort key (eligible_rows are already sorted this way
+        # from the sort above, but re-sort to be defensive)
+        portfolio_rows.sort(key=lambda r: compute_actionable_sort_key(
+            decision_fields=r,
+            archetype=r.get("archetype", ""),
+            optionality=float(r["clinical_optionality_pct_dev"])
+                if r.get("clinical_optionality_pct_dev") not in (None, "")
+                else None,
+            composite_rank=r.get("composite_rank"),
+            ticker=r.get("ticker", ""),
+        ))
+        portfolio_rows = portfolio_rows[:top_k]
+
+        # Re-assign actionable_rank 1..N for the filtered set
+        for i, row in enumerate(portfolio_rows, start=1):
+            row["actionable_rank"] = i
+
+        # Re-compute weights for the filtered portfolio
+        compute_target_weights(portfolio_rows, ruleset=rs)
+
+        # Write decision_portfolio.csv
+        portfolio_csv_path = snap_path / "decision_portfolio.csv"
+        try:
+            with open(portfolio_csv_path, "w", newline="", encoding="utf-8") as f:
+                writer = csv.DictWriter(
+                    f, fieldnames=PHASE2_PORTFOLIO_COLUMNS, extrasaction="ignore",
+                )
+                writer.writeheader()
+                for row in portfolio_rows:
+                    writer.writerow(row)
+            logger.info(
+                f"Phase-2 portfolio: {len(portfolio_rows)} positions -> "
+                f"{portfolio_csv_path.name}"
+            )
+        except OSError as e:
+            logger.warning(f"Could not write decision_portfolio.csv: {e}")
+
+        # Write decision_portfolio.json (structured payload)
+        portfolio_json_path = snap_path / "decision_portfolio.json"
+        try:
+            portfolio_payload = {
+                "snapshot_date": as_of_date,
+                "decision_engine_version": DE_VERSION,
+                "ruleset_id": rs.ruleset_id,
+                "ruleset_path": str(
+                    PHASE2_DEFAULT_RULESET_PATH
+                    if PHASE2_DEFAULT_RULESET_PATH.exists()
+                    else "built-in"
+                ),
+                "tier_filter": tier_filter,
+                "top_k": top_k,
+                "n_positions": len(portfolio_rows),
+                "total_weight_pct": round(
+                    sum(
+                        float(r.get("target_weight_pct", 0))
+                        for r in portfolio_rows
+                        if r.get("target_weight_pct") not in (None, "")
+                    ),
+                    2,
+                ),
+                "positions": [
+                    {
+                        "ticker": r.get("ticker", ""),
+                        "tier_dev": r.get("tier_dev", ""),
+                        "actionable_rank": r.get("actionable_rank", ""),
+                        "size_band": r.get("size_band", ""),
+                        "target_weight_pct": r.get("target_weight_pct", ""),
+                        "tier_reason": r.get("tier_reason", ""),
+                        "catalyst_mode": r.get("catalyst_mode", ""),
+                        "catalyst_days": r.get("catalyst_days", ""),
+                        "mom_state": r.get("mom_state", ""),
+                        "risk_flags": r.get("risk_flags", ""),
+                        "composite_rank": r.get("composite_rank", ""),
+                        "composite_score": r.get("composite_score", ""),
+                    }
+                    for r in portfolio_rows
+                ],
+            }
+            with open(portfolio_json_path, "w", encoding="utf-8") as f:
+                json.dump(portfolio_payload, f, indent=2, default=str)
+                f.write("\n")
+            logger.info(f"Phase-2 portfolio JSON -> {portfolio_json_path.name}")
+        except OSError as e:
+            logger.warning(f"Could not write decision_portfolio.json: {e}")
 
     # --- Compute per-component score diagnostics ---
     score_columns = [
@@ -4274,9 +4390,11 @@ Module 3 Catalyst Detection:
         "--decision-mode",
         type=str,
         default="observe",
-        choices=["observe", "actionable"],
-        help="Decision output mode: observe (default, sort by composite_rank) or "
-             "actionable (sort by tier-based deterministic ordering with target weights).",
+        choices=["observe", "actionable", "phase2"],
+        help="Decision output mode: observe (default, sort by composite_rank), "
+             "actionable (sort by tier-based deterministic ordering with target weights), "
+             "or phase2 (observe + emit filtered decision_portfolio.csv/json with "
+             "A+B tier filter, top-K=20, size-band weights).",
     )
 
     parser.add_argument(
