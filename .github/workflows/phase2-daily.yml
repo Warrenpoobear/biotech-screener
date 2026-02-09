@@ -101,6 +101,28 @@ jobs:
       - name: Decision engine replay regression
         run: python -m pytest tests/test_decision_engine_replay_regression.py -v --tb=short
 
+      - name: Generate decision engine QA report
+        if: always()
+        run: |
+          SNAP_DIR="data/snapshots/$(ls -1 data/snapshots/ | sort | tail -1)"
+          python scripts/decision_engine_qa_report.py \
+            --snapshot-dir "$SNAP_DIR" --output-dir output
+
+      - name: Validate QA report
+        if: always()
+        run: |
+          python -c "
+          import json, sys
+          qa = json.load(open('output/decision_engine_qa.json'))
+          assert 'overall_status' in qa, 'Missing overall_status'
+          assert 'sections' in qa, 'Missing sections'
+          if qa['overall_status'] == 'FAIL':
+              reasons = [s for s,v in qa['sections'].items() if v.get('status')=='FAIL']
+              print(f'::error::QA FAIL in: {reasons}', file=sys.stderr)
+              sys.exit(1)
+          print(f'QA status: {qa[\"overall_status\"]}')
+          "
+
       # ── Artifacts ───────────────────────────────────────────────
       - name: Upload artifacts
         if: always()
@@ -110,6 +132,8 @@ jobs:
           path: |
             output/phase2_daily.log
             output/phase2_daily_wrapper.log
+            output/decision_engine_qa.json
+            output/decision_engine_qa.md
             data/snapshots/
           retention-days: 30
 
