@@ -1312,7 +1312,7 @@ SNAPSHOT_COLUMNS = [
     "de_catalyst_days", "de_catalyst_in_window", "de_catalyst_mode",
     "de_alpha_60d",
     "de_tier1_count",
-    "de_beta_xbi_60d", "de_drawdown", "de_rsi_14d",
+    "de_beta_xbi_60d", "de_drawdown", "de_drawdown_missing_reason", "de_rsi_14d",
 ]
 
 # Phase-2 decision portfolio output columns
@@ -1340,6 +1340,11 @@ PHASE2_DEFAULT_HEALTH_THRESHOLDS_PATH = (
 PHASE2_PINNED_THRESHOLDS_ID = "26f0d3d2"
 
 
+MIN_BARS_FOR_ESTIMATE = 126  # trading bars (rows), half of 252-bar window; below this drawdown is unreliable
+
+VALID_DRAWDOWN_MISSING_REASONS = frozenset({"", "no_price_series", "series_too_short"})
+
+
 def _hydrate_drawdown(
     rec_by_ticker: Dict[str, Dict[str, Any]],
     price_history_path: Optional[Path],
@@ -1356,6 +1361,11 @@ def _hydrate_drawdown(
     252-day drawdown ``(current / peak) - 1.0`` and write into
     ``defensive_features["drawdown"]``.
 
+    Also writes ``defensive_features["drawdown_missing_reason"]``:
+      - ``""`` — drawdown is present (computed or normalized)
+      - ``"no_price_series"`` — ticker not found in price_history.csv
+      - ``"series_too_short"`` — has price data but bars < MIN_BARS_FOR_ESTIMATE
+
     Returns the number of records hydrated (either normalized or computed).
     """
     import csv as _csv
@@ -1370,11 +1380,13 @@ def _hydrate_drawdown(
             df = {}
             rec["defensive_features"] = df
         if df.get("drawdown") is not None:
+            df["drawdown_missing_reason"] = ""
             continue
         for alt_key in ("drawdown_current", "drawdown_60d"):
             val = df.get(alt_key)
             if val is not None:
                 df["drawdown"] = val
+                df["drawdown_missing_reason"] = ""
                 hydrated += 1
                 break
 
@@ -1382,6 +1394,14 @@ def _hydrate_drawdown(
     still_missing = [t for t, r in rec_by_ticker.items()
                      if (r.get("defensive_features") or {}).get("drawdown") is None]
     if not still_missing or price_history_path is None or not price_history_path.exists():
+        # Tag remaining missing tickers with reason (no CSV available)
+        for t in still_missing if still_missing else []:
+            df = rec_by_ticker[t].get("defensive_features")
+            if df is None:
+                df = {}
+                rec_by_ticker[t]["defensive_features"] = df
+            if "drawdown_missing_reason" not in df:
+                df["drawdown_missing_reason"] = "no_price_series"
         return hydrated
 
     try:
@@ -1391,12 +1411,31 @@ def _hydrate_drawdown(
         return hydrated
 
     missing_set = set(still_missing)
+
+    # --- Symbol alias variants ---
+    # For each missing ticker, generate deterministic alias variants
+    # (dot↔dash, strip whitespace) to match against CSV symbols.
+    def _alias_variants(sym: str) -> List[str]:
+        s = sym.strip().upper()
+        variants = [s]
+        if "." in s:
+            variants.append(s.replace(".", "-"))
+        if "-" in s:
+            variants.append(s.replace("-", "."))
+        return variants
+
+    # Build set of all symbols we want from the CSV: exact + alias variants
+    alias_targets: set = set()
+    for t in missing_set:
+        for v in _alias_variants(t):
+            alias_targets.add(v)
+
     prices_by_ticker: Dict[str, List[float]] = {}
     with open(price_history_path, "r", encoding="utf-8") as fh:
         reader = _csv.DictReader(fh)
         for row in reader:
             ticker = (row.get("ticker") or "").upper()
-            if ticker not in missing_set:
+            if ticker not in missing_set and ticker not in alias_targets:
                 continue
             date_str = row.get("date", "")
             close_str = row.get("close", "")
@@ -1416,25 +1455,66 @@ def _hydrate_drawdown(
                 continue
             prices_by_ticker.setdefault(ticker, []).append((row_date, close))
 
+    # --- Build alias index: variant → CSV symbol ---
+    # For CSV symbols NOT already exact-matched, check if they are alias
+    # variants of any missing ticker.  On collision, keep lexicographically
+    # smallest CSV symbol for determinism.
+    alias_to_csv_sym: Dict[str, str] = {}
+    csv_syms_with_data = set(prices_by_ticker.keys())
+    for csv_sym in sorted(csv_syms_with_data):  # sorted → deterministic
+        for v in _alias_variants(csv_sym):
+            if v in missing_set and v not in prices_by_ticker:
+                # This CSV symbol is an alias for missing ticker v
+                if v not in alias_to_csv_sym:
+                    alias_to_csv_sym[v] = csv_sym
+
     WINDOW = 252
     for ticker in still_missing:
-        series = prices_by_ticker.get(ticker)
-        if not series or len(series) < 2:
-            continue
-        series.sort(key=lambda x: x[0])
-        closes = [p for _, p in series]
-        look = closes[-WINDOW:] if len(closes) >= WINDOW else closes
-        peak = max(look)
-        if peak == 0:
-            continue
-        dd = (closes[-1] / peak) - 1.0
         rec = rec_by_ticker[ticker]
         df = rec.get("defensive_features")
         if df is None:
             df = {}
             rec["defensive_features"] = df
+
+        # Try exact match first, then alias resolution
+        resolved_sym = None
+        series = prices_by_ticker.get(ticker)
+        if not series:
+            csv_sym = alias_to_csv_sym.get(ticker)
+            if csv_sym:
+                series = prices_by_ticker.get(csv_sym)
+                resolved_sym = csv_sym
+
+        if not series:
+            df["drawdown_missing_reason"] = "no_price_series"
+            continue
+        if len(series) < MIN_BARS_FOR_ESTIMATE:
+            df["drawdown_missing_reason"] = "series_too_short"
+            continue
+
+        series.sort(key=lambda x: x[0])
+        closes = [p for _, p in series]
+        look = closes[-WINDOW:] if len(closes) >= WINDOW else closes
+        peak = max(look)
+        if peak == 0:
+            df["drawdown_missing_reason"] = "series_too_short"
+            continue
+        dd = (closes[-1] / peak) - 1.0
         df["drawdown"] = round(dd, 6)
+        df["drawdown_missing_reason"] = ""
+        if resolved_sym:
+            df["drawdown_price_symbol"] = resolved_sym
         hydrated += 1
+
+    # --- Defensive check: all reason values must be in the enum ---
+    for t, rec in rec_by_ticker.items():
+        reason = (rec.get("defensive_features") or {}).get(
+            "drawdown_missing_reason", ""
+        )
+        assert reason in VALID_DRAWDOWN_MISSING_REASONS, (
+            f"_hydrate_drawdown: ticker {t} has invalid "
+            f"drawdown_missing_reason={reason!r}"
+        )
 
     return hydrated
 
@@ -1585,6 +1665,7 @@ def save_validation_snapshot(
         row["de_tier1_count"] = t1 if t1 is not None else ""
         row["de_beta_xbi_60d"] = df.get("beta_xbi_60d", "")
         row["de_drawdown"] = df.get("drawdown", "")
+        row["de_drawdown_missing_reason"] = df.get("drawdown_missing_reason", "")
         row["de_rsi_14d"] = df.get("rsi_14d", "")
 
     # --- Actionable ordering: sort + assign rank + compute weights ---

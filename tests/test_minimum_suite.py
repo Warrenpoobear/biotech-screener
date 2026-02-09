@@ -9,165 +9,26 @@ Tests:
 4. PIT discipline test: No data after as_of_date is used
 5. Edge cases: Missing values, empty modules handled explicitly
 
+Uses session-scoped pipeline fixtures from conftest.py to avoid redundant runs.
+
 Usage:
     pytest tests/test_minimum_suite.py -v
     pytest tests/test_minimum_suite.py -v -k smoke  # Run only smoke tests
 """
 
-import hashlib
-import json
 import subprocess
-from datetime import date, timedelta
-from decimal import Decimal
 from pathlib import Path
-from typing import Any, Dict
 
 import pytest
 
+from conftest import (
+    NON_DETERMINISTIC_PATHS,
+    PIPELINE_MAIN_DATE,
+    compute_content_hash,
+)
+
 # Test configuration
 DATA_DIR = Path("production_data")
-TEST_AS_OF_DATE = "2026-01-20"
-
-# ==============================================================================
-# FIXTURES
-# ==============================================================================
-
-
-@pytest.fixture
-def as_of_date():
-    """Standard as_of_date for deterministic tests"""
-    return date(2026, 1, 20)
-
-
-@pytest.fixture
-def sample_financial_records():
-    """Sample financial records for unit tests"""
-    return [
-        {
-            "ticker": "TEST1",
-            "Cash": 500_000_000,
-            "NetIncome": -100_000_000,
-            "market_cap": 2_000_000_000,
-            "avg_volume": 500_000,
-            "price": 20.0,
-        },
-        {
-            "ticker": "TEST2",
-            "Cash": 50_000_000,
-            "NetIncome": -200_000_000,  # Short runway
-            "market_cap": 500_000_000,
-            "avg_volume": 100_000,
-            "price": 10.0,
-        },
-    ]
-
-
-@pytest.fixture
-def sample_trial_records():
-    """Sample trial records for unit tests"""
-    return [
-        {
-            "ticker": "TEST1",
-            "nct_id": "NCT00000001",
-            "overall_status": "RECRUITING",
-            "phase": "Phase 2",
-            "last_update_posted": "2026-01-10",
-        },
-        {
-            "ticker": "TEST1",
-            "nct_id": "NCT00000002",
-            "overall_status": "ACTIVE_NOT_RECRUITING",
-            "phase": "Phase 3",
-            "last_update_posted": "2026-01-15",
-        },
-    ]
-
-
-def run_pipeline(as_of_date: str, output_path: Path, extra_args: list = None) -> tuple:
-    """Run the pipeline and return (success, stdout, stderr)"""
-    import sys
-    import tempfile
-    with tempfile.TemporaryDirectory() as tmpdir:
-        cmd = [
-            sys.executable, "run_screen.py",
-            "--as-of-date", as_of_date,
-            "--data-dir", str(DATA_DIR),
-            "--output", str(output_path),
-            "--output-dir", tmpdir,
-            "--pit-mode", "degrade",
-        ]
-        if extra_args:
-            cmd.extend(extra_args)
-
-        result = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            cwd=Path(__file__).parent.parent,
-        )
-        return result.returncode == 0, result.stdout, result.stderr
-
-
-@pytest.fixture(scope="module")
-def pipeline_output(tmp_path_factory):
-    """Run pipeline once and share the result across all tests in this module.
-
-    Before: each test called run_pipeline() independently (~17s each, 17 tests = ~280s).
-    After: one shared run (~17s) reused by all read-only tests.
-    """
-    tmpdir = tmp_path_factory.mktemp("minimum_suite")
-    output_path = tmpdir / "test_output.json"
-    success, stdout, stderr = run_pipeline(TEST_AS_OF_DATE, output_path)
-    assert success, f"Pipeline setup failed:\n{stderr}"
-    with open(output_path) as f:
-        data = json.load(f)
-    return {
-        "success": success,
-        "stdout": stdout,
-        "stderr": stderr,
-        "output_path": output_path,
-        "data": data,
-    }
-
-
-def compute_hash(data: Any, exclude_paths: set = None) -> str:
-    """Compute deterministic content hash, optionally excluding paths"""
-    if exclude_paths:
-        data = _remove_paths(data, exclude_paths)
-    json_str = json.dumps(data, sort_keys=True, separators=(",", ":"))
-    return hashlib.sha256(json_str.encode()).hexdigest()
-
-
-def _remove_paths(data: Any, paths: set, prefix: str = "") -> Any:
-    """Remove specified paths from nested dict for determinism comparison"""
-    if isinstance(data, dict):
-        result = {}
-        for k, v in data.items():
-            full_path = f"{prefix}.{k}" if prefix else k
-            # Check if this path or any parent path should be excluded
-            should_exclude = any(
-                full_path == p or full_path.startswith(p + ".")
-                for p in paths
-            )
-            if not should_exclude:
-                result[k] = _remove_paths(v, paths, full_path)
-        return result
-    elif isinstance(data, list):
-        return [_remove_paths(item, paths, prefix) for item in data]
-    else:
-        return data
-
-
-# Paths with known non-determinism (floating-point accumulation, timestamps)
-NON_DETERMINISTIC_PATHS = {
-    "run_metadata.timestamp",
-    "run_metadata.deterministic_timestamp",
-    "run_metadata.input_hashes",  # Input file hashes may change with data updates
-    "clinical_exclusions",  # Ordering may vary with score changes
-    "enhancements",  # All enhancements have floating-point variations
-    "summary",  # Contains coverage stats derived from enhancements
-    "module_5_composite",  # Entire module affected by enhancement non-determinism
-}
 
 
 # ==============================================================================
@@ -178,18 +39,18 @@ NON_DETERMINISTIC_PATHS = {
 class TestSmoke:
     """Smoke tests - pipeline runs without crashing"""
 
-    def test_pipeline_completes_without_error(self, pipeline_output):
+    def test_pipeline_completes_without_error(self, pipeline_run_main):
         """The most basic test: pipeline runs to completion"""
-        assert pipeline_output["success"], "Pipeline failed"
-        assert pipeline_output["output_path"].exists(), "Output file not created"
+        assert pipeline_run_main["success"], "Pipeline failed"
+        assert pipeline_run_main["output_path"].exists(), "Output file not created"
 
-    def test_output_is_valid_json(self, pipeline_output):
+    def test_output_is_valid_json(self, pipeline_run_main):
         """Output file is valid JSON"""
-        assert isinstance(pipeline_output["data"], dict)
+        assert isinstance(pipeline_run_main["data"], dict)
 
-    def test_output_has_required_sections(self, pipeline_output):
+    def test_output_has_required_sections(self, pipeline_run_main):
         """Output has all required top-level sections"""
-        data = pipeline_output["data"]
+        data = pipeline_run_main["data"]
 
         required_sections = [
             "run_metadata",
@@ -204,9 +65,9 @@ class TestSmoke:
         for section in required_sections:
             assert section in data, f"Missing section: {section}"
 
-    def test_summary_has_key_metrics(self, pipeline_output):
+    def test_summary_has_key_metrics(self, pipeline_run_main):
         """Summary section has key metrics"""
-        summary = pipeline_output["data"]["summary"]
+        summary = pipeline_run_main["data"]["summary"]
         assert "total_evaluated" in summary
         assert "active_universe" in summary
         assert "final_ranked" in summary
@@ -221,22 +82,10 @@ class TestSmoke:
 class TestRegression:
     """Regression tests - same inputs produce identical outputs"""
 
-    def test_determinism_two_runs(self, pipeline_output, tmp_path):
+    def test_determinism_two_runs(self, pipeline_run_main, pipeline_run_determinism):
         """Two runs with same inputs produce identical outputs"""
-        # Reuse the shared pipeline run as run 1
-        data1 = pipeline_output["data"]
-
-        # Only need one additional run
-        output2 = tmp_path / "run2.json"
-        success2, _, stderr2 = run_pipeline(TEST_AS_OF_DATE, output2)
-        assert success2, f"Second run failed:\n{stderr2}"
-
-        with open(output2) as f:
-            data2 = json.load(f)
-
-        # Compare content hashes (excluding known non-deterministic paths)
-        hash1 = compute_hash(data1, NON_DETERMINISTIC_PATHS)
-        hash2 = compute_hash(data2, NON_DETERMINISTIC_PATHS)
+        hash1 = compute_content_hash(pipeline_run_main["data"], NON_DETERMINISTIC_PATHS)
+        hash2 = compute_content_hash(pipeline_run_determinism["data"], NON_DETERMINISTIC_PATHS)
 
         assert hash1 == hash2, "Two runs produced different outputs"
 
@@ -262,9 +111,9 @@ class TestRegression:
 class TestSchema:
     """Schema validation tests"""
 
-    def test_module_2_output_schema(self, pipeline_output):
+    def test_module_2_output_schema(self, pipeline_run_main):
         """Module 2 output has correct schema"""
-        m2 = pipeline_output["data"]["module_2_financial"]
+        m2 = pipeline_run_main["data"]["module_2_financial"]
 
         # Required fields
         assert "scores" in m2
@@ -276,9 +125,9 @@ class TestSchema:
             assert "financial_score" in score
             assert "severity" in score
 
-    def test_module_5_output_schema(self, pipeline_output):
+    def test_module_5_output_schema(self, pipeline_run_main):
         """Module 5 output has correct schema"""
-        m5 = pipeline_output["data"]["module_5_composite"]
+        m5 = pipeline_run_main["data"]["module_5_composite"]
 
         # Required fields
         assert "ranked_securities" in m5
@@ -291,9 +140,9 @@ class TestSchema:
             assert "composite_score" in sec
             assert "composite_rank" in sec
 
-    def test_scores_in_valid_range(self, pipeline_output):
+    def test_scores_in_valid_range(self, pipeline_run_main):
         """All scores are in [0, 100] range"""
-        data = pipeline_output["data"]
+        data = pipeline_run_main["data"]
 
         # Module 2
         for score in data["module_2_financial"]["scores"]:
@@ -314,21 +163,15 @@ class TestSchema:
 class TestPITDiscipline:
     """Point-in-time discipline tests"""
 
-    def test_as_of_date_in_output(self, pipeline_output):
+    def test_as_of_date_in_output(self, pipeline_run_main):
         """Output contains correct as_of_date"""
-        assert pipeline_output["data"]["run_metadata"]["as_of_date"] == TEST_AS_OF_DATE
+        assert pipeline_run_main["data"]["run_metadata"]["as_of_date"] == PIPELINE_MAIN_DATE
 
-    def test_historical_date_filters_future_data(self, tmp_path):
+    def test_historical_date_filters_future_data(self, pipeline_run_historical):
         """Running with historical date filters future data"""
-        output = tmp_path / "historical.json"
-        historical_date = "2026-01-15"
+        assert pipeline_run_historical["success"], "Pipeline failed with historical date"
 
-        success, stdout, stderr = run_pipeline(historical_date, output)
-        # Pipeline should succeed (with filtering)
-        assert success, f"Pipeline failed with historical date:\n{stderr}"
-
-        # Check that filtering happened (warning in logs)
-        combined_output = stdout + stderr
+        combined_output = pipeline_run_historical["stdout"] + pipeline_run_historical["stderr"]
         assert "Filtered" in combined_output or "future" in combined_output.lower()
 
     def test_pit_cutoff_computation(self):
@@ -363,9 +206,9 @@ class TestPITDiscipline:
 class TestEdgeCases:
     """Edge case handling tests"""
 
-    def test_missing_financial_data_flagged(self, pipeline_output):
+    def test_missing_financial_data_flagged(self, pipeline_run_main):
         """Tickers with missing financial data are properly flagged"""
-        data = pipeline_output["data"]
+        data = pipeline_run_main["data"]
 
         # Some tickers should have missing data flags
         missing_count = 0
@@ -376,9 +219,9 @@ class TestEdgeCases:
         # Just informational - not necessarily a failure
         print(f"Tickers with missing financial data: {missing_count}")
 
-    def test_sev3_tickers_excluded(self, pipeline_output):
+    def test_sev3_tickers_excluded(self, pipeline_run_main):
         """SEV3 (critical) tickers are excluded from ranking"""
-        data = pipeline_output["data"]
+        data = pipeline_run_main["data"]
 
         # Count SEV3 in Module 2
         sev3_count = sum(
@@ -392,17 +235,17 @@ class TestEdgeCases:
         # Most excluded should be SEV3
         assert excluded_count >= sev3_count * 0.8, "SEV3 tickers not being excluded"
 
-    def test_excluded_have_exclusion_reason(self, pipeline_output):
+    def test_excluded_have_exclusion_reason(self, pipeline_run_main):
         """Excluded securities have exclusion reasons"""
-        data = pipeline_output["data"]
+        data = pipeline_run_main["data"]
 
         for sec in data["module_5_composite"]["excluded_securities"]:
             reason = sec.get("reason")
             assert reason and reason != "unknown", f"Ticker {sec['ticker']} missing exclusion reason"
 
-    def test_weights_sum_to_target(self, pipeline_output):
+    def test_weights_sum_to_target(self, pipeline_run_main):
         """Position weights: 0 when position sizing disabled (default), 1.0 when enabled"""
-        data = pipeline_output["data"]
+        data = pipeline_run_main["data"]
 
         m5 = data["module_5_composite"]
         total_weight = sum(
@@ -420,24 +263,24 @@ class TestEdgeCases:
         else:
             assert total_weight == 0.0, f"Weights should be 0 when position sizing disabled, got {total_weight}"
 
-    def test_excluded_have_zero_weight(self, pipeline_output):
+    def test_excluded_have_zero_weight(self, pipeline_run_main):
         """Excluded securities have zero weight"""
-        data = pipeline_output["data"]
+        data = pipeline_run_main["data"]
 
         for sec in data["module_5_composite"]["excluded_securities"]:
             weight = float(sec.get("position_weight", "0"))
             assert weight == 0, f"Excluded ticker {sec['ticker']} has non-zero weight: {weight}"
 
-    def test_no_all_zero_module_2(self, pipeline_output):
+    def test_no_all_zero_module_2(self, pipeline_run_main):
         """Module 2 doesn't return all zeros"""
-        scores = pipeline_output["data"]["module_2_financial"]["scores"]
+        scores = pipeline_run_main["data"]["module_2_financial"]["scores"]
         non_zero = sum(1 for s in scores if s.get("financial_score", 0) != 0)
 
         assert non_zero > 0, "All Module 2 scores are zero"
 
-    def test_no_all_zero_module_4(self, pipeline_output):
+    def test_no_all_zero_module_4(self, pipeline_run_main):
         """Module 4 doesn't return all zeros"""
-        scores = pipeline_output["data"]["module_4_clinical"]["scores"]
+        scores = pipeline_run_main["data"]["module_4_clinical"]["scores"]
         non_zero = sum(1 for s in scores if float(s.get("clinical_score", "0")) != 0)
 
         assert non_zero > 0, "All Module 4 scores are zero"
@@ -462,11 +305,11 @@ class TestValidation:
         )
         assert result.returncode == 0, f"Doctor check failed:\n{result.stdout}\n{result.stderr}"
 
-    def test_validate_pipeline_passes(self, pipeline_output):
+    def test_validate_pipeline_passes(self, pipeline_run_main):
         """Pipeline validation passes on output"""
         import sys
         result = subprocess.run(
-            [sys.executable, "validate_pipeline.py", "--output", str(pipeline_output["output_path"])],
+            [sys.executable, "validate_pipeline.py", "--output", str(pipeline_run_main["output_path"])],
             capture_output=True,
             text=True,
             cwd=Path(__file__).parent.parent

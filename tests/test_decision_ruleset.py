@@ -1,6 +1,8 @@
 """Tests for DecisionRuleset dataclass — parameterized threshold config."""
 import json
 import os
+import re
+import subprocess
 import sys
 import tempfile
 from pathlib import Path
@@ -315,6 +317,116 @@ class TestRulesetDriftGuardrails:
         assert RULESET_ID == DEFAULT_RULESET.ruleset_id
         assert SIZING_WEIGHTS == DEFAULT_RULESET.sizing_weights_dict
 
+    # -- Manifest governance --------------------------------------------------
+
+    MANIFEST_PATH = (
+        Path(__file__).resolve().parent.parent
+        / "production_data" / "decision_rulesets" / "manifest.json"
+    )
+
+    REQUIRED_ENTRY_KEYS = {
+        "id", "file", "created_at", "engine_version",
+        "description", "status", "requires_replay", "notes",
+    }
+
+    VALID_STATUSES = {"active", "candidate", "retired", "rejected"}
+
+    def test_manifest_json_valid(self):
+        """manifest.json exists, has valid structure, and exactly 1 active ruleset."""
+        assert self.MANIFEST_PATH.exists(), (
+            f"manifest.json not found at {self.MANIFEST_PATH}"
+        )
+        with open(self.MANIFEST_PATH) as f:
+            data = json.load(f)
+
+        assert "schema_version" in data, "Missing schema_version"
+        assert data["schema_version"] == 1
+        assert "rulesets" in data, "Missing rulesets array"
+        assert isinstance(data["rulesets"], list)
+        assert len(data["rulesets"]) >= 1, "rulesets array is empty"
+
+        active_count = 0
+        for entry in data["rulesets"]:
+            missing = self.REQUIRED_ENTRY_KEYS - set(entry.keys())
+            assert not missing, (
+                f"Entry for {entry.get('file', '?')} missing keys: {missing}"
+            )
+            assert entry["status"] in self.VALID_STATUSES, (
+                f"Invalid status {entry['status']!r} for {entry['file']}"
+            )
+            if entry["status"] == "active":
+                active_count += 1
+
+        assert active_count == 1, (
+            f"Expected exactly 1 active ruleset, found {active_count}"
+        )
+
+    VALID_UPDATED_BY = {
+        "bump_ruleset.py",
+        "promote_ruleset.py",
+        "manual_bootstrap",
+    }
+
+    # Accepts both YYYY-MM-DD and YYYY-MM-DDTHH:MM:SSZ (ISO 8601 UTC)
+    _ISO_DATE_RE = re.compile(
+        r"^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}Z)?$"
+    )
+
+    def test_manifest_active_has_provenance(self):
+        """Every active/candidate entry must have valid updated_by and updated_at.
+
+        Retired/rejected entries are grandfathered and do not require these fields.
+        """
+        assert self.MANIFEST_PATH.exists(), "manifest.json not found"
+        with open(self.MANIFEST_PATH) as f:
+            data = json.load(f)
+
+        provenance_required = {"active", "candidate"}
+        for entry in data["rulesets"]:
+            if entry["status"] not in provenance_required:
+                continue
+            label = f"{entry['id']} ({entry['file']})"
+
+            # Must have both fields
+            assert "updated_by" in entry, (
+                f"Entry {label} status={entry['status']} "
+                f"missing 'updated_by' provenance field"
+            )
+            assert "updated_at" in entry, (
+                f"Entry {label} status={entry['status']} "
+                f"missing 'updated_at' provenance field"
+            )
+
+            # updated_by must be a known source
+            assert entry["updated_by"] in self.VALID_UPDATED_BY, (
+                f"Entry {label}: updated_by={entry['updated_by']!r} not in "
+                f"allowed set {self.VALID_UPDATED_BY}"
+            )
+
+            # updated_at must be ISO date or ISO datetime UTC
+            assert self._ISO_DATE_RE.match(entry["updated_at"]), (
+                f"Entry {label}: updated_at={entry['updated_at']!r} is not "
+                f"valid ISO format (YYYY-MM-DD or YYYY-MM-DDTHH:MM:SSZ)"
+            )
+
+    def test_manifest_ids_match_files(self):
+        """Each manifest entry's id matches the recomputed ruleset_id from its file."""
+        assert self.MANIFEST_PATH.exists(), "manifest.json not found"
+        with open(self.MANIFEST_PATH) as f:
+            data = json.load(f)
+
+        rulesets_dir = self.MANIFEST_PATH.parent
+        for entry in data["rulesets"]:
+            filepath = rulesets_dir / entry["file"]
+            assert filepath.exists(), (
+                f"Manifest references {entry['file']} but file not found"
+            )
+            loaded = DecisionRuleset.from_json(str(filepath))
+            assert loaded.ruleset_id == entry["id"], (
+                f"{entry['file']}: manifest id={entry['id']} != "
+                f"computed id={loaded.ruleset_id}"
+            )
+
 
 # =============================================================================
 # Tests: Soft drawdown mode
@@ -376,3 +488,127 @@ class TestSoftDrawdownMode:
     def test_drawdown_gate_mode_changes_ruleset_id(self):
         """Flipping drawdown_gate_mode changes ruleset_id."""
         assert self.SOFT_RULESET.ruleset_id != DEFAULT_RULESET.ruleset_id
+
+
+# =============================================================================
+# Intent guardrail: baseline-based (compares working tree vs origin/main)
+# =============================================================================
+
+_ROOT = Path(__file__).resolve().parents[1]
+
+
+def _git_show(ref: str, relpath: str) -> str | None:
+    """Retrieve file contents from a git ref. Returns None if unavailable."""
+    try:
+        return subprocess.check_output(
+            ["git", "show", f"{ref}:{relpath}"],
+            cwd=_ROOT,
+            text=True,
+            stderr=subprocess.DEVNULL,
+        )
+    except Exception:
+        return None
+
+
+def _extract_expected_fingerprint(py_text: str) -> str | None:
+    m = re.search(r'EXPECTED_FINGERPRINT\s*=\s*"([0-9a-f]{8,64})"', py_text)
+    return m.group(1) if m else None
+
+
+def _active_id_from_manifest_text(manifest_text: str) -> str | None:
+    obj = json.loads(manifest_text)
+    actives = [e["id"] for e in obj.get("rulesets", []) if e.get("status") == "active"]
+    return actives[0] if len(actives) == 1 else None
+
+
+def _candidate_ids_from_manifest_text(manifest_text: str) -> list[str]:
+    obj = json.loads(manifest_text)
+    return [e["id"] for e in obj.get("rulesets", []) if e.get("status") == "candidate"]
+
+
+def _changelog_has_final_entry(changelog_text: str, ruleset_id: str) -> bool:
+    """Check that a non-DRAFT heading references this ruleset ID.
+
+    Matches our changelog format: ``## [vX.Y.Z] {id} — date — desc``
+    and DRAFT format: ``## [DRAFT] [vX.Y.Z] {id} — date — desc``
+    """
+    for line in changelog_text.splitlines():
+        if not line.startswith("## "):
+            continue
+        if ruleset_id not in line:
+            continue
+        if "[DRAFT]" in line:
+            continue
+        return True
+    return False
+
+
+class TestRulesetIntentGuardrail:
+    """Baseline-based intent guard: detects fingerprint change vs origin/main.
+
+    If the golden fingerprint changed on this branch, enforces:
+      1. A candidate exists in the manifest OR active ruleset id changed.
+      2. The "intent target" id (new active if changed, else first candidate)
+         has a finalized (non-DRAFT) changelog entry.
+
+    Skips gracefully when origin/main is not available (shallow clone, local
+    dev without remote).
+    """
+
+    def test_fingerprint_change_requires_ruleset_intent_and_changelog(self):
+        # Read origin/main baselines — skip if unavailable
+        prev_contract = _git_show(
+            "origin/main", "tests/test_decision_engine_contract.py",
+        )
+        prev_manifest = _git_show(
+            "origin/main", "production_data/decision_rulesets/manifest.json",
+        )
+        if not prev_contract or not prev_manifest:
+            pytest.skip("origin/main baseline not available (need fetch in CI)")
+
+        prev_fp = _extract_expected_fingerprint(prev_contract)
+        assert prev_fp, "Could not extract EXPECTED_FINGERPRINT from origin/main"
+
+        # Read current branch fingerprint from the committed test file
+        from tests.test_decision_engine_contract import (
+            EXPECTED_FINGERPRINT as cur_fp,
+        )
+
+        if cur_fp == prev_fp:
+            return  # no drift — nothing to enforce
+
+        # ── Fingerprint changed — enforce governance ────────────────────
+        cur_manifest_path = _ROOT / "production_data" / "decision_rulesets" / "manifest.json"
+        cur_manifest_text = cur_manifest_path.read_text(encoding="utf-8")
+
+        cur_active = _active_id_from_manifest_text(cur_manifest_text)
+        assert cur_active, "manifest must have exactly 1 active ruleset"
+
+        prev_active = _active_id_from_manifest_text(prev_manifest)
+        assert prev_active, "origin/main manifest must have exactly 1 active ruleset"
+
+        cur_candidates = _candidate_ids_from_manifest_text(cur_manifest_text)
+        active_changed = cur_active != prev_active
+        candidate_exists = len(cur_candidates) >= 1
+
+        assert candidate_exists or active_changed, (
+            f"Golden fingerprint changed ({prev_fp} -> {cur_fp}), but no "
+            f"candidate ruleset exists and active ruleset did not change. "
+            f"Create a candidate via bump_ruleset.py or promote a candidate."
+        )
+
+        # Determine which ruleset id must have a finalized changelog entry
+        target_id = cur_active if active_changed else cur_candidates[0]
+
+        changelog_path = _ROOT / "RULESET_CHANGELOG.md"
+        assert changelog_path.exists(), (
+            f"Fingerprint changed ({prev_fp} -> {cur_fp}) but "
+            f"RULESET_CHANGELOG.md not found"
+        )
+        changelog = changelog_path.read_text(encoding="utf-8")
+
+        assert _changelog_has_final_entry(changelog, target_id), (
+            f"Fingerprint changed ({prev_fp} -> {cur_fp}) but changelog "
+            f"has no finalized (non-DRAFT) entry for ruleset {target_id}. "
+            f"Finalize the DRAFT entry before landing."
+        )

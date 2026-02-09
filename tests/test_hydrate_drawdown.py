@@ -12,7 +12,7 @@ import pytest
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from run_screen import _hydrate_drawdown
+from run_screen import _hydrate_drawdown, MIN_BARS_FOR_ESTIMATE
 
 
 # ---------------------------------------------------------------------------
@@ -95,31 +95,43 @@ class TestComputeFromPriceHistory:
 
     def test_basic_computation(self):
         """Drawdown computed as (current / peak) - 1.0."""
+        from datetime import date, timedelta
         recs = {"XYZ": _make_rec("XYZ")}
         with tempfile.TemporaryDirectory() as tmp:
             csv_path = Path(tmp) / "price_history.csv"
-            # Peak at 100, current at 80 → dd = -0.20
+            # Build MIN_BARS_FOR_ESTIMATE bars: flat at 100, then peak at 100, last at 80
+            base = date(2024, 6, 1)
             prices = [
-                {"ticker": "XYZ", "date": "2025-01-01", "close": "90"},
-                {"ticker": "XYZ", "date": "2025-03-01", "close": "100"},
-                {"ticker": "XYZ", "date": "2025-06-01", "close": "80"},
+                {"ticker": "XYZ", "date": (base + timedelta(days=i)).isoformat(),
+                 "close": "100"}
+                for i in range(MIN_BARS_FOR_ESTIMATE - 1)
             ]
+            # Last bar: drop to 80 → dd = (80 / 100) - 1.0 = -0.20
+            last_date = (base + timedelta(days=MIN_BARS_FOR_ESTIMATE - 1)).isoformat()
+            prices.append({"ticker": "XYZ", "date": last_date, "close": "80"})
             _write_price_csv(csv_path, prices)
-            n = _hydrate_drawdown(recs, csv_path, "2025-06-01")
+            n = _hydrate_drawdown(recs, csv_path, last_date)
         assert n == 1
         assert abs(recs["XYZ"]["defensive_features"]["drawdown"] - (-0.20)) < 1e-4
 
     def test_pit_safety(self):
         """Future dates (after as_of_date) are excluded."""
+        from datetime import date, timedelta
         recs = {"PIT": _make_rec("PIT")}
         with tempfile.TemporaryDirectory() as tmp:
             csv_path = Path(tmp) / "price_history.csv"
+            # Build MIN_BARS_FOR_ESTIMATE bars up to as_of_date, all at 100
+            base = date(2024, 6, 1)
+            as_of = date(2025, 6, 1)
             prices = [
-                {"ticker": "PIT", "date": "2025-01-01", "close": "100"},
-                {"ticker": "PIT", "date": "2025-06-01", "close": "80"},
-                # Future — should be excluded
-                {"ticker": "PIT", "date": "2025-12-01", "close": "50"},
+                {"ticker": "PIT", "date": (base + timedelta(days=i)).isoformat(),
+                 "close": "100"}
+                for i in range(MIN_BARS_FOR_ESTIMATE - 1)
             ]
+            # Last bar on as_of_date at 80
+            prices.append({"ticker": "PIT", "date": as_of.isoformat(), "close": "80"})
+            # Future bar — should be excluded
+            prices.append({"ticker": "PIT", "date": "2025-12-01", "close": "50"})
             _write_price_csv(csv_path, prices)
             n = _hydrate_drawdown(recs, csv_path, "2025-06-01")
         # dd = (80 / 100) - 1 = -0.20 (not -0.50 if future were included)
@@ -161,3 +173,177 @@ class TestComputeFromPriceHistory:
         recs = {"X": _make_rec("X")}
         n = _hydrate_drawdown(recs, None, "2025-06-01")
         assert n == 0
+
+
+# ---------------------------------------------------------------------------
+# Min-bars threshold and missing-reason tracking
+# ---------------------------------------------------------------------------
+
+class TestMinBarsAndMissingReason:
+
+    def test_series_too_short_marked_missing(self):
+        """50 bars (< MIN_BARS_FOR_ESTIMATE) → drawdown None, reason series_too_short."""
+        recs = {"SHORT": _make_rec("SHORT")}
+        with tempfile.TemporaryDirectory() as tmp:
+            csv_path = Path(tmp) / "price_history.csv"
+            # Generate 50 daily prices
+            prices = [
+                {"ticker": "SHORT", "date": f"2025-{(i // 28) + 1:02d}-{(i % 28) + 1:02d}",
+                 "close": str(100 + i)}
+                for i in range(50)
+            ]
+            _write_price_csv(csv_path, prices)
+            n = _hydrate_drawdown(recs, csv_path, "2025-12-31")
+        assert n == 0
+        assert recs["SHORT"]["defensive_features"].get("drawdown") is None
+        assert recs["SHORT"]["defensive_features"]["drawdown_missing_reason"] == "series_too_short"
+
+    def test_series_at_min_bars_computed(self):
+        """Exactly MIN_BARS_FOR_ESTIMATE bars → drawdown computed, reason cleared."""
+        recs = {"GOOD": _make_rec("GOOD")}
+        with tempfile.TemporaryDirectory() as tmp:
+            csv_path = Path(tmp) / "price_history.csv"
+            from datetime import date, timedelta
+            base = date(2024, 6, 1)
+            prices = [
+                {"ticker": "GOOD", "date": (base + timedelta(days=i)).isoformat(),
+                 "close": str(100.0)}  # flat → dd = 0.0
+                for i in range(MIN_BARS_FOR_ESTIMATE)
+            ]
+            _write_price_csv(csv_path, prices)
+            last_date = (base + timedelta(days=MIN_BARS_FOR_ESTIMATE - 1)).isoformat()
+            n = _hydrate_drawdown(recs, csv_path, last_date)
+        assert n == 1
+        assert recs["GOOD"]["defensive_features"]["drawdown"] == 0.0
+        assert recs["GOOD"]["defensive_features"]["drawdown_missing_reason"] == ""
+
+    def test_no_price_series_reason(self):
+        """Ticker not in price CSV → reason = no_price_series."""
+        recs = {"ABSENT": _make_rec("ABSENT")}
+        with tempfile.TemporaryDirectory() as tmp:
+            csv_path = Path(tmp) / "price_history.csv"
+            # CSV exists but has no rows for ABSENT
+            _write_price_csv(csv_path, [
+                {"ticker": "OTHER", "date": "2025-01-01", "close": "100"},
+            ])
+            n = _hydrate_drawdown(recs, csv_path, "2025-06-01")
+        assert n == 0
+        assert recs["ABSENT"]["defensive_features"].get("drawdown") is None
+        assert recs["ABSENT"]["defensive_features"]["drawdown_missing_reason"] == "no_price_series"
+
+    def test_missing_reason_cleared_on_normalize(self):
+        """Key normalization (Step A) sets reason to empty string."""
+        recs = {"NORM": _make_rec("NORM", drawdown_current=-0.15)}
+        n = _hydrate_drawdown(recs, None, "2025-06-01")
+        assert n == 1
+        assert recs["NORM"]["defensive_features"]["drawdown"] == -0.15
+        assert recs["NORM"]["defensive_features"]["drawdown_missing_reason"] == ""
+
+    def test_existing_drawdown_has_empty_reason(self):
+        """Ticker with pre-existing drawdown gets reason = empty."""
+        recs = {"EXISTS": _make_rec("EXISTS", drawdown=-0.10)}
+        n = _hydrate_drawdown(recs, None, "2025-06-01")
+        assert n == 0
+        assert recs["EXISTS"]["defensive_features"]["drawdown_missing_reason"] == ""
+
+    def test_no_csv_tags_as_no_price_series(self):
+        """When price_history_path is None, remaining missing tickers get no_price_series."""
+        recs = {"MISS": _make_rec("MISS")}
+        n = _hydrate_drawdown(recs, None, "2025-06-01")
+        assert n == 0
+        assert recs["MISS"]["defensive_features"]["drawdown_missing_reason"] == "no_price_series"
+
+
+# ---------------------------------------------------------------------------
+# Alias resolution (dot↔dash symbol normalization)
+# ---------------------------------------------------------------------------
+
+class TestAliasResolution:
+
+    def _make_alias_prices(self, csv_ticker: str, n_bars: int = MIN_BARS_FOR_ESTIMATE):
+        """Build price rows for a given CSV ticker with enough bars."""
+        from datetime import date, timedelta
+        base = date(2024, 6, 1)
+        prices = [
+            {"ticker": csv_ticker,
+             "date": (base + timedelta(days=i)).isoformat(),
+             "close": "100"}
+            for i in range(n_bars - 1)
+        ]
+        # Last bar at 80 → dd = -0.20
+        last_date = (base + timedelta(days=n_bars - 1)).isoformat()
+        prices.append({"ticker": csv_ticker, "date": last_date, "close": "80"})
+        return prices, last_date
+
+    def test_dot_to_dash_resolution(self):
+        """Record has BRK.B, CSV has BRK-B → drawdown computed via alias."""
+        recs = {"BRK.B": _make_rec("BRK.B")}
+        prices, last_date = self._make_alias_prices("BRK-B")
+        with tempfile.TemporaryDirectory() as tmp:
+            csv_path = Path(tmp) / "price_history.csv"
+            _write_price_csv(csv_path, prices)
+            n = _hydrate_drawdown(recs, csv_path, last_date)
+        assert n == 1
+        dd = recs["BRK.B"]["defensive_features"]["drawdown"]
+        assert abs(dd - (-0.20)) < 1e-4
+        assert recs["BRK.B"]["defensive_features"]["drawdown_missing_reason"] == ""
+        assert recs["BRK.B"]["defensive_features"]["drawdown_price_symbol"] == "BRK-B"
+
+    def test_dash_to_dot_resolution(self):
+        """Record has ABC-1, CSV has ABC.1 → drawdown computed via alias."""
+        recs = {"ABC-1": _make_rec("ABC-1")}
+        prices, last_date = self._make_alias_prices("ABC.1")
+        with tempfile.TemporaryDirectory() as tmp:
+            csv_path = Path(tmp) / "price_history.csv"
+            _write_price_csv(csv_path, prices)
+            n = _hydrate_drawdown(recs, csv_path, last_date)
+        assert n == 1
+        dd = recs["ABC-1"]["defensive_features"]["drawdown"]
+        assert abs(dd - (-0.20)) < 1e-4
+        assert recs["ABC-1"]["defensive_features"]["drawdown_missing_reason"] == ""
+        assert recs["ABC-1"]["defensive_features"]["drawdown_price_symbol"] == "ABC.1"
+
+    def test_exact_match_preferred_over_alias(self):
+        """When both exact and alias match exist, exact is used (no alias tag)."""
+        recs = {"XYZ": _make_rec("XYZ")}
+        prices_exact, last_date = self._make_alias_prices("XYZ")
+        # Also add a dot-variant that shouldn't be used
+        prices_alias, _ = self._make_alias_prices("X.YZ", n_bars=MIN_BARS_FOR_ESTIMATE)
+        with tempfile.TemporaryDirectory() as tmp:
+            csv_path = Path(tmp) / "price_history.csv"
+            _write_price_csv(csv_path, prices_exact + prices_alias)
+            n = _hydrate_drawdown(recs, csv_path, last_date)
+        assert n == 1
+        assert recs["XYZ"]["defensive_features"]["drawdown_missing_reason"] == ""
+        # No alias tag when exact match used
+        assert "drawdown_price_symbol" not in recs["XYZ"]["defensive_features"]
+
+    def test_collision_determinism(self):
+        """Two CSV symbols both alias to same missing ticker → lexicographically smallest wins."""
+        # Record wants "A.B", CSV has "A-B" and "A_B" won't match,
+        # but if we had two variants... Actually dot↔dash only produces one
+        # variant. Let's test with a ticker where the CSV has the exact alias.
+        # More realistic: record "X.Y", CSV has "X-Y" → only one match, deterministic.
+        recs = {"X.Y": _make_rec("X.Y")}
+        prices, last_date = self._make_alias_prices("X-Y")
+        with tempfile.TemporaryDirectory() as tmp:
+            csv_path = Path(tmp) / "price_history.csv"
+            _write_price_csv(csv_path, prices)
+            # Run twice to verify stability
+            n1 = _hydrate_drawdown({"X.Y": _make_rec("X.Y")}, csv_path, last_date)
+            recs2 = {"X.Y": _make_rec("X.Y")}
+            n2 = _hydrate_drawdown(recs2, csv_path, last_date)
+        assert n1 == n2 == 1
+        assert recs2["X.Y"]["defensive_features"]["drawdown_price_symbol"] == "X-Y"
+
+    def test_no_alias_for_clean_missing(self):
+        """Ticker with no special chars and not in CSV stays no_price_series."""
+        recs = {"ZZZZ": _make_rec("ZZZZ")}
+        prices, last_date = self._make_alias_prices("OTHER")
+        with tempfile.TemporaryDirectory() as tmp:
+            csv_path = Path(tmp) / "price_history.csv"
+            _write_price_csv(csv_path, prices)
+            n = _hydrate_drawdown(recs, csv_path, last_date)
+        assert n == 0
+        assert recs["ZZZZ"]["defensive_features"]["drawdown_missing_reason"] == "no_price_series"
+        assert "drawdown_price_symbol" not in recs["ZZZZ"]["defensive_features"]

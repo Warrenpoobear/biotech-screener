@@ -1,0 +1,333 @@
+name: ruleset-release
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "Which governance step to run"
+        required: true
+        type: choice
+        options:
+          - bump
+          - refresh_goldens
+          - promote
+      candidate_id:
+        description: "8-char ruleset ID (required for promote)"
+        required: false
+        type: string
+      overrides:
+        description: "CLI flags for bump (e.g. --tier-a-optionality-floor 0.50)"
+        required: false
+        type: string
+
+concurrency:
+  group: ruleset-release
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  # ── bump ──────────────────────────────────────────────────────────────
+  bump:
+    if: inputs.action == 'bump'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e .
+
+      - name: Validate overrides provided
+        if: inputs.overrides == ''
+        run: |
+          echo "::error::overrides input is required for bump action"
+          exit 1
+
+      - name: Run bump_ruleset.py
+        env:
+          OVERRIDES: ${{ inputs.overrides }}
+        run: |
+          mkdir -p artifacts
+          python scripts/bump_ruleset.py $OVERRIDES 2>&1 | tee artifacts/bump_output.txt
+        shell: bash
+
+      - name: Generate diff summary
+        run: |
+          echo "# Ruleset Bump Summary" > artifacts/ruleset_diff.md
+          echo "" >> artifacts/ruleset_diff.md
+          echo "**Date**: $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> artifacts/ruleset_diff.md
+          echo "**Overrides**: ${{ inputs.overrides }}" >> artifacts/ruleset_diff.md
+          echo "" >> artifacts/ruleset_diff.md
+          echo "## bump_ruleset.py output" >> artifacts/ruleset_diff.md
+          echo '```' >> artifacts/ruleset_diff.md
+          cat artifacts/bump_output.txt >> artifacts/ruleset_diff.md
+          echo '```' >> artifacts/ruleset_diff.md
+          echo "" >> artifacts/ruleset_diff.md
+          echo "## Manifest diff" >> artifacts/ruleset_diff.md
+          echo '```diff' >> artifacts/ruleset_diff.md
+          git diff production_data/decision_rulesets/manifest.json >> artifacts/ruleset_diff.md || true
+          echo '```' >> artifacts/ruleset_diff.md
+
+      - name: Run manifest tests
+        env:
+          PYTHONHASHSEED: "0"
+        run: |
+          python -m pytest tests/test_decision_ruleset.py -v --tb=short
+
+      - name: Upload candidate artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bump-candidate
+          path: |
+            production_data/decision_rulesets/manifest.json
+            production_data/decision_rulesets/*candidate*.json
+            RULESET_CHANGELOG.md
+            artifacts/ruleset_diff.md
+            artifacts/bump_output.txt
+
+  # ── refresh_goldens ───────────────────────────────────────────────────
+  refresh:
+    if: inputs.action == 'refresh_goldens'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e .
+
+      - name: Check candidate exists in manifest
+        run: |
+          python -c "
+          import json, sys
+          data = json.load(open('production_data/decision_rulesets/manifest.json'))
+          candidates = [e for e in data['rulesets'] if e['status'] == 'candidate']
+          if not candidates:
+              print('::error::No candidate in manifest. Run bump first.')
+              sys.exit(1)
+          print(f'Found {len(candidates)} candidate(s): {[c[\"id\"] for c in candidates]}')
+          "
+
+      - name: Capture pre-refresh fingerprint
+        run: |
+          mkdir -p artifacts
+          grep 'EXPECTED_FINGERPRINT' tests/test_decision_engine_contract.py \
+            > artifacts/fingerprint_old.txt
+
+      - name: Run refresh_goldens.py
+        run: |
+          python scripts/refresh_goldens.py 2>&1 | tee artifacts/refresh_output.txt
+
+      - name: Generate fingerprint report
+        run: |
+          echo "# Golden Fingerprint Refresh Report" > artifacts/fingerprint_report.md
+          echo "" >> artifacts/fingerprint_report.md
+          echo "**Date**: $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> artifacts/fingerprint_report.md
+          echo "" >> artifacts/fingerprint_report.md
+          echo "## Old fingerprint" >> artifacts/fingerprint_report.md
+          echo '```' >> artifacts/fingerprint_report.md
+          cat artifacts/fingerprint_old.txt >> artifacts/fingerprint_report.md
+          echo '```' >> artifacts/fingerprint_report.md
+          echo "" >> artifacts/fingerprint_report.md
+          echo "## New fingerprint" >> artifacts/fingerprint_report.md
+          echo '```' >> artifacts/fingerprint_report.md
+          grep 'EXPECTED_FINGERPRINT' tests/test_decision_engine_contract.py \
+            >> artifacts/fingerprint_report.md
+          echo '```' >> artifacts/fingerprint_report.md
+          echo "" >> artifacts/fingerprint_report.md
+          echo "## refresh_goldens.py output" >> artifacts/fingerprint_report.md
+          echo '```' >> artifacts/fingerprint_report.md
+          cat artifacts/refresh_output.txt >> artifacts/fingerprint_report.md
+          echo '```' >> artifacts/fingerprint_report.md
+
+      - name: Run contract tests
+        env:
+          PYTHONHASHSEED: "0"
+        run: |
+          python -m pytest tests/test_decision_engine_contract.py -v --tb=short
+
+      - name: Upload refresh artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: refreshed-goldens
+          path: |
+            tests/test_decision_engine_contract.py
+            artifacts/fingerprint_report.md
+            artifacts/refresh_output.txt
+
+  # ── promote ───────────────────────────────────────────────────────────
+  promote:
+    if: inputs.action == 'promote'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e .
+
+      - name: Validate candidate_id provided
+        if: inputs.candidate_id == ''
+        run: |
+          echo "::error::candidate_id input is required for promote action"
+          exit 1
+
+      - name: Run pre-promote test battery
+        env:
+          PYTHONHASHSEED: "0"
+        run: |
+          mkdir -p artifacts
+          python -m pytest \
+            tests/test_decision_engine_contract.py \
+            tests/test_decision_replay_regression.py \
+            tests/test_phase2_portfolio_regression.py \
+            tests/test_decision_ruleset.py \
+            tests/test_phase2_health_gate.py \
+            -v --tb=short 2>&1 | tee artifacts/test_battery.txt
+
+      - name: Generate QA report
+        continue-on-error: true
+        run: |
+          echo "# QA Report — Promote ${{ inputs.candidate_id }}" > artifacts/qa_report.md
+          echo "" >> artifacts/qa_report.md
+          echo "**Date**: $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> artifacts/qa_report.md
+          echo "**Candidate**: ${{ inputs.candidate_id }}" >> artifacts/qa_report.md
+          echo "**Action**: promote" >> artifacts/qa_report.md
+          echo "" >> artifacts/qa_report.md
+          echo "## Pre-Promote Test Battery" >> artifacts/qa_report.md
+          echo '```' >> artifacts/qa_report.md
+          tail -20 artifacts/test_battery.txt >> artifacts/qa_report.md
+          echo '```' >> artifacts/qa_report.md
+          echo "" >> artifacts/qa_report.md
+          echo "## Replay Regression Summary" >> artifacts/qa_report.md
+          echo '```' >> artifacts/qa_report.md
+          python -m pytest tests/test_decision_replay_regression.py \
+            -v --tb=line 2>&1 | tail -15 >> artifacts/qa_report.md || true
+          echo '```' >> artifacts/qa_report.md
+          echo "" >> artifacts/qa_report.md
+          echo "## Manifest (pre-promote)" >> artifacts/qa_report.md
+          echo '```json' >> artifacts/qa_report.md
+          cat production_data/decision_rulesets/manifest.json >> artifacts/qa_report.md
+          echo '```' >> artifacts/qa_report.md
+
+      - name: Run promote_ruleset.py
+        env:
+          CANDIDATE_ID: ${{ inputs.candidate_id }}
+        run: |
+          python scripts/promote_ruleset.py "$CANDIDATE_ID" 2>&1 | tee artifacts/promote_output.txt
+
+      - name: Snapshot post-promote manifest
+        if: always()
+        run: |
+          cp production_data/decision_rulesets/manifest.json artifacts/manifest_post_promote.json
+
+      - name: Validate manifest post-promote
+        env:
+          PYTHONHASHSEED: "0"
+        run: |
+          python -m pytest tests/test_decision_ruleset.py -v --tb=short
+
+      - name: Generate release summary
+        continue-on-error: true
+        env:
+          PYTHONHASHSEED: "0"
+        run: |
+          python -c "
+          import json, sys, re
+          sys.path.insert(0, '.')
+
+          # Load post-promote manifest
+          manifest = json.load(open('production_data/decision_rulesets/manifest.json'))
+          active = next((e for e in manifest['rulesets'] if e['status'] == 'active'), None)
+          retired = [e for e in manifest['rulesets'] if e['status'] == 'retired']
+          prev = retired[0] if retired else None
+
+          # Read fingerprint from contract test
+          src = open('tests/test_decision_engine_contract.py').read()
+          fp_match = re.search(r'EXPECTED_FINGERPRINT\s*=\"([a-f0-9]+)\"', src)
+          fingerprint = fp_match.group(1) if fp_match else 'unknown'
+
+          # Read changelog excerpt for the active ID
+          cl_text = open('RULESET_CHANGELOG.md').read()
+          excerpt_lines = []
+          capture = False
+          for line in cl_text.splitlines():
+              if active and active['id'] in line and line.startswith('## '):
+                  capture = True
+              elif capture and line.startswith('## '):
+                  break
+              if capture:
+                  excerpt_lines.append(line)
+
+          lines = [
+              '# Release Summary',
+              '',
+              f'**Date**: $(date -u)',
+              f'**Promoted**: {active[\"id\"]} ({active[\"file\"]})' if active else 'N/A',
+              f'**Retired**: {prev[\"id\"]} ({prev[\"file\"]})' if prev else 'N/A',
+              f'**Golden Fingerprint**: {fingerprint}',
+              f'**Engine Version**: {active[\"engine_version\"]}' if active else '',
+              '',
+              '## Changelog Excerpt',
+              '',
+          ]
+          lines.extend(excerpt_lines or ['_No entry found._'])
+          lines.extend([
+              '',
+              '## Artifacts',
+              '',
+              '- \`qa_report.md\` — Pre-promote test battery + replay regression',
+              '- \`test_battery.txt\` — Full 5-file test output',
+              '- \`promote_output.txt\` — promote_ruleset.py stdout',
+              '- \`manifest.json\` — Post-promotion manifest',
+              '- \`RULESET_CHANGELOG.md\` — Full changelog',
+              '',
+          ])
+          open('artifacts/release_summary.md', 'w').write('\n'.join(lines))
+          print('Wrote artifacts/release_summary.md')
+          " 2>&1 || echo "::warning::release_summary.md generation failed (non-fatal)"
+
+      - name: Upload promotion artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: promotion-summary
+          path: |
+            production_data/decision_rulesets/manifest.json
+            RULESET_CHANGELOG.md
+            artifacts/manifest_post_promote.json
+            artifacts/qa_report.md
+            artifacts/test_battery.txt
+            artifacts/promote_output.txt
+            artifacts/release_summary.md

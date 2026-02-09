@@ -7,10 +7,14 @@ Provides reusable fixtures for:
 - Temporary data directories
 - Common test utilities
 - Standard as_of_date for deterministic tests
+- Session-scoped pipeline runs (shared across integration test files)
 """
 
+import hashlib
 import json
+import subprocess
 import sys
+import tempfile
 from datetime import date
 from decimal import Decimal
 from pathlib import Path
@@ -20,6 +24,133 @@ import pytest
 
 # Add parent to path for module imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
+
+_PROJECT_ROOT = Path(__file__).parent.parent
+_DATA_DIR = Path("production_data")
+
+# Dates used by integration tests
+PIPELINE_MAIN_DATE = "2026-01-20"
+PIPELINE_HISTORICAL_DATE = "2026-01-15"
+
+# Paths with known non-determinism (shared by golden_baseline + minimum_suite)
+NON_DETERMINISTIC_PATHS = {
+    "run_metadata.timestamp",
+    "run_metadata.deterministic_timestamp",
+    "run_metadata.input_hashes",
+    "clinical_exclusions",
+    "enhancements",
+    "summary",
+    "module_5_composite",
+}
+
+
+def _run_pipeline(as_of_date: str, output_path: Path) -> tuple:
+    """Run the screening pipeline. Returns (success, stdout, stderr)."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        cmd = [
+            sys.executable, "run_screen.py",
+            "--as-of-date", as_of_date,
+            "--data-dir", str(_DATA_DIR),
+            "--output", str(output_path),
+            "--output-dir", tmpdir,
+            "--pit-mode", "degrade",
+        ]
+        result = subprocess.run(
+            cmd, capture_output=True, text=True, cwd=_PROJECT_ROOT,
+        )
+        return result.returncode == 0, result.stdout, result.stderr
+
+
+def compute_content_hash(data: Any, exclude_paths: set = None) -> str:
+    """Compute deterministic SHA-256 content hash, optionally excluding paths."""
+    if exclude_paths:
+        data = _remove_paths(data, exclude_paths)
+    json_str = json.dumps(data, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(json_str.encode()).hexdigest()
+
+
+def _remove_paths(data: Any, paths: set, prefix: str = "") -> Any:
+    """Remove specified dot-separated paths from nested dict."""
+    if isinstance(data, dict):
+        result = {}
+        for k, v in data.items():
+            full_path = f"{prefix}.{k}" if prefix else k
+            should_exclude = any(
+                full_path == p or full_path.startswith(p + ".")
+                for p in paths
+            )
+            if not should_exclude:
+                result[k] = _remove_paths(v, paths, full_path)
+        return result
+    elif isinstance(data, list):
+        return [_remove_paths(item, paths, prefix) for item in data]
+    return data
+
+
+# ============================================================================
+# SESSION-SCOPED PIPELINE RUNS (shared across test_golden_baseline +
+# test_minimum_suite — avoids duplicate 18s pipeline invocations)
+# ============================================================================
+
+@pytest.fixture(scope="session")
+def pipeline_run_main(tmp_path_factory):
+    """Single shared pipeline run at 2026-01-20.
+
+    Used by both test_golden_baseline.py and test_minimum_suite.py for
+    all read-only smoke / schema / edge-case / baseline tests.
+    """
+    tmpdir = tmp_path_factory.mktemp("pipeline_main")
+    output_path = tmpdir / "output.json"
+    success, stdout, stderr = _run_pipeline(PIPELINE_MAIN_DATE, output_path)
+    assert success, f"Pipeline main run failed:\n{stderr}"
+    with open(output_path) as f:
+        data = json.load(f)
+    return {
+        "success": success,
+        "stdout": stdout,
+        "stderr": stderr,
+        "output_path": output_path,
+        "data": data,
+    }
+
+
+@pytest.fixture(scope="session")
+def pipeline_run_determinism(tmp_path_factory):
+    """Second independent pipeline run at 2026-01-20 for determinism checks.
+
+    Compared against pipeline_run_main to verify identical outputs.
+    """
+    tmpdir = tmp_path_factory.mktemp("pipeline_det")
+    output_path = tmpdir / "output.json"
+    success, stdout, stderr = _run_pipeline(PIPELINE_MAIN_DATE, output_path)
+    assert success, f"Pipeline determinism run failed:\n{stderr}"
+    with open(output_path) as f:
+        data = json.load(f)
+    return {
+        "success": success,
+        "stdout": stdout,
+        "stderr": stderr,
+        "output_path": output_path,
+        "data": data,
+    }
+
+
+@pytest.fixture(scope="session")
+def pipeline_run_historical(tmp_path_factory):
+    """Pipeline run at 2026-01-15 for PIT discipline tests."""
+    tmpdir = tmp_path_factory.mktemp("pipeline_hist")
+    output_path = tmpdir / "output.json"
+    success, stdout, stderr = _run_pipeline(PIPELINE_HISTORICAL_DATE, output_path)
+    assert success, f"Pipeline historical run failed:\n{stderr}"
+    with open(output_path) as f:
+        data = json.load(f)
+    return {
+        "success": success,
+        "stdout": stdout,
+        "stderr": stderr,
+        "output_path": output_path,
+        "data": data,
+    }
 
 
 # ============================================================================

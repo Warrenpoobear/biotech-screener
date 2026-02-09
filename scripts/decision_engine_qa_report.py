@@ -134,8 +134,19 @@ def _section_eligibility(snap: SnapshotData) -> SectionResult:
                 "pass_pct": round((n_dev - failed) / n_dev * 100, 1) if n_dev else 100.0,
             }
 
+    # Missing-reason breakdown (from de_drawdown_missing_reason column)
+    missing_reason_counts: Dict[str, int] = {}
+    if "de_drawdown_missing_reason" in dev.columns:
+        for val in dev["de_drawdown_missing_reason"]:
+            v = str(val).strip() if not pd.isna(val) else ""
+            if v == "":
+                continue  # present or legacy (no reason column)
+            missing_reason_counts[v] = missing_reason_counts.get(v, 0) + 1
+
     status = "OK"
     if eligible_count == 0:
+        status = "FAIL"
+    elif drawdown_data_coverage_pct < 40:
         status = "FAIL"
     elif dev_eligible_pct < 50 or dev_eligible_pct > 95:
         status = "WARN"
@@ -149,6 +160,7 @@ def _section_eligibility(snap: SnapshotData) -> SectionResult:
         "ineligible_reason_breakdown": reason_counts,
         "gate_pass_rates": gate_pass_rates,
         "drawdown_data_coverage_pct": drawdown_data_coverage_pct,
+        "missing_reason_counts": missing_reason_counts,
     }
 
 
@@ -485,6 +497,13 @@ def format_markdown(report: Dict[str, Any]) -> str:
         dd_cov = m.get("drawdown_data_coverage_pct", "N/A")
         lines.append("")
         lines.append(f"Drawdown data coverage: {dd_cov}%")
+        mr = m.get("missing_reason_counts", {})
+        if mr:
+            lines.append("")
+            lines.append(f"| Missing reason | Count |")
+            lines.append(f"|---|---|")
+            for reason, cnt in sorted(mr.items(), key=lambda x: -x[1]):
+                lines.append(f"| {reason} | {cnt} |")
         lines.append("")
 
     # Tier Distribution

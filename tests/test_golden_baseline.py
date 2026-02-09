@@ -5,6 +5,8 @@ test_golden_baseline.py - Golden Run Regression Tests
 Creates a baseline output for one as-of-date and compares future outputs to it.
 Allows explicitly-defined tolerated changes (e.g., timestamps).
 
+Uses session-scoped pipeline fixtures from conftest.py to avoid redundant runs.
+
 Usage:
     # Create baseline
     pytest tests/test_golden_baseline.py::TestGoldenBaseline::test_create_baseline -v
@@ -13,35 +15,23 @@ Usage:
     pytest tests/test_golden_baseline.py -v
 """
 
-import hashlib
 import json
-import os
-import subprocess
 from datetime import date
 from pathlib import Path
 from typing import Any, Dict, Set
 
 import pytest
 
+from conftest import (
+    NON_DETERMINISTIC_PATHS,
+    PIPELINE_HISTORICAL_DATE,
+    compute_content_hash,
+)
+
 # Configuration
 GOLDEN_DIR = Path(__file__).parent / "golden"
 BASELINE_FILE = GOLDEN_DIR / "baseline_output.json"
 BASELINE_METADATA_FILE = GOLDEN_DIR / "baseline_metadata.json"
-
-# Standard as-of date for golden tests
-GOLDEN_AS_OF_DATE = "2026-01-20"
-
-# Fields that are allowed to change between runs (deterministic but time-dependent)
-# Note: pos_scores has known non-determinism issue tracked for future fix
-TOLERATED_DIFF_PATHS = {
-    "run_metadata.deterministic_timestamp",  # Fixed timestamp based on as_of_date
-    "run_metadata.timestamp",  # Actual timestamp varies
-    "run_metadata.input_hashes",  # Input file hashes may change with data updates
-    "clinical_exclusions",  # Ordering may vary with score changes
-    "enhancements",  # All enhancements have floating-point variations
-    "summary",  # Contains pos coverage stats derived from enhancements
-    "module_5_composite",  # Entire module affected by enhancement non-determinism
-}
 
 # Fields that are NEVER allowed to change
 CRITICAL_STABLE_FIELDS = {
@@ -50,34 +40,6 @@ CRITICAL_STABLE_FIELDS = {
     "summary.final_ranked",
     "module_5_composite.diagnostic_counts.rankable",
 }
-
-
-def compute_content_hash(data: Any, exclude_paths: Set[str] = None) -> str:
-    """Compute deterministic content hash, optionally excluding certain paths"""
-    if exclude_paths:
-        data = _remove_paths(data, exclude_paths)
-    json_str = json.dumps(data, sort_keys=True, separators=(",", ":"))
-    return hashlib.sha256(json_str.encode()).hexdigest()
-
-
-def _remove_paths(data: Any, paths: Set[str], prefix: str = "") -> Any:
-    """Remove specified paths from nested dict"""
-    if isinstance(data, dict):
-        result = {}
-        for k, v in data.items():
-            full_path = f"{prefix}.{k}" if prefix else k
-            # Check if this path or any parent path should be excluded
-            should_exclude = any(
-                full_path == p or full_path.startswith(p + ".")
-                for p in paths
-            )
-            if not should_exclude:
-                result[k] = _remove_paths(v, paths, full_path)
-        return result
-    elif isinstance(data, list):
-        return [_remove_paths(item, paths, prefix) for item in data]
-    else:
-        return data
 
 
 def get_nested_value(data: Dict, path: str) -> Any:
@@ -92,52 +54,18 @@ def get_nested_value(data: Dict, path: str) -> Any:
     return current
 
 
-def run_pipeline(as_of_date: str, output_path: Path) -> bool:
-    """Run the pipeline and return success status"""
-    import sys
-    import tempfile
-    with tempfile.TemporaryDirectory() as tmpdir:
-        cmd = [
-            sys.executable, "run_screen.py",
-            "--as-of-date", as_of_date,
-            "--data-dir", "production_data",
-            "--output", str(output_path),
-            "--output-dir", tmpdir,
-            "--pit-mode", "degrade",
-        ]
-
-        result = subprocess.run(cmd, capture_output=True, text=True, cwd=Path(__file__).parent.parent)
-        return result.returncode == 0
-
-
 @pytest.fixture
 def ensure_golden_dir():
     """Ensure golden directory exists"""
     GOLDEN_DIR.mkdir(parents=True, exist_ok=True)
 
 
-@pytest.fixture(scope="module")
-def pipeline_output(tmp_path_factory):
-    """Run pipeline once and share the result across all tests in this module.
-
-    Before: each test called run_pipeline() independently (~14s each, 9 tests = ~166s).
-    After: one shared run (~14s) reused by all read-only tests.
-    """
-    tmpdir = tmp_path_factory.mktemp("golden_baseline")
-    output_path = tmpdir / "golden_output.json"
-    success = run_pipeline(GOLDEN_AS_OF_DATE, output_path)
-    assert success, "Pipeline setup failed"
-    with open(output_path) as f:
-        data = json.load(f)
-    return {"success": success, "output_path": output_path, "data": data}
-
-
 class TestGoldenBaseline:
     """Golden baseline regression tests"""
 
-    def test_create_baseline(self, ensure_golden_dir, pipeline_output):
+    def test_create_baseline(self, ensure_golden_dir, pipeline_run_main):
         """Create or update the golden baseline"""
-        output = pipeline_output["data"]
+        output = pipeline_run_main["data"]
 
         # Save baseline
         with open(BASELINE_FILE, "w") as f:
@@ -146,8 +74,8 @@ class TestGoldenBaseline:
         # Save metadata
         metadata = {
             "created_at": date.today().isoformat(),
-            "as_of_date": GOLDEN_AS_OF_DATE,
-            "content_hash": compute_content_hash(output, TOLERATED_DIFF_PATHS),
+            "as_of_date": "2026-01-20",
+            "content_hash": compute_content_hash(output, NON_DETERMINISTIC_PATHS),
             "total_evaluated": output.get("summary", {}).get("total_evaluated"),
             "final_ranked": output.get("summary", {}).get("final_ranked"),
             "version": output.get("run_metadata", {}).get("version"),
@@ -158,22 +86,22 @@ class TestGoldenBaseline:
 
         print(f"\nBaseline created:")
         print(f"  File: {BASELINE_FILE}")
-        print(f"  As-of date: {GOLDEN_AS_OF_DATE}")
+        print(f"  As-of date: 2026-01-20")
         print(f"  Content hash: {metadata['content_hash'][:16]}")
         print(f"  Total evaluated: {metadata['total_evaluated']}")
         print(f"  Final ranked: {metadata['final_ranked']}")
 
     @pytest.mark.skipif(not BASELINE_FILE.exists(), reason="No baseline exists. Run test_create_baseline first.")
-    def test_output_matches_baseline(self, pipeline_output):
+    def test_output_matches_baseline(self, pipeline_run_main):
         """Test that current output matches the golden baseline"""
-        current = pipeline_output["data"]
+        current = pipeline_run_main["data"]
 
         with open(BASELINE_FILE) as f:
             baseline = json.load(f)
 
         # Compare content hashes (excluding tolerated diffs)
-        current_hash = compute_content_hash(current, TOLERATED_DIFF_PATHS)
-        baseline_hash = compute_content_hash(baseline, TOLERATED_DIFF_PATHS)
+        current_hash = compute_content_hash(current, NON_DETERMINISTIC_PATHS)
+        baseline_hash = compute_content_hash(baseline, NON_DETERMINISTIC_PATHS)
 
         if current_hash != baseline_hash:
             # Find differences
@@ -187,9 +115,9 @@ class TestGoldenBaseline:
             )
 
     @pytest.mark.skipif(not BASELINE_FILE.exists(), reason="No baseline exists")
-    def test_critical_fields_stable(self, pipeline_output):
+    def test_critical_fields_stable(self, pipeline_run_main):
         """Test that critical fields haven't changed"""
-        current = pipeline_output["data"]
+        current = pipeline_run_main["data"]
 
         with open(BASELINE_FILE) as f:
             baseline = json.load(f)
@@ -203,20 +131,10 @@ class TestGoldenBaseline:
             )
 
     @pytest.mark.skipif(not BASELINE_FILE.exists(), reason="No baseline exists")
-    def test_determinism_multiple_runs(self, pipeline_output, tmp_path):
+    def test_determinism_multiple_runs(self, pipeline_run_main, pipeline_run_determinism):
         """Test that running twice produces identical output"""
-        # Reuse the shared pipeline run as run 1
-        data1 = pipeline_output["data"]
-
-        # Only need one additional run
-        output2 = tmp_path / "run2.json"
-        assert run_pipeline(GOLDEN_AS_OF_DATE, output2), "Second run failed"
-
-        with open(output2) as f:
-            data2 = json.load(f)
-
-        hash1 = compute_content_hash(data1, TOLERATED_DIFF_PATHS)
-        hash2 = compute_content_hash(data2, TOLERATED_DIFF_PATHS)
+        hash1 = compute_content_hash(pipeline_run_main["data"], NON_DETERMINISTIC_PATHS)
+        hash2 = compute_content_hash(pipeline_run_determinism["data"], NON_DETERMINISTIC_PATHS)
 
         assert hash1 == hash2, "Two runs with same inputs produced different outputs"
 
@@ -230,7 +148,7 @@ class TestGoldenBaseline:
             path = f"{prefix}.{key}" if prefix else key
 
             # Skip tolerated paths
-            if path in TOLERATED_DIFF_PATHS:
+            if path in NON_DETERMINISTIC_PATHS:
                 continue
 
             baseline_val = baseline.get(key)
@@ -250,13 +168,13 @@ class TestGoldenBaseline:
 class TestSmokeTest:
     """Quick smoke tests that don't require baseline"""
 
-    def test_pipeline_runs_without_crash(self, pipeline_output):
+    def test_pipeline_runs_without_crash(self, pipeline_run_main):
         """Test that the pipeline runs without crashing"""
-        assert pipeline_output["success"], "Pipeline crashed"
+        assert pipeline_run_main["success"], "Pipeline crashed"
 
-    def test_output_has_required_sections(self, pipeline_output):
+    def test_output_has_required_sections(self, pipeline_run_main):
         """Test output has all required sections"""
-        data = pipeline_output["data"]
+        data = pipeline_run_main["data"]
 
         required = [
             "run_metadata",
@@ -271,9 +189,9 @@ class TestSmokeTest:
         for section in required:
             assert section in data, f"Missing required section: {section}"
 
-    def test_no_all_zero_scores(self, pipeline_output):
+    def test_no_all_zero_scores(self, pipeline_run_main):
         """Test that no module returns all-zero scores"""
-        data = pipeline_output["data"]
+        data = pipeline_run_main["data"]
 
         # Module 2
         m2_scores = data.get("module_2_financial", {}).get("scores", [])
@@ -297,42 +215,38 @@ class TestSmokeTest:
 class TestPITDiscipline:
     """Point-in-time discipline tests"""
 
-    def test_no_future_data_in_output(self, tmp_path):
+    def test_no_future_data_in_output(self, pipeline_run_historical):
         """Test that output doesn't contain data from after as_of_date"""
-        output_path = tmp_path / "pit_test.json"
-        as_of = "2026-01-15"
-
-        run_pipeline(as_of, output_path)
-
-        with open(output_path) as f:
-            data = json.load(f)
+        data = pipeline_run_historical["data"]
 
         # Check as_of_date in metadata
         metadata = data.get("run_metadata", {})
-        assert metadata.get("as_of_date") == as_of
+        assert metadata.get("as_of_date") == PIPELINE_HISTORICAL_DATE
 
         # Check no provenance dates are after as_of_date
         m4 = data.get("module_4_clinical", {})
         m4_date = m4.get("as_of_date")
         if m4_date:
-            assert m4_date <= as_of, f"Module 4 as_of_date {m4_date} > {as_of}"
+            assert m4_date <= PIPELINE_HISTORICAL_DATE, (
+                f"Module 4 as_of_date {m4_date} > {PIPELINE_HISTORICAL_DATE}"
+            )
 
 
 class TestEdgeCases:
     """Edge case tests"""
 
-    def test_empty_catalyst_handling(self, pipeline_output):
+    def test_empty_catalyst_handling(self, pipeline_run_main):
         """Test that zero catalysts doesn't crash the pipeline"""
-        data = pipeline_output["data"]
+        data = pipeline_run_main["data"]
 
         # Catalyst module should have diagnostic counts even with 0 events
         m3 = data.get("module_3_catalyst", {})
         diag = m3.get("diagnostic_counts", {})
         assert "tickers_analyzed" in diag
 
-    def test_missing_financial_data_handled(self, pipeline_output):
+    def test_missing_financial_data_handled(self, pipeline_run_main):
         """Test that missing financial data is handled gracefully"""
-        data = pipeline_output["data"]
+        data = pipeline_run_main["data"]
 
         # Check that tickers with missing data are properly flagged
         m2 = data.get("module_2_financial", {})

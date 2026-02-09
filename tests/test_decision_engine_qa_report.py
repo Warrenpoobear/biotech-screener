@@ -243,8 +243,23 @@ class TestSectionStatusLogic:
         # Drawdown data coverage: 90/100 = 90%
         assert metrics["drawdown_data_coverage_pct"] == 90.0
 
+    def test_eligibility_fail_very_low_drawdown_coverage(self):
+        """drawdown_data_coverage_pct < 40% triggers FAIL."""
+        # Only 30/100 have drawdown data → 30% < 40% → FAIL
+        rows = [_dev_row(ticker=f"E{i}", eligible="1",
+                         de_drawdown="-0.15") for i in range(30)]
+        rows += [_dev_row(ticker=f"N{i}", eligible="1",
+                          de_drawdown="") for i in range(50)]
+        rows += [_dev_row(ticker=f"I{i}", eligible="0",
+                          ineligible_reasons="sev3",
+                          de_drawdown="") for i in range(20)]
+        snap = _make_snap(rows)
+        status, metrics = _section_eligibility(snap)
+        assert status == "FAIL"
+        assert metrics["drawdown_data_coverage_pct"] == 30.0
+
     def test_eligibility_warn_low_drawdown_coverage(self):
-        """drawdown_data_coverage_pct < 60% triggers WARN even if dev_eligible_pct is OK."""
+        """drawdown_data_coverage_pct < 60% but >= 40% triggers WARN even if dev_eligible_pct is OK."""
         # 80/100 eligible → 80% → normally OK
         # But only 50/100 have drawdown data → 50% < 60% → WARN
         rows = [_dev_row(ticker=f"E{i}", eligible="1",
@@ -272,6 +287,24 @@ class TestSectionStatusLogic:
         status, metrics = _section_eligibility(snap)
         assert status == "OK"
         assert metrics["drawdown_data_coverage_pct"] == 90.0
+
+    def test_missing_reason_counts_in_metrics(self):
+        """Missing reason breakdown appears in eligibility metrics."""
+        rows = [_dev_row(ticker=f"E{i}", eligible="1",
+                         de_drawdown="-0.15",
+                         de_drawdown_missing_reason="") for i in range(70)]
+        rows += [_dev_row(ticker=f"N{i}", eligible="1",
+                          de_drawdown="",
+                          de_drawdown_missing_reason="no_price_series") for i in range(20)]
+        rows += [_dev_row(ticker=f"S{i}", eligible="1",
+                          de_drawdown="",
+                          de_drawdown_missing_reason="series_too_short") for i in range(10)]
+        snap = _make_snap(rows)
+        status, metrics = _section_eligibility(snap)
+        assert "missing_reason_counts" in metrics
+        mr = metrics["missing_reason_counts"]
+        assert mr.get("no_price_series") == 20
+        assert mr.get("series_too_short") == 10
 
     # -- Tier Distribution --
     def test_tier_ok(self):
@@ -465,3 +498,62 @@ class TestQAReportGeneration:
         loaded = json.loads(serialized)
         assert loaded["overall_status"] == report["overall_status"]
         assert set(loaded["sections"].keys()) == set(report["sections"].keys())
+
+
+# ---------------------------------------------------------------------------
+# TestMissingReasonMarkdown — synthetic, no I/O
+# ---------------------------------------------------------------------------
+
+
+class TestMissingReasonMarkdown:
+
+    def test_missing_reasons_rendered_in_markdown(self):
+        """Missing Reasons table appears in markdown when coverage is low."""
+        rows = [_dev_row(ticker=f"E{i}", eligible="1",
+                         de_drawdown="-0.15",
+                         de_drawdown_missing_reason="") for i in range(50)]
+        rows += [_dev_row(ticker=f"N{i}", eligible="1",
+                          de_drawdown="",
+                          de_drawdown_missing_reason="no_price_series") for i in range(30)]
+        rows += [_dev_row(ticker=f"S{i}", eligible="1",
+                          de_drawdown="",
+                          de_drawdown_missing_reason="series_too_short") for i in range(20)]
+        snap = _make_snap(rows)
+        report = generate_report(snap)
+        md = format_markdown(report)
+        # Coverage is 50% → WARN, and missing reasons should be rendered
+        assert report["sections"]["eligibility"]["status"] == "WARN"
+        assert "Missing reason" in md
+        assert "no_price_series" in md
+        assert "series_too_short" in md
+
+    def test_fail_coverage_with_reasons_in_markdown(self):
+        """FAIL at <40% coverage still renders missing reasons table."""
+        rows = [_dev_row(ticker=f"E{i}", eligible="1",
+                         de_drawdown="-0.15",
+                         de_drawdown_missing_reason="") for i in range(30)]
+        rows += [_dev_row(ticker=f"N{i}", eligible="1",
+                          de_drawdown="",
+                          de_drawdown_missing_reason="no_price_series") for i in range(70)]
+        snap = _make_snap(rows)
+        report = generate_report(snap)
+        md = format_markdown(report)
+        assert report["sections"]["eligibility"]["status"] == "FAIL"
+        assert report["overall_status"] == "FAIL"
+        assert "Missing reason" in md
+        assert "no_price_series" in md
+
+    def test_no_missing_reasons_omits_table(self):
+        """When all drawdown present, Missing Reasons table is absent."""
+        rows = [_dev_row(ticker=f"E{i}", eligible="1",
+                         de_drawdown="-0.15",
+                         de_drawdown_missing_reason="") for i in range(80)]
+        rows += [_dev_row(ticker=f"I{i}", eligible="0",
+                          ineligible_reasons="sev3",
+                          de_drawdown="-0.10",
+                          de_drawdown_missing_reason="") for i in range(20)]
+        snap = _make_snap(rows)
+        report = generate_report(snap)
+        md = format_markdown(report)
+        assert report["sections"]["eligibility"]["status"] == "OK"
+        assert "Missing reason" not in md

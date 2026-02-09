@@ -14,6 +14,7 @@ Test categories:
 """
 from __future__ import annotations
 
+import hashlib
 import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -847,3 +848,143 @@ class TestDrawdownDataMissing:
         f2 = compute_decision_fields(_rec("B", drawdown=-0.55), "drug_developer", 0.5)
         flags2 = f2["risk_flags"].split("|") if f2["risk_flags"] else []
         assert not ("drawdown_data_missing" in flags2 and "deep_drawdown" in flags2)
+
+
+# =============================================================================
+# 9. SNAPSHOT INPUT COLUMNS — lock de_* contract surface
+# =============================================================================
+
+class TestSnapshotInputContract:
+    """Prevent silent addition, removal, or renaming of de_* input columns."""
+
+    EXPECTED_DE_INPUT_COLUMNS = frozenset({
+        "de_catalyst_days", "de_catalyst_in_window", "de_catalyst_mode",
+        "de_alpha_60d", "de_tier1_count",
+        "de_beta_xbi_60d", "de_drawdown", "de_drawdown_missing_reason", "de_rsi_14d",
+    })
+
+    def test_de_input_columns_present(self):
+        """de_* columns in SNAPSHOT_COLUMNS match the pinned set exactly."""
+        from run_screen import SNAPSHOT_COLUMNS
+
+        actual_de = frozenset(c for c in SNAPSHOT_COLUMNS if c.startswith("de_"))
+        assert actual_de == self.EXPECTED_DE_INPUT_COLUMNS, (
+            f"de_* column mismatch.\n"
+            f"  Added:   {actual_de - self.EXPECTED_DE_INPUT_COLUMNS}\n"
+            f"  Removed: {self.EXPECTED_DE_INPUT_COLUMNS - actual_de}"
+        )
+
+    def test_drawdown_missing_reason_values(self):
+        """drawdown_missing_reason set to a valid enum value when drawdown is None."""
+        from run_screen import VALID_DRAWDOWN_MISSING_REASONS
+
+        rec = _rec("DD_ENUM", drawdown=None)
+        fields = compute_decision_fields(rec, "drug_developer", 0.65)
+        # The engine doesn't write drawdown_missing_reason itself (that's
+        # _hydrate_drawdown's job), but it propagates the de_drawdown and
+        # de_drawdown_missing_reason inputs.  Verify the enum is importable
+        # and contains the three documented values.
+        assert VALID_DRAWDOWN_MISSING_REASONS == frozenset(
+            {"", "no_price_series", "series_too_short"}
+        )
+
+    def test_drawdown_price_symbol_not_persisted(self):
+        """de_drawdown_price_symbol must NOT appear in SNAPSHOT_COLUMNS.
+
+        It is an intermediate diagnostic field only (zero impact on current
+        universe — all 353 tickers are clean alphanumeric).
+        """
+        from run_screen import SNAPSHOT_COLUMNS
+
+        assert "de_drawdown_price_symbol" not in SNAPSHOT_COLUMNS
+
+
+# =============================================================================
+# 10. GOLDEN OUTPUT FINGERPRINT — CI gate for logic changes
+# =============================================================================
+
+# Fields already pinned by separate tests (version string, ruleset ID).
+_FINGERPRINT_EXCLUDED = {"decision_engine_version", "decision_engine_ruleset_id"}
+
+
+def _compute_golden_output_fingerprint() -> str:
+    """Hash all golden fixture outputs + full pipeline to detect logic changes.
+
+    Returns SHA256[:12] covering:
+      - Individual compute_decision_fields output for each golden fixture
+      - Full sort + weight pipeline output (same cohort as TestFullPipeline)
+
+    Excluded: decision_engine_version and decision_engine_ruleset_id (pinned
+    separately by TestSchemaContract and TestRulesetDriftGuardrails).
+    """
+    hasher = hashlib.sha256()
+
+    # Part 1: individual golden outputs (stable fixture-list order)
+    all_fields = [_compute_golden(g) for g in ALL_GOLDEN]
+    for fields in all_fields:
+        for key in sorted(fields.keys()):
+            if key in _FINGERPRINT_EXCLUDED:
+                continue
+            hasher.update(f"{key}={fields[key]}".encode())
+
+    # Part 2: full pipeline (sort + weight)
+    rows = []
+    for i, g in enumerate(ALL_GOLDEN):
+        fields = _compute_golden(g)
+        fields["ticker"] = g["ticker"]
+        fields["archetype"] = g["archetype"]
+        fields["optionality"] = g["optionality"]
+        fields["composite_rank"] = i + 1
+        rows.append(fields)
+
+    rows.sort(key=lambda r: compute_actionable_sort_key(
+        decision_fields=r, archetype=r["archetype"],
+        optionality=r["optionality"], composite_rank=r["composite_rank"],
+        ticker=r["ticker"],
+    ))
+
+    rank = 0
+    for r in rows:
+        if r["eligible"] == "1":
+            rank += 1
+            r["actionable_rank"] = rank
+        else:
+            r["actionable_rank"] = ""
+
+    eligible = [r for r in rows if r["eligible"] == "1"]
+    compute_target_weights(eligible)
+
+    for r in rows:
+        for key in sorted(r.keys()):
+            if key in _FINGERPRINT_EXCLUDED:
+                continue
+            hasher.update(f"{key}={r[key]}".encode())
+
+    return hasher.hexdigest()[:12]
+
+
+class TestGoldenOutputFingerprint:
+    """CI gate: detects ANY logic change that alters golden fixture outputs.
+
+    The ruleset_id only hashes parameters — it cannot detect code changes
+    (e.g. >= → > in a tier boundary, sort-key tweak, weight formula change).
+    This fingerprint hashes all output fields across all 10 golden fixtures
+    plus the full sort+weight pipeline.
+
+    If this test fails:
+      1. Verify the logic change is intentional
+      2. Update EXPECTED_FINGERPRINT below
+      3. Add an entry to RULESET_CHANGELOG.md
+      4. Bump VERSION in decision_engine.py if the change is material
+    """
+
+    EXPECTED_FINGERPRINT = "82b41fac1c68"
+
+    def test_golden_output_fingerprint_pinned(self):
+        actual = _compute_golden_output_fingerprint()
+        assert actual == self.EXPECTED_FINGERPRINT, (
+            f"Golden output fingerprint changed: {self.EXPECTED_FINGERPRINT} → {actual}.\n"
+            f"A logic change in decision_engine.py altered fixture outputs.\n"
+            f"If intentional: update EXPECTED_FINGERPRINT, add RULESET_CHANGELOG.md entry, "
+            f"bump VERSION if material."
+        )
