@@ -113,7 +113,14 @@ from module_5_scoring_v3 import summarize_dev_catalyst_guardrail
 
 # Production validation
 from production_validation import validate_screening_output
-from decision_engine import compute_decision_fields
+from decision_engine import (
+    DecisionRuleset,
+    DEFAULT_RULESET,
+    compute_decision_fields,
+    compute_actionable_sort_key,
+    compute_target_weights,
+    ACTIONABLE_COLUMNS,
+)
 
 # Module 3A specific imports
 from event_detector import SimpleMarketCalendar
@@ -1298,6 +1305,8 @@ SNAPSHOT_COLUMNS = [
     "runway_bucket", "mom_state", "risk_flags",
     "size_band", "size_reasons",
     "tier_dev", "tier_reason",
+    # Decision Engine v2 actionable columns
+    "actionable_rank", "target_weight_pct",
     # Decision Engine input columns (for archive self-containment)
     "de_catalyst_days", "de_catalyst_in_window", "de_catalyst_mode",
     "de_alpha_60d",
@@ -1311,6 +1320,8 @@ def save_validation_snapshot(
     as_of_date: str,
     results: Dict[str, Any],
     version: str,
+    decision_mode: str = "observe",
+    ruleset: Optional[DecisionRuleset] = None,
 ) -> Optional[Path]:
     """
     Save a lightweight validation snapshot for future forward-looking backtests.
@@ -1328,6 +1339,9 @@ def save_validation_snapshot(
         as_of_date: Screen date string (YYYY-MM-DD)
         results: Full pipeline results dict
         version: Pipeline version string
+        decision_mode: "observe" (sort by composite_rank) or "actionable"
+                       (sort by tier-based deterministic ordering)
+        ruleset: DecisionRuleset config (defaults to DEFAULT_RULESET)
 
     Returns:
         Path to the snapshot directory, or None if save failed
@@ -1416,7 +1430,7 @@ def save_validation_snapshot(
         arch = archetypes.get(ticker, "")
         opt = row.get("clinical_optionality_pct_dev")
         opt_float = float(opt) if opt is not None else None
-        decision = compute_decision_fields(rec, arch, opt_float)
+        decision = compute_decision_fields(rec, arch, opt_float, ruleset=ruleset)
         row.update(decision)
 
         # Persist decision engine INPUT fields for archive self-containment.
@@ -1439,6 +1453,37 @@ def save_validation_snapshot(
         row["de_drawdown"] = df.get("drawdown", "")
         row["de_rsi_14d"] = df.get("rsi_14d", "")
 
+    # --- Actionable ordering: sort + assign rank + compute weights ---
+    # Sort all rows by actionable sort key
+    csv_rows.sort(key=lambda r: compute_actionable_sort_key(
+        decision_fields=r,
+        archetype=r.get("archetype", ""),
+        optionality=float(r["clinical_optionality_pct_dev"])
+            if r.get("clinical_optionality_pct_dev") not in (None, "")
+            else None,
+        composite_rank=r.get("composite_rank"),
+        ticker=r.get("ticker", ""),
+    ))
+
+    # Assign actionable_rank: eligible rows get 1..N, ineligible get blank
+    eligible_rows = [r for r in csv_rows if r.get("eligible") == "1"]
+    ineligible_rows = [r for r in csv_rows if r.get("eligible") != "1"]
+    for i, row in enumerate(eligible_rows, start=1):
+        row["actionable_rank"] = i
+    for row in ineligible_rows:
+        row["actionable_rank"] = ""
+        row["target_weight_pct"] = ""
+
+    # Compute target weights for eligible rows
+    compute_target_weights(eligible_rows, ruleset=ruleset)
+
+    # In observe mode, re-sort by composite_rank (original behavior)
+    if decision_mode == "observe":
+        csv_rows.sort(key=lambda r: (
+            int(r["composite_rank"]) if r.get("composite_rank") not in (None, "") else 9999,
+            r.get("ticker", ""),
+        ))
+
     # --- Write rankings CSV ---
     csv_path = snap_path / "rankings.csv"
     try:
@@ -1450,6 +1495,13 @@ def save_validation_snapshot(
     except OSError as e:
         logger.warning(f"Could not write snapshot CSV: {e}")
         return None
+
+    # --- Write decision ruleset sidecar JSON for reproducibility ---
+    rs = ruleset or DEFAULT_RULESET
+    try:
+        rs.to_json(str(snap_path / "decision_ruleset.json"))
+    except OSError as e:
+        logger.warning(f"Could not write decision_ruleset.json: {e}")
 
     # --- Compute per-component score diagnostics ---
     score_columns = [
@@ -4219,6 +4271,23 @@ Module 3 Catalyst Detection:
     )
 
     parser.add_argument(
+        "--decision-mode",
+        type=str,
+        default="observe",
+        choices=["observe", "actionable"],
+        help="Decision output mode: observe (default, sort by composite_rank) or "
+             "actionable (sort by tier-based deterministic ordering with target weights).",
+    )
+
+    parser.add_argument(
+        "--ruleset",
+        type=Path,
+        default=None,
+        help="Path to a decision engine ruleset JSON file. "
+             "If omitted, built-in defaults are used.",
+    )
+
+    parser.add_argument(
         "--tickers",
         nargs="+",
         help="Optional: Whitelist specific tickers (default: use all from universe.json)",
@@ -4808,6 +4877,13 @@ Module 3 Catalyst Detection:
             logger.info(f"Audit log:          {args.audit_log}")
         logger.info("=" * 60)
 
+        # Load decision engine ruleset (custom JSON or built-in defaults)
+        de_ruleset = (
+            DecisionRuleset.from_json(str(args.ruleset))
+            if args.ruleset
+            else DEFAULT_RULESET
+        )
+
         # Save validation snapshot for future forward-looking backtests
         if not args.no_snapshot:
             snapshot_dir = args.snapshot_dir or (args.data_dir.parent / "data" / "snapshots")
@@ -4816,6 +4892,8 @@ Module 3 Catalyst Detection:
                 as_of_date=args.as_of_date,
                 results=results,
                 version=VERSION,
+                decision_mode=args.decision_mode,
+                ruleset=de_ruleset,
             )
             if snap_result:
                 logger.info(f"Snapshot dir:       {snap_result}")

@@ -20,55 +20,105 @@ Data sources on each rec:
 from __future__ import annotations
 
 import hashlib
+import json
+from dataclasses import dataclass, fields as dc_fields
 from typing import Any, Dict, List, Optional, Tuple
+
+
+# =============================================================================
+# RULESET CONFIGURATION
+# =============================================================================
+
+@dataclass(frozen=True)
+class DecisionRuleset:
+    """Immutable configuration for all tunable decision engine thresholds.
+
+    Frozen so instances are hashable and can produce a deterministic ruleset_id.
+    All defaults match the original v1.0.0 hardcoded values.
+    """
+    # Layer 0 — Eligibility
+    drawdown_gate: float = -0.40
+
+    # Layer 2 — Risk flag thresholds
+    vol_high_threshold: float = 1.20
+    beta_high_threshold: float = 1.80
+    drawdown_flag_threshold: float = -0.35
+    rsi_overbought: float = 70.0
+    confidence_low_threshold: float = 0.30
+
+    # Layer 2 — Momentum classification
+    alpha_tailwind: float = 0.05
+    alpha_headwind: float = -0.05
+
+    # Layer 4 — Tier cutoffs
+    tier_a_optionality_floor: float = 0.60
+    tier_b_optionality_floor: float = 0.30
+
+    # Previously hardcoded inline values
+    catalyst_near_days: int = 90
+    sponsor_confirm_threshold: int = 2
+
+    # Sizing weights (tuple-of-tuples for frozen hashability)
+    sizing_weights: tuple = (("L", 1.0), ("M", 0.6), ("S", 0.3), ("XS", 0.15))
+
+    @property
+    def sizing_weights_dict(self) -> Dict[str, float]:
+        """Convert sizing_weights to dict for runtime use."""
+        return dict(self.sizing_weights)
+
+    def _canonical_json(self) -> str:
+        """Deterministic JSON representation for hashing."""
+        d = {}
+        for f in dc_fields(self):
+            val = getattr(self, f.name)
+            if f.name == "sizing_weights":
+                d[f.name] = dict(val)
+            else:
+                d[f.name] = val
+        return json.dumps(d, sort_keys=True, separators=(",", ":"))
+
+    @property
+    def ruleset_id(self) -> str:
+        """8-char hex hash of all parameters for change detection."""
+        return hashlib.sha256(self._canonical_json().encode()).hexdigest()[:8]
+
+    def to_json(self, path: str) -> None:
+        """Write ruleset to a JSON file."""
+        d = {}
+        for f in dc_fields(self):
+            val = getattr(self, f.name)
+            if f.name == "sizing_weights":
+                d[f.name] = dict(val)
+            else:
+                d[f.name] = val
+        with open(path, "w", encoding="utf-8") as fh:
+            json.dump(d, fh, indent=2, sort_keys=True)
+            fh.write("\n")
+
+    @classmethod
+    def from_json(cls, path: str) -> DecisionRuleset:
+        """Load ruleset from a JSON file."""
+        with open(path, "r", encoding="utf-8") as fh:
+            d = json.load(fh)
+        # Convert sizing_weights dict back to tuple-of-tuples
+        if "sizing_weights" in d and isinstance(d["sizing_weights"], dict):
+            d["sizing_weights"] = tuple(
+                (k, v) for k, v in sorted(d["sizing_weights"].items())
+            )
+        return cls(**d)
 
 
 # =============================================================================
 # VERSIONING
 # =============================================================================
 
-# Bump VERSION when thresholds, gates, or tier logic change.
-# Bump RULESET_ID (or recompute) when any parameter changes.
-VERSION = "v1.0.0"
+VERSION = "v1.1.0"
 
-# Deterministic ruleset hash: computed from the threshold constants below.
-# Recomputed at import time so any parameter change auto-updates the ID.
-def _compute_ruleset_id() -> str:
-    """Short hash of all tunable parameters for change detection."""
-    params = (
-        f"DRAWDOWN_GATE={-0.40}|"
-        f"VOL_HIGH={1.20}|BETA_HIGH={1.80}|DD_FLAG={-0.35}|RSI_OB={70}|"
-        f"CONF_LOW={0.30}|"
-        f"ALPHA_TW={0.05}|ALPHA_HW={-0.05}|"
-        f"TIER_A={0.60}|TIER_B={0.30}|"
-        f"SPONSOR_CONFIRM=2"
-    )
-    return hashlib.sha256(params.encode()).hexdigest()[:8]
+DEFAULT_RULESET = DecisionRuleset()
 
-RULESET_ID = _compute_ruleset_id()
-
-
-# =============================================================================
-# THRESHOLDS
-# =============================================================================
-
-# Layer 0 — Eligibility gates (hard gates only)
-DRAWDOWN_GATE = -0.40            # Worse than -40% drawdown → ineligible
-
-# Layer 2 — Risk flag thresholds
-VOL_HIGH_THRESHOLD = 1.20        # Annualized vol > 120%
-BETA_HIGH_THRESHOLD = 1.80       # Beta to XBI > 1.8
-DRAWDOWN_FLAG_THRESHOLD = -0.35  # Drawdown worse than -35%
-RSI_OVERBOUGHT = 70              # RSI > 70
-CONFIDENCE_LOW_THRESHOLD = 0.30  # Confidence < 30% → risk flag (not hard gate)
-
-# Layer 2 — Momentum classification
-ALPHA_TAILWIND = 0.05            # alpha_60d > +5%
-ALPHA_HEADWIND = -0.05           # alpha_60d < -5%
-
-# Layer 4 — Tier cutoffs
-TIER_A_OPTIONALITY_FLOOR = 0.60  # Top 40% → optionality_pct >= 0.60
-TIER_B_OPTIONALITY_FLOOR = 0.30  # Top 70% → optionality_pct >= 0.30
+# Backward-compat exports (same value as DEFAULT_RULESET for default params)
+RULESET_ID = DEFAULT_RULESET.ruleset_id
+SIZING_WEIGHTS = DEFAULT_RULESET.sizing_weights_dict
 
 
 # =============================================================================
@@ -93,7 +143,7 @@ _MISSING = object()
 # LAYER 0 — ELIGIBILITY
 # =============================================================================
 
-def _compute_eligibility(rec: Dict) -> Tuple[bool, List[str]]:
+def _compute_eligibility(rec: Dict, ruleset: DecisionRuleset) -> Tuple[bool, List[str]]:
     """Check eligibility gates.
 
     Hard gates only — survivability, liquidity, drawdown.
@@ -115,7 +165,7 @@ def _compute_eligibility(rec: Dict) -> Tuple[bool, List[str]]:
     # Gate: deep drawdown
     df = rec.get("defensive_features") or {}
     dd = _safe_float(df.get("drawdown"))
-    if dd is not None and dd < DRAWDOWN_GATE:
+    if dd is not None and dd < ruleset.drawdown_gate:
         reasons.append("deep_drawdown")
 
     # Gate: check attn_flags for liquidity/ADV issues
@@ -136,7 +186,7 @@ def _compute_eligibility(rec: Dict) -> Tuple[bool, List[str]]:
 # LAYER 2 — OVERLAYS
 # =============================================================================
 
-def _compute_overlays(rec: Dict) -> Dict[str, Any]:
+def _compute_overlays(rec: Dict, ruleset: DecisionRuleset) -> Dict[str, Any]:
     """Extract overlay signals from rec.
 
     Sponsorship:  rec["smart_money_signal"] + rec["coinvest"]
@@ -228,9 +278,9 @@ def _compute_overlays(rec: Dict) -> Dict[str, Any]:
         mom_top = rec.get("momentum_signal") or {}
         alpha = _safe_float(mom_top.get("alpha_60d"))
     if alpha is not None:
-        if alpha > ALPHA_TAILWIND:
+        if alpha > ruleset.alpha_tailwind:
             out["mom_state"] = "tailwind"
-        elif alpha < ALPHA_HEADWIND:
+        elif alpha < ruleset.alpha_headwind:
             out["mom_state"] = "headwind"
         else:
             out["mom_state"] = "neutral"
@@ -241,19 +291,19 @@ def _compute_overlays(rec: Dict) -> Dict[str, Any]:
     df = rec.get("defensive_features") or {}
     risk_flags: List[str] = []
     vol = _safe_float(df.get("vol_60d"))
-    if vol is not None and vol > VOL_HIGH_THRESHOLD:
+    if vol is not None and vol > ruleset.vol_high_threshold:
         risk_flags.append("high_vol")
     beta = _safe_float(df.get("beta_xbi_60d"))
-    if beta is not None and beta > BETA_HIGH_THRESHOLD:
+    if beta is not None and beta > ruleset.beta_high_threshold:
         risk_flags.append("high_beta")
     dd = _safe_float(df.get("drawdown"))
-    if dd is not None and dd < DRAWDOWN_FLAG_THRESHOLD:
+    if dd is not None and dd < ruleset.drawdown_flag_threshold:
         risk_flags.append("deep_drawdown")
     rsi = _safe_float(df.get("rsi_14d"))
-    if rsi is not None and rsi > RSI_OVERBOUGHT:
+    if rsi is not None and rsi > ruleset.rsi_overbought:
         risk_flags.append("overbought_rsi")
     conf = _safe_float(rec.get("confidence_overall"))
-    if conf is not None and conf < CONFIDENCE_LOW_THRESHOLD:
+    if conf is not None and conf < ruleset.confidence_low_threshold:
         risk_flags.append("low_confidence")
     out["risk_flags"] = "|".join(risk_flags) if risk_flags else ""
 
@@ -272,6 +322,7 @@ def _compute_size_band(
     tier_dev: str,
     optionality: Optional[float],
     overlays: Dict[str, Any],
+    ruleset: DecisionRuleset,
 ) -> Tuple[str, List[str]]:
     """Rule-based sizing band. Returns (band, list_of_reasons)."""
     if not eligible:
@@ -281,13 +332,13 @@ def _compute_size_band(
     reasons: List[str] = []
 
     # Tier A dev with high optionality → push toward L
-    if tier_dev == "A" and optionality is not None and optionality >= TIER_A_OPTIONALITY_FLOOR:
+    if tier_dev == "A" and optionality is not None and optionality >= ruleset.tier_a_optionality_floor:
         idx += 1
         reasons.append("tier_a_dev")
 
     # Sponsorship confirmation (only when data present)
     t1 = overlays.get("sponsor_tier1_count")
-    if isinstance(t1, (int, float)) and t1 >= 2:
+    if isinstance(t1, (int, float)) and t1 >= ruleset.sponsor_confirm_threshold:
         idx += 1
         reasons.append("sponsor_confirmed")
 
@@ -327,6 +378,7 @@ def _compute_tier_dev(
     optionality: Optional[float],
     catalyst_in_window: str,
     catalyst_days: Any,
+    ruleset: DecisionRuleset,
 ) -> Tuple[str, str]:
     """Compute dev tier (A/B/C/D) and tier_reason.
 
@@ -353,35 +405,133 @@ def _compute_tier_dev(
     has_specific_days = isinstance(catalyst_days, (int, float)) and catalyst_days > 0
     has_blended_window = catalyst_in_window == "1"
     has_catalyst_data = has_specific_days or has_blended_window
-    has_catalyst_near = (has_specific_days and catalyst_days <= 90) or has_blended_window
+    has_catalyst_near = (has_specific_days and catalyst_days <= ruleset.catalyst_near_days) or has_blended_window
 
     # Catalyst suffix for tier_reason
-    cat_tag = "catalyst_near" if has_specific_days and catalyst_days <= 90 else (
+    cat_tag = "catalyst_near" if has_specific_days and catalyst_days <= ruleset.catalyst_near_days else (
         "catalyst_window" if has_blended_window and not has_specific_days else (
         "catalyst_far" if has_catalyst_data and not has_catalyst_near else ""))
 
     if has_catalyst_data:
-        if optionality >= TIER_A_OPTIONALITY_FLOOR and has_catalyst_near:
+        if optionality >= ruleset.tier_a_optionality_floor and has_catalyst_near:
             return "A", f"high_opt+{cat_tag}"
-        elif optionality >= TIER_A_OPTIONALITY_FLOOR:
+        elif optionality >= ruleset.tier_a_optionality_floor:
             return "B", f"high_opt+{cat_tag}" if cat_tag else "high_opt+catalyst_far"
-        elif optionality >= TIER_B_OPTIONALITY_FLOOR and has_catalyst_near:
+        elif optionality >= ruleset.tier_b_optionality_floor and has_catalyst_near:
             return "B", f"mod_opt+{cat_tag}"
         else:
             return "C", "low_opt"
     else:
         # No catalyst data: tier on optionality only
-        if optionality >= TIER_A_OPTIONALITY_FLOOR:
+        if optionality >= ruleset.tier_a_optionality_floor:
             return "B", "high_opt+no_catalyst_data"
-        elif optionality >= TIER_B_OPTIONALITY_FLOOR:
+        elif optionality >= ruleset.tier_b_optionality_floor:
             return "C", "mod_opt+no_catalyst_data"
         else:
             return "C", "low_opt+no_catalyst_data"
 
 
 # =============================================================================
+# ACTIONABLE ORDERING
+# =============================================================================
+
+# Priority mappings for sort key construction
+_TIER_ORDER = {"A": 0, "B": 1, "C": 2, "D": 3, "": 4}
+_CATALYST_MODE_ORDER = {"specific_days": 0, "blended_window": 1, "no_upcoming": 2, "missing": 3}
+_MOM_STATE_ORDER = {"tailwind": 0, "neutral": 1, "headwind": 2}
+
+
+def compute_actionable_sort_key(
+    decision_fields: Dict[str, Any],
+    archetype: str,
+    optionality: Optional[float],
+    composite_rank: Optional[int],
+    ticker: str,
+) -> Tuple:
+    """Return a sort-key tuple for deterministic actionable ordering.
+
+    Lower tuple values sort first. Eligible dev-stage tickers with the
+    best tier, nearest catalyst, and highest optionality rank first.
+    """
+    eligible_val = decision_fields.get("eligible", "0")
+    is_eligible = 0 if eligible_val == "1" else 1
+
+    is_dev = 0 if archetype == "drug_developer" else 1
+
+    tier = decision_fields.get("tier_dev", "")
+    tier_ord = _TIER_ORDER.get(str(tier), 4)
+
+    cat_mode = decision_fields.get("catalyst_mode", "missing")
+    cat_mode_ord = _CATALYST_MODE_ORDER.get(str(cat_mode), 3)
+
+    cat_days_raw = decision_fields.get("catalyst_days", "")
+    cat_days = int(cat_days_raw) if cat_days_raw != "" and cat_days_raw is not None else 9999
+
+    opt_neg = -(float(optionality)) if optionality is not None else 0.0
+
+    sponsor_raw = decision_fields.get("sponsor_tier1_count", "")
+    sponsor_neg = -(int(sponsor_raw)) if sponsor_raw != "" and sponsor_raw is not None else 0
+
+    mom = decision_fields.get("mom_state", "neutral")
+    mom_ord = _MOM_STATE_ORDER.get(str(mom), 1)
+
+    comp_rank = int(composite_rank) if composite_rank is not None else 9999
+
+    return (
+        is_eligible,    # 0: eligible first
+        is_dev,         # 1: dev first
+        tier_ord,       # 2: A < B < C < D < blank
+        cat_mode_ord,   # 3: specific < blended < no_upcoming < missing
+        cat_days,       # 4: ascending days (missing=9999)
+        opt_neg,        # 5: descending optionality (negated)
+        sponsor_neg,    # 6: descending sponsor count (negated)
+        mom_ord,        # 7: tailwind < neutral < headwind
+        comp_rank,      # 8: ascending composite rank
+        ticker,         # 9: alphabetic tiebreak
+    )
+
+
+# =============================================================================
+# TARGET WEIGHT SIZING
+# =============================================================================
+
+def compute_target_weights(
+    rows: List[Dict[str, Any]],
+    ruleset: Optional[DecisionRuleset] = None,
+) -> List[Dict[str, Any]]:
+    """Assign target_weight_pct to eligible rows based on size_band.
+
+    Takes already-sorted, eligible-only rows. Normalizes raw weights
+    so they sum to 100%. Rounds to 2 decimal places.
+
+    Returns the same rows with 'target_weight_pct' added.
+    """
+    rs = ruleset or DEFAULT_RULESET
+    weights_map = rs.sizing_weights_dict
+
+    raw_weights = []
+    for row in rows:
+        band = row.get("size_band", "XS")
+        raw_weights.append(weights_map.get(str(band), 0.15))
+
+    total = sum(raw_weights)
+    if total <= 0:
+        for row in rows:
+            row["target_weight_pct"] = ""
+        return rows
+
+    for row, rw in zip(rows, raw_weights):
+        row["target_weight_pct"] = round(rw / total * 100, 2)
+
+    return rows
+
+
+# =============================================================================
 # PUBLIC API
 # =============================================================================
+
+# Columns added by the actionable ordering layer
+ACTIONABLE_COLUMNS = ["actionable_rank", "target_weight_pct"]
 
 # Column names emitted by the decision engine (for SNAPSHOT_COLUMNS)
 DECISION_COLUMNS = [
@@ -399,6 +549,7 @@ def compute_decision_fields(
     rec: Dict[str, Any],
     archetype: str,
     optionality_pct_dev: Optional[float] = None,
+    ruleset: Optional[DecisionRuleset] = None,
 ) -> Dict[str, Any]:
     """Compute all decision engine fields for a single ticker.
 
@@ -406,15 +557,18 @@ def compute_decision_fields(
         rec: ranked_securities record from Module 5
         archetype: company archetype string
         optionality_pct_dev: pre-computed optionality percentile (float or None)
+        ruleset: DecisionRuleset config (defaults to DEFAULT_RULESET)
 
     Returns:
         dict with all decision engine column values
     """
+    rs = ruleset or DEFAULT_RULESET
+
     # Layer 0 — Eligibility
-    eligible, reasons = _compute_eligibility(rec)
+    eligible, reasons = _compute_eligibility(rec, rs)
 
     # Layer 2 — Overlays
-    overlays = _compute_overlays(rec)
+    overlays = _compute_overlays(rec, rs)
 
     # Layer 4 — Dev Tier (before sizing, since tier affects size)
     tier_dev, tier_reason = _compute_tier_dev(
@@ -423,6 +577,7 @@ def compute_decision_fields(
         optionality=optionality_pct_dev,
         catalyst_in_window=overlays.get("catalyst_in_window", ""),
         catalyst_days=overlays.get("catalyst_days", ""),
+        ruleset=rs,
     )
 
     # Layer 3 — Sizing
@@ -431,12 +586,13 @@ def compute_decision_fields(
         tier_dev=tier_dev,
         optionality=optionality_pct_dev,
         overlays=overlays,
+        ruleset=rs,
     )
 
     # Assemble output
     fields: Dict[str, Any] = {
         "decision_engine_version": VERSION,
-        "decision_engine_ruleset_id": RULESET_ID,
+        "decision_engine_ruleset_id": rs.ruleset_id,
         "eligible": "1" if eligible else "0",
         "ineligible_reasons": "|".join(reasons) if reasons else "",
         **overlays,
