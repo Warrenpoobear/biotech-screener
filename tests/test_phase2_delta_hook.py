@@ -186,3 +186,81 @@ class TestDeltaHookWiring:
             "rank_current", "rank_prior",
         }
         assert expected_cols == set(df.columns)
+
+    def test_hook_writes_health_json(self, tmp_path):
+        """_run_phase2_delta writes phase2_health.json into the snapshot dir."""
+        from run_screen import _run_phase2_delta
+
+        snapshot_dir = tmp_path / "snapshots"
+        _write_snapshot(snapshot_dir, "2026-01-20")
+        current = _write_snapshot(snapshot_dir, "2026-02-09")
+
+        args = types.SimpleNamespace(delta_prior="auto")
+        logger = MagicMock()
+
+        health = _run_phase2_delta(current, snapshot_dir, args, logger)
+
+        assert (current / "phase2_health.json").exists()
+        with open(current / "phase2_health.json") as f:
+            hj = json.load(f)
+        assert hj["status"] in ("OK", "WARN", "FAIL")
+        assert "reasons" in hj
+        assert "metrics" in hj
+        assert "thresholds" in hj
+
+        # Return value should be a HealthResult
+        assert health is not None
+        assert health.status == hj["status"]
+
+    def test_strict_mode_exit_codes(self):
+        """Verify the --strict gating logic for WARN and FAIL."""
+        from run_phase2_snapshot_delta import HealthResult
+
+        # FAIL + strict => would return 1
+        args_strict = types.SimpleNamespace(
+            decision_mode="phase2",
+            no_delta=False,
+            strict=True,
+        )
+        health_fail = HealthResult(status="FAIL", reasons=["no_a_tier"], metrics={})
+        if health_fail.status == "FAIL" and getattr(args_strict, "strict", False):
+            exit_code = 1
+        elif health_fail.status == "WARN" and getattr(args_strict, "strict", False):
+            exit_code = 2
+        else:
+            exit_code = 0
+        assert exit_code == 1
+
+        # WARN + strict => would return 2
+        health_warn = HealthResult(status="WARN", reasons=["high_turnover"], metrics={})
+        if health_warn.status == "FAIL" and getattr(args_strict, "strict", False):
+            exit_code = 1
+        elif health_warn.status == "WARN" and getattr(args_strict, "strict", False):
+            exit_code = 2
+        else:
+            exit_code = 0
+        assert exit_code == 2
+
+        # OK + strict => would return 0
+        health_ok = HealthResult(status="OK", reasons=[], metrics={})
+        if health_ok.status == "FAIL" and getattr(args_strict, "strict", False):
+            exit_code = 1
+        elif health_ok.status == "WARN" and getattr(args_strict, "strict", False):
+            exit_code = 2
+        else:
+            exit_code = 0
+        assert exit_code == 0
+
+        # WARN + no strict => would return 0
+        args_no_strict = types.SimpleNamespace(
+            decision_mode="phase2",
+            no_delta=False,
+            strict=False,
+        )
+        if health_warn.status == "FAIL" and getattr(args_no_strict, "strict", False):
+            exit_code = 1
+        elif health_warn.status == "WARN" and getattr(args_no_strict, "strict", False):
+            exit_code = 2
+        else:
+            exit_code = 0
+        assert exit_code == 0

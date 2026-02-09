@@ -1333,6 +1333,11 @@ PHASE2_DEFAULT_RULESET_PATH = (
 PHASE2_DEFAULT_TIER_FILTER = ["A", "B"]
 PHASE2_DEFAULT_TOP_K = 20
 PHASE2_PINNED_RULESET_ID = "d3cdf5c8"
+PHASE2_DEFAULT_HEALTH_THRESHOLDS_PATH = (
+    Path(__file__).resolve().parent
+    / "production_data" / "phase2_health_thresholds" / "v1.json"
+)
+PHASE2_PINNED_THRESHOLDS_ID = "8d6e02d4"
 
 
 def save_validation_snapshot(
@@ -4306,13 +4311,40 @@ def _run_phase2_delta(snap_path, snapshot_dir, args, logger):
         load_snapshot,
         compute_delta,
         compute_single_snapshot_summary,
+        compute_health_gate,
+        generate_health_json,
         generate_report,
         generate_details_json,
         generate_delta_csv,
+        Phase2HealthThresholds,
+        DEFAULT_HEALTH_THRESHOLDS,
         PHASE2_PINNED_RULESET_ID as DELTA_PINNED_ID,
     )
 
     logger.info("--- Phase-2 Delta Report ---")
+
+    # Load health thresholds
+    ht_override = getattr(args, "health_thresholds", None)
+    if ht_override and Path(ht_override).exists():
+        health_thresholds = Phase2HealthThresholds.from_json(str(ht_override))
+        logger.info(f"Health thresholds: {Path(ht_override).name} (id={health_thresholds.thresholds_id})")
+    elif PHASE2_DEFAULT_HEALTH_THRESHOLDS_PATH.exists():
+        health_thresholds = Phase2HealthThresholds.from_json(
+            str(PHASE2_DEFAULT_HEALTH_THRESHOLDS_PATH)
+        )
+        if health_thresholds.thresholds_id != PHASE2_PINNED_THRESHOLDS_ID:
+            logger.warning(
+                f"Health thresholds id {health_thresholds.thresholds_id} != "
+                f"pinned {PHASE2_PINNED_THRESHOLDS_ID}"
+            )
+        logger.info(f"Health thresholds: pinned v1 (id={health_thresholds.thresholds_id})")
+    else:
+        logger.warning(
+            f"Pinned health thresholds not found: {PHASE2_DEFAULT_HEALTH_THRESHOLDS_PATH}, "
+            f"using built-in defaults"
+        )
+        health_thresholds = DEFAULT_HEALTH_THRESHOLDS
+
     current_date = snap_path.name
     delta_prior = getattr(args, "delta_prior", "auto")
 
@@ -4344,14 +4376,19 @@ def _run_phase2_delta(snap_path, snapshot_dir, args, logger):
         logger.info(f"Delta: {current_date} (no comparable prior)")
         result = compute_single_snapshot_summary(current)
 
+    # Health gate
+    health = compute_health_gate(current, prior, result, thresholds=health_thresholds)
+    health_json = generate_health_json(health, thresholds=health_thresholds)
+
     # Write artifacts into snapshot dir
     output_dir = snap_path
-    report_txt = generate_report(current, prior, result)
+    report_txt = generate_report(current, prior, result, health=health)
     details = generate_details_json(current, prior, result)
 
     report_path = output_dir / "phase2_run_delta_report.txt"
     details_path = output_dir / "phase2_run_delta_details.json"
     csv_path = output_dir / "phase2_run_delta.csv"
+    health_path = output_dir / "phase2_health.json"
 
     try:
         with open(report_path, "w") as f:
@@ -4359,10 +4396,12 @@ def _run_phase2_delta(snap_path, snapshot_dir, args, logger):
         with open(details_path, "w") as f:
             json.dump(details, f, indent=2)
         generate_delta_csv(current, prior, csv_path)
-        logger.info(f"Delta artifacts: {report_path.name}, {details_path.name}, {csv_path.name}")
+        with open(health_path, "w") as f:
+            json.dump(health_json, f, indent=2)
+        logger.info(f"Delta artifacts: {report_path.name}, {details_path.name}, {csv_path.name}, {health_path.name}")
     except OSError as e:
         logger.warning(f"Delta: could not write artifacts: {e}")
-        return
+        return health
 
     # Surface warnings
     warnings = result.warnings if hasattr(result, "warnings") else []
@@ -4370,7 +4409,19 @@ def _run_phase2_delta(snap_path, snapshot_dir, args, logger):
         for w in warnings:
             logger.warning(f"Delta: {w}")
 
-    # Print headline summary
+    # Print health headline
+    m = health.metrics
+    metric_parts = []
+    if "name_turnover_pct" in m:
+        metric_parts.append(f"turnover={m['name_turnover_pct']}%")
+    metric_parts.append(f"catalyst={m['catalyst_coverage_pct']}%")
+    metric_parts.append(f"A={m['a_count']}")
+    reason_tag = f" [{', '.join(health.reasons)}]" if health.reasons else ""
+    logger.info(
+        f"PHASE2 HEALTH: {health.status} ({', '.join(metric_parts)}){reason_tag}"
+    )
+
+    # Print delta headline summary
     is_delta = hasattr(result, "entrants")
     if is_delta:
         n_ent = len(result.entrants)
@@ -4381,6 +4432,8 @@ def _run_phase2_delta(snap_path, snapshot_dir, args, logger):
             f"L1={result.weight_l1_delta}%"
         )
     logger.info("--- End Delta Report ---")
+
+    return health
 
 
 def main() -> int:
@@ -4524,6 +4577,21 @@ Module 3 Catalyst Detection:
         action="store_true",
         default=False,
         help="Skip Phase-2 delta report generation after snapshot.",
+    )
+
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        default=False,
+        help="Exit non-zero on Phase-2 health WARN (2) or FAIL (1).",
+    )
+
+    parser.add_argument(
+        "--health-thresholds",
+        type=Path,
+        default=None,
+        help="Path to Phase2HealthThresholds JSON override. "
+             "If omitted, uses pinned production defaults.",
     )
 
     parser.add_argument(
@@ -5174,7 +5242,14 @@ Module 3 Catalyst Detection:
                     args.decision_mode == "phase2"
                     and not getattr(args, "no_delta", False)
                 ):
-                    _run_phase2_delta(snap_result, snapshot_dir, args, logger)
+                    health = _run_phase2_delta(snap_result, snapshot_dir, args, logger)
+                    if health is not None and getattr(args, "strict", False):
+                        if health.status == "FAIL":
+                            logger.error("--strict: Phase-2 health FAIL, exiting 1")
+                            return 1
+                        if health.status == "WARN":
+                            logger.warning("--strict: Phase-2 health WARN, exiting 2")
+                            return 2
 
         return 0
 

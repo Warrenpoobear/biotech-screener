@@ -15,10 +15,12 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import re
 import sys
 from dataclasses import dataclass, field
+from dataclasses import fields as dc_fields
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
@@ -30,6 +32,62 @@ PHASE2_PINNED_RULESET_ID = "d3cdf5c8"
 WARN_NAME_TURNOVER_PCT = 40.0
 WARN_A_COUNT_MIN = 1
 WARN_CATALYST_COVERAGE_MIN = 50.0  # specific_days % among dev-stage
+
+# ---------------------------------------------------------------------------
+# Health gate thresholds (externalized, versioned)
+# ---------------------------------------------------------------------------
+
+@dataclass(frozen=True)
+class Phase2HealthThresholds:
+    """Immutable, versioned configuration for health gate thresholds.
+
+    Frozen so instances are hashable and produce a deterministic thresholds_id.
+    Defaults are calibrated against the 2025 steady-state archive chain.
+    """
+    # FAIL gates — data feed is broken
+    fail_catalyst_coverage_min: float = 20.0   # below this = catalyst feed broken
+    fail_a_count_min: int = 1                  # Phase-2 requires tier separation
+
+    # WARN gates — operational concern
+    warn_a_count_low: int = 2                  # too concentrated (calibrated: P50=2, P90=5)
+    warn_turnover_pct: float = 50.0            # name turnover (calibrated: P95=17.4)
+    warn_weight_l1_pct: float = 45.0           # weight turnover (calibrated: P90=39, P95=42)
+    warn_catalyst_drop_pp: float = 5.0         # coverage drop vs prior (calibrated: max=1.9)
+
+    def _canonical_json(self) -> str:
+        """Deterministic JSON representation for hashing."""
+        d = {f.name: getattr(self, f.name) for f in dc_fields(self)}
+        return json.dumps(d, sort_keys=True, separators=(",", ":"))
+
+    @property
+    def thresholds_id(self) -> str:
+        """8-char hex hash of all parameters for change detection."""
+        return hashlib.sha256(self._canonical_json().encode()).hexdigest()[:8]
+
+    def to_json(self, path: str) -> None:
+        """Write thresholds to a JSON file."""
+        d = {f.name: getattr(self, f.name) for f in dc_fields(self)}
+        with open(path, "w", encoding="utf-8") as fh:
+            json.dump(d, fh, indent=2, sort_keys=True)
+            fh.write("\n")
+
+    @classmethod
+    def from_json(cls, path: str) -> Phase2HealthThresholds:
+        """Load thresholds from a JSON file."""
+        with open(path, "r", encoding="utf-8") as fh:
+            d = json.load(fh)
+        return cls(**d)
+
+
+DEFAULT_HEALTH_THRESHOLDS = Phase2HealthThresholds()
+
+# Backward-compat module-level aliases (used by tests and calibration harness)
+FAIL_CATALYST_COVERAGE_MIN = DEFAULT_HEALTH_THRESHOLDS.fail_catalyst_coverage_min
+FAIL_A_COUNT_MIN = DEFAULT_HEALTH_THRESHOLDS.fail_a_count_min
+WARN_A_COUNT_LOW = DEFAULT_HEALTH_THRESHOLDS.warn_a_count_low
+WARN_TURNOVER_PCT = DEFAULT_HEALTH_THRESHOLDS.warn_turnover_pct
+WARN_WEIGHT_L1_PCT = DEFAULT_HEALTH_THRESHOLDS.warn_weight_l1_pct
+WARN_CATALYST_DROP_PP = DEFAULT_HEALTH_THRESHOLDS.warn_catalyst_drop_pp
 
 # Portfolio reconstruction defaults (mirrors run_screen.py logic)
 RECON_TIER_FILTER = ("A", "B")
@@ -103,6 +161,14 @@ class SingleResult:
     top_catalysts: List[Dict]
     risk: Dict[str, int]
     warnings: List[str] = field(default_factory=list)
+
+
+@dataclass
+class HealthResult:
+    """Deterministic health gate outcome."""
+    status: str                 # "OK" | "WARN" | "FAIL"
+    reasons: List[str]          # e.g. ["high_turnover", "catalyst_drop"]
+    metrics: Dict[str, object]  # key numbers for logging
 
 
 # ---------------------------------------------------------------------------
@@ -459,6 +525,104 @@ def compute_single_snapshot_summary(snap: SnapshotData) -> SingleResult:
 
 
 # ---------------------------------------------------------------------------
+# Health gate
+# ---------------------------------------------------------------------------
+
+def compute_health_gate(
+    current: SnapshotData,
+    prior: Optional[SnapshotData],
+    result,  # DeltaResult | SingleResult
+    thresholds: Optional[Phase2HealthThresholds] = None,
+) -> HealthResult:
+    """Evaluate FAIL / WARN / OK health status for the snapshot."""
+    th = thresholds or DEFAULT_HEALTH_THRESHOLDS
+    is_delta = isinstance(result, DeltaResult)
+    fail_reasons: List[str] = []
+    warn_reasons: List[str] = []
+
+    tier_counts = result.tier_counts_current if is_delta else result.tier_counts
+    cat_cov = result.catalyst_coverage_current if is_delta else result.catalyst_coverage
+
+    # --- FAIL conditions (checked first) ---
+    if current.ruleset_id != PHASE2_PINNED_RULESET_ID:
+        fail_reasons.append("ruleset_mismatch")
+
+    if len(current.portfolio) == 0:
+        fail_reasons.append("no_portfolio")
+
+    if tier_counts.get("A", 0) < th.fail_a_count_min:
+        fail_reasons.append("no_a_tier")
+
+    if cat_cov.pct < th.fail_catalyst_coverage_min:
+        fail_reasons.append("catalyst_broken")
+
+    # --- WARN conditions (only meaningful in delta mode) ---
+    if is_delta:
+        if result.name_turnover_pct > th.warn_turnover_pct:
+            warn_reasons.append("high_turnover")
+
+        if result.weight_l1_delta > th.warn_weight_l1_pct:
+            warn_reasons.append("high_weight_churn")
+
+        if prior is not None:
+            cat_cov_prior = result.catalyst_coverage_prior
+            cat_drop = cat_cov_prior.pct - cat_cov.pct
+            if cat_drop > th.warn_catalyst_drop_pp:
+                warn_reasons.append("catalyst_drop")
+
+    # low_a_tier: above FAIL threshold but below WARN threshold
+    a_count = tier_counts.get("A", 0)
+    if a_count >= th.fail_a_count_min and a_count < th.warn_a_count_low:
+        warn_reasons.append("low_a_tier")
+
+    # --- Resolve status ---
+    if fail_reasons:
+        status = "FAIL"
+        reasons = fail_reasons
+    elif warn_reasons:
+        status = "WARN"
+        reasons = warn_reasons
+    else:
+        status = "OK"
+        reasons = []
+
+    metrics = {
+        "a_count": a_count,
+        "catalyst_coverage_pct": cat_cov.pct,
+        "portfolio_size": len(current.portfolio),
+        "ruleset_id": current.ruleset_id,
+        "thresholds_id": th.thresholds_id,
+    }
+    if is_delta:
+        metrics["name_turnover_pct"] = result.name_turnover_pct
+        metrics["weight_l1_delta"] = result.weight_l1_delta
+
+    return HealthResult(status=status, reasons=reasons, metrics=metrics)
+
+
+def generate_health_json(
+    health: HealthResult,
+    thresholds: Optional[Phase2HealthThresholds] = None,
+) -> dict:
+    """Produce a machine-readable dict for phase2_health.json."""
+    th = thresholds or DEFAULT_HEALTH_THRESHOLDS
+    return {
+        "status": health.status,
+        "reasons": health.reasons,
+        "metrics": health.metrics,
+        "thresholds_id": th.thresholds_id,
+        "thresholds": {
+            "fail_catalyst_coverage_min": th.fail_catalyst_coverage_min,
+            "fail_a_count_min": th.fail_a_count_min,
+            "warn_a_count_low": th.warn_a_count_low,
+            "warn_turnover_pct": th.warn_turnover_pct,
+            "warn_weight_l1_pct": th.warn_weight_l1_pct,
+            "warn_catalyst_drop_pp": th.warn_catalyst_drop_pp,
+        },
+    }
+
+
+# ---------------------------------------------------------------------------
 # Report generation
 # ---------------------------------------------------------------------------
 
@@ -466,6 +630,7 @@ def generate_report(
     current: SnapshotData,
     prior: Optional[SnapshotData],
     result,  # DeltaResult | SingleResult
+    health: Optional[HealthResult] = None,
 ) -> str:
     """Generate human-readable text report."""
     lines: List[str] = []
@@ -483,6 +648,22 @@ def generate_report(
     else:
         lines.append("Prior:     (none)")
     lines.append("")
+
+    # Health headline box
+    if health is not None:
+        if health.reasons:
+            lines.append(f"HEALTH: {health.status} [{', '.join(health.reasons)}]")
+        else:
+            lines.append(f"HEALTH: {health.status}")
+        m = health.metrics
+        parts = []
+        if "name_turnover_pct" in m:
+            parts.append(f"turnover={m['name_turnover_pct']}%")
+        parts.append(f"catalyst={m['catalyst_coverage_pct']}%")
+        parts.append(f"A={m['a_count']}")
+        parts.append(f"ruleset={m['ruleset_id']}")
+        lines.append("  " + "  ".join(parts))
+        lines.append("")
 
     is_delta = isinstance(result, DeltaResult)
 
@@ -885,11 +1066,28 @@ def main():
         default="output",
         help="Output directory (default: output)",
     )
+    parser.add_argument(
+        "--health-thresholds",
+        default=None,
+        help="Path to Phase2HealthThresholds JSON (default: built-in defaults)",
+    )
     args = parser.parse_args()
 
     snapshot_dir = Path(args.snapshot_dir)
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
+
+    # Load health thresholds
+    if args.health_thresholds:
+        ht_path = Path(args.health_thresholds)
+        if not ht_path.exists():
+            print(f"ERROR: Health thresholds not found: {ht_path}", file=sys.stderr)
+            sys.exit(1)
+        health_thresholds = Phase2HealthThresholds.from_json(str(ht_path))
+        print(f"Health thresholds: {ht_path.name} (id={health_thresholds.thresholds_id})")
+    else:
+        health_thresholds = DEFAULT_HEALTH_THRESHOLDS
+        print(f"Health thresholds: defaults (id={health_thresholds.thresholds_id})")
 
     # Find snapshots
     current_path, prior_path = find_snapshots(
@@ -926,14 +1124,19 @@ def main():
     else:
         result = compute_single_snapshot_summary(current)
 
+    # Health gate
+    health = compute_health_gate(current, prior, result, thresholds=health_thresholds)
+    health_json = generate_health_json(health, thresholds=health_thresholds)
+
     # Generate outputs
-    report_txt = generate_report(current, prior, result)
+    report_txt = generate_report(current, prior, result, health=health)
     details = generate_details_json(current, prior, result)
 
     # Write artifacts
     report_path = output_dir / "phase2_run_delta_report.txt"
     details_path = output_dir / "phase2_run_delta_details.json"
     csv_path = output_dir / "phase2_run_delta.csv"
+    health_path = output_dir / "phase2_health.json"
 
     with open(report_path, "w") as f:
         f.write(report_txt)
@@ -945,6 +1148,17 @@ def main():
 
     generate_delta_csv(current, prior, csv_path)
     print(f"  -> {csv_path}")
+
+    with open(health_path, "w") as f:
+        json.dump(health_json, f, indent=2)
+    print(f"  -> {health_path}")
+
+    # Print health headline
+    if health.reasons:
+        headline = f"PHASE2 HEALTH: {health.status} [{', '.join(health.reasons)}]"
+    else:
+        headline = f"PHASE2 HEALTH: {health.status}"
+    print(headline)
 
     # Print report to stdout
     print()
