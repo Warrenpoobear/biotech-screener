@@ -44,6 +44,23 @@ def build_command(args: argparse.Namespace, extra: list[str]) -> list[str]:
     return cmd
 
 
+def assert_outputs_exist(snapshot_dir: Path, as_of_date: str) -> list[str]:
+    """Check critical output files exist and are non-empty. Returns error strings."""
+    errors = []
+    snap = snapshot_dir / as_of_date
+    for filename, min_bytes in [
+        ("rankings.csv", 100),
+        ("metadata.json", 10),
+        ("phase2_health.json", 10),
+    ]:
+        p = snap / filename
+        if not p.exists():
+            errors.append(f"Missing: {p}")
+        elif p.stat().st_size < min_bytes:
+            errors.append(f"Empty/truncated: {p} ({p.stat().st_size} bytes)")
+    return errors
+
+
 def read_health_json(snapshot_dir: Path, as_of_date: str) -> dict | None:
     """Load phase2_health.json from the snapshot, or None if missing."""
     health_path = snapshot_dir / as_of_date / "phase2_health.json"
@@ -121,6 +138,14 @@ def main(argv: list[str] | None = None) -> int:
     if args.dry_run:
         print(f"[PHASE2] dry-run finished, exit code={rc}")
         return rc
+
+    # Fail-fast: verify critical output files exist
+    output_errors = assert_outputs_exist(args.snapshot_dir, args.as_of_date)
+    if output_errors:
+        for err in output_errors:
+            print(f"[PHASE2] OUTPUT CHECK FAILED: {err}", file=sys.stderr)
+        print(f"[PHASE2] Log: {args.log_file}", file=sys.stderr)
+        return 1
 
     # Read health JSON
     health = read_health_json(args.snapshot_dir, args.as_of_date)

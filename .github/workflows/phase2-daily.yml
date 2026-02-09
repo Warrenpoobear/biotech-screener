@@ -37,6 +37,9 @@ jobs:
           pip install -r requirements.txt
           pip install -e .
 
+      - name: Smoke test (dry-run)
+        run: python run_phase2_daily.py --dry-run --data-dir production_data
+
       # ── Data hydrate ────────────────────────────────────────────
       # Download a date-stamped inputs bundle from GitHub Releases.
       # To publish a bundle:
@@ -80,15 +83,20 @@ jobs:
         id: screen
         run: |
           set +e
+          mkdir -p output
           DATE_ARG=""
           if [ -n "${{ inputs.as_of_date }}" ]; then
             DATE_ARG="--as-of-date ${{ inputs.as_of_date }}"
           fi
-          python run_phase2_daily.py $DATE_ARG
-          RC=$?
+          python run_phase2_daily.py $DATE_ARG 2>&1 | tee output/phase2_daily_wrapper.log
+          RC=${PIPESTATUS[0]}
           echo "exit_code=$RC" >> "$GITHUB_OUTPUT"
           # Don't fail yet — evaluate step handles routing
           exit 0
+
+      # ── Contract tests ────────────────────────────────────────────
+      - name: Decision engine contract tests
+        run: python -m pytest tests/test_decision_engine_contract.py -v --tb=short
 
       # ── Artifacts ───────────────────────────────────────────────
       - name: Upload artifacts
@@ -98,6 +106,7 @@ jobs:
           name: phase2-output
           path: |
             output/phase2_daily.log
+            output/phase2_daily_wrapper.log
             data/snapshots/
           retention-days: 30
 
@@ -112,15 +121,59 @@ jobs:
             DATE=$(date +%Y-%m-%d)
           fi
 
-          HEALTH_FILE="data/snapshots/${DATE}/phase2_health.json"
-          if [ -f "$HEALTH_FILE" ]; then
-            STATUS=$(python -c "import json,sys; h=json.load(open(sys.argv[1])); print(h['status'])" "$HEALTH_FILE")
-            REASONS=$(python -c "import json,sys; h=json.load(open(sys.argv[1])); print(', '.join(h.get('reasons',[])))" "$HEALTH_FILE")
-          else
-            STATUS="UNKNOWN"
-            REASONS="health JSON not found"
+          SNAP_DIR="data/snapshots/${DATE}"
+
+          # ── Artifact existence checks ──
+          MISSING=0
+          for f in rankings.csv metadata.json phase2_health.json; do
+            if [ ! -s "${SNAP_DIR}/${f}" ]; then
+              echo "::error::Missing or empty artifact: ${SNAP_DIR}/${f}"
+              MISSING=1
+            fi
+          done
+          if [ "$MISSING" = "1" ]; then
+            echo "::error::Critical output files missing — pipeline may have crashed before completion"
+            exit 1
           fi
 
+          HEALTH_FILE="${SNAP_DIR}/phase2_health.json"
+          STATUS=$(python -c "import json,sys; h=json.load(open(sys.argv[1])); print(h['status'])" "$HEALTH_FILE")
+          REASONS=$(python -c "import json,sys; h=json.load(open(sys.argv[1])); print(', '.join(h.get('reasons',[])))" "$HEALTH_FILE")
+
+          # ── Health JSON schema validation ──
+          python -c "
+          import json, sys
+          h = json.load(open(sys.argv[1]))
+          errors = []
+          for key in ('status', 'reasons', 'metrics'):
+              if key not in h:
+                  errors.append(f'Missing required key: {key}')
+          if 'status' in h and not isinstance(h['status'], str):
+              errors.append(f'status must be str, got {type(h[\"status\"]).__name__}')
+          if 'reasons' in h and not isinstance(h['reasons'], list):
+              errors.append(f'reasons must be list, got {type(h[\"reasons\"]).__name__}')
+          if 'metrics' in h and not isinstance(h['metrics'], dict):
+              errors.append(f'metrics must be dict, got {type(h[\"metrics\"]).__name__}')
+          if errors:
+              for e in errors:
+                  print(f'::error::Health JSON schema: {e}', file=sys.stderr)
+              sys.exit(1)
+          " "$HEALTH_FILE"
+
+          # ── Metadata date consistency ──
+          META_FILE="${SNAP_DIR}/metadata.json"
+          if [ -f "$META_FILE" ]; then
+            python -c "
+          import json, sys
+          m = json.load(open(sys.argv[1]))
+          meta_date = m.get('as_of_date', '')
+          expected = sys.argv[2]
+          if meta_date and meta_date != expected:
+              print(f'::warning::Metadata as_of_date={meta_date} does not match expected={expected}')
+          " "$META_FILE" "$DATE"
+          fi
+
+          # ── Exit code routing ──
           if [ "$RC" = "0" ]; then
             echo "Health gate: OK"
             exit 0
