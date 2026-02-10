@@ -39,6 +39,7 @@ from typing import Any, Dict, List, NamedTuple, Optional, Tuple
 PROJECT_ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
+from backtest.cost_model import estimate_trade_cost
 from decision_engine import (
     DecisionRuleset,
     DEFAULT_RULESET,
@@ -76,10 +77,13 @@ DEFAULT_TOP_K = 20
 
 PANEL_COLUMNS = [
     "as_of_date", "ticker", "tier", "band", "eligible", "weight",
-    "tier_reason", "risk_flags", "catalyst_mode", "mom_state",
+    "tier_reason", "risk_flags", "catalyst_mode", "catalyst_strength", "mom_state",
     "optionality", "catalyst_days_raw", "ruleset_id",
+    "drawdown_abs", "drawdown_xbi", "drawdown_rel_xbi",
     "fwd_ret_20d", "fwd_ret_60d", "fwd_max_dd_20d", "fwd_max_dd_60d",
     "fwd_dd_missing_reason",
+    "adv_dollars", "est_cost_bps", "participation_pct",
+    "fwd_ret_20d_net", "fwd_ret_60d_net",
 ]
 
 
@@ -339,6 +343,7 @@ def build_all_dev_decisions(
         opt = archive_data.optionalities.get(ticker)
         fields = compute_decision_fields(rec, archetype, opt, ruleset=ruleset)
 
+        df = rec.get("defensive_features") or {}
         results.append({
             "ticker": ticker,
             "tier_dev": fields.get("tier_dev", ""),
@@ -347,9 +352,13 @@ def build_all_dev_decisions(
             "tier_reason": fields.get("tier_reason", ""),
             "risk_flags": fields.get("risk_flags", ""),
             "catalyst_mode": fields.get("catalyst_mode", ""),
+            "catalyst_strength": fields.get("catalyst_strength", ""),
             "catalyst_days": fields.get("catalyst_days", ""),
             "mom_state": fields.get("mom_state", ""),
             "optionality": opt,
+            "drawdown_abs": df.get("drawdown"),
+            "drawdown_xbi": df.get("drawdown_xbi"),
+            "drawdown_rel_xbi": df.get("drawdown_rel_xbi"),
         })
 
     return results
@@ -642,6 +651,28 @@ def run_strategy_backtest(
                 opt_str = round(opt_val, 6) if opt_val is not None else ""
                 cat_days = dev.get("catalyst_days", "")
 
+                # Cost model: ADV from market_data, cost only for portfolio positions
+                md = archive_data.market_data.get(ticker, {})
+                adv = (md.get("avg_volume") or 0) * (md.get("price") or 0)
+                weight = weight_map.get(ticker, 0.0)
+                if weight > 0 and adv > 0:
+                    cost = estimate_trade_cost(weight, adv)
+                    est_cost_bps = cost.round_trip_bps
+                    participation = cost.participation_pct
+                else:
+                    est_cost_bps = 0.0
+                    participation = 0.0
+
+                # Net returns: gross minus round-trip cost (bps→%)
+                cost_pct = est_cost_bps / 100.0  # bps to percentage points
+                fwd_20_pct = round(fwd_20 * 100, 4) if fwd_20 is not None else ""
+                fwd_60_pct = round(fwd_60 * 100, 4) if fwd_60 is not None else ""
+                fwd_20_net = round(fwd_20_pct - cost_pct, 4) if fwd_20_pct != "" else ""
+                fwd_60_net = round(fwd_60_pct - cost_pct, 4) if fwd_60_pct != "" else ""
+
+                dd_abs = dev.get("drawdown_abs")
+                dd_xbi = dev.get("drawdown_xbi")
+                dd_rel = dev.get("drawdown_rel_xbi")
                 panel_rows.append({
                     "as_of_date": date_str,
                     "ticker": ticker,
@@ -652,15 +683,24 @@ def run_strategy_backtest(
                     "tier_reason": dev["tier_reason"],
                     "risk_flags": dev["risk_flags"],
                     "catalyst_mode": dev["catalyst_mode"],
+                    "catalyst_strength": dev.get("catalyst_strength", ""),
                     "mom_state": dev["mom_state"],
                     "optionality": opt_str,
                     "catalyst_days_raw": cat_days,
                     "ruleset_id": ruleset.ruleset_id,
-                    "fwd_ret_20d": round(fwd_20 * 100, 4) if fwd_20 is not None else "",
-                    "fwd_ret_60d": round(fwd_60 * 100, 4) if fwd_60 is not None else "",
+                    "drawdown_abs": round(dd_abs, 4) if dd_abs is not None else "",
+                    "drawdown_xbi": round(dd_xbi, 4) if dd_xbi is not None else "",
+                    "drawdown_rel_xbi": round(dd_rel, 4) if dd_rel is not None else "",
+                    "fwd_ret_20d": fwd_20_pct,
+                    "fwd_ret_60d": fwd_60_pct,
                     "fwd_max_dd_20d": round(dd_20 * 100, 4) if dd_20 is not None else "",
                     "fwd_max_dd_60d": round(dd_60 * 100, 4) if dd_60 is not None else "",
                     "fwd_dd_missing_reason": dd_reason,
+                    "adv_dollars": round(adv, 2),
+                    "est_cost_bps": round(est_cost_bps, 2),
+                    "participation_pct": round(participation, 4),
+                    "fwd_ret_20d_net": fwd_20_net,
+                    "fwd_ret_60d_net": fwd_60_net,
                 })
 
         # Evaluate
@@ -1212,6 +1252,10 @@ def main():
         help="Write per-ticker walk-forward panel CSV to PATH",
     )
     parser.add_argument(
+        "--archive-dir", type=str, default=None,
+        help=f"Archive directory (default: {ARCHIVE_DIR})",
+    )
+    parser.add_argument(
         "--dry-run", action="store_true",
         help="Print config + archive count, exit",
     )
@@ -1246,7 +1290,8 @@ def main():
     print(f"  Horizons:    {HORIZONS}")
 
     # Discover archives
-    archives = discover_archives(ARCHIVE_DIR, start=args.start, end=args.end)
+    arch_dir = Path(args.archive_dir) if args.archive_dir else ARCHIVE_DIR
+    archives = discover_archives(arch_dir, start=args.start, end=args.end)
     print(f"  Archives:    {len(archives)} found")
 
     if args.dry_run:

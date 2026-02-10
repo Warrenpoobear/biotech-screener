@@ -106,8 +106,8 @@ class TestDefaults:
         assert RULESET_ID == DEFAULT_RULESET.ruleset_id
 
     def test_version_bumped(self):
-        """VERSION is v1.2.0 after soft drawdown gate."""
-        assert VERSION == "v1.2.0"
+        """VERSION is v1.3.0 after catalyst strength bands."""
+        assert VERSION == "v1.3.0"
 
 
 # =============================================================================
@@ -211,20 +211,20 @@ class TestCustomRulesetBehavior:
         assert loose_result["eligible"] == "1"
 
     def test_wider_catalyst_window_promotes_ticker(self):
-        """A ticker at 100 days is 'far' with 90d window but 'near' with 120d."""
+        """A ticker at 200 days is 'far' with default mid=180 but 'mid' with mid=250."""
         rec = _base_rec(
-            catalyst_decay={"days_to_catalyst": 100, "in_optimal_window": False},
+            catalyst_decay={"days_to_catalyst": 200, "in_optimal_window": False},
         )
-        # Default: 90d → 100 days is far → B (not A)
+        # Default: mid_days=180 → 200 days is far → B (not A)
         default_result = compute_decision_fields(rec, "drug_developer", 0.75)
         assert default_result["tier_dev"] == "B"
         assert "catalyst_far" in default_result["tier_reason"]
 
-        # Wider: 120d → 100 days is near → A
-        wide = DecisionRuleset(catalyst_near_days=120)
+        # Wider: mid_days=250 → 200 days is mid → actionable → A
+        wide = DecisionRuleset(catalyst_mid_days=250)
         wide_result = compute_decision_fields(rec, "drug_developer", 0.75, ruleset=wide)
         assert wide_result["tier_dev"] == "A"
-        assert "catalyst_near" in wide_result["tier_reason"]
+        assert "catalyst_mid" in wide_result["tier_reason"]
 
     def test_higher_sponsor_threshold_changes_size_band(self):
         """With sponsor_confirm=3, tier1=2 no longer confirms → different band."""
@@ -285,7 +285,7 @@ class TestRulesetDriftGuardrails:
     regenerate production_data/decision_rulesets/v1.json.
     """
 
-    EXPECTED_DEFAULT_RULESET_ID = "d4f1f8a8"
+    EXPECTED_DEFAULT_RULESET_ID = "65d2209b"
 
     def test_default_ruleset_id_pinned(self):
         """DEFAULT_RULESET.ruleset_id must match the committed expected value.
@@ -488,6 +488,73 @@ class TestSoftDrawdownMode:
     def test_drawdown_gate_mode_changes_ruleset_id(self):
         """Flipping drawdown_gate_mode changes ruleset_id."""
         assert self.SOFT_RULESET.ruleset_id != DEFAULT_RULESET.ruleset_id
+
+
+# =============================================================================
+# Regime-Aware Drawdown Gate (XBI-Relative) — AND logic tests
+# =============================================================================
+
+class TestDrawdownAndGate:
+    """Tests for the AND gate: FAIL only if BOTH absolute AND relative thresholds breach."""
+
+    def test_both_breach_ineligible(self):
+        """Both absolute (-0.50 < -0.40) and relative (-0.25 < -0.15) breach → INELIGIBLE."""
+        rec = _base_rec(
+            defensive_features={"drawdown": -0.50, "drawdown_rel_xbi": -0.25,
+                                "vol_60d": 0.5, "beta_xbi_60d": 1.0, "rsi_14d": 40},
+        )
+        result = compute_decision_fields(rec, "drug_developer", 0.75)
+        assert result["eligible"] == "0"
+        assert "deep_drawdown" in result["ineligible_reasons"]
+
+    def test_only_abs_breach_eligible(self):
+        """Absolute breaches (-0.50 < -0.40) but relative does NOT (-0.10 > -0.15) → ELIGIBLE."""
+        rec = _base_rec(
+            defensive_features={"drawdown": -0.50, "drawdown_rel_xbi": -0.10,
+                                "vol_60d": 0.5, "beta_xbi_60d": 1.0, "rsi_14d": 40},
+        )
+        result = compute_decision_fields(rec, "drug_developer", 0.75)
+        assert result["eligible"] == "1"
+        assert "deep_drawdown" not in result.get("ineligible_reasons", "")
+
+    def test_only_rel_breach_eligible(self):
+        """Absolute does NOT breach (-0.30 > -0.40) but relative does (-0.25 < -0.15) → ELIGIBLE."""
+        rec = _base_rec(
+            defensive_features={"drawdown": -0.30, "drawdown_rel_xbi": -0.25,
+                                "vol_60d": 0.5, "beta_xbi_60d": 1.0, "rsi_14d": 40},
+        )
+        result = compute_decision_fields(rec, "drug_developer", 0.75)
+        assert result["eligible"] == "1"
+
+    def test_missing_rel_fallback_ineligible(self):
+        """Absolute breaches and relative is None → fallback to absolute-only → INELIGIBLE."""
+        rec = _base_rec(
+            defensive_features={"drawdown": -0.50, "vol_60d": 0.5,
+                                "beta_xbi_60d": 1.0, "rsi_14d": 40},
+        )
+        result = compute_decision_fields(rec, "drug_developer", 0.75)
+        assert result["eligible"] == "0"
+        assert "deep_drawdown" in result["ineligible_reasons"]
+
+    def test_soft_mode_with_relative(self):
+        """Soft mode + both breaches → sizing penalty, not ineligibility (above hard floor)."""
+        rs = DecisionRuleset(drawdown_gate_mode="soft")
+        rec = _base_rec(
+            defensive_features={"drawdown": -0.50, "drawdown_rel_xbi": -0.25,
+                                "vol_60d": 0.5, "beta_xbi_60d": 1.0, "rsi_14d": 40},
+        )
+        result = compute_decision_fields(rec, "drug_developer", 0.75, ruleset=rs)
+        assert result["eligible"] == "1"
+        assert "deep_drawdown" not in result.get("ineligible_reasons", "")
+
+    def test_rel_risk_flag(self):
+        """Relative drawdown breach → deep_drawdown_rel_xbi in risk_flags."""
+        rec = _base_rec(
+            defensive_features={"drawdown": -0.30, "drawdown_rel_xbi": -0.25,
+                                "vol_60d": 0.5, "beta_xbi_60d": 1.0, "rsi_14d": 40},
+        )
+        result = compute_decision_fields(rec, "drug_developer", 0.75)
+        assert "deep_drawdown_rel_xbi" in result["risk_flags"]
 
 
 # =============================================================================

@@ -140,17 +140,46 @@ jobs:
           status = drift['status']
           reasons = drift.get('reasons', [])
           rollback = drift.get('rollback_candidate')
+          action = drift.get('recommended_action', 'NONE')
+          adaptive = drift.get('adaptive_warnings', [])
           if status == 'FAIL':
-              msg = f'DRIFT FAIL: {reasons}'
+              msg = f'DRIFT FAIL ({action}): {reasons}'
+              if adaptive:
+                  msg += f' | adaptive={adaptive}'
               if rollback:
-                  msg += f' -- Rollback candidate: {rollback[\"id\"]}'
-                  msg += f' -- To rollback: python scripts/promote_ruleset.py {rollback[\"id\"]}'
+                  msg += f' -- Rollback: python scripts/promote_ruleset.py {rollback[\"id\"]} --rollback --force'
               print(f'::error::{msg}', file=sys.stderr)
               sys.exit(1)
           elif status == 'WARN':
-              print(f'::warning::DRIFT WARN: {reasons}')
+              warn_parts = reasons + [f'[adaptive] {w}' for w in adaptive]
+              print(f'::warning::DRIFT WARN: {warn_parts}')
           print(f'Drift status: {status}')
           "
+
+      # ── Ticker explain pack ────────────────────────────────
+      - name: Generate ticker explain pack
+        if: always()
+        run: |
+          SNAP_DIR="data/snapshots"
+          CURRENT=$(ls -1 "$SNAP_DIR" | sort | tail -1)
+          PRIOR=$(ls -1 "$SNAP_DIR" | sort | tail -2 | head -1)
+          if [ "$CURRENT" != "$PRIOR" ]; then
+            python scripts/generate_ticker_explain_pack.py \
+              --snapshot-dir "$SNAP_DIR/$CURRENT" \
+              --prev-snapshot-dir "$SNAP_DIR/$PRIOR" \
+              --output-dir output
+          else
+            python scripts/generate_ticker_explain_pack.py \
+              --snapshot-dir "$SNAP_DIR/$CURRENT" \
+              --output-dir output
+          fi
+
+      # ── Price history provenance ───────────────────────────────
+      - name: Price history provenance
+        if: always()
+        run: |
+          python scripts/price_history_provenance.py \
+            --output output/price_history_manifest.json
 
       # ── Artifacts ───────────────────────────────────────────────
       - name: Upload artifacts
@@ -165,6 +194,10 @@ jobs:
             output/decision_engine_qa.md
             output/drift_report.json
             output/drift_report.md
+            output/rollback_packet.md
+            output/ticker_explain_pack.json
+            output/ticker_explain_pack.md
+            output/price_history_manifest.json
             data/snapshots/
           retention-days: 30
 

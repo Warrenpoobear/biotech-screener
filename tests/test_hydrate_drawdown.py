@@ -347,3 +347,68 @@ class TestAliasResolution:
         assert n == 0
         assert recs["ZZZZ"]["defensive_features"]["drawdown_missing_reason"] == "no_price_series"
         assert "drawdown_price_symbol" not in recs["ZZZZ"]["defensive_features"]
+
+
+# ---------------------------------------------------------------------------
+# XBI drawdown + relative drawdown
+# ---------------------------------------------------------------------------
+
+class TestXbiRelativeDrawdown:
+
+    @staticmethod
+    def _make_prices(ticker: str, n_bars: int, start_price: float = 10.0,
+                     end_price: float = 8.0):
+        """Generate a linearly declining price series."""
+        from datetime import date, timedelta
+        base = date(2025, 6, 1)
+        rows = []
+        for i in range(n_bars):
+            frac = i / max(n_bars - 1, 1)
+            price = start_price + (end_price - start_price) * frac
+            rows.append({
+                "ticker": ticker,
+                "date": (base + timedelta(days=i)).isoformat(),
+                "close": f"{price:.4f}",
+            })
+        return rows, (base + timedelta(days=n_bars - 1)).isoformat()
+
+    def test_xbi_drawdown_populated(self):
+        """XBI drawdown and relative drawdown are populated for all tickers."""
+        ticker_prices, last_date = self._make_prices("ACME", 200, 10.0, 7.0)
+        xbi_prices, _ = self._make_prices("XBI", 200, 100.0, 90.0)
+        recs = {"ACME": _make_rec("ACME")}
+        with tempfile.TemporaryDirectory() as tmp:
+            csv_path = Path(tmp) / "price_history.csv"
+            _write_price_csv(csv_path, ticker_prices + xbi_prices)
+            _hydrate_drawdown(recs, csv_path, last_date)
+        df = recs["ACME"]["defensive_features"]
+        assert df["drawdown_xbi"] is not None
+        assert df["drawdown_xbi"] < 0  # XBI is declining
+        assert df["drawdown_rel_xbi"] is not None
+        # ACME drops 30% while XBI drops 10% → relative should be negative
+        assert df["drawdown_rel_xbi"] < 0
+
+    def test_relative_drawdown_computation(self):
+        """Relative drawdown = ticker drawdown - XBI drawdown."""
+        ticker_prices, last_date = self._make_prices("ACME", 200, 10.0, 7.0)
+        xbi_prices, _ = self._make_prices("XBI", 200, 100.0, 90.0)
+        recs = {"ACME": _make_rec("ACME")}
+        with tempfile.TemporaryDirectory() as tmp:
+            csv_path = Path(tmp) / "price_history.csv"
+            _write_price_csv(csv_path, ticker_prices + xbi_prices)
+            _hydrate_drawdown(recs, csv_path, last_date)
+        df = recs["ACME"]["defensive_features"]
+        expected_rel = round(df["drawdown"] - df["drawdown_xbi"], 6)
+        assert abs(df["drawdown_rel_xbi"] - expected_rel) < 1e-6
+
+    def test_relative_drawdown_missing_xbi(self):
+        """When XBI is not in CSV, relative drawdown is None."""
+        ticker_prices, last_date = self._make_prices("ACME", 200, 10.0, 7.0)
+        recs = {"ACME": _make_rec("ACME")}
+        with tempfile.TemporaryDirectory() as tmp:
+            csv_path = Path(tmp) / "price_history.csv"
+            _write_price_csv(csv_path, ticker_prices)
+            _hydrate_drawdown(recs, csv_path, last_date)
+        df = recs["ACME"]["defensive_features"]
+        assert df["drawdown_xbi"] is None
+        assert df["drawdown_rel_xbi"] is None

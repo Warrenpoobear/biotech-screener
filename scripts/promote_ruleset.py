@@ -92,6 +92,10 @@ def main() -> int:
         "--force", action="store_true",
         help="Skip changelog validation (for CI/automation).",
     )
+    parser.add_argument(
+        "--rollback", action="store_true",
+        help="Rollback: promote a retired ruleset back to active.",
+    )
     args = parser.parse_args()
 
     rid = args.ruleset_id
@@ -108,20 +112,43 @@ def main() -> int:
         print(f"Ruleset '{rid}' is already active ({active['file']}). Nothing to do.")
         return 0
 
-    # Find candidate entry
-    candidate = _find_by_id_and_status(manifest, rid, "candidate")
-    if not candidate:
-        # Check if it exists with another status
-        for entry in manifest["rulesets"]:
-            if entry["id"] == rid:
-                print(
-                    f"ERROR: Ruleset '{rid}' exists but has status '{entry['status']}', "
-                    f"not 'candidate'.",
-                    file=sys.stderr,
-                )
-                return 1
-        print(f"ERROR: No ruleset with ID '{rid}' found in manifest.", file=sys.stderr)
-        return 1
+    # Find target entry (candidate or retired depending on --rollback)
+    if args.rollback:
+        if not args.force:
+            print(
+                "ERROR: --rollback requires --force (emergency rollback skips changelog).",
+                file=sys.stderr,
+            )
+            return 1
+        target = _find_by_id_and_status(manifest, rid, "retired")
+        if not target:
+            for entry in manifest["rulesets"]:
+                if entry["id"] == rid:
+                    print(
+                        f"ERROR: Ruleset '{rid}' has status '{entry['status']}', "
+                        f"not 'retired'.",
+                        file=sys.stderr,
+                    )
+                    return 1
+            print(f"ERROR: No ruleset with ID '{rid}' found in manifest.", file=sys.stderr)
+            return 1
+        source_status = "retired"
+        updated_by = "promote_ruleset.py --rollback"
+    else:
+        target = _find_by_id_and_status(manifest, rid, "candidate")
+        if not target:
+            for entry in manifest["rulesets"]:
+                if entry["id"] == rid:
+                    print(
+                        f"ERROR: Ruleset '{rid}' exists but has status '{entry['status']}', "
+                        f"not 'candidate'.",
+                        file=sys.stderr,
+                    )
+                    return 1
+            print(f"ERROR: No ruleset with ID '{rid}' found in manifest.", file=sys.stderr)
+            return 1
+        source_status = "candidate"
+        updated_by = "promote_ruleset.py"
 
     # Validate changelog (unless --force)
     if not args.force:
@@ -134,30 +161,31 @@ def main() -> int:
 
     # Print summary
     print()
-    print(f"Promote: {rid} ({candidate['file']})")
+    print(f"Promote: {rid} ({target['file']})")
     if active:
         print(f"Retire:  {active['id']} ({active['file']})")
     print()
 
     if args.dry_run:
         print("[dry-run] Would update manifest:")
-        print(f"  {candidate['file']}: candidate -> active")
+        print(f"  {target['file']}: {source_status} -> active")
         if active:
             print(f"  {active['file']}: active -> retired")
         return 0
 
     # Flip statuses
-    candidate["status"] = "active"
-    candidate["updated_by"] = "promote_ruleset.py"
-    candidate["updated_at"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    target["status"] = "active"
+    target["updated_by"] = updated_by
+    target["updated_at"] = now
     if active:
         active["status"] = "retired"
-        active["updated_by"] = "promote_ruleset.py"
-        active["updated_at"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        active["updated_by"] = updated_by
+        active["updated_at"] = now
 
     _save_manifest(manifest)
     print(f"Updated {MANIFEST_PATH}")
-    print(f"  {candidate['file']}: now active")
+    print(f"  {target['file']}: now active")
     if active:
         print(f"  {active['file']}: now retired")
 

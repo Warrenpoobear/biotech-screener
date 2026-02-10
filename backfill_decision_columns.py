@@ -216,7 +216,7 @@ def build_rec(
 
     # Defensive features: merge archive vol_60d with enriched beta/dd/rsi
     base_def = dict(defensive_map.get(ticker, {}))
-    for key in ("beta_xbi_60d", "drawdown", "rsi_14d"):
+    for key in ("beta_xbi_60d", "drawdown", "drawdown_xbi", "drawdown_rel_xbi", "rsi_14d"):
         if key in enriched:
             base_def[key] = enriched[key]
     rec["defensive_features"] = base_def
@@ -243,6 +243,7 @@ def process_archive(
     tar_path: Path,
     dry_run: bool = False,
     ruleset: Optional[DecisionRuleset] = None,
+    output_tar_path: Path | None = None,
 ) -> Dict[str, Any]:
     """Backfill decision columns into one archive.
 
@@ -349,12 +350,13 @@ def process_archive(
         rs.to_json(str(archive_root / "decision_ruleset.json"))
 
         # Repack tar.gz
-        new_tar_path = tar_path.with_suffix(".tar.gz.tmp")
+        dest = output_tar_path or tar_path
+        new_tar_path = dest.with_suffix(".tar.gz.tmp")
         with tarfile.open(new_tar_path, "w:gz") as tar:
             tar.add(str(archive_root), arcname=date_str)
 
-        # Replace original
-        shutil.move(str(new_tar_path), str(tar_path))
+        # Replace original (or write to output path)
+        shutil.move(str(new_tar_path), str(dest))
 
     except Exception as e:
         result["status"] = "error"

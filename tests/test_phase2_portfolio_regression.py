@@ -10,7 +10,8 @@ decision engine, sort key, or sizing logic.
 
 Pinned on: 2026-02-10
 Snapshot:  2025-10-31 archive
-Ruleset:   v1.2.0_candidate (ID: eb833c56, a_floor=0.60, catalyst_near=120)
+Ruleset:   v1.3.0 (ID: 181346fe, a_floor=0.60, catalyst_near=120, catalyst_mid=180,
+           drawdown_rel_xbi_gate=-0.15)
 Policy:    tier_filter=[A,B], top_k=20
 """
 from __future__ import annotations
@@ -40,20 +41,21 @@ TIER_FILTER = ["A", "B"]
 TOP_K = 20
 
 # Pinned top-10 tickers in exact actionable order
+# Re-pinned 2026-02-10 for v1.3.0 (catalyst strength bands: NEAR/MID/FAR/MISSING)
 EXPECTED_TOP_10 = [
-    {"ticker": "CNTX",  "rank": 1,  "tier": "A", "band": "L", "weight": 6.13},
-    {"ticker": "KALV",  "rank": 2,  "tier": "A", "band": "L", "weight": 6.13},
-    {"ticker": "XENE",  "rank": 3,  "tier": "B", "band": "M", "weight": 3.68},
-    {"ticker": "PVLA",  "rank": 4,  "tier": "B", "band": "L", "weight": 6.13},
-    {"ticker": "VRDN",  "rank": 5,  "tier": "B", "band": "M", "weight": 3.68},
-    {"ticker": "AKRO",  "rank": 6,  "tier": "B", "band": "L", "weight": 6.13},
-    {"ticker": "DNTH",  "rank": 7,  "tier": "B", "band": "L", "weight": 6.13},
-    {"ticker": "NUVL",  "rank": 8,  "tier": "B", "band": "L", "weight": 6.13},
-    {"ticker": "NAUT",  "rank": 9,  "tier": "B", "band": "L", "weight": 6.13},
-    {"ticker": "CELC",  "rank": 10, "tier": "B", "band": "L", "weight": 6.13},
+    {"ticker": "CNTX",  "rank": 1,  "tier": "A", "band": "L", "weight": 5.65},
+    {"ticker": "KALV",  "rank": 2,  "tier": "A", "band": "L", "weight": 5.65},
+    {"ticker": "VRDN",  "rank": 3,  "tier": "A", "band": "L", "weight": 5.65},
+    {"ticker": "AKRO",  "rank": 4,  "tier": "A", "band": "L", "weight": 5.65},
+    {"ticker": "XENE",  "rank": 5,  "tier": "B", "band": "M", "weight": 3.39},
+    {"ticker": "PVLA",  "rank": 6,  "tier": "B", "band": "L", "weight": 5.65},
+    {"ticker": "PTGX",  "rank": 7,  "tier": "B", "band": "L", "weight": 5.65},
+    {"ticker": "DNTH",  "rank": 8,  "tier": "B", "band": "L", "weight": 5.65},
+    {"ticker": "CELC",  "rank": 9,  "tier": "B", "band": "L", "weight": 5.65},
+    {"ticker": "NAUT",  "rank": 10, "tier": "B", "band": "L", "weight": 5.65},
 ]
 
-EXPECTED_N_POSITIONS = 19
+EXPECTED_N_POSITIONS = 20
 
 
 # =============================================================================
@@ -144,8 +146,8 @@ class TestPhase2PortfolioRegression:
         if not RULESET_PATH.exists():
             pytest.skip(f"Ruleset not found: {RULESET_PATH}")
         ruleset = DecisionRuleset.from_json(str(RULESET_PATH))
-        assert ruleset.ruleset_id == "eb833c56", (
-            f"Ruleset ID changed: expected eb833c56, got {ruleset.ruleset_id}"
+        assert ruleset.ruleset_id == "181346fe", (
+            f"Ruleset ID changed: expected 181346fe, got {ruleset.ruleset_id}"
         )
 
     def test_a_floor_060(self):

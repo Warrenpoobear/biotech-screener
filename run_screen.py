@@ -1302,7 +1302,7 @@ SNAPSHOT_COLUMNS = [
     "decision_engine_version", "decision_engine_ruleset_id",
     "eligible", "ineligible_reasons",
     "sponsor_tier1_count", "sponsor_overlap_count", "sponsor_net_buying",
-    "catalyst_days", "catalyst_in_window", "catalyst_mode",
+    "catalyst_days", "catalyst_in_window", "catalyst_mode", "catalyst_strength",
     "runway_bucket", "mom_state", "risk_flags",
     "size_band", "size_reasons",
     "tier_dev", "tier_reason",
@@ -1313,6 +1313,7 @@ SNAPSHOT_COLUMNS = [
     "de_alpha_60d",
     "de_tier1_count",
     "de_beta_xbi_60d", "de_drawdown", "de_drawdown_missing_reason", "de_rsi_14d",
+    "de_drawdown_xbi", "de_drawdown_rel_xbi",
 ]
 
 # Phase-2 decision portfolio output columns
@@ -1332,7 +1333,7 @@ PHASE2_DEFAULT_RULESET_PATH = (
 )
 PHASE2_DEFAULT_TIER_FILTER = ["A", "B"]
 PHASE2_DEFAULT_TOP_K = 20
-PHASE2_PINNED_RULESET_ID = "eb833c56"
+PHASE2_PINNED_RULESET_ID = "181346fe"
 PHASE2_DEFAULT_HEALTH_THRESHOLDS_PATH = (
     Path(__file__).resolve().parent
     / "production_data" / "phase2_health_thresholds" / "v1.json"
@@ -1430,12 +1431,14 @@ def _hydrate_drawdown(
         for v in _alias_variants(t):
             alias_targets.add(v)
 
+    # Also read XBI prices for relative drawdown computation
+    xbi_want = {"XBI"}
     prices_by_ticker: Dict[str, List[float]] = {}
     with open(price_history_path, "r", encoding="utf-8") as fh:
         reader = _csv.DictReader(fh)
         for row in reader:
             ticker = (row.get("ticker") or "").upper()
-            if ticker not in missing_set and ticker not in alias_targets:
+            if ticker not in missing_set and ticker not in alias_targets and ticker not in xbi_want:
                 continue
             date_str = row.get("date", "")
             close_str = row.get("close", "")
@@ -1505,6 +1508,29 @@ def _hydrate_drawdown(
         if resolved_sym:
             df["drawdown_price_symbol"] = resolved_sym
         hydrated += 1
+
+    # --- XBI drawdown + relative drawdown for ALL tickers ---
+    xbi_series = prices_by_ticker.get("XBI")
+    xbi_dd = None
+    if xbi_series and len(xbi_series) >= MIN_BARS_FOR_ESTIMATE:
+        xbi_series.sort(key=lambda x: x[0])
+        xbi_closes = [p for _, p in xbi_series]
+        xbi_look = xbi_closes[-WINDOW:] if len(xbi_closes) >= WINDOW else xbi_closes
+        xbi_peak = max(xbi_look)
+        if xbi_peak > 0:
+            xbi_dd = round((xbi_closes[-1] / xbi_peak) - 1.0, 6)
+
+    for rec in rec_by_ticker.values():
+        df = rec.get("defensive_features")
+        if df is None:
+            df = {}
+            rec["defensive_features"] = df
+        df["drawdown_xbi"] = xbi_dd
+        dd = df.get("drawdown")
+        if dd is not None and xbi_dd is not None:
+            df["drawdown_rel_xbi"] = round(dd - xbi_dd, 6)
+        else:
+            df["drawdown_rel_xbi"] = None
 
     # --- Defensive check: all reason values must be in the enum ---
     for t, rec in rec_by_ticker.items():
@@ -1667,6 +1693,8 @@ def save_validation_snapshot(
         row["de_drawdown"] = df.get("drawdown", "")
         row["de_drawdown_missing_reason"] = df.get("drawdown_missing_reason", "")
         row["de_rsi_14d"] = df.get("rsi_14d", "")
+        row["de_drawdown_xbi"] = df.get("drawdown_xbi", "")
+        row["de_drawdown_rel_xbi"] = df.get("drawdown_rel_xbi", "")
 
     # --- Actionable ordering: sort + assign rank + compute weights ---
     # Sort all rows by actionable sort key

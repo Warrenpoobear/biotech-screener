@@ -4,7 +4,7 @@ Decision Engine Replay Regression Tests
 
 Loads compact fixtures extracted from 3 real archives (2025-04-30, 2025-07-31,
 2025-10-31), runs the decision engine with the Phase-2 production ruleset
-(eb833c56, a_floor=0.60, catalyst_near=120), and asserts on 7 categories of metrics:
+(181346fe, a_floor=0.60, catalyst_near=120, catalyst_mid=180, drawdown_rel_xbi_gate=-0.15), and asserts on 7 categories of metrics:
 
 1. Real data ingest — engine doesn't crash, universe size is sane
 2. Schema on real data — all expected columns present, valid enums
@@ -48,7 +48,7 @@ RULESET_PATH = (
     PROJECT_ROOT / "production_data" / "decision_rulesets" / "v1.2.0_candidate.json"
 )
 DATES = ["2025-04-30", "2025-07-31", "2025-10-31"]
-EXPECTED_RULESET_ID = "eb833c56"
+EXPECTED_RULESET_ID = "181346fe"
 
 # Valid enum values for categorical fields
 VALID_TIERS = {"A", "B", "C", "D", ""}
@@ -402,7 +402,7 @@ class TestGoldenTickers:
         ("2025-07-31", "ELDN", "A", "L", "high_opt+catalyst_near"),
         # 2025-07-31: B-tier names
         ("2025-07-31", "BLTE", "B", "M", "mod_opt+catalyst_near"),
-        ("2025-07-31", "PVLA", "B", "L", "high_opt+catalyst_far"),
+        ("2025-07-31", "PVLA", "A", "L", "high_opt+catalyst_mid"),
         # 2025-10-31: A-tier (pinned by test_phase2_portfolio_regression)
         ("2025-10-31", "CNTX", "A", "L", "high_opt+catalyst_near"),
         ("2025-10-31", "KALV", "A", "L", "high_opt+catalyst_near"),

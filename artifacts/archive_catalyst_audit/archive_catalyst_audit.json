@@ -1,0 +1,1075 @@
+{
+  "dq_threshold": 80.0,
+  "n_archives": 33,
+  "n_ok": 33,
+  "n_skipped": 0,
+  "n_error": 0,
+  "current_gate": {
+    "pass": 24,
+    "fail": 9
+  },
+  "archives": [
+    {
+      "date": "2024-01-31",
+      "status": "ok",
+      "n_eligible": 69,
+      "catalyst_present": 14,
+      "catalyst_missing": 55,
+      "catalyst_missing_pct": 79.7,
+      "passes_dq_gate": true,
+      "source_breakdown": {
+        "trial_pcd": 14
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 14,
+          "missing": 55,
+          "missing_pct": 79.7,
+          "passes_dq": true
+        },
+        "270d": {
+          "present": 18,
+          "missing": 51,
+          "missing_pct": 73.9,
+          "passes_dq": true
+        },
+        "365d": {
+          "present": 22,
+          "missing": 47,
+          "missing_pct": 68.1,
+          "passes_dq": true
+        }
+      }
+    },
+    {
+      "date": "2024-02-29",
+      "status": "ok",
+      "n_eligible": 71,
+      "catalyst_present": 11,
+      "catalyst_missing": 60,
+      "catalyst_missing_pct": 84.5,
+      "passes_dq_gate": false,
+      "source_breakdown": {
+        "trial_pcd": 10,
+        "pdufa": 1
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 11,
+          "missing": 60,
+          "missing_pct": 84.5,
+          "passes_dq": false
+        },
+        "270d": {
+          "present": 15,
+          "missing": 56,
+          "missing_pct": 78.9,
+          "passes_dq": true
+        },
+        "365d": {
+          "present": 18,
+          "missing": 53,
+          "missing_pct": 74.6,
+          "passes_dq": true
+        }
+      }
+    },
+    {
+      "date": "2024-03-29",
+      "status": "ok",
+      "n_eligible": 72,
+      "catalyst_present": 9,
+      "catalyst_missing": 63,
+      "catalyst_missing_pct": 87.5,
+      "passes_dq_gate": false,
+      "source_breakdown": {
+        "trial_pcd": 9
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 9,
+          "missing": 63,
+          "missing_pct": 87.5,
+          "passes_dq": false
+        },
+        "270d": {
+          "present": 14,
+          "missing": 58,
+          "missing_pct": 80.6,
+          "passes_dq": false
+        },
+        "365d": {
+          "present": 17,
+          "missing": 55,
+          "missing_pct": 76.4,
+          "passes_dq": true
+        }
+      }
+    },
+    {
+      "date": "2024-04-30",
+      "status": "ok",
+      "n_eligible": 69,
+      "catalyst_present": 11,
+      "catalyst_missing": 58,
+      "catalyst_missing_pct": 84.1,
+      "passes_dq_gate": false,
+      "source_breakdown": {
+        "trial_pcd": 11
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 11,
+          "missing": 58,
+          "missing_pct": 84.1,
+          "passes_dq": false
+        },
+        "270d": {
+          "present": 17,
+          "missing": 52,
+          "missing_pct": 75.4,
+          "passes_dq": true
+        },
+        "365d": {
+          "present": 20,
+          "missing": 49,
+          "missing_pct": 71.0,
+          "passes_dq": true
+        }
+      }
+    },
+    {
+      "date": "2024-05-31",
+      "status": "ok",
+      "n_eligible": 67,
+      "catalyst_present": 13,
+      "catalyst_missing": 54,
+      "catalyst_missing_pct": 80.6,
+      "passes_dq_gate": false,
+      "source_breakdown": {
+        "trial_pcd": 13
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 13,
+          "missing": 54,
+          "missing_pct": 80.6,
+          "passes_dq": false
+        },
+        "270d": {
+          "present": 16,
+          "missing": 51,
+          "missing_pct": 76.1,
+          "passes_dq": true
+        },
+        "365d": {
+          "present": 17,
+          "missing": 50,
+          "missing_pct": 74.6,
+          "passes_dq": true
+        }
+      }
+    },
+    {
+      "date": "2024-06-28",
+      "status": "ok",
+      "n_eligible": 68,
+      "catalyst_present": 14,
+      "catalyst_missing": 54,
+      "catalyst_missing_pct": 79.4,
+      "passes_dq_gate": true,
+      "source_breakdown": {
+        "trial_pcd": 14
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 14,
+          "missing": 54,
+          "missing_pct": 79.4,
+          "passes_dq": true
+        },
+        "270d": {
+          "present": 17,
+          "missing": 51,
+          "missing_pct": 75.0,
+          "passes_dq": true
+        },
+        "365d": {
+          "present": 21,
+          "missing": 47,
+          "missing_pct": 69.1,
+          "passes_dq": true
+        }
+      }
+    },
+    {
+      "date": "2024-07-31",
+      "status": "ok",
+      "n_eligible": 69,
+      "catalyst_present": 14,
+      "catalyst_missing": 55,
+      "catalyst_missing_pct": 79.7,
+      "passes_dq_gate": true,
+      "source_breakdown": {
+        "trial_pcd": 14
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 14,
+          "missing": 55,
+          "missing_pct": 79.7,
+          "passes_dq": true
+        },
+        "270d": {
+          "present": 17,
+          "missing": 52,
+          "missing_pct": 75.4,
+          "passes_dq": true
+        },
+        "365d": {
+          "present": 27,
+          "missing": 42,
+          "missing_pct": 60.9,
+          "passes_dq": true
+        }
+      }
+    },
+    {
+      "date": "2024-08-30",
+      "status": "ok",
+      "n_eligible": 70,
+      "catalyst_present": 13,
+      "catalyst_missing": 57,
+      "catalyst_missing_pct": 81.4,
+      "passes_dq_gate": false,
+      "source_breakdown": {
+        "trial_pcd": 13
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 13,
+          "missing": 57,
+          "missing_pct": 81.4,
+          "passes_dq": false
+        },
+        "270d": {
+          "present": 15,
+          "missing": 55,
+          "missing_pct": 78.6,
+          "passes_dq": true
+        },
+        "365d": {
+          "present": 29,
+          "missing": 41,
+          "missing_pct": 58.6,
+          "passes_dq": true
+        }
+      }
+    },
+    {
+      "date": "2024-09-30",
+      "status": "ok",
+      "n_eligible": 76,
+      "catalyst_present": 13,
+      "catalyst_missing": 63,
+      "catalyst_missing_pct": 82.9,
+      "passes_dq_gate": false,
+      "source_breakdown": {
+        "trial_pcd": 13
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 13,
+          "missing": 63,
+          "missing_pct": 82.9,
+          "passes_dq": false
+        },
+        "270d": {
+          "present": 18,
+          "missing": 58,
+          "missing_pct": 76.3,
+          "passes_dq": true
+        },
+        "365d": {
+          "present": 36,
+          "missing": 40,
+          "missing_pct": 52.6,
+          "passes_dq": true
+        }
+      }
+    },
+    {
+      "date": "2024-10-31",
+      "status": "ok",
+      "n_eligible": 75,
+      "catalyst_present": 14,
+      "catalyst_missing": 61,
+      "catalyst_missing_pct": 81.3,
+      "passes_dq_gate": false,
+      "source_breakdown": {
+        "trial_pcd": 13,
+        "pdufa": 1
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 14,
+          "missing": 61,
+          "missing_pct": 81.3,
+          "passes_dq": false
+        },
+        "270d": {
+          "present": 22,
+          "missing": 53,
+          "missing_pct": 70.7,
+          "passes_dq": true
+        },
+        "365d": {
+          "present": 36,
+          "missing": 39,
+          "missing_pct": 52.0,
+          "passes_dq": true
+        }
+      }
+    },
+    {
+      "date": "2024-11-29",
+      "status": "ok",
+      "n_eligible": 74,
+      "catalyst_present": 16,
+      "catalyst_missing": 58,
+      "catalyst_missing_pct": 78.4,
+      "passes_dq_gate": true,
+      "source_breakdown": {
+        "trial_pcd": 15,
+        "pdufa": 1
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 16,
+          "missing": 58,
+          "missing_pct": 78.4,
+          "passes_dq": true
+        },
+        "270d": {
+          "present": 26,
+          "missing": 48,
+          "missing_pct": 64.9,
+          "passes_dq": true
+        },
+        "365d": {
+          "present": 35,
+          "missing": 39,
+          "missing_pct": 52.7,
+          "passes_dq": true
+        }
+      }
+    },
+    {
+      "date": "2024-12-31",
+      "status": "ok",
+      "n_eligible": 70,
+      "catalyst_present": 14,
+      "catalyst_missing": 56,
+      "catalyst_missing_pct": 80.0,
+      "passes_dq_gate": true,
+      "source_breakdown": {
+        "trial_pcd": 13,
+        "pdufa": 1
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 14,
+          "missing": 56,
+          "missing_pct": 80.0,
+          "passes_dq": true
+        },
+        "270d": {
+          "present": 25,
+          "missing": 45,
+          "missing_pct": 64.3,
+          "passes_dq": true
+        },
+        "365d": {
+          "present": 33,
+          "missing": 37,
+          "missing_pct": 52.9,
+          "passes_dq": true
+        }
+      }
+    },
+    {
+      "date": "2025-01-31",
+      "status": "ok",
+      "n_eligible": 57,
+      "catalyst_present": 11,
+      "catalyst_missing": 46,
+      "catalyst_missing_pct": 80.7,
+      "passes_dq_gate": false,
+      "source_breakdown": {
+        "trial_pcd": 10,
+        "pdufa": 1
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 11,
+          "missing": 46,
+          "missing_pct": 80.7,
+          "passes_dq": false
+        },
+        "270d": {
+          "present": 20,
+          "missing": 37,
+          "missing_pct": 64.9,
+          "passes_dq": true
+        },
+        "365d": {
+          "present": 28,
+          "missing": 29,
+          "missing_pct": 50.9,
+          "passes_dq": true
+        }
+      }
+    },
+    {
+      "date": "2025-02-28",
+      "status": "ok",
+      "n_eligible": 54,
+      "catalyst_present": 13,
+      "catalyst_missing": 41,
+      "catalyst_missing_pct": 75.9,
+      "passes_dq_gate": true,
+      "source_breakdown": {
+        "trial_pcd": 12,
+        "pdufa": 1
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 13,
+          "missing": 41,
+          "missing_pct": 75.9,
+          "passes_dq": true
+        },
+        "270d": {
+          "present": 20,
+          "missing": 34,
+          "missing_pct": 63.0,
+          "passes_dq": true
+        },
+        "365d": {
+          "present": 27,
+          "missing": 27,
+          "missing_pct": 50.0,
+          "passes_dq": true
+        }
+      }
+    },
+    {
+      "date": "2025-03-31",
+      "status": "ok",
+      "n_eligible": 48,
+      "catalyst_present": 13,
+      "catalyst_missing": 35,
+      "catalyst_missing_pct": 72.9,
+      "passes_dq_gate": true,
+      "source_breakdown": {
+        "trial_pcd": 13
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 13,
+          "missing": 35,
+          "missing_pct": 72.9,
+          "passes_dq": true
+        },
+        "270d": {
+          "present": 21,
+          "missing": 27,
+          "missing_pct": 56.2,
+          "passes_dq": true
+        },
+        "365d": {
+          "present": 24,
+          "missing": 24,
+          "missing_pct": 50.0,
+          "passes_dq": true
+        }
+      }
+    },
+    {
+      "date": "2025-04-30",
+      "status": "ok",
+      "n_eligible": 42,
+      "catalyst_present": 15,
+      "catalyst_missing": 27,
+      "catalyst_missing_pct": 64.3,
+      "passes_dq_gate": true,
+      "source_breakdown": {
+        "trial_pcd": 15
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 15,
+          "missing": 27,
+          "missing_pct": 64.3,
+          "passes_dq": true
+        },
+        "270d": {
+          "present": 21,
+          "missing": 21,
+          "missing_pct": 50.0,
+          "passes_dq": true
+        },
+        "365d": {
+          "present": 23,
+          "missing": 19,
+          "missing_pct": 45.2,
+          "passes_dq": true
+        }
+      }
+    },
+    {
+      "date": "2025-05-30",
+      "status": "ok",
+      "n_eligible": 42,
+      "catalyst_present": 14,
+      "catalyst_missing": 28,
+      "catalyst_missing_pct": 66.7,
+      "passes_dq_gate": true,
+      "source_breakdown": {
+        "trial_pcd": 14
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 14,
+          "missing": 28,
+          "missing_pct": 66.7,
+          "passes_dq": true
+        },
+        "270d": {
+          "present": 20,
+          "missing": 22,
+          "missing_pct": 52.4,
+          "passes_dq": true
+        },
+        "365d": {
+          "present": 23,
+          "missing": 19,
+          "missing_pct": 45.2,
+          "passes_dq": true
+        }
+      }
+    },
+    {
+      "date": "2025-06-30",
+      "status": "ok",
+      "n_eligible": 43,
+      "catalyst_present": 13,
+      "catalyst_missing": 30,
+      "catalyst_missing_pct": 69.8,
+      "passes_dq_gate": true,
+      "source_breakdown": {
+        "trial_pcd": 13
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 13,
+          "missing": 30,
+          "missing_pct": 69.8,
+          "passes_dq": true
+        },
+        "270d": {
+          "present": 18,
+          "missing": 25,
+          "missing_pct": 58.1,
+          "passes_dq": true
+        },
+        "365d": {
+          "present": 21,
+          "missing": 22,
+          "missing_pct": 51.2,
+          "passes_dq": true
+        }
+      }
+    },
+    {
+      "date": "2025-07-31",
+      "status": "ok",
+      "n_eligible": 44,
+      "catalyst_present": 14,
+      "catalyst_missing": 30,
+      "catalyst_missing_pct": 68.2,
+      "passes_dq_gate": true,
+      "source_breakdown": {
+        "trial_pcd": 14
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 14,
+          "missing": 30,
+          "missing_pct": 68.2,
+          "passes_dq": true
+        },
+        "270d": {
+          "present": 18,
+          "missing": 26,
+          "missing_pct": 59.1,
+          "passes_dq": true
+        },
+        "365d": {
+          "present": 20,
+          "missing": 24,
+          "missing_pct": 54.5,
+          "passes_dq": true
+        }
+      }
+    },
+    {
+      "date": "2025-08-29",
+      "status": "ok",
+      "n_eligible": 43,
+      "catalyst_present": 13,
+      "catalyst_missing": 30,
+      "catalyst_missing_pct": 69.8,
+      "passes_dq_gate": true,
+      "source_breakdown": {
+        "trial_pcd": 13
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 13,
+          "missing": 30,
+          "missing_pct": 69.8,
+          "passes_dq": true
+        },
+        "270d": {
+          "present": 17,
+          "missing": 26,
+          "missing_pct": 60.5,
+          "passes_dq": true
+        },
+        "365d": {
+          "present": 19,
+          "missing": 24,
+          "missing_pct": 55.8,
+          "passes_dq": true
+        }
+      }
+    },
+    {
+      "date": "2025-09-30",
+      "status": "ok",
+      "n_eligible": 41,
+      "catalyst_present": 9,
+      "catalyst_missing": 32,
+      "catalyst_missing_pct": 78.0,
+      "passes_dq_gate": true,
+      "source_breakdown": {
+        "trial_pcd": 9
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 9,
+          "missing": 32,
+          "missing_pct": 78.0,
+          "passes_dq": true
+        },
+        "270d": {
+          "present": 11,
+          "missing": 30,
+          "missing_pct": 73.2,
+          "passes_dq": true
+        },
+        "365d": {
+          "present": 14,
+          "missing": 27,
+          "missing_pct": 65.9,
+          "passes_dq": true
+        }
+      }
+    },
+    {
+      "date": "2025-10-31",
+      "status": "ok",
+      "n_eligible": 43,
+      "catalyst_present": 11,
+      "catalyst_missing": 32,
+      "catalyst_missing_pct": 74.4,
+      "passes_dq_gate": true,
+      "source_breakdown": {
+        "trial_pcd": 11
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 11,
+          "missing": 32,
+          "missing_pct": 74.4,
+          "passes_dq": true
+        },
+        "270d": {
+          "present": 13,
+          "missing": 30,
+          "missing_pct": 69.8,
+          "passes_dq": true
+        },
+        "365d": {
+          "present": 17,
+          "missing": 26,
+          "missing_pct": 60.5,
+          "passes_dq": true
+        }
+      }
+    },
+    {
+      "date": "2026-01-15",
+      "status": "ok",
+      "n_eligible": 53,
+      "catalyst_present": 11,
+      "catalyst_missing": 42,
+      "catalyst_missing_pct": 79.2,
+      "passes_dq_gate": true,
+      "source_breakdown": {
+        "trial_pcd": 11
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 11,
+          "missing": 42,
+          "missing_pct": 79.2,
+          "passes_dq": true
+        },
+        "270d": {
+          "present": 18,
+          "missing": 35,
+          "missing_pct": 66.0,
+          "passes_dq": true
+        },
+        "365d": {
+          "present": 24,
+          "missing": 29,
+          "missing_pct": 54.7,
+          "passes_dq": true
+        }
+      }
+    },
+    {
+      "date": "2026-01-20",
+      "status": "ok",
+      "n_eligible": 53,
+      "catalyst_present": 11,
+      "catalyst_missing": 42,
+      "catalyst_missing_pct": 79.2,
+      "passes_dq_gate": true,
+      "source_breakdown": {
+        "trial_pcd": 11
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 11,
+          "missing": 42,
+          "missing_pct": 79.2,
+          "passes_dq": true
+        },
+        "270d": {
+          "present": 18,
+          "missing": 35,
+          "missing_pct": 66.0,
+          "passes_dq": true
+        },
+        "365d": {
+          "present": 24,
+          "missing": 29,
+          "missing_pct": 54.7,
+          "passes_dq": true
+        }
+      }
+    },
+    {
+      "date": "2026-01-28",
+      "status": "ok",
+      "n_eligible": 54,
+      "catalyst_present": 11,
+      "catalyst_missing": 43,
+      "catalyst_missing_pct": 79.6,
+      "passes_dq_gate": true,
+      "source_breakdown": {
+        "trial_pcd": 11
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 11,
+          "missing": 43,
+          "missing_pct": 79.6,
+          "passes_dq": true
+        },
+        "270d": {
+          "present": 19,
+          "missing": 35,
+          "missing_pct": 64.8,
+          "passes_dq": true
+        },
+        "365d": {
+          "present": 25,
+          "missing": 29,
+          "missing_pct": 53.7,
+          "passes_dq": true
+        }
+      }
+    },
+    {
+      "date": "2026-01-30",
+      "status": "ok",
+      "n_eligible": 54,
+      "catalyst_present": 11,
+      "catalyst_missing": 43,
+      "catalyst_missing_pct": 79.6,
+      "passes_dq_gate": true,
+      "source_breakdown": {
+        "trial_pcd": 11
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 11,
+          "missing": 43,
+          "missing_pct": 79.6,
+          "passes_dq": true
+        },
+        "270d": {
+          "present": 19,
+          "missing": 35,
+          "missing_pct": 64.8,
+          "passes_dq": true
+        },
+        "365d": {
+          "present": 25,
+          "missing": 29,
+          "missing_pct": 53.7,
+          "passes_dq": true
+        }
+      }
+    },
+    {
+      "date": "2026-01-31",
+      "status": "ok",
+      "n_eligible": 54,
+      "catalyst_present": 11,
+      "catalyst_missing": 43,
+      "catalyst_missing_pct": 79.6,
+      "passes_dq_gate": true,
+      "source_breakdown": {
+        "trial_pcd": 11
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 11,
+          "missing": 43,
+          "missing_pct": 79.6,
+          "passes_dq": true
+        },
+        "270d": {
+          "present": 19,
+          "missing": 35,
+          "missing_pct": 64.8,
+          "passes_dq": true
+        },
+        "365d": {
+          "present": 25,
+          "missing": 29,
+          "missing_pct": 53.7,
+          "passes_dq": true
+        }
+      }
+    },
+    {
+      "date": "2026-02-01",
+      "status": "ok",
+      "n_eligible": 54,
+      "catalyst_present": 10,
+      "catalyst_missing": 44,
+      "catalyst_missing_pct": 81.5,
+      "passes_dq_gate": false,
+      "source_breakdown": {
+        "trial_pcd": 10
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 10,
+          "missing": 44,
+          "missing_pct": 81.5,
+          "passes_dq": false
+        },
+        "270d": {
+          "present": 19,
+          "missing": 35,
+          "missing_pct": 64.8,
+          "passes_dq": true
+        },
+        "365d": {
+          "present": 25,
+          "missing": 29,
+          "missing_pct": 53.7,
+          "passes_dq": true
+        }
+      }
+    },
+    {
+      "date": "2026-02-03",
+      "status": "ok",
+      "n_eligible": 54,
+      "catalyst_present": 13,
+      "catalyst_missing": 41,
+      "catalyst_missing_pct": 75.9,
+      "passes_dq_gate": true,
+      "source_breakdown": {
+        "trial_pcd": 13
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 13,
+          "missing": 41,
+          "missing_pct": 75.9,
+          "passes_dq": true
+        },
+        "270d": {
+          "present": 20,
+          "missing": 34,
+          "missing_pct": 63.0,
+          "passes_dq": true
+        },
+        "365d": {
+          "present": 25,
+          "missing": 29,
+          "missing_pct": 53.7,
+          "passes_dq": true
+        }
+      }
+    },
+    {
+      "date": "2026-02-04",
+      "status": "ok",
+      "n_eligible": 54,
+      "catalyst_present": 13,
+      "catalyst_missing": 41,
+      "catalyst_missing_pct": 75.9,
+      "passes_dq_gate": true,
+      "source_breakdown": {
+        "trial_pcd": 13
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 13,
+          "missing": 41,
+          "missing_pct": 75.9,
+          "passes_dq": true
+        },
+        "270d": {
+          "present": 22,
+          "missing": 32,
+          "missing_pct": 59.3,
+          "passes_dq": true
+        },
+        "365d": {
+          "present": 25,
+          "missing": 29,
+          "missing_pct": 53.7,
+          "passes_dq": true
+        }
+      }
+    },
+    {
+      "date": "2026-02-05",
+      "status": "ok",
+      "n_eligible": 54,
+      "catalyst_present": 13,
+      "catalyst_missing": 41,
+      "catalyst_missing_pct": 75.9,
+      "passes_dq_gate": true,
+      "source_breakdown": {
+        "trial_pcd": 13
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 13,
+          "missing": 41,
+          "missing_pct": 75.9,
+          "passes_dq": true
+        },
+        "270d": {
+          "present": 22,
+          "missing": 32,
+          "missing_pct": 59.3,
+          "passes_dq": true
+        },
+        "365d": {
+          "present": 25,
+          "missing": 29,
+          "missing_pct": 53.7,
+          "passes_dq": true
+        }
+      }
+    },
+    {
+      "date": "2026-02-06",
+      "status": "ok",
+      "n_eligible": 54,
+      "catalyst_present": 13,
+      "catalyst_missing": 41,
+      "catalyst_missing_pct": 75.9,
+      "passes_dq_gate": true,
+      "source_breakdown": {
+        "trial_pcd": 13
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 13,
+          "missing": 41,
+          "missing_pct": 75.9,
+          "passes_dq": true
+        },
+        "270d": {
+          "present": 22,
+          "missing": 32,
+          "missing_pct": 59.3,
+          "passes_dq": true
+        },
+        "365d": {
+          "present": 25,
+          "missing": 29,
+          "missing_pct": 53.7,
+          "passes_dq": true
+        }
+      }
+    },
+    {
+      "date": "2026-02-07",
+      "status": "ok",
+      "n_eligible": 54,
+      "catalyst_present": 13,
+      "catalyst_missing": 41,
+      "catalyst_missing_pct": 75.9,
+      "passes_dq_gate": true,
+      "source_breakdown": {
+        "trial_pcd": 13
+      },
+      "hypothetical": {
+        "180d": {
+          "present": 13,
+          "missing": 41,
+          "missing_pct": 75.9,
+          "passes_dq": true
+        },
+        "270d": {
+          "present": 22,
+          "missing": 32,
+          "missing_pct": 59.3,
+          "passes_dq": true
+        },
+        "365d": {
+          "present": 25,
+          "missing": 29,
+          "missing_pct": 53.7,
+          "passes_dq": true
+        }
+      }
+    }
+  ]
+}

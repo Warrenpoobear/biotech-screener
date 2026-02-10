@@ -13,7 +13,7 @@ Writes a sidecar `decision_inputs.json` into each archive's inputs/ directory.
 PIT safety:
   - Prices: only use rows where date <= as_of_date
   - Trials: only use records where first_posted <= as_of_date AND
-    primary_completion_date in (as_of_date, as_of_date + 180d]
+    primary_completion_date in (as_of_date, as_of_date + TRIAL_PCD_WINDOW_DAYS]
   - PDUFA: only use entries where pdufa_date > as_of_date
   - Holdings: static Q3 2025 (known limitation)
 """
@@ -36,6 +36,12 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 ARCHIVE_DIR = PROJECT_ROOT / "data" / "archives"
 PRICE_CSV = PROJECT_ROOT / "production_data" / "price_history.csv"
+
+# Trial PCD look-ahead window (calendar days from as_of_date).
+# 365d captures Phase 2/3 trials with PCD up to 1 year out.
+# The prior 180d cutoff caused 2024 archives to fail the calibration
+# DQ gate (catalyst_missing_pct > 80% among eligible dev tickers).
+TRIAL_PCD_WINDOW_DAYS = 365
 
 
 # =============================================================================
@@ -188,6 +194,14 @@ def compute_defensive_and_momentum(
     if dd is not None:
         result["drawdown"] = round(dd, 4)
 
+    # XBI drawdown + relative drawdown (ticker vs XBI)
+    xbi_closes = [p for _, p in xp]
+    xbi_dd = _compute_drawdown(xbi_closes, 252) if len(xbi_closes) >= 126 else None
+    if xbi_dd is not None:
+        result["drawdown_xbi"] = round(xbi_dd, 4)
+    if dd is not None and xbi_dd is not None:
+        result["drawdown_rel_xbi"] = round(dd - xbi_dd, 4)
+
     # 60-day return
     if len(closes) >= 61:
         ret_60d = (closes[-1] / closes[-61]) - 1.0
@@ -238,11 +252,12 @@ def compute_catalyst(
     trials: List[Dict[str, Any]],
     pdufa_entries: List[Dict[str, Any]],
     as_of: date,
+    trial_window_days: int = TRIAL_PCD_WINDOW_DAYS,
 ) -> Dict[str, Any]:
     """Compute catalyst proximity for one ticker from trials + PDUFA.
 
     PIT rules:
-      - Trials: first_posted <= as_of AND primary_completion_date in (as_of, as_of+180d]
+      - Trials: first_posted <= as_of AND primary_completion_date in (as_of, as_of+trial_window_days]
       - PDUFA: pdufa_date > as_of
     """
     result: Dict[str, Any] = {}
@@ -271,9 +286,9 @@ def compute_catalyst(
         # PIT filter: trial must be publicly known before as_of
         if fp_date > as_of:
             continue
-        # Upcoming: completion date in (as_of, as_of + 180d]
+        # Upcoming: completion date in (as_of, as_of + trial_window_days]
         days_away = (pcd_date - as_of).days
-        if days_away <= 0 or days_away > 180:
+        if days_away <= 0 or days_away > trial_window_days:
             continue
 
         if nearest_days is None or days_away < nearest_days:
@@ -343,12 +358,25 @@ def compute_tier1_counts(
 # PER-ARCHIVE ENRICHMENT
 # =============================================================================
 
+CATALYST_KEYS = frozenset({
+    "days_to_catalyst", "in_optimal_window", "catalyst_source",
+    "catalyst_event_type",
+})
+
+
 def enrich_archive(
     tar_path: Path,
     all_prices: Dict[str, List[Tuple[date, float]]],
     dry_run: bool = False,
+    trial_window_days: int = TRIAL_PCD_WINDOW_DAYS,
+    catalyst_only: bool = False,
+    output_tar_path: Path | None = None,
 ) -> Dict[str, Any]:
-    """Compute and write decision_inputs.json sidecar for one archive."""
+    """Compute and write decision_inputs.json sidecar for one archive.
+
+    When catalyst_only=True, only recompute catalyst fields in the existing
+    decision_inputs.json, preserving defensive features (drawdown, beta, etc.).
+    """
     date_str = tar_path.name.replace(".tar.gz", "")
     result: Dict[str, Any] = {"date": date_str, "status": "ok"}
 
@@ -426,35 +454,51 @@ def enrich_archive(
         # ---- XBI prices for beta/alpha computation ----
         xbi_prices = all_prices.get("XBI", [])
 
+        # ---- Load existing sidecar if catalyst_only ----
+        existing_inputs: Dict[str, Dict[str, Any]] = {}
+        sidecar_path = inputs_dir / "decision_inputs.json"
+        if catalyst_only and sidecar_path.exists():
+            with open(sidecar_path, "r") as f:
+                existing_inputs = json.load(f)
+
         # ---- Compute per-ticker ----
         decision_inputs: Dict[str, Dict[str, Any]] = {}
         stats = {"n_beta": 0, "n_catalyst": 0, "n_tier1": 0}
 
         for ticker in tickers:
-            entry: Dict[str, Any] = {}
+            if catalyst_only:
+                # Start from existing entry, strip old catalyst keys
+                entry = dict(existing_inputs.get(ticker, {}))
+                for k in CATALYST_KEYS:
+                    entry.pop(k, None)
+            else:
+                entry = {}
 
-            # A+B: Defensive + momentum from prices
-            ticker_prices = all_prices.get(ticker, [])
-            if ticker_prices:
-                features = compute_defensive_and_momentum(
-                    ticker_prices, xbi_prices, as_of
-                )
-                entry.update(features)
-                if "beta_xbi_60d" in features:
-                    stats["n_beta"] += 1
+            if not catalyst_only:
+                # A+B: Defensive + momentum from prices
+                ticker_prices = all_prices.get(ticker, [])
+                if ticker_prices:
+                    features = compute_defensive_and_momentum(
+                        ticker_prices, xbi_prices, as_of
+                    )
+                    entry.update(features)
+                    if "beta_xbi_60d" in features:
+                        stats["n_beta"] += 1
 
             # C: Catalyst from trials + PDUFA
-            cat = compute_catalyst(ticker, trials, pdufa_entries, as_of)
+            cat = compute_catalyst(ticker, trials, pdufa_entries, as_of,
+                                   trial_window_days=trial_window_days)
             if cat:
                 entry.update(cat)
                 stats["n_catalyst"] += 1
 
-            # D: Coinvest tier1_count
-            t1 = tier1_counts.get(ticker)
-            if t1 is not None:
-                entry["tier1_count"] = t1
-                if t1 > 0:
-                    stats["n_tier1"] += 1
+            if not catalyst_only:
+                # D: Coinvest tier1_count
+                t1 = tier1_counts.get(ticker)
+                if t1 is not None:
+                    entry["tier1_count"] = t1
+                    if t1 > 0:
+                        stats["n_tier1"] += 1
 
             if entry:
                 decision_inputs[ticker] = entry
@@ -473,11 +517,12 @@ def enrich_archive(
             json.dump(decision_inputs, f, indent=2, default=str)
 
         # Repack archive
-        new_tar_path = tar_path.with_suffix(".tar.gz.tmp")
+        dest = output_tar_path or tar_path
+        new_tar_path = dest.with_suffix(".tar.gz.tmp")
         with tarfile.open(new_tar_path, "w:gz") as tar:
             tar.add(str(archive_root), arcname=date_str)
 
-        shutil.move(str(new_tar_path), str(tar_path))
+        shutil.move(str(new_tar_path), str(dest))
 
     except Exception as e:
         result["status"] = "error"
@@ -506,6 +551,14 @@ def main():
         "--archive", type=str, default=None,
         help="Process a single archive date (e.g. 2025-06-30)"
     )
+    parser.add_argument(
+        "--trial-window", type=int, default=None,
+        help=f"Trial PCD look-ahead window in days (default: {TRIAL_PCD_WINDOW_DAYS})"
+    )
+    parser.add_argument(
+        "--catalyst-only", action="store_true",
+        help="Only update catalyst fields; preserve existing defensive features"
+    )
     args = parser.parse_args()
 
     if not ARCHIVE_DIR.exists():
@@ -522,19 +575,24 @@ def main():
             print(f"ERROR: Archive not found for date: {args.archive}")
             sys.exit(1)
 
+    trial_window = args.trial_window if args.trial_window is not None else TRIAL_PCD_WINDOW_DAYS
+
     print(f"Loading price history from {PRICE_CSV} ...")
     all_prices = load_price_history(PRICE_CSV)
     print(f"  {len(all_prices)} tickers, XBI has {len(all_prices.get('XBI', []))} days")
     print()
 
-    print(f"Enriching {len(archives)} archives")
+    mode_label = "catalyst-only" if args.catalyst_only else "full"
+    print(f"Enriching {len(archives)} archives ({mode_label}, trial window: {trial_window}d)")
     if args.dry_run:
         print("  (dry run — no files will be modified)")
     print()
 
     for tar_path in archives:
         print(f"  {tar_path.name} ...", end=" ", flush=True)
-        r = enrich_archive(tar_path, all_prices, dry_run=args.dry_run)
+        r = enrich_archive(tar_path, all_prices, dry_run=args.dry_run,
+                           trial_window_days=trial_window,
+                           catalyst_only=args.catalyst_only)
         s = r.get("stats", {})
         if r["status"] in ("ok", "dry_run"):
             tag = "DRY" if r["status"] == "dry_run" else "OK"

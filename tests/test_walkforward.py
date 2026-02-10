@@ -205,12 +205,26 @@ class TestPanelSchema:
         """PANEL_COLUMNS constant matches expected list."""
         expected = [
             "as_of_date", "ticker", "tier", "band", "eligible", "weight",
-            "tier_reason", "risk_flags", "catalyst_mode", "mom_state",
+            "tier_reason", "risk_flags", "catalyst_mode", "catalyst_strength", "mom_state",
             "optionality", "catalyst_days_raw", "ruleset_id",
+            "drawdown_abs", "drawdown_xbi", "drawdown_rel_xbi",
             "fwd_ret_20d", "fwd_ret_60d", "fwd_max_dd_20d", "fwd_max_dd_60d",
             "fwd_dd_missing_reason",
+            "adv_dollars", "est_cost_bps", "participation_pct",
+            "fwd_ret_20d_net", "fwd_ret_60d_net",
         ]
         assert PANEL_COLUMNS == expected
+
+    def test_panel_schema_has_net_columns(self):
+        """PANEL_COLUMNS includes cost and net-return columns."""
+        for col in ["adv_dollars", "est_cost_bps", "participation_pct",
+                     "fwd_ret_20d_net", "fwd_ret_60d_net"]:
+            assert col in PANEL_COLUMNS, f"Missing {col} in PANEL_COLUMNS"
+
+    def test_panel_columns_has_drawdown_fields(self):
+        """PANEL_COLUMNS includes regime-aware drawdown fields."""
+        for col in ["drawdown_abs", "drawdown_xbi", "drawdown_rel_xbi"]:
+            assert col in PANEL_COLUMNS, f"Missing {col} in PANEL_COLUMNS"
 
     def test_build_all_dev_decisions_keys(self):
         """build_all_dev_decisions returns expected keys for each ticker."""
@@ -227,8 +241,9 @@ class TestPanelSchema:
         # Check keys
         expected_keys = {
             "ticker", "tier_dev", "band", "eligible", "tier_reason",
-            "risk_flags", "catalyst_mode", "catalyst_days", "mom_state",
+            "risk_flags", "catalyst_mode", "catalyst_strength", "catalyst_days", "mom_state",
             "optionality",
+            "drawdown_abs", "drawdown_xbi", "drawdown_rel_xbi",
         }
         for r in results:
             assert set(r.keys()) == expected_keys
@@ -292,3 +307,32 @@ class TestTierSeparationMetrics:
         for entry in result:
             assert entry["count"] == 0
             assert entry["mean_ret"] is None
+
+
+class TestCostSummary:
+    """Tests for compute_cost_summary."""
+
+    def test_cost_summary_filters_portfolio_only(self):
+        """Only rows with weight > 0 contribute to cost stats."""
+        from run_walkforward_report import compute_cost_summary
+
+        panel = [
+            # Portfolio position
+            {"weight": 5.0, "est_cost_bps": 20.0, "participation_pct": 1.5, "adv_dollars": 5_000_000},
+            {"weight": 3.0, "est_cost_bps": 40.0, "participation_pct": 2.0, "adv_dollars": 2_000_000},
+            # Non-portfolio (weight=0): should be excluded
+            {"weight": 0.0, "est_cost_bps": 0.0, "participation_pct": 0.0, "adv_dollars": 100_000},
+            {"weight": 0, "est_cost_bps": 0, "participation_pct": 0, "adv_dollars": 50_000},
+        ]
+        result = compute_cost_summary(panel)
+        assert result["n_portfolio_rows"] == 2
+        assert result["median_cost_bps"] is not None
+        assert result["low_adv_count"] == 0
+
+    def test_cost_summary_empty_panel(self):
+        """Empty panel returns None metrics."""
+        from run_walkforward_report import compute_cost_summary
+
+        result = compute_cost_summary([])
+        assert result["n_portfolio_rows"] == 0
+        assert result["median_cost_bps"] is None

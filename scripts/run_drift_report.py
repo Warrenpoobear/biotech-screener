@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Daily Drift Report — post-promotion monitoring for ruleset eb833c56.
+"""Daily Drift Report — post-promotion monitoring for the active ruleset.
 
 Loads the last N snapshots from the snapshot directory, computes per-snapshot
 drift metrics (tier distribution, catalyst coverage, top-25 overlap, score
@@ -67,8 +67,18 @@ class DriftGuardrails:
     fail_overlap_low: float = 50.0     # top-25 overlap vs prior < 50%
     fail_dispersion_low: float = 0.10  # optionality std < 0.10
 
+    # WARN triggers (cost / eligibility)
+    warn_median_cost_bps_high: float = 60.0   # median round-trip cost > 60 bps
+    warn_eligible_dev_pct_low: float = 10.0   # eligible dev % < 10% → WARN
+
     # Rolling window size
     window_size: int = 5
+
+    # Adaptive WARN layer
+    warn_iqr_k: float = 2.0             # WARN if |delta| > k * max(IQR, floor)
+    warn_iqr_floor: float = 1.0         # minimum IQR (prevents spurious WARN from flat windows)
+    warn_min_window: int = 3            # minimum snapshots for adaptive WARN to activate
+    fail_corroboration_count: int = 2   # FAIL metrics needed for ROLLBACK_RECOMMENDED
 
     @property
     def guardrails_id(self) -> str:
@@ -249,6 +259,15 @@ def compute_snapshot_metrics(snap: SnapshotData) -> Dict[str, Any]:
     # Drawdown coverage
     metrics["drawdown_coverage_pct"] = _drawdown_coverage_pct(rankings)
 
+    # Catalyst strength distribution (when column exists)
+    if "catalyst_strength" in dev.columns:
+        n_elig = sum(1 for e in dev["eligible"] if str(e).strip() == "1") if "eligible" in dev.columns else n_dev
+        if n_elig > 0:
+            eligible_dev = dev[dev["eligible"].astype(str).str.strip() == "1"] if "eligible" in dev.columns else dev
+            for band in ("near", "mid", "far", "missing"):
+                n_band = sum(1 for v in eligible_dev["catalyst_strength"] if str(v).strip() == band)
+                metrics[f"catalyst_strength_{band}_pct"] = round(n_band / n_elig * 100, 1) if n_elig else 0.0
+
     # Score dispersion
     metrics["optionality_std"] = _optionality_std(rankings)
     metrics["composite_iqr"] = _composite_iqr(rankings)
@@ -307,17 +326,34 @@ def compute_drift_metrics(
         "tier_A_pct", "tier_B_pct", "tier_C_pct", "tier_D_pct",
         "eligible_pct", "catalyst_missing_pct", "top25_overlap_pct",
         "optionality_std", "composite_iqr", "drawdown_coverage_pct",
+        "catalyst_strength_near_pct", "catalyst_strength_mid_pct",
+        "catalyst_strength_far_pct", "catalyst_strength_missing_pct",
     ]
     rolling: Dict[str, Dict[str, Any]] = {}
     for key in roll_keys:
         vals = [m[key] for m in all_metrics if m.get(key) is not None]
         if vals:
-            rolling[key] = {
+            cur_val = current.get(key)
+            med = round(statistics.median(vals), 2)
+            entry: Dict[str, Any] = {
                 "min": round(min(vals), 2),
                 "max": round(max(vals), 2),
                 "mean": round(statistics.mean(vals), 2),
-                "current": current.get(key),
+                "median": med,
+                "current": cur_val,
             }
+            # IQR requires >= 3 data points for statistics.quantiles
+            if len(vals) >= 3:
+                q1, _q2, q3 = statistics.quantiles(vals, n=4)
+                entry["iqr"] = round(q3 - q1, 2)
+            else:
+                entry["iqr"] = None
+            # Delta = current - median (positive = increased vs window baseline)
+            if cur_val is not None:
+                entry["delta"] = round(cur_val - med, 2)
+            else:
+                entry["delta"] = None
+            rolling[key] = entry
 
     return {
         "snapshots": all_metrics,
@@ -358,14 +394,15 @@ def find_rollback_candidate(
 def evaluate_guardrails(
     metrics: Dict[str, Any],
     guardrails: DriftGuardrails,
-) -> Tuple[str, List[str], Optional[Dict[str, Any]]]:
+) -> Tuple[str, List[str], Optional[Dict[str, Any]], str]:
     """Evaluate drift guardrails against current snapshot metrics.
 
     Returns:
-        (status, reasons, rollback_candidate)
+        (status, reasons, rollback_candidate, recommended_action)
         status: "OK" | "WARN" | "FAIL"
         reasons: list of human-readable reason strings
         rollback_candidate: manifest entry for most recently retired ruleset (on FAIL)
+        recommended_action: "NONE" | "ROLLBACK_RECOMMENDED" | "INVESTIGATE"
     """
     current = metrics.get("current", {})
     reasons: List[str] = []
@@ -399,9 +436,292 @@ def evaluate_guardrails(
 
     if reasons:
         rollback = find_rollback_candidate()
-        return "FAIL", reasons, rollback
+        n_fail = len(reasons)
+        if n_fail >= guardrails.fail_corroboration_count and rollback:
+            action = "ROLLBACK_RECOMMENDED"
+        else:
+            action = "INVESTIGATE"
+        return "FAIL", reasons, rollback, action
 
-    return "OK", [], None
+    # WARN checks (non-FAIL, advisory only)
+    warn_reasons: List[str] = []
+    median_cost = current.get("median_cost_bps")
+    if median_cost is not None and median_cost > guardrails.warn_median_cost_bps_high:
+        warn_reasons.append(
+            f"Median cost = {median_cost:.1f} bps > "
+            f"{guardrails.warn_median_cost_bps_high} bps ceiling"
+        )
+
+    eligible_pct = current.get("eligible_pct")
+    if eligible_pct is not None and eligible_pct < guardrails.warn_eligible_dev_pct_low:
+        warn_reasons.append(
+            f"eligible_dev_pct={eligible_pct:.1f}% < "
+            f"{guardrails.warn_eligible_dev_pct_low}% floor"
+        )
+
+    if warn_reasons:
+        return "WARN", warn_reasons, None, "INVESTIGATE"
+
+    return "OK", [], None, "NONE"
+
+
+# ---------------------------------------------------------------------------
+# Adaptive WARN evaluation
+# ---------------------------------------------------------------------------
+ADAPTIVE_WARN_METRICS = [
+    "eligible_pct",
+    "tier_A_pct",
+    "catalyst_missing_pct",
+    "catalyst_strength_near_pct",
+]
+
+
+def evaluate_adaptive_warnings(
+    metrics: Dict[str, Any],
+    guardrails: DriftGuardrails,
+) -> Tuple[str, List[str]]:
+    """IQR-based adaptive warnings for key health indicators.
+
+    Fires when the current value drifts more than ``warn_iqr_k * max(IQR, floor)``
+    from the rolling window median.  Requires at least ``warn_min_window``
+    snapshots in the window to activate.
+
+    Returns:
+        (status, reasons) where status is "OK" or "WARN".
+    """
+    rolling = metrics.get("rolling", {})
+    n_snaps = len(metrics.get("snapshots", []))
+    reasons: List[str] = []
+
+    if n_snaps < guardrails.warn_min_window:
+        return "OK", []
+
+    for key in ADAPTIVE_WARN_METRICS:
+        entry = rolling.get(key)
+        if entry is None:
+            continue
+        iqr = entry.get("iqr")
+        delta = entry.get("delta")
+        median = entry.get("median")
+        cur = entry.get("current")
+
+        if iqr is None or delta is None:
+            continue
+
+        effective_iqr = max(iqr, guardrails.warn_iqr_floor)
+        threshold = guardrails.warn_iqr_k * effective_iqr
+
+        if abs(delta) > threshold:
+            direction = "above" if delta > 0 else "below"
+            label = key.replace("_", " ").replace("pct", "%")
+            reasons.append(
+                f"{label} = {cur} ({direction} median {median} by "
+                f"{abs(delta):.1f}pp; threshold {threshold:.1f}pp = "
+                f"{guardrails.warn_iqr_k} * max(IQR={iqr}, floor={guardrails.warn_iqr_floor}))"
+            )
+
+    if reasons:
+        return "WARN", reasons
+    return "OK", []
+
+
+# ---------------------------------------------------------------------------
+# Drift attribution — root-cause breadcrumbs for pairwise snapshot diffs
+# ---------------------------------------------------------------------------
+_GATE_KEYS = ("fundamental_red_flag", "sev3", "deep_drawdown", "adv_fail")
+_STRENGTH_RANK = {"near": 0, "mid": 1, "far": 2, "missing": 3}
+
+
+def _parse_pipe_separated(value) -> List[str]:
+    """Split a pipe-separated CSV string, handling blank/NaN/None."""
+    if value is None or (isinstance(value, float) and pd.isna(value)):
+        return []
+    s = str(value).strip()
+    if not s:
+        return []
+    return [part.strip() for part in s.split("|") if part.strip()]
+
+
+def _compute_gate_counts(dev: pd.DataFrame) -> Dict[str, int]:
+    """Count each eligibility gate reason among dev tickers.
+
+    Returns dict with 4 keys always present (zeros for missing gates).
+    Graceful: returns all-zero if ``ineligible_reasons`` column is absent.
+    """
+    counts = {k: 0 for k in _GATE_KEYS}
+    if "ineligible_reasons" not in dev.columns:
+        return counts
+    for val in dev["ineligible_reasons"]:
+        for reason in _parse_pipe_separated(val):
+            if reason in counts:
+                counts[reason] += 1
+    return counts
+
+
+def _compute_strength_counts(dev: pd.DataFrame) -> Dict[str, int]:
+    """Count catalyst_strength buckets among eligible dev tickers.
+
+    Returns dict with 4 keys: near, mid, far, missing.
+    Graceful: all-zero if column missing.
+    """
+    counts = {"near": 0, "mid": 0, "far": 0, "missing": 0}
+    if "catalyst_strength" not in dev.columns:
+        return counts
+    # Filter to eligible only
+    if "eligible" in dev.columns:
+        eligible = dev[dev["eligible"].astype(str).str.strip() == "1"]
+    else:
+        eligible = dev
+    for val in eligible["catalyst_strength"]:
+        band = str(val).strip()
+        if band in counts:
+            counts[band] += 1
+    return counts
+
+
+def _compute_strength_transitions(
+    prior_dev: pd.DataFrame, current_dev: pd.DataFrame
+) -> Tuple[List[Dict[str, str]], List[Dict[str, str]]]:
+    """Find tickers whose catalyst_strength changed between snapshots.
+
+    Only considers tickers eligible in BOTH snapshots (intersection).
+    Returns (degraded, improved) lists of {"ticker", "prior", "current"} dicts,
+    sorted by magnitude of transition, capped at 10 each.
+    """
+    degraded: List[Dict[str, str]] = []
+    improved: List[Dict[str, str]] = []
+
+    for df in (prior_dev, current_dev):
+        if "catalyst_strength" not in df.columns:
+            return [], []
+
+    # Build eligible-only lookups: ticker -> strength
+    def _eligible_strength_map(df: pd.DataFrame) -> Dict[str, str]:
+        if "eligible" in df.columns:
+            elig = df[df["eligible"].astype(str).str.strip() == "1"]
+        else:
+            elig = df
+        out: Dict[str, str] = {}
+        for _, row in elig.iterrows():
+            t = str(row.get("ticker", "")).strip()
+            s = str(row.get("catalyst_strength", "")).strip()
+            if t and s:
+                out[t] = s
+        return out
+
+    prior_map = _eligible_strength_map(prior_dev)
+    current_map = _eligible_strength_map(current_dev)
+    common = set(prior_map) & set(current_map)
+
+    for ticker in common:
+        p, c = prior_map[ticker], current_map[ticker]
+        if p == c:
+            continue
+        p_rank = _STRENGTH_RANK.get(p, 3)
+        c_rank = _STRENGTH_RANK.get(c, 3)
+        entry = {"ticker": ticker, "prior": p, "current": c}
+        if c_rank > p_rank:
+            degraded.append(entry)
+        else:
+            improved.append(entry)
+
+    # Sort by magnitude (biggest rank change first), then ticker for stability
+    degraded.sort(key=lambda e: (-abs(_STRENGTH_RANK.get(e["current"], 3) - _STRENGTH_RANK.get(e["prior"], 3)), e["ticker"]))
+    improved.sort(key=lambda e: (-abs(_STRENGTH_RANK.get(e["current"], 3) - _STRENGTH_RANK.get(e["prior"], 3)), e["ticker"]))
+
+    return degraded[:10], improved[:10]
+
+
+def _compute_churn_details(
+    prior_rankings: pd.DataFrame, current_rankings: pd.DataFrame
+) -> Dict[str, Any]:
+    """Compute portfolio churn between two snapshots.
+
+    Uses top-25 by actionable_rank among dev tickers.
+    Returns dropped/added ticker lists with metadata.
+    """
+    prior_top = _top_n_tickers(prior_rankings, 25)
+    current_top = _top_n_tickers(current_rankings, 25)
+
+    dropped_tickers = prior_top - current_top
+    added_tickers = current_top - prior_top
+
+    def _ticker_meta(rankings: pd.DataFrame, ticker: str) -> Dict[str, str]:
+        dev = rankings[rankings["archetype"] == "drug_developer"]
+        rows = dev[dev["ticker"] == ticker]
+        if rows.empty:
+            return {"ticker": ticker, "tier_dev": "", "size_band": "", "tier_reason": ""}
+        row = rows.iloc[0]
+        return {
+            "ticker": ticker,
+            "tier_dev": str(row.get("tier_dev", "")),
+            "size_band": str(row.get("size_band", "")),
+            "tier_reason": str(row.get("tier_reason", "")),
+        }
+
+    dropped = sorted(
+        [_ticker_meta(prior_rankings, t) for t in dropped_tickers],
+        key=lambda d: d["ticker"],
+    )
+    added = sorted(
+        [_ticker_meta(current_rankings, t) for t in added_tickers],
+        key=lambda d: d["ticker"],
+    )
+
+    return {
+        "prior_top25": sorted(prior_top),
+        "current_top25": sorted(current_top),
+        "dropped": dropped,
+        "added": added,
+        "overlap_count": len(prior_top & current_top),
+    }
+
+
+def compute_attribution(
+    snapshots: List[SnapshotData],
+) -> Optional[Dict[str, Any]]:
+    """Compute root-cause attribution by diffing the two most recent snapshots.
+
+    Returns None if fewer than 2 snapshots are available.
+    """
+    if len(snapshots) < 2:
+        return None
+
+    prior, current = snapshots[-2], snapshots[-1]
+    prior_dev = prior.rankings[prior.rankings["archetype"] == "drug_developer"]
+    current_dev = current.rankings[current.rankings["archetype"] == "drug_developer"]
+
+    # Eligibility gates
+    prior_gates = _compute_gate_counts(prior_dev)
+    current_gates = _compute_gate_counts(current_dev)
+    gate_delta = {k: current_gates[k] - prior_gates[k] for k in _GATE_KEYS}
+
+    # Catalyst strength
+    prior_strength = _compute_strength_counts(prior_dev)
+    current_strength = _compute_strength_counts(current_dev)
+    strength_delta = {k: current_strength[k] - prior_strength[k] for k in _STRENGTH_RANK}
+    degraded, improved = _compute_strength_transitions(prior_dev, current_dev)
+
+    # Portfolio churn
+    churn = _compute_churn_details(prior.rankings, current.rankings)
+
+    return {
+        "prior_date": prior.date,
+        "current_date": current.date,
+        "eligibility_gates": {
+            "prior": prior_gates,
+            "current": current_gates,
+            "delta": gate_delta,
+        },
+        "catalyst_strength": {
+            "prior": prior_strength,
+            "current": current_strength,
+            "delta": strength_delta,
+            "degraded": degraded,
+            "improved": improved,
+        },
+        "portfolio_churn": churn,
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -413,6 +733,9 @@ def generate_drift_report_md(
     reasons: List[str],
     guardrails: DriftGuardrails,
     rollback_candidate: Optional[Dict[str, Any]] = None,
+    recommended_action: str = "NONE",
+    adaptive_warnings: Optional[List[str]] = None,
+    attribution: Optional[Dict[str, Any]] = None,
 ) -> str:
     """Generate a Markdown drift report."""
     current = metrics.get("current", {})
@@ -467,11 +790,12 @@ def generate_drift_report_md(
     if rolling:
         lines.append(f"## Rolling Window (last {n_snaps} runs)")
         lines.append("")
-        lines.append("| Metric              | Min   | Max   | Mean  | Current |")
-        lines.append("|---------------------|-------|-------|-------|---------|")
+        lines.append("| Metric              | Min   | Max   | Mean  | Median | IQR   | Delta | Current |")
+        lines.append("|---------------------|-------|-------|-------|--------|-------|-------|---------|")
         for key in [
             "tier_A_pct", "catalyst_missing_pct",
             "top25_overlap_pct", "optionality_std",
+            "catalyst_strength_near_pct",
         ]:
             if key not in rolling:
                 continue
@@ -482,6 +806,9 @@ def generate_drift_report_md(
                 f"| {r['min']:>5} "
                 f"| {r['max']:>5} "
                 f"| {r['mean']:>5} "
+                f"| {_fmt(r.get('median')):>6} "
+                f"| {_fmt(r.get('iqr')):>5} "
+                f"| {_fmt(r.get('delta')):>5} "
                 f"| {_fmt(r['current']):>7} |"
             )
         lines.append("")
@@ -496,8 +823,101 @@ def generate_drift_report_md(
         lines.append(f"Rulesets observed: {', '.join(sorted(rulesets_in_window))}")
         lines.append("")
 
+    # Adaptive Warnings
+    if adaptive_warnings:
+        lines.append("## Adaptive Warnings")
+        lines.append("")
+        for w in adaptive_warnings:
+            lines.append(f"- {w}")
+        lines.append("")
+
+    # Drift Attribution (pairwise diff of last two snapshots)
+    if attribution is not None:
+        lines.append("## Drift Attribution")
+        lines.append(
+            f"Comparing {attribution['prior_date']} → {attribution['current_date']}"
+        )
+        lines.append("")
+
+        # Eligibility Gate Changes
+        eg = attribution.get("eligibility_gates", {})
+        if eg:
+            lines.append("### Eligibility Gate Changes")
+            lines.append("")
+            lines.append("| Gate | Prior | Current | Delta |")
+            lines.append("|------|-------|---------|-------|")
+            for gate in _GATE_KEYS:
+                p = eg.get("prior", {}).get(gate, 0)
+                c = eg.get("current", {}).get(gate, 0)
+                d = eg.get("delta", {}).get(gate, 0)
+                delta_str = f"+{d}" if d > 0 else str(d)
+                lines.append(f"| {gate} | {p} | {c} | {delta_str} |")
+            lines.append("")
+
+        # Catalyst Strength Shifts
+        cs = attribution.get("catalyst_strength", {})
+        if cs:
+            lines.append("### Catalyst Strength Shifts")
+            lines.append("")
+            lines.append("| Band | Prior | Current | Delta |")
+            lines.append("|------|-------|---------|-------|")
+            for band in ("near", "mid", "far", "missing"):
+                p = cs.get("prior", {}).get(band, 0)
+                c = cs.get("current", {}).get(band, 0)
+                d = cs.get("delta", {}).get(band, 0)
+                delta_str = f"+{d}" if d > 0 else str(d)
+                lines.append(f"| {band} | {p} | {c} | {delta_str} |")
+            lines.append("")
+
+            degraded = cs.get("degraded", [])
+            if degraded:
+                lines.append("**Degraded:**")
+                for e in degraded:
+                    lines.append(f"- {e['ticker']}: {e['prior']} → {e['current']}")
+                lines.append("")
+
+            improved = cs.get("improved", [])
+            if improved:
+                lines.append("**Improved:**")
+                for e in improved:
+                    lines.append(f"- {e['ticker']}: {e['prior']} → {e['current']}")
+                lines.append("")
+
+        # Portfolio Churn
+        churn = attribution.get("portfolio_churn", {})
+        if churn:
+            lines.append("### Portfolio Churn")
+            lines.append(f"Top-25 overlap: {churn.get('overlap_count', 0)}/25")
+            lines.append("")
+
+            dropped = churn.get("dropped", [])
+            if dropped:
+                lines.append("**Dropped:**")
+                lines.append("")
+                lines.append("| Ticker | Tier | Band | Reason |")
+                lines.append("|--------|------|------|--------|")
+                for d in dropped:
+                    lines.append(
+                        f"| {d['ticker']} | {d['tier_dev']} | {d['size_band']} | {d['tier_reason']} |"
+                    )
+                lines.append("")
+
+            added = churn.get("added", [])
+            if added:
+                lines.append("**Added:**")
+                lines.append("")
+                lines.append("| Ticker | Tier | Band | Reason |")
+                lines.append("|--------|------|------|--------|")
+                for a in added:
+                    lines.append(
+                        f"| {a['ticker']} | {a['tier_dev']} | {a['size_band']} | {a['tier_reason']} |"
+                    )
+                lines.append("")
+
     # Guardrails
     lines.append(f"## Guardrails: {status}")
+    lines.append(f"Recommended action: {recommended_action}")
+    lines.append("")
     if reasons:
         for r in reasons:
             lines.append(f"- {r}")
@@ -506,7 +926,7 @@ def generate_drift_report_md(
         lines.append(f"**Rollback candidate**: {rollback_candidate['id']} "
                       f"({rollback_candidate.get('file', 'N/A')})")
         lines.append(f"  To rollback: `python scripts/promote_ruleset.py "
-                      f"{rollback_candidate['id']}`")
+                      f"{rollback_candidate['id']} --rollback --force`")
     lines.append("")
 
     # Guardrails config
@@ -517,6 +937,11 @@ def generate_drift_report_md(
     lines.append(f"- fail_catalyst_missing_high: {guardrails.fail_catalyst_missing_high}%")
     lines.append(f"- fail_overlap_low: {guardrails.fail_overlap_low}%")
     lines.append(f"- fail_dispersion_low: {guardrails.fail_dispersion_low}")
+    lines.append(f"- warn_median_cost_bps_high: {guardrails.warn_median_cost_bps_high} bps")
+    lines.append(f"- warn_iqr_k: {guardrails.warn_iqr_k}")
+    lines.append(f"- warn_iqr_floor: {guardrails.warn_iqr_floor}")
+    lines.append(f"- warn_min_window: {guardrails.warn_min_window}")
+    lines.append(f"- fail_corroboration_count: {guardrails.fail_corroboration_count}")
     lines.append("")
 
     return "\n".join(lines)
@@ -528,19 +953,122 @@ def generate_drift_json(
     reasons: List[str],
     guardrails: DriftGuardrails,
     rollback_candidate: Optional[Dict[str, Any]] = None,
+    recommended_action: str = "NONE",
+    adaptive_warnings: Optional[List[str]] = None,
+    attribution: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """Generate a JSON-serializable drift report dict."""
     return {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "status": status,
         "reasons": reasons,
+        "recommended_action": recommended_action,
         "rollback_candidate": rollback_candidate,
+        "adaptive_warnings": adaptive_warnings or [],
+        "attribution": attribution,
         "guardrails": guardrails.to_dict(),
         "current": metrics.get("current", {}),
         "rolling": metrics.get("rolling", {}),
         "window_size": len(metrics.get("snapshots", [])),
         "snapshots": metrics.get("snapshots", []),
     }
+
+
+def generate_rollback_packet_md(
+    status: str,
+    reasons: List[str],
+    rollback_candidate: Optional[Dict[str, Any]],
+    recommended_action: str,
+    current_metrics: Dict[str, Any],
+    guardrails: DriftGuardrails,
+) -> str:
+    """Generate a self-contained rollback ops page (only called on FAIL)."""
+    ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    lines: List[str] = []
+    lines.append("# Rollback Packet")
+    lines.append(f"Generated: {ts} | Status: {status} | Action: {recommended_action}")
+    lines.append("")
+
+    # --- Guardrails tripped ---
+    lines.append("## Guardrails Tripped")
+    lines.append("")
+    lines.append("| Guardrail | Threshold | Actual | Status |")
+    lines.append("|-----------|-----------|--------|--------|")
+    for reason in reasons:
+        # Parse reason strings like "A-tier % = 1.5% < 2.0% floor"
+        lines.append(f"| {reason} | - | - | FAIL |")
+    lines.append("")
+
+    if recommended_action == "ROLLBACK_RECOMMENDED" and rollback_candidate:
+        # --- Recommended rollback ---
+        rid = rollback_candidate["id"]
+        rfile = rollback_candidate.get("file", "N/A")
+        engine_ver = rollback_candidate.get("engine_version", "N/A")
+        desc = rollback_candidate.get("description", "N/A")
+
+        lines.append("## Recommended Rollback")
+        lines.append("")
+        lines.append("| Field | Value |")
+        lines.append("|-------|-------|")
+        lines.append(f"| Ruleset ID | `{rid}` |")
+        lines.append(f"| File | `production_data/decision_rulesets/{rfile}` |")
+        lines.append(f"| Engine version | {engine_ver} |")
+        lines.append(f"| Description | {desc} |")
+        lines.append("")
+
+        # --- Fingerprint verification ---
+        lines.append("## Fingerprint Verification")
+        lines.append("")
+        lines.append("```bash")
+        lines.append(
+            f'python -c "import json; '
+            f"d=json.load(open('production_data/decision_rulesets/{rfile}')); "
+            f"assert d['ruleset_id']=='{rid}', f'ID mismatch: {{d[\"ruleset_id\"]}}'; "
+            f"print('OK:', d['ruleset_id'])\""
+        )
+        lines.append("```")
+        lines.append("")
+
+        # --- Rollback commands ---
+        lines.append("## Rollback Commands")
+        lines.append("")
+        lines.append(
+            f"1. Verify fingerprint (above)"
+        )
+        lines.append(
+            f"2. `python scripts/promote_ruleset.py {rid} --rollback --force`"
+        )
+        lines.append(
+            "3. Re-run screen: `python run_screen.py --strict`"
+        )
+        lines.append(
+            "4. Re-run drift: `python scripts/run_drift_report.py "
+            "--snapshot-dir data/snapshots --output-dir output`"
+        )
+        lines.append("")
+    else:
+        # No candidate available
+        lines.append("## No Rollback Candidate Available")
+        lines.append("")
+        lines.append("No retired ruleset available. Manual investigation required.")
+        lines.append("")
+
+    # --- Current snapshot ---
+    lines.append("## Current Snapshot")
+    lines.append("")
+    lines.append("| Metric | Value |")
+    lines.append("|--------|-------|")
+    for key in (
+        "tier_A_pct", "tier_B_pct", "catalyst_missing_pct",
+        "top25_overlap_pct", "optionality_std",
+    ):
+        val = current_metrics.get(key)
+        if val is not None:
+            label = key.replace("_", " ").title()
+            lines.append(f"| {label} | {val} |")
+    lines.append("")
+
+    return "\n".join(lines)
 
 
 # ---------------------------------------------------------------------------
@@ -595,12 +1123,36 @@ def main() -> int:
     # Compute metrics
     metrics = compute_drift_metrics(snapshots)
 
-    # Evaluate guardrails
-    status, reasons, rollback = evaluate_guardrails(metrics, guardrails)
+    # Evaluate guardrails (FAIL layer — absolute thresholds)
+    fail_status, fail_reasons, rollback, recommended_action = evaluate_guardrails(
+        metrics, guardrails
+    )
+
+    # Evaluate adaptive warnings (WARN layer — window-relative)
+    warn_status, warn_reasons = evaluate_adaptive_warnings(metrics, guardrails)
+
+    # Combine: FAIL > WARN > OK
+    if fail_status == "FAIL":
+        final_status = "FAIL"
+    elif warn_status == "WARN":
+        final_status = "WARN"
+    else:
+        final_status = "OK"
+
+    # Compute attribution (pairwise diff of last two snapshots)
+    attribution = compute_attribution(snapshots)
 
     # Generate reports
-    md = generate_drift_report_md(metrics, status, reasons, guardrails, rollback)
-    report_json = generate_drift_json(metrics, status, reasons, guardrails, rollback)
+    md = generate_drift_report_md(
+        metrics, final_status, fail_reasons, guardrails, rollback,
+        recommended_action, adaptive_warnings=warn_reasons or None,
+        attribution=attribution,
+    )
+    report_json = generate_drift_json(
+        metrics, final_status, fail_reasons, guardrails, rollback,
+        recommended_action, adaptive_warnings=warn_reasons or None,
+        attribution=attribution,
+    )
 
     # Write outputs
     args.output_dir.mkdir(parents=True, exist_ok=True)
@@ -614,13 +1166,36 @@ def main() -> int:
         json.dump(report_json, f, indent=2, default=str)
         f.write("\n")
 
-    print(f"Drift status: {status}")
-    if reasons:
-        for r in reasons:
-            print(f"  - {r}")
+    # Rollback packet (only on FAIL)
+    if final_status == "FAIL":
+        packet = generate_rollback_packet_md(
+            final_status, fail_reasons, rollback, recommended_action,
+            metrics.get("current", {}), guardrails,
+        )
+        packet_path = args.output_dir / "rollback_packet.md"
+        packet_path.write_text(packet, encoding="utf-8")
+        print(f"Wrote rollback packet: {packet_path}")
+
+    print(f"Drift status: {final_status}")
+    if fail_reasons:
+        for r in fail_reasons:
+            print(f"  FAIL: {r}")
+    if warn_reasons:
+        for r in warn_reasons:
+            print(f"  WARN: {r}")
+    if attribution:
+        gate_delta = attribution.get("eligibility_gates", {}).get("delta", {})
+        nonzero_gates = {k: v for k, v in gate_delta.items() if v != 0}
+        if nonzero_gates:
+            print(f"  Gate deltas: {nonzero_gates}")
+        churn = attribution.get("portfolio_churn", {})
+        n_dropped = len(churn.get("dropped", []))
+        n_added = len(churn.get("added", []))
+        if n_dropped or n_added:
+            print(f"  Churn: {n_dropped} dropped, {n_added} added")
     print(f"Reports written to {args.output_dir}/")
 
-    return 1 if status == "FAIL" else 0
+    return 1 if final_status == "FAIL" else 0
 
 
 if __name__ == "__main__":

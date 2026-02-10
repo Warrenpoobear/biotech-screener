@@ -123,6 +123,19 @@ class ArchiveData(NamedTuple):
     archetypes: Dict[str, str]                    # ticker -> archetype
     optionalities: Dict[str, Optional[float]]     # ticker -> optionality_pct_dev
     tickers: List[str]                            # all tickers in CSV
+    market_data: Dict[str, Dict[str, Any]] = {}   # ticker -> {avg_volume, price, ...}
+
+
+def _load_market_data(inputs_dir: Path) -> Dict[str, Dict[str, Any]]:
+    """Load market_data.json from archive inputs directory.
+
+    Returns {ticker: {avg_volume, price, ...}} or empty dict if file missing.
+    """
+    md_path = inputs_dir / "market_data.json"
+    if not md_path.exists():
+        return {}
+    with open(md_path, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 
 def load_archive_data(tar_path: Path, date_str: str) -> ArchiveData:
@@ -151,6 +164,7 @@ def load_archive_data(tar_path: Path, date_str: str) -> ArchiveData:
         holdings_map = _load_holdings_map(inputs_dir) if inputs_dir.exists() else {}
         defensive_map = _load_defensive_map(inputs_dir) if inputs_dir.exists() else {}
         decision_inputs = _load_decision_inputs(inputs_dir) if inputs_dir.exists() else {}
+        market_data = _load_market_data(inputs_dir) if inputs_dir.exists() else {}
 
         # Read CSV
         with open(csv_path, "r", newline="", encoding="utf-8-sig") as f:
@@ -192,6 +206,7 @@ def load_archive_data(tar_path: Path, date_str: str) -> ArchiveData:
             archetypes=archetypes,
             optionalities=optionalities,
             tickers=tickers,
+            market_data=market_data,
         )
     finally:
         shutil.rmtree(tmp_dir, ignore_errors=True)

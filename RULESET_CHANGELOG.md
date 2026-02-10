@@ -6,6 +6,30 @@ Format: `[engine_version] ruleset_id — date — summary`
 
 ---
 
+## [v1.3.0] c88bd4cc — 2026-02-10 — Regime-aware drawdown gate (XBI-relative AND logic)
+
+**Parameters changed** (vs 181346fe):
+- `drawdown_rel_xbi_gate`: -0.15 → -0.20
+- Added `drawdown_gate_require_both`: True (AND logic — both absolute AND relative must breach)
+
+**Behavior changes**:
+- Drawdown gate now uses AND logic: a ticker is only failed for deep_drawdown if BOTH
+  absolute drawdown < -0.40 AND relative drawdown (ticker - XBI) < -0.20.
+- When relative drawdown data is unavailable, falls back to absolute-only (safe degradation).
+- `drawdown_gate_require_both=False` restores original absolute-only behavior.
+- New risk flag `deep_drawdown_rel_xbi` fires when relative drawdown < threshold.
+- New snapshot/panel columns: `de_drawdown_xbi`, `de_drawdown_rel_xbi`, `drawdown_abs`,
+  `drawdown_xbi`, `drawdown_rel_xbi`.
+
+**Rationale**: In tape-down regimes (e.g. late-2025), absolute -0.40 gate collapses dev
+eligibility because the entire sector is down. The AND gate distinguishes ticker-specific
+weakness from market-wide drawdowns. Strictly looser than absolute-only — no currently-eligible
+ticker loses eligibility.
+
+**Files**: `v1.2.0_candidate.json` (active)
+
+---
+
 ## [v1.2.0] d3cdf5c8 — 2025-10-31 — Phase-2 production default
 
 **Parameters changed** (vs v1.0.0):
@@ -36,6 +60,32 @@ Initial decision engine release. Hard-coded thresholds:
 produces negative tier-A vs tier-C spread.
 
 **Files**: `v1.json`
+
+---
+
+## [v1.3.0] f6c99132 — 2026-02-10 — Catalyst strength bands
+
+**Parameters changed** (vs eb833c56):
+- Added `catalyst_mid_days`: 180 (new parameter — upper bound of MID strength band)
+
+**Behavior changes**:
+- Catalyst strength computed as NEAR (≤ near_days) / MID (near_days < d ≤ mid_days) / FAR (> mid_days) / MISSING
+- A-tier now requires actionable catalyst: strength ∈ {near, mid}. FAR treated same as MISSING for tier gating.
+- FAR catalysts get +1 sizing band step ("catalyst_far_lift")
+- Sort key includes catalyst_strength between catalyst_mode and catalyst_days
+- `catalyst_strength` added to DECISION_COLUMNS, SNAPSHOT_COLUMNS, PANEL_COLUMNS
+
+**Rationale**: 365d trial window experiment proved wider coverage dilutes tier separation
+(+0.97pp→+0.30pp) because far-out catalysts flood A/B tiers. Strength bands preserve
+wider data capture without polluting tier signal.
+
+**catalyst_mid_days validation** (2D sweep: 7 a_floor × 7 mid_days, 2025-only, 1808 rows):
+Ridge monotonically favors tighter boundaries (150→+2.78pp, 180→+2.53pp, 210→+2.21pp,
+270→+1.03pp). Optimizer picks mid=150, but A-count=1.7 (below health gate warn=2).
+Decision: keep mid=180 (A-count=2.3, +2.53pp separation, 5/5 neighbor stability).
+Catalyst strength signal: near median +5.56% / mid +4.50% >> far -0.15% / missing -0.63%.
+
+**Files**: `v1.2.0_candidate.json` (updated with `catalyst_mid_days: 180`)
 
 ---
 

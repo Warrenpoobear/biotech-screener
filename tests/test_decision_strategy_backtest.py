@@ -518,3 +518,19 @@ class TestBuildUniverseBaseline:
         result = build_universe_baseline(data, DecisionRuleset())
         assert len(result) == 2
         assert result[0]["weight_pct"] == result[1]["weight_pct"]
+
+
+# =============================================================================
+# TEST: Panel cost fields
+# =============================================================================
+
+class TestPanelCostFields:
+    """Verify panel COLUMNS include cost columns."""
+
+    def test_panel_columns_include_cost_fields(self):
+        """PANEL_COLUMNS contains adv_dollars, est_cost_bps, and net return columns."""
+        from run_decision_strategy_backtest import PANEL_COLUMNS
+
+        for col in ["adv_dollars", "est_cost_bps", "participation_pct",
+                     "fwd_ret_20d_net", "fwd_ret_60d_net"]:
+            assert col in PANEL_COLUMNS, f"Missing {col} in PANEL_COLUMNS"

@@ -315,6 +315,74 @@ def compute_stability_metrics(
     }
 
 
+def compute_cost_summary(
+    panel_rows: List[Dict[str, Any]],
+) -> Dict[str, Any]:
+    """Compute cost statistics across portfolio rows (weight > 0).
+
+    Returns dict with median/mean/p95 cost bps, participation stats,
+    low-ADV count, and a capacity note.
+    """
+    costs: List[float] = []
+    participations: List[float] = []
+    low_adv_count = 0
+
+    for row in panel_rows:
+        try:
+            w = float(row.get("weight", 0))
+        except (ValueError, TypeError):
+            w = 0.0
+        if w <= 0:
+            continue
+
+        try:
+            cost = float(row.get("est_cost_bps", 0))
+        except (ValueError, TypeError):
+            cost = 0.0
+        costs.append(cost)
+
+        try:
+            part = float(row.get("participation_pct", 0))
+        except (ValueError, TypeError):
+            part = 0.0
+        participations.append(part)
+
+        try:
+            adv = float(row.get("adv_dollars", 0))
+        except (ValueError, TypeError):
+            adv = 0.0
+        if adv < 500_000:
+            low_adv_count += 1
+
+    if not costs:
+        return {
+            "n_portfolio_rows": 0,
+            "median_cost_bps": None,
+            "mean_cost_bps": None,
+            "p95_cost_bps": None,
+            "median_participation_pct": None,
+            "p95_participation_pct": None,
+            "low_adv_count": 0,
+            "capacity_note": "No portfolio rows with cost data",
+        }
+
+    sorted_costs = sorted(costs)
+    sorted_parts = sorted(participations)
+    p95_idx = int(len(sorted_costs) * 0.95)
+
+    med_cost = round(median(sorted_costs), 1)
+    return {
+        "n_portfolio_rows": len(costs),
+        "median_cost_bps": med_cost,
+        "mean_cost_bps": round(mean(costs), 1),
+        "p95_cost_bps": round(sorted_costs[min(p95_idx, len(sorted_costs) - 1)], 1),
+        "median_participation_pct": round(median(sorted_parts), 2),
+        "p95_participation_pct": round(sorted_parts[min(p95_idx, len(sorted_parts) - 1)], 2),
+        "low_adv_count": low_adv_count,
+        "capacity_note": f"At $50M AUM: median {med_cost} bps round-trip",
+    }
+
+
 def compute_coverage_summary(
     panel_rows: List[Dict[str, Any]],
 ) -> Dict[str, Any]:
@@ -352,6 +420,8 @@ def generate_walkforward_report_md(
     coverage: Dict[str, Any],
     config: Dict[str, Any],
     strength_dist: Optional[List[Dict[str, Any]]] = None,
+    tier_sep_net: Optional[List[Dict[str, Any]]] = None,
+    cost_summary: Optional[Dict[str, Any]] = None,
 ) -> str:
     """Generate the markdown report string."""
     lines: List[str] = []
@@ -408,6 +478,45 @@ def generate_walkforward_report_md(
             hr = f"{s['hit_rate']:.1f}" if s["hit_rate"] is not None else "n/a"
             dd = f"{s['mean_max_dd']:.2f}" if s["mean_max_dd"] is not None else "n/a"
             lines.append(f"| {s['strength']} | {n} | {m} | {md} | {hr} | {dd} |")
+        lines.append("")
+
+    # Cost analysis (gross vs net)
+    if tier_sep_net and cost_summary:
+        lines.append("## Cost Analysis")
+        lines.append("")
+
+        # Gross vs net tier separation table
+        net_by_tier = {t["tier"]: t for t in tier_sep_net}
+        lines.append("### Gross vs Net Tier Separation (60d forward returns)")
+        lines.append("")
+        lines.append("| Tier | N | Gross Mean % | Net Mean % | Gross Hit % | Net Hit % |")
+        lines.append("|------|---|-------------|-----------|------------|----------|")
+        for t in tier_sep:
+            tier = t["tier"]
+            nt = net_by_tier.get(tier, {})
+            gm = f"{t['mean_ret']:+.2f}" if t["mean_ret"] is not None else "n/a"
+            nm = f"{nt.get('mean_ret', None):+.2f}" if nt.get("mean_ret") is not None else "n/a"
+            gh = f"{t['hit_rate']:.1f}" if t["hit_rate"] is not None else "n/a"
+            nh = f"{nt.get('hit_rate', None):.1f}" if nt.get("hit_rate") is not None else "n/a"
+            lines.append(f"| {tier} | {t['count']} | {gm} | {nm} | {gh} | {nh} |")
+        lines.append("")
+
+        # Cost distribution stats
+        lines.append("### Cost Distribution (portfolio positions)")
+        lines.append("")
+        lines.append(f"- Portfolio rows: {cost_summary.get('n_portfolio_rows', 0)}")
+        med = cost_summary.get("median_cost_bps")
+        lines.append(f"- Median round-trip cost: {med} bps" if med is not None else "- Median round-trip cost: n/a")
+        mn = cost_summary.get("mean_cost_bps")
+        lines.append(f"- Mean round-trip cost: {mn} bps" if mn is not None else "- Mean round-trip cost: n/a")
+        p95 = cost_summary.get("p95_cost_bps")
+        lines.append(f"- P95 round-trip cost: {p95} bps" if p95 is not None else "- P95 round-trip cost: n/a")
+        med_p = cost_summary.get("median_participation_pct")
+        lines.append(f"- Median participation: {med_p}%" if med_p is not None else "- Median participation: n/a")
+        p95_p = cost_summary.get("p95_participation_pct")
+        lines.append(f"- P95 participation: {p95_p}%" if p95_p is not None else "- P95 participation: n/a")
+        lines.append(f"- Low-ADV positions (< $500K): {cost_summary.get('low_adv_count', 0)}")
+        lines.append(f"- {cost_summary.get('capacity_note', '')}")
         lines.append("")
 
     # Eligible vs ineligible
@@ -562,6 +671,8 @@ def main():
     eligible_cmp = compute_eligible_comparison(panel_rows)
     stability = compute_stability_metrics(panel_rows)
     coverage = compute_coverage_summary(panel_rows)
+    tier_sep_net = compute_tier_separation(panel_rows, return_col="fwd_ret_60d_net")
+    cost_summ = compute_cost_summary(panel_rows)
 
     config = {
         "ruleset_id": ruleset.ruleset_id,
@@ -586,11 +697,13 @@ def main():
         "config": config,
         "provenance": provenance,
         "tier_separation": tier_sep,
+        "tier_separation_net": tier_sep_net,
         "band_separation": band_sep,
         "strength_distribution": strength_dist,
         "eligible_comparison": eligible_cmp,
         "stability": stability,
         "coverage": coverage,
+        "cost_summary": cost_summ,
     }
     json_path = output_dir / f"walkforward_report{sfx}.json"
     with open(json_path, "w", encoding="utf-8") as f:
@@ -601,6 +714,8 @@ def main():
     md_content = generate_walkforward_report_md(
         tier_sep, band_sep, eligible_cmp, stability, coverage, config,
         strength_dist=strength_dist,
+        tier_sep_net=tier_sep_net,
+        cost_summary=cost_summ,
     )
     md_path = output_dir / f"walkforward_report{sfx}.md"
     with open(md_path, "w", encoding="utf-8") as f:

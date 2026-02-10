@@ -43,7 +43,7 @@ def _make_rankings_df(
     actionable_ranks: list | None = None,
     risk_flags: list[str] | None = None,
     weights: list | None = None,
-    ruleset_id: str = "eb833c56",
+    ruleset_id: str = "181346fe",
     size_bands: list[str] | None = None,
 ) -> pd.DataFrame:
     """Build a synthetic rankings DataFrame with decision engine columns."""
@@ -86,7 +86,7 @@ def _make_portfolio_df(
         "archetype": ["drug_developer"] * n,
         "catalyst_mode": ["specific_days"] * n,
         "catalyst_days": list(range(1, n + 1)),
-        "decision_engine_ruleset_id": ["eb833c56"] * n,
+        "decision_engine_ruleset_id": ["181346fe"] * n,
         "decision_engine_version": ["v1.2.0"] * n,
     }
     return pd.DataFrame(data)
@@ -96,7 +96,7 @@ def _make_snapshot(
     date: str,
     rankings: pd.DataFrame,
     portfolio: pd.DataFrame,
-    ruleset_id: str = "eb833c56",
+    ruleset_id: str = "181346fe",
     has_native: bool = True,
 ) -> SnapshotData:
     return SnapshotData(

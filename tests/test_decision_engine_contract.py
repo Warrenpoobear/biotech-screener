@@ -137,7 +137,7 @@ GOLDEN_1 = {
     },
 }
 
-# Fixture 2: Tier B — high opt but catalyst far
+# Fixture 2: Tier A — high opt + catalyst mid (90 < 120 ≤ 180)
 GOLDEN_2 = {
     "ticker": "GLD_TIERB_FAR",
     "rec": _rec("GLD_TIERB_FAR", catalyst_days=120, catalyst_in_window=False,
@@ -146,9 +146,10 @@ GOLDEN_2 = {
     "optionality": 0.70,
     "expected": {
         "eligible": "1",
-        "tier_dev": "B",
-        "tier_reason": "high_opt+catalyst_far",
+        "tier_dev": "A",
+        "tier_reason": "high_opt+catalyst_mid",
         "catalyst_mode": "specific_days",
+        "catalyst_strength": "mid",
         "catalyst_days": 120,
         "mom_state": "neutral",
     },
@@ -340,6 +341,12 @@ class TestSchemaContract:
         assert fields["catalyst_mode"] in (
             "specific_days", "blended_window", "no_upcoming", "missing"
         ), f"catalyst_mode invalid: {fields['catalyst_mode']!r}"
+
+    def test_catalyst_strength_valid(self, golden_output):
+        _, fields = golden_output
+        assert fields["catalyst_strength"] in (
+            "near", "mid", "far", "missing"
+        ), f"catalyst_strength invalid: {fields['catalyst_strength']!r}"
 
     def test_mom_state_valid(self, golden_output):
         _, fields = golden_output
@@ -584,23 +591,23 @@ class TestOverrideEffects:
         assert f_soft["eligible"] == "1"
         assert "drawdown_penalty" in f_soft["size_reasons"]
 
-    def test_catalyst_near_days_changes_tier(self):
-        """Shortening catalyst_near_days from 90 to 30 with days=45 should downgrade from A.
+    def test_catalyst_mid_days_changes_tier(self):
+        """Shortening catalyst_mid_days to 30 with days=45 should downgrade from A to B.
 
-        Must use in_optimal_window=False so only the days path counts as "near".
-        (blended_window always counts as near regardless of catalyst_near_days.)
+        When catalyst_mid_days=30, days=45 > 30 → strength=far → NOT actionable → B.
+        Must use in_optimal_window=False so only the days path counts.
         """
         rec = _rec("CAT_DAYS_TEST", catalyst_days=45, catalyst_in_window=False,
                    alpha_60d=0.02, tier1_count=1, drawdown=-0.15)
-        rs_90 = DecisionRuleset(catalyst_near_days=90)
-        rs_30 = DecisionRuleset(catalyst_near_days=30)
+        rs_mid180 = DecisionRuleset(catalyst_near_days=90, catalyst_mid_days=180)
+        rs_mid30 = DecisionRuleset(catalyst_near_days=30, catalyst_mid_days=30)
 
-        f_90 = compute_decision_fields(rec, "drug_developer", 0.75, ruleset=rs_90)
-        f_30 = compute_decision_fields(rec, "drug_developer", 0.75, ruleset=rs_30)
+        f_mid180 = compute_decision_fields(rec, "drug_developer", 0.75, ruleset=rs_mid180)
+        f_mid30 = compute_decision_fields(rec, "drug_developer", 0.75, ruleset=rs_mid30)
 
-        assert f_90["tier_dev"] == "A", "days=45 within 90d should be tier A"
-        assert f_30["tier_dev"] == "B", (
-            f"days=45 outside 30d should be tier B, got {f_30['tier_dev']}"
+        assert f_mid180["tier_dev"] == "A", "days=45 within mid=180 should be tier A"
+        assert f_mid30["tier_dev"] == "B", (
+            f"days=45 outside mid=30 should be tier B (far), got {f_mid30['tier_dev']}"
         )
 
     def test_sponsor_threshold_changes_sizing(self):
@@ -851,7 +858,101 @@ class TestDrawdownDataMissing:
 
 
 # =============================================================================
-# 9. SNAPSHOT INPUT COLUMNS — lock de_* contract surface
+# 9. CATALYST STRENGTH BANDS
+# =============================================================================
+
+class TestCatalystStrengthBands:
+    """Tests for the catalyst_strength band computation and tier/sizing effects."""
+
+    def test_near_within_near_days(self):
+        """days=30 with default near_days=90 → strength=near."""
+        rec = _rec("NEAR", catalyst_days=30, catalyst_in_window=True)
+        f = compute_decision_fields(rec, "drug_developer", 0.75)
+        assert f["catalyst_strength"] == "near"
+
+    def test_mid_between_near_and_mid_days(self):
+        """days=150 with near_days=90, mid_days=180 → strength=mid."""
+        rec = _rec("MID", catalyst_days=150, catalyst_in_window=False)
+        f = compute_decision_fields(rec, "drug_developer", 0.75)
+        assert f["catalyst_strength"] == "mid"
+
+    def test_far_beyond_mid_days(self):
+        """days=250 with mid_days=180 → strength=far."""
+        rec = _rec("FAR", catalyst_days=250, catalyst_in_window=False)
+        f = compute_decision_fields(rec, "drug_developer", 0.75)
+        assert f["catalyst_strength"] == "far"
+
+    def test_blended_window_always_near(self):
+        """Blended window mode → strength=near regardless of days."""
+        rec = _rec("BLEND", catalyst_days=0, catalyst_in_window=True)
+        f = compute_decision_fields(rec, "drug_developer", 0.75)
+        assert f["catalyst_strength"] == "near"
+
+    def test_missing_mode_is_missing_strength(self):
+        """No catalyst data → strength=missing."""
+        rec = _rec("MISS")  # no catalyst args
+        f = compute_decision_fields(rec, "drug_developer", 0.75)
+        assert f["catalyst_strength"] == "missing"
+
+    def test_no_upcoming_is_missing_strength(self):
+        """no_upcoming mode → strength=missing."""
+        rec = _rec("NOUP", catalyst_days=0, catalyst_in_window=False)
+        f = compute_decision_fields(rec, "drug_developer", 0.75)
+        assert f["catalyst_strength"] == "missing"
+
+    def test_near_qualifies_for_tier_a(self):
+        """near + high_opt → A."""
+        rec = _rec("A_NEAR", catalyst_days=30, catalyst_in_window=True)
+        f = compute_decision_fields(rec, "drug_developer", 0.75)
+        assert f["tier_dev"] == "A"
+
+    def test_mid_qualifies_for_tier_a(self):
+        """mid + high_opt → A."""
+        rec = _rec("A_MID", catalyst_days=150, catalyst_in_window=False)
+        f = compute_decision_fields(rec, "drug_developer", 0.75)
+        assert f["tier_dev"] == "A"
+
+    def test_far_excluded_from_tier_a(self):
+        """far + high_opt → B (not A)."""
+        rec = _rec("B_FAR", catalyst_days=250, catalyst_in_window=False)
+        f = compute_decision_fields(rec, "drug_developer", 0.75)
+        assert f["tier_dev"] == "B"
+        assert "catalyst_far" in f["tier_reason"]
+
+    def test_far_gives_sizing_lift(self):
+        """FAR strength → catalyst_far_lift in size_reasons."""
+        rec = _rec("FAR_LIFT", catalyst_days=250, catalyst_in_window=False)
+        f = compute_decision_fields(rec, "drug_developer", 0.75)
+        assert "catalyst_far_lift" in f["size_reasons"]
+
+    def test_boundary_near_exact_equals(self):
+        """days == near_days → near (inclusive)."""
+        rs = DecisionRuleset(catalyst_near_days=90, catalyst_mid_days=180)
+        rec = _rec("BOUND_NEAR", catalyst_days=90, catalyst_in_window=False)
+        f = compute_decision_fields(rec, "drug_developer", 0.75, ruleset=rs)
+        assert f["catalyst_strength"] == "near"
+
+    def test_boundary_mid_exact_equals(self):
+        """days == mid_days → mid (inclusive)."""
+        rs = DecisionRuleset(catalyst_near_days=90, catalyst_mid_days=180)
+        rec = _rec("BOUND_MID", catalyst_days=180, catalyst_in_window=False)
+        f = compute_decision_fields(rec, "drug_developer", 0.75, ruleset=rs)
+        assert f["catalyst_strength"] == "mid"
+
+    def test_custom_ruleset_boundaries(self):
+        """Custom near=60, mid=120: days=90 → mid."""
+        rs = DecisionRuleset(catalyst_near_days=60, catalyst_mid_days=120)
+        rec = _rec("CUSTOM", catalyst_days=90, catalyst_in_window=False)
+        f = compute_decision_fields(rec, "drug_developer", 0.75, ruleset=rs)
+        assert f["catalyst_strength"] == "mid"
+        # And days=130 → far
+        rec2 = _rec("CUSTOM2", catalyst_days=130, catalyst_in_window=False)
+        f2 = compute_decision_fields(rec2, "drug_developer", 0.75, ruleset=rs)
+        assert f2["catalyst_strength"] == "far"
+
+
+# =============================================================================
+# 10. SNAPSHOT INPUT COLUMNS — lock de_* contract surface
 # =============================================================================
 
 class TestSnapshotInputContract:
@@ -861,6 +962,7 @@ class TestSnapshotInputContract:
         "de_catalyst_days", "de_catalyst_in_window", "de_catalyst_mode",
         "de_alpha_60d", "de_tier1_count",
         "de_beta_xbi_60d", "de_drawdown", "de_drawdown_missing_reason", "de_rsi_14d",
+        "de_drawdown_xbi", "de_drawdown_rel_xbi",
     })
 
     def test_de_input_columns_present(self):
@@ -978,7 +1080,7 @@ class TestGoldenOutputFingerprint:
       4. Bump VERSION in decision_engine.py if the change is material
     """
 
-    EXPECTED_FINGERPRINT = "82b41fac1c68"
+    EXPECTED_FINGERPRINT = "9663af4c7492"
 
     def test_golden_output_fingerprint_pinned(self):
         actual = _compute_golden_output_fingerprint()
