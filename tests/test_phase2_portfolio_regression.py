@@ -8,9 +8,9 @@ deterministic, known-good output for a specific snapshot + ruleset.
 This prevents silent ordering/weight drift from code changes to the
 decision engine, sort key, or sizing logic.
 
-Pinned on: 2026-02-08
+Pinned on: 2026-02-10
 Snapshot:  2025-10-31 archive
-Ruleset:   v2_phase2_default (ID: d3cdf5c8, a_floor=0.55)
+Ruleset:   v1.2.0_candidate (ID: eb833c56, a_floor=0.60, catalyst_near=120)
 Policy:    tier_filter=[A,B], top_k=20
 """
 from __future__ import annotations
@@ -34,26 +34,26 @@ from run_rank_ic_backtest import ARCHIVE_DIR
 # =============================================================================
 
 SNAPSHOT_DATE = "2025-10-31"
-RULESET_PATH = PROJECT_ROOT / "production_data" / "decision_rulesets" / "v2_phase2_default.json"
+RULESET_PATH = PROJECT_ROOT / "production_data" / "decision_rulesets" / "v1.2.0_candidate.json"
 ARCHIVE_PATH = ARCHIVE_DIR / f"{SNAPSHOT_DATE}.tar.gz"
 TIER_FILTER = ["A", "B"]
 TOP_K = 20
 
 # Pinned top-10 tickers in exact actionable order
 EXPECTED_TOP_10 = [
-    {"ticker": "CNTX",  "rank": 1,  "tier": "A", "band": "L", "weight": 5.78},
-    {"ticker": "KALV",  "rank": 2,  "tier": "A", "band": "L", "weight": 5.78},
-    {"ticker": "XENE",  "rank": 3,  "tier": "B", "band": "M", "weight": 3.47},
-    {"ticker": "PVLA",  "rank": 4,  "tier": "B", "band": "L", "weight": 5.78},
-    {"ticker": "VRDN",  "rank": 5,  "tier": "B", "band": "M", "weight": 3.47},
-    {"ticker": "AKRO",  "rank": 6,  "tier": "B", "band": "L", "weight": 5.78},
-    {"ticker": "DNTH",  "rank": 7,  "tier": "B", "band": "L", "weight": 5.78},
-    {"ticker": "NUVL",  "rank": 8,  "tier": "B", "band": "L", "weight": 5.78},
-    {"ticker": "NAUT",  "rank": 9,  "tier": "B", "band": "L", "weight": 5.78},
-    {"ticker": "CELC",  "rank": 10, "tier": "B", "band": "L", "weight": 5.78},
+    {"ticker": "CNTX",  "rank": 1,  "tier": "A", "band": "L", "weight": 6.13},
+    {"ticker": "KALV",  "rank": 2,  "tier": "A", "band": "L", "weight": 6.13},
+    {"ticker": "XENE",  "rank": 3,  "tier": "B", "band": "M", "weight": 3.68},
+    {"ticker": "PVLA",  "rank": 4,  "tier": "B", "band": "L", "weight": 6.13},
+    {"ticker": "VRDN",  "rank": 5,  "tier": "B", "band": "M", "weight": 3.68},
+    {"ticker": "AKRO",  "rank": 6,  "tier": "B", "band": "L", "weight": 6.13},
+    {"ticker": "DNTH",  "rank": 7,  "tier": "B", "band": "L", "weight": 6.13},
+    {"ticker": "NUVL",  "rank": 8,  "tier": "B", "band": "L", "weight": 6.13},
+    {"ticker": "NAUT",  "rank": 9,  "tier": "B", "band": "L", "weight": 6.13},
+    {"ticker": "CELC",  "rank": 10, "tier": "B", "band": "L", "weight": 6.13},
 ]
 
-EXPECTED_N_POSITIONS = 20
+EXPECTED_N_POSITIONS = 19
 
 
 # =============================================================================
@@ -144,16 +144,16 @@ class TestPhase2PortfolioRegression:
         if not RULESET_PATH.exists():
             pytest.skip(f"Ruleset not found: {RULESET_PATH}")
         ruleset = DecisionRuleset.from_json(str(RULESET_PATH))
-        assert ruleset.ruleset_id == "d3cdf5c8", (
-            f"Ruleset ID changed: expected d3cdf5c8, got {ruleset.ruleset_id}"
+        assert ruleset.ruleset_id == "eb833c56", (
+            f"Ruleset ID changed: expected eb833c56, got {ruleset.ruleset_id}"
         )
 
-    def test_a_floor_055(self):
-        """Phase-2 ruleset should have a_floor=0.55 (key change from v1)."""
+    def test_a_floor_060(self):
+        """Phase-2 ruleset should have a_floor=0.60 (from 2D calibration)."""
         if not RULESET_PATH.exists():
             pytest.skip(f"Ruleset not found: {RULESET_PATH}")
         ruleset = DecisionRuleset.from_json(str(RULESET_PATH))
-        assert ruleset.tier_a_optionality_floor == 0.55
+        assert ruleset.tier_a_optionality_floor == 0.60
 
     def test_hard_drawdown_mode(self):
         """Phase-2 should use hard drawdown (not soft)."""

@@ -36,3 +36,25 @@ Initial decision engine release. Hard-coded thresholds:
 produces negative tier-A vs tier-C spread.
 
 **Files**: `v1.json`
+
+---
+
+## [v1.2.0] eb833c56 — 2026-02-10 — 2D calibration (a_floor + catalyst timing)
+
+**Parameters changed** (vs d3cdf5c8):
+- `tier_a_optionality_floor`: 0.55 → 0.60
+- `catalyst_near_days`: 90 → 120
+
+**Rationale**: 2D calibration sweep (`calibrate_ruleset_from_panel.py`, 40 combos = 8 a_floor
+× 5 catalyst_near_days, 2025-only panel, 1808 rows, 10 snapshots) found current baseline
+a_floor=0.55 / catalyst_near=90 has *negative* AB-CD separation (-0.57pp). Best candidate
+a_floor=0.60 / catalyst_near=120 achieves +0.97pp separation, +1.41pp AB return improvement,
+lower turnover (13.4% vs 15.7%), and higher top-25 overlap (86.6% vs 84.3%). Neighbor stability
+STRONG (5/5 adjacent grid cells pass constraints). Ridge summary confirms catalyst_near=120
+dominates across all a_floor values.
+
+**Governance**: Contract tests (257 passed), replay regression (3 archive dates), release
+summary (`artifacts/release_summary_2d_2025.md`). Calibration artifacts:
+`artifacts/calibration_report_2d_2025.md`, `artifacts/walkforward_report_2025.md`.
+
+**Files**: `v1.2.0_candidate.json` (candidate)

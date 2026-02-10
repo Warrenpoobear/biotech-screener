@@ -74,6 +74,14 @@ HORIZONS = [20, 60]
 DEFAULT_TIER_FILTER = ["A", "B"]
 DEFAULT_TOP_K = 20
 
+PANEL_COLUMNS = [
+    "as_of_date", "ticker", "tier", "band", "eligible", "weight",
+    "tier_reason", "risk_flags", "catalyst_mode", "mom_state",
+    "optionality", "catalyst_days_raw", "ruleset_id",
+    "fwd_ret_20d", "fwd_ret_60d", "fwd_max_dd_20d", "fwd_max_dd_60d",
+    "fwd_dd_missing_reason",
+]
+
 
 # =============================================================================
 # MULTI-HORIZON FORWARD RETURNS
@@ -309,6 +317,55 @@ def build_universe_baseline(
     return [{"ticker": t, "weight_pct": weight} for t in eligible_tickers]
 
 
+def build_all_dev_decisions(
+    archive_data: ArchiveData,
+    ruleset: DecisionRuleset,
+) -> List[Dict[str, Any]]:
+    """Compute decision fields for ALL dev-stage tickers (not just filtered portfolio).
+
+    Returns one dict per dev-stage ticker with raw decision output.
+    No filtering or sorting — includes ineligible tickers.
+    """
+    results: List[Dict[str, Any]] = []
+    for ticker in archive_data.tickers:
+        archetype = archive_data.archetypes.get(ticker, "")
+        if archetype != "drug_developer":
+            continue
+
+        rec = archive_data.recs.get(ticker)
+        if rec is None:
+            continue
+
+        opt = archive_data.optionalities.get(ticker)
+        fields = compute_decision_fields(rec, archetype, opt, ruleset=ruleset)
+
+        results.append({
+            "ticker": ticker,
+            "tier_dev": fields.get("tier_dev", ""),
+            "band": fields.get("size_band", ""),
+            "eligible": fields.get("eligible", "0"),
+            "tier_reason": fields.get("tier_reason", ""),
+            "risk_flags": fields.get("risk_flags", ""),
+            "catalyst_mode": fields.get("catalyst_mode", ""),
+            "catalyst_days": fields.get("catalyst_days", ""),
+            "mom_state": fields.get("mom_state", ""),
+            "optionality": opt,
+        })
+
+    return results
+
+
+def write_panel_csv(
+    panel_rows: List[Dict[str, Any]],
+    output_path: Path,
+) -> None:
+    """Write the walk-forward panel CSV with stable column order."""
+    with open(output_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=PANEL_COLUMNS, extrasaction="ignore")
+        writer.writeheader()
+        writer.writerows(panel_rows)
+
+
 # =============================================================================
 # PORTFOLIO EVALUATION
 # =============================================================================
@@ -508,9 +565,14 @@ def run_strategy_backtest(
     tier_filter: List[str],
     top_k: int,
     horizons: List[int] = HORIZONS,
-) -> List[SnapshotResult]:
-    """Run the strategy backtest across all usable archives."""
+    emit_panel: bool = False,
+) -> Tuple[List[SnapshotResult], List[Dict[str, Any]]]:
+    """Run the strategy backtest across all usable archives.
+
+    Returns (results, panel_rows). panel_rows is populated only when emit_panel=True.
+    """
     results: List[SnapshotResult] = []
+    panel_rows: List[Dict[str, Any]] = []
     prev_strategy: List[Dict[str, Any]] = []
 
     # Compute as-of fence
@@ -552,6 +614,55 @@ def run_strategy_backtest(
             archive_data, ruleset
         )
 
+        # Panel: all dev-stage decisions + forward returns + forward max-DD
+        if emit_panel:
+            all_devs = build_all_dev_decisions(archive_data, ruleset)
+
+            # Build weight map from strategy positions
+            weight_map: Dict[str, float] = {}
+            for pos in strategy_positions:
+                weight_map[pos["ticker"]] = pos.get("weight_pct", 0.0)
+
+            for dev in all_devs:
+                ticker = dev["ticker"]
+                fwd_20 = mh_returns.raw.get(20, {}).get(ticker)
+                fwd_60 = mh_returns.raw.get(60, {}).get(ticker)
+
+                dd_20, dd_20_reason = csv_provider.get_forward_max_drawdown(
+                    ticker, date_str, 20
+                )
+                dd_60, dd_60_reason = csv_provider.get_forward_max_drawdown(
+                    ticker, date_str, 60
+                )
+                # Use the longer-horizon reason as representative
+                dd_reason = dd_60_reason or dd_20_reason
+
+                # Optionality + catalyst_days as raw values for re-tiering
+                opt_val = dev.get("optionality")
+                opt_str = round(opt_val, 6) if opt_val is not None else ""
+                cat_days = dev.get("catalyst_days", "")
+
+                panel_rows.append({
+                    "as_of_date": date_str,
+                    "ticker": ticker,
+                    "tier": dev["tier_dev"],
+                    "band": dev["band"],
+                    "eligible": dev["eligible"],
+                    "weight": weight_map.get(ticker, 0.0),
+                    "tier_reason": dev["tier_reason"],
+                    "risk_flags": dev["risk_flags"],
+                    "catalyst_mode": dev["catalyst_mode"],
+                    "mom_state": dev["mom_state"],
+                    "optionality": opt_str,
+                    "catalyst_days_raw": cat_days,
+                    "ruleset_id": ruleset.ruleset_id,
+                    "fwd_ret_20d": round(fwd_20 * 100, 4) if fwd_20 is not None else "",
+                    "fwd_ret_60d": round(fwd_60 * 100, 4) if fwd_60 is not None else "",
+                    "fwd_max_dd_20d": round(dd_20 * 100, 4) if dd_20 is not None else "",
+                    "fwd_max_dd_60d": round(dd_60 * 100, 4) if dd_60 is not None else "",
+                    "fwd_dd_missing_reason": dd_reason,
+                })
+
         # Evaluate
         strategy_eval = evaluate_portfolio(
             strategy_positions, mh_returns, horizons
@@ -587,7 +698,7 @@ def run_strategy_backtest(
             turnover=turnover,
         ))
 
-    return results
+    return results, panel_rows
 
 
 # =============================================================================
@@ -1097,6 +1208,10 @@ def main():
         help="Archive end date filter (YYYY-MM-DD)",
     )
     parser.add_argument(
+        "--emit-panel", type=str, default=None,
+        help="Write per-ticker walk-forward panel CSV to PATH",
+    )
+    parser.add_argument(
         "--dry-run", action="store_true",
         help="Print config + archive count, exit",
     )
@@ -1150,7 +1265,7 @@ def main():
 
     # Run backtest
     print("\nRunning strategy backtest ...")
-    results = run_strategy_backtest(
+    results, panel_rows = run_strategy_backtest(
         archives=archives,
         chained=chained,
         csv_provider=csv_provider,
@@ -1158,6 +1273,7 @@ def main():
         tier_filter=tier_filter,
         top_k=args.top_k,
         horizons=HORIZONS,
+        emit_panel=bool(args.emit_panel),
     )
 
     if not results:
@@ -1185,6 +1301,12 @@ def main():
 
     generate_report(agg, config, results, report_txt, HORIZONS)
     print(f"  Wrote {report_txt}")
+
+    if args.emit_panel and panel_rows:
+        panel_path = Path(args.emit_panel)
+        panel_path.parent.mkdir(parents=True, exist_ok=True)
+        write_panel_csv(panel_rows, panel_path)
+        print(f"  Wrote panel CSV: {panel_path} ({len(panel_rows)} rows)")
 
     # Print headline
     print("\n" + "=" * 60)

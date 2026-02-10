@@ -18,7 +18,7 @@ import pytest
 # Helpers to build minimal snapshot dirs on disk
 # ---------------------------------------------------------------------------
 
-def _write_snapshot(snap_dir: Path, date: str, ruleset_id: str = "d3cdf5c8"):
+def _write_snapshot(snap_dir: Path, date: str, ruleset_id: str = "eb833c56"):
     """Write a minimal but valid snapshot (rankings.csv + metadata.json)."""
     d = snap_dir / date
     d.mkdir(parents=True, exist_ok=True)
@@ -63,7 +63,7 @@ class TestDeltaHookWiring:
 
         snapshot_dir = tmp_path / "snapshots"
         prior = _write_snapshot(snapshot_dir, "2026-01-20", "d4f1f8a8")
-        current = _write_snapshot(snapshot_dir, "2026-02-09", "d3cdf5c8")
+        current = _write_snapshot(snapshot_dir, "2026-02-09", "eb833c56")
 
         args = types.SimpleNamespace(delta_prior="auto")
         logger = MagicMock()
@@ -153,7 +153,7 @@ class TestDeltaHookWiring:
 
         snapshot_dir = tmp_path / "snapshots"
         _write_snapshot(snapshot_dir, "2026-01-20", "d4f1f8a8")
-        current = _write_snapshot(snapshot_dir, "2026-02-09", "d3cdf5c8")
+        current = _write_snapshot(snapshot_dir, "2026-02-09", "eb833c56")
 
         args = types.SimpleNamespace(delta_prior="auto")
         logger = MagicMock()

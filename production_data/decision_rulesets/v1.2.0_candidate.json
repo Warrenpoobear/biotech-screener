@@ -1,0 +1,23 @@
+{
+  "alpha_headwind": -0.05,
+  "alpha_tailwind": 0.05,
+  "beta_high_threshold": 1.8,
+  "catalyst_near_days": 120,
+  "confidence_low_threshold": 0.3,
+  "drawdown_flag_threshold": -0.35,
+  "drawdown_gate": -0.4,
+  "drawdown_gate_mode": "hard",
+  "drawdown_hard_floor": -0.75,
+  "drawdown_size_penalty": -1,
+  "rsi_overbought": 70.0,
+  "sizing_weights": {
+    "L": 1.0,
+    "M": 0.6,
+    "S": 0.3,
+    "XS": 0.15
+  },
+  "sponsor_confirm_threshold": 2,
+  "tier_a_optionality_floor": 0.6,
+  "tier_b_optionality_floor": 0.3,
+  "vol_high_threshold": 1.2
+}

@@ -123,6 +123,35 @@ jobs:
           print(f'QA status: {qa[\"overall_status\"]}')
           "
 
+      # ── Drift monitoring ─────────────────────────────────────────
+      - name: Generate drift report
+        if: always()
+        run: |
+          python scripts/run_drift_report.py \
+            --snapshot-dir data/snapshots \
+            --output-dir output
+
+      - name: Evaluate drift guardrails
+        if: always()
+        run: |
+          python -c "
+          import json, sys
+          drift = json.load(open('output/drift_report.json'))
+          status = drift['status']
+          reasons = drift.get('reasons', [])
+          rollback = drift.get('rollback_candidate')
+          if status == 'FAIL':
+              msg = f'DRIFT FAIL: {reasons}'
+              if rollback:
+                  msg += f' -- Rollback candidate: {rollback[\"id\"]}'
+                  msg += f' -- To rollback: python scripts/promote_ruleset.py {rollback[\"id\"]}'
+              print(f'::error::{msg}', file=sys.stderr)
+              sys.exit(1)
+          elif status == 'WARN':
+              print(f'::warning::DRIFT WARN: {reasons}')
+          print(f'Drift status: {status}')
+          "
+
       # ── Artifacts ───────────────────────────────────────────────
       - name: Upload artifacts
         if: always()
@@ -134,6 +163,8 @@ jobs:
             output/phase2_daily_wrapper.log
             output/decision_engine_qa.json
             output/decision_engine_qa.md
+            output/drift_report.json
+            output/drift_report.md
             data/snapshots/
           retention-days: 30
 

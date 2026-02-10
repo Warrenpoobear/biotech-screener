@@ -97,6 +97,44 @@ class CSVReturnsProvider(BaseReturnsProvider):
                     last = ticker_max
         return last
 
+    # Minimum bars required for a meaningful forward max-DD estimate
+    MIN_BARS_FORWARD = 10
+
+    def get_forward_max_drawdown(
+        self, ticker: str, as_of_date: str, horizon_bars: int,
+    ) -> Tuple[Optional[float], str]:
+        """Max peak-to-trough drawdown in the forward window.
+
+        Returns (max_dd, missing_reason).
+        max_dd is negative (e.g. -0.20 = 20% drawdown), or 0.0 for monotonic up.
+        None if data is missing/insufficient.
+        missing_reason: "" | "no_price_series" | "series_too_short"
+        """
+        ticker = ticker.upper()
+        prices = self._prices.get(ticker)
+        if not prices:
+            return (None, "no_price_series")
+
+        as_of = date.fromisoformat(as_of_date)
+        # Dates strictly after as_of_date, sorted ascending, take first horizon_bars
+        forward_dates = sorted(d for d in prices if d > as_of)[:horizon_bars]
+
+        if len(forward_dates) < self.MIN_BARS_FORWARD:
+            return (None, "series_too_short")
+
+        # Running peak, track min drawdown
+        peak = float(prices[forward_dates[0]])
+        max_dd = 0.0
+        for d in forward_dates:
+            p = float(prices[d])
+            if p > peak:
+                peak = p
+            dd = (p / peak) - 1.0 if peak > 0 else 0.0
+            if dd < max_dd:
+                max_dd = dd
+
+        return (round(max_dd, 6), "")
+
     def get_daily_returns(
         self, ticker: str, start: date, end: date,
     ) -> List[Tuple[date, float]]:
