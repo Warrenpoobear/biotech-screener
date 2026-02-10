@@ -41,6 +41,9 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
+from outcome_provenance import build_provenance
+from decision_engine_codes import registry_fingerprint
+
 DEFAULT_PANEL = PROJECT_ROOT / "artifacts" / "walkforward_panel.csv"
 DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "artifacts"
 
@@ -134,11 +137,16 @@ def retier_row(
     a_floor: float,
     b_floor: float,
     catalyst_near_days: int,
+    catalyst_mid_days: int = 180,
 ) -> str:
     """Re-compute tier for a panel row under a candidate a_floor.
 
     Replicates _compute_tier_dev() from decision_engine.py using
     panel columns: eligible, optionality, catalyst_mode, catalyst_days_raw.
+
+    catalyst_mid_days: upper bound of MID strength band (default 180).
+    A-tier requires actionable catalyst (near or mid). FAR treated same
+    as MISSING for tier gating.
     """
     if str(row.get("eligible", "0")) != "1":
         return "D"
@@ -153,17 +161,28 @@ def retier_row(
     has_specific_days = catalyst_mode == "specific_days"
     has_blended_window = catalyst_mode == "blended_window"
     has_catalyst_data = has_specific_days or has_blended_window
-    has_catalyst_near = (
-        (has_specific_days and cat_days is not None and cat_days <= catalyst_near_days)
-        or has_blended_window
-    )
+
+    # Compute catalyst strength
+    if has_blended_window:
+        strength = "near"
+    elif has_specific_days and cat_days is not None and cat_days > 0:
+        if cat_days <= catalyst_near_days:
+            strength = "near"
+        elif cat_days <= catalyst_mid_days:
+            strength = "mid"
+        else:
+            strength = "far"
+    else:
+        strength = "missing"
+
+    is_actionable = strength in ("near", "mid")
 
     if has_catalyst_data:
-        if opt >= a_floor and has_catalyst_near:
+        if opt >= a_floor and is_actionable:
             return "A"
         elif opt >= a_floor:
             return "B"
-        elif opt >= b_floor and has_catalyst_near:
+        elif opt >= b_floor and is_actionable:
             return "B"
         else:
             return "C"
@@ -185,12 +204,13 @@ def evaluate_candidate(
     a_floor: float,
     b_floor: float,
     catalyst_near_days: int,
+    catalyst_mid_days: int = 180,
 ) -> Dict[str, Any]:
     """Evaluate a candidate a_floor value by re-tiering all rows."""
     # Re-tier
     tiers: List[str] = []
     for row in rows:
-        new_tier = retier_row(row, a_floor, b_floor, catalyst_near_days)
+        new_tier = retier_row(row, a_floor, b_floor, catalyst_near_days, catalyst_mid_days)
         tiers.append(new_tier)
 
     total = len(rows)
@@ -242,7 +262,9 @@ def evaluate_candidate(
 
         tier_metrics[tier] = entry
 
-    # AB vs CD separation (the objective)
+    # AB vs C separation (the objective)
+    # D-tier (ineligible) is excluded — it's a categorically different
+    # population that would confound the eligible-tier signal.
     ab_rets: List[float] = []
     cd_rets: List[float] = []
     ab_dds: List[float] = []
@@ -255,7 +277,7 @@ def evaluate_candidate(
                 ab_rets.append(ret)
             if dd is not None:
                 ab_dds.append(dd)
-        elif tiers[i] in ("C", "D"):
+        elif tiers[i] == "C":
             if ret is not None:
                 cd_rets.append(ret)
             if dd is not None:
@@ -384,21 +406,34 @@ def _compute_tradeoffs(
 def run_2d_sweep(
     rows: List[Dict[str, Any]],
     a_floor_values: List[float],
-    catalyst_near_values: List[int],
+    sweep_values: List[int],
     b_floor: float,
     min_a_pct: float,
     max_turnover: float,
+    sweep_dim: str = "cat_near",
+    base_near_days: int = 90,
+    base_mid_days: int = 180,
 ) -> List[Dict[str, Any]]:
-    """Evaluate all (a_floor, catalyst_near_days) combinations.
+    """Evaluate all (a_floor, sweep_dim) combinations.
 
-    Returns a list of candidate dicts, each with a_floor, catalyst_near_days,
+    sweep_dim="cat_near": varies catalyst_near_days, holds catalyst_mid_days fixed.
+    sweep_dim="cat_mid":  varies catalyst_mid_days, holds catalyst_near_days fixed.
+
+    Returns a list of candidate dicts, each with a_floor, sweep_val,
     score, violations, passed, and all metrics from evaluate_candidate().
     """
     candidates: List[Dict[str, Any]] = []
-    for cat_days in catalyst_near_values:
+    for sv in sweep_values:
+        if sweep_dim == "cat_mid":
+            cat_near, cat_mid = base_near_days, sv
+        else:
+            cat_near, cat_mid = sv, base_mid_days
         for a_floor in a_floor_values:
-            result = evaluate_candidate(rows, a_floor, b_floor, cat_days)
-            result["catalyst_near_days"] = cat_days
+            result = evaluate_candidate(rows, a_floor, b_floor, cat_near, cat_mid)
+            result["sweep_val"] = sv
+            # Keep legacy key for backward compatibility
+            result["catalyst_near_days"] = cat_near
+            result["catalyst_mid_days"] = cat_mid
             score, violations = score_candidate(result, min_a_pct, max_turnover)
             result["score"] = score
             result["violations"] = violations
@@ -410,19 +445,19 @@ def run_2d_sweep(
 def compute_ridge_summary(
     candidates: List[Dict[str, Any]],
 ) -> List[Dict[str, Any]]:
-    """For each catalyst_near_days value, find the best a_floor.
+    """For each sweep_val, find the best a_floor.
 
-    Returns a list of dicts with: catalyst_near_days, best_a_floor, score,
+    Returns a list of dicts with: sweep_val, best_a_floor, score,
     separation_60d, passed, a_pct_elig.
     """
-    by_cat: Dict[int, List[Dict[str, Any]]] = {}
+    by_sv: Dict[int, List[Dict[str, Any]]] = {}
     for c in candidates:
-        cat_days = c["catalyst_near_days"]
-        by_cat.setdefault(cat_days, []).append(c)
+        sv = c["sweep_val"]
+        by_sv.setdefault(sv, []).append(c)
 
     ridge: List[Dict[str, Any]] = []
-    for cat_days in sorted(by_cat.keys()):
-        group = by_cat[cat_days]
+    for sv in sorted(by_sv.keys()):
+        group = by_sv[sv]
         passing = [c for c in group if c["passed"]]
         if passing:
             best = max(passing, key=lambda c: c["score"])
@@ -431,7 +466,7 @@ def compute_ridge_summary(
 
         elig_dist = best.get("eligible_tier_distribution", {})
         ridge.append({
-            "catalyst_near_days": cat_days,
+            "sweep_val": sv,
             "best_a_floor": best["a_floor"],
             "score": best["score"],
             "separation_60d": best.get("separation_60d"),
@@ -447,18 +482,18 @@ def check_neighbor_stability(
     best: Dict[str, Any],
     candidates: List[Dict[str, Any]],
     a_floor_values: List[float],
-    catalyst_near_values: List[int],
+    sweep_values: List[int],
 ) -> List[Dict[str, Any]]:
     """Check all immediate neighbors (±1 step in each dimension) of the best candidate.
 
     Returns a list of neighbor dicts with their scores and pass/fail status.
     """
     best_af = best["a_floor"]
-    best_cn = best["catalyst_near_days"]
+    best_sv = best["sweep_val"]
 
     # Find ±1 step indices
     af_idx = a_floor_values.index(best_af) if best_af in a_floor_values else -1
-    cn_idx = catalyst_near_values.index(best_cn) if best_cn in catalyst_near_values else -1
+    sv_idx = sweep_values.index(best_sv) if best_sv in sweep_values else -1
 
     neighbor_afs = set()
     if af_idx > 0:
@@ -467,21 +502,21 @@ def check_neighbor_stability(
     if af_idx < len(a_floor_values) - 1:
         neighbor_afs.add(a_floor_values[af_idx + 1])
 
-    neighbor_cns = set()
-    if cn_idx > 0:
-        neighbor_cns.add(catalyst_near_values[cn_idx - 1])
-    neighbor_cns.add(best_cn)
-    if cn_idx < len(catalyst_near_values) - 1:
-        neighbor_cns.add(catalyst_near_values[cn_idx + 1])
+    neighbor_svs = set()
+    if sv_idx > 0:
+        neighbor_svs.add(sweep_values[sv_idx - 1])
+    neighbor_svs.add(best_sv)
+    if sv_idx < len(sweep_values) - 1:
+        neighbor_svs.add(sweep_values[sv_idx + 1])
 
     neighbors: List[Dict[str, Any]] = []
     for c in candidates:
-        if c["a_floor"] in neighbor_afs and c["catalyst_near_days"] in neighbor_cns:
-            if c["a_floor"] == best_af and c["catalyst_near_days"] == best_cn:
+        if c["a_floor"] in neighbor_afs and c["sweep_val"] in neighbor_svs:
+            if c["a_floor"] == best_af and c["sweep_val"] == best_sv:
                 continue  # skip self
             neighbors.append({
                 "a_floor": c["a_floor"],
-                "catalyst_near_days": c["catalyst_near_days"],
+                "sweep_val": c["sweep_val"],
                 "score": c["score"],
                 "separation_60d": c.get("separation_60d"),
                 "passed": c.get("passed", False),
@@ -614,8 +649,10 @@ def generate_calibration_report_2d_md(
     ridge: List[Dict[str, Any]],
     neighbors: List[Dict[str, Any]],
     config: Dict[str, Any],
+    sweep_label: str = "cat_near",
 ) -> str:
     """Generate the markdown calibration report for a 2D sweep."""
+    sweep_param = "catalyst_mid_days" if sweep_label == "cat_mid" else "catalyst_near_days"
     lines: List[str] = []
     lines.append("# 2D Ruleset Calibration Report")
     lines.append("")
@@ -624,11 +661,11 @@ def generate_calibration_report_2d_md(
         f"Panel: {config.get('panel_path', '')} | "
         f"Rows: {config.get('panel_rows', 0)} | "
         f"Baseline: a_floor={config.get('baseline_a_floor', '?')}, "
-        f"catalyst_near={config.get('baseline_catalyst_near', '?')}"
+        f"{sweep_label}={config.get('baseline_sweep_val', '?')}"
     )
     lines.append(
         f"Grid: {len(config.get('a_floor_values', []))} a_floor × "
-        f"{len(config.get('catalyst_near_values', []))} catalyst_near = "
+        f"{len(config.get('sweep_values', []))} {sweep_label} = "
         f"{len(candidates)} combos"
     )
     lines.append("")
@@ -639,7 +676,7 @@ def generate_calibration_report_2d_md(
     lines.append("## Top 10 Candidates")
     lines.append("")
     lines.append(
-        "| # | a_floor | cat_near | A%(elig) | Sep | AB DD | Score | Pass |"
+        f"| # | a_floor | {sweep_label} | A%(elig) | Sep | AB DD | Score | Pass |"
     )
     lines.append(
         "|---|---------|----------|----------|-----|-------|-------|------|"
@@ -654,7 +691,7 @@ def generate_calibration_report_2d_md(
         marker_end = "**" if c is best else ""
         lines.append(
             f"| {i} | {marker}{c['a_floor']:.2f}{marker_end} "
-            f"| {c['catalyst_near_days']} "
+            f"| {c['sweep_val']} "
             f"| {etd.get('A', 0):.1f} "
             f"| {_fmt(c.get('separation_60d'))} "
             f"| {_fmt(c.get('ab_median_dd_60d'), '.2f')} "
@@ -664,17 +701,17 @@ def generate_calibration_report_2d_md(
     lines.append("")
 
     # Ridge summary
-    lines.append("## Ridge Summary (best a_floor per catalyst_near_days)")
+    lines.append(f"## Ridge Summary (best a_floor per {sweep_label})")
     lines.append("")
     lines.append(
-        "| cat_near | best a_floor | A%(elig) | A count | Sep | AB DD | Score | Pass |"
+        f"| {sweep_label} | best a_floor | A%(elig) | A count | Sep | AB DD | Score | Pass |"
     )
     lines.append(
         "|----------|-------------|----------|---------|-----|-------|-------|------|"
     )
     for r in ridge:
         lines.append(
-            f"| {r['catalyst_near_days']} "
+            f"| {r['sweep_val']} "
             f"| {r['best_a_floor']:.2f} "
             f"| {r['a_pct_elig']:.1f} "
             f"| {r['mean_a_count']:.1f} "
@@ -691,7 +728,7 @@ def generate_calibration_report_2d_md(
         lines.append("")
         lines.append(
             f"Best candidate: a_floor={best['a_floor']:.2f}, "
-            f"catalyst_near={best['catalyst_near_days']}, "
+            f"{sweep_label}={best['sweep_val']}, "
             f"score={best['score']:.4f}"
         )
         lines.append("")
@@ -701,12 +738,12 @@ def generate_calibration_report_2d_md(
             f"{n_passing} passing"
         )
         lines.append("")
-        lines.append("| a_floor | cat_near | Sep | Score | Pass |")
+        lines.append(f"| a_floor | {sweep_label} | Sep | Score | Pass |")
         lines.append("|---------|----------|-----|-------|------|")
         for n in sorted(neighbors, key=lambda x: x["score"], reverse=True):
             lines.append(
                 f"| {n['a_floor']:.2f} "
-                f"| {n['catalyst_near_days']} "
+                f"| {n['sweep_val']} "
                 f"| {_fmt(n['separation_60d'])} "
                 f"| {_fmt(n['score'], '.2f')} "
                 f"| {'Y' if n['passed'] else 'N'} |"
@@ -728,7 +765,7 @@ def generate_calibration_report_2d_md(
     if best.get("passed"):
         lines.append(
             f"**`tier_a_optionality_floor = {best['a_floor']:.2f}`, "
-            f"`catalyst_near_days = {best['catalyst_near_days']}`**"
+            f"`{sweep_param} = {best['sweep_val']}`**"
         )
         lines.append("")
         lines.append("### Baseline vs Candidate")
@@ -811,8 +848,16 @@ def main() -> int:
         help=f"catalyst_near_days held constant for 1D sweep (default: {DEFAULT_CATALYST_NEAR_DAYS})",
     )
     parser.add_argument(
+        "--catalyst-mid", type=int, default=180,
+        help="catalyst_mid_days held constant when sweeping near (default: 180)",
+    )
+    parser.add_argument(
         "--sweep-catalyst-near-days", type=str, default=None,
         help="Enable 2D sweep: comma-separated catalyst_near_days values (e.g., '30,45,60,90,120')",
+    )
+    parser.add_argument(
+        "--sweep-catalyst-mid-days", type=str, default=None,
+        help="Enable 2D sweep: comma-separated catalyst_mid_days values (e.g., '150,180,210,270,365')",
     )
     parser.add_argument(
         "--min-a-pct", type=float, default=3.0,
@@ -871,18 +916,26 @@ def main() -> int:
     }
 
     # Parse 2D catalyst sweep values
-    catalyst_near_values: Optional[List[int]] = None
+    if args.sweep_catalyst_near_days and args.sweep_catalyst_mid_days:
+        print("ERROR: Cannot use both --sweep-catalyst-near-days and --sweep-catalyst-mid-days", file=sys.stderr)
+        return 1
+
+    sweep_label = "cat_near"
+    sweep_values: Optional[List[int]] = None
     if args.sweep_catalyst_near_days:
-        catalyst_near_values = sorted(int(v.strip()) for v in args.sweep_catalyst_near_days.split(","))
-    is_2d = catalyst_near_values is not None
+        sweep_values = sorted(int(v.strip()) for v in args.sweep_catalyst_near_days.split(","))
+    elif args.sweep_catalyst_mid_days:
+        sweep_values = sorted(int(v.strip()) for v in args.sweep_catalyst_mid_days.split(","))
+        sweep_label = "cat_mid"
+    is_2d = sweep_values is not None
 
     print("Ruleset Calibration Configuration:")
     print(f"  Panel:           {args.panel}")
     print(f"  a_floor values:  {a_floor_values}")
     print(f"  b_floor:         {args.b_floor}")
     if is_2d:
-        print(f"  catalyst_near:   {catalyst_near_values} (2D sweep)")
-        print(f"  Grid size:       {len(a_floor_values)} × {len(catalyst_near_values)} = {len(a_floor_values) * len(catalyst_near_values)} combos")
+        print(f"  {sweep_label}:   {sweep_values} (2D sweep)")
+        print(f"  Grid size:       {len(a_floor_values)} × {len(sweep_values)} = {len(a_floor_values) * len(sweep_values)} combos")
     else:
         print(f"  catalyst_near:   {args.catalyst_near}")
     print(f"  Constraints:     A% >= {args.min_a_pct}, turnover <= {args.max_turnover}%")
@@ -920,6 +973,15 @@ def main() -> int:
     config["date_min"] = args.date_min
     config["date_max"] = args.date_max
 
+    # Extract baseline ruleset_id from panel (first row's ruleset_id)
+    baseline_ruleset_id = ""
+    for r in rows:
+        rid = r.get("ruleset_id", "")
+        if rid:
+            baseline_ruleset_id = rid
+            break
+    config["baseline_ruleset_id"] = baseline_ruleset_id
+
     # Data-quality gate
     dq_ok, dq_diag = check_panel_data_quality(rows, args.max_missing_catalyst_pct)
     config["data_quality"] = dq_diag
@@ -946,8 +1008,16 @@ def main() -> int:
     # Identify baseline
     baseline_a_floor = 0.55  # current active
     baseline_cat_near = args.catalyst_near  # current active (90)
+    baseline_cat_mid = args.catalyst_mid  # current active (180)
     config["baseline_a_floor"] = baseline_a_floor
     config["baseline_catalyst_near"] = baseline_cat_near
+    config["baseline_catalyst_mid"] = baseline_cat_mid
+    if is_2d:
+        config["sweep_values"] = sweep_values
+        config["sweep_label"] = sweep_label
+        config["baseline_sweep_val"] = (
+            baseline_cat_mid if sweep_label == "cat_mid" else baseline_cat_near
+        )
 
     # File naming
     sfx = f"_{args.suffix}" if args.suffix else ""
@@ -956,12 +1026,14 @@ def main() -> int:
     # 2D SWEEP PATH
     # =====================================================================
     if is_2d:
-        config["catalyst_near_values"] = catalyst_near_values
-        n_combos = len(a_floor_values) * len(catalyst_near_values)
-        print(f"\nRunning 2D sweep ({n_combos} combos) ...")
+        n_combos = len(a_floor_values) * len(sweep_values)
+        print(f"\nRunning 2D sweep ({n_combos} combos, dim={sweep_label}) ...")
         candidates = run_2d_sweep(
-            rows, a_floor_values, catalyst_near_values,
+            rows, a_floor_values, sweep_values,
             args.b_floor, args.min_a_pct, args.max_turnover,
+            sweep_dim=sweep_label,
+            base_near_days=args.catalyst_near,
+            base_mid_days=args.catalyst_mid,
         )
 
         # Print grid summary
@@ -969,12 +1041,18 @@ def main() -> int:
         print(f"  {n_passing}/{n_combos} combos pass all constraints")
 
         # Evaluate baseline
-        baseline_result = evaluate_candidate(rows, baseline_a_floor, args.b_floor, baseline_cat_near)
+        baseline_result = evaluate_candidate(
+            rows, baseline_a_floor, args.b_floor, baseline_cat_near, baseline_cat_mid,
+        )
         score, violations = score_candidate(baseline_result, args.min_a_pct, args.max_turnover)
         baseline_result["score"] = score
         baseline_result["violations"] = violations
         baseline_result["passed"] = len(violations) == 0
         baseline_result["catalyst_near_days"] = baseline_cat_near
+        baseline_result["catalyst_mid_days"] = baseline_cat_mid
+        baseline_result["sweep_val"] = (
+            baseline_cat_mid if sweep_label == "cat_mid" else baseline_cat_near
+        )
 
         # Pick best
         passing = [c for c in candidates if c["passed"]]
@@ -989,13 +1067,13 @@ def main() -> int:
 
         # Ridge summary + neighbor stability
         ridge = compute_ridge_summary(candidates)
-        neighbors = check_neighbor_stability(best, candidates, a_floor_values, catalyst_near_values)
+        neighbors = check_neighbor_stability(best, candidates, a_floor_values, sweep_values)
 
         # Print ridge
-        print("\n  Ridge summary (best a_floor per catalyst_near):")
+        print(f"\n  Ridge summary (best a_floor per {sweep_label}):")
         for r in ridge:
             sep_s = f"{r['separation_60d']:+.2f}" if r['separation_60d'] is not None else "n/a"
-            print(f"    cat_near={r['catalyst_near_days']:3d}: "
+            print(f"    {sweep_label}={r['sweep_val']:3d}: "
                   f"a_floor={r['best_a_floor']:.2f} "
                   f"sep={sep_s} score={r['score']:.2f} "
                   f"{'PASS' if r['passed'] else 'FAIL'}")
@@ -1006,8 +1084,12 @@ def main() -> int:
         if best.get("passed"):
             if best["a_floor"] != baseline_a_floor:
                 overrides["tier_a_optionality_floor"] = best["a_floor"]
-            if best["catalyst_near_days"] != baseline_cat_near:
-                overrides["catalyst_near_days"] = best["catalyst_near_days"]
+            if sweep_label == "cat_mid":
+                if best["catalyst_mid_days"] != baseline_cat_mid:
+                    overrides["catalyst_mid_days"] = best["catalyst_mid_days"]
+            else:
+                if best["catalyst_near_days"] != baseline_cat_near:
+                    overrides["catalyst_near_days"] = best["catalyst_near_days"]
         if overrides:
             with open(overrides_path, "w", encoding="utf-8") as f:
                 json.dump(overrides, f, indent=2)
@@ -1019,25 +1101,34 @@ def main() -> int:
                 print(f"\nBaseline is already optimal. No override generated.")
             else:
                 print(f"\nWARNING: No candidate passed constraints. Writing best-effort override.")
-                overrides = {
-                    "tier_a_optionality_floor": best["a_floor"],
-                    "catalyst_near_days": best["catalyst_near_days"],
-                }
+                overrides = {"tier_a_optionality_floor": best["a_floor"]}
+                if sweep_label == "cat_mid":
+                    overrides["catalyst_mid_days"] = best["catalyst_mid_days"]
+                else:
+                    overrides["catalyst_near_days"] = best["catalyst_near_days"]
             with open(overrides_path, "w", encoding="utf-8") as f:
                 json.dump(overrides, f, indent=2)
                 f.write("\n")
 
         # Write JSON report
         json_path = output_dir / f"calibration_report{sfx}.json"
+        provenance = build_provenance(
+            panel_path=Path(args.panel),
+            ruleset_id=baseline_ruleset_id,
+            explanation_registry_fingerprint=registry_fingerprint(),
+        )
         report_json = {
             "config": config,
+            "provenance": provenance,
             "baseline": baseline_result,
             "candidates": candidates,
             "ridge": ridge,
             "neighbors": neighbors,
             "best": {
                 "a_floor": best["a_floor"],
+                "sweep_val": best["sweep_val"],
                 "catalyst_near_days": best["catalyst_near_days"],
+                "catalyst_mid_days": best["catalyst_mid_days"],
                 "score": best["score"],
                 "passed": best["passed"],
                 "separation_60d": best["separation_60d"],
@@ -1051,6 +1142,7 @@ def main() -> int:
         # Write MD report
         md_content = generate_calibration_report_2d_md(
             candidates, best, baseline_result, ridge, neighbors, config,
+            sweep_label=sweep_label,
         )
         md_path = output_dir / f"calibration_report{sfx}.md"
         with open(md_path, "w", encoding="utf-8") as f:
@@ -1060,7 +1152,7 @@ def main() -> int:
         # Print headline
         print("\n" + "=" * 60)
         if best.get("passed"):
-            print(f"RECOMMENDATION: a_floor={best['a_floor']:.2f}, catalyst_near={best['catalyst_near_days']}")
+            print(f"RECOMMENDATION: a_floor={best['a_floor']:.2f}, {sweep_label}={best['sweep_val']}")
             print(f"  Separation (AB-CD): {best['separation_60d']:+.2f}pp")
             print(f"  Score: {best['score']:.2f}")
             n_neighbor_pass = sum(1 for n in neighbors if n["passed"])
@@ -1070,7 +1162,7 @@ def main() -> int:
                     print(f"  - {t}")
         else:
             print("NO CANDIDATE PASSED ALL CONSTRAINTS")
-            print(f"  Best: a_floor={best['a_floor']:.2f}, catalyst_near={best['catalyst_near_days']}")
+            print(f"  Best: a_floor={best['a_floor']:.2f}, {sweep_label}={best['sweep_val']}")
             print(f"  Score: {best['score']:.2f}")
             print(f"  Violations: {'; '.join(best['violations'])}")
         print("=" * 60)
@@ -1146,8 +1238,14 @@ def main() -> int:
 
     # Write calibration_report.json
     json_path = output_dir / f"calibration_report{sfx}.json"
+    provenance = build_provenance(
+        panel_path=Path(args.panel),
+        ruleset_id=baseline_ruleset_id,
+        explanation_registry_fingerprint=registry_fingerprint(),
+    )
     report_json = {
         "config": config,
+        "provenance": provenance,
         "baseline": baseline_result,
         "candidates": candidates,
         "best": {

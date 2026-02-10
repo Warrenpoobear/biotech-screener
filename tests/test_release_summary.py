@@ -195,3 +195,16 @@ class TestReleaseSummary:
         cal["candidates"][0]["violations"] = ["A-tier 1.0% < min 3.0%"]
         md = generate_release_summary(cal, None, None, None)
         assert "FAIL" in md
+
+    def test_includes_registry_fingerprint_in_provenance(self):
+        cal = _make_calibration()
+        cal["provenance"] = {
+            "code_version": "abc1234",
+            "ruleset_id": "test_rs",
+            "price_history_sha256": "a" * 64,
+            "panel_sha256": "b" * 64,
+            "explanation_registry_fingerprint": "88dd1a0f3a87",
+        }
+        md = generate_release_summary(cal, None, None, None)
+        assert "Explanation registry" in md
+        assert "`88dd1a0f3a87`" in md

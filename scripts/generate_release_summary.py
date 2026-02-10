@@ -246,6 +246,24 @@ def generate_release_summary(
                 lines.append(f"  - {v}")
     lines.append("")
 
+    # Provenance
+    prov = calibration.get("provenance")
+    if prov:
+        lines.append("## Provenance")
+        lines.append("")
+        lines.append("| Field | Value |")
+        lines.append("|-------|-------|")
+        price_sha = prov.get("price_history_sha256")
+        panel_sha = prov.get("panel_sha256")
+        lines.append(f"| Price data SHA256 | `{price_sha or 'n/a'}` |")
+        lines.append(f"| Panel SHA256 | `{panel_sha or 'n/a'}` |")
+        lines.append(f"| Ruleset ID | {prov.get('ruleset_id', 'n/a')} |")
+        lines.append(f"| Code version | {prov.get('code_version', 'n/a')} |")
+        reg_fp = prov.get("explanation_registry_fingerprint")
+        if reg_fp:
+            lines.append(f"| Explanation registry | `{reg_fp}` |")
+        lines.append("")
+
     # QA checklist
     lines.append("## QA Checklist")
     lines.append("")

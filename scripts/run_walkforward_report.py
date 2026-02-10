@@ -45,6 +45,8 @@ from run_decision_strategy_backtest import (
 )
 from run_decision_ruleset_sweep import init_providers
 from run_rank_ic_backtest import ARCHIVE_DIR, discover_archives
+from outcome_provenance import build_provenance
+from decision_engine_codes import registry_fingerprint
 
 DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "artifacts"
 
@@ -147,6 +149,67 @@ def compute_band_separation(
 
         entry: Dict[str, Any] = {
             "band": band,
+            "count": len(rows),
+            "with_returns": len(rets),
+        }
+        if rets:
+            entry["mean_ret"] = round(mean(rets), 2)
+            entry["median_ret"] = round(median(rets), 2)
+            entry["hit_rate"] = round(sum(1 for r in rets if r > 0) / len(rets) * 100, 1)
+        else:
+            entry["mean_ret"] = None
+            entry["median_ret"] = None
+            entry["hit_rate"] = None
+
+        if dds:
+            entry["mean_max_dd"] = round(mean(dds), 2)
+            entry["median_max_dd"] = round(median(dds), 2)
+        else:
+            entry["mean_max_dd"] = None
+            entry["median_max_dd"] = None
+
+        results.append(entry)
+
+    return results
+
+
+def compute_strength_distribution(
+    panel_rows: List[Dict[str, Any]],
+    return_col: str = "fwd_ret_60d",
+    dd_col: str = "fwd_max_dd_60d",
+) -> List[Dict[str, Any]]:
+    """Compute per-catalyst-strength-band metrics from the panel.
+
+    Returns a list of dicts, one per strength band (near/mid/far/missing),
+    with: count, mean_ret, median_ret, hit_rate, mean_max_dd.
+    """
+    by_strength: Dict[str, List[Dict[str, Any]]] = {}
+    for row in panel_rows:
+        strength = row.get("catalyst_strength", "")
+        if strength:
+            by_strength.setdefault(strength, []).append(row)
+
+    results = []
+    for band in ["near", "mid", "far", "missing"]:
+        rows = by_strength.get(band, [])
+        rets = []
+        dds = []
+        for r in rows:
+            v = r.get(return_col)
+            if v != "" and v is not None:
+                try:
+                    rets.append(float(v))
+                except (ValueError, TypeError):
+                    pass
+            dd_v = r.get(dd_col)
+            if dd_v != "" and dd_v is not None:
+                try:
+                    dds.append(float(dd_v))
+                except (ValueError, TypeError):
+                    pass
+
+        entry: Dict[str, Any] = {
+            "strength": band,
             "count": len(rows),
             "with_returns": len(rets),
         }
@@ -288,6 +351,7 @@ def generate_walkforward_report_md(
     stability: Dict[str, Any],
     coverage: Dict[str, Any],
     config: Dict[str, Any],
+    strength_dist: Optional[List[Dict[str, Any]]] = None,
 ) -> str:
     """Generate the markdown report string."""
     lines: List[str] = []
@@ -330,6 +394,21 @@ def generate_walkforward_report_md(
         dd = f"{b['mean_max_dd']:.2f}" if b["mean_max_dd"] is not None else "n/a"
         lines.append(f"| {b['band']} | {n} | {m} | {md} | {hr} | {dd} |")
     lines.append("")
+
+    # Catalyst strength distribution
+    if strength_dist:
+        lines.append("## Catalyst Strength Distribution (60d forward returns)")
+        lines.append("")
+        lines.append("| Strength | N | Mean % | Median % | Hit Rate % | Mean Max-DD % |")
+        lines.append("|----------|---|--------|----------|------------|---------------|")
+        for s in strength_dist:
+            n = s["count"]
+            m = f"{s['mean_ret']:+.2f}" if s["mean_ret"] is not None else "n/a"
+            md = f"{s['median_ret']:+.2f}" if s["median_ret"] is not None else "n/a"
+            hr = f"{s['hit_rate']:.1f}" if s["hit_rate"] is not None else "n/a"
+            dd = f"{s['mean_max_dd']:.2f}" if s["mean_max_dd"] is not None else "n/a"
+            lines.append(f"| {s['strength']} | {n} | {m} | {md} | {hr} | {dd} |")
+        lines.append("")
 
     # Eligible vs ineligible
     lines.append("## Eligible vs Ineligible (60d forward returns)")
@@ -415,6 +494,10 @@ def main():
         "--suffix", type=str, default=None,
         help="Suffix for output files (e.g., '2025' → walkforward_panel_2025.csv)",
     )
+    parser.add_argument(
+        "--archive-dir", type=str, default=None,
+        help=f"Archive directory (default: {ARCHIVE_DIR})",
+    )
     args = parser.parse_args()
 
     # Load ruleset
@@ -430,7 +513,8 @@ def main():
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # Discover archives
-    archives = discover_archives(ARCHIVE_DIR, start=args.date_min, end=args.date_max)
+    arch_dir = Path(args.archive_dir) if args.archive_dir else ARCHIVE_DIR
+    archives = discover_archives(arch_dir, start=args.date_min, end=args.date_max)
     if args.date_min or args.date_max:
         print(f"Date filter: {args.date_min or '*'} to {args.date_max or '*'}")
     print(f"Archives: {len(archives)} found")
@@ -474,6 +558,7 @@ def main():
     print("Computing metrics ...")
     tier_sep = compute_tier_separation(panel_rows)
     band_sep = compute_band_separation(panel_rows)
+    strength_dist = compute_strength_distribution(panel_rows)
     eligible_cmp = compute_eligible_comparison(panel_rows)
     stability = compute_stability_metrics(panel_rows)
     coverage = compute_coverage_summary(panel_rows)
@@ -489,11 +574,20 @@ def main():
         "generated": datetime.now().isoformat(timespec="seconds"),
     }
 
+    # Provenance
+    provenance = build_provenance(
+        panel_path=panel_path,
+        ruleset_id=ruleset.ruleset_id,
+        explanation_registry_fingerprint=registry_fingerprint(),
+    )
+
     # Write JSON
     report_json = {
         "config": config,
+        "provenance": provenance,
         "tier_separation": tier_sep,
         "band_separation": band_sep,
+        "strength_distribution": strength_dist,
         "eligible_comparison": eligible_cmp,
         "stability": stability,
         "coverage": coverage,
@@ -505,7 +599,8 @@ def main():
 
     # Write markdown
     md_content = generate_walkforward_report_md(
-        tier_sep, band_sep, eligible_cmp, stability, coverage, config
+        tier_sep, band_sep, eligible_cmp, stability, coverage, config,
+        strength_dist=strength_dist,
     )
     md_path = output_dir / f"walkforward_report{sfx}.md"
     with open(md_path, "w", encoding="utf-8") as f:
