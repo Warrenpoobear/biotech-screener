@@ -6,6 +6,38 @@ Format: `[engine_version] ruleset_id — date — summary`
 
 ---
 
+## [v1.3.0] 131800e4 — 2026-02-11 — Enable cost-aware sizing (cap=1000)
+
+**Parameters changed** (vs 34bb662d):
+- `enable_cost_haircut`: False → **True**
+- `cost_impact_cap_bps`: 200.0 → **1000.0**
+
+**Behavior changes**:
+- Cost-aware sizing is now **active in the production ruleset**. Portfolio weights
+  are adjusted based on estimated round-trip trading costs (ADV-derived).
+- Biotech-calibrated bucket thresholds (400/1000/2000 bps) produce meaningful
+  differentiation: ~26% of A+B positions get no haircut, ~32% get 0.85x, ~32%
+  get 0.70x + band step-down, ~11% get 0.55x floor + band step-down.
+- Membership unchanged (same 20 names), eligibility unchanged, turnover unchanged.
+- Weight redistribution: liquid names (AKRO, MRUS, CELC at $80-150M ADV) gain
+  weight; illiquid micro-caps (NAUT, IKT at $0.6-0.8M ADV) lose weight.
+- One band step-down observed: CNTX L→M (cost_mult=0.70, ADV $3.6M).
+
+**Rationale**: Cap calibration sweep (`artifacts/cost_cap_sweep_2026-02-11.md`,
+8 values from 500 to uncapped) found clear elbow at cap=1000: binding drops to
+2.7% (from 71.6% at default 200), all 4 bucket tiers populated, performance
+plateaus from 1000 through uncapped (+1.61pp 60d residual vs disabled baseline).
+ADV coverage audit confirmed 100% of A+B positions costed, bucket distribution
+healthy (26/32/32/11%), zero missing tickers.
+
+**Governance**: ADV coverage audit (`artifacts/cost_coverage_audit_2026-02-11.md`).
+Cap sweep 8 backtests, 10 snapshots each. Phase2 portfolio regression re-pinned
+(2025-10-31 snapshot, 20 positions). Contract fingerprint unchanged. Full suite green.
+
+**Files**: `v1.2.1_candidate.json` (active, +2 fields)
+
+---
+
 ## [v1.3.0] 34bb662d — 2026-02-11 — Recalibrate cost haircut buckets for biotech
 
 **Parameters changed** (vs 9bc38c2d):

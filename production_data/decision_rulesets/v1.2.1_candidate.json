@@ -5,6 +5,8 @@
   "catalyst_mid_days": 180,
   "catalyst_near_days": 120,
   "confidence_low_threshold": 0.3,
+  "cost_impact_cap_bps": 1000.0,
+  "enable_cost_haircut": true,
   "drawdown_flag_threshold": -0.35,
   "drawdown_gate": -0.4,
   "drawdown_gate_mode": "hard",

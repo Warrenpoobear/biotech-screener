@@ -8,10 +8,10 @@ deterministic, known-good output for a specific snapshot + ruleset.
 This prevents silent ordering/weight drift from code changes to the
 decision engine, sort key, or sizing logic.
 
-Pinned on: 2026-02-10
+Pinned on: 2026-02-11
 Snapshot:  2025-10-31 archive
-Ruleset:   v1.3.0 (ID: 34bb662d, a_floor=0.60, catalyst_near=120, catalyst_mid=180,
-           drawdown_rel_xbi_gate=-0.25)
+Ruleset:   v1.3.0 (ID: 131800e4, a_floor=0.60, catalyst_near=120, catalyst_mid=180,
+           drawdown_rel_xbi_gate=-0.25, enable_cost_haircut=True, cap=1000)
 Policy:    tier_filter=[A,B], top_k=20
 """
 from __future__ import annotations
@@ -41,18 +41,18 @@ TIER_FILTER = ["A", "B"]
 TOP_K = 20
 
 # Pinned top-10 tickers in exact actionable order
-# Re-pinned 2026-02-10 for v1.3.0 (catalyst strength bands: NEAR/MID/FAR/MISSING)
+# Re-pinned 2026-02-11 for cost-aware sizing (enable_cost_haircut=True, cap=1000)
 EXPECTED_TOP_10 = [
-    {"ticker": "CNTX",  "rank": 1,  "tier": "A", "band": "L", "weight": 5.65},
-    {"ticker": "KALV",  "rank": 2,  "tier": "A", "band": "L", "weight": 5.65},
-    {"ticker": "VRDN",  "rank": 3,  "tier": "A", "band": "L", "weight": 5.65},
-    {"ticker": "AKRO",  "rank": 4,  "tier": "A", "band": "L", "weight": 5.65},
-    {"ticker": "XENE",  "rank": 5,  "tier": "B", "band": "M", "weight": 3.39},
-    {"ticker": "PVLA",  "rank": 6,  "tier": "B", "band": "L", "weight": 5.65},
-    {"ticker": "PTGX",  "rank": 7,  "tier": "B", "band": "L", "weight": 5.65},
-    {"ticker": "DNTH",  "rank": 8,  "tier": "B", "band": "L", "weight": 5.65},
-    {"ticker": "CELC",  "rank": 9,  "tier": "B", "band": "L", "weight": 5.65},
-    {"ticker": "NAUT",  "rank": 10, "tier": "B", "band": "L", "weight": 5.65},
+    {"ticker": "CNTX",  "rank": 1,  "tier": "A", "band": "M", "weight": 3.15},
+    {"ticker": "KALV",  "rank": 2,  "tier": "A", "band": "L", "weight": 6.37},
+    {"ticker": "VRDN",  "rank": 3,  "tier": "A", "band": "L", "weight": 6.37},
+    {"ticker": "AKRO",  "rank": 4,  "tier": "A", "band": "L", "weight": 7.49},
+    {"ticker": "XENE",  "rank": 5,  "tier": "B", "band": "M", "weight": 3.82},
+    {"ticker": "PVLA",  "rank": 6,  "tier": "B", "band": "L", "weight": 6.37},
+    {"ticker": "PTGX",  "rank": 7,  "tier": "B", "band": "L", "weight": 7.49},
+    {"ticker": "DNTH",  "rank": 8,  "tier": "B", "band": "L", "weight": 6.37},
+    {"ticker": "CELC",  "rank": 9,  "tier": "B", "band": "L", "weight": 7.49},
+    {"ticker": "NAUT",  "rank": 10, "tier": "B", "band": "L", "weight": 4.12},
 ]
 
 EXPECTED_N_POSITIONS = 20
@@ -146,8 +146,8 @@ class TestPhase2PortfolioRegression:
         if not RULESET_PATH.exists():
             pytest.skip(f"Ruleset not found: {RULESET_PATH}")
         ruleset = DecisionRuleset.from_json(str(RULESET_PATH))
-        assert ruleset.ruleset_id == "34bb662d", (
-            f"Ruleset ID changed: expected 34bb662d, got {ruleset.ruleset_id}"
+        assert ruleset.ruleset_id == "131800e4", (
+            f"Ruleset ID changed: expected 131800e4, got {ruleset.ruleset_id}"
         )
 
     def test_a_floor_060(self):

@@ -1334,7 +1334,7 @@ PHASE2_DEFAULT_RULESET_PATH = (
 )
 PHASE2_DEFAULT_TIER_FILTER = ["A", "B"]
 PHASE2_DEFAULT_TOP_K = 20
-PHASE2_PINNED_RULESET_ID = "34bb662d"
+PHASE2_PINNED_RULESET_ID = "131800e4"
 PHASE2_DEFAULT_HEALTH_THRESHOLDS_PATH = (
     Path(__file__).resolve().parent
     / "production_data" / "phase2_health_thresholds" / "v1.json"
