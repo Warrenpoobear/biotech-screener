@@ -1374,19 +1374,29 @@ def _hydrate_drawdown(
 
     hydrated = 0
 
-    # --- Step A: key normalization ---
+    # --- Step A: key normalization (coerce to float | None) ---
     for rec in rec_by_ticker.values():
         df = rec.get("defensive_features")
         if df is None:
             df = {}
             rec["defensive_features"] = df
+        # Coerce existing drawdown to float (JSON may store as string)
+        raw_dd = df.get("drawdown")
+        if raw_dd is not None:
+            try:
+                df["drawdown"] = float(raw_dd)
+            except (ValueError, TypeError):
+                df["drawdown"] = None
         if df.get("drawdown") is not None:
             df["drawdown_missing_reason"] = ""
             continue
         for alt_key in ("drawdown_current", "drawdown_60d"):
             val = df.get(alt_key)
             if val is not None:
-                df["drawdown"] = val
+                try:
+                    df["drawdown"] = float(val)
+                except (ValueError, TypeError):
+                    continue
                 df["drawdown_missing_reason"] = ""
                 hydrated += 1
                 break

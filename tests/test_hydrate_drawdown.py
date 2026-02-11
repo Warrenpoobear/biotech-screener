@@ -79,6 +79,41 @@ class TestKeyNormalization:
         assert n == 0
         assert recs["D"]["defensive_features"]["drawdown"] == -0.05
 
+    def test_string_drawdown_coerced_to_float(self):
+        """Drawdown stored as string in JSON is coerced to float."""
+        recs = {"S": {"ticker": "S", "defensive_features": {"drawdown": "-0.25"}}}
+        n = _hydrate_drawdown(recs, None, "2025-06-01")
+        assert n == 0
+        dd = recs["S"]["defensive_features"]["drawdown"]
+        assert isinstance(dd, float)
+        assert dd == -0.25
+
+    def test_string_alt_key_coerced_to_float(self):
+        """Alt-key (drawdown_current) stored as string is coerced to float."""
+        recs = {"T": {"ticker": "T", "defensive_features": {"drawdown_current": "-0.10"}}}
+        n = _hydrate_drawdown(recs, None, "2025-06-01")
+        assert n == 1
+        dd = recs["T"]["defensive_features"]["drawdown"]
+        assert isinstance(dd, float)
+        assert dd == -0.10
+
+    def test_non_numeric_drawdown_becomes_none(self):
+        """Non-numeric drawdown string is treated as missing."""
+        recs = {"U": {"ticker": "U", "defensive_features": {"drawdown": "N/A"}}}
+        n = _hydrate_drawdown(recs, None, "2025-06-01")
+        assert recs["U"]["defensive_features"]["drawdown"] is None
+
+    def test_non_numeric_alt_key_skipped(self):
+        """Non-numeric alt-key is skipped; falls through to next alt or CSV."""
+        recs = {"V": {"ticker": "V", "defensive_features": {
+            "drawdown_current": "bad", "drawdown_60d": "-0.15",
+        }}}
+        n = _hydrate_drawdown(recs, None, "2025-06-01")
+        assert n == 1
+        dd = recs["V"]["defensive_features"]["drawdown"]
+        assert isinstance(dd, float)
+        assert dd == -0.15
+
     def test_no_defensive_features(self):
         """Rec with no defensive_features dict gets one created."""
         recs = {"E": {"ticker": "E"}}
