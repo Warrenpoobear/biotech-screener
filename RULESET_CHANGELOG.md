@@ -108,3 +108,30 @@ summary (`artifacts/release_summary_2d_2025.md`). Calibration artifacts:
 `artifacts/calibration_report_2d_2025.md`, `artifacts/walkforward_report_2025.md`.
 
 **Files**: `v1.2.0_candidate.json` (candidate)
+
+---
+
+## [v1.3.0] 5a9faad9 — 2026-02-11 — Loosen relative drawdown gate (AND)
+
+**Parameters changed** (vs c88bd4cc):
+- `drawdown_rel_xbi_gate`: -0.20 -> -0.25
+
+**Behavior changes**:
+- Under AND logic (require_both=True), both absolute (-0.40) AND relative must breach to fail.
+  Loosening the relative gate from -0.20 to -0.25 means fewer tickers hit the combined gate.
+- 38 previously ineligible names become rescued (abs breaches, rel passes at -0.25).
+- All 11 currently rescued names remain rescued (their rel margins are already positive).
+
+**Rationale**: Rescued-vs-clean walkforward analysis (10 snapshots, 2025-01-31 to 2025-10-31,
+ruleset c88bd4cc, 1808 panel rows) showed:
+- Current rescued (N=11): mean +13.95%, hit 63.6%, max-DD -20.62% (comparable to clean)
+- Newly rescued at -0.25 (N=38): mean +33.48%, hit 63.2%, max-DD -21.90% (strong performers)
+- Combined rescued at -0.25 (N=49): mean +29.10%, better max-DD than clean (-21.6% vs -24.1%)
+- DD rel near-gate pressure: 34.5% of eligible dev tickers within 5pp — binding constraint
+- Calibration sweep: separation +4.54pp at -0.25 vs +2.27pp at -0.20; STRONG neighbor stability
+
+**Governance**: Walkforward panel (`artifacts/walkforward_panel_rescued.csv`, 1808 rows),
+rescued outcome analysis, calibration artifacts (`artifacts/calibration_report__2025_ddrel_AND.*`).
+Pinned regression test updated. Contract/replay tests green.
+
+**Files**: `v1.2.1_candidate.json` (candidate)

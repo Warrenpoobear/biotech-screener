@@ -45,10 +45,10 @@ from decision_engine import (
 # ---------------------------------------------------------------------------
 FIXTURE_DIR = PROJECT_ROOT / "tests" / "fixtures" / "phase2_replays"
 RULESET_PATH = (
-    PROJECT_ROOT / "production_data" / "decision_rulesets" / "v1.2.0_candidate.json"
+    PROJECT_ROOT / "production_data" / "decision_rulesets" / "v1.2.1_candidate.json"
 )
 DATES = ["2025-04-30", "2025-07-31", "2025-10-31"]
-EXPECTED_RULESET_ID = "c88bd4cc"
+EXPECTED_RULESET_ID = "5a9faad9"
 
 # Valid enum values for categorical fields
 VALID_TIERS = {"A", "B", "C", "D", ""}
