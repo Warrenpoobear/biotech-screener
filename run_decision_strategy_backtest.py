@@ -207,6 +207,17 @@ def build_strategy_portfolio(
             except ValueError:
                 pass
 
+    # Cost schedule for est_cost_bps computation (when cost haircut is enabled)
+    if ruleset.enable_cost_haircut:
+        cost_schedule = CostSchedule(
+            impact_cap_bps=ruleset.cost_impact_cap_bps,
+        )
+        # Representative weight for cost estimation (actual weights unknown yet)
+        rep_weight = 100.0 / max(top_k, 1)
+    else:
+        cost_schedule = None
+        rep_weight = 0.0
+
     # Compute decision fields for dev-stage tickers
     candidates: List[Tuple[Tuple, Dict[str, Any]]] = []
     for ticker in archive_data.tickers:
@@ -220,7 +231,18 @@ def build_strategy_portfolio(
 
         opt = archive_data.optionalities.get(ticker)
 
-        fields = compute_decision_fields(rec, archetype, opt, ruleset=ruleset)
+        # Compute est_cost_bps from archive market data when cost haircut is on
+        est_cost_bps = None
+        if cost_schedule is not None:
+            md = archive_data.market_data.get(ticker, {})
+            adv = (md.get("avg_volume") or 0) * (md.get("price") or 0)
+            if adv > 0:
+                cost_est = estimate_trade_cost(rep_weight, adv, cost_schedule)
+                est_cost_bps = cost_est.round_trip_bps
+
+        fields = compute_decision_fields(
+            rec, archetype, opt, ruleset=ruleset, est_cost_bps=est_cost_bps,
+        )
 
         # Filter: eligible + tier in filter
         if fields.get("eligible") != "1":
@@ -246,6 +268,10 @@ def build_strategy_portfolio(
             "risk_flags": fields.get("risk_flags", ""),
             "composite_rank": composite_rank,
             "optionality": opt,
+            "est_cost_bps": est_cost_bps,
+            "cost_mult": fields.get("cost_mult", ""),
+            "cost_bucket": fields.get("cost_bucket", ""),
+            "cost_haircut_applied": fields.get("cost_haircut_applied", ""),
         }))
 
     # Sort by actionable key and take top-k

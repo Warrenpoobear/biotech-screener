@@ -534,3 +534,142 @@ class TestPanelCostFields:
         for col in ["adv_dollars", "est_cost_bps", "participation_pct",
                      "fwd_ret_20d_net", "fwd_ret_60d_net"]:
             assert col in PANEL_COLUMNS, f"Missing {col} in PANEL_COLUMNS"
+
+
+# =============================================================================
+# TEST: Cost wiring into portfolio construction
+# =============================================================================
+
+def _make_archive_data_with_market(
+    tickers_data: Dict[str, Dict[str, Any]],
+    date_str: str = "2024-06-30",
+) -> ArchiveData:
+    """Build ArchiveData with market_data for cost wiring tests."""
+    tickers = list(tickers_data.keys())
+    recs = {t: d["rec"] for t, d in tickers_data.items()}
+    archetypes = {t: d.get("archetype", "drug_developer") for t, d in tickers_data.items()}
+    optionalities = {t: d.get("opt", 0.70) for t, d in tickers_data.items()}
+    market_data = {t: d.get("market_data", {}) for t, d in tickers_data.items()}
+    rows = []
+    for t in tickers:
+        row = {
+            "ticker": t,
+            "archetype": archetypes[t],
+            "clinical_optionality_pct_dev": str(optionalities[t]) if optionalities[t] is not None else "",
+        }
+        rank = tickers_data[t].get("composite_rank")
+        if rank is not None:
+            row["composite_rank"] = str(rank)
+        rows.append(row)
+
+    return ArchiveData(
+        date_str=date_str,
+        rows=rows,
+        recs=recs,
+        archetypes=archetypes,
+        optionalities=optionalities,
+        tickers=tickers,
+        market_data=market_data,
+    )
+
+
+class TestCostWiringInPortfolio:
+    """Cost haircut flows through build_strategy_portfolio when enabled."""
+
+    def _two_ticker_archive(self):
+        """Two identical tickers except ADV: CHEAP ($200M) vs COSTLY ($500K)."""
+        base_rec = _make_rec(catalyst_days=30, catalyst_window=True)
+        return _make_archive_data_with_market({
+            "CHEAP": {
+                "rec": {**base_rec},
+                "archetype": "drug_developer",
+                "opt": 0.75,
+                "composite_rank": 1,
+                "market_data": {"avg_volume": 2_000_000, "price": 100.0},  # ADV $200M
+            },
+            "COSTLY": {
+                "rec": {**base_rec},
+                "archetype": "drug_developer",
+                "opt": 0.75,
+                "composite_rank": 2,
+                "market_data": {"avg_volume": 10_000, "price": 50.0},  # ADV $500K
+            },
+        })
+
+    # Biotech-calibrated buckets: CHEAP (~230 bps RT) → 1.0x, COSTLY (~4036 bps RT) → floor
+    _BIOTECH_BUCKETS = ((300, 1.0), (1000, 0.85), (2000, 0.70))
+
+    def test_enabled_haircut_differentiates_weights(self):
+        """With cost haircut enabled, high-cost ticker gets lower weight."""
+        archive = self._two_ticker_archive()
+        ruleset = DecisionRuleset(
+            enable_cost_haircut=True,
+            cost_impact_cap_bps=2000.0,
+            cost_haircut_buckets=self._BIOTECH_BUCKETS,
+        )
+        result = build_strategy_portfolio(archive, ruleset, ["A", "B"], top_k=20)
+
+        by_ticker = {p["ticker"]: p for p in result}
+        assert "CHEAP" in by_ticker and "COSTLY" in by_ticker
+
+        # COSTLY should have lower weight due to cost haircut
+        assert by_ticker["COSTLY"]["weight_pct"] < by_ticker["CHEAP"]["weight_pct"], (
+            f"COSTLY ({by_ticker['COSTLY']['weight_pct']}%) should be < "
+            f"CHEAP ({by_ticker['CHEAP']['weight_pct']}%)"
+        )
+
+        # Cost fields should be populated
+        assert by_ticker["COSTLY"]["cost_haircut_applied"] == "1"
+        assert float(by_ticker["COSTLY"]["cost_mult"]) < 1.0
+
+    def test_enabled_haircut_band_stepdown(self):
+        """High-cost ticker gets band step-down when cost_mult <= 0.70."""
+        archive = self._two_ticker_archive()
+        ruleset = DecisionRuleset(
+            enable_cost_haircut=True,
+            cost_impact_cap_bps=2000.0,
+            cost_haircut_buckets=self._BIOTECH_BUCKETS,
+        )
+        result = build_strategy_portfolio(archive, ruleset, ["A", "B"], top_k=20)
+        by_ticker = {p["ticker"]: p for p in result}
+
+        cheap_cost_mult = float(by_ticker["CHEAP"].get("cost_mult") or 1.0)
+        costly_cost_mult = float(by_ticker["COSTLY"].get("cost_mult") or 1.0)
+
+        # CHEAP (~230 bps RT < 300 threshold) → 1.0x, COSTLY (~4036 bps > 2000) → floor 0.55x
+        assert cheap_cost_mult == 1.0, f"CHEAP should be 1.0x, got {cheap_cost_mult}"
+        assert costly_cost_mult < cheap_cost_mult, (
+            f"COSTLY cost_mult ({costly_cost_mult}) should be < CHEAP ({cheap_cost_mult})"
+        )
+
+    def test_disabled_haircut_identical_weights(self):
+        """With cost haircut disabled, identical tickers get identical weights."""
+        archive = self._two_ticker_archive()
+        ruleset = DecisionRuleset(enable_cost_haircut=False)
+        result = build_strategy_portfolio(archive, ruleset, ["A", "B"], top_k=20)
+
+        by_ticker = {p["ticker"]: p for p in result}
+        assert "CHEAP" in by_ticker and "COSTLY" in by_ticker
+
+        # Weights should be identical (cost not applied)
+        assert by_ticker["CHEAP"]["weight_pct"] == by_ticker["COSTLY"]["weight_pct"]
+
+        # Cost fields should show no haircut
+        assert by_ticker["COSTLY"].get("cost_haircut_applied") in ("", "0", None)
+
+    def test_no_market_data_graceful(self):
+        """Tickers without market_data get est_cost_bps=None, no haircut."""
+        base_rec = _make_rec(catalyst_days=30, catalyst_window=True)
+        archive = _make_archive_data_with_market({
+            "NODATA": {
+                "rec": {**base_rec},
+                "archetype": "drug_developer",
+                "opt": 0.75,
+                "composite_rank": 1,
+                # No market_data key
+            },
+        })
+        ruleset = DecisionRuleset(enable_cost_haircut=True, cost_impact_cap_bps=2000.0)
+        result = build_strategy_portfolio(archive, ruleset, ["A", "B"], top_k=20)
+        assert len(result) == 1
+        assert result[0]["est_cost_bps"] is None
