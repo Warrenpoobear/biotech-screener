@@ -280,7 +280,7 @@ class TestBuildExplanation:
 class TestRegistryFingerprint:
     """Registry fingerprint must match pinned value."""
 
-    EXPECTED_FINGERPRINT = "88dd1a0f3a87"
+    EXPECTED_FINGERPRINT = "9884d97764ec"
 
     def test_registry_fingerprint_pinned(self):
         """registry_fingerprint() matches pinned value.

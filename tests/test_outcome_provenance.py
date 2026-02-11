@@ -329,9 +329,9 @@ class TestRegistryFingerprintProvenance:
 
         prov = build_provenance(
             price_csv=price_csv,
-            explanation_registry_fingerprint="88dd1a0f3a87",
+            explanation_registry_fingerprint="9884d97764ec",
         )
-        assert prov["explanation_registry_fingerprint"] == "88dd1a0f3a87"
+        assert prov["explanation_registry_fingerprint"] == "9884d97764ec"
 
     def test_provenance_registry_fingerprint_default_none(self, tmp_path: Path) -> None:
         """Omitting the kwarg produces None (backward compatible)."""

@@ -10,8 +10,8 @@ decision engine, sort key, or sizing logic.
 
 Pinned on: 2026-02-10
 Snapshot:  2025-10-31 archive
-Ruleset:   v1.3.0 (ID: 181346fe, a_floor=0.60, catalyst_near=120, catalyst_mid=180,
-           drawdown_rel_xbi_gate=-0.15)
+Ruleset:   v1.3.0 (ID: c88bd4cc, a_floor=0.60, catalyst_near=120, catalyst_mid=180,
+           drawdown_rel_xbi_gate=-0.20)
 Policy:    tier_filter=[A,B], top_k=20
 """
 from __future__ import annotations
@@ -146,8 +146,8 @@ class TestPhase2PortfolioRegression:
         if not RULESET_PATH.exists():
             pytest.skip(f"Ruleset not found: {RULESET_PATH}")
         ruleset = DecisionRuleset.from_json(str(RULESET_PATH))
-        assert ruleset.ruleset_id == "181346fe", (
-            f"Ruleset ID changed: expected 181346fe, got {ruleset.ruleset_id}"
+        assert ruleset.ruleset_id == "c88bd4cc", (
+            f"Ruleset ID changed: expected c88bd4cc, got {ruleset.ruleset_id}"
         )
 
     def test_a_floor_060(self):

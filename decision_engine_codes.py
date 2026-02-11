@@ -65,6 +65,8 @@ _RISK_FLAG_CODE_LIST: List[ReasonCode] = [
                "14d RSI above overbought threshold"),
     ReasonCode("low_confidence", "risk",
                "Overall confidence below threshold"),
+    ReasonCode("deep_drawdown_rel_xbi", "risk",
+               "Relative drawdown vs XBI below threshold"),
     ReasonCode("drawdown_data_missing", "risk",
                "No drawdown data available for assessment"),
 ]
