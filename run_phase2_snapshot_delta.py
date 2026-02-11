@@ -28,7 +28,7 @@ from typing import Dict, List, Optional, Tuple
 # ---------------------------------------------------------------------------
 # Guardrail thresholds
 # ---------------------------------------------------------------------------
-PHASE2_PINNED_RULESET_ID = "181346fe"
+PHASE2_PINNED_RULESET_ID = "131800e4"
 PHASE2_A_FLOOR = 0.60  # Phase-2 ruleset a_floor; used by optionality diagnostic
 WARN_NAME_TURNOVER_PCT = 40.0
 WARN_A_COUNT_MIN = 1

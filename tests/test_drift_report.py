@@ -45,7 +45,7 @@ def _make_rankings(
     a_pct: float = 5.0,
     catalyst_missing_pct: float = 30.0,
     optionality_std: float = 0.30,
-    ruleset_id: str = "181346fe",
+    ruleset_id: str = "131800e4",
     include_attribution_cols: bool = False,
 ) -> pd.DataFrame:
     """Build a synthetic rankings DataFrame with controllable tier distribution."""
@@ -138,7 +138,7 @@ def _make_rankings(
 def _make_snapshot(
     date: str,
     rankings: pd.DataFrame | None = None,
-    ruleset_id: str = "181346fe",
+    ruleset_id: str = "131800e4",
 ) -> SnapshotData:
     if rankings is None:
         rankings = _make_rankings(ruleset_id=ruleset_id)
@@ -154,7 +154,7 @@ def _make_snapshot(
     )
 
 
-def _write_minimal_snapshot(snap_dir: Path, date: str, ruleset_id: str = "181346fe"):
+def _write_minimal_snapshot(snap_dir: Path, date: str, ruleset_id: str = "131800e4"):
     """Write a minimal loadable snapshot to disk."""
     d = snap_dir / date
     d.mkdir(parents=True, exist_ok=True)
