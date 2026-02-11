@@ -69,6 +69,11 @@ class DecisionRuleset:
     # Sizing weights (tuple-of-tuples for frozen hashability)
     sizing_weights: tuple = (("L", 1.0), ("M", 0.6), ("S", 0.3), ("XS", 0.15))
 
+    # Layer 3 — Cost-aware sizing (opt-in, no behavior change when disabled)
+    enable_cost_haircut: bool = False
+    cost_haircut_buckets: tuple = ((50, 1.0), (100, 0.85), (150, 0.70))
+    cost_haircut_floor_mult: float = 0.55
+
     @property
     def sizing_weights_dict(self) -> Dict[str, float]:
         """Convert sizing_weights to dict for runtime use."""
@@ -112,6 +117,11 @@ class DecisionRuleset:
         if "sizing_weights" in d and isinstance(d["sizing_weights"], dict):
             d["sizing_weights"] = tuple(
                 (k, v) for k, v in sorted(d["sizing_weights"].items())
+            )
+        # Convert cost_haircut_buckets list-of-lists back to tuple-of-tuples
+        if "cost_haircut_buckets" in d and isinstance(d["cost_haircut_buckets"], list):
+            d["cost_haircut_buckets"] = tuple(
+                tuple(pair) for pair in d["cost_haircut_buckets"]
             )
         return cls(**d)
 
@@ -364,6 +374,24 @@ def _compute_overlays(rec: Dict, ruleset: DecisionRuleset) -> Dict[str, Any]:
 _BAND_ORDER = ["XS", "S", "M", "L"]
 
 
+def _compute_cost_mult(
+    est_cost_bps: Optional[float],
+    ruleset: DecisionRuleset,
+) -> Tuple[float, str]:
+    """Compute cost multiplier and bucket label from estimated trading cost.
+
+    Returns (multiplier, bucket_label).  When cost haircut is disabled
+    or cost data is unavailable, returns (1.0, "").
+    """
+    if not ruleset.enable_cost_haircut or est_cost_bps is None:
+        return 1.0, ""
+    for upper, mult in ruleset.cost_haircut_buckets:
+        if est_cost_bps <= upper:
+            return mult, f"<={int(upper)}bps"
+    last_upper = ruleset.cost_haircut_buckets[-1][0] if ruleset.cost_haircut_buckets else 0
+    return ruleset.cost_haircut_floor_mult, f">{int(last_upper)}bps"
+
+
 def _compute_size_band(
     eligible: bool,
     tier_dev: str,
@@ -371,6 +399,8 @@ def _compute_size_band(
     overlays: Dict[str, Any],
     ruleset: DecisionRuleset,
     rec: Optional[Dict] = None,
+    cost_mult: float = 1.0,
+    cost_bucket: str = "",
 ) -> Tuple[str, List[str]]:
     """Rule-based sizing band. Returns (band, list_of_reasons)."""
     if not eligible:
@@ -424,6 +454,11 @@ def _compute_size_band(
         if _dd is not None and _dd < ruleset.drawdown_gate:
             idx += ruleset.drawdown_size_penalty  # negative → band downgrade
             reasons.append("drawdown_penalty")
+
+    # Cost-aware band step-down (heavy haircut → drop one band)
+    if cost_mult <= 0.70 and cost_bucket:
+        idx -= 1
+        reasons.append(f"cost_haircut_{cost_bucket}")
 
     # Clamp
     idx = max(0, min(len(_BAND_ORDER) - 1, idx))
@@ -595,7 +630,8 @@ def compute_target_weights(
     raw_weights = []
     for row in rows:
         band = row.get("size_band", "XS")
-        raw_weights.append(weights_map.get(str(band), 0.15))
+        cm = _safe_float(row.get("cost_mult"), default=1.0)
+        raw_weights.append(weights_map.get(str(band), 0.15) * cm)
 
     total = sum(raw_weights)
     if total <= 0:
@@ -624,6 +660,7 @@ DECISION_COLUMNS = [
     "catalyst_days", "catalyst_in_window", "catalyst_mode", "catalyst_strength",
     "runway_bucket", "mom_state", "risk_flags",
     "size_band", "size_reasons",
+    "cost_mult", "cost_bucket", "cost_haircut_applied",
     "tier_dev", "tier_reason",
 ]
 
@@ -633,6 +670,7 @@ def compute_decision_fields(
     archetype: str,
     optionality_pct_dev: Optional[float] = None,
     ruleset: Optional[DecisionRuleset] = None,
+    est_cost_bps: Optional[float] = None,
 ) -> Dict[str, Any]:
     """Compute all decision engine fields for a single ticker.
 
@@ -641,6 +679,7 @@ def compute_decision_fields(
         archetype: company archetype string
         optionality_pct_dev: pre-computed optionality percentile (float or None)
         ruleset: DecisionRuleset config (defaults to DEFAULT_RULESET)
+        est_cost_bps: estimated round-trip trading cost in basis points (float or None)
 
     Returns:
         dict with all decision engine column values
@@ -663,6 +702,9 @@ def compute_decision_fields(
         ruleset=rs,
     )
 
+    # Cost multiplier (opt-in, affects sizing band + weight)
+    cost_mult, cost_bucket = _compute_cost_mult(est_cost_bps, rs)
+
     # Layer 3 — Sizing
     size_band, size_reasons = _compute_size_band(
         eligible=eligible,
@@ -671,6 +713,8 @@ def compute_decision_fields(
         overlays=overlays,
         ruleset=rs,
         rec=rec,
+        cost_mult=cost_mult,
+        cost_bucket=cost_bucket,
     )
 
     # Assemble output
@@ -684,6 +728,9 @@ def compute_decision_fields(
         "size_reasons": "|".join(size_reasons) if size_reasons else "",
         "tier_dev": tier_dev,
         "tier_reason": tier_reason,
+        "cost_mult": cost_mult,
+        "cost_bucket": cost_bucket,
+        "cost_haircut_applied": "1" if cost_mult < 1.0 else "0",
     }
     return fields
 

@@ -90,67 +90,63 @@ def _remove_paths(data: Any, paths: set, prefix: str = "") -> Any:
 # ============================================================================
 # SESSION-SCOPED PIPELINE RUNS (shared across test_golden_baseline +
 # test_minimum_suite — avoids duplicate 18s pipeline invocations)
+#
+# All 3 runs launch concurrently via ThreadPoolExecutor (~19s instead of ~57s).
+# Each is an independent subprocess writing to its own temp dir; production_data/
+# is read-only shared input.
 # ============================================================================
 
 @pytest.fixture(scope="session")
-def pipeline_run_main(tmp_path_factory):
-    """Single shared pipeline run at 2026-01-20.
+def _parallel_pipeline_runs(tmp_path_factory):
+    """Run all 3 pipeline variants concurrently (~19s instead of ~57s)."""
+    from concurrent.futures import ThreadPoolExecutor
 
-    Used by both test_golden_baseline.py and test_minimum_suite.py for
-    all read-only smoke / schema / edge-case / baseline tests.
-    """
-    tmpdir = tmp_path_factory.mktemp("pipeline_main")
-    output_path = tmpdir / "output.json"
-    success, stdout, stderr = _run_pipeline(PIPELINE_MAIN_DATE, output_path)
-    assert success, f"Pipeline main run failed:\n{stderr}"
-    with open(output_path) as f:
-        data = json.load(f)
-    return {
-        "success": success,
-        "stdout": stdout,
-        "stderr": stderr,
-        "output_path": output_path,
-        "data": data,
+    # Pre-create temp dirs on main thread (tmp_path_factory may not be thread-safe)
+    dirs = {
+        "main": tmp_path_factory.mktemp("pipeline_main"),
+        "determinism": tmp_path_factory.mktemp("pipeline_det"),
+        "historical": tmp_path_factory.mktemp("pipeline_hist"),
     }
+
+    def _run_one(name, as_of_date):
+        output_path = dirs[name] / "output.json"
+        success, stdout, stderr = _run_pipeline(as_of_date, output_path)
+        assert success, f"Pipeline {name} run failed:\n{stderr}"
+        with open(output_path) as f:
+            data = json.load(f)
+        return {
+            "success": success,
+            "stdout": stdout,
+            "stderr": stderr,
+            "output_path": output_path,
+            "data": data,
+        }
+
+    with ThreadPoolExecutor(max_workers=3) as pool:
+        futures = {
+            "main": pool.submit(_run_one, "main", PIPELINE_MAIN_DATE),
+            "determinism": pool.submit(_run_one, "determinism", PIPELINE_MAIN_DATE),
+            "historical": pool.submit(_run_one, "historical", PIPELINE_HISTORICAL_DATE),
+        }
+        return {k: f.result() for k, f in futures.items()}
 
 
 @pytest.fixture(scope="session")
-def pipeline_run_determinism(tmp_path_factory):
-    """Second independent pipeline run at 2026-01-20 for determinism checks.
-
-    Compared against pipeline_run_main to verify identical outputs.
-    """
-    tmpdir = tmp_path_factory.mktemp("pipeline_det")
-    output_path = tmpdir / "output.json"
-    success, stdout, stderr = _run_pipeline(PIPELINE_MAIN_DATE, output_path)
-    assert success, f"Pipeline determinism run failed:\n{stderr}"
-    with open(output_path) as f:
-        data = json.load(f)
-    return {
-        "success": success,
-        "stdout": stdout,
-        "stderr": stderr,
-        "output_path": output_path,
-        "data": data,
-    }
+def pipeline_run_main(_parallel_pipeline_runs):
+    """Shared pipeline run at 2026-01-20 (from parallel batch)."""
+    return _parallel_pipeline_runs["main"]
 
 
 @pytest.fixture(scope="session")
-def pipeline_run_historical(tmp_path_factory):
+def pipeline_run_determinism(_parallel_pipeline_runs):
+    """Second independent run at 2026-01-20 for determinism checks."""
+    return _parallel_pipeline_runs["determinism"]
+
+
+@pytest.fixture(scope="session")
+def pipeline_run_historical(_parallel_pipeline_runs):
     """Pipeline run at 2026-01-15 for PIT discipline tests."""
-    tmpdir = tmp_path_factory.mktemp("pipeline_hist")
-    output_path = tmpdir / "output.json"
-    success, stdout, stderr = _run_pipeline(PIPELINE_HISTORICAL_DATE, output_path)
-    assert success, f"Pipeline historical run failed:\n{stderr}"
-    with open(output_path) as f:
-        data = json.load(f)
-    return {
-        "success": success,
-        "stdout": stdout,
-        "stderr": stderr,
-        "output_path": output_path,
-        "data": data,
-    }
+    return _parallel_pipeline_runs["historical"]
 
 
 # ============================================================================

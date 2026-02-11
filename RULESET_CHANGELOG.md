@@ -6,6 +6,32 @@ Format: `[engine_version] ruleset_id — date — summary`
 
 ---
 
+## [v1.3.0] 18d44abd — 2026-02-11 — Add cost-aware sizing (L3-only, opt-in)
+
+**Parameters added** (vs 5a9faad9):
+- `enable_cost_haircut`: False (opt-in flag, no behavior change when disabled)
+- `cost_haircut_buckets`: ((50, 1.0), (100, 0.85), (150, 0.70))
+- `cost_haircut_floor_mult`: 0.55
+
+**Behavior changes**:
+- **None when disabled** (default). All existing outputs are identical.
+- When `enable_cost_haircut=True` and `est_cost_bps` is provided:
+  - Trading cost is mapped to a multiplier via bucket thresholds (1.0/0.85/0.70/0.55)
+  - Multiplier scales raw weight before normalization in `compute_target_weights()`
+  - Heavy haircut (mult <= 0.70) also triggers a one-step band downgrade
+  - New output fields: `cost_mult`, `cost_bucket`, `cost_haircut_applied`
+
+**Rationale**: High-cost / illiquid names should carry less weight to reflect
+implementation friction. Opt-in flag ensures zero impact until calibrated and
+deliberately enabled. Affects L3 sizing only — no eligibility or tier changes.
+
+**Governance**: 20 new unit tests (`test_cost_aware_sizing.py`), pinned regression
+green (bands/weights/tickers unchanged), contract/replay tests green.
+
+**Files**: `v1.2.1_candidate.json` (active, schema-expanded)
+
+---
+
 ## [v1.3.0] c88bd4cc — 2026-02-10 — Regime-aware drawdown gate (XBI-relative AND logic)
 
 **Parameters changed** (vs 181346fe):
