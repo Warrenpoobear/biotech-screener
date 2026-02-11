@@ -1,0 +1,92 @@
+========================================================================
+STRATEGY-LEVEL DECISION ENGINE BACKTEST
+========================================================================
+Generated: 2026-02-11T13:53:31
+
+1. CONFIGURATION
+----------------------------------------
+  Ruleset ID:    c88bd4cc
+  Tier filter:   ['A', 'B']
+  Top-K:         20
+  Horizons:      [20, 60]
+  Archives used: 10
+  Date range:    2025-01-31 to 2025-10-31
+  Avg positions: 16.3
+  Unique tickers: 36
+
+2. HEADLINE RESULTS (mean across snapshots, %)
+----------------------------------------
+  Portfolio                 resid_20d    resid_60d  hit_60d
+  ---------------------- ------------ ------------ --------
+  Strategy (weighted)           +8.07       +22.56      n/a
+  Strategy (EW)                 +7.91       +21.68      n/a
+  Baseline top-K (EW)           +0.34        +1.23      n/a
+  Baseline universe(EW)         +5.18       +13.46      n/a
+
+  Spread vs baseline (strategy weighted resid - baseline EW resid):
+    20d: vs top-K=+7.73%, vs universe=+2.89%
+    60d: vs top-K=+21.33%, vs universe=+9.10%
+
+  Winsorized means (5% each tail):
+    Strategy (weighted)           +8.07       +22.56
+    Baseline top-K (EW)           +0.34        +1.23
+
+3. REGIME SPLIT
+----------------------------------------
+  RISK_OFF (n=5):
+    20d: strategy=+2.97%, baseline_topk=-2.44%
+    60d: strategy=+18.94%, baseline_topk=+0.36%
+  RISK_ON (n=5):
+    20d: strategy=+13.17%, baseline_topk=+3.11%
+    60d: strategy=+26.17%, baseline_topk=+2.10%
+
+4. TURNOVER
+----------------------------------------
+  Mean position turnover: 27.8%
+  Mean weight turnover:   23.9%
+
+5. MOST FREQUENT POSITIONS
+----------------------------------------
+  Ticker    Appearances  % of snapshots
+  -------- ------------ ---------------
+  MRUS               10          100.0%
+  DNTH               10          100.0%
+  ABEO               10          100.0%
+  PVLA               10          100.0%
+  AKRO               10          100.0%
+  TENX                9           90.0%
+  MLTX                8           80.0%
+  ELDN                7           70.0%
+  LQDA                7           70.0%
+  VRDN                6           60.0%
+  ZVRA                6           60.0%
+  BLTE                6           60.0%
+  CDTX                6           60.0%
+  INBX                5           50.0%
+  XENE                5           50.0%
+
+6. PER-DATE SUMMARY
+----------------------------------------
+  Date         Regime      N  Strat_60d   TopK_60d   Spread    PTO
+  ------------ --------- --- ---------- ---------- -------- ------
+  2025-01-31   RISK_OFF   18      +4.22      -7.45   +11.67    n/a
+  2025-02-28   RISK_OFF   18      +5.53      -6.77   +12.30  28.6%
+  2025-03-31   RISK_OFF   18     +12.69      +6.59    +6.09  43.5%
+  2025-04-30   RISK_OFF   12     +39.64      +5.44   +34.20  50.0%
+  2025-05-30   RISK_OFF   14     +32.62      +3.99   +28.63  14.3%
+  2025-06-30   RISK_ON    14     +49.83      +5.33   +44.50  25.0%
+  2025-07-31   RISK_ON    15      +7.74      -0.00    +7.74  18.8%
+  2025-08-29   RISK_ON    19     +29.25      +8.17   +21.09  38.1%
+  2025-09-30   RISK_ON    16     +33.30      -0.74   +34.04  15.8%
+  2025-10-31   RISK_ON    19     +10.74      -2.25   +12.99  15.8%
+
+7. CAVEATS
+----------------------------------------
+  - Forward returns use Morningstar+CSV fallback (price return, no dividends).
+  - Residual returns subtract beta*XBI to isolate alpha.
+  - Strategy uses size-band weighting; baselines use equal weight.
+  - Small sample sizes: interpret spreads directionally, not as precise estimates.
+  - Turnover assumes monthly rebalance frequency (archive cadence).
+  - No transaction costs, slippage, or capacity constraints modeled.
+
+========================================================================
