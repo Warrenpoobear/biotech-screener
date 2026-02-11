@@ -6,6 +6,31 @@ Format: `[engine_version] ruleset_id — date — summary`
 
 ---
 
+## [v1.3.0] 34bb662d — 2026-02-11 — Recalibrate cost haircut buckets for biotech
+
+**Parameters changed** (vs 9bc38c2d):
+- `cost_haircut_buckets`: ((50, 1.0), (100, 0.85), (150, 0.70)) → ((400, 1.0), (1000, 0.85), (2000, 0.70))
+
+**Behavior changes**:
+- **None when disabled** (default). All existing outputs are identical.
+- When `enable_cost_haircut=True`, buckets now produce meaningful differentiation
+  across the biotech cost distribution (P30/P70/P90 percentile breaks on round-trip bps).
+- Old thresholds (50/100/150 bps) placed 100% of biotech positions at the floor
+  multiplier (0.55x), making the haircut a uniform no-op after weight normalization.
+
+**Rationale**: Wired backtest with `cost_impact_cap_bps=2000` showed all 183 portfolio
+positions have round-trip costs ≥178 bps (median 514, max 4036). Old large-cap equity
+thresholds provided zero differentiation. New breaks at 400/1000/2000 bps create
+~30%/40%/20%/10% bucket distribution matching the actual biotech cost curve.
+
+**Governance**: 5 tests updated in `test_cost_aware_sizing.py` (bucket labels + cost
+values), all pinned IDs cascaded. Contract fingerprint unchanged (cost haircut disabled
+by default). 6465 tests green.
+
+**Files**: `decision_engine.py` (default parameter), all ID-pinned files cascaded
+
+---
+
 ## [v1.3.0] 9bc38c2d — 2026-02-11 — Add cost_impact_cap_bps + cost telemetry
 
 **Parameters added** (vs 18d44abd):

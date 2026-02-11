@@ -77,33 +77,33 @@ class TestComputeCostMult:
         assert bucket == ""
 
     def test_low_cost_no_haircut(self):
-        """Cost <= 50 bps → multiplier 1.0."""
-        mult, bucket = _compute_cost_mult(30.0, ENABLED_RS)
+        """Cost <= 400 bps → multiplier 1.0."""
+        mult, bucket = _compute_cost_mult(200.0, ENABLED_RS)
         assert mult == 1.0
-        assert bucket == "<=50bps"
+        assert bucket == "<=400bps"
 
-    def test_boundary_50(self):
-        """Cost exactly at 50 bps → first bucket (1.0)."""
-        mult, _ = _compute_cost_mult(50.0, ENABLED_RS)
+    def test_boundary_400(self):
+        """Cost exactly at 400 bps → first bucket (1.0)."""
+        mult, _ = _compute_cost_mult(400.0, ENABLED_RS)
         assert mult == 1.0
 
     def test_moderate_cost_haircut(self):
-        """Cost 50-100 bps → 0.85 multiplier."""
-        mult, bucket = _compute_cost_mult(75.0, ENABLED_RS)
+        """Cost 400-1000 bps → 0.85 multiplier."""
+        mult, bucket = _compute_cost_mult(700.0, ENABLED_RS)
         assert mult == 0.85
-        assert bucket == "<=100bps"
+        assert bucket == "<=1000bps"
 
     def test_high_cost_haircut(self):
-        """Cost 100-150 bps → 0.70 multiplier."""
-        mult, bucket = _compute_cost_mult(125.0, ENABLED_RS)
+        """Cost 1000-2000 bps → 0.70 multiplier."""
+        mult, bucket = _compute_cost_mult(1500.0, ENABLED_RS)
         assert mult == 0.70
-        assert bucket == "<=150bps"
+        assert bucket == "<=2000bps"
 
     def test_very_high_cost_floor(self):
-        """Cost > 150 bps → floor multiplier 0.55."""
-        mult, bucket = _compute_cost_mult(300.0, ENABLED_RS)
+        """Cost > 2000 bps → floor multiplier 0.55."""
+        mult, bucket = _compute_cost_mult(3000.0, ENABLED_RS)
         assert mult == 0.55
-        assert bucket == ">150bps"
+        assert bucket == ">2000bps"
 
     def test_zero_cost(self):
         """Cost = 0 bps → first bucket (1.0)."""
@@ -145,18 +145,18 @@ class TestBandStepDown:
         band, reasons = _compute_size_band(
             eligible=True, tier_dev="B", optionality=0.50,
             overlays={}, ruleset=ENABLED_RS,
-            cost_mult=0.85, cost_bucket="<=100bps",
+            cost_mult=0.85, cost_bucket="<=1000bps",
         )
-        assert "cost_haircut_<=100bps" not in reasons
+        assert "cost_haircut_<=1000bps" not in reasons
 
     def test_step_down_at_070(self):
         """cost_mult=0.70 triggers band step-down."""
         band, reasons = _compute_size_band(
             eligible=True, tier_dev="B", optionality=0.50,
             overlays={}, ruleset=ENABLED_RS,
-            cost_mult=0.70, cost_bucket="<=150bps",
+            cost_mult=0.70, cost_bucket="<=2000bps",
         )
-        assert "cost_haircut_<=150bps" in reasons
+        assert "cost_haircut_<=2000bps" in reasons
         # Baseline without cost is M (idx=2); step-down → S (idx=1)
         assert band == "S"
 
@@ -165,9 +165,9 @@ class TestBandStepDown:
         band, reasons = _compute_size_band(
             eligible=True, tier_dev="B", optionality=0.50,
             overlays={}, ruleset=ENABLED_RS,
-            cost_mult=0.55, cost_bucket=">150bps",
+            cost_mult=0.55, cost_bucket=">2000bps",
         )
-        assert "cost_haircut_>150bps" in reasons
+        assert "cost_haircut_>2000bps" in reasons
 
     def test_band_clamps_at_xs(self):
         """Band step-down can't go below XS."""
@@ -176,7 +176,7 @@ class TestBandStepDown:
             eligible=True, tier_dev="C", optionality=0.10,
             overlays={"mom_state": "headwind", "runway_bucket": "critical"},
             ruleset=ENABLED_RS,
-            cost_mult=0.55, cost_bucket=">150bps",
+            cost_mult=0.55, cost_bucket=">2000bps",
         )
         assert band == "XS"
 
@@ -238,8 +238,8 @@ class TestOutputSchema:
         """When enabled + high cost, fields reflect the haircut."""
         rec = _minimal_rec()
         fields = compute_decision_fields(
-            rec, "drug_developer", 0.50, ENABLED_RS, est_cost_bps=125.0
+            rec, "drug_developer", 0.50, ENABLED_RS, est_cost_bps=1500.0
         )
         assert fields["cost_mult"] == 0.70
-        assert fields["cost_bucket"] == "<=150bps"
+        assert fields["cost_bucket"] == "<=2000bps"
         assert fields["cost_haircut_applied"] == "1"
