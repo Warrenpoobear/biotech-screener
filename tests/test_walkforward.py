@@ -208,6 +208,8 @@ class TestPanelSchema:
             "tier_reason", "risk_flags", "catalyst_mode", "catalyst_strength", "mom_state",
             "optionality", "catalyst_days_raw", "ruleset_id",
             "drawdown_abs", "drawdown_xbi", "drawdown_rel_xbi",
+            "dd_abs_margin", "dd_rel_margin", "rescued_by_rel",
+            "optionality_margin_a", "actionable_catalyst",
             "fwd_ret_20d", "fwd_ret_60d", "fwd_max_dd_20d", "fwd_max_dd_60d",
             "fwd_dd_missing_reason",
             "adv_dollars", "est_cost_bps", "participation_pct",
@@ -244,6 +246,8 @@ class TestPanelSchema:
             "risk_flags", "catalyst_mode", "catalyst_strength", "catalyst_days", "mom_state",
             "optionality",
             "drawdown_abs", "drawdown_xbi", "drawdown_rel_xbi",
+            "dd_abs_margin", "dd_rel_margin", "rescued_by_rel",
+            "optionality_margin_a", "actionable_catalyst",
         }
         for r in results:
             assert set(r.keys()) == expected_keys

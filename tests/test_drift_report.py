@@ -21,6 +21,7 @@ from run_drift_report import (
     _compute_gate_counts,
     _compute_strength_counts,
     _compute_strength_transitions,
+    _compute_margin_summary,
     _parse_pipe_separated,
     compute_attribution,
     compute_drift_metrics,
@@ -1133,3 +1134,77 @@ class TestCostGuardrail:
         )
         assert status == "OK"
         assert not any("cost" in r.lower() for r in reasons)
+
+
+# ============================================================================
+# TestGatePressure — _compute_margin_summary pressure metrics
+# ============================================================================
+class TestGatePressure:
+    """Tests for gate pressure metrics in _compute_margin_summary."""
+
+    def _make_dev_df(self, rows):
+        """Build a dev DataFrame from list of dicts."""
+        return pd.DataFrame(rows)
+
+    def test_near_gate_count(self):
+        """Tickers at ±0.05 are counted as near-gate."""
+        rows = [
+            {"dd_abs_margin": 0.25, "dd_rel_margin": 0.10, "optionality_margin_a": 0.20,
+             "rescued_by_rel": "0", "eligible": "1"},
+            {"dd_abs_margin": 0.03, "dd_rel_margin": -0.04, "optionality_margin_a": -0.03,
+             "rescued_by_rel": "0", "eligible": "1"},
+            {"dd_abs_margin": -0.02, "dd_rel_margin": 0.15, "optionality_margin_a": 0.05,
+             "rescued_by_rel": "1", "eligible": "1"},
+            {"dd_abs_margin": -0.10, "dd_rel_margin": -0.20, "optionality_margin_a": -0.15,
+             "rescued_by_rel": "0", "eligible": "1"},
+        ]
+        result = _compute_margin_summary(self._make_dev_df(rows))
+        # dd_abs: 2 of 4 near (0.03, -0.02)
+        assert result["dd_abs_near_gate_pct"] == 50.0
+        # dd_rel: 1 of 4 near (-0.04)
+        assert result["dd_rel_near_gate_pct"] == 25.0
+        # opt_a: 2 of 4 near (-0.03, 0.05)
+        assert result["optionality_near_a_floor_pct"] == 50.0
+
+    def test_rescued_share(self):
+        """rescued_share_pct = rescued / eligible."""
+        rows = [
+            {"rescued_by_rel": "1", "eligible": "1"},
+            {"rescued_by_rel": "0", "eligible": "1"},
+            {"rescued_by_rel": "0", "eligible": "1"},
+            {"rescued_by_rel": "0", "eligible": "0"},
+        ]
+        result = _compute_margin_summary(self._make_dev_df(rows))
+        # 1 rescued / 3 eligible = 33.3%
+        assert result["rescued_share_pct"] == pytest.approx(33.3, abs=0.1)
+
+    def test_no_margin_columns_returns_none(self):
+        """Missing margin columns → all pressure metrics are None."""
+        rows = [{"ticker": "AAA", "eligible": "1"}]
+        result = _compute_margin_summary(self._make_dev_df(rows))
+        assert result["dd_abs_near_gate_pct"] is None
+        assert result["dd_rel_near_gate_pct"] is None
+        assert result["optionality_near_a_floor_pct"] is None
+
+    def test_no_eligible_returns_zero(self):
+        """No eligible tickers → rescued_share_pct = 0."""
+        rows = [
+            {"rescued_by_rel": "0", "eligible": "0",
+             "dd_abs_margin": 0.01, "dd_rel_margin": 0.01, "optionality_margin_a": 0.01},
+        ]
+        result = _compute_margin_summary(self._make_dev_df(rows))
+        assert result["rescued_share_pct"] == 0.0
+
+    def test_snapshot_metrics_include_pressure(self):
+        """compute_snapshot_metrics passes through pressure metrics."""
+        r = _make_rankings(n_dev=10, include_attribution_cols=True)
+        # Add margin columns
+        r["dd_abs_margin"] = [0.03, -0.02, 0.20, 0.30, -0.01, 0.25, 0.15, -0.04, 0.10, 0.05]
+        r["dd_rel_margin"] = [0.10] * 10
+        r["optionality_margin_a"] = [0.02] * 10
+        r["rescued_by_rel"] = ["0"] * 10
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_snapshot_metrics(snap)
+        assert "dd_abs_near_gate_pct" in metrics
+        assert metrics["dd_abs_near_gate_pct"] is not None
+        assert "rescued_share_pct" in metrics

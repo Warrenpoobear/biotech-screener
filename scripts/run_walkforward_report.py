@@ -272,6 +272,143 @@ def compute_eligible_comparison(
     return result
 
 
+def compute_rescued_outcomes(
+    panel_rows: List[Dict[str, Any]],
+    return_col: str = "fwd_ret_60d",
+    dd_col: str = "fwd_max_dd_60d",
+) -> Dict[str, Any]:
+    """Compare rescued-by-relative-gate tickers vs clean eligible tickers.
+
+    Rescued: eligible AND rescued_by_rel=="1" (abs drawdown breached, rel passed).
+    Clean: eligible AND dd_abs_margin >= 0 (never at drawdown risk).
+
+    Returns per-group: count, mean_ret, median_ret, hit_rate, mean_max_dd, spread.
+    """
+    # Check if margin columns exist
+    has_margins = any(row.get("rescued_by_rel") not in (None, "") for row in panel_rows[:10])
+    if not has_margins:
+        return {"rescued_count": 0, "clean_count": 0, "spread_pp": None}
+
+    rescued_rets: List[float] = []
+    rescued_dds: List[float] = []
+    clean_rets: List[float] = []
+    clean_dds: List[float] = []
+
+    for row in panel_rows:
+        if str(row.get("eligible", "0")) != "1":
+            continue
+        v = row.get(return_col)
+        if v == "" or v is None:
+            continue
+        try:
+            ret = float(v)
+        except (ValueError, TypeError):
+            continue
+
+        dd_v = row.get(dd_col)
+        dd_val = None
+        if dd_v not in ("", None):
+            try:
+                dd_val = float(dd_v)
+            except (ValueError, TypeError):
+                pass
+
+        is_rescued = str(row.get("rescued_by_rel", "0")) == "1"
+        if is_rescued:
+            rescued_rets.append(ret)
+            if dd_val is not None:
+                rescued_dds.append(dd_val)
+        else:
+            # Clean = dd_abs_margin >= 0 (safe from abs drawdown)
+            margin_raw = row.get("dd_abs_margin", "")
+            if margin_raw != "" and margin_raw is not None:
+                try:
+                    margin = float(margin_raw)
+                except (ValueError, TypeError):
+                    margin = None
+                if margin is not None and margin >= 0:
+                    clean_rets.append(ret)
+                    if dd_val is not None:
+                        clean_dds.append(dd_val)
+
+    result: Dict[str, Any] = {}
+
+    for label, rets, dds in [
+        ("rescued", rescued_rets, rescued_dds),
+        ("clean", clean_rets, clean_dds),
+    ]:
+        result[f"{label}_count"] = len(rets)
+        if rets:
+            result[f"{label}_mean_ret"] = round(mean(rets), 2)
+            result[f"{label}_median_ret"] = round(median(rets), 2)
+            result[f"{label}_hit_rate"] = round(
+                sum(1 for r in rets if r > 0) / len(rets) * 100, 1
+            )
+        else:
+            result[f"{label}_mean_ret"] = None
+            result[f"{label}_median_ret"] = None
+            result[f"{label}_hit_rate"] = None
+        if dds:
+            result[f"{label}_mean_max_dd"] = round(mean(dds), 2)
+        else:
+            result[f"{label}_mean_max_dd"] = None
+
+    # Spread
+    r_med = result.get("rescued_median_ret")
+    c_med = result.get("clean_median_ret")
+    if r_med is not None and c_med is not None:
+        result["spread_pp"] = round(r_med - c_med, 2)
+    else:
+        result["spread_pp"] = None
+
+    return result
+
+
+def compute_gate_pressure(
+    panel_rows: List[Dict[str, Any]],
+) -> Dict[str, Any]:
+    """Compute gate pressure: share of dev tickers within ±5pp of each threshold.
+
+    Metrics (computed among all rows with valid margin values):
+    - dd_abs_near_gate_pct: share with dd_abs_margin in [-0.05, +0.05]
+    - dd_rel_near_gate_pct: share with dd_rel_margin in [-0.05, +0.05]
+    - optionality_near_a_floor_pct: share with optionality_margin_a in [-0.05, +0.05]
+    - rescued_share_pct: rescued_count / eligible_count
+    """
+    result: Dict[str, Any] = {}
+
+    for col, key in [
+        ("dd_abs_margin", "dd_abs_near_gate_pct"),
+        ("dd_rel_margin", "dd_rel_near_gate_pct"),
+        ("optionality_margin_a", "optionality_near_a_floor_pct"),
+    ]:
+        n_near = 0
+        n_valid = 0
+        for row in panel_rows:
+            raw = row.get(col, "")
+            if raw in ("", None):
+                continue
+            try:
+                v = float(raw)
+            except (ValueError, TypeError):
+                continue
+            n_valid += 1
+            if -0.05 <= v <= 0.05:
+                n_near += 1
+        result[key] = round(n_near / n_valid * 100, 1) if n_valid > 0 else None
+
+    # rescued_share_pct = rescued / eligible
+    n_rescued = sum(1 for r in panel_rows if str(r.get("rescued_by_rel", "0")) == "1")
+    n_eligible = sum(1 for r in panel_rows if str(r.get("eligible", "0")) == "1")
+    result["rescued_share_pct"] = (
+        round(n_rescued / n_eligible * 100, 1) if n_eligible > 0 else 0.0
+    )
+    result["rescued_count"] = n_rescued
+    result["eligible_count"] = n_eligible
+
+    return result
+
+
 def compute_stability_metrics(
     panel_rows: List[Dict[str, Any]],
     top_n: int = 25,
@@ -422,6 +559,8 @@ def generate_walkforward_report_md(
     strength_dist: Optional[List[Dict[str, Any]]] = None,
     tier_sep_net: Optional[List[Dict[str, Any]]] = None,
     cost_summary: Optional[Dict[str, Any]] = None,
+    rescued_outcomes: Optional[Dict[str, Any]] = None,
+    gate_pressure: Optional[Dict[str, Any]] = None,
 ) -> str:
     """Generate the markdown report string."""
     lines: List[str] = []
@@ -534,6 +673,64 @@ def generate_walkforward_report_md(
         hr_s = f"{hr:.1f}" if hr is not None else "n/a"
         lines.append(f"| {group.capitalize()} | {n} | {m_s} | {md_s} | {hr_s} |")
     lines.append("")
+
+    # Rescued by Relative Gate
+    if rescued_outcomes and rescued_outcomes.get("rescued_count", 0) > 0:
+        lines.append("## Rescued by Relative Gate (60d)")
+        lines.append("")
+        lines.append(
+            "Tickers where abs drawdown breached but XBI-relative did not. "
+            "Survived via AND gate (require_both=True)."
+        )
+        lines.append("")
+        lines.append("| Group | N | Mean % | Median % | Hit Rate % | Mean Max-DD % |")
+        lines.append("|-------|---|--------|----------|------------|---------------|")
+        for grp in ["rescued", "clean"]:
+            n = rescued_outcomes.get(f"{grp}_count", 0)
+            m = rescued_outcomes.get(f"{grp}_mean_ret")
+            md = rescued_outcomes.get(f"{grp}_median_ret")
+            hr = rescued_outcomes.get(f"{grp}_hit_rate")
+            dd = rescued_outcomes.get(f"{grp}_mean_max_dd")
+            m_s = f"{m:+.2f}" if m is not None else "n/a"
+            md_s = f"{md:+.2f}" if md is not None else "n/a"
+            hr_s = f"{hr:.1f}" if hr is not None else "n/a"
+            dd_s = f"{dd:.2f}" if dd is not None else "n/a"
+            label = "Rescued" if grp == "rescued" else "Clean eligible"
+            lines.append(f"| {label} | {n} | {m_s} | {md_s} | {hr_s} | {dd_s} |")
+        spread = rescued_outcomes.get("spread_pp")
+        if spread is not None:
+            lines.append(f"\nSpread (rescued - clean): {spread:+.2f}pp")
+        lines.append("")
+
+    # Gate Pressure
+    if gate_pressure:
+        pressure_rows = [
+            ("DD abs near gate", "dd_abs_near_gate_pct"),
+            ("DD rel near gate", "dd_rel_near_gate_pct"),
+            ("Optionality near A-floor", "optionality_near_a_floor_pct"),
+            ("Rescued share", "rescued_share_pct"),
+        ]
+        has_data = any(
+            gate_pressure.get(k) is not None for _, k in pressure_rows
+        )
+        if has_data:
+            lines.append("## Gate Pressure")
+            lines.append("")
+            lines.append(
+                "Share of dev tickers within +/-5pp of each gate threshold "
+                "(panel-wide aggregate)."
+            )
+            lines.append("")
+            lines.append("| Metric | Value |")
+            lines.append("|--------|-------|")
+            for label, key in pressure_rows:
+                v = gate_pressure.get(key)
+                v_s = f"{v:.1f}%" if isinstance(v, (int, float)) else "n/a"
+                lines.append(f"| {label} | {v_s} |")
+            rc = gate_pressure.get("rescued_count", 0)
+            ec = gate_pressure.get("eligible_count", 0)
+            lines.append(f"\nRescued: {rc} / {ec} eligible")
+            lines.append("")
 
     # Stability
     lines.append("## Stability")
@@ -673,6 +870,8 @@ def main():
     coverage = compute_coverage_summary(panel_rows)
     tier_sep_net = compute_tier_separation(panel_rows, return_col="fwd_ret_60d_net")
     cost_summ = compute_cost_summary(panel_rows)
+    rescued = compute_rescued_outcomes(panel_rows)
+    pressure = compute_gate_pressure(panel_rows)
 
     config = {
         "ruleset_id": ruleset.ruleset_id,
@@ -704,6 +903,8 @@ def main():
         "stability": stability,
         "coverage": coverage,
         "cost_summary": cost_summ,
+        "rescued_by_rel": rescued,
+        "gate_pressure": pressure,
     }
     json_path = output_dir / f"walkforward_report{sfx}.json"
     with open(json_path, "w", encoding="utf-8") as f:
@@ -716,6 +917,8 @@ def main():
         strength_dist=strength_dist,
         tier_sep_net=tier_sep_net,
         cost_summary=cost_summ,
+        rescued_outcomes=rescued,
+        gate_pressure=pressure,
     )
     md_path = output_dir / f"walkforward_report{sfx}.md"
     with open(md_path, "w", encoding="utf-8") as f:

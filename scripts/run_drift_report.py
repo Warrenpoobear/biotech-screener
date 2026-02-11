@@ -67,9 +67,11 @@ class DriftGuardrails:
     fail_overlap_low: float = 50.0     # top-25 overlap vs prior < 50%
     fail_dispersion_low: float = 0.10  # optionality std < 0.10
 
-    # WARN triggers (cost / eligibility)
+    # WARN triggers (cost / eligibility / drawdown coverage)
     warn_median_cost_bps_high: float = 60.0   # median round-trip cost > 60 bps
     warn_eligible_dev_pct_low: float = 10.0   # eligible dev % < 10% → WARN
+    warn_drawdown_rel_coverage_low: float = 80.0  # WARN if XBI relative DD coverage < 80%
+    fail_drawdown_rel_coverage_low: float = 50.0  # FAIL if XBI relative DD coverage < 50%
 
     # Rolling window size
     window_size: int = 5
@@ -224,6 +226,22 @@ def _drawdown_coverage_pct(rankings: pd.DataFrame) -> Optional[float]:
     return round(n_covered / n_dev * 100, 1)
 
 
+def _drawdown_rel_coverage_pct(rankings: pd.DataFrame) -> Optional[float]:
+    """Relative drawdown (vs XBI) coverage % among dev tickers."""
+    dev = rankings[rankings["archetype"] == "drug_developer"]
+    n_dev = len(dev)
+    if n_dev == 0:
+        return None
+    if "de_drawdown_rel_xbi" not in dev.columns:
+        return None
+    n_covered = sum(
+        1
+        for v in dev["de_drawdown_rel_xbi"]
+        if v is not None and str(v).strip() not in ("", "nan")
+    )
+    return round(n_covered / n_dev * 100, 1)
+
+
 def compute_snapshot_metrics(snap: SnapshotData) -> Dict[str, Any]:
     """Compute drift metrics for a single snapshot."""
     rankings = snap.rankings
@@ -259,6 +277,9 @@ def compute_snapshot_metrics(snap: SnapshotData) -> Dict[str, Any]:
     # Drawdown coverage
     metrics["drawdown_coverage_pct"] = _drawdown_coverage_pct(rankings)
 
+    # Relative drawdown (vs XBI) coverage
+    metrics["drawdown_rel_coverage_pct"] = _drawdown_rel_coverage_pct(rankings)
+
     # Catalyst strength distribution (when column exists)
     if "catalyst_strength" in dev.columns:
         n_elig = sum(1 for e in dev["eligible"] if str(e).strip() == "1") if "eligible" in dev.columns else n_dev
@@ -271,6 +292,15 @@ def compute_snapshot_metrics(snap: SnapshotData) -> Dict[str, Any]:
     # Score dispersion
     metrics["optionality_std"] = _optionality_std(rankings)
     metrics["composite_iqr"] = _composite_iqr(rankings)
+
+    # Gate margin metrics (when columns exist)
+    margin_summary = _compute_margin_summary(dev)
+    for key in ("median_dd_abs_margin", "median_dd_rel_margin"):
+        metrics[key] = margin_summary.get(key)
+    metrics["rescued_count"] = margin_summary.get("rescued_count")
+    for key in ("dd_abs_near_gate_pct", "dd_rel_near_gate_pct",
+                "optionality_near_a_floor_pct", "rescued_share_pct"):
+        metrics[key] = margin_summary.get(key)
 
     # Top-25 tickers (for overlap computation)
     metrics["_top25"] = _top_n_tickers(rankings, 25)
@@ -326,8 +356,12 @@ def compute_drift_metrics(
         "tier_A_pct", "tier_B_pct", "tier_C_pct", "tier_D_pct",
         "eligible_pct", "catalyst_missing_pct", "top25_overlap_pct",
         "optionality_std", "composite_iqr", "drawdown_coverage_pct",
+        "drawdown_rel_coverage_pct",
         "catalyst_strength_near_pct", "catalyst_strength_mid_pct",
         "catalyst_strength_far_pct", "catalyst_strength_missing_pct",
+        "median_dd_abs_margin", "median_dd_rel_margin", "rescued_count",
+        "dd_abs_near_gate_pct", "dd_rel_near_gate_pct",
+        "optionality_near_a_floor_pct", "rescued_share_pct",
     ]
     rolling: Dict[str, Dict[str, Any]] = {}
     for key in roll_keys:
@@ -434,6 +468,13 @@ def evaluate_guardrails(
             f"Optionality std = {opt_std:.4f} < {guardrails.fail_dispersion_low} floor"
         )
 
+    dd_rel_cov = current.get("drawdown_rel_coverage_pct")
+    if dd_rel_cov is not None and dd_rel_cov < guardrails.fail_drawdown_rel_coverage_low:
+        reasons.append(
+            f"Relative DD coverage = {dd_rel_cov:.1f}% < "
+            f"{guardrails.fail_drawdown_rel_coverage_low}% floor"
+        )
+
     if reasons:
         rollback = find_rollback_candidate()
         n_fail = len(reasons)
@@ -457,6 +498,14 @@ def evaluate_guardrails(
         warn_reasons.append(
             f"eligible_dev_pct={eligible_pct:.1f}% < "
             f"{guardrails.warn_eligible_dev_pct_low}% floor"
+        )
+
+    if (dd_rel_cov is not None
+            and dd_rel_cov < guardrails.warn_drawdown_rel_coverage_low
+            and dd_rel_cov >= guardrails.fail_drawdown_rel_coverage_low):
+        warn_reasons.append(
+            f"Relative DD coverage = {dd_rel_cov:.1f}% < "
+            f"{guardrails.warn_drawdown_rel_coverage_low}% floor"
         )
 
     if warn_reasons:
@@ -577,6 +626,76 @@ def _compute_strength_counts(dev: pd.DataFrame) -> Dict[str, int]:
         if band in counts:
             counts[band] += 1
     return counts
+
+
+def _compute_margin_summary(dev: pd.DataFrame) -> Dict[str, Any]:
+    """Compute margin statistics among dev tickers.
+
+    Graceful: returns all-None if margin columns are absent (older snapshots).
+    """
+    result: Dict[str, Any] = {}
+
+    for col in ("dd_abs_margin", "dd_rel_margin", "optionality_margin_a"):
+        if col not in dev.columns:
+            result[f"median_{col}"] = None
+            result[f"p10_{col}"] = None
+            continue
+        vals = []
+        for v in dev[col]:
+            fv = _safe_float(v, None)
+            if fv is not None:
+                vals.append(fv)
+        if vals:
+            vals_sorted = sorted(vals)
+            result[f"median_{col}"] = round(statistics.median(vals), 4)
+            # P10 (10th percentile — worst-case margin)
+            idx = max(0, int(len(vals_sorted) * 0.10))
+            result[f"p10_{col}"] = round(vals_sorted[min(idx, len(vals_sorted) - 1)], 4)
+        else:
+            result[f"median_{col}"] = None
+            result[f"p10_{col}"] = None
+
+    # Rescued count
+    if "rescued_by_rel" in dev.columns:
+        result["rescued_count"] = sum(
+            1 for v in dev["rescued_by_rel"]
+            if str(v).strip() == "1"
+        )
+    else:
+        result["rescued_count"] = None
+
+    # --- Gate pressure metrics (share within ±5pp of threshold) ---
+    n_dev = len(dev)
+
+    for col, key in [
+        ("dd_abs_margin", "dd_abs_near_gate_pct"),
+        ("dd_rel_margin", "dd_rel_near_gate_pct"),
+        ("optionality_margin_a", "optionality_near_a_floor_pct"),
+    ]:
+        if col not in dev.columns:
+            result[key] = None
+            continue
+        n_near = 0
+        n_valid = 0
+        for v in dev[col]:
+            fv = _safe_float(v, None)
+            if fv is not None:
+                n_valid += 1
+                if -0.05 <= fv <= 0.05:
+                    n_near += 1
+        result[key] = round(n_near / n_valid * 100, 1) if n_valid > 0 else None
+
+    # rescued_share_pct = rescued / eligible
+    if "eligible" in dev.columns and result.get("rescued_count") is not None:
+        n_elig = sum(1 for e in dev["eligible"] if str(e).strip() == "1")
+        result["rescued_share_pct"] = (
+            round(result["rescued_count"] / n_elig * 100, 1)
+            if n_elig > 0 else 0.0
+        )
+    else:
+        result["rescued_share_pct"] = None
+
+    return result
 
 
 def _compute_strength_transitions(
@@ -705,6 +824,18 @@ def compute_attribution(
     # Portfolio churn
     churn = _compute_churn_details(prior.rankings, current.rankings)
 
+    # Gate margin summary
+    prior_margins = _compute_margin_summary(prior_dev)
+    current_margins = _compute_margin_summary(current_dev)
+    margin_delta: Dict[str, Any] = {}
+    for key in prior_margins:
+        p = prior_margins[key]
+        c = current_margins.get(key)
+        if isinstance(p, (int, float)) and isinstance(c, (int, float)):
+            margin_delta[key] = round(c - p, 4)
+        else:
+            margin_delta[key] = None
+
     return {
         "prior_date": prior.date,
         "current_date": current.date,
@@ -721,6 +852,11 @@ def compute_attribution(
             "improved": improved,
         },
         "portfolio_churn": churn,
+        "margin_summary": {
+            "prior": prior_margins,
+            "current": current_margins,
+            "delta": margin_delta,
+        },
     }
 
 
@@ -777,6 +913,8 @@ def generate_drift_report_md(
          if current.get("catalyst_missing_pct") is not None else "N/A"),
         ("Drawdown coverage (dev)", f"{current.get('drawdown_coverage_pct', 'N/A')}%"
          if current.get("drawdown_coverage_pct") is not None else "N/A"),
+        ("Rel DD coverage (dev)", f"{current.get('drawdown_rel_coverage_pct', 'N/A')}%"
+         if current.get("drawdown_rel_coverage_pct") is not None else "N/A"),
         ("Top-25 overlap (vs prior)", f"{current.get('top25_overlap_pct', 'N/A')}%"
          if current.get("top25_overlap_pct") is not None else "N/A"),
         ("Optionality std", _fmt(current.get("optionality_std"), 2)),
@@ -913,6 +1051,65 @@ def generate_drift_report_md(
                         f"| {a['ticker']} | {a['tier_dev']} | {a['size_band']} | {a['tier_reason']} |"
                     )
                 lines.append("")
+
+        # Gate Margin Shifts
+        ms = attribution.get("margin_summary", {})
+        prior_ms = ms.get("prior", {})
+        current_ms = ms.get("current", {})
+        delta_ms = ms.get("delta", {})
+        # Only show if at least one non-None value exists
+        has_data = any(
+            v is not None
+            for v in list(prior_ms.values()) + list(current_ms.values())
+        )
+        if has_data:
+            lines.append("### Gate Margin Shifts")
+            lines.append("")
+            lines.append("| Metric | Prior | Current | Delta |")
+            lines.append("|--------|-------|---------|-------|")
+            margin_rows = [
+                ("Median dd_abs_margin", "median_dd_abs_margin"),
+                ("P10 dd_abs_margin", "p10_dd_abs_margin"),
+                ("Median dd_rel_margin", "median_dd_rel_margin"),
+                ("Rescued count", "rescued_count"),
+            ]
+            for label, key in margin_rows:
+                p = prior_ms.get(key)
+                c = current_ms.get(key)
+                d = delta_ms.get(key)
+                p_s = f"{p:+.4f}" if isinstance(p, float) else (str(p) if p is not None else "N/A")
+                c_s = f"{c:+.4f}" if isinstance(c, float) else (str(c) if c is not None else "N/A")
+                d_s = f"{d:+.4f}" if isinstance(d, float) else (f"+{d}" if isinstance(d, int) and d > 0 else str(d) if d is not None else "N/A")
+                lines.append(f"| {label} | {p_s} | {c_s} | {d_s} |")
+            lines.append("")
+
+        # Gate Pressure (share within ±5pp of thresholds)
+        pressure_rows = [
+            ("DD abs near gate %", "dd_abs_near_gate_pct"),
+            ("DD rel near gate %", "dd_rel_near_gate_pct"),
+            ("Optionality near A-floor %", "optionality_near_a_floor_pct"),
+            ("Rescued share %", "rescued_share_pct"),
+        ]
+        has_pressure = any(
+            current_ms.get(k) is not None or prior_ms.get(k) is not None
+            for _, k in pressure_rows
+        )
+        if has_pressure:
+            lines.append("### Gate Pressure")
+            lines.append("")
+            lines.append("Share of dev tickers within ±5pp of each gate threshold.")
+            lines.append("")
+            lines.append("| Metric | Prior | Current | Delta |")
+            lines.append("|--------|-------|---------|-------|")
+            for label, key in pressure_rows:
+                p = prior_ms.get(key)
+                c = current_ms.get(key)
+                d = delta_ms.get(key)
+                p_s = f"{p:.1f}%" if isinstance(p, (int, float)) else "N/A"
+                c_s = f"{c:.1f}%" if isinstance(c, (int, float)) else "N/A"
+                d_s = f"{d:+.1f}pp" if isinstance(d, (int, float)) else "N/A"
+                lines.append(f"| {label} | {p_s} | {c_s} | {d_s} |")
+            lines.append("")
 
     # Guardrails
     lines.append(f"## Guardrails: {status}")
