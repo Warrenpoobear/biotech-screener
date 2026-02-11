@@ -122,6 +122,7 @@ from decision_engine import (
     compute_target_weights,
     ACTIONABLE_COLUMNS,
 )
+from backtest.cost_model import CostSchedule, estimate_trade_cost
 
 # Module 3A specific imports
 from event_detector import SimpleMarketCalendar
@@ -1564,6 +1565,7 @@ def save_validation_snapshot(
     decision_mode: str = "observe",
     ruleset: Optional[DecisionRuleset] = None,
     price_history_path: Optional[Path] = None,
+    market_data_by_ticker: Optional[Dict[str, Dict]] = None,
 ) -> Optional[Path]:
     """
     Save a lightweight validation snapshot for future forward-looking backtests.
@@ -1673,6 +1675,15 @@ def save_validation_snapshot(
         if n_hydrated:
             logger.info(f"Hydrated drawdown for {n_hydrated} tickers")
 
+    # Cost-aware sizing: initialize cost schedule when enabled
+    cost_schedule = None
+    rep_weight = 0.0
+    if ruleset and ruleset.enable_cost_haircut and market_data_by_ticker:
+        cost_schedule = CostSchedule(
+            impact_cap_bps=ruleset.cost_impact_cap_bps,
+        )
+        rep_weight = 100.0 / PHASE2_DEFAULT_TOP_K
+
     for row in csv_rows:
         ticker = row.get("ticker", "")
         rec = rec_by_ticker.get(ticker)
@@ -1681,7 +1692,18 @@ def save_validation_snapshot(
         arch = archetypes.get(ticker, "")
         opt = row.get("clinical_optionality_pct_dev")
         opt_float = float(opt) if opt is not None else None
-        decision = compute_decision_fields(rec, arch, opt_float, ruleset=ruleset)
+
+        est_cost_bps = None
+        if cost_schedule is not None:
+            md = market_data_by_ticker.get(ticker, {})
+            adv = (md.get("avg_volume") or 0) * (md.get("price") or 0)
+            if adv > 0:
+                cost_est = estimate_trade_cost(rep_weight, adv, cost_schedule)
+                est_cost_bps = cost_est.round_trip_bps
+
+        decision = compute_decision_fields(
+            rec, arch, opt_float, ruleset=ruleset, est_cost_bps=est_cost_bps,
+        )
         row.update(decision)
 
         # Persist decision engine INPUT fields for archive self-containment.
@@ -5454,6 +5476,22 @@ Module 3 Catalyst Detection:
         # Save validation snapshot for future forward-looking backtests
         if not args.no_snapshot:
             snapshot_dir = args.snapshot_dir or (args.data_dir.parent / "data" / "snapshots")
+
+            # Build market_data lookup for cost-aware sizing in snapshot
+            _mkt_data_for_snapshot = None
+            if de_ruleset and de_ruleset.enable_cost_haircut:
+                _mkt_path = args.data_dir / "market_data.json"
+                if _mkt_path.exists():
+                    try:
+                        _mkt_records = json.loads(_mkt_path.read_text())
+                        _mkt_data_for_snapshot = {
+                            r["ticker"].upper(): r
+                            for r in _mkt_records
+                            if isinstance(r, dict) and "ticker" in r
+                        }
+                    except Exception as e:
+                        logger.warning(f"Could not load market_data for cost sizing: {e}")
+
             snap_result = save_validation_snapshot(
                 snapshot_dir=snapshot_dir,
                 as_of_date=args.as_of_date,
@@ -5462,6 +5500,7 @@ Module 3 Catalyst Detection:
                 decision_mode=args.decision_mode,
                 ruleset=de_ruleset,
                 price_history_path=args.data_dir / "price_history.csv",
+                market_data_by_ticker=_mkt_data_for_snapshot,
             )
             if snap_result:
                 logger.info(f"Snapshot dir:       {snap_result}")
