@@ -6,6 +6,30 @@ Format: `[engine_version] ruleset_id — date — summary`
 
 ---
 
+## [v1.3.0] 9bc38c2d — 2026-02-11 — Add cost_impact_cap_bps + cost telemetry
+
+**Parameters added** (vs 18d44abd):
+- `cost_impact_cap_bps`: 200.0 (governs CostSchedule.impact_cap_bps when cost haircut is enabled)
+
+**Behavior changes**:
+- **None** — default 200.0 matches `DEFAULT_SCHEDULE.impact_cap_bps` exactly.
+- When callers enable cost haircut, they now read `ruleset.cost_impact_cap_bps` to construct
+  the `CostSchedule`, allowing cap tuning without code changes.
+- Strategy backtest emits `cost_telemetry` in details JSON when panel export is active:
+  `cost_coverage_pct`, `cap_binding_pct`, `n_costed`, `n_positions`.
+
+**Rationale**: Backtest revealed cap degeneracy — `impact_cap_bps=200` compresses all biotech
+round-trip costs to ~410 bps with zero differentiation across buckets. Externalizing the cap
+into the ruleset enables future calibration (e.g. 2000 bps) without code changes. Telemetry
+provides programmatic detection of cap-binding and low coverage.
+
+**Governance**: 3 new tests in `test_cost_model.py` (cap dispersion, telemetry basics,
+default cap invariant). All pinned IDs cascaded. Contract fingerprint unchanged.
+
+**Files**: `v1.2.1_candidate.json` (active, schema-expanded)
+
+---
+
 ## [v1.3.0] 18d44abd — 2026-02-11 — Add cost-aware sizing (L3-only, opt-in)
 
 **Parameters added** (vs 5a9faad9):

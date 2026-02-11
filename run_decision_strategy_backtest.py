@@ -39,7 +39,13 @@ from typing import Any, Dict, List, NamedTuple, Optional, Tuple
 PROJECT_ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from backtest.cost_model import estimate_trade_cost
+from backtest.cost_model import (
+    CostEstimate,
+    CostSchedule,
+    DEFAULT_SCHEDULE,
+    compute_cost_telemetry,
+    estimate_trade_cost,
+)
 from decision_engine import (
     DecisionRuleset,
     DEFAULT_RULESET,
@@ -647,13 +653,17 @@ def run_strategy_backtest(
     top_k: int,
     horizons: List[int] = HORIZONS,
     emit_panel: bool = False,
-) -> Tuple[List[SnapshotResult], List[Dict[str, Any]]]:
+) -> Tuple[List[SnapshotResult], List[Dict[str, Any]], Dict[str, Any]]:
     """Run the strategy backtest across all usable archives.
 
-    Returns (results, panel_rows). panel_rows is populated only when emit_panel=True.
+    Returns (results, panel_rows, cost_telemetry). panel_rows is populated only
+    when emit_panel=True. cost_telemetry is populated only when emit_panel=True
+    and aggregates coverage/cap-binding across all snapshots.
     """
     results: List[SnapshotResult] = []
     panel_rows: List[Dict[str, Any]] = []
+    all_cost_estimates: List[CostEstimate] = []
+    total_positions = 0
     prev_strategy: List[Dict[str, Any]] = []
 
     # Compute as-of fence
@@ -707,6 +717,15 @@ def run_strategy_backtest(
             for pos in strategy_positions:
                 weight_map[pos["ticker"]] = pos.get("weight_pct", 0.0)
 
+            # Cost schedule: use ruleset cap when cost haircut is enabled
+            if ruleset.enable_cost_haircut:
+                cost_schedule = CostSchedule(
+                    impact_cap_bps=ruleset.cost_impact_cap_bps,
+                )
+            else:
+                cost_schedule = DEFAULT_SCHEDULE
+            cost_estimates: List[CostEstimate] = []
+
             for dev in all_devs:
                 ticker = dev["ticker"]
                 fwd_20 = mh_returns.raw.get(20, {}).get(ticker)
@@ -731,9 +750,10 @@ def run_strategy_backtest(
                 adv = (md.get("avg_volume") or 0) * (md.get("price") or 0)
                 weight = weight_map.get(ticker, 0.0)
                 if weight > 0 and adv > 0:
-                    cost = estimate_trade_cost(weight, adv)
+                    cost = estimate_trade_cost(weight, adv, cost_schedule)
                     est_cost_bps = cost.round_trip_bps
                     participation = cost.participation_pct
+                    cost_estimates.append(cost)
                 else:
                     est_cost_bps = 0.0
                     participation = 0.0
@@ -783,6 +803,10 @@ def run_strategy_backtest(
                     "fwd_ret_60d_net": fwd_60_net,
                 })
 
+            # Accumulate cost telemetry across snapshots
+            all_cost_estimates.extend(cost_estimates)
+            total_positions += len(strategy_positions)
+
         # Evaluate
         strategy_eval = evaluate_portfolio(
             strategy_positions, mh_returns, horizons
@@ -818,7 +842,20 @@ def run_strategy_backtest(
             turnover=turnover,
         ))
 
-    return results, panel_rows
+    # Compute aggregate cost telemetry
+    if emit_panel and total_positions > 0:
+        cost_sched = (
+            CostSchedule(impact_cap_bps=ruleset.cost_impact_cap_bps)
+            if ruleset.enable_cost_haircut
+            else DEFAULT_SCHEDULE
+        )
+        cost_telem = compute_cost_telemetry(
+            total_positions, all_cost_estimates, cost_sched
+        )
+    else:
+        cost_telem = {}
+
+    return results, panel_rows, cost_telem
 
 
 # =============================================================================
@@ -1390,7 +1427,7 @@ def main():
 
     # Run backtest
     print("\nRunning strategy backtest ...")
-    results, panel_rows = run_strategy_backtest(
+    results, panel_rows, cost_telemetry = run_strategy_backtest(
         archives=archives,
         chained=chained,
         csv_provider=csv_provider,
@@ -1421,6 +1458,8 @@ def main():
     write_summary_csv(results, agg, summary_csv, HORIZONS)
     print(f"  Wrote {summary_csv}")
 
+    if cost_telemetry:
+        config["cost_telemetry"] = cost_telemetry
     write_details_json(results, agg, config, details_json)
     print(f"  Wrote {details_json}")
 

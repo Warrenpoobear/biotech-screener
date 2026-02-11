@@ -9,7 +9,14 @@ import pytest
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from backtest.cost_model import CostEstimate, CostSchedule, DEFAULT_SCHEDULE, estimate_trade_cost
+from backtest.cost_model import (
+    CostEstimate,
+    CostSchedule,
+    DEFAULT_SCHEDULE,
+    compute_cost_telemetry,
+    estimate_trade_cost,
+)
+from decision_engine import DecisionRuleset
 
 
 class TestMonotonic:
@@ -102,3 +109,70 @@ class TestScheduleId:
         s1 = CostSchedule()
         s2 = CostSchedule(impact_coeff=0.20)
         assert s1.schedule_id != s2.schedule_id
+
+
+class TestCapDispersion:
+    """Cap degeneracy: low cap compresses costs, high cap reveals dispersion."""
+
+    def test_high_cap_reveals_dispersion(self):
+        """Two ADVs ($20M vs $500K) at 5% weight with high cap → costs diverge > 100 bps."""
+        high_cap = CostSchedule(impact_cap_bps=2000.0)
+        c_liquid = estimate_trade_cost(5.0, 20_000_000, high_cap)
+        c_illiquid = estimate_trade_cost(5.0, 500_000, high_cap)
+        gap = c_illiquid.round_trip_bps - c_liquid.round_trip_bps
+        assert gap > 100, f"Expected >100 bps gap with high cap, got {gap}"
+
+    def test_low_cap_compresses_costs(self):
+        """Same pair with cap=200 → both hit cap, costs converge."""
+        low_cap = CostSchedule(impact_cap_bps=200.0)
+        c_liquid = estimate_trade_cost(5.0, 20_000_000, low_cap)
+        c_illiquid = estimate_trade_cost(5.0, 500_000, low_cap)
+        # Both should be cap-bound on impact — gap comes only from spread difference
+        # Spread gap: 18 bps ($500K) - 3 bps ($20M) = 15 bps one-way = 30 bps round-trip
+        gap = c_illiquid.round_trip_bps - c_liquid.round_trip_bps
+        assert gap <= 50, f"Expected <=50 bps gap with low cap, got {gap}"
+
+
+class TestCostTelemetry:
+    """Tests for compute_cost_telemetry()."""
+
+    def test_telemetry_basics(self):
+        """Mixed estimates: some cap-binding, some not."""
+        sched = CostSchedule(impact_cap_bps=200.0)
+        estimates = [
+            CostEstimate(spread_bps=5, impact_bps=200.0, one_way_bps=205,
+                         round_trip_bps=410, participation_pct=10.0, adv_dollars=1e6),
+            CostEstimate(spread_bps=3, impact_bps=50.0, one_way_bps=53,
+                         round_trip_bps=106, participation_pct=2.0, adv_dollars=5e6),
+            CostEstimate(spread_bps=10, impact_bps=199.99, one_way_bps=209.99,
+                         round_trip_bps=419.98, participation_pct=8.0, adv_dollars=2e6),
+        ]
+        telem = compute_cost_telemetry(n_positions=20, estimates=estimates, schedule=sched)
+        assert telem["n_costed"] == 3
+        assert telem["n_positions"] == 20
+        assert telem["cost_coverage_pct"] == 15.0  # 3/20 * 100
+        # estimates[0]: 200.0 >= 199.99 → cap-binding
+        # estimates[2]: 199.99 >= 199.99 → cap-binding (within 0.01 tolerance)
+        assert telem["cap_binding_pct"] == pytest.approx(66.7, abs=0.1)  # 2/3
+
+    def test_telemetry_no_estimates(self):
+        """No estimates → coverage 0%, cap_binding 0%."""
+        sched = DEFAULT_SCHEDULE
+        telem = compute_cost_telemetry(n_positions=10, estimates=[], schedule=sched)
+        assert telem["cost_coverage_pct"] == 0.0
+        assert telem["cap_binding_pct"] == 0.0
+        assert telem["n_costed"] == 0
+
+    def test_telemetry_zero_positions(self):
+        """Zero positions → coverage 0%."""
+        sched = DEFAULT_SCHEDULE
+        telem = compute_cost_telemetry(n_positions=0, estimates=[], schedule=sched)
+        assert telem["cost_coverage_pct"] == 0.0
+
+
+class TestDefaultCapInvariant:
+    """DecisionRuleset default cap must match DEFAULT_SCHEDULE cap."""
+
+    def test_default_cap_matches_schedule(self):
+        """cost_impact_cap_bps default == DEFAULT_SCHEDULE.impact_cap_bps."""
+        assert DecisionRuleset().cost_impact_cap_bps == DEFAULT_SCHEDULE.impact_cap_bps

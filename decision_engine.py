@@ -73,6 +73,7 @@ class DecisionRuleset:
     enable_cost_haircut: bool = False
     cost_haircut_buckets: tuple = ((50, 1.0), (100, 0.85), (150, 0.70))
     cost_haircut_floor_mult: float = 0.55
+    cost_impact_cap_bps: float = 200.0
 
     @property
     def sizing_weights_dict(self) -> Dict[str, float]:

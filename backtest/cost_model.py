@@ -16,7 +16,7 @@ from __future__ import annotations
 import hashlib
 import math
 from dataclasses import dataclass, fields as dc_fields
-from typing import Tuple
+from typing import Dict, List, Tuple
 
 
 @dataclass(frozen=True)
@@ -124,3 +124,37 @@ def estimate_trade_cost(
         participation_pct=round(participation * 100, 4),
         adv_dollars=adv_dollars,
     )
+
+
+def compute_cost_telemetry(
+    n_positions: int,
+    estimates: List[CostEstimate],
+    schedule: CostSchedule,
+) -> Dict[str, float]:
+    """Compute coverage and cap-binding diagnostics for cost estimates.
+
+    Parameters
+    ----------
+    n_positions : int
+        Total portfolio positions (including those without cost estimates).
+    estimates : list of CostEstimate
+        Cost estimates for positions that have ADV data.
+    schedule : CostSchedule
+        The schedule used, for cap-binding detection.
+
+    Returns
+    -------
+    dict with keys: cost_coverage_pct, cap_binding_pct, n_costed, n_positions.
+    """
+    n_costed = len(estimates)
+    coverage = n_costed / n_positions * 100 if n_positions > 0 else 0.0
+    cap_binding = sum(
+        1 for e in estimates if e.impact_bps >= schedule.impact_cap_bps - 0.01
+    )
+    cap_pct = cap_binding / n_costed * 100 if n_costed > 0 else 0.0
+    return {
+        "cost_coverage_pct": round(coverage, 1),
+        "cap_binding_pct": round(cap_pct, 1),
+        "n_costed": n_costed,
+        "n_positions": n_positions,
+    }

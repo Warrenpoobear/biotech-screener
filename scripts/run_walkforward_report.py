@@ -835,7 +835,7 @@ def main():
 
     # Run strategy backtest with panel emission
     print("Running walk-forward backtest with panel emission ...")
-    results, panel_rows = run_strategy_backtest(
+    results, panel_rows, _cost_telem = run_strategy_backtest(
         archives=archives,
         chained=chained,
         csv_provider=csv_provider,
