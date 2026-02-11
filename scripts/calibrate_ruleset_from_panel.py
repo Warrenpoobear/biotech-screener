@@ -67,7 +67,8 @@ def read_panel(path: Path) -> List[Dict[str, Any]]:
             # Parse numeric fields
             for col in ("optionality", "catalyst_days_raw",
                         "fwd_ret_20d", "fwd_ret_60d",
-                        "fwd_max_dd_20d", "fwd_max_dd_60d", "weight"):
+                        "fwd_max_dd_20d", "fwd_max_dd_60d", "weight",
+                        "drawdown_abs", "drawdown_xbi", "drawdown_rel_xbi"):
                 v = row.get(col, "")
                 if v == "" or v is None:
                     row[col] = None
@@ -138,6 +139,9 @@ def retier_row(
     b_floor: float,
     catalyst_near_days: int,
     catalyst_mid_days: int = 180,
+    drawdown_gate: Optional[float] = None,
+    drawdown_rel_xbi_gate: Optional[float] = None,
+    drawdown_gate_require_both: bool = True,
 ) -> str:
     """Re-compute tier for a panel row under a candidate a_floor.
 
@@ -147,8 +151,33 @@ def retier_row(
     catalyst_mid_days: upper bound of MID strength band (default 180).
     A-tier requires actionable catalyst (near or mid). FAR treated same
     as MISSING for tier gating.
+
+    When drawdown_gate is provided, re-evaluates eligibility using
+    drawdown_abs and drawdown_rel_xbi columns from the panel.
     """
-    if str(row.get("eligible", "0")) != "1":
+    eligible = str(row.get("eligible", "0")) == "1"
+
+    # Re-evaluate drawdown eligibility when thresholds are provided
+    if drawdown_gate is not None and eligible:
+        dd_abs = row.get("drawdown_abs")
+        dd_rel = row.get("drawdown_rel_xbi")
+
+        abs_breach = dd_abs is not None and dd_abs < drawdown_gate
+        rel_breach = (drawdown_rel_xbi_gate is not None
+                      and dd_rel is not None and dd_rel < drawdown_rel_xbi_gate)
+
+        if dd_rel is None or drawdown_rel_xbi_gate is None:
+            # No relative data — absolute-only
+            if abs_breach:
+                eligible = False
+        elif drawdown_gate_require_both:
+            if abs_breach and rel_breach:
+                eligible = False
+        else:
+            if abs_breach or rel_breach:
+                eligible = False
+
+    if not eligible:
         return "D"
 
     opt = row.get("optionality")
@@ -205,12 +234,18 @@ def evaluate_candidate(
     b_floor: float,
     catalyst_near_days: int,
     catalyst_mid_days: int = 180,
+    drawdown_gate: Optional[float] = None,
+    drawdown_rel_xbi_gate: Optional[float] = None,
+    drawdown_gate_require_both: bool = True,
 ) -> Dict[str, Any]:
     """Evaluate a candidate a_floor value by re-tiering all rows."""
     # Re-tier
     tiers: List[str] = []
     for row in rows:
-        new_tier = retier_row(row, a_floor, b_floor, catalyst_near_days, catalyst_mid_days)
+        new_tier = retier_row(
+            row, a_floor, b_floor, catalyst_near_days, catalyst_mid_days,
+            drawdown_gate, drawdown_rel_xbi_gate, drawdown_gate_require_both,
+        )
         tiers.append(new_tier)
 
     total = len(rows)
@@ -406,18 +441,21 @@ def _compute_tradeoffs(
 def run_2d_sweep(
     rows: List[Dict[str, Any]],
     a_floor_values: List[float],
-    sweep_values: List[int],
+    sweep_values: list,
     b_floor: float,
     min_a_pct: float,
     max_turnover: float,
     sweep_dim: str = "cat_near",
     base_near_days: int = 90,
     base_mid_days: int = 180,
+    base_drawdown_gate: float = -0.40,
+    base_drawdown_require_both: bool = True,
 ) -> List[Dict[str, Any]]:
     """Evaluate all (a_floor, sweep_dim) combinations.
 
     sweep_dim="cat_near": varies catalyst_near_days, holds catalyst_mid_days fixed.
     sweep_dim="cat_mid":  varies catalyst_mid_days, holds catalyst_near_days fixed.
+    sweep_dim="dd_rel":   varies drawdown_rel_xbi_gate, holds catalyst params fixed.
 
     Returns a list of candidate dicts, each with a_floor, sweep_val,
     score, violations, passed, and all metrics from evaluate_candidate().
@@ -426,10 +464,20 @@ def run_2d_sweep(
     for sv in sweep_values:
         if sweep_dim == "cat_mid":
             cat_near, cat_mid = base_near_days, sv
+            dd_gate, dd_rel_gate, dd_require_both = None, None, True
+        elif sweep_dim == "dd_rel":
+            cat_near, cat_mid = base_near_days, base_mid_days
+            dd_gate = base_drawdown_gate
+            dd_rel_gate = sv
+            dd_require_both = base_drawdown_require_both
         else:
             cat_near, cat_mid = sv, base_mid_days
+            dd_gate, dd_rel_gate, dd_require_both = None, None, True
         for a_floor in a_floor_values:
-            result = evaluate_candidate(rows, a_floor, b_floor, cat_near, cat_mid)
+            result = evaluate_candidate(
+                rows, a_floor, b_floor, cat_near, cat_mid,
+                dd_gate, dd_rel_gate, dd_require_both,
+            )
             result["sweep_val"] = sv
             # Keep legacy key for backward compatibility
             result["catalyst_near_days"] = cat_near
@@ -482,7 +530,7 @@ def check_neighbor_stability(
     best: Dict[str, Any],
     candidates: List[Dict[str, Any]],
     a_floor_values: List[float],
-    sweep_values: List[int],
+    sweep_values: list,
 ) -> List[Dict[str, Any]]:
     """Check all immediate neighbors (±1 step in each dimension) of the best candidate.
 
@@ -652,7 +700,12 @@ def generate_calibration_report_2d_md(
     sweep_label: str = "cat_near",
 ) -> str:
     """Generate the markdown calibration report for a 2D sweep."""
-    sweep_param = "catalyst_mid_days" if sweep_label == "cat_mid" else "catalyst_near_days"
+    if sweep_label == "cat_mid":
+        sweep_param = "catalyst_mid_days"
+    elif sweep_label == "dd_rel":
+        sweep_param = "drawdown_rel_xbi_gate"
+    else:
+        sweep_param = "catalyst_near_days"
     lines: List[str] = []
     lines.append("# 2D Ruleset Calibration Report")
     lines.append("")
@@ -860,6 +913,18 @@ def main() -> int:
         help="Enable 2D sweep: comma-separated catalyst_mid_days values (e.g., '150,180,210,270,365')",
     )
     parser.add_argument(
+        "--sweep-drawdown-rel-gate", type=str, default=None,
+        help="Enable 2D sweep: comma-separated drawdown_rel_xbi_gate values (e.g., '-0.10,-0.15,-0.20,-0.25,-0.30')",
+    )
+    parser.add_argument(
+        "--drawdown-gate", type=float, default=-0.40,
+        help="Held constant absolute drawdown gate for drawdown sweep (default: -0.40)",
+    )
+    parser.add_argument(
+        "--drawdown-gate-require-both", type=str, default="true",
+        help="AND vs OR logic for drawdown gate (default: true)",
+    )
+    parser.add_argument(
         "--min-a-pct", type=float, default=3.0,
         help="Constraint: min %% of rows in tier A (default: 3.0)",
     )
@@ -915,18 +980,25 @@ def main() -> int:
         "generated": datetime.now().isoformat(timespec="seconds"),
     }
 
-    # Parse 2D catalyst sweep values
-    if args.sweep_catalyst_near_days and args.sweep_catalyst_mid_days:
-        print("ERROR: Cannot use both --sweep-catalyst-near-days and --sweep-catalyst-mid-days", file=sys.stderr)
+    # Parse --drawdown-gate-require-both as bool
+    require_both = args.drawdown_gate_require_both.lower() in ("true", "1", "yes")
+
+    # Parse 2D catalyst/drawdown sweep values
+    n_sweeps = sum(1 for x in [args.sweep_catalyst_near_days, args.sweep_catalyst_mid_days, args.sweep_drawdown_rel_gate] if x)
+    if n_sweeps > 1:
+        print("ERROR: Cannot use more than one --sweep-* flag at a time", file=sys.stderr)
         return 1
 
     sweep_label = "cat_near"
-    sweep_values: Optional[List[int]] = None
+    sweep_values: Optional[list] = None
     if args.sweep_catalyst_near_days:
         sweep_values = sorted(int(v.strip()) for v in args.sweep_catalyst_near_days.split(","))
     elif args.sweep_catalyst_mid_days:
         sweep_values = sorted(int(v.strip()) for v in args.sweep_catalyst_mid_days.split(","))
         sweep_label = "cat_mid"
+    elif args.sweep_drawdown_rel_gate:
+        sweep_values = sorted(float(v.strip()) for v in args.sweep_drawdown_rel_gate.split(","))
+        sweep_label = "dd_rel"
     is_2d = sweep_values is not None
 
     print("Ruleset Calibration Configuration:")
@@ -1034,6 +1106,8 @@ def main() -> int:
             sweep_dim=sweep_label,
             base_near_days=args.catalyst_near,
             base_mid_days=args.catalyst_mid,
+            base_drawdown_gate=args.drawdown_gate,
+            base_drawdown_require_both=require_both,
         )
 
         # Print grid summary
@@ -1073,7 +1147,9 @@ def main() -> int:
         print(f"\n  Ridge summary (best a_floor per {sweep_label}):")
         for r in ridge:
             sep_s = f"{r['separation_60d']:+.2f}" if r['separation_60d'] is not None else "n/a"
-            print(f"    {sweep_label}={r['sweep_val']:3d}: "
+            sv = r['sweep_val']
+            sv_fmt = f"{sv:3d}" if isinstance(sv, int) else f"{sv:.2f}"
+            print(f"    {sweep_label}={sv_fmt}: "
                   f"a_floor={r['best_a_floor']:.2f} "
                   f"sep={sep_s} score={r['score']:.2f} "
                   f"{'PASS' if r['passed'] else 'FAIL'}")
@@ -1087,6 +1163,8 @@ def main() -> int:
             if sweep_label == "cat_mid":
                 if best["catalyst_mid_days"] != baseline_cat_mid:
                     overrides["catalyst_mid_days"] = best["catalyst_mid_days"]
+            elif sweep_label == "dd_rel":
+                overrides["drawdown_rel_xbi_gate"] = best["sweep_val"]
             else:
                 if best["catalyst_near_days"] != baseline_cat_near:
                     overrides["catalyst_near_days"] = best["catalyst_near_days"]
@@ -1104,6 +1182,8 @@ def main() -> int:
                 overrides = {"tier_a_optionality_floor": best["a_floor"]}
                 if sweep_label == "cat_mid":
                     overrides["catalyst_mid_days"] = best["catalyst_mid_days"]
+                elif sweep_label == "dd_rel":
+                    overrides["drawdown_rel_xbi_gate"] = best["sweep_val"]
                 else:
                     overrides["catalyst_near_days"] = best["catalyst_near_days"]
             with open(overrides_path, "w", encoding="utf-8") as f:

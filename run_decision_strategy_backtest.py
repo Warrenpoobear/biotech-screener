@@ -45,7 +45,9 @@ from decision_engine import (
     DEFAULT_RULESET,
     compute_actionable_sort_key,
     compute_decision_fields,
+    compute_gate_margins,
     compute_target_weights,
+    compute_tier_margins,
 )
 from run_decision_ruleset_sweep import (
     ArchiveData,
@@ -80,6 +82,8 @@ PANEL_COLUMNS = [
     "tier_reason", "risk_flags", "catalyst_mode", "catalyst_strength", "mom_state",
     "optionality", "catalyst_days_raw", "ruleset_id",
     "drawdown_abs", "drawdown_xbi", "drawdown_rel_xbi",
+    "dd_abs_margin", "dd_rel_margin", "rescued_by_rel",
+    "optionality_margin_a", "actionable_catalyst",
     "fwd_ret_20d", "fwd_ret_60d", "fwd_max_dd_20d", "fwd_max_dd_60d",
     "fwd_dd_missing_reason",
     "adv_dollars", "est_cost_bps", "participation_pct",
@@ -343,6 +347,12 @@ def build_all_dev_decisions(
         opt = archive_data.optionalities.get(ticker)
         fields = compute_decision_fields(rec, archetype, opt, ruleset=ruleset)
 
+        # Gate margin diagnostics (panel-only)
+        margins = compute_gate_margins(rec, ruleset)
+        tier_margins = compute_tier_margins(
+            opt, fields.get("catalyst_strength", "missing"), ruleset
+        )
+
         df = rec.get("defensive_features") or {}
         results.append({
             "ticker": ticker,
@@ -359,9 +369,71 @@ def build_all_dev_decisions(
             "drawdown_abs": df.get("drawdown"),
             "drawdown_xbi": df.get("drawdown_xbi"),
             "drawdown_rel_xbi": df.get("drawdown_rel_xbi"),
+            "dd_abs_margin": margins["dd_abs_margin"],
+            "dd_rel_margin": margins["dd_rel_margin"],
+            "rescued_by_rel": margins["rescued_by_rel"],
+            "optionality_margin_a": tier_margins["optionality_margin_a"],
+            "actionable_catalyst": tier_margins["actionable_catalyst"],
         })
 
     return results
+
+
+# Min trailing bars required for drawdown estimate (match run_screen.py)
+_MIN_BARS_DRAWDOWN = 126
+_DRAWDOWN_WINDOW = 252
+
+
+def hydrate_archive_drawdown(
+    archive_data: ArchiveData,
+    csv_provider,
+    as_of_date: str,
+) -> None:
+    """Compute trailing drawdown from price CSV and inject into archive recs.
+
+    Populates defensive_features with: drawdown, drawdown_xbi, drawdown_rel_xbi.
+    Modifies archive_data.recs in place.
+    """
+    from datetime import date as _date
+
+    ref = _date.fromisoformat(as_of_date)
+
+    def _trailing_dd(ticker: str) -> Optional[float]:
+        prices = csv_provider._prices.get(ticker.upper())
+        if not prices:
+            return None
+        # Sorted dates <= ref
+        valid = sorted((d, float(p)) for d, p in prices.items() if d <= ref)
+        if len(valid) < _MIN_BARS_DRAWDOWN:
+            return None
+        closes = [c for _, c in valid]
+        look = closes[-_DRAWDOWN_WINDOW:] if len(closes) >= _DRAWDOWN_WINDOW else closes
+        peak = max(look)
+        if peak <= 0:
+            return None
+        return round((closes[-1] / peak) - 1.0, 6)
+
+    xbi_dd = _trailing_dd("XBI")
+
+    for ticker, rec in archive_data.recs.items():
+        df = rec.get("defensive_features")
+        if df is None:
+            df = {}
+            rec["defensive_features"] = df
+        # Only hydrate if missing
+        if df.get("drawdown") is None:
+            dd = _trailing_dd(ticker)
+            if dd is not None:
+                df["drawdown"] = dd
+                df["drawdown_missing_reason"] = ""
+            else:
+                df.setdefault("drawdown_missing_reason", "no_price_series")
+        df["drawdown_xbi"] = xbi_dd
+        dd = df.get("drawdown")
+        if dd is not None and xbi_dd is not None:
+            df["drawdown_rel_xbi"] = round(dd - xbi_dd, 6)
+        else:
+            df["drawdown_rel_xbi"] = None
 
 
 def write_panel_csv(
@@ -607,6 +679,9 @@ def run_strategy_backtest(
         # Load archive data
         archive_data = load_archive_data(tar_path, date_str)
 
+        # Hydrate drawdown from price CSV (archives don't store it)
+        hydrate_archive_drawdown(archive_data, csv_provider, date_str)
+
         # Compute multi-horizon returns
         mh_returns = compute_multi_horizon_returns(
             chained, csv_provider, archive_data.tickers, date_str, horizons
@@ -691,6 +766,11 @@ def run_strategy_backtest(
                     "drawdown_abs": round(dd_abs, 4) if dd_abs is not None else "",
                     "drawdown_xbi": round(dd_xbi, 4) if dd_xbi is not None else "",
                     "drawdown_rel_xbi": round(dd_rel, 4) if dd_rel is not None else "",
+                    "dd_abs_margin": round(dev["dd_abs_margin"], 4) if isinstance(dev.get("dd_abs_margin"), (int, float)) else "",
+                    "dd_rel_margin": round(dev["dd_rel_margin"], 4) if isinstance(dev.get("dd_rel_margin"), (int, float)) else "",
+                    "rescued_by_rel": "1" if dev.get("rescued_by_rel") else "0",
+                    "optionality_margin_a": round(dev["optionality_margin_a"], 4) if isinstance(dev.get("optionality_margin_a"), (int, float)) else "",
+                    "actionable_catalyst": "1" if dev.get("actionable_catalyst") else "0",
                     "fwd_ret_20d": fwd_20_pct,
                     "fwd_ret_60d": fwd_60_pct,
                     "fwd_max_dd_20d": round(dd_20 * 100, 4) if dd_20 is not None else "",

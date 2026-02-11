@@ -130,12 +130,16 @@ def _load_market_data(inputs_dir: Path) -> Dict[str, Dict[str, Any]]:
     """Load market_data.json from archive inputs directory.
 
     Returns {ticker: {avg_volume, price, ...}} or empty dict if file missing.
+    Handles both list-of-dicts (with 'ticker' key) and dict-keyed-by-ticker formats.
     """
     md_path = inputs_dir / "market_data.json"
     if not md_path.exists():
         return {}
     with open(md_path, "r", encoding="utf-8") as f:
-        return json.load(f)
+        raw = json.load(f)
+    if isinstance(raw, list):
+        return {item["ticker"]: item for item in raw if "ticker" in item}
+    return raw
 
 
 def load_archive_data(tar_path: Path, date_str: str) -> ArchiveData:

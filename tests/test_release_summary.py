@@ -203,8 +203,8 @@ class TestReleaseSummary:
             "ruleset_id": "test_rs",
             "price_history_sha256": "a" * 64,
             "panel_sha256": "b" * 64,
-            "explanation_registry_fingerprint": "88dd1a0f3a87",
+            "explanation_registry_fingerprint": "9884d97764ec",
         }
         md = generate_release_summary(cal, None, None, None)
         assert "Explanation registry" in md
-        assert "`88dd1a0f3a87`" in md
+        assert "`9884d97764ec`" in md
