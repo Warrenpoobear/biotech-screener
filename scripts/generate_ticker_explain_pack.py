@@ -37,6 +37,11 @@ from run_drift_report import (
     _parse_pipe_separated,
     compute_attribution,
 )
+from decision_engine import (
+    DecisionRuleset,
+    compute_gate_margins,
+    compute_tier_margins,
+)
 from decision_engine_codes import build_explanation, describe_code
 
 # ---------------------------------------------------------------------------
@@ -85,6 +90,21 @@ def _build_eligibility_map(dev_df: pd.DataFrame) -> Dict[str, bool]:
         if ticker:
             result[ticker] = elig == "1"
     return result
+
+
+def _build_rec_from_row(row: pd.Series) -> Dict[str, Any]:
+    """Build a minimal rec dict from a rankings row for compute_gate_margins()."""
+    inelig = _parse_pipe_separated(row.get("ineligible_reasons", ""))
+    return {
+        "fundamental_red_flag": "fundamental_red_flag" in inelig,
+        "severity": str(row.get("severity", "")).strip(),
+        "defensive_features": {
+            "drawdown": _safe_float(row.get("de_drawdown"), default=None),
+            "drawdown_rel_xbi": _safe_float(row.get("de_drawdown_rel_xbi"), default=None),
+        },
+        "attn_flags": ["adv_fail"] if "adv_fail" in inelig else [],
+        "flags": [],
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -208,6 +228,28 @@ def extract_dossier(
     }
     result["explanation"] = build_explanation(explanation_fields)
 
+    # Gate + tier margins (computed on-the-fly from rankings columns)
+    rec_proxy = _build_rec_from_row(row)
+    ruleset = DecisionRuleset(tier_a_optionality_floor=a_floor)
+    gate_margins = compute_gate_margins(rec_proxy, ruleset)
+    tier_margins = compute_tier_margins(
+        opt_val,
+        _get(row, "catalyst_strength", "missing"),
+        ruleset,
+    )
+
+    result["gate_margins"] = {
+        "dd_abs_margin": gate_margins["dd_abs_margin"],
+        "dd_rel_margin": gate_margins["dd_rel_margin"],
+        "rescued_by_rel": gate_margins["rescued_by_rel"],
+        "first_failed_effective_gate": gate_margins["first_failed_effective_gate"],
+        "counterfactual": gate_margins["counterfactual"],
+    }
+    result["tier_margins"] = {
+        "optionality_margin_a": tier_margins["optionality_margin_a"],
+        "actionable_catalyst": tier_margins["actionable_catalyst"],
+    }
+
     return result
 
 
@@ -293,6 +335,52 @@ def build_explain_pack(
 
         explains.append(dossier)
 
+    # Compute gate pressure over all dev tickers
+    dev = current.rankings[current.rankings["archetype"] == "drug_developer"]
+    n_eligible = 0
+    n_rescued = 0
+    margin_cols: Dict[str, List[float]] = {
+        "dd_abs_margin": [], "dd_rel_margin": [], "optionality_margin_a": [],
+    }
+
+    ruleset = DecisionRuleset(tier_a_optionality_floor=a_floor)
+    for _, row in dev.iterrows():
+        rec_proxy = _build_rec_from_row(row)
+        opt_val = _safe_float(row.get("clinical_optionality_pct_dev"), default=None)
+
+        gm = compute_gate_margins(rec_proxy, ruleset)
+        tm = compute_tier_margins(
+            opt_val,
+            str(row.get("catalyst_strength", "missing")).strip(),
+            ruleset,
+        )
+
+        is_eligible = str(row.get("eligible", "0")).strip() == "1"
+        if is_eligible:
+            n_eligible += 1
+            if gm["rescued_by_rel"]:
+                n_rescued += 1
+
+        if gm["dd_abs_margin"] is not None:
+            margin_cols["dd_abs_margin"].append(gm["dd_abs_margin"])
+        if gm["dd_rel_margin"] is not None:
+            margin_cols["dd_rel_margin"].append(gm["dd_rel_margin"])
+        if tm["optionality_margin_a"] is not None:
+            margin_cols["optionality_margin_a"].append(tm["optionality_margin_a"])
+
+    pressure: Dict[str, Any] = {}
+    for col_key, pct_key in [
+        ("dd_abs_margin", "dd_abs_near_gate_pct"),
+        ("dd_rel_margin", "dd_rel_near_gate_pct"),
+        ("optionality_margin_a", "optionality_near_a_floor_pct"),
+    ]:
+        vals = margin_cols[col_key]
+        near = sum(1 for v in vals if -0.05 <= v <= 0.05)
+        pressure[pct_key] = round(near / len(vals) * 100, 1) if vals else None
+    pressure["rescued_share_pct"] = round(n_rescued / n_eligible * 100, 1) if n_eligible > 0 else 0.0
+    pressure["rescued_count"] = n_rescued
+    pressure["eligible_count"] = n_eligible
+
     pack: Dict[str, Any] = {
         "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "snapshot_date": current.date,
@@ -301,6 +389,7 @@ def build_explain_pack(
         "tickers_selected_by": "auto" if not hasattr(build_explain_pack, "_explicit") else "explicit",
         "ticker_count": len(tickers),
         "explains": explains,
+        "gate_pressure": pressure,
     }
     return pack
 
@@ -419,6 +508,42 @@ def render_dossier_md(dossier: Dict[str, Any]) -> str:
     else:
         lines.append("**Drawdown:** n/a")
 
+    # Decision Reversal (from gate/tier margins)
+    gm = dossier.get("gate_margins", {})
+    tm = dossier.get("tier_margins", {})
+    if gm:
+        if gm.get("rescued_by_rel"):
+            abs_m = gm.get("dd_abs_margin")
+            rel_m = gm.get("dd_rel_margin")
+            abs_s = f"{abs_m:+.3f}" if abs_m is not None else "n/a"
+            rel_s = f"{rel_m:+.3f}" if rel_m is not None else "n/a"
+            lines.append(f"**Decision Reversal:** Rescued by relative gate "
+                         f"(abs margin={abs_s}, rel margin={rel_s})")
+        elif not dossier.get("eligible") and gm.get("first_failed_effective_gate"):
+            gate = gm["first_failed_effective_gate"]
+            cf = gm.get("counterfactual", {})
+            if cf:
+                cf_parts = [f"{k}\u2192{v}" for k, v in cf.items()]
+                lines.append(f"**Decision Reversal:** {gate} \u2014 "
+                             f"to flip: {', '.join(cf_parts)}")
+            else:
+                lines.append(f"**Decision Reversal:** {gate}")
+        # Margin summary for all tickers
+        margin_parts = []
+        abs_m = gm.get("dd_abs_margin")
+        rel_m = gm.get("dd_rel_margin")
+        opt_m = tm.get("optionality_margin_a")
+        if abs_m is not None:
+            margin_parts.append(f"dd_abs={abs_m:+.3f}")
+        if rel_m is not None:
+            margin_parts.append(f"dd_rel={rel_m:+.3f}")
+        if opt_m is not None:
+            margin_parts.append(f"opt_a={opt_m:+.3f}")
+        if tm.get("actionable_catalyst") is not None:
+            margin_parts.append(f"actionable_cat={'yes' if tm['actionable_catalyst'] else 'no'}")
+        if margin_parts:
+            lines.append(f"**Margins:** {' | '.join(margin_parts)}")
+
     # Delta (if present)
     delta = dossier.get("delta")
     if delta is not None:
@@ -465,6 +590,27 @@ def render_explain_pack_md(pack: Dict[str, Any]) -> str:
     lines.append(f"**Tickers:** {pack.get('ticker_count', 0)} ({pack.get('tickers_selected_by', 'unknown')})")
     lines.append(f"**a_floor:** {pack.get('a_floor', DEFAULT_A_FLOOR)}")
     lines.append(f"**Generated:** {pack.get('generated_at', '')}")
+
+    pressure = pack.get("gate_pressure")
+    if pressure:
+        lines.append("")
+        lines.append("### Pressure Context")
+        lines.append("")
+        lines.append("| Metric | Value |")
+        lines.append("|--------|-------|")
+        for label, key in [
+            ("DD abs near gate", "dd_abs_near_gate_pct"),
+            ("DD rel near gate", "dd_rel_near_gate_pct"),
+            ("Optionality near A-floor", "optionality_near_a_floor_pct"),
+            ("Rescued share", "rescued_share_pct"),
+        ]:
+            v = pressure.get(key)
+            v_s = f"{v:.1f}%" if isinstance(v, (int, float)) else "n/a"
+            lines.append(f"| {label} | {v_s} |")
+        rc = pressure.get("rescued_count", 0)
+        ec = pressure.get("eligible_count", 0)
+        lines.append(f"\nRescued: {rc} / {ec} eligible")
+
     lines.append("")
     lines.append("---")
     lines.append("")

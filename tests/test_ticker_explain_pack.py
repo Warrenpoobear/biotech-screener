@@ -73,7 +73,9 @@ def _make_rankings(
         "eligible": eligible,
         "mom_state": ["tailwind"] * (actual_n // 2) + ["headwind"] * (actual_n - actual_n // 2),
         "de_drawdown": [-0.10 + i * 0.005 for i in range(actual_n)],
+        "de_drawdown_rel_xbi": [-0.05 + i * 0.003 for i in range(actual_n)],
         "de_drawdown_missing_reason": [""] * actual_n,
+        "severity": [""] * actual_n,
         "catalyst_in_window": ["1"] * n_eligible + ["0"] * (actual_n - n_eligible),
         "sponsor_tier1_count": [2] * actual_n,
         "sponsor_net_buying": [3.0] * actual_n,
@@ -397,6 +399,7 @@ class TestJsonOutput:
             "tickers_selected_by",
             "ticker_count",
             "explains",
+            "gate_pressure",
         }
         assert expected_keys == set(pack.keys())
 
@@ -489,3 +492,129 @@ class TestExplanation:
                 f"[{ticker}] band mismatch: explanation={explanation['sizing']['band']}, "
                 f"dossier={dossier['size_band']}"
             )
+
+
+# ============================================================================
+# TestDossierMargins
+# ============================================================================
+class TestDossierMargins:
+    """Tests for margin/counterfactual fields in extract_dossier()."""
+
+    def test_dossier_has_margin_keys(self):
+        """Dossier includes gate_margins and tier_margins."""
+        rankings = _make_rankings()
+        dossier = extract_dossier("T000", rankings)
+        assert "gate_margins" in dossier
+        assert "tier_margins" in dossier
+        gm = dossier["gate_margins"]
+        assert "dd_abs_margin" in gm
+        assert "rescued_by_rel" in gm
+        assert "first_failed_effective_gate" in gm
+        assert "counterfactual" in gm
+
+    def test_eligible_ticker_empty_counterfactual(self):
+        """Eligible ticker has empty counterfactual and no effective first-fail."""
+        rankings = _make_rankings()
+        # T000 is eligible
+        dossier = extract_dossier("T000", rankings)
+        gm = dossier["gate_margins"]
+        assert gm["counterfactual"] == {}
+        assert gm["first_failed_effective_gate"] == ""
+
+    def test_ineligible_ticker_has_counterfactual(self):
+        """Ineligible ticker has non-empty counterfactual."""
+        rankings = _make_rankings()
+        # Find an ineligible ticker with fundamental_red_flag
+        inelig = rankings[rankings["ineligible_reasons"] == "fundamental_red_flag"]
+        if inelig.empty:
+            pytest.skip("No red_flag ticker in synthetic data")
+        ticker = inelig.iloc[0]["ticker"]
+        dossier = extract_dossier(ticker, rankings)
+        gm = dossier["gate_margins"]
+        assert gm["first_failed_effective_gate"] == "fundamental_red_flag"
+        assert "fundamental_red_flag" in gm["counterfactual"]
+
+    def test_counterfactual_minimal_one_field(self):
+        """require_both counterfactual flips only 1 drawdown field."""
+        rankings = _make_rankings()
+        # Find a deep_drawdown ineligible ticker
+        inelig = rankings[rankings["ineligible_reasons"] == "deep_drawdown"]
+        if inelig.empty:
+            pytest.skip("No deep_drawdown ticker in synthetic data")
+        ticker = inelig.iloc[0]["ticker"]
+        # Set both drawdowns breaching
+        rankings.loc[rankings["ticker"] == ticker, "de_drawdown"] = -0.50
+        rankings.loc[rankings["ticker"] == ticker, "de_drawdown_rel_xbi"] = -0.30
+        dossier = extract_dossier(ticker, rankings)
+        gm = dossier["gate_margins"]
+        cf = gm["counterfactual"]
+        # Minimal: only 1 drawdown field (not both)
+        dd_keys = {"drawdown", "drawdown_rel_xbi"} & set(cf.keys())
+        assert len(dd_keys) == 1
+
+
+# ============================================================================
+# TestPressureHeader
+# ============================================================================
+class TestPressureHeader:
+    """Tests for gate_pressure in explain pack."""
+
+    def test_pack_has_pressure_key(self):
+        """build_explain_pack includes gate_pressure dict."""
+        current = _make_snapshot("2026-02-09")
+        pack = build_explain_pack(current, None, ["T000"])
+        assert "gate_pressure" in pack
+        p = pack["gate_pressure"]
+        assert "dd_abs_near_gate_pct" in p
+        assert "rescued_share_pct" in p
+        assert "eligible_count" in p
+
+    def test_pressure_in_markdown(self):
+        """Pressure Context header rendered in markdown."""
+        current = _make_snapshot("2026-02-09")
+        pack = build_explain_pack(current, None, ["T000"])
+        md = render_explain_pack_md(pack)
+        assert "Pressure Context" in md
+        assert "DD abs near gate" in md
+
+    def test_rescued_excludes_ineligible(self):
+        """Ineligible ticker with rescued_by_rel=True must NOT count in rescued_share."""
+        rankings = _make_rankings(n_dev=4)
+        # Make ALL tickers ineligible via fundamental_red_flag, but give them
+        # drawdowns that trigger rescued_by_rel (abs breaches, rel passes).
+        rankings["eligible"] = "0"
+        rankings["ineligible_reasons"] = "fundamental_red_flag"
+        rankings["de_drawdown"] = -0.50       # breaches -0.40 gate
+        rankings["de_drawdown_rel_xbi"] = 0.0  # passes -0.20 gate
+        current = _make_snapshot("2026-02-09", rankings)
+        pack = build_explain_pack(current, None, ["T000"])
+        p = pack["gate_pressure"]
+        assert p["rescued_count"] == 0
+        assert p["rescued_share_pct"] == 0.0
+
+
+# ============================================================================
+# TestReversalMarkdown
+# ============================================================================
+class TestReversalMarkdown:
+    """Tests for Decision Reversal markdown block."""
+
+    def test_eligible_no_reversal_gate(self):
+        """Eligible ticker does NOT show 'Decision Reversal: fundamental_red_flag'."""
+        rankings = _make_rankings()
+        dossier = extract_dossier("T000", rankings)
+        md = render_dossier_md(dossier)
+        # Should not show any failed gate reversal
+        assert "Decision Reversal: fundamental_red_flag" not in md
+
+    def test_ineligible_shows_reversal(self):
+        """Ineligible ticker shows Decision Reversal block."""
+        rankings = _make_rankings()
+        inelig = rankings[rankings["ineligible_reasons"] == "fundamental_red_flag"]
+        if inelig.empty:
+            pytest.skip("No red_flag ticker")
+        ticker = inelig.iloc[0]["ticker"]
+        dossier = extract_dossier(ticker, rankings)
+        md = render_dossier_md(dossier)
+        assert "Decision Reversal" in md
+        assert "fundamental_red_flag" in md
