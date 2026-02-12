@@ -1340,7 +1340,7 @@ PHASE2_DEFAULT_HEALTH_THRESHOLDS_PATH = (
     Path(__file__).resolve().parent
     / "production_data" / "phase2_health_thresholds" / "v1.json"
 )
-PHASE2_PINNED_THRESHOLDS_ID = "26f0d3d2"
+PHASE2_PINNED_THRESHOLDS_ID = "c0e01f42"
 
 
 MIN_BARS_FOR_ESTIMATE = 126  # trading bars (rows), half of 252-bar window; below this drawdown is unreliable

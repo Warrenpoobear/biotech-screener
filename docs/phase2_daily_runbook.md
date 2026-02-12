@@ -65,7 +65,7 @@ Health JSON: `data/snapshots/2026-02-07/phase2_health.json`
 ## Updating pinned thresholds
 
 Health thresholds are pinned in `production_data/phase2_health_thresholds/v1.json`
-(ID: `26f0d3d2`). To recalibrate:
+(ID: `c0e01f42`). To recalibrate:
 
 ```bash
 python run_phase2_health_calibration.py

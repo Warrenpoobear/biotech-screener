@@ -53,7 +53,7 @@ class Phase2HealthThresholds:
     # WARN gates — operational concern
     warn_a_count_low: int = 2                  # too concentrated (calibrated: P50=2, P90=5)
     warn_turnover_pct: float = 50.0            # name turnover (calibrated: P95=17.4)
-    warn_weight_l1_pct: float = 45.0           # weight turnover (calibrated: P90=39, P95=42)
+    warn_weight_l1_pct: float = 55.0           # weight turnover (calibrated: P90=50.8, P95=52.7)
     warn_catalyst_drop_pp: float = 5.0         # coverage drop vs prior (calibrated: max=1.9)
 
     def _canonical_json(self) -> str:

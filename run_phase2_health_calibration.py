@@ -36,6 +36,7 @@ import pandas as pd
 PROJECT_ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
+from backtest.cost_model import CostSchedule, estimate_trade_cost
 from decision_engine import (
     DecisionRuleset,
     compute_actionable_sort_key,
@@ -65,7 +66,7 @@ from run_phase2_snapshot_delta import (
 
 ARCHIVE_DIR = PROJECT_ROOT / "data" / "archives"
 PHASE2_RULESET_PATH = (
-    PROJECT_ROOT / "production_data" / "decision_rulesets" / "v2_phase2_default.json"
+    PROJECT_ROOT / "production_data" / "decision_rulesets" / "v1.2.1_candidate.json"
 )
 PHASE2_HEALTH_THRESHOLDS_PATH = (
     PROJECT_ROOT / "production_data" / "phase2_health_thresholds" / "v1.json"
@@ -100,6 +101,15 @@ def _build_snapshot_from_archive(
             except ValueError:
                 pass
 
+    # Cost-aware sizing: initialize cost schedule when enabled
+    cost_schedule = None
+    rep_weight = 0.0
+    if ruleset.enable_cost_haircut:
+        cost_schedule = CostSchedule(
+            impact_cap_bps=ruleset.cost_impact_cap_bps,
+        )
+        rep_weight = 100.0 / max(top_k, 1)
+
     ranking_rows: List[Dict[str, Any]] = []
     for row in archive_data.rows:
         ticker = row.get("ticker", "").strip().upper()
@@ -110,9 +120,20 @@ def _build_snapshot_from_archive(
         rec = archive_data.recs.get(ticker)
         opt = archive_data.optionalities.get(ticker)
 
+        # Compute est_cost_bps from archive market data when cost haircut is on
+        est_cost_bps = None
+        if cost_schedule is not None:
+            md = archive_data.market_data.get(ticker, {})
+            adv = (md.get("avg_volume") or 0) * (md.get("price") or 0)
+            if adv > 0:
+                cost_est = estimate_trade_cost(rep_weight, adv, cost_schedule)
+                est_cost_bps = cost_est.round_trip_bps
+
         # Compute decision fields (only meaningful for drug_developer)
         if archetype == "drug_developer" and rec is not None:
-            fields = compute_decision_fields(rec, archetype, opt, ruleset=ruleset)
+            fields = compute_decision_fields(
+                rec, archetype, opt, ruleset=ruleset, est_cost_bps=est_cost_bps,
+            )
         else:
             fields = {}
 
@@ -158,7 +179,18 @@ def _build_snapshot_from_archive(
         if rec is None:
             continue
 
-        fields = compute_decision_fields(rec, rr["archetype"], opt, ruleset=ruleset)
+        # Recompute cost for this candidate (same schedule as above)
+        cand_cost_bps = None
+        if cost_schedule is not None:
+            md = archive_data.market_data.get(ticker, {})
+            adv = (md.get("avg_volume") or 0) * (md.get("price") or 0)
+            if adv > 0:
+                cost_est = estimate_trade_cost(rep_weight, adv, cost_schedule)
+                cand_cost_bps = cost_est.round_trip_bps
+
+        fields = compute_decision_fields(
+            rec, rr["archetype"], opt, ruleset=ruleset, est_cost_bps=cand_cost_bps,
+        )
         composite_rank = rank_by_ticker.get(ticker)
         sort_key = compute_actionable_sort_key(
             fields, rr["archetype"], opt, composite_rank, ticker
