@@ -27,6 +27,17 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from decision_engine import VERSION, DecisionRuleset
 
 RULESETS_DIR = PROJECT_ROOT / "production_data" / "decision_rulesets"
+
+
+def _parse_bool(v: str) -> bool:
+    """Parse boolean CLI argument (argparse doesn't handle --flag true/false)."""
+    if v.lower() in ("true", "1", "yes"):
+        return True
+    if v.lower() in ("false", "0", "no"):
+        return False
+    raise argparse.ArgumentTypeError(f"Boolean value expected, got '{v}'")
+
+
 MANIFEST_PATH = RULESETS_DIR / "manifest.json"
 CHANGELOG_PATH = PROJECT_ROOT / "RULESET_CHANGELOG.md"
 
@@ -70,6 +81,9 @@ def _build_overrides(args: argparse.Namespace) -> Dict[str, Any]:
         "tier_b_optionality_floor": "tier_b_optionality_floor",
         "catalyst_near_days": "catalyst_near_days",
         "sponsor_confirm_threshold": "sponsor_confirm_threshold",
+        "enable_cost_haircut": "enable_cost_haircut",
+        "cost_impact_cap_bps": "cost_impact_cap_bps",
+        "cost_haircut_floor_mult": "cost_haircut_floor_mult",
     }
 
     for cli_name, field_name in flag_map.items():
@@ -107,6 +121,12 @@ def _apply_overrides(base: DecisionRuleset, overrides: Dict[str, Any]) -> Decisi
     if isinstance(params.get("sizing_weights"), dict):
         params["sizing_weights"] = tuple(
             (k, v) for k, v in sorted(params["sizing_weights"].items())
+        )
+
+    # Convert cost_haircut_buckets list-of-lists back to tuple-of-tuples
+    if isinstance(params.get("cost_haircut_buckets"), list):
+        params["cost_haircut_buckets"] = tuple(
+            tuple(pair) for pair in params["cost_haircut_buckets"]
         )
 
     return DecisionRuleset(**params)
@@ -179,6 +199,9 @@ def main() -> int:
     parser.add_argument("--tier-b-optionality-floor", type=float)
     parser.add_argument("--catalyst-near-days", type=int)
     parser.add_argument("--sponsor-confirm-threshold", type=int)
+    parser.add_argument("--enable-cost-haircut", type=_parse_bool)
+    parser.add_argument("--cost-impact-cap-bps", type=float)
+    parser.add_argument("--cost-haircut-floor-mult", type=float)
 
     args = parser.parse_args()
 

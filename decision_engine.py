@@ -75,6 +75,26 @@ class DecisionRuleset:
     cost_haircut_floor_mult: float = 0.55
     cost_impact_cap_bps: float = 200.0
 
+    def __post_init__(self):
+        # Validate cost_haircut_buckets: ascending thresholds
+        buckets = self.cost_haircut_buckets
+        if buckets:
+            for i in range(1, len(buckets)):
+                if buckets[i][0] <= buckets[i - 1][0]:
+                    raise ValueError(
+                        f"cost_haircut_buckets thresholds must be strictly ascending: {buckets}"
+                    )
+        # Validate cost_haircut_floor_mult in (0, 1]
+        if not (0 < self.cost_haircut_floor_mult <= 1.0):
+            raise ValueError(
+                f"cost_haircut_floor_mult must be in (0, 1], got {self.cost_haircut_floor_mult}"
+            )
+        # Validate cost_impact_cap_bps > 0
+        if self.cost_impact_cap_bps <= 0:
+            raise ValueError(
+                f"cost_impact_cap_bps must be > 0, got {self.cost_impact_cap_bps}"
+            )
+
     @property
     def sizing_weights_dict(self) -> Dict[str, float]:
         """Convert sizing_weights to dict for runtime use."""

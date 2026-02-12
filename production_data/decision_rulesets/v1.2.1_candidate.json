@@ -5,8 +5,22 @@
   "catalyst_mid_days": 180,
   "catalyst_near_days": 120,
   "confidence_low_threshold": 0.3,
+  "cost_haircut_buckets": [
+    [
+      400,
+      1.0
+    ],
+    [
+      1000,
+      0.85
+    ],
+    [
+      2000,
+      0.7
+    ]
+  ],
+  "cost_haircut_floor_mult": 0.55,
   "cost_impact_cap_bps": 1000.0,
-  "enable_cost_haircut": true,
   "drawdown_flag_threshold": -0.35,
   "drawdown_gate": -0.4,
   "drawdown_gate_mode": "hard",
@@ -14,6 +28,7 @@
   "drawdown_hard_floor": -0.75,
   "drawdown_rel_xbi_gate": -0.25,
   "drawdown_size_penalty": -1,
+  "enable_cost_haircut": true,
   "rsi_overbought": 70.0,
   "sizing_weights": {
     "L": 1.0,

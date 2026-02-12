@@ -695,3 +695,70 @@ class TestRulesetIntentGuardrail:
             f"has no finalized (non-DRAFT) entry for ruleset {target_id}. "
             f"Finalize the DRAFT entry before landing."
         )
+
+
+# =============================================================================
+# Tests: Cost param validation
+# =============================================================================
+
+class TestCostParamValidation:
+    """Tests for cost-aware sizing parameter validation and serialization."""
+
+    def test_round_trip_custom_cost_buckets(self, tmp_path):
+        """Custom buckets + floor_mult round-trip preserves equality and ruleset_id."""
+        custom = DecisionRuleset(
+            cost_haircut_buckets=((50, 1.0), (100, 0.85), (150, 0.70)),
+            cost_haircut_floor_mult=0.50,
+        )
+        path = str(tmp_path / "cost_custom.json")
+        custom.to_json(path)
+        loaded = DecisionRuleset.from_json(path)
+        assert loaded == custom
+        assert loaded.ruleset_id == custom.ruleset_id
+        assert loaded.cost_haircut_buckets == ((50, 1.0), (100, 0.85), (150, 0.70))
+        assert loaded.cost_haircut_floor_mult == 0.50
+
+    def test_invalid_bucket_ordering_rejected(self):
+        """Descending bucket thresholds raise ValueError."""
+        with pytest.raises(ValueError, match="strictly ascending"):
+            DecisionRuleset(
+                cost_haircut_buckets=((100, 1.0), (50, 0.85), (200, 0.70)),
+            )
+
+    def test_invalid_floor_mult_rejected(self):
+        """floor_mult=0 and floor_mult>1 both raise ValueError."""
+        with pytest.raises(ValueError, match="cost_haircut_floor_mult"):
+            DecisionRuleset(cost_haircut_floor_mult=0.0)
+        with pytest.raises(ValueError, match="cost_haircut_floor_mult"):
+            DecisionRuleset(cost_haircut_floor_mult=1.5)
+
+    def test_default_behavior_when_cost_fields_absent(self, tmp_path):
+        """JSON missing cost fields → defaults applied, matches expected."""
+        # Write a minimal JSON without cost fields
+        minimal = {
+            "drawdown_gate": -0.40,
+            "vol_high_threshold": 1.20,
+        }
+        path = str(tmp_path / "no_cost.json")
+        with open(path, "w") as f:
+            json.dump(minimal, f)
+        loaded = DecisionRuleset.from_json(path)
+        assert loaded.cost_haircut_buckets == DEFAULT_RULESET.cost_haircut_buckets
+        assert loaded.cost_haircut_floor_mult == DEFAULT_RULESET.cost_haircut_floor_mult
+        assert loaded.cost_impact_cap_bps == DEFAULT_RULESET.cost_impact_cap_bps
+        assert loaded.enable_cost_haircut == DEFAULT_RULESET.enable_cost_haircut
+
+    def test_from_json_with_explicit_cost_buckets(self, tmp_path):
+        """JSON with cost_haircut_buckets as list-of-lists → loaded as tuple-of-tuples."""
+        data = {
+            "cost_haircut_buckets": [[50, 1.0], [100, 0.85], [150, 0.70]],
+            "cost_haircut_floor_mult": 0.60,
+        }
+        path = str(tmp_path / "explicit_cost.json")
+        with open(path, "w") as f:
+            json.dump(data, f)
+        loaded = DecisionRuleset.from_json(path)
+        assert isinstance(loaded.cost_haircut_buckets, tuple)
+        assert all(isinstance(pair, tuple) for pair in loaded.cost_haircut_buckets)
+        assert loaded.cost_haircut_buckets == ((50, 1.0), (100, 0.85), (150, 0.70))
+        assert loaded.cost_haircut_floor_mult == 0.60
