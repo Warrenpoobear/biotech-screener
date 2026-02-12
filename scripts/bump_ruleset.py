@@ -38,6 +38,40 @@ def _parse_bool(v: str) -> bool:
     raise argparse.ArgumentTypeError(f"Boolean value expected, got '{v}'")
 
 
+def _parse_buckets(s: str) -> tuple:
+    """Parse 'threshold:mult,...' into tuple-of-tuples.
+
+    Example: '400:1.0,1000:0.85,2000:0.70' -> ((400.0,1.0),(1000.0,0.85),(2000.0,0.70))
+    """
+    pairs = []
+    for token in s.split(","):
+        token = token.strip()
+        parts = token.split(":")
+        if len(parts) != 2:
+            raise argparse.ArgumentTypeError(
+                f"Expected 'threshold:mult' pair, got '{token}'"
+            )
+        try:
+            threshold = float(parts[0])
+            mult = float(parts[1])
+        except ValueError:
+            raise argparse.ArgumentTypeError(
+                f"Non-numeric value in bucket pair '{token}'"
+            )
+        if not (0 < mult <= 1.0):
+            raise argparse.ArgumentTypeError(
+                f"Multiplier must be in (0, 1], got {mult} in '{token}'"
+            )
+        pairs.append((threshold, mult))
+    # Validate ascending thresholds
+    for i in range(1, len(pairs)):
+        if pairs[i][0] <= pairs[i - 1][0]:
+            raise argparse.ArgumentTypeError(
+                f"Bucket thresholds must be strictly ascending: {pairs}"
+            )
+    return tuple(pairs)
+
+
 MANIFEST_PATH = RULESETS_DIR / "manifest.json"
 CHANGELOG_PATH = PROJECT_ROOT / "RULESET_CHANGELOG.md"
 
@@ -84,6 +118,7 @@ def _build_overrides(args: argparse.Namespace) -> Dict[str, Any]:
         "enable_cost_haircut": "enable_cost_haircut",
         "cost_impact_cap_bps": "cost_impact_cap_bps",
         "cost_haircut_floor_mult": "cost_haircut_floor_mult",
+        "cost_haircut_buckets": "cost_haircut_buckets",
     }
 
     for cli_name, field_name in flag_map.items():
@@ -202,6 +237,10 @@ def main() -> int:
     parser.add_argument("--enable-cost-haircut", type=_parse_bool)
     parser.add_argument("--cost-impact-cap-bps", type=float)
     parser.add_argument("--cost-haircut-floor-mult", type=float)
+    parser.add_argument(
+        "--cost-haircut-buckets", type=_parse_buckets,
+        help="Bucket boundaries as 'threshold:mult,...' (e.g. '400:1.0,1000:0.85,2000:0.70')",
+    )
 
     args = parser.parse_args()
 
