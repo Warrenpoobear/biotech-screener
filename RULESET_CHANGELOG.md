@@ -6,6 +6,27 @@ Format: `[engine_version] ruleset_id — date — summary`
 
 ---
 
+## [v1.3.0] 68b2c45e — 2026-02-12 — Add catalyst tilt schema (defaults off)
+
+**Parameters added** (vs 131800e4):
+- `enable_catalyst_tilt`: **False** (new field, disabled by default)
+- `catalyst_tilt_mults`: **NEAR=1.10, MID=1.05, FAR=0.95, MISSING=0.90** (new field)
+
+**Behavior changes**: None. Catalyst tilt is off by default. All portfolio
+weights, bands, eligibility, and membership are bit-for-bit identical to
+131800e4. The only change is the ruleset ID (new fields in canonical JSON).
+
+**Rationale**: Infrastructure for opt-in weight tilt by catalyst proximity
+band. Evidence from backtest: NEAR median +5.56% / MID +4.50% >> FAR -0.15%
+/ MISSING -0.63% at 60d. Requires explicit `--enable-catalyst-tilt true` to
+activate. Cost params also made explicit in JSON (previously implicit defaults)
+and bumpable via CLI (`--cost-haircut-buckets`, `--catalyst-tilt-mults`).
+
+**Governance**: 379 tests pass. Regression test re-pinned. All manifest IDs
+updated. No replay required (identical behavior).
+
+---
+
 ## [v1.3.0] 131800e4 — 2026-02-11 — Enable cost-aware sizing (cap=1000)
 
 **Parameters changed** (vs 34bb662d):
