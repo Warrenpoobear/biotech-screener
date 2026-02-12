@@ -22,6 +22,7 @@ from run_drift_report import (
     _compute_strength_counts,
     _compute_strength_transitions,
     _compute_margin_summary,
+    _cost_metrics,
     _parse_pipe_separated,
     compute_attribution,
     compute_drift_metrics,
@@ -91,6 +92,11 @@ def _make_rankings(
         "size_band": ["L"] * (actual_n // 2) + ["M"] * (actual_n - actual_n // 2),
         "decision_engine_version": ["v1.2.0"] * actual_n,
         "eligible": eligible,
+        # Cost columns (present in current-era snapshots)
+        "est_cost_bps": [round(20.0 + i * 1.5, 1) for i in range(actual_n)],
+        "cost_mult": [1.0] * actual_n,
+        "cost_bucket": ["<=400bps"] * actual_n,
+        "cost_haircut_applied": ["0"] * actual_n,
     }
 
     if include_attribution_cols:
@@ -1208,3 +1214,105 @@ class TestGatePressure:
         assert "dd_abs_near_gate_pct" in metrics
         assert metrics["dd_abs_near_gate_pct"] is not None
         assert "rescued_share_pct" in metrics
+
+
+# ============================================================================
+# TestCostTelemetry
+# ============================================================================
+class TestCostTelemetry:
+    """Tests for cost telemetry metrics and guardrails."""
+
+    def test_cost_metrics_populated(self):
+        """Snapshot with cost columns → all cost metrics present and correct."""
+        n = 20
+        r = _make_rankings(n_dev=n)
+        # Override cost columns: 15 with haircut, 5 at floor
+        mults = [1.0] * 10 + [0.85] * 5 + [0.55] * 5
+        r["cost_mult"] = mults
+        # 5 tickers at cap (1000+ bps), rest well below
+        cost_bps = [50.0 + i * 20 for i in range(15)] + [1000.0] * 5
+        r["est_cost_bps"] = cost_bps
+        r["cost_haircut_applied"] = ["0" if m >= 1.0 else "1" for m in mults]
+        r["cost_bucket"] = [
+            "<=400bps" if m >= 1.0 else "<=1000bps" if m >= 0.85 else ">2000bps"
+            for m in mults
+        ]
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_snapshot_metrics(snap)
+
+        # Coverage — all 20 dev tickers have est_cost_bps
+        assert metrics["cost_coverage_pct"] == 100.0
+
+        # Percentiles are present and ordered
+        assert metrics["est_cost_bps_p10"] is not None
+        assert metrics["est_cost_bps_p50"] is not None
+        assert metrics["est_cost_bps_p90"] is not None
+        assert metrics["est_cost_bps_p10"] <= metrics["est_cost_bps_p50"]
+        assert metrics["est_cost_bps_p50"] <= metrics["est_cost_bps_p90"]
+
+        # Mean cost mult < 1.0 (some haircuts applied)
+        assert metrics["mean_cost_mult"] is not None
+        assert metrics["mean_cost_mult"] < 1.0
+
+        # Bucket shares sum to 100%
+        total = sum(
+            metrics[f"cost_bucket_{b}_pct"]
+            for b in ("no", "mild", "heavy", "floor")
+        )
+        assert abs(total - 100.0) < 0.2
+
+        # Floor bucket share still tracked separately
+        assert metrics["cost_bucket_floor_pct"] == 25.0
+
+        # Cap binding = est_cost_bps >= 1000 → 5/20 = 25%
+        assert metrics["cap_binding_pct"] == 25.0
+
+    def test_warn_cost_coverage_low(self):
+        """cost_coverage_pct < 80% → WARN."""
+
+        def _metrics_with_current(**overrides):
+            current = {
+                "tier_A_pct": 5.0,
+                "catalyst_missing_pct": 30.0,
+                "top25_overlap_pct": 80.0,
+                "optionality_std": 0.30,
+            }
+            current.update(overrides)
+            return {"current": current, "snapshots": [current], "rolling": {}}
+
+        status, reasons, _, action = evaluate_guardrails(
+            _metrics_with_current(cost_coverage_pct=60.0),
+            DriftGuardrails(),
+        )
+        assert status == "WARN"
+        assert any("Cost coverage" in r for r in reasons)
+        assert action == "INVESTIGATE"
+
+    def test_warn_cap_binding_high(self):
+        """cap_binding_pct > 20% → WARN."""
+
+        def _metrics_with_current(**overrides):
+            current = {
+                "tier_A_pct": 5.0,
+                "catalyst_missing_pct": 30.0,
+                "top25_overlap_pct": 80.0,
+                "optionality_std": 0.30,
+            }
+            current.update(overrides)
+            return {"current": current, "snapshots": [current], "rolling": {}}
+
+        status, reasons, _, action = evaluate_guardrails(
+            _metrics_with_current(cap_binding_pct=30.0),
+            DriftGuardrails(),
+        )
+        assert status == "WARN"
+        assert any("Cap binding" in r for r in reasons)
+        assert action == "INVESTIGATE"
+
+    def test_cost_metrics_missing_columns_returns_none(self):
+        """Rankings without cost columns → _cost_metrics returns None."""
+        df = _make_rankings().drop(
+            columns=["est_cost_bps", "cost_mult", "cost_bucket"],
+            errors="ignore",
+        )
+        assert _cost_metrics(df) is None

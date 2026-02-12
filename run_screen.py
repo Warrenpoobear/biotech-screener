@@ -1306,7 +1306,7 @@ SNAPSHOT_COLUMNS = [
     "catalyst_days", "catalyst_in_window", "catalyst_mode", "catalyst_strength",
     "runway_bucket", "mom_state", "risk_flags",
     "size_band", "size_reasons",
-    "cost_mult", "cost_bucket", "cost_haircut_applied",
+    "cost_mult", "cost_bucket", "cost_haircut_applied", "est_cost_bps",
     "tier_dev", "tier_reason",
     # Decision Engine v2 actionable columns
     "actionable_rank", "target_weight_pct",
@@ -1705,6 +1705,7 @@ def save_validation_snapshot(
             rec, arch, opt_float, ruleset=ruleset, est_cost_bps=est_cost_bps,
         )
         row.update(decision)
+        row["est_cost_bps"] = est_cost_bps if est_cost_bps is not None else ""
 
         # Persist decision engine INPUT fields for archive self-containment.
         # These de_-prefixed columns capture the raw inputs the engine read,

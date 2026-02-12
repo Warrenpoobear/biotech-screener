@@ -69,6 +69,8 @@ class DriftGuardrails:
 
     # WARN triggers (cost / eligibility / drawdown coverage)
     warn_median_cost_bps_high: float = 60.0   # median round-trip cost > 60 bps
+    warn_cost_coverage_low: float = 80.0      # WARN if cost coverage < 80%
+    warn_cap_binding_high: float = 20.0       # WARN if cap-binding (floor bucket) > 20%
     warn_eligible_dev_pct_low: float = 10.0   # eligible dev % < 10% → WARN
     warn_drawdown_rel_coverage_low: float = 80.0  # WARN if XBI relative DD coverage < 80%
     fail_drawdown_rel_coverage_low: float = 50.0  # FAIL if XBI relative DD coverage < 50%
@@ -242,6 +244,100 @@ def _drawdown_rel_coverage_pct(rankings: pd.DataFrame) -> Optional[float]:
     return round(n_covered / n_dev * 100, 1)
 
 
+def _cost_metrics(
+    rankings: pd.DataFrame, cap_bps: float = 1000.0,
+) -> Optional[Dict[str, Any]]:
+    """Cost telemetry metrics from pipeline-produced columns.
+
+    Reads est_cost_bps, cost_mult, cost_bucket, cost_haircut_applied
+    directly from rankings — no recomputation.
+
+    Returns None when required cost columns are absent.
+    """
+    required = {"est_cost_bps", "cost_mult", "cost_bucket"}
+    if not required.issubset(rankings.columns):
+        return None
+
+    dev = rankings[rankings["archetype"] == "drug_developer"]
+    n_dev = len(dev)
+    result: Dict[str, Any] = {}
+
+    if n_dev == 0:
+        for k in (
+            "cost_coverage_pct", "est_cost_bps_p10", "est_cost_bps_p50",
+            "est_cost_bps_p90", "median_cost_bps", "mean_cost_mult",
+            "cap_binding_pct",
+            "cost_bucket_no_pct", "cost_bucket_mild_pct",
+            "cost_bucket_heavy_pct", "cost_bucket_floor_pct",
+        ):
+            result[k] = None
+        return result
+
+    # --- est_cost_bps percentiles + coverage ---
+    if "est_cost_bps" in dev.columns:
+        cost_vals = [
+            fv for v in dev["est_cost_bps"]
+            if (fv := _safe_float(v, None)) is not None
+        ]
+        result["cost_coverage_pct"] = round(len(cost_vals) / n_dev * 100, 1)
+
+        if cost_vals:
+            cost_sorted = sorted(cost_vals)
+            n = len(cost_sorted)
+            result["est_cost_bps_p10"] = round(
+                cost_sorted[max(0, int(n * 0.10))], 1
+            )
+            result["est_cost_bps_p50"] = round(statistics.median(cost_sorted), 1)
+            result["est_cost_bps_p90"] = round(
+                cost_sorted[min(n - 1, int(n * 0.90))], 1
+            )
+            result["median_cost_bps"] = result["est_cost_bps_p50"]
+            eps = 1e-9
+            result["cap_binding_pct"] = round(
+                sum(1 for v in cost_vals if v >= (cap_bps - eps))
+                / len(cost_vals) * 100, 1
+            )
+        else:
+            for k in ("est_cost_bps_p10", "est_cost_bps_p50",
+                       "est_cost_bps_p90", "median_cost_bps",
+                       "cap_binding_pct"):
+                result[k] = None
+    else:
+        for k in ("cost_coverage_pct", "est_cost_bps_p10", "est_cost_bps_p50",
+                   "est_cost_bps_p90", "median_cost_bps", "cap_binding_pct"):
+            result[k] = None
+
+    # --- cost_mult stats + bucket shares ---
+    if "cost_mult" in dev.columns:
+        mults = [
+            fv for v in dev["cost_mult"]
+            if (fv := _safe_float(v, None)) is not None
+        ]
+        result["mean_cost_mult"] = (
+            round(statistics.mean(mults), 4) if mults else None
+        )
+
+        n_with = len(mults)
+        if n_with > 0:
+            n_no = sum(1 for m in mults if m >= 1.0)
+            n_mild = sum(1 for m in mults if 0.70 < m < 1.0)
+            n_heavy = sum(1 for m in mults if 0.55 < m <= 0.70)
+            n_floor = sum(1 for m in mults if m <= 0.55)
+            result["cost_bucket_no_pct"] = round(n_no / n_with * 100, 1)
+            result["cost_bucket_mild_pct"] = round(n_mild / n_with * 100, 1)
+            result["cost_bucket_heavy_pct"] = round(n_heavy / n_with * 100, 1)
+            result["cost_bucket_floor_pct"] = round(n_floor / n_with * 100, 1)
+        else:
+            for b in ("no", "mild", "heavy", "floor"):
+                result[f"cost_bucket_{b}_pct"] = None
+    else:
+        result["mean_cost_mult"] = None
+        for b in ("no", "mild", "heavy", "floor"):
+            result[f"cost_bucket_{b}_pct"] = None
+
+    return result
+
+
 def compute_snapshot_metrics(snap: SnapshotData) -> Dict[str, Any]:
     """Compute drift metrics for a single snapshot."""
     rankings = snap.rankings
@@ -301,6 +397,11 @@ def compute_snapshot_metrics(snap: SnapshotData) -> Dict[str, Any]:
     for key in ("dd_abs_near_gate_pct", "dd_rel_near_gate_pct",
                 "optionality_near_a_floor_pct", "rescued_share_pct"):
         metrics[key] = margin_summary.get(key)
+
+    # Cost telemetry
+    cost = _cost_metrics(rankings)
+    if cost is not None:
+        metrics.update(cost)
 
     # Top-25 tickers (for overlap computation)
     metrics["_top25"] = _top_n_tickers(rankings, 25)
@@ -362,6 +463,8 @@ def compute_drift_metrics(
         "median_dd_abs_margin", "median_dd_rel_margin", "rescued_count",
         "dd_abs_near_gate_pct", "dd_rel_near_gate_pct",
         "optionality_near_a_floor_pct", "rescued_share_pct",
+        "cost_coverage_pct", "cap_binding_pct", "mean_cost_mult",
+        "est_cost_bps_p50", "median_cost_bps",
     ]
     rolling: Dict[str, Dict[str, Any]] = {}
     for key in roll_keys:
@@ -491,6 +594,20 @@ def evaluate_guardrails(
         warn_reasons.append(
             f"Median cost = {median_cost:.1f} bps > "
             f"{guardrails.warn_median_cost_bps_high} bps ceiling"
+        )
+
+    cost_coverage = current.get("cost_coverage_pct")
+    if cost_coverage is not None and cost_coverage < guardrails.warn_cost_coverage_low:
+        warn_reasons.append(
+            f"Cost coverage = {cost_coverage:.1f}% < "
+            f"{guardrails.warn_cost_coverage_low}% floor"
+        )
+
+    cap_binding = current.get("cap_binding_pct")
+    if cap_binding is not None and cap_binding > guardrails.warn_cap_binding_high:
+        warn_reasons.append(
+            f"Cap binding = {cap_binding:.1f}% > "
+            f"{guardrails.warn_cap_binding_high}% ceiling"
         )
 
     eligible_pct = current.get("eligible_pct")
@@ -924,6 +1041,37 @@ def generate_drift_report_md(
         lines.append(f"| {label:<25} | {str(val):>6} |")
     lines.append("")
 
+    # Cost Context table (only if cost columns present)
+    has_cost = current.get("cost_coverage_pct") is not None
+    if has_cost:
+        lines.append("## Cost Context")
+        lines.append("")
+        lines.append("| Metric                    | Value  |")
+        lines.append("|---------------------------|--------|")
+
+        cov = current.get("cost_coverage_pct")
+        lines.append(f"| {'Cost coverage (dev)':<25} | {_fmt(cov)}% |")
+
+        p10 = current.get("est_cost_bps_p10")
+        p50 = current.get("est_cost_bps_p50")
+        p90 = current.get("est_cost_bps_p90")
+        bps_str = f"{_fmt(p10)} / {_fmt(p50)} / {_fmt(p90)} bps"
+        lines.append(f"| {'Est cost P10 / P50 / P90':<25} | {bps_str} |")
+
+        lines.append(f"| {'Mean cost mult':<25} | {_fmt(current.get('mean_cost_mult'), 4)} |")
+
+        bk_no = _fmt(current.get("cost_bucket_no_pct"))
+        bk_mild = _fmt(current.get("cost_bucket_mild_pct"))
+        bk_heavy = _fmt(current.get("cost_bucket_heavy_pct"))
+        bk_floor = _fmt(current.get("cost_bucket_floor_pct"))
+        lines.append(
+            f"| {'Bucket no/mild/heavy/floor':<25} | "
+            f"{bk_no}% / {bk_mild}% / {bk_heavy}% / {bk_floor}% |"
+        )
+
+        lines.append(f"| {'Cap binding':<25} | {_fmt(current.get('cap_binding_pct'))}% |")
+        lines.append("")
+
     # Rolling window table
     if rolling:
         lines.append(f"## Rolling Window (last {n_snaps} runs)")
@@ -1135,6 +1283,8 @@ def generate_drift_report_md(
     lines.append(f"- fail_overlap_low: {guardrails.fail_overlap_low}%")
     lines.append(f"- fail_dispersion_low: {guardrails.fail_dispersion_low}")
     lines.append(f"- warn_median_cost_bps_high: {guardrails.warn_median_cost_bps_high} bps")
+    lines.append(f"- warn_cost_coverage_low: {guardrails.warn_cost_coverage_low}%")
+    lines.append(f"- warn_cap_binding_high: {guardrails.warn_cap_binding_high}%")
     lines.append(f"- warn_iqr_k: {guardrails.warn_iqr_k}")
     lines.append(f"- warn_iqr_floor: {guardrails.warn_iqr_floor}")
     lines.append(f"- warn_min_window: {guardrails.warn_min_window}")
