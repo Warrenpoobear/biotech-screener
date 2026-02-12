@@ -1,0 +1,499 @@
+#!/usr/bin/env python3
+"""
+Eligibility Gate Diagnosis — 2024 D-Tier Outperformance Investigation
+
+Reads the walkforward panel CSV (with ineligible_reasons + first_failed_gate columns),
+diagnoses WHY D-tier outperforms B/C in 2024, and runs surgical ablations to
+identify which gate(s) are excluding future outperformers.
+
+Sections:
+  1. Tier Performance by Year
+  2. D-Tier Attribution (ineligible reasons breakdown)
+  3. Surgical Ablations (disable gates, recompute tier, measure separation)
+  4. Drawdown Margin Analysis (barely-ineligible distribution)
+
+Usage:
+    python scripts/diagnose_eligibility_gates.py [options]
+
+    --panel PATH       Panel CSV (default: artifacts/walkforward_panel_diag.csv)
+    --output-dir PATH  Output directory (default: artifacts/)
+    --suffix TAG       Suffix for output filename
+"""
+from __future__ import annotations
+
+import argparse
+import csv
+import sys
+from collections import Counter, defaultdict
+from datetime import datetime
+from pathlib import Path
+from statistics import mean, median, stdev
+from typing import Any, Dict, List, Optional, Tuple
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+PROJECT_ROOT = SCRIPT_DIR.parent
+sys.path.insert(0, str(PROJECT_ROOT))
+
+from scripts.calibrate_ruleset_from_panel import retier_row
+
+DEFAULT_PANEL = PROJECT_ROOT / "artifacts" / "walkforward_panel_diag.csv"
+DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "artifacts"
+
+# Active ruleset parameters (68b2c45e)
+A_FLOOR = 0.60
+B_FLOOR = 0.30
+CATALYST_NEAR = 120
+CATALYST_MID = 180
+
+
+# =============================================================================
+# PANEL READER
+# =============================================================================
+
+def read_panel(path: Path) -> List[Dict[str, Any]]:
+    """Read the panel CSV and parse numeric columns."""
+    rows: List[Dict[str, Any]] = []
+    with open(path, "r", newline="", encoding="utf-8-sig") as f:
+        for raw in csv.DictReader(f):
+            row: Dict[str, Any] = dict(raw)
+            for col in ("optionality", "catalyst_days_raw",
+                        "fwd_ret_20d", "fwd_ret_60d",
+                        "fwd_max_dd_20d", "fwd_max_dd_60d", "weight",
+                        "drawdown_abs", "drawdown_xbi", "drawdown_rel_xbi",
+                        "dd_abs_margin", "dd_rel_margin"):
+                v = row.get(col, "")
+                if v == "" or v is None:
+                    row[col] = None
+                else:
+                    try:
+                        row[col] = float(v)
+                    except (ValueError, TypeError):
+                        row[col] = None
+            rows.append(row)
+    return rows
+
+
+def year_of(row: Dict[str, Any]) -> str:
+    return row["as_of_date"][:4]
+
+
+# =============================================================================
+# STATISTICS HELPERS
+# =============================================================================
+
+def summary_stats(values: List[float]) -> Dict[str, Any]:
+    """Compute summary stats for a list of floats."""
+    if not values:
+        return {"count": 0, "mean": None, "median": None, "p25": None, "p75": None, "hit_pct": None}
+    sv = sorted(values)
+    n = len(sv)
+    p25 = sv[int(n * 0.25)] if n > 1 else sv[0]
+    p75 = sv[int(n * 0.75)] if n > 1 else sv[0]
+    hit = sum(1 for v in values if v > 0)
+    return {
+        "count": n,
+        "mean": round(mean(values), 2),
+        "median": round(median(values), 2),
+        "p25": round(p25, 2),
+        "p75": round(p75, 2),
+        "hit_pct": round(hit / n * 100, 1),
+    }
+
+
+def fmt(v, suffix="%", default="n/a"):
+    """Format a numeric value for display."""
+    if v is None:
+        return default
+    if suffix == "%":
+        return f"{v:+.2f}%"
+    return f"{v:.2f}{suffix}"
+
+
+# =============================================================================
+# SECTION 1: TIER PERFORMANCE BY YEAR
+# =============================================================================
+
+def section_tier_performance(rows: List[Dict[str, Any]]) -> str:
+    """Tier performance breakdown by year."""
+    lines = ["# Section 1: Tier Performance by Year", ""]
+
+    for yr in sorted(set(year_of(r) for r in rows)):
+        yr_rows = [r for r in rows if year_of(r) == yr]
+        lines.append(f"## {yr}  ({len(yr_rows)} rows)")
+        lines.append("")
+
+        tier_data: Dict[str, List[float]] = defaultdict(list)
+        for r in yr_rows:
+            tier = r.get("tier", "?")
+            ret = r.get("fwd_ret_60d")
+            if ret is not None:
+                tier_data[tier].append(ret)
+
+        lines.append(f"{'Tier':<6} {'N':>5} {'Mean':>8} {'Med':>8} {'P25':>8} {'P75':>8} {'Hit%':>7}")
+        lines.append("-" * 52)
+        ab_rets, cd_rets = [], []
+        for tier in ["A", "B", "C", "D"]:
+            s = summary_stats(tier_data.get(tier, []))
+            lines.append(
+                f"{tier:<6} {s['count']:>5} "
+                f"{fmt(s['mean']):>8} {fmt(s['median']):>8} "
+                f"{fmt(s['p25']):>8} {fmt(s['p75']):>8} "
+                f"{fmt(s['hit_pct'], suffix=''):>6}%"
+            )
+            if tier in ("A", "B"):
+                ab_rets.extend(tier_data.get(tier, []))
+            else:
+                cd_rets.extend(tier_data.get(tier, []))
+
+        ab_med = median(ab_rets) if ab_rets else None
+        cd_med = median(cd_rets) if cd_rets else None
+        ab_mean = mean(ab_rets) if ab_rets else None
+        cd_mean = mean(cd_rets) if cd_rets else None
+        sep_med = round(ab_med - cd_med, 2) if ab_med is not None and cd_med is not None else None
+        sep_mean = round(ab_mean - cd_mean, 2) if ab_mean is not None and cd_mean is not None else None
+        lines.append("")
+        lines.append(f"AB-CD separation (median): {fmt(sep_med)}")
+        lines.append(f"AB-CD separation (mean):   {fmt(sep_mean)}")
+        lines.append("")
+
+    return "\n".join(lines)
+
+
+# =============================================================================
+# SECTION 2: D-TIER ATTRIBUTION
+# =============================================================================
+
+def section_dtier_attribution(rows: List[Dict[str, Any]]) -> str:
+    """D-tier breakdown by ineligible_reasons and first_failed_gate."""
+    lines = ["# Section 2: D-Tier Attribution (Ineligible Reasons)", ""]
+
+    d_rows = [r for r in rows if r.get("tier") == "D"]
+    lines.append(f"Total D-tier rows: {len(d_rows)}")
+    lines.append("")
+
+    for yr in sorted(set(year_of(r) for r in rows)):
+        yr_d = [r for r in d_rows if year_of(r) == yr]
+        lines.append(f"## {yr} — D-Tier ({len(yr_d)} rows)")
+        lines.append("")
+
+        # Group by ineligible_reasons
+        reason_groups: Dict[str, List[float]] = defaultdict(list)
+        for r in yr_d:
+            reason = r.get("ineligible_reasons", "") or "(empty)"
+            ret = r.get("fwd_ret_60d")
+            if ret is not None:
+                reason_groups[reason].append(ret)
+
+        lines.append(f"### By ineligible_reasons")
+        lines.append(f"{'Reason':<35} {'N':>5} {'Mean':>8} {'Med':>8} {'P25':>8} {'P75':>8} {'Hit%':>7}")
+        lines.append("-" * 80)
+        for reason in sorted(reason_groups.keys(), key=lambda k: -len(reason_groups[k])):
+            s = summary_stats(reason_groups[reason])
+            lines.append(
+                f"{reason:<35} {s['count']:>5} "
+                f"{fmt(s['mean']):>8} {fmt(s['median']):>8} "
+                f"{fmt(s['p25']):>8} {fmt(s['p75']):>8} "
+                f"{fmt(s['hit_pct'], suffix=''):>6}%"
+            )
+        lines.append("")
+
+        # Group by first_failed_gate
+        gate_groups: Dict[str, List[float]] = defaultdict(list)
+        for r in yr_d:
+            gate = r.get("first_failed_gate", "") or "(empty)"
+            ret = r.get("fwd_ret_60d")
+            if ret is not None:
+                gate_groups[gate].append(ret)
+
+        lines.append(f"### By first_failed_gate")
+        lines.append(f"{'Gate':<35} {'N':>5} {'Mean':>8} {'Med':>8} {'P25':>8} {'P75':>8} {'Hit%':>7}")
+        lines.append("-" * 80)
+        for gate in sorted(gate_groups.keys(), key=lambda k: -len(gate_groups[k])):
+            s = summary_stats(gate_groups[gate])
+            lines.append(
+                f"{gate:<35} {s['count']:>5} "
+                f"{fmt(s['mean']):>8} {fmt(s['median']):>8} "
+                f"{fmt(s['p25']):>8} {fmt(s['p75']):>8} "
+                f"{fmt(s['hit_pct'], suffix=''):>6}%"
+            )
+        lines.append("")
+
+    return "\n".join(lines)
+
+
+# =============================================================================
+# SECTION 3: SURGICAL ABLATIONS
+# =============================================================================
+
+def compute_separation(rows: List[Dict[str, Any]], tier_col: str = "tier") -> Dict[str, Any]:
+    """Compute AB-CD separation from rows with a tier column."""
+    ab, cd = [], []
+    tier_counts: Counter = Counter()
+    for r in rows:
+        tier = r.get(tier_col, "?")
+        tier_counts[tier] += 1
+        ret = r.get("fwd_ret_60d")
+        if ret is None:
+            continue
+        if tier in ("A", "B"):
+            ab.append(ret)
+        elif tier in ("C", "D"):
+            cd.append(ret)
+
+    ab_mean = mean(ab) if ab else None
+    cd_mean = mean(cd) if cd else None
+    ab_med = median(ab) if ab else None
+    cd_med = median(cd) if cd else None
+    sep_mean = round(ab_mean - cd_mean, 2) if ab_mean is not None and cd_mean is not None else None
+    sep_med = round(ab_med - cd_med, 2) if ab_med is not None and cd_med is not None else None
+
+    return {
+        "tier_counts": dict(tier_counts),
+        "ab_mean": round(ab_mean, 2) if ab_mean is not None else None,
+        "cd_mean": round(cd_mean, 2) if cd_mean is not None else None,
+        "sep_mean": sep_mean,
+        "sep_med": sep_med,
+        "n_ab": len(ab),
+        "n_cd": len(cd),
+    }
+
+
+def run_ablation(
+    rows: List[Dict[str, Any]],
+    label: str,
+    eligible_override_fn,
+) -> Dict[str, Any]:
+    """Run an ablation: override eligible for matching rows, retier, measure separation.
+
+    eligible_override_fn(row) -> bool: returns True if this row should be
+    force-set to eligible=1 for the ablation.
+    """
+    ablated = []
+    n_flipped = 0
+    for r in rows:
+        row = dict(r)  # shallow copy
+        if eligible_override_fn(row):
+            row["eligible"] = "1"
+            n_flipped += 1
+        # Retier using the row's (possibly overridden) eligible flag
+        new_tier = retier_row(
+            row,
+            a_floor=A_FLOOR,
+            b_floor=B_FLOOR,
+            catalyst_near_days=CATALYST_NEAR,
+            catalyst_mid_days=CATALYST_MID,
+        )
+        row["tier_ablated"] = new_tier
+        ablated.append(row)
+
+    sep = compute_separation(ablated, tier_col="tier_ablated")
+    sep["label"] = label
+    sep["n_flipped"] = n_flipped
+    return sep
+
+
+def section_ablations(rows: List[Dict[str, Any]]) -> str:
+    """Run surgical ablations and report results."""
+    lines = ["# Section 3: Surgical Ablations", ""]
+
+    # Baseline
+    baseline = compute_separation(rows)
+    lines.append(f"Baseline tier distribution: {baseline['tier_counts']}")
+    lines.append(f"Baseline AB-CD sep (mean): {fmt(baseline['sep_mean'])}")
+    lines.append(f"Baseline AB-CD sep (med):  {fmt(baseline['sep_med'])}")
+    lines.append("")
+
+    for yr in sorted(set(year_of(r) for r in rows)):
+        yr_rows = [r for r in rows if year_of(r) == yr]
+        lines.append(f"## {yr}  ({len(yr_rows)} rows)")
+        lines.append("")
+
+        # Baseline for this year
+        bl = compute_separation(yr_rows)
+        lines.append(f"Baseline: {bl['tier_counts']}  sep_mean={fmt(bl['sep_mean'])}  sep_med={fmt(bl['sep_med'])}")
+        lines.append("")
+
+        # Ablation 1: Disable ALL gating
+        abl1 = run_ablation(
+            yr_rows,
+            "disable_all_gates",
+            lambda r: r.get("tier") == "D",
+        )
+
+        # Ablation 2: Disable drawdown gate only (rows where ONLY deep_drawdown)
+        def _dd_only(r):
+            if r.get("tier") != "D":
+                return False
+            reasons = r.get("ineligible_reasons", "")
+            return reasons == "deep_drawdown"
+
+        abl2 = run_ablation(yr_rows, "disable_drawdown_only", _dd_only)
+
+        # Ablation 3: Disable each gate individually
+        GATES = ["deep_drawdown", "sev3", "fundamental_red_flag", "adv_fail"]
+        gate_ablations = []
+        for gate in GATES:
+            def _gate_match(r, g=gate):
+                if r.get("tier") != "D":
+                    return False
+                ffg = r.get("first_failed_gate", "")
+                return ffg == g
+            abl = run_ablation(yr_rows, f"disable_{gate}", _gate_match)
+            gate_ablations.append(abl)
+
+        # Report
+        lines.append(f"{'Ablation':<30} {'Flipped':>7} {'A':>4} {'B':>4} {'C':>4} {'D':>4} {'Sep(mean)':>10} {'Sep(med)':>10} {'Δmean':>8}")
+        lines.append("-" * 96)
+
+        for abl in [abl1, abl2] + gate_ablations:
+            tc = abl["tier_counts"]
+            delta = round(abl["sep_mean"] - bl["sep_mean"], 2) if abl["sep_mean"] is not None and bl["sep_mean"] is not None else None
+            lines.append(
+                f"{abl['label']:<30} {abl['n_flipped']:>7} "
+                f"{tc.get('A', 0):>4} {tc.get('B', 0):>4} {tc.get('C', 0):>4} {tc.get('D', 0):>4} "
+                f"{fmt(abl['sep_mean']):>10} {fmt(abl['sep_med']):>10} "
+                f"{fmt(delta):>8}"
+            )
+        lines.append("")
+
+    return "\n".join(lines)
+
+
+# =============================================================================
+# SECTION 4: DRAWDOWN MARGIN ANALYSIS
+# =============================================================================
+
+def section_drawdown_margins(rows: List[Dict[str, Any]]) -> str:
+    """Analyze drawdown margins for D-tier rows."""
+    lines = ["# Section 4: Drawdown Margin Analysis (D-Tier)", ""]
+
+    d_rows = [r for r in rows if r.get("tier") == "D"]
+    lines.append(f"Total D-tier rows: {len(d_rows)}")
+    lines.append("")
+
+    for yr in sorted(set(year_of(r) for r in rows)):
+        yr_d = [r for r in d_rows if year_of(r) == yr]
+        lines.append(f"## {yr} — D-Tier Drawdown Margins ({len(yr_d)} rows)")
+        lines.append("")
+
+        # Only look at rows where drawdown is a reason
+        dd_rows = [r for r in yr_d if "deep_drawdown" in (r.get("ineligible_reasons", "") or "")]
+
+        abs_margins = [r["dd_abs_margin"] for r in dd_rows if r.get("dd_abs_margin") is not None]
+        rel_margins = [r["dd_rel_margin"] for r in dd_rows if r.get("dd_rel_margin") is not None]
+
+        lines.append(f"Rows with deep_drawdown reason: {len(dd_rows)}")
+        lines.append("")
+
+        if abs_margins:
+            # Margins are in raw decimal: -0.15 = 15pp below gate
+            lines.append(f"dd_abs_margin distribution (N={len(abs_margins)}):")
+            lines.append(f"  Mean: {mean(abs_margins)*100:.1f}pp  Median: {median(abs_margins)*100:.1f}pp")
+            sv = sorted(abs_margins)
+            p25 = sv[int(len(sv)*0.25)] if len(sv) > 1 else sv[0]
+            p75 = sv[int(len(sv)*0.75)] if len(sv) > 1 else sv[0]
+            lines.append(f"  P25: {p25*100:.1f}pp  P75: {p75*100:.1f}pp")
+            # Barely ineligible: margin within 5pp of threshold (0.05 in decimal)
+            barely = [m for m in abs_margins if m > -0.05]
+            lines.append(f"  Barely ineligible (margin > -5pp): {len(barely)} / {len(abs_margins)} ({len(barely)/len(abs_margins)*100:.1f}%)")
+            very_close = [m for m in abs_margins if m > -0.02]
+            lines.append(f"  Very close (margin > -2pp): {len(very_close)} / {len(abs_margins)} ({len(very_close)/len(abs_margins)*100:.1f}%)")
+            # Histogram
+            buckets = [(0.0, -0.02, "0-2pp"), (-0.02, -0.05, "2-5pp"),
+                       (-0.05, -0.10, "5-10pp"), (-0.10, -0.20, "10-20pp"),
+                       (-0.20, -0.50, "20-50pp"), (-0.50, -999, ">50pp")]
+            lines.append(f"  Histogram:")
+            for lo, hi, label in buckets:
+                count = sum(1 for m in abs_margins if m <= lo and m > hi)
+                pct = count / len(abs_margins) * 100
+                lines.append(f"    {label:>8}: {count:>5} ({pct:.1f}%)")
+        else:
+            lines.append("dd_abs_margin: no data")
+        lines.append("")
+
+        if rel_margins:
+            lines.append(f"dd_rel_margin distribution (N={len(rel_margins)}):")
+            lines.append(f"  Mean: {mean(rel_margins)*100:.1f}pp  Median: {median(rel_margins)*100:.1f}pp")
+            barely = [m for m in rel_margins if m > -0.05]
+            lines.append(f"  Barely ineligible (margin > -5pp): {len(barely)} / {len(rel_margins)} ({len(barely)/len(rel_margins)*100:.1f}%)")
+        else:
+            lines.append("dd_rel_margin: no data")
+        lines.append("")
+
+        # Performance split: barely-ineligible vs deep-ineligible drawdown rows
+        if dd_rows:
+            close_rows = [r for r in dd_rows if r.get("dd_abs_margin") is not None and r["dd_abs_margin"] > -0.10]
+            deep_rows = [r for r in dd_rows if r.get("dd_abs_margin") is not None and r["dd_abs_margin"] <= -0.10]
+
+            close_rets = [r["fwd_ret_60d"] for r in close_rows if r.get("fwd_ret_60d") is not None]
+            deep_rets = [r["fwd_ret_60d"] for r in deep_rows if r.get("fwd_ret_60d") is not None]
+
+            sc = summary_stats(close_rets)
+            sd = summary_stats(deep_rets)
+            lines.append(f"Performance split (deep_drawdown rows only):")
+            lines.append(f"  Near gate  (margin > -10pp): N={sc['count']}, mean={fmt(sc['mean'])}, med={fmt(sc['median'])}, hit={fmt(sc['hit_pct'], suffix='')}")
+            lines.append(f"  Far below  (margin <= -10pp): N={sd['count']}, mean={fmt(sd['mean'])}, med={fmt(sd['median'])}, hit={fmt(sd['hit_pct'], suffix='')}")
+            lines.append("")
+
+    return "\n".join(lines)
+
+
+# =============================================================================
+# MAIN
+# =============================================================================
+
+def main():
+    parser = argparse.ArgumentParser(description="Eligibility Gate Diagnosis")
+    parser.add_argument("--panel", type=Path, default=DEFAULT_PANEL)
+    parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
+    parser.add_argument("--suffix", default="")
+    args = parser.parse_args()
+
+    print(f"Reading panel: {args.panel}")
+    rows = read_panel(args.panel)
+    print(f"  Total rows: {len(rows)}")
+    print(f"  Date range: {min(r['as_of_date'] for r in rows)} to {max(r['as_of_date'] for r in rows)}")
+    print(f"  Years: {sorted(set(year_of(r) for r in rows))}")
+
+    # Check for required columns
+    sample = rows[0] if rows else {}
+    has_reasons = "ineligible_reasons" in sample
+    has_gate = "first_failed_gate" in sample
+    print(f"  ineligible_reasons column: {'YES' if has_reasons else 'MISSING'}")
+    print(f"  first_failed_gate column:  {'YES' if has_gate else 'MISSING'}")
+    if not has_reasons:
+        print("WARNING: ineligible_reasons column missing — attribution will be limited")
+
+    # Build report
+    sections = []
+    sections.append(section_tier_performance(rows))
+    sections.append(section_dtier_attribution(rows))
+    sections.append(section_ablations(rows))
+    sections.append(section_drawdown_margins(rows))
+
+    # Header
+    today = datetime.now().strftime("%Y-%m-%d")
+    header = [
+        f"# Eligibility Gate Diagnosis — {today}",
+        f"",
+        f"Panel: {args.panel.name}",
+        f"Rows: {len(rows)}",
+        f"Date range: {min(r['as_of_date'] for r in rows)} to {max(r['as_of_date'] for r in rows)}",
+        f"Ruleset params: a_floor={A_FLOOR}, b_floor={B_FLOOR}, catalyst_near={CATALYST_NEAR}d, catalyst_mid={CATALYST_MID}d",
+        f"",
+        f"---",
+        f"",
+    ]
+
+    report = "\n".join(header) + "\n\n".join(sections)
+
+    # Write
+    suffix = f"_{args.suffix}" if args.suffix else ""
+    out_path = args.output_dir / f"eligibility_gate_diagnosis{suffix}.md"
+    args.output_dir.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(report, encoding="utf-8")
+    print(f"\nReport written to: {out_path}")
+
+
+if __name__ == "__main__":
+    main()

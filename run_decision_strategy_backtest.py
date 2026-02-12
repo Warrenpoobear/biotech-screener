@@ -85,6 +85,7 @@ DEFAULT_TOP_K = 20
 
 PANEL_COLUMNS = [
     "as_of_date", "ticker", "tier", "band", "eligible", "weight",
+    "ineligible_reasons", "first_failed_gate",
     "tier_reason", "risk_flags", "catalyst_mode", "catalyst_strength", "mom_state",
     "optionality", "catalyst_days_raw", "ruleset_id",
     "drawdown_abs", "drawdown_xbi", "drawdown_rel_xbi",
@@ -394,6 +395,8 @@ def build_all_dev_decisions(
             "tier_dev": fields.get("tier_dev", ""),
             "band": fields.get("size_band", ""),
             "eligible": fields.get("eligible", "0"),
+            "ineligible_reasons": fields.get("ineligible_reasons", ""),
+            "first_failed_gate": margins.get("first_failed_gate", ""),
             "tier_reason": fields.get("tier_reason", ""),
             "risk_flags": fields.get("risk_flags", ""),
             "catalyst_mode": fields.get("catalyst_mode", ""),
@@ -806,6 +809,8 @@ def run_strategy_backtest(
                     "band": dev["band"],
                     "eligible": dev["eligible"],
                     "weight": weight_map.get(ticker, 0.0),
+                    "ineligible_reasons": dev.get("ineligible_reasons", ""),
+                    "first_failed_gate": dev.get("first_failed_gate", ""),
                     "tier_reason": dev["tier_reason"],
                     "risk_flags": dev["risk_flags"],
                     "catalyst_mode": dev["catalyst_mode"],

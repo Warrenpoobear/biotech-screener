@@ -205,6 +205,7 @@ class TestPanelSchema:
         """PANEL_COLUMNS constant matches expected list."""
         expected = [
             "as_of_date", "ticker", "tier", "band", "eligible", "weight",
+            "ineligible_reasons", "first_failed_gate",
             "tier_reason", "risk_flags", "catalyst_mode", "catalyst_strength", "mom_state",
             "optionality", "catalyst_days_raw", "ruleset_id",
             "drawdown_abs", "drawdown_xbi", "drawdown_rel_xbi",
@@ -243,7 +244,9 @@ class TestPanelSchema:
         assert tickers == {"TICK1", "TICK2"}
         # Check keys
         expected_keys = {
-            "ticker", "tier_dev", "band", "eligible", "tier_reason",
+            "ticker", "tier_dev", "band", "eligible",
+            "ineligible_reasons", "first_failed_gate",
+            "tier_reason",
             "risk_flags", "catalyst_mode", "catalyst_strength", "catalyst_days", "mom_state",
             "optionality",
             "drawdown_abs", "drawdown_xbi", "drawdown_rel_xbi",
