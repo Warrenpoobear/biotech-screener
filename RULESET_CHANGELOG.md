@@ -176,6 +176,18 @@ optimal operating point.
 
 ---
 
+## [v1.2.0] 010b4332 — 2025-10-15 — Candidate v1.2 (a_floor=0.55, pre-drawdown)
+
+Pre-promotion copy of the Phase-2 production config. Identical effective
+configuration to `v2_phase2_default.json` (promoted as d3cdf5c8). Predates
+the drawdown gate and cost-aware sizing fields (uses engine defaults).
+
+**Status**: Legacy candidate. Superseded by promoted v2_phase2_default.json.
+
+**Files**: `v1.2_candidate.json`
+
+---
+
 ## [v1.0.0] d4f1f8a8 — 2024-11-01 — Original defaults
 
 Initial decision engine release. Hard-coded thresholds:
@@ -263,3 +275,6 @@ rescued outcome analysis, calibration artifacts (`artifacts/calibration_report__
 Pinned regression test updated. Contract/replay tests green.
 
 **Files**: `v1.2.1_candidate.json` (candidate)
+
+
+**Governance**: <fill in>

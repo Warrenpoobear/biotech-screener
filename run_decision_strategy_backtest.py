@@ -94,6 +94,7 @@ PANEL_COLUMNS = [
     "fwd_dd_missing_reason",
     "adv_dollars", "est_cost_bps", "participation_pct",
     "fwd_ret_20d_net", "fwd_ret_60d_net",
+    "catalyst_tilt_mult", "catalyst_tilt_applied",
 ]
 
 
@@ -272,6 +273,8 @@ def build_strategy_portfolio(
             "cost_mult": fields.get("cost_mult", ""),
             "cost_bucket": fields.get("cost_bucket", ""),
             "cost_haircut_applied": fields.get("cost_haircut_applied", ""),
+            "catalyst_tilt_mult": fields.get("catalyst_tilt_mult", 1.0),
+            "catalyst_tilt_applied": fields.get("catalyst_tilt_applied", "0"),
         }))
 
     # Sort by actionable key and take top-k
@@ -406,6 +409,8 @@ def build_all_dev_decisions(
             "rescued_by_rel": margins["rescued_by_rel"],
             "optionality_margin_a": tier_margins["optionality_margin_a"],
             "actionable_catalyst": tier_margins["actionable_catalyst"],
+            "catalyst_tilt_mult": fields.get("catalyst_tilt_mult", 1.0),
+            "catalyst_tilt_applied": fields.get("catalyst_tilt_applied", "0"),
         })
 
     return results

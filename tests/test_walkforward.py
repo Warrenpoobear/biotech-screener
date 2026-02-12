@@ -214,6 +214,7 @@ class TestPanelSchema:
             "fwd_dd_missing_reason",
             "adv_dollars", "est_cost_bps", "participation_pct",
             "fwd_ret_20d_net", "fwd_ret_60d_net",
+            "catalyst_tilt_mult", "catalyst_tilt_applied",
         ]
         assert PANEL_COLUMNS == expected
 
@@ -248,6 +249,7 @@ class TestPanelSchema:
             "drawdown_abs", "drawdown_xbi", "drawdown_rel_xbi",
             "dd_abs_margin", "dd_rel_margin", "rescued_by_rel",
             "optionality_margin_a", "actionable_catalyst",
+            "catalyst_tilt_mult", "catalyst_tilt_applied",
         }
         for r in results:
             assert set(r.keys()) == expected_keys
