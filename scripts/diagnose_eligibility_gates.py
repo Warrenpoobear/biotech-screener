@@ -602,6 +602,166 @@ def section_reversal_filter(rows: List[Dict[str, Any]]) -> str:
 
 
 # =============================================================================
+# SECTION 6: RELATIVE-DRAWDOWN RESCUE AUDIT
+# =============================================================================
+
+def section_relative_rescue(rows: List[Dict[str, Any]]) -> str:
+    """Audit relative-drawdown rescue signal for D-tier rows.
+
+    Three sub-analyses:
+      6a) rescued_by_rel context (eligible rows rescued vs not)
+      6b) 2×2 abs/rel margin grid for D-tier
+      6c) Hypothetical rescue sweep: relax rel margin → retier → measure sep
+    """
+    lines = ["# Section 6: Relative-Drawdown Rescue Audit", ""]
+
+    d_rows = [r for r in rows if r.get("tier") == "D"]
+    elig_rows = [r for r in rows if str(r.get("eligible", "0")) == "1"]
+
+    # ---- 6a: rescued_by_rel context (eligible rows) ----
+    lines.append("## 6a: rescued_by_rel Performance (Eligible Rows)")
+    lines.append("")
+    lines.append("Note: rescued_by_rel is 0 for ALL D-tier rows (require_both gate mode).")
+    lines.append("This section examines rescued eligible rows as context for the signal's value.")
+    lines.append("")
+
+    for yr in sorted(set(year_of(r) for r in rows)):
+        yr_elig = [r for r in elig_rows if year_of(r) == yr]
+        rescued = [r for r in yr_elig if r.get("rescued_by_rel") == "1"]
+        not_rescued = [r for r in yr_elig if r.get("rescued_by_rel") != "1"]
+
+        r_rets = [r["fwd_ret_60d"] for r in rescued if r.get("fwd_ret_60d") is not None]
+        nr_rets = [r["fwd_ret_60d"] for r in not_rescued if r.get("fwd_ret_60d") is not None]
+
+        sr = summary_stats(r_rets)
+        snr = summary_stats(nr_rets)
+        lines.append(f"### {yr}")
+        lines.append(f"  Rescued (abs breach, rel saved):  N={sr['count']}, mean={fmt(sr['mean'])}, med={fmt(sr['median'])}, hit={fmt(sr['hit_pct'], suffix='')}")
+        lines.append(f"  Not rescued (no abs breach):      N={snr['count']}, mean={fmt(snr['mean'])}, med={fmt(snr['median'])}, hit={fmt(snr['hit_pct'], suffix='')}")
+        lines.append("")
+
+    # ---- 6b: 2×2 abs/rel margin grid for D-tier ----
+    lines.append("## 6b: 2×2 Abs/Rel Margin Grid (D-Tier Only)")
+    lines.append("")
+    lines.append("Splits D-tier rows at -10pp margin on each axis.")
+    lines.append("'Shallow' = margin > -0.10 (closer to gate), 'Deep' = margin <= -0.10")
+    lines.append("")
+
+    ABS_SPLIT = -0.10
+    REL_SPLIT = -0.10
+
+    for yr in sorted(set(year_of(r) for r in rows)):
+        yr_d = [r for r in d_rows if year_of(r) == yr
+                and r.get("dd_abs_margin") is not None
+                and r.get("dd_rel_margin") is not None]
+        lines.append(f"### {yr} ({len(yr_d)} D-tier rows with both margins)")
+        lines.append("")
+
+        grid: Dict[str, List[float]] = {
+            "abs_shallow+rel_shallow": [],
+            "abs_shallow+rel_deep": [],
+            "abs_deep+rel_shallow": [],
+            "abs_deep+rel_deep": [],
+        }
+
+        for r in yr_d:
+            abs_m = r["dd_abs_margin"]
+            rel_m = r["dd_rel_margin"]
+            ret = r.get("fwd_ret_60d")
+            if ret is None:
+                continue
+
+            abs_label = "abs_shallow" if abs_m > ABS_SPLIT else "abs_deep"
+            rel_label = "rel_shallow" if rel_m > REL_SPLIT else "rel_deep"
+            grid[f"{abs_label}+{rel_label}"].append(ret)
+
+        lines.append(f"{'Cell':<30} {'N':>5} {'Mean':>8} {'Med':>8} {'Hit%':>7}")
+        lines.append("-" * 62)
+        for cell in ["abs_shallow+rel_shallow", "abs_shallow+rel_deep",
+                      "abs_deep+rel_shallow", "abs_deep+rel_deep"]:
+            s = summary_stats(grid[cell])
+            lines.append(
+                f"{cell:<30} {s['count']:>5} "
+                f"{fmt(s['mean']):>8} {fmt(s['median']):>8} "
+                f"{fmt(s['hit_pct'], suffix=''):>6}%"
+            )
+        lines.append("")
+
+        # Is rel_shallow better than rel_deep (holding abs constant)?
+        for abs_level in ["abs_shallow", "abs_deep"]:
+            s_vals = grid[f"{abs_level}+rel_shallow"]
+            d_vals = grid[f"{abs_level}+rel_deep"]
+            if s_vals and d_vals:
+                delta_mean = round(mean(s_vals) - mean(d_vals), 2)
+                delta_med = round(median(s_vals) - median(d_vals), 2)
+                lines.append(
+                    f"  {abs_level}: rel_shallow − rel_deep = "
+                    f"Δmean={fmt(delta_mean)}, Δmed={fmt(delta_med)}"
+                )
+        lines.append("")
+
+    # ---- 6c: Hypothetical rescue sweep ----
+    lines.append("## 6c: Hypothetical Rescue Sweep")
+    lines.append("")
+    lines.append("What if D-tier rows with dd_rel_margin above threshold were rescued (set eligible=1)?")
+    lines.append("Retiers using current ruleset params, measures AB-CD separation.")
+    lines.append("")
+
+    RESCUE_THRESHOLDS = [-0.02, -0.05, -0.10, -0.15, -0.20]
+
+    for yr in sorted(set(year_of(r) for r in rows)):
+        yr_rows = [r for r in rows if year_of(r) == yr]
+        yr_d = [r for r in yr_rows if r.get("tier") == "D"]
+
+        # Baseline
+        bl = compute_separation(yr_rows)
+        lines.append(f"### {yr} (baseline sep_mean={fmt(bl['sep_mean'])}, sep_med={fmt(bl['sep_med'])})")
+        lines.append("")
+        lines.append(f"{'Rescue threshold':<20} {'Rescued':>7} {'A':>4} {'B':>4} {'C':>4} {'D':>4} {'Sep(mean)':>10} {'Sep(med)':>10} {'Δmean':>8}")
+        lines.append("-" * 88)
+
+        for thresh in RESCUE_THRESHOLDS:
+            def _rescue_fn(r, t=thresh):
+                if r.get("tier") != "D":
+                    return False
+                rel_m = r.get("dd_rel_margin")
+                if rel_m is None:
+                    return False
+                return rel_m > t
+
+            abl = run_ablation(yr_rows, f"rel_margin>{thresh:.2f}", _rescue_fn)
+            tc = abl["tier_counts"]
+            delta = round(abl["sep_mean"] - bl["sep_mean"], 2) if abl["sep_mean"] is not None and bl["sep_mean"] is not None else None
+            lines.append(
+                f"dd_rel_margin > {thresh:>5.2f}  {abl['n_flipped']:>7} "
+                f"{tc.get('A', 0):>4} {tc.get('B', 0):>4} {tc.get('C', 0):>4} {tc.get('D', 0):>4} "
+                f"{fmt(abl['sep_mean']):>10} {fmt(abl['sep_med']):>10} "
+                f"{fmt(delta):>8}"
+            )
+
+        # Also report performance of rescued rows at each threshold
+        lines.append("")
+        lines.append(f"{'Rescue threshold':<20} {'Rescued':>7} {'Rescued mean':>12} {'Rescued med':>12} {'Rescued hit%':>12}")
+        lines.append("-" * 70)
+        for thresh in RESCUE_THRESHOLDS:
+            rescued_rets = [
+                r["fwd_ret_60d"] for r in yr_d
+                if r.get("dd_rel_margin") is not None
+                and r["dd_rel_margin"] > thresh
+                and r.get("fwd_ret_60d") is not None
+            ]
+            s = summary_stats(rescued_rets)
+            lines.append(
+                f"dd_rel_margin > {thresh:>5.2f}  {s['count']:>7} "
+                f"{fmt(s['mean']):>12} {fmt(s['median']):>12} "
+                f"{fmt(s['hit_pct'], suffix=''):>11}%"
+            )
+        lines.append("")
+
+    return "\n".join(lines)
+
+
+# =============================================================================
 # MAIN
 # =============================================================================
 
@@ -643,6 +803,7 @@ def main():
     sections.append(section_ablations(rows))
     sections.append(section_drawdown_margins(rows))
     sections.append(section_reversal_filter(rows))
+    sections.append(section_relative_rescue(rows))
 
     # Header
     today = datetime.now().strftime("%Y-%m-%d")
