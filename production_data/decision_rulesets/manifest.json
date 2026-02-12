@@ -2,7 +2,7 @@
   "schema_version": 1,
   "rulesets": [
     {
-      "id": "e7100019",
+      "id": "010b4332",
       "file": "v2_phase2_default.json",
       "created_at": "2025-10-31",
       "engine_version": "v1.2.0",
@@ -14,7 +14,7 @@
       "updated_at": "2026-02-10T13:18:40Z"
     },
     {
-      "id": "0af7f802",
+      "id": "2202a60b",
       "file": "v1.2.0_candidate.json",
       "created_at": "2026-02-10",
       "engine_version": "v1.3.0",
@@ -26,7 +26,7 @@
       "updated_at": "2026-02-11T18:58:55Z"
     },
     {
-      "id": "131800e4",
+      "id": "68b2c45e",
       "file": "v1.2.1_candidate.json",
       "created_at": "2026-02-11",
       "engine_version": "v1.3.0",
@@ -38,7 +38,7 @@
       "updated_at": "2026-02-11T18:58:55Z"
     },
     {
-      "id": "e7100019",
+      "id": "010b4332",
       "file": "v1.2_candidate.json",
       "created_at": "2025-10-15",
       "engine_version": "v1.2.0",
@@ -50,7 +50,7 @@
       "updated_at": "2025-10-15T00:00:00Z"
     },
     {
-      "id": "d9d4a057",
+      "id": "031454ca",
       "file": "v1.3_candidate.json",
       "created_at": "2025-10-31",
       "engine_version": "v1.2.0",
@@ -60,7 +60,7 @@
       "notes": "Rejected: soft drawdown dilutes alpha and worsens P5 from -29% to -38%."
     },
     {
-      "id": "402dd3e4",
+      "id": "dcdcccc8",
       "file": "v1.json",
       "created_at": "2024-11-01",
       "engine_version": "v1.0.0",
