@@ -75,6 +75,12 @@ class DecisionRuleset:
     cost_haircut_floor_mult: float = 0.55
     cost_impact_cap_bps: float = 200.0
 
+    # Layer 3 — Catalyst strength sizing tilt (opt-in, multiplicative on weight)
+    enable_catalyst_tilt: bool = False
+    catalyst_tilt_mults: tuple = (
+        ("NEAR", 1.10), ("MID", 1.05), ("FAR", 0.95), ("MISSING", 0.90)
+    )
+
     def __post_init__(self):
         # Validate cost_haircut_buckets: ascending thresholds
         buckets = self.cost_haircut_buckets
@@ -94,6 +100,18 @@ class DecisionRuleset:
             raise ValueError(
                 f"cost_impact_cap_bps must be > 0, got {self.cost_impact_cap_bps}"
             )
+        # Validate catalyst_tilt_mults: keys must be valid bands, mults > 0
+        valid_bands = {"NEAR", "MID", "FAR", "MISSING"}
+        for band, mult in self.catalyst_tilt_mults:
+            if band not in valid_bands:
+                raise ValueError(
+                    f"catalyst_tilt_mults: unknown band '{band}', "
+                    f"expected one of {sorted(valid_bands)}"
+                )
+            if mult <= 0:
+                raise ValueError(
+                    f"catalyst_tilt_mults: mult must be > 0, got {mult} for '{band}'"
+                )
 
     @property
     def sizing_weights_dict(self) -> Dict[str, float]:
@@ -143,6 +161,11 @@ class DecisionRuleset:
         if "cost_haircut_buckets" in d and isinstance(d["cost_haircut_buckets"], list):
             d["cost_haircut_buckets"] = tuple(
                 tuple(pair) for pair in d["cost_haircut_buckets"]
+            )
+        # Convert catalyst_tilt_mults list-of-lists back to tuple-of-tuples
+        if "catalyst_tilt_mults" in d and isinstance(d["catalyst_tilt_mults"], list):
+            d["catalyst_tilt_mults"] = tuple(
+                tuple(pair) for pair in d["catalyst_tilt_mults"]
             )
         return cls(**d)
 
@@ -652,7 +675,8 @@ def compute_target_weights(
     for row in rows:
         band = row.get("size_band", "XS")
         cm = _safe_float(row.get("cost_mult"), default=1.0)
-        raw_weights.append(weights_map.get(str(band), 0.15) * cm)
+        tm = _safe_float(row.get("catalyst_tilt_mult"), default=1.0)
+        raw_weights.append(weights_map.get(str(band), 0.15) * cm * tm)
 
     total = sum(raw_weights)
     if total <= 0:
@@ -682,6 +706,7 @@ DECISION_COLUMNS = [
     "runway_bucket", "mom_state", "risk_flags",
     "size_band", "size_reasons",
     "cost_mult", "cost_bucket", "cost_haircut_applied",
+    "catalyst_tilt_mult", "catalyst_tilt_applied",
     "tier_dev", "tier_reason",
 ]
 
@@ -726,6 +751,13 @@ def compute_decision_fields(
     # Cost multiplier (opt-in, affects sizing band + weight)
     cost_mult, cost_bucket = _compute_cost_mult(est_cost_bps, rs)
 
+    # Catalyst tilt multiplier (opt-in, affects weight only)
+    catalyst_tilt_mult = 1.0
+    if rs.enable_catalyst_tilt:
+        tilt_map = dict(rs.catalyst_tilt_mults)
+        cat_strength = overlays.get("catalyst_strength", "missing")
+        catalyst_tilt_mult = tilt_map.get(cat_strength.upper(), 1.0)
+
     # Layer 3 — Sizing
     size_band, size_reasons = _compute_size_band(
         eligible=eligible,
@@ -752,6 +784,8 @@ def compute_decision_fields(
         "cost_mult": cost_mult,
         "cost_bucket": cost_bucket,
         "cost_haircut_applied": "1" if cost_mult < 1.0 else "0",
+        "catalyst_tilt_mult": catalyst_tilt_mult,
+        "catalyst_tilt_applied": "1" if catalyst_tilt_mult != 1.0 else "0",
     }
     return fields
 

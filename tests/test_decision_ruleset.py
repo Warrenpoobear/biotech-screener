@@ -285,7 +285,7 @@ class TestRulesetDriftGuardrails:
     regenerate production_data/decision_rulesets/v1.json.
     """
 
-    EXPECTED_DEFAULT_RULESET_ID = "402dd3e4"
+    EXPECTED_DEFAULT_RULESET_ID = "dcdcccc8"
 
     def test_default_ruleset_id_pinned(self):
         """DEFAULT_RULESET.ruleset_id must match the committed expected value.
@@ -762,3 +762,92 @@ class TestCostParamValidation:
         assert all(isinstance(pair, tuple) for pair in loaded.cost_haircut_buckets)
         assert loaded.cost_haircut_buckets == ((50, 1.0), (100, 0.85), (150, 0.70))
         assert loaded.cost_haircut_floor_mult == 0.60
+
+
+# =============================================================================
+# Tests: Catalyst tilt
+# =============================================================================
+
+class TestCatalystTilt:
+    """Tests for catalyst strength sizing tilt (L3-only, opt-in)."""
+
+    def test_disabled_weights_identical(self):
+        """With enable_catalyst_tilt=False, weights are bit-for-bit identical to baseline."""
+        rows_baseline = [
+            {"size_band": "L", "eligible": "1", "catalyst_strength": "near"},
+            {"size_band": "M", "eligible": "1", "catalyst_strength": "missing"},
+        ]
+        rows_tilt_off = [
+            {"size_band": "L", "eligible": "1", "catalyst_strength": "near"},
+            {"size_band": "M", "eligible": "1", "catalyst_strength": "missing"},
+        ]
+        compute_target_weights(rows_baseline)
+        rs_off = DecisionRuleset(enable_catalyst_tilt=False)
+        compute_target_weights(rows_tilt_off, ruleset=rs_off)
+        assert rows_baseline[0]["target_weight_pct"] == rows_tilt_off[0]["target_weight_pct"]
+        assert rows_baseline[1]["target_weight_pct"] == rows_tilt_off[1]["target_weight_pct"]
+
+    def test_enabled_near_gets_higher_weight_than_far(self):
+        """With tilt enabled, NEAR ticker gets higher weight than FAR for same band."""
+        rs = DecisionRuleset(enable_catalyst_tilt=True)
+        # Build two otherwise-identical rows differing only in catalyst tilt
+        rec_near = _base_rec(
+            catalyst_decay={"days_to_catalyst": 45, "in_optimal_window": True},
+        )
+        rec_far = _base_rec(
+            catalyst_decay={"days_to_catalyst": 200, "in_optimal_window": False},
+        )
+        result_near = compute_decision_fields(rec_near, "drug_developer", 0.75, ruleset=rs)
+        result_far = compute_decision_fields(rec_far, "drug_developer", 0.75, ruleset=rs)
+        assert result_near["catalyst_tilt_mult"] > result_far["catalyst_tilt_mult"]
+        assert result_near["catalyst_tilt_applied"] == "1"
+        assert result_far["catalyst_tilt_applied"] == "1"
+
+    def test_disabled_emits_neutral_tilt(self):
+        """With tilt disabled, catalyst_tilt_mult=1.0, catalyst_tilt_applied='0'."""
+        rec = _base_rec()
+        result = compute_decision_fields(rec, "drug_developer", 0.75)
+        assert result["catalyst_tilt_mult"] == 1.0
+        assert result["catalyst_tilt_applied"] == "0"
+
+    def test_invalid_tilt_band_rejected(self):
+        """Unknown band in catalyst_tilt_mults raises ValueError."""
+        with pytest.raises(ValueError, match="unknown band"):
+            DecisionRuleset(
+                catalyst_tilt_mults=(("NEAR", 1.10), ("BOGUS", 0.90)),
+            )
+
+    def test_non_positive_tilt_mult_rejected(self):
+        """Multiplier <= 0 raises ValueError."""
+        with pytest.raises(ValueError, match="must be > 0"):
+            DecisionRuleset(
+                catalyst_tilt_mults=(("NEAR", 0.0), ("MID", 1.05)),
+            )
+
+    def test_round_trip_custom_tilt_mults(self, tmp_path):
+        """Custom tilt mults round-trip preserves equality and ruleset_id."""
+        custom = DecisionRuleset(
+            enable_catalyst_tilt=True,
+            catalyst_tilt_mults=(("NEAR", 1.20), ("MID", 1.10), ("FAR", 0.90), ("MISSING", 0.80)),
+        )
+        path = str(tmp_path / "tilt_custom.json")
+        custom.to_json(path)
+        loaded = DecisionRuleset.from_json(path)
+        assert loaded == custom
+        assert loaded.ruleset_id == custom.ruleset_id
+        assert loaded.enable_catalyst_tilt is True
+        assert loaded.catalyst_tilt_mults == (
+            ("NEAR", 1.20), ("MID", 1.10), ("FAR", 0.90), ("MISSING", 0.80)
+        )
+
+    def test_tilt_weights_in_portfolio(self):
+        """With tilt enabled, NEAR weight > FAR weight in portfolio normalization."""
+        rs = DecisionRuleset(enable_catalyst_tilt=True)
+        rows = [
+            {"size_band": "L", "eligible": "1", "cost_mult": 1.0,
+             "catalyst_tilt_mult": 1.10},  # NEAR
+            {"size_band": "L", "eligible": "1", "cost_mult": 1.0,
+             "catalyst_tilt_mult": 0.95},  # FAR
+        ]
+        compute_target_weights(rows, ruleset=rs)
+        assert rows[0]["target_weight_pct"] > rows[1]["target_weight_pct"]

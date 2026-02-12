@@ -52,7 +52,8 @@ def _parse_buckets(s: str) -> tuple:
                 f"Expected 'threshold:mult' pair, got '{token}'"
             )
         try:
-            threshold = float(parts[0])
+            raw_thresh = parts[0].strip()
+            threshold = int(raw_thresh) if "." not in raw_thresh else float(raw_thresh)
             mult = float(parts[1])
         except ValueError:
             raise argparse.ArgumentTypeError(
@@ -69,6 +70,42 @@ def _parse_buckets(s: str) -> tuple:
             raise argparse.ArgumentTypeError(
                 f"Bucket thresholds must be strictly ascending: {pairs}"
             )
+    return tuple(pairs)
+
+
+_VALID_TILT_BANDS = {"NEAR", "MID", "FAR", "MISSING"}
+
+
+def _parse_tilt_mults(s: str) -> tuple:
+    """Parse 'BAND:mult,...' into tuple-of-tuples.
+
+    Example: 'NEAR:1.10,MID:1.05,FAR:0.95,MISSING:0.90'
+             -> (("NEAR",1.10),("MID",1.05),("FAR",0.95),("MISSING",0.90))
+    """
+    pairs = []
+    for token in s.split(","):
+        token = token.strip()
+        parts = token.split(":")
+        if len(parts) != 2:
+            raise argparse.ArgumentTypeError(
+                f"Expected 'BAND:mult' pair, got '{token}'"
+            )
+        band = parts[0].strip().upper()
+        if band not in _VALID_TILT_BANDS:
+            raise argparse.ArgumentTypeError(
+                f"Unknown band '{band}', expected one of {sorted(_VALID_TILT_BANDS)}"
+            )
+        try:
+            mult = float(parts[1])
+        except ValueError:
+            raise argparse.ArgumentTypeError(
+                f"Non-numeric multiplier in '{token}'"
+            )
+        if mult <= 0:
+            raise argparse.ArgumentTypeError(
+                f"Multiplier must be > 0, got {mult} for '{band}'"
+            )
+        pairs.append((band, mult))
     return tuple(pairs)
 
 
@@ -119,6 +156,8 @@ def _build_overrides(args: argparse.Namespace) -> Dict[str, Any]:
         "cost_impact_cap_bps": "cost_impact_cap_bps",
         "cost_haircut_floor_mult": "cost_haircut_floor_mult",
         "cost_haircut_buckets": "cost_haircut_buckets",
+        "enable_catalyst_tilt": "enable_catalyst_tilt",
+        "catalyst_tilt_mults": "catalyst_tilt_mults",
     }
 
     for cli_name, field_name in flag_map.items():
@@ -162,6 +201,12 @@ def _apply_overrides(base: DecisionRuleset, overrides: Dict[str, Any]) -> Decisi
     if isinstance(params.get("cost_haircut_buckets"), list):
         params["cost_haircut_buckets"] = tuple(
             tuple(pair) for pair in params["cost_haircut_buckets"]
+        )
+
+    # Convert catalyst_tilt_mults list-of-lists back to tuple-of-tuples
+    if isinstance(params.get("catalyst_tilt_mults"), list):
+        params["catalyst_tilt_mults"] = tuple(
+            tuple(pair) for pair in params["catalyst_tilt_mults"]
         )
 
     return DecisionRuleset(**params)
@@ -240,6 +285,11 @@ def main() -> int:
     parser.add_argument(
         "--cost-haircut-buckets", type=_parse_buckets,
         help="Bucket boundaries as 'threshold:mult,...' (e.g. '400:1.0,1000:0.85,2000:0.70')",
+    )
+    parser.add_argument("--enable-catalyst-tilt", type=_parse_bool)
+    parser.add_argument(
+        "--catalyst-tilt-mults", type=_parse_tilt_mults,
+        help="Tilt multipliers as 'BAND:mult,...' (e.g. 'NEAR:1.10,MID:1.05,FAR:0.95,MISSING:0.90')",
     )
 
     args = parser.parse_args()
