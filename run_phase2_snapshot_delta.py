@@ -126,6 +126,7 @@ class CatalystCoverage:
     n_specific: int
     pct: float
     mode_dist: Dict[str, int]
+    backfill_share_pct: float = 0.0  # % of non-missing signals from backfill
 
 
 @dataclass
@@ -262,7 +263,16 @@ def _catalyst_coverage(rankings: pd.DataFrame) -> CatalystCoverage:
             n_specific += 1
 
     pct = (n_specific / n_dev * 100) if n_dev > 0 else 0.0
-    return CatalystCoverage(n_dev, n_specific, round(pct, 1), mode_dist)
+
+    # Backfill share: % of non-missing catalyst signals sourced from backfill
+    backfill_share = 0.0
+    if "catalyst_source" in dev.columns:
+        sources = [str(s).strip() for s in dev["catalyst_source"] if str(s).strip()]
+        if sources:
+            n_bf = sum(1 for s in sources if s in ("trial_cd", "trial_active"))
+            backfill_share = round(n_bf / len(sources) * 100, 1)
+
+    return CatalystCoverage(n_dev, n_specific, round(pct, 1), mode_dist, backfill_share)
 
 
 def _top_catalysts(rankings: pd.DataFrame, n: int = 10) -> List[Dict]:
@@ -823,6 +833,8 @@ def generate_report(
         cc = result.catalyst_coverage_current
         cp = result.catalyst_coverage_prior
         lines.append(f"  specific_days:  {cc.pct}%  (Prior: {cp.pct}%)")
+        if cc.backfill_share_pct > 0:
+            lines.append(f"  backfill_share:  {cc.backfill_share_pct}%")
         lines.append("  Mode distribution (current):")
         for mode, count in sorted(cc.mode_dist.items()):
             lines.append(f"    {mode}: {count}")
@@ -832,6 +844,8 @@ def generate_report(
     else:
         cc = result.catalyst_coverage
         lines.append(f"  specific_days:  {cc.pct}%")
+        if cc.backfill_share_pct > 0:
+            lines.append(f"  backfill_share:  {cc.backfill_share_pct}%")
         lines.append("  Mode distribution:")
         for mode, count in sorted(cc.mode_dist.items()):
             lines.append(f"    {mode}: {count}")
@@ -1048,6 +1062,7 @@ def _cat_cov_dict(cc: CatalystCoverage) -> dict:
         "n_specific": cc.n_specific,
         "pct": cc.pct,
         "mode_dist": cc.mode_dist,
+        "backfill_share_pct": cc.backfill_share_pct,
     }
 
 

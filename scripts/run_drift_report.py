@@ -78,6 +78,9 @@ class DriftGuardrails:
     # Rolling window size
     window_size: int = 5
 
+    # Backfill telemetry
+    warn_backfill_share_high: float = 60.0  # WARN if backfill-sourced catalyst > 60%
+
     # Adaptive WARN layer
     warn_iqr_k: float = 2.0             # WARN if |delta| > k * max(IQR, floor)
     warn_iqr_floor: float = 1.0         # minimum IQR (prevents spurious WARN from flat windows)
@@ -209,6 +212,27 @@ def _catalyst_missing_pct_eligible(rankings: pd.DataFrame) -> Optional[float]:
         if str(m).strip() in ("missing", "")
     )
     return round(n_missing / n_elig * 100, 1)
+
+
+def _catalyst_backfill_share_pct(rankings: pd.DataFrame) -> Optional[float]:
+    """Percentage of non-missing catalyst signals sourced from backfill.
+
+    Reads ``catalyst_source`` from rankings; counts trial_cd and trial_active
+    as backfill sources.  Returns None when column is absent or no non-missing
+    catalyst signals exist.
+    """
+    if "catalyst_source" not in rankings.columns:
+        return None
+    dev = rankings[rankings["archetype"] == "drug_developer"]
+    if "eligible" in dev.columns:
+        dev = dev[dev["eligible"].astype(str).str.strip() == "1"]
+    # Non-missing: has a catalyst_source value that isn't blank
+    sources = [str(s).strip() for s in dev["catalyst_source"] if str(s).strip()]
+    if not sources:
+        return None
+    backfill_sources = {"trial_cd", "trial_active"}
+    n_backfill = sum(1 for s in sources if s in backfill_sources)
+    return round(n_backfill / len(sources) * 100, 1)
 
 
 def _drawdown_coverage_pct(rankings: pd.DataFrame) -> Optional[float]:
@@ -370,6 +394,9 @@ def compute_snapshot_metrics(snap: SnapshotData) -> Dict[str, Any]:
     # Catalyst missing % among eligible
     metrics["catalyst_missing_pct"] = _catalyst_missing_pct_eligible(rankings)
 
+    # Catalyst backfill share
+    metrics["catalyst_backfill_share_pct"] = _catalyst_backfill_share_pct(rankings)
+
     # Drawdown coverage
     metrics["drawdown_coverage_pct"] = _drawdown_coverage_pct(rankings)
 
@@ -455,7 +482,8 @@ def compute_drift_metrics(
     # Rolling aggregates for key numeric metrics
     roll_keys = [
         "tier_A_pct", "tier_B_pct", "tier_C_pct", "tier_D_pct",
-        "eligible_pct", "catalyst_missing_pct", "top25_overlap_pct",
+        "eligible_pct", "catalyst_missing_pct", "catalyst_backfill_share_pct",
+        "top25_overlap_pct",
         "optionality_std", "composite_iqr", "drawdown_coverage_pct",
         "drawdown_rel_coverage_pct",
         "catalyst_strength_near_pct", "catalyst_strength_mid_pct",
@@ -608,6 +636,13 @@ def evaluate_guardrails(
         warn_reasons.append(
             f"Cap binding = {cap_binding:.1f}% > "
             f"{guardrails.warn_cap_binding_high}% ceiling"
+        )
+
+    backfill_share = current.get("catalyst_backfill_share_pct")
+    if backfill_share is not None and backfill_share > guardrails.warn_backfill_share_high:
+        warn_reasons.append(
+            f"Backfill share = {backfill_share:.1f}% > "
+            f"{guardrails.warn_backfill_share_high}% ceiling"
         )
 
     eligible_pct = current.get("eligible_pct")
@@ -1028,6 +1063,8 @@ def generate_drift_report_md(
          if current.get("eligible_pct") is not None else "N/A"),
         ("Catalyst missing (elig)", f"{current.get('catalyst_missing_pct', 'N/A')}%"
          if current.get("catalyst_missing_pct") is not None else "N/A"),
+        ("Backfill share (elig)", f"{current.get('catalyst_backfill_share_pct', 'N/A')}%"
+         if current.get("catalyst_backfill_share_pct") is not None else "N/A"),
         ("Drawdown coverage (dev)", f"{current.get('drawdown_coverage_pct', 'N/A')}%"
          if current.get("drawdown_coverage_pct") is not None else "N/A"),
         ("Rel DD coverage (dev)", f"{current.get('drawdown_rel_coverage_pct', 'N/A')}%"
@@ -1285,6 +1322,7 @@ def generate_drift_report_md(
     lines.append(f"- warn_median_cost_bps_high: {guardrails.warn_median_cost_bps_high} bps")
     lines.append(f"- warn_cost_coverage_low: {guardrails.warn_cost_coverage_low}%")
     lines.append(f"- warn_cap_binding_high: {guardrails.warn_cap_binding_high}%")
+    lines.append(f"- warn_backfill_share_high: {guardrails.warn_backfill_share_high}%")
     lines.append(f"- warn_iqr_k: {guardrails.warn_iqr_k}")
     lines.append(f"- warn_iqr_floor: {guardrails.warn_iqr_floor}")
     lines.append(f"- warn_min_window: {guardrails.warn_min_window}")
