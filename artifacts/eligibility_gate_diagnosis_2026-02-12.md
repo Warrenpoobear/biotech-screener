@@ -189,3 +189,88 @@ Q2              -14.6% to   -3.7%   291   +23.80%    +9.32%  62.20%
 Q3               -3.7% to   +6.1%   290   +32.02%   +18.60%  66.60%
 Q4               +6.1% to  +20.4%   290   +35.70%   +20.78%  74.50%
 Q5              +20.4% to +824.9%   295   +33.05%   +16.75%  66.10%
+
+
+# Section 6: Relative-Drawdown Rescue Audit
+
+## 6a: rescued_by_rel Performance (Eligible Rows)
+
+Note: rescued_by_rel is 0 for ALL D-tier rows (require_both gate mode).
+This section examines rescued eligible rows as context for the signal's value.
+
+### 2024
+  Rescued (abs breach, rel saved):  N=0, mean=n/a, med=n/a, hit=n/a
+  Not rescued (no abs breach):      N=621, mean=-4.49%, med=-7.78%, hit=37.00
+
+### 2025
+  Rescued (abs breach, rel saved):  N=11, mean=+13.95%, med=+17.46%, hit=63.60
+  Not rescued (no abs breach):      N=325, mean=+22.48%, med=+11.57%, hit=64.60
+
+## 6b: 2×2 Abs/Rel Margin Grid (D-Tier Only)
+
+Splits D-tier rows at -10pp margin on each axis.
+'Shallow' = margin > -0.10 (closer to gate), 'Deep' = margin <= -0.10
+
+### 2024 (1405 D-tier rows with both margins)
+
+Cell                               N     Mean      Med    Hit%
+--------------------------------------------------------------
+abs_shallow+rel_shallow           38   -2.54%   -6.12%  42.10%
+abs_shallow+rel_deep             322   +3.39%  -10.89%  32.90%
+abs_deep+rel_shallow               0      n/a      n/a    n/a%
+abs_deep+rel_deep               1045   +6.58%   -9.51%  39.00%
+
+  abs_shallow: rel_shallow − rel_deep = Δmean=-5.93%, Δmed=+4.77%
+
+### 2025 (1459 D-tier rows with both margins)
+
+Cell                               N     Mean      Med    Hit%
+--------------------------------------------------------------
+abs_shallow+rel_shallow          101  +23.19%   +9.01%  62.40%
+abs_shallow+rel_deep             108   +2.43%   -3.82%  46.30%
+abs_deep+rel_shallow              28  +30.73%  +27.99%  85.70%
+abs_deep+rel_deep               1220  +31.98%  +16.74%  67.00%
+
+  abs_shallow: rel_shallow − rel_deep = Δmean=+20.76%, Δmed=+12.83%
+  abs_deep: rel_shallow − rel_deep = Δmean=-1.25%, Δmed=+11.25%
+
+## 6c: Hypothetical Rescue Sweep
+
+What if D-tier rows with dd_rel_margin above threshold were rescued (set eligible=1)?
+Retiers using current ruleset params, measures AB-CD separation.
+
+### 2024 (baseline sep_mean=-6.78%, sep_med=+1.02%)
+
+Rescue threshold     Rescued    A    B    C    D  Sep(mean)   Sep(med)    Δmean
+----------------------------------------------------------------------------------------
+dd_rel_margin > -0.02        0   52  252  405 1405     -6.78%     +1.02%   +0.00%
+dd_rel_margin > -0.05        8   53  257  407 1397     -6.60%     +1.55%   +0.18%
+dd_rel_margin > -0.10       38   54  274  419 1367     -6.50%     +1.76%   +0.28%
+dd_rel_margin > -0.15      106   59  308  448 1299     -6.71%     +1.81%   +0.07%
+dd_rel_margin > -0.20      269   74  371  533 1136     -7.17%     +2.53%   -0.39%
+
+Rescue threshold     Rescued Rescued mean  Rescued med Rescued hit%
+----------------------------------------------------------------------
+dd_rel_margin > -0.02        0          n/a          n/a         n/a%
+dd_rel_margin > -0.05        8       -1.63%       -9.19%       25.00%
+dd_rel_margin > -0.10       38       -2.54%       -6.12%       42.10%
+dd_rel_margin > -0.15      106       -3.36%       -5.04%       44.30%
+dd_rel_margin > -0.20      269       -5.54%       -7.21%       39.00%
+
+### 2025 (baseline sep_mean=+4.53%, sep_med=+1.34%)
+
+Rescue threshold     Rescued    A    B    C    D  Sep(mean)   Sep(med)    Δmean
+----------------------------------------------------------------------------------------
+dd_rel_margin > -0.02       16   41  130  194 1443     +7.11%     +2.19%   +2.58%
+dd_rel_margin > -0.05       38   43  143  201 1421     +7.29%     +2.32%   +2.76%
+dd_rel_margin > -0.10      129   65  178  235 1330     +3.60%     +2.25%   -0.93%
+dd_rel_margin > -0.15      245   92  223  279 1214     -2.78%     -0.31%   -7.31%
+dd_rel_margin > -0.20      347  104  258  334 1112     -5.42%     -2.27%   -9.95%
+
+Rescue threshold     Rescued Rescued mean  Rescued med Rescued hit%
+----------------------------------------------------------------------
+dd_rel_margin > -0.02       16      +44.18%      +21.62%       68.80%
+dd_rel_margin > -0.05       38      +33.48%      +16.78%       63.20%
+dd_rel_margin > -0.10      129      +24.83%      +16.37%       67.40%
+dd_rel_margin > -0.15      245      +18.54%      +10.82%       64.90%
+dd_rel_margin > -0.20      347      +17.35%       +9.03%       62.50%
