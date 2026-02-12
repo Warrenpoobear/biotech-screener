@@ -81,6 +81,9 @@ class DriftGuardrails:
     # Backfill telemetry
     warn_backfill_share_high: float = 60.0  # WARN if backfill-sourced catalyst > 60%
 
+    # dd_rel_margin rescue telemetry
+    warn_dd_rel_margin_rescue_share_high: float = 5.0  # WARN if rescued share > 5%
+
     # Adaptive WARN layer
     warn_iqr_k: float = 2.0             # WARN if |delta| > k * max(IQR, floor)
     warn_iqr_floor: float = 1.0         # minimum IQR (prevents spurious WARN from flat windows)
@@ -422,7 +425,8 @@ def compute_snapshot_metrics(snap: SnapshotData) -> Dict[str, Any]:
         metrics[key] = margin_summary.get(key)
     metrics["rescued_count"] = margin_summary.get("rescued_count")
     for key in ("dd_abs_near_gate_pct", "dd_rel_near_gate_pct",
-                "optionality_near_a_floor_pct", "rescued_share_pct"):
+                "optionality_near_a_floor_pct", "rescued_share_pct",
+                "dd_rel_margin_rescue_count", "dd_rel_margin_rescue_share_pct"):
         metrics[key] = margin_summary.get(key)
 
     # Cost telemetry
@@ -491,6 +495,7 @@ def compute_drift_metrics(
         "median_dd_abs_margin", "median_dd_rel_margin", "rescued_count",
         "dd_abs_near_gate_pct", "dd_rel_near_gate_pct",
         "optionality_near_a_floor_pct", "rescued_share_pct",
+        "dd_rel_margin_rescue_count", "dd_rel_margin_rescue_share_pct",
         "cost_coverage_pct", "cap_binding_pct", "mean_cost_mult",
         "est_cost_bps_p50", "median_cost_bps",
     ]
@@ -643,6 +648,13 @@ def evaluate_guardrails(
         warn_reasons.append(
             f"Backfill share = {backfill_share:.1f}% > "
             f"{guardrails.warn_backfill_share_high}% ceiling"
+        )
+
+    rescue_share = current.get("dd_rel_margin_rescue_share_pct")
+    if rescue_share is not None and rescue_share > guardrails.warn_dd_rel_margin_rescue_share_high:
+        warn_reasons.append(
+            f"DD rel-margin rescue share = {rescue_share:.1f}% > "
+            f"{guardrails.warn_dd_rel_margin_rescue_share_high}% ceiling"
         )
 
     eligible_pct = current.get("eligible_pct")
@@ -846,6 +858,24 @@ def _compute_margin_summary(dev: pd.DataFrame) -> Dict[str, Any]:
         )
     else:
         result["rescued_share_pct"] = None
+
+    # dd_rel_margin_rescued count + share
+    if "dd_rel_margin_rescued" in dev.columns:
+        result["dd_rel_margin_rescue_count"] = sum(
+            1 for v in dev["dd_rel_margin_rescued"]
+            if str(v).strip() == "1"
+        )
+    else:
+        result["dd_rel_margin_rescue_count"] = None
+
+    if "eligible" in dev.columns and result.get("dd_rel_margin_rescue_count") is not None:
+        n_elig = sum(1 for e in dev["eligible"] if str(e).strip() == "1")
+        result["dd_rel_margin_rescue_share_pct"] = (
+            round(result["dd_rel_margin_rescue_count"] / n_elig * 100, 1)
+            if n_elig > 0 else 0.0
+        )
+    else:
+        result["dd_rel_margin_rescue_share_pct"] = None
 
     return result
 
@@ -1257,6 +1287,7 @@ def generate_drift_report_md(
                 ("P10 dd_abs_margin", "p10_dd_abs_margin"),
                 ("Median dd_rel_margin", "median_dd_rel_margin"),
                 ("Rescued count", "rescued_count"),
+                ("DD rel-margin rescue count", "dd_rel_margin_rescue_count"),
             ]
             for label, key in margin_rows:
                 p = prior_ms.get(key)
@@ -1274,6 +1305,7 @@ def generate_drift_report_md(
             ("DD rel near gate %", "dd_rel_near_gate_pct"),
             ("Optionality near A-floor %", "optionality_near_a_floor_pct"),
             ("Rescued share %", "rescued_share_pct"),
+            ("DD rel-margin rescue share %", "dd_rel_margin_rescue_share_pct"),
         ]
         has_pressure = any(
             current_ms.get(k) is not None or prior_ms.get(k) is not None
@@ -1323,6 +1355,7 @@ def generate_drift_report_md(
     lines.append(f"- warn_cost_coverage_low: {guardrails.warn_cost_coverage_low}%")
     lines.append(f"- warn_cap_binding_high: {guardrails.warn_cap_binding_high}%")
     lines.append(f"- warn_backfill_share_high: {guardrails.warn_backfill_share_high}%")
+    lines.append(f"- warn_dd_rel_margin_rescue_share_high: {guardrails.warn_dd_rel_margin_rescue_share_high}%")
     lines.append(f"- warn_iqr_k: {guardrails.warn_iqr_k}")
     lines.append(f"- warn_iqr_floor: {guardrails.warn_iqr_floor}")
     lines.append(f"- warn_min_window: {guardrails.warn_min_window}")

@@ -209,7 +209,7 @@ class TestPanelSchema:
             "tier_reason", "risk_flags", "catalyst_mode", "catalyst_strength", "mom_state",
             "optionality", "catalyst_days_raw", "ruleset_id",
             "drawdown_abs", "drawdown_xbi", "drawdown_rel_xbi",
-            "dd_abs_margin", "dd_rel_margin", "rescued_by_rel",
+            "dd_abs_margin", "dd_rel_margin", "rescued_by_rel", "dd_rel_margin_rescued",
             "optionality_margin_a", "actionable_catalyst",
             "fwd_ret_20d", "fwd_ret_60d", "fwd_max_dd_20d", "fwd_max_dd_60d",
             "fwd_dd_missing_reason",
@@ -251,6 +251,7 @@ class TestPanelSchema:
             "optionality",
             "drawdown_abs", "drawdown_xbi", "drawdown_rel_xbi",
             "dd_abs_margin", "dd_rel_margin", "rescued_by_rel",
+            "dd_rel_margin_rescued",
             "optionality_margin_a", "actionable_catalyst",
             "catalyst_tilt_mult", "catalyst_tilt_applied",
         }

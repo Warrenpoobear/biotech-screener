@@ -66,6 +66,11 @@ class DecisionRuleset:
     drawdown_rel_xbi_gate: float = -0.20
     drawdown_gate_require_both: bool = True
 
+    # Near-rel-gate rescue: override drawdown failure when relative margin
+    # is close to the gate (sector-driven drawdown, not idiosyncratic blow-up)
+    enable_dd_rel_margin_rescue: bool = False
+    dd_rel_margin_rescue_threshold: float = -0.05
+
     # Sizing weights (tuple-of-tuples for frozen hashability)
     sizing_weights: tuple = (("L", 1.0), ("M", 0.6), ("S", 0.3), ("XS", 0.15))
 
@@ -112,6 +117,12 @@ class DecisionRuleset:
                 raise ValueError(
                     f"catalyst_tilt_mults: mult must be > 0, got {mult} for '{band}'"
                 )
+        # Validate dd_rel_margin_rescue_threshold: must be <= 0
+        if self.dd_rel_margin_rescue_threshold > 0:
+            raise ValueError(
+                f"dd_rel_margin_rescue_threshold must be <= 0, "
+                f"got {self.dd_rel_margin_rescue_threshold}"
+            )
 
     @property
     def sizing_weights_dict(self) -> Dict[str, float]:
@@ -205,16 +216,21 @@ _MISSING = object()
 # LAYER 0 — ELIGIBILITY
 # =============================================================================
 
-def _compute_eligibility(rec: Dict, ruleset: DecisionRuleset) -> Tuple[bool, List[str]]:
+def _compute_eligibility(
+    rec: Dict, ruleset: DecisionRuleset
+) -> Tuple[bool, List[str], bool]:
     """Check eligibility gates.
 
     Hard gates only — survivability, liquidity, drawdown.
     Confidence is deliberately NOT a hard gate (sparse dev-stage coverage
     would exclude the exact optionality names we want to keep).
 
-    Returns (eligible, list_of_reasons).
+    Returns (eligible, list_of_reasons, dd_rel_margin_rescued).
+    dd_rel_margin_rescued is True when a drawdown failure was overridden
+    because the relative margin was close to the gate (sector-driven drawdown).
     """
     reasons: List[str] = []
+    dd_rel_margin_rescued = False
 
     # Gate: fundamental red flag (runway < 6m, survivability critical, etc.)
     if rec.get("fundamental_red_flag"):
@@ -240,7 +256,17 @@ def _compute_eligibility(rec: Dict, ruleset: DecisionRuleset) -> Tuple[bool, Lis
         elif ruleset.drawdown_gate_require_both:
             # AND: both absolute AND relative must breach
             if abs_breach and rel_breach:
-                reasons.append("deep_drawdown")
+                # Near-rel-gate rescue: if relative margin is close to the gate,
+                # override the failure (sector-driven drawdown, not idiosyncratic).
+                if (ruleset.enable_dd_rel_margin_rescue
+                        and dd_rel is not None):
+                    rel_margin = dd_rel - ruleset.drawdown_rel_xbi_gate
+                    if rel_margin > ruleset.dd_rel_margin_rescue_threshold:
+                        dd_rel_margin_rescued = True
+                    else:
+                        reasons.append("deep_drawdown")
+                else:
+                    reasons.append("deep_drawdown")
         else:
             # OR: either breaches
             if abs_breach or rel_breach:
@@ -262,7 +288,7 @@ def _compute_eligibility(rec: Dict, ruleset: DecisionRuleset) -> Tuple[bool, Lis
             break
 
     eligible = len(reasons) == 0
-    return eligible, reasons
+    return eligible, reasons, dd_rel_margin_rescued
 
 
 # =============================================================================
@@ -707,6 +733,7 @@ DECISION_COLUMNS = [
     "size_band", "size_reasons",
     "cost_mult", "cost_bucket", "cost_haircut_applied",
     "catalyst_tilt_mult", "catalyst_tilt_applied",
+    "dd_rel_margin_rescued",
     "tier_dev", "tier_reason",
 ]
 
@@ -733,7 +760,7 @@ def compute_decision_fields(
     rs = ruleset or DEFAULT_RULESET
 
     # Layer 0 — Eligibility
-    eligible, reasons = _compute_eligibility(rec, rs)
+    eligible, reasons, dd_rel_margin_rescued = _compute_eligibility(rec, rs)
 
     # Layer 2 — Overlays
     overlays = _compute_overlays(rec, rs)
@@ -786,6 +813,7 @@ def compute_decision_fields(
         "cost_haircut_applied": "1" if cost_mult < 1.0 else "0",
         "catalyst_tilt_mult": catalyst_tilt_mult,
         "catalyst_tilt_applied": "1" if catalyst_tilt_mult != 1.0 else "0",
+        "dd_rel_margin_rescued": "1" if dd_rel_margin_rescued else "0",
     }
     return fields
 

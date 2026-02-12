@@ -158,6 +158,8 @@ def _build_overrides(args: argparse.Namespace) -> Dict[str, Any]:
         "cost_haircut_buckets": "cost_haircut_buckets",
         "enable_catalyst_tilt": "enable_catalyst_tilt",
         "catalyst_tilt_mults": "catalyst_tilt_mults",
+        "enable_dd_rel_margin_rescue": "enable_dd_rel_margin_rescue",
+        "dd_rel_margin_rescue_threshold": "dd_rel_margin_rescue_threshold",
     }
 
     for cli_name, field_name in flag_map.items():
@@ -291,6 +293,8 @@ def main() -> int:
         "--catalyst-tilt-mults", type=_parse_tilt_mults,
         help="Tilt multipliers as 'BAND:mult,...' (e.g. 'NEAR:1.10,MID:1.05,FAR:0.95,MISSING:0.90')",
     )
+    parser.add_argument("--enable-dd-rel-margin-rescue", type=_parse_bool)
+    parser.add_argument("--dd-rel-margin-rescue-threshold", type=float)
 
     args = parser.parse_args()
 

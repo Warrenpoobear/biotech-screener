@@ -6,6 +6,32 @@ Format: `[engine_version] ruleset_id — date — summary`
 
 ---
 
+## [v1.3.0] b92f9338 — 2026-02-12 — Add dd_rel_margin rescue schema (defaults off)
+
+**Parameters added** (vs 68b2c45e):
+- `enable_dd_rel_margin_rescue`: **False** (opt-in flag, no behavior change when disabled)
+- `dd_rel_margin_rescue_threshold`: **-0.05** (relative drawdown margin threshold for rescue)
+
+**Behavior changes**: None. Rescue is off by default. All portfolio weights, tiers,
+eligibility, and membership are bit-for-bit identical to 68b2c45e. The only change
+is the ruleset ID (new fields in canonical JSON).
+
+**Rationale**: Infrastructure for conservative drawdown rescue — when both abs + rel
+gates breach under AND mode, override if relative margin is close to the gate
+(sector-driven drawdown, not idiosyncratic blow-up). Walkforward validation showed
+-0.05 threshold is too aggressive for production: worsens 2025 AB-CD separation by
+-2.05pp and increases turnover by +14.8pp. Flag remains OFF pending tighter threshold
+calibration. Telemetry (`dd_rel_margin_rescued`) and drift monitoring
+(`dd_rel_margin_rescue_share_pct`, WARN > 5%) are in place for when the flag is
+eventually enabled.
+
+**Governance**: 9 unit tests (`TestDdRelMarginRescue`), 78 drift report tests,
+6538 total tests green. Walkforward validation memo:
+`artifacts/dd_rel_margin_rescue_validation_2026-02-12.md`. All manifest IDs updated.
+No replay required (identical behavior when disabled).
+
+---
+
 ## [v1.3.0] 68b2c45e — 2026-02-12 — Add catalyst tilt schema (defaults off)
 
 **Parameters added** (vs 131800e4):
@@ -275,6 +301,3 @@ rescued outcome analysis, calibration artifacts (`artifacts/calibration_report__
 Pinned regression test updated. Contract/replay tests green.
 
 **Files**: `v1.2.1_candidate.json` (candidate)
-
-
-**Governance**: <fill in>

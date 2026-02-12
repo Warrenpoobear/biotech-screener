@@ -285,7 +285,7 @@ class TestRulesetDriftGuardrails:
     regenerate production_data/decision_rulesets/v1.json.
     """
 
-    EXPECTED_DEFAULT_RULESET_ID = "dcdcccc8"
+    EXPECTED_DEFAULT_RULESET_ID = "b40b4677"
 
     def test_default_ruleset_id_pinned(self):
         """DEFAULT_RULESET.ruleset_id must match the committed expected value.
@@ -555,6 +555,129 @@ class TestDrawdownAndGate:
         )
         result = compute_decision_fields(rec, "drug_developer", 0.75)
         assert "deep_drawdown_rel_xbi" in result["risk_flags"]
+
+
+# =============================================================================
+# Drawdown near-rel-gate rescue (dd_rel_margin_rescue)
+# =============================================================================
+
+class TestDdRelMarginRescue:
+    """Tests for the near-rel-gate rescue: override drawdown exclusion when
+    the relative margin is close to the gate (sector-driven drawdown)."""
+
+    def _rs(self, **kw):
+        defaults = dict(
+            drawdown_gate_require_both=True,
+            enable_dd_rel_margin_rescue=True,
+            dd_rel_margin_rescue_threshold=-0.05,
+        )
+        defaults.update(kw)
+        return DecisionRuleset(**defaults)
+
+    def test_rescue_fires_when_rel_margin_above_threshold(self):
+        """Both breach, but rel margin = -0.03 > threshold -0.05 → RESCUED, ELIGIBLE."""
+        # abs: -0.50 < -0.40 → breach.  rel: -0.23 < -0.20 → breach, margin = -0.03
+        rs = self._rs()
+        rec = _base_rec(
+            defensive_features={"drawdown": -0.50, "drawdown_rel_xbi": -0.23,
+                                "vol_60d": 0.5, "beta_xbi_60d": 1.0, "rsi_14d": 40},
+        )
+        result = compute_decision_fields(rec, "drug_developer", 0.75, ruleset=rs)
+        assert result["eligible"] == "1"
+        assert result["dd_rel_margin_rescued"] == "1"
+        assert "deep_drawdown" not in result.get("ineligible_reasons", "")
+
+    def test_rescue_does_not_fire_when_rel_margin_below_threshold(self):
+        """Both breach, rel margin = -0.08 < threshold -0.05 → NOT rescued, INELIGIBLE."""
+        # abs: -0.50 < -0.40 → breach.  rel: -0.28 < -0.20 → breach, margin = -0.08
+        rs = self._rs()
+        rec = _base_rec(
+            defensive_features={"drawdown": -0.50, "drawdown_rel_xbi": -0.28,
+                                "vol_60d": 0.5, "beta_xbi_60d": 1.0, "rsi_14d": 40},
+        )
+        result = compute_decision_fields(rec, "drug_developer", 0.75, ruleset=rs)
+        assert result["eligible"] == "0"
+        assert result["dd_rel_margin_rescued"] == "0"
+        assert "deep_drawdown" in result["ineligible_reasons"]
+
+    def test_rescue_disabled_by_default(self):
+        """Default ruleset has rescue disabled — both breach → INELIGIBLE."""
+        rs = DecisionRuleset()  # enable_dd_rel_margin_rescue=False
+        rec = _base_rec(
+            defensive_features={"drawdown": -0.50, "drawdown_rel_xbi": -0.23,
+                                "vol_60d": 0.5, "beta_xbi_60d": 1.0, "rsi_14d": 40},
+        )
+        result = compute_decision_fields(rec, "drug_developer", 0.75, ruleset=rs)
+        assert result["eligible"] == "0"
+        assert result["dd_rel_margin_rescued"] == "0"
+
+    def test_rescue_at_threshold_boundary_not_rescued(self):
+        """Rel margin just below threshold → NOT rescued."""
+        # rel: -0.2501, gate: -0.20, margin = -0.0501 < threshold -0.05 → NOT rescued
+        rs = self._rs()
+        rec = _base_rec(
+            defensive_features={"drawdown": -0.50, "drawdown_rel_xbi": -0.2501,
+                                "vol_60d": 0.5, "beta_xbi_60d": 1.0, "rsi_14d": 40},
+        )
+        result = compute_decision_fields(rec, "drug_developer", 0.75, ruleset=rs)
+        assert result["eligible"] == "0"
+        assert result["dd_rel_margin_rescued"] == "0"
+
+    def test_rescue_only_applies_to_require_both_mode(self):
+        """Rescue disabled when require_both=False (OR mode)."""
+        rs = self._rs(drawdown_gate_require_both=False)
+        rec = _base_rec(
+            defensive_features={"drawdown": -0.50, "drawdown_rel_xbi": -0.23,
+                                "vol_60d": 0.5, "beta_xbi_60d": 1.0, "rsi_14d": 40},
+        )
+        result = compute_decision_fields(rec, "drug_developer", 0.75, ruleset=rs)
+        # In OR mode, abs breach alone → ineligible (rescue doesn't apply)
+        assert result["eligible"] == "0"
+        assert result["dd_rel_margin_rescued"] == "0"
+
+    def test_rescue_does_not_apply_when_only_abs_breaches(self):
+        """Abs breaches but rel does NOT → already eligible, no rescue needed."""
+        rs = self._rs()
+        rec = _base_rec(
+            defensive_features={"drawdown": -0.50, "drawdown_rel_xbi": -0.10,
+                                "vol_60d": 0.5, "beta_xbi_60d": 1.0, "rsi_14d": 40},
+        )
+        result = compute_decision_fields(rec, "drug_developer", 0.75, ruleset=rs)
+        assert result["eligible"] == "1"
+        assert result["dd_rel_margin_rescued"] == "0"  # Not rescued — already eligible
+
+    def test_rescue_does_not_override_other_gates(self):
+        """Even if rescue fires for drawdown, sev3 still blocks eligibility."""
+        rs = self._rs()
+        rec = _base_rec(
+            severity="SEV3",
+            defensive_features={"drawdown": -0.50, "drawdown_rel_xbi": -0.23,
+                                "vol_60d": 0.5, "beta_xbi_60d": 1.0, "rsi_14d": 40},
+        )
+        result = compute_decision_fields(rec, "drug_developer", 0.75, ruleset=rs)
+        assert result["eligible"] == "0"
+        assert "sev3" in result["ineligible_reasons"]
+
+    def test_rescued_ticker_gets_proper_tier(self):
+        """Rescued ticker with high optionality + near catalyst → tier A."""
+        rs = self._rs(
+            tier_a_optionality_floor=0.60,
+            catalyst_near_days=90,
+        )
+        rec = _base_rec(
+            defensive_features={"drawdown": -0.50, "drawdown_rel_xbi": -0.23,
+                                "vol_60d": 0.5, "beta_xbi_60d": 1.0, "rsi_14d": 40},
+            catalyst_decay={"days_to_catalyst": 30, "in_optimal_window": True},
+        )
+        result = compute_decision_fields(rec, "drug_developer", 0.75, ruleset=rs)
+        assert result["eligible"] == "1"
+        assert result["dd_rel_margin_rescued"] == "1"
+        assert result["tier_dev"] == "A"
+
+    def test_validation_rejects_positive_threshold(self):
+        """dd_rel_margin_rescue_threshold must be <= 0."""
+        with pytest.raises(ValueError, match="dd_rel_margin_rescue_threshold"):
+            DecisionRuleset(dd_rel_margin_rescue_threshold=0.05)
 
 
 # =============================================================================

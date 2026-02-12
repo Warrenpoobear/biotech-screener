@@ -1308,6 +1308,7 @@ SNAPSHOT_COLUMNS = [
     "size_band", "size_reasons",
     "cost_mult", "cost_bucket", "cost_haircut_applied", "est_cost_bps",
     "catalyst_tilt_mult", "catalyst_tilt_applied",
+    "dd_rel_margin_rescued",
     "tier_dev", "tier_reason",
     # Decision Engine v2 actionable columns
     "actionable_rank", "target_weight_pct",
@@ -1336,7 +1337,7 @@ PHASE2_DEFAULT_RULESET_PATH = (
 )
 PHASE2_DEFAULT_TIER_FILTER = ["A", "B"]
 PHASE2_DEFAULT_TOP_K = 20
-PHASE2_PINNED_RULESET_ID = "68b2c45e"
+PHASE2_PINNED_RULESET_ID = "b92f9338"
 PHASE2_DEFAULT_HEALTH_THRESHOLDS_PATH = (
     Path(__file__).resolve().parent
     / "production_data" / "phase2_health_thresholds" / "v1.json"
