@@ -148,3 +148,44 @@ dd_rel_margin distribution (N=1459):
 Performance split (deep_drawdown rows only):
   Near gate  (margin > -10pp): N=209, mean=+12.46%, med=+3.64%, hit=54.10
   Far below  (margin <= -10pp): N=1248, mean=+31.95%, med=+17.11%, hit=67.40
+
+
+# Section 5: D-Tier Reversal Filter (trail_ret_20d)
+
+D-tier rows with trail_ret_20d: 2863 / 2864
+
+## 2024 — D-Tier Reversal Split (1404 rows with trail_ret_20d)
+
+Group                         N     Mean      Med      P25      P75    Hit%
+----------------------------------------------------------------------
+trail_ret_20d > 0           624   +9.33%   -9.68%  -27.35%  +13.44%  37.50%
+trail_ret_20d <= 0          780   +2.66%   -9.80%  -29.34%  +13.42%  37.90%
+
+Delta (up - down) mean: +6.67%  median: +0.12%
+
+### trail_ret_20d quintiles
+Quintile                    Range     N  Mean_60d   Med_60d    Hit%
+----------------------------------------------------------------------
+Q1              -65.4% to  -17.3%   280    -3.54%    -9.04%  37.90%
+Q2              -17.3% to   -7.6%   280   +14.70%   -10.39%  38.60%
+Q3               -7.5% to   +2.2%   280    -4.32%    -8.44%  37.50%
+Q4               +2.3% to  +17.5%   280   +22.92%    -9.02%  36.80%
+Q5              +17.5% to +465.2%   284    -1.55%   -10.70%  38.00%
+
+## 2025 — D-Tier Reversal Split (1459 rows with trail_ret_20d)
+
+Group                         N     Mean      Med      P25      P75    Hit%
+----------------------------------------------------------------------
+trail_ret_20d > 0           764  +33.36%  +18.67%   -5.56%  +51.55%  69.20%
+trail_ret_20d <= 0          693  +24.52%  +10.08%  -11.71%  +38.69%  61.30%
+
+Delta (up - down) mean: +8.84%  median: +8.59%
+
+### trail_ret_20d quintiles
+Quintile                    Range     N  Mean_60d   Med_60d    Hit%
+----------------------------------------------------------------------
+Q1              -87.8% to  -14.6%   291   +21.20%    +8.18%  58.10%
+Q2              -14.6% to   -3.7%   291   +23.80%    +9.32%  62.20%
+Q3               -3.7% to   +6.1%   290   +32.02%   +18.60%  66.60%
+Q4               +6.1% to  +20.4%   290   +35.70%   +20.78%  74.50%
+Q5              +20.4% to +824.9%   295   +33.05%   +16.75%  66.10%
