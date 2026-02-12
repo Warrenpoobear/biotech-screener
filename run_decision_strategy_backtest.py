@@ -96,6 +96,7 @@ PANEL_COLUMNS = [
     "adv_dollars", "est_cost_bps", "participation_pct",
     "fwd_ret_20d_net", "fwd_ret_60d_net",
     "catalyst_tilt_mult", "catalyst_tilt_applied",
+    "mom_state_tilt_mult", "mom_state_tilt_applied",
 ]
 
 
@@ -276,6 +277,8 @@ def build_strategy_portfolio(
             "cost_haircut_applied": fields.get("cost_haircut_applied", ""),
             "catalyst_tilt_mult": fields.get("catalyst_tilt_mult", 1.0),
             "catalyst_tilt_applied": fields.get("catalyst_tilt_applied", "0"),
+            "mom_state_tilt_mult": fields.get("mom_state_tilt_mult", 1.0),
+            "mom_state_tilt_applied": fields.get("mom_state_tilt_applied", "0"),
         }))
 
     # Sort by actionable key and take top-k
@@ -415,6 +418,8 @@ def build_all_dev_decisions(
             "actionable_catalyst": tier_margins["actionable_catalyst"],
             "catalyst_tilt_mult": fields.get("catalyst_tilt_mult", 1.0),
             "catalyst_tilt_applied": fields.get("catalyst_tilt_applied", "0"),
+            "mom_state_tilt_mult": fields.get("mom_state_tilt_mult", 1.0),
+            "mom_state_tilt_applied": fields.get("mom_state_tilt_applied", "0"),
         })
 
     return results

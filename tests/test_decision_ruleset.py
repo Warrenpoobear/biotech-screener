@@ -285,7 +285,7 @@ class TestRulesetDriftGuardrails:
     regenerate production_data/decision_rulesets/v1.json.
     """
 
-    EXPECTED_DEFAULT_RULESET_ID = "b40b4677"
+    EXPECTED_DEFAULT_RULESET_ID = "6076badd"
 
     def test_default_ruleset_id_pinned(self):
         """DEFAULT_RULESET.ruleset_id must match the committed expected value.
@@ -973,4 +973,101 @@ class TestCatalystTilt:
              "catalyst_tilt_mult": 0.95},  # FAR
         ]
         compute_target_weights(rows, ruleset=rs)
+        assert rows[0]["target_weight_pct"] > rows[1]["target_weight_pct"]
+
+
+# =============================================================================
+# Tests: Momentum state tilt
+# =============================================================================
+
+class TestMomStateTilt:
+    """Tests for momentum state sizing tilt (L3-only, opt-in)."""
+
+    def test_disabled_weights_identical(self):
+        """With enable_mom_state_tilt=False, weights are bit-for-bit identical to baseline."""
+        rows_baseline = [
+            {"size_band": "L", "eligible": "1", "mom_state": "tailwind"},
+            {"size_band": "M", "eligible": "1", "mom_state": "neutral"},
+        ]
+        rows_tilt_off = [
+            {"size_band": "L", "eligible": "1", "mom_state": "tailwind"},
+            {"size_band": "M", "eligible": "1", "mom_state": "neutral"},
+        ]
+        compute_target_weights(rows_baseline)
+        rs_off = DecisionRuleset(enable_mom_state_tilt=False)
+        compute_target_weights(rows_tilt_off, ruleset=rs_off)
+        assert rows_baseline[0]["target_weight_pct"] == rows_tilt_off[0]["target_weight_pct"]
+        assert rows_baseline[1]["target_weight_pct"] == rows_tilt_off[1]["target_weight_pct"]
+
+    def test_enabled_produces_differential_weights(self):
+        """With tilt enabled and neutral penalized, tailwind gets higher weight than neutral."""
+        rs = DecisionRuleset(
+            enable_mom_state_tilt=True,
+            mom_state_tilt_mults=(
+                ("tailwind", 1.0), ("neutral", 0.85), ("headwind", 1.0),
+            ),
+        )
+        # Two otherwise-identical recs differing only in momentum
+        rec_tailwind = _base_rec(
+            catalyst_decay={"days_to_catalyst": 45, "in_optimal_window": True},
+            score_breakdown={"enhancements": {"momentum": {"alpha_60d": 0.08}}},
+        )
+        rec_neutral = _base_rec(
+            catalyst_decay={"days_to_catalyst": 45, "in_optimal_window": True},
+            score_breakdown={"enhancements": {"momentum": {"alpha_60d": 0.02}}},
+        )
+        result_tw = compute_decision_fields(rec_tailwind, "drug_developer", 0.75, ruleset=rs)
+        result_nu = compute_decision_fields(rec_neutral, "drug_developer", 0.75, ruleset=rs)
+        assert result_tw["mom_state_tilt_mult"] > result_nu["mom_state_tilt_mult"]
+        assert result_tw["mom_state_tilt_applied"] == "0"  # 1.0 is neutral
+        assert result_nu["mom_state_tilt_applied"] == "1"  # 0.85 != 1.0
+
+    def test_disabled_emits_neutral_tilt(self):
+        """With tilt disabled, mom_state_tilt_mult=1.0, mom_state_tilt_applied='0'."""
+        rec = _base_rec()
+        result = compute_decision_fields(rec, "drug_developer", 0.75)
+        assert result["mom_state_tilt_mult"] == 1.0
+        assert result["mom_state_tilt_applied"] == "0"
+
+    def test_invalid_state_name_rejected(self):
+        """Unknown state in mom_state_tilt_mults raises ValueError."""
+        with pytest.raises(ValueError, match="unknown state"):
+            DecisionRuleset(
+                mom_state_tilt_mults=(("tailwind", 1.0), ("bogus", 0.90)),
+            )
+
+    def test_non_positive_tilt_mult_rejected(self):
+        """Multiplier <= 0 raises ValueError."""
+        with pytest.raises(ValueError, match="must be > 0"):
+            DecisionRuleset(
+                mom_state_tilt_mults=(("tailwind", 0.0), ("neutral", 1.0)),
+            )
+
+    def test_round_trip_custom_mults(self, tmp_path):
+        """Custom mom tilt mults round-trip preserves equality and ruleset_id."""
+        custom = DecisionRuleset(
+            enable_mom_state_tilt=True,
+            mom_state_tilt_mults=(
+                ("tailwind", 1.10), ("neutral", 0.85), ("headwind", 0.90),
+            ),
+        )
+        path = str(tmp_path / "mom_tilt_custom.json")
+        custom.to_json(path)
+        loaded = DecisionRuleset.from_json(path)
+        assert loaded == custom
+        assert loaded.ruleset_id == custom.ruleset_id
+        assert loaded.enable_mom_state_tilt is True
+        assert loaded.mom_state_tilt_mults == (
+            ("tailwind", 1.10), ("neutral", 0.85), ("headwind", 0.90),
+        )
+
+    def test_tilt_weights_in_portfolio(self):
+        """With tilt enabled, tailwind weight > neutral weight in portfolio normalization."""
+        rows = [
+            {"size_band": "L", "eligible": "1", "cost_mult": 1.0,
+             "catalyst_tilt_mult": 1.0, "mom_state_tilt_mult": 1.0},
+            {"size_band": "L", "eligible": "1", "cost_mult": 1.0,
+             "catalyst_tilt_mult": 1.0, "mom_state_tilt_mult": 0.85},
+        ]
+        compute_target_weights(rows)
         assert rows[0]["target_weight_pct"] > rows[1]["target_weight_pct"]

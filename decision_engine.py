@@ -86,6 +86,12 @@ class DecisionRuleset:
         ("NEAR", 1.10), ("MID", 1.05), ("FAR", 0.95), ("MISSING", 0.90)
     )
 
+    # Layer 3 — Momentum state sizing tilt (opt-in, multiplicative on weight)
+    enable_mom_state_tilt: bool = False
+    mom_state_tilt_mults: tuple = (
+        ("tailwind", 1.0), ("neutral", 1.0), ("headwind", 1.0),
+    )
+
     def __post_init__(self):
         # Validate cost_haircut_buckets: ascending thresholds
         buckets = self.cost_haircut_buckets
@@ -116,6 +122,18 @@ class DecisionRuleset:
             if mult <= 0:
                 raise ValueError(
                     f"catalyst_tilt_mults: mult must be > 0, got {mult} for '{band}'"
+                )
+        # Validate mom_state_tilt_mults: keys must be valid states, mults > 0
+        valid_mom_states = {"tailwind", "neutral", "headwind"}
+        for state, mult in self.mom_state_tilt_mults:
+            if state not in valid_mom_states:
+                raise ValueError(
+                    f"mom_state_tilt_mults: unknown state '{state}', "
+                    f"expected one of {sorted(valid_mom_states)}"
+                )
+            if mult <= 0:
+                raise ValueError(
+                    f"mom_state_tilt_mults: mult must be > 0, got {mult} for '{state}'"
                 )
         # Validate dd_rel_margin_rescue_threshold: must be <= 0
         if self.dd_rel_margin_rescue_threshold > 0:
@@ -177,6 +195,11 @@ class DecisionRuleset:
         if "catalyst_tilt_mults" in d and isinstance(d["catalyst_tilt_mults"], list):
             d["catalyst_tilt_mults"] = tuple(
                 tuple(pair) for pair in d["catalyst_tilt_mults"]
+            )
+        # Convert mom_state_tilt_mults list-of-lists back to tuple-of-tuples
+        if "mom_state_tilt_mults" in d and isinstance(d["mom_state_tilt_mults"], list):
+            d["mom_state_tilt_mults"] = tuple(
+                tuple(pair) for pair in d["mom_state_tilt_mults"]
             )
         return cls(**d)
 
@@ -702,7 +725,8 @@ def compute_target_weights(
         band = row.get("size_band", "XS")
         cm = _safe_float(row.get("cost_mult"), default=1.0)
         tm = _safe_float(row.get("catalyst_tilt_mult"), default=1.0)
-        raw_weights.append(weights_map.get(str(band), 0.15) * cm * tm)
+        mm = _safe_float(row.get("mom_state_tilt_mult"), default=1.0)
+        raw_weights.append(weights_map.get(str(band), 0.15) * cm * tm * mm)
 
     total = sum(raw_weights)
     if total <= 0:
@@ -733,6 +757,7 @@ DECISION_COLUMNS = [
     "size_band", "size_reasons",
     "cost_mult", "cost_bucket", "cost_haircut_applied",
     "catalyst_tilt_mult", "catalyst_tilt_applied",
+    "mom_state_tilt_mult", "mom_state_tilt_applied",
     "dd_rel_margin_rescued",
     "tier_dev", "tier_reason",
 ]
@@ -785,6 +810,13 @@ def compute_decision_fields(
         cat_strength = overlays.get("catalyst_strength", "missing")
         catalyst_tilt_mult = tilt_map.get(cat_strength.upper(), 1.0)
 
+    # Momentum state tilt multiplier (opt-in, affects weight only)
+    mom_state_tilt_mult = 1.0
+    if rs.enable_mom_state_tilt:
+        mom_tilt_map = dict(rs.mom_state_tilt_mults)
+        mom = overlays.get("mom_state", "neutral")
+        mom_state_tilt_mult = mom_tilt_map.get(mom, 1.0)
+
     # Layer 3 — Sizing
     size_band, size_reasons = _compute_size_band(
         eligible=eligible,
@@ -813,6 +845,8 @@ def compute_decision_fields(
         "cost_haircut_applied": "1" if cost_mult < 1.0 else "0",
         "catalyst_tilt_mult": catalyst_tilt_mult,
         "catalyst_tilt_applied": "1" if catalyst_tilt_mult != 1.0 else "0",
+        "mom_state_tilt_mult": mom_state_tilt_mult,
+        "mom_state_tilt_applied": "1" if mom_state_tilt_mult != 1.0 else "0",
         "dd_rel_margin_rescued": "1" if dd_rel_margin_rescued else "0",
     }
     return fields

@@ -74,6 +74,7 @@ def _parse_buckets(s: str) -> tuple:
 
 
 _VALID_TILT_BANDS = {"NEAR", "MID", "FAR", "MISSING"}
+_VALID_MOM_STATES = {"tailwind", "neutral", "headwind"}
 
 
 def _parse_tilt_mults(s: str) -> tuple:
@@ -106,6 +107,39 @@ def _parse_tilt_mults(s: str) -> tuple:
                 f"Multiplier must be > 0, got {mult} for '{band}'"
             )
         pairs.append((band, mult))
+    return tuple(pairs)
+
+
+def _parse_mom_tilt_mults(s: str) -> tuple:
+    """Parse 'state:mult,...' into tuple-of-tuples.
+
+    Example: 'tailwind:1.0,neutral:0.85,headwind:1.0'
+             -> (("tailwind",1.0),("neutral",0.85),("headwind",1.0))
+    """
+    pairs = []
+    for token in s.split(","):
+        token = token.strip()
+        parts = token.split(":")
+        if len(parts) != 2:
+            raise argparse.ArgumentTypeError(
+                f"Expected 'state:mult' pair, got '{token}'"
+            )
+        state = parts[0].strip().lower()
+        if state not in _VALID_MOM_STATES:
+            raise argparse.ArgumentTypeError(
+                f"Unknown state '{state}', expected one of {sorted(_VALID_MOM_STATES)}"
+            )
+        try:
+            mult = float(parts[1])
+        except ValueError:
+            raise argparse.ArgumentTypeError(
+                f"Non-numeric multiplier in '{token}'"
+            )
+        if mult <= 0:
+            raise argparse.ArgumentTypeError(
+                f"Multiplier must be > 0, got {mult} for '{state}'"
+            )
+        pairs.append((state, mult))
     return tuple(pairs)
 
 
@@ -158,6 +192,8 @@ def _build_overrides(args: argparse.Namespace) -> Dict[str, Any]:
         "cost_haircut_buckets": "cost_haircut_buckets",
         "enable_catalyst_tilt": "enable_catalyst_tilt",
         "catalyst_tilt_mults": "catalyst_tilt_mults",
+        "enable_mom_state_tilt": "enable_mom_state_tilt",
+        "mom_state_tilt_mults": "mom_state_tilt_mults",
         "enable_dd_rel_margin_rescue": "enable_dd_rel_margin_rescue",
         "dd_rel_margin_rescue_threshold": "dd_rel_margin_rescue_threshold",
     }
@@ -209,6 +245,12 @@ def _apply_overrides(base: DecisionRuleset, overrides: Dict[str, Any]) -> Decisi
     if isinstance(params.get("catalyst_tilt_mults"), list):
         params["catalyst_tilt_mults"] = tuple(
             tuple(pair) for pair in params["catalyst_tilt_mults"]
+        )
+
+    # Convert mom_state_tilt_mults list-of-lists back to tuple-of-tuples
+    if isinstance(params.get("mom_state_tilt_mults"), list):
+        params["mom_state_tilt_mults"] = tuple(
+            tuple(pair) for pair in params["mom_state_tilt_mults"]
         )
 
     return DecisionRuleset(**params)
@@ -292,6 +334,11 @@ def main() -> int:
     parser.add_argument(
         "--catalyst-tilt-mults", type=_parse_tilt_mults,
         help="Tilt multipliers as 'BAND:mult,...' (e.g. 'NEAR:1.10,MID:1.05,FAR:0.95,MISSING:0.90')",
+    )
+    parser.add_argument("--enable-mom-state-tilt", type=_parse_bool)
+    parser.add_argument(
+        "--mom-state-tilt-mults", type=_parse_mom_tilt_mults,
+        help="Mom state tilt multipliers as 'state:mult,...' (e.g. 'tailwind:1.0,neutral:0.85,headwind:1.0')",
     )
     parser.add_argument("--enable-dd-rel-margin-rescue", type=_parse_bool)
     parser.add_argument("--dd-rel-margin-rescue-threshold", type=float)

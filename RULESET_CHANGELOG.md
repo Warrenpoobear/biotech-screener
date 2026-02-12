@@ -6,6 +6,25 @@ Format: `[engine_version] ruleset_id — date — summary`
 
 ---
 
+## [v1.3.0] a021df60 — 2026-02-12 — Add momentum state weight tilt schema (defaults neutral)
+
+**Parameters added** (vs b92f9338):
+- `enable_mom_state_tilt`: **False** (opt-in flag, no behavior change when disabled)
+- `mom_state_tilt_mults`: **tailwind=1.0, neutral=1.0, headwind=1.0** (neutral defaults)
+
+**Behavior changes**: None. Tilt is off by default, and default mults are all 1.0.
+All portfolio weights, tiers, eligibility, and membership are bit-for-bit identical
+to b92f9338. The only change is the ruleset ID (new fields in canonical JSON).
+
+**Rationale**: Infrastructure for momentum-state weight modifiers — L3-only,
+membership-preserving. 2024 inversion attribution found `mom_state=neutral` as the
+#1 driver of AB-D spread inversion. Sweep will test neutral penalty values
+(0.80-0.95) on walkforward panel before enabling.
+
+**Files**: all 6 production rulesets re-saved with new fields, manifest IDs updated.
+
+---
+
 ## [v1.3.0] b92f9338 — 2026-02-12 — Add dd_rel_margin rescue schema (defaults off)
 
 **Parameters added** (vs 68b2c45e):

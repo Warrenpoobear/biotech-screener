@@ -50,6 +50,21 @@
   "enable_catalyst_tilt": false,
   "enable_cost_haircut": true,
   "enable_dd_rel_margin_rescue": false,
+  "enable_mom_state_tilt": false,
+  "mom_state_tilt_mults": [
+    [
+      "tailwind",
+      1.0
+    ],
+    [
+      "neutral",
+      1.0
+    ],
+    [
+      "headwind",
+      1.0
+    ]
+  ],
   "rsi_overbought": 70.0,
   "sizing_weights": {
     "L": 1.0,

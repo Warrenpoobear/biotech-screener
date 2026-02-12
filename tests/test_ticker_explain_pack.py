@@ -34,7 +34,7 @@ from run_phase2_snapshot_delta import SnapshotData
 def _make_rankings(
     n_dev: int = 50,
     include_attribution_cols: bool = True,
-    ruleset_id: str = "b92f9338",
+    ruleset_id: str = "a021df60",
 ) -> pd.DataFrame:
     """Build a synthetic rankings DataFrame with attribution columns."""
     import random
@@ -122,7 +122,7 @@ def _make_rankings(
 def _make_snapshot(
     date: str,
     rankings: pd.DataFrame | None = None,
-    ruleset_id: str = "b92f9338",
+    ruleset_id: str = "a021df60",
 ) -> SnapshotData:
     if rankings is None:
         rankings = _make_rankings(ruleset_id=ruleset_id)

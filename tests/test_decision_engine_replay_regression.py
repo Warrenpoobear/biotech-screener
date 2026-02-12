@@ -48,7 +48,7 @@ RULESET_PATH = (
     PROJECT_ROOT / "production_data" / "decision_rulesets" / "v1.2.1_candidate.json"
 )
 DATES = ["2025-04-30", "2025-07-31", "2025-10-31"]
-EXPECTED_RULESET_ID = "b92f9338"
+EXPECTED_RULESET_ID = "a021df60"
 
 # Valid enum values for categorical fields
 VALID_TIERS = {"A", "B", "C", "D", ""}
