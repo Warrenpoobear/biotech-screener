@@ -1,0 +1,149 @@
+{
+  "schema_version": 1,
+  "description": "Registry of evaluated-but-not-promoted decision engine levers. Prevents re-running dead ends and indexes governance artifacts.",
+  "levers": [
+    {
+      "name": "catalyst_tilt",
+      "ruleset_fields": ["enable_catalyst_tilt", "catalyst_tilt_mults"],
+      "status": "PARKED",
+      "decision": "PARK",
+      "evaluated_at": "2026-02-12",
+      "summary": "Multiplicative weight tilt by catalyst proximity band (NEAR=1.10, MID=1.05, FAR=0.95, MISSING=0.90). Default mults show correct signal direction but insufficient magnitude and too few NEAR names to justify turnover.",
+      "metrics": {
+        "sep_delta_60d_pp": null,
+        "turnover_delta_pp": null,
+        "a_tier_mean_delta_pp": null,
+        "notes": "Catalyst strength signal confirmed (near +5.56%, mid +4.50% >> far -0.15%, missing -0.63%). Tilt mults need recalibration once catalyst coverage improves."
+      },
+      "artifact_paths": [
+        "artifacts/catalyst_tilt_validation_2026-02-12.md",
+        "artifacts/walkforward_panel_tilt_default.csv",
+        "artifacts/walkforward_panel_tilt_aggressive.csv",
+        "artifacts/walkforward_panel_tilt_conservative.csv",
+        "artifacts/walkforward_report_tilt_default.json",
+        "artifacts/walkforward_report_tilt_aggressive.json",
+        "artifacts/walkforward_report_tilt_conservative.json"
+      ],
+      "revisit_conditions": [
+        "When 2025+ archives have >50% NEAR+MID catalyst coverage (currently ~28%)",
+        "After recalibrating tilt multipliers via sweep (current defaults are placeholder)"
+      ]
+    },
+    {
+      "name": "dd_rel_margin_rescue",
+      "ruleset_fields": ["enable_dd_rel_margin_rescue", "dd_rel_margin_rescue_threshold"],
+      "status": "PARKED",
+      "decision": "PARK",
+      "evaluated_at": "2026-02-12",
+      "summary": "Override drawdown exclusion when relative margin is close to the gate (sector-driven drawdown). Threshold=-0.05 too aggressive: dilutes A-tier and spikes turnover in 2025.",
+      "metrics": {
+        "sep_delta_60d_pp": -2.05,
+        "turnover_delta_pp": 14.8,
+        "a_tier_mean_delta_pp": -1.62,
+        "notes": "Full panel (2024+2025) shows +1.24pp sep, but 2025-only shows -2.05pp. Rescued cohort mean +21.21% (2025) but dilutes A from +18.17% to +16.55%."
+      },
+      "artifact_paths": [
+        "artifacts/dd_rel_margin_rescue_validation_2026-02-12.md",
+        "artifacts/walkforward_panel__rescue_full.csv",
+        "artifacts/walkforward_panel__rescue_2025.csv",
+        "artifacts/walkforward_report__rescue_full.json",
+        "artifacts/walkforward_report__rescue_2025.json",
+        "artifacts/eligibility_gate_diagnosis_2026-02-12.md"
+      ],
+      "revisit_conditions": [
+        "After testing tighter threshold (-0.02) or composite condition (rel_margin > -0.02 AND catalyst_mode != 'missing')",
+        "When more 2025+ history available to confirm rescued cohort performance stability"
+      ]
+    },
+    {
+      "name": "catalyst_window_365d",
+      "ruleset_fields": [],
+      "status": "RETIRED",
+      "decision": "RETIRE",
+      "evaluated_at": "2026-02-10",
+      "summary": "Widen pipeline catalyst detection window from 180d to 365d. Improves DQ gate pass rate (33/33 vs 24/33) but dilutes 2025 tier separation (+0.97pp to +0.30pp). Wider window floods A/B tiers with far-out catalysts.",
+      "metrics": {
+        "sep_delta_60d_pp": -0.67,
+        "turnover_delta_pp": null,
+        "a_tier_mean_delta_pp": null,
+        "notes": "Solved by catalyst_strength bands instead (NEAR/MID/FAR). Wider window captured in pipeline but FAR catalysts gated from A-tier."
+      },
+      "artifact_paths": [
+        "artifacts/calibration_report_full_365d_2025.md",
+        "artifacts/calibration_report_full_365d.md",
+        "artifacts/walkforward_panel_full.csv"
+      ],
+      "revisit_conditions": [
+        "No revisit planned — superseded by catalyst_strength band gating"
+      ]
+    },
+    {
+      "name": "soft_drawdown_mode",
+      "ruleset_fields": ["drawdown_gate_mode"],
+      "status": "RETIRED",
+      "decision": "RETIRE",
+      "evaluated_at": "2025-10-31",
+      "summary": "Replace hard drawdown gate with soft (size-penalty) mode. Policy matrix showed soft drawdown dilutes alpha and worsens P5 from -29% to -38%.",
+      "metrics": {
+        "sep_delta_60d_pp": null,
+        "turnover_delta_pp": null,
+        "a_tier_mean_delta_pp": null,
+        "notes": "v1.3_candidate (8452265a) rejected. Hard+AND mode (require_both) is strictly better."
+      },
+      "artifact_paths": [
+        "production_data/decision_rulesets/v1.3_candidate.json"
+      ],
+      "revisit_conditions": [
+        "No revisit planned — hard+AND mode with relative gate is superior"
+      ]
+    },
+    {
+      "name": "trial_active_backfill",
+      "ruleset_fields": [],
+      "status": "PARKED",
+      "decision": "PARK",
+      "evaluated_at": "2026-02-12",
+      "summary": "Backfill historical archives with trial_active status from ClinicalTrials.gov to improve catalyst coverage in 2024. Would fix structural catalyst sparsity (78.9% missing in 2024) but requires external API integration and PIT-safety audit.",
+      "metrics": {
+        "sep_delta_60d_pp": null,
+        "turnover_delta_pp": null,
+        "a_tier_mean_delta_pp": null,
+        "notes": "2024 catalyst regime is fundamentally broken (pipeline didn't capture catalyst_decay before mid-2024). Backfill would fix data coverage but calibration sweep still shows 0/40 configs pass on 2024+2025 combined."
+      },
+      "artifact_paths": [
+        "artifacts/catalyst_backfill_audit_2026-02-12.md",
+        "artifacts/calibration_backfilled_2024_2025_2026-02-12.md",
+        "artifacts/walkforward_panel__backfilled_combined.csv",
+        "artifacts/calibration_report__backfilled_2024_2025.md",
+        "artifacts/calibration_report__backfilled_2025_only.md"
+      ],
+      "revisit_conditions": [
+        "When ClinicalTrials.gov API integration is built for live pipeline",
+        "After confirming PIT-safety of retrospective trial_active imputation"
+      ]
+    },
+    {
+      "name": "sec_8k_enrichment",
+      "ruleset_fields": [],
+      "status": "PARKED",
+      "decision": "PARK",
+      "evaluated_at": "2026-02-12",
+      "summary": "Enrich archives with SEC 8-K filing data as catalyst proxy (FDA approvals, trial results). Would provide PIT-safe catalyst signal independent of pipeline's catalyst_decay field.",
+      "metrics": {
+        "sep_delta_60d_pp": null,
+        "turnover_delta_pp": null,
+        "a_tier_mean_delta_pp": null,
+        "notes": "SEC EDGAR API integration needed. secadcom trial showed modest improvement in catalyst coverage but no change in tier separation dynamics. Requires substantial engineering effort for marginal gain."
+      },
+      "artifact_paths": [
+        "artifacts/walkforward_panel__secadcom_combined.csv",
+        "artifacts/calibration_report__secadcom_2024_2025.md",
+        "artifacts/calibration_report__secadcom_2025_only.md"
+      ],
+      "revisit_conditions": [
+        "When SEC EDGAR API is integrated into live pipeline",
+        "After building reliable 8-K event classifier (approval vs. routine filing)"
+      ]
+    }
+  ]
+}
