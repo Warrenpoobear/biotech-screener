@@ -22,6 +22,8 @@ from typing import Any, Dict, Set
 
 import pytest
 
+pytestmark = pytest.mark.slow
+
 from conftest import (
     NON_DETERMINISTIC_PATHS,
     PIPELINE_HISTORICAL_DATE,

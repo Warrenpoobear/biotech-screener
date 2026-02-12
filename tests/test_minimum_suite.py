@@ -21,6 +21,8 @@ from pathlib import Path
 
 import pytest
 
+pytestmark = pytest.mark.slow
+
 from conftest import (
     NON_DETERMINISTIC_PATHS,
     PIPELINE_MAIN_DATE,

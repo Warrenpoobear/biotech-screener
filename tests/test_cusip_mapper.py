@@ -16,6 +16,8 @@ from pathlib import Path
 import json
 import tempfile
 
+pytestmark = pytest.mark.slow
+
 # Import module under test
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))

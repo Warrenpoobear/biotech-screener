@@ -19,6 +19,8 @@ from pathlib import Path
 
 import pytest
 
+pytestmark = pytest.mark.slow
+
 from catalyst_diagnostics import PITViolationError
 from run_screen import run_screening_pipeline
 
