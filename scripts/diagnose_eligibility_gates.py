@@ -38,6 +38,7 @@ from scripts.calibrate_ruleset_from_panel import retier_row
 
 DEFAULT_PANEL = PROJECT_ROOT / "artifacts" / "walkforward_panel_diag.csv"
 DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "artifacts"
+DEFAULT_PRICE_CSV = PROJECT_ROOT / "production_data" / "price_history.csv"
 
 # Active ruleset parameters (68b2c45e)
 A_FLOOR = 0.60
@@ -439,6 +440,168 @@ def section_drawdown_margins(rows: List[Dict[str, Any]]) -> str:
 
 
 # =============================================================================
+# SECTION 5: D-TIER REVERSAL FILTER (trail_ret_20d)
+# =============================================================================
+
+def load_price_index(price_csv: Path) -> Dict[str, Dict[str, float]]:
+    """Load price_history.csv into {TICKER: {date_str: close}} index.
+
+    Returns dates as strings (YYYY-MM-DD) for easy lookup.
+    """
+    prices: Dict[str, Dict[str, float]] = {}
+    with open(price_csv, "r", newline="", encoding="utf-8-sig") as f:
+        for row in csv.DictReader(f):
+            ticker = row.get("ticker", "").strip().upper()
+            date_str = row.get("date", "").strip()[:10]
+            close_str = row.get("close", "").strip()
+            if not ticker or not date_str or not close_str:
+                continue
+            try:
+                close = float(close_str)
+            except (ValueError, TypeError):
+                continue
+            if ticker not in prices:
+                prices[ticker] = {}
+            prices[ticker][date_str] = close
+    return prices
+
+
+def compute_trailing_return(
+    prices: Dict[str, Dict[str, float]],
+    ticker: str,
+    as_of_date: str,
+    lookback_bars: int = 20,
+    tolerance_days: int = 5,
+) -> Optional[float]:
+    """Compute trailing return from price history.
+
+    Finds the close on as_of_date (±tolerance), then the close lookback_bars
+    trading days earlier, returns (end/start - 1).
+    """
+    from datetime import date as _date, timedelta
+
+    ticker_prices = prices.get(ticker.upper())
+    if not ticker_prices:
+        return None
+
+    ref = _date.fromisoformat(as_of_date)
+
+    # Find end price (nearest to as_of_date)
+    end_price = None
+    for delta in range(0, tolerance_days + 1):
+        for d in [ref - timedelta(days=delta), ref + timedelta(days=delta)]:
+            ds = d.isoformat()
+            if ds in ticker_prices:
+                end_price = ticker_prices[ds]
+                ref = d  # anchor to actual date found
+                break
+        if end_price is not None:
+            break
+    if end_price is None or end_price <= 0:
+        return None
+
+    # Get sorted dates <= ref, pick the one lookback_bars back
+    valid_dates = sorted(d for d in ticker_prices if d <= ref.isoformat())
+    if len(valid_dates) < lookback_bars + 1:
+        return None
+
+    start_date = valid_dates[-(lookback_bars + 1)]
+    start_price = ticker_prices[start_date]
+    if start_price <= 0:
+        return None
+
+    return round((end_price / start_price) - 1.0, 6)
+
+
+def enrich_panel_with_trailing_returns(
+    rows: List[Dict[str, Any]],
+    prices: Dict[str, Dict[str, float]],
+    lookback_bars: int = 20,
+) -> int:
+    """Add trail_ret_20d to each panel row in-place. Returns count of populated rows."""
+    n_filled = 0
+    for r in rows:
+        ticker = r.get("ticker", "")
+        as_of = r.get("as_of_date", "")
+        ret = compute_trailing_return(prices, ticker, as_of, lookback_bars)
+        r["trail_ret_20d"] = ret
+        if ret is not None:
+            n_filled += 1
+    return n_filled
+
+
+def section_reversal_filter(rows: List[Dict[str, Any]]) -> str:
+    """D-tier reversal filter: split by trail_ret_20d > 0 vs <= 0."""
+    lines = ["# Section 5: D-Tier Reversal Filter (trail_ret_20d)", ""]
+
+    d_rows = [r for r in rows if r.get("tier") == "D"]
+    has_trail = [r for r in d_rows if r.get("trail_ret_20d") is not None]
+    lines.append(f"D-tier rows with trail_ret_20d: {len(has_trail)} / {len(d_rows)}")
+    lines.append("")
+
+    for yr in sorted(set(year_of(r) for r in rows)):
+        yr_d = [r for r in d_rows if year_of(r) == yr and r.get("trail_ret_20d") is not None]
+        lines.append(f"## {yr} — D-Tier Reversal Split ({len(yr_d)} rows with trail_ret_20d)")
+        lines.append("")
+
+        # Split by sign
+        up = [r for r in yr_d if r["trail_ret_20d"] > 0]
+        down = [r for r in yr_d if r["trail_ret_20d"] <= 0]
+
+        up_rets = [r["fwd_ret_60d"] for r in up if r.get("fwd_ret_60d") is not None]
+        down_rets = [r["fwd_ret_60d"] for r in down if r.get("fwd_ret_60d") is not None]
+
+        su = summary_stats(up_rets)
+        sd = summary_stats(down_rets)
+
+        lines.append(f"{'Group':<25} {'N':>5} {'Mean':>8} {'Med':>8} {'P25':>8} {'P75':>8} {'Hit%':>7}")
+        lines.append("-" * 70)
+        lines.append(
+            f"{'trail_ret_20d > 0':<25} {su['count']:>5} "
+            f"{fmt(su['mean']):>8} {fmt(su['median']):>8} "
+            f"{fmt(su['p25']):>8} {fmt(su['p75']):>8} "
+            f"{fmt(su['hit_pct'], suffix=''):>6}%"
+        )
+        lines.append(
+            f"{'trail_ret_20d <= 0':<25} {sd['count']:>5} "
+            f"{fmt(sd['mean']):>8} {fmt(sd['median']):>8} "
+            f"{fmt(sd['p25']):>8} {fmt(sd['p75']):>8} "
+            f"{fmt(sd['hit_pct'], suffix=''):>6}%"
+        )
+        delta_mean = round(su["mean"] - sd["mean"], 2) if su["mean"] is not None and sd["mean"] is not None else None
+        delta_med = round(su["median"] - sd["median"], 2) if su["median"] is not None and sd["median"] is not None else None
+        lines.append("")
+        lines.append(f"Delta (up - down) mean: {fmt(delta_mean)}  median: {fmt(delta_med)}")
+        lines.append("")
+
+        # Finer granularity: quintiles of trail_ret_20d
+        if yr_d:
+            sorted_by_trail = sorted(yr_d, key=lambda r: r["trail_ret_20d"])
+            n = len(sorted_by_trail)
+            q_size = n // 5
+            if q_size > 0:
+                lines.append(f"### trail_ret_20d quintiles")
+                lines.append(f"{'Quintile':<12} {'Range':>20} {'N':>5} {'Mean_60d':>9} {'Med_60d':>9} {'Hit%':>7}")
+                lines.append("-" * 70)
+                for qi in range(5):
+                    start = qi * q_size
+                    end = (qi + 1) * q_size if qi < 4 else n
+                    q_rows = sorted_by_trail[start:end]
+                    q_rets = [r["fwd_ret_60d"] for r in q_rows if r.get("fwd_ret_60d") is not None]
+                    qs = summary_stats(q_rets)
+                    lo = q_rows[0]["trail_ret_20d"]
+                    hi = q_rows[-1]["trail_ret_20d"]
+                    lines.append(
+                        f"Q{qi+1:<11} {lo*100:>+8.1f}% to {hi*100:>+6.1f}% "
+                        f"{qs['count']:>5} {fmt(qs['mean']):>9} {fmt(qs['median']):>9} "
+                        f"{fmt(qs['hit_pct'], suffix=''):>6}%"
+                    )
+                lines.append("")
+
+    return "\n".join(lines)
+
+
+# =============================================================================
 # MAIN
 # =============================================================================
 
@@ -447,6 +610,8 @@ def main():
     parser.add_argument("--panel", type=Path, default=DEFAULT_PANEL)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--suffix", default="")
+    parser.add_argument("--price-csv", type=Path, default=DEFAULT_PRICE_CSV,
+                        help="Price history CSV for trailing return computation")
     args = parser.parse_args()
 
     print(f"Reading panel: {args.panel}")
@@ -464,12 +629,20 @@ def main():
     if not has_reasons:
         print("WARNING: ineligible_reasons column missing — attribution will be limited")
 
+    # Load price history for trailing return computation
+    print(f"Loading prices: {args.price_csv}")
+    prices = load_price_index(args.price_csv)
+    print(f"  Tickers with prices: {len(prices)}")
+    n_filled = enrich_panel_with_trailing_returns(rows, prices, lookback_bars=20)
+    print(f"  trail_ret_20d populated: {n_filled} / {len(rows)} ({n_filled/len(rows)*100:.1f}%)")
+
     # Build report
     sections = []
     sections.append(section_tier_performance(rows))
     sections.append(section_dtier_attribution(rows))
     sections.append(section_ablations(rows))
     sections.append(section_drawdown_margins(rows))
+    sections.append(section_reversal_filter(rows))
 
     # Header
     today = datetime.now().strftime("%Y-%m-%d")
