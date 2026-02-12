@@ -54,7 +54,12 @@ output/
 outputs/
 data/archives/
 data/archives_backfilled/
-artifacts/
+
+# Generated analysis artifacts (heavy outputs)
+artifacts/*
+# Allow governance memos and summary reports
+!artifacts/**/*.md
+!artifacts/**/*.txt
 
 # Large data files - uncomment if you want to exclude real AACT data
 # data/aact_snapshots/*/studies.csv

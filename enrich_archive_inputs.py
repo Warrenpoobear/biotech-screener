@@ -247,18 +247,54 @@ def compute_defensive_and_momentum(
 # CATALYST FROM TRIALS + PDUFA
 # =============================================================================
 
+def _sec_event_days(event: Dict[str, Any], as_of: date) -> Optional[int]:
+    """Compute days-to-catalyst from a SEC 8-K or ADCOM event.
+
+    For DAY precision (HIGH confidence): use event_date directly.
+    For QUARTER precision (MED confidence): use start of quarter (conservative).
+    Skips HALF_YEAR (LOW confidence) and events with no date.
+
+    Returns positive days if event is in the future, else None.
+    """
+    precision = event.get("date_precision", "DAY")
+    confidence = event.get("confidence", "")
+
+    # Skip LOW confidence (vague "mid-year" / "year-end" language)
+    if confidence == "LOW":
+        return None
+
+    date_str = event.get("event_date", "")
+    if not date_str:
+        return None
+
+    try:
+        event_date = datetime.strptime(str(date_str)[:10], "%Y-%m-%d").date()
+    except (ValueError, TypeError):
+        return None
+
+    days_away = (event_date - as_of).days
+    if days_away <= 0:
+        return None
+
+    return days_away
+
+
 def compute_catalyst(
     ticker: str,
     trials: List[Dict[str, Any]],
     pdufa_entries: List[Dict[str, Any]],
     as_of: date,
     trial_window_days: int = TRIAL_PCD_WINDOW_DAYS,
+    sec_events: Optional[List[Dict[str, Any]]] = None,
+    adcom_events: Optional[List[Dict[str, Any]]] = None,
 ) -> Dict[str, Any]:
-    """Compute catalyst proximity for one ticker from trials + PDUFA.
+    """Compute catalyst proximity for one ticker from trials + PDUFA + SEC/ADCOM.
 
     PIT rules:
       - Trials: first_posted <= as_of AND primary_completion_date in (as_of, as_of+trial_window_days]
       - PDUFA: pdufa_date > as_of
+      - SEC 8-K: filing_date <= as_of AND event_date > as_of (enforced by collector)
+      - ADCOM: publication_date <= as_of AND event_date > as_of (enforced by collector)
     """
     result: Dict[str, Any] = {}
     nearest_days: Optional[int] = None
@@ -314,6 +350,32 @@ def compute_catalyst(
             nearest_days = days_away
             nearest_source = "pdufa"
             nearest_type = "FDA_DECISION"
+
+    # SEC 8-K timing events (PDUFA dates, data readouts from filings)
+    if sec_events:
+        for event in sec_events:
+            if event.get("ticker", "").upper() != ticker.upper():
+                continue
+            days_away = _sec_event_days(event, as_of)
+            if days_away is None:
+                continue
+            if nearest_days is None or days_away < nearest_days:
+                nearest_days = days_away
+                nearest_source = "sec_8k"
+                nearest_type = event.get("event_type", "DATA_READOUT")
+
+    # FDA Advisory Committee events
+    if adcom_events:
+        for event in adcom_events:
+            if event.get("ticker", "").upper() != ticker.upper():
+                continue
+            days_away = _sec_event_days(event, as_of)
+            if days_away is None:
+                continue
+            if nearest_days is None or days_away < nearest_days:
+                nearest_days = days_away
+                nearest_source = "adcom"
+                nearest_type = "FDA_ADCOM"
 
     if nearest_days is not None:
         result["days_to_catalyst"] = nearest_days
@@ -371,6 +433,8 @@ def enrich_archive(
     trial_window_days: int = TRIAL_PCD_WINDOW_DAYS,
     catalyst_only: bool = False,
     output_tar_path: Path | None = None,
+    sec_events: Optional[List[Dict[str, Any]]] = None,
+    adcom_events: Optional[List[Dict[str, Any]]] = None,
 ) -> Dict[str, Any]:
     """Compute and write decision_inputs.json sidecar for one archive.
 
@@ -485,9 +549,11 @@ def enrich_archive(
                     if "beta_xbi_60d" in features:
                         stats["n_beta"] += 1
 
-            # C: Catalyst from trials + PDUFA
+            # C: Catalyst from trials + PDUFA + SEC/ADCOM
             cat = compute_catalyst(ticker, trials, pdufa_entries, as_of,
-                                   trial_window_days=trial_window_days)
+                                   trial_window_days=trial_window_days,
+                                   sec_events=sec_events,
+                                   adcom_events=adcom_events)
             if cat:
                 entry.update(cat)
                 stats["n_catalyst"] += 1
@@ -537,6 +603,55 @@ def enrich_archive(
 # MAIN
 # =============================================================================
 
+def _collect_sec_events_for_date(
+    as_of: date,
+    universe_entries: List[Dict[str, Any]],
+    sec_mode: str,
+    adcom_mode: str,
+    data_dir: Path,
+) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
+    """Collect SEC 8-K and ADCOM events for a single as_of_date.
+
+    Returns (sec_events, adcom_events) lists.
+    """
+    sec_events: List[Dict[str, Any]] = []
+    adcom_events: List[Dict[str, Any]] = []
+
+    if sec_mode == "live":
+        try:
+            from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import (
+                collect_8k_timing_events,
+            )
+            sec_events = collect_8k_timing_events(
+                universe=universe_entries,
+                as_of_date=as_of,
+                cache_dir=PROJECT_ROOT / "wake_robin_data_pipeline" / "cache" / "sec" / "8k_catalysts",
+                lookback_days=365,
+            )
+        except Exception as e:
+            print(f"    SEC 8-K collection error: {e}")
+
+    if adcom_mode == "live":
+        try:
+            from wake_robin_data_pipeline.collectors.fda_adcom_collector import (
+                collect_fda_adcom_events,
+                build_product_ticker_map,
+            )
+            product_map = build_product_ticker_map(data_dir)
+            ticker_set = {e.get("ticker", "").upper() for e in universe_entries if e.get("ticker")}
+            adcom_events = collect_fda_adcom_events(
+                drug_to_ticker=product_map,
+                as_of_date=as_of,
+                cache_dir=PROJECT_ROOT / "wake_robin_data_pipeline" / "cache" / "fda",
+                lookback_days=365,
+                universe_tickers=ticker_set,
+            )
+        except Exception as e:
+            print(f"    ADCOM collection error: {e}")
+
+    return sec_events, adcom_events
+
+
 def main():
     import argparse
 
@@ -559,6 +674,27 @@ def main():
         "--catalyst-only", action="store_true",
         help="Only update catalyst fields; preserve existing defensive features"
     )
+    parser.add_argument(
+        "--sec-8k-mode", type=str, default="off", choices=["off", "live"],
+        help="SEC 8-K catalyst mode: off (default) or live (fetch from EDGAR)"
+    )
+    parser.add_argument(
+        "--adcom-mode", type=str, default="off", choices=["off", "live"],
+        help="FDA ADCOM mode: off (default) or live (fetch from Federal Register + EDGAR)"
+    )
+    parser.add_argument(
+        "--out-dir", type=str, default=None,
+        help="Output directory for enriched archives (default: modify in-place). "
+             "Source archives are copied then enriched, preserving originals."
+    )
+    parser.add_argument(
+        "--start", type=str, default=None,
+        help="Only process archives on or after this date (YYYY-MM-DD)"
+    )
+    parser.add_argument(
+        "--end", type=str, default=None,
+        help="Only process archives on or before this date (YYYY-MM-DD)"
+    )
     args = parser.parse_args()
 
     if not ARCHIVE_DIR.exists():
@@ -568,6 +704,12 @@ def main():
         print(f"ERROR: Price history not found: {PRICE_CSV}")
         sys.exit(1)
 
+    # Resolve output directory
+    out_dir: Optional[Path] = None
+    if args.out_dir:
+        out_dir = Path(args.out_dir)
+        out_dir.mkdir(parents=True, exist_ok=True)
+
     archives = sorted(ARCHIVE_DIR.glob("*.tar.gz"))
     if args.archive:
         archives = [a for a in archives if a.name.replace(".tar.gz", "") == args.archive]
@@ -575,31 +717,93 @@ def main():
             print(f"ERROR: Archive not found for date: {args.archive}")
             sys.exit(1)
 
-    trial_window = args.trial_window if args.trial_window is not None else TRIAL_PCD_WINDOW_DAYS
+    # Date range filter
+    if args.start:
+        archives = [a for a in archives if a.name.replace(".tar.gz", "") >= args.start]
+    if args.end:
+        archives = [a for a in archives if a.name.replace(".tar.gz", "") <= args.end]
 
+    trial_window = args.trial_window if args.trial_window is not None else TRIAL_PCD_WINDOW_DAYS
+    use_sec = args.sec_8k_mode != "off"
+    use_adcom = args.adcom_mode != "off"
+
+    if out_dir:
+        print(f"Output directory: {out_dir}")
     print(f"Loading price history from {PRICE_CSV} ...")
     all_prices = load_price_history(PRICE_CSV)
     print(f"  {len(all_prices)} tickers, XBI has {len(all_prices.get('XBI', []))} days")
+
+    # Load universe for SEC/ADCOM collection (needs ticker + CIK)
+    universe_entries: List[Dict[str, Any]] = []
+    data_dir = PROJECT_ROOT / "production_data"
+    if use_sec or use_adcom:
+        universe_path = data_dir / "universe.json"
+        if universe_path.exists():
+            with open(universe_path, "r") as f:
+                universe_entries = json.load(f)
+            print(f"  Universe: {len(universe_entries)} tickers (for SEC/ADCOM lookup)")
+        else:
+            print(f"  WARNING: universe.json not found, SEC/ADCOM will have no CIK mapping")
+
     print()
 
-    mode_label = "catalyst-only" if args.catalyst_only else "full"
+    mode_parts = []
+    if args.catalyst_only:
+        mode_parts.append("catalyst-only")
+    else:
+        mode_parts.append("full")
+    if use_sec:
+        mode_parts.append(f"sec-8k={args.sec_8k_mode}")
+    if use_adcom:
+        mode_parts.append(f"adcom={args.adcom_mode}")
+    mode_label = ", ".join(mode_parts)
+
     print(f"Enriching {len(archives)} archives ({mode_label}, trial window: {trial_window}d)")
     if args.dry_run:
         print("  (dry run — no files will be modified)")
     print()
 
     for tar_path in archives:
+        date_str = tar_path.name.replace(".tar.gz", "")
         print(f"  {tar_path.name} ...", end=" ", flush=True)
-        r = enrich_archive(tar_path, all_prices, dry_run=args.dry_run,
+
+        # Collect SEC/ADCOM events for this date if enabled
+        sec_events: Optional[List[Dict[str, Any]]] = None
+        adcom_events_list: Optional[List[Dict[str, Any]]] = None
+        if use_sec or use_adcom:
+            try:
+                as_of = datetime.strptime(date_str, "%Y-%m-%d").date()
+                sec_events, adcom_events_list = _collect_sec_events_for_date(
+                    as_of, universe_entries, args.sec_8k_mode, args.adcom_mode, data_dir,
+                )
+            except ValueError:
+                pass  # Bad date format, enrich_archive will handle it
+
+        # Determine output path (copy-on-write if --out-dir)
+        output_tar: Optional[Path] = None
+        if out_dir:
+            output_tar = out_dir / tar_path.name
+            if not args.dry_run:
+                shutil.copy2(tar_path, output_tar)
+
+        enrich_path = output_tar if output_tar and not args.dry_run else tar_path
+        r = enrich_archive(enrich_path, all_prices, dry_run=args.dry_run,
                            trial_window_days=trial_window,
-                           catalyst_only=args.catalyst_only)
+                           catalyst_only=args.catalyst_only,
+                           sec_events=sec_events,
+                           adcom_events=adcom_events_list)
         s = r.get("stats", {})
         if r["status"] in ("ok", "dry_run"):
             tag = "DRY" if r["status"] == "dry_run" else "OK"
+            sec_str = ""
+            if sec_events is not None:
+                sec_str = f", sec={len(sec_events)}"
+            if adcom_events_list is not None:
+                sec_str += f", adcom={len(adcom_events_list)}"
             print(
                 f"{tag} ({r.get('n_enriched', 0)}/{r.get('n_tickers', 0)} tickers, "
                 f"beta={s.get('n_beta', 0)}, cat={s.get('n_catalyst', 0)}, "
-                f"t1={s.get('n_tier1', 0)})"
+                f"t1={s.get('n_tier1', 0)}{sec_str})"
             )
         else:
             print(f"ERROR: {r.get('error', 'unknown')}")
