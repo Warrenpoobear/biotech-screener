@@ -1,4 +1,5 @@
 """Tests for DecisionRuleset dataclass — parameterized threshold config."""
+import hashlib
 import json
 import os
 import re
@@ -426,6 +427,103 @@ class TestRulesetDriftGuardrails:
                 f"{entry['file']}: manifest id={entry['id']} != "
                 f"computed id={loaded.ruleset_id}"
             )
+
+
+# =============================================================================
+# Tests: Schema-stability (ruleset_id must not change with schema expansion)
+# =============================================================================
+
+class TestRulesetIdSchemaStability:
+    """Ensure that from_json hashes file content, not expanded dataclass.
+
+    Adding new optional fields to DecisionRuleset must NOT change the
+    ruleset_id of existing production JSON files.  These tests pin known
+    file-content hashes and verify round-trip + stability properties.
+    """
+
+    RULESETS_DIR = (
+        Path(__file__).resolve().parent.parent
+        / "production_data" / "decision_rulesets"
+    )
+
+    # Pinned file-content hashes for key rulesets
+    PINNED_FILE_HASHES = {
+        "v1.2.2_candidate.json": "bf6815e2",
+        "v1.3.0_candidate.json": "f3454ef7",
+        "v1.json": "4284645a",
+    }
+
+    def test_pinned_file_hashes_stable(self):
+        """Production file-content hashes must match pinned values."""
+        for filename, expected_id in self.PINNED_FILE_HASHES.items():
+            path = self.RULESETS_DIR / filename
+            assert path.exists(), f"{filename} not found"
+            rs = DecisionRuleset.from_json(str(path))
+            assert rs.ruleset_id == expected_id, (
+                f"{filename}: expected {expected_id}, got {rs.ruleset_id}. "
+                f"If the file content changed intentionally, update PINNED_FILE_HASHES."
+            )
+
+    def test_from_json_uses_file_content_hash(self):
+        """from_json stores _file_content_hash on the frozen instance."""
+        path = self.RULESETS_DIR / "v1.2.2_candidate.json"
+        rs = DecisionRuleset.from_json(str(path))
+        # Must have the hidden attribute
+        assert hasattr(rs, "_file_content_hash")
+        assert rs._file_content_hash == rs.ruleset_id
+
+    def test_programmatic_construction_uses_canonical_hash(self):
+        """DecisionRuleset() (no file) hashes via _canonical_json."""
+        rs = DecisionRuleset()
+        assert not hasattr(rs, "_file_content_hash") or not rs._file_content_hash
+        # Should still have a valid ruleset_id
+        assert len(rs.ruleset_id) == 8
+
+    def test_round_trip_preserves_id(self):
+        """to_json → from_json round-trip produces identical ruleset_id."""
+        import tempfile
+        rs = DecisionRuleset.from_json(
+            str(self.RULESETS_DIR / "v1.2.2_candidate.json")
+        )
+        with tempfile.NamedTemporaryFile(
+            suffix=".json", delete=False, mode="w"
+        ) as tmp:
+            tmp_path = tmp.name
+        try:
+            rs.to_json(tmp_path)
+            rs2 = DecisionRuleset.from_json(tmp_path)
+            assert rs.ruleset_id == rs2.ruleset_id
+            assert rs == rs2
+        finally:
+            os.unlink(tmp_path)
+
+    def test_file_missing_future_field_keeps_hash(self):
+        """A file that lacks a field still hashes to its file content.
+
+        Simulates future schema expansion: writes a file WITHOUT a known
+        field, then loads it. The hash must be based on what's in the file,
+        not the expanded defaults.
+        """
+        import tempfile
+        # Write a minimal valid ruleset (only a few fields)
+        minimal = {"tier_a_optionality_floor": 0.55, "tier_b_optionality_floor": 0.30}
+        with tempfile.NamedTemporaryFile(
+            suffix=".json", delete=False, mode="w"
+        ) as tmp:
+            json.dump(minimal, tmp, sort_keys=True)
+            tmp_path = tmp.name
+        try:
+            rs = DecisionRuleset.from_json(tmp_path)
+            # Hash should be based on the 2-key dict, NOT the full dataclass
+            expected_hash = hashlib.sha256(
+                json.dumps(minimal, sort_keys=True, separators=(",", ":")).encode()
+            ).hexdigest()[:8]
+            assert rs.ruleset_id == expected_hash, (
+                f"from_json hash {rs.ruleset_id} != raw file hash {expected_hash}. "
+                f"ruleset_id may be using expanded dataclass fields."
+            )
+        finally:
+            os.unlink(tmp_path)
 
 
 # =============================================================================

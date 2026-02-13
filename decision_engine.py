@@ -175,7 +175,16 @@ class DecisionRuleset:
 
     @property
     def ruleset_id(self) -> str:
-        """8-char hex hash of all parameters for change detection."""
+        """8-char hex hash for change detection.
+
+        When loaded via ``from_json``, hashes the *raw file content* so that
+        adding new optional fields to the schema does not change historical IDs.
+        When constructed programmatically, hashes all dataclass fields.
+        """
+        # Prefer file-content hash set by from_json (schema-stable)
+        file_hash = getattr(self, "_file_content_hash", None)
+        if file_hash:
+            return file_hash
         return hashlib.sha256(self._canonical_json().encode()).hexdigest()[:8]
 
     def to_json(self, path: str) -> None:
@@ -193,9 +202,19 @@ class DecisionRuleset:
 
     @classmethod
     def from_json(cls, path: str) -> DecisionRuleset:
-        """Load ruleset from a JSON file."""
+        """Load ruleset from a JSON file.
+
+        Computes a stable ``ruleset_id`` from the raw file content *before*
+        type normalization.  This ensures that adding new optional fields to
+        the dataclass schema does not change the hash of existing files.
+        """
         with open(path, "r", encoding="utf-8") as fh:
             d = json.load(fh)
+        # Compute stable hash from raw dict BEFORE type conversions.
+        # Uses the same compact-separator format as _canonical_json.
+        file_hash = hashlib.sha256(
+            json.dumps(d, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest()[:8]
         # Convert sizing_weights dict back to tuple-of-tuples
         if "sizing_weights" in d and isinstance(d["sizing_weights"], dict):
             d["sizing_weights"] = tuple(
@@ -221,7 +240,10 @@ class DecisionRuleset:
             d["catalyst_priority_map"] = tuple(
                 tuple(rule) for rule in d["catalyst_priority_map"]
             )
-        return cls(**d)
+        instance = cls(**d)
+        # Store file-content hash on the frozen instance (bypasses __setattr__)
+        object.__setattr__(instance, "_file_content_hash", file_hash)
+        return instance
 
 
 # =============================================================================
