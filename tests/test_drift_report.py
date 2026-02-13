@@ -2033,6 +2033,120 @@ class TestCatalystSourceMix:
         )
         assert "### Unknown Source" in md
 
+    # -- Non-CTGOV offender appendix tests --
+
+    def test_non_ctgov_offender_fields(self):
+        """Non-CTGOV offenders have ticker, mode, source, event_type, days."""
+        r = _make_rankings(n_dev=5)
+        r["tier_dev"] = ["A"] * 5
+        r["catalyst_mode"] = ["specific_days"] * 3 + ["no_upcoming"] * 2
+        r["catalyst_source"] = [
+            "FDA_CALENDAR", "SEC_8K_FILING", "CTGOV_CALENDAR",
+            "CORPORATE_CALENDAR", "CTGOV_CALENDAR",
+        ]
+        r["catalyst_event_type"] = [
+            "FDA_DECISION", "DATA_READOUT", "DATA_READOUT",
+            "TRIAL_ONGOING", "DATA_READOUT",
+        ]
+        r["de_catalyst_days"] = ["30", "60", "45", "90", "15"]
+        result = _catalyst_source_metrics(r)
+        offenders = result["_cs_non_ctgov_offenders"]
+        # Only dated (specific_days/blended_window) non-CTGOV: FDA, SEC_8K
+        # no_upcoming CORPORATE excluded (not dated)
+        assert len(offenders) == 2
+        assert offenders[0]["catalyst_source"] == "FDA_CALENDAR"
+        assert offenders[0]["event_type"] == "FDA_DECISION"
+        assert offenders[0]["catalyst_days"] == "30"
+        assert offenders[1]["catalyst_source"] == "SEC_8K_FILING"
+
+    def test_non_ctgov_offenders_sorted_deterministically(self):
+        """Non-CTGOV offenders sort by source group, then mode, then ticker."""
+        r = _make_rankings(n_dev=4)
+        r["ticker"] = ["ZZZ", "AAA", "MMM", "BBB"]
+        r["tier_dev"] = ["A"] * 4
+        r["catalyst_mode"] = ["specific_days"] * 4
+        r["catalyst_source"] = [
+            "SEC_8K_FILING", "FDA_CALENDAR", "CORPORATE_CALENDAR", "FDA_CALENDAR",
+        ]
+        r["catalyst_event_type"] = ["X"] * 4
+        result = _catalyst_source_metrics(r)
+        offenders = result["_cs_non_ctgov_offenders"]
+        tickers = [o["ticker"] for o in offenders]
+        # FDA (AAA, BBB), SEC_8K (ZZZ), CORPORATE (MMM)
+        assert tickers == ["AAA", "BBB", "ZZZ", "MMM"]
+
+    def test_non_ctgov_full_table_when_ctgov_floor_breached(self):
+        """Full table renders when CTGOV share < floor (37%)."""
+        r = _make_rankings(n_dev=10)
+        r["tier_dev"] = ["A"] * 10
+        r["catalyst_mode"] = ["specific_days"] * 10
+        # 3 CTGOV out of 10 = 30% < 37% floor
+        r["catalyst_source"] = (
+            ["CTGOV_CALENDAR"] * 3 + ["FDA_CALENDAR"] * 4 + ["SEC_8K_FILING"] * 3
+        )
+        r["catalyst_event_type"] = ["DATA_READOUT"] * 10
+        r["de_catalyst_days"] = ["45"] * 10
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_drift_metrics([snap])
+        md = generate_drift_report_md(metrics, "OK", [], DriftGuardrails())
+        assert "### Non-CTGOV Dated Catalysts" in md
+        assert "FDA_CALENDAR" in md
+
+    def test_non_ctgov_summary_when_ctgov_floor_ok(self):
+        """Summary line when CTGOV share >= floor."""
+        r = _make_rankings(n_dev=10)
+        r["tier_dev"] = ["A"] * 10
+        r["catalyst_mode"] = ["specific_days"] * 10
+        # 5 CTGOV + 5 FDA = 50% CTGOV > 37% floor
+        r["catalyst_source"] = ["CTGOV_CALENDAR"] * 5 + ["FDA_CALENDAR"] * 5
+        r["catalyst_event_type"] = ["DATA_READOUT"] * 10
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_drift_metrics([snap])
+        md = generate_drift_report_md(metrics, "OK", [], DriftGuardrails())
+        assert "### Non-CTGOV Dated Catalysts" not in md
+        assert "Non-CTGOV dated catalysts: 5 ticker(s)" in md
+        assert "CTGOV floor not breached" in md
+
+    def test_non_ctgov_absent_when_all_ctgov(self):
+        """No non-CTGOV section when all sources are CTGOV."""
+        r = _make_rankings(n_dev=10)
+        r["tier_dev"] = ["A"] * 10
+        r["catalyst_mode"] = ["specific_days"] * 10
+        r["catalyst_source"] = ["CTGOV_CALENDAR"] * 10
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_drift_metrics([snap])
+        md = generate_drift_report_md(metrics, "OK", [], DriftGuardrails())
+        assert "Non-CTGOV" not in md
+
+    def test_non_ctgov_verbose_forces_table(self):
+        """verbose_offenders=True forces full non-CTGOV table."""
+        r = _make_rankings(n_dev=10)
+        r["tier_dev"] = ["A"] * 10
+        r["catalyst_mode"] = ["specific_days"] * 10
+        r["catalyst_source"] = ["CTGOV_CALENDAR"] * 5 + ["FDA_CALENDAR"] * 5
+        r["catalyst_event_type"] = ["DATA_READOUT"] * 10
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_drift_metrics([snap])
+        md = generate_drift_report_md(
+            metrics, "OK", [], DriftGuardrails(), verbose_offenders=True,
+        )
+        assert "### Non-CTGOV Dated Catalysts" in md
+
+    def test_non_ctgov_excludes_undated(self):
+        """Non-CTGOV offenders exclude no_upcoming and missing catalysts."""
+        r = _make_rankings(n_dev=4)
+        r["tier_dev"] = ["A"] * 4
+        r["catalyst_mode"] = ["specific_days", "no_upcoming", "missing", "blended_window"]
+        r["catalyst_source"] = ["FDA_CALENDAR", "FDA_CALENDAR", "FDA_CALENDAR", "SEC_8K_FILING"]
+        r["catalyst_event_type"] = ["X"] * 4
+        result = _catalyst_source_metrics(r)
+        offenders = result["_cs_non_ctgov_offenders"]
+        # Only specific_days and blended_window included
+        assert len(offenders) == 2
+        tickers = [o["catalyst_mode"] for o in offenders]
+        assert "no_upcoming" not in tickers
+        assert "missing" not in tickers
+
 
 # ---------------------------------------------------------------------------
 # Catalyst event type mix

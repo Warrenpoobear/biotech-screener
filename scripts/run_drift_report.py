@@ -643,6 +643,31 @@ def _catalyst_source_metrics(
         )
         result["_cs_unknown_offenders"] = unknown_offenders
 
+        # Non-CTGOV offenders: dated catalysts from other sources
+        # Shows "what replaced CTGOV?" when ctgov floor WARN trips
+        _SRC_ORDER = {"FDA_CALENDAR": 0, "SEC_8K_FILING": 1, "CORPORATE_CALENDAR": 2}
+        _DATED_MODES = {"specific_days", "blended_window"}
+        non_ctgov_offenders = []
+        for i, norm_src in enumerate(sources):
+            if norm_src not in ("CTGOV_CALENDAR", "none", "unknown"):
+                mode = cat_modes[i]
+                if mode in _DATED_MODES:
+                    non_ctgov_offenders.append({
+                        "ticker": tickers[i],
+                        "catalyst_mode": mode,
+                        "catalyst_source": norm_src,
+                        "event_type": cat_event_types[i],
+                        "catalyst_days": cat_days[i],
+                    })
+        non_ctgov_offenders.sort(
+            key=lambda o: (
+                _SRC_ORDER.get(o["catalyst_source"], 9),
+                _MODE_ORDER.get(o["catalyst_mode"], 9),
+                o["ticker"],
+            )
+        )
+        result["_cs_non_ctgov_offenders"] = non_ctgov_offenders
+
     return result
 
 
@@ -2031,6 +2056,46 @@ def generate_drift_report_md(
                     f"_Unknown source offenders: {len(cs_unknown_offenders)} ticker(s)."
                     f" WARN threshold not breached ({cs_unknown_share:.1f}%"
                     f" <= {guardrails.warn_cs_unknown_share_high}%)._"
+                )
+                lines.append("")
+
+        # Non-CTGOV offenders: "what replaced CTGOV?" breadcrumb
+        # Full table when CTGOV-floor WARN fires or verbose; summary otherwise.
+        non_ctgov_offenders = current.get("_cs_non_ctgov_offenders", [])
+        cs_ctgov_share = current.get("cs_ctgov_calendar_share_pct") or 0.0
+        _cs_ctgov_warn = cs_ctgov_share < guardrails.warn_cs_ctgov_share_low
+        if non_ctgov_offenders:
+            if _cs_ctgov_warn or verbose_offenders:
+                lines.append("### Non-CTGOV Dated Catalysts")
+                lines.append("")
+                lines.append(
+                    "Dated-catalyst tickers sourced from non-CTGOV pipelines"
+                    " — shows what replaced CTGOV when floor WARN trips."
+                )
+                lines.append("")
+                lines.append("| Ticker | Mode           | Days | Source               | Event Type     |")
+                lines.append("|--------|----------------|------|----------------------|----------------|")
+                for off in non_ctgov_offenders[:_CT_MAX_OFFENDERS]:
+                    days_str = off.get("catalyst_days", "") or "—"
+                    et_str = off.get("event_type", "") or "—"
+                    lines.append(
+                        f"| {off['ticker']:<6} "
+                        f"| {off['catalyst_mode']:<14} "
+                        f"| {str(days_str):>4} "
+                        f"| {off['catalyst_source']:<20} "
+                        f"| {et_str:<14} |"
+                    )
+                if len(non_ctgov_offenders) > _CT_MAX_OFFENDERS:
+                    lines.append(
+                        f"| ...    | ({len(non_ctgov_offenders) - _CT_MAX_OFFENDERS} more)"
+                        f"{'':<14} | {'':>4} | {'':<20} | {'':<14} |"
+                    )
+                lines.append("")
+            else:
+                lines.append(
+                    f"_Non-CTGOV dated catalysts: {len(non_ctgov_offenders)} ticker(s)."
+                    f" CTGOV floor not breached ({cs_ctgov_share:.1f}%"
+                    f" >= {guardrails.warn_cs_ctgov_share_low}%)._"
                 )
                 lines.append("")
 
