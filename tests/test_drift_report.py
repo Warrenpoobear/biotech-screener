@@ -1766,7 +1766,7 @@ class TestCatalystSourceMix:
             + ["FDA_CALENDAR"] * 5
             + ["SEC_8K_FILING"] * 2
             + [""] * 2   # → none
-            + [None] * 1  # → none (NaN = no catalyst, not broken data)
+            + [None] * 1  # → unknown (snapshot mode default)
         )
         result = _catalyst_source_metrics(r)
         assert result is not None
@@ -1776,17 +1776,28 @@ class TestCatalystSourceMix:
         assert result["cs_fda_calendar_count"] == 5
         assert result["cs_fda_calendar_share_pct"] == 25.0
         assert result["cs_sec_8k_filing_count"] == 2
-        assert result["cs_none_count"] == 3  # 2 empty + 1 None
-        assert result["cs_none_share_pct"] == 15.0
-        assert result["cs_unknown_count"] == 0
-        assert result["cs_unknown_share_pct"] == 0.0
+        assert result["cs_none_count"] == 2
+        assert result["cs_none_share_pct"] == 10.0
+        assert result["cs_unknown_count"] == 1
+        assert result["cs_unknown_share_pct"] == 5.0
 
-    def test_blank_and_nan_both_map_to_none(self):
-        """Empty string → 'none', NaN/None → 'none' (no catalyst)."""
+    def test_snapshot_mode_nan_maps_to_unknown(self):
+        """Snapshot mode (default): NaN/None → 'unknown' (broken data)."""
         r = _make_rankings(n_dev=6)
         r["tier_dev"] = ["A"] * 6
         r["catalyst_source"] = ["CTGOV_CALENDAR", "", "  ", None, "FDA_CALENDAR", ""]
-        result = _catalyst_source_metrics(r)
+        result = _catalyst_source_metrics(r, panel_mode=False)
+        assert result["cs_none_count"] == 3  # "", "  ", ""
+        assert result["cs_unknown_count"] == 1  # None
+        assert result["cs_ctgov_calendar_count"] == 1
+        assert result["cs_fda_calendar_count"] == 1
+
+    def test_panel_mode_nan_maps_to_none(self):
+        """Panel mode: NaN/None → 'none' (CSV ambiguity)."""
+        r = _make_rankings(n_dev=6)
+        r["tier_dev"] = ["A"] * 6
+        r["catalyst_source"] = ["CTGOV_CALENDAR", "", "  ", None, "FDA_CALENDAR", ""]
+        result = _catalyst_source_metrics(r, panel_mode=True)
         assert result["cs_none_count"] == 4  # "", "  ", None, ""
         assert result["cs_unknown_count"] == 0
         assert result["cs_ctgov_calendar_count"] == 1
@@ -2435,3 +2446,41 @@ class TestCsCtgovSuggestionGate:
             suggestions=suggestions,
         )
         assert "suggest_cs_min_cat_specific_days_median" not in md
+
+
+# ---------------------------------------------------------------------------
+# Panel-mode catalyst_source note
+# ---------------------------------------------------------------------------
+
+
+class TestPanelModeSourceNote:
+    """Catalyst Source Mix section includes CSV ambiguity note in panel mode."""
+
+    def _metrics_with_cs(self):
+        return {
+            "snapshots": [],
+            "rolling": {},
+            "current": {
+                "cs_n_eligible": 10,
+                "cs_ctgov_calendar_count": 5, "cs_ctgov_calendar_share_pct": 50.0,
+                "cs_fda_calendar_count": 2, "cs_fda_calendar_share_pct": 20.0,
+                "cs_sec_8k_filing_count": 0, "cs_sec_8k_filing_share_pct": 0.0,
+                "cs_corporate_calendar_count": 0, "cs_corporate_calendar_share_pct": 0.0,
+                "cs_none_count": 3, "cs_none_share_pct": 30.0,
+                "cs_unknown_count": 0, "cs_unknown_share_pct": 0.0,
+            },
+        }
+
+    def test_note_present_in_panel_mode(self):
+        md = generate_drift_report_md(
+            self._metrics_with_cs(), "OK", [], DriftGuardrails(),
+            panel_mode=True,
+        )
+        assert "CSV ambiguity" in md
+
+    def test_note_absent_in_snapshot_mode(self):
+        md = generate_drift_report_md(
+            self._metrics_with_cs(), "OK", [], DriftGuardrails(),
+            panel_mode=False,
+        )
+        assert "CSV ambiguity" not in md
