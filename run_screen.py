@@ -1321,6 +1321,8 @@ SNAPSHOT_COLUMNS = [
     "de_drawdown_xbi", "de_drawdown_rel_xbi",
     # Returns provenance (for drift monitoring)
     "returns_source",
+    # Catalyst source provenance (for drift monitoring)
+    "catalyst_source",
 ]
 
 # Phase-2 decision portfolio output columns
@@ -1562,6 +1564,33 @@ def _hydrate_drawdown(
     return hydrated
 
 
+def _nearest_catalyst_source(
+    m3_summaries: Optional[Dict[str, Any]],
+    ticker: str,
+) -> str:
+    """Extract the source of the nearest catalyst event from Module 3 summaries.
+
+    Looks up the ticker's catalyst summary, finds the event matching
+    ``integration.next_catalyst_date``, and returns its ``source`` field.
+    Returns empty string when data is unavailable.
+    """
+    if not m3_summaries:
+        return ""
+    summary = m3_summaries.get(ticker.upper()) or m3_summaries.get(ticker)
+    if not summary or not isinstance(summary, dict):
+        return ""
+    next_date = (summary.get("integration") or {}).get("next_catalyst_date")
+    if not next_date:
+        return ""
+    for event in summary.get("events") or []:
+        if not isinstance(event, dict):
+            continue
+        # Match by event_date (exact match with next_catalyst_date)
+        if event.get("event_date") == next_date:
+            return event.get("source", "")
+    return ""
+
+
 def save_validation_snapshot(
     snapshot_dir: Path,
     as_of_date: str,
@@ -1611,6 +1640,7 @@ def save_validation_snapshot(
 
     ranked = sorted(ranked, key=lambda x: x.get("composite_rank", 999))
     archetypes = results.get("company_archetypes", {})
+    m3_summaries = (results.get("module_3_catalyst") or {}).get("summaries")
 
     # --- Helper: extract a named component's normalized score from component_scores ---
     def _component_score(rec, name):
@@ -1737,6 +1767,9 @@ def save_validation_snapshot(
 
         # Returns provenance: live screen always uses Morningstar pipeline
         row["returns_source"] = "morningstar"
+
+        # Catalyst source provenance: extract from Module 3 nearest event
+        row["catalyst_source"] = _nearest_catalyst_source(m3_summaries, ticker)
 
     # --- Actionable ordering: sort + assign rank + compute weights ---
     # Sort all rows by actionable sort key
