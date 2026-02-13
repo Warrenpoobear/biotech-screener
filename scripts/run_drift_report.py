@@ -108,6 +108,10 @@ class DriftGuardrails:
     warn_cs_ctgov_share_low: float = 37.0             # WARN if CTGOV_CALENDAR share < 37%
     warn_cs_unknown_share_high: float = 5.0           # WARN if unknown source share > 5%
 
+    # Catalyst event type mix (regime-gated: only when cat_specific_days ≥ 40%)
+    warn_ct_unknown_share_high: float = 5.0           # WARN if unknown event type share > 5%
+    warn_ct_fda_share_spike: float = 30.0             # WARN if FDA_DECISION + FDA_ADCOM share > 30%
+
     # Adaptive WARN layer
     warn_iqr_k: float = 2.0             # WARN if |delta| > k * max(IQR, floor)
     warn_iqr_floor: float = 1.0         # minimum IQR (prevents spurious WARN from flat windows)
@@ -997,6 +1001,9 @@ def compute_drift_metrics(
         "cs_ctgov_calendar_share_pct", "cs_fda_calendar_share_pct",
         "cs_sec_8k_filing_share_pct", "cs_corporate_calendar_share_pct",
         "cs_none_share_pct", "cs_unknown_share_pct",
+        "ct_data_readout_share_pct", "ct_fda_decision_share_pct",
+        "ct_fda_adcom_share_pct", "ct_trial_ongoing_share_pct",
+        "ct_none_share_pct", "ct_unknown_share_pct",
     ]
     rolling: Dict[str, Dict[str, Any]] = {}
     for key in roll_keys:
@@ -1232,6 +1239,24 @@ def evaluate_guardrails(
                 f"{guardrails.warn_cs_unknown_share_high}% ceiling"
             )
 
+    # Catalyst event type mix checks — same regime gate as cs_*
+    if _cs_regime_ok:
+        ct_unknown = current.get("ct_unknown_share_pct")
+        if ct_unknown is not None and ct_unknown > guardrails.warn_ct_unknown_share_high:
+            warn_reasons.append(
+                f"Catalyst event type unknown = {ct_unknown:.1f}% > "
+                f"{guardrails.warn_ct_unknown_share_high}% ceiling"
+            )
+        # FDA spike tripwire: FDA_DECISION + FDA_ADCOM combined
+        ct_fda_dec = current.get("ct_fda_decision_share_pct") or 0.0
+        ct_fda_adc = current.get("ct_fda_adcom_share_pct") or 0.0
+        ct_fda_combined = ct_fda_dec + ct_fda_adc
+        if ct_fda_combined > guardrails.warn_ct_fda_share_spike:
+            warn_reasons.append(
+                f"Catalyst event type FDA share = {ct_fda_combined:.1f}% > "
+                f"{guardrails.warn_ct_fda_share_spike}% ceiling"
+            )
+
     if warn_reasons:
         return "WARN", warn_reasons, None, "INVESTIGATE"
 
@@ -1313,6 +1338,7 @@ _SUGGESTION_SPECS: List[Tuple[str, str, str, str]] = [
     ("rs_unknown_share_pct", "high_ceiling", "warn_rs_unknown_share_high", "Returns unknown share"),
     ("cs_ctgov_calendar_share_pct", "low_floor", "warn_cs_ctgov_share_low", "CTGOV calendar share"),
     ("cs_unknown_share_pct", "high_ceiling", "warn_cs_unknown_share_high", "Unknown source share"),
+    ("ct_unknown_share_pct", "high_ceiling", "warn_ct_unknown_share_high", "Unknown event type share"),
 ]
 
 SUGGESTION_MIN_POINTS = 3
@@ -1353,10 +1379,11 @@ def compute_suggested_guardrails(
         if len(vals) < min_points:
             continue
 
-        # Gate: suppress cs_* suggestions when dated catalysts are sparse
+        # Gate: suppress cs_*/ct_* suggestions when dated catalysts are sparse
         if metric_key in (
             "cs_ctgov_calendar_share_pct",
             "cs_unknown_share_pct",
+            "ct_unknown_share_pct",
         ):
             cat_vals = [
                 m["cat_specific_days_share_pct"]
@@ -2144,6 +2171,8 @@ def generate_drift_report_md(
     lines.append(f"- warn_cat_specific_days_share_low: {guardrails.warn_cat_specific_days_share_low}%")
     lines.append(f"- warn_cs_ctgov_share_low: {guardrails.warn_cs_ctgov_share_low}%")
     lines.append(f"- warn_cs_unknown_share_high: {guardrails.warn_cs_unknown_share_high}%")
+    lines.append(f"- warn_ct_unknown_share_high: {guardrails.warn_ct_unknown_share_high}%")
+    lines.append(f"- warn_ct_fda_share_spike: {guardrails.warn_ct_fda_share_spike}%")
     lines.append(f"- warn_iqr_k: {guardrails.warn_iqr_k}")
     lines.append(f"- warn_iqr_floor: {guardrails.warn_iqr_floor}")
     lines.append(f"- warn_min_window: {guardrails.warn_min_window}")

@@ -2046,6 +2046,93 @@ class TestCatalystEventTypeMix:
         md = generate_drift_report_md(metrics, "OK", [], DriftGuardrails())
         assert "## Catalyst Event Type Mix" not in md
 
+    # -- ct_* WARN guardrail tests --
+
+    def _metrics_with_ct(self, **overrides) -> dict:
+        """Build metrics dict with ct_* keys."""
+        current = {
+            "tier_A_pct": 5.0,
+            "catalyst_missing_pct": 30.0,
+            "top25_overlap_pct": 80.0,
+            "optionality_std": 0.30,
+        }
+        current.update(overrides)
+        return {"current": current, "snapshots": [current], "rolling": {}}
+
+    def test_warn_ct_unknown_share_high(self):
+        """WARN fires when unknown event type share > threshold (regime ok)."""
+        m = self._metrics_with_ct(
+            ct_unknown_share_pct=10.0,
+            cat_specific_days_share_pct=50.0,
+        )
+        status, reasons, _, _ = evaluate_guardrails(m, DriftGuardrails())
+        assert status == "WARN"
+        assert any("event type unknown" in r.lower() for r in reasons)
+
+    def test_warn_ct_fda_share_spike(self):
+        """WARN fires when combined FDA share > threshold (regime ok)."""
+        m = self._metrics_with_ct(
+            ct_fda_decision_share_pct=25.0,
+            ct_fda_adcom_share_pct=10.0,
+            cat_specific_days_share_pct=50.0,
+        )
+        status, reasons, _, _ = evaluate_guardrails(m, DriftGuardrails())
+        assert status == "WARN"
+        assert any("FDA share" in r for r in reasons)
+
+    def test_ok_ct_within_bounds(self):
+        """No WARN when event type mix is healthy."""
+        m = self._metrics_with_ct(
+            ct_unknown_share_pct=2.0,
+            ct_fda_decision_share_pct=5.0,
+            ct_fda_adcom_share_pct=1.0,
+            cat_specific_days_share_pct=50.0,
+        )
+        status, reasons, _, _ = evaluate_guardrails(m, DriftGuardrails())
+        assert status == "OK"
+
+    def test_ct_warn_suppressed_in_sparse_regime(self):
+        """ct_* WARNs suppressed when cat_specific_days_share < 40%."""
+        m = self._metrics_with_ct(
+            ct_unknown_share_pct=20.0,
+            ct_fda_decision_share_pct=25.0,
+            ct_fda_adcom_share_pct=10.0,
+            cat_specific_days_share_pct=30.0,
+        )
+        status, reasons, _, _ = evaluate_guardrails(m, DriftGuardrails())
+        assert not any("event type" in r.lower() for r in reasons)
+        assert not any("FDA share" in r for r in reasons)
+
+    def test_ct_warn_suppressed_when_cat_specific_days_missing(self):
+        """ct_* WARNs suppressed when cat_specific_days_share_pct absent."""
+        m = self._metrics_with_ct(
+            ct_unknown_share_pct=20.0,
+        )
+        status, reasons, _, _ = evaluate_guardrails(m, DriftGuardrails())
+        assert not any("event type" in r.lower() for r in reasons)
+
+    def test_ct_fda_spike_below_threshold_ok(self):
+        """No WARN when FDA combined share is below spike threshold."""
+        m = self._metrics_with_ct(
+            ct_fda_decision_share_pct=15.0,
+            ct_fda_adcom_share_pct=10.0,
+            cat_specific_days_share_pct=50.0,
+        )
+        status, reasons, _, _ = evaluate_guardrails(m, DriftGuardrails())
+        assert not any("FDA share" in r for r in reasons)
+
+    def test_guardrails_config_includes_ct_thresholds(self):
+        """Report shows ct_* guardrail thresholds."""
+        r = _make_rankings(n_dev=20)
+        r["tier_dev"] = ["A"] * 20
+        r["catalyst_event_type"] = ["DATA_READOUT"] * 15 + [""] * 5
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_drift_metrics([snap])
+        guardrails = DriftGuardrails()
+        md = generate_drift_report_md(metrics, "OK", [], guardrails)
+        assert "warn_ct_unknown_share_high" in md
+        assert "warn_ct_fda_share_spike" in md
+
 
 # ---------------------------------------------------------------------------
 # Panel-as-snapshots
@@ -2501,6 +2588,7 @@ class TestCsCtgovSuggestionGate:
                 "rs_morningstar_share_pct": 95.0,
                 "rs_unknown_share_pct": 2.0,
                 "cs_unknown_share_pct": 1.0,
+                "ct_unknown_share_pct": 1.0,
             }
             for _ in range(n)
         ]
@@ -2559,6 +2647,22 @@ class TestCsCtgovSuggestionGate:
         cs_unk = [s for s in suggestions if s["metric"] == "cs_unknown_share_pct"]
         assert len(cs_unk) == 1
         assert cs_unk[0].get("suppressed") is not True
+
+    def test_ct_unknown_suppressed_when_sparse(self):
+        """ct_unknown suggestion is suppressed when specific_days are sparse."""
+        metrics = self._make_metrics(cat_specific_pct=25.0, cs_ctgov_pct=90.0)
+        suggestions = compute_suggested_guardrails(metrics, DriftGuardrails())
+        ct_unk = [s for s in suggestions if s["metric"] == "ct_unknown_share_pct"]
+        assert len(ct_unk) == 1
+        assert ct_unk[0]["suppressed"] is True
+
+    def test_ct_unknown_not_suppressed_when_healthy(self):
+        """ct_unknown suggestion is not suppressed when specific_days are healthy."""
+        metrics = self._make_metrics(cat_specific_pct=50.0, cs_ctgov_pct=80.0)
+        suggestions = compute_suggested_guardrails(metrics, DriftGuardrails())
+        ct_unk = [s for s in suggestions if s["metric"] == "ct_unknown_share_pct"]
+        assert len(ct_unk) == 1
+        assert ct_unk[0].get("suppressed") is not True
 
     def test_report_footer_shows_suppression_threshold(self):
         metrics = self._make_metrics(cat_specific_pct=25.0, cs_ctgov_pct=90.0)
