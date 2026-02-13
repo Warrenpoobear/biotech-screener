@@ -553,13 +553,21 @@ def _catalyst_source_metrics(rankings: pd.DataFrame) -> Optional[Dict[str, Any]]
 
     from collections import Counter
 
+    # Map enrichment-pipeline names → canonical live-pipeline names
+    _SOURCE_ALIASES: Dict[str, str] = {
+        "trial_pcd": "CTGOV_CALENDAR",
+        "pdufa": "FDA_CALENDAR",
+        "sec_8k": "SEC_8K_FILING",
+        "adcom": "FDA_CALENDAR",
+    }
+
     def _norm_source(v) -> str:
         if v is None or (isinstance(v, float) and pd.isna(v)):
-            return "unknown"
+            return "none"  # NaN/None → no catalyst (not broken data)
         s = str(v).strip()
         if not s:
             return "none"
-        return s
+        return _SOURCE_ALIASES.get(s, s)
 
     sources = [_norm_source(v) for v in eligible_dev["catalyst_source"]]
     counts = Counter(sources)

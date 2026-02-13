@@ -21,9 +21,11 @@ from decision_engine import DecisionRuleset
 from run_decision_ruleset_sweep import ArchiveData
 from run_decision_strategy_backtest import (
     MultiHorizonReturns,
+    PANEL_COLUMNS,
     SnapshotResult,
     _percentile,
     aggregate_results,
+    build_all_dev_decisions,
     build_composite_baseline,
     build_strategy_portfolio,
     build_universe_baseline,
@@ -673,3 +675,31 @@ class TestCostWiringInPortfolio:
         result = build_strategy_portfolio(archive, ruleset, ["A", "B"], top_k=20)
         assert len(result) == 1
         assert result[0]["est_cost_bps"] is None
+
+
+# =============================================================================
+# TEST: catalyst_source in panel
+# =============================================================================
+
+
+class TestCatalystSourceInPanel:
+    """Verify catalyst_source flows from rec dict to panel output."""
+
+    def test_panel_columns_include_catalyst_source(self):
+        assert "catalyst_source" in PANEL_COLUMNS
+
+    def test_build_all_dev_decisions_passes_catalyst_source(self):
+        rec = _make_rec()
+        rec["catalyst_source"] = "trial_pcd"
+        archive = _make_archive_data({"AAA": {"rec": rec, "opt": 0.70}})
+        devs = build_all_dev_decisions(archive, DecisionRuleset())
+        assert len(devs) == 1
+        assert devs[0]["catalyst_source"] == "trial_pcd"
+
+    def test_catalyst_source_fallback_empty_string(self):
+        rec = _make_rec()
+        # rec has no catalyst_source key
+        archive = _make_archive_data({"BBB": {"rec": rec, "opt": 0.70}})
+        devs = build_all_dev_decisions(archive, DecisionRuleset())
+        assert len(devs) == 1
+        assert devs[0]["catalyst_source"] == ""

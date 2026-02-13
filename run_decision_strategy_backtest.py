@@ -100,6 +100,7 @@ PANEL_COLUMNS = [
     "catalyst_tilt_mult", "catalyst_tilt_applied",
     "mom_state_tilt_mult", "mom_state_tilt_applied",
     "returns_source",
+    "catalyst_source",
 ]
 
 
@@ -432,6 +433,7 @@ def build_all_dev_decisions(
             "catalyst_tilt_applied": fields.get("catalyst_tilt_applied", "0"),
             "mom_state_tilt_mult": fields.get("mom_state_tilt_mult", 1.0),
             "mom_state_tilt_applied": fields.get("mom_state_tilt_applied", "0"),
+            "catalyst_source": rec.get("catalyst_source", ""),
         })
 
     return results
@@ -857,6 +859,7 @@ def run_strategy_backtest(
                     "fwd_ret_20d_net": fwd_20_net,
                     "fwd_ret_60d_net": fwd_60_net,
                     "returns_source": _get_return_source(chained, ticker, date_str, 60),
+                    "catalyst_source": dev.get("catalyst_source", ""),
                 })
 
             # Accumulate cost telemetry across snapshots

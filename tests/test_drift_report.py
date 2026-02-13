@@ -1766,7 +1766,7 @@ class TestCatalystSourceMix:
             + ["FDA_CALENDAR"] * 5
             + ["SEC_8K_FILING"] * 2
             + [""] * 2   # → none
-            + [None] * 1  # → unknown
+            + [None] * 1  # → none (NaN = no catalyst, not broken data)
         )
         result = _catalyst_source_metrics(r)
         assert result is not None
@@ -1776,21 +1776,39 @@ class TestCatalystSourceMix:
         assert result["cs_fda_calendar_count"] == 5
         assert result["cs_fda_calendar_share_pct"] == 25.0
         assert result["cs_sec_8k_filing_count"] == 2
-        assert result["cs_none_count"] == 2
-        assert result["cs_none_share_pct"] == 10.0
-        assert result["cs_unknown_count"] == 1
-        assert result["cs_unknown_share_pct"] == 5.0
+        assert result["cs_none_count"] == 3  # 2 empty + 1 None
+        assert result["cs_none_share_pct"] == 15.0
+        assert result["cs_unknown_count"] == 0
+        assert result["cs_unknown_share_pct"] == 0.0
 
-    def test_blank_maps_to_none_nan_maps_to_unknown(self):
-        """Empty string → 'none', NaN/None → 'unknown'."""
+    def test_blank_and_nan_both_map_to_none(self):
+        """Empty string → 'none', NaN/None → 'none' (no catalyst)."""
         r = _make_rankings(n_dev=6)
         r["tier_dev"] = ["A"] * 6
         r["catalyst_source"] = ["CTGOV_CALENDAR", "", "  ", None, "FDA_CALENDAR", ""]
         result = _catalyst_source_metrics(r)
-        assert result["cs_none_count"] == 3  # "", "  ", ""
-        assert result["cs_unknown_count"] == 1  # None
+        assert result["cs_none_count"] == 4  # "", "  ", None, ""
+        assert result["cs_unknown_count"] == 0
         assert result["cs_ctgov_calendar_count"] == 1
         assert result["cs_fda_calendar_count"] == 1
+
+    def test_enrichment_source_aliases(self):
+        """Enrichment pipeline names normalize to canonical keys."""
+        r = _make_rankings(n_dev=5)
+        r["tier_dev"] = ["A"] * 5
+        r["catalyst_source"] = [
+            "trial_pcd",   # → CTGOV_CALENDAR
+            "pdufa",       # → FDA_CALENDAR
+            "sec_8k",      # → SEC_8K_FILING
+            "adcom",       # → FDA_CALENDAR
+            "",            # → none
+        ]
+        result = _catalyst_source_metrics(r)
+        assert result["cs_ctgov_calendar_count"] == 1
+        assert result["cs_fda_calendar_count"] == 2  # pdufa + adcom
+        assert result["cs_sec_8k_filing_count"] == 1
+        assert result["cs_none_count"] == 1
+        assert result["cs_unknown_count"] == 0
 
     def test_none_when_column_missing(self):
         """Returns None when catalyst_source column absent."""

@@ -221,6 +221,10 @@ def build_rec(
             base_def[key] = enriched[key]
     rec["defensive_features"] = base_def
 
+    # Catalyst provenance: pass through from enriched sidecar
+    rec["catalyst_source"] = enriched.get("catalyst_source", "")
+    rec["catalyst_event_type"] = enriched.get("catalyst_event_type", "")
+
     # Momentum: use enriched alpha_60d if available
     if "alpha_60d" in enriched:
         rec["score_breakdown"] = {
