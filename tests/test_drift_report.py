@@ -24,6 +24,7 @@ from run_drift_report import (
     _compute_margin_summary,
     _cost_metrics,
     _parse_pipe_separated,
+    _returns_source_metrics,
     compute_attribution,
     compute_drift_metrics,
     compute_snapshot_metrics,
@@ -1316,3 +1317,196 @@ class TestCostTelemetry:
             errors="ignore",
         )
         assert _cost_metrics(df) is None
+
+
+# ============================================================================
+# TestReturnsSourceMix
+# ============================================================================
+class TestReturnsSourceMix:
+    """Tests for returns-source mix metrics and guardrails."""
+
+    def _make_rankings_with_rs(
+        self, n_dev: int = 50, sources: list | None = None,
+    ) -> pd.DataFrame:
+        """Build rankings DataFrame with a returns_source column."""
+        r = _make_rankings(n_dev=n_dev)
+        if sources is not None:
+            r["returns_source"] = sources[:n_dev]
+        else:
+            # Default: 80% morningstar, 10% csv, 5% unknown, 5% csv_outlier_override
+            n_mstar = int(n_dev * 0.80)
+            n_csv = int(n_dev * 0.10)
+            n_unknown = int(n_dev * 0.05)
+            n_outlier = n_dev - n_mstar - n_csv - n_unknown
+            r["returns_source"] = (
+                ["morningstar"] * n_mstar
+                + ["csv"] * n_csv
+                + ["unknown"] * n_unknown
+                + ["csv_outlier_override"] * n_outlier
+            )
+        return r
+
+    def _metrics_with_current(self, **overrides) -> dict:
+        current = {
+            "tier_A_pct": 5.0,
+            "catalyst_missing_pct": 30.0,
+            "top25_overlap_pct": 80.0,
+            "optionality_std": 0.30,
+        }
+        current.update(overrides)
+        return {"current": current, "snapshots": [current], "rolling": {}}
+
+    # -- _returns_source_metrics tests --
+
+    def test_mix_known_distribution(self):
+        """Known source distribution → correct counts and shares."""
+        r = _make_rankings(n_dev=20)
+        r["returns_source"] = (
+            ["morningstar"] * 14
+            + ["csv"] * 3
+            + ["csv_outlier_override"] * 1
+            + ["unknown"] * 2
+        )
+        result = _returns_source_metrics(r)
+        assert result is not None
+        assert result["rs_n_dev"] == 20
+        assert result["rs_morningstar_count"] == 14
+        assert result["rs_morningstar_share_pct"] == 70.0
+        assert result["rs_csv_count"] == 3
+        assert result["rs_csv_share_pct"] == 15.0
+        assert result["rs_csv_outlier_override_count"] == 1
+        assert result["rs_csv_outlier_override_share_pct"] == 5.0
+        assert result["rs_unknown_count"] == 2
+        assert result["rs_unknown_share_pct"] == 10.0
+
+    def test_mix_none_when_column_missing(self):
+        """No returns_source column → returns None."""
+        r = _make_rankings(n_dev=20)
+        assert "returns_source" not in r.columns
+        result = _returns_source_metrics(r)
+        assert result is None
+
+    def test_blank_treated_as_unknown(self):
+        """Blank/empty returns_source values are counted as unknown."""
+        r = _make_rankings(n_dev=10)
+        r["returns_source"] = ["morningstar"] * 7 + ["", None, "  "]
+        result = _returns_source_metrics(r)
+        assert result["rs_unknown_count"] == 3
+        assert result["rs_morningstar_count"] == 7
+
+    def test_snapshot_metrics_include_rs(self):
+        """compute_snapshot_metrics includes rs_ keys when column present."""
+        r = self._make_rankings_with_rs(n_dev=30)
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_snapshot_metrics(snap)
+        assert "rs_morningstar_share_pct" in metrics
+        assert "rs_unknown_share_pct" in metrics
+        assert "rs_csv_outlier_override_share_pct" in metrics
+        assert metrics["rs_morningstar_share_pct"] is not None
+
+    def test_snapshot_metrics_no_rs_when_missing(self):
+        """compute_snapshot_metrics omits rs_ keys when column absent."""
+        r = _make_rankings(n_dev=30)
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_snapshot_metrics(snap)
+        assert "rs_morningstar_share_pct" not in metrics
+
+    # -- Guardrail WARN tests --
+
+    def test_warn_unknown_share_high(self):
+        """rs_unknown_share_pct > threshold → WARN."""
+        status, reasons, _, action = evaluate_guardrails(
+            self._metrics_with_current(rs_unknown_share_pct=15.0),
+            DriftGuardrails(),
+        )
+        assert status == "WARN"
+        assert any("unknown" in r for r in reasons)
+        assert action == "INVESTIGATE"
+
+    def test_warn_csv_outlier_override_high(self):
+        """rs_csv_outlier_override_share_pct > threshold → WARN."""
+        status, reasons, _, action = evaluate_guardrails(
+            self._metrics_with_current(rs_csv_outlier_override_share_pct=2.0),
+            DriftGuardrails(),
+        )
+        assert status == "WARN"
+        assert any("csv_outlier_override" in r for r in reasons)
+
+    def test_warn_morningstar_share_low(self):
+        """rs_morningstar_share_pct < threshold → WARN."""
+        status, reasons, _, action = evaluate_guardrails(
+            self._metrics_with_current(rs_morningstar_share_pct=60.0),
+            DriftGuardrails(),
+        )
+        assert status == "WARN"
+        assert any("morningstar" in r for r in reasons)
+
+    def test_ok_rs_within_bounds(self):
+        """Returns source shares within bounds → no WARN from rs checks."""
+        status, reasons, _, _ = evaluate_guardrails(
+            self._metrics_with_current(
+                rs_unknown_share_pct=5.0,
+                rs_csv_outlier_override_share_pct=0.5,
+                rs_morningstar_share_pct=80.0,
+            ),
+            DriftGuardrails(),
+        )
+        assert status == "OK"
+        assert not any("returns source" in r.lower() or "Returns source" in r for r in reasons)
+
+    def test_ok_rs_none_no_warn(self):
+        """rs metrics not present (None) → no WARN from rs checks."""
+        status, reasons, _, _ = evaluate_guardrails(
+            self._metrics_with_current(),
+            DriftGuardrails(),
+        )
+        assert status == "OK"
+
+    # -- Report table test --
+
+    def test_md_report_includes_rs_section(self):
+        """Returns Source Mix section present when rs data exists."""
+        r = self._make_rankings_with_rs(n_dev=30)
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_drift_metrics([snap])
+        guardrails = DriftGuardrails()
+        md = generate_drift_report_md(metrics, "OK", [], guardrails)
+        assert "## Returns Source Mix" in md
+        assert "morningstar" in md
+        assert "csv_outlier_override" in md
+
+    def test_md_report_no_rs_section_when_missing(self):
+        """No Returns Source Mix section when column is absent."""
+        r = _make_rankings(n_dev=30)
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_drift_metrics([snap])
+        guardrails = DriftGuardrails()
+        md = generate_drift_report_md(metrics, "OK", [], guardrails)
+        assert "## Returns Source Mix" not in md
+
+    # -- Roll keys test --
+
+    def test_roll_keys_tracked(self):
+        """rs_morningstar_share_pct appears in rolling when snapshots have data."""
+        snaps = []
+        for i in range(4):
+            r = self._make_rankings_with_rs(n_dev=30)
+            snaps.append(_make_snapshot(f"2026-01-0{i+1}", r))
+        metrics = compute_drift_metrics(snaps)
+        rolling = metrics["rolling"]
+        assert "rs_morningstar_share_pct" in rolling
+        assert "rs_unknown_share_pct" in rolling
+        assert rolling["rs_morningstar_share_pct"]["current"] is not None
+
+    # -- Guardrails config test --
+
+    def test_guardrails_config_includes_rs_thresholds(self):
+        """Report shows rs guardrail thresholds."""
+        r = _make_rankings(n_dev=30)
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_drift_metrics([snap])
+        guardrails = DriftGuardrails()
+        md = generate_drift_report_md(metrics, "OK", [], guardrails)
+        assert "warn_rs_unknown_share_high" in md
+        assert "warn_rs_csv_outlier_override_share_high" in md
+        assert "warn_rs_morningstar_share_low" in md

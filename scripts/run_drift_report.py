@@ -84,6 +84,11 @@ class DriftGuardrails:
     # dd_rel_margin rescue telemetry
     warn_dd_rel_margin_rescue_share_high: float = 5.0  # WARN if rescued share > 5%
 
+    # Returns-source mix
+    warn_rs_unknown_share_high: float = 10.0       # WARN if unknown source > 10%
+    warn_rs_csv_outlier_override_share_high: float = 1.0  # WARN if outlier overrides > 1%
+    warn_rs_morningstar_share_low: float = 70.0    # WARN if Morningstar share < 70%
+
     # Adaptive WARN layer
     warn_iqr_k: float = 2.0             # WARN if |delta| > k * max(IQR, floor)
     warn_iqr_floor: float = 1.0         # minimum IQR (prevents spurious WARN from flat windows)
@@ -271,6 +276,47 @@ def _drawdown_rel_coverage_pct(rankings: pd.DataFrame) -> Optional[float]:
     return round(n_covered / n_dev * 100, 1)
 
 
+_RETURNS_SOURCE_KEYS = ("morningstar", "csv", "csv_outlier_override", "unknown")
+
+
+def _returns_source_metrics(rankings: pd.DataFrame) -> Optional[Dict[str, Any]]:
+    """Returns-source mix metrics from the ``returns_source`` column.
+
+    Computes per-source counts and share percentages among dev-stage tickers.
+    Returns None when the column is absent.
+    """
+    if "returns_source" not in rankings.columns:
+        return None
+
+    dev = rankings[rankings["archetype"] == "drug_developer"]
+    n_dev = len(dev)
+    if n_dev == 0:
+        result: Dict[str, Any] = {"rs_n_dev": 0}
+        for src in _RETURNS_SOURCE_KEYS:
+            result[f"rs_{src}_count"] = 0
+            result[f"rs_{src}_share_pct"] = None
+        return result
+
+    from collections import Counter
+
+    def _norm_source(v) -> str:
+        if v is None or (isinstance(v, float) and pd.isna(v)):
+            return "unknown"
+        s = str(v).strip()
+        return s if s else "unknown"
+
+    sources = [_norm_source(v) for v in dev["returns_source"]]
+    counts = Counter(sources)
+
+    result = {"rs_n_dev": n_dev}
+    for src in _RETURNS_SOURCE_KEYS:
+        c = counts.get(src, 0)
+        result[f"rs_{src}_count"] = c
+        result[f"rs_{src}_share_pct"] = round(c / n_dev * 100, 1)
+
+    return result
+
+
 def _cost_metrics(
     rankings: pd.DataFrame, cap_bps: float = 1000.0,
 ) -> Optional[Dict[str, Any]]:
@@ -434,6 +480,11 @@ def compute_snapshot_metrics(snap: SnapshotData) -> Dict[str, Any]:
     if cost is not None:
         metrics.update(cost)
 
+    # Returns-source mix
+    rs = _returns_source_metrics(rankings)
+    if rs is not None:
+        metrics.update(rs)
+
     # Top-25 tickers (for overlap computation)
     metrics["_top25"] = _top_n_tickers(rankings, 25)
 
@@ -498,6 +549,8 @@ def compute_drift_metrics(
         "dd_rel_margin_rescue_count", "dd_rel_margin_rescue_share_pct",
         "cost_coverage_pct", "cap_binding_pct", "mean_cost_mult",
         "est_cost_bps_p50", "median_cost_bps",
+        "rs_morningstar_share_pct", "rs_unknown_share_pct",
+        "rs_csv_outlier_override_share_pct",
     ]
     rolling: Dict[str, Dict[str, Any]] = {}
     for key in roll_keys:
@@ -670,6 +723,26 @@ def evaluate_guardrails(
         warn_reasons.append(
             f"Relative DD coverage = {dd_rel_cov:.1f}% < "
             f"{guardrails.warn_drawdown_rel_coverage_low}% floor"
+        )
+
+    # Returns-source mix checks
+    rs_unknown = current.get("rs_unknown_share_pct")
+    if rs_unknown is not None and rs_unknown > guardrails.warn_rs_unknown_share_high:
+        warn_reasons.append(
+            f"Returns source unknown = {rs_unknown:.1f}% > "
+            f"{guardrails.warn_rs_unknown_share_high}% ceiling"
+        )
+    rs_outlier = current.get("rs_csv_outlier_override_share_pct")
+    if rs_outlier is not None and rs_outlier > guardrails.warn_rs_csv_outlier_override_share_high:
+        warn_reasons.append(
+            f"Returns source csv_outlier_override = {rs_outlier:.1f}% > "
+            f"{guardrails.warn_rs_csv_outlier_override_share_high}% ceiling"
+        )
+    rs_mstar = current.get("rs_morningstar_share_pct")
+    if rs_mstar is not None and rs_mstar < guardrails.warn_rs_morningstar_share_low:
+        warn_reasons.append(
+            f"Returns source morningstar = {rs_mstar:.1f}% < "
+            f"{guardrails.warn_rs_morningstar_share_low}% floor"
         )
 
     if warn_reasons:
@@ -1139,6 +1212,20 @@ def generate_drift_report_md(
         lines.append(f"| {'Cap binding':<25} | {_fmt(current.get('cap_binding_pct'))}% |")
         lines.append("")
 
+    # Returns Source Mix table (only if returns_source data present)
+    has_rs = current.get("rs_morningstar_share_pct") is not None
+    if has_rs:
+        lines.append("## Returns Source Mix")
+        lines.append("")
+        lines.append("| Source                 | Count | Share |")
+        lines.append("|------------------------|-------|-------|")
+        for src in _RETURNS_SOURCE_KEYS:
+            cnt = current.get(f"rs_{src}_count", 0)
+            share = current.get(f"rs_{src}_share_pct")
+            share_str = f"{share:.1f}%" if share is not None else "N/A"
+            lines.append(f"| {src:<22} | {cnt:>5} | {share_str:>5} |")
+        lines.append("")
+
     # Rolling window table
     if rolling:
         lines.append(f"## Rolling Window (last {n_snaps} runs)")
@@ -1356,6 +1443,9 @@ def generate_drift_report_md(
     lines.append(f"- warn_cap_binding_high: {guardrails.warn_cap_binding_high}%")
     lines.append(f"- warn_backfill_share_high: {guardrails.warn_backfill_share_high}%")
     lines.append(f"- warn_dd_rel_margin_rescue_share_high: {guardrails.warn_dd_rel_margin_rescue_share_high}%")
+    lines.append(f"- warn_rs_unknown_share_high: {guardrails.warn_rs_unknown_share_high}%")
+    lines.append(f"- warn_rs_csv_outlier_override_share_high: {guardrails.warn_rs_csv_outlier_override_share_high}%")
+    lines.append(f"- warn_rs_morningstar_share_low: {guardrails.warn_rs_morningstar_share_low}%")
     lines.append(f"- warn_iqr_k: {guardrails.warn_iqr_k}")
     lines.append(f"- warn_iqr_floor: {guardrails.warn_iqr_floor}")
     lines.append(f"- warn_min_window: {guardrails.warn_min_window}")
