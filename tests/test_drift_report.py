@@ -2219,7 +2219,8 @@ class TestSuggestedGuardrails:
 
     def test_high_ceiling_formula(self):
         """High ceiling: suggested = min(100, median + k*IQR)."""
-        metrics = [{"date": f"d{i}", "cs_unknown_share_pct": 5.0}
+        metrics = [{"date": f"d{i}", "cs_unknown_share_pct": 5.0,
+                    "cat_specific_days_share_pct": 50.0}
                    for i in range(6)]
         result = compute_suggested_guardrails(
             metrics, DriftGuardrails(), k=2.0,
@@ -2383,3 +2384,36 @@ class TestCsCtgovSuggestionGate:
         )
         assert "suppressed" in md
         assert "CTGOV calendar share" in md or "cs_ctgov_calendar_share_pct" in md
+
+    def test_cs_unknown_also_suppressed_when_sparse(self):
+        metrics = self._make_metrics(cat_specific_pct=25.0, cs_ctgov_pct=90.0)
+        suggestions = compute_suggested_guardrails(metrics, DriftGuardrails())
+        cs_unk = [s for s in suggestions if s["metric"] == "cs_unknown_share_pct"]
+        assert len(cs_unk) == 1
+        assert cs_unk[0]["suppressed"] is True
+
+    def test_cs_unknown_not_suppressed_when_healthy(self):
+        metrics = self._make_metrics(cat_specific_pct=50.0, cs_ctgov_pct=80.0)
+        suggestions = compute_suggested_guardrails(metrics, DriftGuardrails())
+        cs_unk = [s for s in suggestions if s["metric"] == "cs_unknown_share_pct"]
+        assert len(cs_unk) == 1
+        assert cs_unk[0].get("suppressed") is not True
+
+    def test_report_footer_shows_suppression_threshold(self):
+        metrics = self._make_metrics(cat_specific_pct=25.0, cs_ctgov_pct=90.0)
+        suggestions = compute_suggested_guardrails(metrics, DriftGuardrails())
+        md = generate_drift_report_md(
+            {"snapshots": metrics}, "OK", [], DriftGuardrails(),
+            suggestions=suggestions,
+        )
+        assert "suggest_cs_min_cat_specific_days_median" in md
+        assert "40.0%" in md
+
+    def test_report_footer_absent_when_no_suppression(self):
+        metrics = self._make_metrics(cat_specific_pct=50.0, cs_ctgov_pct=80.0)
+        suggestions = compute_suggested_guardrails(metrics, DriftGuardrails())
+        md = generate_drift_report_md(
+            {"snapshots": metrics}, "OK", [], DriftGuardrails(),
+            suggestions=suggestions,
+        )
+        assert "suggest_cs_min_cat_specific_days_median" not in md

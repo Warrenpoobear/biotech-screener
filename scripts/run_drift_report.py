@@ -1172,8 +1172,11 @@ def compute_suggested_guardrails(
         if len(vals) < min_points:
             continue
 
-        # Gate: suppress cs_ctgov suggestion when dated catalysts are sparse
-        if metric_key == "cs_ctgov_calendar_share_pct":
+        # Gate: suppress cs_* suggestions when dated catalysts are sparse
+        if metric_key in (
+            "cs_ctgov_calendar_share_pct",
+            "cs_unknown_share_pct",
+        ):
             cat_vals = [
                 m["cat_specific_days_share_pct"]
                 for m in prior
@@ -1948,6 +1951,14 @@ def generate_drift_report_md(
                 f"| {s['label']} | {s['n']} | {s['median']}% "
                 f"| {s['iqr']} | {s['suggested']}% "
                 f"| {cur_str} | {tighter_flag} |"
+            )
+        # Show suppression config so the report is self-explanatory
+        any_suppressed = any(s.get("suppressed") for s in suggestions)
+        if any_suppressed:
+            lines.append(
+                f"Suppression threshold: "
+                f"suggest_cs_min_cat_specific_days_median ="
+                f" {_SUGGEST_CS_MIN_CAT_SPECIFIC_DAYS_MEDIAN:.1f}%"
             )
         lines.append("")
 
