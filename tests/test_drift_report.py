@@ -16,7 +16,9 @@ sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
 
 from run_drift_report import (
     ADAPTIVE_WARN_METRICS,
+    SUGGESTION_MIN_POINTS,
     _PANEL_COL_MAP,
+    _SUGGESTION_SPECS,
     DriftGuardrails,
     _compute_churn_details,
     _compute_gate_counts,
@@ -32,6 +34,7 @@ from run_drift_report import (
     compute_attribution,
     compute_drift_metrics,
     compute_snapshot_metrics,
+    compute_suggested_guardrails,
     evaluate_adaptive_warnings,
     evaluate_guardrails,
     find_rollback_candidate,
@@ -2143,3 +2146,172 @@ class TestSynthesizeActionableRank:
         assert ranks.iloc[0] == 1
         assert ranks.iloc[1] == 9999
         assert ranks.iloc[2] == 9999
+
+
+# ---------------------------------------------------------------------------
+# Suggested Guardrails
+# ---------------------------------------------------------------------------
+
+class TestSuggestedGuardrails:
+    """Tests for compute_suggested_guardrails."""
+
+    def _make_metrics_series(self, n, **overrides):
+        """Build N+1 synthetic snapshot metric dicts (N prior + 1 current)."""
+        metrics = []
+        for i in range(n + 1):
+            m = {
+                "date": f"2025-{i+1:02d}-01",
+                "tier_A_pct": 5.0 + i * 0.1,
+                "cat_eligible_share_pct": 95.0 - i * 0.5,
+                "cat_specific_days_share_pct": 50.0 + i * 0.2,
+                "rs_morningstar_share_pct": 90.0 + i * 0.1,
+                "rs_unknown_share_pct": 3.0 + i * 0.1,
+                "cs_ctgov_calendar_share_pct": 60.0 + i * 0.5,
+                "cs_unknown_share_pct": 2.0 + i * 0.1,
+            }
+            m.update(overrides)
+            metrics.append(m)
+        return metrics
+
+    def test_insufficient_history_returns_empty(self):
+        """Fewer than min_points prior snapshots → no suggestions."""
+        # 2 total = 1 prior (below default min_points=3)
+        metrics = self._make_metrics_series(1)
+        result = compute_suggested_guardrails(metrics, DriftGuardrails())
+        assert result == []
+
+    def test_exactly_min_points_produces_suggestions(self):
+        """Exactly min_points prior snapshots → suggestions appear."""
+        metrics = self._make_metrics_series(SUGGESTION_MIN_POINTS)
+        result = compute_suggested_guardrails(metrics, DriftGuardrails())
+        assert len(result) > 0
+        labels = {s["label"] for s in result}
+        assert "CTGOV calendar share" in labels
+
+    def test_prior_only_excludes_current(self):
+        """Current snapshot is excluded from baseline computation."""
+        # 4 prior with stable values + 1 current with extreme value
+        metrics = self._make_metrics_series(3)
+        metrics.append({
+            "date": "2025-99-01",
+            "rs_morningstar_share_pct": 10.0,  # extreme outlier
+            **{k: metrics[0][k] for k in metrics[0] if k != "rs_morningstar_share_pct"},
+        })
+        result = compute_suggested_guardrails(metrics, DriftGuardrails())
+        ms = {s["metric"]: s for s in result}
+        # Morningstar median should NOT be dragged down by the outlier current
+        assert ms["rs_morningstar_share_pct"]["median"] > 80.0
+
+    def test_low_floor_formula(self):
+        """Low floor: suggested = max(0, median - k*IQR)."""
+        # 5 prior with constant value → IQR=0 → suggested=median
+        metrics = [{"date": f"d{i}", "cat_eligible_share_pct": 90.0}
+                   for i in range(6)]
+        result = compute_suggested_guardrails(
+            metrics, DriftGuardrails(), k=2.0,
+        )
+        ms = {s["metric"]: s for s in result}
+        s = ms["cat_eligible_share_pct"]
+        assert s["iqr"] == 0.0
+        assert s["suggested"] == 90.0  # median - 2*0 = 90
+        assert s["direction"] == "low_floor"
+
+    def test_high_ceiling_formula(self):
+        """High ceiling: suggested = min(100, median + k*IQR)."""
+        metrics = [{"date": f"d{i}", "cs_unknown_share_pct": 5.0}
+                   for i in range(6)]
+        result = compute_suggested_guardrails(
+            metrics, DriftGuardrails(), k=2.0,
+        )
+        ms = {s["metric"]: s for s in result}
+        s = ms["cs_unknown_share_pct"]
+        assert s["suggested"] == 5.0  # median + 2*0 = 5
+        assert s["direction"] == "high_ceiling"
+
+    def test_clipping_to_zero(self):
+        """Low floor is clipped to 0 (never negative)."""
+        # Values with high variance → median - k*IQR could go negative
+        metrics = [
+            {"date": "d0", "tier_A_pct": 0.5},
+            {"date": "d1", "tier_A_pct": 1.0},
+            {"date": "d2", "tier_A_pct": 5.0},
+            {"date": "d3", "tier_A_pct": 10.0},
+            {"date": "d4", "tier_A_pct": 2.0},  # current (excluded)
+        ]
+        result = compute_suggested_guardrails(
+            metrics, DriftGuardrails(), k=2.0,
+        )
+        ms = {s["metric"]: s for s in result}
+        assert ms["tier_A_pct"]["suggested"] >= 0.0
+
+    def test_clipping_to_100(self):
+        """High ceiling is clipped to 100 (never above)."""
+        metrics = [
+            {"date": "d0", "rs_unknown_share_pct": 90.0},
+            {"date": "d1", "rs_unknown_share_pct": 95.0},
+            {"date": "d2", "rs_unknown_share_pct": 85.0},
+            {"date": "d3", "rs_unknown_share_pct": 98.0},
+            {"date": "d4", "rs_unknown_share_pct": 50.0},  # current
+        ]
+        result = compute_suggested_guardrails(
+            metrics, DriftGuardrails(), k=2.0,
+        )
+        ms = {s["metric"]: s for s in result}
+        assert ms["rs_unknown_share_pct"]["suggested"] <= 100.0
+
+    def test_tighter_flag(self):
+        """Tighter flag is True only when suggestion exceeds current threshold."""
+        # All cat_eligible at 99% → suggested ≈ 99% >> current 80% → tighter
+        metrics = [{"date": f"d{i}", "cat_eligible_share_pct": 99.0}
+                   for i in range(6)]
+        result = compute_suggested_guardrails(
+            metrics, DriftGuardrails(), k=2.0,
+        )
+        ms = {s["metric"]: s for s in result}
+        assert ms["cat_eligible_share_pct"]["tighter"] is True
+        assert ms["cat_eligible_share_pct"]["current_threshold"] == 80.0
+
+    def test_report_section_appears(self):
+        """Suggestions section appears in markdown when suggestions exist."""
+        snap = _make_snapshot("2026-01-01")
+        metrics = compute_drift_metrics([snap, snap, snap, snap])
+        suggestions = compute_suggested_guardrails(
+            metrics["snapshots"], DriftGuardrails(),
+        )
+        md = generate_drift_report_md(
+            metrics, "OK", [], DriftGuardrails(), suggestions=suggestions,
+        )
+        assert "## Suggested Guardrails" in md
+        assert "informational only" in md
+
+    def test_report_section_absent_when_no_suggestions(self):
+        """Suggestions section is absent when no suggestions computed."""
+        snap = _make_snapshot("2026-01-01")
+        metrics = compute_drift_metrics([snap])
+        md = generate_drift_report_md(
+            metrics, "OK", [], DriftGuardrails(), suggestions=None,
+        )
+        assert "## Suggested Guardrails" not in md
+
+    def test_missing_metric_skipped(self):
+        """Metrics not present in snapshots are silently skipped."""
+        # Only tier_A_pct present, others missing → only tier_A_pct suggested
+        metrics = [{"date": f"d{i}", "tier_A_pct": 5.0} for i in range(6)]
+        result = compute_suggested_guardrails(
+            metrics, DriftGuardrails(), k=2.0,
+        )
+        assert len(result) == 1
+        assert result[0]["metric"] == "tier_A_pct"
+
+    def test_json_includes_suggestions(self):
+        """JSON output includes suggested_guardrails key."""
+        snap = _make_snapshot("2026-01-01")
+        metrics = compute_drift_metrics([snap, snap, snap, snap])
+        suggestions = compute_suggested_guardrails(
+            metrics["snapshots"], DriftGuardrails(),
+        )
+        js = generate_drift_json(
+            metrics, "OK", [], DriftGuardrails(), suggestions=suggestions,
+        )
+        assert "suggested_guardrails" in js
+        assert isinstance(js["suggested_guardrails"], list)

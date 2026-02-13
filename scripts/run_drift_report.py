@@ -1118,6 +1118,96 @@ def evaluate_adaptive_warnings(
 
 
 # ---------------------------------------------------------------------------
+# Suggested guardrails — data-driven threshold proposals (informational only)
+# ---------------------------------------------------------------------------
+
+# Each spec: (metric_key, direction, guardrail_field, label)
+# direction: "low_floor" → suggested = max(0, median - k*IQR)
+#            "high_ceiling" → suggested = min(100, median + k*IQR)
+_SUGGESTION_SPECS: List[Tuple[str, str, str, str]] = [
+    ("tier_A_pct", "low_floor", "warn_a_pct_low", "A-tier %"),
+    ("cat_eligible_share_pct", "low_floor", "warn_cat_eligible_share_low", "Catalyst eligible share"),
+    ("cat_specific_days_share_pct", "low_floor", "warn_cat_specific_days_share_low", "Specific-days share"),
+    ("rs_morningstar_share_pct", "low_floor", "warn_rs_morningstar_share_low", "Morningstar share"),
+    ("rs_unknown_share_pct", "high_ceiling", "warn_rs_unknown_share_high", "Returns unknown share"),
+    ("cs_ctgov_calendar_share_pct", "low_floor", "warn_cs_ctgov_share_low", "CTGOV calendar share"),
+    ("cs_unknown_share_pct", "high_ceiling", "warn_cs_unknown_share_high", "Unknown source share"),
+]
+
+SUGGESTION_MIN_POINTS = 3
+
+
+def compute_suggested_guardrails(
+    all_metrics: List[Dict[str, Any]],
+    guardrails: DriftGuardrails,
+    k: float = 2.0,
+    min_points: int = SUGGESTION_MIN_POINTS,
+) -> List[Dict[str, Any]]:
+    """Compute data-driven threshold suggestions from prior snapshots.
+
+    Uses ``all_metrics[:-1]`` (excludes current) to build a baseline.
+    For each metric in ``_SUGGESTION_SPECS``, computes median/IQR and
+    proposes a tighter threshold if enough history exists.
+
+    Returns a list of suggestion dicts, one per spec with enough data.
+    Each dict: {metric, label, direction, n, median, iqr, suggested,
+                current_threshold, tighter}.
+    """
+    if len(all_metrics) < 2:
+        return []
+
+    # Prior snapshots only (exclude current)
+    prior = all_metrics[:-1]
+
+    suggestions: List[Dict[str, Any]] = []
+    for metric_key, direction, guardrail_field, label in _SUGGESTION_SPECS:
+        vals = [
+            m[metric_key]
+            for m in prior
+            if m.get(metric_key) is not None
+        ]
+        if len(vals) < min_points:
+            continue
+
+        median = statistics.median(vals)
+        if len(vals) >= 3:
+            q1, _q2, q3 = statistics.quantiles(vals, n=4)
+            iqr = q3 - q1
+        else:
+            iqr = 0.0
+
+        current_threshold = getattr(guardrails, guardrail_field, None)
+
+        if direction == "low_floor":
+            suggested = max(0.0, median - k * iqr)
+        else:  # high_ceiling
+            suggested = min(100.0, median + k * iqr)
+        suggested = round(suggested, 1)
+
+        # Is the suggestion tighter than current?
+        tighter = False
+        if current_threshold is not None:
+            if direction == "low_floor":
+                tighter = suggested > current_threshold
+            else:
+                tighter = suggested < current_threshold
+
+        suggestions.append({
+            "metric": metric_key,
+            "label": label,
+            "direction": direction,
+            "n": len(vals),
+            "median": round(median, 1),
+            "iqr": round(iqr, 1),
+            "suggested": suggested,
+            "current_threshold": current_threshold,
+            "tighter": tighter,
+        })
+
+    return suggestions
+
+
+# ---------------------------------------------------------------------------
 # Drift attribution — root-cause breadcrumbs for pairwise snapshot diffs
 # ---------------------------------------------------------------------------
 _GATE_KEYS = ("fundamental_red_flag", "sev3", "deep_drawdown", "adv_fail")
@@ -1433,6 +1523,7 @@ def generate_drift_report_md(
     recommended_action: str = "NONE",
     adaptive_warnings: Optional[List[str]] = None,
     attribution: Optional[Dict[str, Any]] = None,
+    suggestions: Optional[List[Dict[str, Any]]] = None,
 ) -> str:
     """Generate a Markdown drift report."""
     current = metrics.get("current", {})
@@ -1802,6 +1893,26 @@ def generate_drift_report_md(
     lines.append(f"- fail_corroboration_count: {guardrails.fail_corroboration_count}")
     lines.append("")
 
+    # Suggested guardrails (informational only — never affects status)
+    if suggestions:
+        lines.append("## Suggested Guardrails")
+        lines.append("")
+        lines.append("Data-driven suggestions from prior snapshots (excludes current).")
+        lines.append("These are **informational only** and do not affect drift status.")
+        lines.append("")
+        lines.append("| Metric | N | Median | IQR | Suggested | Current | Tighter? |")
+        lines.append("|--------|---|--------|-----|-----------|---------|----------|")
+        for s in suggestions:
+            tighter_flag = "**yes**" if s["tighter"] else ""
+            cur = s["current_threshold"]
+            cur_str = f"{cur}%" if cur is not None else "N/A"
+            lines.append(
+                f"| {s['label']} | {s['n']} | {s['median']}% "
+                f"| {s['iqr']} | {s['suggested']}% "
+                f"| {cur_str} | {tighter_flag} |"
+            )
+        lines.append("")
+
     return "\n".join(lines)
 
 
@@ -1814,6 +1925,7 @@ def generate_drift_json(
     recommended_action: str = "NONE",
     adaptive_warnings: Optional[List[str]] = None,
     attribution: Optional[Dict[str, Any]] = None,
+    suggestions: Optional[List[Dict[str, Any]]] = None,
 ) -> Dict[str, Any]:
     """Generate a JSON-serializable drift report dict."""
     return {
@@ -1824,6 +1936,7 @@ def generate_drift_json(
         "rollback_candidate": rollback_candidate,
         "adaptive_warnings": adaptive_warnings or [],
         "attribution": attribution,
+        "suggested_guardrails": suggestions or [],
         "guardrails": guardrails.to_dict(),
         "current": metrics.get("current", {}),
         "rolling": metrics.get("rolling", {}),
@@ -2014,11 +2127,16 @@ def main() -> int:
     # Compute attribution (pairwise diff of last two snapshots)
     attribution = compute_attribution(snapshots)
 
+    # Compute suggested guardrails (informational — uses prior snapshots only)
+    suggestions = compute_suggested_guardrails(
+        metrics.get("snapshots", []), guardrails,
+    )
+
     # Generate reports
     md = generate_drift_report_md(
         metrics, final_status, fail_reasons, guardrails, rollback,
         recommended_action, adaptive_warnings=warn_reasons or None,
-        attribution=attribution,
+        attribution=attribution, suggestions=suggestions or None,
     )
     if args.panel:
         d0, d1 = snapshots[0].date, snapshots[-1].date
@@ -2030,7 +2148,7 @@ def main() -> int:
     report_json = generate_drift_json(
         metrics, final_status, fail_reasons, guardrails, rollback,
         recommended_action, adaptive_warnings=warn_reasons or None,
-        attribution=attribution,
+        attribution=attribution, suggestions=suggestions or None,
     )
 
     # Write outputs
