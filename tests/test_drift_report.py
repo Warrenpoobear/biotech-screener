@@ -25,6 +25,7 @@ from run_drift_report import (
     _cost_metrics,
     _parse_pipe_separated,
     _catalyst_coverage_metrics,
+    _catalyst_source_metrics,
     _returns_source_metrics,
     compute_attribution,
     compute_drift_metrics,
@@ -1686,3 +1687,170 @@ class TestCatalystCoverage:
         md = generate_drift_report_md(metrics, "OK", [], guardrails)
         assert "warn_cat_eligible_share_low" in md
         assert "warn_cat_specific_days_share_low" in md
+
+
+class TestCatalystSourceMix:
+    """Tests for catalyst source mix metrics and guardrails."""
+
+    def _make_rankings_with_cs(
+        self, n_dev: int = 50, sources: list | None = None,
+    ) -> pd.DataFrame:
+        """Build rankings DataFrame with catalyst_source + tier_dev columns."""
+        r = _make_rankings(n_dev=n_dev)
+        # Ensure tier_dev is populated (eligible tickers)
+        r["tier_dev"] = ["A"] * (n_dev // 4) + ["B"] * (n_dev // 4) + ["C"] * (n_dev - 2 * (n_dev // 4))
+        if sources is not None:
+            r["catalyst_source"] = sources[:n_dev]
+        else:
+            # Default: 60% CTGOV, 20% FDA, 10% none, 10% unknown
+            n_ctgov = int(n_dev * 0.60)
+            n_fda = int(n_dev * 0.20)
+            n_none = int(n_dev * 0.10)
+            n_unknown = n_dev - n_ctgov - n_fda - n_none
+            r["catalyst_source"] = (
+                ["CTGOV_CALENDAR"] * n_ctgov
+                + ["FDA_CALENDAR"] * n_fda
+                + [""] * n_none  # none
+                + [None] * n_unknown  # unknown
+            )
+        return r
+
+    def _metrics_with_current(self, **overrides) -> dict:
+        current = {
+            "tier_A_pct": 5.0,
+            "catalyst_missing_pct": 30.0,
+            "top25_overlap_pct": 80.0,
+            "optionality_std": 0.30,
+        }
+        current.update(overrides)
+        return {"current": current, "snapshots": [current], "rolling": {}}
+
+    # -- _catalyst_source_metrics tests --
+
+    def test_mix_known_distribution(self):
+        """Known source distribution → correct counts and shares."""
+        r = _make_rankings(n_dev=20)
+        r["tier_dev"] = ["A"] * 20  # all eligible
+        r["catalyst_source"] = (
+            ["CTGOV_CALENDAR"] * 10
+            + ["FDA_CALENDAR"] * 5
+            + ["SEC_8K_FILING"] * 2
+            + [""] * 2   # → none
+            + [None] * 1  # → unknown
+        )
+        result = _catalyst_source_metrics(r)
+        assert result is not None
+        assert result["cs_n_eligible"] == 20
+        assert result["cs_ctgov_calendar_count"] == 10
+        assert result["cs_ctgov_calendar_share_pct"] == 50.0
+        assert result["cs_fda_calendar_count"] == 5
+        assert result["cs_fda_calendar_share_pct"] == 25.0
+        assert result["cs_sec_8k_filing_count"] == 2
+        assert result["cs_none_count"] == 2
+        assert result["cs_none_share_pct"] == 10.0
+        assert result["cs_unknown_count"] == 1
+        assert result["cs_unknown_share_pct"] == 5.0
+
+    def test_blank_maps_to_none_nan_maps_to_unknown(self):
+        """Empty string → 'none', NaN/None → 'unknown'."""
+        r = _make_rankings(n_dev=6)
+        r["tier_dev"] = ["A"] * 6
+        r["catalyst_source"] = ["CTGOV_CALENDAR", "", "  ", None, "FDA_CALENDAR", ""]
+        result = _catalyst_source_metrics(r)
+        assert result["cs_none_count"] == 3  # "", "  ", ""
+        assert result["cs_unknown_count"] == 1  # None
+        assert result["cs_ctgov_calendar_count"] == 1
+        assert result["cs_fda_calendar_count"] == 1
+
+    def test_none_when_column_missing(self):
+        """Returns None when catalyst_source column absent."""
+        r = _make_rankings(n_dev=10)
+        assert _catalyst_source_metrics(r) is None
+
+    def test_none_when_tier_dev_missing(self):
+        """Returns None when tier_dev column absent (needed for eligible filter)."""
+        r = _make_rankings(n_dev=10)
+        r["catalyst_source"] = ["CTGOV_CALENDAR"] * 10
+        r.drop(columns=["tier_dev"], inplace=True)
+        assert _catalyst_source_metrics(r) is None
+
+    def test_snapshot_metrics_include_cs(self):
+        """compute_snapshot_metrics includes cs_ keys when columns present."""
+        r = self._make_rankings_with_cs(n_dev=30)
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_snapshot_metrics(snap)
+        assert "cs_n_eligible" in metrics
+        assert "cs_ctgov_calendar_share_pct" in metrics
+
+    def test_md_report_includes_cs_section(self):
+        """Report includes Catalyst Source Mix section when data present."""
+        r = self._make_rankings_with_cs(n_dev=30)
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_drift_metrics([snap])
+        guardrails = DriftGuardrails()
+        md = generate_drift_report_md(metrics, "OK", [], guardrails)
+        assert "## Catalyst Source Mix" in md
+        assert "CTGOV_CALENDAR" in md
+        assert "FDA_CALENDAR" in md
+
+    def test_md_report_no_cs_section_when_missing(self):
+        """Report omits Catalyst Source Mix when catalyst_source absent."""
+        r = _make_rankings(n_dev=30)
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_drift_metrics([snap])
+        guardrails = DriftGuardrails()
+        md = generate_drift_report_md(metrics, "OK", [], guardrails)
+        assert "## Catalyst Source Mix" not in md
+
+    def test_roll_keys_tracked(self):
+        """cs_ctgov_calendar_share_pct appears in rolling when data present."""
+        snaps = []
+        for i in range(4):
+            r = self._make_rankings_with_cs(n_dev=30)
+            snaps.append(_make_snapshot(f"2026-01-0{i+1}", r))
+        metrics = compute_drift_metrics(snaps)
+        rolling = metrics["rolling"]
+        assert "cs_ctgov_calendar_share_pct" in rolling
+        assert "cs_none_share_pct" in rolling
+        assert rolling["cs_ctgov_calendar_share_pct"]["current"] is not None
+
+    # -- Guardrail WARN tests --
+
+    def test_warn_cs_ctgov_share_low(self):
+        """WARN fires when CTGOV share < threshold."""
+        m = self._metrics_with_current(cs_ctgov_calendar_share_pct=40.0)
+        status, reasons, _, _ = evaluate_guardrails(m, DriftGuardrails())
+        assert status == "WARN"
+        assert any("CTGOV share" in r for r in reasons)
+
+    def test_warn_cs_unknown_share_high(self):
+        """WARN fires when unknown source share > threshold."""
+        m = self._metrics_with_current(cs_unknown_share_pct=10.0)
+        status, reasons, _, _ = evaluate_guardrails(m, DriftGuardrails())
+        assert status == "WARN"
+        assert any("unknown" in r for r in reasons)
+
+    def test_ok_cs_within_bounds(self):
+        """No WARN when catalyst source mix is healthy."""
+        m = self._metrics_with_current(
+            cs_ctgov_calendar_share_pct=60.0,
+            cs_unknown_share_pct=2.0,
+        )
+        status, reasons, _, _ = evaluate_guardrails(m, DriftGuardrails())
+        assert status == "OK"
+
+    def test_ok_cs_none_no_warn(self):
+        """No WARN when catalyst source keys absent (older snapshots)."""
+        m = self._metrics_with_current()
+        status, reasons, _, _ = evaluate_guardrails(m, DriftGuardrails())
+        assert status == "OK"
+
+    def test_guardrails_config_includes_cs_thresholds(self):
+        """Report shows catalyst source mix guardrail thresholds."""
+        r = self._make_rankings_with_cs(n_dev=30)
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_drift_metrics([snap])
+        guardrails = DriftGuardrails()
+        md = generate_drift_report_md(metrics, "OK", [], guardrails)
+        assert "warn_cs_ctgov_share_low" in md
+        assert "warn_cs_unknown_share_high" in md

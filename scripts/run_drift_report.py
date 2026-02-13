@@ -93,6 +93,10 @@ class DriftGuardrails:
     warn_cat_eligible_share_low: float = 80.0         # WARN if eligible % of dev < 80%
     warn_cat_specific_days_share_low: float = 40.0    # WARN if specific_days % of eligible < 40%
 
+    # Catalyst source mix
+    warn_cs_ctgov_share_low: float = 50.0             # WARN if CTGOV_CALENDAR share < 50%
+    warn_cs_unknown_share_high: float = 5.0           # WARN if unknown source share > 5%
+
     # Adaptive WARN layer
     warn_iqr_k: float = 2.0             # WARN if |delta| > k * max(IQR, floor)
     warn_iqr_floor: float = 1.0         # minimum IQR (prevents spurious WARN from flat windows)
@@ -384,6 +388,72 @@ def _catalyst_coverage_metrics(rankings: pd.DataFrame) -> Optional[Dict[str, Any
     return result
 
 
+_CATALYST_SOURCE_KEYS = (
+    "CTGOV_CALENDAR", "FDA_CALENDAR", "SEC_8K_FILING",
+    "CORPORATE_CALENDAR", "none", "unknown",
+)
+
+
+def _catalyst_source_metrics(rankings: pd.DataFrame) -> Optional[Dict[str, Any]]:
+    """Catalyst source mix metrics from the ``catalyst_source`` column.
+
+    Among eligible dev tickers (non-blank ``tier_dev``), counts per-source
+    distribution.  Maps ``""`` → ``"none"`` (no catalyst) and ``NaN/None``
+    → ``"unknown"`` (missing data).  Returns None when column is absent.
+    """
+    if "catalyst_source" not in rankings.columns or "tier_dev" not in rankings.columns:
+        return None
+
+    dev = rankings[rankings["archetype"] == "drug_developer"]
+    n_dev = len(dev)
+    if n_dev == 0:
+        result: Dict[str, Any] = {"cs_n_eligible": 0}
+        for src in _CATALYST_SOURCE_KEYS:
+            key = src.lower()
+            result[f"cs_{key}_count"] = 0
+            result[f"cs_{key}_share_pct"] = None
+        return result
+
+    # Eligible = non-blank tier_dev
+    def _is_eligible(v) -> bool:
+        if v is None or (isinstance(v, float) and pd.isna(v)):
+            return False
+        return str(v).strip() != ""
+
+    eligible_dev = dev[dev["tier_dev"].apply(_is_eligible)]
+    n_eligible = len(eligible_dev)
+
+    if n_eligible == 0:
+        result = {"cs_n_eligible": 0}
+        for src in _CATALYST_SOURCE_KEYS:
+            key = src.lower()
+            result[f"cs_{key}_count"] = 0
+            result[f"cs_{key}_share_pct"] = None
+        return result
+
+    from collections import Counter
+
+    def _norm_source(v) -> str:
+        if v is None or (isinstance(v, float) and pd.isna(v)):
+            return "unknown"
+        s = str(v).strip()
+        if not s:
+            return "none"
+        return s
+
+    sources = [_norm_source(v) for v in eligible_dev["catalyst_source"]]
+    counts = Counter(sources)
+
+    result = {"cs_n_eligible": n_eligible}
+    for src in _CATALYST_SOURCE_KEYS:
+        key = src.lower()
+        c = counts.get(src, 0)
+        result[f"cs_{key}_count"] = c
+        result[f"cs_{key}_share_pct"] = round(c / n_eligible * 100, 1)
+
+    return result
+
+
 def _cost_metrics(
     rankings: pd.DataFrame, cap_bps: float = 1000.0,
 ) -> Optional[Dict[str, Any]]:
@@ -557,6 +627,11 @@ def compute_snapshot_metrics(snap: SnapshotData) -> Dict[str, Any]:
     if cat is not None:
         metrics.update(cat)
 
+    # Catalyst source mix
+    cs = _catalyst_source_metrics(rankings)
+    if cs is not None:
+        metrics.update(cs)
+
     # Top-25 tickers (for overlap computation)
     metrics["_top25"] = _top_n_tickers(rankings, 25)
 
@@ -625,6 +700,9 @@ def compute_drift_metrics(
         "rs_csv_outlier_override_share_pct",
         "cat_eligible_share_pct", "cat_specific_days_share_pct",
         "cat_no_upcoming_share_pct", "cat_missing_share_pct",
+        "cs_ctgov_calendar_share_pct", "cs_fda_calendar_share_pct",
+        "cs_sec_8k_filing_share_pct", "cs_corporate_calendar_share_pct",
+        "cs_none_share_pct", "cs_unknown_share_pct",
     ]
     rolling: Dict[str, Dict[str, Any]] = {}
     for key in roll_keys:
@@ -831,6 +909,20 @@ def evaluate_guardrails(
         warn_reasons.append(
             f"Catalyst specific_days share = {cat_sd:.1f}% < "
             f"{guardrails.warn_cat_specific_days_share_low}% floor"
+        )
+
+    # Catalyst source mix checks
+    cs_ctgov = current.get("cs_ctgov_calendar_share_pct")
+    if cs_ctgov is not None and cs_ctgov < guardrails.warn_cs_ctgov_share_low:
+        warn_reasons.append(
+            f"Catalyst source CTGOV share = {cs_ctgov:.1f}% < "
+            f"{guardrails.warn_cs_ctgov_share_low}% floor"
+        )
+    cs_unknown = current.get("cs_unknown_share_pct")
+    if cs_unknown is not None and cs_unknown > guardrails.warn_cs_unknown_share_high:
+        warn_reasons.append(
+            f"Catalyst source unknown = {cs_unknown:.1f}% > "
+            f"{guardrails.warn_cs_unknown_share_high}% ceiling"
         )
 
     if warn_reasons:
@@ -1335,6 +1427,24 @@ def generate_drift_report_md(
             lines.append(f"| {mode:<17} | {cnt:>5} | {share_str:>12} |")
         lines.append("")
 
+    # Catalyst Source Mix table (only if catalyst_source data present)
+    has_cs = current.get("cs_n_eligible") is not None
+    if has_cs:
+        lines.append("## Catalyst Source Mix")
+        lines.append("")
+        n_elig_cs = current.get("cs_n_eligible", 0)
+        lines.append(f"Eligible dev tickers: {n_elig_cs}")
+        lines.append("")
+        lines.append("| Source                 | Count | Share (elig) |")
+        lines.append("|------------------------|-------|--------------|")
+        for src in _CATALYST_SOURCE_KEYS:
+            key = src.lower()
+            cnt = current.get(f"cs_{key}_count", 0)
+            share = current.get(f"cs_{key}_share_pct")
+            share_str = f"{share:.1f}%" if share is not None else "N/A"
+            lines.append(f"| {src:<22} | {cnt:>5} | {share_str:>12} |")
+        lines.append("")
+
     # Rolling window table
     if rolling:
         lines.append(f"## Rolling Window (last {n_snaps} runs)")
@@ -1557,6 +1667,8 @@ def generate_drift_report_md(
     lines.append(f"- warn_rs_morningstar_share_low: {guardrails.warn_rs_morningstar_share_low}%")
     lines.append(f"- warn_cat_eligible_share_low: {guardrails.warn_cat_eligible_share_low}%")
     lines.append(f"- warn_cat_specific_days_share_low: {guardrails.warn_cat_specific_days_share_low}%")
+    lines.append(f"- warn_cs_ctgov_share_low: {guardrails.warn_cs_ctgov_share_low}%")
+    lines.append(f"- warn_cs_unknown_share_high: {guardrails.warn_cs_unknown_share_high}%")
     lines.append(f"- warn_iqr_k: {guardrails.warn_iqr_k}")
     lines.append(f"- warn_iqr_floor: {guardrails.warn_iqr_floor}")
     lines.append(f"- warn_min_window: {guardrails.warn_min_window}")
