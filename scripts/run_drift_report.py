@@ -512,6 +512,20 @@ def _catalyst_coverage_metrics(rankings: pd.DataFrame) -> Optional[Dict[str, Any
     return result
 
 
+def _classify_unknown_reason(raw_val) -> str:
+    """Classify why a value was mapped to 'unknown'.
+
+    Returns 'missing' (None/NaN), 'blank' (empty/whitespace),
+    or 'unrecognized:<raw>' (non-empty but unmapped).
+    """
+    if raw_val is None or (isinstance(raw_val, float) and pd.isna(raw_val)):
+        return "missing"
+    s = str(raw_val).strip()
+    if s == "" or s == "nan":
+        return "blank"
+    return f"unrecognized:{s}"
+
+
 _CATALYST_SOURCE_KEYS = (
     "CTGOV_CALENDAR", "FDA_CALENDAR", "SEC_8K_FILING",
     "CORPORATE_CALENDAR", "none", "unknown",
@@ -588,15 +602,13 @@ def _catalyst_source_metrics(
         s = str(v).strip()
         return _SOURCE_ALIASES.get(s, s)
 
+    raw_source_vals = eligible_dev["catalyst_source"].tolist()
     if modes is None:
-        sources = [_norm_source(v) for v in eligible_dev["catalyst_source"]]
+        sources = [_norm_source(v) for v in raw_source_vals]
     else:
         sources = [
             _norm_source(v, m)
-            for v, m in zip(
-                eligible_dev["catalyst_source"].tolist(),
-                modes.tolist(),
-            )
+            for v, m in zip(raw_source_vals, modes.tolist())
         ]
     counts = Counter(sources)
 
@@ -637,6 +649,7 @@ def _catalyst_source_metrics(
                     "catalyst_mode": cat_modes[i],
                     "event_type": cat_event_types[i],
                     "catalyst_days": cat_days[i],
+                    "unknown_reason": _classify_unknown_reason(raw_source_vals[i]),
                 })
         unknown_offenders.sort(
             key=lambda o: (_MODE_ORDER.get(o["catalyst_mode"], 9), o["ticker"])
@@ -749,15 +762,13 @@ def _catalyst_event_type_metrics(
         s = str(v).strip()
         return _EVENT_TYPE_ALIASES.get(s.lower(), s)
 
+    raw_event_type_vals = eligible_dev["catalyst_event_type"].tolist()
     if modes is None:
-        types = [_norm_event_type(v) for v in eligible_dev["catalyst_event_type"]]
+        types = [_norm_event_type(v) for v in raw_event_type_vals]
     else:
         types = [
             _norm_event_type(v, m)
-            for v, m in zip(
-                eligible_dev["catalyst_event_type"].tolist(),
-                modes.tolist(),
-            )
+            for v, m in zip(raw_event_type_vals, modes.tolist())
         ]
     counts = Counter(types)
 
@@ -799,6 +810,7 @@ def _catalyst_event_type_metrics(
                     "catalyst_mode": cat_modes[i],
                     "catalyst_source": cat_sources[i],
                     "catalyst_days": cat_days[i],
+                    "unknown_reason": _classify_unknown_reason(raw_event_type_vals[i]),
                 })
         unknown_offenders.sort(
             key=lambda o: (_MODE_ORDER.get(o["catalyst_mode"], 9), o["ticker"])
@@ -2034,21 +2046,23 @@ def generate_drift_report_md(
                     "Dated-catalyst tickers with missing or unrecognized source."
                 )
                 lines.append("")
-                lines.append("| Ticker | Catalyst Mode  | Days | Event Type     |")
-                lines.append("|--------|----------------|------|----------------|")
+                lines.append("| Ticker | Catalyst Mode  | Days | Event Type     | Reason         |")
+                lines.append("|--------|----------------|------|----------------|----------------|")
                 for off in cs_unknown_offenders[:_CT_MAX_OFFENDERS]:
                     days_str = off.get("catalyst_days", "") or "—"
                     et_str = off.get("event_type", "") or "—"
+                    reason_str = off.get("unknown_reason", "—")
                     lines.append(
                         f"| {off['ticker']:<6} "
                         f"| {off['catalyst_mode']:<14} "
                         f"| {str(days_str):>4} "
-                        f"| {et_str:<14} |"
+                        f"| {et_str:<14} "
+                        f"| {reason_str:<14} |"
                     )
                 if len(cs_unknown_offenders) > _CT_MAX_OFFENDERS:
                     lines.append(
                         f"| ...    | ({len(cs_unknown_offenders) - _CT_MAX_OFFENDERS} more)"
-                        f"{'':<14} | {'':>4} | {'':<14} |"
+                        f"{'':<14} | {'':>4} | {'':<14} | {'':<14} |"
                     )
                 lines.append("")
             else:
@@ -2130,20 +2144,22 @@ def generate_drift_report_md(
                     "Dated-catalyst tickers with missing or unrecognized event type."
                 )
                 lines.append("")
-                lines.append("| Ticker | Catalyst Mode  | Days | Catalyst Source      |")
-                lines.append("|--------|----------------|------|----------------------|")
+                lines.append("| Ticker | Catalyst Mode  | Days | Catalyst Source      | Reason         |")
+                lines.append("|--------|----------------|------|----------------------|----------------|")
                 for off in unknown_offenders[:_CT_MAX_OFFENDERS]:
                     days_str = off.get("catalyst_days", "") or "—"
+                    reason_str = off.get("unknown_reason", "—")
                     lines.append(
                         f"| {off['ticker']:<6} "
                         f"| {off['catalyst_mode']:<14} "
                         f"| {str(days_str):>4} "
-                        f"| {off['catalyst_source'] or '—':<20} |"
+                        f"| {off['catalyst_source'] or '—':<20} "
+                        f"| {reason_str:<14} |"
                     )
                 if len(unknown_offenders) > _CT_MAX_OFFENDERS:
                     lines.append(
                         f"| ...    | ({len(unknown_offenders) - _CT_MAX_OFFENDERS} more)"
-                        f"{'':<14} | {'':>4} | {'':<20} |"
+                        f"{'':<14} | {'':>4} | {'':<20} | {'':<14} |"
                     )
                 lines.append("")
             else:

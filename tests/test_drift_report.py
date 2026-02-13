@@ -45,6 +45,7 @@ from run_drift_report import (
     generate_rollback_packet_md,
     load_panel_as_snapshots,
     load_snapshot_window,
+    _classify_unknown_reason,
 )
 from run_phase2_snapshot_delta import SnapshotData
 
@@ -1951,7 +1952,7 @@ class TestCatalystSourceMix:
     # -- cs_* offender appendix tests --
 
     def test_cs_unknown_offender_fields(self):
-        """Unknown source offenders have ticker, catalyst_mode, event_type, catalyst_days."""
+        """Unknown source offenders have ticker, catalyst_mode, event_type, catalyst_days, unknown_reason."""
         r = _make_rankings(n_dev=4)
         r["tier_dev"] = ["A"] * 4
         r["catalyst_mode"] = ["specific_days", "blended_window", "no_upcoming", "specific_days"]
@@ -1964,7 +1965,9 @@ class TestCatalystSourceMix:
         assert offenders[0]["catalyst_mode"] == "specific_days"
         assert offenders[0]["event_type"] == "DATA_READOUT"
         assert offenders[0]["catalyst_days"] == "30"
+        assert offenders[0]["unknown_reason"] == "missing"  # None → missing
         assert offenders[1]["catalyst_mode"] == "blended_window"
+        assert offenders[1]["unknown_reason"] == "blank"  # "" → blank
 
     def test_cs_unknown_offenders_sorted_deterministically(self):
         """Unknown source offenders sort by mode (specific_days first), then ticker."""
@@ -2385,7 +2388,7 @@ class TestCatalystEventTypeMix:
         assert "### FDA-Tagged Tickers" not in md
 
     def test_unknown_offender_fields(self):
-        """Unknown offenders have ticker, catalyst_mode, catalyst_source, catalyst_days."""
+        """Unknown offenders have ticker, catalyst_mode, catalyst_source, catalyst_days, unknown_reason."""
         r = _make_rankings(n_dev=4)
         r["tier_dev"] = ["A"] * 4
         r["catalyst_mode"] = ["specific_days", "blended_window", "no_upcoming", "specific_days"]
@@ -2399,6 +2402,8 @@ class TestCatalystEventTypeMix:
         assert offenders[1]["catalyst_mode"] == "blended_window"
         assert offenders[0]["catalyst_days"] == "45"
         assert offenders[1]["catalyst_days"] == "120"
+        assert offenders[0]["unknown_reason"] == "missing"  # None → missing
+        assert offenders[1]["unknown_reason"] == "blank"  # "" → blank
 
     def test_fda_offender_fields(self):
         """FDA offenders have ticker, event_type, catalyst_source."""
@@ -2528,6 +2533,82 @@ class TestCatalystEventTypeMix:
         )
         assert "### FDA-Tagged Tickers" in md_verbose
         assert "FDA_DECISION" in md_verbose
+
+
+# ---------------------------------------------------------------------------
+# Unknown reason taxonomy
+# ---------------------------------------------------------------------------
+
+class TestClassifyUnknownReason:
+    """Tests for _classify_unknown_reason helper."""
+
+    def test_none_is_missing(self):
+        assert _classify_unknown_reason(None) == "missing"
+
+    def test_nan_is_missing(self):
+        assert _classify_unknown_reason(float("nan")) == "missing"
+
+    def test_empty_string_is_blank(self):
+        assert _classify_unknown_reason("") == "blank"
+
+    def test_whitespace_is_blank(self):
+        assert _classify_unknown_reason("   ") == "blank"
+
+    def test_nan_string_is_blank(self):
+        assert _classify_unknown_reason("nan") == "blank"
+
+    def test_unrecognized_value(self):
+        assert _classify_unknown_reason("CUSTOM_SRC") == "unrecognized:CUSTOM_SRC"
+
+    def test_unrecognized_strips_whitespace(self):
+        assert _classify_unknown_reason("  FOO  ") == "unrecognized:FOO"
+
+    def test_cs_unknown_reason_in_markdown_table(self):
+        """Reason column appears in cs_* unknown offender table when WARN fires."""
+        r = _make_rankings(n_dev=10)
+        r["tier_dev"] = ["A"] * 10
+        r["catalyst_mode"] = ["specific_days"] * 10
+        # Mix of None and "" sources → unknown with different reasons
+        r["catalyst_source"] = [None] * 5 + [""] * 3 + ["CTGOV_CALENDAR"] * 2
+        r["catalyst_event_type"] = ["DATA_READOUT"] * 10
+        r["de_catalyst_days"] = ["45"] * 10
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_drift_metrics([snap], strict_cs_missing=True)
+        md = generate_drift_report_md(metrics, "OK", [], DriftGuardrails())
+        assert "| Reason" in md
+        assert "missing" in md
+
+    def test_ct_unknown_reason_in_markdown_table(self):
+        """Reason column appears in ct_* unknown offender table when WARN fires."""
+        r = _make_rankings(n_dev=10)
+        r["tier_dev"] = ["A"] * 10
+        r["catalyst_mode"] = ["specific_days"] * 10
+        # Mix of None and "" event types → unknown with different reasons
+        r["catalyst_event_type"] = [None] * 5 + [""] * 3 + ["DATA_READOUT"] * 2
+        r["catalyst_source"] = ["CTGOV_CALENDAR"] * 10
+        r["de_catalyst_days"] = ["45"] * 10
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_drift_metrics([snap], strict_cs_missing=True)
+        md = generate_drift_report_md(metrics, "OK", [], DriftGuardrails())
+        assert "### Unknown Event Type" in md
+        assert "| Reason" in md
+        assert "missing" in md
+
+    def test_classify_unknown_reason_called_for_each_offender(self):
+        """Each cs_* unknown offender gets the correct reason from _classify_unknown_reason."""
+        import numpy as np
+        r = _make_rankings(n_dev=4)
+        r["tier_dev"] = ["A"] * 4
+        r["catalyst_mode"] = ["specific_days"] * 4
+        # None → missing, NaN → missing, "" → blank, "CTGOV" → not unknown
+        r["catalyst_source"] = [None, np.nan, "", "CTGOV_CALENDAR"]
+        r["catalyst_event_type"] = ["DATA_READOUT"] * 4
+        result = _catalyst_source_metrics(r, strict_missing=True)
+        offenders = result["_cs_unknown_offenders"]
+        assert len(offenders) == 3
+        reasons = [o["unknown_reason"] for o in offenders]
+        assert reasons.count("missing") == 2  # None + NaN
+        assert reasons.count("blank") == 1  # ""
 
 
 # ---------------------------------------------------------------------------
