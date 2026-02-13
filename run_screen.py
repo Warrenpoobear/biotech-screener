@@ -1338,7 +1338,7 @@ PHASE2_PORTFOLIO_COLUMNS = [
 # Phase-2 operational defaults
 PHASE2_DEFAULT_RULESET_PATH = (
     Path(__file__).resolve().parent
-    / "production_data" / "decision_rulesets" / "v1.2.1_candidate.json"
+    / "production_data" / "decision_rulesets" / "v1.2.2_candidate.json"
 )
 PHASE2_DEFAULT_TIER_FILTER = ["A", "B"]
 PHASE2_DEFAULT_TOP_K = 20

@@ -35,7 +35,7 @@ from run_rank_ic_backtest import ARCHIVE_DIR
 # =============================================================================
 
 SNAPSHOT_DATE = "2025-10-31"
-RULESET_PATH = PROJECT_ROOT / "production_data" / "decision_rulesets" / "v1.2.1_candidate.json"
+RULESET_PATH = PROJECT_ROOT / "production_data" / "decision_rulesets" / "v1.2.2_candidate.json"
 ARCHIVE_PATH = ARCHIVE_DIR / f"{SNAPSHOT_DATE}.tar.gz"
 TIER_FILTER = ["A", "B"]
 TOP_K = 20

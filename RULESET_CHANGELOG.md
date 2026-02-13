@@ -6,6 +6,23 @@ Format: `[engine_version] ruleset_id — date — summary`
 
 ---
 
+## [v1.3.0] a021df60 — 2026-02-13 — Version bump to v1.2.2_candidate (no logic change)
+
+**Parameters changed**: None. Identical content-hash to v1.2.1_candidate.
+
+**Rationale**: Pairs with drift guardrail calibration (commit 496b27b) which tightened
+four WARN thresholds from the 2025 panel baseline:
+- `warn_rs_morningstar_share_low`: 70% -> 85% (median=94.4%, IQR=4.5)
+- `warn_rs_unknown_share_high`: 10% -> 8.5% (median=1.7%, IQR=3.4)
+- `warn_cat_eligible_share_low`: 80% -> 95% (median=100%, IQR=0)
+- `warn_cs_ctgov_share_low`: 50% -> 37% (2025 median=39.7%, IQR=1.2)
+
+**Verification**: Panel diff between v1.2.1 and v1.2.2 is zero bytes.
+
+**Files**: `v1.2.2_candidate.json` (active), `v1.2.1_candidate.json` (retired, preserved for audit)
+
+---
+
 ## [v1.3.0] a021df60 — 2026-02-12 — Add momentum state weight tilt schema (defaults neutral)
 
 **Parameters added** (vs b92f9338):
