@@ -60,7 +60,9 @@ from archive_snapshot import verify_archive
 SNAPSHOT_DIR = PROJECT_ROOT / "data" / "snapshots"
 ARCHIVE_DIR = PROJECT_ROOT / "data" / "archives"
 RETURNS_JSON = PROJECT_ROOT / "production_data" / "morningstar_returns_history.json"
-PRICE_CSV = PROJECT_ROOT / "production_data" / "price_history.csv"
+_PRICE_CSV_SPLIT_ADJ = PROJECT_ROOT / "production_data" / "price_history_split_adj.csv"
+_PRICE_CSV_RAW = PROJECT_ROOT / "production_data" / "price_history.csv"
+PRICE_CSV = _PRICE_CSV_SPLIT_ADJ if _PRICE_CSV_SPLIT_ADJ.exists() else _PRICE_CSV_RAW
 OUTPUT_DIR = PROJECT_ROOT / "output"
 OUTPUT_JSON = OUTPUT_DIR / "rank_ic_backtest.json"
 
@@ -874,29 +876,65 @@ class MorningstarReturnsProvider(BaseReturnsProvider):
 # CHAINED RETURNS PROVIDER (HS793 primary + price CSV fallback)
 # =============================================================================
 
+    # Hard cap: if |return| exceeds this, try CSV fallback instead of Morningstar.
+    # 10.0 = 1000% — anything beyond this is almost certainly a data error
+    # (split artifact, corporate action, or stale total-return index).
+    OUTLIER_RETURN_CAP = 10.0
+
 class ChainedReturnsProvider(BaseReturnsProvider):
     """
     Try HS793 total return index first; fall back to price_history.csv
     close-to-close return for tickers not covered by HS793.
 
+    Outlier guardrail: if the primary return exceeds ±OUTLIER_RETURN_CAP,
+    prefer the CSV return instead (and log the override).
+
     Caveat: CSV fallback is price return (no dividends), but biotech
     names rarely pay dividends so this is acceptable vs. dropping them.
     """
 
+    OUTLIER_RETURN_CAP = 10.0  # |return| > 1000% → suspect
+
     def __init__(self, primary: MorningstarReturnsProvider, fallback: CSVReturnsProvider):
         self.primary = primary
         self.fallback = fallback
-        self._fallback_hits: Dict[str, int] = {}  # track which source was used
+        self._fallback_hits: Dict[str, int] = {}
+        self._source_log: Dict[str, str] = {}  # (ticker, start) → "morningstar" | "csv"
+        self._outlier_overrides: List[Dict[str, Any]] = []
 
     def get_forward_total_return(self, ticker: str, start_date: str, end_date: str) -> Optional[str]:
         ret = self.primary.get_forward_total_return(ticker, start_date, end_date)
+        tk = ticker.upper()
+        source_key = f"{tk}:{start_date}:{end_date}"
         if ret is not None:
+            # Outlier guardrail: if Morningstar return is extreme, try CSV
+            if abs(float(ret)) > self.OUTLIER_RETURN_CAP:
+                csv_ret = self.fallback.get_forward_total_return(ticker, start_date, end_date)
+                if csv_ret is not None:
+                    self._outlier_overrides.append({
+                        "ticker": tk,
+                        "start": start_date,
+                        "end": end_date,
+                        "morningstar_ret": float(ret),
+                        "csv_ret": float(csv_ret),
+                    })
+                    self._source_log[source_key] = "csv_outlier_override"
+                    self._fallback_hits[tk] = self._fallback_hits.get(tk, 0) + 1
+                    return csv_ret
+                # No CSV data either — keep Morningstar value
+            self._source_log[source_key] = "morningstar"
             return ret
-        # Fallback to CSV price return
+        # Primary miss → fallback to CSV
         ret = self.fallback.get_forward_total_return(ticker, start_date, end_date)
         if ret is not None:
-            self._fallback_hits[ticker.upper()] = self._fallback_hits.get(ticker.upper(), 0) + 1
+            self._fallback_hits[tk] = self._fallback_hits.get(tk, 0) + 1
+            self._source_log[source_key] = "csv"
         return ret
+
+    def get_return_source(self, ticker: str, start_date: str, end_date: str) -> str:
+        """Return which provider supplied the return: morningstar | csv | csv_outlier_override | unknown."""
+        key = f"{ticker.upper()}:{start_date}:{end_date}"
+        return self._source_log.get(key, "unknown")
 
     def get_available_tickers(self) -> List[str]:
         return sorted(set(self.primary.get_available_tickers()) |
@@ -917,7 +955,12 @@ class ChainedReturnsProvider(BaseReturnsProvider):
             "n_tickers_used_fallback": len(self._fallback_hits),
             "total_fallback_lookups": sum(self._fallback_hits.values()),
             "tickers": sorted(self._fallback_hits.keys()),
+            "outlier_overrides": len(self._outlier_overrides),
         }
+
+    def get_outlier_overrides(self) -> List[Dict[str, Any]]:
+        """Return list of cases where Morningstar was overridden due to outlier cap."""
+        return list(self._outlier_overrides)
 
 
 # =============================================================================

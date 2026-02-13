@@ -67,6 +67,7 @@ from run_rank_ic_backtest import (
     OUTPUT_DIR,
     PRICE_CSV,
     _winsorize,
+    add_trading_days,
     compute_as_of_fence,
     compute_forward_returns,
     compute_residual_returns,
@@ -98,6 +99,7 @@ PANEL_COLUMNS = [
     "fwd_ret_20d_net", "fwd_ret_60d_net",
     "catalyst_tilt_mult", "catalyst_tilt_applied",
     "mom_state_tilt_mult", "mom_state_tilt_applied",
+    "returns_source",
 ]
 
 
@@ -173,6 +175,15 @@ def _percentile(vals: List[float], pct: float) -> float:
     hi = min(lo + 1, len(s) - 1)
     frac = k - lo
     return s[lo] + frac * (s[hi] - s[lo])
+
+
+def _get_return_source(chained, ticker: str, as_of_date: str, horizon: int) -> str:
+    """Look up which provider supplied the return for this ticker/horizon."""
+    if not hasattr(chained, "get_return_source"):
+        return ""
+    start = add_trading_days(as_of_date, 1)
+    end = add_trading_days(as_of_date, horizon)
+    return chained.get_return_source(ticker, start, end)
 
 
 def _safe_div(num: float, denom: float) -> float:
@@ -845,6 +856,7 @@ def run_strategy_backtest(
                     "participation_pct": round(participation, 4),
                     "fwd_ret_20d_net": fwd_20_net,
                     "fwd_ret_60d_net": fwd_60_net,
+                    "returns_source": _get_return_source(chained, ticker, date_str, 60),
                 })
 
             # Accumulate cost telemetry across snapshots

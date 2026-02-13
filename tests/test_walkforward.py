@@ -217,6 +217,7 @@ class TestPanelSchema:
             "fwd_ret_20d_net", "fwd_ret_60d_net",
             "catalyst_tilt_mult", "catalyst_tilt_applied",
             "mom_state_tilt_mult", "mom_state_tilt_applied",
+            "returns_source",
         ]
         assert PANEL_COLUMNS == expected
 
