@@ -1948,6 +1948,91 @@ class TestCatalystSourceMix:
         assert "warn_cs_ctgov_share_low" in md
         assert "warn_cs_unknown_share_high" in md
 
+    # -- cs_* offender appendix tests --
+
+    def test_cs_unknown_offender_fields(self):
+        """Unknown source offenders have ticker, catalyst_mode, event_type, catalyst_days."""
+        r = _make_rankings(n_dev=4)
+        r["tier_dev"] = ["A"] * 4
+        r["catalyst_mode"] = ["specific_days", "blended_window", "no_upcoming", "specific_days"]
+        r["catalyst_source"] = [None, "", "CTGOV_CALENDAR", "CTGOV_CALENDAR"]
+        r["catalyst_event_type"] = ["DATA_READOUT", "FDA_DECISION", "DATA_READOUT", "DATA_READOUT"]
+        r["de_catalyst_days"] = ["30", "90", "60", "45"]
+        result = _catalyst_source_metrics(r, strict_missing=True)
+        offenders = result["_cs_unknown_offenders"]
+        assert len(offenders) == 2
+        assert offenders[0]["catalyst_mode"] == "specific_days"
+        assert offenders[0]["event_type"] == "DATA_READOUT"
+        assert offenders[0]["catalyst_days"] == "30"
+        assert offenders[1]["catalyst_mode"] == "blended_window"
+
+    def test_cs_unknown_offenders_sorted_deterministically(self):
+        """Unknown source offenders sort by mode (specific_days first), then ticker."""
+        r = _make_rankings(n_dev=4)
+        r["ticker"] = ["ZZZ", "AAA", "MMM", "BBB"]
+        r["tier_dev"] = ["A"] * 4
+        r["catalyst_mode"] = ["blended_window", "specific_days", "specific_days", "blended_window"]
+        r["catalyst_source"] = [None, None, None, None]
+        r["catalyst_event_type"] = ["X"] * 4
+        result = _catalyst_source_metrics(r, strict_missing=True)
+        offenders = result["_cs_unknown_offenders"]
+        tickers = [o["ticker"] for o in offenders]
+        assert tickers == ["AAA", "MMM", "BBB", "ZZZ"]
+
+    def test_cs_unknown_offenders_full_table_above_threshold(self):
+        """Above WARN threshold: full unknown-source table with Days + Event Type."""
+        r = _make_rankings(n_dev=10)
+        r["tier_dev"] = ["A"] * 10
+        r["catalyst_mode"] = ["specific_days"] * 10
+        # 8 unknown out of 10 = 80% > 5% threshold
+        r["catalyst_source"] = [None] * 8 + ["CTGOV_CALENDAR"] * 2
+        r["catalyst_event_type"] = ["DATA_READOUT"] * 10
+        r["de_catalyst_days"] = ["45"] * 10
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_drift_metrics([snap], strict_cs_missing=True)
+        md = generate_drift_report_md(metrics, "OK", [], DriftGuardrails())
+        assert "### Unknown Source" in md
+        assert "| Days |" in md
+        assert "| Event Type" in md
+
+    def test_cs_unknown_offenders_summary_below_threshold(self):
+        """Below WARN threshold: one-line summary instead of full table."""
+        r = _make_rankings(n_dev=100)
+        r["tier_dev"] = ["A"] * 100
+        r["catalyst_mode"] = ["specific_days"] * 100
+        # 2 unknown out of 100 = 2% < 5% threshold
+        r["catalyst_source"] = [None] * 2 + ["CTGOV_CALENDAR"] * 98
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_drift_metrics([snap], strict_cs_missing=True)
+        md = generate_drift_report_md(metrics, "OK", [], DriftGuardrails())
+        assert "### Unknown Source" not in md
+        assert "Unknown source offenders: 2 ticker(s)" in md
+        assert "threshold not breached" in md
+
+    def test_cs_unknown_offenders_absent_when_clean(self):
+        """No unknown source offenders section when all sources populated."""
+        r = _make_rankings(n_dev=10)
+        r["tier_dev"] = ["A"] * 10
+        r["catalyst_source"] = ["CTGOV_CALENDAR"] * 10
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_drift_metrics([snap])
+        md = generate_drift_report_md(metrics, "OK", [], DriftGuardrails())
+        assert "Unknown source offenders" not in md
+        assert "### Unknown Source" not in md
+
+    def test_cs_verbose_offenders_forces_table(self):
+        """verbose_offenders=True forces full table below WARN threshold."""
+        r = _make_rankings(n_dev=100)
+        r["tier_dev"] = ["A"] * 100
+        r["catalyst_mode"] = ["specific_days"] * 100
+        r["catalyst_source"] = [None] * 2 + ["CTGOV_CALENDAR"] * 98
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_drift_metrics([snap], strict_cs_missing=True)
+        md = generate_drift_report_md(
+            metrics, "OK", [], DriftGuardrails(), verbose_offenders=True,
+        )
+        assert "### Unknown Source" in md
+
 
 # ---------------------------------------------------------------------------
 # Catalyst event type mix

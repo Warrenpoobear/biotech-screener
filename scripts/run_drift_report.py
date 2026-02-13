@@ -607,6 +607,42 @@ def _catalyst_source_metrics(
         result[f"cs_{key}_count"] = c
         result[f"cs_{key}_share_pct"] = round(c / n_eligible * 100, 1)
 
+    # Offender lists for actionable WARN breadcrumbs
+    ticker_col = "ticker" if "ticker" in eligible_dev.columns else None
+    if ticker_col:
+        tickers = eligible_dev[ticker_col].tolist()
+        cat_modes = (
+            eligible_dev["catalyst_mode"].astype(str).fillna("").tolist()
+            if "catalyst_mode" in eligible_dev.columns
+            else [""] * n_eligible
+        )
+        cat_event_types = (
+            eligible_dev["catalyst_event_type"].astype(str).fillna("").tolist()
+            if "catalyst_event_type" in eligible_dev.columns
+            else [""] * n_eligible
+        )
+        cat_days = (
+            eligible_dev["de_catalyst_days"].astype(str).fillna("").tolist()
+            if "de_catalyst_days" in eligible_dev.columns
+            else [""] * n_eligible
+        )
+
+        # Unknown offenders: dated catalyst but missing/unknown source
+        _MODE_ORDER = {"specific_days": 0, "blended_window": 1}
+        unknown_offenders = []
+        for i, norm_src in enumerate(sources):
+            if norm_src == "unknown":
+                unknown_offenders.append({
+                    "ticker": tickers[i],
+                    "catalyst_mode": cat_modes[i],
+                    "event_type": cat_event_types[i],
+                    "catalyst_days": cat_days[i],
+                })
+        unknown_offenders.sort(
+            key=lambda o: (_MODE_ORDER.get(o["catalyst_mode"], 9), o["ticker"])
+        )
+        result["_cs_unknown_offenders"] = unknown_offenders
+
     return result
 
 
@@ -1959,6 +1995,44 @@ def generate_drift_report_md(
             share_str = f"{share:.1f}%" if share is not None else "N/A"
             lines.append(f"| {src:<22} | {cnt:>5} | {share_str:>12} |")
         lines.append("")
+
+        # Top offenders: unknown source (actionable breadcrumb)
+        # Full table when WARN fires or verbose; one-line summary otherwise.
+        cs_unknown_offenders = current.get("_cs_unknown_offenders", [])
+        cs_unknown_share = current.get("cs_unknown_share_pct") or 0.0
+        _cs_unknown_warn = cs_unknown_share > guardrails.warn_cs_unknown_share_high
+        if cs_unknown_offenders:
+            if _cs_unknown_warn or verbose_offenders:
+                lines.append("### Unknown Source — Top Offenders")
+                lines.append("")
+                lines.append(
+                    "Dated-catalyst tickers with missing or unrecognized source."
+                )
+                lines.append("")
+                lines.append("| Ticker | Catalyst Mode  | Days | Event Type     |")
+                lines.append("|--------|----------------|------|----------------|")
+                for off in cs_unknown_offenders[:_CT_MAX_OFFENDERS]:
+                    days_str = off.get("catalyst_days", "") or "—"
+                    et_str = off.get("event_type", "") or "—"
+                    lines.append(
+                        f"| {off['ticker']:<6} "
+                        f"| {off['catalyst_mode']:<14} "
+                        f"| {str(days_str):>4} "
+                        f"| {et_str:<14} |"
+                    )
+                if len(cs_unknown_offenders) > _CT_MAX_OFFENDERS:
+                    lines.append(
+                        f"| ...    | ({len(cs_unknown_offenders) - _CT_MAX_OFFENDERS} more)"
+                        f"{'':<14} | {'':>4} | {'':<14} |"
+                    )
+                lines.append("")
+            else:
+                lines.append(
+                    f"_Unknown source offenders: {len(cs_unknown_offenders)} ticker(s)."
+                    f" WARN threshold not breached ({cs_unknown_share:.1f}%"
+                    f" <= {guardrails.warn_cs_unknown_share_high}%)._"
+                )
+                lines.append("")
 
     # Catalyst Event Type Mix table (only if catalyst_event_type data present)
     has_ct = current.get("ct_n_eligible") is not None
