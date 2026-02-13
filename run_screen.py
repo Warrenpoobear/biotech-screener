@@ -1319,6 +1319,8 @@ SNAPSHOT_COLUMNS = [
     "de_tier1_count",
     "de_beta_xbi_60d", "de_drawdown", "de_drawdown_missing_reason", "de_rsi_14d",
     "de_drawdown_xbi", "de_drawdown_rel_xbi",
+    # Returns provenance (for drift monitoring)
+    "returns_source",
 ]
 
 # Phase-2 decision portfolio output columns
@@ -1732,6 +1734,9 @@ def save_validation_snapshot(
         row["de_rsi_14d"] = df.get("rsi_14d", "")
         row["de_drawdown_xbi"] = df.get("drawdown_xbi", "")
         row["de_drawdown_rel_xbi"] = df.get("drawdown_rel_xbi", "")
+
+        # Returns provenance: live screen always uses Morningstar pipeline
+        row["returns_source"] = "morningstar"
 
     # --- Actionable ordering: sort + assign rank + compute weights ---
     # Sort all rows by actionable sort key
