@@ -317,6 +317,69 @@ def _returns_source_metrics(rankings: pd.DataFrame) -> Optional[Dict[str, Any]]:
     return result
 
 
+_CATALYST_MODE_KEYS = ("specific_days", "blended_window", "no_upcoming", "missing")
+
+
+def _catalyst_coverage_metrics(rankings: pd.DataFrame) -> Optional[Dict[str, Any]]:
+    """Catalyst coverage metrics from ``tier_dev`` and ``catalyst_mode`` columns.
+
+    Among dev-stage tickers, counts how many are "eligible" (non-blank tier_dev)
+    and breaks down the catalyst_mode distribution among eligible tickers.
+    Returns None when required columns are absent.
+    """
+    if "tier_dev" not in rankings.columns or "catalyst_mode" not in rankings.columns:
+        return None
+
+    dev = rankings[rankings["archetype"] == "drug_developer"]
+    n_dev = len(dev)
+    if n_dev == 0:
+        result: Dict[str, Any] = {"cat_n_dev": 0, "cat_n_eligible": 0, "cat_eligible_share_pct": None}
+        for mode in _CATALYST_MODE_KEYS:
+            result[f"cat_{mode}_count"] = 0
+            result[f"cat_{mode}_share_pct"] = None
+        return result
+
+    # Eligible = non-blank tier_dev
+    def _is_eligible(v) -> bool:
+        if v is None or (isinstance(v, float) and pd.isna(v)):
+            return False
+        return str(v).strip() != ""
+
+    eligible_mask = dev["tier_dev"].apply(_is_eligible)
+    eligible_dev = dev[eligible_mask]
+    n_eligible = len(eligible_dev)
+
+    result = {
+        "cat_n_dev": n_dev,
+        "cat_n_eligible": n_eligible,
+        "cat_eligible_share_pct": round(n_eligible / n_dev * 100, 1) if n_dev > 0 else None,
+    }
+
+    if n_eligible == 0:
+        for mode in _CATALYST_MODE_KEYS:
+            result[f"cat_{mode}_count"] = 0
+            result[f"cat_{mode}_share_pct"] = None
+        return result
+
+    from collections import Counter
+
+    def _norm_mode(v) -> str:
+        if v is None or (isinstance(v, float) and pd.isna(v)):
+            return "missing"
+        s = str(v).strip()
+        return s if s else "missing"
+
+    modes = [_norm_mode(v) for v in eligible_dev["catalyst_mode"]]
+    counts = Counter(modes)
+
+    for mode in _CATALYST_MODE_KEYS:
+        c = counts.get(mode, 0)
+        result[f"cat_{mode}_count"] = c
+        result[f"cat_{mode}_share_pct"] = round(c / n_eligible * 100, 1)
+
+    return result
+
+
 def _cost_metrics(
     rankings: pd.DataFrame, cap_bps: float = 1000.0,
 ) -> Optional[Dict[str, Any]]:
@@ -485,6 +548,11 @@ def compute_snapshot_metrics(snap: SnapshotData) -> Dict[str, Any]:
     if rs is not None:
         metrics.update(rs)
 
+    # Catalyst coverage
+    cat = _catalyst_coverage_metrics(rankings)
+    if cat is not None:
+        metrics.update(cat)
+
     # Top-25 tickers (for overlap computation)
     metrics["_top25"] = _top_n_tickers(rankings, 25)
 
@@ -551,6 +619,8 @@ def compute_drift_metrics(
         "est_cost_bps_p50", "median_cost_bps",
         "rs_morningstar_share_pct", "rs_unknown_share_pct",
         "rs_csv_outlier_override_share_pct",
+        "cat_eligible_share_pct", "cat_specific_days_share_pct",
+        "cat_no_upcoming_share_pct", "cat_missing_share_pct",
     ]
     rolling: Dict[str, Dict[str, Any]] = {}
     for key in roll_keys:
@@ -1224,6 +1294,26 @@ def generate_drift_report_md(
             share = current.get(f"rs_{src}_share_pct")
             share_str = f"{share:.1f}%" if share is not None else "N/A"
             lines.append(f"| {src:<22} | {cnt:>5} | {share_str:>5} |")
+        lines.append("")
+
+    # Catalyst Coverage table (only if tier_dev + catalyst_mode present)
+    has_cat = current.get("cat_n_dev") is not None
+    if has_cat:
+        lines.append("## Catalyst Coverage")
+        lines.append("")
+        n_dev_cat = current.get("cat_n_dev", 0)
+        n_elig_cat = current.get("cat_n_eligible", 0)
+        elig_share = current.get("cat_eligible_share_pct")
+        elig_str = f"{elig_share:.1f}%" if elig_share is not None else "N/A"
+        lines.append(f"Dev tickers: {n_dev_cat} | Eligible: {n_elig_cat} ({elig_str})")
+        lines.append("")
+        lines.append("| Catalyst Mode     | Count | Share (elig) |")
+        lines.append("|-------------------|-------|--------------|")
+        for mode in _CATALYST_MODE_KEYS:
+            cnt = current.get(f"cat_{mode}_count", 0)
+            share = current.get(f"cat_{mode}_share_pct")
+            share_str = f"{share:.1f}%" if share is not None else "N/A"
+            lines.append(f"| {mode:<17} | {cnt:>5} | {share_str:>12} |")
         lines.append("")
 
     # Rolling window table

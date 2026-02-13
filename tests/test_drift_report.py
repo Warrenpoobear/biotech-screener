@@ -24,6 +24,7 @@ from run_drift_report import (
     _compute_margin_summary,
     _cost_metrics,
     _parse_pipe_separated,
+    _catalyst_coverage_metrics,
     _returns_source_metrics,
     compute_attribution,
     compute_drift_metrics,
@@ -1510,3 +1511,125 @@ class TestReturnsSourceMix:
         assert "warn_rs_unknown_share_high" in md
         assert "warn_rs_csv_outlier_override_share_high" in md
         assert "warn_rs_morningstar_share_low" in md
+
+
+class TestCatalystCoverage:
+    """Tests for catalyst coverage metrics in drift report."""
+
+    def _make_rankings_with_cat(
+        self, n_dev: int = 50,
+        eligible_pct: float = 60.0,
+        modes: list | None = None,
+    ) -> pd.DataFrame:
+        """Build rankings with tier_dev and catalyst_mode columns."""
+        r = _make_rankings(n_dev=n_dev)
+        # Ensure tier_dev is populated for eligible tickers
+        n_eligible = int(n_dev * eligible_pct / 100)
+        tiers = (["A"] * max(1, n_eligible // 4)
+                 + ["B"] * max(1, n_eligible // 4)
+                 + ["C"] * (n_eligible - 2 * max(1, n_eligible // 4)))
+        # Pad with blank for ineligible
+        tiers = tiers[:n_eligible] + [""] * (n_dev - n_eligible)
+        r["tier_dev"] = tiers[:n_dev]
+        if modes is not None:
+            r["catalyst_mode"] = modes[:n_dev]
+        else:
+            # Default: eligible get specific_days, ineligible get blank
+            cat_modes = ["specific_days"] * n_eligible + [""] * (n_dev - n_eligible)
+            r["catalyst_mode"] = cat_modes[:n_dev]
+        return r
+
+    # -- _catalyst_coverage_metrics tests --
+
+    def test_mix_known_distribution(self):
+        """Known catalyst mode distribution → correct counts and shares."""
+        r = _make_rankings(n_dev=20)
+        r["tier_dev"] = ["A"] * 5 + ["B"] * 5 + ["C"] * 5 + [""] * 5
+        modes = (
+            ["specific_days"] * 8
+            + ["no_upcoming"] * 4
+            + ["missing"] * 3
+            + [""] * 5  # ineligible, not counted
+        )
+        r["catalyst_mode"] = modes
+        result = _catalyst_coverage_metrics(r)
+        assert result is not None
+        assert result["cat_n_dev"] == 20
+        assert result["cat_n_eligible"] == 15
+        assert result["cat_eligible_share_pct"] == 75.0
+        assert result["cat_specific_days_count"] == 8
+        assert result["cat_specific_days_share_pct"] == pytest.approx(53.3, abs=0.1)
+        assert result["cat_no_upcoming_count"] == 4
+        assert result["cat_missing_count"] == 3
+
+    def test_blank_and_none_treated_as_missing(self):
+        """Blank/None/NaN catalyst_mode values among eligible → counted as missing."""
+        r = _make_rankings(n_dev=10)
+        r["tier_dev"] = ["A"] * 10
+        r["catalyst_mode"] = ["specific_days"] * 5 + ["", None, "", "specific_days", None]
+        result = _catalyst_coverage_metrics(r)
+        assert result["cat_missing_count"] == 4
+        assert result["cat_specific_days_count"] == 6
+
+    def test_none_when_columns_missing(self):
+        """Returns None when tier_dev or catalyst_mode absent."""
+        r = _make_rankings(n_dev=10)
+        # Drop tier_dev → None
+        r2 = r.drop(columns=["tier_dev"])
+        assert _catalyst_coverage_metrics(r2) is None
+        # Has tier_dev but no catalyst_mode → None
+        r3 = r.drop(columns=["catalyst_mode"])
+        assert _catalyst_coverage_metrics(r3) is None
+
+    def test_snapshot_metrics_include_cat(self):
+        """compute_snapshot_metrics includes cat_ keys when columns present."""
+        r = self._make_rankings_with_cat(n_dev=30)
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_snapshot_metrics(snap)
+        assert "cat_n_dev" in metrics
+        assert "cat_eligible_share_pct" in metrics
+        assert "cat_specific_days_share_pct" in metrics
+
+    def test_md_report_includes_cat_section(self):
+        """Report includes Catalyst Coverage section when data present."""
+        r = self._make_rankings_with_cat(n_dev=30)
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_drift_metrics([snap])
+        guardrails = DriftGuardrails()
+        md = generate_drift_report_md(metrics, "OK", [], guardrails)
+        assert "## Catalyst Coverage" in md
+        assert "specific_days" in md
+        assert "no_upcoming" in md
+
+    def test_md_report_no_cat_section_when_missing(self):
+        """Report omits Catalyst Coverage when catalyst_mode column absent."""
+        r = _make_rankings(n_dev=30)
+        # Drop catalyst_mode — tier_dev must stay for _tier_counts()
+        r.drop(columns=["catalyst_mode"], inplace=True)
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_drift_metrics([snap])
+        guardrails = DriftGuardrails()
+        md = generate_drift_report_md(metrics, "OK", [], guardrails)
+        assert "## Catalyst Coverage" not in md
+
+    def test_roll_keys_tracked(self):
+        """cat_eligible_share_pct and cat_specific_days_share_pct in rolling."""
+        snaps = []
+        for i in range(4):
+            r = self._make_rankings_with_cat(n_dev=30)
+            snaps.append(_make_snapshot(f"2026-01-0{i+1}", r))
+        metrics = compute_drift_metrics(snaps)
+        rolling = metrics["rolling"]
+        assert "cat_eligible_share_pct" in rolling
+        assert "cat_specific_days_share_pct" in rolling
+        assert rolling["cat_eligible_share_pct"]["current"] is not None
+
+    def test_zero_eligible_no_crash(self):
+        """All blank tier_dev → n_eligible=0, no division error."""
+        r = _make_rankings(n_dev=10)
+        r["tier_dev"] = [""] * 10
+        r["catalyst_mode"] = ["specific_days"] * 10
+        result = _catalyst_coverage_metrics(r)
+        assert result is not None
+        assert result["cat_n_eligible"] == 0
+        assert result["cat_specific_days_share_pct"] is None
