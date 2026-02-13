@@ -54,12 +54,26 @@ output/
 outputs/
 data/archives/
 data/archives_backfilled/
+data/archives_secadcom/
 
 # Generated analysis artifacts (heavy outputs)
 artifacts/*
-# Allow governance memos and summary reports
+# Allow governance memos and summary reports (but not date-stamped one-offs)
 !artifacts/**/*.md
 !artifacts/**/*.txt
+# Re-ignore ephemeral analysis artifacts (walkforward sweeps, inversion reports, etc.)
+artifacts/walkforward_report_2024_*.md
+artifacts/walkforward_report_2025_*.md
+artifacts/walkforward_report__baseline_*.md
+artifacts/walkforward_report__rescue_*.md
+artifacts/walkforward_report_backfilled_*.md
+artifacts/walkforward_report_baseline_*.md
+artifacts/walkforward_report_diag*.md
+artifacts/walkforward_report_mom_*.md
+artifacts/walkforward_report_tilt_*.md
+artifacts/walkforward_report_original_*.md
+artifacts/*_inversion_attribution_2026-*.md
+artifacts/return_integrity_audit.md
 
 # Large data files - uncomment if you want to exclude real AACT data
 # data/aact_snapshots/*/studies.csv
@@ -129,6 +143,7 @@ production_data/screen_*.json
 production_data/morningstar_mcp_data.json
 production_data/morningstar_price_history.json
 production_data/morningstar_returns_history.json
+production_data/price_history_split_adj.csv
 
 # --- Cache directories (regenerated at runtime) ---
 cache/
