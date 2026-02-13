@@ -703,3 +703,26 @@ class TestCatalystSourceInPanel:
         devs = build_all_dev_decisions(archive, DecisionRuleset())
         assert len(devs) == 1
         assert devs[0]["catalyst_source"] == ""
+
+
+class TestCatalystEventTypeInPanel:
+    """Verify catalyst_event_type flows from rec dict to panel output."""
+
+    def test_panel_columns_include_catalyst_event_type(self):
+        assert "catalyst_event_type" in PANEL_COLUMNS
+
+    def test_build_all_dev_decisions_passes_catalyst_event_type(self):
+        rec = _make_rec()
+        rec["catalyst_event_type"] = "DATA_READOUT"
+        archive = _make_archive_data({"AAA": {"rec": rec, "opt": 0.70}})
+        devs = build_all_dev_decisions(archive, DecisionRuleset())
+        assert len(devs) == 1
+        assert devs[0]["catalyst_event_type"] == "DATA_READOUT"
+
+    def test_catalyst_event_type_fallback_empty_string(self):
+        rec = _make_rec()
+        # rec has no catalyst_event_type key
+        archive = _make_archive_data({"BBB": {"rec": rec, "opt": 0.70}})
+        devs = build_all_dev_decisions(archive, DecisionRuleset())
+        assert len(devs) == 1
+        assert devs[0]["catalyst_event_type"] == ""

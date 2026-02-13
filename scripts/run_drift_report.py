@@ -606,6 +606,104 @@ def _catalyst_source_metrics(
     return result
 
 
+# --- Catalyst event type mix ---------------------------------------------------
+
+_CATALYST_EVENT_TYPE_KEYS = (
+    "DATA_READOUT", "FDA_DECISION", "FDA_ADCOM",
+    "TRIAL_ONGOING", "none", "unknown",
+)
+
+# Map enrichment-pipeline event type names → canonical names
+_EVENT_TYPE_ALIASES: Dict[str, str] = {
+    "data_readout": "DATA_READOUT",
+    "fda_decision": "FDA_DECISION",
+    "fda_adcom": "FDA_ADCOM",
+    "trial_ongoing": "TRIAL_ONGOING",
+}
+
+
+def _catalyst_event_type_metrics(
+    rankings: pd.DataFrame,
+    *,
+    strict_missing: bool = False,
+) -> Optional[Dict[str, Any]]:
+    """Catalyst event type mix metrics from the ``catalyst_event_type`` column.
+
+    Among eligible dev tickers (non-blank ``tier_dev``), counts per-type
+    distribution.  Maps ``""`` → ``"none"`` (no catalyst).
+
+    When ``strict_missing=True`` and ``catalyst_mode`` column exists,
+    tickers with a dated catalyst but missing event type are counted as
+    ``"unknown"`` (broken data).  Otherwise missing → ``"none"``.
+
+    Returns None when column is absent.
+    """
+    if "catalyst_event_type" not in rankings.columns or "tier_dev" not in rankings.columns:
+        return None
+
+    dev = rankings[rankings["archetype"] == "drug_developer"]
+    n_dev = len(dev)
+    if n_dev == 0:
+        result: Dict[str, Any] = {"ct_n_eligible": 0}
+        for et in _CATALYST_EVENT_TYPE_KEYS:
+            key = et.lower()
+            result[f"ct_{key}_count"] = 0
+            result[f"ct_{key}_share_pct"] = None
+        return result
+
+    def _is_eligible(v) -> bool:
+        if v is None or (isinstance(v, float) and pd.isna(v)):
+            return False
+        return str(v).strip() != ""
+
+    eligible_dev = dev[dev["tier_dev"].apply(_is_eligible)]
+    n_eligible = len(eligible_dev)
+
+    if n_eligible == 0:
+        result = {"ct_n_eligible": 0}
+        for et in _CATALYST_EVENT_TYPE_KEYS:
+            key = et.lower()
+            result[f"ct_{key}_count"] = 0
+            result[f"ct_{key}_share_pct"] = None
+        return result
+
+    from collections import Counter
+
+    modes: Optional[pd.Series] = None
+    if strict_missing and "catalyst_mode" in eligible_dev.columns:
+        modes = eligible_dev["catalyst_mode"].astype(str).fillna("")
+
+    def _norm_event_type(v, mode: str = "") -> str:
+        missing = (v is None) or (isinstance(v, float) and pd.isna(v)) or (str(v).strip() == "")
+        if missing:
+            if strict_missing and mode in ("specific_days", "blended_window"):
+                return "unknown"
+            return "none"
+        s = str(v).strip()
+        return _EVENT_TYPE_ALIASES.get(s.lower(), s)
+
+    if modes is None:
+        types = [_norm_event_type(v) for v in eligible_dev["catalyst_event_type"]]
+    else:
+        types = [
+            _norm_event_type(v, m)
+            for v, m in zip(
+                eligible_dev["catalyst_event_type"].tolist(),
+                modes.tolist(),
+            )
+        ]
+    counts = Counter(types)
+
+    result = {"ct_n_eligible": n_eligible}
+    for et in _CATALYST_EVENT_TYPE_KEYS:
+        key = et.lower()
+        c = counts.get(et, 0)
+        result[f"ct_{key}_count"] = c
+        result[f"ct_{key}_share_pct"] = round(c / n_eligible * 100, 1)
+
+    return result
+
+
 def _cost_metrics(
     rankings: pd.DataFrame, cap_bps: float = 1000.0,
 ) -> Optional[Dict[str, Any]]:
@@ -787,6 +885,11 @@ def compute_snapshot_metrics(
     cs = _catalyst_source_metrics(rankings, strict_missing=strict_cs_missing)
     if cs is not None:
         metrics.update(cs)
+
+    # Catalyst event type mix
+    ct = _catalyst_event_type_metrics(rankings, strict_missing=strict_cs_missing)
+    if ct is not None:
+        metrics.update(ct)
 
     # Top-25 tickers (for overlap computation)
     metrics["_top25"] = _top_n_tickers(rankings, 25)
@@ -1741,6 +1844,24 @@ def generate_drift_report_md(
             lines.append(f"| {src:<22} | {cnt:>5} | {share_str:>12} |")
         lines.append("")
 
+    # Catalyst Event Type Mix table (only if catalyst_event_type data present)
+    has_ct = current.get("ct_n_eligible") is not None
+    if has_ct:
+        lines.append("## Catalyst Event Type Mix")
+        lines.append("")
+        n_elig_ct = current.get("ct_n_eligible", 0)
+        lines.append(f"Eligible dev tickers: {n_elig_ct}")
+        lines.append("")
+        lines.append("| Event Type             | Count | Share (elig) |")
+        lines.append("|------------------------|-------|--------------|")
+        for et in _CATALYST_EVENT_TYPE_KEYS:
+            key = et.lower()
+            cnt = current.get(f"ct_{key}_count", 0)
+            share = current.get(f"ct_{key}_share_pct")
+            share_str = f"{share:.1f}%" if share is not None else "N/A"
+            lines.append(f"| {et:<22} | {cnt:>5} | {share_str:>12} |")
+        lines.append("")
+
     # Rolling window table
     if rolling:
         lines.append(f"## Rolling Window (last {n_snaps} runs)")
@@ -2249,6 +2370,14 @@ def main() -> int:
             "## Catalyst Source Mix\n\n",
             "## Catalyst Source Mix\n\n"
             "_Panel CSV: empty catalyst_source treated as `none`"
+            " (CSV ambiguity)._\n\n",
+            1,
+        )
+    if is_panel and "## Catalyst Event Type Mix" in md:
+        md = md.replace(
+            "## Catalyst Event Type Mix\n\n",
+            "## Catalyst Event Type Mix\n\n"
+            "_Panel CSV: empty catalyst_event_type treated as `none`"
             " (CSV ambiguity)._\n\n",
             1,
         )

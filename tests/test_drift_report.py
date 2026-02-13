@@ -30,6 +30,7 @@ from run_drift_report import (
     _parse_pipe_separated,
     _catalyst_coverage_metrics,
     _catalyst_source_metrics,
+    _catalyst_event_type_metrics,
     _returns_source_metrics,
     _synthesize_actionable_rank,
     compute_attribution,
@@ -1946,6 +1947,104 @@ class TestCatalystSourceMix:
         md = generate_drift_report_md(metrics, "OK", [], guardrails)
         assert "warn_cs_ctgov_share_low" in md
         assert "warn_cs_unknown_share_high" in md
+
+
+# ---------------------------------------------------------------------------
+# Catalyst event type mix
+# ---------------------------------------------------------------------------
+
+class TestCatalystEventTypeMix:
+    """Tests for catalyst event type mix metrics and report section."""
+
+    def test_known_distribution(self):
+        """Known event type distribution → correct counts and shares."""
+        r = _make_rankings(n_dev=20)
+        r["tier_dev"] = ["A"] * 20
+        r["catalyst_event_type"] = (
+            ["DATA_READOUT"] * 10
+            + ["FDA_DECISION"] * 3
+            + ["FDA_ADCOM"] * 2
+            + [""] * 3   # → none
+            + [None] * 2  # → none (default: relaxed)
+        )
+        result = _catalyst_event_type_metrics(r)
+        assert result is not None
+        assert result["ct_n_eligible"] == 20
+        assert result["ct_data_readout_count"] == 10
+        assert result["ct_data_readout_share_pct"] == 50.0
+        assert result["ct_fda_decision_count"] == 3
+        assert result["ct_fda_adcom_count"] == 2
+        assert result["ct_none_count"] == 5  # 3 empty + 2 None
+        assert result["ct_unknown_count"] == 0
+
+    def test_default_nan_maps_to_none(self):
+        """Default (no strict): NaN/None → 'none'."""
+        r = _make_rankings(n_dev=4)
+        r["tier_dev"] = ["A"] * 4
+        r["catalyst_event_type"] = ["DATA_READOUT", "", None, "  "]
+        result = _catalyst_event_type_metrics(r)
+        assert result["ct_none_count"] == 3
+        assert result["ct_unknown_count"] == 0
+
+    def test_strict_missing_marks_unknown_when_dated_catalyst(self):
+        """strict_missing: dated catalyst with missing event type → 'unknown'."""
+        r = _make_rankings(n_dev=3)
+        r["tier_dev"] = ["A"] * 3
+        r["catalyst_mode"] = ["specific_days", "no_upcoming", "blended_window"]
+        r["catalyst_event_type"] = [None, None, ""]
+        result = _catalyst_event_type_metrics(r, strict_missing=True)
+        assert result["ct_unknown_count"] == 2  # specific_days + blended_window
+        assert result["ct_none_count"] == 1  # no_upcoming
+
+    def test_enrichment_aliases(self):
+        """Enrichment pipeline names normalize to canonical keys."""
+        r = _make_rankings(n_dev=4)
+        r["tier_dev"] = ["A"] * 4
+        r["catalyst_event_type"] = [
+            "data_readout",   # lowercase → DATA_READOUT
+            "fda_decision",   # lowercase → FDA_DECISION
+            "fda_adcom",      # lowercase → FDA_ADCOM
+            "trial_ongoing",  # lowercase → TRIAL_ONGOING
+        ]
+        result = _catalyst_event_type_metrics(r)
+        assert result["ct_data_readout_count"] == 1
+        assert result["ct_fda_decision_count"] == 1
+        assert result["ct_fda_adcom_count"] == 1
+        assert result["ct_trial_ongoing_count"] == 1
+
+    def test_none_when_column_missing(self):
+        """Returns None when catalyst_event_type column absent."""
+        r = _make_rankings(n_dev=10)
+        assert _catalyst_event_type_metrics(r) is None
+
+    def test_snapshot_metrics_include_ct(self):
+        """compute_snapshot_metrics includes ct_ keys when columns present."""
+        r = _make_rankings(n_dev=20)
+        r["tier_dev"] = ["A"] * 20
+        r["catalyst_event_type"] = ["DATA_READOUT"] * 15 + [""] * 5
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_snapshot_metrics(snap)
+        assert "ct_n_eligible" in metrics
+        assert "ct_data_readout_share_pct" in metrics
+
+    def test_md_report_includes_ct_section(self):
+        """Report includes Catalyst Event Type Mix section when data present."""
+        r = _make_rankings(n_dev=20)
+        r["tier_dev"] = ["A"] * 20
+        r["catalyst_event_type"] = ["DATA_READOUT"] * 15 + [""] * 5
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_drift_metrics([snap])
+        md = generate_drift_report_md(metrics, "OK", [], DriftGuardrails())
+        assert "## Catalyst Event Type Mix" in md
+        assert "DATA_READOUT" in md
+
+    def test_md_report_no_ct_section_when_missing(self):
+        """Report omits Catalyst Event Type Mix when column absent."""
+        r = _make_rankings(n_dev=20)
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_drift_metrics([snap])
+        md = generate_drift_report_md(metrics, "OK", [], DriftGuardrails())
+        assert "## Catalyst Event Type Mix" not in md
 
 
 # ---------------------------------------------------------------------------
