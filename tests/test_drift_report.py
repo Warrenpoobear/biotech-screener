@@ -2133,6 +2133,84 @@ class TestCatalystEventTypeMix:
         assert "warn_ct_unknown_share_high" in md
         assert "warn_ct_fda_share_spike" in md
 
+    # -- Offender appendix tests --
+
+    def test_unknown_offenders_listed(self):
+        """Unknown offenders table appears when dated catalyst has blank type."""
+        r = _make_rankings(n_dev=10)
+        r["tier_dev"] = ["A"] * 10
+        r["catalyst_mode"] = ["specific_days"] * 5 + ["no_upcoming"] * 5
+        r["catalyst_event_type"] = [None] * 3 + ["DATA_READOUT"] * 2 + [""] * 5
+        r["catalyst_source"] = ["CTGOV_CALENDAR"] * 10
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_drift_metrics([snap], strict_cs_missing=True)
+        md = generate_drift_report_md(metrics, "OK", [], DriftGuardrails())
+        assert "### Unknown Event Type" in md
+        assert "Top Offenders" in md
+
+    def test_unknown_offenders_absent_when_none(self):
+        """No unknown offenders section when all event types are populated."""
+        r = _make_rankings(n_dev=10)
+        r["tier_dev"] = ["A"] * 10
+        r["catalyst_event_type"] = ["DATA_READOUT"] * 5 + ["FDA_DECISION"] * 5
+        r["catalyst_source"] = ["CTGOV_CALENDAR"] * 5 + ["FDA_CALENDAR"] * 5
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_drift_metrics([snap])
+        md = generate_drift_report_md(metrics, "OK", [], DriftGuardrails())
+        assert "### Unknown Event Type" not in md
+
+    def test_fda_offenders_listed(self):
+        """FDA-tagged tickers table appears when FDA events exist."""
+        r = _make_rankings(n_dev=10)
+        r["tier_dev"] = ["A"] * 10
+        r["catalyst_event_type"] = (
+            ["FDA_DECISION"] * 3 + ["FDA_ADCOM"] * 2 + ["DATA_READOUT"] * 5
+        )
+        r["catalyst_source"] = (
+            ["FDA_CALENDAR"] * 5 + ["CTGOV_CALENDAR"] * 5
+        )
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_drift_metrics([snap])
+        md = generate_drift_report_md(metrics, "OK", [], DriftGuardrails())
+        assert "### FDA-Tagged Tickers" in md
+        assert "FDA_DECISION" in md
+
+    def test_fda_offenders_absent_when_no_fda(self):
+        """No FDA offenders section when no FDA events present."""
+        r = _make_rankings(n_dev=10)
+        r["tier_dev"] = ["A"] * 10
+        r["catalyst_event_type"] = ["DATA_READOUT"] * 10
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_drift_metrics([snap])
+        md = generate_drift_report_md(metrics, "OK", [], DriftGuardrails())
+        assert "### FDA-Tagged Tickers" not in md
+
+    def test_unknown_offender_fields(self):
+        """Unknown offenders have ticker, catalyst_mode, catalyst_source."""
+        r = _make_rankings(n_dev=4)
+        r["tier_dev"] = ["A"] * 4
+        r["catalyst_mode"] = ["specific_days", "blended_window", "no_upcoming", "specific_days"]
+        r["catalyst_event_type"] = [None, "", "DATA_READOUT", "DATA_READOUT"]
+        r["catalyst_source"] = ["CTGOV_CALENDAR", "FDA_CALENDAR", "CTGOV_CALENDAR", "CTGOV_CALENDAR"]
+        result = _catalyst_event_type_metrics(r, strict_missing=True)
+        offenders = result["_ct_unknown_offenders"]
+        assert len(offenders) == 2
+        assert offenders[0]["catalyst_mode"] == "specific_days"
+        assert offenders[1]["catalyst_mode"] == "blended_window"
+
+    def test_fda_offender_fields(self):
+        """FDA offenders have ticker, event_type, catalyst_source."""
+        r = _make_rankings(n_dev=4)
+        r["tier_dev"] = ["A"] * 4
+        r["catalyst_event_type"] = ["FDA_DECISION", "FDA_ADCOM", "DATA_READOUT", ""]
+        r["catalyst_source"] = ["FDA_CALENDAR", "FDA_CALENDAR", "CTGOV_CALENDAR", ""]
+        result = _catalyst_event_type_metrics(r)
+        offenders = result["_ct_fda_offenders"]
+        assert len(offenders) == 2
+        assert offenders[0]["event_type"] == "FDA_DECISION"
+        assert offenders[1]["event_type"] == "FDA_ADCOM"
+        assert offenders[0]["catalyst_source"] == "FDA_CALENDAR"
+
 
 # ---------------------------------------------------------------------------
 # Panel-as-snapshots

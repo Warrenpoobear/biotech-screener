@@ -612,6 +612,8 @@ def _catalyst_source_metrics(
 
 # --- Catalyst event type mix ---------------------------------------------------
 
+_CT_MAX_OFFENDERS = 10  # max tickers listed in ct_* offender appendix
+
 _CATALYST_EVENT_TYPE_KEYS = (
     "DATA_READOUT", "FDA_DECISION", "FDA_ADCOM",
     "TRIAL_ONGOING", "none", "unknown",
@@ -704,6 +706,43 @@ def _catalyst_event_type_metrics(
         c = counts.get(et, 0)
         result[f"ct_{key}_count"] = c
         result[f"ct_{key}_share_pct"] = round(c / n_eligible * 100, 1)
+
+    # Offender lists for actionable WARN breadcrumbs
+    ticker_col = "ticker" if "ticker" in eligible_dev.columns else None
+    if ticker_col:
+        tickers = eligible_dev[ticker_col].tolist()
+        cat_modes = (
+            eligible_dev["catalyst_mode"].astype(str).fillna("").tolist()
+            if "catalyst_mode" in eligible_dev.columns
+            else [""] * n_eligible
+        )
+        cat_sources = (
+            eligible_dev["catalyst_source"].astype(str).fillna("").tolist()
+            if "catalyst_source" in eligible_dev.columns
+            else [""] * n_eligible
+        )
+
+        # Unknown offenders: dated catalyst but missing/unknown event type
+        unknown_offenders = []
+        for i, norm_type in enumerate(types):
+            if norm_type == "unknown":
+                unknown_offenders.append({
+                    "ticker": tickers[i],
+                    "catalyst_mode": cat_modes[i],
+                    "catalyst_source": cat_sources[i],
+                })
+        result["_ct_unknown_offenders"] = unknown_offenders
+
+        # FDA offenders: tickers tagged FDA_DECISION or FDA_ADCOM
+        fda_offenders = []
+        for i, norm_type in enumerate(types):
+            if norm_type in ("FDA_DECISION", "FDA_ADCOM"):
+                fda_offenders.append({
+                    "ticker": tickers[i],
+                    "event_type": norm_type,
+                    "catalyst_source": cat_sources[i],
+                })
+        result["_ct_fda_offenders"] = fda_offenders
 
     return result
 
@@ -1921,6 +1960,54 @@ def generate_drift_report_md(
             share_str = f"{share:.1f}%" if share is not None else "N/A"
             lines.append(f"| {et:<22} | {cnt:>5} | {share_str:>12} |")
         lines.append("")
+
+        # Top offenders: unknown event type (actionable breadcrumb)
+        unknown_offenders = current.get("_ct_unknown_offenders", [])
+        if unknown_offenders:
+            lines.append("### Unknown Event Type — Top Offenders")
+            lines.append("")
+            lines.append(
+                "Dated-catalyst tickers with missing or unrecognized event type."
+            )
+            lines.append("")
+            lines.append("| Ticker | Catalyst Mode  | Catalyst Source      |")
+            lines.append("|--------|----------------|----------------------|")
+            for off in unknown_offenders[:_CT_MAX_OFFENDERS]:
+                lines.append(
+                    f"| {off['ticker']:<6} "
+                    f"| {off['catalyst_mode']:<14} "
+                    f"| {off['catalyst_source'] or '—':<20} |"
+                )
+            if len(unknown_offenders) > _CT_MAX_OFFENDERS:
+                lines.append(
+                    f"| ...    | ({len(unknown_offenders) - _CT_MAX_OFFENDERS} more)"
+                    f"{'':<14} | {'':<20} |"
+                )
+            lines.append("")
+
+        # Top offenders: FDA spike (actionable breadcrumb)
+        fda_offenders = current.get("_ct_fda_offenders", [])
+        if fda_offenders:
+            lines.append("### FDA-Tagged Tickers")
+            lines.append("")
+            lines.append(
+                "Tickers labeled FDA_DECISION or FDA_ADCOM — verify source provenance."
+            )
+            lines.append("")
+            lines.append("| Ticker | Event Type     | Catalyst Source      |")
+            lines.append("|--------|----------------|----------------------|")
+            for off in fda_offenders[:_CT_MAX_OFFENDERS]:
+                lines.append(
+                    f"| {off['ticker']:<6} "
+                    f"| {off['event_type']:<14} "
+                    f"| {off['catalyst_source'] or '—':<20} |"
+                )
+            if len(fda_offenders) > _CT_MAX_OFFENDERS:
+                lines.append(
+                    f"| ...    | ({len(fda_offenders) - _CT_MAX_OFFENDERS} more)"
+                    f"{'':<14} | {'':<20} |"
+                )
+            lines.append("")
 
     # Catalyst Priority Distribution (only if cat_priority data present)
     has_cp = current.get("cp_n_eligible") is not None
