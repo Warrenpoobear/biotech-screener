@@ -704,6 +704,34 @@ def _catalyst_event_type_metrics(
     return result
 
 
+def _catalyst_priority_metrics(
+    rankings: pd.DataFrame,
+) -> Optional[Dict[str, Any]]:
+    """Priority distribution for the cat_priority column (when present).
+
+    Returns counts per priority bucket among eligible dev-stage tickers.
+    Returns None when cat_priority column is absent.
+    """
+    if "cat_priority" not in rankings.columns or "tier_dev" not in rankings.columns:
+        return None
+
+    dev = rankings[rankings["archetype"] == "drug_developer"]
+    eligible_dev = dev[dev["eligible"] == "1"] if "eligible" in dev.columns else dev
+    n = len(eligible_dev)
+    if n == 0:
+        return {"cp_n_eligible": 0}
+
+    vals = eligible_dev["cat_priority"].fillna(9).astype(int)
+    result: Dict[str, Any] = {"cp_n_eligible": n}
+    # Named buckets for common priority values
+    _LABELS = {1: "fda", 2: "readout", 3: "ongoing", 9: "none", 99: "unknown"}
+    for prio, label in _LABELS.items():
+        c = int((vals == prio).sum())
+        result[f"cp_{label}_count"] = c
+        result[f"cp_{label}_share_pct"] = round(c / n * 100, 1)
+    return result
+
+
 def _cost_metrics(
     rankings: pd.DataFrame, cap_bps: float = 1000.0,
 ) -> Optional[Dict[str, Any]]:
@@ -890,6 +918,11 @@ def compute_snapshot_metrics(
     ct = _catalyst_event_type_metrics(rankings, strict_missing=strict_cs_missing)
     if ct is not None:
         metrics.update(ct)
+
+    # Catalyst priority distribution
+    cp = _catalyst_priority_metrics(rankings)
+    if cp is not None:
+        metrics.update(cp)
 
     # Top-25 tickers (for overlap computation)
     metrics["_top25"] = _top_n_tickers(rankings, 25)
@@ -1860,6 +1893,30 @@ def generate_drift_report_md(
             share = current.get(f"ct_{key}_share_pct")
             share_str = f"{share:.1f}%" if share is not None else "N/A"
             lines.append(f"| {et:<22} | {cnt:>5} | {share_str:>12} |")
+        lines.append("")
+
+    # Catalyst Priority Distribution (only if cat_priority data present)
+    has_cp = current.get("cp_n_eligible") is not None
+    if has_cp:
+        lines.append("## Catalyst Priority Distribution")
+        lines.append("")
+        n_elig_cp = current.get("cp_n_eligible", 0)
+        lines.append(f"Eligible dev tickers: {n_elig_cp}")
+        lines.append("")
+        lines.append("| Priority | Label    | Count | Share (elig) |")
+        lines.append("|----------|----------|-------|--------------|")
+        _CP_ROWS = [
+            (1, "fda", "FDA"),
+            (2, "readout", "Readout"),
+            (3, "ongoing", "Ongoing"),
+            (9, "none", "None"),
+            (99, "unknown", "Unknown"),
+        ]
+        for prio, key, label in _CP_ROWS:
+            cnt = current.get(f"cp_{key}_count", 0)
+            share = current.get(f"cp_{key}_share_pct")
+            share_str = f"{share:.1f}%" if share is not None else "N/A"
+            lines.append(f"| {prio:>8} | {label:<8} | {cnt:>5} | {share_str:>12} |")
         lines.append("")
 
     # Rolling window table

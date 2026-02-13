@@ -31,10 +31,10 @@
       "created_at": "2026-02-13",
       "engine_version": "v1.3.0",
       "description": "No logic change. Version bump to pair with drift guardrail calibration (496b27b).",
-      "status": "active",
+      "status": "retired",
       "requires_replay": false,
-      "notes": "Identical parameters to v1.2.1_candidate. Drift guardrails tightened: rs_morningstar 70→85%, rs_unknown 10→8.5%, cat_eligible 80→95%, cs_ctgov 50→37%.",
-      "updated_by": "bump_ruleset.py",
+      "notes": "Identical parameters to v1.2.1_candidate. Drift guardrails tightened: rs_morningstar 70→85%, rs_unknown 10→8.5%, cat_eligible 80→95%, cs_ctgov 50→37%. Superseded by v1.3.0_candidate (enable_catalyst_priority).",
+      "updated_by": "promote_ruleset.py",
       "updated_at": "2026-02-13T00:00:00Z"
     },
     {
@@ -77,10 +77,10 @@
       "created_at": "2026-02-13",
       "engine_version": "v1.3.0",
       "description": "Catalyst source/type ordering policy (enable_catalyst_priority=true)",
-      "status": "candidate",
-      "requires_replay": true,
-      "notes": "Same params as v1.2.2 + enable_catalyst_priority=true. FDA events (priority=1) sort above CTGOV readouts (2) within same tier.",
-      "updated_by": "bump_ruleset.py",
+      "status": "active",
+      "requires_replay": false,
+      "notes": "Same params as v1.2.2 + enable_catalyst_priority=true. FDA events (priority=1) sort above CTGOV readouts (2) within same tier. Backtest acceptance: 0 delta across 22 snapshots.",
+      "updated_by": "promote_ruleset.py",
       "updated_at": "2026-02-13T00:00:00Z"
     },
     {

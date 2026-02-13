@@ -220,6 +220,7 @@ class TestPanelSchema:
             "returns_source",
             "catalyst_source",
             "catalyst_event_type",
+            "cat_priority",
         ]
         assert PANEL_COLUMNS == expected
 
@@ -260,6 +261,7 @@ class TestPanelSchema:
             "catalyst_tilt_mult", "catalyst_tilt_applied",
             "mom_state_tilt_mult", "mom_state_tilt_applied",
             "catalyst_source", "catalyst_event_type",
+            "cat_priority",
         }
         for r in results:
             assert set(r.keys()) == expected_keys

@@ -40,7 +40,7 @@ DEFAULT_PANEL = PROJECT_ROOT / "artifacts" / "walkforward_panel_diag.csv"
 DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "artifacts"
 DEFAULT_PRICE_CSV = PROJECT_ROOT / "production_data" / "price_history.csv"
 
-# Active ruleset parameters (bf6815e2)
+# Active ruleset parameters (f3454ef7)
 A_FLOOR = 0.60
 B_FLOOR = 0.30
 CATALYST_NEAR = 120

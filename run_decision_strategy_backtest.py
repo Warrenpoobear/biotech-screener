@@ -54,6 +54,7 @@ from decision_engine import (
     compute_gate_margins,
     compute_target_weights,
     compute_tier_margins,
+    resolve_catalyst_priority,
 )
 from run_decision_ruleset_sweep import (
     ArchiveData,
@@ -102,6 +103,7 @@ PANEL_COLUMNS = [
     "returns_source",
     "catalyst_source",
     "catalyst_event_type",
+    "cat_priority",
 ]
 
 
@@ -441,6 +443,11 @@ def build_all_dev_decisions(
             "mom_state_tilt_applied": fields.get("mom_state_tilt_applied", "0"),
             "catalyst_source": rec.get("catalyst_source", ""),
             "catalyst_event_type": rec.get("catalyst_event_type", ""),
+            "cat_priority": resolve_catalyst_priority(
+                rec.get("catalyst_event_type", ""),
+                rec.get("catalyst_source", ""),
+                ruleset,
+            ),
         })
 
     return results
@@ -868,6 +875,11 @@ def run_strategy_backtest(
                     "returns_source": _get_return_source(chained, ticker, date_str, 60),
                     "catalyst_source": dev.get("catalyst_source", ""),
                     "catalyst_event_type": dev.get("catalyst_event_type", ""),
+                    "cat_priority": resolve_catalyst_priority(
+                        dev.get("catalyst_event_type", ""),
+                        dev.get("catalyst_source", ""),
+                        ruleset,
+                    ),
                 })
 
             # Accumulate cost telemetry across snapshots

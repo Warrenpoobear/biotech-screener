@@ -6,6 +6,32 @@ Format: `[engine_version] ruleset_id — date — summary`
 
 ---
 
+## [v1.3.0] f3454ef7 — 2026-02-13 — Promote v1.3.0 + cat_priority observability
+
+**Promotion**: `v1.3.0_candidate.json` (ID: f3454ef7) promoted to active.
+`v1.2.2_candidate.json` (ID: bf6815e2) retired.
+
+**Backtest acceptance**: v1.2.2 vs v1.3.0 side-by-side on 2025-only panel (10 snapshots).
+Zero delta across all metrics: portfolio membership, ranks, weights, tier distribution,
+20d/60d spread, and turnover. Expected — archives are 63.3% empty + 36.2% DATA_READOUT
+(same priority=2), only 0.5% FDA_DECISION.
+
+**Observability — `cat_priority` column**:
+- Added to `SNAPSHOT_COLUMNS` in `run_screen.py` (rankings.csv)
+- Added to `PHASE2_PORTFOLIO_COLUMNS` in `run_screen.py` (phase2 portfolio CSV)
+- Added to `PANEL_COLUMNS` in `run_decision_strategy_backtest.py` (walkforward panel)
+- `resolve_catalyst_priority()` called at all assembly points
+- Drift report: new "Catalyst Priority Distribution" section (FDA/readout/ongoing/none/unknown counts + shares)
+
+**Ruleset ID stability fix** (commit 6950d0f): `ruleset_id` now hashes raw JSON file
+content (via `from_json`), not expanded dataclass. Future schema additions no longer
+cascade-rename historical ruleset IDs. 5 new tests in `TestRulesetIdSchemaStability`.
+
+**Governance**: All pinned IDs cascaded (bf6815e2 → f3454ef7). Default paths updated.
+Regression test re-pinned. Full suite green.
+
+---
+
 ## [v1.3.0] bf6815e2 + f3454ef7 — 2026-02-13 — Catalyst source/type ordering policy
 
 **Parameters added** (schema expansion, all rulesets):

@@ -120,6 +120,7 @@ from decision_engine import (
     compute_decision_fields,
     compute_actionable_sort_key,
     compute_target_weights,
+    resolve_catalyst_priority,
     ACTIONABLE_COLUMNS,
 )
 from backtest.cost_model import CostSchedule, estimate_trade_cost
@@ -1324,13 +1325,14 @@ SNAPSHOT_COLUMNS = [
     # Catalyst source provenance (for drift monitoring)
     "catalyst_source",
     "catalyst_event_type",
+    "cat_priority",
 ]
 
 # Phase-2 decision portfolio output columns
 PHASE2_PORTFOLIO_COLUMNS = [
     "ticker", "tier_dev", "actionable_rank", "size_band",
     "target_weight_pct", "tier_reason", "size_reasons",
-    "catalyst_mode", "catalyst_days", "mom_state", "risk_flags",
+    "catalyst_mode", "catalyst_days", "cat_priority", "mom_state", "risk_flags",
     "composite_rank", "composite_score", "archetype",
     "clinical_optionality_pct_dev",
     "decision_engine_version", "decision_engine_ruleset_id",
@@ -1339,11 +1341,11 @@ PHASE2_PORTFOLIO_COLUMNS = [
 # Phase-2 operational defaults
 PHASE2_DEFAULT_RULESET_PATH = (
     Path(__file__).resolve().parent
-    / "production_data" / "decision_rulesets" / "v1.2.2_candidate.json"
+    / "production_data" / "decision_rulesets" / "v1.3.0_candidate.json"
 )
 PHASE2_DEFAULT_TIER_FILTER = ["A", "B"]
 PHASE2_DEFAULT_TOP_K = 20
-PHASE2_PINNED_RULESET_ID = "bf6815e2"
+PHASE2_PINNED_RULESET_ID = "f3454ef7"
 PHASE2_DEFAULT_HEALTH_THRESHOLDS_PATH = (
     Path(__file__).resolve().parent
     / "production_data" / "phase2_health_thresholds" / "v1.json"
@@ -1797,6 +1799,12 @@ def save_validation_snapshot(
         # Catalyst source provenance: extract from Module 3 nearest event
         row["catalyst_source"] = _nearest_catalyst_source(m3_summaries, ticker)
         row["catalyst_event_type"] = _nearest_catalyst_event_type(m3_summaries, ticker)
+
+        # Catalyst priority (resolve from event_type + source via ruleset policy)
+        rs = ruleset or DEFAULT_RULESET
+        row["cat_priority"] = resolve_catalyst_priority(
+            row["catalyst_event_type"], row["catalyst_source"], rs,
+        )
 
     # --- Actionable ordering: sort + assign rank + compute weights ---
     # Sort all rows by actionable sort key

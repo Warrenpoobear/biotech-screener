@@ -66,7 +66,7 @@ from run_phase2_snapshot_delta import (
 
 ARCHIVE_DIR = PROJECT_ROOT / "data" / "archives"
 PHASE2_RULESET_PATH = (
-    PROJECT_ROOT / "production_data" / "decision_rulesets" / "v1.2.2_candidate.json"
+    PROJECT_ROOT / "production_data" / "decision_rulesets" / "v1.3.0_candidate.json"
 )
 PHASE2_HEALTH_THRESHOLDS_PATH = (
     PROJECT_ROOT / "production_data" / "phase2_health_thresholds" / "v1.json"
