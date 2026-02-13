@@ -1479,7 +1479,7 @@ class TestReturnsSourceMix:
             self._metrics_with_current(
                 rs_unknown_share_pct=5.0,
                 rs_csv_outlier_override_share_pct=0.5,
-                rs_morningstar_share_pct=80.0,
+                rs_morningstar_share_pct=90.0,
             ),
             DriftGuardrails(),
         )
@@ -1695,7 +1695,7 @@ class TestCatalystCoverage:
     def test_ok_cat_within_bounds(self):
         """No WARN when catalyst coverage is healthy."""
         m = self._metrics_with_current(
-            cat_eligible_share_pct=90.0,
+            cat_eligible_share_pct=98.0,
             cat_specific_days_share_pct=60.0,
         )
         status, reasons, _, _ = evaluate_guardrails(m, DriftGuardrails())
@@ -1885,7 +1885,7 @@ class TestCatalystSourceMix:
     def test_warn_cs_ctgov_share_low(self):
         """WARN fires when CTGOV share < threshold (and regime is healthy)."""
         m = self._metrics_with_current(
-            cs_ctgov_calendar_share_pct=40.0,
+            cs_ctgov_calendar_share_pct=30.0,
             cat_specific_days_share_pct=50.0,  # regime gate passes
         )
         status, reasons, _, _ = evaluate_guardrails(m, DriftGuardrails())
@@ -2333,7 +2333,7 @@ class TestSuggestedGuardrails:
         )
         ms = {s["metric"]: s for s in result}
         assert ms["cat_eligible_share_pct"]["tighter"] is True
-        assert ms["cat_eligible_share_pct"]["current_threshold"] == 80.0
+        assert ms["cat_eligible_share_pct"]["current_threshold"] == 95.0
 
     def test_report_section_appears(self):
         """Suggestions section appears in markdown when suggestions exist."""

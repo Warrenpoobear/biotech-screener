@@ -96,16 +96,16 @@ class DriftGuardrails:
     warn_dd_rel_margin_rescue_share_high: float = 5.0  # WARN if rescued share > 5%
 
     # Returns-source mix
-    warn_rs_unknown_share_high: float = 10.0       # WARN if unknown source > 10%
+    warn_rs_unknown_share_high: float = 8.5        # WARN if unknown source > 8.5%
     warn_rs_csv_outlier_override_share_high: float = 1.0  # WARN if outlier overrides > 1%
-    warn_rs_morningstar_share_low: float = 70.0    # WARN if Morningstar share < 70%
+    warn_rs_morningstar_share_low: float = 85.0    # WARN if Morningstar share < 85%
 
     # Catalyst coverage
-    warn_cat_eligible_share_low: float = 80.0         # WARN if eligible % of dev < 80%
+    warn_cat_eligible_share_low: float = 95.0         # WARN if eligible % of dev < 95%
     warn_cat_specific_days_share_low: float = 40.0    # WARN if specific_days % of eligible < 40%
 
     # Catalyst source mix
-    warn_cs_ctgov_share_low: float = 50.0             # WARN if CTGOV_CALENDAR share < 50%
+    warn_cs_ctgov_share_low: float = 37.0             # WARN if CTGOV_CALENDAR share < 37%
     warn_cs_unknown_share_high: float = 5.0           # WARN if unknown source share > 5%
 
     # Adaptive WARN layer
