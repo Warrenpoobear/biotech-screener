@@ -65,6 +65,7 @@ from run_decision_ruleset_sweep import (
 from run_rank_ic_backtest import (
     ARCHIVE_DIR,
     OUTPUT_DIR,
+    PRICE_CSV,
     _winsorize,
     compute_as_of_fence,
     compute_forward_returns,
@@ -1416,6 +1417,10 @@ def main():
         help=f"Archive directory (default: {ARCHIVE_DIR})",
     )
     parser.add_argument(
+        "--price-csv", type=str, default=None,
+        help="Price CSV path for returns (default: production_data/price_history.csv)",
+    )
+    parser.add_argument(
         "--dry-run", action="store_true",
         help="Print config + archive count, exit",
     )
@@ -1440,6 +1445,7 @@ def main():
         "horizons": HORIZONS,
         "start": args.start,
         "end": args.end,
+        "price_csv": args.price_csv or str(PRICE_CSV),
         "generated": datetime.now().isoformat(timespec="seconds"),
     }
 
@@ -1466,7 +1472,11 @@ def main():
 
     # Initialize providers
     print("\nInitializing returns providers ...")
-    chained, _ms_provider, csv_provider = init_providers()
+    provider_kwargs = {}
+    if args.price_csv:
+        provider_kwargs["price_csv"] = Path(args.price_csv)
+        print(f"  Using price CSV: {args.price_csv}")
+    chained, _ms_provider, csv_provider = init_providers(**provider_kwargs)
 
     # Run backtest
     print("\nRunning strategy backtest ...")
