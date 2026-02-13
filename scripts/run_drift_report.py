@@ -516,16 +516,18 @@ _CATALYST_SOURCE_KEYS = (
 
 def _catalyst_source_metrics(
     rankings: pd.DataFrame,
-    panel_mode: bool = False,
+    *,
+    strict_missing: bool = False,
 ) -> Optional[Dict[str, Any]]:
     """Catalyst source mix metrics from the ``catalyst_source`` column.
 
     Among eligible dev tickers (non-blank ``tier_dev``), counts per-source
     distribution.  Maps ``""`` → ``"none"`` (no catalyst).
 
-    NaN/None handling depends on mode:
-    - **panel_mode=True**: NaN → ``"none"`` (CSV ambiguity collapses empty to NaN)
-    - **panel_mode=False**: NaN → ``"unknown"`` (signals missing/broken data)
+    When ``strict_missing=True`` and ``catalyst_mode`` column exists,
+    tickers with a dated catalyst (``specific_days`` or ``blended_window``)
+    but missing ``catalyst_source`` are counted as ``"unknown"`` (broken
+    data).  Otherwise missing → ``"none"``.
 
     Returns None when column is absent.
     """
@@ -569,15 +571,29 @@ def _catalyst_source_metrics(
         "adcom": "FDA_CALENDAR",
     }
 
-    def _norm_source(v) -> str:
-        if v is None or (isinstance(v, float) and pd.isna(v)):
-            return "none" if panel_mode else "unknown"
-        s = str(v).strip()
-        if not s:
+    modes: Optional[pd.Series] = None
+    if strict_missing and "catalyst_mode" in eligible_dev.columns:
+        modes = eligible_dev["catalyst_mode"].astype(str).fillna("")
+
+    def _norm_source(v, mode: str = "") -> str:
+        missing = (v is None) or (isinstance(v, float) and pd.isna(v)) or (str(v).strip() == "")
+        if missing:
+            if strict_missing and mode in ("specific_days", "blended_window"):
+                return "unknown"
             return "none"
+        s = str(v).strip()
         return _SOURCE_ALIASES.get(s, s)
 
-    sources = [_norm_source(v) for v in eligible_dev["catalyst_source"]]
+    if modes is None:
+        sources = [_norm_source(v) for v in eligible_dev["catalyst_source"]]
+    else:
+        sources = [
+            _norm_source(v, m)
+            for v, m in zip(
+                eligible_dev["catalyst_source"].tolist(),
+                modes.tolist(),
+            )
+        ]
     counts = Counter(sources)
 
     result = {"cs_n_eligible": n_eligible}
@@ -686,7 +702,8 @@ def _cost_metrics(
 
 def compute_snapshot_metrics(
     snap: SnapshotData,
-    panel_mode: bool = False,
+    *,
+    strict_cs_missing: bool = False,
 ) -> Dict[str, Any]:
     """Compute drift metrics for a single snapshot."""
     rankings = snap.rankings
@@ -767,7 +784,7 @@ def compute_snapshot_metrics(
         metrics.update(cat)
 
     # Catalyst source mix
-    cs = _catalyst_source_metrics(rankings, panel_mode=panel_mode)
+    cs = _catalyst_source_metrics(rankings, strict_missing=strict_cs_missing)
     if cs is not None:
         metrics.update(cs)
 
@@ -779,7 +796,8 @@ def compute_snapshot_metrics(
 
 def compute_drift_metrics(
     snapshots: List[SnapshotData],
-    panel_mode: bool = False,
+    *,
+    strict_cs_missing: bool = False,
 ) -> Dict[str, Any]:
     """Compute per-snapshot metrics plus rolling aggregates.
 
@@ -795,7 +813,7 @@ def compute_drift_metrics(
 
     all_metrics: List[Dict[str, Any]] = []
     for snap in snapshots:
-        m = compute_snapshot_metrics(snap, panel_mode=panel_mode)
+        m = compute_snapshot_metrics(snap, strict_cs_missing=strict_cs_missing)
         all_metrics.append(m)
 
     # Compute top-25 overlap (vs prior snapshot)
@@ -1578,7 +1596,6 @@ def generate_drift_report_md(
     adaptive_warnings: Optional[List[str]] = None,
     attribution: Optional[Dict[str, Any]] = None,
     suggestions: Optional[List[Dict[str, Any]]] = None,
-    panel_mode: bool = False,
 ) -> str:
     """Generate a Markdown drift report."""
     current = metrics.get("current", {})
@@ -1715,12 +1732,6 @@ def generate_drift_report_md(
             share = current.get(f"cs_{key}_share_pct")
             share_str = f"{share:.1f}%" if share is not None else "N/A"
             lines.append(f"| {src:<22} | {cnt:>5} | {share_str:>12} |")
-        if panel_mode:
-            lines.append("")
-            lines.append(
-                "_Panel CSV: empty/NaN catalyst_source treated as `none`"
-                " (CSV ambiguity)._"
-            )
         lines.append("")
 
     # Rolling window table
@@ -2183,7 +2194,9 @@ def main() -> int:
 
     # Compute metrics
     is_panel = args.panel is not None
-    metrics = compute_drift_metrics(snapshots, panel_mode=is_panel)
+    metrics = compute_drift_metrics(
+        snapshots, strict_cs_missing=not is_panel,
+    )
 
     # Evaluate guardrails (FAIL layer — absolute thresholds)
     fail_status, fail_reasons, rollback, recommended_action = evaluate_guardrails(
@@ -2214,8 +2227,15 @@ def main() -> int:
         metrics, final_status, fail_reasons, guardrails, rollback,
         recommended_action, adaptive_warnings=warn_reasons or None,
         attribution=attribution, suggestions=suggestions or None,
-        panel_mode=is_panel,
     )
+    if is_panel and "## Catalyst Source Mix" in md:
+        md = md.replace(
+            "## Catalyst Source Mix\n\n",
+            "## Catalyst Source Mix\n\n"
+            "_Panel CSV: empty catalyst_source treated as `none`"
+            " (CSV ambiguity)._\n\n",
+            1,
+        )
     if args.panel:
         d0, d1 = snapshots[0].date, snapshots[-1].date
         md = (
