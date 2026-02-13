@@ -2186,17 +2186,20 @@ class TestCatalystEventTypeMix:
         assert "### FDA-Tagged Tickers" not in md
 
     def test_unknown_offender_fields(self):
-        """Unknown offenders have ticker, catalyst_mode, catalyst_source."""
+        """Unknown offenders have ticker, catalyst_mode, catalyst_source, catalyst_days."""
         r = _make_rankings(n_dev=4)
         r["tier_dev"] = ["A"] * 4
         r["catalyst_mode"] = ["specific_days", "blended_window", "no_upcoming", "specific_days"]
         r["catalyst_event_type"] = [None, "", "DATA_READOUT", "DATA_READOUT"]
         r["catalyst_source"] = ["CTGOV_CALENDAR", "FDA_CALENDAR", "CTGOV_CALENDAR", "CTGOV_CALENDAR"]
+        r["de_catalyst_days"] = ["45", "120", "30", "60"]
         result = _catalyst_event_type_metrics(r, strict_missing=True)
         offenders = result["_ct_unknown_offenders"]
         assert len(offenders) == 2
         assert offenders[0]["catalyst_mode"] == "specific_days"
         assert offenders[1]["catalyst_mode"] == "blended_window"
+        assert offenders[0]["catalyst_days"] == "45"
+        assert offenders[1]["catalyst_days"] == "120"
 
     def test_fda_offender_fields(self):
         """FDA offenders have ticker, event_type, catalyst_source."""
@@ -2210,6 +2213,81 @@ class TestCatalystEventTypeMix:
         assert offenders[0]["event_type"] == "FDA_DECISION"
         assert offenders[1]["event_type"] == "FDA_ADCOM"
         assert offenders[0]["catalyst_source"] == "FDA_CALENDAR"
+
+    def test_unknown_offenders_sorted_deterministically(self):
+        """Unknown offenders sort by mode (specific_days first), then ticker."""
+        r = _make_rankings(n_dev=4)
+        # Assign tickers explicitly
+        r["ticker"] = ["ZZZ", "AAA", "MMM", "BBB"]
+        r["tier_dev"] = ["A"] * 4
+        r["catalyst_mode"] = ["blended_window", "specific_days", "specific_days", "blended_window"]
+        r["catalyst_event_type"] = [None, None, None, None]
+        r["catalyst_source"] = ["X"] * 4
+        result = _catalyst_event_type_metrics(r, strict_missing=True)
+        offenders = result["_ct_unknown_offenders"]
+        # specific_days first (AAA, MMM), then blended_window (BBB, ZZZ)
+        tickers = [o["ticker"] for o in offenders]
+        assert tickers == ["AAA", "MMM", "BBB", "ZZZ"]
+
+    def test_fda_offenders_sorted_deterministically(self):
+        """FDA offenders sort by event_type (DECISION first), then ticker."""
+        r = _make_rankings(n_dev=4)
+        r["ticker"] = ["ZZZ", "AAA", "MMM", "BBB"]
+        r["tier_dev"] = ["A"] * 4
+        r["catalyst_event_type"] = ["FDA_ADCOM", "FDA_DECISION", "FDA_ADCOM", "FDA_DECISION"]
+        r["catalyst_source"] = ["FDA_CALENDAR"] * 4
+        result = _catalyst_event_type_metrics(r)
+        offenders = result["_ct_fda_offenders"]
+        tickers = [o["ticker"] for o in offenders]
+        assert tickers == ["AAA", "BBB", "MMM", "ZZZ"]
+
+    def test_unknown_offenders_summary_below_threshold(self):
+        """Below WARN threshold: one-line summary instead of full table."""
+        r = _make_rankings(n_dev=100)
+        r["tier_dev"] = ["A"] * 100
+        r["catalyst_mode"] = ["specific_days"] * 100
+        # 2 unknown out of 100 = 2% < 5% threshold
+        r["catalyst_event_type"] = [None] * 2 + ["DATA_READOUT"] * 98
+        r["catalyst_source"] = ["CTGOV_CALENDAR"] * 100
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_drift_metrics([snap], strict_cs_missing=True)
+        md = generate_drift_report_md(metrics, "OK", [], DriftGuardrails())
+        # Full table should NOT appear
+        assert "### Unknown Event Type" not in md
+        # Summary line should appear
+        assert "Unknown event type offenders: 2 ticker(s)" in md
+        assert "threshold not breached" in md
+
+    def test_fda_offenders_summary_below_threshold(self):
+        """Below WARN threshold: one-line summary instead of full FDA table."""
+        r = _make_rankings(n_dev=100)
+        r["tier_dev"] = ["A"] * 100
+        # 5 FDA out of 100 = 5% < 30% threshold
+        r["catalyst_event_type"] = ["FDA_DECISION"] * 5 + ["DATA_READOUT"] * 95
+        r["catalyst_source"] = ["FDA_CALENDAR"] * 5 + ["CTGOV_CALENDAR"] * 95
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_drift_metrics([snap])
+        md = generate_drift_report_md(metrics, "OK", [], DriftGuardrails())
+        # Full table should NOT appear
+        assert "### FDA-Tagged Tickers" not in md
+        # Summary line should appear
+        assert "FDA-tagged tickers: 5" in md
+        assert "threshold not breached" in md
+
+    def test_unknown_offenders_full_table_above_threshold(self):
+        """Above WARN threshold: full table with Days column."""
+        r = _make_rankings(n_dev=10)
+        r["tier_dev"] = ["A"] * 10
+        r["catalyst_mode"] = ["specific_days"] * 10
+        # 8 unknown out of 10 = 80% > 5% threshold
+        r["catalyst_event_type"] = [None] * 8 + ["DATA_READOUT"] * 2
+        r["catalyst_source"] = ["CTGOV_CALENDAR"] * 10
+        r["de_catalyst_days"] = ["45"] * 10
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_drift_metrics([snap], strict_cs_missing=True)
+        md = generate_drift_report_md(metrics, "OK", [], DriftGuardrails())
+        assert "### Unknown Event Type" in md
+        assert "| Days |" in md  # catalyst_days column present
 
 
 # ---------------------------------------------------------------------------

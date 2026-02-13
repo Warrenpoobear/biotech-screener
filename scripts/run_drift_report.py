@@ -721,8 +721,15 @@ def _catalyst_event_type_metrics(
             if "catalyst_source" in eligible_dev.columns
             else [""] * n_eligible
         )
+        cat_days = (
+            eligible_dev["de_catalyst_days"].astype(str).fillna("").tolist()
+            if "de_catalyst_days" in eligible_dev.columns
+            else [""] * n_eligible
+        )
 
         # Unknown offenders: dated catalyst but missing/unknown event type
+        # Sorted: catalyst_mode (specific_days first), then ticker
+        _MODE_ORDER = {"specific_days": 0, "blended_window": 1}
         unknown_offenders = []
         for i, norm_type in enumerate(types):
             if norm_type == "unknown":
@@ -730,10 +737,16 @@ def _catalyst_event_type_metrics(
                     "ticker": tickers[i],
                     "catalyst_mode": cat_modes[i],
                     "catalyst_source": cat_sources[i],
+                    "catalyst_days": cat_days[i],
                 })
+        unknown_offenders.sort(
+            key=lambda o: (_MODE_ORDER.get(o["catalyst_mode"], 9), o["ticker"])
+        )
         result["_ct_unknown_offenders"] = unknown_offenders
 
         # FDA offenders: tickers tagged FDA_DECISION or FDA_ADCOM
+        # Sorted: event_type (FDA_DECISION first), then ticker
+        _ET_ORDER = {"FDA_DECISION": 0, "FDA_ADCOM": 1}
         fda_offenders = []
         for i, norm_type in enumerate(types):
             if norm_type in ("FDA_DECISION", "FDA_ADCOM"):
@@ -742,6 +755,9 @@ def _catalyst_event_type_metrics(
                     "event_type": norm_type,
                     "catalyst_source": cat_sources[i],
                 })
+        fda_offenders.sort(
+            key=lambda o: (_ET_ORDER.get(o["event_type"], 9), o["ticker"])
+        )
         result["_ct_fda_offenders"] = fda_offenders
 
     return result
@@ -1962,52 +1978,77 @@ def generate_drift_report_md(
         lines.append("")
 
         # Top offenders: unknown event type (actionable breadcrumb)
+        # Full table when WARN fires; one-line summary otherwise.
         unknown_offenders = current.get("_ct_unknown_offenders", [])
+        ct_unknown_share = current.get("ct_unknown_share_pct") or 0.0
+        _ct_unknown_warn = ct_unknown_share > guardrails.warn_ct_unknown_share_high
         if unknown_offenders:
-            lines.append("### Unknown Event Type — Top Offenders")
-            lines.append("")
-            lines.append(
-                "Dated-catalyst tickers with missing or unrecognized event type."
-            )
-            lines.append("")
-            lines.append("| Ticker | Catalyst Mode  | Catalyst Source      |")
-            lines.append("|--------|----------------|----------------------|")
-            for off in unknown_offenders[:_CT_MAX_OFFENDERS]:
+            if _ct_unknown_warn:
+                lines.append("### Unknown Event Type — Top Offenders")
+                lines.append("")
                 lines.append(
-                    f"| {off['ticker']:<6} "
-                    f"| {off['catalyst_mode']:<14} "
-                    f"| {off['catalyst_source'] or '—':<20} |"
+                    "Dated-catalyst tickers with missing or unrecognized event type."
                 )
-            if len(unknown_offenders) > _CT_MAX_OFFENDERS:
+                lines.append("")
+                lines.append("| Ticker | Catalyst Mode  | Days | Catalyst Source      |")
+                lines.append("|--------|----------------|------|----------------------|")
+                for off in unknown_offenders[:_CT_MAX_OFFENDERS]:
+                    days_str = off.get("catalyst_days", "") or "—"
+                    lines.append(
+                        f"| {off['ticker']:<6} "
+                        f"| {off['catalyst_mode']:<14} "
+                        f"| {str(days_str):>4} "
+                        f"| {off['catalyst_source'] or '—':<20} |"
+                    )
+                if len(unknown_offenders) > _CT_MAX_OFFENDERS:
+                    lines.append(
+                        f"| ...    | ({len(unknown_offenders) - _CT_MAX_OFFENDERS} more)"
+                        f"{'':<14} | {'':>4} | {'':<20} |"
+                    )
+                lines.append("")
+            else:
                 lines.append(
-                    f"| ...    | ({len(unknown_offenders) - _CT_MAX_OFFENDERS} more)"
-                    f"{'':<14} | {'':<20} |"
+                    f"_Unknown event type offenders: {len(unknown_offenders)} ticker(s)."
+                    f" WARN threshold not breached ({ct_unknown_share:.1f}%"
+                    f" <= {guardrails.warn_ct_unknown_share_high}%)._"
                 )
-            lines.append("")
+                lines.append("")
 
         # Top offenders: FDA spike (actionable breadcrumb)
+        # Full table when WARN fires; one-line summary otherwise.
         fda_offenders = current.get("_ct_fda_offenders", [])
+        ct_fda_dec = current.get("ct_fda_decision_share_pct") or 0.0
+        ct_fda_adc = current.get("ct_fda_adcom_share_pct") or 0.0
+        _ct_fda_warn = (ct_fda_dec + ct_fda_adc) > guardrails.warn_ct_fda_share_spike
         if fda_offenders:
-            lines.append("### FDA-Tagged Tickers")
-            lines.append("")
-            lines.append(
-                "Tickers labeled FDA_DECISION or FDA_ADCOM — verify source provenance."
-            )
-            lines.append("")
-            lines.append("| Ticker | Event Type     | Catalyst Source      |")
-            lines.append("|--------|----------------|----------------------|")
-            for off in fda_offenders[:_CT_MAX_OFFENDERS]:
+            if _ct_fda_warn:
+                lines.append("### FDA-Tagged Tickers")
+                lines.append("")
                 lines.append(
-                    f"| {off['ticker']:<6} "
-                    f"| {off['event_type']:<14} "
-                    f"| {off['catalyst_source'] or '—':<20} |"
+                    "Tickers labeled FDA_DECISION or FDA_ADCOM — verify source provenance."
                 )
-            if len(fda_offenders) > _CT_MAX_OFFENDERS:
+                lines.append("")
+                lines.append("| Ticker | Event Type     | Catalyst Source      |")
+                lines.append("|--------|----------------|----------------------|")
+                for off in fda_offenders[:_CT_MAX_OFFENDERS]:
+                    lines.append(
+                        f"| {off['ticker']:<6} "
+                        f"| {off['event_type']:<14} "
+                        f"| {off['catalyst_source'] or '—':<20} |"
+                    )
+                if len(fda_offenders) > _CT_MAX_OFFENDERS:
+                    lines.append(
+                        f"| ...    | ({len(fda_offenders) - _CT_MAX_OFFENDERS} more)"
+                        f"{'':<14} | {'':<20} |"
+                    )
+                lines.append("")
+            else:
                 lines.append(
-                    f"| ...    | ({len(fda_offenders) - _CT_MAX_OFFENDERS} more)"
-                    f"{'':<14} | {'':<20} |"
+                    f"_FDA-tagged tickers: {len(fda_offenders)}."
+                    f" WARN threshold not breached ({ct_fda_dec + ct_fda_adc:.1f}%"
+                    f" <= {guardrails.warn_ct_fda_share_spike}%)._"
                 )
-            lines.append("")
+                lines.append("")
 
     # Catalyst Priority Distribution (only if cat_priority data present)
     has_cp = current.get("cp_n_eligible") is not None
