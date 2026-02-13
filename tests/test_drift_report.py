@@ -16,6 +16,7 @@ sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
 
 from run_drift_report import (
     ADAPTIVE_WARN_METRICS,
+    _PANEL_COL_MAP,
     DriftGuardrails,
     _compute_churn_details,
     _compute_gate_counts,
@@ -27,6 +28,7 @@ from run_drift_report import (
     _catalyst_coverage_metrics,
     _catalyst_source_metrics,
     _returns_source_metrics,
+    _synthesize_actionable_rank,
     compute_attribution,
     compute_drift_metrics,
     compute_snapshot_metrics,
@@ -36,6 +38,7 @@ from run_drift_report import (
     generate_drift_json,
     generate_drift_report_md,
     generate_rollback_packet_md,
+    load_panel_as_snapshots,
     load_snapshot_window,
 )
 from run_phase2_snapshot_delta import SnapshotData
@@ -272,12 +275,32 @@ class TestGuardrailEvaluation:
         return {"current": current, "snapshots": [current], "rolling": {}}
 
     def test_fail_a_pct_low(self):
+        """A-tier at 0% triggers FAIL (pipeline broken)."""
         status, reasons, _, action = evaluate_guardrails(
-            self._metrics_with_current(tier_A_pct=1.5),
+            self._metrics_with_current(tier_A_pct=0.0),
             DriftGuardrails(),
         )
         assert status == "FAIL"
         assert any("A-tier" in r and "floor" in r for r in reasons)
+
+    def test_warn_a_pct_low(self):
+        """A-tier below warn threshold but above FAIL triggers WARN."""
+        status, reasons, _, action = evaluate_guardrails(
+            self._metrics_with_current(tier_A_pct=1.0),
+            DriftGuardrails(),
+        )
+        # Should not FAIL (0% floor), but should WARN (1.5% threshold)
+        assert status != "FAIL"
+        assert any("A-tier" in r and "sparse" in r for r in reasons)
+
+    def test_ok_a_pct_above_warn(self):
+        """A-tier above warn threshold is OK."""
+        status, reasons, _, action = evaluate_guardrails(
+            self._metrics_with_current(tier_A_pct=2.0),
+            DriftGuardrails(),
+        )
+        assert status == "OK"
+        assert not any("A-tier" in r for r in reasons)
 
     def test_fail_a_pct_high(self):
         status, reasons, _, action = evaluate_guardrails(
@@ -546,9 +569,9 @@ class TestRecommendedAction:
             lambda: fake_candidate,
         )
 
-        # Trigger 2 FAIL metrics for corroboration
+        # Trigger 2 FAIL metrics for corroboration (overlap + dispersion)
         status, reasons, rollback, action = evaluate_guardrails(
-            self._metrics_with_current(tier_A_pct=1.0, optionality_std=0.05),
+            self._metrics_with_current(top25_overlap_pct=40.0, optionality_std=0.05),
             DriftGuardrails(),
         )
         assert status == "FAIL"
@@ -566,7 +589,7 @@ class TestRecommendedAction:
         )
 
         status, reasons, rollback, action = evaluate_guardrails(
-            self._metrics_with_current(tier_A_pct=1.0),
+            self._metrics_with_current(top25_overlap_pct=40.0),
             DriftGuardrails(),
         )
         assert status == "FAIL"
@@ -819,8 +842,9 @@ class TestCorroboration:
             run_drift_report, "find_rollback_candidate",
             lambda: fake_candidate,
         )
+        # overlap < 50% is a single FAIL
         status, reasons, rollback, action = evaluate_guardrails(
-            self._metrics_with_current(tier_A_pct=1.0),
+            self._metrics_with_current(top25_overlap_pct=40.0),
             DriftGuardrails(),
         )
         assert status == "FAIL"
@@ -836,8 +860,9 @@ class TestCorroboration:
             run_drift_report, "find_rollback_candidate",
             lambda: fake_candidate,
         )
+        # overlap + dispersion: 2 independent FAILs
         status, reasons, rollback, action = evaluate_guardrails(
-            self._metrics_with_current(tier_A_pct=1.0, optionality_std=0.05),
+            self._metrics_with_current(top25_overlap_pct=40.0, optionality_std=0.05),
             DriftGuardrails(),
         )
         assert status == "FAIL"
@@ -852,7 +877,7 @@ class TestCorroboration:
             lambda: None,
         )
         status, reasons, rollback, action = evaluate_guardrails(
-            self._metrics_with_current(tier_A_pct=1.0, optionality_std=0.05),
+            self._metrics_with_current(top25_overlap_pct=40.0, optionality_std=0.05),
             DriftGuardrails(),
         )
         assert status == "FAIL"
@@ -868,8 +893,9 @@ class TestCorroboration:
             run_drift_report, "find_rollback_candidate",
             lambda: fake_candidate,
         )
+        # overlap + dispersion: 2 independent FAILs, but corroboration needs 3
         status, reasons, rollback, action = evaluate_guardrails(
-            self._metrics_with_current(tier_A_pct=1.0, optionality_std=0.05),
+            self._metrics_with_current(top25_overlap_pct=40.0, optionality_std=0.05),
             DriftGuardrails(fail_corroboration_count=3),
         )
         assert status == "FAIL"
@@ -1854,3 +1880,266 @@ class TestCatalystSourceMix:
         md = generate_drift_report_md(metrics, "OK", [], guardrails)
         assert "warn_cs_ctgov_share_low" in md
         assert "warn_cs_unknown_share_high" in md
+
+
+# ---------------------------------------------------------------------------
+# Panel-as-snapshots
+# ---------------------------------------------------------------------------
+
+def _make_panel_csv(path, rows, extra_cols=None):
+    """Write a minimal panel CSV for testing.
+
+    Each row is a dict with panel column names.
+    """
+    import csv
+
+    base_cols = [
+        "as_of_date", "ticker", "tier", "band", "eligible", "weight",
+        "ineligible_reasons", "first_failed_gate", "tier_reason", "risk_flags",
+        "catalyst_mode", "catalyst_strength", "mom_state",
+        "optionality", "catalyst_days_raw", "ruleset_id",
+        "drawdown_abs", "drawdown_xbi", "drawdown_rel_xbi",
+        "dd_abs_margin", "dd_rel_margin", "rescued_by_rel",
+        "dd_rel_margin_rescued", "optionality_margin_a", "actionable_catalyst",
+        "returns_source",
+    ]
+    cols = base_cols + (extra_cols or [])
+
+    with open(path, "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=cols, extrasaction="ignore")
+        writer.writeheader()
+        for row in rows:
+            writer.writerow(row)
+
+
+def _panel_row(
+    date="2025-06-30", ticker="TICK", tier="B", band="L",
+    eligible="1", weight="5.0", catalyst_mode="specific_days",
+    catalyst_strength="near", optionality="0.70", ruleset_id="a021df60",
+    returns_source="morningstar", **extra,
+):
+    """Build a single panel row dict with sensible defaults."""
+    row = {
+        "as_of_date": date, "ticker": ticker, "tier": tier, "band": band,
+        "eligible": eligible, "weight": weight,
+        "ineligible_reasons": "", "first_failed_gate": "",
+        "tier_reason": "mod_opt" if tier == "B" else "high_opt+catalyst_near",
+        "risk_flags": "", "catalyst_mode": catalyst_mode,
+        "catalyst_strength": catalyst_strength, "mom_state": "tailwind",
+        "optionality": optionality, "catalyst_days_raw": "30",
+        "ruleset_id": ruleset_id,
+        "drawdown_abs": "-0.10", "drawdown_xbi": "-0.05",
+        "drawdown_rel_xbi": "-0.05",
+        "dd_abs_margin": "0.30", "dd_rel_margin": "0.20",
+        "rescued_by_rel": "0", "dd_rel_margin_rescued": "0",
+        "optionality_margin_a": "0.10", "actionable_catalyst": "1",
+        "returns_source": returns_source,
+    }
+    row.update(extra)
+    return row
+
+
+class TestPanelLoader:
+    """Tests for load_panel_as_snapshots and column remapping."""
+
+    def test_basic_load(self, tmp_path):
+        """Panel CSV is loaded and split by date."""
+        csv_path = tmp_path / "panel.csv"
+        rows = [
+            _panel_row(date="2025-01-31", ticker="A1"),
+            _panel_row(date="2025-01-31", ticker="A2"),
+            _panel_row(date="2025-02-28", ticker="A1"),
+            _panel_row(date="2025-02-28", ticker="A3"),
+        ]
+        _make_panel_csv(csv_path, rows)
+        snaps = load_panel_as_snapshots(csv_path)
+        assert len(snaps) == 2
+        assert snaps[0].date == "2025-01-31"
+        assert snaps[1].date == "2025-02-28"
+        assert len(snaps[0].rankings) == 2
+        assert len(snaps[1].rankings) == 2
+
+    def test_column_remapping(self, tmp_path):
+        """Panel columns are renamed to snapshot equivalents."""
+        csv_path = tmp_path / "panel.csv"
+        _make_panel_csv(csv_path, [_panel_row()])
+        snaps = load_panel_as_snapshots(csv_path)
+        r = snaps[0].rankings
+        # tier → tier_dev
+        assert "tier_dev" in r.columns
+        assert "tier" not in r.columns
+        # optionality → clinical_optionality_pct_dev
+        assert "clinical_optionality_pct_dev" in r.columns
+        assert "optionality" not in r.columns
+        # band → size_band
+        assert "size_band" in r.columns
+        assert "band" not in r.columns
+        # drawdown_rel_xbi → de_drawdown_rel_xbi
+        assert "de_drawdown_rel_xbi" in r.columns
+
+    def test_date_column_dropped(self, tmp_path):
+        """Date column is dropped from rankings (schema parity with rankings.csv)."""
+        csv_path = tmp_path / "panel.csv"
+        _make_panel_csv(csv_path, [_panel_row()])
+        snaps = load_panel_as_snapshots(csv_path)
+        r = snaps[0].rankings
+        assert "as_of_date" not in r.columns
+        assert "snapshot_date" not in r.columns
+        assert "date" not in r.columns
+
+    def test_archetype_injected(self, tmp_path):
+        """Synthetic archetype=drug_developer is added."""
+        csv_path = tmp_path / "panel.csv"
+        _make_panel_csv(csv_path, [_panel_row()])
+        snaps = load_panel_as_snapshots(csv_path)
+        r = snaps[0].rankings
+        assert "archetype" in r.columns
+        assert all(r["archetype"] == "drug_developer")
+
+    def test_actionable_rank_synthesized(self, tmp_path):
+        """actionable_rank is derived from weight (higher weight = lower rank)."""
+        csv_path = tmp_path / "panel.csv"
+        rows = [
+            _panel_row(ticker="HI", weight="10.0"),
+            _panel_row(ticker="MID", weight="5.0"),
+            _panel_row(ticker="ZERO", weight="0.0"),
+        ]
+        _make_panel_csv(csv_path, rows)
+        snaps = load_panel_as_snapshots(csv_path)
+        r = snaps[0].rankings
+        assert "actionable_rank" in r.columns
+        by_ticker = {row["ticker"]: row["actionable_rank"] for _, row in r.iterrows()}
+        assert by_ticker["HI"] < by_ticker["MID"]
+        assert by_ticker["ZERO"] == 9999
+
+    def test_window_size_limits_dates(self, tmp_path):
+        """window_size keeps only the last N dates."""
+        csv_path = tmp_path / "panel.csv"
+        rows = [
+            _panel_row(date="2025-01-31", ticker="A"),
+            _panel_row(date="2025-02-28", ticker="A"),
+            _panel_row(date="2025-03-31", ticker="A"),
+        ]
+        _make_panel_csv(csv_path, rows)
+        snaps = load_panel_as_snapshots(csv_path, window_size=2)
+        assert len(snaps) == 2
+        assert snaps[0].date == "2025-02-28"
+        assert snaps[1].date == "2025-03-31"
+
+    def test_ruleset_id_extracted(self, tmp_path):
+        """Ruleset ID is extracted from panel rows."""
+        csv_path = tmp_path / "panel.csv"
+        _make_panel_csv(csv_path, [_panel_row(ruleset_id="deadbeef")])
+        snaps = load_panel_as_snapshots(csv_path)
+        assert snaps[0].ruleset_id == "deadbeef"
+
+    def test_metrics_computable(self, tmp_path):
+        """compute_snapshot_metrics runs without error on panel-derived snapshot."""
+        csv_path = tmp_path / "panel.csv"
+        n = 30
+        rows = [
+            _panel_row(
+                ticker=f"T{i:03d}",
+                tier=["A", "B", "C", "D"][i % 4],
+                eligible="1" if i < 20 else "0",
+                weight=str(round(5.0 - i * 0.1, 2)) if i < 20 else "0.0",
+                optionality=str(round(0.3 + i * 0.02, 4)),
+                catalyst_mode=["specific_days", "no_upcoming", "missing"][i % 3],
+                catalyst_strength=["near", "mid", "far", "missing"][i % 4],
+            )
+            for i in range(n)
+        ]
+        _make_panel_csv(csv_path, rows)
+        snaps = load_panel_as_snapshots(csv_path)
+        m = compute_snapshot_metrics(snaps[0])
+        assert m["n_dev"] == n
+        assert m["tier_A_count"] > 0
+        assert m["optionality_std"] is not None
+        # Catalyst coverage should work
+        assert m.get("cat_n_dev") == n
+        assert m.get("cat_eligible_share_pct") is not None
+
+    def test_drift_metrics_on_panel(self, tmp_path):
+        """Full drift metrics pipeline works on multi-date panel."""
+        csv_path = tmp_path / "panel.csv"
+        rows = []
+        for date in ("2025-01-31", "2025-02-28", "2025-03-31"):
+            for i in range(20):
+                rows.append(_panel_row(
+                    date=date, ticker=f"T{i:03d}",
+                    tier=["A", "B", "C", "D"][i % 4],
+                    eligible="1" if i < 15 else "0",
+                    weight=str(round(5.0 - i * 0.2, 2)) if i < 15 else "0.0",
+                    catalyst_mode=["specific_days", "no_upcoming", "missing"][i % 3],
+                    catalyst_strength=["near", "mid", "far", "missing"][i % 4],
+                ))
+        _make_panel_csv(csv_path, rows)
+        snaps = load_panel_as_snapshots(csv_path)
+        metrics = compute_drift_metrics(snaps)
+        assert len(metrics["snapshots"]) == 3
+        assert metrics["current"]["date"] == "2025-03-31"
+        # Rolling should have keys
+        assert "tier_A_pct" in metrics["rolling"]
+
+    def test_missing_date_column_raises(self, tmp_path):
+        """Panel without any recognized date column raises ValueError."""
+        import csv as csv_mod
+        csv_path = tmp_path / "bad.csv"
+        with open(csv_path, "w", newline="") as f:
+            w = csv_mod.writer(f)
+            w.writerow(["ticker", "tier"])
+            w.writerow(["TICK", "A"])
+        with pytest.raises(ValueError, match="date column"):
+            load_panel_as_snapshots(csv_path)
+
+    def test_alternate_date_column(self, tmp_path):
+        """Panel with 'snapshot_date' instead of 'as_of_date' is accepted."""
+        import csv as csv_mod
+        csv_path = tmp_path / "panel.csv"
+        # Write with snapshot_date column
+        row = _panel_row()
+        row["snapshot_date"] = row.pop("as_of_date")
+        cols = list(row.keys())
+        with open(csv_path, "w", newline="") as f:
+            w = csv_mod.DictWriter(f, fieldnames=cols)
+            w.writeheader()
+            w.writerow(row)
+        snaps = load_panel_as_snapshots(csv_path)
+        assert len(snaps) == 1
+        assert snaps[0].date == "2025-06-30"
+
+    def test_panel_col_map_keys(self):
+        """_PANEL_COL_MAP contains expected mappings."""
+        assert _PANEL_COL_MAP["tier"] == "tier_dev"
+        assert _PANEL_COL_MAP["optionality"] == "clinical_optionality_pct_dev"
+        assert _PANEL_COL_MAP["band"] == "size_band"
+        assert _PANEL_COL_MAP["drawdown_rel_xbi"] == "de_drawdown_rel_xbi"
+
+
+class TestSynthesizeActionableRank:
+    """Tests for _synthesize_actionable_rank."""
+
+    def test_ranking_order(self):
+        """Higher weight gets lower (better) rank."""
+        df = pd.DataFrame({
+            "weight": ["10.0", "5.0", "1.0", "0.0"],
+        })
+        ranks = _synthesize_actionable_rank(df)
+        assert ranks.iloc[0] == 1  # weight=10
+        assert ranks.iloc[1] == 2  # weight=5
+        assert ranks.iloc[2] == 3  # weight=1
+        assert ranks.iloc[3] == 9999  # weight=0
+
+    def test_all_zero_weight(self):
+        """All zero weights → all 9999."""
+        df = pd.DataFrame({"weight": ["0.0", "0.0"]})
+        ranks = _synthesize_actionable_rank(df)
+        assert list(ranks) == [9999, 9999]
+
+    def test_missing_weight(self):
+        """Missing/NaN weight treated as 0."""
+        df = pd.DataFrame({"weight": ["5.0", "", None]})
+        ranks = _synthesize_actionable_rank(df)
+        assert ranks.iloc[0] == 1
+        assert ranks.iloc[1] == 9999
+        assert ranks.iloc[2] == 9999

@@ -5,12 +5,20 @@ Loads the last N snapshots from the snapshot directory, computes per-snapshot
 drift metrics (tier distribution, catalyst coverage, top-25 overlap, score
 dispersion), evaluates hard guardrails, and produces JSON + Markdown reports.
 
+Alternatively, accepts a walkforward panel CSV (``--panel``) to replay
+historical drift metrics across archived dates.
+
 Usage:
     python scripts/run_drift_report.py \
         --snapshot-dir data/snapshots \
         --output-dir output \
         [--window-size 5] \
         [--guardrails path/to/guardrails.json]
+
+    python scripts/run_drift_report.py \
+        --panel artifacts/walkforward_panel.csv \
+        --output-dir output \
+        [--window-size 10]
 """
 from __future__ import annotations
 
@@ -61,13 +69,16 @@ class DriftGuardrails:
     """
 
     # FAIL triggers
-    fail_a_pct_low: float = 2.0        # A-tier % among dev < 2%
+    fail_a_pct_low: float = 0.0        # A-tier % among dev = 0% (pipeline broken)
     fail_a_pct_high: float = 25.0      # A-tier % among dev > 25%
     fail_catalyst_missing_high: float = 85.0   # catalyst missing % among eligible > 85%
     fail_overlap_low: float = 50.0     # top-25 overlap vs prior < 50%
     fail_dispersion_low: float = 0.10  # optionality std < 0.10
 
-    # WARN triggers (cost / eligibility / drawdown coverage)
+    # WARN triggers
+    warn_a_pct_low: float = 1.5              # WARN if A-tier % < 1.5% (sparse catalyst regime)
+
+    # Cost / eligibility / drawdown coverage
     warn_median_cost_bps_high: float = 60.0   # median round-trip cost > 60 bps
     warn_cost_coverage_low: float = 80.0      # WARN if cost coverage < 80%
     warn_cap_binding_high: float = 20.0       # WARN if cap-binding (floor bucket) > 20%
@@ -162,6 +173,115 @@ def load_snapshot_window(
         snap = load_snapshot(d)
         if snap is not None:
             snapshots.append(snap)
+
+    return snapshots
+
+
+# ---------------------------------------------------------------------------
+# Panel-as-snapshots loader
+# ---------------------------------------------------------------------------
+
+# Column mapping: panel name → snapshot name expected by metrics helpers.
+_PANEL_COL_MAP = {
+    "tier": "tier_dev",
+    "optionality": "clinical_optionality_pct_dev",
+    "band": "size_band",
+    "drawdown_rel_xbi": "de_drawdown_rel_xbi",
+}
+
+
+def _synthesize_actionable_rank(df: pd.DataFrame) -> pd.Series:
+    """Derive actionable_rank from weight (higher weight → lower rank).
+
+    Rows with weight > 0 are ranked 1..N by descending weight.
+    Rows with weight = 0 or missing get rank 9999.
+    """
+    weights = df["weight"].apply(lambda v: _safe_float(v, 0.0))
+    ranks = pd.Series(9999, index=df.index, dtype=int)
+    mask = weights > 0
+    if mask.any():
+        # Rank descending: highest weight = rank 1
+        ranked = weights[mask].rank(ascending=False, method="min").astype(int)
+        ranks.loc[mask] = ranked
+    return ranks
+
+
+def load_panel_as_snapshots(
+    panel_path: Path, window_size: int = 0,
+) -> List[SnapshotData]:
+    """Load a walkforward panel CSV and convert to SnapshotData objects.
+
+    The panel has one row per (date, ticker).  Column names differ from
+    snapshot rankings — this function remaps them so all downstream drift
+    metrics work unchanged.
+
+    Args:
+        panel_path: Path to the panel CSV (date column required — accepts
+            ``as_of_date``, ``snapshot_date``, or ``date``).
+        window_size: If > 0, keep only the last *window_size* dates.
+
+    Returns:
+        List of SnapshotData, sorted by date ascending.
+    """
+    df = pd.read_csv(panel_path, dtype=str)
+
+    # Flexible date column detection
+    date_col = None
+    for candidate in ("as_of_date", "snapshot_date", "date"):
+        if candidate in df.columns:
+            date_col = candidate
+            break
+    if date_col is None:
+        raise ValueError(
+            f"Panel CSV missing date column (expected one of: "
+            f"as_of_date, snapshot_date, date): {panel_path}"
+        )
+    if date_col != "as_of_date":
+        df = df.rename(columns={date_col: "as_of_date"})
+
+    # Rename columns to match snapshot expectations
+    df = df.rename(columns=_PANEL_COL_MAP)
+
+    # Panel is dev-only — synthesize archetype
+    df["archetype"] = "drug_developer"
+
+    # Synthesize actionable_rank from weight (for top-25 overlap)
+    if "weight" in df.columns and "actionable_rank" not in df.columns:
+        df["actionable_rank"] = _synthesize_actionable_rank(df)
+
+    # Group by date, build one SnapshotData per date
+    dates = sorted(df["as_of_date"].unique())
+    if window_size > 0:
+        dates = dates[-window_size:]
+
+    snapshots: List[SnapshotData] = []
+    for date_str in dates:
+        date_df = df[df["as_of_date"] == date_str].copy()
+
+        # Drop the date column — real snapshot rankings.csv never has it
+        date_df.drop(columns=["as_of_date"], inplace=True, errors="ignore")
+
+        # Determine ruleset_id (first non-blank value)
+        ruleset_id = ""
+        if "ruleset_id" in date_df.columns:
+            ids = [
+                str(v).strip()
+                for v in date_df["ruleset_id"].dropna().unique()
+                if str(v).strip()
+            ]
+            if ids:
+                ruleset_id = ids[0]
+
+        snap = SnapshotData(
+            date=date_str,
+            path=Path("<panel>"),
+            rankings=date_df,
+            portfolio=pd.DataFrame(),
+            metadata={},
+            ruleset_id=ruleset_id,
+            has_native_portfolio=False,
+        )
+        snapshots.append(snap)
 
     return snapshots
 
@@ -788,9 +908,9 @@ def evaluate_guardrails(
     opt_std = current.get("optionality_std")
 
     # FAIL checks
-    if a_pct is not None and a_pct < guardrails.fail_a_pct_low:
+    if a_pct is not None and a_pct <= guardrails.fail_a_pct_low:
         reasons.append(
-            f"A-tier % = {a_pct:.1f}% < {guardrails.fail_a_pct_low}% floor"
+            f"A-tier % = {a_pct:.1f}% <= {guardrails.fail_a_pct_low}% floor"
         )
     if a_pct is not None and a_pct > guardrails.fail_a_pct_high:
         reasons.append(
@@ -827,6 +947,12 @@ def evaluate_guardrails(
 
     # WARN checks (non-FAIL, advisory only)
     warn_reasons: List[str] = []
+
+    if a_pct is not None and a_pct > guardrails.fail_a_pct_low and a_pct < guardrails.warn_a_pct_low:
+        warn_reasons.append(
+            f"A-tier % = {a_pct:.1f}% < {guardrails.warn_a_pct_low}% (sparse catalyst regime)"
+        )
+
     median_cost = current.get("median_cost_bps")
     if median_cost is not None and median_cost > guardrails.warn_median_cost_bps_high:
         warn_reasons.append(
@@ -1653,6 +1779,7 @@ def generate_drift_report_md(
     lines.append("## Guardrails Config")
     lines.append(f"ID: {guardrails.guardrails_id}")
     lines.append(f"- fail_a_pct_low: {guardrails.fail_a_pct_low}%")
+    lines.append(f"- warn_a_pct_low: {guardrails.warn_a_pct_low}%")
     lines.append(f"- fail_a_pct_high: {guardrails.fail_a_pct_high}%")
     lines.append(f"- fail_catalyst_missing_high: {guardrails.fail_catalyst_missing_high}%")
     lines.append(f"- fail_overlap_low: {guardrails.fail_overlap_low}%")
@@ -1809,12 +1936,20 @@ def main() -> int:
     parser = argparse.ArgumentParser(
         description="Generate daily drift report for post-promotion monitoring."
     )
-    parser.add_argument(
+
+    # Input source: snapshot directory OR panel CSV (mutually exclusive)
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument(
         "--snapshot-dir",
         type=Path,
-        required=True,
         help="Directory containing dated snapshot subdirectories.",
     )
+    source.add_argument(
+        "--panel",
+        type=Path,
+        help="Walkforward panel CSV (as_of_date column required).",
+    )
+
     parser.add_argument(
         "--output-dir",
         type=Path,
@@ -1843,13 +1978,19 @@ def main() -> int:
 
     window_size = guardrails.window_size
 
-    # Load snapshots
-    snapshots = load_snapshot_window(args.snapshot_dir, window_size)
+    # Load snapshots (from directory or panel)
+    if args.panel:
+        snapshots = load_panel_as_snapshots(args.panel, window_size)
+        source_label = f"panel: {args.panel.name}"
+    else:
+        snapshots = load_snapshot_window(args.snapshot_dir, window_size)
+        source_label = f"snapshot-dir: {args.snapshot_dir}"
+
     if not snapshots:
-        print("No loadable snapshots found.", file=sys.stderr)
+        print(f"No loadable snapshots found ({source_label}).", file=sys.stderr)
         return 1
 
-    print(f"Loaded {len(snapshots)} snapshots (window={window_size})")
+    print(f"Loaded {len(snapshots)} snapshots (window={window_size}, {source_label})")
 
     # Compute metrics
     metrics = compute_drift_metrics(snapshots)
@@ -1879,6 +2020,13 @@ def main() -> int:
         recommended_action, adaptive_warnings=warn_reasons or None,
         attribution=attribution,
     )
+    if args.panel:
+        d0, d1 = snapshots[0].date, snapshots[-1].date
+        md = (
+            f"> Panel mode: {args.panel.name} | "
+            f"dates={len(snapshots)} | range={d0}..{d1} | "
+            f"window={window_size}\n\n"
+        ) + md
     report_json = generate_drift_json(
         metrics, final_status, fail_reasons, guardrails, rollback,
         recommended_action, adaptive_warnings=warn_reasons or None,
