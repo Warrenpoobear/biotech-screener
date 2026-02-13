@@ -57,7 +57,7 @@ def _make_rankings(
     a_pct: float = 5.0,
     catalyst_missing_pct: float = 30.0,
     optionality_std: float = 0.30,
-    ruleset_id: str = "a021df60",
+    ruleset_id: str = "bf6815e2",
     include_attribution_cols: bool = False,
 ) -> pd.DataFrame:
     """Build a synthetic rankings DataFrame with controllable tier distribution."""
@@ -155,7 +155,7 @@ def _make_rankings(
 def _make_snapshot(
     date: str,
     rankings: pd.DataFrame | None = None,
-    ruleset_id: str = "a021df60",
+    ruleset_id: str = "bf6815e2",
 ) -> SnapshotData:
     if rankings is None:
         rankings = _make_rankings(ruleset_id=ruleset_id)
@@ -171,7 +171,7 @@ def _make_snapshot(
     )
 
 
-def _write_minimal_snapshot(snap_dir: Path, date: str, ruleset_id: str = "a021df60"):
+def _write_minimal_snapshot(snap_dir: Path, date: str, ruleset_id: str = "bf6815e2"):
     """Write a minimal loadable snapshot to disk."""
     d = snap_dir / date
     d.mkdir(parents=True, exist_ok=True)
@@ -2080,7 +2080,7 @@ def _make_panel_csv(path, rows, extra_cols=None):
 def _panel_row(
     date="2025-06-30", ticker="TICK", tier="B", band="L",
     eligible="1", weight="5.0", catalyst_mode="specific_days",
-    catalyst_strength="near", optionality="0.70", ruleset_id="a021df60",
+    catalyst_strength="near", optionality="0.70", ruleset_id="bf6815e2",
     returns_source="morningstar", **extra,
 ):
     """Build a single panel row dict with sensible defaults."""

@@ -4,6 +4,45 @@
   "beta_high_threshold": 1.8,
   "catalyst_mid_days": 180,
   "catalyst_near_days": 90,
+  "catalyst_priority_default": 9,
+  "catalyst_priority_map": [
+    [
+      "FDA_DECISION",
+      "FDA_CALENDAR",
+      1
+    ],
+    [
+      "FDA_ADCOM",
+      "FDA_CALENDAR",
+      1
+    ],
+    [
+      "DATA_READOUT",
+      "CTGOV_CALENDAR",
+      2
+    ],
+    [
+      "DATA_READOUT",
+      "*",
+      2
+    ],
+    [
+      "TRIAL_ONGOING",
+      "*",
+      3
+    ],
+    [
+      "*",
+      "CORPORATE_CALENDAR",
+      3
+    ],
+    [
+      "*",
+      "SEC_8K_FILING",
+      2
+    ]
+  ],
+  "catalyst_priority_unknown": 99,
   "catalyst_tilt_mults": [
     [
       "NEAR",
@@ -47,6 +86,7 @@
   "drawdown_hard_floor": -0.75,
   "drawdown_rel_xbi_gate": -0.2,
   "drawdown_size_penalty": -1,
+  "enable_catalyst_priority": false,
   "enable_catalyst_tilt": false,
   "enable_cost_haircut": false,
   "enable_dd_rel_margin_rescue": false,

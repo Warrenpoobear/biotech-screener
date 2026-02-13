@@ -1323,6 +1323,7 @@ SNAPSHOT_COLUMNS = [
     "returns_source",
     # Catalyst source provenance (for drift monitoring)
     "catalyst_source",
+    "catalyst_event_type",
 ]
 
 # Phase-2 decision portfolio output columns
@@ -1342,7 +1343,7 @@ PHASE2_DEFAULT_RULESET_PATH = (
 )
 PHASE2_DEFAULT_TIER_FILTER = ["A", "B"]
 PHASE2_DEFAULT_TOP_K = 20
-PHASE2_PINNED_RULESET_ID = "a021df60"
+PHASE2_PINNED_RULESET_ID = "bf6815e2"
 PHASE2_DEFAULT_HEALTH_THRESHOLDS_PATH = (
     Path(__file__).resolve().parent
     / "production_data" / "phase2_health_thresholds" / "v1.json"
@@ -1591,6 +1592,31 @@ def _nearest_catalyst_source(
     return ""
 
 
+def _nearest_catalyst_event_type(
+    m3_summaries: Optional[Dict[str, Any]],
+    ticker: str,
+) -> str:
+    """Extract the event_type of the nearest catalyst event from Module 3.
+
+    Same lookup logic as ``_nearest_catalyst_source`` but returns
+    ``event_type`` (e.g. ``"DATA_READOUT"``, ``"FDA_DECISION"``).
+    """
+    if not m3_summaries:
+        return ""
+    summary = m3_summaries.get(ticker.upper()) or m3_summaries.get(ticker)
+    if not summary or not isinstance(summary, dict):
+        return ""
+    next_date = (summary.get("integration") or {}).get("next_catalyst_date")
+    if not next_date:
+        return ""
+    for event in summary.get("events") or []:
+        if not isinstance(event, dict):
+            continue
+        if event.get("event_date") == next_date:
+            return event.get("event_type", "")
+    return ""
+
+
 def save_validation_snapshot(
     snapshot_dir: Path,
     as_of_date: str,
@@ -1770,6 +1796,7 @@ def save_validation_snapshot(
 
         # Catalyst source provenance: extract from Module 3 nearest event
         row["catalyst_source"] = _nearest_catalyst_source(m3_summaries, ticker)
+        row["catalyst_event_type"] = _nearest_catalyst_event_type(m3_summaries, ticker)
 
     # --- Actionable ordering: sort + assign rank + compute weights ---
     # Sort all rows by actionable sort key
@@ -1781,6 +1808,9 @@ def save_validation_snapshot(
             else None,
         composite_rank=r.get("composite_rank"),
         ticker=r.get("ticker", ""),
+        catalyst_event_type=r.get("catalyst_event_type", ""),
+        catalyst_source=r.get("catalyst_source", ""),
+        ruleset=ruleset,
     ))
 
     # Assign actionable_rank: eligible rows get 1..N, ineligible get blank
@@ -1842,6 +1872,9 @@ def save_validation_snapshot(
                 else None,
             composite_rank=r.get("composite_rank"),
             ticker=r.get("ticker", ""),
+            catalyst_event_type=r.get("catalyst_event_type", ""),
+            catalyst_source=r.get("catalyst_source", ""),
+            ruleset=ruleset,
         ))
         portfolio_rows = portfolio_rows[:top_k]
 

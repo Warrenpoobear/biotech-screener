@@ -4,6 +4,8 @@ import pytest
 from decision_engine import (
     compute_actionable_sort_key,
     compute_target_weights,
+    resolve_catalyst_priority,
+    DecisionRuleset,
     SIZING_WEIGHTS,
     ACTIONABLE_COLUMNS,
 )
@@ -35,13 +37,14 @@ def _make_fields(
 
 
 def _sort_key(fields, archetype="drug_developer", optionality=0.50,
-              composite_rank=100, ticker="TEST"):
+              composite_rank=100, ticker="TEST", **kwargs):
     return compute_actionable_sort_key(
         decision_fields=fields,
         archetype=archetype,
         optionality=optionality,
         composite_rank=composite_rank,
         ticker=ticker,
+        **kwargs,
     )
 
 
@@ -307,3 +310,148 @@ def test_sort_key_missing_optionality():
 
     # With real optionality (0.50 → negated = -0.50) sorts before None (→ 0.0)
     assert key_with < key_without
+
+
+# ── Catalyst source/type priority tests ──
+
+def _priority_ruleset():
+    """Ruleset with enable_catalyst_priority=True."""
+    return DecisionRuleset(enable_catalyst_priority=True)
+
+
+def _disabled_ruleset():
+    """Ruleset with enable_catalyst_priority=False (default)."""
+    return DecisionRuleset(enable_catalyst_priority=False)
+
+
+# -- resolve_catalyst_priority unit tests --
+
+class TestResolveCatalystPriority:
+    """Unit tests for resolve_catalyst_priority()."""
+
+    def test_fda_decision_fda_calendar(self):
+        rs = _priority_ruleset()
+        assert resolve_catalyst_priority("FDA_DECISION", "FDA_CALENDAR", rs) == 1
+
+    def test_fda_adcom_fda_calendar(self):
+        rs = _priority_ruleset()
+        assert resolve_catalyst_priority("FDA_ADCOM", "FDA_CALENDAR", rs) == 1
+
+    def test_data_readout_ctgov(self):
+        rs = _priority_ruleset()
+        assert resolve_catalyst_priority("DATA_READOUT", "CTGOV_CALENDAR", rs) == 2
+
+    def test_data_readout_wildcard_source(self):
+        rs = _priority_ruleset()
+        assert resolve_catalyst_priority("DATA_READOUT", "SEC_8K_FILING", rs) == 2
+
+    def test_trial_ongoing_any_source(self):
+        rs = _priority_ruleset()
+        assert resolve_catalyst_priority("TRIAL_ONGOING", "SOME_SOURCE", rs) == 3
+
+    def test_any_type_corporate_calendar(self):
+        rs = _priority_ruleset()
+        assert resolve_catalyst_priority("SOME_TYPE", "CORPORATE_CALENDAR", rs) == 3
+
+    def test_any_type_sec_8k(self):
+        rs = _priority_ruleset()
+        assert resolve_catalyst_priority("SOME_TYPE", "SEC_8K_FILING", rs) == 2
+
+    def test_no_catalyst_returns_default(self):
+        rs = _priority_ruleset()
+        assert resolve_catalyst_priority("", "", rs) == 9
+        assert resolve_catalyst_priority("none", "none", rs) == 9
+        assert resolve_catalyst_priority(None, None, rs) == 9
+
+    def test_unknown_returns_unknown_priority(self):
+        rs = _priority_ruleset()
+        assert resolve_catalyst_priority("unknown", "FDA_CALENDAR", rs) == 99
+        assert resolve_catalyst_priority("DATA_READOUT", "unknown", rs) == 99
+
+    def test_unmatched_rule_returns_default(self):
+        rs = _priority_ruleset()
+        assert resolve_catalyst_priority("NOVEL_TYPE", "NOVEL_SOURCE", rs) == 9
+
+    def test_case_insensitive(self):
+        rs = _priority_ruleset()
+        assert resolve_catalyst_priority("fda_decision", "fda_calendar", rs) == 1
+        assert resolve_catalyst_priority("data_readout", "ctgov_calendar", rs) == 2
+
+
+# -- Sort key integration tests with catalyst priority --
+
+class TestCatalystPriorityOrdering:
+    """Integration tests: catalyst priority in sort key."""
+
+    def test_fda_beats_ctgov_same_tier(self):
+        """FDA event sorts before CTGOV readout within same tier."""
+        rs = _priority_ruleset()
+        f_fda = _make_fields(tier_dev="A", catalyst_mode="specific_days", catalyst_days=60)
+        f_ctgov = _make_fields(tier_dev="A", catalyst_mode="specific_days", catalyst_days=60)
+
+        key_fda = _sort_key(f_fda, ticker="FDA_TICK",
+                            catalyst_event_type="FDA_DECISION",
+                            catalyst_source="FDA_CALENDAR", ruleset=rs)
+        key_ctgov = _sort_key(f_ctgov, ticker="CTG_TICK",
+                              catalyst_event_type="DATA_READOUT",
+                              catalyst_source="CTGOV_CALENDAR", ruleset=rs)
+        assert key_fda < key_ctgov
+
+    def test_unknown_sinks_below_dated(self):
+        """Unknown source/type sorts after dated catalyst at same tier."""
+        rs = _priority_ruleset()
+        f_dated = _make_fields(tier_dev="B", catalyst_mode="specific_days", catalyst_days=60)
+        f_unknown = _make_fields(tier_dev="B", catalyst_mode="specific_days", catalyst_days=60)
+
+        key_dated = _sort_key(f_dated, ticker="DATED",
+                              catalyst_event_type="DATA_READOUT",
+                              catalyst_source="CTGOV_CALENDAR", ruleset=rs)
+        key_unknown = _sort_key(f_unknown, ticker="UNK",
+                                catalyst_event_type="unknown",
+                                catalyst_source="unknown", ruleset=rs)
+        assert key_dated < key_unknown
+
+    def test_no_catalyst_below_dated(self):
+        """No catalyst (empty type/source) sorts after dated catalyst."""
+        rs = _priority_ruleset()
+        f_dated = _make_fields(tier_dev="B", catalyst_mode="specific_days", catalyst_days=60)
+        f_none = _make_fields(tier_dev="B", catalyst_mode="specific_days", catalyst_days=60)
+
+        key_dated = _sort_key(f_dated, ticker="DATED",
+                              catalyst_event_type="DATA_READOUT",
+                              catalyst_source="CTGOV_CALENDAR", ruleset=rs)
+        key_none = _sort_key(f_none, ticker="NONE_TICK",
+                             catalyst_event_type="", catalyst_source="",
+                             ruleset=rs)
+        assert key_dated < key_none
+
+    def test_disabled_no_effect_on_ordering(self):
+        """When disabled, catalyst priority does not change relative order."""
+        rs = _disabled_ruleset()
+        f1 = _make_fields(tier_dev="B", catalyst_mode="specific_days", catalyst_days=60)
+        f2 = _make_fields(tier_dev="B", catalyst_mode="specific_days", catalyst_days=60)
+
+        key_fda = _sort_key(f1, ticker="FDA_TICK",
+                            catalyst_event_type="FDA_DECISION",
+                            catalyst_source="FDA_CALENDAR", ruleset=rs)
+        key_ctgov = _sort_key(f2, ticker="CTG_TICK",
+                              catalyst_event_type="DATA_READOUT",
+                              catalyst_source="CTGOV_CALENDAR", ruleset=rs)
+        # cat_priority is 0 for both when disabled — order falls through
+        # to cat_mode_ord (same) → cat_days (same) → ticker alpha
+        assert key_ctgov < key_fda  # CTG_TICK < FDA_TICK alphabetically
+
+    def test_tier_still_dominates_over_priority(self):
+        """Tier ordering still takes precedence over catalyst priority."""
+        rs = _priority_ruleset()
+        f_a = _make_fields(tier_dev="A", catalyst_mode="specific_days", catalyst_days=60)
+        f_b = _make_fields(tier_dev="B", catalyst_mode="specific_days", catalyst_days=60)
+
+        # B-tier has FDA (priority=1), A-tier has generic (priority=9)
+        key_a = _sort_key(f_a, ticker="A_TICK",
+                          catalyst_event_type="", catalyst_source="",
+                          ruleset=rs)
+        key_b = _sort_key(f_b, ticker="B_TICK",
+                          catalyst_event_type="FDA_DECISION",
+                          catalyst_source="FDA_CALENDAR", ruleset=rs)
+        assert key_a < key_b  # A-tier wins despite worse catalyst priority

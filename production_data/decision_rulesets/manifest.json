@@ -2,7 +2,7 @@
   "schema_version": 1,
   "rulesets": [
     {
-      "id": "bd0d5957",
+      "id": "6b12517f",
       "file": "v2_phase2_default.json",
       "created_at": "2025-10-31",
       "engine_version": "v1.2.0",
@@ -14,7 +14,7 @@
       "updated_at": "2026-02-10T13:18:40Z"
     },
     {
-      "id": "f066c872",
+      "id": "984f1705",
       "file": "v1.2.0_candidate.json",
       "created_at": "2026-02-10",
       "engine_version": "v1.3.0",
@@ -26,7 +26,7 @@
       "updated_at": "2026-02-11T18:58:55Z"
     },
     {
-      "id": "a021df60",
+      "id": "bf6815e2",
       "file": "v1.2.2_candidate.json",
       "created_at": "2026-02-13",
       "engine_version": "v1.3.0",
@@ -34,11 +34,11 @@
       "status": "active",
       "requires_replay": false,
       "notes": "Identical parameters to v1.2.1_candidate. Drift guardrails tightened: rs_morningstar 70→85%, rs_unknown 10→8.5%, cat_eligible 80→95%, cs_ctgov 50→37%.",
-      "updated_by": "manual",
+      "updated_by": "bump_ruleset.py",
       "updated_at": "2026-02-13T00:00:00Z"
     },
     {
-      "id": "a021df60",
+      "id": "bf6815e2",
       "file": "v1.2.1_candidate.json",
       "created_at": "2026-02-11",
       "engine_version": "v1.3.0",
@@ -50,7 +50,7 @@
       "updated_at": "2026-02-13T00:00:00Z"
     },
     {
-      "id": "bd0d5957",
+      "id": "6b12517f",
       "file": "v1.2_candidate.json",
       "created_at": "2025-10-15",
       "engine_version": "v1.2.0",
@@ -62,7 +62,7 @@
       "updated_at": "2025-10-15T00:00:00Z"
     },
     {
-      "id": "7c05187b",
+      "id": "be5e5c86",
       "file": "v1.3_candidate.json",
       "created_at": "2025-10-31",
       "engine_version": "v1.2.0",
@@ -72,7 +72,19 @@
       "notes": "Rejected: soft drawdown dilutes alpha and worsens P5 from -29% to -38%."
     },
     {
-      "id": "6076badd",
+      "id": "f3454ef7",
+      "file": "v1.3.0_candidate.json",
+      "created_at": "2026-02-13",
+      "engine_version": "v1.3.0",
+      "description": "Catalyst source/type ordering policy (enable_catalyst_priority=true)",
+      "status": "candidate",
+      "requires_replay": true,
+      "notes": "Same params as v1.2.2 + enable_catalyst_priority=true. FDA events (priority=1) sort above CTGOV readouts (2) within same tier.",
+      "updated_by": "bump_ruleset.py",
+      "updated_at": "2026-02-13T00:00:00Z"
+    },
+    {
+      "id": "4284645a",
       "file": "v1.json",
       "created_at": "2024-11-01",
       "engine_version": "v1.0.0",

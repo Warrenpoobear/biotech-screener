@@ -39,7 +39,7 @@ def _make_rankings_df(
     actionable_ranks: list | None = None,
     risk_flags: list[str] | None = None,
     weights: list | None = None,
-    ruleset_id: str = "a021df60",
+    ruleset_id: str = "bf6815e2",
     size_bands: list[str] | None = None,
 ) -> pd.DataFrame:
     n = len(tickers)
@@ -81,7 +81,7 @@ def _make_portfolio_df(
         "archetype": ["drug_developer"] * n,
         "catalyst_mode": ["specific_days"] * n,
         "catalyst_days": list(range(1, n + 1)),
-        "decision_engine_ruleset_id": ["a021df60"] * n,
+        "decision_engine_ruleset_id": ["bf6815e2"] * n,
         "decision_engine_version": ["v1.2.0"] * n,
     }
     return pd.DataFrame(data)
@@ -91,7 +91,7 @@ def _make_snapshot(
     date: str,
     rankings: pd.DataFrame,
     portfolio: pd.DataFrame,
-    ruleset_id: str = "a021df60",
+    ruleset_id: str = "bf6815e2",
     has_native: bool = True,
 ) -> SnapshotData:
     return SnapshotData(

@@ -218,6 +218,8 @@ class TestPanelSchema:
             "catalyst_tilt_mult", "catalyst_tilt_applied",
             "mom_state_tilt_mult", "mom_state_tilt_applied",
             "returns_source",
+            "catalyst_source",
+            "catalyst_event_type",
         ]
         assert PANEL_COLUMNS == expected
 
@@ -257,6 +259,7 @@ class TestPanelSchema:
             "optionality_margin_a", "actionable_catalyst",
             "catalyst_tilt_mult", "catalyst_tilt_applied",
             "mom_state_tilt_mult", "mom_state_tilt_applied",
+            "catalyst_source", "catalyst_event_type",
         }
         for r in results:
             assert set(r.keys()) == expected_keys

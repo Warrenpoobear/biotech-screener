@@ -92,6 +92,21 @@ class DecisionRuleset:
         ("tailwind", 1.0), ("neutral", 1.0), ("headwind", 1.0),
     )
 
+    # Actionable ordering — catalyst source/type priority (opt-in)
+    enable_catalyst_priority: bool = False
+    catalyst_priority_map: tuple = (
+        # (event_type, source) → priority int (lower = better)
+        ("FDA_DECISION", "FDA_CALENDAR", 1),
+        ("FDA_ADCOM", "FDA_CALENDAR", 1),
+        ("DATA_READOUT", "CTGOV_CALENDAR", 2),
+        ("DATA_READOUT", "*", 2),
+        ("TRIAL_ONGOING", "*", 3),
+        ("*", "CORPORATE_CALENDAR", 3),
+        ("*", "SEC_8K_FILING", 2),
+    )
+    catalyst_priority_default: int = 9
+    catalyst_priority_unknown: int = 99
+
     def __post_init__(self):
         # Validate cost_haircut_buckets: ascending thresholds
         buckets = self.cost_haircut_buckets
@@ -200,6 +215,11 @@ class DecisionRuleset:
         if "mom_state_tilt_mults" in d and isinstance(d["mom_state_tilt_mults"], list):
             d["mom_state_tilt_mults"] = tuple(
                 tuple(pair) for pair in d["mom_state_tilt_mults"]
+            )
+        # Convert catalyst_priority_map list-of-lists back to tuple-of-tuples
+        if "catalyst_priority_map" in d and isinstance(d["catalyst_priority_map"], list):
+            d["catalyst_priority_map"] = tuple(
+                tuple(rule) for rule in d["catalyst_priority_map"]
             )
         return cls(**d)
 
@@ -652,17 +672,60 @@ _CATALYST_MODE_ORDER = {"specific_days": 0, "blended_window": 1, "no_upcoming": 
 _MOM_STATE_ORDER = {"tailwind": 0, "neutral": 1, "headwind": 2}
 
 
+def resolve_catalyst_priority(
+    event_type: str,
+    source: str,
+    ruleset: "DecisionRuleset",
+) -> int:
+    """Map (event_type, source) → priority int via ruleset.catalyst_priority_map.
+
+    Match rules: exact match on event_type and source, with ``"*"`` acting as
+    wildcard.  First matching rule wins (rules are ordered).
+
+    Returns ``catalyst_priority_default`` (9) when no dated catalyst, or
+    ``catalyst_priority_unknown`` (99) when values are "unknown".
+    """
+    et = str(event_type).strip().upper() if event_type else ""
+    src = str(source).strip().upper() if source else ""
+
+    # No catalyst data → default (9)
+    if et in ("", "NONE") and src in ("", "NONE"):
+        return ruleset.catalyst_priority_default
+
+    # Broken data → unknown (99)
+    if et == "UNKNOWN" or src == "UNKNOWN":
+        return ruleset.catalyst_priority_unknown
+
+    for rule in ruleset.catalyst_priority_map:
+        rule_et, rule_src, priority = rule
+        et_match = (rule_et == "*" or rule_et.upper() == et)
+        src_match = (rule_src == "*" or rule_src.upper() == src)
+        if et_match and src_match:
+            return int(priority)
+
+    # No rule matched — return default
+    return ruleset.catalyst_priority_default
+
+
 def compute_actionable_sort_key(
     decision_fields: Dict[str, Any],
     archetype: str,
     optionality: Optional[float],
     composite_rank: Optional[int],
     ticker: str,
+    *,
+    catalyst_event_type: str = "",
+    catalyst_source: str = "",
+    ruleset: Optional["DecisionRuleset"] = None,
 ) -> Tuple:
     """Return a sort-key tuple for deterministic actionable ordering.
 
     Lower tuple values sort first. Eligible dev-stage tickers with the
     best tier, nearest catalyst, and highest optionality rank first.
+
+    When ``ruleset.enable_catalyst_priority`` is True and event_type/source
+    are provided, a catalyst priority element is inserted after tier_ord
+    (before cat_mode_ord) to prefer FDA events over generic readouts.
     """
     eligible_val = decision_fields.get("eligible", "0")
     is_eligible = 0 if eligible_val == "1" else 1
@@ -671,6 +734,15 @@ def compute_actionable_sort_key(
 
     tier = decision_fields.get("tier_dev", "")
     tier_ord = _TIER_ORDER.get(str(tier), 4)
+
+    # Catalyst source/type priority (opt-in via ruleset)
+    rs = ruleset or DEFAULT_RULESET
+    if rs.enable_catalyst_priority:
+        cat_priority = resolve_catalyst_priority(
+            catalyst_event_type, catalyst_source, rs,
+        )
+    else:
+        cat_priority = 0  # neutral — no effect on ordering
 
     cat_mode = decision_fields.get("catalyst_mode", "missing")
     cat_mode_ord = _CATALYST_MODE_ORDER.get(str(cat_mode), 3)
@@ -692,13 +764,14 @@ def compute_actionable_sort_key(
         is_eligible,    # 0: eligible first
         is_dev,         # 1: dev first
         tier_ord,       # 2: A < B < C < D < blank
-        cat_mode_ord,   # 3: specific < blended < no_upcoming < missing
-        cat_days,       # 4: ascending days (missing=9999)
-        opt_neg,        # 5: descending optionality (negated)
-        sponsor_neg,    # 6: descending sponsor count (negated)
-        mom_ord,        # 7: tailwind < neutral < headwind
-        comp_rank,      # 8: ascending composite rank
-        ticker,         # 9: alphabetic tiebreak
+        cat_priority,   # 3: catalyst source/type priority (0=neutral when disabled)
+        cat_mode_ord,   # 4: specific < blended < no_upcoming < missing
+        cat_days,       # 5: ascending days (missing=9999)
+        opt_neg,        # 6: descending optionality (negated)
+        sponsor_neg,    # 7: descending sponsor count (negated)
+        mom_ord,        # 8: tailwind < neutral < headwind
+        comp_rank,      # 9: ascending composite rank
+        ticker,         # 10: alphabetic tiebreak
     )
 
 

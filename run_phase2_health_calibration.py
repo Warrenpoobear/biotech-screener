@@ -193,7 +193,10 @@ def _build_snapshot_from_archive(
         )
         composite_rank = rank_by_ticker.get(ticker)
         sort_key = compute_actionable_sort_key(
-            fields, rr["archetype"], opt, composite_rank, ticker
+            fields, rr["archetype"], opt, composite_rank, ticker,
+            catalyst_event_type=rec.get("catalyst_event_type", ""),
+            catalyst_source=rec.get("catalyst_source", ""),
+            ruleset=ruleset,
         )
         candidates.append((sort_key, rr))
 

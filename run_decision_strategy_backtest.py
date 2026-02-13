@@ -269,8 +269,13 @@ def build_strategy_portfolio(
             continue
 
         composite_rank = rank_by_ticker.get(ticker)
+        cat_et = rec.get("catalyst_event_type", "")
+        cat_src = rec.get("catalyst_source", "")
         sort_key = compute_actionable_sort_key(
-            fields, archetype, opt, composite_rank, ticker
+            fields, archetype, opt, composite_rank, ticker,
+            catalyst_event_type=cat_et,
+            catalyst_source=cat_src,
+            ruleset=ruleset,
         )
 
         candidates.append((sort_key, {

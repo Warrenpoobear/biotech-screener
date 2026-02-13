@@ -6,7 +6,35 @@ Format: `[engine_version] ruleset_id — date — summary`
 
 ---
 
-## [v1.3.0] a021df60 — 2026-02-13 — Version bump to v1.2.2_candidate (no logic change)
+## [v1.3.0] bf6815e2 + f3454ef7 — 2026-02-13 — Catalyst source/type ordering policy
+
+**Parameters added** (schema expansion, all rulesets):
+- `enable_catalyst_priority`: **False** (opt-in flag, no behavior change when disabled)
+- `catalyst_priority_map`: Priority ladder for (event_type, source) pairs
+- `catalyst_priority_default`: **9** (no-catalyst fallback)
+- `catalyst_priority_unknown`: **99** (broken-data sink)
+
+**New ruleset**: `v1.3.0_candidate.json` (ID: f3454ef7)
+- Same parameters as v1.2.2 + `enable_catalyst_priority=true`
+- Priority ladder: FDA=1, CTGOV/readout=2, corporate/ongoing=3, none=9, unknown=99
+
+**Sort key change**: `compute_actionable_sort_key()` now returns 11-element tuple
+(was 10). New element at position 3: `cat_priority`. When disabled, value=0 (neutral,
+no effect). When enabled, lower priority values sort first within same tier.
+
+**Call site wiring**: catalyst_event_type + catalyst_source now passed at all call sites:
+- `run_screen.py`: added `_nearest_catalyst_event_type()`, `catalyst_event_type` in SNAPSHOT_COLUMNS
+- `run_decision_strategy_backtest.py`, `run_phase2_health_calibration.py`
+
+**Behavior changes**: None for v1.2.2 (enable_catalyst_priority=false). v1.3.0_candidate
+requires backtest acceptance before promotion.
+
+**Tests**: 32 in `test_decision_actionable_ordering.py` (+16 new: resolve_catalyst_priority
+unit tests + sort key integration with priority enabled/disabled)
+
+---
+
+## [v1.3.0] bf6815e2 — 2026-02-13 — Version bump to v1.2.2_candidate (no logic change)
 
 **Parameters changed**: None. Identical content-hash to v1.2.1_candidate.
 
@@ -23,7 +51,7 @@ four WARN thresholds from the 2025 panel baseline:
 
 ---
 
-## [v1.3.0] a021df60 — 2026-02-12 — Add momentum state weight tilt schema (defaults neutral)
+## [v1.3.0] bf6815e2 — 2026-02-12 — Add momentum state weight tilt schema (defaults neutral)
 
 **Parameters added** (vs b92f9338):
 - `enable_mom_state_tilt`: **False** (opt-in flag, no behavior change when disabled)
