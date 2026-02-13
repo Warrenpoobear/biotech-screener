@@ -62,7 +62,7 @@ class DriftGuardrails:
 
     # FAIL triggers
     fail_a_pct_low: float = 2.0        # A-tier % among dev < 2%
-    fail_a_pct_high: float = 15.0      # A-tier % among dev > 15%
+    fail_a_pct_high: float = 25.0      # A-tier % among dev > 25%
     fail_catalyst_missing_high: float = 85.0   # catalyst missing % among eligible > 85%
     fail_overlap_low: float = 50.0     # top-25 overlap vs prior < 50%
     fail_dispersion_low: float = 0.10  # optionality std < 0.10

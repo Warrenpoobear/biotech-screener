@@ -279,7 +279,7 @@ class TestGuardrailEvaluation:
 
     def test_fail_a_pct_high(self):
         status, reasons, _, action = evaluate_guardrails(
-            self._metrics_with_current(tier_A_pct=16.0),
+            self._metrics_with_current(tier_A_pct=26.0),
             DriftGuardrails(),
         )
         assert status == "FAIL"
