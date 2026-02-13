@@ -526,6 +526,29 @@ def _classify_unknown_reason(raw_val) -> str:
     return f"unrecognized:{s}"
 
 
+def _unknown_reason_breakdown(offenders: list, n_eligible: int) -> str:
+    """Build a compact '(missing=X%, blank=Y%)' string from offender dicts.
+
+    Omits buckets that are zero.  Groups any ``unrecognized:*`` reasons
+    into a single ``unrecognized`` bucket.
+    """
+    if not offenders or n_eligible <= 0:
+        return ""
+    from collections import Counter
+    buckets: Counter = Counter()
+    for o in offenders:
+        reason = o.get("unknown_reason", "missing")
+        if reason.startswith("unrecognized:"):
+            reason = "unrecognized"
+        buckets[reason] += 1
+    parts = []
+    for key in ("missing", "blank", "unrecognized"):
+        c = buckets.get(key, 0)
+        if c > 0:
+            parts.append(f"{key}={c / n_eligible * 100:.1f}%")
+    return f" ({', '.join(parts)})" if parts else ""
+
+
 _CATALYST_SOURCE_KEYS = (
     "CTGOV_CALENDAR", "FDA_CALENDAR", "SEC_8K_FILING",
     "CORPORATE_CALENDAR", "none", "unknown",
@@ -1362,8 +1385,12 @@ def evaluate_guardrails(
             )
         cs_unknown = current.get("cs_unknown_share_pct")
         if cs_unknown is not None and cs_unknown > guardrails.warn_cs_unknown_share_high:
+            _cs_bkdn = _unknown_reason_breakdown(
+                current.get("_cs_unknown_offenders", []),
+                current.get("cs_n_eligible", 0),
+            )
             warn_reasons.append(
-                f"Catalyst source unknown = {cs_unknown:.1f}% > "
+                f"Catalyst source unknown = {cs_unknown:.1f}%{_cs_bkdn} > "
                 f"{guardrails.warn_cs_unknown_share_high}% ceiling"
             )
 
@@ -1371,8 +1398,12 @@ def evaluate_guardrails(
     if _cs_regime_ok:
         ct_unknown = current.get("ct_unknown_share_pct")
         if ct_unknown is not None and ct_unknown > guardrails.warn_ct_unknown_share_high:
+            _ct_bkdn = _unknown_reason_breakdown(
+                current.get("_ct_unknown_offenders", []),
+                current.get("ct_n_eligible", 0),
+            )
             warn_reasons.append(
-                f"Catalyst event type unknown = {ct_unknown:.1f}% > "
+                f"Catalyst event type unknown = {ct_unknown:.1f}%{_ct_bkdn} > "
                 f"{guardrails.warn_ct_unknown_share_high}% ceiling"
             )
         # FDA spike tripwire: FDA_DECISION + FDA_ADCOM combined

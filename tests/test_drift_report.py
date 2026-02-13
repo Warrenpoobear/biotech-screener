@@ -1904,6 +1904,25 @@ class TestCatalystSourceMix:
         assert status == "WARN"
         assert any("unknown" in r for r in reasons)
 
+    def test_warn_cs_unknown_reason_breakdown(self):
+        """WARN string includes missing/blank breakdown from offender list."""
+        offenders = [
+            {"ticker": "T1", "unknown_reason": "missing"},
+            {"ticker": "T2", "unknown_reason": "missing"},
+            {"ticker": "T3", "unknown_reason": "blank"},
+        ]
+        m = self._metrics_with_current(
+            cs_unknown_share_pct=30.0,  # 3 of 10 = 30%
+            cs_n_eligible=10,
+            cat_specific_days_share_pct=50.0,
+            _cs_unknown_offenders=offenders,
+        )
+        status, reasons, _, _ = evaluate_guardrails(m, DriftGuardrails())
+        assert status == "WARN"
+        warn_str = [r for r in reasons if "source unknown" in r.lower()][0]
+        assert "missing=20.0%" in warn_str
+        assert "blank=10.0%" in warn_str
+
     def test_ok_cs_within_bounds(self):
         """No WARN when catalyst source mix is healthy."""
         m = self._metrics_with_current(
@@ -2270,6 +2289,26 @@ class TestCatalystEventTypeMix:
         status, reasons, _, _ = evaluate_guardrails(m, DriftGuardrails())
         assert status == "WARN"
         assert any("event type unknown" in r.lower() for r in reasons)
+
+    def test_warn_ct_unknown_reason_breakdown(self):
+        """WARN string includes missing/blank/unrecognized breakdown."""
+        offenders = [
+            {"ticker": "T1", "unknown_reason": "missing"},
+            {"ticker": "T2", "unknown_reason": "blank"},
+            {"ticker": "T3", "unknown_reason": "unrecognized:WEIRD"},
+        ]
+        m = self._metrics_with_ct(
+            ct_unknown_share_pct=15.0,  # 3 of 20 = 15%
+            ct_n_eligible=20,
+            cat_specific_days_share_pct=50.0,
+            _ct_unknown_offenders=offenders,
+        )
+        status, reasons, _, _ = evaluate_guardrails(m, DriftGuardrails())
+        assert status == "WARN"
+        warn_str = [r for r in reasons if "event type unknown" in r.lower()][0]
+        assert "missing=5.0%" in warn_str
+        assert "blank=5.0%" in warn_str
+        assert "unrecognized=5.0%" in warn_str
 
     def test_warn_ct_fda_share_spike(self):
         """WARN fires when combined FDA share > threshold (regime ok)."""
