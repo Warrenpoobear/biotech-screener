@@ -1883,15 +1883,21 @@ class TestCatalystSourceMix:
     # -- Guardrail WARN tests --
 
     def test_warn_cs_ctgov_share_low(self):
-        """WARN fires when CTGOV share < threshold."""
-        m = self._metrics_with_current(cs_ctgov_calendar_share_pct=40.0)
+        """WARN fires when CTGOV share < threshold (and regime is healthy)."""
+        m = self._metrics_with_current(
+            cs_ctgov_calendar_share_pct=40.0,
+            cat_specific_days_share_pct=50.0,  # regime gate passes
+        )
         status, reasons, _, _ = evaluate_guardrails(m, DriftGuardrails())
         assert status == "WARN"
         assert any("CTGOV share" in r for r in reasons)
 
     def test_warn_cs_unknown_share_high(self):
-        """WARN fires when unknown source share > threshold."""
-        m = self._metrics_with_current(cs_unknown_share_pct=10.0)
+        """WARN fires when unknown source share > threshold (and regime healthy)."""
+        m = self._metrics_with_current(
+            cs_unknown_share_pct=10.0,
+            cat_specific_days_share_pct=50.0,  # regime gate passes
+        )
         status, reasons, _, _ = evaluate_guardrails(m, DriftGuardrails())
         assert status == "WARN"
         assert any("unknown" in r for r in reasons)
@@ -1901,6 +1907,7 @@ class TestCatalystSourceMix:
         m = self._metrics_with_current(
             cs_ctgov_calendar_share_pct=60.0,
             cs_unknown_share_pct=2.0,
+            cat_specific_days_share_pct=50.0,
         )
         status, reasons, _, _ = evaluate_guardrails(m, DriftGuardrails())
         assert status == "OK"
@@ -1910,6 +1917,25 @@ class TestCatalystSourceMix:
         m = self._metrics_with_current()
         status, reasons, _, _ = evaluate_guardrails(m, DriftGuardrails())
         assert status == "OK"
+
+    def test_cs_warn_suppressed_in_sparse_regime(self):
+        """cs_* WARNs suppressed when cat_specific_days_share < 40%."""
+        m = self._metrics_with_current(
+            cs_ctgov_calendar_share_pct=10.0,  # would WARN normally
+            cs_unknown_share_pct=20.0,         # would WARN normally
+            cat_specific_days_share_pct=30.0,  # sparse regime → gate
+        )
+        status, reasons, _, _ = evaluate_guardrails(m, DriftGuardrails())
+        assert not any("CTGOV" in r for r in reasons)
+        assert not any("cs" in r.lower() and "unknown" in r.lower() for r in reasons)
+
+    def test_cs_warn_suppressed_when_cat_specific_days_missing(self):
+        """cs_* WARNs suppressed when cat_specific_days_share_pct absent."""
+        m = self._metrics_with_current(
+            cs_ctgov_calendar_share_pct=10.0,
+        )
+        status, reasons, _, _ = evaluate_guardrails(m, DriftGuardrails())
+        assert not any("CTGOV" in r for r in reasons)
 
     def test_guardrails_config_includes_cs_thresholds(self):
         """Report shows catalyst source mix guardrail thresholds."""

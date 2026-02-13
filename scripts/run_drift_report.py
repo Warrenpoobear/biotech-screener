@@ -1075,19 +1075,26 @@ def evaluate_guardrails(
             f"{guardrails.warn_cat_specific_days_share_low}% floor"
         )
 
-    # Catalyst source mix checks
-    cs_ctgov = current.get("cs_ctgov_calendar_share_pct")
-    if cs_ctgov is not None and cs_ctgov < guardrails.warn_cs_ctgov_share_low:
-        warn_reasons.append(
-            f"Catalyst source CTGOV share = {cs_ctgov:.1f}% < "
-            f"{guardrails.warn_cs_ctgov_share_low}% floor"
-        )
-    cs_unknown = current.get("cs_unknown_share_pct")
-    if cs_unknown is not None and cs_unknown > guardrails.warn_cs_unknown_share_high:
-        warn_reasons.append(
-            f"Catalyst source unknown = {cs_unknown:.1f}% > "
-            f"{guardrails.warn_cs_unknown_share_high}% ceiling"
-        )
+    # Catalyst source mix checks — only evaluate when dated catalysts are
+    # prevalent enough for source mix to be meaningful.
+    cat_sd_current = current.get("cat_specific_days_share_pct")
+    _cs_regime_ok = (
+        cat_sd_current is not None
+        and cat_sd_current >= _SUGGEST_CS_MIN_CAT_SPECIFIC_DAYS_MEDIAN
+    )
+    if _cs_regime_ok:
+        cs_ctgov = current.get("cs_ctgov_calendar_share_pct")
+        if cs_ctgov is not None and cs_ctgov < guardrails.warn_cs_ctgov_share_low:
+            warn_reasons.append(
+                f"Catalyst source CTGOV share = {cs_ctgov:.1f}% < "
+                f"{guardrails.warn_cs_ctgov_share_low}% floor"
+            )
+        cs_unknown = current.get("cs_unknown_share_pct")
+        if cs_unknown is not None and cs_unknown > guardrails.warn_cs_unknown_share_high:
+            warn_reasons.append(
+                f"Catalyst source unknown = {cs_unknown:.1f}% > "
+                f"{guardrails.warn_cs_unknown_share_high}% ceiling"
+            )
 
     if warn_reasons:
         return "WARN", warn_reasons, None, "INVESTIGATE"
@@ -2198,18 +2205,27 @@ def main() -> int:
         snapshots, strict_cs_missing=not is_panel,
     )
 
-    # Evaluate guardrails (FAIL layer — absolute thresholds)
-    fail_status, fail_reasons, rollback, recommended_action = evaluate_guardrails(
+    # Evaluate guardrails (FAIL + static WARN checks)
+    gr_status, gr_reasons, rollback, recommended_action = evaluate_guardrails(
         metrics, guardrails
     )
 
     # Evaluate adaptive warnings (WARN layer — window-relative)
-    warn_status, warn_reasons = evaluate_adaptive_warnings(metrics, guardrails)
+    aw_status, aw_reasons = evaluate_adaptive_warnings(metrics, guardrails)
+
+    # Split guardrail reasons into FAIL vs WARN buckets
+    if gr_status == "FAIL":
+        fail_reasons = gr_reasons
+        warn_reasons = aw_reasons or []
+    else:
+        fail_reasons = []
+        # Merge guardrail WARNs + adaptive WARNs
+        warn_reasons = (gr_reasons or []) + (aw_reasons or [])
 
     # Combine: FAIL > WARN > OK
-    if fail_status == "FAIL":
+    if fail_reasons:
         final_status = "FAIL"
-    elif warn_status == "WARN":
+    elif warn_reasons:
         final_status = "WARN"
     else:
         final_status = "OK"
