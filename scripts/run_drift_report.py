@@ -1821,6 +1821,7 @@ def generate_drift_report_md(
     adaptive_warnings: Optional[List[str]] = None,
     attribution: Optional[Dict[str, Any]] = None,
     suggestions: Optional[List[Dict[str, Any]]] = None,
+    verbose_offenders: bool = False,
 ) -> str:
     """Generate a Markdown drift report."""
     current = metrics.get("current", {})
@@ -1983,7 +1984,7 @@ def generate_drift_report_md(
         ct_unknown_share = current.get("ct_unknown_share_pct") or 0.0
         _ct_unknown_warn = ct_unknown_share > guardrails.warn_ct_unknown_share_high
         if unknown_offenders:
-            if _ct_unknown_warn:
+            if _ct_unknown_warn or verbose_offenders:
                 lines.append("### Unknown Event Type — Top Offenders")
                 lines.append("")
                 lines.append(
@@ -2021,7 +2022,7 @@ def generate_drift_report_md(
         ct_fda_adc = current.get("ct_fda_adcom_share_pct") or 0.0
         _ct_fda_warn = (ct_fda_dec + ct_fda_adc) > guardrails.warn_ct_fda_share_spike
         if fda_offenders:
-            if _ct_fda_warn:
+            if _ct_fda_warn or verbose_offenders:
                 lines.append("### FDA-Tagged Tickers")
                 lines.append("")
                 lines.append(
@@ -2510,6 +2511,12 @@ def main() -> int:
         default=None,
         help="Path to guardrails JSON override (optional).",
     )
+    parser.add_argument(
+        "--verbose-offenders",
+        action="store_true",
+        default=False,
+        help="Force full offender tables even when WARN thresholds are not breached.",
+    )
     args = parser.parse_args()
 
     # Load guardrails
@@ -2578,6 +2585,7 @@ def main() -> int:
         metrics, final_status, fail_reasons, guardrails, rollback,
         recommended_action, adaptive_warnings=warn_reasons or None,
         attribution=attribution, suggestions=suggestions or None,
+        verbose_offenders=args.verbose_offenders,
     )
     if is_panel and "## Catalyst Source Mix" in md:
         md = md.replace(

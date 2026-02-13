@@ -2289,6 +2289,47 @@ class TestCatalystEventTypeMix:
         assert "### Unknown Event Type" in md
         assert "| Days |" in md  # catalyst_days column present
 
+    def test_verbose_offenders_forces_unknown_table(self):
+        """verbose_offenders=True forces full unknown table below WARN threshold."""
+        r = _make_rankings(n_dev=100)
+        r["tier_dev"] = ["A"] * 100
+        r["catalyst_mode"] = ["specific_days"] * 100
+        # 2 unknown out of 100 = 2% < 5% threshold
+        r["catalyst_event_type"] = [None] * 2 + ["DATA_READOUT"] * 98
+        r["catalyst_source"] = ["CTGOV_CALENDAR"] * 100
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_drift_metrics([snap], strict_cs_missing=True)
+        # Without verbose: summary line only
+        md_quiet = generate_drift_report_md(metrics, "OK", [], DriftGuardrails())
+        assert "### Unknown Event Type" not in md_quiet
+        assert "Unknown event type offenders: 2" in md_quiet
+        # With verbose: full table
+        md_verbose = generate_drift_report_md(
+            metrics, "OK", [], DriftGuardrails(), verbose_offenders=True,
+        )
+        assert "### Unknown Event Type" in md_verbose
+        assert "| Days |" in md_verbose
+
+    def test_verbose_offenders_forces_fda_table(self):
+        """verbose_offenders=True forces full FDA table below WARN threshold."""
+        r = _make_rankings(n_dev=100)
+        r["tier_dev"] = ["A"] * 100
+        # 5 FDA out of 100 = 5% < 30% threshold
+        r["catalyst_event_type"] = ["FDA_DECISION"] * 5 + ["DATA_READOUT"] * 95
+        r["catalyst_source"] = ["FDA_CALENDAR"] * 5 + ["CTGOV_CALENDAR"] * 95
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_drift_metrics([snap])
+        # Without verbose: summary line only
+        md_quiet = generate_drift_report_md(metrics, "OK", [], DriftGuardrails())
+        assert "### FDA-Tagged Tickers" not in md_quiet
+        assert "FDA-tagged tickers: 5" in md_quiet
+        # With verbose: full table
+        md_verbose = generate_drift_report_md(
+            metrics, "OK", [], DriftGuardrails(), verbose_offenders=True,
+        )
+        assert "### FDA-Tagged Tickers" in md_verbose
+        assert "FDA_DECISION" in md_verbose
+
 
 # ---------------------------------------------------------------------------
 # Panel-as-snapshots
