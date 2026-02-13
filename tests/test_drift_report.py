@@ -1539,6 +1539,16 @@ class TestCatalystCoverage:
             r["catalyst_mode"] = cat_modes[:n_dev]
         return r
 
+    def _metrics_with_current(self, **overrides) -> dict:
+        current = {
+            "tier_A_pct": 5.0,
+            "catalyst_missing_pct": 30.0,
+            "top25_overlap_pct": 80.0,
+            "optionality_std": 0.30,
+        }
+        current.update(overrides)
+        return {"current": current, "snapshots": [current], "rolling": {}}
+
     # -- _catalyst_coverage_metrics tests --
 
     def test_mix_known_distribution(self):
@@ -1591,13 +1601,14 @@ class TestCatalystCoverage:
         assert "cat_specific_days_share_pct" in metrics
 
     def test_md_report_includes_cat_section(self):
-        """Report includes Catalyst Coverage section when data present."""
+        """Report includes Catalyst Coverage section with definition line."""
         r = self._make_rankings_with_cat(n_dev=30)
         snap = _make_snapshot("2026-01-01", r)
         metrics = compute_drift_metrics([snap])
         guardrails = DriftGuardrails()
         md = generate_drift_report_md(metrics, "OK", [], guardrails)
         assert "## Catalyst Coverage" in md
+        assert "Eligible = dev tickers with non-empty `tier_dev`" in md
         assert "specific_days" in md
         assert "no_upcoming" in md
 
@@ -1633,3 +1644,45 @@ class TestCatalystCoverage:
         assert result is not None
         assert result["cat_n_eligible"] == 0
         assert result["cat_specific_days_share_pct"] is None
+
+    # -- Guardrail WARN tests --
+
+    def test_warn_cat_eligible_share_low(self):
+        """WARN fires when cat_eligible_share_pct < threshold."""
+        m = self._metrics_with_current(cat_eligible_share_pct=70.0)
+        status, reasons, _, _ = evaluate_guardrails(m, DriftGuardrails())
+        assert status == "WARN"
+        assert any("Catalyst eligible share" in r for r in reasons)
+
+    def test_warn_cat_specific_days_share_low(self):
+        """WARN fires when cat_specific_days_share_pct < threshold."""
+        m = self._metrics_with_current(cat_specific_days_share_pct=30.0)
+        status, reasons, _, _ = evaluate_guardrails(m, DriftGuardrails())
+        assert status == "WARN"
+        assert any("specific_days share" in r for r in reasons)
+
+    def test_ok_cat_within_bounds(self):
+        """No WARN when catalyst coverage is healthy."""
+        m = self._metrics_with_current(
+            cat_eligible_share_pct=90.0,
+            cat_specific_days_share_pct=60.0,
+        )
+        status, reasons, _, _ = evaluate_guardrails(m, DriftGuardrails())
+        assert status == "OK"
+        assert not any("Catalyst" in r for r in reasons)
+
+    def test_ok_cat_none_no_warn(self):
+        """No WARN when catalyst coverage keys absent (older snapshots)."""
+        m = self._metrics_with_current()  # no cat_ keys
+        status, reasons, _, _ = evaluate_guardrails(m, DriftGuardrails())
+        assert status == "OK"
+
+    def test_guardrails_config_includes_cat_thresholds(self):
+        """Report shows catalyst coverage guardrail thresholds."""
+        r = self._make_rankings_with_cat(n_dev=30)
+        snap = _make_snapshot("2026-01-01", r)
+        metrics = compute_drift_metrics([snap])
+        guardrails = DriftGuardrails()
+        md = generate_drift_report_md(metrics, "OK", [], guardrails)
+        assert "warn_cat_eligible_share_low" in md
+        assert "warn_cat_specific_days_share_low" in md

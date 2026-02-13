@@ -89,6 +89,10 @@ class DriftGuardrails:
     warn_rs_csv_outlier_override_share_high: float = 1.0  # WARN if outlier overrides > 1%
     warn_rs_morningstar_share_low: float = 70.0    # WARN if Morningstar share < 70%
 
+    # Catalyst coverage
+    warn_cat_eligible_share_low: float = 80.0         # WARN if eligible % of dev < 80%
+    warn_cat_specific_days_share_low: float = 40.0    # WARN if specific_days % of eligible < 40%
+
     # Adaptive WARN layer
     warn_iqr_k: float = 2.0             # WARN if |delta| > k * max(IQR, floor)
     warn_iqr_floor: float = 1.0         # minimum IQR (prevents spurious WARN from flat windows)
@@ -815,6 +819,20 @@ def evaluate_guardrails(
             f"{guardrails.warn_rs_morningstar_share_low}% floor"
         )
 
+    # Catalyst coverage checks
+    cat_elig = current.get("cat_eligible_share_pct")
+    if cat_elig is not None and cat_elig < guardrails.warn_cat_eligible_share_low:
+        warn_reasons.append(
+            f"Catalyst eligible share = {cat_elig:.1f}% < "
+            f"{guardrails.warn_cat_eligible_share_low}% floor"
+        )
+    cat_sd = current.get("cat_specific_days_share_pct")
+    if cat_sd is not None and cat_sd < guardrails.warn_cat_specific_days_share_low:
+        warn_reasons.append(
+            f"Catalyst specific_days share = {cat_sd:.1f}% < "
+            f"{guardrails.warn_cat_specific_days_share_low}% floor"
+        )
+
     if warn_reasons:
         return "WARN", warn_reasons, None, "INVESTIGATE"
 
@@ -1306,6 +1324,7 @@ def generate_drift_report_md(
         elig_share = current.get("cat_eligible_share_pct")
         elig_str = f"{elig_share:.1f}%" if elig_share is not None else "N/A"
         lines.append(f"Dev tickers: {n_dev_cat} | Eligible: {n_elig_cat} ({elig_str})")
+        lines.append("Eligible = dev tickers with non-empty `tier_dev`.")
         lines.append("")
         lines.append("| Catalyst Mode     | Count | Share (elig) |")
         lines.append("|-------------------|-------|--------------|")
@@ -1536,6 +1555,8 @@ def generate_drift_report_md(
     lines.append(f"- warn_rs_unknown_share_high: {guardrails.warn_rs_unknown_share_high}%")
     lines.append(f"- warn_rs_csv_outlier_override_share_high: {guardrails.warn_rs_csv_outlier_override_share_high}%")
     lines.append(f"- warn_rs_morningstar_share_low: {guardrails.warn_rs_morningstar_share_low}%")
+    lines.append(f"- warn_cat_eligible_share_low: {guardrails.warn_cat_eligible_share_low}%")
+    lines.append(f"- warn_cat_specific_days_share_low: {guardrails.warn_cat_specific_days_share_low}%")
     lines.append(f"- warn_iqr_k: {guardrails.warn_iqr_k}")
     lines.append(f"- warn_iqr_floor: {guardrails.warn_iqr_floor}")
     lines.append(f"- warn_min_window: {guardrails.warn_min_window}")
