@@ -18,6 +18,7 @@ from run_drift_report import (
     ADAPTIVE_WARN_METRICS,
     SUGGESTION_MIN_POINTS,
     _PANEL_COL_MAP,
+    _SUGGEST_CS_MIN_CAT_SPECIFIC_DAYS_MEDIAN,
     _SUGGESTION_SPECS,
     DriftGuardrails,
     _compute_churn_details,
@@ -2315,3 +2316,70 @@ class TestSuggestedGuardrails:
         )
         assert "suggested_guardrails" in js
         assert isinstance(js["suggested_guardrails"], list)
+
+
+# ---------------------------------------------------------------------------
+# cs_ctgov suppression gate
+# ---------------------------------------------------------------------------
+
+
+class TestCsCtgovSuggestionGate:
+    """cs_ctgov_calendar_share_pct suggestion is suppressed when
+    the prior median of cat_specific_days_share_pct < 40%."""
+
+    def _make_metrics(self, cat_specific_pct: float, cs_ctgov_pct: float, n: int = 4):
+        """Build a list of snapshot metrics dicts with consistent values."""
+        return [
+            {
+                "cat_specific_days_share_pct": cat_specific_pct,
+                "cs_ctgov_calendar_share_pct": cs_ctgov_pct,
+                # Fill enough keys so other specs don't crash
+                "tier_A_pct": 5.0,
+                "cat_eligible_share_pct": 100.0,
+                "rs_morningstar_share_pct": 95.0,
+                "rs_unknown_share_pct": 2.0,
+                "cs_unknown_share_pct": 1.0,
+            }
+            for _ in range(n)
+        ]
+
+    def test_suppressed_when_specific_days_sparse(self):
+        metrics = self._make_metrics(cat_specific_pct=25.0, cs_ctgov_pct=90.0)
+        suggestions = compute_suggested_guardrails(metrics, DriftGuardrails())
+        ctgov = [s for s in suggestions if s["metric"] == "cs_ctgov_calendar_share_pct"]
+        assert len(ctgov) == 1
+        assert ctgov[0]["suppressed"] is True
+        assert ctgov[0]["suggested"] is None
+        assert "25.0%" in ctgov[0]["suppressed_reason"]
+
+    def test_not_suppressed_when_specific_days_healthy(self):
+        metrics = self._make_metrics(cat_specific_pct=50.0, cs_ctgov_pct=80.0)
+        suggestions = compute_suggested_guardrails(metrics, DriftGuardrails())
+        ctgov = [s for s in suggestions if s["metric"] == "cs_ctgov_calendar_share_pct"]
+        assert len(ctgov) == 1
+        assert ctgov[0].get("suppressed") is not True
+        assert ctgov[0]["suggested"] is not None
+
+    def test_suppressed_at_boundary(self):
+        # Exactly at the boundary (39.9 < 40.0 → suppressed)
+        metrics = self._make_metrics(cat_specific_pct=39.9, cs_ctgov_pct=80.0)
+        suggestions = compute_suggested_guardrails(metrics, DriftGuardrails())
+        ctgov = [s for s in suggestions if s["metric"] == "cs_ctgov_calendar_share_pct"]
+        assert ctgov[0]["suppressed"] is True
+
+    def test_not_suppressed_at_exact_threshold(self):
+        # Exactly 40.0 → NOT suppressed (>= would pass, but we use <)
+        metrics = self._make_metrics(cat_specific_pct=40.0, cs_ctgov_pct=80.0)
+        suggestions = compute_suggested_guardrails(metrics, DriftGuardrails())
+        ctgov = [s for s in suggestions if s["metric"] == "cs_ctgov_calendar_share_pct"]
+        assert ctgov[0].get("suppressed") is not True
+
+    def test_report_shows_suppressed_row(self):
+        metrics = self._make_metrics(cat_specific_pct=25.0, cs_ctgov_pct=90.0)
+        suggestions = compute_suggested_guardrails(metrics, DriftGuardrails())
+        md = generate_drift_report_md(
+            {"snapshots": metrics}, "OK", [], DriftGuardrails(),
+            suggestions=suggestions,
+        )
+        assert "suppressed" in md
+        assert "CTGOV calendar share" in md or "cs_ctgov_calendar_share_pct" in md

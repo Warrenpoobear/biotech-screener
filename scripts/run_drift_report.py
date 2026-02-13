@@ -1136,6 +1136,9 @@ _SUGGESTION_SPECS: List[Tuple[str, str, str, str]] = [
 
 SUGGESTION_MIN_POINTS = 3
 
+# Suppress cs_ctgov suggestion when dated catalysts are too sparse to be meaningful
+_SUGGEST_CS_MIN_CAT_SPECIFIC_DAYS_MEDIAN = 40.0
+
 
 def compute_suggested_guardrails(
     all_metrics: List[Dict[str, Any]],
@@ -1168,6 +1171,34 @@ def compute_suggested_guardrails(
         ]
         if len(vals) < min_points:
             continue
+
+        # Gate: suppress cs_ctgov suggestion when dated catalysts are sparse
+        if metric_key == "cs_ctgov_calendar_share_pct":
+            cat_vals = [
+                m["cat_specific_days_share_pct"]
+                for m in prior
+                if m.get("cat_specific_days_share_pct") is not None
+            ]
+            cat_median = statistics.median(cat_vals) if cat_vals else 0.0
+            if cat_median < _SUGGEST_CS_MIN_CAT_SPECIFIC_DAYS_MEDIAN:
+                current_threshold = getattr(guardrails, guardrail_field, None)
+                suggestions.append({
+                    "metric": metric_key,
+                    "label": label,
+                    "direction": direction,
+                    "n": len(vals),
+                    "median": None,
+                    "iqr": None,
+                    "suggested": None,
+                    "current_threshold": current_threshold,
+                    "tighter": False,
+                    "suppressed": True,
+                    "suppressed_reason": (
+                        f"prior median cat_specific_days={cat_median:.1f}%"
+                        f" < {_SUGGEST_CS_MIN_CAT_SPECIFIC_DAYS_MEDIAN:.1f}%"
+                    ),
+                })
+                continue
 
         median = statistics.median(vals)
         if len(vals) >= 3:
@@ -1903,9 +1934,16 @@ def generate_drift_report_md(
         lines.append("| Metric | N | Median | IQR | Suggested | Current | Tighter? |")
         lines.append("|--------|---|--------|-----|-----------|---------|----------|")
         for s in suggestions:
-            tighter_flag = "**yes**" if s["tighter"] else ""
             cur = s["current_threshold"]
             cur_str = f"{cur}%" if cur is not None else "N/A"
+            if s.get("suppressed"):
+                lines.append(
+                    f"| {s['label']} | {s['n']} |  |  "
+                    f"| _suppressed ({s['suppressed_reason']})_ "
+                    f"| {cur_str} |  |"
+                )
+                continue
+            tighter_flag = "**yes**" if s["tighter"] else ""
             lines.append(
                 f"| {s['label']} | {s['n']} | {s['median']}% "
                 f"| {s['iqr']} | {s['suggested']}% "
