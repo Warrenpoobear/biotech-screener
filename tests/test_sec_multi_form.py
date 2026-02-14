@@ -365,3 +365,102 @@ class TestPerTickerCap:
             _MAX_FILINGS_PER_TICKER,
         )
         assert _MAX_FILINGS_PER_TICKER == 2
+
+
+# ===========================================================================
+# convert_sec_8k_to_v2 source label passthrough
+# ===========================================================================
+
+class TestSourceLabelPassthrough:
+    """Verify multi-form source labels survive CatalystEventV2 conversion."""
+
+    def test_10q_source_preserved(self):
+        """10-Q event should keep SEC_10Q_FILING source after conversion."""
+        from module_3_catalyst import convert_sec_8k_to_v2
+        ev = {
+            "ticker": "ACAD",
+            "event_type": "DATA_READOUT",
+            "event_date": "2026-06-15",
+            "source": "SEC_10Q_FILING",
+            "filing_form": "10-Q",
+            "confidence": "MED",
+        }
+        v2 = convert_sec_8k_to_v2(ev, date(2026, 2, 7))
+        assert v2 is not None
+        assert v2.source == "SEC_10Q_FILING"
+
+    def test_10k_source_preserved(self):
+        from module_3_catalyst import convert_sec_8k_to_v2
+        ev = {
+            "ticker": "FOLD",
+            "event_type": "FDA_PDUFA_DATE",
+            "event_date": "2026-09-01",
+            "source": "SEC_10K_FILING",
+            "filing_form": "10-K",
+            "confidence": "HIGH",
+        }
+        v2 = convert_sec_8k_to_v2(ev, date(2026, 2, 7))
+        assert v2 is not None
+        assert v2.source == "SEC_10K_FILING"
+
+    def test_6k_source_preserved(self):
+        from module_3_catalyst import convert_sec_8k_to_v2
+        ev = {
+            "ticker": "SGEN",
+            "event_type": "DATA_READOUT",
+            "event_date": "2026-03-15",
+            "source": "SEC_6K_FILING",
+            "filing_form": "6-K",
+            "confidence": "MED",
+        }
+        v2 = convert_sec_8k_to_v2(ev, date(2026, 2, 7))
+        assert v2 is not None
+        assert v2.source == "SEC_6K_FILING"
+
+    def test_8k_default_source(self):
+        """8-K event without explicit source should default to SEC_8K_FILING."""
+        from module_3_catalyst import convert_sec_8k_to_v2
+        ev = {
+            "ticker": "INSM",
+            "event_type": "DATA_READOUT",
+            "event_date": "2026-05-01",
+            "confidence": "MED",
+        }
+        v2 = convert_sec_8k_to_v2(ev, date(2026, 2, 7))
+        assert v2 is not None
+        assert v2.source == "SEC_8K_FILING"
+
+
+# ===========================================================================
+# run_screen _build_m3_config wiring
+# ===========================================================================
+
+class TestBuildM3Config:
+    """Verify _build_m3_config passes multi-form and FDA regulatory modes."""
+
+    def test_default_modes_off(self):
+        from run_screen import _build_m3_config
+        cfg = _build_m3_config()
+        assert cfg.enable_sec_multi_form == "off"
+        assert cfg.enable_fda_regulatory == "off"
+
+    def test_multi_form_mode_passed(self):
+        from run_screen import _build_m3_config
+        cfg = _build_m3_config(sec_multi_form_mode="cache_only")
+        assert cfg.enable_sec_multi_form == "cache_only"
+
+    def test_fda_regulatory_mode_passed(self):
+        from run_screen import _build_m3_config
+        cfg = _build_m3_config(fda_regulatory_mode="live")
+        assert cfg.enable_fda_regulatory == "live"
+
+    def test_all_modes_together(self):
+        from run_screen import _build_m3_config
+        cfg = _build_m3_config(
+            sec_8k_mode="live",
+            sec_multi_form_mode="live",
+            fda_regulatory_mode="cache_only",
+        )
+        assert cfg.enable_sec_8k_catalysts == "live"
+        assert cfg.enable_sec_multi_form == "live"
+        assert cfg.enable_fda_regulatory == "cache_only"

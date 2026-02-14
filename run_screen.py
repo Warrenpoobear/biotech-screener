@@ -3089,10 +3089,16 @@ def _normalize_m3_regime(regime: Optional[str]) -> Optional[str]:
     return "CHOP"
 
 
-def _build_m3_config(sec_8k_mode: str = "cache_only") -> 'Module3Config':
+def _build_m3_config(
+    sec_8k_mode: str = "cache_only",
+    sec_multi_form_mode: str = "off",
+    fda_regulatory_mode: str = "off",
+) -> 'Module3Config':
     """Build Module3Config, optionally overriding SEC 8-K mode."""
     cfg = Module3Config()
     cfg.enable_sec_8k_catalysts = sec_8k_mode
+    cfg.enable_sec_multi_form = sec_multi_form_mode
+    cfg.enable_fda_regulatory = fda_regulatory_mode
     return cfg
 
 
@@ -3135,6 +3141,10 @@ def run_screening_pipeline(
     output_dir: Optional[Path] = None,
     # SEC 8-K live mode
     sec_8k_mode: str = "cache_only",
+    # SEC multi-form (10-Q, 10-K, 6-K) mode
+    sec_multi_form_mode: str = "off",
+    # FDA regulatory notices (Federal Register) mode
+    fda_regulatory_mode: str = "off",
     # Module 5 calibrated weights
     module5_weights_path: Optional[Path] = None,
     module5_weights_mode: str = "global",
@@ -3610,7 +3620,7 @@ def run_screening_pipeline(
             active_tickers=full_universe_tickers,  # FULL universe, not filtered active_tickers
             as_of_date=as_of_date_obj,  # Date object
             market_calendar=SimpleMarketCalendar(),  # Market calendar for weekends
-            config=_build_m3_config(sec_8k_mode),
+            config=_build_m3_config(sec_8k_mode, sec_multi_form_mode, fda_regulatory_mode),
             output_dir=output_dir,  # Output directory for catalyst_events_*.json
             pit_mode=pit_mode,
         )
@@ -5136,6 +5146,20 @@ Module 3 Catalyst Detection:
         help="Run SEC 8-K catalyst collector in live mode (fetches from EDGAR). "
              "Only allowed when --as-of-date equals today (PIT safety).",
     )
+    parser.add_argument(
+        "--sec-multi-form-mode",
+        type=str,
+        default="off",
+        choices=["off", "cache_only", "live"],
+        help="SEC multi-form (10-Q, 10-K, 6-K) catalyst mode: off (default), cache_only, or live.",
+    )
+    parser.add_argument(
+        "--fda-regulatory-mode",
+        type=str,
+        default="off",
+        choices=["off", "cache_only", "live"],
+        help="FDA regulatory notices (Federal Register) mode: off (default), cache_only, or live.",
+    )
 
     # Clustering controls
     parser.add_argument(
@@ -5441,6 +5465,8 @@ Module 3 Catalyst Detection:
             pit_mode=args.pit_mode,
             output_dir=args.output_dir if args.output_dir else args.data_dir,
             sec_8k_mode=("live" if args.sec_8k_live else "cache_only"),
+            sec_multi_form_mode=args.sec_multi_form_mode,
+            fda_regulatory_mode=args.fda_regulatory_mode,
             module5_weights_path=(Path(args.module5_weights) if getattr(args, "module5_weights", None) else None),
             module5_weights_mode=getattr(args, "module5_weights_mode", "global"),
             scoring_mode=getattr(args, "scoring_mode", None),

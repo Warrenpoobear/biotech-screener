@@ -571,7 +571,7 @@ def convert_sec_8k_to_v2(
         field_changed=f"sec_8k_{event_type_str.lower()}",
         prior_value=None,
         new_value=new_value,
-        source="SEC_8K_FILING",
+        source=event.get("source", "SEC_8K_FILING"),
         confidence=confidence,
         disclosed_at=event.get('disclosed_at', as_of_date.isoformat()),
         event_date_end=event.get('event_date_end'),
