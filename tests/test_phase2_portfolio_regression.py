@@ -41,18 +41,18 @@ TIER_FILTER = ["A", "B"]
 TOP_K = 20
 
 # Pinned top-10 tickers in exact actionable order
-# Re-pinned 2026-02-11 for cost-aware sizing (enable_cost_haircut=True, cap=1000)
+# Re-pinned 2026-02-14 for tiebreaker mode (catalyst_priority_mode migration)
 EXPECTED_TOP_10 = [
-    {"ticker": "CNTX",  "rank": 1,  "tier": "A", "band": "M", "weight": 3.15},
-    {"ticker": "KALV",  "rank": 2,  "tier": "A", "band": "L", "weight": 6.37},
-    {"ticker": "VRDN",  "rank": 3,  "tier": "A", "band": "L", "weight": 6.37},
+    {"ticker": "KALV",  "rank": 1,  "tier": "A", "band": "L", "weight": 6.37},
+    {"ticker": "VRDN",  "rank": 2,  "tier": "A", "band": "L", "weight": 6.37},
+    {"ticker": "CNTX",  "rank": 3,  "tier": "A", "band": "M", "weight": 3.15},
     {"ticker": "AKRO",  "rank": 4,  "tier": "A", "band": "L", "weight": 7.49},
-    {"ticker": "XENE",  "rank": 5,  "tier": "B", "band": "M", "weight": 3.82},
-    {"ticker": "PVLA",  "rank": 6,  "tier": "B", "band": "L", "weight": 6.37},
-    {"ticker": "PTGX",  "rank": 7,  "tier": "B", "band": "L", "weight": 7.49},
-    {"ticker": "DNTH",  "rank": 8,  "tier": "B", "band": "L", "weight": 6.37},
-    {"ticker": "CELC",  "rank": 9,  "tier": "B", "band": "L", "weight": 7.49},
-    {"ticker": "NAUT",  "rank": 10, "tier": "B", "band": "L", "weight": 4.12},
+    {"ticker": "PTGX",  "rank": 5,  "tier": "B", "band": "L", "weight": 7.49},
+    {"ticker": "XENE",  "rank": 6,  "tier": "B", "band": "M", "weight": 3.82},
+    {"ticker": "TENX",  "rank": 7,  "tier": "B", "band": "L", "weight": 5.24},
+    {"ticker": "ABEO",  "rank": 8,  "tier": "B", "band": "S", "weight": 1.57},
+    {"ticker": "PVLA",  "rank": 9,  "tier": "B", "band": "L", "weight": 6.37},
+    {"ticker": "CLYM",  "rank": 10, "tier": "B", "band": "S", "weight": 1.57},
 ]
 
 EXPECTED_N_POSITIONS = 20

@@ -102,6 +102,29 @@
       3
     ]
   ],
+  "catalyst_priority_mode": "off",
+  "catalyst_priority_rank_bonuses": [
+    [
+      1,
+      5.0
+    ],
+    [
+      2,
+      2.0
+    ],
+    [
+      3,
+      0.0
+    ],
+    [
+      9,
+      0.0
+    ],
+    [
+      99,
+      0.0
+    ]
+  ],
   "catalyst_priority_unknown": 99,
   "catalyst_tilt_mults": [
     [

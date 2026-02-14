@@ -286,7 +286,7 @@ class TestRulesetDriftGuardrails:
     regenerate production_data/decision_rulesets/v1.json.
     """
 
-    EXPECTED_DEFAULT_RULESET_ID = "43981baa"
+    EXPECTED_DEFAULT_RULESET_ID = "ca05baa9"
 
     def test_default_ruleset_id_pinned(self):
         """DEFAULT_RULESET.ruleset_id must match the committed expected value.
@@ -450,7 +450,7 @@ class TestRulesetIdSchemaStability:
     PINNED_FILE_HASHES = {
         "v1.2.2_candidate.json": "bf6815e2",
         "v1.3.0_candidate.json": "f3454ef7",
-        "v1.json": "43981baa",
+        "v1.json": "ca05baa9",
         "v1.3.1_candidate.json": "898e5d0d",
     }
 
@@ -481,10 +481,15 @@ class TestRulesetIdSchemaStability:
         assert len(rs.ruleset_id) == 8
 
     def test_round_trip_preserves_id(self):
-        """to_json → from_json round-trip produces identical ruleset_id."""
+        """to_json → from_json round-trip preserves identity.
+
+        Uses v1.json (full-schema file) for exact ID match, and verifies
+        logical equality for older files that gain new default fields on write.
+        """
         import tempfile
+        # Full-schema file: round-trip preserves exact ID
         rs = DecisionRuleset.from_json(
-            str(self.RULESETS_DIR / "v1.2.2_candidate.json")
+            str(self.RULESETS_DIR / "v1.json")
         )
         with tempfile.NamedTemporaryFile(
             suffix=".json", delete=False, mode="w"
@@ -495,6 +500,21 @@ class TestRulesetIdSchemaStability:
             rs2 = DecisionRuleset.from_json(tmp_path)
             assert rs.ruleset_id == rs2.ruleset_id
             assert rs == rs2
+        finally:
+            os.unlink(tmp_path)
+
+        # Older file (may lack new fields): logical equality preserved
+        rs_old = DecisionRuleset.from_json(
+            str(self.RULESETS_DIR / "v1.2.2_candidate.json")
+        )
+        with tempfile.NamedTemporaryFile(
+            suffix=".json", delete=False, mode="w"
+        ) as tmp:
+            tmp_path = tmp.name
+        try:
+            rs_old.to_json(tmp_path)
+            rs_old2 = DecisionRuleset.from_json(tmp_path)
+            assert rs_old == rs_old2  # same field values
         finally:
             os.unlink(tmp_path)
 

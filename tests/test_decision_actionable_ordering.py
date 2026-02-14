@@ -315,13 +315,13 @@ def test_sort_key_missing_optionality():
 # ── Catalyst source/type priority tests ──
 
 def _priority_ruleset():
-    """Ruleset with enable_catalyst_priority=True."""
-    return DecisionRuleset(enable_catalyst_priority=True)
+    """Ruleset with catalyst priority enabled (tiebreaker mode)."""
+    return DecisionRuleset(catalyst_priority_mode="tiebreaker")
 
 
 def _disabled_ruleset():
-    """Ruleset with enable_catalyst_priority=False (default)."""
-    return DecisionRuleset(enable_catalyst_priority=False)
+    """Ruleset with catalyst priority disabled (off mode, default)."""
+    return DecisionRuleset(catalyst_priority_mode="off")
 
 
 # -- resolve_catalyst_priority unit tests --
@@ -525,3 +525,152 @@ class TestCatalystPriorityOrdering:
                           catalyst_event_type="FDA_DECISION",
                           catalyst_source="FDA_CALENDAR", ruleset=rs)
         assert key_a < key_b  # A-tier wins despite worse catalyst priority
+
+
+# ── Catalyst Priority Mode tests ──
+
+def _mode_ruleset(mode, **kwargs):
+    """Build a ruleset with a specific catalyst_priority_mode."""
+    return DecisionRuleset(catalyst_priority_mode=mode, **kwargs)
+
+
+class TestCatalystPriorityModes:
+    """Tests for off / tiebreaker / blended catalyst priority modes."""
+
+    def test_off_mode_identical_to_disabled(self):
+        """mode='off' produces same ordering as enable_catalyst_priority=False."""
+        rs_off = _mode_ruleset("off")
+        rs_disabled = DecisionRuleset(enable_catalyst_priority=False)
+
+        f = _make_fields(tier_dev="A", catalyst_mode="specific_days", catalyst_days=60)
+
+        key_off = _sort_key(f, ticker="X", composite_rank=10,
+                            catalyst_event_type="FDA_DECISION",
+                            catalyst_source="FDA_CALENDAR", ruleset=rs_off)
+        key_dis = _sort_key(f, ticker="X", composite_rank=10,
+                            catalyst_event_type="FDA_DECISION",
+                            catalyst_source="FDA_CALENDAR", ruleset=rs_disabled)
+        assert key_off == key_dis
+
+    def test_tiebreaker_comp_rank_dominates(self):
+        """In tiebreaker mode, FDA at rank 20 sorts AFTER generic at rank 10."""
+        rs = _mode_ruleset("tiebreaker")
+        f_fda = _make_fields(tier_dev="A", catalyst_mode="specific_days", catalyst_days=60)
+        f_gen = _make_fields(tier_dev="A", catalyst_mode="specific_days", catalyst_days=60)
+
+        key_fda = _sort_key(f_fda, ticker="FDA_T", composite_rank=20,
+                            catalyst_event_type="FDA_DECISION",
+                            catalyst_source="FDA_CALENDAR", ruleset=rs)
+        key_gen = _sort_key(f_gen, ticker="GEN_T", composite_rank=10,
+                            catalyst_event_type="DATA_READOUT",
+                            catalyst_source="CTGOV_CALENDAR", ruleset=rs)
+        assert key_gen < key_fda  # rank 10 beats rank 20 despite FDA priority
+
+    def test_tiebreaker_same_rank_fda_wins(self):
+        """In tiebreaker mode, FDA at rank 10 sorts before CTGOV at rank 10."""
+        rs = _mode_ruleset("tiebreaker")
+        f_fda = _make_fields(tier_dev="A", catalyst_mode="specific_days", catalyst_days=60)
+        f_ctgov = _make_fields(tier_dev="A", catalyst_mode="specific_days", catalyst_days=60)
+
+        key_fda = _sort_key(f_fda, ticker="FDA_T", composite_rank=10,
+                            catalyst_event_type="FDA_DECISION",
+                            catalyst_source="FDA_CALENDAR", ruleset=rs)
+        key_ctgov = _sort_key(f_ctgov, ticker="CTG_T", composite_rank=10,
+                              catalyst_event_type="DATA_READOUT",
+                              catalyst_source="CTGOV_CALENDAR", ruleset=rs)
+        assert key_fda < key_ctgov  # same rank, FDA priority 1 < CTGOV priority 2
+
+    def test_blended_small_rank_jump(self):
+        """In blended mode, FDA at rank 12 (bonus=5 → eff 7) beats generic at rank 10."""
+        rs = _mode_ruleset("blended")
+        f_fda = _make_fields(tier_dev="A", catalyst_mode="specific_days", catalyst_days=60)
+        f_gen = _make_fields(tier_dev="A", catalyst_mode="specific_days", catalyst_days=60)
+
+        key_fda = _sort_key(f_fda, ticker="FDA_T", composite_rank=12,
+                            catalyst_event_type="FDA_DECISION",
+                            catalyst_source="FDA_CALENDAR", ruleset=rs)
+        key_gen = _sort_key(f_gen, ticker="GEN_T", composite_rank=10,
+                            catalyst_event_type="", catalyst_source="",
+                            ruleset=rs)
+        # FDA: effective_rank = 12 - 5 = 7.0; generic: 10 - 0 = 10.0
+        assert key_fda < key_gen
+
+    def test_blended_large_gap_no_swap(self):
+        """In blended mode, FDA at rank 20 (bonus=5 → eff 15) still after generic rank 10."""
+        rs = _mode_ruleset("blended")
+        f_fda = _make_fields(tier_dev="A", catalyst_mode="specific_days", catalyst_days=60)
+        f_gen = _make_fields(tier_dev="A", catalyst_mode="specific_days", catalyst_days=60)
+
+        key_fda = _sort_key(f_fda, ticker="FDA_T", composite_rank=20,
+                            catalyst_event_type="FDA_DECISION",
+                            catalyst_source="FDA_CALENDAR", ruleset=rs)
+        key_gen = _sort_key(f_gen, ticker="GEN_T", composite_rank=10,
+                            catalyst_event_type="", catalyst_source="",
+                            ruleset=rs)
+        # FDA: effective_rank = 20 - 5 = 15.0; generic: 10 - 0 = 10.0
+        assert key_gen < key_fda
+
+    def test_tier_still_dominates_all_modes(self):
+        """A-tier always beats B-tier regardless of mode."""
+        for mode in ("off", "tiebreaker", "blended"):
+            rs = _mode_ruleset(mode)
+            f_a = _make_fields(tier_dev="A", catalyst_mode="specific_days", catalyst_days=60)
+            f_b = _make_fields(tier_dev="B", catalyst_mode="specific_days", catalyst_days=60)
+
+            key_a = _sort_key(f_a, ticker="A_T", composite_rank=50,
+                              catalyst_event_type="", catalyst_source="",
+                              ruleset=rs)
+            key_b = _sort_key(f_b, ticker="B_T", composite_rank=1,
+                              catalyst_event_type="FDA_DECISION",
+                              catalyst_source="FDA_CALENDAR", ruleset=rs)
+            assert key_a < key_b, f"A-tier should beat B-tier in mode={mode}"
+
+    def test_no_tier_changes_tiebreaker(self):
+        """Tiebreaker mode does not change tier assignments — same tier_ord."""
+        rs_off = _mode_ruleset("off")
+        rs_tb = _mode_ruleset("tiebreaker")
+        f = _make_fields(tier_dev="A", catalyst_mode="specific_days", catalyst_days=60)
+
+        key_off = _sort_key(f, ticker="X", composite_rank=10, ruleset=rs_off)
+        key_tb = _sort_key(f, ticker="X", composite_rank=10, ruleset=rs_tb)
+        # tier_ord is at index 2 in both tuples
+        assert key_off[2] == key_tb[2]
+
+    def test_mode_validation_rejects_invalid(self):
+        """Invalid catalyst_priority_mode raises ValueError."""
+        import pytest as _pytest
+        with _pytest.raises(ValueError, match="catalyst_priority_mode"):
+            DecisionRuleset(catalyst_priority_mode="invalid")
+
+    def test_from_json_migration_enable_to_tiebreaker(self):
+        """Old JSON with enable_catalyst_priority=true migrates to mode='tiebreaker'."""
+        import json
+        import tempfile
+        import os
+
+        # Build a minimal valid ruleset JSON with enable_catalyst_priority=true
+        # but NO catalyst_priority_mode key
+        base = DecisionRuleset(enable_catalyst_priority=True)
+        tmp = tempfile.NamedTemporaryFile(
+            mode="w", suffix=".json", delete=False,
+        )
+        try:
+            d = {}
+            from dataclasses import fields as dc_fields
+            for f in dc_fields(base):
+                val = getattr(base, f.name)
+                if f.name == "sizing_weights":
+                    d[f.name] = dict(val)
+                else:
+                    d[f.name] = val
+            # Remove the new fields to simulate old-format JSON
+            d.pop("catalyst_priority_mode", None)
+            d.pop("catalyst_priority_rank_bonuses", None)
+            json.dump(d, tmp, indent=2, sort_keys=True)
+            tmp.write("\n")
+            tmp.close()
+
+            loaded = DecisionRuleset.from_json(tmp.name)
+            assert loaded.catalyst_priority_mode == "tiebreaker"
+        finally:
+            os.unlink(tmp.name)

@@ -120,6 +120,16 @@ class DecisionRuleset:
     catalyst_priority_default: int = 9
     catalyst_priority_unknown: int = 99
 
+    # Actionable ordering — catalyst priority mode (supersedes enable_catalyst_priority)
+    catalyst_priority_mode: str = "off"       # "off" | "tiebreaker" | "blended"
+    catalyst_priority_rank_bonuses: tuple = (  # blended mode: priority → rank bonus
+        (1, 5.0),     # FDA events: effective_rank -= 5
+        (2, 2.0),     # CTGOV/SEC readout: effective_rank -= 2
+        (3, 0.0),     # corporate/ongoing
+        (9, 0.0),     # no catalyst
+        (99, 0.0),    # unknown
+    )
+
     def __post_init__(self):
         # Validate cost_haircut_buckets: ascending thresholds
         buckets = self.cost_haircut_buckets
@@ -163,6 +173,12 @@ class DecisionRuleset:
                 raise ValueError(
                     f"mom_state_tilt_mults: mult must be > 0, got {mult} for '{state}'"
                 )
+        # Validate catalyst_priority_mode
+        if self.catalyst_priority_mode not in ("off", "tiebreaker", "blended"):
+            raise ValueError(
+                f"catalyst_priority_mode must be 'off', 'tiebreaker', or 'blended', "
+                f"got '{self.catalyst_priority_mode}'"
+            )
         # Validate dd_rel_margin_rescue_threshold: must be <= 0
         if self.dd_rel_margin_rescue_threshold > 0:
             raise ValueError(
@@ -253,6 +269,14 @@ class DecisionRuleset:
             d["catalyst_priority_map"] = tuple(
                 tuple(rule) for rule in d["catalyst_priority_map"]
             )
+        # Convert catalyst_priority_rank_bonuses list-of-lists back to tuple-of-tuples
+        if "catalyst_priority_rank_bonuses" in d and isinstance(d["catalyst_priority_rank_bonuses"], list):
+            d["catalyst_priority_rank_bonuses"] = tuple(
+                tuple(pair) for pair in d["catalyst_priority_rank_bonuses"]
+            )
+        # Migration: enable_catalyst_priority=True → catalyst_priority_mode="tiebreaker"
+        if d.get("enable_catalyst_priority") and "catalyst_priority_mode" not in d:
+            d["catalyst_priority_mode"] = "tiebreaker"
         instance = cls(**d)
         # Store file-content hash on the frozen instance (bypasses __setattr__)
         object.__setattr__(instance, "_file_content_hash", file_hash)
@@ -758,9 +782,14 @@ def compute_actionable_sort_key(
     Lower tuple values sort first. Eligible dev-stage tickers with the
     best tier, nearest catalyst, and highest optionality rank first.
 
-    When ``ruleset.enable_catalyst_priority`` is True and event_type/source
-    are provided, a catalyst priority element is inserted after tier_ord
-    (before cat_mode_ord) to prefer FDA events over generic readouts.
+    Sort behavior is controlled by ``ruleset.catalyst_priority_mode``:
+
+    - **off**: priority neutral — catalyst mode/days dominate after tier.
+    - **tiebreaker**: composite_rank dominates; priority only breaks ties
+      among tickers with the same composite rank.
+    - **blended**: small rank bonus applied per priority level — FDA tickers
+      get ``effective_rank = comp_rank - bonus``, a gentle tilt that can
+      leapfrog nearby ranks but not distant ones.
     """
     eligible_val = decision_fields.get("eligible", "0")
     is_eligible = 0 if eligible_val == "1" else 1
@@ -770,9 +799,11 @@ def compute_actionable_sort_key(
     tier = decision_fields.get("tier_dev", "")
     tier_ord = _TIER_ORDER.get(str(tier), 4)
 
-    # Catalyst source/type priority (opt-in via ruleset)
     rs = ruleset or DEFAULT_RULESET
-    if rs.enable_catalyst_priority:
+    mode = rs.catalyst_priority_mode
+
+    # Resolve catalyst priority (needed for tiebreaker + blended modes)
+    if mode != "off":
         cat_priority = resolve_catalyst_priority(
             catalyst_event_type, catalyst_source, rs,
         )
@@ -795,11 +826,48 @@ def compute_actionable_sort_key(
 
     comp_rank = int(composite_rank) if composite_rank is not None else 9999
 
+    # --- Mode dispatch ---
+    if mode == "tiebreaker":
+        # comp_rank dominates after tier; priority only breaks ties
+        return (
+            is_eligible,    # 0: eligible first
+            is_dev,         # 1: dev first
+            tier_ord,       # 2: A < B < C < D < blank
+            comp_rank,      # 3: composite rank dominates
+            cat_priority,   # 4: priority breaks comp_rank ties
+            cat_days,       # 5: ascending days
+            opt_neg,        # 6: descending optionality
+            sponsor_neg,    # 7: descending sponsor count
+            mom_ord,        # 8: tailwind < neutral < headwind
+            cat_mode_ord,   # 9: specific < blended < no_upcoming < missing
+            ticker,         # 10: alphabetic tiebreak
+        )
+
+    if mode == "blended":
+        # Build bonus map from ruleset tuples
+        bonus_map = dict(rs.catalyst_priority_rank_bonuses)
+        bonus = bonus_map.get(cat_priority, 0.0)
+        effective_comp_rank = float(comp_rank) - bonus
+        return (
+            is_eligible,          # 0: eligible first
+            is_dev,               # 1: dev first
+            tier_ord,             # 2: A < B < C < D < blank
+            effective_comp_rank,  # 3: comp_rank with gentle bonus tilt
+            cat_mode_ord,         # 4: specific < blended < no_upcoming < missing
+            cat_days,             # 5: ascending days
+            opt_neg,              # 6: descending optionality
+            sponsor_neg,          # 7: descending sponsor count
+            mom_ord,              # 8: tailwind < neutral < headwind
+            cat_priority,         # 9: priority as tiebreaker
+            ticker,               # 10: alphabetic tiebreak
+        )
+
+    # mode == "off" (default)
     return (
         is_eligible,    # 0: eligible first
         is_dev,         # 1: dev first
         tier_ord,       # 2: A < B < C < D < blank
-        cat_priority,   # 3: catalyst source/type priority (0=neutral when disabled)
+        cat_priority,   # 3: 0 (neutral) — no effect on ordering
         cat_mode_ord,   # 4: specific < blended < no_upcoming < missing
         cat_days,       # 5: ascending days (missing=9999)
         opt_neg,        # 6: descending optionality (negated)

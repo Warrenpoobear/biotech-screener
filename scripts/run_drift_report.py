@@ -723,8 +723,8 @@ _CT_MAX_OFFENDERS = 10  # max tickers listed in ct_* offender appendix
 _CATALYST_EVENT_TYPE_KEYS = (
     "DATA_READOUT", "FDA_DECISION", "FDA_ADCOM",
     "FDA_PDUFA_DATE", "FDA_APPROVAL", "FDA_CRL",
-    "FDA_RTF", "FDA_WARNING_LETTER",
-    "CT_PRIMARY_COMPLETION", "CT_STUDY_COMPLETION",
+    "FDA_RTF", "FDA_WARNING_LETTER", "FDA_SUBMISSION",
+    "CT_PRIMARY_COMPLETION", "CT_STUDY_COMPLETION", "CT_RESULTS_POSTED",
     "TRIAL_ONGOING", "none", "unknown",
 )
 
@@ -740,6 +740,8 @@ _EVENT_TYPE_ALIASES: Dict[str, str] = {
     "fda_warning_letter": "FDA_WARNING_LETTER",
     "ct_primary_completion": "CT_PRIMARY_COMPLETION",
     "ct_study_completion": "CT_STUDY_COMPLETION",
+    "ct_results_posted": "CT_RESULTS_POSTED",
+    "fda_submission": "FDA_SUBMISSION",
     "trial_ongoing": "TRIAL_ONGOING",
 }
 
