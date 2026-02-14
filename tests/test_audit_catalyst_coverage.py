@@ -227,3 +227,88 @@ def test_pdufa_and_corp_entries():
     # FDA_CALENDAR from PDUFA entries
     assert "FDA_CALENDAR" in result["by_source"]
     assert result["by_source"]["FDA_CALENDAR"]["events"] == 2
+
+
+# ---------------------------------------------------------------------------
+# CTGOV diagnostic fields (regression)
+# ---------------------------------------------------------------------------
+
+def test_ctgov_present_flag():
+    """ctgov_present is True when CTGOV events exist, False otherwise."""
+    universe = _make_universe(3)
+    vnext_with = {
+        "T001": {"events": [_make_vnext_event("CT_PRIMARY_COMPLETION", "CTGOV_CALENDAR")]},
+    }
+    vnext_without = {
+        "T001": {"events": [_make_vnext_event("DATA_READOUT", "SEC_8K_FILING")]},
+    }
+
+    result_with = compute_coverage_metrics(universe_tickers=universe, vnext_summaries=vnext_with)
+    result_without = compute_coverage_metrics(universe_tickers=universe, vnext_summaries=vnext_without)
+
+    assert result_with["ctgov_present"] is True
+    assert result_without["ctgov_present"] is False
+
+
+def test_ctgov_by_type_breakdown():
+    """ctgov_by_type has counts per CT_* event type."""
+    universe = _make_universe(5)
+    vnext = {
+        "T001": {"events": [
+            _make_vnext_event("CT_PRIMARY_COMPLETION", "CTGOV_CALENDAR"),
+            _make_vnext_event("CT_STUDY_COMPLETION", "CTGOV_CALENDAR"),
+        ]},
+        "T002": {"events": [
+            _make_vnext_event("CT_PRIMARY_COMPLETION", "CTGOV_CALENDAR"),
+        ]},
+    }
+
+    result = compute_coverage_metrics(universe_tickers=universe, vnext_summaries=vnext)
+
+    assert result["ctgov_by_type"]["CT_PRIMARY_COMPLETION"] == 2
+    assert result["ctgov_by_type"]["CT_STUDY_COMPLETION"] == 1
+
+
+def test_amended_form_source_is_unknown():
+    """SEC_6K/A_FILING should be flagged as unknown source (regression)."""
+    universe = _make_universe(2)
+    multi_form = [
+        {"ticker": "T001", "event_type": "DATA_READOUT",
+         "source": "SEC_6K/A_FILING", "event_date": "2026-03-15"},
+    ]
+
+    result = compute_coverage_metrics(
+        universe_tickers=universe,
+        sec_multi_form_events=multi_form,
+    )
+
+    unk = result["unknown_events"]
+    assert unk["unknown_source_count"] >= 1
+    assert any(
+        ex["source"] == "SEC_6K/A_FILING" for ex in unk["unknown_source_examples"]
+    )
+
+
+def test_multi_form_uplift_new_tickers():
+    """Multi-form uplift counts tickers not already in 8-K."""
+    universe = _make_universe(5)
+    sec_8k = [
+        {"ticker": "T001", "event_type": "DATA_READOUT", "event_date": "2026-05-01"},
+    ]
+    multi_form = [
+        {"ticker": "T001", "event_type": "DATA_READOUT", "source": "SEC_10Q_FILING",
+         "event_date": "2026-06-01"},
+        {"ticker": "T002", "event_type": "DATA_READOUT", "source": "SEC_6K_FILING",
+         "event_date": "2026-07-01"},
+    ]
+
+    result = compute_coverage_metrics(
+        universe_tickers=universe,
+        sec_8k_events=sec_8k,
+        sec_multi_form_events=multi_form,
+    )
+
+    uplift = result["multi_form_uplift"]
+    assert uplift["tickers_new_count"] == 1
+    assert "T002" in uplift["tickers_new"]
+    assert "T001" not in uplift["tickers_new"]

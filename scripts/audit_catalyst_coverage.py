@@ -54,7 +54,7 @@ KNOWN_EVENT_TYPES = {
     "DATA_READOUT", "FDA_PDUFA_DATE", "FDA_ADCOM", "FDA_CRL", "FDA_RTF",
     "FDA_WARNING_LETTER", "FDA_APPROVAL", "FDA_SUBMISSION", "FDA_DESIGNATION",
     "FDA_DECISION", "CT_PRIMARY_COMPLETION", "CT_STUDY_COMPLETION",
-    "TRIAL_ONGOING", "CLINICAL_HOLD", "SAFETY_SIGNAL",
+    "TRIAL_ONGOING", "CLINICAL_HOLD", "SAFETY_SIGNAL", "CT_RESULTS_POSTED",
 }
 
 FDA_EVENT_TYPES = {
@@ -265,11 +265,13 @@ def compute_coverage_metrics(
     # FDA tickers
     fda_tickers = {t for t, et, _, _ in all_events if et in FDA_EVENT_TYPES}
 
-    # CTGOV tickers
+    # CTGOV tickers + breakdown
     ctgov_tickers = set()
+    ctgov_by_type = Counter()
     for t, et, src, _ in all_events:
         if src == "CTGOV_CALENDAR" or et in ("CT_PRIMARY_COMPLETION", "CT_STUDY_COMPLETION"):
             ctgov_tickers.add(t)
+            ctgov_by_type[et] += 1
 
     # Unknown/blank event_type
     unknown_type_events = [
@@ -296,6 +298,8 @@ def compute_coverage_metrics(
         "pct_with_fda": round(len(fda_tickers) / universe_size * 100, 2),
         "tickers_with_ctgov": len(ctgov_tickers),
         "pct_with_ctgov": round(len(ctgov_tickers) / universe_size * 100, 2),
+        "ctgov_by_type": dict(ctgov_by_type.most_common()),
+        "ctgov_present": len(ctgov_tickers) > 0,
         "by_source": {
             s: {"events": c, "tickers": len(source_tickers[s])}
             for s, c in source_counter.most_common()
@@ -374,6 +378,22 @@ def print_summary(metrics):
         for ex in unk["unknown_source_examples"][:10]:
             print(f"      {ex['ticker']:6s}  type={ex['event_type']!r:20s}  src={ex['source']!r}")
 
+    # CTGOV pipeline diagnostic
+    ctgov_present = metrics.get("ctgov_present", False)
+    ctgov_count = metrics.get("tickers_with_ctgov", 0)
+    ctgov_types = metrics.get("ctgov_by_type", {})
+    print(f"\n  CTGOV PIPELINE: {'PRESENT' if ctgov_present else 'NOT DETECTED'}")
+    if ctgov_present:
+        print(f"    Tickers: {ctgov_count} ({metrics.get('pct_with_ctgov', 0):.1f}%)")
+        for ct_type, ct_count in ctgov_types.items():
+            print(f"    {ct_type:30s}  events={ct_count:4d}")
+    else:
+        print("    WARNING: No CTGOV events found in vNext summaries.")
+        print("    Possible causes:")
+        print("      - vNext file missing or wrong format")
+        print("      - trial_records.json not loaded")
+        print("      - No upcoming trial dates in window")
+
     # Multi-form uplift
     uplift = metrics.get("multi_form_uplift", {})
     new_count = uplift.get("tickers_new_count", 0)
@@ -414,7 +434,11 @@ def main():
     if vnext_path and vnext_path.exists():
         vnext_data = _load_json(vnext_path)
         if isinstance(vnext_data, dict):
-            vnext_summaries = vnext_data
+            # New vnext format nests summaries under 'summaries' key
+            if "summaries" in vnext_data:
+                vnext_summaries = vnext_data["summaries"]
+            else:
+                vnext_summaries = vnext_data  # Legacy flat format
         print(f"vNext summaries: {vnext_path.name} ({len(vnext_summaries)} tickers)")
     else:
         print("vNext summaries: NOT FOUND")
