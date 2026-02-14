@@ -77,11 +77,11 @@
       "created_at": "2026-02-13",
       "engine_version": "v1.3.0",
       "description": "Catalyst source/type ordering policy (enable_catalyst_priority=true)",
-      "status": "active",
+      "status": "retired",
       "requires_replay": false,
-      "notes": "Same params as v1.2.2 + enable_catalyst_priority=true. FDA events (priority=1) sort above CTGOV readouts (2) within same tier. Backtest acceptance: 0 delta across 22 snapshots.",
+      "notes": "Same params as v1.2.2 + enable_catalyst_priority=true. FDA events (priority=1) sort above CTGOV readouts (2) within same tier. Superseded by v1.3.2 (tiebreaker mode).",
       "updated_by": "promote_ruleset.py",
-      "updated_at": "2026-02-13T00:00:00Z"
+      "updated_at": "2026-02-14T00:00:00Z"
     },
     {
       "id": "898e5d0d",
@@ -89,7 +89,7 @@
       "created_at": "2026-02-14",
       "engine_version": "v1.3.0",
       "description": "Expanded priority map: SEC multi-form (10Q/10K/6K) + Federal Register (demoted to pri=3)",
-      "status": "candidate",
+      "status": "retired",
       "requires_replay": false,
       "notes": "Same params as v1.3.0 + expanded catalyst_priority_map: SEC_10Q/10K/6K_FILING at pri=2, FEDERAL_REGISTER demoted from pri=1 to pri=3 (procedural notices, not drug decisions). Supports multi-form EDGAR collection.",
       "updated_by": "manual_bootstrap",
@@ -111,7 +111,7 @@
       "created_at": "2026-02-14",
       "engine_version": "v1.3.0",
       "description": "Catalyst priority dampened: tiebreaker mode (comp_rank dominates, priority only breaks ties)",
-      "status": "candidate",
+      "status": "active",
       "requires_replay": false,
       "notes": "Same params as v1.3.1 + catalyst_priority_mode=tiebreaker, enable_catalyst_priority=false (deprecated). Acceptance target: <=5% rank changes vs mode=off.",
       "updated_by": "manual_bootstrap",

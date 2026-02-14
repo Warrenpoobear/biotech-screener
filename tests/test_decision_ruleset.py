@@ -452,6 +452,7 @@ class TestRulesetIdSchemaStability:
         "v1.3.0_candidate.json": "f3454ef7",
         "v1.json": "ca05baa9",
         "v1.3.1_candidate.json": "898e5d0d",
+        "v1.3.2_candidate.json": "96f655ee",
     }
 
     def test_pinned_file_hashes_stable(self):

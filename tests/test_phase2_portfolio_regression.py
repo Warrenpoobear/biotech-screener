@@ -8,10 +8,10 @@ deterministic, known-good output for a specific snapshot + ruleset.
 This prevents silent ordering/weight drift from code changes to the
 decision engine, sort key, or sizing logic.
 
-Pinned on: 2026-02-11
+Pinned on: 2026-02-14
 Snapshot:  2025-10-31 archive
-Ruleset:   v1.3.0 (ID: f3454ef7, a_floor=0.60, catalyst_near=120, catalyst_mid=180,
-           drawdown_rel_xbi_gate=-0.25, enable_cost_haircut=True, cap=1000)
+Ruleset:   v1.3.2 (ID: 96f655ee, tiebreaker mode, a_floor=0.60, catalyst_near=120,
+           catalyst_mid=180, drawdown_rel_xbi_gate=-0.25, enable_cost_haircut=True, cap=1000)
 Policy:    tier_filter=[A,B], top_k=20
 """
 from __future__ import annotations
@@ -35,7 +35,7 @@ from run_rank_ic_backtest import ARCHIVE_DIR
 # =============================================================================
 
 SNAPSHOT_DATE = "2025-10-31"
-RULESET_PATH = PROJECT_ROOT / "production_data" / "decision_rulesets" / "v1.3.0_candidate.json"
+RULESET_PATH = PROJECT_ROOT / "production_data" / "decision_rulesets" / "v1.3.2_candidate.json"
 ARCHIVE_PATH = ARCHIVE_DIR / f"{SNAPSHOT_DATE}.tar.gz"
 TIER_FILTER = ["A", "B"]
 TOP_K = 20
@@ -146,8 +146,8 @@ class TestPhase2PortfolioRegression:
         if not RULESET_PATH.exists():
             pytest.skip(f"Ruleset not found: {RULESET_PATH}")
         ruleset = DecisionRuleset.from_json(str(RULESET_PATH))
-        assert ruleset.ruleset_id == "f3454ef7", (
-            f"Ruleset ID changed: expected f3454ef7, got {ruleset.ruleset_id}"
+        assert ruleset.ruleset_id == "96f655ee", (
+            f"Ruleset ID changed: expected 96f655ee, got {ruleset.ruleset_id}"
         )
 
     def test_a_floor_060(self):
