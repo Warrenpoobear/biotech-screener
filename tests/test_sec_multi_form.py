@@ -249,13 +249,119 @@ class TestPriorityResolutionNewSources:
         rs = DecisionRuleset(enable_catalyst_priority=True)
         assert resolve_catalyst_priority("DATA_READOUT", "SEC_6K_FILING", rs) == 2
 
-    def test_federal_register_priority_1(self):
+    def test_federal_register_fda_approval_priority_1(self):
+        """FDA_APPROVAL from FEDERAL_REGISTER → event-type rule wins → still pri=1."""
         from decision_engine import resolve_catalyst_priority, DecisionRuleset
         rs = DecisionRuleset(enable_catalyst_priority=True)
+        # FDA_APPROVAL matches ("FDA_APPROVAL", "*", 1) before ("*", "FEDERAL_REGISTER", 3)
         assert resolve_catalyst_priority("FDA_APPROVAL", "FEDERAL_REGISTER", rs) == 1
 
-    def test_federal_register_wildcard_type_priority_1(self):
-        """Any event type from FEDERAL_REGISTER gets priority 1."""
+    def test_federal_register_wildcard_type_priority_3(self):
+        """Any event type from FEDERAL_REGISTER gets priority 3."""
         from decision_engine import resolve_catalyst_priority, DecisionRuleset
         rs = DecisionRuleset(enable_catalyst_priority=True)
-        assert resolve_catalyst_priority("SOME_NOVEL_TYPE", "FEDERAL_REGISTER", rs) == 1
+        assert resolve_catalyst_priority("SOME_NOVEL_TYPE", "FEDERAL_REGISTER", rs) == 3
+
+
+# ===========================================================================
+# adsh-level parsed event cache
+# ===========================================================================
+
+class TestAdshCache:
+    """Verify per-filing adsh-level cache helpers."""
+
+    def test_adsh_cache_dir(self):
+        from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import (
+            _adsh_cache_dir,
+        )
+        d = _adsh_cache_dir(Path("/tmp/cache"))
+        assert d.name == "multi_form_parsed"
+        assert d.parent == Path("/tmp/cache")
+
+    def test_adsh_cache_path_contains_version(self):
+        from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import (
+            _adsh_cache_path, PATTERN_VERSION,
+        )
+        p = _adsh_cache_path(Path("/tmp/cache"), "0001234567-26-001234")
+        assert PATTERN_VERSION in p.name
+        assert p.suffix == ".json"
+
+    def test_adsh_cache_path_sanitizes_slashes(self):
+        from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import (
+            _adsh_cache_path,
+        )
+        p = _adsh_cache_path(Path("/tmp/cache"), "0001/234567-26-001234")
+        assert "/" not in p.name
+
+    def test_cache_miss_returns_none(self, tmp_path):
+        from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import (
+            _load_adsh_cache,
+        )
+        result = _load_adsh_cache(tmp_path, "nonexistent-adsh")
+        assert result is None
+
+    def test_save_then_load_roundtrip(self, tmp_path):
+        from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import (
+            _save_adsh_cache, _load_adsh_cache,
+        )
+        events = [
+            {"ticker": "ACAD", "event_type": "DATA_READOUT", "event_date": "2026-06-15",
+             "source": "SEC_10Q_FILING", "filing_form": "10-Q"},
+        ]
+        _save_adsh_cache(tmp_path, "0001234567-26-001234", events)
+        loaded = _load_adsh_cache(tmp_path, "0001234567-26-001234")
+        assert loaded is not None
+        assert len(loaded) == 1
+        assert loaded[0]["ticker"] == "ACAD"
+
+    def test_save_empty_events_cached(self, tmp_path):
+        """Empty results are cached (prevents re-fetching filings with no events)."""
+        from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import (
+            _save_adsh_cache, _load_adsh_cache,
+        )
+        _save_adsh_cache(tmp_path, "0001234567-26-000001", [])
+        loaded = _load_adsh_cache(tmp_path, "0001234567-26-000001")
+        assert loaded is not None
+        assert loaded == []
+
+    def test_cache_deterministic(self, tmp_path):
+        """Same adsh always loads same events."""
+        from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import (
+            _save_adsh_cache, _load_adsh_cache,
+        )
+        events = [
+            {"ticker": "INSM", "event_type": "FDA_PDUFA_DATE", "event_date": "2026-09-01"},
+            {"ticker": "INSM", "event_type": "DATA_READOUT", "event_date": "2026-07-01"},
+        ]
+        _save_adsh_cache(tmp_path, "test-adsh-123", events)
+        load_1 = _load_adsh_cache(tmp_path, "test-adsh-123")
+        load_2 = _load_adsh_cache(tmp_path, "test-adsh-123")
+        assert load_1 == load_2 == events
+
+
+# ===========================================================================
+# Per-ticker cap constant
+# ===========================================================================
+
+class TestPerTickerCap:
+    """Verify per-ticker cap constant is set and reasonable."""
+
+    def test_cap_is_positive_int(self):
+        from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import (
+            _MAX_FILINGS_PER_TICKER,
+        )
+        assert isinstance(_MAX_FILINGS_PER_TICKER, int)
+        assert _MAX_FILINGS_PER_TICKER >= 1
+
+    def test_cap_is_small(self):
+        """Per-ticker cap should be much smaller than global cap."""
+        from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import (
+            _MAX_FILINGS_PER_TICKER, _MAX_FILINGS_PER_MULTI_FORM_RUN,
+        )
+        assert _MAX_FILINGS_PER_TICKER < _MAX_FILINGS_PER_MULTI_FORM_RUN
+
+    def test_default_cap_is_2(self):
+        from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import (
+            _MAX_FILINGS_PER_TICKER,
+        )
+        assert _MAX_FILINGS_PER_TICKER == 2

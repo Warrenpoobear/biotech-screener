@@ -115,7 +115,7 @@ class DecisionRuleset:
         ("*", "SEC_10Q_FILING", 2),
         ("*", "SEC_10K_FILING", 2),
         ("*", "SEC_6K_FILING", 2),
-        ("*", "FEDERAL_REGISTER", 1),
+        ("*", "FEDERAL_REGISTER", 3),
     )
     catalyst_priority_default: int = 9
     catalyst_priority_unknown: int = 99

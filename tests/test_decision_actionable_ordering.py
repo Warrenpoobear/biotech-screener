@@ -432,13 +432,13 @@ class TestResolveCatalystPriority:
         rs = _priority_ruleset()
         assert resolve_catalyst_priority("SOME_TYPE", "SEC_6K_FILING", rs) == 2
 
-    def test_federal_register_wildcard_type_priority_1(self):
-        """Any event_type from FEDERAL_REGISTER → priority 1."""
+    def test_federal_register_wildcard_type_priority_3(self):
+        """Any event_type from FEDERAL_REGISTER → priority 3 (demoted: procedural notices)."""
         rs = _priority_ruleset()
-        assert resolve_catalyst_priority("SOME_TYPE", "FEDERAL_REGISTER", rs) == 1
+        assert resolve_catalyst_priority("SOME_TYPE", "FEDERAL_REGISTER", rs) == 3
 
     def test_fda_approval_from_federal_register_priority_1(self):
-        """FDA_APPROVAL from FEDERAL_REGISTER → matches FDA_APPROVAL rule first → 1."""
+        """FDA_APPROVAL from FEDERAL_REGISTER → matches FDA_APPROVAL event rule first → 1."""
         rs = _priority_ruleset()
         assert resolve_catalyst_priority("FDA_APPROVAL", "FEDERAL_REGISTER", rs) == 1
 

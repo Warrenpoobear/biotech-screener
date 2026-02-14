@@ -49,6 +49,9 @@ _MAX_FILINGS_PER_RUN = 500
 # Hard cap for multi-form (10-Q, 10-K, 6-K) collection
 _MAX_FILINGS_PER_MULTI_FORM_RUN = 300
 
+# Per-ticker cap for multi-form: keep only the N most recent filings per ticker
+_MAX_FILINGS_PER_TICKER = 2
+
 # Map filing form type to source label for events
 FORM_TO_SOURCE = {
     "8-K":  "SEC_8K_FILING",
@@ -835,6 +838,41 @@ def _multi_form_cache_path(cache_dir: Path, as_of_date: date) -> Path:
     return cache_dir / f"sec_filings_{as_of_date.isoformat()}_{PATTERN_VERSION}.json"
 
 
+def _adsh_cache_dir(cache_dir: Path) -> Path:
+    """Directory for per-filing parsed event caches."""
+    return cache_dir / "multi_form_parsed"
+
+
+def _adsh_cache_path(cache_dir: Path, adsh: str) -> Path:
+    """Cache path for parsed events from a single filing (keyed by adsh + PATTERN_VERSION)."""
+    safe_adsh = adsh.replace("/", "_").replace("\\", "_")
+    return _adsh_cache_dir(cache_dir) / f"{safe_adsh}_{PATTERN_VERSION}.json"
+
+
+def _load_adsh_cache(cache_dir: Path, adsh: str) -> Optional[List[Dict[str, Any]]]:
+    """Load cached parsed events for a single filing. Returns None on miss."""
+    path = _adsh_cache_path(cache_dir, adsh)
+    if not path.exists():
+        return None
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return None
+
+
+def _save_adsh_cache(cache_dir: Path, adsh: str, events: List[Dict[str, Any]]) -> None:
+    """Save parsed events for a single filing."""
+    d = _adsh_cache_dir(cache_dir)
+    d.mkdir(parents=True, exist_ok=True)
+    path = _adsh_cache_path(cache_dir, adsh)
+    try:
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(events, f, indent=2)
+    except Exception as e:
+        logger.warning(f"adsh cache write error for {adsh}: {e}")
+
+
 def collect_sec_filing_events(
     universe: List[Dict[str, Any]],
     as_of_date: date,
@@ -1019,7 +1057,30 @@ def collect_sec_filing_events(
 
     logger.info(f"Multi-form phase 1: {len(filings_to_fetch)} unique filings to fetch")
 
-    # Hard cap
+    # ── Per-ticker cap: keep only _MAX_FILINGS_PER_TICKER most recent per ticker ──
+    ticker_filings: Dict[str, List[Tuple[str, Dict[str, str]]]] = {}
+    for adsh, meta in filings_to_fetch.items():
+        t = meta["ticker"]
+        if t not in ticker_filings:
+            ticker_filings[t] = []
+        ticker_filings[t].append((adsh, meta))
+
+    # Sort each ticker's filings by date (most recent first), keep top N
+    capped: Dict[str, Dict[str, str]] = {}
+    for t, entries in ticker_filings.items():
+        entries.sort(key=lambda x: x[1]["file_date"], reverse=True)
+        for adsh, meta in entries[:_MAX_FILINGS_PER_TICKER]:
+            capped[adsh] = meta
+
+    pre_cap = len(filings_to_fetch)
+    filings_to_fetch = capped
+    if pre_cap != len(filings_to_fetch):
+        logger.info(
+            f"Per-ticker cap ({_MAX_FILINGS_PER_TICKER}/ticker): "
+            f"{pre_cap} → {len(filings_to_fetch)} filings"
+        )
+
+    # Global backstop cap (after per-ticker cap)
     if len(filings_to_fetch) > _MAX_FILINGS_PER_MULTI_FORM_RUN:
         logger.warning(
             f"Capping multi-form fetches at {_MAX_FILINGS_PER_MULTI_FORM_RUN} "
@@ -1032,9 +1093,11 @@ def collect_sec_filing_events(
         )
         filings_to_fetch = dict(sorted_items[:_MAX_FILINGS_PER_MULTI_FORM_RUN])
 
-    # Phase 2: Fetch filing text and extract events
+    # Phase 2: Fetch filing text and extract events (with adsh-level cache)
     all_events = []
     fetch_errors = 0
+    cache_hits = 0
+    network_fetches = 0
 
     for adsh, meta in filings_to_fetch.items():
         ticker = meta["ticker"]
@@ -1045,38 +1108,53 @@ def collect_sec_filing_events(
         # Determine source label from form type
         source_label = FORM_TO_SOURCE.get(form_type, f"SEC_{form_type.replace('-', '')}_FILING")
 
+        # Check adsh-level cache first
+        cached_events = _load_adsh_cache(cache_dir, adsh)
+        if cached_events is not None:
+            cache_hits += 1
+            all_events.extend(cached_events)
+            continue
+
         try:
             text = _fetch_filing_text(cik, adsh, session)
             if not text:
                 fetch_errors += 1
+                _save_adsh_cache(cache_dir, adsh, [])  # Cache empty result
                 continue
 
+            network_fetches += 1
             extracted = _extract_timing_events(text, ticker, file_date, as_of_date)
             downside = _extract_downside_events(text, ticker, file_date)
 
             # Override source to match the filing form type
+            filing_events = []
             for ev in extracted:
                 ev["source"] = source_label
                 ev["filing_form"] = form_type
+                filing_events.append(ev)
             for ev in downside:
                 ev["source"] = source_label
                 ev["filing_form"] = form_type
+                filing_events.append(ev)
 
-            total_extracted = len(extracted) + len(downside)
-            if total_extracted:
+            # Cache parsed events for this filing
+            _save_adsh_cache(cache_dir, adsh, filing_events)
+
+            if filing_events:
                 logger.info(
                     f"  {ticker} ({form_type} {adsh}, {file_date}): "
                     f"{len(extracted)} timing + {len(downside)} downside events"
                 )
-            all_events.extend(extracted)
-            all_events.extend(downside)
+            all_events.extend(filing_events)
 
         except Exception as e:
             logger.warning(f"Error processing {ticker} {form_type} {adsh}: {e}")
             fetch_errors += 1
 
-    if fetch_errors:
-        logger.info(f"Multi-form phase 2: {fetch_errors} filing fetch errors")
+    logger.info(
+        f"Multi-form phase 2: {cache_hits} cache hits, "
+        f"{network_fetches} network fetches, {fetch_errors} errors"
+    )
 
     # Deduplicate events by (ticker, event_type, event_date)
     seen = set()

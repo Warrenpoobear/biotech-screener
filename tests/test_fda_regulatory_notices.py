@@ -194,11 +194,11 @@ class TestFederalRegisterPriority:
         rs = DecisionRuleset(enable_catalyst_priority=True)
         assert resolve_catalyst_priority("FDA_WARNING_LETTER", "FEDERAL_REGISTER", rs) == 1
 
-    def test_generic_type_federal_register_priority_1(self):
-        """Any type from FEDERAL_REGISTER falls through to wildcard rule → 1."""
+    def test_generic_type_federal_register_priority_3(self):
+        """Novel type from FEDERAL_REGISTER falls through to source wildcard → 3 (demoted)."""
         from decision_engine import resolve_catalyst_priority, DecisionRuleset
         rs = DecisionRuleset(enable_catalyst_priority=True)
-        assert resolve_catalyst_priority("NOVEL_TYPE", "FEDERAL_REGISTER", rs) == 1
+        assert resolve_catalyst_priority("NOVEL_TYPE", "FEDERAL_REGISTER", rs) == 3
 
 
 # ===========================================================================

@@ -40,6 +40,10 @@ CACHE_DIRS_8K = [
     PROJECT_ROOT / "cache" / "sec" / "8k_catalysts",
     PROJECT_ROOT / "wake_robin_data_pipeline" / "cache" / "sec" / "8k_catalysts",
 ]
+CACHE_DIRS_MULTI_FORM = [
+    PROJECT_ROOT / "cache" / "sec" / "8k_catalysts",
+    PROJECT_ROOT / "wake_robin_data_pipeline" / "cache" / "sec" / "8k_catalysts",
+]
 CACHE_DIRS_ADCOM = [
     PROJECT_ROOT / "cache" / "fda",
     PROJECT_ROOT / "wake_robin_data_pipeline" / "cache" / "fda",
@@ -137,6 +141,7 @@ def compute_coverage_metrics(
     universe_tickers,
     vnext_summaries=None,
     sec_8k_events=None,
+    sec_multi_form_events=None,
     adcom_events=None,
     pdufa_entries=None,
     corp_entries=None,
@@ -147,6 +152,7 @@ def compute_coverage_metrics(
         universe_tickers: set of uppercase tickers
         vnext_summaries: dict of {ticker: summary} from catalyst_events_vnext
         sec_8k_events: list of SEC 8-K event dicts
+        sec_multi_form_events: list of SEC 10-Q/10-K/6-K event dicts
         adcom_events: list of ADCOM event dicts
         pdufa_entries: list of PDUFA date entries
         corp_entries: list of corporate catalyst entries
@@ -160,6 +166,7 @@ def compute_coverage_metrics(
 
     vnext_summaries = vnext_summaries or {}
     sec_8k_events = sec_8k_events or []
+    sec_multi_form_events = sec_multi_form_events or []
     adcom_events = adcom_events or []
     pdufa_entries = pdufa_entries or []
     corp_entries = corp_entries or []
@@ -192,6 +199,17 @@ def compute_coverage_metrics(
             has_date = bool(ev.get("event_date"))
             all_events.append((t, et, src, has_date))
             sec_tickers.add(t)
+
+    # SEC multi-form events (10-Q, 10-K, 6-K)
+    multi_form_tickers = set()
+    for ev in sec_multi_form_events:
+        t = ev.get("ticker", "").upper()
+        if t and t in universe_tickers:
+            et = ev.get("event_type", "")
+            src = ev.get("source", "SEC_10Q_FILING")
+            has_date = bool(ev.get("event_date"))
+            all_events.append((t, et, src, has_date))
+            multi_form_tickers.add(t)
 
     # ADCOM events
     adcom_tickers = set()
@@ -302,9 +320,15 @@ def compute_coverage_metrics(
         },
         "source_ticker_lists": {
             "SEC_8K": sorted(sec_tickers & universe_tickers),
+            "SEC_MULTI_FORM": sorted(multi_form_tickers & universe_tickers),
             "ADCOM": sorted(adcom_tickers & universe_tickers),
             "PDUFA": sorted(pdufa_tickers & universe_tickers),
             "CORPORATE": sorted(corp_tickers & universe_tickers),
+        },
+        # Uplift: tickers gained from multi-form that aren't covered by 8-K alone
+        "multi_form_uplift": {
+            "tickers_new": sorted((multi_form_tickers - sec_tickers) & universe_tickers),
+            "tickers_new_count": len((multi_form_tickers - sec_tickers) & universe_tickers),
         },
     }
     return metrics
@@ -350,6 +374,20 @@ def print_summary(metrics):
         for ex in unk["unknown_source_examples"][:10]:
             print(f"      {ex['ticker']:6s}  type={ex['event_type']!r:20s}  src={ex['source']!r}")
 
+    # Multi-form uplift
+    uplift = metrics.get("multi_form_uplift", {})
+    new_count = uplift.get("tickers_new_count", 0)
+    new_tickers = uplift.get("tickers_new", [])
+    if new_count > 0:
+        print(f"\n  MULTI-FORM UPLIFT (vs 8-K only):")
+        print(f"    New tickers from 10-Q/10-K/6-K: {new_count}")
+        print(f"    Tickers: {', '.join(new_tickers[:20])}")
+        if len(new_tickers) > 20:
+            print(f"    ... and {len(new_tickers) - 20} more")
+    elif any(s.startswith("SEC_10") or s.startswith("SEC_6K") for s in metrics.get("by_source", {})):
+        print(f"\n  MULTI-FORM UPLIFT (vs 8-K only):")
+        print(f"    New tickers from 10-Q/10-K/6-K: 0 (all already covered by 8-K)")
+
 
 def main():
     parser = argparse.ArgumentParser(description="Comprehensive catalyst coverage audit")
@@ -389,6 +427,14 @@ def main():
     sec_events = _load_json(sec_cache) if sec_cache else []
     print(f"SEC 8-K cache: {sec_cache.name if sec_cache else 'NOT FOUND'} ({len(sec_events)} events)")
 
+    # Load SEC multi-form cache (10-Q, 10-K, 6-K)
+    if args.as_of_date:
+        mf_cache = _find_cache_for_date(CACHE_DIRS_MULTI_FORM, "sec_filings_", args.as_of_date)
+    else:
+        mf_cache = _find_latest_cache(CACHE_DIRS_MULTI_FORM, "sec_filings_")
+    multi_form_events = _load_json(mf_cache) if mf_cache else []
+    print(f"SEC multi-form cache: {mf_cache.name if mf_cache else 'NOT FOUND'} ({len(multi_form_events)} events)")
+
     # Load ADCOM cache
     if args.as_of_date:
         adcom_cache = _find_cache_for_date(CACHE_DIRS_ADCOM, "adcom_calendar_", args.as_of_date)
@@ -426,6 +472,7 @@ def main():
         universe_tickers=universe_tickers,
         vnext_summaries=vnext_summaries,
         sec_8k_events=sec_events,
+        sec_multi_form_events=multi_form_events,
         adcom_events=adcom_events,
         pdufa_entries=pdufa_entries,
         corp_entries=corp_entries,
