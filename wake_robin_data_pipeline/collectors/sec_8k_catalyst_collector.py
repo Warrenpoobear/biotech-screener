@@ -981,7 +981,7 @@ def collect_sec_filing_events(
                     file_date = source.get("file_date", "")
                     adsh = source.get("adsh", "")
                     ciks = source.get("ciks", [])
-                    form_type = source.get("form_type", "")
+                    form_type = source.get("form", "") or source.get("form_type", "")
 
                     if not adsh or not file_date or file_date > end_date:
                         continue
