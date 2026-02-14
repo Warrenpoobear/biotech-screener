@@ -7,13 +7,43 @@
   "catalyst_priority_default": 9,
   "catalyst_priority_map": [
     [
-      "FDA_DECISION",
-      "FDA_CALENDAR",
+      "FDA_PDUFA_DATE",
+      "*",
       1
     ],
     [
       "FDA_ADCOM",
-      "FDA_CALENDAR",
+      "*",
+      1
+    ],
+    [
+      "FDA_CRL",
+      "*",
+      1
+    ],
+    [
+      "FDA_RTF",
+      "*",
+      1
+    ],
+    [
+      "FDA_WARNING_LETTER",
+      "*",
+      1
+    ],
+    [
+      "FDA_DECISION",
+      "*",
+      1
+    ],
+    [
+      "FDA_APPROVAL",
+      "*",
+      1
+    ],
+    [
+      "FDA_SUBMISSION",
+      "*",
       1
     ],
     [
@@ -25,6 +55,16 @@
       "DATA_READOUT",
       "*",
       2
+    ],
+    [
+      "CT_PRIMARY_COMPLETION",
+      "*",
+      3
+    ],
+    [
+      "CT_STUDY_COMPLETION",
+      "*",
+      3
     ],
     [
       "TRIAL_ONGOING",
@@ -40,6 +80,26 @@
       "*",
       "SEC_8K_FILING",
       2
+    ],
+    [
+      "*",
+      "SEC_10Q_FILING",
+      2
+    ],
+    [
+      "*",
+      "SEC_10K_FILING",
+      2
+    ],
+    [
+      "*",
+      "SEC_6K_FILING",
+      2
+    ],
+    [
+      "*",
+      "FEDERAL_REGISTER",
+      1
     ]
   ],
   "catalyst_priority_unknown": 99,

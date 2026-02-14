@@ -131,6 +131,12 @@ class Module3Config:
         self.enable_sec_8k_catalysts: str = "cache_only"
         self.sec_8k_cache_dir = Path("cache/sec/8k_catalysts")
 
+        # SEC multi-form catalyst config (10-Q, 10-K, 6-K — same modes)
+        self.enable_sec_multi_form: str = "off"
+
+        # FDA regulatory notices config (approvals, CRLs, etc. from Federal Register)
+        self.enable_fda_regulatory: str = "off"
+
     @classmethod
     def from_dict(cls, config_dict: Dict[str, Any]) -> 'Module3Config':
         """Create config from dict"""
@@ -181,6 +187,26 @@ class Module3Config:
                 config.enable_sec_8k_catalysts = str(val)
         if 'sec_8k_cache_dir' in config_dict:
             config.sec_8k_cache_dir = Path(config_dict['sec_8k_cache_dir'])
+
+        # SEC multi-form settings (same bool compat)
+        if 'enable_sec_multi_form' in config_dict:
+            val = config_dict['enable_sec_multi_form']
+            if val is True:
+                config.enable_sec_multi_form = "live"
+            elif val is False:
+                config.enable_sec_multi_form = "off"
+            else:
+                config.enable_sec_multi_form = str(val)
+
+        # FDA regulatory settings (same bool compat)
+        if 'enable_fda_regulatory' in config_dict:
+            val = config_dict['enable_fda_regulatory']
+            if val is True:
+                config.enable_fda_regulatory = "live"
+            elif val is False:
+                config.enable_fda_regulatory = "off"
+            else:
+                config.enable_fda_regulatory = str(val)
 
         return config
 
@@ -1397,10 +1423,23 @@ def compute_module_3_catalyst(
         adcom_cache_path = Path(config.fda_adcom_cache_dir) / f"adcom_calendar_{as_of_date.isoformat()}.json"
 
         if _adcom_mode == "cache_only":
-            # Load from cache only — no network
-            if adcom_cache_path.exists():
+            # Load from cache only — no network.
+            # Fallback: if primary cache dir doesn't have the file,
+            # check wake_robin_data_pipeline/cache/fda/ (where enrich writes).
+            _resolved_adcom_path = adcom_cache_path
+            if not adcom_cache_path.exists():
+                _fallback_adcom_dir = data_dir.parent / "wake_robin_data_pipeline" / "cache" / "fda"
+                _fallback_adcom_path = _fallback_adcom_dir / adcom_cache_path.name
+                if _fallback_adcom_path.exists():
+                    logger.warning(
+                        f"FDA ADCOM: cache not in {adcom_cache_path.parent}, "
+                        f"using fallback {_fallback_adcom_path}"
+                    )
+                    _resolved_adcom_path = _fallback_adcom_path
+
+            if _resolved_adcom_path.exists():
                 try:
-                    with open(adcom_cache_path, 'r', encoding='utf-8') as f:
+                    with open(_resolved_adcom_path, 'r', encoding='utf-8') as f:
                         adcom_events = json.load(f)
                     logger.info(f"FDA ADCOM: loaded {len(adcom_events)} events from cache")
                 except Exception as e:
@@ -1473,15 +1512,35 @@ def compute_module_3_catalyst(
             sec_cache_path = Path(config.sec_8k_cache_dir) / f"8k_catalysts_{as_of_date.isoformat()}.json"
 
         if _sec_mode == "cache_only":
-            if sec_cache_path.exists():
+            # Fallback: if primary cache dir doesn't have the versioned file,
+            # check wake_robin_data_pipeline/cache/ (where enrich_archive_inputs writes).
+            _FALLBACK_8K_DIR = data_dir.parent / "wake_robin_data_pipeline" / "cache" / "sec" / "8k_catalysts"
+            _resolved_8k_path = sec_cache_path
+            if not sec_cache_path.exists() and _FALLBACK_8K_DIR.exists():
                 try:
-                    with open(sec_cache_path, 'r', encoding='utf-8') as f:
+                    fallback_path = _sec_versioned_path(_FALLBACK_8K_DIR, as_of_date)
+                except NameError:
+                    fallback_path = _FALLBACK_8K_DIR / sec_cache_path.name
+                if fallback_path.exists():
+                    logger.warning(
+                        f"SEC 8-K: versioned cache not in {sec_cache_path.parent}, "
+                        f"using fallback {fallback_path}"
+                    )
+                    _resolved_8k_path = fallback_path
+
+            if _resolved_8k_path.exists():
+                try:
+                    with open(_resolved_8k_path, 'r', encoding='utf-8') as f:
                         sec_8k_events = json.load(f)
                     logger.info(f"SEC 8-K: loaded {len(sec_8k_events)} events from cache")
                 except Exception as e:
                     logger.warning(f"SEC 8-K cache read error: {e}")
             else:
-                logger.debug(f"SEC 8-K: no cache for {as_of_date} (run warm_caches.py to populate)")
+                logger.warning(
+                    f"SEC 8-K: no versioned cache for {as_of_date} "
+                    f"(expected {sec_cache_path.name} in {sec_cache_path.parent} "
+                    f"or {_FALLBACK_8K_DIR}; run enrich_archive_inputs.py --sec-8k-mode=live)"
+                )
         elif _sec_mode == "live":
             try:
                 from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import (
@@ -1533,6 +1592,182 @@ def compute_module_3_catalyst(
                 total_events += sec_added
                 logger.info(f"Merged {sec_added} SEC 8-K catalyst events "
                            f"(new tickers: {sec_tickers_added}, deduped: {sec_deduped})")
+
+    # =========================================================================
+    # MERGE SEC MULTI-FORM (10-Q, 10-K, 6-K) CATALYST EVENTS
+    # =========================================================================
+    _multi_form_mode = config.enable_sec_multi_form
+    if _multi_form_mode == "off":
+        logger.debug("SEC multi-form source off (set enable_sec_multi_form='cache_only' or 'live')")
+    else:
+        mf_events = []
+
+        # Use versioned cache path (separate from 8-K)
+        try:
+            from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import (
+                _multi_form_cache_path as _mf_cache_path,
+            )
+            mf_cache = _mf_cache_path(Path(config.sec_8k_cache_dir), as_of_date)
+        except ImportError:
+            mf_cache = Path(config.sec_8k_cache_dir) / f"sec_filings_{as_of_date.isoformat()}.json"
+
+        if _multi_form_mode == "cache_only":
+            _resolved_mf_path = mf_cache
+            if not mf_cache.exists():
+                _fallback_mf_dir = data_dir.parent / "wake_robin_data_pipeline" / "cache" / "sec" / "8k_catalysts"
+                try:
+                    fallback_mf = _mf_cache_path(_fallback_mf_dir, as_of_date)
+                except NameError:
+                    fallback_mf = _fallback_mf_dir / mf_cache.name
+                if fallback_mf.exists():
+                    logger.warning(
+                        f"SEC multi-form: cache not in {mf_cache.parent}, "
+                        f"using fallback {fallback_mf}"
+                    )
+                    _resolved_mf_path = fallback_mf
+
+            if _resolved_mf_path.exists():
+                try:
+                    with open(_resolved_mf_path, 'r', encoding='utf-8') as f:
+                        mf_events = json.load(f)
+                    logger.info(f"SEC multi-form: loaded {len(mf_events)} events from cache")
+                except Exception as e:
+                    logger.warning(f"SEC multi-form cache read error: {e}")
+            else:
+                logger.warning(
+                    f"SEC multi-form: no cache for {as_of_date} "
+                    f"(run enrich_archive_inputs.py --sec-multi-form-mode=live)"
+                )
+
+        elif _multi_form_mode == "live":
+            try:
+                from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import (
+                    collect_sec_filing_events,
+                )
+                universe_path = data_dir / "universe.json"
+                if universe_path.exists():
+                    with open(universe_path, 'r', encoding='utf-8') as f:
+                        universe_data = json.load(f)
+                    universe_entries = universe_data if isinstance(universe_data, list) else universe_data.get('tickers', [])
+                else:
+                    universe_entries = []
+
+                mf_events = collect_sec_filing_events(
+                    universe=universe_entries,
+                    as_of_date=as_of_date,
+                    cache_dir=config.sec_8k_cache_dir,
+                )
+            except ImportError:
+                logger.debug("SEC multi-form collector not available")
+            except Exception as e:
+                logger.warning(f"SEC multi-form live collection error: {e}")
+
+        if mf_events:
+            mf_added = 0
+            mf_tickers_added = 0
+            mf_touched: Set[str] = set()
+            for mf_event in mf_events:
+                ticker = mf_event.get('ticker')
+                if not ticker or ticker not in active_tickers:
+                    continue
+                v2_event = convert_sec_8k_to_v2(mf_event, as_of_date)
+                if v2_event is None:
+                    continue
+                if ticker not in events_by_ticker_v2:
+                    events_by_ticker_v2[ticker] = []
+                    mf_tickers_added += 1
+                events_by_ticker_v2[ticker].append(v2_event)
+                mf_touched.add(ticker)
+                mf_added += 1
+
+            if mf_added > 0:
+                mf_deduped = 0
+                for ticker in sorted(mf_touched):
+                    events_by_ticker_v2[ticker], deduped = dedup_events(events_by_ticker_v2[ticker])
+                    mf_deduped += deduped
+                    events_by_ticker_v2[ticker] = sort_events_v2(events_by_ticker_v2[ticker])
+                total_deduped += mf_deduped
+                total_events += mf_added
+                logger.info(f"Merged {mf_added} SEC multi-form catalyst events "
+                           f"(new tickers: {mf_tickers_added}, deduped: {mf_deduped})")
+
+    # =========================================================================
+    # MERGE FDA REGULATORY NOTICES INTO SCORING PIPELINE
+    # =========================================================================
+    _fda_reg_mode = config.enable_fda_regulatory
+    if _fda_reg_mode == "off":
+        logger.debug("FDA regulatory source off (set enable_fda_regulatory='cache_only' or 'live')")
+    else:
+        fda_reg_events = []
+        fda_reg_cache_path = Path(config.fda_adcom_cache_dir) / f"fda_regulatory_{as_of_date.isoformat()}.json"
+
+        if _fda_reg_mode == "cache_only":
+            _resolved_reg_path = fda_reg_cache_path
+            if not fda_reg_cache_path.exists():
+                _fallback_reg_dir = data_dir.parent / "wake_robin_data_pipeline" / "cache" / "fda"
+                _fallback_reg_path = _fallback_reg_dir / fda_reg_cache_path.name
+                if _fallback_reg_path.exists():
+                    logger.warning(
+                        f"FDA regulatory: cache not in {fda_reg_cache_path.parent}, "
+                        f"using fallback {_fallback_reg_path}"
+                    )
+                    _resolved_reg_path = _fallback_reg_path
+
+            if _resolved_reg_path.exists():
+                try:
+                    with open(_resolved_reg_path, 'r', encoding='utf-8') as f:
+                        fda_reg_events = json.load(f)
+                    logger.info(f"FDA regulatory: loaded {len(fda_reg_events)} events from cache")
+                except Exception as e:
+                    logger.warning(f"FDA regulatory cache read error: {e}")
+            else:
+                logger.debug(f"FDA regulatory: no cache for {as_of_date}")
+
+        elif _fda_reg_mode == "live":
+            try:
+                from wake_robin_data_pipeline.collectors.fda_adcom_collector import (
+                    collect_fda_regulatory_notices,
+                    build_product_ticker_map,
+                )
+                product_map = build_product_ticker_map(data_dir)
+                fda_reg_events = collect_fda_regulatory_notices(
+                    product_ticker_map=product_map,
+                    as_of_date=as_of_date,
+                    cache_dir=config.fda_adcom_cache_dir,
+                )
+            except ImportError:
+                logger.debug("FDA regulatory collector not available")
+            except Exception as e:
+                logger.warning(f"FDA regulatory live collection error: {e}")
+
+        if fda_reg_events:
+            reg_added = 0
+            reg_tickers_added = 0
+            reg_touched: Set[str] = set()
+            for reg_event in fda_reg_events:
+                ticker = reg_event.get('ticker')
+                if not ticker or ticker not in active_tickers:
+                    continue
+                v2_event = convert_fda_adcom_to_v2(reg_event, as_of_date)
+                if v2_event is None:
+                    continue
+                if ticker not in events_by_ticker_v2:
+                    events_by_ticker_v2[ticker] = []
+                    reg_tickers_added += 1
+                events_by_ticker_v2[ticker].append(v2_event)
+                reg_touched.add(ticker)
+                reg_added += 1
+
+            if reg_added > 0:
+                reg_deduped = 0
+                for ticker in sorted(reg_touched):
+                    events_by_ticker_v2[ticker], deduped = dedup_events(events_by_ticker_v2[ticker])
+                    reg_deduped += deduped
+                    events_by_ticker_v2[ticker] = sort_events_v2(events_by_ticker_v2[ticker])
+                total_deduped += reg_deduped
+                total_events += reg_added
+                logger.info(f"Merged {reg_added} FDA regulatory events "
+                           f"(new tickers: {reg_tickers_added}, deduped: {reg_deduped})")
 
     # Update total event count for combined diff + calendar + corporate events
     combined_tickers_with_events = len([t for t in events_by_ticker_v2 if events_by_ticker_v2[t]])

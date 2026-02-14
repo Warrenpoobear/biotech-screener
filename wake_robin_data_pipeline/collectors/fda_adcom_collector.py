@@ -492,6 +492,196 @@ def _collect_adcom_from_edgar(
     return deduped
 
 
+# =============================================================================
+# FDA REGULATORY NOTICES (approvals, CRLs, RTFs, warning letters)
+# =============================================================================
+
+# Federal Register query patterns for regulatory actions
+_FR_REGULATORY_QUERIES = [
+    # Approval notices
+    {
+        "term": '"approval of" ("NDA" OR "BLA" OR "sNDA" OR "sBLA")',
+        "event_type": "FDA_APPROVAL",
+    },
+    # Complete Response Letters
+    {
+        "term": '"Complete Response Letter"',
+        "event_type": "FDA_CRL",
+    },
+    # Refuse to File
+    {
+        "term": '"Refuse to File"',
+        "event_type": "FDA_RTF",
+    },
+    # Warning Letters
+    {
+        "term": '"Warning Letter" "FDA"',
+        "event_type": "FDA_WARNING_LETTER",
+    },
+]
+
+
+def collect_fda_regulatory_notices(
+    product_ticker_map: Dict[str, str],
+    as_of_date: date,
+    cache_dir: Path = DEFAULT_CACHE_DIR,
+    lookback_days: int = 365,
+) -> List[Dict[str, Any]]:
+    """
+    Collect FDA regulatory notices from the Federal Register API.
+
+    Queries for approval, CRL, RTF, and warning letter notices published
+    by the FDA. Matches drug/product names to tickers using the product map.
+
+    The Federal Register API is free, structured JSON, requires no API key.
+
+    Args:
+        product_ticker_map: {drug_name_lower: ticker} for matching
+        as_of_date: Current analysis date
+        cache_dir: Directory for caching results
+        lookback_days: How far back to search
+
+    Returns:
+        List of event dicts
+    """
+    cache_dir = Path(cache_dir)
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    cache_path = cache_dir / f"fda_regulatory_{as_of_date.isoformat()}.json"
+
+    # Check cache
+    if cache_path.exists():
+        try:
+            with open(cache_path, "r", encoding="utf-8") as f:
+                cached = json.load(f)
+            logger.info(f"Loaded {len(cached)} FDA regulatory notices from cache")
+            return cached
+        except Exception as e:
+            logger.warning(f"FDA regulatory cache read error: {e}")
+
+    try:
+        import requests
+    except ImportError:
+        logger.warning("requests library not available")
+        return []
+
+    start_date = (as_of_date - timedelta(days=lookback_days)).isoformat()
+    end_date = as_of_date.isoformat()
+
+    events: List[Dict[str, Any]] = []
+
+    for query_spec in _FR_REGULATORY_QUERIES:
+        term = query_spec["term"]
+        event_type = query_spec["event_type"]
+        page = 1
+
+        while True:
+            params = {
+                "conditions[agencies][]": "food-and-drug-administration",
+                "conditions[term]": term,
+                "conditions[publication_date][gte]": start_date,
+                "conditions[publication_date][lte]": end_date,
+                "fields[]": ["title", "dates", "abstract", "publication_date",
+                             "html_url", "document_number"],
+                "per_page": 100,
+                "page": page,
+            }
+
+            try:
+                time.sleep(0.2)
+                resp = requests.get(FEDERAL_REGISTER_API, params=params, timeout=30)
+                if resp.status_code != 200:
+                    logger.warning(f"Federal Register API returned {resp.status_code} for {event_type}")
+                    break
+
+                data = resp.json()
+                results = data.get("results", [])
+                total_pages = data.get("total_pages", 1)
+
+                if page == 1:
+                    count = data.get("count", 0)
+                    if count > 0:
+                        logger.info(f"Federal Register {event_type}: {count} notices found")
+
+                if not results:
+                    break
+
+            except Exception as e:
+                logger.warning(f"Federal Register API error for {event_type}: {e}")
+                break
+
+            for doc in results:
+                title = doc.get("title", "")
+                pub_date = doc.get("publication_date", "")
+                doc_number = doc.get("document_number", "")
+
+                # PIT safety
+                if pub_date > end_date:
+                    continue
+
+                # Match drug name to ticker
+                match = _match_product_to_ticker(title, product_ticker_map)
+
+                # Also try extracted drug names via regex
+                if not match:
+                    extracted_drugs = []
+                    for m in _FR_DRUG_AFTER_NDA.finditer(title):
+                        extracted_drugs.append(m.group(1).strip())
+                    for m in _FR_BRAND_GENERIC.finditer(title):
+                        extracted_drugs.append(m.group(1).strip())
+                        extracted_drugs.append(m.group(2).strip())
+                    for m in _FR_DRUG_AFTER_COMMENTS.finditer(title):
+                        extracted_drugs.append(m.group(1).strip())
+
+                    for candidate in extracted_drugs:
+                        match2 = _match_product_to_ticker(candidate, product_ticker_map)
+                        if match2:
+                            match = match2
+                            break
+
+                if not match:
+                    continue
+
+                ticker = match["ticker"]
+                drug_name = match["drug_name"]
+
+                events.append({
+                    "ticker": ticker,
+                    "event_type": event_type,
+                    "event_date": pub_date,
+                    "event_name": f"{event_type}: {drug_name} ({title[:60]})",
+                    "drug_name": drug_name,
+                    "confidence": "HIGH",
+                    "source": "FEDERAL_REGISTER",
+                    "disclosed_at": pub_date,
+                    "fr_document_number": doc_number,
+                    "tags": ["fda_regulatory", "federal_register"],
+                })
+
+            if page >= total_pages:
+                break
+            page += 1
+
+    # Deduplicate by (ticker, event_type, event_date)
+    seen: Set[tuple] = set()
+    deduped = []
+    for event in events:
+        key = (event["ticker"], event["event_type"], event["event_date"])
+        if key not in seen:
+            seen.add(key)
+            deduped.append(event)
+
+    logger.info(f"FDA regulatory notices: {len(deduped)} events ({len(events) - len(deduped)} dupes removed)")
+
+    # Cache results
+    try:
+        with open(cache_path, "w", encoding="utf-8") as f:
+            json.dump(deduped, f, indent=2)
+    except Exception as e:
+        logger.warning(f"FDA regulatory cache write error: {e}")
+
+    return deduped
+
+
 def collect_fda_adcom_events(
     drug_to_ticker: Dict[str, str],
     as_of_date: date,

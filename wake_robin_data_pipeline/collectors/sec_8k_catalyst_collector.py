@@ -46,6 +46,17 @@ _SEC_MIN_INTERVAL = 0.1
 # Hard cap on filings to fetch per run (safety against runaway costs)
 _MAX_FILINGS_PER_RUN = 500
 
+# Hard cap for multi-form (10-Q, 10-K, 6-K) collection
+_MAX_FILINGS_PER_MULTI_FORM_RUN = 300
+
+# Map filing form type to source label for events
+FORM_TO_SOURCE = {
+    "8-K":  "SEC_8K_FILING",
+    "10-Q": "SEC_10Q_FILING",
+    "10-K": "SEC_10K_FILING",
+    "6-K":  "SEC_6K_FILING",
+}
+
 # SEC official ticker-to-CIK mapping
 SEC_COMPANY_TICKERS_URL = "https://www.sec.gov/files/company_tickers.json"
 
@@ -80,6 +91,58 @@ TIMING_PATTERNS = [
         r"(?:data|results?)\s+expected\s+.*?(?:mid|year[- ]?end)[- ]?(\d{4})",
         "DATA_READOUT",
         "HALF_YEAR",
+    ),
+    # ── FDA action date variants (DAY precision) ──
+    # "FDA action date of March 15, 2026" / "FDA target action date of ..."
+    (
+        r"FDA\s+(?:target\s+)?action\s+date\s+(?:of|is|set for)\s+(\w+\s+\d{1,2},?\s+\d{4})",
+        "FDA_PDUFA_DATE",
+        "DAY",
+    ),
+    # "NDA accepted...PDUFA date of April 3, 2026" / "BLA...PDUFA date of ..."
+    (
+        r"(?:NDA|BLA|sNDA|sBLA)\s+.*?PDUFA\s+date\s+(?:of|is)\s+(\w+\s+\d{1,2},?\s+\d{4})",
+        "FDA_PDUFA_DATE",
+        "DAY",
+    ),
+    # "Prescription Drug User Fee Act date of March 15, 2026"
+    (
+        r"Prescription\s+Drug\s+User\s+Fee\s+Act\s+(?:date|goal date)\s+(?:of|is|set for)\s+(\w+\s+\d{1,2},?\s+\d{4})",
+        "FDA_PDUFA_DATE",
+        "DAY",
+    ),
+    # ── FDA decision in quarter (QUARTER precision) ──
+    # "regulatory decision expected in Q2 2026" / "FDA decision expected in Q1 2026"
+    (
+        r"(?:regulatory|FDA)\s+(?:decision|review)\s+(?:is\s+)?(?:expected|anticipated)\s+.*?(Q[1-4]\s*\d{4})",
+        "FDA_PDUFA_DATE",
+        "QUARTER",
+    ),
+    # "FDA approval expected in Q2 2026" / "FDA approval anticipated in Q3 2026"
+    (
+        r"FDA\s+approval\s+(?:is\s+)?(?:expected|anticipated)\s+.*?(Q[1-4]\s*\d{4})",
+        "FDA_PDUFA_DATE",
+        "QUARTER",
+    ),
+    # ── FDA approval in half-year (HALF_YEAR precision) ──
+    # "FDA approval anticipated second half of 2026" / "approval expected first half of 2026"
+    (
+        r"(?:FDA\s+)?approval\s+(?:is\s+)?(?:expected|anticipated)\s+.*?(?:first|second)\s+half\s+(?:of\s+)?(\d{4})",
+        "FDA_PDUFA_DATE",
+        "HALF_YEAR",
+    ),
+    # ── Advisory Committee / ADCOM (DAY and QUARTER) ──
+    # "Advisory Committee meeting on July 17, 2026" / "advisory committee scheduled for ..."
+    (
+        r"Advisory\s+Committee\s+(?:meeting\s+)?(?:on|scheduled for|set for)\s+(\w+\s+\d{1,2},?\s+\d{4})",
+        "FDA_ADCOM",
+        "DAY",
+    ),
+    # "ADCOM meeting expected in Q3 2026" / "ADCOM scheduled for Q2 2026"
+    (
+        r"ADCOM\s+(?:meeting\s+)?(?:is\s+)?(?:expected|scheduled|anticipated)\s+.*?(Q[1-4]\s*\d{4})",
+        "FDA_ADCOM",
+        "QUARTER",
     ),
 ]
 
@@ -128,6 +191,18 @@ DOWNSIDE_PATTERNS = [
         r"DSMB\s+recommended\s+(?:halt|stop|discontinu)",
         "SAFETY_SIGNAL",
         "HIGH",
+    ),
+    # FDA Refuse to File
+    (
+        r"(?:refused?\s+to\s+file|Refuse\s+to\s+File)",
+        "FDA_RTF",
+        "HIGH",
+    ),
+    # FDA Warning Letter
+    (
+        r"FDA\s+warning\s+letter",
+        "FDA_WARNING_LETTER",
+        "MED",
     ),
 ]
 
@@ -518,10 +593,18 @@ def collect_8k_timing_events(
     cache_dir.mkdir(parents=True, exist_ok=True)
     cache_path = _versioned_cache_path(cache_dir, as_of_date)
 
-    # Check cache
-    if cache_path.exists():
+    # Check cache — primary dir first, then fallback to pipeline subdir
+    _cache_to_load = cache_path
+    if not cache_path.exists():
+        _fallback_dir = Path("wake_robin_data_pipeline") / "cache" / "sec" / "8k_catalysts"
+        _fallback_path = _versioned_cache_path(_fallback_dir, as_of_date)
+        if _fallback_path.exists():
+            logger.info(f"SEC 8-K: cache not in {cache_dir}, using fallback {_fallback_path}")
+            _cache_to_load = _fallback_path
+
+    if _cache_to_load.exists():
         try:
-            with open(cache_path, "r", encoding="utf-8") as f:
+            with open(_cache_to_load, "r", encoding="utf-8") as f:
                 cached = json.load(f)
             logger.info(f"Loaded {len(cached)} SEC 8-K catalyst events from cache")
             return cached
@@ -580,6 +663,12 @@ def collect_8k_timing_events(
         '"data readout" OR "interim data"',
         '"pivotal trial" AND ("first half" OR "second half")',
         '"Phase 3" AND ("expects" OR "anticipates") AND ("results" OR "data")',
+        '"FDA action date" OR "FDA target action date"',
+        '"Prescription Drug User Fee Act" AND "date"',
+        '"FDA approval" AND ("expected" OR "anticipated")',
+        '"regulatory decision" AND ("expected" OR "anticipated")',
+        '"Advisory Committee" AND ("meeting" OR "scheduled")',
+        '"ADCOM" AND ("meeting" OR "scheduled" OR "expected")',
     ]
 
     # Max pages per query to avoid runaway requests
@@ -728,6 +817,278 @@ def collect_8k_timing_events(
 
     logger.info(
         f"Collected {len(deduped)} SEC 8-K timing events "
+        f"({len(all_events) - len(deduped)} duplicates removed)"
+    )
+
+    # Cache results
+    try:
+        with open(cache_path, "w", encoding="utf-8") as f:
+            json.dump(deduped, f, indent=2)
+    except Exception as e:
+        logger.warning(f"Cache write error: {e}")
+
+    return deduped
+
+
+def _multi_form_cache_path(cache_dir: Path, as_of_date: date) -> Path:
+    """Cache path for multi-form (10-Q, 10-K, 6-K) results."""
+    return cache_dir / f"sec_filings_{as_of_date.isoformat()}_{PATTERN_VERSION}.json"
+
+
+def collect_sec_filing_events(
+    universe: List[Dict[str, Any]],
+    as_of_date: date,
+    cache_dir: Path = DEFAULT_CACHE_DIR,
+    lookback_days: int = 365,
+    forms: Tuple[str, ...] = ("10-Q", "10-K", "6-K"),
+) -> List[Dict[str, Any]]:
+    """
+    Collect timing events from SEC 10-Q, 10-K, and 6-K filings.
+
+    Same extraction pipeline as 8-K but searches additional form types.
+    Uses a separate cache to avoid invalidating existing 8-K caches.
+    The collect_8k_timing_events() function is left unchanged.
+
+    Args:
+        universe: List of universe entries (must have 'ticker' and optionally 'cik')
+        as_of_date: Current analysis date
+        cache_dir: Directory for caching results
+        lookback_days: How far back to search for filings
+        forms: Tuple of SEC form types to search
+
+    Returns:
+        List of event dicts matching corporate catalyst schema
+    """
+    cache_dir = Path(cache_dir)
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    cache_path = _multi_form_cache_path(cache_dir, as_of_date)
+
+    # Check cache — primary first, then fallback
+    _cache_to_load = cache_path
+    if not cache_path.exists():
+        _fallback_dir = Path("wake_robin_data_pipeline") / "cache" / "sec" / "8k_catalysts"
+        _fallback_path = _multi_form_cache_path(_fallback_dir, as_of_date)
+        if _fallback_path.exists():
+            logger.info(f"SEC multi-form: using fallback cache {_fallback_path}")
+            _cache_to_load = _fallback_path
+
+    if _cache_to_load.exists():
+        try:
+            with open(_cache_to_load, "r", encoding="utf-8") as f:
+                cached = json.load(f)
+            logger.info(f"Loaded {len(cached)} SEC multi-form events from cache")
+            return cached
+        except Exception as e:
+            logger.warning(f"Multi-form cache read error: {e}")
+
+    try:
+        import requests
+    except ImportError:
+        logger.warning("requests library not available; skipping SEC multi-form collection")
+        return []
+
+    session = requests.Session()
+    session.headers.update({"User-Agent": USER_AGENT})
+
+    # Build universe ticker set and CIK mappings
+    ticker_set: Set[str] = set()
+    ticker_to_cik: Dict[str, str] = {}
+    cik_to_ticker: Dict[str, str] = {}
+    for entry in universe:
+        ticker = entry.get("ticker", "")
+        cik = entry.get("cik", "")
+        if ticker:
+            ticker_set.add(ticker.upper())
+        if ticker and cik:
+            cik_stripped = str(cik).lstrip("0")
+            ticker_to_cik[ticker.upper()] = cik_stripped
+            cik_to_ticker[cik_stripped] = ticker.upper()
+
+    # Supplement with SEC's official company_tickers.json
+    try:
+        ct_resp = _sec_get(session, SEC_COMPANY_TICKERS_URL)
+        if ct_resp.status_code == 200:
+            for _k, entry in ct_resp.json().items():
+                t = entry.get("ticker", "").upper()
+                c = str(entry.get("cik_str", "")).lstrip("0")
+                if t in ticker_set and c:
+                    if t not in ticker_to_cik:
+                        ticker_to_cik[t] = c
+                    if c not in cik_to_ticker:
+                        cik_to_ticker[c] = t
+    except Exception as e:
+        logger.warning(f"Could not load company_tickers.json: {e}")
+
+    start_date = (as_of_date - timedelta(days=lookback_days)).isoformat()
+    end_date = as_of_date.isoformat()
+
+    # Comma-separated form types for EDGAR
+    forms_param = ",".join(forms)
+
+    # Reuse the same search queries as 8-K (timing language is form-agnostic)
+    search_queries = [
+        '"topline data" OR "top-line data"',
+        '"topline results" OR "top-line results"',
+        '"PDUFA date" OR "PDUFA action date"',
+        '"data readout" OR "interim data"',
+        '"pivotal trial" AND ("first half" OR "second half")',
+        '"Phase 3" AND ("expects" OR "anticipates") AND ("results" OR "data")',
+        '"FDA action date" OR "FDA target action date"',
+        '"Prescription Drug User Fee Act" AND "date"',
+        '"FDA approval" AND ("expected" OR "anticipated")',
+        '"regulatory decision" AND ("expected" OR "anticipated")',
+        '"Advisory Committee" AND ("meeting" OR "scheduled")',
+        '"ADCOM" AND ("meeting" OR "scheduled" OR "expected")',
+    ]
+
+    _MAX_PAGES_PER_QUERY = 5  # More conservative for multi-form
+
+    filings_to_fetch: Dict[str, Dict[str, str]] = {}
+
+    for query in search_queries:
+        try:
+            offset = 0
+            query_total = None
+
+            while True:
+                params = {
+                    "q": query,
+                    "dateRange": "custom",
+                    "startdt": start_date,
+                    "enddt": end_date,
+                    "forms": forms_param,
+                    "from": offset,
+                }
+
+                resp = _sec_get(session, SEC_SEARCH_URL, params=params)
+                if resp.status_code != 200:
+                    break
+
+                results = resp.json()
+                hits = results.get("hits", {}).get("hits", [])
+
+                if query_total is None:
+                    query_total = results.get("hits", {}).get("total", {}).get("value", 0)
+                    if query_total > 0:
+                        logger.info(f"EDGAR multi-form '{query[:40]}': {query_total} total hits")
+
+                if not hits:
+                    break
+
+                for hit in hits:
+                    source = hit.get("_source", {})
+                    display_names = source.get("display_names", [])
+                    file_date = source.get("file_date", "")
+                    adsh = source.get("adsh", "")
+                    ciks = source.get("ciks", [])
+                    form_type = source.get("form_type", "")
+
+                    if not adsh or not file_date or file_date > end_date:
+                        continue
+
+                    ticker = _extract_ticker_from_display_names(display_names)
+                    ticker_upper = ticker.upper() if ticker else ""
+
+                    if not ticker_upper or ticker_upper not in ticker_set:
+                        ticker_upper = ""
+                        for cik_val in ciks:
+                            cik_stripped = str(cik_val).lstrip("0")
+                            if cik_stripped in cik_to_ticker:
+                                ticker_upper = cik_to_ticker[cik_stripped]
+                                break
+                        if not ticker_upper:
+                            continue
+
+                    cik = ticker_to_cik.get(ticker_upper) or (ciks[0] if ciks else "")
+
+                    if adsh not in filings_to_fetch:
+                        filings_to_fetch[adsh] = {
+                            "ticker": ticker_upper,
+                            "cik": cik,
+                            "file_date": file_date,
+                            "form_type": form_type,
+                        }
+
+                offset += len(hits)
+                page = offset // 100
+                if offset >= query_total or page >= _MAX_PAGES_PER_QUERY:
+                    break
+
+        except Exception as e:
+            logger.warning(f"SEC multi-form search error for '{query[:40]}': {e}")
+
+    logger.info(f"Multi-form phase 1: {len(filings_to_fetch)} unique filings to fetch")
+
+    # Hard cap
+    if len(filings_to_fetch) > _MAX_FILINGS_PER_MULTI_FORM_RUN:
+        logger.warning(
+            f"Capping multi-form fetches at {_MAX_FILINGS_PER_MULTI_FORM_RUN} "
+            f"(found {len(filings_to_fetch)})"
+        )
+        sorted_items = sorted(
+            filings_to_fetch.items(),
+            key=lambda x: x[1]["file_date"],
+            reverse=True,
+        )
+        filings_to_fetch = dict(sorted_items[:_MAX_FILINGS_PER_MULTI_FORM_RUN])
+
+    # Phase 2: Fetch filing text and extract events
+    all_events = []
+    fetch_errors = 0
+
+    for adsh, meta in filings_to_fetch.items():
+        ticker = meta["ticker"]
+        cik = meta["cik"]
+        file_date = meta["file_date"]
+        form_type = meta.get("form_type", "")
+
+        # Determine source label from form type
+        source_label = FORM_TO_SOURCE.get(form_type, f"SEC_{form_type.replace('-', '')}_FILING")
+
+        try:
+            text = _fetch_filing_text(cik, adsh, session)
+            if not text:
+                fetch_errors += 1
+                continue
+
+            extracted = _extract_timing_events(text, ticker, file_date, as_of_date)
+            downside = _extract_downside_events(text, ticker, file_date)
+
+            # Override source to match the filing form type
+            for ev in extracted:
+                ev["source"] = source_label
+                ev["filing_form"] = form_type
+            for ev in downside:
+                ev["source"] = source_label
+                ev["filing_form"] = form_type
+
+            total_extracted = len(extracted) + len(downside)
+            if total_extracted:
+                logger.info(
+                    f"  {ticker} ({form_type} {adsh}, {file_date}): "
+                    f"{len(extracted)} timing + {len(downside)} downside events"
+                )
+            all_events.extend(extracted)
+            all_events.extend(downside)
+
+        except Exception as e:
+            logger.warning(f"Error processing {ticker} {form_type} {adsh}: {e}")
+            fetch_errors += 1
+
+    if fetch_errors:
+        logger.info(f"Multi-form phase 2: {fetch_errors} filing fetch errors")
+
+    # Deduplicate events by (ticker, event_type, event_date)
+    seen = set()
+    deduped = []
+    for event in all_events:
+        key = (event["ticker"], event["event_type"], event["event_date"])
+        if key not in seen:
+            seen.add(key)
+            deduped.append(event)
+
+    logger.info(
+        f"Collected {len(deduped)} SEC multi-form timing events "
         f"({len(all_events) - len(deduped)} duplicates removed)"
     )
 

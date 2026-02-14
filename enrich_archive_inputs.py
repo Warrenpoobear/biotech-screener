@@ -287,14 +287,16 @@ def compute_catalyst(
     trial_window_days: int = TRIAL_PCD_WINDOW_DAYS,
     sec_events: Optional[List[Dict[str, Any]]] = None,
     adcom_events: Optional[List[Dict[str, Any]]] = None,
+    fda_regulatory_events: Optional[List[Dict[str, Any]]] = None,
 ) -> Dict[str, Any]:
-    """Compute catalyst proximity for one ticker from trials + PDUFA + SEC/ADCOM.
+    """Compute catalyst proximity for one ticker from trials + PDUFA + SEC/ADCOM + FDA regulatory.
 
     PIT rules:
       - Trials: first_posted <= as_of AND primary_completion_date in (as_of, as_of+trial_window_days]
       - PDUFA: pdufa_date > as_of
       - SEC 8-K: filing_date <= as_of AND event_date > as_of (enforced by collector)
       - ADCOM: publication_date <= as_of AND event_date > as_of (enforced by collector)
+      - FDA regulatory: publication_date <= as_of AND event_date > as_of (enforced by collector)
     """
     result: Dict[str, Any] = {}
     nearest_days: Optional[int] = None
@@ -377,6 +379,19 @@ def compute_catalyst(
                 nearest_source = "adcom"
                 nearest_type = "FDA_ADCOM"
 
+    # FDA regulatory notices (Federal Register: approvals, CRLs, RTFs, warning letters)
+    if fda_regulatory_events:
+        for event in fda_regulatory_events:
+            if event.get("ticker", "").upper() != ticker.upper():
+                continue
+            days_away = _sec_event_days(event, as_of)
+            if days_away is None:
+                continue
+            if nearest_days is None or days_away < nearest_days:
+                nearest_days = days_away
+                nearest_source = "federal_register"
+                nearest_type = event.get("event_type", "FDA_APPROVAL")
+
     if nearest_days is not None:
         result["days_to_catalyst"] = nearest_days
         result["in_optimal_window"] = 14 <= nearest_days <= 60
@@ -435,6 +450,7 @@ def enrich_archive(
     output_tar_path: Path | None = None,
     sec_events: Optional[List[Dict[str, Any]]] = None,
     adcom_events: Optional[List[Dict[str, Any]]] = None,
+    fda_regulatory_events: Optional[List[Dict[str, Any]]] = None,
 ) -> Dict[str, Any]:
     """Compute and write decision_inputs.json sidecar for one archive.
 
@@ -553,7 +569,8 @@ def enrich_archive(
             cat = compute_catalyst(ticker, trials, pdufa_entries, as_of,
                                    trial_window_days=trial_window_days,
                                    sec_events=sec_events,
-                                   adcom_events=adcom_events)
+                                   adcom_events=adcom_events,
+                                   fda_regulatory_events=fda_regulatory_events)
             if cat:
                 entry.update(cat)
                 stats["n_catalyst"] += 1
@@ -609,13 +626,17 @@ def _collect_sec_events_for_date(
     sec_mode: str,
     adcom_mode: str,
     data_dir: Path,
-) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
-    """Collect SEC 8-K and ADCOM events for a single as_of_date.
+    multi_form_mode: str = "off",
+    fda_regulatory_mode: str = "off",
+) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]], List[Dict[str, Any]], List[Dict[str, Any]]]:
+    """Collect SEC 8-K, multi-form, ADCOM, and FDA regulatory events for a single as_of_date.
 
-    Returns (sec_events, adcom_events) lists.
+    Returns (sec_events, adcom_events, multi_form_events, fda_regulatory_events) lists.
     """
     sec_events: List[Dict[str, Any]] = []
     adcom_events: List[Dict[str, Any]] = []
+    multi_form_events: List[Dict[str, Any]] = []
+    fda_regulatory_events: List[Dict[str, Any]] = []
 
     if sec_mode == "live":
         try:
@@ -630,6 +651,20 @@ def _collect_sec_events_for_date(
             )
         except Exception as e:
             print(f"    SEC 8-K collection error: {e}")
+
+    if multi_form_mode == "live":
+        try:
+            from wake_robin_data_pipeline.collectors.sec_8k_catalyst_collector import (
+                collect_sec_filing_events,
+            )
+            multi_form_events = collect_sec_filing_events(
+                universe=universe_entries,
+                as_of_date=as_of,
+                cache_dir=PROJECT_ROOT / "wake_robin_data_pipeline" / "cache" / "sec" / "8k_catalysts",
+                lookback_days=365,
+            )
+        except Exception as e:
+            print(f"    SEC multi-form collection error: {e}")
 
     if adcom_mode == "live":
         try:
@@ -649,7 +684,23 @@ def _collect_sec_events_for_date(
         except Exception as e:
             print(f"    ADCOM collection error: {e}")
 
-    return sec_events, adcom_events
+    if fda_regulatory_mode == "live":
+        try:
+            from wake_robin_data_pipeline.collectors.fda_adcom_collector import (
+                collect_fda_regulatory_notices,
+                build_product_ticker_map,
+            )
+            product_map = build_product_ticker_map(data_dir)
+            fda_regulatory_events = collect_fda_regulatory_notices(
+                product_ticker_map=product_map,
+                as_of_date=as_of,
+                cache_dir=PROJECT_ROOT / "wake_robin_data_pipeline" / "cache" / "fda",
+                lookback_days=365,
+            )
+        except Exception as e:
+            print(f"    FDA regulatory collection error: {e}")
+
+    return sec_events, adcom_events, multi_form_events, fda_regulatory_events
 
 
 def main():
@@ -681,6 +732,14 @@ def main():
     parser.add_argument(
         "--adcom-mode", type=str, default="off", choices=["off", "live"],
         help="FDA ADCOM mode: off (default) or live (fetch from Federal Register + EDGAR)"
+    )
+    parser.add_argument(
+        "--sec-multi-form-mode", type=str, default="off", choices=["off", "live"],
+        help="SEC multi-form (10-Q, 10-K, 6-K) mode: off (default) or live"
+    )
+    parser.add_argument(
+        "--fda-regulatory-mode", type=str, default="off", choices=["off", "live"],
+        help="FDA regulatory notices (Federal Register) mode: off (default) or live"
     )
     parser.add_argument(
         "--out-dir", type=str, default=None,
@@ -726,6 +785,8 @@ def main():
     trial_window = args.trial_window if args.trial_window is not None else TRIAL_PCD_WINDOW_DAYS
     use_sec = args.sec_8k_mode != "off"
     use_adcom = args.adcom_mode != "off"
+    use_multi_form = args.sec_multi_form_mode != "off"
+    use_fda_regulatory = args.fda_regulatory_mode != "off"
 
     if out_dir:
         print(f"Output directory: {out_dir}")
@@ -736,7 +797,7 @@ def main():
     # Load universe for SEC/ADCOM collection (needs ticker + CIK)
     universe_entries: List[Dict[str, Any]] = []
     data_dir = PROJECT_ROOT / "production_data"
-    if use_sec or use_adcom:
+    if use_sec or use_adcom or use_multi_form or use_fda_regulatory:
         universe_path = data_dir / "universe.json"
         if universe_path.exists():
             with open(universe_path, "r") as f:
@@ -756,6 +817,10 @@ def main():
         mode_parts.append(f"sec-8k={args.sec_8k_mode}")
     if use_adcom:
         mode_parts.append(f"adcom={args.adcom_mode}")
+    if use_multi_form:
+        mode_parts.append(f"sec-multi-form={args.sec_multi_form_mode}")
+    if use_fda_regulatory:
+        mode_parts.append(f"fda-regulatory={args.fda_regulatory_mode}")
     mode_label = ", ".join(mode_parts)
 
     print(f"Enriching {len(archives)} archives ({mode_label}, trial window: {trial_window}d)")
@@ -770,11 +835,15 @@ def main():
         # Collect SEC/ADCOM events for this date if enabled
         sec_events: Optional[List[Dict[str, Any]]] = None
         adcom_events_list: Optional[List[Dict[str, Any]]] = None
-        if use_sec or use_adcom:
+        multi_form_events: Optional[List[Dict[str, Any]]] = None
+        fda_reg_events: Optional[List[Dict[str, Any]]] = None
+        if use_sec or use_adcom or use_multi_form or use_fda_regulatory:
             try:
                 as_of = datetime.strptime(date_str, "%Y-%m-%d").date()
-                sec_events, adcom_events_list = _collect_sec_events_for_date(
+                sec_events, adcom_events_list, multi_form_events, fda_reg_events = _collect_sec_events_for_date(
                     as_of, universe_entries, args.sec_8k_mode, args.adcom_mode, data_dir,
+                    multi_form_mode=args.sec_multi_form_mode,
+                    fda_regulatory_mode=args.fda_regulatory_mode,
                 )
             except ValueError:
                 pass  # Bad date format, enrich_archive will handle it
@@ -787,11 +856,16 @@ def main():
                 shutil.copy2(tar_path, output_tar)
 
         enrich_path = output_tar if output_tar and not args.dry_run else tar_path
+        # Combine 8-K and multi-form SEC events (same schema, different source labels)
+        combined_sec = list(sec_events) if sec_events else []
+        if multi_form_events:
+            combined_sec.extend(multi_form_events)
         r = enrich_archive(enrich_path, all_prices, dry_run=args.dry_run,
                            trial_window_days=trial_window,
                            catalyst_only=args.catalyst_only,
-                           sec_events=sec_events,
-                           adcom_events=adcom_events_list)
+                           sec_events=combined_sec or None,
+                           adcom_events=adcom_events_list,
+                           fda_regulatory_events=fda_reg_events)
         s = r.get("stats", {})
         if r["status"] in ("ok", "dry_run"):
             tag = "DRY" if r["status"] == "dry_run" else "OK"
@@ -800,6 +874,8 @@ def main():
                 sec_str = f", sec={len(sec_events)}"
             if adcom_events_list is not None:
                 sec_str += f", adcom={len(adcom_events_list)}"
+            if fda_reg_events is not None:
+                sec_str += f", fda_reg={len(fda_reg_events)}"
             print(
                 f"{tag} ({r.get('n_enriched', 0)}/{r.get('n_tickers', 0)} tickers, "
                 f"beta={s.get('n_beta', 0)}, cat={s.get('n_catalyst', 0)}, "

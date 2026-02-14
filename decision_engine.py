@@ -96,13 +96,26 @@ class DecisionRuleset:
     enable_catalyst_priority: bool = False
     catalyst_priority_map: tuple = (
         # (event_type, source) → priority int (lower = better)
-        ("FDA_DECISION", "FDA_CALENDAR", 1),
-        ("FDA_ADCOM", "FDA_CALENDAR", 1),
+        # First-match-wins: specific FDA types before wildcards.
+        ("FDA_PDUFA_DATE", "*", 1),
+        ("FDA_ADCOM", "*", 1),
+        ("FDA_CRL", "*", 1),
+        ("FDA_RTF", "*", 1),
+        ("FDA_WARNING_LETTER", "*", 1),
+        ("FDA_DECISION", "*", 1),
+        ("FDA_APPROVAL", "*", 1),
+        ("FDA_SUBMISSION", "*", 1),
         ("DATA_READOUT", "CTGOV_CALENDAR", 2),
         ("DATA_READOUT", "*", 2),
+        ("CT_PRIMARY_COMPLETION", "*", 3),
+        ("CT_STUDY_COMPLETION", "*", 3),
         ("TRIAL_ONGOING", "*", 3),
         ("*", "CORPORATE_CALENDAR", 3),
         ("*", "SEC_8K_FILING", 2),
+        ("*", "SEC_10Q_FILING", 2),
+        ("*", "SEC_10K_FILING", 2),
+        ("*", "SEC_6K_FILING", 2),
+        ("*", "FEDERAL_REGISTER", 1),
     )
     catalyst_priority_default: int = 9
     catalyst_priority_unknown: int = 99

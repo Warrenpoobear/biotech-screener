@@ -104,6 +104,10 @@ class EventType(str, Enum):
     FDA_SUBMISSION = "FDA_SUBMISSION"
     # FDA designation granted (BTD, Fast Track, etc.)
     FDA_DESIGNATION = "FDA_DESIGNATION"
+    # Refuse to File letter (negative)
+    FDA_RTF = "FDA_RTF"
+    # FDA warning letter (negative)
+    FDA_WARNING_LETTER = "FDA_WARNING_LETTER"
 
     # ==========================================================================
     # CORPORATE EVENTS
@@ -216,6 +220,8 @@ EVENT_SEVERITY_MAP: Dict[EventType, EventSeverity] = {
     EventType.CT_ARM_REMOVED: EventSeverity.NEGATIVE,
     EventType.CT_ENROLLMENT_PAUSED: EventSeverity.NEGATIVE,
     EventType.FDA_CRL: EventSeverity.SEVERE_NEGATIVE,
+    EventType.FDA_RTF: EventSeverity.SEVERE_NEGATIVE,
+    EventType.FDA_WARNING_LETTER: EventSeverity.NEGATIVE,
 
     # Severe negative
     EventType.CT_STATUS_SEVERE_NEG: EventSeverity.SEVERE_NEGATIVE,
@@ -276,6 +282,8 @@ EVENT_DEFAULT_CONFIDENCE: Dict[EventType, ConfidenceLevel] = {
     EventType.FDA_APPROVAL: ConfidenceLevel.HIGH,
     EventType.FDA_SUBMISSION: ConfidenceLevel.HIGH,
     EventType.FDA_DESIGNATION: ConfidenceLevel.HIGH,
+    EventType.FDA_RTF: ConfidenceLevel.HIGH,
+    EventType.FDA_WARNING_LETTER: ConfidenceLevel.MED,
 
     # Corporate events - MED confidence (dates can shift)
     EventType.EARNINGS_RELEASE: ConfidenceLevel.MED,
@@ -385,6 +393,8 @@ EVENT_TYPE_WEIGHT: Dict[EventType, Decimal] = {
     EventType.CT_ARM_REMOVED: Decimal("0.0"),
     EventType.CT_ENROLLMENT_PAUSED: Decimal("0.0"),
     EventType.FDA_CRL: Decimal("0.0"),              # Complete Response Letter (negative)
+    EventType.FDA_RTF: Decimal("0.0"),               # Refuse to File (negative)
+    EventType.FDA_WARNING_LETTER: Decimal("0.0"),    # Warning Letter (negative)
     EventType.CT_TRIAL_TERMINATED: Decimal("0.0"),
     EventType.CT_TRIAL_WITHDRAWN: Decimal("0.0"),
     EventType.CT_TRIAL_SUSPENDED: Decimal("0.0"),

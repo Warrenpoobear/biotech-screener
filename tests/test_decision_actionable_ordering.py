@@ -377,6 +377,76 @@ class TestResolveCatalystPriority:
         assert resolve_catalyst_priority("fda_decision", "fda_calendar", rs) == 1
         assert resolve_catalyst_priority("data_readout", "ctgov_calendar", rs) == 2
 
+    # -- Expanded FDA type coverage (v1.3.1 priority map) --
+
+    def test_fda_pdufa_date_sec_8k(self):
+        """FDA_PDUFA_DATE from SEC_8K_FILING → priority 1 (not wildcard 2)."""
+        rs = _priority_ruleset()
+        assert resolve_catalyst_priority("FDA_PDUFA_DATE", "SEC_8K_FILING", rs) == 1
+
+    def test_fda_adcom_sec_8k(self):
+        """FDA_ADCOM from SEC_8K_FILING → priority 1."""
+        rs = _priority_ruleset()
+        assert resolve_catalyst_priority("FDA_ADCOM", "SEC_8K_FILING", rs) == 1
+
+    def test_fda_crl_any_source(self):
+        """FDA_CRL from any source → priority 1."""
+        rs = _priority_ruleset()
+        assert resolve_catalyst_priority("FDA_CRL", "SEC_8K_FILING", rs) == 1
+        assert resolve_catalyst_priority("FDA_CRL", "FDA_CALENDAR", rs) == 1
+
+    def test_fda_rtf_any_source(self):
+        """FDA_RTF from any source → priority 1."""
+        rs = _priority_ruleset()
+        assert resolve_catalyst_priority("FDA_RTF", "SEC_8K_FILING", rs) == 1
+
+    def test_fda_warning_letter_any_source(self):
+        """FDA_WARNING_LETTER from any source → priority 1."""
+        rs = _priority_ruleset()
+        assert resolve_catalyst_priority("FDA_WARNING_LETTER", "SEC_8K_FILING", rs) == 1
+
+    def test_fda_approval_any_source(self):
+        """FDA_APPROVAL from any source → priority 1."""
+        rs = _priority_ruleset()
+        assert resolve_catalyst_priority("FDA_APPROVAL", "CORPORATE_CALENDAR", rs) == 1
+
+    def test_data_readout_sec_8k_still_priority_2(self):
+        """DATA_READOUT from SEC_8K_FILING → priority 2 (unchanged)."""
+        rs = _priority_ruleset()
+        assert resolve_catalyst_priority("DATA_READOUT", "SEC_8K_FILING", rs) == 2
+
+    # -- New multi-form SEC sources (v1.3.1 priority map) --
+
+    def test_sec_10q_wildcard_type_priority_2(self):
+        """Any event_type from SEC_10Q_FILING → priority 2."""
+        rs = _priority_ruleset()
+        assert resolve_catalyst_priority("SOME_TYPE", "SEC_10Q_FILING", rs) == 2
+
+    def test_sec_10k_wildcard_type_priority_2(self):
+        """Any event_type from SEC_10K_FILING → priority 2."""
+        rs = _priority_ruleset()
+        assert resolve_catalyst_priority("SOME_TYPE", "SEC_10K_FILING", rs) == 2
+
+    def test_sec_6k_wildcard_type_priority_2(self):
+        """Any event_type from SEC_6K_FILING → priority 2."""
+        rs = _priority_ruleset()
+        assert resolve_catalyst_priority("SOME_TYPE", "SEC_6K_FILING", rs) == 2
+
+    def test_federal_register_wildcard_type_priority_1(self):
+        """Any event_type from FEDERAL_REGISTER → priority 1."""
+        rs = _priority_ruleset()
+        assert resolve_catalyst_priority("SOME_TYPE", "FEDERAL_REGISTER", rs) == 1
+
+    def test_fda_approval_from_federal_register_priority_1(self):
+        """FDA_APPROVAL from FEDERAL_REGISTER → matches FDA_APPROVAL rule first → 1."""
+        rs = _priority_ruleset()
+        assert resolve_catalyst_priority("FDA_APPROVAL", "FEDERAL_REGISTER", rs) == 1
+
+    def test_data_readout_from_10q_priority_2(self):
+        """DATA_READOUT from SEC_10Q_FILING → matches DATA_READOUT wildcard → 2."""
+        rs = _priority_ruleset()
+        assert resolve_catalyst_priority("DATA_READOUT", "SEC_10Q_FILING", rs) == 2
+
 
 # -- Sort key integration tests with catalyst priority --
 

@@ -551,7 +551,8 @@ def _unknown_reason_breakdown(offenders: list, n_eligible: int) -> str:
 
 _CATALYST_SOURCE_KEYS = (
     "CTGOV_CALENDAR", "FDA_CALENDAR", "SEC_8K_FILING",
-    "CORPORATE_CALENDAR", "none", "unknown",
+    "SEC_10Q_FILING", "SEC_10K_FILING", "SEC_6K_FILING",
+    "FEDERAL_REGISTER", "CORPORATE_CALENDAR", "none", "unknown",
 )
 
 
@@ -609,6 +610,10 @@ def _catalyst_source_metrics(
         "trial_pcd": "CTGOV_CALENDAR",
         "pdufa": "FDA_CALENDAR",
         "sec_8k": "SEC_8K_FILING",
+        "sec_10q": "SEC_10Q_FILING",
+        "sec_10k": "SEC_10K_FILING",
+        "sec_6k": "SEC_6K_FILING",
+        "federal_register": "FEDERAL_REGISTER",
         "adcom": "FDA_CALENDAR",
     }
 
@@ -681,7 +686,11 @@ def _catalyst_source_metrics(
 
         # Non-CTGOV offenders: dated catalysts from other sources
         # Shows "what replaced CTGOV?" when ctgov floor WARN trips
-        _SRC_ORDER = {"FDA_CALENDAR": 0, "SEC_8K_FILING": 1, "CORPORATE_CALENDAR": 2}
+        _SRC_ORDER = {
+            "FDA_CALENDAR": 0, "FEDERAL_REGISTER": 0,
+            "SEC_8K_FILING": 1, "SEC_10Q_FILING": 1, "SEC_10K_FILING": 1, "SEC_6K_FILING": 1,
+            "CORPORATE_CALENDAR": 2,
+        }
         _DATED_MODES = {"specific_days", "blended_window"}
         non_ctgov_offenders = []
         for i, norm_src in enumerate(sources):
@@ -713,6 +722,9 @@ _CT_MAX_OFFENDERS = 10  # max tickers listed in ct_* offender appendix
 
 _CATALYST_EVENT_TYPE_KEYS = (
     "DATA_READOUT", "FDA_DECISION", "FDA_ADCOM",
+    "FDA_PDUFA_DATE", "FDA_APPROVAL", "FDA_CRL",
+    "FDA_RTF", "FDA_WARNING_LETTER",
+    "CT_PRIMARY_COMPLETION", "CT_STUDY_COMPLETION",
     "TRIAL_ONGOING", "none", "unknown",
 )
 
@@ -721,6 +733,13 @@ _EVENT_TYPE_ALIASES: Dict[str, str] = {
     "data_readout": "DATA_READOUT",
     "fda_decision": "FDA_DECISION",
     "fda_adcom": "FDA_ADCOM",
+    "fda_pdufa_date": "FDA_PDUFA_DATE",
+    "fda_approval": "FDA_APPROVAL",
+    "fda_crl": "FDA_CRL",
+    "fda_rtf": "FDA_RTF",
+    "fda_warning_letter": "FDA_WARNING_LETTER",
+    "ct_primary_completion": "CT_PRIMARY_COMPLETION",
+    "ct_study_completion": "CT_STUDY_COMPLETION",
     "trial_ongoing": "TRIAL_ONGOING",
 }
 
