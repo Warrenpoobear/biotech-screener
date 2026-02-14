@@ -374,6 +374,18 @@ def load_snapshot(snap_path: Path) -> Optional[SnapshotData]:
 
     rankings = pd.read_csv(rankings_csv, dtype=str)
     if "tier_dev" not in rankings.columns:
+        print(
+            f"WARNING: {snap_path.name}: snapshot schema too old "
+            f"(missing 'tier_dev'). Re-enrich or skip.",
+            file=sys.stderr,
+        )
+        return None
+    if "actionable_rank" not in rankings.columns:
+        print(
+            f"WARNING: {snap_path.name}: snapshot schema too old "
+            f"(missing 'actionable_rank'). Re-enrich or skip.",
+            file=sys.stderr,
+        )
         return None
 
     # Load metadata

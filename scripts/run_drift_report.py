@@ -2066,6 +2066,12 @@ def generate_drift_report_md(
             share_str = f"{share:.1f}%" if share is not None else "N/A"
             lines.append(f"| {mode:<17} | {cnt:>5} | {share_str:>12} |")
         lines.append("")
+        lines.append(
+            "> **Note:** Coverage here is *specific_days* (dated catalysts within the "
+            "actionable near/mid window), not audit \"any catalyst\". "
+            "See `docs/CATALYST_COVERAGE_CROSSWALK.md` for definitions."
+        )
+        lines.append("")
 
     # Catalyst Source Mix table (only if catalyst_source data present)
     has_cs = current.get("cs_n_eligible") is not None
