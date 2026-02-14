@@ -42,7 +42,7 @@ class TestFormToSource:
         assert FORM_TO_SOURCE["6-K"] == "SEC_6K_FILING"
 
     def test_four_entries(self):
-        assert len(FORM_TO_SOURCE) == 4
+        assert len(FORM_TO_SOURCE) == 7  # 4 base + 3 amended (/A) variants
 
 
 # ===========================================================================

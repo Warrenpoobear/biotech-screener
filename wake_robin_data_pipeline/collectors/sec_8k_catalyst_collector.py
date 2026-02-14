@@ -58,6 +58,9 @@ FORM_TO_SOURCE = {
     "10-Q": "SEC_10Q_FILING",
     "10-K": "SEC_10K_FILING",
     "6-K":  "SEC_6K_FILING",
+    "6-K/A": "SEC_6K_FILING",   # Amended 6-K → same source label
+    "10-Q/A": "SEC_10Q_FILING", # Amended 10-Q → same source label
+    "10-K/A": "SEC_10K_FILING", # Amended 10-K → same source label
 }
 
 # SEC official ticker-to-CIK mapping
