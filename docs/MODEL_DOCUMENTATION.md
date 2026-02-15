@@ -67,19 +67,21 @@ python run_screen.py \
 
 ### Recommended IC workflow
 
-1. **Screen**: Start with `module_5_composite.ranked_securities` and filter to `rankable=true`.
-2. **Risk gates**: Review `severity`, `severe_negative_flag`, and `fundamental_red_flag` before any investment decision.
-3. **Thesis build**: Use Module 3 (catalysts) + Module 4 (pipeline quality) as the thesis backbone; use Modules 2/5 components as constraints and timing.
-4. **Implementation**: Apply portfolio constraints (cash target, max weight, sector/cluster caps) outside the scorer; document any overrides.
-5. **Monitoring**: Track coverage, confidence, and drift metrics each run (see Monitoring & Reporting).
+1. **Portfolio**: Start with `decision_portfolio.csv` (Decision Engine output: A+B tier, top-K, sized). This supersedes the legacy Module 5 `composite_rank` for all investment decisions.
+2. **Risk gates**: Review `severity`, `risk_flags`, and `tier_reason` before any investment decision.
+3. **Thesis build**: Use catalyst provenance (`catalyst_source`, `catalyst_days`, `catalyst_strength`) + Module 4 (pipeline quality) as the thesis backbone.
+4. **Health check**: Review `phase2_health.json` — FAIL means do not act, WARN means review before acting.
+5. **Implementation**: Apply portfolio constraints (cash target, max weight, sector/cluster caps) on top of Decision Engine weights; document any overrides.
+6. **Monitoring**: Track health gate status, catalyst coverage, and tier distribution each run (see Monitoring & Reporting).
 
 ### What to show the IC each run (one page)
 
-- **Run metadata**: `as_of_date`, version, and validation status.
-- **Coverage**: % of universe with non‑zero catalyst proximity, PIT date coverage, and data_state distribution.
-- **Top drivers**: distributions of z-scores and the primary `rank_driver` buckets.
-- **Risk posture**: defensive bucket mix and cluster concentration diagnostics.
-- **Exceptions**: list of `rankable=false` names and *why*.
+- **Health gate**: `phase2_health.json` status (OK/WARN/FAIL) and reasons.
+- **Portfolio**: `decision_portfolio.csv` — top-20 positions with tiers, weights, catalyst proximity.
+- **Delta**: `phase2_run_delta_report.txt` — entries/exits, turnover, L1 weight change vs prior run.
+- **Catalyst coverage**: % dev tickers with `specific_days` mode, source mix distribution.
+- **Tier distribution**: A/B/C/D counts and any tier migrations from prior run.
+- **Exceptions**: ineligible tickers and reasons, any health gate warnings.
 
 ---
 
@@ -403,7 +405,9 @@ Each snapshot writes `catalyst_source_mix.json` alongside `rankings.csv`, contai
 
 ---
 
-### Module 5: Composite Ranking
+### Module 5: Composite Ranking (Legacy — being superseded by Decision Engine)
+
+> **Deprecation notice:** Module 5's fixed-weight composite scoring is being replaced by the [Decision Engine (Phase-2)](#decision-engine-phase-2), which provides explicit tier assignments, catalyst-aware eligibility gates, cost-aware sizing, and externalized rulesets. Module 5 continues to produce the `composite_score` and `composite_rank` used as inputs to the Decision Engine, but portfolio decisions (tier, actionable rank, target weight) are now driven by the Decision Engine. See the [architectural transition](#architectural-transition-module-5--decision-engine) note below.
 
 **File:** `module_5_composite_with_defensive.py`
 **Purpose:** Combine all signals into final ranking with defensive overlay
@@ -742,9 +746,23 @@ else:
 ## Decision Engine (Phase-2)
 
 **File:** `decision_engine.py`
-**Purpose:** Post-processing layer that converts composite rankings into actionable portfolio decisions
+**Purpose:** Actionable portfolio construction layer that supersedes Module 5's composite scoring for all investment decisions
 
-The Decision Engine sits downstream of Module 5 and applies eligibility gates, tier assignments, and sizing rules to produce a filtered, sized portfolio.
+The Decision Engine replaces Module 5's fixed-weight composite ranking as the authoritative source of portfolio decisions. It consumes Module 5's `composite_score` as one input among several, then applies explicit eligibility gates, catalyst-aware tier assignments, and cost-aware sizing to produce a filtered, sized portfolio with full audit trail.
+
+### Architectural Transition: Module 5 → Decision Engine
+
+| Concern | Module 5 (Legacy) | Decision Engine (Current) |
+|---------|-------------------|--------------------------|
+| Ranking method | Fixed-weight linear combination | Multi-layer: eligibility → overlays → tier → sizing |
+| Catalyst integration | 10% weight in composite score | Explicit catalyst strength bands (NEAR/MID/FAR/MISSING) gate tier assignment |
+| Portfolio construction | None — ranking only | Full: tier filter, top-K selection, target weights |
+| Configuration | Hardcoded weights | Externalized frozen rulesets with content-hash IDs |
+| Reproducibility | Implicit via code version | Explicit via pinned `ruleset_id` + health gate |
+| Health monitoring | None | Automated: FAIL/WARN/OK with turnover, coverage, and ruleset drift checks |
+| Catalyst sources | Single Module 3 net score | Source-aware priority (FDA > CTGOV/SEC > corporate) with quality gating |
+
+Module 5 remains in the pipeline to produce `composite_score` and `composite_rank`, which the Decision Engine uses as a base signal. All downstream consumers (IC reports, portfolio construction, drift monitoring) should use Decision Engine outputs (`tier_dev`, `actionable_rank`, `target_weight_pct`) rather than Module 5's `composite_rank`.
 
 ### Processing Layers
 
