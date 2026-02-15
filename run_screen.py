@@ -1786,11 +1786,11 @@ def _compute_shadow_metrics(
     if source_mix and isinstance(source_mix.get("by_source"), dict):
         by_src = source_mix["by_source"]
         sec_8k_events = by_src.get("SEC_8K_FILING", 0)
-        ctgov_events = by_src.get("CTGOV_CALENDAR", 0)
-        fda_events = (
-            by_src.get("FDA_CALENDAR", 0)
-            + by_src.get("FDA_ADCOM_CALENDAR", 0)
-            + by_src.get("FEDERAL_REGISTER", 0)
+        ctgov_events = by_src.get("CTGOV_CALENDAR", 0) + by_src.get("CTGOV", 0)
+        fda_events = sum(
+            by_src.get(k, 0)
+            for k in ("FDA_CALENDAR", "FDA_ADCOM_CALENDAR",
+                       "FEDERAL_REGISTER", "FDA_PDUFA")
         )
 
     # ----- A-tier count (dev-only) -----
