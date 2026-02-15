@@ -13,6 +13,8 @@ import pytest
 
 from wake_robin_data_pipeline.collectors.fda_adcom_collector import (
     _FR_REGULATORY_QUERIES,
+    _GENERIC_INTERVENTION_NAMES,
+    build_product_ticker_map,
     collect_fda_regulatory_notices,
     _match_product_to_ticker,
     FEDERAL_REGISTER_API,
@@ -244,3 +246,43 @@ class TestFDARegulatoryEventSchema:
         assert "fr_document_number" in ev
         assert "tags" in ev
         assert "fda_regulatory" in ev["tags"]
+
+
+# ===========================================================================
+# Product map expansion from trial_records.json
+# ===========================================================================
+
+class TestProductMapTrialExpansion:
+    """Verify build_product_ticker_map() mines trial_records.json."""
+
+    def test_product_map_includes_trial_interventions(self, tmp_path):
+        """With trial_records.json, map should include intervention names."""
+        trials = [
+            {"ticker": "ACAD", "interventions": ["pimavanserin", "placebo"]},
+            {"ticker": "SGEN", "interventions": ["enfortumab vedotin"]},
+            {"ticker": "ALNY", "interventions": ["patisiran", "saline"]},
+        ]
+        with open(tmp_path / "trial_records.json", "w") as f:
+            json.dump(trials, f)
+
+        product_map = build_product_ticker_map(tmp_path)
+        assert len(product_map) >= 3
+        assert product_map["pimavanserin"] == "ACAD"
+        assert product_map["enfortumab vedotin"] == "SGEN"
+        assert product_map["patisiran"] == "ALNY"
+
+    def test_product_map_excludes_generic_names(self, tmp_path):
+        """Generic names like 'placebo' and 'standard of care' are excluded."""
+        trials = [
+            {"ticker": "ACAD", "interventions": [
+                "pimavanserin", "placebo", "standard of care", "saline",
+                "sham", "vehicle", "matching placebo",
+            ]},
+        ]
+        with open(tmp_path / "trial_records.json", "w") as f:
+            json.dump(trials, f)
+
+        product_map = build_product_ticker_map(tmp_path)
+        assert "pimavanserin" in product_map
+        for generic in _GENERIC_INTERVENTION_NAMES:
+            assert generic not in product_map, f"Generic name '{generic}' should be excluded"

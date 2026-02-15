@@ -438,11 +438,11 @@ class TestSourceLabelPassthrough:
 class TestBuildM3Config:
     """Verify _build_m3_config passes multi-form and FDA regulatory modes."""
 
-    def test_default_modes_off(self):
+    def test_default_modes_cache_only(self):
         from run_screen import _build_m3_config
         cfg = _build_m3_config()
-        assert cfg.enable_sec_multi_form == "off"
-        assert cfg.enable_fda_regulatory == "off"
+        assert cfg.enable_sec_multi_form == "cache_only"
+        assert cfg.enable_fda_regulatory == "cache_only"
 
     def test_multi_form_mode_passed(self):
         from run_screen import _build_m3_config
@@ -464,3 +464,54 @@ class TestBuildM3Config:
         assert cfg.enable_sec_8k_catalysts == "live"
         assert cfg.enable_sec_multi_form == "live"
         assert cfg.enable_fda_regulatory == "cache_only"
+
+
+# ===========================================================================
+# cache_only mode integration (module_3_catalyst reads from cache)
+# ===========================================================================
+
+class TestCacheOnlyMode:
+    """Verify cache_only mode reads cached events and handles missing cache."""
+
+    def test_cache_only_reads_from_standard_location(self, tmp_path):
+        """cache_only loads events from the versioned cache file."""
+        cache_dir = tmp_path / "sec_cache"
+        cache_dir.mkdir()
+        as_of = date(2026, 2, 7)
+        cache_path = _multi_form_cache_path(cache_dir, as_of)
+        events = [
+            {
+                "ticker": "ACAD",
+                "event_type": "CLINICAL_READOUT",
+                "event_date": "2026-06-15",
+                "event_name": "Phase 3 topline data",
+                "source": "SEC_10Q_FILING",
+                "filing_form": "10-Q",
+            },
+        ]
+        with open(cache_path, "w") as f:
+            json.dump(events, f)
+
+        loaded = collect_sec_filing_events(
+            universe=[{"ticker": "ACAD"}],
+            as_of_date=as_of,
+            cache_dir=cache_dir,
+        )
+        assert len(loaded) == 1
+        assert loaded[0]["ticker"] == "ACAD"
+        assert loaded[0]["source"] == "SEC_10Q_FILING"
+
+    def test_cache_only_no_cache_returns_empty(self, tmp_path):
+        """When no cache file exists and requests is unavailable, returns empty."""
+        cache_dir = tmp_path / "sec_cache_empty"
+        cache_dir.mkdir()
+        as_of = date(2099, 1, 1)  # No cache for this date
+
+        with patch.dict("sys.modules", {"requests": None}):
+            # Without requests, live collection fails gracefully
+            loaded = collect_sec_filing_events(
+                universe=[{"ticker": "ACAD"}],
+                as_of_date=as_of,
+                cache_dir=cache_dir,
+            )
+        assert loaded == []

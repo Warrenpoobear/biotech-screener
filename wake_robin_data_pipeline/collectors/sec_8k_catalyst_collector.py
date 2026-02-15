@@ -552,12 +552,16 @@ def _fetch_filing_text(
     # Fetch exhibits first (press releases have the timing language), then main doc
     all_text_parts = []
     docs_to_fetch = exhibit_files[:3] + main_files[:2]  # Cap at 5 docs per filing
+    _MAX_DOC_BYTES = 2_000_000  # Skip docs > 2 MB (large 10-Ks cause pathological parse)
 
     for filename in docs_to_fetch:
         doc_url = f"{base_url}/{filename}"
         try:
             doc_resp = _sec_get(session, doc_url)
             if doc_resp.status_code == 200:
+                if len(doc_resp.text) > _MAX_DOC_BYTES:
+                    logger.debug(f"Skipping oversized doc ({len(doc_resp.text)} bytes): {doc_url}")
+                    continue
                 # Strip HTML tags to get plain text
                 text = re.sub(r"<[^>]+>", " ", doc_resp.text)
                 text = re.sub(r"&nbsp;", " ", text)
@@ -1101,8 +1105,9 @@ def collect_sec_filing_events(
     fetch_errors = 0
     cache_hits = 0
     network_fetches = 0
+    total_filings = len(filings_to_fetch)
 
-    for adsh, meta in filings_to_fetch.items():
+    for filing_idx, (adsh, meta) in enumerate(filings_to_fetch.items(), 1):
         ticker = meta["ticker"]
         cik = meta["cik"]
         file_date = meta["file_date"]
@@ -1117,6 +1122,12 @@ def collect_sec_filing_events(
             cache_hits += 1
             all_events.extend(cached_events)
             continue
+
+        if filing_idx % 10 == 0 or filing_idx == 1:
+            logger.info(
+                f"Multi-form [{filing_idx}/{total_filings}] fetching {ticker} "
+                f"{form_type} {adsh} ({file_date})"
+            )
 
         try:
             text = _fetch_filing_text(cik, adsh, session)

@@ -67,6 +67,15 @@ _FR_DRUG_AFTER_COMMENTS = re.compile(
     r"Comments-([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*(?:\s+(?:Capsules?|Tablets?|Injection|Solution))?)"
 )
 
+# Generic/non-drug intervention names to exclude from product map
+_GENERIC_INTERVENTION_NAMES = frozenset({
+    "placebo", "standard of care", "soc", "observation", "no intervention",
+    "best supportive care", "bsc", "control", "active comparator",
+    "investigational drug", "experimental drug", "study drug",
+    "matching placebo", "saline", "normal saline", "vehicle",
+    "sham procedure", "sham", "usual care",
+})
+
 # ADCOM date patterns in SEC 8-K filings
 _ADCOM_DATE_PATTERNS = [
     r"[Aa]dvisory\s+[Cc]ommittee\s+(?:meeting\s+)?(?:scheduled\s+for|on|date[:\s]+|is\s+)\s*(\w+\s+\d{1,2},?\s+\d{4})",
@@ -119,6 +128,30 @@ def build_product_ticker_map(data_dir: Path) -> Dict[str, str]:
                     product_map[drug.lower()] = ticker
         except Exception as e:
             logger.warning(f"Error reading FDA designations: {e}")
+
+    # Read trial intervention names
+    trials_path = data_dir / "trial_records.json"
+    if trials_path.exists():
+        try:
+            with open(trials_path, "r", encoding="utf-8") as f:
+                trials = json.load(f)
+            for trial in trials:
+                ticker = trial.get("ticker", "").strip()
+                if not ticker:
+                    continue
+                for intervention in trial.get("interventions", []):
+                    name = intervention.strip()
+                    if not name:
+                        continue
+                    # Skip generic/non-drug interventions
+                    name_lower = name.lower()
+                    if name_lower in _GENERIC_INTERVENTION_NAMES:
+                        continue
+                    # Only add if not already mapped to a different ticker
+                    if name_lower not in product_map:
+                        product_map[name_lower] = ticker
+        except Exception as e:
+            logger.warning(f"Error reading trial records: {e}")
 
     logger.info(f"Built product-to-ticker map with {len(product_map)} entries")
     return product_map

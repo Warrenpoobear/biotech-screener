@@ -3091,8 +3091,8 @@ def _normalize_m3_regime(regime: Optional[str]) -> Optional[str]:
 
 def _build_m3_config(
     sec_8k_mode: str = "cache_only",
-    sec_multi_form_mode: str = "off",
-    fda_regulatory_mode: str = "off",
+    sec_multi_form_mode: str = "cache_only",
+    fda_regulatory_mode: str = "cache_only",
 ) -> 'Module3Config':
     """Build Module3Config, optionally overriding SEC 8-K mode."""
     cfg = Module3Config()
@@ -3142,9 +3142,9 @@ def run_screening_pipeline(
     # SEC 8-K live mode
     sec_8k_mode: str = "cache_only",
     # SEC multi-form (10-Q, 10-K, 6-K) mode
-    sec_multi_form_mode: str = "off",
+    sec_multi_form_mode: str = "cache_only",
     # FDA regulatory notices (Federal Register) mode
-    fda_regulatory_mode: str = "off",
+    fda_regulatory_mode: str = "cache_only",
     # Module 5 calibrated weights
     module5_weights_path: Optional[Path] = None,
     module5_weights_mode: str = "global",
