@@ -1792,6 +1792,28 @@ def compute_module_3_catalyst(
     if total_fuzzy_merged > 0:
         logger.info(f"Fuzzy dedup merged {total_fuzzy_merged} near-duplicate events")
 
+    # Compute catalyst source mix from finalized events (before scoring)
+    _src_counts: Dict[str, int] = {}
+    _conf_counts: Dict[str, int] = {}
+    _prec_counts: Dict[str, int] = {}
+    _tickers_with_events: Set[str] = set()
+    _total_events = 0
+    for _ticker, _evts in events_by_ticker_v2.items():
+        for _ev in _evts:
+            _total_events += 1
+            _tickers_with_events.add(_ticker)
+            _src_counts[_ev.source] = _src_counts.get(_ev.source, 0) + 1
+            _conf_counts[_ev.confidence.value] = _conf_counts.get(_ev.confidence.value, 0) + 1
+            _prec_counts[getattr(_ev, 'date_precision', 'UNKNOWN')] = _prec_counts.get(
+                getattr(_ev, 'date_precision', 'UNKNOWN'), 0) + 1
+    catalyst_source_mix = {
+        "total_events": _total_events,
+        "unique_tickers_with_events": len(_tickers_with_events),
+        "by_source": dict(sorted(_src_counts.items())),
+        "by_confidence": dict(sorted(_conf_counts.items())),
+        "by_date_precision": dict(sorted(_prec_counts.items())),
+    }
+
     # Score events using new scoring system
     logger.info("Scoring events with vNext scorer...")
     summaries_v2, diagnostics = score_catalyst_events(
@@ -1976,6 +1998,8 @@ def compute_module_3_catalyst(
         # New: PIT violation tracking
         "pit_violation": pit_violation_info,
         "catalyst_mode": "corporate_only_due_to_pit_violation" if pit_violation else "full",
+        # New: source mix for ablation diagnostics
+        "catalyst_source_mix": catalyst_source_mix,
     }
 
     # Output validation

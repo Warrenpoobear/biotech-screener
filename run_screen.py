@@ -1852,6 +1852,16 @@ def save_validation_snapshot(
         logger.warning(f"Could not write snapshot CSV: {e}")
         return None
 
+    # --- Write catalyst source mix sidecar JSON ---
+    source_mix = (results.get("module_3_catalyst") or {}).get("catalyst_source_mix")
+    if source_mix:
+        try:
+            with open(snap_path / "catalyst_source_mix.json", "w", encoding="utf-8") as f:
+                json.dump(source_mix, f, indent=2, default=str)
+                f.write("\n")
+        except OSError as e:
+            logger.warning(f"Could not write catalyst_source_mix.json: {e}")
+
     # --- Write decision ruleset sidecar JSON for reproducibility ---
     rs = ruleset or DEFAULT_RULESET
     try:
