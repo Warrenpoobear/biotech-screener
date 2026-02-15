@@ -301,16 +301,17 @@ class TestComputeShadowMetrics:
         source_mix = {
             "by_source": {
                 "SEC_8K_FILING": 206,
-                "CTGOV": 1084,
-                "FDA_PDUFA": 8,
-                "FEDERAL_REGISTER": 3,
+                "CTGOV_CALENDAR": 1084,
+                "FDA_CALENDAR": 8,
+                "FDA_ADCOM_CALENDAR": 2,
+                "FEDERAL_REGISTER": 1,
             }
         }
         result = _compute_shadow_metrics(rows, "2026-02-14", snap, source_mix)
 
         assert result["sec_8k_events"] == 206
         assert result["ctgov_events"] == 1084
-        assert result["fda_events"] == 11  # 8 + 3
+        assert result["fda_events"] == 11  # 8 + 2 + 1
 
 
 # ===================================================================
