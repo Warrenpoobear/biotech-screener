@@ -148,6 +148,7 @@ class TestComputeShadowMetrics:
         assert result["prior_date"] is None
         assert result["bad_to_good_count"] is None
         assert result["good_to_bad_count"] is None
+        assert result["bad_to_good_in_top60"] is None
         assert result["bad_to_good_in_top100"] is None
         assert result["top60_overlap"] is None
         assert result["top100_overlap"] is None
@@ -294,34 +295,37 @@ class TestComputeShadowMetrics:
         # Intersection: T03,T04,T05 (3), Union: T01..T07 (7)
         assert result["top60_overlap"] == round(3 / 7, 4)
 
-    def test_bad_to_good_in_top100(self, tmp_path):
+    def test_bad_to_good_in_top_n(self, tmp_path):
         snap = tmp_path / "snapshots"
         # Build 100 filler tickers ranked 1-100 so FOLD at rank=200 is outside top-100
         filler_prior = [
             _make_dev_row(f"F{i:03d}", composite_rank=i, catalyst_mode="specific_days")
             for i in range(1, 101)
         ]
-        # Prior: ACAD(rank=10) bad, FOLD(rank=200) bad
+        # Prior: ACAD(rank=10) bad, QRST(rank=80) bad, FOLD(rank=200) bad
         prior_rows = filler_prior + [
             _make_dev_row("ACAD", composite_rank=10, catalyst_mode="no_upcoming"),
+            _make_dev_row("QRST", composite_rank=80, catalyst_mode="missing"),
             _make_dev_row("FOLD", composite_rank=200, catalyst_mode="missing"),
         ]
         _write_rankings(snap, "2026-02-12", prior_rows)
         _write_rankings(snap, "2026-02-14", [_make_dev_row("X")])
 
-        # Current: same fillers + both flip to good
+        # Current: same fillers + all three flip to good
         filler_cur = [
             _make_dev_row(f"F{i:03d}", composite_rank=i, catalyst_mode="specific_days")
             for i in range(1, 101)
         ]
         cur_rows = filler_cur + [
             _make_dev_row("ACAD", composite_rank=10, catalyst_mode="specific_days"),
+            _make_dev_row("QRST", composite_rank=80, catalyst_mode="blended_window"),
             _make_dev_row("FOLD", composite_rank=200, catalyst_mode="blended_window"),
         ]
         result = _compute_shadow_metrics(cur_rows, "2026-02-14", snap, None)
 
-        assert result["bad_to_good_count"] == 2
-        assert result["bad_to_good_in_top100"] == 1  # only ACAD (rank 10)
+        assert result["bad_to_good_count"] == 3
+        assert result["bad_to_good_in_top60"] == 1   # ACAD (rank 10)
+        assert result["bad_to_good_in_top100"] == 2   # ACAD + QRST (rank 80)
 
     def test_source_attribution_extraction(self, tmp_path):
         snap = tmp_path / "snapshots"

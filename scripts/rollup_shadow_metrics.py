@@ -27,6 +27,7 @@ COLUMNS = [
     "prior_date",
     "bad_to_good_count",
     "good_to_bad_count",
+    "bad_to_good_in_top60",
     "bad_to_good_in_top100",
     "median_catalyst_days_good",
     "p10_catalyst_days",
@@ -104,9 +105,9 @@ def main(argv: list[str] | None = None) -> int:
     print(f"Wrote {len(rows)} rows to {args.output}")
 
     # Print summary table
-    print(f"\n{'date':<12} {'B→G':>4} {'t100':>4} {'G→B':>4} {'med_d':>6} "
+    print(f"\n{'date':<12} {'B→G':>4} {'t60':>4} {'t100':>4} {'G→B':>4} {'med_d':>6} "
           f"{'A_cnt':>5} {'t60%':>6} {'t100%':>6} {'8K':>5} {'CTG':>5} {'FDA':>4}")
-    print("-" * 78)
+    print("-" * 83)
     for r in rows:
         def _f(v, fmt=".0f"):
             return f"{v:{fmt}}" if v is not None else "-"
@@ -117,6 +118,7 @@ def main(argv: list[str] | None = None) -> int:
         print(
             f"{r['as_of_date']:<12} "
             f"{_f(r['bad_to_good_count']):>4} "
+            f"{_f(r.get('bad_to_good_in_top60')):>4} "
             f"{_f(r.get('bad_to_good_in_top100')):>4} "
             f"{_f(r['good_to_bad_count']):>4} "
             f"{_f(r['median_catalyst_days_good']):>6} "
