@@ -366,11 +366,26 @@ def _parse_exact_date(date_str: str) -> Optional[str]:
     return None
 
 
+_BOILERPLATE_KWS = (
+    "foreseeable future", "going concern", "material weakness",
+    "accounting standard", "fasb", "asu", "impairment", "adopt",
+)
+_BIOPHARMA_KWS = (
+    "fda", "pdufa", "nda", "bla", "crl",
+    "phase 1", "phase 2", "phase 3", "topline", "readout",
+    "primary endpoint", "enrollment", "interim analysis",
+    "clinical", "regulatory",
+)
+
+
 def _extract_timing_events(
     text: str,
     ticker: str,
     filing_date: str,
     as_of_date: Optional[date] = None,
+    *,
+    require_biopharma_context: bool = False,
+    block_boilerplate: bool = False,
 ) -> List[Dict[str, Any]]:
     """
     Extract timing events from 8-K filing text.
@@ -380,6 +395,10 @@ def _extract_timing_events(
         ticker: Associated ticker symbol
         filing_date: ISO date string of the 8-K filing
         as_of_date: Current analysis date (used for year guard + staleness filter)
+        require_biopharma_context: If True, only accept matches with biopharma
+            keywords (FDA, Phase, topline, etc.) in the surrounding 300-char window.
+        block_boilerplate: If True, reject matches where the surrounding context
+            contains accounting/boilerplate language.
 
     Returns:
         List of event dicts
@@ -399,6 +418,13 @@ def _extract_timing_events(
 
     for pattern, event_type, precision in TIMING_PATTERNS:
         for match in re.finditer(pattern, text, re.IGNORECASE):
+            # Context-based relevance filters (±300 chars around match)
+            ctx = text[max(0, match.start() - 300):min(len(text), match.end() + 300)].lower()
+            if block_boilerplate and any(k in ctx for k in _BOILERPLATE_KWS):
+                continue
+            if require_biopharma_context and not any(k in ctx for k in _BIOPHARMA_KWS):
+                continue
+
             captured = match.group(1).strip()
 
             if precision == "DAY":
@@ -506,6 +532,8 @@ def _fetch_filing_text(
     cik: str,
     adsh: str,
     session: Any,
+    *,
+    prefer_exhibits_only: bool = False,
 ) -> str:
     """
     Fetch the actual text of an 8-K filing from SEC EDGAR Archives.
@@ -551,7 +579,7 @@ def _fetch_filing_text(
 
     # Fetch exhibits first (press releases have the timing language), then main doc
     all_text_parts = []
-    docs_to_fetch = exhibit_files[:3] + main_files[:2]  # Cap at 5 docs per filing
+    docs_to_fetch = exhibit_files[:3] if prefer_exhibits_only else (exhibit_files[:3] + main_files[:2])
     _MAX_DOC_BYTES = 2_000_000  # Skip docs > 2 MB (large 10-Ks cause pathological parse)
 
     for filename in docs_to_fetch:
@@ -1130,14 +1158,21 @@ def collect_sec_filing_events(
             )
 
         try:
-            text = _fetch_filing_text(cik, adsh, session)
+            text = _fetch_filing_text(
+                cik, adsh, session,
+                prefer_exhibits_only=form_type in ("10-Q", "10-K"),
+            )
             if not text:
                 fetch_errors += 1
                 _save_adsh_cache(cache_dir, adsh, [])  # Cache empty result
                 continue
 
             network_fetches += 1
-            extracted = _extract_timing_events(text, ticker, file_date, as_of_date)
+            extracted = _extract_timing_events(
+                text, ticker, file_date, as_of_date,
+                require_biopharma_context=True,
+                block_boilerplate=True,
+            )
             downside = _extract_downside_events(text, ticker, file_date)
 
             # Override source to match the filing form type

@@ -1663,7 +1663,12 @@ def compute_module_3_catalyst(
                 logger.warning(f"SEC multi-form live collection error: {e}")
 
         if mf_events:
+            # Hard gate: only MED/HIGH confidence + DAY/QUARTER precision
+            # can drive catalyst_mode / tiers.  HALF_YEAR / LOW are noise.
+            _MF_ALLOWED_CONF = {ConfidenceLevel.MED, ConfidenceLevel.HIGH}
+            _MF_ALLOWED_PREC = {"DAY", "QUARTER"}
             mf_added = 0
+            mf_gated = 0
             mf_tickers_added = 0
             mf_touched: Set[str] = set()
             for mf_event in mf_events:
@@ -1672,6 +1677,10 @@ def compute_module_3_catalyst(
                     continue
                 v2_event = convert_sec_8k_to_v2(mf_event, as_of_date)
                 if v2_event is None:
+                    continue
+                # Gate: reject LOW confidence or imprecise dates
+                if v2_event.confidence not in _MF_ALLOWED_CONF or v2_event.date_precision not in _MF_ALLOWED_PREC:
+                    mf_gated += 1
                     continue
                 if ticker not in events_by_ticker_v2:
                     events_by_ticker_v2[ticker] = []
@@ -1689,7 +1698,8 @@ def compute_module_3_catalyst(
                 total_deduped += mf_deduped
                 total_events += mf_added
                 logger.info(f"Merged {mf_added} SEC multi-form catalyst events "
-                           f"(new tickers: {mf_tickers_added}, deduped: {mf_deduped})")
+                           f"(new tickers: {mf_tickers_added}, deduped: {mf_deduped}, "
+                           f"gated: {mf_gated})")
 
     # =========================================================================
     # MERGE FDA REGULATORY NOTICES INTO SCORING PIPELINE
