@@ -1685,6 +1685,7 @@ def _compute_shadow_metrics(
     good_to_bad_count: Optional[int] = None
     bad_to_good_tickers: Optional[List[str]] = None
     good_to_bad_tickers: Optional[List[str]] = None
+    bad_to_good_in_top100: Optional[int] = None
 
     if prior is not None:
         prior_mode_by_ticker = {
@@ -1778,6 +1779,12 @@ def _compute_shadow_metrics(
         top60_overlap = round(_jaccard(cur_set_60, prior_set_60), 4)
         top100_overlap = round(_jaccard(cur_set_100, prior_set_100), 4)
 
+        # B→G flips that landed in the current top-100 (decision-relevant)
+        if bad_to_good_tickers is not None:
+            bad_to_good_in_top100 = len(
+                set(bad_to_good_tickers) & cur_set_100
+            )
+
     # ----- Source attribution (from catalyst_source_mix) -----
     sec_8k_events: Optional[int] = None
     ctgov_events: Optional[int] = None
@@ -1806,6 +1813,7 @@ def _compute_shadow_metrics(
         "good_to_bad_count": good_to_bad_count,
         "bad_to_good_tickers": bad_to_good_tickers,
         "good_to_bad_tickers": good_to_bad_tickers,
+        "bad_to_good_in_top100": bad_to_good_in_top100,
         "median_catalyst_days_good": median_catalyst_days_good,
         "p10_catalyst_days": p10,
         "p50_catalyst_days": p50,
