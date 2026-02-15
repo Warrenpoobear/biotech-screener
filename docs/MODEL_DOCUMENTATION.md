@@ -1,7 +1,7 @@
 # Biotech Screener Model Documentation
 
-**Version:** 2.0.0
-**Last Updated:** February 3, 2026
+**Version:** 2.1.0
+**Last Updated:** February 15, 2026
 **System:** Wake Robin Capital Biotech Screening Pipeline
 
 ---
@@ -17,11 +17,12 @@
 7. [Output Format: CSV](#output-format-csv)
 8. [Field Definitions](#field-definitions)
 9. [Scoring Methodology](#scoring-methodology)
-10. [PIT (Point-in-Time) Compliance](#pit-point-in-time-compliance)
-11. [Monitoring & Reporting](#monitoring--reporting)
-12. [Configuration](#configuration)
-13. [Appendix: File Locations](#appendix-file-locations)
-14. [Changelog](#changelog)
+10. [Decision Engine (Phase-2)](#decision-engine-phase-2)
+11. [PIT (Point-in-Time) Compliance](#pit-point-in-time-compliance)
+12. [Monitoring & Reporting](#monitoring--reporting)
+13. [Configuration](#configuration)
+14. [Appendix: File Locations](#appendix-file-locations)
+15. [Changelog](#changelog)
 
 ---
 
@@ -42,11 +43,14 @@ The Biotech Screener is a deterministic, production-grade screening system that 
 
 ```bash
 python run_screen.py \
-    --as-of-date 2026-01-30 \
+    --as-of-date 2026-02-14 \
     --data-dir production_data \
-    --output production_data/results.json \
+    --output production_data/screen_output.json \
+    --snapshot-dir data/snapshots \
+    --decision-mode phase2 \
     --enable-enhancements \
-    --enable-clustering
+    --enable-smart-money \
+    --log-level INFO
 ```
 
 
@@ -278,6 +282,24 @@ python run_screen.py \
 **File:** `module_3_catalyst.py`
 **Purpose:** Detect and score clinical and corporate catalyst events
 
+**Data Sources:**
+| Source | Mode | Description |
+|--------|------|-------------|
+| ClinicalTrials.gov Calendar | Always on | Forward-looking PCD/SCD dates from trial records |
+| ClinicalTrials.gov Delta | Always on | Status changes, timeline shifts detected between snapshots |
+| SEC 8-K Filings | Always on | Timing phrases extracted from 8-K filings (primary SEC source) |
+| SEC Multi-Form (10-Q/10-K/6-K) | `cache_only` | Timing phrases from quarterly/annual/foreign filings; quality-gated |
+| FDA Calendar (PDUFA) | Always on | PDUFA action dates |
+| FDA Regulatory (Federal Register) | `cache_only` | FDA approvals, CRLs, RTFs, warning letters |
+
+**Quality Gating (Multi-Form Events):**
+
+Multi-form events pass through a three-layer filter before reaching the scoring pipeline:
+
+1. **Source triage**: 10-Q/10-K fetch exhibit documents only (press releases); 6-K/8-K fetch full text
+2. **Relevance filter**: Boilerplate blocking (8 keywords: "foreseeable future", "going concern", etc.) + biopharma context requirement (15 keywords: "fda", "phase 1/2/3", "topline", etc.) within ±300 chars of match
+3. **Hard gate at merge**: Only MED/HIGH confidence + DAY/WEEK/MONTH/QUARTER precision survive; LOW confidence and HALF_YEAR/YEAR precision events are blocked
+
 **Event Types (Delta-Based):**
 | Event Type | Description | Impact | Confidence |
 |------------|-------------|--------|------------|
@@ -298,11 +320,27 @@ python run_screen.py \
 | 91-180 days | UPCOMING_PCD/SCD | 0.55 |
 | 181-270 days | UPCOMING_PCD/SCD | 0.45 |
 
+**SEC Filing Event Types:**
+| Event Type | Source Forms | Description |
+|------------|-------------|-------------|
+| DATA_READOUT | 8-K, 6-K | Topline data, interim analysis |
+| FDA_PDUFA_DATE | 8-K, 6-K | PDUFA action date disclosed |
+| SAFETY_SIGNAL | 8-K, 6-K | Serious adverse events, clinical holds |
+| CLINICAL_HOLD | 8-K, 6-K | FDA clinical hold |
+
 **Scoring Formula:**
 ```
 event_score = impact × confidence × proximity
 catalyst_score_net = sum(positive_events) - sum(negative_events)
 ```
+
+**Source Mix Sidecar:**
+
+Each snapshot writes `catalyst_source_mix.json` alongside `rankings.csv`, containing:
+- `total_events`, `unique_tickers_with_events`
+- `by_source`: event count per source (CTGOV_CALENDAR, SEC_8K_FILING, FDA_CALENDAR, etc.)
+- `by_confidence`: HIGH/MED/LOW distribution
+- `by_date_precision`: DAY/WEEK/MONTH/QUARTER/HALF_YEAR/RANGE distribution
 
 **Output Fields:**
 | Field | Type | Description |
@@ -512,6 +550,27 @@ Module 4 observability for PIT audit.
 #### Catalyst Debug Columns (Position 74-80)
 Module 3 catalyst details for debugging.
 
+#### Decision Engine Columns (rankings.csv)
+Tier assignments, catalyst provenance, and portfolio decisions.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `eligible` | 0/1 | Passes eligibility gates |
+| `tier_dev` | A/B/C/D | Dev-stage tier assignment |
+| `tier_reason` | string | Why this tier was assigned |
+| `actionable_rank` | int | Rank within eligible+tiered universe |
+| `target_weight_pct` | float | Target portfolio weight |
+| `catalyst_mode` | string | specific_days, blended_window, no_upcoming, missing |
+| `catalyst_days` | int | Days to nearest catalyst |
+| `catalyst_strength` | string | NEAR, MID, FAR, MISSING |
+| `catalyst_source` | string | Source of nearest catalyst (CTGOV_CALENDAR, SEC_8K_FILING, etc.) |
+| `catalyst_event_type` | string | Type of nearest catalyst event |
+| `cat_priority` | int | Catalyst source priority (1=highest) |
+| `mom_state` | string | Momentum regime |
+| `size_band` | string | L, M, S, XS |
+| `cost_mult` | float | Cost-aware sizing multiplier |
+| `cost_bucket` | string | Cost classification |
+
 ---
 
 ## Field Definitions
@@ -680,6 +739,92 @@ else:
 
 ---
 
+## Decision Engine (Phase-2)
+
+**File:** `decision_engine.py`
+**Purpose:** Post-processing layer that converts composite rankings into actionable portfolio decisions
+
+The Decision Engine sits downstream of Module 5 and applies eligibility gates, tier assignments, and sizing rules to produce a filtered, sized portfolio.
+
+### Processing Layers
+
+| Layer | Name | Description |
+|-------|------|-------------|
+| L0 | Eligibility | Drug developer archetype + no disqualifying flags |
+| L2 | Overlays | Catalyst tilt, momentum tilt, cost haircut |
+| L4 | Dev Tier | A/B/C/D tier assignment based on optionality + catalyst strength |
+| L3 | Sizing | Target weight allocation within tier/band constraints |
+
+### Tier Assignment
+
+| Tier | Criteria | Description |
+|------|----------|-------------|
+| A | optionality >= a_floor (0.60) + catalyst NEAR/MID | Highest conviction, actionable catalyst |
+| B | optionality >= a_floor OR catalyst NEAR/MID | One strong signal present |
+| C | Eligible but neither criterion met | Watchlist |
+| D | Eligible with adverse flags | Deprioritized |
+
+### Catalyst Strength Bands
+
+| Band | Days to Catalyst | Description |
+|------|-----------------|-------------|
+| NEAR | <= 120 days | Imminent catalyst |
+| MID | 121-180 days | Approaching catalyst |
+| FAR | > 180 days | Distant catalyst |
+| MISSING | No catalyst found | No dated catalyst event |
+
+### Catalyst Priority (Tiebreaker Mode)
+
+When tickers share the same tier/rank, catalyst source priority breaks ties:
+
+| Priority | Sources |
+|----------|---------|
+| 1 | FDA_CALENDAR, FEDERAL_REGISTER |
+| 2 | CTGOV_CALENDAR, SEC_10Q/10K/6K_FILING |
+| 3 | Corporate/ongoing events |
+| 9 | No catalyst |
+
+### Ruleset Configuration
+
+Decision rules are externalized as frozen `DecisionRuleset` dataclass instances, serialized to JSON with content-hash IDs for reproducibility.
+
+- **Pinned ruleset**: `v1.3.2_candidate.json` (ID=`96f655ee`)
+- **Pinned in**: `run_screen.py` AND `run_phase2_snapshot_delta.py` (must stay in sync)
+
+### Phase-2 Health Gate
+
+**File:** `run_phase2_snapshot_delta.py`
+
+The health gate compares current vs prior snapshots and reports OK/WARN/FAIL:
+
+| Check | FAIL Threshold | WARN Threshold |
+|-------|---------------|----------------|
+| Ruleset identity | != pinned ID | - |
+| Portfolio empty | 0 positions | - |
+| A-tier count | < 1 | < 2 |
+| Optionality coverage | < 80% (when A=0) | - |
+| Name turnover | - | > 50% |
+| Weight L1 delta | - | > 55% |
+| Catalyst coverage drop | - | > 5pp |
+
+### Snapshot Outputs
+
+Each Phase-2 run saves to `data/snapshots/{as_of_date}/`:
+
+| File | Description |
+|------|-------------|
+| `rankings.csv` | Full universe with 30+ decision engine columns |
+| `catalyst_source_mix.json` | Event distribution by source, confidence, precision |
+| `decision_ruleset.json` | Frozen ruleset used for this run |
+| `decision_portfolio.csv` | Filtered A+B tier, top-K positions |
+| `decision_portfolio.json` | Same as CSV, JSON format |
+| `phase2_health.json` | Health gate result + metrics |
+| `phase2_run_delta_report.txt` | Human-readable delta report |
+| `phase2_run_delta.csv` | Per-ticker delta details |
+| `metadata.json` | Run metadata, version, timestamps |
+
+---
+
 ## PIT (Point-in-Time) Compliance
 
 ### Validation Rules
@@ -792,9 +937,15 @@ python run_screen.py \
 | Main orchestrator | `run_screen.py` | Pipeline coordinator |
 | Module 1 | `module_1_universe.py` | Universe filtering |
 | Module 2 | `module_2_financial.py` | Financial health |
-| Module 3 | `module_3_catalyst.py` | Catalyst detection |
+| Module 3 | `module_3_catalyst.py` | Catalyst detection + scoring |
 | Module 4 | `module_4_clinical_dev.py` | Clinical development |
 | Module 5 | `module_5_composite_with_defensive.py` | Final ranking |
+| Decision Engine | `decision_engine.py` | Post-processing: tiers, sizing, portfolio |
+| Phase-2 Delta/Health | `run_phase2_snapshot_delta.py` | Health gate + delta report |
+| SEC 8-K Collector | `wake_robin_data_pipeline/collectors/sec_8k_catalyst_collector.py` | SEC filing catalyst extraction |
+| FDA Collector | `wake_robin_data_pipeline/collectors/fda_adcom_collector.py` | FDA calendar + regulatory notices |
+| Drift Report | `scripts/run_drift_report.py` | Daily guardrails + rollback triggers |
+| Ablation Comparison | `scripts/compare_ablation_snapshots.py` | Snapshot A/B comparison |
 | CSV export | `export_results_csv.py` | JSON to CSV conversion |
 | Production validation | `production_validation.py` | Output validation |
 | Date backfill | `backfill_ctgov_dates.py` | PIT date enhancement |
@@ -803,6 +954,7 @@ python run_screen.py \
 
 ## Changelog
 
+- **2026-02-15 v2.1.0**: Added Decision Engine (Phase-2) section, expanded Module 3 with SEC multi-form sources, quality gating, source mix sidecar, updated file locations
 - **2026-02-03 v2.0.0**: Comprehensive documentation with field definitions
 - **2026-01-30 v1.1.0**: Added PIT diagnostics, production validation
 - **2026-01-20 v1.0.0**: Initial documentation
