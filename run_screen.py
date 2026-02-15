@@ -35,11 +35,13 @@ import argparse
 import csv
 import json
 import logging
+import re
 import sys
 from datetime import date, datetime
 import hashlib
 from decimal import Decimal
 from pathlib import Path
+from statistics import median, quantiles
 from typing import Any, Dict, List, Optional
 
 # Configure logging with rotation support
@@ -1619,6 +1621,200 @@ def _nearest_catalyst_event_type(
     return ""
 
 
+# ---------------------------------------------------------------------------
+# Catalyst shadow metrics telemetry
+# ---------------------------------------------------------------------------
+
+_GOOD_CATALYST_MODES = frozenset({"specific_days", "blended_window"})
+_BAD_CATALYST_MODES = frozenset({"no_upcoming", "missing"})
+
+_DATE_DIR_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+
+def _find_prior_rankings(snapshot_dir: Path, current_date: str) -> Optional[dict]:
+    """Find the most recent prior snapshot with a tier_dev-bearing rankings.csv.
+
+    Returns ``{"date": str, "rows": [dict, ...]}`` or *None*.
+    """
+    if not snapshot_dir.exists():
+        return None
+
+    all_dates = sorted(
+        [d.name for d in snapshot_dir.iterdir()
+         if d.is_dir() and _DATE_DIR_RE.match(d.name)],
+        reverse=True,
+    )
+    if current_date not in all_dates:
+        return None
+
+    idx = all_dates.index(current_date)
+    # Walk backward (max 10 candidates) looking for a valid prior
+    for candidate in all_dates[idx + 1: idx + 11]:
+        rankings_csv = snapshot_dir / candidate / "rankings.csv"
+        if not rankings_csv.exists():
+            continue
+        with open(rankings_csv, "r", encoding="utf-8") as f:
+            header = f.readline().strip()
+        if "tier_dev" not in header.split(","):
+            continue
+        # Valid prior — read full CSV
+        with open(rankings_csv, "r", encoding="utf-8") as f:
+            rows = list(csv.DictReader(f))
+        return {"date": candidate, "rows": rows}
+
+    return None
+
+
+def _compute_shadow_metrics(
+    csv_rows: List[dict],
+    as_of_date: str,
+    snapshot_dir: Path,
+    source_mix: Optional[dict],
+) -> dict:
+    """Compute catalyst shadow metrics for telemetry sidecar.
+
+    All metrics are derived from the current ``csv_rows`` (already written to
+    rankings.csv) and, optionally, a prior snapshot for transition/overlap
+    metrics.
+    """
+    prior = _find_prior_rankings(snapshot_dir, as_of_date)
+    prior_date = prior["date"] if prior else None
+
+    # ----- Transition metrics (dev-only, common tickers) -----
+    bad_to_good_count: Optional[int] = None
+    good_to_bad_count: Optional[int] = None
+    bad_to_good_tickers: Optional[List[str]] = None
+    good_to_bad_tickers: Optional[List[str]] = None
+
+    if prior is not None:
+        prior_mode_by_ticker = {
+            r["ticker"]: r.get("catalyst_mode", r.get("de_catalyst_mode", ""))
+            for r in prior["rows"]
+            if r.get("archetype") == "drug_developer"
+        }
+        bad_to_good_list: List[str] = []
+        good_to_bad_list: List[str] = []
+        for row in csv_rows:
+            if row.get("archetype") != "drug_developer":
+                continue
+            ticker = row.get("ticker", "")
+            if ticker not in prior_mode_by_ticker:
+                continue  # new ticker, skip
+            cur_mode = row.get("catalyst_mode", row.get("de_catalyst_mode", ""))
+            prev_mode = prior_mode_by_ticker[ticker]
+            if prev_mode in _BAD_CATALYST_MODES and cur_mode in _GOOD_CATALYST_MODES:
+                bad_to_good_list.append(ticker)
+            elif prev_mode in _GOOD_CATALYST_MODES and cur_mode in _BAD_CATALYST_MODES:
+                good_to_bad_list.append(ticker)
+
+        bad_to_good_count = len(bad_to_good_list)
+        good_to_bad_count = len(good_to_bad_list)
+        bad_to_good_tickers = sorted(bad_to_good_list)
+        good_to_bad_tickers = sorted(good_to_bad_list)
+
+    # ----- Distribution metrics (current snapshot, dev-only GOOD-mode) -----
+    good_days: List[float] = []
+    all_days: List[float] = []
+    for row in csv_rows:
+        if row.get("archetype") != "drug_developer":
+            continue
+        raw = row.get("catalyst_days", row.get("de_catalyst_days", ""))
+        if raw in (None, ""):
+            continue
+        try:
+            val = float(raw)
+        except (ValueError, TypeError):
+            continue
+        all_days.append(val)
+        cur_mode = row.get("catalyst_mode", row.get("de_catalyst_mode", ""))
+        if cur_mode in _GOOD_CATALYST_MODES:
+            good_days.append(val)
+
+    median_catalyst_days_good: Optional[float] = None
+    if good_days:
+        median_catalyst_days_good = round(median(good_days), 1)
+
+    p10: Optional[float] = None
+    p50: Optional[float] = None
+    p90: Optional[float] = None
+    if len(all_days) >= 2:
+        deciles = quantiles(all_days, n=10)  # returns 9 cut-points
+        p10 = round(deciles[0], 1)
+        p50 = round(deciles[4], 1)
+        p90 = round(deciles[8], 1)
+    elif len(all_days) == 1:
+        p10 = p50 = p90 = round(all_days[0], 1)
+
+    # ----- Overlap metrics (full universe, by composite_rank) -----
+    top60_overlap: Optional[float] = None
+    top100_overlap: Optional[float] = None
+
+    if prior is not None:
+        def _top_n_tickers(rows, n):
+            valid = []
+            for r in rows:
+                cr = r.get("composite_rank", "")
+                if cr in (None, ""):
+                    continue
+                try:
+                    valid.append((int(cr), r.get("ticker", "")))
+                except (ValueError, TypeError):
+                    continue
+            valid.sort()
+            return {t for _, t in valid[:n]}
+
+        cur_set_60 = _top_n_tickers(csv_rows, 60)
+        prior_set_60 = _top_n_tickers(prior["rows"], 60)
+        cur_set_100 = _top_n_tickers(csv_rows, 100)
+        prior_set_100 = _top_n_tickers(prior["rows"], 100)
+
+        def _jaccard(a, b):
+            if not a and not b:
+                return 1.0
+            if not a or not b:
+                return 0.0
+            return len(a & b) / len(a | b)
+
+        top60_overlap = round(_jaccard(cur_set_60, prior_set_60), 4)
+        top100_overlap = round(_jaccard(cur_set_100, prior_set_100), 4)
+
+    # ----- Source attribution (from catalyst_source_mix) -----
+    sec_8k_events: Optional[int] = None
+    ctgov_events: Optional[int] = None
+    fda_events: Optional[int] = None
+
+    if source_mix and isinstance(source_mix.get("by_source"), dict):
+        by_src = source_mix["by_source"]
+        sec_8k_events = by_src.get("SEC_8K_FILING", 0)
+        ctgov_events = by_src.get("CTGOV", 0)
+        fda_events = by_src.get("FDA_PDUFA", 0) + by_src.get("FEDERAL_REGISTER", 0)
+
+    # ----- A-tier count (dev-only) -----
+    a_tier_count = sum(
+        1 for r in csv_rows
+        if r.get("archetype") == "drug_developer" and r.get("tier_dev") == "A"
+    )
+
+    return {
+        "as_of_date": as_of_date,
+        "prior_date": prior_date,
+        "bad_to_good_count": bad_to_good_count,
+        "good_to_bad_count": good_to_bad_count,
+        "bad_to_good_tickers": bad_to_good_tickers,
+        "good_to_bad_tickers": good_to_bad_tickers,
+        "median_catalyst_days_good": median_catalyst_days_good,
+        "p10_catalyst_days": p10,
+        "p50_catalyst_days": p50,
+        "p90_catalyst_days": p90,
+        "A_tier_count": a_tier_count,
+        "top60_overlap": top60_overlap,
+        "top100_overlap": top100_overlap,
+        "sec_8k_events": sec_8k_events,
+        "ctgov_events": ctgov_events,
+        "fda_events": fda_events,
+    }
+
+
 def save_validation_snapshot(
     snapshot_dir: Path,
     as_of_date: str,
@@ -1861,6 +2057,20 @@ def save_validation_snapshot(
                 f.write("\n")
         except OSError as e:
             logger.warning(f"Could not write catalyst_source_mix.json: {e}")
+
+    # --- Write catalyst shadow metrics sidecar ---
+    try:
+        shadow = _compute_shadow_metrics(
+            csv_rows=csv_rows,
+            as_of_date=as_of_date,
+            snapshot_dir=snapshot_dir,
+            source_mix=source_mix,
+        )
+        with open(snap_path / "catalyst_shadow_metrics.json", "w", encoding="utf-8") as f:
+            json.dump(shadow, f, indent=2, default=str)
+            f.write("\n")
+    except Exception as e:
+        logger.warning("Could not write catalyst_shadow_metrics.json: %s", e)
 
     # --- Write decision ruleset sidecar JSON for reproducibility ---
     rs = ruleset or DEFAULT_RULESET
