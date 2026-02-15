@@ -581,6 +581,8 @@ def _fetch_filing_text(
     all_text_parts = []
     docs_to_fetch = exhibit_files[:3] if prefer_exhibits_only else (exhibit_files[:3] + main_files[:2])
     _MAX_DOC_BYTES = 2_000_000  # Skip docs > 2 MB (large 10-Ks cause pathological parse)
+    skipped_oversize = 0
+    fetched_any = False
 
     for filename in docs_to_fetch:
         doc_url = f"{base_url}/{filename}"
@@ -589,7 +591,9 @@ def _fetch_filing_text(
             if doc_resp.status_code == 200:
                 if len(doc_resp.text) > _MAX_DOC_BYTES:
                     logger.debug(f"Skipping oversized doc ({len(doc_resp.text)} bytes): {doc_url}")
+                    skipped_oversize += 1
                     continue
+                fetched_any = True
                 # Strip HTML tags to get plain text
                 text = re.sub(r"<[^>]+>", " ", doc_resp.text)
                 text = re.sub(r"&nbsp;", " ", text)
@@ -600,6 +604,8 @@ def _fetch_filing_text(
         except Exception as e:
             logger.debug(f"Doc fetch error {doc_url}: {e}")
 
+    if skipped_oversize:
+        logger.info(f"Multi-form: skipped_oversize_docs={skipped_oversize}, fetched_any={fetched_any}")
     return " ".join(all_text_parts)
 
 

@@ -1663,10 +1663,9 @@ def compute_module_3_catalyst(
                 logger.warning(f"SEC multi-form live collection error: {e}")
 
         if mf_events:
-            # Hard gate: only MED/HIGH confidence + DAY/QUARTER precision
-            # can drive catalyst_mode / tiers.  HALF_YEAR / LOW are noise.
+            # Hard gate: only MED/HIGH confidence + precise dates (no HALF_YEAR/YEAR)
             _MF_ALLOWED_CONF = {ConfidenceLevel.MED, ConfidenceLevel.HIGH}
-            _MF_ALLOWED_PREC = {"DAY", "QUARTER"}
+            _MF_ALLOWED_PREC = {"DAY", "WEEK", "MONTH", "QUARTER"}
             mf_added = 0
             mf_gated = 0
             mf_tickers_added = 0
