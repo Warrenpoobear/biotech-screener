@@ -113,6 +113,14 @@ def build_screen_cmd(
     return cmd
 
 
+def build_onepager_cmd(date_str: str, args: argparse.Namespace) -> list[str]:
+    return [
+        sys.executable,
+        str(SCRIPT_DIR / "scripts" / "make_ic_onepager.py"),
+        "--snapshot-dir", str(args.snapshot_dir / date_str),
+    ]
+
+
 def build_rollup_cmd(args: argparse.Namespace) -> list[str]:
     return [
         sys.executable,
@@ -244,6 +252,14 @@ def main(argv: list[str] | None = None) -> int:
         # ── screen ──
         screen_cmd = build_screen_cmd(d, args, extra=extra or None)
         screen_rc = run_step(screen_cmd, f"{d}  screen", dry_run=args.dry_run)
+
+        # ── one-pager (non-fatal) ──
+        if screen_rc in (_EXIT_OK, _EXIT_WARN):
+            op_rc = run_step(
+                build_onepager_cmd(d, args), f"{d}  onepager", dry_run=args.dry_run,
+            )
+            if op_rc != 0:
+                print(f"[DAILY] {d}  onepager: WARNING (exit {op_rc})", file=sys.stderr)
 
         warm_lbl = "SKIP" if args.no_warm else _STATUS_LABELS.get(warm_rc, f"ERR({warm_rc})")
         screen_lbl = _STATUS_LABELS.get(screen_rc, f"ERR({screen_rc})")
