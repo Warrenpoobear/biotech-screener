@@ -1,6 +1,6 @@
 # Biotech Screener Model Documentation
 
-**Version:** 2.2.0
+**Version:** 2.3.0
 **Last Updated:** February 16, 2026
 **System:** Wake Robin Capital Biotech Screening Pipeline
 
@@ -585,6 +585,8 @@ Tier assignments, catalyst provenance, and portfolio decisions.
 | `missingness_penalty` | int | Count of missing components (0..N) |
 | `commercial_quality` | float | Raw quality composite (commercial_* only) |
 | `commercial_quality_pct` | float | Quality percentile within commercial cohort |
+| `clinical_score_z` | float | PIT-safe cross-sectional z-score of Module 4 clinical_score within drug_developer universe (population std) |
+| `clinical_score_z_tier` | float | PIT-safe tier-local z-score of clinical_score within (tier_dev × drug_developer); used by clinical sort signal |
 | `de_drawdown_missing_reason` | string | Why drawdown is missing: no_price_series, series_too_short, or empty |
 | `top_3_drivers` | string | Top 3 composite score drivers with contributions |
 
@@ -841,12 +843,74 @@ When tickers share the same tier/rank, catalyst source priority breaks ties:
 | 9 | No catalyst |
 | 99 | Unknown source |
 
+### Clinical Sort Signal (Within-Tier Reordering)
+
+**Purpose:** Nudge tickers with stronger clinical profiles higher within their existing tier, without changing tier membership.
+
+**Design guarantee:** Clinical affects **within-tier ordering only**. Tier assignment is unchanged — validated across 24 snapshots with zero tier churn.
+
+**Pipeline columns:**
+
+| Column | Scope | Description |
+|--------|-------|-------------|
+| `clinical_score_z` | All drug_developer | Cross-sectional z-score of Module 4 `clinical_score` (population std, ddof=0) |
+| `clinical_score_z_tier` | All drug_developer with tier_dev | Tier-local z-score within (tier_dev × drug_developer). This is the column consumed by the sort key. |
+
+**Sort key integration:**
+
+The clinical signal is **blended into the anchor term** of the sort key (not a separate tuple position, which would be unreachable behind continuously-varying terms):
+
+| Sort Mode | Anchor Term | Blend |
+|-----------|-------------|-------|
+| tiebreaker | `comp_rank` | `effective_comp_rank = comp_rank - clin_adj` |
+| blended | `effective_comp_rank` | `effective_comp_rank = comp_rank - bonus - clin_adj` |
+| off | `opt_neg` | `effective_opt_neg = opt_neg - clin_adj` |
+
+**Clinical adjustment formula:**
+
+```
+cz_tier = clinical_score_z_tier (from rankings.csv)
+stage_mult = {early: 0.0, mid: 1.0, late: 1.5}[stage_bucket]
+cz_eff = clamp(max(0, cz_tier), 0, 2.0)     # positive-only + safety clamp
+clin_adj = clinical_sort_weight * cz_eff * stage_mult
+```
+
+**Gating:**
+
+| Gate | Effect | Rationale |
+|------|--------|-----------|
+| Stage gate | `early=0` (no effect), `mid=1.0`, `late=1.5` | Clinical signal is most predictive at 6–12m horizons (recall study); late-stage names get stronger boost |
+| Positive-only | Only boosts high-clinical; never penalizes low | Avoids "inverted gradient" where early-stage high-optionality names are dragged down by low clinical scores |
+| ±2.0 clamp | Bounds tier-local z to prevent spiky outliers in small cohorts | Safety: small tier groups (N<10) can produce extreme z values |
+
+**DecisionRuleset fields:**
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `enable_clinical_sort_signal` | bool | `False` | Master switch (OFF in production) |
+| `clinical_sort_weight` | float | `1.0` | Multiplier for clinical adjustment |
+| `clinical_positive_only` | bool | `True` | Only boost positive z, never penalize |
+| `clinical_stage_mults` | tuple | `(early=0, mid=1, late=1.5)` | Stage gating multipliers |
+
+**Replay evidence (24 snapshots, Jan 15 – Feb 17, 2026, w=1.0 pos_only):**
+
+| Metric | Result |
+|--------|--------|
+| Top-20 overlap | 100% on 23/24 dates (96%) |
+| Top-60 overlap | 100% on all 24 dates |
+| Tier churn | Zero |
+| Max rank churn | 2 (single date) |
+| Up-mover mean cz_tier | +1.31 |
+| Down-mover mean cz_tier | -0.71 |
+| Direction delta | +2.02 (signal always nudges correctly) |
+
 ### Ruleset Configuration
 
 Decision rules are externalized as frozen `DecisionRuleset` dataclass instances, serialized to JSON with content-hash IDs for reproducibility.
 
 - **Active ruleset**: `v1.3.3_missing_sort_only_candidate.json` (ID=`e1be5370`)
 - **Pinned in**: `run_screen.py` AND `run_phase2_snapshot_delta.py` (must stay in sync)
+- **Candidate**: `v1.3.4_clinical_sort_candidate.json` (ID=`f9842e1f`) — clinical sort signal (w=1.0, pos_only, stage-gated), pending promotion
 - **Candidate**: `v1.4.1_tier_first_candidate.json` (ID=`054bc5cc`) — commercial tier promotion, pending replay
 
 ### Phase-2 Health Gate
@@ -1140,6 +1204,7 @@ python run_screen.py \
 | Ruleset Compare/Replay | `scripts/compare_rulesets_replay.py` | Re-sort rankings with baseline vs candidate ruleset |
 | Cache Warmer | `warm_caches.py` | Pre-build SEC 8-K and FDA caches before screen run |
 | Flipper Return Attribution | `scripts/diag_flipper_returns.py` | Forward return analysis for catalyst flips |
+| Top Returners Recall | `scripts/diag_top_returners_recall.py` | Multi-horizon signal recall study (clinical + catalyst vs realized returns) |
 | Ablation Comparison | `scripts/compare_ablation_snapshots.py` | Snapshot A/B comparison |
 | CSV export | `export_results_csv.py` | JSON to CSV conversion |
 | Production validation | `production_validation.py` | Output validation |
@@ -1149,6 +1214,7 @@ python run_screen.py \
 
 ## Changelog
 
+- **2026-02-16 v2.3.0**: Clinical sort signal — tier-local z-score (`clinical_score_z_tier`) blended into sort key anchor, stage-gated (early=0, mid=1.0, late=1.5), positive-only with ±2.0 clamp. Candidate v1.3.4 (`f9842e1f`). Added `clinical_score_z` (cross-universe) and top returners recall diagnostic.
 - **2026-02-16 v2.2.1**: Added flipper return attribution diagnostic documentation (methodology, runbook, interpretation notes)
 - **2026-02-16 v2.2.0**: Commercial tier promotion (tier_commercial, tier_any, quality composite, tiering_priority_mode), missingness penalty columns + health guardrails, catalyst shadow metrics telemetry, IC one-pager, updated pinned ruleset to e1be5370, corrected catalyst priority table (FEDERAL_REGISTER demoted to pri=3), expanded Decision Engine columns table
 - **2026-02-15 v2.1.0**: Added Decision Engine (Phase-2) section, expanded Module 3 with SEC multi-form sources, quality gating, source mix sidecar, updated file locations
