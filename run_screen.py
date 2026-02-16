@@ -5142,7 +5142,7 @@ Module 3 Catalyst Detection:
     parser.add_argument(
         "--decision-mode",
         type=str,
-        default="observe",
+        default="phase2",
         choices=["observe", "actionable", "phase2"],
         help="Decision output mode: observe (default, sort by composite_rank), "
              "actionable (sort by tier-based deterministic ordering with target weights), "
