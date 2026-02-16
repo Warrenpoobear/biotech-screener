@@ -1,7 +1,7 @@
 """Regression guardrails on the catalyst shadow timeseries rollup.
 
 Reads the live rollup CSV and asserts invariants that should hold
-across the post-regime-transition steady state (Feb 05+).
+across the full business-day series (Jan 15+).
 Catches accidental coverage cliffs, data regressions, or broken pipelines.
 
 Usage:
@@ -16,18 +16,20 @@ import pytest
 
 ROLLUP_CSV = Path(__file__).resolve().parent.parent / "output" / "catalyst_shadow_timeseries.csv"
 
-# ── Regime boundary ─────────────────────────────────────────────────
-# Feb 04 is the CTG onset date (regime jump); Feb 05+ is steady state.
-REGIME_ONSET = "2026-02-04"
-STEADY_STATE_START = "2026-02-05"
+# ── Series boundary ─────────────────────────────────────────────────
+# With PIT-filtered CTGov caches, CTG is nonzero across the full series.
+# Churn checks use STEADY_STATE_START to skip prior-chain transition dates
+# (Feb 02 + Feb 04 have inflated B→G from stale priors being replaced).
+SERIES_START = "2026-01-15"
+STEADY_STATE_START = "2026-02-05"  # after prior-chain artifacts settle
 
 # ── Thresholds (generous — these are guardrails, not tight bounds) ──
 MAX_DAILY_B2G = 15          # steady-state B→G per day (Feb 14 SEC refresh was 8)
 MAX_DAILY_G2B = 5           # coverage regressions should be near-zero
-MIN_A_TIER = 25             # A-tier should stay above this post-CTG
+MIN_A_TIER = 25             # A-tier should stay above this across series
 MIN_TOP60_OVERLAP = 0.70    # Jaccard; below this = major portfolio churn
 MIN_TOP100_OVERLAP = 0.85
-MIN_CTG_EVENTS = 500        # CTG must be present post-regime
+MIN_CTG_EVENTS = 500        # CTG must be present across entire series
 
 
 def _load_rollup() -> list[dict]:
@@ -83,21 +85,11 @@ class TestSteadyStateChurn:
                 )
 
 
-class TestCTGRegime:
-    """CTG events should be nonzero only after regime onset."""
+class TestCTGCoverage:
+    """CTG events should be nonzero across the entire business-day series."""
 
-    def test_ctg_zero_before_onset(self):
+    def test_ctg_nonzero_all_rows(self):
         rows = _load_rollup()
-        pre = [r for r in rows if r["as_of_date"] < REGIME_ONSET]
-        for r in pre:
-            ctg = _int_or_none(r["ctgov_events"])
-            if ctg is not None:
-                assert ctg == 0, (
-                    f"{r['as_of_date']}: CTG={ctg} but expected 0 before {REGIME_ONSET}"
-                )
-
-    def test_ctg_nonzero_after_onset(self):
-        rows = _steady_state_rows(_load_rollup())
         for r in rows:
             ctg = _int_or_none(r["ctgov_events"])
             if ctg is not None:
