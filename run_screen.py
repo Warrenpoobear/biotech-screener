@@ -1304,6 +1304,7 @@ SNAPSHOT_COLUMNS = [
     "confidence_overall",
     "clinical_rank_pct_dev", "clinical_optionality_pct_dev",
     "clinical_alpha_z", "clinical_readout_days", "clinical_coverage_flag",
+    "clinical_score_z",
     "commercial_quality", "commercial_quality_pct",
     # Decision Engine v1 columns
     "decision_engine_version", "decision_engine_ruleset_id",
@@ -1344,7 +1345,8 @@ PHASE2_PORTFOLIO_COLUMNS = [
     "target_weight_pct", "tier_reason", "tier_any_reason", "size_reasons",
     "catalyst_mode", "catalyst_days", "cat_priority", "mom_state", "risk_flags",
     "composite_rank", "composite_score", "archetype",
-    "clinical_optionality_pct_dev", "clinical_alpha_z", "commercial_quality_pct",
+    "clinical_optionality_pct_dev", "clinical_alpha_z", "clinical_score_z",
+    "commercial_quality_pct",
     "missing_components",
     "decision_engine_version", "decision_engine_ruleset_id",
 ]
@@ -2127,6 +2129,22 @@ def save_validation_snapshot(
         _m4_lookup = {s["ticker"]: s for s in
                       (results.get("module_4_clinical", {}).get("scores") or [])}
         _compute_clinical_alpha_z(csv_rows, _m4_lookup, _readout_days)
+
+    # --- Compute clinical_score_z (PIT-safe, cross-sectional within drug_developer) ---
+    _dev_indices = [i for i, r in enumerate(csv_rows)
+                    if r.get("archetype") == "drug_developer"
+                    and r.get("clinical_score") is not None
+                    and r.get("clinical_score") != ""]
+    if _dev_indices:
+        _scores = [float(csv_rows[i]["clinical_score"]) for i in _dev_indices]
+        _mean = sum(_scores) / len(_scores)
+        _var = sum((s - _mean) ** 2 for s in _scores) / len(_scores)
+        _std = _var ** 0.5
+        for j, idx in enumerate(_dev_indices):
+            if _std > 0:
+                csv_rows[idx]["clinical_score_z"] = round((_scores[j] - _mean) / _std, 4)
+            else:
+                csv_rows[idx]["clinical_score_z"] = 0.0
 
     # --- Compute commercial_quality_pct (percentile within commercial cohort) ---
     _CQ_WEIGHTS = {"financial": 0.45, "valuation": 0.35, "momentum": 0.20}

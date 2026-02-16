@@ -99,6 +99,11 @@ class DecisionRuleset:
     enable_missingness_sort_penalty: bool = False
     enable_missingness_size_penalty: bool = False
 
+    # Clinical signal sort tilt (opt-in, default OFF)
+    # When enabled, higher clinical_score_z sorts earlier within tier/catalyst.
+    enable_clinical_sort_signal: bool = False
+    clinical_sort_weight: float = 1.0
+
     # Commercial tiering (opt-in, default dev_first = current behavior)
     tiering_priority_mode: str = "dev_first"          # "dev_first" | "tier_first"
     tier_a_commercial_floor: float = 0.85             # quality_pct cutoff for commercial A
@@ -1036,6 +1041,12 @@ def compute_actionable_sort_key(
     if rs.enable_missingness_sort_penalty:
         missing_count = int(_safe_float(decision_fields.get("missingness_penalty", 0)))
 
+    # Clinical sort signal: higher z sorts earlier (negated, 0 when disabled)
+    clin_neg = 0.0
+    if rs.enable_clinical_sort_signal:
+        cz = _safe_float(decision_fields.get("clinical_score_z")) or 0.0
+        clin_neg = -(rs.clinical_sort_weight * cz)
+
     # --- Mode dispatch ---
     # prefix is (is_eligible, is_dev, tier_ord) in dev_first mode
     # or (is_eligible, tier_ord, is_dev) in tier_first mode
@@ -1047,6 +1058,7 @@ def compute_actionable_sort_key(
             cat_priority,   # priority breaks comp_rank ties
             cat_days,       # ascending days
             opt_neg,        # descending optionality
+            clin_neg,       # descending clinical z (0 when disabled)
             sponsor_neg,    # descending sponsor count
             mom_ord,        # tailwind < neutral < headwind
             cat_mode_ord,   # specific < blended < no_upcoming < missing
@@ -1064,6 +1076,7 @@ def compute_actionable_sort_key(
             cat_mode_ord,         # specific < blended < no_upcoming < missing
             cat_days,             # ascending days
             opt_neg,              # descending optionality
+            clin_neg,             # descending clinical z (0 when disabled)
             sponsor_neg,          # descending sponsor count
             mom_ord,              # tailwind < neutral < headwind
             cat_priority,         # priority as tiebreaker
@@ -1077,6 +1090,7 @@ def compute_actionable_sort_key(
         cat_days,       # ascending days (missing=9999)
         missing_count,  # fewer missing components first
         opt_neg,        # descending optionality (negated)
+        clin_neg,       # descending clinical z (0 when disabled)
         sponsor_neg,    # descending sponsor count (negated)
         mom_ord,        # tailwind < neutral < headwind
         comp_rank,      # ascending composite rank

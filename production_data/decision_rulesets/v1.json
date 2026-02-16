@@ -147,6 +147,7 @@
     ]
   ],
   "catalyst_time_decay_mode": "hard",
+  "clinical_sort_weight": 1.0,
   "confidence_low_threshold": 0.3,
   "cost_haircut_buckets": [
     [
@@ -174,6 +175,7 @@
   "drawdown_size_penalty": -1,
   "enable_catalyst_priority": false,
   "enable_catalyst_tilt": false,
+  "enable_clinical_sort_signal": false,
   "enable_cost_haircut": false,
   "enable_dd_rel_margin_rescue": false,
   "enable_missingness_size_penalty": false,
@@ -201,7 +203,10 @@
     "XS": 0.15
   },
   "sponsor_confirm_threshold": 2,
+  "tier_a_commercial_floor": 0.85,
   "tier_a_optionality_floor": 0.6,
+  "tier_b_commercial_floor": 0.6,
   "tier_b_optionality_floor": 0.3,
+  "tiering_priority_mode": "dev_first",
   "vol_high_threshold": 1.2
 }

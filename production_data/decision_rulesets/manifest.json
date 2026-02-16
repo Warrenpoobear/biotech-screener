@@ -108,14 +108,14 @@
       "updated_at": "2026-02-14T00:00:00Z"
     },
     {
-      "id": "4fe77659",
+      "id": "0228148d",
       "file": "v1.json",
       "created_at": "2024-11-01",
       "engine_version": "v1.0.0",
       "description": "Original defaults (a_floor=0.60) + missingness penalty schema",
       "status": "retired",
       "requires_replay": false,
-      "notes": "Retired: a_floor=0.60 produces negative tier-A vs tier-C spread. Schema updated with missingness penalty fields (enable_missingness_sort_penalty, enable_missingness_size_penalty)."
+      "notes": "Retired: a_floor=0.60 produces negative tier-A vs tier-C spread. Schema updated with missingness penalty fields + clinical sort signal fields (enable_clinical_sort_signal, clinical_sort_weight)."
     },
     {
       "id": "96f655ee",
