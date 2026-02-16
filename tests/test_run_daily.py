@@ -147,7 +147,7 @@ class TestMain:
     @mock.patch("run_daily.subprocess.run")
     def test_single_date_runs_all_steps(self, mock_run):
         mock_run.return_value = mock.Mock(returncode=0)
-        rc = run_daily.main(["--as-of-date", "2026-02-15"])
+        rc = run_daily.main(["--as-of-date", "2026-02-15", "--no-skip-existing"])
         assert rc == 0
         # warm + screen + rollup = 3 calls
         assert mock_run.call_count == 3
@@ -159,7 +159,7 @@ class TestMain:
     @mock.patch("run_daily.subprocess.run")
     def test_no_warm_skips_warm(self, mock_run):
         mock_run.return_value = mock.Mock(returncode=0)
-        rc = run_daily.main(["--as-of-date", "2026-02-15", "--no-warm"])
+        rc = run_daily.main(["--as-of-date", "2026-02-15", "--no-warm", "--no-skip-existing"])
         assert rc == 0
         # screen + rollup = 2 calls
         assert mock_run.call_count == 2
@@ -169,7 +169,7 @@ class TestMain:
     @mock.patch("run_daily.subprocess.run")
     def test_no_rollup_skips_rollup(self, mock_run):
         mock_run.return_value = mock.Mock(returncode=0)
-        rc = run_daily.main(["--as-of-date", "2026-02-15", "--no-rollup"])
+        rc = run_daily.main(["--as-of-date", "2026-02-15", "--no-rollup", "--no-skip-existing"])
         assert rc == 0
         # warm + screen = 2 calls
         assert mock_run.call_count == 2
@@ -184,7 +184,7 @@ class TestMain:
             mock.Mock(returncode=1),  # screen FAIL
             mock.Mock(returncode=0),  # rollup
         ]
-        rc = run_daily.main(["--as-of-date", "2026-02-15"])
+        rc = run_daily.main(["--as-of-date", "2026-02-15", "--no-skip-existing"])
         assert rc == 1
 
     @mock.patch("run_daily.subprocess.run")
@@ -199,6 +199,7 @@ class TestMain:
             "--from-date", "2026-02-09",  # Mon
             "--to-date", "2026-02-10",    # Tue
             "--stop-on-fail",
+            "--no-skip-existing",
         ])
         assert rc == 1
         # warm(1) + screen(1) + rollup = 3, NOT warm(2)+screen(2)+rollup=5
@@ -211,6 +212,62 @@ class TestMain:
         assert "warm_caches.py" in out
         assert "run_phase2_daily.py" in out
         assert "rollup_shadow_metrics.py" in out
+
+
+# ── TestSkipExisting ────────────────────────────────────────────────────
+
+
+class TestSkipExisting:
+    @mock.patch("run_daily.subprocess.run")
+    def test_skips_date_with_existing_rankings(self, mock_run, tmp_path, capsys):
+        # Create a fake existing snapshot
+        snap = tmp_path / "2026-02-15"
+        snap.mkdir()
+        (snap / "rankings.csv").write_text("ticker\nAAPL\n")
+        mock_run.return_value = mock.Mock(returncode=0)
+        rc = run_daily.main([
+            "--as-of-date", "2026-02-15",
+            "--snapshot-dir", str(tmp_path),
+        ])
+        assert rc == 0
+        out = capsys.readouterr().out
+        assert "snapshot exists" in out
+        # Only rollup should run (warm+screen skipped)
+        assert mock_run.call_count == 1
+        assert "rollup_shadow_metrics.py" in mock_run.call_args_list[0].args[0][1]
+
+    @mock.patch("run_daily.subprocess.run")
+    def test_no_skip_existing_forces_rerun(self, mock_run, tmp_path):
+        snap = tmp_path / "2026-02-15"
+        snap.mkdir()
+        (snap / "rankings.csv").write_text("ticker\nAAPL\n")
+        mock_run.return_value = mock.Mock(returncode=0)
+        rc = run_daily.main([
+            "--as-of-date", "2026-02-15",
+            "--snapshot-dir", str(tmp_path),
+            "--no-skip-existing",
+        ])
+        assert rc == 0
+        # warm + screen + rollup = 3
+        assert mock_run.call_count == 3
+
+    @mock.patch("run_daily.subprocess.run")
+    def test_range_skips_only_completed_dates(self, mock_run, tmp_path, capsys):
+        # Mon 2026-02-09 exists, Tue 2026-02-10 does not
+        snap_09 = tmp_path / "2026-02-09"
+        snap_09.mkdir()
+        (snap_09 / "rankings.csv").write_text("ticker\nAAPL\n")
+        mock_run.return_value = mock.Mock(returncode=0)
+        rc = run_daily.main([
+            "--from-date", "2026-02-09",
+            "--to-date", "2026-02-10",
+            "--snapshot-dir", str(tmp_path),
+        ])
+        assert rc == 0
+        out = capsys.readouterr().out
+        assert "2026-02-09" in out and "snapshot exists" in out
+        # warm(10) + screen(10) + rollup = 3 (only date-10 processed)
+        assert mock_run.call_count == 3
 
 
 # ── TestValidation ──────────────────────────────────────────────────────

@@ -139,6 +139,13 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Halt backfill on first FAIL (exit 1)",
     )
+    p.add_argument(
+        "--skip-existing",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Skip dates where snapshot rankings.csv already exists "
+        "(use --no-skip-existing to force rerun)",
+    )
 
     # Pass-through
     p.add_argument("--sources", default="fda_adcom,sec_8k", help="warm_caches sources")
@@ -187,8 +194,16 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     results: list[tuple[str, int, int]] = []  # (date, warm_rc, screen_rc)
+    n_skipped = 0
 
     for d in dates:
+        # ── skip existing ──
+        rankings = args.snapshot_dir / d / "rankings.csv"
+        if args.skip_existing and not args.dry_run and rankings.exists():
+            print(f"[DAILY] {d}  warm=SKIP  screen=SKIP  (snapshot exists)")
+            n_skipped += 1
+            continue
+
         # ── warm ──
         warm_rc = 0
         if not args.no_warm:
@@ -219,11 +234,16 @@ def main(argv: list[str] | None = None) -> int:
     n_warn = sum(1 for _, _, rc in results if rc == _EXIT_WARN)
     n_fail = sum(1 for _, _, rc in results if rc == _EXIT_FAIL)
     n_err = sum(1 for _, _, rc in results if rc not in (_EXIT_OK, _EXIT_WARN, _EXIT_FAIL))
+    parts = [f"{n_ok} OK, {n_warn} WARN, {n_fail} FAIL"]
+    if n_err:
+        parts.append(f"{n_err} ERR")
+    if n_skipped:
+        parts.append(f"{n_skipped} skipped")
+    if not args.no_rollup:
+        parts.append(f"rollup={'OK' if rollup_rc == 0 else f'ERR({rollup_rc})'}")
     print(
-        f"\n[DAILY] Summary: {len(results)} dates — "
-        f"{n_ok} OK, {n_warn} WARN, {n_fail} FAIL"
-        + (f", {n_err} ERR" if n_err else "")
-        + (f", rollup={'OK' if rollup_rc == 0 else f'ERR({rollup_rc})'}" if not args.no_rollup else "")
+        f"\n[DAILY] Summary: {len(results) + n_skipped} dates — "
+        + ", ".join(parts)
     )
 
     if n_fail > 0 or n_err > 0:
