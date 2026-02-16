@@ -6,6 +6,7 @@ single CSV with one row per snapshot date.
 
 Usage:
     python scripts/rollup_shadow_metrics.py [--snapshot-dir DIR] [--output PATH]
+    python scripts/rollup_shadow_metrics.py --from-date 2026-01-15 --to-date 2026-02-16
 
 Defaults:
     --snapshot-dir  data/snapshots
@@ -42,14 +43,27 @@ COLUMNS = [
 ]
 
 
-def collect_shadow_metrics(snapshot_dir: Path) -> list[dict]:
-    """Read all catalyst_shadow_metrics.json files, return sorted rows."""
+def collect_shadow_metrics(
+    snapshot_dir: Path,
+    *,
+    from_date: str | None = None,
+    to_date: str | None = None,
+) -> list[dict]:
+    """Read catalyst_shadow_metrics.json files, return sorted rows.
+
+    When *from_date* / *to_date* are given, only include snapshot dates
+    within the inclusive [from_date, to_date] range.
+    """
     rows: list[dict] = []
     if not snapshot_dir.exists():
         return rows
 
     for d in sorted(snapshot_dir.iterdir()):
         if not d.is_dir() or not _DATE_DIR_RE.match(d.name):
+            continue
+        if from_date and d.name < from_date:
+            continue
+        if to_date and d.name > to_date:
             continue
         metrics_path = d / "catalyst_shadow_metrics.json"
         if not metrics_path.exists():
@@ -94,9 +108,23 @@ def main(argv: list[str] | None = None) -> int:
         default=Path("output/catalyst_shadow_timeseries.csv"),
         help="Output CSV path (default: output/catalyst_shadow_timeseries.csv)",
     )
+    parser.add_argument(
+        "--from-date",
+        default=None,
+        help="Include snapshots on or after this date (YYYY-MM-DD)",
+    )
+    parser.add_argument(
+        "--to-date",
+        default=None,
+        help="Include snapshots on or before this date (YYYY-MM-DD)",
+    )
     args = parser.parse_args(argv)
 
-    rows = collect_shadow_metrics(args.snapshot_dir)
+    rows = collect_shadow_metrics(
+        args.snapshot_dir,
+        from_date=args.from_date,
+        to_date=args.to_date,
+    )
     if not rows:
         print("No catalyst_shadow_metrics.json files found.", file=sys.stderr)
         return 1

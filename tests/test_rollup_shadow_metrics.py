@@ -90,6 +90,47 @@ class TestCollectShadowMetrics:
         rows = collect_shadow_metrics(snap)
         assert rows[0]["as_of_date"] == "2026-02-14"
 
+    def test_from_date_filters_earlier(self, tmp_path):
+        snap = tmp_path / "snapshots"
+        _write_shadow(snap, "2025-06-30", _sample_metrics("2025-06-30"))
+        _write_shadow(snap, "2026-01-15", _sample_metrics("2026-01-15"))
+        _write_shadow(snap, "2026-02-14", _sample_metrics("2026-02-14"))
+
+        rows = collect_shadow_metrics(snap, from_date="2026-01-01")
+        assert len(rows) == 2
+        assert rows[0]["as_of_date"] == "2026-01-15"
+
+    def test_to_date_filters_later(self, tmp_path):
+        snap = tmp_path / "snapshots"
+        _write_shadow(snap, "2026-01-15", _sample_metrics("2026-01-15"))
+        _write_shadow(snap, "2026-02-14", _sample_metrics("2026-02-14"))
+        _write_shadow(snap, "2026-03-01", _sample_metrics("2026-03-01"))
+
+        rows = collect_shadow_metrics(snap, to_date="2026-02-28")
+        assert len(rows) == 2
+        assert rows[-1]["as_of_date"] == "2026-02-14"
+
+    def test_from_and_to_date_combined(self, tmp_path):
+        snap = tmp_path / "snapshots"
+        _write_shadow(snap, "2025-12-31", _sample_metrics("2025-12-31"))
+        _write_shadow(snap, "2026-01-15", _sample_metrics("2026-01-15"))
+        _write_shadow(snap, "2026-02-14", _sample_metrics("2026-02-14"))
+        _write_shadow(snap, "2026-03-01", _sample_metrics("2026-03-01"))
+
+        rows = collect_shadow_metrics(snap, from_date="2026-01-01", to_date="2026-02-28")
+        assert len(rows) == 2
+        dates = [r["as_of_date"] for r in rows]
+        assert dates == ["2026-01-15", "2026-02-14"]
+
+    def test_from_to_date_inclusive_boundaries(self, tmp_path):
+        snap = tmp_path / "snapshots"
+        _write_shadow(snap, "2026-02-10", _sample_metrics("2026-02-10"))
+        _write_shadow(snap, "2026-02-11", _sample_metrics("2026-02-11"))
+        _write_shadow(snap, "2026-02-12", _sample_metrics("2026-02-12"))
+
+        rows = collect_shadow_metrics(snap, from_date="2026-02-10", to_date="2026-02-12")
+        assert len(rows) == 3
+
 
 class TestWriteCsv:
 
@@ -152,3 +193,25 @@ class TestMain:
         assert len(loaded) == 2
         assert loaded[0]["A_tier_count"] == "33"
         assert loaded[1]["A_tier_count"] == "37"
+
+    def test_main_from_to_date_filters(self, tmp_path):
+        snap = tmp_path / "snapshots"
+        _write_shadow(snap, "2025-06-30", _sample_metrics("2025-06-30"))
+        _write_shadow(snap, "2026-01-15", _sample_metrics("2026-01-15"))
+        _write_shadow(snap, "2026-02-14", _sample_metrics("2026-02-14"))
+        _write_shadow(snap, "2026-03-01", _sample_metrics("2026-03-01"))
+        out = tmp_path / "out.csv"
+
+        rc = main([
+            "--snapshot-dir", str(snap),
+            "--output", str(out),
+            "--from-date", "2026-01-01",
+            "--to-date", "2026-02-28",
+        ])
+        assert rc == 0
+
+        with open(out, encoding="utf-8") as f:
+            loaded = list(csv.DictReader(f))
+        assert len(loaded) == 2
+        dates = [r["as_of_date"] for r in loaded]
+        assert dates == ["2026-01-15", "2026-02-14"]
