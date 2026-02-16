@@ -463,7 +463,7 @@ class TestShellKeywords:
         assert "blank check" in SHELL_KEYWORDS
         assert "shell company" in SHELL_KEYWORDS
 
-    @pytest.mark.parametrize("keyword", list(SHELL_KEYWORDS))
+    @pytest.mark.parametrize("keyword", sorted(SHELL_KEYWORDS))
     def test_each_keyword_triggers_exclusion(self, keyword):
         """Each shell keyword should trigger exclusion."""
         raw_records = [
