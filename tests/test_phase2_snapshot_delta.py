@@ -23,6 +23,7 @@ from run_phase2_snapshot_delta import (
     generate_details_json,
     generate_report,
     load_snapshot,
+    PHASE2_PINNED_RULESET_ID,
     RECON_TOP_K,
     WARN_A_COUNT_MIN,
     WARN_CATALYST_COVERAGE_MIN,
@@ -43,7 +44,7 @@ def _make_rankings_df(
     actionable_ranks: list | None = None,
     risk_flags: list[str] | None = None,
     weights: list | None = None,
-    ruleset_id: str = "f3454ef7",
+    ruleset_id: str = PHASE2_PINNED_RULESET_ID,
     size_bands: list[str] | None = None,
 ) -> pd.DataFrame:
     """Build a synthetic rankings DataFrame with decision engine columns."""
@@ -86,7 +87,7 @@ def _make_portfolio_df(
         "archetype": ["drug_developer"] * n,
         "catalyst_mode": ["specific_days"] * n,
         "catalyst_days": list(range(1, n + 1)),
-        "decision_engine_ruleset_id": ["f3454ef7"] * n,
+        "decision_engine_ruleset_id": [PHASE2_PINNED_RULESET_ID] * n,
         "decision_engine_version": ["v1.2.0"] * n,
     }
     return pd.DataFrame(data)
@@ -96,7 +97,7 @@ def _make_snapshot(
     date: str,
     rankings: pd.DataFrame,
     portfolio: pd.DataFrame,
-    ruleset_id: str = "f3454ef7",
+    ruleset_id: str = PHASE2_PINNED_RULESET_ID,
     has_native: bool = True,
 ) -> SnapshotData:
     return SnapshotData(

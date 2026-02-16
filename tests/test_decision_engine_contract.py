@@ -1090,3 +1090,24 @@ class TestGoldenOutputFingerprint:
             f"If intentional: update EXPECTED_FINGERPRINT, add RULESET_CHANGELOG.md entry, "
             f"bump VERSION if material."
         )
+
+
+# =============================================================================
+# PHASE-2 PINNED RULESET ID SYNC GUARDRAIL
+# =============================================================================
+
+class TestPhase2PinnedIdSync:
+    """Verify run_screen.py and run_phase2_snapshot_delta.py pin the same ruleset ID.
+
+    These two constants MUST stay in sync — a mismatch causes silent health-gate
+    FAIL (ruleset_mismatch) on every screen run.
+    """
+
+    def test_pinned_ids_match(self):
+        from run_screen import PHASE2_PINNED_RULESET_ID as screen_id
+        from run_phase2_snapshot_delta import PHASE2_PINNED_RULESET_ID as delta_id
+        assert screen_id == delta_id, (
+            f"PHASE2_PINNED_RULESET_ID mismatch: "
+            f"run_screen={screen_id}, run_phase2_snapshot_delta={delta_id}. "
+            f"These MUST be identical."
+        )

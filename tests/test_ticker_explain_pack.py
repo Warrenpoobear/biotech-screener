@@ -25,7 +25,7 @@ from generate_ticker_explain_pack import (
     render_dossier_md,
     render_explain_pack_md,
 )
-from run_phase2_snapshot_delta import SnapshotData
+from run_phase2_snapshot_delta import PHASE2_PINNED_RULESET_ID, SnapshotData
 
 
 # ---------------------------------------------------------------------------
@@ -34,7 +34,7 @@ from run_phase2_snapshot_delta import SnapshotData
 def _make_rankings(
     n_dev: int = 50,
     include_attribution_cols: bool = True,
-    ruleset_id: str = "f3454ef7",
+    ruleset_id: str = PHASE2_PINNED_RULESET_ID,
 ) -> pd.DataFrame:
     """Build a synthetic rankings DataFrame with attribution columns."""
     import random
@@ -122,7 +122,7 @@ def _make_rankings(
 def _make_snapshot(
     date: str,
     rankings: pd.DataFrame | None = None,
-    ruleset_id: str = "f3454ef7",
+    ruleset_id: str = PHASE2_PINNED_RULESET_ID,
 ) -> SnapshotData:
     if rankings is None:
         rankings = _make_rankings(ruleset_id=ruleset_id)
