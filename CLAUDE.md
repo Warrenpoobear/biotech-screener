@@ -119,7 +119,7 @@ The Phase-2 pipeline (`run_phase2_snapshot_delta.py`, ~1220 lines) compares cons
 - **OK** (exit 0): all checks pass
 
 ### Pinned Thresholds
-- `production_data/phase2_health_thresholds/v1.json` (ID: `c0e01f42`)
+- `production_data/phase2_health_thresholds/v1.json` (ID: `0dae2ff0`)
 - `Phase2HealthThresholds` frozen dataclass with `thresholds_id` (sha256[:8])
 
 ### Delta Report

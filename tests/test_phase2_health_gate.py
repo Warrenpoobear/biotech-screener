@@ -41,6 +41,7 @@ def _make_rankings_df(
     weights: list | None = None,
     ruleset_id: str = PHASE2_PINNED_RULESET_ID,
     size_bands: list[str] | None = None,
+    missing_components: list[str] | None = None,
 ) -> pd.DataFrame:
     n = len(tickers)
     data = {
@@ -58,6 +59,7 @@ def _make_rankings_df(
         "clinical_optionality_pct_dev": [0.6] * n,
         "size_band": size_bands or ["M"] * n,
         "decision_engine_version": ["v1.2.0"] * n,
+        "missing_components": missing_components or [""] * n,
     }
     return pd.DataFrame(data)
 
@@ -417,7 +419,7 @@ class TestPinnedThresholds:
     def test_default_thresholds_id_pinned(self):
         """Default thresholds must produce the pinned ID."""
         from run_phase2_snapshot_delta import DEFAULT_HEALTH_THRESHOLDS
-        assert DEFAULT_HEALTH_THRESHOLDS.thresholds_id == "c0e01f42"
+        assert DEFAULT_HEALTH_THRESHOLDS.thresholds_id == "0dae2ff0"
 
     def test_production_json_matches_defaults(self):
         """Production v1.json must round-trip to the same thresholds as defaults."""
@@ -481,3 +483,167 @@ class TestPinnedThresholds:
         health_custom = compute_health_gate(snap, None, result, thresholds=custom_th)
         assert health_custom.status == "WARN"
         assert "low_a_tier" in health_custom.reasons
+
+
+# ---------------------------------------------------------------------------
+# 12. Missingness guardrails
+# ---------------------------------------------------------------------------
+
+class TestMissingnessGuardrails:
+    """Tests for missingness coverage thresholds in health gate."""
+
+    def test_portfolio_missing_data_warns(self):
+        """portfolio_missing_count > 0 → WARN portfolio_missing_data."""
+        from run_phase2_snapshot_delta import compute_single_snapshot_summary
+        # Use enough tickers so 1 missing sponsor stays above all FAIL thresholds
+        tickers = [f"T{i:03d}" for i in range(50)]
+        rankings = _make_rankings_df(
+            tickers,
+            tiers=["A"] * 25 + ["B"] * 25,
+            catalyst_modes=["specific_days"] * 50,
+            missing_components=["sponsor"] + [""] * 49,  # T000 has missing sponsor (in portfolio)
+        )
+        portfolio = _make_portfolio_df(tickers[:25], tiers=["A"] * 25)
+        snap = _make_snapshot("2026-02-09", rankings, portfolio)
+        result = compute_single_snapshot_summary(snap)
+        health = compute_health_gate(snap, None, result)
+        assert health.status == "WARN"
+        assert "portfolio_missing_data" in health.reasons
+        assert health.metrics["portfolio_missing_count"] == 1
+
+    def test_portfolio_missing_outside_portfolio_ok(self):
+        """Missing data only in non-portfolio tickers → OK (portfolio_missing_count=0)."""
+        from run_phase2_snapshot_delta import compute_single_snapshot_summary
+        tickers = [f"T{i}" for i in range(10)]
+        # T5 (non-portfolio) has missing sponsor — should not trigger WARN
+        mc = [""] * 5 + ["sponsor"] + [""] * 4
+        rankings = _make_rankings_df(
+            tickers,
+            tiers=["A"] * 5 + ["B"] * 5,
+            catalyst_modes=["specific_days"] * 10,
+            missing_components=mc,
+        )
+        portfolio = _make_portfolio_df(tickers[:5], tiers=["A"] * 5)
+        snap = _make_snapshot("2026-02-09", rankings, portfolio)
+        result = compute_single_snapshot_summary(snap)
+        health = compute_health_gate(snap, None, result)
+        assert health.status == "OK"
+        assert health.metrics["portfolio_missing_count"] == 0
+
+    def test_drawdown_coverage_fail(self):
+        """coverage_drawdown_pct < 95 → FAIL drawdown_coverage_low."""
+        from run_phase2_snapshot_delta import compute_single_snapshot_summary
+        tickers = [f"T{i}" for i in range(20)]
+        # 2/20 dev tickers have missing drawdown → 90% coverage < 95% FAIL
+        mc = ["drawdown"] * 2 + [""] * 18
+        rankings = _make_rankings_df(
+            tickers,
+            tiers=["A"] * 10 + ["B"] * 10,
+            catalyst_modes=["specific_days"] * 20,
+            missing_components=mc,
+        )
+        portfolio = _make_portfolio_df(tickers[:10], tiers=["A"] * 10)
+        snap = _make_snapshot("2026-02-09", rankings, portfolio)
+        result = compute_single_snapshot_summary(snap)
+        health = compute_health_gate(snap, None, result)
+        assert health.status == "FAIL"
+        assert "drawdown_coverage_low" in health.reasons
+        assert health.metrics["coverage_drawdown_pct"] == 90.0
+
+    def test_drawdown_coverage_warn(self):
+        """coverage_drawdown_pct < 99 but >= 95 → WARN drawdown_coverage_low."""
+        from run_phase2_snapshot_delta import (
+            Phase2HealthThresholds,
+            compute_single_snapshot_summary,
+        )
+        # 1/50 missing → 98% coverage: below WARN(99%) but above FAIL(95%)
+        tickers = [f"T{i:03d}" for i in range(50)]
+        mc = ["drawdown"] + [""] * 49
+        rankings = _make_rankings_df(
+            tickers,
+            tiers=["A"] * 25 + ["B"] * 25,
+            catalyst_modes=["specific_days"] * 50,
+            missing_components=mc,
+        )
+        portfolio = _make_portfolio_df(tickers[:25], tiers=["A"] * 25)
+        snap = _make_snapshot("2026-02-09", rankings, portfolio)
+        result = compute_single_snapshot_summary(snap)
+        health = compute_health_gate(snap, None, result)
+        assert health.status == "WARN"
+        assert "drawdown_coverage_low" in health.reasons
+
+    def test_sponsor_coverage_warn(self):
+        """coverage_sponsor_pct < 90 → WARN sponsor_coverage_low."""
+        from run_phase2_snapshot_delta import compute_single_snapshot_summary
+        tickers = [f"T{i}" for i in range(10)]
+        # 2/10 missing sponsor → 80% < 90%
+        mc = ["sponsor"] * 2 + [""] * 8
+        rankings = _make_rankings_df(
+            tickers,
+            tiers=["A"] * 5 + ["B"] * 5,
+            catalyst_modes=["specific_days"] * 10,
+            missing_components=mc,
+        )
+        portfolio = _make_portfolio_df(tickers[:5], tiers=["A"] * 5)
+        snap = _make_snapshot("2026-02-09", rankings, portfolio)
+        result = compute_single_snapshot_summary(snap)
+        health = compute_health_gate(snap, None, result)
+        assert health.status == "WARN"
+        assert "sponsor_coverage_low" in health.reasons
+        assert health.metrics["coverage_sponsor_pct"] == 80.0
+
+    def test_catalyst_comp_coverage_warn(self):
+        """coverage_catalyst_pct < 85 → WARN catalyst_coverage_low."""
+        from run_phase2_snapshot_delta import compute_single_snapshot_summary
+        tickers = [f"T{i}" for i in range(10)]
+        # 2/10 missing catalyst component → 80% < 85%
+        mc = ["catalyst"] * 2 + [""] * 8
+        rankings = _make_rankings_df(
+            tickers,
+            tiers=["A"] * 5 + ["B"] * 5,
+            catalyst_modes=["specific_days"] * 10,
+            missing_components=mc,
+        )
+        portfolio = _make_portfolio_df(tickers[:5], tiers=["A"] * 5)
+        snap = _make_snapshot("2026-02-09", rankings, portfolio)
+        result = compute_single_snapshot_summary(snap)
+        health = compute_health_gate(snap, None, result)
+        assert health.status == "WARN"
+        assert "catalyst_coverage_low" in health.reasons
+        assert health.metrics["coverage_catalyst_pct"] == 80.0
+
+    def test_no_missing_components_column_skips_guardrails(self):
+        """Old snapshots without missing_components column → no missingness checks."""
+        from run_phase2_snapshot_delta import compute_single_snapshot_summary
+        snap = _clean_snapshot()
+        # Remove the missing_components column to simulate old snapshot
+        snap.rankings.drop(columns=["missing_components"], inplace=True)
+        result = compute_single_snapshot_summary(snap)
+        health = compute_health_gate(snap, None, result)
+        assert health.status == "OK"
+        assert "portfolio_missing_data" not in health.reasons
+        assert "coverage_drawdown_pct" not in health.metrics
+
+    def test_clean_snapshot_still_ok(self):
+        """Clean snapshot with missing_components column (all empty) → OK."""
+        from run_phase2_snapshot_delta import compute_single_snapshot_summary
+        snap = _clean_snapshot()
+        result = compute_single_snapshot_summary(snap)
+        health = compute_health_gate(snap, None, result)
+        assert health.status == "OK"
+        assert health.metrics.get("coverage_drawdown_pct") == 100.0
+        assert health.metrics.get("coverage_sponsor_pct") == 100.0
+        assert health.metrics.get("coverage_catalyst_pct") == 100.0
+        assert health.metrics.get("portfolio_missing_count") == 0
+
+    def test_health_json_includes_new_thresholds(self):
+        """generate_health_json should include missingness thresholds."""
+        from run_phase2_snapshot_delta import compute_single_snapshot_summary
+        snap = _clean_snapshot()
+        result = compute_single_snapshot_summary(snap)
+        health = compute_health_gate(snap, None, result)
+        hj = generate_health_json(health)
+        assert "fail_drawdown_coverage_min" in hj["thresholds"]
+        assert "warn_drawdown_coverage_min" in hj["thresholds"]
+        assert "warn_sponsor_coverage_min" in hj["thresholds"]
+        assert "warn_catalyst_comp_coverage_min" in hj["thresholds"]

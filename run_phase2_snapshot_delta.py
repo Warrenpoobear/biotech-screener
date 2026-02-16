@@ -56,6 +56,12 @@ class Phase2HealthThresholds:
     warn_weight_l1_pct: float = 55.0           # weight turnover (calibrated: P90=50.8, P95=52.7)
     warn_catalyst_drop_pp: float = 5.0         # coverage drop vs prior (calibrated: max=1.9)
 
+    # Missingness coverage gates (dev-stage component coverage)
+    fail_drawdown_coverage_min: float = 95.0   # below this = risk feed broken
+    warn_drawdown_coverage_min: float = 99.0   # mild degradation
+    warn_sponsor_coverage_min: float = 90.0    # dev-stage sponsorship coverage
+    warn_catalyst_comp_coverage_min: float = 85.0  # dev-stage catalyst component coverage
+
     def _canonical_json(self) -> str:
         """Deterministic JSON representation for hashing."""
         d = {f.name: getattr(self, f.name) for f in dc_fields(self)}
@@ -690,6 +696,32 @@ def compute_health_gate(
             port_mc.apply(lambda x: pd.notna(x) and bool(str(x).strip())).sum()
         )
 
+    # --- Missingness guardrails (guarded by column existence) ---
+    if "missing_components" in current.rankings.columns:
+        dd_cov = metrics.get("coverage_drawdown_pct")
+        sp_cov = metrics.get("coverage_sponsor_pct")
+        ct_cov = metrics.get("coverage_catalyst_pct")
+        pm_cnt = metrics.get("portfolio_missing_count", 0)
+
+        if dd_cov is not None and dd_cov < th.fail_drawdown_coverage_min:
+            fail_reasons.append("drawdown_coverage_low")
+        if dd_cov is not None and dd_cov < th.warn_drawdown_coverage_min:
+            warn_reasons.append("drawdown_coverage_low")
+        if sp_cov is not None and sp_cov < th.warn_sponsor_coverage_min:
+            warn_reasons.append("sponsor_coverage_low")
+        if ct_cov is not None and ct_cov < th.warn_catalyst_comp_coverage_min:
+            warn_reasons.append("catalyst_coverage_low")
+        if pm_cnt > 0:
+            warn_reasons.append("portfolio_missing_data")
+
+        # Re-resolve status after missingness checks
+        if fail_reasons:
+            status = "FAIL"
+            reasons = fail_reasons
+        elif warn_reasons:
+            status = "WARN"
+            reasons = warn_reasons
+
     return HealthResult(status=status, reasons=reasons, metrics=metrics)
 
 
@@ -708,10 +740,14 @@ def generate_health_json(
             "fail_catalyst_coverage_min": th.fail_catalyst_coverage_min,
             "fail_a_count_min": th.fail_a_count_min,
             "fail_optionality_coverage_min": th.fail_optionality_coverage_min,
+            "fail_drawdown_coverage_min": th.fail_drawdown_coverage_min,
             "warn_a_count_low": th.warn_a_count_low,
             "warn_turnover_pct": th.warn_turnover_pct,
             "warn_weight_l1_pct": th.warn_weight_l1_pct,
             "warn_catalyst_drop_pp": th.warn_catalyst_drop_pp,
+            "warn_drawdown_coverage_min": th.warn_drawdown_coverage_min,
+            "warn_sponsor_coverage_min": th.warn_sponsor_coverage_min,
+            "warn_catalyst_comp_coverage_min": th.warn_catalyst_comp_coverage_min,
         },
     }
 
