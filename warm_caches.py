@@ -116,6 +116,7 @@ def warm_ctgov(as_of_date: date, data_dir: Path, cache_dir: Path | None = None) 
     records = json.loads(source.read_text())
     cutoff = as_of_date.isoformat()
 
+    missing_lup = sum(1 for r in records if not (r.get("last_update_posted") or "").strip())
     filtered = [
         r for r in records
         if (r.get("last_update_posted") or "")[:10] <= cutoff
@@ -125,7 +126,8 @@ def warm_ctgov(as_of_date: date, data_dir: Path, cache_dir: Path | None = None) 
     target.write_text(json.dumps(filtered))
     logger.info(
         f"CTGov PIT filter: {len(records)} → {len(filtered)} records "
-        f"(cutoff={cutoff}, dropped={len(records) - len(filtered)})"
+        f"(cutoff={cutoff}, dropped={len(records) - len(filtered)}, "
+        f"missing_lup={missing_lup})"
     )
     return len(filtered)
 
@@ -329,13 +331,17 @@ def main():
         except Exception as e:
             logger.error(f"SEC 8-K warm failed: {e}")
 
+    ctgov_records = 0
     if "ctgov" in sources:
         try:
-            total += warm_ctgov(as_of, data_dir)
+            ctgov_records = warm_ctgov(as_of, data_dir)
         except Exception as e:
             logger.error(f"CTGov warm failed: {e}")
 
-    logger.info(f"Cache warm complete: {total} total events cached")
+    parts = [f"{total} events"]
+    if ctgov_records:
+        parts.append(f"{ctgov_records} CTGov records")
+    logger.info(f"Cache warm complete: {', '.join(parts)}")
     return 0
 
 
