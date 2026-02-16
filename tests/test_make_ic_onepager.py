@@ -309,6 +309,15 @@ class TestDelta:
         assert "Exits: OLD1" in md
         assert "2026-02-15" in md
 
+    def test_null_prior_graceful(self, tmp_path: Path) -> None:
+        snap = _build_full_snapshot(tmp_path)
+        delta = _minimal_delta()
+        delta["prior"] = None
+        _write_json(snap / "phase2_run_delta_details.json", delta)
+        md = generate_ic_onepager(snap)
+
+        assert "## Delta vs Prior (?)" in md
+
     def test_nearest_catalysts(self, tmp_path: Path) -> None:
         snap = _build_full_snapshot(tmp_path)
         md = generate_ic_onepager(snap)

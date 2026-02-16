@@ -143,7 +143,7 @@ def _delta_section(delta_data: Optional[dict]) -> str:
     if delta_data is None:
         return f"## Delta vs Prior\n{_NOT_AVAILABLE}\n"
 
-    prior = delta_data.get("prior", {})
+    prior = delta_data.get("prior") or {}
     prior_date = prior.get("date", "?")
     pt = delta_data.get("portfolio_turnover", {})
     turnover = _fmt_pct(pt.get("name_turnover_pct", 0))
