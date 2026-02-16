@@ -1224,14 +1224,10 @@ def compute_decision_fields(
 
     # Layer 3 — Sizing (effective tier depends on tiering priority mode)
     effective_tier = tier_any if rs.tiering_priority_mode == "tier_first" else tier_dev
-    # For sizing, use the relevant quality metric: optionality for dev, quality_pct for commercial
-    effective_optionality = optionality_pct_dev
-    if effective_optionality is None and commercial_quality_pct is not None:
-        effective_optionality = commercial_quality_pct
     size_band, size_reasons = _compute_size_band(
         eligible=eligible,
         tier_dev=effective_tier,
-        optionality=effective_optionality,
+        optionality=optionality_pct_dev,
         overlays=overlays,
         ruleset=rs,
         rec=rec,

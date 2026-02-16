@@ -201,10 +201,7 @@
     "XS": 0.15
   },
   "sponsor_confirm_threshold": 2,
-  "tier_a_commercial_floor": 0.85,
   "tier_a_optionality_floor": 0.6,
-  "tier_b_commercial_floor": 0.6,
   "tier_b_optionality_floor": 0.3,
-  "tiering_priority_mode": "dev_first",
   "vol_high_threshold": 1.2
 }

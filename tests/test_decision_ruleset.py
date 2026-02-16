@@ -450,7 +450,7 @@ class TestRulesetIdSchemaStability:
     PINNED_FILE_HASHES = {
         "v1.2.2_candidate.json": "bf6815e2",
         "v1.3.0_candidate.json": "f3454ef7",
-        "v1.json": "fbf9d299",
+        "v1.json": "4fe77659",
         "v1.3.1_candidate.json": "898e5d0d",
         "v1.3.2_candidate.json": "96f655ee",
         "v1.3.3_missing_sort_only_candidate.json": "e1be5370",
@@ -486,29 +486,35 @@ class TestRulesetIdSchemaStability:
     def test_round_trip_preserves_id(self):
         """to_json → from_json round-trip preserves identity.
 
-        Uses v1.json (full-schema file) for exact ID match, and verifies
-        logical equality for older files that gain new default fields on write.
+        Generates a full-schema file from DEFAULT_RULESET for exact ID match,
+        and verifies logical equality for older files that gain new default
+        fields on write.
         """
         import tempfile
-        # Full-schema file: round-trip preserves exact ID
-        rs = DecisionRuleset.from_json(
-            str(self.RULESETS_DIR / "v1.json")
-        )
+        # Full-schema file: generate from DEFAULT_RULESET so all fields present
         with tempfile.NamedTemporaryFile(
             suffix=".json", delete=False, mode="w"
         ) as tmp:
             tmp_path = tmp.name
         try:
-            rs.to_json(tmp_path)
-            rs2 = DecisionRuleset.from_json(tmp_path)
+            DEFAULT_RULESET.to_json(tmp_path)
+            rs = DecisionRuleset.from_json(tmp_path)
+            # Write again and re-read — round-trip must preserve ID
+            tmp_path2 = tmp_path + ".rt"
+            rs.to_json(tmp_path2)
+            rs2 = DecisionRuleset.from_json(tmp_path2)
             assert rs.ruleset_id == rs2.ruleset_id
             assert rs == rs2
         finally:
-            os.unlink(tmp_path)
+            for p in (tmp_path, tmp_path + ".rt"):
+                try:
+                    os.unlink(p)
+                except FileNotFoundError:
+                    pass
 
         # Older file (may lack new fields): logical equality preserved
         rs_old = DecisionRuleset.from_json(
-            str(self.RULESETS_DIR / "v1.2.2_candidate.json")
+            str(self.RULESETS_DIR / "v1.json")
         )
         with tempfile.NamedTemporaryFile(
             suffix=".json", delete=False, mode="w"

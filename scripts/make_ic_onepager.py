@@ -113,9 +113,9 @@ def _portfolio_section(
                 first = t3.split(";")[0] if t3 else ""
                 driver_map[row.get("ticker", "")] = first
 
-    # Check if any commercial names are in portfolio
+    # Check if any non-dev names are in portfolio
     has_commercial = any(
-        r.get("archetype", "").startswith("commercial_") for r in portfolio_rows
+        r.get("archetype", "") != "drug_developer" for r in portfolio_rows
     )
 
     n = len(portfolio_rows)
@@ -143,8 +143,8 @@ def _portfolio_section(
         risk = row.get("risk_flags", "")
         driver = driver_map.get(ticker, "")
         if has_commercial:
-            arch = row.get("archetype", "")
-            arch_label = "C" if arch.startswith("commercial_") else "D"
+            is_dev = (row.get("archetype", "") == "drug_developer")
+            arch_label = "D" if is_dev else "C"
             lines.append(
                 f"| {rank} | {ticker} | {arch_label} | {tier} | {wt} | {cat_days} "
                 f"| {strength} | {mom} | {risk} | {driver} |"

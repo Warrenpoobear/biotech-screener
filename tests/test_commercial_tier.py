@@ -327,14 +327,20 @@ class TestPortfolioFilter:
 
 
 # =============================================================================
-# 15: Sizing with effective tier in tier_first mode
+# 15: Sizing does not give commercial names dev optionality boost
 # =============================================================================
 
 class TestSizingTierFirst:
-    """Verify commercial A gets tier_a sizing boost in tier_first mode."""
+    """Verify commercial names do NOT get dev optionality sizing boost.
 
-    def test_commercial_a_gets_tier_a_sizing_boost(self):
-        """In tier_first mode, commercial A eligible → size_band boosted by tier_a_dev."""
+    The tier_a_dev sizing check requires optionality_pct_dev, which is None
+    for commercial names.  Even in tier_first mode, commercial A-tier names
+    should not receive the tier_a_dev band boost (commercial quality != dev
+    optionality).
+    """
+
+    def test_commercial_a_no_dev_sizing_boost(self):
+        """Commercial A-tier does not get tier_a_dev sizing boost (no optionality data)."""
         rs = DecisionRuleset(tiering_priority_mode="tier_first")
         rec = _rec(catalyst_days=45, catalyst_in_window=True, tier1_count=3)
         result = compute_decision_fields(
@@ -343,14 +349,19 @@ class TestSizingTierFirst:
         )
         assert result["tier_commercial"] == "A"
         assert result["tier_any"] == "A"
-        assert "tier_a_dev" in result["size_reasons"]
-        # In dev_first mode, same commercial name wouldn't get the boost
-        rs_dev = DecisionRuleset(tiering_priority_mode="dev_first")
-        result_dev = compute_decision_fields(
-            rec, "commercial_biotech", None,
-            ruleset=rs_dev, commercial_quality_pct=0.90,
+        # No tier_a_dev boost — commercial quality is not optionality
+        assert "tier_a_dev" not in result["size_reasons"]
+
+    def test_dev_a_still_gets_sizing_boost(self):
+        """Dev A-tier still gets tier_a_dev sizing boost (unchanged)."""
+        rs = DecisionRuleset(tiering_priority_mode="tier_first")
+        rec = _rec(catalyst_days=45, catalyst_in_window=True, tier1_count=3)
+        result = compute_decision_fields(
+            rec, "drug_developer", 0.75,
+            ruleset=rs,
         )
-        assert "tier_a_dev" not in result_dev["size_reasons"]
+        assert result["tier_dev"] == "A"
+        assert "tier_a_dev" in result["size_reasons"]
 
 
 # =============================================================================
