@@ -128,6 +128,18 @@
       "notes": "Same params as v1.3.1 + catalyst_priority_mode=tiebreaker, enable_catalyst_priority=false (deprecated). Acceptance target: <=5% rank changes vs mode=off.",
       "updated_by": "manual_bootstrap",
       "updated_at": "2026-02-14T00:00:00Z"
+    },
+    {
+      "id": "e1be5370",
+      "file": "v1.3.3_missing_sort_only_candidate.json",
+      "created_at": "2026-02-16",
+      "engine_version": "v1.3.0",
+      "description": "Candidate: missingness sort penalty only",
+      "status": "candidate",
+      "requires_replay": true,
+      "notes": "Enables sort tie-break against incomplete data; no sizing cliffs. enable_missingness_sort_penalty=true, enable_missingness_size_penalty=false.",
+      "updated_by": "manual_bootstrap",
+      "updated_at": "2026-02-16T00:00:00Z"
     }
   ]
 }
