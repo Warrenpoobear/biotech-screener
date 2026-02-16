@@ -671,6 +671,25 @@ def compute_health_gate(
         metrics["dev_above_a_floor_count"] = opt_diag["dev_above_a_floor_count"]
         metrics["optionality_diagnostic"] = opt_diag
 
+    # Component coverage (dev-stage) — guarded by column existence
+    if "missing_components" in current.rankings.columns:
+        dev_mask = current.rankings.get("archetype", pd.Series(dtype=str)) == "drug_developer"
+        dev_rows = current.rankings[dev_mask] if dev_mask.any() else current.rankings
+        n_dev = len(dev_rows)
+        if n_dev > 0:
+            for comp in ("catalyst", "sponsor", "drawdown"):
+                n_miss = dev_rows["missing_components"].apply(
+                    lambda x, c=comp: pd.notna(x) and c in str(x)
+                ).sum()
+                metrics[f"coverage_{comp}_pct"] = round(100 * (1 - n_miss / n_dev), 1)
+        # Portfolio missing count
+        port_tickers = set(current.portfolio["ticker"])
+        port_mask = current.rankings["ticker"].isin(port_tickers)
+        port_mc = current.rankings.loc[port_mask, "missing_components"]
+        metrics["portfolio_missing_count"] = int(
+            port_mc.apply(lambda x: pd.notna(x) and bool(str(x).strip())).sum()
+        )
+
     return HealthResult(status=status, reasons=reasons, metrics=metrics)
 
 

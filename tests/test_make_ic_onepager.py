@@ -123,6 +123,7 @@ def _minimal_rankings() -> list[dict]:
             "eligible": "1",
             "ineligible_reasons": "",
             "risk_flags": "",
+            "missing_components": "",
             "top_3_drivers": "clinical_score:+22.0;financial_score:+10.0",
             "catalyst_reason_detail": "tier=A;reason=high_opt",
         },
@@ -132,6 +133,7 @@ def _minimal_rankings() -> list[dict]:
             "eligible": "1",
             "ineligible_reasons": "",
             "risk_flags": "deep_drawdown",
+            "missing_components": "sponsor",
             "top_3_drivers": "momentum_score:+15.0;catalyst_score:+12.0",
             "catalyst_reason_detail": "tier=A;reason=high_opt",
         },
@@ -141,6 +143,7 @@ def _minimal_rankings() -> list[dict]:
             "eligible": "1",
             "ineligible_reasons": "",
             "risk_flags": "",
+            "missing_components": "",
             "top_3_drivers": "smart_money_score:+20.0",
             "catalyst_reason_detail": "",
         },
@@ -150,6 +153,7 @@ def _minimal_rankings() -> list[dict]:
             "eligible": "0",
             "ineligible_reasons": "low_confidence",
             "risk_flags": "",
+            "missing_components": "catalyst|drawdown",
             "top_3_drivers": "",
             "catalyst_reason_detail": "",
         },
@@ -298,6 +302,28 @@ class TestExceptions:
         assert "Health Gate: WARN" in md
         assert "high_turnover" in md
         assert "catalyst_drop" in md
+
+    def test_missingness_in_exceptions(self, tmp_path: Path) -> None:
+        snap = _build_full_snapshot(tmp_path)
+        md = generate_ic_onepager(snap)
+
+        # BBB has sponsor missing → 1 portfolio ticker with missing data
+        assert "Missing data in portfolio: 1/2" in md
+        assert "sponsor: 1" in md
+
+    def test_dev_coverage_in_exceptions(self, tmp_path: Path) -> None:
+        snap = _build_full_snapshot(tmp_path)
+        health = _minimal_health()
+        health["metrics"]["coverage_catalyst_pct"] = 95.0
+        health["metrics"]["coverage_sponsor_pct"] = 80.0
+        health["metrics"]["coverage_drawdown_pct"] = 99.5
+        _write_json(snap / "phase2_health.json", health)
+
+        md = generate_ic_onepager(snap)
+        assert "Dev coverage:" in md
+        assert "catalyst: 95.0%" in md
+        assert "sponsor: 80.0%" in md
+        assert "drawdown: 99.5%" in md
 
 
 class TestDelta:

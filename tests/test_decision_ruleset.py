@@ -286,7 +286,7 @@ class TestRulesetDriftGuardrails:
     regenerate production_data/decision_rulesets/v1.json.
     """
 
-    EXPECTED_DEFAULT_RULESET_ID = "18eb5154"
+    EXPECTED_DEFAULT_RULESET_ID = "4fe77659"
 
     def test_default_ruleset_id_pinned(self):
         """DEFAULT_RULESET.ruleset_id must match the committed expected value.
@@ -450,7 +450,7 @@ class TestRulesetIdSchemaStability:
     PINNED_FILE_HASHES = {
         "v1.2.2_candidate.json": "bf6815e2",
         "v1.3.0_candidate.json": "f3454ef7",
-        "v1.json": "18eb5154",
+        "v1.json": "4fe77659",
         "v1.3.1_candidate.json": "898e5d0d",
         "v1.3.2_candidate.json": "96f655ee",
     }

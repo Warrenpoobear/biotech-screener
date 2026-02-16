@@ -287,6 +287,36 @@ def _exceptions_section(
     else:
         lines.append("Risk flags in portfolio: N/A")
 
+    # Missing data in portfolio (join from rankings)
+    if rankings_rows and portfolio_rows:
+        port_tickers = {r.get("ticker") for r in portfolio_rows}
+        port_rankings = [r for r in rankings_rows if r.get("ticker") in port_tickers]
+        mc_count = sum(1 for r in port_rankings if r.get("missing_components", "").strip())
+        if mc_count:
+            comp_counts: Dict[str, int] = {}
+            for r in port_rankings:
+                mc = r.get("missing_components", "")
+                for c in mc.split("|"):
+                    if c.strip():
+                        comp_counts[c.strip()] = comp_counts.get(c.strip(), 0) + 1
+            parts = [f"{k}: {v}" for k, v in sorted(comp_counts.items())]
+            lines.append(
+                f"Missing data in portfolio: {mc_count}/{len(port_rankings)} ({', '.join(parts)})"
+            )
+        else:
+            lines.append("Missing data in portfolio: 0")
+
+    # Dev coverage from health metrics
+    if health_data:
+        hmetrics = health_data.get("metrics", {})
+        cov_parts = []
+        for comp in ("catalyst", "sponsor", "drawdown"):
+            key = f"coverage_{comp}_pct"
+            if key in hmetrics:
+                cov_parts.append(f"{comp}: {hmetrics[key]}%")
+        if cov_parts:
+            lines.append(f"Dev coverage: {', '.join(cov_parts)}")
+
     # Health warnings
     if health_data:
         reasons = health_data.get("reasons", [])

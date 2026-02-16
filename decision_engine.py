@@ -95,6 +95,10 @@ class DecisionRuleset:
         ("tailwind", 1.0), ("neutral", 1.0), ("headwind", 1.0),
     )
 
+    # Missingness penalties (opt-in, default off — tracking always on)
+    enable_missingness_sort_penalty: bool = False
+    enable_missingness_size_penalty: bool = False
+
     # Actionable ordering — catalyst source/type priority (opt-in)
     enable_catalyst_priority: bool = False
     catalyst_priority_map: tuple = (
@@ -334,6 +338,28 @@ def _logistic_decay(days: float | None, midpoint: float, scale: float) -> float:
 
 # Sentinel for "data not present" vs "present and zero"
 _MISSING = object()
+
+
+def _has_flag(rf, flag: str) -> bool:
+    """Check if a risk-flag string contains a specific flag."""
+    if not rf:
+        return False
+    return flag in str(rf).replace("|", ",").split(",")
+
+
+_MISSINGNESS_COMPONENTS = ("catalyst", "sponsor", "drawdown")
+
+
+def _compute_missing_components(decision_fields: dict) -> list:
+    """Identify missing critical data components from decision output fields."""
+    missing = []
+    if decision_fields.get("catalyst_mode") == "missing":
+        missing.append("catalyst")
+    if decision_fields.get("sponsor_tier1_count") in ("", None):
+        missing.append("sponsor")
+    if _has_flag(decision_fields.get("risk_flags"), "drawdown_data_missing"):
+        missing.append("drawdown")
+    return missing
 
 
 # =============================================================================
@@ -666,6 +692,18 @@ def _compute_size_band(
         idx -= 1
         reasons.append("high_risk")
 
+    # Missingness size penalty (opt-in)
+    if ruleset.enable_missingness_size_penalty:
+        if _has_flag(overlays.get("risk_flags"), "drawdown_data_missing"):
+            idx -= 1
+            reasons.append("missing_drawdown")
+        if tier_dev in ("A", "B") and overlays.get("sponsor_tier1_count") in ("", None):
+            idx -= 1
+            reasons.append("missing_sponsor")
+        if tier_dev == "A" and overlays.get("catalyst_mode") == "missing":
+            idx -= 1
+            reasons.append("missing_catalyst")
+
     # Soft drawdown penalty
     if rec is not None and ruleset.drawdown_gate_mode == "soft":
         _df = rec.get("defensive_features") or {}
@@ -884,6 +922,11 @@ def compute_actionable_sort_key(
 
     comp_rank = int(composite_rank) if composite_rank is not None else 9999
 
+    # Missingness sort penalty: higher count sorts later (0 when disabled)
+    missing_count = 0
+    if rs.enable_missingness_sort_penalty:
+        missing_count = int(_safe_float(decision_fields.get("missingness_penalty", 0)))
+
     # --- Mode dispatch ---
     if mode == "tiebreaker":
         # comp_rank dominates after tier; priority only breaks ties
@@ -892,13 +935,14 @@ def compute_actionable_sort_key(
             is_dev,         # 1: dev first
             tier_ord,       # 2: A < B < C < D < blank
             comp_rank,      # 3: composite rank dominates
-            cat_priority,   # 4: priority breaks comp_rank ties
-            cat_days,       # 5: ascending days
-            opt_neg,        # 6: descending optionality
-            sponsor_neg,    # 7: descending sponsor count
-            mom_ord,        # 8: tailwind < neutral < headwind
-            cat_mode_ord,   # 9: specific < blended < no_upcoming < missing
-            ticker,         # 10: alphabetic tiebreak
+            missing_count,  # 4: fewer missing components first
+            cat_priority,   # 5: priority breaks comp_rank ties
+            cat_days,       # 6: ascending days
+            opt_neg,        # 7: descending optionality
+            sponsor_neg,    # 8: descending sponsor count
+            mom_ord,        # 9: tailwind < neutral < headwind
+            cat_mode_ord,   # 10: specific < blended < no_upcoming < missing
+            ticker,         # 11: alphabetic tiebreak
         )
 
     if mode == "blended":
@@ -911,13 +955,14 @@ def compute_actionable_sort_key(
             is_dev,               # 1: dev first
             tier_ord,             # 2: A < B < C < D < blank
             effective_comp_rank,  # 3: comp_rank with gentle bonus tilt
-            cat_mode_ord,         # 4: specific < blended < no_upcoming < missing
-            cat_days,             # 5: ascending days
-            opt_neg,              # 6: descending optionality
-            sponsor_neg,          # 7: descending sponsor count
-            mom_ord,              # 8: tailwind < neutral < headwind
-            cat_priority,         # 9: priority as tiebreaker
-            ticker,               # 10: alphabetic tiebreak
+            missing_count,        # 4: fewer missing components first
+            cat_mode_ord,         # 5: specific < blended < no_upcoming < missing
+            cat_days,             # 6: ascending days
+            opt_neg,              # 7: descending optionality
+            sponsor_neg,          # 8: descending sponsor count
+            mom_ord,              # 9: tailwind < neutral < headwind
+            cat_priority,         # 10: priority as tiebreaker
+            ticker,               # 11: alphabetic tiebreak
         )
 
     # mode == "off" (default)
@@ -928,11 +973,12 @@ def compute_actionable_sort_key(
         cat_priority,   # 3: 0 (neutral) — no effect on ordering
         cat_mode_ord,   # 4: specific < blended < no_upcoming < missing
         cat_days,       # 5: ascending days (missing=9999)
-        opt_neg,        # 6: descending optionality (negated)
-        sponsor_neg,    # 7: descending sponsor count (negated)
-        mom_ord,        # 8: tailwind < neutral < headwind
-        comp_rank,      # 9: ascending composite rank
-        ticker,         # 10: alphabetic tiebreak
+        missing_count,  # 6: fewer missing components first
+        opt_neg,        # 7: descending optionality (negated)
+        sponsor_neg,    # 8: descending sponsor count (negated)
+        mom_ord,        # 9: tailwind < neutral < headwind
+        comp_rank,      # 10: ascending composite rank
+        ticker,         # 11: alphabetic tiebreak
     )
 
 
@@ -994,6 +1040,7 @@ DECISION_COLUMNS = [
     "mom_state_tilt_mult", "mom_state_tilt_applied",
     "dd_rel_margin_rescued",
     "tier_dev", "tier_reason",
+    "missing_components", "missingness_penalty",
 ]
 
 
@@ -1089,6 +1136,12 @@ def compute_decision_fields(
         "mom_state_tilt_applied": "1" if mom_state_tilt_mult != 1.0 else "0",
         "dd_rel_margin_rescued": "1" if dd_rel_margin_rescued else "0",
     }
+
+    # Missingness tracking (always computed, penalties gated by ruleset toggles)
+    missing = _compute_missing_components(fields)
+    fields["missing_components"] = "|".join(missing) if missing else ""
+    fields["missingness_penalty"] = len(missing)
+
     return fields
 
 

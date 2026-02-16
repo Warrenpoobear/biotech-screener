@@ -1314,6 +1314,7 @@ SNAPSHOT_COLUMNS = [
     "mom_state_tilt_mult", "mom_state_tilt_applied",
     "dd_rel_margin_rescued",
     "tier_dev", "tier_reason",
+    "missing_components", "missingness_penalty",
     # Decision Engine v2 actionable columns
     "actionable_rank", "target_weight_pct",
     # Decision Engine input columns (for archive self-containment)
@@ -1340,6 +1341,7 @@ PHASE2_PORTFOLIO_COLUMNS = [
     "catalyst_mode", "catalyst_days", "cat_priority", "mom_state", "risk_flags",
     "composite_rank", "composite_score", "archetype",
     "clinical_optionality_pct_dev",
+    "missing_components",
     "decision_engine_version", "decision_engine_ruleset_id",
 ]
 
