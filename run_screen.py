@@ -1328,6 +1328,9 @@ SNAPSHOT_COLUMNS = [
     "catalyst_source",
     "catalyst_event_type",
     "cat_priority",
+    # Explainability columns
+    "top_3_drivers",
+    "catalyst_reason_detail",
 ]
 
 # Phase-2 decision portfolio output columns
@@ -2014,6 +2017,42 @@ def save_validation_snapshot(
         rs = ruleset or DEFAULT_RULESET
         row["cat_priority"] = resolve_catalyst_priority(
             row["catalyst_event_type"], row["catalyst_source"], rs,
+        )
+
+        # --- Explainability: top_3_drivers ---
+        _score_cols = [
+            "clinical_score", "catalyst_score", "momentum_score",
+            "financial_score", "smart_money_score",
+        ]
+        _vals = {}
+        for sc in _score_cols:
+            v = row.get(sc)
+            if v is not None and v != "":
+                try:
+                    _vals[sc] = float(v)
+                except (ValueError, TypeError):
+                    pass
+        if _vals:
+            _mean = sum(_vals.values()) / len(_vals)
+            _devs = [(k, v - _mean) for k, v in _vals.items()]
+            _devs.sort(key=lambda x: (-abs(x[1]), x[0]))
+            row["top_3_drivers"] = ";".join(
+                f"{k}:{d:+.1f}" for k, d in _devs[:3]
+            )
+        else:
+            row["top_3_drivers"] = ""
+
+        # --- Explainability: catalyst_reason_detail ---
+        _cat_days = row.get("catalyst_days", "")
+        _cat_days_str = str(_cat_days) if _cat_days != "" else "NA"
+        _decay_w = row.get("catalyst_decay_w", "")
+        _decay_w_str = str(_decay_w) if _decay_w != "" else "NA"
+        row["catalyst_reason_detail"] = (
+            f"tier={row.get('tier_dev', '')}"
+            f";reason={row.get('tier_reason', '')}"
+            f";cat_days={_cat_days_str}"
+            f";strength={row.get('catalyst_strength', '')}"
+            f";decay_w={_decay_w_str}"
         )
 
     # --- Actionable ordering: sort + assign rank + compute weights ---
