@@ -58,11 +58,16 @@ _CLINICAL_PHASES = frozenset({
     "EARLY_PHASE1",
 })
 
+# Stage multipliers (must match DE ruleset defaults)
+_STAGE_MULTS = {"early": 0.0, "mid": 1.0, "late": 1.5}
+
 # All flags evaluated in the study
 FLAG_NAMES = [
     "model_top20", "tier_ab",
     "clinical_z_high", "clinical_top20",
     "clinical_score_z_top20",
+    "clinical_score_z_tier_top20", "clinical_cz_eff_top20",
+    "cs_z_top20_ab", "cz_eff_top20_ab",
     "clinical_near_readout", "clinical_high_and_near", "clinical_late_high",
     "catalyst_near",
     "any_signal",
@@ -74,6 +79,10 @@ FLAG_DEFS = {
     "clinical_z_high": "clinical_alpha_z >= +1.0 (approx PIT)",
     "clinical_top20": "clinical_alpha_z in top 20% (approx PIT)",
     "clinical_score_z_top20": "zscore(clinical_score) top 20% (PIT-safe)",
+    "clinical_score_z_tier_top20": "tier-local zscore(clinical_score) top 20% (PIT-safe)",
+    "clinical_cz_eff_top20": "cz_eff (stage-gated, pos-only, clamped) top 20% (PIT-safe)",
+    "cs_z_top20_ab": "clinical_score_z top 20% restricted to tier A+B (DE scope)",
+    "cz_eff_top20_ab": "cz_eff top 20% restricted to tier A+B (DE scope)",
     "clinical_near_readout": "readout_days <= 180 + coverage (approx PIT)",
     "clinical_high_and_near": "clin_z >= 1.0 AND readout <= 180",
     "clinical_late_high": "stage mid/late AND clin_score_z top 20%",
@@ -87,6 +96,10 @@ _FLAG_ABBREV = {
     "clinical_z_high": "cz_hi",
     "clinical_top20": "cz20",
     "clinical_score_z_top20": "cs20",
+    "clinical_score_z_tier_top20": "czt20",
+    "clinical_cz_eff_top20": "eff20",
+    "cs_z_top20_ab": "csAB",
+    "cz_eff_top20_ab": "effAB",
     "clinical_near_readout": "rd",
     "clinical_high_and_near": "cz+rd",
     "clinical_late_high": "late",
@@ -281,27 +294,161 @@ def compute_clinical_alpha_z(
 def compute_clinical_score_z(csv_rows: List[dict]) -> None:
     """Compute clinical_score_z (fully PIT-safe) in-place.
 
-    Pure z-score of the archive's clinical_score column.
+    Per-cohort z-score of the archive's clinical_score column.
+    Cohorts: drug_developer, commercial_biotech, commercial_pharma.
     No trial records dependency — maximally PIT-faithful.
     """
-    eligible_indices: List[int] = []
-    scores: List[float] = []
+    _CLINICAL_COHORTS = ("drug_developer", "commercial_biotech", "commercial_pharma")
+    total_filled = 0
 
+    for cohort_arch in _CLINICAL_COHORTS:
+        eligible_indices: List[int] = []
+        scores: List[float] = []
+
+        for i, row in enumerate(csv_rows):
+            if (row.get("archetype") or "") != cohort_arch:
+                continue
+            cs = _safe_float(row.get("clinical_score"))
+            if cs is not None:
+                eligible_indices.append(i)
+                scores.append(cs)
+
+        if not scores:
+            continue
+
+        zs = _zscore(scores)
+        for j, idx in enumerate(eligible_indices):
+            csv_rows[idx]["clinical_score_z"] = round(zs[j], 4)
+
+        total_filled += len(eligible_indices)
+        print(f"  clinical_score_z ({cohort_arch}): {len(eligible_indices)} tickers, "
+              f"mean={statistics.mean(scores):.1f}", file=sys.stderr)
+
+    print(f"  clinical_score_z (PIT-safe): {total_filled} total tickers", file=sys.stderr)
+
+
+def compute_clinical_score_z_tier(csv_rows: List[dict]) -> None:
+    """Compute clinical_score_z_tier (tier-local, ddof=0, PIT-safe) in-place.
+
+    Drug developers: z-scored within (tier_dev × drug_developer) groups.
+    Commercial: z-scored within (tier_commercial × archetype) groups.
+    If tier_commercial not available (older archives), use clinical_score_z
+    as fallback (archetype-level z, no tier sub-grouping).
+    Population std (ddof=0) for consistency with run_screen.py.
+    """
+    from collections import defaultdict
+
+    def _fill_tier_groups(pairs_by_tier: Dict[str, List[Tuple[int, float]]]) -> int:
+        """Z-score within each tier group. Returns count filled."""
+        filled = 0
+        for tier, pairs in pairs_by_tier.items():
+            if len(pairs) < 2:
+                for idx, _ in pairs:
+                    csv_rows[idx]["clinical_score_z_tier"] = 0.0
+                filled += len(pairs)
+                continue
+            scores = [s for _, s in pairs]
+            mean_val = sum(scores) / len(scores)
+            var_val = sum((s - mean_val) ** 2 for s in scores) / len(scores)  # ddof=0
+            std_val = var_val ** 0.5
+            for idx, s in pairs:
+                if std_val > 0:
+                    csv_rows[idx]["clinical_score_z_tier"] = round(
+                        (s - mean_val) / std_val, 4
+                    )
+                else:
+                    csv_rows[idx]["clinical_score_z_tier"] = 0.0
+            filled += len(pairs)
+        return filled
+
+    # --- Drug developers: group by tier_dev ---
+    dev_indices: List[int] = []
     for i, row in enumerate(csv_rows):
         cs = _safe_float(row.get("clinical_score"))
-        if cs is not None:
-            eligible_indices.append(i)
-            scores.append(cs)
+        if cs is not None and (row.get("archetype") or "") == "drug_developer":
+            dev_indices.append(i)
 
-    if not scores:
-        return
+    tier_groups: Dict[str, List[Tuple[int, float]]] = defaultdict(list)
+    for i in dev_indices:
+        tier = csv_rows[i].get("tier_dev", "")
+        if tier:
+            tier_groups[tier].append((i, float(csv_rows[i]["clinical_score"])))
 
-    zs = _zscore(scores)
-    for j, idx in enumerate(eligible_indices):
-        csv_rows[idx]["clinical_score_z"] = round(zs[j], 4)
+    n_dev = _fill_tier_groups(tier_groups)
+    print(f"  clinical_score_z_tier (drug_developer, ddof=0): {n_dev} tickers, "
+          f"{len(tier_groups)} tiers", file=sys.stderr)
 
-    print(f"  clinical_score_z (PIT-safe): {len(eligible_indices)} tickers, "
-          f"mean={statistics.mean(scores):.1f}", file=sys.stderr)
+    # --- Commercial cohorts: group by tier_commercial ---
+    _COMM_ARCHETYPES = ("commercial_biotech", "commercial_pharma")
+    has_tier_comm = any(row.get("tier_commercial") for row in csv_rows)
+
+    n_comm = 0
+    for arch in _COMM_ARCHETYPES:
+        comm_indices = [i for i, row in enumerate(csv_rows)
+                        if (row.get("archetype") or "") == arch
+                        and _safe_float(row.get("clinical_score")) is not None]
+        if not comm_indices:
+            continue
+
+        if has_tier_comm:
+            comm_tier_groups: Dict[str, List[Tuple[int, float]]] = defaultdict(list)
+            for i in comm_indices:
+                tier = csv_rows[i].get("tier_commercial", "")
+                if not tier:
+                    csv_rows[i]["clinical_score_z_tier"] = 0.0
+                    n_comm += 1
+                    continue
+                comm_tier_groups[tier].append((i, float(csv_rows[i]["clinical_score"])))
+            n_comm += _fill_tier_groups(comm_tier_groups)
+        else:
+            # Fallback: use clinical_score_z (archetype-level z) as proxy
+            for i in comm_indices:
+                cz = _safe_float(csv_rows[i].get("clinical_score_z"))
+                csv_rows[i]["clinical_score_z_tier"] = round(cz, 4) if cz is not None else 0.0
+                n_comm += 1
+
+    print(f"  clinical_score_z_tier (commercial, ddof=0): {n_comm} tickers"
+          f"{' (tier_commercial fallback to archetype z)' if not has_tier_comm else ''}",
+          file=sys.stderr)
+
+
+def compute_cz_eff(csv_rows: List[dict]) -> None:
+    """Compute cz_eff (stage-gated, pos-only, clamped) in-place.
+
+    Matches DE ruleset defaults:
+      stage_mults = {early: 0.0, mid: 1.0, late: 1.5}
+      cz_eff = clamp(max(0, cz_tier), 0, 2) * stage_mult
+    """
+    n_filled = 0
+    for row in csv_rows:
+        cz_tier = _safe_float(row.get("clinical_score_z_tier"))
+        if cz_tier is None:
+            continue
+        stage = (row.get("stage_bucket") or "").lower().strip()
+        stage_mult = _STAGE_MULTS.get(stage, 0.0)
+        cz_pos = max(0.0, cz_tier)
+        cz_clamped = min(2.0, cz_pos)
+        row["cz_eff"] = round(cz_clamped * stage_mult, 4)
+        n_filled += 1
+
+    # Summary by stage
+    stage_counts: Dict[str, int] = {}
+    stage_nonzero: Dict[str, int] = {}
+    for row in csv_rows:
+        v = _safe_float(row.get("cz_eff"))
+        if v is None:
+            continue
+        stage = (row.get("stage_bucket") or "").lower().strip()
+        stage_counts[stage] = stage_counts.get(stage, 0) + 1
+        if v > 0:
+            stage_nonzero[stage] = stage_nonzero.get(stage, 0) + 1
+
+    print(f"  cz_eff (stage-gated, pos-only, clamped ±2): {n_filled} tickers",
+          file=sys.stderr)
+    for s in sorted(stage_counts):
+        nz = stage_nonzero.get(s, 0)
+        print(f"    {s or '(empty)'}: {stage_counts[s]} total, {nz} nonzero",
+              file=sys.stderr)
 
 
 # ---------------------------------------------------------------------------
@@ -553,11 +700,49 @@ def compute_flags(rows: List[dict]) -> None:
     n_top20_cs = max(1, int(len(cscore_zs) * 0.20))
     cscore_top20_thr = cscore_zs[n_top20_cs - 1] if cscore_zs else 0
 
+    # Tier-local z threshold
+    czt_zs = sorted(
+        [v for v in (_safe_float(r.get("clinical_score_z_tier")) for r in rows)
+         if v is not None],
+        reverse=True,
+    )
+    n_top20_czt = max(1, int(len(czt_zs) * 0.20))
+    czt_top20_thr = czt_zs[n_top20_czt - 1] if czt_zs else 0
+
+    # cz_eff threshold (top 20% of ALL values incl zeros, consistent with other flags)
+    czeff_vals = sorted(
+        [v for v in (_safe_float(r.get("cz_eff")) for r in rows)
+         if v is not None],
+        reverse=True,
+    )
+    n_top20_czeff = max(1, int(len(czeff_vals) * 0.20))
+    czeff_top20_thr = czeff_vals[n_top20_czeff - 1] if czeff_vals else 0
+
+    # A+B tier thresholds (DE scope: where clinical sort actually operates)
+    ab_rows = [r for r in rows if (r.get("tier_dev") or "").upper() in ("A", "B")]
+    ab_cs_zs = sorted(
+        [v for v in (_safe_float(r.get("clinical_score_z")) for r in ab_rows)
+         if v is not None],
+        reverse=True,
+    )
+    n_top20_cs_ab = max(1, int(len(ab_cs_zs) * 0.20))
+    cs_top20_ab_thr = ab_cs_zs[n_top20_cs_ab - 1] if ab_cs_zs else 0
+
+    ab_czeff = sorted(
+        [v for v in (_safe_float(r.get("cz_eff")) for r in ab_rows)
+         if v is not None],
+        reverse=True,
+    )
+    n_top20_czeff_ab = max(1, int(len(ab_czeff) * 0.20))
+    czeff_top20_ab_thr = ab_czeff[n_top20_czeff_ab - 1] if ab_czeff else 0
+
     for row in rows:
         comp_rank = _safe_float(row.get("composite_rank"))
         tier = (row.get("tier_dev") or "").upper()
         clin_z = _safe_float(row.get("clinical_alpha_z"))
         cs_z = _safe_float(row.get("clinical_score_z"))
+        cz_tier = _safe_float(row.get("clinical_score_z_tier"))
+        cz_eff = _safe_float(row.get("cz_eff"))
         cat_mode = (row.get("catalyst_mode")
                     or row.get("de_catalyst_mode") or "").lower()
         cat_days = _safe_float(row.get("catalyst_days"))
@@ -585,6 +770,27 @@ def compute_flags(rows: List[dict]) -> None:
         # New PIT-safe clinical_score_z flag
         row["flag_clinical_score_z_top20"] = 1 if (
             cs_z is not None and cs_z >= cscore_top20_thr
+        ) else 0
+
+        # Tier-local z-score flag (PIT-safe)
+        row["flag_clinical_score_z_tier_top20"] = 1 if (
+            cz_tier is not None and cz_tier >= czt_top20_thr
+        ) else 0
+
+        # cz_eff flag — the DE sort signal (PIT-safe, stage-gated)
+        row["flag_clinical_cz_eff_top20"] = 1 if (
+            cz_eff is not None and cz_eff >= czeff_top20_thr and cz_eff > 0
+        ) else 0
+
+        # A+B tier flags (DE scope: where sort signal actually operates)
+        row["flag_cs_z_top20_ab"] = 1 if (
+            tier in ("A", "B")
+            and cs_z is not None and cs_z >= cs_top20_ab_thr
+        ) else 0
+        row["flag_cz_eff_top20_ab"] = 1 if (
+            tier in ("A", "B")
+            and cz_eff is not None and cz_eff >= czeff_top20_ab_thr
+            and cz_eff > 0
         ) else 0
 
         # Near readout (approx PIT)
@@ -692,6 +898,7 @@ CSV_COLUMNS = [
     "price_t0", "price_t1",
     "archetype", "stage_bucket", "composite_rank", "score_rank_pct",
     "tier_dev", "clinical_score", "clinical_score_z",
+    "clinical_score_z_tier", "cz_eff",
     "clinical_alpha_z", "clinical_readout_days", "clinical_coverage_flag",
     "catalyst_days", "catalyst_mode",
 ] + [f"flag_{f}" for f in FLAG_NAMES]
@@ -773,6 +980,9 @@ def write_report(
              "From archive at t0 |")
     L.append("| clinical_score, clinical_score_z | **PIT-safe** | "
              "Pure z-score of archive clinical_score |")
+    L.append("| clinical_score_z_tier, cz_eff | **PIT-safe** | "
+             "Tier-local z (ddof=0) + stage-gated/pos-only/clamped transform; "
+             "matches DE sort signal |")
     L.append("| clinical_alpha_z, readout_days | **Approximate PIT** | "
              "Uses today's trial records filtered by first_posted <= t0; "
              "PCD/completion dates may have shifted post-t0 |")
@@ -865,11 +1075,11 @@ def write_report(
     L.append("## 5. Top 30 Returners (24m) — Signal Decomposition")
     L.append(
         "| # | Ticker | 24m | 12m | 6m | 3m | "
-        "Arch | Rank | Tier | ClinZ | CS_Z | Rd | CatD | CatMode | Flags |"
+        "Arch | Rank | Tier | ClinZ | CS_Z | CZT | czEff | Rd | CatD | CatMode | Flags |"
     )
     L.append(
         "|---|--------|-----|-----|----|----|"
-        "-----|------|------|-------|------|----|------|---------|-------|"
+        "-----|------|------|-------|------|-----|-------|----|----|---------|-------|"
     )
     for i, r in enumerate(with_ret[:30], 1):
         r24 = _fmt_pct(r.get("ret_24m"))
@@ -881,6 +1091,8 @@ def write_report(
         tier = r.get("tier_dev") or ""
         clin_z = _fmt_f2(_safe_float(r.get("clinical_alpha_z")))
         cs_z = _fmt_f2(_safe_float(r.get("clinical_score_z")))
+        czt = _fmt_f2(_safe_float(r.get("clinical_score_z_tier")))
+        czeff = _fmt_f2(_safe_float(r.get("cz_eff")))
         rd = r.get("clinical_readout_days")
         rd_str = str(rd) if rd != "" and rd is not None else "—"
         cat_d = r.get("catalyst_days") or "—"
@@ -896,7 +1108,7 @@ def write_report(
         L.append(
             f"| {i} | {r['ticker']} | {r24} | {r12} | {r6} | {r3} | "
             f"{arch} | {comp} | {tier} | {clin_z} | {cs_z} | "
-            f"{rd_str} | {cat_d} | {cat_m} | {flag_str} |"
+            f"{czt} | {czeff} | {rd_str} | {cat_d} | {cat_m} | {flag_str} |"
         )
     L.append("")
 
@@ -908,6 +1120,8 @@ def write_report(
     signal_cols = [
         ("clinical_alpha_z", "Clinical Alpha Z (approx PIT)"),
         ("clinical_score_z", "Clinical Score Z (PIT-safe)"),
+        ("clinical_score_z_tier", "Clinical Score Z Tier-local (PIT-safe)"),
+        ("cz_eff", "cz_eff (DE sort signal, PIT-safe)"),
         ("clinical_score", "Clinical Score (raw)"),
         ("catalyst_days", "Catalyst Days"),
         ("composite_rank", "Composite Rank"),
@@ -927,8 +1141,70 @@ def write_report(
                  f"| {_fmt_f2(delta)} |")
     L.append("")
 
-    # --- 7. Notes ---
-    L.append("## 7. Notes")
+    # --- 7. Coverage decomposition for top-K ---
+    L.append(f"## 7. Coverage Decomposition — Top {top_k} Returners (24m)")
+    L.append("")
+    L.append("Why some top returners aren't flagged by clinical signals:")
+    L.append("")
+
+    # Categorize top-K returners
+    top_k_rows = with_ret[:top_k]
+    n_dd = sum(1 for r in top_k_rows
+               if (r.get("archetype") or "") == "drug_developer")
+    n_comm_bio = sum(1 for r in top_k_rows
+                     if (r.get("archetype") or "") == "commercial_biotech")
+    n_comm_pharma = sum(1 for r in top_k_rows
+                        if (r.get("archetype") or "") == "commercial_pharma")
+    n_comm = n_comm_bio + n_comm_pharma
+    n_other = len(top_k_rows) - n_dd - n_comm
+    n_early = sum(1 for r in top_k_rows
+                  if (r.get("stage_bucket") or "").lower() == "early")
+    n_no_tier = sum(1 for r in top_k_rows
+                    if not (r.get("tier_dev") or "")
+                    and not (r.get("tier_commercial") or ""))
+    n_tier_a = sum(1 for r in top_k_rows
+                   if (r.get("tier_dev") or "").upper() == "A")
+    n_tier_b = sum(1 for r in top_k_rows
+                   if (r.get("tier_dev") or "").upper() == "B")
+    n_tier_cd = sum(1 for r in top_k_rows
+                    if (r.get("tier_dev") or "").upper() in ("C", "D"))
+    n_comm_with_czeff = sum(1 for r in top_k_rows
+                            if (r.get("archetype") or "").startswith("commercial_")
+                            and _safe_float(r.get("cz_eff")) is not None
+                            and _safe_float(r.get("cz_eff")) > 0)
+    n_cat_near = sum(1 for r in top_k_rows
+                     if r.get("flag_catalyst_near") == 1)
+    n_no_cat = sum(1 for r in top_k_rows
+                   if (r.get("catalyst_mode") or r.get("de_catalyst_mode")
+                       or "").lower() == "missing")
+
+    L.append(f"| Category | Count | % of Top-{top_k} |")
+    L.append("|----------|-------|--------------|")
+    for label, n in [
+        ("Drug developer (clinical signal scope)", n_dd),
+        ("Commercial biotech (clinical signal scope)", n_comm_bio),
+        ("Commercial pharma (clinical signal scope)", n_comm_pharma),
+        ("Other archetype (no clinical signal)", n_other),
+        ("Early stage (cz_eff=0 by design)", n_early),
+        ("No tier (excluded from cz_tier)", n_no_tier),
+        ("Tier A (dev)", n_tier_a),
+        ("Tier B (dev)", n_tier_b),
+        ("Tier C/D (dev)", n_tier_cd),
+        ("Commercial with nonzero cz_eff", n_comm_with_czeff),
+        ("Catalyst near (days<=180)", n_cat_near),
+        ("No catalyst (missing)", n_no_cat),
+    ]:
+        pct = n / len(top_k_rows) * 100 if top_k_rows else 0
+        L.append(f"| {label} | {n} | {pct:.0f}% |")
+    L.append("")
+    L.append(f"> Of {len(top_k_rows)} top returners, {n_dd} are drug developers, "
+             f"{n_comm} are commercial (biotech+pharma), and {n_other} are other "
+             f"archetypes. {n_early} are early-stage (cz_eff=0 by design). "
+             f"{n_comm_with_czeff} commercial tickers have nonzero cz_eff.")
+    L.append("")
+
+    # --- 8. Notes ---
+    L.append("## 8. Notes")
     missing_t0 = sum(1 for r in rows if r.get("price_t0") is None)
     missing_t1 = sum(1 for r in rows
                      if r.get("price_t1") is None and r.get("price_t0") is not None)
@@ -940,6 +1216,12 @@ def write_report(
              "(PCD may have drifted).")
     L.append("- clinical_score_z is a pure z-score of the archive's "
              "clinical_score — fully PIT-safe.")
+    L.append("- clinical_score_z_tier: tier-local z (ddof=0). "
+             "Drug developers: within tier_dev. Commercial: within "
+             "tier_commercial × archetype (fallback to archetype z "
+             "for older archives without tier_commercial).")
+    L.append("- cz_eff: stage-gated (early=0, mid=1.0, late=1.5), "
+             "positive-only, clamped [0, 2]. The actual DE sort signal.")
     L.append("")
 
     output_path.write_text("\n".join(L), encoding="utf-8")
@@ -1016,6 +1298,10 @@ def main() -> None:
     # 2a: PIT-safe clinical_score_z (no trial records needed)
     compute_clinical_score_z(rows)
 
+    # 2a2: Tier-local z-score + cz_eff (PIT-safe, matches DE sort signal)
+    compute_clinical_score_z_tier(rows)
+    compute_cz_eff(rows)
+
     # 2b: Approximate-PIT clinical_alpha_z (needs trial records)
     trial_records_path = args.trial_records
     if trial_records_path is None:
@@ -1050,7 +1336,8 @@ def main() -> None:
     compute_clinical_alpha_z(rows, readout_days)
 
     # Sanity check z-scores
-    for col_name in ["clinical_alpha_z", "clinical_score_z"]:
+    for col_name in ["clinical_alpha_z", "clinical_score_z",
+                     "clinical_score_z_tier", "cz_eff"]:
         zs = [v for v in (_safe_float(r.get(col_name)) for r in rows)
               if v is not None]
         if zs:

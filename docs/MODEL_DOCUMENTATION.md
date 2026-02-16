@@ -892,6 +892,8 @@ clin_adj = clinical_sort_weight * cz_eff * stage_mult
 | `clinical_positive_only` | bool | `True` | Only boost positive z, never penalize |
 | `clinical_stage_mults` | tuple | `(early=0, mid=1, late=1.5)` | Stage gating multipliers |
 
+**Signal interpretation:** `cz_eff` is a mid/late-stage within-tier preference signal; it is *not* designed to capture extreme binary event winners. Top returners in biotech are often driven by M&A, FDA surprises, or short squeezes on low-clinical-score names — the signal produces lift and above-baseline recall at 6m/12m horizons, but unconditional mean cz_eff among the top-50 can appear inverted. The correct metrics are recall vs baseline, lift, and precision@K.
+
 **Replay evidence (24 snapshots, Jan 15 – Feb 17, 2026, w=1.0 pos_only):**
 
 | Metric | Result |
@@ -903,6 +905,13 @@ clin_adj = clinical_sort_weight * cz_eff * stage_mult
 | Up-mover mean cz_tier | +1.31 |
 | Down-mover mean cz_tier | -0.71 |
 | Direction delta | +2.02 (signal always nudges correctly) |
+
+**Recall evidence (t0=2024-01-31, 285 survivors, top K=50):**
+
+| Flag | N | Baseline | R@50 6m | Lift 6m | R@50 12m | Lift 12m | Prec@50 24m |
+|------|---|----------|---------|---------|----------|----------|-------------|
+| `clinical_cz_eff_top20` | 31 | 10.9% | 16.0% | 2.11 | 16.0% | 2.91 | 19.35% |
+| `clinical_score_z_top20` | 56 | 19.7% | 22.0% | 1.21 | 22.0% | 2.57 | 12.50% |
 
 ### Ruleset Configuration
 

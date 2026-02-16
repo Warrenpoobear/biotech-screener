@@ -346,17 +346,26 @@ def main(argv=None) -> int:
     rankings = pd.read_csv(rankings_path)
 
     # Backfill clinical z-scores if not in snapshot (pre-feature snapshots)
+    # Each archetype cohort gets its own z-score (never mixed).
+    _CLINICAL_COHORTS = {
+        "drug_developer": "dev",
+        "commercial_biotech": "comm_biotech",
+        "commercial_pharma": "comm_pharma",
+    }
     dev_mask = rankings["archetype"] == "drug_developer"
     if "clinical_score_z" not in rankings.columns and "clinical_score" in rankings.columns:
-        scores = pd.to_numeric(rankings.loc[dev_mask, "clinical_score"], errors="coerce")
-        valid = scores.dropna()
-        if len(valid) > 1:
-            mean, std = valid.mean(), valid.std(ddof=0)
-            if std > 0:
-                rankings.loc[valid.index, "clinical_score_z"] = ((valid - mean) / std).round(4)
-        print(f"[INFO] Backfilled clinical_score_z for {len(valid)} drug_developers (ddof=0)")
+        for arch_name, cohort_label in _CLINICAL_COHORTS.items():
+            mask = rankings["archetype"] == arch_name
+            scores = pd.to_numeric(rankings.loc[mask, "clinical_score"], errors="coerce")
+            valid = scores.dropna()
+            if len(valid) > 1:
+                mean, std = valid.mean(), valid.std(ddof=0)
+                if std > 0:
+                    rankings.loc[valid.index, "clinical_score_z"] = ((valid - mean) / std).round(4)
+            print(f"[INFO] Backfilled clinical_score_z for {len(valid)} {arch_name} (ddof=0)")
 
     if "clinical_score_z_tier" not in rankings.columns and "clinical_score" in rankings.columns:
+        # Drug developers: group by tier_dev
         n_filled = 0
         for tier, grp in rankings.loc[dev_mask].groupby("tier_dev"):
             if not tier:
@@ -374,6 +383,40 @@ def main(argv=None) -> int:
                 rankings.loc[valid.index, "clinical_score_z_tier"] = 0.0
             n_filled += len(valid)
         print(f"[INFO] Backfilled clinical_score_z_tier for {n_filled} drug_developers (ddof=0)")
+
+        # Commercial cohorts: group by tier_commercial (if column exists)
+        _COMM_ARCHETYPES = ("commercial_biotech", "commercial_pharma")
+        has_tier_comm = "tier_commercial" in rankings.columns
+        n_comm_filled = 0
+        for arch_name in _COMM_ARCHETYPES:
+            comm_mask = rankings["archetype"] == arch_name
+            if not has_tier_comm:
+                # Older snapshots: no tier_commercial → set 0.0
+                comm_cs = pd.to_numeric(rankings.loc[comm_mask, "clinical_score"], errors="coerce")
+                valid = comm_cs.dropna()
+                rankings.loc[valid.index, "clinical_score_z_tier"] = 0.0
+                n_comm_filled += len(valid)
+                continue
+            for tier, grp in rankings.loc[comm_mask].groupby("tier_commercial"):
+                if not tier:
+                    scores = pd.to_numeric(grp["clinical_score"], errors="coerce")
+                    rankings.loc[scores.dropna().index, "clinical_score_z_tier"] = 0.0
+                    n_comm_filled += len(scores.dropna())
+                    continue
+                scores = pd.to_numeric(grp["clinical_score"], errors="coerce")
+                valid = scores.dropna()
+                if len(valid) < 2:
+                    rankings.loc[valid.index, "clinical_score_z_tier"] = 0.0
+                    n_comm_filled += len(valid)
+                    continue
+                mean, std = valid.mean(), valid.std(ddof=0)
+                if std > 0:
+                    rankings.loc[valid.index, "clinical_score_z_tier"] = ((valid - mean) / std).round(4)
+                else:
+                    rankings.loc[valid.index, "clinical_score_z_tier"] = 0.0
+                n_comm_filled += len(valid)
+        if n_comm_filled:
+            print(f"[INFO] Backfilled clinical_score_z_tier for {n_comm_filled} commercial tickers (ddof=0)")
 
     baseline_rs = DecisionRuleset.from_json(args.baseline_ruleset)
     candidate_rs = DecisionRuleset.from_json(args.candidate_ruleset)

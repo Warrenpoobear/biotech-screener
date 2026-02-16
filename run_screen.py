@@ -2130,21 +2130,31 @@ def save_validation_snapshot(
                       (results.get("module_4_clinical", {}).get("scores") or [])}
         _compute_clinical_alpha_z(csv_rows, _m4_lookup, _readout_days)
 
-    # --- Compute clinical_score_z (PIT-safe, cross-sectional within drug_developer) ---
-    _dev_indices = [i for i, r in enumerate(csv_rows)
-                    if r.get("archetype") == "drug_developer"
-                    and r.get("clinical_score") is not None
-                    and r.get("clinical_score") != ""]
-    if _dev_indices:
-        _scores = [float(csv_rows[i]["clinical_score"]) for i in _dev_indices]
-        _mean = sum(_scores) / len(_scores)
-        _var = sum((s - _mean) ** 2 for s in _scores) / len(_scores)
-        _std = _var ** 0.5
-        for j, idx in enumerate(_dev_indices):
-            if _std > 0:
-                csv_rows[idx]["clinical_score_z"] = round((_scores[j] - _mean) / _std, 4)
-            else:
-                csv_rows[idx]["clinical_score_z"] = 0.0
+    # --- Compute clinical_score_z (PIT-safe, cross-sectional within cohort) ---
+    # Each archetype cohort gets its own z-score (never mixed).
+    _CLINICAL_COHORTS = {
+        "drug_developer": "dev",
+        "commercial_biotech": "comm_biotech",
+        "commercial_pharma": "comm_pharma",
+    }
+    _dev_indices = []  # still needed for tier z-score below
+    for _cohort_arch in _CLINICAL_COHORTS:
+        _cohort_idx = [i for i, r in enumerate(csv_rows)
+                       if r.get("archetype") == _cohort_arch
+                       and r.get("clinical_score") is not None
+                       and r.get("clinical_score") != ""]
+        if _cohort_arch == "drug_developer":
+            _dev_indices = _cohort_idx
+        if _cohort_idx:
+            _scores = [float(csv_rows[i]["clinical_score"]) for i in _cohort_idx]
+            _mean = sum(_scores) / len(_scores)
+            _var = sum((s - _mean) ** 2 for s in _scores) / len(_scores)
+            _std = _var ** 0.5
+            for j, idx in enumerate(_cohort_idx):
+                if _std > 0:
+                    csv_rows[idx]["clinical_score_z"] = round((_scores[j] - _mean) / _std, 4)
+                else:
+                    csv_rows[idx]["clinical_score_z"] = 0.0
 
     # --- Compute clinical_score_z_tier (PIT-safe, z within tier_dev × drug_developer) ---
     from collections import defaultdict as _defaultdict
@@ -2314,6 +2324,36 @@ def save_validation_snapshot(
             f";strength={row.get('catalyst_strength', '')}"
             f";decay_w={_decay_w_str}"
         )
+
+    # --- Compute clinical_score_z_tier for commercial cohorts (needs tier_commercial from DE) ---
+    _COMM_ARCHETYPES = ("commercial_biotech", "commercial_pharma")
+    _comm_tier_groups = _defaultdict(list)  # (archetype, tier_commercial) -> [(index, score)]
+    for i, r in enumerate(csv_rows):
+        arch = r.get("archetype", "")
+        if arch not in _COMM_ARCHETYPES:
+            continue
+        cs = r.get("clinical_score")
+        if cs is None or cs == "":
+            continue
+        tier = r.get("tier_commercial", "")
+        if not tier:
+            r["clinical_score_z_tier"] = 0.0
+            continue
+        _comm_tier_groups[(arch, tier)].append((i, float(cs)))
+    for (_arch, _tier), _pairs in _comm_tier_groups.items():
+        if len(_pairs) < 2:
+            for idx, _ in _pairs:
+                csv_rows[idx]["clinical_score_z_tier"] = 0.0
+            continue
+        _t_scores = [s for _, s in _pairs]
+        _t_mean = sum(_t_scores) / len(_t_scores)
+        _t_var = sum((s - _t_mean) ** 2 for s in _t_scores) / len(_t_scores)
+        _t_std = _t_var ** 0.5
+        for idx, s in _pairs:
+            if _t_std > 0:
+                csv_rows[idx]["clinical_score_z_tier"] = round((s - _t_mean) / _t_std, 4)
+            else:
+                csv_rows[idx]["clinical_score_z_tier"] = 0.0
 
     # --- Actionable ordering: sort + assign rank + compute weights ---
     # Sort all rows by actionable sort key
