@@ -35,6 +35,7 @@ import argparse
 import csv
 import json
 import logging
+import math
 import re
 import sys
 from datetime import date, datetime
@@ -1302,6 +1303,7 @@ SNAPSHOT_COLUMNS = [
     "valuation_score", "clinical_score", "financial_score",
     "confidence_overall",
     "clinical_rank_pct_dev", "clinical_optionality_pct_dev",
+    "clinical_alpha_z", "clinical_readout_days", "clinical_coverage_flag",
     "commercial_quality", "commercial_quality_pct",
     # Decision Engine v1 columns
     "decision_engine_version", "decision_engine_ruleset_id",
@@ -1342,7 +1344,7 @@ PHASE2_PORTFOLIO_COLUMNS = [
     "target_weight_pct", "tier_reason", "tier_any_reason", "size_reasons",
     "catalyst_mode", "catalyst_days", "cat_priority", "mom_state", "risk_flags",
     "composite_rank", "composite_score", "archetype",
-    "clinical_optionality_pct_dev", "commercial_quality_pct",
+    "clinical_optionality_pct_dev", "clinical_alpha_z", "commercial_quality_pct",
     "missing_components",
     "decision_engine_version", "decision_engine_ruleset_id",
 ]
@@ -1629,6 +1631,181 @@ def _nearest_catalyst_event_type(
 
 
 # ---------------------------------------------------------------------------
+# Clinical alpha z-score helpers
+# ---------------------------------------------------------------------------
+
+_CLINICAL_PHASES = frozenset({
+    "PHASE1", "PHASE2", "PHASE3",
+    "PHASE 1", "PHASE 2", "PHASE 3",
+    "PHASE1/PHASE2", "PHASE 1/PHASE 2",
+    "PHASE2/PHASE3", "PHASE 2/PHASE 3",
+    "EARLY_PHASE1",
+})
+
+_PHASE_NUM = {
+    "approved": 1.0, "phase 3": 0.83, "phase 2/3": 0.67,
+    "phase 2": 0.50, "phase 1/2": 0.33, "phase 1": 0.17,
+    "preclinical": 0.08,
+}
+
+_CE_WEIGHTS = {"phase": 0.35, "proximity": 0.35, "quality": 0.30}
+
+
+def _parse_trial_date(s) -> Optional[date]:
+    """Parse YYYY-MM-DD string to date, or None."""
+    if not s:
+        return None
+    try:
+        return datetime.strptime(str(s)[:10], "%Y-%m-%d").date()
+    except (ValueError, TypeError):
+        return None
+
+
+def _clinical_proximity(days: Optional[int]) -> float:
+    """Exponential decay proximity score: days to readout → [0, 1]."""
+    if days is None:
+        return 0.0
+    if days <= 0:
+        return 1.0
+    return math.exp(-days / 90)
+
+
+def _compute_clinical_readout_days(
+    trial_records: List[Dict],
+    as_of_date: str,
+) -> Dict[str, Optional[int]]:
+    """For each ticker, find min days to nearest credible clinical readout.
+
+    Filters: INTERVENTIONAL, Phase 1-3 (excl Phase 4), PIT-safe.
+    Priority: primary_completion_date > completion_date.
+    Past PCD with no results_first_posted → 0 (imminent readout).
+
+    Returns dict mapping ticker → days (int) or None if no qualifying trials.
+    """
+    as_of = datetime.strptime(as_of_date[:10], "%Y-%m-%d").date()
+    # Group trials by ticker
+    by_ticker: Dict[str, list] = {}
+    for trial in trial_records:
+        tk = trial.get("ticker", "")
+        if tk:
+            by_ticker.setdefault(tk.upper(), []).append(trial)
+
+    result: Dict[str, Optional[int]] = {}
+    for ticker, trials in by_ticker.items():
+        best_days: Optional[int] = None
+        for t in trials:
+            # Study type filter
+            if t.get("study_type", "").upper() != "INTERVENTIONAL":
+                continue
+            # Phase filter (Phase 1-3 only)
+            phase = str(t.get("phase", "")).upper()
+            if phase not in _CLINICAL_PHASES:
+                continue
+            # PIT gate: trial must be publicly known at as_of
+            fp = _parse_trial_date(t.get("first_posted"))
+            lup = _parse_trial_date(t.get("last_update_posted"))
+            pit_date = fp or lup
+            if pit_date is None or pit_date > as_of:
+                continue
+
+            pcd = _parse_trial_date(t.get("primary_completion_date"))
+            cd = _parse_trial_date(t.get("completion_date"))
+            rfp = _parse_trial_date(t.get("results_first_posted"))
+
+            # Priority 1: PCD
+            if pcd is not None:
+                if pcd > as_of:
+                    days = (pcd - as_of).days
+                elif rfp is None:
+                    # Past PCD, no results posted → imminent readout
+                    days = 0
+                else:
+                    # Past PCD + results posted → already known, skip
+                    continue
+            elif cd is not None and cd > as_of:
+                # Fallback: future completion_date
+                days = (cd - as_of).days
+            else:
+                continue
+
+            if best_days is None or days < best_days:
+                best_days = days
+
+        if best_days is not None:
+            result[ticker] = best_days
+
+    return result
+
+
+def _compute_clinical_alpha_z(
+    csv_rows: List[dict],
+    m4_lookup: Dict[str, dict],
+    readout_days: Dict[str, Optional[int]],
+) -> None:
+    """Compute clinical_alpha_z, clinical_readout_days, clinical_coverage_flag.
+
+    Writes directly into csv_rows (dev tickers only).
+    Z-score is cross-sectional within the drug_developer cohort.
+    """
+    # Collect raw scores for dev tickers
+    dev_indices: List[int] = []
+    raw_scores: List[float] = []
+
+    for i, row in enumerate(csv_rows):
+        if row.get("archetype") != "drug_developer":
+            continue
+        ticker = row.get("ticker", "")
+        m4 = m4_lookup.get(ticker)
+        if m4 is None:
+            continue
+
+        lead_phase = str(m4.get("lead_phase", "")).lower().strip()
+        phase_num = _PHASE_NUM.get(lead_phase, 0.0)
+        rd = readout_days.get(ticker)
+        proximity = _clinical_proximity(rd)
+        clin_score = m4.get("clinical_score")
+        quality = float(clin_score) / 100.0 if clin_score is not None else 0.0
+
+        raw = (_CE_WEIGHTS["phase"] * phase_num
+               + _CE_WEIGHTS["proximity"] * proximity
+               + _CE_WEIGHTS["quality"] * quality)
+
+        dev_indices.append(i)
+        raw_scores.append(raw)
+
+        # Store readout metadata now (will add z later)
+        csv_rows[i]["clinical_readout_days"] = rd if rd is not None else ""
+        csv_rows[i]["clinical_coverage_flag"] = 1 if rd is not None else 0
+
+    if not raw_scores:
+        return
+
+    # Winsorize at p5/p95
+    n = len(raw_scores)
+    if n >= 20:
+        sorted_vals = sorted(raw_scores)
+        p5 = sorted_vals[max(0, int(n * 0.05))]
+        p95 = sorted_vals[min(n - 1, int(n * 0.95))]
+    else:
+        p5 = min(raw_scores)
+        p95 = max(raw_scores)
+
+    winsorized = [max(p5, min(p95, v)) for v in raw_scores]
+
+    # Z-score
+    mean_val = sum(winsorized) / len(winsorized)
+    var_val = sum((v - mean_val) ** 2 for v in winsorized) / len(winsorized)
+    std_val = var_val ** 0.5
+
+    for j, idx in enumerate(dev_indices):
+        if std_val > 0:
+            z = (winsorized[j] - mean_val) / std_val
+        else:
+            z = 0.0
+        csv_rows[idx]["clinical_alpha_z"] = round(z, 4)
+
+
+# ---------------------------------------------------------------------------
 # Catalyst shadow metrics telemetry
 # ---------------------------------------------------------------------------
 
@@ -1845,6 +2022,7 @@ def save_validation_snapshot(
     ruleset: Optional[DecisionRuleset] = None,
     price_history_path: Optional[Path] = None,
     market_data_by_ticker: Optional[Dict[str, Dict]] = None,
+    trial_records: Optional[List[Dict]] = None,
 ) -> Optional[Path]:
     """
     Save a lightweight validation snapshot for future forward-looking backtests.
@@ -1945,6 +2123,13 @@ def save_validation_snapshot(
             p = max(0.001, min(0.999, p))
             csv_rows[row_idx]["clinical_rank_pct_dev"] = round(p, 6)
             csv_rows[row_idx]["clinical_optionality_pct_dev"] = round(1.0 - p, 6)
+
+    # --- Compute clinical_alpha_z (cross-sectional z within dev cohort) ---
+    if trial_records:
+        _readout_days = _compute_clinical_readout_days(trial_records, as_of_date)
+        _m4_lookup = {s["ticker"]: s for s in
+                      (results.get("module_4_clinical", {}).get("scores") or [])}
+        _compute_clinical_alpha_z(csv_rows, _m4_lookup, _readout_days)
 
     # --- Compute commercial_quality_pct (percentile within commercial cohort) ---
     _CQ_WEIGHTS = {"financial": 0.45, "valuation": 0.35, "momentum": 0.20}
@@ -3463,6 +3648,8 @@ def run_screening_pipeline(
     sec_multi_form_mode: str = "cache_only",
     # FDA regulatory notices (Federal Register) mode
     fda_regulatory_mode: str = "cache_only",
+    # Morningstar data mode: off skips vol enrichment + signal engine
+    morningstar_mode: str = "on",
     # Module 5 calibrated weights
     module5_weights_path: Optional[Path] = None,
     module5_weights_mode: str = "global",
@@ -3622,7 +3809,7 @@ def run_screening_pipeline(
     # Compute annualized volatility from Morningstar daily prices (HS377)
     # This enriches market_data_by_ticker with volatility_252d for Module 5's vol adjustment
     ms_price_path = data_dir / "morningstar_price_history.json"
-    if ms_price_path.exists() and market_data_by_ticker:
+    if morningstar_mode != "off" and ms_price_path.exists() and market_data_by_ticker:
         vol_enriched = enrich_volatility_from_morningstar_prices(
             price_history_path=ms_price_path,
             market_data_by_ticker=market_data_by_ticker,
@@ -4603,7 +4790,7 @@ def run_screening_pipeline(
 
             # Step 13: Calculate Morningstar quantitative signal scores (if available)
             morningstar_result = None
-            if HAS_MORNINGSTAR:
+            if HAS_MORNINGSTAR and morningstar_mode != "off":
                 ms_engine = MorningstarSignalEngine()
                 ms_loaded = ms_engine.load_data(Path(data_dir))
                 if ms_loaded > 0:
@@ -5506,6 +5693,13 @@ Module 3 Catalyst Detection:
         choices=["off", "cache_only", "live"],
         help="FDA regulatory notices (Federal Register) mode: off (default), cache_only, or live.",
     )
+    parser.add_argument(
+        "--morningstar-mode",
+        type=str,
+        default="on",
+        choices=["off", "on"],
+        help="Morningstar data mode: off (skip vol enrichment + signal engine), on (default).",
+    )
 
     # Clustering controls
     parser.add_argument(
@@ -5813,6 +6007,7 @@ Module 3 Catalyst Detection:
             sec_8k_mode=("live" if args.sec_8k_live else "cache_only"),
             sec_multi_form_mode=args.sec_multi_form_mode,
             fda_regulatory_mode=args.fda_regulatory_mode,
+            morningstar_mode=args.morningstar_mode,
             module5_weights_path=(Path(args.module5_weights) if getattr(args, "module5_weights", None) else None),
             module5_weights_mode=getattr(args, "module5_weights_mode", "global"),
             scoring_mode=getattr(args, "scoring_mode", None),
@@ -5956,6 +6151,7 @@ Module 3 Catalyst Detection:
                 ruleset=de_ruleset,
                 price_history_path=args.data_dir / "price_history.csv",
                 market_data_by_ticker=_mkt_data_for_snapshot,
+                trial_records=trial_records,
             )
             if snap_result:
                 logger.info(f"Snapshot dir:       {snap_result}")
